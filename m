@@ -1,180 +1,239 @@
-Return-Path: <linux-kernel+bounces-225286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64763912E9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:34:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454F1912E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 200F9281733
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:34:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BDF1F225BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B5817B518;
-	Fri, 21 Jun 2024 20:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SD438gxj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B7517B4F2;
+	Fri, 21 Jun 2024 20:34:49 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED66374DD;
-	Fri, 21 Jun 2024 20:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45794374DD;
+	Fri, 21 Jun 2024 20:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719002072; cv=none; b=BBHlsu0jM+YChzzUaavtuVJTh3upLdoUQgIp22Jaxwd5Wz6PaKsDQ3p47FLaA0jM1LBfzdZq/IC4q09/WdYGjzYkGn+FKA8tkAS2YhCN+kdMLBZdJiBkFHvxfIoihdnPOynNQGZfIZQWnvb4iRt8KakYVZ9lZXaRd7stzVVfQLc=
+	t=1719002089; cv=none; b=Ro4uFzeBx9UcC1yAGNVXc5XG6Az8lh6goBZSAY1qcDsCqkIvU02dX4DtNfx5C5BoeKoso+be5jHTV59WNXXLkVPT2/+aIfiiSGstHwUbSIWJgxZB35SGAd+lS6lRuXz3lFV86zLLyA9rmN456jdt6sDoEHZjdc2OeXWiaZ5VICc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719002072; c=relaxed/simple;
-	bh=g+pouUiiT7AeZC4HcBnx+iVl1hBdooJPKlXz8f+L6E4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsjS2X85DUtmnvoWYWtmGJZ4y/2gicBuG3/nKMCwPbCW/u/W5HoUVVd6Q5fIWoWzCnfLBVYDTGYMjqSE7D7Jkonq0vxFC4rpoXccPBA+Us5XUKV8EFtNT0OIznZuWXGN4sH0QQ4P5ebgP0dvYUnO6QqGHhMGj0s2DZXAEQFlnkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SD438gxj; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719002069; x=1750538069;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=g+pouUiiT7AeZC4HcBnx+iVl1hBdooJPKlXz8f+L6E4=;
-  b=SD438gxjfaW0H6Ot29Y7gVWTQfsjT7ugHgQL5YNXNfYpGc4GF5TqneXN
-   q+PV3Dubj5Ses4G05Iod2ROHaONSjMu/fuvcAjk6nWpVJ0ViXbhtEXViW
-   uSOZdRIJUkzodAC2Ezcqt9twg1Wk63Zy0IRVOWxa892rRi6beYh+p3u4i
-   zFYpTzhJgMl9eBzzZzuc4eg9nsf5t7dkwTE6g2hpf9jhgeNEomolpniip
-   quXHH/PlFiY4u6tZLM2TprIxymZxLaJogiS2FkOTl/J5kH3QHg2PNtVS9
-   Li5xAiJV7G0VS5gJIQJA8b7M5LZCbqe+FWAvmjGimrnS1YZoxiULTlX7p
-   g==;
-X-CSE-ConnectionGUID: 87oLkz+/Qy2juagB+ZP4yQ==
-X-CSE-MsgGUID: gCrQrSrTSlyTaZvLL3d9RQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="16285626"
-X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
-   d="scan'208";a="16285626"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 13:34:28 -0700
-X-CSE-ConnectionGUID: vjURhEvVTDqAJ4kaNuOtEg==
-X-CSE-MsgGUID: LfHac5txTsiEbj3rI22Gnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
-   d="scan'208";a="73910113"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 21 Jun 2024 13:34:22 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKkxf-0008za-1z;
-	Fri, 21 Jun 2024 20:34:19 +0000
-Date: Sat, 22 Jun 2024 04:33:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 17/23] mfd: add s2dos series core driver
-Message-ID: <202406220455.UpxNyPhg-lkp@intel.com>
-References: <20240618-starqltechn_integration_upstream-v3-17-e3f6662017ac@gmail.com>
+	s=arc-20240116; t=1719002089; c=relaxed/simple;
+	bh=RT/+yhfG1qX8sq8+FisAQwWHObfiENnmk06EzW4HVak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tLcxkTzy0iBnLofC4ApkpLXLxMZ+t3KB8EQ67/wTOvJ55wOg9ROq+KQZOEFeaOpDJhyQQYlHo+VJem1S6fQKy5XJiUPxQIRgmYRuCqNGLo+Muf8IIaUZtcIv0VE/Zdv5zvEMoGuYtxchs48EdEm/MEb/J1ZmIFOROTaHd17Sc7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4W5TCn12j8z9v7Hk;
+	Sat, 22 Jun 2024 04:16:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 439F31407FA;
+	Sat, 22 Jun 2024 04:34:32 +0800 (CST)
+Received: from [10.45.150.173] (unknown [10.45.150.173])
+	by APP2 (Coremail) with SMTP id GxC2BwCXHzrM43VmwarhAA--.16019S2;
+	Fri, 21 Jun 2024 21:34:31 +0100 (CET)
+Message-ID: <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com>
+Date: Fri, 21 Jun 2024 22:34:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618-starqltechn_integration_upstream-v3-17-e3f6662017ac@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from
+ security_audit_rule
+To: Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
+ serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
+ penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+ linux-kernel@vger.kernel.org, mic@digikod.net,
+ linux-integrity@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+ <20231215221636.105680-2-casey@schaufler-ca.com>
+ <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
+ <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
+ <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
+Content-Language: en-US
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+In-Reply-To: <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwCXHzrM43VmwarhAA--.16019S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XryDCF48CrWkAF17Kry5twb_yoW7ZFW8pF
+	WUKF4UCF48XFy7G3sa9wnrW3ZaqrWrGr1DZrsxG34DtFn0yrnrGr13Ar4rur9Ygr48Cr1I
+	vF17WrW3uw4Dt3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBF1jj5+PkAAAs1
 
-Hi Dzmitry,
+On 6/21/2024 10:23 PM, Mimi Zohar wrote:
+> On Fri, 2024-06-21 at 15:07 -0400, Paul Moore wrote:
+>> On Fri, Jun 21, 2024 at 12:50 PM Paul Moore <paul@paul-moore.com> wrote:
+>>> On Fri, Dec 15, 2023 at 5:16 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> Create real functions for the ima_filter_rule interfaces.
+>>>> These replace #defines that obscure the reuse of audit
+>>>> interfaces. The new functions are put in security.c because
+>>>> they use security module registered hooks that we don't
+>>>> want exported.
+>>>>
+>>>> Acked-by: Paul Moore <paul@paul-moore.com>
+>>>> Reviewed-by: John Johansen <john.johansen@canonical.com>
+>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>> To: Mimi Zohar <zohar@linux.ibm.com>
+>>>> Cc: linux-integrity@vger.kernel.org
+>>>> ---
+>>>>   include/linux/security.h     | 24 ++++++++++++++++++++++++
+>>>>   security/integrity/ima/ima.h | 26 --------------------------
+>>>>   security/security.c          | 21 +++++++++++++++++++++
+>>>>   3 files changed, 45 insertions(+), 26 deletions(-)
+>>>
+>>> Mimi, Roberto, are you both okay if I merge this into the lsm/dev
+>>> branch?  The #define approach taken with the ima_filter_rule_XXX
+>>> macros likely contributed to the recent problem where the build
+>>> problem caused by the new gfp_t parameter was missed during review;
+>>> I'd like to get this into an upstream tree independent of the larger
+>>> stacking effort as I believe it has standalone value.
+>>
+>> ... and I just realized neither Mimi or Roberto were directly CC'd on
+>> that last email, oops.  Fixed.
+> 
+> Paul, I do see things posted on the linux-integrity mailing list pretty quickly.
+> Unfortunately, something came up midday and I'm just seeing this now.  As for
+> Roberto, it's probably a time zone issue.
 
-kernel test robot noticed the following build warnings:
+Will review/check it first thing Monday morning.
 
-[auto build test WARNING on 6906a84c482f098d31486df8dc98cead21cce2d0]
+Roberto
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20240618-222456
-base:   6906a84c482f098d31486df8dc98cead21cce2d0
-patch link:    https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-17-e3f6662017ac%40gmail.com
-patch subject: [PATCH v3 17/23] mfd: add s2dos series core driver
-config: mips-allyesconfig (https://download.01.org/0day-ci/archive/20240622/202406220455.UpxNyPhg-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240622/202406220455.UpxNyPhg-lkp@intel.com/reproduce)
+> The patch looks ok, but I haven't had a chance to apply or test it.  I'll look
+> at it over the weekend and get back to you.
+> 
+> Mimi
+> 
+>>
+>>>> diff --git a/include/linux/security.h b/include/linux/security.h
+>>>> index 750130a7b9dd..4790508818ee 100644
+>>>> --- a/include/linux/security.h
+>>>> +++ b/include/linux/security.h
+>>>> @@ -2009,6 +2009,30 @@ static inline void security_audit_rule_free(void *lsmrule)
+>>>>   #endif /* CONFIG_SECURITY */
+>>>>   #endif /* CONFIG_AUDIT */
+>>>>
+>>>> +#if defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY)
+>>>> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
+>>>> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
+>>>> +void ima_filter_rule_free(void *lsmrule);
+>>>> +
+>>>> +#else
+>>>> +
+>>>> +static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
+>>>> +                                          void **lsmrule)
+>>>> +{
+>>>> +       return 0;
+>>>> +}
+>>>> +
+>>>> +static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+>>>> +                                           void *lsmrule)
+>>>> +{
+>>>> +       return 0;
+>>>> +}
+>>>> +
+>>>> +static inline void ima_filter_rule_free(void *lsmrule)
+>>>> +{ }
+>>>> +
+>>>> +#endif /* defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY) */
+>>>> +
+>>>>   #ifdef CONFIG_SECURITYFS
+>>>>
+>>>>   extern struct dentry *securityfs_create_file(const char *name, umode_t mode,
+>>>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>>>> index c29db699c996..560d6104de72 100644
+>>>> --- a/security/integrity/ima/ima.h
+>>>> +++ b/security/integrity/ima/ima.h
+>>>> @@ -420,32 +420,6 @@ static inline void ima_free_modsig(struct modsig *modsig)
+>>>>   }
+>>>>   #endif /* CONFIG_IMA_APPRAISE_MODSIG */
+>>>>
+>>>> -/* LSM based policy rules require audit */
+>>>> -#ifdef CONFIG_IMA_LSM_RULES
+>>>> -
+>>>> -#define ima_filter_rule_init security_audit_rule_init
+>>>> -#define ima_filter_rule_free security_audit_rule_free
+>>>> -#define ima_filter_rule_match security_audit_rule_match
+>>>> -
+>>>> -#else
+>>>> -
+>>>> -static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
+>>>> -                                      void **lsmrule)
+>>>> -{
+>>>> -       return -EINVAL;
+>>>> -}
+>>>> -
+>>>> -static inline void ima_filter_rule_free(void *lsmrule)
+>>>> -{
+>>>> -}
+>>>> -
+>>>> -static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+>>>> -                                       void *lsmrule)
+>>>> -{
+>>>> -       return -EINVAL;
+>>>> -}
+>>>> -#endif /* CONFIG_IMA_LSM_RULES */
+>>>> -
+>>>>   #ifdef CONFIG_IMA_READ_POLICY
+>>>>   #define        POLICY_FILE_FLAGS       (S_IWUSR | S_IRUSR)
+>>>>   #else
+>>>> diff --git a/security/security.c b/security/security.c
+>>>> index d7b15ea67c3f..8e5379a76369 100644
+>>>> --- a/security/security.c
+>>>> +++ b/security/security.c
+>>>> @@ -5350,6 +5350,27 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+>>>>   }
+>>>>   #endif /* CONFIG_AUDIT */
+>>>>
+>>>> +#ifdef CONFIG_IMA_LSM_RULES
+>>>> +/*
+>>>> + * The integrity subsystem uses the same hooks as
+>>>> + * the audit subsystem.
+>>>> + */
+>>>> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
+>>>> +{
+>>>> +       return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
+>>>> +}
+>>>> +
+>>>> +void ima_filter_rule_free(void *lsmrule)
+>>>> +{
+>>>> +       call_void_hook(audit_rule_free, lsmrule);
+>>>> +}
+>>>> +
+>>>> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+>>>> +{
+>>>> +       return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
+>>>> +}
+>>>> +#endif /* CONFIG_IMA_LSM_RULES */
+>>>> +
+>>>>   #ifdef CONFIG_BPF_SYSCALL
+>>>>   /**
+>>>>    * security_bpf() - Check if the bpf syscall operation is allowed
+>>>> --
+>>>> 2.41.0
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406220455.UpxNyPhg-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/mfd/s2dos-core.c: In function 's2dos05_i2c_probe':
->> drivers/mfd/s2dos-core.c:88:13: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
-      88 |         int ret = 0;
-         |             ^~~
-
-
-vim +/ret +88 drivers/mfd/s2dos-core.c
-
-    79	
-    80	
-    81	static int s2dos05_i2c_probe(struct i2c_client *i2c)
-    82	{
-    83		struct s2dos_core *s2dos05;
-    84		struct regmap *regmap;
-    85		struct device *dev = &i2c->dev;
-    86	
-    87		unsigned int reg_data;
-  > 88		int ret = 0;
-    89	
-    90		s2dos05 = kzalloc(sizeof(struct s2dos_core), GFP_KERNEL);
-    91		if (!s2dos05)
-    92			return -ENOMEM;
-    93	
-    94		regmap = devm_regmap_init_i2c(i2c, &s2dos05_regmap_config);
-    95		if (IS_ERR(regmap)) {
-    96			dev_err(dev, "Unable to initialise I2C Regmap\n");
-    97			return PTR_ERR(regmap);
-    98		}
-    99		s2dos05->regmap = regmap;
-   100	
-   101		if (regmap_read(regmap, S2DOS05_REG_DEV_ID, &reg_data) < 0) {
-   102			dev_err(dev,
-   103				"device not found on this channel (this is not an error)\n");
-   104			ret = -ENODEV;
-   105		} else {
-   106			dev_info(dev, "%s device found with id: .0x%x\n",
-   107					__func__, reg_data);
-   108		}
-   109	
-   110		i2c_set_clientdata(i2c, s2dos05);
-   111	
-   112		debugfs_file = debugfs_create_file("s2dos05-regs",
-   113					0664, NULL, (void *)s2dos05,
-   114					  &s2dos05_debugfs_fops);
-   115		if (!debugfs_file)
-   116			dev_err(dev, "Failed to create debugfs file\n");
-   117	
-   118		return mfd_add_devices(dev, -1, s2dos05_devs,
-   119				ARRAY_SIZE(s2dos05_devs), NULL, 0, NULL);
-   120	}
-   121	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
