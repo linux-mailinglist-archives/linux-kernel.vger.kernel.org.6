@@ -1,228 +1,199 @@
-Return-Path: <linux-kernel+bounces-224226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA23911F1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:44:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3B8911F25
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B25D1F26070
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F63E1F266DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF0616E876;
-	Fri, 21 Jun 2024 08:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D3116D9DB;
+	Fri, 21 Jun 2024 08:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ACUln0wN"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="nYaDaquc"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C4F16D9BC
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B4616B3B9;
+	Fri, 21 Jun 2024 08:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718959445; cv=none; b=mJRw50ngk0c4uEb9IYOHr/BrjisDPS6dUEv7WcEFPtvG01JQfIFI+Vzx4lAODRp8ob6G/iN8MGNnGyZd02So82f6dj17ypHh1nulx11w2XEuGZ4DhZeLGD9hPfiunmRKSrMBYiKlopI/BlUhWjwy5E8gp4YvPo+QeT0iyvufUFA=
+	t=1718959497; cv=none; b=AqPgWN8KafgjtFv3wU3+JZzjpFfnG8Q1dhGyAhsM1vq6p6+dgzcIYX40slwBouBAnFn3DxlX9kFuU3LxgwUbPS3ptwncfVhPn+xe/0PyszANCwqYY7FMzmmwrhyvX3t9Uf015bs2z63jhBpEmk5HK77o5ucoLtP7fYn7PzPE/oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718959445; c=relaxed/simple;
-	bh=Jbwg4HBbsos0LMHx3qJn3rslKNY3axIyHOu21SZsnAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMXrnaS/8KtNZE+s9tjSjr7yTECVauwCGS6Etc2Anw8nq+4UBi+2hU44MaAmZAaqIY+QHlXqEqXixnddJu7aWuIax6fJHG7NTMP3+vqoMe/EDbBWNJCusZlOoPeNi7a6BuwgSD36yKkpXRbU0149Q1Opflaz2qfEr7ff0GWak5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ACUln0wN; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a62ef52e837so199026766b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1718959440; x=1719564240; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y0W/yXjQFyqiu4YF3eksrFfEO800rJtGZTMEqwAB9lw=;
-        b=ACUln0wN5MBr2W0zWjXeykApLeYWCRLxefBYwuoLqahTF1ci18I+QPwmvZ0wkHn4AV
-         VNwkHNDBLpfaWca8On9V7L1Vn1Pg8fq4i7qjubIIPnp0pFbsO37LaNA4TQNiPHE9dOfl
-         W2FH+qwewdL/y1nRv5uzISbbqo8ekF7TlB4MpABRjSCnHIlhMDL9oGW4TCENB3UzmJa7
-         AbF8askcY530QM6oIkYRMex5NSOYc0Oji/coxVt76xAsbs2NK+Zg9LRkx4j8wphRDHDi
-         Ew1TlqxuHrEDpXpuUKQ08ZjZLnSfN8C+xBmgeCZzY7GvljC5Ud9tfGlrN2e9X2cmG2z4
-         r9Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718959440; x=1719564240;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y0W/yXjQFyqiu4YF3eksrFfEO800rJtGZTMEqwAB9lw=;
-        b=TlTUd9kg6nYgB5WNadDECAgCrAk4jgILTIBJY/2jGFwYA+0OvXLK+mQntUUuBGh4KO
-         n7SBOuIZZoHwXH7MUW/hl5DHydNfGCSmag/ny16cSqVbNSwoZ8PgAYTMtStxrdqiLZl7
-         5TsPAzb60dWypqnP2PNhsYwKqdevi01W581uKTxnopBJcEhDjjAG58SSAHcavmDMehyP
-         CU52TRE4b0bjyM4RSJuqNYSNypfADGWtclTfgiclyU7AwObncJ/eic3IcdXvV2m0SN6Y
-         ICM2TNcdjVT9d9GaeTIb9k95ETL8kpaZWJTRIrTcF7w+kSarsQmHmfW/S2/pXztSK3n8
-         MIgw==
-X-Gm-Message-State: AOJu0Yx4gwTcPgtEvMBTEWkA2LsuN8/wTstgcpxZHdFtJkUZ3MOpCqbH
-	DcmWW2lRTKUmg6U1zEtgYCT/LM47d2uV3gA9AjHDK6EDlO/LxDV5oF0/6jznhjY=
-X-Google-Smtp-Source: AGHT+IGCvv5/dIqWzwFU7HWVxrBDIamtXxsPzF9wPVhiKm9PMGOYERORN5v/XksMktGyjYh/7LB0lA==
-X-Received: by 2002:a17:907:b9d2:b0:a6f:50ae:e06 with SMTP id a640c23a62f3a-a6fab778851mr473339566b.53.1718959439838;
-        Fri, 21 Jun 2024 01:43:59 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf428bb5sm59484866b.13.2024.06.21.01.43.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 01:43:59 -0700 (PDT)
-Date: Fri, 21 Jun 2024 10:43:58 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, apatel@ventanamicro.com, alex@ghiti.fr, 
-	greentime.hu@sifive.com, vincent.chen@sifive.com, Jinyu Tang <tjytimi@163.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>, 
-	Conor Dooley <conor.dooley@microchip.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
-	Atish Patra <atishp@rivosinc.com>, wchen <waylingii@gmail.com>, Samuel Ortiz <sameo@rivosinc.com>, 
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, Evan Green <evan@rivosinc.com>, 
-	Xiao Wang <xiao.w.wang@intel.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Jisheng Zhang <jszhang@kernel.org>, Charlie Jenkins <charlie@rivosinc.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Leonardo Bras <leobras@redhat.com>
-Subject: Re: [PATCH v5 1/4] RISC-V: Add Svade and Svadu Extensions Support
-Message-ID: <20240621-d1b77d43adacaa34337238c2@orel>
-References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
- <20240605121512.32083-2-yongxuan.wang@sifive.com>
+	s=arc-20240116; t=1718959497; c=relaxed/simple;
+	bh=RpckdAUHxpE3PguMTPlZMv4GmZLmasBaPDXDoZBRkPE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=B1CA3F0EUmzrmjwx0mYeSNp8SThqYBKpd8gGnmqgacQInj3O1sksbnhDllZUiXysFcC+FfY5m7UjlfZYMs92o5oiZuyfIzarZeny55pch6+xHNKAx0gED8jzCl8uQmT7PvafQxl7Y+T7EggEubYlpDGZagSoqms3nZqTXF9UjQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=nYaDaquc; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=vnRm0j85otx50gSN5LqFcKunoR/H3ua98B1Wub0g2Lg=; t=1718959493; x=1719564293; 
+	b=nYaDaqucSyVb876NSrVRp8vKQ8Gio7rL52u3C9JteReAhHge663w9C8FI4MJy4UhSTZEgQoeOrC
+	/v3OwEkDDyvtTF3QzkgVojyEUsorci95sFQz63qlvqh7eAsB8RKpNLS28/BIgdkjCQi+HJkSriKyE
+	2AYMwbo5n+vOqE/hzI85JKoBbUu+W6Grt6xd1SQsLisACSVSJUIYIa9tk2OgTwnbI/wOy81FMKQum
+	0uo24gEar31ZBfMSX6ZvJhN6ddbfnzk2Cap/eOYzwJrPXmBFicXRoWiHvrXhRN/UlEHbPOKVbiZTq
+	ILs1NWlCWp/Gsu707DGha15ifXAoq9eXjdsQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sKZsu-00000001rSo-3cOK; Fri, 21 Jun 2024 10:44:41 +0200
+Received: from p5b13a475.dip0.t-ipconnect.de ([91.19.164.117] helo=suse-laptop-2.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sKZsv-00000001cr3-0HzV; Fri, 21 Jun 2024 10:44:41 +0200
+Message-ID: <366548c1a0d9749e42c0d0c993414a353c9b0b02.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 09/15] sh: rework sync_file_range ABI
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Arnd Bergmann <arnd@kernel.org>, linux-arch@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, Helge Deller
+ <deller@gmx.de>, linux-parisc@vger.kernel.org, "David S. Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+ sparclinux@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
+ Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+ linuxppc-dev@lists.ozlabs.org, Brian Cain <bcain@quicinc.com>,
+ linux-hexagon@vger.kernel.org, Guo Ren <guoren@kernel.org>, 
+ linux-csky@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
+ linux-s390@vger.kernel.org, Rich Felker <dalias@libc.org>, 
+ linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+ linux-fsdevel@vger.kernel.org, libc-alpha@sourceware.org, 
+ musl@lists.openwall.com, ltp@lists.linux.it, stable@vger.kernel.org
+Date: Fri, 21 Jun 2024 10:44:39 +0200
+In-Reply-To: <20240620162316.3674955-10-arnd@kernel.org>
+References: <20240620162316.3674955-1-arnd@kernel.org>
+	 <20240620162316.3674955-10-arnd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605121512.32083-2-yongxuan.wang@sifive.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Wed, Jun 05, 2024 at 08:15:07PM GMT, Yong-Xuan Wang wrote:
-> Svade and Svadu extensions represent two schemes for managing the PTE A/D
-> bits. When the PTE A/D bits need to be set, Svade extension intdicates
-> that a related page fault will be raised. In contrast, the Svadu extension
-> supports hardware updating of PTE A/D bits. Since the Svade extension is
-> mandatory and the Svadu extension is optional in RVA23 profile, by default
-> the M-mode firmware will enable the Svadu extension in the menvcfg CSR
-> when only Svadu is present in DT.
-> 
-> This patch detects Svade and Svadu extensions from DT and adds
-> arch_has_hw_pte_young() to enable optimization in MGLRU and
-> __wp_page_copy_user() when we have the PTE A/D bits hardware updating
-> support.
-> 
-> Co-developed-by: Jinyu Tang <tjytimi@163.com>
-> Signed-off-by: Jinyu Tang <tjytimi@163.com>
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Hi Arnd,
+
+thanks for your patch!
+
+On Thu, 2024-06-20 at 18:23 +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The unusual function calling conventions on superh ended up causing
+                                              ^^^^^^
+                                       It's spelled SuperH
+
+> sync_file_range to have the wrong argument order, with the 'flags'
+> argument getting sorted before 'nbytes' by the compiler.
+>=20
+> In userspace, I found that musl, glibc, uclibc and strace all expect the
+> normal calling conventions with 'nbytes' last, so changing the kernel
+> to match them should make all of those work.
+>=20
+> In order to be able to also fix libc implementations to work with existin=
+g
+> kernels, they need to be able to tell which ABI is used. An easy way
+> to do this is to add yet another system call using the sync_file_range2
+> ABI that works the same on all architectures.
+>=20
+> Old user binaries can now work on new kernels, and new binaries can
+> try the new sync_file_range2() to work with new kernels or fall back
+> to the old sync_file_range() version if that doesn't exist.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 75c92acdd5b1 ("sh: Wire up new syscalls.")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  arch/riscv/Kconfig               |  1 +
->  arch/riscv/include/asm/csr.h     |  1 +
->  arch/riscv/include/asm/hwcap.h   |  2 ++
->  arch/riscv/include/asm/pgtable.h | 14 +++++++++++++-
->  arch/riscv/kernel/cpufeature.c   |  2 ++
->  5 files changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index b94176e25be1..dbfe2be99bf9 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -36,6 +36,7 @@ config RISCV
->  	select ARCH_HAS_PMEM_API
->  	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
->  	select ARCH_HAS_PTE_SPECIAL
-> +	select ARCH_HAS_HW_PTE_YOUNG
->  	select ARCH_HAS_SET_DIRECT_MAP if MMU
->  	select ARCH_HAS_SET_MEMORY if MMU
->  	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index 25966995da04..524cd4131c71 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -195,6 +195,7 @@
->  /* xENVCFG flags */
->  #define ENVCFG_STCE			(_AC(1, ULL) << 63)
->  #define ENVCFG_PBMTE			(_AC(1, ULL) << 62)
-> +#define ENVCFG_ADUE			(_AC(1, ULL) << 61)
->  #define ENVCFG_CBZE			(_AC(1, UL) << 7)
->  #define ENVCFG_CBCFE			(_AC(1, UL) << 6)
->  #define ENVCFG_CBIE_SHIFT		4
-> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-> index e17d0078a651..35d7aa49785d 100644
-> --- a/arch/riscv/include/asm/hwcap.h
-> +++ b/arch/riscv/include/asm/hwcap.h
-> @@ -81,6 +81,8 @@
->  #define RISCV_ISA_EXT_ZTSO		72
->  #define RISCV_ISA_EXT_ZACAS		73
->  #define RISCV_ISA_EXT_XANDESPMU		74
-> +#define RISCV_ISA_EXT_SVADE             75
-> +#define RISCV_ISA_EXT_SVADU		76
->  
->  #define RISCV_ISA_EXT_XLINUXENVCFG	127
->  
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index aad8b8ca51f1..7287ea4a6160 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -120,6 +120,7 @@
->  #include <asm/tlbflush.h>
->  #include <linux/mm_types.h>
->  #include <asm/compat.h>
-> +#include <asm/cpufeature.h>
->  
->  #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _PAGE_PFN_SHIFT)
->  
-> @@ -288,7 +289,6 @@ static inline pte_t pud_pte(pud_t pud)
+>  arch/sh/kernel/sys_sh32.c           | 11 +++++++++++
+>  arch/sh/kernel/syscalls/syscall.tbl |  3 ++-
+>  2 files changed, 13 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/sh/kernel/sys_sh32.c b/arch/sh/kernel/sys_sh32.c
+> index 9dca568509a5..d5a4f7c697d8 100644
+> --- a/arch/sh/kernel/sys_sh32.c
+> +++ b/arch/sh/kernel/sys_sh32.c
+> @@ -59,3 +59,14 @@ asmlinkage int sys_fadvise64_64_wrapper(int fd, u32 of=
+fset0, u32 offset1,
+>  				 (u64)len0 << 32 | len1, advice);
+>  #endif
 >  }
->  
->  #ifdef CONFIG_RISCV_ISA_SVNAPOT
-> -#include <asm/cpufeature.h>
->  
->  static __always_inline bool has_svnapot(void)
->  {
-> @@ -624,6 +624,18 @@ static inline pgprot_t pgprot_writecombine(pgprot_t _prot)
->  	return __pgprot(prot);
->  }
->  
-> +/*
-> + * Both Svade and Svadu control the hardware behavior when the PTE A/D bits need to be set. By
-> + * default the M-mode firmware enables the hardware updating scheme when only Svadu is present in
-> + * DT.
-> + */
-> +#define arch_has_hw_pte_young arch_has_hw_pte_young
-> +static inline bool arch_has_hw_pte_young(void)
-> +{
-> +	return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU) &&
-> +	       !riscv_has_extension_likely(RISCV_ISA_EXT_SVADE);
-
-It's hard to guess what is, or will be, more likely to be the correct
-choice of call between the _unlikely and _likely variants. But, while we
-assume svade is most prevalent right now, it's actually quite unlikely
-that 'svade' will be in the DT, since DTs haven't been putting it there
-yet. Anyway, it doesn't really matter much and maybe the _unlikely vs.
-_likely variants are better for documenting expectations than for
-performance.
-
-> +}
 > +
->  /*
->   * THP functions
->   */
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-> index 5ef48cb20ee1..58565798cea0 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -301,6 +301,8 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
->  	__RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
->  	__RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
->  	__RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
-> +	__RISCV_ISA_EXT_DATA(svade, RISCV_ISA_EXT_SVADE),
-> +	__RISCV_ISA_EXT_DATA(svadu, RISCV_ISA_EXT_SVADU),
->  	__RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
->  	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
->  	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
-> -- 
-> 2.17.1
->
+> +/*
+> + * swap the arguments the way that libc wants it instead of
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+I think "swap the arguments to the order that libc wants them" would
+be easier to understand here.
+
+> + * moving flags ahead of the 64-bit nbytes argument
+> + */
+> +SYSCALL_DEFINE6(sh_sync_file_range6, int, fd, SC_ARG64(offset),
+> +                SC_ARG64(nbytes), unsigned int, flags)
+> +{
+> +        return ksys_sync_file_range(fd, SC_VAL64(loff_t, offset),
+> +                                    SC_VAL64(loff_t, nbytes), flags);
+> +}
+> diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscall=
+s/syscall.tbl
+> index bbf83a2db986..c55fd7696d40 100644
+> --- a/arch/sh/kernel/syscalls/syscall.tbl
+> +++ b/arch/sh/kernel/syscalls/syscall.tbl
+> @@ -321,7 +321,7 @@
+>  311	common	set_robust_list			sys_set_robust_list
+>  312	common	get_robust_list			sys_get_robust_list
+>  313	common	splice				sys_splice
+> -314	common	sync_file_range			sys_sync_file_range
+> +314	common	sync_file_range			sys_sh_sync_file_range6
+                                                                 ^^^^^^ Why=
+ the suffix 6 here?
+
+>  315	common	tee				sys_tee
+>  316	common	vmsplice			sys_vmsplice
+>  317	common	move_pages			sys_move_pages
+> @@ -395,6 +395,7 @@
+>  385	common	pkey_alloc			sys_pkey_alloc
+>  386	common	pkey_free			sys_pkey_free
+>  387	common	rseq				sys_rseq
+> +388	common	sync_file_range2		sys_sync_file_range2
+>  # room for arch specific syscalls
+>  393	common	semget				sys_semget
+>  394	common	semctl				sys_semctl
+
+I wonder how you discovered this bug. Did you look up the calling conventio=
+n on SuperH
+and compare the argument order for the sys_sync_file_range system call docu=
+mented there
+with the order in the kernel?
+
+Did you also check what order libc uses? I would expect libc on SuperH miso=
+rdering the
+arguments as well unless I am missing something. Or do we know that the cod=
+e is actually
+currently broken?
 
 Thanks,
-drew
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
