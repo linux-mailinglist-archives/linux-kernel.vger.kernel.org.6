@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-225472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB749130F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 01:56:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15A19130F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 01:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21DE1F22DCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD337286D49
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A9A16F8E4;
-	Fri, 21 Jun 2024 23:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9B016F8EB;
+	Fri, 21 Jun 2024 23:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z2ajfKhn"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hmf2cQr5"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDC316EB76
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 23:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499EC16E86A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 23:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719014179; cv=none; b=SdXCdMk2HXUhHpuuaPa6a773+xNzyOVNdksDngK6P8iW/Ofp2W80TEoZ+M6G0J7S1+76Qxxqg4zHpkNYkV7X4KkY6DbKsLvREIsD8eMeEcs2G4PjBBZuUToK4eWm7Zwwil32K1/JOiEaNrmkG5ukB9OLomXXmT+fm4iBdiN/zvM=
+	t=1719014241; cv=none; b=J+TveEHGP8BAGpPEwRJxTW8PAZ7nz7m6iCFJ/Yl8Z5oQOYvTvSStGOANrRVGwtltXoDI+jDgilx9SHIL/jf4/jGletCQ85sqGXeH3TIFcMwAnnOrqjLKVvmC9JC2n3lNNTat7FTKHpEP7DdTzhgZcmdEIQfo2/3dgQPwZowD3UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719014179; c=relaxed/simple;
-	bh=nWi4TkapE2Ezxu7e4csCWHYxNmjlAhbuDlvNb1n3IPQ=;
+	s=arc-20240116; t=1719014241; c=relaxed/simple;
+	bh=KX1PujVhCoV8MnBjdZUd+F+4LKQJW3MTNIjFLr0gXEU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dk7tmOIEmN8++wdv1IlN/TX/kAbsuRy9jPysmbfUVkBed64+Os1EtQgXhP60gSG0+ktLH2gzeO72OmQccsGxqH53epVhDbir3lT6snvqjm+6Kkj3Ja2dTaMnxfn9Fc2Le2A8p9u9jEm7g9+h3w86V7aSW3w/N8B0zih+gkKIblw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z2ajfKhn; arc=none smtp.client-ip=209.85.214.170
+	 Content-Type:Content-Disposition:In-Reply-To; b=bMrF34KsL2Og+GZ+LnrMgwS5iXqoci/x9PpmAgn2hlruW0tFxURXgSkK01Q3ypbQS01wxsaXjPtbPYjLNTV9kuByWLNtG19jBhHKbTYZUhAycu4gIawa7qodZpuQ8P5EKmPapP/QWnip++HePrxMvFiXiCklGSr6IR34qP4V9Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hmf2cQr5; arc=none smtp.client-ip=209.85.166.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f70ec6ff8bso230135ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:56:17 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-375fc24a746so150905ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:57:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719014177; x=1719618977; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719014239; x=1719619039; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dIy2CR/RFjZQaJDXPjHveFD5gn1nucaR+J0UOyxBY1U=;
-        b=Z2ajfKhnQ2h3ZfKHj+6jmtRIkRSYPFfeCvUhEaqP9GyS7gW+JD+3R+041XKloVqPpE
-         XDxHga8l9hglsKe0/enbZRyNIlIZl1Vkyrv77dUZAZmTCyRJBtnQMpZs6QjExpYahQyJ
-         4L3jMUfkFlYfSbljawAOHITnw/jQ2NAu4PVZHeh5fbVpvEDSkWdZNh2UHs0F4jHB6elQ
-         qIKVOuwAKHs/U4m0UgvcaG4DT8XJtWK0ODrmUkYcXzYeUeg++SoS4cxd0MbEEIhvT0fQ
-         BnxnX7tI5qLJdCY+GMS1TKwH3ZxZJCEYQHR1Rf2lFu2WQ1CfzVQjLDFttcLALLlV/n+D
-         YtBw==
+        bh=y7speCYjhq5KhdxCXThLCw9rUBn42IJVbtj/2ApzxBY=;
+        b=hmf2cQr5676UzMrKTZaZJX1EsAUMKfrhY9ecmGIqSrsaiYnkMUhbtJrhuHdxApczmk
+         dflt26/MXPrkeUH0BbkPS1fDillGv7FG8KOwV1LR0V0c4FMohxg/Cpsu8UdfxFDvpGUU
+         08W81yXpm8tl+RW+O1zCGz78AQGCxvHLmCPt9yir8qyQ+/I85gKgTPmEUphbdN49W/X7
+         V0I3GC7VWG3W2iQTZY6ZlLN1MybWfGYtIEg/vte2J2UOR6wCOHVRaBb6Hec/Y+xI60vh
+         A0hUturedOkDhcRGI1r+rLh4e3gqhMIRD9Pyr8mS3d1sFFUlR8rEdMCX420HIsXyM0p3
+         cQxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719014177; x=1719618977;
+        d=1e100.net; s=20230601; t=1719014239; x=1719619039;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dIy2CR/RFjZQaJDXPjHveFD5gn1nucaR+J0UOyxBY1U=;
-        b=pYIwgQhcNYqI2VzjbObNCDa/5OKuTKZwwtVzdCaTk8uB8qmyptE2kV30bzdduvM1Ti
-         2DuXER6UBvMIPA2c12w1SYVmsBQzc92yQDs+4tqN+KogqIX4HNd0vj8BnJ+6QvvTDXsw
-         XTGXQ4pOtAI9NT+11RkPy6yjDE+5GJGwapsClUJ8B4Q9EEmI582ZR0D2JFkSxST/GgYI
-         QYc0B0cCltkYoN7LWmmZWGiCcL4oUNwjdQppHVInIYbfa4wnTK5mhb3c1nwv2wanflrE
-         fR5EANiP/WDPV1JaYkBppI1ExtmySnx7X0MwPAfrZExHHZOqY30bUN3ifHd4ciZ9bz/s
-         vzgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9ksM7eCHOu4NIN6QXeisJfVpPjq7/Nk5yJsB0ijSE7Sl2a9Oh+iO25NmpItXmH0iiyJM9DgAOopEtLz0QeRywEgFnVUHOnZCiXckV
-X-Gm-Message-State: AOJu0YyJO8DuKOyTtke9Sbjyh1IrOJWwCi2l/2aUR1Ah+TFkIjESka9M
-	d0f02M5T1kgXI2cVcNl5Ifc5juof0di0FpuzG7+l3sgSuBav2aB2QG4Zf2vf9g==
-X-Google-Smtp-Source: AGHT+IHwKZFfTcf6qeuALbcdQ3AWCrAEIufgmLdwwP3qVJwrhBc2d0hTnJg9cYYAp8QYf/0EybR/ZA==
-X-Received: by 2002:a17:902:a58b:b0:1ea:963e:2e2d with SMTP id d9443c01a7336-1fa0a29ec8cmr788815ad.24.1719014177092;
-        Fri, 21 Jun 2024 16:56:17 -0700 (PDT)
+        bh=y7speCYjhq5KhdxCXThLCw9rUBn42IJVbtj/2ApzxBY=;
+        b=SDPOinnuK9MmIvuAWk5wMhCZVGnk76QKs2bfN1P8zgTB2ZeDub+v09/HL6nrbPAa3e
+         nc8a+UMqgJGXv/dZumgrkuyk0rd1ObF65Yp9H860IynZfUDsDkmO/R7DIZbMevrON0QF
+         MHMHT/Hg80YKQV6uKK8INmsDeLVoWFpWm1yOhwiq+Aomb5Szb2YsrCSE+BOe5CEYzD+o
+         4iZYiYM1WPMXnCVYdqpqFFSEmvUilk6HxkW6Khe2kZGC6FKiR3pruFWNInmPaCGUav+P
+         ZToDwHRohq1AHnGL+7IdCXObUS9XCX2GgPIc7041E9A9yJeaSP1AwHkpg2uju2FagL6e
+         +wuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXo6OSkF7MJsfcC/9CwmVxiv5etmDOGUw0r9CLBLut8mJvXPK7UcaiwVfe6lSQoTF6V4l7xDQBqBVD9BdZ2JJAY+2QkkbcDcCM0DD31
+X-Gm-Message-State: AOJu0YzkWRwmgtE/AQyoEsm6YNcp7Hl55gYlreltCdf+wgkYBwgR28KL
+	U+uVD2SQGwkWLouoPEPmUAcrWWNcSpUDKB6icXsG/13Vsj++2uSfhVDMHM+90A==
+X-Google-Smtp-Source: AGHT+IHOsaE9nO9D4eMKQ/XRoEQaprJMzTKXWCBqJFeFbpuDRNTK/tExVGVOs8dWcboI/E3+maIdtg==
+X-Received: by 2002:a05:6e02:de2:b0:376:30e6:5c07 with SMTP id e9e14a558f8ab-3763810585emr723025ab.12.1719014239219;
+        Fri, 21 Jun 2024 16:57:19 -0700 (PDT)
 Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819dbb963sm2168967a91.41.2024.06.21.16.56.16
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9f1e2fe37sm17364975ad.69.2024.06.21.16.57.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 16:56:16 -0700 (PDT)
-Date: Fri, 21 Jun 2024 16:56:13 -0700
+        Fri, 21 Jun 2024 16:57:18 -0700 (PDT)
+Date: Fri, 21 Jun 2024 16:57:15 -0700
 From: William McVicker <willmcvicker@google.com>
 To: Peter Griffin <peter.griffin@linaro.org>
 Cc: lee@kernel.org, arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com,
@@ -74,10 +74,11 @@ Cc: lee@kernel.org, arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com,
 	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
 	saravanak@google.com, semen.protsenko@linaro.org,
 	kernel-team@android.com
-Subject: Re: [PATCH v3 1/2] mfd: syscon: add of_syscon_register_regmap() API
-Message-ID: <ZnYTHcjBo5E8Lxi0@google.com>
+Subject: Re: [PATCH v3 2/2] soc: samsung: exynos-pmu: update to use
+ of_syscon_register_regmap()
+Message-ID: <ZnYTW_XnlcWAwx-h@google.com>
 References: <20240621115544.1655458-1-peter.griffin@linaro.org>
- <20240621115544.1655458-2-peter.griffin@linaro.org>
+ <20240621115544.1655458-3-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,21 +87,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621115544.1655458-2-peter.griffin@linaro.org>
+In-Reply-To: <20240621115544.1655458-3-peter.griffin@linaro.org>
 
 On 06/21/2024, Peter Griffin wrote:
-> The of_syscon_register_regmap() API allows an externally created regmap
-> to be registered with syscon. This regmap can then be returned to client
-> drivers using the syscon_regmap_lookup_by_phandle() APIs.
+> For SoCs like gs101 that need a special regmap, register this with
+> of_syscon_register_regmap api, so it can be returned by
+> syscon_regmap_lookup_by_phandle() and friends.
 > 
-> The API is used by platforms where mmio access to the syscon registers is
-> not possible, and a underlying soc driver like exynos-pmu provides a SoC
-> specific regmap that can issue a SMC or hypervisor call to write the
-> register.
+> For SoCs that don't require a custom regmap, revert back to syscon
+> creating the mmio regmap rather than duplicating the logic here.
 > 
-> This approach keeps the SoC complexities out of syscon, but allows common
-> drivers such as  syscon-poweroff, syscon-reboot and friends that are used
-> by many SoCs already to be re-used.
+> exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
+> the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
+> is kept around until fw_devlink support for syscon property is added
+> for the pinctrl-samsung driver that also runs at postcore_initcall
+> level.
+> 
+> All other exynos client drivers can revert back to
+> syscon_regmap_lookup_by_phandle().
 > 
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
@@ -110,19 +114,7 @@ Tested-by: Will McVicker <willmcvicker@google.com>
 
 [...]
 
-Thanks Peter! I've tested the patch series on my Pixel 6 Pro and all is working
-well. I verified all the modularized drivers load and probe successfully:
-
-root@google-gs:~# lsmod
-Module                  Size  Used by
-at24                   24576  0
-dwc3_exynos            12288  0
-i2c_exynos5            28672  0
-phy_exynos_ufs         20480  1
-ufs_exynos             32768  0
-phy_exynos5_usbdrd     36864  2
-s3c2410_wdt            24576  0
-arm_dsu_pmu            24576  0
+(Testing details in patch 1)
 
 Thanks,
 Will
