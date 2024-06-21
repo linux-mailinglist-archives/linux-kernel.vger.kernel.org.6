@@ -1,194 +1,187 @@
-Return-Path: <linux-kernel+bounces-225060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7616912B52
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97085912B60
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61FA32885FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:26:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C12289397
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5755716079D;
-	Fri, 21 Jun 2024 16:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092BA1607A7;
+	Fri, 21 Jun 2024 16:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aid5b4T7"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="dGyJ89S3"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C5410A39;
-	Fri, 21 Jun 2024 16:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A07208C4;
+	Fri, 21 Jun 2024 16:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718987175; cv=none; b=TlWBFeEbw/Lyj1Rd7n9GniNrefJ9OQdYxS1/CoCj0eVMCcX22u3WWi+s5qTYcSzbl28tJnFEQof0GEmq0Z/5pQtpR3G3itStU7RhK9y52DlW8HGSp0S+G253hY0erjuAkWRmWAvufy7y0++SbMHu69ZfA1v8WpiC8BbmWP5t/TY=
+	t=1718987433; cv=none; b=fFaD7wztPvbJWv9Bc3QWSkJl0NZSZ1Ex2/6kK5m5H/HXJcFv7qQ6Hkb2cr7Rgp8XXJCKRkXyppmbqmKNwJGFlrwHZHqLlKfR0rDJHOliuiuXnmRB0Ydyi7Df55+cmlht2+KxawOguZ6TVx4Tod5CNnatjJdituHvLOUG8zFnsyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718987175; c=relaxed/simple;
-	bh=syaw2j1CKNhKileFRhZaU0gaJjIh+YpnaVjx+YB5jbA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JIRWPwqAfi6HQMumrgbeciWomlY3V8l+7gDOV2/56lm36B2XZFwe/efsdRiTb472cZxfd1eGJw9jqtclKgX0DlPOnaH+LRkGJxzLIoRQx0+sxVWufhDAqRa2fAiIneM8jZG/1HMrv6RkSLYVVR/cgfK0DLtmEtRrMjQ7aFeqqbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aid5b4T7; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42189d3c7efso24593105e9.2;
-        Fri, 21 Jun 2024 09:26:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718987172; x=1719591972; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2G5sctyY5+akJotF0NYZBVeqJ4gLFW6IE6iMuGoc2hc=;
-        b=Aid5b4T7HqsUpD2CeIijka/5BYSfZX2u67OiQNvQEMNtbd3mUYD+8ti1CwIMJONcnY
-         kby1LW1FC2CG1t9dsLKOgNjCDbGS344LPkYTwHQSBgr9BjMLx84I4G3dxOfJVP1P/1aF
-         Iyh0/C4VzxTLyRgC3k5GHbNphkCAiGrh1J4TKQSGJWbYDNt9KuinjiVWiDD42srsdwvp
-         qSyBrPpkQP3JxMoJ8KkPA3pCULL8lHXERqAB2UlXBlo+eL0C0VJj3sM0HxptRnnMLpa5
-         Am+4r6hWt1ZOx2yX2KVxktSdu4YVcwqKAFkfsMoArHdRzH/E8zbKt4TcQ5+GP8xTzrJ0
-         IwSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718987172; x=1719591972;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2G5sctyY5+akJotF0NYZBVeqJ4gLFW6IE6iMuGoc2hc=;
-        b=sX4PTazIsenMU6EtxHDYvpP8qEtn+JhnPP7NKXk5Zq3fiOE+JEqabVvVsjeERmLYew
-         twiqpVI5G6qtLJyhA45oF8EFomevQ92LqxuOyc1y7UhoDS6AchgBQzaD00iUr9+kM2hc
-         zCbq/ZjGXRBgsj5c5Or54gE/TdbujMDinQl6hqau/v4WrJbo59hu+MQoz7r8WmXHcIIK
-         aQNcL5JTldUX7xPivhwrpFNPis0ZH34uGYJuz6VWVqGFcD7aGuxKVso2pO6KO1ZRz1T8
-         41cwyB9hri7EzGzzG7BYaZGq8dFvS3aPuw04vCYYnLri+X+NB4nW+f/zn2jDzypLdC/b
-         lrbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVomdJeHiYxc9eDA+NiLSOP3uIFuMTvj7uALfkYWYHqXi6R61CCwaKLhPcy7Hmk//fOHlbWy+eoI0F5qux9buWopOO+oH9iS0NWYfT60W6bxOtfCR9BGATglA1gnTPfUAw1cDAIO+yIm8GkJBEpsDn4s9On/cpyBV7vrsrBilYrWI+UjJOJhA1LiWNWFYzBaRCJqs/t/LG4q7kYc1C1PVWUglfj78wMxldx64fepnmqkMx6z/qwJJGGDLY=
-X-Gm-Message-State: AOJu0Yz/2Tmu4PXP2rmdEKkd4ZX+fA8KUvrykZvw2vhQaseKUsjxv62q
-	mem9RbbprAiso/vH1xsISFq+ktm0Te5Wxz1howDd6Ct0mJt51E1tfieHHx6Hx4ZsCSh1PZqBp1s
-	2p3SGlRq2MhLTNrPjCyH0zo35rbc=
-X-Google-Smtp-Source: AGHT+IFSihQV0lS2A8sdrIWW8qjAtXJa85Cfo+eO9dbfvheawX77yi34eO4/SQ3D/TDwMdwQ6G6tYXsv4r3cj5RyB98=
-X-Received: by 2002:a05:600c:181c:b0:422:1a82:3ed2 with SMTP id
- 5b1f17b1804b1-424752969b0mr86309965e9.27.1718987172113; Fri, 21 Jun 2024
- 09:26:12 -0700 (PDT)
+	s=arc-20240116; t=1718987433; c=relaxed/simple;
+	bh=TaVSF8Wo6axT8++84WQ+MyVXhldB4MqulOKt1aiG610=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mVEQZhqgc6AweIvkCDJCFyarbcmms7jWLTsNESDuPc5qlU4BjCNRBcM7gZxnXAy2lXugJE7Xyq4jv9seU1rmqLi+FhSFod+JWyIzK29hnhosaniGNUeOc6DrCeIzgfxTqn9jpHTLuxbRBmdAnFbxCXuMWIRM5YojOxvNbr2Dd7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=dGyJ89S3; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1718987346; x=1719592146; i=deller@gmx.de;
+	bh=TaVSF8Wo6axT8++84WQ+MyVXhldB4MqulOKt1aiG610=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=dGyJ89S3Mtnb3qCeqKQ7dNrV2AX+MBvXvpFOS5qdU5StBNeSfBhj3npOOzwCrL2I
+	 OWu4Iw7nLS7C7FqGCqb9jP0mHnSAWNDp/B7oOpqNyH+7RhIwXCY7R/TwxqQG61hYm
+	 /IvwIpeBjt0GepWOMNkDAIUg6eRs65R2+nmi0nxpCsYyDq2gK2tPySnYyWpVG8S43
+	 ZvQEf501RrASQFyXuehQg5sXe2oBtvJ5uLn25WBdeSp2PKuSAq3KMcugDsB48Eqww
+	 CywDG9/PCKvur0T1ok3M2r3j5b7JRp7HrudYWXhNrBq8o2LuvA8pkp74qNhDfJjtS
+	 rCoZwjkgBr8NtnIQgA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.133]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MfHEJ-1srq1Z2d4N-00ddIK; Fri, 21
+ Jun 2024 18:29:06 +0200
+Message-ID: <cd7fdd76-8da0-4d43-9d1c-c93aed4c0f5d@gmx.de>
+Date: Fri, 21 Jun 2024 18:28:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621-hid_hw_req_bpf-v1-0-d7ab8b885a0b@kernel.org>
- <20240621-hid_hw_req_bpf-v1-6-d7ab8b885a0b@kernel.org> <CAADnVQ+us6cQepSGWbOB4K1bb_0Wh43Cpo4zXJxB2d+SVpYinQ@mail.gmail.com>
- <dcbgoe7gija3fn5zsooulnq3jey4twwqvsxjv4yjijacnrlt2h@q6obu65ifctt>
-In-Reply-To: <dcbgoe7gija3fn5zsooulnq3jey4twwqvsxjv4yjijacnrlt2h@q6obu65ifctt>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 21 Jun 2024 09:26:00 -0700
-Message-ID: <CAADnVQKE6RyGUhQbTiOfa15=D9B_vtAg=VMDv8cfYrUKOv5UFQ@mail.gmail.com>
-Subject: Re: [PATCH HID 06/12] HID: bpf: add HID-BPF hooks for hid_hw_output_report
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/15] parisc: use generic sys_fanotify_mark
+ implementation
+To: Arnd Bergmann <arnd@arndb.de>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Arnd Bergmann <arnd@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ "David S . Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ Brian Cain <bcain@quicinc.com>, linux-hexagon@vger.kernel.org,
+ guoren <guoren@kernel.org>,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
+ Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Xi Ruoyao <libc-alpha@sourceware.org>,
+ "musl@lists.openwall.com" <musl@lists.openwall.com>,
+ LTP List <ltp@lists.linux.it>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
+References: <20240620162316.3674955-1-arnd@kernel.org>
+ <20240620162316.3674955-8-arnd@kernel.org>
+ <e80809ba-ee81-47a5-9b08-54b11f118a78@gmx.de>
+ <1537113c4396cd043a08a72bdca80cccfa2d54d9.camel@physik.fu-berlin.de>
+ <ba14c4fb-e6a7-46b3-a030-081482264a99@app.fastmail.com>
+ <a623c1979ac494d01977abe6dfc22e8381dc6e4f.camel@physik.fu-berlin.de>
+ <83613d85-53f9-4644-be68-4f438abe2e52@app.fastmail.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <83613d85-53f9-4644-be68-4f438abe2e52@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qzcGugqMcbMY+YWYJmVsNMJLSzXL1IFC+qPqRPEqwIjeHu1j8dW
+ eKrd9zTKO8WqTBd1atZ9gk73fhgOsLFzmyt55jQz2EE0lv7OLTEi8eH1tERMhO+XealwSx1
+ UGgBBAPSpMfKRXJChZsTA9t/N/bEd9WMNnHEwTU1TsTs3cyh1vRWNfUsERYHddYMxe16B2C
+ 4cE95QxNZt3dO/ZdT1fcQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:qkvA0SU8VBk=;7/QatZvg+BRxv1QkYdIagec8md0
+ /gpUIUeNoh2h5Zc2DzrKSZAqUU/Uw+GnsiaAaeHEHI+myLKBBKPB0CZ4PI9GoNYcjlvRwC+Dt
+ cj4SKrgECYJdrasgoF20T9r9P8F4BOUJuHY7LfSfBt6aBQXc93SxHPI1b2yssJl0RJaoaYxmY
+ oLb2/KG/hDplIAs8CJ6xU8ciG5YfyKU1j1+jkWw1MQPFc3+e4aIxLiTSvFRncW/p38cwcMayq
+ jza45P6I18yIb0lDFwYxfYx7JtvcYmz49tEM+mRNWRo0sqZOKrDutFk2bIfcxantsC9mqHxQs
+ 5a3j94hFYF0GycjrDV+oesj7qYVBuU6oYunEsd60beMeznHHR3ImzBXx0U+lZ1yg5DwK5B7CI
+ QesCueVCEB/qYbWnjOn2wcuR9pB1PIHB4z/V43nmRFpwUH1vi3CFARq2AflaUsICu5nwLy9Xf
+ Qkf/FIQ2HAWc3Nz8D7NpxmuEdmmXn1uUlfNkFMEIMvZS08xsLcvFw7HawfxyG3k0NSKzQBLpm
+ ja62fYS6SAKuF+UBiwKzX5eFg26Sbjq3sh26tyiYHSDDdClW4X5tok+KvIYORgrjWs4GT9uCM
+ 6aaMHjRJ+tik9fPg2gVvQPbCJ7BZasXiujTtGovW47pMTNieoSrWh7Q3faXOlVgg6VgWPvFQn
+ dRdHVRBA7/oVEYpoz4lYuxsnHQfksXpjaFITA0DK0Gs+syZDYB8Aqpcri4MPk01+eWrlM5X8c
+ 1YVFCGgstmmLXXu2b3Sj6ehNnDt85oZyT/Iy1bR4HWd48jJY/zu80u6vzoZmdVbwkKjEt+2ip
+ ExQiXgsj0tPfrUnUe2j3FBUQbV3FxfoNfx2osTCe+13E8=
 
-On Fri, Jun 21, 2024 at 9:08=E2=80=AFAM Benjamin Tissoires <bentiss@kernel.=
-org> wrote:
+On 6/21/24 11:52, Arnd Bergmann wrote:
+> On Fri, Jun 21, 2024, at 11:03, John Paul Adrian Glaubitz wrote:
+>> On Fri, 2024-06-21 at 10:56 +0200, Arnd Bergmann wrote:
+>>> Feel free to pick up the sh patch directly, I'll just merge whatever
+>>> is left in the end. I mainly want to ensure we can get all the bugfixe=
+s
+>>> done for v6.10 so I can build my longer cleanup series on top of it
+>>> for 6.11.
+>>
+>> This series is still for 6.10?
 >
-> On Jun 21 2024, Alexei Starovoitov wrote:
-> > On Fri, Jun 21, 2024 at 1:56=E2=80=AFAM Benjamin Tissoires <bentiss@ker=
-nel.org> wrote:
-> > >
-> > > Same story than hid_hw_raw_requests:
-> > >
-> > > This allows to intercept and prevent or change the behavior of
-> > > hid_hw_output_report() from a bpf program.
-> > >
-> > > The intent is to solve a couple of use case:
-> > >   - firewalling a HID device: a firewall can monitor who opens the hi=
-draw
-> > >     nodes and then prevent or allow access to write operations on tha=
-t
-> > >     hidraw node.
-> > >   - change the behavior of a device and emulate a new HID feature req=
-uest
-> > >
-> > > The hook is allowed to be run as sleepable so it can itself call
-> > > hid_hw_output_report(), which allows to "convert" one feature request=
- into
-> > > another or even call the feature request on a different HID device on=
- the
-> > > same physical device.
-> > >
-> > > Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> > >
-> > > ---
-> > >
-> > > Here checkpatch complains about:
-> > > WARNING: use of RCU tasks trace is incorrect outside BPF or core RCU =
-code
-> > >
-> > > However, we are jumping in BPF code, so I think this is correct, but =
-I'd
-> > > like to have the opinion on the BPF folks.
-> > > ---
-> > >  drivers/hid/bpf/hid_bpf_dispatch.c   | 37 ++++++++++++++++++++++++++=
-++++++----
-> > >  drivers/hid/bpf/hid_bpf_struct_ops.c |  1 +
-> > >  drivers/hid/hid-core.c               | 10 ++++++++--
-> > >  drivers/hid/hidraw.c                 |  2 +-
-> > >  include/linux/hid.h                  |  3 ++-
-> > >  include/linux/hid_bpf.h              | 24 ++++++++++++++++++++++-
-> > >  6 files changed, 68 insertions(+), 9 deletions(-)
-> > >
-> > > diff --git a/drivers/hid/bpf/hid_bpf_dispatch.c b/drivers/hid/bpf/hid=
-_bpf_dispatch.c
-> > > index 8d6e08b7c42f..2a29a0625a3b 100644
-> > > --- a/drivers/hid/bpf/hid_bpf_dispatch.c
-> > > +++ b/drivers/hid/bpf/hid_bpf_dispatch.c
-> > > @@ -111,6 +111,38 @@ int dispatch_hid_bpf_raw_requests(struct hid_dev=
-ice *hdev,
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(dispatch_hid_bpf_raw_requests);
-> > >
-> > > +int dispatch_hid_bpf_output_report(struct hid_device *hdev,
-> > > +                                  __u8 *buf, u32 size, __u64 source,
-> > > +                                  bool from_bpf)
-> > > +{
-> > > +       struct hid_bpf_ctx_kern ctx_kern =3D {
-> > > +               .ctx =3D {
-> > > +                       .hid =3D hdev,
-> > > +                       .allocated_size =3D size,
-> > > +                       .size =3D size,
-> > > +               },
-> > > +               .data =3D buf,
-> > > +               .from_bpf =3D from_bpf,
-> > > +       };
-> > > +       struct hid_bpf_ops *e;
-> > > +       int ret;
-> > > +
-> > > +       rcu_read_lock_trace();
-> > > +       list_for_each_entry_rcu(e, &hdev->bpf.prog_list, list) {
-> > > +               if (e->hid_hw_output_report) {
-> > > +                       ret =3D e->hid_hw_output_report(&ctx_kern.ctx=
-, source);
-> > > +                       if (ret)
-> > > +                               goto out;
-> > > +               }
-> > > +       }
-> > > +       ret =3D 0;
-> > > +
-> > > +out:
-> > > +       rcu_read_unlock_trace();
-> >
-> > same question.
->
-> re What is this for?:
->
-> e->hid_hw_output_report might sleep, so using a plain rcu_read_lock()
-> introduces warnings.
+> Yes, these are all the bugfixes that I think we want to backport
+> to stable kernels, so it makes sense to merge them as quickly as
+> possible. The actual stuff I'm working on will come as soon as
+> I have it in a state for public review and won't need to be
+> backported.
 
-Ok, but just replacing rcu_read_lock() with rcu_read_lock_trace()
-doesn't fix it.
-rcu and rcu_tasks_trace are different.
-If you're using call_rcu to wait for GP to free an element in that
-list the thing will go wrong.
+Ah, OK.... in that case would you please keep the two parisc
+patches in your git tree? I didn't plan to send a new pull
+request during v6.10, so it's easier for me if you keep them
+and send them together with your other remaining patches.
+(I'll drop them now from the parisc tree)
 
-If you really need rcu life times here use srcu. It's a much better fit.
-There will be srcu_read_lock() here, paired with call_srcu().
+I tested both patches, so you may add:
+Tested-by: Helge Deller <deller@gmx.de>
+Acked-by: Helge Deller <deller@gmx.de>
+
+Thank you!
+Helge
 
