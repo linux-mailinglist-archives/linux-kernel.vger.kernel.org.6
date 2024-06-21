@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-224027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28737911C26
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:55:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CD2911C59
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59C2C1C21254
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91232288134
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DBF168C17;
-	Fri, 21 Jun 2024 06:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D36167DB1;
+	Fri, 21 Jun 2024 06:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bnI5rSav"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="V3vHQ2xL"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD01312BEBE;
-	Fri, 21 Jun 2024 06:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827081667F2
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718952895; cv=none; b=Irx3R6M4ekeCROSL+H9xPZDLJsgy31DTsQoXQt1WXZWIu2Ovj+iirQigMyHZaUf/ZauTZxfHsr3HdD5YiDc6snD/US50Ud2+XTwh5bdRVwMfuLnVSAQ5jCI7VFF+wV/irFntXZxf9qzgCAXdVI2ZDpOFubSIdMk67TMKTI0UNAw=
+	t=1718953133; cv=none; b=EjT8c+zKkn7+V0Edw+zE8yZsEDbwMA+Tkys3tUrZ84Xq+isABax62Na8nXKGsKevv6X6rW/lHvLPW9ZtEJF78VTkGIVkQL5ZbXSV8XxJu0XVO8Htqj75jhdEnJQ6x4niImjqXBeNOuUrIm3t6UUWIBWQU9QKfkJjspLzUN2eS8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718952895; c=relaxed/simple;
-	bh=maxy3h9/O6I3J6oAtvJphwdEDiKj1QlCCR8g1sEvtQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bjpSFy14T/JpFuweGSvx0h4LTGtfq29a8NSSshArOGDnbPCfufLR9IWktVLCjw4ZfYYqa4c24p8CyqTGIRxE+/6WwEnTyMNoevAufrFOaN7Jl/ZwM5LV8AnxA3rZxYqtPm/0uC1hDDU0S8S2q6X9xyr9fEu1u+PioSI5c35S/6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bnI5rSav; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L5S0v1030845;
-	Fri, 21 Jun 2024 06:54:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nVLAeFDiyBN2iBcoy6VpATm3Sgv68qgJCHi0riVRTxk=; b=bnI5rSavBITxZWEH
-	IcSVBF7gc+6L36OEIiRxAgfAvdwW8gjKonk4tb8lEsN3EUmAjxyBAEb8cfcMpCb7
-	YnF2X3k7+7N9TxoTqrIoF9mCy4YnVl09coHgbzSCowWYZFKQMkcVIMliIXBS6I+3
-	9ErD2IQgND8+cilEiWodZB/aGG8rAjN8h7msna1tTlQ7fxWnYX4Lw5h18wBQj9WG
-	buYvb57XYVx18PALlvPQTOsWKuOR0aBy2RjCRfKG/BSkMl1P3f5vcftUR/El2Cic
-	xpCtXdEzhO0NP5W5zUppoQ6S9NY9j1xYnA43uXWAsEWscvT4KE+z8eLu7kOC5ZVz
-	ooBvHA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yw3d48ap0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 06:54:44 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45L6shLF001456
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 06:54:43 GMT
-Received: from [10.253.9.185] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
- 2024 23:54:36 -0700
-Message-ID: <9c7522ae-a98e-4105-bc3b-76ca85f825f3@quicinc.com>
-Date: Fri, 21 Jun 2024 14:54:33 +0800
+	s=arc-20240116; t=1718953133; c=relaxed/simple;
+	bh=VB3sa7wRXdFENiXd89umSPAzZXPKf6iCSmNFgLdO8uA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PCfyf7+C4ZMmH6Qm+/1kBTk+DqwjKMlX7uWDlRT/nDXNpHeoca0l2J7dZO7/qNahhRyrqDTo1+3qeuL+GPRQmYwCyI+fYpVDE2sAUjsRhzPCjgJsAsgbkhWkjR2I9p2LKRLZWCaQR3NAiBcWBoLi2eswRX2bIOnxPC0D8XwyfmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=V3vHQ2xL; arc=none smtp.client-ip=167.172.40.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1718953097;
+ bh=wuLrixmm9mNItymNAgLNb/E3azKTDfSKGMXK8se96Fg=;
+ b=V3vHQ2xLsAUNGMEJ/8zM7IcXYgdef3aFCtQ2AagtODnSuifUZoscwpQKtqx2BuN6mPkZ2lKtD
+ vgpKQOxXJXEkgJQQT5Fjl1uNRpggp9dXSgBiT1YDzG5qHZnwdjPXtMfE22wGT/cxrqnsgTFhbk4
+ 2qcVdV0GWGLDVufllTNU8AUDi5U3HsPlLBAYIjIaYoeRmTst5QZ1QjNe0i8bfM0ma42uSz2DXna
+ fyi/JKyUuopqIfrUhbcv6b9Pq378AYY+JoSzPFPxIYd6iKdqjeS0bTWbAuKKNun0l005fjnKuJ4
+ 2SCnA/uYvQtmmU0p16EVTeaPiVgr+4FfUtqPhVUuxSYA==
+Message-ID: <dbf9d54e-1197-4731-80f2-91ff7c9954e4@kwiboo.se>
+Date: Fri, 21 Jun 2024 08:58:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,48 +49,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: phy: qcom,qmp-usb: fix spelling error
-To: Krzysztof Kozlowski <krzk@kernel.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tengfan@quicinc.com>,
-        <quic_aiquny@quicinc.com>, <quic_jiegan@quicinc.com>
-CC: <kernel@quicinc.com>
-References: <20240621061521.332567-1-quic_yijiyang@quicinc.com>
- <85bcaf30-3ffa-4bb4-bd38-0dd3c76b92f4@kernel.org>
+Subject: Re: [PATCH 3/5] arm64: dts: rockchip: Fix mic-in-differential usage
+ on rk3568-rock-3a
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko
+ Stuebner <heiko@sntech.de>, Chris Zhong <zyw@rock-chips.com>, Zhang Qing
+ <zhangqing@rock-chips.com>, Chris Morgan <macromorgan@hotmail.com>, Furkan
+ Kardame <f.kardame@manjaro.org>, Michael Riesch
+ <michael.riesch@wolfvision.net>, kernel@collabora.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240619-rk809-fixes-v1-0-fa93bc5313f4@collabora.com>
+ <20240619-rk809-fixes-v1-3-fa93bc5313f4@collabora.com>
+ <c35b3e80-7889-473d-8365-88436c3cb9a9@kwiboo.se>
+ <4015ded1-5ec4-4374-982e-9c7f23b43884@collabora.com>
+ <1fce65a2-b752-4bab-84e5-314b60d682f0@collabora.com>
 Content-Language: en-US
-From: Yijie Yang <quic_yijiyang@quicinc.com>
-In-Reply-To: <85bcaf30-3ffa-4bb4-bd38-0dd3c76b92f4@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <1fce65a2-b752-4bab-84e5-314b60d682f0@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KI6QdCGk5y4EaaJF9aMT8KlFRqcswMz8
-X-Proofpoint-ORIG-GUID: KI6QdCGk5y4EaaJF9aMT8KlFRqcswMz8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_01,2024-06-20_04,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- mlxscore=0 adultscore=0 mlxlogscore=620 spamscore=0 impostorscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406210050
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 167.172.40.54
+X-ForwardEmail-ID: 667524847560ce51b8f26441
 
+Hi Cristian,
 
-
-On 2024-06-21 14:28, Krzysztof Kozlowski wrote:
-> On 21/06/2024 08:15, YijieYang wrote:
->> From: Yijie Yang <quic_yijiyang@quicinc.com>
+On 2024-06-21 03:23, Cristian Ciocaltea wrote:
+> On 6/19/24 3:56 PM, Cristian Ciocaltea wrote:
+>> Hi Jonas,
 >>
->> Correct the spelling error, changing 'com' to 'qcom'.
+>> On 6/19/24 3:22 PM, Jonas Karlman wrote:
+>>> Hi Cristian,
+>>>
+>>> On 2024-06-19 13:23, Cristian Ciocaltea wrote:
+>>>> The 'mic-in-differential' DT property supported by the RK809/RK817 audio
+>>>> codec driver is actually valid if prefixed with 'rockchip,':
+>>>>
+>>>>   DTC_CHK arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dtb
+>>>>   rk3568-rock-3a.dtb: pmic@20: codec: 'mic-in-differential' does not match any of the regexes: 'pinctrl-[0-9]+'
+>>>> 	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+>>>>
+>>>> Make use of the correct property name.
+>>>>
+>>>> Fixes: a84ffd2ef1ff ("arm64: dts: rockchip: Fix mic-in-differential usage on rock-3a")
+>>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>>>> ---
+>>>>  arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
+>>>> index ebdedea15ad1..0b54dfe92d6e 100644
+>>>> --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
+>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
+>>>> @@ -533,7 +533,7 @@ regulator-state-mem {
+>>>>  		};
+>>>>  
+>>>>  		codec {
+>>>> -			mic-in-differential;
+>>>> +			rockchip,mic-in-differential;
+>>>
+>>> If I understand the schematics correctly, only one wire is connected so
+>>> this board cannot really use differential signaling, and this should
+>>> probably instead be dropped.
+>>
+>> Thanks for pointing this out, I will drop it in v2.
 > 
-> Please provide Fixes and Cc-stable tags (see stable kernel rules).
+> I've also checked the schematics which indicate the PMIC RK809 CODEC
+> receives both MIC1_INN and MIC1_INP signals; the former comes from the
+> Jack input, while the latter is generated by the SLM42Q3AT MEMS Microphone.
 > 
-> Best regards,
-> Krzysztof
+> However, I'm not sure the Mic presence on the board is dependent on the
+> HW revision - on REV V1.3 the "NC_" prefix under U24 component label
+> suggests it is not connected.  So maybe we should keep the property?!
+
+There is no such mic on the board, at least on the rev 1.3 that I have.
+
+This prop should be used to indicate that the attached microphone uses
+differential signaling, e.g. should have its two output signals
+connected to both INP(+) and INN(-).
+
+The SLM42Q3AT or the single wire from headphone jack indicate that a
+single-ended microphone is/can be used/wired on this board.
+
+The current use of non-working mic-in-differential was wrong, adding
+the rockchip,mic-in-differential would change behavior and wrongly
+describe hw of this board.
+
+Regards,
+Jonas
+
 > 
-Apologies for forgetting that.
+> Cristian
+
 
