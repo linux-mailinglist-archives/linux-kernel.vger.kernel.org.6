@@ -1,92 +1,90 @@
-Return-Path: <linux-kernel+bounces-224755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE7E912683
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:18:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3AB912682
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51E13B24E98
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:18:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 740AB1F22B2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9778B1527AC;
-	Fri, 21 Jun 2024 13:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B418155758;
+	Fri, 21 Jun 2024 13:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hZRAwxHn"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LwDmfFsg"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3F51EB45
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69BA2E622;
+	Fri, 21 Jun 2024 13:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718975901; cv=none; b=tqFY+Z5B/MF2GdXeYG17toOZUUJ7YJbFEop8AIwFNeyhFop8X3LuP9IVYsoFygRCZ7PeASjYrJ6gURYnsN+FAB4XQxV5BIpZbYU2Aq136a537ube2Z0Jj7VStaEEp7V7BzTyCVQTA4JBGNZJ12A2VjLMn+H2stneq2rMVwJryG0=
+	t=1718975884; cv=none; b=aEGSDNN2SxdiR9zbtKkrrhPY6g0eIq5E42NjYLdGLIixlVFx2lTXcIQW3YsN4/J43XKNBcAutBNGT1WUUlT1dra+SAF55vyn5BdhOO/xh7GfRgIq9BYbW8CCTZq3TRS7HS6ZFWqysa/52P6v6yycPwwbhRonNMUYYhZf/oJDTLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718975901; c=relaxed/simple;
-	bh=sqHBALxOEcXUdMLpEKaMQRWH/dDRXChPwcd1d8Bcp6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSB8H9+Ot8OMHPuRkV0dYGO1VdEO4zKaTu5/oYmX7zJMsuqPKBGM0f3Hn2fcuWTAzXqYUwBX2RhNfnBAZ1ffSL1G7s+s9uKr34RAvlT60LvmAvcOoGVL+NdugVgHkgPSHdXJRuv2Znx5Ico8TTG9G1GoZhxJmqKzmxz2UOA3LUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hZRAwxHn; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 04D9D40E01D6;
-	Fri, 21 Jun 2024 13:18:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 3Np-3OE6K1rj; Fri, 21 Jun 2024 13:18:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718975892; bh=JizJndAhaNZaXqVbhXkm0kB9rqgin/WAmKHV7VIfvWM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hZRAwxHnLicP+AE20iVNYCVwOk7yVR0apQJNRIsX69+EVTcZW+or48HTvNB3v2Kgc
-	 7PQBg7eod7g31JcUVfDGuKImJ2ouIaR4gqVrxYiuCZmXvFDBuMntPTtEAmUJ5bo5nn
-	 TS6j+XwPuJsakF3knI+Wan6yhW/15meZgW5VgCJcAK/MJgUEU1DPuVhcuCUhUEPR+7
-	 XfdrFId+R0WJp/P7m9Rija0Cjf/vVtK2Ur/0MLCvwEg+AeW5fBe6OUoMkqOspJrr0u
-	 Cg1mJYrZvRbc7qxg8WBtDHSp4XgmvGrv5AA00D648JoboCARxN5g8eV3pQexFbpVAQ
-	 5J3ZzNIUTHi9rd47zZjAp2yLfP/boMtkqJ+3p6ewRAUuiONbv7GfnsFde4IF3JpQ5o
-	 5oKarRxdix9ewE4os7Y3WpeiHJaRGlbdiaDHWBQQjGoL9Omk0nB2swgLH4+waE6sRp
-	 lHfnRgNHntXdyajmGHFZLzm0fh5WtTNP3br8AWRbfY17S9YvvNM1ZG8CQfUVejfEqn
-	 W5JvOx+ib9bHwC+8nhRsw+l9fAv0VP7ifiDQOi2OO+aAOAccPUEviAN+4uT5WdDmbo
-	 Yri2zyPPYLihzdEolxx9Ycilcf1Evl/3K+dhVwQfDH0ha8saX1LZFWbJtVyCDhsuQv
-	 Jfgexbj7YVxAXVJTWNESiOqo=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5951140E0185;
-	Fri, 21 Jun 2024 13:17:47 +0000 (UTC)
-Date: Fri, 21 Jun 2024 15:17:42 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Steve Wahl <steve.wahl@hpe.com>
-Cc: Ashish Kalra <ashish.kalra@amd.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Pavin Joseph <me@pavinjoseph.com>,
-	Eric Hagberg <ehagberg@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
-	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
-	Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
-References: <20240520183633.1457687-1-steve.wahl@hpe.com>
- <20240613152826.GKZmsQGnO3OthLH3Vu@fat_crate.local>
- <ZmsbZCF9rFzuB3rO@swahl-home.5wahls.com>
- <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
- <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com>
+	s=arc-20240116; t=1718975884; c=relaxed/simple;
+	bh=NTlU4MzAnhhcT3IXIo/UnGQRRM53fAqVg82XwxlIG3s=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8patnco3wykoXMp46UB+EImT3yPY1czHBIa63BmVL8PkM6w4pkI8cANIHL3qTREvu2gA9ZqaaG8+qiPTYvHd9FS+OMOrMnjTsLnJZ5fnRY7Tdny6DinwILNLr75h61UktmeUcmPIxDSlW80uQl9UhDnchmnfXxtZapkJA0wMiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LwDmfFsg; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52cdb0d8107so454631e87.1;
+        Fri, 21 Jun 2024 06:18:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718975881; x=1719580681; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Va7fQxN9lBsLo744XPC53nXOlbU4afLajRDQWh9HAcM=;
+        b=LwDmfFsgIgqXSJLe7vkAQorPvrkxgUoi9GwHAAjqtdXUj7BldJCP+CpE9sTNQR4HkE
+         NNOwil3Be5uxnON1hKy/U+tPXfZQ3rLbGLhZaD3wslW0DU7iw2/sPASpu4VfdkItySPj
+         KiEbpF7b2jrEi1q7hg4NaDtzcqprDpaJihUFUkruJz84ha7x37IPNNKJXuFfcH3QW592
+         EBg1AbkgkaPyUcFP64ywEhf+36U8v+GsXUhxNZRV/16Vf5TvOlrmOEU7y+pXSBIfrT1y
+         4s7kM95McoWqtKtwbFcBIojIoYD7VA8edHUmmDqV5OySSjY3ByL921bkKFbeP7D/lEQg
+         YUgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718975881; x=1719580681;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Va7fQxN9lBsLo744XPC53nXOlbU4afLajRDQWh9HAcM=;
+        b=Clh7Utq606K45dhxCpq8LNFQ16JbJsRFEkvy8KqDn6+GeJg5QFoGn3D2K669HhB78Q
+         j7wcuDyXT2q5hHEpaHyoevG0CUa09mSlOqqTeZxAtnWeplphKZCW4fuxNXJxSgwifQyg
+         VSsbLLP1XueHAtVBA4rI/JzFc89JV7KX/Q1CsrZ3jrl/AFh8e30m6AITd6y83V0ELCDc
+         YY4cNHEUqQ/3IsfNTWo654O0dVoN582mcUzwnxlYQ8PMrIidnLxYUYDlVxHg5ZUmQwd1
+         eHjiLpxD9QoRKOVSuInDLoiT7WgYKv0V3fMX6WCzLx5vPHmvIZx1BbMuo/GbuhU5D4KQ
+         6Vtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpl99QsDDLdMow1ZioOEzDLn4Z3aA5pxFKsPuVkxLUTNaUTUtgk3EKKWCOrLjSWTu5qZImNywTNG8TuBlhUoopjQdAhjGJjX+6YWbUid4xGLAd0IngopZP38WunfKDRNMF/d7DTNOPXLfFFK2TM/aKfAZrVEf+FJh9HrLciDBTQU5iViKO
+X-Gm-Message-State: AOJu0Yy6hpo6G08SfD9Onk4HjsqjDr3l2RMwzFccuotVNUM0S7UDCRZk
+	UxfaKBOT6UGfDgc0Scv7QKvFy9yJBRlmI9lzX0lbbsmRsfcFQEV9
+X-Google-Smtp-Source: AGHT+IHkhqARK5Dooq1qSnFt+7oS2w45OWcGar+Ac/wnacPVJSV9FXzNu8K18xQUDgDf/Jb4mgoyTA==
+X-Received: by 2002:a05:6512:138c:b0:52c:cda0:18b9 with SMTP id 2adb3069b0e04-52ccda01977mr5931095e87.59.1718975880879;
+        Fri, 21 Jun 2024 06:18:00 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a8d8esm27985845e9.12.2024.06.21.06.18.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 06:18:00 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 21 Jun 2024 15:17:58 +0200
+To: Oleg Nesterov <oleg@redhat.com>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	loongarch@lists.linux.dev
+Subject: Re: [PATCH] uprobe: Do not use UPROBE_SWBP_INSN as static initializer
+Message-ID: <ZnV9hvOP5388YJtw@krava>
+References: <20240618194306.1577022-1-jolsa@kernel.org>
+ <CAEf4BzbN4Li2iesQm28ZYEV2nXsLre8_qknmvkSy510EV7h=SA@mail.gmail.com>
+ <20240620193846.GA7165@redhat.com>
+ <CAEf4BzaqgbjPfxKmzF-M7nzGroOwKikA0BM7Tnw7dKzKS+x9ZQ@mail.gmail.com>
+ <20240621120149.GB12521@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,62 +93,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240621120149.GB12521@redhat.com>
 
-On Mon, Jun 17, 2024 at 10:10:32AM -0500, Steve Wahl wrote:
-> The first, hardest step is locate a system that is AMD based, SEV
-> capable, with a BIOS that chooses to locate the CC_BLOB at addresses
-> that do not share a 2M page with other chunks of memory the kernel
-> currently adds to the kexec identity map. I.e. This is a stroke of
-> luck,
-
-Ya think?
-
-It is more likely that I win the lottery than finding such a beast. ;-\
-
-> and for all I know could depend on configuration such as memory
-> size in addition to motherboard and BIOS version.  However, it does
-> not seem to change from boot to boot; as system that has the problem
-> seems to be consistent about it.
+On Fri, Jun 21, 2024 at 02:01:50PM +0200, Oleg Nesterov wrote:
+> On 06/20, Andrii Nakryiko wrote:
+> >
+> > On Thu, Jun 20, 2024 at 12:40 PM Oleg Nesterov <oleg@redhat.com> wrote:
+> > >
+> > > But I can't understand what does it do, it calls emit_break() and
+> > > git grep -w emit_break finds nothing.
+> > >
+> >
+> > It's DEF_EMIT_REG0I15_FORMAT(break, break_op) in
+> > arch/loongarch/include/asm/inst.h
+> >
+> > A bunch of macro magic, but in the end it produces some constant
+> > value, of course.
 > 
-> Second, boot linux including the "nogbpages" command line option.
+> I see, thanks!
 > 
-> Third, kexec -l <kernel image> --append=<command line options>
-> --initrd=<initrd>.
+> Then perhaps something like below?
+
+lgtm, added loong arch list/folks
+
+for context:
+  https://lore.kernel.org/bpf/20240614174822.GA1185149@thelio-3990X/
+
+thanks,
+jirka
+
 > 
-> Fourth, kexec -e.
+> Oleg.
 > 
-> Systems that have this problem successfully kexec without the
-> "nogbpages" parameter, but fail and do a full reboot with the
-> "nogbpages" parameter.  
 > 
-> I wish I could be more exact,
-
-Yes, this doesn't really explain what the culprit is.
-
-So, your 0th message says:
-
-"But the community chose instead to avoid referencing this memory on
-non-AMD systems where the problem was reported.
-
-    commit bee6cf1a80b5 ("x86/sev: Do not try to parse for the CC blob
-                          on non-AMD hardware")"
-
-But that patch fixes !AMD systems.
-
-Now you're basically saying that there are some AMD machines out there where
-the EFI config table doesn't get mapped because it is somewhere else, outside
-of the range of a 2M page or 1G page.
-
-Or even if it is, "nogbpages" supplied on the cmdline would cause the
-"overlapping 2M and 1G mapping to not happen, leaving the EFI config table
-unmapped.
-
-Am I on the right track here?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> --- x/arch/loongarch/include/asm/uprobes.h
+> +++ x/arch/loongarch/include/asm/uprobes.h
+> @@ -9,7 +9,7 @@ typedef u32 uprobe_opcode_t;
+>  #define MAX_UINSN_BYTES		8
+>  #define UPROBE_XOL_SLOT_BYTES	MAX_UINSN_BYTES
+>  
+> -#define UPROBE_SWBP_INSN	larch_insn_gen_break(BRK_UPROBE_BP)
+> +#define UPROBE_SWBP_INSN	(uprobe_opcode_t)(BRK_UPROBE_BP | (break_op << 15))
+>  #define UPROBE_SWBP_INSN_SIZE	LOONGARCH_INSN_SIZE
+>  
+>  #define UPROBE_XOLBP_INSN	larch_insn_gen_break(BRK_UPROBE_XOLBP)
+> --- x/arch/loongarch/kernel/uprobes.c
+> +++ x/arch/loongarch/kernel/uprobes.c
+> @@ -7,6 +7,13 @@
+>  
+>  #define UPROBE_TRAP_NR	UINT_MAX
+>  
+> +static __init int __ck_insn(void)
+> +{
+> +	BUG_ON(UPROBE_SWBP_INSN != larch_insn_gen_break(BRK_UPROBE_BP));
+> +	return 0;
+> +}
+> +late_initcall(__ck_insn);
+> +
+>  int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe,
+>  			     struct mm_struct *mm, unsigned long addr)
+>  {
+> 
 
