@@ -1,118 +1,81 @@
-Return-Path: <linux-kernel+bounces-225163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1052F912CF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:06:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E4A912CF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68CA72847BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E249A1C23C7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACA354FB5;
-	Fri, 21 Jun 2024 18:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306F71607A4;
+	Fri, 21 Jun 2024 18:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="ogS24POi"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2110.outbound.protection.outlook.com [40.107.93.110])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="g534TUui"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2079.outbound.protection.outlook.com [40.107.236.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011832E417;
-	Fri, 21 Jun 2024 18:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCE954FB5;
+	Fri, 21 Jun 2024 18:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.79
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718993206; cv=fail; b=kh5dJ5IGtRldS8B84cTL6omTfbRHGMSgQA4i6aJmrJzhoazCWNqS3wgQm0lFjWNwxObY7uJDMz+PdBzH355mKsfO2mS5bU/PW1vOLrUfrSfiNJ7SXOpo+AOnkA8ZChWi9yq57t7knDaKD3SEkIkzX8w8Wb21wMiSvyVDVRA264c=
+	t=1718993235; cv=fail; b=N9rec7fUyVSWDj+dElk3UgMazrHidNVhf3NEPTePj1RpPDmsoUZziCKZr/OgsryQSrPy0mjQbVARQppJQVKy5q2RFvwtlFLzJ1omOatSe/MBe9do4qYX/CyVhBp1zXuBLYTaUtQ+cU7SuLjGmtyolNbP8V+z0jyYFUQr81L3fU8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718993206; c=relaxed/simple;
-	bh=5TfGGsLAKo4fmwLj9Oygg5s+jMiMEah3Oamkr85k2xU=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NFa8o0wdWGDvKJ3FgSmvMc822hn526WYOg9up7LO/glBkC/AJv60LnJbKxuHtD83RZDYG0BMG9sgTM1/EFbSlqUQrO9FYZlBKQ3YGGg9ahjx+ekeJSe4qvkGvEDMqwbT4fTQBOg5MWEAL/SbaeQk3gGhZz3df/B4cke9vALJCIM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=ogS24POi; arc=fail smtp.client-ip=40.107.93.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1718993235; c=relaxed/simple;
+	bh=ANzGlqWQYa4U6VYaaUxfpCB+4AJ3bnxO1SYhGYwbq0w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=cZKqYb+uasX3G0PsZwJuxwd2zMEe37Xe46mwhQqVsGrCC366qp+KuWXLWB309aF5s9P/+X8o0tTeutjj1MU0NQQHdKV5po17gAKW6mezf+be0oUlUqbyljSo2BCvmDv9qTBnMR+AjyvgiRnH0Yfcv3B/5UdM20/UCWfnGgrgt3c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=g534TUui; arc=fail smtp.client-ip=40.107.236.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ALwntIfMYf/f/Uedgzxvher2El+z9JJe4KF3MeEgQ47NVfEJPIH7ay2pxHqfGDa4tuuhtntEEOdIpaCTqOSFgpKfSA1PZRQ3BnJDs98niUcWiSAspwIcdbqvN8V0v+Py3/pizxoLALhP94Ypyuz+QIotLo6a/15gfltWXmeWacPH5Ovnv+4ogdUJdAJJUO56RZUQHyk00bl5H7TUqa2a9hdvhIoAxvEyS/GG35L8kg4A1nDk0sjCLQSY5RoQemDeTbh32zgSd6xZs6eLmyHxWe2hEtgTg26IExvSJgX6/dU7euH8hFnKRfJYqNl8y8ppDdGwSE+5gYbAu8RY1sZlvA==
+ b=fG73+VGX3yTMyoNtdB1jUB4A/v/OJgYCBoXXz4WgP5fRpONC0XdGPZEXfawEnqOjBa99y6NFrF9mHfDp7IWlwY1MgCfoS/0lqVtMtTZOb/MPp2iGk6ICyptHaxo0lG0ir8Y+/+3fzKzggB579DnsnSchsiD0x3C4ZbNVVjA9VLDKsRn5qNV7g7W9ssconRC1xGqcNqeNB8AQIPz5DZ8kOczDU/1pjUxtu5eBEl43/+qGmhzC4QENoXqQ95pzZrK8bakA2gstqATLRlOjbSSkiF5cR5K4IgJtKvCRZUhasiHhjAIEopzjHZwk7eItPk3QrcA5ZpI2C6B96oi5y9FOZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xBrPu+ke8gCbBJiNJ7wFwrpHG1FtOctEsNzRCF5KNx0=;
- b=fP5UYlouLbViVcAdrh9uiQWGV3vEtCMUmF0fiOkabtPeeANM8qnCwbdyCMpNSqh6Cy+p7nwKeebWwTW4N7SykUYRLsXjG68ySoou8CaPxWmLB+2AZI75x8GM5DGviRzDaNZ0BJYQqPaPlJfdn07Wm9JqxYncnFdSkJg2YamFVwh90i3p1OfDMKVBQGdnxPiv5I8bHvUPbrFcJBmBesV/cm6Pk12AZ5NT+CdXHgZMTusSMnndvhbgHCfjQwTwmlipAr4+bdUeJET1oFNuwYvr535hHblKc5+3EnTncjBPGHGhqrz+6AZXATfE0A7X0HdRaVuo44u9KYsM83KC/Q4QmA==
+ bh=4bcWIzqx9hx0zee9ozenJULif9KZN+aRUoxFLPk8izE=;
+ b=UV3VJPBpjNQ8PVz/DL9Wk5/KwRjJ66W/1ZPE1Cm3c3mnx6KKgq4jfMMAnnTQIo9zrYVkCPUJktW0HTAEinpFmPgb9FeIkx6A+obWiIhEOBib2HmxrRuio2UOvXyiknIvN+Yt1TkTLBCG9Cs4B8fQzVTkw04w7zFz5VjeVzGQ83be9jvfEXGJO+J6PzzINbItSqHaYEMdtPZsQAl9gK8onolWGN17zlltT2cOL+80MxwDiAXHU/stYwhCuFlH2U6769m0ZpC0R635Yhy3nYQhWoJKe7HFluZs2dNpAd2UJTP+yfJhw34jOgy+I/ZwrLCCk0Grl9mJzB0MwCeVP9yRLQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xBrPu+ke8gCbBJiNJ7wFwrpHG1FtOctEsNzRCF5KNx0=;
- b=ogS24POiy9ljW3onowEvVDUuo96wLFsrlb6aiGAmZayuRhEAxMbF0k9QnFS2kk0+WDBPwbECP8js8/kwsnjVbRyBQfTyJ7cOozHO5hxHDtB1xzMVWEy5CMqqz2kpBiaq6ivrkt22und5nEEwb0Cjy/Yvj5jA0YL6wtJHT+LaLss=
+ bh=4bcWIzqx9hx0zee9ozenJULif9KZN+aRUoxFLPk8izE=;
+ b=g534TUuiLZuKgYORLptEiW+14GAA3lvNMLhE2Uk6gdETE+B70bLcC2LvOmfeRj1MmTk0Dzs0vJT6SiRNAnP4c05daJG24u6PLvkPKlkdqvGdAKapRLA+5lyFuo4tgxEHHLBVe1wFtYwrivlS0aa0Auv6+trtrjhPg8BRZ2pFctg=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CO1PR01MB7370.prod.exchangelabs.com (2603:10b6:303:159::16) by
- CO1PR01MB6743.prod.exchangelabs.com (2603:10b6:303:d5::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.33; Fri, 21 Jun 2024 18:06:39 +0000
-Received: from CO1PR01MB7370.prod.exchangelabs.com
- ([fe80::6e98:87d1:5562:ad73]) by CO1PR01MB7370.prod.exchangelabs.com
- ([fe80::6e98:87d1:5562:ad73%3]) with mapi id 15.20.7698.017; Fri, 21 Jun 2024
- 18:06:39 +0000
-Message-ID: <84e75542-026f-4c99-a8e0-f07dbf1695e8@os.amperecomputing.com>
-Date: Fri, 21 Jun 2024 11:06:36 -0700
-User-Agent: Mozilla Thunderbird
-From: Daniel Ferguson <danielf@os.amperecomputing.com>
-Subject: Re: [RFC PATCH v8 10/10] ras: scrub: ACPI RAS2: Add memory ACPI RAS2
- driver
-To: Shiju Jose <shiju.jose@huawei.com>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "david@redhat.com" <david@redhat.com>,
- "Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
- "leo.duran@amd.com" <leo.duran@amd.com>,
- "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
- "rientjes@google.com" <rientjes@google.com>,
- "jiaqiyan@google.com" <jiaqiyan@google.com>,
- "tony.luck@intel.com" <tony.luck@intel.com>,
- "Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
- <lenb@kernel.org>, "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
- "james.morse@arm.com" <james.morse@arm.com>,
- "jthoughton@google.com" <jthoughton@google.com>,
- "somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
- "erdemaktas@google.com" <erdemaktas@google.com>,
- "pgonda@google.com" <pgonda@google.com>,
- "duenwen@google.com" <duenwen@google.com>,
- "mike.malvestuto@intel.com" <mike.malvestuto@intel.com>,
- "gthelen@google.com" <gthelen@google.com>,
- "wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
- "dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
- "wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
- "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
- tanxiaofei <tanxiaofei@huawei.com>, "Zengtao (B)"
- <prime.zeng@hisilicon.com>,
- "kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
- wanghuiqiang <wanghuiqiang@huawei.com>, Linuxarm <linuxarm@huawei.com>,
- "ira.weiny@intel.com" <ira.weiny@intel.com>,
- "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
- "alison.schofield@intel.com" <alison.schofield@intel.com>,
- "dave.jiang@intel.com" <dave.jiang@intel.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- "dave@stgolabs.net" <dave@stgolabs.net>,
- "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>
-References: <20240419164720.1765-1-shiju.jose@huawei.com>
- <20240419164720.1765-11-shiju.jose@huawei.com>
- <fcd0621b-dd68-4e0d-96e1-15c16a3278d0@os.amperecomputing.com>
- <d1986e8e1d8549c588f7488dfd5dd374@huawei.com>
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
+ by BY5PR12MB4292.namprd12.prod.outlook.com (2603:10b6:a03:212::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.22; Fri, 21 Jun
+ 2024 18:07:10 +0000
+Received: from BL1PR12MB5732.namprd12.prod.outlook.com
+ ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
+ ([fe80::bf0:d462:345b:dc52%7]) with mapi id 15.20.7698.020; Fri, 21 Jun 2024
+ 18:07:10 +0000
+Message-ID: <935fd457-74d3-cbf4-d532-718fc17f78ed@amd.com>
+Date: Fri, 21 Jun 2024 13:07:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v1 2/5] x86/sev: Move sev_guest.h into common SEV header
 Content-Language: en-US
-In-Reply-To: <d1986e8e1d8549c588f7488dfd5dd374@huawei.com>
+To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org,
+ nikunj.dadhania@amd.com
+Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, x86@kernel.org,
+ pbonzini@redhat.com, seanjc@google.com, jroedel@suse.de, pgonda@google.com,
+ ashish.kalra@amd.com, bp@alien8.de, pankaj.gupta@amd.com,
+ liam.merwick@oracle.com
+References: <20240621134041.3170480-1-michael.roth@amd.com>
+ <20240621134041.3170480-3-michael.roth@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20240621134041.3170480-3-michael.roth@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0070.namprd04.prod.outlook.com
- (2603:10b6:303:6b::15) To CO1PR01MB7370.prod.exchangelabs.com
- (2603:10b6:303:159::16)
+X-ClientProxiedBy: SA1P222CA0058.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:2c1::9) To BL1PR12MB5732.namprd12.prod.outlook.com
+ (2603:10b6:208:387::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -120,425 +83,260 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR01MB7370:EE_|CO1PR01MB6743:EE_
-X-MS-Office365-Filtering-Correlation-Id: bd9d7b1d-c054-4531-2dba-08dc921ce5d9
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|BY5PR12MB4292:EE_
+X-MS-Office365-Filtering-Correlation-Id: 056fa72d-57ca-40b9-8667-08dc921cf824
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|366013|52116011|376011|7416011|1800799021|38350700011;
+X-Microsoft-Antispam: BCL:0;ARA:13230037|7416011|376011|1800799021|366013;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WktsS1BGb1ZLaEZvSUhBU2RlL29yV0NsUG9BeWhnQm5WWHRXMmZPcXdmUDNY?=
- =?utf-8?B?NWs0bno0ODE3UUJIZVhkWGlnT0JjZDdBamFFQXg4NTFvcWFtV1Q1dGxxZ051?=
- =?utf-8?B?L1hZcFRWV01pZ1pSUU05aG9NM2l2elVIbjBkNlhVallBalltb0RsWHE3SWpn?=
- =?utf-8?B?NFVGNGcyQ0NXK2hIWHBtWDl6LzlOK3M5KzVPRFVzdkYyMUlzWWxnc21LWUIz?=
- =?utf-8?B?SFNYS1RXVit2VGgrOHVXL0cvd2tDUE5EcnVySFY4aUNtdHhsTTlrMlBteWVl?=
- =?utf-8?B?VE1uanRoRDB3QjF0VnNtK3lSemlrbDMxVTZLTS9PRlhoKzJHbTU3RXArS2JK?=
- =?utf-8?B?OGlZbDJwMVZDRDQ4bFhORno2ZzhaMkdpeEFqeUV2cDRjbkNjeUgra1FIU01o?=
- =?utf-8?B?UWhkMXpCWnpSYUVxY3hmVkFCSFlqVk4rTGFwL1c5ZlZSSStqRSs3enhiSkpo?=
- =?utf-8?B?c2ZwVHFWVC9LYU5zWHFFVGloTVBSNS9oMTNEYjlTd3pIUmV6Tnpkd2cvMlho?=
- =?utf-8?B?Y3ZYZ1Jsa25LV09qb1BIM2V2ODhJN0FkUmpYdmFUMlZ2Ti9nV2k0OFhqV1lV?=
- =?utf-8?B?V2dvRCs4N005djlXZ0I0d1dXYzNKN0FaQXpBamRNbEh4REVlbGJqTUxqZWdv?=
- =?utf-8?B?VHRkVFVyNkNXbGFrMk5Lang2SkRHTWxCWER4MmdNYVhDU3JVQ1hsUUwvVTJL?=
- =?utf-8?B?L1VsbG5GRW8wYUJXeTdzejJ2L0hqSFNOT1FNM2NMY0xmN1Bnc1U0VU1qSU5n?=
- =?utf-8?B?eXNXbGFDbkM4K1cyaU1qQ1ViVnhGS1NsZUZrK3kvVGcrQTMza3JmWTZEa2ly?=
- =?utf-8?B?T2pEMVdlcFozaER1T2lJM3JvTzhrWTZGMzdiVGdwUStIbW1SSnJ1YUpYZytH?=
- =?utf-8?B?eU9ZN25BN0FlaW4rM2JIYVlSZCtHYWRFUlpFNmQrMzBuQWM5TEM3R2xCMUtz?=
- =?utf-8?B?aWxTUlIycWRzQUY5R2syZ0pPOHk3S3dhRmRTaitiZFkvT1dvUFNTTzMzQ1h1?=
- =?utf-8?B?WmI2SDZtbTVKKzJuOURuWVNQN25mb0JWWkxlaGVDbUFtLzdHTzUxNGdLczFL?=
- =?utf-8?B?Wmc1SzBGeDhWck5yUmY2dEY5aEZuQmpPdlJBSVZPSStvaGMrN2NxelNoVm0v?=
- =?utf-8?B?amVlN3c5eXVXNmNDRUR3eEFqZUUybnlUVlhVWEhFUHVFMjV5aHdnYUFFK2d1?=
- =?utf-8?B?eUp5Z1V2N3pKTTgyNU1sSnRjRmpkdVNLcHVTUXA4d05hNWg0WWQ0RTlDV25x?=
- =?utf-8?B?SGFWT2sxdE9yb2V3WkhUcENibVZrbGpRRWFobGU5Q1YxRm1YY0RnbkhMc1Bk?=
- =?utf-8?B?aEdhK1ZLcE1Jc0xBSnNKTXBGNDlGcmt2eDErNkFlM3hSUDBXMUMzMlVoaFJJ?=
- =?utf-8?B?YWhJZmJpRHZhS2swRWtxb040ODF0OWE2SUp2WXhrZXl0Q2FGNWJkREZDOHhp?=
- =?utf-8?B?UUU5OGcvUVpsQTJ3WkxQWDJheHhYYVE2WSs4UnFrS25EcW83dnowS0dWSzkz?=
- =?utf-8?B?bUFZdHVVaS8yQ3BPeVV2Lzl0ZGNwTG84d3VvYTZBd2xMekV6clUxTzRnSXhI?=
- =?utf-8?B?UjNhWkRmUnpqdzBiYXg3RWhXTDZyWDhYSzhGMnl2WGdZdlRuUy9QWWVzMkZ3?=
- =?utf-8?B?NjJweUQwZ3VtZDBNQ1U1eko2aDVJbnV0U09WZzg4NHRFWjV5ajEyNkZZbUlr?=
- =?utf-8?B?eXVpM0ZtdmtIdzV2cTlBdUJtNUl4RmNTeTBkM1R3bkxROTVNcDM1N1hHdjNT?=
- =?utf-8?B?TEZ3L2lNMHJqRGR4bHQzNVYxNExqbTBKOENEWllxWVBjV0NlK002ajFJTVVP?=
- =?utf-8?Q?LNEQ6Sk2SNdN/o8W/qOXgWycsC337MXY08Of8=3D?=
+	=?utf-8?B?MmZpbGdWakNXall3b0hrYU53L1o4VnZVMzgyZVdKUkFhbXVsYjVUVzZIZEo5?=
+ =?utf-8?B?RTJ3WlZoTzZBeTVRWnRjTEUrQUZQTWo0V2ZRS3dtT1RoenRnYlVMQ2tMYW9S?=
+ =?utf-8?B?WUQrUUlVcURUOGZ5bm5aTFc5SE9qOHJ4YWFOYm1uNFFkSTcxdERHT1orRHVY?=
+ =?utf-8?B?c2VCMXJrUkZ5OW13QW4xOXk1MHo3WmlqRTV3KzRqSHFObkJWZVUxSkx4T1dS?=
+ =?utf-8?B?b0t0L0lhZHdtM2puOVBTTkMydU9lZUdoeXZjellDc0REV3lDNTRVdDdGWjg4?=
+ =?utf-8?B?SitBNi80SkdsNWE1YW5HS0sxeXd5dEd2cnorbGJoOHRWN3pLeXNOcU4zNWVC?=
+ =?utf-8?B?bG5mTVk1SHhPdVhTMDg1WldEazhTUloybjhVQzIyOGJlZGRXdDBkaEpENzAv?=
+ =?utf-8?B?bEJ4dEVMdmZOTXB6eDg5YXJiZERFK1ZVbUFTbDVsRnhyQnNOTDVJNVRFeDBw?=
+ =?utf-8?B?R1dZVUkybTNDdmIxbjJzZFpRamRiR1EwZFE5Z0NwYWpadHkwbVN5eFNGTWh4?=
+ =?utf-8?B?ZHcreDJBUkR3WU9hZGNaQjRhRVRsOWpncnpDRHJGZ2QydThRc0lPajN4eDZs?=
+ =?utf-8?B?a3IzdTBXbm5DMC8wTENHVzZkT3lqWmI3a1I3Z1J2U2IxNVFYTzlHWWcvbFR4?=
+ =?utf-8?B?MmNqNllvaXR1RHZvWDAyU3VZdVl0eVRqVGVCTit4algrb3ZWQ1VmYUVlb3Mv?=
+ =?utf-8?B?T0ZVU2tSWW9rUWxFM1lCN0hPMk1xMnFpK3FpSGhNa0hKOVJPVDQ5SEFrZWp0?=
+ =?utf-8?B?MXRIZ3VCR3J0ZVBGWEIwYUd4Lzd4aTRVTzhWR01LbFBDcksvMzZnOENKYWFx?=
+ =?utf-8?B?UUw3enc1ekowR2RQNEp2dzlEZzRjbGhReVVSMVlBcUJRVFh0Q24vY3hCR3F2?=
+ =?utf-8?B?M3ZBemhtN1JWQXZFOHVTTXVKOWxKTFBjdXlJakUyWVhVc1R1Ykc5RnlESGNW?=
+ =?utf-8?B?ZkJNbTJTYmlvVmJNbXpvS1ZDcit0NEZadU8vMnEzMnMvYWR0R2E2OWtUMWhT?=
+ =?utf-8?B?aTh4aytYR0Q2ZGxlUEtUbDNkU3JqOG9mamt2S0tZeUhCNHg4OVgrMWhvZ3VE?=
+ =?utf-8?B?bTlxOVA2K3pZb2VGbHQ0M045Ujg3TkRvcGJJYlBLdG1NYi9od0piVEVaNkZs?=
+ =?utf-8?B?b1pUUDNlZTYvRFV0MlhRd3ZMNlRNY0Zya1NBN0FjVWM2MFJZRGdjaG5GUVVi?=
+ =?utf-8?B?aHBJR3E1ZWdoTytjQ1VZdndsV1FtaVVqeHYrWnlRTGFJSllmNDFLK0txZTFT?=
+ =?utf-8?B?U0JPUnJqcVRINzA5cTVxRGJyZGFicURHSDNKZFZaUDhKY1NkRks5M3MxZGFG?=
+ =?utf-8?B?WFI2TkhidWR5UWFCNWxhNUlST0R6SWVHQTNKZVQwaUQxRTdDM1M0UFdsU3lO?=
+ =?utf-8?B?RnZkYy81MFJWSGZYSFJFTzhGN1RJb1BmdTlJODNnS2RCTUJoU0ZwVTQ0UHRk?=
+ =?utf-8?B?RVVZZ3BSVlBaeGZxUE94WFRVb1hyVlVaRWs4cjlSQ2hxWlhUeXlaNzJQQWEz?=
+ =?utf-8?B?SFNUQ0VaUXQ4clRCcFo5dVJsYnBpRHBqMmswSjh6SVZPYzBRY0t6UFozc0JL?=
+ =?utf-8?B?TzFCQVRTbEh6aDdFcWlFdDZpSTdyVUR0bjh4b2l0SUJtL1RCTlZDR1lTNWFh?=
+ =?utf-8?B?d0VxSzhqSkw2K1N6WGVCdzdlWkhFZitad0RsMkliSlRQYlh2b3FmNWQ4bit5?=
+ =?utf-8?Q?FL5C142U9+eQGXE3aZDo?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR01MB7370.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(52116011)(376011)(7416011)(1800799021)(38350700011);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(7416011)(376011)(1800799021)(366013);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ek9CaWEzNnNuRHVkRi9yVmNmdEZ0Y0xBVlNsejhFUWdDakFDVXAvV095YUYy?=
- =?utf-8?B?MEE3bC96cFdvaEhkYmtDajhNdGdYNSs2ZzdNVGtBRXRwZ1VMNUNyV1ZmQWUx?=
- =?utf-8?B?cm1leDF6a3p2VW9HdHhyN1UrVHlYdllWYWFTUGJrUFhqdkFpaHBuQ2plVGVO?=
- =?utf-8?B?RWhMZ1hXN29mSGtFZC8rSUNoL3piU1JrNzdBaUxCSU5xRTU0VzdBWUd1Z3RY?=
- =?utf-8?B?SjF5SjB2d0xTTjZ6WDdnS08vL3g1dmpOZ3lHWFF4TjU5LzdiOVJobFFHZndP?=
- =?utf-8?B?VjlHNXliTndMdzhqcm9IdDRZOEh6dHpRbG5zbDRNNncvNFgySjZuYUV3N3JK?=
- =?utf-8?B?OWFZNWUyT3NBb2U1YUwyWnZCVWpDUyt6WS9YU3o1SE43bmk0L2hXeHFhMHVF?=
- =?utf-8?B?cE8rcUFwNUhXU1hnYzZPbENwUnd4R1RBUUtJWFI4NlMyWkl2WVhyRmYrakta?=
- =?utf-8?B?dlFJeE5ORDNLWmJoUnlEamRoTzRBLzRYTVB0N1lWZmxMbnFUTkJ4ZEZ1TXBW?=
- =?utf-8?B?dkROR1RIYnpvQkcxeW1GQkZMc0tneXhXSE9sOWhYOWIwQkJwZVZpRks2dEkx?=
- =?utf-8?B?UjhVUldFWVZLZGlTUy9tSnowelNJZnlRTlR2K3gzQ0kweEVhbE1IUDhWT3h1?=
- =?utf-8?B?Ukhrb1VwaC9pVHY2bndMZ1BlZUJHRDNNWTUwZXRac09ZQjB3bEpkOGlvQ1dk?=
- =?utf-8?B?aGV6ZnU4MnBIVkJ5Y0JNWkFsSUtXQUR6aHB6TDVYWXQ5SEk5Wms3RU5SbDBW?=
- =?utf-8?B?ZEI5RWk5Zk5HblY3UVV4Vk51amU2MzRzeEhVOG5UWVRlT0NmaVkyb3ZCSEFz?=
- =?utf-8?B?L3ZOdENYaUtPeFFRREtkMVV2cWFwM0JNcUc0LzV5L2VUenZuN05XWjY3aTBa?=
- =?utf-8?B?UnU3ejFBSXBEWVF0eFA3UDF0emllckluNTdlaU5EeWxYVVgvUVhVTTNhU21K?=
- =?utf-8?B?VTBmdVg0RmYyUmZVUTFvWmpucGdhcnBZbWlSazdwMEt4b3pMc3Rta3J0QUE2?=
- =?utf-8?B?bHI0djU2VWpobjhHRVR0SnRONGlWdWI5ZUdwdFE4Rkp3LzRTSjgvcWN6Zldx?=
- =?utf-8?B?eU9IZEZwN2tobzJ0d0ZENmZRKytBZ1g2VG1uUEUwU2l0Y3lRY2ZmcE14dXZO?=
- =?utf-8?B?YXJXYWhuREpoZW13d3lMTWxteUFQb0NONldBd0U1N1hsYWRHUlhlajJlUkNE?=
- =?utf-8?B?dHZCUlFKSXA1dlZ3V3JTUzRWMlpheE9CQy96d0dJMmYxZE5nRlBFYzFRSzRh?=
- =?utf-8?B?NEZSeHhvYW9FeDNCdkM1RmRTL3pTUThnTzdSaDd4SXMyZEk3cEE4Z1BFM1ZY?=
- =?utf-8?B?blNhYXRMckYzcHFpd01RbHhhYzVpeUxLWmVqK1RyWnVTRTBJMG9uaVVOUUtG?=
- =?utf-8?B?ZXVJWGRDRis4SHNydHJBKzJFQ2wwTVJlREJFeGhpNU9jSU9KVHJoTm9MT2h5?=
- =?utf-8?B?NzJJaVNwZy8vdEZiLzZ2MFFFaWk4UEtHeURMeXh3V0hqdEs2ZGU4UFRJNEZZ?=
- =?utf-8?B?N2I5Y0FTNGhVRC8wczF6RWFQckZMSy9hcSszSUNHRU9sVWx2MjV1VUx4Ukph?=
- =?utf-8?B?Nk92Q3hYQW5TalhKZ1NsQUJLMkw5d0F4eklLVlAwT2VWUldZd1hQc0NFc0x1?=
- =?utf-8?B?aE0rK1d5c1R4N3ViTno4VmhLRldabVdoZFFjNktyRmhMTC92MDFxWGxCRUFp?=
- =?utf-8?B?bnZodzFmQlRTSjY4UFo2R3U5SnFKYTFlOVhlSWFlZTRDZy9MZEdQcEkvdVN6?=
- =?utf-8?B?QjduVWtlTjF6d2ZROVM1UFV3ZzZXVWVhajVSc2wvODhETmc0d2xadnJNN0ZQ?=
- =?utf-8?B?QlpzUDkxemQvcXdUVVBHSnhpVjc3RUo4cGdZSy9Ib3dteWhZdFIyeDEzV0Ry?=
- =?utf-8?B?Mmllc2o2b2FVdTVPem9heldjVlprY1BmSzVHM0Frc0RlbFVlL3dDdHkyL2o0?=
- =?utf-8?B?T2RLamFuMzBYaEc3L3VIbjg4WDNKaWVVVlBkTDRNMldJNkFNZmNoaVI0V3dz?=
- =?utf-8?B?NXpVbFlraDBLdWt4OHpTaHYxZ25iemNJNGhtY3Fxd3VEQ25tU28vVU05UWFP?=
- =?utf-8?B?S3plOTJIemNwV2UwcGZQVVZ0TzJDU1ptUldTcENQekRaaDhJTHUvcndlWnRv?=
- =?utf-8?B?N01SNTNNZER0VStnbHRQWmlvSVdHaU11TE5ya3JHOGg1THBrR3k4WGdQOFhF?=
- =?utf-8?Q?h7UeyK4ol4bQQYC8wjGltHE=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd9d7b1d-c054-4531-2dba-08dc921ce5d9
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR01MB7370.prod.exchangelabs.com
+	=?utf-8?B?ZGdLaWpwMzFvOXpteTdoUWpyNFF0N3hPQm5RRTgwQXQyN1RHY2hlV3hXbDRm?=
+ =?utf-8?B?eWZhQjh6WVBKMU9vZCtadG9zL3NyazRraVNtbU1KOFZQK3lqOVIwUTJOSm5W?=
+ =?utf-8?B?THZoTmU1bkpiMmFPQnJJTHBibjZNQWtTNDh0Y0JFUXEzZXBwQXdHekRHQXVS?=
+ =?utf-8?B?a2ZPdW50WTU5NGxiNUo1Y3FldzE4SUx2OHFUTXQxWG1lVGUyRGoySDBvU09N?=
+ =?utf-8?B?c2dmKy8vams5Y1Nxb1hUUjVkbW5UUDFGWFc4czBORVFuUVJWL1pjdzFFSXBi?=
+ =?utf-8?B?VzlEd1drU2RMaDdLcVpTSHJsSUpUblhidG14cEM4RXBpVnhNMUlsdldTWGgx?=
+ =?utf-8?B?Vzh6NnRSV2NlN244YnVCUHlIYkNKV0c1cHF5MHgxaTN4RDEzZUR5ZE04alNE?=
+ =?utf-8?B?ODZkSE00MWJVbWNQRUF5YisvK3dXNVJYa2VHMU01Rko5UERlN3BDOExUSmRp?=
+ =?utf-8?B?SE1zMmdjKzFaNEVGdDcyMzRCTml4endpQlMwdzgyanl0QUt3T1hqREhPaEU1?=
+ =?utf-8?B?M28vK256LzUrZFBZTXJXL0pJRjVOVHNIeGxhalBzcWRBcTlRR0pKSGF3amds?=
+ =?utf-8?B?aGFOcnV1OXhyYjdLRmlENzl1dWN2N3dXdnpLWE1QTTI4NG9RQUcvNWRWK1lU?=
+ =?utf-8?B?RTF0WDVHU3hUVlluZFdCVFlnck5TWmJBWUlQZzJscEJEdjNtMjhNd2ZGYmlk?=
+ =?utf-8?B?ZElnbXZkQTdTaXI1SEV1K0FRZTdvSVJmRDlNK1VxaVpaeGxCNjZLUFJyNWVu?=
+ =?utf-8?B?cHpxanR6Y0VsTjM5VGo5MEN6cFZ4MmErcmg5K2c2ajJkSFl2cWlIN1hIb1NQ?=
+ =?utf-8?B?QzZoZTluelBVR0FQVHptM1BMelhyOXNYOElMYjNmeGJDR1VoSERwWjRYWVZT?=
+ =?utf-8?B?eW42K3RJS2lRY09uQlVDVlhNV1hUZitqMjA5VERGaytvMFgvUkxLRTI0U1B2?=
+ =?utf-8?B?S25iUEx4Y25oZ1NCQWxwVFRGRkpvVmdUaWNoKzh2MDVCZm5ZelBOUmsvK2hD?=
+ =?utf-8?B?TDQvaHRTYlZ2d0t3MVlISVlkNjJMeGw4ampyblU1c3Y2SkdlbXA3QW1QZUpD?=
+ =?utf-8?B?RnVXU2RKTHhYcytQaCtMRVd5alR5cW4xUWVzdmV4R2RFRGphOC9lSFlhTnJM?=
+ =?utf-8?B?ME83bmNFMUlhZ3NTSXF6eEN4UnJKRjdrMm05Qm8zdUlBUHVQRWw1QUl4SXFY?=
+ =?utf-8?B?a3hlTDRSUGlsRGRTS2J0U2pQa1JsSFRjMjZOdTdBMlBWNlVEZmxtdzVhbE5i?=
+ =?utf-8?B?TXNXNVlJdk50ZGdmZzIwL3NRVFROMXgvdTRndjNSVGIrZXpTS2c3U2w5bTJr?=
+ =?utf-8?B?Qm8vWXVXZzkzaFZRQzFBb2J2dS9VSDlHdVVhRlpGNkliQVlOZlYzWmphOVRx?=
+ =?utf-8?B?UTBzOElEVlVSYk9NNUJWcVlKWTJXZ1NjRmJJNmVhQ0lWY1g5eG9oZlduc3hB?=
+ =?utf-8?B?MmhPRUtaYm1na3BQdEswMzdhZUpWQ0pTOEkwVnJ2MUpnUlB0QlRDaVhaU1pE?=
+ =?utf-8?B?ck95aDlPUm4xVXIwRGp2NWxDS2YxR0JSRkR2K1R6dWtyL2RTejBHbFlNNjNP?=
+ =?utf-8?B?V25tMzRlVzh6bCtvOS9JYTk2SlB2L0t6UU9iNWtsc2E4cWdiWGpzZFo0d3FF?=
+ =?utf-8?B?YnJkK0thTTFIVEJWRWhJNmlKMzlmK3JwOVh5d0xIY044YUI4VktIWHBEQnlq?=
+ =?utf-8?B?VHROTHdXa2dTNm5UL3hjbnVXRm9xSkxSU0NvNGYrVUQ0UXE5c1NQWVU2VGha?=
+ =?utf-8?B?cmdtOFJ4SklYY2NsWGtJdzVzSGYxZVU1K25QY09UMVgvQVhYL3N0QjNiRGhl?=
+ =?utf-8?B?dWFvMkZnSkh0M1BGRU9odFJFMHdUT2JyK04vcWJ4NzZmWkp4S1JZQXhiOHM3?=
+ =?utf-8?B?cVJTZFYrUlRiOU1ObXRCbWRPcjhiS0V5REQvV3lWMm54UDhINFNuYXJXSHcw?=
+ =?utf-8?B?WkREOWpkLzVyS1F6UWhIZXRLUjk1YWtoUDNPdlFENzBCT0hKUldXVXBFZG9W?=
+ =?utf-8?B?R0FZbHdVaDloZkowRjM4ckJtUmFZTkxQNXVmWWhIRE1xSDdRdnpSTHg0Skho?=
+ =?utf-8?B?Y3lNZEJGQzg1ajMxcTVRRk9XcWphWVplUUlXVVZZYXZDa2ZYbldQY1BVcWZQ?=
+ =?utf-8?Q?lHiOZN9lBha5CjGAEF1YRgYI6?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 056fa72d-57ca-40b9-8667-08dc921cf824
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 18:06:39.5450
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 18:07:10.1108
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Hb9JCTaTD2sTF3kpSEJHDubv3Vp07BYc3tqVKTF4e+7H8PipkkDfStCwey8HHM0gntX3Xab4KJVZxZuBJ8b4Wc5tOIrRx1dbtqWRT7Vi4uoxS624slY4Yibe4qfA3PnT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR01MB6743
+X-MS-Exchange-CrossTenant-UserPrincipalName: Os28+9esxsqT4IjPDGG8KXO6WKDg70CySLAovKGNeSLG0y2V2qtyIcCmzk30btv3wRQJ+Dc4/kgSHHY/2/JYFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4292
 
 
 
-On 6/7/2024 8:46 AM, Shiju Jose wrote:
-> Hi Daniel,
+On 6/21/24 08:40, Michael Roth wrote:
+> sev_guest.h currently contains various definitions relating to the
+> format of SNP_GUEST_REQUEST commands to SNP firmware. Currently only the
+> sev-guest driver makes use of them, but when the KVM side of this is
+> implemented there's a need to parse the SNP_GUEST_REQUEST header to
+> determine whether additional information needs to be provided to the
+> guest. Prepare for this by moving those definitions to a common header
+> that's shared by host/guest code so that KVM can also make use of them.
 > 
-> Thanks for the feedback.
+> Signed-off-by: Michael Roth <michael.roth@amd.com>
+
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+
+Nikunj does something similar in his Secure TSC patches. So depending on
+which series goes in first...
+
+Thanks,
+Tom
+
+> ---
+>  arch/x86/include/asm/sev.h              | 48 +++++++++++++++++++
+>  drivers/virt/coco/sev-guest/sev-guest.c |  2 -
+>  drivers/virt/coco/sev-guest/sev-guest.h | 63 -------------------------
+>  3 files changed, 48 insertions(+), 65 deletions(-)
+>  delete mode 100644 drivers/virt/coco/sev-guest/sev-guest.h
 > 
->> -----Original Message-----
->> From: Daniel Ferguson <danielf@os.amperecomputing.com>
->> Sent: 05 June 2024 22:33
->> To: Shiju Jose <shiju.jose@huawei.com>
->> Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org;
->> david@redhat.com; Vilas.Sridharan@amd.com; leo.duran@amd.com;
->> Yazen.Ghannam@amd.com; rientjes@google.com; jiaqiyan@google.com;
->> tony.luck@intel.com; Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
->> rafael@kernel.org; lenb@kernel.org; naoya.horiguchi@nec.com;
->> james.morse@arm.com; jthoughton@google.com; somasundaram.a@hpe.com;
->> erdemaktas@google.com; pgonda@google.com; duenwen@google.com;
->> mike.malvestuto@intel.com; gthelen@google.com;
->> wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
->> wbs@os.amperecomputing.com; nifan.cxl@gmail.com; tanxiaofei
->> <tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>;
->> kangkang.shen@futurewei.com; wanghuiqiang <wanghuiqiang@huawei.com>;
->> Linuxarm <linuxarm@huawei.com>; ira.weiny@intel.com;
->> vishal.l.verma@intel.com; alison.schofield@intel.com; dave.jiang@intel.com;
->> Jonathan Cameron <jonathan.cameron@huawei.com>; dave@stgolabs.net;
->> dan.j.williams@intel.com; linux-mm@kvack.org; linux-acpi@vger.kernel.org;
->> linux-cxl@vger.kernel.org
->> Subject: Re: [RFC PATCH v8 10/10] ras: scrub: ACPI RAS2: Add memory ACPI
->> RAS2 driver
->>
->>> +/* Context - lock must be held */
->>> +static int ras2_get_patrol_scrub_running(struct ras2_scrub_ctx *ras2_ctx,
->>> +					 bool *running)
->>> +{
->>> +	struct acpi_ras2_ps_shared_mem __iomem *ps_sm = (void *)
->>> +					ras2_ctx->pcc_subspace-
->>> pcc_comm_addr;
->>> +	int ret;
->>> +
->>> +	if (ras2_ctx->bg)
->>> +		*running = true;
->>> +
->>> +	ps_sm->common.set_capabilities[0] =
->> RAS2_SUPPORT_HW_PARTOL_SCRUB;
->>> +	ps_sm->params.patrol_scrub_command =
->> RAS2_GET_PATROL_PARAMETERS;
->>
->> Need to reset the address range (base and size). A user may have previously
->> called "Enable Background" where the code zeros out these parameters.
->> 	ps_sm->params.requested_address_range[0] = ras2_ctx->base;
->> 	ps_sm->params.requested_address_range[1] = ras2_ctx->size;
-> The address range is being set to the above in the ras2_hw_scrub_set_enabled_od(), because they are
-> valid for on-demand scrubbing only. 
-> 
-> However the ras2_ctx->base and ras2_ctx->size are set to the  
-> ras2_ctx->base = ps_sm->params.actual_address_range[0];
-> ras2_ctx->size = ps_sm->params.actual_address_range[1];
-> in the ras2_update_patrol_scrub_params_cache(), which is called after enabling bg scrub and on-demand scrub. 
-> Thus ras2_ctx->base and ras2_ctx->size may have a 0 or garbage value for bg scrub because address range is not valid for bg scrubbing as perc ACPI specification. I will add checks to retain the cached address range if bg scrub is enabled. 
->>
->>
->>> +
->>> +	ret = ras2_send_pcc_cmd(ras2_ctx, RAS2_PCC_CMD_EXEC);
->>> +	if (ret) {
->>> +		dev_err(ras2_ctx->dev, "failed to read parameters\n");
->>> +		return ret;
->>> +	}
->>> +
->>> +	*running = ps_sm->params.flags &
->>> +RAS2_PATROL_SCRUB_FLAG_SCRUBBER_RUNNING;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int ras2_hw_scrub_write_rate(struct device *dev, u64 rate) {
->>> +	struct ras2_scrub_ctx *ras2_ctx = dev_get_drvdata(dev);
->>> +	bool running;
->>> +	int ret;
->>> +
->>> +	guard(mutex)(&ras2_ctx->lock);
->>> +	ret = ras2_get_patrol_scrub_running(ras2_ctx, &running);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	if (running)
->>> +		return -EBUSY;
->>
->>
->> I suggest we do not check if the patrol scrub is running when we are merely
->> updating cached values. More importantly, if we had previously wrote an invalid
->> value (that is only invalidated by firmware after executing a command), then
->> when we try to write a correct value, this "ras2_get_patrol_scrub_running"
->> check will always fail, therefore preventing us from correcting our error.
-> 
-> In our opinion, write the rate and range etc, though updating the cached values, should be allowed only when the scrub is NOT running to avoid confusion thinking they are actually set in the running scrubber, when read them back in the userspace.
-
-
-It may be that I didn't explain myself properly last time. Let me try
-again.
-
-1) This driver code does not currently check to see if an
-'addr_range_base' is valid or not. Validation occurs in the platform
-firmware, when either GET_PATROL_PARAMETERS or START_PATROL_SCRUBBER is
-executed. If our platform firmware detects an invalid address, it raises
-an error.
-
-2) Therefore, a user can specify an invalid address, and the user will
-not know that the address is invalid until after the cached parameters
-(used to check if the patrol scrubber is running) are written to.
-
-3) Now, every time the user attempts to write a value to either base,
-size, or rate; the preceding call to ras2_get_patrol_scrub_running will
-result in an error, and the attempt to write a different value fails.
-
-To Conclude:
-If a user specifies an invalid address, the only way to correct the
-invalid address is to reboot or module reload. To me, that seems like a
-show-stopper.
-
->>
->>> +
->>> +	if (rate < ras2_ctx->rate_min || rate > ras2_ctx->rate_max)
->>> +		return -EINVAL;
->>> +
->>> +	ras2_ctx->rate = rate;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int ras2_hw_scrub_read_rate(struct device *dev, u64 *rate) {
->>> +	struct ras2_scrub_ctx *ras2_ctx = dev_get_drvdata(dev);
->>> +
->>> +	*rate = ras2_ctx->rate;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int ras2_hw_scrub_read_rate_avail(struct device *dev, u64
->>> +*min, u64 *max) {
->>> +	struct ras2_scrub_ctx *ras2_ctx = dev_get_drvdata(dev);
->>> +
->>> +	*min = ras2_ctx->rate_min;
->>> +	*max = ras2_ctx->rate_max;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int ras2_hw_scrub_read_range(struct device *dev, u64 *base,
->>> +u64 *size) {
->>> +	struct ras2_scrub_ctx *ras2_ctx = dev_get_drvdata(dev);
->>> +
->>> +	*base = ras2_ctx->base;
->>> +	*size = ras2_ctx->size;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int ras2_hw_scrub_write_range(struct device *dev, u64 base,
->>> +u64 size) {
->>> +	struct ras2_scrub_ctx *ras2_ctx = dev_get_drvdata(dev);
->>> +	bool running;
->>> +	int ret;
->>> +
->>> +	guard(mutex)(&ras2_ctx->lock);
->>> +	ret = ras2_get_patrol_scrub_running(ras2_ctx, &running);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	if (running)
->>> +		return -EBUSY;
->>
->> I suggest we do not check if the patrol scrub is running. See previous comment
->> above.
-> Same as above.
-> 
->>
->>> +
->>> +	ras2_ctx->base = base;
->>> +	ras2_ctx->size = size;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int ras2_hw_scrub_set_enabled_bg(struct device *dev, bool
->>> +enable) {
->>> +	struct ras2_scrub_ctx *ras2_ctx = dev_get_drvdata(dev);
->>> +	struct acpi_ras2_ps_shared_mem __iomem *ps_sm = (void *)
->>> +					ras2_ctx->pcc_subspace-
->>> pcc_comm_addr;
->>> +	int ret;
->>> +
->>> +	guard(mutex)(&ras2_ctx->lock);
->>> +	ps_sm->common.set_capabilities[0] =
->> RAS2_SUPPORT_HW_PARTOL_SCRUB;
->>> +	if (enable) {
->>> +		ps_sm->params.requested_address_range[0] = 0;
->>> +		ps_sm->params.requested_address_range[1] = 0;
->>> +		ps_sm->params.scrub_params_in &=
->> ~RAS2_PATROL_SCRUB_RATE_IN_MASK;
->>> +		ps_sm->params.scrub_params_in |=
->> FIELD_PREP(RAS2_PATROL_SCRUB_RATE_IN_MASK,
->>> +							    ras2_ctx->rate);
->>> +		ps_sm->params.patrol_scrub_command =
->> RAS2_START_PATROL_SCRUBBER;
->>> +	} else {
->>> +		ps_sm->params.patrol_scrub_command =
->> RAS2_STOP_PATROL_SCRUBBER;
->>> +	}
->>> +	ps_sm->params.scrub_params_in &=
->> ~RAS2_PATROL_SCRUB_EN_BACKGROUND;
->>> +	ps_sm->params.scrub_params_in |=
->> FIELD_PREP(RAS2_PATROL_SCRUB_EN_BACKGROUND,
->>> +						    enable);
->>> +
->>> +	ret = ras2_send_pcc_cmd(ras2_ctx, RAS2_PCC_CMD_EXEC);
->>> +	if (ret) {
->>> +		dev_err(ras2_ctx->dev, "%s: failed to enable(%d) background
->> scrubbing\n",
->>> +			__func__, enable);
->>> +		return ret;
->>> +	}
->>> +	ras2_ctx->bg = true;
->>> +
->>> +	/* Update the cache to account for rounding of supplied parameters and
->> similar */
->>> +	return ras2_update_patrol_scrub_params_cache(ras2_ctx);
->>> +}
->>> +
->>> +static int ras2_hw_scrub_get_enabled_bg(struct device *dev, bool
->>> +*enabled) {
->>> +	struct ras2_scrub_ctx *ras2_ctx = dev_get_drvdata(dev);
->>> +
->>> +	*enabled = ras2_ctx->bg;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int ras2_hw_scrub_set_enabled_od(struct device *dev, bool
->>> +enable) {
->>> +	struct ras2_scrub_ctx *ras2_ctx = dev_get_drvdata(dev);
->>> +	struct acpi_ras2_ps_shared_mem __iomem *ps_sm = (void *)
->>> +					ras2_ctx->pcc_subspace-
->>> pcc_comm_addr;
->>> +	bool enabled;
->>> +	int ret;
->>> +
->>> +	guard(mutex)(&ras2_ctx->lock);
->>> +	ps_sm->common.set_capabilities[0] =
->> RAS2_SUPPORT_HW_PARTOL_SCRUB;
->>> +	if (enable) {
->>> +		if (!ras2_ctx->size) {
->>> +			dev_warn(ras2_ctx->dev,
->>> +				 "%s: Invalid requested address range,
->> requested_address_range[0]=0x%llx "
->>> +				 "requested_address_range[1]=0x%llx\n",
->> __func__,
->>> +				 ps_sm->params.requested_address_range[0],
->>> +				 ps_sm->params.requested_address_range[1]);
->>> +			return -ERANGE;
->>> +		}
->>> +		ret = ras2_get_patrol_scrub_running(ras2_ctx, &enabled);
->>> +		if (ret)
->>> +			return ret;
->>> +
->>> +		if (enabled)
->>> +			return 0;
->>> +
->>> +		ps_sm->params.scrub_params_in &=
->> ~RAS2_PATROL_SCRUB_RATE_IN_MASK;
->>> +		ps_sm->params.scrub_params_in |=
->> FIELD_PREP(RAS2_PATROL_SCRUB_RATE_IN_MASK,
->>> +							    ras2_ctx->rate);
->>> +		ps_sm->params.requested_address_range[0] = ras2_ctx->base;
->>> +		ps_sm->params.requested_address_range[1] = ras2_ctx->size;
->>
->>
->> We need to clear the RAS2_PATROL_SCRUB_EN_BACKGROUND bit in the input
->> parameters.
->> This is in case "Enable Background" was previously called, and this bit was set.
->>
->> 		ps_sm->params.scrub_params_in &=
->> ~RAS2_PATROL_SCRUB_EN_BACKGROUND;
-> We need to stop background scrub if it is already running before start an on-demand scrubbing. 
-> The RAS2_PATROL_SCRUB_EN_BACKGROUND bit would be cleared with disable  bg scrub
-> with the following code
-> in ras2_hw_scrub_set_enabled_bg() when disable background scrub('enable' is 0 in this case).
-> ps_sm->params.scrub_params_in &= ~RAS2_PATROL_SCRUB_EN_BACKGROUND;
-> ps_sm->params.scrub_params_in |= FIELD_PREP(RAS2_PATROL_SCRUB_EN_BACKGROUND,
-> 						    enable);
-> Hope it make sense?
-
-
-Yes, this makes sense. But, on our platform, we automatically enable
-background when on-demand finishes(or is stopped). Similarly, if we
-enable on-demand then we automatically disable background. So, some sort
-of patrol is always on-going. The user is unable to turn them both off
-at the same time.
-
-Due to our implementation choices, this causes some weirdness with how
-the driver represents enable_background and enable_on_demand
-independently, since our scrubbers are not independent.
-
-I'm going to leave this conversation here for now, because on different
-platforms, maybe having independent control for background and on-demand
-is desired.
-
->>
->>
->>> +		ps_sm->params.patrol_scrub_command =
->> RAS2_START_PATROL_SCRUBBER;
->>> +	} else {
->>> +		ps_sm->params.patrol_scrub_command =
->> RAS2_STOP_PATROL_SCRUBBER;
->>> +	}
->>> +
->>> +	ret = ras2_send_pcc_cmd(ras2_ctx, RAS2_PCC_CMD_EXEC);
->>> +	if (ret) {
->>> +		dev_err(ras2_ctx->dev, "failed to enable(%d) the demand
->> scrubbing\n", enable);
->>> +		return ret;
->>> +	}
->>> +	ras2_ctx->bg = false;
->>> +
->>> +	return ras2_update_patrol_scrub_params_cache(ras2_ctx);
->>> +}
->>
->>
-> Thanks,
-> Shiju
+> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+> index 1936f37e3371..72f9ba3a2fee 100644
+> --- a/arch/x86/include/asm/sev.h
+> +++ b/arch/x86/include/asm/sev.h
+> @@ -119,6 +119,54 @@ struct snp_req_data {
+>  	unsigned int data_npages;
+>  };
+>  
+> +#define MAX_AUTHTAG_LEN		32
+> +
+> +/* See SNP spec SNP_GUEST_REQUEST section for the structure */
+> +enum msg_type {
+> +	SNP_MSG_TYPE_INVALID = 0,
+> +	SNP_MSG_CPUID_REQ,
+> +	SNP_MSG_CPUID_RSP,
+> +	SNP_MSG_KEY_REQ,
+> +	SNP_MSG_KEY_RSP,
+> +	SNP_MSG_REPORT_REQ,
+> +	SNP_MSG_REPORT_RSP,
+> +	SNP_MSG_EXPORT_REQ,
+> +	SNP_MSG_EXPORT_RSP,
+> +	SNP_MSG_IMPORT_REQ,
+> +	SNP_MSG_IMPORT_RSP,
+> +	SNP_MSG_ABSORB_REQ,
+> +	SNP_MSG_ABSORB_RSP,
+> +	SNP_MSG_VMRK_REQ,
+> +	SNP_MSG_VMRK_RSP,
+> +
+> +	SNP_MSG_TYPE_MAX
+> +};
+> +
+> +enum aead_algo {
+> +	SNP_AEAD_INVALID,
+> +	SNP_AEAD_AES_256_GCM,
+> +};
+> +
+> +struct snp_guest_msg_hdr {
+> +	u8 authtag[MAX_AUTHTAG_LEN];
+> +	u64 msg_seqno;
+> +	u8 rsvd1[8];
+> +	u8 algo;
+> +	u8 hdr_version;
+> +	u16 hdr_sz;
+> +	u8 msg_type;
+> +	u8 msg_version;
+> +	u16 msg_sz;
+> +	u32 rsvd2;
+> +	u8 msg_vmpck;
+> +	u8 rsvd3[35];
+> +} __packed;
+> +
+> +struct snp_guest_msg {
+> +	struct snp_guest_msg_hdr hdr;
+> +	u8 payload[4000];
+> +} __packed;
+> +
+>  struct sev_guest_platform_data {
+>  	u64 secrets_gpa;
+>  };
+> diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
+> index 654290a8e1ba..f0ea26f18cbf 100644
+> --- a/drivers/virt/coco/sev-guest/sev-guest.c
+> +++ b/drivers/virt/coco/sev-guest/sev-guest.c
+> @@ -29,8 +29,6 @@
+>  #include <asm/svm.h>
+>  #include <asm/sev.h>
+>  
+> -#include "sev-guest.h"
+> -
+>  #define DEVICE_NAME	"sev-guest"
+>  #define AAD_LEN		48
+>  #define MSG_HDR_VER	1
+> diff --git a/drivers/virt/coco/sev-guest/sev-guest.h b/drivers/virt/coco/sev-guest/sev-guest.h
+> deleted file mode 100644
+> index 21bda26fdb95..000000000000
+> --- a/drivers/virt/coco/sev-guest/sev-guest.h
+> +++ /dev/null
+> @@ -1,63 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> -/*
+> - * Copyright (C) 2021 Advanced Micro Devices, Inc.
+> - *
+> - * Author: Brijesh Singh <brijesh.singh@amd.com>
+> - *
+> - * SEV-SNP API spec is available at https://developer.amd.com/sev
+> - */
+> -
+> -#ifndef __VIRT_SEVGUEST_H__
+> -#define __VIRT_SEVGUEST_H__
+> -
+> -#include <linux/types.h>
+> -
+> -#define MAX_AUTHTAG_LEN		32
+> -
+> -/* See SNP spec SNP_GUEST_REQUEST section for the structure */
+> -enum msg_type {
+> -	SNP_MSG_TYPE_INVALID = 0,
+> -	SNP_MSG_CPUID_REQ,
+> -	SNP_MSG_CPUID_RSP,
+> -	SNP_MSG_KEY_REQ,
+> -	SNP_MSG_KEY_RSP,
+> -	SNP_MSG_REPORT_REQ,
+> -	SNP_MSG_REPORT_RSP,
+> -	SNP_MSG_EXPORT_REQ,
+> -	SNP_MSG_EXPORT_RSP,
+> -	SNP_MSG_IMPORT_REQ,
+> -	SNP_MSG_IMPORT_RSP,
+> -	SNP_MSG_ABSORB_REQ,
+> -	SNP_MSG_ABSORB_RSP,
+> -	SNP_MSG_VMRK_REQ,
+> -	SNP_MSG_VMRK_RSP,
+> -
+> -	SNP_MSG_TYPE_MAX
+> -};
+> -
+> -enum aead_algo {
+> -	SNP_AEAD_INVALID,
+> -	SNP_AEAD_AES_256_GCM,
+> -};
+> -
+> -struct snp_guest_msg_hdr {
+> -	u8 authtag[MAX_AUTHTAG_LEN];
+> -	u64 msg_seqno;
+> -	u8 rsvd1[8];
+> -	u8 algo;
+> -	u8 hdr_version;
+> -	u16 hdr_sz;
+> -	u8 msg_type;
+> -	u8 msg_version;
+> -	u16 msg_sz;
+> -	u32 rsvd2;
+> -	u8 msg_vmpck;
+> -	u8 rsvd3[35];
+> -} __packed;
+> -
+> -struct snp_guest_msg {
+> -	struct snp_guest_msg_hdr hdr;
+> -	u8 payload[4000];
+> -} __packed;
+> -
+> -#endif /* __VIRT_SEVGUEST_H__ */
 
