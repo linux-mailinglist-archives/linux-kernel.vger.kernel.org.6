@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-224446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826E5912281
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA04912282
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4CCC1C23C20
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:35:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A1E1C23B25
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695FE17167F;
-	Fri, 21 Jun 2024 10:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51307172760;
+	Fri, 21 Jun 2024 10:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U10Mn5DP"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WOqjIGx9"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3801876034
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACBF171675
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718966135; cv=none; b=KLMVnJEtCyU+zKi0rmoSJb+iB479cvWnD2wN0poLjGAEjoVJbd4lpJ9bR9Aa0gCNSir861AnIMTQ+DoosU+6ZHDkps1GOwCVL+q1YcvUXqB6l+BxKSUc58bGp/MnVRDG05434jVLVDS017VweL7+Fqw2xrk18b+gBZVDpi35PsU=
+	t=1718966137; cv=none; b=BAPb02QdVv4BHFnro73IkSOO9HccNBJF1jIfzwHNW8AFFBd2GFNoZKiSc7UP/r2vcH3EWdWsNrXPlxNlCEyKSuuOGWyaKbFRoy9wnh8WQLsgeuldMecr/80GuyF7vIeFkouz14jMtyERkz6pUyCgU0xrAiODjJb5Vma3FqVzMeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718966135; c=relaxed/simple;
-	bh=3Lw7KdJjlLxunIjzSI5anXQ+XVW7oO6tvpp6EHXDDcw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=D2+gD6SlHq4fJ24kppS00benOoS1q73/1qT74qylV4vTxaZtxZmPP1hH0qoIZjURdKCTlnhFnu4Uuil4Gz1Q5saG8L4pykzuZQHkOxQU94GCmuZS4i3QmIi8FtaouCdeuDnoSyim+2xexUQcTGI8/Nxj0//9vELxC0wj8ICSK0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U10Mn5DP; arc=none smtp.client-ip=209.85.128.201
+	s=arc-20240116; t=1718966137; c=relaxed/simple;
+	bh=6wWzVlFR1VHADGH+6BePWydBpBp6gryq9IdChcDcKU8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=F0vBG5dTtsG7uEBbcA8r7zTaIQnR1pGR6GzPXxwwtP8JeQVR7iMoJVrYU5k3VXYjpW+zhzMP62ArudCFzsLCjOBZvYvvDCEqGGOtgtl7/4l16gvB9zQkyGvQiTcIMMpFH1EAg8XCaBv7d4+66SROL4V+QLzce0DYHihQHr0JeNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WOqjIGx9; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-627f20cff42so31637877b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 03:35:32 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627f43bec13so34418657b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 03:35:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718966132; x=1719570932; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3eABDz1M5CfNPOmLh6hSg0SPvosrOCJFcrFqSGbIDiw=;
-        b=U10Mn5DP/knA//qUIxdPEjlg+owwParo2KwSXMZKGG9im7+2K/PE9oee8nqGHp/6Hz
-         27yUO5cOLFLcCLu837OgEPv1SSPSWGYAm/Qytw7UmHBgsBg6OSqP70NGseNtBXBBjHzb
-         uT5xqmqGLgOOLVtwlM12YLMJOKaKXdVFY7XLn3mHvEQUgKKI8KskiFoXK0r2VBPNceV3
-         i57yKgVkwuw8AIU6ixsWuGteC+oLRdzQ+8ya7WlbiLMlKZBNzRogTY0GFMnlo1xvtK2/
-         xQGDaHzPq7N5wKDSqPM/R0x6wk07hoguTjP+ekp2KANgGHhD0sAhorTJ3Q53YqEg4gtZ
-         h8Eg==
+        d=google.com; s=20230601; t=1718966135; x=1719570935; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CrOCucYoXI5A0zFoBN/LEOcGTzj1eDJ5JNGNyCICG4w=;
+        b=WOqjIGx9AgPHEbgJiOX2VDwLi0vtz64YFROeDTh3nu3M84ApJKRD8giUmtjIbh2pDD
+         zR94ccUdKpwK+iWxrilp3edZm4XwZtDTDo77Xp0Y7662TfQJimRq5iBVWEjB0egFvNSl
+         VcziKGD/JOzz+LJcT29ZZWhZ98MncJEjTCfx6xH/OKjVTxIpLpH8PcUfy8A/e573xtEk
+         ap974m1E/R85oqToANRP5GGDXxpIKvTM49xRjaCiyATE6idBOS8c7v2EAD3xgLhKehJ0
+         Yp9Rv9IN5yCfprL0q2vr6Xn0FWpz6IPz5NmonykArckO/2Edfp4FgxVfY1LN102EaUkw
+         tCgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718966132; x=1719570932;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3eABDz1M5CfNPOmLh6hSg0SPvosrOCJFcrFqSGbIDiw=;
-        b=Z+080MwojeQL4tWGNKmMLPh03w61J6eVo0eaG2/98GHVZwXm2JOEt2WPVfy2AzwK5h
-         kY6/VGgNr+2GiXO92pyS82EyJOpaj1l4tUgz4pZhtm4r1fqZDUk4sM9ogVJafTKlmrYT
-         LI+5hy3seMDUFt37nAhftSHHxPDjFu+SIikpJD8Ot2XS9/s4ZgnHiTZADCzM9qBRN8XU
-         yqPU8OHvX7kJnHEZbEe70m9i+NGv2xl2GkdtH2pGtJPCHeJNx0MdTE0b5oWVm97i5qTY
-         Ivy9dvay7qUSbrwO3+3DygtSoAzfX9g8lk6b5p7vXo+7HIfCA5pkCWjX9WUKIZzQzECw
-         rMuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXF8HwvZdc9ze8VznhmixwM6gEXIPImt0d434fPcQQmeZXjeHrKTOYFlZJyc69KeZwWsU5lzccsXkE2bQMJ3dE3iiLEl4Jo62G86Okp
-X-Gm-Message-State: AOJu0YyJsa8NY+NEakwpEyXmfw+aQUyfVQ6UCERkOi5SeBhK2emiL9Bt
-	YzLqDwRJyLKEGOip3bl3KamhyGFJ4dSFuNXDsmvaQG9I0vV8NiKTnK6c8tzlMBkXaBaWav+1xyb
-	mBqlz/O42AnHkLw==
-X-Google-Smtp-Source: AGHT+IGgj+LrDRDzSB/jQ/HSB/gzIfKHF378aY4D7NhVMRl0uS5JczfBNVnpd/4RAl+dYYs7Da80IKv0McjFgVE=
+        d=1e100.net; s=20230601; t=1718966135; x=1719570935;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CrOCucYoXI5A0zFoBN/LEOcGTzj1eDJ5JNGNyCICG4w=;
+        b=jvQq1o4orKczcO0fNalMTAaNDoLSXlP1jKXjOrn63i5HDUE+O5sGoh4WWq7pUxENZk
+         Beu7GA3gV0U3vaDWjNE9weedTFnf/ksrx8k8hAHv+5hdlg7PeZWk7KjUhL2gFd87oG5y
+         7RLKNrUOoz4VPBQCMPiHrKOXECUSjhPhfbUxvJcPKAmFWtKq7tu3/tQVIxz4MvZEr0Xd
+         1KRFVbDqlN77qbl2569gbngjj77MBwp7Q9Z3Hz1sKl9psUatq8iXtTfoD2fikTYUfZI6
+         QQyvcQbPkU7TPYy8oufUIKANX2+9gK1/UzOf5/KAAsTbLK2vwBBlCIO41ForN/YBBfsb
+         W2cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDkUTq2Xt0MwxlCt9Bh2Pvwt4L5tNbJ1U9BZf8NBF2BnMvSg6zZFSsp37+dHCAJQchdgEb3Eq1/0TNws8YG7/s/EO08ALA0Y4v8Ump
+X-Gm-Message-State: AOJu0YyePmHAkALEaE29F60xWx0gCBJflihrQ1kTVjKNGYhtGZzcWFnU
+	gCcUplPq8FJJ0qRtzhfoxc4T0M4srJjeYuDwl29O3Fi3/V9o9kiTBFoWaH8wt+PJYSaD4uI/eru
+	qJAq+UA9JHEKB9A==
+X-Google-Smtp-Source: AGHT+IGVPYWO/IU1ZjZdU5tBe8plUiU3EKikmKQ+F6kZ+2U8VVqNPl/NGi/EZ0pSAI0i9VOJqPEAwp8eflEuhWE=
 X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a05:6902:18cd:b0:df7:b717:10c2 with SMTP
- id 3f1490d57ef6-e02be0f145dmr1819814276.2.1718966132063; Fri, 21 Jun 2024
- 03:35:32 -0700 (PDT)
-Date: Fri, 21 Jun 2024 10:35:25 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a05:6902:1003:b0:e02:bd4f:def2 with SMTP
+ id 3f1490d57ef6-e02be20b2ccmr1838087276.11.1718966134957; Fri, 21 Jun 2024
+ 03:35:34 -0700 (PDT)
+Date: Fri, 21 Jun 2024 10:35:26 +0000
+In-Reply-To: <20240621-tracepoint-v3-0-9e44eeea2b85@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAG1XdWYC/23MQQ6CMBCF4auYWVvTKbSoK+9hXLQwwCRKSUsaD
- eHuFlaSuHwv+f4ZIgWmCNfDDIESR/ZDHsXxAHVvh44EN3mDkqqURhoxBVvT6HmYRIGE2l0klRV
- CBmOglt9b7P7Iu+c4+fDZ2gnX928moZDCaI1GVa7V6G6d992TTrV/wdpJ6sei3FmVbWvJ2eaMr tB6Z5dl+QKHNDdx4QAAAA==
+References: <20240621-tracepoint-v3-0-9e44eeea2b85@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4153; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=3Lw7KdJjlLxunIjzSI5anXQ+XVW7oO6tvpp6EHXDDcw=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmdVdvongHF5FFp5wmjddlI2qC3Ap5SiseOB5gM
- Sk4/3H4CxKJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZnVXbwAKCRAEWL7uWMY5
- RpOLEACX9A90/BXzUnKyX5BwP3ZRcJpcLCLaVnC8JiSjYlvMqd35lorsftDj7hPH7jY+ATnpnEi
- 24PuJvxNBGkk0rpkbbaRWfjMd4KA10TymYiCVC9y04ik3UmgD1oFibL5GNDlR8bDzm+3ko60Jqb
- o5NFc8bDq6o61K4jGF3uZ/JEzhyAcF+Rf7MwcXa8ZWsSGrqBZQoROA0crek13qaYB811HUD3ATg
- JJ/RZGbFY09jhTw73hlMZkBOvh1rFmW/kkc0C5zZH2d6GfZlWzvDR49d/mrt/1PxuifDWMA7zCs
- T4gSvHRRAoJfyUPCRM0KTGO+1NN80jKQ78tA8ZDwJxJdwki6zClbWrLdLsPwiqMf74GO8iKUlkC
- 2oFo4MowrkIyEbZ+dyh6/DApUSTMnc73BXuWywAqj4Tqc+1B6MbNeBPRxwqmOhR1t2SakhXtZFk
- EgnDq2NJZEB6J2Y9G+HcWBkuXIfKA/SW0g7AssYNrhN/wvobPoeGRPIEIPYOB7IVpHtToGpXieI
- utzENuqHKDLsOmZOM2bdgOF7TSRc1s0/wyJvSnGshpqOQhSu4QJim7regTWp6dEvzWy4NxnBh6v
- IyOZb+Um0A7f3V2XVDxLdSITSvtpDYbi/lY5capaomYzFWnQPXkyp1WKC/hQLTGnVAZhJJJb0yB SLnjc6FRSMdG0KQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5918; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=6wWzVlFR1VHADGH+6BePWydBpBp6gryq9IdChcDcKU8=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmdVdwWHR38Id2Y1qI7zKbIntmDpdG2XqgVF2X9
+ Pf7bNMKSfaJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZnVXcAAKCRAEWL7uWMY5
+ Rm0kEAC0vvj6AE4i4zy0e5goiDGQ1miDq/5MGdB+jxfbD9hho/GGNUobR2VV0zVUu9wxLRmoA/4
+ NKx7emh8PfAA5wI3i0i3SN29Z3bIEl5/TnoAO8j848tBnzNJDMAxTaSwgEntSuk1eZC2VJTFobd
+ j4P1EGP06EhipWKPROT0ioujoB8oHmo47fC/NLSYdd8s8f3ToWYHGyaMdZbu54kaqwTcUQpWOR7
+ j1m7sS9o4glt/wpz/7lvmCOlcs22IIDYR8VzP8eH0MgbIYWpnkY27pFGfDoms3Jf4D/gzK5q1kW
+ J5R5maMNT1VX9uGbg6z6lR/CbYgMjhElPospfQmamRqUJN3TkfZSGExaswS0syMtfLHKvoC2xBr
+ pEzEcqvcjArWvSapahCk5dTdtopIg9hEEimEsPI3+x1nOsv1AOVzkJL/94964U+4sWTOMmzPxMH
+ 9JLUkoLxl2tTx3uPlZ9VNSFNMIDC98FgIlJOFywZKn0UODwVpL4ZoKwkrPA7kTecKAy5Bz8qn2h
+ bzMpljBeRNhRDLHdEknLlpsyLy0MuLFBXtpMWns5FkGpb2oMeaTaEcrb0Vb0Sewv9uhYSV/sPpr
+ HEvRKk6j17ZcDCq1n/IXwxYeNKxptYFJej0Zw0Xoruoi/oIcuk5XW+0rLdOLP+JvocuA2GBrH/7 zNeFgSDFbaEWQiQ==
 X-Mailer: b4 0.13-dev-26615
-Message-ID: <20240621-tracepoint-v3-0-9e44eeea2b85@google.com>
-Subject: [PATCH v3 0/2] Tracepoints and static branch in Rust
+Message-ID: <20240621-tracepoint-v3-1-9e44eeea2b85@google.com>
+Subject: [PATCH v3 1/2] rust: add static_key_false
 From: Alice Ryhl <aliceryhl@google.com>
 To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
@@ -101,116 +101,199 @@ Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-An important part of a production ready Linux kernel driver is
-tracepoints. So to write production ready Linux kernel drivers in Rust,
-we must be able to call tracepoints from Rust code. This patch series
-adds support for calling tracepoints declared in C from Rust.
+Add just enough support for static key so that we can use it from
+tracepoints. Tracepoints rely on `static_key_false` even though it is
+deprecated, so we add the same functionality to Rust.
 
-To use the tracepoint support, you must:
+It is not possible to use the existing C implementation of
+arch_static_branch because it passes the argument `key` to inline
+assembly as an 'i' parameter, so any attempt to add a C helper for this
+function will fail to compile because the value of `key` must be known
+at compile-time.
 
-1. Declare the tracepoint in a C header file as usual.
-
-2. Add #define CREATE_RUST_TRACE_POINTS next to your
-   #define CREATE_TRACE_POINTS.
-
-2. Make sure that the header file is visible to bindgen.
-
-3. Use the declare_trace! macro in your Rust code to generate Rust
-   functions that call into the tracepoint.
-
-For example, the kernel has a tracepoint called `sched_kthread_stop`. It
-is declared like this:
-
-	TRACE_EVENT(sched_kthread_stop,
-		TP_PROTO(struct task_struct *t),
-		TP_ARGS(t),
-		TP_STRUCT__entry(
-			__array(	char,	comm,	TASK_COMM_LEN	)
-			__field(	pid_t,	pid			)
-		),
-		TP_fast_assign(
-			memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
-			__entry->pid	= t->pid;
-		),
-		TP_printk("comm=%s pid=%d", __entry->comm, __entry->pid)
-	);
-
-To call the above tracepoint from Rust code, you must first ensure that
-the Rust helper for the tracepoint is generated. To do this, you would
-modify kernel/sched/core.c by adding #define CREATE_RUST_TRACE_POINTS.
-
-Next, you would include include/trace/events/sched.h in
-rust/bindings/bindings_helper.h so that the exported C functions are
-visible to Rust, and then you would declare the tracepoint in Rust:
-
-	declare_trace! {
-	    fn sched_kthread_stop(task: *mut task_struct);
-	}
-
-This will define an inline Rust function that checks the static key,
-calling into rust_do_trace_##name if the tracepoint is active. Since
-these tracepoints often take raw pointers as arguments, it may be
-convenient to wrap it in a safe wrapper:
-
-	mod raw {
-	    declare_trace! {
-	        fn sched_kthread_stop(task: *mut task_struct);
-	    }
-	}
-	
-	#[inline]
-	pub fn trace_sched_kthread_stop(task: &Task) {
-	    // SAFETY: The pointer to `task` is valid.
-	    unsafe { raw::sched_kthread_stop(task.as_raw()) }
-	}
-
-A future expansion of the tracepoint support could generate these safe
-versions automatically, but that is left as future work for now.
-
-This is intended for use in the Rust Binder driver, which was originally
-sent as an RFC [1]. The RFC did not include tracepoint support, but you
-can see how it will be used in Rust Binder at [2]. The author has
-verified that the tracepoint support works on Android devices.
-
-This implementation implements support for static keys in Rust so that
-the actual static branch happens in the Rust object file. However, the
-__DO_TRACE body remains in C code. See v1 for an implementation where
-__DO_TRACE is also implemented in Rust.
-
-Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
-Link: https://r.android.com/3119993 [2]
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-Changes in v3:
-- Support for Rust static_key on loongarch64 and riscv64.
-- Avoid failing compilation on architectures that are missing Rust
-  static_key support when the archtectures does not actually use it.
-- Link to v2: https://lore.kernel.org/r/20240610-tracepoint-v2-0-faebad81b355@google.com
+ rust/kernel/lib.rs        |   1 +
+ rust/kernel/static_key.rs | 143 ++++++++++++++++++++++++++++++++++++++++++++++
+ scripts/Makefile.build    |   2 +-
+ 3 files changed, 145 insertions(+), 1 deletion(-)
 
-Changes in v2:
-- Call into C code for __DO_TRACE.
-- Drop static_call patch, as it is no longer needed.
-- Link to v1: https://lore.kernel.org/r/20240606-tracepoint-v1-0-6551627bf51b@google.com
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index fbd91a48ff8b..a0be9544996d 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -38,6 +38,7 @@
+ pub mod prelude;
+ pub mod print;
+ mod static_assert;
++pub mod static_key;
+ #[doc(hidden)]
+ pub mod std_vendor;
+ pub mod str;
+diff --git a/rust/kernel/static_key.rs b/rust/kernel/static_key.rs
+new file mode 100644
+index 000000000000..9c844fe3e3a3
+--- /dev/null
++++ b/rust/kernel/static_key.rs
+@@ -0,0 +1,143 @@
++// SPDX-License-Identifier: GPL-2.0
++
++// Copyright (C) 2024 Google LLC.
++
++//! Logic for static keys.
++
++use crate::bindings::*;
++
++#[doc(hidden)]
++#[macro_export]
++#[cfg(target_arch = "x86_64")]
++macro_rules! _static_key_false {
++    ($key:path, $keytyp:ty, $field:ident) => {'my_label: {
++        core::arch::asm!(
++            r#"
++            1: .byte 0x0f,0x1f,0x44,0x00,0x00
++
++            .pushsection __jump_table,  "aw"
++            .balign 8
++            .long 1b - .
++            .long {0} - .
++            .quad {1} + {2} - .
++            .popsection
++            "#,
++            label {
++                break 'my_label true;
++            },
++            sym $key,
++            const ::core::mem::offset_of!($keytyp, $field),
++        );
++
++        break 'my_label false;
++    }};
++}
++
++#[doc(hidden)]
++#[macro_export]
++#[cfg(target_arch = "aarch64")]
++macro_rules! _static_key_false {
++    ($key:path, $keytyp:ty, $field:ident) => {'my_label: {
++        core::arch::asm!(
++            r#"
++            1: nop
++
++            .pushsection __jump_table,  "aw"
++            .align 3
++            .long 1b - ., {0} - .
++            .quad {1} + {2} - .
++            .popsection
++            "#,
++            label {
++                break 'my_label true;
++            },
++            sym $key,
++            const ::core::mem::offset_of!($keytyp, $field),
++        );
++
++        break 'my_label false;
++    }};
++}
++
++#[doc(hidden)]
++#[macro_export]
++#[cfg(target_arch = "loongarch64")]
++macro_rules! _static_key_false {
++    ($key:path, $keytyp:ty, $field:ident) => {'my_label: {
++        core::arch::asm!(
++            r#"
++            1: nop
++
++            .pushsection __jump_table,  "aw"
++            .align 3
++            .long 1b - ., {0} - .
++            .quad {1} + {2} - .
++            .popsection
++            "#,
++            label {
++                break 'my_label true;
++            },
++            sym $key,
++            const ::core::mem::offset_of!($keytyp, $field),
++        );
++
++        break 'my_label false;
++    }};
++}
++
++#[doc(hidden)]
++#[macro_export]
++#[cfg(target_arch = "riscv64")]
++macro_rules! _static_key_false {
++    ($key:path, $keytyp:ty, $field:ident) => {'my_label: {
++        core::arch::asm!(
++            r#"
++            .align  2
++            .option push
++            .option norelax
++            .option norvc
++            1: nop
++            .option pop
++            .pushsection __jump_table,  "aw"
++            .align 3
++            .long 1b - ., {0} - .
++            .dword {1} + {2} - .
++            .popsection
++            "#,
++            label {
++                break 'my_label true;
++            },
++            sym $key,
++            const ::core::mem::offset_of!($keytyp, $field),
++        );
++
++        break 'my_label false;
++    }};
++}
++
++/// Branch based on a static key.
++///
++/// Takes three arguments:
++///
++/// * `key` - the path to the static variable containing the `static_key`.
++/// * `keytyp` - the type of `key`.
++/// * `field` - the name of the field of `key` that contains the `static_key`.
++#[macro_export]
++macro_rules! static_key_false {
++    // Forward to the real implementation. Separated like this so that we don't have to duplicate
++    // the documentation.
++    ($key:path, $keytyp:ty, $field:ident) => {{
++        // Assert that `$key` has type `$keytyp` and that `$key.$field` has type `static_key`.
++        //
++        // SAFETY: We know that `$key` is a static because otherwise the inline assembly will not
++        // compile. The raw pointers created in this block are in-bounds of `$key`.
++        static _TY_ASSERT: () = unsafe {
++            let key: *const $keytyp = ::core::ptr::addr_of!($key);
++            let _: *const $crate::bindings::static_key = ::core::ptr::addr_of!((*key).$field);
++        };
++
++        $crate::_static_key_false! { $key, $keytyp, $field }
++    }};
++}
++
++pub use static_key_false;
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index efacca63c897..60197c1c063f 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -263,7 +263,7 @@ $(obj)/%.lst: $(obj)/%.c FORCE
+ # Compile Rust sources (.rs)
+ # ---------------------------------------------------------------------------
+ 
+-rust_allowed_features := new_uninit
++rust_allowed_features := asm_const,asm_goto,new_uninit
+ 
+ # `--out-dir` is required to avoid temporaries being created by `rustc` in the
+ # current working directory, which may be not accessible in the out-of-tree
 
----
-Alice Ryhl (2):
-      rust: add static_key_false
-      rust: add tracepoint support
-
- include/linux/tracepoint.h      |  18 ++++-
- include/trace/define_trace.h    |   7 ++
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/lib.rs              |   2 +
- rust/kernel/static_key.rs       | 143 ++++++++++++++++++++++++++++++++++++++++
- rust/kernel/tracepoint.rs       |  47 +++++++++++++
- scripts/Makefile.build          |   2 +-
- 7 files changed, 218 insertions(+), 2 deletions(-)
----
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-change-id: 20240606-tracepoint-31e15b90e471
-
-Best regards,
 -- 
-Alice Ryhl <aliceryhl@google.com>
+2.45.2.741.gdbec12cfda-goog
 
 
