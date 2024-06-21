@@ -1,216 +1,156 @@
-Return-Path: <linux-kernel+bounces-224925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21629128C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:01:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDE39128C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E6E31F273AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:01:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1785D1C260F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDBC5A0FE;
-	Fri, 21 Jun 2024 15:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC315502BD;
+	Fri, 21 Jun 2024 15:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="E5KeRAAV"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fk7gGsY0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A09E25762;
-	Fri, 21 Jun 2024 15:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E49A4CDF9
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718982073; cv=none; b=U4JsmQoS0G3e04WGNfNnEEvGzAXH4j1EU0IZ8CiVIZ71qgJRJXy5bDXFv/vEeqhjnyW258d9sSrEHMkv5XTnO/eNfeKQSEq1FQdJ7S33miH4W0lHpyTlF/wqvRgYKVnvvFa0+jegyhqN/ccB8koOfDvNpaesfXboDMjww0ZVSAo=
+	t=1718982117; cv=none; b=CLvh7bWPw9E3BA4Bbgjicw+NN8tK8ON2QjEZp1fm7oiIFnH0PB3oj4jDuXhF2fFDh835CRIqcDYhgE0ITnfeZTywAQRmBeyYwWjRlowdycY4M1tvRZkja4ptp1MuLFAE+Knjs80y7hgnU6SaQz35OB5WJ9Y4GEpWwZrqYhStTaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718982073; c=relaxed/simple;
-	bh=b+spiLBETXWAHz7iQ9Q/ImLDBrx7PrrMEhAnvpM2Bq8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=naJpVDYQdYz5O9mOjFqR35spyHbTT2iFM+zyfh5oL46PCWlk5Ufusu8IYDt+IwBFx+w03kTOK0GWtBhb7SbzH8s4ACk8ff1Q04U6GVvyjhg7h+JiJ7PdMWF3lSNrohJdQJvkG6buHeVemC7RqwbAtFO7fSfq7KYRCxy68xlLWdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=E5KeRAAV; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4491A240004;
-	Fri, 21 Jun 2024 15:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718982069;
+	s=arc-20240116; t=1718982117; c=relaxed/simple;
+	bh=U5FbGj9341y9I5di5l7P227GVvKlgS0dA3G7vCN+yY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yu5b94nhonwkyEIv8xwV2P56wljmVdSsUJLJqVskfPYCreQ67UQFFP7i0zypq5OfObSLBhebrRldvkydyPg2JHajWxIXWMCMJl5Wq4ir0DrwtEXkrkg7hNB17Ho1X2qZeNZigXIUHqdk3d1gwPVOtdQqyKt+AC2SPhgQjnmwA6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fk7gGsY0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718982115;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=swFigz1dJFA6nW/teg50EkKWKn06yrLOy63UV2RCdiQ=;
-	b=E5KeRAAVAvMZi7XTsmPjBCbYPFKE5Z4nadt8yBMhwgDQ8/jwMOmX5vha0VOhTYvZLl46u4
-	HrNmjhOIGRD4+K+KN3aPPPg55+kWz6recZon4G/5t5AA7K0aaWv10QzXPahCpbAXXQ7/Mz
-	H9O5yEqbwIFhOSHaGfiPkZ/Umt0tDQh/XnriGLYU/d2UuOmU3jfHWMw76q4yxMR8o6HC4l
-	MHCivm6SF2AxcHrxnqyov3h18C1Ra3Qceno/HducbT3EPmIfuuVXp49g5Xf006RteWDjsS
-	hDUChpeu25TOEIge+qdzawX3/pvhJa0UYssSVBnPuYBi9fOW7BoDlxzfqmX8Lw==
-From: Richard Genoud <richard.genoud@bootlin.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Suman Anna <s-anna@ti.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Udit Kumar <u-kumar1@ti.com>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Hari Nagalla <hnagalla@ti.com>,
-	=?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Richard Genoud <richard.genoud@bootlin.com>
-Subject: [PATCH 4/4] remoteproc: k3-r5: support for graceful stop of remote cores
-Date: Fri, 21 Jun 2024 17:00:58 +0200
-Message-ID: <20240621150058.319524-5-richard.genoud@bootlin.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240621150058.319524-1-richard.genoud@bootlin.com>
-References: <20240621150058.319524-1-richard.genoud@bootlin.com>
+	bh=REVMzCf9KPJKxppAPyYl2jD1cpXtxvVGJIDHyR5KKbs=;
+	b=fk7gGsY0cgBTPHPqq+7cxogb54B8scrd0CUMHH+O3xfT768A5B7lO37qxu7zv6QJ2KSpbQ
+	Mrz+qQkSIVY43r4adAOMQzP98YKtowW2BjnVZlf0Yh37nDhM1Gwxw7Rg33DOdC23pvGnVy
+	ll+Z0IXU37jfidnNDd1+JPXfYacG4v4=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-501-2Sw25Eu5Np22FRo7BfC6wQ-1; Fri, 21 Jun 2024 11:01:54 -0400
+X-MC-Unique: 2Sw25Eu5Np22FRo7BfC6wQ-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6b4fc5c2ee5so3658236d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:01:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718982113; x=1719586913;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=REVMzCf9KPJKxppAPyYl2jD1cpXtxvVGJIDHyR5KKbs=;
+        b=tV7SBmQ4VsJGsAj5mO4IvXEsaDOjNP5rsFMb8ulE1Sn3RCNhmG+tiRlu281Wx847zd
+         RVhaYHVT/T590pnZ8ZwW5wfAPdvPilBo2pmemJeri6Hi+o7aqbFa+drZTp1fs68AoMw0
+         OpfmMoGUrPNzCuEguvhkTIfgYx2t2GB4eMolY1l3LupHY48wLEXJuXHZSt2uIj5A0LRb
+         3S8+dudZrHUcYA4edFAfSOYOh73ebptQJAmAeCi4ZdIhyhFEQF3PXY26G47Xq2EVuNCo
+         cSTt3GmsfmKbQ8BisGFjSdoWAY0zvPnpdNHWbmg6dpL+QKZeVO0NeCQOYOJ1EK7lbEaQ
+         QSjw==
+X-Gm-Message-State: AOJu0YwZpX1imWIlilcWBoS5vLbGUFuU4l2WOMYre7gVvyjEYieMC2JH
+	7P+SWQgnj4mmnZSlG6wVpkSvwXgUgiiaVsmJuzs33zUwqKi988rRpu/WiGCAzPexvLvwVaBuPCW
+	M6DsYexJXvSHL9HEiR3m+qx5cx/OVIbwEJkzW4TOjP/dIa2UWuP0meS43BidlNVt5HqU3dX1Yce
+	Sfmh5q/ELKzn189IuvNkVSBh+9VEBsUuWhBljq7dgaEVI=
+X-Received: by 2002:a05:622a:2cc:b0:441:581b:c111 with SMTP id d75a77b69052e-444a7a153ffmr95993721cf.1.1718982112962;
+        Fri, 21 Jun 2024 08:01:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGy/M4tB0NsmwFw2Vc1r8qkgVlJcFixEuuYKG9UASFE/pxP8aIpWiptz9iA6cfjIHrhSLs9OQ==
+X-Received: by 2002:a05:622a:2cc:b0:441:581b:c111 with SMTP id d75a77b69052e-444a7a153ffmr95992901cf.1.1718982112163;
+        Fri, 21 Jun 2024 08:01:52 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444c2c3d946sm11823491cf.74.2024.06.21.08.01.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 08:01:51 -0700 (PDT)
+Date: Fri, 21 Jun 2024 11:01:47 -0400
+From: Peter Xu <peterx@redhat.com>
+To: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+	Dave Jiang <dave.jiang@intel.com>,
+	"Kirill A . Shutemov" <kirill@shutemov.name>,
+	Ingo Molnar <mingo@redhat.com>, Oscar Salvador <osalvador@suse.de>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linuxppc-dev@lists.ozlabs.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Rik van Riel <riel@surriel.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Huang Ying <ying.huang@intel.com>
+Subject: Re: [PATCH 4/7] mm/powerpc: Add missing pud helpers
+Message-ID: <ZnWV2-YBFKXjLA9v@x1n>
+References: <20240621142504.1940209-1-peterx@redhat.com>
+ <20240621142504.1940209-5-peterx@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: richard.genoud@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240621142504.1940209-5-peterx@redhat.com>
 
-Introduce software IPC handshake between the K3-R5 remote proc driver
-and the R5 MCU to gracefully stop/reset the remote core.
+On Fri, Jun 21, 2024 at 10:25:01AM -0400, Peter Xu wrote:
+> +pmd_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
+> +		      pud_t *pudp)
+> +{
+> +	unsigned long old_pud;
+> +
+> +	VM_WARN_ON_ONCE(!pmd_present(*pmdp));
+> +	old_pmd = pmd_hugepage_update(vma->vm_mm, address, pmdp, _PAGE_PRESENT, _PAGE_INVALID);
+> +	flush_pmd_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
+> +	return __pmd(old_pmd);
+> +}
 
-Upon a stop request, K3-R5 remote proc driver sends a RP_MBOX_SHUTDOWN
-mailbox message to the remote R5 core.
-The remote core is expected to:
-- relinquish all the resources acquired through Device Manager (DM)
-- disable its interrupts
-- send back a mailbox acknowledgment RP_MBOX_SHUDOWN_ACK
-- enter WFI state.
+I'll need an amend at least here, and my test harness won't catch it even
+if it's a mistake as silly as it could be..  My apologies for such noise.
+Below is what I plan to squash into this patch when I repost v2.
 
-Meanwhile, the K3-R5 remote proc driver does:
-- wait for the RP_MBOX_SHUTDOWN_ACK from the remote core
-- wait for the remote proc to enter WFI state
-- reset the remote core through device manager
+===8<===
+diff --git a/arch/powerpc/mm/book3s64/pgtable.c b/arch/powerpc/mm/book3s64/pgtable.c
+index c6ae969020e0..ea2c83634434 100644
+--- a/arch/powerpc/mm/book3s64/pgtable.c
++++ b/arch/powerpc/mm/book3s64/pgtable.c
+@@ -176,15 +176,15 @@ pmd_t pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
+        return __pmd(old_pmd);
+ }
+ 
+-pmd_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
++pud_t pudp_invalidate(struct vm_area_struct *vma, unsigned long address,
+                      pud_t *pudp)
+ {
+        unsigned long old_pud;
+ 
+-       VM_WARN_ON_ONCE(!pmd_present(*pmdp));
+-       old_pmd = pmd_hugepage_update(vma->vm_mm, address, pmdp, _PAGE_PRESENT, _PAGE_INVALID);
+-       flush_pmd_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
+-       return __pmd(old_pmd);
++       VM_WARN_ON_ONCE(!pud_present(*pudp));
++       old_pud = pud_hugepage_update(vma->vm_mm, address, pudp, _PAGE_PRESENT, _PAGE_INVALID);
++       flush_pud_tlb_range(vma, address, address + HPAGE_PUD_SIZE);
++       return __pud(old_pud);
+ }
+ 
+ pmd_t pmdp_huge_get_and_clear_full(struct vm_area_struct *vma,
+===8<===
 
-Based on work from: Hari Nagalla <hnagalla@ti.com>
+-- 
+Peter Xu
 
-Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
----
- drivers/remoteproc/omap_remoteproc.h     |  9 +++++-
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 40 ++++++++++++++++++++++++
- 2 files changed, 48 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-index 828e13256c02..c008f11fa2a4 100644
---- a/drivers/remoteproc/omap_remoteproc.h
-+++ b/drivers/remoteproc/omap_remoteproc.h
-@@ -42,6 +42,11 @@
-  * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
-  * on a suspend request
-  *
-+ * @RP_MBOX_SHUTDOWN: shutdown request for the remote processor
-+ *
-+ * @RP_MBOX_SHUTDOWN_ACK: successful response from remote processor for a
-+ * shutdown request. The remote processor should be in WFI state short after.
-+ *
-  * Introduce new message definitions if any here.
-  *
-  * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
-@@ -59,7 +64,9 @@ enum omap_rp_mbox_messages {
- 	RP_MBOX_SUSPEND_SYSTEM	= 0xFFFFFF11,
- 	RP_MBOX_SUSPEND_ACK	= 0xFFFFFF12,
- 	RP_MBOX_SUSPEND_CANCEL	= 0xFFFFFF13,
--	RP_MBOX_END_MSG		= 0xFFFFFF14,
-+	RP_MBOX_SHUTDOWN	= 0xFFFFFF14,
-+	RP_MBOX_SHUTDOWN_ACK	= 0xFFFFFF15,
-+	RP_MBOX_END_MSG		= 0xFFFFFF16,
- };
- 
- #endif /* _OMAP_RPMSG_H */
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index a2ead87952c7..918a15e1dd9a 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -21,6 +21,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/remoteproc.h>
- #include <linux/suspend.h>
-+#include <linux/iopoll.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
- 
-@@ -172,8 +173,23 @@ struct k3_r5_rproc {
- 	struct k3_r5_core *core;
- 	struct k3_r5_mem *rmem;
- 	int num_rmems;
-+	struct completion shutdown_complete;
- };
- 
-+/*
-+ * This will return true if the remote core is in Wait For Interrupt state.
-+ */
-+static bool k3_r5_is_core_in_wfi(struct k3_r5_core *core)
-+{
-+	int ret;
-+	u64 boot_vec;
-+	u32 cfg, ctrl, stat;
-+
-+	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, &stat);
-+
-+	return !ret ? !!(stat & PROC_BOOT_STATUS_FLAG_R5_WFI) : false;
-+}
-+
- /**
-  * k3_r5_rproc_mbox_callback() - inbound mailbox message handler
-  * @client: mailbox client pointer used for requesting the mailbox channel
-@@ -209,6 +225,10 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
- 	case RP_MBOX_ECHO_REPLY:
- 		dev_info(dev, "received echo reply from %s\n", name);
- 		break;
-+	case RP_MBOX_SHUTDOWN_ACK:
-+		dev_dbg(dev, "received shutdown_ack from %s\n", name);
-+		complete(&kproc->shutdown_complete);
-+		break;
- 	default:
- 		/* silently handle all other valid messages */
- 		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
-@@ -634,6 +654,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
- 	struct k3_r5_cluster *cluster = kproc->cluster;
- 	struct device *dev = kproc->dev;
- 	struct k3_r5_core *core1, *core = kproc->core;
-+	bool wfi;
- 	int ret;
- 
- 
-@@ -650,6 +671,24 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
- 		}
- 	}
- 
-+	/* Send SHUTDOWN message to remote proc */
-+	reinit_completion(&kproc->shutdown_complete);
-+	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_SHUTDOWN);
-+	if (ret < 0) {
-+		dev_err(dev, "Sending SHUTDOWN message failed: %d. Halting core anyway.\n", ret);
-+	} else {
-+		ret = wait_for_completion_timeout(&kproc->shutdown_complete,
-+						  msecs_to_jiffies(1000));
-+		if (ret == 0) {
-+			dev_err(dev, "Timeout waiting SHUTDOWN_ACK message. Halting core anyway.\n");
-+		} else {
-+			ret = readx_poll_timeout(k3_r5_is_core_in_wfi, core,
-+						 wfi, wfi, 200, 2000);
-+			if (ret)
-+				dev_err(dev, "Timeout waiting for remote proc to be in WFI state. Halting core anyway.\n");
-+		}
-+	}
-+
- 	/* halt all applicable cores */
- 	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
- 		list_for_each_entry(core, &cluster->cores, elem) {
-@@ -1410,6 +1449,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 			goto err_config;
- 		}
- 
-+		init_completion(&kproc->shutdown_complete);
- init_rmem:
- 		k3_r5_adjust_tcm_sizes(kproc);
- 
 
