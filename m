@@ -1,78 +1,256 @@
-Return-Path: <linux-kernel+bounces-225339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29D26912F48
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:17:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F64A912F4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9AE4282584
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:17:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526B2288047
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE1A17BB1F;
-	Fri, 21 Jun 2024 21:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB4C17C214;
+	Fri, 21 Jun 2024 21:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3p6wp2O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="caapiA1m"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8991607AF
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC5916D310
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719004630; cv=none; b=aG/iYc5FbSQoK0N127fSj2XK0cn4d8lvZDMOdE4bFq9LXTK1QLz1fNA52ucEC+1+W27YYvODRa+lwDdN+eLlLahLg55ZFtXxd3teBnyFlFKkdriRYZCMBNyiXRU8RcNKDoAP5dWU/Faj6QKv5ftOXAo9L0dE9Rh2uji/J84EeLg=
+	t=1719004677; cv=none; b=A2n5C02l+pyv51e6S9Bnd1tiPdb/9fa5xf1XGSqRTUslBj6schuA846JPsTX/y+nkrNOJPHskWejqVz4DXTqihSnWDKhbCoj8vBgBvFX4Avkrsp85PQGLREoXgv8D+FzgCr96n69VW4ec9N6ngjk5LVS0MYasLsq6WK3u/Wnsh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719004630; c=relaxed/simple;
-	bh=BD1C7XWZWXhO1/414bvlPN5f2q8+iAA4aSQQAnc/OfA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jilo+pMSuuohb3vGdLrc6+aMT6l/XqMSItP0/eAVPB3FwsEvtfrQsww87IcX8A+KHjRYF99fJ4bRkIZu03kMEuyF4Nxxpe/n8dg4qU+GuEj5A5L32P8vVv0DnG0ZIppXnw9bqaiajKfz0Cgc31YRhomrvBw/BpGMcZ3EqcVsaSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3p6wp2O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D3C0CC2BBFC;
-	Fri, 21 Jun 2024 21:17:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719004629;
-	bh=BD1C7XWZWXhO1/414bvlPN5f2q8+iAA4aSQQAnc/OfA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=O3p6wp2OCP5li1gyDjIeQMJxcAnKy9bkapBYLck6JpfEo07ClOI4U+TrCdK6PZYdG
-	 obdSHg3/Szz6qg8mqgq/uBgS/lPySf+C6Ga12w4T5AfmWbfrlzG9ORvvgBie24Otkh
-	 rSoNLmwCGXoFyYH0vW/b2idKPDyLqsy0UE64U93BFEyO2rtiNoLEqoNGV+h6dUr8fk
-	 0h391dIWTMAH9KFeUJlvABAGYzzLjOJc/Ty096bhYaOGllIuOdWoS6ARN8TWEpMXzE
-	 y+8hlhRiu4Dw3eRH5zfYbroYZW/L3M0EPxLoSqTN/wjZ/MViR3/cf3RhH+/6E+MA+E
-	 PdHMwFlNjCt5w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C8D71C4167D;
-	Fri, 21 Jun 2024 21:17:09 +0000 (UTC)
-Subject: Re: [git pull] drm fixes for 6.10-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9tyhLY-=pyy=RU0kyTQmV=_cFujRQ0Z=KY+o8V6KxcA7Ew@mail.gmail.com>
-References: <CAPM=9tyhLY-=pyy=RU0kyTQmV=_cFujRQ0Z=KY+o8V6KxcA7Ew@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAPM=9tyhLY-=pyy=RU0kyTQmV=_cFujRQ0Z=KY+o8V6KxcA7Ew@mail.gmail.com>
-X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-06-22
-X-PR-Tracked-Commit-Id: d1913b86f7351238106068785e9adc63d76d8790
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d6c941570680d4d11e5c7480c3bcbeff8d3860f9
-Message-Id: <171900462981.11487.11294674151371155855.pr-tracker-bot@kernel.org>
-Date: Fri, 21 Jun 2024 21:17:09 +0000
-To: Dave Airlie <airlied@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1719004677; c=relaxed/simple;
+	bh=ejKkPFJaB3Ka3fsapPQVUzX9N5WhhAbWiXLA/TvXHh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A2s2NGahQYsjNQTGV2GBKovG5Qw6Kkd/HEOjYO5hv/T9WWyiCpw7MHLfhqhV8bJauEXXTjzIvtGYky6+cKlan1/QBiO0EFESAvFLY0lpiangDuW0m0GFgYo9dkgRhRNnrIcO9EaECNZ9mXAXqssxT1tWxzJpnnFC4GCDrhU9EA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=caapiA1m; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so25051061fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:17:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719004673; x=1719609473; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M+XDYN6E55Q8wiev+4hnFYw5SQkDqC6ydMWbbsnc6Uw=;
+        b=caapiA1mTW1PO+/g1XlZx1enhgS5J4ZyAptW2qQGzYPHw7rW2S5DF66MWkdQAzuYRP
+         TCoa24H+lde/cHkMw9mVn1G+HKrCUDRZRR23lc3G/atGLdeBKEq9ekqEQ7Tw7vUq8hxA
+         e9fFrCIrwR8MCzxjkh5LWB+tDIW+uBLTDeI/EbjdRbJ3oWau8S9esuv5D2/5VcPEzsBg
+         mujjerUJLa8uut7cHPBlq6CE/HZTFiDvsV79qPx5d79rQ55WHUVK9GykFJ617WlgAfa7
+         lyR9N2GEXEAo+9k7jBFJdKyW7hivKYYbsg3b3enXez9wxFrPQZKquBqc4UqUO/n6aOZ5
+         K8nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719004673; x=1719609473;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M+XDYN6E55Q8wiev+4hnFYw5SQkDqC6ydMWbbsnc6Uw=;
+        b=CDwzBggYokpdqUlezOkLE1wNQM9i3mlIWe0q0FMDIpZ3kjcBdvE3WtNryAO7tDiy7b
+         LMi50W9SaghDN5RLkiai4yNaGslnWQfW8mCI9CZlq/b1OZ2V0ZUCZT1xjpXL+Kyivgq4
+         9ZcP1dNnlUxP7nJtx47aT/hjjanKUwgT1gRLsPlaXxdRCwQc+WMkW1EwoDAMTPA1BzBw
+         aae9X8yZELv7urdijc7xX0Kii1mvCYQToFXymTZsonrPusaPm9dRr4TMUK2Mq2muxEJB
+         0j0MMkCtrD3Te6DvgI45CsRPLR5UCm9fY2+PlVE6dSI9VuI5Qsr7ZwGGmbBQHxCUpbC2
+         9sRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4V6QzBtbcRJ6jz/c+dOnHBzhoW8QpVb6dbEu+Afwutt8gGxV/HdSXkZ+rr+ix5Keuf/bSNCziCFHDAECVmuhzUcKgN88RQM0MT+3E
+X-Gm-Message-State: AOJu0YwIDkGiJFfsjsKKYWZXDqGp6+w415uuAZf5+G6eEZEUL18ZQKc9
+	0SnqKhG7O0Fz8vYU8XJdFm7SGarTxuSCxwGhSzjsXLgBMRTDCajql3MGQ5iVIyg=
+X-Google-Smtp-Source: AGHT+IG5ONtAHMiAMkjrKYk/XJYpMtsQK2fNUz21XwNvYiifq/ErR6C5eSVfLnXD9V5NnA9w+MvPuw==
+X-Received: by 2002:a2e:980b:0:b0:2ec:5365:34db with SMTP id 38308e7fff4ca-2ec536537eemr6903361fa.0.1719004672703;
+        Fri, 21 Jun 2024 14:17:52 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec511dac51sm1707251fa.74.2024.06.21.14.17.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 14:17:52 -0700 (PDT)
+Date: Sat, 22 Jun 2024 00:17:50 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: sboyd@kernel.org, andersson@kernel.org, bjorn.andersson@linaro.org, 
+	david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, 
+	robh@kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: Re: [PATCH v9 2/8] remoteproc: qcom: Add secure PIL support
+Message-ID: <mew7kifravbescnenvstmebfxkbpwdnarmagh6v4a2hqnbrxc6@cepyqz4vgum6>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-3-quic_gokulsri@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621114659.2958170-3-quic_gokulsri@quicinc.com>
 
-The pull request you sent on Sat, 22 Jun 2024 06:41:13 +1000:
+On Fri, Jun 21, 2024 at 05:16:53PM GMT, Gokul Sriram Palanisamy wrote:
+> IPQ8074 uses secure PIL. Hence, adding the support for the same.
 
-> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-06-22
+See Documentation/process/submitting-patches.rst
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d6c941570680d4d11e5c7480c3bcbeff8d3860f9
+> 
+> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> ---
+>  drivers/remoteproc/qcom_q6v5_wcss.c | 43 +++++++++++++++++++++++++++--
+>  1 file changed, 40 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+> index 366b19cbd994..e45e79d80238 100644
+> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/reset.h>
+>  #include <linux/soc/qcom/mdt_loader.h>
+> +#include <linux/firmware/qcom/qcom_scm.h>
+>  #include "qcom_common.h"
+>  #include "qcom_pil_info.h"
+>  #include "qcom_q6v5.h"
+> @@ -86,6 +87,9 @@
+>  #define TCSR_WCSS_CLK_ENABLE	0x14
+>  
+>  #define MAX_HALT_REG		3
+> +
+> +#define WCNSS_PAS_ID		6
+> +
+>  enum {
+>  	WCSS_IPQ8074,
+>  	WCSS_QCS404,
+> @@ -134,6 +138,7 @@ struct q6v5_wcss {
+>  	unsigned int crash_reason_smem;
+>  	u32 version;
+>  	bool requires_force_stop;
+> +	bool need_mem_protection;
 
-Thank you!
+needs
+
+>  
+>  	struct qcom_rproc_glink glink_subdev;
+>  	struct qcom_rproc_ssr ssr_subdev;
+> @@ -152,6 +157,7 @@ struct wcss_data {
+>  	int ssctl_id;
+>  	const struct rproc_ops *ops;
+>  	bool requires_force_stop;
+> +	bool need_mem_protection;
+
+needs
+
+>  };
+>  
+>  static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+> @@ -251,6 +257,15 @@ static int q6v5_wcss_start(struct rproc *rproc)
+>  
+>  	qcom_q6v5_prepare(&wcss->q6v5);
+>  
+> +	if (wcss->need_mem_protection) {
+> +		ret = qcom_scm_pas_auth_and_reset(WCNSS_PAS_ID);
+> +		if (ret) {
+> +			dev_err(wcss->dev, "wcss_reset failed\n");
+> +			return ret;
+> +		}
+> +		goto wait_for_reset;
+> +	}
+
+Use if/else instead of a goto.
+
+> +
+>  	/* Release Q6 and WCSS reset */
+>  	ret = reset_control_deassert(wcss->wcss_reset);
+>  	if (ret) {
+> @@ -285,6 +300,7 @@ static int q6v5_wcss_start(struct rproc *rproc)
+>  	if (ret)
+>  		goto wcss_q6_reset;
+>  
+> +wait_for_reset:
+
+This is more like wait_for_start
+
+>  	ret = qcom_q6v5_wait_for_start(&wcss->q6v5, 5 * HZ);
+>  	if (ret == -ETIMEDOUT)
+>  		dev_err(wcss->dev, "start timed out\n");
+> @@ -718,6 +734,15 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+>  	struct q6v5_wcss *wcss = rproc->priv;
+>  	int ret;
+>  
+> +	if (wcss->need_mem_protection) {
+> +		ret = qcom_scm_pas_shutdown(WCNSS_PAS_ID);
+> +		if (ret) {
+> +			dev_err(wcss->dev, "not able to shutdown\n");
+> +			return ret;
+> +		}
+> +		goto pas_done;
+> +	}
+
+if/else. Or abstract this to functions.
+
+> +
+>  	/* WCSS powerdown */
+>  	if (wcss->requires_force_stop) {
+>  		ret = qcom_q6v5_request_stop(&wcss->q6v5, NULL);
+> @@ -742,6 +767,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+>  			return ret;
+>  	}
+>  
+> +pas_done:
+>  	clk_disable_unprepare(wcss->prng_clk);
+>  	qcom_q6v5_unprepare(&wcss->q6v5);
+>  
+> @@ -765,9 +791,15 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
+>  	struct q6v5_wcss *wcss = rproc->priv;
+>  	int ret;
+>  
+> -	ret = qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
+> -				    0, wcss->mem_region, wcss->mem_phys,
+> -				    wcss->mem_size, &wcss->mem_reloc);
+> +	if (wcss->need_mem_protection)
+> +		ret = qcom_mdt_load(wcss->dev, fw, rproc->firmware,
+> +				    WCNSS_PAS_ID, wcss->mem_region,
+> +				    wcss->mem_phys, wcss->mem_size,
+> +				    &wcss->mem_reloc);
+> +	else
+> +		ret = qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
+> +					    0, wcss->mem_region, wcss->mem_phys,
+> +					    wcss->mem_size, &wcss->mem_reloc);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1035,6 +1067,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+>  	if (!desc)
+>  		return -EINVAL;
+>  
+> +	if (desc->need_mem_protection && !qcom_scm_is_available())
+> +		return -EPROBE_DEFER;
+> +
+>  	rproc = devm_rproc_alloc(&pdev->dev, pdev->name, desc->ops,
+>  				 desc->firmware_name, sizeof(*wcss));
+>  	if (!rproc) {
+> @@ -1048,6 +1083,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+>  
+>  	wcss->version = desc->version;
+>  	wcss->requires_force_stop = desc->requires_force_stop;
+> +	wcss->need_mem_protection = desc->need_mem_protection;
+>  
+>  	ret = q6v5_wcss_init_mmio(wcss, pdev);
+>  	if (ret)
+> @@ -1111,6 +1147,7 @@ static const struct wcss_data wcss_ipq8074_res_init = {
+>  	.wcss_q6_reset_required = true,
+>  	.ops = &q6v5_wcss_ipq8074_ops,
+>  	.requires_force_stop = true,
+> +	.need_mem_protection = true,
+>  };
+>  
+>  static const struct wcss_data wcss_qcs404_res_init = {
+> -- 
+> 2.34.1
+> 
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+With best wishes
+Dmitry
 
