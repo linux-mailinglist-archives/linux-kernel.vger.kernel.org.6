@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-224573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA6F91242D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:44:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFCD912433
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 126CEB25CEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:44:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A065B26305
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78384174EE5;
-	Fri, 21 Jun 2024 11:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C278D1802D2;
+	Fri, 21 Jun 2024 11:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cHS4AIQu"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aYXtoMYb"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D8817DE2F;
-	Fri, 21 Jun 2024 11:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A5C17F362;
+	Fri, 21 Jun 2024 11:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969878; cv=none; b=WHGELz9KoPjK/eX4qFX2FuZfSxqCGuB0jfnITXjAuflfMcnGw8oQZVB5QcjDVaiZ93UrNPBUgWXwnLK+vSpNw4K2WbWP7wnp8hJMMZxryX1BzV+eIsR8NZyBaOJRn5wNnXHrCHQzoF3isTkbNkVfDfsycT27NXzaXoZpC9JR0HI=
+	t=1718969880; cv=none; b=L14/0PwwCZFVaaTtn5sjIhoABKqFkju9NwY4zcSOFMa0nO91qsEIkqYVvFZWLWcMQGGE5IaWzucw0gct4GWGmLSN/fKfDqYckpyssGPjUIAOu6IoJj6m37+dqcPeWZ9cI+jC0Mq+Ttf3aoRmqnOCiMmwn1HVZoYflQrUYaQgBck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969878; c=relaxed/simple;
-	bh=Ax+aP14KrdwayShhWVsq8yvQQjchcqq+0ZFHyoGmMBo=;
+	s=arc-20240116; t=1718969880; c=relaxed/simple;
+	bh=qQwqpPT9VAM0YJy7YDkIe/L5Dfh31FPxRP+Tk6MOGQs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TXfcXANPXTD6KmNJvSn2xWdbafhPofE/Y+M2jnwtW/Dw/SVX6UtTe8Vjjjl5bi7tS/IkMB7GPJsLflqPApmxAvJaKp0G3HqWnL/6u3Rxg9bE4h17AkgegXvt4GLGO04joELnNfaQZ+fp/ThBTM8W9MzWGYnsnxPnOgpRecuJuEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cHS4AIQu; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=Z3E5yXcnKWMbYAjC5P44KB7lHYD6Fe1m7xE3Qi+8O9MP1G//CdHk2bh+D7L3QqL0FSkPuexwKjyIK1QiUbIxe6LFtpJzFz8VHUsitglBde+dt6U0EZUlRW8syVY2mlEVLX7Duc8t0/d7Gi+TkSLxk7lal1KQ/A7hiWolOGK4l9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aYXtoMYb; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LBSug8032437;
-	Fri, 21 Jun 2024 11:37:35 GMT
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LAoUL6014184;
+	Fri, 21 Jun 2024 11:37:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=X1oGap99TVdqB
-	vzHLWhv+TXBuFqzUMdrRG4OBua4bwY=; b=cHS4AIQufHyIdJNvC/ckC7xvUQXq2
-	pmE/5t7z1eYxkVNhUNRsW3IQQLLwAVx+wMygpvoScm6hW/ZSvY18/EYjTpqhkSvB
-	++qp2VmG8ljf1linqVsRk/m7cZUs6kgChtkZidBDJPNLsLa5JeUXOrdg1VQ0gFEP
-	cc6pqrhpJ3NY36cyqS58FR1viJ78PumnsWfk1CWhXMShNyZqNmWfErq8/pSHh5LF
-	sBtF5Ptinmd3Pc6F0gyKH+Y0EvCEwouaeEa3k9t7lJcr66IK9NL1EyjtAh7CoULl
-	nTN6Kv8L9kUC4XSeefoaZ6aDHCLYcnOqpbiq2jkwNln6urM2kZv2zm3Tw==
+	:mime-version:content-transfer-encoding; s=pp1; bh=twgTpfHCjImRn
+	KDbwT1fFnn3UXy6li/j6Qe1IMbE5zU=; b=aYXtoMYbe4ekJIpkZtshNGmrQ6X8P
+	UbBp/BljzbxZCdVdMQt9qhCP+Ypn/RoUcw1lQV8kFAiKPexaQgb9A/CZDJuoq+Hv
+	85BsDXb6gD2XLeAvY0tNddxCXnCIJtuyAKSSuGiSo3zY+TccZGsUgW09105F7d53
+	EFOqispB0NPA+I1RZmgElnZjXwLnfI6MJU799olTfwDPLf9DwB7a2nXfYpAjy7Lh
+	4SoFNnGqGT4TPK+ky9RHoxnxxxEA/3lDY7PoUjfUGs7gF5dkPFiqZYAlPP0UxNmI
+	o6BgjwaiPDHk/SeMLEtZ3e+9LJEEBfNbMutGdGyAH86DEOf7kfEhc3C4w==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yw8p2g0kn-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yw7t5046c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 11:37:36 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45LBbZ56017560;
+	Fri, 21 Jun 2024 11:37:35 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yw7t50469-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 21 Jun 2024 11:37:35 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45LBbYUM014376;
-	Fri, 21 Jun 2024 11:37:34 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yw8p2g0kg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 11:37:34 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L9AHOT019941;
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L9Lx4G030885;
 	Fri, 21 Jun 2024 11:37:34 GMT
 Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yvrqupw0g-1
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yvrssxvbw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 21 Jun 2024 11:37:34 +0000
 Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45LBbSnF54853978
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45LBbSjg49676548
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Fri, 21 Jun 2024 11:37:30 GMT
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1D9972004B;
+	by IMSVA (Postfix) with ESMTP id B14842004E;
 	Fri, 21 Jun 2024 11:37:28 +0000 (GMT)
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 81C262004E;
-	Fri, 21 Jun 2024 11:37:27 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 27B452004D;
+	Fri, 21 Jun 2024 11:37:28 +0000 (GMT)
 Received: from black.boeblingen.de.ibm.com (unknown [9.155.200.166])
 	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Jun 2024 11:37:27 +0000 (GMT)
+	Fri, 21 Jun 2024 11:37:28 +0000 (GMT)
 From: Ilya Leoshkevich <iii@linux.ibm.com>
 To: Alexander Gordeev <agordeev@linux.ibm.com>,
         Alexander Potapenko <glider@google.com>,
@@ -93,9 +93,9 @@ Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
         Sven Schnelle <svens@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v7 31/38] s390/mm: Define KMSAN metadata for vmalloc and modules
-Date: Fri, 21 Jun 2024 13:35:15 +0200
-Message-ID: <20240621113706.315500-32-iii@linux.ibm.com>
+Subject: [PATCH v7 32/38] s390/string: Add KMSAN support
+Date: Fri, 21 Jun 2024 13:35:16 +0200
+Message-ID: <20240621113706.315500-33-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240621113706.315500-1-iii@linux.ibm.com>
 References: <20240621113706.315500-1-iii@linux.ibm.com>
@@ -107,82 +107,148 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 72Oak4PnOY00Ouh9gmqCpCVl-f00e8x0
-X-Proofpoint-ORIG-GUID: B6QLHfkbQ1aHYH9UguQEGWXygvTuApGV
+X-Proofpoint-ORIG-GUID: 3PFulpmb0GyW_EvRMDVFj7MrXJtxbV1X
+X-Proofpoint-GUID: XQwQMTK_IdbRjv4p0bY5Pn4_ph8BXBKO
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-21_04,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=663 spamscore=0
- clxscore=1015 bulkscore=0 impostorscore=0 phishscore=0 priorityscore=1501
- mlxscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406210084
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0 adultscore=0
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406210084
 
-The pages for the KMSAN metadata associated with most kernel mappings
-are taken from memblock by the common code. However, vmalloc and module
-metadata needs to be defined by the architectures.
+Add KMSAN support for the s390 implementations of the string functions.
+Do this similar to how it's already done for KASAN, except that the
+optimized memset{16,32,64}() functions need to be disabled: it's
+important for KMSAN to know that they initialized something.
 
-Be a little bit more careful than x86: allocate exactly MODULES_LEN
-for the module shadow and origins, and then take 2/3 of vmalloc for
-the vmalloc shadow and origins. This ensures that users passing small
-vmalloc= values on the command line do not cause module metadata
-collisions.
+The way boot code is built with regard to string functions is
+problematic, since most files think it's configured with sanitizers,
+but boot/string.c doesn't. This creates various problems with the
+memset64() definitions, depending on whether the code is built with
+sanitizers or fortify. This should probably be streamlined, but in the
+meantime resolve the issues by introducing the IN_BOOT_STRING_C macro,
+similar to the existing IN_ARCH_STRING_C macro.
 
 Reviewed-by: Alexander Potapenko <glider@google.com>
-Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
 Acked-by: Heiko Carstens <hca@linux.ibm.com>
 Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 ---
- arch/s390/boot/startup.c        |  7 +++++++
- arch/s390/include/asm/pgtable.h | 12 ++++++++++++
- 2 files changed, 19 insertions(+)
+ arch/s390/boot/string.c        | 16 ++++++++++++++++
+ arch/s390/include/asm/string.h | 20 +++++++++++++++-----
+ 2 files changed, 31 insertions(+), 5 deletions(-)
 
-diff --git a/arch/s390/boot/startup.c b/arch/s390/boot/startup.c
-index 48ef5fe5c08a..d6b0d114939a 100644
---- a/arch/s390/boot/startup.c
-+++ b/arch/s390/boot/startup.c
-@@ -301,11 +301,18 @@ static unsigned long setup_kernel_memory_layout(unsigned long kernel_size)
- 	MODULES_END = round_down(kernel_start, _SEGMENT_SIZE);
- 	MODULES_VADDR = MODULES_END - MODULES_LEN;
- 	VMALLOC_END = MODULES_VADDR;
-+	if (IS_ENABLED(CONFIG_KMSAN))
-+		VMALLOC_END -= MODULES_LEN * 2;
+diff --git a/arch/s390/boot/string.c b/arch/s390/boot/string.c
+index faccb33b462c..f6b9b1df48a8 100644
+--- a/arch/s390/boot/string.c
++++ b/arch/s390/boot/string.c
+@@ -1,11 +1,18 @@
+ // SPDX-License-Identifier: GPL-2.0
++#define IN_BOOT_STRING_C 1
+ #include <linux/ctype.h>
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
+ #undef CONFIG_KASAN
+ #undef CONFIG_KASAN_GENERIC
++#undef CONFIG_KMSAN
+ #include "../lib/string.c"
  
- 	/* allow vmalloc area to occupy up to about 1/2 of the rest virtual space left */
- 	vsize = (VMALLOC_END - FIXMAP_SIZE) / 2;
- 	vsize = round_down(vsize, _SEGMENT_SIZE);
- 	vmalloc_size = min(vmalloc_size, vsize);
-+	if (IS_ENABLED(CONFIG_KMSAN)) {
-+		/* take 2/3 of vmalloc area for KMSAN shadow and origins */
-+		vmalloc_size = round_down(vmalloc_size / 3, _SEGMENT_SIZE);
-+		VMALLOC_END -= vmalloc_size * 2;
-+	}
- 	VMALLOC_START = VMALLOC_END - vmalloc_size;
- 
- 	__memcpy_real_area = round_down(VMALLOC_START - MEMCPY_REAL_SIZE, PAGE_SIZE);
-diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
-index 70b6ee557eb2..fb6870384b97 100644
---- a/arch/s390/include/asm/pgtable.h
-+++ b/arch/s390/include/asm/pgtable.h
-@@ -107,6 +107,18 @@ static inline int is_module_addr(void *addr)
- 	return 1;
++/*
++ * Duplicate some functions from the common lib/string.c
++ * instead of fully including it.
++ */
++
+ int strncmp(const char *cs, const char *ct, size_t count)
+ {
+ 	unsigned char c1, c2;
+@@ -22,6 +29,15 @@ int strncmp(const char *cs, const char *ct, size_t count)
+ 	return 0;
  }
  
-+#ifdef CONFIG_KMSAN
-+#define KMSAN_VMALLOC_SIZE (VMALLOC_END - VMALLOC_START)
-+#define KMSAN_VMALLOC_SHADOW_START VMALLOC_END
-+#define KMSAN_VMALLOC_SHADOW_END (KMSAN_VMALLOC_SHADOW_START + KMSAN_VMALLOC_SIZE)
-+#define KMSAN_VMALLOC_ORIGIN_START KMSAN_VMALLOC_SHADOW_END
-+#define KMSAN_VMALLOC_ORIGIN_END (KMSAN_VMALLOC_ORIGIN_START + KMSAN_VMALLOC_SIZE)
-+#define KMSAN_MODULES_SHADOW_START KMSAN_VMALLOC_ORIGIN_END
-+#define KMSAN_MODULES_SHADOW_END (KMSAN_MODULES_SHADOW_START + MODULES_LEN)
-+#define KMSAN_MODULES_ORIGIN_START KMSAN_MODULES_SHADOW_END
-+#define KMSAN_MODULES_ORIGIN_END (KMSAN_MODULES_ORIGIN_START + MODULES_LEN)
-+#endif
++void *memset64(uint64_t *s, uint64_t v, size_t count)
++{
++	uint64_t *xs = s;
 +
- #ifdef CONFIG_RANDOMIZE_BASE
- #define KASLR_LEN	(1UL << 31)
- #else
++	while (count--)
++		*xs++ = v;
++	return s;
++}
++
+ char *skip_spaces(const char *str)
+ {
+ 	while (isspace(*str))
+diff --git a/arch/s390/include/asm/string.h b/arch/s390/include/asm/string.h
+index 351685de53d2..2ab868cbae6c 100644
+--- a/arch/s390/include/asm/string.h
++++ b/arch/s390/include/asm/string.h
+@@ -15,15 +15,12 @@
+ #define __HAVE_ARCH_MEMCPY	/* gcc builtin & arch function */
+ #define __HAVE_ARCH_MEMMOVE	/* gcc builtin & arch function */
+ #define __HAVE_ARCH_MEMSET	/* gcc builtin & arch function */
+-#define __HAVE_ARCH_MEMSET16	/* arch function */
+-#define __HAVE_ARCH_MEMSET32	/* arch function */
+-#define __HAVE_ARCH_MEMSET64	/* arch function */
+ 
+ void *memcpy(void *dest, const void *src, size_t n);
+ void *memset(void *s, int c, size_t n);
+ void *memmove(void *dest, const void *src, size_t n);
+ 
+-#ifndef CONFIG_KASAN
++#if !defined(CONFIG_KASAN) && !defined(CONFIG_KMSAN)
+ #define __HAVE_ARCH_MEMCHR	/* inline & arch function */
+ #define __HAVE_ARCH_MEMCMP	/* arch function */
+ #define __HAVE_ARCH_MEMSCAN	/* inline & arch function */
+@@ -36,6 +33,9 @@ void *memmove(void *dest, const void *src, size_t n);
+ #define __HAVE_ARCH_STRNCPY	/* arch function */
+ #define __HAVE_ARCH_STRNLEN	/* inline & arch function */
+ #define __HAVE_ARCH_STRSTR	/* arch function */
++#define __HAVE_ARCH_MEMSET16	/* arch function */
++#define __HAVE_ARCH_MEMSET32	/* arch function */
++#define __HAVE_ARCH_MEMSET64	/* arch function */
+ 
+ /* Prototypes for non-inlined arch strings functions. */
+ int memcmp(const void *s1, const void *s2, size_t n);
+@@ -44,7 +44,7 @@ size_t strlcat(char *dest, const char *src, size_t n);
+ char *strncat(char *dest, const char *src, size_t n);
+ char *strncpy(char *dest, const char *src, size_t n);
+ char *strstr(const char *s1, const char *s2);
+-#endif /* !CONFIG_KASAN */
++#endif /* !defined(CONFIG_KASAN) && !defined(CONFIG_KMSAN) */
+ 
+ #undef __HAVE_ARCH_STRCHR
+ #undef __HAVE_ARCH_STRNCHR
+@@ -74,20 +74,30 @@ void *__memset16(uint16_t *s, uint16_t v, size_t count);
+ void *__memset32(uint32_t *s, uint32_t v, size_t count);
+ void *__memset64(uint64_t *s, uint64_t v, size_t count);
+ 
++#ifdef __HAVE_ARCH_MEMSET16
+ static inline void *memset16(uint16_t *s, uint16_t v, size_t count)
+ {
+ 	return __memset16(s, v, count * sizeof(v));
+ }
++#endif
+ 
++#ifdef __HAVE_ARCH_MEMSET32
+ static inline void *memset32(uint32_t *s, uint32_t v, size_t count)
+ {
+ 	return __memset32(s, v, count * sizeof(v));
+ }
++#endif
+ 
++#ifdef __HAVE_ARCH_MEMSET64
++#ifdef IN_BOOT_STRING_C
++void *memset64(uint64_t *s, uint64_t v, size_t count);
++#else
+ static inline void *memset64(uint64_t *s, uint64_t v, size_t count)
+ {
+ 	return __memset64(s, v, count * sizeof(v));
+ }
++#endif
++#endif
+ 
+ #if !defined(IN_ARCH_STRING_C) && (!defined(CONFIG_FORTIFY_SOURCE) || defined(__NO_FORTIFY))
+ 
 -- 
 2.45.1
 
