@@ -1,80 +1,157 @@
-Return-Path: <linux-kernel+bounces-225041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F3E912AF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC9C3912AF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7449D28B482
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:09:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A700A28B82E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DDB15FA65;
-	Fri, 21 Jun 2024 16:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A27715FA62;
+	Fri, 21 Jun 2024 16:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kSasi6ux"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CF515AACD;
-	Fri, 21 Jun 2024 16:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pmhTRG3f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tSz5wRLo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pmhTRG3f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tSz5wRLo"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6EC364AB;
+	Fri, 21 Jun 2024 16:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718986165; cv=none; b=D/WfUIFEmYxBNWvJmBytqkLir377ZQnu/RjTArTZjhMbW7bRaQP341IRu2bTWxDAfLJKbbxWJ6FN3HFzrLP+BsYzTiuXO8auOnooict5OG20tnZrhHz4W68Fh9N/1A8iK46eOV5Xx/H0RQmVPoh/pIl6ESdpTcWNnX2mdZaZWrw=
+	t=1718986186; cv=none; b=hYkAey1B03qeApvCzuX/kA3r96itvsX+2LpPWbWgyPMrEfnKeAcsLN8DzpS6TvlsEL1p3IomTQ7exk9/dGKcy/E4fkH+IZDk+8KehfHr0RusZi5YBtxlQD/IxW7n13fSjaJnb7b807ZVydYMHBWz91PWXqkqPIie0cpXev1Hc4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718986165; c=relaxed/simple;
-	bh=dvWfvNe6dib0dMV5plpJMOjRKiJe/99IRDev5pqBmk4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SvYjwQo1LqF0xEKLKixcVYMvu1ZILNg3GSzGw2q4sBPGLo7YPoc70rg4gCk0LnkPmMZ8Bz0ox7MsIGvO+zbvhFLDuaV4JOLqm2wcbdZq5QC77gvTwjkvis5RqG10xuxSHOqPOP9HxyS0oX7ssOUiwlCv+5UhcEAUICU/flxX7VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kSasi6ux; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.49.54] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 5346420B7001;
-	Fri, 21 Jun 2024 09:09:23 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5346420B7001
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1718986163;
-	bh=HlD4aPIdPUThQZd/pvRtxfoGeetS7LRPjbenqqQPAfU=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=kSasi6uxj3BPtiNQ47E4kGoGhyERM8dNFntaKnFCLY1ad+hffgpN6ISir4PQCjzgz
-	 CkUJAiW2+1JL9nY7Se05IbNRRzMQGkraigRvf5dzsamV1DM/nHtQaXWQFMFqu+7wn9
-	 1+W9cxXTG6g7FT9eAWf+oWnZuqihR2MW829oPQd0=
-Message-ID: <1d5a8d4f-8236-4092-ae9e-3885bce097e6@linux.microsoft.com>
-Date: Fri, 21 Jun 2024 09:09:21 -0700
+	s=arc-20240116; t=1718986186; c=relaxed/simple;
+	bh=av5Jto4LDaJc6D+9N0wwF0CYpBxq7KfS7SjVpvm88fE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LzQHbPuHC33iQE0SWEVYKrwnVhExyUd+jvT2jizFcbTA9X+XeiHOwizszPey7oXwY2fki2+xhk61WzaZUQb/qRXQpIapJUlz6umgUGuhLmwZSJlERAUKRrY4Pi4rjJmNsVlp4Q7rSxTvaBqARK86g6GLBCh5+COszXKL7HMrbpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pmhTRG3f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tSz5wRLo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pmhTRG3f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tSz5wRLo; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B07891FB89;
+	Fri, 21 Jun 2024 16:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718986182; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EwtQk9tLIu3pAbGuLBfd9oqp0JcfGbaoZTN/hou026M=;
+	b=pmhTRG3fnu9xeVzxTx6yrWJ86bZHfxBXwrpn+lfPU8ChH/TXmpP6cDo+ArzKsQt04rop85
+	exR3Bi2sMMeWS1pZV1uwa+Q7ZEUcsXOrYx52Hq+ipQ9vphgkX54K97xFhlVU4pm/hRBmcu
+	rqYjoHjQRRNV5NgM7KUC3tq6Fe2KXtI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718986182;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EwtQk9tLIu3pAbGuLBfd9oqp0JcfGbaoZTN/hou026M=;
+	b=tSz5wRLoGdinDPTRHBJZxXyt5kUM/SO+vj5p+3mhbYag0CtgFUyRXtEg6VWZ45nj5jtGdQ
+	eKjrNUF2f9CHk5CA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718986182; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EwtQk9tLIu3pAbGuLBfd9oqp0JcfGbaoZTN/hou026M=;
+	b=pmhTRG3fnu9xeVzxTx6yrWJ86bZHfxBXwrpn+lfPU8ChH/TXmpP6cDo+ArzKsQt04rop85
+	exR3Bi2sMMeWS1pZV1uwa+Q7ZEUcsXOrYx52Hq+ipQ9vphgkX54K97xFhlVU4pm/hRBmcu
+	rqYjoHjQRRNV5NgM7KUC3tq6Fe2KXtI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718986182;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EwtQk9tLIu3pAbGuLBfd9oqp0JcfGbaoZTN/hou026M=;
+	b=tSz5wRLoGdinDPTRHBJZxXyt5kUM/SO+vj5p+3mhbYag0CtgFUyRXtEg6VWZ45nj5jtGdQ
+	eKjrNUF2f9CHk5CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A406D13ABD;
+	Fri, 21 Jun 2024 16:09:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2LUGKMaldWYfTAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 21 Jun 2024 16:09:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4433EA085C; Fri, 21 Jun 2024 18:09:42 +0200 (CEST)
+Date: Fri, 21 Jun 2024 18:09:42 +0200
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+d1da16f03614058fdc48@syzkaller.appspotmail.com>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	tytso@mit.edu
+Subject: Re: [syzbot] kernel BUG in ext4_do_writepages
+Message-ID: <20240621160942.4bfi56fgy6ycvtl4@quack3>
+References: <0000000000006fd14305f00bdc84@google.com>
+ <0000000000000b3e69061b5b5762@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: eahariha@linux.microsoft.com, Andi Shyti <andi.shyti@kernel.org>,
- linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] docs: i2c: summary: document use of inclusive
- language
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- linux-kernel@vger.kernel.org
-References: <20240621073015.5443-1-wsa+renesas@sang-engineering.com>
- <20240621073015.5443-5-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-In-Reply-To: <20240621073015.5443-5-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000000b3e69061b5b5762@google.com>
+X-Spam-Score: -2.30
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[99.98%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[d1da16f03614058fdc48];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
 
-On 6/21/2024 12:30 AM, Wolfram Sang wrote:
-> We now have the updated I2C specs and our own Code of Conduct, so we
-> have all we need to switch over to the inclusive terminology. Define
-> them here.
+On Thu 20-06-24 17:16:16, syzbot wrote:
+> This bug is marked as fixed by commit:
+> ext4: fix race condition between buffer write and page_mkwrite
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  Documentation/i2c/i2c_bus.svg | 15 ++++++++-------
->  Documentation/i2c/summary.rst | 23 +++++++++++++++++------
->  2 files changed, 25 insertions(+), 13 deletions(-)
->
+> But I can't find it in the tested trees[1] for more than 90 days.
+> Is it a correct commit? Please update it by replying:
+> 
+> #syz fix: exact-commit-title
+> 
+> Until then the bug is still considered open and new crashes with
+> the same signature are ignored.
+> 
+> Kernel: Linux
+> Dashboard link: https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
 
-Looks good to me.
+This bug is still unfixed AFAIK as we realized the fixing commit is buggy
+and there's no easy fix (inline_data feature has some difficult to address
+problems). So can we 'syz unfix' this? :)
 
-Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
