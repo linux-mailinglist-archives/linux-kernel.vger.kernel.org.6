@@ -1,197 +1,157 @@
-Return-Path: <linux-kernel+bounces-225071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6300D912B7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:38:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6BC2912B95
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868291C23D9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D55328AFB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7DB160785;
-	Fri, 21 Jun 2024 16:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6466173324;
+	Fri, 21 Jun 2024 16:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VhBftoRS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xDcSbmIX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543FE5D477;
-	Fri, 21 Jun 2024 16:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="drxdoO3Q"
+Received: from smtp.cecloud.com (unknown [1.203.97.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32ECF166311
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718987902; cv=none; b=AUxUaVDWNo8zffaKVcG5KqB5Sxvv4kfIxcqXX0sTqc6ZSnJg0mKCrY5U88ei1q89fYwL9dPKbsjMFuL6mIs4GQWEWiRWoRcVRVAF45RfbF1h9k9rs+cbZ7qGZVXj1yxxAjLwR/gODpjD8x+kzOHCdiEMTVO7riZBBixRYtVnS4M=
+	t=1718988000; cv=none; b=lNkz+JBjij/n+cqmAY5xxXFQML0PPLqESZXNUxUN8S+EUF4NAWFGGkwageSJ5Gw2rbswT1Z7NpuG1OrDqVasrD9jZTBxLLyPmRuehWiZiGHyD+RBF7PZDYmoBipUFUAV2D4Xml/3510z6ZF9tg1IVDQYHtZq4/UCseBeEtNQaW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718987902; c=relaxed/simple;
-	bh=F2Foq8chGaYEKnpLehBWW8K5nNv65nvqwaSSHCLVspo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=fUqBFeZQ/V7qkCgY1cFYA9t/aLA3QVVm+RbpMc161pfCWwFott8F9ED6j4tWUzYQr0+PCzI8FpVqZW4X8fUtLvRpWHuenUUcoSrB0tbYuunRmnqHecMhIdKSap4qhFJVGGt+a6oXLBiUy9Yqh+jtp3jsetcDwpEJ7YuDqUoQV/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VhBftoRS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xDcSbmIX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Jun 2024 16:38:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718987898;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkxUbzuXKpxyIC2qihAos29TfQGmeBI3WYAEuLWk8Tg=;
-	b=VhBftoRSH+zkNf1kT4GYaXOcXD7x4UO9AAbgTqtZHTA4fsWcOTB3PDdS1noZ8oOmwGCis+
-	Q+IzsiLAJu5lFcLPvFmmtJoEOXNj8pkTwW7Db4zVZAcWbxUxGplZldJ6IbqBUHeD5pPasv
-	Ha/K8Z2y9VUO6m9VPacRBjF/kI4c+gFLENtjs0tlpKUv0KDpw/zQiqcJLwW168eEkzgjlZ
-	6Yhc1R47sAdYvHkWJUiy5UxnBIpLOnr6kbaJYkOdLIpw8cxwhaWdJ3E5uKnFhknB1h42Ei
-	fzuJ9iry4G9fhTbc/4g21/nKHwZfI466pf5jQ4GczC/pdDLGv101pMov7VIGIA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718987898;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkxUbzuXKpxyIC2qihAos29TfQGmeBI3WYAEuLWk8Tg=;
-	b=xDcSbmIXa2r/rCLJQ4LFAbXGdkUIYBCs/kH8cTwbW24xarZNeznD5zxPXMazU4SYvmi4go
-	4qUOipkDiYaEGYCQ==
-From: "tip-bot2 for Tom Lendacky" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sev] x86/sev: Do RMP memory coverage check after max_pfn
- has been set
-Cc: Tom Lendacky <thomas.lendacky@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3Cbec4364c7e34358cc576f01bb197a7796a109169=2E17189?=
- =?utf-8?q?84524=2Egit=2Ethomas=2Elendacky=40amd=2Ecom=3E?=
-References: =?utf-8?q?=3Cbec4364c7e34358cc576f01bb197a7796a109169=2E171898?=
- =?utf-8?q?4524=2Egit=2Ethomas=2Elendacky=40amd=2Ecom=3E?=
+	s=arc-20240116; t=1718988000; c=relaxed/simple;
+	bh=SISnFDeVB8cxk0I8FawymLYe3uw3xU5C6Csb/KZRzjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EA5Ndls2yc6ToCSw2m7+azLZphdBzgugGmh/Majpt9dnnjF+gTR/ZgGVg0BUcT0HktoCArCslx/pfbB4xg/mPLjNGs9ntgQaSRkBXWbg2tABHxb3ZP4PjHX6tJFxpxihR+RS5Nky72whmjmMq886sfhS1XTBaD6RWfDVWUtMMHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; dkim=fail (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=drxdoO3Q reason="signature verification failed"; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=none smtp.client-ip=1.203.97.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.cecloud.com (Postfix) with ESMTP id 11E077C0112;
+	Sat, 22 Jun 2024 00:39:55 +0800 (CST)
+X-MAIL-GRAY:0
+X-MAIL-DELIVERY:1
+X-SKE-CHECKED:1
+X-ABS-CHECKED:1
+X-ANTISPAM-LEVEL:2
+Received: from localhost.localdomain (117.240.211.222.broad.my.sc.dynamic.163data.com.cn [222.211.240.117])
+	by smtp.cecloud.com (postfix) whith ESMTP id P2702681T281465900102000S1718987992732469_;
+	Sat, 22 Jun 2024 00:39:53 +0800 (CST)
+X-RL-SENDER:liuwei09@cestc.cn
+X-SENDER:liuwei09@cestc.cn
+X-LOGIN-NAME:liuwei09@cestc.cn
+X-FST-TO:prarit@redhat.com
+X-RCPT-COUNT:10
+X-LOCAL-RCPT-COUNT:1
+X-MUTI-DOMAIN-COUNT:0
+X-SENDER-IP:222.211.240.117
+X-ATTACHMENT-NUM:0
+X-UNIQUE-TAG:<750264334267299d61681e5ae89bbad6>
+X-System-Flag:0
+From: Liu Wei <liuwei09@cestc.cn>
+To: prarit@redhat.com,
+	Liu Wei <liuwei09@cestc.cn>
+Cc: catalin.marinas@arm.com,
+	guohanjun@huawei.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lpieralisi@kernel.org,
+	rafael@kernel.org,
+	sudeep.holla@arm.com,
+	will@kernel.org
+Subject: Re: [PATCH v2] ACPI: Add config to disable ACPI SPCR console by default on arm64
+Date: Sat, 22 Jun 2024 00:39:25 +0800
+Message-ID: <c3f923f7-05b1-44ec-8cc2-e5dff1cbd2c6@redhat.com>
+X-Mailer: git-send-email 2.42.1
+In-Reply-To: <20240621044706.87181-1-liuwei09@cestc.cn>
+References: <20240530015332.7305-1-liuwei09@cestc.cn> <20240621044706.87181-1-liuwei09@cestc.cn>
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124]) (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits)) (No client certificate requested) by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F081741DB for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com; s=mimecast20190719; t=1718969217; h=from:from:reply-to:subject:subject:date:date:message-id:message-id: to:to:cc:cc:mime-version:mime-version:content-type:content-type: content-transfer-encoding:content-transfer-encoding: in-reply-to:in-reply-to:references:references; bh=+AbWTm7QYhVs521X2AgBsRmkjpYYxf77pV7a0Yxd2xk=; b=drxdoO3QXJS+cNv6gnJ4+Uk5Wbel5ipQzW9ZcmuXTjYsfXBImrusoVSidWv5qf0JWII/uf AqpVdCj2a8TnAhDDFAlhn9U2wiAGpGfQp1tRyVZ1MV6x1lbqBGp61nSj65Eut9XnDMuKbP M4EtrFw079xn080AbU1J9BZsNhqzNw0=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id us-mta-664-kHLQ7AdZM0uQYmwjJ7ycYw-1; Fri, 21 Jun 2024 07:26:54 -0400
+X-MC-Unique: kHLQ7AdZM0uQYmwjJ7ycYw-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b50be910afso21500826d6.2 for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:26:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1e100.net; s=20230601; t=1718969213; x=1719574013; h=content-transfer-encoding:in-reply-to:from:content-language :references:cc:to:subject:user-agent:mime-version:date:message-id :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to; bh=+AbWTm7QYhVs521X2AgBsRmkjpYYxf77pV7a0Yxd2xk=; b=rdrkcV+jalRcKHXdUE+jEWe33/qNgR+yTM8VCmmwLCRdJtATehgTw5dUtqYogrUH82 3e3GKCFgbH1JIy1aoy2T4EW5sj3DPjDYiSAtc6RVHPgt1Bhur0nmukH5AjsP21ysZXt4 JODPkkFBxhY4xU9D8fy+3lSbiA3pT95ZwtqQMePN7tOCJLkH29zdV/i/wvfekoMtkcmf 6ZpUlhO+X9RWDy5UWcqJ2928IeXkdIWQ4TMnTTR4JiLFZGM2OncgStajsPCSzCa84UQe Y3VlqsU5ucZAnixcrstuv/khT1KRkU591VJ8sk166oqJvcHmgn629zyAkwv4iaFWgEV6 Wxpw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/pYxiYR8AKK6yCNk7GG9xRTiMUKEROfmvmmFLrbOuvTdTDWsNfYE4LxF1M7HQlPO9rbc2pOXMNlhrqkhpywfg7rBrz0lhJkFVh32x
+X-Gm-Message-State: AOJu0YzMSmvpfE8RSnU/AXz8DZVZpCszEEYM3JUq5OYGms0sTEdsZkNa Fc5yToFK46IHdfU2LxlT3ysrhiCjtIwJMuafisFakj6IqEqD9WfwVgqUiVofPsiRGZzCxcVn7kp GfUyQEBI2snlAZZR+3/KM7zQYacsBKrTdhhdx0hzeLa3zeAR6duGLaIpsCr9HJA==
+X-Received: by 2002:a0c:df93:0:b0:6b4:fece:1322 with SMTP id 6a1803df08f44-6b501ebbe51mr94781236d6.55.1718969213640; Fri, 21 Jun 2024 04:26:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHtpc/94A17BbeMJBFiG1uB3pSn3hfOV4uhOgztsnw0fPNyMBVvu8SC58FfeqcgOO6s7gUeSg==
+X-Received: by 2002:a0c:df93:0:b0:6b4:fece:1322 with SMTP id 6a1803df08f44-6b501ebbe51mr94780956d6.55.1718969213179; Fri, 21 Jun 2024 04:26:53 -0700 (PDT)
+Received: from [10.26.1.93] ([66.187.232.136]) by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ecfe878sm7912306d6.14.2024.06.21.04.26.52 (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128); Fri, 21 Jun 2024 04:26:52 -0700 (PDT)
+Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171898789757.10875.17817122735030570876.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/sev branch of tip:
+From: Prarit Bhargava <prarit@redhat.com>
 
-Commit-ID:     6a7d32f3a205f577789f65fe0862eee9bfc12262
-Gitweb:        https://git.kernel.org/tip/6a7d32f3a205f577789f65fe0862eee9bfc12262
-Author:        Tom Lendacky <thomas.lendacky@amd.com>
-AuthorDate:    Fri, 21 Jun 2024 10:42:05 -05:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 21 Jun 2024 18:20:09 +02:00
+On 6/21/24 00:47, Liu Wei wrote:
+> > For varying privacy and security reasons, sometimes we would like to
+> > completely silence the serial console output, and only enable it through
+> > cmdline when needed.
+> > 
+> > But there are many existing systems that depend on this console,
+> > so add CONFIG_ARM_DISABLE_ACPI_SPCR_CONSOLE for this situation.
+> > 
+> > Signed-off-by: Liu Wei <liuwei09@cestc.cn>
+> > Suggested-by: Prarit Bhargava <prarit@redhat.com>
+> > ---
+> > 
+> > v2: Add a config option suggested by Prarit
+> > ---
+> >   arch/arm64/kernel/acpi.c   | 12 ++++++++++++
+> >   drivers/acpi/arm64/Kconfig | 11 +++++++++++
+> >   2 files changed, 23 insertions(+)
+> > 
+> > diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+> > index dba8fcec7f33..3365fabb5cf8 100644
+> > --- a/arch/arm64/kernel/acpi.c
+> > +++ b/arch/arm64/kernel/acpi.c
+> > @@ -227,7 +227,19 @@ void __init acpi_boot_table_init(void)
+> >   		if (earlycon_acpi_spcr_enable)
+> >   			early_init_dt_scan_chosen_stdout();
+> >   	} else {
+> > +		/*
+> > +		 * For varying privacy and security reasons, sometimes need
+> > +		 * to completely silence the serial console output, and only
+> > +		 * enable it by cmdline when needed.
+> > +		 * But there are many existing systems that depend on this
+> > +		 * behavior, so use CONFIG_ARM_DISABLE_ACPI_SPCR_CONSOLE.
+> > +		 */
+> > +#ifdef CONFIG_ARM_DISABLE_ACPI_SPCR_CONSOLE
+> > +		acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
+> > +#else
+> >   		acpi_parse_spcr(earlycon_acpi_spcr_enable, true);
+> > +#endif
+> > +
+> 
+> I don't think you want a config option here after all.  See my previous 
+> comment about "acpi=nospcr".  I realized that if you do use a config 
+> then distros will not have the ability to default 'on', and advise users 
+> to disable it for their use cases.
+> 
+> Try the 'acpi=nospcr' option.  That should keep everyone happy.
+>
 
-x86/sev: Do RMP memory coverage check after max_pfn has been set
+Ok, I will send new version soon.
 
-The RMP table is probed early in the boot process before max_pfn has been
-set, so the logic to check if the RMP covers all of system memory is not
-valid.
+Thanks for your suggestion!
 
-Move the RMP memory coverage check from snp_probe_rmptable_info() into
-snp_rmptable_init(), which is well after max_pfn has been set. Also, fix
-the calculation to use PFN_UP instead of PHYS_PFN, in order to compute
-the required RMP size properly.
+Liu Wei
+ 
+> P.
+> 
 
-Fixes: 216d106c7ff7 ("x86/sev: Add SEV-SNP host initialization support")
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/bec4364c7e34358cc576f01bb197a7796a109169.1718984524.git.thomas.lendacky@amd.com
----
- arch/x86/virt/svm/sev.c | 44 ++++++++++++++++++++--------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-index 0ae1053..0ce1776 100644
---- a/arch/x86/virt/svm/sev.c
-+++ b/arch/x86/virt/svm/sev.c
-@@ -120,7 +120,7 @@ static __init void snp_enable(void *arg)
- 
- bool snp_probe_rmptable_info(void)
- {
--	u64 max_rmp_pfn, calc_rmp_sz, rmp_sz, rmp_base, rmp_end;
-+	u64 rmp_sz, rmp_base, rmp_end;
- 
- 	rdmsrl(MSR_AMD64_RMP_BASE, rmp_base);
- 	rdmsrl(MSR_AMD64_RMP_END, rmp_end);
-@@ -137,28 +137,11 @@ bool snp_probe_rmptable_info(void)
- 
- 	rmp_sz = rmp_end - rmp_base + 1;
- 
--	/*
--	 * Calculate the amount the memory that must be reserved by the BIOS to
--	 * address the whole RAM, including the bookkeeping area. The RMP itself
--	 * must also be covered.
--	 */
--	max_rmp_pfn = max_pfn;
--	if (PHYS_PFN(rmp_end) > max_pfn)
--		max_rmp_pfn = PHYS_PFN(rmp_end);
--
--	calc_rmp_sz = (max_rmp_pfn << 4) + RMPTABLE_CPU_BOOKKEEPING_SZ;
--
--	if (calc_rmp_sz > rmp_sz) {
--		pr_err("Memory reserved for the RMP table does not cover full system RAM (expected 0x%llx got 0x%llx)\n",
--		       calc_rmp_sz, rmp_sz);
--		return false;
--	}
--
- 	probed_rmp_base = rmp_base;
- 	probed_rmp_size = rmp_sz;
- 
- 	pr_info("RMP table physical range [0x%016llx - 0x%016llx]\n",
--		probed_rmp_base, probed_rmp_base + probed_rmp_size - 1);
-+		rmp_base, rmp_end);
- 
- 	return true;
- }
-@@ -206,9 +189,8 @@ void __init snp_fixup_e820_tables(void)
-  */
- static int __init snp_rmptable_init(void)
- {
-+	u64 max_rmp_pfn, calc_rmp_sz, rmptable_size, rmp_end, val;
- 	void *rmptable_start;
--	u64 rmptable_size;
--	u64 val;
- 
- 	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
- 		return 0;
-@@ -219,10 +201,28 @@ static int __init snp_rmptable_init(void)
- 	if (!probed_rmp_size)
- 		goto nosnp;
- 
-+	rmp_end = probed_rmp_base + probed_rmp_size - 1;
-+
-+	/*
-+	 * Calculate the amount the memory that must be reserved by the BIOS to
-+	 * address the whole RAM, including the bookkeeping area. The RMP itself
-+	 * must also be covered.
-+	 */
-+	max_rmp_pfn = max_pfn;
-+	if (PFN_UP(rmp_end) > max_pfn)
-+		max_rmp_pfn = PFN_UP(rmp_end);
-+
-+	calc_rmp_sz = (max_rmp_pfn << 4) + RMPTABLE_CPU_BOOKKEEPING_SZ;
-+	if (calc_rmp_sz > probed_rmp_size) {
-+		pr_err("Memory reserved for the RMP table does not cover full system RAM (expected 0x%llx got 0x%llx)\n",
-+		       calc_rmp_sz, probed_rmp_size);
-+		goto nosnp;
-+	}
-+
- 	rmptable_start = memremap(probed_rmp_base, probed_rmp_size, MEMREMAP_WB);
- 	if (!rmptable_start) {
- 		pr_err("Failed to map RMP table\n");
--		return 1;
-+		goto nosnp;
- 	}
- 
- 	/*
 
