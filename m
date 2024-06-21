@@ -1,159 +1,188 @@
-Return-Path: <linux-kernel+bounces-225020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426B3912AA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:52:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A62E912AA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC2AF2871C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:52:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 908DD1F21236
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC9A15EFCC;
-	Fri, 21 Jun 2024 15:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8304A15F30D;
+	Fri, 21 Jun 2024 15:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="EDHzFVnb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y/wetpbH"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LlzMtzB3"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AD6823D0;
-	Fri, 21 Jun 2024 15:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C2115ECFE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718985136; cv=none; b=sRvgpVeYB9ksPupJlY97Q6jqwrzKXMzuB5qld2CheGWJxMP8oCRZmvpTOIcnkzsD130Fy1xtB94lwlJhO75aoaDUEei3fLl6vYzAhBhcln69VrnFo3WdLXKVDIhtIItQfOJPrd85XbXK6C9gIDVbB9ZDa+MIBHEa0EjfZK/t1DQ=
+	t=1718985158; cv=none; b=gh2z+rGXUg224w8G/EVEUilFZgX+3jQKamdcEY9kRez9atynGNna3lTLQcM7QnEs7WEOlIG7642kUD6OfQXJHhaPIwBi0AxlAdfQyxtvtm7tUj3a8IIT2X/pFqlJOIWxvyEfuLsyP1CvBC/RzYy9c7Veb9vIJy25uc7w/3I9LQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718985136; c=relaxed/simple;
-	bh=okNWiYN3jSllF7aHvqx8wll68vaA9f02SH5rITMSg9M=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=tYxVFkWG8WAoKa3gKM4mZ+I7ZusM6IkmweLxnlN2nGpfgTIaPpVEOxk5PtiHlDvju93RRT3CquFFAh/m8U6rIYABeJcESb4uQbdvf3HmmXXZeEVFsgaERiMjaqk0MRo2ujXxca8k7pNGrIqnY+oXV7LG7tXMwZWHyfjUnBVJD5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=EDHzFVnb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y/wetpbH; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 01E521380099;
-	Fri, 21 Jun 2024 11:52:14 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Fri, 21 Jun 2024 11:52:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718985133;
-	 x=1719071533; bh=tEs/YOs3Cin6gK0AVTgZ7Beywij4477QZ3N259TzrVk=; b=
-	EDHzFVnbTWo9CJ9z/+Lrm+nKov+alSuDNSLI0EPUXP9mQG/4boCpKJaM78U92mDA
-	JWd3saJw31hd/Ub+adR9O+8j9SufxAtOtJxvSy3dNQHRfH0MPpKOUpeY7hjBHJWE
-	pa8lo91bTyE43Y0JpjQIW7kIt6QrVFvyZOTW8YWPisvjKva54BOh2OVgsTC0Da/e
-	WP6QQtLvvxoD0QT+sJsYK7JCrD7FqdFAblJPZiub+/E7lVNuSjvDeCevES0FEIyx
-	FS0VqgKbOjUxAnHo00YssSyAM09As04VT+XX511GzXGim814nM7+jnjW+2DVf1qy
-	oF6JIa/eoKZVECNGemXZ8A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718985133; x=
-	1719071533; bh=tEs/YOs3Cin6gK0AVTgZ7Beywij4477QZ3N259TzrVk=; b=Y
-	/wetpbHtFaiPRKucVMd61+OS606HECO5Bk78U5lc78DfS6ud8WeoyuN0tWKjb8Pv
-	mBszz30e21ML4muyaZTO0KnKseugxYibygoFfPlaZDROE/rLGM5jDRUFNTM36+sB
-	q7srgB8u2UYjiWrPXNIhyyxKUL+6hiGp9COyaoitVKVCSYfvwJN04Fa3riTAZ0dR
-	sdYMu3tcg0t7FJOeKuMJKU7pPqOq5gP3WwuM14U3ETCP8h4HTlQbO0V1L83U44+V
-	TIVIFfPvbUjEFTSyQeE1aWSGu0pL7Y0KoV/5CGuYIAhNIcBzBh/0NYDDRe/k8Kwy
-	xwi6WAjSXWUwZ6L6/vLnw==
-X-ME-Sender: <xms:raF1Zn2TThGtlOwWW6Ld6ZTfyCGaHFpB6YrihemH_X_HO9QQUxxPdA>
-    <xme:raF1ZmE2KZyobt74-pNjUrQ6qyDclcVPJUlyJQnp9o53a1YT4kwbRyNtWXgAOLCWb
-    oZwpuaBXvgwC0jLEXg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefgedgleehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:raF1Zn6lM7t3eTht1EgKBHXBKMF8ODY9nvYtsgGb0MQjH7obiiWUhA>
-    <xmx:raF1Zs0WuDQnMfUfkxDgJUzfG21BjxuOutpwB9TNuYdm9J7uUzrLAw>
-    <xmx:raF1ZqGnHd7OkQYjiCfwhp-Kvll1f-jZUBt6tdm-LEdYB0zFgAv_ig>
-    <xmx:raF1Zt-hjd5qx97N-rh3AaL41vP-_ymsut8Pwuuft5ocSVOyOJiHwg>
-    <xmx:raF1ZtCE5CQYUZVPNu8D0XEC9u0F4NVyflr8BzaYZ_7rOCLI6ykaTODr>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 9A90836A0075; Fri, 21 Jun 2024 11:52:13 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718985158; c=relaxed/simple;
+	bh=7QtTWpzSkAfcmaeTt2hMYoNG7lS04QTiDzb4LCrYk1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sP4BnrcuFvR47oYtjriZOjrskVRLeTe/0i8ZuWE1CNZjiuRHB+BTIOuOdIO02DP5RUdfWLl1E7BX4vNfUysKLruU6spflFzf1ZIP1gDEPigAt6KkRTtAk+5e4CIMwzp07UVZ61PFHdWB+VpGHAK5CvkwwZEZKTq3c4iXvbIqsC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=LlzMtzB3; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4247adb75a1so2629605e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:52:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1718985155; x=1719589955; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vd3HeTeZMYz+szCMLjJ+nPKJvussyehfNdDyWJdflY8=;
+        b=LlzMtzB3iqcpGQFsu/JbUoRa/u5wvSn8Y3OCFFMvgbSmo5pqc3jBLQeS5OkUHVRhGu
+         VSCpCmv3YpAUsBC3/uXYhPz6ZGmBtbW5OoRh8IgsQ+zva73aoo9NGnsg1haP/0a5xSxV
+         3GjU7+qH7IkKu4OaLvvYriF8tw3B7GtKHmmn0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718985155; x=1719589955;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vd3HeTeZMYz+szCMLjJ+nPKJvussyehfNdDyWJdflY8=;
+        b=TtxevTiL40POSu2G/6iG151npw7KV2KdUZtmgeh077vssNhhP1/6Bm/r6YO28THjV1
+         n7z1qKi7ylfjMXITbT7fTRhHgMmZovsnemt8QX5RfQIPnaxFWLYrTMDnjpyprE5z3yPn
+         QIXJDbp18NX2bdtv4cuN8dEH/UuEr+1IixI5SLuWSrPjNxXoef9d30fBs2chSoDR5bxK
+         NRvbTFpYy8VMWjk72flGB5/4InThfZCNvUzKwjrqUDDhy5Hnw9eCn59n1zX6G65iH1tw
+         1PmaLFz8FjCh1vk/JIYHbHPG/smDHbqPqe8imgo85955u+U3W/HfYLrXAeyn8UEsRjVF
+         TsvA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0C96vwsQrQrowJ0eXm4aRHDhY5CBvxD1pzpZ9ba1xPvdoygi3nT2Rjxo0BnoWvADsZelpUbRH0K0NsBbm2LtIrB4NT0/FZjedBqWH
+X-Gm-Message-State: AOJu0Yzhj0cM9RIWllCExgdqjlKPEO7aeYMCqHwXo/TIP/Dgixx0d26o
+	uYDlGY+a/mgFutZ33o4OJbc5mWSOcb39Ywl+F3j+RSSvtu68Qz6plj/n4NdtzXs=
+X-Google-Smtp-Source: AGHT+IHTT6f9c44NGR6g+VcrdzZyAm7iHTscK4tEiWZvq36vM9pBm1QlBHsawMSX9ZVQwhSsjv6Cbg==
+X-Received: by 2002:a7b:c5ca:0:b0:424:7876:b6ca with SMTP id 5b1f17b1804b1-4247876b78bmr54773525e9.1.1718985155185;
+        Fri, 21 Jun 2024 08:52:35 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247101a955sm102812785e9.0.2024.06.21.08.52.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 08:52:34 -0700 (PDT)
+Date: Fri, 21 Jun 2024 17:52:32 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Ekansh Gupta <quic_ekangupt@quicinc.com>,
+	Oded Gabbay <ogabbay@kernel.org>, srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org, gregkh@linuxfoundation.org,
+	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org,
+	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
+	Daniel Vetter <daniel@ffwll.ch>, Dave Airlie <airlied@gmail.com>
+Subject: Re: [PATCH v1] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
+Message-ID: <ZnWhwJtTXS32UI9H@phenom.ffwll.local>
+Mail-Followup-To: Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Ekansh Gupta <quic_ekangupt@quicinc.com>,
+	Oded Gabbay <ogabbay@kernel.org>, srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org, gregkh@linuxfoundation.org,
+	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org,
+	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
+	Dave Airlie <airlied@gmail.com>
+References: <20240612064731.25651-1-quic_ekangupt@quicinc.com>
+ <zbpia232dh4ojfsvhcqxrp6cwfygaalu5cycdrs47pqmnrisvk@dq24nww26gkm>
+ <z6g5ool5vomkudiroyaxh532rhlfu5x4i3l5xoqrsho2sxv4im@v5ghemjkpc3v>
+ <CAA8EJprgCJKOnZo7Q31KZV3SA3NqWxcMmoUxuqnVF+8cQW5ucg@mail.gmail.com>
+ <6f59552d-d7a3-5e05-3465-e707c1b7eaf2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <856ff7b0-774d-4120-8bd8-01270f5c14b4@app.fastmail.com>
-In-Reply-To: <808f27bf-9dc7-407a-86ff-0a8fae79531c@kernel.org>
-References: <20240618-boston-syscon-v3-0-c47c06647a26@flygoat.com>
- <20240618-boston-syscon-v3-7-c47c06647a26@flygoat.com>
- <6d3fbd07-72a0-43fd-a1e5-c39e3a833bc1@kernel.org>
- <51557e31-0a59-4278-a8c1-25cf66fa3c3f@app.fastmail.com>
- <808f27bf-9dc7-407a-86ff-0a8fae79531c@kernel.org>
-Date: Fri, 21 Jun 2024 16:51:55 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v3 7/8] dt-bindings: mfd: Add img,boston-platform-regs
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f59552d-d7a3-5e05-3465-e707c1b7eaf2@quicinc.com>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
+On Fri, Jun 21, 2024 at 09:40:09AM -0600, Jeffrey Hugo wrote:
+> On 6/21/2024 5:19 AM, Dmitry Baryshkov wrote:
+> > On Fri, 21 Jun 2024 at 09:19, Bjorn Andersson <andersson@kernel.org> wrote:
+> > > 
+> > > On Wed, Jun 12, 2024 at 09:28:39PM GMT, Dmitry Baryshkov wrote:
+> > > > On Wed, Jun 12, 2024 at 12:17:28PM +0530, Ekansh Gupta wrote:
+> > > > > Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
+> > > > > to be added for PD notifications and other missing features. Adding
+> > > > > and maintaining new files from within fastrpc directory would be easy.
+> > > > > 
+> > > > > Example of feature that is being planned to be introduced in a new C
+> > > > > file:
+> > > > > https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
+> > > > > 
+> > > > > Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> > > > > ---
+> > > > >   MAINTAINERS                          |  2 +-
+> > > > >   drivers/misc/Kconfig                 | 13 +------------
+> > > > >   drivers/misc/Makefile                |  2 +-
+> > > > >   drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
+> > > > >   drivers/misc/fastrpc/Makefile        |  2 ++
+> > > > >   drivers/misc/{ => fastrpc}/fastrpc.c |  0
+> > > > >   6 files changed, 21 insertions(+), 14 deletions(-)
+> > > > >   create mode 100644 drivers/misc/fastrpc/Kconfig
+> > > > >   create mode 100644 drivers/misc/fastrpc/Makefile
+> > > > >   rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
+> > > > 
+> > > > Please consider whether it makes sense to move to drivers/accel instead
+> > > > (and possibly writing a better Kconfig entry, specifying that the driver
+> > > > is to be used to offload execution to the DSP).
+> > > > 
+> > > 
+> > > Wouldn't this come with the expectation of following the ABIs of
+> > > drivers/accel and thereby breaking userspace?
+> > 
+> > As I wrote earlier, that depends on the accel/ maintainers decision,
+> > whether it's acceptable to have non-DRM_ACCEL code underneath.
+> > But at least I'd try doing that on the grounds of keeping the code at
+> > the proper place in the drivers/ tree, raising awareness of the
+> > FastRPC, etc.
+> > For example current fastrpc driver bypasses dri-devel reviews, while
+> > if I remember correctly, at some point it was suggested that all
+> > dma-buf-handling drivers should also notify the dri-devel ML.
+> > 
+> > Also having the driver under drivers/accels makes it possible and
+> > logical to  implement DRM_ACCEL uAPI at some point. In the ideal world
+> > we should be able to declare existing FastRPC uAPI as legacy /
+> > deprecated / backwards compatibility only and migrate to the
+> > recommended uAPI approach, which is DRM_ACCEL.
+> > 
+> 
+> I suspect Vetter/Airlie need to be involved in this.
+> 
+> Its my understanding that accelerator drivers are able to reside in misc as
+> long as there is no use of dma-buf.  Use of dma-buf means they need to be in
+> drm/accel.
+> 
+> There is precedent for moving a driver from misc to accel (HabanaLabs).
+> 
+> Right now, I'm not aware that fastRPC meets the requirements for drm/accel.
+> There is an open source userspace driver, but I'm not aware of an open
+> source compiler.  From what I know of the architecture, it should be
+> possible to utilize upstream LLVM to produce one.
 
+Yeah so fastrpc is one of the reasons why I've added a dma_buf regex match
+to MAINTAINERS, and given this move has shown up here on dri-devel that
+seems to work.
 
-=E5=9C=A82024=E5=B9=B46=E6=9C=8820=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=E5=
-=8D=887:40=EF=BC=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
-[...]
->>=20
->> Hi Krzysztof,
->>=20
->> I believe U-Boot's implementation is correct. As per simple-mfd bindi=
-ng:
->>=20
->> ```
->> simple-mfd" - this signifies that the operating system should
->>   consider all subnodes of the MFD device as separate devices akin to=
- how
->>   "simple-bus" indicates when to see subnodes as children for a simple
->>   memory-mapped bus.
->> ```
->>=20
->> This reads to me as "if you want sub nodes to be populated as devices
->> you need this."
->>=20
->> In our case there are "clock" and "reset" node sub nodes which should=
- be
->> probed as regular device, so it's true for us.
->
-> No, you already got comment from Rob.
->
-> Your children depend on parent to provide IO address, so this is not
-> simple-mfd. Rule for simple-mfd is that children do not rely on parent
-> at all.
->
-Hi Krzysztof,
+But also, it slipped through, can't break uapi, so I just pretend it's not
+really there :-)
 
-Sorry but can I ask for clarification on "depend on parent to provide IO
-address", do you mind explaining it a little bit? Does it mean children
-should get regmap node from a phandle property, not the parent node? Or =
-there
-should be a reg property for child node to tell register offset etc?
+That aside, going forward it might make sense to look into drivers/accel,
+and also going forward new dma_buf uapi will be reviewed to fairly
+stringent standards. We're not going to impose the dri-devel userspace
+rules on everyone, each subsystem tends to know what's best in their
+ecosystem. But if something just ends up in misc so it can avoid the drm
+or accel rules (and I think media is also pretty much on the same page
+nowadays), then expect some serious heat ...
 
-There are way too much usage that children "depends" on parents somehow
-in tree, so I want to confirm my understanding.
-
-For boston-platform-regs there are some other PHYs that I may add drivers
-for them in future, so I certainly want "simple-mfd" to be here=20
-
-
---=20
-- Jiaxun
+Cheers, Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
