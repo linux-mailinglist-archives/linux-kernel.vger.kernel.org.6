@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-223745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE72B9117AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10ED391179C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BA571C21B49
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:33:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41F1B1C21C72
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D6B15A863;
-	Fri, 21 Jun 2024 00:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487331272BC;
+	Fri, 21 Jun 2024 00:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WOG9KwPy"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PNF7gbL2"
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9103212C48B;
-	Fri, 21 Jun 2024 00:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02C084D29;
+	Fri, 21 Jun 2024 00:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718929646; cv=none; b=TJ3crbaZdD43hCKGmH7pKeu4ozbnsQ+H1tV1wqKyiXHDpT61w/MWu8fGmnz0KN/snfesqu/usI9yAFrQsQGf6OmtDi9hX088GEf3ApT9VNCv5OthJ3MPrKCVH+Ey1nmxg9q+GZLn2YVB7WgAaRj4xyeOOd3r6nIL9TQTTBpunWM=
+	t=1718929641; cv=none; b=H7tiyW3n/vpbZe21egXqiW9K0TD1j/u+PLGI1JEO/Uezg9IEwU/9MXOu7W2DM6r4pSpcHbVm+B/6moW8AIznpsd2gz0amUjWdrn8Rd+OPinyMcc2/tBwFn9J93eGHBGAJBZz+Cf55alSVI+zTpn4emR1oJ/fsEwjQH/DneYmnvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718929646; c=relaxed/simple;
-	bh=ZE4s9vXdBqS6M4ueN2Ozq7zT4w7ShtK+n52RYLf16ko=;
+	s=arc-20240116; t=1718929641; c=relaxed/simple;
+	bh=93I0DpW7vBHhALniPtqGUbqbmlZPAa0esu20HJ7Lw98=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mPPfPueugyRvFAbuj7y6PylX6+77lZ9BCbQhAAa3F8E77x0yVsNcWjaJzQcWWZArA1FFmUpJhYvvoawP4FAtogranwUjX1UyA7fzHd/21TZFrLcigXqF8C9agt0umCddEkWYdYIsqDAIdp4397q7pnZcw91eK9mqSLb5pwXkvTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WOG9KwPy; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=FZh/T8RJoX4UomtlXDMS2PB+sCaeDh3hov8Z288AcNiEn/eIaG49hkoxmzyfwtKcUlL/t7XYsFTMjRgSpqZ4aUE2+38Uz7OQocLjS/7S+2v3c52WP+tV1lF7m2/kGZ9OUz3yzpnJeSllTeYbBmCcgg136XwxE0SfXF5ewD3DR7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PNF7gbL2; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L0QQck007775;
-	Fri, 21 Jun 2024 00:27:00 GMT
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KNtjEU028042;
+	Fri, 21 Jun 2024 00:27:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=tPY2/xfj0WoIT
-	wfgq4isE+nahUee+x7RgpdrRutXdLc=; b=WOG9KwPy5lW6w/HKd3bM98s4XlbG/
-	HxT0Fdi4dg1Af4TILtilSApJ0ddc1DxxKQpmUovmxZbyfnpR4gJgxyqqZ2/DbVm7
-	6+AZ/8JNvxo4BmDNdEB1HnznDFfALsynkALE9mF3kQls/8WtGJZ+KLBM/Z/2cKcp
-	fYI3n0+iQEpEYUEbIHAzCClNpgpCPPkvRLvPlpVA2Fqgk6dmMbuyuGuWg7n10vMM
-	aI63AsdOkM2geaHldKvk1F12M4T9sLo/3T4s01K6qJwqaTElkuGmIA7hpmpUTkjg
-	xhh8zW/qQEi9SDNWXqVJqDWKBnQjkVoV6prfVRLE1W5ZMS1xAU5+gr43A==
+	:mime-version:content-transfer-encoding; s=pp1; bh=//0Kc+3BL5cKz
+	p2INWy7uHqYWutu2bfhjte7hQD65vA=; b=PNF7gbL2puZuQ+js/w+zDJTHu/+C9
+	CEQ/m504q8i3T4mqudfRdya9hSrjEodUkeke8DarSdwPD3jceJAWgB1D6VM/VpVp
+	j7Kh5D9FGaWDsB2l5a1Dg+8PDV7LtkTh07U59cN+55mDRMMlmPN5Nnf7Kp3+C+6q
+	rcgz2nDLzulci9yeR/yZUCsshoXuoIycM4u0mCrRV8C6aXTWrlFLfW/AmMBymZz4
+	sJJbfFwA3DVQAgVxt7n0Jfhnh9mZb93BSTkcP64eDCNMtyEYTzAWz3FXt53UkSte
+	wad5R6D+6i2GzvX8qwURobdjfNG8AW6WQ8y6sfGxTbfvYHJbsajRLOcUw==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvw8c8769-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvw8c876e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 00:27:01 +0000 (GMT)
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45L0R1Ns007963;
+	Fri, 21 Jun 2024 00:27:01 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvw8c876a-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 21 Jun 2024 00:27:00 +0000 (GMT)
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45L0QxAf007945;
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L0GVt1025708;
 	Fri, 21 Jun 2024 00:26:59 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvw8c8766-1
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yvrqv2np5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 00:26:59 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45KLeEAh032326;
-	Fri, 21 Jun 2024 00:26:58 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yvrspjn0y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 00:26:58 +0000
+	Fri, 21 Jun 2024 00:26:59 +0000
 Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45L0QrZi54067482
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45L0Qsuj16253276
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Jun 2024 00:26:55 GMT
+	Fri, 21 Jun 2024 00:26:56 GMT
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1160D20040;
+	by IMSVA (Postfix) with ESMTP id 46D862004B;
+	Fri, 21 Jun 2024 00:26:54 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 257B420043;
 	Fri, 21 Jun 2024 00:26:53 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DFBFF20043;
-	Fri, 21 Jun 2024 00:26:51 +0000 (GMT)
 Received: from heavy.ibm.com (unknown [9.171.10.44])
 	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Jun 2024 00:26:51 +0000 (GMT)
+	Fri, 21 Jun 2024 00:26:53 +0000 (GMT)
 From: Ilya Leoshkevich <iii@linux.ibm.com>
 To: Alexander Gordeev <agordeev@linux.ibm.com>,
         Alexander Potapenko <glider@google.com>,
@@ -93,9 +93,9 @@ Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
         Sven Schnelle <svens@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v6 27/39] s390/cpumf: Unpoison STCCTM output buffer
-Date: Fri, 21 Jun 2024 02:25:01 +0200
-Message-ID: <20240621002616.40684-28-iii@linux.ibm.com>
+Subject: [PATCH v6 28/39] s390/diag: Unpoison diag224() output buffer
+Date: Fri, 21 Jun 2024 02:25:02 +0200
+Message-ID: <20240621002616.40684-29-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240621002616.40684-1-iii@linux.ibm.com>
 References: <20240621002616.40684-1-iii@linux.ibm.com>
@@ -107,55 +107,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ZyRH2cM2a1ar3ozL6AHjMGtgyGHBGmOh
-X-Proofpoint-ORIG-GUID: ikkOvxFQ4wm1Gq2BQy-mlkcEGMDjF1s5
+X-Proofpoint-GUID: dR-59j4Kk4tyD4-uSWRXBGdaB4Fdihzm
+X-Proofpoint-ORIG-GUID: UqQveLdo15GSMG0ihOGcB2yNIYG0gRJI
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-20_11,2024-06-20_04,2024-05-17_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
  mlxscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- bulkscore=0 suspectscore=0 mlxlogscore=958 malwarescore=0 clxscore=1015
+ bulkscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0 clxscore=1015
  spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2406140001 definitions=main-2406210001
 
-stcctm() uses the "Q" constraint for dest, therefore KMSAN does not
-understand that it fills multiple doublewords pointed to by dest, not
-just one. This results in false positives.
+Diagnose 224 stores 4k bytes, which currently cannot be deduced from
+the inline assembly constraints. This leads to KMSAN false positives.
 
-Unpoison the whole dest manually with kmsan_unpoison_memory().
+Fix the constraints by using a 4k-sized struct instead of a raw
+pointer. While at it, prettify them too.
 
-Reported-by: Alexander Gordeev <agordeev@linux.ibm.com>
+Suggested-by: Heiko Carstens <hca@linux.ibm.com>
 Reviewed-by: Alexander Potapenko <glider@google.com>
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
 Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 ---
- arch/s390/include/asm/cpu_mf.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/s390/kernel/diag.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/s390/include/asm/cpu_mf.h b/arch/s390/include/asm/cpu_mf.h
-index a0de5b9b02ea..9e4bbc3e53f8 100644
---- a/arch/s390/include/asm/cpu_mf.h
-+++ b/arch/s390/include/asm/cpu_mf.h
-@@ -10,6 +10,7 @@
- #define _ASM_S390_CPU_MF_H
+diff --git a/arch/s390/kernel/diag.c b/arch/s390/kernel/diag.c
+index 8dee9aa0ec95..8a7009618ba7 100644
+--- a/arch/s390/kernel/diag.c
++++ b/arch/s390/kernel/diag.c
+@@ -278,12 +278,14 @@ int diag224(void *ptr)
+ 	int rc = -EOPNOTSUPP;
  
- #include <linux/errno.h>
-+#include <linux/kmsan-checks.h>
- #include <asm/asm-extable.h>
- #include <asm/facility.h>
- 
-@@ -239,6 +240,11 @@ static __always_inline int stcctm(enum stcctm_ctr_set set, u64 range, u64 *dest)
- 		: "=d" (cc)
- 		: "Q" (*dest), "d" (range), "i" (set)
- 		: "cc", "memory");
-+	/*
-+	 * If cc == 2, less than RANGE counters are stored, but it's not easy
-+	 * to tell how many. Always unpoison the whole range for simplicity.
-+	 */
-+	kmsan_unpoison_memory(dest, range * sizeof(u64));
- 	return cc;
+ 	diag_stat_inc(DIAG_STAT_X224);
+-	asm volatile(
+-		"	diag	%1,%2,0x224\n"
+-		"0:	lhi	%0,0x0\n"
++	asm volatile("\n"
++		"	diag	%[type],%[addr],0x224\n"
++		"0:	lhi	%[rc],0\n"
+ 		"1:\n"
+ 		EX_TABLE(0b,1b)
+-		: "+d" (rc) :"d" (0), "d" (addr) : "memory");
++		: [rc] "+d" (rc)
++		, "=m" (*(struct { char buf[PAGE_SIZE]; } *)ptr)
++		: [type] "d" (0), [addr] "d" (addr));
+ 	return rc;
  }
- 
+ EXPORT_SYMBOL(diag224);
 -- 
 2.45.1
 
