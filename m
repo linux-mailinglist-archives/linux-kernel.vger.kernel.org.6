@@ -1,213 +1,233 @@
-Return-Path: <linux-kernel+bounces-225204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD95912D8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:53:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39928912D90
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C731F24D91
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E371F25F7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779BB17B423;
-	Fri, 21 Jun 2024 18:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350C3179957;
+	Fri, 21 Jun 2024 18:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WXPQ0n0C"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JcwVBeeG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F758C1E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 18:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD378C1E;
+	Fri, 21 Jun 2024 18:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718996006; cv=none; b=uFJe4h7alWIhEhCS1Ztfkg38Pc6lHvPjw/7OJKmYzdxoqvSFCMBXCNm6NfVmgXkpK+c1N4TSMBlr197109XPLcBAs4k+uJvcvppU5nCUgvYBC4SZg1y6OPxddOQTjR3N49KXpPiqqWIV07JD7ixhN3ZYBmBHO1VIVemHyrwTwew=
+	t=1718996028; cv=none; b=tu1yG56hH3xDK4AsgMYiL6TTcJ1ly+CHUP0euHcXsbK1jhk8zqMAjs1lE8m3IRT2ZPmaQPhbVvbDPxuQdDNpkUru5m9BgYc2+kUI9WOf2wYqzSe41IdrpZdbrky1bYeIWJqNWskVcDWMfAI2ORoOsE6iwIJQUlNRRuozmZjrNmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718996006; c=relaxed/simple;
-	bh=dECGrhLa+sA8i7PbZJNOksBc4B7KR5A7aNDGwBvTNiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=l0OMT8/L4rRQuOl+u7ZdE4fcSpCumaZCGpypsPOAxFMDZEjXHmQ7fM6iCiUQ29pRd4QbGs1xk3Yi5//Bo1TOauKA15G7EqZ7Y34V/bp7RRZnBy7mSmUnWf2QSn7cCdQbN+uzYpbxHSpI5w9vD88wOs/VDAYNDkP4bgtxcSbhHL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WXPQ0n0C; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718996005; x=1750532005;
-  h=date:from:to:cc:subject:message-id;
-  bh=dECGrhLa+sA8i7PbZJNOksBc4B7KR5A7aNDGwBvTNiQ=;
-  b=WXPQ0n0CZGPIo78Tcm4eCVwMDVr0hNFxd7cXizzmNZpg/ARNEOoHyzTm
-   AtTU7QTxGx56utGLhsyWxf6gU6qY4p52DaE30TYNifAta8pI/wL7aSLxa
-   EKPHz93mnHrgNeZdpjK5r4QztM3iUmbXDwaeITZ33wrTIdS9le9wxiMqw
-   x/U9D7+RlNIGJrnpePFIlPR6ez4EXgWr4hvL730p51P9o9iItOgCHitEi
-   GedyGPzqkMZ7OyRg1DlTkJssbbWMYnyEZ1RexxJZqIsqufYv76Kujd18H
-   9AGLiq50yzvsjm68fzjlYzFTIVrJhd0Qfiu2wTt8aKz0bPM2gMoyvlL4p
-   Q==;
-X-CSE-ConnectionGUID: 5KUJ34LPSP+AVDuGponzAQ==
-X-CSE-MsgGUID: pS7wNM3LSlWOR0wAaX3y/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="16276181"
-X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
-   d="scan'208";a="16276181"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 11:53:19 -0700
-X-CSE-ConnectionGUID: ODh1HSDGT1KZ7vu0NIciUA==
-X-CSE-MsgGUID: eGrFwo4fRgG8Pdir84xoEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
-   d="scan'208";a="42581634"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 21 Jun 2024 11:53:18 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKjNr-0008ti-0k;
-	Fri, 21 Jun 2024 18:53:15 +0000
-Date: Sat, 22 Jun 2024 02:52:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cc] BUILD SUCCESS
- 16df35946120fca2346c415fae429c821391eef8
-Message-ID: <202406220255.Ix7co0ln-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1718996028; c=relaxed/simple;
+	bh=hm5f2+i7cXJarAwmiNoIflF+PrKQZDZQu56AYioULBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h5+E7TxoPnlDcPRX8kdJD56/uViTVdZSuSOAsO1lz7iYUPf7CMaYaKnWfOlkGW92BTjAUuPxHFLYEwkUvt0JBIq9YfH0UZ9B+JtLaH3ELI7pR0dHvZLJFIYXgRABjJ4JTZnxXs/rRRhoUhJTABeiqCPFVOkgpC/rJe8ZvzpSHjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JcwVBeeG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409AFC2BBFC;
+	Fri, 21 Jun 2024 18:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718996027;
+	bh=hm5f2+i7cXJarAwmiNoIflF+PrKQZDZQu56AYioULBY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JcwVBeeGy57t2forSPBBIiNj8kTQyzytn8dXe1VDM00TY5CeINfsetk77T90jLHmm
+	 1WL6mGvBf3oTdG5f0ZStU9iCBRFMdybWYufqdwANHiMb8v430U/ZVDn7KebeImZK7Q
+	 x+/TubCx/983MpznrKEW9sT4kgEfLPOWF9lYp+a4JUGbzSe2MW6MV1GrHrpWmbL4wl
+	 Gf2pM5aK4Avmpw6kMIJ61Xo+IjoMcf+T7wFZRp2VjicUyQfOT0iNSjuX8Dcbn6Sfr9
+	 Zl8bUcfJV0hzRNPxIOQoSls+IrVFPl9+IJ3p/GOjjztukmkYq9j4cnCmHgKYNztNqB
+	 itr9RDInrPG1w==
+Date: Fri, 21 Jun 2024 11:53:45 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: koachan@protonmail.com
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de,
+	sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] sparc/build: Make all compiler flags also
+ clang-compatible
+Message-ID: <20240621185345.GA416370@thelio-3990X>
+References: <20240620-sparc-cflags-v1-1-bba7d0ff7d42@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620-sparc-cflags-v1-1-bba7d0ff7d42@protonmail.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cc
-branch HEAD: 16df35946120fca2346c415fae429c821391eef8  ACPI: tables: Print MULTIPROC_WAKEUP when MADT is parsed
+Hi Koakuma,
 
-elapsed time: 4616m
+On Thu, Jun 20, 2024 at 10:56:00PM +0700, Koakuma via B4 Relay wrote:
+> From: Koakuma <koachan@protonmail.com>
+> 
+> Remove flags not supported by clang and make sure that all the flags
+> used are portable between clang and GCC.
+> 
+> The reasoning for removing the -fcall-used* ones is as follows:
+> 
+> In the (normal) 32-bit ABI, %g5 and %g7 is normally reserved, and in
+> the 64-bit ABI, %g7 is the reserved one.
+> Linux turns them into volatile registers by the way of -fcall-used-*,
+> but on the other hand, omitting the flags shouldn't be harmful;
+> compilers will now simply refuse to touch them, and any assembly
+> code that happens to touch them would still work like usual (because
+> Linux' conventions already treats them as volatile anyway).
+> 
+> Signed-off-by: Koakuma <koachan@protonmail.com>
+> ---
+> Hello~
+> 
+> This changes the CFLAGS for building the SPARC kernel so that it can be
+> built with clang, as a follow up from the discussion in this thread:
+> 
+> https://lore.kernel.org/lkml/JAYB7uS-EdLABTR4iWZdtFOVa5MvlKosIrD_cKTzgeozCOGRM7lhxeLigFB1g3exX445I_W5VKB-tAzl2_G1zCVJRQjp67ODfsSqiZWOZ9o=@protonmail.com/T/#u
+> 
+> The changes are removal of various `-fcall-used-*` flags, and changing
+> `-mv8plus` to `-mcpu=v9`:
+> 
+> - `-fcall-used-*` flags should be safe to remove; the compiler will
+>   stop using the registers specified as temporaries, but it is a safe
+>   change wrt. the ABI. Assembly code can still use those registers
+>   as needed.
+>   It does bring a theoretical possible slowdown due to the compiler
+>   having less registers to work with, but in practice - in my case,
+>   at least - it seems to not make any difference with daily usage.
+> 
+> - More trivial is to change `-mv8plus` -> `-mcpu=v9`.
+>   This should be safe too since the kernel seems to require a V9
+>   processor to run anyway, so I'm changing the flag to one that is
+>   portable between GCC and clang.
+> 
+> Also, as stated in the thread, building with these changes still result
+> in a working kernel, at least for Sun T5120 and qemu virtual machines.
+> 
+> On the LLVM side, the effort for building Linux/SPARC is tracked here:
+> https://github.com/llvm/llvm-project/issues/40792
 
-configs tested: 121
-configs skipped: 2
+This is really awesome to see, thanks for sending this patch!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+I think a good amount of the reasoning below the '---' could probably
+make it into the commit message as well but I don't have much of a
+vision there, maybe one of the SPARC folks will.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                               defconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240620   gcc-13.2.0
-arc                   randconfig-002-20240620   gcc-13.2.0
-arm                               allnoconfig   clang-19
-arm                                 defconfig   clang-14
-arm                   randconfig-001-20240620   gcc-13.2.0
-arm                   randconfig-002-20240620   clang-19
-arm                   randconfig-003-20240620   gcc-13.2.0
-arm                   randconfig-004-20240620   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240620   gcc-13.2.0
-arm64                 randconfig-002-20240620   gcc-13.2.0
-arm64                 randconfig-003-20240620   gcc-13.2.0
-arm64                 randconfig-004-20240620   clang-19
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240620   gcc-13.2.0
-csky                  randconfig-002-20240620   gcc-13.2.0
-hexagon                           allnoconfig   clang-19
-hexagon                             defconfig   clang-19
-hexagon               randconfig-001-20240620   clang-19
-hexagon               randconfig-002-20240620   clang-19
-i386         buildonly-randconfig-001-20240619   clang-18
-i386         buildonly-randconfig-002-20240619   clang-18
-i386         buildonly-randconfig-003-20240619   clang-18
-i386         buildonly-randconfig-004-20240619   clang-18
-i386         buildonly-randconfig-005-20240619   gcc-7
-i386         buildonly-randconfig-006-20240619   gcc-7
-i386                  randconfig-001-20240619   gcc-7
-i386                  randconfig-002-20240619   gcc-7
-i386                  randconfig-003-20240619   clang-18
-i386                  randconfig-004-20240619   gcc-7
-i386                  randconfig-005-20240619   clang-18
-i386                  randconfig-006-20240619   gcc-9
-i386                  randconfig-011-20240619   clang-18
-i386                  randconfig-012-20240619   clang-18
-i386                  randconfig-013-20240619   gcc-13
-i386                  randconfig-014-20240619   clang-18
-i386                  randconfig-015-20240619   clang-18
-i386                  randconfig-016-20240619   gcc-13
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240620   gcc-13.2.0
-loongarch             randconfig-002-20240620   gcc-13.2.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240620   gcc-13.2.0
-nios2                 randconfig-002-20240620   gcc-13.2.0
-openrisc                          allnoconfig   gcc-13.2.0
-openrisc                            defconfig   gcc-13.2.0
-parisc                            allnoconfig   gcc-13.2.0
-parisc                              defconfig   gcc-13.2.0
-parisc                randconfig-001-20240620   gcc-13.2.0
-parisc                randconfig-002-20240620   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                           allnoconfig   gcc-13.2.0
-powerpc               randconfig-001-20240620   gcc-13.2.0
-powerpc               randconfig-002-20240620   gcc-13.2.0
-powerpc               randconfig-003-20240620   clang-17
-powerpc64             randconfig-001-20240620   gcc-13.2.0
-powerpc64             randconfig-002-20240620   gcc-13.2.0
-powerpc64             randconfig-003-20240620   clang-17
-riscv                             allnoconfig   gcc-13.2.0
-riscv                               defconfig   clang-19
-riscv                 randconfig-001-20240620   clang-19
-riscv                 randconfig-002-20240620   clang-14
-s390                              allnoconfig   clang-19
-s390                                defconfig   clang-19
-s390                  randconfig-001-20240620   gcc-13.2.0
-s390                  randconfig-002-20240620   gcc-13.2.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                  defconfig   gcc-13.2.0
-sh                    randconfig-001-20240620   gcc-13.2.0
-sh                    randconfig-002-20240620   gcc-13.2.0
-sparc                             allnoconfig   gcc-13.2.0
-sparc                               defconfig   gcc-13.2.0
-sparc64                             defconfig   gcc-13.2.0
-sparc64               randconfig-001-20240620   gcc-13.2.0
-sparc64               randconfig-002-20240620   gcc-13.2.0
-um                                allnoconfig   clang-17
-um                                  defconfig   clang-19
-um                             i386_defconfig   gcc-13
-um                    randconfig-001-20240620   clang-19
-um                    randconfig-002-20240620   gcc-13
-um                           x86_64_defconfig   clang-15
-x86_64       buildonly-randconfig-001-20240619   clang-18
-x86_64       buildonly-randconfig-002-20240619   clang-18
-x86_64       buildonly-randconfig-003-20240619   gcc-11
-x86_64       buildonly-randconfig-004-20240619   clang-18
-x86_64       buildonly-randconfig-005-20240619   clang-18
-x86_64       buildonly-randconfig-006-20240619   gcc-13
-x86_64                randconfig-001-20240619   gcc-13
-x86_64                randconfig-002-20240619   clang-18
-x86_64                randconfig-003-20240619   gcc-8
-x86_64                randconfig-004-20240619   clang-18
-x86_64                randconfig-005-20240619   clang-18
-x86_64                randconfig-006-20240619   gcc-13
-x86_64                randconfig-011-20240619   gcc-13
-x86_64                randconfig-012-20240619   gcc-13
-x86_64                randconfig-013-20240619   gcc-13
-x86_64                randconfig-014-20240619   clang-18
-x86_64                randconfig-015-20240619   clang-18
-x86_64                randconfig-016-20240619   gcc-11
-x86_64                randconfig-071-20240619   clang-18
-x86_64                randconfig-072-20240619   clang-18
-x86_64                randconfig-073-20240619   gcc-9
-x86_64                randconfig-074-20240619   gcc-9
-x86_64                randconfig-075-20240619   clang-18
-x86_64                randconfig-076-20240619   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240620   gcc-13.2.0
-xtensa                randconfig-002-20240620   gcc-13.2.0
+I saw through the LLVM issue above that one other patch is necessary to
+fix an issue in the vDSO [1], which I applied in testing this one. I
+noticed in applying that change that you appear to be working on 6.1,
+which is fine for now, but you'll need another diff once you get to a
+newer version, as we stopped using CROSS_COMPILE to set clang's
+'--target=' value:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
+index 6c23c6af797f..2435efae67f5 100644
+--- a/scripts/Makefile.clang
++++ b/scripts/Makefile.clang
+@@ -10,6 +10,7 @@ CLANG_TARGET_FLAGS_mips		:= mipsel-linux-gnu
+ CLANG_TARGET_FLAGS_powerpc	:= powerpc64le-linux-gnu
+ CLANG_TARGET_FLAGS_riscv	:= riscv64-linux-gnu
+ CLANG_TARGET_FLAGS_s390		:= s390x-linux-gnu
++CLANG_TARGET_FLAGS_sparc	:= sparc64-linux-gnu
+ CLANG_TARGET_FLAGS_x86		:= x86_64-linux-gnu
+ CLANG_TARGET_FLAGS_um		:= $(CLANG_TARGET_FLAGS_$(SUBARCH))
+ CLANG_TARGET_FLAGS		:= $(CLANG_TARGET_FLAGS_$(SRCARCH))
+
+With those, I can successfully build a kernel with clang that boots in
+QEMU :)
+
+  $ make -skj"$(nproc)" \
+         ARCH=sparc64 \
+         CC=clang \
+         CROSS_COMPILE=sparc64-linux-gnu- \
+         LLVM_IAS=0 \
+         mrproper defconfig all
+
+  $ qemu-system-sparc64 \
+        -serial mon:stdio \
+        -display none \
+        -no-reboot \
+        -M sun4u \
+        -cpu 'TI UltraSparc IIi' \
+        -m 512 \
+        -append console=ttyS0 \
+        -initrd sparc64-rootfs.cpio \
+        -kernel arch/sparc/boot/image
+  ...
+  [    1.788544] Run /init as init process
+  ...
+  Linux version 6.10.0-rc4+ (nathan@thelio-3990X) (ClangBuiltLinux clang version 19.0.0git (https://github.com/llvm/llvm-project a083e50f53f0f9eb9ad0c5b65f3c627cf97043e6), GNU ld (GNU Binutils) 2.42) #1 SMP Fri Jun 21 11:36:18 MST 2024
+  ...
+
+Consider this:
+
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+
+[1]: https://github.com/koachan/linux-clang/commit/c0114bfc7a4f64bc4d3e63eca6582ec827a8e2a2
+
+> ---
+>  arch/sparc/Makefile      | 4 ++--
+>  arch/sparc/vdso/Makefile | 4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
+> index 757451c3ea1d..7318a8b452c3 100644
+> --- a/arch/sparc/Makefile
+> +++ b/arch/sparc/Makefile
+> @@ -29,7 +29,7 @@ UTS_MACHINE    := sparc
+>  # versions of gcc.  Some gcc versions won't pass -Av8 to binutils when you
+>  # give -mcpu=v8.  This silently worked with older bintutils versions but
+>  # does not any more.
+> -KBUILD_CFLAGS  += -m32 -mcpu=v8 -pipe -mno-fpu -fcall-used-g5 -fcall-used-g7
+> +KBUILD_CFLAGS  += -m32 -mcpu=v8 -pipe -mno-fpu
+>  KBUILD_CFLAGS  += -Wa,-Av8
+>  
+>  KBUILD_AFLAGS  += -m32 -Wa,-Av8
+> @@ -45,7 +45,7 @@ export BITS   := 64
+>  UTS_MACHINE   := sparc64
+>  
+>  KBUILD_CFLAGS += -m64 -pipe -mno-fpu -mcpu=ultrasparc -mcmodel=medlow
+> -KBUILD_CFLAGS += -ffixed-g4 -ffixed-g5 -fcall-used-g7 -Wno-sign-compare
+> +KBUILD_CFLAGS += -ffixed-g4 -ffixed-g5 -Wno-sign-compare
+>  KBUILD_CFLAGS += -Wa,--undeclared-regs
+>  KBUILD_CFLAGS += $(call cc-option,-mtune=ultrasparc3)
+>  KBUILD_AFLAGS += -m64 -mcpu=ultrasparc -Wa,--undeclared-regs
+> diff --git a/arch/sparc/vdso/Makefile b/arch/sparc/vdso/Makefile
+> index 243dbfc4609d..929140facabf 100644
+> --- a/arch/sparc/vdso/Makefile
+> +++ b/arch/sparc/vdso/Makefile
+> @@ -46,7 +46,7 @@ CFL := $(PROFILING) -mcmodel=medlow -fPIC -O2 -fasynchronous-unwind-tables -m64
+>         -fno-omit-frame-pointer -foptimize-sibling-calls \
+>         -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
+>  
+> -SPARC_REG_CFLAGS = -ffixed-g4 -ffixed-g5 -fcall-used-g5 -fcall-used-g7
+> +SPARC_REG_CFLAGS = -ffixed-g4 -ffixed-g5
+>  
+>  $(vobjs): KBUILD_CFLAGS := $(filter-out $(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) $(SPARC_REG_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
+>  
+> @@ -86,7 +86,7 @@ KBUILD_CFLAGS_32 += -fno-stack-protector
+>  KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
+>  KBUILD_CFLAGS_32 += -fno-omit-frame-pointer
+>  KBUILD_CFLAGS_32 += -DDISABLE_BRANCH_PROFILING
+> -KBUILD_CFLAGS_32 += -mv8plus
+> +KBUILD_CFLAGS_32 += -mcpu=v9
+>  $(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
+>  
+>  $(obj)/vdso32.so.dbg: FORCE \
+> 
+> ---
+> base-commit: 92e5605a199efbaee59fb19e15d6cc2103a04ec2
+> change-id: 20240620-sparc-cflags-e7f2dbbd4b9d
+> 
+> Best regards,
+> -- 
+> Koakuma <koachan@protonmail.com>
+> 
+> 
 
