@@ -1,58 +1,105 @@
-Return-Path: <linux-kernel+bounces-225033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939F5912AD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:06:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C688D912AD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 465362837D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7402E281CB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA0A15FA6C;
-	Fri, 21 Jun 2024 16:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C2A15EFDA;
+	Fri, 21 Jun 2024 16:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="WaFdfRFb"
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ZhMVTlYI"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACFE5A79B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C314F215
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718985950; cv=none; b=MLl+mwV7qumYwMEpV9U0epIr7S+zKPxOtHH4SpbiSvlt17Y9O9B3sHuZH//P1TRHvb3MOpsJuwbPqo3WE5WAt0+FrSZUHj8sUMSRekubsnq8wXM9En0TSyzc3rR2qNP/IatuKcSiqgInM2kme0cGPXXy3kQSGGtSplCTN8NqnZo=
+	t=1718985848; cv=none; b=eg0W0f07PpCiUHarwXFI0z54LxYQvsbZOLI7gPwwu7/mjs7F1JCyVhAsj92+O/+tPgZ2iB2oLxIGfCzyV6oidnBxVwLoNF9VqmouXE/ZdQUBR+b9whIe7646nRhcVOq+cV5/IyjOmZZpwHRrycddRKDXODtYCX9APw51+409jok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718985950; c=relaxed/simple;
-	bh=HLIGsFoFXfkW5grq1kBsr2MpcKrxX3SI7FnwCeRJfmQ=;
+	s=arc-20240116; t=1718985848; c=relaxed/simple;
+	bh=GRii09jWj7oa82KnO/sJmVrri1gO9a1IACLF/McKDxM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dzDeZcxcVS8EuQdGCeo4iFUMgHj5cevuKmJmjGHva3vMMB2aJWRuAcXgIeqRdeQu2W1hetwzLHbNe5O7gQSWCP6Kcq167hcf4UALDo3hnjzKk4XPeoWgoZYMTzNt+p3GvczOONnenOM1o3CSe8pt3BefMxrqFJetDrQGBzsZHGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=WaFdfRFb; arc=none smtp.client-ip=84.16.66.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4W5MWR4WWmzhc9;
-	Fri, 21 Jun 2024 18:00:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1718985603;
-	bh=jjsdmC2rugRobeZ0tOl0fxS/md4FLeZ48MksR7AnbBo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WaFdfRFbrYof0i6GJ3s03UP2zYVpTvHZEofmVI+QFEKiogYokX1VszDK9uzjkk+lK
-	 j4OrAs8Q4kmgye1LO+uLrT8MfCppYj6fsGOKwQEs7RQYeLXKIjmwBpqEJaRuUzHKEt
-	 6v+2gQi7FUW0V6JK0vIhKrt1Ww7CUp1ISzdxpPlE=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4W5MWQ29Yrz353;
-	Fri, 21 Jun 2024 18:00:02 +0200 (CEST)
-Date: Fri, 21 Jun 2024 18:00:01 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
-	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH v5] landlock: Add abstract unix socket connect restriction
-Message-ID: <20240621.OhK4Aht4oa7i@digikod.net>
-References: <ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yz7q1P9sVQzxu3Jwu/2SnvTKwslkhc0KGblB0ev3vaFzSeQtSt7hZTOFxWbv8ZeswTC1962IG0A5WZ+A9pIZfNATOCKK6evhvhvXhrtYGn9XAe4kGpyehOE4+xePJz9LRw+hqHD/UghRVMCFREKkYrxCjJLygPQKt8WJvGowQ+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=ZhMVTlYI; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4210f0bb857so2759715e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:04:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1718985845; x=1719590645; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vN260L65NdwhhzFhGRzhHpkMdYHsvIyA4ZNIAeJjPbg=;
+        b=ZhMVTlYIdzs1LtGxTm0wln5gn4YHVWkcmn+PTnEyAW4uWHHeiW5nmtUaCVWtkWWf1f
+         DF2FjjB30zy6qPshmOAsT/kPZssNJBvgVbIFZVLD8Lxi8Rz+sc9i4nPjZCts//p6BCMd
+         1HhMcjhI0W6xe1l8hmClijvNvVqJPL1IbImb8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718985845; x=1719590645;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vN260L65NdwhhzFhGRzhHpkMdYHsvIyA4ZNIAeJjPbg=;
+        b=X9fKVfhb9I6GNa8C7Xx1AtbxT3dja9sZjlFB0c+Psg6x7yZZOCrjE4VvwnJl0uof+/
+         Mhcuf9+/FxARI+Stj7awtaA9coWy+bYIfmdfrGhnpRUV8oymAwA7LJBmzC27cWyVwvCW
+         MOUU5ClmqpGwTjtscXzXx0FE/Rmw/t+ZFRINw7zMD3RTKOS0s1Y4B0qx4mcMFhPTIvXY
+         CyiUMb0vl3dQjrF9sapmPw/71E9VAHfReOuxVfS8qdOqH6nOQq4tA6wLgGWLn+YqSZC7
+         cx2pgID5C1nQuH3IaD9K94YKHlc/kHnkSuVK9Di4Hj2+LYhUJnyjrjxOdAH2/HGu1rCP
+         KbZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWY4o4lrzlzH9CExxgFpbZY8hA3gkq40Cds0RToy7jJa0SBMDio2k84jCtD8tX5THClG+CoSxU4ZEnz9PJlGMUM/M7YyMeurFAvXlYA
+X-Gm-Message-State: AOJu0YwfBtR0+HTq/mPEc/hI8jTjV8zHkDINjjckyu1IOURkWlw+M3LI
+	mPPi9tPRrNSyTldpgVEFPp0j2ag8t1Mlzu6gddvASN3kbm8DCN8b7CWHLpub6b0=
+X-Google-Smtp-Source: AGHT+IFVeU3xce+k26r2+DnW8GeU78oyhJggZBPOJmXKmQ3sZUYdc630B9SNBh7u3If+X/hS+ML+Pg==
+X-Received: by 2002:a05:6000:1f86:b0:360:8490:74d with SMTP id ffacd0b85a97d-36319990f76mr6226350f8f.5.1718985845005;
+        Fri, 21 Jun 2024 09:04:05 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366383f6d16sm2172707f8f.3.2024.06.21.09.04.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 09:04:04 -0700 (PDT)
+Date: Fri, 21 Jun 2024 18:04:02 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Doug Anderson <dianders@chromium.org>
+Cc: dri-devel@lists.freedesktop.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Yuran Pereira <yuran.pereira@hotmail.com>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm/panel: Avoid warnings w/ panel-simple/panel-edp at
+ shutdown
+Message-ID: <ZnWkcodVWXe7gPVa@phenom.ffwll.local>
+Mail-Followup-To: Doug Anderson <dianders@chromium.org>,
+	dri-devel@lists.freedesktop.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Yuran Pereira <yuran.pereira@hotmail.com>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-kernel@vger.kernel.org
+References: <20240611074846.1.Ieb287c2c3ee3f6d3b0d5f49b29f746b93621749c@changeid>
+ <ZmljNHteJ9L5EdE9@phenom.ffwll.local>
+ <CAD=FV=V4C1AYVqG4gig+SiQr4n_mAPVASxneDDZT1a=7AY3Hzw@mail.gmail.com>
+ <Zmm6i6iQOdP613w3@phenom.ffwll.local>
+ <CAD=FV=WBVfBZrgGay=XY2Usq3FA3m9i6y0cU4=b=w7qO6gRBFQ@mail.gmail.com>
+ <ZnBFgDO37xhMfvzV@phenom.ffwll.local>
+ <CAD=FV=UindNjK4rWMvsMybgp_bPULbNz2A-u8x60MD4scrnHSQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,244 +108,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=UindNjK4rWMvsMybgp_bPULbNz2A-u8x60MD4scrnHSQ@mail.gmail.com>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On Thu, Jun 20, 2024 at 03:05:34PM GMT, Tahera Fahimi wrote:
-> Abstract unix sockets are used for local inter-process communications
-> without on a filesystem. Currently a sandboxed process can connect to a
-
-"without a"
-
-> socket outside of the sandboxed environment, since landlock has no
-
-s/landlock/Landlock/
-
-> restriction for connecting to a unix socket in the abstract namespace.
-
-"namespace" usually refers to the namespaces(7) man page.  What about
-using the same vocabulary is in unix(7):
-"for connecting to an abstract socket address."
-
-> Access to such sockets for a sandboxed process should be scoped the same
-> way ptrace is limited.
+On Tue, Jun 18, 2024 at 04:49:22PM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> Because of compatibility reasons and since landlock should be flexible,
-> we extend the user space interface by adding a new "scoped" field
-
-...to the ruleset attribute structure.
-
-> . This
-> field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
-> specify that the ruleset will deny any connection from within the
-> sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
+> On Mon, Jun 17, 2024 at 7:17 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > > That all being said, I'm also totally OK with any of the following:
+> > >
+> > > 1. Dropping my patch and just accepting that we will have warnings
+> > > printed out for all DRM drivers that do things correctly and have no
+> > > warnings for broken DRM drivers.
+> >
+> > Can't we just flip the warnings around? Like make the hacky cleanup
+> > conditional on the panel not yet being disabled/cleaned up, and complain
+> > in that case only. With that:
+> > - drivers which call shutdown shouldn't get a warning anymore, and also
+> >   not a surplus call to drm_panel_disable/unprepare
+> > - drivers which are broken still get the cleanup calls
+> > - downside: we can't enforce this, because it's not yet enforced through
+> >   device_link ordering
 > 
-> Closes: https://github.com/landlock-lsm/linux/issues/7
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> I feel like something is getting lost in the discussion here. I'm just
+> not sure where to put the hacky cleanup without either having a list
+> like I have or fixing the device link problem so that the DRM device
+> shutdown gets called before the panel. Specifically, right now I think
+> it's possible for the panel's shutdown() callback to happen before the
+> DRM Device's shutdown(). Thus, we have:
 > 
-> -------
-
-For the next version, please list all changes since last version. With
-this v5 I see some renaming, a new curr_ruleset field with optional
-domain scopping, and code formatting.
-
-
-> V4: Added abstract unix socket scoping tests
-> V3: Added "scoped" field to landlock_ruleset_attr
-> V2: Remove wrapper functions
+> 1. Panel shutdown() checks and says "it's not shutdown yet so do my
+> hacky cleanup."
+> 2. DRM device shutdown() gets called and tries to cleanup again.
 > 
-> -------
+> ...and thus in step #1 we can't detect a broken DRM device. What am I missing?
+
+The above is a broken drm driver, because shutting down something that the
+main drm driver needs _before_ it is shut down itself is broken. That's
+why we need the device link.
+
+So if this case goes a bit wrong that's imo ok. That was my point that
+without device links, we cannot have _any_ warning at all, but we can at
+least make sure that correct drivers, meaning:
+- they make sure the panel is around for longer than the drm device
+- and they call drm atomic_helper_shutdown in the right places
+
+Wont either double-shutdown the panel or get the warning.
+
+It's not great, but it's at least better than the current situation where
+correct drivers get a warning, and some broken drivers don't. So still an
+improvement.
+
+That leaves us with the issue of warning for all broken drivers. We have
+two proposals for that:
+
+- Your explicit list, which is a pain imo, and I'm not seeing the benefit
+  of this, because it'll encourage each driver to hack around the core
+  code bug of not having the right device links.
+
+- Fixing this with a device link and adding the warning for everyone.
+
+This isn't a great situation, because it's likely going to be another few
+years without the device link situation sorted out. But that's been the
+case already for years so *shrug*.
+
+> > > 2. Someone else posting / landing a patch to remove the hacky "disable
+> > > / unprepare" for panel-simple and panel-edp and asserting that they
+> > > don't care if they break any DRM drivers that are still broken. I
+> > > don't want to be involved in authoring or landing this patch, but I
+> > > won't scream loudly if others want to do it.
+> > >
+> > > 3. Someone else taking over trying to solve this problem.
+> > >
+> > > ...mostly this work is janitorial and I'm trying to help move the DRM
+> > > framework forward and get rid of cruft, so if it's going to cause too
+> > > much conflict I'm fine just stepping back.
+> >
+> > My issue is that you're trading an ugly warning that hurts maintenance
+> > with an explicit list of working drivers, which also hurts maintenance.
+> > Does seem like forward progress to me, just pushing the issue around.
 > 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
->  include/uapi/linux/landlock.h                 |  27 ++
->  security/landlock/limits.h                    |   3 +
->  security/landlock/ruleset.c                   |  12 +-
->  security/landlock/ruleset.h                   |  27 +-
->  security/landlock/syscalls.c                  |  13 +-
->  security/landlock/task.c                      |  95 +++++++
->  .../testing/selftests/landlock/ptrace_test.c  | 261 ++++++++++++++++++
->  7 files changed, 430 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index 68625e728f43..1eb459afcb3b 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -37,6 +37,11 @@ struct landlock_ruleset_attr {
->  	 * rule explicitly allow them.
->  	 */
->  	__u64 handled_access_net;
-> +	/**
-> +	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
+> IMO it at least moves things forward. If we make the warning obvious
+> enough then I think we could assert that, within a few kernel
+> versions, everyone who hit the warning would have addressed it. Once
+> that happens we can fully get rid of the ugly list and just make the
+> assumption that things are good. That feels like a clear path to me...
 
-Please take a look at the generated documentation and fix the build
-warnings related to this patch: check-linux.sh doc (or make htmldocs)
+Yeah, but your warning I think just encourages more hacks in drivers that
+shouldn't be there (for the ordering issue). So I'm not sure it's strictly
+better.
 
+And we have _tons_ of drm driver api misuse that we don't catch with
+warnings and checks. Sometimes that's just not possible, because the
+situation is too messy. If we add an explicit "I'm not broken" list for
+each such case, we will have an unmaintainable mess. Sometimes a "I'm the
+last broken driver" flag makes sense, but even there I'm cautious that
+it's a bright idea.
 
-> +	 * which are confined to only affect the current Landlock domain.
-
-What about this?
-"Bitmask of scopes () restricting a Landlock domain from accessing
-outside resources (e.g. IPCs)."
-
-> +	 */
-> +	__u64 scoped;
->  };
->  
->  /*
-> @@ -266,4 +271,26 @@ struct landlock_net_port_attr {
->  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
->  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
->  /* clang-format on */
-> +
-> +/**
-> + * DOC: scope
-> + *
-> + * .scoped attribute handles a set of restrictions on kernel IPCs through
-> + * the following flags.
-
-Shouldn't this be after the section title?
-
-> + *
-> + * Scope access flags
-
-You can remove "access"
-
-> + * ~~~~~~~~~~~~~~~~~~~~
-> + * 
-> + * These flags enable to restrict a sandboxed process from a set of IPC 
-
-There are several spaces at the end of lines, they should be removed.
-
-> + * actions. Setting a flag in a landlock domain will isolate the Landlock
-
-A flag is not set "in a Landlock domain" but for a ruleset.
-
-> + *  domain to forbid connections to resources outside the domain.
-
-Please remove unneeded spaces.
-
-> + *
-> + * IPCs with scoped actions:
-> + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandbox process to
-> + *   connect to a process outside of the sandbox domain through abstract
-> + *   unix sockets. 
-
-Restrict a sandboxed process from connecting to an abstract unix socket
-created by a process outside the related Landlock domain (e.g. a parent
-domain or a process which is not sandboxed).
-
-> + */
-> +/* clang-format off */
-> +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
-> +/* clang-format on*/
->  #endif /* _UAPI_LINUX_LANDLOCK_H */
-> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> index 4eb643077a2a..eb01d0fb2165 100644
-> --- a/security/landlock/limits.h
-> +++ b/security/landlock/limits.h
-> @@ -26,6 +26,9 @@
->  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
->  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
->  
-> +#define LANDLOCK_LAST_SCOPE		LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
-> +#define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
-> +#define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
->  /* clang-format on */
->  
->  #endif /* _SECURITY_LANDLOCK_LIMITS_H */
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index 6ff232f58618..3b3844574326 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -52,12 +52,13 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
->  
->  struct landlock_ruleset *
->  landlock_create_ruleset(const access_mask_t fs_access_mask,
-> -			const access_mask_t net_access_mask)
-> +			const access_mask_t net_access_mask,
-> +			const access_mask_t scope_mask)
->  {
->  	struct landlock_ruleset *new_ruleset;
->  
->  	/* Informs about useless ruleset. */
-> -	if (!fs_access_mask && !net_access_mask)
-> +	if (!fs_access_mask && !net_access_mask && !scope_mask)
->  		return ERR_PTR(-ENOMSG);
->  	new_ruleset = create_ruleset(1);
->  	if (IS_ERR(new_ruleset))
-> @@ -66,6 +67,8 @@ landlock_create_ruleset(const access_mask_t fs_access_mask,
->  		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
->  	if (net_access_mask)
->  		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
-> +	if (scope_mask)
-> +		landlock_add_scope_mask(new_ruleset, scope_mask, 0);
->  	return new_ruleset;
->  }
->  
-> @@ -311,7 +314,7 @@ static void put_hierarchy(struct landlock_hierarchy *hierarchy)
->  {
->  	while (hierarchy && refcount_dec_and_test(&hierarchy->usage)) {
->  		const struct landlock_hierarchy *const freeme = hierarchy;
-> -
-> +		
->  		hierarchy = hierarchy->parent;
->  		kfree(freeme);
->  	}
-> @@ -472,6 +475,7 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
->  	}
->  	get_hierarchy(parent->hierarchy);
->  	child->hierarchy->parent = parent->hierarchy;
-> +	child->hierarchy->curr_ruleset = child;
->  
->  out_unlock:
->  	mutex_unlock(&parent->lock);
-> @@ -571,7 +575,7 @@ landlock_merge_ruleset(struct landlock_ruleset *const parent,
->  	err = merge_ruleset(new_dom, ruleset);
->  	if (err)
->  		goto out_put_dom;
-> -
-> +	new_dom->hierarchy->curr_ruleset = new_dom;
->  	return new_dom;
->  
->  out_put_dom:
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index 0f1b5b4c8f6b..39cb313812dc 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -35,6 +35,8 @@ typedef u16 access_mask_t;
->  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
->  /* Makes sure all network access rights can be stored. */
->  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_NET);
-> +/* Makes sure all scoped rights can be stored*/
-> +static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_SCOPE);
->  /* Makes sure for_each_set_bit() and for_each_clear_bit() calls are OK. */
->  static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
->  
-> @@ -42,6 +44,7 @@ static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
->  struct access_masks {
->  	access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
->  	access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
-> +	access_mask_t scoped : LANDLOCK_NUM_SCOPE;
->  };
->  
->  typedef u16 layer_mask_t;
-> @@ -150,6 +153,10 @@ struct landlock_hierarchy {
->  	 * domain.
->  	 */
->  	refcount_t usage;
-> +	/**
-> +	 * @curr_ruleset: a pointer back to the current ruleset
-> +	 */
-> +	struct landlock_ruleset *curr_ruleset;
-
-This curr_ruleset pointer can become a dangling pointer and then lead to
-a user after free bug because a domain (i.e. ruleset tie to a set of
-processes) is free when no processes use it.
-
-Instead, we could just use a bitmask (or a boolean for now) to identify
-if the related layer scopes abstract unix sockets.  Because struct
-landlock_hierarchy identifies only one layer of a domain, another and
-simpler approach would be to only rely on the "client" and "server"
-domains' layers.
+Cheers, Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
