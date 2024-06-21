@@ -1,99 +1,200 @@
-Return-Path: <linux-kernel+bounces-224296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E0B912058
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:20:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0069D91205B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDC0AB20FA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E951C20FCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B826E16EBE4;
-	Fri, 21 Jun 2024 09:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwPxV1gL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDE016D335;
+	Fri, 21 Jun 2024 09:20:43 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021F916E86F;
-	Fri, 21 Jun 2024 09:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDD216D9B1;
+	Fri, 21 Jun 2024 09:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718961632; cv=none; b=aIeOZXtHqBe5fuoYFP3AOJZGfK1c7rvETKNgfFl5RxUCi2vSYHYj9KOI+1ahILAzCWk772Fj/VyzFY0HJRFu9oyh1paPENjBDtJqHR/9WFY6ypAI7b7pA+z32jP6tDot/ptkoEuLudpw96qcvbhhEKpcIQRBUB6Rop2yDrLkyZQ=
+	t=1718961643; cv=none; b=ejHuhd95tJkDj0lcyBgCwRjZXXTH3XqLcorBu/MsBkkewl7ToL+bMCwVnIVYoXHcRj4ZOkZOf3DLV99ppnDa8wT9DHHe+uBwkTJixJHBQciYWPb1c7/VKeaVjfQWnRotY1Xeqo0fD8NGKCzG42EqB1mcqcXTnJ4MaDzdBHTQNZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718961632; c=relaxed/simple;
-	bh=DdfBUSruCOMmVc04SJP9LQBray58f2G8GWiu7++ObGY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=gPwji1nrMuH5aOTSmj/ENrY9FK3cOuOiU6dZqhB3qcCqHLFi3Y6/fNCCQVFrhti0u+3viEjlSUExlzA3Mu0SSPfefO8W/VfSaTI9+gwoANg558KpzpX1QssQY3TWUOMXZi2+z42KR4VAAmDcnp7PY/LIoMlltP3P5uFDFPR9+TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwPxV1gL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 88ED2C4AF11;
-	Fri, 21 Jun 2024 09:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718961631;
-	bh=DdfBUSruCOMmVc04SJP9LQBray58f2G8GWiu7++ObGY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hwPxV1gLc8S89t1n0Hk+M6QQuEbWSuBecMPD5HTs4oSSCRvBg6voSgWT7Mw3AJuuF
-	 xOVuyKdMB0d+pqVm1ZG/z1U+NN9bOAA48tJivS1eQup/Hi3zEESK95m5jHC9HFumRJ
-	 SmUWrTIf2P5RPVI5Slec0SJcB5dcXveJRrOXfTA/bXpDSG/BEd0j3JdFpG8ZkdgrFu
-	 w7tmotBE1cVMQmtIJJjQpOwvuuMlzdjbN0kX/mrkGt7qGK1q/8l26amztkK53BZDHj
-	 4k6+2H1W/cP0gUcWqFlJzCDYj85ApcTmY4ViS8WfDvrpkzKLUg19XWO2Vq7bc0aN6j
-	 vYLipJPpSFN8Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 78D4FCF3B9C;
-	Fri, 21 Jun 2024 09:20:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718961643; c=relaxed/simple;
+	bh=u/e9ACPsk0kxpoIqQMCTNuTV6Ti4BCp6cT234ylfTTo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DMyi4K7uUMhmhlzkLmWF8naZBmfhIwk03u0299Ef4jEMDZJ5wQ+hIbgG164bl4DALZl4fyTzThcCIXVHckJdjYg+4jSs+bWSka62BflMyT0xkqzdqQJJ+7HZdVqLtYS3VxKD0dsq8mBMjzipwsga3JgaspkXWDOdmsdi5tNO4F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W5Bcl0JqZz6K8FJ;
+	Fri, 21 Jun 2024 17:19:03 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8AFB81400D9;
+	Fri, 21 Jun 2024 17:20:37 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Jun
+ 2024 10:20:37 +0100
+Date: Fri, 21 Jun 2024 10:20:36 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>, Shiju
+ Jose <shiju.jose@huawei.com>, Tony Luck <tony.luck@intel.com>, Ard Biesheuvel
+	<ardb@kernel.org>, Dave Jiang <dave.jiang@intel.com>, "Ira Weiny"
+	<ira.weiny@intel.com>, <linux-edac@vger.kernel.org>,
+	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] efi/cper: Add a new helper function to print
+ bitmasks
+Message-ID: <20240621102036.0000493e@Huawei.com>
+In-Reply-To: <fcc8a699c9497b788ac99aa0d57dedd629ac4945.1718906288.git.mchehab+huawei@kernel.org>
+References: <cover.1718906288.git.mchehab+huawei@kernel.org>
+	<fcc8a699c9497b788ac99aa0d57dedd629ac4945.1718906288.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH resubmit 3] net: fec: Fix FEC_ECR_EN1588 being cleared on
- link-down
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171896163149.20195.11694633975704847703.git-patchwork-notify@kernel.org>
-Date: Fri, 21 Jun 2024 09:20:31 +0000
-References: <20240619123111.2798142-1-csokas.bence@prolan.hu>
-In-Reply-To: <20240619123111.2798142-1-csokas.bence@prolan.hu>
-To: =?utf-8?b?Q3PDs2vDoXMgQmVuY2UgPGNzb2thcy5iZW5jZUBwcm9sYW4uaHU+?=@codeaurora.org
-Cc: Frank.Li@freescale.com, davem@davemloft.net, imx@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- richardcochran@gmail.com, andrew@lunn.ch, wei.fang@nxp.com,
- shenwei.wang@nxp.com, xiaoning.wang@nxp.com, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hello:
+On Thu, 20 Jun 2024 20:01:45 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Wed, 19 Jun 2024 14:31:11 +0200 you wrote:
-> FEC_ECR_EN1588 bit gets cleared after MAC reset in `fec_stop()`, which
-> makes all 1588 functionality shut down, and all the extended registers
-> disappear, on link-down, making the adapter fall back to compatibility
-> "dumb mode". However, some functionality needs to be retained (e.g. PPS)
-> even without link.
+> Sometimes it is desired to produce a single log line for errors.
+> Add a new helper function for such purpose.
 > 
-> Fixes: 6605b730c061 ("FEC: Add time stamping code and a PTP hardware clock")
-> Cc: Richard Cochran <richardcochran@gmail.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Link: https://lore.kernel.org/netdev/5fa9fadc-a89d-467a-aae9-c65469ff5fe1@lunn.ch/
-> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  drivers/firmware/efi/cper.c | 59 +++++++++++++++++++++++++++++++++++++
+>  include/linux/cper.h        |  3 ++
+>  2 files changed, 62 insertions(+)
 > 
-> [...]
+> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+> index 7d2cdd9e2227..9bf27af3e870 100644
+> --- a/drivers/firmware/efi/cper.c
+> +++ b/drivers/firmware/efi/cper.c
+> @@ -106,6 +106,65 @@ void cper_print_bits(const char *pfx, unsigned int bits,
+>  		printk("%s\n", buf);
+>  }
+>  
+> +/*
 
-Here is the summary with links:
-  - [resubmit,3] net: fec: Fix FEC_ECR_EN1588 being cleared on link-down
-    https://git.kernel.org/netdev/net-next/c/c32fe1986f27
+It's exported and in a header used by other code, so why not make
+this kernel-doc? /**
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> + * cper_bits_to_str - return a string for set bits
+> + * @buf: buffer to store the output string
+> + * @buf_size: size of the output string buffer
+> + * @bits: bit mask
+> + * @strs: string array, indexed by bit position
+> + * @strs_size: size of the string array: @strs
 
+If it had been kernel doc, W=1 would have told you mask is
+missing.
+
+Passing a 0 for mask seems probably not worth while.
+If all bits of the unsigned int are set then people can pass ~0
+
+Or make this cper_bits_to_str_masked() and have
+cper_bits_to_str() that doesn't take a mask.
+
+If you do that, some simplifications can be easily made.
+
+
+
+> + *
+> + * add to @buf the bitmask in hexadecimal. Then, for each set bit in @bits,
+> + * add the corresponding string in @strs to @buf.
+> + */
+> +char *cper_bits_to_str(char *buf, int buf_size, unsigned int bits,
+
+Perhaps make bits an unsigned long as then you can use the
+for_each_set_bit() etc.
+
+> +		       const char * const strs[], unsigned int strs_size,
+> +		       unsigned int mask)
+> +{
+> +	int i, size, first_bit;
+> +	int len = buf_size;
+> +	const char *start;
+> +	char *str = buf;
+> +
+> +	if (strs_size < 16)
+> +		size = snprintf(str, len, "0x%02x: ", bits);
+> +	if (strs_size < 32)
+> +		size = snprintf(str, len, "0x%04x: ", bits);
+> +
+> +	len -= size;
+> +	str += size;
+> +
+> +	start = str;
+> +
+> +	if (mask) {
+> +		first_bit = ffs(mask) - 1;
+> +		if (bits & ~mask) {
+> +			size = strscpy(str, "reserved bit(s)", len);
+> +			len -= size;
+> +			str += size;
+> +		}
+> +	} else {
+> +		first_bit = 0;
+> +	}
+Might be worth
+
+	bits = bits & mask;
+
+Obviously setting bits that aren't in the mask is
+odd though so maybe a warning print if that happens?
+> +
+
+
+for_each_bit_set(i, &bits, strs_size) {
+	...
+
+}
+
+> +	for (i = 0; i < strs_size; i++) {
+> +		if (!(bits & (1U << (i + first_bit))))
+> +			continue;
+> +
+> +		if (*start && len > 0) {
+> +			*str = '|';
+> +			len--;
+> +			str++;
+> +		}
+> +
+> +		size = strscpy(str, strs[i], len);
+> +		len -= size;
+> +		str += size;
+> +	}
+> +	return buf;
+> +}
+> +EXPORT_SYMBOL_GPL(cper_bits_to_str);
+> +
+>  static const char * const proc_type_strs[] = {
+>  	"IA32/X64",
+>  	"IA64",
+> diff --git a/include/linux/cper.h b/include/linux/cper.h
+> index 265b0f8fc0b3..856e8f00a7fb 100644
+> --- a/include/linux/cper.h
+> +++ b/include/linux/cper.h
+> @@ -584,6 +584,9 @@ const char *cper_mem_err_type_str(unsigned int);
+>  const char *cper_mem_err_status_str(u64 status);
+>  void cper_print_bits(const char *prefix, unsigned int bits,
+>  		     const char * const strs[], unsigned int strs_size);
+> +char *cper_bits_to_str(char *buf, int buf_size, unsigned int bits,
+> +		       const char * const strs[], unsigned int strs_size,
+> +		       unsigned int mask);
+>  void cper_mem_err_pack(const struct cper_sec_mem_err *,
+>  		       struct cper_mem_err_compact *);
+>  const char *cper_mem_err_unpack(struct trace_seq *,
 
 
