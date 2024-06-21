@@ -1,140 +1,133 @@
-Return-Path: <linux-kernel+bounces-224176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6196E911E4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:15:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FF4911E54
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16EDD1F22709
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACE81F2252E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EA216DEA3;
-	Fri, 21 Jun 2024 08:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CA916E86E;
+	Fri, 21 Jun 2024 08:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dq4FFZtm"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Q7o1YAFJ"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35FB16D304;
-	Fri, 21 Jun 2024 08:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E5A84A3B;
+	Fri, 21 Jun 2024 08:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718957354; cv=none; b=Txe95Xt1eXB05kVpc7emGGPoyO3hdmQtQa3lH3YaL8KFOVv6S1TOHkwVMrfMy7U/j41c89X/iFkW+gDAe4k4jUe1sTRPXOyHnHUzDwSrsh2mCvB+Epkr/U2P4Oi18UhJxv61UCYh7ioHaKdWX73nhornbiv4mj5dHvxXZkHvPCQ=
+	t=1718957478; cv=none; b=E5PZJXymh7b+urVQv3ikkk7ZciP6LWPFy/d5prgcg8Id8JSI5NV8weNmYeh16mNjAcPisqKTmvCEqyR6qny0nEYuN+lenTynO1IvJzn6vAOBOYUHOu+CT8SIdGw5S0i37sWOadXzxzgZSXTWwwpY1KZC+L/+FjLONnIW/sXkuyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718957354; c=relaxed/simple;
-	bh=JO8jBgL5VicYON4ggakHf8zSEa0qmLKYKjl67css/90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o108NMVy1RPY5A4uvCYjqXcp7I1jRFw1DYOBcaphorkEmmz9FNt1KTR9Yjd2kx5WY+RDjCyFA/b7PJzapiZaok147sToPamaHugr0hIlLNXRRqclRSbme1wCpAb3DeRScPGNSTlkFVW9w08Dl7UbkW8toSLmSjzlvI5YzrVL/28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dq4FFZtm; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3762ef0c477so1095015ab.3;
-        Fri, 21 Jun 2024 01:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718957352; x=1719562152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CwClo4datysb7tCRM4Yh2KXHFdvHWi27Cv7/oywYAaE=;
-        b=dq4FFZtmX/C4HHx/KPpSFhMZ7hc26tpA2ycgB2/AT46ULNcIccaM9m+b1gAbllgPEn
-         PKwSngTLSkJ4qmx41tdcvn3guG58PODBNKdBpRlYOeMqnM9UdYHFBP9Lm/gr5YIFzC9r
-         nWCug4qS+hoP67OxolpstpTjRSlM2IOVR3sMWh3+mR9zl1C5EeTE3kfCEAV6wgsKKOA1
-         l4lVrMtNaq294oAGaqOeyIqT6HEn1ogSH/C424Qz1/N86C9OxFUNuLv5vX7w0WIHDCNw
-         qy+4T9uoFQLpmMQfSC9AUXNqpUdyAY6eagobjEocj5pF9X2TMlDIU7YgwEfbOMCRfhcS
-         NhFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718957352; x=1719562152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CwClo4datysb7tCRM4Yh2KXHFdvHWi27Cv7/oywYAaE=;
-        b=TIkcpc5yT3601w0rkZ44OWsh+huk5077NubGNhlQGP2Mh1s5+ynvWk98THR07ea4Xd
-         bDVZ1CfCt0g0raOpJcqhrGJq5vSy4GpnzWDljz+msWWPXWpOJ6rRS36UG23qfHEDE5lV
-         maaa39di2EhxxJM8pijRuFiZQrikbTgaxy1LV7bjP+ebPT2t7a9TB41jhmQA6m4ChBQ0
-         CtSlP9zaFtu+U/d/ZEi/buxBKNNkknVSqXz0D59HHBQ6PsLBIwvIyaE0+0TIV/ZQWerl
-         MQRwGzIuFzeW3fq2NHSdGG04pYh7MIvBiWRfavideunKAnxWNd1fUFGkoWIhNexWqmFa
-         n2nA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZKG6pn2HaDyDzFFwH3EEo8SoiRYMowKZZype/mMFsZj4vUMVrCHcNTOCrMUyKk4KtHcDr/YqfeBzGkv8YSufAhFrswYEhZ9k2S/MKkXh73omtdVvo1klL8PjewD6VvGosjZy6y5wVNbhZ9f8RculwcIj/oblsSWebJ5NKXZ1AdSI/7w==
-X-Gm-Message-State: AOJu0Yz1KyilRGeSFgqvwfsxueS+Kvu5tpblufLxyaS0tnwck7+RT4/D
-	g5b+3XNOHDxh0/QvwFIaasXN1QBUTceUmKbDmqCc5L/0PadILj07/10DIefx4Y1R1Pv5UHU9YSP
-	2GgK4O8bvKQEMK/6F6Lrdn5DZF1ESkD08yws=
-X-Google-Smtp-Source: AGHT+IFwSrtGzSeEPK5TgC+oT8UOSi4rybKlq0dBAqLPHDSohAbLAOfIvFh4wZQl+7YbkvIbecRy6ybHuZFNV6WdVXA=
-X-Received: by 2002:a05:6e02:1849:b0:375:a3d8:97be with SMTP id
- e9e14a558f8ab-3761d66d1admr86716815ab.9.1718957351600; Fri, 21 Jun 2024
- 01:09:11 -0700 (PDT)
+	s=arc-20240116; t=1718957478; c=relaxed/simple;
+	bh=tw9Hq07gA2b1Rquog4nhGifnXcTRzaS5xtVu7HsdB4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iZ3SJyk/jv4lgA7eb3eZo4HAg63SIQn8MlI7z65g5VReWRoeSu70v+XjMkeX/AV1LYv1L+CsaJ9pJkQ+NmyLYgCGFh6DM1xtrkaaanAn60+EnEHorNypFZVufGPLZO/kgjA9ENNL91agVLNND5DkYEptN5rHumOg2A9n7lclq6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Q7o1YAFJ; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718957433; x=1719562233; i=markus.elfring@web.de;
+	bh=tw9Hq07gA2b1Rquog4nhGifnXcTRzaS5xtVu7HsdB4A=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Q7o1YAFJNcGyxjEQn1AFW1H6JlsKS1YZxYyeUV3di1tL3d1IIQSN7SYr7X5QuVXM
+	 1+F5Ezg3aJSRCEFVmtdNwUAXoVADWRKWqqxhy7r8w+RZrb7//u79RYiqzIsfTCNcZ
+	 2/mAG8moFCw0BOCafcZOnMuquC/6rGwZUcU37eChyZQMg32Naxp3VEcBEKS7eaLIY
+	 wbsFYQf4J93BMFSIcfFfXzn8N9DeDZk4z4kCvByOntN4IQZnY8XiKZCBbl4jZWpLA
+	 J1KyHFrkuQWNlFa94f+RoA6dxunh92bO7T5fn2iFF55RLsf5D7xIsSYZE36I7aDNq
+	 4LMmTvhdX9qLFA6C+Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzTLI-1sXxQv0YLo-017BdG; Fri, 21
+ Jun 2024 10:10:33 +0200
+Message-ID: <302ce128-a0ef-41b4-9808-210a83bc6a48@web.de>
+Date: Fri, 21 Jun 2024 10:10:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1718350923-21392-1-git-send-email-shengjiu.wang@nxp.com>
- <171895121238.3616871.12573343188535489268.b4-ty@linaro.org> <ZnUfbEBDaKqIJU0r@linaro.org>
-In-Reply-To: <ZnUfbEBDaKqIJU0r@linaro.org>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Fri, 21 Jun 2024 16:09:00 +0800
-Message-ID: <CAA+D8APggO9q1bC7LnEBLj4JqF_q=Arax=iO6VeO5wZsm=d12g@mail.gmail.com>
-Subject: Re: [PATCH v8 0/5] clk: imx: clk-audiomix: Improvement for audiomix
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: p.zabel@pengutronix.de, abelvesa@kernel.org, peng.fan@nxp.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Patch review challenges
+To: Lee Jones <lee@kernel.org>, lkp@intel.com, linux-iio@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Cc: Vinod Koul <vkoul@kernel.org>, Paul Cercueil <paul@crapouillou.net>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Sumit Semwal <sumit.semwal@linaro.org>, oe-kbuild-all@lists.linux.dev,
+ LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, Julia Lawall <julia.lawall@inria.fr>,
+ Randy Dunlap <rdunlap@infradead.org>
+References: <202406191014.9JAzwRV6-lkp@intel.com>
+ <c25aab0d-48f6-4754-b514-d6caf8d51fd1@web.de> <ZnRUSaHJhz7XLcKa@matsya>
+ <20240620170522.GU3029315@google.com> <ZnUnFeum1Z2ahm9M@matsya>
+ <ebddd644-b9b1-4a87-a2e7-dcf255f4184d@web.de>
+ <20240621075123.GG1318296@google.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240621075123.GG1318296@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nVOg+KeLl2N2fq/s0Ntj00wEVMmsfslYtciYpHyTe1/l2inQk/m
+ WhJy/k0th8SnjtkGT3mY/stpMLVVX5brl4hVD6aV6JfozNCx+Edw9BY4QKhB751Buia3WeY
+ WnELOdc2qE2T/SLclfYbdLxkWppv47XuhajfIUhpsbTRjFIWSqkorXBLupOF6bLWoZLH/yK
+ TEiDwPBXPJjDX82KuPAyA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wqB3HsVqvPU=;8MOxyZOZkIMm6tGRBtxnuI4cxWM
+ C2MH9F78tjLMgO6do7scFkqbR4KU6Jok6Ci5kNtCab5kNp2GKptQW07ctOCsAUccyCDBXjLeF
+ gpDax1qUTepmbIEP4VjLz1LHGgYKvSC/jtZ0DCBKVS5Oexx0QvLjAwde48cXYcTObya/yEEH7
+ eAkyrC55rXP5s+IDasphuWOpyT9isIS/Z0LFL4b+iQXpz/xEZjUqraiLqTZ8itaLXufVSt1hz
+ V06L8WgXSerY5SZeXVjuNiEJdIIfcbFlFEih0VokjSRU3JjRc5VVfnsiE/H/X34RMwf3uuNvE
+ J3BbQN7NnXbNa5TlO4Y1tyl6rCnEqxW5Etu8Cph7dPrQaez2J9m4n6YLZ/UOwk8rHsofdVxj5
+ Ln2z9dJs83Qm5Co7um6reNtDHG103cnGOBoFacb+JpXYjxwvSPUg+NbsEFUqcVvMa3H0CMARJ
+ sD99oPWaok/1HHSxxivsizHgiAn7wdlwREFe/O1UaLxv6CQnqSSnamsM821PzSgABOX6/5Iwh
+ QCou1JsC/dKFXE7pj/BP6Ntf9Idn4u+A5dG9sYHZiZUO3CGGmlUTsy7pOeZqGsmOkRE7NoLaw
+ /4nd2tmNSLnP5Cn//Bc26WwTGsVQtOPRzs/j3kfBtApe+yhSsKUvZ6QdJBE7A/N5lxyq7ExTQ
+ ycRAjQUyFIwpeXpYbeNoDCLLMjVpPtcg8AZDxIx2FRYdviSUM6Wfzbz7nsIn8DFrKeR++mhBs
+ GokAydPsde3/+knQ8w2J8nkUA2b72Hgy4EfUtL8Vs7nncRGMDivv4iwpK4erFGcM0zbhppa9f
+ JMmNtgz/O8TPPKhKVXZb4hQWKwWCwg2cylRlwaysmztkg=
 
-Hi Philipp Zabel
-
-On Fri, Jun 21, 2024 at 2:36=E2=80=AFPM Abel Vesa <abel.vesa@linaro.org> wr=
-ote:
+> The issue is one of communication and the way reviews are conducted.
 >
-> On 24-06-21 09:26:52, Abel Vesa wrote:
-> >
-> > On Fri, 14 Jun 2024 15:41:58 +0800, Shengjiu Wang wrote:
-> > > Some improvement for audiomix driver:
-> > > Add CLK_SET_RATE_PARENT flags for clocks
-> > > Correct parent clock for earc_phy and audpll clocks.
-> > > Add reset controller for EARC function, use the auxiliary device
-> > > framework:
-> > > https://lore.kernel.org/lkml/b86c83a520f0c45a60249468fa92b1de.sboyd@k=
-ernel.org/
-> > >
-> > > [...]
-> >
-> > Applied, thanks!
-> >
-> > [1/5] dt-bindings: clock: imx8mp: Add #reset-cells property
-> >       commit: d7d9ef1f40dc0639ba0901097139fcdc4bedb32e
-> > [2/5] clk: imx: clk-audiomix: Add reset controller
-> >       commit: 6f0e817175c5b2e453f7ad6a4e9a8a7fd904ee4a
-> > [3/5] reset: imx8mp-audiomix: Add AudioMix Block Control reset driver
-> >       commit: b7604e8b805a6e52161ff98728122005e6975a46
->
-> Dropped the this one. Needs to go through different tree.
+> Reviewing other people's work is challenging and requires a certain
+> skill-set, of which _excellent_ communication skills are non-negotiable.
 
-In case that you may miss this commit which is in a clock driver patch set.
-Could you please have a review?  Thanks.
+Patch feedback and change tolerance can vary also according to involved co=
+mmunities.
 
-https://lore.kernel.org/linux-arm-kernel/20240614101727.zkh32bqe5nurnmbx@pe=
-ngutronix.de/T/#m4bd8091438d9fbe0bd1400005d681483c59607c7
 
-Best regards
-Shengjiu Wang
+> Why not concentrate on more complex submissions for a while and grow
+> your repertoire of common review points,
 
->
-> > [4/5] clk: imx: clk-audiomix: Add CLK_SET_RATE_PARENT flags for clocks
-> >       commit: 163e678c0b24d0e45f617f4496c4ae9b1afd8d63
-> > [5/5] clk: imx: clk-audiomix: Correct parent clock for earc_phy and aud=
-pll
-> >       commit: 22fb849ead1b109f868e83b309223d906e4b7d96
-> >
-> > Best regards,
-> > --
-> > Abel Vesa <abel.vesa@linaro.org>
-> >
+Further collateral evolution can be considered there depending on
+corresponding development resources.
+
+
+> rather than repeating the same few over and over?
+
+Some factors are probably known also according to corresponding statistics=
+.
+Several contributors are stumbling on recurring improvement possibilities
+in published information.
+
+
+> Reading other, more experienced maintainer's reviews would also be a goo=
+d use
+> of your time.
+
+I am trying to influence adjustments in desirable directions for a while.
+
+Regards,
+Markus
 
