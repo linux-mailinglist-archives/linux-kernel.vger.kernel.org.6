@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-224572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8BE91242A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:43:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCE1912431
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C3C3B25A11
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:43:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9A77B2615B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC1B17E8F6;
-	Fri, 21 Jun 2024 11:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557001802B2;
+	Fri, 21 Jun 2024 11:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XJ53Nf9a"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UCF4KT0a"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB13717DE13;
-	Fri, 21 Jun 2024 11:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD97717E911;
+	Fri, 21 Jun 2024 11:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969877; cv=none; b=bM6upg+EJw0obSsyuBLA+CS8RmIw2DEXxnR/NuZ4qRKgll9KxSKfm2W1b0/nSTep186QMXrUwdRjkLS6KlQyrF+qHYVaQwRtDidLUXX7+vh9xbcbOqJD15SORET9g/UoGrO2itz1iGQEMXjBGEWzD3K0rSYcjCX/JhgzaGNZBHo=
+	t=1718969880; cv=none; b=Zmm0DP4U/V+hxkZYITPC58Imx+m4YGIYQ1e9d8JIeXmMMGS14+/YqSWbsmQPmup2zEwZ1Xt7WJLNzakD/mLDyi3ZHzc0zJgMN29fzAUTtIBvts5PfveaUg8LglzicTff1ArMeafzKXv9zXTYAFYRJOO7OTm8SgmpId04c8pEsiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969877; c=relaxed/simple;
-	bh=d2/rW4z5JA+hWF6GGLxIeeVunzjSAZfwoQbx7SnQ6OE=;
+	s=arc-20240116; t=1718969880; c=relaxed/simple;
+	bh=O25mRw7S/ZC8M5ctPubCjPY5+A4szOidaddkhJ/87GI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s+jx8aXFTAKcECks2FcmbvwFpP7pTUM9Nd24Lke3asN/9AsSaH+OR03F9k+vmUKOmSr3gLXJ8kCAe9EnXP2pR9lklhG0fKMRdUaPQGRUINQ/2SB2ShSUkHGykrT4klmAfOIAAOy2xl13M4kzx10ObMNOJaKFp/gp2tLF0izACFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XJ53Nf9a; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=fIbTM6IAY8yoEI1IurX5R7j0E9yCHF97O540sa3LCvzHn+jOrTvrK90Zv6PTicYYwhuWqG2HRM6iOOC96cXnl0orMd/is3VdKsQ28Tmwi4yE7fsOCFPo8t8OFNrDzq8yeMdiQWLxGnL5NGvJYsUxW5TUqF/K80iDZQtCqz2Id84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UCF4KT0a; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LB34ZA015263;
-	Fri, 21 Jun 2024 11:37:34 GMT
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LBT6s9029206;
+	Fri, 21 Jun 2024 11:37:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=lwqEGphQg9/N4
-	AE+qTFRbf/COwqV90p8RxwOJfRaDvM=; b=XJ53Nf9aRgc1CcHErGDHJVhMkoqyJ
-	WRgZ/3EzKl+lmzaK1844Id9jdp9ZrFEcwR3M7y1DydMwCHMOVyPGDBOQ6j5AIe6Y
-	qheP6UvGFsGzv7kV4CGWlsJkr92v3LwmeWyoJr0lzAKsh7tb3lEF5Z4F1hug27wv
-	vKDon0JGRiOCWHaUkNIXwFZODdBTTmeGo2fGx4F/7stNSIn8tVDsUxQStdjc+CfW
-	7ljjjlWzkvbc2s3mVJ3Rm+B7Iwu6z8VkklW4WFCCT3APP9eaufNpyopvrK4dVvWH
-	g30mw+SdhnVUtGPxN/qAeyRhCJEA5U1tmvL08ydprDPC9TyhArIOGqiOA==
+	:mime-version:content-transfer-encoding; s=pp1; bh=+zoFJVlk37wQa
+	OMfwbNCgteXo249s6T95ikp3xQJB1k=; b=UCF4KT0aelp2nJDzns2AA5nuBL2WZ
+	kFxtl3TlY9x+9RaXBeDX2IpQd6rXq7fELvnjcWAhI8Q4lGlwcqFnEBka4gTDc1ru
+	I+ESWogo2nxY/nRZeZuth+j1CazrBNOTW2fr942wtJuhFJa3ISLrjIdYW7KlcNTQ
+	N/kk/8UdJqCfw8e/cE8gmBr4EXC3yjrTWEulMp7ugP06dVCkjWuYxQVG7zaxYzs5
+	X5S18bQHMd07BrErdgedfQxbxS3PI9go+sWw9H6wuXf4T+JAL/GGLA04Mg2ssp1m
+	TaR3wOi96KC4Pt78U9tM6UB1RslqdiTiPn5+z4qhlnABp6Ik7SK7ZhC0w==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yw6wtrb1t-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yw8p080n2-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 21 Jun 2024 11:37:34 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45LBbXjl003837;
-	Fri, 21 Jun 2024 11:37:33 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yw6wtrb1p-1
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45LBbJEk008790;
+	Fri, 21 Jun 2024 11:37:34 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yw8p080mv-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 11:37:33 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L9CeSe007669;
-	Fri, 21 Jun 2024 11:37:32 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yvrspeuqb-1
+	Fri, 21 Jun 2024 11:37:34 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L9Ef4J032346;
+	Fri, 21 Jun 2024 11:37:33 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yvrsppv68-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 21 Jun 2024 11:37:32 +0000
 Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45LBbQAh48628136
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45LBbRa055378336
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Fri, 21 Jun 2024 11:37:29 GMT
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D7A9D20043;
-	Fri, 21 Jun 2024 11:37:26 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 77EDA2005A;
+	Fri, 21 Jun 2024 11:37:27 +0000 (GMT)
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4E3DD2005A;
+	by IMSVA (Postfix) with ESMTP id E1B712004B;
 	Fri, 21 Jun 2024 11:37:26 +0000 (GMT)
 Received: from black.boeblingen.de.ibm.com (unknown [9.155.200.166])
 	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
@@ -93,9 +93,9 @@ Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
         Sven Schnelle <svens@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v7 29/38] s390/ftrace: Unpoison ftrace_regs in kprobe_ftrace_handler()
-Date: Fri, 21 Jun 2024 13:35:13 +0200
-Message-ID: <20240621113706.315500-30-iii@linux.ibm.com>
+Subject: [PATCH v7 30/38] s390/irqflags: Do not instrument arch_local_irq_*() with KMSAN
+Date: Fri, 21 Jun 2024 13:35:14 +0200
+Message-ID: <20240621113706.315500-31-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240621113706.315500-1-iii@linux.ibm.com>
 References: <20240621113706.315500-1-iii@linux.ibm.com>
@@ -107,52 +107,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: yhZa-GJwpXVc4D4zqRCXsxL90eVaByvk
-X-Proofpoint-ORIG-GUID: -XJKREGYzHJTLdefTkmm922KFj1UHXvz
+X-Proofpoint-GUID: Cjz3AGYCfNKeIGjA23EoGVN2dv6kxTTF
+X-Proofpoint-ORIG-GUID: 4cxJA7IRQkUmZHTUVyn6E6n_yLN24h_e
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-21_04,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- mlxlogscore=999 mlxscore=0 bulkscore=0 clxscore=1015 malwarescore=0
- suspectscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ suspectscore=0 priorityscore=1501 spamscore=0 malwarescore=0 clxscore=1015
+ impostorscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2406140001 definitions=main-2406210084
 
-s390 uses assembly code to initialize ftrace_regs and call
-kprobe_ftrace_handler(). Therefore, from the KMSAN's point of view,
-ftrace_regs is poisoned on kprobe_ftrace_handler() entry. This causes
-KMSAN warnings when running the ftrace testsuite.
+Lockdep generates the following false positives with KMSAN on s390x:
 
-Fix by trusting the assembly code and always unpoisoning ftrace_regs in
-kprobe_ftrace_handler().
+[    6.063666] DEBUG_LOCKS_WARN_ON(lockdep_hardirqs_enabled())
+[         ...]
+[    6.577050] Call Trace:
+[    6.619637]  [<000000000690d2de>] check_flags+0x1fe/0x210
+[    6.665411] ([<000000000690d2da>] check_flags+0x1fa/0x210)
+[    6.707478]  [<00000000006cec1a>] lock_acquire+0x2ca/0xce0
+[    6.749959]  [<00000000069820ea>] _raw_spin_lock_irqsave+0xea/0x190
+[    6.794912]  [<00000000041fc988>] __stack_depot_save+0x218/0x5b0
+[    6.838420]  [<000000000197affe>] __msan_poison_alloca+0xfe/0x1a0
+[    6.882985]  [<0000000007c5827c>] start_kernel+0x70c/0xd50
+[    6.927454]  [<0000000000100036>] startup_continue+0x36/0x40
+
+Between trace_hardirqs_on() and `stosm __mask, 3` lockdep thinks that
+interrupts are on, but on the CPU they are still off. KMSAN
+instrumentation takes spinlocks, giving lockdep a chance to see and
+complain about this discrepancy.
+
+KMSAN instrumentation is inserted in order to poison the __mask
+variable. Disable instrumentation in the respective functions. They are
+very small and it's easy to see that no important metadata updates are
+lost because of this.
 
 Reviewed-by: Alexander Potapenko <glider@google.com>
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
 Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 ---
- arch/s390/kernel/ftrace.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/s390/include/asm/irqflags.h | 17 ++++++++++++++---
+ drivers/s390/char/sclp.c         |  2 +-
+ 2 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/arch/s390/kernel/ftrace.c b/arch/s390/kernel/ftrace.c
-index ddf2ee47cb87..0bd6adc40a34 100644
---- a/arch/s390/kernel/ftrace.c
-+++ b/arch/s390/kernel/ftrace.c
-@@ -12,6 +12,7 @@
- #include <linux/ftrace.h>
- #include <linux/kernel.h>
- #include <linux/types.h>
-+#include <linux/kmsan-checks.h>
- #include <linux/kprobes.h>
- #include <linux/execmem.h>
- #include <trace/syscall.h>
-@@ -303,6 +304,7 @@ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
- 	if (bit < 0)
- 		return;
+diff --git a/arch/s390/include/asm/irqflags.h b/arch/s390/include/asm/irqflags.h
+index 02427b205c11..bcab456dfb80 100644
+--- a/arch/s390/include/asm/irqflags.h
++++ b/arch/s390/include/asm/irqflags.h
+@@ -37,12 +37,18 @@ static __always_inline void __arch_local_irq_ssm(unsigned long flags)
+ 	asm volatile("ssm   %0" : : "Q" (flags) : "memory");
+ }
  
-+	kmsan_unpoison_memory(fregs, sizeof(*fregs));
- 	regs = ftrace_get_regs(fregs);
- 	p = get_kprobe((kprobe_opcode_t *)ip);
- 	if (!regs || unlikely(!p) || kprobe_disabled(p))
+-static __always_inline unsigned long arch_local_save_flags(void)
++#ifdef CONFIG_KMSAN
++#define arch_local_irq_attributes noinline notrace __no_sanitize_memory __maybe_unused
++#else
++#define arch_local_irq_attributes __always_inline
++#endif
++
++static arch_local_irq_attributes unsigned long arch_local_save_flags(void)
+ {
+ 	return __arch_local_irq_stnsm(0xff);
+ }
+ 
+-static __always_inline unsigned long arch_local_irq_save(void)
++static arch_local_irq_attributes unsigned long arch_local_irq_save(void)
+ {
+ 	return __arch_local_irq_stnsm(0xfc);
+ }
+@@ -52,7 +58,12 @@ static __always_inline void arch_local_irq_disable(void)
+ 	arch_local_irq_save();
+ }
+ 
+-static __always_inline void arch_local_irq_enable(void)
++static arch_local_irq_attributes void arch_local_irq_enable_external(void)
++{
++	__arch_local_irq_stosm(0x01);
++}
++
++static arch_local_irq_attributes void arch_local_irq_enable(void)
+ {
+ 	__arch_local_irq_stosm(0x03);
+ }
+diff --git a/drivers/s390/char/sclp.c b/drivers/s390/char/sclp.c
+index d53ee34d398f..fb1d9949adca 100644
+--- a/drivers/s390/char/sclp.c
++++ b/drivers/s390/char/sclp.c
+@@ -736,7 +736,7 @@ sclp_sync_wait(void)
+ 	cr0_sync.val = cr0.val & ~CR0_IRQ_SUBCLASS_MASK;
+ 	cr0_sync.val |= 1UL << (63 - 54);
+ 	local_ctl_load(0, &cr0_sync);
+-	__arch_local_irq_stosm(0x01);
++	arch_local_irq_enable_external();
+ 	/* Loop until driver state indicates finished request */
+ 	while (sclp_running_state != sclp_running_state_idle) {
+ 		/* Check for expired request timer */
 -- 
 2.45.1
 
