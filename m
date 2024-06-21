@@ -1,64 +1,44 @@
-Return-Path: <linux-kernel+bounces-224291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF8E912047
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:17:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80BF391204B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5E328DD4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C4EB284F23
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D9516F0ED;
-	Fri, 21 Jun 2024 09:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ohiki8X8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CC416E862;
+	Fri, 21 Jun 2024 09:17:02 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE5A16F0D2
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB05116C698;
+	Fri, 21 Jun 2024 09:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718961380; cv=none; b=G99DkSQYTcuHYYyTHfdyn1iEtm8AF332ybvIY7vbIRQyD4by5cVcBu3gQyThiMmaPkTeQk/BtRl35SnIMXHE0JWvNEY54CkSrIzrLMrlKmozmFqN0+pHr8vdqAv3dUaHS83ZHcXnAWPpINoz0YIWFiP6f9a/Bu63uNHHnyWUX2U=
+	t=1718961422; cv=none; b=YDjLVQUeDWMZdpaWXhui3nUE4enzp+HXpYJgCFHTsWD9CfRn6uYHTsQMZVqKAiFNrVSquqicHCWmuFjRNjRCspfnJs3MQcHxvXvZa1PVGnmuiIIpqOfZB6XhSJLdm5qsMrWw81ezJrqqHNNbQvckOm1Rv6c1m64zEGwXljevgY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718961380; c=relaxed/simple;
-	bh=tIr6xsl9f1qlL3ubydb+4cEtOOda2NPwxbdGg11VU2k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JbOyHU9/1fTozSGNIoW3BDtUutYzm0dHIwb100apG5zLHrmkBE8QOMChD4cdJkYmAxoaDDHHJZV8pTJXAUQaiY7XFRGoeWCRrOf0PCyqb8l1y/kM3d6zNowhMP8UsSKmoSvG0AlSMcglKt1lts7Os0KxRoEWN4gycocQwFFED/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ohiki8X8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 054FFC4AF09;
-	Fri, 21 Jun 2024 09:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718961379;
-	bh=tIr6xsl9f1qlL3ubydb+4cEtOOda2NPwxbdGg11VU2k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ohiki8X8ilUGBaJ7gIupFINyIDRIkaniT7gVKr6Iwd9XrNDZKfOuVeufXr3czCW4E
-	 igxvoZsMarJ2BDeZZXD/HJXuFFsThKi5Ht/NdM3fTHOzphrJs0/2G6n/9Bfq0fQ5uR
-	 SwAzvZyNCFd6EcZQTLtBBK7qP+6y2dNSTAlONmafm8eOQCnHyisHgPk2t/+MPZYzM0
-	 SFiV7TWPpaaf6FIA5R3X/XCuCT/ww2qbKzisfr0NWRwbnWWQ/B5gbsVK7VsahRnl1o
-	 Dyj3CSxrvdda/NQtta8OUUA6pIV8z71yZo7f1gWBQRwH8awSB4Y8uvDVKWRmgWO94F
-	 rFx2bYrgbRR7g==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 4/4] perf: Fix event leak upon exec and file release
-Date: Fri, 21 Jun 2024 11:16:01 +0200
-Message-ID: <20240621091601.18227-5-frederic@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240621091601.18227-1-frederic@kernel.org>
-References: <20240621091601.18227-1-frederic@kernel.org>
+	s=arc-20240116; t=1718961422; c=relaxed/simple;
+	bh=61p25ATK1e0R9fBYFveQbbb+jL+lpz6dGVy/tPsjI6s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IZO+pH4OKrSL0UxG/kIBPRI3pWYDRXFAy1uauBZnzmR9JSOSbW2RM/qitOOPMBmsA7h1P67ik/5uy1Bv65YRQIeZQY1aDUEvn39A+4VO7ZbKEXKrHSqxoNhbaJw7CuL4nz3K+Rto+p2zzMncD4sjAsKn89AR/TSPMhTFsv85kk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowADHzhICRXVmgfDqCw--.8650S2;
+	Fri, 21 Jun 2024 17:16:50 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] pinctrl: mlxbf3: Fix return value check for devm_platform_ioremap_resource
+Date: Fri, 21 Jun 2024 17:16:37 +0800
+Message-Id: <20240621091637.2299310-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,156 +46,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADHzhICRXVmgfDqCw--.8650S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uryUGr1UJFy5JF1kZr1fZwb_yoW8GF18p3
+	93ZF4fJr98JFWDtryxtw13XFy3Ca1xKa15Ka4UX3s3Z3ZxAry5Gw1FgrW5tFZxKrZ0vF45
+	t3y3AFW5uF40vFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkq14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4f
+	MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
+	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0E
+	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
+	W8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
+	cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUj_WrJUUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-The perf pending task work is never waited upon the matching event
-release. In the case of a child event, released via free_event()
-directly, this can potentially result in a leaked event, such as in the
-following scenario that doesn't even require a weak IRQ work
-implementation to trigger:
+Fix return value check for devm_platform_ioremap_resource() in
+mlxbf3_pinctrl_probe().
 
-schedule()
-   prepare_task_switch()
-=======> <NMI>
-      perf_event_overflow()
-         event->pending_sigtrap = ...
-         irq_work_queue(&event->pending_irq)
-<======= </NMI>
-      perf_event_task_sched_out()
-          event_sched_out()
-              event->pending_sigtrap = 0;
-              atomic_long_inc_not_zero(&event->refcount)
-              task_work_add(&event->pending_task)
-   finish_lock_switch()
-=======> <IRQ>
-   perf_pending_irq()
-      //do nothing, rely on pending task work
-<======= </IRQ>
-
-begin_new_exec()
-   perf_event_exit_task()
-      perf_event_exit_event()
-         // If is child event
-         free_event()
-            WARN(atomic_long_cmpxchg(&event->refcount, 1, 0) != 1)
-            // event is leaked
-
-Similar scenarios can also happen with perf_event_remove_on_exec() or
-simply against concurrent perf_event_release().
-
-Fix this with synchonizing against the possibly remaining pending task
-work while freeing the event, just like is done with remaining pending
-IRQ work. This means that the pending task callback neither need nor
-should hold a reference to the event, preventing it from ever beeing
-freed.
-
-Fixes: 517e6a301f34 ("perf: Fix perf_pending_task() UaF")
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- include/linux/perf_event.h |  1 +
- kernel/events/core.c       | 38 ++++++++++++++++++++++++++++++++++----
- 2 files changed, 35 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-mlxbf3.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index a5304ae8c654..393fb13733b0 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -786,6 +786,7 @@ struct perf_event {
- 	struct irq_work			pending_irq;
- 	struct callback_head		pending_task;
- 	unsigned int			pending_work;
-+	struct rcuwait			pending_work_wait;
+diff --git a/drivers/pinctrl/pinctrl-mlxbf3.c b/drivers/pinctrl/pinctrl-mlxbf3.c
+index 7d1713824a89..ffb5dda364dc 100644
+--- a/drivers/pinctrl/pinctrl-mlxbf3.c
++++ b/drivers/pinctrl/pinctrl-mlxbf3.c
+@@ -259,16 +259,16 @@ static int mlxbf3_pinctrl_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->fw_ctrl_set0);
  
- 	atomic_t			event_limit;
+ 	priv->fw_ctrl_clr0 = devm_platform_ioremap_resource(pdev, 1);
+-	if (IS_ERR(priv->fw_ctrl_set0))
+-		return PTR_ERR(priv->fw_ctrl_set0);
++	if (IS_ERR(priv->fw_ctrl_clr0))
++		return PTR_ERR(priv->fw_ctrl_clr0);
  
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 7c3218d31d1d..586d4f367624 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2288,7 +2288,6 @@ event_sched_out(struct perf_event *event, struct perf_event_context *ctx)
- 		if (state != PERF_EVENT_STATE_OFF &&
- 		    !event->pending_work &&
- 		    !task_work_add(current, &event->pending_task, TWA_RESUME)) {
--			WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
- 			event->pending_work = 1;
- 		} else {
- 			local_dec(&event->ctx->nr_pending);
-@@ -5203,9 +5202,35 @@ static bool exclusive_event_installable(struct perf_event *event,
- static void perf_addr_filters_splice(struct perf_event *event,
- 				       struct list_head *head);
+ 	priv->fw_ctrl_set1 = devm_platform_ioremap_resource(pdev, 2);
+-	if (IS_ERR(priv->fw_ctrl_set0))
+-		return PTR_ERR(priv->fw_ctrl_set0);
++	if (IS_ERR(priv->fw_ctrl_set1))
++		return PTR_ERR(priv->fw_ctrl_set1);
  
-+static void perf_pending_task_sync(struct perf_event *event)
-+{
-+	struct callback_head *head = &event->pending_task;
-+
-+	if (!event->pending_work)
-+		return;
-+	/*
-+	 * If the task is queued to the current task's queue, we
-+	 * obviously can't wait for it to complete. Simply cancel it.
-+	 */
-+	if (task_work_cancel(current, head)) {
-+		event->pending_work = 0;
-+		local_dec(&event->ctx->nr_pending);
-+		return;
-+	}
-+
-+	/*
-+	 * All accesses related to the event are within the same
-+	 * non-preemptible section in perf_pending_task(). The RCU
-+	 * grace period before the event is freed will make sure all
-+	 * those accesses are complete by then.
-+	 */
-+	rcuwait_wait_event(&event->pending_work_wait, !event->pending_work, TASK_UNINTERRUPTIBLE);
-+}
-+
- static void _free_event(struct perf_event *event)
- {
- 	irq_work_sync(&event->pending_irq);
-+	perf_pending_task_sync(event);
+ 	priv->fw_ctrl_clr1 = devm_platform_ioremap_resource(pdev, 3);
+-	if (IS_ERR(priv->fw_ctrl_set0))
+-		return PTR_ERR(priv->fw_ctrl_set0);
++	if (IS_ERR(priv->fw_ctrl_clr1))
++		return PTR_ERR(priv->fw_ctrl_clr1);
  
- 	unaccount_event(event);
- 
-@@ -6828,24 +6853,28 @@ static void perf_pending_task(struct callback_head *head)
- 	struct perf_event *event = container_of(head, struct perf_event, pending_task);
- 	int rctx;
- 
-+	/*
-+	 * All accesses to the event must belong to the same implicit RCU read-side
-+	 * critical section as the ->pending_work reset. See comment in
-+	 * perf_pending_task_sync().
-+	 */
-+	preempt_disable_notrace();
- 	/*
- 	 * If we 'fail' here, that's OK, it means recursion is already disabled
- 	 * and we won't recurse 'further'.
- 	 */
--	preempt_disable_notrace();
- 	rctx = perf_swevent_get_recursion_context();
- 
- 	if (event->pending_work) {
- 		event->pending_work = 0;
- 		perf_sigtrap(event);
- 		local_dec(&event->ctx->nr_pending);
-+		rcuwait_wake_up(&event->pending_work_wait);
- 	}
- 
- 	if (rctx >= 0)
- 		perf_swevent_put_recursion_context(rctx);
- 	preempt_enable_notrace();
--
--	put_event(event);
- }
- 
- #ifdef CONFIG_GUEST_PERF_EVENTS
-@@ -11959,6 +11988,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 	init_waitqueue_head(&event->waitq);
- 	init_irq_work(&event->pending_irq, perf_pending_irq);
- 	init_task_work(&event->pending_task, perf_pending_task);
-+	rcuwait_init(&event->pending_work_wait);
- 
- 	mutex_init(&event->mmap_mutex);
- 	raw_spin_lock_init(&event->addr_filters.lock);
+ 	ret = devm_pinctrl_register_and_init(dev,
+ 					     &mlxbf3_pin_desc,
 -- 
-2.45.2
+2.25.1
 
 
