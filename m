@@ -1,96 +1,115 @@
-Return-Path: <linux-kernel+bounces-224536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE9C9123B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EAA39123B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841AD28BB06
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19A1628C0E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD20178371;
-	Fri, 21 Jun 2024 11:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D4A178CE8;
+	Fri, 21 Jun 2024 11:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eL4A/A4J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b="F3aHT96j"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090F2173354;
-	Fri, 21 Jun 2024 11:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83FC172BDC;
+	Fri, 21 Jun 2024 11:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969431; cv=none; b=AG8BxwgWtL6pyxljXwAMVMvVtiTBDKjTX3jO5aTtMlo7lHQKzDET/qp4pArv6cPK9XYHqAsmmixxJEKw/+OqvYNmKIrZDDzAFRMe/lssPftKzZabSC0dGiloj0cqDIadrTc4l8UxWNHDQlTy3T688dakc4mChz06voB9CJaSifo=
+	t=1718969471; cv=none; b=t85cdRwRqhXYlzjZLHJvC06pQUk2KmvlEWg0497aUyV19xR9TQohCZDGb/yi2DoruZDzA25o7XR13mdt6M9/OlGbWoFjOsXfMYAHj8//JN389bODMYtXffxepOP1l0XCngRKRPxJrfck2edK6OKe/bAS31Qa7bw+wSqt3Of1F4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969431; c=relaxed/simple;
-	bh=vV9wCK9hoYqqOcklrFgBuYYByRX11AIgQ1XylLrlNsA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=u5Dt4Q0Fw3gz0PKbSOSaVtOzTDNWOTTjC1rcNAt4KWznQGIYBDvOXpgSYO/ppzAEed6QX3lb1OvGibpGp1s4513KVTJXEkmXdkPS8XAFICj0mdW4Z+LvnD2pYfFoCHeXnT3sxczD946loFQIBRyD9j71ZAey6/Ch9I/BWMOvP1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eL4A/A4J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 882A4C4AF08;
-	Fri, 21 Jun 2024 11:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718969430;
-	bh=vV9wCK9hoYqqOcklrFgBuYYByRX11AIgQ1XylLrlNsA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=eL4A/A4JE8aRIwjStROYhp1X9S5BXkdOnIY0vkeqKrDCJXd7rpdp4HEWZkkEjSsFo
-	 TezOKuZVovDIp/njWUE7t1b2KcRavJSAzHZXMEN0jyVC+SACzKwObnZfr9fyHuCFoJ
-	 qKQ4RPCGjCTwjNcxeojSHikAcP3Ihs1yraE97B0No8LjeePhKrS8EYWtoXnLZk3KYi
-	 aX1kD1Dr5dy6g2kYvJmzU7ErgminHHBlmEfTocoUluq3SAQlWjKUwIM/PXBiyaRi4F
-	 EhvIoNCY9EDhUZzQfy/rxtlz/YBhSU3n+05OXfJOkyc0I6FXhaDLp3X9WX/tX8LIF8
-	 xdsKSl1Lh+yIA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 71EB5CF3B9B;
-	Fri, 21 Jun 2024 11:30:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718969471; c=relaxed/simple;
+	bh=2FvjIiEYj2MFig2XwAXHex9GDlnYG3XbdViWU9XDHFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JEIucVttc3/yhViKGXR07EbYVzCXMTtyaTOX01pdD+h7BkDA6FjFPMF2gp7q1cjaxPQrNeDGBbnBJV+9nRnEgOl9P9X19JbO/eN8XYf0SXUwi1i4f3oLT4BrYJtV6167TBLWzUxYEOquY2Nd1qc8dM+gHHCsnhVdvkeZlJ3oAWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so; spf=pass smtp.mailfrom=doubly.so; dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b=F3aHT96j; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=doubly.so
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W5FXx6cfCz9sjr;
+	Fri, 21 Jun 2024 13:30:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=doubly.so; s=MBO0001;
+	t=1718969457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gZJtjw44ko3M+Kjflvnp89KRg/WESR2beaBfi/hCWIw=;
+	b=F3aHT96jXqka4dmDWbH5JKT/Qss2ZcWr2i1RnWkXxw44Uyfxpzgzl0Jokolf3VWLaTJgKV
+	9/nlH4a7ZsElKOZwTlRzbRQW++uD9Wg0ZYhC+iyqbaH87RITPF2wsTOGgvPQQFuZyXZO87
+	YuM5P2x2ZlKssmf9xeZbr1uo/Vn3yx9svBvb4F4bhKTljWTWH00p0YtpthkM6/K/gV1KCg
+	2WXau8L0jFG9G2CE/hw0VX8mW++t/bI0YjbBfFRbxfZ4dmk6V4RhyPMfnaIPoeNoPWyrqa
+	xgrYys4+p3q4pm2ICnUmrRBA7bHbiQqWHUIV30qdCklnYtDN8k8MGeY602mRIg==
+Message-ID: <c2ab501b-532a-41a6-a142-55b52e135aee@doubly.so>
+Date: Fri, 21 Jun 2024 13:30:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/3] net: dsa: qca8k: cleanup and port isolation
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171896943046.2605.7186195507093229147.git-patchwork-notify@kernel.org>
-Date: Fri, 21 Jun 2024 11:30:30 +0000
-References: <cover.1718899575.git.mschiffer@universe-factory.net>
-In-Reply-To: <cover.1718899575.git.mschiffer@universe-factory.net>
-To: Matthias Schiffer <mschiffer@universe-factory.net>
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- ansuelsmth@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] platform/x86: asus-wmi: add support for vivobook
+ fan profiles
+To: Luke Jones <luke@ljones.dev>, Mohamed Ghanmi <mohamed.ghanmi@supcom.tn>
+Cc: Hans de Goede <hdegoede@redhat.com>, corentin.chary@gmail.com,
+ platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20240421194320.48258-1-mohamed.ghanmi@supcom.tn>
+ <20240421194320.48258-2-mohamed.ghanmi@supcom.tn>
+ <de8fcb82-3e08-41e6-b099-75df27c6df23@redhat.com>
+ <aee09e9f-6269-43ef-b509-a9a7b5e1752f@app.fastmail.com>
+ <f126562f-54c8-de58-3f98-7375c129f66a@linux.intel.com>
+ <4de768c5-aae5-4fda-a139-a8b73c8495a1@app.fastmail.com>
+ <dbe77711-f32e-4dce-b4a9-ee3114a435bf@doubly.so>
+ <373bcabb-5175-4937-88b7-bd0fec579357@app.fastmail.com>
+From: Devin Bayer <dev@doubly.so>
+Content-Language: en-US
+In-Reply-To: <373bcabb-5175-4937-88b7-bd0fec579357@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
 
-On Thu, 20 Jun 2024 19:25:47 +0200 you wrote:
-> A small cleanup patch, and basically the same changes that were just
-> accepted for mt7530 to implement port isolation.
+On 21/06/2024 12.26, Luke Jones wrote:
 > 
-> Matthias Schiffer (3):
->   net: dsa: qca8k: do not write port mask twice in bridge join/leave
->   net: dsa: qca8k: factor out bridge join/leave logic
->   net: dsa: qca8k: add support for bridge port isolation
+>> I tested it and it works. However, it has a couple issues:
+>>
+>> 1. This dev_id isn't Vivobook specific. My Zenbook UX3404VC (2023) has this control.
 > 
-> [...]
+> I'm not sure what else to call it. "thermal_throttle_alt" or otherwise, I don't know. The intention should be clear even if only in a comment.
 
-Here is the summary with links:
-  - [net-next,1/3] net: dsa: qca8k: do not write port mask twice in bridge join/leave
-    https://git.kernel.org/netdev/net-next/c/e85d3e6fea05
-  - [net-next,2/3] net: dsa: qca8k: factor out bridge join/leave logic
-    https://git.kernel.org/netdev/net-next/c/412e1775f413
-  - [net-next,3/3] net: dsa: qca8k: add support for bridge port isolation
-    https://git.kernel.org/netdev/net-next/c/422b64025ec1
+Okay, I thought Vivo might be little confusing and the "2" suffix would
+match the ASUS_WMI_DEVID_MINI_LED_MODE2 convention.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+>> 2. The Zenbook only supports values 0-2 (standard, quiet and performance).
+>>    Calling the method with 3 causes the KEYBOARD_KEY event to fire instead of
+>>    adjusting the GPU power and fan speed.
+> 
+> I linked you to v4 of this patch in one of my responses. The link again is https://lore.kernel.org/platform-driver-x86/20240609144849.2532-1-mohamed.ghanmi@supcom.tn/T/#mcd18e74676084e21d5c15af84bc08d8c6b375fb9
 
+Ah, sorry. I see v4 of the patch is working fine.
 
+>> I wonder if the existing fan_boost_mode should also be considered a platform_profile?
+> 
+> No. It tends to be only fans, and usually fullspeed. Platform_profile is intended to control platform related variables. I would also be curious if you tested without the PPD (daemon) as recent versions may also control the energy performance preference and that will skew your results.
+
+I don't use the PPD so tested without it.
+
+BTW, FAN_BOOST_MODE doesn't have a FULLSPEED constant, so maybe you were
+thinking of FAN_CTRL.
+
+I don't have a 0x00110018 device so I can't test that but just FYI, the
+reason I thought the 0x00110019 device as related are the similar
+dev_ids and it calls the ACPI method name FANL to write the EC variable
+QFAN.
+
+~ Dev
 
