@@ -1,247 +1,161 @@
-Return-Path: <linux-kernel+bounces-225009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AAD912A83
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94261912A85
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98996B277E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:42:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDD7CB2AE29
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0523C15445F;
-	Fri, 21 Jun 2024 15:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B34155313;
+	Fri, 21 Jun 2024 15:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gbAdskS8"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2057.outbound.protection.outlook.com [40.107.236.57])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EeWo22ks"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503AD15219C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718984565; cv=fail; b=nz0aXNvxn3pzIsexFFSdki1ttZmnJ1z+QSvWaEQN5iRehiff9lskAngzO62GeJSXNcQxilDilrggKwfW+KrDDr8k4LEB6gfzrwC0bkR/rpjw1KwO57BagVtcwheV3kHGk0H22k15/bYLvK7+KXeLMcS6sKjWwbiYIpP3hZuz+hg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718984565; c=relaxed/simple;
-	bh=q0pKV49LiDdcu/kmErPRMI+DWSga1b2KCC9Rh3Rumwg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=liwjWEWuV5Seq9aLMD7Kf/sDRLfaBebRSgITa3eNFS85dVeYxDv1x77r4nExaaq3AZwfdeHLiYfZ1VRh9Y6FmO6kPNreQuaIdKLesEVMr6i184q8M2qibYdI5CsyMfUb4uk/Mlq9qApipQ7b70RT8YE1aputndcusxLUBiwCu+8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gbAdskS8; arc=fail smtp.client-ip=40.107.236.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lpgsE2YLr1GGWg48F/DowgMGMFESAqP9PU1YnDY8IXRs4vp44j8FWo1uOlu5g8YlMSOnYXdFnWNuQGn+JcXZQmriHMmqmVX9IbNwex2oy5tsHIf2s1bl4y2DmKpjVr4l5vw598qhLw3np9tzf7NPBJaI4n0leGOfL2o3azTAkT1K4XrxRlGrELNuIXLwBI02vjhtCh+TD4seQlRtcFSUm7h+iQ0vNTjsOy8ApbHqEcrt7y/c6AN7pPcCrV+j3p42pq+soEkQTIGrw6Y3XdA984h99ZtdExAdinSyouafXFeQwjVQhd3Fwc01M1iqjHb2RfccPIjzSaVHYgpS2bP1tg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z6MPtWZJwiiE6QBlm2ZkmF4YCgAXs/gzH6RbHNrCXmc=;
- b=bIXvy6x1grUE+EGcjmiQIgzG0vrx4oCkc9efIGbiCEVFRVKeUVAMgRYsStk+aQ633Tu8gTAXPg0gLnZdxWcxpuoDPgaakfhhm37CCR1QgzO4uINfkXDW5IoeAKLUQmgplqiNzGVnx1cppGXGKK6WjwJWsYpOCp7ueucvgEI2lcbf5MNubh/GeXVPRO466KMv/A+rj/dyIe3dmvBUNCHZlQwcGZod85778Nlrb35poXqQHc6UY29S2LdHuHyBvLCMlIN0/1g26et/8awBJvzrmfYjXsL8A2O5gSSjqZ7PxPopAnb6Y7Qt9i58rEjuu8CjY+nXus6vMrzjDXOO0ostjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z6MPtWZJwiiE6QBlm2ZkmF4YCgAXs/gzH6RbHNrCXmc=;
- b=gbAdskS8JJEQXVIu863ZoqQZYgkYF1Z0QpxQJTe8o9lni/K7Pk4jTKuFXPNX1nYytnPW/+CuMFb6ZfB5xGLyfevuEiqEoo7Yg6oOKuufLy7UzTUWrsL89VFT0QVKfmRPynKZrxztrnn5D41rPSU8KAFXPtnJRUfkoMXjL3V6Bm8=
-Received: from BL1PR13CA0265.namprd13.prod.outlook.com (2603:10b6:208:2ba::30)
- by CY8PR12MB7193.namprd12.prod.outlook.com (2603:10b6:930:5b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
- 2024 15:42:40 +0000
-Received: from BN3PEPF0000B070.namprd21.prod.outlook.com
- (2603:10b6:208:2ba:cafe::d9) by BL1PR13CA0265.outlook.office365.com
- (2603:10b6:208:2ba::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.33 via Frontend
- Transport; Fri, 21 Jun 2024 15:42:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B070.mail.protection.outlook.com (10.167.243.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7741.0 via Frontend Transport; Fri, 21 Jun 2024 15:42:39 +0000
-Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Jun
- 2024 10:42:38 -0500
-From: Tom Lendacky <thomas.lendacky@amd.com>
-To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>
-Subject: [PATCH v2] x86/sev: Do RMP memory coverage check after max_pfn has been set
-Date: Fri, 21 Jun 2024 10:42:05 -0500
-Message-ID: <bec4364c7e34358cc576f01bb197a7796a109169.1718984524.git.thomas.lendacky@amd.com>
-X-Mailer: git-send-email 2.43.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2021534ED
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718984581; cv=none; b=jAAw52VuguC3Dd0fhcctEm8DBMzX8/mrGG6e1ww8DfE0G/uJSOf1A7MhtGrkkgIhJewatayExHLmzHjzuRL0kinZvtMkKC87Fy0O2X2VLc96VwQujE/IKfoBr1PetXKwC+2Fn0dYdjioAlTwLyAaZR2jt0SRnXDKNdY9xp4yZlM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718984581; c=relaxed/simple;
+	bh=gCC64W7ORXL0L0ectsYOplnILeWtSh6BU978rTWjcuM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FFViWF+hqisLgT73Y3O6DrQQnZuQoXnenehr9r9bcbcVMDCre29m+BAh3Y6faGKFKrWsReiv6eGO6DlBrghq075qAb3f9pLxBtpHGFsRsqjr4SpivTebhwAoU2PmZYPXrRVSSSuAR7lqY4eT4l92HjK290zt7uhaWfLG8UCS4KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EeWo22ks; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718984578;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8padAC2vgZoYm5gMWgM5Jxwrly13NFf+7Nho49URbpE=;
+	b=EeWo22ksrY0Kr4l7bU0s0MyBhylNxIdimT17s2Z9gZSzjND/RQsJ0v1HOyq4M+SR8Cr41Q
+	kBMOND6iRhx9AiKmyOZGeNlIUzgnfmlrxVkGj3vlYTW10tiDfIBqtoE+SKwxYWJobtld8c
+	JUDNYmIczRxm9Optej07oA1LdfC8Emw=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-353-jyskglFcO4KGbibDYzqrmA-1; Fri, 21 Jun 2024 11:42:57 -0400
+X-MC-Unique: jyskglFcO4KGbibDYzqrmA-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ec4df4e2e8so7212781fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:42:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718984575; x=1719589375;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8padAC2vgZoYm5gMWgM5Jxwrly13NFf+7Nho49URbpE=;
+        b=sIhElTM7bYy2McdE/sym2qKeOAmKIhpuTDA4k4Jq7G+fJzMmoeBELxPlt6O7ddpEse
+         32ciFDz4hyYEzHzFd+rYGhOmzAXftzNsHroZedFtlER8IU8bIuf1hHwYMAseZd9ULQeN
+         /lBBrfKjzc4XdAeOdW6pW862BenArq7cbTfJdHOQz4b0f9PATYdMDL8bN2joDYgrsgEE
+         b9ivm49lbPvLVeV1VNlN/2I9kl2gA9mdzcAdkgIWaMUEG8w3IiqBclG39+oGSPCgkD0P
+         GNcDvwRrL6HssnJBW31Dib2IGOmG/54TG4nJlBnt/nWP6X7lw5rgX8PPbnCge8A8zikb
+         CLfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgKmW5dNW2EF2cIBEkAWe1fEdzxYNfFAOv6VIa1b+1FkNjAJWX4pkVJyAqff21hEK7aTwcLA00Gb3iJgb/8EzH19Q55uN+ngBJ9/e2
+X-Gm-Message-State: AOJu0YwaQ4/Y38urkJPEatmKyxe0EzLV9n4MYsR2BpUReIbw2ne9go83
+	VozWdiOiaz6ypC+Wrhp27Ywnw5nc0muHXvgr5oZFGUZR1aPPDbNt/Xe0r00E1Dzkl+qEpM25nJM
+	3LWS0yw6lgsmA78VQB3n70K0yAKuhZo3EnMnWTQTuohmDt7n/el4JX78aaEgFIg==
+X-Received: by 2002:a2e:87c2:0:b0:2ec:50dc:af8d with SMTP id 38308e7fff4ca-2ec50dcb1c0mr10844061fa.12.1718984575415;
+        Fri, 21 Jun 2024 08:42:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcL/uAmvTw3Xz4SGTKYWK4KNhLBx9ctCWYZtT7LlItr1HRHTMUIIoIfC6SGU42CcZuFEWfeQ==
+X-Received: by 2002:a2e:87c2:0:b0:2ec:50dc:af8d with SMTP id 38308e7fff4ca-2ec50dcb1c0mr10843901fa.12.1718984574941;
+        Fri, 21 Jun 2024 08:42:54 -0700 (PDT)
+Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a9f11sm31899275e9.18.2024.06.21.08.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 08:42:54 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Maxime Ripard <mripard@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/ssd130x: Add drm_panic support
+In-Reply-To: <87h6dmjry6.fsf@minerva.mail-host-address-is-not-set>
+References: <20240620222222.155933-1-javierm@redhat.com>
+ <24205cdf-a3c6-475e-ba8a-a52d039a402d@redhat.com>
+ <87h6dmjry6.fsf@minerva.mail-host-address-is-not-set>
+Date: Fri, 21 Jun 2024 17:42:53 +0200
+Message-ID: <87ed8qjo8y.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B070:EE_|CY8PR12MB7193:EE_
-X-MS-Office365-Filtering-Correlation-Id: 52c4b307-f3ae-41da-ea03-08dc9208c7fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|376011|36860700010|82310400023|1800799021;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+gQIAKt9C1U8lNH5uFIP9bxrzBBtf+aBtwrtO0WXRABObtcPavHji5Vp3Brz?=
- =?us-ascii?Q?l9tgxuvDcWhF71qoYL+yiyZwzzNpZVbfW4JZgfHXnyvtFwzuNczRCR+S2mWW?=
- =?us-ascii?Q?1720kMCuI+G1SRkYmOj7ikaMyT1mA5gEDfEL6W7lAM9SiFi9MLrDhHY5ZHoh?=
- =?us-ascii?Q?BLRYg61zFs2ChA8+nWs7VQlMjbMLmQheYps8y7AHICaLnlziIeESp47edJlQ?=
- =?us-ascii?Q?PO+q4ZDl2era8MD+RvsyFxuLBhLZ33oj5rT4cGdeeYGRTzJd3yTdiagoszw1?=
- =?us-ascii?Q?rhVTEyNgYkY8QgfYXsG+9G2MKKlHhvyj7fC3UNpCdIYlJEjoHAP6ZJzAyxkl?=
- =?us-ascii?Q?pXtcZKOcK6w8wjll4ZCVdd1YE57xk1F5ergODGgva2iEPT2C7kvLirKJOk84?=
- =?us-ascii?Q?3hybea1qv/pUHKGe8yYFTe/cpH0Ud8A9XAie7jJ1rPW3cZbAyUiDhLU58IjK?=
- =?us-ascii?Q?NGhjoUwtrxXdMs9Zm4GrZFiapURdTVhI5u0znsOAi29svxeryz5fTAm+orui?=
- =?us-ascii?Q?6PdQGBGwkV3gq1hVNKxdEBIZKESZHihDDwoeAmxKaMmv5/j1/batq441clJR?=
- =?us-ascii?Q?m2iJb1NaqhnKZbJ3VVMrGfIP0866nG5NM3Jq/7rMUbxtp+ycF58KwtraW/Xy?=
- =?us-ascii?Q?cT02gt5sDuqzCphBJdwEX3kwjryueLKc75a76dnkvG5TT3O2N3kiiPyfyz9J?=
- =?us-ascii?Q?miTXSWQ7pk6GiR6UqehCfElKw+yJ08jmyCID/x691jgY8pL+/VMxbBla7+MY?=
- =?us-ascii?Q?43pc7lTQ5DDivzi2Y09YycMOQH7//s0T5vLxebauyzCno7iYsijHJuB1Tywl?=
- =?us-ascii?Q?1LioqGJTEgYTN/xE/u2ldPGCruH4baKC0vXLVGRqaF7OZ06ONMUPbuKU+Jfb?=
- =?us-ascii?Q?PglgZyhdOkftMw6uWRLumtPvJf4C0xpqb0gZoY9oiherauLCw6D1c9EiQ9Xn?=
- =?us-ascii?Q?f79uY+pYTYdG8kYUijdMXARNtvmGNMAGuvwgCjRcSVeUDb8+Ouo+KVD/9j5i?=
- =?us-ascii?Q?MT2w5wXL29ijJ5fq6CA32f6091v7iu+HJt/AROhIcsjAUG715+sxNo+sI0q7?=
- =?us-ascii?Q?gPALvtGFhLyn34zqJIEc8Ze1Lp/sZCxVdP95qLIjr0NBwRXCePnOZcDOQ4SC?=
- =?us-ascii?Q?9dPLb90NSxzSv60v/Plocyu43zkw5rNSWUFjccE9CLa08pZdIaq0KHqhbLbS?=
- =?us-ascii?Q?8boWshtx6F2iKlVLQiI4Agj7qWFrVmEr9REm2BjJXSxn7wiQG3K7CBtGLNN+?=
- =?us-ascii?Q?h9Xd60gd3lCoFnTWOB1Ube2B7FLEnRX5yJ6QdrNGCNVd+DW2VlbA/FLv4L4j?=
- =?us-ascii?Q?hS16w7NZ4H4I6Rx78aCeiDtpztmAF6m5ZyKz5pUbdVVRzJdC0s3Equd/uQJ6?=
- =?us-ascii?Q?hjvrAx0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(376011)(36860700010)(82310400023)(1800799021);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 15:42:39.1711
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52c4b307-f3ae-41da-ea03-08dc9208c7fb
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B070.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7193
 
-The RMP table is probed early in the boot process before max_pfn has been
-set, so the logic to check if the RMP covers all of system memory is not
-valid.
+Javier Martinez Canillas <javierm@redhat.com> writes:
 
-Move the RMP memory coverage check from snp_probe_rmptable_info() into
-snp_rmptable_init(), which is well after max_pfn has been set. Also, fix
-the calculation to use PFN_UP instead of PHYS_PFN, in order to compute
-the required RMP size properly.
+> Jocelyn Falempe <jfalempe@redhat.com> writes:
+>
+> Hello Jocelyn, thanks for your feedback!
+>
+>> On 21/06/2024 00:22, Javier Martinez Canillas wrote:
+>>> Add support for the drm_panic infrastructure, which allows to display
+>>> a user friendly message on the screen when a Linux kernel panic occurs.
+>>> 
+>>> The display controller doesn't scanout the framebuffer, but instead the
+>>> pixels are sent to the device using a transport bus. For this reason, a
+>>> .panic_flush handler is needed to flush the panic image to the display.
+>>
+>> Thanks for this patch, that's really cool that drm_panic can work on 
+>> this device too.
+>>
+>
+> Indeed, that's why I did it. Just to see if it could work :)
+>
+> [...]
+>
+>>> +static void ssd130x_primary_plane_helper_panic_flush(struct drm_plane *plane)
+>>> +{
+>>> +	struct drm_plane_state *plane_state = plane->state;
+>>> +	struct ssd130x_plane_state *ssd130x_plane_state = to_ssd130x_plane_state(plane_state);
+>>> +	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(plane_state);
+>>> +	struct drm_crtc *crtc = plane_state->crtc;
+>>> +	struct ssd130x_crtc_state *ssd130x_crtc_state = to_ssd130x_crtc_state(crtc->state);
+>>> +
+>>> +	ssd130x_fb_blit_rect(plane_state->fb, &shadow_plane_state->data[0], &plane_state->dst,
+>>> +			     ssd130x_plane_state->buffer, ssd130x_crtc_state->data_array,
+>>> +			     &shadow_plane_state->fmtcnv_state);
+>>
+>> ssd130x_fb_blit_rect() will call regmap->write(), which involve mutex 
+>> and might sleep. And if the mutex is taken when the panic occurs, it 
+>> might deadlock the panic handling.
+>
+> That's a good point and I something haven't considered...
+>
+>> One solution would be to configure the regmap with config->fast_io and 
+>> config->use_raw_spinlock, and check that the lock is available with 
+>> try_lock(map->raw_spin_lock)
+>> But that means it will waste cpu cycle with busy waiting for normal 
+>> operation, which is not good.
+>>
+>
+> Yeah, I would prefer to not change the driver for normal operation.
+>
 
-Fixes: 216d106c7ff7 ("x86/sev: Add SEV-SNP host initialization support")
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Another option, that I believe makes more sense, is to just disable the
+regmap locking (using struct regmap_config.disable_locking field [0]).
 
----
+Since this regmap is not shared with other drivers and so any concurrent
+access should already be prevented by the DRM core locking scheme.
 
-Changes in v2:
-- Removed static variable used to hold the probed RMP_END MSR value and
-  instead use the existing local variable in snp_probe_rmptable_info()
-  and calculate the RMP_END value in snp_rmptable_init().
-- Use PFN_UP instead of PHYS_PFN to correctly calculate the RMP size.
----
- arch/x86/virt/svm/sev.c | 44 ++++++++++++++++++++---------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+Is my understanding correct?
 
-diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-index 0ae10535c699..0ce17766c0e5 100644
---- a/arch/x86/virt/svm/sev.c
-+++ b/arch/x86/virt/svm/sev.c
-@@ -120,7 +120,7 @@ static __init void snp_enable(void *arg)
- 
- bool snp_probe_rmptable_info(void)
- {
--	u64 max_rmp_pfn, calc_rmp_sz, rmp_sz, rmp_base, rmp_end;
-+	u64 rmp_sz, rmp_base, rmp_end;
- 
- 	rdmsrl(MSR_AMD64_RMP_BASE, rmp_base);
- 	rdmsrl(MSR_AMD64_RMP_END, rmp_end);
-@@ -137,28 +137,11 @@ bool snp_probe_rmptable_info(void)
- 
- 	rmp_sz = rmp_end - rmp_base + 1;
- 
--	/*
--	 * Calculate the amount the memory that must be reserved by the BIOS to
--	 * address the whole RAM, including the bookkeeping area. The RMP itself
--	 * must also be covered.
--	 */
--	max_rmp_pfn = max_pfn;
--	if (PHYS_PFN(rmp_end) > max_pfn)
--		max_rmp_pfn = PHYS_PFN(rmp_end);
--
--	calc_rmp_sz = (max_rmp_pfn << 4) + RMPTABLE_CPU_BOOKKEEPING_SZ;
--
--	if (calc_rmp_sz > rmp_sz) {
--		pr_err("Memory reserved for the RMP table does not cover full system RAM (expected 0x%llx got 0x%llx)\n",
--		       calc_rmp_sz, rmp_sz);
--		return false;
--	}
--
- 	probed_rmp_base = rmp_base;
- 	probed_rmp_size = rmp_sz;
- 
- 	pr_info("RMP table physical range [0x%016llx - 0x%016llx]\n",
--		probed_rmp_base, probed_rmp_base + probed_rmp_size - 1);
-+		rmp_base, rmp_end);
- 
- 	return true;
- }
-@@ -206,9 +189,8 @@ void __init snp_fixup_e820_tables(void)
-  */
- static int __init snp_rmptable_init(void)
- {
-+	u64 max_rmp_pfn, calc_rmp_sz, rmptable_size, rmp_end, val;
- 	void *rmptable_start;
--	u64 rmptable_size;
--	u64 val;
- 
- 	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
- 		return 0;
-@@ -219,10 +201,28 @@ static int __init snp_rmptable_init(void)
- 	if (!probed_rmp_size)
- 		goto nosnp;
- 
-+	rmp_end = probed_rmp_base + probed_rmp_size - 1;
-+
-+	/*
-+	 * Calculate the amount the memory that must be reserved by the BIOS to
-+	 * address the whole RAM, including the bookkeeping area. The RMP itself
-+	 * must also be covered.
-+	 */
-+	max_rmp_pfn = max_pfn;
-+	if (PFN_UP(rmp_end) > max_pfn)
-+		max_rmp_pfn = PFN_UP(rmp_end);
-+
-+	calc_rmp_sz = (max_rmp_pfn << 4) + RMPTABLE_CPU_BOOKKEEPING_SZ;
-+	if (calc_rmp_sz > probed_rmp_size) {
-+		pr_err("Memory reserved for the RMP table does not cover full system RAM (expected 0x%llx got 0x%llx)\n",
-+		       calc_rmp_sz, probed_rmp_size);
-+		goto nosnp;
-+	}
-+
- 	rmptable_start = memremap(probed_rmp_base, probed_rmp_size, MEMREMAP_WB);
- 	if (!rmptable_start) {
- 		pr_err("Failed to map RMP table\n");
--		return 1;
-+		goto nosnp;
- 	}
- 
- 	/*
+[0]: https://elixir.bootlin.com/linux/v6.10-rc1/source/include/linux/regmap.h#L326
+
 -- 
-2.43.2
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
 
