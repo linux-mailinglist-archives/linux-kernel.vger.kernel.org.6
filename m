@@ -1,141 +1,174 @@
-Return-Path: <linux-kernel+bounces-225233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD56912DE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:33:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C331912DE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1E57283AF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:33:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A3BE283C57
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7253C17BB25;
-	Fri, 21 Jun 2024 19:33:35 +0000 (UTC)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EEC17B505;
+	Fri, 21 Jun 2024 19:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nw6qApOB"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA1D17B50D;
-	Fri, 21 Jun 2024 19:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA31A17B40B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718998415; cv=none; b=h6fPgNdb9Sv7olFuXPXOK+9aMDJlBcuCUUvfuNBPiAjYYul7ImyUh1WoXGeQu1lU7aPN7YciIT+zkFKHSQty5PZxbwnDkz91/YktUuhuLaya815cXI1E9lU6nVW2Jtth77pNYzCL644C5nTyN8kd8I4j2LrVgvrfOBiF+wqt/a0=
+	t=1718998430; cv=none; b=ZnKwqbb7DBvnvzTb2sIxmm14Ntr8Q8WIpd9ToLHjCK1Ddng/deIY3f9RG1Ar9vKLKVyTMe/Ji3tYj52ymkHlNKnqbLJOWbGm7IRPsOb81V8LGKdlZ3pOxr66QhS3aC7eiBkZ9XKfi7/w2M2wlHDmdgUUMUU+JKcCUcb5vjkmFp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718998415; c=relaxed/simple;
-	bh=iI+L7i712SZhcAPxwe+PjDhF8zxPu0w/7Hnx+v8CzE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Is87YkRsGKdXVORfHCY7g/NFgUN8B2XMVnITAbYbIHI+9AoUHpgHc6fC5Px6BHx9PBHR2JqxpXvhXXjl4Wtt2F/AlsriZ917ue6q3b2Y9fV+mNrzWfOehzCdpuqZybT50r9QRXM/3fOWUvWhwn6Ohp7folNTN9nIDQYUZzXBlzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c80637ee79so1422666a91.0;
-        Fri, 21 Jun 2024 12:33:32 -0700 (PDT)
+	s=arc-20240116; t=1718998430; c=relaxed/simple;
+	bh=DWJwt5txtEJ5l1ggdApbfkj/j9BnA2yzomof5Tf2sKU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EyoTEY/0z4DiGSLvWO1Wu1sso3mWMHrUT7Wel1pc+lxU7v/xr67WJQj32014nEJKXLvZEqs30T+6BqL6YcVMDiS8cWQnNto+9oZzVzJwRggdGmtEp6BlaeYpboLC5TiFK5pAwhuJm+P8t7ZqZ4+Z5MEdMbp4OY7uC8rJENl6emk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nw6qApOB; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4405dffca81so274461cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718998427; x=1719603227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Le2MkNdTd7ht732px20a1wWOLqrtTMx4YCE6l0MH95w=;
+        b=nw6qApOBjHGbEc5TFGkEcJXGG68vGGcaSsmvy1gfh083jMbuEwbrVnY5RVkVyH6EB4
+         3Je4EQpvK5epFCyfdxpfZMHz9c/gJRTEuCWeTCYZ+CqpaqgHENzs3OABnYrM7ZhqhzGt
+         VXzYjGnulSJJf4ItCeqV2/kJ1vnT+8Si5/s/NUS75INsf/WXJMyjV9IuIVme/rGfEibI
+         1INqUxDRFu+DTrVioGsF/fLdE3J7si4Je4f8xZiRAJNQlsh/PKuEp5qJNkBOw07Gg6XJ
+         HufVBwHLraFFSDATkJICKCS146qkcTQ72ioZQUxLfi8YRaomzEqIr13ilC/Gehh8jnBd
+         O+uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718998412; x=1719603212;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cm5Jv5fuO8QRKswysU16NBBPz6DZDirM0voo1fYssSI=;
-        b=AjSv16Zdphiof/rLUJRPw6Lju0gR7IvxLLi9qAxmUjnmXEDP4v2EtioTmhXv3IfynR
-         DWJHSqbzzMFS2eaqAkxW7Y4jNoRwSA2DMJjVd4bQr7ktWxwbMBJJQ6gYIRvBeD7LSb7F
-         071MNyFNNaETLKvidOOFj5J3GzYcW55X4CercSiV9J5fRoQLdy08UQruhmGhf4zeEHzg
-         p7umCP2UNpnzA94z6ogus9dqkaMf3qsfUVG7exAdr8EHOkITSbhlku+vKzJ5wYUe4ZwF
-         cE4NKZ7kWKHQLw6op7MjainHV9ZuJGOpZV9copR+jY/US5cZSJufHeVurhsgiMwFr5GJ
-         N93A==
-X-Forwarded-Encrypted: i=1; AJvYcCW0N21tM0OYFzkpo1e0RIwq9EVf/SucJ1X4MMuH4OU5oOEDphC0pQ+XKOS9uu7vuEguhhW7zd+H6OjmdmSZQPBeJMZ8QEeNkqShmx2N1UBMNmzeQGdaCyVWsnPGMtbRhGW2yzmzwkDcBi1YMpAaK6GZvnqGd+KvRTZtofDLMwUfRmFjTxUk
-X-Gm-Message-State: AOJu0YyV/M9Dq8e5LFXXpq1v4MfDUHbNu9BSxNob9Z44H6qcfxCPjVB6
-	MwP4TmzIF+Dw21BGQJ9IODMVdoLFPsl4EZF24zwhPDMfsIUKESg9s2kSBw==
-X-Google-Smtp-Source: AGHT+IGE/Z7FqcafjZphknZusfs1seXePC3UZoSxmZCkJHzLFZu+1mTSdCv+F7KypwvQ1l5vmCFSVw==
-X-Received: by 2002:a17:90b:50cd:b0:2c7:db01:c9ad with SMTP id 98e67ed59e1d1-2c7db01cbf7mr6557900a91.18.1718998411694;
-        Fri, 21 Jun 2024 12:33:31 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e4ff97c8sm3999661a91.12.2024.06.21.12.33.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 12:33:31 -0700 (PDT)
-Date: Fri, 21 Jun 2024 19:33:23 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Dexuan Cui <decui@microsoft.com>
-Cc: Jake Oshins <jakeo@microsoft.com>,
-	Saurabh Singh Sengar <ssengar@linux.microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, mhklinux <mhklinux@outlook.com>,
-	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-	"stable@kernel.org" <stable@kernel.org>,
-	KY Srinivasan <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: hv: fix reading of PCI_INTERRUPT_LINE and
- PCI_INTERRUPT_PIN
-Message-ID: <ZnXVgy_hVz5JXncD@liuwe-devbox-debian-v2>
-References: <20240621014815.263590-1-wei.liu@kernel.org>
- <SN6PR02MB4157C9FD41483E9AC7ED9E70D4C92@SN6PR02MB4157.namprd02.prod.outlook.com>
- <ZnUbWUdVE7q8oNjj@liuwe-devbox-debian-v2>
- <20240621110327.GA19602@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <DM4PR21MB36085B06555AF3CD6244ACEAABC92@DM4PR21MB3608.namprd21.prod.outlook.com>
- <SA1PR21MB13178E3D11B407F9B272E8F4BFC92@SA1PR21MB1317.namprd21.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1718998427; x=1719603227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Le2MkNdTd7ht732px20a1wWOLqrtTMx4YCE6l0MH95w=;
+        b=hu4nu5Cj8g5tbeyVmKupIP7wDbRoD1JDbqAzxydg/A4V/2lGTqJHyH+eoLBkhT3t37
+         rKgwEONzgD/SDJmkMbjn7DFIxK4xwv7fNSCSyC+3nmFvWLuK1+Km230yrgPGsgu1V+3U
+         7SsmjG93vIGMIOaFb7gEG15StB3m1o0DT2ja492a3s4h90fknnDaHbzcbWP6XApfJGQy
+         GC259iHi+3rEh7Zf2jW/PFlP8RgzaBLqYdHBlLkSjc2+GNOfuJYrBMFRbSBWXgNH55Rr
+         wrXvp+OVFUS53QVkVeIQZ5tbchN6tk6co9yLw9tcIeXdIB9kD7Jpz77kVsA9YrN66Zoc
+         yIrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqborhbng6yrKkxX1LoWxjXMAMtcqRv/41OqJVajBcH+IuAs/lSKh19fUqW4IVtx0k3W4ZD7Eil8gYbIeq/4LLivnYE18n4g+8bVMf
+X-Gm-Message-State: AOJu0YxZGBqmO7hWLIeFoFwTzkWyC5T8fH6NszlMJZ6imhiu58UYstag
+	x1N+jHlgpSIIf/cZ6qvtQuX1aciy3EkuWq06klhR1GzURcLfMZRqOrZtuJruCZt/SKSTtf41BJO
+	U0W6WwGaVRIVF6DqID5V1h9sXBLPrJoFHuYqs
+X-Google-Smtp-Source: AGHT+IFrMD+rZzDa0ZVM2nBbSOJX2XJ6FBHeQxjvTimHBSdAG5CC6HH/3+o7haZPxilyiYFmJuIdUGRz/upXWdTumZA=
+X-Received: by 2002:a05:622a:83:b0:441:54bb:50eb with SMTP id
+ d75a77b69052e-444ce39fd5dmr117391cf.28.1718998426491; Fri, 21 Jun 2024
+ 12:33:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SA1PR21MB13178E3D11B407F9B272E8F4BFC92@SA1PR21MB1317.namprd21.prod.outlook.com>
+References: <20240620080509.18504-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240620080509.18504-2-lvzhaoxiong@huaqin.corp-partner.google.com>
+In-Reply-To: <20240620080509.18504-2-lvzhaoxiong@huaqin.corp-partner.google.com>
+From: Doug Anderson <dianders@google.com>
+Date: Fri, 21 Jun 2024 12:33:31 -0700
+Message-ID: <CAD=FV=Xf26n+ZtUXHAwhQin76+z_Zkg+KWf++pGWWrHtgU83jQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] drm/panel: jd9365da: Modify the method of sending commands
+To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
+	benjamin.tissoires@redhat.co, hsinyi@google.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jagan Teki <jagan@edgeble.ai>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 06:41:04PM +0000, Dexuan Cui wrote:
-> From: Jake Oshins <jakeo@microsoft.com> 
-> Sent: Friday, June 21, 2024 9:51 AM
-> > [...]
-> >On Fri, Jun 21, 2024 at 06:19:05AM +0000, Wei Liu wrote:
-> > On Fri, Jun 21, 2024 at 03:15:19AM +0000, Michael Kelley wrote:
-> > > From: Wei Liu <mailto:wei.liu@kernel.org> Sent: Thursday, June 20, 2024 6:48 PM
-> > > >
-> > > > The intent of the code snippet is to always return 0 for both fields.
-> > > > The check is wrong though. Fix that.
-> > > >
-> > > > This is discovered by this call in VFIO:
-> > > >
-> > > >     pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
-> > > >
-> > > > The old code does not set *val to 0 because the second half of the check is
-> > > > incorrect.
-> 
-> Hi Wei, so you got a non-zero 'pin' value returned by the host when the guest reads
-> from the MMIO config page. What's the consequence? Will VFIO try to use the legacy INTx 
-> rather than MSI/MSI-X? I'm curious how you noticed the bug. I'm also curious why the
-> host doesn't return 0 for the 'PIN' register when the guest reads it from the config page.
+Hi,
 
-It is not the guest reading the register. The VM has not launched yet.
-Everything happens on the host side. The host side software is preparing
-the device for the VM to use.
+On Thu, Jun 20, 2024 at 1:05=E2=80=AFAM Zhaoxiong Lv
+<lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
+>
+> Currently, the init_code of the jd9365da driver is placed
+> in the enable() function and sent, but this seems to take
+> a long time. It takes 17ms to send each instruction (an init
+> code consists of about 200 instructions), so it takes
+> about 3.5s to send the init_code. So we moved the sending
+> of the inti_code to the prepare() function, and each
+> instruction seemed to take only 25=CE=BCs.
+>
+> We checked the DSI host and found that the difference in
+> command sending time is caused by the different modes of
+> the DSI host in prepare() and enable() functions.
+> Our DSI Host only supports sending cmd in LP mode, The
+> prepare() function can directly send init_code (LP->cmd)
+> in LP mode, but the enable() function is in HS mode and
+> needs to switch to LP mode before sending init code
+> (HS->LP->cmd->HS). Therefore, it takes longer to send
+> the command.
+>
+> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+> ---
+>
+> Changes between V4 and V3:
+> - 1. Only move mipi_dsi_dcs_write_buffer from enable() function to prepar=
+e() function,
+> -    and no longer use mipi_dsi_dcs_write_seq_multi.
+>
+> V3:https://lore.kernel.org/all/20240614145510.22965-2-lvzhaoxiong@huaqin.=
+corp-partner.google.com/
+>
+> ---
+>  .../gpu/drm/panel/panel-jadard-jd9365da-h3.c  | 24 +++++++++----------
+>  1 file changed, 11 insertions(+), 13 deletions(-)
 
-The consequence of this bug is that user space code will think INTx is
-available while in fact it is not.
+This seems reasonable to me, but I'd prefer someone with more MIPI
+experience than me to actually give it a good review to make sure that
+the argument about things being in prepare() vs enable() makes sense
+to them.
 
-VFIO itself doesn't care much. I noticed the bug because our VMM (Cloud
-Hypervisor) initializes INTx whenever it is available.
+Actually, that makes me look at your CC list, which seems to be
+missing some important people. You should have run
+`./scripts/get_maintainer.pl` and used that to help you make your CC
+list, but you're missing some important people including the
+maintainer of this driver and the panel maintainer. I've added a few
+of those people to this patch. If you send future versions please
+include folks that get_maintainer points out.
 
-> 
-> >  I believe that this fix is correct.  (And I'm frankly surprised that this bug didn't
-> > cause a problem before this.  It's been there since I first wrote the code.)
-> > -- Jake Oshins
-> 
-> I suppose it didn't cause any issue because the PCI device drivers use MSI/MSI-X,
-> so they don't care about the values of the 'PIN' and 'LINE' registers.
 
-I suspect the same. Drivers almost always prefer MSI / MSI-X over INTx.
-No one else triggered that code path before.
+> @@ -117,7 +107,15 @@ static int jadard_prepare(struct drm_panel *panel)
+>         msleep(10);
+>
+>         gpiod_set_value(jadard->reset, 1);
+> -       msleep(120);
+> +       msleep(130);
+> +
+> +       for (i =3D 0; i < desc->num_init_cmds; i++) {
+> +               const struct jadard_init_cmd *cmd =3D &desc->init_cmds[i]=
+;
+> +
+> +               ret =3D mipi_dsi_dcs_write_buffer(dsi, cmd->data, JD9365D=
+A_INIT_CMD_LEN);
 
-Thanks,
-Wei.
+In general people don't like the table-based approach for DSI init.
+For this patch it's probably OK, but before the later patch where you
+add a new panel you'll probably need to transition to a separate init
+per panel and then use mipi_dsi_dcs_write_seq_multi() in there. I'll
+comment more on the later patch. In other words, one possible v5
+should be a 5-patch series:
 
-> 
-> Thanks,
-> Dexuan
-> 
+Patch #1: this patch
+Patch #2: DT binding
+Patch #3: switch jd9365da to use mipi_dsi_dcs_write_seq_multi() but no
+functional changes.
+Patch #4: add your new panel.
+Patch #5: orientation.
+
+
+
+-Doug
 
