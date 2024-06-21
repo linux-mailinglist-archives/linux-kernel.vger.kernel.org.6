@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-224101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B3C911D44
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:47:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A91911D49
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD9F284A05
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C32A81C22269
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010A016D4DA;
-	Fri, 21 Jun 2024 07:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C1716D318;
+	Fri, 21 Jun 2024 07:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfFN+Huq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="nDHehLuQ"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202D216C86E;
-	Fri, 21 Jun 2024 07:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DC87E58D;
+	Fri, 21 Jun 2024 07:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718956050; cv=none; b=n+AaWGSjWvK5G7bWBmJh+DsXfR+9t/8ifhRI4HYcOG4S42vzSxxbIfycsSL1gj12TacewVvE2cp/poFbK939RGb+NX9yc/YDuYcUGih3r27t5V16pTPe4xCQJKqFVIfh5XkaOINvNENE+hQBlSJ+b5xwyavxrCTfsA+vgJGsDWY=
+	t=1718956116; cv=none; b=sC4QwySbqJnvRdWBfrGklA0NkjevNGo/R2Xb5SHqu1Ds184Hc0zB3TvNVEcBQPelT3oDsOp/IYXDWf4ZNfb2ow3vAN/ZkYZ03junGObzi3fpeqBIM8WF1/9JK+U3lh0l4GX/Qpziw/PK7dp88NFidRcEeAfj0U3nAA5eIxnadHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718956050; c=relaxed/simple;
-	bh=+n1uE1MrLQMFhNN+7jwAvQajIquhPpIK6hC9WogIb1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V3iOUVHate0rd2oJjkAAYJ9xtqcdoYz7I68Bk6VG/WHEYVUOjSCcqJCoC//wN0rRTiysmui2KlWfNpjMfcaOaFUvWLMAvuKul2QuQc2p/8s3/R7YZh/fUm67sZFkk1xfNRlMmwdlitJFOjBotlfmbRnBFpMYx/EGN+EKwR1KgPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfFN+Huq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ED54C2BBFC;
-	Fri, 21 Jun 2024 07:47:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718956049;
-	bh=+n1uE1MrLQMFhNN+7jwAvQajIquhPpIK6hC9WogIb1Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VfFN+HuqInMOioum3nOUUAxrTdtVdjbZPYztVw5rmIyxcrJKkfr//GPMMvssZ97mF
-	 bc16USxoEeLnXgt2+ZWBhKfJaZxF6h94UXw/6wVZmRCosK7MzmOV/zy0hFkL9oAOTY
-	 pLA96PVGw92edy7QBoumKi8/eHn/jpPrkZVF8iciR02xYit0fMKT5AKfFI28z2S/Xo
-	 7cTGqzDyXh0801wUzYZXCV5iG5ibGw7x8NUtpfJaovfGEj4d4xgd71H8ZAoG1ltp5R
-	 DaYwRoRG9BedSojyfpOn0Rc1oP+3UrPp/XDKQIT4MVW7tJ4oBBcq8vXMRLFcoNlAPv
-	 I1hJb8yogM0Jw==
-Date: Fri, 21 Jun 2024 09:47:19 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	linux-mips@vger.kernel.org, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	sparclinux@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, Brian Cain <bcain@quicinc.com>, 
-	linux-hexagon@vger.kernel.org, Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org, 
-	Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, libc-alpha@sourceware.org, 
-	musl@lists.openwall.com, ltp@lists.linux.it, stable@vger.kernel.org
-Subject: Re: [PATCH 01/15] ftruncate: pass a signed offset
-Message-ID: <20240621-jeden-hinab-e265b0d0807a@brauner>
-References: <20240620162316.3674955-1-arnd@kernel.org>
- <20240620162316.3674955-2-arnd@kernel.org>
+	s=arc-20240116; t=1718956116; c=relaxed/simple;
+	bh=+EhfIqDCxvAn5pgilOswqS+omcw5oGDRGBmQLYWykCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fyCtoXDyJOhpAVVQGnrjHZHz5ZurRu7oFSX+MVV7ovamWPPnncIYZK4E3gUv3zC+r8OGQnBCguvsQ8U/6i6N6iO5gQ0rMTlpXNZAcRRkGlPpPRiIpVH7WTfq+z4/EFVwQNngoKYJ5i9cYPOkvGsnDJzbVrqlt7AJFO1t5MfV01c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=nDHehLuQ; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4B13CA0796;
+	Fri, 21 Jun 2024 09:48:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=OB0z767zdZiUMHyqre9h
+	c5AMqLSuctfCp1/ZdkYsUxU=; b=nDHehLuQ8zSJZvveTYE1uUR/3yUw+67dLpnb
+	mcU3XOmobcoP5xXN2vxGRMAh8EF2MQ3R+R69OPcj5BbzCGEu9T3iDbZbJTZTBUf7
+	8QKmNf/Hy1S7wurNWqH2czXfp2JX3TYIiVgmsPN7XXXtANir7nRqJLrXauwHZ1u+
+	Xg1ESDEorrem66Lmp6WDKuBaPG1OKFiTGxSke7SRcjNiE1Th0kKKk6Yw62COmnZV
+	C7kkPVDn/uwHsOmdixuKbhR4mipBoopaxNIwuWxfLNrUgl8yG03z5nTS5ID7fJ5A
+	U/0rD+ywxCtfTXgT4kliiPFLGWy3eiSnFn0nM5kNcIWv+O/E4Ur0Vi5JPP9c2Hi2
+	1iaHGZD/mCRgL9L+jJplzwqolLtKI7paISpQmyS7cy4ToEk5+oHwuOKRvNxH2K44
+	TuhhZYnf8yMvZc2wDWoVfLuZhFK731qkGcSe2Fe7n+gIH06iWrDKIAx//2LI0bpc
+	/9CATeZr9vdAKQ/zhjXo+uvQrIwReB9/Po7D9Mr9V0AmCyzagBt2O8GxV/+EOEP+
+	sQ/rFw9aSRKnhpt8dSB+FV5WW+jgSixk3akBEhjcDXJtROLoDvhwTIohDBZLXVMF
+	Kng/TNt6UDVcTposUYp4fbHx10l+5S7cmGYjq30LuhHfZ8Jn9hNDkx/TVOt3lFS3
+	FFlUlzE=
+Message-ID: <f216c0b9-3d0d-4d4c-aa33-ba02b0722052@prolan.hu>
+Date: Fri, 21 Jun 2024 09:48:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240620162316.3674955-2-arnd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 resub 1/2] net: include: mii: Refactor: Define LPA_* in
+ terms of ADVERTISE_*
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Vladimir Oltean
+	<olteanv@gmail.com>, <trivial@kernel.org>, Heiner Kallweit
+	<hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>
+References: <20240619124622.2798613-1-csokas.bence@prolan.hu>
+ <c82256a5-6385-4205-ba74-ab102396abb6@lunn.ch>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <c82256a5-6385-4205-ba74-ab102396abb6@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2945A129576C7567
 
-On Thu, Jun 20, 2024 at 06:23:02PM GMT, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The old ftruncate() syscall, using the 32-bit off_t misses a sign
-> extension when called in compat mode on 64-bit architectures.  As a
-> result, passing a negative length accidentally succeeds in truncating
-> to file size between 2GiB and 4GiB.
-> 
-> Changing the type of the compat syscall to the signed compat_off_t
-> changes the behavior so it instead returns -EINVAL.
-> 
-> The native entry point, the truncate() syscall and the corresponding
-> loff_t based variants are all correct already and do not suffer
-> from this mistake.
-> 
-> Fixes: 3f6d078d4acc ("fix compat truncate/ftruncate")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+Hi
 
-Looks good to me,
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+On 6/20/24 21:07, Andrew Lunn wrote:
+> On Wed, Jun 19, 2024 at 02:46:22PM +0200, Csókás, Bence wrote:
+>> Ethernet specification mandates that these bits will be equal.
+>> To reduce the amount of magix hex'es in the code, just define
+>> them in terms of each other.
+> 
+> I have a quick email exchange with other PHY maintainers, and we
+> agree. We will reject these changes, they are just churn and bring no
+> real benefit.
+> 
+> NACK
+> 
+>      Andrew
+> 
+
+The benefit is that I don't have to constantly convert between "n-th bit 
+set" (which is how virtually all datasheets, specifications, 
+documentation etc. represent MII bits) and these hex values. In most 
+places in the kernel, register bits are already represented with BIT() 
+et al., so why not here?
+
+Bence
+
 
