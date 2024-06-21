@@ -1,120 +1,132 @@
-Return-Path: <linux-kernel+bounces-224757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B60912687
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:20:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB9291268A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F93F281970
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:20:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC781C22141
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE361514C1;
-	Fri, 21 Jun 2024 13:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82529155A2B;
+	Fri, 21 Jun 2024 13:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="tOXJbW34"
-Received: from mail-lf1-f97.google.com (mail-lf1-f97.google.com [209.85.167.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqVRAuVn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6101B1EA80
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C410122094;
+	Fri, 21 Jun 2024 13:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718976013; cv=none; b=PBk8K0xqsb/K1fDcgnMgpUhnui+g4lqlCL6NAPJf868WOd3u6Vap2OJjW71hKwr9hTI79GnZorZbj1MMdiq5EGC9jM+Hj6X30iT4ak81cGJU6BW8Y8jjhs5uls3T5I1e7QXt4dV+hH4YRN/hEFoLiGeO4mM9U8+UejOgJfYRBD4=
+	t=1718976079; cv=none; b=GSoUK6hnkiOTUYDAw8vWi5STwYJNc80JolTYmAjV0/Nf9l1Hi8ZEBirHIyA0Y/eVFqfiQl+7qFz2MatFr1t69uCAvxnTAikPmsU5iU7YC/tLMWb/CDzXv3kx3Gx0DD1SHa680bgCaCn3VWh2C+l8IchUUyh5JBH7NMXXnRJfCa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718976013; c=relaxed/simple;
-	bh=M466tMXbuxs22b9X0TogkzCirZJvukhHRWob2oukJi8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gGQGGXfvSxendthwW6KcKA952WffdPst+O+HqwpvFZIrzNZYBalVrnWQzfHXvmvGEc1674TiIe9nl0LWwBLvPx1+ZNJUV7lcWDEbRGWFjz0HSdZvUxk4paKwwMHyarldgeGvl3BqF+S7W7QsC0Zzne2xLHfeKFo0pyU+o+gcdIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=tOXJbW34; arc=none smtp.client-ip=209.85.167.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-lf1-f97.google.com with SMTP id 2adb3069b0e04-52c4b92c09bso2775505e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1718976009; x=1719580809; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z5SWq4O+1fJQvBFv7KtItarRKM0S2vzLYLjmxEsd7wc=;
-        b=tOXJbW34YFVMuMoe0/LLMbHlhJm96Iw6xn3lQd+m21w7775Ho5LNhr8TrCRUgVJPe+
-         zFG/5pOk3NwvDGQK+nqwMGRdMtm4HzchIa2957jNiODlCQF8hDyjmBS2a0Yo8opG8fz8
-         +uZiQO6MYniokATwh/W2WntIZ7OnZ5vG6d3DpfP8wKxBp8OODo/tqxDa1ICSnI5mUtdK
-         H9pyPQ893IGKaUzK8G48zAZm1caPkaTp66JfuNtkXjKfp4zftcCKZmZ+v2W7ttm5Mhxp
-         4jAQzJB3p6Xea3X3isSn2ui/QuwZ52dlKAvb6YyLDXeXdRO3LlMxZpFAX4Y1Lcnsd5e+
-         fDww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718976009; x=1719580809;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z5SWq4O+1fJQvBFv7KtItarRKM0S2vzLYLjmxEsd7wc=;
-        b=FKA5oPjbMtOljtQ96hkP1/HhIUlVWjJjNh35pl0EFnobgABjSuSXdTXQcE0gdA/YIu
-         5513ZlQgWoIu+QSvn/BToJyez1tg3T9S2KTH2UXGcZxs6wdzQ/KwqUC6WuYt/fLssc1i
-         c/cT4jL89RMa8bLv0f6UEAtV5TXL+nlvLeuLyf8Bi3qRBZAxsuuIAGVvWvd6561JSOfP
-         cVjVPGsN5mhAHDdwGszt5YLAt76CHyZrYzfZkf5IqGSCSlbN6e29EFezQADLIWIj8/64
-         UANeMmFbVg5iVufykgcDPsTKqvGc9L53sR5vNhBwjFHe9RosMmDCbwlaKKZy/QDS7Wk1
-         OEgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDtc34ySm+Y8m+8kUa/IpHMqlf74LD9yS4Kp1A1nz3BMpgDtwAmh6aOkkTYVHCD/jAsbaeN/QByrh43JLolEq/5LnzvMC72q5QZdTJ
-X-Gm-Message-State: AOJu0Yzlkuq8ZdvqHlhcYtFhj1e6MDZtzZ+bug0sWC3IfUvyZP5IB0FD
-	vSzDCyadYTGYXtDA9OY90G6zTsmlgVCYb7Ai+uJpnlqASVFtfeH17wbLtVe13+OcZ6JLLnuog0m
-	AGRtcQVE/a9PETfjgLU1KIow03EwJ3jGn
-X-Google-Smtp-Source: AGHT+IHqUZLsTLgssBIZw8iReEOCHqen18GXQqnxoCYS9aawC9ZkikLrQX1xkcqFEecfByHdZEABleDj8t0Z
-X-Received: by 2002:ac2:5934:0:b0:52c:d70d:5ff8 with SMTP id 2adb3069b0e04-52cd70d618fmr1239567e87.1.1718975979306;
-        Fri, 21 Jun 2024 06:19:39 -0700 (PDT)
-Received: from raspberrypi.com ([188.39.149.98])
-        by smtp-relay.gmail.com with ESMTPS id a640c23a62f3a-a6fcf549578sm5170366b.148.2024.06.21.06.19.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 06:19:39 -0700 (PDT)
-X-Relaying-Domain: raspberrypi.com
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-To: Maxime Ripard <mripard@kernel.org>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: [PATCH v2 2/2] MAINTAINERS: drm: vc4: Drop Emma's tree
-Date: Fri, 21 Jun 2024 14:19:26 +0100
-Message-Id: <20240621131926.3133484-2-dave.stevenson@raspberrypi.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240621131926.3133484-1-dave.stevenson@raspberrypi.com>
-References: <20240621131926.3133484-1-dave.stevenson@raspberrypi.com>
+	s=arc-20240116; t=1718976079; c=relaxed/simple;
+	bh=eEBjK7L9zo7dYznjm4ZoCU0EEdJVjmtajHqCxc1dnhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gcz2SLSHz5RXrHOvO3Q46kwUKBKJDEKcH46L0OjMiCzV4px/xvpvQ2vOirXcDAoWLazu9kj5iKM3d2UK2+MEjhQPBPTl33cYebdXE5g25ML+/u4+FotZWkjqmYpjo54kQPedG7VpAe/25TDx2Ac1Zv286JuxQivVdgGUvu+E9nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqVRAuVn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8955CC2BBFC;
+	Fri, 21 Jun 2024 13:21:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718976079;
+	bh=eEBjK7L9zo7dYznjm4ZoCU0EEdJVjmtajHqCxc1dnhI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JqVRAuVnTHIw6D5/uqDKXXNm7JNokOfiLq8/btn0kxMfp1kd2uq1YrOaR0i2I9naV
+	 VcMeTW3EPsY69Hy87DN1ljANH5fesyYF+U/K9VlG4yqb0QcA903TyXcg2EwxCaIimy
+	 aZBdng5s5nySzZbIIxumy9Eq3qSkSGI9SflGzObEdz8F61YrGom6eaFDIwiAex84HH
+	 z43lJtMcpBYMRRSBarhkSHh3FfRk8nR3tfR+iSuX6uzSLA5OcleTC7af19fP4zsRIx
+	 YtftL3nqhr6BiHku+Pj3q+pyr+RI1cGTXSr7Tj7Tjr6Q7edwErule1YwdWjuYIuaUt
+	 OClFU/D2DXZEw==
+Date: Fri, 21 Jun 2024 14:21:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Dillon Varone <dillon.varone@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Michael Strauss <michael.strauss@amd.com>,
+	Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
+Message-ID: <ZnV-SlwKvgfpYYK9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6v7f5m3wwL3qaoRy"
+Content-Disposition: inline
 
-Emma stepped back from VC4 maintenance a while ago, and
-all patches are now merged through drm-misc.
 
-Drop Emma's tree from MAINTAINERS.
+--6v7f5m3wwL3qaoRy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
+Hi all,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8dabcb16d29f..3fb03de446c3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7523,7 +7523,6 @@ M:	Maxime Ripard <mripard@kernel.org>
- M:	Dave Stevenson <dave.stevenson@raspberrypi.com>
- R:	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
- S:	Supported
--T:	git git://github.com/anholt/linux
- T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
- F:	Documentation/devicetree/bindings/display/brcm,bcm2835-*.yaml
- F:	drivers/gpu/drm/vc4/
--- 
-2.34.1
+Today's linux-next merge of the drm tree got a conflict in:
 
+  drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_init.c
+
+between commit:
+
+  c03d770c0b014 ("drm/amd/display: Attempt to avoid empty TUs when endpoint=
+ is DPIA")
+
+=66rom the drm-fixes tree and commits:
+
+  47745acc5e8dd ("drm/amd/display: Add trigger FIFO resync path for DCN35")
+  0127f0445f7c1 ("drm/amd/display: Refactor input mode programming for DIG =
+FIFO")
+
+=66rom the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_init.c b/drive=
+rs/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_init.c
+index 199781233fd5f..30e6a63988391 100644
+--- a/drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_init.c
++++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_init.c
+@@ -157,8 +160,8 @@ static const struct hwseq_private_funcs dcn35_private_f=
+uncs =3D {
+ 	.set_mcm_luts =3D dcn32_set_mcm_luts,
+ 	.setup_hpo_hw_control =3D dcn35_setup_hpo_hw_control,
+ 	.calculate_dccg_k1_k2_values =3D dcn32_calculate_dccg_k1_k2_values,
+-	.set_pixels_per_cycle =3D dcn32_set_pixels_per_cycle,
+-	.is_dp_dig_pixel_rate_div_policy =3D dcn35_is_dp_dig_pixel_rate_div_polic=
+y,
++	.resync_fifo_dccg_dio =3D dcn314_resync_fifo_dccg_dio,
++	.is_dp_dig_pixel_rate_div_policy =3D dcn32_is_dp_dig_pixel_rate_div_polic=
+y,
+ 	.dsc_pg_control =3D dcn35_dsc_pg_control,
+ 	.dsc_pg_status =3D dcn32_dsc_pg_status,
+ 	.enable_plane =3D dcn35_enable_plane,
+
+--6v7f5m3wwL3qaoRy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ1fkkACgkQJNaLcl1U
+h9AyjQf+NYcwSmnP3xpW16rF7WaCcqQmKBlzH6VMIQFcNdUDyyfKEifrumflFV7G
+p0DY+ttTzgrKcKh5TNxzgxFK/Zrc9RCzhnqZpsbCz5dfr9YSuUGoK9tcnoMfUgXL
+Cii+JhXyM+t18tu53iT6XlOLGl1GzrC2fMT2N4R5AeIvhL25my7PErl92VchvncQ
+IkN0EiS6KHH0PwSt7omzgnpq3ovdZYXE8F7+HmJyVLTYFoXCOkeYYDLK0fv/3Auh
+llfyOYxdp8BWXPDH11D1bkkcw72FZpAI4NXX/lmVMWQ1qkCa3l11marLj3R6QhbE
+txUFOeftL7zzc6HHDW3RwR799O4V1Q==
+=Pcbk
+-----END PGP SIGNATURE-----
+
+--6v7f5m3wwL3qaoRy--
 
