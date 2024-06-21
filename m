@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-223993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC5F911B99
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:24:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40669911B9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7E21F248B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:24:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA8381F24AF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDB51339B1;
-	Fri, 21 Jun 2024 06:24:01 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5180B14D2AC;
+	Fri, 21 Jun 2024 06:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZDORCxfO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF012746B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE0B12F365;
+	Fri, 21 Jun 2024 06:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718951041; cv=none; b=Co8vZBbJzGvC4t5oTS2TpWFqoo/utYWHdgeFmKLokpqovK8qiG4SsDXXLU2s/UqoSbhRhc3eqY8KxiLNicWjVwbQvkw8ZoOb0F2H8/bKSD1bNmAqLd9FEe0edWj8MSAVKSNMiY2yEgWJZ/icpjae1n3gCMu9xllmb0z9EvgCtig=
+	t=1718951050; cv=none; b=HjLK6LtEr+0Ik/E5VVgpCvA+z2SaivVgGHLDhZJk9yzlgbE+x6KvIz3a5IU7HAnWdvPEZ//ntFIPkniG0s5X1nogbY6XyFS8jcNTT1sDIOz0KEZCI3x66BbjcN7E/n87lEN8eHGX2x5RtrkLlk8KLjKVheblk9tLMLSGmFbYNfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718951041; c=relaxed/simple;
-	bh=wCMlso4lZECEUnJenKisKJStCVPLXZCJcJh31So+f2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eZxxw+q8w0g+96NZ58iyuRbxB/9W29UzXRURB2JZimAeroo3Jdtzf1sdiLfIIRgVol4NGcn9Ac9A+z/DoCTS9rAF/RxSvqA20bWKZizQH6qtw5ekVkRDB+0HLY0LtMp3Q5SCsri40LllwySKXw5EeozwGst67pY6TlJYfcMX3wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4W56fY0G3xzMp58;
-	Fri, 21 Jun 2024 14:20:21 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id BD507180088;
-	Fri, 21 Jun 2024 14:23:55 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 21 Jun 2024 14:23:55 +0800
-Message-ID: <39b2bce8-3bc1-b1d9-3e4a-8132a92059c6@huawei.com>
-Date: Fri, 21 Jun 2024 14:23:54 +0800
+	s=arc-20240116; t=1718951050; c=relaxed/simple;
+	bh=7Cn2LiEwUik0k5WAFctKO8MFLAbRBS347iFlEJ7yo5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GBoEgYol/tzDQmrlOPMhfNoZY87D/X9ZB+IOAKXmLLoqczMTNy2elZWD3cFHkHEBtID4JQVUXYCCuj2SSaTM5pSIG+JSJumlBzcG/42q6ShVjWLmNk7VbXzQixDSFXP8FGOt+ZnhThWHm5r5xC89E8xum1CokgFOA9Boa0js9oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZDORCxfO; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718951049; x=1750487049;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=7Cn2LiEwUik0k5WAFctKO8MFLAbRBS347iFlEJ7yo5k=;
+  b=ZDORCxfO6az9vJ4qcbjCGNdgFI7ONW38ZNsoghk60kSzp0gIUxxNifx5
+   2/8q55nUpus+7mvUvFTD8qHVBwc/O9mJBONEuMd98Nn+zx60tTdUxyKj3
+   qC/uKmIxC8LdRnbUGMqgmKMopj4O8qbJcx3nG3lA90fKGt3ljXFQhhva2
+   PSzhYlHiSzQr04VGASon/knSnpIch5peJ8kry0brVmdGIHrp0dinwiqRN
+   NXkoEX+pCj4Cga560+wxL2I7idF24Y4XlM9pIZDG9kRtScDSyRcs2q1Yq
+   byBN8NvHOCwonmFYSi/+URF6TpKJWjuH84bWXpH3Lg6WVceCzfhq1eBce
+   A==;
+X-CSE-ConnectionGUID: yBd7O+YXRN6dOcFM9EKu0g==
+X-CSE-MsgGUID: Mu5FDXb3QvaiKukxuEd9bQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="27106815"
+X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
+   d="scan'208";a="27106815"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 23:24:09 -0700
+X-CSE-ConnectionGUID: CK2E6po+Sd60GzmEnY+SpQ==
+X-CSE-MsgGUID: ZQx7FbvFSRSuVXrXE+lpVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
+   d="scan'208";a="42572422"
+Received: from mesincla-mobl1.amr.corp.intel.com (HELO desk) ([10.209.40.87])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 23:24:07 -0700
+Date: Thu, 20 Jun 2024 23:23:58 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Brice Goglin <brice.goglin@gmail.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+	srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH 0/9] Add CPU-type to topology
+Message-ID: <20240621062358.w4fjrs62uu2s5onk@desk>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
+ <20240619015315.3ei5f6rovzdnxovo@desk>
+ <bc75ff55161671e4470849ed51baa547f619889d.camel@linux.intel.com>
+ <0021f5f2-67c5-4b20-939d-48c9c1c60cdb@gmail.com>
+ <1b99017a-6964-46de-ba3a-09552e7cf072@intel.com>
+ <ec4eeab6-ce32-4a2f-a32c-dfd95cdd9ccd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v2 5/5] arm64: irqchip/gic-v3: Select priorities at boot
- time
-To: Mark Rutland <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: <alexandru.elisei@arm.com>, <catalin.marinas@arm.com>,
-	<linux-kernel@vger.kernel.org>, <maz@kernel.org>, <tglx@linutronix.de>,
-	<will@kernel.org>
-References: <20240617111841.2529370-1-mark.rutland@arm.com>
- <20240617111841.2529370-6-mark.rutland@arm.com>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <20240617111841.2529370-6-mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+In-Reply-To: <ec4eeab6-ce32-4a2f-a32c-dfd95cdd9ccd@gmail.com>
 
+On Thu, Jun 20, 2024 at 05:22:59PM +0200, Brice Goglin wrote:
+> Le 20/06/2024 à 17:06, Dave Hansen a écrit :
+> 
+> > On 6/19/24 14:25, Brice Goglin wrote:
+> > > Good point. From this patch series, I understand that the current kernel
+> > > side doesn't care about these different E-cores. However it might be
+> > > good to expose them as different cpu-types (or better name) to userspace ?
+> > > 
+> > > Something like type 0 = P-core, 1 = normal E-core, 2 = low power E-core ?
+> > The first priority here is getting the kernel to comprehend these types
+> > for architectural purposes: when there are functional differences
+> > between the cores.
+> > 
+> > Let's get that in place, first.  Then we can discuss the possibility of
+> > new ABI in the area.
+> 
+> Agreed.
 
-
-在 2024/6/17 19:18, Mark Rutland 写道:
->  	cpus_have_group0 = gic_has_group0();
-
-> +#define __gicv3_prio_to_ns(p)	(0xff & ((p) << 1))
-> +#define __gicv3_ns_to_prio(ns)	(0x80 | ((ns) >> 1))
-
-What about refactoring the gic_has_group0() using the mapping macros
-between PMR priority and GIC priority like this:
-
----------------%<-----------------
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -882,6 +882,7 @@ static bool gic_has_group0(void)
- {
-        u32 val;
-        u32 old_pmr;
-+       u32 prio = BIT(8 - gic_get_pribits());
-
-        old_pmr = gic_read_pmr();
-
-@@ -896,12 +897,12 @@ static bool gic_has_group0(void)
-         * becomes 0x80. Reading it back returns 0, indicating that
-         * we're don't have access to Group0.
-         */
--       gic_write_pmr(BIT(8 - gic_get_pribits()));
-+       gic_write_pmr(prio);
-        val = gic_read_pmr();
-
-        gic_write_pmr(old_pmr);
-
--       return val != 0;
-+       return val != (__gicv3_prio_to_ns(__gicv3_ns_to_prio(prio)));
- }
---------------->%-----------------
-
-
--- 
-BR
-Liao, Chang
+Sorry replying late, I was on vacation. Yes, let's leave the ABI for
+another series when we have a clear use case.
 
