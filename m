@@ -1,130 +1,129 @@
-Return-Path: <linux-kernel+bounces-225367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFA3912FAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:41:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAED9912FB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002A81F253C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:41:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B516B21771
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A5117C230;
-	Fri, 21 Jun 2024 21:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616FD17C234;
+	Fri, 21 Jun 2024 21:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="asvAsQ/M"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="EoSqq8iq"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB21B17C221
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A439208C4
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719006070; cv=none; b=htJW8mf8h5JMVZM1bkgyXHGCiFHo0N1aftvj+xTfIl4XjOHqZOlJGLGD2ddDa1uJu0jMzuIAxNTVWm47fGk6VJyRlA5kE/lSBiwmK6NTPn6Tw1c74p8FGLcwC1m+RSxIMeVviGFlOzMk/afjZ/bib6oeYoQm/h3E1xfCgFDs8V8=
+	t=1719006141; cv=none; b=lOCmUr0B526ea6m/AO9AzamNbO1iVgSH5zUooMs8I3PBUBGjgq+R8hc1T+OKTdyvkTHRT4uRqoNx3vZLLYIC4EePCvQg9zKZL0uOfAGeMHoURRRzHp+ogN25TYfFRzvVIg3qb1FEW1MPvEnedsnl6hes0cT64mD5HntEU0HNG7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719006070; c=relaxed/simple;
-	bh=8HrUb5me26sutWrvy5wgx4sSSVH7TI1dQ/80vVNZ/B4=;
+	s=arc-20240116; t=1719006141; c=relaxed/simple;
+	bh=1YAwfipQupFRIS4wpWcyOMfeZDaN8Qg2Ww00GUTEC3Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9vT77t4tGqJMI4njWn55QNEjEVCQpdEJZRk+EV/8DxsFGJk8s3o3E2cYLQkYu3OdSBqp36l4/vhpwnPn6pwU3vCdUeT+liIgFMSmqW3PqFJt4EmF5UwmVxgDXzQEUFRdCQhyPHcMeBzyI7ey1hBQObrSDP1ZYHXSjwc0/NXmwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=asvAsQ/M; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cd87277d8so979034e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:41:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719006067; x=1719610867; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hROpKLiZGwmIxWRNshgfEi2QRxXPG8amGi59yvS8gTQ=;
-        b=asvAsQ/MtLx8z0fK5iyXkPbj8c9WbteWmwOFDDXGLaJTD36ZrpHd8sPoCVrIHHa1aP
-         oCifICWVytrsvUbc+WaSwtIXksn9vEU9updAdXZspwSYf6zX9y6/Ry8Sx0SKzKYkmsUV
-         MPLZog4A0MVtGgHf5Ur7D8dbGL4bJMOEHsuWVi13daynmbe2SayeHluVbgCqERKwalS2
-         4BCZcIQjdWWZtue7GIIDtjtPkxVq/IBRV+pLgyYqVm9zl1PFcqTLJl82v6JJ3B1U+KRl
-         4AS+zcq7h+1f8BxQEcX3MbJ6bgfAWk5IpJtNnHkoqCBeJb5GGVVLCQtAaVZxSs69I6zy
-         Z0WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719006067; x=1719610867;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hROpKLiZGwmIxWRNshgfEi2QRxXPG8amGi59yvS8gTQ=;
-        b=U4DDiaR3vS49f7B2mnW95fQan1YE9UYK8ImPGmP/UJeRz6KvqwUUj9++DoMFAUuAJM
-         DsNTpG2H8K37aksG/jsn94QdjLwmGHrKpB62BOaDLdCkF9kZWI2yZmO2R93LbLnBh1/k
-         xOG0UTBgsvM4y7k2ehdNXrKTU9hD+Dw4i6jMdH3/g9ujd9FXlWyCrfxyg2RtI7+hFT2C
-         CifNXUyY8DWutHcHSpxXUxw/X3mZyE+h+43+D+NyUdpa8WvL3aSIzLEb0pveGp1ElOPa
-         0mn10BQ+Qr6CODEXlhXr7HVGR3WbaUBZNS07nGJSm6OY35nW8fklEZrUqTnauG5UCpKC
-         QA8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrCpMFHx52mtDoZ2r2o2pERARREPuJ5ruQ9TWQs04xQwMMWLIqOfRl1xbcabfT1miVMHWPGzARbp0Lkx7X5FBljijLcs0Lq489AuPd
-X-Gm-Message-State: AOJu0YzrGebs/lP6paSlQ9PwX8n0Dh/zAh6iGbSr+EsyqSaukCJ52oHI
-	+tWmtwpNmXHmKT4x3g2bcnoh2x7foVABZn3/OTpjYkuJQ+SyRDoIe18a3LSGO24=
-X-Google-Smtp-Source: AGHT+IGZu5mpssPZ3r4bG4g5/RYkWfsJ/FKimhProEYhh7Vb8Kd9qOKiyGVurRnVfvriUHagrgoIYA==
-X-Received: by 2002:ac2:4e0b:0:b0:52c:90aa:444c with SMTP id 2adb3069b0e04-52ccaa5f1a7mr7414029e87.28.1719006067210;
-        Fri, 21 Jun 2024 14:41:07 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdbdfbba3sm149508e87.137.2024.06.21.14.41.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 14:41:06 -0700 (PDT)
-Date: Sat, 22 Jun 2024 00:41:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Valeriy Klimin <vdos63@gmail.com>
-Cc: ~postmarketos/upstreaming <~postmarketos/upstreaming@lists.sr.ht>, 
-	phone-devel <phone-devel@vger.kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Add Sony Xperia Z3 Compact smartphone
-Message-ID: <otccxn3xdhoihuvleoofjptnq3jfwj6tdqu55n3tlg6xzrrp3p@x3sin3ebqozk>
-References: <20240621-sony-aries-v2-0-dddf10722522@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sxjW/vQPZOyN1udPlinnlv1BghjgfQ2QtH0K7EM1HG7DlL1UJEdIdePld6fEBqt6Y2uOkkrm0xngpJ1uuL/JBLoZg7Tw01fjk5UJmihF01cd3ainfJg/86/R6e7Gy3LrkEgFYdHSNBT0EP1KiFhwu4MH8h4yjXqFd0pVmjNOKLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=EoSqq8iq; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=1YAw
+	fipQupFRIS4wpWcyOMfeZDaN8Qg2Ww00GUTEC3Y=; b=EoSqq8iq1SKJnOEvDq2J
+	mZyH5lgrQQxuZ8BDZygr+BRtkybIAQHwLLbeyDp+Om/Fc6B2Vp3SSBaK/ZKa39wk
+	lvrzlHyBwPz3++JVJPtq//p5v+RDtzqwfRlfbTA4okvVpy0nYFut32lo2No0du8o
+	BDMZw2QVyqD1By8LcRjbW0hD5PNY9NCFA+v4vNKEUoDLz52Z4ORZ69v3bDe2zpEC
+	DIYgh0nB2oftaFpaAlQuC54+S7tH+5pMBMeRio2Jdi6QL9wjrmN81CG+xlNG53uY
+	Fonsysw4nQR+005d3xktNxtUusBKZBLvg12T6zcb9dU5CVDL32YOKMOtXgoW9pyl
+	zw==
+Received: (qmail 1496405 invoked from network); 21 Jun 2024 23:42:13 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 23:42:13 +0200
+X-UD-Smtp-Session: l3s3148p1@+wTtTW0bcpNehh9j
+Date: Fri, 21 Jun 2024 23:42:12 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Allen <allen.lkml@gmail.com>
+Cc: Aubin Constans <aubin.constans@microchip.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Manuel Lauss <manuel.lauss@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
+	Jaehoon Chung <jh80.chung@samsung.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
+	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, 
+	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3] mmc: Convert from tasklet to BH workqueue
+Message-ID: <ay2rpumtfxtvx4qgkgal7a7z46dbtwjnq4ctik55neseirkhfk@gkylcwud6vry>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Allen <allen.lkml@gmail.com>, Aubin Constans <aubin.constans@microchip.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Manuel Lauss <manuel.lauss@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
+	Jaehoon Chung <jh80.chung@samsung.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
+	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, 
+	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20240618225210.825290-1-allen.lkml@gmail.com>
+ <gw6adkoy3ndjdjufti2gs2gnk3xdgylt6tnia2zha76hsgdwtq@dr3czbxjij66>
+ <CAOMdWS+p4Dt2xDGWvwoXtWinsRZintLwPmADddbsmaEfLvRQkw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4uczb2555w7pwjdx"
+Content-Disposition: inline
+In-Reply-To: <CAOMdWS+p4Dt2xDGWvwoXtWinsRZintLwPmADddbsmaEfLvRQkw@mail.gmail.com>
+
+
+--4uczb2555w7pwjdx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621-sony-aries-v2-0-dddf10722522@gmail.com>
 
-On Fri, Jun 21, 2024 at 05:26:41PM GMT, Valeriy Klimin wrote:
-> This is almost the same as the dts of the Xperia Z3, except for the
-> battery charge limits. 
-> 
-> The current on the l21 regulator for shinano is also bumped up
-> to stop SD card errors.
-> 
-> Signed-off-by: Valeriy Klimin <vdos63@gmail.com>
-> ---
-> Changes in v2:
-> - Reordered dt-bindings and dts commits
-> - Link to v1: https://lore.kernel.org/r/20240621-sony-aries-v1-0-bcf96876980e@gmail.com
 
-Please let reviewers finish their job first. It's recommended to post
-once in 24 hours timeframe. Otherwise you end up getting feedback and
-tags for v1, while you have already posted v2.
+> If introducing the pointer is the only way forward and is an
+> acceptable solution,
+> I can send out a draft.
 
-> 
-> ---
-> Valeriy Klimin (3):
->       dt-bindings: arm: qcom: Add Sony Xperia Z3 Compact
->       ARM: dts: qcom: Add Sony Xperia Z3 Compact smartphone
->       ARM: dts: qcom: msm8974-sony-shinano: increase load on l21 for sdhc2
-> 
->  Documentation/devicetree/bindings/arm/qcom.yaml    |  1 +
->  arch/arm/boot/dts/qcom/Makefile                    |  1 +
->  .../qcom-msm8974pro-sony-xperia-shinano-aries.dts  | 44 ++++++++++++++++++++++
->  ...qcom-msm8974pro-sony-xperia-shinano-common.dtsi |  2 +
->  4 files changed, 48 insertions(+)
-> ---
-> base-commit: cd214efd16e30bf1aa40ccfaaf9177f47dd21fd5
-> change-id: 20240620-sony-aries-4a5bce06c91d
-> 
-> Best regards,
-> -- 
-> Valeriy Klimin <vdos63@gmail.com>
-> 
+My proposal is that I take over the SDHI part of your series. I know the
+code pretty well and I can test the solution right away. Your draft
+seems in the wrong layer (conceptually, technically it should work), but
+I need to play around a little. Is that okay with you?
 
--- 
-With best wishes
-Dmitry
+
+--4uczb2555w7pwjdx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ187AACgkQFA3kzBSg
+KbbkFw/+NH0uQfV6TYrBMMITXN3T4xDzbs9NYB/BVvi4xIlPamoo08TmnIls53lQ
+DMooD/RzgfYjo+8bF07S/RYy794UEsHR9fGWSsaqEOJUI2rWAJveeXzMsZHBmfGQ
+HScU/Tfzm6c9C0zqvw7SO7zV26VDX25yUpVaAa/2IKKmsmKsBTcnAQjCP0F1Xibo
+VvTW2iyVQDH/byyQiLbgdQxaK6K7BUwuliMX3vNvSLSzC8FLAldd7iE7zvhjMCdj
+0wrYmTL/RjmAk+n4sPjPDaxav12gpRm38i0iB+oiLbE9G2onfOvjEkV6sDYjFfxA
+hWPKRziVrRIJhBpT9jcAxuVUvnoBVmc/li0WqTA8b9akpPpr2WHkRDnyN+LpBI3t
+FOEoTEJgxI1FPHLr2PiR4F4y6jti8dgKqsxRqcCWDN0Pa+QDWm7SUj4/DckZUeKX
+VEu4Qyqp2LKdUIpK90ppMxaukDoOdtebVz3zg/go3+dVJqZaZvzQAP/xfzDuSSHu
+PO3COoXSenYjYMFDPmlQBquNUq2SNIr6l8rE/Asucj7oIQdctw/5quwGOTF2zKTN
+3ThGUbD5mUOTDu/FL6ImAOtPiLUpb0l4IXqz3etBaEXLTAah+mRg0VeIPyBhF2n4
+0GEIjJ3TOdrtPXA20O5M/aCjeH1q3O+wSgL3PfXfwsV/z3AqQc8=
+=JsVR
+-----END PGP SIGNATURE-----
+
+--4uczb2555w7pwjdx--
 
