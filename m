@@ -1,121 +1,192 @@
-Return-Path: <linux-kernel+bounces-225473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15A19130F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 01:57:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA749130FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 01:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD337286D49
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:57:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2F91C2248D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9B016F8EB;
-	Fri, 21 Jun 2024 23:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF61616F8F4;
+	Fri, 21 Jun 2024 23:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hmf2cQr5"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKDJZJX6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499EC16E86A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 23:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E6116EB76;
+	Fri, 21 Jun 2024 23:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719014241; cv=none; b=J+TveEHGP8BAGpPEwRJxTW8PAZ7nz7m6iCFJ/Yl8Z5oQOYvTvSStGOANrRVGwtltXoDI+jDgilx9SHIL/jf4/jGletCQ85sqGXeH3TIFcMwAnnOrqjLKVvmC9JC2n3lNNTat7FTKHpEP7DdTzhgZcmdEIQfo2/3dgQPwZowD3UI=
+	t=1719014256; cv=none; b=LLmTieHqVgdXwkTnO7Wf4okDJbOrW7zcrA9I0QHOHDMMqCJbTzeF6F8KWwrupvq8zuGKKPycPz12HgkDLpxmWHlmOMmHGUo9orSt8MTRbaOgsdxAcbVUIDK2WRY8FUE2C2LZZCiRNJ/XUlw96z6QJHC8kGZTIZo2dc3sc14hSTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719014241; c=relaxed/simple;
-	bh=KX1PujVhCoV8MnBjdZUd+F+4LKQJW3MTNIjFLr0gXEU=;
+	s=arc-20240116; t=1719014256; c=relaxed/simple;
+	bh=dQ56fFgECEl6ZpF2/AeRJC8HqFL85IfaRermg5g+Iqc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bMrF34KsL2Og+GZ+LnrMgwS5iXqoci/x9PpmAgn2hlruW0tFxURXgSkK01Q3ypbQS01wxsaXjPtbPYjLNTV9kuByWLNtG19jBhHKbTYZUhAycu4gIawa7qodZpuQ8P5EKmPapP/QWnip++HePrxMvFiXiCklGSr6IR34qP4V9Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hmf2cQr5; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-375fc24a746so150905ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:57:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719014239; x=1719619039; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y7speCYjhq5KhdxCXThLCw9rUBn42IJVbtj/2ApzxBY=;
-        b=hmf2cQr5676UzMrKTZaZJX1EsAUMKfrhY9ecmGIqSrsaiYnkMUhbtJrhuHdxApczmk
-         dflt26/MXPrkeUH0BbkPS1fDillGv7FG8KOwV1LR0V0c4FMohxg/Cpsu8UdfxFDvpGUU
-         08W81yXpm8tl+RW+O1zCGz78AQGCxvHLmCPt9yir8qyQ+/I85gKgTPmEUphbdN49W/X7
-         V0I3GC7VWG3W2iQTZY6ZlLN1MybWfGYtIEg/vte2J2UOR6wCOHVRaBb6Hec/Y+xI60vh
-         A0hUturedOkDhcRGI1r+rLh4e3gqhMIRD9Pyr8mS3d1sFFUlR8rEdMCX420HIsXyM0p3
-         cQxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719014239; x=1719619039;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y7speCYjhq5KhdxCXThLCw9rUBn42IJVbtj/2ApzxBY=;
-        b=SDPOinnuK9MmIvuAWk5wMhCZVGnk76QKs2bfN1P8zgTB2ZeDub+v09/HL6nrbPAa3e
-         nc8a+UMqgJGXv/dZumgrkuyk0rd1ObF65Yp9H860IynZfUDsDkmO/R7DIZbMevrON0QF
-         MHMHT/Hg80YKQV6uKK8INmsDeLVoWFpWm1yOhwiq+Aomb5Szb2YsrCSE+BOe5CEYzD+o
-         4iZYiYM1WPMXnCVYdqpqFFSEmvUilk6HxkW6Khe2kZGC6FKiR3pruFWNInmPaCGUav+P
-         ZToDwHRohq1AHnGL+7IdCXObUS9XCX2GgPIc7041E9A9yJeaSP1AwHkpg2uju2FagL6e
-         +wuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXo6OSkF7MJsfcC/9CwmVxiv5etmDOGUw0r9CLBLut8mJvXPK7UcaiwVfe6lSQoTF6V4l7xDQBqBVD9BdZ2JJAY+2QkkbcDcCM0DD31
-X-Gm-Message-State: AOJu0YzkWRwmgtE/AQyoEsm6YNcp7Hl55gYlreltCdf+wgkYBwgR28KL
-	U+uVD2SQGwkWLouoPEPmUAcrWWNcSpUDKB6icXsG/13Vsj++2uSfhVDMHM+90A==
-X-Google-Smtp-Source: AGHT+IHOsaE9nO9D4eMKQ/XRoEQaprJMzTKXWCBqJFeFbpuDRNTK/tExVGVOs8dWcboI/E3+maIdtg==
-X-Received: by 2002:a05:6e02:de2:b0:376:30e6:5c07 with SMTP id e9e14a558f8ab-3763810585emr723025ab.12.1719014239219;
-        Fri, 21 Jun 2024 16:57:19 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9f1e2fe37sm17364975ad.69.2024.06.21.16.57.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 16:57:18 -0700 (PDT)
-Date: Fri, 21 Jun 2024 16:57:15 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: lee@kernel.org, arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	saravanak@google.com, semen.protsenko@linaro.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v3 2/2] soc: samsung: exynos-pmu: update to use
- of_syscon_register_regmap()
-Message-ID: <ZnYTW_XnlcWAwx-h@google.com>
-References: <20240621115544.1655458-1-peter.griffin@linaro.org>
- <20240621115544.1655458-3-peter.griffin@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXJyojETJBb0p2mrwdfM+QW6+58g0YUZCZ+T3ZqIJFxa+Yn8pKPTKWi+7mNQGKrncir+upBKAB/a7Wh/JIwGhTdm6JRX6+ItyVeRHDdNXP3a9cVtQvUxQmYygPTrOyTteyzx33XC2YPwLYORx+yDx2J+yC40D1ZMcL5oLCijQ3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKDJZJX6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E715C2BBFC;
+	Fri, 21 Jun 2024 23:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719014255;
+	bh=dQ56fFgECEl6ZpF2/AeRJC8HqFL85IfaRermg5g+Iqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VKDJZJX6gQz1MmmIKErHCQZ7kJP90q0WZ3UcO1m7+D+UY1CdvDzXTxzBkrVC9SLI9
+	 uI3k7OnBZ2au7yXhG0/UJJUBkOx/aPEKyw65U8aNifOoUcXEt+uNWSShgKj/P42rJy
+	 5vwxl5VNV+Bgau1oM36LwgvSTU3Uwfiv1gDIQyha64rGn53nUKA/mSVynxNjHP1RDN
+	 xeaB3ER5UmTvfAiNsCf92/qooPeVd14jq2uj2qqfopb+Y+dfM23t+3JXPL7P96mqhz
+	 CtASAWLFyXaND4ZFUxFa8jGZ9qXmEx9/5YlBmRAnXQY3BXEIda42VTvtoA1C5Dgx6j
+	 KCZWLQMs/DL+A==
+Date: Fri, 21 Jun 2024 16:57:33 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@arm.com>
+Cc: linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Kajol Jain <kjain@linux.ibm.com>, Spoorthy S <spoorts2@in.ibm.com>,
+	German Gomez <german.gomez@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf test: Make test_arm_callgraph_fp.sh more robust
+Message-ID: <ZnYTbZ30Vkrzm8xI@google.com>
+References: <20240612140316.3006660-1-james.clark@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240621115544.1655458-3-peter.griffin@linaro.org>
+In-Reply-To: <20240612140316.3006660-1-james.clark@arm.com>
 
-On 06/21/2024, Peter Griffin wrote:
-> For SoCs like gs101 that need a special regmap, register this with
-> of_syscon_register_regmap api, so it can be returned by
-> syscon_regmap_lookup_by_phandle() and friends.
+On Wed, Jun 12, 2024 at 03:03:14PM +0100, James Clark wrote:
+> The 2 second sleep can cause the test to fail on very slow network file
+> systems because Perf ends up being killed before it finishes starting
+> up.
 > 
-> For SoCs that don't require a custom regmap, revert back to syscon
-> creating the mmio regmap rather than duplicating the logic here.
+> Fix it by making the leafloop workload end after a fixed time like the
+> other workloads so there is no need to kill it after 2 seconds.
 > 
-> exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
-> the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
-> is kept around until fw_devlink support for syscon property is added
-> for the pinctrl-samsung driver that also runs at postcore_initcall
-> level.
+> Also remove the 1 second start sampling delay because it is similarly
+> fragile. Instead, search through all samples for a matching one, rather
+> than just checking the first sample and hoping it's in the right place.
 > 
-> All other exynos client drivers can revert back to
-> syscon_regmap_lookup_by_phandle().
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Fixes: cd6382d82752 ("perf test arm64: Test unwinding using fame-pointer (fp) mode")
+> Signed-off-by: James Clark <james.clark@arm.com>
 
-Tested-by: Will McVicker <willmcvicker@google.com>
-
-[...]
-
-(Testing details in patch 1)
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
 Thanks,
-Will
+Namhyung
+
+
+> ---
+>  .../perf/tests/shell/test_arm_callgraph_fp.sh | 27 +++++++------------
+>  tools/perf/tests/workloads/leafloop.c         | 20 +++++++++++---
+>  2 files changed, 26 insertions(+), 21 deletions(-)
+> 
+> diff --git a/tools/perf/tests/shell/test_arm_callgraph_fp.sh b/tools/perf/tests/shell/test_arm_callgraph_fp.sh
+> index 61898e256616..9caa36130175 100755
+> --- a/tools/perf/tests/shell/test_arm_callgraph_fp.sh
+> +++ b/tools/perf/tests/shell/test_arm_callgraph_fp.sh
+> @@ -28,28 +28,21 @@ cleanup_files()
+>  
+>  trap cleanup_files EXIT TERM INT
+>  
+> -# Add a 1 second delay to skip samples that are not in the leaf() function
+>  # shellcheck disable=SC2086
+> -perf record -o "$PERF_DATA" --call-graph fp -e cycles//u -D 1000 --user-callchains -- $TEST_PROGRAM 2> /dev/null &
+> -PID=$!
+> +perf record -o "$PERF_DATA" --call-graph fp -e cycles//u --user-callchains -- $TEST_PROGRAM
+>  
+> -echo " + Recording (PID=$PID)..."
+> -sleep 2
+> -echo " + Stopping perf-record..."
+> -
+> -kill $PID
+> -wait $PID
+> +# Try opening the file so any immediate errors are visible in the log
+> +perf script -i "$PERF_DATA" -F comm,ip,sym | head -n4
+>  
+> -# expected perf-script output:
+> +# expected perf-script output if 'leaf' has been inserted correctly:
+>  #
+> -# program
+> +# perf
+>  # 	728 leaf
+>  # 	753 parent
+>  # 	76c leafloop
+> -# ...
+> +# ... remaining stack to main() ...
+>  
+> -perf script -i "$PERF_DATA" -F comm,ip,sym | head -n4
+> -perf script -i "$PERF_DATA" -F comm,ip,sym | head -n4 | \
+> -	awk '{ if ($2 != "") sym[i++] = $2 } END { if (sym[0] != "leaf" ||
+> -						       sym[1] != "parent" ||
+> -						       sym[2] != "leafloop") exit 1 }'
+> +# Each frame is separated by a tab, some spaces and an address
+> +SEP="[[:space:]]+ [[:xdigit:]]+"
+> +perf script -i "$PERF_DATA" -F comm,ip,sym | tr '\n' ' ' | \
+> +	grep -E -q "perf $SEP leaf $SEP parent $SEP leafloop"
+> diff --git a/tools/perf/tests/workloads/leafloop.c b/tools/perf/tests/workloads/leafloop.c
+> index 1bf5cc97649b..f7561767e32c 100644
+> --- a/tools/perf/tests/workloads/leafloop.c
+> +++ b/tools/perf/tests/workloads/leafloop.c
+> @@ -1,6 +1,8 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+> +#include <signal.h>
+>  #include <stdlib.h>
+>  #include <linux/compiler.h>
+> +#include <unistd.h>
+>  #include "../tests.h"
+>  
+>  /* We want to check these symbols in perf script */
+> @@ -8,10 +10,16 @@ noinline void leaf(volatile int b);
+>  noinline void parent(volatile int b);
+>  
+>  static volatile int a;
+> +static volatile sig_atomic_t done;
+> +
+> +static void sighandler(int sig __maybe_unused)
+> +{
+> +	done = 1;
+> +}
+>  
+>  noinline void leaf(volatile int b)
+>  {
+> -	for (;;)
+> +	while (!done)
+>  		a += b;
+>  }
+>  
+> @@ -22,12 +30,16 @@ noinline void parent(volatile int b)
+>  
+>  static int leafloop(int argc, const char **argv)
+>  {
+> -	int c = 1;
+> +	int sec = 1;
+>  
+>  	if (argc > 0)
+> -		c = atoi(argv[0]);
+> +		sec = atoi(argv[0]);
+> +
+> +	signal(SIGINT, sighandler);
+> +	signal(SIGALRM, sighandler);
+> +	alarm(sec);
+>  
+> -	parent(c);
+> +	parent(sec);
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.34.1
+> 
 
