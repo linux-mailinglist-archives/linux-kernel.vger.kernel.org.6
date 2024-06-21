@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-224720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A2591264F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1689125FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AA48B2D17F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00E672826C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC031155C84;
-	Fri, 21 Jun 2024 12:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1854115C3;
+	Fri, 21 Jun 2024 12:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="hCP8ImGP"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="F0dZIvhJ"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1271553A2
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D351E49F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718974353; cv=none; b=TtY9hR29qnu2YZ7faUuYMmxgUCtEygqhW8j+Tx/ujnNWyyQhcYF5oCgZQtaRM2UYFylm09j7dyqnb+yuTzUF5eotpz3BxIIaHZWcrTKAlA+v1vs+gy13uMvYf6c5RllHaDKObYMVRXlL5i1E00gkkpC/upDvObObten342GCuxQ=
+	t=1718974297; cv=none; b=aOH/iasPJhgm9QCiO6M2XkN7EaO5RWQ4Oo8BnFVhOO8mSExErG+XUr++kGEDJZOyP2uPvrVQAVQG89ZJAIuPD3nh4VOy1L5ctSYfQk+pYIwawdMYcLmMJ1fOUb7j0yjmw13RmuoqUmvFolbI+1qM5lwYLKTmP/2st7Ta0UxmeF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718974353; c=relaxed/simple;
-	bh=FrCPmk4Atbv8JXepVzayPNF17A0CCJvX+aB9/OC3fYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NejdiOMlfx+bix9DHFM2F/c26c/fuEuotrwPJlzTtsDtXv4mZdc5Xwv3xZ80BLSAynjfxffv2irV36NM+VaokkyrrDO1VY2ZGusgbBLyGxWeMkD540ltynUad/Rbuz6VyPOHtZ3lsZgt6Jk8/VkRcxttiUf5/D+rd2ZlpM4E9F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=hCP8ImGP; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LAtXJd011589;
-	Fri, 21 Jun 2024 14:52:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	sCZLqKVkRBoOk0m5N4EQHRqtX4PoBuJIIpIVr7E8RDc=; b=hCP8ImGPVqkvKv5s
-	CpLEoDnGKm8lLL/vW0nucH8hO0+rXx655Q+X+nSmCTb4dZCN2Dltu1LgGUOJyrSp
-	bf0HhrbuPD1HQmrz1inEmqoc9XUhfq/XrkQiXxaTRcl+cDwcLaT1HYIfRMrk2/hC
-	746ofOLCd6EaQxS989NQouR2bzefsHGwOsee4S02eThOES3Z5WXKiGBO2ZiX3p7r
-	2Y5O0lWbqc5tsJ5uDmCm+k70zNpWBFuSxYpJLzea4vL2TG9Mi4nzjgLry3caIsVi
-	4oV8obv0p1/Kjzpqv6li6u1iWuJoHv7VIYjvsayvvv2jozhEJqLVeJ3KZQUHGDC0
-	Js0VdA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yvrkdup7j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 14:52:08 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E469E40046;
-	Fri, 21 Jun 2024 14:52:04 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3001F21A206;
-	Fri, 21 Jun 2024 14:51:23 +0200 (CEST)
-Received: from [10.48.87.177] (10.48.87.177) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 21 Jun
- 2024 14:51:22 +0200
-Message-ID: <b20e0f8b-0b06-42ab-b8a4-1461f380e723@foss.st.com>
-Date: Fri, 21 Jun 2024 14:51:21 +0200
+	s=arc-20240116; t=1718974297; c=relaxed/simple;
+	bh=oJhNKSiOdLm70pBsH/9KJGUC8653wDVYRRmce2De8Bg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZKO/i6H/BeHa75xJy1+TpDpWMYUDV7cKzccU7z7jsjEa+Lr2cLchfYSrfRX003Bfs4JQkNX7JjQVnDEdMqYUCibNfxrjmut8YE3V2te9fRSH2WSjIIvaERQ37wcuOI9TY82PtPImgtxAtj2DN7ndbSq2gcw8Fwb0BFcZo0wBGZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=F0dZIvhJ; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c82101407so3377031e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1718974293; x=1719579093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FWAkuQtQbhgbJxkwJNkctDpDNqgcetuxscd31qCmfLE=;
+        b=F0dZIvhJpOCGe4xldY+ZYegvpouhxyghVn5/vNu96mXxPlMDcUqH9dy6OKGPlQNwT4
+         +oBVU6pxz16AlG00wX8Z01/U9b2lkVM+KE8pUbUt7QchJ1jcAAQxVHVQJIzKie29IDFd
+         0ubL0NBLjzybnktvGU9N7cC/3ILhrsZh9lsv/mCji3ekcFuYwB+GGQTTA2GakuaqKJtB
+         CBLxjcSNDza8perAqeDJf0dBRat2q0B+ZkQqfAoEjwUJPpALqKnfLVZVLVNT6pDZdf73
+         L0h5hMh9zBX56sB/nLOKVT33cP24/PusfjvBoeZbprt9hyjGswhNAcNq1RNYW1HfozXs
+         5FMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718974293; x=1719579093;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FWAkuQtQbhgbJxkwJNkctDpDNqgcetuxscd31qCmfLE=;
+        b=Or2nt/0NYuKeo55FrYTc4r73VIhb5Yb9G2kWg8W73qKzXb65OaB20oEcs1MDBezI+c
+         6/uj6GtaHPGY5clV808O6lbq891PO9h+UipC4yGYwXiezuJvFp8N/vh9qNeNyiPTYkbe
+         4qN/1GZrCcqiG554hesDd7n88vwKeHa7gwhPW0wdmU4ysHdwM3lH/vlNv+PLZkmUpBg7
+         woUFMOv1x13X/lwF6WgVwsinRWve+RRhepBAwdZba5qt4W5Owj4InNo3rv5RT2vdyt0f
+         n1u0ZbxSLKUTJpx4g2odp/F/mjiOkGX2ZTHOeJn2Hpkd18QkYDpAqT3Bn13vmmXJLLli
+         y10A==
+X-Forwarded-Encrypted: i=1; AJvYcCVj3Ze/n6+nv+VXWqhsH47R9CB1ha4MgmoeRm/zz+a5jJYgZ6c2CBqctg8lNLwNVCzJpEnhjqFUVpUzvxb+ujtSYCwmU8p94AU+jabV
+X-Gm-Message-State: AOJu0YyDPkS1L3wP0Hdjh7OXuo3g/x/x9R6D956wNQm45dloC7l13eQ+
+	TrQYSyX/NSo2sEzHxEkdnK1D0/jwhPK0uGpQo7jU8FrHvXGtTBR1HZ5SHALTDRE=
+X-Google-Smtp-Source: AGHT+IGGZCHswcYDLs1QtSATkylyIC1UJHcz54PWiA9XC+0LCqDJPsD4911wb1Jx40wbuOCUR3XASw==
+X-Received: by 2002:a05:6512:3706:b0:52b:be6b:d16a with SMTP id 2adb3069b0e04-52ccaa36508mr5286238e87.31.1718974293312;
+        Fri, 21 Jun 2024 05:51:33 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf560627sm82273966b.148.2024.06.21.05.51.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 05:51:32 -0700 (PDT)
+Message-ID: <4a693c1f-15ec-43b4-8f53-ab0a6bd4d7dc@tuxon.dev>
+Date: Fri, 21 Jun 2024 15:51:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,425 +75,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 3/3] drm/stm: dsi: expose DSI PHY internal clock
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: <dri-devel@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240129104106.43141-1-raphael.gallais-pou@foss.st.com>
- <20240129104106.43141-4-raphael.gallais-pou@foss.st.com>
+Subject: Re: [PATCH 06/12] i2c: riic: Add suspend/resume support
 Content-Language: en-US
-From: Yannick FERTRE <yannick.fertre@foss.st.com>
-In-Reply-To: <20240129104106.43141-4-raphael.gallais-pou@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_04,2024-06-21_01,2024-05-17_01
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240621112303.1607621-7-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB113468CF1B6652524A2D101D686C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB113468CF1B6652524A2D101D686C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Raphael,
-
-thanks for the patch.
-
-Acked-by: Yannick Fertre <yannick.fertre@foss.st.com>
-
-Tested-by: Yannick Fertre <yannick.fertre@foss.st.com>
-
-BR
 
 
-Le 29/01/2024 à 11:41, Raphael Gallais-Pou a écrit :
-> 	DSISRC __________
-> 	               __\_
-> 	              |    \
-> 	pll4_p_ck   ->|  1  |____dsi_k
-> 	ck_dsi_phy  ->|  0  |
-> 	              |____/
->
-> A DSI clock is missing in the clock framework. Looking at the
-> clk_summary, it appears that 'ck_dsi_phy' is not implemented. Since the
-> DSI kernel clock is based on the internal DSI pll. The common clock
-> driver can not directly expose this 'ck_dsi_phy' clock because it does
-> not contain any common registers with the DSI. Thus it needs to be done
-> directly within the DSI phy driver.
->
-> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-> ---
-> Changes in v3:
-> 	- Fix smatch warning:
-> 	.../dw_mipi_dsi-stm.c:719 dw_mipi_dsi_stm_probe() warn: 'dsi->pclk'
-> 	from clk_prepare_enable() not released on lines: 719.
-> ---
->   drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 247 ++++++++++++++++++++++----
->   1 file changed, 216 insertions(+), 31 deletions(-)
->
-> diff --git a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-> index 82fff9e84345..b20123854c4a 100644
-> --- a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-> +++ b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-> @@ -7,7 +7,9 @@
->    */
->   
->   #include <linux/clk.h>
-> +#include <linux/clk-provider.h>
->   #include <linux/iopoll.h>
-> +#include <linux/kernel.h>
->   #include <linux/mod_devicetable.h>
->   #include <linux/module.h>
->   #include <linux/platform_device.h>
-> @@ -77,9 +79,12 @@ enum dsi_color {
->   
->   struct dw_mipi_dsi_stm {
->   	void __iomem *base;
-> +	struct device *dev;
->   	struct clk *pllref_clk;
->   	struct clk *pclk;
-> +	struct clk_hw txbyte_clk;
->   	struct dw_mipi_dsi *dsi;
-> +	struct dw_mipi_dsi_plat_data pdata;
->   	u32 hw_version;
->   	int lane_min_kbps;
->   	int lane_max_kbps;
-> @@ -196,29 +201,198 @@ static int dsi_pll_get_params(struct dw_mipi_dsi_stm *dsi,
->   	return 0;
->   }
->   
-> -static int dw_mipi_dsi_phy_init(void *priv_data)
-> +#define clk_to_dw_mipi_dsi_stm(clk) \
-> +	container_of(clk, struct dw_mipi_dsi_stm, txbyte_clk)
-> +
-> +static void dw_mipi_dsi_clk_disable(struct clk_hw *clk)
->   {
-> -	struct dw_mipi_dsi_stm *dsi = priv_data;
-> +	struct dw_mipi_dsi_stm *dsi = clk_to_dw_mipi_dsi_stm(clk);
-> +
-> +	DRM_DEBUG_DRIVER("\n");
-> +
-> +	/* Disable the DSI PLL */
-> +	dsi_clear(dsi, DSI_WRPCR, WRPCR_PLLEN);
-> +
-> +	/* Disable the regulator */
-> +	dsi_clear(dsi, DSI_WRPCR, WRPCR_REGEN | WRPCR_BGREN);
-> +}
-> +
-> +static int dw_mipi_dsi_clk_enable(struct clk_hw *clk)
-> +{
-> +	struct dw_mipi_dsi_stm *dsi = clk_to_dw_mipi_dsi_stm(clk);
->   	u32 val;
->   	int ret;
->   
-> +	DRM_DEBUG_DRIVER("\n");
-> +
->   	/* Enable the regulator */
->   	dsi_set(dsi, DSI_WRPCR, WRPCR_REGEN | WRPCR_BGREN);
-> -	ret = readl_poll_timeout(dsi->base + DSI_WISR, val, val & WISR_RRS,
-> -				 SLEEP_US, TIMEOUT_US);
-> +	ret = readl_poll_timeout_atomic(dsi->base + DSI_WISR, val, val & WISR_RRS,
-> +					SLEEP_US, TIMEOUT_US);
->   	if (ret)
->   		DRM_DEBUG_DRIVER("!TIMEOUT! waiting REGU, let's continue\n");
->   
->   	/* Enable the DSI PLL & wait for its lock */
->   	dsi_set(dsi, DSI_WRPCR, WRPCR_PLLEN);
-> -	ret = readl_poll_timeout(dsi->base + DSI_WISR, val, val & WISR_PLLLS,
-> -				 SLEEP_US, TIMEOUT_US);
-> +	ret = readl_poll_timeout_atomic(dsi->base + DSI_WISR, val, val & WISR_PLLLS,
-> +					SLEEP_US, TIMEOUT_US);
->   	if (ret)
->   		DRM_DEBUG_DRIVER("!TIMEOUT! waiting PLL, let's continue\n");
->   
->   	return 0;
->   }
->   
-> +static int dw_mipi_dsi_clk_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct dw_mipi_dsi_stm *dsi = clk_to_dw_mipi_dsi_stm(hw);
-> +
-> +	return dsi_read(dsi, DSI_WRPCR) & WRPCR_PLLEN;
-> +}
-> +
-> +static unsigned long dw_mipi_dsi_clk_recalc_rate(struct clk_hw *hw,
-> +						 unsigned long parent_rate)
-> +{
-> +	struct dw_mipi_dsi_stm *dsi = clk_to_dw_mipi_dsi_stm(hw);
-> +	unsigned int idf, ndiv, odf, pll_in_khz, pll_out_khz;
-> +	u32 val;
-> +
-> +	DRM_DEBUG_DRIVER("\n");
-> +
-> +	pll_in_khz = (unsigned int)(parent_rate / 1000);
-> +
-> +	val = dsi_read(dsi, DSI_WRPCR);
-> +
-> +	idf = (val & WRPCR_IDF) >> 11;
-> +	if (!idf)
-> +		idf = 1;
-> +	ndiv = (val & WRPCR_NDIV) >> 2;
-> +	odf = int_pow(2, (val & WRPCR_ODF) >> 16);
-> +
-> +	/* Get the adjusted pll out value */
-> +	pll_out_khz = dsi_pll_get_clkout_khz(pll_in_khz, idf, ndiv, odf);
-> +
-> +	return (unsigned long)pll_out_khz * 1000;
-> +}
-> +
-> +static long dw_mipi_dsi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				       unsigned long *parent_rate)
-> +{
-> +	struct dw_mipi_dsi_stm *dsi = clk_to_dw_mipi_dsi_stm(hw);
-> +	unsigned int idf, ndiv, odf, pll_in_khz, pll_out_khz;
-> +	int ret;
-> +
-> +	DRM_DEBUG_DRIVER("\n");
-> +
-> +	pll_in_khz = (unsigned int)(*parent_rate / 1000);
-> +
-> +	/* Compute best pll parameters */
-> +	idf = 0;
-> +	ndiv = 0;
-> +	odf = 0;
-> +
-> +	ret = dsi_pll_get_params(dsi, pll_in_khz, rate / 1000,
-> +				 &idf, &ndiv, &odf);
-> +	if (ret)
-> +		DRM_WARN("Warning dsi_pll_get_params(): bad params\n");
-> +
-> +	/* Get the adjusted pll out value */
-> +	pll_out_khz = dsi_pll_get_clkout_khz(pll_in_khz, idf, ndiv, odf);
-> +
-> +	return pll_out_khz * 1000;
-> +}
-> +
-> +static int dw_mipi_dsi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				    unsigned long parent_rate)
-> +{
-> +	struct dw_mipi_dsi_stm *dsi = clk_to_dw_mipi_dsi_stm(hw);
-> +	unsigned int idf, ndiv, odf, pll_in_khz, pll_out_khz;
-> +	int ret;
-> +	u32 val;
-> +
-> +	DRM_DEBUG_DRIVER("\n");
-> +
-> +	pll_in_khz = (unsigned int)(parent_rate / 1000);
-> +
-> +	/* Compute best pll parameters */
-> +	idf = 0;
-> +	ndiv = 0;
-> +	odf = 0;
-> +
-> +	ret = dsi_pll_get_params(dsi, pll_in_khz, rate / 1000, &idf, &ndiv, &odf);
-> +	if (ret)
-> +		DRM_WARN("Warning dsi_pll_get_params(): bad params\n");
-> +
-> +	/* Get the adjusted pll out value */
-> +	pll_out_khz = dsi_pll_get_clkout_khz(pll_in_khz, idf, ndiv, odf);
-> +
-> +	/* Set the PLL division factors */
-> +	dsi_update_bits(dsi, DSI_WRPCR,	WRPCR_NDIV | WRPCR_IDF | WRPCR_ODF,
-> +			(ndiv << 2) | (idf << 11) | ((ffs(odf) - 1) << 16));
-> +
-> +	/* Compute uix4 & set the bit period in high-speed mode */
-> +	val = 4000000 / pll_out_khz;
-> +	dsi_update_bits(dsi, DSI_WPCR0, WPCR0_UIX4, val);
-> +
-> +	return 0;
-> +}
-> +
-> +static void dw_mipi_dsi_clk_unregister(void *data)
-> +{
-> +	struct dw_mipi_dsi_stm *dsi = data;
-> +
-> +	DRM_DEBUG_DRIVER("\n");
-> +
-> +	of_clk_del_provider(dsi->dev->of_node);
-> +	clk_hw_unregister(&dsi->txbyte_clk);
-> +}
-> +
-> +static const struct clk_ops dw_mipi_dsi_stm_clk_ops = {
-> +	.enable = dw_mipi_dsi_clk_enable,
-> +	.disable = dw_mipi_dsi_clk_disable,
-> +	.is_enabled = dw_mipi_dsi_clk_is_enabled,
-> +	.recalc_rate = dw_mipi_dsi_clk_recalc_rate,
-> +	.round_rate = dw_mipi_dsi_clk_round_rate,
-> +	.set_rate = dw_mipi_dsi_clk_set_rate,
-> +};
-> +
-> +static struct clk_init_data cdata_init = {
-> +	.name = "ck_dsi_phy",
-> +	.ops = &dw_mipi_dsi_stm_clk_ops,
-> +	.parent_names = (const char * []) {"ck_hse"},
-> +	.num_parents = 1,
-> +};
-> +
-> +static int dw_mipi_dsi_clk_register(struct dw_mipi_dsi_stm *dsi,
-> +				    struct device *dev)
-> +{
-> +	struct device_node *node = dev->of_node;
-> +	int ret;
-> +
-> +	DRM_DEBUG_DRIVER("Registering clk\n");
-> +
-> +	dsi->txbyte_clk.init = &cdata_init;
-> +
-> +	ret = clk_hw_register(dev, &dsi->txbyte_clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = of_clk_add_hw_provider(node, of_clk_hw_simple_get,
-> +				     &dsi->txbyte_clk);
-> +	if (ret)
-> +		clk_hw_unregister(&dsi->txbyte_clk);
-> +
-> +	return ret;
-> +}
-> +
-> +static int dw_mipi_dsi_phy_init(void *priv_data)
-> +{
-> +	struct dw_mipi_dsi_stm *dsi = priv_data;
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(dsi->txbyte_clk.clk);
-> +	return ret;
-> +}
-> +
->   static void dw_mipi_dsi_phy_power_on(void *priv_data)
->   {
->   	struct dw_mipi_dsi_stm *dsi = priv_data;
-> @@ -235,6 +409,8 @@ static void dw_mipi_dsi_phy_power_off(void *priv_data)
->   
->   	DRM_DEBUG_DRIVER("\n");
->   
-> +	clk_disable_unprepare(dsi->txbyte_clk.clk);
-> +
->   	/* Disable the DSI wrapper */
->   	dsi_clear(dsi, DSI_WCR, WCR_DSIEN);
->   }
-> @@ -245,9 +421,8 @@ dw_mipi_dsi_get_lane_mbps(void *priv_data, const struct drm_display_mode *mode,
->   			  unsigned int *lane_mbps)
->   {
->   	struct dw_mipi_dsi_stm *dsi = priv_data;
-> -	unsigned int idf, ndiv, odf, pll_in_khz, pll_out_khz;
-> +	unsigned int pll_in_khz, pll_out_khz;
->   	int ret, bpp;
-> -	u32 val;
->   
->   	pll_in_khz = (unsigned int)(clk_get_rate(dsi->pllref_clk) / 1000);
->   
-> @@ -268,25 +443,10 @@ dw_mipi_dsi_get_lane_mbps(void *priv_data, const struct drm_display_mode *mode,
->   		DRM_WARN("Warning min phy mbps is used\n");
->   	}
->   
-> -	/* Compute best pll parameters */
-> -	idf = 0;
-> -	ndiv = 0;
-> -	odf = 0;
-> -	ret = dsi_pll_get_params(dsi, pll_in_khz, pll_out_khz,
-> -				 &idf, &ndiv, &odf);
-> +	ret = clk_set_rate((dsi->txbyte_clk.clk), pll_out_khz * 1000);
->   	if (ret)
-> -		DRM_WARN("Warning dsi_pll_get_params(): bad params\n");
-> -
-> -	/* Get the adjusted pll out value */
-> -	pll_out_khz = dsi_pll_get_clkout_khz(pll_in_khz, idf, ndiv, odf);
-> -
-> -	/* Set the PLL division factors */
-> -	dsi_update_bits(dsi, DSI_WRPCR,	WRPCR_NDIV | WRPCR_IDF | WRPCR_ODF,
-> -			(ndiv << 2) | (idf << 11) | ((ffs(odf) - 1) << 16));
-> -
-> -	/* Compute uix4 & set the bit period in high-speed mode */
-> -	val = 4000000 / pll_out_khz;
-> -	dsi_update_bits(dsi, DSI_WPCR0, WPCR0_UIX4, val);
-> +		DRM_DEBUG_DRIVER("ERROR Could not set rate of %d to %s clk->name",
-> +				 pll_out_khz, clk_hw_get_name(&dsi->txbyte_clk));
->   
->   	/* Select video mode by resetting DSIM bit */
->   	dsi_clear(dsi, DSI_WCFGR, WCFGR_DSIM);
-> @@ -445,6 +605,7 @@ static int dw_mipi_dsi_stm_probe(struct platform_device *pdev)
->   {
->   	struct device *dev = &pdev->dev;
->   	struct dw_mipi_dsi_stm *dsi;
-> +	const struct dw_mipi_dsi_plat_data *pdata = of_device_get_match_data(dev);
->   	int ret;
->   
->   	dsi = devm_kzalloc(dev, sizeof(*dsi), GFP_KERNEL);
-> @@ -514,18 +675,41 @@ static int dw_mipi_dsi_stm_probe(struct platform_device *pdev)
->   		dsi->lane_max_kbps *= 2;
->   	}
->   
-> -	dw_mipi_dsi_stm_plat_data.base = dsi->base;
-> -	dw_mipi_dsi_stm_plat_data.priv_data = dsi;
-> +	dsi->pdata = *pdata;
-> +	dsi->pdata.base = dsi->base;
-> +	dsi->pdata.priv_data = dsi;
-> +
-> +	dsi->pdata.max_data_lanes = 2;
-> +	dsi->pdata.phy_ops = &dw_mipi_dsi_stm_phy_ops;
->   
->   	platform_set_drvdata(pdev, dsi);
->   
-> -	dsi->dsi = dw_mipi_dsi_probe(pdev, &dw_mipi_dsi_stm_plat_data);
-> +	dsi->dsi = dw_mipi_dsi_probe(pdev, &dsi->pdata);
->   	if (IS_ERR(dsi->dsi)) {
->   		ret = PTR_ERR(dsi->dsi);
->   		dev_err_probe(dev, ret, "Failed to initialize mipi dsi host\n");
->   		goto err_dsi_probe;
->   	}
->   
-> +	/*
-> +	 * We need to wait for the generic bridge to probe before enabling and
-> +	 * register the internal pixel clock.
-> +	 */
-> +	ret = clk_prepare_enable(dsi->pclk);
-> +	if (ret) {
-> +		DRM_ERROR("%s: Failed to enable peripheral clk\n", __func__);
-> +		goto err_dsi_probe;
-> +	}
-> +
-> +	ret = dw_mipi_dsi_clk_register(dsi, dev);
-> +	if (ret) {
-> +		DRM_ERROR("Failed to register DSI pixel clock: %d\n", ret);
-> +		clk_disable_unprepare(dsi->pclk);
-> +		goto err_dsi_probe;
-> +	}
-> +
-> +	clk_disable_unprepare(dsi->pclk);
-> +
->   	return 0;
->   
->   err_dsi_probe:
-> @@ -542,12 +726,13 @@ static void dw_mipi_dsi_stm_remove(struct platform_device *pdev)
->   
->   	dw_mipi_dsi_remove(dsi->dsi);
->   	clk_disable_unprepare(dsi->pllref_clk);
-> +	dw_mipi_dsi_clk_unregister(dsi);
->   	regulator_disable(dsi->vdd_supply);
->   }
->   
->   static int dw_mipi_dsi_stm_suspend(struct device *dev)
->   {
-> -	struct dw_mipi_dsi_stm *dsi = dw_mipi_dsi_stm_plat_data.priv_data;
-> +	struct dw_mipi_dsi_stm *dsi = dev_get_drvdata(dev);
->   
->   	DRM_DEBUG_DRIVER("\n");
->   
-> @@ -560,7 +745,7 @@ static int dw_mipi_dsi_stm_suspend(struct device *dev)
->   
->   static int dw_mipi_dsi_stm_resume(struct device *dev)
->   {
-> -	struct dw_mipi_dsi_stm *dsi = dw_mipi_dsi_stm_plat_data.priv_data;
-> +	struct dw_mipi_dsi_stm *dsi = dev_get_drvdata(dev);
->   	int ret;
->   
->   	DRM_DEBUG_DRIVER("\n");
+On 21.06.2024 15:30, Biju Das wrote:
+> Hi Claudiu,
+> 
+> Thanks for the patch
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Friday, June 21, 2024 12:23 PM
+>> Subject: [PATCH 06/12] i2c: riic: Add suspend/resume support
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Add suspend/resume support for the RIIC driver. This is necessary for the Renesas RZ/G3S SoC which
+>> support suspend to deep sleep state where power to most of the SoC components is turned off. As a
+>> result the I2C controller needs to be reconfigured after suspend/resume. For this, the reset line
+>> was stored in the driver private data structure as well as i2c timings.
+>> The reset line and I2C timings are necessary to re-initialize the controller after resume.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>  drivers/i2c/busses/i2c-riic.c | 66 +++++++++++++++++++++++++++++------
+>>  1 file changed, 55 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c index
+>> 00fb09786e48..f9b9e92570d8 100644
+>> --- a/drivers/i2c/busses/i2c-riic.c
+>> +++ b/drivers/i2c/busses/i2c-riic.c
+>> @@ -105,6 +105,8 @@ struct riic_dev {
+>>  	struct completion msg_done;
+>>  	struct i2c_adapter adapter;
+>>  	struct clk *clk;
+>> +	struct reset_control *rstc;
+>> +	struct i2c_timings i2c_t;
+>>  };
+>>
+>>  struct riic_irq_desc {
+>> @@ -306,11 +308,12 @@ static const struct i2c_algorithm riic_algo = {
+>>  	.functionality	= riic_func,
+>>  };
+>>
+>> -static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+>> +static int riic_init_hw(struct riic_dev *riic)
+>>  {
+>>  	int ret;
+>>  	unsigned long rate;
+>>  	int total_ticks, cks, brl, brh;
+>> +	struct i2c_timings *t = &riic->i2c_t;
+>>  	struct device *dev = riic->adapter.dev.parent;
+>>
+>>  	if (t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) { @@ -429,8 +432,6 @@ static int
+>> riic_i2c_probe(struct platform_device *pdev)
+>>  	struct device *dev = &pdev->dev;
+>>  	struct riic_dev *riic;
+>>  	struct i2c_adapter *adap;
+>> -	struct i2c_timings i2c_t;
+>> -	struct reset_control *rstc;
+>>  	int i, ret;
+>>
+>>  	riic = devm_kzalloc(dev, sizeof(*riic), GFP_KERNEL); @@ -447,16 +448,16 @@ static int
+>> riic_i2c_probe(struct platform_device *pdev)
+>>  		return PTR_ERR(riic->clk);
+>>  	}
+>>
+>> -	rstc = devm_reset_control_get_optional_exclusive(dev, NULL);
+>> -	if (IS_ERR(rstc))
+>> -		return dev_err_probe(dev, PTR_ERR(rstc),
+>> +	riic->rstc = devm_reset_control_get_optional_exclusive(dev, NULL);
+>> +	if (IS_ERR(riic->rstc))
+>> +		return dev_err_probe(dev, PTR_ERR(riic->rstc),
+>>  				     "Error: missing reset ctrl\n");
+>>
+>> -	ret = reset_control_deassert(rstc);
+>> +	ret = reset_control_deassert(riic->rstc);
+>>  	if (ret)
+>>  		return ret;
+>>
+>> -	ret = devm_add_action_or_reset(dev, riic_reset_control_assert, rstc);
+>> +	ret = devm_add_action_or_reset(dev, riic_reset_control_assert,
+>> +riic->rstc);
+>>  	if (ret)
+>>  		return ret;
+>>
+>> @@ -485,13 +486,13 @@ static int riic_i2c_probe(struct platform_device *pdev)
+>>
+>>  	init_completion(&riic->msg_done);
+>>
+>> -	i2c_parse_fw_timings(dev, &i2c_t, true);
+>> +	i2c_parse_fw_timings(dev, &riic->i2c_t, true);
+>>
+>>  	pm_runtime_set_autosuspend_delay(dev, 0);
+>>  	pm_runtime_use_autosuspend(dev);
+>>  	pm_runtime_enable(dev);
+>>
+>> -	ret = riic_init_hw(riic, &i2c_t);
+>> +	ret = riic_init_hw(riic);
+>>  	if (ret)
+>>  		goto out;
+>>
+>> @@ -501,7 +502,7 @@ static int riic_i2c_probe(struct platform_device *pdev)
+>>
+>>  	platform_set_drvdata(pdev, riic);
+>>
+>> -	dev_info(dev, "registered with %dHz bus speed\n", i2c_t.bus_freq_hz);
+>> +	dev_info(dev, "registered with %dHz bus speed\n",
+>> +riic->i2c_t.bus_freq_hz);
+>>  	return 0;
+>>
+>>  out:
+>> @@ -561,6 +562,48 @@ static const struct riic_of_data riic_rz_v2h_info = {
+>>  	},
+>>  };
+>>
+>> +static int riic_i2c_suspend(struct device *dev) {
+>> +	struct riic_dev *riic = dev_get_drvdata(dev);
+>> +	int ret;
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	i2c_mark_adapter_suspended(&riic->adapter);
+>> +
+>> +	/* Disable output on SDA, SCL pins. */
+>> +	riic_clear_set_bit(riic, ICCR1_ICE, 0, RIIC_ICCR1);
+>> +
+>> +	pm_runtime_mark_last_busy(dev);
+>> +	pm_runtime_put_sync(dev);
+>> +
+>> +	return reset_control_assert(riic->rstc); }
+>> +
+>> +static int riic_i2c_resume(struct device *dev) {
+>> +	struct riic_dev *riic = dev_get_drvdata(dev);
+>> +	int ret;
+>> +
+>> +	ret = reset_control_deassert(riic->rstc);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = riic_init_hw(riic);
+>> +	if (ret)
+>> +		return ret;
+> 
+> On error case we need to assert back??
+
+Yes, it would be better as we cannot recover though other paths anymore, if
+that happens.
+
+> 
+> Cheers,
+> Biju
+> 
+>> +
+>> +	i2c_mark_adapter_resumed(&riic->adapter);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct dev_pm_ops riic_i2c_pm_ops = {
+>> +	SYSTEM_SLEEP_PM_OPS(riic_i2c_suspend, riic_i2c_resume) };
+>> +
+>>  static const struct of_device_id riic_i2c_dt_ids[] = {
+>>  	{ .compatible = "renesas,riic-rz", .data = &riic_rz_a_info },
+>>  	{ .compatible = "renesas,riic-r9a09g057", .data = &riic_rz_v2h_info }, @@ -573,6 +616,7 @@
+>> static struct platform_driver riic_i2c_driver = {
+>>  	.driver		= {
+>>  		.name	= "i2c-riic",
+>>  		.of_match_table = riic_i2c_dt_ids,
+>> +		.pm	= pm_ptr(&riic_i2c_pm_ops),
+>>  	},
+>>  };
+>>
+>> --
+>> 2.39.2
+>>
+> 
 
