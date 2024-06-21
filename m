@@ -1,92 +1,60 @@
-Return-Path: <linux-kernel+bounces-224986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2A6912992
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:25:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EAB9129A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6164E1C25BF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:25:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A171BB28551
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F2874402;
-	Fri, 21 Jun 2024 15:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DA074402;
+	Fri, 21 Jun 2024 15:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="IXpxWbJn"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjgfR2pS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027E96E619
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587C92C859;
+	Fri, 21 Jun 2024 15:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983530; cv=none; b=nYvF51tMWK0pI6hbhKCRCLpnRn7FoWHh1J3bYebMo+AeU2IA1u5T9CII0mva5CoKLQWlDlF4e0aU8kvBrG6QSykDq+diGYAwQRcsasnsnO5Twuh+pIUG2nZG2e5VVLuX0k+NAa9+Qi6yotfhUSkZZcUgna5HDBnDapl92JoagVM=
+	t=1718983611; cv=none; b=iIFYURNzEKe1hvd0nklpZVEo3PQS/x1lSX1orU+7XP3aieceu8xRreYq0lKTyh5iXSJ5KnyahLxqYW4TJ/R+6GAPDegq+6QVI/CTCeY0059wgW+UVSkpaqD5QAmC/AA1io9JeuznP09sptpXwPLTEK58Db+ivPsC4AT2hZJn1sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718983530; c=relaxed/simple;
-	bh=HZEeTINutptEU0lhQpxdRR6DoHtHY3p+yc0zzfwYTKk=;
+	s=arc-20240116; t=1718983611; c=relaxed/simple;
+	bh=VZvSfmYm+YYVRqepGXv0DdjyARWDuL62j88rb4mTLp0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SE7nsKaifhX/odfZNXnZmGBUYEYwoEIJkHwYD3IpGY8V/dYQgjzmjbnBeBaC6bgzxOV/dJGkj2YDqMc1GZE05mvlXTXjlypzilb+TtmSHJJvP7f83vEb0nNY29BQC8u9FOvJU+El/z3NlUQQKOdKe1IFteNCnzu4415L+oqGLSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=IXpxWbJn; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f47f07aceaso17323425ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1718983528; x=1719588328; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JYlNHWP11x6QNKTXlbmUex1BD8XP8iF4g+JbpwM+d2E=;
-        b=IXpxWbJnTsCsV+baMz8lKeVtDVk91ge6oxA2ieOwDDoLuPk1SCI2IaffBH44AiHPfQ
-         tlKPtdr7E+0UNhZeyVN3uOBK8Z6vNCugNAk0ccoZ0sF5sMXDOnPPhA2p+dRiJvGWhlLY
-         k9vIylP9JirZM3cDs2FI+VRnRmjuLQyJgQz14/jL7M1jovk2tkShPn7ol1a2nJ+VeJyt
-         RBr57oJSOpFH2zYNfFw2XLyX+pmeNeUE8RfT8DC8kMQ6o3bl4wvVSyscBKAiodUN5L5O
-         muqYd6tpx9lUjFRHSjqPCrWSCqyrnxR3nuYJyuBvb8njNRISjHUTXdbLBzjqluTqX8dI
-         7GcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718983528; x=1719588328;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JYlNHWP11x6QNKTXlbmUex1BD8XP8iF4g+JbpwM+d2E=;
-        b=r0uUaMd/CswTPVu21NcTB6UhbXJIDoEu8WwpYOGGwrAYWmF1hGw/Ar9aaLKNT0Hh4q
-         5im8Yk1g6e1yMXxhlNWPy5BdHWzu2fG0E0+IPlnJUKk45FaUzSDFkx5txZdF5v12rnlv
-         UyBa8fYoTpKNW/4AJZyiC6UDzuIYg3tbJQKgF/D1BTK9AehX/D7lT1qEnbr6KriP2a/t
-         qRDcPb+X7P4W3Ba6NNaWIAIWdJLum/7n6RN837AWlfmGXQE/LtD5+QXvRvtm01Gr/R2i
-         bQU7q2ANt4J1N6oYLQQT6Kn2xxP7zTRLLaamjnTqV8AEyFXOQ/dPCrnYG1fmEqXSwxzi
-         FhuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJJCtKgDF70RJJ19HNMfCM6t6hg+Am46sLKVcmnzUrZBekxSYiuONgZie+PrTF4vtJdFCwg+Lf144xpmlpZp4aY9bSY0mbm19rfXn8
-X-Gm-Message-State: AOJu0YzBHcuRLSdsnp+bX3OBviZOrsxyzlgRzgvaeXKhVgBaZqWouueS
-	HQj3HQy6OSMVLrPjGxc45HxmEdo4EEfnW2JmYn/a0NI1FiE3eiEuBI47rO/+vjI=
-X-Google-Smtp-Source: AGHT+IEC/+dU28AaumAmbjdJPumvT/Gnd4v11fgIaQOE3Q5JRhFPBwxb0aR0CmD13L3R1bpzIYHY8w==
-X-Received: by 2002:a17:903:244d:b0:1f9:f021:f2ea with SMTP id d9443c01a7336-1f9f021f686mr22307065ad.63.1718983528046;
-        Fri, 21 Jun 2024 08:25:28 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb8c8960sm15313065ad.227.2024.06.21.08.25.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 08:25:27 -0700 (PDT)
-Date: Fri, 21 Jun 2024 08:25:25 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Allen Pais <allen.lkml@gmail.com>
-Cc: kuba@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- jes@trained-monkey.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, kda@linux-powerpc.org, cai.huoqing@linux.dev,
- dougmill@linux.ibm.com, npiggin@gmail.com, christophe.leroy@csgroup.eu,
- aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com,
- tlfalcon@linux.ibm.com, cooldavid@cooldavid.org, marcin.s.wojtas@gmail.com,
- mlindner@marvell.com, nbd@nbd.name, sean.wang@mediatek.com,
- Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, borisp@nvidia.com,
- bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com,
- louis.peens@corigine.com, richardcochran@gmail.com,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-acenic@sunsite.dk, linux-net-drivers@amd.com,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 00/15] ethernet: Convert from tasklet to BH workqueue
-Message-ID: <20240621082525.0def003b@hermes.local>
-In-Reply-To: <20240621050525.3720069-1-allen.lkml@gmail.com>
-References: <20240621050525.3720069-1-allen.lkml@gmail.com>
+	 MIME-Version:Content-Type; b=hcbMj0QPi4mdUpEbLW9LNNRl6LXavnVzV1zlkRBSyRsGyetM2JglMCIgbgVuUXgZPAfRvrhIlHce6WSr8Yjrzw3R3RhkwdIZt7Qg26yf47jMiqcMPWxSsBn1LLyIcRjWIWgFkLpZTzKhqOAUk1wMBEkwIlFFpjVsSB6DHdiWKnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjgfR2pS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800DBC2BBFC;
+	Fri, 21 Jun 2024 15:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718983610;
+	bh=VZvSfmYm+YYVRqepGXv0DdjyARWDuL62j88rb4mTLp0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jjgfR2pS0CHoifVSOF1onh/LnD0rkt0ywgTtfPTp8Z/ExNi3fEMRKXheQljQ5MD+0
+	 0SxeOr7K2dbNDaIl7JA2t4EpQq38fKOCioK9Wv/ldlMFLtrgnVWk7hsfJfRYwJmDpN
+	 U0An75uWq4M4cOkVAWKwfBYJQCqFzGHmbKzcuY0/q85PPfraFxrJLorSjN8DlKAQFi
+	 sQA0movE0zwX+WiW7wsKA4EmWQRdAqobO+Lwggjw9Ik97hTdnHqubZ4WyRaG0x9Sa1
+	 j+z5y+EEJsP88ECJj0iUm5/rlNISaqWL7g4vHkvPGu5hNYit8dKI4Fb8cZ1MlqPlpt
+	 M2sONNaQa/3NA==
+Date: Fri, 21 Jun 2024 17:26:45 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, James
+ Morse <james.morse@arm.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>,
+ linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-edac@vger.kernel.org, Len Brown <lenb@kernel.org>,
+ linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] Fix CPER issues related to UEFI 2.9A Errata
+Message-ID: <20240621172645.21082af3@coco.lan>
+In-Reply-To: <CAMj1kXHsyAhmV9K__pRh8cYJy-ed2-s5VLDE4GwMqNajvJE46w@mail.gmail.com>
+References: <cover.1718906288.git.mchehab+huawei@kernel.org>
+	<CAMj1kXHsyAhmV9K__pRh8cYJy-ed2-s5VLDE4GwMqNajvJE46w@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,98 +64,99 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Jun 2024 22:05:10 -0700
-Allen Pais <allen.lkml@gmail.com> wrote:
+Hi Ard,
 
-> The only generic interface to execute asynchronously in the BH context is
-> tasklet; however, it's marked deprecated and has some design flaws. To
-> replace tasklets, BH workqueue support was recently added. A BH workqueue
-> behaves similarly to regular workqueues except that the queued work items
-> are executed in the BH context.
-> 
-> This patch converts a few drivers in drivers/ethernet/* from tasklet
-> to BH workqueue. The next set will be sent out after the next -rc is
-> out.
-> 
-> This series is based on 
-> commit a6ec08beec9e ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
-> 
-> First version converting all the drivers can be found at:
-> https://lore.kernel.org/all/20240507190111.16710
-> -2-apais@linux.microsoft.com/
-> 
-> 
-> Allen Pais (15):
->   net: alteon: Convert tasklet API to new bottom half workqueue
->     mechanism
->   net: xgbe: Convert tasklet API to new bottom half workqueue mechanism
->   net: cnic: Convert tasklet API to new bottom half workqueue mechanism
->   net: macb: Convert tasklet API to new bottom half workqueue mechanism
->   net: cavium/liquidio: Convert tasklet API to new bottom half workqueue
->     mechanism
->   net: octeon: Convert tasklet API to new bottom half workqueue
->     mechanism
->   net: thunderx: Convert tasklet API to new bottom half workqueue
->     mechanism
->   net: chelsio: Convert tasklet API to new bottom half workqueue
->     mechanism
->   net: sundance: Convert tasklet API to new bottom half workqueue
->     mechanism
->   net: hinic: Convert tasklet API to new bottom half workqueue mechanism
->   net: ehea: Convert tasklet API to new bottom half workqueue mechanism
->   net: ibmvnic: Convert tasklet API to new bottom half workqueue
->     mechanism
->   net: jme: Convert tasklet API to new bottom half workqueue mechanism
->   net: marvell: Convert tasklet API to new bottom half workqueue
->     mechanism
->   net: mtk-wed: Convert tasklet API to new bottom half workqueue
->     mechanism
-> 
->  drivers/net/ethernet/alteon/acenic.c          | 26 +++----
->  drivers/net/ethernet/alteon/acenic.h          |  8 +--
->  drivers/net/ethernet/amd/xgbe/xgbe-drv.c      | 30 ++++----
->  drivers/net/ethernet/amd/xgbe/xgbe-i2c.c      | 16 ++---
->  drivers/net/ethernet/amd/xgbe/xgbe-mdio.c     | 16 ++---
->  drivers/net/ethernet/amd/xgbe/xgbe-pci.c      |  4 +-
->  drivers/net/ethernet/amd/xgbe/xgbe.h          | 10 +--
->  drivers/net/ethernet/broadcom/cnic.c          | 19 ++---
->  drivers/net/ethernet/broadcom/cnic.h          |  2 +-
->  drivers/net/ethernet/cadence/macb.h           |  3 +-
->  drivers/net/ethernet/cadence/macb_main.c      | 10 +--
->  .../net/ethernet/cavium/liquidio/lio_core.c   |  4 +-
->  .../net/ethernet/cavium/liquidio/lio_main.c   | 24 +++----
->  .../ethernet/cavium/liquidio/lio_vf_main.c    | 10 +--
->  .../ethernet/cavium/liquidio/octeon_droq.c    |  4 +-
->  .../ethernet/cavium/liquidio/octeon_main.h    |  4 +-
->  .../net/ethernet/cavium/octeon/octeon_mgmt.c  | 13 ++--
->  drivers/net/ethernet/cavium/thunder/nic.h     |  5 +-
->  .../net/ethernet/cavium/thunder/nicvf_main.c  | 24 +++----
->  .../ethernet/cavium/thunder/nicvf_queues.c    |  4 +-
->  .../ethernet/cavium/thunder/nicvf_queues.h    |  2 +-
->  drivers/net/ethernet/chelsio/cxgb/sge.c       | 19 ++---
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |  9 +--
->  .../net/ethernet/chelsio/cxgb4/cxgb4_main.c   |  2 +-
->  .../ethernet/chelsio/cxgb4/cxgb4_tc_mqprio.c  |  4 +-
->  .../net/ethernet/chelsio/cxgb4/cxgb4_uld.c    |  2 +-
->  drivers/net/ethernet/chelsio/cxgb4/sge.c      | 40 +++++------
->  drivers/net/ethernet/chelsio/cxgb4vf/sge.c    |  6 +-
->  drivers/net/ethernet/dlink/sundance.c         | 41 +++++------
->  .../net/ethernet/huawei/hinic/hinic_hw_cmdq.c |  2 +-
->  .../net/ethernet/huawei/hinic/hinic_hw_eqs.c  | 17 +++--
->  .../net/ethernet/huawei/hinic/hinic_hw_eqs.h  |  2 +-
->  drivers/net/ethernet/ibm/ehea/ehea.h          |  3 +-
->  drivers/net/ethernet/ibm/ehea/ehea_main.c     | 14 ++--
->  drivers/net/ethernet/ibm/ibmvnic.c            | 24 +++----
->  drivers/net/ethernet/ibm/ibmvnic.h            |  2 +-
->  drivers/net/ethernet/jme.c                    | 72 +++++++++----------
->  drivers/net/ethernet/jme.h                    |  8 +--
->  .../net/ethernet/marvell/mvpp2/mvpp2_main.c   |  4 +-
->  drivers/net/ethernet/marvell/skge.c           | 12 ++--
->  drivers/net/ethernet/marvell/skge.h           |  3 +-
->  drivers/net/ethernet/mediatek/mtk_wed_wo.c    | 12 ++--
->  drivers/net/ethernet/mediatek/mtk_wed_wo.h    |  3 +-
->  43 files changed, 273 insertions(+), 266 deletions(-)
-> 
+Em Fri, 21 Jun 2024 09:45:16 +0200
+Ard Biesheuvel <ardb@kernel.org> escreveu:
 
-This should also go to netdev@vger.kernel.org
+> On Thu, 20 Jun 2024 at 20:01, Mauro Carvalho Chehab
+> <mchehab+huawei@kernel.org> wrote:
+> >
+> > The UEFI 2.9A errata makes clear how ARM processor type encoding should
+> > be done: it is meant to be equal to Generic processor, using a bitmask.
+> >
+> > The current code assumes, for both generic and ARM processor types
+> > that this is an integer, which is an incorrect assumption.
+> >
+> > Fix it. While here, also fix a compilation issue when using W=1.
+> >
+> > After the change, Kernel will properly decode receiving two errors at the same
+> > message, as defined at UEFI spec:
+> >
+> > [   75.282430] Memory failure: 0x5cdfd: recovery action for free buddy page: Recovered
+> > [   94.973081] {2}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 1
+> > [   94.973770] {2}[Hardware Error]: event severity: recoverable
+> > [   94.974334] {2}[Hardware Error]:  Error 0, type: recoverable
+> > [   94.974962] {2}[Hardware Error]:   section_type: ARM processor error
+> > [   94.975586] {2}[Hardware Error]:   MIDR: 0x000000000000cd24
+> > [   94.976202] {2}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x000000000000ab12
+> > [   94.977011] {2}[Hardware Error]:   error affinity level: 2
+> > [   94.977593] {2}[Hardware Error]:   running state: 0x1
+> > [   94.978135] {2}[Hardware Error]:   Power State Coordination Interface state: 4660
+> > [   94.978884] {2}[Hardware Error]:   Error info structure 0:
+> > [   94.979463] {2}[Hardware Error]:   num errors: 3
+> > [   94.979971] {2}[Hardware Error]:    first error captured
+> > [   94.980523] {2}[Hardware Error]:    propagated error captured
+> > [   94.981110] {2}[Hardware Error]:    overflow occurred, error info is incomplete
+> > [   94.981893] {2}[Hardware Error]:    error_type: 0x0006: cache error|TLB error
+> > [   94.982606] {2}[Hardware Error]:    error_info: 0x000000000091000f
+> > [   94.983249] {2}[Hardware Error]:     transaction type: Data Access
+> > [   94.983891] {2}[Hardware Error]:     cache error, operation type: Data write
+> > [   94.984559] {2}[Hardware Error]:     TLB error, operation type: Data write
+> > [   94.985215] {2}[Hardware Error]:     cache level: 2
+> > [   94.985749] {2}[Hardware Error]:     TLB level: 2
+> > [   94.986277] {2}[Hardware Error]:     processor context not corrupted
+> >
+> > And the error code is properly decoded according with table N.17 from UEFI 2.10
+> > spec:
+> >
+> >         [   94.981893] {2}[Hardware Error]:    error_type: 0x0006: cache error|TLB error
+> >
+> > Mauro Carvalho Chehab (3):
+> >   efi/cper: Adjust infopfx size to accept an extra space
+> >   efi/cper: Add a new helper function to print bitmasks
+> >   efi/cper: align ARM CPER type with UEFI 2.9A/2.10 specs
+> >  
+> 
+> Hello Mauro,
+> 
+> How this is v4 different from the preceding 3 revisions that you sent
+> over the past 2 days?
+> 
+> I would expect an experienced maintainer like yourself to be familiar
+> with the common practice here: please leave some time between sending
+> revisions so people can take a look. And if there is a pressing need
+> to deviate from this rule, at least put an explanation in the commit
+> log of how the series differs from the preceding one.
+
+Sorry, I'll add a version review on that. Basically I was missing a
+test environment to do error injection. When I got it enabled, and fixed
+to cope with UEFI 2.9A/2.10 expected behavior, I was able to discover 
+some issues and to do some code improvements.
+
+v1: 
+- (tagged as RFC) was mostly to give a heads up that the current 
+  implementation is not following the spec. It also touches
+  only cper code.
+
+v2:
+- It fixes the way printks are handled on both cper_arm and ghes
+  drivers;
+
+v3:
+- It adds a helper function to produce a buffer describing the
+  error bits at cper's printk and ghes pr_warn_bitrated. It also
+  fixes a W=1 error while building cper;
+
+v4:
+- The print function had some bugs on it, which was discovered with
+  the help of an error injection tool I'm now using.
+
+I have already another version ready to send. It does some code
+cleanup and address the issues pointed by Tony and Jonathan. If you
+prefer, I can hold it until Monday to give you some time to look
+at it.
+
+Thanks,
+Mauro
 
