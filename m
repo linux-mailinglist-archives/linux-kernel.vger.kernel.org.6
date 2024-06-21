@@ -1,229 +1,187 @@
-Return-Path: <linux-kernel+bounces-225210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C42912DA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:01:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CDC912DA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 797701C213A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E0E71C20A4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696E317B4FA;
-	Fri, 21 Jun 2024 19:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA4017B419;
+	Fri, 21 Jun 2024 19:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Xg9C7vjh"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="oSPIMrlu"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF6715FD19;
-	Fri, 21 Jun 2024 19:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875534644C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718996456; cv=none; b=IUhvGrwlWuII+7AxuYiHYyI/ekvydWY92NzY0Ii2aaOAw11PMk7/pNcxCjv48QMWrL2CPTGPCq8Y8YaCRB8xXZxVo0uADLToJpopXbnflCUckwYcjTZvYGAUGtt1AqdtTSbof1ypsthVpyOsfFL6pJGXMcdDqqEVXLPwOY/+I2s=
+	t=1718996547; cv=none; b=b0gTEsjD8ME6hm8+3ast3S+QmKKmvRBM519qOv35nP0aI0MhNkHpOmNbqdbiDm+9gnxiwMVlpfTW2u4hq3ED92vcijNp532LOOoxvTQVs0Yup5z2NeAmVS676PiadV6/pCpfmDPPms2LRgt5OALPErEO2QMX+iNDjj1sSDFnAvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718996456; c=relaxed/simple;
-	bh=1xI8YRL10smwl7VMGvO7M912Po4pATP5fMCzVekJ7R0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:References; b=ihABFL5xZYf+C4BbKHYYlTq8RZoqEowjUYEPUiyABAgEBVV+WBYLTvLlCK9jVEb2weuLl6K0jTGyK6sHDG4tdfsgXu9RpIjs2jDgeH43Bmeqj8koAGEaui79dxmVHWkJ+PnFLOem6zT4g+32N6aWsTcXOd/jCWqAojqS37CMFLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Xg9C7vjh; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240621190051euoutp011e3fb80ce585a280639feb0146ab6e7c~bGiooYs8W0340903409euoutp01M;
-	Fri, 21 Jun 2024 19:00:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240621190051euoutp011e3fb80ce585a280639feb0146ab6e7c~bGiooYs8W0340903409euoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718996451;
-	bh=fh5BmalpRFF5KdaH3pq9kpTeLWy3/PADXMuzR0CNQWA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Xg9C7vjhhKp8Rw4UIKiDK/M9Pw3HSlZHI2Z8PjzFsnZjvZVfzkDfaNuYALyV0VRGr
-	 QrH/hXxH1ei2XzfBHvm8oo8Ve8ctOAlzBeFvEsfncvYe2ur8YhUGpCCInaGtXHg8y1
-	 6QxofTwOApKWffHWmdwkCBft/gAsb5qc+tYQjOEc=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240621190050eucas1p1d924ca2731218b3a724a30443c603042~bGioD9UOj1850418504eucas1p1h;
-	Fri, 21 Jun 2024 19:00:50 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 58.50.09620.2EDC5766; Fri, 21
-	Jun 2024 20:00:50 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240621190049eucas1p28ba502d86e2f9380315c06add645517c~bGinQcrAp1851118511eucas1p2v;
-	Fri, 21 Jun 2024 19:00:49 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240621190049eusmtrp2e23bb636b1098754aaf533b1db1f8aef~bGinPvTUW2540425404eusmtrp2e;
-	Fri, 21 Jun 2024 19:00:49 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-1c-6675cde28763
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id BA.22.09010.1EDC5766; Fri, 21
-	Jun 2024 20:00:49 +0100 (BST)
-Received: from localhost (unknown [106.120.51.111]) by eusmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240621190049eusmtip108eda68f91c3e7b7e6b91f8214750328~bGinCT2jO2684926849eusmtip14;
-	Fri, 21 Jun 2024 19:00:49 +0000 (GMT)
-From: Lukasz Stelmach <l.stelmach@samsung.com>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,  Rob Herring
-	<robh@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Anand Moon
-	<linux.amoon@gmail.com>,  Olivia Mackall <olivia@selenic.com>,  Herbert Xu
-	<herbert@gondor.apana.org.au>,  Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,  linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 5/6] hwrng: exynos: Add SMC based TRNG operation
-Date: Fri, 21 Jun 2024 21:00:29 +0200
-In-Reply-To: <20240620231339.1574-6-semen.protsenko@linaro.org> (Sam
-	Protsenko's message of "Thu, 20 Jun 2024 18:13:38 -0500")
-Message-ID: <oypijdplsaruia.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1718996547; c=relaxed/simple;
+	bh=2ejfWjZZ+2p6n8C/uYSvX+3GJZETSO2UUSX42MmnXY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dObjQ38enlb3DZ4k9eZrkIV8v5K2f728M/8k5egbIhRAx1Hg96n5VHfX9lpgz3dyJXO9in8dzWmFzEShQ1VUKz1f13Fw95+mZxfkZvG/PM7ON6IwLARyXe+8HmSSTUNuifm2wL5tanWtWwK9P3oUhKVzaVu7oCC8gzLoU3v7LSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=oSPIMrlu; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f480624d0fso18251755ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718996544; x=1719601344; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2ejfWjZZ+2p6n8C/uYSvX+3GJZETSO2UUSX42MmnXY0=;
+        b=oSPIMrluRj/zDqsgkzy/B80Y/49TndFAp/dYd1K9Q6IfgedwFTuYHt3SHjrKhwfeed
+         LAxdZvrp/EefaAsGSak6PZM8qGHhZIc2eqx0d9WXk9LCsaKLUBFzxWo3Z5RFSd5vQBhe
+         2KURMGk13DuwOVPM6B1LWsn6dH0la1E+pPT7f5AAEmjEaT1WJS/FK+ac0aGoaUuWKeey
+         5dGHVwGTJ9jA5nORxV+PCYUAJQUpHoFwj2LdJNsXJ/XJV2713+71xV5kcqGt6MKh49OQ
+         kJJ0vDr4gqflnYJNoWs5TTDUTqByzUKKK66Qc5z9sWXWkI46YSBrQsYpJ/0RcaBJinI8
+         EGgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718996544; x=1719601344;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ejfWjZZ+2p6n8C/uYSvX+3GJZETSO2UUSX42MmnXY0=;
+        b=WU9617V9Z9nK+3BCK35j7W+diPXCYtl5sW7RoSCjzsHIS2zqZSPuV0EjaH8hPX39cH
+         AjXTrvMe43qSrLrB6Rnzab/vW5Gkg6FZfcNlMlRHS7+/L5+/7nQacXe37T7MpGLMnn/y
+         nXXfgVOcaZfEmu+KzRr5OIZh2MGYEzSz/qQi32rSxzP9gj6FyC/N30sEL7c5C3QMaNQI
+         Iuxp46DcEftjb81dnAamFAVUWoh5mWk44sfEzDqCPf/O2ayaCz/Qd3jotVhWN/0fwmEv
+         38CISiLqzRKL5UEA/wOc6IXmMgRqqiYcY2DsT3pVaTekXTwmKYb0lkWFHW0h99Huyi07
+         4O+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUYc290PSK8t6PAc6C/NNf1hDCAzmjc5Z2RDxRTMbwtaE9g0fM9HCEPfMhM8OsqpjTIqFSVQP51ACUQW7WCpjOAgT6BWww5pY+WE6Gp
+X-Gm-Message-State: AOJu0Ywh+a9xssaN9WoO/WyGTAMDa1loeALfTcFqPZpfVwtQPexvIctw
+	CMgtkHKbFmE2grMAbR6P05ZmP82dduN4m9VfrmCop/1+zEJ00nAMMOnnN/IN0mg=
+X-Google-Smtp-Source: AGHT+IHNesJtO0UqquNF67ECCx6rJvGVvWqByp4IpDMUVIaiuwlaYkut+gD3Q7guqC20bvpJVZvxbQ==
+X-Received: by 2002:a17:902:da91:b0:1f9:c289:7378 with SMTP id d9443c01a7336-1f9c2897606mr82016305ad.33.1718996543540;
+        Fri, 21 Jun 2024 12:02:23 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f051bsm17459975ad.51.2024.06.21.12.02.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 12:02:23 -0700 (PDT)
+Date: Fri, 21 Jun 2024 12:02:21 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Cyril Bur <cyrilbur@tenstorrent.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] riscv: convert bottom half of exception handling to C
+Message-ID: <ZnXOPbuGe3nHNrs5@debug.ba.rivosinc.com>
+References: <20240616170553.2832-1-jszhang@kernel.org>
+ <20240616170553.2832-4-jszhang@kernel.org>
+ <ZnMPhcaTKFRbbE1i@debug.ba.rivosinc.com>
+ <CANtDSipXbYSuz6NakbXw-8k0_ZN5hdT7VWMushXvQ5VB0Am_Ng@mail.gmail.com>
+ <95a081a9-2307-4e5b-8ae2-082be16b327e@rivosinc.com>
+ <ZnTByNTDWnVdtiDr@xhacker>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-	protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUwTdxjH/d0d16OuzbXCeFY73Yq4OF2BYeIpurDFzMuMy4bJsmzGrZPj
-	xdGWtFQYWwa4IMhmQTCwNkPt4gpWW7BABWXMNCgu64sw0hBCyyzEl3abKUyRJepaziX+93m+
-	z/d5++VH4dLZJBlVoinndBpVqYIUEq5rS/7Xwl5DYZbNLWP+OOkimfM/+zDm1Igvifk2Imfu
-	mkMk45wNJDEzoSWM+f3SDyTzvX8YYxwXpgSMfSQoYGY83yHmydCAgLltHMbyxOygOShgXVcy
-	WKftKMlOB4ZItvdMNWvssyHWeLcHsQvONe9RHwm3F3ClJYc4XeYbnwqLxx7ewMtCL1SevWMl
-	a9CZ1EZEUUBvBmuUbkTJlJTuQhCdzm9Ewjj/g2CqfRbxwQKCsMVOJFyJgvDJCySf6EQwMH6N
-	4IM7CDoGe/FEW5JWgt3+YaIgJY4OU0SQ8OB0FAenzxMPBNQqehfM70hYCDoDAnVelOBkugZB
-	YEScYBG9Be77g8tzU+mtMNpfT/K6BH41zS3rOK0Gk//P5UWB/iUZxiePIv6ynXAktpffeRVE
-	RvsEPMvhyeApjPfXIzg8YUnig2YECw2HMd6VC9O+f0me34TazhM431QMk39J+MFiaHG1P5VF
-	0HBEyrvXgaNp6OlbyeBYpAvxzEJbtA3jn6oFwYPLdYJm9JL5mXvMz9xjjrfF6Q3QfSmTlzeC
-	1RLFed4BDsc94jRKsqE0zqBXF3H6HA1XodSr1HqDpkh5QKt2ovjf++3x6P0B1BWJKd0Io5Ab
-	rYsXh3vO3UAyQqPVcIoU0e1GXaFUVKD6oorTaT/RGUo5vRutpghFmiijYC0npYtU5dznHFfG
-	6f7PYlSyrAYjNO945oTZG6Rv775ZuD99yFOtDLvnh6nFMebqVxMfEH1b97Qbd7aGYor1x195
-	UX5ri/fHzuJ50FO9+y4eTG9dbeiwZu2zGpQrFk9UZR1r5iQd29jaKlv1XqXW//rFYIX08nO5
-	6+vki8OxlkpLClm9cU3eWstS+kDO9YPiuZu3MhfPZ+eUPWo668sPtnzctH3lZ6bcTWLm+HRd
-	998ev8s7JZrJ63m5W522K/hWqH/3g5JySX7ttgPer4VXU+mKc8Yl1Zex+lnT/tNX8EcrNtP9
-	1yfwewFv58OVRZKG9J+cZbQKb40e6n63eXCTHZt8/xuv/DGuHa0cp9r694y1P2+dUxD6YlX2
-	q7hOr/oPmMRsfPYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsVy+t/xu7oPz5amGZzbqGjxYN42Nos1e88x
-	Wcw/co7VovuVjMXLWffYLDY9vsZqcf/eTyaLy7vmsFnMOL+PyWLdxlvsFmuP3GW3uH+mh9Hi
-	/54d7BbP+/YxOfB57Jx1l91j2wFVj02rOtk87lzbw+axeUm9R9+WVYwefS83MHp83iQXwBGl
-	Z1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5egl3HxxwXm
-	gnuSFStfLGNrYFwi2sXIySEhYCLxaN5Gti5GLg4hgaWMEtcnTWXuYuQASkhJrJybDlEjLPHn
-	WhcbiC0k8IxR4s43fpASNgE9ibVrI0DCIkDmupmv2EHGMAu8Y5bYevkQYxcjO4ewgLvEJ1uI
-	TjuJSwd72UFsFgFViWutZxlBbE6BBkaJa0f4QGxeAXOJr+fvsoDYogKWEse3trNBxAUlTs58
-	AhZnFsiW+Lr6OfMERoFZSFKzkKRmAR3HLKApsX6XPkRYW2LZwtfMELatxLp171kWMLKuYhRJ
-	LS3OTc8tNtIrTswtLs1L10vOz93ECIzYbcd+btnBuPLVR71DjEwcjIcYVYA6H21YfYFRiiUv
-	Py9VSYT3eVdRmhBvSmJlVWpRfnxRaU5q8SFGU6DXJjJLiSbnA1NJXkm8oZmBqaGJmaWBqaWZ
-	sZI4r2dBR6KQQHpiSWp2ampBahFMHxMHp1QDk/xkLZaAwqIHX19EM7hYvisMySz7mBqmYcu4
-	SG//m901d85pHIg4qzKl/oty846f9w6tz3+4mIfhlcn709zT57FP3Oa6jUMk49etAy+0zkuc
-	yuvS5W9wndB6IivksrRp064tSo6CSy+XV93W+hEx6Qn/r0NikjPcNc2LL//s+/A2sWrvr+MW
-	v79e97zY7Kc976jotRUr2+LmmZw4soPtlKZq1PvTTx+KbzCz2rZtXmmdcXd+yG/1iX7zM7dX
-	33vOwXntoPCmZcve2vg+cLCQWDdVcnfAPZbT3QcdZy7z1P/6i2sfp+ZxuTW//gX/FjOK+dF2
-	X/ZF0tYzs3dIsL7/OOt+y9eZF2d4rAqp3vrD8oytEktxRqKhFnNRcSIAIBPrrW0DAAA=
-X-CMS-MailID: 20240621190049eucas1p28ba502d86e2f9380315c06add645517c
-X-Msg-Generator: CA
-X-RootMTR: 20240621190049eucas1p28ba502d86e2f9380315c06add645517c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240621190049eucas1p28ba502d86e2f9380315c06add645517c
-References: <20240620231339.1574-6-semen.protsenko@linaro.org>
-	<CGME20240621190049eucas1p28ba502d86e2f9380315c06add645517c@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZnTByNTDWnVdtiDr@xhacker>
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-It was <2024-06-20 czw 18:13>, when Sam Protsenko wrote:
-> On some Exynos chips like Exynos850 the access to Security Sub System
-> (SSS) registers is protected with TrustZone, and therefore only possible
-> from EL3 monitor software. The Linux kernel is running in EL1, so the
-> only way for the driver to obtain TRNG data is via SMC calls to EL3
-> monitor. Implement such SMC operation and use it when EXYNOS_SMC flag is
-> set in the corresponding chip driver data.
+On Fri, Jun 21, 2024 at 07:56:56AM +0800, Jisheng Zhang wrote:
+>On Thu, Jun 20, 2024 at 10:06:15AM +0200, Clément Léger wrote:
+>>
+>>
+>> On 20/06/2024 02:02, Cyril Bur wrote:
+>> > On Thu, Jun 20, 2024 at 3:04 AM Deepak Gupta <debug@rivosinc.com> wrote:
+>> >>
+>> >> On Mon, Jun 17, 2024 at 01:05:50AM +0800, Jisheng Zhang wrote:
+>> >>> For readability, maintainability and future scalability, convert the
+>> >>> bottom half of the exception handling to C.
+>> >>>
+>> >>> Mostly the assembly code is converted to C in a relatively
+>> >>> straightforward manner.
+>> >>>
+>> >>> However, there are two modifications I need to mention:
+>> >>>
+>> >>> 1. the CSR_CAUSE reg reading and saving is moved to the C code
+>> >>> because we need the cause to dispatch the exception handling,
+>> >>> if we keep the cause reading and saving, we either pass it to
+>> >>> do_traps() via. 2nd param or get it from pt_regs which an extra
+>> >>> memory load is needed, I don't like any of the two solutions becase
+>> >>> the exception handling sits in hot code path, every instruction
+>> >>> matters.
+>> >>
+>> >> CC: Clement.
+>> >>
+>> >> I think its better to save away cause in pt_regs prior to calling
+>> >> `do_traps`. Once control is transferred to C code in `do_traps`,
+>> >> another trap can happen. It's a problem anyways today without CPU support.
+>> >>
+>> >> Although with Ssdbltrp [1] extension and it kernel support [2] for it,
+>> >> I expect asm code would clear up `SDT` bit in mstatus. Whenever `Ssdbltrp` lands,
 >
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
-> Changes in v3:
->   - Added appropriate error messages for the case when init SMC command f=
-ails
+>Hi Deepak, Clément,
 >
-> Changes in v2:
->   - Used the "reversed Christmas tree" style in the variable declaration
->     block in exynos_trng_do_read_smc()
->   - Renamed .quirks to .flags in the driver structure
->   - Added Krzysztof's R-b tag
+>Currently, SR_IE bit is is set(setting means enable irq) in c, could the
+>'SDT' bit be cleared in c as well when Ssdbltrp lands?
+
+SDT is placed in sstatus CSR. So yes its possible to clear it in C in `do_traps`.
+Although then you (and any future developer) will have to pay extra attention to this
+function because this function can be nested depending on when SDT is cleared or not.
+Maintainence (and introductions of error) wise it doesn't look ideal.
+
+If we keep read of `cause` in asm code and pass it as parameter to `do_traps`, it
+cleanly defines the boundary of which functions can be nested and which can't. It
+helps features like SSE [1, 2] (which expect nesting of events and had to be creative)
+to implement cleaner logic.
+
+[1] https://lists.riscv.org/g/tech-prs/message/515
+[2] https://lpc.events/event/17/contributions/1479/attachments/1243/2526/SSE_Plumbers.pdf
+
 >
->  drivers/char/hw_random/exynos-trng.c | 140 +++++++++++++++++++++++++--
->  1 file changed, 130 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_rando=
-m/exynos-trng.c
-> index 6ef2ee6c9804..9fa30583cc86 100644
-> --- a/drivers/char/hw_random/exynos-trng.c
-> +++ b/drivers/char/hw_random/exynos-trng.c
-
-[...]
-
-
-> @@ -103,6 +163,24 @@ static int exynos_trng_init(struct hwrng *rng)
->  	return 0;
->  }
->=20=20
-> +static int exynos_trng_init_smc(struct hwrng *rng)
-> +{
-> +	struct exynos_trng_dev *trng =3D (struct exynos_trng_dev *)rng->priv;
-> +	struct arm_smccc_res res;
-> +	int ret =3D 0;
-> +
-> +	arm_smccc_smc(SMC_CMD_RANDOM, HWRNG_INIT, 0, 0, 0, 0, 0, 0, &res);
-> +	if (res.a0 !=3D HWRNG_RET_OK) {
-> +		dev_err(trng->dev, "SMC command for TRNG init failed (%d)\n",
-> +			(int)res.a0);
-> +		ret =3D -EIO;
-> +	}
-> +	if ((int)res.a0 =3D=3D -1)
-> +		dev_info(trng->dev, "Make sure LDFW is loaded by your BL\n");
-
-This is good, thank you for adding it. It can be even better though, if
-you don't skimp on message length (-; I mean, I know what BL is, I can
-fingure what LDFW is because you have explained to me and I can see the
-source code, but somewone who sees it for the first time will be only
-slightly less surprised than with v2 error message only. Come on, you
-can make this message twice as long and it will still fit in 80 characters =
-(-;
-
-Don't change it if v3 is the last. If not, please, make it more verbose.
-
-> +
-> +	return ret;
-> +}
-> +
-
-
-[...]
-
-
-Kind regards,
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAmZ1zc0ACgkQsK4enJil
-gBCvUgf+KkpSOKPvcfQuSHLfbhbfcy5nzwnU01J4onEued9iClyhoqOXA02kPp/B
-68JLBCGl2v1S7OAyr1ZNY0XjAPn3xLpuh1fH41j4wt2mFjpjycO6qur/8jyOPmfN
-5Z7txxkta2OzJBtQ+c3kEQ6E/sl+03KJCj2Y7YfK51eGCqr9DkkpRTa7R/1IL3FY
-9sk8wn80rfRtDZYP8S/xHARcte7uOkhU93NuQs2h9UL6mpnFFQ+UD8K2Kh46xPeR
-v15fncy50yb1wcOGa/7gC2Wv4xYSF38eByxiy5WtExyS1tC11khZxlSfYol6EOKd
-CUkH0i9czNOFU31yJ83xrXKdbWFRPw==
-=y/GC
------END PGP SIGNATURE-----
---=-=-=--
+>Thanks
+>> >> I think `do_traps` should expect nesting of traps and thus cause should be saved
+>> >> away before it gets control so that safely traps can be nested.
+>>
+>> Hi,
+>>
+>> Indeed, every register that is "unique" to a trap and than can be
+>> overwritten by a second trap should be saved before reenabling them when
+>> using Ssdbltrp. So that would be nice to preserve that.
+>>
+>> >>
+>> >
+>> > Is a possible solution to do both options Jisheng suggested? Save the
+>> > cause before
+>> > calling do_traps but also pass it via second param?
+>>
+>> I guess so if it fits your performance requirements.
+>>
+>> Thanks,
+>>
+>> Clément
+>>
+>> >
+>> >> [1] - https://github.com/riscv/riscv-double-trap/releases/download/v1.0-rc1/riscv-double-trap.pdf
+>> >> [2] - https://lore.kernel.org/all/20240418133916.1442471-1-cleger@rivosinc.com/
+>> >>
+>> >>>
+>> >>> 2.To cope with SIFIVE_CIP_453 errata, it looks like we don't need
+>> >>> alternative mechanism any more after the asm->c convertion. Just
+>> >>> replace the excp_vect_table two entries.
+>> >>>
+>> >>> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+>> >>
+>> >> _______________________________________________
+>> >> linux-riscv mailing list
+>> >> linux-riscv@lists.infradead.org
+>> >> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
