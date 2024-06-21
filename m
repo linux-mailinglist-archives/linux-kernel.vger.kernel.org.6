@@ -1,212 +1,232 @@
-Return-Path: <linux-kernel+bounces-224341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4865B912117
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:44:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B77C912119
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A91FB23FC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:44:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D9C01C2253D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EA216F0CF;
-	Fri, 21 Jun 2024 09:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D4B16F85C;
+	Fri, 21 Jun 2024 09:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8JvkVKm"
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b7Y1S1p1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8888316E899;
-	Fri, 21 Jun 2024 09:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A5516E899
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718963016; cv=none; b=i1Rm5dF8EU6dsYFxEBo7MXHIadG8Um5uMBBD26WUBoNw6ZsgdlBd2sS/dqaYsqkhw1iBAqmnvnfmQO/Ckjy5nK0wINtNxSQq4Mjt1qYKlrY+e54AOrcELmFG39UKJG0SvtYkctim7mSXoQiBrZ+U5mR7CCsY8YPjA/z9588UEUk=
+	t=1718963023; cv=none; b=knwGz+vUxJHQDCxa3dADhsgaOT2m8tbF3GCHl2IqqgGSIqzSV6NGDN1Yg0vt+l9RHAbFjetaykJvsATy6vJ+wZ9cqRgYx41nJeMne3xS6bwfI/rl32DlJmCHuY59IfqhduYwrlePs1WPPQCONGV4XNRvQKiqRwLc/T2i9WuG01k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718963016; c=relaxed/simple;
-	bh=1qanX/q3WKZYHC6rEcONLtYsNe0oE006qtvSKCQMHI4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=so/jhRNRTYMZnJr15yE4MY0K21qAhmBjHLNzhR0kO5pUhXLxRA1qsMZzM1tNywp346mRAa50bNurRaQEJf/TsL/OUrdx37D6RwZtoudZhoF5p6uJ53NHmAqDp4BhA1r7wMKggQ9UPTnahd6IHURMerecb+W3z7EG4U1H11oHlT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8JvkVKm; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-48f350bcd89so158792137.2;
-        Fri, 21 Jun 2024 02:43:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718963013; x=1719567813; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jqLHgiTMJFtaX6sfG34bK9oM4kNpdFNFa/14p8/lD7w=;
-        b=J8JvkVKmJqDH3YzOvPolY/miMNjSUdFrSTPLjf+M8UFE2UYSEQIVK8xYFuZj+G+Bam
-         uJm2BDuGevBEjDGukYdjKuNpEi2adJggfqJOwVwaTrCIy2b5d1FKMS/wHwWLLArDSVi2
-         ohEqnL0JUrN2/ScYF3PLYKUtcF5kF1Lk1KSM9XBoRxW2+FvfW5NvT27iyg/Q+uN3gdd1
-         nemDtVQwZHraZxHDOPKbwqN/41osRrPUVDMOy+brPt64NGM9WFMmr2gD+NqA0lU6Qlck
-         KiOEn/oetnRt12V0kFdbwE59tHFDTI4fIzFwSmyyJacasrqO4bSKYBuxVtgJiJxp0z9X
-         TFQA==
+	s=arc-20240116; t=1718963023; c=relaxed/simple;
+	bh=dOu7TKpD65Qn91FhP+3ezNvvdaK37n0H64MukY+aZBs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KLajwQss8Enmb85bQNjvVMVJwKC/16Q6NefXAbXN25FzWp8w3RShvaKdS4xyiiy5g0HflGQbXQoo08EzfKDkgtcpdgwrHhhNFiuY661bfwDEgbxXr5mfJLXXk9rE90MKJ/F8raeBlQCGYFj8edoaDV26fHKxcqn/Z90NiLC+TKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b7Y1S1p1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718963020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dOu7TKpD65Qn91FhP+3ezNvvdaK37n0H64MukY+aZBs=;
+	b=b7Y1S1p1XVbYWH8ctHYtlnHSp0V79f9IijIBrSF5ZEdZjUHTRNeDvYWCKTGJ7TE6k5sAHE
+	GuMClD0vSTANc4R/66hU0bMmd3MbWTGEEZt+AnciFMckAE1X13lRyvlO8gna0ap5tSF1WR
+	jD/vOE7gZJQdBx9cOAwCUPZDNMeRXvA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-248-R4aNMhZzNj6QIRmLCf6_yQ-1; Fri, 21 Jun 2024 05:43:38 -0400
+X-MC-Unique: R4aNMhZzNj6QIRmLCf6_yQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36499139786so281923f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:43:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718963013; x=1719567813;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jqLHgiTMJFtaX6sfG34bK9oM4kNpdFNFa/14p8/lD7w=;
-        b=ODFXhwSEi+I6Zg7CLKNE2ruciRT/KqRB6i7WiCeXwuuKD5yf7YG7MbPpbjQxuuBnxK
-         M82qgr9mQmMj16sf6MXPZs+KzrES4wYoTboYZGspTQjqRqyBQK0Xy7oedhcRNZrytO0z
-         2i7MEhsMVO2XC4U5ryswbCMI50DVgRDkJgcOvLrZzOqLvAC2TxSUevsNc5U5YaIRUh4S
-         9l0+SX0uNQqAQ+rh/HvF5DlNw564U+MZg8U+1KwBPPSpRhEWAd2T3riHW6ql7CgVGtWO
-         sXY5D6qyiYnwm2o5C+vskIv7pXF32enxZIKLBThRAmgOFiQZ8if65ZUv+2xHn3HuHQhr
-         G5YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPzLDtKnKsJeFubI+3mpyYcJRLiJtH8Fqj/S9Ipw719ofzu+VkUi3oPBkV9MM/eDRuATOoZrSbDOi6gq/MbZp9k3pBNrqeocG+vQT3caJFhS+jundVlsfDwqfL6+fTPnkLkcJaSQaJIXNHPQg4
-X-Gm-Message-State: AOJu0YzrOHqFSbWk/rvAtMGNodCIkdM8GD4oqz1nK4p6v4bSmGhEtlZU
-	yCot5/1xx99FvfjO79B/d1CdkkElJpRnl6kCrRqo+zvy66CAR+Skyaw5+4PR8/4PzQlLADyITil
-	07c5Lbg1Qev2oVS8SVooBxNRhWEM=
-X-Google-Smtp-Source: AGHT+IFMAoId7SY6B8VMs2FjQVmw40Rm/hJ1bVJU21YbkSpCM+udbaveFI7IM5pfBccw7MCoooc+zgTiRHPq4fDpT5g=
-X-Received: by 2002:a05:6102:3595:b0:48d:b0c5:7fe4 with SMTP id
- ada2fe7eead31-48f130e4323mr9965440137.29.1718963013554; Fri, 21 Jun 2024
- 02:43:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718963017; x=1719567817;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dOu7TKpD65Qn91FhP+3ezNvvdaK37n0H64MukY+aZBs=;
+        b=nTf4F1iSGVouupnHu+obdzFfcC20csUq8NXzvujLlwMiTZ2BV3nJZpiSxh2D3/s7yG
+         YIB7UVD2kTOwsPasHKXq2z4rqk+tCKTBdlYtD73yraYV07IV4i07FvJzQCthrwc9DnRf
+         X3FjzQJhHwt7vjdsYdp8bCNMQroVENz2sCgwL0iOKklwmjiJVi0ORhKNPXZ2Ixqpa2dZ
+         3HxXKNSkAOfVMnxvPZGshvU4CJKHpRlc5H8ZJNIJdf8q/BA3iJmAyh69KAcz6bKywB5R
+         Bmc113jmTV87Zdi8lY4PPFFb7L7m6t5SkhE9Wn0cRlWHFGz95WF8CO6gom+oNwtTyiC6
+         f2mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEmqsRT7Qxa9bduLnBWQtPjhNNp8kqyovzhp3LM5K0uhUMylHjQ1AmDo1Bj5CZGpVAITvDME2UxFq3TafQm2iGmYRblQPCfvd3C15Z
+X-Gm-Message-State: AOJu0YxaYh3mSVv8KOIa6zkbeLOiwmIqcEHSk2Mqor3q67nTHD1u1Ucn
+	oGRXU/+hPgbqfIIcItK8mqTlp0pHOeOfmgyI/c163L15dG+BZ3T+8ByGT+8vh8zj9jh0zYv/7kr
+	9s877TplRzKAAczTiwiz3/lOIJr1mVQZYLI2dftwsvADfSQrMg3BXf/3nOYFxcg==
+X-Received: by 2002:a05:600c:1c8b:b0:423:146b:36f8 with SMTP id 5b1f17b1804b1-42478e41349mr46698935e9.4.1718963017057;
+        Fri, 21 Jun 2024 02:43:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZy81YPJtm/RjjImN0bEGbtNnfnO0rKFhNc/jBgxq3caLP+I9REwIpO9tZ1V0UMa7wvG04DA==
+X-Received: by 2002:a05:600c:1c8b:b0:423:146b:36f8 with SMTP id 5b1f17b1804b1-42478e41349mr46698725e9.4.1718963016540;
+        Fri, 21 Jun 2024 02:43:36 -0700 (PDT)
+Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a99fbsm19971705e9.16.2024.06.21.02.43.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 02:43:36 -0700 (PDT)
+Message-ID: <a43dc0512194042d762bf5bb5f1396d41fef5bce.camel@redhat.com>
+Subject: Re: [PATCH v2 07/10] rust: add `io::Io` base type
+From: Philipp Stanner <pstanner@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@redhat.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org, 
+ alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+ gary@garyguo.net,  bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com,  aliceryhl@google.com, airlied@gmail.com,
+ fujita.tomonori@gmail.com,  lina@asahilina.net, ajanulgu@redhat.com,
+ lyude@redhat.com, robh@kernel.org,  daniel.almeida@collabora.com,
+ rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org
+Date: Fri, 21 Jun 2024 11:43:34 +0200
+In-Reply-To: <2024062040-wannabe-composer-91bc@gregkh>
+References: <20240618234025.15036-1-dakr@redhat.com>
+	 <20240618234025.15036-8-dakr@redhat.com>
+	 <2024062040-wannabe-composer-91bc@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620002648.75204-1-21cnbao@gmail.com> <f3c18806-34ac-41d3-8c79-d7dd6504547e@arm.com>
- <d0b20f47-384d-49f1-8449-0da6da11089c@redhat.com> <b99c2f80-3b53-4b04-b610-a66179b928a9@arm.com>
- <CAGsJ_4y_pjMpNOFzrPZ6u7=M83-CQ0umDCPt=ZDuSKJWssiCqA@mail.gmail.com> <87cyoa1wgm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87cyoa1wgm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 21 Jun 2024 21:43:20 +1200
-Message-ID: <CAGsJ_4xX52FKG+o7vsjAwBLjvfPH=tg_36xqjCnwc5yGV=SaVg@mail.gmail.com>
-Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
- entry allocation for thp_swapout
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, 
-	shuah@kernel.org, linux-mm@kvack.org, chrisl@kernel.org, hughd@google.com, 
-	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 9:24=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
->
-> Barry Song <21cnbao@gmail.com> writes:
->
-> > On Fri, Jun 21, 2024 at 7:25=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.=
-com> wrote:
-> >>
-> >> On 20/06/2024 12:34, David Hildenbrand wrote:
-> >> > On 20.06.24 11:04, Ryan Roberts wrote:
-> >> >> On 20/06/2024 01:26, Barry Song wrote:
-> >> >>> From: Barry Song <v-songbaohua@oppo.com>
-> >> >>>
-> >> >>> Both Ryan and Chris have been utilizing the small test program to =
-aid
-> >> >>> in debugging and identifying issues with swap entry allocation. Wh=
-ile
-> >> >>> a real or intricate workload might be more suitable for assessing =
-the
-> >> >>> correctness and effectiveness of the swap allocation policy, a sma=
-ll
-> >> >>> test program presents a simpler means of understanding the problem=
- and
-> >> >>> initially verifying the improvements being made.
-> >> >>>
-> >> >>> Let's endeavor to integrate it into the self-test suite. Although =
-it
-> >> >>> presently only accommodates 64KB and 4KB, I'm optimistic that we c=
-an
-> >> >>> expand its capabilities to support multiple sizes and simulate mor=
-e
-> >> >>> complex systems in the future as required.
-> >> >>
-> >> >> I'll try to summarize the thread with Huang Ying by suggesting this=
- test program
-> >> >> is "neccessary but not sufficient" to exhaustively test the mTHP sw=
-ap-out path.
-> >> >> I've certainly found it useful and think it would be a valuable add=
-ition to the
-> >> >> tree.
-> >> >>
-> >> >> That said, I'm not convinced it is a selftest; IMO a selftest shoul=
-d provide a
-> >> >> clear pass/fail result against some criteria and must be able to be=
- run
-> >> >> automatically by (e.g.) a CI system.
-> >> >
-> >> > Likely we should then consider moving other such performance-related=
- thingies
-> >> > out of the selftests?
-> >>
-> >> Yes, that would get my vote. But of the 4 tests you mentioned that use
-> >> clock_gettime(), it looks like transhuge-stress is the only one that d=
-oesn't
-> >> have a pass/fail result, so is probably the only candidate for moving.
-> >>
-> >> The others either use the times as a timeout and determines failure if=
- the
-> >> action didn't occur within the timeout (e.g. ksm_tests.c) or use it to=
- add some
-> >> supplemental performance information to an otherwise functionality-ori=
-ented test.
-> >
-> > Thank you very much, Ryan. I think you've found a better home for this
-> > tool . I will
-> > send v2, relocating it to tools/mm and adding a function to swap in
-> > either the whole
-> > mTHPs or a portion of mTHPs by "-a"(aligned swapin).
-> >
-> > So basically, we will have
-> >
-> > 1. Use MADV_PAGEPUT for rapid swap-out, putting the swap allocation cod=
-e under
-> > high exercise in a short time.
-> >
-> > 2. Use MADV_DONTNEED to simulate the behavior of libc and Java heap in =
-freeing
-> > memory, as well as for munmap, app exits, or OOM killer scenarios. This=
- ensures
-> > new mTHP is always generated, released or swapped out, similar to the b=
-ehavior
-> > on a PC or Android phone where many applications are frequently started=
- and
-> > terminated.
->
-> MADV_DONTNEED 64KB memory, then memset() it, this just simulates the
-> large folio swap-in exactly, which hasn't been merged by upstream.  I
-> don't think that it's a good idea to make such kind of trick.
+On Thu, 2024-06-20 at 16:53 +0200, Greg KH wrote:
+> On Wed, Jun 19, 2024 at 01:39:53AM +0200, Danilo Krummrich wrote:
+> > I/O memory is typically either mapped through direct calls to
+> > ioremap()
+> > or subsystem / bus specific ones such as pci_iomap().
+> >=20
+> > Even though subsystem / bus specific functions to map I/O memory
+> > are
+> > based on ioremap() / iounmap() it is not desirable to re-implement
+> > them
+> > in Rust.
+>=20
+> Why not?
 
-I disagree. This is how userspace heaps can manage memory deallocation.
-Additionally, in the event of an application exit, munmap, or OOM killer, t=
-he
-amount of freed memory can be much larger than 64KB. The primary purpose
-of using MADV_DONTNEED is to release anonymous memory and generate
-new mTHP so that the iteration can continue. Otherwise, the test program
-becomes entirely pointless, as we only have large folios at the beginning.
-That is exactly why Chris has failed to find his bugs by using other small
-programs.
+Because you'd then up reimplementing all that logic that the C code
+already provides. In the worst case that could lead to you effectively
+reimplemting the subsystem instead of wrapping it. And that's obviously
+uncool because you'd then have two of them (besides, the community in
+general rightfully pushes back against reimplementing stuff; see the
+attempts to provide redundant Rust drivers in the past).
 
-On the other hand, we definitely want large folios swap-in, otherwise, mTHP
-is just a toy to Android or similar system where more than 2/3 memory could
-be in swap. We do NOT want single-use mTHP.
+The C code already takes care of figuring out region ranges and all
+that, and it's battle hardened.
 
->
-> > 3. Swap in with or without the "-a" option to observe how fragments
-> > due to swap-in
-> > and the incoming swap-in of large folios will impact swap-out fallback.
->
-> It's good to create fragmentation with swap-in.  Which is more practical
-> and future-proof.  And, I believe that we can reduce large folio
-> swap-out fallback rate without the large folio swap-in trick.
->
-> > And many thanks to Chris for the suggestion on improving it within
-> > selftest, though I
-> > prefer to place it in tools/mm.
->
-> --
-> Best Regards,
-> Huang, Ying
+The main point of Rust is to make things safer; so if that can be
+achieved without rewrite, as is the case with the presented container
+solution, that's the way to go.
 
-Thanks
-Barry
+>=20
+> > Instead, implement a base type for I/O mapped memory, which
+> > generically
+> > provides the corresponding accessors, such as `Io::readb` or
+> > `Io:try_readb`.
+>=20
+> It provides a subset of the existing accessors, one you might want to
+> trim down for now, see below...
+>=20
+> > +/* io.h */
+> > +u8 rust_helper_readb(const volatile void __iomem *addr)
+> > +{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return readb(addr);
+> > +}
+> > +EXPORT_SYMBOL_GPL(rust_helper_readb);
+>=20
+> <snip>
+>=20
+> You provide wrappers for a subset of what io.h provides, why that
+> specific subset?
+>=20
+> Why not just add what you need, when you need it?=C2=A0 I doubt you need
+> all
+> of these, and odds are you will need more.
+>=20
+
+That was written by me as a first play set to test. Nova itself
+currently reads only 8 byte from a PCI BAR, so we could indeed drop
+everything but readq() for now and add things subsequently later, as
+you suggest.
+
+
+
+> > +u32 rust_helper_readl_relaxed(const volatile void __iomem *addr)
+> > +{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return readl_relaxed(addr);
+> > +}
+> > +EXPORT_SYMBOL_GPL(rust_helper_readl_relaxed);
+>=20
+> I know everyone complains about wrapper functions around inline
+> functions, so I'll just say it again, this is horrid.=C2=A0 And it's goin=
+g
+> to
+> hurt performance, so any rust code people write is not on a level
+> playing field here.
+>=20
+> Your call, but ick...
+
+Well, can anyone think of another way to do it?
+
+>=20
+> > +#ifdef CONFIG_64BIT
+> > +u64 rust_helper_readq_relaxed(const volatile void __iomem *addr)
+> > +{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return readq_relaxed(addr);
+> > +}
+> > +EXPORT_SYMBOL_GPL(rust_helper_readq_relaxed);
+> > +#endif
+>=20
+> Rust works on 32bit targets in the kernel now?
+
+Ahm, afaik not. That's some relic. Let's address that with your subset
+comment from above.
+
+>=20
+> > +macro_rules! define_read {
+> > +=C2=A0=C2=A0=C2=A0 ($(#[$attr:meta])* $name:ident, $try_name:ident,
+> > $type_name:ty) =3D> {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /// Read IO data from a giv=
+en offset known at compile
+> > time.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ///
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /// Bound checks are perfor=
+med on compile time, hence if
+> > the offset is not known at compile
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /// time, the build will fa=
+il.
+>=20
+> offsets aren't know at compile time for many implementations, as it
+> could be a dynamically allocated memory range.=C2=A0 How is this going to
+> work for that?=C2=A0 Heck, how does this work for DT-defined memory range=
+s
+> today?
+
+The macro below will take care of those where it's only knowable at
+runtime I think.
+
+Rust has this feature (called "const generic") that can be used for
+APIs where ranges which are known at compile time, so the compiler can
+check all the parameters at that point. That has been judged to be
+positive because errors with the range handling become visible before
+the kernel runs and because it gives some performance advantages.
+
+
+P.
+
+>=20
+> thanks,
+>=20
+> greg k-h
+>=20
+
 
