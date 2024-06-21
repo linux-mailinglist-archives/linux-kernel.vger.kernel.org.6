@@ -1,274 +1,102 @@
-Return-Path: <linux-kernel+bounces-224844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66D491278B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:21:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 828B091277B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C5ED28BB5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:21:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B40E61C25208
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4ED9383A2;
-	Fri, 21 Jun 2024 14:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A6D2C6BB;
+	Fri, 21 Jun 2024 14:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOaPYgKY"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DP61nD8c"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507E42C1AC
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AA428DC1
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718979677; cv=none; b=Ft6e+DkVP4zp7BoYAYSXTk954QgUcYmNe+dIbX2bdnfpzfIBXuZQEJCvxzPVEkfseXZr/YTBDZdvBPAKl68SxJffg8t+SA8/Tw+3dQRyGEw30NlbBoDgd47SZXlr544avDLt+Cyp8rv1gW9K92RbOo8sRdMjMxAUi63J7Y7MNms=
+	t=1718979670; cv=none; b=KO5F/XTZhIggB65g9sm4o1kTWbRfrGmUIP9OdazssRVOMolIXrQQ9C4+Q+hSHO1h/KsDe7wUwF+vowFJBsy3v9Qd3K9CwOjNIGtCCcVPq/oG3aP0yfhwUiixunvybV61Wn7V/rfi9jOpCMpgBprdV3I7/na/Ga1peuL7NgL9tYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718979677; c=relaxed/simple;
-	bh=6BHMiMoKVlkooZFbv08vvmarKLf4j1ryhKjpdh7OWlY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jXZsmxq1R9VfjXqgfYpbCkBWWgUskkbGJu2FIk65WwiSoFbYdqYTNlt9cUBQwvvkyz44FkaPOLCzkBl7bmJNUx7aWbPuXof2Zql5s/TiXGzBlq29fdNfdK7wEbEpwJIaz7CPUFEeq2RYBKRIte2lwJqkVPesG+t+JhUxwfl0Otc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOaPYgKY; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b4fc2b5277so8244136d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:21:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718979675; x=1719584475; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MjXMle0rO8XpaOjdtO6Igck9jzTHjsyq0tjq0iKq+6k=;
-        b=MOaPYgKYFc+cdxDRiQLsuoRSK0NRXa5G+lX0C9sZZHOMTTjL3US+5ZIUN471AM7jR0
-         /Fr4FAkDdwP5eQRJO/8xhCFw0aRFVVgMGCfJ/dLVWg6pEVUpk7cdKC7NNLFnFjwg8zSR
-         fowNkbJIeHK0zq+aGCxPJfMlvPyZbDXv+lMK5NSQ0my9tRxyCO0ihh2X6T9NiiN8AsCP
-         SvctC0a/BxTmjbdZXFn/aEW+4a46kJvM+QFnCmSg6MerCHhPuhV9K6pzMZLIDOyW4fDQ
-         U7SigSG/pYiY1HkoZtEPpDpoKJGQwBrrtLEtJ90URcJYYNyl4xoXccU//BqJpEgb3H4j
-         K7Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718979675; x=1719584475;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MjXMle0rO8XpaOjdtO6Igck9jzTHjsyq0tjq0iKq+6k=;
-        b=Pc3xEcDFF7WEhrIIXCZK+bW+UFuXiIvy1tDiTgkFs+x3UIB9MJ9Vq06GWMeZaVWgct
-         JxWxUjd111tTUV8U/9tf4Ri3tiYk1KlU0r+pfuOsGgHbMpgtzFYLM/pcxZ+tVfHHvWLz
-         vj5czporXrl0Ji55yAwOFwGKv5Wyrz10nKhWg03PotD2US7M5/OILi2xIGBNtYmHmSui
-         btaRIRFHQyVA5RNIhNyEJ3FUe7U7sPx+AENUheW5jnyY56fngE/XO+W1zVLX6BGXFSKl
-         2EBZ3at50i/J0zOq4BqnrljKjm5x8eWhj1OHO2rf7e3MNz+r0yVi8SEVw8SdR3+clmH+
-         HGNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNPw6EiFuTp1/mzze8GxBbJf3B9bYLldwr8JnL0BmTJEVJRkDGYpBxwdYVaCZ0da0iz3wpUwwLod7r3zsLrhblKbpnxBCi1p1xntpl
-X-Gm-Message-State: AOJu0YzGPIDq+cSmg8qStHWYnJR9ObKPMKsXBa0gdT7ltqD2CTZnDhIP
-	0A0IyO/5l+HgR+fSxV7o52urT34sgcb4CkWMxbulQPxCRmTQOdma
-X-Google-Smtp-Source: AGHT+IHTsm5qtIMJT3X14t/FfwytBP6BI2xShJWE3XRYqnh+pQytGVZUlvy0RxH7ZCq8cqLXQDvjJw==
-X-Received: by 2002:ad4:5cc2:0:b0:6b2:a333:2abf with SMTP id 6a1803df08f44-6b50d8e18d8mr83165976d6.51.1718979675153;
-        Fri, 21 Jun 2024 07:21:15 -0700 (PDT)
-Received: from localhost.localdomain ([142.198.217.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ef312b3sm9164736d6.88.2024.06.21.07.21.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 07:21:14 -0700 (PDT)
-From: Wu Hoi Pok <wuhoipok@gmail.com>
-To: 
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Wu Hoi Pok <wuhoipok@gmail.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 7/7] drm/radeon: rdev->ddev to rdev_to_drm(rdev) 6
-Date: Fri, 21 Jun 2024 10:20:49 -0400
-Message-ID: <20240621142052.20152-1-wuhoipok@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718979670; c=relaxed/simple;
+	bh=gIsAYvc7V06aARwVwNxvDtx9375NHja9zxf8RAiawlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXt4yy+l7rEMdRFxA0P6lLCWYyOOqTAKvSOqogTON4Grvi1cib8t6d4qhzRT/4JcpCQFCGNvI+BnYZ9uDPWSZd+BiX9vWVDnQ+N9K+xrO+lbN/GN0/WSlDSqiBIV+GPSTabnl4y52yyS4nuYqru0g3HjQBip1JFAvNi0rVN67/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DP61nD8c; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: bigeasy@linutronix.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718979663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mDg/bErLUvNLFGhkln1hOOoZ0QemIVkLLqNOX1eZjvc=;
+	b=DP61nD8cD+WMlBNVxN5rxuw+H7kQ6yW/DOZv+JW6Z9j1S9s4E2wRynhrjNxyzEYG8hbvz9
+	y6k8bd5jMefXElAlou8muA3XDqhOJSvy8rWQugQQXYi+8KlzLcW+ozHOccy2uDvWiqYG+f
+	kP6YzLaOH6z/vUFTQsRH+q8gwNTWyRc=
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: bsegall@google.com
+X-Envelope-To: bristot@redhat.com
+X-Envelope-To: dietmar.eggemann@arm.com
+X-Envelope-To: mingo@redhat.com
+X-Envelope-To: juri.lelli@redhat.com
+X-Envelope-To: klarasmodin@gmail.com
+X-Envelope-To: mgorman@suse.de
+X-Envelope-To: peterz@infradead.org
+X-Envelope-To: rostedt@goodmis.org
+X-Envelope-To: surenb@google.com
+X-Envelope-To: tglx@linutronix.de
+X-Envelope-To: vschneid@redhat.com
+X-Envelope-To: vincent.guittot@linaro.org
+Date: Fri, 21 Jun 2024 10:20:58 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Ben Segall <bsegall@google.com>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Klara Modin <klarasmodin@gmail.com>, Mel Gorman <mgorman@suse.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH] sched/task_struct: Move alloc_tag to the end of the
+ struct.
+Message-ID: <7zretxxixkpfxt6lr7x64n67ql2v2qpb7abbbjklclwlu4u2kx@22o5sdlnpkea>
+References: <20240621102750.oH9p1FQq@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621102750.oH9p1FQq@linutronix.de>
+X-Migadu-Flow: FLOW_OUT
 
-Please see Patch v2 1/7 for details.
+On Fri, Jun 21, 2024 at 12:27:50PM +0200, Sebastian Andrzej Siewior wrote:
+> The alloc_tag member has been added to task_struct at the very
+> beginning. This is a pointer and on 64bit architectures it forces 4 byte
+> padding after `ptrace' and then forcing another another 4 byte padding
+> after `on_cpu'. A few members later, `se' requires a cacheline aligned
+> due to struct sched_avg resulting in 52 hole before `se'.
+> 
+> This is the case on 64bit-SMP architectures.
+> The 52 byte hole can be avoided by moving alloc_tag away where it
+> currently resides.
+> 
+> Move alloc_tag to the end of task_struct. There is likely a hole before
+> `thread' due to its alignment requirement and the previous members are
+> likely to be already pointer-aligned.
 
-Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
----
- drivers/gpu/drm/radeon/rs400.c |  6 +++---
- drivers/gpu/drm/radeon/rs600.c | 14 +++++++-------
- drivers/gpu/drm/radeon/rs690.c |  2 +-
- drivers/gpu/drm/radeon/rv515.c |  4 ++--
- drivers/gpu/drm/radeon/rv770.c |  2 +-
- drivers/gpu/drm/radeon/si.c    |  4 ++--
- 6 files changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpu/drm/radeon/rs400.c b/drivers/gpu/drm/radeon/rs400.c
-index d4d1501e6576..d6c18fd740ec 100644
---- a/drivers/gpu/drm/radeon/rs400.c
-+++ b/drivers/gpu/drm/radeon/rs400.c
-@@ -379,7 +379,7 @@ DEFINE_SHOW_ATTRIBUTE(rs400_debugfs_gart_info);
- static void rs400_debugfs_pcie_gart_info_init(struct radeon_device *rdev)
- {
- #if defined(CONFIG_DEBUG_FS)
--	struct dentry *root = rdev->ddev->primary->debugfs_root;
-+	struct dentry *root = rdev_to_drm(rdev)->primary->debugfs_root;
- 
- 	debugfs_create_file("rs400_gart_info", 0444, root, rdev,
- 			    &rs400_debugfs_gart_info_fops);
-@@ -474,7 +474,7 @@ int rs400_resume(struct radeon_device *rdev)
- 			RREG32(R_0007C0_CP_STAT));
- 	}
- 	/* post */
--	radeon_combios_asic_init(rdev->ddev);
-+	radeon_combios_asic_init(rdev_to_drm(rdev));
- 	/* Resume clock after posting */
- 	r300_clock_startup(rdev);
- 	/* Initialize surface registers */
-@@ -552,7 +552,7 @@ int rs400_init(struct radeon_device *rdev)
- 		return -EINVAL;
- 
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 	/* initialize memory controller */
- 	rs400_mc_init(rdev);
- 	/* Fence driver */
-diff --git a/drivers/gpu/drm/radeon/rs600.c b/drivers/gpu/drm/radeon/rs600.c
-index 5c162778899b..88c8e91ea651 100644
---- a/drivers/gpu/drm/radeon/rs600.c
-+++ b/drivers/gpu/drm/radeon/rs600.c
-@@ -321,7 +321,7 @@ void rs600_pm_misc(struct radeon_device *rdev)
- 
- void rs600_pm_prepare(struct radeon_device *rdev)
- {
--	struct drm_device *ddev = rdev->ddev;
-+	struct drm_device *ddev = rdev_to_drm(rdev);
- 	struct drm_crtc *crtc;
- 	struct radeon_crtc *radeon_crtc;
- 	u32 tmp;
-@@ -339,7 +339,7 @@ void rs600_pm_prepare(struct radeon_device *rdev)
- 
- void rs600_pm_finish(struct radeon_device *rdev)
- {
--	struct drm_device *ddev = rdev->ddev;
-+	struct drm_device *ddev = rdev_to_drm(rdev);
- 	struct drm_crtc *crtc;
- 	struct radeon_crtc *radeon_crtc;
- 	u32 tmp;
-@@ -408,7 +408,7 @@ void rs600_hpd_set_polarity(struct radeon_device *rdev,
- 
- void rs600_hpd_init(struct radeon_device *rdev)
- {
--	struct drm_device *dev = rdev->ddev;
-+	struct drm_device *dev = rdev_to_drm(rdev);
- 	struct drm_connector *connector;
- 	unsigned enable = 0;
- 
-@@ -435,7 +435,7 @@ void rs600_hpd_init(struct radeon_device *rdev)
- 
- void rs600_hpd_fini(struct radeon_device *rdev)
- {
--	struct drm_device *dev = rdev->ddev;
-+	struct drm_device *dev = rdev_to_drm(rdev);
- 	struct drm_connector *connector;
- 	unsigned disable = 0;
- 
-@@ -797,7 +797,7 @@ int rs600_irq_process(struct radeon_device *rdev)
- 		/* Vertical blank interrupts */
- 		if (G_007EDC_LB_D1_VBLANK_INTERRUPT(rdev->irq.stat_regs.r500.disp_int)) {
- 			if (rdev->irq.crtc_vblank_int[0]) {
--				drm_handle_vblank(rdev->ddev, 0);
-+				drm_handle_vblank(rdev_to_drm(rdev), 0);
- 				rdev->pm.vblank_sync = true;
- 				wake_up(&rdev->irq.vblank_queue);
- 			}
-@@ -806,7 +806,7 @@ int rs600_irq_process(struct radeon_device *rdev)
- 		}
- 		if (G_007EDC_LB_D2_VBLANK_INTERRUPT(rdev->irq.stat_regs.r500.disp_int)) {
- 			if (rdev->irq.crtc_vblank_int[1]) {
--				drm_handle_vblank(rdev->ddev, 1);
-+				drm_handle_vblank(rdev_to_drm(rdev), 1);
- 				rdev->pm.vblank_sync = true;
- 				wake_up(&rdev->irq.vblank_queue);
- 			}
-@@ -1133,7 +1133,7 @@ int rs600_init(struct radeon_device *rdev)
- 		return -EINVAL;
- 
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 	/* initialize memory controller */
- 	rs600_mc_init(rdev);
- 	r100_debugfs_rbbm_init(rdev);
-diff --git a/drivers/gpu/drm/radeon/rs690.c b/drivers/gpu/drm/radeon/rs690.c
-index 14fb0819b8c1..016eb4992803 100644
---- a/drivers/gpu/drm/radeon/rs690.c
-+++ b/drivers/gpu/drm/radeon/rs690.c
-@@ -845,7 +845,7 @@ int rs690_init(struct radeon_device *rdev)
- 		return -EINVAL;
- 
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 	/* initialize memory controller */
- 	rs690_mc_init(rdev);
- 	rv515_debugfs(rdev);
-diff --git a/drivers/gpu/drm/radeon/rv515.c b/drivers/gpu/drm/radeon/rv515.c
-index bbc6ccabf788..1b4dfb645585 100644
---- a/drivers/gpu/drm/radeon/rv515.c
-+++ b/drivers/gpu/drm/radeon/rv515.c
-@@ -255,7 +255,7 @@ DEFINE_SHOW_ATTRIBUTE(rv515_debugfs_ga_info);
- void rv515_debugfs(struct radeon_device *rdev)
- {
- #if defined(CONFIG_DEBUG_FS)
--	struct dentry *root = rdev->ddev->primary->debugfs_root;
-+	struct dentry *root = rdev_to_drm(rdev)->primary->debugfs_root;
- 
- 	debugfs_create_file("rv515_pipes_info", 0444, root, rdev,
- 			    &rv515_debugfs_pipes_info_fops);
-@@ -636,7 +636,7 @@ int rv515_init(struct radeon_device *rdev)
- 	if (radeon_boot_test_post_card(rdev) == false)
- 		return -EINVAL;
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 	/* initialize AGP */
- 	if (rdev->flags & RADEON_IS_AGP) {
- 		r = radeon_agp_init(rdev);
-diff --git a/drivers/gpu/drm/radeon/rv770.c b/drivers/gpu/drm/radeon/rv770.c
-index 9ce12fa3c356..7d4b0bf59109 100644
---- a/drivers/gpu/drm/radeon/rv770.c
-+++ b/drivers/gpu/drm/radeon/rv770.c
-@@ -1935,7 +1935,7 @@ int rv770_init(struct radeon_device *rdev)
- 	/* Initialize surface registers */
- 	radeon_surface_init(rdev);
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 	/* Fence driver */
- 	radeon_fence_driver_init(rdev);
- 	/* initialize AGP */
-diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
-index 15759c8ca5b7..6c95575ce109 100644
---- a/drivers/gpu/drm/radeon/si.c
-+++ b/drivers/gpu/drm/radeon/si.c
-@@ -6277,7 +6277,7 @@ int si_irq_process(struct radeon_device *rdev)
- 				event_name = "vblank";
- 
- 				if (rdev->irq.crtc_vblank_int[crtc_idx]) {
--					drm_handle_vblank(rdev->ddev, crtc_idx);
-+					drm_handle_vblank(rdev_to_drm(rdev), crtc_idx);
- 					rdev->pm.vblank_sync = true;
- 					wake_up(&rdev->irq.vblank_queue);
- 				}
-@@ -6839,7 +6839,7 @@ int si_init(struct radeon_device *rdev)
- 	/* Initialize surface registers */
- 	radeon_surface_init(rdev);
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 
- 	/* Fence driver */
- 	radeon_fence_driver_init(rdev);
--- 
-2.45.2
-
+We sure we want it at the end? we do want it on a hot cacheline
 
