@@ -1,470 +1,115 @@
-Return-Path: <linux-kernel+bounces-224780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733309126CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:40:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E389126D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29F81F26F58
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:40:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF679289578
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72D1B65E;
-	Fri, 21 Jun 2024 13:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5EAEAC8;
+	Fri, 21 Jun 2024 13:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFWEwid5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H6eVmksC"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7318979D8;
-	Fri, 21 Jun 2024 13:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BDA8C1E;
+	Fri, 21 Jun 2024 13:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718977225; cv=none; b=Aanopwt6SxZ1z6JHrieGaILol3a63bmNVxLD3yCvq0suIYGr+AV6pZgyNyp7ZDZi1V+jzbDkeHCDi2PCx+TzhoAiYRsYfxijnmW10p5yycAdGVDOObEJ9KdtjCJdIJ9h57MTxtkhp9Uk178jT/nL/JwTCAhXuQsiC1k7IBDR4Xo=
+	t=1718977236; cv=none; b=LEts7f/Mb39Ni71Qp/IL/oZ/Y4ZZX6Jv21zmf0m8zrrAqwUasXxc4rZd0PSlIePIiuYFocK/Gsam6YaXUwhYTGg94wBzldDJrbtl4OMKoUeQBR5o6d0tY5vsTk8xVk5SQO2pScOXuwWdE+26lWFFmdA821TthqbzslI552y5/jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718977225; c=relaxed/simple;
-	bh=fOM9ylRhcgz7ECY4ZWBxL26DxUUgMk2Ed4FUd7Ji+6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UZeB6yVDZ5KJ9vBTomCxx/qWbkvCDv7TJ7SJNCm7X6Esz6tTzABML7hEdW/PJQUUEtzMo8JmtwpNY8P1sswRh1eajednpn5BBrv/D0R6+1P8qSZdh8Ft+woa1Ab06Xigz8Yw1A0MaDybP3C8J84dbqbEdt+ylNhcGUY4DTt9HPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFWEwid5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D28AC2BBFC;
-	Fri, 21 Jun 2024 13:40:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718977225;
-	bh=fOM9ylRhcgz7ECY4ZWBxL26DxUUgMk2Ed4FUd7Ji+6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mFWEwid5hPzLHOOsv6GRlXK77oTJTmYrJ+9RYGaGj27q9SUUEFK91cNe1FmlNF/KO
-	 yTeYnA+VyXkvNXqHiB8InaMF+8NeszlOKHFEoTe8ujJvPy7BjGjJLnsoV2J34aLyPa
-	 Wp0+6yYfpSaPwd//HeQfFSkNYseTHKUznZIklu+u+wFJJQzLjNpfadlpOcAtqp7nnE
-	 mo4+YER6IPhNNnX1iQJzdlaugqSjihe0G+JMyRZxKrc1RYSKex+JE9X5aHJ5Qhp0VQ
-	 nqwnoyMoCbVX5T6cI/Y2OfD2ZQ+0MvgW4nNvIb81kWJ7zMrVrldbU81mqdr7Mu6JD+
-	 HwWVht1Xsm9zQ==
-Date: Fri, 21 Jun 2024 10:40:22 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] perf trace: Augment enum syscall arguments with
- BTF
-Message-ID: <ZnWCxgeFClpo2k3M@x1>
-References: <20240619082042.4173621-1-howardchu95@gmail.com>
- <20240619082042.4173621-3-howardchu95@gmail.com>
- <ZnLgstTgrFRYu0aD@x1>
- <CAH0uvohKGrfwApZXfJZaWx4LQgPXct+uQ_N7snmqSo4VeCxVUA@mail.gmail.com>
- <CAH0uvohxZ16MFCG2g3my48yUtp9AHAiAZCPAmkT5bDtNM6sGhg@mail.gmail.com>
- <CAH0uvohe2WssHZGYNyMCq=xpasXOYxaznRsGPe49iYQBME8_QQ@mail.gmail.com>
+	s=arc-20240116; t=1718977236; c=relaxed/simple;
+	bh=1pCCmT9VpDArttJzHDtZHFGh1LKBiui5mFNG1hrtDLs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u9C3YB+8HoANoamI/1o+TcQtb5LZAwOZ0xGywCVOproCb6956xLP0YvHWf58l+1K0Ub3AxC/laU/14O3v5hVZpR7NKnKR1OB8T/dsey7h2uvMOmcVl8WEIbAKcdtu6RLH2XhqNzQYY0OrNMpX2spc2v1Uj4FAt2SXYOLAPe39dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H6eVmksC; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so234868a12.1;
+        Fri, 21 Jun 2024 06:40:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718977233; x=1719582033; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HO8YbNgusDOc+w+m1b18tvlpjQ6nHTLOVFIcczCcZXE=;
+        b=H6eVmksCroy/2lzSUAEIGnAF/Wt00nQ4cq1ZpBdC1GUUWm4k9wGMI8RUsok5CEr/z3
+         VCapYvIrqgv2RCE5fvlfuIwReMn86YFWnDdz3wuPYVX4NLu26zat61kbM//nTwjEOU2W
+         SbvtVlHV1aM+4mvHDoytrowSU7rFAxjVjGe67A8UJZYjtXqgo+1QeH1Hj/cP2XO84/Gh
+         IkuLfzmuK8hleTDtr3LAHujrpcjjTejN9Q7xQnMzHPTvZ8gnqEAyX21MpVzcD2uswMTG
+         ka/Ox4BLILRBfOwdy24hrAEcVvKixuHPEx0l5zY32jB1kCzaNguTI3/jMIGF3pdRfwrG
+         TseA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718977233; x=1719582033;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HO8YbNgusDOc+w+m1b18tvlpjQ6nHTLOVFIcczCcZXE=;
+        b=Kn1OKpB5dwhr6GmBcU2NMigRWC/rhU9x/jATo9/S4hRTKHTxmH6p18g84QDZdPDvHq
+         kxbctfxWx44nfS7WSWbURjAIX1shywAG90WyN1YM1MvacSF+cpJB0/XTCWEs/ydKs/DZ
+         eTyYILqpYPM+KHEKEHfnfUzS3ov0b2e1OSHZK0MmBZiKvZZl3W4NzDOwm0Xbduo3HYHI
+         MD8oWEfkgi64lnEPmeuvsNsW7FMcOI37kXXdU6ih7BkGn/010yxzOmGCiHZ8RBTCgyXF
+         hoZGcV1b1uQPNMzcgIV2AWZsdtzD7BP6Eh/F/sbMeh+elkrfoktF0ELGms/0SJGpZM0C
+         9bOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWonTHCxgvr+yPxdJ1MKIsFwnxKIhD+cI0zeoZ8MqUjiO6JczbcyZDnmGf8YKmaMi6bmJo7V4kyzdEVzlQvi3hwp7rAp8Zwj/nehAx5
+X-Gm-Message-State: AOJu0Yyyy8AqROzIp5qm8orjOYLwOkHurgV6ud6BgkVfc3Um9FEjUZki
+	7aAVkH2eMOus3ver3FgX+MTYMThDJKdIFQEkmC3FvFMWS+vHRYp6gg2e
+X-Google-Smtp-Source: AGHT+IF80rrq09Pob3DPsGOTdKXgb+35KYXWIJaGBuqcU9+0ap2q4ps0fkqx4Pp0KMSYOl1t91xmdA==
+X-Received: by 2002:a50:9359:0:b0:57c:c41c:c0cd with SMTP id 4fb4d7f45d1cf-57d069af610mr5811498a12.4.1718977233052;
+        Fri, 21 Jun 2024 06:40:33 -0700 (PDT)
+Received: from U4.lan ([2a02:810b:f40:4600:1b6a:5399:9a4f:7217])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30562cb6sm962059a12.83.2024.06.21.06.40.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 06:40:32 -0700 (PDT)
+From: Alex Bee <knaerzche@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH 0/4] Add LBA3368 board
+Date: Fri, 21 Jun 2024 15:40:26 +0200
+Message-ID: <20240621134030.243646-1-knaerzche@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH0uvohe2WssHZGYNyMCq=xpasXOYxaznRsGPe49iYQBME8_QQ@mail.gmail.com>
 
-On Fri, Jun 21, 2024 at 03:16:26AM +0800, Howard Chu wrote:
-> Hello,
-> 
-> The fixes are on the perf-tools-next branch at:
-> https://github.com/Sberm/linux.git
-> 
-> please use
-> ```
-> git pull https://github.com/Sberm/linux.git perf-tools-next
-> ```
-> 
-> I'm no git expert so please tell me if something is wrong.
+This series aims to add support for RK3368 based LBA3368 industrial board
+form Neardi. The device tree currently only contains entries for which both
+bindings and linux driver exists and is expected to be exended in future.
 
-So, you combined everything into just one patch and there is no commit
-log message, I'll see if I can redo it from the last broken out patch
-series you submitted.
+NB: checkpatch throws me a warning that no venddor-prefix for "usb5e3"
+exists - which is true - but "usb5e3,610" has a valid binding.
 
-- Arnaldo
- 
-> P.S. not my proudest patch, changed too many things, might be buggy.
-> If there're bugs please let me know.
-> 
-> On Fri, Jun 21, 2024 at 12:34 AM Howard Chu <howardchu95@gmail.com> wrote:
-> >
-> > Hello Arnaldo,
-> >
-> > Thanks for the review, the code is refined based on your comments.
-> > There is just a little thing:
-> >
-> > On Thu, Jun 20, 2024 at 1:59 AM Howard Chu <howardchu95@gmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > Thanks for the in-depth review.
-> > >
-> > > On Wed, Jun 19, 2024 at 9:44 PM Arnaldo Carvalho de Melo
-> > > <acme@kernel.org> wrote:
-> > > >
-> > > > On Wed, Jun 19, 2024 at 04:20:39PM +0800, Howard Chu wrote:
-> > > > > This is a feature implemented on the basis of the previous bug fix
-> > > > > https://lore.kernel.org/linux-perf-users/d18a9606-ac9f-4ca7-afaf-fcf4c951cb90@web.de/T/#t
-> > > > >
-> > > > > In this patch, BTF is used to turn enum value to the corresponding
-> > > > > enum variable name. There is only one system call that uses enum value
-> > > > > as its argument, that is `landlock_add_rule()`.
-> > > > >
-> > > > > The vmlinux btf is loaded lazily, when user decided to trace the
-> > > > > `landlock_add_rule` syscall. But if one decides to run `perf trace`
-> > > > > without any arguments, the behaviour is to trace `landlock_add_rule`,
-> > > > > so vmlinux btf will be loaded by default.
-> > > > >
-> > > > > before:
-> > > > >
-> > > > > ```
-> > > > > perf $ ./perf trace -e landlock_add_rule
-> > > > >      0.000 ( 0.008 ms): ldlck-test/438194 landlock_add_rule(rule_type: 2)                                       = -1 EBADFD (File descriptor in bad state)
-> > > > >      0.010 ( 0.001 ms): ldlck-test/438194 landlock_add_rule(rule_type: 1)                                       = -1 EBADFD (File descriptor in bad state)
-> > > > > ```
-> > > > >
-> > > > > after:
-> > > > >
-> > > > > ```
-> > > > > perf $ ./perf trace -e landlock_add_rule
-> > > > >      0.000 ( 0.029 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_NET_PORT)                  = -1 EBADFD (File descriptor in bad state)
-> > > > >      0.036 ( 0.004 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_PATH_BENEATH)              = -1 EBADFD (File descriptor in bad state)
-> > > > > ```
-> > > > > Tested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > > > > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > > > > Reviewed-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > > > > Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> > > > > ---
-> > > > >  tools/perf/builtin-trace.c | 96 ++++++++++++++++++++++++++++++++++++--
-> > > > >  1 file changed, 91 insertions(+), 5 deletions(-)
-> > > > >
-> > > > > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> > > > > index c4fa8191253d..d93f34e9af74 100644
-> > > > > --- a/tools/perf/builtin-trace.c
-> > > > > +++ b/tools/perf/builtin-trace.c
-> > > > > @@ -19,6 +19,7 @@
-> > > > >  #ifdef HAVE_LIBBPF_SUPPORT
-> > > > >  #include <bpf/bpf.h>
-> > > > >  #include <bpf/libbpf.h>
-> > > > > +#include <bpf/btf.h>
-> > > > >  #ifdef HAVE_BPF_SKEL
-> > > > >  #include "bpf_skel/augmented_raw_syscalls.skel.h"
-> > > > >  #endif
-> > > > > @@ -110,6 +111,11 @@ struct syscall_arg_fmt {
-> > > > >       const char *name;
-> > > > >       u16        nr_entries; // for arrays
-> > > > >       bool       show_zero;
-> > > > > +     bool       is_enum;
-> > > > > +     struct {
-> > > > > +             void    *entries;
-> > > > > +             u16     nr_entries;
-> > > > > +     }          btf_entry;
-> > > > >  };
-> > > > >
-> > > > >  struct syscall_fmt {
-> > > > > @@ -140,6 +146,7 @@ struct trace {
-> > > > >  #ifdef HAVE_BPF_SKEL
-> > > > >       struct augmented_raw_syscalls_bpf *skel;
-> > > > >  #endif
-> > > > > +     struct btf              *btf;
-> > > > >       struct record_opts      opts;
-> > > > >       struct evlist   *evlist;
-> > > > >       struct machine          *host;
-> > > > > @@ -897,6 +904,56 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
-> > > > >           .strtoul    = STUL_STRARRAY_FLAGS, \
-> > > > >           .parm       = &strarray__##array, }
-> > > > >
-> > > > > +static int btf_enum_find_entry(struct btf *btf, char *type, struct syscall_arg_fmt *arg_fmt)
-> > > > > +{
-> > > > > +     const struct btf_type *bt;
-> > > > > +     char enum_prefix[][16] = { "enum", "const enum" }, *ep;
-> > > > > +     int id;
-> > > > > +     size_t i;
-> > > > > +
-> > > > > +     for (i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
-> > > > > +             ep = enum_prefix[i];
-> > > > > +             if (strlen(type) > strlen(ep) + 1 && strstarts(type, ep))
-> > > >
-> > > > No need for the strlen test? I.e. plain using strstarts() should be
-> > > > enough?
-> > >
-> > > Agree. Thanks for pointing that out. Although if string 'type' is
-> > > 'enum' and prefix is 'enum', strstarts() will be true, but to do 'type
-> > > += strlen(ep) + 1', and then access 'type', might give us an
-> > > out-of-range access, but I don't think 'type' will ever be just 'enum'
-> > > or 'const enum', so I'll delete it then.
-> > >
-> > > >
-> > > > > +                     type += strlen(ep) + 1;
-> > > > > +     }
-> > > > > +
-> > > > > +     id = btf__find_by_name(btf, type);
-> > > > > +     if (id < 0)
-> > > > > +             return -1;
-> > > > > +
-> > > > > +     bt = btf__type_by_id(btf, id);
-> > > > > +     if (bt == NULL)
-> > > >
-> > > > a pr_debug() stating that something that tracefs says should be in BTF
-> > > > and isn't found there seems to be of value here.
-> > >
-> > > Sure.
-> > >
-> > > >
-> > > > > +             return -1;
-> > > > > +
-> > > > > +     arg_fmt->btf_entry.entries    = btf_enum(bt);
-> > > > > +     arg_fmt->btf_entry.nr_entries = btf_vlen(bt);
-> > > > > +
-> > > > > +     return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static size_t btf_enum_scnprintf(char *bf, size_t size, int val, struct btf *btf, char *type,
-> > > > > +                              struct syscall_arg_fmt *arg_fmt)
-> > > > > +{
-> > > > > +     struct btf_enum *be;
-> > > > > +     int i;
-> > > > > +
-> > > > > +     /* if btf_entry is NULL, find and save it to arg_fmt */
-> > > > > +     if (arg_fmt->btf_entry.entries == NULL)
-> > > > > +             if (btf_enum_find_entry(btf, type, arg_fmt))
-> > > > > +                     return 0;
-> > > > > +
-> > > > > +     be = (struct btf_enum *)arg_fmt->btf_entry.entries;
-> > > >
-> > > >         struct btf_enum *be = (struct btf_enum *)arg_fmt->btf_entry.entries;
-> > > >
-> > > >  arg_fmt->btf_entry.entries is (void *), so we don't need the (struct
-> > > > btf_enum *) cast here, removing it makes the code more compact. And
-> > > > since we move the declaration to the same line, the info about its type
-> > > > is there as well.
-> > >
-> > > Sure, thanks.
-> > >
-> > > >
-> > > > > +
-> > > > > +     for (i = 0; i < arg_fmt->btf_entry.nr_entries; ++i, ++be) {
-> > > >
-> > > >
-> > > >         for (int i = 0; i < arg_fmt->btf_entry.nr_entries; ++i, ++be) {
-> >
-> > I did this, it's all good. But here:
-> >
-> > for (i = 0, be = arg_fmt->btf_entry.entries; i <
-> > arg_fmt->btf_entry.nr_entries; ++i, ++be) {
-> >
-> > I can't do
-> >
-> > for (int i = 0, struct btf_enum *be = arg_fmt->btf_entry.entries; i <
-> > arg_fmt->btf_entry.nr_entries; ++i, ++be) {
-> >
-> > The compiler will show errors:
-> >
-> > builtin-trace.c: In function ‘btf_enum_scnprintf’:
-> > builtin-trace.c:996:25: error: expected identifier or ‘(’ before ‘struct’
-> >   996 |         for (int i = 0, struct btf_enum *be =
-> > arg_fmt->btf_entry.entries; i < arg_fmt->btf_entry.nr_entries; ++i,
-> > ++be) {
-> >       |                         ^~~~~~
-> > builtin-trace.c:996:117: error: ‘be’ undeclared (first use in this
-> > function); did you mean ‘bf’?
-> >   996 |         for (int i = 0, struct btf_enum *be =
-> > arg_fmt->btf_entry.entries; i < arg_fmt->btf_entry.nr_entries; ++i,
-> > ++be) {
-> >       |
-> >                                                      ^~
-> >       |
-> >                                                      bf
-> > builtin-trace.c:996:117: note: each undeclared identifier is reported
-> > only once for each function it appears in
-> >
-> > This is not good either:
-> >
-> > for (int i = 0, be = arg_fmt->btf_entry.entries; i <
-> > arg_fmt->btf_entry.nr_entries; ++i, ++be) {
-> >
-> > builtin-trace.c: In function ‘btf_enum_scnprintf’:
-> > builtin-trace.c:998:25: error: declaration of ‘be’ shadows a previous
-> > local [-Werror=shadow]
-> >   998 |         for (int i = 0, be = arg_fmt->btf_entry.entries; i <
-> > arg_fmt->btf_entry.nr_entries; ++i, ++be) {
-> >       |                         ^~
-> > builtin-trace.c:991:26: note: shadowed declaration is here
-> >   991 |         struct btf_enum *be;
-> >       |                          ^~
-> > builtin-trace.c:998:30: error: initialization of ‘int’ from ‘void *’
-> > makes integer from pointer without a cast [-Wint-conversion]
-> >   998 |         for (int i = 0, be = arg_fmt->btf_entry.entries; i <
-> > arg_fmt->btf_entry.nr_entries; ++i, ++be) {
-> >       |                              ^~~~~~~
-> >
-> > But I can do:
-> >
-> > ```
-> > be = arg_fmt->btf_entry.entries;
-> >
-> > for (int i = 0; i < arg_fmt->btf_entry.nr_entries; ++i, ++be) {
-> > ```
-> >
-> > Thanks,
-> > Howard
-> >
-> >
-> > > >
-> > > > ⬢[acme@toolbox perf-tools-next]$ git grep 'for (int ' tools/perf/ | wc -l
-> > > > 99
-> > > > ⬢[acme@toolbox perf-tools-next]$
-> > > >
-> > > > Doing it this way makes the code more compact and is allowed even in
-> > > > kernel code since some time ago:
-> > >
-> > > Sure.
-> > >
-> > > >
-> > > > ⬢[acme@toolbox perf-tools-next]$ git grep 'for (int ' drivers/ | wc -l
-> > > > 294
-> > > > ⬢[acme@toolbox perf-tools-next]$ git grep 'for (int ' kernel/ | wc -l
-> > > > 12
-> > > > ⬢[acme@toolbox perf-tools-next]$ git grep 'for (int ' net/ | wc -l
-> > > > 3
-> > > > ⬢[acme@toolbox perf-tools-next]$ git grep 'for (int ' mm/ | wc -l
-> > > > 21
-> > > > ⬢[acme@toolbox perf-tools-next]$
-> > > >
-> > > > > +             if (be->val == val) {
-> > > > > +                     return scnprintf(bf, size, "%s",
-> > > > > +                                      btf__name_by_offset(btf, be->name_off));
-> > > > > +             }
-> > > > > +     }
-> > > > > +
-> > > > > +     return 0;
-> > > > > +}
-> > > > > +
-> > > > >  #include "trace/beauty/arch_errno_names.c"
-> > > > >  #include "trace/beauty/eventfd.c"
-> > > > >  #include "trace/beauty/futex_op.c"
-> > > > > @@ -1699,6 +1756,15 @@ static void trace__symbols__exit(struct trace *trace)
-> > > > >       symbol__exit();
-> > > > >  }
-> > > > >
-> > > > > +static void trace__load_vmlinux_btf(struct trace *trace)
-> > > > > +{
-> > > > > +     trace->btf = btf__load_vmlinux_btf();
-> > > > > +     if (verbose > 0) {
-> > > > > +             fprintf(trace->output, trace->btf ? "vmlinux BTF loaded\n" :
-> > > > > +                                                 "Failed to load vmlinux BTF\n");
-> > > > > +     }
-> > > > > +}
-> > > > > +
-> > > > >  static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
-> > > > >  {
-> > > > >       int idx;
-> > > > > @@ -1744,7 +1810,7 @@ static const struct syscall_arg_fmt *syscall_arg_fmt__find_by_name(const char *n
-> > > > >  }
-> > > > >
-> > > > >  static struct tep_format_field *
-> > > > > -syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field)
-> > > > > +syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field, bool *use_btf)
-> > > > >  {
-> > > > >       struct tep_format_field *last_field = NULL;
-> > > > >       int len;
-> > > > > @@ -1782,6 +1848,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
-> > > > >                        * 7 unsigned long
-> > > > >                        */
-> > > > >                       arg->scnprintf = SCA_FD;
-> > > > > +             } else if (strstr(field->type, "enum") && use_btf != NULL) {
-> > > > > +                     *use_btf = arg->is_enum = true;
-> > > >
-> > > > Here you have to check if use_btf is NULL, as you, in this patch, later
-> > > > call syscall_arg_fmt__init_array(arg, field, NULL) in
-> > > > evsel__init_tp_arg_scnprintf(), probably you tested it all at the end of
-> > > > the patch series, we have to make sure that it works after each patch,
-> > > > so that we keep the codebase bisectable.
-> > >
-> > > I'm sorry, could you enlighten me on this? I thought:
-> > > ```
-> > > else if (strstr(field->type, "enum") && use_btf != NULL) {
-> > > ```
-> > > is doing the NULL checking. If you mean making sure the NULL checking
-> > > appears in all patches, I thought this is where we should introduce
-> > > the checking. Tiny reminder, the [1/5] patch is your syscalltbl
-> > > traversal bug fix.
-> > >
-> > > >
-> > > > >               } else {
-> > > > >                       const struct syscall_arg_fmt *fmt =
-> > > > >                               syscall_arg_fmt__find_by_name(field->name);
-> > > > > @@ -1796,9 +1864,10 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
-> > > > >       return last_field;
-> > > > >  }
-> > > > >
-> > > > > -static int syscall__set_arg_fmts(struct syscall *sc)
-> > > > > +static int syscall__set_arg_fmts(struct syscall *sc, bool *use_btf)
-> > > > >  {
-> > > > > -     struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args);
-> > > > > +     struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args,
-> > > > > +                                                                       use_btf);
-> > > > >
-> > > > >       if (last_field)
-> > > > >               sc->args_size = last_field->offset + last_field->size;
-> > > > > @@ -1810,7 +1879,9 @@ static int trace__read_syscall_info(struct trace *trace, int id)
-> > > > >  {
-> > > > >       char tp_name[128];
-> > > > >       struct syscall *sc;
-> > > > > +     int err;
-> > > > >       const char *name = syscalltbl__name(trace->sctbl, id);
-> > > > > +     bool use_btf = false;
-> > > > >
-> > > > >  #ifdef HAVE_SYSCALL_TABLE_SUPPORT
-> > > > >       if (trace->syscalls.table == NULL) {
-> > > > > @@ -1883,7 +1954,12 @@ static int trace__read_syscall_info(struct trace *trace, int id)
-> > > > >       sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
-> > > > >       sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
-> > > > >
-> > > > > -     return syscall__set_arg_fmts(sc);
-> > > > > +     err = syscall__set_arg_fmts(sc, &use_btf);
-> > > > > +
-> > > > > +     if (use_btf && trace->btf == NULL)
-> > > > > +             trace__load_vmlinux_btf(trace);
-> > > > > +
-> > > > > +     return err;
-> > > > >  }
-> > > > >
-> > > > >  static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
-> > > > > @@ -1891,7 +1967,7 @@ static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
-> > > > >       struct syscall_arg_fmt *fmt = evsel__syscall_arg_fmt(evsel);
-> > > > >
-> > > > >       if (fmt != NULL) {
-> > > > > -             syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields);
-> > > > > +             syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields, NULL);
-> > > > >               return 0;
-> > > > >       }
-> > > > >
-> > > > > @@ -2103,6 +2179,16 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
-> > > > >                       if (trace->show_arg_names)
-> > > > >                               printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
-> > > > >
-> > > > > +                     if (sc->arg_fmt[arg.idx].is_enum && trace->btf) {
-> > > > > +                             size_t p = btf_enum_scnprintf(bf + printed, size - printed, val,
-> > > > > +                                                           trace->btf, field->type,
-> > > > > +                                                           &sc->arg_fmt[arg.idx]);
-> > > > > +                             if (p) {
-> > > > > +                                     printed += p;
-> > > > > +                                     continue;
-> > > > > +                             }
-> > > > > +                     }
-> > > > > +
-> > > > >                       printed += syscall_arg_fmt__scnprintf_val(&sc->arg_fmt[arg.idx],
-> > > > >                                                                 bf + printed, size - printed, &arg, val);
-> > > > >               }
-> > > > > --
-> > > > > 2.45.2
-> > > > >
-> > >
-> > > Thanks,
-> > > Howard
+
+Alex Bee (4):
+  dt-bindings: vendor-prefixes: Add Neardi Technology
+  dt-bindings: arm: rockchip: Add Neardi LBA3368
+  arm64: dts: rockchip: Add sound-dai-cells for RK3368
+  arm64: dts: rockchip: Add Neardi LBA3368 board
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3368-lba3368.dts      | 666 ++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi      |   3 +
+ 5 files changed, 677 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3368-lba3368.dts
+
+-- 
+2.45.2
+
 
