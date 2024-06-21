@@ -1,127 +1,96 @@
-Return-Path: <linux-kernel+bounces-224298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC3491205E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:21:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7ED912057
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4782867FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:21:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 364A5B20E7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC6D16E86B;
-	Fri, 21 Jun 2024 09:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F06A16EB66;
+	Fri, 21 Jun 2024 09:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="NYR9hKXM"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Af/e2FBo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2309B16D335;
-	Fri, 21 Jun 2024 09:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00CB16E862;
+	Fri, 21 Jun 2024 09:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718961691; cv=none; b=lYkaDpstdBQLzaYRm/ZBSvFs+NyecXhuNsS4q07IT9ejzYuKGyf8QQZdnTr+IdBQEBFP24jXhnRzgFux3yPTmftAhC88c8oHp0I2mFi1Ef2eTRuJM5tFHMi6rZfeD994Gm+mRbrEcBdnfitKxF8ZoYPZg28JeuGbQt8SGOD7Mdc=
+	t=1718961631; cv=none; b=SLYYOYiuq8ShqhyXVqLeI1/IzizH3yYdjp+uyMgIZ5kvCteBeTDcRRxZZCzwaNY5PTDPXu38IXuwhfjWxFlEelFUu1fOstCOiKrUCEokWfQLZehBO5E6Oe++dfISZOZvIbOCumNlc++eXZdKPDfd/hDzK4tVKlI4S9iCLjy1jXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718961691; c=relaxed/simple;
-	bh=eAk9gOkLBlRQrDeTJO0W4a3ezXJR6fbg07voMiFyTxA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lTCJLaODPmcvwUM0/yI28wvkXkzZoOyCnF3ALaLRnRuAj0agkRCiRTAUEpf0jKlI4Nd+dWmmMNnLQS7chl9CMSr15CsGhZMH40ZUmMdXCTzCX9oEQ6priXVHRDsZHfPiRAM+biIDn6HPbSv2p41Ku65Cdom7avmzWhLXWVoauMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=NYR9hKXM; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L9L2oA007852;
-	Fri, 21 Jun 2024 02:21:02 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=O
-	CCufIrz40hLEdPGerpnyd9wuw/kAjb7VvhJ+TqQiS0=; b=NYR9hKXM2T8ThdUR/
-	ROIiEb2oCksJDjSpbtAtUlrdQFnDjagc7K6vjE6aPpiQzMMRIUvGTCcAAV6NBaoT
-	m4n7yuMzt5EbtRaTIwaALmj92DIvkAGTEWcNhxTdMwD0pCwBmO7QSv/DO9QDhteD
-	JhJgFGXtq/vtqQYsiuwpXS5PqhcIqf3FpbZhs1Bre+syoH1ZvBelaorD2l0amWhk
-	Y557ylpk3a3D+wbgDOjsAoWMiCzZbKQLOVSxh6c53i8wLhZLc8cYiGZm+rdyhbdn
-	cSvLGz2kvp2MqwLuqwVVHsRm5H+bo8PyzJzv8U4LjK11JXfNNmigLftJgb6ExI9l
-	UGGjg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3yw6t80004-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 02:21:00 -0700 (PDT)
-Received: from m0045849.ppops.net (m0045849.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45L9KxKK007805;
-	Fri, 21 Jun 2024 02:20:59 -0700
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3yw6t80002-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 02:20:59 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 21 Jun 2024 02:19:13 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 21 Jun 2024 02:19:13 -0700
-Received: from maili.marvell.com (unknown [10.28.36.165])
-	by maili.marvell.com (Postfix) with ESMTP id C45DD3F7069;
-	Fri, 21 Jun 2024 02:19:09 -0700 (PDT)
-Date: Fri, 21 Jun 2024 14:49:08 +0530
-From: Ratheesh Kannoth <rkannoth@marvell.com>
-To: Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>
-CC: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-        Marc Kleine-Budde
-	<mkl@pengutronix.de>,
-        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Markus
- Schneider-Pargmann <msp@baylibre.com>,
-        <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] can: m_can: don't enable transceiver when probing
-Message-ID: <20240621091908.juhoeb7zfo4zhsga@maili.marvell.com>
-References: <20240607105210.155435-1-martin@geanix.com>
+	s=arc-20240116; t=1718961631; c=relaxed/simple;
+	bh=g0c2J8l1AVStje0/uF5fYXZ83d8hO/iWIMUtbgnpBzE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=KjlbfjR4fYkePuKAMefe3NBpHuxwwKeVnJ5Cvh87In9hhFW/3ZkIqCNSCOjjM+P6LhBzILVIICyfm4rj2tjWEvcpYa5Chq8zsx02RXN4Z/TN0WkyKu27nb37hgQhP0sK8pbhskKvM+Zzshpz0mrEBbpqBcpywGiKBQvdIH29PbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Af/e2FBo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 76288C4AF0E;
+	Fri, 21 Jun 2024 09:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718961631;
+	bh=g0c2J8l1AVStje0/uF5fYXZ83d8hO/iWIMUtbgnpBzE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Af/e2FBoCd4iKnJA/V4ujshU+Dye1OPShjCsIkjMTsjZeUiXe3N02y5AdSzeMiCTE
+	 NcRqHYoho4ZEsX3GhEKj/ZE+HQ4e5+UWuwE52hpuZUe6k912fYqC080K/LXdiQCc43
+	 TRc7uyMKpr/AEf61Z2TAgGHzMmwpFGt4f+C7lyI+k+3W5MzHkNC2a2sCN4LnNpqWfn
+	 kIGU27UGZZ+QfgxrPuskTbBLrjJb/PFBQ5nTHUiDkEDLW+LqLKkvxsVHE9R6YhcHdp
+	 Pg+HrP3TVergb+m79qPwDFbi6QdBwyfSI3wV5F9woNfZbUm4TNNv4V4KH8XTWURGPl
+	 a9YOQk//NHu/g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 658B1CF3B9B;
+	Fri, 21 Jun 2024 09:20:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240607105210.155435-1-martin@geanix.com>
-X-Proofpoint-GUID: oznMlDvDVOb7xXWCyBgbcGTQ5HWu4cFq
-X-Proofpoint-ORIG-GUID: _v_-lH_1A7N3CBgrXvrJwaBVBoABDhJF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_03,2024-06-20_04,2024-05-17_01
+Subject: Re: [PATCH v3 net-next] net: dsa: ksz_common: Allow only up to two HSR HW
+ offloaded ports for KSZ9477
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171896163141.20195.5158269251673335777.git-patchwork-notify@kernel.org>
+Date: Fri, 21 Jun 2024 09:20:31 +0000
+References: <20240619145809.1252915-1-lukma@denx.de>
+In-Reply-To: <20240619145809.1252915-1-lukma@denx.de>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: olteanv@gmail.com, kuba@kernel.org, netdev@vger.kernel.org,
+ pabeni@redhat.com, edumazet@google.com, davem@davemloft.net,
+ o.rempel@pengutronix.de, Tristram.Ha@microchip.com, bigeasy@linutronix.de,
+ horms@kernel.org, dan.carpenter@linaro.org, ricardo@marliere.net,
+ casper.casan@gmail.com, linux-kernel@vger.kernel.org,
+ woojung.huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch
 
-On 2024-06-07 at 16:22:08, Martin Hundebøll (martin@geanix.com) wrote:
->
-> -		usleep_range(1, 5);
-> +	/* Then clear the it again. */
-> +	ret = m_can_cccr_update_bits(cdev, CCCR_NISO, 0);
-> +	if (ret) {
-> +		dev_err(cdev->dev, "failed to revert the NON-ISO bit in CCCR\n");
-> +		return ret;
->  	}
->
-> -	/* Clear NISO */
-> -	cccr_reg &= ~(CCCR_NISO);
-> -	m_can_write(cdev, M_CAN_CCCR, cccr_reg);
-> +	ret = m_can_config_disable(cdev);
-> +	if (ret)
-> +		return ret;
-if ret != 0, then the function returns "true", right ?
-as indicated by the below comment. But as i understand,
-this is an error case and should return "false"
-> -	/* return false if time out (-ETIMEDOUT), else return true */
-> -	return !niso_timeout;
-> +	return niso == 0;
->  }
->
->
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Wed, 19 Jun 2024 16:58:09 +0200 you wrote:
+> The KSZ9477 allows HSR in-HW offloading for any of two selected ports.
+> This patch adds check if one tries to use more than two ports with
+> HSR offloading enabled.
+> 
+> The problem is with RedBox configuration (HSR-SAN) - when configuring:
+> ip link add name hsr0 type hsr slave1 lan1 slave2 lan2 interlink lan3 \
+> 	supervision 45 version 1
+> 
+> [...]
+
+Here is the summary with links:
+  - [v3,net-next] net: dsa: ksz_common: Allow only up to two HSR HW offloaded ports for KSZ9477
+    https://git.kernel.org/netdev/net-next/c/dcec8d291da8
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
