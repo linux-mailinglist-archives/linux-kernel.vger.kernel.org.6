@@ -1,57 +1,101 @@
-Return-Path: <linux-kernel+bounces-225248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE0B912E0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:42:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF92E912E17
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 272AD1F22D99
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:42:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2456FB22C46
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D4A17BB2B;
-	Fri, 21 Jun 2024 19:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3EE17B504;
+	Fri, 21 Jun 2024 19:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CR2AIQkz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eA6fsPyL"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDA317BB08;
-	Fri, 21 Jun 2024 19:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1C613B59F;
+	Fri, 21 Jun 2024 19:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718998946; cv=none; b=jXq5l08R/XIQhtEezbyz8X61uQHHiqUbqQAN9+V0yErYyiC7vWJZ/CIgXTD8ck0YCSvPJwtACdrfNCmj0bgF3d3qFfKo0WnT6e51t0hREODCw4b2+7I69J3K9na+iBrH3YCilF53fXc+eYfSPhrLqTYhkuy5yW7MUPl2lt4dW8k=
+	t=1718999220; cv=none; b=D9NYVQjgrDkLh+OyM+ivhyLTWkexX11x/IIaWcROUHAJLAfm/y3VWssGhTwDqY+uaT2jw4BjaQmx3KPrnm/s6pC+dZx48rowEleALwdqjq7zLhIrzmva0eg63dWNkj6D/Bu96hzUajRCSSYlloHEr0n8hO1PtjC4oitCPCpLssU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718998946; c=relaxed/simple;
-	bh=YxoHs/MZgzWYB+EBfGrNrzS7EXBm148ckuCUwY2V2/M=;
+	s=arc-20240116; t=1718999220; c=relaxed/simple;
+	bh=yU2z2DJZv7XHWtM2QjUWji5BSc6J409Zd0oe+r/st2c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEFeWPUhZJFltcGVpI6prAmc+lBszef825K82kcfmBb3XyZzAhJyt+gWvNJU+Khhknamf0b6OaPYtOdaIHzqltq4WCDcFM80ouXh1pdGzg8TChyB0ef0JMYe1BJwOU2iLoMWMziiFtC5voDoOePBTrB4rb5H/djzn1OGvNop3Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CR2AIQkz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1180C2BBFC;
-	Fri, 21 Jun 2024 19:42:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718998946;
-	bh=YxoHs/MZgzWYB+EBfGrNrzS7EXBm148ckuCUwY2V2/M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CR2AIQkzqBmC5ymH7i6NPNzRQOvW3RU7o+FzsFnIZF1boFfulZTlAKnSnk+3Jk5pZ
-	 4QE5Sg7dRqovKnoIX7qDeagad0P0Uy1ZXoyOGVli1kSnO9dycbLHCclm1yrY3P2lkZ
-	 mNs6xLexX/qEYA79NIefufKmuRTCthrDxmpfthmIg3tHMbUdsfdK64JgKfOwoL4Ubn
-	 3Fuh8a8ylZlYCzNdIZVvELhCE0UjUGOgO+5KZeJN/+dnuPU2Ol8atYQolqPSaWJ1gD
-	 8ifP0WFbHF5X8KO1mWAlDFmQ1LdS0wjcHZl5JES+0JFJwLYhQT5eUJUWibkCZBTijq
-	 21IDhezDi1hGw==
-Date: Fri, 21 Jun 2024 12:42:25 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH 01/13] xfs: only allow minlen allocations when near ENOSPC
-Message-ID: <20240621194225.GR3058325@frogsfrogsfrogs>
-References: <20240621100540.2976618-1-john.g.garry@oracle.com>
- <20240621100540.2976618-2-john.g.garry@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z/OHCa44UvuID7vE93EPUcTIwie6SprwywlupDct0hrKJ5t4OBH4V54K+BszMHj/WURYyuIwMW0O7yCHtspxACtBPCqmRhzj+1P+yvSA6Y82r5BGiFIwR1pTqLEufgJfPzCiEpcuXW4LDVHc8UwqMRzjq9DvSB2mn8ArHFwvapA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eA6fsPyL; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-706354409e1so2121562b3a.2;
+        Fri, 21 Jun 2024 12:46:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718999218; x=1719604018; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b0t/8hzhEOnJgauoqC4P/3+Tol7cjVc8S0pcKauAPzM=;
+        b=eA6fsPyLkSoVW/h7yr9AZfhWQzXYCsAutTA3sljr424tbTWAnhoeX4eg20TrYrh9YK
+         7gaSV64KoXWOwGGfaAhysoZqQrbw8G6Z2gB6CTdOYlzkbrJpVDSZuIVlVyoppemmQxL/
+         ReppQwzvcI2ms/rlwrp/3rYAER3PIGbxP5TkZnYMn1eVvsnHdiLcXm3H6E/WfYncVhRK
+         AadowA9paw5uNFbS5CJTYE/7x5v3RlUbYPLLw53wQTwbEZ4l08gxL5UALepf4LyZBj8S
+         CtDExViOr6XqJVdWr6hm8GDbcTK3kF5WGOwGQUdH4mTv1y/WR52hTJX4zeoMhbh68wQ+
+         ktoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718999218; x=1719604018;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b0t/8hzhEOnJgauoqC4P/3+Tol7cjVc8S0pcKauAPzM=;
+        b=DA3Z2Uh3cj0gDU/+9J+B6WelYzWU+atreJd8nmdC9j3x2zxq38DiCsGJSpQoMXKHYH
+         PU117rItci+cqiSU4i7bEDWmTRdMfEzij0Q+s1ZbHYiEOWwMvCLP+tuKlSf/+yfhF5Ri
+         UTIq/joctJ+4yOOlr6Ne2Br9xi1QQe9gTyIdSAi9jPA4wZnJ8E9Rep9VtcHCMbc0WFlc
+         k/X0JWtLujqMDAc4z0iG0MtrWg1FrM1Ek4kNjfOWcpvJBu8ci6oGWWQ9czOGgPalUYS0
+         8uZr0r6PxcidupOB3GICPAIEIshtWQ5KQwDuxPQz59v0NCC3DwxHGmQLn+UhpuI/wTDc
+         jECQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnCzyIroHs5snBUmlxDOQDDWnbptQNsNs+9REBc1l9AnpV0aVqPzt/f0LUPiPNxu+rp6C5Nrq9HgrTAU5wbJVnMD4W1iJ8IipQbh5EcpadFoze100dtETnRz7uMev1VCG8
+X-Gm-Message-State: AOJu0Yw3P3TJkARx17nd1xqPXMnfhIjVxHB+HpT1DoNZ19X/+FIID520
+	qBNi7Ayy8v48Dl+I+/7s1qpbHRfGx1ObrcbWcZbBdHyzQv41rHts
+X-Google-Smtp-Source: AGHT+IE5LoO3qFQ9l13F4NQXJx6hQoOceSXfH80tyyB6SBsXpEF0710urKuzaFNPqa9hrndu/kbu7A==
+X-Received: by 2002:a05:6a00:22c5:b0:705:ddbf:5c05 with SMTP id d2e1a72fcca58-70629c4204cmr12741427b3a.11.1718999217674;
+        Fri, 21 Jun 2024 12:46:57 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512d6483sm1840279b3a.178.2024.06.21.12.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 12:46:57 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Fri, 21 Jun 2024 09:46:56 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH sched_ext/for-6.11] sched, sched_ext: Replace
+ scx_next_task_picked() with sched_class->switch_class()
+Message-ID: <ZnXYsHw1gOZ4jlp2@slm.duckdns.org>
+References: <87ed8sps71.ffs@tglx>
+ <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
+ <87bk3wpnzv.ffs@tglx>
+ <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
+ <878qz0pcir.ffs@tglx>
+ <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
+ <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
+ <ZnRptXC-ONl-PAyX@slm.duckdns.org>
+ <ZnSp5mVp3uhYganb@slm.duckdns.org>
+ <CAHk-=wjFPLqo7AXu8maAGEGnOy6reUg-F4zzFhVB0Kyu22h7pw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,85 +104,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621100540.2976618-2-john.g.garry@oracle.com>
+In-Reply-To: <CAHk-=wjFPLqo7AXu8maAGEGnOy6reUg-F4zzFhVB0Kyu22h7pw@mail.gmail.com>
 
-On Fri, Jun 21, 2024 at 10:05:28AM +0000, John Garry wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> When we are near ENOSPC and don't have enough free
-> space for an args->maxlen allocation, xfs_alloc_space_available()
-> will trim args->maxlen to equal the available space. However, this
-> function has only checked that there is enough contiguous free space
-> for an aligned args->minlen allocation to succeed. Hence there is no
-> guarantee that an args->maxlen allocation will succeed, nor that the
-> available space will allow for correct alignment of an args->maxlen
-> allocation.
-> 
-> Further, by trimming args->maxlen arbitrarily, it breaks an
-> assumption made in xfs_alloc_fix_len() that if the caller wants
-> aligned allocation, then args->maxlen will be set to an aligned
-> value. It then skips the tail alignment and so we end up with
-> extents that aren't aligned to extent size hint boundaries as we
-> approach ENOSPC.
-> 
-> To avoid this problem, don't reduce args->maxlen by some random,
-> arbitrary amount. If args->maxlen is too large for the available
-> space, reduce the allocation to a minlen allocation as we know we
-> have contiguous free space available for this to succeed and always
-> be correctly aligned.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/xfs/libxfs/xfs_alloc.c | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
-> index 6c55a6e88eba..5855a21d4864 100644
-> --- a/fs/xfs/libxfs/xfs_alloc.c
-> +++ b/fs/xfs/libxfs/xfs_alloc.c
-> @@ -2409,14 +2409,23 @@ xfs_alloc_space_available(
->  	if (available < (int)max(args->total, alloc_len))
->  		return false;
->  
-> +	if (flags & XFS_ALLOC_FLAG_CHECK)
-> +		return true;
-> +
->  	/*
-> -	 * Clamp maxlen to the amount of free space available for the actual
-> -	 * extent allocation.
-> +	 * If we can't do a maxlen allocation, then we must reduce the size of
-> +	 * the allocation to match the available free space. We know how big
-> +	 * the largest contiguous free space we can allocate is, so that's our
-> +	 * upper bound. However, we don't exaclty know what alignment/size
-> +	 * constraints have been placed on the allocation, so we can't
-> +	 * arbitrarily select some new max size. Hence make this a minlen
-> +	 * allocation as we know that will definitely succeed and match the
-> +	 * callers alignment constraints.
->  	 */
-> -	if (available < (int)args->maxlen && !(flags & XFS_ALLOC_FLAG_CHECK)) {
-> -		args->maxlen = available;
-> +	alloc_len = args->maxlen + (args->alignment - 1) + args->minalignslop;
+Hello,
 
-Didn't we already calculate alloc_len identically under "do we have
-enough contiguous free space for the allocation?"?  AFAICT we haven't
-alter anything in @args since then, right?
-
-> +	if (longest < alloc_len) {
-> +		args->maxlen = args->minlen;
-
-Is it possible to reduce maxlen the largest multiple of the alignment
-that is still less than @longest?
-
---D
-
->  		ASSERT(args->maxlen > 0);
-> -		ASSERT(args->maxlen >= args->minlen);
->  	}
->  
->  	return true;
-> -- 
-> 2.31.1
+On Thu, Jun 20, 2024 at 03:42:48PM -0700, Linus Torvalds wrote:
+...
+> Btw, indirect calls are now expensive enough that when you have only a
+> handful of choices, instead of a variable
 > 
+>         class->some_callback(some_arguments);
 > 
+> you might literally be better off with a macro that does
+> 
+>        #define call_sched_fn(class, name, arg...) switch (class) { \
+>         case &fair_name_class: fair_name_class.name(arg); break; \
+>         ... unroll them all here..
+> 
+> which then just generates a (very small) tree of if-statements.
+> 
+> Again, this is entirely too ugly to do unless people *really* care.
+> But for situations where you have a small handful of cases known at
+> compile-time, it's not out of the question, and it probably does
+> generate better code.
+
+I'll update the patch description to point to the previous message just in
+case and apply it to sched_ext/for-6.11.
+
+Thanks.
+
+-- 
+tejun
 
