@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-224449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A22912296
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:38:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD479122C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0131F21E59
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2515F289936
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A32F171E5E;
-	Fri, 21 Jun 2024 10:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I3udThls"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E76172799;
+	Fri, 21 Jun 2024 10:45:29 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A25616D33A
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416CE172784
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718966317; cv=none; b=hMcfGNVqLOSzpT01VVAnq7V2ICGDnaKMNJ3AzMqml97OMSbxeYhqKvnJe1g+ldX3lzubnUViBXFTvQtDgluanlC+fEUWeqy1qpQ+dzPGmQEnfFkisXHRSCDumzGsvTKkQvIkEOBkT7EQnCgYETyktLn8CHtU8cfWyIup/hiR/nA=
+	t=1718966729; cv=none; b=HZkCvrV8hq+f4kpHCzFCCyhnJZ6Nuc5azgIampzp9ZyqMaN/t5X7KOkaTWBUTSbS52EqrvaNQ/JAk+ltQHAVt7KYoPpGawYYLZoSVrZMNq0/Vve0BrB9h6gh5oAgjymt0iXnbmVoj32Uqy4kMYfk2OjTH+Bg9AiTU3GWBnfQx2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718966317; c=relaxed/simple;
-	bh=WTJ0KG5tYdhhPPGpfmG62gp49W7qhiVbW9dawR3CcTE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ii9Q4XDcNpw0NBeyniyVvSa2bvlN40ZN5fuemKUtuI65WHjeiKNS0Ve2rqUcXD5Kml1eeX8UdPl1+RsbW9Hcv8Q6z4n6o3BqlOpn58jCsnR4ILAqyPjBROQ2vVW0PJBzg9B/Fi9UXuvMqG7Xlcnw2jkrFrsWRg9ZaWNbVzANlDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I3udThls; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42108856c33so17848295e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 03:38:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718966314; x=1719571114; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=44ZpRvpfFDERBn9Dks1/mP2gSSkjphom+K+EdkVXitM=;
-        b=I3udThlsQtQ2YjDq9atbqobDTGJ1volpRkp9VT7nWkPV4K+MiRSpUnsSx4lfFnT5Iw
-         jkjOqKxHlKQtGeSDWWYZlcpUkeHqjtDckHDSLTl/vJ91P8Wuycj6VkkeKuNnBmXg4Y4u
-         +1O0rclTfVrVudevE0lJrewlXLKRXdsm6F6lTD+flXJnUyCqPF+QBEbkfeO7xbmdWqpW
-         UHWHS+gPbde6KHozXg+nJdXx41xPx7bTSyfwVniy/glwniqX0Erg7mNmTfh0q+P3PPpE
-         NthxUVizX0lvdmNBrujRRGlC5IoJ8f6/O4bNHUrgIRvRlbzhNxhDQ1GkH4qlRO2Lw/b7
-         RKVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718966314; x=1719571114;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=44ZpRvpfFDERBn9Dks1/mP2gSSkjphom+K+EdkVXitM=;
-        b=XZ1rqKvfobUiBJTTOwJOoxi3J1lVgng2/FxATOnVASTNVcgcQtwUl47QzezTQ57jq2
-         V436nEMrUj1XbgF4Src0hWm7uJ91HRPpFLIAhESzcdW1G/2YG08s1QhHYaC4V5K1d+Dg
-         E6SRmEyf4rtzdA/hSDGvj8fOMKypyUPsrMpWKoAIifJVe01cq1ItDnpkDyEw2eXljxGq
-         i4SsviZNQVMWXvsUzZLTkF/qfhVletBUZGv2sAGDn+0r7FBr7esgRWUNGpHayRkhJen2
-         prZQc1fjeZShBMs/AUeYTb+Kopp6aTJTLpr1MelZoCmTcG2SIJgn9h0xawnSqNYwXtkO
-         QD6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSAc2QL6IMtOt5D+e5cHTZe3dLbU4hHar+Srm3kc52qtoDymEdm1ue6iwbE7ETU0bsKpZBuJI0Ev6W18UB6CMh+4n5HyUkvRZHrwAz
-X-Gm-Message-State: AOJu0YwuQn9QFir19BdC3+Ri+E1YvPk3Mf8DNY4Q1n7PXAcVvDOF68u+
-	bMojev2b4nIhYp+MFKC+5zwBa2dDeYZwMQAR8r07CZiuZwXjf11ccVaqXasNok7T2caN+0A8b8j
-	nQYgfx2y5UWpZqlXcts0SgeJP8lXdr0nPYBXy
-X-Google-Smtp-Source: AGHT+IHayn/UTVkcWmt4aexOdjYrU9ksdoexbcJhXjXZONtcnkNGjtekAv/BumbuGkdej+U3QP9aLzN4qBHFXpFkuUc=
-X-Received: by 2002:a05:6000:1284:b0:360:8c88:ab82 with SMTP id
- ffacd0b85a97d-3630191c24dmr7727188f8f.30.1718966314110; Fri, 21 Jun 2024
- 03:38:34 -0700 (PDT)
+	s=arc-20240116; t=1718966729; c=relaxed/simple;
+	bh=1XwFKly4cs7PcvOcUHmUCRlNu+w/zdo+sADEBfK9PwU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jU3h4ZuPHxCiC/UpEFVstB6Ka9P3Lpxh2igHxY2dFv/r/UZHr1o/e6yyHe4Elw0FR2pupHQl+bu5Ej6cuEoT5N1HTg3nD2uyhiScQZHlzJslWVpfTvBv7GBKsTq1v2PNXw+tmyXa7EoVtzptqcCaPcOYkPMQ0mWMpZyU1kMTiP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: a6d9ded42fba11ef9305a59a3cc225df-20240621
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:ec2780ce-2419-4e24-9dfe-935dc1c31ce5,IP:15,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:6
+X-CID-INFO: VERSION:1.1.38,REQID:ec2780ce-2419-4e24-9dfe-935dc1c31ce5,IP:15,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:6
+X-CID-META: VersionHash:82c5f88,CLOUDID:80c16f1438ba1a9cbeb3f8174ba81c85,BulkI
+	D:240620143416P0737R0Q,BulkQuantity:2,Recheck:0,SF:43|74|64|66|24|17|19|81
+	7|102,TC:nil,Content:0|-5,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:ni
+	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_ULS
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
+	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
+	HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD
+	CIE_GOOD_SPF, GTI_FG_BS, GTI_C_CI, GTI_FG_IT, GTI_RG_INFO
+	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
+	ABX_MISS_RDNS
+X-UUID: a6d9ded42fba11ef9305a59a3cc225df-20240621
+X-User: lihongfu@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.255)] by mailgw.kylinos.cn
+	(envelope-from <lihongfu@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1636551456; Fri, 21 Jun 2024 18:40:18 +0800
+From: Hongfu Li <lihongfu@kylinos.cn>
+To: markus.elfring@web.de
+Cc: aahringo@redhat.com,
+	gfs2@lists.linux.dev,
+	julia.lawall@inria.fr,
+	lihongfu@kylinos.cn,
+	linux-kernel@vger.kernel.org,
+	teigland@redhat.com
+Subject: Re: dlm: use KMEM_CACHE() in dlm_memory_init() 
+Date: Fri, 21 Jun 2024 18:39:59 +0800
+Message-Id: <20240621103959.131413-1-lihongfu@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <5094e8bf-6eb6-43e4-80de-052e9c0c67c0@web.de>
+References: <5094e8bf-6eb6-43e4-80de-052e9c0c67c0@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610-tracepoint-v2-0-faebad81b355@google.com>
- <20240610-tracepoint-v2-1-faebad81b355@google.com> <20240612-cottage-revision-9842e7e22070@spud>
-In-Reply-To: <20240612-cottage-revision-9842e7e22070@spud>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 21 Jun 2024 12:38:21 +0200
-Message-ID: <CAH5fLgg2v1jL8uFBK3mEMW-mPydBj1eRT6je8YGtHyNF48JCfA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] rust: add static_key_false
-To: Conor Dooley <conor@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 5:03=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
+>> My initial purpose is to replace kmem_cache_create() with KMEM_CACHE().
 >
-> On Mon, Jun 10, 2024 at 02:01:04PM +0000, Alice Ryhl wrote:
-> > Add just enough support for static key so that we can use it from
-> > tracepoints. Tracepoints rely on `static_key_false` even though it is
-> > deprecated, so we add the same functionality to Rust.
-> >
-> > It is not possible to use the existing C implementation of
-> > arch_static_branch because it passes the argument `key` to inline
-> > assembly as an 'i' parameter, so any attempt to add a C helper for this
-> > function will fail to compile because the value of `key` must be known
-> > at compile-time.
-> >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>Do you take any help from advanced analysis tools into account
+>for such transformation attempts?
 >
-> > +#[cfg(target_arch =3D "x86_64")]
+>Example for the semantic patch language (Coccinelle software):
+>[PATCH v2] Coccinelle: api: Add SmPL script “use_KMEM_CACHE.cocci”
+>https://lore.kernel.org/cocci/b08603d6-cac1-4876-a56c-30c680d5dc52@web.de/
+>https://sympa.inria.fr/sympa/arc/cocci/2024-02/msg00000.html
 >
-> > +#[cfg(target_arch =3D "aarch64")]
 >
-> This patch breaks the build on riscv (and I assume loongarch):
+>> In my view，there is no problem in unifying passed name strings and
+>> structure identifiers.
+>> Maybe that's wrong，
 >
-> error[E0432]: unresolved import `_static_key_false`
-> --> /stuff/linux/rust/kernel/static_key.rs:87:10
-> |
-> 87 | pub use {_static_key_false, static_key_false};
-> |          ^^^^^^^^^^^^^^^^^ no external crate `_static_key_false`
+>I suggest to take another look also at feedback which other contributors
+>(from your Linux software distribution) got for similar change suggestions.
 >
-> Cheers,
-> Conor.
+>
+>> I will resubmit a patch that does not change "dlm_cb" to "dlm_callback".
+>
+>Do you see further opportunities to improve the change description accordingly?
+>https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc4#n94
 
-Thank you. Fixed in v3.
-https://lore.kernel.org/all/20240621-tracepoint-v3-0-9e44eeea2b85@google.co=
-m/
+So grateful for you suggestion and I will definitely consider it.
 
-Alice
+thanks,
+Hongfu Li
 
