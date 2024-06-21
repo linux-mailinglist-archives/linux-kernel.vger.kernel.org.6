@@ -1,160 +1,79 @@
-Return-Path: <linux-kernel+bounces-224499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F319D912329
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:18:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76CC91232D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73141F234B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80521C21EAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF636172BC3;
-	Fri, 21 Jun 2024 11:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6A8173324;
+	Fri, 21 Jun 2024 11:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="nAtmHxbl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dBxu0SwG"
-Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3XnesmB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B90E3A1CD;
-	Fri, 21 Jun 2024 11:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F89512D771;
+	Fri, 21 Jun 2024 11:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718968711; cv=none; b=Br5gMZuY3LwR6/sgzrLyuPKr6Wnaqh7K0LW2KbJ1kFxbiGUaAImHrJ6nKMgyS0fMhLuacpx9oJKGcRnP6OOtxKXGwrwRRg4VornJpXg+laD0DCfj956urSnIWQ3PCENvvH2ldtepxVcezY/fSshHLJNplhMbYjOrgLWzEdLXqjY=
+	t=1718968730; cv=none; b=Evm81pmOFCUfzaPmH/jz80skvoPUZ0S7zJlCimdAH0yaGgWlOaJ/gUDJgHg2mvYI/qwKgLPBVvFsPPuhtn6ZVVTQ1d6RqJFtj8POzT9A543VfmbDgu40H6dxfS4wsEqjTOfu9U1JhCZM5OMfvZ2sunOAnkAQiWGkA1TGBDMzNvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718968711; c=relaxed/simple;
-	bh=+fY7tkigpTQXc5Fku/J8C2gMCAOJnpPj6kuyBUVHayg=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=fMTwUMN4Xt1a3HHvhaylJAjrjqGtGoZRHXEfHfZ6mJ+zgNwWjicsspyTyZgExXREoTxEk7jFfjIhNWGqLkWf8/6CfSdR/NhWHZNiHZPsXGEN3hxOmBQL4iRbeosH0/0H9s+Q7iQK9O+5gfqLCHPKJGiqg+ab6Bg1Fdz/cmK9Ww0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=nAtmHxbl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dBxu0SwG; arc=none smtp.client-ip=64.147.123.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 2F4CD18000BB;
-	Fri, 21 Jun 2024 07:18:28 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Fri, 21 Jun 2024 07:18:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718968707;
-	 x=1719055107; bh=G0G1El3uK8k2KjVN3fQ6GgP+FCi/pQffGpLCPF/vvhA=; b=
-	nAtmHxblkVwYf1+7Jq2u6m1VmZGiN9TSZLEJFshiPsDMlAegGOiNHf+UE+4216dT
-	htbiTLMSoaFX92ECFSGXq3F+QpleL98i78t8z+rdIcbyYTpavyMV6JSXHaSxk6PL
-	JOkiuNZ6qSyqyyByhm9AzSIqmcopudyqmKoZtTLxsJJTsBjHqvlNzSwAmuJICJPC
-	xAkI+sCOWXpsbJNKWByYDHbMZSo8+twogxKc+snXzQX7HJadXzejaEfWqA/6sBHh
-	emcjdSHSG9Bo4FI1CD5/aX8Jxvwoln4y6udQuP1YYdzVawOyynR9Gxm05Fbrpyr+
-	WB/7o7hfo/3BZhUhG6ANNQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718968707; x=
-	1719055107; bh=G0G1El3uK8k2KjVN3fQ6GgP+FCi/pQffGpLCPF/vvhA=; b=d
-	Bxu0SwGZw0WkHjTnlnS7fq0zY56CagKJUR47SpgMY7tm6B9aM/Y1dStGHEeQdnDg
-	fCRkvjCgGazP2+UAsbWXGxIX4TiO36d0PYJoOC57DTO3WhDbYh5xK7zBmoVWOLQd
-	UV4EBFBYqO7zBd5J+yASORFYRWi03tNDqnbRTbKRNbo+q+zXd7VgW8v0wiWvr1B7
-	rr2bTE7y7Dc524RRp4nxBdIA76939GnwKcZdixRChC50ONqTr1ex/3RAV1znusd1
-	qVxKhyuBnM1lqA9rP9631v35ZlxNjclnFqSQxEdrw2Rq0rUlgSbfXPnyye1vThMO
-	HKi85rCTn8v3rXqgdA37A==
-X-ME-Sender: <xms:g2F1ZobL1r5dayGb6_dx20VuVd8FBDgwufb-Bfiftejw-qkKSzpUFg>
-    <xme:g2F1ZjYozVdl2unO9nK0bwGLrNn3obOQ6jEuV1fZcrNSLO8g0lxxVu71WBEH0SQ8c
-    LuxKocgWiSj9kafDa4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefgedgfeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:g2F1Zi_7opE70T8E4hvvoIxcDxWUnYzIMUPeLlAZ13rdHvzzcm8Vpg>
-    <xmx:g2F1ZiqZSAYUjyGJQIjONpqp-oO0L90SzbNFf0Dan5AkSXCqxAvW1g>
-    <xmx:g2F1Zjq3gMEeAhz6Zrx5ISXwXxhEyZe36v_DrzbBAqREz0GH_JhbTg>
-    <xmx:g2F1ZgS8yr65kj-LojYGQVGFpxzEflGJ5gpbkoz33gE6-8bc_CSGJA>
-    <xmx:g2F1ZkceRkZjBi65qbQal4Sjl6wjS8sAUiKyTFcdy42gAMyIgNykgtBn>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 3A04236A0074; Fri, 21 Jun 2024 07:18:27 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718968730; c=relaxed/simple;
+	bh=HfbIjyxVlOvSKRVZrwhoYszewBmElsV/Orv22ajzXTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sXTkz+yWo0zG65hcl5fexg7B600UQh8UKe1lNuQXMiNVf+bb7q4RlrHJ5nJw5L6M3q2hlQj65pTm7VmRatAHwrCv8uf44+Jlz9KBU+wW1gRigPVmEYd04+eq481ZNPL6piM0JeKsEplu7/PTCwdV62Gz5ERdBuuEknXJiFJo9FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3XnesmB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 521D1C2BBFC;
+	Fri, 21 Jun 2024 11:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718968730;
+	bh=HfbIjyxVlOvSKRVZrwhoYszewBmElsV/Orv22ajzXTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V3XnesmB6GvSGy81HjBWiwKZRiakH/Nv4MMWhfuuuDRfGll8SrNhFJixdUTo6eAkw
+	 wKP9vFPnADGFBn/FK2fbI8mqB3Z6i67e9P1oLF9uziC0g9+jxCP2XrZXqZFILVddz9
+	 72n3iQxXJzq+oV5rKlyZYUW2JxgfyJ4+MyDfzGDvj0Mco5zOFFo0BCpvfXwIPUXw9Y
+	 sY+PByyBurfV5pC5wZgysIiVXUs8QKSFYm19Q0l621ehinW0R+shJiX21K5l6gfMqw
+	 ggF7LRo90wRoPwwbMLBstGTz+dHj9ifVQsa/0k8SiNKHNJDIWK83CJAeSAx9DrS1Ge
+	 lWmLoaBEqKdTA==
+Date: Fri, 21 Jun 2024 12:18:46 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH net v3] net: usb: ax88179_178a: improve link status logs
+Message-ID: <20240621111846.GD1098275@kernel.org>
+References: <20240620133439.102296-1-jtornosm@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <58f65f4b-9433-44a2-b8de-f18b8d8b0c46@app.fastmail.com>
-In-Reply-To: <20240612-mips-clks-v2-6-a57e6f49f3db@flygoat.com>
-References: <20240612-mips-clks-v2-0-a57e6f49f3db@flygoat.com>
- <20240612-mips-clks-v2-6-a57e6f49f3db@flygoat.com>
-Date: Fri, 21 Jun 2024 12:18:07 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Daniel Lezcano" <daniel.lezcano@linaro.org>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Serge Semin" <fancer.lancer@gmail.com>,
- "Thomas Gleixner" <tglx@linutronix.de>
-Subject: Re: [PATCH v2 6/7] clocksource: mips-gic-timer: Refine rating computation
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620133439.102296-1-jtornosm@redhat.com>
 
+On Thu, Jun 20, 2024 at 03:34:31PM +0200, Jose Ignacio Tornos Martinez wrote:
+> Avoid spurious link status logs that may ultimately be wrong; for example,
+> if the link is set to down with the cable plugged, then the cable is
+> unplugged and after this the link is set to up, the last new log that is
+> appearing is incorrectly telling that the link is up.
+> 
+> In order to avoid errors, show link status logs after link_reset
+> processing, and in order to avoid spurious as much as possible, only show
+> the link loss when some link status change is detected.
+> 
+> cc: stable@vger.kernel.org
+> Fixes: e2ca90c276e1 ("ax88179_178a: ASIX AX88179_178A USB 3.0/2.0 to gigabit ethernet adapter driver")
+> Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
 
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-=E5=9C=A82024=E5=B9=B46=E6=9C=8812=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=E5=
-=8D=889:54=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
-> It is a good clocksource which usually go as fast as CPU core
-> and have a low access latency, so raise the base of rating
-> from Good to desired when we know that it has a stable frequency.
->
-> Increase frequency addend dividend to 10000000 (10MHz) to
-> reasonably accommodate multi GHz level clock, also cap rating
-> within current level.
->
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-
-Hi Daniel,
-
-Can I get a Review or Ack for this series? As it's mainly clocksource re=
-lated.
-
-Thanks.
-- Jiaxun
-
-> ---
-> v2: Fix number of zeros for 10 MHz
-> ---
->  drivers/clocksource/mips-gic-timer.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clocksource/mips-gic-timer.c=20
-> b/drivers/clocksource/mips-gic-timer.c
-> index b3ae38f36720..7a03d94c028a 100644
-> --- a/drivers/clocksource/mips-gic-timer.c
-> +++ b/drivers/clocksource/mips-gic-timer.c
-> @@ -197,7 +197,11 @@ static int __init __gic_clocksource_init(void)
->  	gic_clocksource.mask =3D CLOCKSOURCE_MASK(count_width);
->=20
->  	/* Calculate a somewhat reasonable rating value. */
-> -	gic_clocksource.rating =3D 200 + gic_frequency / 10000000;
-> +	if (mips_cm_revision() >=3D CM_REV_CM3 || !IS_ENABLED(CONFIG_CPU_FRE=
-Q))
-> +		gic_clocksource.rating =3D 300; /* Good when frequecy is stable */
-> +	else
-> +		gic_clocksource.rating =3D 200;
-> +	gic_clocksource.rating +=3D clamp(gic_frequency / 10000000, 0, 99);
->=20
->  	ret =3D clocksource_register_hz(&gic_clocksource, gic_frequency);
->  	if (ret < 0)
->
-> --=20
-> 2.43.0
-
---=20
-- Jiaxun
 
