@@ -1,125 +1,151 @@
-Return-Path: <linux-kernel+bounces-224168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1A7911DF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:09:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76078911DF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA92BB24444
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:09:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291AE1F2622F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABD916FF30;
-	Fri, 21 Jun 2024 08:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFDE916E894;
+	Fri, 21 Jun 2024 08:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7l2ga2O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KQyoiFQ/"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8683484A3B;
-	Fri, 21 Jun 2024 08:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146EE16D33D;
+	Fri, 21 Jun 2024 08:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718956862; cv=none; b=MF3xSjdjG7cqYli0u+jqu6rh9fZfqgiMvJa+kIU7A6NP+Kc5AKKLnKCo8MidXeyqafooo+izDZIjNWS4uA0q8+Eq5gq6PUi7sUD8x0x3tReq17NH+POJLYrjDoHC26/mwXZUe4C3AjVRglVopiu2FaG8Vy87xR88Th7sNlwGNys=
+	t=1718956911; cv=none; b=KjymtPuCGUJobNvW20GY59/eDzIbzKJz4Vin0hvHUl8PVHThcxyY9+g5COVVkb9Tkb/9cFhLcijB92lRRZuEDDFlktnuyv/52rxdXv7pwDvY5Isfb2G6s9MihTDI1ydoGSkhmHr7Ft/rpHvshyA7Kgztf6vy721dH90Lpj+QA/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718956862; c=relaxed/simple;
-	bh=79uHlnttJepyz6wjLqBHqDBH9rnuTEAmit5+JYFFtgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=Pa6MEtDf5Ecijh+NHB4yDrUPD0am2bwGJDzFOs5vcf6iw454hDOm6rVHGAp97NewFDWeNeYPon1FiQq1f1hjub0uvhg/YnhDMVqFneIAJR8JcixUpINKo2kljwiArdvEh+GXNzM2j2fvrC8rZLPYZIBs2hZmUDE3l47JT4WDGvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7l2ga2O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D97C4AF07;
-	Fri, 21 Jun 2024 08:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718956862;
-	bh=79uHlnttJepyz6wjLqBHqDBH9rnuTEAmit5+JYFFtgI=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=u7l2ga2OpM+1ELNAwlwCWVUVHmHa47s8I/9/KEB4vCZAvhSwWHWUqzdIFI6JGwYjP
-	 j7W3fDOkdkiet4895wDHQf00kYB1BO9UgW8gw4t0PhlQ6biGCpxqcU/PBHY9kXvT9t
-	 acoqyfgdhwxaAzMj3vITW9yOBUhdpjJaUx2FIe82tDnKWng7qU3Nq6bvi/9WrFISxD
-	 UTwd3Zv2Ntq/7020K+hVyLEgSNgoxmb8FLQeW8hp2eoce2WInO/pvFqbfafwhChGG4
-	 RUk9ply8M+T3hossQa9SSizJO4SPdIRrWCg+NktimMut0QrZrW38TLjsQ0imt2B8CG
-	 RTN6I8Zd7DmEA==
-Message-ID: <101b0854-7b39-486d-af63-4fe72566e8e1@kernel.org>
-Date: Fri, 21 Jun 2024 10:00:52 +0200
+	s=arc-20240116; t=1718956911; c=relaxed/simple;
+	bh=/8U21ieG/xam9mqjZuainYvWT0HJGgXaxs10B0hv06I=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jyex8pUCJt7bILW5w1Syqalrvp1958lnvykQKAJHp2YSbaaWdjFYscTgy/EJZm2cKRDiJzbDaTu4s7umWh6cqPBlUbp57Knrkz2q88cxatWKLlgvHC7uw2057MuZj/S4ZJnPtS5tqGJIhhLJ9+VpGe7RK7SFagvvK7RNB979XWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KQyoiFQ/; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718956909; x=1750492909;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/8U21ieG/xam9mqjZuainYvWT0HJGgXaxs10B0hv06I=;
+  b=KQyoiFQ/7NUlZigpmpOC7tXa4YiVHEh0PNGKz38VA+yux7rtfLy9iqk0
+   JCMm1fcV8yDThY2nEcX6PVYMmTSyry48ulX57twiSgxZzs9vs/JbmfrvS
+   gT1Q/MYgqntAms0b/O9zSKmLmKxnXbt99vPbcvU3O1wSpK230Yxmg8P4T
+   hQ3PUca3SWFeG74l2ZZt6T4XGSGjlRLDcXxaMYc6lCztFPypypTZZeMi8
+   QJUO0vao1DfoXaMXZm5rnWs1pcutf4xADLg6YkGfpSOz6UXesBF5LLk4Z
+   gT5br5iOlTEnl8aaoDPSXjtc1LlVvhs0xydS1OjxQf5ksk87ibmM4Aiwh
+   A==;
+X-CSE-ConnectionGUID: OYcrU40nQFmm0LLNhIk6Pw==
+X-CSE-MsgGUID: uI1EHhk1Q9y5tyT8v//LiQ==
+X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
+   d="asc'?scan'208";a="259202488"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Jun 2024 01:01:40 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 21 Jun 2024 01:01:29 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Fri, 21 Jun 2024 01:01:24 -0700
+Date: Fri, 21 Jun 2024 09:01:05 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+CC: Yong-Xuan Wang <yongxuan.wang@sifive.com>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <kvm-riscv@lists.infradead.org>,
+	<kvm@vger.kernel.org>, <apatel@ventanamicro.com>, <ajones@ventanamicro.com>,
+	<greentime.hu@sifive.com>, <vincent.chen@sifive.com>, Jinyu Tang
+	<tjytimi@163.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Anup Patel
+	<anup@brainfault.org>, Mayuresh Chitale <mchitale@ventanamicro.com>, Atish
+ Patra <atishp@rivosinc.com>, wchen <waylingii@gmail.com>, Samuel Ortiz
+	<sameo@rivosinc.com>, =?iso-8859-1?Q?Cl=E9ment_L=E9ger?=
+	<cleger@rivosinc.com>, Evan Green <evan@rivosinc.com>, Xiao Wang
+	<xiao.w.wang@intel.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Andrew
+ Morton <akpm@linux-foundation.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Kemeng Shi <shikemeng@huaweicloud.com>, Samuel Holland
+	<samuel.holland@sifive.com>, Jisheng Zhang <jszhang@kernel.org>, Charlie
+ Jenkins <charlie@rivosinc.com>, "Matthew Wilcox (Oracle)"
+	<willy@infradead.org>, Leonardo Bras <leobras@redhat.com>
+Subject: Re: [PATCH v5 1/4] RISC-V: Add Svade and Svadu Extensions Support
+Message-ID: <20240621-enchanted-unfasten-6d71b1ecd791@wendy>
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-2-yongxuan.wang@sifive.com>
+ <09f427cd-74ad-4aa5-81b1-995af2b6e1d1@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rtla/osnoise: set the default threshold to 1us
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
- Steven Rostedt <rostedt@goodmis.org>
-References: <Zmb-QhiiiI6jM9To@uudg.org>
-Content-Language: en-US, pt-BR, it-IT
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>
-From: Daniel Bristot de Oliveira <bristot@kernel.org>
-In-Reply-To: <Zmb-QhiiiI6jM9To@uudg.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5AFAaEg/n/Anupu4"
+Content-Disposition: inline
+In-Reply-To: <09f427cd-74ad-4aa5-81b1-995af2b6e1d1@ghiti.fr>
 
-Hi Luis,
+--5AFAaEg/n/Anupu4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is not rtla/osnoise but tracing/osnoise, so the Subject would be:
+On Fri, Jun 21, 2024 at 09:52:01AM +0200, Alexandre Ghiti wrote:
+> On 05/06/2024 14:15, Yong-Xuan Wang wrote:
+> > Svade and Svadu extensions represent two schemes for managing the PTE A=
+/D
+> > +/*
+> > + * Both Svade and Svadu control the hardware behavior when the PTE A/D=
+ bits need to be set. By
+> > + * default the M-mode firmware enables the hardware updating scheme wh=
+en only Svadu is present in
+> > + * DT.
+> > + */
+> > +#define arch_has_hw_pte_young arch_has_hw_pte_young
+> > +static inline bool arch_has_hw_pte_young(void)
+> > +{
+> > +	return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU) &&
+> > +	       !riscv_has_extension_likely(RISCV_ISA_EXT_SVADE);
+> > +}
+>=20
+>=20
+> AFAIK, the riscv_has_extension_*() macros will use the content of the
+> riscv,isa string. So this works fine for now with the description you
+> provided in the cover letter, as long as we don't have the FWFT SBI
+> extension. I'm wondering if we should not make sure it works when FWFT la=
+nds
+> because I'm pretty sure we will forget about this.
+>=20
+> So I think we should check the availability of SBI FWFT and use some glob=
+al
+> variable that tells if svadu is enabled or not instead of this check.
 
-[PATCH] tracing/osnoise: Set the default threshold to 1 us
+No. If FWFT stuff arrives, it should be plumbed into exactly the same
+interface. "Users" should not have to think about where the extension is
+probed from and be able to use the same interface regardless.
 
-On 6/10/24 15:23, Luis Claudio R. Goncalves wrote:
-> Change the default threshold for osnoise to 1us, so that any noise
-> equal or above this value is recorded. Let the user set a higher
-> threshold if necessary.
+The interfaces we have have already caused some confusion, we should not
+make them worse.
 
-The reason why I place fear instead of one was "fear" of having the loop
-taking more then one us, creating false noise notifications because of
-execution time.
+--5AFAaEg/n/Anupu4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-But it actually never happened, even on low speed arm boxes... Also,
-all users I know are setting it to 1 on rtla... so I think it is safe to
-move the value to 1.
+-----BEGIN PGP SIGNATURE-----
 
-Acked-by: Daniel Bristot de Oliveira <bristot@kernel.org>
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnUzNAAKCRB4tDGHoIJi
+0uuGAP9Bm5ygy05cg4wKg5y9lqC76rVPgngZCQO1I648KyMFrwD+M1+iBKLXKdDH
+xaTCLonuJOr+ErXPGNikXsfRBCcP5A8=
+=HAt6
+-----END PGP SIGNATURE-----
 
-> Suggested-by: Daniel Bristot de Oliveira <bristot@kernel.org>
-> Reviewed-by: Clark Williams <williams@redhat.com>
-> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-> ---
->  Documentation/trace/osnoise-tracer.rst | 2 +-
->  kernel/trace/trace_osnoise.c           | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/trace/osnoise-tracer.rst b/Documentation/trace/osnoise-tracer.rst
-> index 140ef2533d26a..a520adbd34765 100644
-> --- a/Documentation/trace/osnoise-tracer.rst
-> +++ b/Documentation/trace/osnoise-tracer.rst
-> @@ -108,7 +108,7 @@ The tracer has a set of options inside the osnoise directory, they are:
->     option.
->   - tracing_threshold: the minimum delta between two time() reads to be
->     considered as noise, in us. When set to 0, the default value will
-> -   be used, which is currently 5 us.
-> +   be used, which is currently 1 us.
->   - osnoise/options: a set of on/off options that can be enabled by
->     writing the option name to the file or disabled by writing the option
->     name preceded with the 'NO\_' prefix. For example, writing
-> diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-> index a8e28f9b9271c..66a871553d4a1 100644
-> --- a/kernel/trace/trace_osnoise.c
-> +++ b/kernel/trace/trace_osnoise.c
-> @@ -1444,9 +1444,9 @@ static int run_osnoise(void)
->  	save_osn_sample_stats(osn_var, &s);
->  
->  	/*
-> -	 * if threshold is 0, use the default value of 5 us.
-> +	 * if threshold is 0, use the default value of 1 us.
->  	 */
-> -	threshold = tracing_thresh ? : 5000;
-> +	threshold = tracing_thresh ? : 1000;
->  
->  	/*
->  	 * Apply PREEMPT and IRQ disabled options.
-
+--5AFAaEg/n/Anupu4--
 
