@@ -1,153 +1,76 @@
-Return-Path: <linux-kernel+bounces-224992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C449F9129AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:31:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABFD9129B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC85281B85
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:31:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B72DB24A94
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7FD7BB19;
-	Fri, 21 Jun 2024 15:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EF9757F8;
+	Fri, 21 Jun 2024 15:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lpTs2kTj"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOa7Hv5m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD72502BD
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077F920DF7
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983874; cv=none; b=FGNGi635j+pG2JLvQYuvryP9c/H+KCzyliJP/HCn0A/yUR3XOqRjZBsix14bWGDfqPRkXhlZ7o3eY32eOFzp/fuzXi+ey5tfOZ8tEil/0XNPRlRUix/PoJUytjr6y+2m6KkmfQETKe2nJuTb0WaA8daIPZ8vzW0Kkl2xqSIFGnw=
+	t=1718983995; cv=none; b=Jo7lzSjTs2I9GJLSDr6AUqWSVdLLjCPp6n5G01JSOOCAslGfGjzEw4ydH+CQwnfHpWekXRKh8ZcAN6SWc57nPSLOYUxNAQ+peuQEXN0aQHCHuphVDfmCfdV2EQbe5K0QHfMstjlrkiebp9FrMbKvH/VGBDJQzK8bGfQS0SxW/s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718983874; c=relaxed/simple;
-	bh=6Sxj7NyGK3NnaTBQtDuoPz7xSdV7SeSV4ZOOalbUogk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eQk5FXqnQrMSO4HHpJ5YlvBZ1+SZWqp2BRjeYF/B33q0kV+sgck9bslarjGRgcAA1ZfG4j1EVN/6QDbRdpV0/tqzYwoC4D5GRRYk/E45iZ0cTVECVXCG8aolT5D27lvcd5a0Y189m+GeDU40oeo6DAg90++vpb0/2Zn4K7QRcnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lpTs2kTj; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: linux@roeck-us.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718983870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=84714MseuJ5eYmHrBF1FkNC7jf6Ok3uWsdaXqPdl7zU=;
-	b=lpTs2kTjM0gFPDUpXxvFlPnH3hc0GMHF7MQxeJ/gCwUETTINTn4hsa8ytX7UszhAQVYsFK
-	Cuufi4+rIPUMJZlMqm826Vbx5XeXr0vCftNKIlYfCm9rq+yrjc8+Whs2kdnD4Ftw8jbksk
-	ySwchPAzQAYCouDK2VXqoxRSrSSH6HQ=
-X-Envelope-To: jic23@kernel.org
-X-Envelope-To: jdelvare@suse.com
-X-Envelope-To: linux-iio@vger.kernel.org
-X-Envelope-To: linux-hwmon@vger.kernel.org
-X-Envelope-To: lars@metafoo.de
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <1439bdda-0e01-42da-a8ec-7a51ee3a5a08@linux.dev>
-Date: Fri, 21 Jun 2024 11:31:06 -0400
+	s=arc-20240116; t=1718983995; c=relaxed/simple;
+	bh=cY9zUbFwVRSjnfTiVO85v6UotIoff4FS2+tMYQoolfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y4j75/j3DHrqH9uLRMpM8wEOl8ZpCylq0ghXCFavDWkm7cxXhHbwle6lJsotKjI/Z4UlVy5Q/FxyTfQq8c3eZ7fmy2eVeKoxgF7yeCwVqNzDOZkpGol+W6Pkf9tssX63IfcYo1ci8C6i6PSy3YlJXTB5FJmXS8DG25ndC74Iifw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOa7Hv5m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B7AAC2BBFC;
+	Fri, 21 Jun 2024 15:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718983994;
+	bh=cY9zUbFwVRSjnfTiVO85v6UotIoff4FS2+tMYQoolfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TOa7Hv5mYVmrn4PEobDGYazCysPStxsTY1KXf3agRM7+wLgBLcB4hQr0hSTsD2513
+	 LS7k5OTGrn68Tqoq25S3KfkFjtMNY49vVLcysAVhiI3/XprLEeW1o1y4MMOzSOpaSS
+	 f2fzDjUEjb8YgJDPn491lM1BqK8HvW11xjpzkA2rgAQl60AB9Yhu6X/hwV8lFDnYbx
+	 7fc3JQtubWUtDnPGjrldpjUdOCsYLUJ23DiHoNv+mTjHZvDRQtHAt74leR6PkkZfgy
+	 8Mln2P6Rk7VpLB4UyiPjKEFRX6XBZgMbPHWTjvV4+WcpjJTzU3vj//eoVawtICTLjq
+	 No69I+78DO8QA==
+Date: Fri, 21 Jun 2024 17:33:11 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch V3 08/51] posix-cpu-timers: Save interval only for armed
+ timers
+Message-ID: <ZnWdN2wBJ7pMKh5I@localhost.localdomain>
+References: <20240610163452.591699700@linutronix.de>
+ <20240610164025.971657046@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] hwmon: iio: Add labels from IIO channels
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Guenter Roeck <linux@roeck-us.net>, Jonathan Cameron <jic23@kernel.org>,
- Jean Delvare <jdelvare@suse.com>, linux-iio@vger.kernel.org,
- linux-hwmon@vger.kernel.org
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org
-References: <20240620211310.820579-1-sean.anderson@linux.dev>
- <20240620211310.820579-3-sean.anderson@linux.dev>
- <0c74406c-291d-4b0f-935e-989fb2f870ce@roeck-us.net>
- <55dbe61b-c2df-4eeb-80ac-cc2c83e9cdd3@linux.dev>
-Content-Language: en-US
-In-Reply-To: <55dbe61b-c2df-4eeb-80ac-cc2c83e9cdd3@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240610164025.971657046@linutronix.de>
 
-On 6/21/24 11:22, Sean Anderson wrote:
-> On 6/21/24 11:08, Guenter Roeck wrote:
->> On 6/20/24 14:13, Sean Anderson wrote:
->>> Add labels from IIO channels to our channels. This allows userspace to
->>> display more meaningful names instead of "in0" or "temp5".
->>>
->>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->>> ---
->>>
->>>   drivers/hwmon/iio_hwmon.c | 33 ++++++++++++++++++++++++++++++---
->>>   1 file changed, 30 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
->>> index 4c8a80847891..588b64c18e63 100644
->>> --- a/drivers/hwmon/iio_hwmon.c
->>> +++ b/drivers/hwmon/iio_hwmon.c
->>> @@ -33,6 +33,17 @@ struct iio_hwmon_state {
->>>       struct attribute **attrs;
->>>   };
->>>   +static ssize_t iio_hwmon_read_label(struct device *dev,
->>> +                  struct device_attribute *attr,
->>> +                  char *buf)
->>> +{
->>> +    struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
->>> +    struct iio_hwmon_state *state = dev_get_drvdata(dev);
->>> +    struct iio_channel *chan = &state->channels[sattr->index];
->>> +
->>> +    return iio_read_channel_label(chan, buf);
->> 
->> This can return -EINVAL if there is no label. Since the label attribute
->> is created unconditionally, every affected system would end up with
->> lots of error messages when running the "sensors" command.
->> This is not acceptable.
+Le Mon, Jun 10, 2024 at 06:42:15PM +0200, Thomas Gleixner a écrit :
+> There is no point to return the interval for timers which have been
+> disarmed.
 > 
-> The sensors command gracefully handles this. There are no errors, and the label is unused.
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-For example, without IIO labels I get:
-
-$ sensors hwmon_ams_ps-isa-0000
-hwmon_ams_ps-isa-0000
-Adapter: ISA adapter
-in1:         825.00 mV 
-in2:         826.00 mV 
-in3:           1.81 V  
-in4:           1.18 V  
-in5:           1.80 V  
-in6:           1.80 V  
-in7:           3.27 V  
-in8:           1.81 V  
-in9:         825.00 mV 
-in10:          1.81 V  
-in11:          1.80 V  
-temp1:        +79.8 C  
-temp2:        +80.9 C  
-
-and with labels I get
-
-$ sensors hwmon_ams_ps-isa-0000
-hwmon_ams_ps-isa-0000
-Adapter: ISA adapter
-VCC_PSINTLP: 824.00 mV 
-VCC_PSINTFP: 822.00 mV 
-VCC_PSAUX:     1.81 V  
-VCC_PSDDR:     1.18 V  
-VCC_PSIO3:     1.80 V  
-VCC_PSIO0:     1.80 V  
-VCC_PSIO1:     3.27 V  
-VCC_PSIO2:     1.80 V  
-PS_MGTRAVCC: 822.00 mV 
-PS_MGTRAVTT:   1.81 V  
-VCC_PSADC:     1.80 V  
-Temp_LPD:     +79.5 C  
-Temp_FPD:     +80.2 C  
-
-I also was concerned about the same thing, but lm-sensors handles things
-gracefully, allowing us to simplify the implementation.
-
---Sean
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
