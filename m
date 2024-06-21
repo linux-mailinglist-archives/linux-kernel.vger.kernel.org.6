@@ -1,113 +1,127 @@
-Return-Path: <linux-kernel+bounces-224618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3A69124DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:15:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1577E9124DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FE1FB25B30
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:15:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4FF328776B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B1614F9F7;
-	Fri, 21 Jun 2024 12:15:21 +0000 (UTC)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B478A15279E;
+	Fri, 21 Jun 2024 12:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="br6XBrqI"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5839EEC4;
-	Fri, 21 Jun 2024 12:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D1A482ED
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718972121; cv=none; b=UwQzap6J2qZMIk+vbV+NF3qrPgac8VWZEkyV1M5cyuvYei6XLzIpQUCfABweKgXIT2H/NWIDDSvjlrK76fV3Quu31vMzOG81DDqVg+MNa9Wxk/eXcGlYbMiMzYy28E7VpNtV2eWOYQrvVQEzJO6LR3kDqbcGYXrwvP35VswfsLw=
+	t=1718972124; cv=none; b=aIRNbptNTjGslQDKfDqkz7zK7bYGrfvXWW5gANsNI09AwUEP0MhsaE/ONNYMnUutgjVq+fd5Uz2Rb5cPxkgB5GyHrSfhk5pigyGjNS6RlNNEfT2+aNhO5cEabGNxVYTxwTpzRtrZdcrfHrV6ljN7s9BgD0fYmRujOu5/XMvdWPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718972121; c=relaxed/simple;
-	bh=HoVl+s/0uhbwF06QYRgp0cmsGbM6e2lQnYXAXcu2TS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OGwMS+pwNsblaE6eA60y31FVwlgbB+F1L8AK/4G45K3ygjM4LQlhtsVdWZcNE8YJMGOJvDwuCxQ59jx4KjaLSeNIYD/+qTw7tbTTTZ2AigzHwj4Pzs/hYjPCXnKKtkR5jJFIg2Age8XhOCsujoyhQDykNaWpgcbnuNUGrpjHSkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-632843cff4fso18652197b3.3;
-        Fri, 21 Jun 2024 05:15:19 -0700 (PDT)
+	s=arc-20240116; t=1718972124; c=relaxed/simple;
+	bh=Ul4UPYH/+TY+vUx++IuWcHjMYpRIIfVR+t0N7A/0g94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbQrH8VYwrb2GVA4ZKyEguz7hSnOm7NgOZkmtxc2E8PKysdlawFjP93AK4TcthHb9SC9b2j2GzHpvOMhhXfN9LpeD48WRkOiMZ9iBsx12O/mbWdi6q3OHcFVrZ7MUo0uZ3zFeEejvJqd4BZLGqpgaP+RDnN9IpvwfAmJe1j+9B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=br6XBrqI; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso27821641fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:15:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718972119; x=1719576919; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6xH4TjJ1vLeO7hvhqxB1jVAlRByyOLroRcKk1YzxwLQ=;
+        b=br6XBrqIgFKrlXfFCWa2cyRVqNBbxtwrzvbhZV77Z35bkJ+YKAfa1UVKxThHs64KR1
+         9CplcFrFXuDWqr9a4OLgzEM3cdMG2ougs9IcO2kpj4WFYDyC+QqTK0DesC8RV5yw3/7v
+         Tmtf6xcS2IUWLsrPVornHpkRb4zjwdtFprb2vbmAQxzJ97rHrbOaxR2YmrLLAro9NWJ4
+         CgEqspfaUx71anH5H6mtVSJ0oAdDZ02kOgUY46PBJT2CNOG7guU37g+3r8xHM+nLv/Ut
+         HO9J48O6qMuzoK8yFxMdK1UphQIeHikgWgMwURtZVa3dJ+A0KoXQ1MtKjdL/KZ6502Qw
+         6/gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718972118; x=1719576918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/VLm+/3RGyNu/np3rDAPr08/Aiyof+ayMRldgobak0k=;
-        b=wDMulo8klr7c8hfWtD1CiZf7w1I/sYNQEI/0NBwCcqcr85HTmqIJ1EhrhO9uQVB2U4
-         CPfOluBhiQH7AtCNCH7KvIievoCf5Ks5G4GB4B9u33A0m0HRXsQtdwVV+MCxWw5TuEpn
-         kprnZk9QbbSl197+dOZBeZjfDFXBCpDXNfsIIY1COkQNZ18r8iZAEl2/sXpkG149Au8M
-         v243yuKnjbsBVQcOCYMF1n8TwnYGzVKM3OrNwwoeyNi5jTuz4yHFyFV2qqFiYFYHkkqu
-         JoSpahb1+nG39+59+OMZxO3bAdsMEQOjwAOMdnDfszTcwOVIB1eSh4g+doSyaVQrpkI3
-         tgoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeCdruTE6L23GwgmDV1AWRzV8emrKRyReji178pj9TYfblSJME0ZaXir32AgxnE+7fS1874x2lg1xiw6R1q7RRD1cqNdtKN9mjKeUmojfYgqBnRTRd7kOBYJUNPjf3an5m+BCOUr9h3geXm5tbU450YNLq3iXKpcRi1D3fE0lpxvLFX+hw4jxB9lAz
-X-Gm-Message-State: AOJu0Yy2roIy1X6/Bdj499u4q9cskxZVPcYHUY2huUMchn4EwAFWAzMF
-	w5H6swFyLRi6K5bZLolwy3fIopaXXWm1VdwRyXKj4yO97iBcuv82dGuyvY3A
-X-Google-Smtp-Source: AGHT+IHdTuOsaAF9tx5tLvnJu0CcO+LpzCyhrwGUeTrd/KC+ByIo0ZKqA3ck6qbeWAYwJFJ7Hqdjaw==
-X-Received: by 2002:a0d:e2cf:0:b0:61a:e2e4:454d with SMTP id 00721157ae682-63a8fed2d11mr86891387b3.45.1718972118070;
+        d=1e100.net; s=20230601; t=1718972119; x=1719576919;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6xH4TjJ1vLeO7hvhqxB1jVAlRByyOLroRcKk1YzxwLQ=;
+        b=PmQbq3jHvRfMeqZvHpwUu5R8N10jM8I9lbJxQOmSiuN7/ZbWzi+d8krLOirUGTX+4v
+         WkPygsb0OQrQmGBZjNaNm5fvgzwDt0s5HxheD2s0m7CNLuGJnlovp4732KFYiiQJd/Fr
+         5NbzkVLnO/wvZivM4onayz/YkTjIj/1bf/wt7xk3HVHk9xURqoaPlqPCv2fEwalMZMyS
+         EOHKM7VwA9vEIXAUcqllsNTPKGJccO2vSU/TwvvSYtyt2ZV4vPHlB3tvMi5ALwkEMyXE
+         aeHKN2eAinpSc6ZsPD5kcrh8mr1XqpXOp2caoSGUG0hWHCJmVJMhEl1KvxEydLhqdM/C
+         MldA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3tNw60OtYBFKK0YQoI5bqd+iL63IoTnny1VUAs6lbmejyd+X2LU97o9ly+kN2HqViqL8/yNX43ssqeQwuVjaoEGN8eIu7YCZV2qrH
+X-Gm-Message-State: AOJu0YytCvJ9zUif7DqV7hP19NsrHURrz+S4FD4uOdQs6P6cF4uw9ZpU
+	rkxDGzoxN+1t2gqqgl9xrG9SdxrgHaQB6m46wK8KPsRotkmN8JfMZHpWXnOamk0=
+X-Google-Smtp-Source: AGHT+IGTk3TufthfvrmTzsIzthh/R+FGLBg4ydeD9dSFSJdwe3KkpatXVXYn3/PLrKsUx4xzR+4XkQ==
+X-Received: by 2002:a2e:7c10:0:b0:2ea:e1fe:2059 with SMTP id 38308e7fff4ca-2ec3ced180emr63245121fa.27.1718972119493;
+        Fri, 21 Jun 2024 05:15:19 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb321c24sm12834335ad.97.2024.06.21.05.15.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 21 Jun 2024 05:15:18 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f154d5df7sm2953357b3.107.2024.06.21.05.15.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 05:15:17 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a2424ecb8so22344677b3.1;
-        Fri, 21 Jun 2024 05:15:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUW+g3gWP+O1JvckpssgIb/oumRKD3vHNyqH81Q61E3pw8QA0iFnpQhlmIDO4HU2mfN7VzO1P78evlbMF8xk/OzDPVQYylgn4UEL6zVfKUMLqtDwQmZMr35Zt2NUQBLI6W+/X1jQJKjWloDX2PmnVC/g9sPNkGnhjnrN5Q8+qlmrMix4C0YKY1NiexZ
-X-Received: by 2002:a81:431f:0:b0:61a:ed1e:ecd with SMTP id
- 00721157ae682-63fee13c447mr9173527b3.50.1718972116988; Fri, 21 Jun 2024
- 05:15:16 -0700 (PDT)
+Date: Fri, 21 Jun 2024 14:15:09 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Tony Lindgren <tony.lindgren@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] serial: core: Revert unusable console quirk
+ handling
+Message-ID: <ZnVuzXMqoH_HLdhB@pathway.suse.cz>
+References: <20240620124541.164931-1-tony.lindgren@linux.intel.com>
+ <20240620124541.164931-4-tony.lindgren@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618174831.415583-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240618174831.415583-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240618174831.415583-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 21 Jun 2024 14:15:04 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUR0wuBKx-ugMUyeyOCiCW5pbyes3MFu1Yfd5936ve-0g@mail.gmail.com>
-Message-ID: <CAMuHMdUR0wuBKx-ugMUyeyOCiCW5pbyes3MFu1Yfd5936ve-0g@mail.gmail.com>
-Subject: Re: [PATCH 3/4] pinctrl: renesas: rzg2l: Move RZG2L_SINGLE_PIN
- definition to top of the file
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620124541.164931-4-tony.lindgren@linux.intel.com>
 
-On Tue, Jun 18, 2024 at 7:48=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Define `RZG2L_SINGLE_PIN` at the top of the file to clarify its use for
-> dedicated pins for improved readability.
->
-> While at it update the comment for `RZG2L_SINGLE_PIN_PACK` macro and plac=
-e
-> it just above the macro for clarity.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu 2024-06-20 15:45:28, Tony Lindgren wrote:
+> There is no point of trying to handle the console quirks in the serial
+> core instead of console_setup() currently.
+> 
+> With the console_setup() related changes, we are now deferring the
+> DEVNAME:0.0 style consoles based on the ":" naming only. So the serial
+> core console quirk handling would not do anything for the "ttyS" named
+> consoles as they are not deferred.
+> 
+> Also the earlier approach would have depended on further changes to be
+> able to drop the serial port quirk handling from console_setup().
+> 
+> Let's revert the following console quirk handling related serial core
+> commits:
+> 
+> b20172ca6bf4 ("serial: core: Fix ifdef for serial base console functions")
+> 4547cd76f08a ("serial: 8250: Fix add preferred console for serial8250_isa_init_ports()")
+> a8b04cfe7dad ("serial: 8250: Add preferred console in serial8250_isa_init_ports()")
+> a0f32e2dd998 ("serial: core: Handle serial console options")
+> 787a1cabac01 ("serial: core: Add support for DEVNAME:0.0 style naming for kernel console")
+> 
+> Once the console quirk handling is gone, we add back the DEVNAME:0.0
+> functionality with a minimal patch.
+> 
+> Suggested-by: Petr Mladek <pmladek@suse.com>
+> Link: https://lore.kernel.org/linux-serial/ZnGQ8JAu2OQf0GX8@pathway.suse.cz/
+> Signed-off-by: Tony Lindgren <tony.lindgren@linux.intel.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.11.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Best Regards,
+Petr
 
