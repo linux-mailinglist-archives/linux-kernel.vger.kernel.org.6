@@ -1,105 +1,196 @@
-Return-Path: <linux-kernel+bounces-224719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73376912622
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:58:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7275C912604
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C71F5B27A65
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:53:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91CE31C256A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFCB1553BF;
-	Fri, 21 Jun 2024 12:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A26153BDE;
+	Fri, 21 Jun 2024 12:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fFm4GIaD"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dTwxAVVv"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3D115530F;
-	Fri, 21 Jun 2024 12:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C79915383B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718974352; cv=none; b=TC3u6y06EwASRQg+FVtqD55g658OYeA0UBtzUjzJOgHzUyc+XbRvKkB5HL91GzAA5qhHL08ZduaNrVUMTeIYiFQhlpA+mIAzLOackn/3Z8eAmGTqFuu4m789XeiqiIvoxNA/LVcQ55MaTd5DfzgAVSkqny4IvaWvMTZGQkHVet0=
+	t=1718974347; cv=none; b=U4tHW1ryw5ObQ0DbjNPKD99KXIXOtv4k3HQSQJBhbJO7cDwQkt8HnSMb94hc7rHRiGiuaEPse/WQXGk7mWndRdtDKC4A5nUv94jguGlZq670Q57WrsI3jlv/CBbgmbIzGFQJDn2Brc6VrXzPTb5jB/M7EJXAJgmDWsguGANyqs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718974352; c=relaxed/simple;
-	bh=sy67VyX+6tFDFqZPNJ6vHwDoUQkPVK7jzqNQ/cPNonI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eY0r263RZtM+3/J4karid3GVAIjRxkMfNv2xgkrBV1aPIs6pCqRjzWu++z3/mqklxJB0X84shuO79uiS57M7afIHXX9kpTcK7Aomk8vFkFZN08Yo3+Fn88frVAOhV5x3oPGh49YoFOpIcWSVY7zdJvfOnqeWajKe9RpkZHhRNkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fFm4GIaD; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9C11840E021B;
-	Fri, 21 Jun 2024 12:52:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id kwK4-fyUVF0Q; Fri, 21 Jun 2024 12:52:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718974337; bh=kC3oXF4sjVIYJp+MXXYTe61sDbC5YEW3qf5CpMsG//8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fFm4GIaDaoAtB6sPLaqsK/9tlG0UrHgH0g5FzmWcKaxpINfx+YKSugCFLlQVZ82ID
-	 29lt0ywXC6DMZ9dlbiav1oCOr1NSViy3y4EnIEKpFmIORxjwyBaG7vCFh9JotyER1J
-	 QGlegpX9py5SBU7QaQOvZ+/HhIAkDoFwXIaj4RvTHF4ZEzLCh3TA7KrErJpZTPeNOI
-	 BGyrsI65e1O0teO/dDqo1LHOnrdlWsdlO1ObilQc8vcAY9dUf6dm98KGX1PSu3ssUJ
-	 xijPtw4zFjOkbK6kOHy9VWBJjUDcySZqH2zPOpIau8t5VNh07ZccpNGLEnbMqzFE2S
-	 Bqnc0iTzm9bNKhDCNexopnHdnbN+SKY4aeW3v2sOpiECtaaEF+V1Sz2dZaEEBb+6Mc
-	 tVaAmUtN08uC1CoMOVYwgrbyHxKayySxxxeGlthFQIpkNv15SRgJHFWdz9knAiqoJ9
-	 lCyjh2xTfA7WzEVhWWyq0ow7ZR6MdEqsIibRHZeNgGO3vPueiyM7mcWzGe9SWJ+gH0
-	 lJw2V07FHCJfp+5VckJejlnpbPXEnsxJ92AlxqhliqpSyaLqsoL3+iRj8jtteyLRdo
-	 dPNXQsdoHqHZGvGGgHVZWFA9yIgs2BT8I42VbEDdl6Pfpu5RFHTfwKQshYs6OgW6Jq
-	 k1q4LnZrXO/R+a7mnkC/zoN0=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 741EF40E01A5;
-	Fri, 21 Jun 2024 12:52:04 +0000 (UTC)
-Date: Fri, 21 Jun 2024 14:51:59 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Amit Shah <amit@kernel.org>
-Cc: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	amit.shah@amd.com, seanjc@google.com, pbonzini@redhat.com,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	hpa@zytor.com, kim.phillips@amd.com, david.kaplan@amd.com
-Subject: Re: [PATCH] KVM: SVM: let alternatives handle the cases when rsb
- filling is required
-Message-ID: <20240621125159.GDZnV3b-eqbkGTB7YD@fat_crate.local>
-References: <20240621120743.59330-1-amit@kernel.org>
+	s=arc-20240116; t=1718974347; c=relaxed/simple;
+	bh=9ExI3HMc8dpikZS14KdMf2VTfo2Gm4D9Du3Ad8hswa0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iTVnU3sDkTykUd7Oxq3NGXt6Yk3C5/SCnRr+zf3lq/zET3LBp1WCmfvA6vrZP7QC6by+xzfkh96SZfqAGv+cBdONPxCWXt4KM5kGwQIbiqtorEa2blrc++pw/P0JE3Mya6MIW+lz7NusrJ6C5dNYB96ZgO0Nkr+kgkQsQUgmcw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dTwxAVVv; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7046211e455so1369033b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:52:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718974345; x=1719579145; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jFikssrTKZjRo9rjV6X1YnKRcFeJcrLtumLLhBthri8=;
+        b=dTwxAVVvG50novP6VF9UJ4zxxi3/kn2Qm/RuCRSGH6hF9+fGk4+lxd8Ts1FqPzm3dc
+         TNLnGhqmv7uchPdWDS+dM1lZLxaOCbBdW6WgnygnPxblfrgdo5IChA51HTkI12IQG/is
+         0h2Gqx5pNlccTuls0xwhHYtRZVbuRRItSow1ThOoQrT3C0jLepMAzKHEOwuLpgAtX3uk
+         5crDRly5mSLFxUu1smW6B66qa7qBAyp4f+iJozeZdpCj8VSXKe6egAOQni4qEPPAveLq
+         ZvGVrcaVu9Y7Vc8vCW22gO7E3O8DFODHFhyvtY/CjokQF9o4iBjPzsBf29maRwj6MZcy
+         dv3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718974345; x=1719579145;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jFikssrTKZjRo9rjV6X1YnKRcFeJcrLtumLLhBthri8=;
+        b=rnoqd7i34Bp3r/Fkr3WNjYu8iT1ATupNXD9k5QjDil6cYkkHu12pgbH95u4n+bpvoR
+         LjhnBvcRi+2LJ2uowHEKuYhN7IwtJd80avAPuynLScCevx/ljlvH7mS0zAoAf7LCtfWo
+         6iHOqPyVt60JAlyF8X/2eLPONUEleNcz1ta3fYMjiXg6WYZmmbSEYqAviqAbdDoAHIfj
+         8T5O5yrHuPpmXkVRByvbRdYvpdOJoqc/g6723IKHzkLOX8YP8F+BSAjdexIM9XM6hamO
+         /vH7MFKX8flWy3XYXTjVxnCq+xK45eLJOEg4x1sLIBXH9fmuOKVVvdVYJKidh9HVASek
+         QbQw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9mhwaPENiUakNrDFNrxltqbqExhwGBc1yG/w1fpxLUa3dGDXaxZMwfp3y3+EoJe9O0T9XvMr1m8lxkEu60J+bGaGgakK2olCqpbve
+X-Gm-Message-State: AOJu0YzSLyTqITUFtiPmf0o1J1TN/2yRZOblnlzzc8HWJ2Hu7jH27sQl
+	bUC8i+xOfjo0pE7g9XrrrBKo6pNitcZt9dYFgx6b6szjY1gLABktx4DynJRc+qe/LaNF8hj+Qr2
+	VJoto6MERfDdLXe5tMAdyQpoqPywz5dsqXQzL
+X-Google-Smtp-Source: AGHT+IHLbxh5gnZYE3Ij3eJIOL1ReH1iHe0C7faIKhDLxkg3+UYsqYWbYf6Q8dpYIbAjVW26QeLxKyYtHQr3AWRtJa0=
+X-Received: by 2002:a05:6a20:7283:b0:1af:bd03:3222 with SMTP id
+ adf61e73a8af0-1bcbb5f75cbmr9905522637.45.1718974345162; Fri, 21 Jun 2024
+ 05:52:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240621120743.59330-1-amit@kernel.org>
+References: <20240621-tracepoint-v3-0-9e44eeea2b85@google.com> <20240621-tracepoint-v3-2-9e44eeea2b85@google.com>
+In-Reply-To: <20240621-tracepoint-v3-2-9e44eeea2b85@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 21 Jun 2024 14:52:10 +0200
+Message-ID: <CAH5fLghb6oVkgy3ckf=dUk9S4VdCeWin+yDBW1ffBoxu=HqBKw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] rust: add tracepoint support
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>
+Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 02:07:43PM +0200, Amit Shah wrote:
-> From: Amit Shah <amit.shah@amd.com>
-> 
-> This patch removes superfluous RSB filling after a VMEXIT when the CPU
+On Fri, Jun 21, 2024 at 12:35=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> Make it possible to have Rust code call into tracepoints defined by C
+> code. It is still required that the tracepoint is declared in a C
+> header, and that this header is included in the input to bindgen.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  include/linux/tracepoint.h      | 18 +++++++++++++++-
+>  include/trace/define_trace.h    |  7 ++++++
+>  rust/bindings/bindings_helper.h |  1 +
+>  rust/kernel/lib.rs              |  1 +
+>  rust/kernel/tracepoint.rs       | 47 +++++++++++++++++++++++++++++++++++=
+++++++
+>  5 files changed, 73 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+> index 689b6d71590e..d82af4d77c9f 100644
+> --- a/include/linux/tracepoint.h
+> +++ b/include/linux/tracepoint.h
+> @@ -238,6 +238,20 @@ static inline struct tracepoint *tracepoint_ptr_dere=
+f(tracepoint_ptr_t *p)
+>  #define __DECLARE_TRACE_RCU(name, proto, args, cond)
+>  #endif
+>
+> +/*
+> + * Declare an exported function that Rust code can call to trigger this
+> + * tracepoint. This function does not include the static branch; that is=
+ done
+> + * in Rust to avoid a function call when the tracepoint is disabled.
+> + */
+> +#define DEFINE_RUST_DO_TRACE(name, proto, args)
+> +#define DEFINE_RUST_DO_TRACE_REAL(name, proto, args)                   \
+> +       notrace void rust_do_trace_##name(proto)                        \
+> +       {                                                               \
+> +               __DO_TRACE(name,                                        \
+> +                       TP_ARGS(args),                                  \
+> +                       cpu_online(raw_smp_processor_id()), 0);         \
+> +       }
+> +
+>  /*
+>   * Make sure the alignment of the structure in the __tracepoints section=
+ will
+>   * not add unwanted padding between the beginning of the section and the
+> @@ -253,6 +267,7 @@ static inline struct tracepoint *tracepoint_ptr_deref=
+(tracepoint_ptr_t *p)
+>         extern int __traceiter_##name(data_proto);                      \
+>         DECLARE_STATIC_CALL(tp_func_##name, __traceiter_##name);        \
+>         extern struct tracepoint __tracepoint_##name;                   \
+> +       extern void rust_do_trace_##name(proto);                        \
+>         static inline void trace_##name(proto)                          \
+>         {                                                               \
+>                 if (static_key_false(&__tracepoint_##name.key))         \
+> @@ -337,7 +352,8 @@ static inline struct tracepoint *tracepoint_ptr_deref=
+(tracepoint_ptr_t *p)
+>         void __probestub_##_name(void *__data, proto)                   \
+>         {                                                               \
+>         }                                                               \
+> -       DEFINE_STATIC_CALL(tp_func_##_name, __traceiter_##_name);
+> +       DEFINE_STATIC_CALL(tp_func_##_name, __traceiter_##_name);       \
+> +       DEFINE_RUST_DO_TRACE(_name, TP_PROTO(proto), TP_ARGS(args))
+>
+>  #define DEFINE_TRACE(name, proto, args)                \
+>         DEFINE_TRACE_FN(name, NULL, NULL, PARAMS(proto), PARAMS(args));
+> diff --git a/include/trace/define_trace.h b/include/trace/define_trace.h
+> index 00723935dcc7..b47cc036acba 100644
+> --- a/include/trace/define_trace.h
+> +++ b/include/trace/define_trace.h
+> @@ -72,6 +72,13 @@
+>  #define DECLARE_TRACE(name, proto, args)       \
+>         DEFINE_TRACE(name, PARAMS(proto), PARAMS(args))
+>
+> +/* If requested, create helpers for calling these tracepoints from Rust.=
+ */
+> +#ifdef CREATE_RUST_TRACE_POINTS
+> +#undef DEFINE_RUST_DO_TRACE
+> +#define DEFINE_RUST_DO_TRACE(name, proto, args)        \
+> +       DEFINE_RUST_DO_TRACE_REAL(name, PARAMS(proto), PARAMS(args))
+> +#endif
+> +
+>  #undef TRACE_INCLUDE
+>  #undef __TRACE_INCLUDE
+>
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
+per.h
 
-s/This patch removes/Remove/
+Hmm, I tried using the support where I have both events and hooks:
 
-> already has flushed the RSB after a VMEXIT.
+#define CREATE_TRACE_POINTS
+#define CREATE_RUST_TRACE_POINTS
+#include <trace/hooks/rust_binder.h>
+#include <trace/events/rust_binder.h>
 
-... because AutoIBRS flushes the RSB on VMEXIT."
+But it's not really working. Initially I thought that it's because I
+need to undef DEFINE_RUST_DO_TRACE at the end of this file, but even
+when I added that, I still get this error:
 
-I'd like to be stated clearly that AutoIBRS does that.
+    error: redefinition of 'str__rust_binder__trace_system_name'
 
-Otherwise, looks ok to me.
+Is the Rust support missing something, or is the answer just that you
+can't have two files of the same name like this? Or am I doing
+something else wrong?
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Alice
 
