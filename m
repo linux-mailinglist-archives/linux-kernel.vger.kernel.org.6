@@ -1,150 +1,104 @@
-Return-Path: <linux-kernel+bounces-224036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3330911C54
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:58:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC14911C5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9E91F2500C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:58:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BEE91C24110
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FF6168C2C;
-	Fri, 21 Jun 2024 06:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B4D169AD5;
+	Fri, 21 Jun 2024 07:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="fCQgsxBN"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNbZ3asG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1DA12D1EB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C750167D98;
+	Fri, 21 Jun 2024 07:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718953115; cv=none; b=rGlCtQxGoGgPmbOiSbnp/xV3+azAdLKGDpU1IB9ZO4s/sPrCNG9LhxAdpWyfFLvimUAVEq22p2nsX1QaYeaBV/sU/vxeGziGbRvb6tV2BQ0K27YMACNsiax329NtsDkNvD9A7/6LTd+wqfkdP7Uv9bSd6vplJIQiAM01tCeynOA=
+	t=1718953207; cv=none; b=ielNjSvMQNIxLx2wPppgJS4o5Kgk+/QeVpILztTQ/0qBg2eQH39+gVB9ogF0dF7e9J/WpRM8inQs3Xa+nJn5jucmqiwa5BWzApDHzzcrmAZl2Oy0Gp+0gRjN9k4fTBRbS8kATXmeoIg+T8s0KZVvApC5XEvb1XgF0o7yWY/f9W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718953115; c=relaxed/simple;
-	bh=VB3sa7wRXdFENiXd89umSPAzZXPKf6iCSmNFgLdO8uA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nh0Ez64gzjdiVac3VojNZLy2wGA+t0nnZwU3OI3nLM1ck8CA87D3k4+IPRUSbasvO6F4oJsVxYdIO7kIbfpOlUGQ/7wRIBpd7eQPgn4gGHXVML8P1N2aD35TQY4AbmeSR2MJI28OkFBdzMt3hMursB73tPI3CUj0ClXAbEpeNL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=fCQgsxBN; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1718953096;
- bh=wuLrixmm9mNItymNAgLNb/E3azKTDfSKGMXK8se96Fg=;
- b=fCQgsxBNHkuFS1z62RU/VUZaXp3TsQ9b5GHwAzHFImPMWn/gWKBocMV2QIzE6YS7Aj5/zWpXt
- 4bklNla1MfdslTLQZmQLnTdeYgaIa8k2mPn5FSyn1IwDtUiF87trVsJE/h3b5AEjt8lWaMTX5vN
- sBV9z8Hp0bhGNoEtr0vXrsQTiBfH24BD96l5etYOnv8xQHHFcZg6+3xASN1NpaV2hYpRmBiwb+F
- J43Xok0sVtX6irfEJQaRkJ3i/tOB0bfak/AiAtFvBDWCjPRc/26P6G+gsVeqttuKWEm9a5apsrw
- iG7mBOCNT5qsqPHtFDpQ8F1G8FLEGW/IcueQ/2Dpwmlw==
-Message-ID: <dbf9d54e-1197-4731-80f2-91ff7c9954e4@kwiboo.se>
-Date: Fri, 21 Jun 2024 08:58:07 +0200
+	s=arc-20240116; t=1718953207; c=relaxed/simple;
+	bh=HLK1QrlfbbMEdecZH3fuabbAT7AvcBUTRYiFLz+4f7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRMiYMDzcGFQY1cPMsL3WrnTYQQ9l2/SuCK8IfaWg7BBUYP2baNRDrpYDYwpjBD7ZOX+p87eqAh6Fn5WpaFol4KPvDXrYdhn3nODzBpf59VEjFGGJJx6EHMbccAbe3LQXDdO+kSylFgl6wdH+5NhrHpCzAkYyHr2AqVsjb5nk5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNbZ3asG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCF54C2BBFC;
+	Fri, 21 Jun 2024 07:00:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718953206;
+	bh=HLK1QrlfbbMEdecZH3fuabbAT7AvcBUTRYiFLz+4f7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tNbZ3asG1h+6NzR3gqFiEzc9uHqZKts3ieC9wbv7XJJhABcQaRwcERAmfisEEbzbw
+	 KolyAPJk7xHHKrq3H0qp3S5z2eQ6Isff96dCX6ASIkb3b+bfa5Hw04mLeOzlsF+6Wa
+	 CEd2P3VjBIFwbeY2nD3/unii4yee7O7yIb6d3f7az5tDmKiASMcnHSdqUUw3AduWbr
+	 jvRu12juB64C5a0r2l6VAoT9zClsTUK2Qrbb84feV6yBdw9O7SalWTODGKVri30ywX
+	 b1zbF5k/d8klmpeNuMM3onVDGAMMAL7IAdixxB/TVdX+dvtPDV5IPI4mb4Vo775IAj
+	 9WxJ8dnLpRIVw==
+Date: Fri, 21 Jun 2024 00:00:06 -0700
+From: Kees Cook <kees@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Eric Biederman <ebiederm@xmission.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 2/2] exec: Avoid pathological argc, envc, and bprm->p
+ values
+Message-ID: <202406202354.3020C4FCA4@keescook>
+References: <20240520021337.work.198-kees@kernel.org>
+ <20240520021615.741800-2-keescook@chromium.org>
+ <fbc4e2e4-3ca2-45b7-8443-0a8372d4ba94@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] arm64: dts: rockchip: Fix mic-in-differential usage
- on rk3568-rock-3a
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko
- Stuebner <heiko@sntech.de>, Chris Zhong <zyw@rock-chips.com>, Zhang Qing
- <zhangqing@rock-chips.com>, Chris Morgan <macromorgan@hotmail.com>, Furkan
- Kardame <f.kardame@manjaro.org>, Michael Riesch
- <michael.riesch@wolfvision.net>, kernel@collabora.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240619-rk809-fixes-v1-0-fa93bc5313f4@collabora.com>
- <20240619-rk809-fixes-v1-3-fa93bc5313f4@collabora.com>
- <c35b3e80-7889-473d-8365-88436c3cb9a9@kwiboo.se>
- <4015ded1-5ec4-4374-982e-9c7f23b43884@collabora.com>
- <1fce65a2-b752-4bab-84e5-314b60d682f0@collabora.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <1fce65a2-b752-4bab-84e5-314b60d682f0@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 667524847560ce51b8f26441
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbc4e2e4-3ca2-45b7-8443-0a8372d4ba94@roeck-us.net>
 
-Hi Cristian,
-
-On 2024-06-21 03:23, Cristian Ciocaltea wrote:
-> On 6/19/24 3:56 PM, Cristian Ciocaltea wrote:
->> Hi Jonas,
->>
->> On 6/19/24 3:22 PM, Jonas Karlman wrote:
->>> Hi Cristian,
->>>
->>> On 2024-06-19 13:23, Cristian Ciocaltea wrote:
->>>> The 'mic-in-differential' DT property supported by the RK809/RK817 audio
->>>> codec driver is actually valid if prefixed with 'rockchip,':
->>>>
->>>>   DTC_CHK arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dtb
->>>>   rk3568-rock-3a.dtb: pmic@20: codec: 'mic-in-differential' does not match any of the regexes: 'pinctrl-[0-9]+'
->>>> 	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
->>>>
->>>> Make use of the correct property name.
->>>>
->>>> Fixes: a84ffd2ef1ff ("arm64: dts: rockchip: Fix mic-in-differential usage on rock-3a")
->>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->>>> ---
->>>>  arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
->>>> index ebdedea15ad1..0b54dfe92d6e 100644
->>>> --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
->>>> +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
->>>> @@ -533,7 +533,7 @@ regulator-state-mem {
->>>>  		};
->>>>  
->>>>  		codec {
->>>> -			mic-in-differential;
->>>> +			rockchip,mic-in-differential;
->>>
->>> If I understand the schematics correctly, only one wire is connected so
->>> this board cannot really use differential signaling, and this should
->>> probably instead be dropped.
->>
->> Thanks for pointing this out, I will drop it in v2.
+On Thu, Jun 20, 2024 at 05:19:55PM -0700, Guenter Roeck wrote:
+> Hi,
 > 
-> I've also checked the schematics which indicate the PMIC RK809 CODEC
-> receives both MIC1_INN and MIC1_INP signals; the former comes from the
-> Jack input, while the latter is generated by the SLM42Q3AT MEMS Microphone.
+> On Sun, May 19, 2024 at 07:16:12PM -0700, Kees Cook wrote:
+> > Make sure nothing goes wrong with the string counters or the bprm's
+> > belief about the stack pointer. Add checks and matching self-tests.
+> > 
+> > For 32-bit validation, this was run under 32-bit UML:
+> > $ tools/testing/kunit/kunit.py run --make_options SUBARCH=i386 exec
+> > 
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
 > 
-> However, I'm not sure the Mic presence on the board is dependent on the
-> HW revision - on REV V1.3 the "NC_" prefix under U24 component label
-> suggests it is not connected.  So maybe we should keep the property?!
+> With this patch in linux-next, the qemu m68k:mcf5208evb emulation
+> fails to boot. The error is:
 
-There is no such mic on the board, at least on the rev 1.3 that I have.
+Eeek. Thanks for the report! I've dropped this patch from my for-next
+tree.
 
-This prop should be used to indicate that the attached microphone uses
-differential signaling, e.g. should have its two output signals
-connected to both INP(+) and INN(-).
+> Run /init as init process
+> Failed to execute /init (error -7)
 
-The SLM42Q3AT or the single wire from headphone jack indicate that a
-single-ended microphone is/can be used/wired on this board.
+-7 is E2BIG, so it's certainly one of the 3 new added checks. I must
+have made a mistake in my reasoning about how bprm->p is initialized;
+the other two checks seems extremely unlikely to be tripped.
 
-The current use of non-working mic-in-differential was wrong, adding
-the rockchip,mic-in-differential would change behavior and wrongly
-describe hw of this board.
+I will try to get qemu set up and take a close look at what's happening.
+While I'm doing that, if it's easy for you, can you try it with just
+this removed (i.e. the other 2 new -E2BIG cases still in place):
 
-Regards,
-Jonas
+	/* Avoid a pathological bprm->p. */
+	if (bprm->p < limit)
+		return -E2BIG;
 
-> 
-> Cristian
 
+-- 
+Kees Cook
 
