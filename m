@@ -1,188 +1,113 @@
-Return-Path: <linux-kernel+bounces-225226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23D7912DCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:23:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10C7912DCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31458B21EEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:23:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43EDF1F2333B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A37D17B50D;
-	Fri, 21 Jun 2024 19:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD4617BB2B;
+	Fri, 21 Jun 2024 19:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="knUtvkap"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wy2iKkI7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lJttQ362"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9ACC4644C;
-	Fri, 21 Jun 2024 19:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEA317BB01
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718997774; cv=none; b=Yq+m3i0A08df3LLUTgxEwElT2PIqwt3hPY2gMgFvlWycLtp3fFrtcd3qtNd+u5GeyI4KzP8HhT1qDKH4tp/UmURw0n99lt97/TL8GMf49X9e5gVqIMh4WnXud+pPXbDUChtPhdSHzjZnWN+cwJtb3ygVcuI4aGQpBdORB/gEz94=
+	t=1718997777; cv=none; b=ClkiE7cw81CmNhJiXsPbLrKkmMGN9X6CXT5eh9T7t5awDO818OTAI05p3QdS1DFLekljs6zSRixKakHduI+T6sGfLgaIIWM7Bt6aPT4aM8yiyx4aNxjuW46cZorO3eEHFNfUtDU4coFtvSNAZFmRd8LwypKiIQCDGdhvPj4sXkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718997774; c=relaxed/simple;
-	bh=kVfwHw0X+MRE2b6MToDFxTZX1GClbgp+mTNAT10Q+AM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=elxz8EcHzPYkxZTnUD5jbD6wtCKz9gWJI3OSUlyQvgWdITZW0G2gAMG+WNdyvC4IdZagsrMKED4nIhn8LDxdo1VFZJGn+q8TU7Q1HVjypo7J63YKAi2abNZqR4FvA2iosI45DzJN15wRTK4ZgoRpUKCSdh3Zzbxzm1cBFELkmME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=knUtvkap; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LEfp2C017423;
-	Fri, 21 Jun 2024 19:22:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DYGuW9hZ5KvCtpEK3M7nZ6w4VGSOYf5QmEUMubHKFNs=; b=knUtvkapsX/H//d4
-	xdH3RO+45PhSVcWwoWKMzHmWOpUkEQcnzdD63N6vgGUdHhonAQ2hIkR1vLmgWVdU
-	P/E0dWrP9sySs+wElBgigoe9e9fRQuIn5SjYHSJxP2pQyxX+APmYl8RHCdX7MkDh
-	PogXCsYcbIrPW4JlTJzz32Gbk6/c53dmJ3Cg9hDGhAat7jH9ejihglWV0C2qQuz4
-	8CGwIMlPXsYub6kD5u5pKSu6JPWsBF+Y3M3QWFxMQQOXvDMNog+xnGqdn5zEm27w
-	rU1l12UI+Z0P/ZgwmmPphGzPS0tXQPfYqMN/14fS8ac6JQ5Q1Zpyr8ijj24c86w5
-	MsG05w==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrkrbgkp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 19:22:17 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45LJMFB1014392
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 19:22:15 GMT
-Received: from [10.110.25.219] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Jun
- 2024 12:22:06 -0700
-Message-ID: <b075e5a8-ca75-49cc-84d6-84e28bc38eee@quicinc.com>
-Date: Fri, 21 Jun 2024 12:22:04 -0700
+	s=arc-20240116; t=1718997777; c=relaxed/simple;
+	bh=JUlWsAMB1jxwwOj6uw3ptcHahhiIDFuD+/+iPluqHa4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QO0+kW0G1tq53JlGrsbC25t68xNfLr1B6076zNjc4AdMCgGG8X1SkFeMX9Yne0rrwJmosQ+qKtbP5rGBfDDVTAwVyY61gFV+aUb5iAndyI3AZOFE+qAc7lfcNYn9Rwh9aNgYGYUV60CLyMl56mXAuhFSYECUOKowr0WJ54rNnA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wy2iKkI7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lJttQ362; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 21 Jun 2024 21:22:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718997774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JUlWsAMB1jxwwOj6uw3ptcHahhiIDFuD+/+iPluqHa4=;
+	b=Wy2iKkI7qtDir4I9fRhkk+LpCwEmTjeiV5LvpkL/Pu6Ohj2Nh5dSv2yM5ASFfpdbDdHY8s
+	V51Ta7lCv6AH/46y749qgn0zjiE8SC+mla87zG5cN4TJYocafQYhvFmfHZWUQZjv9/fidw
+	6kTketWxqfS4o6bKqRmZMi7/4T7kidvZrVM38amLz1uoXfeViFi1EYVKHhsmlklJbtUJfb
+	jdFVfPZTHtABPbExKko6rvcxBgdfUrxmY40q3FLV/mcnmWWwn0E7rwTgQoHkaWXLOwcBjT
+	eFFVgm8QYRJJsQQD8IbN/gf3UmHtLqmlCKwiVMb9uOtFfqF/d4/NM8BMnWd2uw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718997774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JUlWsAMB1jxwwOj6uw3ptcHahhiIDFuD+/+iPluqHa4=;
+	b=lJttQ362DLbgh6tndVMGK4rBqRcfiskbLbTD39L18iJ0AIVIJgQcSAns9DV8VvMcFf5peF
+	77KYbr+tPzShgFAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ben Segall <bsegall@google.com>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Klara Modin <klarasmodin@gmail.com>, Mel Gorman <mgorman@suse.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH] sched/task_struct: Move alloc_tag to the end of the
+ struct.
+Message-ID: <20240621192252.-whn_Ae8@linutronix.de>
+References: <20240621102750.oH9p1FQq@linutronix.de>
+ <7zretxxixkpfxt6lr7x64n67ql2v2qpb7abbbjklclwlu4u2kx@22o5sdlnpkea>
+ <20240621182915.S-ULWn0O@linutronix.de>
+ <yjkte7jz6meaon4tvtwrefvhegwthnxorj3vrz5so6h6kftukv@azvug3smbd3p>
+ <20240621190719.TeLTxI9M@linutronix.de>
+ <elqyw2tofbojh6rfkfyrjaz6dpwpq4vfd3ni5r3cgkwdumginc@ctizxnu4jkff>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] net: stmmac: Add interconnect support in qcom-ethqos
- driver
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Vinod Koul <vkoul@kernel.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Russell King <linux@armlinux.org.uk>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>, <kernel@quicinc.com>,
-        Andrew Halaney <ahalaney@redhat.com>, <linux-arm-msm@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20240619-icc_bw_voting_from_ethqos-v1-0-6112948b825e@quicinc.com>
- <20240619-icc_bw_voting_from_ethqos-v1-1-6112948b825e@quicinc.com>
- <159700cc-f46c-4f70-82aa-972ba6e904ca@lunn.ch>
-Content-Language: en-US
-From: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-In-Reply-To: <159700cc-f46c-4f70-82aa-972ba6e904ca@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1re7hUvRsS133zJQqD0NClBIcVsEo0Wl
-X-Proofpoint-GUID: 1re7hUvRsS133zJQqD0NClBIcVsEo0Wl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_10,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- priorityscore=1501 mlxscore=0 mlxlogscore=999 phishscore=0 impostorscore=0
- adultscore=0 bulkscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406210141
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <elqyw2tofbojh6rfkfyrjaz6dpwpq4vfd3ni5r3cgkwdumginc@ctizxnu4jkff>
 
+On 2024-06-21 15:13:19 [-0400], Kent Overstreet wrote:
+> > > > random code=E2=80=A6 Puh. So if the end is too cold, what about aro=
+und the mm
+> > > > pointer?
+> > >=20
+> > > Not there, that's not actually that hot. It needs to be by
+> > > task_struct->flags; that's used in the same paths.
+> >=20
+> > But there is no space without the additional 52 bytes. Was this by any
+> > chance on purpose?
+>=20
+> No, that wasn't, and it doesn't have to be the exact same cacheline, but
+> we do want it near current->flags; we store PF_MEMALLOC flags there that
+> are converted to gfp flags and used exactly where we're using
+> current->alloc_tag.
 
+Hmm. `stack' and `usage' are the only two member that you would have to
+move (away) in order the stash the conditional variable there. The
+`ptrace' one uses the same flags as `flags' so it wouldn't make sense to
+move that one.
 
-On 6/19/2024 4:13 PM, Andrew Lunn wrote:
-> On Wed, Jun 19, 2024 at 03:41:29PM -0700, Sagar Cheluvegowda wrote:
->> Add interconnect support in qcom-ethqos driver to vote for bus
->> bandwidth based on the current speed of the driver.
->> This change adds support for two different paths - one from ethernet
->> to DDR and the other from Apps to ethernet.
-> 
-> What do you mean by Apps?
-> Apps means application processor.
-
->> Vote from each interconnect client is aggregated and the on-chip
->> interconnect hardware is configured to the most appropriate
->> bandwidth profile.
->>
->> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
->> ---
->>  .../net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c   | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
->> index e254b21fdb59..682e68f37dbd 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
->> @@ -7,6 +7,7 @@
->>  #include <linux/platform_device.h>
->>  #include <linux/phy.h>
->>  #include <linux/phy/phy.h>
->> +#include <linux/interconnect.h>
-> 
-> If you look at these includes, you should notice they are
-> alphabetical.
-> Agreed, let me update it in v2 of this series.
->> +static void ethqos_set_icc_bw(struct qcom_ethqos *ethqos, unsigned int speed)
->> +{
->> +	icc_set_bw(ethqos->axi_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
->> +	icc_set_bw(ethqos->ahb_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
->> +}
->> +
->>  static void ethqos_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
->>  {
->>  	struct qcom_ethqos *ethqos = priv;
->>  
->>  	ethqos->speed = speed;
->>  	ethqos_update_link_clk(ethqos, speed);
->> +	ethqos_set_icc_bw(ethqos, speed);
->>  	ethqos_configure(ethqos);
->>  }
->>  
->> @@ -813,6 +824,14 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
->>  		return dev_err_probe(dev, PTR_ERR(ethqos->link_clk),
->>  				     "Failed to get link_clk\n");
->>  
->> +	ethqos->axi_icc_path = devm_of_icc_get(dev, "axi_icc_path");
->> +	if (IS_ERR(ethqos->axi_icc_path))
->> +		return PTR_ERR(ethqos->axi_icc_path);
->> +
->> +	ethqos->ahb_icc_path = devm_of_icc_get(dev, "ahb_icc_path");
->> +	if (IS_ERR(ethqos->axi_icc_path))
->> +		return PTR_ERR(ethqos->axi_icc_path);
->> +
-> 
-> This all looks pretty generic. Any reason why this is just in the
-> Qualcomm device, and not at a higher level so it could be used for all
-> stmmac devices if the needed properties are found in DT?
-> 
->        Andrew
-ICC is a software framework to access the NOC bus topology of the
-system, all though "axi" and "ahb" buses seem generic but the 
-topologies of these NOC's are specific to the vendors of synopsys chipset hence
-this framework might not be applicable to all the vendors of stmmac driver.
-
-	Sagar
+Sebastian
 
