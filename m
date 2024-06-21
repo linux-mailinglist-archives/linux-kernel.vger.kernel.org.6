@@ -1,197 +1,131 @@
-Return-Path: <linux-kernel+bounces-225186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3D2912D42
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:36:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C29912D44
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0F561C25A5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:36:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DC96287B4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAF817B409;
-	Fri, 21 Jun 2024 18:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CC517B400;
+	Fri, 21 Jun 2024 18:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fyadxZ0C"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWq0DJ3Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35B48820;
-	Fri, 21 Jun 2024 18:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F771607B2;
+	Fri, 21 Jun 2024 18:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718994957; cv=none; b=KpuJov8ka8OV71HYXq5D5D9aLREFDfKlt7gwVxbfduTB9iMnESQmxsUohOlSA8XwPWcB3QbQBFPbVSmoHsmBx6W+zPjwy+oZTufUWXiUcn8+FgzQa2liL8SePrkFFVq8JsSFNgJrBy8rF/OYWPHq5yNhXm+jXRPfdx6QfEfz9U0=
+	t=1718994996; cv=none; b=bQbREoHiaBA129DF6iVT3HMHXY/AB2qXb0BElYRM90k/z00wlj7G+9xNKxXV2DOgIJo99XARIovquGA3vUyMHPoMobWo+HzEmCTUpv7x4JXlx9Wl6P3xKpwxiympV5sH4aJ2JtalIG+VRvBQrt+efBqCW5yW5UCpcWXuph8wpNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718994957; c=relaxed/simple;
-	bh=QIyejG/zbZEcgR5J/ddiOry3kPPgnnTi3cpFLpIU+X0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=TLjeeYzqGTQGVeLvM1du7oWn6AXXoPaHg0nDkotvpHWSfK6WELza+c1ibPXeEuFFVWn9M1S49g7wjPHg7eO2N2rcSgNxXjdJXjyZEtXxXDKP+NCZ+Me6LOlSNnBDy1niObjcqYgC4zyNVcHyJZU8r/8OjhYnusEynKsnO8w7/6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fyadxZ0C; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57d280e2d5dso1938605a12.1;
-        Fri, 21 Jun 2024 11:35:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718994954; x=1719599754; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8ut3soxKE98hJxPx1BWoehHt/249jkHLzLfTJdtT/OE=;
-        b=fyadxZ0CIy+j+/8N2zZgG5rB8B6Rwjkf0wO3ina+jcr1lwFAa685g/qwy7rXsgoNuK
-         MrQgRJAVVx0HWgvtkvzCTAJzvLOSj3Hx/7hjgqPoxjULaUqPI+TtMECddhHZkx69dYt6
-         sYPOqCTC0uchO16PEOPrpp1vKjIzqSiaXTMqVl4g/hZHcV7/sU+oAjsVRkfzPS2oOWV6
-         x1Y8Jbhet3Eo2lhGE6rPytekD+5uFk6sMFSAgISfynqNiX0mASD4n2CuYqz4ziqGFdkU
-         LcU2DZqxtg9qlgBvgrWaT0SaT892xSNrTae08Eex8opp0oOG6/FgP4fSYsulWoIoS54f
-         0FRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718994954; x=1719599754;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8ut3soxKE98hJxPx1BWoehHt/249jkHLzLfTJdtT/OE=;
-        b=VSqZV5VIlLhTo0kUZ9twImq7mM/DDw6s7+iv4bHQ2Au0phUSMLB9BAYHkYhIbpF6cQ
-         OHf8neeu/nIBNaLL8xvQH2+KIFTmSb/d4ZjkYfgEb7HtB/aviFvKAAP4Av8xtfQyhY12
-         sC2zJFCqlKJ8EAjKbmfsnv706n/Bxmx4vkQJC96aBb4wosytD1cCJ7RPCHvcQFDLjO+B
-         uK0p8Y5HhSU+7THStEmEqpkdycafSCsbIqIOb3Br+oMRmjG8P6VwbBG374WMzx8Z2BRb
-         ytlysZK38Be8DCcaKWf+fhDtWJ+oXuOFXdD3jhmB5zGyV2DrFv8RBFfYNQ3rMPe3LzcP
-         K5Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9yzdVm/MyBl9CDvmAB00stD+0qCyHFKi56OBokjOPq/6uKLkQzkS3s5UEwjuwSGVKX6CO9jveIzgxm+YR0YlLvIGFdBtM0jJKclYTSpFhI4md4VEdCkZOcSGuVFrYU6CJVj7Rm+myJFMSZRLiFKTNezIF/9URZZsTWBUieyCBncPYpVehNikjHZgUbzvL+Bs3m7U8+WdyWdjVWS2qrSjLVSeubV5y
-X-Gm-Message-State: AOJu0YzMQLLnB2JppeBQGWE/u8Gf48PlqOPXpgMrrexbGg7EW6Qv2kWT
-	p9DUuxBDfaU95dxCfzSZ7AtZw+emiymKzOIF9SWajnP6fjOzshLehwpfBYG+IGCIN1wXJ62EBFm
-	qFzvMAv88IF1q3h6kXMiaXlUQFeY=
-X-Google-Smtp-Source: AGHT+IGeL1qr5IRUGzRkGEVvSh2+JLe463SKTjitYFVFbztu9r9oubLaI7KKXq2n4LWsmU35TDeIqBD0pgUebFFnfNc=
-X-Received: by 2002:a50:cd13:0:b0:57c:6afc:d2a9 with SMTP id
- 4fb4d7f45d1cf-57d07ed9449mr4999733a12.26.1718994953827; Fri, 21 Jun 2024
- 11:35:53 -0700 (PDT)
+	s=arc-20240116; t=1718994996; c=relaxed/simple;
+	bh=Zk1Sdd8CeZyKxJweu3Yjmum2aIYv2fUbQWFU2b+mfl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ttrQx9UUjaqOaeuS4bqxtjJlr6IB0u89et/W/GCwu+0gTWQqfd8m5okJzsMDYgWNcRijbrtNFC22c46cHT+19OGUxDsW4ez4zTOUZQBfn3qEqK421HWrbHbNJd/JeGBt9PXy/VXUsHgtKQNIi+vZMYVMQOegrpjwMfx+hVNSdjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWq0DJ3Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69EDC2BBFC;
+	Fri, 21 Jun 2024 18:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718994995;
+	bh=Zk1Sdd8CeZyKxJweu3Yjmum2aIYv2fUbQWFU2b+mfl4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=EWq0DJ3YQIEFcMG2tjKQUSZ3vZFZKV3e5HuglsyQ1XpE9Ccce+Oxym79QGgGq/URq
+	 sdEXRGlzsVlZBzKXnsd5jiVVhwPWnB8NN7PIWSnEnSj045C3+6sT//C7XbjVLBt9+Y
+	 2LIxSveNNaEqNcfLPis5HWesq6O0o9/7WUOsE7Z7qjMldeHaSiqnOc0agFuoUyRy03
+	 lr4tirSQSBRW9oirFrsKUmEwL6bhVDByZntXbzh4xGjWvliTiPr1qillUqyFsxfELJ
+	 lWeIHLWAFmCrmI2nN2TzJlgHDnOUpsyhwYSOniVDBI0pTUwbWvIaTzEBfANAQHGHMT
+	 cu95xUdb3ib7Q==
+Date: Fri, 21 Jun 2024 19:36:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jun 21
+Message-ID: <ZnXIL3OzztrGWeqa@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618225210.825290-1-allen.lkml@gmail.com> <gw6adkoy3ndjdjufti2gs2gnk3xdgylt6tnia2zha76hsgdwtq@dr3czbxjij66>
- <CAOMdWS+p4Dt2xDGWvwoXtWinsRZintLwPmADddbsmaEfLvRQkw@mail.gmail.com>
-In-Reply-To: <CAOMdWS+p4Dt2xDGWvwoXtWinsRZintLwPmADddbsmaEfLvRQkw@mail.gmail.com>
-From: Allen <allen.lkml@gmail.com>
-Date: Fri, 21 Jun 2024 11:35:40 -0700
-Message-ID: <CAOMdWSLfZyoM-_7EV5f1QPKmCM3M2Pkw=zHhVQb4ULnb9B5aZg@mail.gmail.com>
-Subject: Re: [PATCH v3] mmc: Convert from tasklet to BH workqueue
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Allen Pais <allen.lkml@gmail.com>, 
-	Aubin Constans <aubin.constans@microchip.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Manuel Lauss <manuel.lauss@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
-	Jaehoon Chung <jh80.chung@samsung.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
-	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, linux-mmc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-> > > The only generic interface to execute asynchronously in the BH contex=
-t is
-> > > tasklet; however, it's marked deprecated and has some design flaws. T=
-o
-> > > replace tasklets, BH workqueue support was recently added. A BH workq=
-ueue
-> > > behaves similarly to regular workqueues except that the queued work i=
-tems
-> > > are executed in the BH context.
-> > >
-> > > This patch converts drivers/mmc/* from tasklet to BH workqueue.
-> > >
-> > > Based on the work done by Tejun Heo <tj@kernel.org>
-> >
-> > Has this been fully build-tested?
-> >
-> > =3D=3D=3D
-> > drivers/mmc/host/renesas_sdhi_internal_dmac.c: In function =E2=80=98ren=
-esas_sdhi_internal_dmac_complete_work_fn=E2=80=99:
-> > ./include/linux/container_of.h:20:54: error: =E2=80=98struct tmio_mmc_h=
-ost=E2=80=99 has no member named =E2=80=98dma_complete=E2=80=99
-> > =3D=3D=3D
->
->  Yes, it does break. My bad, my local compile testing failed to catch thi=
-s.
->
-> >
-> > In deed, 'dma_complete' is only in 'struct renesas_sdhi_dma'. From
-> > there, we can get to the parent 'struct renesas_sdhi' using
-> > container_of. But then, I don't see a way to go to 'struct
-> > tmio_mmc_host' from there. The other way around is possible because
-> > there is the pointer 'struct tmio_mmc_data *pdata' in the TMIO struct
-> > pointing to the data contained in 'struct renesas_sdhi'. 'host_to_priv(=
-)'
-> > does the math. But I don't see a path the other way around.
-> >
->
->  I have been looking at this code since the issue was reported. Yes it
-> is a bit tricky and so far, the only way I found was to introduce a new p=
-ointer.
-> But, I am not very familiar with the code and have asked Ulf for pointers=
-.
->
-> If introducing the pointer is the only way forward and is an
-> acceptable solution,
-> I can send out a draft.
->
-> Thanks,
-> Allen
->
-> > So, it doesn't look like the workqueue interface can provide a
-> > generic pointer like tasklets could do? This means we have to add a
-> > pointer from 'struct renesas_sdhi' to 'struct tmio_mmc_host'?
-> >
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FMZpx69m2EBT12kS"
+Content-Disposition: inline
 
 
-How about the following?
+--FMZpx69m2EBT12kS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 5fd276492f80..9a63b78837e2 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -484,9 +484,14 @@ static bool
-renesas_sdhi_internal_dmac_complete(struct tmio_mmc_host *host)
-        return true;
- }
+Hi all,
 
--static void renesas_sdhi_internal_dmac_complete_work_fn(struct work_struct=
- *t)
-+static void renesas_sdhi_internal_dmac_complete_work_fn(struct
-work_struct *work)
- {
--       struct tmio_mmc_host *host =3D from_work(host, t, dma_complete);
-+       struct renesas_sdhi_dma *dma_priv =3D container_of(work,
-+                                                        struct
-renesas_sdhi_dma,
-+                                                        dma_complete);
-+       struct renesas_sdhi *sdhi =3D container_of(dma_priv,
-+                                                struct renesas_sdhi, dma_p=
-riv);
-+       struct tmio_mmc_host *host =3D sdhi->mmc_data->host;
+Changes since 20240620:
 
-        spin_lock_irq(&host->lock);
-        if (!renesas_sdhi_internal_dmac_complete(host))
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index eace8ea6cda0..cf2cca0e96b5 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -100,6 +100,7 @@ struct tmio_mmc_data {
-        dma_addr_t                      dma_rx_offset;
-        unsigned int                    max_blk_count;
-        unsigned short                  max_segs;
-+       struct tmio_mmc_host            *host;          /* back
-pointer to the parent struct */
-        void (*set_pwr)(struct platform_device *host, int state);
-        void (*set_clk_div)(struct platform_device *host, int state);
- };
+The sched_ext tree was added.
 
-Thanks.
+The drm tree gained a conflict with the drm-fixes tree.
+
+The mmc tree gained a build failure, I used the version from 20240620.
+
+The block tree gained a build failure, I used the version from 20240620.
+
+The kvm-x86 tree gained a conflict with Linus' tree.
+
+The char-misc tree gained a conflict with the sched-ext tree.
+
+Non-merge commits (relative to Linus' tree): 6902
+ 7316 files changed, 623462 insertions(+), 126741 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm
+and a native build of tools/perf.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 378 trees (counting Linus' and 106 trees of bug
+fix patches pending for the current merge release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--FMZpx69m2EBT12kS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ1yC8ACgkQJNaLcl1U
+h9CxpQf8ChQlRr98FjbLk7kxIf0ismBoPm2K5LSH+k0D8cmoxnzz+7/GP6Wsv9GQ
+vA/kgmkih4jmZ8Tg4xZSxITDkVnZ7z4caFDmLfv8mDAv2weRTk/9FgQTqXkerWS6
+fkBuMMofsXZG9KPn/6KAAJT1fQitbRCMsa65nkSIHDggzdGdP53wt4PKCeQIqG+j
+UifZc9HY+H+3iLrCctLj636Jd2T5qrIDvaDu70FBsEBem8HCv8apcXNjCNlSJMjj
+b0pnJtkqaX3ZVtWruWp41mapBkOajX9sqZfIHnGwYo8MZJOHxd0bkWSifkU8Exgy
+bTvJgBASc7dMiWEd9FhnHkJvrcSdWg==
+=MaeZ
+-----END PGP SIGNATURE-----
+
+--FMZpx69m2EBT12kS--
 
