@@ -1,250 +1,238 @@
-Return-Path: <linux-kernel+bounces-224865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581379127CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:30:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99B59127D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08042282A3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE8E31C2637A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0CA1CAB4;
-	Fri, 21 Jun 2024 14:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F0021A19;
+	Fri, 21 Jun 2024 14:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VSAi2ejo"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBjwrxbF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D507208A1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2260208A1
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718980248; cv=none; b=C36+foI99rBK1V2ScinEQZLqiCKhYQ9T53xcchMHPq3LLQXt17F7XtdO7Sd3tExPtBhXS6dYCN7yIhsKddslsHiAAya4X/YSzX2uFYcz1wusqp2FBfAnWxNkbUuNiyKlwgsjsLUKWJdfD0QKAfduz9+Y8JDdjQxWsME+h3/kHKk=
+	t=1718980278; cv=none; b=C3R/RaS4gYfr53gGnBnygy7SmndbEx3JoM2NcQ8Xtlp89+rSMpYwUIsSfEomhGWPuHOECtrBKn2Jr5udL3yaJVCEgi6EkK+CzpzgLPyoqN/VL+4z/oYn7zCqnxGspYiGdh+GgTbYlK/Ry+tdbY6kYVzz6gbwfcpA93Gy4/cO014=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718980248; c=relaxed/simple;
-	bh=l69RXR9caIpgpmBw3miphSwRK/aixhCck2cUWIdXDiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n5IrQZ091HHx+g+yi5HzHMPfWYMxM+RgBov4AzOF3Ucf44ot6yvQ074qiv0XcjqLPWRJ5SRd1TU/0PNAvyxfmr7RQsZbrsHEqVOOX30LCUXJyBopr1yag6kzpfuoxdqZLcjN4lhy0kMcJc+Zn+M4eQHaNg7o+n9/WpAzNJuowIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VSAi2ejo; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42179dafd6bso19434725e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:30:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1718980244; x=1719585044; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qbPIdNuW/e6oq9A4pmtBGwDGU9mCfpj2mUttqFFt4AY=;
-        b=VSAi2ejoXHcuQR5f+k/NP0CqysVCW40RzmvjhYijz/EFtNHMlpeB+gzxO5mXoJFwER
-         YYN2TMu2ZjpQzWnTJ07ALNUFz4GuacB9sBEeiyswpDZiLsvmdFI0aJ21j9U+jYKttvXY
-         ugCNgz8bUXyKODJs/3i7V7RRYjlQB4Al6+c0A+m8AyT7nLpvpFBAHHFmpDS2eVSbYQWm
-         BvxBLbeYfRLfc40TvtzwKA/OOARJddeGZufnLRseIWLhQmx5WX01hHRmiHokf+tQVUiq
-         flqkyEOVr91gCjnoXv7wRFVXqrTlq1WeCHq5/IXE6ntQcoZr9GiUjGyXUI8JjcnISWkZ
-         9AGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718980244; x=1719585044;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qbPIdNuW/e6oq9A4pmtBGwDGU9mCfpj2mUttqFFt4AY=;
-        b=WWQO7t1dL5EBWg5+8QYApu4SlZvM7Et76bltQYY1Eou/chnDfPUJCOJySgeNfs3hdg
-         FraFW9b+ypjOoJCWEERGrYYKql0k7SnKnAl+7kXICnZK7XkwU9VPNPTdAcNujMHUrmaB
-         do+m8SVZQqW4tBz31dZwBvgOR99lLLhMLnVCE/jZNzYfKxmfGsi4jWyYihl3AeAjh2Uf
-         xtE/PaE4uiJllZlcLxV77EtLTo3sRMMPsCsHqRVHIXSW/aO75BgOKljrc4Rgqi5ghDDY
-         REd/RS8LwiEydRdlcB5SPV5fblOwi/izn+xLkRYn6LuuvCKFVppQhMb2wGLZPCtZrEpv
-         FgPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdR7Q7HQmwFyjXTflhqP+DM9UEnEqv6wU5YtqZeyZa/+gRMa544fEH+5AG7NYIHwvoa21ZprXFpbb9PzjQ9XZRmIelrGzrno+t9BQA
-X-Gm-Message-State: AOJu0Yz56aJX3OjnSr8DQ0GbJ6g6S0a51twklIGAYUL+DThbOEJzcD+p
-	932XclEJM1kFHo7mjnsFm8Ty+fTf3L2n7Q51wt7zScSv5RfWQYEF9CIbZrp9480=
-X-Google-Smtp-Source: AGHT+IG+o3zct0KzcLvruWFnXBfY6OOJGzZfpCe1OsLKDS1OAKy6kHJWpWDX8qUcg59uhpPDcvP+ww==
-X-Received: by 2002:a05:600c:17d5:b0:424:7689:7ac4 with SMTP id 5b1f17b1804b1-424862d7222mr149165e9.1.1718980243592;
-        Fri, 21 Jun 2024 07:30:43 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248191c65asm29641445e9.40.2024.06.21.07.30.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 07:30:43 -0700 (PDT)
-Message-ID: <871c563d-daa5-4be4-b114-9a8072e4edd0@tuxon.dev>
-Date: Fri, 21 Jun 2024 17:30:39 +0300
+	s=arc-20240116; t=1718980278; c=relaxed/simple;
+	bh=8QFjndEQ8+qdauD0rfTeR1Hzck+SUb8TF1DtGMQns3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlNfOvfCvxUR9rENO7DXi5+dvQOHNas8a4e3zXTifdNv1bfjYjDnS3jz7JJCPg6OylVw86ngDd5H2s9NmBRAK+eSmHC6kFvCoopfe1U6WaE4Ny8/lE6vr6hXn/sJO2gx2q3Mx+LVCfqZgO6qqIRcvavyZnYDtVRjCxw95TsEhE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBjwrxbF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B18C2BBFC;
+	Fri, 21 Jun 2024 14:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718980278;
+	bh=8QFjndEQ8+qdauD0rfTeR1Hzck+SUb8TF1DtGMQns3g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rBjwrxbFNAmKqYbU+H4G0IV6ZdBIcR24sIX/4VgV71qfFApJyHOUKf+uQKPo5ag0x
+	 Ow2c78DOguzutDjJelpaHJC7Z1IxaGN8MagU3mCYosfTIThifhYSXKsANNKvliqRYC
+	 60d6IPOUUkYuSQbsbUiSsi0iLPn4hgEIPvE/v9TyEbZ1iRPop0LqAkXVbOdPD4Ec7N
+	 OVZ4gCcsGQf5JFgrOK81x/aeNMrwp7NXHXHiYJS4q3N303/4ogx47+Maay6mjay8A/
+	 AwkcXwcFPsQvr7CkqFsF1y1RkomCQrbsety9xUx84PefywJloVdXERI+gH3hYL1Pif
+	 AaM/XYb7Hez2g==
+Date: Fri, 21 Jun 2024 16:31:15 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>, Narasimhan V <Narasimhan.V@amd.com>
+Subject: Re: [PATCH 0/3] timer_migration: Fix a possible race and improvements
+Message-ID: <ZnWOswTMML6ShzYO@localhost.localdomain>
+References: <20240621-tmigr-fixes-v1-0-8c8a2d8e8d77@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
- R9A08G045 support
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Brandt <Chris.Brandt@renesas.com>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
- <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346105D3D3DD46AEF8CD44986C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <0bc78e5e-de37-4ff6-ac74-571f615b97f9@tuxon.dev>
- <TY3PR01MB1134602C189C6C63C6187840886C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <b5a3ef7c-8509-4065-ab0f-efb5a7e5fcbb@tuxon.dev>
- <TY3PR01MB11346D9CF89F7ED9B6A49C61586C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <e381e1c0-2e23-4734-a55f-cab6c21f8c5b@tuxon.dev>
- <TY3PR01MB113468EF895A0EBED5DBD975D86C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB113468EF895A0EBED5DBD975D86C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240621-tmigr-fixes-v1-0-8c8a2d8e8d77@linutronix.de>
+
+Le Fri, Jun 21, 2024 at 11:37:05AM +0200, Anna-Maria Behnsen a écrit :
+> Borislav reported a warning in timer migration deactive path
+> 
+>   https://lore.kernel.org/r/20240612090347.GBZmlkc5PwlVpOG6vT@fat_crate.local
+> 
+> Sadly it doesn't reproduce directly. But with the change of timing (by
+> adding a trace prinkt before the warning), it is possible to trigger the
+> warning reliable at least in my test setup. The problem here is a racy
+> check agains group->parent pointer. This is also used in other places in
+> the code and fixing this racy usage is adressed by the first patch.
+> 
+> While working with the code, I saw two things which could be improved
+> (tracing and update of per cpu group wakeup value). This improvements are
+> adressed by the other two patches.
+> 
+> Patches are available here:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/anna-maria/linux-devel.git timers/misc
+> 
+> Cc: Frederic Weisbecker <frederic@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-kernel@vger.kernel.org
+> 
+> Thanks,
+> 
+> Anna-Maria
+> 
+> ---
+
+This made me stare at the group creation again and I might have found
+something. Does the following race look plausible to you?
 
 
+                  [GRP0:0]
+               migrator = 0
+               active   = 0
+               nextevt  = KTIME_MAX
+               /         \
+              0         1 .. 7
+          active         idle
 
-On 21.06.2024 17:06, Biju Das wrote:
-> Hi Claudiu,
-> 
->> -----Original Message-----
->> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->> Sent: Friday, June 21, 2024 2:30 PM
->> Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the R9A08G045 support
->>
->>
->>
->> On 21.06.2024 16:10, Biju Das wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>>> Sent: Friday, June 21, 2024 2:06 PM
->>>  Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document
->>> the R9A08G045 support
->>>>
->>>>
->>>>
->>>> On 21.06.2024 15:56, Biju Das wrote:
->>>>>
->>>>> Hi claudiu,
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>>>>> Sent: Friday, June 21, 2024 1:55 PM
->>>>>> Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document
->>>>>> the R9A08G045 support
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 21.06.2024 15:34, Biju Das wrote:
->>>>>>> Hi Claudiu,
->>>>>>>
->>>>>>>> -----Original Message-----
->>>>>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>>>>>> Sent: Friday, June 21, 2024 12:23 PM
->>>>>>>> Subject: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document
->>>>>>>> the
->>>>>>>> R9A08G045 support
->>>>>>>>
->>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>>>
->>>>>>>> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is
->>>>>>>> compatible with the version available on Renesas RZ/V2H
->>>>>>>> (R9A09G075). Most of the IP variants that the RIIC driver is working with supports fast mode
->> plus.
->>>>>>>> However, it happens that on the same SoC to have IP instatiations
->>>>>>>> that support fast mode plus as well as IP instantiation that
->>>>>>>> doesn't support it. For this, introduced the renesas,riic-no-fast- mode-plus property.
->>>>>>>>
->>>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>>> ---
->>>>>>>>  Documentation/devicetree/bindings/i2c/renesas,riic.yaml | 8
->>>>>>>> ++++++++
->>>>>>>>  1 file changed, 8 insertions(+)
->>>>>>>>
->>>>>>>> diff --git
->>>>>>>> a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->>>>>>>> b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->>>>>>>> index 91ecf17b7a81..c0964edbca69 100644
->>>>>>>> --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->>>>>>>> +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->>>>>>>> @@ -25,6 +25,10 @@ properties:
->>>>>>>>                - renesas,riic-r9a07g054  # RZ/V2L
->>>>>>>>            - const: renesas,riic-rz      # RZ/A or RZ/G2L
->>>>>>>>
->>>>>>>> +      - items:
->>>>>>>> +          - const: renesas,riic-r9a08g045   # RZ/G3S
->>>>>>>> +          - const: renesas,riic-r9a09g057
->>>>>>>> +
->>>>>>>>        - const: renesas,riic-r9a09g057   # RZ/V2H(P)
->>>>>>>>
->>>>>>>>    reg:
->>>>>>>> @@ -66,6 +70,10 @@ properties:
->>>>>>>>    resets:
->>>>>>>>      maxItems: 1
->>>>>>>>
->>>>>>>> +  renesas,riic-no-fast-mode-plus:
->>>>>>>> +    description: specifies if fast mode plus is not supported
->>>>>>>> +    type: Boolean
->>>>>>>
->>>>>>> Can't this info, as part of device data?? Based on frequency and
->>>>>>> device data is enough to derive this info??
->>>>>>
->>>>>> We can't rely completely on device data because on RZ/G3S we have 2
->>>>>> RIIC channels that support fast mode plus and 2 that doesn't support it.
->>>>>
->>>>> Can't array of bits for this channels won't help??
->>>>
->>>> Can you give an example? I'm not sure I understand how you would
->>>> prefer me to use the array of bits.
->>>
->>> struct riic_of_data {
->>> 	u8 regs[RIIC_REG_END];
->>> 	u16 fast_mode_info info; /* 1 means fast mode plus supported,
->>> starting with channel 0*/ };
->>>
->>> .info = 0x3, means channel 0 and 1 has fast mode plus supported .info
->>> = 0x0, none of the channel supported fast mode plus.
->>
->> If I understand the proposal correctly, a match b/w struct riic_of_data::info bit + frequency and
->> the nodes in device tree is still needed, right? As the RZ/G3S RIIC channels are using the same
->> compatible.
->> W/o a match how I cannot detect in the driver who is, e.g., channel 1 that supports FMP w/o
->> hardcoding some RIIC channel data in the driver (e.g. RIIC channel address)?
-> 
-> bit array gives the capability info on various channels.
-> 
-> If someone define fast_mode_plus frequency in DT node and channel is not fast_mode_plus(from the capability info)
-> then you should return error.
-> 
-> Here you need to use SoC specific compatible as each SoC has different capabilities.
+0) Hierarchy has only 8 CPUs (single node for now with only CPU 0
+   as active.
 
-And I would add, as it is in this case: there are multiple instantiation of
-the RIIC in RZ/G3S SoC. RIIC 0 and 1 supports FMP, RIIC 2 and 3 does not.
+   
+                             [GRP1:0]
+                        migrator = TMIGR_NONE
+                        active   = NONE
+                        nextevt  = KTIME_MAX
+                                         \
+                 [GRP0:0]                  [GRP0:1]
+              migrator = 0              migrator = TMIGR_NONE
+              active   = 0              active   = NONE
+              nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
+                /         \                    |
+              0          1 .. 7                8
+          active         idle                !online
 
-For all RIICs (0, 1, 2, 3) we use the same compatible (as all are part of
-the same SoC). How to do the match b/w DT RIIC channel and driver with the
-solution you propose w/o hardcoding some RIIC channel data in the driver?
+1) CPU 8 is booting and creates a new node and a new top. For now it's
+   only connected to GRP0:1, not yet to GRP0:0. Also CPU 8 hasn't called
+   __tmigr_cpu_activate() on itself yet.
 
-> 
-> Cheers,
-> Biju
-> 
-> 
->>
->> Also, for future SoCs that will suffer the same symptom but for different channels (and channels
->> with different addresses) the driver will have to be adapted to match b/w the channel bit in struct
->> riic_of_data::info and channel node from DT.
->>
->>>
->>> Cheers,
->>> Biju
+
+                             [GRP1:0]
+                        migrator = TMIGR_NONE
+                        active   = NONE
+                        nextevt  = KTIME_MAX
+                       /                  \
+                 [GRP0:0]                  [GRP0:1]
+              migrator = 0              migrator = TMIGR_NONE
+              active   = 0              active   = NONE
+              nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
+                /         \                    |
+              0          1 .. 7                8
+          active         idle                active
+
+2) CPU 8 connects GRP0:0 to GRP1:0 and observes while in
+   tmigr_connect_child_parent() that GRP0:0 is not TMIGR_NONE. So it
+   prepares to call tmigr_active_up() on it. It hasn't done it yet.
+
+
+                             [GRP1:0]
+                        migrator = TMIGR_NONE
+                        active   = NONE
+                        nextevt  = KTIME_MAX
+                       /                  \
+                 [GRP0:0]                  [GRP0:1]
+              migrator = TMIGR_NONE        migrator = TMIGR_NONE
+              active   = NONE              active   = NONE
+              nextevt  = KTIME_MAX         nextevt  = KTIME_MAX
+                /         \                    |
+              0          1 .. 7                8
+            idle         idle                active
+
+3) CPU 0 goes idle. Since GRP0:0->parent has been updated by CPU 8 with
+   GRP0:0->lock held, CPU 0 observes GRP1:0 after calling tmigr_update_events()
+   and it propagates the change to the top (no change there and no wakeup
+   programmed since there is no timer).
+
+
+                             [GRP1:0]
+                        migrator = GRP0:0
+                        active   = GRP0:0
+                        nextevt  = KTIME_MAX
+                       /                  \
+                 [GRP0:0]                  [GRP0:1]
+              migrator = TMIGR_NONE       migrator = TMIGR_NONE
+              active   = NONE             active   = NONE
+              nextevt  = KTIME_MAX        nextevt  = KTIME_MAX
+                /         \                    |
+              0          1 .. 7                8
+            idle         idle                active
+
+4) Now CPU 8 finally calls tmigr_active_up() to GRP0:0
+
+                             [GRP1:0]
+                        migrator = GRP0:0
+                        active   = GRP0:0, GRP0:1
+                        nextevt  = KTIME_MAX
+                       /                  \
+                 [GRP0:0]                  [GRP0:1]
+              migrator = TMIGR_NONE       migrator = 8
+              active   = NONE             active   = 8
+              nextevt  = KTIME_MAX        nextevt  = KTIME_MAX
+                /         \                    |
+              0          1 .. 7                8
+            idle         idle                active
+
+5) And out of tmigr_cpu_online() CPU 8 calls tmigr_active_up() on itself
+
+                             [GRP1:0]
+                        migrator = GRP0:0
+                        active   = GRP0:0
+                        nextevt  = T8
+                       /                  \
+                 [GRP0:0]                  [GRP0:1]
+              migrator = TMIGR_NONE         migrator = TMIGR_NONE
+              active   = NONE               active   = NONE
+              nextevt  = KTIME_MAX          nextevt  = T8
+                /         \                    |
+              0          1 .. 7                8
+            idle         idle                  idle
+
+5) CPU 8 goes idle with a timer T8 and relies on GRP0:0 as the migrator.
+   But it's not really active, so T8 gets ignored.
+
+
+And if that race looks plausible, does the following fix look good?
+
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index 84413114db5c..0609cb8c770e 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -1525,7 +1525,6 @@ static void tmigr_connect_child_parent(struct tmigr_group *child,
+ 	child->childmask = BIT(parent->num_children++);
+ 
+ 	raw_spin_unlock(&parent->lock);
+-	raw_spin_unlock_irq(&child->lock);
+ 
+ 	trace_tmigr_connect_child_parent(child);
+ 
+@@ -1559,6 +1558,14 @@ static void tmigr_connect_child_parent(struct tmigr_group *child,
+ 		 */
+ 		WARN_ON(!tmigr_active_up(parent, child, &data) && parent->parent);
+ 	}
++	/*
++	 * Keep the lock up to that point so that if the child goes idle
++	 * concurrently, either it sees the new parent with its active state
++	 * after locking on tmigr_update_events() and propagates afterwards
++	 * its idle state up, or the current booting CPU will observe TMIGR_NONE
++	 * on the remote child and it won't propagate a spurious active state.
++	 */
++	raw_spin_unlock_irq(&child->lock);
+ }
+ 
+ static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
 
