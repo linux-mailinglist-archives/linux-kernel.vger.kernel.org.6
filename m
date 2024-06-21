@@ -1,120 +1,212 @@
-Return-Path: <linux-kernel+bounces-224340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261AB912115
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:44:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4865B912117
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5BA9284294
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:44:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A91FB23FC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5392B16EB78;
-	Fri, 21 Jun 2024 09:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EA216F0CF;
+	Fri, 21 Jun 2024 09:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b="PqKyZ3CB"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8JvkVKm"
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5E416E899;
-	Fri, 21 Jun 2024 09:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8888316E899;
+	Fri, 21 Jun 2024 09:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718963002; cv=none; b=VXqSyED/sJ2h3heSg2FS4mJpsPfrngv6Vt/Wv4dnJFP2UbuDZKBH0H7Kw4OExaFS8reGi14TMmYfpy/tmp7vXUJG/dasdzI1knssN9D2je86cd+V4qYDFKyhDX/7A2ov70ExxwHd4rdBI0k4ZcQ8IPCzp8GW/pP4gZeCrFV9OYs=
+	t=1718963016; cv=none; b=i1Rm5dF8EU6dsYFxEBo7MXHIadG8Um5uMBBD26WUBoNw6ZsgdlBd2sS/dqaYsqkhw1iBAqmnvnfmQO/Ckjy5nK0wINtNxSQq4Mjt1qYKlrY+e54AOrcELmFG39UKJG0SvtYkctim7mSXoQiBrZ+U5mR7CCsY8YPjA/z9588UEUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718963002; c=relaxed/simple;
-	bh=6Qd4tbhRiKEgoUoWjgbb9e7vIA6U7kYKz3dgDTy4OGY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DPpyDuv7fk4UNSvfq6ZMrsXpvtA9OJlDkbfph7kYKXiKRT3iemh2NuseiCce6eaPm42ugmWEojFPyiHXx7mfHYM+3Dw+VLizXmkGzPjpZ+lALiOJfg/bYp/O8xhqV/P2Fn9AWWjQV08OR9PzMiIYqHofX/heGDsEUttQM+B6gN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so; spf=pass smtp.mailfrom=doubly.so; dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b=PqKyZ3CB; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=doubly.so
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4W5C8d6pjLz9sZl;
-	Fri, 21 Jun 2024 11:43:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=doubly.so; s=MBO0001;
-	t=1718962993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q0/+kWCBzOJ1LAOx+w7M+WSXBlOu5eXoolfKSt44t/A=;
-	b=PqKyZ3CBzOcbgsjg8asa10QvIbnvj8MzqZYEj+eeu2LHvpkc/SHl18Y5e/oK9kgaVgtiYS
-	7Fp8iy3jvPCSN4J8cJAt2xdVgVKmLXBKaAMaoS3tRI31ptHr/aypHTFotANfIRu2xiqCHo
-	0vLJ9yjH6b3wsFvufjwMlTC4Ff3hlnd/tcbLHkHFN/mbpNvkVZo19gAmMmEE5G4kFhtwtd
-	jL9r+a9dBHwBUuzzQ8FW+vKYRir1ydzvYLODVrnUxAvcZCv+4RMJY/IjvzjAf7w9TD111b
-	oO3Z4Xm8LlakJdKYYpRCy2wbmY1DmcnL9FiiyTO1NDPT5fO4LU8IUjNHw3rU6Q==
-Message-ID: <dbe77711-f32e-4dce-b4a9-ee3114a435bf@doubly.so>
-Date: Fri, 21 Jun 2024 11:43:10 +0200
+	s=arc-20240116; t=1718963016; c=relaxed/simple;
+	bh=1qanX/q3WKZYHC6rEcONLtYsNe0oE006qtvSKCQMHI4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=so/jhRNRTYMZnJr15yE4MY0K21qAhmBjHLNzhR0kO5pUhXLxRA1qsMZzM1tNywp346mRAa50bNurRaQEJf/TsL/OUrdx37D6RwZtoudZhoF5p6uJ53NHmAqDp4BhA1r7wMKggQ9UPTnahd6IHURMerecb+W3z7EG4U1H11oHlT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8JvkVKm; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-48f350bcd89so158792137.2;
+        Fri, 21 Jun 2024 02:43:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718963013; x=1719567813; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jqLHgiTMJFtaX6sfG34bK9oM4kNpdFNFa/14p8/lD7w=;
+        b=J8JvkVKmJqDH3YzOvPolY/miMNjSUdFrSTPLjf+M8UFE2UYSEQIVK8xYFuZj+G+Bam
+         uJm2BDuGevBEjDGukYdjKuNpEi2adJggfqJOwVwaTrCIy2b5d1FKMS/wHwWLLArDSVi2
+         ohEqnL0JUrN2/ScYF3PLYKUtcF5kF1Lk1KSM9XBoRxW2+FvfW5NvT27iyg/Q+uN3gdd1
+         nemDtVQwZHraZxHDOPKbwqN/41osRrPUVDMOy+brPt64NGM9WFMmr2gD+NqA0lU6Qlck
+         KiOEn/oetnRt12V0kFdbwE59tHFDTI4fIzFwSmyyJacasrqO4bSKYBuxVtgJiJxp0z9X
+         TFQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718963013; x=1719567813;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jqLHgiTMJFtaX6sfG34bK9oM4kNpdFNFa/14p8/lD7w=;
+        b=ODFXhwSEi+I6Zg7CLKNE2ruciRT/KqRB6i7WiCeXwuuKD5yf7YG7MbPpbjQxuuBnxK
+         M82qgr9mQmMj16sf6MXPZs+KzrES4wYoTboYZGspTQjqRqyBQK0Xy7oedhcRNZrytO0z
+         2i7MEhsMVO2XC4U5ryswbCMI50DVgRDkJgcOvLrZzOqLvAC2TxSUevsNc5U5YaIRUh4S
+         9l0+SX0uNQqAQ+rh/HvF5DlNw564U+MZg8U+1KwBPPSpRhEWAd2T3riHW6ql7CgVGtWO
+         sXY5D6qyiYnwm2o5C+vskIv7pXF32enxZIKLBThRAmgOFiQZ8if65ZUv+2xHn3HuHQhr
+         G5YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPzLDtKnKsJeFubI+3mpyYcJRLiJtH8Fqj/S9Ipw719ofzu+VkUi3oPBkV9MM/eDRuATOoZrSbDOi6gq/MbZp9k3pBNrqeocG+vQT3caJFhS+jundVlsfDwqfL6+fTPnkLkcJaSQaJIXNHPQg4
+X-Gm-Message-State: AOJu0YzrOHqFSbWk/rvAtMGNodCIkdM8GD4oqz1nK4p6v4bSmGhEtlZU
+	yCot5/1xx99FvfjO79B/d1CdkkElJpRnl6kCrRqo+zvy66CAR+Skyaw5+4PR8/4PzQlLADyITil
+	07c5Lbg1Qev2oVS8SVooBxNRhWEM=
+X-Google-Smtp-Source: AGHT+IFMAoId7SY6B8VMs2FjQVmw40Rm/hJ1bVJU21YbkSpCM+udbaveFI7IM5pfBccw7MCoooc+zgTiRHPq4fDpT5g=
+X-Received: by 2002:a05:6102:3595:b0:48d:b0c5:7fe4 with SMTP id
+ ada2fe7eead31-48f130e4323mr9965440137.29.1718963013554; Fri, 21 Jun 2024
+ 02:43:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Devin Bayer <dev@doubly.so>
-Subject: Re: [PATCH v3 1/1] platform/x86: asus-wmi: add support for vivobook
- fan profiles
-To: Mohamed Ghanmi <mohamed.ghanmi@supcom.tn>, Luke Jones <luke@ljones.dev>
-Cc: Hans de Goede <hdegoede@redhat.com>, corentin.chary@gmail.com,
- platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20240421194320.48258-1-mohamed.ghanmi@supcom.tn>
- <20240421194320.48258-2-mohamed.ghanmi@supcom.tn>
- <de8fcb82-3e08-41e6-b099-75df27c6df23@redhat.com>
- <aee09e9f-6269-43ef-b509-a9a7b5e1752f@app.fastmail.com>
- <f126562f-54c8-de58-3f98-7375c129f66a@linux.intel.com>
- <4de768c5-aae5-4fda-a139-a8b73c8495a1@app.fastmail.com>
-Content-Language: en-US
-In-Reply-To: <4de768c5-aae5-4fda-a139-a8b73c8495a1@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4W5C8d6pjLz9sZl
+References: <20240620002648.75204-1-21cnbao@gmail.com> <f3c18806-34ac-41d3-8c79-d7dd6504547e@arm.com>
+ <d0b20f47-384d-49f1-8449-0da6da11089c@redhat.com> <b99c2f80-3b53-4b04-b610-a66179b928a9@arm.com>
+ <CAGsJ_4y_pjMpNOFzrPZ6u7=M83-CQ0umDCPt=ZDuSKJWssiCqA@mail.gmail.com> <87cyoa1wgm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87cyoa1wgm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 21 Jun 2024 21:43:20 +1200
+Message-ID: <CAGsJ_4xX52FKG+o7vsjAwBLjvfPH=tg_36xqjCnwc5yGV=SaVg@mail.gmail.com>
+Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
+ entry allocation for thp_swapout
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, 
+	shuah@kernel.org, linux-mm@kvack.org, chrisl@kernel.org, hughd@google.com, 
+	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Mohamed et al,
+On Fri, Jun 21, 2024 at 9:24=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
+wrote:
+>
+> Barry Song <21cnbao@gmail.com> writes:
+>
+> > On Fri, Jun 21, 2024 at 7:25=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.=
+com> wrote:
+> >>
+> >> On 20/06/2024 12:34, David Hildenbrand wrote:
+> >> > On 20.06.24 11:04, Ryan Roberts wrote:
+> >> >> On 20/06/2024 01:26, Barry Song wrote:
+> >> >>> From: Barry Song <v-songbaohua@oppo.com>
+> >> >>>
+> >> >>> Both Ryan and Chris have been utilizing the small test program to =
+aid
+> >> >>> in debugging and identifying issues with swap entry allocation. Wh=
+ile
+> >> >>> a real or intricate workload might be more suitable for assessing =
+the
+> >> >>> correctness and effectiveness of the swap allocation policy, a sma=
+ll
+> >> >>> test program presents a simpler means of understanding the problem=
+ and
+> >> >>> initially verifying the improvements being made.
+> >> >>>
+> >> >>> Let's endeavor to integrate it into the self-test suite. Although =
+it
+> >> >>> presently only accommodates 64KB and 4KB, I'm optimistic that we c=
+an
+> >> >>> expand its capabilities to support multiple sizes and simulate mor=
+e
+> >> >>> complex systems in the future as required.
+> >> >>
+> >> >> I'll try to summarize the thread with Huang Ying by suggesting this=
+ test program
+> >> >> is "neccessary but not sufficient" to exhaustively test the mTHP sw=
+ap-out path.
+> >> >> I've certainly found it useful and think it would be a valuable add=
+ition to the
+> >> >> tree.
+> >> >>
+> >> >> That said, I'm not convinced it is a selftest; IMO a selftest shoul=
+d provide a
+> >> >> clear pass/fail result against some criteria and must be able to be=
+ run
+> >> >> automatically by (e.g.) a CI system.
+> >> >
+> >> > Likely we should then consider moving other such performance-related=
+ thingies
+> >> > out of the selftests?
+> >>
+> >> Yes, that would get my vote. But of the 4 tests you mentioned that use
+> >> clock_gettime(), it looks like transhuge-stress is the only one that d=
+oesn't
+> >> have a pass/fail result, so is probably the only candidate for moving.
+> >>
+> >> The others either use the times as a timeout and determines failure if=
+ the
+> >> action didn't occur within the timeout (e.g. ksm_tests.c) or use it to=
+ add some
+> >> supplemental performance information to an otherwise functionality-ori=
+ented test.
+> >
+> > Thank you very much, Ryan. I think you've found a better home for this
+> > tool . I will
+> > send v2, relocating it to tools/mm and adding a function to swap in
+> > either the whole
+> > mTHPs or a portion of mTHPs by "-a"(aligned swapin).
+> >
+> > So basically, we will have
+> >
+> > 1. Use MADV_PAGEPUT for rapid swap-out, putting the swap allocation cod=
+e under
+> > high exercise in a short time.
+> >
+> > 2. Use MADV_DONTNEED to simulate the behavior of libc and Java heap in =
+freeing
+> > memory, as well as for munmap, app exits, or OOM killer scenarios. This=
+ ensures
+> > new mTHP is always generated, released or swapped out, similar to the b=
+ehavior
+> > on a PC or Android phone where many applications are frequently started=
+ and
+> > terminated.
+>
+> MADV_DONTNEED 64KB memory, then memset() it, this just simulates the
+> large folio swap-in exactly, which hasn't been merged by upstream.  I
+> don't think that it's a good idea to make such kind of trick.
 
-On 05/06/2024 09.43, Luke Jones wrote:
-> 
-> I am saying I would like to see ASUS_THROTTLE_THERMAL_POLICY_FULLSPEED removed, or placed somewhere else such as in <sysfs>/asus-nb-wmi/hwmon/hwmon3/pwm1_enable.
-> 
-> It certainly shouldn't be included in platform_profile and I'm not keen on seeing it in thorttle_thermal_policy either.
-> 
-> A lot of this reasoning is now coming from the refactor I've just done of asus-wmi and the "features" such as this one to place them under firmware_attributes class and begin deprecation of them in asus_wmi. From what I've achieved so far with it it is much *much* more suitable than this ad-hoc style of adding features I've been doing here (I'll submit this work soon, it repalces the last patch series I did).
-> 
-> In light of the above I'm considering the possibility of removing throttle_thermal_policy completely to wholly favour the use of platform_profile. It doesn't make all that much sense to have two different things manipulating the same thing - and as such I don't think the "full speed fan" setting fits at all with platform_profile as it is not a performance tweak.
-> 
-> Mohamed, I would be happy to include the Vivo support so long as:
-> 1. the fullspeed setting is removed
-> 2. the modes map correctly to platform_profile
-> 
-> I hope this makes sense. Very sorry about the previous brief response (I was recovering from surgery trauma).
+I disagree. This is how userspace heaps can manage memory deallocation.
+Additionally, in the event of an application exit, munmap, or OOM killer, t=
+he
+amount of freed memory can be much larger than 64KB. The primary purpose
+of using MADV_DONTNEED is to release anonymous memory and generate
+new mTHP so that the iteration can continue. Otherwise, the test program
+becomes entirely pointless, as we only have large folios at the beginning.
+That is exactly why Chris has failed to find his bugs by using other small
+programs.
 
-I recently created my own patch to toggle this control[^1]. I thought
-it was an alternative fan_boost_mode because the dev_id's were one apart. But with
-more testing I've realized it also controls the GPU power and supporting the standard
-platform_profile is better, so I prefer this patch.
+On the other hand, we definitely want large folios swap-in, otherwise, mTHP
+is just a toy to Android or similar system where more than 2/3 memory could
+be in swap. We do NOT want single-use mTHP.
 
-I tested it and it works. However, it has a couple issues:
+>
+> > 3. Swap in with or without the "-a" option to observe how fragments
+> > due to swap-in
+> > and the incoming swap-in of large folios will impact swap-out fallback.
+>
+> It's good to create fragmentation with swap-in.  Which is more practical
+> and future-proof.  And, I believe that we can reduce large folio
+> swap-out fallback rate without the large folio swap-in trick.
+>
+> > And many thanks to Chris for the suggestion on improving it within
+> > selftest, though I
+> > prefer to place it in tools/mm.
+>
+> --
+> Best Regards,
+> Huang, Ying
 
-1. This dev_id isn't Vivobook specific. My Zenbook UX3404VC (2023) has this control.
-
-2. The Zenbook only supports values 0-2 (standard, quiet and performance).
-   Calling the method with 3 causes the KEYBOARD_KEY event to fire instead of
-   adjusting the GPU power and fan speed.
-
-So I would suggest to remove the fullspeed setting and rename the constants,
-perhaps to ASUS_THROTTLE_THERMAL_POLICY2.
-
-Mohamed, if you are busy I could also create a new version of this patch with
-the requested fixes.
-
-I wonder if the existing fan_boost_mode should also be considered a platform_profile?
-
-~ Dev
-
-[^1]: https://lore.kernel.org/platform-driver-x86/20240620082223.20178-1-dev@doubly.so/
+Thanks
+Barry
 
