@@ -1,163 +1,208 @@
-Return-Path: <linux-kernel+bounces-224765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5585C9126A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:25:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C8591269E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 860B41C25A9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:25:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E87EB26136
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EDB156643;
-	Fri, 21 Jun 2024 13:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2B715748C;
+	Fri, 21 Jun 2024 13:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Y4oVOyHN"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bjtyj2p4"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0710D155C84
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E29155723
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718976301; cv=none; b=WW+L71eUNbELXdafmOjGwhVuIleQCIUKwjyZqnKfr+AXwl2wMGJws7Zs9TDbkvK8VzpUa9b7M6+vKiYrdDQLmqrDawSLxB1nGQ+vG2VlNWd5N6k+mSkH0GlPRGheR8COjGQ6UP4Bf8ZmuLkZh/YrlPxi6aDWK/RUp6eAmGKK+RI=
+	t=1718976233; cv=none; b=MehwjhCeO0GGQL1J0nJUHemkxs9tq28Vg3kZlGNXdQr94Kq/ierXI0IgJKgq2GSo3X28ErCUsxaF1PnaOyO5EC4KtBthPbN1lJ7toBdZmzcjLl1NtV6BnfSqiEYbAUMvvMT7trGDhbu4NT/hqPsPb8jFqYs3E3zCyojMLcvITuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718976301; c=relaxed/simple;
-	bh=E1ltYPGReYr7cHgA19i1+OTNxZ2G6c2UHY7yca7ZMTA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aXggnz0RAgihTFqx20EZjRFwLDwd0Bvi6jwNAemvWUF7zG5Ai+RJ2yIFl0vl0hMt8m5jFCXx2JrDf8pa3LYMHnBqwkKQvcx2kVNSuDavE9BdiBnjhuM3FYmg3N5cASLqjbNR7Vi0uodgLa83qsJWH++UAhlG5kMfFgkajnjedcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Y4oVOyHN; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LDNOsa050798;
-	Fri, 21 Jun 2024 08:23:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718976204;
-	bh=jA2rl6BiJ1KgklO098yAZ+1ei3qV02tWnwEbSAolu6k=;
-	h=From:To:CC:Subject:Date;
-	b=Y4oVOyHN9WW5QMWlQlhxrjw8QLL91pvsTSko67OP413/lYlkW+oPdJlg9+9nZVIcG
-	 IKk7bR2QN3xiKuQE1Ub6awJhQ4M/zddh6ZwZs9q+BLADKtx0IE0vU9xCfiKYcDvjOZ
-	 +s3ApvwKkEvGEb4IhIRwB/klaxV5g4+ydTpe8d+g=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LDNOni001981
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 08:23:24 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Jun 2024 08:23:24 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Jun 2024 08:23:24 -0500
-Received: from LT5CG31242FY.dhcp.ti.com (lt5cg31242fy.dhcp.ti.com [10.85.14.238])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LDNDcY046768;
-	Fri, 21 Jun 2024 08:23:14 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13916275206@139.com>, <zhourui@huaqin.com>,
-        <alsa-devel@alsa-project.org>, <i-salazar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
-        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
-        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <yuhsuan@google.com>,
-        <henry.lo@ti.com>, <tiwai@suse.de>, <baojun.xu@ti.com>, <soyer@irl.hu>,
-        <Baojun.Xu@fpt.com>, <judyhsiao@google.com>, <navada@ti.com>,
-        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
-        <savyasanchi.shukla@netradyne.com>, <flaviopr@microsoft.com>,
-        <jesse-ji@ti.com>, <darren.ye@mediatek.com>,
-        Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [PATCH v1] ASoc: tas2781: Add name_prefix as the prefix name of firmwares and kcontrol to support corresponding TAS2563/TAS2781s
-Date: Fri, 21 Jun 2024 21:23:07 +0800
-Message-ID: <20240621132309.564-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1718976233; c=relaxed/simple;
+	bh=wQtusHT7PTHfNhISON3c4fk/0f68+/Mcm3emwcz0W2Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=im1NuolE5boMgBd3lvqLb4bNAtNdn3NS3MIpcHZAr+Nk4BtdhMQWghBKKkVrLawd6Wblq9U6xiaKvzYJ5/5DOUxmiJDVkoWyFZ4Z3EuwPRxzCuO87cwTkYpmLDqu/wAD8Mdbp524lKdN3L4qmXObbu29fCZTnStiypG45CC0YFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bjtyj2p4; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52c819f6146so2485022e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:23:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718976229; x=1719581029; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lh6DHy5f3eoMV1E961uZI87Rq1n/gY0n/fr9bCAQrdo=;
+        b=bjtyj2p4U32GeMDYPSUWmtE2chTbi1v+y5UfIGQC9LEUpC/OkUlilX5eOFlWPjKkF2
+         qGe2Q+8jPSNTYIRSXG62GOsDi+9yNmRjVL1O4136JvCl8YCVbSJmMiDn0iyE48QF+noj
+         pNXmYpbCubSyKA/c8TV0D4sg1tw2fB1XAG0PChFXO1DR863DYtqrGl/uIFqlLVSpw2XD
+         7wFFJ7AJdLdvFSUYayx5g+q8kYUwqmnSx6u+f8T3NdMv42+yEaRWhWiWs0NZcPQwrJ9z
+         0gunHamNuRjqeEvfoiC00FK96wfDMMJUaAV0APR2FVMtD2VMV69wLgtapdkgfAKz6Ry2
+         jacQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718976229; x=1719581029;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lh6DHy5f3eoMV1E961uZI87Rq1n/gY0n/fr9bCAQrdo=;
+        b=OJUo29/n3mYp3/dDjXAdqfLeyYnP+JDnjIekJsxeF8X4bAaYT4o360z0yMJQY6MX8F
+         vZLOcp5f5GYcnn0S6J2cREBQs70sjaF6JqbSHDFHf7SjPNLI+OLsYtorD16Fi1YBrahk
+         9zsSwzDUQVf2HibWzVeacG/v/2G91wPovvt/TbyZuU2vAEqQiHrtA3xCpWAc0zjfw491
+         V4L7P3Y1SioZ7cmpjuKFtKMvyZwBbtohX/dfgpf6wDhCPBD5kVnEPKuHKhx7o8xgqAMc
+         QKm6nK/BsQYrqzIHVyqtonpN6a1ttlzkM+wx/tBv69v5YIK3+abMrfBy0pSlLsrZKgKs
+         cgkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBRx3JhSUE8x93MLmy7EWNpW+E3mzCUZBA+90X1K9DOID4q0nC+Co4/VlMGB6GTkjgbBa+kaiRZiHMOhS48B3+f59uUm6R5BZP0ynW
+X-Gm-Message-State: AOJu0YzmFwKBiGSF3+XN5m58wQU1gkQ1T4kpsRM2EiCF5Oz5bmNjS6Gb
+	GIwpx4JwrTE1GQH3RPhWbALEPBXZOGHlRk/VM4XUO+xtOzf7kNWWG8Z1GWe76UmD1R8zx0W1qz8
+	2E/iwcm9QPx2A0c3miJFqbDGDVRpSpVzLnsJ6fA==
+X-Google-Smtp-Source: AGHT+IG5Y1gn2ekPnM1m7JqqJu9Ttsj5bBzwQpCQM5QC3ClAcEetDkpxMFp8GreL0i+Q2R/FLHudf9Yf2q2tQ+uH6IQ=
+X-Received: by 2002:ac2:5e91:0:b0:52c:b199:940b with SMTP id
+ 2adb3069b0e04-52ccaa62a3emr5131441e87.32.1718976228569; Fri, 21 Jun 2024
+ 06:23:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240605123850.24857-1-brgl@bgdev.pl> <171889385036.4585.6482250630135606154.git-patchwork-notify@kernel.org>
+ <0b144517-4cc5-4c23-be57-d6f5323690ec@163.com> <CAMRc=Mf2C4ywa+wQ6pcq5RtehQD00dDhzvS6sDcD8tAn=UypUA@mail.gmail.com>
+ <33c7587b-83a4-4be7-b00a-d30874df8c22@163.com>
+In-Reply-To: <33c7587b-83a4-4be7-b00a-d30874df8c22@163.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 21 Jun 2024 15:23:37 +0200
+Message-ID: <CAMRc=Me8h-L6mbmOfHce9FF8Koh4_fp=cWAeWrQAj-ukxBOL2g@mail.gmail.com>
+Subject: Re: [PATCH v9 0/2] pwrseq: introduce the subsystem and first driver
+To: Lk Sii <lk_sii@163.com>, marcel@holtmann.org, luiz.dentz@gmail.com
+Cc: patchwork-bot+bluetooth@kernel.org, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, kvalo@kernel.org, 
+	andersson@kernel.org, konrad.dybcio@linaro.org, lgirdwood@gmail.com, 
+	broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, 
+	bhelgaas@google.com, saravanak@google.com, geert+renesas@glider.be, 
+	arnd@arndb.de, neil.armstrong@linaro.org, m.szyprowski@samsung.com, 
+	elder@linaro.org, srinivas.kandagatla@linaro.org, gregkh@linuxfoundation.org, 
+	abel.vesa@linaro.org, mani@kernel.org, lukas@wunner.de, 
+	dmitry.baryshkov@linaro.org, amit.pundir@linaro.org, wuxilin123@gmail.com, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
+	linux-pm@vger.kernel.org, bartosz.golaszewski@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add name_prefix as the prefix name of firmwares and
-kcontrol to support corresponding TAS2563/TAS2781s.
-name_prefix is not mandatory.
+On Fri, Jun 21, 2024 at 11:04=E2=80=AFAM Lk Sii <lk_sii@163.com> wrote:
+>
+> On 2024/6/21 14:36, Bartosz Golaszewski wrote:
+> > On Fri, Jun 21, 2024 at 3:14=E2=80=AFAM Lk Sii <lk_sii@163.com> wrote:
+> >>
+> >>
+> >>
+> >> On 2024/6/20 22:30, patchwork-bot+bluetooth@kernel.org wrote:
+> >>> Hello:
+> >>>
+> >>> This series was applied to bluetooth/bluetooth-next.git (master)
+> >>> by Bartosz Golaszewski <bartosz.golaszewski@linaro.org>:
+> >>>
+> >> Hi luiz,
+> >>
+> >> i am curious why Bartosz is able to merge his changes into bluetooth
+> >> development tree bluetooth-next directly.
+> >>
+> >
+> > This conversation is getting progressively worse...
+> >
+> >> 1)
+> >> his changes should belong to *POWER* scope instead of *Bluetooth*
+> >> obviously, however, there are *NOT* any SOB tag from either power and
+> >> bluetooth maintainer. these changes currently only have below Acked-by
+> >> and Signed-off-by tags:
+> >>
+> >> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>
+> >
+> > It's a new subsystem that has been discussed and reviewed for months
+> > and thoroughly tested. Please refer to the cover letter under v8
+> > linked in this thread. It's not related to power-management or
+> > power-supply, it's its own thing but IMO the best place to put it is
+> > under drivers/power/. And I will maintain it.
+> >
+> >> 2)
+> >> his changes have not merged into linus mainline tree yet.
+> >>
+> >
+> > This is why they are in next! They are scheduled to go in during the
+> > upcoming merge window. But since changes belong in multiple trees, we
+> > need a cross-tree merge.
+> >
+> >> 3)
+> >> perhaps, it is safer to pull his changes from linus mainline tree when
+> >> merged than to merge into bluetooth-next firstly.
+> >>
+> >
+> > It's not safer at all, why would spending less time in next be safer?
+> >
+> it seems this patch serial(new subsystem) does not depend on bluetooth
+> and also does not belong to bluetooth subsystem, but have been contained
+> by tip of bluetooth tree.
+>
 
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+It's the other way around: bluetooth changes (namely the hci_qca
+driver) depend on the power sequencing changes.
 
----
-v1:
- - Changed the copyright year to 2024 in tas2781-comlib.c.
- - Correct the filename in the header comments of tas2781-comlib.c,
-   remove the wrong file name.
- - Add name_prefix as name of firmwares and kcontrol.
----
- include/sound/tas2781.h           |  1 +
- sound/soc/codecs/tas2781-comlib.c | 13 +++++++++----
- sound/soc/codecs/tas2781-i2c.c    |  1 +
- 3 files changed, 11 insertions(+), 4 deletions(-)
+> why not follow below merging produce?
+> 1) you send this patch serials to Linus to merge within linus mainline tr=
+ee
+> 2) luiz then pull your changes from linus mainline tree.
+>
 
-diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
-index 99ca3e401fd1..cd8ce522b78e 100644
---- a/include/sound/tas2781.h
-+++ b/include/sound/tas2781.h
-@@ -108,6 +108,7 @@ struct tasdevice_priv {
- 	unsigned char coef_binaryname[64];
- 	unsigned char rca_binaryname[64];
- 	unsigned char dev_name[32];
-+	const char *name_prefix;
- 	unsigned char ndev;
- 	unsigned int magic_num;
- 	unsigned int chip_id;
-diff --git a/sound/soc/codecs/tas2781-comlib.c b/sound/soc/codecs/tas2781-comlib.c
-index 3aa81514dad7..6db1a260da82 100644
---- a/sound/soc/codecs/tas2781-comlib.c
-+++ b/sound/soc/codecs/tas2781-comlib.c
-@@ -1,8 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- //
--// tas2781-lib.c -- TAS2781 Common functions for HDA and ASoC Audio drivers
-+// TAS2781 Common functions for HDA and ASoC Audio drivers
- //
--// Copyright 2023 Texas Instruments, Inc.
-+// Copyright 2023 - 2024 Texas Instruments, Inc.
- //
- // Author: Shenghao Ding <shenghao-ding@ti.com>
- 
-@@ -277,8 +277,13 @@ int tascodec_init(struct tasdevice_priv *tas_priv, void *codec,
- 	 */
- 	mutex_lock(&tas_priv->codec_lock);
- 
--	scnprintf(tas_priv->rca_binaryname, 64, "%sRCA%d.bin",
--		tas_priv->dev_name, tas_priv->ndev);
-+	if (tas_priv->name_prefix)
-+		scnprintf(tas_priv->rca_binaryname, 64, "%s-%sRCA%d.bin",
-+			tas_priv->name_prefix, tas_priv->dev_name,
-+			tas_priv->ndev);
-+	else
-+		scnprintf(tas_priv->rca_binaryname, 64, "%sRCA%d.bin",
-+			tas_priv->dev_name, tas_priv->ndev);
- 	crc8_populate_msb(tas_priv->crc8_lkp_tbl, TASDEVICE_CRC8_POLYNOMIAL);
- 	tas_priv->codec = codec;
- 	ret = request_firmware_nowait(module, FW_ACTION_UEVENT,
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index c64d458e524e..4d1a0d836e77 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -579,6 +579,7 @@ static int tasdevice_codec_probe(struct snd_soc_component *codec)
- {
- 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
- 
-+	tas_priv->name_prefix = codec->name_prefix;
- 	return tascodec_init(tas_priv, codec, THIS_MODULE, tasdevice_fw_ready);
- }
- 
--- 
-2.34.1
+I explained this in my previous email. Why would you want these
+changes to needlessly wait for another release cycle? It makes no
+sense. It's just a regular cross-tree merge like hundreds that are
+performed every release.
 
+> >>> On Wed,  5 Jun 2024 14:38:48 +0200 you wrote:
+> >>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >>>>
+> >>>> Hi!
+> >>>>
+> >>>> These are the power sequencing patches sent separately after some
+> >>>> improvements suggested by Bjorn Helgaas. I intend to pick them up in=
+to a
+> >>>> new branch and maintain the subsystem from now on. I then plan to
+> >>>> provide an immutable tag to the Bluetooth and PCI subsystems so that=
+ the
+> >>>> rest of the C changes can be applied. This new branch will then be
+> >>>> directly sent to Linus Torvalds for the next merge window.
+> >>>>
+> >>>> [...]
+> >>>
+> >>> Here is the summary with links:
+> >>>   - [v9,1/2] power: sequencing: implement the pwrseq core
+> >>>     https://git.kernel.org/bluetooth/bluetooth-next/c/249ebf3f65f8
+> >>>   - [v9,2/2] power: pwrseq: add a driver for the PMU module on the QC=
+om WCN chipsets
+> >>>     https://git.kernel.org/bluetooth/bluetooth-next/c/2f1630f437df
+> >>>
+> >>> You are awesome, thank you!
+> >>
+> >
+> > Why are you top-posting anyway?
+> >
+> it is caused by my bad mail client settings. thanks for reminder.
+> > Bart
+>
+
+Luiz, Marcel: Am I wasting my time with this person? Is this another
+Markus Elfring and I unknowingly got pulled into a nonsensical
+argument?
+
+Bart
 
