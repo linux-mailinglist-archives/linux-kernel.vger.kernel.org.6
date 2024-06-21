@@ -1,224 +1,148 @@
-Return-Path: <linux-kernel+bounces-224018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9135911C05
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:43:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580D8911C07
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086D41C23F05
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:43:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137AD2817E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807B015B12F;
-	Fri, 21 Jun 2024 06:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE9F1649A8;
+	Fri, 21 Jun 2024 06:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EBwcZpZm"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haNqaWHy"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1DB15624C;
-	Fri, 21 Jun 2024 06:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718952193; cv=fail; b=A7TqfPg1gs8l3NZjo+ELqq0v2Kr71qPN1/V+EgznlNoZn+AUYtfwI4XkRiZ5yU/5WeJ2vvgt0sXW2t8Ovx6KoWXWaiQ4ojjz/HZqD9OJX+BZgtP/IUfJP5p0KFkdwiEJ9H3pdifbmYu2RtycCSP+G1FEt7dix7Y6AsPUzACy99A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718952193; c=relaxed/simple;
-	bh=g+D7/zt4VfGoDs5QKnM3JQOH6sumWJW+dp5WaKgvins=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NtgiHOFjh4dBItkMF9v/hf5WHWeouvCYKBP5HVOZjCALG7kuPJfyfYdKUxo6mG7btr2iCG9Osf3bB5lhP4YZrlYcbYnakzUj5eBlVhMG2kf8QyIjdwAbL4bNvG2MnC6+zYqTUw+SqYs/JlJjashFrlkLCek0KPJ9PWQA3DpvIuw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EBwcZpZm; arc=fail smtp.client-ip=40.107.94.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gR30zfuv4LKot4xZ+n1buIdRrHJet1voOkybaEzoOrg9ppOOv8Z98FNnF10ET1e22Jx+Ys4KX7BXwjmGy+X5xYsJska2IDw64iDN9JIArWhC7yzpLMas6kl8MQ6Ow5TCmMZqj2BuE89ZXnQ2NzdJ4xzrW5Je9ba8DEZXqVOerZRsKXRDlgaxeVvrk0QpqzPRPDgbzG+of210NL6AAJCa57b2QrT9hiqewOGv4dGWOiDD7M6QywWXj4TUrCWMOuk4ahQHOGRUVyIKloO4GFTBy9jfWLM4niFG0qDGPadnkYlaYc88cDB6vf1IOsh1Vc3CKwxBkHmwwajwEwt+dQW48g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=15lLPBzK7+7AZ/frt2Y2orQ/qFHqQ6JeXjWB3ZRlMfw=;
- b=M0OaYHDiIL086kBgF3AMf1+5jumWVbbawp2cAB3GFcoDHnVSeCg9phS32tdnrGSqnpunNt5XgoqzMhc62TDTPmVPKIlZd/ODgEgl3rntosnyzMALIZfAS1o9IKFJQMiq6B+WeGp9SwBaOO3fHbkqC/TabMEtsHYBPHL8aUZTLUMSyVAy8v3jVFyskLrAY8V74SsYnxpxGQcJ9dEbbrAoV5iDz+RNdYNCD35dQTVpwzUW5ebJjI0WB074GOHsts7Mk01ONra4BmLonlw4VDHS/NNIe1CF/IJjx4eQH0HS/vqEWY6cGzp2Q6dMiEJIcsllZEFmJwJCyx5dv1psjs9SwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=15lLPBzK7+7AZ/frt2Y2orQ/qFHqQ6JeXjWB3ZRlMfw=;
- b=EBwcZpZm5PqWxS24G30xQAdVeqXb0A+oe2AkMFCImzISAH8hGwGPdqMahU2pHR1f6d4Jqju/eBt4sxqGQa+xx2O/lNDkx/kYSD8a2Tfkf/D+UlEXtCPz7BS2zg3ZroO6iZjTamct4sL42PHuIYK4FaYzEyQbYrLlBGC9+LA5kwg=
-Received: from SJ0P220CA0008.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::17)
- by CY5PR12MB6324.namprd12.prod.outlook.com (2603:10b6:930:f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
- 2024 06:43:09 +0000
-Received: from MWH0EPF000971E3.namprd02.prod.outlook.com
- (2603:10b6:a03:41b:cafe::3f) by SJ0P220CA0008.outlook.office365.com
- (2603:10b6:a03:41b::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.33 via Frontend
- Transport; Fri, 21 Jun 2024 06:43:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MWH0EPF000971E3.mail.protection.outlook.com (10.167.243.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Fri, 21 Jun 2024 06:43:09 +0000
-Received: from BLRRASHENOY1 (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Jun
- 2024 01:43:05 -0500
-From: Gautham R.Shenoy <gautham.shenoy@amd.com>
-To: Mario Limonciello <mario.limonciello@amd.com>, Perry Yuan
-	<perry.yuan@amd.com>, <rafael.j.wysocki@intel.com>, <viresh.kumar@linaro.org>
-CC: <Xinmei.Huang@amd.com>, <Xiaojian.Du@amd.com>, <Li.Meng@amd.com>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 9/9] Documentation: cpufreq: amd-pstate: update doc
- for Per CPU boost control method
-In-Reply-To: <19cbf20f-cf06-4776-8d14-973b090f7242@amd.com>
-References: <cover.1718787627.git.perry.yuan@amd.com>
- <6b705dc178d484dd4f99e6bd134bdf09ee0a879e.1718787627.git.perry.yuan@amd.com>
- <19cbf20f-cf06-4776-8d14-973b090f7242@amd.com>
-Date: Fri, 21 Jun 2024 12:12:56 +0530
-Message-ID: <87a5jevlsf.fsf@BLR-5CG11610CF.amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4601A15624C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718952246; cv=none; b=A/q58H0t6yxZYorPNBKbOPGD2lQPIRvJQobt2I/gyKOz50CIpaBBPsV+YfctXnRRwY8Qtdp5LZHkDo0R8BiSpKVAjEoda3KC0azmIUdCPD+egawIs7df3EaEYHoSPHjhgfTuNcYSstPdTQPPYMkvj4ixs3bDhy9CFiGjTCVudHw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718952246; c=relaxed/simple;
+	bh=nhcmvGnnHEuaHFzQcYbt3CTcyyYu6sUbA+s1f3pVEdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OKSUSk3YDqYD1eTmn9/dVUAvbwQneDPsId1C0eyzkQJgU4h/dvq3mGvKNUSgQBoIDe+rDMwxQei/SwYfR0/CdDaMDgAdSbQ1qs3u/JVlvpfRHgj2QiBrseQ7vIQr8awh+VfWqsne0d4q14zdMmEqasOB/1sJ+lDFciV2vJ2pxLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haNqaWHy; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70436ac8882so1400890b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:44:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718952244; x=1719557044; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4+594vb27iUnZDSTatKmhnwO59pI3iB7FBBFD3X7DeM=;
+        b=haNqaWHygW/r30iv/gn04mXfjvS9iXr/K62A3o/C7Z8sEpucsTiro5I5PuV+r255TG
+         kIBLkdh05Vw6rusgqiInWwqHYHUDYTr/OCKAO78PrqHhEVKg66OzZ4kVfuPT6DQ5xV+v
+         rSU+GdDlRYbsZrZavobPGm+oNtB60vnf+mDZwJ9wS07Ssmd906XjVwbcTBjRAp5Mao1X
+         yxry/XgofwjnyNEylgB/Q+hmi6KiPDawVhrCe+6w3EH2nNNgiIeybqv6CFCG8e/b99qu
+         avXLHykeO8C67KHrMXnjaBcTiRZ7lZs00GX94yFGeerCKU6cmGMu8g05313SFFx2Ce7/
+         a1hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718952244; x=1719557044;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4+594vb27iUnZDSTatKmhnwO59pI3iB7FBBFD3X7DeM=;
+        b=GC+drq3FDZrxZUN+62ybJL72ZoDdapjMNV8db9/gJ1JkXSQdGE8MjtsezBauL0gDYd
+         mW0wzoQ49SXs65fr9BAgje7k+ih/S56nxw/6bqAkIHOqVdrmCJ/8PEFHcZzJOEESPq7L
+         eGpcnWgXLeK9ziMSO3p2L4MGIYPeAf4mSXrc3hyOSTuFkkmE0oE11KCc7Df2Zd4rSalB
+         W/t1okjr8bGGw2ubBeuwduABgLYoUnHXb4mxZ9JXNelkV8kwq9laxzMO9vs8QpddcKVs
+         BP+0oLHh+fJytBrW3loLsTrgQZkR6w0OagNdMiwVC381k8LrN6OVG07Oy79zxQouxX83
+         +Xog==
+X-Forwarded-Encrypted: i=1; AJvYcCXJPYXN4+t3e6X9KdR7gR7lNnY6kAfWFnPn9K16YgY1Yq9/ZwF3x6gZ3TjQI0XGeiFafwilvm7TCuYl8pAH/uSW1SUxfzcAB/sOBnLF
+X-Gm-Message-State: AOJu0YxAS3H80FIwCTb11vpAMie92in7Iav5cbvDtwZTncJH6rDezW/M
+	qP9ZChuhnOT6HayEgFFkoCd05Xwqi7PxgFMexotsIU7Aka4uFr/1
+X-Google-Smtp-Source: AGHT+IGgsSAAAnAcSy1xgA+1CUqQn4IDFTUITGxa3vybVMINzCpds9LRH6QWvTUCgq4LfXHEKULh/g==
+X-Received: by 2002:a05:6a20:4881:b0:1b0:1a02:4136 with SMTP id adf61e73a8af0-1bcbb386b43mr7134680637.8.1718952244412;
+        Thu, 20 Jun 2024 23:44:04 -0700 (PDT)
+Received: from [192.168.255.10] ([101.87.0.127])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ec6595ebsm6653055ad.25.2024.06.20.23.44.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 23:44:03 -0700 (PDT)
+Message-ID: <15ee2753-a3f6-4b41-8afa-344ce9154161@gmail.com>
+Date: Fri, 21 Jun 2024 14:43:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E3:EE_|CY5PR12MB6324:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5563cc09-f5a9-44f8-9f57-08dc91bd69f3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|36860700010|1800799021|82310400023|376011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WXn1MVW5XzdUsPrKfE840L0VE8c93gq3PwAjGdZugNsMkgI6hmYCVoV+WQXZ?=
- =?us-ascii?Q?h3roRwy2LJhAzIsEdkgijK0x3x5c5H0mLP0jIlfq5UsmYsCnYg6kQuao3NDJ?=
- =?us-ascii?Q?CupqnJco5A3+3N+LT4fvCmMNz77O7yKBOPZ4fq4x+QCQ4ld8esUs+a3RZGcV?=
- =?us-ascii?Q?YwW38sNxTKpSdrl9Tmb3gCGtb1w9x16v52xs6/xWyg0Kxj0eXhbMb5ONMaJE?=
- =?us-ascii?Q?jbxknN0yDrRTohZOnmb3o0u6n3vKNyN5kXUC7dgqpW4S5IPOVCHjWM8cIOpL?=
- =?us-ascii?Q?mt+IWsHD2UDZwRaMq9ebPKkQOCDJY3sdvAHuM9ToqtF4p4jlxK0gZkm1VUrs?=
- =?us-ascii?Q?9cAYn7fg3KEleGHC24QWn8t0Pzyn7MRvup/hj/nyS31rGhh03EnLIGwT/hD0?=
- =?us-ascii?Q?HJvbGNAnZe4v5sdfFer0UD4lrW35kVtkXJrOorAA61xr4CmIUTnyacc6+1As?=
- =?us-ascii?Q?d3V/ppGvuYCj6o9XCOaSwx16OD36qIi7bDKwkL9NaoahK0n9y8QMtgNH92+5?=
- =?us-ascii?Q?kiNYH3r4PxtluP2Y4klmwSA6z/OkCWfVBHNqAPwp3kXuP64GvuyDppRPrGAi?=
- =?us-ascii?Q?NZZv4XIKmZkLkYuC53jj76orFrnus9EjbLYJ7LFHVtP5BK/I0ft+SBlFZU33?=
- =?us-ascii?Q?q2JULePmBzCaSM4ACK/HL5bczNAUvR6FT74VWh9jvjz0iXJZJPEmx3V5bQEp?=
- =?us-ascii?Q?b5/Dz+82NcSKswHZyw5g06vSOAYCJiJpaQPn6Vv6LqpNJaTbELxab71dTyLg?=
- =?us-ascii?Q?TOQ+Gj6S0XVsOOrowxHM0EVftphB8QK7OW4JWkHJf0WjAHD4EPf4lgyJA1VP?=
- =?us-ascii?Q?QGvbXEOSSbv9JY53mL88YtaU2QzZ3y8lCqM5YD1qYLN6xvoiJQdJ3N/ixt08?=
- =?us-ascii?Q?e5cK6wLrQSZXZaroRNz4yIaa1UMtp9NqWHQ7nkA/HSfkuu3gOIu6ewxNN2yZ?=
- =?us-ascii?Q?3x+zwsjsv7iRqKIcLcJ7MOHkoaaHkz9G8bFjWCbTCYBEERM9XFhv5LhVrWgO?=
- =?us-ascii?Q?ZT6Sj8PQTi7+DbJKSRBWOZN8Fmbs8o4hkl3ngj/bLWroJtpSod3PbMsSSMHf?=
- =?us-ascii?Q?kGqOSagoH6cmwxmv5ZWMkqeAZa/fPPzjLDUnQaXFvxgK7FSGuK8sklbxgR+j?=
- =?us-ascii?Q?20pVnDjoZkNA9pZAZRpDKI0xO43onqFeK/j6fBTaylRgXqfnpRXNyFNkAr+W?=
- =?us-ascii?Q?DmkOA/nY0USAdWw6Wi3TurdVRsNjrUBuKEw+Lt7ADwmSixbKP7Idb7/QdEfA?=
- =?us-ascii?Q?unxt9TjmL5tTthVRFOXUq0wTnj6+xcnIQoQNp62ceJmWl63+F+ArMyvok7Vc?=
- =?us-ascii?Q?ztkt3h8NQnMQIMO1JcSu0uRGz7frCtEPq+vGwxqkXw9D08lUcK6euQWicjag?=
- =?us-ascii?Q?WEb5chYvOpCLGBElHEnoRsjhP34nGSQtjCwsxVz7O3oXN7sBBQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(36860700010)(1800799021)(82310400023)(376011);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 06:43:09.0312
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5563cc09-f5a9-44f8-9f57-08dc91bd69f3
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E3.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6324
-
-Mario Limonciello <mario.limonciello@amd.com> writes:
-
-> On 6/19/2024 04:16, Perry Yuan wrote:
->> Updates the documentation in `amd-pstate.rst` to include information about the
->> per CPU boost control feature. Users can now enable or disable the Core Performance
->> Boost (CPB) feature on individual CPUs using the `boost` sysfs attribute.
->> 
->> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
->> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->>   Documentation/admin-guide/pm/amd-pstate.rst | 20 ++++++++++++++++++++
->>   1 file changed, 20 insertions(+)
->> 
->> diff --git a/Documentation/admin-guide/pm/amd-pstate.rst b/Documentation/admin-guide/pm/amd-pstate.rst
->> index bcc0d9404c18..98e43c53c387 100644
->> --- a/Documentation/admin-guide/pm/amd-pstate.rst
->> +++ b/Documentation/admin-guide/pm/amd-pstate.rst
->> @@ -281,6 +281,26 @@ integer values defined between 0 to 255 when EPP feature is enabled by platform
->>   firmware, if EPP feature is disabled, driver will ignore the written value
->>   This attribute is read-write.
->>   
->> +``boost``
->> +The `boost` sysfs attribute provides control over the CPU core
->> +performance boost, allowing users to manage the maximum frequency limitation
->> +of the CPU. This attribute can be used to enable or disable the boost feature
->> +on individual CPUs.
->> +
->> +When the boost feature is enabled, the CPU can dynamically increase its frequency
->> +beyond the base frequency, providing enhanced performance for demanding workloads.
->> +On the other hand, disabling the boost feature restricts the CPU to operate at the
->> +base frequency, which may be desirable in certain scenarios to prioritize power
->> +efficiency or manage temperature.
->> +
->> +To manipulate the `boost` attribute, users can write a value of `0` to disable the
->> +boost or `1` to enable it, for the respective CPU using the sysfs path
->> +`/sys/devices/system/cpu/cpuX/cpufreq/boost`, where `X` represents the CPU number.
->> +
->> +It is important to note that modifying the global variable
->> +`amd_pstate_global_params.cpb_boost` will override the individual CPU settings.
->
-> The whole point of the global cpb_boost is an easy way for software to 
-> turn on/off for the whole package.
->
-> This makes me wonder if we want a "custom" string for the global param 
-> if one of the CPUs has been individually modified separately from the 
-> global flag.  Then software can very easily tell when it's been toggled 
-> for a given CPU or via the global flag.
-
-Yeah, this is one usecase which may justify the need for a separate
-amd_pstate/cpb_boost interface. i.e., if there are users who do want to
-reset the boost state on all the CPUs if individual CPUs have
-independently toggled the boost states. 
-
->
-> * Basically if userspace wrote to a single CPU store a bit in the global 
-> structure to say cpb_custom = true if it's not already set.
-> * If writing to cpb_boost from sysfs then "cpb_custom = false"
-> * If reading cpb_boost from sysfs and "cpb_custom = true" then double 
-> check all CPUs.
-
-Actually, we can maintain a counter which is set to nr_online_cpus when
-the global cpb_boost is enabled and set to 0 when global cpb_boost is
-disabled. When each individual CPU disables cpb , we decrement the value
-of the counter. We increment the counter value when some individual CPU
-enables cpb.
-
-So global counter returns "enabled" if counter == nr_policies, returns
-"disabled" if counter == 0 and "custom" for all other values of the
-counter.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/15] add zpdesc memory descriptor for zswap.zpool
+To: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, minchan@kernel.org, willy@infradead.org,
+ senozhatsky@chromium.org, david@redhat.com, 42.hyeyoo@gmail.com
+References: <20240621054658.1220796-1-alexs@kernel.org>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <20240621054658.1220796-1-alexs@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
->    - If they don't have the same value return "custom".
->    - If they all have the same values this means software has updated 
-> them all, set "cpb_custom = false" and then return enabled/disabled.
->
-> What do you think?
 
-Could be done. But again, are there users who want to see the "custom"
-value ?
+On 6/21/24 1:46 PM, alexs@kernel.org wrote:
+> From: Alex Shi <alexs@kernel.org>
+> 
+> According to Metthew's plan, the page descriptor will be replace by a 8
+> bytes mem_desc on destination purpose.
+> https://lore.kernel.org/lkml/YvV1KTyzZ+Jrtj9x@casper.infradead.org/
+> 
+> Here is a implement on z3fold to replace page descriptor by zpdesc,
+> which is still overlay on struct page now. but it's a step move forward
+> above destination.
+> 
+> To name the struct zpdesc instead of z3fold_desc, since there are 3 zpool
+> usages under zswap, zbud, z3fold, zsmalloc. It looks like we may extend the
+> zpdesc to zbud and zsmalloc, combined their usage into one.
+BTW, 
+Thanks for David and Willy's suggestion!
+Since all zpool candidates are single page users, then we could use zpdesc to
+descript them all in future.
 
---
-Thanks and Regards
-gautham.
+Thanks
+
+> 
+> For zpdesc(page), z3fold just uses the 5th member zppage_flag, which
+> match with page.private. Potentially uses the first member flags for
+> headless PG_locked, list_head lru and page.mapping|PAGE_MAPPING_MOVABLE
+> for page migration.> 
+> This patachset could save 26Kbyetes z3fold.o size, basely saving come
+> from the page to folio conversion.
+> 
+> Thanks a lot!
+> Alex
+> 
+> Alex Shi (15):
+>   mm/z3fold: add zpdesc struct and helper and use them in
+>     z3fold_page_isolate
+>   mm/z3fold: use zpdesc in z3fold_page_migrate
+>   mm/z3fold: use zpdesc in z3fold_page_putback
+>   mm/z3fold: use zpdesc in get/put_z3fold_header funcs
+>   mm/z3fold: use zpdesc in init_z3fold_page
+>   mm/z3fold: use zpdesc in free_z3fold_page
+>   mm/z3fold: convert page to zpdesc in __release_z3fold_page
+>   mm/z3fold: use zpdesc free_pages_work
+>   mm/z3fold: use zpdesc in z3fold_compact_page and do_compact_page
+>   mm/z3fold: use zpdesc in __z3fold_alloc
+>   mm/z3fold: use zpdesc in z3fold_alloc
+>   mm/z3fold: use zpdesc in free_z3fold_page and z3fold_free
+>   mm/z3fold: use zpdesc in z3fold_map/z3fold_unmap
+>   mm/z3fold: introduce __zpdesc_set_movable
+>   mm/z3fold: introduce __zpdesc_clear_movable
+> 
+>  mm/z3fold.c | 190 +++++++++++++++++++++++++++-------------------------
+>  mm/zpdesc.h |  87 ++++++++++++++++++++++++
+>  2 files changed, 184 insertions(+), 93 deletions(-)
+>  create mode 100644 mm/zpdesc.h
+> 
 
