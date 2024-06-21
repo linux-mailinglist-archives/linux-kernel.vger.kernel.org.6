@@ -1,187 +1,134 @@
-Return-Path: <linux-kernel+bounces-223860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8575F911975
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:30:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E098B91197F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7E57B236AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:30:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B115284252
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B8412C7F9;
-	Fri, 21 Jun 2024 04:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D368E12CD9B;
+	Fri, 21 Jun 2024 04:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="c/5A7gma"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2064.outbound.protection.outlook.com [40.107.236.64])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mJ8aNvCj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A59DEBE;
-	Fri, 21 Jun 2024 04:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718944246; cv=fail; b=k6YMZe73Lu9dSc1wGXkChs1Ib4TCTG86wOXyW59VtoyK0KDUyi7p6uqKxqZzD/Zl/dik0ixS3OVnLFh8c6DbSE4U+H2Dkf/MimvHynoElb5zP+bFBTI4xSSxELqkFxVlCaakBDEvGfo2O03VE9chOC0GG9aA1cqK+pQk56YcCts=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718944246; c=relaxed/simple;
-	bh=Nw0NLhOHlIUb9k/ETV8JZ9+Qsa48ksrhKLdpnnEnR5Q=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tvnbKjQJWj4zjS1mFLeQnjWuPTm7I9MxID12I5h6/78cYKtMUWP4Kquio4Cv+x+PGbGA1UGBHEznJzWzH+DmOz9Ji6DqbQIk0zTZ+uMzvcaU3E4PkZa4xDtLuCh+yadCGPvjZw57ghJa4IhYlFdoqkxfJl+IVgFQpoUVaJt8DOM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=c/5A7gma; arc=fail smtp.client-ip=40.107.236.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DAo8VMpOh8SD29bdB47kIvDqwbhJF9As/u2eDTlwmVrUVRO018aMMsnBZ5M/xPuzA37a1Mc8YxH6XEKaGmuGbxg36PNVWQJrSCWn2nUgAa0dIIR7dRqMT458nrPcFN7kVs0Uxt2N+zXq1HHtyP+yoy0ktN4mkx35P7TQ56Da+R4I0vYTI6Nk7pGCjzwOIxy7M25OWYXkJDtHHVGuFqPb+L2pog8u4BWJcbi69xVhNyenh7q8LHo05RlBK8M7YQQTZMV7AM+RMxhWyHOufTs1cWzRBi4ceeWO2Dv7fFLwHopFJyoak+XKClL6uurm5shMfvx66Lz3OfG0Xof+r2rqBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o3eTkQe4Zp29FiagUcVg6E2Y+fkufWDw/Fx9iopTB7E=;
- b=hyTy0MjOBO0mbpAWcdEZxgGvlh97yubQrZvk9K1cNpoeNHq+rjH/R1xVazxs19K+qLJnmsjIZmZZFbdwXAoXo0oYyURdiPIxK9gTP0vvhL4lTjpu7Rag1hBu0V21A1NxyfD09ntiKi8FijQ3L+uMMy5Rta0H7f66yAOy6thPmWEsYf03MMBYhclBKjZyS7mLA/K3y4YfOc+i2ljX1EICFAe36Q+8PF2G/C9QWsasStISR32IxbXnZLRctHXPTmA2xd/oJXAauKWcSnliEoh3PdTg+YTWASwUdmxMsMWcArDzGA89FaBQKL1kCAv2sQYZX/YhPZffC8YnuSzDBWT6yg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o3eTkQe4Zp29FiagUcVg6E2Y+fkufWDw/Fx9iopTB7E=;
- b=c/5A7gmaBRaAM0hzqPG4vmXBiw5nU2TnK3KqhYuMfKzF2eET+boMfGJLxuFSpjQhF4pRgXMqJoWKyQXIjQXcaqhDLMVKop2x7imOdT5RLXLf1QjFrOX6VGxna57GHWd/riMVLKzbSE9POPGNB6P5KCLX90AbUVx2ffPcuXwSHnw=
-Received: from BLAPR05CA0018.namprd05.prod.outlook.com (2603:10b6:208:36e::13)
- by SA3PR12MB8023.namprd12.prod.outlook.com (2603:10b6:806:320::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.22; Fri, 21 Jun
- 2024 04:30:42 +0000
-Received: from BL6PEPF0001AB75.namprd02.prod.outlook.com
- (2603:10b6:208:36e:cafe::98) by BLAPR05CA0018.outlook.office365.com
- (2603:10b6:208:36e::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.33 via Frontend
- Transport; Fri, 21 Jun 2024 04:30:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF0001AB75.mail.protection.outlook.com (10.167.242.168) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Fri, 21 Jun 2024 04:30:42 +0000
-Received: from BLRRASHENOY1 (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Jun
- 2024 23:30:39 -0500
-From: Gautham R.Shenoy <gautham.shenoy@amd.com>
-To: Perry Yuan <perry.yuan@amd.com>, <rafael.j.wysocki@intel.com>,
-	<Mario.Limonciello@amd.com>, <viresh.kumar@linaro.org>
-CC: <Xinmei.Huang@amd.com>, <Xiaojian.Du@amd.com>, <Li.Meng@amd.com>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12 2/9] cpufreq: simplify boolean parsing with
- kstrtobool in store function
-In-Reply-To: <26f6ce59390a157cf37c622dd2fcf14b5738a8cf.1718787627.git.perry.yuan@amd.com>
-References: <cover.1718787627.git.perry.yuan@amd.com>
- <26f6ce59390a157cf37c622dd2fcf14b5738a8cf.1718787627.git.perry.yuan@amd.com>
-Date: Fri, 21 Jun 2024 10:00:32 +0530
-Message-ID: <87iky2x6hj.fsf@BLR-5CG11610CF.amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86BAEBE;
+	Fri, 21 Jun 2024 04:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718944455; cv=none; b=jkmeo3CZ3pOCeU2My/K5dAncAXbTT/xQXy7eDhr/QaU3XJVR1R1ADlmN9nvR0Jb5K7FwsrpqYTEUHiGBrlHl4ebagwSbXs5MOI0jkQkT5iL1TEb32iMjcpkohaLNRr391lJsq5WLPTgBKcG7C9GRkBq4h3RccS6iSazqIuSjTSo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718944455; c=relaxed/simple;
+	bh=BoS/tIDHw9tMTBj4Fpfa4bXjNsqBWr/XXVzf3vePCa0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ojjBYwG61LY2DYOxno72ei/sHezrLSgyNTkgCAFAkOdVrOE9bkeJceKGOf3z45DfZ8vi13E5tB+PXQ8vByle7NMK6MffZhQQgNvlFwPDriby8trPltdJeKYNp8JDM64RGbtZ13A4YE21Tv3FFtaq8FnuBavH+Lnkz0Bz6DBzS7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mJ8aNvCj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L4P5Le022511;
+	Fri, 21 Jun 2024 04:34:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PwjfkBZCfAbe9fUHJY7I6WnMh4SDhfak2gHRLZ/Osmo=; b=mJ8aNvCjGF9Txl9n
+	mxUHggwVbb/9iIaLfObQ4EiWxlO8UV4SnGKQ43s/QifCuveGa1WWCLVE4cn/NbDT
+	bgfCMk0N1CZOAU9v2qqiVqSE5K0yb/J7zLyVjF4oKSIe++18+jhhA1miT6eiBT3P
+	9e0aLnSEJEl+q/dD2YT5vxcCPb8IbR2P3ZqkfrQ6oyg6hDu5Xx19+CcpCB4sKLgl
+	8yccEl/OUWqYrF2pR+FlzBT2LGjMuSg70x8taYo8pjNsd8eDA/21x0epKeW8eNwn
+	MC7pTox6uKEO+bDiOlBeu7n0g97NG264JSxx6luG8ZRqElrwnAjw3PX9V1cZsxho
+	dTu91Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrnyhcbj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 04:34:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45L4Y8tf005173
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 04:34:08 GMT
+Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 21:34:02 -0700
+Message-ID: <053e047b-7594-48bc-ac1b-2368c0c8f1cc@quicinc.com>
+Date: Fri, 21 Jun 2024 10:03:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB75:EE_|SA3PR12MB8023:EE_
-X-MS-Office365-Filtering-Correlation-Id: eaba7f62-31bf-48bc-7e18-08dc91aae95c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|82310400023|376011|1800799021|36860700010;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?j/U2UZO61fFdWpGVH9AXo3cP5wf4sPN1itbqovGxkh3RIcdKmdS314tN5G5d?=
- =?us-ascii?Q?It2OkV764zl844zMnm924KxZ60JUYmj/BwiyHYz+ZoGWgaae6q39bJB1Vlqs?=
- =?us-ascii?Q?ogwbz2G9gLJQ7NdS4RX5oSkavwiA3To+Cgz+uOPhIdMArkeIxAApDNp84liu?=
- =?us-ascii?Q?5Gy/qNpq5QgUfbpbdrov5Y5D5uMWL4YJ0/X8aHBKjOENcaJEG8uqX2hvgezd?=
- =?us-ascii?Q?V0yCpfUrKTf/UgmLCppTf+4phlVAj42LX6qEie51x7Y/6AjvsSt+B6IuRKF4?=
- =?us-ascii?Q?k+taugYCQzqcDB62QNW0ht9mK5G7jNInaRE3K/EoYAEB6XPJCqOB01R/Xlr9?=
- =?us-ascii?Q?jhImekhq7Y2hChMUoMtljndcLnvnpHjg3Y4beH2CH9l8lV3FydvKkDn4WtXj?=
- =?us-ascii?Q?WNj/0466Sg5kNuu8GZ+MlupsnlWXjmc2bsXaPd9KLglcdUOA1ibJZcR34FhN?=
- =?us-ascii?Q?Oex18YPypIAC/TI/cwCIgvvqgyvbgTqCzLWR8pLXB8BkN1MDY2qZFD3J03rR?=
- =?us-ascii?Q?yHNzw10EbSE7E5dnWu2ql9ICx8wwfhuNIITThNNHK4IJTRjSqugWfoQJF16s?=
- =?us-ascii?Q?TiN2KQfbrukpppOsFraZdvUSmo5pOakmn9SUrdaA6/LCpPkAVtu/Mz+jTb11?=
- =?us-ascii?Q?QjJp0DD5aujHu3xPIeZ7lOnINxhc+4xSMi+yoO8cXyf3SSkWL0O4LZZWlWiB?=
- =?us-ascii?Q?LGVQYSoTLtsc8r2l2sJcGO6osrw8C3KekYv8TfMnrXECpn0yHYjuvWeDR5Pv?=
- =?us-ascii?Q?DhaGbrGTlJOYkxh9DwQWatLADSXtfhw7gK/OGT+FgZaA/A0AzxgS3ROI9uV2?=
- =?us-ascii?Q?C97/q5zKGfKInxacgH5iHnpnTk1rS9K0MNu+NIPltlL7jLYoVgRJ5Xo8s3WO?=
- =?us-ascii?Q?nSgvu0uhfgOwQST44iIxwFMG9cV91ULh4LNzqOW8K31Nu5sLu9baCTxVqE5s?=
- =?us-ascii?Q?DN5ITs6pI99fosULrJ6AyTbaHJBhgvUVjZFyy1sU1rbQJ1T1+pndUCyv5CDN?=
- =?us-ascii?Q?Kyu81JfDlIu2RHzxEL6Ym9k0TopWf4yVmFiSI2IjiezeSdvn9RPm322G1mj1?=
- =?us-ascii?Q?ayYmYGHHHPMURABnpsKT55Fg3IrGSuRD1ZFu+dZdC69uUDrnZ/ZtYnnFHDBW?=
- =?us-ascii?Q?Ib0O3tmQvCJuklQuEfl5486RGbQAwkWPUudl8XH1y7H3ijdx5YpcDuZFVYx6?=
- =?us-ascii?Q?Ww36Hp1A911PpjQL1fr/xdDeWkIieB3FpyfssKjLywzqAJJ4p4GJ8fQxIrcR?=
- =?us-ascii?Q?erd5n4BH9VPdINesBEVsTJ8blbo905LXhfRbBwBGpc1GvONhNqKqPiEcNYx4?=
- =?us-ascii?Q?20NV6Vjy8wfqan/gExIt7IO7pCx+4rcPQyfJxJgan1c2xqgndpavH56poGZO?=
- =?us-ascii?Q?dzNryolO4R0n3vkXuwQrhgBXIKXyriAHSOIz3/OKVWMGouWjFA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(82310400023)(376011)(1800799021)(36860700010);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 04:30:42.4763
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eaba7f62-31bf-48bc-7e18-08dc91aae95c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB75.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8023
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] clk: qcom: Add support for Display clock Controllers
+ on SA8775P
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_jkona@quicinc.com>, <quic_imrashai@quicinc.com>
+References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
+ <20240612-sa8775p-mm-clock-controllers-v1-6-db295a846ee7@quicinc.com>
+ <37bbd466-742a-4a23-b3f7-97f8da109608@linaro.org>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <37bbd466-742a-4a23-b3f7-97f8da109608@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sXulWohIsmaG89yWtgjJuRyGmaKO5vRo
+X-Proofpoint-ORIG-GUID: sXulWohIsmaG89yWtgjJuRyGmaKO5vRo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_12,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 spamscore=0 bulkscore=0
+ adultscore=0 mlxlogscore=913 clxscore=1015 phishscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406210031
 
-Perry Yuan <perry.yuan@amd.com> writes:
 
-> Update the cpufreq store function to use kstrtobool for parsing boolean
-> values. This simplifies the code and improves readability by using a
-> standard kernel function for boolean string conversion.
->
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 
-> ---
->  drivers/cpufreq/cpufreq.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index a45aac17c20f..1fdabb660231 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -614,10 +614,9 @@ static ssize_t show_boost(struct kobject *kobj,
->  static ssize_t store_boost(struct kobject *kobj, struct kobj_attribute *attr,
->  			   const char *buf, size_t count)
->  {
-> -	int ret, enable;
-> +	bool enable;
->  
-> -	ret = sscanf(buf, "%d", &enable);
-> -	if (ret != 1 || enable < 0 || enable > 1)
-> +	if (kstrtobool(buf, &enable))
->  		return -EINVAL;
->  
->  	if (cpufreq_boost_trigger_state(enable)) {
-> @@ -641,10 +640,10 @@ static ssize_t show_local_boost(struct cpufreq_policy *policy, char *buf)
->  static ssize_t store_local_boost(struct cpufreq_policy *policy,
->  				 const char *buf, size_t count)
->  {
-> -	int ret, enable;
-> +	int ret;
-> +	bool enable;
->  
-> -	ret = kstrtoint(buf, 10, &enable);
-> -	if (ret || enable < 0 || enable > 1)
-> +	if (kstrtobool(buf, &enable))
->  		return -EINVAL;
->  
->  	if (!cpufreq_driver->boost_enabled)
-> -- 
-> 2.34.1
+On 6/13/2024 10:16 PM, Konrad Dybcio wrote:
+> 
+> 
+> On 6/12/24 12:47, Taniya Das wrote:
+>> Add support for display0 and display1 clock controllers on SA8775P
+>> platform.
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
+> 
+> Please merge this into one to save on boilerplate, take a look
+> at dispcc-sc8280xp.c
+> 
+
+I did take a look at the dispcc for SC8280XP before posting the series, 
+but it kind of looked tricky to add fixes for a particular dispcc.
+Debugging could also be difficult in my opinion.
+Though I understand that we are trying to optimize by re-using few 
+common structures/probe but from clocks side they are all redefined.
+That was the reason to keep them separate.
+
+> Konrad
+
+-- 
+Thanks & Regards,
+Taniya Das.
 
