@@ -1,210 +1,122 @@
-Return-Path: <linux-kernel+bounces-224343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5B791211B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:44:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D2791211F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B733F1F25D17
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B846D28155C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8F116EB6F;
-	Fri, 21 Jun 2024 09:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B49C81AC6;
+	Fri, 21 Jun 2024 09:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jygJFWOz"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpEEAGkK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E213716E895;
-	Fri, 21 Jun 2024 09:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6488342AA0
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718963057; cv=none; b=r2V1V1XFKnrTevItF+awUh3CyTYRXe6OHMGSmk0I/iYuXer4AinvOZCcTq9VHC1jfbADbviCGCDuywQm8O7PY/dmInrzCqAokFz9RjxSmIlxL+kMK7xwivbkGEOEi6JQ3sgUu1xmiSK/UkilK5fJu09KfRS8Dqon/6Z1gTtYhcU=
+	t=1718963213; cv=none; b=kgFn8dkixGoIhziKZ9bFPERjuMbflnlxEy/q7o7Pio4kH2dFBE922KOvfYMXPaWZa/ZZwKWwb4VrW/SBdv+j1fZVcKFlVeOZNMXP8l64nzconyMx8tvFvX1TkuQtiMA23aywCmnGU9UHFOCcS99QT+Jl3jQeBG6D9oxxPQC9MgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718963057; c=relaxed/simple;
-	bh=c+X4o8yOOqmqqo+T6TcDvzWoDO4BblrQxz4brlJHuSg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GuSP4zdSik2Wo6SVJkKwhdlIuhMomGGEFefSw2yMbSMljg8zLYyIeIzg2PEQUR0YXh06VnDPFImtIhsaR5jJsqOJs8I3JB2n7k3MhKNP5B3PEIk6QrZ16ti0iNJL8thzCp0wf1V6imZE+byOO2dyv2UESseDPhzI35rAIE7/A4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jygJFWOz; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f09b457fdso187865866b.2;
-        Fri, 21 Jun 2024 02:44:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718963054; x=1719567854; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YH8HgTmsyYTHd1UBCvXdgm36Yrr0b+GSZnRwwUHMfH4=;
-        b=jygJFWOzE7qDhvCZMYt53YmCfoMYPk4jpPHVbxlnSWSzffOyBHjLawePlBBliQ5+nK
-         ILmZkBNYOzAR7i2DJ207S6mWv2DN1M6GlYZ8SUSaN7hkTWtBS7PaE1VR63PvGY5pVbx9
-         p3Ih0jb9C4YkWq73+R1HK4bEhyowuFkKTzlgT9j85jqzIr+EG0mN7xjO24snaMMgPMuS
-         nB8YA3I+lhb7vpFOBWaZU0l5PvKuEA9ocdbCFc5QVfUJqo6OmtjhaoHc4kTvP+DVQ57k
-         IhWojDFSDkgNc9s4P0HJcn2PTnIMNJYFOoehLR+gHj7klfIeJXV9L+tWCdgUy2lV2XJL
-         cs9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718963054; x=1719567854;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YH8HgTmsyYTHd1UBCvXdgm36Yrr0b+GSZnRwwUHMfH4=;
-        b=dKMpez965GDd2VlX2312zldlPTcSS1Op35P+U9kGsWMHun9/o9w+ufVRK8x8ovHjHW
-         s8n2wD5O/0t7VPBIDSwtn1tKLsRYqmoaTfloJM2fj9FkzSJ7IT1JjX60DlY5Scz50OpA
-         U7ubSC+cKeP1cyu9oRPVO1I1CGAw/cbnkOrlDQroFtIcSqr3APa9KEDr3oUz3KYM92e/
-         ikmzbub0he9S7pGaURrXrtIJQa65Qf5SuYcDf/Ww1Vn5gNXcHZSKq7+2poOA0nJM+PRO
-         +NZX91I2RjSTjxEs0xCSbK+KACb951HDiHCw/cwSaYGLVTCio4o5ViFqm7Y+mdUsQzgi
-         i80g==
-X-Forwarded-Encrypted: i=1; AJvYcCVmLMLJzmv3XbrmIUnEz+o3sCCVfQzAXhaMEMmGqTod7a+3rVWw2F4IMCfWs/GaGpWL1t2ob2PH4bxeZQIQ6RXjbvmvYplmb0cLMDvlOlBM2eVxyAs2tS6ZnB1ejsqq8o7Hcvij0ryH3Q==
-X-Gm-Message-State: AOJu0YzYPXx4wTV66W8EBy2XBR+nRdiYtlCpa1g14c5GPWpPLIY8WgxN
-	ZvocEhB5Xfl/wDRtaPYG9QMP3ciXGqK2DO+g1BsIRzxzi/FdGOOH
-X-Google-Smtp-Source: AGHT+IHFvIYFRPxClWRA8y4JLBhyArN9ZGGm2+KYv28v2EmS+G6m3eLsRivYBY4rUA6LGQZV4cbFow==
-X-Received: by 2002:a17:907:a602:b0:a6f:5efb:5c8 with SMTP id a640c23a62f3a-a6fab6088e7mr596883766b.9.1718963054027;
-        Fri, 21 Jun 2024 02:44:14 -0700 (PDT)
-Received: from pc636 (176-227-201-31.ftth.glasoperator.nl. [31.201.227.176])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48b17esm64261166b.88.2024.06.21.02.44.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 02:44:13 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Fri, 21 Jun 2024 11:44:12 +0200
-To: Baoquan He <bhe@redhat.com>, Nick Bowler <nbowler@draconx.ca>
-Cc: Hailong Liu <hailong.liu@oppo.com>, Nick Bowler <nbowler@draconx.ca>,
-	linux-kernel@vger.kernel.org,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	linux-mm@kvack.org, sparclinux@vger.kernel.org,
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <ZnVLbCCkvhf5GaTf@pc636>
-References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
- <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
- <20240621033005.6mccm7waduelb4m5@oppo.com>
- <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
+	s=arc-20240116; t=1718963213; c=relaxed/simple;
+	bh=jKBzzFJgP4KGZzGVeyg+1aMf2D+AkSK2i7HSacskoWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oUIxZGZKxFrKq0PFDT83q+pXMDPsnCyjmPTrDLONwhPOO+FTUI4ie4+TpNY7W+6TF8KYvi6k3nKFzyNkdMFcjQR/bOT13ina3bnWznlEWWCyuN6H64ii2HG7ZL2V1TJDicu1tgZFOfm8WvTBwhz37NL3cWLqnRcGaDzDO3A3mvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpEEAGkK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54661C2BBFC;
+	Fri, 21 Jun 2024 09:46:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718963212;
+	bh=jKBzzFJgP4KGZzGVeyg+1aMf2D+AkSK2i7HSacskoWs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bpEEAGkKPvS3woD/fde1frxnhvxNw/jTA6ZZx4AJtZrYFJB/eYJM1itc6Df1Ve/Y2
+	 z1b7aclAlvQ7R3EhVPmYcVFx/5iFMbH/CbIBkUMZ57C5MBeNTW26tZURx+Yiwq6FEz
+	 jPg/i65bh90jKxf9ZuV7/iCZu+KFgQYhW5svNgmTJcKHz5c0wt/Rb8RjC9gW78oszh
+	 4NjKAG+4evw9EJ7EZ81GguE0sgzALFYmHA7SxVyPNAXq+yUibNBaPNeplP28Zz5RQB
+	 lD0irnWvn/3TSYiPnOtvFWstXaszYIiVqDQWq+1Vo5bRDtRZfUnXyhuAickaXdFdsy
+	 ALeNAytRZbcEA==
+Date: Fri, 21 Jun 2024 15:16:48 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: soundwire fixes for v6.10
+Message-ID: <ZnVMCAG3F5JLdl5I@matsya>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="PNvFnR5VwBpONmnf"
+Content-Disposition: inline
+
+
+--PNvFnR5VwBpONmnf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
-> On 06/21/24 at 11:30am, Hailong Liu wrote:
-> > On Thu, 20. Jun 14:02, Nick Bowler wrote:
-> > > On 2024-06-20 02:19, Nick Bowler wrote:
-> > > > After upgrading my sparc to 6.9.5 I noticed that attempting to run
-> > > > xfsdump instantly (within a couple seconds) and reliably crashes the
-> > > > kernel.  The same problem is also observed on 6.10-rc4.
-> > > [...]
-> > > >   062eacf57ad91b5c272f89dc964fd6dd9715ea7d is the first bad commit
-> > > >   commit 062eacf57ad91b5c272f89dc964fd6dd9715ea7d
-> > > >   Author: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > >   Date:   Thu Mar 30 21:06:38 2023 +0200
-> > > >
-> > > >       mm: vmalloc: remove a global vmap_blocks xarray
-> > >
-> > > I think I might see what is happening here.
-> > >
-> > > On this machine, there are two CPUs numbered 0 and 2 (there is no CPU1).
-> > >
-> > +Baoquan
-> 
-> Thanks for adding me, Hailong.
-> 
-> > 
-> > Ahh, I thought you are right. addr_to_vb_xa assume that the CPU numbers are
-> > contiguous. I don't have knowledge about CPU at all.
-> > Technically change the implement addr_to_vb_xa() to
-> > return &per_cpu(vmap_block_queue, raw_smp_processor_id()).vmap_blocks;
-> > would also work, but it violate the load balance. Wating for
-> > experts reply.
-> 
-> Yeah, I think so as you explained.
-> 
-> > 
-> > > The per-cpu variables in mm/vmalloc.c are initialized like this, in
-> > > vmalloc_init
-> > >
-> > >   for_each_possible_cpu(i) {
-> > >     /* ... */
-> > >     vbq = &per_cpu(vmap_block_queue, i);
-> > >     /* initialize stuff in vbq */
-> > >   }
-> > >
-> > > This loops over the set bits of cpu_possible_mask, bits 0 and 2 are set,
-> > > so it initializes stuff with i=0 and i=2, skipping i=1 (I added prints to
-> > > confirm this).
-> > >
-> > > Then, in vm_map_ram, with the problematic change it calls the new
-> > > function addr_to_vb_xa, which does this:
-> > >
-> > >   int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > >   return &per_cpu(vmap_block_queue, index).vmap_blocks;
-> > >
-> > > The num_possible_cpus() function counts the number of set bits in
-> > > cpu_possible_mask, so it returns 2.  Thus, index is either 0 or 1, which
-> > > does not correspond to what was initialized (0 or 2).  The crash occurs
-> > > when the computed index is 1 in this function.  In this case, the
-> > > returned value appears to be garbage (I added prints to confirm this).
-> 
-> This is a great catch. 
-> 
-Indeed :)
+Hello Linus,
 
-> > >
-> > > If I change addr_to_vb_xa function to this:
-> > >
-> > >   int index = ((addr / VMAP_BLOCK_SIZE) & 1) << 1; /* 0 or 2 */
-> > >   return &per_cpu(vmap_block_queue, index).vmap_blocks;
-> 
-> Yeah, while above change is not generic, e.g if it's CPU0 and CPU3.
-> I think we should take the max possible CPU number as the hush bucket
-> size. The vb->va is also got from global free_vmap_area, so no need to
-> worry about the waste.
->
-Agree.
+Please pull to receive single fix for soundwire subsystem.
 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index be2dd281ea76..18e87cafbaf2 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
->  static struct xarray *
->  addr_to_vb_xa(unsigned long addr)
->  {
-> -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
->  
->  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
->  }
-> 
-The problem i see is about not-initializing of the:
-<snip>
-	for_each_possible_cpu(i) {
-		struct vmap_block_queue *vbq;
-		struct vfree_deferred *p;
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-		vbq = &per_cpu(vmap_block_queue, i);
-		spin_lock_init(&vbq->lock);
-		INIT_LIST_HEAD(&vbq->free);
-		p = &per_cpu(vfree_deferred, i);
-		init_llist_head(&p->list);
-		INIT_WORK(&p->wq, delayed_vfree_work);
-		xa_init(&vbq->vmap_blocks);
-	}
-<snip>
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-correctly or fully. It is my bad i did not think that CPUs in a possible mask
-can be non sequential :-/
+are available in the Git repository at:
 
-nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
-when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/so=
+undwire-6.10-fixes
 
-Or i missed something in your patch, Baoquan?
+for you to fetch changes up to e2d8ea0a066a6db51f31efd2710057271d685d2e:
 
---
-Uladzislau Rezki
+  soundwire: fix usages of device_get_named_child_node() (2024-06-03 17:35:=
+24 +0530)
+
+----------------------------------------------------------------
+soundwire fixes for 6.10
+
+ - Single fix for calling fwnode_handle_put() on the
+   returned fwnode pointer
+
+----------------------------------------------------------------
+Pierre-Louis Bossart (1):
+      soundwire: fix usages of device_get_named_child_node()
+
+ drivers/soundwire/amd_manager.c     |  3 +++
+ drivers/soundwire/intel_auxdevice.c |  6 +++++-
+ drivers/soundwire/mipi_disco.c      | 30 ++++++++++++++++++++++++------
+ 3 files changed, 32 insertions(+), 7 deletions(-)
+
+--=20
+~Vinod
+
+--PNvFnR5VwBpONmnf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmZ1TAgACgkQfBQHDyUj
+g0cvug//TjZqGCsgeijXKVyhhrMKbf+SpZaRK+TboAtFnegzfAa/BkoGQsXxFNo4
+b5+cQtxvVMl63vYZTeIdkvMFibCYgsyn+yfOIPCkgXmqKaHYKE0nqDDCRVf4UfRy
+PJe3QtfN5l4X89oiOc+TLH4S/yVXP2NSoEbbmqgrmNG16KrwA40xKxDaRkmua4V7
+/kiZUvYtn63Q6La6FIRQLQlHf3ENKCx83AD4tIOMOU+nKNY3xIyuEfegy30uvsGP
+OCT8OFyZG9TsRnXlGd69PBMJkZogEf48cNXXHwwpkbTq+/mIBKl9Gs/sfotQ36eI
+loFwMJbyQv1qHfHeFKtKAJaCxPPg0g2RqBR2I2Tl3GagXYWKWQALvLHSGw5gx7Ps
+W/68Me0Wqyw1JqCD8Ba8Jnw+opLF8ENnjg1rFoXT6keW3MBAzaeXN6TpVnpdUEQ9
+pgZ/NTdmKHNIwK8VjIgQPfDZmsLmPB/bQJYgUtVOyon1ro6P5BPByp8K3/39VEAq
+raY71Bks26E4ys8kqCRsiSclxzQkhVwww7TQ+saA67nWn8r1SkS52O3mEPOsx0NG
+332pSKrmv+72aTENa9KGMkCEgcDCK+PtSuPuvwXMmD37Kdjl/pIEmfTgXvMFBMiZ
+BoCgP6PPRi3BRmDqIo3fsYCuwu4oqTqCIqD5/zwZrorHsbv3CqM=
+=rcFK
+-----END PGP SIGNATURE-----
+
+--PNvFnR5VwBpONmnf--
 
