@@ -1,145 +1,266 @@
-Return-Path: <linux-kernel+bounces-225203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BB0912D8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:52:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE35912D85
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA65283EF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:52:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF5251F23E4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A73B17B42D;
-	Fri, 21 Jun 2024 18:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD00417BB1A;
+	Fri, 21 Jun 2024 18:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="DLFr7q3X"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ep4qjsFk"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E138C1E;
-	Fri, 21 Jun 2024 18:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69F817B43F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 18:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718995951; cv=none; b=Gqdlrt0jtCAjU4waovkU55lWvCbLXw51KsWA57SATT9uFRCZa/9YuOhyBwYl4mXxP/o04eg/9ZUWiPEhzU1pLAhPXP776lgjz5yW11XZApu+a+nraJDR8C300U0e7bA8/hwwSUy5paynSYOt2uddqyUbVfg8TyfL5jXQSFHfCFM=
+	t=1718995729; cv=none; b=X6CWobBkjo+BoHL/vFV4eBu1tLWUNEX4d5vNjKrU+2p7HDUUQbDG2dDc2MTYaZHXlFYV4Gt9UUAvL7flkMk425XoDO1/xt9DPRgkqHXuqNZhY4wph4aHYF/0Jfc320ZuwQbaVf3vH2n9eTWm7tobgZVRyd/xdW1/BYyJAtneKws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718995951; c=relaxed/simple;
-	bh=ecwtGev0KvQNSzwp35e+yNAtAWdvf51o9B6zM/n6gQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZSTfifgJfjPGpmWXZNp75Pq2B4pZs3LgQI6JT7lU7xlXEMt9AERvpJ+q+UcBQ537V6W2qgQL1O8kvPZ4ys9Nuwv/j2+ebO561ze1cig64jSnOJrbHUu36Es+5D/03+FWXwvmP1iGVYoFWAKIRD78QWxhRoDSfpWphjqmAxfCXP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=DLFr7q3X; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id F1A7E100002;
-	Fri, 21 Jun 2024 21:52:06 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1718995927; bh=xUGHglTcHE+deAdqIJapo1+7Zs90p4nFF+okhK8BfmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=DLFr7q3XqgXTXr8TWhGqMLSnWx9ePg6/0RHwcWOPy/aN9NbwSWHhW7VYR14E/MLy4
-	 PeaVMvdZyyVhEcmRX8CSaXCDgVHkly8Algcff7NTayOXz8WDeqdN4f34rDGZebLBOj
-	 wUwoFG7smwZv7r57Ts7v+aJ8KOSIU6j4CcoyYEyUp4bZscbCOpXBWo+2BfACFqCoZG
-	 wypmMpU6jIX/QDPOgoU4LAwRw3JEhe5EPEQ/Ke2WreHizKdObcWhRxt8AXv97WdX+V
-	 i3ftbSvyMbAsi4iyZq/tbeiF5QLSGKXMOVljzvAXbrklTc38U2sibVBZHzblbquySs
-	 aPNGBjzBGW4xQ==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Fri, 21 Jun 2024 21:51:10 +0300 (MSK)
-Received: from [172.17.214.6] (172.17.214.6) by ta-mail-02 (172.17.13.212)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Jun
- 2024 21:50:50 +0300
-Message-ID: <f6b0e5fb-c692-4d67-ac0e-36ddbbc0a784@t-argos.ru>
-Date: Fri, 21 Jun 2024 21:47:27 +0300
+	s=arc-20240116; t=1718995729; c=relaxed/simple;
+	bh=OSlxMUbH1cjP63rf/i9A5OnYZ1MoT2re527p17lrMmg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NQ5iZ0Ri90uYzp/rtUP45CGihwlA/gd1IbeZqS0O/eMLWGe7nolwxCHdw6no53+ze6Dubdy/m3550PaeyGURgXSD2I4d12DQvwbTGuL7eRdW1oI062GA6HVnlmHH8+gdU4NMAa85yw1Xw1jTWLfDI+R3eSd/l0Lx1C4J+nhBL+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ep4qjsFk; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6ef64b092cso278142466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:48:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718995724; x=1719600524; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zlvzkk98R2AMG0Z6R+7nntNyc9a9ODPBi8r4EwCvbRQ=;
+        b=ep4qjsFklEFqpVJUKWocum5m/Io13lGRq4EdyZT2oV2jz2VRFNLFt8t0MBi0IBPJnr
+         jTAkMIfj2nMJb/FnGlSYVFbFSKkwzFxEsH401JxThJZJ4Q1OqDVTYTun8UGcgBg4BXLD
+         pDtpH/J7194OprEHFUy1tgWVSqfPoP9Qcw2wzPPgoS6znpxnWW2RYg3Ik481uFXByHur
+         8t1R8AucQu05yVQZxgfYqKr31+T+yw8tdIwe74GztkEsz3utwTPtu9muIve8NgwRtL9l
+         Wd4wCdN9Kn3pLEt0YBYb1lBp5zl9qLpVPm1rqI4Zhjhc4VMoBaxUKeleB9XZx9PLURO9
+         2QOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718995724; x=1719600524;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zlvzkk98R2AMG0Z6R+7nntNyc9a9ODPBi8r4EwCvbRQ=;
+        b=TdHt5mccowURbbzv5ZJXYtn8dd/EOml1pyriHwTauh0R2VL99j4Y9QseKAIk5914sA
+         7DqXpWej2HGkdCmij67MkSkV2FLJtZbCgU8LWz0ovPABh0q3PqEQEz5gWuGBD9zIlOP5
+         M+dqYqmqE4ZMG2kUcdiIXhDzHK6iHgaM1DI6rfGU+3jQUKIhqLh5ebY3aTvSZSN8shBW
+         0tn+ux2SXzsr7n0n8h52laKWovgKgRSmyfGa4WJen/5/m1D1488U7OuC9C22dLysMib5
+         OfUN9gpuGew1QhxP7b7+NIdgAHVHG/OtxteCJabY1KBTeONyxZHqdF2hdEPPAQRzMzsJ
+         w/Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpaQb60yefssTtXWkxbLzCE8y3BKNEF1yPkz7l+eKjq82yFTiu/mRaibY/eqvj2keAfDVct7MaJJhjRtvRQfJTHXpA7wFD8t+zZfSS
+X-Gm-Message-State: AOJu0YxB6fgxBm4LaEXq7FmrhOxsS5DO6fNZLqv1BszE8qq0qb6v24G1
+	qNcHWe06o7PTG5AhfvWlwkzBQxDox+aoEqKNNaxIPg0uEpKRxfvIW2RoqctOKg+cOnRF4u9G8uo
+	Cn4VJsdU8p15MmcAOwZCYOEZPPDxmmhB37rmW
+X-Google-Smtp-Source: AGHT+IFB0A55nMGApv5jFWmOQotPDfRzqqPIQ74RIyN5NL9KIVshccHHA4pJlBegEvYv4fDuzVclwWQ3R4BpwgBCJ4w=
+X-Received: by 2002:a17:907:a644:b0:a6f:b60c:2c08 with SMTP id
+ a640c23a62f3a-a6fb60c2f79mr565339266b.24.1718995723769; Fri, 21 Jun 2024
+ 11:48:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: davinci: Validate the obtained number of IRQs
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-CC: Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Grygorii Strashko <grygorii.strashko@ti.com>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-References: <20240618144344.16943-1-amishin@t-argos.ru>
- <CAMRc=Me5R+YLmx6mh_mfszRj7TKx25cL9Vx3J-7mvRTuat8Puw@mail.gmail.com>
-Content-Language: ru
-From: Aleksandr Mishin <amishin@t-argos.ru>
-In-Reply-To: <CAMRc=Me5R+YLmx6mh_mfszRj7TKx25cL9Vx3J-7mvRTuat8Puw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186064 [Jun 21 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, git.kernel.org:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mx1.t-argos.ru.ru:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/06/21 15:05:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/21 14:39:00 #25651428
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20240613013557.1169171-1-almasrymina@google.com>
+ <20240613013557.1169171-7-almasrymina@google.com> <439590d4-0f05-4f5e-80ec-e7fdf214e307@gmail.com>
+In-Reply-To: <439590d4-0f05-4f5e-80ec-e7fdf214e307@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 21 Jun 2024 11:48:30 -0700
+Message-ID: <CAHS8izNr4x6SW0oY_VJDPZOsrBQEAyJO1qVJQbu8VNJQMtX9Sg@mail.gmail.com>
+Subject: Re: [PATCH net-next v12 06/13] page_pool: devmem support
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, linux-mm@kvack.org, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jun 17, 2024 at 7:17=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
+>
+> On 6/13/24 02:35, Mina Almasry wrote:
+> > Convert netmem to be a union of struct page and struct netmem. Overload
+> > the LSB of struct netmem* to indicate that it's a net_iov, otherwise
+> > it's a page.
+> >
+> > Currently these entries in struct page are rented by the page_pool and
+> > used exclusively by the net stack:
+> >
+> > struct {
+> >       unsigned long pp_magic;
+> >       struct page_pool *pp;
+> >       unsigned long _pp_mapping_pad;
+> >       unsigned long dma_addr;
+> >       atomic_long_t pp_ref_count;
+> > };
+> >
+> > Mirror these (and only these) entries into struct net_iov and implement
+> > netmem helpers that can access these common fields regardless of
+> > whether the underlying type is page or net_iov.
+> >
+> > Implement checks for net_iov in netmem helpers which delegate to mm
+> > APIs, to ensure net_iov are never passed to the mm stack.
+> >
+> > Signed-off-by: Mina Almasry <almasrymina@google.com>
+>
+> Apart from small comments below
+>
+> Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+>
+>
+> > ---
+> >   include/net/netmem.h            | 137 ++++++++++++++++++++++++++++++-=
+-
+> >   include/net/page_pool/helpers.h |  25 +++---
+> >   net/core/devmem.c               |   3 +
+> >   net/core/page_pool.c            |  26 +++---
+> >   net/core/skbuff.c               |  22 +++--
+> >   5 files changed, 168 insertions(+), 45 deletions(-)
+> >
+> > diff --git a/include/net/netmem.h b/include/net/netmem.h
+> > index 664df8325ece5..35ad237fdf29e 100644
+> > --- a/include/net/netmem.h
+> > +++ b/include/net/netmem.h
+> ...
+> > -/* Converting from page to netmem is always safe, because a page can a=
+lways be
+> > - * a netmem.
+> > - */
+> >   static inline netmem_ref page_to_netmem(struct page *page)
+> >   {
+> >       return (__force netmem_ref)page;
+> > @@ -68,17 +107,103 @@ static inline netmem_ref page_to_netmem(struct pa=
+ge *page)
+> >
+> >   static inline int netmem_ref_count(netmem_ref netmem)
+> >   {
+> > +     /* The non-pp refcount of net_iov is always 1. On net_iov, we onl=
+y
+> > +      * support pp refcounting which uses the pp_ref_count field.
+> > +      */
+> > +     if (netmem_is_net_iov(netmem))
+> > +             return 1;
+> > +
+> >       return page_ref_count(netmem_to_page(netmem));
+> >   }
+> >
+> >   static inline unsigned long netmem_to_pfn(netmem_ref netmem)
+> >   {
+> > +     if (netmem_is_net_iov(netmem))
+> > +             return 0;
+>
+> IIRC 0 is a valid pfn. Not much of a concern since it's
+> used only for tracing, but might make sense to pass some
+> invalid pfn if there is one
+>
+
+AFAIU all non-negative pfns are technically valid pfns if the machine
+is big enough.
+
+I could have this function return long long instead of unsigned long
+so I can return a negative number for errors, and then cast to
+unsigned long when I figure out it's actually a pfn. Seemed like such
+a hassle especially since the call site is just tracing that I figured
+it's not that worth it.
+
+> > +
+> >       return page_to_pfn(netmem_to_page(netmem));
+> >   }
+> >
+> ...
+> >   static inline netmem_ref netmem_compound_head(netmem_ref netmem)
+> >   {
+> > +     /* niov are never compounded */
+> > +     if (netmem_is_net_iov(netmem))
+> > +             return netmem;
+> > +
+> >       return page_to_netmem(compound_head(netmem_to_page(netmem)));
+> >   }
+> >
+> > +static inline void *netmem_address(netmem_ref netmem)
+>
+> I don't think it's used anywhere, do I miss it?
+>
+
+Ah, It's used by the GVE devmem implementation:
+https://github.com/mina/linux/commit/da89baa81873d457cbf7b49ee6b4f0d66855b2=
+05
+
+I could leave it out of this patch, then add it with the follow up GVE
+devmem implementation, but I figured almost for sure drivers are going
+to need this eventually, and it's small, so just put it here.
+
+> > +{
+> > +     if (netmem_is_net_iov(netmem))
+> > +             return NULL;
+> > +
+> > +     return page_address(netmem_to_page(netmem));
+> > +}
+> > +
+> ...
+> > diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> > index a5957d3359762..1152e3547795a 100644
+> > --- a/net/core/page_pool.c
+> > +++ b/net/core/page_pool.c
+> > @@ -26,6 +26,8 @@
+> ...
+> >
+> >   /* If the page refcnt =3D=3D 1, this will try to recycle the page.
+> > @@ -714,7 +713,7 @@ __page_pool_put_page(struct page_pool *pool, netmem=
+_ref netmem,
+> >        * refcnt =3D=3D 1 means page_pool owns page, and can recycle it.
+> >        *
+> >        * page is NOT reusable when allocated when system is under
+> > -      * some pressure. (page_is_pfmemalloc)
+> > +      * some pressure. (page_pool_page_is_pfmemalloc)
+>
+> There is no page_pool_page_is_pfmemalloc()
+>
+
+Thanks done. I implemented most of your other comments on all the
+patches btw. I'm only responding to the ones I didn't apply for
+various reasons. Thanks for the review!
 
 
-
-On 21.06.2024 16:59, Bartosz Golaszewski wrote:
-> On Tue, Jun 18, 2024 at 4:45 PM Aleksandr Mishin <amishin@t-argos.ru> wrote:
->>
->> Value of pdata->gpio_unbanked is taken from Device Tree. In case of broken
->> DT due to any error this value can be any. Without this value validation
->> there can be out of chips->irqs array boundaries access in
->> davinci_gpio_probe().
->>
->> Validate the obtained nirq value so that it won't exceed the maximum
->> number of IRQs per bank.
->>
->> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->>
-> 
-> Why not Reported-by: ?
-
-It is an established practice for our project, you can find 700+ applied
-patches with similar line:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?qt=grep&q=linuxtesting.org
-
-> 
-> Bart
-> 
->> Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ numbering")
->> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
->> ---
->>   drivers/gpio/gpio-davinci.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
->> index bb499e362912..1d0175d6350b 100644
->> --- a/drivers/gpio/gpio-davinci.c
->> +++ b/drivers/gpio/gpio-davinci.c
->> @@ -225,6 +225,11 @@ static int davinci_gpio_probe(struct platform_device *pdev)
->>          else
->>                  nirq = DIV_ROUND_UP(ngpio, 16);
->>
->> +       if (nirq > MAX_INT_PER_BANK) {
->> +               dev_err(dev, "Too many IRQs!\n");
->> +               return -EINVAL;
->> +       }
->> +
->>          chips = devm_kzalloc(dev, sizeof(*chips), GFP_KERNEL);
->>          if (!chips)
->>                  return -ENOMEM;
->> --
->> 2.30.2
->>
-
--- 
-Kind regards
-Aleksandr
+--=20
+Thanks,
+Mina
 
