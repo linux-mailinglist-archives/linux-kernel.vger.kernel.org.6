@@ -1,167 +1,220 @@
-Return-Path: <linux-kernel+bounces-224750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84EED912676
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:13:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A06E9125F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A9D6B2162B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1432E2820A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B98155758;
-	Fri, 21 Jun 2024 13:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA13155C84;
+	Fri, 21 Jun 2024 12:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="WweC6dPU"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kMDH4Xsq"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A07915444C;
-	Fri, 21 Jun 2024 13:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E8A155732
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718975616; cv=none; b=h3zPKd3KZYl4ESdqwUZVgMRwoLq4C5UVxAULJSlTB+9dj7UHYlfSFa3ImHL0696yXyD+TRLE3lNY2+pCeBdPizKVeXB9XNUWsEZf8CM9rE96O8vfVwAUYv1hfA652fn/t+i79w9na9ZM7R6Ivff+hVeoFvbw0x1vcGE9W1eSuGc=
+	t=1718974163; cv=none; b=thtu5Cwlwc7kNYPmdq1QgMEPDiuZMcdudknGu30hvsrH7uZE1TYgnCyI/+eJW44P5YuuP8A5jOncKBc4yuUJjwETICIZmytbNg1f0qxebXWXmMRfpdFtS4bLWEsx5GdeU/YZA3XziiL86rm5SwWA0RWMSsTvaNMKme5lkjJFqg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718975616; c=relaxed/simple;
-	bh=WQsisy3R83VOdcBN5ISga9KLt1DhdQDaVlt49Nw2AZE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aSefwhVd0rNGhuinUqMUrUFSLtArN477fDcYsSZNJnFLOCltZsZ7CEfiJt7Ywhx+FoeS9pg6gtz4Tp3FMKBHmWid6C7I8CP9DpbaVvRH13ZfpjU6euIcElKU2UwRJ/4aZjP2S9WM/OwsgRD+D0DTbAN3UEsAjKuEJSb2QAB3x6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=WweC6dPU; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=b29xoMgpaZYss8C1W6FlfyXZaKncrRZNVZcstAF/Ncg=; b=WweC6dPUYHi8DEVygI3BSkBQmQ
-	Ae7doyUsfR9TzH6E1g77VsjyTNxEYnc0nDKgESK1+avBGUYJz9RRo3yxsk2lZBbrVyp5ZzAHLTOOt
-	WC5dLrl4TLmItYcrp1oQ3shB3jZCmoo45ZyT2C+BXSqoSraTgs1fuWJh1+X4u/MqYoVNtmrnRW0VP
-	ANCq0ruG86bxmleHhW6s4BqhtRhwomsYZAMdRM3osz/Y/TTjoTJn3cHn2q4QuvQ0SqrBH3aibM7NP
-	oEnLSzpI7FlrXZAU1za2Ixd48OJ2PGCA/0b4SncUWvLFM4p6L1ixyc8a+7TDnYyQraZGgaZNkxP3P
-	DxMpAong==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1sKdg7-0003iB-W7; Fri, 21 Jun 2024 14:47:44 +0200
-Received: from [178.197.248.18] (helo=linux.home)
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1sKdg7-000Kcg-0M;
-	Fri, 21 Jun 2024 14:47:42 +0200
-Subject: Re: [RFC net-next 1/9] skb: introduce gro_disabled bit
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Yan Zhai <yan@cloudflare.com>, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Willem de Bruijn <willemb@google.com>, Simon Horman <horms@kernel.org>,
- Florian Westphal <fw@strlen.de>, Mina Almasry <almasrymina@google.com>,
- Abhishek Chauhan <quic_abchauha@quicinc.com>,
- David Howells <dhowells@redhat.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- David Ahern <dsahern@kernel.org>, Richard Gobert <richardbgobert@gmail.com>,
- Antoine Tenart <atenart@kernel.org>, Felix Fietkau <nbd@nbd.name>,
- Soheil Hassas Yeganeh <soheil@google.com>,
- Pavel Begunkov <asml.silence@gmail.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <linux@weissschuh.net>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-References: <cover.1718919473.git.yan@cloudflare.com>
- <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
- <66756ed3f2192_2e64f929491@willemb.c.googlers.com.notmuch>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <44ac34f6-c78e-16dd-14da-15d729fecb5b@iogearbox.net>
-Date: Fri, 21 Jun 2024 14:47:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+	s=arc-20240116; t=1718974163; c=relaxed/simple;
+	bh=c4lSndExJ/cc5eNCheDMr9J3W43LWQlWV5UyZYy72rs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UgVgChKPU2V2ck2TpsHFfBhkcl9VUV/N7rx9ck8JAlUPVTblWl+7S60Amomv0QCmyi2XzUa7kfBLkGBheVrCNm3dmwbj9nHXBuoy4P67iTDdERdKrR2Q2AbZw78epf2V6ayf5SZcXdd2isTftuh8kDbYvZbdFYfe7YAgBzPswmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kMDH4Xsq; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57d0699fd02so1095067a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:49:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1718974159; x=1719578959; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RD+QCLuzt4S0oOl+2dqbiZ8N0PvfenhMgob7uoU9cwc=;
+        b=kMDH4XsqFV/0DbkxnHYq7N3Wao5LpiimazNdSSYGfYTNhm2H43fQVirDgsRJ7YKymY
+         mWAKiQUqqjfyMlJoh3mq9iJI+81h2bCntVkujJ/hBcJGbPN/SsKR7tfhu/fCuTZjMl52
+         ujZ11AxqyTVjCdD4aIQD6YY64tpQnWueIKkrwRo7Hp9a/xJBbyvQoxDF0ae0Q4zjMAcG
+         0pPh6urNnlFVSURwlb6zLtSUrsgaA8HQGnUxWbL0eVcJ0aPSye+WVVqWlWXnmobdtu8l
+         OJkqbNyZSzcLFOdDxdVKZb3lIIsKoasR382gYCgm/07uIp9fZpiX6lgOfcPeMwgttCnF
+         9KDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718974159; x=1719578959;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RD+QCLuzt4S0oOl+2dqbiZ8N0PvfenhMgob7uoU9cwc=;
+        b=HajZ1Uwo85+sC3DyGtGkvR+o4xwp/FTTaNSD0b5NKpjTVKuQL6YixIXk0TBVMjgi1X
+         kCV6Kl+UebYPaxEpgKkoWo4n9vfgzEO9JV05ATvjb0bcKXBF83SJj4D46TOSqE0j4leg
+         Aa707BlH0ADZZmCPMHObAPG6WsVO5VCrFjE9e/nS7aloNHOUDk8jlET2JPhiIzPW5IuS
+         hpwwOClNapY4rqyNkXEcyunA3u3PN7uw8gWcstrVXfcw30jGDWhk7gk5h8P1hmaeOOrR
+         6fVvrdPhDN9VYceSIJw9RFFsZT6gBRknO9AEaR0MkJWJ4predY0LBTXkmW5ZC24x1zuR
+         aRgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUoE2uoc+w6FgmuxDcx3AkMGxIEt1g3WMph3NPzJ/OAcXroG/hJ7UYwS1IyYXfWet5R+2o06A/mGle6FnGLscMmkk/90KDasJOzlmt
+X-Gm-Message-State: AOJu0YwTEewpnzsFlh3G9I6l7r1VAedtVUpJ4fbomI/8MJKLVWzGhFjz
+	K4K44B/7wy+0IV1nrn7IMxZYxUAHqkWRVC8H306HLl8ZC1LIbbuzTqkhD3eMuCU=
+X-Google-Smtp-Source: AGHT+IF11C1F752WZxk5bhZLImhsRy3vnORk8rEHCQaYu1grWsvvDo6IHWo5qQhN675H1vflP/T/yw==
+X-Received: by 2002:a50:d593:0:b0:57c:fc75:408c with SMTP id 4fb4d7f45d1cf-57d07e63da5mr6694311a12.19.1718974159142;
+        Fri, 21 Jun 2024 05:49:19 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30583e93sm899546a12.96.2024.06.21.05.49.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 05:49:18 -0700 (PDT)
+Message-ID: <497f8ddd-2a3a-4111-8923-fe467bd59815@tuxon.dev>
+Date: Fri, 21 Jun 2024 15:49:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <66756ed3f2192_2e64f929491@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/12] i2c: riic: Use pm_runtime_resume_and_get()
 Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240621112303.1607621-5-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB1134618ADDB552893DB00C58E86C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB1134618ADDB552893DB00C58E86C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27313/Fri Jun 21 10:28:08 2024)
 
-On 6/21/24 2:15 PM, Willem de Bruijn wrote:
-> Yan Zhai wrote:
->> Software GRO is currently controlled by a single switch, i.e.
+Hi, Biju,
+
+On 21.06.2024 15:24, Biju Das wrote:
+> Hi Claudiu,
+> 
+> Thanks for the patch.
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Friday, June 21, 2024 12:23 PM
+>> Subject: [PATCH 04/12] i2c: riic: Use pm_runtime_resume_and_get()
 >>
->>    ethtool -K dev gro on|off
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> However, this is not always desired. When GRO is enabled, even if the
->> kernel cannot GRO certain traffic, it has to run through the GRO receive
->> handlers with no benefit.
+>> pm_runtime_get_sync() may return with error. In case it returns with error
+>> dev->power.usage_count needs to be decremented.
+>> dev->pm_runtime_resume_and_get()
+>> takes care of this. Thus use it.
 >>
->> There are also scenarios that turning off GRO is a requirement. For
->> example, our production environment has a scenario that a TC egress hook
->> may add multiple encapsulation headers to forwarded skbs for load
->> balancing and isolation purpose. The encapsulation is implemented via
->> BPF. But the problem arises then: there is no way to properly offload a
->> double-encapsulated packet, since skb only has network_header and
->> inner_network_header to track one layer of encapsulation, but not two.
->> On the other hand, not all the traffic through this device needs double
->> encapsulation. But we have to turn off GRO completely for any ingress
->> device as a result.
->>
->> Introduce a bit on skb so that GRO engine can be notified to skip GRO on
->> this skb, rather than having to be 0-or-1 for all traffic.
->>
->> Signed-off-by: Yan Zhai <yan@cloudflare.com>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >> ---
->>   include/linux/netdevice.h |  9 +++++++--
->>   include/linux/skbuff.h    | 10 ++++++++++
->>   net/Kconfig               | 10 ++++++++++
->>   net/core/gro.c            |  2 +-
->>   net/core/gro_cells.c      |  2 +-
->>   net/core/skbuff.c         |  4 ++++
->>   6 files changed, 33 insertions(+), 4 deletions(-)
+>>  drivers/i2c/busses/i2c-riic.c | 25 +++++++++++++++++++++----
+>>  1 file changed, 21 insertions(+), 4 deletions(-)
 >>
->> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
->> index c83b390191d4..2ca0870b1221 100644
->> --- a/include/linux/netdevice.h
->> +++ b/include/linux/netdevice.h
->> @@ -2415,11 +2415,16 @@ struct net_device {
->>   	((dev)->devlink_port = (port));				\
->>   })
->>   
->> -static inline bool netif_elide_gro(const struct net_device *dev)
->> +static inline bool netif_elide_gro(const struct sk_buff *skb)
->>   {
->> -	if (!(dev->features & NETIF_F_GRO) || dev->xdp_prog)
->> +	if (!(skb->dev->features & NETIF_F_GRO) || skb->dev->xdp_prog)
->>   		return true;
+>> diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c index
+>> 83e4d5e14ab6..6b739483ef37 100644
+>> --- a/drivers/i2c/busses/i2c-riic.c
+>> +++ b/drivers/i2c/busses/i2c-riic.c
+>> @@ -113,6 +113,8 @@ struct riic_irq_desc {
+>>  	char *name;
+>>  };
+>>
+>> +static const char * const riic_rpm_err_msg = "Failed to runtime
+>> +resume";
 >> +
->> +#ifdef CONFIG_SKB_GRO_CONTROL
->> +	return skb->gro_disabled;
->> +#else
->>   	return false;
->> +#endif
+>>  static inline void riic_writeb(struct riic_dev *riic, u8 val, u8 offset)  {
+>>  	writeb(val, riic->base + riic->info->regs[offset]); @@ -133,10 +135,14 @@ static int
+>> riic_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+>>  	struct riic_dev *riic = i2c_get_adapdata(adap);
+>>  	struct device *dev = adap->dev.parent;
+>>  	unsigned long time_left;
+>> -	int i;
+>> +	int i, ret;
+>>  	u8 start_bit;
+>>
+>> -	pm_runtime_get_sync(dev);
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret) {
+>> +		dev_err(dev, riic_rpm_err_msg);
+>> +		return ret;
+>> +	}
+>>
+>>  	if (riic_readb(riic, RIIC_ICCR2) & ICCR2_BBSY) {
+>>  		riic->err = -EBUSY;
+>> @@ -301,6 +307,7 @@ static const struct i2c_algorithm riic_algo = {
+>>
+>>  static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)  {
+>> +	int ret;
+>>  	unsigned long rate;
+>>  	int total_ticks, cks, brl, brh;
+>>  	struct device *dev = riic->adapter.dev.parent; @@ -379,7 +386,11 @@ static int
+>> riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+>>  		 t->scl_fall_ns / (1000000000 / rate),
+>>  		 t->scl_rise_ns / (1000000000 / rate), cks, brl, brh);
+>>
+>> -	pm_runtime_get_sync(dev);
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret) {
+>> +		dev_err(dev, riic_rpm_err_msg);
+>> +		return ret;
+>> +	}
+>>
+>>  	/* Changing the order of accessing IICRST and ICE may break things! */
+>>  	riic_writeb(riic, ICCR1_IICRST | ICCR1_SOWP, RIIC_ICCR1); @@ -498,8 +509,14 @@ static void
+>> riic_i2c_remove(struct platform_device *pdev)  {
+>>  	struct riic_dev *riic = platform_get_drvdata(pdev);
+>>  	struct device *dev = &pdev->dev;
+>> +	int ret;
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret) {
+>> +		dev_err(dev, riic_rpm_err_msg);
+>> +		return;
+>> +	}
 > 
-> Yet more branches in the hot path.
-> 
-> Compile time configurability does not help, as that will be
-> enabled by distros.
-> 
-> For a fairly niche use case. Where functionality of GRO already
-> works. So just a performance for a very rare case at the cost of a
-> regression in the common case. A small regression perhaps, but death
-> by a thousand cuts.
+> This change will lead to resource leak. Maybe if there is error
+> skip accessing the register. Or restore previous code,
+> just ignore condition in remove.
 
-Mentioning it here b/c it perhaps fits in this context, longer time ago
-there was the idea mentioned to have BPF operating as GRO engine which
-might also help to reduce attack surface by only having to handle packets
-of interest for the concrete production use case. Perhaps here meta data
-buffer could be used to pass a notification from XDP to exit early w/o
-aggregation.
+Ok, I'll delete the adapter.
+
+> 
+> There are other place in i2c core driver where this call can fail.
+> You could fix as well.
+> https://elixir.bootlin.com/linux/v6.10-rc4/source/drivers/i2c/i2c-core-base.c#L509
+
+Yes, there are many other places as well. Wolfram, would you prefer
+touching that code, as well?
+
+Thank you,
+Claudiu Beznea
+
+> 
+> Cheers,
+> Biju
+> 
+>>
+>> -	pm_runtime_get_sync(dev);
+>>  	riic_writeb(riic, 0, RIIC_ICIER);
+>>  	pm_runtime_put(dev);
+>>  	i2c_del_adapter(&riic->adapter);
+>> --
+>> 2.39.2
+>>
+> 
 
