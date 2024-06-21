@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-224066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA2E911CCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:31:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADE9911CCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAA5AB23C7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:31:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4A231F22EFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D55216C6B8;
-	Fri, 21 Jun 2024 07:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1D816D4F5;
+	Fri, 21 Jun 2024 07:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Wg0mtBT9"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="e5da2N5a"
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7777584A31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4041F4CE13
 	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718955027; cv=none; b=fSJjzU/YDhRh9dA1ARJBNTh2TEh/6yGA3uZPzAjwOVXAA36N2kT7nA8r4b/h0XWgr5ORzypHm75B3sAUkwSjtbMVON6oaCpyAKcMOgTu3RojZye2xXMer8yEJOg+mv8UV/cXclc/IH+XRuTdc9TuLxc3BouwHk6WZVb/SfSqPvQ=
+	t=1718955028; cv=none; b=he4J1j1JQMYzb43S8pBvtb87R9Ov+EacK3J4Pb2zNNVjrUo88jHsgeJHt1EiQzNixx7xouY/lvlC3bjl75FJOYs7IRUWEMgXOCwt/LlUDQ2DBECKSlhHRC45usrH/UExAGDumYdOBMy7VOfbNlvw84pYOcWDzPBEY9HjTL6YbWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718955027; c=relaxed/simple;
-	bh=AaeKWFy6+MhJUSVDuiArePmxqwjpDms46lje4lfg78Y=;
+	s=arc-20240116; t=1718955028; c=relaxed/simple;
+	bh=tLa3YjKzTjbALrEqcR62zhXe0F7RUglCnTOQTHelM9A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WSoclfBRY5lXUho/d0r8PMOEN64yxtscthTPX/nRrzxtFf8ZX0SEQV/vs5qYYtfoD1p1J7iS7g3qmzxzqcYAcc3IWvqHyGMa9TUZ7Tq6Wvh89evGEvr5bLANybG4Hh/zOUY1CFpkdwa9+FoZYEcEXwJz5prmRRVu0X5a9ss6jys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Wg0mtBT9; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version:Content-Type; b=mS3mT306nPkKMC2LfH6rG5p0dbK8fzP0Qc1jWBKK38OPzppa9PmX5zi5UyRNZfmsInGHVdAxrm5g8qdFP0IG2LxK6GAtEwYYTa/KkATOS8/cz6NsgKRJ+/S/AnevjlEXwP7l0pVtAsjp7fcUw9JTQ3/KyjGxX+OpSUaJ7iZzb5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=e5da2N5a; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-type
-	:content-transfer-encoding; s=k1; bh=QxN9/peWzKBlFqRmDXEKD0iHTiZ
-	lunJFWOblMthWaXk=; b=Wg0mtBT9TyelcTDA6riZbZ61STrKMj128jtojXWdlDy
-	cZGsCS4/HE6r3C5To2WPq1n3j9GVdKufVNIGHfPoxwwpkYmt++KVWSqrIClwPjIB
-	hklChVsz1gt/PhbDBpPZKA1Plk8hU90bCHWCdcKg4xQpBu+rbnrZ8K2rKVpfMz4Q
-	BIXiBXw/P0MU72PPsXGVLhACU7DcoUurSYGi3KvV9L25DjOXjdd6Iad0nQulC65M
-	SMD6wXxoTyEU1H7C+rTSdKtExeBpVMWBybKZstz9ZWXv9iYglaJvDnT6t0yyZxCF
-	3KAZPL6lefdo2qGu9np8lkfUE4xwLZ+Tav8WrGdBOIg==
-Received: (qmail 1279036 invoked from network); 21 Jun 2024 09:30:23 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 09:30:23 +0200
-X-UD-Smtp-Session: l3s3148p1@G1uLZ2Eb0MMgAwDPXzjQABqqX1QYyOSW
+	:content-transfer-encoding; s=k1; bh=ns0TUqgMIMc2G1ba8motoRRT6bt
+	z+ty/Oyg8gP8SWmY=; b=e5da2N5atOPx9sU3HnbguoDU4x5iKVRPkVDDDEpkwqK
+	HiHr5/qo1NyhMdC7ZFGP1l4nyBrQ4Bl8zceH3ze4/zsaZLtJVZExLd0OcKPeZLY7
+	ABAEm0iSVfhE88OP5WB1ZwBuRf+oG70iJXj0zGbcnJi3TarvrlKV6NA6K3U50yK9
+	4zvR7Pkeidg7aGuAVEjMBakop8ISfFjQvXEaiT74LRrS1H98474Nha97hU09ZR2x
+	uVR0zx1iKUWMbcwIB3vkFs0MtW7+aIyEgW8AVnYujhaCAie9kkos9Ok7U8stIymt
+	4Gf0KWZqSXZZObSm/cYDI4KdqqgREOOsCnMuPzMv1xQ==
+Received: (qmail 1279065 invoked from network); 21 Jun 2024 09:30:24 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 09:30:24 +0200
+X-UD-Smtp-Session: l3s3148p1@ZFyXZ2Eb0sMgAwDPXzjQABqqX1QYyOSW
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: Andi Shyti <andi.shyti@kernel.org>,
 	Easwar Hariharan <eahariha@linux.microsoft.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	linux-i2c@vger.kernel.org
-Subject: [PATCH v4 1/6] docs: i2c: summary: start sentences consistently.
-Date: Fri, 21 Jun 2024 09:30:08 +0200
-Message-ID: <20240621073015.5443-2-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v4 2/6] docs: i2c: summary: update I2C specification link
+Date: Fri, 21 Jun 2024 09:30:09 +0200
+Message-ID: <20240621073015.5443-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240621073015.5443-1-wsa+renesas@sang-engineering.com>
 References: <20240621073015.5443-1-wsa+renesas@sang-engineering.com>
@@ -64,51 +64,34 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Change the first paragraphs to contain only one space after the end of
-the previous sentence like in the rest of the document.
+Luckily, the specs are directly downloadable again, so update the link.
+Also update its title to the original name "I²C".
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 ---
- Documentation/i2c/summary.rst | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ Documentation/i2c/summary.rst | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/Documentation/i2c/summary.rst b/Documentation/i2c/summary.rst
-index 786c618ba3be..28ff80a2302b 100644
+index 28ff80a2302b..e3ab1d414014 100644
 --- a/Documentation/i2c/summary.rst
 +++ b/Documentation/i2c/summary.rst
-@@ -4,10 +4,10 @@ Introduction to I2C and SMBus
- 
- I²C (pronounce: I squared C and written I2C in the kernel documentation) is
- a protocol developed by Philips. It is a slow two-wire protocol (variable
--speed, up to 400 kHz), with a high speed extension (3.4 MHz).  It provides
-+speed, up to 400 kHz), with a high speed extension (3.4 MHz). It provides
- an inexpensive bus for connecting many types of devices with infrequent or
--low bandwidth communications needs.  I2C is widely used with embedded
--systems.  Some systems use variants that don't meet branding requirements,
-+low bandwidth communications needs. I2C is widely used with embedded
-+systems. Some systems use variants that don't meet branding requirements,
+@@ -11,11 +11,9 @@ systems. Some systems use variants that don't meet branding requirements,
  and so are not advertised as being I2C but come under different names,
  e.g. TWI (Two Wire Interface), IIC.
  
-@@ -18,14 +18,14 @@ access the PDF. An older version of the specification (revision 6) is archived
- `here <https://web.archive.org/web/20210813122132/https://www.nxp.com/docs/en/user-guide/UM10204.pdf>`_.
+-The latest official I2C specification is the `"I2C-bus specification and user
+-manual" (UM10204) <https://www.nxp.com/webapp/Download?colCode=UM10204>`_
+-published by NXP Semiconductors. However, you need to log-in to the site to
+-access the PDF. An older version of the specification (revision 6) is archived
+-`here <https://web.archive.org/web/20210813122132/https://www.nxp.com/docs/en/user-guide/UM10204.pdf>`_.
++The latest official I2C specification is the `"I²C-bus specification and user
++manual" (UM10204) <https://www.nxp.com/docs/en/user-guide/UM10204.pdf>`_
++published by NXP Semiconductors, version 7 as of this writing.
  
  SMBus (System Management Bus) is based on the I2C protocol, and is mostly
--a subset of I2C protocols and signaling.  Many I2C devices will work on an
-+a subset of I2C protocols and signaling. Many I2C devices will work on an
- SMBus, but some SMBus protocols add semantics beyond what is required to
--achieve I2C branding.  Modern PC mainboards rely on SMBus.  The most common
-+achieve I2C branding. Modern PC mainboards rely on SMBus. The most common
- devices connected through SMBus are RAM modules configured using I2C EEPROMs,
- and hardware monitoring chips.
- 
- Because the SMBus is mostly a subset of the generalized I2C bus, we can
--use its protocols on many I2C systems.  However, there are systems that don't
-+use its protocols on many I2C systems. However, there are systems that don't
- meet both SMBus and I2C electrical constraints; and others which can't
- implement all the common SMBus protocol semantics or messages.
- 
+ a subset of I2C protocols and signaling. Many I2C devices will work on an
 -- 
 2.43.0
 
