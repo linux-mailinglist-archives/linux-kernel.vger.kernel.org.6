@@ -1,91 +1,190 @@
-Return-Path: <linux-kernel+bounces-225423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC19913060
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:36:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F041913063
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED5801C2266D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:36:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7E31F2234C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A6816F0C4;
-	Fri, 21 Jun 2024 22:36:32 +0000 (UTC)
-Received: from norbury.hmeau.com (helcar.hmeau.com [216.24.177.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F0616F0DD;
+	Fri, 21 Jun 2024 22:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eIErnzmV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B670C208C4;
-	Fri, 21 Jun 2024 22:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.24.177.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2607F16D4D8
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719009392; cv=none; b=HxLZ1RohlEW49LIgY0aIOGnYFkQSlEcswEi7yk9//AvI6YJ4RUld6O4ej14d6sAkFofpyUMCXT6QfvMIsXefkKsEHa+qpzX7jNz11MqhPVtOlB+sPPt154UYhQpmxV3sMCyLHmBM1BXgIQjpGajlb/CENK1LVhq5U1nADh9Mqwo=
+	t=1719009550; cv=none; b=J3bhEfZ9A3g/zsz28zg7Mpxe8CeonQ+o3x0ucxoGCMpiAuyamGATXEh0v4NRHcQ7+QNnEHGA9x45uKx+5YaJY3t2I6X750spgTL8LytVI/9i7bGSCnJJU83v1akCKXoR0HgZnEkwDFsPmXdfhM4JG9x6LKN8fH9OZzgwg/DscPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719009392; c=relaxed/simple;
-	bh=9JkM/dcM2JYYr7ezKHy6/xOt0tnRt1I9sK4BeYdaC1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SPt7t3zNaUt91+SC3sHYjF7S8MTe0iTBC2hwQB0NXZFV0httMNXF2ir8zSepyDJyDSB58rR6orr4PaTKUiYNRX0UwJ/parwYyWB8lTdRJKCllR0eSPXs2jQeSeQ3YRbkC4jRxutRyhrECvg/ymr7/CO2YM4J9lJNI3h1Pts6b3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=216.24.177.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sKmrB-002lkq-2l;
-	Sat, 22 Jun 2024 08:35:46 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 22 Jun 2024 08:35:46 +1000
-Date: Sat, 22 Jun 2024 08:35:46 +1000
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Yabin Cui <yabinc@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2] Fix initializing a static union variable
-Message-ID: <ZnYAQhNjVEvFlkdY@gondor.apana.org.au>
-References: <20240621211819.1690234-1-yabinc@google.com>
+	s=arc-20240116; t=1719009550; c=relaxed/simple;
+	bh=HVGr1OMYqhxJeiEX1KZV6JwYta6GuW+t70Bcbb/KPK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L0hCkXU6cm7PvRWya846WY3oPP+hkEf5zhuyH/rLIGPwc8a4XcW+GLiL14SA0p0u9WDVNlfUgvdyJumdOAKE81a5XTHSIgdBZY7vEtm3ZZVNZfFeX+UQDsZW/7cdRikdp14Yi9NpVLNVt+UL/XszM9SHi2U5rE+Rtg1rby8E3pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eIErnzmV; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719009548; x=1750545548;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HVGr1OMYqhxJeiEX1KZV6JwYta6GuW+t70Bcbb/KPK4=;
+  b=eIErnzmVeY6QGduGzuD70CAZ4LCeHL/cBSOgm14q4Chpwh0kT4iH6z28
+   xZ/oxPIOt5DvvJqGdgNXBik3zrFXjxp5jQ14l1kWorA3fzSXceWTM2lZL
+   X2yW2hcVXwk7whQoEk7YTJ/Odqf1vcOTmQ9lnW6Y0Axc5VGbRgGAGWeNQ
+   CQ0ic6OsLZbmaeSTkJK0diQ03nQdJookvwqcAIbOweQRbjqwEGzfcUCiL
+   bQaFGtL0QRBp5tMa93FI3dotJEQZCpqCd2fl7ErYrO1tnAmDQ4+F+jBUW
+   G1tEe/DpZ3+HHYGinE9rNQoZVuPlJMJ8uDg/OBLuFJ8Pwo78DlBvWHNOF
+   g==;
+X-CSE-ConnectionGUID: +jzHsEv0RfeKVxuQb4J3Tg==
+X-CSE-MsgGUID: 9ZqnstkNTo2YHOwDfMRh7Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="26691249"
+X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
+   d="scan'208";a="26691249"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 15:39:07 -0700
+X-CSE-ConnectionGUID: X8g/Y5phSpOmRxgePK7FbA==
+X-CSE-MsgGUID: +3kU1aNqTku6miIClVmkDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
+   d="scan'208";a="73935633"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 15:39:06 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v21 00/18] Add support for Sub-NUMA cluster (SNC) systems
+Date: Fri, 21 Jun 2024 15:38:41 -0700
+Message-ID: <20240621223859.43471-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621211819.1690234-1-yabinc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 21, 2024 at 02:18:19PM -0700, Yabin Cui wrote:
-> saddr_wildcard is a static union variable initialized with {}.
-> 
-> Empty brace initialization of union types is unspecified prior to C23,
-> and even in C23, it doesn't guarantee zero initialization of all fields
-> (see sections 4.5 and 6.2 in
-> https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2900.htm).
+This series based on top of tip x86/cache commit f385f0246394
+("x86/resctrl: Replace open coded cacheinfo searches")
 
-What about all the other places in the kernel that use the same
-idiom? A grep shows that there are more than a hundred spots in
-the kernel where {} is used to initialise a union.
+The Sub-NUMA cluster feature on some Intel processors partitions the CPUs
+that share an L3 cache into two or more sets. This plays havoc with the
+Resource Director Technology (RDT) monitoring features.  Prior to this
+patch Intel has advised that SNC and RDT are incompatible.
 
-$ git grep '=[[:blank:]]*{}' | grep union | wc -l
-123
-$
+Some of these CPUs support an MSR that can partition the RMID counters
+in the same way. This allows monitoring features to be used. Legacy
+monitoring files provide the sum of counters from each SNC node for
+backwards compatibility. Additional  files per SNC node provide details
+per node.
 
-Also what if the union is embedded into a struct.  Does it get
-initialised fully or not? If not then you've got over 5000 {}
-initialisations to work through.
+Memory bandwidth allocation features continue to operate at
+the scope of the L3 cache.
 
-$ git grep '=[[:blank:]]*{}' | wc -l
-5102
-$
+L3 cache occupancy and allocation operate on the portion of
+L3 cache available for each SNC node.
 
-Cheers,
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+---
+Changes since v20: https://lore.kernel.org/all/20240610183528.349198-1-tony.luck@intel.com/
+
+1	Add Reinette review tag
+2	Add Reinette review tag
+3	Add Reinette review tag
+4	Add Reinette review tag
+5	Add Reinette review tag
+6	Remove extra space in "snc_nodes_per_l3_cache  == 1" (comment and code)
+	Add Reinette review tag
+7	Updated comment above supports_mba_mbps() with new condtion.
+	Add invalfc() to give user better error message
+8	Move #include <linux/cacheinfo.h> from internal.h to <linux/resctrl.h>
+9	Replace kerneldoc comment for struct rmid_read with Reinette's version
+10	Add Reinette review tag
+11	Fix kerneldoc issues for mon_data_bits
+		End all entries with period.
+		s/@rid/@u.rid/ ditto for all other union members
+	Add Reinette review tag
+12	Change test for snc_mode to use "== RESCTRL_L3_NODE"
+	Use snc_mode to pick d->ci->id vs. d->hdr.id
+13	Change test for snc_mode to use "== RESCTRL_L3_NODE"
+	Use snc_mode to pick d->ci->id vs. d->hdr.id
+	Move/reword SNC comment to top of function
+	Drop double space from commit comment
+	Drop "also" from commit comment
+14	Initialize rr.ci in mbm_update()
+	Split long line in rdtgroup_mondata_show()
+15	Add period to end sentences in two comments.
+	Fix the "sum" case in __mon_event_count() to return
+	success if reading from any domains succeeds.
+16	Update comment for arch_mon_domain_online() to say
+	that it is enabling RMID shaing mode.
+	s/Enable RMID shared RMID mode/Enable shared RMID mode/
+	s/This isn't very compatible/This isn't compatible/
+	s/Tehcnically/Technically/
+17	s/number CPUs sharing/number of CPUs sharing/
+	Add Reinette review tag
+18	s/each bit would only represent 5MB/each bit only represents 5MB/
+	s/mainatined/maintained/
+	Add Reinette review tag
+
+Tony Luck (18):
+  x86/resctrl: Prepare for new domain scope
+  x86/resctrl: Prepare to split rdt_domain structure
+  x86/resctrl: Prepare for different scope for control/monitor
+    operations
+  x86/resctrl: Split the rdt_domain and rdt_hw_domain structures
+  x86/resctrl: Add node-scope to the options for feature scope
+  x86/resctrl: Introduce snc_nodes_per_l3_cache
+  x86/resctrl: Block use of mba_MBps mount option on Sub-NUMA Cluster
+    (SNC) systems
+  x86/resctrl: Prepare for new Sub-NUMA Cluster (SNC) monitor files
+  x86/resctrl: Add a new field to struct rmid_read for summation of
+    domains
+  x86/resctrl: Refactor mkdir_mondata_subdir() with a helper function
+  x86/resctrl: Allocate a new field in union mon_data_bits
+  x86/resctrl: Create Sub-NUMA Cluster (SNC) monitor files
+  x86/resctrl: Handle removing directories in Sub-NUMA Cluster (SNC)
+    mode
+  x86/resctrl: Fill out rmid_read structure for smp_call*() to read a
+    counter
+  x86/resctrl: Make __mon_event_count() handle sum domains
+  x86/resctrl: Enable shared RMID mode on Sub-NUMA Cluster (SNC) systems
+  x86/resctrl: Sub-NUMA Cluster (SNC) detection
+  x86/resctrl: Update documentation with Sub-NUMA cluster changes
+
+ Documentation/arch/x86/resctrl.rst        |  27 ++
+ include/linux/resctrl.h                   |  88 ++++--
+ arch/x86/include/asm/msr-index.h          |   1 +
+ arch/x86/kernel/cpu/resctrl/internal.h    | 108 +++++---
+ arch/x86/kernel/cpu/resctrl/core.c        | 312 ++++++++++++++++------
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  86 +++---
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 253 +++++++++++++++---
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  27 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 278 ++++++++++++-------
+ 9 files changed, 861 insertions(+), 319 deletions(-)
+
+
+base-commit: f385f024639431bec3e70c33cdbc9563894b3ee5
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.45.2
+
 
