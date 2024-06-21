@@ -1,102 +1,139 @@
-Return-Path: <linux-kernel+bounces-225276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DAA912E73
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:23:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E71C912E78
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D3F1C22E49
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:23:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B656DB252F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6B816DED0;
-	Fri, 21 Jun 2024 20:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755ED16DED0;
+	Fri, 21 Jun 2024 20:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l8kwNScj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+ZOwR+e0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SATzZSo4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B330B16849B;
-	Fri, 21 Jun 2024 20:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E96F15F30F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719001430; cv=none; b=ZVjURS9oaOkV2SLvAQoH8eMxzfRlZc5ImY0lvaIFFSxWsGtjDveBHYnwsnSWfy8pNsjD0aP9BbSDkSRi9pv9DIow2R4BWsqfUZxq87Q5/gkYlG/vPwG1rEjenu/cf1tU6FjFJhcHbcOsH4sgPwHO669nXaWzI9j7gHqICxO7bV8=
+	t=1719001673; cv=none; b=i1ZPAsV37aaZ7NCRq51v2np+zLJrkfwcNm+Y2CdZq10T3WZGmKYmujlUVXYkGobPPIIVBO88WotPXNQo3SBid0VpRhAFgBbtK1NExNUFndXRgWhJLUEXcvrFQleTcbwFD6UQ1gxu/zvXzz1Q0/HoqkgGQ5WUBrbNnd8Ujd8U8Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719001430; c=relaxed/simple;
-	bh=z6UOFK+BDqljEbR67bqI/yPZ0v4IfpX/OfeS1hAC6os=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pIeSiDvLUTGmbrAds9gGKYWPo05MdjPP/7QmSoJwr2MbandIAjKANve88knFzIFuPjEi3rgYPixmWIC1uShM4nafdIXdJ4NqQJJ9aD5TJzMEmEn0M8iP+Nh9v7E5Ezjewm3+2VCCTzI4jvH+M34+42MACNYW5R/RqiFPaOmNmGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l8kwNScj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+ZOwR+e0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719001426;
+	s=arc-20240116; t=1719001673; c=relaxed/simple;
+	bh=+y0YSjkn3mxAbSpReIOPljowg5houdzhfnzpEyF7ep0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P117TfjXbKglPq+GH9zZOIcjHXPnXtftXGwCoAIbGAe5lSwjumvjvisy+O0Z0I29k2kzWCtkqhWxbSFXiCA7JR/FGtiap/9mAGjINCYvX1k3yn0HVrgqUNNmp64MbuzVpfH8o6VBaFVHmJplAfSxDIQ94sk15HpiVPwbzs9ANDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SATzZSo4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719001671;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iFtq1vul+FO0S9PKjZBCsPui0uV3aSvISSlH+jCcXMw=;
-	b=l8kwNScjIjdPspMHZeUnRbXZK+REFU6ZzXHGES1I411o4PV+ye4NgChqKsH0gYnAfcZAfc
-	py4wR+QAOg6NweMSRMbEJa3tgBNkNGlTHlIf//w6gwrlifpOyG04X8nN1i5EcOA0wkg244
-	LcAAmux7yod9YBxbBDuBhlPD74eI0GoTkN5p3RYVulLpkpI1AGZ4vaU7XBJh4V4JjWXtmb
-	URwZAbQtpk7LGanDmuq1A7PZUAU+uPRFCGf5m+7p/6WvvwC6PgEAqkXJl/bupyhVPxT93V
-	iwr5V4sIBulpnfTWMVGfVazpwEIjCp3zAT8O7HQ3xa5XlO9mqPyHDdoClR0CDg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719001426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iFtq1vul+FO0S9PKjZBCsPui0uV3aSvISSlH+jCcXMw=;
-	b=+ZOwR+e0QZikwWqT1V4yMurl+eCh4+M3wQgGlMI8iIJBs64wY8bO+80oHMTgxEXN2+8F0M
-	SzUEWok8qKTIRIBQ==
-To: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>
-Cc: Aleksandar Rikalo <arikalo@gmail.com>, Chao-ying Fu <cfu@wavecomp.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens
- <hauke@hauke-m.de>, Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>, Jiaxun
- Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, Marc Zyngier <maz@kernel.org>, Paul Burton
- <paulburton@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Serge
- Semin <fancer.lancer@gmail.com>, Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 05/14] irqchip: mips-gic: Setup defaults in each cluster
-In-Reply-To: <20240511104341.151550-6-aleksandar.rikalo@syrmia.com>
-References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com>
- <20240511104341.151550-6-aleksandar.rikalo@syrmia.com>
-Date: Fri, 21 Jun 2024 22:23:45 +0200
-Message-ID: <87plsam4dq.ffs@tglx>
+	bh=22pIrWQAypdIZ5Rg6Bb3sV1iFixhfYe7whIUT2M8qwY=;
+	b=SATzZSo4Ulx43WLhJTtW7D+xLIpdNQgJSpcNzlwEwTelE8m30T9mRP1/KoIMWDn6LaDlsj
+	hMmtlF5ngc6vdBgq5+h8dVwIcM7tS9vgmsuYW/Pc2bpGdCsB9FWyxwhOsqS3DEH/LWTmXK
+	mZtvIDLNsxaU/jaokIQ6BTOVqyt5o98=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-219-ciVhnetAMymJVa1Z3vUPPA-1; Fri, 21 Jun 2024 16:27:49 -0400
+X-MC-Unique: ciVhnetAMymJVa1Z3vUPPA-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5ba819595deso302000eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:27:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719001669; x=1719606469;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=22pIrWQAypdIZ5Rg6Bb3sV1iFixhfYe7whIUT2M8qwY=;
+        b=VP+KLiMe6Hn55rDy6xZcVfH0JgngP3YObdDF2co6PEnKXX/oabRD+KXLsY9w7YzvZD
+         tJaxLuvGlxsNwPop5oNNGUm93505Ce176FKLbUCMTaL2eP2bnQiAfWr7JfZWewYrDTvO
+         GRNAPh4zF2sDch9cdyTMePJBV0kZ5BG1oLQgSp6ebZNxhknVsVac/97TmJ22RQV9/rDu
+         RwscrCAuEmeN9vfZes+bKC1qBJ1CXRb+/v8obBbqh+73haNNYUD3smElU/EOV7iRajXf
+         7lAdjDxmHdA7DtDkYxOlCDmClu4sOYzN/2P9BrCd0aHeJTRDE2H4yBSTjXjCZwJj6bKI
+         RzcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzlGV97x4JEEE7FkE/QwHVB/BO/c+IHXPX3cFkqh4KzjkuEgK4stuxg5merWF3IN+eHJmQRShRk7KUy6Q6qcpimegZwEl+bUoaY4CN
+X-Gm-Message-State: AOJu0YxRcCTj+BwrnDZN7TGUG4Obp+7iycC7pdsfPCnCjWWkk0DRSeeN
+	WJPddOXrpa/5Rjgy2Hcw/0S3yNdna1GfJRWoVGwtJkS70kx4H/ShoeMOLUzPX8sZfoz/B69BaqP
+	vSv6IKX33AEm02qDPMupU6Za+33VbOHKZgQsDK5YoUjRYmgl81kQR2FZ0Y5Octg==
+X-Received: by 2002:a05:6358:5905:b0:1a1:fdee:fb5d with SMTP id e5c5f4694b2df-1a2310ec6f4mr36970255d.1.1719001668840;
+        Fri, 21 Jun 2024 13:27:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEnQONlRBQfB2WimAlD7suCOv/AMwePZpfZM1R4sEwSWsu+GFC5PQy+iV7t7DTH9Ud/XUjInA==
+X-Received: by 2002:a05:6358:5905:b0:1a1:fdee:fb5d with SMTP id e5c5f4694b2df-1a2310ec6f4mr36967655d.1.1719001668167;
+        Fri, 21 Jun 2024 13:27:48 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce92e6b4sm113770785a.100.2024.06.21.13.27.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 13:27:47 -0700 (PDT)
+Date: Fri, 21 Jun 2024 16:27:44 -0400
+From: Peter Xu <peterx@redhat.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"Hansen, Dave" <dave.hansen@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"hughd@google.com" <hughd@google.com>,
+	"willy@infradead.org" <willy@infradead.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"vbabka@suse.cz" <vbabka@suse.cz>,
+	"mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"kirill@shutemov.name" <kirill@shutemov.name>,
+	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+	"Jiang, Dave" <dave.jiang@intel.com>,
+	"aneesh.kumar@linux.ibm.com" <aneesh.kumar@linux.ibm.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"riel@surriel.com" <riel@surriel.com>,
+	"npiggin@gmail.com" <npiggin@gmail.com>,
+	"osalvador@suse.de" <osalvador@suse.de>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"Williams, Dan J" <dan.j.williams@intel.com>
+Subject: Re: [PATCH 6/7] mm/x86: Add missing pud helpers
+Message-ID: <ZnXiQAJsKPBAKa6b@x1n>
+References: <20240621142504.1940209-1-peterx@redhat.com>
+ <20240621142504.1940209-7-peterx@redhat.com>
+ <4fb4b087-cae2-4516-a34e-cb4c72be13eb@intel.com>
+ <db95c7abea9cd252a791d15359a4d940d91524e3.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <db95c7abea9cd252a791d15359a4d940d91524e3.camel@intel.com>
 
-On Sat, May 11 2024 at 12:43, Aleksandar Rikalo wrote:
-> From: Chao-ying Fu <cfu@wavecomp.com>
->
-> In multi-cluster MIPS I6500 systems we have a GIC per cluster. The
-> default shared interrupt setup that we configure in gic_of_init() will
-> only apply to the GIC in the cluster containing the boot CPU, leaving
-> the GICs of other clusters unconfigured. Similarly configure other
-> clusters here.
+On Fri, Jun 21, 2024 at 07:36:30PM +0000, Edgecombe, Rick P wrote:
+> On Fri, 2024-06-21 at 07:51 -0700, Dave Hansen wrote:
+> > 
+> > But, still, what if you take a Dirty=1,Write=1 pud and pud_modify() it
+> > to make it Dirty=1,Write=0?  What prevents that from being
+> > misinterpreted by the hardware as being a valid 1G shadow stack mapping?
+> 
+> Hmm, it looks like we could use an arch_check_zapped_pud() that does a warning
+> like arch_check_zapped_pte/pmd() too. Not that we had no use for one before
+> this.
 
-We ...
+I can definitely look into that, but this check only happens when zapping,
+and IIUC it means there can still be outliers floating around.  I wonder
+whether it should rely on page_table_check_pxx_set() from that regard.
 
-> +	nclusters = mips_cps_numclusters();
-> +	for (cl = 0; cl < nclusters; cl++) {
-> +		if (cl == cpu_cluster(&current_cpu_data)) {
-> +			for (i = 0; i < gic_shared_intrs; i++) {
-> +				change_gic_pol(i, GIC_POL_ACTIVE_HIGH);
-> +				change_gic_trig(i, GIC_TRIG_LEVEL);
-> +				write_gic_rmask(i);
-> +			}
-> +		} else {
-> +			mips_cm_lock_other(cl, 0, 0,
-> +					   CM_GCR_Cx_OTHER_BLOCK_GLOBAL);
+Thanks,
 
-Please get rid of these line breaks. You have 100 characters available.
+-- 
+Peter Xu
+
 
