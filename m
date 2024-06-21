@@ -1,110 +1,167 @@
-Return-Path: <linux-kernel+bounces-224903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC82912870
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:50:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2637D912879
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A07E51C20A2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:50:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C621F29FEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017822C6A3;
-	Fri, 21 Jun 2024 14:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDFD47A66;
+	Fri, 21 Jun 2024 14:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kCx5sqFx"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="asyfs0c+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC03631
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC543B1A3;
+	Fri, 21 Jun 2024 14:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718981417; cv=none; b=kHUABCEenh3Jw+lYIBJzxtloC8TQvyuIWNa1Ts2ndSQmDCPnHHQ1YKfRUueMB/EVkZkFpqwNgGERDPBW6V7JkhVNG9FACFm9KDOWECpmlSez82bwsi6o5v6H9BtaVqshmIifV0Kp8UaADCZaNyaD0TILhqijk4pN8zo943x432k=
+	t=1718981426; cv=none; b=JQEBueDKbdbuDzf3pm0ecTTMi+sn6mhvIc4SGESdh6YQJR4RWqHPiu1BMezzXkR7VYHiJiLBz+1tP8ZQuJaeN93yoaBwCCxfNW0IAm/QJdUfSdVq3Yfsw/O/vGoLcdZ3cm3yUsvNJ5DqG/xd61Obz8priyrOZs99PmdJQzBf17U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718981417; c=relaxed/simple;
-	bh=DOoU8myoV2Uurk0i7zR/6lzKf0ys510aSQbKxhddcJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDKC19VVnpeBuxJEgvEGgD8sS+9wHnUFEI2bhM7quySl8KdWbJgTOW2CoHwlEJ4Rjdn+gOt9wJxvQpwOtUAm6IIsgj12OX/XiO7RvOuaqOZrDaO+zL29WugwYC1C5IZfCWFFlXiJJTVHRvAmH8YNiQTj+OqYibDasLElWGR3FYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kCx5sqFx; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E4BB040E01D6;
-	Fri, 21 Jun 2024 14:50:12 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id h9M-QsiuJkzF; Fri, 21 Jun 2024 14:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718981409; bh=vltHNAer8E5AtzMA/n5SbWrhcqDi3Uw/cldbjoibJsw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kCx5sqFxF1xbwUhNzDoIkUiMDK5y4nChC93ZaTMfWRytS37kfAytlbtMVQIViXUVw
-	 zfodCmyGSYh66EaMyBRIP7ZWavRnkjhPXO2qlJ6az8fZY+B0XCbXPFEiAIkTkpBVED
-	 Aqb0NQnUlYCm7JRvli313DKFXBe2AjxX+TBJTwyXxjpYy0TPyTFcAz2UEwGjf2fo4F
-	 Xqx0EFhNx8qO/8OAXzO8q8oFDHAmdE+fjoxmpm2PUuAFbQZRNR8bGUkmJFT3bXk2Jy
-	 rnHl2t6E+5wheT+TuiWSFzWwfEP6Je+AW1Ywts7TazAzNuMW9yRNc5amyLGa6/9j2y
-	 88vlPotCLGl3qgQKB46lAXKJsiJ2MvK0SufUigb6zPvuUzZ1ompOhgH9Pbf4PR1hBG
-	 yBIrO8hkeuHYqaVBg+8DCwnj7FJN/GQk8Gs2/Qmb9abOTtiEKbC3T5vZyamG6yWGAu
-	 9wgF+oSu6GMQY+f3G165f+RS70NwnyvcWkYlD5DWs69d/E7hmq8nnkvpUrzBNUg3tR
-	 wg8F2n7X6UllbsBESNV6Y9O4oueTEEsDrrNQMMmq8xE2dIYGZDkYL6jsPRkaMEEdy7
-	 w8fFyTlK4iyNTSUvLPdFOVQ4HaYviOwwqbNaTf63aa0Drh5u8n6gB96hSizDbnufgR
-	 aYFdFh9ayG9bKBtSGdnUSyEI=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 55DB640E0185;
-	Fri, 21 Jun 2024 14:50:01 +0000 (UTC)
-Date: Fri, 21 Jun 2024 16:49:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Subject: Re: [PATCH] x86/sev: Do RMP memory coverage check after max_pfn has
- been set
-Message-ID: <20240621144956.GJZnWTFLIwvAxy7bMr@fat_crate.local>
-References: <92b4ba20a5afeb4aecde167bfac094d0275d8e1b.1717601917.git.thomas.lendacky@amd.com>
- <20240621135935.GGZnWHRxn08g8CkLNu@fat_crate.local>
- <4c4c8208-7194-79d0-a9cf-e625e5feff23@amd.com>
- <20240621142911.GIZnWON-Pgx4dSzlGZ@fat_crate.local>
- <187a0e4e-6e05-7da2-37bd-d75f9a6034e3@amd.com>
+	s=arc-20240116; t=1718981426; c=relaxed/simple;
+	bh=+Hg6tFbWZcI7vg/2hhjDAn/2mNvc4EHGH1umCCb8vc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qNUa11o7WyFTs20ZEPO6HdwC3X+f8Ctpx0jBbD9ZbV+oQ49RFGn6Y0I+wKYH4YICmnsy7b688G6aqqFzs6okDDhWpI+5yZgVIwFrMpsSZm/STtgDCGMprjskb8ZUuIpT6aX3ccc8qHl47OM1osM2AoDxszdcdtMOrVST+n8DUtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=asyfs0c+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9711CC2BBFC;
+	Fri, 21 Jun 2024 14:50:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718981425;
+	bh=+Hg6tFbWZcI7vg/2hhjDAn/2mNvc4EHGH1umCCb8vc0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=asyfs0c+RaqaVr8+fvcHF6fQIhU4CeXKsnJpoO06uRr8LMEx9XEuII0h+021Voi31
+	 t2rfFAV5QWhT2vFxEJsFkKXMy2RJlCedJLMbIgBLGqMLrWAVg/GohHB4kCHPQRqUip
+	 RShrQ7qbnBeJz5Wfqm8yr9D92dniRaKbc++qsHMmytWx58hksPj5Gw3/3tGYrNcAuM
+	 QEjI4IW3pb7PJjm/pGWgVcsIOVoNbx6eNQkAzxCcZW5+sSdX2kFV00JNCPw4UMIjXl
+	 jF9774ZFHOH2FjfPdyZ5Q6tnR7pcLuYWR+0/FQYnMfZiQm708WZlvvnZA8oHH8JZPl
+	 IrEAR8gNlUVcA==
+Message-ID: <5952f4ef-8615-4aa5-9ff6-3bee63750712@kernel.org>
+Date: Fri, 21 Jun 2024 16:50:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <187a0e4e-6e05-7da2-37bd-d75f9a6034e3@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/2] pwrseq: introduce the subsystem and first driver
+To: Lk Sii <lk_sii@163.com>, patchwork-bot+bluetooth@kernel.org,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, kvalo@kernel.org,
+ andersson@kernel.org, konrad.dybcio@linaro.org, lgirdwood@gmail.com,
+ broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ bhelgaas@google.com, saravanak@google.com, geert+renesas@glider.be,
+ arnd@arndb.de, neil.armstrong@linaro.org, m.szyprowski@samsung.com,
+ elder@linaro.org, srinivas.kandagatla@linaro.org,
+ gregkh@linuxfoundation.org, abel.vesa@linaro.org, mani@kernel.org,
+ lukas@wunner.de, dmitry.baryshkov@linaro.org, amit.pundir@linaro.org,
+ wuxilin123@gmail.com, linux-bluetooth@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+ bartosz.golaszewski@linaro.org
+References: <20240605123850.24857-1-brgl@bgdev.pl>
+ <171889385036.4585.6482250630135606154.git-patchwork-notify@kernel.org>
+ <0b144517-4cc5-4c23-be57-d6f5323690ec@163.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <0b144517-4cc5-4c23-be57-d6f5323690ec@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 21, 2024 at 09:37:46AM -0500, Tom Lendacky wrote:
-> Ok, I'll remove the new static and resubmit. There is also a logic error
-> in the original check which should be using PFN_UP instead of PHYS_PFN, so
-> I'll include that, too.
+On 21/06/2024 03:14, Lk Sii wrote:
+> 
+> 
+> On 2024/6/20 22:30, patchwork-bot+bluetooth@kernel.org wrote:
+>> Hello:
+>>
+>> This series was applied to bluetooth/bluetooth-next.git (master)
+>> by Bartosz Golaszewski <bartosz.golaszewski@linaro.org>:
+>>
+> Hi luiz,
+> 
+> i am curious why Bartosz is able to merge his changes into bluetooth
+> development tree bluetooth-next directly.
+> 
+> 1)
+> his changes should belong to *POWER* scope instead of *Bluetooth*
+> obviously, however, there are *NOT* any SOB tag from either power and
+> bluetooth maintainer. these changes currently only have below Acked-by
+> and Signed-off-by tags:
 
-So we said this fix should not go to stable because SNP host is not upstream
-yet.
- 
-> Do you want a single patch or two patches, one to fix the PHYS_PFN to
-> PFN_UP and one to move the check?
+You are trolling us or what?
 
-Since this is snp_rmptable_init() and that is also SNP host then I think
-a single patch is fine.
+That's a cross tree pull request.
 
-Thx.
+> 
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> 2)
+> his changes have not merged into linus mainline tree yet.
 
--- 
-Regards/Gruss,
-    Boris.
+Do you understand the concept of merge windows?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> 
+> 3)
+> perhaps, it is safer to pull his changes from linus mainline tree when
+> merged than to merge into bluetooth-next firstly.
+
+You are joking, right?
+
+
+Best regards,
+Krzysztof
+
 
