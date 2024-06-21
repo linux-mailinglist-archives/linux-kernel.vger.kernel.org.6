@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-223720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D7D91177C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:28:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F156911770
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C32A1C216A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:28:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98DF7B21C0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6172AE95;
-	Fri, 21 Jun 2024 00:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6BD847C;
+	Fri, 21 Jun 2024 00:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="h0Zvssk6"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T1ae6wqR"
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76925F9E6;
-	Fri, 21 Jun 2024 00:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8566310FA;
+	Fri, 21 Jun 2024 00:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718929622; cv=none; b=KGCTBMVKdkP+TgOPZXCbB8lEqqzVqTLaO4DH3ssH/6ZjgsngNVm/TNC6/J3bx6haUdAczEoVb7pjIdgwP7F3Qo/jUaZWv6MEd5/LJV6lsmEkKWRKkk1dckEELovpQcYDati6K8zSTqgj0SzjLxGZu9P91E6JQt9fLeijcjLIu74=
+	t=1718929619; cv=none; b=MTvREeIUuskk0qMSkAHsPbWsPQqc9uwlepFqNJuhzQbzuObwxR35ah58i6oi5bU9vo5Uansx3StVEwXI7fkgWzIK65t2IMqRAWWtiIgpt+F1tVjVUVt/ewOxcz10+e1ylj0gmAPLoJ7VF77nOIgfKV4aba1IypzhU/DCrpDGAmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718929622; c=relaxed/simple;
-	bh=VZxS36owFyTFwfF0o1KxTwsjbCK5h/6199Ow8SsXxP8=;
+	s=arc-20240116; t=1718929619; c=relaxed/simple;
+	bh=KItl/9C6eG40jk7hUQLRQiZeJ0bPj6Y0X5vOYAo0Yj8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EetbZdkSmNLiUdR2+LkptKJSqndxw8d8sLVjBFvv/ZZlrrnAikLu8MqUzodg9DHmGHTs/iNv+Cd538vPR3BqHQQbLnzHJMGZPq0c3k2yZCLG/esHScaf1g9tkJ56roB/C6eZdmh1DgnQJJHK0JWIGXbXa7izR23Rgs2VKhhvDB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=h0Zvssk6; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=Kn6dZajHCN/HBuXu48isT4Y3+/libp22EZOIzaA/x7MRXmi7LqL3X3MY1+R3adUDlc+JSLGYY9Qkuu8oQiUVLoyKRC/VpRH5vHr9Zje7fTmEME0NNbAsYXmu/aGVIbJgFuT5vi0lNoz/TyjHqES2r090sB3XooqI4QXZKDSR+Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T1ae6wqR; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KNSUVn000458;
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L0QM6r009279;
 	Fri, 21 Jun 2024 00:26:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=3hDUyT9rvjh/u
-	qttZeOy24s2Df+NNUjOmmqDaE5+6Vk=; b=h0Zvssk6U31qRBTvZ/Pep/F4zOG0K
-	UMB+ltMG9SJ3UggEFvoAJ5AKPGn4mpzEhBQuM3OcoBV5mfxgW0+h6XdotimhQlqk
-	+pELs0lzCnCQS2yvB46M5gVhI64pV53Rq71bjpy4OvrE4uAarl8+UOTG2EKdX7JI
-	0Zw2IW9a+UG1Ayn7x7zQyt7ZeexSF9Vbk9xcuMSyGwuoijUhKu+GkZh6rXN/LIkX
-	W7ZaR8WhLDcweillMTLmQx7MsOx1fcg/nx7srbr0Av/UI1OejqBuB6HSa+z7438j
-	I0VEw4cNTnnAaJnhT04NFnCgscpsJifpLcjlb3GFFqeXXRwkbAG3tUidQ==
+	:mime-version:content-transfer-encoding; s=pp1; bh=YaTjcojmIIYPS
+	V3AqgAoZ8tGeMyuD+KvoajbKIBgv5I=; b=T1ae6wqRK9YROa0u2XMwlJZr0wf+q
+	qbKCliA1teQOiJTeX385c2/ycazx07W1gBD0PujYICDk46Y9H/jGHT3ypfUWCbkt
+	0FsRn7vtmSflslEqqXcJ8RgM5HpsLQ22eEw1n6/lsaNbLVwR+YU0moktH7LrFdtw
+	j4x4HLfP66Res3msgylQYSp0MpHpos7sDIOGiVlxxEAsEJDjo8x+nj/tKstsPu/H
+	fjl2MZq+lVoUPHDZlV8NzkHUTvU4Zn6Zu6oYmnQWciHl4f2K2vfwxmtpmFhzl94d
+	cFKgmqWChUPn9ey10ldcTPleA3hfsTghU05RcwB99hw5uYZow4NzLLKOQ==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvw8c0704-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 00:26:37 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45L0QaeN022669;
-	Fri, 21 Jun 2024 00:26:36 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvw8c0700-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvvrdr8ab-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 21 Jun 2024 00:26:36 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L0G6WD031351;
-	Fri, 21 Jun 2024 00:26:34 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yvrrq2na9-1
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45L0QaaB009416;
+	Fri, 21 Jun 2024 00:26:36 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvvrdr8a6-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 00:26:34 +0000
+	Fri, 21 Jun 2024 00:26:36 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L0GVsp025708;
+	Fri, 21 Jun 2024 00:26:35 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yvrqv2nku-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 00:26:35 +0000
 Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45L0QSun21299646
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45L0QTRt52101600
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Jun 2024 00:26:30 GMT
+	Fri, 21 Jun 2024 00:26:31 GMT
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8A3E020043;
+	by IMSVA (Postfix) with ESMTP id BEEE02004F;
+	Fri, 21 Jun 2024 00:26:29 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9F4C92004D;
 	Fri, 21 Jun 2024 00:26:28 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6ACD22004D;
-	Fri, 21 Jun 2024 00:26:27 +0000 (GMT)
 Received: from heavy.ibm.com (unknown [9.171.10.44])
 	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Jun 2024 00:26:27 +0000 (GMT)
+	Fri, 21 Jun 2024 00:26:28 +0000 (GMT)
 From: Ilya Leoshkevich <iii@linux.ibm.com>
 To: Alexander Gordeev <agordeev@linux.ibm.com>,
         Alexander Potapenko <glider@google.com>,
@@ -93,9 +93,9 @@ Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
         Sven Schnelle <svens@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v6 07/39] kmsan: Remove a useless assignment from kmsan_vmap_pages_range_noflush()
-Date: Fri, 21 Jun 2024 02:24:41 +0200
-Message-ID: <20240621002616.40684-8-iii@linux.ibm.com>
+Subject: [PATCH v6 08/39] kmsan: Remove an x86-specific #include from kmsan.h
+Date: Fri, 21 Jun 2024 02:24:42 +0200
+Message-ID: <20240621002616.40684-9-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240621002616.40684-1-iii@linux.ibm.com>
 References: <20240621002616.40684-1-iii@linux.ibm.com>
@@ -107,41 +107,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 9aqDnYqiZJrIWgkclNbtCMnokhICs_wR
-X-Proofpoint-GUID: M6kl4HuHEuc2TVbCgmc2mbFwZv4B5LNB
+X-Proofpoint-GUID: vyxYbYMv0_NAWx6wam-6wBrYJn6RoEVq
+X-Proofpoint-ORIG-GUID: 5IOHAuWOwgEPcoqMkZyFmjoadwmxjUKH
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_11,2024-06-20_04,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 spamscore=0
- impostorscore=0 clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=999
+ definitions=2024-06-20_09,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ mlxlogscore=999 spamscore=0 adultscore=0 phishscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 bulkscore=0
  suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406210001
+ engine=8.19.0-2406140001 definitions=main-2406200174
 
-The value assigned to prot is immediately overwritten on the next line
-with PAGE_KERNEL. The right hand side of the assignment has no
-side-effects.
+Replace the x86-specific asm/pgtable_64_types.h #include with the
+linux/pgtable.h one, which all architectures have.
 
-Fixes: b073d7f8aee4 ("mm: kmsan: maintain KMSAN metadata for page operations")
-Suggested-by: Alexander Gordeev <agordeev@linux.ibm.com>
+While at it, sort the headers alphabetically for the sake of
+consistency with other KMSAN code.
+
+Fixes: f80be4571b19 ("kmsan: add KMSAN runtime core")
+Suggested-by: Heiko Carstens <hca@linux.ibm.com>
 Reviewed-by: Alexander Potapenko <glider@google.com>
 Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 ---
- mm/kmsan/shadow.c | 1 -
- 1 file changed, 1 deletion(-)
+ mm/kmsan/kmsan.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/mm/kmsan/shadow.c b/mm/kmsan/shadow.c
-index b9d05aff313e..2d57408c78ae 100644
---- a/mm/kmsan/shadow.c
-+++ b/mm/kmsan/shadow.c
-@@ -243,7 +243,6 @@ int kmsan_vmap_pages_range_noflush(unsigned long start, unsigned long end,
- 		s_pages[i] = shadow_page_for(pages[i]);
- 		o_pages[i] = origin_page_for(pages[i]);
- 	}
--	prot = __pgprot(pgprot_val(prot) | _PAGE_NX);
- 	prot = PAGE_KERNEL;
+diff --git a/mm/kmsan/kmsan.h b/mm/kmsan/kmsan.h
+index a14744205435..adf443bcffe8 100644
+--- a/mm/kmsan/kmsan.h
++++ b/mm/kmsan/kmsan.h
+@@ -10,14 +10,14 @@
+ #ifndef __MM_KMSAN_KMSAN_H
+ #define __MM_KMSAN_KMSAN_H
  
- 	origin_start = vmalloc_meta((void *)start, KMSAN_META_ORIGIN);
+-#include <asm/pgtable_64_types.h>
+ #include <linux/irqflags.h>
++#include <linux/mm.h>
++#include <linux/nmi.h>
++#include <linux/pgtable.h>
++#include <linux/printk.h>
+ #include <linux/sched.h>
+ #include <linux/stackdepot.h>
+ #include <linux/stacktrace.h>
+-#include <linux/nmi.h>
+-#include <linux/mm.h>
+-#include <linux/printk.h>
+ 
+ #define KMSAN_ALLOCA_MAGIC_ORIGIN 0xabcd0100
+ #define KMSAN_CHAIN_MAGIC_ORIGIN 0xabcd0200
 -- 
 2.45.1
 
