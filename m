@@ -1,83 +1,167 @@
-Return-Path: <linux-kernel+bounces-224713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF83891264A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84EED912676
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ACF5B2171A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:51:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A9D6B2162B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8821155326;
-	Fri, 21 Jun 2024 12:47:56 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B98155758;
+	Fri, 21 Jun 2024 13:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="WweC6dPU"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B8F15530F;
-	Fri, 21 Jun 2024 12:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A07915444C;
+	Fri, 21 Jun 2024 13:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718974076; cv=none; b=E3fTc5+nIhGDOVfszXgXzJzY5cSDSAhKg3RmO7l7z13rTzQrbp190nlJppnPK5WlI7ZvRe2ne2yUv6Asw4UCuuDg55VFF8KrNdE5OSr/oH1eIhF6Bl08j/FKaSdJHc/SQ8V2i+cStTlC/SsnBCQGn/YoAMFgqQD2MG6QjIFApr4=
+	t=1718975616; cv=none; b=h3zPKd3KZYl4ESdqwUZVgMRwoLq4C5UVxAULJSlTB+9dj7UHYlfSFa3ImHL0696yXyD+TRLE3lNY2+pCeBdPizKVeXB9XNUWsEZf8CM9rE96O8vfVwAUYv1hfA652fn/t+i79w9na9ZM7R6Ivff+hVeoFvbw0x1vcGE9W1eSuGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718974076; c=relaxed/simple;
-	bh=0d8wlO0X6tVXHNhI6T5ozsQARyGGQggyq/qs8MeKrbM=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date; b=EkjRXQZeQUewaySupMHpfacpFwNPOvIbreQRfqPN5YxyV139obQI6wYqlDABPovknNgLq86Wz7jlRuKAseBFUzBRw6goQE8NuchL5TMuxEVST1ez3HaBLIBwu4A1iLFVePC8dMgIJPewkdbHUXX1tG8rzht0Omqk1YA24YBSlNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 45LClYJV14097679, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 45LClYJV14097679
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Jun 2024 20:47:34 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 21 Jun 2024 20:47:34 +0800
-Received: from [127.0.1.1] (172.16.22.19) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 21 Jun
- 2024 20:47:34 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, <Jes.Sorensen@gmail.com>
-CC: <kvalo@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jiapeng Chong
-	<jiapeng.chong@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH] wifi: rtl8xxxu: use swap() in rtl8xxxu_switch_ports()
-In-Reply-To: <20240619024017.53246-1-jiapeng.chong@linux.alibaba.com>
-References: <20240619024017.53246-1-jiapeng.chong@linux.alibaba.com>
+	s=arc-20240116; t=1718975616; c=relaxed/simple;
+	bh=WQsisy3R83VOdcBN5ISga9KLt1DhdQDaVlt49Nw2AZE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=aSefwhVd0rNGhuinUqMUrUFSLtArN477fDcYsSZNJnFLOCltZsZ7CEfiJt7Ywhx+FoeS9pg6gtz4Tp3FMKBHmWid6C7I8CP9DpbaVvRH13ZfpjU6euIcElKU2UwRJ/4aZjP2S9WM/OwsgRD+D0DTbAN3UEsAjKuEJSb2QAB3x6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=WweC6dPU; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=b29xoMgpaZYss8C1W6FlfyXZaKncrRZNVZcstAF/Ncg=; b=WweC6dPUYHi8DEVygI3BSkBQmQ
+	Ae7doyUsfR9TzH6E1g77VsjyTNxEYnc0nDKgESK1+avBGUYJz9RRo3yxsk2lZBbrVyp5ZzAHLTOOt
+	WC5dLrl4TLmItYcrp1oQ3shB3jZCmoo45ZyT2C+BXSqoSraTgs1fuWJh1+X4u/MqYoVNtmrnRW0VP
+	ANCq0ruG86bxmleHhW6s4BqhtRhwomsYZAMdRM3osz/Y/TTjoTJn3cHn2q4QuvQ0SqrBH3aibM7NP
+	oEnLSzpI7FlrXZAU1za2Ixd48OJ2PGCA/0b4SncUWvLFM4p6L1ixyc8a+7TDnYyQraZGgaZNkxP3P
+	DxMpAong==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1sKdg7-0003iB-W7; Fri, 21 Jun 2024 14:47:44 +0200
+Received: from [178.197.248.18] (helo=linux.home)
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1sKdg7-000Kcg-0M;
+	Fri, 21 Jun 2024 14:47:42 +0200
+Subject: Re: [RFC net-next 1/9] skb: introduce gro_disabled bit
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Yan Zhai <yan@cloudflare.com>, netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Willem de Bruijn <willemb@google.com>, Simon Horman <horms@kernel.org>,
+ Florian Westphal <fw@strlen.de>, Mina Almasry <almasrymina@google.com>,
+ Abhishek Chauhan <quic_abchauha@quicinc.com>,
+ David Howells <dhowells@redhat.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ David Ahern <dsahern@kernel.org>, Richard Gobert <richardbgobert@gmail.com>,
+ Antoine Tenart <atenart@kernel.org>, Felix Fietkau <nbd@nbd.name>,
+ Soheil Hassas Yeganeh <soheil@google.com>,
+ Pavel Begunkov <asml.silence@gmail.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ =?UTF-8?Q?Thomas_Wei=c3=9fschuh?= <linux@weissschuh.net>,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <cover.1718919473.git.yan@cloudflare.com>
+ <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
+ <66756ed3f2192_2e64f929491@willemb.c.googlers.com.notmuch>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <44ac34f6-c78e-16dd-14da-15d729fecb5b@iogearbox.net>
+Date: Fri, 21 Jun 2024 14:47:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Message-ID: <a735918b-ed0e-4fb2-9b95-d3eeb48b0f17@RTEXMBS04.realtek.com.tw>
-Date: Fri, 21 Jun 2024 20:47:34 +0800
-X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+In-Reply-To: <66756ed3f2192_2e64f929491@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27313/Fri Jun 21 10:28:08 2024)
 
-Jiapeng Chong <jiapeng.chong@linux.alibaba.com> wrote:
-
-> Use existing swap() function rather than duplicating its implementation.
+On 6/21/24 2:15 PM, Willem de Bruijn wrote:
+> Yan Zhai wrote:
+>> Software GRO is currently controlled by a single switch, i.e.
+>>
+>>    ethtool -K dev gro on|off
+>>
+>> However, this is not always desired. When GRO is enabled, even if the
+>> kernel cannot GRO certain traffic, it has to run through the GRO receive
+>> handlers with no benefit.
+>>
+>> There are also scenarios that turning off GRO is a requirement. For
+>> example, our production environment has a scenario that a TC egress hook
+>> may add multiple encapsulation headers to forwarded skbs for load
+>> balancing and isolation purpose. The encapsulation is implemented via
+>> BPF. But the problem arises then: there is no way to properly offload a
+>> double-encapsulated packet, since skb only has network_header and
+>> inner_network_header to track one layer of encapsulation, but not two.
+>> On the other hand, not all the traffic through this device needs double
+>> encapsulation. But we have to turn off GRO completely for any ingress
+>> device as a result.
+>>
+>> Introduce a bit on skb so that GRO engine can be notified to skip GRO on
+>> this skb, rather than having to be 0-or-1 for all traffic.
+>>
+>> Signed-off-by: Yan Zhai <yan@cloudflare.com>
+>> ---
+>>   include/linux/netdevice.h |  9 +++++++--
+>>   include/linux/skbuff.h    | 10 ++++++++++
+>>   net/Kconfig               | 10 ++++++++++
+>>   net/core/gro.c            |  2 +-
+>>   net/core/gro_cells.c      |  2 +-
+>>   net/core/skbuff.c         |  4 ++++
+>>   6 files changed, 33 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+>> index c83b390191d4..2ca0870b1221 100644
+>> --- a/include/linux/netdevice.h
+>> +++ b/include/linux/netdevice.h
+>> @@ -2415,11 +2415,16 @@ struct net_device {
+>>   	((dev)->devlink_port = (port));				\
+>>   })
+>>   
+>> -static inline bool netif_elide_gro(const struct net_device *dev)
+>> +static inline bool netif_elide_gro(const struct sk_buff *skb)
+>>   {
+>> -	if (!(dev->features & NETIF_F_GRO) || dev->xdp_prog)
+>> +	if (!(skb->dev->features & NETIF_F_GRO) || skb->dev->xdp_prog)
+>>   		return true;
+>> +
+>> +#ifdef CONFIG_SKB_GRO_CONTROL
+>> +	return skb->gro_disabled;
+>> +#else
+>>   	return false;
+>> +#endif
 > 
-> ./drivers/net/wireless/realtek/rtl8xxxu/core.c:6749:30-31: WARNING opportunity for swap().
+> Yet more branches in the hot path.
 > 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9358
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> Compile time configurability does not help, as that will be
+> enabled by distros.
+> 
+> For a fairly niche use case. Where functionality of GRO already
+> works. So just a performance for a very rare case at the cost of a
+> regression in the common case. A small regression perhaps, but death
+> by a thousand cuts.
 
-1 patch(es) applied to rtw-next branch of rtw.git, thanks.
-
-6c3b5970b0c4 wifi: rtl8xxxu: use swap() in rtl8xxxu_switch_ports()
-
----
-https://github.com/pkshih/rtw.git
-
+Mentioning it here b/c it perhaps fits in this context, longer time ago
+there was the idea mentioned to have BPF operating as GRO engine which
+might also help to reduce attack surface by only having to handle packets
+of interest for the concrete production use case. Perhaps here meta data
+buffer could be used to pass a notification from XDP to exit early w/o
+aggregation.
 
