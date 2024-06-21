@@ -1,206 +1,287 @@
-Return-Path: <linux-kernel+bounces-224752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD9791267C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:15:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9AD91267F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 221081F2274D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:15:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52DE41C2134B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5B8155A43;
-	Fri, 21 Jun 2024 13:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266201EA80;
+	Fri, 21 Jun 2024 13:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Gwxa6YpY"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="McZKMvIX"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A0812EBE1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DE8EEDC
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718975715; cv=none; b=lBEgmUiAzeKgdDzcy2wyGg4eoKPMoVnY5zprezOmK9e9eciN60XFKWSppm/b2+B/mhvMhusT92G+gehAAlgA6VDf9t/vFyECsirBd66YbxOANPaFzSn/DF1P0RXuoVuwtRIsonKE7EBRceZ4KbHPt+60cGwRDR2SGtfAC+hbOOo=
+	t=1718975841; cv=none; b=Xas8cQqrZSOoDAEyCfwway6mkRfPMxDUbD8d8Iz/Tg819JHzWVaM+Tye/vTVApgqqPfUyAVntkq6vmcscmDB6rSjRaypx21RBIYN9Fqi87Aez24l97vZm0l6X8Jn3xlGAA+5Wc2VDJd3So4iZju9C+oviGhBRLijF2D3IqV7JdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718975715; c=relaxed/simple;
-	bh=mQ7wmAolxTUXR3TDySGFFEBFu0+G4nfni9DtqD1DkcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=alSWdyjgRZoZB9uElWwTVYV2m0hMG9wAQLYvMvXlbcehptu7CrbVvjvgZ0Bv0SAnNiaZDcZh5fx0XFoQBvEW1sZ2lJdo2sfkxGsIj4kEbuQcpjngxQIVVArDAC5YKfwAa0s0F5fJHzhW2gVftWMVz1psQu8z/4Fxa1+2O7bFbdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Gwxa6YpY; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57d07673185so1929285a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:15:13 -0700 (PDT)
+	s=arc-20240116; t=1718975841; c=relaxed/simple;
+	bh=hLcOFwi2J2KZcT+28pyhB884XMs4WErv3F9SncFRe8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NWrrNv29fv39fueIVM+h2Zojq9zBH7Cm41VQJ1+B/NgPKu8566l9r/eU04X3c4tv6xphrFj1kHS2BFLXHpp80FiRGqmeoDtiFwWQIl8QWlrxNqm1L1cDJQ7+zEtTml2l6tmlzb8zs9d3eYA46JV12mwINJ+sAfHAE8Cn4rXMkuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=McZKMvIX; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f9885d5c04so17912285ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:17:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1718975712; x=1719580512; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cD16Eg0jMB1tLt142Rk+A9t4pdlm9NDQxO24pzXHIlI=;
-        b=Gwxa6YpYwPnU1fvJaYdvEg7BG1HarfT1uE81qaTj1WKttIAWtOET+UuSJ25JcJQqLP
-         BaYuPv7MdDuVL7KmpbEqpMAsGzx4smSWbgivSU76eVE4PX8//+7vMit8/YH1hnSOQ2mB
-         Zxs2J83sE7FWhqzAvhdF8UVgZP8RX8dg3muaqIxHC+v/QgkeNPeasCChZPxZhlL43oPl
-         Pqvq/sHmQMibi6nqXZ7+uD1cdcOovc2guF9nS1Z9w8pa13rMmHUV2Vll+1Ew+De3QxlR
-         P11HfywhKHbQGDxZ4zfBbFa4U1m4cQm/f6zVHS5lq+Ep3gCbfK8kuMkkaFeSRYTrURIO
-         p6mA==
+        d=gmail.com; s=20230601; t=1718975839; x=1719580639; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q8Jo6W/oSNP8jr6rmsVk9Fz1TTt99fPqwc+b/r8xVV4=;
+        b=McZKMvIXSIuQZWM97AlVgnhs/ybp3DGH+cEQWXP/qwBgctCcrXIRam4lxrmFYu0F9a
+         eUk43VwBC6VLWkva7yy7zYBDZewsCAV9Cwd1T1uL86otNfZJXAtYxHozVsbaSU7XbTZh
+         hbk1KnkCe6DJ7afwhJeLfBisWHPPKm1oHJtFVIrcB6iNu96ApGMOmAhdx+Ou6Maz5TbC
+         a/ed/owIwvu2nmy6F59nnmgCr8XM/519o4UvBom06+3yIcDXfKYGhjLwSCvPEpG9ULiK
+         PnvCeHfONh9DI8aPnq/ZSk3ygo85853b4g+1T+PICrfCHfGg8o5W5aWvDk7Er58JuCRl
+         ocIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718975712; x=1719580512;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cD16Eg0jMB1tLt142Rk+A9t4pdlm9NDQxO24pzXHIlI=;
-        b=UyXG4/xCcPjL+w1UPLpokDKh+dnWFu36PuECLio+ToAlu15WuFkZEDbV3OETYOLb7Z
-         w/siVV6QN0+Lpaghcp9vPdMuCNKV85PBvZfljRcZXJffZa3TKOfa1IaqPsGah1Xy5TF/
-         Vj1R88QDIqMSV2aoI4aSMVh1B/GEF57p1vNx90EKCiTwfvkYaiF/wZVhGj7SsloFeMWG
-         GJzLzAlBJMUNGeFkDYKTxJVR7RcKcxXP6c4eIhqUpmaiTiQ4lZNEv0fdvGZ6V8o8E3yT
-         W5Xonir0OvMlVFTW0e7NSd2Z4cvBi1ZiO1JtKc345cCPNeIJAgadkX/2vexfnYlDHZNC
-         yOhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrt2GZhc22kh42al0tLiF9Q6CX45ouXM2CvJ2/kHi1OYEDqQEulJUM3kjEXvXUhde1cPL4wxO7ZvzLytq95fB9JJu1wacijLEDPw7g
-X-Gm-Message-State: AOJu0Yy1mVULUdHW1MB3CHqx0MWD1qo0dsCQmX4XUuc32sbCLap5qx1r
-	3ras6ckZ8u8W0I1U2ijvxJ+28D8D5xnWhS25NRiUyiFVmEmFpXyWfeW84YHIBPc=
-X-Google-Smtp-Source: AGHT+IEHzhMsJ0Rmre1Op5vsKrU4YAx88gVFBKQkrx9xQgMhlCsZix0dkICFq5gGjvtBpIaF8RFzng==
-X-Received: by 2002:a50:8719:0:b0:57c:571f:e52d with SMTP id 4fb4d7f45d1cf-57d07ebeaaamr5721984a12.36.1718975712142;
-        Fri, 21 Jun 2024 06:15:12 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3042fd72sm954912a12.48.2024.06.21.06.15.11
+        d=1e100.net; s=20230601; t=1718975839; x=1719580639;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q8Jo6W/oSNP8jr6rmsVk9Fz1TTt99fPqwc+b/r8xVV4=;
+        b=pLEBtzuyGV7z0g/qGqFiLzrYgQ/qNhZ7+EA/sy8axgvIM111bxnAetTR+nzBxzIOnR
+         5CykpXnSrb/tL5ppG1g7wPlE1PHstN9EqR/b1O072m4evIJo74DNobhgRMEcT5qYvMjk
+         6WM6ZjzlR/jecFzBJ7ce2ILetsULmiuCw/uHUDQwIGXMxX0E4R6ukc8jjzsaf8sPMaj/
+         TQJiuYjHbjCjrxcRaXvpcCa+bhgbXr4klnEihR85NPHnQji4HC5YuKBre5JM4aQWP4/F
+         vdF7dKh67LHyxhtNkaf7OhrDTv1z3v49zCKAJBeocEzueHwfc5yVfNiJDDvZVIs0UR8o
+         hz0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWuP76tHYj1ZZRNgO0CyvIwyTbgok8C/MZPUi63//xKhFKnJ+SA0lpGoBnoT03VcqAy5p3TFDlIOmSIEFdEskVDqH0OW4pmBmpbBWa2
+X-Gm-Message-State: AOJu0YwzYZi0s2KyMWT+kuO79tUoa5WsjuMQ/1nVfQaw+kXFLWAEoeIg
+	vSDyNaEErh2uSHtvlwNa8knGfpaJ5rAX6S4SDN1ppFyrTy9HMVCv
+X-Google-Smtp-Source: AGHT+IH/ujlQpjyJpVOol708EAJiossfwncho/7eSVf/kW6J8Bt8687f96NhgOmOJu8sQGHkNYB4Qw==
+X-Received: by 2002:a17:902:d482:b0:1f8:3c9e:3b92 with SMTP id d9443c01a7336-1f9aa3dd710mr102086615ad.23.1718975838796;
+        Fri, 21 Jun 2024 06:17:18 -0700 (PDT)
+Received: from distilledx.localdomain ([122.172.87.96])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f030csm13804045ad.43.2024.06.21.06.17.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 06:15:11 -0700 (PDT)
-Date: Fri, 21 Jun 2024 15:15:10 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Conor Dooley <conor.dooley@microchip.com>, 
-	Anup Patel <apatel@ventanamicro.com>, Conor Dooley <conor@kernel.org>, 
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com, 
-	vincent.chen@sifive.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
-Message-ID: <20240621-9bf9365533a2f8f97cbf1f5e@orel>
-References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
- <20240605121512.32083-3-yongxuan.wang@sifive.com>
- <20240605-atrium-neuron-c2512b34d3da@spud>
- <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
- <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr>
- <20240621-viewless-mural-f5992a247992@wendy>
- <edcd3957-0720-4ab4-bdda-58752304a53a@ghiti.fr>
+        Fri, 21 Jun 2024 06:17:18 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com
+Cc: Tejas Vipin <tejasvipin76@gmail.com>,
+	dianders@chromium.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panel: asus-z00t-tm5p5-n35596: transition to mipi_dsi wrapped functions
+Date: Fri, 21 Jun 2024 18:46:46 +0530
+Message-ID: <20240621131648.131667-1-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <edcd3957-0720-4ab4-bdda-58752304a53a@ghiti.fr>
 
-On Fri, Jun 21, 2024 at 02:42:15PM GMT, Alexandre Ghiti wrote:
-> 
-> On 21/06/2024 12:17, Conor Dooley wrote:
-> > On Fri, Jun 21, 2024 at 10:37:21AM +0200, Alexandre Ghiti wrote:
-> > > On 20/06/2024 08:25, Anup Patel wrote:
-> > > > On Wed, Jun 5, 2024 at 10:25 PM Conor Dooley <conor@kernel.org> wrote:
-> > > > > On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
-> > > > > > Add entries for the Svade and Svadu extensions to the riscv,isa-extensions
-> > > > > > property.
-> > > > > > 
-> > > > > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> > > > > > ---
-> > > > > >    .../devicetree/bindings/riscv/extensions.yaml | 30 +++++++++++++++++++
-> > > > > >    1 file changed, 30 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > > > index 468c646247aa..1e30988826b9 100644
-> > > > > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > > > @@ -153,6 +153,36 @@ properties:
-> > > > > >                ratified at commit 3f9ed34 ("Add ability to manually trigger
-> > > > > >                workflow. (#2)") of riscv-time-compare.
-> > > > > > 
-> > > > > > +        - const: svade
-> > > > > > +          description: |
-> > > > > > +            The standard Svade supervisor-level extension for raising page-fault
-> > > > > > +            exceptions when PTE A/D bits need be set as ratified in the 20240213
-> > > > > > +            version of the privileged ISA specification.
-> > > > > > +
-> > > > > > +            Both Svade and Svadu extensions control the hardware behavior when
-> > > > > > +            the PTE A/D bits need to be set. The default behavior for the four
-> > > > > > +            possible combinations of these extensions in the device tree are:
-> > > > > > +            1. Neither svade nor svadu in DT: default to svade.
-> > > > > I think this needs to be expanded on, as to why nothing means svade.
-> > > > Actually if both Svade and Svadu are not present in DT then
-> > > > it is left to the platform and OpenSBI does nothing.
-> > > > 
-> > > > > > +            2. Only svade in DT: use svade.
-> > > > > That's a statement of the obvious, right?
-> > > > > 
-> > > > > > +            3. Only svadu in DT: use svadu.
-> > > > > This is not relevant for Svade.
-> > > > > 
-> > > > > > +            4. Both svade and svadu in DT: default to svade (Linux can switch to
-> > > > > > +               svadu once the SBI FWFT extension is available).
-> > > > > "The privilege level to which this devicetree has been provided can switch to
-> > > > > Svadu if the SBI FWFT extension is available".
-> > > > > 
-> > > > > > +        - const: svadu
-> > > > > > +          description: |
-> > > > > > +            The standard Svadu supervisor-level extension for hardware updating
-> > > > > > +            of PTE A/D bits as ratified at commit c1abccf ("Merge pull request
-> > > > > > +            #25 from ved-rivos/ratified") of riscv-svadu.
-> > > > > > +
-> > > > > > +            Both Svade and Svadu extensions control the hardware behavior when
-> > > > > > +            the PTE A/D bits need to be set. The default behavior for the four
-> > > > > > +            possible combinations of these extensions in the device tree are:
-> > > > > @Anup/Drew/Alex, are we missing some wording in here about it only being
-> > > > > valid to have Svadu in isolation if the provider of the devicetree has
-> > > > > actually turned on Svadu? The binding says "the default behaviour", but
-> > > > > it is not the "default" behaviour, the behaviour is a must AFAICT. If
-> > > > > you set Svadu in isolation, you /must/ have turned it on. If you set
-> > > > > Svadu and Svade, you must have Svadu turned off?
-> > > > Yes, the wording should be more of requirement style using
-> > > > must or may.
-> > > > 
-> > > > How about this ?
-> > > > 1) Both Svade and Svadu not present in DT => Supervisor may
-> > > >       assume Svade to be present and enabled or it can discover
-> > > >       based on mvendorid, marchid, and mimpid.
-> > > > 2) Only Svade present in DT => Supervisor must assume Svade
-> > > >       to be always enabled. (Obvious)
-> > > > 3) Only Svadu present in DT => Supervisor must assume Svadu
-> > > >       to be always enabled. (Obvious)
-> > > 
-> > > I agree with all of that, but the problem is how can we guarantee that
-> > > openSBI actually enabled svadu?
-> > Conflation of an SBI implementation and OpenSBI aside, if the devicetree
-> > property is defined to mean that "the supervisor must assume svadu to be
-> > always enabled", then either it is, or the firmware's description of the
-> > hardware is broken and it's not the supervisor's problem any more. It's
-> > not the kernel's job to validate that the devicetree matches the
-> > hardware.
-> > 
-> > > This is not the case for now.
-> > What "is not the case for now"? My understanding was that, at the
-> > moment, nothing happens with Svadu in OpenSBI. In turn, this means that
-> > there should be no devicetrees containing Svadu (per this binding's
-> > description) and therefore no problem?
-> 
-> 
-> What prevents a dtb to be passed with svadu to an old version of opensbi
-> which does not support the enablement of svadu? The svadu extension will end
-> up being present in the kernel but not enabled right?
->
+Use functions introduced in commit 966e397e4f60 ("drm/mipi-dsi:
+Introduce mipi_dsi_*_write_seq_multi()") and commit f79d6d28d8fe
+("drm/mipi-dsi: wrap more functions for streamline handling") for the
+asus-z00t-tm5p5-n35596 panel.
 
-I understand the concern; old SBI implementations will leave svadu in the
-DT but not actually enable it. Then, since svade may not be in the DT if
-the platform doesn't support it or it was left out on purpose, Linux will
-only see svadu and get unexpected exceptions. This is something we could
-force easily with QEMU and an SBI implementation which doesn't do anything
-for svadu. I hope vendors of real platforms, which typically provide their
-own firmware and DTs, would get this right, though, especially since Linux
-should fail fast in their testing when they get it wrong.
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+---
+ .../drm/panel/panel-asus-z00t-tm5p5-n35596.c  | 140 ++++++++----------
+ 1 file changed, 59 insertions(+), 81 deletions(-)
 
-Thanks,
-drew
+diff --git a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+index bcaa63d1955f..b05a663c134c 100644
+--- a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
++++ b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+@@ -33,119 +33,97 @@ static void tm5p5_nt35596_reset(struct tm5p5_nt35596 *ctx)
+ 	usleep_range(15000, 16000);
+ }
+ 
+-static int tm5p5_nt35596_on(struct tm5p5_nt35596 *ctx)
++static void tm5p5_nt35596_on(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+-	struct mipi_dsi_device *dsi = ctx->dsi;
+-
+-	mipi_dsi_generic_write_seq(dsi, 0xff, 0x05);
+-	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0xc5, 0x31);
+-	mipi_dsi_generic_write_seq(dsi, 0xff, 0x04);
+-	mipi_dsi_generic_write_seq(dsi, 0x01, 0x84);
+-	mipi_dsi_generic_write_seq(dsi, 0x05, 0x25);
+-	mipi_dsi_generic_write_seq(dsi, 0x06, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0x07, 0x20);
+-	mipi_dsi_generic_write_seq(dsi, 0x08, 0x06);
+-	mipi_dsi_generic_write_seq(dsi, 0x09, 0x08);
+-	mipi_dsi_generic_write_seq(dsi, 0x0a, 0x10);
+-	mipi_dsi_generic_write_seq(dsi, 0x0b, 0x10);
+-	mipi_dsi_generic_write_seq(dsi, 0x0c, 0x10);
+-	mipi_dsi_generic_write_seq(dsi, 0x0d, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x0e, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x0f, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x10, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x11, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x12, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x17, 0xf3);
+-	mipi_dsi_generic_write_seq(dsi, 0x18, 0xc0);
+-	mipi_dsi_generic_write_seq(dsi, 0x19, 0xc0);
+-	mipi_dsi_generic_write_seq(dsi, 0x1a, 0xc0);
+-	mipi_dsi_generic_write_seq(dsi, 0x1b, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0x1c, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0x1d, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0x1e, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0x1f, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0x20, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0xff, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0x35, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0xd3, 0x06);
+-	mipi_dsi_generic_write_seq(dsi, 0xd4, 0x04);
+-	mipi_dsi_generic_write_seq(dsi, 0x5e, 0x0d);
+-	mipi_dsi_generic_write_seq(dsi, 0x11, 0x00);
+-	msleep(100);
+-	mipi_dsi_generic_write_seq(dsi, 0x29, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, 0x53, 0x24);
+-
+-	return 0;
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x05);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xc5, 0x31);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x04);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x01, 0x84);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x05, 0x25);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x06, 0x01);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x07, 0x20);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x08, 0x06);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x09, 0x08);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0a, 0x10);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0b, 0x10);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0c, 0x10);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0d, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0e, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0f, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x10, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x11, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x12, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x17, 0xf3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x18, 0xc0);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x19, 0xc0);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1a, 0xc0);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1b, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1c, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1d, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1e, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1f, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x20, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x00);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x35, 0x01);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xd3, 0x06);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xd4, 0x04);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x5e, 0x0d);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x11, 0x00);
++
++	mipi_dsi_msleep(dsi_ctx, 100);
++
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x29, 0x00);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x53, 0x24);
+ }
+ 
+-static int tm5p5_nt35596_off(struct tm5p5_nt35596 *ctx)
++static void tm5p5_nt35596_off(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+-	struct mipi_dsi_device *dsi = ctx->dsi;
+-	struct device *dev = &dsi->dev;
+-	int ret;
+-
+-	ret = mipi_dsi_dcs_set_display_off(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set display off: %d\n", ret);
+-		return ret;
+-	}
+-	msleep(60);
++	mipi_dsi_dcs_set_display_off_multi(dsi_ctx);
+ 
+-	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_msleep(dsi_ctx, 60);
+ 
+-	mipi_dsi_dcs_write_seq(dsi, 0x4f, 0x01);
++	mipi_dsi_dcs_enter_sleep_mode_multi(dsi_ctx);
+ 
+-	return 0;
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0x4f, 0x01);
+ }
+ 
+ static int tm5p5_nt35596_prepare(struct drm_panel *panel)
+ {
+ 	struct tm5p5_nt35596 *ctx = to_tm5p5_nt35596(panel);
+-	struct device *dev = &ctx->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx =	{.dsi = ctx->dsi};
+ 
+-	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to enable regulators: %d\n", ret);
+-		return ret;
+-	}
++	dsi_ctx.accum_err = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
++	if (dsi_ctx.accum_err)
++		return dsi_ctx.accum_err;
+ 
+ 	tm5p5_nt35596_reset(ctx);
+ 
+-	ret = tm5p5_nt35596_on(ctx);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to initialize panel: %d\n", ret);
++	tm5p5_nt35596_on(&dsi_ctx);
++
++	if (dsi_ctx.accum_err) {
+ 		gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+ 		regulator_bulk_disable(ARRAY_SIZE(ctx->supplies),
+ 				       ctx->supplies);
+-		return ret;
+ 	}
+ 
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static int tm5p5_nt35596_unprepare(struct drm_panel *panel)
+ {
+ 	struct tm5p5_nt35596 *ctx = to_tm5p5_nt35596(panel);
+-	struct device *dev = &ctx->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx =	{.dsi = ctx->dsi};
+ 
+-	ret = tm5p5_nt35596_off(ctx);
+-	if (ret < 0)
+-		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
++	tm5p5_nt35596_off(&dsi_ctx);
+ 
+ 	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+ 	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies),
+ 			       ctx->supplies);
+ 
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static const struct drm_display_mode tm5p5_nt35596_mode = {
+-- 
+2.45.2
+
 
