@@ -1,227 +1,124 @@
-Return-Path: <linux-kernel+bounces-224966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AEE091294F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A741291293E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4657B27DD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:17:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB07B1C23B85
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390CA55C0A;
-	Fri, 21 Jun 2024 15:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C95955C3E;
+	Fri, 21 Jun 2024 15:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DvMZ1yde"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="utQPc8xh"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C286F2F1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F74374D1;
+	Fri, 21 Jun 2024 15:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983011; cv=none; b=Wt7udBVz1DDpUux4fS8h/KvHVGv8vRCr+CYLifo6UqH8MwzfBS0cYAhvoO6/Rx+H7UnoM+66Zcxl/MpvnrxzLQcIxXovAY5N/pNDrPs05BPh90zF0IlUeJQcVDWHT1KTOgSa/0chaVkV4KnbnQ0OGtfXRaCs7k3xfje1HElN8sc=
+	t=1718983030; cv=none; b=J8TGeiGOvskxTG9L/2eCecOMSt1l7AuYlaNeNdv3MuDL8ZYty6VMsZ9plWKDIP21ofPMmp99N6FcDmlIPAUSjO0yDgYBzga7XFE6qyQg0KV0YmwP2Cdv4iWvLRLk29qLXND7HWGsZAoo2QbH+SIonycTeqBCBzfQqCIChFsz0BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718983011; c=relaxed/simple;
-	bh=zFuk48cbhB5z7snlfIaQJo8NiN5IXQRvgXqdLrDRlUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ivPUQ9lGqbdktBCmYsaUes210rwMxcHn+4Jif2FevWensExRqLPMHNGLojTBcLSVSdusvZK+91AQ119g9qqmCe+5gyzGJr5glKo14beqadjAZLwFKre5L3Fv9k1lLwVnTGRhcOqxHjkmBz66LMiD7Kk20THbAWVAkgK69PUefFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DvMZ1yde; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-63f7d53bd88so7111417b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:16:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718983008; x=1719587808; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=INvmFR+mG8MdGOooEtB857cvAaTXvZhVkdY0DiHUQtU=;
-        b=DvMZ1ydejbqS2cT5pBUfd4o7FeQaofVq0edEItDyz2IjfrqGkSNngtjxyiGiwyi4Yq
-         9CcXbcbiwp+60LEUUiGoU6tEHIeXmuLImaenYvOrT4jKPlScxXXfxlyVyGdy3wHXW67x
-         s/c+7pKKBBJ/l/o2XwUJkIZfTT9aLVo4/p2B4aBRWNsQyM8qj/nK+ls1ElIRfZXFsUHz
-         4HERoCbSvDjL/XsVbovWJEjdPzdNgFOVgAQC1BzdsHG4qYyyYeYGuIipjDXmAeY7UQVK
-         RWqHudZUaL6X4oV7xyL5yoC/tD58werLUIYW+x3kCuNfPa/Lf2vYrmqpN34g83yViQK8
-         4g+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718983008; x=1719587808;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=INvmFR+mG8MdGOooEtB857cvAaTXvZhVkdY0DiHUQtU=;
-        b=drCJK2kH+Zwr1g0hFJsAmmN/54J9cFiEW8SH/MVFpV1s0px6KGqd/KHnO8Xvn3d+dM
-         aMFaqjvG0q2sb+xKXriimDx2e8lx2oVyQgnUr65prf9r/pynVx7CppBtxfdPSjQPXRQM
-         sOq+4jlK9jmuNIMe5W2phPsG+/qsvn2ANJA/Oezks4dc0xYYs1cDV7sueG36aAFBnK52
-         I+Jt1vCmW68VbyMsWEu+oVjOsy3oOmhjMZQV1+2uqTHDP90cR2vyAq6172oopORFnV7R
-         73rIXRSaIZiZo7KaDTn0Nx+nQhuDYYxj6gDnXySC54WLSLKn07WbclRlwK6MrcDaxkxZ
-         gU/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUBSjTHRRivWNyahlRVqqQq5oYB8oCl9nHUjSXmbnE6bFynAdItHJ/m2pP1c+nVw833TEqISm/sD5S/DvIcpjWkCC+qNziEeojk6ZUa
-X-Gm-Message-State: AOJu0Yyw4jYgmkxADm0MtVc06lrUxu7yCEQs2gic9Va05rFjArpK4iC5
-	CuxgrZxm22WfSY78ua7hGxFZOLPz2FUAvwmVDPD7axembVkvCOZXuP1ydTZcnlYzJtaOn2XHY0B
-	Jq0LmDbJvBLy+g08iA+qwsLulDML4N3yqrIpuwQ==
-X-Google-Smtp-Source: AGHT+IG9fIZtqKAlVbm475u7hjzHmZxu5O5csfSpdA3s/BA65IHQtgPjc9HdU685v/rRzRccM4YLnKwk8VBa0Bz9ESQ=
-X-Received: by 2002:a81:8742:0:b0:630:fe1d:99cc with SMTP id
- 00721157ae682-63a8faf37b2mr77928047b3.52.1718983008204; Fri, 21 Jun 2024
- 08:16:48 -0700 (PDT)
+	s=arc-20240116; t=1718983030; c=relaxed/simple;
+	bh=37+hd08I1T6GodrRhAnd9tk9oBcSMZ+kDvs1tu6eI3E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dCv+7TaNORsHXKLV6VwOvjJfOVotMp5Y+QAOtO9jNOg37dbH+jblwoO7mfaBfRxFZDje3feKKlkvjretKzEwfnqgXRihAS+TduVB8DRXAx4ScN+Md7kHMRlk2BC5/DHmi/6gZEmYvCth3S9GeBwAYCixyuTprwAVu4JO/wNKf48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=utQPc8xh; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LFGomn080374;
+	Fri, 21 Jun 2024 10:16:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718983010;
+	bh=XbBF79bZTa5YI1QbHJEUN+iBpddUT0rwSMM8ISbB17s=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=utQPc8xh2RcR2tpF/ZIteGFEL2hsroDOB2qGeIhcAhqXq0rRVoQYsth7/xnzpG4WU
+	 jYz21n5cMAKn5Xlq1A5w+CtSFvGqVic57Tsb2mqHaLikuYyndrLe1pNCrvq9SN4N2D
+	 He6U0eqywPSJhbaUjUmiKG6/m6uYgBFoabmS7V3s=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LFGoot040538
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 21 Jun 2024 10:16:50 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
+ Jun 2024 10:16:49 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 21 Jun 2024 10:16:49 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LFGjB7066628;
+	Fri, 21 Jun 2024 10:16:46 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Roger Quadros <rogerq@kernel.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <afd@ti.com>, <srk@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5] arm64: dts: ti: am642-evm: Add overlay for NAND expansion card
+Date: Fri, 21 Jun 2024 20:46:44 +0530
+Message-ID: <171898028153.2272421.3051817978263340632.b4-ty@ti.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240614-am642-evm-nand-v5-1-acf760896239@kernel.org>
+References: <20240614-am642-evm-nand-v5-1-acf760896239@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617005825.1443206-1-quic_gaurkash@quicinc.com>
- <20240617005825.1443206-5-quic_gaurkash@quicinc.com> <3eehkn3cdhhjfqtzpahxhjxtu5uqwhntpgu22k3hknctrop3g5@f7dhwvdvhr3k>
- <96e2ce4b154a4f918be0bc2a45011e6d@quicinc.com> <CAA8EJppGpv7N_JQQNJZrbngBBdEKZfuqutR9MPnS1R_WqYNTQw@mail.gmail.com>
- <3a15df00a2714b40aba4ebc43011a7b6@quicinc.com> <CAA8EJpoZ0RR035QwzMLguJZvdYb-C6aqudp1BgHgn_DH2ffsoQ@mail.gmail.com>
- <20240621044747.GC4362@sol.localdomain>
-In-Reply-To: <20240621044747.GC4362@sol.localdomain>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 21 Jun 2024 18:16:37 +0300
-Message-ID: <CAA8EJppXsbpFCeGJOMGKOQddy0fF4uW3rt4RUuDTQq6mPunBkg@mail.gmail.com>
-Subject: Re: [PATCH v5 04/15] soc: qcom: ice: add hwkm support in ice
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>, 
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "andersson@kernel.org" <andersson@kernel.org>, 
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, 
-	"srinivas.kandagatla" <srinivas.kandagatla@linaro.org>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel <kernel@quicinc.com>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"Om Prakash Singh (QUIC)" <quic_omprsing@quicinc.com>, 
-	"Bao D. Nguyen (QUIC)" <quic_nguyenb@quicinc.com>, 
-	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>, 
-	"konrad.dybcio@linaro.org" <konrad.dybcio@linaro.org>, 
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "jejb@linux.ibm.com" <jejb@linux.ibm.com>, 
-	"martin.petersen@oracle.com" <martin.petersen@oracle.com>, "mani@kernel.org" <mani@kernel.org>, 
-	"davem@davemloft.net" <davem@davemloft.net>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Sonal Gupta <sonalg@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, 21 Jun 2024 at 07:47, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Thu, Jun 20, 2024 at 02:57:40PM +0300, Dmitry Baryshkov wrote:
-> > > > >
-> > > > > > Is it possible to use both kind of keys when working on standard mode?
-> > > > > > If not, it should be the user who selects what type of keys to be used.
-> > > > > > Enforcing this via DT is not a way to go.
-> > > > > >
-> > > > >
-> > > > > Unfortunately, that support is not there yet. When you say user, do
-> > > > > you mean to have it as a filesystem mount option?
-> > > >
-> > > > During cryptsetup time. When running e.g. cryptsetup I, as a user, would like
-> > > > to be able to use either a hardware-wrapped key or a standard key.
-> > > >
-> > >
-> > > What we are looking for with these patches is for per-file/folder encryption using fscrypt policies.
-> > > Cryptsetup to my understanding supports only full-disk , and does not support FBE (File-Based)
-> >
-> > I must admit, I mostly used dm-crypt beforehand, so I had to look at
-> > fscrypt now. Some of my previous comments might not be fully
-> > applicable.
-> >
-> > > Hence the idea here is that we mount an unencrypted device (with the inlinecrypt option that indicates inline encryption is supported)
-> > > And specify policies (links to keys) for different folders.
-> > >
-> > > > > The way the UFS/EMMC crypto layer is designed currently is that, this
-> > > > > information is needed when the modules are loaded.
-> > > > >
-> > > > > https://lore.kernel.org/all/20231104211259.17448-2-ebiggers@kernel.org
-> > > > > /#Z31drivers:ufs:core:ufshcd-crypto.c
-> > > >
-> > > > I see that the driver lists capabilities here. E.g. that it supports HW-wrapped
-> > > > keys. But the line doesn't specify that standard keys are not supported.
-> > > >
-> > >
-> > > Those are capabilities that are read from the storage controller. However, wrapped keys
-> > > Are not a standard in the ICE JEDEC specification, and in most cases, is a value add coming
-> > > from the SoC.
-> > >
-> > > QCOM SOC and firmware currently does not support both kinds of keys in the HWKM mode.
-> > > That is something we are internally working on, but not available yet.
-> >
-> > I'd say this is a significant obstacle, at least from my point of
-> > view. I understand that the default might be to use hw-wrapped keys,
-> > but it should be possible for the user to select non-HW keys if the
-> > ability to recover the data is considered to be important. Note, I'm
-> > really pointing to the user here, not to the system integrator. So
-> > using DT property or specifying kernel arguments to switch between
-> > these modes is not really an option.
-> >
-> > But I'd really love to hear some feedback from linux-security and/or
-> > linux-fscrypt here.
-> >
-> > In my humble opinion the user should be able to specify that the key
-> > is wrapped using the hardware KMK. Then if the hardware has already
-> > started using the other kind of keys, it should be able to respond
-> > with -EINVAL / whatever else. Then the user can evict previously
-> > programmed key and program a desired one.
-> >
-> > > > Also, I'd have expected that hw-wrapped keys are handled using trusted
-> > > > keys mechanism (see security/keys/trusted-keys/). Could you please point
-> > > > out why that's not the case?
-> > > >
-> > >
-> > > I will evaluate this.
-> > > But my initial response is that we currently cannot communicate to our TPM directly from HLOS, but
-> > > goes through QTEE, and I don't think our qtee currently interfaces with the open source tee
-> > > driver. The interface is through QCOM SCM driver.
-> >
-> > Note, this is just an API interface, see how it is implemented for the
-> > CAAM hardware.
-> >
->
-> The problem is that this patchset was sent out without the patches that add the
-> block and filesystem-level framework for hardware-wrapped inline encryption
-> keys, which it depends on.  So it's lacking context.  The proposed framework can
-> be found at
-> https://lore.kernel.org/linux-block/20231104211259.17448-1-ebiggers@kernel.org/T/#u
+Hi Roger Quadros,
 
-Thank you. I have quickly skimmed through the patches, but I didn't
-review them thoroughly. Maybe the patchset already implements the
-interfaces that I'm thinking about. In such a case please excuse me. I
-will give it a more thorough look later today.
+On Fri, 14 Jun 2024 18:06:42 +0300, Roger Quadros wrote:
+> The NAND expansion card plugs in over the HSE (High Speed Expansion)
+> connector. Add support for it.
+> 
+> We add the ranges property to the GPMC node instead of the NAND
+> overlay file to prevent below warnings.
+> 
+> /fragment@3/__overlay__: Relying on default #address-cells value
+> /fragment@3/__overlay__: Relying on default #size-cells value
+> 
+> [...]
 
-> As for why "trusted keys" aren't used, they just aren't helpful here.  "Trusted
-> keys" are based around a model where the kernel can request that keys be sealed
-> and unsealed using a trust source, and the kernel gets access to the raw
-> unsealed keys.  Hardware-wrapped inline encryption keys use a different model
-> where the kernel never gets access to the raw keys.  They also have the concept
-> of ephemeral wrapping which does not exist in "trusted keys".  And they need to
-> be properly integrated with the inline encryption framework in the block layer.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-Then what exactly does qcom_scm_derive_sw_secret() do? Does it rewrap
-the key under some other key?
-I had the feeling that there are two separate pieces of functionality
-being stuffed into a single patchset and into a single solution.
+[1/1] arm64: dts: ti: am642-evm: Add overlay for NAND expansion card
+      commit: 117937ff2fbf1f67e6e7cbe1635bbe1cc72dbee2
 
-First one is handling the keys. I keep on thinking that there should
-be a separate software interface to unseal the key and rewrap it under
-an ephemeral key. Some hardware might permit importing raw keys. Other
-hardware might insist on generating the keys on-chip so that raw keys
-can never be used. Anyway, the net result is the binary blob + cookie
-for the ephemeral key.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Second part is the actual block interface. Gaurav wrote about
-targeting fscrypt, but there should be no actual difference between
-crypto targets. FDE or having a single partition encrypted should
-probably work in the same way. Convert the key into blk_crypto_key
-(including the cookie for the ephemeral key), program the key into the
-slot, use the slot to en/decrypt hardware blocks.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-My main point is that the decision on the key type should be coming
-from the user. I can easily imagine a user, which wants to use
-password / raw key for documents storage so that it is possible to
-recover the data, hw-wrapped long-term key for app & data storage and
-generated one-time random key for the swap, so that memory contents
-can never be recovered after reboot / device capture.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
--- 
-With best wishes
-Dmitry
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
+
 
