@@ -1,79 +1,75 @@
-Return-Path: <linux-kernel+bounces-225317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E17D5912F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:56:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0E2912F08
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF83281173
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7DD31F22435
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BC817BB2C;
-	Fri, 21 Jun 2024 20:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E7517BB1B;
+	Fri, 21 Jun 2024 20:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Er+gBcbg"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RacLbu9e"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D73416849B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2730B1607B3;
+	Fri, 21 Jun 2024 20:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719003410; cv=none; b=lqVilDuqWySGGYh6YNI07VO+rIjPFfdc/c534bEJ3VG4ZpQ6/ucDIPSHBfRCjiIGcsgZUb9rayk4EEtgB31xHrv11qMYZri2y81Lu0tCy+Hb+diizi5jGMrFsZ6XlHKSEpRr0e8rItlVZfKE7WGLaQdxnhCgUyEiQOqlqNtlqgk=
+	t=1719003459; cv=none; b=vC05LmF8N/UBul2s+yTX6ZL3YA4c0RR9QsYQuEfIpDPQah8tmbA/98GCi2Jre7UtlHzQXCfQqUYBDZdcfIzV0ZprA+LrFQ/Ikurxo4Dak9I2chwJJ1VGnzo9+O74cQ1ESS20rMIlQL2+7qy8j5mEgyuxUlS1IYiaQfRORZ9kgaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719003410; c=relaxed/simple;
-	bh=5st63SI9GsmLxPdfiAGP6Hn4GJN1GJ3y8psezivCzq8=;
+	s=arc-20240116; t=1719003459; c=relaxed/simple;
+	bh=2UYSm+OuTKQvO73eRpd2wGw7T/UPQzUjqIp9bW8MHfU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mjk7vZCsnO7+HQZ3RxjRovu/56wXsDP+VGt1mXMcWviQt9fbCqmEY9EXFMBlheWQBG2NcGhNzPgJRIQn4QJiuTPxQhVAZh2xyLz/+L1v6UvkD3QBqbSZU5sjuozDOz2MLOgOW4qzU6uRmcwQXRnw4YRQifXwj8e4xbRdp1rwHKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Er+gBcbg; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso27339721fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719003407; x=1719608207; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pCXZHO5jGlp2bYUbK8OUm7s9KsnQfmaNZmifsjWFRsU=;
-        b=Er+gBcbgvOAcPry2qbdN3mvo7njHiIdd6eV6V04cz/8BTivRnfDRnS3sUN7PuzuMFB
-         YdJDAMhRqEX7u1Dp5cD8SWv2b2s+pLT6eCkRJZ3OaReV/tGdYOTKoH1sy9AcynIr2/RG
-         Tbm18tYQVYKgzz+3hmd8xnhqLPf4uvma/Baga+r8BW1XOY+JDjxjnd2wTQKkhHC9BoOM
-         C1sTZXcIVQnxVo+gjv34Fkks4Vdbr/vqukdlr55Mub5IQhvWrb0AdYnLTGbA45yjipkD
-         aihLXT5VTOzCbYKVumCLMKNfmORusIwQi74DyvLVQXjTVM6CxXZb1b1TXAh4dljsKzTz
-         JjqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719003407; x=1719608207;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pCXZHO5jGlp2bYUbK8OUm7s9KsnQfmaNZmifsjWFRsU=;
-        b=Uen+C3+nM3bL+z96tWw9OtcR39LmNPg7MPlom1/GBrJ4qJEsr5MJwf+8YKG0D8nG1I
-         KY4u6PJsoV1mriLROKioaG0+u4N2d3/iYudDKvJAVvtU3cV3jAWOew0vUNhPAK19HwfT
-         o0UX3bm/AMcTROB6KOQmN00pKQuHNN02jHMZ/lqEWeKbQYjzY7qvzDkj802vp/GwHyHu
-         dY50Y1zfKczGf+tD6I7ohHGEbQcBaOuJL/2bj6/eUHdNjY8pRK1QXdB2mSakFNPYYmNo
-         phn+9XM75J45R3r7skiVAHDDNIrZvq8mc/aYUoDccyFjidqw1uc39OJOn9YN1NhfsZky
-         W0LA==
-X-Forwarded-Encrypted: i=1; AJvYcCVy9NgbEJp8g8pKVMfe07ujvAsDol+jBrnsGF8TbysWJIKs9YrQUyehd2PCQkWh37CMoX+327ND7x092vdtXztqiWzoh3+au2vUwEiI
-X-Gm-Message-State: AOJu0Yybpzup6DCSTAF8VhZYiLgo1V8VJD6uZZktWp1emtOlZeU7/6bn
-	7R4Ze1El7Dg1+MvCz7qSzUZ7AUqdFri4In1/dTCJpOyX2DxakddfPkBsCWNazTI=
-X-Google-Smtp-Source: AGHT+IGMBqADkA6Kc5SklaTSzDMTsOlB2IIkSb7HlCkzxfs6AbKDf7unm5UgoSB2TqULwUhH6n3F0g==
-X-Received: by 2002:a2e:9ecf:0:b0:2eb:e634:fee6 with SMTP id 38308e7fff4ca-2ec3ce93f8emr60717111fa.18.1719003406685;
-        Fri, 21 Jun 2024 13:56:46 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d788590sm2938421fa.137.2024.06.21.13.56.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 13:56:46 -0700 (PDT)
-Date: Fri, 21 Jun 2024 23:56:44 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Johan Hovold <johan@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: qcom_battmgr: Enable battery support on
- x1e80100
-Message-ID: <3n2qq3ggv2t6t3v475oscp7zvofq5ggy4nhxaygqbalsqc3ixs@serhvz77kyan>
-References: <20240621-x1e80100-power-supply-qcom-battmgr-v1-1-40cb89a0c144@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EbpN13gdp8T4fsSerxPa2HJt9CkB5nuGt7SJoAWheqCmebdej4Uz+IsrEpH8ZlpWbPjHbVwEE9E2VFZqJEJxncyZbiSYjQXdlZTp9IJARdJ1OhW+XSmGQsOueaJ20j0S4/7R16G95H511h8EOZdiAZq/CNOjrooqOHpIcCWoFqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RacLbu9e; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719003457; x=1750539457;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2UYSm+OuTKQvO73eRpd2wGw7T/UPQzUjqIp9bW8MHfU=;
+  b=RacLbu9eB8N5quXeBVynlsoy4or1Xe4RFpNQXbcgYrymY2/ANUez2g5X
+   66VNZq7W86efAk0w8rMRYt8sg8JkeFL+sUl0kC8EzgomxZlplULyN/AyV
+   oeVixxvKslgvVBrHj/0mKjEppnBZCL/bXvHbCACgfHcCtAauJneAwlLz/
+   iDTEOhEl4l/NhcTXl3wk+R0Z+BEQB4biQSNrmattxoJ/Ca7ms27Kvroyk
+   XBFuR2y4f1XTV6Xw1dQ/KIB6STPudYsrcrpuV8CQG9FRqo6jTBZ7g5I4v
+   1jvklnEXy0dLHOZa4+gSOkGH92p0JiV+XrAlEuIFmL8upf5p1wSj2Pl/9
+   A==;
+X-CSE-ConnectionGUID: owV2I+GDRMOPkWLE4DFg+Q==
+X-CSE-MsgGUID: ddUNMALjTOSdOltY5TgjOg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="16171311"
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="16171311"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 13:57:37 -0700
+X-CSE-ConnectionGUID: n46erGAoTNGCQfKSZ0mOKA==
+X-CSE-MsgGUID: C0TYepGcTRqTNNDzlzSMDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="65948774"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.102.249])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 13:57:35 -0700
+Date: Fri, 21 Jun 2024 13:57:32 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cxl/acpi: Warn on unsupported platform config detection
+Message-ID: <ZnXpPGV57o7v4xYT@aschofie-mobl2>
+References: <20240619125949.167936-1-fabio.m.de.francesco@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,45 +78,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621-x1e80100-power-supply-qcom-battmgr-v1-1-40cb89a0c144@linaro.org>
+In-Reply-To: <20240619125949.167936-1-fabio.m.de.francesco@linux.intel.com>
 
-On Fri, Jun 21, 2024 at 10:16:35AM GMT, Abel Vesa wrote:
-> The x1e80100, being a compute platform, provides functionality for the
-> exact same power supplies as sc8280xp. Add the compatible and assign
-> the sc8280xp match data.
+On Wed, Jun 19, 2024 at 02:59:41PM +0200, Fabio M. De Francesco wrote:
+
+Hi Fabio,
+You've written such a detailed commit msg, that it pulls me in,
+and now I want to understand more....
+
+
+> Each Host Bridge instance has a corresponding CXL Host Bridge Structure
+> (CHBS) ACPI table that identifies its capabilities. CHBS tables can be
+> two types: RCRB and CHBCR.
+
+Is there a spec reference for this?
+While you're spelling things out, please expand RCRB and CHBCR
+
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> If a Host Bridge is attached to a device that is operating in Restricted
+> CXL Device Mode (RCD), BIOS publishes an RCRB with the base address of
+> registers that describe its capabilities.
+> 
+> However, the new (CXL 2.0+) Component registers (e.g., Extended Security
+> Capability), can only be accessed by means of a base address published
+> with a CHBCR.
+> 
+> An algorithm to locate a CHBCR associated with an RCRB would be too
+> invasive to land without some concrete motivation.
+> 
+> Therefore, just print a message to inform of unsupported config.
+> 
+
+
+Were users seeing this and confused by this silent failure?
+What did it look like before?
+
+
+> Count how many different CHBS "Version" types are detected by
+> cxl_get_chbs_iter(). Then make cxl_get_chbs() print a warning if that sum
+> is greater than 1.
+> 
+> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
 > ---
->  drivers/power/supply/qcom_battmgr.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/cxl/acpi.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qcom_battmgr.c
-> index ec163d1bcd18..46f36dcb185c 100644
-> --- a/drivers/power/supply/qcom_battmgr.c
-> +++ b/drivers/power/supply/qcom_battmgr.c
-> @@ -1308,6 +1308,7 @@ static void qcom_battmgr_pdr_notify(void *priv, int state)
->  static const struct of_device_id qcom_battmgr_of_variants[] = {
->  	{ .compatible = "qcom,sc8180x-pmic-glink", .data = (void *)QCOM_BATTMGR_SC8280XP },
->  	{ .compatible = "qcom,sc8280xp-pmic-glink", .data = (void *)QCOM_BATTMGR_SC8280XP },
-> +	{ .compatible = "qcom,x1e80100-pmic-glink", .data = (void *)QCOM_BATTMGR_SC8280XP },
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index 571069863c62..9e226a65a5ea 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -482,6 +482,7 @@ struct cxl_chbs_context {
+>  	unsigned long long uid;
+>  	resource_size_t base;
+>  	u32 cxl_version;
+> +	int count;
 
-Do we have a bindings patch somewhere? If these devices are compatible,
-what about using a fallback entry instead?
+Maybe s/count/nr_versions to be more explicit of what it counts.
 
->  	/* Unmatched devices falls back to QCOM_BATTMGR_SM8350 */
->  	{}
+-- Alison
 >  };
+>  
+snip
 > 
-> ---
-> base-commit: 2102cb0d050d34d50b9642a3a50861787527e922
-> change-id: 20240522-x1e80100-power-supply-qcom-battmgr-83442b7cce60
-> 
-> Best regards,
-> -- 
-> Abel Vesa <abel.vesa@linaro.org>
-> 
-
--- 
-With best wishes
-Dmitry
 
