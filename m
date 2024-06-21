@@ -1,318 +1,139 @@
-Return-Path: <linux-kernel+bounces-225342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112CB912F57
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:19:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3029C912F5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:19:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62668B23587
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616861C220E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C6817C231;
-	Fri, 21 Jun 2024 21:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B674917C226;
+	Fri, 21 Jun 2024 21:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2j0J7XY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KeNONThH"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819C882488;
-	Fri, 21 Jun 2024 21:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E8F770FB
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719004736; cv=none; b=XLxc8hf/fiEXdPzWiNgf939xviOEmWTQC4r07IiubiyqMp1GFvz+bqy9we1iACGmC6IrHUur7iSFISk51E1TsdfzNGxZrX/yj6lfZ7teDj0hC8OtisJ9GIN66sjhH4FyLRYcCzcHWVe+2UxM9w/+Gixrtwo7q5CR87daQKjAYys=
+	t=1719004768; cv=none; b=e/fqqI12gQqcQ44kXe2Cx16ZonBH0LEkm3tkjoOwSCjQz16TJMpQcKxkdJB4vRTpYbt8j43oSGvVMU5Pb8UC3xJZgPXpLWieqtCnE7YM+nIfvQWYHlDqwQRlu/30RhEz61eHZGpywKJGftcnW664yPOLlElJ0SIj3XY5/yXgVFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719004736; c=relaxed/simple;
-	bh=sdtBjsr+XiHzFFwJkoRXFeC0FXv2NWldnm0I6mueIIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WR5z5blMHzJtoxXcpisM5wY8e8yCZiOClBwBsipqyax4iP6z2LpVOGzazDL8mB5Jl0GLs/wFpGV41k0YENOPKd6Gem6cmSFxLB7EdlgZ1HSomhFffSSWm0IqM0j7QYwLkFLfdAY9jUNq3MLFLu2UH2XAHxP/LhDaOy5LAD/SDWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C2j0J7XY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7A1AC2BBFC;
-	Fri, 21 Jun 2024 21:18:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719004736;
-	bh=sdtBjsr+XiHzFFwJkoRXFeC0FXv2NWldnm0I6mueIIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C2j0J7XYnglGPEiEziaR5oJH2YSHKc+/x1SlIkP213F7Ne1JnvVZgZz9tuky+Aasy
-	 6MZy17hsxxBt4Ba+DYJAqIhtz2nV+WGetvSA99yPiipqs9cjZNMOxbYaCNY3YcsAG0
-	 HiAHxsFtoKEI2Y+6IAExVu2LiF4RYYYqYVlTUskJEAe4ESUa+1W9M2nNkrGtq8huU5
-	 KngZUgVIh3zUgw0al2QnLAYMhYAn5jMED5Q0x25hq0a8LUy6zpZhsowQHWaCrSTxOb
-	 cM3OxhmkgUB0Xa8k/tYmqM7nB8FdZQtkPANImh5zh6pzmGKxfm6QB5LJGB/XggKl0D
-	 ynjuqanOQhjkg==
-Date: Fri, 21 Jun 2024 14:18:55 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, tytso@mit.edu, dchinner@redhat.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.com,
-	chandan.babu@oracle.com, hch@lst.de, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-xfs@vger.kernel.org, catherine.hoang@oracle.com,
-	ritesh.list@gmail.com, mcgrof@kernel.org,
-	mikulas@artax.karlin.mff.cuni.cz, agruenba@redhat.com,
-	miklos@szeredi.hu, martin.petersen@oracle.com
-Subject: Re: [PATCH v4 02/22] iomap: Allow filesystems set IO block zeroing
- size
-Message-ID: <20240621211855.GY3058325@frogsfrogsfrogs>
-References: <20240607143919.2622319-1-john.g.garry@oracle.com>
- <20240607143919.2622319-3-john.g.garry@oracle.com>
- <20240612213235.GK2764752@frogsfrogsfrogs>
- <59255aa1-a769-437b-8fbb-71f53fd7920f@oracle.com>
+	s=arc-20240116; t=1719004768; c=relaxed/simple;
+	bh=8lr1mwe6kp+kuxQVqcuMU3hSRlGZ/owZFV26zQzK298=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V4TWZGyOLftw1VTYSR6Y9SmTKSLvIrox2K7N3lzfMpWVuNTyUHH6jwBb+bX8IVJgrmA9xnKp0vpfFagqJj1UmNxXn0ChaY0FNgl+7dmvunjrTgG1j3pZb3NkM/CoXaditb6Tf/k2a/UYNIHu93KZTjeKxnjNp4nzedHueT8Wxqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KeNONThH; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e0272692096so2287588276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1719004765; x=1719609565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uTh4L3BY4iwQCbofoLDyf8SOpU+yU/iGqx41nKNZbog=;
+        b=KeNONThHR5rPROY4WGN8GVZ2DfbLUel0xnJPzlL46IgAyJkA1rVEE5Bg/+aFYZm3y9
+         mmxKAt42c2ucaHb2WV5v7ADvb0RXZZ/sRJ9GkOeNMUJh2slY1lVGT+hh+7D5w86U+4Kq
+         Bovus/SOYTVddU2sC7FBZg80jSGq8+mZ/bYZh3aA6qwKfOaGcylvhLs1k0AGFP0+X8P7
+         bl1UXL/+8egdNX+7Z+Ir5kiWxNHVCJFphG40U91lehEwX4FQ9nzpBBtsp00jGL3j5U3J
+         B3oOysnh6hx9ztyZRwwJ+BKDmw90b8xo3hO+N8cScniI3/acY7pJWnbExncXlL+cWdQa
+         l6Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719004765; x=1719609565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uTh4L3BY4iwQCbofoLDyf8SOpU+yU/iGqx41nKNZbog=;
+        b=nY2K6igVoSzD/rupPQcYWq/FLsdFIQlxbQ3pUIDlyDIk7rSjq1lrPfvdQ2RjTx5Uz5
+         LuP7hnPCgz2C5JduDg81Z66EnzEkGOBYwn8B1ihrg1ChMUz0InYz3CqhusAJBgvWM6Hp
+         Hmov9CR6ywMnAyF1ZG79suXrm1ACqrkNKDzwrn71SQReYx+tJvOFYWZtXRCqQDz7Ay56
+         0wKOMAI3JHsEWrhZ64rtsVJpUx4d5EdSzuvdvm3l75rh/tVKC9eNb/5Ce9RriuD4GrbL
+         M2V+06uTjxf6B5tOx7AFqzoDTFypnDRBKk41p3GHZmXA/iJ9RienUOl3i06sLv85pMIu
+         GxiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqcfkmbqOKVYfsNR2SNRtFs8y3eXPfu47vab+waQf4NgqyO94EA/iuJQiKvFz8aSzduzLUF3JA5+U9YqQVzmxn+2K81fBMujUqlZ36
+X-Gm-Message-State: AOJu0Yz31XjUi0o/hzb3eFD2csdMBZgZYQqIaaXdLDNKQmJlIjqqRjYs
+	/GulAmvBrD7LYyReZG31IU/MaLLF0cU2idw7jhIY7fDoPcHU5ZqplWuxkcTpzSCBV1IKv9++7Ca
+	yCeQ44okzAVdtJsoQYbxyStRV8jnfEsaFUfji
+X-Google-Smtp-Source: AGHT+IEO3bU6Bkwuyqrkdth6ewbR+7IHhepu1IYoa73UuwczNOTdI9rtJb2IzNy/CVVXrmq3jsM8cCXNxJAJ4+XXpKo=
+X-Received: by 2002:a25:ad06:0:b0:dff:2ef1:e3d5 with SMTP id
+ 3f1490d57ef6-e02be227615mr8816096276.63.1719004765371; Fri, 21 Jun 2024
+ 14:19:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <59255aa1-a769-437b-8fbb-71f53fd7920f@oracle.com>
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+ <20231215221636.105680-2-casey@schaufler-ca.com> <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
+ <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
+ <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com> <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com>
+In-Reply-To: <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 21 Jun 2024 17:19:14 -0400
+Message-ID: <CAHC9VhRKmkAPgQRt0YXrF4hLXCp7RyCSkG0K9ZchJ6x4bKKhEw@mail.gmail.com>
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from security_audit_rule
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, mic@digikod.net, 
+	linux-integrity@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 11:31:35AM +0100, John Garry wrote:
-> On 12/06/2024 22:32, Darrick J. Wong wrote:
-> > > unsigned int fs_block_size = i_blocksize(inode), pad;
-> > > +	u64 io_block_size = iomap->io_block_size;
-> > I wonder, should iomap be nice and not require filesystems to set
-> > io_block_size themselves unless they really need it?
-> 
-> That's what I had in v3, like:
-> 
-> if (iomap->io_block_size)
-> 	io_block_size = iomap->io_block_size;
-> else
-> 	io_block_size = i_block_size(inode)
-> 
-> but it was suggested to change that (to like what I have here).
+On Fri, Jun 21, 2024 at 4:34=E2=80=AFPM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On 6/21/2024 10:23 PM, Mimi Zohar wrote:
+> > On Fri, 2024-06-21 at 15:07 -0400, Paul Moore wrote:
+> >> On Fri, Jun 21, 2024 at 12:50=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> >>> On Fri, Dec 15, 2023 at 5:16=E2=80=AFPM Casey Schaufler <casey@schauf=
+ler-ca.com> wrote:
+> >>>> Create real functions for the ima_filter_rule interfaces.
+> >>>> These replace #defines that obscure the reuse of audit
+> >>>> interfaces. The new functions are put in security.c because
+> >>>> they use security module registered hooks that we don't
+> >>>> want exported.
+> >>>>
+> >>>> Acked-by: Paul Moore <paul@paul-moore.com>
+> >>>> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> >>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >>>> To: Mimi Zohar <zohar@linux.ibm.com>
+> >>>> Cc: linux-integrity@vger.kernel.org
+> >>>> ---
+> >>>>   include/linux/security.h     | 24 ++++++++++++++++++++++++
+> >>>>   security/integrity/ima/ima.h | 26 --------------------------
+> >>>>   security/security.c          | 21 +++++++++++++++++++++
+> >>>>   3 files changed, 45 insertions(+), 26 deletions(-)
+> >>>
+> >>> Mimi, Roberto, are you both okay if I merge this into the lsm/dev
+> >>> branch?  The #define approach taken with the ima_filter_rule_XXX
+> >>> macros likely contributed to the recent problem where the build
+> >>> problem caused by the new gfp_t parameter was missed during review;
+> >>> I'd like to get this into an upstream tree independent of the larger
+> >>> stacking effort as I believe it has standalone value.
+> >>
+> >> ... and I just realized neither Mimi or Roberto were directly CC'd on
+> >> that last email, oops.  Fixed.
+> >
+> > Paul, I do see things posted on the linux-integrity mailing list pretty=
+ quickly.
+> > Unfortunately, something came up midday and I'm just seeing this now.  =
+As for
+> > Roberto, it's probably a time zone issue.
+>
+> Will review/check it first thing Monday morning.
 
-oh, ok.  Ignore that comment, then. :)
+Thanks Roberto, no rush.
 
-> > Anyone working on
-> > an iomap port while this patchset is in progress may or may not remember
-> > to add this bit if they get their port merged after atomicwrites is
-> > merged; and you might not remember to prevent the bitrot if the reverse
-> > order happens.
-> 
-> Sure, I get your point.
-> 
-> However, OTOH, if we check xfs_bmbt_to_iomap(), it does set all or close to
-> all members of struct iomap, so we are just continuing that trend, i.e. it
-> is the job of the FS callback to set all these members.
-> 
-> > 
-> > 	u64 io_block_size = iomap->io_block_size ?: i_blocksize(inode);
-> > 
-> > >   	loff_t length = iomap_length(iter);
-> > >   	loff_t pos = iter->pos;
-> > >   	blk_opf_t bio_opf;
-> > > @@ -287,6 +287,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > >   	int nr_pages, ret = 0;
-> > >   	size_t copied = 0;
-> > >   	size_t orig_count;
-> > > +	unsigned int pad;
-> > >   	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
-> > >   	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
-> > > @@ -355,7 +356,14 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > >   	if (need_zeroout) {
-> > >   		/* zero out from the start of the block to the write offset */
-> > > -		pad = pos & (fs_block_size - 1);
-> > > +		if (is_power_of_2(io_block_size)) {
-> > > +			pad = pos & (io_block_size - 1);
-> > > +		} else {
-> > > +			loff_t _pos = pos;
-> > > +
-> > > +			pad = do_div(_pos, io_block_size);
-> > > +		}
-> > Please don't opencode this twice.
-> > 
-> > static unsigned int offset_in_block(loff_t pos, u64 blocksize)
-> > {
-> > 	if (likely(is_power_of_2(blocksize)))
-> > 		return pos & (blocksize - 1);
-> > 	return do_div(pos, blocksize);
-> > }
-> 
-> ok, fine
-> 
-> > 
-> > 		pad = offset_in_block(pos, io_block_size);
-> > 		if (pad)
-> > 			...
-> > 
-> > Also, what happens if pos-pad points to a byte before the mapping?
-> 
-> It's the job of the FS to map in something aligned to io_block_size. Having
-> said that, I don't think we are doing that for XFS (which sets io_block_size
-> > i_block_size(inode)), so I need to check that.
-
-<nod>  You can only play with the mapping that the fs gave you.
-If xfs doesn't give you a big enough mapping, then that's a programming
-bug to WARN_ON_ONCE about and return EIO.
-
-I hadn't realized that the ->iomap_begin function is required to
-provide mappings that are aligned to io_block_size.
-
-> 
-> > 
-> > > +
-> > >   		if (pad)
-> > >   			iomap_dio_zero(iter, dio, pos - pad, pad);
-> > >   	}
-> > > @@ -429,9 +437,16 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
-> > >   	if (need_zeroout ||
-> > >   	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode))) {
-> > >   		/* zero out from the end of the write to the end of the block */
-> > > -		pad = pos & (fs_block_size - 1);
-> > > +		if (is_power_of_2(io_block_size)) {
-> > > +			pad = pos & (io_block_size - 1);
-> > > +		} else {
-> > > +			loff_t _pos = pos;
-> > > +
-> > > +			pad = do_div(_pos, io_block_size);
-> > > +		}
-> > > +
-> > >   		if (pad)
-> > > -			iomap_dio_zero(iter, dio, pos, fs_block_size - pad);
-> > > +			iomap_dio_zero(iter, dio, pos, io_block_size - pad);
-> > What if pos + io_block_size - pad points to a byte after the end of the
-> > mapping?
-> 
-> as above, we expect this to be mapped in (so ok to zero)
-> 
-> > 
-> > >   	}
-> > >   out:
-> > >   	/* Undo iter limitation to current extent */
-> > > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > > index 378342673925..ecb4cae88248 100644
-> > > --- a/fs/xfs/xfs_iomap.c
-> > > +++ b/fs/xfs/xfs_iomap.c
-> > > @@ -127,6 +127,7 @@ xfs_bmbt_to_iomap(
-> > >   	}
-> > >   	iomap->offset = XFS_FSB_TO_B(mp, imap->br_startoff);
-> > >   	iomap->length = XFS_FSB_TO_B(mp, imap->br_blockcount);
-> > > +	iomap->io_block_size = i_blocksize(VFS_I(ip));
-> > >   	if (mapping_flags & IOMAP_DAX)
-> > >   		iomap->dax_dev = target->bt_daxdev;
-> > >   	else
-> > > diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
-> > > index 3b103715acc9..bf2cc4bee309 100644
-> > > --- a/fs/zonefs/file.c
-> > > +++ b/fs/zonefs/file.c
-> > > @@ -50,6 +50,7 @@ static int zonefs_read_iomap_begin(struct inode *inode, loff_t offset,
-> > >   		iomap->addr = (z->z_sector << SECTOR_SHIFT) + iomap->offset;
-> > >   		iomap->length = isize - iomap->offset;
-> > >   	}
-> > > +	iomap->io_block_size = i_blocksize(inode);
-> > >   	mutex_unlock(&zi->i_truncate_mutex);
-> > >   	trace_zonefs_iomap_begin(inode, iomap);
-> > > @@ -99,6 +100,7 @@ static int zonefs_write_iomap_begin(struct inode *inode, loff_t offset,
-> > >   		iomap->type = IOMAP_MAPPED;
-> > >   		iomap->length = isize - iomap->offset;
-> > >   	}
-> > > +	iomap->io_block_size = i_blocksize(inode);
-> > >   	mutex_unlock(&zi->i_truncate_mutex);
-> > >   	trace_zonefs_iomap_begin(inode, iomap);
-> > > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> > > index 6fc1c858013d..d63a35b77907 100644
-> > > --- a/include/linux/iomap.h
-> > > +++ b/include/linux/iomap.h
-> > > @@ -103,6 +103,8 @@ struct iomap {
-> > >   	void			*private; /* filesystem private */
-> > >   	const struct iomap_folio_ops *folio_ops;
-> > >   	u64			validity_cookie; /* used with .iomap_valid() */
-> > > +	/* io block zeroing size, not necessarily a power-of-2  */
-> > size in bytes?
-> > 
-> > I'm not sure what "io block zeroing" means.
-> 
-> Naming is hard. Essentally we are trying to reuse the sub-fs block zeroing
-> code for sub-extent granule writes. More below.
-
-Yeah.  For sub-fsblock zeroing we issue (chained) bios to write zeroes
-to the sectors surrounding the part we're actually writing, then we're
-issuing the write itself, and finally the ioend converts the mapping to
-unwritten.
-
-For untorn writes we're doing the same thing, but now on the level of
-multiple fsblocks.  I guess this is all going to support a 
-
-
-<nod> "IO granularity" ?  For untorn writes I guess you want mappings
-that are aligned to a supported untorn write granularity; for bs > ps
-filesystems I guess the IO granularity is 
-
-> > What are you trying to
-> > accomplish here?  Let's say the fsblock size is 4k and the allocation
-> > unit (aka the atomic write size) is 16k.
-> 
-> ok, so I say here that the extent granule is 16k
-> 
-> > Userspace wants a direct write
-> > to file offset 8192-12287, and that space is unwritten:
-> > 
-> > uuuu
-> >    ^
-> > 
-> > Currently we'd just write the 4k and run the io completion handler, so
-> > the final state is:
-> > 
-> > uuWu
-> > 
-> > Instead, if the fs sets io_block_size to 16384, does this direct write
-> > now amplify into a full 16k write?
-> 
-> Yes, but only when the extent is newly allocated and we require zeroing.
-> 
-> > With the end result being:
-> > ZZWZ
-> 
-> Yes
-> 
-> > 
-> > only.... I don't see the unwritten areas being converted to written?
-> 
-> See xfs_iomap_write_unwritten() change in the next patch
-> 
-> > I guess for an atomic write you'd require the user to write 0-16383?
-> 
-> Not exactly
-> 
-> > 
-> > <still confused about why we need to do this, maybe i'll figure it out
-> > as I go along>
-> 
-> This zeroing is just really required for atomic writes. The purpose is to
-> zero the extent granule for any write within a newly allocated granule.
-> 
-> Consider we have uuWu, above. If the user then attempts to write the full
-> 16K as an atomic write, the iomap iter code would generate writes for sizes
-> 8k, 4k, and 4k, i.e. not a single 16K write. This is not acceptable. So the
-> idea is to zero the full extent granule when allocated, so we have ZZWZ
-> after the 4k write at offset 8192, above. As such, if we then attempt this
-> 16K atomic write, we get a single 16K BIO, i.e. there is no unwritten extent
-> conversion.
-
-Wait, are we issuing zeroing writes for 0-8191 and 12288-16383, then
-issuing a single atomic write for 0-16383?  That won't work, because all
-the bios attached to an iomap_dio are submitted and execute
-asynchronously.  I think you need ->iomap_begin to do XFS_BMAPI_ZERO
-allocations if the writes aren't aligned to the minimum untorn write
-granularity.
-
-> I am not sure if we should be doing this only for atomic writes inodes, or
-> also forcealign only or RT.
-
-I think it only applies to untorn writes because the default behavior
-everywhere is is that writes can tear.
-
---D
-
-> Thanks,
-> John
-> 
-> 
-> 
+--=20
+paul-moore.com
 
