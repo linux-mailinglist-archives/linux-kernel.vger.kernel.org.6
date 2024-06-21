@@ -1,124 +1,230 @@
-Return-Path: <linux-kernel+bounces-223818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E469118C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12EBF9118C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086BD1C225EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B601C209F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19D184E0A;
-	Fri, 21 Jun 2024 02:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E928F84E0D;
+	Fri, 21 Jun 2024 02:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gpFzaOJb"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R4Y8ZR/i"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5494D84D37;
-	Fri, 21 Jun 2024 02:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC6AB65D;
+	Fri, 21 Jun 2024 02:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718937338; cv=none; b=ANetWwDXuelLJf84Lh/8OgF3eb2HkePv6SIIH5DMAv7Ulccf9fPL9p9Myg0UeCeK3EK3YYmPGZwxNU8e6BLXnHjx7zc0zshk956CJ5JG2BXlvlZnhQjfYa0MKjDPTBrsB43f3AeYRArwzwjDNTlGOmoDt8wNma7YWBDwJyyXUWU=
+	t=1718937314; cv=none; b=V4dGyZsVf1QAHd0zG72yqkHoy+tZO7T+Hiw1saMAkG9aPPNY+AxjR9bZZni37OjtY46CQmWZvX0ESf2WmUMoCGN6auYo6P5D/GEEdE6VyE/YDxfRVMVFPFmLobK+TPgAB/2YdUHjg/Y3TXv4QeRMP0g4HsnclBydHcTIdxB49/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718937338; c=relaxed/simple;
-	bh=cFrj54EHqVH+PxtlDbxJQZRdDgSVfzfm3iOshhgQvNI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sfMo2HTZlQTgTFkB/JdLLfT2ppmvKKIgNNtLMwcr1YB1BWG6hkNfwRFGtFeZEjQU/nf3/ex34nR0aH9jL2IkM4BbG+L8FM884p+66wqdm4hmPB51NjztE9YNSKDv1FQMHWw2WovhUsnNW+V1JiDArpuLKPdWqS3Lb6eFN4tUHss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gpFzaOJb; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1718937314; c=relaxed/simple;
+	bh=w8HpJs4mPUMmNvptnNHOsaZh4VS8SUO/0nFuF/PdTAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=haNBhfv45T+Vz7+xaUOc6cdq+n1d2IaHh+epV23LOqukrQc2ng+zmV1WoXDYA4Rb2PlhC/JFt5BRqZgNdkFhs0p4vr9AZ8OssBrb90LNwQwydYKAq0fq9lVngEXEDrLaDBpcuDgP8KVBwZz2Hvw91//m/+N4DzN0caBWblIwZLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R4Y8ZR/i; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718937336; x=1750473336;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=cFrj54EHqVH+PxtlDbxJQZRdDgSVfzfm3iOshhgQvNI=;
-  b=gpFzaOJbGIkOmnfrV+dui7cluRQbgaXzavfbrRtP0Zlj4w8GRda2baUf
-   z9Oe3uWs4+SEGmyrSr1raNba8/23lfORdATjLnLY/nuaDhh0Tm/1vGAFH
-   5RcpCgnBWmMh4nXyeB8664ZoONPpDS488QULuBZ+dmrBmYWmpkIyOks15
-   cMiELZg8WXLMaINExDNMCjTpXFLXlPyqImR8KkiAIsVdduo0AW8VoZRx4
-   QQO/bnl1UJHvMNqqw8oJS8U/MLCClxM4QO8rZdYXySNUlWMyq7UOTTx++
-   DusxcS5nw3/xYju+8NJYMeyo5dO6EUnJBqC1G0u7wLGgZ+XV76SocStrt
-   w==;
-X-CSE-ConnectionGUID: q53tSpfXShy3s1rUYBQODA==
-X-CSE-MsgGUID: 0KO75eV/SSqUi7XsWQ3PtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="16098512"
+  t=1718937312; x=1750473312;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=w8HpJs4mPUMmNvptnNHOsaZh4VS8SUO/0nFuF/PdTAw=;
+  b=R4Y8ZR/ilL1qw/25u7lFtpzbNq3ywdd4CwTL/Q369G1x2jeSrHNzAFt5
+   y1BLT0g5za6ga8QDVd20RZHCSvwKfVDDGq0hnXjFddQwFwbnhfoD3dwsr
+   BK1iGKZOLbSsXMK1AbqzHKvrtO/AYHpOsAFFN+dHj+pmkePZBhz7ROx71
+   XfPApoOP/Nc/OWdfwgW3fZOlmzXYKdGMPnfU+bDcC1T/KlR8OUSM2Wn7Y
+   vWa3ESV19p7eEXh2KpTfaZELHUV2jMolEpQrZB7D1TXEfhyDkHiOnqRZC
+   ZLXgG3RXslgfAXqo5KUSDnTfNONpYLTc6ul/uYxs+8I7NKtAlGR/JZQGo
+   A==;
+X-CSE-ConnectionGUID: hJ3cHKU9T7W/0zkNNVYkFg==
+X-CSE-MsgGUID: SjzrjoSUSAyhqe0qQEiAwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="16098470"
 X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="16098512"
+   d="scan'208";a="16098470"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 19:35:36 -0700
-X-CSE-ConnectionGUID: JQ6mUdRcRLC0P+eh/BlGEA==
-X-CSE-MsgGUID: 4Dt0LsHsSR28BkTekb6V7Q==
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 19:35:12 -0700
+X-CSE-ConnectionGUID: dpSaqV5vT52yXRHFp4Guhw==
+X-CSE-MsgGUID: bDz7oTLlQ6mMkgM0qQtcJg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="42526110"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 19:35:32 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,  Barry Song <21cnbao@gmail.com>,
-  akpm@linux-foundation.org,  shuah@kernel.org,  linux-mm@kvack.org,
-  chrisl@kernel.org,  hughd@google.com,  kaleshsingh@google.com,
-  kasong@tencent.com,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  Barry Song <v-songbaohua@oppo.com>,
- Philip Li <philip.li@intel.com>
-Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
- entry allocation for thp_swapout
-In-Reply-To: <d0b20f47-384d-49f1-8449-0da6da11089c@redhat.com> (David
-	Hildenbrand's message of "Thu, 20 Jun 2024 13:34:02 +0200")
-References: <20240620002648.75204-1-21cnbao@gmail.com>
-	<f3c18806-34ac-41d3-8c79-d7dd6504547e@arm.com>
-	<d0b20f47-384d-49f1-8449-0da6da11089c@redhat.com>
-Date: Fri, 21 Jun 2024 10:33:41 +0800
-Message-ID: <87sex710u2.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+   d="scan'208";a="42526012"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.127]) ([10.124.245.127])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 19:35:08 -0700
+Message-ID: <4b57f565-25b0-4b97-ac78-4913a8b1d225@linux.intel.com>
+Date: Fri, 21 Jun 2024 10:35:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] KVM: x86/pmu: Define KVM_PMC_MAX_GENERIC for platform
+ independence
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+ Mingwei Zhang <mizhang@google.com>, Xiong Zhang <xiong.y.zhang@intel.com>,
+ Zhenyu Wang <zhenyuw@linux.intel.com>, Like Xu <like.xu.linux@gmail.com>,
+ Jinrong Liang <cloudliang@tencent.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240619182128.4131355-1-dapeng1.mi@linux.intel.com>
+ <20240619182128.4131355-2-dapeng1.mi@linux.intel.com>
+ <ZnRV6XrKkVwZB2TN@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <ZnRV6XrKkVwZB2TN@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-David Hildenbrand <david@redhat.com> writes:
 
-> On 20.06.24 11:04, Ryan Roberts wrote:
->> On 20/06/2024 01:26, Barry Song wrote:
->>> From: Barry Song <v-songbaohua@oppo.com>
->>>
->>> Both Ryan and Chris have been utilizing the small test program to aid
->>> in debugging and identifying issues with swap entry allocation. While
->>> a real or intricate workload might be more suitable for assessing the
->>> correctness and effectiveness of the swap allocation policy, a small
->>> test program presents a simpler means of understanding the problem and
->>> initially verifying the improvements being made.
->>>
->>> Let's endeavor to integrate it into the self-test suite. Although it
->>> presently only accommodates 64KB and 4KB, I'm optimistic that we can
->>> expand its capabilities to support multiple sizes and simulate more
->>> complex systems in the future as required.
->> I'll try to summarize the thread with Huang Ying by suggesting this
->> test program
->> is "neccessary but not sufficient" to exhaustively test the mTHP swap-out path.
->> I've certainly found it useful and think it would be a valuable addition to the
->> tree.
->> That said, I'm not convinced it is a selftest; IMO a selftest should
->> provide a
->> clear pass/fail result against some criteria and must be able to be run
->> automatically by (e.g.) a CI system.
+On 6/21/2024 12:16 AM, Sean Christopherson wrote:
+> On Thu, Jun 20, 2024, Dapeng Mi wrote:
+>> The existing macro, KVM_INTEL_PMC_MAX_GENERIC, ambiguously represents the
+>> maximum supported General Purpose (GP) counter number for both Intel and
+>> AMD platforms. This could lead to issues if AMD begins to support more GP
+>> counters than Intel.
+>>
+>> To resolve this, a new platform-independent macro, KVM_PMC_MAX_GENERIC,
+>> is introduced to represent the maximum GP counter number across all x86
+>> platforms.
+>>
+>> No logic changes are introduced in this patch.
+>>
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> ---
+>>  arch/x86/include/asm/kvm_host.h | 9 +++++----
+>>  arch/x86/kvm/svm/pmu.c          | 2 +-
+>>  arch/x86/kvm/vmx/pmu_intel.c    | 2 ++
+>>  3 files changed, 8 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>> index 57440bda4dc4..18137be6504a 100644
+>> --- a/arch/x86/include/asm/kvm_host.h
+>> +++ b/arch/x86/include/asm/kvm_host.h
+>> @@ -534,11 +534,12 @@ struct kvm_pmc {
+>>  
+>>  /* More counters may conflict with other existing Architectural MSRs */
+>>  #define KVM_INTEL_PMC_MAX_GENERIC	8
+>> -#define MSR_ARCH_PERFMON_PERFCTR_MAX	(MSR_ARCH_PERFMON_PERFCTR0 + KVM_INTEL_PMC_MAX_GENERIC - 1)
+>> -#define MSR_ARCH_PERFMON_EVENTSEL_MAX	(MSR_ARCH_PERFMON_EVENTSEL0 + KVM_INTEL_PMC_MAX_GENERIC - 1)
+>> +#define KVM_AMD_PMC_MAX_GENERIC	6
+>> +#define KVM_PMC_MAX_GENERIC		KVM_INTEL_PMC_MAX_GENERIC
+> Since we're changing the macro, maybe take the opportunity to use a better name?
+> E.g. KVM_MAX_NR_GP_COUNTERS?  And then in a follow-up patch, give fixed counters
+> the same treatment, e.g. KVM_MAX_NR_FIXED_COUNTERS.  Or maybe KVM_MAX_NR_GP_PMCS
+> and KVM_MAX_NR_FIXED_PMCS?
+
+Yeah, would change to KVM_MAX_NR_GP_COUNTERS and KVM_MAX_NR_FIXED_COUNTERS
+in next version.
+
+
 >
-> Likely we should then consider moving other such performance-related
-> thingies out of the selftests?
+>> +#define MSR_ARCH_PERFMON_PERFCTR_MAX	(MSR_ARCH_PERFMON_PERFCTR0 + KVM_PMC_MAX_GENERIC - 1)
+>> +#define MSR_ARCH_PERFMON_EVENTSEL_MAX	(MSR_ARCH_PERFMON_EVENTSEL0 + KVM_PMC_MAX_GENERIC - 1)
+> And I'm very, very tempted to say we should simply delete these two, along with
+> MSR_ARCH_PERFMON_FIXED_CTR_MAX, and just open code the "end" MSR in the one user.
+> Especially since "KVM" doesn't appear anyone in the name, i.e. because the names
+> misrepresent KVM's semi-arbitrary max as the *architectural* max.
 
-I think that it's good to distinguish between functionality and
-performance tests.  For example, 0-day test system will use virtual
-machines to do some functionality tests to improve efficiency.  But it's
-not good to run performance tests in such kind of virtual machines.
+Agree. MSR_ARCH_PERFMON_PERFCTR_MAX indeed brings some misleading which
+make users think it's a HW's limitation instead of KVM's limitation.
 
---
-Best Regards,
-Huang, Ying
+
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 6ad19d913d31..547dfe40d017 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -7432,17 +7432,20 @@ static void kvm_probe_msr_to_save(u32 msr_index)
+>                      intel_pt_validate_hw_cap(PT_CAP_num_address_ranges) * 2))
+>                         return;
+>                 break;
+> -       case MSR_ARCH_PERFMON_PERFCTR0 ... MSR_ARCH_PERFMON_PERFCTR_MAX:
+> +       case MSR_ARCH_PERFMON_PERFCTR0 ...
+> +            MSR_ARCH_PERFMON_PERFCTR0 + KVM_MAX_NR_GP_COUNTERS - 1:
+>                 if (msr_index - MSR_ARCH_PERFMON_PERFCTR0 >=
+>                     kvm_pmu_cap.num_counters_gp)
+>                         return;
+>                 break;
+> -       case MSR_ARCH_PERFMON_EVENTSEL0 ... MSR_ARCH_PERFMON_EVENTSEL_MAX:
+> +       case MSR_ARCH_PERFMON_EVENTSEL0 ...
+> +            MSR_ARCH_PERFMON_EVENTSEL0 + KVM_MAX_NR_GP_COUNTERS - 1:
+>                 if (msr_index - MSR_ARCH_PERFMON_EVENTSEL0 >=
+>                     kvm_pmu_cap.num_counters_gp)
+>                         return;
+>                 break;
+> -       case MSR_ARCH_PERFMON_FIXED_CTR0 ... MSR_ARCH_PERFMON_FIXED_CTR_MAX:
+> +       case MSR_ARCH_PERFMON_FIXED_CTR0 ...
+> +            MSR_ARCH_PERFMON_FIXED_CTR0 + KVM_MAR_NR_FIXED_COUNTERS - 1:
+>                 if (msr_index - MSR_ARCH_PERFMON_FIXED_CTR0 >=
+>                     kvm_pmu_cap.num_counters_fixed)
+>                         return;
+
+Thanks.
+
+
+>
+>>  #define KVM_PMC_MAX_FIXED	3
+>>  #define MSR_ARCH_PERFMON_FIXED_CTR_MAX	(MSR_ARCH_PERFMON_FIXED_CTR0 + KVM_PMC_MAX_FIXED - 1)
+>> -#define KVM_AMD_PMC_MAX_GENERIC	6
+>>  
+>>  struct kvm_pmu {
+>>  	u8 version;
+>> @@ -554,7 +555,7 @@ struct kvm_pmu {
+>>  	u64 global_status_rsvd;
+>>  	u64 reserved_bits;
+>>  	u64 raw_event_mask;
+>> -	struct kvm_pmc gp_counters[KVM_INTEL_PMC_MAX_GENERIC];
+>> +	struct kvm_pmc gp_counters[KVM_PMC_MAX_GENERIC];
+>>  	struct kvm_pmc fixed_counters[KVM_PMC_MAX_FIXED];
+>>  
+>>  	/*
+>> diff --git a/arch/x86/kvm/svm/pmu.c b/arch/x86/kvm/svm/pmu.c
+>> index 6e908bdc3310..2fca247798eb 100644
+>> --- a/arch/x86/kvm/svm/pmu.c
+>> +++ b/arch/x86/kvm/svm/pmu.c
+>> @@ -218,7 +218,7 @@ static void amd_pmu_init(struct kvm_vcpu *vcpu)
+>>  	int i;
+>>  
+>>  	BUILD_BUG_ON(KVM_AMD_PMC_MAX_GENERIC > AMD64_NUM_COUNTERS_CORE);
+>> -	BUILD_BUG_ON(KVM_AMD_PMC_MAX_GENERIC > INTEL_PMC_MAX_GENERIC);
+>> +	BUILD_BUG_ON(KVM_AMD_PMC_MAX_GENERIC > KVM_PMC_MAX_GENERIC);
+>>  
+>>  	for (i = 0; i < KVM_AMD_PMC_MAX_GENERIC ; i++) {
+>>  		pmu->gp_counters[i].type = KVM_PMC_GP;
+>> diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
+>> index fb5cbd6cbeff..a4b0bee04596 100644
+>> --- a/arch/x86/kvm/vmx/pmu_intel.c
+>> +++ b/arch/x86/kvm/vmx/pmu_intel.c
+>> @@ -570,6 +570,8 @@ static void intel_pmu_init(struct kvm_vcpu *vcpu)
+>>  	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+>>  	struct lbr_desc *lbr_desc = vcpu_to_lbr_desc(vcpu);
+>>  
+>> +	BUILD_BUG_ON(KVM_INTEL_PMC_MAX_GENERIC > KVM_PMC_MAX_GENERIC);
+> Rather than BUILD_BUG_ON() for both Intel and AMD, can't we just do?
+>
+> #define KVM_MAX_NR_GP_COUNTERS max(KVM_INTEL_PMC_MAX_GENERIC, KVM_AMD_PMC_MAX_GENERIC)
+
+Actually I tried this, but compiler would report the below error since
+KVM_PMC_MAX_GENERIC would used to define the array
+gp_counters[KVM_PMC_MAX_GENERIC];
+
+./include/linux/minmax.h:48:50: error: braced-group within expression
+allowed only inside a function
+
+>
+>> +
+>>  	for (i = 0; i < KVM_INTEL_PMC_MAX_GENERIC; i++) {
+>>  		pmu->gp_counters[i].type = KVM_PMC_GP;
+>>  		pmu->gp_counters[i].vcpu = vcpu;
+>> -- 
+>> 2.34.1
+>>
 
