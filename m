@@ -1,137 +1,85 @@
-Return-Path: <linux-kernel+bounces-224452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7587D91229E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:41:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0219091229F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3E051C2397E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B076C28AFCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E1D172BD9;
-	Fri, 21 Jun 2024 10:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWZ0QKGN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1E4172761;
-	Fri, 21 Jun 2024 10:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20A9171E4B;
+	Fri, 21 Jun 2024 10:41:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33573171679
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718966443; cv=none; b=NwZVYlRjYsgzC4uNEHiI6fxg7m/jU648STWRJ+d7IV/YoomuE596PGOj9dZz4YAGsahImFxSMdx6dIzbBerZnGPApZzilfzTKukta2z/InFp7vOLjXMSL1fgAPE8mjvrMirM8Pgo1hNUjuHMgrTwfBHN7gxrjq3rMIxhRQdawsk=
+	t=1718966465; cv=none; b=bjJg+GQtOJUIXljF/CEy8dfh4FJWAFwHTplkNkpcfDlacpd/eGBdSRAilFpUCbT9FC3mp5ubfph/kt0yKJOJKkvZmqLzlEIwF0MzcQuJYciysaPWNL1GUDCvbcKedR3G2mk6DQNYnJNyzUiGqpwsEMurKFWbehbz3OQhUFmkt/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718966443; c=relaxed/simple;
-	bh=lideyFmcopJya8C9kB3HrrkDsw81oL4TPuWa8cb63zI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mn2d2KgRmNcmLV3bKtJsDVsqIrEswEmMLhslcxUZM2ztsCik50Rgx6UkTJO47vklucVsrRQjxFfMRcdw7Ya+dYlXXlTcI5K1Z2I5DzHX7gxJ1b68dXO4ljb8O5NGhHAmfPDtPmqlHGtPlqaEYyYExwTOprjyyt9FFiiOltCjjS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWZ0QKGN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D651C2BBFC;
-	Fri, 21 Jun 2024 10:40:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718966443;
-	bh=lideyFmcopJya8C9kB3HrrkDsw81oL4TPuWa8cb63zI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uWZ0QKGNhxHochU+Yna7EM+hevPMT70jXT2bcbf+tQUpBzMbo/H2cgBjwotvbFV0k
-	 sDD5x8IcPHBQqLF0m05n0OCLD8vedPVQCcqoP6fZ4mXtuNZ9CnvFF+0SQkFa268nCQ
-	 9eeGRRBFkTr9J8uQDWljmmviEgNF+pn7EkFGAPzcrohWqgO2jFfYYx66wTyeI1t3cl
-	 M4QhehJ/6mzHthokn3kaLB5+mmK/vVb2gXWnilLB099ZEStflVFYRuqGcB0tvhMXx3
-	 HYih5bDRwzLD2jRrw55/ZtvUHKH2TCPPssVcOOlhtO8z4cwN5yTWmWIvrr+2RpIFhU
-	 bro75jQF73sWg==
-Date: Fri, 21 Jun 2024 11:40:38 +0100
-From: Lee Jones <lee@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Pavel Machek <pavel@ucw.cz>, Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>, linux-leds@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: cros_ec: Implement review comments from Lee
-Message-ID: <20240621104038.GL1318296@google.com>
-References: <20240614-cros_ec-led-review-v1-1-946f2549fac2@weissschuh.net>
- <20240620093114.GH3029315@google.com>
- <5708f5c6-65fe-4bf9-8d08-6dbb77e21a9d@t-8ch.de>
- <20240620122741.GL3029315@google.com>
- <478e23df-800a-40c6-b972-2af2d535b1ae@t-8ch.de>
- <20240620171511.GX3029315@google.com>
- <3a164ee6-79f7-48ea-bdd2-4b8074920eda@t-8ch.de>
+	s=arc-20240116; t=1718966465; c=relaxed/simple;
+	bh=jzgGmfqFlVTZEJS9ofU/g3n66CmBRlAAwZHE7eoCQoI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oqynJFceD2PnADH5kQ+bV3A/CP1xkiz2xiahdVmGf/jxPL9U6LzEhw93v/IxLErZn6/B+qr3XJo27yWUBYUUqGccmhXNIScwPwXMXoYT7zqgCiPz4jh8oew7nYvLzJqTktioNylEtMKAghUBIb+l3B312af+SwLG2YoN7ByU/JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C220DA7;
+	Fri, 21 Jun 2024 03:41:27 -0700 (PDT)
+Received: from [192.168.178.110] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30FD73F6A8;
+	Fri, 21 Jun 2024 03:41:00 -0700 (PDT)
+Message-ID: <8bfa0628-bd74-47c3-ba3c-4724acbfd717@arm.com>
+Date: Fri, 21 Jun 2024 12:40:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding
+ actual_cpu_capacity
+To: Xuewen Yan <xuewen.yan94@gmail.com>, Qais Yousef <qyousef@layalina.io>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org,
+ mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ bristot@redhat.com, vschneid@redhat.com, vincent.donnefort@arm.com,
+ ke.wang@unisoc.com, linux-kernel@vger.kernel.org, christian.loehle@arm.com
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com>
+ <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
+ <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
+ <20240616222003.agcz5osb2nkli75h@airbuntu>
+ <CAB8ipk-ejDKQTr8nAmK9MkhL2Ra=0J==p3Q+U-4K18G6MeJhQw@mail.gmail.com>
+ <20240617110348.pyofhzekzoqda7fo@airbuntu>
+ <20240618145851.je4a7cu4ltrt3qxa@airbuntu>
+ <CAB8ipk_LXzkkGzT1SS6U8i4nW6j9coxeuwn6vuUFusCQcFM8zw@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <CAB8ipk_LXzkkGzT1SS6U8i4nW6j9coxeuwn6vuUFusCQcFM8zw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3a164ee6-79f7-48ea-bdd2-4b8074920eda@t-8ch.de>
 
-On Thu, 20 Jun 2024, Thomas Weißschuh wrote:
+On 19/06/2024 04:46, Xuewen Yan wrote:
+> On Tue, Jun 18, 2024 at 10:58 PM Qais Yousef <qyousef@layalina.io> wrote:
+>>
+>> On 06/17/24 12:03, Qais Yousef wrote:
 
-> On 2024-06-20 18:15:11+0000, Lee Jones wrote:
-> > On Thu, 20 Jun 2024, Thomas Weißschuh wrote:
-> > 
-> > > On 2024-06-20 13:27:41+0000, Lee Jones wrote:
-> > > > On Thu, 20 Jun 2024, Thomas Weißschuh wrote:
-> > > > 
-> > > > > Hi Lee,
-> > > > > 
-> > > > > On 2024-06-20 10:31:14+0000, Lee Jones wrote:
-> > > > > > Definitely not seen a commit message like that before
-> > > > > 
-> > > > > I assumed that this patch would be squashed into the original commit.
-> > > > > 
-> > > > > My question in which form you wanted the changes should have included
-> > > > > "incremental series".
-> > > > 
-> > > > Incremental means on top.
-> > > > 
-> > > > A lot of maintainers don't support history re-writes, but I've reserved
-> > > > that right since forever, so I can squash it if you like.
-> > > 
-> > > If it is already visible somewhere and a squash would inconvenience
-> > > anybody I'll resend it.
-> > > But if not I'd be happy about a squash.
-> > > 
-> > > (I couldn't and still can't find the public tree where driver is in)
-> > 
-> > Odd, neither can I!  Okay applied the whole set again, squashed the
-> > patch and submitted for testing.
-> 
-> Thanks!
-> 
-> FYI:
-> 
-> The Ack you asked for in the cros_kbd_led_backlight series [0],
-> which should go through the LED tree (and has a MFD component),
-> was given by Tzung-Bi in [1].
-> 
-> (In case it fell through the cracks. If not, please disregard)
+[...]
 
-Now I'm really confused.
+> Sorry for the late reply...
+> In our own tree, we removed the check for rd overutil in feec(), so
+> the above case often occurs.
 
-This patch not for that set though, right?
+How to you schedule hackbench on this thing then? Via EAS or do you just
+exclude this kind of workload?
 
-You're talking about:
+> And now it seems that on the mainline, uclamp_max is the only way to
+> override this.
 
- mfd: cros_ec: Register keyboard backlight subdevice
- platform/chrome: cros_kbd_led_backlight: allow binding through MFD     <-- this one
- leds: class: Add flag to avoid automatic renaming of LED devices
- leds: class: Warn about name collisions earlier
+[...]
 
-But this fix-up patch belongs in:
-
- mfd: cros_ec: Register LED subdevice
- leds: Add ChromeOS EC driver                                           <-- this one
- leds: core: Unexport led_colors[] array
- leds: multicolor: Use led_get_color_name() function
- leds: core: Introduce led_get_color_name() function
-
-Right?
-
-> [0] https://lore.kernel.org/lkml/20240526-cros_ec-kbd-led-framework-v3-0-ee577415a521@weissschuh.net/
-> [1] https://lore.kernel.org/lkml/ZmutW6vh7pD1HLf5@google.com/
-
--- 
-Lee Jones [李琼斯]
 
