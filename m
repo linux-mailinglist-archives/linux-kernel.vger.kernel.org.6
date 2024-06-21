@@ -1,125 +1,150 @@
-Return-Path: <linux-kernel+bounces-224252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E11A911F73
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:54:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C61911F7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1766B1F25C39
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:54:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43B341C2108E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A670316DEA5;
-	Fri, 21 Jun 2024 08:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E3416DC19;
+	Fri, 21 Jun 2024 08:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="GgpT32tD"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Aqic3j4b"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3696116D9B3;
-	Fri, 21 Jun 2024 08:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E0C16D9BC
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718960054; cv=none; b=Ncmk9yBpbw0hxUxl/2XvK1z1JO24BrDyMZu+e+ofqQyvhdARxUl1hUEa3wyCZxmx5XsHAW9sAeT7CEb8o+nttVpmDnxx3TVK6mhZ7NWPVCGiHgZyZdljis+gayWD6e+HamWj7Jzw9EEDy7ZoHuhIKCniQdTna4gU2AGOCOT9odc=
+	t=1718960091; cv=none; b=i/1Td09CsFj9HilKqoELsaOTqA3qJU9YOqxqdE0hMUYONgZ9PYnRIkUxa9QVCw9EaNFacRDNennWkDqPWMBPg2Ta9oU3Zr8b93PyiSHor2HihdjATYg6khf8yRnuAuLHNWBQyuo2RcxC9kzot4Qm4kKbYwbOKApY5Xz5Uy3PRUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718960054; c=relaxed/simple;
-	bh=pyFA7AU/2GhI7wvm0cKEdUMzUTfxvRrJTX5svXYqMYA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=on1QVVvd72cxPQLNE6UjwSP8QAKRDhpmD6ohfV1o7sg9X+Bpudrg5L5v9RDfPc1aBI9g4lRMgxvJzsr0Gm4aIz7LCQWW/crSy+6kL33NiWUpcG0ZFyqbGl8iN/b2lzKz18/0NiMbBy6XS14KD4Z8Y1Z3/2anwlFzgMomAgqaELw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=GgpT32tD; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=6ux19xNP9Z9FPgP5f+00+S+qPS6imbskeOogbDqAbYA=; t=1718960052; x=1719564852; 
-	b=GgpT32tDYKk0Yi1M1RpDpWXoAIPXQq59InsRWpEqpmxvxsnXQvZ9i9OW+qKxbDxoKWZyB7KvLdK
-	t7qnRRF24IpHGSfmPiSKkbFq5SC4II24v6wjgLN43u0rvJH62moiOGoYZGWoGO7cRqEAVoKmk/ymo
-	kiProdosDLxoa8b/LoBwcJSx9S6S/q575JwKWNFUZdJXemoKaKOybhqt9jZ+XK+uGADtekYXkU4jW
-	2tAq8GxMRrBjuXbnPdbYsUZ22QQwlyRH0W7j62ZU9ngv2i6DyNAlgsibX9nCMxLN39vtX6qx5Emzl
-	njWfjx7upWXEql/eG2p2X6hOrz5Ef5JICasw==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1sKa25-000000020GB-1Me6; Fri, 21 Jun 2024 10:54:09 +0200
-Received: from p5b13a475.dip0.t-ipconnect.de ([91.19.164.117] helo=[192.168.178.20])
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1sKa25-00000001eAa-2Euu; Fri, 21 Jun 2024 10:54:09 +0200
-Message-ID: <3444b93ce46c7e7c156f912495e5c35ccf275549.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 07/15] parisc: use generic sys_fanotify_mark
- implementation
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Arnd Bergmann <arnd@arndb.de>, LEROY Christophe
- <christophe.leroy2@cs-soprasteria.com>, Helge Deller <deller@gmx.de>, Arnd
- Bergmann <arnd@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Rich Felker <dalias@libc.org>, Andreas Larsson <andreas@gaisler.com>, 
- guoren <guoren@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "H. Peter Anvin" <hpa@zytor.com>, "sparclinux@vger.kernel.org"
- <sparclinux@vger.kernel.org>,  "linux-s390@vger.kernel.org"
- <linux-s390@vger.kernel.org>, "linux-sh@vger.kernel.org"
- <linux-sh@vger.kernel.org>, "linux-csky@vger.kernel.org"
- <linux-csky@vger.kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-  Heiko Carstens <hca@linux.ibm.com>, "musl@lists.openwall.com"
- <musl@lists.openwall.com>, Nicholas Piggin <npiggin@gmail.com>, Alexander
- Viro <viro@zeniv.linux.org.uk>, LTP List <ltp@lists.linux.it>, Brian Cain
- <bcain@quicinc.com>, Christian Brauner <brauner@kernel.org>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Xi Ruoyao
- <libc-alpha@sourceware.org>, "linux-parisc@vger.kernel.org"
- <linux-parisc@vger.kernel.org>, "linux-mips@vger.kernel.org"
- <linux-mips@vger.kernel.org>, Adhemerval Zanella Netto
- <adhemerval.zanella@linaro.org>, "linux-hexagon@vger.kernel.org"
- <linux-hexagon@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
- <linuxppc-dev@lists.ozlabs.org>, "David S . Miller" <davem@davemloft.net>
-Date: Fri, 21 Jun 2024 10:54:08 +0200
-In-Reply-To: <1308b23a-d7c0-449e-becd-53c42114661e@app.fastmail.com>
-References: <20240620162316.3674955-1-arnd@kernel.org>
-	 <20240620162316.3674955-8-arnd@kernel.org>
-	 <e80809ba-ee81-47a5-9b08-54b11f118a78@gmx.de>
-	 <e22d7cd7-d247-4426-9506-a3a644ae03c4@cs-soprasteria.com>
-	 <1308b23a-d7c0-449e-becd-53c42114661e@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1718960091; c=relaxed/simple;
+	bh=C8ybsMTbYwXEy9pNJgGuUwtT7s6ItRLeMRTEkqLDyuI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R0YFf+aZRz1lVokPzIt8c277ce+1dGaNzChnyeDTYoqE42H0I7fKidDGs6uqbaTjLT9BlPAL8x+OiCvyjHzNWUTd9EXyFdk8ymuvPZlXqCOZZlWKc9I52b/ZrOq+7JpDJNx+zLd4ZHWLpC04x7dUGTxZPLuJ8P3Yjs3C5oq+xFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Aqic3j4b; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4ecf43f5537so904290e0c.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:54:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718960089; x=1719564889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CYX2FT4NFr8Qk3CdgyGwyy67UucRagXIxiXFznR5hco=;
+        b=Aqic3j4bVaav4Gg2qEB6BLOPTYtmvqa216ufW28qEzKQ6h2jTogR9NIfzi2Lt7kDUH
+         T9mheHRM93UtSRjWr3DN4s9rNmATc+NZiJ0BDI0cwYvdweHwCZZVErQT77/ZsABXiNhA
+         K71VIPKS5Ufbt4nzniweNBrZTq7Y7Sseh0SZm5zGZcYeM/96Ah7782Nu3nesOGB3vEvX
+         d0wj+GvRsvpYXm7eFpsq8te4sQ/S/N7o6b8DJ2fVYu2JJ5z3MVxZV14qSthOp1EGxbYJ
+         1OhkbicZ9tByuzlZH1Ok7ZzQ40/IT3zvi8hZ5N4BycOKHsPETCvyn/W5PdICiXvt4wMJ
+         IQ7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718960089; x=1719564889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CYX2FT4NFr8Qk3CdgyGwyy67UucRagXIxiXFznR5hco=;
+        b=SNjn14q9kRlZC13ToueV4phSJbmnjoenBx7a9EMbc/mRXoQZlBVX26WDVC00Y0twHI
+         qgUBXJddvBEsvzg7dYpUl3+YuW9WCyZ/BweWrDMHeUvyNvIPr14LYOrgL9Ru5iGtr1EC
+         RAQ1Q1KgyGxootfAm6blc+M5Y+Ux0WVz8/diN7CW+TuwpHeBoSgH1wC1pkpY/L8RZsCo
+         A9oLuprjMnatE9djvi04868UOfkRdDHUl27Hq5Gqh59xPUy4joU3CMQX9bfaE+4woBX6
+         m8ytFFqRaGq86fjWL/WIWRpjkELSlIiqP4sjdZ+5+UIDmqSmF6scKAhid494Xz/zfw6N
+         9S3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWvveofqqzxa4F8WeEHwajBrMjvVQf+mRwdfz6pmKczxQF+G/MMDjEsg+qscevfkqlAF/pzc6Eoy8BybI9SZUiONPsrJn7ycfHKB25e
+X-Gm-Message-State: AOJu0Yw2xajPw9QIjwGOXncSDUKTYqsU8i+0Fjf0YMn8v3DtgWUxN7/s
+	XWJEgS316KGg7SFT6DjUqrdIkW+LuAfrrJ6TsH+nkO0R/IjK1VLKM3zBbhCjFNEG0z9m6dnl8h6
+	hBR9ZFYeu49U0azmm/x5RATOj6xpbOPs/CHrh
+X-Google-Smtp-Source: AGHT+IE+4r9WRty/Arup00wvViToPFouwguOScRaXAgLBJYNMjH1J9pgCzwiTT3frpsC9/op0vu9j85DaYbfM+65eZo=
+X-Received: by 2002:a05:6122:3688:b0:4eb:e37:2d19 with SMTP id
+ 71dfb90a1353d-4ef1a9e5b96mr9551360e0c.1.1718960088716; Fri, 21 Jun 2024
+ 01:54:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com> <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+ <20240619115135.GE2494510@nvidia.com> <CA+EHjTz_=J+bDpqciaMnNja4uz1Njcpg5NVh_GW2tya-suA7kQ@mail.gmail.com>
+ <ZnRMn1ObU8TFrms3@google.com> <CA+EHjTxvOyCqWRMTS3mXHznQtAJzDJLgqdS0Er2GA9FGdxd1vA@mail.gmail.com>
+ <4c8b81a0-3a76-4802-875f-f26ff1844955@redhat.com>
+In-Reply-To: <4c8b81a0-3a76-4802-875f-f26ff1844955@redhat.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Fri, 21 Jun 2024 09:54:12 +0100
+Message-ID: <CA+EHjTzvjsc4DKsNFA6LVT44YR_1C5A2JhpVSPG=R9ottfu70A@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+To: David Hildenbrand <david@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>, Jason Gunthorpe <jgg@nvidia.com>, 
+	John Hubbard <jhubbard@nvidia.com>, Elliot Berman <quic_eberman@quicinc.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi David,
 
-On Fri, 2024-06-21 at 08:28 +0200, Arnd Bergmann wrote:
-> It's more likely to be related to the upward growing stack.
-> I checked the gcc sources and found that out of the 50 supported
-> architectures, ARGS_GROW_DOWNWARD is set on everything except
-> for gcn, stormy16 and  32-bit parisc. The other two are
-> little-endian though. STACK_GROWS_DOWNWARD in turn is set on
-> everything other than parisc (both 32-bit and 64-bit).
+On Fri, Jun 21, 2024 at 9:44=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> >> Again from that thread, one of most important aspects guest_memfd is t=
+hat VMAs
+> >> are not required.  Stating the obvious, lack of VMAs makes it really h=
+ard to drive
+> >> swap, reclaim, migration, etc. from code that fundamentally operates o=
+n VMAs.
+> >>
+> >>   : More broadly, no VMAs are required.  The lack of stage-1 page tabl=
+es are nice to
+> >>   : have; the lack of VMAs means that guest_memfd isn't playing second=
+ fiddle, e.g.
+> >>   : it's not subject to VMA protections, isn't restricted to host mapp=
+ing size, etc.
+> >>
+> >> [1] https://lore.kernel.org/all/Zfmpby6i3PfBEcCV@google.com
+> >> [2] https://lore.kernel.org/all/Zg3xF7dTtx6hbmZj@google.com
+> >
+> > I wonder if it might be more productive to also discuss this in one of
+> > the PUCKs, ahead of LPC, in addition to trying to go over this in LPC.
+>
+> I don't know in  which context you usually discuss that, but I could
+> propose that as a topic in the bi-weekly MM meeting.
+>
+> This would, of course, be focused on the bigger MM picture: how to mmap,
+> how how to support huge pages, interaction with page pinning, ... So
+> obviously more MM focused once we are in agreement that we want to
+> support shared memory in guest_memfd and how to make that work with core-=
+mm.
+>
+> Discussing if we want shared memory in guest_memfd might be betetr
+> suited for a different, more CC/KVM specific meeting (likely the "PUCKs"
+> mentioned here?).
 
-Wait a second! Does that mean that on 64-bit PA-RISC, the stack is
-actually growing downwards? If yes, that would be a strong argument
-for creating a 64-bit PA-RISC port in Debian and replacing the 32-bit
-port.
+Sorry, I should have given more context on what a PUCK* is :) It's a
+periodic (almost weekly) upstream call for KVM.
 
-Adrian
+[*] https://lore.kernel.org/all/20230512231026.799267-1-seanjc@google.com/
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+But yes, having a discussion in one of the mm meetings ahead of LPC
+would also be great. When do these meetings usually take place, to try
+to coordinate across timezones.
+
+Cheers,
+/fuad
+
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
