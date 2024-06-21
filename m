@@ -1,130 +1,123 @@
-Return-Path: <linux-kernel+bounces-224709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677FC9125EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:50:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73D09125F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AD951F22131
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:50:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139B61C2342B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361A515CD72;
-	Fri, 21 Jun 2024 12:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD14615F31D;
+	Fri, 21 Jun 2024 12:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="2/nYqkgF"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="LI5Fi8CI"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9448D15B975
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CCC14D45A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718973875; cv=none; b=qcDweypZTU0LuK2q0+96yYCf+n+blxDTOnEJpozCCict/ykxuqffQKNRnj82VlF9a0Yu3eAVjmIn3MF8TtageNNvah6lgJussiCpCCoB6vsSpDFgdbYFcwJ7CcZqQURTkDlLJRdmxc1Ukh1Fy1oF4AbfmxqDcwdb5sFof/5D/yA=
+	t=1718973951; cv=none; b=Ra118/fE2U0j+jj7lh6HyrFn1+U6Gej5v5HRzZQyf5qRshnhmP7105ASOGFLNUJ97XPP/JLuqyGcB1pchxq9Gcp3+5ofeO4n5Tz+TL+9Y1q9qTNj0DoH4csRuXKo3Sfykl7BT9WxWUqYK0//6SVON2aGkuB5T2xxR5kizbCjrQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718973875; c=relaxed/simple;
-	bh=5l08J6QwTAydc1Q035PbR16J+Enp8p+H6+DUEul73Uc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fY4dXmRzp9wSBM/6MZbtWwr7Mv/VifLoMzaXmQ9rYanJ8MV0NGgZDXfAJCHY1p/wWAgQeOQW9tpmy44WeaXnsOHYm7kF0yMhQRrQiVSumbWGV5HWNJ1h8VE+f5/6dw8RjY9hpE6HR1w9hrRgMQmqQWlSMZp4mXRxLJVLu9H/qR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=2/nYqkgF; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6f9a4f9923aso1057087a34.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:44:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1718973872; x=1719578672; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5l08J6QwTAydc1Q035PbR16J+Enp8p+H6+DUEul73Uc=;
-        b=2/nYqkgFh4BQX24EVE1GiO4QA5l4varwH8FB9cvXPIIdwe98n1tSYgA3wlx+UjAcOP
-         bXpOE8hgn+VVvYi0oDw6H3kW3c0/5CL3YPGx9bB/TNvpuJltFR/DCgtrMP6XwIYlLeTk
-         dEnuhX8skNCXatglG3kR9wUX9qiG44IgnVNqbRltj5gIwRA8oCI6xneka5XjZPqt+Gab
-         IeynXAaaRfMRChGOIBEZut1Vy0i/cil5+t9ahnzdhC5liwDkonxFkJWQ3K0JBPe/z+jp
-         PsFfPxPFqQOJw4N+gXp7LEulfX8/7V15sHvkKI63OAK+3cUOHDwM+Y2zOO44WDT/8TOH
-         AHpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718973872; x=1719578672;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5l08J6QwTAydc1Q035PbR16J+Enp8p+H6+DUEul73Uc=;
-        b=s0EgH3DEh5uVqnVjXpK65Kza5jQhSB2G3mtakXE6cXvJubLkpmL35vEDBXSLxTbb5V
-         8iQe/xMQReI9K1lUO9yQd49ZBDurFXqvoFwSS18oXzazVzu1Q5VJg5d191it0lx8kDUX
-         TrzXY2oUL3nMAijZ58ypeWiwa2eX/51lU5uPHZexQ9Xr9Hyj4KPSfi59eDZFthJOHQpZ
-         KLEM2EM2iJRfAJy0yLBpPTVkXPWhA5uqGnk4ZS2FifLIJugKHuZvrlGL7fiZQ6QvPQ5Q
-         uDo/X7ZZltbFhl5Rr4WEiVzlC6ZNKPMr2bjhE9dw4GKtWXALUDKujCvgs/nCGvmlAIMY
-         mzzA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Jtrm13o7Z0AvSGtpogE5qfX6oZm1cecMbggyXOFWW27ylkTJw2MR0wYUHjrr+j8jTkja+9e/13+pm8x15XuIbS65FjDvHyWWszY3
-X-Gm-Message-State: AOJu0YxVNm29OFstWfWGibKjkkHRs1atXl4xdKt4lrdeO/fB+d5n0tCD
-	r92pzDRPZEJFWBv1OsKArzQ5Pkt2leB1Xil08T0QU1wfa4On1VD52sRmYuIX+toiYbkUbxOrlwh
-	0aHUjsZ3jWFoFiZE6deE1KlpRGyIPm4wyqGWwiw==
-X-Google-Smtp-Source: AGHT+IEOZNlyLp+OxVrBD22Lk7qV9DoUmsFRWzsrduGbMG3NGbu8paAH4Nzg2EEG9ozpibJTiN4vqzTSJCMR3pLWBf8=
-X-Received: by 2002:a9d:76cd:0:b0:6f9:e6a5:dad2 with SMTP id
- 46e09a7af769-70074dc525emr9327837a34.17.1718973872714; Fri, 21 Jun 2024
- 05:44:32 -0700 (PDT)
+	s=arc-20240116; t=1718973951; c=relaxed/simple;
+	bh=6NwreloHsiV0gBn7RVmYZnNCuQDF7PlKbG//1DTYq1E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y5oRgCMZ6j6dNvguxgIxCx7McDCIMgYiA8LWrVHvW2Mjdooq1TNxSIg80Vj0Z9s2rKvVqQ3pNPHmd1oxTGq6dcF+w91VJ9I9JGtWr+00vo71UU5ST6TA4yX644VgTaoE+ihAcV4a3aqqI2ifkS8udffLPHNhsUHw2qbGT+PITdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=LI5Fi8CI; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=L8yrHVsxWDH2FoC1Mf/LumUyyPNxnkuSsKX0JVFnSLs=; b=LI5Fi8CIqHGk5NPzr8o6CPTndY
+	4Ozmj32DSyAwa/mCoz92cGmhYl9hH5sQPh/+CFiFZY9xvHFv0mM6HhTFNjlqrQ6iaCh2C56CuK4Dj
+	kGCG3kcNu3bm+bysPynf0aCorDfFfb962S4D+NnSeaS0ML76kd/MgeC41xxgSbrgtq30aQGKRqyJ9
+	XVw2Bi+A9Ye1fOk7fs5QwdUraGbLwwsjb4MUZsd2iK1RKeRhKQNHvNvy13Q3RemSpU8fh/HYfXJ89
+	45DS4BRRgoDgdRPOl79okVeWCml3wvPespksYcSPOm4KS8RagpdoFneWoAx+2wOMu+f7VdxF5LozU
+	dwdSHsIQ==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sKde7-000KRb-8W; Fri, 21 Jun 2024 14:45:39 +0200
+Received: from [80.62.116.144] (helo=localhost)
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sKde7-0009LS-0d;
+	Fri, 21 Jun 2024 14:45:38 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,
+  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  Linus Walleij <linus.walleij@linaro.org>,
+  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org,  Hartmut
+ Birr <e9hack@gmail.com>
+Subject: Re: [PATCH v2] mtd: spi-nor: winbond: fix w25q128 regression
+In-Reply-To: <20240621120929.2670185-1-mwalle@kernel.org> (Michael Walle's
+	message of "Fri, 21 Jun 2024 14:09:29 +0200")
+References: <20240621120929.2670185-1-mwalle@kernel.org>
+Date: Fri, 21 Jun 2024 14:45:38 +0200
+Message-ID: <8734p679cd.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
- <20240620175657.358273-9-piotr.wojtaszczyk@timesys.com> <20240621103019.783271f4@xps-13>
-In-Reply-To: <20240621103019.783271f4@xps-13>
-From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Date: Fri, 21 Jun 2024 14:44:21 +0200
-Message-ID: <CAG+cZ06GSxPsTzRLXSk23qWXMkp-qxYq7Z9av5-2cPHSJmVAHg@mail.gmail.com>
-Subject: Re: [Patch v4 08/10] mtd: rawnand: lpx32xx: Request DMA channels
- using DT entries
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"J.M.B. Downing" <jonathan.downing@nautel.com>, Vladimir Zapolskiy <vz@mleia.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>, Yangtao Li <frank.li@vivo.com>, 
-	Li Zetao <lizetao1@huawei.com>, Chancel Liu <chancel.liu@nxp.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	Markus Elfring <Markus.Elfring@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27313/Fri Jun 21 10:28:08 2024)
 
-On Fri, Jun 21, 2024 at 10:30=E2=80=AFAM Miquel Raynal
-<miquel.raynal@bootlin.com> wrote:
->
-> Hi Piotr,
->
-> piotr.wojtaszczyk@timesys.com wrote on Thu, 20 Jun 2024 19:56:39 +0200:
->
-> > Move away from pl08x platform data towards device tree.
-> >
-> > Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
->
-> I don't see any change regarding the NAND controller node in the device
-> tree, is there any dependency with other patches from the same patchset
-> or may I apply this directly to nand/next?
->
-> Thanks,
-> Miqu=C3=A8l
+Michael Walle <mwalle@kernel.org> writes:
 
-Yes, this patch depends on "[v4,04/10] ARM: dts: lpc32xx: Add missing
-dma and i2s properties"
-which will be splitted into two or more separate patches per request
-in the comments.
-I'd like to keep driver changes and corresponding changes in DTS in
-the same patch
-but I've made a separate patch for DTS per request from v2 of the patch set=
-.
+> Commit 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+> removed the flags for non-SFDP devices. It was assumed that it wasn't in
+> use anymore. This wasn't true. Add the no_sfdp_flags as well as the size
+> again.
+>
+> We add the additional flags for dual and quad read because they have
+> been reported to work properly by Hartmut using both older and newer
+> versions of this flash, the similar flashes with 64Mbit and 256Mbit
+> already have these flags and because it will (luckily) trigger our
+> legacy SFDP parsing, so newer versions with SFDP support will still get
+> the parameters from the SFDP tables.
+>
+> Reported-by: Hartmut Birr <e9hack@gmail.com>
+> Closes: https://lore.kernel.org/r/CALxbwRo_-9CaJmt7r7ELgu+vOcgk=xZcGHobnKf=oT2=u4d4aA@mail.gmail.com/
+> Fixes: 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
 
---
-Piotr Wojtaszczyk
-Timesys
+Reviewed-by: Esben Haabendal <esben@geanix.com>
+
+> ---
+> As mentioned this is for fixing the regression and a proper fix will
+> make use of the TRY_SFDP (or whatever it will be named) mechanism.
+> ---
+>  drivers/mtd/spi-nor/winbond.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
+> index ca67bf2c46c3..6b6dec6f8faf 100644
+> --- a/drivers/mtd/spi-nor/winbond.c
+> +++ b/drivers/mtd/spi-nor/winbond.c
+> @@ -105,7 +105,9 @@ static const struct flash_info winbond_nor_parts[] = {
+>  	}, {
+>  		.id = SNOR_ID(0xef, 0x40, 0x18),
+>  		.name = "w25q128",
+> +		.size = SZ_16M,
+>  		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+>  	}, {
+>  		.id = SNOR_ID(0xef, 0x40, 0x19),
+>  		.name = "w25q256",
 
