@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-224038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC14911C5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:00:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C165A911C61
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BEE91C24110
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:00:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4D21C21694
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B4D169AD5;
-	Fri, 21 Jun 2024 07:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F038168C20;
+	Fri, 21 Jun 2024 07:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNbZ3asG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UYmWNYpL"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C750167D98;
-	Fri, 21 Jun 2024 07:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC1512D745
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718953207; cv=none; b=ielNjSvMQNIxLx2wPppgJS4o5Kgk+/QeVpILztTQ/0qBg2eQH39+gVB9ogF0dF7e9J/WpRM8inQs3Xa+nJn5jucmqiwa5BWzApDHzzcrmAZl2Oy0Gp+0gRjN9k4fTBRbS8kATXmeoIg+T8s0KZVvApC5XEvb1XgF0o7yWY/f9W4=
+	t=1718953412; cv=none; b=eDCY5a6Dg1ejoH0T3cHeqDgIFAFgbxMuIpwka/7X1JU3fch0Sjp4zZjWPVBjXkKfLlwgqxo2kd2eNJX0zZh0K2Hs5HKCUqSdi0EH/xYrIrJFGw9bxF97//std0gz1p9H0mVFaQbLEH7yEPExJP/gF5qAzlBsfPGj485V0NTcZrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718953207; c=relaxed/simple;
-	bh=HLK1QrlfbbMEdecZH3fuabbAT7AvcBUTRYiFLz+4f7c=;
+	s=arc-20240116; t=1718953412; c=relaxed/simple;
+	bh=9YpIG0vywBEXYfiYSjXWZS4SaYwJoaD6O61rlDfXZsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZRMiYMDzcGFQY1cPMsL3WrnTYQQ9l2/SuCK8IfaWg7BBUYP2baNRDrpYDYwpjBD7ZOX+p87eqAh6Fn5WpaFol4KPvDXrYdhn3nODzBpf59VEjFGGJJx6EHMbccAbe3LQXDdO+kSylFgl6wdH+5NhrHpCzAkYyHr2AqVsjb5nk5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNbZ3asG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCF54C2BBFC;
-	Fri, 21 Jun 2024 07:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718953206;
-	bh=HLK1QrlfbbMEdecZH3fuabbAT7AvcBUTRYiFLz+4f7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tNbZ3asG1h+6NzR3gqFiEzc9uHqZKts3ieC9wbv7XJJhABcQaRwcERAmfisEEbzbw
-	 KolyAPJk7xHHKrq3H0qp3S5z2eQ6Isff96dCX6ASIkb3b+bfa5Hw04mLeOzlsF+6Wa
-	 CEd2P3VjBIFwbeY2nD3/unii4yee7O7yIb6d3f7az5tDmKiASMcnHSdqUUw3AduWbr
-	 jvRu12juB64C5a0r2l6VAoT9zClsTUK2Qrbb84feV6yBdw9O7SalWTODGKVri30ywX
-	 b1zbF5k/d8klmpeNuMM3onVDGAMMAL7IAdixxB/TVdX+dvtPDV5IPI4mb4Vo775IAj
-	 9WxJ8dnLpRIVw==
-Date: Fri, 21 Jun 2024 00:00:06 -0700
-From: Kees Cook <kees@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Eric Biederman <ebiederm@xmission.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/2] exec: Avoid pathological argc, envc, and bprm->p
- values
-Message-ID: <202406202354.3020C4FCA4@keescook>
-References: <20240520021337.work.198-kees@kernel.org>
- <20240520021615.741800-2-keescook@chromium.org>
- <fbc4e2e4-3ca2-45b7-8443-0a8372d4ba94@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWK7RnPTBfyIPQB+NRGaiCECfpwlRJQCvWyF7DFtntu3JakpGHpHiYs297QFijMfDUuVAdHrl2gRgEXemU3IjgmTP2r6BxxuxkHHo/x9j6bs1ebfSEdv0wk9wJt84YijWDm54m/GEepjUXPb8I0S/+JIuRC7AfjaF4SKYuTZMeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UYmWNYpL; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=9YpI
+	G0vywBEXYfiYSjXWZS4SaYwJoaD6O61rlDfXZsM=; b=UYmWNYpLsZ/h0ty/oCAx
+	o/NDwZnqSRD58/nLMBxymgT9cutC7ytVfIb5EqWhTaTO6IxkclIIvuz3PscTm9yN
+	modIlTDV0sTggUrKuzFI1tdYWBFQX6zR8IswIYzVt9iPHlXwdE7SE/soJbgsZs/5
+	1gIDQ+zny8w2/kMRguBwikKsv1VPgj2Yy8C7wJEasGr/qP0RpUVQdcWsZFqT0qjv
+	tturjHksnliHbJXdqtObeSEcKo1PvNf23mQwKlSJFp0+c/f9r0qt+YDrTmGKO8W4
+	qhFxkHkqe1oKUQaV80rlpUQTXH4zw6bhpO+ef8ktxrI5u8ynJ74Da7D2e5Q8taAv
+	pg==
+Received: (qmail 1271058 invoked from network); 21 Jun 2024 09:03:27 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 09:03:27 +0200
+X-UD-Smtp-Session: l3s3148p1@Uvc6B2Eb7tUgAwDPXzjQABqqX1QYyOSW
+Date: Fri, 21 Jun 2024 09:03:27 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, 
+	linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] docs: i2c: summary: document 'local' and 'remote'
+ targets
+Message-ID: <o5sbb2yqwzm3p2elxgoq6atgbw62e7jwzim6trjswbbozkptc2@4yzoaqanmrfn>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Easwar Hariharan <eahariha@linux.microsoft.com>, 
+	linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240614081239.7128-8-wsa+renesas@sang-engineering.com>
+ <20240614081239.7128-13-wsa+renesas@sang-engineering.com>
+ <4zxr4rlqnjqbqh3oxmd2ufqi6uk4pxa3tniuya5pgjtqi6tswc@utq4r2zt6z6b>
+ <ed75fyc2xcsnwubq42eposf6ayt5aj2jmqz6mthugk6vm2zpi4@qqwlmuwayoo5>
+ <y34k2k25xdr5z4v7oejp4da237s4o5qym5npihyydwlbsdh75c@vhmfl7sw3pbm>
+ <7d5f800f-fc65-4fbf-adad-616d51501c62@linux.microsoft.com>
+ <boehtgry7j7ulhrw7tenkmzxujahmxfn25imvb7zw2ibtmebbk@u3jryw4v2y7h>
+ <cu2mkl42byhce6eytcnw7yseogbnypgtrkoirlezakwg35egdg@vjjye4ca7yey>
+ <cbwamjer2rupkmyze6atgpkrszajcbhw2udb23ldl73ne3m6qr@jjs7q3codtx5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5mhnob3uxzg2llob"
+Content-Disposition: inline
+In-Reply-To: <cbwamjer2rupkmyze6atgpkrszajcbhw2udb23ldl73ne3m6qr@jjs7q3codtx5>
+
+
+--5mhnob3uxzg2llob
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fbc4e2e4-3ca2-45b7-8443-0a8372d4ba94@roeck-us.net>
-
-On Thu, Jun 20, 2024 at 05:19:55PM -0700, Guenter Roeck wrote:
-> Hi,
-> 
-> On Sun, May 19, 2024 at 07:16:12PM -0700, Kees Cook wrote:
-> > Make sure nothing goes wrong with the string counters or the bprm's
-> > belief about the stack pointer. Add checks and matching self-tests.
-> > 
-> > For 32-bit validation, this was run under 32-bit UML:
-> > $ tools/testing/kunit/kunit.py run --make_options SUBARCH=i386 exec
-> > 
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> 
-> With this patch in linux-next, the qemu m68k:mcf5208evb emulation
-> fails to boot. The error is:
-
-Eeek. Thanks for the report! I've dropped this patch from my for-next
-tree.
-
-> Run /init as init process
-> Failed to execute /init (error -7)
-
--7 is E2BIG, so it's certainly one of the 3 new added checks. I must
-have made a mistake in my reasoning about how bprm->p is initialized;
-the other two checks seems extremely unlikely to be tripped.
-
-I will try to get qemu set up and take a close look at what's happening.
-While I'm doing that, if it's easy for you, can you try it with just
-this removed (i.e. the other 2 new -E2BIG cases still in place):
-
-	/* Avoid a pathological bprm->p. */
-	if (bprm->p < limit)
-		return -E2BIG;
+Content-Transfer-Encoding: quoted-printable
 
 
--- 
-Kees Cook
+> > The refactoring only affects "master/slave" not "adapter/client". We are
+> >=20
+> > aligned here, aren't we?
+>=20
+> Yes, of course. And I'm not really asking for the totality of the
+> "client"'s to be replaced, rather than, when replacing slave, to
+> choose "target" over "client" whenever possible(*).
+
+Okay, phew, seems we got it now :) I'll send out v4 today and probably
+send it to Linus this week. I want this base work to be upstream ASAP,
+so we can base further work on it.
+
+Thanks for your input and cooperation, Easwar and Andi!
+
+
+--5mhnob3uxzg2llob
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ1Jb8ACgkQFA3kzBSg
+KbaPXg//QldHT5fYSnWzc0KZgm0U6+CGlWXYHzQgIvHzGmo4NjKL0OnEsD2hTNly
+j9eainm2OTjb1+3YrKclLIlx+paQJxVpU6TVBRa9b/CJX+j1Ub/JZu+AcO2lW6xg
+dx1Iq9LQlKxFzfyzyqRy7r2UorQwvnDWWdw0DaKdhUDufJxK5jIiR0s/BMlrgsyr
+K6EoIxHgJDESmRd3xzKo5rgC0vcD83Iwts1RAihuUrh6c8Wjz+xPgyhECtbH09rZ
+kkvRuzwYuWas+0CX/WQNpK2S49HZTmpI5PcTmn3WAIrStfW0jmFfofkpVBvOj0Wz
+T+ZKTZegE/GrUP5UBEHHkim8fjeLYj4lT8JCR8R1fOp6GVrvVlzj5VBmuAMOcPmG
+OOV9gUpfOmZpSbVdr8amMcbwpZ+epwZiRZnernj9klT0EgUfFZt5tb6oLWZSb0LF
+rAGL3V7txa+396EzIiLLseBJv6AxVBVqHj/yCpy+D7vRCe00QcPi2bkzEe/wLEvE
+jaoZuGhNrXTGKVifwMNY8/JG2Fwrq+OYzy2f+WBNzGE5qCC0a6K3/U0vqQ2tUB7i
+hg50MqNQ3ha7+F5TCA2aSHsIsVDb/mzliLw+4WBv8+1CPue92jep0FXlw05gOGDx
+EEgb3Rl7Gf4ywPwvsDnnUVmvG/q12F3kqHn/nYjD21ePaN5n0Ag=
+=x9EZ
+-----END PGP SIGNATURE-----
+
+--5mhnob3uxzg2llob--
 
