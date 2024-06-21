@@ -1,170 +1,121 @@
-Return-Path: <linux-kernel+bounces-224275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADC9912013
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:06:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D24912005
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D7141F23ECB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:06:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB321C23575
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AB816E883;
-	Fri, 21 Jun 2024 09:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XSVkVAVA"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2181C02;
-	Fri, 21 Jun 2024 09:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062C516D9C8;
+	Fri, 21 Jun 2024 09:04:31 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7741A1C02;
+	Fri, 21 Jun 2024 09:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718960739; cv=none; b=hXnh2d5+7WmW4K0azgH7LZicVIHJgbu3lscEna+ty0d3XO2kzvpr95rGeEPmMQAEBtN9iKey1zhj9LXoPmLGBL+d2FbfnvI3h/tXtMa5kOniOrjjFsEDSnk0KLyHazhGJ/5BmE3rY7yIR1idaXt15tkRWf0IKTeJVvF9YBJsZLQ=
+	t=1718960670; cv=none; b=ddaoHctMa2t/U7cC/uJuPUNiA3A++c6DeYNOt3L4YThkhI+165iTgAIBDaco3n0OYA2uYwDaH+ft4O2iYjhtFvgcvfOQS0jc7oEZpyBOw5OBDx5Aja9c+22uzEYJam5RVQTDXQDZvbXPciEIf/MXeJji98wxNDba/tZwSZrATTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718960739; c=relaxed/simple;
-	bh=u3vsruWw3m6yWhKiI6k/Bp6Kz8w7AjrzmFbFuOLhVYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d3KcjybfRXq1d05YzNrV7oWNbkWgLEj/TuiodzasvSHGks1opNoISRV9RaUThRXTOCgksuTxzrOPFjBdcr4WemLoA1Rn9RPcVW9hwt8Ijanyl9nXzkeICY/fFraqxX7+2N2mOkHfeWMPiznIMFlEv5Xp4M9b4bIJEGyPM9O15yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XSVkVAVA; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=+JO4ER5bv9lk/4SoTsJyJX99aDmjGIgbmbYr1Bo8tQk=;
-	b=XSVkVAVAsNqJ+96Z02pJ31GaBFNz9YN//CbiAY3xSDXlzW9DZRGpWkfLE6D4t6
-	dY01mCKPdLNTRImIVZmlHRr2T4mAsCiZU1wET095pPdbUMdnFIB4fzTj6ORn8he6
-	RwFAJ91fUibN1xiEzWdCOrk51MvJGOB/qS+XfaX2POMzY=
-Received: from [192.168.1.26] (unknown [183.195.6.47])
-	by gzga-smtp-mta-g3-4 (Coremail) with SMTP id _____wDn1xgVQnVmlNLkEg--.36559S2;
-	Fri, 21 Jun 2024 17:04:23 +0800 (CST)
-Message-ID: <33c7587b-83a4-4be7-b00a-d30874df8c22@163.com>
-Date: Fri, 21 Jun 2024 17:04:21 +0800
+	s=arc-20240116; t=1718960670; c=relaxed/simple;
+	bh=FOLBBN7Y7P9cFK4QrPPCIKjuDb5SFjIq9ErBPq1XOPI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QLIvvw7bkX3jxZgU3KmwBwGANIdyyYHYUzzs9CmBNbga1BeiHmTKtBbO4z128CRmA+idt+0VwPOcbyIDbn7U4s3hhI4VIkwn75BMAUaDCuzggCBdNrpu6Eqk2+rb4HLws+X8n/aFh3ii3VNoCUaKs34M377gCXiScAuKi/7ZFyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W5BHL4Qwtz6K73W;
+	Fri, 21 Jun 2024 17:03:58 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 95BC8140AA7;
+	Fri, 21 Jun 2024 17:04:24 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Jun
+ 2024 10:04:24 +0100
+Date: Fri, 21 Jun 2024 10:04:23 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>, Shiju
+ Jose <shiju.jose@huawei.com>, Tony Luck <tony.luck@intel.com>, Ard Biesheuvel
+	<ardb@kernel.org>, <linux-edac@vger.kernel.org>, <linux-efi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] efi/cper: Adjust infopfx size to accept an extra
+ space
+Message-ID: <20240621100423.0000624c@Huawei.com>
+In-Reply-To: <a8cfcd9e9827770de748db7be44362a98c957642.1718906288.git.mchehab+huawei@kernel.org>
+References: <cover.1718906288.git.mchehab+huawei@kernel.org>
+	<a8cfcd9e9827770de748db7be44362a98c957642.1718906288.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/2] pwrseq: introduce the subsystem and first driver
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: patchwork-bot+bluetooth@kernel.org, marcel@holtmann.org,
- luiz.dentz@gmail.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, kvalo@kernel.org,
- andersson@kernel.org, konrad.dybcio@linaro.org, lgirdwood@gmail.com,
- broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org,
- bhelgaas@google.com, saravanak@google.com, geert+renesas@glider.be,
- arnd@arndb.de, neil.armstrong@linaro.org, m.szyprowski@samsung.com,
- elder@linaro.org, srinivas.kandagatla@linaro.org,
- gregkh@linuxfoundation.org, abel.vesa@linaro.org, mani@kernel.org,
- lukas@wunner.de, dmitry.baryshkov@linaro.org, amit.pundir@linaro.org,
- wuxilin123@gmail.com, linux-bluetooth@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
- bartosz.golaszewski@linaro.org
-References: <20240605123850.24857-1-brgl@bgdev.pl>
- <171889385036.4585.6482250630135606154.git-patchwork-notify@kernel.org>
- <0b144517-4cc5-4c23-be57-d6f5323690ec@163.com>
- <CAMRc=Mf2C4ywa+wQ6pcq5RtehQD00dDhzvS6sDcD8tAn=UypUA@mail.gmail.com>
-Content-Language: en-US
-From: Lk Sii <lk_sii@163.com>
-In-Reply-To: <CAMRc=Mf2C4ywa+wQ6pcq5RtehQD00dDhzvS6sDcD8tAn=UypUA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn1xgVQnVmlNLkEg--.36559S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXrW7tr1rWw15KrW8XFy3CFg_yoW5CFW5pF
-	W3G3Z0kF4UJr18AF1jgw1fZFy2qw47Xw1fur1Dt3s8ZF90gr18tr1Sy34F9ry7urWI9r18
-	tFWjyrySgw48urDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRWmhrUUUUU=
-X-CM-SenderInfo: 5onb2xrl6rljoofrz/1tbiExoFNWXAlu3dLwAAsV
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 2024/6/21 14:36, Bartosz Golaszewski wrote:
-> On Fri, Jun 21, 2024 at 3:14 AM Lk Sii <lk_sii@163.com> wrote:
->>
->>
->>
->> On 2024/6/20 22:30, patchwork-bot+bluetooth@kernel.org wrote:
->>> Hello:
->>>
->>> This series was applied to bluetooth/bluetooth-next.git (master)
->>> by Bartosz Golaszewski <bartosz.golaszewski@linaro.org>:
->>>
->> Hi luiz,
->>
->> i am curious why Bartosz is able to merge his changes into bluetooth
->> development tree bluetooth-next directly.
->>
-> 
-> This conversation is getting progressively worse...
-> 
->> 1)
->> his changes should belong to *POWER* scope instead of *Bluetooth*
->> obviously, however, there are *NOT* any SOB tag from either power and
->> bluetooth maintainer. these changes currently only have below Acked-by
->> and Signed-off-by tags:
->>
->> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
->> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>
-> 
-> It's a new subsystem that has been discussed and reviewed for months
-> and thoroughly tested. Please refer to the cover letter under v8
-> linked in this thread. It's not related to power-management or
-> power-supply, it's its own thing but IMO the best place to put it is
-> under drivers/power/. And I will maintain it.
-> 
->> 2)
->> his changes have not merged into linus mainline tree yet.
->>
-> 
-> This is why they are in next! They are scheduled to go in during the
-> upcoming merge window. But since changes belong in multiple trees, we
-> need a cross-tree merge.
-> 
->> 3)
->> perhaps, it is safer to pull his changes from linus mainline tree when
->> merged than to merge into bluetooth-next firstly.
->>
-> 
-> It's not safer at all, why would spending less time in next be safer?
-> 
-it seems this patch serial(new subsystem) does not depend on bluetooth
-and also does not belong to bluetooth subsystem, but have been contained
-by tip of bluetooth tree.
+On Thu, 20 Jun 2024 20:01:44 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-why not follow below merging produce?
-1) you send this patch serials to Linus to merge within linus mainline tree
-2) luiz then pull your changes from linus mainline tree.
+> Compiling with W=3D1 with werror enabled produces an error:
+>=20
+> drivers/firmware/efi/cper-arm.c: In function =E2=80=98cper_print_proc_arm=
+=E2=80=99:
+> drivers/firmware/efi/cper-arm.c:298:64: error: =E2=80=98snprintf=E2=80=99=
+ output may be truncated before the last format character [-Werror=3Dformat=
+-truncation=3D]
+>   298 |                         snprintf(infopfx, sizeof(infopfx), "%s ",=
+ newpfx);
+>       |                                                                ^
+> drivers/firmware/efi/cper-arm.c:298:25: note: =E2=80=98snprintf=E2=80=99 =
+output between 2 and 65 bytes into a destination of size 64
+>   298 |                         snprintf(infopfx, sizeof(infopfx), "%s ",=
+ newpfx);
+>       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~~~
+>=20
+> As the logic there adds an space at the end of infopx buffer.
+> Add an extra space to avoid such warning.
+>=20
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
->>> On Wed,  5 Jun 2024 14:38:48 +0200 you wrote:
->>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>
->>>> Hi!
->>>>
->>>> These are the power sequencing patches sent separately after some
->>>> improvements suggested by Bjorn Helgaas. I intend to pick them up into a
->>>> new branch and maintain the subsystem from now on. I then plan to
->>>> provide an immutable tag to the Bluetooth and PCI subsystems so that the
->>>> rest of the C changes can be applied. This new branch will then be
->>>> directly sent to Linus Torvalds for the next merge window.
->>>>
->>>> [...]
->>>
->>> Here is the summary with links:
->>>   - [v9,1/2] power: sequencing: implement the pwrseq core
->>>     https://git.kernel.org/bluetooth/bluetooth-next/c/249ebf3f65f8
->>>   - [v9,2/2] power: pwrseq: add a driver for the PMU module on the QCom WCN chipsets
->>>     https://git.kernel.org/bluetooth/bluetooth-next/c/2f1630f437df
->>>
->>> You are awesome, thank you!
->>
-> 
-> Why are you top-posting anyway?
-> 
-it is caused by my bad mail client settings. thanks for reminder.
-> Bart
+Trivial suggestion inline. Either way LGTM
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> ---
+>  drivers/firmware/efi/cper-arm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-=
+arm.c
+> index fa9c1c3bf168..d9bbcea0adf4 100644
+> --- a/drivers/firmware/efi/cper-arm.c
+> +++ b/drivers/firmware/efi/cper-arm.c
+> @@ -240,7 +240,7 @@ void cper_print_proc_arm(const char *pfx,
+>  	int i, len, max_ctx_type;
+>  	struct cper_arm_err_info *err_info;
+>  	struct cper_arm_ctx_info *ctx_info;
+> -	char newpfx[64], infopfx[64];
+> +	char newpfx[64], infopfx[65];
+
+Maybe make it explicit so we don't wonder if it was
+a typo in future. Something like?
+
+	char newpfx[64];
+	char infofx[ARRAY_SIZE(newpfx) + 1];
+
+> =20
+>  	printk("%sMIDR: 0x%016llx\n", pfx, proc->midr);
+> =20
 
 
