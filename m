@@ -1,138 +1,106 @@
-Return-Path: <linux-kernel+bounces-224461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453F09122BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:44:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25329122BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009E6288F74
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:44:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 096E01C22022
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBDB171E75;
-	Fri, 21 Jun 2024 10:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF85171E6A;
+	Fri, 21 Jun 2024 10:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="UguzqbY0"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hgJSQG9G"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0003171E5D;
-	Fri, 21 Jun 2024 10:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CC616F854
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718966681; cv=none; b=C5C1Sx7LnwGLgXLPuV+nR1Hck5gPhWsBXFx2lmeE2mZvwswiZBCq7dUw8htrJwF3ReNzkp1JDtPMd4bvgljHFgk9xpRNGJcfkF1lUyuXuP+AFEc+MLyJr4qWy8k2Pek3HdETnHn6rdPQFvq53MrE909eRE58oGZBNkkYzStKZ5Q=
+	t=1718966711; cv=none; b=NTYWUav14rY77E7URMoAjzZAUSrcx+h6wqi+tMZ1eNsz3C+qK0PchcXquaK5NXReTAsW5UpprOnV3/I5dqHmliMJ181wDCpQIZE1NRw3zYHGHsW0f7twIwyzizv5kDBBS/WnUjXSVYfqy/MEUP6LcB4uBCO23iT+GHjNLsroB/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718966681; c=relaxed/simple;
-	bh=sX+28HuOEhuHTD/5J4TrbqqVEghIZejXXfBHB0DrGB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u3mqm7bGZdTYavJ2kzqdOEvY2J7tkPsfebobFMZ4p0PcAOHg1fF7ePYq/L4+XKHXPgt5yNu67DBMV4zzzcUEDcpfxIMxN+VX5LXnNWL23NSR71M7pxk6r5eyVhgyy5jMbcp4UEFCgjofwE1op67HHikAHxJKfosnx5PJrkNla+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=UguzqbY0; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718966670;
-	bh=sX+28HuOEhuHTD/5J4TrbqqVEghIZejXXfBHB0DrGB8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UguzqbY0eIXds0nQPsKflqftwyJrssEIJzHnMUPUqMeHeVGlmbN0QZ4wzi5M1FwOx
-	 GwZbz6FrNZO03q5KO8ae6xXPQhwQSdjr5wSfGQyFl55IUP0CvJIhlagWBU/bQdqrJi
-	 CMqmNJpDWleB+DFQH/XUr0fsAOudx4BpX8RWHLRQ=
-Date: Fri, 21 Jun 2024 12:44:29 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, linux-leds@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: cros_ec: Implement review comments from Lee
-Message-ID: <cef01f01-ccb8-43f5-af78-e59c8286976b@t-8ch.de>
-References: <20240614-cros_ec-led-review-v1-1-946f2549fac2@weissschuh.net>
- <20240620093114.GH3029315@google.com>
- <5708f5c6-65fe-4bf9-8d08-6dbb77e21a9d@t-8ch.de>
- <20240620122741.GL3029315@google.com>
- <478e23df-800a-40c6-b972-2af2d535b1ae@t-8ch.de>
- <20240620171511.GX3029315@google.com>
- <3a164ee6-79f7-48ea-bdd2-4b8074920eda@t-8ch.de>
- <20240621104038.GL1318296@google.com>
+	s=arc-20240116; t=1718966711; c=relaxed/simple;
+	bh=vCzKBkI0EOlIaIsyEt1Ho+UPCJV1SGzIjta1R/xOqyo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NkBQS4vCcL/lmJ1F9JpZPDXcWCKJw2w0uryrJ8Bzzz6jfsgPTDN+c5AhkWb9WUAUd3kKQRZGJWsN4FP5SMqYDf3KLrcsRT6vsTEP9wrSWnR9+BBVkpB3PNMk2xpX7hc1wtmJSlulceaZHvce0vC2/Og5h6o3f+xqyKZK+l/gyy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hgJSQG9G; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b50b704ffeso2722826d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 03:45:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718966709; x=1719571509; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vCzKBkI0EOlIaIsyEt1Ho+UPCJV1SGzIjta1R/xOqyo=;
+        b=hgJSQG9GjTvc/j8hdCsPkfxeebXotpIQB64mr/kcmI/AdlWcore13QrboDIDn/2C++
+         4Q6hCWk965WvEC0hUS3QhSruUvTzKhvIA7OTlZpMlDBZuJuYmgdK8+YojT9yySZM2Vpq
+         FziIy2xqQiuDe+XdeZChIgccF9y5ajyks4mQpUKW7xW0AKaBQVWIwtmsZNOKeac29Ao4
+         r8onlNJVp0dl8deRsOGZygRar/GDzatVxK++lSeI3po/zW7DlSc3biav4LIGQnop9hcP
+         tav2v7GjRhjLVOleMIP04Rbg+/ZtlU0t1cvbbi1uAXJYGrbU9AOOVa441vBmxfdyaASo
+         4uOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718966709; x=1719571509;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vCzKBkI0EOlIaIsyEt1Ho+UPCJV1SGzIjta1R/xOqyo=;
+        b=unfi398TiJaQ7vyD6RAXpDwYIOgDljNFM7TwVo2tsmIrHmdj9zV44StuJAwStqi3wn
+         CL0eB1w0k72re0dH2fynr0J9g7LjvvZ8iX5AeaZJ8yDT1PwXr/61Q8kj9+kF+XuRTjLr
+         OhBz4SZvSlExasvQfrCbpI3Snm0UzX6/OShdzdJbkq225qwsjAZ+mRJTvprL55CclQAF
+         IMtHBNM8gm4BusL51wZbJRsuG6MEyvdWHpYNWR5TN0rMaL2ILkbDLDlZcKCN0Z2ZjDhi
+         FCqS0BkLCarJB9lqVD8OISh0HUk4QwtI/S4ezUE5A65elUycM1j4bCLEA+fUSQ1irOe5
+         pfKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMGR1iZgIfcnxeYXZEWBT5VnX0ISrxADOVqw0hmGTm7YFCbPF32rSA4popZqmCdRehdE3A4/c85+7kFzacwEN48JxiRMdrloRtLkbU
+X-Gm-Message-State: AOJu0Yxj7+o/nz/ixfz8SF+hXD30KID6l0c2m4wzoqieGHMWHqW5JZW9
+	uw0VB5yloVlgpkc9EEmg9ZGGMwGhzQCrcj6ALv2zg4paY9522/l1MFgmiMxZC2ksCM5XLeajn1u
+	YqbIBzPMsvU5PEl6RnQqbapuh4No=
+X-Google-Smtp-Source: AGHT+IGI1lyNp+TbE3ThRp8In7N425hvlee/0+RjTWRu6FiUFfFtrbG1ST8pJQ2n45IwF01JbVb46PDQIa50lhYgPS4=
+X-Received: by 2002:a05:6214:c8b:b0:6b2:af02:28d6 with SMTP id
+ 6a1803df08f44-6b501d261e4mr83907056d6.0.1718966708856; Fri, 21 Jun 2024
+ 03:45:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240621104038.GL1318296@google.com>
+References: <CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com>
+ <CADnq5_PDxJ8O1JUQ9RBYRFB9G1WZJos05ZAM4jUKuPBwPxjNkA@mail.gmail.com>
+ <CABXGCsNN9LwHc2x2AAEH=5UNwpvkWkBqRYz3OP8MZ6Woy+HDXA@mail.gmail.com> <b6c440ca-e63e-429b-af41-5f27d4b8b2a2@leemhuis.info>
+In-Reply-To: <b6c440ca-e63e-429b-af41-5f27d4b8b2a2@leemhuis.info>
+From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Date: Fri, 21 Jun 2024 15:44:58 +0500
+Message-ID: <CABXGCsNoFfMn7LaqqFgEPg-ECyUPN=f=SXVrFi=GZk6c69-Gqw@mail.gmail.com>
+Subject: Re: 6.10/bisected/regression - commits bc87d666c05 and 6d4279cb99ac
+ cause appearing green flashing bar on top of screen on Radeon 6900XT and 120Hz
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: Alex Deucher <alexdeucher@gmail.com>, Hamza Mahfooz <hamza.mahfooz@amd.com>, 
+	Rodrigo.Siqueira@amd.com, "Deucher, Alexander" <alexander.deucher@amd.com>, 
+	amd-gfx list <amd-gfx@lists.freedesktop.org>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-06-21 11:40:38+0000, Lee Jones wrote:
-> On Thu, 20 Jun 2024, Thomas Weißschuh wrote:
-> 
-> > On 2024-06-20 18:15:11+0000, Lee Jones wrote:
-> > > On Thu, 20 Jun 2024, Thomas Weißschuh wrote:
-> > > 
-> > > > On 2024-06-20 13:27:41+0000, Lee Jones wrote:
-> > > > > On Thu, 20 Jun 2024, Thomas Weißschuh wrote:
-> > > > > 
-> > > > > > Hi Lee,
-> > > > > > 
-> > > > > > On 2024-06-20 10:31:14+0000, Lee Jones wrote:
-> > > > > > > Definitely not seen a commit message like that before
-> > > > > > 
-> > > > > > I assumed that this patch would be squashed into the original commit.
-> > > > > > 
-> > > > > > My question in which form you wanted the changes should have included
-> > > > > > "incremental series".
-> > > > > 
-> > > > > Incremental means on top.
-> > > > > 
-> > > > > A lot of maintainers don't support history re-writes, but I've reserved
-> > > > > that right since forever, so I can squash it if you like.
-> > > > 
-> > > > If it is already visible somewhere and a squash would inconvenience
-> > > > anybody I'll resend it.
-> > > > But if not I'd be happy about a squash.
-> > > > 
-> > > > (I couldn't and still can't find the public tree where driver is in)
-> > > 
-> > > Odd, neither can I!  Okay applied the whole set again, squashed the
-> > > patch and submitted for testing.
-> > 
-> > Thanks!
-> > 
-> > FYI:
-> > 
-> > The Ack you asked for in the cros_kbd_led_backlight series [0],
-> > which should go through the LED tree (and has a MFD component),
-> > was given by Tzung-Bi in [1].
-> > 
-> > (In case it fell through the cracks. If not, please disregard)
-> 
-> Now I'm really confused.
-> 
-> This patch not for that set though, right?
-> 
-> You're talking about:
-> 
->  mfd: cros_ec: Register keyboard backlight subdevice
->  platform/chrome: cros_kbd_led_backlight: allow binding through MFD     <-- this one
->  leds: class: Add flag to avoid automatic renaming of LED devices
->  leds: class: Warn about name collisions earlier
-> 
-> But this fix-up patch belongs in:
-> 
->  mfd: cros_ec: Register LED subdevice
->  leds: Add ChromeOS EC driver                                           <-- this one
->  leds: core: Unexport led_colors[] array
->  leds: multicolor: Use led_get_color_name() function
->  leds: core: Introduce led_get_color_name() function
-> 
-> Right?
+On Fri, Jun 21, 2024 at 12:56=E2=80=AFPM Linux regression tracking (Thorste=
+n
+Leemhuis) <regressions@leemhuis.info> wrote:
+> Hmmm, I might have missed something, but it looks like nothing happened
+> here since then. What's the status? Is the issue still happening?
 
-Yes, all correct.
-Which is why I referred to it explicitly as the "cros_kbd_led_backlight series".
+Yes. Tested on e5b3efbe1ab1.
 
-It was meant as a heads-up. Mentioned here as I was writing with you anyways.
+I spotted that the problem disappears after forcing the TV to sleep
+(activate screensaver <Super> + <L>) and then wake it up by pressing
+any button and entering a password.
+Hope this information can't help figure out how to fix it.
 
-> > [0] https://lore.kernel.org/lkml/20240526-cros_ec-kbd-led-framework-v3-0-ee577415a521@weissschuh.net/
-> > [1] https://lore.kernel.org/lkml/ZmutW6vh7pD1HLf5@google.com/
+--=20
+Best Regards,
+Mike Gavrilov.
 
