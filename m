@@ -1,254 +1,267 @@
-Return-Path: <linux-kernel+bounces-224497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB5C912325
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9CE912326
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3532B2249F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:17:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBE3BB22444
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB0D172BCA;
-	Fri, 21 Jun 2024 11:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1qVOfPD"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE5812D771;
-	Fri, 21 Jun 2024 11:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55578172BB6;
+	Fri, 21 Jun 2024 11:18:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F5312D771
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718968654; cv=none; b=jcfm9dILGTBL8yQJXhoC8b/oG42SxgiBBV0j1bWJsLeufR/JWMNdYgIdTPMYyQiRSoGKofJj+B6zTH7FN9xpnZCu7ODq8popaioEJUfimpGhU0unnPbsmxXZWCM8DsdLrvICCFXJmi0X1jczKFvvgGrORexrFighyq3BZHLNAko=
+	t=1718968681; cv=none; b=KNftETo8rvTbuSkHxx0cCQw5PWT0Mi4P16cB+BBiF3C3y+4L8e9BkMyEgzWHoJcO7e3EiDY9i2YCmlaw6pzotoa2fW84D1WBcGXvAKdBBBGPyP9zuDz8raL7PEQ19rQYE+jehpA+lPkJrmj+39XrTQEqxKTlcIorc+ai8ojzdpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718968654; c=relaxed/simple;
-	bh=sVzc/YicQt/3Bw6kdGjiDZDnTvmjCjYj4ieJizyeyeY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=st9GX68wML/SRtWfTw3b6TRMkN55Kbdm9tMdu/6vF24Bg4wiCA+GAruL3VfG0T9sXbxwNboBmJIn6e5meZjNg7AfOufBb1pTS/sM4WAIMUC95cDimPLKU6CnGLMCY0iKGtWEI0FjiRLa+ex8LUAX5cYYG/0MGhlCzFk3130r0Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1qVOfPD; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6efacd25ecso104167766b.1;
-        Fri, 21 Jun 2024 04:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718968651; x=1719573451; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g7Y9S7C57tDOTQYtWaBtzx3CbVPOS8YYr0zKSVtRrMQ=;
-        b=O1qVOfPDlmJ8eXXLZUTXATPgo2AvFqF+kG61BUkdytglILlNJrPatFb0MeEI+9kXpO
-         sAODLqsXQqLecBdonN4mtPfuD0l302pLXCpf0xTc0GqJ0pW9lLUz3z70PJ0uWhFXBmU2
-         j4QZMqPR0yQhg1D2g3xwzFf21/F60o/LJB5QDDcDl6tFVWA5cpFMtswWLr1A3py1PkOa
-         R8sFZfDxHU2O6M5Hlw0LfuDGw2GAUEzTccrWmUHWTS6NHeb1xCiRR7ZA/+mDvOGUDlep
-         clxmHCGxBKokw1LLVoSFi4CFMRQ7KcX6Eh+fA9rJgTHE/OFOE3RKlm11igakPEBRB9sI
-         RBHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718968651; x=1719573451;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g7Y9S7C57tDOTQYtWaBtzx3CbVPOS8YYr0zKSVtRrMQ=;
-        b=NrRwmtZqzZvxR4g4+F0PbsMg4GsO30XZDsZXfW+iLuaCbX4NZAaZ0KM2xoiaDJk1SQ
-         v84L8jDs9UAsigVl50oGvk09Ypo6QqNPchsGKz7N1C8u1mLjGwKvq/Kv8JTdx/8ZBWd6
-         VfaYsqoh07O88GxZY4IdTJja15u67HXQzMAQVWzdi8TQL+tNhtCu+APwelgXn6WAVeyC
-         0FmiIafFYJW8rcshlTcGQ7aMQBYWJziH43Jl0d60b7YXwy+LEFx3I1obJBCtor9GYs4+
-         +ckxGRmI7BQ6le4s0XMpQfgyG7Z9QuMCJFp1lDIXI13/MCxBox0/J9ebbaRBMRnleb4G
-         yDzw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1OrQhCBPhPyRFtPMj/FDrS3cIwjjxja8LK6WLUJpxyyepu8fRzcWC+5rJgei0tHackIBBM72avwDuaKIEi+4RiRcTDO/7QHQhAFTu8gR2sedfaYFSzrCbEf1QIYedanfC0eOJB+nOuw2D+w==
-X-Gm-Message-State: AOJu0YyI7I+SPgTTG5cpvYM01qm/7zLmuLb4zOLZ6UNRkTzw22VHDOrh
-	AyWboU1eRde1L4JBQY4bqpforwfH+CzI1MoZV9mQvJsVGC+Kq34JoLpLW5D4sIW9iZVQvYYboyu
-	werolF/dRDyXbrs3afzh0sKYbqM8=
-X-Google-Smtp-Source: AGHT+IGVZAg20oIBvCbGXF8iXdeGiupDamoCVJcG/qovlSTHPYhqL6+kjJ32aTE5BJxHG1JdE+Baw+bQq4LcCmgRuwU=
-X-Received: by 2002:a50:9fc9:0:b0:57d:3df:f881 with SMTP id
- 4fb4d7f45d1cf-57d07e0d0a9mr6050621a12.3.1718968651088; Fri, 21 Jun 2024
- 04:17:31 -0700 (PDT)
+	s=arc-20240116; t=1718968681; c=relaxed/simple;
+	bh=BzmQXJO3hjknYA5yLaNmF4yH0r+++siyIfmEb9Jxe3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L5SbrKlTq2EmXwuy3bZwN6kUTFcYFMH6cd666XrNbciZc/0DgvA6D4/KcOcoYEsOC76dUyudI/Ll7wDexitNXRt7WjoYQ1g1UyYCYuPyAK8wB3bUm/WdDlREKiHIckYksJNutIJlY/b+zXNHvhs/h++yCH1a8yAbeZktTwCQsM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F79CDA7;
+	Fri, 21 Jun 2024 04:18:23 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 040803F6A8;
+	Fri, 21 Jun 2024 04:17:56 -0700 (PDT)
+Date: Fri, 21 Jun 2024 12:17:54 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: linux-arm-kernel@lists.infradead.org, alexandru.elisei@arm.com,
+	catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
+	maz@kernel.org, tglx@linutronix.de, will@kernel.org
+Subject: Re: [PATCH v2 2/5] irqchip/gic-common: Remove sync_access callback
+Message-ID: <ZnVhYiqy45y4GJKv@J2N7QTR9R3>
+References: <20240617111841.2529370-1-mark.rutland@arm.com>
+ <20240617111841.2529370-3-mark.rutland@arm.com>
+ <6c16eeb4-f382-89a5-3481-548c405d4f8e@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620120359.151258-1-mjguzik@gmail.com> <20240621-affekt-denkzettel-3c115f68355a@brauner>
-In-Reply-To: <20240621-affekt-denkzettel-3c115f68355a@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 21 Jun 2024 13:17:17 +0200
-Message-ID: <CAGudoHFeNy55qOw676ohM9-9P-n_P9HNX2qL+kRT-B2SmwguSQ@mail.gmail.com>
-Subject: Re: [PATCH] vfs: reorder checks in may_create_in_sticky
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6c16eeb4-f382-89a5-3481-548c405d4f8e@huawei.com>
 
-On Fri, Jun 21, 2024 at 9:45=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Thu, Jun 20, 2024 at 02:03:59PM GMT, Mateusz Guzik wrote:
-> > The routine is called for all directories on file creation and weirdly
-> > postpones the check if the dir is sticky to begin with. Instead it firs=
-t
-> > checks fifos and regular files (in that order), while avoidably pulling
-> > globals.
-> >
-> > No functional changes.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+On Fri, Jun 21, 2024 at 10:22:26AM +0800, Jinjie Ruan wrote:
+> 
+> 
+> On 2024/6/17 19:18, Mark Rutland wrote:
+> > The gic_configure_irq(), gic_dist_config(), and gic_cpu_config()
+> > functions each take an optional "sync_access" callback, but in almost
+> > all cases this is not used. The only user is the GICv3 driver's
+> > gic_cpu_init() function, which uses gic_redist_wait_for_rwp() as the
+> > "sync_access" callback for gic_cpu_config().
+> > 
+> > It would be simpler and clearer to remove the callback and have the
+> > GICv3 driver call gic_redist_wait_for_rwp() explicitly after
+> > gic_cpu_config().
+> > 
+> > Remove the "sync_access" callback, and call gic_redist_wait_for_rwp()
+> > explicitly in the GICv3 driver.
+> > 
+> > There should be no functional change as a result of this patch.
+> 
+> There seems to be a similar patch already:
+> 
+> https://lore.kernel.org/all/20230902134106.1969-1-yuzenghui@huawei.com/
+
+Ok; looking at the diffstat and the diff, that patch didn't adjust
+gic_cpu_config(), and Marc has already reviewed and tested this.
+
+Thanks for the pointer, but I don't think that changes anything?
+
+Mark.
+
+> 
+> > 
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Alexandru Elisei <alexandru.elisei@arm.com>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Will Deacon <will@kernel.org>
+> > Reviewed-by: Marc Zyngier <maz@kernel.org>
+> > Tested-by: Marc Zyngier <maz@kernel.org>
 > > ---
-> >  fs/namei.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 63d1fb06da6b..b1600060ecfb 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -1246,9 +1246,9 @@ static int may_create_in_sticky(struct mnt_idmap =
-*idmap,
-> >       umode_t dir_mode =3D nd->dir_mode;
-> >       vfsuid_t dir_vfsuid =3D nd->dir_vfsuid;
-> >
-> > -     if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
-> > -         (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
-> > -         likely(!(dir_mode & S_ISVTX)) ||
-> > +     if (likely(!(dir_mode & S_ISVTX)) ||
-> > +         (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
-> > +         (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
-> >           vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
-> >           vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid=
-()))
-> >               return 0;
->
-> I think we really need to unroll this unoly mess to make it more readable=
-?
->
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 3e23fbb8b029..1dd2d328bae3 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1244,25 +1244,43 @@ static int may_create_in_sticky(struct mnt_idmap =
-*idmap,
->                                 struct nameidata *nd, struct inode *const=
- inode)
->  {
->         umode_t dir_mode =3D nd->dir_mode;
-> -       vfsuid_t dir_vfsuid =3D nd->dir_vfsuid;
-> +       vfsuid_t dir_vfsuid =3D nd->dir_vfsuid, i_vfsuid;
-> +       int ret;
-> +
-> +       if (likely(!(dir_mode & S_ISVTX)))
-> +               return 0;
-> +
-> +       if (S_ISREG(inode->i_mode) && !sysctl_protected_regular)
-> +               return 0;
-> +
-> +       if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
-> +               return 0;
-> +
-> +       i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
-> +
-> +       if (vfsuid_eq(i_vfsuid, dir_vfsuid))
-> +               return 0;
->
-> -       if (likely(!(dir_mode & S_ISVTX)) ||
-> -           (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
-> -           (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
-> -           vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
-> -           vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid=
-()))
-> +       if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
->                 return 0;
->
-> -       if (likely(dir_mode & 0002) ||
-> -           (dir_mode & 0020 &&
-> -            ((sysctl_protected_fifos >=3D 2 && S_ISFIFO(inode->i_mode)) =
-||
-> -             (sysctl_protected_regular >=3D 2 && S_ISREG(inode->i_mode))=
-))) {
-> -               const char *operation =3D S_ISFIFO(inode->i_mode) ?
-> -                                       "sticky_create_fifo" :
-> -                                       "sticky_create_regular";
-> -               audit_log_path_denied(AUDIT_ANOM_CREAT, operation);
-> +       if (likely(dir_mode & 0002)) {
-> +               audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
->                 return -EACCES;
->         }
-> +
-> +       if (dir_mode & 0020) {
-> +               if (sysctl_protected_fifos >=3D 2 && S_ISFIFO(inode->i_mo=
-de)) {
-> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
-reate_fifo");
-> +                       return -EACCES;
-> +               }
-> +
-> +               if (sysctl_protected_regular >=3D 2 && S_ISREG(inode->i_m=
-ode)) {
-> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
-reate_regular");
-> +                       return -EACCES;
-> +               }
-> +       }
-> +
->         return 0;
->  }
->
-> That gives us:
->
-> static int may_create_in_sticky(struct mnt_idmap *idmap,
->                                 struct nameidata *nd, struct inode *const=
- inode)
-> {
->         umode_t dir_mode =3D nd->dir_mode;
->         vfsuid_t dir_vfsuid =3D nd->dir_vfsuid, i_vfsuid;
->         int ret;
->
->         if (likely(!(dir_mode & S_ISVTX)))
->                 return 0;
->
->         if (S_ISREG(inode->i_mode) && !sysctl_protected_regular)
->                 return 0;
->
->         if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
->                 return 0;
->
->         i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
->
->         if (vfsuid_eq(i_vfsuid, dir_vfsuid))
->                 return 0;
->
->         if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
->                 return 0;
->
->         if (likely(dir_mode & 0002)) {
->                 audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
->                 return -EACCES;
->         }
->
->         if (dir_mode & 0020) {
->                 if (sysctl_protected_fifos >=3D 2 && S_ISFIFO(inode->i_mo=
-de)) {
->                         audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
-reate_fifo");
->                         return -EACCES;
->                 }
->
->                 if (sysctl_protected_regular >=3D 2 && S_ISREG(inode->i_m=
-ode)) {
->                         audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
-reate_regular");
->                         return -EACCES;
->                 }
->         }
->
->         return 0;
-> }
-
-That does look better. :)
-
-So as far as I'm concerned my patch can be just dropped, just in case
-I'll note there is no need to mention me anywhere near this.
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+> >  drivers/irqchip/irq-gic-common.c | 16 +++-------------
+> >  drivers/irqchip/irq-gic-common.h |  7 +++----
+> >  drivers/irqchip/irq-gic-v3.c     |  7 ++++---
+> >  drivers/irqchip/irq-gic.c        |  6 +++---
+> >  drivers/irqchip/irq-hip04.c      |  6 +++---
+> >  5 files changed, 16 insertions(+), 26 deletions(-)
+> > 
+> > diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
+> > index afd6a1841715a..4ed17620dc4d7 100644
+> > --- a/drivers/irqchip/irq-gic-common.c
+> > +++ b/drivers/irqchip/irq-gic-common.c
+> > @@ -45,7 +45,7 @@ void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
+> >  }
+> >  
+> >  int gic_configure_irq(unsigned int irq, unsigned int type,
+> > -		       void __iomem *base, void (*sync_access)(void))
+> > +		       void __iomem *base)
+> >  {
+> >  	u32 confmask = 0x2 << ((irq % 16) * 2);
+> >  	u32 confoff = (irq / 16) * 4;
+> > @@ -84,14 +84,10 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
+> >  
+> >  	raw_spin_unlock_irqrestore(&irq_controller_lock, flags);
+> >  
+> > -	if (sync_access)
+> > -		sync_access();
+> > -
+> >  	return ret;
+> >  }
+> >  
+> > -void gic_dist_config(void __iomem *base, int gic_irqs,
+> > -		     void (*sync_access)(void))
+> > +void gic_dist_config(void __iomem *base, int gic_irqs)
+> >  {
+> >  	unsigned int i;
+> >  
+> > @@ -118,12 +114,9 @@ void gic_dist_config(void __iomem *base, int gic_irqs,
+> >  		writel_relaxed(GICD_INT_EN_CLR_X32,
+> >  			       base + GIC_DIST_ENABLE_CLEAR + i / 8);
+> >  	}
+> > -
+> > -	if (sync_access)
+> > -		sync_access();
+> >  }
+> >  
+> > -void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void))
+> > +void gic_cpu_config(void __iomem *base, int nr)
+> >  {
+> >  	int i;
+> >  
+> > @@ -144,7 +137,4 @@ void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void))
+> >  	for (i = 0; i < nr; i += 4)
+> >  		writel_relaxed(GICD_INT_DEF_PRI_X4,
+> >  					base + GIC_DIST_PRI + i * 4 / 4);
+> > -
+> > -	if (sync_access)
+> > -		sync_access();
+> >  }
+> > diff --git a/drivers/irqchip/irq-gic-common.h b/drivers/irqchip/irq-gic-common.h
+> > index f407cce9ecaaa..c230175dd584c 100644
+> > --- a/drivers/irqchip/irq-gic-common.h
+> > +++ b/drivers/irqchip/irq-gic-common.h
+> > @@ -20,10 +20,9 @@ struct gic_quirk {
+> >  };
+> >  
+> >  int gic_configure_irq(unsigned int irq, unsigned int type,
+> > -                       void __iomem *base, void (*sync_access)(void));
+> > -void gic_dist_config(void __iomem *base, int gic_irqs,
+> > -		     void (*sync_access)(void));
+> > -void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void));
+> > +                       void __iomem *base);
+> > +void gic_dist_config(void __iomem *base, int gic_irqs);
+> > +void gic_cpu_config(void __iomem *base, int nr);
+> >  void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
+> >  		void *data);
+> >  void gic_enable_of_quirks(const struct device_node *np,
+> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> > index 6fb276504bcc8..d95dda2383fb5 100644
+> > --- a/drivers/irqchip/irq-gic-v3.c
+> > +++ b/drivers/irqchip/irq-gic-v3.c
+> > @@ -670,7 +670,7 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
+> >  
+> >  	offset = convert_offset_index(d, GICD_ICFGR, &index);
+> >  
+> > -	ret = gic_configure_irq(index, type, base + offset, NULL);
+> > +	ret = gic_configure_irq(index, type, base + offset);
+> >  	if (ret && (range == PPI_RANGE || range == EPPI_RANGE)) {
+> >  		/* Misconfigured PPIs are usually not fatal */
+> >  		pr_warn("GIC: PPI INTID%ld is secure or misconfigured\n", irq);
+> > @@ -940,7 +940,7 @@ static void __init gic_dist_init(void)
+> >  		writel_relaxed(GICD_INT_DEF_PRI_X4, base + GICD_IPRIORITYRnE + i);
+> >  
+> >  	/* Now do the common stuff */
+> > -	gic_dist_config(base, GIC_LINE_NR, NULL);
+> > +	gic_dist_config(base, GIC_LINE_NR);
+> >  
+> >  	val = GICD_CTLR_ARE_NS | GICD_CTLR_ENABLE_G1A | GICD_CTLR_ENABLE_G1;
+> >  	if (gic_data.rdists.gicd_typer2 & GICD_TYPER2_nASSGIcap) {
+> > @@ -1282,7 +1282,8 @@ static void gic_cpu_init(void)
+> >  	for (i = 0; i < gic_data.ppi_nr + SGI_NR; i += 32)
+> >  		writel_relaxed(~0, rbase + GICR_IGROUPR0 + i / 8);
+> >  
+> > -	gic_cpu_config(rbase, gic_data.ppi_nr + SGI_NR, gic_redist_wait_for_rwp);
+> > +	gic_cpu_config(rbase, gic_data.ppi_nr + SGI_NR);
+> > +	gic_redist_wait_for_rwp();
+> >  
+> >  	/* initialise system registers */
+> >  	gic_cpu_sys_reg_init();
+> > diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+> > index 98aa383e39db1..87255bde960fc 100644
+> > --- a/drivers/irqchip/irq-gic.c
+> > +++ b/drivers/irqchip/irq-gic.c
+> > @@ -303,7 +303,7 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
+> >  			    type != IRQ_TYPE_EDGE_RISING)
+> >  		return -EINVAL;
+> >  
+> > -	ret = gic_configure_irq(gicirq, type, base + GIC_DIST_CONFIG, NULL);
+> > +	ret = gic_configure_irq(gicirq, type, base + GIC_DIST_CONFIG);
+> >  	if (ret && gicirq < 32) {
+> >  		/* Misconfigured PPIs are usually not fatal */
+> >  		pr_warn("GIC: PPI%ld is secure or misconfigured\n", gicirq - 16);
+> > @@ -479,7 +479,7 @@ static void gic_dist_init(struct gic_chip_data *gic)
+> >  	for (i = 32; i < gic_irqs; i += 4)
+> >  		writel_relaxed(cpumask, base + GIC_DIST_TARGET + i * 4 / 4);
+> >  
+> > -	gic_dist_config(base, gic_irqs, NULL);
+> > +	gic_dist_config(base, gic_irqs);
+> >  
+> >  	writel_relaxed(GICD_ENABLE, base + GIC_DIST_CTRL);
+> >  }
+> > @@ -516,7 +516,7 @@ static int gic_cpu_init(struct gic_chip_data *gic)
+> >  				gic_cpu_map[i] &= ~cpu_mask;
+> >  	}
+> >  
+> > -	gic_cpu_config(dist_base, 32, NULL);
+> > +	gic_cpu_config(dist_base, 32);
+> >  
+> >  	writel_relaxed(GICC_INT_PRI_THRESHOLD, base + GIC_CPU_PRIMASK);
+> >  	gic_cpu_if_up(gic);
+> > diff --git a/drivers/irqchip/irq-hip04.c b/drivers/irqchip/irq-hip04.c
+> > index 46161f6ff289d..5285150fd9096 100644
+> > --- a/drivers/irqchip/irq-hip04.c
+> > +++ b/drivers/irqchip/irq-hip04.c
+> > @@ -130,7 +130,7 @@ static int hip04_irq_set_type(struct irq_data *d, unsigned int type)
+> >  
+> >  	raw_spin_lock(&irq_controller_lock);
+> >  
+> > -	ret = gic_configure_irq(irq, type, base + GIC_DIST_CONFIG, NULL);
+> > +	ret = gic_configure_irq(irq, type, base + GIC_DIST_CONFIG);
+> >  	if (ret && irq < 32) {
+> >  		/* Misconfigured PPIs are usually not fatal */
+> >  		pr_warn("GIC: PPI%d is secure or misconfigured\n", irq - 16);
+> > @@ -260,7 +260,7 @@ static void __init hip04_irq_dist_init(struct hip04_irq_data *intc)
+> >  	for (i = 32; i < nr_irqs; i += 2)
+> >  		writel_relaxed(cpumask, base + GIC_DIST_TARGET + ((i * 2) & ~3));
+> >  
+> > -	gic_dist_config(base, nr_irqs, NULL);
+> > +	gic_dist_config(base, nr_irqs);
+> >  
+> >  	writel_relaxed(1, base + GIC_DIST_CTRL);
+> >  }
+> > @@ -287,7 +287,7 @@ static void hip04_irq_cpu_init(struct hip04_irq_data *intc)
+> >  		if (i != cpu)
+> >  			hip04_cpu_map[i] &= ~cpu_mask;
+> >  
+> > -	gic_cpu_config(dist_base, 32, NULL);
+> > +	gic_cpu_config(dist_base, 32);
+> >  
+> >  	writel_relaxed(0xf0, base + GIC_CPU_PRIMASK);
+> >  	writel_relaxed(1, base + GIC_CPU_CTRL);
 
