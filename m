@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-224353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB1AE912139
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:51:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2B891213B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC89B1C2233D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8556F2898AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E199A16F851;
-	Fri, 21 Jun 2024 09:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FF616F84C;
+	Fri, 21 Jun 2024 09:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7Z9Rklj"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPM1/oYs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64F516E86B;
-	Fri, 21 Jun 2024 09:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1910E16F82F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718963461; cv=none; b=l5npDHliebmqw0gBoE7dEbnW+gcwXLgc4IP/QYVoajMqCTD08Rerf+qKRuXLDpywcUcHx/Lx8Ebb7scqi40s7Xuexd1EugaIxKB4LStXsup3rP47LeXQvfFeFiiF1RwZ7ck0Z61J5SnqK9SGH4Q/cjTMhEOckVyE0Wb6/YFw6ks=
+	t=1718963471; cv=none; b=Rpltnjm7mCV6sqZt3ISZ9mnvuTty6mkOhL4AB5mt4G56+amS+MvQkEp0aRC4k/b/L2nS0xiJq5/piInQQctq+oEn5NgtvpHzHc3wB+Ip1xXIyM6EOtcatMFYUUZuBhjgtm4ym5oIT5UxaG7Tgf74TVS1ZIyiFuD+KRLKdeZSGvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718963461; c=relaxed/simple;
-	bh=cvYHNa+hIJJ+RNHkoXRTd4NRdSnicliKkicnX+9ow0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pTkS14PcmXAKj+AyzgKgHxHf0EtkJR3upIMHL7IkCvxT9W1eln0m3he1jp3M5x6T59foiMOS5kgB+aG4W8M8jBp2/QfVFL8gMKpwNuKO0LiDqCxjkmp22UgCBv2OaglO5M7nJCzh3qDlad+Kz5f9PrX3aRHW0z4dhK3E2+qu7so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7Z9Rklj; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-354b722fe81so1275914f8f.3;
-        Fri, 21 Jun 2024 02:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718963458; x=1719568258; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qMVxhUU5XY6Kva5wDPcO6sBUJYNFOfP/teCdrUpvYVo=;
-        b=X7Z9RkljTy5myI0DGsWtMv0qbv6ksWx3Q9/+UkTZWsAGuAgQ9yM5qAZxqzD31/doPv
-         WduwADlKqE5QhfOYk9p638G4KC2TUIGI9xaxfbrVRw+PgAR9DY75zxBMd44W87T6aIJh
-         wcvvRKh7XlLPz1u/7f/hR21DHa6zkVCQ5kt+VYlaqtGcjlALcxirDGQOABATSilOVLCq
-         4MZhnYmaValj02+byelFxSskvVSynm1PSYlxOsUcA/YI+MJicENJnj8fBXw8N2/dnhMg
-         IbWW8vXP+vhxC3nHCt6ASZyvxAoc+zriGd+AgeS58JEIcq4eOaX2fHeLWGL5ZE2BzCWv
-         Higw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718963458; x=1719568258;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qMVxhUU5XY6Kva5wDPcO6sBUJYNFOfP/teCdrUpvYVo=;
-        b=YBJYAsheIqo6HCshHLMOnK3fwouH4e2gpQXwK2c8PbJgvwa6NA7yxQzwC5Kbls6gCU
-         7x1J7NcxwK/AJ+WyDKz1TDQyLffuhU5keGEHqHAVAW/uzr4PlUZe+e1EdBkM76ZKw8t0
-         K5ZpV2HtZglBn80KaeYUU6s/qPUR9jzUit4T4kb5cicxBe2kFWqym1VlpXicGIPSyp1/
-         CEd7ycr40rcudphs7BCky50MssgUVsTlxPspDy/dAEq+j37cdWwGZorDAXGlMhOOujM6
-         CXLhaU3zqRm95uiOSKQZTOzX+BD6yPbNpMM6B+UIWFEm+nrxWj3uJAJWkWlmJfj4SSMx
-         5P1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUVy2R/H7d6ti7kvyl1G2iNmqa0PAJxAqqSu8smCe/fNlT7ZVydYvw0yGT+KIEpznFY5cYRof+Ch4Yxc+rQ4udocdOxIfzHV4q8v7eoK3cMfuwYN5E6H1VnUZYUico6BZHR6Q4oJ+hmBY1aUCTSSm3Kl4j9AWJ2wXWERzU98VT4GDN383WR
-X-Gm-Message-State: AOJu0YxCXf9KVUJYQsMBk+81qX0hbqGYdrtx20bYUby4IzClQwwlmi7T
-	iGRSUlYYetpVQJlXA53mARKQBe/1JFU4u9XJ3ePwpNA2cPRsc89h
-X-Google-Smtp-Source: AGHT+IFrweBZm7r27ycSwyudMYCNoQgDJxfiX4045xUVNtMnwDt4rTTu0oWIZNtGc5VvXAxtcet+Nw==
-X-Received: by 2002:a5d:4a87:0:b0:360:88a3:e56f with SMTP id ffacd0b85a97d-36319a85e76mr5656363f8f.67.1718963457791;
-        Fri, 21 Jun 2024 02:50:57 -0700 (PDT)
-Received: from vitor-nb.. ([2001:8a0:e622:f700:9e85:710d:d269:42ed])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638f85916sm1234604f8f.61.2024.06.21.02.50.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 02:50:57 -0700 (PDT)
-From: Vitor Soares <ivitro@gmail.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Lukas Wunner <lukas@wunner.de>
-Cc: Vitor Soares <vitor.soares@toradex.com>,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ivitro@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH v1] tpm_tis_spi: add missing attpm20p SPI device ID entry
-Date: Fri, 21 Jun 2024 10:50:45 +0100
-Message-Id: <20240621095045.1536920-1-ivitro@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718963471; c=relaxed/simple;
+	bh=CYAZBMfO/SxuVQVR0C8wqHPGKi+7+MnhX7/PeYm5MIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m4QuEk2ZFIbjCuCVQmZ/9bdMviCURR3FKcFsLjhS2REHSHqiYmYz5k8qarLczCVFv+6zU0d00PdyKD9eCShtvMIx+OQM1tEeRnUtkdIRrfjRBOpuoYdo6kIEJkDStl6GfvwTmjMZD/0jKlVEB95CjHzdMHVn3mi2dV/J4rFkktc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPM1/oYs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DCFC2BBFC;
+	Fri, 21 Jun 2024 09:51:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718963470;
+	bh=CYAZBMfO/SxuVQVR0C8wqHPGKi+7+MnhX7/PeYm5MIs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mPM1/oYsA1JzkH0lCtEGFC6lRYlJza/U3jtV0Ai65qi0zgn9A3PjHQtyXNrTtPmHT
+	 jDheDQtXsSaNMMKGCU6WbjuUW46b4WMeSx91qFgPdr7I3/mWO2edgoUf2jetaThL2C
+	 dZ8SD67K8tUGrDKHRW/HqSvCaqUBYm90wzY9X7kg/UtrfaG4wUXYmx/SJRNn8VErCV
+	 ZVxhEybCWBgPW7QporCeWWY+8NFDtbkNrToCK1RbMdzjDCQQRc/J9o52yKgFUCjPI4
+	 kqgAm3kStvY6G/nF5DFeen+gc7JOVVq8WMwNo5QD+81AkoE4YTbMLbyZhMP09bUV/u
+	 SPQDgiqITf2uA==
+Date: Fri, 21 Jun 2024 15:21:06 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: Generic phy fixes for v6.10
+Message-ID: <ZnVNCogeCFcQH1jH@matsya>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gOAqRbwQ5riGMOZQ"
+Content-Disposition: inline
 
-From: Vitor Soares <vitor.soares@toradex.com>
 
-"atmel,attpm20p" DT compatible is missing its SPI device ID entry, not
-allowing module autoloading and leading to the following message:
+--gOAqRbwQ5riGMOZQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  "SPI driver tpm_tis_spi has no spi_device_id for atmel,attpm20p"
+Hi Linus,
 
-Based on:
-  commit 7eba41fe8c7b ("tpm_tis_spi: Add missing SPI ID")
+Please pull to receive couple of fixes in the Qualcomm qmp phy driver
 
-Fix this by adding the corresponding "attpm20p" spi_device_id entry.
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-Fixes: 3c45308c44ed ("tpm_tis_spi: Add compatible string atmel,attpm20p")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
----
- drivers/char/tpm/tpm_tis_spi_main.c | 1 +
- 1 file changed, 1 insertion(+)
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-index c9eca24bbad4..61b42c83ced8 100644
---- a/drivers/char/tpm/tpm_tis_spi_main.c
-+++ b/drivers/char/tpm/tpm_tis_spi_main.c
-@@ -318,6 +318,7 @@ static void tpm_tis_spi_remove(struct spi_device *dev)
- }
- 
- static const struct spi_device_id tpm_tis_spi_id[] = {
-+	{ "attpm20p", (unsigned long)tpm_tis_spi_probe },
- 	{ "st33htpm-spi", (unsigned long)tpm_tis_spi_probe },
- 	{ "slb9670", (unsigned long)tpm_tis_spi_probe },
- 	{ "tpm_tis_spi", (unsigned long)tpm_tis_spi_probe },
--- 
-2.34.1
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git tags/phy-=
+fixes-6.10
+
+for you to fetch changes up to 163c1a356a847ab4767200fd4a45b3f8e4ddc900:
+
+  phy: qcom: qmp-combo: Switch from V6 to V6 N4 register offsets (2024-06-0=
+3 19:30:47 +0530)
+
+----------------------------------------------------------------
+phy fixes for 6.10
+
+ - Qualcomm QMP driver fixes for missing register offsets and correct N4
+   offsets for registers
+
+----------------------------------------------------------------
+Abel Vesa (3):
+      phy: qcom-qmp: qserdes-txrx: Add missing registers offsets
+      phy: qcom-qmp: pcs: Add missing v6 N4 register offsets
+      phy: qcom: qmp-combo: Switch from V6 to V6 N4 register offsets
+
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c          | 189 +++++++++++++++++=
+----
+ drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6-n4.h      |  32 ++++
+ .../phy/qualcomm/phy-qcom-qmp-qserdes-txrx-v6_n4.h |  13 ++
+ drivers/phy/qualcomm/phy-qcom-qmp.h                |   2 +
+ 4 files changed, 207 insertions(+), 29 deletions(-)
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6-n4.h
+--=20
+~Vinod
+
+--gOAqRbwQ5riGMOZQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmZ1TQoACgkQfBQHDyUj
+g0cvVQ//SSft+fbuCJ0tEtW+O+IwaQ3dCpgo0R6WRMaHqWYjKJP3NiaSDvLJQjgK
+X+x5wO210v+GPvsi69YAVDK5qW5i9PbSe4zSiTiee/CHSgTL1rEokRWZUkXOnXsu
+LV4oT4MMcVm5u6DEaym0aAGoMti59XymeFY59hfbcjGJZl9r93p4JnOwfwsCdmjM
+yVQCnyZeJz3Tjykppb9WM9SKIMcqB0Kf0ekTEKUb6r52GjAYtvjwhgSl+yPM02O5
+MwaNja4uPf6Ot6B/k7QHskPLVHKm41Mllt3W3gvEGKYTs0xtoo9/Vynmf2wcrqhZ
+BwzAGv3SFyGgKhXPsAsIVAEbZYU1vXMR7A8IezgYhPvlfuipOlcQ3SfOaTo+6OLh
+9EjHKfjMtIkIddzAJBJR3GQW82w3u+NzC+VppN/AVRCmXDdgneFCoV/IAKvZwLbF
+QTS8u7SOEg7+p3Ms9PehVJOSa9Sd9/f4YyLxXKD0mZ+3b3kgUwtrAipYYLOPxElH
+79i+HNuunMLg52JfQ0O1ZIYoxkzP3dm0dTqylbKZZZq4yuOgESwgsIBzPB303774
+msN/i4D2Hb94FFhH5Kt7dOLcCfVDPm0bfrU924EEXkpw+b07ZK2PgNrSoC1nWI5e
+5UkmCI/oZVp9FZTPqbiBtpqGowbLN/abn/moWsK8LQdIZTPF4/Y=
+=SkfY
+-----END PGP SIGNATURE-----
+
+--gOAqRbwQ5riGMOZQ--
 
