@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-223853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA944911967
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:28:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 195B9911969
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 947C4285479
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:28:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EDFEB22630
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A896130A7D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9387A13C9A7;
 	Fri, 21 Jun 2024 04:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="n2Z3CIxf"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="IRdLxC+M"
 Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2751012C484
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFB312C48A
 	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718944077; cv=none; b=dB+cIhcEYWEG3uny5YZHuHaMCmbAny9/q8+Z0YNbnklRFalvj0Hb4IFwHT6L+wRNyZcb3aNAhM1hVOTv2xOkCCgek5RbJXIIqKIvvUpwAki68S13hFhR1irnXzQzATflgE0OoYjxBJvC8ZdGhHqQ99p/O8AgW71zwD31aYRiVeY=
+	t=1718944077; cv=none; b=IzanQd7jJtDlWeCIqUnEqT+2frVr7Rhlou97TBz5EnBk1j8x1YnLvoDeJkfVPiVOO9L6pwkf++CODNZXuvgxTpR86ulns462th15AVJYqbrAe0oqop/GNH5tJVqaUa5Rkc/cXc7ko69Eduwp7m+c/gYo3EYyL3tKjJ7ctX9Atak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718944077; c=relaxed/simple;
-	bh=JwYw48GooEGXKddVE3740d9/raXUKRkQvJ22Umv/L8s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hJfnsGIn7Qgpv4Hqn/NgGgiS8PhcCgb4WFAaLm5sF90B4ZgqWq4jof9R7E8Lu5AbIz7HVePRux6z8vEH6OZRmr4G5msKxk0PCgqNlMEaTWmgtU9f+tXHwU8R5OAn+qj/Zmzz0biRQdBkpkd3e6YJF97bGy07yEcMs7vGoRhq+gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=n2Z3CIxf; arc=none smtp.client-ip=202.36.163.20
+	bh=9F7/pDVIyY5TMdrdNAJrOgxGq2+BhjoSOQbrfcPHA8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oRpgttHFubNcjF0b3TbeZifxQGXuKTjGZnajIQdbO8Suj0nz+MYQ5K8OjasrjwzyJDAjMH2OGzUEUnGRnq9Q41ngxMmCqRCcqpOdnXa4Z5THngigkuknkHACYHcsf069/3cAar1qoUGwkB/p1hRlYfc/LzrKN4Z6dOC/2Y+ed6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=IRdLxC+M; arc=none smtp.client-ip=202.36.163.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
 Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A9A402C0240;
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 99D752C01F6;
 	Fri, 21 Jun 2024 16:27:44 +1200 (NZST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
 	s=mail181024; t=1718944064;
-	bh=YT8P3PhE0XH22FCG98Odvm1akxGcHT2GR8zXg6YFbEo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=n2Z3CIxf3/FWu/eFEq8Txh873Aa56tuZRyEa/A8gY913p4WSVF6UKbw5r2PCnhiKd
-	 e/j+998Cq2AQ7KpMFXT1dYYpUe+IHiKDBfnVIxqaDfHvfT/oqtaK1gdpR2I6ZVgUox
-	 TC4u8AzZPg1xHEZj83fv4P2vNzAzoJmfjpF7C13LJQLmo33IQOlxEPZOvtORZ/o4G5
-	 QCeBIPYfKgzd8qO0RSsZgSho5tQqKUQLAvIy1dykAFVI7fa7iP54CVZGab38T6x3Ha
-	 fdcbIr7Ewp/V9/r0iP9NHZUqFYCXrjYOY6PkmM63phcrXkT36UFzkzou1jtbGRGPbW
-	 eVAwINNGWRRog==
+	bh=SNGmJcjAA7tZgdlqk6UBzfeZbU0k+XWZqd5KIXEx/L0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IRdLxC+M0VSknVCAgf3P/OFItJYauEYfdAvqPhJWXSCuwzrmomharOk22TiosasiL
+	 rpSDmiIXi5lP67J228+UjzNYiqVhm8LoB1+HI9j/iFhrVworcQOMNRO5riR1O2a+kj
+	 j63KX7jI31iISig9lR1JGj5vDMzJKRjmgiyyr/XuXfe/lYMRo5xJx/0T9lgOWbiU+U
+	 CrQlfUneNfoCsJ/96JJDgsvkObR3N5pEWrZqFSy47ATf5SgLcxvnOm5kyX6Cymn5/F
+	 VGTOT8AcJhY28xU7cj0lexU+VSNPR/a8fEVbzFwUFSPSrxsGhHxYmNXSJErb/7XnNq
+	 I71xd3P3hHAUQ==
 Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B667501400000>; Fri, 21 Jun 2024 16:27:44 +1200
+	id <B667501400001>; Fri, 21 Jun 2024 16:27:44 +1200
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 460F413EDC3;
+	by pat.atlnz.lc (Postfix) with ESMTP id 47BF813EE4F;
 	Fri, 21 Jun 2024 16:27:44 +1200 (NZST)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 4027A280BEA; Fri, 21 Jun 2024 16:27:44 +1200 (NZST)
+	id 449CC280B94; Fri, 21 Jun 2024 16:27:44 +1200 (NZST)
 From: Chris Packham <chris.packham@alliedtelesis.co.nz>
 To: tglx@linutronix.de,
 	robh@kernel.org,
@@ -71,10 +72,12 @@ Cc: linux-kernel@vger.kernel.org,
 	kabel@kernel.org,
 	ericwouds@gmail.com,
 	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 0/6] mips: Support for RTL9302C
-Date: Fri, 21 Jun 2024 16:27:31 +1200
-Message-ID: <20240621042737.674128-1-chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 1/6] dt-bindings: mips: realtek: Add rtl930x-soc compatible
+Date: Fri, 21 Jun 2024 16:27:32 +1200
+Message-ID: <20240621042737.674128-2-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240621042737.674128-1-chris.packham@alliedtelesis.co.nz>
+References: <20240621042737.674128-1-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,48 +85,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=66750140 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=ASfweHJq_IkPO-eo3qEA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=66750140 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=WKw4xq4RvRPWmP5xJC4A:9 a=3ZKOabzyN94A:10
 X-SEG-SpamProfiler-Score: 0
 x-atlnz-ls: pat
 
-This series adds basic support for the RTL9302C reference board. Currentl=
-y the
-focus is on the CPU block stuff. I hope to get around to the DSA switch d=
-river
-eventually but this is a small start that lets me boot a mainline kernel =
-on the
-board I have. I initialiy started with code from openwrt but have paired =
-it
-down to just the clocksource driver and devicetree.
+Add the rtl930x-soc and RTL9302C board to the list of Realtek compatible
+strings.
 
-Chris Packham (6):
-  dt-bindings: mips: realtek: Add rtl930x-soc compatible
-  dt-bindings: timer: Add schema for realtek,otto-timer
-  dt-bindings: interrupt-controller: realtek,rtl-intc: Add rtl9300-intc
-  clocksource: realtek: Add timer driver for rtl-otto platforms
-  mips: generic: add fdt fixup for Realtek reference board
-  mips: dts: realtek: Add RTL9302C board
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+ Documentation/devicetree/bindings/mips/realtek-rtl.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
- .../realtek,rtl-intc.yaml                     |   1 +
- .../devicetree/bindings/mips/realtek-rtl.yaml |   2 +
- .../bindings/timer/realtek,otto-timer.yaml    |  54 ++++
- arch/mips/boot/dts/realtek/Makefile           |   1 +
- arch/mips/boot/dts/realtek/RTL9302C.dts       |  74 +++++
- arch/mips/boot/dts/realtek/rtl930x.dtsi       |  78 +++++
- arch/mips/generic/Makefile                    |   1 +
- arch/mips/generic/board-realtek.c             |  81 +++++
- drivers/clocksource/Kconfig                   |  11 +
- drivers/clocksource/Makefile                  |   1 +
- drivers/clocksource/timer-rtl-otto.c          | 287 ++++++++++++++++++
- include/linux/cpuhotplug.h                    |   1 +
- 12 files changed, 592 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/realtek,otto-=
-timer.yaml
- create mode 100644 arch/mips/boot/dts/realtek/RTL9302C.dts
- create mode 100644 arch/mips/boot/dts/realtek/rtl930x.dtsi
- create mode 100644 arch/mips/generic/board-realtek.c
- create mode 100644 drivers/clocksource/timer-rtl-otto.c
-
+diff --git a/Documentation/devicetree/bindings/mips/realtek-rtl.yaml b/Do=
+cumentation/devicetree/bindings/mips/realtek-rtl.yaml
+index f8ac309d2994..f59249a2cefe 100644
+--- a/Documentation/devicetree/bindings/mips/realtek-rtl.yaml
++++ b/Documentation/devicetree/bindings/mips/realtek-rtl.yaml
+@@ -19,6 +19,8 @@ properties:
+       - items:
+           - enum:
+               - cisco,sg220-26
++              - realtek,RTL9302C
+           - const: realtek,rtl8382-soc
++          - const: realtek,rtl930x-soc
+=20
+ additionalProperties: true
 --=20
 2.45.2
 
