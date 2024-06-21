@@ -1,188 +1,117 @@
-Return-Path: <linux-kernel+bounces-224647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C43091254E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:30:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51742912550
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B3E31F22B0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:30:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827E71C20FD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CAD15279E;
-	Fri, 21 Jun 2024 12:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6143D1527A3;
+	Fri, 21 Jun 2024 12:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unXpbkxk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FOChEhXl"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117EC219F9;
-	Fri, 21 Jun 2024 12:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0555E219F9;
+	Fri, 21 Jun 2024 12:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718973021; cv=none; b=ly9JsRC1QvxS/TAYt22gBo4VeW/0WEOi0xFbJevpF0R2vBmnFGUN7oCthib5xXs+h5a0p3agGB5a+8bLR2+CZc1BntxmJ6H3pOpRiZ+xQG68ScrLbbwQnyRZIIiAHQKV2fS+5wbZ3Ogd10CsPOJNAnD/qrFA2qJOKCjVhcSQOe4=
+	t=1718973055; cv=none; b=oSj1yDzacpFQakqQPEDbjrLraJqU2sLtS7A0GCY2KAydPZNJ7ROwxK3wCoj6gbry0buGqaD0On/HqjMi705r3H2CRN+TL0SGZvhRuEZNU4gBEM33uGBwASdZeZr2BJ7oDRzPfrT+cPjGx9gju3WKlUgdD0JCTg6vPBi3c265sE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718973021; c=relaxed/simple;
-	bh=d8BIEZLavWHUMszYIHJ2D/RcGB1497ngkcDHfH/1lto=;
+	s=arc-20240116; t=1718973055; c=relaxed/simple;
+	bh=MDf/S7p9nxc7jxIb4VHeMj74saNKIvIpDEbm4gVOuPE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBjKzsXn926Q7TW8zdlmpao3uH1eiH3ZPdSyEBET0GY8P9mgcH+Q5rMv3WEtNB7HHmSDzMyHnFddGYdBUgPMkwGEAS0Pp5XRkZJ8NV3GyuLx/73MwGXCBK94yM0m13EZAWyD+Qe5sbgHzjCXH6fF00r2nKiICgdWedicG8LTHCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unXpbkxk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6F32C2BBFC;
-	Fri, 21 Jun 2024 12:30:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718973020;
-	bh=d8BIEZLavWHUMszYIHJ2D/RcGB1497ngkcDHfH/1lto=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=unXpbkxkZLDrFSrnOqxsqvFV0mUZ0aui8YniT5OEligtDcLJkIIPxfR6Hfx7rvuAw
-	 J7qc65uORIMsKeesTs2dH30zGk9h93YD6lUW3GnRLuAlhiFyHCzhn0pSutODMnvpn6
-	 UkNP+pKNi7IV0s9VLWDZQweW1kbnMWFzYHdN78rMM4OhW8oFZt5zN6Gc0MbL4/+K0d
-	 9g4LOaaqnZbaQVvkBlLy5T9Do22N1OcFXkHYyYa8p0F0Et+Y1wzjcEhkJMKWV7rb21
-	 2DmOXoqTv2xD0TQzhQxhLKxDDfsBud61TF5MYi8XlZx3M8IlALvAnahEm5XwU9rUsP
-	 mgRB+IwmhFRqQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 4F179CE0D11; Fri, 21 Jun 2024 05:30:20 -0700 (PDT)
-Date: Fri, 21 Jun 2024 05:30:20 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Zhouyi Zhou <zhouzhouyi@gmail.com>, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	lance@osuosl.org
-Subject: Re: [PATCH V4] rcutorture: Add CFcommon.arch for the various arch's
- need
-Message-ID: <69a993b5-7f02-4013-9d5c-49f615ae6fbb@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240619230658.805185-1-zhouzhouyi@gmail.com>
- <673d737a-cf17-4480-a9e2-7ff1668f4b44@paulmck-laptop>
- <ZnVjR0Z9MjHbdlx6@J2N7QTR9R3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fsgG5MxOwdM0BeLQIuGbS8QbHO/YIroTrhj08K8rGdKxPjyj4f+M91jWnpaUa60hbVSZnmRbECp5p42OkhJH2nJsu1FZEpQqBnPAWs+uIQI8zZ4/GMuh1OocJBWyD8RhFkahT+HpF5ofpWTRw1QVGMAqqDpvUkL6fGthFvKQXAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FOChEhXl; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2qIXFrmiML0W+NIuVWwtNy9ypBaWgCdJ6JhYw4WxT+c=; b=FOChEhXl/kUHw8ezMzLSyhvkAq
+	00m2SlvQC3yodPkRjKTawrWAEJVxet5KG81Du9E4Ih553hkJlXUn0b7xTbJTxapZtro8roqsj/rvJ
+	qjvdboYA8veyR2G21DGJ2l/omqXcgBubbVkTzutB24E72VKV7tuZXt7kTAcSrRy2njCzTFOk+u+Z6
+	paam7ODO5+Bac4vCjYf0c6fN38MxstxK4wmYWq02EXaeRHf+B0EHCocW2dgD9TD0MrISrlnl9MOdl
+	Of7Emrocfnwk1ZWbXyEf2ykJVRqcet+tIXDh/mSNqr/6l7a64tn59vFhGqAdISh2V2hGZOp84WVGD
+	icz/H05g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47448)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sKdPb-0003us-0J;
+	Fri, 21 Jun 2024 13:30:39 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sKdPd-00007R-JP; Fri, 21 Jun 2024 13:30:41 +0100
+Date: Fri, 21 Jun 2024 13:30:41 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
+Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
+	trivial@kernel.org, Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v2 resub 1/2] net: include: mii: Refactor: Define LPA_*
+ in terms of ADVERTISE_*
+Message-ID: <ZnVycQASAhN2Shfu@shell.armlinux.org.uk>
+References: <20240619124622.2798613-1-csokas.bence@prolan.hu>
+ <c82256a5-6385-4205-ba74-ab102396abb6@lunn.ch>
+ <f216c0b9-3d0d-4d4c-aa33-ba02b0722052@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ZnVjR0Z9MjHbdlx6@J2N7QTR9R3>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f216c0b9-3d0d-4d4c-aa33-ba02b0722052@prolan.hu>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Jun 21, 2024 at 12:25:59PM +0100, Mark Rutland wrote:
-> On Thu, Jun 20, 2024 at 10:57:27AM -0700, Paul E. McKenney wrote:
-> > On Wed, Jun 19, 2024 at 11:06:58PM +0000, Zhouyi Zhou wrote:
-> > > Add CFcommon.arch for the various arch's need for rcutorture.
-> > >     
-> > > In accordance with [1], [2] and [3], move x86 specific kernel option
-> > > CONFIG_HYPERVISOR_GUEST to CFcommon.arch, also move kernel option
-> > > CONFIG_KVM_GUEST which only exists on x86 & PowerPC to CFcommon.arch. 
-> > >     
-> > > [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
-> > > [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
-> > > [3] https://lore.kernel.org/all/ZnBkHosMDhsh4H8g@J2N7QTR9R3/
-> > >     
-> > > Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
-> > >    
-> > > Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
-> > > Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> > > Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> > > Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-> > 
-> > Thank you!  I have reverted the earlier version to queue this one.
-> > Please check below to make sure that my usual wordsmithing did not mess
-> > things up.
-> > 
-> > Mark, any suggestions for any needed ARM CFcommon.arch files?  Or does
-> > moving out the x86/PowerPC-specific Kconfig options take care of things
-> > for you guys?  (Hey, I can dream, can't I?)
+On Fri, Jun 21, 2024 at 09:48:23AM +0200, Csókás Bence wrote:
+> Hi
 > 
-> I'm not aware of anything that we specifically need enabled, so pulling
-> out those bits should be everything -- I've given my Ack below.
+> On 6/20/24 21:07, Andrew Lunn wrote:
+> > On Wed, Jun 19, 2024 at 02:46:22PM +0200, Csókás, Bence wrote:
+> > > Ethernet specification mandates that these bits will be equal.
+> > > To reduce the amount of magix hex'es in the code, just define
+> > > them in terms of each other.
+> > 
+> > I have a quick email exchange with other PHY maintainers, and we
+> > agree. We will reject these changes, they are just churn and bring no
+> > real benefit.
+> > 
+> > NACK
+> > 
+> >      Andrew
+> > 
+> 
+> The benefit is that I don't have to constantly convert between "n-th bit
+> set" (which is how virtually all datasheets, specifications, documentation
+> etc. represent MII bits) and these hex values. In most places in the kernel,
+> register bits are already represented with BIT() et al., so why not here?
 
-Sometimes dreams come true?  ;-)
+These are user API files, you can't use BIT() here (BIT() isn't defined
+for userspace header files.) Next, these are 'int's not 'longs' so
+using BIT() or _BITUL() could cause warnings - plus it changes the
+type of these definitions not only for kernel space but also user space.
+Thus, it's an API change.
 
-And thank you -- I will apply your ack on my next rebase.
+So no, we're not making changes to make this "more readable" at the
+expense of breaking the kernel's UAPI.
 
-							Thanx, Paul
+Just get used to working with hex numbers like most of us had to do
+before BIT() was added to the kernel... it's not difficult, each hex
+digit is after all four binary bits. It's not like it's decimal.
 
-> > ------------------------------------------------------------------------
-> > 
-> > commit 9d6767c47ce4de2ef817e47a5882748d8008ebe9
-> > Author: Zhouyi Zhou <zhouzhouyi@gmail.com>
-> > Date:   Wed Jun 19 23:06:58 2024 +0000
-> > 
-> >     rcutorture: Add CFcommon.arch for arch-specific Kconfig options
-> >     
-> >     Add CFcommon.arch for arch-specific Kconfig options.
-> >     
-> >     In accordance with [1], [2] and [3], move the x86-specific kernel option
-> >     CONFIG_HYPERVISOR_GUEST to CFcommon.i686 and CFcommon.x86_64, and also
-> >     move the x86/PowerPC CONFIG_KVM_GUEST Kconfig option to CFcommon.i686,
-> >     CFcommon.x86_64, and CFcommon.ppc64le.
-> >     
-> >     The "arch" in CFcommon.arch is taken from the "uname -m" command.
-> >     
-> >     [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
-> >     [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
-> >     [3] https://lore.kernel.org/all/ZnBkHosMDhsh4H8g@J2N7QTR9R3/
-> >     
-> >     Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
-> >     
-> >     Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
-> >     Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> >     Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> >     Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
-> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Mark.
-> 
-> 
-> > 
-> > diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> > index b33cd87536899..ad79784e552d2 100755
-> > --- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> > +++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> > @@ -68,6 +68,8 @@ config_override_param "--gdb options" KcList "$TORTURE_KCONFIG_GDB_ARG"
-> >  config_override_param "--kasan options" KcList "$TORTURE_KCONFIG_KASAN_ARG"
-> >  config_override_param "--kcsan options" KcList "$TORTURE_KCONFIG_KCSAN_ARG"
-> >  config_override_param "--kconfig argument" KcList "$TORTURE_KCONFIG_ARG"
-> > +config_override_param "$config_dir/CFcommon.$(uname -m)" KcList \
-> > +		      "`cat $config_dir/CFcommon.$(uname -m) 2> /dev/null`"
-> >  cp $T/KcList $resdir/ConfigFragment
-> >  
-> >  base_resdir=`echo $resdir | sed -e 's/\.[0-9]\+$//'`
-> > diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> > index 0e92d85313aa7..217597e849052 100644
-> > --- a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> > +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> > @@ -1,7 +1,5 @@
-> >  CONFIG_RCU_TORTURE_TEST=y
-> >  CONFIG_PRINTK_TIME=y
-> > -CONFIG_HYPERVISOR_GUEST=y
-> >  CONFIG_PARAVIRT=y
-> > -CONFIG_KVM_GUEST=y
-> >  CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC=n
-> >  CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n
-> > diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-> > new file mode 100644
-> > index 0000000000000..d8b2f555686fb
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-> > @@ -0,0 +1,2 @@
-> > +CONFIG_HYPERVISOR_GUEST=y
-> > +CONFIG_KVM_GUEST=y
-> > diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
-> > new file mode 100644
-> > index 0000000000000..133da04247ee0
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
-> > @@ -0,0 +1 @@
-> > +CONFIG_KVM_GUEST=y
-> > diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-> > new file mode 100644
-> > index 0000000000000..d8b2f555686fb
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-> > @@ -0,0 +1,2 @@
-> > +CONFIG_HYPERVISOR_GUEST=y
-> > +CONFIG_KVM_GUEST=y
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
