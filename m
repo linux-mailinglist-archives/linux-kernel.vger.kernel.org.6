@@ -1,104 +1,122 @@
-Return-Path: <linux-kernel+bounces-225154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B40912CC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:57:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304CC912CD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8624D1F265C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:57:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5637B2811B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B128716A935;
-	Fri, 21 Jun 2024 17:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2BF16A941;
+	Fri, 21 Jun 2024 17:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cD5wxEsr"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZwcYW0v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1778313D521
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 17:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953CB15FD1B;
+	Fri, 21 Jun 2024 17:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718992636; cv=none; b=WDpE+WdvoCEWe8io+D1At4db3wv4+vPIhxIKUenW5pQYrLzUc/UaNTWvhsF11dPiGAZZOg2eChqjq+p9trdqHTM+jRJZvIuSVy6WXFz8GD4n+SktQVS+dMG7J3dTCspJQsYEP98nzH3DZb9Fi3EtDRv9yn8H2VUHa1KnbhcGTJk=
+	t=1718992699; cv=none; b=KBmkh8JPqZ9Aak1UgMRKv/oKYjcZp/hT9THMHz5P8iRwoKOVuzwpeI/bWvb+Y1SQMa3ic/pbo9cyzbe+9J58qK5lA8CwCA49JNdxbqYBp7hIuGYZzodX4jc8q5TVx0hsI7cusaDQGqAkJqRg35/8/qT/8Rys2kiwsCxZrWC4q0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718992636; c=relaxed/simple;
-	bh=huiiGge3N5NRabnHhvGTRpLAvVUJYtR2Isze4gc0Iyg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M6EH1cWiIoKWZCxW2j0h1vNBwf8vISCBv6dYysvQMseqSVbX4bKG2WsDQWdTQHX+BBMVRL8cqy4ClshHZeyzy6EuFPQXniuGOpS6hU1wkMexTlv1qQMRjvQND1j6darzBxdSSwWajfApdZG2Hdv0TqQXd85bgF2uDisjDAsw8gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cD5wxEsr; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3d22323a3ccso130641b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:57:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718992633; x=1719597433; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u2uqp7TElEavi/tTlIJQ2pRjgF4RKNZn5WN+PGY/J3c=;
-        b=cD5wxEsrGUsk9P88rSupFociznSs3d59o3z5E7zbGRE0CsVLBLnls5xUtJ0wSbfBMz
-         UXd9Ndcz+LRitcDj2j7k53Emgx0c/BHhDyJHMzsDX5H6XTqrbTZqjo8Cl5aRGYDMJj0M
-         SmsgI0nMob2lqc/vmji2rZIvGbmMYZWQuXStWqffmxzpbWt30eQqvCZecvb4XDrM2keI
-         u7qN6z4OZ/c6WHvZZvb3xyjld2032TDG+rn5BUgp3a4MDCJaOi+Pa7klEf7dyfu83iwM
-         sTGCkQdpXLOn4wlPBn2sQm05u4G1xVYfEb7mUC5E33bFH3zE/LzCCYoTfnFBmDmW+dao
-         Urfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718992633; x=1719597433;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u2uqp7TElEavi/tTlIJQ2pRjgF4RKNZn5WN+PGY/J3c=;
-        b=ZEe6UrKr/w/UYMPbxh231GTUB6RtrDuw0SlVjpqFvKEg5TvQMJuxDY+PCA8NSH8mrS
-         xqWXs0/TIPeVF8Ic/H44hVXSjB2ZaQf3RSc5EabiLUH++P3ltQ6jNTYM4Py1uzxLpAAf
-         l7UVXjvbKTAgV7cSGaurBBLsOTprA2rqYWo9wh3ufMpnTBUsKpF2/FfGcwn0bc3THMNd
-         oeEkJng3akDLfMdPxoO9VZtU9Gx4+cdEa83tdlWNtzshLiRDLIS/7LQk1i9PNlcidl3U
-         zJ5uJZbWXdmemuUq1GJ8wikccfCJ32FDPYx3+VAwMnp64o3vz4jjl7WJQ/O+UkwMmb9W
-         4QNA==
-X-Gm-Message-State: AOJu0YxZzXMOO9BfYLrTnsTXAMrR32qZlQgmhZe/KVUgX06TpxPc3fyf
-	w+alc3J3keMZKYSy4+g4ywe1YjH3cLdK1hk04N1Zj3x3TBND1R1LWL2qnHsDO7g=
-X-Google-Smtp-Source: AGHT+IGi0WX+0vM76rlJSCntcANXU1jeQRrj9IofAe0fvrLTEz82eLwYCIjJ+BpSxkmkMO/qy/bddg==
-X-Received: by 2002:a05:6808:150f:b0:3d2:2356:d271 with SMTP id 5614622812f47-3d51b9654ebmr11015214b6e.1.1718992633179;
-        Fri, 21 Jun 2024 10:57:13 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d53451bd94sm389075b6e.33.2024.06.21.10.57.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 10:57:12 -0700 (PDT)
-Message-ID: <b765d200-4e0f-48b1-a962-7dfa1c4aef9c@kernel.dk>
-Date: Fri, 21 Jun 2024 11:57:05 -0600
+	s=arc-20240116; t=1718992699; c=relaxed/simple;
+	bh=FHCBOkmJKRXejruoqMXNQNRLqnkS19ln5GOhpLntUOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X91ZLCrrH170XQi30utFbYylLdlY+FgAl8JFo8vQ21YxBWePQBtBxFFe8Lxx9/oQmEqKLi2TLQEUtFQl4dgnVmdUUFlPlJDP5x4PbOjJAdeSHVQdNnxqHj+HyG4FlewKIXrrbC3uv81VG/7VBQEkZVmuV7RY5teBqzjw93Wy1B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZwcYW0v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F035C4AF07;
+	Fri, 21 Jun 2024 17:58:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718992699;
+	bh=FHCBOkmJKRXejruoqMXNQNRLqnkS19ln5GOhpLntUOw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YZwcYW0vdtdGiwivQzAapn+QuTm1F5qT9YogaDVOkQPvAOHFGHo/TD1yXTOIhQxED
+	 9slb9Mq0ZwpuYHMLk/F/tEMI8Sl9UiAmZZRzjP4RRj7476xWi6bLJKx1uBwAD/apxj
+	 pna10eP8Wl4mSDvfqLOZPl422ANzIrBJmCp/erieV9zDcSQeQmrogL6QAMO+oqfvqe
+	 0C6DMu84ZP9VHVWuQEVZW6dZlQ1l41Va3CMSUZJhdFvPgP3HwOblS+0OdZVGC9K3Ev
+	 36qeFf3WbMJO5kfvyK4NOp/Xr8BH5qVnqMNyP6GQORj+XR/iVWpU3G8s11oGcQHdKr
+	 bPWgAeak4uyBQ==
+Date: Fri, 21 Jun 2024 10:58:16 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Jesse Taube <jesse@rivosinc.com>, linux-riscv@lists.infradead.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Evan Green <evan@rivosinc.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>,
+	Greentime Hu <greentime.hu@sifive.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Anup Patel <apatel@ventanamicro.com>,
+	Zong Li <zong.li@sifive.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Erick Archer <erick.archer@gmx.com>,
+	Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] RISC-V: Detect unaligned vector accesses
+ supported.
+Message-ID: <20240621175816.GD2081@sol.localdomain>
+References: <20240613191616.2101821-1-jesse@rivosinc.com>
+ <20240613191616.2101821-5-jesse@rivosinc.com>
+ <ZnDmRK0ZtKzmWN5S@ghost>
+ <ZnDsdzv4o/Xz9kWm@ghost>
+ <e6f7a061-50f0-4a6a-a09b-468502703c20@rivosinc.com>
+ <ZnSptpobfqjik3RM@ghost>
+ <20240621-reveler-underfed-37600a9f16d5@wendy>
+ <ZnW130PqW56CnZT8@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the block tree
-To: John Garry <john.g.garry@oracle.com>, Mark Brown <broonie@kernel.org>,
- Himanshu Madhani <himanshu.madhani@oracle.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Keith Busch <kbusch@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <ZnWe6sXMxm4RXBcM@sirena.org.uk>
- <670625c0-a288-4166-9209-2eccc5ee97c3@kernel.dk>
- <b098bd2d-f308-4383-b348-98f9904ca28a@oracle.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <b098bd2d-f308-4383-b348-98f9904ca28a@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnW130PqW56CnZT8@ghost>
 
-On 6/21/24 11:02 AM, John Garry wrote:
-> Sure, but I think that we can also use the following, since both are unsigned int:
->     if (WARN_ON_ONCE(chunk_sectors % boundary_sectors))
+On Fri, Jun 21, 2024 at 10:18:23AM -0700, Charlie Jenkins wrote:
+> > Additionally, what are we doing in the kernel if we detect that
+> > misaligned stuff isn't supported? Are we going to mandate that kernel
+> > code is aligned only, disable in-kernel vector or some other mechanism
+> > to make sure that things like crypto code don't have/introduce code
+> > that'll not run on these systems?
 > 
-> I'll send a fix.
+> UNSUPPORTED will still be set by the quick probe so it would be possible
+> for the kernel/userspace to avoid running misaligned vector when it's
+> unsupported. Any kernel methods would probably want to always run
+> aligned vector unless misaligned support was determined to be FAST
+> anyway, I am doubtful that code will have different optimizations for
+> FAST, SLOW, and UNSUPPORTED but it is possible. 
+> 
+> I would prefer consistency between scalar and vector misaligned support,
+> but this is not a deal breaker for this patch. I am not convinced it is
+> the best choice, but I am okay with leaving this option in the kernel.
+> 
 
-Good point, yeah that's better as it's just 32-bit types regardless.
+Note that most of the vector crypto code (in arch/riscv/crypto/) assumes that
+vector misaligned accesses are supported.  Many of the RISC-V vector crypto
+instructions require using SEW=32 or SEW=64, and as a result, loads and stores
+of data can be misaligned unless the code changes the SEW to 8 and back again,
+which would be inefficient and add extra complexity.  I don't anticipate
+workarounds for CPUs that couldn't be bothered to support misaligned accesses
+being added.  So what we'll probably have to do is just disable the vector
+crypto algorithms if the CPU doesn't support misaligned accesses...
 
--- 
-Jens Axboe
-
+- Eric
 
