@@ -1,239 +1,342 @@
-Return-Path: <linux-kernel+bounces-225287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454F1912E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:35:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A551A912EA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BDF1F225BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C96551C21CC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B7517B4F2;
-	Fri, 21 Jun 2024 20:34:49 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377B617B504;
+	Fri, 21 Jun 2024 20:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rigra2S5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45794374DD;
-	Fri, 21 Jun 2024 20:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363E8374DD;
+	Fri, 21 Jun 2024 20:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719002089; cv=none; b=Ro4uFzeBx9UcC1yAGNVXc5XG6Az8lh6goBZSAY1qcDsCqkIvU02dX4DtNfx5C5BoeKoso+be5jHTV59WNXXLkVPT2/+aIfiiSGstHwUbSIWJgxZB35SGAd+lS6lRuXz3lFV86zLLyA9rmN456jdt6sDoEHZjdc2OeXWiaZ5VICc=
+	t=1719002157; cv=none; b=blBfW7hAcxJoeT1o623b5qKANJ6vUoPYT4Aqk7qf3Vd85krum2fNYfGAp06GQEWL+ZU1bcpVsBhGkKq7YcC/Zb8VRWk3MM+7ffQ2Qi3QCnxtxcnobeQ87L/ql1CsmIb00CBV4G3oiEHuXh3E5sIbTu30UyPTMJ4kA14x6Vizmkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719002089; c=relaxed/simple;
-	bh=RT/+yhfG1qX8sq8+FisAQwWHObfiENnmk06EzW4HVak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tLcxkTzy0iBnLofC4ApkpLXLxMZ+t3KB8EQ67/wTOvJ55wOg9ROq+KQZOEFeaOpDJhyQQYlHo+VJem1S6fQKy5XJiUPxQIRgmYRuCqNGLo+Muf8IIaUZtcIv0VE/Zdv5zvEMoGuYtxchs48EdEm/MEb/J1ZmIFOROTaHd17Sc7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4W5TCn12j8z9v7Hk;
-	Sat, 22 Jun 2024 04:16:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 439F31407FA;
-	Sat, 22 Jun 2024 04:34:32 +0800 (CST)
-Received: from [10.45.150.173] (unknown [10.45.150.173])
-	by APP2 (Coremail) with SMTP id GxC2BwCXHzrM43VmwarhAA--.16019S2;
-	Fri, 21 Jun 2024 21:34:31 +0100 (CET)
-Message-ID: <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com>
-Date: Fri, 21 Jun 2024 22:34:18 +0200
+	s=arc-20240116; t=1719002157; c=relaxed/simple;
+	bh=AWGl7kBatIEhJKHGRbfHsCcAQbol8d3H5yKz8G3EmZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fkR823/CaHOM/fbFV+B+snNrpTnT8koGH+b4wb8rdjzrElSTV2M1KN6IJDW0W3LW2OjDFRUxdgWsJOQZjeElrd1Ly4N2iUr+pgtbhlvrY2LsvoZV2jHcEdV4UjmVa7VuDQOJphCJFjlhpcg/yz7iL0Q410+qfekEs1Rxi2Al//o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rigra2S5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94843C2BBFC;
+	Fri, 21 Jun 2024 20:35:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719002156;
+	bh=AWGl7kBatIEhJKHGRbfHsCcAQbol8d3H5yKz8G3EmZo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rigra2S56F826IoJcX0fMMGIqsMQ1W83Yqu9XzVg4OAEMiUkOJVs7ylsAiUBUYNqt
+	 SZjuQgzPtXFG9/DpSyyVJLedr3z8coz1A7IHP2A0NOrtDAq4sES+I9stkFzxF+/F9K
+	 GdPwYoPtAFSLWv4uZvoKvpBLF8KRwGlr2rDrHVQlS6+LB+MfJ2TMPMCB5MiLcSt82E
+	 dKNhZr5E9oFR/RcYdSEaYiDZv2Sg6nJu+YIv3CD2K0ikDmZZ5BubmEvHuKnz0x9VZD
+	 4e8a4YBy7fh5OB8Op1nFJHYhF8XXdnjmMkEXQEL1b1aV3gRg3N7s1b2UqmkSTopH+f
+	 QWNd23pXTUseQ==
+Date: Fri, 21 Jun 2024 13:35:56 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH 04/13] xfs: make EOF allocation simpler
+Message-ID: <20240621203556.GU3058325@frogsfrogsfrogs>
+References: <20240621100540.2976618-1-john.g.garry@oracle.com>
+ <20240621100540.2976618-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from
- security_audit_rule
-To: Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
- Roberto Sassu <roberto.sassu@huawei.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
- serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
- penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
- linux-kernel@vger.kernel.org, mic@digikod.net,
- linux-integrity@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20231215221636.105680-1-casey@schaufler-ca.com>
- <20231215221636.105680-2-casey@schaufler-ca.com>
- <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
- <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
- <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwCXHzrM43VmwarhAA--.16019S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XryDCF48CrWkAF17Kry5twb_yoW7ZFW8pF
-	WUKF4UCF48XFy7G3sa9wnrW3ZaqrWrGr1DZrsxG34DtFn0yrnrGr13Ar4rur9Ygr48Cr1I
-	vF17WrW3uw4Dt3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQABBF1jj5+PkAAAs1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621100540.2976618-5-john.g.garry@oracle.com>
 
-On 6/21/2024 10:23 PM, Mimi Zohar wrote:
-> On Fri, 2024-06-21 at 15:07 -0400, Paul Moore wrote:
->> On Fri, Jun 21, 2024 at 12:50 PM Paul Moore <paul@paul-moore.com> wrote:
->>> On Fri, Dec 15, 2023 at 5:16 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> Create real functions for the ima_filter_rule interfaces.
->>>> These replace #defines that obscure the reuse of audit
->>>> interfaces. The new functions are put in security.c because
->>>> they use security module registered hooks that we don't
->>>> want exported.
->>>>
->>>> Acked-by: Paul Moore <paul@paul-moore.com>
->>>> Reviewed-by: John Johansen <john.johansen@canonical.com>
->>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>>> To: Mimi Zohar <zohar@linux.ibm.com>
->>>> Cc: linux-integrity@vger.kernel.org
->>>> ---
->>>>   include/linux/security.h     | 24 ++++++++++++++++++++++++
->>>>   security/integrity/ima/ima.h | 26 --------------------------
->>>>   security/security.c          | 21 +++++++++++++++++++++
->>>>   3 files changed, 45 insertions(+), 26 deletions(-)
->>>
->>> Mimi, Roberto, are you both okay if I merge this into the lsm/dev
->>> branch?  The #define approach taken with the ima_filter_rule_XXX
->>> macros likely contributed to the recent problem where the build
->>> problem caused by the new gfp_t parameter was missed during review;
->>> I'd like to get this into an upstream tree independent of the larger
->>> stacking effort as I believe it has standalone value.
->>
->> ... and I just realized neither Mimi or Roberto were directly CC'd on
->> that last email, oops.  Fixed.
+On Fri, Jun 21, 2024 at 10:05:31AM +0000, John Garry wrote:
+> From: Dave Chinner <dchinner@redhat.com>
 > 
-> Paul, I do see things posted on the linux-integrity mailing list pretty quickly.
-> Unfortunately, something came up midday and I'm just seeing this now.  As for
-> Roberto, it's probably a time zone issue.
-
-Will review/check it first thing Monday morning.
-
-Roberto
-
-> The patch looks ok, but I haven't had a chance to apply or test it.  I'll look
-> at it over the weekend and get back to you.
+> Currently the allocation at EOF is broken into two cases - when the
+> offset is zero and when the offset is non-zero. When the offset is
+> non-zero, we try to do exact block allocation for contiguous
+> extent allocation. When the offset is zero, the allocation is simply
+> an aligned allocation.
 > 
-> Mimi
+> We want aligned allocation as the fallback when exact block
+> allocation fails, but that complicates the EOF allocation in that it
+> now has to handle two different allocation cases. The
+> caller also has to handle allocation when not at EOF, and for the
+> upcoming forced alignment changes we need that to also be aligned
+> allocation.
 > 
->>
->>>> diff --git a/include/linux/security.h b/include/linux/security.h
->>>> index 750130a7b9dd..4790508818ee 100644
->>>> --- a/include/linux/security.h
->>>> +++ b/include/linux/security.h
->>>> @@ -2009,6 +2009,30 @@ static inline void security_audit_rule_free(void *lsmrule)
->>>>   #endif /* CONFIG_SECURITY */
->>>>   #endif /* CONFIG_AUDIT */
->>>>
->>>> +#if defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY)
->>>> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
->>>> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
->>>> +void ima_filter_rule_free(void *lsmrule);
->>>> +
->>>> +#else
->>>> +
->>>> +static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
->>>> +                                          void **lsmrule)
->>>> +{
->>>> +       return 0;
->>>> +}
->>>> +
->>>> +static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
->>>> +                                           void *lsmrule)
->>>> +{
->>>> +       return 0;
->>>> +}
->>>> +
->>>> +static inline void ima_filter_rule_free(void *lsmrule)
->>>> +{ }
->>>> +
->>>> +#endif /* defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY) */
->>>> +
->>>>   #ifdef CONFIG_SECURITYFS
->>>>
->>>>   extern struct dentry *securityfs_create_file(const char *name, umode_t mode,
->>>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->>>> index c29db699c996..560d6104de72 100644
->>>> --- a/security/integrity/ima/ima.h
->>>> +++ b/security/integrity/ima/ima.h
->>>> @@ -420,32 +420,6 @@ static inline void ima_free_modsig(struct modsig *modsig)
->>>>   }
->>>>   #endif /* CONFIG_IMA_APPRAISE_MODSIG */
->>>>
->>>> -/* LSM based policy rules require audit */
->>>> -#ifdef CONFIG_IMA_LSM_RULES
->>>> -
->>>> -#define ima_filter_rule_init security_audit_rule_init
->>>> -#define ima_filter_rule_free security_audit_rule_free
->>>> -#define ima_filter_rule_match security_audit_rule_match
->>>> -
->>>> -#else
->>>> -
->>>> -static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
->>>> -                                      void **lsmrule)
->>>> -{
->>>> -       return -EINVAL;
->>>> -}
->>>> -
->>>> -static inline void ima_filter_rule_free(void *lsmrule)
->>>> -{
->>>> -}
->>>> -
->>>> -static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
->>>> -                                       void *lsmrule)
->>>> -{
->>>> -       return -EINVAL;
->>>> -}
->>>> -#endif /* CONFIG_IMA_LSM_RULES */
->>>> -
->>>>   #ifdef CONFIG_IMA_READ_POLICY
->>>>   #define        POLICY_FILE_FLAGS       (S_IWUSR | S_IRUSR)
->>>>   #else
->>>> diff --git a/security/security.c b/security/security.c
->>>> index d7b15ea67c3f..8e5379a76369 100644
->>>> --- a/security/security.c
->>>> +++ b/security/security.c
->>>> @@ -5350,6 +5350,27 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
->>>>   }
->>>>   #endif /* CONFIG_AUDIT */
->>>>
->>>> +#ifdef CONFIG_IMA_LSM_RULES
->>>> +/*
->>>> + * The integrity subsystem uses the same hooks as
->>>> + * the audit subsystem.
->>>> + */
->>>> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
->>>> +{
->>>> +       return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
->>>> +}
->>>> +
->>>> +void ima_filter_rule_free(void *lsmrule)
->>>> +{
->>>> +       call_void_hook(audit_rule_free, lsmrule);
->>>> +}
->>>> +
->>>> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
->>>> +{
->>>> +       return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
->>>> +}
->>>> +#endif /* CONFIG_IMA_LSM_RULES */
->>>> +
->>>>   #ifdef CONFIG_BPF_SYSCALL
->>>>   /**
->>>>    * security_bpf() - Check if the bpf syscall operation is allowed
->>>> --
->>>> 2.41.0
+> To simplify all this, pull the aligned allocation cases back into
+> the callers and leave the EOF allocation path for exact block
+> allocation only. This means that the EOF exact block allocation
+> fallback path is the normal aligned allocation path and that ends up
+> making things a lot simpler when forced alignment is introduced.
 > 
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/libxfs/xfs_bmap.c   | 129 +++++++++++++++----------------------
+>  fs/xfs/libxfs/xfs_ialloc.c |   2 +-
+>  2 files changed, 54 insertions(+), 77 deletions(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+> index 7f8c8e4dd244..528e3cd81ee6 100644
+> --- a/fs/xfs/libxfs/xfs_bmap.c
+> +++ b/fs/xfs/libxfs/xfs_bmap.c
+> @@ -3310,12 +3310,12 @@ xfs_bmap_select_minlen(
+>  static int
+>  xfs_bmap_btalloc_select_lengths(
+>  	struct xfs_bmalloca	*ap,
+> -	struct xfs_alloc_arg	*args,
+> -	xfs_extlen_t		*blen)
+> +	struct xfs_alloc_arg	*args)
+>  {
+>  	struct xfs_mount	*mp = args->mp;
+>  	struct xfs_perag	*pag;
+>  	xfs_agnumber_t		agno, startag;
+> +	xfs_extlen_t		blen = 0;
+>  	int			error = 0;
+>  
+>  	if (ap->tp->t_flags & XFS_TRANS_LOWMODE) {
+> @@ -3329,19 +3329,18 @@ xfs_bmap_btalloc_select_lengths(
+>  	if (startag == NULLAGNUMBER)
+>  		startag = 0;
+>  
+> -	*blen = 0;
+>  	for_each_perag_wrap(mp, startag, agno, pag) {
+> -		error = xfs_bmap_longest_free_extent(pag, args->tp, blen);
+> +		error = xfs_bmap_longest_free_extent(pag, args->tp, &blen);
+>  		if (error && error != -EAGAIN)
+>  			break;
+>  		error = 0;
+> -		if (*blen >= args->maxlen)
+> +		if (blen >= args->maxlen)
+>  			break;
+>  	}
+>  	if (pag)
+>  		xfs_perag_rele(pag);
+>  
+> -	args->minlen = xfs_bmap_select_minlen(ap, args, *blen);
+> +	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
+>  	return error;
+>  }
+>  
+> @@ -3551,78 +3550,40 @@ xfs_bmap_exact_minlen_extent_alloc(
+>   * If we are not low on available data blocks and we are allocating at
+>   * EOF, optimise allocation for contiguous file extension and/or stripe
+>   * alignment of the new extent.
+> - *
+> - * NOTE: ap->aeof is only set if the allocation length is >= the
+> - * stripe unit and the allocation offset is at the end of file.
+>   */
+>  static int
+>  xfs_bmap_btalloc_at_eof(
+>  	struct xfs_bmalloca	*ap,
+> -	struct xfs_alloc_arg	*args,
+> -	xfs_extlen_t		blen,
+> -	bool			ag_only)
+> +	struct xfs_alloc_arg	*args)
+>  {
+>  	struct xfs_mount	*mp = args->mp;
+>  	struct xfs_perag	*caller_pag = args->pag;
+> +	xfs_extlen_t		alignment = args->alignment;
+>  	int			error;
+>  
+> +	ASSERT(ap->aeof && ap->offset);
+> +	ASSERT(args->alignment >= 1);
+> +
+>  	/*
+> -	 * If there are already extents in the file, try an exact EOF block
+> -	 * allocation to extend the file as a contiguous extent. If that fails,
+> -	 * or it's the first allocation in a file, just try for a stripe aligned
+> -	 * allocation.
+> +	 * Compute the alignment slop for the fallback path so we ensure
+> +	 * we account for the potential alignemnt space required by the
+> +	 * fallback paths before we modify the AGF and AGFL here.
+>  	 */
+> -	if (ap->offset) {
+> -		xfs_extlen_t	alignment = args->alignment;
+> -
+> -		/*
+> -		 * Compute the alignment slop for the fallback path so we ensure
+> -		 * we account for the potential alignemnt space required by the
+> -		 * fallback paths before we modify the AGF and AGFL here.
+> -		 */
+> -		args->alignment = 1;
+> -		args->alignslop = alignment - args->alignment;
+> -
+> -		if (!caller_pag)
+> -			args->pag = xfs_perag_get(mp, XFS_FSB_TO_AGNO(mp, ap->blkno));
+> -		error = xfs_alloc_vextent_exact_bno(args, ap->blkno);
+> -		if (!caller_pag) {
+> -			xfs_perag_put(args->pag);
+> -			args->pag = NULL;
+> -		}
+> -		if (error)
+> -			return error;
+> -
+> -		if (args->fsbno != NULLFSBLOCK)
+> -			return 0;
+> -		/*
+> -		 * Exact allocation failed. Reset to try an aligned allocation
+> -		 * according to the original allocation specification.
+> -		 */
+> -		args->alignment = alignment;
+> -		args->alignslop = 0;
+> -	}
+> +	args->alignment = 1;
+> +	args->alignslop = alignment - args->alignment;
+>  
+> -	if (ag_only) {
+> -		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
+> -	} else {
+> +	if (!caller_pag)
+> +		args->pag = xfs_perag_get(mp, XFS_FSB_TO_AGNO(mp, ap->blkno));
+> +	error = xfs_alloc_vextent_exact_bno(args, ap->blkno);
+> +	if (!caller_pag) {
+> +		xfs_perag_put(args->pag);
+>  		args->pag = NULL;
+> -		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
+> -		ASSERT(args->pag == NULL);
+> -		args->pag = caller_pag;
+>  	}
+> -	if (error)
+> -		return error;
+>  
+> -	if (args->fsbno != NULLFSBLOCK)
+> -		return 0;
+> -
+> -	/*
+> -	 * Aligned allocation failed, so all fallback paths from here drop the
+> -	 * start alignment requirement as we know it will not succeed.
+> -	 */
+> -	args->alignment = 1;
+> -	return 0;
+> +	/* Reset alignment to original specifications.  */
+> +	args->alignment = alignment;
+> +	args->alignslop = 0;
+> +	return error;
+>  }
+>  
+>  /*
+> @@ -3688,12 +3649,19 @@ xfs_bmap_btalloc_filestreams(
+>  	}
+>  
+>  	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
+> -	if (ap->aeof)
+> -		error = xfs_bmap_btalloc_at_eof(ap, args, blen, true);
+> +	if (ap->aeof && ap->offset)
+> +		error = xfs_bmap_btalloc_at_eof(ap, args);
+>  
+> +	/* This may be an aligned allocation attempt. */
+>  	if (!error && args->fsbno == NULLFSBLOCK)
+>  		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
+>  
+> +	/* Attempt non-aligned allocation if we haven't already. */
+> +	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
+> +		args->alignment = 1;
 
+Do we have to zero alignslop here?
+
+Kicking the calls to the near/startag allocators out of
+xfs_bmap_btalloc_at_eof makes it a lot easier to follow.  I appreciate
+that.
+
+--D
+
+> +		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
+> +	}
+> +
+>  out_low_space:
+>  	/*
+>  	 * We are now done with the perag reference for the filestreams
+> @@ -3715,7 +3683,6 @@ xfs_bmap_btalloc_best_length(
+>  	struct xfs_bmalloca	*ap,
+>  	struct xfs_alloc_arg	*args)
+>  {
+> -	xfs_extlen_t		blen = 0;
+>  	int			error;
+>  
+>  	ap->blkno = XFS_INO_TO_FSB(args->mp, ap->ip->i_ino);
+> @@ -3726,23 +3693,33 @@ xfs_bmap_btalloc_best_length(
+>  	 * the request.  If one isn't found, then adjust the minimum allocation
+>  	 * size to the largest space found.
+>  	 */
+> -	error = xfs_bmap_btalloc_select_lengths(ap, args, &blen);
+> +	error = xfs_bmap_btalloc_select_lengths(ap, args);
+>  	if (error)
+>  		return error;
+>  
+>  	/*
+> -	 * Don't attempt optimal EOF allocation if previous allocations barely
+> -	 * succeeded due to being near ENOSPC. It is highly unlikely we'll get
+> -	 * optimal or even aligned allocations in this case, so don't waste time
+> -	 * trying.
+> +	 * If we are in low space mode, then optimal allocation will fail so
+> +	 * prepare for minimal allocation and run the low space algorithm
+> +	 * immediately.
+>  	 */
+> -	if (ap->aeof && !(ap->tp->t_flags & XFS_TRANS_LOWMODE)) {
+> -		error = xfs_bmap_btalloc_at_eof(ap, args, blen, false);
+> -		if (error || args->fsbno != NULLFSBLOCK)
+> -			return error;
+> +	if (ap->tp->t_flags & XFS_TRANS_LOWMODE) {
+> +		ASSERT(args->fsbno == NULLFSBLOCK);
+> +		return xfs_bmap_btalloc_low_space(ap, args);
+> +	}
+> +
+> +	if (ap->aeof && ap->offset)
+> +		error = xfs_bmap_btalloc_at_eof(ap, args);
+> +
+> +	/* This may be an aligned allocation attempt. */
+> +	if (!error && args->fsbno == NULLFSBLOCK)
+> +		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
+> +
+> +	/* Attempt non-aligned allocation if we haven't already. */
+> +	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
+> +		args->alignment = 1;
+
+And here?
+
+> +		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
+>  	}
+>  
+> -	error = xfs_alloc_vextent_start_ag(args, ap->blkno);
+>  	if (error || args->fsbno != NULLFSBLOCK)
+>  		return error;
+>  
+> diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
+> index 9f71a9a3a65e..40a2daeea712 100644
+> --- a/fs/xfs/libxfs/xfs_ialloc.c
+> +++ b/fs/xfs/libxfs/xfs_ialloc.c
+> @@ -780,7 +780,7 @@ xfs_ialloc_ag_alloc(
+>  		 * the exact agbno requirement and increase the alignment
+>  		 * instead. It is critical that the total size of the request
+>  		 * (len + alignment + slop) does not increase from this point
+> -		 * on, so reset minalignslop to ensure it is not included in
+> +		 * on, so reset alignslop to ensure it is not included in
+
+This belongs in the previous patch, yes?
+
+--D
+
+>  		 * subsequent requests.
+>  		 */
+>  		args.alignslop = 0;
+> -- 
+> 2.31.1
+> 
+> 
 
