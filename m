@@ -1,147 +1,144 @@
-Return-Path: <linux-kernel+bounces-223996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB75911BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:25:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D18911BA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994D31F250EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:25:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CD71C23AEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1CB14D2A4;
-	Fri, 21 Jun 2024 06:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49E6158DC5;
+	Fri, 21 Jun 2024 06:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zgAMF+LQ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7D9hrya"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B50E1339B1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63551339B1;
+	Fri, 21 Jun 2024 06:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718951118; cv=none; b=Zp8FH0Bae/ogVwIPi1027lMzsGr+d/t5lk9mZlj4w8ZYobxZjdxzWhTB/EEFOo/BD0yTwURqbOsyCaTrZCs2gMeIlOfFoyrScz02Ind9Z8Rgd3XboHUuHAihgOayq2HGTyLRFUqvm0H/43ooHtnX95jP5G0p2vJraU6NFzNXEsk=
+	t=1718951135; cv=none; b=hUsW7EwPiw12lvoIS7HqrYX3JqAk7QjW2fvN0/owibsUbRBCBMl2oQkNqUz4c6gGZ7OWpJ8MOT8DHEUIZxNYQOftHLk73WRaD+aolaZ1C03ZBCr9oYtxelELaHyYXa0+QgOLVA8DQzKS3dtO5kyo6nWmtuDzgICPd0wbmSgKudE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718951118; c=relaxed/simple;
-	bh=vluQpXFRuEsX4CzotufWS3BiU3gXU3CkyNzrm5f7P00=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=quVLRxxuqTnN06hkAz8u8Uvt4hrRMLhlDZc7itJIU0eByvInIGNjekUsdYcMQGnJG4Ax0z8Nri6/6iDs6cCnyd4I6J7N+Lo9e+RtIQ7JcQTq/rTyVKH9kiM9msPq1kF9AcNHhLOR8r/i4d7NBIr6mDTJmjHiWKtWR3w6DzhhoEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zgAMF+LQ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52cc5d5179aso2262479e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718951115; x=1719555915; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=StWMYOsCh6FPtaum53yX6NippyLiUpGWAFV7rmRXSlk=;
-        b=zgAMF+LQh4PdOXgsMM8+YcaWu+uWt0KMdMMI3d3WZNjRvR0FlmVhD+NpSpvosX5l+d
-         6cPNUgsjjrfxFRDJE3uKruWrFDcvRp5pceAItMP41HydIL994o6crJMKDF1tqn6cYZp4
-         62Tm4E8vcEPgLl+q2q9HUq8Q2UwLYfOyOYxDHlhTzIiLpU1jlqjD4BsvpPX+qTEXn7XG
-         maDRjoAPvLlOAabIx4P/f8K7X5PnlJuI9MD12wUMpw7935ZmKMN030ecgJCSqRsimw6J
-         56KPTr7sK+zjz15vAlp5SUIYFj02vfDVzjjkSfQ/NWd5fvA4QV3jsSsawBU/dKR8v16w
-         0l2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718951115; x=1719555915;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=StWMYOsCh6FPtaum53yX6NippyLiUpGWAFV7rmRXSlk=;
-        b=wXfzsfqzyqIendk1aGvkF8dp2CeKs1Y0APpmMJNQetUxsoDWycdebScvUJpfahaMNK
-         KsbhpgbKRirYAKHibE+nhf71BLOIXfOl9nC6Vzykn2cTaB9pF6OdWbKoubIAVIHTtClV
-         ynGohxRh0tF09zoitEo4ir1oyljVeX18Vl5xCpqrJ/mmg4nEwVXYEa0u55eb1uJ93CLV
-         OC5Z0ACu6gUukIZ/W6MhUIiTmnNIEgj9w1IsPuoyHP7zN1hxEJdraOnWlH0IJM+NiSXw
-         JPGz/bGoPpfkARef2IsVCQcc1LeAeDKz6eP0MI7IeHwJs45mrpmqSL7QRxOgvj7K+Ax8
-         4THA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrELnFvEMtgyP9vA/IlILDCWSm5dFOEIiVk/gmRFf8m652jHNm9ZfDCAuFdB+IxRM6ZdFdoZDK92ryL3p61I96MdM2nBHaM7nLrlVG
-X-Gm-Message-State: AOJu0YxmP5wpoTH8VkDl5FhPiLN1srMK0LBOvyroCNADBVHNQb+qUec4
-	oBDvw0KHjI9vhf4kTR8RKxpx8/oim1fkxKjGXE/RA3U2B/KqCkJdgBFBUVyOj7Y=
-X-Google-Smtp-Source: AGHT+IGOvQBVeOVRfT9OeleaCwxcfWuwyKp0KoQmrSi1Y8cbFK0mqlmwonfKGGA/D0j7pSuym3kIpA==
-X-Received: by 2002:a05:6512:3988:b0:52c:cb8d:6374 with SMTP id 2adb3069b0e04-52ccb8d6456mr6536347e87.11.1718951115118;
-        Thu, 20 Jun 2024 23:25:15 -0700 (PDT)
-Received: from hackbox.lan ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a8ed3sm14463675e9.13.2024.06.20.23.25.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 23:25:14 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: abelvesa@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: imx@lists.linux.dev,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V3 00/15] clk: imx: misc update/fix
-Date: Fri, 21 Jun 2024 09:24:59 +0300
-Message-Id: <171895105697.3608188.110944709510140108.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240607133347.3291040-1-peng.fan@oss.nxp.com>
-References: <20240607133347.3291040-1-peng.fan@oss.nxp.com>
+	s=arc-20240116; t=1718951135; c=relaxed/simple;
+	bh=oPW1WUMpeUlBXgaCkD1FCmz7P1PMeZKHjbupeBiDffo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jN0olApgE+sR3ujHaJSFEQXPJjbM/3NJx/sRxEd8m3EedE6TEg18LOwpod9/GpWxx7ziZ6196tRKv3RO3HZgpAhZbtPjYhAGBEdbOWMFNll2BsCnhrDTmvsH93inB+WRdo5JDYYjpn6pb+FaNrtaUpVpR7Qo5bpx2d6iccu6rVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7D9hrya; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D565C4AF08;
+	Fri, 21 Jun 2024 06:25:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718951135;
+	bh=oPW1WUMpeUlBXgaCkD1FCmz7P1PMeZKHjbupeBiDffo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R7D9hrya9zYx6knzHuSfzQlpsZKb8kU0bwbSvU2xuqPKeNuw2N0IZtk/B/ML9YyxZ
+	 lVaI0gjQxdQSjaIL5KE5fwAev9T+PD77RAGoWt0BVZ1yqFMY/X4F2tz7UJNtS2RdA3
+	 cuXOHQ2q1WHjqt4aTcNkARNwY83Azzp1hMeMd3h7RrCZy4DE+fRKbnDcpprU6HwzxS
+	 qcR1SsGlpPfYBR9P8aQXoS2yyvCf2yeBEs/3Tc2P2yb/G7YRgax3ESQSPatl/P811o
+	 SBH/oUce3T+7ltZ4YqTTQUeh0OEqvbKZXyVDaPjMaxBUL9hoX1GYNSljFqqTHKgdEy
+	 3cUWNkOeyL5Mg==
+Message-ID: <f52bc36a-0b82-4def-bb11-ed7e2ca55016@kernel.org>
+Date: Fri, 21 Jun 2024 08:25:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v4 07/10] ARM: lpc32xx: Remove pl08x platform data in
+ favor for device tree
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "J.M.B. Downing" <jonathan.downing@nautel.com>,
+ Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Yangtao Li <frank.li@vivo.com>, Arnd Bergmann <arnd@arndb.de>,
+ Li Zetao <lizetao1@huawei.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Chancel Liu <chancel.liu@nxp.com>, dmaengine@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+ linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+ <20240620175657.358273-8-piotr.wojtaszczyk@timesys.com>
+ <bc3d018e-5a60-46b0-8e84-7158d231d2cc@web.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <bc3d018e-5a60-46b0-8e84-7158d231d2cc@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Fri, 07 Jun 2024 21:33:32 +0800, Peng Fan (OSS) wrote:
-> Changes in v3:
-> - Drop two patches
->       clk: imx: pll14xx: Add constraint for fvco frequency
->       clk: imx: pll14xx: use rate_table for audio plls
-> - Update 8ULP PCC check to not return Error
-> - Update commit log and Add R-b for
->   "clk: imx: imx8mp: fix clock tree update of TF-A managed clocks"
-> - Link to v2: https://lore.kernel.org/all/20240510-imx-clk-v2-0-c998f315d29c@nxp.com/
+On 21/06/2024 07:56, Markus Elfring wrote:
+>> With the driver for nxp,lpc3220-dmamux we can remove the pl08x platform
+>> data and let pl08x driver to create peripheral channels from the DT
+>> properties.
 > 
-> [...]
+> Do you see opportunities to improve such a change description?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc4#n94
 
-Applied, thanks!
-
-[01/15] clk: imx: composite-8m: Enable gate clk with mcore_booted
-        commit: b4c91df8118b5d4efdc9732206de81ac620f53d2
-[02/15] clk: imx: composite-93: keep root clock on when mcore enabled
-        commit: 90d91ce8e20e0df9806ce7f7c49f8ef05471b5ce
-[03/15] clk: imx: composite-7ulp: Check the PCC present bit
-        commit: afd1247ce838b4a06fb0c24e522687475583035d
-[04/15] clk: imx: fracn-gppll: fix fractional part of PLL getting lost
-        commit: af218f2d935e118582d43cbd89c81ef6f26be286
-[05/15] clk: imx: imx8mp-audiomix: remove sdma root clock
-        (no commit info)
-[06/15] clk: imx: imx8mp: fix clock tree update of TF-A managed clocks
-        commit: 6bc3d1e264ad5bace5d1980997abcc7ad5308181
-[07/15] clk: imx: Remove CLK_SET_PARENT_GATE for DRAM mux for i.MX7D
-        commit: 68a3e49a2a5e75a2e1511ff75ca24b584a0f12f4
-[08/15] clk: imx: add CLK_SET_RATE_PARENT for lcdif_pixel_src for i.MX7D
-        commit: e2d956067b0b3c9a9ba5acde655bf6fc708c3ab0
-[09/15] clk: imx: imx8mn: add sai7_ipg_clk clock settings
-        commit: 40cfc8c2fccf5440fb192aa80a84bff9f3288b2c
-[10/15] clk: imx: imx8mm: Change the 'nand_usdhc_bus' clock to non-critical one
-        commit: c7f85fc3dc2facacc1851db992d485a89acde8ee
-[11/15] clk: imx: imx8qxp: Add LVDS bypass clocks
-        commit: ecee2c870be1776c483b3d1a40e3998c7cb7eb1b
-[12/15] clk: imx: imx8qxp: Add clock muxes for MIPI and PHY ref clocks
-        commit: 385e7c90bdb571677c4d16d97e8809427dc4d8d7
-[13/15] clk: imx: imx8qxp: Register dc0_bypass0_clk before disp clk
-        commit: 9cf2310e4845006f72c959d38bd1300863432194
-[14/15] clk: imx: imx8qxp: Parent should be initialized earlier than the clock
-        commit: c69e0dba43e63862ec95cbd91a2daa28e3e87a9e
-[15/15] clk: imx: fracn-gppll: update rate table
-        commit: 747cf5fbfc4326ab2ad9cc73cde8eb7776f3ba53
+<form letter>
+Feel free to ignore all comments from Markus, regardless whether the
+suggestion is reasonable or not. This person is banned from LKML and
+several maintainers ignore Markus' feedback, because it is just a waste
+of time.
+</form letter>
 
 Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+Krzysztof
+
 
