@@ -1,85 +1,133 @@
-Return-Path: <linux-kernel+bounces-225145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A82912C82
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C5D912C92
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7852E1C23C81
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:40:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 059D51C2422A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC5F168490;
-	Fri, 21 Jun 2024 17:40:24 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554641C14;
-	Fri, 21 Jun 2024 17:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5526A16A935;
+	Fri, 21 Jun 2024 17:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K7NLThrQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0501F8BFD;
+	Fri, 21 Jun 2024 17:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718991624; cv=none; b=PSEYrejAUVbmCkffkdGP5ZsY2stHPFqkgn/7neU/LBgawUfYIT84k2rLIK4TJr2CZI7KpFy2+ST1VZZHZHL7K4ll4RBXb18CNO7Nb0akZRm4HR0WCBCrKE+IEw6nFFwrptsz4BiuBASNSXS0EJKGp7apqJXOn7s8tNghXTGzUO0=
+	t=1718991831; cv=none; b=Jxvz9YEtydhNvgEOMiF4BLO7M6K0Qm4q3qbD3JZnyVp9JzrYBTJ8I+K+uEvNvQ6y+VNYWUW+WaRig40WNG6TsNuEyGjqmYwaLCtc2hpx1eXz6yG6fQboRx++QbwccPlC/q6fEOH/JTW/ZOaVejJq3vzUl8Ji8lCxFeWU5N+pst4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718991624; c=relaxed/simple;
-	bh=sYp9zVqfK6P/YFTVP1ANDcbGMHfXaXTyLhpF3yx8ffE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Xr00vgxLteVqTphQIbPoPkLtJBSYEed7JMkrPll2znMaz9OSKbHGALhQiWUmn5S4YqeWTwbSOM5koC2i06mQvXX2KybCAe9W6gqHMaZGnmFEVZFsCLTjYhy3O68Zh4xexQWSKZkDoOBlVMCkcvOoLGPfAsC//p/rj4tRsa/qqJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 6A1C792009C; Fri, 21 Jun 2024 19:40:19 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 6056192009B;
-	Fri, 21 Jun 2024 18:40:19 +0100 (BST)
-Date: Fri, 21 Jun 2024 18:40:19 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Jonas Gorski <jonas.gorski@gmail.com>, 
-    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] MIPS: Introduce config options for LLSC
- availability
-In-Reply-To: <83cf475c-86a3-4acb-bc82-d94c66c53779@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2406211827360.43454@angie.orcam.me.uk>
-References: <20240612-mips-llsc-v2-0-a42bd5562bdb@flygoat.com> <20240612-mips-llsc-v2-2-a42bd5562bdb@flygoat.com> <alpine.DEB.2.21.2406210041140.43454@angie.orcam.me.uk> <2c26a07f-fa68-48f1-8f3b-3b5e4f77130b@app.fastmail.com> <alpine.DEB.2.21.2406211446500.43454@angie.orcam.me.uk>
- <83cf475c-86a3-4acb-bc82-d94c66c53779@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1718991831; c=relaxed/simple;
+	bh=X8jfzg/wyxs168n27oHncGTMVl1l94eynwuziWyg5Wg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nke2TCTKy5lNmJkhJkGmfwjBKEWOUWAyvCvpGjgNUfPyJy+X92GzIVis1wJEbUGqaLfNDw1brOt7Lvu4AZDrhI6z9W3B15CFdqgvXgS2Ia1AzAPNuqgLBIEmiGsodO0sWOF9+B/fuyc3ttswIjjgHneJvKF0dTR88+6I71ll8nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K7NLThrQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LFbvjP021677;
+	Fri, 21 Jun 2024 17:43:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	J4d77Yn0f566TtqVIjt1HDWczzH71mbrVuT84+uqzSA=; b=K7NLThrQVbTZeS88
+	U/bpc+F1H1yGivwcMb6k6M/JklRLG8K87fI4MJhZ5emkO1SYLZQreP4kOECF4gLE
+	GNkQL2fE7LeliP5TDdC4DkARFVxRKjuXpxbsoB+7Ig9/Co5FQr8OLxVj8whI+uIs
+	PGRmX+fPZTiU+1+GhH3XNnXY25LHnNODs6P0aTdK+MnyrsX/HtoDR2nTMQARrOAa
+	XFZGKV/8KkR/iluEMT6vvA57zRhcW+jrHQ4YtR7h/RObPGSqRZbOr0Sm0N63sjuA
+	pTqNLsg0SnxxAhDd53KGjdn7rnQOe5U8rN1+IVo1Q4++1Zoxc4Zhhb0PCBGgaNBq
+	Q37dmg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywcb28a65-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 17:43:45 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45LHhhGe013848
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 17:43:43 GMT
+Received: from [10.50.38.38] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Jun
+ 2024 10:43:38 -0700
+Message-ID: <d6c4ceed-5804-473a-8599-405d4ace099f@quicinc.com>
+Date: Fri, 21 Jun 2024 23:13:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/4] interconnect: qcom: sc7280: enable QoS
+ configuration
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Kees Cook <keescook@chromium.org>, <cros-qcom-dts-watchers@chromium.org>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>, <quic_rlaggysh@quicinc.com>,
+        <quic_mdtipton@quicinc.com>
+References: <20240607173927.26321-1-quic_okukatla@quicinc.com>
+ <20240607173927.26321-3-quic_okukatla@quicinc.com>
+ <910af90e-affb-45f2-a2f7-875ca8362c0f@linaro.org>
+Content-Language: en-US
+From: Odelu Kukatla <quic_okukatla@quicinc.com>
+In-Reply-To: <910af90e-affb-45f2-a2f7-875ca8362c0f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: B_kqqTIC_s-xjSuoVgL781wJiaYmrprG
+X-Proofpoint-ORIG-GUID: B_kqqTIC_s-xjSuoVgL781wJiaYmrprG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_08,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ clxscore=1011 phishscore=0 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 suspectscore=0 mlxlogscore=645 priorityscore=1501
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406210126
 
-On Fri, 21 Jun 2024, Jiaxun Yang wrote:
 
-> >  That might do in the interim as a sanity check, however ultimately the 
-> > sole reason these <asm/mach-*/cpu-feature-overrides.h> exist (and the 
-> > `cpu_has_llsc' setting there) is so that a dynamic check at run time is 
-> > avoided where the result is known from elsewhere beforehand anyway, and 
-> > your change effectively supersedes the overrides, and therefore they need 
-> > to be removed.
-> >
-> No, overrides are still valid if platform did CPU_MAY_HAVE_LLSC, this is at
-> least valid for R10000 systems (IP28 decided to opt-out from llsc somehow),
-> ATH25 (platform made assumption on IP version shipped with CPU), cavium
-> octeon (platform decided to opt-out llsc for non-SMP build). I'm not confident
-> with handling them all in Kconfig so I think the best approach so far is to do
-> build time assertion.
 
- No, CPU_MAY_HAVE_LLSC is the dynamic case, in which case you need to run 
-verification at run time and access the result via the CPU feature vector.  
+On 6/18/2024 8:16 PM, Konrad Dybcio wrote:
+> 
+> 
+> On 6/7/24 19:39, Odelu Kukatla wrote:
+>> Enable QoS configuration for master ports with predefined values
+>> for priority and urgency forawrding.
+>>
+>> Signed-off-by: Odelu Kukatla <quic_okukatla@quicinc.com>
+>> ---
+> 
+> msm-5.4 also has a qhm_gic node with QoS offset 0x9000, is that of any
+> importance, or can we forget it exists?
+> 
 
- If you insist that you need a static override in this case, then you've 
-got your CPU_MAY_HAVE_LLSC setting wrong, it should be either CPU_HAS_LLSC 
-or nil, according to what <asm/mach-*/cpu-feature-overrides.h> currently 
-sets for the platform in question.  Whatever is set statically there at 
-build time can be reproduced in Kconfig.
+qhm_gic node QoS is not that important, it is fine.
 
- Going through platforms should be easy if not a bit tedious, but that's 
-the cost you sometimes need to pay for progress.
+> LGTM otherwise:
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
+> Konrad
 
-  Maciej
+Thanks for the review!
+
+Regards,
+Odelu
 
