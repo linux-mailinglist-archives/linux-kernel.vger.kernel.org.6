@@ -1,212 +1,238 @@
-Return-Path: <linux-kernel+bounces-224456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34849122A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:42:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D189122CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E10F281488
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:42:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D381F2280F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AB8172790;
-	Fri, 21 Jun 2024 10:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBA7171E54;
+	Fri, 21 Jun 2024 10:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="svwwJ0Yb"
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on2073.outbound.protection.outlook.com [40.107.8.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=mvista.com header.i=@mvista.com header.b="kJY2JJdP"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5874A173326;
-	Fri, 21 Jun 2024 10:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.8.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718966493; cv=fail; b=GeSf/ttztqscrQPy4ZGD5c3A4kpOxUhEO31NnnJW1opt6Usqphuoamr2ZI9xLzRWB2jtoiuM16eL8aK+DmCdsAwivnso8hOnGq2DEweKaT61sViLw18QIgoghcb94wtmJ+V5O/LuGnfaVnOgwtngg0DmOhV/kfofsEjcHJ0W7yg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718966493; c=relaxed/simple;
-	bh=kvOgTwXcO/zksQsy0DNcMtFU63B5yhNZOtrAY2hUOUY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=InjHlc2YmFeg2phon3WBESehOXp86GakqLnyyjq3FZ4ZBlFizL7bkNKUCdWQ/8IHbfelr7iSL2D9zmXDCLDAEm0yffr5rvcfbOqiqZ7IoVE5iNt2wTLUFNpq5+3NBDLS7NPRIDJvvJs4VJAYIYRudHws8b8L/Ui9iu5TptpT9Ao=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=svwwJ0Yb; arc=fail smtp.client-ip=40.107.8.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kKbOxx2Wq1bm9BHXMMk1TKayWQBu2K1sMUZnkUv7RQAa3LpM24VJYS8XSSOPDvwjyZUvE7EiBRcVwELe16AUNWg6WCU8wBorDege5TMZRgOIh4M6KuEqab4XqpASKRkOLlOip6RFPqozmR/MiBaiJjLKoWR1Mz5FxioFZ4Ngg6LWNwi9RD23UXk6yz23zeqjV5ht3sItmmGOeO4YjgsfwyyN9HfpabBVjQD7OmauZ0iyATmKsUmv9P4chn17R/MAJZPLPAX1OS4MVyHdh/kBlO6JM4kCsr5RB/ZwhK5fF2ES30dW4CDKiMWowvdzbc4zrR55rty2R5xB8Pm6kuXMYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KoXrkpXc/GN3H8vCKkwQBfNQvUGmNk0VwDxRWo3GBoE=;
- b=g2TeW6tZ3Q/+wooGM2KmnJmBvweOiKSjuUnFQWy5JvmdY3X12YTQPou2s6+2/B99bhSW64QUfWJyBHitjqP20LUMcOV4+RN7+YR1wSpZB7w1KC5ewgvJBS2Bj7kioU2rTsDpFNS+sGyiTCkdAOHY4xoJaszNIsU695KqadFQSXpp0BZSnHR+uI0a9Setyp7zVdw3m/TiKFvgpOBXOUkYdGq2TSkQ1WPexvzaZNwUeVlmRWwEaEEW6tvGzPJukZBY5cG62Y9dGFxtV7ZuLWAP4G9s/uO09Xpr1i+2xFRAQvTQoLcLiTs2N5GnCK1q1Rq0H5eby96isTBTQhYFpueoDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KoXrkpXc/GN3H8vCKkwQBfNQvUGmNk0VwDxRWo3GBoE=;
- b=svwwJ0YbyUf0sfRtkdykBnQh1G/C5hUt/8lIrMuiCLu+4JicyzAqvLjz96z+lrUdOZhEkPIPtdA6Pcqd53MsDtBqxaI99Xu6RPJiYQUUqQ8n9mu6BX0Je4SB/3qbzLCApW2DPbN3g+WrgkPZtW67Lst2klLIhqQnZ/D/NrL0oEU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
- by AS8PR04MB8801.eurprd04.prod.outlook.com (2603:10a6:20b:42c::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Fri, 21 Jun
- 2024 10:41:28 +0000
-Received: from AS4PR04MB9386.eurprd04.prod.outlook.com
- ([fe80::261e:eaf4:f429:5e1c]) by AS4PR04MB9386.eurprd04.prod.outlook.com
- ([fe80::261e:eaf4:f429:5e1c%5]) with mapi id 15.20.7698.020; Fri, 21 Jun 2024
- 10:41:28 +0000
-From: Joy Zou <joy.zou@nxp.com>
-To: Frank.Li@nxp.com,
-	vkoul@kernel.org
-Cc: imx@lists.linux.dev,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] dmaengine: fsl-edma: add edma src ID check at request channel
-Date: Fri, 21 Jun 2024 18:49:32 +0800
-Message-Id: <20240621104932.4116137-3-joy.zou@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20240621104932.4116137-1-joy.zou@nxp.com>
-References: <20240621104932.4116137-1-joy.zou@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0196.apcprd06.prod.outlook.com (2603:1096:4:1::28)
- To AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595C216DEC9
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718967003; cv=none; b=uGvp4RBJ8exajBTkLq0Nki9BnVUtGy1UYy+40vARhcq3Br9gNCWt3A5mCkgjp9w1BP/chKD7MuokyEBLE7wsh5lAWC/bMtxm13jINyNap1FRwGq+6jHVPPDo/1vaLfWZsbT6h5twbTHcrrHQLewn9gtt9MLGG5zRY3mMehSnB0M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718967003; c=relaxed/simple;
+	bh=PPWduEZpjfNs3/2+j1zwWl1tubmzUgKRaHvP5A8k2mc=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=DkBTCvXVQm2PvaXasbJwdUC6lHAnlZ6Q+U8VT+OGid+BbTJeQ6CihQ4W1D8CGDY51lLa9L6IyA4+pJlc9Iq1aEuNdLu/v9lE3n1KnbaxhWRihhgrgIhi/IiTbJd9Q5/Ks56HO8+h0quhJjdohqPYuXm/flAtRelkijrJV7OnRfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mvista.com; spf=pass smtp.mailfrom=mvista.com; dkim=pass (1024-bit key) header.d=mvista.com header.i=@mvista.com header.b=kJY2JJdP; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mvista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mvista.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6bce380eb9bso1210742a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 03:50:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mvista.com; s=google; t=1718966999; x=1719571799; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YHw26fYNtbVg90pb/0vXhYC2RIqSga4ERHI4UzA2SBA=;
+        b=kJY2JJdPjz4oHcnsgLOQFj8XCATwRPlwzd8GWbLb+4PXs4mXAylatNblrRkIolxPeh
+         q7ssvfr6/F81JFn7LW5K2z87Ydvc984ziPr7x2f2UYAQnSu2s65SLoOcYE+3hQcqYq41
+         XLSOPJ8S+MIjSXBylKQHkw0sLXXyn0OZCLgyk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718966999; x=1719571799;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YHw26fYNtbVg90pb/0vXhYC2RIqSga4ERHI4UzA2SBA=;
+        b=SKKxZwCMwD2xiCPSV/NzOIWr/McyvbhMyg8bjflYoIPvEPBtAAZt2GLwBHUzJRRdWj
+         7GblMLVEmH3X5ixLqfyN8L4newjvO+b9kVe3DeUyYA8eyze57OftBqKiXakrsCR3iy/E
+         MoAv2ia6WuOywcwTQKkVn/DtkCrPzB5C/el44DZJnpUpBrdW1TLPp6hE1n4aCAI5yE3S
+         qGw/vcjfB9DQ0sl/uQtiR3yEyMJV13lTUnjTfJad0W4ulo3j3Xumi/TutoEv4+dirY2F
+         dFp8PhmOCipi2242hzv8/0H5FEW5uuSuE6U/FZuyGTv4q/M+7ijMLGnxdc759YRPB3lA
+         lmIw==
+X-Gm-Message-State: AOJu0Yw+dhOnD4zbd57q2y/gpE1/AOu29onEGrf0kJIoYrNppt58NNHO
+	lH5L5yoVSXJQO4QFhtY1EXXaHhH9t4QWlelbO131gpBzkYLOngVENCuGxszeWkY=
+X-Google-Smtp-Source: AGHT+IEyVFpOJx0pO9aGMKZ3sNs0OOvNIh6JEqB3B4LPg/mwPqNrsiNNsiGyJ9ZPS/E84z4PGw2hfg==
+X-Received: by 2002:a17:90a:ec06:b0:2c2:cee8:bd6e with SMTP id 98e67ed59e1d1-2c7b5dee324mr7263094a91.49.1718966999389;
+        Fri, 21 Jun 2024 03:49:59 -0700 (PDT)
+Received: from sam-Latitude-3400.mvista.com ([2a0c:5a81:a102:2900:e1da:404e:9c0d:e1b8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716ba79ff2esm881743a12.65.2024.06.21.03.49.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Jun 2024 03:49:58 -0700 (PDT)
+From: Sam Kappen <skappen@mvista.com>
+To: linux-rt-users@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	tom.zanussi@linux.intel.com,
+	zanussi@kernel.org,
+	sam.gsk@gmail.com,
+	Sam Kappen <skappen@mvista.com>
+Subject: [PATCH RT v4.19] tcp: md5: Add a serialization in tcp MD5 hash functions.
+Date: Fri, 21 Jun 2024 12:49:32 +0200
+Message-Id: <1718966972-17507-1-git-send-email-skappen@mvista.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9386:EE_|AS8PR04MB8801:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b6cfda5-1d22-4511-ae06-08dc91deb49f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|376011|52116011|366013|38350700011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xYjugEP2i4dsa4Knx/LYiJpV3XFwPehzlNYupggJsL6CWcn8dJVhlfFmapgT?=
- =?us-ascii?Q?C+aoKnrsmA/ZbNrC+PVxBtZK/DIBnXQHkbqnlE/mi+RigO5uFy2hXHRlWUSk?=
- =?us-ascii?Q?hYLRuLNCKC1Q4wbYq69tqCiiPKQfolMWRT69cHt8c0s2zfnhfoAdll2TzlpC?=
- =?us-ascii?Q?xuA4fFWM4sohkgzk0S1sNr9Zt1sg0mZpCkpj2jh5HH3dCjfpFfcrygIufl+c?=
- =?us-ascii?Q?LZ8x8O3uHxHE9u+3BdMosuS2bwxmjkV0tNDmKIjUqBeWbWF9fEAEa6hQ06lc?=
- =?us-ascii?Q?/ZWwzxzPcQGISpxpjCH3sS1M2qgQJLiajM2YUUPVh/lHTfKrT/3nFn4zXPCk?=
- =?us-ascii?Q?ljgvoBZr4MiqObzr7alzlnSn5KBZiGwGBfZLP0kJ0/p/2cgqY/b5wDQCMYu2?=
- =?us-ascii?Q?7hjbxwe9bJGqkCaTJ5La5ij3czPO3lkSEA2ebrCqpi8gTiRqEsUh3X12YAJS?=
- =?us-ascii?Q?4FlP2xX6Np2Wni7gBQixMc33uw3VN/YZjEsMiV5PZudfB8OAM9ARE4l1OlOq?=
- =?us-ascii?Q?euq9TVLVttcdQ+VGiGEoiPnc6oEqZ16YRmYqcoxk/V+Vl3V1enHbQTh9jxUZ?=
- =?us-ascii?Q?b3XzjflSxVcf993JLWLG9sNb9gjoYG3XUBH64aL43xd83eNTbWDN0gICZEDm?=
- =?us-ascii?Q?ikovp2zzDarOo/vyFqtJRej+/JDJ4rp1lo7BESQkIiX95l7xqkeeJG+Zz+tC?=
- =?us-ascii?Q?0znETmQkzsYTlwjbdKHxdIytA+O93BVc5blalpf3+NY5O9yXUqNH8CN9lWay?=
- =?us-ascii?Q?K5utJh7TLA+013mh7/ZswHATmZOL2tHhQf5HWzZADYyusTM9PVF18AD0QnNZ?=
- =?us-ascii?Q?YvD6Obcb7uzLCdwSLD+j0B053jYw0yY+E5gkIcPKMxR4KcyLytxo5jqDVwgf?=
- =?us-ascii?Q?YyFTL/rz5c0jeZ1DQSqtZXxj4oatvPonDNfSFOg9c6YbXadqAxqg8gMsSsWk?=
- =?us-ascii?Q?Ey/Q8sone46WlpLfuZ5Te48i3JgyLskxUjUbqMHth9/y0JU6wECEYn188TFT?=
- =?us-ascii?Q?v0i2F8E9bFVFMiZ34sKYD9Xjf8ezGip0oWv1zEWlh+ha+HomKvug+GYYBT+Z?=
- =?us-ascii?Q?Q/AGAJ3iPyzDpQzN1fxMx3hqRSUaGbOtDrP+5gzW+JpcHjbVSPs+DE3wlHlk?=
- =?us-ascii?Q?fQbxVOn1eA2jyqnH23H70UaKgoBH+W2nELXKRM80d1x/qROPtYCNVILCPJ5P?=
- =?us-ascii?Q?A19I2EJHPhCYlnU7NUWsYP+6CvZA/NxiIQ3G8WyukUlHNlE3rc5u1qI6xd5X?=
- =?us-ascii?Q?1e9VUaDyqJXnJ0HlovpsfnxfQVUhoiiptv12kfpi6NRvBq6O99hP0CR0EAUA?=
- =?us-ascii?Q?L/D0dDUMuPUY0fksd/LiekCx7nGSQQ4X+4aApOyvqGjM6WITEAGi6QV6lnZG?=
- =?us-ascii?Q?XXZsrG8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9386.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(52116011)(366013)(38350700011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2jd5oOuOyCDfYvr7AzlS4rDTl5f+JQ2EkOgzTlZycvoXSKX/MKQ4rYJ5VYsV?=
- =?us-ascii?Q?MLdVjve+nO6L4ztCpoHHeJ+YBDbw6xhzsSGdSZ+sG+YCklcgGEt40B9Oxsn3?=
- =?us-ascii?Q?tDPP1gkdd6kdjQVIZ887hBoWjbhsm7V3z+PMV7BKaE3v4grGQU69tPL31Vb3?=
- =?us-ascii?Q?1mBw6KvUwMJQyvo4pkyH/ZT3zA/25mEwYMsZzGwRnAP6w0j3uscVsNC5/dl8?=
- =?us-ascii?Q?dDDHIBfDdcrwQEFLwaZkyst/BmdYzl847U9lQGhe7LZ0WvoMAY+1ucH3qOWT?=
- =?us-ascii?Q?U64DmrLZg6kjojiAqkN9OG4+fJaYUOQ8Pcgq2k92Lblvv6cVRkKT1oV8AiTZ?=
- =?us-ascii?Q?PPZVGxSLDOmlygs2MKua16GTaBciJACX8lO2ukRRIiyswmN2dVswSlKSrCLi?=
- =?us-ascii?Q?5NWu0i9hRAMo8+e79P51AgTTSs030g6y2jT2CaUGxqlh30JNmaRaCMyXeRaG?=
- =?us-ascii?Q?Hmp1r/JvSUM+5FKjvhm9aQ+Fj8ojyX6NRuLIzr+Osj1idTjs6ruJWTDYv+gs?=
- =?us-ascii?Q?UEZzEKv7v7u80fYgpAxSZ5aqpldVs+dJq3bManPVoqquXgzZAwsph0rT2SNl?=
- =?us-ascii?Q?YSJT7Xolmv0jToqhQME3DPNTXr7MqH30oPABRfIATGiiITw7+9Im92/yCTKD?=
- =?us-ascii?Q?/ZGgcpwuO/L6+eJdz+Dg9xEZCc0kWJdxTDQpN0fV+f6CgZUP0i+BFJWsROjh?=
- =?us-ascii?Q?uysB/movDJtSJCGwD8Ya9DmsNq7gBgCqlcuT7MmsgB1XVFAOen5xzBreaDFX?=
- =?us-ascii?Q?iqkjsPtdo37FcnqC0HxUQUMC3oTkF8om7daPno4PDW+3Fr2eRWscd6B34aLR?=
- =?us-ascii?Q?NTUZixSPzvxwkcZUa/WwGWwxZIc5kfbaaPE9He1sfmXyuuBpEieN/yfCzxxc?=
- =?us-ascii?Q?yraCUDgm7PKGycK0gFT+mfihegnCO4D8WJPr0UdzTUC8PJEnf4A4j6to2Mrk?=
- =?us-ascii?Q?9Rjbdbg84uw6T2khRWgItMpM3WYmNeijAPqhDOKwFZilM/V7URIHiq4zac8f?=
- =?us-ascii?Q?DrXfwA4xKIcfMoia5ECSllWBX3cxVqsh2spT2ZxDDmjth7b2K1pTNgEBYVtx?=
- =?us-ascii?Q?2ytLk3c5hmrZTqfXgjEJW//HBUTCDtlmjwCfSUmN3mWPvJTM630GW3Q+rOLG?=
- =?us-ascii?Q?d7FtlOyfnqVIXqMo9x8Vb8ZtkMQ5Y7YsBTS0FpFVKfkHGhvKr6ypBRBco7uw?=
- =?us-ascii?Q?VEB1H3kEwwmpn+yQQbY4gjWa3Hj1ZPMlU6//kU5fWTQGEPULVy1T70X0k7k0?=
- =?us-ascii?Q?2B/sJ59eOWFFzN413qqaaMPJDY+DznZ8tt6iRIp447FeD0glmKF+D4eEJ827?=
- =?us-ascii?Q?NVkSgW0ay9ukPB+LyHgh572eKpVxkvwemG5vf8IUTmeCLAXRYY4jDt5VrtUl?=
- =?us-ascii?Q?6Yl+la9BgYsdbPLMieZsrWaymBL6nJ98OsslFjA+jiF5803Moy+2WZQp+E+Z?=
- =?us-ascii?Q?vQRRNjmDQ1mrLz2ZGc9K/e0ZTUBkbhLprLZu3tj0EJozNz5jrGMoCdhfTCXR?=
- =?us-ascii?Q?4WpY3a02tnsCMlwp6Ls6FY2H3KrCcSpjhfGwVqEV6QRaBAgsmLYzM2drOf0R?=
- =?us-ascii?Q?8G+YAzx6X3edviorX/Z9Wdi18/ZS9lbqIvmXW0Lo?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b6cfda5-1d22-4511-ae06-08dc91deb49f
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9386.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 10:41:28.1529
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Tx6UOAmJ6F2g3yNs+JtOQ+2R1OEayqKp9+Q5+cSaSDN3kLXSLidSTn9tt8fs+9ey
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8801
 
-Check src ID to detect misuse of same src ID for multiple DMA channels.
+A crash was observed when stress testing tcp MD5 feature in 4.19 RT kernel.
+Issue is reproducible on the 4.x based RT kernels.
+It is due to a race issue in tcp md5 hash functions.
+They are called from the softirqs that are processed in parallel
+on the same cpu.In non RT it is prevented by disabling BH but
+it would not work on RT. Fix this issue by adding a serialization.
+There have been similar issues in the RT 4.x kernel,
+ad01e514374 (net: xfrm: fix compress vs decompress serialization)
+is one of that kind.
 
-Signed-off-by: Joy Zou <joy.zou@nxp.com>
+This issue is not applicable on later 5.x RT kernel versions onwards.
+The commit "6f6ba7715a9" (softirq: rework) in v5.0.19-rt11
+and later its stable commit version 96fac673174
+(softirq: Add preemptible softirq) does a rework on softirq
+so that if we disable the  BH two softirqs cannot be
+processed in parallel on the same CPU in RT.
+
+[   97.017722] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+[   97.017723] PGD 46152a067 P4D 46152a067 PUD 46174d067 PMD 0
+[   97.017726] Oops: 0000 [#1] PREEMPT SMP
+[   97.017727] CPU: 3 PID: 2329 Comm: tcp_stress_md5 Not tainted 4.19.315-rt135-yocto-standard #1
+[   97.017727] Hardware name: Supermicro Super Server/X11SSH-F, BIOS 2.0c 10/06/2017
+[   97.017731] RIP: 0010:hash_walk_new_entry+0x4/0x50
+[   97.017732] Code: 72 cf ff 65 48 8b 14 25 c0 9d 01 00 83 82 dc 0a 00 00 01 48 8b 7c 24 08 8b 44 24 04 8b 4f 18 eb ac 0f 1f 44 00 00 48 8b 77 20 <8b> 46 08 89 47 08 48 8b 0e 89 c2 c1 ea 0c 25 ff 0f 00 00 48 c1 e2
+[   97.017732] RSP: 0018:ffffc90002b53730 EFLAGS: 00010246
+[   97.017733] RAX: 0000000000000000 RBX: ffff888461fa2710 RCX: 0000000000000ce5
+[   97.017734] RDX: 0000000000000008 RSI: 0000000000000000 RDI: ffffc90002b53738
+[   97.017734] RBP: ffff8884679a5240 R08: 0000000049466cc1 R09: 0000000000007f15
+[   97.017734] R10: 0000000000007f15 R11: 00000000e75d5e25 R12: 0000000000000118
+[   97.017735] R13: ffff88845d199118 R14: ffff888461fa26c0 R15: ffff8884679a5240
+[   97.017735] FS:  00007f159ffff700(0000) GS:ffff888467980000(0000) knlGS:0000000000000000
+[   97.017736] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   97.017736] CR2: 0000000000000008 CR3: 00000004615db005 CR4: 00000000003606e0
+[   97.017737] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   97.017737] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   97.017737] Call Trace:
+[   97.017740]  ? __die+0x62/0xb0
+[   97.017742]  ? no_context+0x150/0x3c0
+[   97.017744]  ? __switch_to_asm+0x35/0x70
+[   97.017745]  ? __switch_to_asm+0x41/0x70
+[   97.017746]  ? __switch_to_asm+0x35/0x70
+[   97.017747]  ? __do_page_fault+0xe1/0x570
+[   97.017748]  ? __schedule+0x272/0x640
+[   97.017749]  ? page_fault+0x1e/0x30
+[   97.017751]  ? hash_walk_new_entry+0x4/0x50
+[   97.017752]  shash_ahash_update+0x20/0x60
+[   97.017754]  ? tcp_md5_hash_skb_data+0xe2/0x230
+[   97.017755]  tcp_md5_hash_key+0x49/0x70
+[   97.017757]  tcp_v4_md5_hash_skb+0xe5/0x130
+[   97.017758]  tcp_v4_inbound_md5_hash+0xf5/0x1b0
+[   97.017760]  tcp_v4_rcv+0x89a/0xa60
+[   97.017761]  ip_local_deliver_finish+0x51/0x1c0
+[   97.017762]  ip_local_deliver+0x102/0x110
+[   97.017763]  ? ip_rcv_core.isra.17+0x280/0x280
+[   97.017764]  ip_rcv+0xdf/0x100
+[   97.017765]  ? ip_rcv_finish_core.isra.14+0x350/0x350
+[   97.017766]  __netif_receive_skb_one_core+0x53/0x70
+[   97.017768]  process_backlog+0x8b/0x170
+[   97.017769]  net_rx_action+0x1eb/0x4a0
+[   97.017771]  ? dev_hard_start_xmit+0x93/0x2a0
+[   97.017773]  do_current_softirqs+0x187/0x370
+[   97.017774]  __local_bh_enable+0x46/0x60
+[   97.017775]  ip_finish_output2+0x18a/0x3c0
+[   97.017776]  ? ip_output+0x66/0x110
+[   97.017777]  ip_output+0x66/0x110
+[   97.017778]  ? __ip_flush_pending_frames.isra.50+0x80/0x80
+[   97.017779]  __ip_queue_xmit+0x166/0x3e0
+[   97.017780]  ? tcp_v4_md5_hash_skb+0x119/0x130
+[   97.017781]  __tcp_transmit_skb+0x539/0xae0
+[   97.017782]  tcp_write_xmit+0x22b/0xf70
+[   97.017784]  ? _copy_from_iter_full+0x92/0x260
+[   97.017785]  __tcp_push_pending_frames+0x28/0xa0
+[   97.017786]  tcp_sendmsg_locked+0x126/0xcc0
+[   97.017788]  tcp_sendmsg+0x22/0x40
+[   97.017789]  __sock_sendmsg+0x2b/0x40
+[   97.017790]  __sys_sendto+0x109/0x140
+[   97.017792]  ? do_epoll_wait+0x81/0xc0
+[   97.017793]  ? __x64_sys_epoll_pwait+0x107/0x120
+[   97.017794]  __x64_sys_sendto+0x1f/0x30
+[   97.017796]  do_syscall_64+0x3d/0xf0
+[   97.017797]  entry_SYSCALL_64_after_hwframe+0x5c/0xc1
+[   97.017798] RIP: 0033:0x3de9210d9a
+[   97.017799] Code: 7c 24 08 4c 89 14 24 e8 54 f7 ff ff 45 31 c9 45 31 c0 4c 8b 14 24 89 c3 4c 89 e2 48 89 ee 48 8b 7c 24 08 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 32 89 df 48 89 04 24 e8 83 f7 ff ff 48 8b 04
+[   97.017799] RSP: 002b:00007f159fffd840 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+[   97.017800] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000003de9210d9a
+[   97.017801] RDX: 00000000000001f4 RSI: 00007f159fffe890 RDI: 000000000000001a
+[   97.017801] RBP: 00007f159fffe890 R08: 0000000000000000 R09: 0000000000000000
+[   97.017801] R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000001f4
+[   97.017802] R13: 00007ffdf2bb780f R14: 0000000000802000 R15: 00007ffdf2bb7810
+[   97.017802] Modules linked in:
+[   97.017804] CR2: 0000000000000008
+[   97.406680] ---[ end trace 0000000000000002 ]---
+
+Signed-off-by: Sam Kappen <skappen@mvista.com>
 ---
- drivers/dma/fsl-edma-main.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ net/ipv4/tcp_ipv4.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/dma/fsl-edma-main.c b/drivers/dma/fsl-edma-main.c
-index d4f29ece69f5..47939d010e59 100644
---- a/drivers/dma/fsl-edma-main.c
-+++ b/drivers/dma/fsl-edma-main.c
-@@ -100,6 +100,22 @@ static irqreturn_t fsl_edma_irq_handler(int irq, void *dev_id)
- 	return fsl_edma_err_handler(irq, dev_id);
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index 91c3ed3..31059e9 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -93,6 +93,7 @@ static int tcp_v4_md5_hash_hdr(char *md5_hash, const struct tcp_md5sig_key *key,
+ 			       __be32 daddr, __be32 saddr, const struct tcphdr *th);
+ #endif
+ 
++static DEFINE_LOCAL_IRQ_LOCK(tcp_md5_lock);
+ struct inet_hashinfo tcp_hashinfo;
+ EXPORT_SYMBOL(tcp_hashinfo);
+ 
+@@ -1224,6 +1225,7 @@ static int tcp_v4_md5_hash_hdr(char *md5_hash, const struct tcp_md5sig_key *key,
+ 	struct tcp_md5sig_pool *hp;
+ 	struct ahash_request *req;
+ 
++	local_lock(tcp_md5_lock);
+ 	hp = tcp_get_md5sig_pool();
+ 	if (!hp)
+ 		goto clear_hash_noput;
+@@ -1240,12 +1242,14 @@ static int tcp_v4_md5_hash_hdr(char *md5_hash, const struct tcp_md5sig_key *key,
+ 		goto clear_hash;
+ 
+ 	tcp_put_md5sig_pool();
++	local_unlock(tcp_md5_lock);
+ 	return 0;
+ 
+ clear_hash:
+ 	tcp_put_md5sig_pool();
+ clear_hash_noput:
+ 	memset(md5_hash, 0, 16);
++	local_unlock(tcp_md5_lock);
+ 	return 1;
  }
  
-+static bool fsl_edma_srcid_in_use(struct fsl_edma_engine *fsl_edma, u32 srcid)
-+{
-+	struct fsl_edma_chan *fsl_chan;
-+	int i;
-+
-+	for (i = 0; i < fsl_edma->n_chans; i++) {
-+		fsl_chan = &fsl_edma->chans[i];
-+
-+		if (fsl_chan->srcid && srcid == fsl_chan->srcid) {
-+			dev_err(&fsl_chan->pdev->dev, "The srcid is using! Can't use repeatly.");
-+			return true;
-+		}
-+	}
-+	return false;
-+}
-+
- static struct dma_chan *fsl_edma_xlate(struct of_phandle_args *dma_spec,
- 		struct of_dma *ofdma)
- {
-@@ -117,6 +133,10 @@ static struct dma_chan *fsl_edma_xlate(struct of_phandle_args *dma_spec,
- 	list_for_each_entry_safe(chan, _chan, &fsl_edma->dma_dev.channels, device_node) {
- 		if (chan->client_count)
- 			continue;
-+
-+		if (fsl_edma_srcid_in_use(fsl_edma, dma_spec->args[1]))
-+			return NULL;
-+
- 		if ((chan->chan_id / chans_per_mux) == dma_spec->args[0]) {
- 			chan = dma_get_slave_channel(chan);
- 			if (chan) {
-@@ -161,6 +181,8 @@ static struct dma_chan *fsl_edma3_xlate(struct of_phandle_args *dma_spec,
- 			continue;
+@@ -1267,6 +1271,7 @@ int tcp_v4_md5_hash_skb(char *md5_hash, const struct tcp_md5sig_key *key,
+ 		daddr = iph->daddr;
+ 	}
  
- 		fsl_chan = to_fsl_edma_chan(chan);
-+		if (fsl_edma_srcid_in_use(fsl_edma, dma_spec->args[0]))
-+			return NULL;
- 		i = fsl_chan - fsl_edma->chans;
++	local_lock(tcp_md5_lock);
+ 	hp = tcp_get_md5sig_pool();
+ 	if (!hp)
+ 		goto clear_hash_noput;
+@@ -1286,12 +1291,14 @@ int tcp_v4_md5_hash_skb(char *md5_hash, const struct tcp_md5sig_key *key,
+ 		goto clear_hash;
  
- 		fsl_chan->priority = dma_spec->args[1];
+ 	tcp_put_md5sig_pool();
++	local_unlock(tcp_md5_lock);
+ 	return 0;
+ 
+ clear_hash:
+ 	tcp_put_md5sig_pool();
+ clear_hash_noput:
+ 	memset(md5_hash, 0, 16);
++	local_unlock(tcp_md5_lock);
+ 	return 1;
+ }
+ EXPORT_SYMBOL(tcp_v4_md5_hash_skb);
 -- 
-2.37.1
+2.7.4
 
 
