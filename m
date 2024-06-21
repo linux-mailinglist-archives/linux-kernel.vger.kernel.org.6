@@ -1,215 +1,258 @@
-Return-Path: <linux-kernel+bounces-225032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C506A912AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:05:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A2B912ADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE404B256DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:05:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29F201C243C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C563C15FA8C;
-	Fri, 21 Jun 2024 16:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8552E15FA9E;
+	Fri, 21 Jun 2024 16:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="V/RM0Zau"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e+xmhos4"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F895028C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902AF15F31D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718985932; cv=none; b=Oa58GzHS2hj6drNSGhY/yV1H8JImGwXMST4FSIZ5tJ1g6mzwDuX30Zgf2JLmoJEUAnc78XjwST9AAWVviCfN5F9DK8tS3S1IuXcGqvP5eAc6nwhaGCRjh1V3LFuzD1B6MkG7u9wyxbG8bHrX2qtAkOUHbOS5zndxuPh3fLxXvDM=
+	t=1718986002; cv=none; b=tWuqWXCO8EJ7BHVw3NeUeNpx9Juy3ULx2zh1IyrXmFvmHDWE9so8c2+f1EGHFlB80Fy4hLUyBkTsyRVuusjilig0W/Qm8viF6JK4bV60JCNCKEYiBzVHi1KF3Z16tnfFmZ6GMvka3jZ0cId8h/Zxvbw/K4bq9YBvExZfBgIGe00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718985932; c=relaxed/simple;
-	bh=fkwPZLyQNQ4ZNXfxazc5Zwbqv5MiORFU7s6HGX0pBXo=;
+	s=arc-20240116; t=1718986002; c=relaxed/simple;
+	bh=RKRMpTOKRm1ujovFZqL3WHfrxYQVRqgjDm+JkPgvrLM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nVvMT/CKLyldwLQjpg6kFSbKMZYDn199pLHl2ztTBAYReN/dI431sQmamm6RJs5NPTZSCCatf32saYqybOzI1Uw7r08GkYqBYPMmE/f1dK4q8LfAfTBZO4BfsSSbl+7f8N+OEqv3w8WjcQMgkIid3HT4LTZ5u5hfENhcL321EQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=V/RM0Zau; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57d1d45ba34so2467929a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:05:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=eZw0OzAgzGzPn95gppkzK5qpJ0pjBqdgreWyyQEVuxk9L37uRXHN7nO8ul9QYlqIxfhb/FB2HmTfYl3U0+Dk45n1i9IZs35cuaOMGoJiRRp+YYt342eAL0N4htvTwskjlBbbWnhlbGb5oE+MeMb2PeHQbmVUIcbAfaNxYwtQDQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e+xmhos4; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02a6d4bdbeso2040370276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:06:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1718985927; x=1719590727; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D2aLeA46ZAcGtDVAAuPO+bTYmu9QSz8VmaNmucxcUMo=;
-        b=V/RM0ZauFfBwHiyGmK69tMrTEtIlck9+4z5c+chqweQK7pscIT5gmLbxwJsMw0kXij
-         aZtfvoPX47z8UnwHZ6TYdv3IYaM9uMeJp/obQMgR0S67uAgul4jVrAFDExWYY7e3Cdxn
-         zv01dX7S76E3o8nPKHsdv4aByMscP3clQ6gV+jAyfTvlYG+69yRb9I+44x5ISly0fyES
-         LivPrYzfMn276anaK5ua7FSqgR1/B0u2H3Qr7gxFiaGysxQkFFXdEDqzt+AEYiCKIMDl
-         k/MGflMmsKJWDhxHVRyB2pld3NK7LMN644LDvAM0Bi67zLeLwai22JfuYLnxAXnsX2x8
-         LRkg==
+        d=linaro.org; s=google; t=1718985999; x=1719590799; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AQp9dlO5pAgdUf8FaDRgU2ZwQcaWQQ47LVCfMxenQGw=;
+        b=e+xmhos4DaPy+J4f7NTm0y/W8wtZUkwGcqzN5I3mLBKgX1jgPNRmhOv9Fg14exgvaR
+         szbRn/VcXxwc2p6tH7i0u3+rTolUFFPqehj1CH5VDunGpAU7PWL2FQ4sHKolmzvPl56m
+         zmX63DMLIC4/7VbOSvc5w6zkbfvv2txej32Fj+YIouAFuXnx9zKm+7uqEF9mGrfZeKkt
+         nfh+zcsdh+K5Y4E48kbPfZOg9NtGfXxZwQnwXc7sy+3uPKxYgeIKUscsi3e7I3kfy/cn
+         EVa6TKt+ZMdXxZr1AmZvhOQLOm/WJFL9uRbwnKaI/843kxgcwb872f5ibE2Q/WMLEgMC
+         x+kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718985927; x=1719590727;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D2aLeA46ZAcGtDVAAuPO+bTYmu9QSz8VmaNmucxcUMo=;
-        b=mFKjCKY6rXxHNjhZaV4XHLherahO9RG43srMyEXQWx3nT4rGGbVaRabhVX59rxi0s+
-         nGOfRSa/mXsqGZXZvH2ExRdAQXGG4/4EkA+70SJ9tAxsGKwgvwsuaHIDPpuW3Eo/5NpG
-         7/hym8Ga4Au/vZxaU92CJAOq1map3tM2XTKSbcrvBpFW0OxOUTb9nfzeE435B9J3vp+5
-         dUDjVHYNCNSY2XYHaXrM3zwxQkloKtBzJ7n0esLHFtNLIqwW2Zl89Hmak8YqzWesQh5M
-         UfgWEKl0amhqsSs79M0yj2hO5xjNhqM265uQYgkGZUJFi9hveG2XT7B1jhVzsgONG4Ht
-         4+9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWq8udgyA9JMnzg65MJveu/gWNrsjkXiE3HMPwOZ3dtsbXjWki15Pvdy+epKArjzCf5xYR3HP6ZsyBizEPAeR4LyoWx/XhfUC/Sj6fr
-X-Gm-Message-State: AOJu0YzV5ZxTfDB5Sy+3UKZIpOVspXaA3DWzJZPg/RiXr4qLtsRAsmGg
-	NpAjUwwkOlYEyNADwkeA8K/adw09a0iSTdE4rd2y8xVMm/gMKj58pLlrRVqL/cLB+/0YFlxt/59
-	3DLmEO0u+YRKGbaNVKR/CJRdeoMWR4QEVPVZ09A==
-X-Google-Smtp-Source: AGHT+IGD3zOZ+DlFfttlvVbViNyesT1FVgv0TCou1a6PzL45XRc693Rl+UIwHlsumxzTa5uTopBV2v3bgejeyto8xfA=
-X-Received: by 2002:a50:9e67:0:b0:57d:57c:ce99 with SMTP id
- 4fb4d7f45d1cf-57d07e68e29mr4776325a12.2.1718985927129; Fri, 21 Jun 2024
- 09:05:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718985999; x=1719590799;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AQp9dlO5pAgdUf8FaDRgU2ZwQcaWQQ47LVCfMxenQGw=;
+        b=hXZ6QjuQS/S0jg0fzJwHGLO7kQKDZLXlr7l8ZFmOdGrI3X73xfIjl6owL6rNtsQsZK
+         eLNryDrAUpM+cC5/XlEhWROy+ZW9pMR+crwW9gVJ+fW6k0AI/l31WK+LmthWYme1dqOG
+         ywI9oMlijT0ppGjtuPtGiG0joxNunWOXIZKdSPj2S4pTkG59O+CZPixHJPEmYVsWjg6D
+         ACfmYvLKK3F79W4cLAi5vs2BEN5gCzSj31JDnCOtHdzyN8XrMF6jKI574l19TrdTWSLZ
+         rLVSQRotoPrjLkspHYkOqrKvvz+Z06VN8E3ViqjsQB/qpZqZ1cwfb7O0HKSA4XUjmXSR
+         15IA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlk+wixYOntSfHLzSY4AE9Vxd0L7kvnu/L82ADWsQC0SU3aJyqi4c21Bw75a0n1ICKcW+IYNOkm0jZhMREhiavOkYYs70c746cJman
+X-Gm-Message-State: AOJu0YwLFvPDIqNZQgporG1WVtnNuch7Ppn92cq/GwqgsiVbKD1ZPeZ3
+	+JcXgPfP5bUswrXthVeIOozSJOsh9sae/CdJoIwd5dTO1bK1QEq8wH/obqQWVBbc51KECLJyon5
+	2sAnwMvBrRf43q6wWTaVGBnba0zdGJ0gfaZD0aQ==
+X-Google-Smtp-Source: AGHT+IFsKhI5/ZpPFPGZgfj7WNLVrLaPZ7KiG2qpvVEJu3dcWK/Nil0xzuhyY4wPN4X4t78JmuDWQRQioq2fNcEPqZk=
+X-Received: by 2002:a25:aa04:0:b0:e02:c343:ffa7 with SMTP id
+ 3f1490d57ef6-e02c344047fmr7674276276.25.1718985999405; Fri, 21 Jun 2024
+ 09:06:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1718919473.git.yan@cloudflare.com> <a9eba425bfd3bfac7e7be38fe86ad5dbff3ae01f.1718919473.git.yan@cloudflare.com>
- <6414deb0-165c-4a98-8467-ba6949166f96@intel.com>
-In-Reply-To: <6414deb0-165c-4a98-8467-ba6949166f96@intel.com>
-From: Yan Zhai <yan@cloudflare.com>
-Date: Fri, 21 Jun 2024 11:05:16 -0500
-Message-ID: <CAO3-PbrVbOo9ydrtc7kfWitXrnftgT3QGpub3y2K209L0jis1Q@mail.gmail.com>
-Subject: Re: [RFC net-next 5/9] ice: apply XDP offloading fixup when building skb
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: netdev@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
-	Magnus Karlsson <magnus.karlsson@intel.com>, 
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
+References: <20240617005825.1443206-1-quic_gaurkash@quicinc.com>
+ <20240617005825.1443206-5-quic_gaurkash@quicinc.com> <3eehkn3cdhhjfqtzpahxhjxtu5uqwhntpgu22k3hknctrop3g5@f7dhwvdvhr3k>
+ <96e2ce4b154a4f918be0bc2a45011e6d@quicinc.com> <CAA8EJppGpv7N_JQQNJZrbngBBdEKZfuqutR9MPnS1R_WqYNTQw@mail.gmail.com>
+ <3a15df00a2714b40aba4ebc43011a7b6@quicinc.com> <CAA8EJpoZ0RR035QwzMLguJZvdYb-C6aqudp1BgHgn_DH2ffsoQ@mail.gmail.com>
+ <20240621044747.GC4362@sol.localdomain> <CAA8EJppXsbpFCeGJOMGKOQddy0fF4uW3rt4RUuDTQq6mPunBkg@mail.gmail.com>
+ <20240621153939.GA2081@sol.localdomain>
+In-Reply-To: <20240621153939.GA2081@sol.localdomain>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 21 Jun 2024 19:06:25 +0300
+Message-ID: <CAA8EJpqV4CW9kKLVUZgfo+hkSv+tn0t+k0McmHEyXNJUpsZF1w@mail.gmail.com>
+Subject: Re: [PATCH v5 04/15] soc: qcom: ice: add hwkm support in ice
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "andersson@kernel.org" <andersson@kernel.org>, 
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, 
+	"srinivas.kandagatla" <srinivas.kandagatla@linaro.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel <kernel@quicinc.com>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"Om Prakash Singh (QUIC)" <quic_omprsing@quicinc.com>, 
+	"Bao D. Nguyen (QUIC)" <quic_nguyenb@quicinc.com>, 
+	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>, 
+	"konrad.dybcio@linaro.org" <konrad.dybcio@linaro.org>, 
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "jejb@linux.ibm.com" <jejb@linux.ibm.com>, 
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>, "mani@kernel.org" <mani@kernel.org>, 
+	"davem@davemloft.net" <davem@davemloft.net>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Sonal Gupta <sonalg@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 4:22=E2=80=AFAM Alexander Lobakin
-<aleksander.lobakin@intel.com> wrote:
+On Fri, 21 Jun 2024 at 18:39, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> From: Yan Zhai <yan@cloudflare.com>
-> Date: Thu, 20 Jun 2024 15:19:22 -0700
->
-> > Add a common point to transfer offloading info from XDP context to skb.
+> On Fri, Jun 21, 2024 at 06:16:37PM +0300, Dmitry Baryshkov wrote:
+> > On Fri, 21 Jun 2024 at 07:47, Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > On Thu, Jun 20, 2024 at 02:57:40PM +0300, Dmitry Baryshkov wrote:
+> > > > > > >
+> > > > > > > > Is it possible to use both kind of keys when working on standard mode?
+> > > > > > > > If not, it should be the user who selects what type of keys to be used.
+> > > > > > > > Enforcing this via DT is not a way to go.
+> > > > > > > >
+> > > > > > >
+> > > > > > > Unfortunately, that support is not there yet. When you say user, do
+> > > > > > > you mean to have it as a filesystem mount option?
+> > > > > >
+> > > > > > During cryptsetup time. When running e.g. cryptsetup I, as a user, would like
+> > > > > > to be able to use either a hardware-wrapped key or a standard key.
+> > > > > >
+> > > > >
+> > > > > What we are looking for with these patches is for per-file/folder encryption using fscrypt policies.
+> > > > > Cryptsetup to my understanding supports only full-disk , and does not support FBE (File-Based)
+> > > >
+> > > > I must admit, I mostly used dm-crypt beforehand, so I had to look at
+> > > > fscrypt now. Some of my previous comments might not be fully
+> > > > applicable.
+> > > >
+> > > > > Hence the idea here is that we mount an unencrypted device (with the inlinecrypt option that indicates inline encryption is supported)
+> > > > > And specify policies (links to keys) for different folders.
+> > > > >
+> > > > > > > The way the UFS/EMMC crypto layer is designed currently is that, this
+> > > > > > > information is needed when the modules are loaded.
+> > > > > > >
+> > > > > > > https://lore.kernel.org/all/20231104211259.17448-2-ebiggers@kernel.org
+> > > > > > > /#Z31drivers:ufs:core:ufshcd-crypto.c
+> > > > > >
+> > > > > > I see that the driver lists capabilities here. E.g. that it supports HW-wrapped
+> > > > > > keys. But the line doesn't specify that standard keys are not supported.
+> > > > > >
+> > > > >
+> > > > > Those are capabilities that are read from the storage controller. However, wrapped keys
+> > > > > Are not a standard in the ICE JEDEC specification, and in most cases, is a value add coming
+> > > > > from the SoC.
+> > > > >
+> > > > > QCOM SOC and firmware currently does not support both kinds of keys in the HWKM mode.
+> > > > > That is something we are internally working on, but not available yet.
+> > > >
+> > > > I'd say this is a significant obstacle, at least from my point of
+> > > > view. I understand that the default might be to use hw-wrapped keys,
+> > > > but it should be possible for the user to select non-HW keys if the
+> > > > ability to recover the data is considered to be important. Note, I'm
+> > > > really pointing to the user here, not to the system integrator. So
+> > > > using DT property or specifying kernel arguments to switch between
+> > > > these modes is not really an option.
+> > > >
+> > > > But I'd really love to hear some feedback from linux-security and/or
+> > > > linux-fscrypt here.
+> > > >
+> > > > In my humble opinion the user should be able to specify that the key
+> > > > is wrapped using the hardware KMK. Then if the hardware has already
+> > > > started using the other kind of keys, it should be able to respond
+> > > > with -EINVAL / whatever else. Then the user can evict previously
+> > > > programmed key and program a desired one.
+> > > >
+> > > > > > Also, I'd have expected that hw-wrapped keys are handled using trusted
+> > > > > > keys mechanism (see security/keys/trusted-keys/). Could you please point
+> > > > > > out why that's not the case?
+> > > > > >
+> > > > >
+> > > > > I will evaluate this.
+> > > > > But my initial response is that we currently cannot communicate to our TPM directly from HLOS, but
+> > > > > goes through QTEE, and I don't think our qtee currently interfaces with the open source tee
+> > > > > driver. The interface is through QCOM SCM driver.
+> > > >
+> > > > Note, this is just an API interface, see how it is implemented for the
+> > > > CAAM hardware.
+> > > >
+> > >
+> > > The problem is that this patchset was sent out without the patches that add the
+> > > block and filesystem-level framework for hardware-wrapped inline encryption
+> > > keys, which it depends on.  So it's lacking context.  The proposed framework can
+> > > be found at
+> > > https://lore.kernel.org/linux-block/20231104211259.17448-1-ebiggers@kernel.org/T/#u
 > >
-> > Signed-off-by: Yan Zhai <yan@cloudflare.com>
-> > Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
-> > ---
-> >  drivers/net/ethernet/intel/ice/ice_txrx.c | 2 ++
-> >  drivers/net/ethernet/intel/ice/ice_xsk.c  | 6 +++++-
-> >  include/net/xdp_sock_drv.h                | 2 +-
-> >  3 files changed, 8 insertions(+), 2 deletions(-)
+> > Thank you. I have quickly skimmed through the patches, but I didn't
+> > review them thoroughly. Maybe the patchset already implements the
+> > interfaces that I'm thinking about. In such a case please excuse me. I
+> > will give it a more thorough look later today.
 > >
-> > diff --git a/drivers/net/ethernet/intel/ice/ice_txrx.c b/drivers/net/et=
-hernet/intel/ice/ice_txrx.c
-> > index 8bb743f78fcb..a247306837ed 100644
-> > --- a/drivers/net/ethernet/intel/ice/ice_txrx.c
-> > +++ b/drivers/net/ethernet/intel/ice/ice_txrx.c
-> > @@ -1222,6 +1222,7 @@ int ice_clean_rx_irq(struct ice_rx_ring *rx_ring,=
- int budget)
+> > > As for why "trusted keys" aren't used, they just aren't helpful here.  "Trusted
+> > > keys" are based around a model where the kernel can request that keys be sealed
+> > > and unsealed using a trust source, and the kernel gets access to the raw
+> > > unsealed keys.  Hardware-wrapped inline encryption keys use a different model
+> > > where the kernel never gets access to the raw keys.  They also have the concept
+> > > of ephemeral wrapping which does not exist in "trusted keys".  And they need to
+> > > be properly integrated with the inline encryption framework in the block layer.
 > >
-> >                       hard_start =3D page_address(rx_buf->page) + rx_bu=
-f->page_offset -
-> >                                    offset;
-> > +                     xdp_init_buff_minimal(xdp);
+> > Then what exactly does qcom_scm_derive_sw_secret() do? Does it rewrap
+> > the key under some other key?
 >
-> Two lines below, you have this:
+> It derives a secret for functionality such as filenames encryption that can't
+> use inline encryption.
 >
->         xdp_buff_clear_frags_flag(xdp);
+> > I had the feeling that there are two separate pieces of functionality
+> > being stuffed into a single patchset and into a single solution.
+> >
+> > First one is handling the keys. I keep on thinking that there should
+> > be a separate software interface to unseal the key and rewrap it under
+> > an ephemeral key.
 >
-> Which clears frags bit in xdp->flags. I.e. since you always clear flags
-> here, this call becomes redundant.
-> But I'd say that `xdp->flags =3D 0` really wants to be moved from
-> xdp_init_buff() to xdp_prepare_buff().
+> There is.  That's what the BLKCRYPTOPREPAREKEY ioctl is for.
 >
-You are right, there is some redundancy here. I will fix it if people
-feel good about the use case in general :)
+> > Some hardware might permit importing raw keys.
+>
+> That's what BLKCRYPTOIMPORTKEY is for.
+>
+> > Other hardware might insist on generating the keys on-chip so that raw keys
+> > can never be used.
+>
+> And that's what BLKCRYPTOGENERATEKEY is for.
 
+Again, this might be answered somewhere, but why can't we use keyctl
+for handling the keys and then use a single IOCTL to point the block
+device to the key in the keyring?
 
-> >                       xdp_prepare_buff(xdp, hard_start, offset, size, !=
-!offset);
-> >  #if (PAGE_SIZE > 4096)
-> >                       /* At larger PAGE_SIZE, frame_sz depend on len si=
-ze */
-> > @@ -1287,6 +1288,7 @@ int ice_clean_rx_irq(struct ice_rx_ring *rx_ring,=
- int budget)
-> >
-> >               /* populate checksum, VLAN, and protocol */
-> >               ice_process_skb_fields(rx_ring, rx_desc, skb);
-> > +             xdp_buff_fixup_skb_offloading(xdp, skb);
-> >
-> >               ice_trace(clean_rx_irq_indicate, rx_ring, rx_desc, skb);
-> >               /* send completed skb up the stack */
-> > diff --git a/drivers/net/ethernet/intel/ice/ice_xsk.c b/drivers/net/eth=
-ernet/intel/ice/ice_xsk.c
-> > index a65955eb23c0..367658acaab8 100644
-> > --- a/drivers/net/ethernet/intel/ice/ice_xsk.c
-> > +++ b/drivers/net/ethernet/intel/ice/ice_xsk.c
-> > @@ -845,8 +845,10 @@ int ice_clean_rx_irq_zc(struct ice_rx_ring *rx_rin=
-g, int budget)
-> >       xdp_prog =3D READ_ONCE(rx_ring->xdp_prog);
-> >       xdp_ring =3D rx_ring->xdp_ring;
-> >
-> > -     if (ntc !=3D rx_ring->first_desc)
-> > +     if (ntc !=3D rx_ring->first_desc) {
-> >               first =3D *ice_xdp_buf(rx_ring, rx_ring->first_desc);
-> > +             xdp_init_buff_minimal(first);
 >
-> xdp_buff_set_size() always clears flags, this is redundant.
+> > Second part is the actual block interface. Gaurav wrote about
+> > targeting fscrypt, but there should be no actual difference between
+> > crypto targets. FDE or having a single partition encrypted should
+> > probably work in the same way. Convert the key into blk_crypto_key
+> > (including the cookie for the ephemeral key), program the key into the
+> > slot, use the slot to en/decrypt hardware blocks.
+> >
+> > My main point is that the decision on the key type should be coming
+> > from the user.
 >
-> > +     }
-> >
-> >       while (likely(total_rx_packets < (unsigned int)budget)) {
-> >               union ice_32b_rx_flex_desc *rx_desc;
-> > @@ -920,6 +922,7 @@ int ice_clean_rx_irq_zc(struct ice_rx_ring *rx_ring=
-, int budget)
-> >                       break;
-> >               }
-> >
-> > +             xdp =3D first;
-> >               first =3D NULL;
-> >               rx_ring->first_desc =3D ntc;
-> >
-> > @@ -934,6 +937,7 @@ int ice_clean_rx_irq_zc(struct ice_rx_ring *rx_ring=
-, int budget)
-> >               vlan_tci =3D ice_get_vlan_tci(rx_desc);
-> >
-> >               ice_process_skb_fields(rx_ring, rx_desc, skb);
-> > +             xdp_buff_fixup_skb_offloading(xdp, skb);
-> >               ice_receive_skb(rx_ring, skb, vlan_tci);
-> >       }
-> >
-> > diff --git a/include/net/xdp_sock_drv.h b/include/net/xdp_sock_drv.h
-> > index 0a5dca2b2b3f..02243dc064c2 100644
-> > --- a/include/net/xdp_sock_drv.h
-> > +++ b/include/net/xdp_sock_drv.h
-> > @@ -181,7 +181,7 @@ static inline void xsk_buff_set_size(struct xdp_buf=
-f *xdp, u32 size)
-> >       xdp->data =3D xdp->data_hard_start + XDP_PACKET_HEADROOM;
-> >       xdp->data_meta =3D xdp->data;
-> >       xdp->data_end =3D xdp->data + size;
-> > -     xdp->flags =3D 0;
-> > +     xdp_init_buff_minimal(xdp);
->
-> Why is this done in the patch prefixed with "ice:"?
->
-Good catch, this should be moved to the previous patch.
+> That's exactly how it works.  There is a block interface for specifying an
+> inline encryption key along with each bio.  The submitter of the bio can specify
+> either a standard key or a HW-wrapped key.
 
-thanks
-Yan
+Not in this patchset. The ICE driver decides whether it can support
+HW-wrapped keys or not and then fails to support other type of keys.
 
-> >  }
-> >
-> >  static inline dma_addr_t xsk_buff_raw_get_dma(struct xsk_buff_pool *po=
-ol,
 >
-> Thanks,
-> Olek
+> Again, take a look at the patchset
+> https://lore.kernel.org/linux-block/20231104211259.17448-1-ebiggers@kernel.org/T/#u.
+> That's where all this stuff is.
+
+I was mostly looking at the hardware-specific implementation.
+
+-- 
+With best wishes
+Dmitry
 
