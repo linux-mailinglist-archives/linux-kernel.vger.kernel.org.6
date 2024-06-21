@@ -1,149 +1,269 @@
-Return-Path: <linux-kernel+bounces-223808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6502F911867
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:21:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 561D2911869
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF918282849
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:21:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B74DDB213A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E6884039;
-	Fri, 21 Jun 2024 02:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoaOcr7E"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0A783CDA;
+	Fri, 21 Jun 2024 02:22:36 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CA6625;
-	Fri, 21 Jun 2024 02:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF97383CD2
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718936492; cv=none; b=XBQefIPZFdkUzKikjee5d2kTxv/E419El3pTpUbTAl4f3uwLTgSWYye3H0qwZpsgZAXxX3HfMGTtnsG7ra+GLpkNheZ5iSYaqvqimcib2RWz1ULWxwX3xYiHf4Q0iTJ6hJXMUME62CfIzsxByM+x533pX9y2dBBdzVHnWoOxL3U=
+	t=1718936556; cv=none; b=S6Ny2q9CpFgvAlxcu/Q8NEuQDcLSUCOpX19NYDDGjrK3hCmm9SFFy5Gia2oiHVk1rta/kED8dLMdFjxHas3QGbJmhXmemsHM2gN1IIyAeylz7V5Joe32mBmk0xVjodc4r0VKImFAzpGoe4XT2MXZ+nDz0N+qrc1+2vmXZuHcmbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718936492; c=relaxed/simple;
-	bh=K6TXBBkcuGG3+1AOnlgP+3FCiMsThHscvB97VY8MFhM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OAS3vgHjReLayi8cxwGoIlZ96U6RthgIPbDYv6VCbqQA0bPD7UijaAmzsoiGj9PpeKlfdss0zMD62bg7pTHbi1L5RpDENyWk3aTDacJHu7xAD1658jido0NYq9gttqQFh64Osf5c4KexhBUkwqpCE1orBWJnHtZgIFH2aY645zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoaOcr7E; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3760121ad45so6070585ab.0;
-        Thu, 20 Jun 2024 19:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718936490; x=1719541290; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aSk8h7hKbIPqaEw4OuvVmqhytgxXbEHflO4uc1Iybpk=;
-        b=NoaOcr7EPP8o9lGXVD2F2bK2+h5P2+wACC+6Pdx7qo2mLoHAOZIf+fGyKGBThRIzLu
-         cjOLLjIBSS2UklxoNT6GQfq2aeCHo16sauOqdlb8ou8S2XFeyqhIoaSmBp3MT67Z+wLj
-         kYGL+k3ocDNxG/3hZYE0l1/iHvgpST1Is6h/4DETI+hcl4qNfoOIzmof2xgf/0UwCUXJ
-         npYm20u37BgMsaNr3Xxz74tP8eJljFvYx5OCBbaR8Vi+np+3KkujjWOS6jIRSq0wLGNt
-         +Sd9bphlTkZPygKdYgHlkySZZU1NfYRpN6TvMQzoxm9lrG3I9rHQJEZFnTVbcf+I5ZCo
-         y74Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718936490; x=1719541290;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aSk8h7hKbIPqaEw4OuvVmqhytgxXbEHflO4uc1Iybpk=;
-        b=IAkteGMtZPjr51d20OW0W+xYls9jk28BrAEanPHN6x7RpJAb2gPIO6wa1crWBm3uWH
-         Db+zG6oZ9juhdl1Ji0QBLeqNEvUFo3u+uVL9n3GibQ3rzquEtXCqhtiyEasuYt7I5mq9
-         qLRnfB8U5YDQnamBPvUbkyr+izqWsTVze09qqBXdoHEb22ESgaf9XeWEOTrkkQFIaNQh
-         KEQZ86+E4LYOZGUqGzGN20iYuN7N5V4g4U6GzYcZzLSFEc4eDTzOWchJ93ADtJgQnA4o
-         +Hl2J2x/n+kI9GBQOMCNzEetijUvqD6700VYoQTj4xlc1MVN88s6kFkiuxvz8vTfBwfi
-         xuNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIOrdeXRxD7HK7E+wGWPNJ+umRJmilDK+P9lUDlKC+9Fi6C0iqv7jHO7w5FZ6ZsWPOL1VK0cblNnSk/br0pgQvOApL0GFsDj+1tbuJecupCDBxQPXoPiI7tMjBkD6l69DHYZdpygTmv+k=
-X-Gm-Message-State: AOJu0Yz6fe7Fp/QzdEfrtvJFhNgjBsOGJ0cpkorHfAP/oHzx2Or+dztK
-	pkt4YTlDVdBNQkY20XjA9pwl2025qsDr0jS1x6+n7PNbSHisWycOcFDIDuDcuK2+pXAnlGPfmxW
-	7n7/VZIDM6D2YihRcMF5BfyrpQH0=
-X-Google-Smtp-Source: AGHT+IGmfVNJDop2DudLdwqs9uZVTjlcrH2ShhifeWXIuD43SSv94NurFFxYTdFRVLVT3Fyp2S1okJmsNyfPB0Oapa0=
-X-Received: by 2002:a92:c269:0:b0:374:abf8:4f65 with SMTP id
- e9e14a558f8ab-3761d74e1d1mr72390415ab.32.1718936490164; Thu, 20 Jun 2024
- 19:21:30 -0700 (PDT)
+	s=arc-20240116; t=1718936556; c=relaxed/simple;
+	bh=9KxMSHTm+DVfNnqGV5KkSla6BsSLATfeLVjHGFBl/RE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eRFWVRxL/BbcHlHrK1lbQfZHPc/4Uc3kBgmw5xEjrgG5PvjUnXxj4axWS2ac4trWpUeUfnb9EnaHZf/nxCEb+SAe9mNLtKnLosIh6nmuxqbsIMRXOZpUjMlSlzhxuKh3jXKqHQqgx+wyvWqMVXQ4D6MaRYUzZ9ZjSVNnIT+YNeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W51GM22r3zVm4j;
+	Fri, 21 Jun 2024 10:17:31 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4026F18007E;
+	Fri, 21 Jun 2024 10:22:28 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 21 Jun 2024 10:22:27 +0800
+Message-ID: <6c16eeb4-f382-89a5-3481-548c405d4f8e@huawei.com>
+Date: Fri, 21 Jun 2024 10:22:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1718851218-27803-1-git-send-email-shengjiu.wang@nxp.com> <87frt82gj7.wl-tiwai@suse.de>
-In-Reply-To: <87frt82gj7.wl-tiwai@suse.de>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Fri, 21 Jun 2024 10:21:19 +0800
-Message-ID: <CAA+D8APZ8-3NFceuQeTnEL-K4reUGGfrgyG63jyjydFA6o_4MA@mail.gmail.com>
-Subject: Re: [RESEND PATCH] ALSA: dmaengine_pcm: terminate dmaengine before synchronize
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, lars@metafoo.de, perex@perex.cz, tiwai@suse.com, 
-	broonie@kernel.org, linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	alsa-devel@alsa-project.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2 2/5] irqchip/gic-common: Remove sync_access callback
+Content-Language: en-US
+To: Mark Rutland <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: <alexandru.elisei@arm.com>, <catalin.marinas@arm.com>,
+	<linux-kernel@vger.kernel.org>, <maz@kernel.org>, <tglx@linutronix.de>,
+	<will@kernel.org>
+References: <20240617111841.2529370-1-mark.rutland@arm.com>
+ <20240617111841.2529370-3-mark.rutland@arm.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240617111841.2529370-3-mark.rutland@arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-On Thu, Jun 20, 2024 at 3:56=E2=80=AFPM Takashi Iwai <tiwai@suse.de> wrote:
->
-> On Thu, 20 Jun 2024 04:40:18 +0200,
-> Shengjiu Wang wrote:
-> >
-> > When dmaengine supports pause function, in suspend state,
-> > dmaengine_pause() is called instead of dmaengine_terminate_async(),
-> >
-> > In end of playback stream, the runtime->state will go to
-> > SNDRV_PCM_STATE_DRAINING, if system suspend & resume happen
-> > at this time, application will not resume playback stream, the
-> > stream will be closed directly, the dmaengine_terminate_async()
-> > will not be called before the dmaengine_synchronize(), which
-> > violates the call sequence for dmaengine_synchronize().
->
-> Hmm, I can't follow this state change.
-> Do you mean that:
-> - snd_pcm_drain() is performed for a playback stream
-> - while draining operation, the system goes to suspend
-> - the system resumes (but the application doesn't call resume yet)
-> - The stream is closed (without calling resume)
-> ??
 
-yes. this is the case.
 
->
-> If so, it's rather an inconsistent PCM state in the core side, and can
-> be fixed by a simple call like below:
->
-> -- 8< --
-> --- a/sound/core/pcm_native.c
-> +++ b/sound/core/pcm_native.c
-> @@ -2700,6 +2700,7 @@ void snd_pcm_release_substream(struct snd_pcm_subst=
-ream *substream)
->         if (substream->ref_count > 0)
->                 return;
->
-> +       snd_pcm_resume(substream);
->         snd_pcm_drop(substream);
->         if (substream->hw_opened) {
->                 if (substream->runtime->state !=3D SNDRV_PCM_STATE_OPEN)
-> -- 8< --
->
-> This will be no-op for the PCM device without SNDRV_PCM_INFO_RESUME.
->
-> But, this may need more rework, too; admittedly it imposes the
-> unnecessary resume of the stream although it shall be stopped and
-> closed immediately after that.  We may have some optimization in
-> addition.
+On 2024/6/17 19:18, Mark Rutland wrote:
+> The gic_configure_irq(), gic_dist_config(), and gic_cpu_config()
+> functions each take an optional "sync_access" callback, but in almost
+> all cases this is not used. The only user is the GICv3 driver's
+> gic_cpu_init() function, which uses gic_redist_wait_for_rwp() as the
+> "sync_access" callback for gic_cpu_config().
+> 
+> It would be simpler and clearer to remove the callback and have the
+> GICv3 driver call gic_redist_wait_for_rwp() explicitly after
+> gic_cpu_config().
+> 
+> Remove the "sync_access" callback, and call gic_redist_wait_for_rwp()
+> explicitly in the GICv3 driver.
+> 
+> There should be no functional change as a result of this patch.
 
-The suspended_state is not cleared that the resume may be called again
-at the end of stream.
+There seems to be a similar patch already:
 
-Will you push the code?
+https://lore.kernel.org/all/20230902134106.1969-1-yuzenghui@huawei.com/
 
-Best regards
-Shengjiu Wang
-
->
->
-> thanks,
->
-> Takashi
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexandru Elisei <alexandru.elisei@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Will Deacon <will@kernel.org>
+> Reviewed-by: Marc Zyngier <maz@kernel.org>
+> Tested-by: Marc Zyngier <maz@kernel.org>
+> ---
+>  drivers/irqchip/irq-gic-common.c | 16 +++-------------
+>  drivers/irqchip/irq-gic-common.h |  7 +++----
+>  drivers/irqchip/irq-gic-v3.c     |  7 ++++---
+>  drivers/irqchip/irq-gic.c        |  6 +++---
+>  drivers/irqchip/irq-hip04.c      |  6 +++---
+>  5 files changed, 16 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
+> index afd6a1841715a..4ed17620dc4d7 100644
+> --- a/drivers/irqchip/irq-gic-common.c
+> +++ b/drivers/irqchip/irq-gic-common.c
+> @@ -45,7 +45,7 @@ void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
+>  }
+>  
+>  int gic_configure_irq(unsigned int irq, unsigned int type,
+> -		       void __iomem *base, void (*sync_access)(void))
+> +		       void __iomem *base)
+>  {
+>  	u32 confmask = 0x2 << ((irq % 16) * 2);
+>  	u32 confoff = (irq / 16) * 4;
+> @@ -84,14 +84,10 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
+>  
+>  	raw_spin_unlock_irqrestore(&irq_controller_lock, flags);
+>  
+> -	if (sync_access)
+> -		sync_access();
+> -
+>  	return ret;
+>  }
+>  
+> -void gic_dist_config(void __iomem *base, int gic_irqs,
+> -		     void (*sync_access)(void))
+> +void gic_dist_config(void __iomem *base, int gic_irqs)
+>  {
+>  	unsigned int i;
+>  
+> @@ -118,12 +114,9 @@ void gic_dist_config(void __iomem *base, int gic_irqs,
+>  		writel_relaxed(GICD_INT_EN_CLR_X32,
+>  			       base + GIC_DIST_ENABLE_CLEAR + i / 8);
+>  	}
+> -
+> -	if (sync_access)
+> -		sync_access();
+>  }
+>  
+> -void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void))
+> +void gic_cpu_config(void __iomem *base, int nr)
+>  {
+>  	int i;
+>  
+> @@ -144,7 +137,4 @@ void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void))
+>  	for (i = 0; i < nr; i += 4)
+>  		writel_relaxed(GICD_INT_DEF_PRI_X4,
+>  					base + GIC_DIST_PRI + i * 4 / 4);
+> -
+> -	if (sync_access)
+> -		sync_access();
+>  }
+> diff --git a/drivers/irqchip/irq-gic-common.h b/drivers/irqchip/irq-gic-common.h
+> index f407cce9ecaaa..c230175dd584c 100644
+> --- a/drivers/irqchip/irq-gic-common.h
+> +++ b/drivers/irqchip/irq-gic-common.h
+> @@ -20,10 +20,9 @@ struct gic_quirk {
+>  };
+>  
+>  int gic_configure_irq(unsigned int irq, unsigned int type,
+> -                       void __iomem *base, void (*sync_access)(void));
+> -void gic_dist_config(void __iomem *base, int gic_irqs,
+> -		     void (*sync_access)(void));
+> -void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void));
+> +                       void __iomem *base);
+> +void gic_dist_config(void __iomem *base, int gic_irqs);
+> +void gic_cpu_config(void __iomem *base, int nr);
+>  void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
+>  		void *data);
+>  void gic_enable_of_quirks(const struct device_node *np,
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 6fb276504bcc8..d95dda2383fb5 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -670,7 +670,7 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
+>  
+>  	offset = convert_offset_index(d, GICD_ICFGR, &index);
+>  
+> -	ret = gic_configure_irq(index, type, base + offset, NULL);
+> +	ret = gic_configure_irq(index, type, base + offset);
+>  	if (ret && (range == PPI_RANGE || range == EPPI_RANGE)) {
+>  		/* Misconfigured PPIs are usually not fatal */
+>  		pr_warn("GIC: PPI INTID%ld is secure or misconfigured\n", irq);
+> @@ -940,7 +940,7 @@ static void __init gic_dist_init(void)
+>  		writel_relaxed(GICD_INT_DEF_PRI_X4, base + GICD_IPRIORITYRnE + i);
+>  
+>  	/* Now do the common stuff */
+> -	gic_dist_config(base, GIC_LINE_NR, NULL);
+> +	gic_dist_config(base, GIC_LINE_NR);
+>  
+>  	val = GICD_CTLR_ARE_NS | GICD_CTLR_ENABLE_G1A | GICD_CTLR_ENABLE_G1;
+>  	if (gic_data.rdists.gicd_typer2 & GICD_TYPER2_nASSGIcap) {
+> @@ -1282,7 +1282,8 @@ static void gic_cpu_init(void)
+>  	for (i = 0; i < gic_data.ppi_nr + SGI_NR; i += 32)
+>  		writel_relaxed(~0, rbase + GICR_IGROUPR0 + i / 8);
+>  
+> -	gic_cpu_config(rbase, gic_data.ppi_nr + SGI_NR, gic_redist_wait_for_rwp);
+> +	gic_cpu_config(rbase, gic_data.ppi_nr + SGI_NR);
+> +	gic_redist_wait_for_rwp();
+>  
+>  	/* initialise system registers */
+>  	gic_cpu_sys_reg_init();
+> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+> index 98aa383e39db1..87255bde960fc 100644
+> --- a/drivers/irqchip/irq-gic.c
+> +++ b/drivers/irqchip/irq-gic.c
+> @@ -303,7 +303,7 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
+>  			    type != IRQ_TYPE_EDGE_RISING)
+>  		return -EINVAL;
+>  
+> -	ret = gic_configure_irq(gicirq, type, base + GIC_DIST_CONFIG, NULL);
+> +	ret = gic_configure_irq(gicirq, type, base + GIC_DIST_CONFIG);
+>  	if (ret && gicirq < 32) {
+>  		/* Misconfigured PPIs are usually not fatal */
+>  		pr_warn("GIC: PPI%ld is secure or misconfigured\n", gicirq - 16);
+> @@ -479,7 +479,7 @@ static void gic_dist_init(struct gic_chip_data *gic)
+>  	for (i = 32; i < gic_irqs; i += 4)
+>  		writel_relaxed(cpumask, base + GIC_DIST_TARGET + i * 4 / 4);
+>  
+> -	gic_dist_config(base, gic_irqs, NULL);
+> +	gic_dist_config(base, gic_irqs);
+>  
+>  	writel_relaxed(GICD_ENABLE, base + GIC_DIST_CTRL);
+>  }
+> @@ -516,7 +516,7 @@ static int gic_cpu_init(struct gic_chip_data *gic)
+>  				gic_cpu_map[i] &= ~cpu_mask;
+>  	}
+>  
+> -	gic_cpu_config(dist_base, 32, NULL);
+> +	gic_cpu_config(dist_base, 32);
+>  
+>  	writel_relaxed(GICC_INT_PRI_THRESHOLD, base + GIC_CPU_PRIMASK);
+>  	gic_cpu_if_up(gic);
+> diff --git a/drivers/irqchip/irq-hip04.c b/drivers/irqchip/irq-hip04.c
+> index 46161f6ff289d..5285150fd9096 100644
+> --- a/drivers/irqchip/irq-hip04.c
+> +++ b/drivers/irqchip/irq-hip04.c
+> @@ -130,7 +130,7 @@ static int hip04_irq_set_type(struct irq_data *d, unsigned int type)
+>  
+>  	raw_spin_lock(&irq_controller_lock);
+>  
+> -	ret = gic_configure_irq(irq, type, base + GIC_DIST_CONFIG, NULL);
+> +	ret = gic_configure_irq(irq, type, base + GIC_DIST_CONFIG);
+>  	if (ret && irq < 32) {
+>  		/* Misconfigured PPIs are usually not fatal */
+>  		pr_warn("GIC: PPI%d is secure or misconfigured\n", irq - 16);
+> @@ -260,7 +260,7 @@ static void __init hip04_irq_dist_init(struct hip04_irq_data *intc)
+>  	for (i = 32; i < nr_irqs; i += 2)
+>  		writel_relaxed(cpumask, base + GIC_DIST_TARGET + ((i * 2) & ~3));
+>  
+> -	gic_dist_config(base, nr_irqs, NULL);
+> +	gic_dist_config(base, nr_irqs);
+>  
+>  	writel_relaxed(1, base + GIC_DIST_CTRL);
+>  }
+> @@ -287,7 +287,7 @@ static void hip04_irq_cpu_init(struct hip04_irq_data *intc)
+>  		if (i != cpu)
+>  			hip04_cpu_map[i] &= ~cpu_mask;
+>  
+> -	gic_cpu_config(dist_base, 32, NULL);
+> +	gic_cpu_config(dist_base, 32);
+>  
+>  	writel_relaxed(0xf0, base + GIC_CPU_PRIMASK);
+>  	writel_relaxed(1, base + GIC_CPU_CTRL);
 
