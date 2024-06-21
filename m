@@ -1,381 +1,158 @@
-Return-Path: <linux-kernel+bounces-225385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D130913004
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:05:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF848913014
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 936A51F25633
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:04:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AEBEB21D0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B7217D34D;
-	Fri, 21 Jun 2024 22:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00A117C20E;
+	Fri, 21 Jun 2024 22:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JsD7AmYK"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="oLK1UBMf"
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA5417C7D8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B355738FB9
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719007430; cv=none; b=M6ugrGcEfNJXxd2BW0DFsI25ByrlXFQwG9Pxma9BAILw5oi/mOezYkO6Qvr9F3XBEHnwPUe0dBinM7w/aJdBZWYXiW0IE0eis6ZuLVPK/5srKYFxUm5Hvy/IKUrpEfylYgyt6WiJaFiAH5+OLiWMAOnMClBwybShK+K1QdSec2s=
+	t=1719007839; cv=none; b=Dgwcwg1wjNNCRX2Tfgcp41Fw6Kx7HqVNr7pfD/YUQvldw6m2eX1EEO+GA4Q240d48Xg8fWbqvMyqCBXd5gU+pmOyU6D5koi8cqnBXa/MxgrtFx/S/ELFFhNBO5WnTdRHRjVBm7CV2Qm+/mH3Rg6R5jaxpB7TECEHFv8fYXxrzg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719007430; c=relaxed/simple;
-	bh=ERzl1vOfSWUTdRssx1gYQEEpeL4zdtyW1p5ZcdM048M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=asNdCvEJ2phS1jDPN93Hv6WSXgWz9TU1nJcidVU3nKm19axcUhwo9GarQx97shi+6BUJ4jpbmb1PFr56SPG7q9ZtDObhsca2PVGm29YefM9C5v+Mfj8G8Hf0xcglWpFEUjRYUaXPUWDOBl2WKxNSbO4YtYj9UANESTomRJoP9Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JsD7AmYK; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec002caeb3so30440881fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:03:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719007426; x=1719612226; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NNV+yfMl4wzIlPe6Pg4OBBplV6ElcGrIImNf/vZG4m0=;
-        b=JsD7AmYK8DaiHDGZFojiPJbkmK5uiYXsQeUdTvGk2xHguC/Yr7CPjekJUjE5I8OCfU
-         xgHEHQRRdXorTw7FtNRfarnhI8qBlQQB2xUQBRo/NXgoMXi9elUk41ZyJxkdDBF0nkHI
-         D+flGYeFU8aYTfifm9lJuWST4A7WoB1H9UiNyPDHvJP0T7ZDMMgQpll/3WyYXPKrbKRR
-         Pd031gm4UYTERaQLzvC1lKr41YFZp3IOOiZG5bw8MWBXrx2WMNHN1iWZ7mzekXgYg4Pp
-         1v0qrz1bykTxqGCPP87NtoAxTga++Q1/dItk6amthZGJ3iAAMoko86ZUSZ8p/KL9zLWJ
-         j4KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719007426; x=1719612226;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NNV+yfMl4wzIlPe6Pg4OBBplV6ElcGrIImNf/vZG4m0=;
-        b=FbOEdzgcGpe/rqlzzLinYmHPaRdIRwDV6hM8PBDpgSXtjI21avMl3fpXS5AdMwXXdA
-         JOm1oRYlSLVyTDnwE51IWBMoav7oubKe7Yzan0jO2HmGxS3SDz6lY3mRgA0Fuk6fPZEr
-         tgqRU0HAeE8iDqDtHAXYXoUihyR9+elkS1SiOeQK/1NKb5mPbNTU4Oocs0buGVCE2os4
-         jZuh2D0JzBbokVTKFBwXugRFh8NId3UuKRKDa/xa3k5OhKKXnJJ9vmSwUgEVms/U6JZu
-         0ANcc/brQD1HPVe67c6DK9AR4uZ1D4ybA9oEDPVOvU7BD0Eu3avkb2hUpcmOe+e1JvAR
-         BGLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCQv5wJKGKGOPR/6cZRSpvUWhvUvNdQlu3qaOOOng+bQPjMpDZ+KsL49u0HRYHh5NpBVdu21TFA3yI//9YnYPKa7gfGi4WBM8/mEbO
-X-Gm-Message-State: AOJu0YzebUX4rsn6Ny+6nDNBLU7X8DjFGifL79rOikkSMcHMEiyzvnNq
-	lVgmzs7UPFAYbAfJ9D7MtMbqfCEHL4xXGlJ6U0y1BRnjY/FKA7H/Hgu0qe0SYFM=
-X-Google-Smtp-Source: AGHT+IHWKfpxf222Z6fpO/pG32g0rZ3+yfuIB65S+L6Ajx161gbLUon+dQfSytPM2Kwd93xWGyThTQ==
-X-Received: by 2002:a05:6512:324c:b0:52c:dd8d:8b44 with SMTP id 2adb3069b0e04-52cdd8d8bdfmr207721e87.22.1719007425680;
-        Fri, 21 Jun 2024 15:03:45 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd6431fcdsm318293e87.210.2024.06.21.15.03.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 15:03:45 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 22 Jun 2024 01:03:44 +0300
-Subject: [PATCH v9 5/5] remoteproc: qcom: enable in-kernel PD mapper
+	s=arc-20240116; t=1719007839; c=relaxed/simple;
+	bh=/3OUXbxbh4HVBBwvgsX+pbK2kz+8OtQOGQtbeuGta1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UJV2tJ/IlLHGTgEfbBJaKq5AzMx3W7rvuB59wpC2tVfqxXUOPLXxGBflZBSDjYaJsyOa5o505JlRVGM7KDIijF+jAUWvO/l/wmYuYdJHg2RnBNKQrvmn0ICzZ1svbRd4NTvG0GeDvjrmkuFvhao87C9vLSLgn3SLK4xOp6OmvJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=oLK1UBMf; arc=none smtp.client-ip=66.163.188.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719007836; bh=W93MUuqF8YI2qTC2EngAWFfgxbIWTzpfO4cxB6FzZ44=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=oLK1UBMfeYWQKHziJOMQRMOzGJoxij5iClwpnN1q1dhXsC4ug8kDEVzB2clQiTXgY5qb9HYSb3NxImVVPlQyiVC/yAQO13BzVZiJBnGaTGY3e6ApH7U3L50XggewLCQ5LH6cqQX3yzIu0CzCu9XnMjryZ5HHV3zqKPbcOPbgEUNNl6/hAFtr4xfhl6XG1ToJszn8aA/kHwpq8NxhqMEDXPhGtIMcYrkOuLemTeHJvqZi0vXM/aGnj4BXJTIJl9fA1ZEna/mmoZMRZ+BpivT3INLJlXZqEDPbEIEGGtRTSrA2Wh7iG6ZLuKRtx+TswxZcsCKaBLfDYM7EpQLsVQMcIQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719007836; bh=eVyNnyzdgTy49bWrcLkx/0jZM++O2wdu6nB73AljJwS=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=iu0C5x1mpU+SZGKu6lRWE/oUQyQEfk160dCCB+CB4l72ztDOYAc4BlHfOh+uedkEWD/DWAeMLpC79cMkmYnFUfTukSr+c5dQbTixfbixqXU5csX0322D0LokPk07RGpIWOia4jr3p4suJvPXa4iKLzEsHI0Jdah8r1a0AVRhPPH+sTWy2wVugwbkS1OGm9e/ZcpsJd+WlcPV8yBfNLzwS0cyCWaI5YEQScWxXHFJD3hf03K3XwNJ5gV2qzC0aWDgmYJtRQ0ZFmeclqZO2QlkxyCJMBYApXnNaeHoYqoCA8wev/h0kpVRPip5Bm6DHlb8MTxjr98LfpiQTKaVpHZ7Bw==
+X-YMail-OSG: xHIJgvYVM1l_e5pHrqiy_yh8PxQUmnnZNw03DwldaoYhvIGtjxoRyA1hUkbJVF2
+ SyOTADNPwKlhsH4_83zkPIKbRq.Q0DDQVZXhiAYJiSXcCpI4pkxrfdfI3vWbH_etfKHXhHTVjZSE
+ HA9zfNysDePb7ZPyH_ti6YBa2UBkPKPpnnvew_UvKOdqFRm71QQRYfAegjLsmc9dSBpn_3HWkfhq
+ 2x0HKa_ysth7HW2P1UYkZvIszKuYDsub_iF_rSh8nYr65Q1fDLOSK9UpkwRw1a12c3eFmJlbg0gG
+ Ps.qhuEdAr69Y3LbxLYIrKwm1QmlWSyFaCxW4GRYkAmyhSzc8GD..EoXavTvvE8fvz8AAOZYWO2Q
+ o3oiK8stAertTzEtGqR0VWSFo1XxCDtA2Im6C9LiZ99jz75WJ.24MDm1a5yBTXJFqFBe0p13NiRI
+ laAyoDkDOk1F11Zw.0bvEP5UrWMudvqUqBMOcoVmVQHQCeUBz8ignD9gGW8tWJmNH5YIn9OL1EAC
+ sLK6kt9hL_Pg00d2R.TgEfim0FuBicqwA1PecLiM4YD_llWpfGSbZ1LIDtys8G2TXmDsA52XupJx
+ PMZjxcX8z7U_Z4l19e7ijxZrDfSkg02CsUczSeAbhYVo.NUZLs_Rb6nmI.15KZLAmHmqd_xQlpSE
+ HmNNwR.v7AxvawVtBWhMpYm4Fien70j10RRBAXyJ3xDHBseTIV7f_f1eAJzEQfKRtHy1jSFI_5O6
+ 9W4ox2yyxPEAeIyvRTDJ3DpJXsE_QCHuPUaY23.mIkOVS6vbqAUc6Jes1P2vRpSC2fto3GRdtTCt
+ BuaJOI1owyBSFNasUaLZb3jT1bVk.4EKVT2a56pf.sHQCSbSxXgGi6aJ0BJffqA2gp_i8u1oSZ3f
+ 6N.WKA.hUb2iRQ7lBTIaV.2JXAVAuRJdP0_rCTSyDr443NZTQ_GHzuY3STxDEXNsHP2BX2lIa2JT
+ UPUwrhHrgTQGt40I8FtCXt0fPc.do3fDAEvnbMj3yd5kzy34.U2DukQcJ3ykWDIRnZKgwaQBFlbT
+ 2SPn6B6Yfte1JmW9oVQBt6Bcr0eQv.Jwsjrus0mnWb1DVqrjLzOZuLMlwC3u0oxqaRTJfpvyZcQD
+ k_bAPui8HfxrlGg_yH.wqVeDrUAvUUuOv66uKwagBp2Eyl_eVayXfj3f2RzP2xxd8enU.owi.whw
+ 4j1OiGmAUtbNINy3mzjjRpaIQoFuR577yzUkFvYzKka61bZN61J_YbfDuPhwUlBePngWeWdasony
+ XyvXRR9ac5F2y3agMebnLJSGv0E0n1RJurZ12HYCGD_mRUNfVTw_vyGNYReqT.7d32FalsrkhXNM
+ YE7X70zZYy.QvxBzsj9hBywvB1wAn131GV3nDNvyu03jd9V32qpkMJUAeZ2O0s36i_sjiky2RBnE
+ IR9_V9wk3p3jbdJ7umKG0BtTNjwHO2yc.K1TxmSmTGg.YyAgWznGK4qarj.5z_LAWmyAVyNnpFVI
+ EUIeRBnK.jdm.oeBa_etlm.RFulscNElPDHZJaIfhlqoxSiSf0pApy_vsW756ibuOUjqt9RIaFfy
+ FiaURzn6l_1w4u6FvRoYbgGCOW1tSciD3ceLtTOCX_0Az.et8w67gzyvtLQ9wApkF8Pru3jCYO3U
+ SqnGkd1jqaq.D.BWNalIaF3QkpLZor5mF09f1GiHTJTmQLzRtdMbbmXBF6cDdoHhmBSgAFBWvScq
+ b.DzMpIcEfNHzmK.O17slhHyZ_jfQFXwhAIJAbifTkTVWxx.PwMVxHWIpeLuhEukWJgfAF8Off20
+ VCejX_LNPVoO5MDUVNnB.UeFvWep7en17N7Y6GMQ3jmJWoF7EUmjPdDrF.JPqiWCXfeksdI5Cwfx
+ oKAkT7Eci3JBKS0SDAE9z3tItrRYpvceo37.dySQuLtrLhJa0ImT69QsKnCtTEo95RjTqcDKLJL0
+ dxMhgkNhQdt3.dTjhhaQdvRTgawMLhdFz5vaILGYncO00Zy03VhwmPwkoaYJG2GlPcd.flgMobOs
+ 3tsHIk32BxbadWd5a5QpKTxIP9VT4cScMqPZr0iu.ikEYWkmxj15JdbnXchSsW7B_J_QDOGtprtl
+ bKecFPJEE5a1OCuLLQKrB1xulpgMCgz24Ns60rT13dXBf4iSvPUG_fruCb1xupgZhY4HVVIHS0uD
+ SHd1H0ZWEvi9xgJFapzZbp_zTk1SpF3cNUx3FPJc6.k7Y2YYZ2rba22bJEOwnDg5Y6dpidlYfXBz
+ YOknam3R1lChQ7W0ePQWNYxezpArxdnk8PnmZkKVtSmrwCXzeAxdoz3O1wLXzb.2IT3Ln8viyS9w
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 40e448d0-786a-4711-84b1-e00c610a0ba3
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jun 2024 22:10:36 +0000
+Received: by hermes--production-gq1-5b4c49485c-75jqb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fa3be147b3108ab3bb88dd26f261d3a7;
+          Fri, 21 Jun 2024 22:00:25 +0000 (UTC)
+Message-ID: <2cddc480-f911-44e3-b415-33e0cec2964c@schaufler-ca.com>
+Date: Fri, 21 Jun 2024 15:00:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240622-qcom-pd-mapper-v9-5-a84ee3591c8e@linaro.org>
-References: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
-In-Reply-To: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Sibi Sankar <quic_sibis@quicinc.com>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-remoteproc@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
- Xilin Wu <wuxilin123@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Steev Klimaszewski <steev@kali.org>, 
- Alexey Minnekhanov <alexeymin@postmarketos.org>, 
- Chris Lew <quic_clew@quicinc.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9639;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=ERzl1vOfSWUTdRssx1gYQEEpeL4zdtyW1p5ZcdM048M=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmdfi8S27dm1fHUp48zQ0eg0UMYWHJlD12WN38l
- gY46J4uqYqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnX4vAAKCRCLPIo+Aiko
- 1YAiCACzBqZDblGXcwb7Kv48HLNNpvqWibCx3M+4oFkup/CSa7odlypo4iJCuV8kSZrlr7ipDkP
- AesR6oXFZPO/2u2dp3eZ7I6gC9uGJ5qIUAQQ0XaBYZQlguJwMEmOowbzk4FtJPY0pr0cu9QrcFu
- B2tUgKKyYfRh7KsSPvE2CsCBCMch23vJVplVO83UWXgudsZ9IH95xfyL9JNG+brs8uisw5YDKv6
- FiZkYW15nt49b/TY1f0Aww5xNBoFAyFRvVMDg7Ao6Yr4McSS1wG1Rpp0jtsKUKCBkj/JOJzvn10
- UCujwA3P7F5SNt+3FhCoCZlCf0h0nC3HhHaacLWv1wTQhEPU
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] LSM, net: Add SO_PEERCONTEXT for peer LSM data
+To: Paul Moore <paul@paul-moore.com>
+Cc: LSM List <linux-security-module@vger.kernel.org>, netdev@vger.kernel.org,
+ linux-api@vger.kernel.org,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
+ <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
+ <c59a4954-913b-4672-b502-21aa683d7cdb@schaufler-ca.com>
+ <CAHC9VhRjbWuFeprjNP3r7tU27cW6bEZytWq-3XTjzoN7Ki-zzQ@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhRjbWuFeprjNP3r7tU27cW6bEZytWq-3XTjzoN7Ki-zzQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Request in-kernel protection domain mapper to be started before starting
-Qualcomm DSP and release it once DSP is stopped. Once all DSPs are
-stopped, the PD mapper will be stopped too.
+On 6/21/2024 12:41 PM, Paul Moore wrote:
+> On Fri, Jun 21, 2024 at 12:06 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 6/20/2024 2:05 PM, Paul Moore wrote:
+>>> On May 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> ..
+>
+>>>> +/**
+>>>> + * security_socket_getpeerctx_stream() - Get the remote peer label
+>>>> + * @sock: socket
+>>>> + * @optval: destination buffer
+>>>> + * @optlen: size of peer label copied into the buffer
+>>>> + * @len: maximum size of the destination buffer
+>>>> + *
+>>>> + * This hook allows the security module to provide peer socket security state
+>>>> + * for unix or connected tcp sockets to userspace via getsockopt
+>>>> + * SO_GETPEERCONTEXT.  For tcp sockets this can be meaningful if the socket
+>>>> + * is associated with an ipsec SA.
+>>>> + *
+>>>> + * Return: Returns 0 if all is well, otherwise, typical getsockopt return
+>>>> + *         values.
+>>>> + */
+>>>> +int security_socket_getpeerctx_stream(struct socket *sock, sockptr_t optval,
+>>>> +                                  sockptr_t optlen, unsigned int len)
+>>>> +{
+>>>> +    struct security_hook_list *hp;
+>>>> +
+>>>> +    hlist_for_each_entry(hp, &security_hook_heads.socket_getpeerctx_stream,
+>>>> +                         list)
+>>>> +            return hp->hook.socket_getpeerctx_stream(sock, optval, optlen,
+>>>> +                                                     len);
+>>>> +
+>>>> +    return LSM_RET_DEFAULT(socket_getpeerctx_stream);
+>>>> +}
+>>> Don't we need the same magic that we have in security_getselfattr() to
+>>> handle the multi-LSM case?
+>> Yes. I would like to move this ahead independently of the multi-LSM support.
+>> Putting the multi-LSM magic in is unnecessary and rather pointless until then.
+> Starting with the LSM syscalls, I want any new user visible API that
+> can support multiple LSMs to have support for multiple LSMs.  Yes, the
+> setselfattr API doesn't support multiple LSMs, but that is because we
+> agreed there was never going to be a way to safely support that usage.
+> In this particular case, that same argument does not apply, we could
+> have multiple LSMs returning a socket's network peer information (even
+> if we don't currently see that), so let's make sure our API supports
+> it from the start.
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
-Tested-by: Steev Klimaszewski <steev@kali.org>
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/remoteproc/qcom_common.c    | 87 +++++++++++++++++++++++++++++++++++++
- drivers/remoteproc/qcom_common.h    | 10 +++++
- drivers/remoteproc/qcom_q6v5_adsp.c |  3 ++
- drivers/remoteproc/qcom_q6v5_mss.c  |  3 ++
- drivers/remoteproc/qcom_q6v5_pas.c  |  3 ++
- drivers/remoteproc/qcom_q6v5_wcss.c |  3 ++
- 6 files changed, 109 insertions(+)
+OK. I'll put that in v2 as well.
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 03e5f5d533eb..8c8688f99f0a 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -13,6 +13,7 @@
- #include <linux/notifier.h>
- #include <linux/remoteproc.h>
- #include <linux/remoteproc/qcom_rproc.h>
-+#include <linux/auxiliary_bus.h>
- #include <linux/rpmsg/qcom_glink.h>
- #include <linux/rpmsg/qcom_smd.h>
- #include <linux/slab.h>
-@@ -25,6 +26,7 @@
- #define to_glink_subdev(d) container_of(d, struct qcom_rproc_glink, subdev)
- #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
- #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
-+#define to_pdm_subdev(d) container_of(d, struct qcom_rproc_pdm, subdev)
- 
- #define MAX_NUM_OF_SS           10
- #define MAX_REGION_NAME_LENGTH  16
-@@ -519,5 +521,90 @@ void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr)
- }
- EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
- 
-+static void pdm_dev_release(struct device *dev)
-+{
-+	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-+
-+	kfree(adev);
-+}
-+
-+static int pdm_notify_prepare(struct rproc_subdev *subdev)
-+{
-+	struct qcom_rproc_pdm *pdm = to_pdm_subdev(subdev);
-+	struct auxiliary_device *adev;
-+	int ret;
-+
-+	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-+	if (!adev)
-+		return -ENOMEM;
-+
-+	adev->dev.parent = pdm->dev;
-+	adev->dev.release = pdm_dev_release;
-+	adev->name = "pd-mapper";
-+	adev->id = pdm->index;
-+
-+	ret = auxiliary_device_init(adev);
-+	if (ret) {
-+		kfree(adev);
-+		return ret;
-+	}
-+
-+	ret = auxiliary_device_add(adev);
-+	if (ret) {
-+		auxiliary_device_uninit(adev);
-+		return ret;
-+	}
-+
-+	pdm->adev = adev;
-+
-+	return 0;
-+}
-+
-+
-+static void pdm_notify_unprepare(struct rproc_subdev *subdev)
-+{
-+	struct qcom_rproc_pdm *pdm = to_pdm_subdev(subdev);
-+
-+	if (!pdm->adev)
-+		return;
-+
-+	auxiliary_device_delete(pdm->adev);
-+	auxiliary_device_uninit(pdm->adev);
-+	pdm->adev = NULL;
-+}
-+
-+/**
-+ * qcom_add_pdm_subdev() - register PD Mapper subdevice
-+ * @rproc:	rproc handle
-+ * @pdm:	PDM subdevice handle
-+ *
-+ * Register @pdm so that Protection Device mapper service is started when the
-+ * DSP is started too.
-+ */
-+void qcom_add_pdm_subdev(struct rproc *rproc, struct qcom_rproc_pdm *pdm)
-+{
-+	pdm->dev = &rproc->dev;
-+	pdm->index = rproc->index;
-+
-+	pdm->subdev.prepare = pdm_notify_prepare;
-+	pdm->subdev.unprepare = pdm_notify_unprepare;
-+
-+	rproc_add_subdev(rproc, &pdm->subdev);
-+}
-+EXPORT_SYMBOL_GPL(qcom_add_pdm_subdev);
-+
-+/**
-+ * qcom_remove_pdm_subdev() - remove PD Mapper subdevice
-+ * @rproc:	rproc handle
-+ * @pdm:	PDM subdevice handle
-+ *
-+ * Remove the PD Mapper subdevice.
-+ */
-+void qcom_remove_pdm_subdev(struct rproc *rproc, struct qcom_rproc_pdm *pdm)
-+{
-+	rproc_remove_subdev(rproc, &pdm->subdev);
-+}
-+EXPORT_SYMBOL_GPL(qcom_remove_pdm_subdev);
-+
- MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
-index 9ef4449052a9..b07fbaa091a0 100644
---- a/drivers/remoteproc/qcom_common.h
-+++ b/drivers/remoteproc/qcom_common.h
-@@ -34,6 +34,13 @@ struct qcom_rproc_ssr {
- 	struct qcom_ssr_subsystem *info;
- };
- 
-+struct qcom_rproc_pdm {
-+	struct rproc_subdev subdev;
-+	struct device *dev;
-+	int index;
-+	struct auxiliary_device *adev;
-+};
-+
- void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
- 			void (*rproc_dumpfn_t)(struct rproc *rproc,
- 				struct rproc_dump_segment *segment, void *dest, size_t offset,
-@@ -52,6 +59,9 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
- 			 const char *ssr_name);
- void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr);
- 
-+void qcom_add_pdm_subdev(struct rproc *rproc, struct qcom_rproc_pdm *pdm);
-+void qcom_remove_pdm_subdev(struct rproc *rproc, struct qcom_rproc_pdm *pdm);
-+
- #if IS_ENABLED(CONFIG_QCOM_SYSMON)
- struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 					   const char *name,
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 1d24c9b656a8..572dcb0f055b 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -112,6 +112,7 @@ struct qcom_adsp {
- 	struct dev_pm_domain_list *pd_list;
- 
- 	struct qcom_rproc_glink glink_subdev;
-+	struct qcom_rproc_pdm pdm_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- 	struct qcom_sysmon *sysmon;
- 
-@@ -726,6 +727,7 @@ static int adsp_probe(struct platform_device *pdev)
- 		goto disable_pm;
- 
- 	qcom_add_glink_subdev(rproc, &adsp->glink_subdev, desc->ssr_name);
-+	qcom_add_pdm_subdev(rproc, &adsp->pdm_subdev);
- 	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
- 	adsp->sysmon = qcom_add_sysmon_subdev(rproc,
- 					      desc->sysmon_name,
-@@ -755,6 +757,7 @@ static void adsp_remove(struct platform_device *pdev)
- 
- 	qcom_q6v5_deinit(&adsp->q6v5);
- 	qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
-+	qcom_remove_pdm_subdev(adsp->rproc, &adsp->pdm_subdev);
- 	qcom_remove_sysmon_subdev(adsp->sysmon);
- 	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
- 	qcom_rproc_pds_detach(adsp);
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 1779fc890e10..2a42215ce8e0 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -228,6 +228,7 @@ struct q6v5 {
- 
- 	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_subdev smd_subdev;
-+	struct qcom_rproc_pdm pdm_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- 	struct qcom_sysmon *sysmon;
- 	struct platform_device *bam_dmux;
-@@ -2102,6 +2103,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
- 	qcom_add_glink_subdev(rproc, &qproc->glink_subdev, "mpss");
- 	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
-+	qcom_add_pdm_subdev(rproc, &qproc->pdm_subdev);
- 	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
- 	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
- 	if (IS_ERR(qproc->sysmon)) {
-@@ -2143,6 +2145,7 @@ static void q6v5_remove(struct platform_device *pdev)
- 	qcom_q6v5_deinit(&qproc->q6v5);
- 	qcom_remove_sysmon_subdev(qproc->sysmon);
- 	qcom_remove_ssr_subdev(rproc, &qproc->ssr_subdev);
-+	qcom_remove_pdm_subdev(rproc, &qproc->pdm_subdev);
- 	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
- 	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
- 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 8458bcfe9e19..88e7b84f223c 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -111,6 +111,7 @@ struct qcom_adsp {
- 
- 	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_subdev smd_subdev;
-+	struct qcom_rproc_pdm pdm_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- 	struct qcom_sysmon *sysmon;
- 
-@@ -777,6 +778,7 @@ static int adsp_probe(struct platform_device *pdev)
- 
- 	qcom_add_glink_subdev(rproc, &adsp->glink_subdev, desc->ssr_name);
- 	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
-+	qcom_add_pdm_subdev(rproc, &adsp->pdm_subdev);
- 	adsp->sysmon = qcom_add_sysmon_subdev(rproc,
- 					      desc->sysmon_name,
- 					      desc->ssctl_id);
-@@ -811,6 +813,7 @@ static void adsp_remove(struct platform_device *pdev)
- 	qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
- 	qcom_remove_sysmon_subdev(adsp->sysmon);
- 	qcom_remove_smd_subdev(adsp->rproc, &adsp->smd_subdev);
-+	qcom_remove_pdm_subdev(adsp->rproc, &adsp->pdm_subdev);
- 	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
- 	adsp_pds_detach(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
- 	device_init_wakeup(adsp->dev, false);
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index 94f68c919ee6..e913dabae992 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -148,6 +148,7 @@ struct q6v5_wcss {
- 	bool requires_force_stop;
- 
- 	struct qcom_rproc_glink glink_subdev;
-+	struct qcom_rproc_pdm pdm_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- };
- 
-@@ -1052,6 +1053,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	qcom_add_glink_subdev(rproc, &wcss->glink_subdev, "q6wcss");
-+	qcom_add_pdm_subdev(rproc, &wcss->pdm_subdev);
- 	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, "q6wcss");
- 
- 	if (desc->ssctl_id)
-@@ -1074,6 +1076,7 @@ static void q6v5_wcss_remove(struct platform_device *pdev)
- 	struct q6v5_wcss *wcss = rproc->priv;
- 
- 	qcom_q6v5_deinit(&wcss->q6v5);
-+	qcom_remove_pdm_subdev(rproc, &wcss->pdm_subdev);
- 	rproc_del(rproc);
- }
- 
+>
+> Unrelated to the above, it would also be good to datagram support as a
+> patch 2/2 thing in a future version of this patchset.  Please be
+> careful not to carry over the mistakes we made with SCM_SECURITY (see
+> the GH discussion linked below).
 
--- 
-2.39.2
+That's "in my queue". I didn't want to spend time on it until I got
+feedback on this one.
 
+>
+> * https://github.com/SELinuxProject/selinux-kernel/issues/24
+>
 
