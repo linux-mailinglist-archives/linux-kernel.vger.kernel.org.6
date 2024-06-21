@@ -1,544 +1,624 @@
-Return-Path: <linux-kernel+bounces-225158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8770912CE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:03:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CB9912CE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6988D1F20D6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 389BE2847C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5BF16B388;
-	Fri, 21 Jun 2024 18:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4536F178CFD;
+	Fri, 21 Jun 2024 18:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="aWWr+vng"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdFmulGe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDF916A959
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 18:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0804178CD6;
+	Fri, 21 Jun 2024 18:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718992988; cv=none; b=pLc5lW7IeAdJagTfDDLoOjj2Ltl3SP5QdKwv9RcjxT4kZvWZgfdb/mOklbWBxWsou/CLrLrrt+/yj8ZyYBgzACCA3An51szb5HEnSHfiKzIq6AEPNB0rnWR5h5KhoGmfsZr23BBPeBnTxG9OwMiVpQLOtfXX/nwsEt+dKT2CQj0=
+	t=1718993032; cv=none; b=H1iX6C2xu9JGphwYPmPF2V8xSRwH8M9W4k5lgNfNNBLlPXjoPaJYSe81TAlxbBFIlbwYi0OLVfhkv4m56a7zwAH0yIM7nnA2Bx5GsTM4LBNE7uV29RA1JcxurUaY/HO8O1zGbWZZjMxEaGkRs9WvdkZpd7dmqGvP9E/MNYsc63s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718992988; c=relaxed/simple;
-	bh=aiEWFzC/pw3egtijIcsQNkzjZf2txmCDjSa97sISoO8=;
+	s=arc-20240116; t=1718993032; c=relaxed/simple;
+	bh=cEx2mciPnmR8aprzyHavr7YyTwPHQK5NbQ4Nvyt5BBY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C0aa7zv17UuQIqdLD7ZOZR9qqufiLoGjBj63Av9VR68ep/amVht4hJq3uwA/L0XY0IIAEcHldf4efY633aWmCL+WyNahia94G9YxAg7q0rJR/2iBGik0MR9uw3EJzA598NTioMeVihjtwqluIAUTNeuWQvqP2mm+uVTYhPUGUa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=aWWr+vng; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f9b523a15cso17608395ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1718992984; x=1719597784; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/fejNfIXIJtvuAfi2f/gRBIjZhFoRrIfjc01kX/930A=;
-        b=aWWr+vngRg1USq8prVObWgqlRSQz8qX7F43ymr+GyiBPLECJGGwE0t/YKJTwILFh0m
-         2ot3RQ7uJ4SGQQdH3WPH+Imwac28GiS93upkZSiYbd2aIv8Fkk0857pfXelPzL+ZY0VE
-         oa+tzN3P7VjOEqR4Ytb8cSE8xm6IceeODN/4Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718992985; x=1719597785;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/fejNfIXIJtvuAfi2f/gRBIjZhFoRrIfjc01kX/930A=;
-        b=O87x87Qd2C8/EtPbadfGCXNgmtfAe5CmlLhptJ1tcEwYYaVjS1dU6FBXIjadmEcfwy
-         iGwkrLf0gqAo1Znn7r8LrEY82e1El0LNyej3QwFfdPLEm+MLFWTQTIUlRRpwiEf39p5t
-         n05xOp8WcEiZMCvri31ZJeUPN3qIadWdzXRco8ZZxi35kNECkU4qOkx233vSv29MbnZS
-         CoQ7XdT02DUEHz+DLq7fcDizTSFoE8NMkNzuBjnfuT/VmV5OpjQzeo0ALI1gjsXK5YLN
-         U1Bgd82ofAnPT/QSJFkVloVfLf1RuIhdLZw9enhOhV4D6tKX2q8PgOp4sIjjSXGMqjXA
-         WfNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVptWLq9xH+O8u8af/IpBXYtNz5ksALbKLFL8Hremc7a0eq06P2ko+hYKQ246xZ7PRYXI4lnNV6Rr2KX3knqKSxcty8TujMUjgAv6A
-X-Gm-Message-State: AOJu0YwEf3/FfeyxOdD0RyoImTGoYJo76mmQ4tyk1d8MqyaiMvvm1hMB
-	d7PT5ZABPEZJy3H+Mvg1Ke+/DoblgTonMbKuOAwg95DYBQsXSTWERs6pfB5pEc0dXDqvp7iLG6f
-	U
-X-Google-Smtp-Source: AGHT+IEVTg16ROXrYPMvs0xQGYg0izhYZTmomgQPRgdKW3ISlow8Icx8y2LCcDG7xFe9uuhQ9UIGkg==
-X-Received: by 2002:a17:902:f549:b0:1f9:ec87:284e with SMTP id d9443c01a7336-1fa04ae5e33mr7336555ad.16.1718992984387;
-        Fri, 21 Jun 2024 11:03:04 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c6a7csm16834235ad.160.2024.06.21.11.03.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 11:03:03 -0700 (PDT)
-Date: Fri, 21 Jun 2024 11:03:01 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>
-Cc: "Nambiar, Amritha" <amritha.nambiar@intel.com>,
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org, sridhar.samudrala@intel.com,
-	nalramli@fastly.com, Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [intel-next 1/2] net/i40e: link NAPI instances to queues and IRQs
-Message-ID: <ZnXAVdz48OI9tONv@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"Nambiar, Amritha" <amritha.nambiar@intel.com>,
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org, sridhar.samudrala@intel.com,
-	nalramli@fastly.com, Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-References: <20240410043936.206169-1-jdamato@fastly.com>
- <20240410043936.206169-2-jdamato@fastly.com>
- <bb0fbd29-c098-4a62-9217-c9fd1a450250@intel.com>
- <ZhckCOFplMR0GMjr@LQ3V64L9R2>
- <f6a3f010-8fb5-4494-9ef0-23501ea01f64@intel.com>
- <Zhrb6qJAoTYks2lK@LQ3V64L9R2>
- <a630e762-a866-7ce0-84ec-22ed09a92f89@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BnrY6aB2tlasoybX8I8rsdkZw6A3f6W0d0ijVuPrwKqKJb3tvIcgPt5FPhM5YC+c43FJJ4f+4TG40PmQ6dygBxSCTsmwCRw63fHgNIVF4TzRbObqRIuXd5krBeoZJpN0DO5FTh7IrozoFm9MK4gzT1V4lTP0/Ry5eejwAGTJCsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdFmulGe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5577C2BBFC;
+	Fri, 21 Jun 2024 18:03:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718993032;
+	bh=cEx2mciPnmR8aprzyHavr7YyTwPHQK5NbQ4Nvyt5BBY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hdFmulGeo25hjqsKKj/cff71Z2MyqzpEkhPy3566uzJeAx4Pb+RlmdMjEApHjVm/N
+	 sUAh0hrJlbFakLPhpOUWqAzfeatr7D6EYRM7Fdavxn/3ctJmnMA2bpGFCrCgxaq4mF
+	 wuSFYbZFqjchTsKw63tE1IvpqSLxlxrKZqPDz915rUT9zk/0PNC4O4aVvWxipckyYh
+	 0kPb3pR0qSKy4ubLI8A61PgCYWepej9/lIb8i0T5bCsjIHsGtszYL6YWQWlXHBsliu
+	 I1Yt6vIKAYbuInlDHchuySFfuy0yWg2XYspOJuytQ9Mi+6K9IDekVn8KQGkPJj90ZE
+	 0Y9fSEnIraaaQ==
+Date: Fri, 21 Jun 2024 15:03:48 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] perf trace: Augment enum syscall arguments with
+ BTF
+Message-ID: <ZnXAhFflUl_LV1QY@x1>
+References: <20240619082042.4173621-1-howardchu95@gmail.com>
+ <20240619082042.4173621-3-howardchu95@gmail.com>
+ <ZnLgstTgrFRYu0aD@x1>
+ <CAH0uvohKGrfwApZXfJZaWx4LQgPXct+uQ_N7snmqSo4VeCxVUA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="qHm5er9783+uyhU7"
 Content-Disposition: inline
-In-Reply-To: <a630e762-a866-7ce0-84ec-22ed09a92f89@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvohKGrfwApZXfJZaWx4LQgPXct+uQ_N7snmqSo4VeCxVUA@mail.gmail.com>
 
-On Mon, Apr 15, 2024 at 09:37:09AM -0700, Tony Nguyen wrote:
+
+--qHm5er9783+uyhU7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+On Thu, Jun 20, 2024 at 01:59:37AM +0800, Howard Chu wrote:
+> Hello,
 > 
+> Thanks for the in-depth review.
 > 
-> On 4/13/2024 12:24 PM, Joe Damato wrote:
-> > On Thu, Apr 11, 2024 at 04:02:37PM -0700, Nambiar, Amritha wrote:
-> > > On 4/10/2024 4:43 PM, Joe Damato wrote:
-> > > > On Wed, Apr 10, 2024 at 02:10:52AM -0700, Nambiar, Amritha wrote:
-> > > > > On 4/9/2024 9:39 PM, Joe Damato wrote:
-> > > > > > Make i40e compatible with the newly added netlink queue GET APIs.
-> > > > > > 
-> > > > > > $ ./cli.py --spec ../../../Documentation/netlink/specs/netdev.yaml \
-> > > > > >      --do queue-get --json '{"ifindex": 3, "id": 1, "type": "rx"}'
-> > > > > > 
-> > > > > > {'id': 1, 'ifindex': 3, 'napi-id': 162, 'type': 'rx'}
-> > > > > > 
-> > > > > > $ ./cli.py --spec ../../../Documentation/netlink/specs/netdev.yaml \
-> > > > > >      --do napi-get --json '{"id": 162}'
-> > > > > > 
-> > > > > > {'id': 162, 'ifindex': 3, 'irq': 136}
-> > > > > > 
-> > > > > > The above output suggests that irq 136 was allocated for queue 1, which has
-> > > > > > a NAPI ID of 162.
-> > > > > > 
-> > > > > > To double check this is correct, the IRQ to queue mapping can be verified
-> > > > > > by checking /proc/interrupts:
-> > > > > > 
-> > > > > > $ cat /proc/interrupts  | grep 136\: | \
-> > > > > >      awk '{print "irq: " $1 " name " $76}'
-> > > > > > 
-> > > > > > irq: 136: name i40e-vlan300-TxRx-1
-> > > > > > 
-> > > > > > Suggests that queue 1 has IRQ 136, as expected.
-> > > > > > 
-> > > > > > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > > > > > ---
-> > > > > >     drivers/net/ethernet/intel/i40e/i40e.h      |  2 +
-> > > > > >     drivers/net/ethernet/intel/i40e/i40e_main.c | 58 +++++++++++++++++++++
-> > > > > >     drivers/net/ethernet/intel/i40e/i40e_txrx.c |  4 ++
-> > > > > >     3 files changed, 64 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/drivers/net/ethernet/intel/i40e/i40e.h b/drivers/net/ethernet/intel/i40e/i40e.h
-> > > > > > index 2fbabcdb5bb5..5900ed5c7170 100644
-> > > > > > --- a/drivers/net/ethernet/intel/i40e/i40e.h
-> > > > > > +++ b/drivers/net/ethernet/intel/i40e/i40e.h
-> > > > > > @@ -1267,6 +1267,8 @@ int i40e_ioctl(struct net_device *netdev, struct ifreq *ifr, int cmd);
-> > > > > >     int i40e_open(struct net_device *netdev);
-> > > > > >     int i40e_close(struct net_device *netdev);
-> > > > > >     int i40e_vsi_open(struct i40e_vsi *vsi);
-> > > > > > +void i40e_queue_set_napi(struct i40e_vsi *vsi, unsigned int queue_index,
-> > > > > > +			 enum netdev_queue_type type, struct napi_struct *napi);
-> > > > > >     void i40e_vlan_stripping_disable(struct i40e_vsi *vsi);
-> > > > > >     int i40e_add_vlan_all_mac(struct i40e_vsi *vsi, s16 vid);
-> > > > > >     int i40e_vsi_add_vlan(struct i40e_vsi *vsi, u16 vid);
-> > > > > > diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-> > > > > > index 0bdcdea0be3e..6384a0c73a05 100644
-> > > > > > --- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-> > > > > > +++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-> > > > > > @@ -3448,6 +3448,58 @@ static struct xsk_buff_pool *i40e_xsk_pool(struct i40e_ring *ring)
-> > > > > >     	return xsk_get_pool_from_qid(ring->vsi->netdev, qid);
-> > > > > >     }
-> > > > > > +/**
-> > > > > > + * __i40e_queue_set_napi - Set the napi instance for the queue
-> > > > > > + * @dev: device to which NAPI and queue belong
-> > > > > > + * @queue_index: Index of queue
-> > > > > > + * @type: queue type as RX or TX
-> > > > > > + * @napi: NAPI context
-> > > > > > + * @locked: is the rtnl_lock already held
-> > > > > > + *
-> > > > > > + * Set the napi instance for the queue. Caller indicates the lock status.
-> > > > > > + */
-> > > > > > +static void
-> > > > > > +__i40e_queue_set_napi(struct net_device *dev, unsigned int queue_index,
-> > > > > > +		      enum netdev_queue_type type, struct napi_struct *napi,
-> > > > > > +		      bool locked)
-> > > > > > +{
-> > > > > > +	if (!locked)
-> > > > > > +		rtnl_lock();
-> > > > > > +	netif_queue_set_napi(dev, queue_index, type, napi);
-> > > > > > +	if (!locked)
-> > > > > > +		rtnl_unlock();
-> > > > > > +}
-> > > > > > +
-> > > > > > +/**
-> > > > > > + * i40e_queue_set_napi - Set the napi instance for the queue
-> > > > > > + * @vsi: VSI being configured
-> > > > > > + * @queue_index: Index of queue
-> > > > > > + * @type: queue type as RX or TX
-> > > > > > + * @napi: NAPI context
-> > > > > > + *
-> > > > > > + * Set the napi instance for the queue. The rtnl lock state is derived from the
-> > > > > > + * execution path.
-> > > > > > + */
-> > > > > > +void
-> > > > > > +i40e_queue_set_napi(struct i40e_vsi *vsi, unsigned int queue_index,
-> > > > > > +		    enum netdev_queue_type type, struct napi_struct *napi)
-> > > > > > +{
-> > > > > > +	struct i40e_pf *pf = vsi->back;
-> > > > > > +
-> > > > > > +	if (!vsi->netdev)
-> > > > > > +		return;
-> > > > > > +
-> > > > > > +	if (current_work() == &pf->service_task ||
-> > > > > > +	    test_bit(__I40E_PF_RESET_REQUESTED, pf->state) ||
-> > > > > 
-> > > > > I think we might need something like ICE_PREPARED_FOR_RESET which detects
-> > > > > all kinds of resets(PFR/CORE/GLOBR). __I40E_PF_RESET_REQUESTED handles PFR
-> > > > > only. So, this might assert for RTNL lock on CORER/GLOBR.
-> > > > 
-> > > > The i40e code is a bit tricky so I'm not sure about these cases. Here's
-> > > > what it looks like to me, but hopefully Intel can weigh-in here as well.
-> > > > 
-> > > > As some one who is not an expert in i40e, what follows is a guess that is
-> > > > likely wrong ;)
-> > > > 
-> > > > The __I40E_GLOBAL_RESET_REQUESTED case it looks to me (I could totally
-> > > > be wrong here) that the i40e_reset_subtask calls i40e_rebuild with
-> > > > lock_acquired = false. In this case, we want __i40e_queue_set_napi to
-> > > > pass locked = true (because i40e_rebuild will acquire the lock for us).
-> > > > 
-> > > > The __I40E_CORE_RESET_REQUESTED case appears to be the same as the
-> > > > __I40E_GLOBAL_RESET_REQUESTED case in that i40e_rebuild is called with
-> > > > lock_acquired = false meaning we also want __i40e_queue_set_napi to pass
-> > > > locked = true (because i40e_rebuild will acquire the lock for us).
-> > > > 
-> > > > __I40E_PF_RESET_REQUESTED is more complex.
-> > > > 
-> > > > It seems:
-> > > >             When the __I40E_PF_RESET_REQUESTED bit is set in:
-> > > >               - i40e_handle_lldp_event
-> > > >               - i40e_tx_timeout
-> > > >               - i40e_intr
-> > > >               - i40e_resume_port_tx
-> > > >               - i40e_suspend_port_tx
-> > > >               - i40e_hw_dcb_config
-> > > > 
-> > > >             then: i40e_service_event_schedule is called which queues
-> > > >             i40e_service_task, which calls i40e_reset_subtask, which
-> > > >             clears the __I40E_PF_RESET_REQUESTED bit and calls
-> > > >             i40e_do_reset passing lock_acquired = false. In the
-> > > >             __I40E_PF_RESET_REQUESTED case, i40e_reset_and_rebuild
-> > > > 	  called with lock_acquired = false again and passed through to
-> > > > 	  i40e_rebuild which will take rtnl on its own. This means
-> > > >             in these cases, __i40e_queue_set_napi can pass locked = true.
-> > > > 
-> > > >             However...
-> > > > 
-> > > >               - i40e_set_features
-> > > >               - i40e_ndo_bridge_setlink
-> > > >               - i40e_create_queue_channel
-> > > >               - i40e_configure_queue_channels
-> > > >               - Error case in i40e_vsi_open
-> > > > 
-> > > >             call i40e_do_reset directly and pass lock_acquired = true so
-> > > >             i40e_reset_and_rebuild will not take the RTNL.
-> > > > 
-> > > > 	  Important assumption: I assume that passing lock_acquired = true
-> > > > 	  means that the lock really was previously acquired (and not simply
-> > > > 	  unnecessary and not taken ?).
-> > > > 
-> > > > 	  If that is correct, then __i40e_queue_set_napi should also not take the rtnl (e.g.
-> > > >             locked = true).
-> > > > 
-> > > > Again, I could be totally off here, but it looks like when:
-> > > > 
-> > > >     (current_work() == &pf->service_task) && test_bit(__I40E_PF_RESET_REQUESTED, pf->state)
-> > > > 
-> > > > is true, we want to call __i40e_queue_set_napi with locked = true,
-> > > > 
-> > > > and also all the other cases we want __i40e_queue_set_napi with locked = true
-> > > > 
-> > > > > > +	    test_bit(__I40E_DOWN, pf->state) ||
-> > > > > > +	    test_bit(__I40E_SUSPENDED, pf->state))
-> > > > > > +		__i40e_queue_set_napi(vsi->netdev, queue_index, type, napi,
-> > > > > > +				      false);
-> > > > > > +	else
-> > > > > > +		__i40e_queue_set_napi(vsi->netdev, queue_index, type, napi,
-> > > > > > +				      true);
-> > > > 
-> > > > I *think* (but honestly... I have no idea) the correct if statement *might* be
-> > > > something like:
-> > > > 
-> > > >     /* __I40E_PF_RESET_REQUESTED via the service_task will
-> > > >      * call i40e_rebuild with lock_acquired = false, causing rtnl to be
-> > > >      * taken, meaning __i40e_queue_set_napi should *NOT* take the lock.
-> > > >      *
-> > > >      * __I40E_PF_RESET_REQUESTED when set directly and not via the
-> > > >      * service task, i40e_reset is called with lock_acquired = true,
-> > > >      * implying that the rtnl was already taken (and, more
-> > > >      * specifically, the lock was not simply unnecessary and skipped)
-> > > >      * and so __i40e_queue_set_napi should *NOT* take the lock.
-> > > >      *
-> > > >      * __I40E_GLOBAL_RESET_REQUESTED and __I40E_CORE_RESET_REQUESTED
-> > > >      * trigger the service_task (via i40e_intr) which will cause
-> > > >      * i40e_rebuild to acquire rtnl and so __i40e_queue_set_napi should
-> > > >      * not acquire it.
-> > > >      */
-> > > >     if (current_work() == &pf->service_task ||
-> > > >         test_bit(__I40E_PF_RESET_REQUESTED, pf->state) ||
-> > > >         test_bit(__I40E_GLOBAL_RESET_REQUESTED, pf->state) ||
-> > > >         test_bit(__I40E_CORE_RESET_REQUESTED, pf->state))
-> > > >             __i40e_queue_set_napi(vsi->netdev, queue_index, type, napi,
-> > > >                                   true);
-> > > >     else if (test_bit(__I40E_DOWN, pf->state) ||
-> > > >              test_bit(__I40E_SUSPENDED, pf->state))
-> > > >             __i40e_queue_set_napi(vsi->netdev, queue_index, type, napi,
-> > > >                                   false);
-> > > >     else
-> > > >             __i40e_queue_set_napi(vsi->netdev, queue_index, type, napi,
-> > > >                                   true);
-> > > > 
-> > > > I suppose to figure this out, I'd need to investigate all cases where
-> > > > i40e_rebuild is called with lock_acquired = true to ensure that the lock was
-> > > > actually acquired (and not just unnecessary).
-> > > > 
-> > > > Unless some one who knows about i40e can answer this question more
-> > > > definitively.
-> > > > 
-> > > 
-> > > I'll wait for the i40e maintainers to chime in here.
-> > 
-> > Based on the findings of I40E_SUSPENDED below, the above if statement is
-> > still slightly incorrect, please see below.
-> > 
-> > > > > > +}
-> > > > > > +
-> > > > > >     /**
-> > > > > >      * i40e_configure_tx_ring - Configure a transmit ring context and rest
-> > > > > >      * @ring: The Tx ring to configure
-> > > > > > @@ -3558,6 +3610,8 @@ static int i40e_configure_tx_ring(struct i40e_ring *ring)
-> > > > > >     	/* cache tail off for easier writes later */
-> > > > > >     	ring->tail = hw->hw_addr + I40E_QTX_TAIL(pf_q);
-> > > > > > +	i40e_queue_set_napi(vsi, ring->queue_index, NETDEV_QUEUE_TYPE_TX,
-> > > > > > +			    &ring->q_vector->napi);
-> > > > > 
-> > > > > I am not sure very sure of this, have you tested this for the reset/rebuild
-> > > > > path as well (example: ethtool -L and change queues). Just wondering if this
-> > > > > path is taken for first time VSI init or additionally for any VSI rebuilds
-> > > > > as well.
-> > > > 
-> > > > Can you explain more about what your concern is? I'm not sure I follow.
-> > > > Was the concern just that on rebuild this code path might not be
-> > > > executed because the driver might take a different path?
-> > > > 
-> > > > If so, I traced the code (and tested with ethtool):
-> > > > 
-> > > > When the device is probed:
-> > > > 
-> > > > i40e_probe
-> > > >     i40e_vsi_open
-> > > >       i40e_vsi_configure
-> > > >         i40e_vsi_configure_rx
-> > > >           i40e_configure_rx_ring
-> > > >         i40e_vsi_configure_tx
-> > > >           i40e_configure_tx_ring
-> > > > 
-> > > > When you use ethtool to change the channel count:
-> > > > 
-> > > > i40e_set_channels
-> > > >     i40e_reconfig_rss_queues
-> > > >       i40e_reset_and_rebuild
-> > > >         i40e_rebuild
-> > > >           i40e_pf_unquiesce_all_vsi
-> > > >             i40e_unquiesce_vsi
-> > > >               i40e_vsi_open
-> > > >                 [.. the call stack above for i40e_vsi_open ..]
-> > > > 
-> > > > Are those the two paths you had in mind or were there other ones? FWIW, using
-> > > > ethtool to change the channel count followed by using the cli.py returns what
-> > > > appears to be correct data, so I think the ethtool -L case is covered.
-> > > > 
-> > > 
-> > > Yes, this is what I had mind. Good to know that it is covered.
-> > 
-> > Thanks for the thorough review; I appreciate your insight. The more I look
-> > at the i40e code paths, the more I realize that it is much trickier than I
-> > originally thought.
-> > 
-> > > > Let me know if I am missing any cases you had in mind or if this answers your
-> > > > question.
-> > > > 
-> > > 
-> > > One other case was the suspend/resume callback. This path involves remapping
-> > > vectors and rings (just like rebuild after changing channels), If this takes
-> > > the i40e_rebuild path like before, then we are covered, as your changes are
-> > > in i40e_vsi_configure. If not, we'll have to add it after re-initializing
-> > > interrupt scheme .
-> > 
-> > Here's what I see in this path, namely that i40e_suspend does not call
-> > i40e_queue_set_napi but sets appropriate bits that can be checked.
-> > 
-> > i40e_suspend:
-> >    __I40E_DOWN is set
-> >    __I40E_SUSPENDED is set
-> >    rtnl_lock
-> >      i40e_clear_interrupt_scheme
-> >        i40e_vsi_free_q_vectors
-> >          i40e_free_q_vector
-> >    rtnl_unlock
-> > 
-> > It seems in the suspend case the i40e_free_rx_resources and
-> > i40e_free_tx_resources are not called. This means I probably missed a case
-> > and need to call i40e_queue_set_napi to set the NAPI mapping to NULL
-> > somewhere in here without calling it twice. See further below for my
-> > thoughts on this.
-> > 
-> > Continuing with resume, though:
-> > 
-> > i40e_resume:
-> >    rtnl_lock
-> >      i40e_restore_interrupt_scheme
-> >        i40e_vsi_alloc_q_vectors
-> >          i40e_vsi_alloc_q_vector
-> >      __I40E_DOWN is cleared
-> >      i40e_reset_and_rebuild (passes lock_acquired = true)
-> >        i40e_rebuild (passes locked_acquired = true)
-> >     rtnl_unlock
-> >     __I40E_SUSPENDED is cleared
-> > 
-> > So, in this case i40e_resume would want to to call __i40e_queue_set_napi
-> > with locked = true, to avoid rtnl since it's already been taken. I think to
-> > cover this case __I40E_SUSPENDED needs to be checked but true can be passed
-> > to the helper to avoid taking rtnl in the helper.
-> > 
-> > This is an adjusted if statement, which is likely still incorrect in some
-> > cases (especially when considering my comments below on the
-> > i40e_free_[rt]x_resource paths), but maybe getting slightly closer:
-> > 
-> >    /* __I40E_PF_RESET_REQUESTED via the service_task will
-> >     * call i40e_rebuild with lock_acquired = false, causing rtnl to be
-> >     * taken, meaning __i40e_queue_set_napi should *NOT* take the lock.
-> >     *
-> >     * __I40E_PF_RESET_REQUESTED when set directly and not via the
-> >     * service task, i40e_reset is called with lock_acquired = true,
-> >     * implying that the rtnl was already taken (and, more
-> >     * specifically, the lock was not simply unnecessary and skipped)
-> >     * and so __i40e_queue_set_napi should *NOT* take the lock.
-> >     *
-> >     * __I40E_GLOBAL_RESET_REQUESTED and __I40E_CORE_RESET_REQUESTED
-> >     * trigger the service_task (via i40e_intr) which will cause
-> >     * i40e_rebuild to acquire rtnl and so __i40e_queue_set_napi should
-> >     * not acquire it.
-> >     *
-> >     * __I40E_SUSPENDED is set in i40e_suspend and cleared in i40e_resume
-> >     * after rtnl_lock + i40_rebuild (with lock_acquired = true). In
-> >     * i40e_resume's call to i40e_rebuild, rtnl is held so
-> >     * __i40e_queue_set_napi should not take the lock, either.
-> >     *
-> >     * __I40E_IN_REMOVE is set in i40e_remove, and freeing the tx/rx
-> >     * resources will trigger this path. In this case, rtnl will not be held,
-> >     * so locked=false must be passed to the helper.
-> >     *
-> >     * __I40E_DOWN is set in a few places: i40e_probe, i40e_remove,
-> >     * i40e_shutdown, i40e_suspend. It is only cleared in i40e_probe after
-> >     * the vsi_open path is taken (in this case rtnl is needed) and it is
-> >     * cleared in i40e_resume, where RTNL is not needed, but the i40e_resume
-> >     * case is handled by checking __I40E_SUSPENDED in the first if block.
-> >     */
-> >    if (current_work() == &pf->service_task ||
-> >        test_bit(__I40E_PF_RESET_REQUESTED, pf->state) ||
-> >        test_bit(__I40E_GLOBAL_RESET_REQUESTED, pf->state) ||
-> >        test_bit(__I40E_CORE_RESET_REQUESTED, pf->state) |
-> >        test_bit(__I40E_SUSPENDED, pf->state))
-> >            __i40e_queue_set_napi(vsi->netdev, queue_index, type, napi,
-> >                                  true);
-> >    else if (test_bit(__I40E_IN_REMOVE, pf->state) ||
-> >             test_bit(__I40E_DOWN, pf->state))
-> >            __i40e_queue_set_napi(vsi->netdev, queue_index, type, napi,
-> >                                  false);
-> >    else
-> >            __i40e_queue_set_napi(vsi->netdev, queue_index, type, napi,
-> >                                  true);
-> > 
-> > 
-> > But please see below about i40e_free_q_vector.
-> > 
-> > > > > >     	return 0;
-> > > > > >     }
-> > > > > > @@ -3716,6 +3770,8 @@ static int i40e_configure_rx_ring(struct i40e_ring *ring)
-> > > > > >     			 ring->queue_index, pf_q);
-> > > > > >     	}
-> > > > > > +	i40e_queue_set_napi(vsi, ring->queue_index, NETDEV_QUEUE_TYPE_RX,
-> > > > > > +			    &ring->q_vector->napi);
-> > > > > > 
-> > > > > Same as above.
-> > > > > 
-> > > > >     	return 0;
-> > > > > >     }
-> > > > > > @@ -4178,6 +4234,8 @@ static int i40e_vsi_request_irq_msix(struct i40e_vsi *vsi, char *basename)
-> > > > > >     		q_vector->affinity_notify.notify = i40e_irq_affinity_notify;
-> > > > > >     		q_vector->affinity_notify.release = i40e_irq_affinity_release;
-> > > > > >     		irq_set_affinity_notifier(irq_num, &q_vector->affinity_notify);
-> > > > > > +		netif_napi_set_irq(&q_vector->napi, q_vector->irq_num);
-> > > > > > +
-> > > > > >     		/* Spread affinity hints out across online CPUs.
-> > > > > >     		 *
-> > > > > >     		 * get_cpu_mask returns a static constant mask with
-> > > > > > diff --git a/drivers/net/ethernet/intel/i40e/i40e_txrx.c b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-> > > > > > index 64d198ed166b..d380885ff26d 100644
-> > > > > > --- a/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-> > > > > > +++ b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-> > > > > > @@ -821,6 +821,8 @@ void i40e_clean_tx_ring(struct i40e_ring *tx_ring)
-> > > > > >     void i40e_free_tx_resources(struct i40e_ring *tx_ring)
-> > > > > >     {
-> > > > > >     	i40e_clean_tx_ring(tx_ring);
-> > > > > > +	i40e_queue_set_napi(tx_ring->vsi, tx_ring->queue_index,
-> > > > > > +			    NETDEV_QUEUE_TYPE_TX, NULL);
-> > > > > >     	kfree(tx_ring->tx_bi);
-> > > > > >     	tx_ring->tx_bi = NULL;
-> > > > > > @@ -1526,6 +1528,8 @@ void i40e_clean_rx_ring(struct i40e_ring *rx_ring)
-> > > > > >     void i40e_free_rx_resources(struct i40e_ring *rx_ring)
-> > > > > >     {
-> > > > > >     	i40e_clean_rx_ring(rx_ring);
-> > > > > > +	i40e_queue_set_napi(rx_ring->vsi, rx_ring->queue_index,
-> > > > > > +			    NETDEV_QUEUE_TYPE_RX, NULL);
-> > 
-> > It appears to me that some cases may not end up calling
-> > i40e_free_tx_resources or i40e_free_rx_resources, but most (or all?) cases
-> > do call i40e_free_q_vector which is where the NAPI is deleted.
-> > 
-> > It probably makes more sense to put the NULL setting where the NAPI delete
-> > happens, and then check those paths to see where rtnl is taken and make
-> > sure the bit checking in the if statement lines up properly.
-> > 
-> > Before I go any deeper down this rabbit hole, I'll wait to see what the
-> > i40e maintainers say / think about this.
+> On Wed, Jun 19, 2024 at 9:44 PM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Wed, Jun 19, 2024 at 04:20:39PM +0800, Howard Chu wrote:
+> > > This is a feature implemented on the basis of the previous bug fix
+> > > https://lore.kernel.org/linux-perf-users/d18a9606-ac9f-4ca7-afaf-fcf4c951cb90@web.de/T/#t
+> > >
+> > > In this patch, BTF is used to turn enum value to the corresponding
+> > > enum variable name. There is only one system call that uses enum value
+> > > as its argument, that is `landlock_add_rule()`.
+> > >
+> > > The vmlinux btf is loaded lazily, when user decided to trace the
+> > > `landlock_add_rule` syscall. But if one decides to run `perf trace`
+> > > without any arguments, the behaviour is to trace `landlock_add_rule`,
+> > > so vmlinux btf will be loaded by default.
+> > >
+> > > before:
+> > >
+> > > ```
+> > > perf $ ./perf trace -e landlock_add_rule
+> > >      0.000 ( 0.008 ms): ldlck-test/438194 landlock_add_rule(rule_type: 2)                                       = -1 EBADFD (File descriptor in bad state)
+> > >      0.010 ( 0.001 ms): ldlck-test/438194 landlock_add_rule(rule_type: 1)                                       = -1 EBADFD (File descriptor in bad state)
+> > > ```
+> > >
+> > > after:
+> > >
+> > > ```
+> > > perf $ ./perf trace -e landlock_add_rule
+> > >      0.000 ( 0.029 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_NET_PORT)                  = -1 EBADFD (File descriptor in bad state)
+> > >      0.036 ( 0.004 ms): ldlck-test/438194 landlock_add_rule(rule_type: LANDLOCK_RULE_PATH_BENEATH)              = -1 EBADFD (File descriptor in bad state)
+> > > ```
+> > > Tested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > > Reviewed-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > > ---
+> > >  tools/perf/builtin-trace.c | 96 ++++++++++++++++++++++++++++++++++++--
+> > >  1 file changed, 91 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > > index c4fa8191253d..d93f34e9af74 100644
+> > > --- a/tools/perf/builtin-trace.c
+> > > +++ b/tools/perf/builtin-trace.c
+> > > @@ -19,6 +19,7 @@
+> > >  #ifdef HAVE_LIBBPF_SUPPORT
+> > >  #include <bpf/bpf.h>
+> > >  #include <bpf/libbpf.h>
+> > > +#include <bpf/btf.h>
+> > >  #ifdef HAVE_BPF_SKEL
+> > >  #include "bpf_skel/augmented_raw_syscalls.skel.h"
+> > >  #endif
+> > > @@ -110,6 +111,11 @@ struct syscall_arg_fmt {
+> > >       const char *name;
+> > >       u16        nr_entries; // for arrays
+> > >       bool       show_zero;
+> > > +     bool       is_enum;
+> > > +     struct {
+> > > +             void    *entries;
+> > > +             u16     nr_entries;
+> > > +     }          btf_entry;
+> > >  };
+> > >
+> > >  struct syscall_fmt {
+> > > @@ -140,6 +146,7 @@ struct trace {
+> > >  #ifdef HAVE_BPF_SKEL
+> > >       struct augmented_raw_syscalls_bpf *skel;
+> > >  #endif
+> > > +     struct btf              *btf;
+> > >       struct record_opts      opts;
+> > >       struct evlist   *evlist;
+> > >       struct machine          *host;
+> > > @@ -897,6 +904,56 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+> > >           .strtoul    = STUL_STRARRAY_FLAGS, \
+> > >           .parm       = &strarray__##array, }
+> > >
+> > > +static int btf_enum_find_entry(struct btf *btf, char *type, struct syscall_arg_fmt *arg_fmt)
+> > > +{
+> > > +     const struct btf_type *bt;
+> > > +     char enum_prefix[][16] = { "enum", "const enum" }, *ep;
+> > > +     int id;
+> > > +     size_t i;
+> > > +
+> > > +     for (i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
+> > > +             ep = enum_prefix[i];
+> > > +             if (strlen(type) > strlen(ep) + 1 && strstarts(type, ep))
+> >
+> > No need for the strlen test? I.e. plain using strstarts() should be
+> > enough?
 > 
-> + Alex for input
+> Agree. Thanks for pointing that out. Although if string 'type' is
+> 'enum' and prefix is 'enum', strstarts() will be true, but to do 'type
+> += strlen(ep) + 1', and then access 'type', might give us an
+> out-of-range access, but I don't think 'type' will ever be just 'enum'
+> or 'const enum', so I'll delete it then.
 
-Just wanted to follow up on this; would really appreciate any
-insight or advice you all can give me before I try posting another
-version.
+So, I did some changes to this patch to fix some issues:
 
-We'd really love to have support for these APIs in i40e, because we
-have a lot of machines with this NIC in our fleet.
+1) We need to make this conditional on libbpf being available, i.e. we
+need to build with 'make NO_LIBBPF=1' so I had to add some ifdefs for
+HAVE_LIBBPF_SUPPORT, and moved some checks for trace->btf to the
+functions where it is used, so that we can pass just 'trace'.
 
-Thanks,
-Joe
+2) syscall_arg_fmt->btf_entry became just syscall_arg_fmt->type, a
+'struct btf_type' pointer, this way we can have:
+
+#ifdef HAVE_LIBBPF_SUPPORT
+static int syscall_arg_fmt__cache_btf_enum(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
+{
+	int id;
+
+	type = strstr(type, "enum ");
+	if (type == NULL)
+		return -1;
+
+	type += 5; // skip "enum " to get the enumeration name
+
+	id = btf__find_by_name(btf, type);
+	if (id < 0)
+		return -1;
+
+	arg_fmt->type = btf__type_by_id(btf, id);
+	return arg_fmt->type == NULL ? -1 : 0;
+}
+
+
+static size_t btf_enum_scnprintf(const struct btf_type *type, struct btf *btf, char *bf, size_t size, int val)
+{
+	struct btf_enum *be = btf_enum(type);
+	const int nr_entries = btf_vlen(type);
+
+	for (int i = 0; i < nr_entries; ++i, ++be) {
+		if (be->val == val) {
+			return scnprintf(bf, size, "%s",
+					 btf__name_by_offset(btf, be->name_off));
+		}
+	}
+
+	return 0;
+}
+
+static size_t trace__btf_enum_scnprintf(struct trace *trace, struct syscall_arg_fmt *arg_fmt, char *bf,
+					size_t size, int val, char *type)
+{
+	if (trace->btf == NULL)
+		return 0;
+	/* if btf_entry is NULL, find and save it to arg_fmt */
+	if (arg_fmt->type == NULL &&
+	    syscall_arg_fmt__cache_btf_enum(arg_fmt, trace->btf, type) < 0)
+		return 0;
+
+	return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
+}
+#else // HAVE_LIBBPF_SUPPORT
+static size_t trace__btf_enum_scnprintf(struct trace *trace __maybe_unused, struct syscall_arg_fmt *arg_fmt __maybe_unused,
+					char *bf __maybe_unused, size_t size __maybe_unused, int val __maybe_unused,
+					char *type __maybe_unused)
+{
+	return 0;
+}
+#endif // HAVE_LIBBPF_SUPPORT
+
+The patch on top of yours is attached. I'll fixup the following ones and
+have them in a branch for you to check and see if you agree with the
+changes.
+
+- Arnaldo
+
+> >
+> > > +                     type += strlen(ep) + 1;
+> > > +     }
+> > > +
+> > > +     id = btf__find_by_name(btf, type);
+> > > +     if (id < 0)
+> > > +             return -1;
+> > > +
+> > > +     bt = btf__type_by_id(btf, id);
+> > > +     if (bt == NULL)
+> >
+> > a pr_debug() stating that something that tracefs says should be in BTF
+> > and isn't found there seems to be of value here.
+> 
+> Sure.
+> 
+> >
+> > > +             return -1;
+> > > +
+> > > +     arg_fmt->btf_entry.entries    = btf_enum(bt);
+> > > +     arg_fmt->btf_entry.nr_entries = btf_vlen(bt);
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static size_t btf_enum_scnprintf(char *bf, size_t size, int val, struct btf *btf, char *type,
+> > > +                              struct syscall_arg_fmt *arg_fmt)
+> > > +{
+> > > +     struct btf_enum *be;
+> > > +     int i;
+> > > +
+> > > +     /* if btf_entry is NULL, find and save it to arg_fmt */
+> > > +     if (arg_fmt->btf_entry.entries == NULL)
+> > > +             if (btf_enum_find_entry(btf, type, arg_fmt))
+> > > +                     return 0;
+> > > +
+> > > +     be = (struct btf_enum *)arg_fmt->btf_entry.entries;
+> >
+> >         struct btf_enum *be = (struct btf_enum *)arg_fmt->btf_entry.entries;
+> >
+> >  arg_fmt->btf_entry.entries is (void *), so we don't need the (struct
+> > btf_enum *) cast here, removing it makes the code more compact. And
+> > since we move the declaration to the same line, the info about its type
+> > is there as well.
+> 
+> Sure, thanks.
+> 
+> >
+> > > +
+> > > +     for (i = 0; i < arg_fmt->btf_entry.nr_entries; ++i, ++be) {
+> >
+> >
+> >         for (int i = 0; i < arg_fmt->btf_entry.nr_entries; ++i, ++be) {
+> >
+> > ⬢[acme@toolbox perf-tools-next]$ git grep 'for (int ' tools/perf/ | wc -l
+> > 99
+> > ⬢[acme@toolbox perf-tools-next]$
+> >
+> > Doing it this way makes the code more compact and is allowed even in
+> > kernel code since some time ago:
+> 
+> Sure.
+> 
+> >
+> > ⬢[acme@toolbox perf-tools-next]$ git grep 'for (int ' drivers/ | wc -l
+> > 294
+> > ⬢[acme@toolbox perf-tools-next]$ git grep 'for (int ' kernel/ | wc -l
+> > 12
+> > ⬢[acme@toolbox perf-tools-next]$ git grep 'for (int ' net/ | wc -l
+> > 3
+> > ⬢[acme@toolbox perf-tools-next]$ git grep 'for (int ' mm/ | wc -l
+> > 21
+> > ⬢[acme@toolbox perf-tools-next]$
+> >
+> > > +             if (be->val == val) {
+> > > +                     return scnprintf(bf, size, "%s",
+> > > +                                      btf__name_by_offset(btf, be->name_off));
+> > > +             }
+> > > +     }
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > >  #include "trace/beauty/arch_errno_names.c"
+> > >  #include "trace/beauty/eventfd.c"
+> > >  #include "trace/beauty/futex_op.c"
+> > > @@ -1699,6 +1756,15 @@ static void trace__symbols__exit(struct trace *trace)
+> > >       symbol__exit();
+> > >  }
+> > >
+> > > +static void trace__load_vmlinux_btf(struct trace *trace)
+> > > +{
+> > > +     trace->btf = btf__load_vmlinux_btf();
+> > > +     if (verbose > 0) {
+> > > +             fprintf(trace->output, trace->btf ? "vmlinux BTF loaded\n" :
+> > > +                                                 "Failed to load vmlinux BTF\n");
+> > > +     }
+> > > +}
+> > > +
+> > >  static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
+> > >  {
+> > >       int idx;
+> > > @@ -1744,7 +1810,7 @@ static const struct syscall_arg_fmt *syscall_arg_fmt__find_by_name(const char *n
+> > >  }
+> > >
+> > >  static struct tep_format_field *
+> > > -syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field)
+> > > +syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field *field, bool *use_btf)
+> > >  {
+> > >       struct tep_format_field *last_field = NULL;
+> > >       int len;
+> > > @@ -1782,6 +1848,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+> > >                        * 7 unsigned long
+> > >                        */
+> > >                       arg->scnprintf = SCA_FD;
+> > > +             } else if (strstr(field->type, "enum") && use_btf != NULL) {
+> > > +                     *use_btf = arg->is_enum = true;
+> >
+> > Here you have to check if use_btf is NULL, as you, in this patch, later
+> > call syscall_arg_fmt__init_array(arg, field, NULL) in
+> > evsel__init_tp_arg_scnprintf(), probably you tested it all at the end of
+> > the patch series, we have to make sure that it works after each patch,
+> > so that we keep the codebase bisectable.
+> 
+> I'm sorry, could you enlighten me on this? I thought:
+> ```
+> else if (strstr(field->type, "enum") && use_btf != NULL) {
+> ```
+> is doing the NULL checking. If you mean making sure the NULL checking
+> appears in all patches, I thought this is where we should introduce
+> the checking. Tiny reminder, the [1/5] patch is your syscalltbl
+> traversal bug fix.
+
+scrap my comment, was a brain fart ;-/ of course you are alreadyu
+checking if use_btf is NULL, doh.
+ 
+> >
+> > >               } else {
+> > >                       const struct syscall_arg_fmt *fmt =
+> > >                               syscall_arg_fmt__find_by_name(field->name);
+> > > @@ -1796,9 +1864,10 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+> > >       return last_field;
+> > >  }
+> > >
+> > > -static int syscall__set_arg_fmts(struct syscall *sc)
+> > > +static int syscall__set_arg_fmts(struct syscall *sc, bool *use_btf)
+> > >  {
+> > > -     struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args);
+> > > +     struct tep_format_field *last_field = syscall_arg_fmt__init_array(sc->arg_fmt, sc->args,
+> > > +                                                                       use_btf);
+> > >
+> > >       if (last_field)
+> > >               sc->args_size = last_field->offset + last_field->size;
+> > > @@ -1810,7 +1879,9 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+> > >  {
+> > >       char tp_name[128];
+> > >       struct syscall *sc;
+> > > +     int err;
+> > >       const char *name = syscalltbl__name(trace->sctbl, id);
+> > > +     bool use_btf = false;
+> > >
+> > >  #ifdef HAVE_SYSCALL_TABLE_SUPPORT
+> > >       if (trace->syscalls.table == NULL) {
+> > > @@ -1883,7 +1954,12 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+> > >       sc->is_exit = !strcmp(name, "exit_group") || !strcmp(name, "exit");
+> > >       sc->is_open = !strcmp(name, "open") || !strcmp(name, "openat");
+> > >
+> > > -     return syscall__set_arg_fmts(sc);
+> > > +     err = syscall__set_arg_fmts(sc, &use_btf);
+> > > +
+> > > +     if (use_btf && trace->btf == NULL)
+> > > +             trace__load_vmlinux_btf(trace);
+> > > +
+> > > +     return err;
+> > >  }
+> > >
+> > >  static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
+> > > @@ -1891,7 +1967,7 @@ static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
+> > >       struct syscall_arg_fmt *fmt = evsel__syscall_arg_fmt(evsel);
+> > >
+> > >       if (fmt != NULL) {
+> > > -             syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields);
+> > > +             syscall_arg_fmt__init_array(fmt, evsel->tp_format->format.fields, NULL);
+> > >               return 0;
+> > >       }
+> > >
+> > > @@ -2103,6 +2179,16 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+> > >                       if (trace->show_arg_names)
+> > >                               printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
+> > >
+> > > +                     if (sc->arg_fmt[arg.idx].is_enum && trace->btf) {
+> > > +                             size_t p = btf_enum_scnprintf(bf + printed, size - printed, val,
+> > > +                                                           trace->btf, field->type,
+> > > +                                                           &sc->arg_fmt[arg.idx]);
+> > > +                             if (p) {
+> > > +                                     printed += p;
+> > > +                                     continue;
+> > > +                             }
+> > > +                     }
+> > > +
+> > >                       printed += syscall_arg_fmt__scnprintf_val(&sc->arg_fmt[arg.idx],
+> > >                                                                 bf + printed, size - printed, &arg, val);
+> > >               }
+> > > --
+> > > 2.45.2
+> > >
+> 
+> Thanks,
+> Howard
+
+--qHm5er9783+uyhU7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="btf_enum_fprintf.patch"
+
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 3a1c031aff9ad049..49d99c20b7f711ef 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -112,10 +112,9 @@ struct syscall_arg_fmt {
+ 	u16	   nr_entries; // for arrays
+ 	bool	   show_zero;
+ 	bool	   is_enum;
+-	struct {
+-		void	*entry;
+-		u16	nr_entries;
+-	}	   btf_entry;
++#ifdef HAVE_LIBBPF_SUPPORT
++	const struct btf_type *type;
++#endif
+ };
+ 
+ struct syscall_fmt {
+@@ -146,7 +145,9 @@ struct trace {
+ #ifdef HAVE_BPF_SKEL
+ 	struct augmented_raw_syscalls_bpf *skel;
+ #endif
++#ifdef HAVE_LIBBPF_SUPPORT
+ 	struct btf		*btf;
++#endif
+ 	struct record_opts	opts;
+ 	struct evlist	*evlist;
+ 	struct machine		*host;
+@@ -894,47 +895,32 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+ 
+ #define SCA_GETRANDOM_FLAGS syscall_arg__scnprintf_getrandom_flags
+ 
+-static int btf_enum_find_entry(struct btf *btf, char *type, struct syscall_arg_fmt *arg_fmt)
++#ifdef HAVE_LIBBPF_SUPPORT
++static int syscall_arg_fmt__cache_btf_enum(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
+ {
+-	const struct btf_type *bt;
+-	char enum_prefix[][16] = { "enum", "const enum" }, *ep;
+ 	int id;
+-	size_t i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
+-		ep = enum_prefix[i];
+-		if (strlen(type) > strlen(ep) + 1 && strstarts(type, ep))
+-			type += strlen(ep) + 1;
+-	}
++	type = strstr(type, "enum ");
++	if (type == NULL)
++		return -1;
++
++	type += 5; // skip "enum " to get the enumeration name
+ 
+ 	id = btf__find_by_name(btf, type);
+ 	if (id < 0)
+ 		return -1;
+ 
+-	bt = btf__type_by_id(btf, id);
+-	if (bt == NULL)
+-		return -1;
+-
+-	arg_fmt->btf_entry.entry      = btf_enum(bt);
+-	arg_fmt->btf_entry.nr_entries = btf_vlen(bt);
+-
+-	return 0;
++	arg_fmt->type = btf__type_by_id(btf, id);
++	return arg_fmt->type == NULL ? -1 : 0;
+ }
+ 
+-static size_t btf_enum_scnprintf(char *bf, size_t size, int val, struct btf *btf, char *type,
+-				 struct syscall_arg_fmt *arg_fmt)
+-{
+-	struct btf_enum *be;
+-	int i;
+-
+-	/* if btf_entry is NULL, find and save it to arg_fmt */
+-	if (arg_fmt->btf_entry.entry == NULL)
+-		if (btf_enum_find_entry(btf, type, arg_fmt))
+-			return 0;
+ 
+-	be = (struct btf_enum *)arg_fmt->btf_entry.entry;
++static size_t btf_enum_scnprintf(const struct btf_type *type, struct btf *btf, char *bf, size_t size, int val)
++{
++	struct btf_enum *be = btf_enum(type);
++	const int nr_entries = btf_vlen(type);
+ 
+-	for (i = 0; i < arg_fmt->btf_entry.nr_entries; ++i, ++be) {
++	for (int i = 0; i < nr_entries; ++i, ++be) {
+ 		if (be->val == val) {
+ 			return scnprintf(bf, size, "%s",
+ 					 btf__name_by_offset(btf, be->name_off));
+@@ -944,6 +930,27 @@ static size_t btf_enum_scnprintf(char *bf, size_t size, int val, struct btf *btf
+ 	return 0;
+ }
+ 
++static size_t trace__btf_enum_scnprintf(struct trace *trace, struct syscall_arg_fmt *arg_fmt, char *bf,
++					size_t size, int val, char *type)
++{
++	if (trace->btf == NULL)
++		return 0;
++	/* if btf_entry is NULL, find and save it to arg_fmt */
++	if (arg_fmt->type == NULL &&
++	    syscall_arg_fmt__cache_btf_enum(arg_fmt, trace->btf, type) < 0)
++		return 0;
++
++	return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
++}
++#else // HAVE_LIBBPF_SUPPORT
++static size_t trace__btf_enum_scnprintf(struct trace *trace __maybe_unused, struct syscall_arg_fmt *arg_fmt __maybe_unused,
++					char *bf __maybe_unused, size_t size __maybe_unused, int val __maybe_unused,
++					char *type __maybe_unused)
++{
++	return 0;
++}
++#endif // HAVE_LIBBPF_SUPPORT
++
+ #define STRARRAY(name, array) \
+ 	  { .scnprintf	= SCA_STRARRAY, \
+ 	    .strtoul	= STUL_STRARRAY, \
+@@ -1757,13 +1764,18 @@ static void trace__symbols__exit(struct trace *trace)
+ 	symbol__exit();
+ }
+ 
+-static void trace__load_vmlinux_btf(struct trace *trace)
++static void trace__load_vmlinux_btf(struct trace *trace __maybe_unused)
+ {
++#ifdef HAVE_LIBBPF_SUPPORT
++	if (trace->btf != NULL)
++		return;
++
+ 	trace->btf = btf__load_vmlinux_btf();
+ 	if (verbose > 0) {
+ 		fprintf(trace->output, trace->btf ? "vmlinux BTF loaded\n" :
+ 						    "Failed to load vmlinux BTF\n");
+ 	}
++#endif
+ }
+ 
+ static int syscall__alloc_arg_fmts(struct syscall *sc, int nr_args)
+@@ -1959,7 +1971,7 @@ static int trace__read_syscall_info(struct trace *trace, int id)
+ 	err = syscall__set_arg_fmts(sc);
+ 
+ 	/* after calling syscall__set_arg_fmts() we'll know whether use_btf is true */
+-	if (sc->use_btf && trace->btf == NULL)
++	if (sc->use_btf)
+ 		trace__load_vmlinux_btf(trace);
+ 
+ 	return err;
+@@ -2182,10 +2194,9 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
+ 			if (trace->show_arg_names)
+ 				printed += scnprintf(bf + printed, size - printed, "%s: ", field->name);
+ 
+-			if (sc->arg_fmt[arg.idx].is_enum && trace->btf) {
+-				size_t p = btf_enum_scnprintf(bf + printed, size - printed, val,
+-							      trace->btf, field->type,
+-							      &sc->arg_fmt[arg.idx]);
++			if (sc->arg_fmt[arg.idx].is_enum) {
++				size_t p = trace__btf_enum_scnprintf(trace, &sc->arg_fmt[arg.idx], bf + printed,
++								     size - printed, val, field->type);
+ 				if (p) {
+ 					printed += p;
+ 					continue;
+
+--qHm5er9783+uyhU7--
 
