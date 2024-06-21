@@ -1,218 +1,117 @@
-Return-Path: <linux-kernel+bounces-224304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC50C912078
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:26:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49686912080
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82347288849
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:26:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38D42870BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F4F16E876;
-	Fri, 21 Jun 2024 09:26:22 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC50E16E892;
+	Fri, 21 Jun 2024 09:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvDBwLWb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79BC12D1EB;
-	Fri, 21 Jun 2024 09:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E377112D1EB;
+	Fri, 21 Jun 2024 09:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718961981; cv=none; b=EXM7KeszyZtsVNMTqwB8v50Ump4hzK/mM8uoAqXL/sLyIZg6ZA0xHlD/XOroN4jswXVHjeyQPirhpY1ys8ngheRkm/QOV/PXINypj4V/b2ENN7AChoa7ZXuLUqHNoSLDLo4M8GzQNLHxp2mlPLCJkHgJD59GjAn5Bp0ojejmZzo=
+	t=1718962048; cv=none; b=M7jtpBGUVhEttzMh+/N4c/HUd8hVN0k6b7fVG2TZCTx6N2i6Tp9DOJu8ZRo1GA7Ujg7nbU9eiTIsPwU6N5IU7n+VFF+ZcoP/H+KSuNd48YFCT5mf4H7CIEr1ipaJSdUatQlBCiAcSqbwM49Kvzot5qPteyVKYbA9k8QIW1oG+dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718961981; c=relaxed/simple;
-	bh=iGyxiKTVbLVFE4tjDiXsZQhh4d9kiqe6XaPjBhqKVJo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CSRv7/nHGYYpb3BE5gu261cAMK2zmz5W4ZLHd95SbaKpY8mUzV2gUvjn94f5nk+NR4ziHFBTpQOQLllPEA7rq0uyEfgONpAbLt6/SEi4VEaBEG0BuxmO/katxTPPQCUsXEsLuUjGYAqARoSXVKqEhej/gN9qZs0QoHMuMwd2HXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W5Bn01hZ9z6GDNF;
-	Fri, 21 Jun 2024 17:26:12 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8FF9B140B2A;
-	Fri, 21 Jun 2024 17:26:16 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Jun
- 2024 10:26:16 +0100
-Date: Fri, 21 Jun 2024 10:26:15 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>, Shiju
- Jose <shiju.jose@huawei.com>, Tony Luck <tony.luck@intel.com>, "Ard
- Biesheuvel" <ardb@kernel.org>, Dave Jiang <dave.jiang@intel.com>, Ira Weiny
-	<ira.weiny@intel.com>, <linux-edac@vger.kernel.org>,
-	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/3] efi/cper: Add a new helper function to print
- bitmasks
-Message-ID: <20240621102615.00004ce7@Huawei.com>
-In-Reply-To: <20240621102036.0000493e@Huawei.com>
-References: <cover.1718906288.git.mchehab+huawei@kernel.org>
-	<fcc8a699c9497b788ac99aa0d57dedd629ac4945.1718906288.git.mchehab+huawei@kernel.org>
-	<20240621102036.0000493e@Huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718962048; c=relaxed/simple;
+	bh=uhH10vmIJUKkPbdPA4/INQpMI+q9x/UjstbjxvXrdJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bp+ricdlcQ9eAFMfxPiVCrLdhN4866P4WABO2DOReaRPrfpcm+TDBGsA4mYTDk8Oq+jONWUMEtFbB2p/bb6+AbZv8h6mFnQTR9chTuctP9Yvz6y5NG1qGvFx6m/A57QdTcsCy8PY2TLTG9AFqrLh2iOIEy4GCMPNNGEacdgLdss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvDBwLWb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE34C2BBFC;
+	Fri, 21 Jun 2024 09:27:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718962047;
+	bh=uhH10vmIJUKkPbdPA4/INQpMI+q9x/UjstbjxvXrdJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MvDBwLWb2dv893GPCGGbeTdvIWAMyKlOsPT/1BC5DgW8PlNDKB8sb9QRzT1auO0Q2
+	 lVxKjTcfQUsdJUTUT0vdx9mBmGvm9lGgwEvm6fwUW07u92IkS0lsWDnzoTl/NqoTE6
+	 eSArKee1Bsqtdy3KpGfXRDr1E+ZsnP2Q2JHUhUYmzipoD8sgrmFJg38on8AjE+O8qG
+	 ftviQRYS9VkELyn58VdzALl2sa9TQj5ph9057h7xNzdDMRRSmVuTjfPC1OxsC9Vpxc
+	 oOFLLdUfr1c2w/qRQBlLTGDjMm8YxxDZrrXpxIqahjcSO7wR6GB0oDXFxPfLQ4p776
+	 4H9YFZxq9vsXg==
+Date: Fri, 21 Jun 2024 11:27:23 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Sergiu Moga <sergiu.moga@microchip.com>, 
+	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	Doug Anderson <dianders@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, 
+	Ricardo =?utf-8?Q?Ca=C3=B1uelo?= <ricardo.canuelo@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Vignesh R <vigneshr@ti.com>, 
+	Kamal Dasu <kamal.dasu@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Chris Brandt <chris.brandt@renesas.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	linux-omap@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, stable@vger.kernel.org
+Subject: Re: [PATCH 0/7] dt-bindings: i2c: few fixes and cleanups
+Message-ID: <5vbvx7qnbv7dwugmnp2sitlpvvsor4hn573spbwaklwbwvilfy@evntmrout65x>
+References: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
+ <qru4aqjphjnjpo6yjxl2oznhlz774iv77u4u7u4jldnmlanps5@vpzxntuz6arp>
+ <6bc864d6-11de-4762-b309-2e2a3bffaa24@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6bc864d6-11de-4762-b309-2e2a3bffaa24@linaro.org>
 
-On Fri, 21 Jun 2024 10:20:36 +0100
-Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-
-> On Thu, 20 Jun 2024 20:01:45 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > Sometimes it is desired to produce a single log line for errors.
-> > Add a new helper function for such purpose.
+On Fri, Jun 21, 2024 at 08:02:03AM GMT, Krzysztof Kozlowski wrote:
+> On 21/06/2024 01:05, Andi Shyti wrote:
+> > Cześć Krzysztof,
 > > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > ---
-> >  drivers/firmware/efi/cper.c | 59 +++++++++++++++++++++++++++++++++++++
-> >  include/linux/cper.h        |  3 ++
-> >  2 files changed, 62 insertions(+)
+> > On Thu, Jun 20, 2024 at 01:34:48PM GMT, Krzysztof Kozlowski wrote:
+> >> Few fixes for I2C controller schemas. The third patch (atmel,at91sam)
+> >> depends on first, so I suggest not splitting this into fixes branch but
+> >> take as is via next branch.
+> >>
+> >> Best regards,
+> >> Krzysztof
+> >>
+> >> ---
+> >> Krzysztof Kozlowski (7):
+> >>       dt-bindings: i2c: atmel,at91sam: correct path to i2c-controller schema
+> >>       dt-bindings: i2c: google,cros-ec-i2c-tunnel: correct path to i2c-controller schema
 > > 
-> > diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-> > index 7d2cdd9e2227..9bf27af3e870 100644
-> > --- a/drivers/firmware/efi/cper.c
-> > +++ b/drivers/firmware/efi/cper.c
-> > @@ -106,6 +106,65 @@ void cper_print_bits(const char *pfx, unsigned int bits,
-> >  		printk("%s\n", buf);
-> >  }
-> >  
-> > +/*  
+> > merged to i2c/i2c-host-fixes
+> > 
+> >>       dt-bindings: i2c: atmel,at91sam: drop unneeded address/size-cells
+> >>       dt-bindings: i2c: nvidia,tegra20: drop unneeded address/size-cells
+> >>       dt-bindings: i2c: samsung,s3c2410: drop unneeded address/size-cells
+> >>       dt-bindings: i2c: ti,omap4: reference i2c-controller.yaml schema
+> >>       dt-bindings: i2c: adjust indentation in DTS example to coding style
+> > 
+> > merged to i2c/i2c-host
 > 
-> It's exported and in a header used by other code, so why not make
-> this kernel-doc? /**
-> 
-> > + * cper_bits_to_str - return a string for set bits
-> > + * @buf: buffer to store the output string
-> > + * @buf_size: size of the output string buffer
-> > + * @bits: bit mask
-> > + * @strs: string array, indexed by bit position
-> > + * @strs_size: size of the string array: @strs  
-> 
-> If it had been kernel doc, W=1 would have told you mask is
-> missing.
-> 
-> Passing a 0 for mask seems probably not worth while.
-> If all bits of the unsigned int are set then people can pass ~0
-> 
-> Or make this cper_bits_to_str_masked() and have
-> cper_bits_to_str() that doesn't take a mask.
-> 
+> So you broke the binding... Why openly ignoring my first sentence?
 
-Mask definitely needs docs as I misunderstood it :(
-Also needs to be contiguous I think which is also a bit unusual.
+It's not an issue. We can get the fixes first and apply the rest
+later, I can keep them in my -next branch and reapply next week.
 
-> If you do that, some simplifications can be easily made.
-> 
-> 
-> 
-> > + *
-> > + * add to @buf the bitmask in hexadecimal. Then, for each set bit in @bits,
-> > + * add the corresponding string in @strs to @buf.
-> > + */
-> > +char *cper_bits_to_str(char *buf, int buf_size, unsigned int bits,  
-> 
-> Perhaps make bits an unsigned long as then you can use the
-> for_each_set_bit() etc.
-> 
-> > +		       const char * const strs[], unsigned int strs_size,
-> > +		       unsigned int mask)
-> > +{
-> > +	int i, size, first_bit;
-> > +	int len = buf_size;
-> > +	const char *start;
-> > +	char *str = buf;
-> > +
-> > +	if (strs_size < 16)
-> > +		size = snprintf(str, len, "0x%02x: ", bits);
-> > +	if (strs_size < 32)
-> > +		size = snprintf(str, len, "0x%04x: ", bits);
-> > +
-> > +	len -= size;
-> > +	str += size;
-> > +
-> > +	start = str;
-> > +
-> > +	if (mask) {
-> > +		first_bit = ffs(mask) - 1;
-> > +		if (bits & ~mask) {
-> > +			size = strscpy(str, "reserved bit(s)", len);
-> > +			len -= size;
-> > +			str += size;
-> > +		}
-> > +	} else {
-> > +		first_bit = 0;
-> > +	}  
-> Might be worth
-> 
-> 	bits = bits & mask;
-> 
-> Obviously setting bits that aren't in the mask is
-> odd though so maybe a warning print if that happens?
-> > +  
-> 
-> 
-> for_each_bit_set(i, &bits, strs_size) {
+Otherwise I would wait for everything at the merge window, but I
+don't want to wait so long.
 
-Ah. I'd missed the offset and gotten function name wrong.
-
-i = first_bit
-for_each_set_bit_from(i, &bits, strs_size + first_bit)
-
-and look up based on i - first_bit
-
-
-> 	...
-> 
-> }
-> 
-> > +	for (i = 0; i < strs_size; i++) {
-> > +		if (!(bits & (1U << (i + first_bit))))
-> > +			continue;
-> > +
-> > +		if (*start && len > 0) {
-> > +			*str = '|';
-> > +			len--;
-> > +			str++;
-> > +		}
-> > +
-> > +		size = strscpy(str, strs[i], len);
-> > +		len -= size;
-> > +		str += size;
-> > +	}
-> > +	return buf;
-> > +}
-> > +EXPORT_SYMBOL_GPL(cper_bits_to_str);
-> > +
-> >  static const char * const proc_type_strs[] = {
-> >  	"IA32/X64",
-> >  	"IA64",
-> > diff --git a/include/linux/cper.h b/include/linux/cper.h
-> > index 265b0f8fc0b3..856e8f00a7fb 100644
-> > --- a/include/linux/cper.h
-> > +++ b/include/linux/cper.h
-> > @@ -584,6 +584,9 @@ const char *cper_mem_err_type_str(unsigned int);
-> >  const char *cper_mem_err_status_str(u64 status);
-> >  void cper_print_bits(const char *prefix, unsigned int bits,
-> >  		     const char * const strs[], unsigned int strs_size);
-> > +char *cper_bits_to_str(char *buf, int buf_size, unsigned int bits,
-> > +		       const char * const strs[], unsigned int strs_size,
-> > +		       unsigned int mask);
-> >  void cper_mem_err_pack(const struct cper_sec_mem_err *,
-> >  		       struct cper_mem_err_compact *);
-> >  const char *cper_mem_err_unpack(struct trace_seq *,  
-> 
-
+Thanks,
+Andi
 
