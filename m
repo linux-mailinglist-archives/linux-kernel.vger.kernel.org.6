@@ -1,280 +1,141 @@
-Return-Path: <linux-kernel+bounces-225232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAFB8912DDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:33:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD56912DE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4058B214B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:33:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1E57283AF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D39E17B4F5;
-	Fri, 21 Jun 2024 19:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="f/MHbmvk"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7253C17BB25;
+	Fri, 21 Jun 2024 19:33:35 +0000 (UTC)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7372D84A32;
-	Fri, 21 Jun 2024 19:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA1D17B50D;
+	Fri, 21 Jun 2024 19:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718998411; cv=none; b=KWPEt9XpclR02/NEOXWDs8fd0wE7s2r7rQqBkLUrfnrY5hCYDKI/5J+tPhqwsBUyWbIMkT7ALvU6IH8d/byPr3YFS9KEwgq/PjHKVdvMOVY3VelXWNZGcPaNFFr2dgXOUrJCZzc7iZELfj22tq+2lHySTpPXKCa52a2A16dvnHg=
+	t=1718998415; cv=none; b=h6fPgNdb9Sv7olFuXPXOK+9aMDJlBcuCUUvfuNBPiAjYYul7ImyUh1WoXGeQu1lU7aPN7YciIT+zkFKHSQty5PZxbwnDkz91/YktUuhuLaya815cXI1E9lU6nVW2Jtth77pNYzCL644C5nTyN8kd8I4j2LrVgvrfOBiF+wqt/a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718998411; c=relaxed/simple;
-	bh=43rWBxFOy1IaWeBsSN18ZiL0vVYHQa8at9qTbLs2uQ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A6iAX8Ho9sPgKE+4M4NvlecVwIPBP8MXURaxtQDS6z7PP7EB1iAwl9I3i8mnYeF7KCT6yTTHYZwLr9sII4UZbGWMqm1duIys6brioJpKtRkgcU/80qNtZWAEvHw6PeWsoL9dTHa0OpX0dUTqF+9cDTckc/mHTs200smNZYjQfVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=f/MHbmvk; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718998395; x=1719603195; i=spasswolf@web.de;
-	bh=aH971ZcYcuKRlw99KTDLXdXUre9wbPrQuEQ7oEy6AM4=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=f/MHbmvk5g/AtI4dTq7o69zgSGL8+HI3qEE7outLEO4AE91qAWn+e5j8YxEaslzE
-	 HhBYFB4LHCSzKmM9TkqDeTc50djCEExrQnFoTd/qae2phwxWhaYRmulR5E4saHPAC
-	 cSaLxdKB3BZ4PiyQ62OziufOETZ+C6hg6ialIh02uB4Glk8wa6TS0eggSJ36T241I
-	 K3NjB9PuT/S+0+EYolzOFT+Wd87x+f9Z4wceNi1acFhrTPTSNw/QSe6REA4sxVrZW
-	 5bdsKvZd4rHuSATJPvlMvGQ4Hli9EbMCHfYU3ePMYdTXx0FDzju9t3+PIInW8FqMG
-	 ZCHbVjmFnHrtQsiTTw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
- (mrweb005 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 1M9ZZo-1sFDh919zo-00HQ4k; Fri, 21 Jun 2024 21:33:15 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: "Liam R . Howlett" <Liam.Howlett@oracle.com>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jiri Olsa <olsajiri@gmail.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: Re: commit 1c29a32ce65f4cd0f1c causes Bad rss-counter state and firefox-esr crash in linux-next-20240613
-Date: Fri, 21 Jun 2024 21:32:55 +0200
-Message-ID: <20240621193259.109863-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: w5uejhiciolye2ikgsdjim25z7lau7km3tu6t2vby3kuxeshos@osowmu4ecng5
-References: 
+	s=arc-20240116; t=1718998415; c=relaxed/simple;
+	bh=iI+L7i712SZhcAPxwe+PjDhF8zxPu0w/7Hnx+v8CzE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Is87YkRsGKdXVORfHCY7g/NFgUN8B2XMVnITAbYbIHI+9AoUHpgHc6fC5Px6BHx9PBHR2JqxpXvhXXjl4Wtt2F/AlsriZ917ue6q3b2Y9fV+mNrzWfOehzCdpuqZybT50r9QRXM/3fOWUvWhwn6Ohp7folNTN9nIDQYUZzXBlzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c80637ee79so1422666a91.0;
+        Fri, 21 Jun 2024 12:33:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718998412; x=1719603212;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cm5Jv5fuO8QRKswysU16NBBPz6DZDirM0voo1fYssSI=;
+        b=AjSv16Zdphiof/rLUJRPw6Lju0gR7IvxLLi9qAxmUjnmXEDP4v2EtioTmhXv3IfynR
+         DWJHSqbzzMFS2eaqAkxW7Y4jNoRwSA2DMJjVd4bQr7ktWxwbMBJJQ6gYIRvBeD7LSb7F
+         071MNyFNNaETLKvidOOFj5J3GzYcW55X4CercSiV9J5fRoQLdy08UQruhmGhf4zeEHzg
+         p7umCP2UNpnzA94z6ogus9dqkaMf3qsfUVG7exAdr8EHOkITSbhlku+vKzJ5wYUe4ZwF
+         cE4NKZ7kWKHQLw6op7MjainHV9ZuJGOpZV9copR+jY/US5cZSJufHeVurhsgiMwFr5GJ
+         N93A==
+X-Forwarded-Encrypted: i=1; AJvYcCW0N21tM0OYFzkpo1e0RIwq9EVf/SucJ1X4MMuH4OU5oOEDphC0pQ+XKOS9uu7vuEguhhW7zd+H6OjmdmSZQPBeJMZ8QEeNkqShmx2N1UBMNmzeQGdaCyVWsnPGMtbRhGW2yzmzwkDcBi1YMpAaK6GZvnqGd+KvRTZtofDLMwUfRmFjTxUk
+X-Gm-Message-State: AOJu0YyV/M9Dq8e5LFXXpq1v4MfDUHbNu9BSxNob9Z44H6qcfxCPjVB6
+	MwP4TmzIF+Dw21BGQJ9IODMVdoLFPsl4EZF24zwhPDMfsIUKESg9s2kSBw==
+X-Google-Smtp-Source: AGHT+IGE/Z7FqcafjZphknZusfs1seXePC3UZoSxmZCkJHzLFZu+1mTSdCv+F7KypwvQ1l5vmCFSVw==
+X-Received: by 2002:a17:90b:50cd:b0:2c7:db01:c9ad with SMTP id 98e67ed59e1d1-2c7db01cbf7mr6557900a91.18.1718998411694;
+        Fri, 21 Jun 2024 12:33:31 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e4ff97c8sm3999661a91.12.2024.06.21.12.33.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 12:33:31 -0700 (PDT)
+Date: Fri, 21 Jun 2024 19:33:23 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Dexuan Cui <decui@microsoft.com>
+Cc: Jake Oshins <jakeo@microsoft.com>,
+	Saurabh Singh Sengar <ssengar@linux.microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, mhklinux <mhklinux@outlook.com>,
+	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+	"stable@kernel.org" <stable@kernel.org>,
+	KY Srinivasan <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: hv: fix reading of PCI_INTERRUPT_LINE and
+ PCI_INTERRUPT_PIN
+Message-ID: <ZnXVgy_hVz5JXncD@liuwe-devbox-debian-v2>
+References: <20240621014815.263590-1-wei.liu@kernel.org>
+ <SN6PR02MB4157C9FD41483E9AC7ED9E70D4C92@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <ZnUbWUdVE7q8oNjj@liuwe-devbox-debian-v2>
+ <20240621110327.GA19602@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <DM4PR21MB36085B06555AF3CD6244ACEAABC92@DM4PR21MB3608.namprd21.prod.outlook.com>
+ <SA1PR21MB13178E3D11B407F9B272E8F4BFC92@SA1PR21MB1317.namprd21.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:S9KaBt8/2gMC/iMb6s2G8WTqV5bb7/8PnYVsFqY5WrWUs3PtHKL
- qdtfc96joa2niwanjCeZkHxG56Ii/fZE9+iwrWbdWc/Aq7Dw1CgwIXHh9GylUTAxtpzbx8D
- qX/QykEFonkdGoBQ5GZBAkZS0u9dFO9UW8NPX0gqYlGQ6jPh3aFFjyc6PeOkwrn+YLy9Iee
- OLhv0frIg2aL2anNmmLtg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RzEmln3+sKw=;D9r2NW/MN3e4s4dMEttNXiaX5Ov
- rDYW+ABialMwu02YVpjUFKwBE5C+Sx55bPywJWVn3bIE3vBxRC7Z+hwx9omctbT0hocRNaUzx
- lIdsvjm7WIaYkl3b96KCLQx1tOX0aYOkSfLw4XVY4AbxZGiRXmbX8Es+H95L3siZAv61PaB/M
- +gq7X2i2nbJccCH17NGOxIYiQQRNNQvO0JPZ5iqIi0MGmJe6X2DOX6PPfb2sVS1siUegdW1OY
- AX8jVNj8LsQvKu1RKqE73m7MVDfqdzOSST0yAiVarjxa6U6qmZG6fmpZlS4lycVPXwBGazjVk
- eyk7VxPqpvCK5B3wVcK+dEAm74vA04hMh2HaUqqT+hkLAaPwrPLyDKKPbiz0bLVZvSNXpnTbA
- 1gbGkHtDOwdPQXayNSN+AXmDoNPqqsXXz22/T5DBR2h3FbXvMi9NIlOhCfuFX+juSwyDAr7IF
- h6Wv/bEoaaHkZ7JQnJe/YF6mZCNUpA9oQdHmeNtJizjTRXL0rukKpliueiZSf8WgAlsDPDDQ8
- ZvTx8WlBkZU17Ktx+ST0LwahvVa/KQmNFZzkfNmf+eguxmnC19vT4yJOXuVo87LTfz4MwVjg0
- HpINWL5FjCUyIRxN3moT4DBkS4EZV/WwSYqOCj1zC1nyfil7RsyQBYz9NMPS2HHW6+tz1vGhZ
- FyyNrab/S93alO2Pp31FyXrFJ+biXOgI0OOVZRlcfLKoeKKe7ZkHPkbobB7Z8NOEXqyVOYU/D
- t3168vvIpW4yHFjksoxoxqvV2dN5B6Fs0MDrKsdj0IhBSDaewHNoMnlHtfO1AzuXCWQrbUse1
- 1FKCw+qaAZDfxxFWghSDMr04u0kix7n3YXsp4xfj4ufnM=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SA1PR21MB13178E3D11B407F9B272E8F4BFC92@SA1PR21MB1317.namprd21.prod.outlook.com>
 
-I did some experiments on the rss counter bug. The next patch is made for =
-linux-next-20240613
-with commit 1c29a32ce65f4cd0f1c0f9 reverted. Then I simply inlined the cod=
-e of do_vmi_unmap()
-and do_vmi_align_munmap() into mmap_region(). This version of the code wor=
-ks fine and does not
-show the rss counter bug.
+On Fri, Jun 21, 2024 at 06:41:04PM +0000, Dexuan Cui wrote:
+> From: Jake Oshins <jakeo@microsoft.com> 
+> Sent: Friday, June 21, 2024 9:51 AM
+> > [...]
+> >On Fri, Jun 21, 2024 at 06:19:05AM +0000, Wei Liu wrote:
+> > On Fri, Jun 21, 2024 at 03:15:19AM +0000, Michael Kelley wrote:
+> > > From: Wei Liu <mailto:wei.liu@kernel.org> Sent: Thursday, June 20, 2024 6:48 PM
+> > > >
+> > > > The intent of the code snippet is to always return 0 for both fields.
+> > > > The check is wrong though. Fix that.
+> > > >
+> > > > This is discovered by this call in VFIO:
+> > > >
+> > > >     pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
+> > > >
+> > > > The old code does not set *val to 0 because the second half of the check is
+> > > > incorrect.
+> 
+> Hi Wei, so you got a non-zero 'pin' value returned by the host when the guest reads
+> from the MMIO config page. What's the consequence? Will VFIO try to use the legacy INTx 
+> rather than MSI/MSI-X? I'm curious how you noticed the bug. I'm also curious why the
+> host doesn't return 0 for the 'PIN' register when the guest reads it from the config page.
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index f95af72ddc9f..0f020c535c83 100644
-=2D-- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -733,7 +733,6 @@ int vma_expand(struct vma_iterator *vmi, struct vm_are=
-a_struct *vma,
- 	vma_iter_store(vmi, vma);
+It is not the guest reading the register. The VM has not launched yet.
+Everything happens on the host side. The host side software is preparing
+the device for the VM to use.
 
- 	vma_complete(&vp, vmi, vma->vm_mm);
--	validate_mm(vma->vm_mm);
- 	return 0;
+The consequence of this bug is that user space code will think INTx is
+available while in fact it is not.
 
- nomem:
-@@ -2911,6 +2910,8 @@ unsigned long mmap_region(struct file *file, unsigne=
-d long addr,
- 	struct vm_area_struct *next, *prev, *merge;
- 	pgoff_t pglen =3D len >> PAGE_SHIFT;
- 	unsigned long charged =3D 0;
-+	struct vma_munmap_struct vms;
-+	struct ma_state mas_detach;
- 	unsigned long end =3D addr + len;
- 	unsigned long merge_start =3D addr, merge_end =3D end;
- 	bool writable_file_mapping =3D false;
-@@ -2933,12 +2934,46 @@ unsigned long mmap_region(struct file *file, unsig=
-ned long addr,
- 			return -ENOMEM;
- 	}
+VFIO itself doesn't care much. I noticed the bug because our VMM (Cloud
+Hypervisor) initializes INTx whenever it is available.
 
--	/* Unmap any existing mapping in the area */
--	error =3D do_vmi_munmap(&vmi, mm, addr, len, uf, false);
--	if (error =3D=3D -EPERM)
--		return error;
--	else if (error)
--		return -ENOMEM;
-+	/* Find the first overlapping VMA */
-+	vma =3D vma_find(&vmi, end);
-+	if (vma) {
-+		struct maple_tree mt_detach;
-+
-+		/*
-+		 * Check if memory is sealed before arch_unmap.
-+		 * Prevent unmapping a sealed VMA.
-+		 * can_modify_mm assumes we have acquired the lock on MM.
-+		 */
-+		if (unlikely(!can_modify_mm(mm, addr, end))) {
-+			return -EPERM;
-+		}
-+
-+		 /* arch_unmap() might do unmaps itself.  */
-+		arch_unmap(mm, addr, end);
-+
-+		mt_init_flags(&mt_detach, vmi.mas.tree->ma_flags & MT_FLAGS_LOCK_MASK);
-+		mt_on_stack(mt_detach);
-+		mas_init(&mas_detach, &mt_detach, 0);
-+
-+		init_vma_munmap(&vms, &vmi, vma, addr, end, uf, false);
-+		error =3D vms_gather_munmap_vmas(&vms, &mas_detach);
-+		if (error) {
-+			validate_mm(mm);
-+			return -ENOMEM;
-+		}
-+
-+		vma =3D NULL;
-+		error =3D vma_iter_clear_gfp(&vmi, addr, end, GFP_KERNEL);
-+		if (error) {
-+			abort_munmap_vmas(&mas_detach);
-+			return -ENOMEM;
-+		}
-+
-+		/* Point of no return */
-+		vms_complete_munmap_vmas(&vms, &mas_detach);
-+	} else {
-+		// TODO
-+	}
+> 
+> >  I believe that this fix is correct.  (And I'm frankly surprised that this bug didn't
+> > cause a problem before this.  It's been there since I first wrote the code.)
+> > -- Jake Oshins
+> 
+> I suppose it didn't cause any issue because the PCI device drivers use MSI/MSI-X,
+> so they don't care about the values of the 'PIN' and 'LINE' registers.
 
- 	/*
- 	 * Private writable mapping: check memory availability
+I suspect the same. Drivers almost always prefer MSI / MSI-X over INTx.
+No one else triggered that code path before.
 
-The next patch now moves the call to vms_complete_munmap_vmas() towards th=
-e end of
-mmap_region(). This code is also free of the rss counter bug.
+Thanks,
+Wei.
 
-commit a4b24bb18dde627792297455befcc465e45be66d
-Author: Bert Karwatzki <spasswolf@web.de>
-Date:   Thu Jun 20 17:02:08 2024 +0200
-
-    mm: mmap: push back vms_complete_munmap_vmas()
-
-    In order to to debug the rss counter bug we're going to push back
-    vms_complete_munmap_vmas() in mmap_region.
-
-    Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 0f020c535c83..4fb9dd2e6d6e 100644
-=2D-- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2970,9 +2970,9 @@ unsigned long mmap_region(struct file *file, unsigne=
-d long addr,
- 		}
-
- 		/* Point of no return */
--		vms_complete_munmap_vmas(&vms, &mas_detach);
- 	} else {
--		// TODO
-+		vms.end =3D 0;
-+		vms.nr_pages =3D 0;
- 	}
-
- 	/*
-@@ -3016,6 +3016,11 @@ unsigned long mmap_region(struct file *file, unsign=
-ed long addr,
- 		vma_iter_next_range(&vmi);
- 	}
-
-+	if (vms.end) {
-+		vms_complete_munmap_vmas(&vms, &mas_detach);
-+		vms.end =3D 0; // avoid double unmap below
-+	}
-+
- 	/* Actually expand, if possible */
- 	if (vma &&
- 	    !vma_expand(&vmi, vma, merge_start, merge_end, vm_pgoff, next)) {
-@@ -3026,7 +3031,8 @@ unsigned long mmap_region(struct file *file, unsigne=
-d long addr,
- 	if (vma =3D=3D prev)
- 		vma_iter_set(&vmi, addr);
- cannot_expand:
--
-+	if (vms.end)
-+		vms_complete_munmap_vmas(&vms, &mas_detach);
- 	/*
- 	 * Determine the object being mapped and call the appropriate
- 	 * specific mapper. the address has already been validated, but
-
-The next patch move vms_complete_munmap_vmas() a little further beyond the
-call to vma_expand(). This code contain the rss counter bug.
-
-commit 02d6be2410fa503d008f4cc8dcd1518ca56f8793
-Author: Bert Karwatzki <spasswolf@web.de>
-Date:   Thu Jun 20 20:07:13 2024 +0200
-
-    mm: mmap: push back vms_complete_munmap_vmas()
-
-    This commit actually show the rss counter bug, while the previus does
-    not!
-
-    Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 4fb9dd2e6d6e..c5f4b4b6fb84 100644
-=2D-- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3016,14 +3016,12 @@ unsigned long mmap_region(struct file *file, unsig=
-ned long addr,
- 		vma_iter_next_range(&vmi);
- 	}
-
--	if (vms.end) {
--		vms_complete_munmap_vmas(&vms, &mas_detach);
--		vms.end =3D 0; // avoid double unmap below
--	}
--
- 	/* Actually expand, if possible */
- 	if (vma &&
- 	    !vma_expand(&vmi, vma, merge_start, merge_end, vm_pgoff, next)) {
-+		if (vms.end) {
-+			vms_complete_munmap_vmas(&vms, &mas_detach);
-+		}
- 		khugepaged_enter_vma(vma, vm_flags);
- 		goto expanded;
- 	}
-
-
-So there might be some unwanted interaction between vms_complete_munmap_vm=
-as though
-I've no yet figured out what exactly is happening. Hope this will be helpf=
-ul in
-solving the problem.
-
-Bert Karwatzki
-
+> 
+> Thanks,
+> Dexuan
+> 
 
