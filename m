@@ -1,189 +1,258 @@
-Return-Path: <linux-kernel+bounces-225450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E281913087
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 780F591308C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01741288B64
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:44:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DA25283B6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698E6170845;
-	Fri, 21 Jun 2024 22:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4FD16F0CA;
+	Fri, 21 Jun 2024 22:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="U7fmM4bS"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9d7Qf6g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA79616F8FC;
-	Fri, 21 Jun 2024 22:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0E2208C4;
+	Fri, 21 Jun 2024 22:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719009645; cv=none; b=ctROaBoccFlRho6UV6KFmpxzr/e63q3Zqk/AiK5jmQVJbk+g2fZLKhdj6I8foqd8+M4EQWDLYcHEh1jGbbUeUijYpceD9NnD9b/MhvwxO880BESwnF/gmqn1ElLVAY0qeE5nYuNaPtTADFxNE49uyDqSdzP1JKaDxB3YrSFzAoM=
+	t=1719009804; cv=none; b=jHDYnMOgE/XQJesdOcqWjpZHzzxkTlX9FxKi9eHDE9bzMd59paHGJevpi9LRHOSwqoLCSQ8AgC868KTNSGdpDHzF6oWkOXvS2Vp3cYh7NFpRcv0hKlJ8S1zMm18Z9JsovB74wmHSOg0XuhH/sfub/12Uk5vQpVH2sPNYtQM0Js0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719009645; c=relaxed/simple;
-	bh=Uybd/th4afdJYueMsyszSrqC9bf6dhBOk6xYGLfGkrc=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pxJasbUeJUrL6adjYZ0WJTwmV0dT/jW29W3uw2+zo4eZGQBNr+BceXXo1HhRDIwsX6b6eDDulDixNvYoS0aLRCXmubefzsJRWwBWhOduPm564v8Y1v9qKpzrZ7+Wx6E82GxNp/BBLfhQAvhJVnzXdVxnBJI5S7pWgsgKwSyi8Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=U7fmM4bS; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sKmvl-000Uu3-07;
-	Sat, 22 Jun 2024 00:40:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:
-	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=VMoQa2KSRqpNbUkmMpoILf1hc3Bv7ijAt3K+kr38SlY=; b=U7fmM4bSU/lt4+VfW9C/8pSJCK
-	g2Go5DAUQcStoQGJHtesb5k9wHSjoZo/QE/mxV/25jjXjWmzpWclOXczwjaIOPD0xMFPflHpzEhyT
-	f4oYvzsLC6zDUPRNuPiot6FK5VVLHVJSoJDnweAuw8YdPuR83s2O9Wpm1DqXoMLziM0qSE7CYvX94
-	aYuOP+PdnPf4oKdSK0yw4nAh5JFUVfKAsL10bFIZnqfTsRuDMBr3+kWo6KGKI3j6hiWPPSTupomXK
-	Fak3VO5HMz9tkMPzsGjwpJekaHm9yRUhJLSfMrkTdchf7wpU9/2pOSwdFvelSGmUsKNuh8tS4Rsb8
-	8jMdvuxg==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sKmvj-003Plh-2U;
-	Sat, 22 Jun 2024 00:40:29 +0200
-Received: from andi by aktux with local (Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sKmvk-006nfu-2T;
-	Sat, 22 Jun 2024 00:40:28 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: dmitry.torokhov@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andreas@kemnade.info,
-	hdegoede@redhat.com,
-	andy.shevchenko@gmail.com,
-	u.kleine-koenig@pengutronix.de,
-	siebren.vroegindeweij@hotmail.com,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND v3 3/3] Input: ektf2127 - add ektf2232 support
-Date: Sat, 22 Jun 2024 00:40:22 +0200
-Message-Id: <20240621224022.1620897-4-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240621224022.1620897-1-andreas@kemnade.info>
-References: <20240621224022.1620897-1-andreas@kemnade.info>
+	s=arc-20240116; t=1719009804; c=relaxed/simple;
+	bh=RdVFUU7jhxxfEURdipzkFmDuclvZyuceXrMVLDPfN7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ImmIt/4D/iT3WSb+Lo5IEXB9XJhJB6UbWWs0rJADB32DWrTbOlQJVSh6BngTUFQV/6DbnTuBxprQ73hljSVjc/BWSucqKoNJs7nYUCQNsRRwjfZeozE7wG6VX6NM4EzB/6aSxihLKQORRAFk0fG6a+HH7rdAIbdhje2YVXDA+HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S9d7Qf6g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13267C2BBFC;
+	Fri, 21 Jun 2024 22:43:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719009804;
+	bh=RdVFUU7jhxxfEURdipzkFmDuclvZyuceXrMVLDPfN7Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=S9d7Qf6g/FVL0QeM66PKuHQ3U2MOt7QJTBkFU0VBdWPzzKDN6UQegQ94LUR7aRjcF
+	 rfPRD9XW/FLWjkG/qTNfMFjRjf0n3xnzSuEXvWqee/DAZ2THRkXXB34DeegFdUgK4I
+	 3NLMgImM7pXJ/dY+BgzK5hU2vxpZYYMDlCSWD+NnFAThUF81tHV7OmrnYciS08cNbB
+	 G3J+ehiAZJzDABDZP5iFID3n73rnvNctiwfWBKw1w6u79HXETXO2wRLkOYfAjB1JNZ
+	 BQXHEMCFlsDYbKTM/4FLVw6RXmBpxuOrTNcDKQelkT/jTvnG9eoM7YOeB172ZTPWG3
+	 LqNroBEwQcThQ==
+Date: Fri, 21 Jun 2024 17:43:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	devicetree@vger.kernel.org, Will Deacon <will@kernel.org>,
+	Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v5 08/12] PCI: imx6: Config look up table(LUT) to support
+ MSI ITS and IOMMU for i.MX95
+Message-ID: <20240621224321.GA1410825@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnX+3H+bwTr4FbDb@lizhi-Precision-Tower-5810>
 
-The chip is similar, but has status bits at different positions,
-so use the correct bits.
+On Fri, Jun 21, 2024 at 06:29:48PM -0400, Frank Li wrote:
+> On Mon, Jun 17, 2024 at 10:26:36AM -0400, Frank Li wrote:
+> > On Thu, Jun 13, 2024 at 05:41:25PM -0500, Bjorn Helgaas wrote:
+> > > On Thu, Jun 06, 2024 at 04:24:17PM -0400, Frank Li wrote:
+> > > > On Mon, Jun 03, 2024 at 04:07:55PM -0400, Frank Li wrote:
+> > > > > On Mon, Jun 03, 2024 at 01:56:27PM -0500, Bjorn Helgaas wrote:
+> > > > > > On Mon, Jun 03, 2024 at 02:42:45PM -0400, Frank Li wrote:
+> > > > > > > On Mon, Jun 03, 2024 at 12:19:21PM -0500, Bjorn Helgaas wrote:
+> > > > > > > > On Fri, May 31, 2024 at 03:58:49PM +0100, Robin Murphy wrote:
+> > > > > > > > > On 2024-05-31 12:08 am, Bjorn Helgaas wrote:
+> > > > > > > > > > [+cc IOMMU and pcie-apple.c folks for comment]
+> > > > > > > > > >
+> > > > > > > > > > On Tue, May 28, 2024 at 03:39:21PM -0400, Frank Li wrote:
+> > > > > > > > > > > For the i.MX95, configuration of a LUT is necessary to convert Bus Device
+> > > > > > > > > > > Function (BDF) to stream IDs, which are utilized by both IOMMU and ITS.
+> > > > > > > > > > > This involves examining the msi-map and smmu-map to ensure consistent
+> > > > > > > > > > > mapping of PCI BDF to the same stream IDs. Subsequently, LUT-related
+> > > > > > > > > > > registers are configured. In the absence of an msi-map, the built-in MSI
+> > > > > > > > > > > controller is utilized as a fallback.
+> > > > > > > > > > >
+> > > > > > > > > > > Additionally, register a PCI bus notifier to trigger imx_pcie_add_device()
+> > > > > > > > > > > upon the appearance of a new PCI device and when the bus is an iMX6 PCI
+> > > > > > > > > > > controller. This function configures the correct LUT based on Device Tree
+> > > > > > > > > > > Settings (DTS).
+> > > > > > > > > >
+> > > > > > > > > > This scheme is pretty similar to apple_pcie_bus_notifier().  If we
+> > > > > > > > > > have to do this, I wish it were *more* similar, i.e., copy the
+> > > > > > > > > > function names, bitmap tracking, code structure, etc.
+> > > > > > > > > >
+> > > > > > > > > > I don't really know how stream IDs work, but I assume they are used on
+> > > > > > > > > > most or all arm64 platforms, so I'm a little surprised that of all the
+> > > > > > > > > > PCI host drivers used on arm64, only pcie-apple.c and pci-imx6.c need
+> > > > > > > > > > this notifier.
+> > > > > > > > >
+> > > > > > > > > This is one of those things that's mostly at the mercy of the PCIe root
+> > > > > > > > > complex implementation. Typically the SMMU StreamID and/or GIC ITS DeviceID
+> > > > > > > > > is derived directly from the PCI RID, sometimes with additional high-order
+> > > > > > > > > bits hard-wired to disambiguate PCI segments. I believe this RID-translation
+> > > > > > > > > LUT is a particular feature of the the Synopsys IP - I know there's also one
+> > > > > > > > > on the NXP Layerscape platforms, but on those it's programmed by the
+> > > > > > > > > bootloader, which also generates the appropriate "msi-map" and "iommu-map"
+> > > > > > > > > properties to match. Ideally that's what i.MX should do as well, but hey.
+> > > > > > > >
+> > > > > > > > Maybe this RID-translation is a feature of i.MX, not of Synopsys?  I
+> > > > > > > > see that the LUT CSR accesses use IMX95_* definitions.
+> > > > > > >
+> > > > > > > Yes, it convert 16bit RID to 6bit stream id.
+> > > > > >
+> > > > > > IIUC, you're saying this is not a Synopsys feature, it's an i.MX
+> > > > > > feature.
+> > > > >
+> > > > > Yes, it is i.MX feature. But I think other vendor should have similar
+> > > > > situation if use old arm smmu.
+> > > > >
+> > > > > >
+> > > > > > > > > If it's really necessary to do this programming from Linux, then there's
+> > > > > > > > > still no point in it being dynamic - the mappings cannot ever change, since
+> > > > > > > > > the rest of the kernel believes that what the DT said at boot time was
+> > > > > > > > > already a property of the hardware. It would be a lot more logical, and
+> > > > > > > > > likely simpler, for the driver to just read the relevant map property and
+> > > > > > > > > program the entire LUT to match, all in one go at controller probe time.
+> > > > > > > > > Rather like what's already commonly done with the parsing of "dma-ranges" to
+> > > > > > > > > program address-translation LUTs for inbound windows.
+> > > > > > > > >
+> > > > > > > > > Plus that would also give a chance of safely dealing with bad DTs specifying
+> > > > > > > > > invalid ID mappings (by refusing to probe at all). As it is, returning an
+> > > > > > > > > error from a child's BUS_NOTIFY_ADD_DEVICE does nothing except prevent any
+> > > > > > > > > further notifiers from running at that point - the device will still be
+> > > > > > > > > added, allowed to bind a driver, and able to start sending DMA/MSI traffic
+> > > > > > > > > without the controller being correctly programmed, which at best won't work
+> > > > > > > > > and at worst may break the whole system.
+> > > > > > > >
+> > > > > > > > Frank, could the imx LUT be programmed once at boot-time instead of at
+> > > > > > > > device-add time?  I'm guessing maybe not because apparently there is a
+> > > > > > > > risk of running out of LUT entries?
+> > > > > > >
+> > > > > > > It is not good idea to depend on boot loader so much.
+> > > > > >
+> > > > > > I meant "could this be programmed once when the Linux imx host
+> > > > > > controller driver is probed?"  But from the below, it sounds like
+> > > > > > that's not possible in general because you don't have enough stream
+> > > > > > IDs to do that.
+> > > > >
+> > > > > Oh! sorry miss understand what your means. It is possible like what I did
+> > > > > at v3 version. But I think it is not good enough.
+> > > > >
+> > > > > >
+> > > > > > > Some hot plug devics
+> > > > > > > (SD7.0) may plug after system boot. Two PCIe instances shared one set
+> > > > > > > of 6bits stream id (total 64). Assume total 16 assign to two PCIe
+> > > > > > > controllers. each have 8 stream id. If use uboot assign it static, each
+> > > > > > > PCIe controller have below 8 devices.  It will be failrue one controller
+> > > > > > > connect 7, another connect 9. but if dynamtic alloc when devices add, both
+> > > > > > > controller can work.
+> > > > > > >
+> > > > > > > Although we have not so much devices now,  this way give us possility to
+> > > > > > > improve it in future.
+> > > > > > >
+> > > > > > > > It sounds like the consequences of running out of LUT entries are
+> > > > > > > > catastrophic, e.g., memory corruption from mis-directed DMA?  If
+> > > > > > > > that's possible, I think we need to figure out how to prevent the
+> > > > > > > > device from being used, not just dev_warn() about it.
+> > > > > > >
+> > > > > > > Yes, but so far, we have not met such problem now. We can improve it when
+> > > > > > > we really face such problem.
+> > > > > >
+> > > > > > If this controller can only support DMA from a limited number of
+> > > > > > endpoints below it, I think we should figure out how to enforce that
+> > > > > > directly.  Maybe we can prevent drivers from enabling bus mastering or
+> > > > > > something.  I'm not happy with the idea of waiting for and debugging a
+> > > > > > report of data corruption.
+> > > > >
+> > > > > It may add a pre-add hook function to pci bridge. let me do more research.
+> > > >
+> > > > Hi Bjorn:
+> > > >
+> > > > int pci_setup_device(struct pci_dev *dev)
+> > > > {
+> > > > 	dev->error_state = pci_channel_io_normal;
+> > > > 	...
+> > > > 	pci_fixup_device(pci_fixup_early, dev);
+> > > >
+> > > > 	^^^ I can add fixup hook for pci_fixup_early. If not resource,
+> > > > I can set dev->error_state to pci_channel_io_frozen or
+> > > > pci_channel_io_perm_failure
+> > > >
+> > > > 	And add below check here after call hook function.
+> > > >
+> > > > 	if (dev->error_state != pci_channel_io_normal)
+> > > > 		return -EIO;
+> > > >
+> > > > }
+> > > >
+> > > > How do you think this method? If you agree, I can continue search device
+> > > > remove hook up.
+> > >
+> > > I think this would mean the device would not appear to be enumerated
+> > > at all, right?  I.e., it wouldn't show up in lspci?  And we couldn't
+> > > use even a pure programmed IO driver with no DMA or MSI?
+> >
+> > Make sense. Let me do more research on this.
+> >
+> > Frank
+> > >
+> > > I wonder if we should have a function pointer in struct
+> > > pci_host_bridge, kind of like the existing ->map_irq(), where we could
+> > > do host bridge-specific setup when enumerating a PCI device.
+> 
+> Consider some device may no use MSI or DMA. It'd better set LUT when
+> allocate msi irq. I think insert a irq-domain in irq hierarchy.
+> 
+> static const struct irq_domain_ops lut_pcie_msi_domain_ops = {
+>         .alloc  = lut_pcie_irq_domain_alloc,
+>         .free   = lut_pcie_irq_domain_free,
+> };
+> 
+> int dw_pcie_allocate_domains(struct dw_pcie_rp *pp)
+> {
+>         struct fwnode_handle *fwnode = of_node_to_fwnode(pci->dev->of_node);
+> 
+>         pp->irq_domain = irq_domain_create_hierarchy(...)
+> 
+>         pp->msi_domain = pci_msi_create_irq_domain(...);
+> 
+>         return 0;
+> }
+> 
+> Manage lut stream id in lut_pcie_irq_domain_alloc() and
+> lut_pcie_irq_domain_free().
+> 
+> So failure happen only when driver use MSI and no-stream ID avaiable. It
+> should be better than failure when add devices. Some devices may not use
+> at all.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/input/touchscreen/ektf2127.c | 36 +++++++++++++++++++++++-----
- 1 file changed, 30 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/input/touchscreen/ektf2127.c b/drivers/input/touchscreen/ektf2127.c
-index cc3103b9cbfba..b6f5046f4b917 100644
---- a/drivers/input/touchscreen/ektf2127.c
-+++ b/drivers/input/touchscreen/ektf2127.c
-@@ -13,6 +13,7 @@
-  * Hans de Goede <hdegoede@redhat.com>
-  */
- 
-+#include <linux/bits.h>
- #include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/i2c.h>
-@@ -46,6 +47,11 @@ struct ektf2127_ts {
- 	struct input_dev *input;
- 	struct gpio_desc *power_gpios;
- 	struct touchscreen_properties prop;
-+	int status_shift;
-+};
-+
-+struct ektf2127_i2c_chip_data {
-+	int status_shift;
- };
- 
- static void ektf2127_parse_coordinates(const u8 *buf, unsigned int touch_count,
-@@ -112,8 +118,8 @@ static void ektf2127_report2_contact(struct ektf2127_ts *ts, int slot,
- 
- static void ektf2127_report2_event(struct ektf2127_ts *ts, const u8 *buf)
- {
--	ektf2127_report2_contact(ts, 0, &buf[1], !!(buf[7] & 2));
--	ektf2127_report2_contact(ts, 1, &buf[4], !!(buf[7] & 4));
-+	ektf2127_report2_contact(ts, 0, &buf[1], !!(buf[7] & BIT(ts->status_shift)));
-+	ektf2127_report2_contact(ts, 1, &buf[4], !!(buf[7] & BIT(ts->status_shift + 1)));
- 
- 	input_mt_sync_frame(ts->input);
- 	input_sync(ts->input);
-@@ -247,6 +253,7 @@ static int ektf2127_query_dimension(struct i2c_client *client, bool width)
- static int ektf2127_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-+	const struct ektf2127_i2c_chip_data *chip_data;
- 	struct ektf2127_ts *ts;
- 	struct input_dev *input;
- 	u8 buf[4];
-@@ -303,6 +310,13 @@ static int ektf2127_probe(struct i2c_client *client)
- 		return error;
- 
- 	ts->input = input;
-+
-+	chip_data = i2c_get_match_data(client);
-+	if (!chip_data)
-+		return dev_err_probe(&client->dev, -EINVAL, "missing chip data\n");
-+
-+	ts->status_shift = chip_data->status_shift;
-+
- 	input_set_drvdata(input, ts);
- 
- 	error = devm_request_threaded_irq(dev, client->irq,
-@@ -325,18 +339,28 @@ static int ektf2127_probe(struct i2c_client *client)
- 	return 0;
- }
- 
-+static const struct ektf2127_i2c_chip_data ektf2127_data = {
-+	.status_shift = 1,
-+};
-+
-+static const struct ektf2127_i2c_chip_data ektf2232_data = {
-+	.status_shift = 0,
-+};
-+
- #ifdef CONFIG_OF
- static const struct of_device_id ektf2127_of_match[] = {
--	{ .compatible = "elan,ektf2127" },
--	{ .compatible = "elan,ektf2132" },
-+	{ .compatible = "elan,ektf2127",	.data = &ektf2127_data},
-+	{ .compatible = "elan,ektf2132",	.data = &ektf2127_data},
-+	{ .compatible = "elan,ektf2232",	.data = &ektf2232_data},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, ektf2127_of_match);
- #endif
- 
- static const struct i2c_device_id ektf2127_i2c_id[] = {
--	{ "ektf2127", 0 },
--	{ "ektf2132", 0 },
-+	{ .name = "ektf2127", .driver_data = (long)&ektf2127_data },
-+	{ .name = "ektf2132", .driver_data = (long)&ektf2127_data },
-+	{ .name = "ektf2232", .driver_data = (long)&ektf2232_data },
- 	{}
- };
- MODULE_DEVICE_TABLE(i2c, ektf2127_i2c_id);
--- 
-2.39.2
-
+I'm not an IRQ expert, but it sounds plausible.  There might even be
+an opportunity to fall back to INTx if there's no stream ID available
+for MSI?
 
