@@ -1,96 +1,83 @@
-Return-Path: <linux-kernel+bounces-225471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF49B9130F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 01:52:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB749130F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 01:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB12284C7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:52:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C21DE1F22DCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D5916F0C2;
-	Fri, 21 Jun 2024 23:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A9A16F8E4;
+	Fri, 21 Jun 2024 23:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d4PJh7OU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z2ajfKhn"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559D836AF8;
-	Fri, 21 Jun 2024 23:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDC316EB76
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 23:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719013956; cv=none; b=YLA641FLQTLEVbn7OX6bQzEQi/hOTVFLgz6EEBC0gK2Qryusf7fczFecZ1/LiA+WTc1akBkzdaAfDu7L1uKxSLPNHC6qiQV07G5M/cpeWDtzupNL12pgEXeBGE9Jibhrvka7X3GLrWu7yOeNMI7zyOiTqxVeE3wnJXGVdZ+DXfE=
+	t=1719014179; cv=none; b=SdXCdMk2HXUhHpuuaPa6a773+xNzyOVNdksDngK6P8iW/Ofp2W80TEoZ+M6G0J7S1+76Qxxqg4zHpkNYkV7X4KkY6DbKsLvREIsD8eMeEcs2G4PjBBZuUToK4eWm7Zwwil32K1/JOiEaNrmkG5ukB9OLomXXmT+fm4iBdiN/zvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719013956; c=relaxed/simple;
-	bh=IlwUS5voj83yrVnahkbmNFGTdQnaGbO/2+ABzc4IILs=;
+	s=arc-20240116; t=1719014179; c=relaxed/simple;
+	bh=nWi4TkapE2Ezxu7e4csCWHYxNmjlAhbuDlvNb1n3IPQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hnu5b/bA0A6JLEXN1NedLXveL9IPAs2z9tSA+YzYtqZWVQpQLUYHd7ZOf6UwKHihTDKDyOsrgH8cc1p9f8kyvRaN2iDNE2pU7IQtffS5Q+wGLHoA8/iIkquQ29KBt3GHl2GNAfs6c82A35m7P/ip/ZYpSa7+IKSz6S88oT2YNo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d4PJh7OU; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719013955; x=1750549955;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IlwUS5voj83yrVnahkbmNFGTdQnaGbO/2+ABzc4IILs=;
-  b=d4PJh7OUCwGsefrIibbslvlvDK60B9hLDDrES4c/cNMomxi44jlJxaGX
-   kJWio6/eIk/idQfY7YoOETqVFaUWve2UZrL/Z2Tio89o/dcseoKltAsqi
-   GL91zfwz+ljdn/PG3VUIeeQ3F0k4cUmGg4PKLtLHwjBSZIYPbd4eaDPpm
-   6tkTTdF1RP13qf/6Qz1e+SKJQzPfiIhYnWPw3+Hy2R0uvXZM+QZ+PAMhQ
-   udryJIVO5AEqXQc8jtf7nV4HYQbkSL3dA7HQjN8OWx4FMQsBWWPQX/w7B
-   wHqPPgiVM64BJQut24KziSL6S/zihPG06dIDDqk6RtDZsX9jUUoqeQviH
-   g==;
-X-CSE-ConnectionGUID: bjE72uaEThmVKDxNAZNMJQ==
-X-CSE-MsgGUID: G58drpIISv621SA9Sa5hSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="12187910"
-X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
-   d="scan'208";a="12187910"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 16:52:34 -0700
-X-CSE-ConnectionGUID: +x18Je5kQISObAMfhdR0PQ==
-X-CSE-MsgGUID: ii9jeeHUSw+zSg9dMw+REQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
-   d="scan'208";a="43173490"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 21 Jun 2024 16:52:27 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKo3M-00098S-1O;
-	Fri, 21 Jun 2024 23:52:24 +0000
-Date: Sat, 22 Jun 2024 07:51:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 12/23] mfd: Add new driver for MAX77705 PMIC
-Message-ID: <202406220754.8crTEWeR-lkp@intel.com>
-References: <20240618-starqltechn_integration_upstream-v3-12-e3f6662017ac@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dk7tmOIEmN8++wdv1IlN/TX/kAbsuRy9jPysmbfUVkBed64+Os1EtQgXhP60gSG0+ktLH2gzeO72OmQccsGxqH53epVhDbir3lT6snvqjm+6Kkj3Ja2dTaMnxfn9Fc2Le2A8p9u9jEm7g9+h3w86V7aSW3w/N8B0zih+gkKIblw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z2ajfKhn; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f70ec6ff8bso230135ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:56:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719014177; x=1719618977; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dIy2CR/RFjZQaJDXPjHveFD5gn1nucaR+J0UOyxBY1U=;
+        b=Z2ajfKhnQ2h3ZfKHj+6jmtRIkRSYPFfeCvUhEaqP9GyS7gW+JD+3R+041XKloVqPpE
+         XDxHga8l9hglsKe0/enbZRyNIlIZl1Vkyrv77dUZAZmTCyRJBtnQMpZs6QjExpYahQyJ
+         4L3jMUfkFlYfSbljawAOHITnw/jQ2NAu4PVZHeh5fbVpvEDSkWdZNh2UHs0F4jHB6elQ
+         qIKVOuwAKHs/U4m0UgvcaG4DT8XJtWK0ODrmUkYcXzYeUeg++SoS4cxd0MbEEIhvT0fQ
+         BnxnX7tI5qLJdCY+GMS1TKwH3ZxZJCEYQHR1Rf2lFu2WQ1CfzVQjLDFttcLALLlV/n+D
+         YtBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719014177; x=1719618977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dIy2CR/RFjZQaJDXPjHveFD5gn1nucaR+J0UOyxBY1U=;
+        b=pYIwgQhcNYqI2VzjbObNCDa/5OKuTKZwwtVzdCaTk8uB8qmyptE2kV30bzdduvM1Ti
+         2DuXER6UBvMIPA2c12w1SYVmsBQzc92yQDs+4tqN+KogqIX4HNd0vj8BnJ+6QvvTDXsw
+         XTGXQ4pOtAI9NT+11RkPy6yjDE+5GJGwapsClUJ8B4Q9EEmI582ZR0D2JFkSxST/GgYI
+         QYc0B0cCltkYoN7LWmmZWGiCcL4oUNwjdQppHVInIYbfa4wnTK5mhb3c1nwv2wanflrE
+         fR5EANiP/WDPV1JaYkBppI1ExtmySnx7X0MwPAfrZExHHZOqY30bUN3ifHd4ciZ9bz/s
+         vzgA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9ksM7eCHOu4NIN6QXeisJfVpPjq7/Nk5yJsB0ijSE7Sl2a9Oh+iO25NmpItXmH0iiyJM9DgAOopEtLz0QeRywEgFnVUHOnZCiXckV
+X-Gm-Message-State: AOJu0YyJO8DuKOyTtke9Sbjyh1IrOJWwCi2l/2aUR1Ah+TFkIjESka9M
+	d0f02M5T1kgXI2cVcNl5Ifc5juof0di0FpuzG7+l3sgSuBav2aB2QG4Zf2vf9g==
+X-Google-Smtp-Source: AGHT+IHwKZFfTcf6qeuALbcdQ3AWCrAEIufgmLdwwP3qVJwrhBc2d0hTnJg9cYYAp8QYf/0EybR/ZA==
+X-Received: by 2002:a17:902:a58b:b0:1ea:963e:2e2d with SMTP id d9443c01a7336-1fa0a29ec8cmr788815ad.24.1719014177092;
+        Fri, 21 Jun 2024 16:56:17 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819dbb963sm2168967a91.41.2024.06.21.16.56.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 16:56:16 -0700 (PDT)
+Date: Fri, 21 Jun 2024 16:56:13 -0700
+From: William McVicker <willmcvicker@google.com>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: lee@kernel.org, arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+	saravanak@google.com, semen.protsenko@linaro.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v3 1/2] mfd: syscon: add of_syscon_register_regmap() API
+Message-ID: <ZnYTHcjBo5E8Lxi0@google.com>
+References: <20240621115544.1655458-1-peter.griffin@linaro.org>
+ <20240621115544.1655458-2-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,122 +86,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240618-starqltechn_integration_upstream-v3-12-e3f6662017ac@gmail.com>
+In-Reply-To: <20240621115544.1655458-2-peter.griffin@linaro.org>
 
-Hi Dzmitry,
+On 06/21/2024, Peter Griffin wrote:
+> The of_syscon_register_regmap() API allows an externally created regmap
+> to be registered with syscon. This regmap can then be returned to client
+> drivers using the syscon_regmap_lookup_by_phandle() APIs.
+> 
+> The API is used by platforms where mmio access to the syscon registers is
+> not possible, and a underlying soc driver like exynos-pmu provides a SoC
+> specific regmap that can issue a SMC or hypervisor call to write the
+> register.
+> 
+> This approach keeps the SoC complexities out of syscon, but allows common
+> drivers such as  syscon-poweroff, syscon-reboot and friends that are used
+> by many SoCs already to be re-used.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-kernel test robot noticed the following build errors:
+Tested-by: Will McVicker <willmcvicker@google.com>
 
-[auto build test ERROR on 6906a84c482f098d31486df8dc98cead21cce2d0]
+[...]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20240618-222456
-base:   6906a84c482f098d31486df8dc98cead21cce2d0
-patch link:    https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-12-e3f6662017ac%40gmail.com
-patch subject: [PATCH v3 12/23] mfd: Add new driver for MAX77705 PMIC
-config: riscv-allmodconfig (https://download.01.org/0day-ci/archive/20240622/202406220754.8crTEWeR-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240622/202406220754.8crTEWeR-lkp@intel.com/reproduce)
+Thanks Peter! I've tested the patch series on my Pixel 6 Pro and all is working
+well. I verified all the modularized drivers load and probe successfully:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406220754.8crTEWeR-lkp@intel.com/
+root@google-gs:~# lsmod
+Module                  Size  Used by
+at24                   24576  0
+dwc3_exynos            12288  0
+i2c_exynos5            28672  0
+phy_exynos_ufs         20480  1
+ufs_exynos             32768  0
+phy_exynos5_usbdrd     36864  2
+s3c2410_wdt            24576  0
+arm_dsu_pmu            24576  0
 
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/mfd/max77705-core.c:14:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:25:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:22:
-   In file included from arch/riscv/include/asm/sections.h:9:
-   In file included from include/linux/mm.h:2214:
-   include/linux/vmstat.h:484:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     484 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     485 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:491:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     491 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     492 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:498:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     498 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:503:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     503 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     504 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:512:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     512 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     513 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/mfd/max77705-core.c:20:
->> include/linux/mfd/max77705-private.h:243:19: error: use of undeclared identifier 'MAX77705_USBC_REG_END'; did you mean 'MAX77705_PMIC_REG_END'?
-     243 |         u8 reg_muic_dump[MAX77705_USBC_REG_END];
-         |                          ^~~~~~~~~~~~~~~~~~~~~
-         |                          MAX77705_PMIC_REG_END
-   include/linux/mfd/max77705-private.h:96:2: note: 'MAX77705_PMIC_REG_END' declared here
-      96 |         MAX77705_PMIC_REG_END,
-         |         ^
-   5 warnings and 1 error generated.
-
-
-vim +243 include/linux/mfd/max77705-private.h
-
-   216	
-   217	struct max77705_dev {
-   218		struct device *dev;
-   219		struct i2c_client *i2c; /* 0xCC; Haptic, PMIC */
-   220		struct i2c_client *charger; /* 0xD2; Charger */
-   221		struct i2c_client *fuelgauge; /* 0x6C; Fuelgauge */
-   222		struct i2c_client *muic; /* 0x4A; MUIC */
-   223		struct i2c_client *debug; /* 0xC4; Debug */
-   224		struct mutex i2c_lock;
-   225	
-   226		struct regmap *regmap;
-   227		struct regmap *regmap_fg;
-   228		struct regmap *regmap_charger;
-   229		struct regmap *regmap_leds;
-   230	
-   231		int type;
-   232	
-   233		int irq;
-   234		int irq_base;
-   235		int irq_masks_cur[MAX77705_IRQ_GROUP_NR];
-   236		int irq_masks_cache[MAX77705_IRQ_GROUP_NR];
-   237		bool wakeup;
-   238		struct mutex irqlock;
-   239	
-   240	#ifdef CONFIG_HIBERNATION
-   241		/* For hibernation */
-   242		u8 reg_pmic_dump[MAX77705_PMIC_REG_END];
- > 243		u8 reg_muic_dump[MAX77705_USBC_REG_END];
-   244		u8 reg_led_dump[MAX77705_LED_REG_END];
-   245	#endif
-   246	
-   247		/* pmic VER/REV register */
-   248		u8 pmic_rev;	/* pmic Rev */
-   249		u8 pmic_ver;	/* pmic version */
-   250	
-   251		u8 cc_booting_complete;
-   252	
-   253		wait_queue_head_t queue_empty_wait_q;
-   254		int doing_irq;
-   255		int is_usbc_queue;
-   256	
-   257		struct max77705_platform_data *pdata;
-   258	};
-   259	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Will
 
