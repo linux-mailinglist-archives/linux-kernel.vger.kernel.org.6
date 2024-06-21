@@ -1,274 +1,166 @@
-Return-Path: <linux-kernel+bounces-224705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4369125E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C52A49125E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6E21F2102F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C19B287078
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22FA15665A;
-	Fri, 21 Jun 2024 12:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpVHj/kx"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB1315A87D;
+	Fri, 21 Jun 2024 12:42:27 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED9E1553A4;
-	Fri, 21 Jun 2024 12:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD041553A4;
+	Fri, 21 Jun 2024 12:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718973738; cv=none; b=I3xOoKfnuSFPaiA7IfRp3Dq983tCx8uD0omydQu8YI9cPENxL+dx/03ng1Mfka69E3xyzW5XVvhN8CZIFzp2a6/cU2LRvE7rNnjL5p+ssm/ECyxzV2sFwbzcxqYu1VUB2IwakmVA22boyYd76BxKtiyYS/k7KhgfFXBOY9MDTd4=
+	t=1718973747; cv=none; b=B+zar1U1vn/b9ZlcHKejF+GE05cgclJhuKamKi6X+pAIKZuKvwthfbBZt86JYy4zSAAmaPxqwPdXXD/Gm6tAN4Zss4dciX3aOVsnMVxDSvtDpWnrUlwkrH/tNAz0X7ZiUsu/WiMJj21iWHNDP+tAsB0n6BdOZ69u4yAujK2YYh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718973738; c=relaxed/simple;
-	bh=o0Zz1fevuySLS+ArAprXIPomY4FCfyicPzisqwGrjU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRp5LHyrSUwPZtRfRY3vhqrzkHxJfmqoMQCU6DgvtA2R41bCAsjUNX/iVF+HzKBvPFBxPhO+iBY5vFqulWCbDjlBXg3JdZYSWUHlfTlmDWc4bfOegvjX4BRgSNA6eWVTJulBosjVRi8FOI/OL6ioSOx5Iaj86vvyFxYefPZZzm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RpVHj/kx; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so132243a12.1;
-        Fri, 21 Jun 2024 05:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718973735; x=1719578535; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oi0LcVAmr1WeeM46g7NJXJsrRLdwaPetNc18z6AYroU=;
-        b=RpVHj/kxr9RFxB30to1gMh7OG2Du7W5YbaibGzjb5wL3N7Kaao7xEYDHqqvSalLz8J
-         MjZMHHxJhvws7BMD8XLD081NZgd9E4MFdSTgK3iNQ7MVlIXkZOzjXtn+zU0aerMX0CfR
-         9s/trckupMaNiN61higIn6W4IQ4dU2TRxLZ+dSzHr9FyEt88YTn6yecdWWF3c4BiDpOl
-         8NmAMedjsLp2dHey9HHEPD7EZBhgzXfnExEKKcoa3bPp9Jxp910iwtkgZ8tfUMdsur54
-         BpqM5MR12KQC2yktCQjUG9qaUqY9R5oW796xKE/zqilR3UFbQU5UeYtxYAdb1Yq2+eZX
-         h8pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718973735; x=1719578535;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oi0LcVAmr1WeeM46g7NJXJsrRLdwaPetNc18z6AYroU=;
-        b=aUGGwKCmjpZVUnNcDJM8Niqo3NnKngB2MAZUllp4+g3cXOcm/nEbKxcYF+DMVp7YJM
-         yxQQUYaQqrUyUGU2JlK5aqiS8zEbs+KjXBQf6zuLfFDqPoaqh2r42Knk/NaxH7yU6X2/
-         v9YppLsFy3Nis4pO5N4aPM+Ia27JnJQQIbZpiNWoPHAWyv6MZSb3DzfTCZItbMwtNIWm
-         gu4LXogN0icmCEuWKKqOpdbHcPTXf/iznJrRU7qgY+YPYqGjihEqJ2C3pJlMZ6T5zIOD
-         K5/6kj0SGcnjmMSS0o9xfZN8StEIKEfwh5iGZNrVxbwp7jL+KPUPIaO3Dm5meBTqx+JJ
-         vRmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEOFju4lUWHpAZdi74A/+Z7PpyAjJA67MK2FKTIfUBiViw9TxLepuBmExyhLElrPDcyVhEDJGLcLjAXA3hJMz1Iv5db6fV95vGbDqJUdKIxJwZhOyzlruPRHvensxynovUKGNTE9k2lufHSNZbCtmng30TtAM2L3m67j5PnfuqfxURgw==
-X-Gm-Message-State: AOJu0YxxmvmKQSQj5CIoek2Qn5jt42ff9D45WquwS6Au1EuGI5TJcmqA
-	LlHoXu8m1f7tTTMp4s9lhif0AWU/6UTaeLxMW8VRZK55QOuQmkmTmzE9R3Nb
-X-Google-Smtp-Source: AGHT+IHREP6VjuCYeod3fdem5l5ceB2HMxw0B8mnfswHnwlQuq+6rPxhUfpLpntKlXu1IPn/nuphXA==
-X-Received: by 2002:a50:aa9b:0:b0:57c:c171:2fb6 with SMTP id 4fb4d7f45d1cf-57d069c3a10mr6199253a12.1.1718973734850;
-        Fri, 21 Jun 2024 05:42:14 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3048ba0dsm920306a12.54.2024.06.21.05.42.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 05:42:14 -0700 (PDT)
-Date: Fri, 21 Jun 2024 15:42:11 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v3 2/3] spi: dt-bindings: fsl-dspi: Convert to yaml format
-Message-ID: <20240621124211.pueymngpq5luokvj@skbuf>
-References: <20240620-ls_qspi-v3-0-1a2afcf417e4@nxp.com>
- <20240620-ls_qspi-v3-2-1a2afcf417e4@nxp.com>
+	s=arc-20240116; t=1718973747; c=relaxed/simple;
+	bh=6/p6dMkjIn36S0TuDtGAxuaz168mw3t7ZpVlE8DqQPs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T4UNiuCx2KeG0mreTkm2BdU/IG5TuCttWg9LntC8enUrc4YTdWUF4haQcSd2l+tZp0FUo8z/JDd1WPeL/xAnuauDzoZ3uUdqdjenuez5p10s8T2JXGR9imrzARb7ze92Dt0AtiyDmcGUEdrRaBvMyRGp92zfcZFX+mlbGrxaKgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6AC90FF804;
+	Fri, 21 Jun 2024 12:42:16 +0000 (UTC)
+Message-ID: <edcd3957-0720-4ab4-bdda-58752304a53a@ghiti.fr>
+Date: Fri, 21 Jun 2024 14:42:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620-ls_qspi-v3-2-1a2afcf417e4@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+Content-Language: en-US
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: Anup Patel <apatel@ventanamicro.com>, Conor Dooley <conor@kernel.org>,
+ Yong-Xuan Wang <yongxuan.wang@sifive.com>, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
+ kvm@vger.kernel.org, ajones@ventanamicro.com, greentime.hu@sifive.com,
+ vincent.chen@sifive.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ devicetree@vger.kernel.org
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-3-yongxuan.wang@sifive.com>
+ <20240605-atrium-neuron-c2512b34d3da@spud>
+ <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
+ <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr>
+ <20240621-viewless-mural-f5992a247992@wendy>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240621-viewless-mural-f5992a247992@wendy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-On Thu, Jun 20, 2024 at 12:58:28PM -0400, Frank Li wrote:
-> Convert dt-binding spi-fsl-dspi.txt to yaml format.
-> 
-> Addtional changes during convert:
-> - compatible string "fsl,ls1028a-dspi" can be followed by
-> fsl,ls1021a-v1.0-dspi.
-> - Change "dspi0@4002c000" to "spi@4002c000" in example.
-> - Reorder properties in example.
-> - Use GIC include in example.
-> - Remove fsl,spi-cs-sck-delay and fsl,spi-sck-cs-delay by use common SPI
-> property.
-> - Use compatible string 'jedec,spi-nor' in example.
-> - Split peripheral part to fsl,spi-dspi-peripheral-props.yaml
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> 
-> ---
-> Use part of Vladimir Oltean's work at
-> https://lore.kernel.org/linux-spi/20221111224651.577729-1-vladimir.oltean@nxp.com/
 
-Hm, you took part of that but gave no attribution? The portion below ---
-is also discarded when the patch is applied, so even the link is lost,
-FYI.
+On 21/06/2024 12:17, Conor Dooley wrote:
+> On Fri, Jun 21, 2024 at 10:37:21AM +0200, Alexandre Ghiti wrote:
+>> On 20/06/2024 08:25, Anup Patel wrote:
+>>> On Wed, Jun 5, 2024 at 10:25 PM Conor Dooley <conor@kernel.org> wrote:
+>>>> On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
+>>>>> Add entries for the Svade and Svadu extensions to the riscv,isa-extensions
+>>>>> property.
+>>>>>
+>>>>> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+>>>>> ---
+>>>>>    .../devicetree/bindings/riscv/extensions.yaml | 30 +++++++++++++++++++
+>>>>>    1 file changed, 30 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+>>>>> index 468c646247aa..1e30988826b9 100644
+>>>>> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+>>>>> @@ -153,6 +153,36 @@ properties:
+>>>>>                ratified at commit 3f9ed34 ("Add ability to manually trigger
+>>>>>                workflow. (#2)") of riscv-time-compare.
+>>>>>
+>>>>> +        - const: svade
+>>>>> +          description: |
+>>>>> +            The standard Svade supervisor-level extension for raising page-fault
+>>>>> +            exceptions when PTE A/D bits need be set as ratified in the 20240213
+>>>>> +            version of the privileged ISA specification.
+>>>>> +
+>>>>> +            Both Svade and Svadu extensions control the hardware behavior when
+>>>>> +            the PTE A/D bits need to be set. The default behavior for the four
+>>>>> +            possible combinations of these extensions in the device tree are:
+>>>>> +            1. Neither svade nor svadu in DT: default to svade.
+>>>> I think this needs to be expanded on, as to why nothing means svade.
+>>> Actually if both Svade and Svadu are not present in DT then
+>>> it is left to the platform and OpenSBI does nothing.
+>>>
+>>>>> +            2. Only svade in DT: use svade.
+>>>> That's a statement of the obvious, right?
+>>>>
+>>>>> +            3. Only svadu in DT: use svadu.
+>>>> This is not relevant for Svade.
+>>>>
+>>>>> +            4. Both svade and svadu in DT: default to svade (Linux can switch to
+>>>>> +               svadu once the SBI FWFT extension is available).
+>>>> "The privilege level to which this devicetree has been provided can switch to
+>>>> Svadu if the SBI FWFT extension is available".
+>>>>
+>>>>> +        - const: svadu
+>>>>> +          description: |
+>>>>> +            The standard Svadu supervisor-level extension for hardware updating
+>>>>> +            of PTE A/D bits as ratified at commit c1abccf ("Merge pull request
+>>>>> +            #25 from ved-rivos/ratified") of riscv-svadu.
+>>>>> +
+>>>>> +            Both Svade and Svadu extensions control the hardware behavior when
+>>>>> +            the PTE A/D bits need to be set. The default behavior for the four
+>>>>> +            possible combinations of these extensions in the device tree are:
+>>>> @Anup/Drew/Alex, are we missing some wording in here about it only being
+>>>> valid to have Svadu in isolation if the provider of the devicetree has
+>>>> actually turned on Svadu? The binding says "the default behaviour", but
+>>>> it is not the "default" behaviour, the behaviour is a must AFAICT. If
+>>>> you set Svadu in isolation, you /must/ have turned it on. If you set
+>>>> Svadu and Svade, you must have Svadu turned off?
+>>> Yes, the wording should be more of requirement style using
+>>> must or may.
+>>>
+>>> How about this ?
+>>> 1) Both Svade and Svadu not present in DT => Supervisor may
+>>>       assume Svade to be present and enabled or it can discover
+>>>       based on mvendorid, marchid, and mimpid.
+>>> 2) Only Svade present in DT => Supervisor must assume Svade
+>>>       to be always enabled. (Obvious)
+>>> 3) Only Svadu present in DT => Supervisor must assume Svadu
+>>>       to be always enabled. (Obvious)
+>>
+>> I agree with all of that, but the problem is how can we guarantee that
+>> openSBI actually enabled svadu?
+> Conflation of an SBI implementation and OpenSBI aside, if the devicetree
+> property is defined to mean that "the supervisor must assume svadu to be
+> always enabled", then either it is, or the firmware's description of the
+> hardware is broken and it's not the supervisor's problem any more. It's
+> not the kernel's job to validate that the devicetree matches the
+> hardware.
+>
+>> This is not the case for now.
+> What "is not the case for now"? My understanding was that, at the
+> moment, nothing happens with Svadu in OpenSBI. In turn, this means that
+> there should be no devicetrees containing Svadu (per this binding's
+> description) and therefore no problem?
 
-> ---
->  .../devicetree/bindings/spi/fsl,dspi.yaml          | 115 +++++++++++++++++++++
->  .../spi/fsl,spi-dspi-peripheral-props.yaml         |  28 +++++
 
-For consistency, could you name this fsl,dspi-peripheral-props.yaml?
+What prevents a dtb to be passed with svadu to an old version of opensbi 
+which does not support the enablement of svadu? The svadu extension will 
+end up being present in the kernel but not enabled right?
 
->  .../devicetree/bindings/spi/spi-fsl-dspi.txt       |  65 ------------
->  .../bindings/spi/spi-peripheral-props.yaml         |   1 +
+Sorry if I'm completely off here, it really feels like I missed something :)
 
-No MAINTAINERS change for the schema path? There was a discussion with
-Krzysztof in the old thread.
 
->  4 files changed, 144 insertions(+), 65 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/fsl,dspi.yaml b/Documentation/devicetree/bindings/spi/fsl,dspi.yaml
-> new file mode 100644
-> index 0000000000000..924ba19aea017
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/fsl,dspi.yaml
-> @@ -0,0 +1,115 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spi/fsl,dspi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ARM Freescale DSPI controller
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - fsl,vf610-dspi
-> +          - fsl,ls1021a-v1.0-dspi
-> +          - fsl,ls1012a-dspi
-> +          - fsl,ls1028a-dspi
-> +          - fsl,ls1043a-dspi
-> +          - fsl,ls1046a-dspi
-> +          - fsl,ls1088a-dspi
-> +          - fsl,ls2080a-dspi
-> +          - fsl,ls2085a-dspi
-> +          - fsl,lx2160a-dspi
-> +      - items:
-> +          - enum:
-> +              - fsl,ls1012a-dspi
-> +              - fsl,ls1028a-dspi
-> +              - fsl,ls1043a-dspi
-> +              - fsl,ls1046a-dspi
-> +              - fsl,ls1088a-dspi
-> +          - const: fsl,ls1021a-v1.0-dspi
-> +      - items:
-> +          - const: fsl,ls2080a-dspi
-> +          - const: fsl,ls2085a-dspi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: dspi
-> +
-> +  pinctrl-0: true
-> +
-> +  pinctrl-names:
-> +    items:
-> +      - const: default
-
-I don't think that pinctrl properties need to be specified in the
-schema. Somehow, I think dt-schema applies
-dtschema/schemas/pinctrl/pinctrl-consumer.yaml by default every time.
-
-> +
-> +  spi-num-chipselects:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: the number of the chipselect signals.
-
-Worth mentioning that this is about _native_ chip select signals.
-cs-gpios don't count against this number.
-
-> +
-> +  big-endian:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      If present the dspi device's registers are implemented
-> +      in big endian mode.
-
-I'm not sure that this needs an explanation, it is an absolutely generic
-property with a universal meaning.
-
-> +
-> +  bus-num:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: the slave chip chipselect signal number.
-
-In fact, no, this is not a chip select number, the old documentation is
-wrong. It just gets assigned to the struct spi_controller :: bus_num.
-In my last submitted version I wrote "SoC-specific identifier for the
-SPI controller", that seems perfectly adequate.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +  - pinctrl-0
-> +  - pinctrl-names
-
-interrupts and pinctrl are not required.
-
-> +  - spi-num-chipselects
-> +
-> +allOf:
-> +  - $ref: spi-controller.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/vf610-clock.h>
-> +
-> +    spi@4002c000 {
-> +        compatible = "fsl,vf610-dspi";
-> +        reg = <0x4002c000 0x1000>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&clks VF610_CLK_DSPI0>;
-> +        clock-names = "dspi";
-> +        spi-num-chipselects = <5>;
-> +        bus-num = <0>;
-> +        pinctrl-names = "default";
-> +        pinctrl-0 = <&pinctrl_dspi0_1>;
-> +        big-endian;
-> +
-> +        flash@0 {
-> +                compatible = "jedec,spi-nor";
-> +                reg = <0>;
-> +                spi-max-frequency = <16000000>;
-> +                spi-cpol;
-> +                spi-cpha;
-> +                spi-cs-setup-delay-ns = <100>;
-> +                spi-cs-hold-delay-ns = <50>;
-> +        };
-> +    };
-> +
-
-Please remove newline at end of file.
+>
+> Thanks,
+> Conor.
 
