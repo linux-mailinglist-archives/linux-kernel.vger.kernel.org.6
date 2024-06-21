@@ -1,214 +1,121 @@
-Return-Path: <linux-kernel+bounces-225112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AABD912BE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:55:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7214E912BE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BCA41F211CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:55:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AACD01C27BA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABAB1667FA;
-	Fri, 21 Jun 2024 16:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4506916A937;
+	Fri, 21 Jun 2024 16:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ccTmi/2A"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BISOTScV"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B419815AACD
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B56515AACD;
+	Fri, 21 Jun 2024 16:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718988837; cv=none; b=bP3bKY1atoC2jXTolZDGxlklRcwVshQn1MpJ6jEz3FYNGrOgkLhgmekQXQbVrwNEmglE/qDoLRBbAh+rDP3umnB6E03j6AiQdxApYuPJ2dpiNJ88W+x8D7IIyv64vfroaHlm1tiGlyf++6Iq0pTjwA0C0Gyp/v/dRMXTL3CwKjA=
+	t=1718988879; cv=none; b=dUkZEtOIjb1p95OYhCffcZrFRZZuGapwltNRW6m6RUn2bQ5DF0FOUb+lPeasmr51jrZZzomkigIhy7/JFP3ZP7umRcZAHQAglFbFM2imwjuQTdT91ED+VWQSYJCwpbhkldveRlVVYoDAv52nqfdsZSCMbMtQBIHt3IhhM8h5I+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718988837; c=relaxed/simple;
-	bh=ZlSwBMzBHxWlNWqUuyqs5XqfDTQcYh+6+TrNc2i2/yQ=;
+	s=arc-20240116; t=1718988879; c=relaxed/simple;
+	bh=p9rgC8AhEGnxn7glekQ57NbVbRgVqVE9M3IVR52QWCA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ePvLoANAJyECE1DZlhCXl5p9JHtGDU97xhsrprdN67CMQv8MJzFSzc0n0Id0whSKIDAfU3rg0tdrJHcO4iCV/N0DMqeyZQJCCLgij7s9mhMKr5eGpURDckkpBJcMdYq+bMmut2pIXaVn8dt1ftZRAnwBc3P1bWVkfQJgzMonNbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ccTmi/2A; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718988833;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=98J4OC312FGkaowbYujp5y890n377gkjQxs8ni0Mxpk=;
-	b=ccTmi/2APyUWenhNxIimy+dhTCcliajowVVrs9jadzMwpVrgUCIfW6rkW92uh6mMBNQpv8
-	eO1wPSifzzYppcBc9yxVVR4y/fCJzJgLPpIG045LGqkbOQgEVyDO4fDaHiSSQ/4rIrAaQj
-	kaY4nUzIc/nEDRlEVybkcqJ03BJHCtY=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-411-iW8OVxfZPCiS8LTj9Vh5vQ-1; Fri,
- 21 Jun 2024 12:53:49 -0400
-X-MC-Unique: iW8OVxfZPCiS8LTj9Vh5vQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	 Content-Type:Content-Disposition:In-Reply-To; b=DhcClmtY5pl+tKOO917AwTrnRf8wsNb9qp8O50SJUxs1xx2De6v8p4jitO1LIS2gAr9tSwXPdB7eu1znmh0ZuwMOvVoRnr0je69CvZmC0KVnqRJ62WH5dTzlxv40UXhoHEx/f6lwUvmAYkncV1B5fbic4YEbmJSzAe22DScATKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BISOTScV; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 077ED40E01F9;
+	Fri, 21 Jun 2024 16:54:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id fk6kBdSQxNjV; Fri, 21 Jun 2024 16:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718988868; bh=ZxRYh4NdlH+RU/ASZJKjkd8D8lAlZCa4l3GUh195iIM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BISOTScVi+Zf7bXTrwyspo/9rkZhXd/dnuajqD5GRTgC0FFP6wUf0kIm65fun6oas
+	 v8yyW9jWhhP29sS/gwP/hr1UhcNSj7kmTLPW4Yo7pK00kbKAwcrk4AH1pb0VVpVU9d
+	 +RczkHu2laUFi//ihaNdIwcNfkV0xNQO7Aga7Eo2nOMpACtePCkOcvHkIuDPFyezBV
+	 fg7AdnXLQYo1EKfiSNGQIxzgSTxH6TerFCAKaLnZKKbBO8KCxnY6IOpONSPpA572L6
+	 JeBcBTqPOHKvxRB9WlHZ8shggBc1n8Cl4IFWXKBpbJVds02cpI0bMTBqv6xL9a0zaS
+	 sxLTZR37L6MGlY0266+nGIvIxMoOjxZZPGQKzsfXEplqxEqfu1MX8Xc3Us+Ur8TeSp
+	 R/D67bWFm8Cx5dR/BOb5CWvm96ufKoXxSBqu7hp4kj01R5QQDdqGalP4+7g/CRV3i4
+	 Q1+1uYNTs+ZRfY0d+2WVnPMbjhloQi+5csTRWYwy3Y0gnm4aEWKfBNiVLB9FAfmVa7
+	 eYRjdlkefAZE10eUcFnh4buHNWunB6lm6Dhlc3HjSQXLCPHb2U+w3OQ4R/qp7sS08b
+	 89SyiL3L0ju8AwDz6gET7XyNIdiXTPPKFS8IYK0z0pKx7K77S4kPIwgukJlma7Vzaj
+	 2YS4NihruCz1bc+gLDdcWOKY=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA93D1955DC9;
-	Fri, 21 Jun 2024 16:53:44 +0000 (UTC)
-Received: from lorien.usersys.redhat.com (unknown [10.22.9.79])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1F4C23000218;
-	Fri, 21 Jun 2024 16:53:30 +0000 (UTC)
-Date: Fri, 21 Jun 2024 12:53:27 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: torvalds@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
-	pjt@google.com, derkling@google.com, haoluo@google.com,
-	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
-	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
-	memxor@gmail.com, andrea.righi@canonical.com,
-	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 04/30] sched: Add sched_class->switching_to() and expose
- check_class_changing/changed()
-Message-ID: <20240621165327.GA51310@lorien.usersys.redhat.com>
-References: <20240618212056.2833381-1-tj@kernel.org>
- <20240618212056.2833381-5-tj@kernel.org>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EFB5540E01D6;
+	Fri, 21 Jun 2024 16:54:16 +0000 (UTC)
+Date: Fri, 21 Jun 2024 18:54:10 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Nikunj A Dadhania <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v9 03/24] virt: sev-guest: Make payload a variable length
+ array
+Message-ID: <20240621165410.GIZnWwMo80ZsPkFENV@fat_crate.local>
+References: <20240531043038.3370793-1-nikunj@amd.com>
+ <20240531043038.3370793-4-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240618212056.2833381-5-tj@kernel.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20240531043038.3370793-4-nikunj@amd.com>
 
-On Tue, Jun 18, 2024 at 11:17:19AM -1000 Tejun Heo wrote:
-> When a task switches to a new sched_class, the prev and new classes are
-> notified through ->switched_from() and ->switched_to(), respectively, after
-> the switching is done.
+On Fri, May 31, 2024 at 10:00:17AM +0530, Nikunj A Dadhania wrote:
+> Currently, guest message is PAGE_SIZE bytes and payload is hard-coded to
+> 4000 bytes, assuming snp_guest_msg_hdr structure as 96 bytes.
 > 
-> A new BPF extensible sched_class will have callbacks that allow the BPF
-> scheduler to keep track of relevant task states (like priority and cpumask).
-> Those callbacks aren't called while a task is on a different sched_class.
-> When a task comes back, we wanna tell the BPF progs the up-to-date state
+> Remove the structure size assumption and hard-coding of payload size and
+> instead use variable length array.
 
-"wanna" ?   How about "want to"?
+I don't understand here what hard-coding is being removed?
 
-That makes me wanna stop reading right there... :)
+It is simply done differently:
 
+from
 
-> before the task gets enqueued, so we need a hook which is called before the
-> switching is committed.
-> 
-> This patch adds ->switching_to() which is called during sched_class switch
-> through check_class_changing() before the task is restored. Also, this patch
-> exposes check_class_changing/changed() in kernel/sched/sched.h. They will be
-> used by the new BPF extensible sched_class to implement implicit sched_class
-> switching which is used e.g. when falling back to CFS when the BPF scheduler
-> fails or unloads.
-> 
-> This is a prep patch and doesn't cause any behavior changes. The new
-> operation and exposed functions aren't used yet.
-> 
-> v3: Refreshed on top of tip:sched/core.
-> 
-> v2: Improve patch description w/ details on planned use.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: David Vernet <dvernet@meta.com>
-> Acked-by: Josh Don <joshdon@google.com>
-> Acked-by: Hao Luo <haoluo@google.com>
-> Acked-by: Barret Rhoden <brho@google.com>
-> ---
->  kernel/sched/core.c     | 12 ++++++++++++
->  kernel/sched/sched.h    |  3 +++
->  kernel/sched/syscalls.c |  1 +
->  3 files changed, 16 insertions(+)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 48f9d00d0666..b088fbeaf26d 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2035,6 +2035,17 @@ inline int task_curr(const struct task_struct *p)
->  	return cpu_curr(task_cpu(p)) == p;
->  }
->  
-> +/*
-> + * ->switching_to() is called with the pi_lock and rq_lock held and must not
-> + * mess with locking.
-> + */
-> +void check_class_changing(struct rq *rq, struct task_struct *p,
-> +			  const struct sched_class *prev_class)
-> +{
-> +	if (prev_class != p->sched_class && p->sched_class->switching_to)
-> +		p->sched_class->switching_to(rq, p);
-> +}
+> -     snp_dev->request = alloc_shared_pages(dev, sizeof(struct snp_guest_msg));
 
-Does this really need wrapper? The compiler may help but it doesn't seem to
-but you're doing a function call and passing in prev_class just to do a
-simple check.  I guess it's not really a fast path. Just seemed like overkill.
+to
 
-I guess I did read past the commit message ...
+> +     snp_dev->request = alloc_shared_pages(dev, SNP_GUEST_MSG_SIZE);
 
+Maybe I'm missing the point here but do you mean by removing the hard-coding
+this:
 
-Cheers,
-Phil
++#define SNP_GUEST_MSG_SIZE 4096
++#define SNP_GUEST_MSG_PAYLOAD_SIZE (SNP_GUEST_MSG_SIZE - sizeof(struct snp_guest_msg))
 
+where the msg payload size will get computed at build time and you won't have
+to do that 4000 in the struct definition:
 
+	u8 payload[4000];
 
-> +
->  /*
->   * switched_from, switched_to and prio_changed must _NOT_ drop rq->lock,
->   * use the balance_callback list if you want balancing.
-> @@ -7021,6 +7032,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
->  	}
->  
->  	__setscheduler_prio(p, prio);
-> +	check_class_changing(rq, p, prev_class);
->  
->  	if (queued)
->  		enqueue_task(rq, p, queue_flag);
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index a2399ccf259a..0ed4271cedf5 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2322,6 +2322,7 @@ struct sched_class {
->  	 * cannot assume the switched_from/switched_to pair is serialized by
->  	 * rq->lock. They are however serialized by p->pi_lock.
->  	 */
-> +	void (*switching_to) (struct rq *this_rq, struct task_struct *task);
->  	void (*switched_from)(struct rq *this_rq, struct task_struct *task);
->  	void (*switched_to)  (struct rq *this_rq, struct task_struct *task);
->  	void (*reweight_task)(struct rq *this_rq, struct task_struct *task,
-> @@ -3608,6 +3609,8 @@ extern void set_load_weight(struct task_struct *p, bool update_load);
->  extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
->  extern void dequeue_task(struct rq *rq, struct task_struct *p, int flags);
->  
-> +extern void check_class_changing(struct rq *rq, struct task_struct *p,
-> +				 const struct sched_class *prev_class);
->  extern void check_class_changed(struct rq *rq, struct task_struct *p,
->  				const struct sched_class *prev_class,
->  				int oldprio);
-> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-> index ae1b42775ef9..cf189bc3dd18 100644
-> --- a/kernel/sched/syscalls.c
-> +++ b/kernel/sched/syscalls.c
-> @@ -797,6 +797,7 @@ int __sched_setscheduler(struct task_struct *p,
->  		__setscheduler_prio(p, newprio);
->  	}
->  	__setscheduler_uclamp(p, attr);
-> +	check_class_changing(rq, p, prev_class);
->  
->  	if (queued) {
->  		/*
-> -- 
-> 2.45.2
-> 
-> 
+?
 
 -- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
