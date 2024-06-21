@@ -1,147 +1,131 @@
-Return-Path: <linux-kernel+bounces-224916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2479128C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:02:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438A39128AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F90DB29A9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:58:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C2F1C25ADC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BE93D984;
-	Fri, 21 Jun 2024 14:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8483F9ED;
+	Fri, 21 Jun 2024 14:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBmZ5TVu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLNZ5w7O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD52A38DF2;
-	Fri, 21 Jun 2024 14:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20A74F20E;
+	Fri, 21 Jun 2024 14:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718981903; cv=none; b=fguw09yFig5ELZ+p5WNl5RuMtIrJ/2lQH0/upmp2lKEoYFCemm1b8cP0QXESEawa2aaESJcRhQZVWWq2QmUs1GQftcfTXmAeg8mEwWQDzUOe8xy1di1BN7da9PP7qDsfUQkxSLpmQxuoxR02yFaiA9lN3pnfwSSKBFvh/LMpitQ=
+	t=1718981916; cv=none; b=tMBzGlfMFh9E1ZhyBhdgAxHQaGm/3ppANToVIpjsIIj7rGlgO2UsPvBAEF0HhGD1zHJPj5EfLb531pR3rYxdLVMW/zcQthZeLKRX9ZHDV+tvRWHlNe6uw5l9azXz/cMe2Ftaj9l3HJlu7GyuRIsQVKo6y26f4H6f+tHDhoFwcwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718981903; c=relaxed/simple;
-	bh=/N0zW1HmRgZHiAuUDZ099fGXSiJzEZf+VzrO/OmldTc=;
+	s=arc-20240116; t=1718981916; c=relaxed/simple;
+	bh=iTy+ar2v/aPDrGFgYNM/EKjztldR0LbzdgwRrLgUwaU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UI7YZffcTLKlLkPBBgyxu4vq14Gb2VY24BMsw5dRtp9s0chJozrdHy9djBPlw2IEDzNVHX1ub9XEzjM2o1BeJOuXWCkMEN/yLGYBmbxe5TtXay3zH3NfSKB2HtKScPF4FH+FGkngOX8hv7LAkiIaDbhQn+EznrmIMpY7uDfR+Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBmZ5TVu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3495CC2BBFC;
-	Fri, 21 Jun 2024 14:58:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wv8IWBjg3DfhYD53V5+QKsczOlFV85oC0N+EcriULzuwqu7NwhzCCSoJowSc8Pms9ces6ZOBvx50SfYtF9grbm9d4yQML9i+4NH+LcIr6sG1KV8cQmorgSMc8arxPFKjft5z6SGSzRpegEhQiPOTMOswYsPYxchXKNDlEyBik5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLNZ5w7O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE66C2BBFC;
+	Fri, 21 Jun 2024 14:58:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718981903;
-	bh=/N0zW1HmRgZHiAuUDZ099fGXSiJzEZf+VzrO/OmldTc=;
+	s=k20201202; t=1718981915;
+	bh=iTy+ar2v/aPDrGFgYNM/EKjztldR0LbzdgwRrLgUwaU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZBmZ5TVueSExguMe00HI/IeWnKyG1SljHOkXRRoVKSsOdWOuj8tb0neCxlwDuyVLv
-	 dJheJL/AA37THMdxMcMKAa0Cn0zSZRunsIcIvAuIuzfUNDAojnWJBznoabATc0Nde0
-	 DS4zcDnK6RTxSDPdrrjnr8JW/Uskz2gwqdSLQGAdDQXAKIpE+Yw91n9F1E8tSfZF0a
-	 9CS6EGVny5WzwWhbr9AhZypkGqMnXeWB28TF5s9ldQtCzkPaZaIB69jEMfd1pJFI3M
-	 ofQvPbmNzlLx+Kuo134BHChi8Q8KrI7FG9tXkY4DX5cSiP0XAt6w/SUQs4wMMfvnun
-	 gsKru6MwVcq6Q==
-Date: Fri, 21 Jun 2024 15:58:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
-	greentime.hu@sifive.com, vincent.chen@sifive.com,
-	Rob Herring <robh@kernel.org>,
+	b=dLNZ5w7OhfaSkX+v1brG7veriBApUjUqkk7BE8esWrTGvoYtGimxMKK3Gl0PPc54O
+	 xknBq1zsamjVsrO3GuexV7RVQMc7uVA3vArhI2tkHqL5ya35XV3N272wNYvUFhb8RF
+	 bf9IcY23muCRsn/KvT95JTyEk9IpAxIuPZDGb1IDxGQZ22QnIKpWxNgXETaoatEjMb
+	 qGA8hBa+roOxP8p89YBJZAiZpoPt26NWrfOLECjww3vw0ggAsly7e4aGb92+iDk8ko
+	 B4qe57iWIrTC7lFt1FsMQ3nOueuVOatM7CNelfL4Aohry88xYCRBpxefZ5A/YK1bWK
+	 odNViv395bCYg==
+Date: Fri, 21 Jun 2024 15:58:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: amergnat@baylibre.com
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lee Jones <lee@kernel.org>, Flora Fu <flora.fu@mediatek.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
-Message-ID: <20240621-surging-flounder-58a653747e1d@spud>
-References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
- <20240605121512.32083-3-yongxuan.wang@sifive.com>
- <20240605-atrium-neuron-c2512b34d3da@spud>
- <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
- <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr>
- <20240621-viewless-mural-f5992a247992@wendy>
- <edcd3957-0720-4ab4-bdda-58752304a53a@ghiti.fr>
- <20240621-9bf9365533a2f8f97cbf1f5e@orel>
- <20240621-glutton-platonic-2ec41021b81b@spud>
- <20240621-a56e848050ebbf1f7394e51f@orel>
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	Nicolas Belin <nbelin@baylibre.com>
+Subject: Re: [PATCH v6 12/16] ASoC: codecs: add MT6357 support
+Message-ID: <e6f1e8b6-f542-4cc7-828d-69810209e9b3@sirena.org.uk>
+References: <20240226-audio-i350-v6-0-f754ec1a7634@baylibre.com>
+ <20240226-audio-i350-v6-12-f754ec1a7634@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8hAPi/SVNrIs/7zQ"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jw2Y2pYWLtcvlWMC"
 Content-Disposition: inline
-In-Reply-To: <20240621-a56e848050ebbf1f7394e51f@orel>
+In-Reply-To: <20240226-audio-i350-v6-12-f754ec1a7634@baylibre.com>
+X-Cookie: Your supervisor is thinking about you.
 
 
---8hAPi/SVNrIs/7zQ
-Content-Type: text/plain; charset=us-ascii
+--jw2Y2pYWLtcvlWMC
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 04:52:09PM +0200, Andrew Jones wrote:
-> On Fri, Jun 21, 2024 at 03:04:47PM GMT, Conor Dooley wrote:
-> > On Fri, Jun 21, 2024 at 03:15:10PM +0200, Andrew Jones wrote:
-> > > On Fri, Jun 21, 2024 at 02:42:15PM GMT, Alexandre Ghiti wrote:
-
-> > > I understand the concern; old SBI implementations will leave svadu in=
- the
-> > > DT but not actually enable it. Then, since svade may not be in the DT=
- if
-> > > the platform doesn't support it or it was left out on purpose, Linux =
-will
-> > > only see svadu and get unexpected exceptions. This is something we co=
-uld
-> > > force easily with QEMU and an SBI implementation which doesn't do any=
-thing
-> > > for svadu. I hope vendors of real platforms, which typically provide =
-their
-> > > own firmware and DTs, would get this right, though, especially since =
-Linux
-> > > should fail fast in their testing when they get it wrong.
-> >=20
-> > I'll admit, I wasn't really thinking here about something like QEMU that
-> > puts extensions into the dtb before their exact meanings are decided
-> > upon. I almost only ever think about "real" systems, and in those cases
-> > I would expect that if you can update the representation of the hardware
-> > provided to (or by the firmware to Linux) with new properties, then upd=
-ating
-> > the firmware itself should be possible.
-> >=20
-> > Does QEMU have the this exact problem at the moment? I know it puts
-> > Svadu in the max cpu, but does it enable the behaviour by default, even
-> > without the SBI implementation asking for it?
+On Wed, Jun 19, 2024 at 04:46:48PM +0200, amergnat@baylibre.com wrote:
+> From: Nicolas Belin <nbelin@baylibre.com>
 >=20
-> Yes, because QEMU has done hardware A/D updating since it first started
-> supporting riscv, which means it did svadu when neither svadu nor svade
-> were in the DT. The "fix" for that was to ensure we have svadu and !svade
-> by default, which means we've perfectly realized Alexandre's concern...
-> We should be able to change the named cpu types that don't support svadu
-> to only have svade in their DTs, since that would actually be fixing those
-> cpu types, but we'll need to discuss how to proceed with the generic cpu
-> types like 'max'.
+> Add the support of MT6357 PMIC audio codec.
 
-Correct me please, since I think I am misunderstanding: At the moment
-QEMU does A/D updating whether or not the SBI implantation asks for it,
-with the max CPU. The SBI implementation doesn't understand Svadu and
-won't strip it. The kernel will get a DT with Svadu in it, but Svadu will
-be enabled, so it is not a problem.
+This breaks an x86 allmodconfig build:
 
---8hAPi/SVNrIs/7zQ
+/build/stage/linux/sound/soc/codecs/mt6357.c: In function =E2=80=98mt_delay=
+_250_event=E2=80=99:
+/build/stage/linux/sound/soc/codecs/mt6357.c:993:29: error: unused variable=
+ =E2=80=98pri
+v=E2=80=99 [-Werror=3Dunused-variable]
+  993 |         struct mt6357_priv *priv =3D snd_soc_component_get_drvdata(=
+cmpnt);
+      |                             ^~~~
+/build/stage/linux/sound/soc/codecs/mt6357.c: In function =E2=80=98mt6357_p=
+latform_drive
+r_probe=E2=80=99:
+/build/stage/linux/sound/soc/codecs/mt6357.c:1867:55: error: too many argum=
+ents=20
+for format [-Werror=3Dformat-extra-args]
+ 1867 |                 return dev_err_probe(&pdev->dev, ret, "Failed to pa=
+rse d
+ts\n", __func__);
+      |                                                       ^~~~~~~~~~~~~=
+~~~~~
+~~~~~
+cc1: all warnings being treated as errors
+
+
+--jw2Y2pYWLtcvlWMC
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnWVCQAKCRB4tDGHoIJi
-0vOtAQDlXct24q3+5xwPuu3xdxQDI0UlyBOK0l80As/W7VUFAgD/dg4Zzqtg9N+j
-ocw/Xv5W3AHDcfI4joWSya+p51csqww=
-=er2I
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ1lRIACgkQJNaLcl1U
+h9A1bwf/V2Qer6d82i9EFIihaq/lGhQ/qfe9gIru+7gJsGI4DqFQH74lqhneOg79
+dbDE9ZxWZMSkRPam0eioJpIWXqp6PInaXpjQ/9S2xHdNwc1c/uUCoChWA98NXlo5
+RADmcGSWVwtbKq/nplum3hiKS2+GF5VUC6Rce/pnb22YK8EGSfgsMzdtSRVrcqaW
+3Rjoh1zf6wzyWBjQmJ1x+8C0lvVH2IbGzQStK9Khpo+Ojz5prAo6tXZA983ktHF5
+m4VZoVblQEiohNk7UTYvsUD511IEo2WS1f9NIHZcQLSzjTbst70usLoGwnA9sjmb
++0XWKkjxGKPzqT7CHhn2IW2qzOam0Q==
+=OTn4
 -----END PGP SIGNATURE-----
 
---8hAPi/SVNrIs/7zQ--
+--jw2Y2pYWLtcvlWMC--
 
