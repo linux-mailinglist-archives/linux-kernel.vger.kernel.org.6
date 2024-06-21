@@ -1,194 +1,284 @@
-Return-Path: <linux-kernel+bounces-225237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA786912DED
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:34:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A5B912DEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ADA31F217A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F83A1F219FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8598317B4FE;
-	Fri, 21 Jun 2024 19:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489A117B505;
+	Fri, 21 Jun 2024 19:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ifraVQh4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TUyuZFdn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2562B168482
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718998447; cv=none; b=YXG9g5S5pTNLbUksklCCtopLurTgND6IPCN3vGwr7I+kU8j6boJsPC51w0QlIBvicWYkWtD62Y3fDSGuP+hxZGs9fz114h0PAD0+sVKIV/pb+woT1cuRubxGji6R0cuzicvDR9C3Wqn8RSzbKMmM/ksuzOmURfNm1X08EgKhubA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718998447; c=relaxed/simple;
-	bh=IR6hXThYDmDCgdqkKA8YX+vJFJpWjz/cBEd5coBfDOo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aqmgsxE/aeZK3g2LM5/WDQ+5Efut45Zm7Vq4fHqQfbLu8OLwOhxKdr1BvRahvRLMBwqp1Ag4ME1tcoGHO7Tmirt2nW3qBTYCWLF1WvcxcOHmz5pX3z5Q4KldQIpYGPKLDBhJAQw6USZLWoTC9qoElOlJPWopA1f0Sz8Ax9WL5Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ifraVQh4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718998445;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iP+mWh+oai2lKyD3HjCZKvKZXTzmQCGTy8Y+p6hNoq4=;
-	b=ifraVQh4utRcpHPRh6wvr1tBw3OyVrJHyjzdytPr1WJmgonxFc33jsrWnTeXY7ef8T04Xx
-	2PWEbPcNSzUh8Pods4R4CjTxnfeNdQpR9g9PS3C2Vk/YRc+VlUB9rrYg5g7ppQf6jKG+8m
-	mkOZcwm1SoY6Hi9381Z9nrweTHmBrrA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-462-SRStz9fRN1ihBSdqYQnWQw-1; Fri, 21 Jun 2024 15:34:03 -0400
-X-MC-Unique: SRStz9fRN1ihBSdqYQnWQw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-421791c4eadso12621495e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:34:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718998442; x=1719603242;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iP+mWh+oai2lKyD3HjCZKvKZXTzmQCGTy8Y+p6hNoq4=;
-        b=YYuELbihtGKkGu7D1ALLIvIkfXbwQAb6CMHvjBrxo/wOHo7ev2jp4CtohwcDHtxUut
-         DZY3WV/PmawzYzZphhoGjvhxvIH2NypbMdfmhQLEDg8vytn7iTBRbe57kRv6voEmEZIZ
-         p8AXcPHJDTnTB9GexWaFTLC3Z8ZiaJuuXo6ph95vYLefWFWAz0Dykbcy1WA9BGQ5gN5e
-         rsYx1pJarR9gAQ7exmJlh7Mkk3PMx+Ko3PRcsIMi5E6vgEIEfEMD9HelemvPtgBA0a4Q
-         WHMighOZuU3JFD/2WKthJ3y6gjm2M82mR5DeMJctQYs78bAm1t4gm887ez3h6u9Yl/g9
-         aUNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzxtEh6kMfILpmDnre4bW2E7Cq2Ts/3V6WIdZ0UegHnFUPbqKe0jSrDOY3M75A9RWY7Hj+PDkiWfSCUEjvw0iaNKHfNc/tvgHBOxOI
-X-Gm-Message-State: AOJu0YyWncn2lt0VvZtKp+GVwK7uLlHBg9nsF9jIVh1K5XlNDqzbkaDb
-	vPZtGAg/s9iQdb3dd7oVf0rGVypLF5YFfaBbUBx0nB5I9adapqKHOYhKdHZbc+mxLAXskwWt+Fy
-	VxZy/4fbXPlntPpSdglXyXDbyLwguj1xuL8+MV66gQeaBHKj+FAGzbQEzlD+vhg==
-X-Received: by 2002:a05:600c:181c:b0:421:f346:6b06 with SMTP id 5b1f17b1804b1-42475298e68mr68730475e9.28.1718998442301;
-        Fri, 21 Jun 2024 12:34:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGUgi1RJw4/XDIAAjAQl+jUyCuY5PEjY+CKK/rd+iuv279adLiMlR3MbhNJooFF7lsCy198mg==
-X-Received: by 2002:a05:600c:181c:b0:421:f346:6b06 with SMTP id 5b1f17b1804b1-42475298e68mr68730275e9.28.1718998441707;
-        Fri, 21 Jun 2024 12:34:01 -0700 (PDT)
-Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0beb08sm83051605e9.17.2024.06.21.12.34.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 12:34:01 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Jocelyn Falempe <jfalempe@redhat.com>, linux-kernel@vger.kernel.org,
- Maxime Ripard <mripard@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David
- Airlie <airlied@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/ssd130x: Add drm_panic support
-In-Reply-To: <ZnWsQ36q44l4CmOJ@phenom.ffwll.local>
-References: <20240620222222.155933-1-javierm@redhat.com>
- <24205cdf-a3c6-475e-ba8a-a52d039a402d@redhat.com>
- <87h6dmjry6.fsf@minerva.mail-host-address-is-not-set>
- <87ed8qjo8y.fsf@minerva.mail-host-address-is-not-set>
- <ZnWsQ36q44l4CmOJ@phenom.ffwll.local>
-Date: Fri, 21 Jun 2024 21:34:00 +0200
-Message-ID: <87bk3ujdjr.fsf@minerva.mail-host-address-is-not-set>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEC884A32;
+	Fri, 21 Jun 2024 19:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718998577; cv=fail; b=fr1Ib5cnpV6Pptg7ligP+lQA59wqn4bM/bE5w2bU3JJtMOY50p0x6U1F5DIii+wTHdPEEJm9VH/KS1ul8HjzMDRJvVxlUXyeTHFsny3F7KOWZM/nv3OCHbrwGd4aSxtwqIoPLJ2BDBaeCIYZ4OqVe5xsvZqwdJL7hMvedl6vovA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718998577; c=relaxed/simple;
+	bh=c76phu75WXDESZ17d1De8+vRRbCOSCXGKzMDQrDmsJM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gV+SebN4GCXWBExz1EuBdZpLVO/6KJIIDaM7WLJ9QmF+WzWtko591WSYwClsEbeZJsEhNTN6yHHtiOFglQ+tpTljbEkTUbd8J0LBJT4lMS19j2oGi1p9CEc5ZGWgYJbt7UvZCTgdzxKpD5uL9RP+xa2F61loX3/Wa99TYFBKJ54=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TUyuZFdn; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718998575; x=1750534575;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=c76phu75WXDESZ17d1De8+vRRbCOSCXGKzMDQrDmsJM=;
+  b=TUyuZFdnmnzDAtSicB/hciyRxNhtPcLIrYnPcE0IPYyMTil6cGgn2GsO
+   NjKZdFGaKBQiFoxWyBouJk3WeoQOAbstXaBbLL89mBYr/CQ/ImL4iSq2m
+   bIm4oWiszJpWkkjM+uI6H8xKQiC27WC9Psq94+lYb5DR0SStk4dD8GbOS
+   CP37/L+pGPdAfoZcB9nPrUz6Wd4FQAnNHkSQOgPyf51np82Cdo7ZMQLlc
+   vjUKwjCrBIPh5040z8+luQOZO9PmnIboM7RoqFcku3eUuEzirHlEFqcm5
+   l5/UD4ykkO//+pR0tzzTtevy258lNZfAsQKCyZr376MgzdSf98P5u/tNC
+   Q==;
+X-CSE-ConnectionGUID: 0vuQRU4WRQ6s7URyfdIUPw==
+X-CSE-MsgGUID: ksKWd7XtS+KXFvBhKP5Kqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="19858848"
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="19858848"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 12:36:14 -0700
+X-CSE-ConnectionGUID: IWe1JlDfQSavXy6rPwM+ZQ==
+X-CSE-MsgGUID: TGbDlCY0RBeq0viZQWreRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="42785015"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Jun 2024 12:36:14 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 21 Jun 2024 12:36:13 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 21 Jun 2024 12:36:13 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 21 Jun 2024 12:36:13 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 21 Jun 2024 12:36:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fo/o5mfSA41vbi+ymeLJSOEUs1wD5HAdQ+b49BQoMM4QH5EG0fVkaVY6kBZ9ROkzd/gbxtoKNnCys8LR0OET5zzHZyhzr1zN6NqV8rw8GLwRtkbvqYVxaPYJDlnrg6mfHYTpVl0Az3npo9SFZtCsw1xqAc3PbAfOy78ckTQ0oKsQN6oi2pWyQfn8nFR0xvr6GGIZhbLudmCPjF2TicLe+1cwbcL42GlVabW1S7rgD3t4cLmR1utsQfNq5CUrP3xy7XqAikGmz0KYcZ/wsSniPbfyhAUmb7bSOfTUuEMjogLfpOsY078mAL35SHZqBdpezGeVt2aE013axcUdCa2K+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wJgGxp5jB6tP6LZije2+Qdn5aKbG7ez4st53aXA+Znc=;
+ b=dKnY/GVWHmZon9cBY6+BTssFLlGdtFea+T5qh6mUBWyd7SvMIO0Fzsw+RT75/d2Qtx2nQIpsEa1xexqrgyxKxR6duao1EYfv8houTehcQlvwySj5vz5Hdfs4wOcUtHB9Z4Hrk4KK6huCs/tA3yKajDSRp1JhXfUtqav1HssvUOGFdYozVHrdyClOk01t7YUZvW8xYRoBECFGUkIrR1szl7IT/B6qCit/LWUSOUdQwwgpiciPyc5IqUIA4puECrLtngqJrQwJW0Lq64DwMUkacTkGF2mfjMuqk+4ir7vgGshrxvXUC/pfcWHhR4Fy0Fs1UxsS9klEp0DWLzJ1M0alrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by IA1PR11MB7386.namprd11.prod.outlook.com (2603:10b6:208:422::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.22; Fri, 21 Jun
+ 2024 19:36:05 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.7633.021; Fri, 21 Jun 2024
+ 19:36:05 +0000
+Date: Fri, 21 Jun 2024 12:36:02 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Terry Bowman <terry.bowman@amd.com>, <dan.j.williams@intel.com>,
+	<ira.weiny@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <ming4.li@intel.com>,
+	<vishal.l.verma@intel.com>, <jim.harris@samsung.com>,
+	<ilpo.jarvinen@linux.intel.com>, <ardb@kernel.org>,
+	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Yazen.Ghannam@amd.com>,
+	<Robert.Richter@amd.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>
+Subject: Re: [RFC PATCH 3/9] PCI/portdrv: Update portdrv with an atomic
+ notifier for reporting AER internal errors
+Message-ID: <6675d622447ac_57ac2942c@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20240617200411.1426554-1-terry.bowman@amd.com>
+ <20240617200411.1426554-4-terry.bowman@amd.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240617200411.1426554-4-terry.bowman@amd.com>
+X-ClientProxiedBy: MW4PR04CA0330.namprd04.prod.outlook.com
+ (2603:10b6:303:82::35) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|IA1PR11MB7386:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc1548f7-c893-453a-efbe-08dc92296469
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|7416011|376011|1800799021|921017;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?UTkp3Wvj2vgb7++ZgIlkZgg1ES0sVk4YoxwTtB6FcGf5q+nHEegakoMfoJuF?=
+ =?us-ascii?Q?Hz8TQFNz9SgRWS7BCxz4OGhWVHWnRFuU9BsyVjQ0qtmhTSpAYjPdUX6frvr7?=
+ =?us-ascii?Q?MVHe9x3dAj/+wYsixooEbLLHJHBDG7bCpaRvM2aiNWJd6Xo55JrYgjMIaWv5?=
+ =?us-ascii?Q?rnIPJFeNBfU1MqkIjjGNglLYO66Y8uj4xRYyLT1tlU/DYBYQIGP0PTMCg0Pm?=
+ =?us-ascii?Q?7k9d3B3LXiQu0rN1JY3YdRiGwy5U2o7o901gDJAKFxkAgV1fxc4HBOEoS/3f?=
+ =?us-ascii?Q?lkP6/EuV/i+mMY7WYlxQIeVriNXp6brcG6zyZ59I5x3kY2u5W755GA+3OQi6?=
+ =?us-ascii?Q?/ksfIiEBXepyGULlCwd35MEEG3ZJ7HTguzRaPy5/AYOKl4ATvYwYyaiUJGne?=
+ =?us-ascii?Q?d5yB9bM75yRqLgLipwbKEHJcsg1P0miF2Je2DWInbRhpFeCYbxKDD1ZwlOYF?=
+ =?us-ascii?Q?+Mjt8hMWNiFfLyNUCZPjSnhvpAhbiW1lmhyt3LiGXe6BJ7/gHz9J1QppU71V?=
+ =?us-ascii?Q?XsnFwpK+c4Or6DcBEnNeapdPlXOCbS4lDVxg0OJMjifUkkUdxrrYu8IWp13d?=
+ =?us-ascii?Q?1elIzkHs29LqSy6o59p0go13l55LmlY9gIx2qmY/3TsUnZm2HD1hQlgiC/EU?=
+ =?us-ascii?Q?LHxLcbLrKe4OsHGytjHi7KB+5ZLEPoFjv96jISpcahQ4v5SlMIFofhAv/+2A?=
+ =?us-ascii?Q?YNfR1kEXwbKk5MqO7Cq2+CPwd55v5BNIRnCZ9hFOCKRvR+PNy/KLdOBpbRUy?=
+ =?us-ascii?Q?V83mUZc/jAm4Dmpx1YguCAC8fRU62jYrhady3MnPbGuhNmrozJxTvlB2n606?=
+ =?us-ascii?Q?9Iy2jcH/X0B4/ofTIGE5Eur2v/ey9PZ7e06ky6ckCebhEwtIhnPUW/z9A+wx?=
+ =?us-ascii?Q?pI7p/AQBenPPW+Nh7DKQUygYGeRhiaeLiZK+BBtqNDfTwVPhDN3aZz9XJjr9?=
+ =?us-ascii?Q?vtgWI9TzOvWUI+ihRIZz0QjBQaM4JCDC41utV5LB/dd0Fa1ndnAqS3NJgyGa?=
+ =?us-ascii?Q?Pufrb1Mhg7lIV1Wmy0ZDMrEGmkOeiT6MjylVOMfc7hcFcYL1Suq7cvhaZO/r?=
+ =?us-ascii?Q?Ef3viCZN1quNx01TRj1H/UZkzMd7NxSZZEn6NuApzP2gkxTvaDjAwzwwdgPk?=
+ =?us-ascii?Q?3/jjV2BeFx6MvOjojHoPyaPY79K5Poid1VZVkKNknYLS+RF7yzfSKcaQz28n?=
+ =?us-ascii?Q?l+VwPW54igLpc//aBHhHk0SPtrieJMmlOkHbtyKj++i1DBl8pRCW/Jua5g2a?=
+ =?us-ascii?Q?8fsSdX+KaD6MG/4mOyENk7uzfQxBAETlC60vJz7HhsEzeZlY6dMwuNuigmaN?=
+ =?us-ascii?Q?gutFMHDxDZakTnqzFV/onM1WYflD/cGOZoYbo3r2fYTfasvPRPKN16RzDoHm?=
+ =?us-ascii?Q?+vOps1w=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021)(921017);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?q30FVYeUULFU1uBCeGp5vjajx4iGG3KWK3z6h3DZcqTpvU4oiJyxCnTw3zQ2?=
+ =?us-ascii?Q?+DZCslybP/oMYfBlzoyzwPxHHxR5fIhyCH21B6mTkM+A68xOIH6V2YH+msyH?=
+ =?us-ascii?Q?3mWTN9tXvchmXRc8G3h5HOKXEvTa2qRKZkWv7Huun0U3bv3hKqcONprlEJ2N?=
+ =?us-ascii?Q?d4sgOpes0RHdj8H5Q6+sqFqt3hn8zJx2PMdNVOBdn3VlMtTdXErqKG2K1eNH?=
+ =?us-ascii?Q?7Xt+1DemnFj4EA+l45cfV6eeLOsPML+mM5erlrW7sz0/0UdEZxpO5DxnfmYN?=
+ =?us-ascii?Q?2jsPdUCARMT8JiYrc3XzDhHrDirZUrZd4UpxG4sS+iA5n9IVtLkLus4/MrAt?=
+ =?us-ascii?Q?IQW7gwYc4VNWk0kL6XlKtywZksbCLD7GSoYZ2idYVAR/6RS5pcyb6/4cvw15?=
+ =?us-ascii?Q?2+mUl5TXwwk9ncH7tP8bzI2+FocWZGsnCTKCmOBPt/67EwdxOqCwxS+b4xI4?=
+ =?us-ascii?Q?xsB941AN9WUa0VZtfx/f71o4RxhWYKBkOwGWGLxUIjL0Ygbjjak13I+wFpxi?=
+ =?us-ascii?Q?AoXXNxMWmloiSMoBmwgKosjohd8/KdJRM+J8C4Dzf/k2r93/iulwzIXkPeOL?=
+ =?us-ascii?Q?4ozE3MPtOVggIjg2eXb0Y0FuRCxmSXPi1f1HsYCrhyOVvizfVDdIOxp7gn1x?=
+ =?us-ascii?Q?4A+5+MKN+S0yxruPsNZOISGaDf9L6+ZP6+pvrXUkcvlDflGI7GPcqi8G38fs?=
+ =?us-ascii?Q?eoXW1s7d3dwWLy4LnMJN/cx3Ly66nuh05ULAAlRqz+lOO8ltbrt2It4LWxE0?=
+ =?us-ascii?Q?Os5UO9GgYgp5+MGihzPYfZSwv9T/Rs0FcPcMWQPUIBc0sYpitZSXJW41vTqB?=
+ =?us-ascii?Q?y35JpfT7j/J+THyc3bKYQjHceHQt0n+wqJCVYeh0YyGrKyZPEN8aOE7LSyX6?=
+ =?us-ascii?Q?H2OfLmkbb/7aomm+oCbTvU0jFirEFddH6AvXoSDiwgG+E9Mnjvl1YqkDfMiW?=
+ =?us-ascii?Q?KA1cxHmC2EH+kI18mo6ZkDjj+bznE9ZE4w4Yift0v+ZsKN6e/yLF2Td93S8O?=
+ =?us-ascii?Q?MenNyeFavxn6W7heTEXs9Hn+NInTyMpF5rCIkLpbRd1elZCdsywGdyh8u7VN?=
+ =?us-ascii?Q?D8IL9NyxT4Hj3mEjE8H/I612jaE3z4UNsFuOUlQc773f1T8PFA+U+/UoHB+Q?=
+ =?us-ascii?Q?pmg2t6U3CfKmH8A+min2JMMDSCWX1cXx0rWZViGgzzePgHhJnXpXLiERo3Qa?=
+ =?us-ascii?Q?e159eo6t55qQAjMGLUefO9nf+qMeB/GG2t2ZXTlGzzOxfmltrL9lEQ2RfmQ2?=
+ =?us-ascii?Q?44urLihaQ++fzuW03ekk4uGHgDZBqSWkHqxOu2s5x1xPX/DZzMQpVYXqDDv8?=
+ =?us-ascii?Q?2HNlUP5WDGt9EVXQQkMft7EmO9KjncFigLAqGL6HumM4hGgo7siYf4uqf9xl?=
+ =?us-ascii?Q?AlYHf8dbPdh+3BXtU/OOlbFo/KX2tE4af37ZEXkyPVW0ZujYDhvzjySqBoGq?=
+ =?us-ascii?Q?PQ+F4+hNPOB4k81Z8/EdyNhnXKWwayD2qeJbrcEAEcQEfQ5L3U8soZNHgEke?=
+ =?us-ascii?Q?7UM2vOPyEp2nF7TkV50Fwjb0lBY9R4YDEcQHNeRvR4wFV+exxVHgBjbupVse?=
+ =?us-ascii?Q?Z21o+hX0TFCmhkcCof77fbE+UfdWl+Ut0SGxzLv5Oe7twcFPhxgTXzvWXzxp?=
+ =?us-ascii?Q?Eg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc1548f7-c893-453a-efbe-08dc92296469
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 19:36:05.7208
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ze6wF55Pl5NdKtSM4Tl9Yx+TbZCVY/iOgdUSeu3Bx3zzCGrYAfPvIB0o7cB5Xp3Ki4cAmiVRZVqD8lTf0aebA7MXYKBoPrEAsdu4ez9j5sY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7386
+X-OriginatorOrg: intel.com
 
-Daniel Vetter <daniel@ffwll.ch> writes:
+Terry Bowman wrote:
+> PCIe port devices are bound to portdrv, the PCIe port bus driver. portdrv
+> does not implement an AER correctable handler (CE) but does implement the
+> AER uncorrectable error (UCE). The UCE handler is fairly straightforward
+> in that it only checks for frozen error state and returns the next step
+> for recovery accordingly.
+> 
+> As a result, port devices relying on AER correctable internal errors (CIE)
+> and AER uncorrectable internal errors (UIE) will not be handled. Note,
+> the PCIe spec indicates AER CIE/UIE can be used to report implementation
+> specific errors.[1]
+> 
+> CXL root ports, CXL downstream switch ports, and CXL upstream switch ports
+> are examples of devices using the AER CIE/UIE for implementation specific
+> purposes. These CXL ports use the AER interrupt and AER CIE/UIE status to
+> report CXL RAS errors.[2]
+> 
+> Add an atomic notifier to portdrv's CE/UCE handlers. Use the atomic
+> notifier to report CIE/UIE errors to the registered functions. This will
+> require adding a CE handler and updating the existing UCE handler.
+> 
+> For the UCE handler, the CXL spec states UIE errors should return need
+> reset: "The only method of recovering from an Uncorrectable Internal Error
+> is reset or hardware replacement."[1]
+> 
+> [1] PCI6.0 - 6.2.10 Internal Errors
+> [2] CXL3.1 - 12.2.2 CXL Root Ports, Downstream Switch Ports, and
+>              Upstream Switch Ports
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
+> ---
+>  drivers/pci/pcie/portdrv.c | 32 ++++++++++++++++++++++++++++++++
+>  drivers/pci/pcie/portdrv.h |  2 ++
+>  2 files changed, 34 insertions(+)
+> 
+> diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
+> index 14a4b89a3b83..86d80e0e9606 100644
+> --- a/drivers/pci/pcie/portdrv.c
+> +++ b/drivers/pci/pcie/portdrv.c
+> @@ -37,6 +37,9 @@ struct portdrv_service_data {
+>  	u32 service;
+>  };
+>  
+> +ATOMIC_NOTIFIER_HEAD(portdrv_aer_internal_err_chain);
+> +EXPORT_SYMBOL_GPL(portdrv_aer_internal_err_chain);
+> +
+>  /**
+>   * release_pcie_device - free PCI Express port service device structure
+>   * @dev: Port service device to release
+> @@ -745,11 +748,39 @@ static void pcie_portdrv_shutdown(struct pci_dev *dev)
+>  static pci_ers_result_t pcie_portdrv_error_detected(struct pci_dev *dev,
+>  					pci_channel_state_t error)
+>  {
+> +	if (dev->aer_cap) {
+> +		u32 status;
+> +
+> +		pci_read_config_dword(dev, dev->aer_cap + PCI_ERR_UNCOR_STATUS,
+> +				      &status);
+> +
+> +		if (status & PCI_ERR_UNC_INTN) {
+> +			atomic_notifier_call_chain(&portdrv_aer_internal_err_chain,
+> +						   AER_FATAL, (void *)dev);
+> +			return PCI_ERS_RESULT_NEED_RESET;
+> +		}
+> +	}
+> +
 
-Hello Sima,
+Oh, this is a finer grained  / lower-level location than I was
+expecting. I was expecting that the notifier was just conveying the port
+interrupt notification to a driver that knew how to take the next step.
+This pcie_portdrv_error_detected() is a notification that is already
+"downstream" of the AER notification.
 
-Thanks for your comment and explanations.
+If PCIe does not care about CIE and UIE then don't make it care, but
+redirect the notifications to the CXL side that may care.
 
-> On Fri, Jun 21, 2024 at 05:42:53PM +0200, Javier Martinez Canillas wrote:
->> Javier Martinez Canillas <javierm@redhat.com> writes:
->> 
->> > Jocelyn Falempe <jfalempe@redhat.com> writes:
->> >
->> > Hello Jocelyn, thanks for your feedback!
->> >
->> >> On 21/06/2024 00:22, Javier Martinez Canillas wrote:
->> >>> Add support for the drm_panic infrastructure, which allows to display
->> >>> a user friendly message on the screen when a Linux kernel panic occurs.
->> >>> 
->> >>> The display controller doesn't scanout the framebuffer, but instead the
->> >>> pixels are sent to the device using a transport bus. For this reason, a
->> >>> .panic_flush handler is needed to flush the panic image to the display.
->> >>
->> >> Thanks for this patch, that's really cool that drm_panic can work on 
->> >> this device too.
->> >>
->> >
->> > Indeed, that's why I did it. Just to see if it could work :)
->> >
->> > [...]
->> >
->> >>> +static void ssd130x_primary_plane_helper_panic_flush(struct drm_plane *plane)
->> >>> +{
->> >>> +	struct drm_plane_state *plane_state = plane->state;
->> >>> +	struct ssd130x_plane_state *ssd130x_plane_state = to_ssd130x_plane_state(plane_state);
->> >>> +	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(plane_state);
->> >>> +	struct drm_crtc *crtc = plane_state->crtc;
->> >>> +	struct ssd130x_crtc_state *ssd130x_crtc_state = to_ssd130x_crtc_state(crtc->state);
->> >>> +
->> >>> +	ssd130x_fb_blit_rect(plane_state->fb, &shadow_plane_state->data[0], &plane_state->dst,
->> >>> +			     ssd130x_plane_state->buffer, ssd130x_crtc_state->data_array,
->> >>> +			     &shadow_plane_state->fmtcnv_state);
->> >>
->> >> ssd130x_fb_blit_rect() will call regmap->write(), which involve mutex 
->> >> and might sleep. And if the mutex is taken when the panic occurs, it 
->> >> might deadlock the panic handling.
->> >
->> > That's a good point and I something haven't considered...
->> >
->> >> One solution would be to configure the regmap with config->fast_io and 
->> >> config->use_raw_spinlock, and check that the lock is available with 
->> >> try_lock(map->raw_spin_lock)
->> >> But that means it will waste cpu cycle with busy waiting for normal 
->> >> operation, which is not good.
->> >>
->> >
->> > Yeah, I would prefer to not change the driver for normal operation.
->> >
->> 
->> Another option, that I believe makes more sense, is to just disable the
->> regmap locking (using struct regmap_config.disable_locking field [0]).
->> 
->> Since this regmap is not shared with other drivers and so any concurrent
->> access should already be prevented by the DRM core locking scheme.
->> 
->> Is my understanding correct?
->
-> Quick irc discussion summary: Since these are panels that sit on i2c/spi
-> buses, you need to put the raw spinlock panic locking into these
-> subsystems. Which is going to be extreme amounts of fun, becuase:
->
-> - You need to protect innermost register access with a raw spinlock, but
->   enough so that every access is still consistent.
->
-> - You need separate panic paths which avoid all the existing subsystem
->   locking (i2c/spi have userspace apis, so they need mutexes) and only
->   rely on the caller having done the raw spinlock trylocking.
->
-> - Bonus points: Who even owns that raw spinlock ...
->
-> I'm afraid, this is going to be a tough nut to crack :-/
->
+Leave the portdrv handlers PCIe native as much as possible.
 
-Yeah, not worth the effort then. I'll just drop this patch.
-
-> Cheers, Sima
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
->
-
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+Now, I have not thought through the full implications of that
+suggestion, but for now am reacting to this AER -> PCIe err_handler ->
+CXL notfier as potentially more awkward than AER -> CXL notifier. It's a
+separate error handling domain that the PCIe side likely does not want
+to worry about. PCIe side is only responsible for allowing CXL to
+register for the notifications beacuse the AER interrupt is shared.
 
