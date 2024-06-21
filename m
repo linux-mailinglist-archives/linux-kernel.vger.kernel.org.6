@@ -1,167 +1,125 @@
-Return-Path: <linux-kernel+bounces-225349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B5B912F71
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:23:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D04912F78
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7427B1C221CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:23:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 510D2B21BA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F0317C239;
-	Fri, 21 Jun 2024 21:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F4017C7BC;
+	Fri, 21 Jun 2024 21:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIjoAo9d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w6/pmwDl"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD52D4A3F;
-	Fri, 21 Jun 2024 21:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD32417C7B5
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719005002; cv=none; b=YU+BxoZn1K6sxyI/7Ma29Z9wo0h2PJQVq1+0W2dqeWUajwVvXrpSU+TZCJTL9RkxhXbiatqiEWmgyCXmiUhBhGZJR8nfsBpgkOYfk3x2a00j7TsEu1uXDO3NdrqQivAq5t65WP/oyOzDKNTQ3CMJ5ltAABg4yTU3io7dCyiewbY=
+	t=1719005007; cv=none; b=tb3sqAXsoIThhu/+L078AXyteTnO9xyeMiME2/boonaUw99lVNTRBV9a20nxco7Kta0wezSj/OjlOZ0MVhVQ44WQcSxvchE0vWMIiHdyCkUJZNKVE5O7Y7L7oJfHlI/GYXbEggdBmU32Ti/bixQStXjt5H5FAxm1rgmeZ+8KtrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719005002; c=relaxed/simple;
-	bh=N4ivVfcXJIy+QZ0gUdEeSMav33R3fT7xLRRwMgFHS5Q=;
+	s=arc-20240116; t=1719005007; c=relaxed/simple;
+	bh=ZVeztje9EUQdYpB4LE1FyD1iGFLoRxXhdVQcdodG+ak=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tLfjNcD60yOIApyoRlTz4LMauwUZqmDE3f0q09H33ae+0p7Y+6vN6dHS4BrJ9QyJCgxeTRaArtQQzDqz5P1JPYRKHcr4ytLeqGNMvUsob/cjTkLvOdDDN7f3/LQ12LHrezBXSJ+p/TzP4lykAjrqHDiWFryOpn3Zy9tOnJpEUSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIjoAo9d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D506C2BBFC;
-	Fri, 21 Jun 2024 21:23:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719005001;
-	bh=N4ivVfcXJIy+QZ0gUdEeSMav33R3fT7xLRRwMgFHS5Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KIjoAo9dVPq/wWSw7vIa+LUCdLv/cy0F+UpK0V0o6GG4XtJGpPyWD7XS6VYSOCLbE
-	 96RxruHq6fyaGWj3Fcup4m2H2zjHCiaQsk2cwLejwCGTDk1h+CDL9GsEpDBeR+358D
-	 eVikhWol4HvrtRbxIVuPnG8/eXP7DgKHQJuJc+DHT3QbmE/Ug77DxemimyxG+bwVLd
-	 ayCRr4u6b+0c/fvSbv7PmeG3MeTeJovAWkBSk4O562mzy8+vpo9vIy6eLQV2Tb8vex
-	 6s75hABhrSF177DZx/ED7ySzT1gVAEo80N7qgJFHW46uWn0nuJwTC9rbYIeMvVkLYN
-	 /Y3Eol8tZh44w==
-Date: Fri, 21 Jun 2024 14:23:20 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Hannes Reinecke <hare@suse.de>, axboe@kernel.dk, kbusch@kernel.org,
-	hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
-	ojaswin@linux.ibm.com, linux-aio@kvack.org,
-	linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org,
-	nilay@linux.ibm.com, ritesh.list@gmail.com, willy@infradead.org,
-	agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
-	dm-devel@lists.linux.dev
-Subject: Re: [Patch v9 07/10] block: Add fops atomic write support
-Message-ID: <20240621212320.GE103020@frogsfrogsfrogs>
-References: <20240620125359.2684798-1-john.g.garry@oracle.com>
- <20240620125359.2684798-8-john.g.garry@oracle.com>
- <680ce641-729b-4150-b875-531a98657682@suse.de>
- <d3332752-52b1-4d24-88cf-3b5e7aa4b74a@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mowdFGyGDKknb3Wqs176I9d0KK0YCYANX1g07A5fZoGutWdNRWjmlTKTa1joc9N0dUNslszxXulHQuyHnWeWlzQ0eeGEWnvmHi5Q93KlgumQEm7RzDL1sFvfMl2ZgmWp0DA9ocFvDnMChiJVLAWlreHYmWTxPixuN+xlvAf84MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w6/pmwDl; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cdcd26d61so415602e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:23:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719005003; x=1719609803; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mh1wRjWN5t1/jKB73EzwYyPfPHKCwEFO5625un8IksA=;
+        b=w6/pmwDlIY2hF9rqxlGgTswRk2UDl5WyYIZlkmhKVnp69xvTOH4N6mjxqoI6aRw7uS
+         8ud3bfEKmrfi6Te3ADlINGp3MAxlINhA2vnHiqeVGh3llKEiEmksEwVCbrMUEzXho8ZC
+         lA70gVrsndGDBmTIIvCBw85/LtxGOzYR9c0yZUPBiqXwfYBOJAbXi51e9NJjuvi9VwRN
+         Y/mkOx6goweo1QP8D5P7FT/cezthmulVXb/WjDBQNFda25AoyF/dDzjIZdczWTauc/95
+         5sUdL9YDb+dWh+UzgDqwYOXMtO/HjUPzdFDPUzuHDoyElIjcNXsM/fgqHpOVVOXTjDxP
+         tsBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719005003; x=1719609803;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mh1wRjWN5t1/jKB73EzwYyPfPHKCwEFO5625un8IksA=;
+        b=SYcqcJce5w7+5DGtHDGNbnplTFvRfQIrG02nWiLgxZoYz8knRRwFdB5S/bhH7gO2Li
+         du1pRbaM8y2Jb4W2HxtIw89fDyuqBE4Khuqcj8/Q0q3D46Z9zUSjKK3aFwlZKcds5hmd
+         VQFv/GVcX7KQtpWi5YJFAwI4LV0QFq9+ZH9FSS7zF2HacMqeBSlU2AOPCtdKhVrIhNoP
+         VaiKwFZwwaqkXYiJmu+2Z1CY644OKmMj8X4VJbRKljejU/Xy+102R1tXLgdkxFlylshs
+         1q0WTXb5iR6kBJofsIa9BrNsH2jRAg+zxFFr8lEO6S01mv7fMJ3g8iB+n1httRtswC73
+         vC5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2g7N9AN/uYsVPJ8rD6uMVx2DO0dVkRJdjOISk0amUa4IO8BsndhvPs72tV0k0ONxPQ5tasYNANzs+C7tje40UgpjUfYYOdQDXOB5T
+X-Gm-Message-State: AOJu0YxOMWIdT7ngFM0EqGPxlt1BrGWA58aT99WECXvSOBFB9H3P9gC/
+	7AIf5jL2cS89Mj0TEvAzDOxR/pnNjKsBGDxAGFKeayF1z8BCBUifriQB8JWy8iE=
+X-Google-Smtp-Source: AGHT+IEEws3Gu1xymwfcBekyq/pzjX/PeYddoBuwFa0zEsRP4l+K5qUunAwj4KATjHZ6K+N3Ske+RA==
+X-Received: by 2002:a05:6512:324f:b0:52b:8ef7:bf1f with SMTP id 2adb3069b0e04-52ccaa33fa2mr5352345e87.17.1719005002922;
+        Fri, 21 Jun 2024 14:23:22 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63b4a0bsm309018e87.20.2024.06.21.14.23.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 14:23:22 -0700 (PDT)
+Date: Sat, 22 Jun 2024 00:23:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: sboyd@kernel.org, andersson@kernel.org, bjorn.andersson@linaro.org, 
+	david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, 
+	robh@kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: Re: [PATCH v9 4/8] remoteproc: qcom: Add ssr subdevice identifier
+Message-ID: <zyyh56ohozogcgms73jh2c33i3c5k7cazk5godm5sxxnztddqk@h2xagcardsw3>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-5-quic_gokulsri@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d3332752-52b1-4d24-88cf-3b5e7aa4b74a@oracle.com>
+In-Reply-To: <20240621114659.2958170-5-quic_gokulsri@quicinc.com>
 
-On Fri, Jun 21, 2024 at 01:02:34PM +0100, John Garry wrote:
-> On 21/06/2024 07:13, Hannes Reinecke wrote:
-> > On 6/20/24 14:53, John Garry wrote:
-> > > Support atomic writes by submitting a single BIO with the REQ_ATOMIC set.
-> > > 
-> > > It must be ensured that the atomic write adheres to its rules, like
-> > > naturally aligned offset, so call blkdev_dio_invalid() ->
-> > > blkdev_atomic_write_valid() [with renaming blkdev_dio_unaligned() to
-> > > blkdev_dio_invalid()] for this purpose. The BIO submission path currently
-> > > checks for atomic writes which are too large, so no need to check here.
-> > > 
-> > > In blkdev_direct_IO(), if the nr_pages exceeds BIO_MAX_VECS, then we
-> > > cannot
-> > > produce a single BIO, so error in this case.
-> > > 
-> > > Finally set FMODE_CAN_ATOMIC_WRITE when the bdev can support atomic
-> > > writes
-> > > and the associated file flag is for O_DIRECT.
-> > > 
-> > > Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >   block/fops.c | 20 +++++++++++++++++---
-> > >   1 file changed, 17 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/block/fops.c b/block/fops.c
-> > > index 376265935714..be36c9fbd500 100644
-> > > --- a/block/fops.c
-> > > +++ b/block/fops.c
-> > > @@ -34,9 +34,12 @@ static blk_opf_t dio_bio_write_op(struct kiocb *iocb)
-> > >       return opf;
-> > >   }
-> > > -static bool blkdev_dio_unaligned(struct block_device *bdev, loff_t pos,
-> > > -                  struct iov_iter *iter)
-> > > +static bool blkdev_dio_invalid(struct block_device *bdev, loff_t pos,
-> > > +                struct iov_iter *iter, bool is_atomic)
-> > >   {
-> > > +    if (is_atomic && !generic_atomic_write_valid(iter, pos))
-> > > +        return true;
-> > > +
-> > >       return pos & (bdev_logical_block_size(bdev) - 1) ||
-> > >           !bdev_iter_is_aligned(bdev, iter);
-> > >   }
-> > > @@ -72,6 +75,8 @@ static ssize_t __blkdev_direct_IO_simple(struct
-> > > kiocb *iocb,
-> > >       bio.bi_iter.bi_sector = pos >> SECTOR_SHIFT;
-> > >       bio.bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
-> > >       bio.bi_ioprio = iocb->ki_ioprio;
-> > > +    if (iocb->ki_flags & IOCB_ATOMIC)
-> > > +        bio.bi_opf |= REQ_ATOMIC;
-> > >       ret = bio_iov_iter_get_pages(&bio, iter);
-> > >       if (unlikely(ret))
-> > > @@ -343,6 +348,9 @@ static ssize_t __blkdev_direct_IO_async(struct
-> > > kiocb *iocb,
-> > >           task_io_account_write(bio->bi_iter.bi_size);
-> > >       }
-> > > +    if (iocb->ki_flags & IOCB_ATOMIC)
-> > > +        bio->bi_opf |= REQ_ATOMIC;
-> > > +
-> > >       if (iocb->ki_flags & IOCB_NOWAIT)
-> > >           bio->bi_opf |= REQ_NOWAIT;
-> > > @@ -359,12 +367,13 @@ static ssize_t __blkdev_direct_IO_async(struct
-> > > kiocb *iocb,
-> > >   static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct
-> > > iov_iter *iter)
-> > >   {
-> > >       struct block_device *bdev = I_BDEV(iocb->ki_filp->f_mapping->host);
-> > > +    bool is_atomic = iocb->ki_flags & IOCB_ATOMIC;
-> > >       unsigned int nr_pages;
-> > >       if (!iov_iter_count(iter))
-> > >           return 0;
-> > > -    if (blkdev_dio_unaligned(bdev, iocb->ki_pos, iter))
-> > > +    if (blkdev_dio_invalid(bdev, iocb->ki_pos, iter, is_atomic))
-> > 
-> > Why not passing in iocb->ki_flags here?
-> > Or, indeed, the entire iocb?
+On Fri, Jun 21, 2024 at 05:16:55PM GMT, Gokul Sriram Palanisamy wrote:
+> Add name for ssr subdevice on IPQ8074 SoC.
+
+Is it SSR or ssr? Why is it necessary?
+
 > 
-> We could (pass the iocb), but we only need to look up one thing - ki_pos. We
-> already have is_atomic local. I am just trying to make things as efficient
-> as possible. If you really think it's better (to pass iocb), then it can be
-> changed.
+> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
 
-I certainly do. ;)
+Three authors for a single-line patch?
 
-https://lore.kernel.org/linux-xfs/20240620212401.GA3058325@frogsfrogsfrogs/
-
---D
-
-> Thanks,
-> John
+> ---
+>  drivers/remoteproc/qcom_q6v5_wcss.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
+> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+> index d8b79765d5c6..06936ca1d079 100644
+> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+> @@ -1170,6 +1170,7 @@ static const struct wcss_data wcss_ipq8074_res_init = {
+>  	.crash_reason_smem = WCSS_CRASH_REASON,
+>  	.aon_reset_required = true,
+>  	.wcss_q6_reset_required = true,
+> +	.ssr_name = "q6wcss",
+>  	.ops = &q6v5_wcss_ipq8074_ops,
+>  	.requires_force_stop = true,
+>  	.need_mem_protection = true,
+> -- 
+> 2.34.1
 > 
+
+-- 
+With best wishes
+Dmitry
 
