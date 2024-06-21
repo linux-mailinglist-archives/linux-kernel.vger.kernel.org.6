@@ -1,148 +1,189 @@
-Return-Path: <linux-kernel+bounces-225453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52AA3913093
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:48:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41476913096
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835F51C210B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEA021F22FCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D328016F0CA;
-	Fri, 21 Jun 2024 22:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9D116F0D0;
+	Fri, 21 Jun 2024 22:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Xsj/n/MO"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M7wl2ioZ"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9CE15D1;
-	Fri, 21 Jun 2024 22:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F193E15D1
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719010107; cv=none; b=KTafNaG+2Gy3sSMn7+qSu/SwpWBXfUCud3lCVIli6fShUhCU+rEqoVmgS69eq937Akf60N0If6y/uAHdlSBvTQlWD0g8k7LxbRK4Gy3aMOZzNNYMt95VPjsMsVbCboxGXx6ykfP41bldaDPaTrhuYZ5LcZyRWAg22bro5A7K7nU=
+	t=1719010247; cv=none; b=fsMFibDRl0SdyF28KI1B73FFA1/3qg728rvlkOlTvnIo0ORsbzjIFIWm8iDkL9hrAWNMx4XZ2FyynuwQQJIuzq8oW8qt/+zd4tLKFwTmKgOqG5vpcKQvD9ftFtec4VJV7AEWr7Yu7Jn5P17/+5GWPZ47rMW5w0YqGGDC3UkNHwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719010107; c=relaxed/simple;
-	bh=+ixQElxwwpzXsjGVjQW/At/HLoIvmODruZlbcS93qGw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LjbPqKoQEhLvn/2p6a8I5tg4pNX2O4PHJH/lHi2YMdwhvSpfCdE/WeVxajKSes4EafxBU2i2wV4ZgNB1kPwFNrkTEpQtgtfS4tIBePJOuTPawJgqgzNyhcB9BV8kXS2WvoWAhYzEZAPEOKx00rwBm/0F6Wkd62rNvznXpMCe1Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Xsj/n/MO; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1719010247; c=relaxed/simple;
+	bh=qdXb7h2xSSWEhzC4Qt2mxzTAvZLwyXuoc2FCs8MmEQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ArNSMDf0785XbSUI8q4hhSKjHfKIS1BoOAjRIRyRUf7C4WXqYOiP2qm2HyEhpH1QUQCjBU3JgdFYGY1Dh/bIVl931wK9WeC5GHmqp2RmbiVFfBmeF5MfS+Y2wWr/rx8wJnjsFTBJC61OF4uTeRESjgekXuaLroYUngYD28lj1NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=M7wl2ioZ; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-706264e1692so2040184b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:50:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1719010106; x=1750546106;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xkj6QHoS5bB9dt0+gxdhy2HS7dkn7KEGOuZp/Sviik8=;
-  b=Xsj/n/MOTmGv6x/5v4uCh/5+dT8iM6y30e8zK2h7xtwMsQ4rUJalvp0U
-   Ru6H6liT4G29OVhvqXmN8EmeUm+OwS4jEmY/dI0VVNte7UZs9e3fDcKRQ
-   VSKrW57Fn+dsXs6xhY5egU2hMPlpZQ6H94cdF5YTd7fct/nDtHNLG2j1O
-   w=;
-X-IronPort-AV: E=Sophos;i="6.08,256,1712620800"; 
-   d="scan'208";a="662229041"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 22:48:22 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:21821]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.145:2525] with esmtp (Farcaster)
- id 35a9dbf0-b590-4b1f-94b4-18f8a44e83fa; Fri, 21 Jun 2024 22:48:20 +0000 (UTC)
-X-Farcaster-Flow-ID: 35a9dbf0-b590-4b1f-94b4-18f8a44e83fa
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 21 Jun 2024 22:48:20 +0000
-Received: from 88665a182662.ant.amazon.com (10.142.201.95) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 21 Jun 2024 22:48:17 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <luoxuanqiang@kylinos.cn>
-CC: <alexandre.ferrieux@orange.com>, <davem@davemloft.net>,
-	<dccp@vger.kernel.org>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<fw@strlen.de>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH net v4] Fix race for duplicate reqsk on identical SYN
-Date: Fri, 21 Jun 2024 15:48:07 -0700
-Message-ID: <20240621224807.8962-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240621013929.1386815-1-luoxuanqiang@kylinos.cn>
-References: <20240621013929.1386815-1-luoxuanqiang@kylinos.cn>
+        d=chromium.org; s=google; t=1719010244; x=1719615044; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IdAX7YqB8PuY9bzTn2bAULXcR/7WVxmcKxOrcis8Hbw=;
+        b=M7wl2ioZu9k4qBOb/pQKdlWjY6SrVVVKMam+ns81v0v+oyuuqo5l1z14CxW7/mfAMo
+         hZM4i9WpQ91tdDW0hxy8BSycGiCfExUAZ3nCFO88wRp+vlMOOzxy+HC+qBberjCyFsnn
+         zoARTQ6c4dAzVtlxkRZtrnJD+3h9XZCl9og08=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719010244; x=1719615044;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IdAX7YqB8PuY9bzTn2bAULXcR/7WVxmcKxOrcis8Hbw=;
+        b=qr+BR/BxXkl6B/m/kHv+LVl5uUMG5e/+8zXhHGr+3LKCRXhGX6SB1HPTCVlWId/fm+
+         Vwqk1gsFEOz4R0rUt4iohcoZoLm1ZMCmTmvyim3vb+PBlDsUUwmUttwXGbDKICgpu1fR
+         snOjBd6NhoArhq6UGPp8Rp9BXV99CXbfKPdwBcgBHEeqV+um3K+W5BbABS8r41lL0egZ
+         yO3zlnfw8VhttQF3kopBAxAz/u49BTwJNuwcdpGcX9HRA8fSBnYD20hPWbAfo+4fOtID
+         q3X1eMIVzFem12YphZDGE6kdpREcNNWqoZVjmS1KONtqxt9mHUvjKz/fzxsXUdHQf6ck
+         eI+w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0VlNsWrO05D62ZPGUiZlwqXflL3GrMBdjXGy/D18H5X3frAk9SN1AEBbNujgnLF40m+6IucOO3ZmtJ8ehQObNLDMdTqy7BE7s393I
+X-Gm-Message-State: AOJu0YwfV2a0Wf/a12fiCcwuYiTsV0lfe/smlxjgVtjnkjFV+bWONv6O
+	MVx+pb3ezjejcYvjs/0J162eqmc9AsmjD6rQWtPX4gd3tAuMQv18/s1J5I3btg==
+X-Google-Smtp-Source: AGHT+IEuv038RQes/j90RQdadBEcwu5TtIIxJ+qn0yvSgF9gdxWbw0Z/sDsDE0s4taUdJZXL2g5LOA==
+X-Received: by 2002:a05:6a20:b802:b0:1a7:60d8:a6dd with SMTP id adf61e73a8af0-1bcbb60d03fmr9158258637.53.1719010244154;
+        Fri, 21 Jun 2024 15:50:44 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:40ba:89b1:5f45:68d8])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-706512e000asm1997743b3a.179.2024.06.21.15.50.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 15:50:43 -0700 (PDT)
+Date: Fri, 21 Jun 2024 15:50:42 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, David Lin <yu-hao.lin@nxp.com>,
+	Francesco Dolcini <francesco@dolcini.it>
+Subject: Re: [PATCH] [RFC] mwifiex: Fix NULL pointer deref
+Message-ID: <ZnYDwjS293Cb8O1f@google.com>
+References: <20240619070824.537856-1-s.hauer@pengutronix.de>
+ <87wmmll5mf.fsf@kernel.org>
+ <ZnSHcZttq79cJS3l@google.com>
+ <ZnVCzx3-pvbcYQLm@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D032UWA003.ant.amazon.com (10.13.139.37) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnVCzx3-pvbcYQLm@pengutronix.de>
 
-From: luoxuanqiang <luoxuanqiang@kylinos.cn>
-Date: Fri, 21 Jun 2024 09:39:29 +0800
-> When bonding is configured in BOND_MODE_BROADCAST mode, if two identical
-> SYN packets are received at the same time and processed on different CPUs,
-> it can potentially create the same sk (sock) but two different reqsk
-> (request_sock) in tcp_conn_request().
+On Fri, Jun 21, 2024 at 11:07:27AM +0200, Sascha Hauer wrote:
+> I am running plain wpa_supplicant -i mlan0 with this config:
 > 
-> These two different reqsk will respond with two SYNACK packets, and since
-> the generation of the seq (ISN) incorporates a timestamp, the final two
-> SYNACK packets will have different seq values.
+> network={
+>         ssid="somessid"
+>         mode=2
+>         frequency=2412
+>         key_mgmt=WPA-PSK WPA-PSK-SHA256
+>         proto=RSN
+>         group=CCMP
+>         pairwise=CCMP
+>         psk="12345678"
+> }
 > 
-> The consequence is that when the Client receives and replies with an ACK
-> to the earlier SYNACK packet, we will reset(RST) it.
-> 
-> ========================================================================
-> 
-> This behavior is consistently reproducible in my local setup,
-> which comprises:
-> 
->                   | NETA1 ------ NETB1 |
-> PC_A --- bond --- |                    | --- bond --- PC_B
->                   | NETA2 ------ NETB2 |
-> 
-> - PC_A is the Server and has two network cards, NETA1 and NETA2. I have
->   bonded these two cards using BOND_MODE_BROADCAST mode and configured
->   them to be handled by different CPU.
-> 
-> - PC_B is the Client, also equipped with two network cards, NETB1 and
->   NETB2, which are also bonded and configured in BOND_MODE_BROADCAST mode.
-> 
-> If the client attempts a TCP connection to the server, it might encounter
-> a failure. Capturing packets from the server side reveals:
-> 
-> 10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
-> 10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
-> localhost > 10.10.10.10.45182: Flags [S.], seq 2967855116,
-> localhost > 10.10.10.10.45182: Flags [S.], seq 2967855123, <==
-> 10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
-> 10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
-> localhost > 10.10.10.10.45182: Flags [R], seq 2967855117, <==
-> localhost > 10.10.10.10.45182: Flags [R], seq 2967855117,
-> 
-> Two SYNACKs with different seq numbers are sent by localhost,
-> resulting in an anomaly.
-> 
-> ========================================================================
-> 
-> The attempted solution is as follows:
-> Add a return value to inet_csk_reqsk_queue_hash_add() to confirm if the
-> ehash insertion is successful (Up to now, the reason for unsuccessful
-> insertion is that a reqsk for the same connection has already been
-> inserted). If the insertion fails, release the reqsk.
-> 
-> Due to the refcnt, Kuniyuki suggests also adding a return value check
-> for the DCCP module; if ehash insertion fails, indicating a successful
-> insertion of the same connection, simply release the reqsk as well.
-> 
-> Simultaneously, In the reqsk_queue_hash_req(), the start of the
-> req->rsk_timer is adjusted to be after successful insertion.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
+> wait for the AP to be established, <ctrl-c> wpa_supplicant and start it
+> again.
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+Thanks. I still can't reproduce, but that's OK. From your fuller
+description now, it seems it depends on the particulars of the bss
+indices in use, and maybe my device/firmware is behaving differently.
+Anyway, your current description and patch below make a lot more sense.
 
-Thanks!
+> It doesn't seem to be a locking problem, see the patch below which fixes
+> my problem.
+
+Sure. It's probably harder to trigger real issues out of some of these
+kinds of race conditions, and the logical problem below sounds a lot
+more likely.
+
+> At some point during incoming events the correct adapter->priv[]
+> is selected based on bss_num and bss_type. when adapter->priv[0] is used
+> for AP mode then an incoming event with type MWIFIEX_BSS_TYPE_STA leads
+> to adapter->priv[1] being picked which is unused and doesn't have a
+> wiphy attached to it.
+
+Ack, that makes a lot of sense -- although I think it also implies
+either you're getting some kind of corrupt event buffer from your device
+too, or there's something else logically weird with your firmware when
+you're receiving MWIFIEX_BSS_TYPE_STA events for a *_AP interface. (Or
+maybe that's also racy, as you're changing the virtual interface from
+STA to AP? Not sure.)
+
+It also highlights that I find this fallback code from
+mwifiex_process_event() weird:
+
+        /* Get BSS number and corresponding priv */
+        priv = mwifiex_get_priv_by_id(adapter, EVENT_GET_BSS_NUM(eventcause),
+                                      EVENT_GET_BSS_TYPE(eventcause));
+        if (!priv)
+                priv = mwifiex_get_priv(adapter, MWIFIEX_BSS_ROLE_ANY);
+                       ^^ // if we didn't match the right BSS/event
+			  // metadata, we'll deliver the event to an
+			  // arbitrary interface?
+
+But I don't think that's your problem. And at least so far, I don't
+think the AP and STA event IDs collide in any way, so I don't think
+we're likely to end up misbehaving even if something is misdelievered.
+
+> 
+> -------------------------8<----------------------------
+> 
+> From 3357963821294ff7de26259a154a1cb5bab760cb Mon Sep 17 00:00:00 2001
+> From: Sascha Hauer <s.hauer@pengutronix.de>
+> Date: Tue, 18 Jun 2024 12:20:20 +0200
+> Subject: [PATCH] mwifiex: Do not return unused priv in
+>  mwifiex_get_priv_by_id()
+> 
+> mwifiex_get_priv_by_id() returns the priv pointer corresponding to the
+> bss_num and bss_type, but without checking if the priv is actually
+> currently in use.
+> Unused priv pointers do not have a wiphy attached to them which can lead
+> to NULL pointer dereferences further down the callstack.
+> Fix this by returning only used priv pointers which have priv->bss_mode
+> set to something else than NL80211_IFTYPE_UNSPECIFIED.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  drivers/net/wireless/marvell/mwifiex/main.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
+> index 175882485a195..c5164ae41b547 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/main.h
+> +++ b/drivers/net/wireless/marvell/mwifiex/main.h
+> @@ -1287,6 +1287,9 @@ mwifiex_get_priv_by_id(struct mwifiex_adapter *adapter,
+>  
+>  	for (i = 0; i < adapter->priv_num; i++) {
+>  		if (adapter->priv[i]) {
+> +			if (adapter->priv[i]->bss_mode == NL80211_IFTYPE_UNSPECIFIED)
+> +				continue;
+> +
+>  			if ((adapter->priv[i]->bss_num == bss_num) &&
+>  			    (adapter->priv[i]->bss_type == bss_type))
+>  				break;
+
+Acked-by: Brian Norris <briannorris@chromium.org>
+
+Something about this formatting didn't get properly picked up by
+patchwork though, so you'll need to resubmit. Feel free to carry the
+above tag with it.
+
+Brian
 
