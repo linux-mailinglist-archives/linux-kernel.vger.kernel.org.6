@@ -1,146 +1,155 @@
-Return-Path: <linux-kernel+bounces-225295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41581912EC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A83912ECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD5231F223BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B939A1F21937
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC3F17BB3A;
-	Fri, 21 Jun 2024 20:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D95D1C6AF;
+	Fri, 21 Jun 2024 20:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PP5DBmEu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IzAppRSZ"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC3117B51F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1719417BB1B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719002698; cv=none; b=SM/ryniFdcTzfuVzwnxFqVrDBmhHimY8GuhbliRK4WgkWxAuQb1WXxfxt5xjKDuruSs5IEAQpnGq2N1XUO7CgOmkaaN/6CleDpA3C2ZPow9Kp7iOEgPrU4LCApUOAYZI5RCC/zJErjlv9R64OL4YSzXZTp1e4tXNvpiCEaSDzuM=
+	t=1719002831; cv=none; b=Hig0llbDYKrfWjZPCD6pmkAnIHBnNuRFKb7V7MH68qWi1OZSq0uxmdMsAOB/eCgbVtF+QCFk6JliiC4IpGlapCw/xBnKFzG75H/dIDfW2oLLP2MkvDGJYeKLVCPUK5bMzzOCCBE3zhQYv86/Eg2vexw06jWR1uNxIvE+ywFK0i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719002698; c=relaxed/simple;
-	bh=EVjOk2Qvik+pOzl2DFM0KDrYTyxssV7z+Gs7LWahwhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FfHN4O62cQqH4t8qEgYZKJvKfeBTaehKhEwGB875006+TK4swE2J7SugBlF0KfVfXMU0KtsmfoNaOnjjsPJAJ4GYSaU5QoY29LRTFndK3fVi4YRkJgzwNi7iQjQWFZ+Od5KRInhvFIiykXtw93eei12OEsbQIwohgD8K8b4kFnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PP5DBmEu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719002695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IBRyGrjkPd5CIS4XoIva4gQOV3Q+VtL43fiauuhlKtM=;
-	b=PP5DBmEud1E2RLh4VfHLdt/IYIVsU4fLmdotvL/wQ/0fSwdpPtbAKfltakEIxRxPHiAJcc
-	mlIJScrZQrbdUVccbuqmP1p9l7LQBys7zBOzE8btaffEAWM7uJ6nh33lLbwMaxQBnqa92P
-	lTmfEv8Dcj5AuPxHiTuQmHUyMCG5dU0=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-385-eRirVWZtP-aMfsUkBg1D0g-1; Fri, 21 Jun 2024 16:44:54 -0400
-X-MC-Unique: eRirVWZtP-aMfsUkBg1D0g-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6ad8a2dbd97so29373256d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:44:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719002693; x=1719607493;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1719002831; c=relaxed/simple;
+	bh=HRE+U2dgfJBzfQ6M8EvZDTIQ+wtvm4IcQYuk3+o/GOY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qIGtoOI9Qdur3cS5dmf4KRIClmLJlmgfKKTpUt40xLQC2px6vWwUCJxrTldmB5Pw/wOUc/gXBiebjqL1tj9ZpG7hL5S1dQvi8k6vDmWIMy7wnnWhnwOpGexMrK1naJpxRAdKOYQaSsgzj7tal/cw1onhi+8fTlsxI43eH/hZ6aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IzAppRSZ; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso2563792276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719002829; x=1719607629; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IBRyGrjkPd5CIS4XoIva4gQOV3Q+VtL43fiauuhlKtM=;
-        b=BYzPe0Di/i/rN8s4VLH4qjo7DylFAJjYcfOwLOUYqOPEmWkBRDgJJOEMv21/q0UvEb
-         4PykmD1XqjmUi5NLQ19NZqLC8i7T5suTSV3Ow+O+R2/datpnLcyEVb3OWQZkSz3qvy5v
-         kZrbu4zDEjGQjTo/mRl39aY62zLrV/baIaLK9J/1VQ7juBPpqJL+HHSFXxsxufB1jC9p
-         IstlWsQGtLnysDWNklbNtBANlT66P62qVwYFs5HarYGmZLZPp/bYGvI40BfxtB8rUhjm
-         yoj14Hz8Mcj0/5KkWe8y3vj1/hPsu9UYkige1V3nFFfgOzMQvMAsBtb8ZyeZWtrymEWl
-         Klsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUutrJKojfjd1AzVR1OEMYp5UUJNNNiVgs+bwAmtnNu6mQt06JReIdS2VV4tHIIJnsBf6YP6dlQzJIYxUEyWUFXZgBM27uKgiIC7isU
-X-Gm-Message-State: AOJu0Yz7ofnJy8ePrMXC7fCmuHHMDs2RTrJ3HmBE8Xnl92Hsy2vBB7Fk
-	VfK+egE+fOFXAHnRF8TD2AEg/olXuUvJxWkafySEVYW6kK/EtCV18YXpj0SibkkRFKK6xlM1NFS
-	aFLA0mxzypeLoiKNN2lxzNVZ8kTc1WaTyfpogUIQ2NxjVSqnJQAH7qcFUk9hx/A==
-X-Received: by 2002:ad4:4e2a:0:b0:6b2:cdaf:300e with SMTP id 6a1803df08f44-6b501e03d2cmr96084166d6.1.1719002693500;
-        Fri, 21 Jun 2024 13:44:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHpK5D9TDm/aP5jldornZZLwHdWh2EXn0K0pkw6eEyjdSKLkGZH9gNAROZfr7QzFOXxvhc+rQ==
-X-Received: by 2002:ad4:4e2a:0:b0:6b2:cdaf:300e with SMTP id 6a1803df08f44-6b501e03d2cmr96083876d6.1.1719002693102;
-        Fri, 21 Jun 2024 13:44:53 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::13])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ef30d47sm12047126d6.83.2024.06.21.13.44.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 13:44:52 -0700 (PDT)
-Date: Fri, 21 Jun 2024 15:44:50 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Sagar Cheluvegowda <quic_scheluve@quicinc.com>, 
-	Vinod Koul <vkoul@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] net: stmmac: Add interconnect support in qcom-ethqos
- driver
-Message-ID: <ymg2rf4vlp6kcsb6fbass3rntaxfz4ox4hbhcn56engfqcboqr@kp47u5rk3mvk>
-References: <20240619-icc_bw_voting_from_ethqos-v1-0-6112948b825e@quicinc.com>
- <20240619-icc_bw_voting_from_ethqos-v1-1-6112948b825e@quicinc.com>
- <159700cc-f46c-4f70-82aa-972ba6e904ca@lunn.ch>
- <b075e5a8-ca75-49cc-84d6-84e28bc38eee@quicinc.com>
- <b5096113-de85-485e-a226-a8112b3d5490@lunn.ch>
+        bh=8vvcq6KNwg3xO4omyLiVP0kO5WMfy03mczyeSqWYQtY=;
+        b=IzAppRSZCxQQd0LyMdTPMSVlR6QGhL1rKPG2JCf5B1hHxoKK4s8GuKah/WNuxuMNIB
+         Zwjb+NIG/Hv22zJmuIY5AiSPr7MdwzsZoBt/Vocz49GLv5sgWA8Has3uhBA0rTvdx8+v
+         y8HjmPtePInbC+r11xD7le/gZJ/ai3a3NdSuc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719002829; x=1719607629;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8vvcq6KNwg3xO4omyLiVP0kO5WMfy03mczyeSqWYQtY=;
+        b=Vg6Qd5AmieeQbPKwlHdTTbmLKiXMWL/RTt+8WbZ1LFekmugPKw9V/JBP2HPNH6TKPv
+         7prWMAGkiCxKN8AHPOxBeH6h7a6xFq+MS0CtjKxe/kRP5nX8enic73Esu58shcVGKGe6
+         aZPqn+TXFOzw+WmHE17H/Kama8HcSuowKza+53+aWXucml8ODHz/q6N6P0LWBd0jRGxU
+         I/FzyWZj2fG7sGRdcNerEC3lgl0xmkiBnBHyDy4ZntaIXco5axhLKeS4e56lSxUbg/Mb
+         ylk3HF1qI5nxdE3aRXardEaWpVE7v6fC54LDEzgoJFbTjbqKFvlZB9aiZGddZkjIcM3u
+         fo/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVqXaiblUJ2tnMMODIbi/VJomSjmfcv/H3NCzGSg7laLbmTMU/+jU606oMdIDHT3MX2BV9JM3Udjq7sWfOKTOLlq+HVOm5icY8tI7iN
+X-Gm-Message-State: AOJu0YzIpY59KS2p0IEo6ddNWJZKxQne4W9k/F47FWj/6ci3vDJUmvvZ
+	vpE6kDl4bvkG7Ie56fvW4Si4Q98fg9nRNKCwsd4ftn+skh5Fx0lE5cbJ03Zlu/xlZInKjpYE23c
+	=
+X-Google-Smtp-Source: AGHT+IEoomztpFh7m8IiWHpChsE6n22bjAn04yNrP0pk3CsQsw84InMo5JI/zdgTx2v3pu0SJ25eig==
+X-Received: by 2002:a25:acc6:0:b0:dfe:73d8:4593 with SMTP id 3f1490d57ef6-e02be20b8ebmr10551775276.48.1719002829007;
+        Fri, 21 Jun 2024 13:47:09 -0700 (PDT)
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com. [209.85.160.180])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ed4882fsm12008886d6.52.2024.06.21.13.47.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 13:47:08 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-44056f72257so536361cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:47:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXE3MG4vJ4UvfDeoalyxeE7IGCpETo1XI9dEQjukAwOkKv9CWQxFKjWIuhXQSHtvRwluM08NhnAOXZXssBzZ1Ez7EIlVejh4ZixxuxZ
+X-Received: by 2002:a05:622a:38e:b0:441:565e:8d31 with SMTP id
+ d75a77b69052e-444ce32b611mr440721cf.19.1719002828083; Fri, 21 Jun 2024
+ 13:47:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5096113-de85-485e-a226-a8112b3d5490@lunn.ch>
+References: <20240621134427.1.Ieb287c2c3ee3f6d3b0d5f49b29f746b93621749c@changeid>
+In-Reply-To: <20240621134427.1.Ieb287c2c3ee3f6d3b0d5f49b29f746b93621749c@changeid>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 21 Jun 2024 13:46:53 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VwebY8F3XjeVt6kvKwB7QZ8Khn5oJJoDThuemiGx9y+g@mail.gmail.com>
+Message-ID: <CAD=FV=VwebY8F3XjeVt6kvKwB7QZ8Khn5oJJoDThuemiGx9y+g@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: Avoid warnings w/ panel-simple/panel-edp at shutdown
+To: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Maxime Ripard <mripard@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chris Morgan <macromorgan@hotmail.com>, 
+	Yuran Pereira <yuran.pereira@hotmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	David Airlie <airlied@gmail.com>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 10:01:39PM GMT, Andrew Lunn wrote:
-> > > This all looks pretty generic. Any reason why this is just in the
-> > > Qualcomm device, and not at a higher level so it could be used for all
-> > > stmmac devices if the needed properties are found in DT?
-> > > 
-> > >        Andrew
-> > ICC is a software framework to access the NOC bus topology of the
-> > system, all though "axi" and "ahb" buses seem generic but the 
-> > topologies of these NOC's are specific to the vendors of synopsys chipset hence
-> > this framework might not be applicable to all the vendors of stmmac driver.
-> 
-> There are however a number of SoCs using synopsys IP. Am i right in
-> says they could all make use of this? Do we really want them to one by
-> one copy/paste what you have here to other vendor specific parts of
-> stmmac?
-> 
-> This code looks in DT. If there are no properties in DT, it does
-> nothing. So in general it should be safe, right?
+Hi,
 
-That logic makes sense to me, and thinking about it more you request a
-"path" between two "endpoints" in the network, and that's pretty
-generic. Sort of like the clocks, etc, and then let the provider figure
-out the gory SoC specific details.
+On Fri, Jun 21, 2024 at 1:45=E2=80=AFPM Douglas Anderson <dianders@chromium=
+.org> wrote:
+>
+> At shutdown if you've got a _properly_ coded DRM modeset driver then
+> you'll get these two warnings at shutdown time:
+>
+>   Skipping disable of already disabled panel
+>   Skipping unprepare of already unprepared panel
+>
+> These warnings are ugly and sound concerning, but they're actually a
+> sign of a properly working system. That's not great.
+>
+> We're not ready to get rid of the calls to drm_panel_disable() and
+> drm_panel_unprepare() because we're not 100% convinced that all DRM
+> modeset drivers are properly calling drm_atomic_helper_shutdown() or
+> drm_helper_force_disable_all() at the right times. However, having the
+> warning show up for correctly working systems is bad.
+>
+> As a bit of a workaround, add some "if" tests to try to avoid the
+> warning on correctly working systems. Also add some comments and
+> update the TODO items in the hopes that future developers won't be too
+> confused by what's going on here.
+>
+> Suggested-by: Daniel Vetter <daniel@ffwll.ch>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> This patch came out of discussion on dri-devel on 2024-06-21
+> [1]. NOTE: I have put all changes into one patch since it didn't seem
+> to add anything to break up the updating of the TODO or the comments
+> in the core into separate patches since the patch is all about one
+> topic and all code is expected to land in the same tree.
+>
+> Previous versions:
+> v0: https://lore.kernel.org/r/20240604172305.v3.24.Ieb287c2c3ee3f6d3b0d5f=
+49b29f746b93621749c@changeid/
+> v1: https://lore.kernel.org/r/20240611074846.1.Ieb287c2c3ee3f6d3b0d5f49b2=
+9f746b93621749c@changeid
+>
+> [1] https://people.freedesktop.org/~cbrill/dri-log/?channel=3Ddri-devel&d=
+ate=3D2024-06-21
+>
+>  Documentation/gpu/todo.rst           | 35 +++++++++++++---------------
+>  drivers/gpu/drm/drm_panel.c          | 18 ++++++++++++++
+>  drivers/gpu/drm/panel/panel-edp.c    | 26 ++++++++++++++-------
+>  drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++-------
+>  4 files changed, 68 insertions(+), 37 deletions(-)
 
-i.e., for example I see the UFS driver uses the paths "ufs-ddr" and
-"cpu-ufs", and thinking about it generically for this IP that's probably
-the same thing going on here (and lends weight to Krzysztof's request to
-use names similar to other interconnect users).
+Ugh! I realized right after I hit "send" that I forgot to mark this as
+V2 and give it version history. Sorry! :( Please consider this to be
+v2. It's basically totally different than v1 based on today's IRC
+discussion, which should be linked above.
 
-That being said, grepping around I don't see users outside of platform
-driver bits (i.e. I was hoping to see drivers/pci/controller/dwc/ doing
-some shared usage, but that's not the case). Given what you said I'm
-of the opinion now this should be done in stmmac_platform.c
-and described for all stmmac users since it feels like a property of the
-IP itself similar to the clocks required, etc. The interconnect framework handles
-when they're not described in the dts gracefully so it shouldn't break any
-other SoCs that don't describe interconnects currently.
+If I need to send a new version I will send it as v3.
 
-Thanks,
-Andrew
-
+-Doug
 
