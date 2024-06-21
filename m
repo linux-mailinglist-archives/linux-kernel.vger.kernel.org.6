@@ -1,287 +1,296 @@
-Return-Path: <linux-kernel+bounces-224493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD9E912318
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:15:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6864191231A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD96E1C221FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCF041F23595
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DA0172BC3;
-	Fri, 21 Jun 2024 11:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE02172BB2;
+	Fri, 21 Jun 2024 11:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="J/EMqpsN"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="gWqfZNRi"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2045.outbound.protection.outlook.com [40.107.255.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BCE172BA5;
-	Fri, 21 Jun 2024 11:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718968507; cv=none; b=HamsL9+O/SqiWGjHOY9vyNmABvvECB1SsUAx/Rqji+axC6X7kZnMTdvPGTNkfFCWT/FnPpEspkaZnsUhtC/hAyjU7F+4MitQPrse/+9E5BFzxSdDhe1nUtRifD6TphGJd9Jl8ReJF7VAQjlPVCzUiwIWfgKtj7VKZsZrztoLEvg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718968507; c=relaxed/simple;
-	bh=01nS62HSk6gjLSy1DwcUDp9QaAYYf9boxCpBRZuhnmc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AD9ZNeq/LPUB3HW54Dv5xdLzMAdrPwOUAw5sYnE77YRSUndyqkAd26awZ/VBmgmWwWwCVEmjp+6By9jELw9s8talRpSwF21fkg6rSe0TolZtZBI8bUyINt6sCR7HfbaRH6G4Z3BmBI+vW3z88qcyD4B+uozKjdPNNcaNq4lUh5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=J/EMqpsN; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LBEwAu020025;
-	Fri, 21 Jun 2024 06:14:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718968498;
-	bh=HRRjFNHUHFJ+Y9g/6FN//DMylwrOkfjCSc2QNeiG10k=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=J/EMqpsNbmHg/qBeTL7xakmjwQG7HdYTj3qZ74HRd//IE5mZAuSdSDOCkiuK+7AgN
-	 3IsNcbNQzlzZwENQqO8XfMKLTk8LwZ6OUrpzHkUcCfBp7f+ycWFrUxj/b+7krDcHwF
-	 IaMXBZmqx5Bl4XmuuEB0fU5fADcS4FESvBhYvaGY=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LBEw2Z037026
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 06:14:58 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Jun 2024 06:14:57 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Jun 2024 06:14:57 -0500
-Received: from [10.24.69.66] (uda0510294.dhcp.ti.com [10.24.69.66])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LBEtaR101126;
-	Fri, 21 Jun 2024 06:14:55 -0500
-Message-ID: <e073c465-c01c-449a-a29a-10fd88c935e5@ti.com>
-Date: Fri, 21 Jun 2024 16:44:54 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B2B171E68;
+	Fri, 21 Jun 2024 11:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718968556; cv=fail; b=WJRIJmMN5E3UC435RaIyH8HOT5EpzxBhUzDYQc455kDJMPgKZ13hY44mhZTLBODeJVKs6jmbGsx5aSjdFu59JS533hievMu5qDZ+nUS4oZyl9PjoUB0APj2YQRytrvR3xSkBevpHpybCZMmjMVAl1CYb4VUVxeLekz7/ivji7z8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718968556; c=relaxed/simple;
+	bh=qf1xe6DlL/I2vah51rEunZTJRUwXdv4eSsClLjci25o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FPkJAgBchMwtyZWFYk3/F/lKdgs/X9QUGcXUiZAwpP76lF5FcotR6PyT7G9zFLNvYdqcwhkE0yVOAJaATRwgScbfvh5jB/svZIp2nZO6twCDZSOCoZW5trDUqfIZc1p3U+ko6bcO8/irY+iD+JKKkF0DSLrpMWZRpM1mJwstWBw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=gWqfZNRi; arc=fail smtp.client-ip=40.107.255.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RPWH7J3if0/Fx9k6yKObkpd2+UnmkD8vV8TROWJ8QZ6P4uXLG9UyKcOrxfW3/lhQYj7XWbLFhvZMAkJVhNGoHCZNFSDmAZvBki7Iuvj/saH4voSv5jGiY3VqUMMqc2aUaoGo58OAyrUwSTZyDnyfCl2IQVRAyZEIRI6AWxmGVoF7A9J8lsuEEzqt4HPfTuZARgTeRXmxaClR4KkvaKkAnIpx5ECWjld8Ck+7UT1V46YSi6wd67qd82KbOkEilw5mUb4W5VXBkXAemuCQEHntkQSC+CcSPUDY6//pu8cbrzIuPCQzA3ltNgC+sSSNcelO6JYznbqTfmp3T2AtuGqYkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Aul5vaVzJf++w+6GW0Zz8yhsj/0b1HhMbOFLJk61bkI=;
+ b=XYFvTOjsjee1iBHIEVeY8i2iRjhVWxKzY2sp5M31//af2B9/idU0OjCEoSPCCYjgOrDlh/irEPXwBCAZXyt9oy+ylDxZ6aHyEaOYf61+VQa63ljaw2QkXuUAbvQBTbKVoZlEZLPQ5RPdMGuTLD6ObUi1EGBjmZfx/Sr8lP2RE5D6cGPsvDqMffpCAo6RXEsYNosSNvkDpchdUUV9nYnLL9O2Pqoj/QcQ6i+wcS3QQWCDsfBE43OogXD+zGyQF8Rzy+2G/1yKeLD7JtYvHrsSVTn7L1XGrIi4/lvo+vbhI8ZyynuwMTxjOrFoDQm1ZmaEkLi0ZpYfYPhfIHb5GlCvUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=gmail.com smtp.mailfrom=oppo.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Aul5vaVzJf++w+6GW0Zz8yhsj/0b1HhMbOFLJk61bkI=;
+ b=gWqfZNRi2/mQIcrYjuFAQm9DNnNkXDmAHB285kwSqI9AEnmmcvjOPCHrYov6Uk8383j9j7QXxFLOawbitTy0nMUz9eJRWWqRGvfV65ZkXB6QdC2tQHTA5s7NoLpD/BUdHjA6Cp8uV2S8HQ00x7EjKt7HfzNnTBKLwyXvay76+6c=
+Received: from SI2PR01CA0008.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::10) by SG2PR02MB5724.apcprd02.prod.outlook.com
+ (2603:1096:4:1b4::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.34; Fri, 21 Jun
+ 2024 11:15:51 +0000
+Received: from SG1PEPF000082E6.apcprd02.prod.outlook.com
+ (2603:1096:4:191:cafe::48) by SI2PR01CA0008.outlook.office365.com
+ (2603:1096:4:191::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.34 via Frontend
+ Transport; Fri, 21 Jun 2024 11:15:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ SG1PEPF000082E6.mail.protection.outlook.com (10.167.240.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Fri, 21 Jun 2024 11:15:51 +0000
+Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Jun
+ 2024 19:15:50 +0800
+Date: Fri, 21 Jun 2024 19:15:45 +0800
+From: Hailong Liu <hailong.liu@oppo.com>
+To: Uladzislau Rezki <urezki@gmail.com>, Baoquan He <bhe@redhat.com>
+CC: Nick Bowler <nbowler@draconx.ca>, <linux-kernel@vger.kernel.org>, Linux
+ regressions mailing list <regressions@lists.linux.dev>, <linux-mm@kvack.org>,
+	<sparclinux@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <20240621111545.awvgrap2nscgehxv@oppo.com>
+References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
+ <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
+ <20240621033005.6mccm7waduelb4m5@oppo.com>
+ <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
+ <ZnVLbCCkvhf5GaTf@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] remoteproc: k3-r5: Acquire mailbox handle during
- probe
-To: Andrew Davis <afd@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240604051722.3608750-1-b-padhi@ti.com>
- <20240604051722.3608750-3-b-padhi@ti.com>
- <e7b98867-3493-4c76-863a-a04795333620@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <e7b98867-3493-4c76-863a-a04795333620@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZnVLbCCkvhf5GaTf@pc636>
+X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
+ (172.16.56.198)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E6:EE_|SG2PR02MB5724:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1542f1f7-172f-4d61-1e89-08dc91e382b7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|1800799021|82310400023|376011|36860700010;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Zm7oMC2yOGdOgIzta3wdwwJVrQ7sNIrIUGL8VWKoGr2Dwcxd9R2oE+dpEsm/?=
+ =?us-ascii?Q?kV/aq01Uu2VsNlQ++06rFGfb6Pk3KdppF7L+xUUfbH3f5qlg2zGZT/6udlfD?=
+ =?us-ascii?Q?EEFaOxT2c1/RQ4soR4CL+yMykaN6rSQ5OPg4Wi6WrGXaIKjDJpuUbqrvhiWs?=
+ =?us-ascii?Q?3kMdy1gAzIV4yCMWoa8ZyFMzRJ5L4o4YfHy4TICE3zYGCJjf9Mtout08tjqE?=
+ =?us-ascii?Q?FzDWTZpDdJF3emlc2by30HB9I9Nep/vpUiIuN/hT6gTXqvyfMEHyOyw0V/8L?=
+ =?us-ascii?Q?O9KtjoLPbdCQ2byCPdYfRn0X9J7qUoadUuoCHqBKvk1k8nfQmC0d7ng8ht3c?=
+ =?us-ascii?Q?j7Hzti+DUesDt4N0ur34ewe22bFEd/b8dQDXsoETs6wkvDHemoHu8Zx/chJL?=
+ =?us-ascii?Q?i+NuTpehqVd+ZWlzonE45C3HruZncd924p4F0nkX22dBc+5f0GSiPfkUmXj2?=
+ =?us-ascii?Q?hCuYU5NHE21ix4zoUCwYBCR16s9nYVEWRCo2sC4MeQvL1yQ9KaSiutRd+nul?=
+ =?us-ascii?Q?/0WoMYnm4aK7byGyPt3ACuGFmI/951XoN5vjx5eoMtqgqk/AHlAXuus5N9bJ?=
+ =?us-ascii?Q?hB+uc4ExIr7iNtispXGIl0Bz6e1zu1I19nZPhFmJ/mpsouxxuNStJUh+hR/O?=
+ =?us-ascii?Q?0y/J2WCAb24vj7EZAmVjr/DvqOAF07O6Oud64X6g/B3Raz7P31cOj8KSOnOC?=
+ =?us-ascii?Q?pAwbJmEEhFQgpgCiTYyhXhBcz+Nr9YB4yo+aR3nXGu7hT4nrkai6AmVRJnQL?=
+ =?us-ascii?Q?hXcz3CQiyOvl0HZI6Akpxe81+kdkcDIsYJ3CswooC2fJKe59oKVqPbGkt6cA?=
+ =?us-ascii?Q?b3kKVADyERkPngFkuoCbAo9CUJ5gTY+cDNQBA4U4PaoduZjII/nlavJ8At3K?=
+ =?us-ascii?Q?8gKEPxMYNXyup0wOn87HWr7rScl3KFCqtygUpxl/mNCirZJ0Wd6Ce18i7i45?=
+ =?us-ascii?Q?viF/+QQ80LZ6VtXb/jjebNvWAx4kSz30DovqXqhSohb3bo4b42aH8ybwmctT?=
+ =?us-ascii?Q?9IwWMtnTNQCwA2H3J/K4YBMTlX8/Pp0h0kyY4qbLg/vCs6vZCVfUjluAxk8V?=
+ =?us-ascii?Q?sHwX96WFWwRZ772LFf07uuv/dndFdth0lS4shaFBVpdwEQfV0A3vu7QFSJpE?=
+ =?us-ascii?Q?0Zu3se9csLDXaXEeXws1x4nm9d+UCQqo2VtQebpf4VhWQo/4RwMUkFBNdbn+?=
+ =?us-ascii?Q?Awsrc9Fm5LA41xLNqX3sHJI4c/D55vthSY6OmtnuBCTUetmeJ5IHsPb/Xqcr?=
+ =?us-ascii?Q?7160pVunYiFs0MWQ2cciNLhLn37ONUxoYTWu1nEFNZbiQlYX0CBVgXA2jRqH?=
+ =?us-ascii?Q?QwJ7CVnRjSv9FsgVTwPo5hsCKWWlCiYWVuKWCiP5aZz/yf9D0d1eXih9Uhed?=
+ =?us-ascii?Q?J0YlwFRV3x4lF72lqVmA0obn30Tc9Obe51ZVrwfnmTo+waqnMQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(82310400023)(376011)(36860700010);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 11:15:51.5473
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1542f1f7-172f-4d61-1e89-08dc91e382b7
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E6.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR02MB5724
 
-Hi Andrew,
+On Fri, 21. Jun 11:44, Uladzislau Rezki wrote:
+> On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
+> > On 06/21/24 at 11:30am, Hailong Liu wrote:
+> > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
+> > > > On 2024-06-20 02:19, Nick Bowler wrote:
+> > > > > After upgrading my sparc to 6.9.5 I noticed that attempting to run
+> > > > > xfsdump instantly (within a couple seconds) and reliably crashes the
+> > > > > kernel.  The same problem is also observed on 6.10-rc4.
+> > > > [...]
+> > > > >   062eacf57ad91b5c272f89dc964fd6dd9715ea7d is the first bad commit
+> > > > >   commit 062eacf57ad91b5c272f89dc964fd6dd9715ea7d
+> > > > >   Author: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > > > >   Date:   Thu Mar 30 21:06:38 2023 +0200
+> > > > >
+> > > > >       mm: vmalloc: remove a global vmap_blocks xarray
+> > > >
+> > > > I think I might see what is happening here.
+> > > >
+> > > > On this machine, there are two CPUs numbered 0 and 2 (there is no CPU1).
+> > > >
+> > > +Baoquan
+> >
+> > Thanks for adding me, Hailong.
+> >
+> > >
+> > > Ahh, I thought you are right. addr_to_vb_xa assume that the CPU numbers are
+> > > contiguous. I don't have knowledge about CPU at all.
+> > > Technically change the implement addr_to_vb_xa() to
+> > > return &per_cpu(vmap_block_queue, raw_smp_processor_id()).vmap_blocks;
+> > > would also work, but it violate the load balance. Wating for
+> > > experts reply.
+> >
+> > Yeah, I think so as you explained.
+> >
+> > >
+> > > > The per-cpu variables in mm/vmalloc.c are initialized like this, in
+> > > > vmalloc_init
+> > > >
+> > > >   for_each_possible_cpu(i) {
+> > > >     /* ... */
+> > > >     vbq = &per_cpu(vmap_block_queue, i);
+> > > >     /* initialize stuff in vbq */
+> > > >   }
+> > > >
+> > > > This loops over the set bits of cpu_possible_mask, bits 0 and 2 are set,
+> > > > so it initializes stuff with i=0 and i=2, skipping i=1 (I added prints to
+> > > > confirm this).
+> > > >
+> > > > Then, in vm_map_ram, with the problematic change it calls the new
+> > > > function addr_to_vb_xa, which does this:
+> > > >
+> > > >   int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > >   return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> > > >
+> > > > The num_possible_cpus() function counts the number of set bits in
+> > > > cpu_possible_mask, so it returns 2.  Thus, index is either 0 or 1, which
+> > > > does not correspond to what was initialized (0 or 2).  The crash occurs
+> > > > when the computed index is 1 in this function.  In this case, the
+> > > > returned value appears to be garbage (I added prints to confirm this).
+> >
+> > This is a great catch.
+> >
+> Indeed :)
+>
+> > > >
+> > > > If I change addr_to_vb_xa function to this:
+> > > >
+> > > >   int index = ((addr / VMAP_BLOCK_SIZE) & 1) << 1; /* 0 or 2 */
+> > > >   return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> >
+> > Yeah, while above change is not generic, e.g if it's CPU0 and CPU3.
+> > I think we should take the max possible CPU number as the hush bucket
+> > size. The vb->va is also got from global free_vmap_area, so no need to
+> > worry about the waste.
+> >
+> Agree.
+>
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index be2dd281ea76..18e87cafbaf2 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> >  static struct xarray *
+> >  addr_to_vb_xa(unsigned long addr)
+> >  {
+> > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> >
+> >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> >  }
+> >
+> The problem i see is about not-initializing of the:
+> <snip>
+> 	for_each_possible_cpu(i) {
+> 		struct vmap_block_queue *vbq;
+> 		struct vfree_deferred *p;
+>
+> 		vbq = &per_cpu(vmap_block_queue, i);
+> 		spin_lock_init(&vbq->lock);
+> 		INIT_LIST_HEAD(&vbq->free);
+> 		p = &per_cpu(vfree_deferred, i);
+> 		init_llist_head(&p->list);
+> 		INIT_WORK(&p->wq, delayed_vfree_work);
+> 		xa_init(&vbq->vmap_blocks);
+> 	}
+> <snip>
+>
+> correctly or fully. It is my bad i did not think that CPUs in a possible mask
+> can be non sequential :-/
+>
+> nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
+> when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
+>
+> Or i missed something in your patch, Baoquan?
+>
+> --
+> Uladzislau Rezki
 
-On 04/06/24 22:40, Andrew Davis wrote:
-> On 6/4/24 12:17 AM, Beleswar Padhi wrote:
->> Acquire the mailbox handle during device probe and do not release handle
->> in stop/detach routine or error paths. This removes the redundant
->> requests for mbox handle later during rproc start/attach. This also
->> allows to defer remoteproc driver's probe if mailbox is not probed yet.
->>
->> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->> ---
->>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 74 +++++++++---------------
->>   1 file changed, 26 insertions(+), 48 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
->> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index 26362a509ae3c..7e02e3472ce25 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -194,6 +194,10 @@ static void k3_r5_rproc_mbox_callback(struct 
->> mbox_client *client, void *data)
->>       const char *name = kproc->rproc->name;
->>       u32 msg = omap_mbox_message(data);
->>   +    /* Do not forward message to a detached core */
->
-> s/to/from
->
-> This is the receive side from the core.
->
->> +    if (kproc->rproc->state == RPROC_DETACHED)
->> +        return;
->> +
->
-> Do we need a similar check when sending messages to the core in
-> k3_r5_rproc_kick()? No one should be sending anything as they
-> all should have detached at this point, but something to double
-> check on.
-Will add this in the next revision.
->
->>       dev_dbg(dev, "mbox msg: 0x%x\n", msg);
->>         switch (msg) {
->> @@ -399,12 +403,9 @@ static int k3_r5_rproc_request_mbox(struct rproc 
->> *rproc)
->>       client->knows_txdone = false;
->>         kproc->mbox = mbox_request_channel(client, 0);
->> -    if (IS_ERR(kproc->mbox)) {
->> -        ret = -EBUSY;
->> -        dev_err(dev, "mbox_request_channel failed: %ld\n",
->> -            PTR_ERR(kproc->mbox));
->> -        return ret;
->> -    }
->> +    if (IS_ERR(kproc->mbox))
->> +        return dev_err_probe(dev, PTR_ERR(kproc->mbox),
->> +                     "mbox_request_channel failed\n");
->
-> This is good cleanup, but maybe something for its own patch.
-I think this cleanup is dependent to this patch itself. The current 
-patch moves the mbox_handle_request to probe routine. And the cleanup 
-returns an -EDEFER_PROBE ERR code. So, this cleanup is only valid if the 
-current patch is applied. Else, if this err code is returned at any 
-point after creation of child devices, it could lead to a infinite 
-loop[0]. Please correct me if I am wrong..?
+IMO, I thought we can fix this by following.
+It doesn't initialize unused variables and utilize the percpu xarray. If I said
+anything wrong, please do let me know. I can learn a lot from you all :).
 
-[0]: 
-https://www.kernel.org/doc/html/v6.5-rc3/driver-api/driver-model/driver.html#callbacks
->
->>         /*
->>        * Ping the remote processor, this is only for sanity-sake for 
->> now;
->> @@ -552,10 +553,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>       u32 boot_addr;
->>       int ret;
->>   -    ret = k3_r5_rproc_request_mbox(rproc);
->> -    if (ret)
->> -        return ret;
->> -
->>       boot_addr = rproc->bootaddr;
->>       /* TODO: add boot_addr sanity checking */
->>       dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", 
->> boot_addr);
->> @@ -564,7 +561,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>       core = kproc->core;
->>       ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
->>       if (ret)
->> -        goto put_mbox;
->> +        return ret;
->>         /* unhalt/run all applicable cores */
->>       if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
->> @@ -580,13 +577,12 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>           if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
->>               dev_err(dev, "%s: can not start core 1 before core 0\n",
->>                   __func__);
->> -            ret = -EPERM;
->> -            goto put_mbox;
->> +            return -EPERM;
->>           }
->>             ret = k3_r5_core_run(core);
->>           if (ret)
->> -            goto put_mbox;
->> +            return ret;
->>       }
->>         return 0;
->> @@ -596,8 +592,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->>           if (k3_r5_core_halt(core))
->>               dev_warn(core->dev, "core halt back failed\n");
->>       }
->> -put_mbox:
->> -    mbox_free_channel(kproc->mbox);
->>       return ret;
->>   }
->>   @@ -658,8 +652,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>               goto out;
->>       }
->>   -    mbox_free_channel(kproc->mbox);
->> -
->>       return 0;
->>     unroll_core_halt:
->> @@ -674,42 +666,22 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->>   /*
->>    * Attach to a running R5F remote processor (IPC-only mode)
->>    *
->> - * The R5F attach callback only needs to request the mailbox, the 
->> remote
->> - * processor is already booted, so there is no need to issue any TI-SCI
->> - * commands to boot the R5F cores in IPC-only mode. This callback is 
->> invoked
->> - * only in IPC-only mode.
->> + * The R5F attach callback is a NOP. The remote processor is already 
->> booted, and
->> + * all required resources have been acquired during probe routine, 
->> so there is
->> + * no need to issue any TI-SCI commands to boot the R5F cores in 
->> IPC-only mode.
->> + * This callback is invoked only in IPC-only mode and exists because
->> + * rproc_validate() checks for its existence.
->>    */
->> -static int k3_r5_rproc_attach(struct rproc *rproc)
->> -{
->> -    struct k3_r5_rproc *kproc = rproc->priv;
->> -    struct device *dev = kproc->dev;
->> -    int ret;
->> -
->> -    ret = k3_r5_rproc_request_mbox(rproc);
->> -    if (ret)
->> -        return ret;
->> -
->> -    dev_info(dev, "R5F core initialized in IPC-only mode\n");
->> -    return 0;
->> -}
->> +static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
->
-> I wonder if rproc_validate() should be updated to allow not
-> having an attach/detach for cases like this. Then we could drop
-> this function completely.
->
-> Andrew
->
->>     /*
->>    * Detach from a running R5F remote processor (IPC-only mode)
->>    *
->> - * The R5F detach callback performs the opposite operation to attach 
->> callback
->> - * and only needs to release the mailbox, the R5F cores are not 
->> stopped and
->> - * will be left in booted state in IPC-only mode. This callback is 
->> invoked
->> - * only in IPC-only mode.
->> + * The R5F detach callback is a NOP. The R5F cores are not stopped 
->> and will be
->> + * left in booted state in IPC-only mode. This callback is invoked 
->> only in
->> + * IPC-only mode and exists for sanity sake.
->>    */
->> -static int k3_r5_rproc_detach(struct rproc *rproc)
->> -{
->> -    struct k3_r5_rproc *kproc = rproc->priv;
->> -    struct device *dev = kproc->dev;
->> -
->> -    mbox_free_channel(kproc->mbox);
->> -    dev_info(dev, "R5F core deinitialized in IPC-only mode\n");
->> -    return 0;
->> -}
->> +static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
->>     /*
->>    * This function implements the .get_loaded_rsc_table() callback 
->> and is used
->> @@ -1277,6 +1249,10 @@ static int k3_r5_cluster_rproc_init(struct 
->> platform_device *pdev)
->>           kproc->rproc = rproc;
->>           core->rproc = rproc;
->>   +        ret = k3_r5_rproc_request_mbox(rproc);
->> +        if (ret)
->> +            return ret;
->> +
->>           ret = k3_r5_rproc_configure_mode(kproc);
->>           if (ret < 0)
->>               goto err_config;
->> @@ -1393,6 +1369,8 @@ static void k3_r5_cluster_rproc_exit(void *data)
->>               }
->>           }
->>   +        mbox_free_channel(kproc->mbox);
->> +
->>           rproc_del(rproc);
->>             k3_r5_reserved_mem_exit(kproc);
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 11fe5ea208aa..f9f981674b2d 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -4480,17 +4480,21 @@ void __init vmalloc_init(void)
+         */
+        vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
+
+-       for_each_possible_cpu(i) {
++       for (i = 0; i < nr_cpu_ids; i++) {
+                struct vmap_block_queue *vbq;
+                struct vfree_deferred *p;
+
+                vbq = &per_cpu(vmap_block_queue, i);
++               xa_init(&vbq->vmap_blocks);
++
++               if (!cpu_possible(i))
++                       continue;
++
+                spin_lock_init(&vbq->lock);
+                INIT_LIST_HEAD(&vbq->free);
+                p = &per_cpu(vfree_deferred, i);
+                init_llist_head(&p->list);
+                INIT_WORK(&p->wq, delayed_vfree_work);
+-               xa_init(&vbq->vmap_blocks);
+        }
+
+--
+help you, help me,
+Hailong.
 
