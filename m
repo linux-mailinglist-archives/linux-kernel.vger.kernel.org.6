@@ -1,287 +1,156 @@
-Return-Path: <linux-kernel+bounces-224753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9AD91267F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:17:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE7E912683
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52DE41C2134B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:17:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51E13B24E98
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266201EA80;
-	Fri, 21 Jun 2024 13:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9778B1527AC;
+	Fri, 21 Jun 2024 13:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="McZKMvIX"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hZRAwxHn"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DE8EEDC
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3F51EB45
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718975841; cv=none; b=Xas8cQqrZSOoDAEyCfwway6mkRfPMxDUbD8d8Iz/Tg819JHzWVaM+Tye/vTVApgqqPfUyAVntkq6vmcscmDB6rSjRaypx21RBIYN9Fqi87Aez24l97vZm0l6X8Jn3xlGAA+5Wc2VDJd3So4iZju9C+oviGhBRLijF2D3IqV7JdY=
+	t=1718975901; cv=none; b=tqFY+Z5B/MF2GdXeYG17toOZUUJ7YJbFEop8AIwFNeyhFop8X3LuP9IVYsoFygRCZ7PeASjYrJ6gURYnsN+FAB4XQxV5BIpZbYU2Aq136a537ube2Z0Jj7VStaEEp7V7BzTyCVQTA4JBGNZJ12A2VjLMn+H2stneq2rMVwJryG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718975841; c=relaxed/simple;
-	bh=hLcOFwi2J2KZcT+28pyhB884XMs4WErv3F9SncFRe8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NWrrNv29fv39fueIVM+h2Zojq9zBH7Cm41VQJ1+B/NgPKu8566l9r/eU04X3c4tv6xphrFj1kHS2BFLXHpp80FiRGqmeoDtiFwWQIl8QWlrxNqm1L1cDJQ7+zEtTml2l6tmlzb8zs9d3eYA46JV12mwINJ+sAfHAE8Cn4rXMkuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=McZKMvIX; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f9885d5c04so17912285ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718975839; x=1719580639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q8Jo6W/oSNP8jr6rmsVk9Fz1TTt99fPqwc+b/r8xVV4=;
-        b=McZKMvIXSIuQZWM97AlVgnhs/ybp3DGH+cEQWXP/qwBgctCcrXIRam4lxrmFYu0F9a
-         eUk43VwBC6VLWkva7yy7zYBDZewsCAV9Cwd1T1uL86otNfZJXAtYxHozVsbaSU7XbTZh
-         hbk1KnkCe6DJ7afwhJeLfBisWHPPKm1oHJtFVIrcB6iNu96ApGMOmAhdx+Ou6Maz5TbC
-         a/ed/owIwvu2nmy6F59nnmgCr8XM/519o4UvBom06+3yIcDXfKYGhjLwSCvPEpG9ULiK
-         PnvCeHfONh9DI8aPnq/ZSk3ygo85853b4g+1T+PICrfCHfGg8o5W5aWvDk7Er58JuCRl
-         ocIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718975839; x=1719580639;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q8Jo6W/oSNP8jr6rmsVk9Fz1TTt99fPqwc+b/r8xVV4=;
-        b=pLEBtzuyGV7z0g/qGqFiLzrYgQ/qNhZ7+EA/sy8axgvIM111bxnAetTR+nzBxzIOnR
-         5CykpXnSrb/tL5ppG1g7wPlE1PHstN9EqR/b1O072m4evIJo74DNobhgRMEcT5qYvMjk
-         6WM6ZjzlR/jecFzBJ7ce2ILetsULmiuCw/uHUDQwIGXMxX0E4R6ukc8jjzsaf8sPMaj/
-         TQJiuYjHbjCjrxcRaXvpcCa+bhgbXr4klnEihR85NPHnQji4HC5YuKBre5JM4aQWP4/F
-         vdF7dKh67LHyxhtNkaf7OhrDTv1z3v49zCKAJBeocEzueHwfc5yVfNiJDDvZVIs0UR8o
-         hz0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWuP76tHYj1ZZRNgO0CyvIwyTbgok8C/MZPUi63//xKhFKnJ+SA0lpGoBnoT03VcqAy5p3TFDlIOmSIEFdEskVDqH0OW4pmBmpbBWa2
-X-Gm-Message-State: AOJu0YwzYZi0s2KyMWT+kuO79tUoa5WsjuMQ/1nVfQaw+kXFLWAEoeIg
-	vSDyNaEErh2uSHtvlwNa8knGfpaJ5rAX6S4SDN1ppFyrTy9HMVCv
-X-Google-Smtp-Source: AGHT+IH/ujlQpjyJpVOol708EAJiossfwncho/7eSVf/kW6J8Bt8687f96NhgOmOJu8sQGHkNYB4Qw==
-X-Received: by 2002:a17:902:d482:b0:1f8:3c9e:3b92 with SMTP id d9443c01a7336-1f9aa3dd710mr102086615ad.23.1718975838796;
-        Fri, 21 Jun 2024 06:17:18 -0700 (PDT)
-Received: from distilledx.localdomain ([122.172.87.96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f030csm13804045ad.43.2024.06.21.06.17.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 06:17:18 -0700 (PDT)
-From: Tejas Vipin <tejasvipin76@gmail.com>
-To: neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com
-Cc: Tejas Vipin <tejasvipin76@gmail.com>,
-	dianders@chromium.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panel: asus-z00t-tm5p5-n35596: transition to mipi_dsi wrapped functions
-Date: Fri, 21 Jun 2024 18:46:46 +0530
-Message-ID: <20240621131648.131667-1-tejasvipin76@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718975901; c=relaxed/simple;
+	bh=sqHBALxOEcXUdMLpEKaMQRWH/dDRXChPwcd1d8Bcp6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eSB8H9+Ot8OMHPuRkV0dYGO1VdEO4zKaTu5/oYmX7zJMsuqPKBGM0f3Hn2fcuWTAzXqYUwBX2RhNfnBAZ1ffSL1G7s+s9uKr34RAvlT60LvmAvcOoGVL+NdugVgHkgPSHdXJRuv2Znx5Ico8TTG9G1GoZhxJmqKzmxz2UOA3LUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hZRAwxHn; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 04D9D40E01D6;
+	Fri, 21 Jun 2024 13:18:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3Np-3OE6K1rj; Fri, 21 Jun 2024 13:18:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718975892; bh=JizJndAhaNZaXqVbhXkm0kB9rqgin/WAmKHV7VIfvWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hZRAwxHnLicP+AE20iVNYCVwOk7yVR0apQJNRIsX69+EVTcZW+or48HTvNB3v2Kgc
+	 7PQBg7eod7g31JcUVfDGuKImJ2ouIaR4gqVrxYiuCZmXvFDBuMntPTtEAmUJ5bo5nn
+	 TS6j+XwPuJsakF3knI+Wan6yhW/15meZgW5VgCJcAK/MJgUEU1DPuVhcuCUhUEPR+7
+	 XfdrFId+R0WJp/P7m9Rija0Cjf/vVtK2Ur/0MLCvwEg+AeW5fBe6OUoMkqOspJrr0u
+	 Cg1mJYrZvRbc7qxg8WBtDHSp4XgmvGrv5AA00D648JoboCARxN5g8eV3pQexFbpVAQ
+	 5J3ZzNIUTHi9rd47zZjAp2yLfP/boMtkqJ+3p6ewRAUuiONbv7GfnsFde4IF3JpQ5o
+	 5oKarRxdix9ewE4os7Y3WpeiHJaRGlbdiaDHWBQQjGoL9Omk0nB2swgLH4+waE6sRp
+	 lHfnRgNHntXdyajmGHFZLzm0fh5WtTNP3br8AWRbfY17S9YvvNM1ZG8CQfUVejfEqn
+	 W5JvOx+ib9bHwC+8nhRsw+l9fAv0VP7ifiDQOi2OO+aAOAccPUEviAN+4uT5WdDmbo
+	 Yri2zyPPYLihzdEolxx9Ycilcf1Evl/3K+dhVwQfDH0ha8saX1LZFWbJtVyCDhsuQv
+	 Jfgexbj7YVxAXVJTWNESiOqo=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5951140E0185;
+	Fri, 21 Jun 2024 13:17:47 +0000 (UTC)
+Date: Fri, 21 Jun 2024 15:17:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Steve Wahl <steve.wahl@hpe.com>
+Cc: Ashish Kalra <ashish.kalra@amd.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	Pavin Joseph <me@pavinjoseph.com>,
+	Eric Hagberg <ehagberg@gmail.com>,
+	Simon Horman <horms@verge.net.au>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
+	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
+	Hou Wenlong <houwenlong.hwl@antgroup.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
+	Michael Roth <michael.roth@amd.com>
+Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
+Message-ID: <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
+References: <20240520183633.1457687-1-steve.wahl@hpe.com>
+ <20240613152826.GKZmsQGnO3OthLH3Vu@fat_crate.local>
+ <ZmsbZCF9rFzuB3rO@swahl-home.5wahls.com>
+ <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
+ <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com>
 
-Use functions introduced in commit 966e397e4f60 ("drm/mipi-dsi:
-Introduce mipi_dsi_*_write_seq_multi()") and commit f79d6d28d8fe
-("drm/mipi-dsi: wrap more functions for streamline handling") for the
-asus-z00t-tm5p5-n35596 panel.
+On Mon, Jun 17, 2024 at 10:10:32AM -0500, Steve Wahl wrote:
+> The first, hardest step is locate a system that is AMD based, SEV
+> capable, with a BIOS that chooses to locate the CC_BLOB at addresses
+> that do not share a 2M page with other chunks of memory the kernel
+> currently adds to the kexec identity map. I.e. This is a stroke of
+> luck,
 
-Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
----
- .../drm/panel/panel-asus-z00t-tm5p5-n35596.c  | 140 ++++++++----------
- 1 file changed, 59 insertions(+), 81 deletions(-)
+Ya think?
 
-diff --git a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
-index bcaa63d1955f..b05a663c134c 100644
---- a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
-+++ b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
-@@ -33,119 +33,97 @@ static void tm5p5_nt35596_reset(struct tm5p5_nt35596 *ctx)
- 	usleep_range(15000, 16000);
- }
- 
--static int tm5p5_nt35596_on(struct tm5p5_nt35596 *ctx)
-+static void tm5p5_nt35596_on(struct mipi_dsi_multi_context *dsi_ctx)
- {
--	struct mipi_dsi_device *dsi = ctx->dsi;
--
--	mipi_dsi_generic_write_seq(dsi, 0xff, 0x05);
--	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
--	mipi_dsi_generic_write_seq(dsi, 0xc5, 0x31);
--	mipi_dsi_generic_write_seq(dsi, 0xff, 0x04);
--	mipi_dsi_generic_write_seq(dsi, 0x01, 0x84);
--	mipi_dsi_generic_write_seq(dsi, 0x05, 0x25);
--	mipi_dsi_generic_write_seq(dsi, 0x06, 0x01);
--	mipi_dsi_generic_write_seq(dsi, 0x07, 0x20);
--	mipi_dsi_generic_write_seq(dsi, 0x08, 0x06);
--	mipi_dsi_generic_write_seq(dsi, 0x09, 0x08);
--	mipi_dsi_generic_write_seq(dsi, 0x0a, 0x10);
--	mipi_dsi_generic_write_seq(dsi, 0x0b, 0x10);
--	mipi_dsi_generic_write_seq(dsi, 0x0c, 0x10);
--	mipi_dsi_generic_write_seq(dsi, 0x0d, 0x14);
--	mipi_dsi_generic_write_seq(dsi, 0x0e, 0x14);
--	mipi_dsi_generic_write_seq(dsi, 0x0f, 0x14);
--	mipi_dsi_generic_write_seq(dsi, 0x10, 0x14);
--	mipi_dsi_generic_write_seq(dsi, 0x11, 0x14);
--	mipi_dsi_generic_write_seq(dsi, 0x12, 0x14);
--	mipi_dsi_generic_write_seq(dsi, 0x17, 0xf3);
--	mipi_dsi_generic_write_seq(dsi, 0x18, 0xc0);
--	mipi_dsi_generic_write_seq(dsi, 0x19, 0xc0);
--	mipi_dsi_generic_write_seq(dsi, 0x1a, 0xc0);
--	mipi_dsi_generic_write_seq(dsi, 0x1b, 0xb3);
--	mipi_dsi_generic_write_seq(dsi, 0x1c, 0xb3);
--	mipi_dsi_generic_write_seq(dsi, 0x1d, 0xb3);
--	mipi_dsi_generic_write_seq(dsi, 0x1e, 0xb3);
--	mipi_dsi_generic_write_seq(dsi, 0x1f, 0xb3);
--	mipi_dsi_generic_write_seq(dsi, 0x20, 0xb3);
--	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
--	mipi_dsi_generic_write_seq(dsi, 0xff, 0x00);
--	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
--	mipi_dsi_generic_write_seq(dsi, 0x35, 0x01);
--	mipi_dsi_generic_write_seq(dsi, 0xd3, 0x06);
--	mipi_dsi_generic_write_seq(dsi, 0xd4, 0x04);
--	mipi_dsi_generic_write_seq(dsi, 0x5e, 0x0d);
--	mipi_dsi_generic_write_seq(dsi, 0x11, 0x00);
--	msleep(100);
--	mipi_dsi_generic_write_seq(dsi, 0x29, 0x00);
--	mipi_dsi_generic_write_seq(dsi, 0x53, 0x24);
--
--	return 0;
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x05);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xc5, 0x31);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x04);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x01, 0x84);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x05, 0x25);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x06, 0x01);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x07, 0x20);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x08, 0x06);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x09, 0x08);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0a, 0x10);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0b, 0x10);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0c, 0x10);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0d, 0x14);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0e, 0x14);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0f, 0x14);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x10, 0x14);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x11, 0x14);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x12, 0x14);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x17, 0xf3);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x18, 0xc0);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x19, 0xc0);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1a, 0xc0);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1b, 0xb3);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1c, 0xb3);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1d, 0xb3);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1e, 0xb3);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1f, 0xb3);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x20, 0xb3);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x00);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x35, 0x01);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xd3, 0x06);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xd4, 0x04);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x5e, 0x0d);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x11, 0x00);
-+
-+	mipi_dsi_msleep(dsi_ctx, 100);
-+
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x29, 0x00);
-+	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x53, 0x24);
- }
- 
--static int tm5p5_nt35596_off(struct tm5p5_nt35596 *ctx)
-+static void tm5p5_nt35596_off(struct mipi_dsi_multi_context *dsi_ctx)
- {
--	struct mipi_dsi_device *dsi = ctx->dsi;
--	struct device *dev = &dsi->dev;
--	int ret;
--
--	ret = mipi_dsi_dcs_set_display_off(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set display off: %d\n", ret);
--		return ret;
--	}
--	msleep(60);
-+	mipi_dsi_dcs_set_display_off_multi(dsi_ctx);
- 
--	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_msleep(dsi_ctx, 60);
- 
--	mipi_dsi_dcs_write_seq(dsi, 0x4f, 0x01);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(dsi_ctx);
- 
--	return 0;
-+	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0x4f, 0x01);
- }
- 
- static int tm5p5_nt35596_prepare(struct drm_panel *panel)
- {
- 	struct tm5p5_nt35596 *ctx = to_tm5p5_nt35596(panel);
--	struct device *dev = &ctx->dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx =	{.dsi = ctx->dsi};
- 
--	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
--	if (ret < 0) {
--		dev_err(dev, "Failed to enable regulators: %d\n", ret);
--		return ret;
--	}
-+	dsi_ctx.accum_err = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+	if (dsi_ctx.accum_err)
-+		return dsi_ctx.accum_err;
- 
- 	tm5p5_nt35596_reset(ctx);
- 
--	ret = tm5p5_nt35596_on(ctx);
--	if (ret < 0) {
--		dev_err(dev, "Failed to initialize panel: %d\n", ret);
-+	tm5p5_nt35596_on(&dsi_ctx);
-+
-+	if (dsi_ctx.accum_err) {
- 		gpiod_set_value_cansleep(ctx->reset_gpio, 0);
- 		regulator_bulk_disable(ARRAY_SIZE(ctx->supplies),
- 				       ctx->supplies);
--		return ret;
- 	}
- 
--	return 0;
-+	return dsi_ctx.accum_err;
- }
- 
- static int tm5p5_nt35596_unprepare(struct drm_panel *panel)
- {
- 	struct tm5p5_nt35596 *ctx = to_tm5p5_nt35596(panel);
--	struct device *dev = &ctx->dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx =	{.dsi = ctx->dsi};
- 
--	ret = tm5p5_nt35596_off(ctx);
--	if (ret < 0)
--		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
-+	tm5p5_nt35596_off(&dsi_ctx);
- 
- 	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
- 	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies),
- 			       ctx->supplies);
- 
--	return 0;
-+	return dsi_ctx.accum_err;
- }
- 
- static const struct drm_display_mode tm5p5_nt35596_mode = {
+It is more likely that I win the lottery than finding such a beast. ;-\
+
+> and for all I know could depend on configuration such as memory
+> size in addition to motherboard and BIOS version.  However, it does
+> not seem to change from boot to boot; as system that has the problem
+> seems to be consistent about it.
+> 
+> Second, boot linux including the "nogbpages" command line option.
+> 
+> Third, kexec -l <kernel image> --append=<command line options>
+> --initrd=<initrd>.
+> 
+> Fourth, kexec -e.
+> 
+> Systems that have this problem successfully kexec without the
+> "nogbpages" parameter, but fail and do a full reboot with the
+> "nogbpages" parameter.  
+> 
+> I wish I could be more exact,
+
+Yes, this doesn't really explain what the culprit is.
+
+So, your 0th message says:
+
+"But the community chose instead to avoid referencing this memory on
+non-AMD systems where the problem was reported.
+
+    commit bee6cf1a80b5 ("x86/sev: Do not try to parse for the CC blob
+                          on non-AMD hardware")"
+
+But that patch fixes !AMD systems.
+
+Now you're basically saying that there are some AMD machines out there where
+the EFI config table doesn't get mapped because it is somewhere else, outside
+of the range of a 2M page or 1G page.
+
+Or even if it is, "nogbpages" supplied on the cmdline would cause the
+"overlapping 2M and 1G mapping to not happen, leaving the EFI config table
+unmapped.
+
+Am I on the right track here?
+
 -- 
-2.45.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
