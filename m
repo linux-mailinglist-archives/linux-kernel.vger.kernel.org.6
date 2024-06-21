@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-224234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C923B911F38
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6846D911F3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71FC51F27B6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131B71F27BC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3647718E20;
-	Fri, 21 Jun 2024 08:48:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD3116D9C4;
+	Fri, 21 Jun 2024 08:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qGm3uYFK"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769B385283
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E3A85283
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718959693; cv=none; b=JISpZCYlxz+Pu0CuNZXDpDZ1H/gOGcJAysWRunbJ5jhVTE5k3pYCNxszEZWMwgHcs8R3QWCJpUlVymwd5IxYNQu/KSEsMx81AxXClpRJEU4+gGnxqat3B1bcM2AJWbOPOVznB9rkB/PjCmqyupNH0ILIJGdvoFr4f+w609PqULE=
+	t=1718959707; cv=none; b=MHqEiU2wtKQmq4XOORSO6X0IWoP/BdMtiqjCk1pt6b376nHHIUhQAeCKVrLF+tgr2qJC37VOg1gYXisCSwwMAcCId2WLPyOmaTTJVyhQj+x+GFQCLRDoftgFtCb8EZoi+ymdR6ZxzDe5p1/kx/YdcCHUXIbvNGxj/2w3R+opBkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718959693; c=relaxed/simple;
-	bh=XXr7POVlG9XqfsnX8LXIEzZDRsRF0W5OS4t3283AvIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HMj+ccZJ6jcDojUhwcCfl4BzBji7nD1Y1j+U9NHRNsriscfav9t/uCAMSA7VTxFHf1Ap/j8NARx47p4WrYtPUTO1ls6m5cSG6U1R0zR9hZzfYkZHwjNJuMCphmJq9ZSOHC2jTIxgrjGCmJLKipE2bnzJ+zbcnWUsKJOqZ8VUPOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sKZwI-0001eE-0j; Fri, 21 Jun 2024 10:48:10 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sKZwH-003u1O-7T; Fri, 21 Jun 2024 10:48:09 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sKZwH-006JSv-0T;
-	Fri, 21 Jun 2024 10:48:09 +0200
-Date: Fri, 21 Jun 2024 10:48:09 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>
-Subject: Re: [PATCH] wifi: mwifiex: increase max_num_akm_suites
-Message-ID: <ZnU-STTaTWjHViwW@pengutronix.de>
-References: <20240530130156.1651174-1-s.hauer@pengutronix.de>
- <ZnRvZMQJUr4APwUU@google.com>
+	s=arc-20240116; t=1718959707; c=relaxed/simple;
+	bh=cmNro0s81V3ggh/XTjBQaqQoYmXEBF36FlD7ZvBjvqU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dAWQbYMytuzON7JKuVXvihhKI0va+j4qEyFqPUu77l+bwU59mUFNNfgl5E1FfM7f6kjQ7tf1ZPwIMGIzAWbMgkjPYsO+Dlc0Xm8QIv8u8pklap9whBTlg20cTPTMqTQNcJ+Zkr/oX1aJyq7Bq4gCRExG+ptfDJgLsPrJ7dqwoMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qGm3uYFK; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718959697; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=3vsqKJpmmEF1YlrnBNdvTctEj6bpEdbnO2+TdQxtZ1w=;
+	b=qGm3uYFKG9nlkiFJ6tpLIypL+Moz0n7fV3TT8uNjLHXGt++y8m90jBJiHMF2NweGMY6Xd5U5Hg9KtF96FNqrzQ1zui4avl4wsdQdSaY89967NdGv81bF4ckHQmdO23z8xUmMwvLYi7qizqdUaV53xK1qHQCp4GUJeruH5u/XgdU=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=hengqi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W8vhyN2_1718959694;
+Received: from 30.221.148.166(mailfrom:hengqi@linux.alibaba.com fp:SMTPD_---0W8vhyN2_1718959694)
+          by smtp.aliyun-inc.com;
+          Fri, 21 Jun 2024 16:48:15 +0800
+Message-ID: <78a99414-314d-452e-938b-07e86182a8bf@linux.alibaba.com>
+Date: Fri, 21 Jun 2024 16:48:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnRvZMQJUr4APwUU@google.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/qxl: Add check for drm_cvt_mode
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ airlied@redhat.com, kraxel@redhat.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ noralf@tronnes.org
+References: <20240621071031.1987974-1-nichen@iscas.ac.cn>
+From: Heng Qi <hengqi@linux.alibaba.com>
+In-Reply-To: <20240621071031.1987974-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024 at 11:05:24AM -0700, Brian Norris wrote:
-> Hi Sascha,
-> 
-> On Thu, May 30, 2024 at 03:01:56PM +0200, Sascha Hauer wrote:
-> > The maximum number of AKM suites will be set to two if not specified by
-> > the driver. Set it to CFG80211_MAX_NUM_AKM_SUITES to let userspace
-> > specify up to ten AKM suites in the akm_suites array.
-> > 
-> > Without only the first two AKM suites will be used, further ones are
-> > ignored.
-> > 
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > ---
-> > 
-> > Current wpa_supplicant/hostapd only put a maximum of two into the
-> > akm_suites array as well, a patch changing this can be found here:
-> > http://lists.infradead.org/pipermail/hostap/2024-May/042720.html
-> 
-> Thanks for the patches and research.
-> 
-> Possibly dumb question: what's unique about mwifiex here? Everything you
-> describe above sounds applicable to all drivers, IIUC, and I don't see
-> any other driver that touches max_num_akm_suites.
 
-I asked myself the same question and I don't have an answer to it. To me
-it looks like the number of akm suites is limited by the akm_suites array
-size which is CFG80211_MAX_NUM_AKM_SUITES which is 10 and that could be
-used for all drivers.
-max_num_akm_suites is introduced to be driver specific and so I changed
-it only for the driver I am currently interested in.
+在 2024/6/21 下午3:10, Chen Ni 写道:
+> Add check for the return value of drm_cvt_mode() and return the error if
+> it fails in order to avoid NULL pointer dereference.
+>
+> Fixes: 1b043677d4be ("drm/qxl: add qxl_add_mode helper function")
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>   drivers/gpu/drm/qxl/qxl_display.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+> index c6d35c33d5d6..86a5dea710c0 100644
+> --- a/drivers/gpu/drm/qxl/qxl_display.c
+> +++ b/drivers/gpu/drm/qxl/qxl_display.c
+> @@ -236,6 +236,9 @@ static int qxl_add_mode(struct drm_connector *connector,
+>   		return 0;
+>   
+>   	mode = drm_cvt_mode(dev, width, height, 60, false, false, false);
+> +	if (!mode)
+> +		return 0;
+> +
+>   	if (preferred)
+>   		mode->type |= DRM_MODE_TYPE_PREFERRED;
+>   	mode->hdisplay = width;
 
-Sascha
+Reviewed-by: Heng Qi <hengqi@linux.alibaba.com>
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks.
 
