@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-223719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F6291177A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:28:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8219911783
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C410C1C21742
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:28:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D966280C67
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C761C25757;
-	Fri, 21 Jun 2024 00:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D0D44C7C;
+	Fri, 21 Jun 2024 00:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TyYZLocx"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="B1UAL0du"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF13AD5F;
-	Fri, 21 Jun 2024 00:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B21394;
+	Fri, 21 Jun 2024 00:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718929622; cv=none; b=kgJTeKFHwllmkc6ehvb2wW70FL4dex/tabSOKYaIXM5aHzSacghwoaQ31RbzcyZnqfvrWsLLKSIm3MTunkiFoaQ/W6r7+L1r96GvYzDTpFyGyI+3lCo6fRWHGDdXqa5R0KxPJqTO3VUJbDi8aNayH/zQ4a1jvb2EiO0py1JCkB8=
+	t=1718929627; cv=none; b=rOjBhXBUWRUzi38Vqyp/c3IV6im3pXfMY1g9BZCKSxyCAI8MLCdlE8iqZ6MB+DA0M/ZKwNkYs9aSU+A4Qebmp1DB1gd5zZMQ3356uF4bGb6viKg9vEWiV7dW3UaBO8jmNAKtjJBxxmlEDZre4pSGxv8hnJnDRUM/GEdxSSXzqBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718929622; c=relaxed/simple;
-	bh=COqCNEmfwNwT/aHRfv25m13vUI7mI0L5rYUQfj5BVF0=;
+	s=arc-20240116; t=1718929627; c=relaxed/simple;
+	bh=XJzA5VZOZ5kL5Q19xZ6JgNfiwyJ20U6GlvS+2464Cow=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tpYzrYuq4iJTs1swTvGrnPlBeYprIW5zQOhNpbo3XJDL+c/6mY/jKnv1USNqc1gkYjFyuOwnBvcHsL5jbx1hR+Z87kFBPq3JeJ6IjWISUrHUP/5ly49HhBYIxNrmnTKL20djD5gdw1ttPETmUwewR7c47Xk3Ke1ucdHzWJ1TMYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TyYZLocx; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=f859FO5tNgYoTd8o+ivi6aOrS68cieS8NvN9iIAVTKfstfkOW3xLKpNTLpf59xZcipln8uOKCWmp210dPrzaAJZd+TpJRZ0DXqbdCnzQPS5jjP35akEgx7lKjaJRY45sJimd7Kui1IFtqpMTmIiQKGwE/USh7+4kCAUDMrCkchg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=B1UAL0du; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KNSIao032554;
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L0QhnS022702;
 	Fri, 21 Jun 2024 00:26:43 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=wYZcdN8GaCldu
-	rJMmgBO/xn6iWaosLK3Wj+Mr2vvPT0=; b=TyYZLocxPDZI6g1LUnLnTM6RDN3bb
-	M7v8iYyXepna0Yr+j7Hk5FEq7FoB2fFjURkk5+DxhadWyAdzDpOU7JjHFnnP1Id7
-	+q2ZzwdPHAfACj6Fq251rnzGpfoq06AKR8ergc/fm7tKTPfAHc+3ANsjdPV/3Spm
-	UXnRKjK8/PCs8Kf1NymeznspqQ/ZkrqSzmGlc0pSWIrtqfPET2uyqxvvaxZP/2sf
-	CHNIpssaZWn6vu4fcVb00iEWBPhdzTMdhj0h6pzjDHlVaBy2dxQWT3mbbf+jxvfo
-	585oNd2nePmOktSPHHnN6QYWTHN5g/dPs/pDZJuPCSSlyxVnghKF1WtWA==
+	:mime-version:content-transfer-encoding; s=pp1; bh=iiouZTMCvClKn
+	gmKPn1JjWUn629yRa6ZHvuTIcvWLUs=; b=B1UAL0du97wjqSFyR+6Ovw/zzAyIw
+	ZH8OXgrvi9Damqnfj/5UDAZYjCyPrSRigturu5yuTjSedpbtiMf3QDLIsnNrxX8s
+	L/Vfa10k6htoyOcwcdEsNmIFgvZjgYuir9hlwkHAGeXfJ8X4VlpFVRXSJJZ1VIK3
+	5Uzfwy57UKBlp6LD+GvAXSX7gXI36UvUAenIgEIfy3/TxFOPUnqn0J7w8W2d9z0s
+	abdgVFa4yppE9lTeaM9HUWvR8XVIsURePS5nPeL5FQW1kANq9ud6KWF8kORvs6C0
+	DXFL5o8jNCc6sv93JvRwLATQdpKeAYnyb4L+J9fVAzfWU/FJRl4LJpPaQ==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvw8c070g-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvvs6g7rp-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 21 Jun 2024 00:26:42 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45L0QSYH022603;
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45L0QgSS022650;
 	Fri, 21 Jun 2024 00:26:42 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvw8c070a-1
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvvs6g7rj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 00:26:41 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L0EnR4019910;
-	Fri, 21 Jun 2024 00:26:40 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yvrqujnwx-1
+	Fri, 21 Jun 2024 00:26:42 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L0LGDS025644;
+	Fri, 21 Jun 2024 00:26:41 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yvrqv2nm9-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 00:26:40 +0000
+	Fri, 21 Jun 2024 00:26:41 +0000
 Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45L0QY4p49611188
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45L0Qa6U19530072
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Jun 2024 00:26:36 GMT
+	Fri, 21 Jun 2024 00:26:38 GMT
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A9F7720040;
+	by IMSVA (Postfix) with ESMTP id DEF162004E;
+	Fri, 21 Jun 2024 00:26:35 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BE4312004B;
 	Fri, 21 Jun 2024 00:26:34 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 86EEE2004E;
-	Fri, 21 Jun 2024 00:26:33 +0000 (GMT)
 Received: from heavy.ibm.com (unknown [9.171.10.44])
 	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Jun 2024 00:26:33 +0000 (GMT)
+	Fri, 21 Jun 2024 00:26:34 +0000 (GMT)
 From: Ilya Leoshkevich <iii@linux.ibm.com>
 To: Alexander Gordeev <agordeev@linux.ibm.com>,
         Alexander Potapenko <glider@google.com>,
@@ -93,9 +93,9 @@ Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
         Sven Schnelle <svens@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v6 12/39] kmsan: Introduce memset_no_sanitize_memory()
-Date: Fri, 21 Jun 2024 02:24:46 +0200
-Message-ID: <20240621002616.40684-13-iii@linux.ibm.com>
+Subject: [PATCH v6 13/39] kmsan: Support SLAB_POISON
+Date: Fri, 21 Jun 2024 02:24:47 +0200
+Message-ID: <20240621002616.40684-14-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240621002616.40684-1-iii@linux.ibm.com>
 References: <20240621002616.40684-1-iii@linux.ibm.com>
@@ -107,62 +107,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: HVD5r9y6qc451bgRBsPVDEcQFobrK51H
-X-Proofpoint-GUID: juOALtlB8s58b-RD-irHl1aByTJkzhA_
+X-Proofpoint-ORIG-GUID: NqZMycCOVADYhS-1sceU6oAJBHDthSX6
+X-Proofpoint-GUID: GjgcOBy8XnMNvwuhP2fJxePLnBR37qk8
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-20_11,2024-06-20_04,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 spamscore=0
- impostorscore=0 clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=867
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 phishscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1015 suspectscore=0 mlxscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2406140001 definitions=main-2406210001
 
-Add a wrapper for memset() that prevents unpoisoning. This is useful
-for filling memory allocator redzones.
+Avoid false KMSAN negatives with SLUB_DEBUG by allowing
+kmsan_slab_free() to poison the freed memory, and by preventing
+init_object() from unpoisoning new allocations by using __memset().
+
+There are two alternatives to this approach. First, init_object()
+can be marked with __no_sanitize_memory. This annotation should be used
+with great care, because it drops all instrumentation from the
+function, and any shadow writes will be lost. Even though this is not a
+concern with the current init_object() implementation, this may change
+in the future.
+
+Second, kmsan_poison_memory() calls may be added after memset() calls.
+The downside is that init_object() is called from
+free_debug_processing(), in which case poisoning will erase the
+distinction between simply uninitialized memory and UAF.
 
 Reviewed-by: Alexander Potapenko <glider@google.com>
 Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 ---
- include/linux/kmsan.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ mm/kmsan/hooks.c |  2 +-
+ mm/slub.c        | 15 +++++++++++----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/kmsan.h b/include/linux/kmsan.h
-index 14b5ea6d3a43..7109644f4c19 100644
---- a/include/linux/kmsan.h
-+++ b/include/linux/kmsan.h
-@@ -255,6 +255,19 @@ void kmsan_enable_current(void);
-  */
- void kmsan_disable_current(void);
+diff --git a/mm/kmsan/hooks.c b/mm/kmsan/hooks.c
+index 267d0afa2e8b..26d86dfdc819 100644
+--- a/mm/kmsan/hooks.c
++++ b/mm/kmsan/hooks.c
+@@ -74,7 +74,7 @@ void kmsan_slab_free(struct kmem_cache *s, void *object)
+ 		return;
  
-+/**
-+ * memset_no_sanitize_memory(): Fill memory without KMSAN instrumentation.
-+ * @s: address of kernel memory to fill.
-+ * @c: constant byte to fill the memory with.
-+ * @n: number of bytes to fill.
-+ *
-+ * This is like memset(), but without KMSAN instrumentation.
-+ */
-+static inline void *memset_no_sanitize_memory(void *s, int c, size_t n)
-+{
-+	return __memset(s, c, n);
-+}
-+
- #else
+ 	/* RCU slabs could be legally used after free within the RCU period */
+-	if (unlikely(s->flags & (SLAB_TYPESAFE_BY_RCU | SLAB_POISON)))
++	if (unlikely(s->flags & SLAB_TYPESAFE_BY_RCU))
+ 		return;
+ 	/*
+ 	 * If there's a constructor, freed memory must remain in the same state
+diff --git a/mm/slub.c b/mm/slub.c
+index 1373ac365a46..1134091abac5 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1139,7 +1139,13 @@ static void init_object(struct kmem_cache *s, void *object, u8 val)
+ 	unsigned int poison_size = s->object_size;
  
- static inline void kmsan_init_shadow(void)
-@@ -362,6 +375,11 @@ static inline void kmsan_disable_current(void)
- {
+ 	if (s->flags & SLAB_RED_ZONE) {
+-		memset(p - s->red_left_pad, val, s->red_left_pad);
++		/*
++		 * Here and below, avoid overwriting the KMSAN shadow. Keeping
++		 * the shadow makes it possible to distinguish uninit-value
++		 * from use-after-free.
++		 */
++		memset_no_sanitize_memory(p - s->red_left_pad, val,
++					  s->red_left_pad);
+ 
+ 		if (slub_debug_orig_size(s) && val == SLUB_RED_ACTIVE) {
+ 			/*
+@@ -1152,12 +1158,13 @@ static void init_object(struct kmem_cache *s, void *object, u8 val)
+ 	}
+ 
+ 	if (s->flags & __OBJECT_POISON) {
+-		memset(p, POISON_FREE, poison_size - 1);
+-		p[poison_size - 1] = POISON_END;
++		memset_no_sanitize_memory(p, POISON_FREE, poison_size - 1);
++		memset_no_sanitize_memory(p + poison_size - 1, POISON_END, 1);
+ 	}
+ 
+ 	if (s->flags & SLAB_RED_ZONE)
+-		memset(p + poison_size, val, s->inuse - poison_size);
++		memset_no_sanitize_memory(p + poison_size, val,
++					  s->inuse - poison_size);
  }
  
-+static inline void *memset_no_sanitize_memory(void *s, int c, size_t n)
-+{
-+	return memset(s, c, n);
-+}
-+
- #endif
- 
- #endif /* _LINUX_KMSAN_H */
+ static void restore_bytes(struct kmem_cache *s, char *message, u8 data,
 -- 
 2.45.1
 
