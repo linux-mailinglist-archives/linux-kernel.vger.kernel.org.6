@@ -1,146 +1,175 @@
-Return-Path: <linux-kernel+bounces-224268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C20E911FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:00:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A955911FD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF2DE1C23728
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:00:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252B828F5CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3E916E892;
-	Fri, 21 Jun 2024 08:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D371C16DEDA;
+	Fri, 21 Jun 2024 08:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="H7mCTDwx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="K4cdFx4S"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b="T42q8ZpV"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138D2171668;
-	Fri, 21 Jun 2024 08:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8804B16DC19;
+	Fri, 21 Jun 2024 08:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718960213; cv=none; b=Whx2tsQkVu3tvnzBK5f/EaJ/hGZTEZ+p+MAGeeFB/Xn5tx9zi4Yd4e5MupJH1RGfd+u+Y+MovcF4Zi+rV9bOgi6kTE29e6vIIdytBsb1o8GHhGYWpjZLSFpfbfmR0N1B0XxQG2hrEH7Q044xJzNokAaY8N0J3cm7ZXl1+GRc8e0=
+	t=1718960296; cv=none; b=WI+07TnyoIqlfSA7lAcZ6q5kj+3RkrkK/oglJaPztAOC5mCly3BAZp9ZwEPNIX1n5wm4d3qONbNILauF4MfqvRbqL6mMcdbCzFkp9mZNOtM3N2e9wif9GV1GMCjE57DuH23svzcIwOkseImXUVo8hlaoGo14tSLbdgD8JM19JX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718960213; c=relaxed/simple;
-	bh=yVhYX7Qb1K30DljPx/XNunSHMQ4LAqLxqGqIBasoGDs=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=qbwSlGgf0dHrC+JSrDEsGznza8P1eAJfPgbFh+dxmJMA2pf7BbR5meDXND4V2WkzzabglokWL1z6tZMSvymEw7eBgB8j5gBgGanlhVZWEnhYN4QkO8TF9g09uqmvfo/IGUqbKlugMIukF6uvbHA07xUGcZJ9XXSQ39MAUlqMP3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=H7mCTDwx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=K4cdFx4S; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 153A01140210;
-	Fri, 21 Jun 2024 04:56:50 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 21 Jun 2024 04:56:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718960210; x=1719046610; bh=LCP3GPJDV8
-	F/N+nAlcGiBZYx7s7qKdEXuPIAtCYCsw8=; b=H7mCTDwxBhL6/3nl2kvwH7Z2jf
-	vHvRWJWjo62xKNC7P63pFKMi0lGQH1oK9d5uLt4KZnRj6RDabX6f042YKlcBY7VL
-	ZZq1IVlKZ2tgE49wrDxmbx5ZugEMclHbG+fKzej1xJSCVx2tZvZ3YPE5yAhRu1hX
-	g6XV6uYI8W0AZrAHJH7GLQD/PzjDkfnuabR9xUItNv+SX/LSx1+9CeE43E1pWrsw
-	H3/6KJ+q3UXf2HjYInaAx+URfx3SrV1MtmOIAqug46Iecs28LMSKwCe+Wulv7Yzh
-	+lVLEByNlljBiKAtUqzaNB80GN0U3FbfHu66zSBtt4AZT/eJby+pGlrYPqRQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1718960210; x=1719046610; bh=LCP3GPJDV8F/N+nAlcGiBZYx7s7q
-	KdEXuPIAtCYCsw8=; b=K4cdFx4S224MYRT+r8L/r9U1j5q9lsA7B7hhlIrlPjWc
-	7EDb3ZPjlybzPs2NKQgEkl/fSHKd0CDqzFXj7P3t+qGfnRRJ78YrIYGTuI3sC43Q
-	6y8H6AA1V0PIijyE6xMkgGupwrnRWrZbay1fonLCHWP6Qa/M3EcTzWO0bm0ePn1Q
-	O38dmf9if6C4B+mrVHd9kbUcCSEJwcWVo6jkCthFmcFHahki2cGoOM3KesCvklVz
-	YT5grRrYymPqsYUACYcdY9Sp9ICM60lfM3yEmkxnIiJkr+UigAeW3QKYo6psB+j+
-	ytsTijk6h1ZVtxvQRM1KQbzMrZL3rRnt47XsyTlhYw==
-X-ME-Sender: <xms:UEB1Zm4izm0yfspkW7ydjajHNz_V1xCdigbmfAZFmL5oM63ee-Wyhw>
-    <xme:UEB1Zv6YEV3Oe7A3j2UMK3TBnvu3IWBefk9T9nUTdlpS5WMN3RIeTZ_JYgTz2Q3Id
-    Mp3CcHRYUWGMbC0aLk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefgedguddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:UEB1ZlewerVmgQOEvLDFfmzpJCOmUBZQGyRAmjbsdJfs6xzQkp-YFA>
-    <xmx:UEB1ZjKrwsZrMN1BtdbMbDwR4OJmLJPFU-kCoOw2HcS_usyMMgHDsw>
-    <xmx:UEB1ZqKUDfHnKePjmuIj68bW7G0CAsctQb5pzimSurs_Ge9Zp4ONZA>
-    <xmx:UEB1ZkxxkNjEJAVWyRsEOh7wRilHzDQTxq6cEooXIRlUnDuIBwJ2SA>
-    <xmx:UkB1ZqViuRkEf_iw5Waz5bDUqxF18TnrV2GO1kTJMH4GWiGo1Svimx46>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 38B95B6008D; Fri, 21 Jun 2024 04:56:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718960296; c=relaxed/simple;
+	bh=M21aNyGYI1RxZ9Fn4kJPks9UHR0SytUOTZR6yL1MGIk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bynhwleUs9Ovk8iiVJdO2gCxGiElkrowTwmrKrkauzanDMCjJ2yS/pMHEqi8Kir8VZmHX4DC/oPo8QO0cDGf/3AsrVXiygWfNa0RHz5mo21LcCdcxoyDOE1MTODRwgqQLi+nekSdlymMvXHj0U4sNXAt1QRVT8b/9WHZnYB5Ri8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so; spf=pass smtp.mailfrom=doubly.so; dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b=T42q8ZpV; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=doubly.so
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W5B8Z0y0cz9tCw;
+	Fri, 21 Jun 2024 10:58:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=doubly.so; s=MBO0001;
+	t=1718960286;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iVZ1trXnEDw/jzcfU5GRoXhefT6k9hFcQoPbnVSV6jM=;
+	b=T42q8ZpVIN9GOjTPNrbFL2u1+dZVArtr6AT9YETmK7mFa0ilKEHVbwboWzCMv0m0GjB0yj
+	PZSchl2QtwkCYd3XN0VyEnW+WSX5LJqipR08CQ6G0srl+xksPiPVWVtDev9/N6XWGPQDQs
+	mPxfyHd9wAbk6vkf3TC4m+z8ZGNqe5qbPwBgJJ5aJB+TlzAKb+/HHLoTNCT94ikNtXyH99
+	ua8ugFpFQ9VJbMEvDHv3469OhRErCzVl3rkCNY6hbCf/eurmiRvHcqTC3/LbTeXt3osqiC
+	lm4MTa2/RYDgiHkyAHxJ97GTp1EO8PU8rDYznKhG/H0VisxjzD+5YxkPuOiitw==
+From: Devin Bayer <dev@doubly.so>
+To: corentin.chary@gmail.com,
+	luke@ljones.dev
+Cc: hdegoede@redhat.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	Devin Bayer <dev@doubly.so>
+Subject: [PATCH v2] platform/x86: asus-wmi: support the disable camera LED on F10 of Zenbook 2023
+Date: Fri, 21 Jun 2024 10:57:45 +0200
+Message-ID: <20240621085745.233107-1-dev@doubly.so>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <ba14c4fb-e6a7-46b3-a030-081482264a99@app.fastmail.com>
-In-Reply-To: 
- <1537113c4396cd043a08a72bdca80cccfa2d54d9.camel@physik.fu-berlin.de>
-References: <20240620162316.3674955-1-arnd@kernel.org>
- <20240620162316.3674955-8-arnd@kernel.org>
- <e80809ba-ee81-47a5-9b08-54b11f118a78@gmx.de>
- <1537113c4396cd043a08a72bdca80cccfa2d54d9.camel@physik.fu-berlin.de>
-Date: Fri, 21 Jun 2024 10:56:27 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Helge Deller" <deller@gmx.de>, "Arnd Bergmann" <arnd@kernel.org>,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- "David S . Miller" <davem@davemloft.net>,
- "Andreas Larsson" <andreas@gaisler.com>, sparclinux@vger.kernel.org,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org, "Brian Cain" <bcain@quicinc.com>,
- linux-hexagon@vger.kernel.org, guoren <guoren@kernel.org>,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- "Heiko Carstens" <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
- "Rich Felker" <dalias@libc.org>, linux-sh@vger.kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- "Xi Ruoyao" <libc-alpha@sourceware.org>,
- "musl@lists.openwall.com" <musl@lists.openwall.com>,
- "LTP List" <ltp@lists.linux.it>,
- "Adhemerval Zanella Netto" <adhemerval.zanella@linaro.org>
-Subject: Re: [PATCH 07/15] parisc: use generic sys_fanotify_mark implementation
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 21, 2024, at 10:52, John Paul Adrian Glaubitz wrote:
-> Hi Helge and Arnd,
->
-> On Thu, 2024-06-20 at 23:21 +0200, Helge Deller wrote:
->> The patch looks good at first sight.
->> I'll pick it up in my parisc git tree and will do some testing the
->> next few days and then push forward for 6.11 when it opens....
->
-> Isn't this supposed to go in as one series or can arch maintainers actually
-> pick the patches for their architecture and merge them individually?
->
-> If yes, I would prefer to do that for the SuperH patch as well as I usually
-> prefer merging SuperH patches in my own tree.
+Adds a sysfs entry for the LED on F10 above the crossed out camera icon on 2023 Zenbooks.
 
-The patches are all independent of one another, except for a couple
-of context changes where multiple patches touch the same lines.
+v2
+- Changed name from `platform::camera` to `asus::camera`
+- Separated patch from patchset
 
-Feel free to pick up the sh patch directly, I'll just merge whatever
-is left in the end. I mainly want to ensure we can get all the bugfixes
-done for v6.10 so I can build my longer cleanup series on top of it
-for 6.11.
+v1
+- https://lore.kernel.org/platform-driver-x86/20240620082223.20178-1-dev@doubly.so/
 
-   Arnd
+Signed-off-by: Devin Bayer <dev@doubly.so>
+---
+ drivers/platform/x86/asus-wmi.c            | 36 ++++++++++++++++++++++
+ include/linux/platform_data/x86/asus-wmi.h |  2 ++
+ 2 files changed, 38 insertions(+)
+
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 3f07bbf809ef..20b7ed6a27b5 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -73,6 +73,7 @@ module_param(fnlock_default, bool, 0444);
+ #define NOTIFY_LID_FLIP_ROG		0xbd
+ 
+ #define ASUS_WMI_FNLOCK_BIOS_DISABLED	BIT(0)
++#define ASUS_WMI_DEVID_CAMERA_LED		0x00060079
+ 
+ #define ASUS_MID_FAN_DESC		"mid_fan"
+ #define ASUS_GPU_FAN_DESC		"gpu_fan"
+@@ -227,6 +228,7 @@ struct asus_wmi {
+ 	struct led_classdev lightbar_led;
+ 	int lightbar_led_wk;
+ 	struct led_classdev micmute_led;
++	struct led_classdev camera_led;
+ 	struct workqueue_struct *led_workqueue;
+ 	struct work_struct tpd_led_work;
+ 	struct work_struct wlan_led_work;
+@@ -1533,6 +1535,27 @@ static int micmute_led_set(struct led_classdev *led_cdev,
+ 	return err < 0 ? err : 0;
+ }
+ 
++static enum led_brightness camera_led_get(struct led_classdev *led_cdev)
++{
++	struct asus_wmi *asus;
++	u32 result;
++
++	asus = container_of(led_cdev, struct asus_wmi, camera_led);
++	asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_CAMERA_LED, &result);
++
++	return result & ASUS_WMI_DSTS_BRIGHTNESS_MASK;
++}
++
++static int camera_led_set(struct led_classdev *led_cdev,
++			   enum led_brightness brightness)
++{
++	int state = brightness != LED_OFF;
++	int err;
++
++	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CAMERA_LED, state, NULL);
++	return err < 0 ? err : 0;
++}
++
+ static void asus_wmi_led_exit(struct asus_wmi *asus)
+ {
+ 	led_classdev_unregister(&asus->kbd_led);
+@@ -1540,6 +1563,7 @@ static void asus_wmi_led_exit(struct asus_wmi *asus)
+ 	led_classdev_unregister(&asus->wlan_led);
+ 	led_classdev_unregister(&asus->lightbar_led);
+ 	led_classdev_unregister(&asus->micmute_led);
++	led_classdev_unregister(&asus->camera_led);
+ 
+ 	if (asus->led_workqueue)
+ 		destroy_workqueue(asus->led_workqueue);
+@@ -1631,6 +1655,18 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+ 			goto error;
+ 	}
+ 
++	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_CAMERA_LED)) {
++		asus->camera_led.name = "asus::camera";
++		asus->camera_led.max_brightness = 1;
++		asus->camera_led.brightness_get = camera_led_get;
++		asus->camera_led.brightness_set_blocking = camera_led_set;
++
++		rv = led_classdev_register(&asus->platform_device->dev,
++						&asus->camera_led);
++		if (rv)
++			goto error;
++	}
++
+ error:
+ 	if (rv)
+ 		asus_wmi_led_exit(asus);
+diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+index ab1c7deff118..fb0b00f7d292 100644
+--- a/include/linux/platform_data/x86/asus-wmi.h
++++ b/include/linux/platform_data/x86/asus-wmi.h
+@@ -50,6 +50,8 @@
+ #define ASUS_WMI_DEVID_LED5		0x00020015
+ #define ASUS_WMI_DEVID_LED6		0x00020016
+ #define ASUS_WMI_DEVID_MICMUTE_LED		0x00040017
++#define ASUS_WMI_DEVID_CAMERA_LED_NEG		0x00060078
++#define ASUS_WMI_DEVID_CAMERA_LED		0x00060079
+ 
+ /* Backlight and Brightness */
+ #define ASUS_WMI_DEVID_ALS_ENABLE	0x00050001 /* Ambient Light Sensor */
+-- 
+2.45.2
+
 
