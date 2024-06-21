@@ -1,241 +1,202 @@
-Return-Path: <linux-kernel+bounces-225338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07CB912F45
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:16:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE59D912F43
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34A20B23302
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:16:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 715B61F251C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C554317C23A;
-	Fri, 21 Jun 2024 21:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F6A17BB3F;
+	Fri, 21 Jun 2024 21:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="WAqoRLEd"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="bmB6KSRx";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="W44u7wBG"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E51517C215;
-	Fri, 21 Jun 2024 21:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719004569; cv=fail; b=XS1lE6KleXr/mK9lcbPNda7yC1lw8w0riul5EQMv6f0QNOmnLw/YXJ7ngYLElGW5PcLNSioq+rHAZ5Hxb2n5bDGzSEvsnfiRTpC96KeX0VZFZKvIvw0FBRiflHyV5Bz71FiQYLDJnD5VBmtrOTUO+hKTGS3ODnPuEM9LlYjAmEM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719004569; c=relaxed/simple;
-	bh=od27pxOClrb3zQQU5yC96Xe3ngYp9Bm7X1RONdixjSE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=a0bu5X1/cUKr7L7qnPrzoXYsnxrJUS8Nd2PXQZxlWSsAzvOynKclCevv9mZvT6p9AR5RyOabOvVa7sSmFCcqe4YLYJ6Xo7u78CiH4+kzFzbef2FEaTqWSCWuSuBfy+8Y18Qtj8x4VK/uWdGm169LpmTuYk4lw0OBk2Ycfnuw2X8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=WAqoRLEd; arc=fail smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 45LJ7ZsG031659;
-	Fri, 21 Jun 2024 14:15:05 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc :
- content-transfer-encoding : content-type : date : from : in-reply-to :
- message-id : mime-version : references : subject : to; s=s2048-2021-q4;
- bh=b1U/MyjkE7xQqsSmLk2vPyKJ79K/czK25NoSvCTed8c=;
- b=WAqoRLEdm+90gavWbT0VTbhBJUsCDxoQ+aR/8Fb31QB3vhYzygucNWAyn+cxaTFqaFHL
- kNuxJ4OIRbNLD2RrmU5SRue4GIzEgngg222gVprjTKg7fvVWBriLMaxavhsxacf/fSri
- PRAXgFm1+s7KOzP9Ov0PTdWP2wnddnncPgxAgW7rYnQEYlsFDBCu0RjHScvRZ+D14Y/2
- dketV3TN9lkxrmvxLzg3kKXv1ct6d88YtpuO85t6+7NDcoNKZYywzSt19iUoD6DFVaJR
- Zp+R8vffRqksUYUK7DduKeU5zDtfZtl4zMktTAOdXQXCK0kFyZR24TvCJwtdQEIaLYmB /A== 
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2169.outbound.protection.outlook.com [104.47.57.169])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3yvrph8jrh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 14:15:05 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YUe98XEUUVBFRzC5HwedSPV3UPHuOMIk4HusnyjEGx5GWhYNITZaHLmzJykCHSXKWIkz3QpJlCIlLhOyn0ToLewklNYBILYUAqLYNrZcNThuIoKaILfF5eZtPzNkOevbsi6yUg44cK62FfrxRFiObPluUN1iG9P7GSv1gWc4cyZfLIsAdygyUzZT6YNQC4YXq/LygOdcv0kaEaCUCGJWDQKOj3tZ8d9U/HRBIpzxzDDTYdHYttC33mrFmMCilWYQv8xOGiYpEfuJzvpmDtmQIpDNUnEQrnr66nenFte139f4VO2rf1s1wB4r87azMUpQNdeZk/L3BAPbEQG25S/pSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b1U/MyjkE7xQqsSmLk2vPyKJ79K/czK25NoSvCTed8c=;
- b=P7qkoltCERKSWFt0K2DgHYbL4XkBoX8gkk+8yvQp1AKfZNA8PoYD6Y2XJlBE+DHcXEJ20AuRoyeqP3vpGfykWNKB8VgnGqMgpJpxENBTFAeQo1K4dUZQn4aiZN4Jq8B1k/ZcGtwgy6MPWnEtO9DbibSrY5BdO85BRSetmSzMdrgMrL8zJwqG8F6NtosUA2sUX9X4fN6YobPwi6282WI82OgRc+GrPAo8HmUgtH9QHR/LxwlHoB+fXuRFFp01PcpNRjRr4CicABfSvsO8WDIQd7KhATr/bWmTLiLc+tN1hjXQR61xQJC4FrYV9mypCtt3ZD7SzDWdOC8F4dfgppg85w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from LV3PR15MB6455.namprd15.prod.outlook.com (2603:10b6:408:1ad::10)
- by LV8PR15MB6389.namprd15.prod.outlook.com (2603:10b6:408:1f5::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Fri, 21 Jun
- 2024 21:14:46 +0000
-Received: from LV3PR15MB6455.namprd15.prod.outlook.com
- ([fe80::4f47:a1b2:2ff9:3af5]) by LV3PR15MB6455.namprd15.prod.outlook.com
- ([fe80::4f47:a1b2:2ff9:3af5%7]) with mapi id 15.20.7698.020; Fri, 21 Jun 2024
- 21:14:46 +0000
-Message-ID: <364ed9fa-e614-4994-8dd3-48b1d8887712@meta.com>
-Date: Fri, 21 Jun 2024 17:14:35 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-To: Thomas Gleixner <tglx@linutronix.de>, Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, mingo@redhat.com,
-        peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-        joshdon@google.com, brho@google.com, pjt@google.com,
-        derkling@google.com, haoluo@google.com, dvernet@meta.com,
-        dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-        changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-        andrea.righi@canonical.com, joel@joelfernandes.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        kernel-team@meta.com
-References: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
- <87ed8sps71.ffs@tglx>
- <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
- <87bk3wpnzv.ffs@tglx>
- <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
- <878qz0pcir.ffs@tglx> <ZnSEeO8MHIQRJyt1@slm.duckdns.org>
- <87r0cqo9p0.ffs@tglx>
-From: Chris Mason <clm@meta.com>
-Content-Language: en-US
-In-Reply-To: <87r0cqo9p0.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1PR13CA0231.namprd13.prod.outlook.com
- (2603:10b6:208:2bf::26) To LV3PR15MB6455.namprd15.prod.outlook.com
- (2603:10b6:408:1ad::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C5212C54B;
+	Fri, 21 Jun 2024 21:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719004565; cv=none; b=Oy6QVzuQMPqBPG/oj0AaVkiRZy1I46MOyqtHaAZjkA3EzIJJQHZfHOfTtyUTfO1rfd3yM4jS6Hc5yG8khmjqhm7ONSdcOvHUFn4ndefXET1y4kVu6Wp+akIMwYxFUg2hxLCZQYkjTQ82YavJH3fxBeK3KbtqJDalE4HA8ImsGSc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719004565; c=relaxed/simple;
+	bh=nlhhoDL+rqMuVo+AQ/Y9fc6ZUUX3QAXxkvgmbqr0iPU=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=Mtl+Zc8WzsxIphjPWZ7LvJxKO2LXWrvQokdUITgufDEeCkQhX/PZ8OOUCCRTk+anH0/JziJob3zBcLUaJNPyqKewjmT96sB45uBTI6ddxgssrepoU3ZD+p7EfzfDekL1sic9jy8ds/ZRicSiMD55tQEQUxl4bz7sY9IHDn8GHD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=bmB6KSRx; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=W44u7wBG; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1719004560;
+	bh=nlhhoDL+rqMuVo+AQ/Y9fc6ZUUX3QAXxkvgmbqr0iPU=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=bmB6KSRxFK+p8uog5dHiLhaeu6UFv7m6/tiH2MjYj2dQ7hMFvN/3p/m59bvcfA8sz
+	 O4rT71E/CDoafmsB1nKesE/ipRSnwCiPrj6Wm6FFjntf5opwhe0t01sN9N9cF6Nne9
+	 dZtlZ2jI9ubL7R+if/TrSCAe30v5GDhdGSAuzO94=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1CD4C1286A09;
+	Fri, 21 Jun 2024 17:16:00 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id SBWYXv19uyzC; Fri, 21 Jun 2024 17:16:00 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1719004559;
+	bh=nlhhoDL+rqMuVo+AQ/Y9fc6ZUUX3QAXxkvgmbqr0iPU=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=W44u7wBG8+04C5WFoyNM15JOl7z0nP2nMDynRwuNBSBaIzgMbhxzBpVAzfZSWKIYu
+	 n0Y6/2G0se3oCJxZDwjk4V2GFEL/aSa2UpmwmHjUU3BqaE52PlyHjEJg6mTDL6TwlP
+	 xw6XBUWOYB4vJPUDEvu7QUbQ64B9FuogIIzAQH+8=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7F3DA12869EC;
+	Fri, 21 Jun 2024 17:15:59 -0400 (EDT)
+Message-ID: <317d2de5fdb5e27f8f493e0e0ad23640a41b6acf.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 6.10-rc4
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Fri, 21 Jun 2024 17:15:57 -0400
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR15MB6455:EE_|LV8PR15MB6389:EE_
-X-MS-Office365-Filtering-Correlation-Id: d6c59797-80df-4889-3b0a-08dc92372d66
-X-FB-Source: Internal
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|366013|376011|7416011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cVhQSWh4aWo4NEJ5TnJ3K0tzdGc3WFBlR3V5c0oyemNybUZMbytSWjcvUzJF?=
- =?utf-8?B?eE1uQS80aU4zaDhsbmk1UjJUa2wvRSsvenVtVm41ZW55cmtndmNHUWltb2xT?=
- =?utf-8?B?UWtSUExCTHp3UE1Rbk5kSXg0cE5mUGZxeTdTMCswR2NVQ0k2V1JUb1NyTndR?=
- =?utf-8?B?citwOEg1QU5CTHQ4QlQvcElrL1Y3TGhWKzZsSGI5aCtYc0xoUHZscHErNUVD?=
- =?utf-8?B?OG1nb3ppT2lRSHRuczhqMjgzcm5zZ2hPYnV5bkxWR0pySVBiY1VRRkZVNmRl?=
- =?utf-8?B?SDFkcW03RzE0OXNJT0ZFbThwWjhXVXRJYmtrRFJ6QjdYN2prMU80RTRIRkxq?=
- =?utf-8?B?cTNlaEE0bjRHWkl2SHRZcUNsNitneTNZV2NPQTlTWDFpbmtBWEtQS0lMQTkx?=
- =?utf-8?B?bUNZUzRnOTZGQ0NPN2NpdkdRMS9OUEdSYjQwTmVVbnZMUVZMS2JSUi84S0xa?=
- =?utf-8?B?OG1COFdPbjRTcFVFQnRSelVOa2t4ekJzc0pRWXVBZlZRUHpDd2pRbWFMZEI1?=
- =?utf-8?B?RFA3cnRXM093djQwaXB1Mitodkt3bUo5akFTTGphcm9NSkFCdkQ1U25GMGxh?=
- =?utf-8?B?VS9Wc1NnZi9sdzhPLy9Od1NaOGFZSEQ5aHZ1QjJYbzFsZlFOeU0yUXBQR0Ru?=
- =?utf-8?B?c2MwajIvb0pqQ290TXdqWXRqVUFIUkFTN1dwbE9zREtNbFYvUmphWFQ2aDBO?=
- =?utf-8?B?Z2xVU2NQK2YwVVRCZWZTbmtTdm5NM3B0RTdBWUw1SnJiTFFHckhSS253aFBr?=
- =?utf-8?B?clRwa0V4enkxaFBaTU9HRE9QUElFWXdhd0lOczdiZTRDV1k2VGxndUhFYVZ2?=
- =?utf-8?B?WDJZVHYyT2lyZWh2RUQ3b1MyRkpBK20wR05xbUErT3F5YnlKck5ZNzljWWdU?=
- =?utf-8?B?ZlVLZnZHRjJZdFV6aWh0WnFYQjZQcWZ4UFBhUHMzNTI5UnJ6a0piQkNxUGh5?=
- =?utf-8?B?MWhuTXp6Z3BaUTg4ei8rMmN5eFVvRGNRdEJuaEFCOUY5NE8ybmt3eFVKZURx?=
- =?utf-8?B?c2tMTG41TURNRjN0bURXa284U0xscVZ6eXBoZ1ZnRHpvQmF2T2t6UGRUK3E2?=
- =?utf-8?B?U040Yk9hMjd5YXpuZFRkZkRNZ255SkRtaVNrK3lNRWpVT3cwWnVQMFJ4OVQ2?=
- =?utf-8?B?clVPc2RIeDdmY0w3eXAzVUsvVFZveXJJNUZNSGFMSitlZm5XWjhtUlhoU3JN?=
- =?utf-8?B?L1dzL21VSUlXUS9TbGdRT1dJWnA2dFFtK01NZ1FLbDN3aXNyenRMWi9La3Va?=
- =?utf-8?B?VTVQUGVKb0JZU21jcVhxQXhTOTNINXhpZkxjN2VBdlRWTzd1TnJxaUhTaFM5?=
- =?utf-8?B?RXRvaXRqUVdTZVppa3IzdG9sNHMrV1Y3cllkKy9pcWhFcTRIT2dhdEhWc3pt?=
- =?utf-8?B?cUxiN1dxMkZrbkNyMFRsQ2ZJVFk5YnlLUHNVY1IzNkF2Y01KRy8wckhib3BK?=
- =?utf-8?B?OW1VRXpNa3FoZ090dTZIOEtMemZVZlJhNFRudmQ5UDZtNVMxanh3VTNsblhF?=
- =?utf-8?B?dGw5ZnlaU29yRzlzQkkxenZrNDFGb1J2YmRPOG1jenNndkdPRzRheWMzOWRi?=
- =?utf-8?B?b3ZIMGtyRk1tbStGeE1FYndjTW95R25hc3UxMHlXNFBYZ1RPcWNsRWJRSXZy?=
- =?utf-8?B?YWV4MHdOZHBmditWYWF0NSszZDJ2SjMzNXdrcTc3UU9TOWlwVDN2czJHS215?=
- =?utf-8?B?NWtQdzE3UEI2VTZ5TGphZlRHRU1YeEJlSlN6Mys3TmFveXdmOHFsR0hMZnhT?=
- =?utf-8?Q?GWC9jjF72iGfI4MfSjd4ZWG57d8RfCjOuOCxfq3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR15MB6455.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(376011)(7416011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGUwYnhvbGtyNCtuZm01OXFZTEN1bklvOWZrSFBqRjVNemNYR0l3VEd3K21a?=
- =?utf-8?B?OGU5VHIvYkx1V1l2eEpxWlp1UFB5OENHL2p4REtpcjZsVVY4c2g1NzQ5QW9q?=
- =?utf-8?B?YUJMUXliN01CQlI3eFlTMEo2MkNVZFB0TXJxLytEUklXR09aUjc3WkhpOFJX?=
- =?utf-8?B?TktKUC9rV25HdDlKb2FrVFIxV2RRUmJKWFFWaVZ6RG1CdTFuQS9laXVVRkhV?=
- =?utf-8?B?ak1yREdhRUNybnROMUxFendPTUdlVFZGQ002UDJlaDdISE1RYTc3RDFkQlk1?=
- =?utf-8?B?NkRQMytNY29ITTlLckFzRWowMFBOc3FNYXZWNWFtNHpzWEVoVVN5aFBqRXY3?=
- =?utf-8?B?cGc0bVN2SEdOQlhBZFJLQkRnbDBDTm56QVYveWlIUzd6ZGIvRlYremxBR041?=
- =?utf-8?B?MldOVVpaM2JRSDcraDA3UTA1RlpCMDJNMXZycjVDaUV4REZrZlB0ZmYvRi9h?=
- =?utf-8?B?Y3JHS1hKdFhBSTlNTFFZaVVlNi9pd1BzSStOVTVEN1Y4VkFlVG5yemV2Qkpm?=
- =?utf-8?B?azRBd0J4ZkFZcEt2dUN2YWdqcjRzVmg1OXhNWXNBdDNCU2RFcCtFcFdJdWZQ?=
- =?utf-8?B?S1BPUUlyRThaSTRmaUhsVUdsbWxtTlZpaFpuMDNjRk5BU0lneVRrVG1QeDU1?=
- =?utf-8?B?S2NkUEU1dUZ0azVLSFIzcTE0bEt0ZmlMa1A5TE5CMWhVOU9oQmZlbi9IcFdF?=
- =?utf-8?B?WVZLL244Q0xidDVzRWtMN3FPcE1EVXhZMHFhZFN3alp2aUFNaXVWZWp4Tm1N?=
- =?utf-8?B?V3Z0OEx1S3l6R1hIWmMwMkkvN3B2bVVhZEVESm1oUVRVQWg5enJFWmZaZjJy?=
- =?utf-8?B?OFJaclA1RVN5ZXg4emo1dFNxZ3JGS25BbGJmYWZTa3UvR0o3bnJjb05sY1VI?=
- =?utf-8?B?NDFqMXpMelVVa0c0VVR2TkFOa2ZwTk1MaW43aWUrRXdNVm1BNkJOalZCcUVu?=
- =?utf-8?B?ZjNxSlhWMG1zeVJiVXAzVVQ5b3RjWGN5REJRN0NJQ3VEb1R3MDhPdk0wMnpp?=
- =?utf-8?B?MjVsYmdveFIrK1g0bVNJbzhEOVpMTmFoM0I0Wmd5eXdyc0d0UmpQZHdYZnh3?=
- =?utf-8?B?NUVwUWNWOHNhcnFTVW14eVFCcWZwTFBxVVhQT1VYWEUrNGl3TEhseCtZcGln?=
- =?utf-8?B?czZScEFWTmtpNUl3aTZ0dldiZ0ZqelBKNTJ1QlI1Nmc2bnVZY2doS2IvOS8x?=
- =?utf-8?B?SFN0TzJrMi9rR1E4dnFES1dPWHYvUkpWMUo5OThhNkIrLzQ5YlJraTk1ZkFJ?=
- =?utf-8?B?bHlSN0xQQkJ3cGxoMVdnaHVEYW5peEUyRGJFVFZWTFlkUmh3aTh6RXRsNEhN?=
- =?utf-8?B?N3dSOU9CVUlCSWhRYm1vVGtGRmkyMWorYVprd25ZSWpLbmk5T3dQM3liK05j?=
- =?utf-8?B?ZUxWeXNYQ1RsYi9xTXh0VUk0MVBscFVzRXNFdWQvT01Wa1FRbXE0KzlLZEhz?=
- =?utf-8?B?Y09BK250cUpZc01XWXhDYzdzNjVYU1FTeWtVUmc5NHRmQUwzbS9MR0xEbGxG?=
- =?utf-8?B?NlVHMUM0TWFhQ2tpdHg3OVpyY2NIUGhBRFl4Sk1SOXVycEtYYTNpaXdZSUsr?=
- =?utf-8?B?QXcwMnRTeXRMQWxTYytld1hvTlM3Ly9Sb2NIUzdEYWkxeTVsSXBQcldwZGxM?=
- =?utf-8?B?MU1DQWNJMDhKYjEwS2piT0RraTFUSnU4L3dYWjBuVmJyVWpic2xBaG9qTFhE?=
- =?utf-8?B?MVowM0gxenV0R0NkOG10M1duNGZ1eVVqVTlvb0dKN2Y1aERkbzM0Y0lmdFZq?=
- =?utf-8?B?ZEgxVE1CMHRBRWlPVEdDVThiVVRjZWxuVGx2R3NCb3F5cmFOb3hrQS8zTTlt?=
- =?utf-8?B?RElXd21xaHdIaWhVblZ3QTRnRUQ1aHNWZmdTZUZma1FocHdEeHZoWlFIcjNO?=
- =?utf-8?B?ZlFWa0l1a0NoSmF2N25YZTM3SVNuQnJtQldoNlJPYU41dUxTdm1neUpaUTZZ?=
- =?utf-8?B?M2hONnZGb2p0YWFKcFovMGY4QTJ4dEUvbzArL1dNcExuT0d6bW1idndIVHJ0?=
- =?utf-8?B?NzBwNTgxR0o1N21aRlNPMDNIUEp3c1NFZFMyYXI2b3VvRnVmTTlPRThEc3NV?=
- =?utf-8?B?V3dieUpTbEptTlphU2RRM0ZUY256TGx5bUJLY2FSdEhwRmxsSUwyYkZJeWJE?=
- =?utf-8?Q?N5NU=3D?=
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6c59797-80df-4889-3b0a-08dc92372d66
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR15MB6455.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 21:14:46.4078
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zRWEaisxZlWmmnp9FtH5JpciqQE5srGOdrNKLqBSkJ57FdJ/zxkF/Be39Xp5sweY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR15MB6389
-X-Proofpoint-ORIG-GUID: k-UxHwEmnYY6T5JVJTTipXsSUv9TqMc4
-X-Proofpoint-GUID: k-UxHwEmnYY6T5JVJTTipXsSUv9TqMc4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_12,2024-06-21_01,2024-05-17_01
+Content-Transfer-Encoding: 7bit
 
-On 6/21/24 6:46 AM, Thomas Gleixner wrote:
+Two fixes: one in the ufs driver fixing an obvious memory leak and the
+other (with a core flag based update) trying to prevent USB crashes by
+stopping the core from issuing a request for the I/O Hints mode page.
 
->> When we attempted to follow up with you afterwards, we got no responses.
-> 
-> I just checked and found three private mails from you which ended up in
-> the wrong filter dated Feb 1, Feb 9, Feb 16. My bad that I dropped
-> them, but definitely not because of desinterest or malice.
-> 
-> You can of course say you tried and I ignored you, but seriously?
-> 
-> If you really wanted to get my attention then you exactly know how to
-> get it like everyone else who is working with me for decades.
+The patch is available here:
 
-I'll be honest, the only clear and consistent communication we've gotten
-about sched_ext was "no, please go away".  You certainly did engage with
-face to face discussions, but at the end of the day/week/month the
-overall message didn't change.
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-I think we made a long list of private and public attempts to
-collaborate, and at some point we just had to be willing to take no for
-an answer.
+The short changelog is:
 
-So, yes, seriously.  It's certainly not hard to find times where I
-ignored patches or emails, and I've obviously handed off almost all of
-my maintainership work to focus on other kernel topics, but I'm never
-comfortable when I watch maintainers try to push 100% of the
-collaboration burden onto everyone else around them.
+Bart Van Assche (2):
+      scsi: usb: uas: Do not query the IO Advice Hints Grouping mode page for USB/UAS devices
+      scsi: core: Introduce the BLIST_SKIP_IO_HINTS flag
 
-The good news is that every merge window is a new chance to argue with
-each other, and I know Linus doesn't want us to save all the arguing for
-the start of the merge window, but saying every day is a new chance to
-argue sounded less optimistic somehow.
+Joel Slebodnick (1):
+      scsi: ufs: core: Free memory allocated for model before reinit
 
-At any rate, I think sched_ext has a good path forward, and I know we'll
-keep working together however we can.
+And the diffstat:
 
--chris
+ drivers/scsi/sd.c              | 4 ++++
+ drivers/ufs/core/ufshcd.c      | 1 +
+ drivers/usb/storage/scsiglue.c | 6 ++++++
+ drivers/usb/storage/uas.c      | 7 +++++++
+ include/scsi/scsi_devinfo.h    | 4 +++-
+ 5 files changed, 21 insertions(+), 1 deletion(-)
 
+With full diff below.
+
+James
+
+---
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index fbc11046bbf6..fe82baa924f8 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -63,6 +63,7 @@
+ #include <scsi/scsi_cmnd.h>
+ #include <scsi/scsi_dbg.h>
+ #include <scsi/scsi_device.h>
++#include <scsi/scsi_devinfo.h>
+ #include <scsi/scsi_driver.h>
+ #include <scsi/scsi_eh.h>
+ #include <scsi/scsi_host.h>
+@@ -3118,6 +3119,9 @@ static void sd_read_io_hints(struct scsi_disk *sdkp, unsigned char *buffer)
+ 	struct scsi_mode_data data;
+ 	int res;
+ 
++	if (sdp->sdev_bflags & BLIST_SKIP_IO_HINTS)
++		return;
++
+ 	res = scsi_mode_sense(sdp, /*dbd=*/0x8, /*modepage=*/0x0a,
+ 			      /*subpage=*/0x05, buffer, SD_BUF_SIZE, SD_TIMEOUT,
+ 			      sdkp->max_retries, &data, &sshdr);
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index e5e9da61f15d..1b65e6ae4137 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -8787,6 +8787,7 @@ static int ufshcd_probe_hba(struct ufs_hba *hba, bool init_dev_params)
+ 	    (hba->quirks & UFSHCD_QUIRK_REINIT_AFTER_MAX_GEAR_SWITCH)) {
+ 		/* Reset the device and controller before doing reinit */
+ 		ufshcd_device_reset(hba);
++		ufs_put_device_desc(hba);
+ 		ufshcd_hba_stop(hba);
+ 		ufshcd_vops_reinit_notify(hba);
+ 		ret = ufshcd_hba_enable(hba);
+diff --git a/drivers/usb/storage/scsiglue.c b/drivers/usb/storage/scsiglue.c
+index b31464740f6c..8c8b5e6041cc 100644
+--- a/drivers/usb/storage/scsiglue.c
++++ b/drivers/usb/storage/scsiglue.c
+@@ -79,6 +79,12 @@ static int slave_alloc (struct scsi_device *sdev)
+ 	if (us->protocol == USB_PR_BULK && us->max_lun > 0)
+ 		sdev->sdev_bflags |= BLIST_FORCELUN;
+ 
++	/*
++	 * Some USB storage devices reset if the IO advice hints grouping mode
++	 * page is queried. Hence skip that mode page.
++	 */
++	sdev->sdev_bflags |= BLIST_SKIP_IO_HINTS;
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
+index a48870a87a29..b610a2de4ae5 100644
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -21,6 +21,7 @@
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_eh.h>
+ #include <scsi/scsi_dbg.h>
++#include <scsi/scsi_devinfo.h>
+ #include <scsi/scsi_cmnd.h>
+ #include <scsi/scsi_device.h>
+ #include <scsi/scsi_host.h>
+@@ -820,6 +821,12 @@ static int uas_slave_alloc(struct scsi_device *sdev)
+ 	struct uas_dev_info *devinfo =
+ 		(struct uas_dev_info *)sdev->host->hostdata;
+ 
++	/*
++	 * Some USB storage devices reset if the IO advice hints grouping mode
++	 * page is queried. Hence skip that mode page.
++	 */
++	sdev->sdev_bflags |= BLIST_SKIP_IO_HINTS;
++
+ 	sdev->hostdata = devinfo;
+ 	return 0;
+ }
+diff --git a/include/scsi/scsi_devinfo.h b/include/scsi/scsi_devinfo.h
+index 6b548dc2c496..1d79a3b536ce 100644
+--- a/include/scsi/scsi_devinfo.h
++++ b/include/scsi/scsi_devinfo.h
+@@ -69,8 +69,10 @@
+ #define BLIST_RETRY_ITF		((__force blist_flags_t)(1ULL << 32))
+ /* Always retry ABORTED_COMMAND with ASC 0xc1 */
+ #define BLIST_RETRY_ASC_C1	((__force blist_flags_t)(1ULL << 33))
++/* Do not query the IO Advice Hints Grouping mode page */
++#define BLIST_SKIP_IO_HINTS	((__force blist_flags_t)(1ULL << 34))
+ 
+-#define __BLIST_LAST_USED BLIST_RETRY_ASC_C1
++#define __BLIST_LAST_USED BLIST_SKIP_IO_HINTS
+ 
+ #define __BLIST_HIGH_UNUSED (~(__BLIST_LAST_USED | \
+ 			       (__force blist_flags_t) \
 
 
