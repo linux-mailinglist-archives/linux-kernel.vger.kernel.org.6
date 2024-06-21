@@ -1,114 +1,169 @@
-Return-Path: <linux-kernel+bounces-225180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B419A912D2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:29:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 194C4912D2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 482FCB262A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:29:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2511F25634
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3E817A934;
-	Fri, 21 Jun 2024 18:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C3917A934;
+	Fri, 21 Jun 2024 18:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A8bzyRZJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U2q37rOk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="EmLLbzhg"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B9E13D521
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 18:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50898548F7
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 18:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718994560; cv=none; b=JeJjG71mz3UEtyx4dl8A/mONwpFBkg/znlp/LHKJ1BeLvc1vhODkGKZHBsZCWwD5xku9D5TAGvGoSTd5azBa5805JVCkSyjnh9pr6HK/JU+p/VB1PUfO++mKXDMq5mRFgMvD1knY77chF+RPZLrdy4fSFIJUlUf8DezO0h1Zj70=
+	t=1718994655; cv=none; b=LAJIL8rH/Wp2I3IaCpduOju1aRSS81KyzzW58XZ1nE2Ujt+5Rxd/nwv7OvNoee/6mAS5OdLpbCa6C/H/moF7NcZSq6lMORlZxEzCYLk24+2dKiaqcI6Oin4lK5IgWLLBKR9zOX93GFbQUbpsQO3UvTmjEcueHt6MRIJ1xy16mvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718994560; c=relaxed/simple;
-	bh=4KGskPPyAVn0nAo6uvFxhKxBCeyYC7GufVGv3zrL3kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XASnArumQDfDvDPlsMQ/IVSpRmck9v0NK6uvsjsp+F24Iacc61D7284Mswpx1adncuj73zrT0TpFwTnzw+L5iQIPStd6r4iUC+ThjwTUS9O7UC/qQzf506ru96WcmwD3qEkpT7NtSC9Ru3tEzW0wI5KS8BjcbbM6p2kFR02659c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A8bzyRZJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U2q37rOk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Jun 2024 20:29:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718994557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4KGskPPyAVn0nAo6uvFxhKxBCeyYC7GufVGv3zrL3kg=;
-	b=A8bzyRZJp0xQschMmCBcH4JKf+w+uYAHOu0gkLZ1cR0g0nL+P8MYFGjlfj5aavYfot5xEU
-	sxMnZ8ATkM7fNDF/9y8RltqqU+DiNKuhCPIFNcg4w1IeZTHKX+tViw210y1AKCk7nPwpEr
-	rsdq2uuj5MQIw1ZK7tA1K/9lOyxW9Qc3AMngsBJy5bm5bScQGSLfnGicTzfdLIvDEoJAcy
-	sdA+2uBIAOi67+kSJocf7pjLCk/DGAVvgJGbtECq6Bsld+Nn5ycLP+bYihIKDheSM4AUc/
-	Bz+uHi1lu6UGMoPn0SXQbb6ElwE+HetOgybQk8X2yd4LLM9QgvEQus7h3LV9xg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718994557;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4KGskPPyAVn0nAo6uvFxhKxBCeyYC7GufVGv3zrL3kg=;
-	b=U2q37rOk6v0ItClWZOYeYjoE5YS5AdjSn5D0V7CEgc6wjPUz2IIXJGb3j/iQ21Cn5HUNpZ
-	PiNuBpZs4SnvTyBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ben Segall <bsegall@google.com>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Klara Modin <klarasmodin@gmail.com>, Mel Gorman <mgorman@suse.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH] sched/task_struct: Move alloc_tag to the end of the
- struct.
-Message-ID: <20240621182915.S-ULWn0O@linutronix.de>
-References: <20240621102750.oH9p1FQq@linutronix.de>
- <7zretxxixkpfxt6lr7x64n67ql2v2qpb7abbbjklclwlu4u2kx@22o5sdlnpkea>
+	s=arc-20240116; t=1718994655; c=relaxed/simple;
+	bh=oqjIz3PeQBH2hn2o/YZ1k+AKyjnZX4YosabOZqJGSF8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qEf62YXHDtlsGpZ0cS6/ZRs6FWhNqk7B0RQMy5qAbocTXdaWhJ+SZ3FtP9xQPTB/fHo24/IOLKn5LdokCD6tIKyt3Tb3gy8MfzCpFrM1a3Nswr6/NOC5UEtLiM2C2L6KvTyiCq5bk0+WTPsCHQMW9yW5aeGk2ZGk7MpL9hJsPVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=EmLLbzhg; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42278f3aea4so21214485e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718994651; x=1719599451; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GDBJP06DmRWkDW63XRl13F0vqR5/B3xF+ky6e3VTjKM=;
+        b=EmLLbzhg4phvj9S9l3ZM+y0HoffEOi9d2CrQxdAJFwlS0GEPE3ngDnKt+AmFQ1NM1w
+         ETomRgCdUbhxY/10xLVYstOjQSOW1wdG+M1xeLaMx1JSQ54CI08EPqOYVVClxGwqeFMl
+         HpkLC8A2BfWryD+VWc335YXs6sqSlyVICDFj19OeF+Bs4LormM7/jahXHjOp7iuHxgCc
+         3PgeWcSvW3O8OK0x6fpH8UXSvCnWU1fTF3u3JqkoI/GWNqd2aOKoU9gQU2B94Y1+qC2o
+         vPu/Gs4fkJgkgCtMOvSjkoAyNpjKdlllWi9RM3WfMmDHCFtNqkPJqsao9Ec32/KaIFH5
+         kVug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718994651; x=1719599451;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GDBJP06DmRWkDW63XRl13F0vqR5/B3xF+ky6e3VTjKM=;
+        b=qausbRroELclpjsYnyvNnHmUWY8F+XSamnT+lUvCBWEzorv9XSP81xoWqwl2nD8PLC
+         94KgHXQMmQit0+a+Y1MbnclWJ+/JLWpBwoNxX/1OD4102sFiDEPNrPBYQ3LWXTjcyAdw
+         s2Fd0Q8lKNRBltEA77szwGgoXLij6OWFynNENF1/BJWFaqguo1jiU6idxNq5F1k0HPaK
+         OsGCZPHDPEef9tfSSIjLP2+5xjTLNZFrDFiE9BY6s+2hs5De8tQYa+yUqAroWLCtgbHh
+         RrkPhUGrdj4BofehHSAH5IryQ8K2qesMxaZmiqTp3AEVEAzkJw87oEr5yvacFjMSYutM
+         Ychg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVwqJSPK+oi5d4gs5MneYdf8wg6IWWYZLiZJeUvb+kGz40Rbw7/L5LJ7BvPKdHKSTwmifhtcEjDqPMBmwZUBRFeLsPfAOAlMxsrEbT
+X-Gm-Message-State: AOJu0YzyNvAczAw+72SlYmP0v/dxOpK2Ihr7FZvVp9co+4q6vvASOJ9D
+	QvJn8e6FcdlrOkFgaco69XgAu36So1Isnuv0a66O2jmd2ydqrRO+6aKS2B75QBy/zMP9fjgC7IW
+	brsxxUnWC8EZ2N5awLrDQufmuP1iZJDm56rd76g==
+X-Google-Smtp-Source: AGHT+IHeBc37pbRnvfEykUpBvFqq4/wFdfQ/OI9yo+wiCiO9O7Ii/6NMT9RkrVuB3eccZMg8VBewVzuX8+kx9wTxJnk=
+X-Received: by 2002:a05:6000:1107:b0:364:e290:c60b with SMTP id
+ ffacd0b85a97d-364e290cbf5mr4499397f8f.38.1718994651598; Fri, 21 Jun 2024
+ 11:30:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240613191616.2101821-1-jesse@rivosinc.com> <20240613191616.2101821-7-jesse@rivosinc.com>
+ <CALs-HssqVkEX0=x+jhQDjwjRQb9TjbskLvrpvzFG_g-2iDXy3w@mail.gmail.com>
+In-Reply-To: <CALs-HssqVkEX0=x+jhQDjwjRQb9TjbskLvrpvzFG_g-2iDXy3w@mail.gmail.com>
+From: Jesse Taube <jesse@rivosinc.com>
+Date: Fri, 21 Jun 2024 14:30:39 -0400
+Message-ID: <CALSpo=ae6Z75SJ7uWj7H_D2GZZaU1genFv+shNCT01DhGYQCTw@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] RISC-V: hwprobe: Document unaligned vector perf key
+To: Evan Green <evan@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>, 
+	Eric Biggers <ebiggers@google.com>, Greentime Hu <greentime.hu@sifive.com>, 
+	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Costa Shulyupin <costa.shul@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Anup Patel <apatel@ventanamicro.com>, Zong Li <zong.li@sifive.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Ben Dooks <ben.dooks@codethink.co.uk>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Erick Archer <erick.archer@gmx.com>, Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <7zretxxixkpfxt6lr7x64n67ql2v2qpb7abbbjklclwlu4u2kx@22o5sdlnpkea>
 
-On 2024-06-21 10:20:58 [-0400], Kent Overstreet wrote:
-> On Fri, Jun 21, 2024 at 12:27:50PM +0200, Sebastian Andrzej Siewior wrote:
-> > The alloc_tag member has been added to task_struct at the very
-> > beginning. This is a pointer and on 64bit architectures it forces 4 byte
-> > padding after `ptrace' and then forcing another another 4 byte padding
-> > after `on_cpu'. A few members later, `se' requires a cacheline aligned
-> > due to struct sched_avg resulting in 52 hole before `se'.
-> >=20
-> > This is the case on 64bit-SMP architectures.
-> > The 52 byte hole can be avoided by moving alloc_tag away where it
-> > currently resides.
-> >=20
-> > Move alloc_tag to the end of task_struct. There is likely a hole before
-> > `thread' due to its alignment requirement and the previous members are
-> > likely to be already pointer-aligned.
->=20
-> We sure we want it at the end? we do want it on a hot cacheline
+On Thu, Jun 20, 2024 at 2:52=E2=80=AFPM Evan Green <evan@rivosinc.com> wrot=
+e:
+>
+> On Thu, Jun 13, 2024 at 12:18=E2=80=AFPM Jesse Taube <jesse@rivosinc.com>=
+ wrote:
+> >
+> > Document key for reporting the speed of unaligned vector accesses.
+> > The descriptions are the same as the scalar equivalent values.
+> >
+> > Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+> > ---
+> > V1 -> V2:
+> >   - New patch
+> > ---
+> >  Documentation/arch/riscv/hwprobe.rst | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/=
+riscv/hwprobe.rst
+> > index 7085a694b801..344bea1e21bd 100644
+> > --- a/Documentation/arch/riscv/hwprobe.rst
+> > +++ b/Documentation/arch/riscv/hwprobe.rst
+> > @@ -236,3 +236,19 @@ The following keys are defined:
+> >
+> >  * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int whic=
+h
+> >    represents the size of the Zicboz block in bytes.
+> > +
+> > +* :c:macro:`RISCV_HWPROBE_KEY_VEC_MISALIGNED_PERF`: An enum value desc=
+ribing the
+> > +  performance of misaligned vector accesses on the selected set of pro=
+cessors.
+> > +
+> > +  * :c:macro:`RISCV_HWPROBE_VEC_MISALIGNED_UNKNOWN`: The performance o=
+f misaligned
+> > +    accesses is unknown.
+> > +
+> > +  * :c:macro:`RISCV_HWPROBE_VEC_MISALIGNED_SLOW`: Misaligned accesses =
+are slower
+>
+> Should we specify what size of vector access we're comparing against?
+> In other words, crispen up what "misaligned access" exactly means. I
+> realize you copied this from my text. I really should have said
+> "misaligned native word size accesses".
 
-Well, the front is bad.
-Looking at pgalloc_tag_add() and its callers, there is no task_struct
-touching. alloc_tag_save()/restore might be the critical one. This is
-random code=E2=80=A6 Puh. So if the end is too cold, what about around the =
-mm
-pointer?
-Other suggestions?
+In arch/riscv/kernel/vec-copy-unaligned.S I set WORD_EEW to 32bits.
+The rationale for using 32bits is
+("riscv: vector: adjust minimum Vector requirement to ZVE32X") in this set.
+https://lore.kernel.org/all/20240412-zve-detection-v4-0-e0c45bb6b253@sifive=
+.com/
 
-Sebastian
+I'll change faste and slow to start with "32bit misaligned accesses are"
+
+Thanks,
+Jesse
+>
+> > +    than equivalent byte accesses.  Misaligned accesses may be support=
+ed
+> > +    directly in hardware, or trapped and emulated by software.
+> > +
+> > +  * :c:macro:`RISCV_HWPROBE_VEC_MISALIGNED_FAST`: Misaligned accesses =
+are faster
+> > +    than equivalent byte accesses.
+> > +
+> > +  * :c:macro:`RISCV_HWPROBE_VEC_MISALIGNED_UNSUPPORTED`: Misaligned ac=
+cesses are
+> > +    not supported at all and will generate a misaligned address fault.
+> > --
+> > 2.43.0
+> >
 
