@@ -1,167 +1,256 @@
-Return-Path: <linux-kernel+bounces-224968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE5B912943
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:17:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47550912981
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BEE11F22DA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:17:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED578B2A9EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A8080605;
-	Fri, 21 Jun 2024 15:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAD355E73;
+	Fri, 21 Jun 2024 15:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="XUzZP5xl"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UByxV7t0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EAA664C6
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2632128DB3;
+	Fri, 21 Jun 2024 15:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983037; cv=none; b=L8EFgBNrR2I0tGh355/2mr5u6ecb7zu6ObaF1BvG302aVFa+c6o3vO5KRIQWlpB2k0TCthNL4HluS4IlU5MadoLjNrEmwp1zYXq/XkKvtY0wYz0u2woIBLA67j7V+n91BVFDzyuF9aqT7NXlQ+Ifx/SNWofxm7oZcl/pTIwvBO4=
+	t=1718983070; cv=none; b=I+eX/je7MXkqBFtjt1Zt7CIFpkSdtBho9dMq0A1IPl75OyY/u1b0Ll4lVT2qKAEcCOXhU5/c/P5vKVYqFt0/YYTZd751UZ4r+A3ol+YTdx93NZJvG9StMgTK4pB6+L+7w19w47V4vjSlOtcWVa4eyD+D0BHtzNa0FqAaVX2QvNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718983037; c=relaxed/simple;
-	bh=Q0K8wveLDtQ5rqIrCYq9H6yuQqmRsmPrm11leJJmngg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mo5AXpUT3e47C3CblUAPkVUIApDgP35ER3dnktx6mgGTQ+7Nix6oCs+JcnlkS57NlrT0JG0iUpNgoYuVQleZZJd/WPiVM9o4VuIZ6QH1Qek8pAOqpa6auaFxqSjB7LBvGXIqerLkW3d6pbeZCzNekSmrypk8tTzCVQLptA6aU/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=XUzZP5xl; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6ef8bf500dso230427966b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:17:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1718983034; x=1719587834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eVdWsH/CebZrv81hSvkbbEEBVG7k1A0KP1jmRZJ7hOw=;
-        b=XUzZP5xl+VveWv9uFbsZWkuJOR+KtaLgLdZNjTofo+jiS6TlH1OStVc+1ANAAK2Fmx
-         JrQCv9HD74WWCgwAXjYPLurXCJgihEPpuIdffHWFME9QiYYCIeSvMPAr4TgppgIvTnvi
-         TmwVF+5tLTyyvkNoDHPb8vnCoVXE0G0he1qjlS3xyqcbuFJyfTldmcrcgLJlU51h0TQi
-         Ihl2MNgcNawhHf4JfcDeXT3qyrEK+/HsJJdjKo55pKBqWNV3AZhRh1gUXMRuaSs6DuP8
-         Wtdt2BvKpB9wjrGGRh3wuOb0kudSQPNepWNNIyOOJZ8a61p3K7m84S4OdN17If896J6J
-         5cQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718983034; x=1719587834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eVdWsH/CebZrv81hSvkbbEEBVG7k1A0KP1jmRZJ7hOw=;
-        b=GPlEnwP1tlj4VScOv2HEo91IeYqiyg6DRbC9w9F+1Mjelex75oK+1NkEBVqLYfmdCg
-         7eQC6IakpHaBZhGEGsSipCxr7cm6VZeVxymaDzJBRKogCEEUkFdUX07CHA07mBSD8OQl
-         W53FAG/JoEwLCr5ASKoihqyqXi3xtBNj+EG99xEDpYKIk99dkRdUzFnOmP1+ZeRbp06Z
-         sgl/25zXHeOAxJHJ9h96O+BwmJv2FDdsZC6nybQ+cXRP4kuORRek0FTfEbGBJHH/FL2Q
-         02BNx1b9kYWiT1LCGOp0CG0ppHxt+qzE6n88wu8vr+00yrFZUDBf/znZHkDtxLBl+lMs
-         0krw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbHmN5rkQrz83z16C88ToJCyKN04cJwSzLlE1ZTUU+cBFq8vpw+UkGa00MZDyxsd49K5S0TImItWZC9db6Folg++7RLdZHw4NjQU7q
-X-Gm-Message-State: AOJu0Yz05VQKLuMZqx89MjlJe8udrnAehDLjmCG30gRLvN1NTD+GQjM9
-	eEu9gnxnScoydeuYJFaMH/oCKxXHnsgPC7LR14j9Gnvavh/DlKh+CsXAjSMzt6FS2Z59YH4dPHi
-	yrwo9DPFYKjT9+l7jmuDbKgEJ7lnR07betllrfg==
-X-Google-Smtp-Source: AGHT+IHtoStFABY+6/Ct10yo+DluObSiNmm2iazrXX4v4aPFp4/k1VH8xzcmISmR1LM13gr6PkVkt+hHTcQEdX7ujLg=
-X-Received: by 2002:a17:906:af0c:b0:a6f:1025:8dd6 with SMTP id
- a640c23a62f3a-a6fab7d0484mr549596266b.71.1718983033870; Fri, 21 Jun 2024
- 08:17:13 -0700 (PDT)
+	s=arc-20240116; t=1718983070; c=relaxed/simple;
+	bh=T4+TI+8ndBdHiFbq61X7WaaGwYLRFKgaWSWHvteO3J0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p5hbgCtGghc7AtKWCOKIz6mYxVrCb+nZ3sev/R32pknnWzHzbBi6emsEjzMNx7evUPkhLeeCn8JGz7utB8pm5XVdCrAK034tfxPOq7LSPidFAr2TneguL9t1c4KMJpRP2gFuNsbjp4cDYpGQ+0IF/1yPVJnrReqSNZKP12qdsCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UByxV7t0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72A26C2BBFC;
+	Fri, 21 Jun 2024 15:17:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718983069;
+	bh=T4+TI+8ndBdHiFbq61X7WaaGwYLRFKgaWSWHvteO3J0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UByxV7t0eq8J0Qw7PACb4hbk2DnhiRy8zVF4eLQHFo/aC1LZniQEOMioSZbMHRxSR
+	 oq96gBrVYbppoWkEYMptNWEQSNWa44ERIuQ8pH5I1YjDCvjzx4+iRH90PFeNrLHeId
+	 Wm6GAURJ/fAcNhkin8QuCuxjO7cTGF4N5k0c0aVhbQcp4EWttBWQnNFQ67LvylPKrq
+	 mdvRJEkX2n99ntQ+R/VOvy2I6P/YvLWzztckT5ivL24ln7EZJ1OexkPJr8UNcjrPXp
+	 DP1r+3se4mL2r26c1cEaXoFfvAvBeMEn7Snuh6bqyEC+pSmb5wOEvTnmpccGhfznIi
+	 677YuWSHl+4Fg==
+Message-ID: <49f4c98b-88eb-404b-ba77-e892309725db@kernel.org>
+Date: Fri, 21 Jun 2024 17:17:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1718919473.git.yan@cloudflare.com> <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
- <2081388d3e05e1e6324d81524c6496006058bbb9.camel@redhat.com>
-In-Reply-To: <2081388d3e05e1e6324d81524c6496006058bbb9.camel@redhat.com>
-From: Yan Zhai <yan@cloudflare.com>
-Date: Fri, 21 Jun 2024 10:17:02 -0500
-Message-ID: <CAO3-Pbo_gNVP4qcEGNJe-RmPBy7CgFZab+dwwv2MyFiJRg9_fA@mail.gmail.com>
-Subject: Re: [RFC net-next 1/9] skb: introduce gro_disabled bit
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Willem de Bruijn <willemb@google.com>, Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>, 
-	Mina Almasry <almasrymina@google.com>, Abhishek Chauhan <quic_abchauha@quicinc.com>, 
-	David Howells <dhowells@redhat.com>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
-	David Ahern <dsahern@kernel.org>, Richard Gobert <richardbgobert@gmail.com>, 
-	Antoine Tenart <atenart@kernel.org>, Felix Fietkau <nbd@nbd.name>, 
-	Soheil Hassas Yeganeh <soheil@google.com>, Pavel Begunkov <asml.silence@gmail.com>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: display: st7701: Add Anbernic RG28XX
+ panel
+To: Hironori KIKUCHI <kikuchan98@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org
+References: <20240618081515.1215552-1-kikuchan98@gmail.com>
+ <20240618081515.1215552-2-kikuchan98@gmail.com>
+ <0455975b-837b-4a1c-8ea3-e9a504db53d0@kernel.org>
+ <CAG40kxHaAwGowQ0dRoEkGSiAUJA5SyKw3SSECUmBApKaAjcHKw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAG40kxHaAwGowQ0dRoEkGSiAUJA5SyKw3SSECUmBApKaAjcHKw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 21, 2024 at 4:57=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wro=
-te:
->
-> On Thu, 2024-06-20 at 15:19 -0700, Yan Zhai wrote:
-> > Software GRO is currently controlled by a single switch, i.e.
-> >
-> >   ethtool -K dev gro on|off
-> >
-> > However, this is not always desired. When GRO is enabled, even if the
-> > kernel cannot GRO certain traffic, it has to run through the GRO receiv=
-e
-> > handlers with no benefit.
-> >
-> > There are also scenarios that turning off GRO is a requirement. For
-> > example, our production environment has a scenario that a TC egress hoo=
-k
-> > may add multiple encapsulation headers to forwarded skbs for load
-> > balancing and isolation purpose. The encapsulation is implemented via
-> > BPF. But the problem arises then: there is no way to properly offload a
-> > double-encapsulated packet, since skb only has network_header and
-> > inner_network_header to track one layer of encapsulation, but not two.
-> > On the other hand, not all the traffic through this device needs double
-> > encapsulation. But we have to turn off GRO completely for any ingress
-> > device as a result.
->
-> Could you please add more details WRT this last statement? I'm unsure
-> if I understand your problem. My guess is as follow:
->
-> Your device receive some traffic, GRO and forward it, and the multiple
-> encapsulation can happen on such forwarded traffic (since I can't find
-> almost none of the above your message is mainly a wild guess).
->
-> Assuming I guessed correctly, I think you could solve the problem with
-> no kernel changes: redirect the to-be-tunneled traffic to some virtual
-> device and all TX offload on top of it and let the encap happen there.
->
-Let's say we have a netns to implement network functions like
-DoS/IDS/Load balancing for IP traffic. The netns has a single veth
-entrance/exit, and a bunch of ip tunnels, GRE/XFRM, to receive and
-tunnel traffic from customer's private sites. Some of such traffic
-could be encapsulated to reach services outside of the netns (but on
-the same server), for example, customers may also want to use our
-CDN/Caching functionality. The complication here is that we might have
-to further tunnel traffic to another data center, because the routing
-is asymmetric so we can receive client traffic from US but the
-response may come back to our EU data center, and in order to do
-layer4/layer7 service, we have to make sure those land on the same
-server.
+On 21/06/2024 12:59, Hironori KIKUCHI wrote:
+> Hello Krzysztof,
+> 
+> Thank you for your reply!
+> 
+> On Tue, Jun 18, 2024 at 6:17 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 18/06/2024 10:15, Hironori KIKUCHI wrote:
+>>> The RG28XX panel is a panel specific to the Anbernic RG28XX.
+>>> It is 2.8 inches in size (diagonally) with a resolution of 480x640.
+>>>
+>>> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
+>>> ---
+>>>  .../display/panel/sitronix,st7701.yaml        | 36 +++++++++++++++++--
+>>>  1 file changed, 34 insertions(+), 2 deletions(-)
+>>
+>> Nothing explains in the commit msg why rg28xx is actually st7701.
+>> Changing interface to SPI suggests it is not.
+> 
+> Thanks, I'll explain like this;
+> ---
+> dt-bindings: display: st7701: Add Anbernic RG28XX panel
+> 
+> The RG28XX panel is a panel specific to the Anbernic RG28XX
+> handheld device. It is 2.8 inches in size (diagonally) with a
+> resolution of 480x640.
+> 
+> This panel is driven by a variant of ST7701 driver IC internally,
+> confirmed by dumping and analyzing its BSP initialization sequence
+> by using a logic analyzer. It is very similar to the existing
+> densitron,dmt028vghmcmi-1a panel, but differs in some unknown
+> register values, so add a new entry for the panel to distinguish them.
+> 
+> Additionally, it is connected over SPI, instead of MIPI DSI. So
+> add and modify for SPI as well.
+> ---
 
-It is true that a device like a veth pair or even netkit could allow
-the kernel segment GRO packets for us. But this does not sound
-actually right in terms of design: if we know already some packet path
-should not be GRO-ed, can we enforce this rather than having to
-aggregate it then chop it down soon after? For our specific case
-though, it also becomes a headache for analytics and customer rules
-that rely on ingress device name, we probably need to pair each tunnel
-with such a virtual device. There could be hundreds of ipsec tunnels,
-and that seems to be a substantial overhead for both data path and
-control plane management.
+OK.
 
-To make this a bit more general, what I'd like to introduce here is:
-when we know GRO is either problematic or simply not useful (like to
-some UDP traffic), can we have more control toggle to skip it?
+> 
+>>
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
+>>> index b348f5bf0a9..04f6751ccca 100644
+>>> --- a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
+>>> +++ b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
+>>> @@ -22,19 +22,21 @@ description: |
+>>>
+>>>  allOf:
+>>>    - $ref: panel-common.yaml#
+>>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+>>>
+>>>  properties:
+>>>    compatible:
+>>>      items:
+>>>        - enum:
+>>>            - anbernic,rg-arc-panel
+>>> +          - anbernic,rg28xx-panel
+>>
+>> What is xx? Wildcards are not allowed, in general.
+>>
+>> Can it be anything else than panel? If not, then drop "-panel".
+> 
+> It's supprising but it actually is a product name of the handheld device...
+> The panel comes with the device, and part# is completely unknown.
 
-thanks
-Yan
+OK
 
-> Cheers,
->
-> Paolo
->
+> 
+>>
+>>
+>>>            - densitron,dmt028vghmcmi-1a
+>>>            - elida,kd50t048a
+>>>            - techstar,ts8550b
+>>>        - const: sitronix,st7701
+>>>
+>>>    reg:
+>>> -    description: DSI virtual channel used by that screen
+>>> +    description: DSI / SPI channel used by that screen
+>>>      maxItems: 1
+>>>
+>>>    VCC-supply:
+>>> @@ -43,6 +45,13 @@ properties:
+>>>    IOVCC-supply:
+>>>      description: I/O system regulator
+>>>
+>>> +  dc-gpios:
+>>> +    maxItems: 1
+>>> +    description: |
+>>
+>> Do not need '|' unless you need to preserve formatting.
+> 
+> Thanks, I'll remove it.
+> 
+>>
+>>> +      Controller data/command selection (D/CX) in 4-line SPI mode.
+>>> +      If not set, the controller is in 3-line SPI mode.
+>>> +      No effect for DSI.
+>>
+>> Which devices can be connected over SPI? It seems not all, so this
+>> should be disallowed (": false" in allOf:if:then:; move the allOf to
+>> bottom like in example-schema) for them.
+> 
+> Hmm... That's a difficult question...
+> 
+> There are 3 types of connection that trying to support:
+> DSI, SPI with D/CX pin, and SPI without D/CX pin.
+> 
+> The dc-gpios is required for SPI with D/CX pin, but not for others.
+> 
+> DSI:
+> - anbernic,rg-arc-panel
+> - densitron,dmt028vghmcmi-1a
+> - elida,kd50t048a
+> - techstar,ts8550b
+> 
+> SPI without D/CX pin:
+> - anbernic,rg28xx-panel
+> 
+> But, there are no panels with D/CX pin so far.
+> How should I deal with this? just disallow all, perhaps?
+
+You can disallow for all existing panels, if you are unsure.
+
+> 
+> 
+> BTW, does panel's compatible string consider to include it's interface?
+
+No, the compatible defines the device, not its wiring (bus). The parent
+node defines which bus is needed.
+
+> ie, what if two panels use the exact same commands and timings, but
+> over different interface,
+> ... are they "compatible" or not?
+
+
+Best regards,
+Krzysztof
+
 
