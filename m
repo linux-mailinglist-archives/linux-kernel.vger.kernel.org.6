@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-224897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323C8912859
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:47:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B83691285A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654521C20D61
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:47:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAF59B27A4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86144C631;
-	Fri, 21 Jun 2024 14:46:53 +0000 (UTC)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCF6374DD;
+	Fri, 21 Jun 2024 14:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pUYC+g9S"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F7C2BAE3;
-	Fri, 21 Jun 2024 14:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46E14F60D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718981213; cv=none; b=sPUdIu60VeORkC4OryXB+yMZIQvLiz9p6QVkeG7mjEvLDdNu+rXyDktuEj5N/EgYOhC6fg716szF4TgdDw4Sy1XBMvMJYs+zHi5JtxhuJdzuOj7c1b+VBnHtu604v3eoWxvbxisB7F0TODV+sk3H7eVBr2uUnxoKC4otqtEBGSU=
+	t=1718981216; cv=none; b=GSXgtUsntDmM9AbTkO9b5VpQan/0NY+saO6CEaTbIRRNlAjHUkEYlkVaH6vxjHRs3LXOCSFT1f010rC/gTLaTQPjWp1SLpX/wsX5g5Lk0ymYUHgN7Lw3bJ7CrpntKyM5sDkBv+1IbMsTxzZ2VO4kek+mB5PkUKcAuuWKnPp7ziY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718981213; c=relaxed/simple;
-	bh=yQVb2DeThksBLy1v6heanX+uAjJHYjLCnQz2w0NHRqc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YmEIBUhjXVsMMl8nmdRcV41bKoNF7nGirGRTCNZy9FsK4AkZI6CY3H7479Oq1StdgDN5y2fIJ3E2hv6yC90ejBeYsbOknPp9/1+wagUI1BPM3IFtbARkrWw1WGfMveaCs351gw0xl1P2XYkjPtbDlActwRFvNb2u/OsesOhB7Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52c89d6b4adso2023884e87.3;
-        Fri, 21 Jun 2024 07:46:51 -0700 (PDT)
+	s=arc-20240116; t=1718981216; c=relaxed/simple;
+	bh=LuDV1jit+LzHW/FnOB8Sm/385vZGIBsm1cA9SJgn1pc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ukc8SzFfRF/Tc72TzGzAigIf6uSnDEinhUO5xPL8O1MoW43x8uUwn3V++XZXIg2EVq5AdzkOTkD6D4Zq4pzUYMRq9EZNHtrBTFp10tYsS/rDoSoaDcVmSmAd1gA10hYJqfRCKfuZS9bQpWzPT5UfMy5NU2nUiRsWxI3x6h7oKbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pUYC+g9S; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3636c572257so1915704f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:46:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718981213; x=1719586013; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DBkwuvx+qzIcwOnXOSKtVB4mU9IrbBnzcqFsSbdvXpo=;
+        b=pUYC+g9SCw4/qSSVy5C2frrd67q7sfJ10/sZw7ziD4qv4d1Y8BAmQR01dtEICWZm8m
+         EC0sMR6gonll4ajWSiQVoogo5XMKoLZvlDINK0XS+GGzl3GyGN4HAR7Jilp1ECj0qFAs
+         sFW2C0ZVEpJmGtsKDUZ3HCr4DqmLMwow5hYjEkBOe4oDTall/uSEftDxTl9x3BV/CC2a
+         2xRRNhSIzf7LYqG3zz14rsLL2Xe8BTR0WUJWsZ++vHJTXcYskv4BYHcR3zz6/MOfkipg
+         PZ1+n60SRiC9iEaYYakCGOYdxS2ge9zHlZzzFCx7HUVJxWZqb4dMYuy2GJjJXsrId2CV
+         GEBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718981208; x=1719586008;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yQVb2DeThksBLy1v6heanX+uAjJHYjLCnQz2w0NHRqc=;
-        b=tQ5sLXnzoPkaSkLZ5Wqt7NISILtrnAxq6fkaJY9T4b7PUG2ZjeIrFHeXKB9hfekJyc
-         P8918gYagsgFd/bYldXpPefhRcCO14fzT4Ka6wzXKyFRq7BI6UStt+Vcm6Krq4DIkUTK
-         660eiQR+CthCx/Al6x/QssiVC+BYIT8Q04cfcMHYg6WvfcRFWMCUAP5NwmvKhqZnw/+E
-         clfdo8gpwFJE+cOUtJ9iRBTkJxx9HU1ETKCFV/y5xqbTnCAfEoQgI9W3H/BVaJ56Fm09
-         ne4LQ1t2aEskLDg26V/anLBGwBPQIknxrO7DwF0eQwDroMKJanoIH8exx/vFtCyAF0r7
-         JAAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcU0xLQhgIl+Y+Uw9C3XH0a4RA9HEEqgMU2q5G0bSlg0tFkNJr/nHxohUuP31pGL/mwVHTkOwc1tLXK4IbYF+4UrPo4UlK0vJR+pMiNXsfxYTGAuvVmH6HdFLfzMJmLziqTpXuaLUfh8z4jMTmj2pX2DPGa19DksL0TfxVUJF+6e7T44tPlv0yBkOyxu5aQEVdD6M9IsQJN0HlXzlh8Jl2s+Q2LkYMnF6hos2m0m+caiPh1kCkIU26gvp36d8j9GTxWYrQz+HcCKhXy0d3BNX6I/Ka//1IMaZALXqXp/Di+o5h34HuqhBZUBecec1t36R6XyOA/7M7yyPqRQqzDPeE7rhthw==
-X-Gm-Message-State: AOJu0YwkNyvdXvfLGvyEDUYuc1kzW0LCCAmhe4/Z2qlhXIH9PMDh/NOc
-	3HLSthSXTx1qr1lRVAhCBqhjS/U8dfvLzCZXBmZiyVyOvdvzkJTHXuo22gM/DpM=
-X-Google-Smtp-Source: AGHT+IER7wT4R9FfGOzQ5BNfgll5zO8oVJ4SPQG+6xi9r8nDKeH7ziLtYU/BWHh5yJD3VLyT3Eb/yA==
-X-Received: by 2002:ac2:5e78:0:b0:52b:bdbd:2c43 with SMTP id 2adb3069b0e04-52ccaaa8d27mr4679346e87.61.1718981207807;
-        Fri, 21 Jun 2024 07:46:47 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdace206esm100345e87.286.2024.06.21.07.46.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 07:46:47 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cccd44570so2468895e87.2;
-        Fri, 21 Jun 2024 07:46:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVr3Wm/MY98z91lj2BJiaYsaP47maRZCyqyfvlJCH8OKjvpALfVSBALIZVvvXSr9Y3QRUut4A3mrmprnUkALNaXApBMiZkE35fsGixCdo0OcszqeWEUkGoCl4LiSPKidpmLgLyy4lzMFAkTvzjR1ANGi5JYPwQr7SMFoJh90SeJcC9TJlfyTjWDtBCTAEasPqcuHGmLxBUKrPTy2t9qA38/3+qLfup2AgRW4uESKsAT9RgrKYRGpTn5/n+10V1bOCMBkrhvxJIYgiiC4yFMQ2TynBfiBOhdltc35NL8opGh9D1j1tQ43eH46PXM01HzFxhDR5lAaXcclO4CXyIVfGVtYG8B7Q==
-X-Received: by 2002:a05:651c:104c:b0:2ec:5073:5816 with SMTP id
- 38308e7fff4ca-2ec507358edmr10687831fa.31.1718981186574; Fri, 21 Jun 2024
- 07:46:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718981213; x=1719586013;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DBkwuvx+qzIcwOnXOSKtVB4mU9IrbBnzcqFsSbdvXpo=;
+        b=gCb977+By4Ql/zfDCiWWQhneZTzyYzHQ5MwAbeH+DMFCS8ahk1QnXXOV7noMNtkf25
+         kbidIK5gjo9qMKj1nB/ux3QD5ew1x4enXOmjING/daW9rS6QI87e2ujGOHLX4XX8Kzo0
+         p6VeHNMEpHvNRcRa81ysja1DoYUD4xQo/5+sgmUtvQeaWnJECpoWlvFtrpooH7t1Rld7
+         /jqJmdV6ZTBY79UnudM3jq1cW3fYnPqiRZtSBi1m5l8xAvFJCaO5KEZbwTg9iSBcvugd
+         9Y4kRwTcwPXGKfZHXPrsmayhS/I+G77Jgfy3bY9WCg/XZsXgctgHa/ok7fHB6Sjr4w93
+         33RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVE9Mr/ku/fsc566C8SCAK89WqhakeCklCvl+c+DHP2nV4rGF/kd122+0hE4iw9oxLfXRuPkCc5LXoCBvoj7lOXoFp+s30eMtNFeF04
+X-Gm-Message-State: AOJu0YxnGmNjC/2BwbA3dW1ddit9cfr5GjbPfF81GXv1CD3DrW+2kJSq
+	J5E0EbZhieFzHCsSJxzv2DQRIna4Za2H9ailXSRZAC+uBrJwMc/QjypujwmjOrM=
+X-Google-Smtp-Source: AGHT+IFuaYVvQQ5U+lob8+mammMMATTKb0eN6b3Bkn7maKlnKEA90KDPdKc5TSvOFx3y9exnTmabaw==
+X-Received: by 2002:adf:fcca:0:b0:35f:2363:e4fc with SMTP id ffacd0b85a97d-363175b8fc2mr7663280f8f.17.1718981212841;
+        Fri, 21 Jun 2024 07:46:52 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0b63d4sm67564025e9.3.2024.06.21.07.46.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 07:46:52 -0700 (PDT)
+Date: Fri, 21 Jun 2024 15:46:50 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Zheng Zengkai <zhengzengkai@huawei.com>, jason.wessel@windriver.com,
+	pmladek@suse.com, christophe.jaillet@wanadoo.fr,
+	thorsten.blum@toblux.com, yuran.pereira@hotmail.com,
+	kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] kdb: Get rid of redundant kdb_curr_task()
+Message-ID: <20240621144650.GC285771@aspen.lan>
+References: <20240620142132.157518-1-zhengzengkai@huawei.com>
+ <CAD=FV=Uw4-czLekDJ1aU55Kxb5NeXVufnpo4fYy9EwQ-KUqDCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org> <20240614-dt-bindings-thermal-allof-v1-3-30b25a6ae24e@linaro.org>
-In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-3-30b25a6ae24e@linaro.org>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 21 Jun 2024 22:46:13 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65T80TH9HUpny8vK2KNrE6aYQHf4x0CAUrxKWih34TdTA@mail.gmail.com>
-Message-ID: <CAGb2v65T80TH9HUpny8vK2KNrE6aYQHf4x0CAUrxKWih34TdTA@mail.gmail.com>
-Subject: Re: [PATCH 03/22] dt-bindings: thermal: allwinner,sun8i-a83t-ths:
- reference thermal-sensor schema
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Guillaume La Roque <glaroque@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Vasily Khoruzhick <anarsoul@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Anson Huang <Anson.Huang@nxp.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
-	Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	zhanghongchen <zhanghongchen@loongson.cn>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	imx@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
-	Florian Fainelli <f.fainelli@gmail.com>, linux-rpi-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=Uw4-czLekDJ1aU55Kxb5NeXVufnpo4fYy9EwQ-KUqDCQ@mail.gmail.com>
 
-On Fri, Jun 14, 2024 at 5:46=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On Fri, Jun 21, 2024 at 07:36:49AM -0700, Doug Anderson wrote:
+> Hi,
 >
-> Device is a thermal sensor and it requires '#thermal-sensor-cells', so
-> reference the thermal-sensor.yaml to simplify it and bring the
-> common definition of '#thermal-sensor-cells' property.
+> On Thu, Jun 20, 2024 at 6:58 AM Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+> >
+> > Commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture")
+> > removed the only definition of macro _TIF_MCA_INIT, so kdb_curr_task()
+> > is actually the same as curr_task() now and becomes redundant.
+> >
+> > Let's remove the definition of kdb_curr_task() and replace remaining
+> > calls with curr_task().
+> >
+> > Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+> > ---
+> >  kernel/debug/kdb/kdb_bt.c      |  2 +-
+> >  kernel/debug/kdb/kdb_main.c    | 18 ++++--------------
+> >  kernel/debug/kdb/kdb_private.h |  2 --
+> >  3 files changed, 5 insertions(+), 17 deletions(-)
 >
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> In case Daniel picks this one up since it CCs LKML, I'll copy my tag
+> from the one that didn't:
+>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Thanks Doug. I was literally getting to it now!
+
+
+Daniel.
 
