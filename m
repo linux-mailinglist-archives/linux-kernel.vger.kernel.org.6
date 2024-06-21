@@ -1,89 +1,63 @@
-Return-Path: <linux-kernel+bounces-224971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274F991294E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:19:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E594091297B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF1B1C26558
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:19:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08430B20BE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9706F2F0;
-	Fri, 21 Jun 2024 15:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3096E2BE;
+	Fri, 21 Jun 2024 15:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwfGKdxI"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RkImYVMW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDF728DB3;
-	Fri, 21 Jun 2024 15:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586412C697;
+	Fri, 21 Jun 2024 15:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983154; cv=none; b=ASNJ4sa5kh2GAE25Bozu+Jj9gIhL4jciYCKivme6T9+t92bSnmGDddOGEL4Dkt8nU792ZA5j+MvayPQrtG0H9L5LXuQTE/hPu1PP7Iqpg+51dhlOkXpef8UXE9D4rKq/emPHH3UR7c+2+SQWV583ysDwcVZPa3cnLY17XTggAy4=
+	t=1718983240; cv=none; b=CoT3GL/+MSPXcz3K/AR/9B1M4F0Qvv0C1p30lF41vLFhQevfDyqd3Chk3YqnH4KQjMXT0Rj/L38mnAECnFmhmjAr8yM1HTvz9rzlq4lNmWcdY+IEp+zzIBc8oSQoDJTS6n5/wjegaW3z/xPzMxD+yRM1CZ1igy78Um+m0zlu9jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718983154; c=relaxed/simple;
-	bh=A5p+moRk0R9liIKtFtn2PGNkd8z9yeHkYGV/CCjCva4=;
+	s=arc-20240116; t=1718983240; c=relaxed/simple;
+	bh=J+pmRh594N2ZDH0OhN6RJjJZNLlXPj4I3k5v+SRt1zo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h2Kucgct1iu2CrJyCW/GGRvFFkzA39r6VjdDNczMI/Z4SZ+H8vKOVLd+30bzl6eCt+DD36dZ9kWkQAuADjedlAo43AKHYzDm0UjMdXyzQa+ZggTRdGoraAMLe9mXgwFjThtDHkGeiT2wSQ3MxA28tzEQdUBTOOHno7q9Vbu7gQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwfGKdxI; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7163489149eso854434a12.1;
-        Fri, 21 Jun 2024 08:19:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718983152; x=1719587952; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cjxvv/dXpoLtAAeIGzsy9ReaW7NrPJCCE9CeS4zb3TA=;
-        b=TwfGKdxIcXWBrwWJqdD8zau+nl+9x+JQae6iipIuzuVdnSnGcNh+okT70OUUHF2T6Z
-         mFL7yhoOnW4BO3YNow7ZsUeNu0au/5MFaEKvJVIr2kHytwnkc6nKTXqlz5BW2vlhRmeK
-         qjPWyfqAPYJWgQbV2d0BdEL3/gzXPN8Sr8DOF/sygmFwyxn+1wuE0/495I0jxby971CI
-         u1BJ/Fn4QhQfpEWtlrQ8ap3RPVsijPuX+g/bdHrF6O7D42kGdQorHXC0fOJVMeW0yjRY
-         lZmNIFzITjC8jwzpelQYtEyRD6bc6WOAoBbAEKb3T0BUGb+1d+39jBcciJ9M1Lttp4r/
-         7kPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718983152; x=1719587952;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cjxvv/dXpoLtAAeIGzsy9ReaW7NrPJCCE9CeS4zb3TA=;
-        b=fprxozMqrtSM1as9UCwDgXIFqRdVynsTnRSd6uQGnZqcm7A3qK4sYCGTREFKW7RWft
-         CJoUpqeT+/b/JHp9yP21DJ4X6jdEpAr4r/Map9tRjGenMQcesTHEPJ3sg+n5zQS1iX4u
-         ezchvyCRAZUOhbzL8pEd1qpYbhEUOlU6hK8BXHAlFfCLX5f5c2K8c8XEHeraYMCfLz0p
-         lsbqj+Nv8JCt/DnSxEnAJpOkQEuJz6ljdkeZfK2X/p6V4y3qmKHenCIl2cHzU9EgJDaJ
-         Ud8nDykZgtcj7wexxQbpK8q5c/5lwzwXs9KX3jewU7J/Y9/RBlS/ueZ6468T03eqBPd9
-         6uCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFVF9gCYz4gAwQSY0z0R2V53h2JjsmZdTc7WOljtB+XCM7IBTLVjLvkzQOSXywJ8xgOpAmjqJM5X8Z8HGzSEUY88+L/M6Ip808hPbblJCC21I4/+qM9zhLx7JK2vc3Z3OjFcTT1vkvQPlerwQKOIgoXnE1KWc9yLY03ODftzoQdbk6/JJp
-X-Gm-Message-State: AOJu0YzUDthUxp9teUgoSrBQCY14Jgw5MWl0KmeXAa/Fu5+v/GXHYG9s
-	LG/c/bckMdHel0c9HvShopfYwWfHaqNYoKgGsWsHG4DGKzFXd1FA
-X-Google-Smtp-Source: AGHT+IEPNc1yAbSPX6EhL18Hn9h8G+pMaRon9VBVmVWl+LZtObdhSRq3RpDsRRBngcXbxQQSri7+Lw==
-X-Received: by 2002:a17:90a:ea92:b0:2c3:e99:614f with SMTP id 98e67ed59e1d1-2c7b5d52dbfmr8330945a91.37.1718983152142;
-        Fri, 21 Jun 2024 08:19:12 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e55db329sm3732434a91.26.2024.06.21.08.19.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 08:19:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 21 Jun 2024 08:19:10 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v5 2/2] drivers: hwmon: sophgo: Add SG2042 external
- hardware monitor support
-Message-ID: <df0f11cb-3b44-4869-bfd6-6e5d01e6debd@roeck-us.net>
-References: <PH7PR20MB4962C6D8FD6989BC79F9483FBB1D2@PH7PR20MB4962.namprd20.prod.outlook.com>
- <PH7PR20MB49622B0A6E9169B04211C7AFBB1D2@PH7PR20MB4962.namprd20.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VBE3k1xjuJTENGRciEvZAXtTG8P43UckklbX8llrTBl0rQdOnwyFmUdazLp035jwl6lGECqGZeI/rod/jMZokreWboH5UOM4rCF0NdNpr1ut/Nk68j11pZXDaGakhetz3RxBxU8yLnhBLWw/TdFR6uDe5S2aijx0hvzAPDqtdZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RkImYVMW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=1rN6ZtuZ5WiYgM8LdZtjJXv4iNlUIE3YjUW4O8w3ias=; b=RkImYVMW0MqdSdKN1Vaf402F4p
+	RxZPvDc2tmKVj+XeuspgLNAU2CLSd2MW+IrKN2TWrrxkvV9uRyi1SGUWR1ahrci0UMhlTEUqc5+u+
+	3SDJP/EJzlUmIUmDCJFcCfXaAF1GrQJnZi4HdHjGe1r/35ZJB5qxGFT2yovc8nf/b6E8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sKg3d-000gGX-89; Fri, 21 Jun 2024 17:20:09 +0200
+Date: Fri, 21 Jun 2024 17:20:09 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	guanwentao@uniontech.com,
+	Wang Zhimin <wangzhimin1179@phytium.com.cn>,
+	Li Wencheng <liwencheng@phytium.com.cn>,
+	Chen Baozi <chenbaozi@phytium.com.cn>,
+	Wang Yinfeng <wangyinfeng@phytium.com.cn>
+Subject: Re: [PATCH] net: stmmac: Add a barrier to make sure all access
+ coherent
+Message-ID: <3f36c1c1-b561-49a7-82a7-a0aaef60cf83@lunn.ch>
+References: <F19E93E071D95714+20240621101836.167600-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,46 +66,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PH7PR20MB49622B0A6E9169B04211C7AFBB1D2@PH7PR20MB4962.namprd20.prod.outlook.com>
+In-Reply-To: <F19E93E071D95714+20240621101836.167600-1-wangyuli@uniontech.com>
 
-On Sun, May 05, 2024 at 09:18:53AM +0800, Inochi Amaoto wrote:
-> SG2042 use an external MCU to provide basic hardware information
-> and thermal sensors.
-> 
-> Add driver support for the onboard MCU of SG2042.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> ---
->  drivers/hwmon/Kconfig            |  11 +
->  drivers/hwmon/Makefile           |   1 +
->  drivers/hwmon/sg2042-hwmon-mcu.c | 531 +++++++++++++++++++++++++++++++
+On Fri, Jun 21, 2024 at 06:18:36PM +0800, WangYuli wrote:
+> Add a memory barrier to sync TX descriptor to avoid data error.
+> Besides, increase the ring buffer size to avoid buffer overflow.
 
-Documentation missing.
+This sounds to do two things. Two patches please, each with a good
+commit message.
 
-> +config SENSORS_SG2042_HWMON_MCU
+> Signed-off-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
+> Signed-off-by: Li Wencheng <liwencheng@phytium.com.cn>
+> Signed-off-by: Chen Baozi <chenbaozi@phytium.com.cn>
+> Signed-off-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
 
-"SENSORS" and "HWMON" is redundant. Yes, I know, others do it
-as well, but that doesn't make it less redundant.
+Five developers for a 25 line patch? Should some of these be
+Suggested-by:, Tested-by: Reported-by:?
 
-> +static DEVICE_ATTR_RO(board_type);
-> +static DEVICE_ATTR_RO(firmware_version);
-> +static DEVICE_ATTR_RO(pcb_version);
-> +static DEVICE_ATTR_RO(reset_count);
-> +static DEVICE_ATTR_RO(uptime);
-> +static DEVICE_ATTR_RO(reset_reason);
-> +static DEVICE_ATTR_RO(mcu_type);
-> +static DEVICE_ATTR_RW(critical_action);
+    Andrew
 
-None of the above are hardware monitoring attributes. They are not
-acceptable as sysfs attributes. Some of them might be acceptable
-as debugfs attributes.
-
-> +static DEVICE_ATTR_RW(repower_temp);
-> +
-
-For this one, I don't know what it is. If it is a temperature
-limit, it should be implemented as one (for example as _emergency
-limit).
-
-Guenter
+---
+pw-bot: cr
 
