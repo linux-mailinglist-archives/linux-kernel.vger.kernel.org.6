@@ -1,402 +1,682 @@
-Return-Path: <linux-kernel+bounces-223793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E1A911839
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:54:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B749891183B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA44281EB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160A91F23E16
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A2582C7E;
-	Fri, 21 Jun 2024 01:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkGaJBPe"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D07682C7E;
+	Fri, 21 Jun 2024 01:55:24 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8A810E3;
-	Fri, 21 Jun 2024 01:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BF910E3;
+	Fri, 21 Jun 2024 01:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718934871; cv=none; b=DrUO0M6bZC+6PaZIoSeZnf/sFxJ55+hbgiKMzMJYs1qBh43YSrP+6NWEZeUqDArbOFBSrV3bYlqKv4LPQ5Sva0D1zZi0BT/vlcrR2Bg13tnaYeCLAXDYzfrnBD+1yhYuR30eeqelmZo10DMvXPrGfhpT9sWhkOZG9YCajfOc978=
+	t=1718934923; cv=none; b=gubm1tosDMANrTkhs7fUAGeh+s6Qk5bJsjaOq0Gb4HYYUN6MIKIPQcvfB5VJiZFBRAB9TPpzYDpr2J8mqtrpLt222aT9wArt6CEjDG8cK5TyDhhj1Zou3aFmHaTbBXfffCQAvkeLh9O5imYYVjwdqUzdE9QlZr73QAaqMqm/wn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718934871; c=relaxed/simple;
-	bh=aSFpcFs6ONeLuOrxd6sEWHEsddMElHt4cazYUQt0fjk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j7y31ceW8hEki4+O+xMKTw/wADEWwlfg3S033EFDm2G1aE5D/ayHgU4mbnuX080ZWZsv6MZenJVGL6dxRzTJDqZr7rPgYy5ONAGY6JaMZ/tRmF57oda00swcJ2KqqL4qrqBXm7cg1uF3TAYVtiKlh/L1cilZoYR0sqG2MEA48Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkGaJBPe; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so28192921fa.0;
-        Thu, 20 Jun 2024 18:54:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718934867; x=1719539667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rxblhwcm0TqKOu+iYEsCkyv/maqBX/RToKbmabjo2cY=;
-        b=gkGaJBPekZ+ijw5mgJEAJc0SQK4Dv9FXHSpFgB+rDVG47jdfXCHqUD3w+mRwaPPXpf
-         eeP0DYiax23yoAxWV2GMhw7rKmIwVUKe/DONDFZFWio6tNn+QIpCGx/F9uFOCdNGDuMO
-         cB+iPkkjrSzs8zI9XXkgMLkrWc7P5n0Xz3mLBdE+6LZ8bq+TELpK5lFRRZ7YAvIJN/k+
-         H5IdVfcsoI2gY1slOqfOg30J45xDu40SvRW+FoSxK1T3R5dtI98veT7v9tbY8pdVL3KO
-         9yUWU0WUKVJnnbDaYSpLNoyZCocNRguPDxdq7o+C48+0LlLPtKqdbC19Z0j5HBFE0IYm
-         46PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718934867; x=1719539667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rxblhwcm0TqKOu+iYEsCkyv/maqBX/RToKbmabjo2cY=;
-        b=FlcE0s3YZ4Lp58fpxjmn6vwu+xsAPtF/U5vuKvp0dA42KVrA97XZStDBgxtr8EPd6z
-         MTjjaTTTn1IwGPXTS6mKDt8onAPRGjQcq+wD0vuChRaiSzJ2OzdnxZRrMG6/wtxd1LH5
-         2KuRS5ty//pYEAZ27fFPrHd4kMBk7DWm7forWv0v7E1LeZIiYPUbyapJAci7cmOcie/L
-         H6wSJNCykuLETNwybFax0Lk+/D/lsDVOkEVrkJxDBaYSf48Q6eYFzKA6X+O+vPsmX4G8
-         OGefa1Af+sS5oAFpch9dB5tOTfWOX8EOP02lm1UoKOBCk3GckL5AsRHVHeCA0OZIp3JD
-         VNkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWI+6X+yuXV7JTq1sfkl++lQNDm+Jq1N4N781FUk3Uzt35nQ7UqRD+NTmuyzfKLSaMXRnJrAolSHhuQ4Nk3C81Ehy6rmdqtUZBX12eDIYCjbiWXsa14EYiWKGZHCuppMc2OuFTdc5vf
-X-Gm-Message-State: AOJu0YwPL2UgbUWq0QI868fRO3I92ohbsxkDrTPG05SNuzBzlWxMjAKD
-	j2ldpixsbe2r5xkuixDjt+3hckfusDSq+FNfCEel3LYmzLLNY6m9pM3wh53FBMtK7z1NxGR+Dug
-	TCveTVk5LCtCqsgwxnHwNRep4V58=
-X-Google-Smtp-Source: AGHT+IGz3V3Y8nJrM/Z70PIUGz+iqDL+L7eVGLDv3agZw8b8ghtyXK50kwKww85MwCWamr2lRawSCRHaODNED6KeIuc=
-X-Received: by 2002:a2e:7e0b:0:b0:2ec:1708:4db5 with SMTP id
- 38308e7fff4ca-2ec3cffc628mr50070041fa.51.1718934866592; Thu, 20 Jun 2024
- 18:54:26 -0700 (PDT)
+	s=arc-20240116; t=1718934923; c=relaxed/simple;
+	bh=202FODjsBc7ilHsKAMiccWS1VJbEco0+i+nEYAMk9Y8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=GK2HUYNzcgvNZHu1zurFcPF9qfoNeJyB2GWC6b88yKGEgcw9GrXFX0LJb+8BxiH44yq26riiVpPCjLmE6MmJL+TKbwzUuRiWQ0Hq1MtsRrFZ376P6SItiEJ6rRriF+8laiAa+L2Gut/jjPqk/PTZv/B97qXxo9hdvZuMSGJ8NHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4W50l02t6Cz1xsnV;
+	Fri, 21 Jun 2024 09:53:48 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7B84E14010C;
+	Fri, 21 Jun 2024 09:55:15 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 21 Jun 2024 09:55:14 +0800
+Message-ID: <2e3fa0f3-0ac9-405b-99a6-b57d0efdca96@huawei.com>
+Date: Fri, 21 Jun 2024 09:55:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620104444.5862-1-victorshihgli@gmail.com>
- <20240620104444.5862-23-victorshihgli@gmail.com> <CACT4zj9Nfd=W9ntQX4dDWzZJRFbP+vve9=BkaRjtmZY7752qfA@mail.gmail.com>
-In-Reply-To: <CACT4zj9Nfd=W9ntQX4dDWzZJRFbP+vve9=BkaRjtmZY7752qfA@mail.gmail.com>
-From: Ben Chuang <benchuanggli@gmail.com>
-Date: Fri, 21 Jun 2024 09:54:12 +0800
-Message-ID: <CACT4zj9Cs+mF+LwyCxV_e5n2+e3iog6OH0E=fGe5oO1FC7KByg@mail.gmail.com>
-Subject: Re: [PATCH V17 22/22] mmc: sdhci-pci-gli: enable UHS-II mode for GL9767
-To: Victor Shih <victorshihgli@gmail.com>
-Cc: ulf.hansson@linaro.org, adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, HL.Liu@genesyslogic.com.tw, 
-	Greg.tu@genesyslogic.com.tw, takahiro.akashi@linaro.org, dlunev@chromium.org, 
-	Ben Chuang <ben.chuang@genesyslogic.com.tw>, 
-	Victor Shih <victor.shih@genesyslogic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xfs: Avoid races with cnt_btree lastrec updates
+From: Zizhi Wo <wozizhi@huawei.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+CC: <chandan.babu@oracle.com>, <dchinner@redhat.com>,
+	<linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yangerkun@huawei.com>
+References: <20240618133208.1161794-1-wozizhi@huawei.com>
+ <20240619002230.GH103057@frogsfrogsfrogs>
+ <25f419c7-5ea7-4f52-ab1c-ecea1d6acc82@huawei.com>
+ <20240620203526.GK103057@frogsfrogsfrogs>
+ <16081f74-cb25-49b8-a26d-d3ad8f37122e@huawei.com>
+In-Reply-To: <16081f74-cb25-49b8-a26d-d3ad8f37122e@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-On Fri, Jun 21, 2024 at 9:49=E2=80=AFAM Ben Chuang <benchuanggli@gmail.com>=
- wrote:
->
-> Hi Victor,
->
-> On Thu, Jun 20, 2024 at 6:46=E2=80=AFPM Victor Shih <victorshihgli@gmail.=
-com> wrote:
-> >
-> > From: Victor Shih <victor.shih@genesyslogic.com.tw>
-> >
-> > Changes are:
-> >  * Enable the internal clock when do reset on UHS-II mode.
-> >  * Increase timeout value before detecting UHS-II interface.
-> >  * Add vendor settings for UHS-II mode.
-> >
-> > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> > Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
-> > ---
-> >
-> > Updates in V17:
-> >  - Use mmc_card_uhs2() to simplify the code in the sdhci_gl9767_reset()=
-.
-> >  - Use mmc_card_uhs2() to simplify the code in the
-> >    sdhci_gl9767_set_power().
-> >  - Add sdhci_gli_overcurrent_event_enable() to sdhci_gl9767_set_power()=
-.
-> >
-> > Updates in V15:
-> >  - Add gl9767 to support uhs2 function.
-> >
-> > ---
-> >
-> >  drivers/mmc/host/sdhci-pci-gli.c | 150 ++++++++++++++++++++++++++++++-
-> >  1 file changed, 148 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-=
-pci-gli.c
-> > index a4164948de81..37c63c45bdc9 100644
-> > --- a/drivers/mmc/host/sdhci-pci-gli.c
-> > +++ b/drivers/mmc/host/sdhci-pci-gli.c
-> > @@ -210,6 +210,10 @@
-> >  #define   PCIE_GLI_9767_SCR_CORE_PWR_D3_OFF              BIT(21)
-> >  #define   PCIE_GLI_9767_SCR_CFG_RST_DATA_LINK_DOWN       BIT(30)
-> >
-> > +#define PCIE_GLI_9767_UHS2_PHY_SET_REG1                               =
- 0x90C
-> > +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR            GENMA=
-SK(31, 29)
-> > +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE      0x3
-> > +
-> >  #define PCIE_GLI_9767_SDHC_CAP                 0x91C
-> >  #define   PCIE_GLI_9767_SDHC_CAP_SDEI_RESULT     BIT(5)
-> >
-> > @@ -228,9 +232,15 @@
-> >  #define   PCIE_GLI_9767_SD_EXPRESS_CTL_SD_EXPRESS_MODE   BIT(1)
-> >
-> >  #define PCIE_GLI_9767_SD_DATA_MULTI_CTL                               =
- 0x944
-> > +#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2            BIT(5=
-)
-> > +#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL        BIT(8=
-)
-> >  #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME        GENMA=
-SK(23, 16)
-> >  #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME_VALUE       =
-   0x64
-> >
-> > +#define PCIE_GLI_9767_UHS2_PHY_SET_REG2                               =
-         0x948
-> > +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING             =
-   GENMASK(22, 21)
-> > +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE       =
-           0x0
-> > +
-> >  #define PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2                      =
- 0x950
-> >  #define   PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2_SDEI_COMPLETE      =
-   BIT(0)
-> >
-> > @@ -240,6 +250,28 @@
-> >  #define PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2                   =
-         0x958
-> >  #define   PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2_SDEI_COMPLETE_SI=
-GNAL_EN    BIT(0)
-> >
-> > +#define PCIE_GLI_9767_UHS2_CTL1                                0x95C
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS             BIT(5)
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE       0x1
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL           BIT(6)
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE     0x1
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN            GENMASK(10, 7=
-)
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE      0x3
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV            GENMASK(14, 1=
-1)
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE      0xf
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS              GENMASK(16, 1=
-5)
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE        0x3
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV               GENMASK(18, 1=
-7)
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE         0x0
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_PDRST                          BIT(2=
-5)
-> > +#define   PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE            0x1
-> > +
-> > +#define PCIE_GLI_9767_UHS2_CTL2                        0x964
-> > +#define   PCIE_GLI_9767_UHS2_CTL2_ZC             GENMASK(3, 0)
-> > +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE       0xb
-> > +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL         BIT(6)
-> > +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE   0x1
-> > +
-> >  #define GLI_MAX_TUNING_LOOP 40
-> >
-> >  /* Genesys Logic chipset */
-> > @@ -1197,8 +1229,32 @@ static void gl9767_hw_setting(struct sdhci_pci_s=
-lot *slot)
-> >
-> >  static void sdhci_gl9767_reset(struct sdhci_host *host, u8 mask)
-> >  {
-> > -       sdhci_reset(host, mask);
-> > -       gli_set_9767(host);
-> > +       u16 clk_ctrl;
-> > +       u16 ctrl2;
-> > +
-> > +       if (mmc_card_uhs2(host->mmc)) {
-> > +               /* need internal clock */
-> > +               if (mask & SDHCI_RESET_ALL) {
-> > +                       ctrl2 =3D sdhci_readw(host, SDHCI_HOST_CONTROL2=
-);
-> > +                       clk_ctrl =3D sdhci_readw(host, SDHCI_CLOCK_CONT=
-ROL);
-> > +
-> > +                       if ((ctrl2 & SDHCI_CTRL_V4_MODE) && (ctrl2 & SD=
-HCI_CTRL_UHS2_ENABLE)) {
-> > +                               sdhci_writew(host, SDHCI_CLOCK_INT_EN, =
-SDHCI_CLOCK_CONTROL);
-> > +                       } else {
-> > +                               sdhci_writew(host, SDHCI_CLOCK_INT_EN, =
-SDHCI_CLOCK_CONTROL);
-> > +                               sdhci_wait_clock_stable(host);
-> > +                               sdhci_writew(host, SDHCI_CTRL_V4_MODE, =
-SDHCI_HOST_CONTROL2);
-> > +                       }
-> > +               }
-> > +               if (mask & (SDHCI_RESET_CMD | SDHCI_RESET_DATA))
->
-> Is this your intention?
->     -> if ((mask & SDHCI_RESET_CMD) |
->             (mask & SDHCI_RESET_DATA))
->
-sorry, fix typo
-     -> if ((mask & SDHCI_RESET_CMD) ||
-             (mask & SDHCI_RESET_DATA))
 
-Best regards,
-Ben Chuang
->
-> > +                       sdhci_gli_uhs2_reset_sd_tran(host);
-> > +
-> > +               sdhci_uhs2_reset(host, mask);
-> > +               gli_set_9767(host);
-> > +       } else {
-> > +               sdhci_reset(host, mask);
-> > +               gli_set_9767(host);
-> > +       }
-> >  }
-> >
-> >  static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios=
- *ios)
-> > @@ -1288,6 +1344,88 @@ static int gl9767_init_sd_express(struct mmc_hos=
-t *mmc, struct mmc_ios *ios)
-> >         return 0;
-> >  }
-> >
-> > +static void gl9767_vendor_init(struct sdhci_host *host)
-> > +{
-> > +       struct sdhci_pci_slot *slot =3D sdhci_priv(host);
-> > +       struct pci_dev *pdev =3D slot->chip->pdev;
-> > +       u32 value;
-> > +
-> > +       gl9767_vhs_write(pdev);
-> > +
-> > +       pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, &v=
-alue);
-> > +       value |=3D FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_IN=
-TR,
-> > +                           PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR=
-_VALUE);
-> > +       pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, v=
-alue);
-> > +
-> > +       pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, &v=
-alue);
-> > +       value |=3D FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_S=
-ETTING,
-> > +                           PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SET=
-TING_VALUE);
-> > +       pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, v=
-alue);
-> > +
-> > +       pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, &value);
-> > +       value |=3D FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS,
-> > +                           PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE) |
-> > +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL,
-> > +                           PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE)=
- |
-> > +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN,
-> > +                           PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE) =
-|
-> > +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV,
-> > +                           PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE) =
-|
-> > +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS,
-> > +                           PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE) |
-> > +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_RECV,
-> > +                           PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE) |
-> > +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_PDRST,
-> > +                           PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE);
-> > +       pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, value);
-> > +
-> > +       pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
-> > +       value |=3D FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC,
-> > +                           PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE) |
-> > +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC_CTL,
-> > +                           PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE);
-> > +       pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-> > +
-> > +       gl9767_vhs_read(pdev);
-> > +}
-> > +
-> > +static void sdhci_gl9767_set_power(struct sdhci_host *host, unsigned c=
-har mode,        unsigned short vdd)
-> > +{
-> > +       struct sdhci_pci_slot *slot =3D sdhci_priv(host);
-> > +       struct pci_dev *pdev;
-> > +       u32 value;
-> > +
-> > +       pdev =3D slot->chip->pdev;
-> > +
-> > +       if (mmc_card_uhs2(host->mmc)) {
-> > +               gl9767_vhs_write(pdev);
-> > +
-> > +               pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI=
-_CTL, &value);
-> > +               value |=3D PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 =
-|
-> > +                        PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CT=
-L;
-> > +               pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULT=
-I_CTL, value);
-> > +
-> > +               gl9767_vhs_read(pdev);
-> > +
-> > +               sdhci_gli_overcurrent_event_enable(host, false);
-> > +               sdhci_uhs2_set_power(host, mode, vdd);
-> > +               sdhci_gli_overcurrent_event_enable(host, true);
-> > +       } else {
-> > +               gl9767_vhs_write(pdev);
-> > +
-> > +               pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI=
-_CTL, &value);
-> > +               value &=3D ~(PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS=
-2 |
-> > +                          PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_=
-CTL);
-> > +               pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULT=
-I_CTL, value);
-> > +
-> > +               gl9767_vhs_read(pdev);
-> > +
-> > +               sdhci_gli_overcurrent_event_enable(host, false);
-> > +               sdhci_set_power(host, mode, vdd);
-> > +               sdhci_gli_overcurrent_event_enable(host, true);
-> > +       }
-> > +}
-> > +
-> >  static int gli_probe_slot_gl9750(struct sdhci_pci_slot *slot)
-> >  {
-> >         struct sdhci_host *host =3D slot->host;
-> > @@ -1324,6 +1462,7 @@ static int gli_probe_slot_gl9767(struct sdhci_pci=
-_slot *slot)
-> >         host->mmc->caps2 |=3D MMC_CAP2_SD_EXP;
-> >         host->mmc_host_ops.init_sd_express =3D gl9767_init_sd_express;
-> >         sdhci_enable_v4_mode(host);
-> > +       gl9767_vendor_init(host);
-> >
-> >         return 0;
-> >  }
-> > @@ -1827,12 +1966,19 @@ static const struct sdhci_ops sdhci_gl9767_ops =
-=3D {
-> >         .reset                   =3D sdhci_gl9767_reset,
-> >         .set_uhs_signaling       =3D sdhci_set_uhs_signaling,
-> >         .voltage_switch          =3D sdhci_gl9767_voltage_switch,
-> > +       .dump_uhs2_regs          =3D sdhci_uhs2_dump_regs,
-> > +       .set_timeout             =3D sdhci_uhs2_set_timeout,
-> > +       .irq                     =3D sdhci_uhs2_irq,
-> > +       .set_power               =3D sdhci_gl9767_set_power,
-> > +       .uhs2_pre_detect_init    =3D sdhci_gli_pre_detect_init,
-> >  };
-> >
-> >  const struct sdhci_pci_fixes sdhci_gl9767 =3D {
-> >         .quirks         =3D SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
-> >         .quirks2        =3D SDHCI_QUIRK2_BROKEN_DDR50,
-> >         .probe_slot     =3D gli_probe_slot_gl9767,
-> > +       .add_host       =3D sdhci_pci_uhs2_add_host,
-> > +       .remove_host    =3D sdhci_pci_uhs2_remove_host,
-> >         .ops            =3D &sdhci_gl9767_ops,
-> >  #ifdef CONFIG_PM_SLEEP
-> >         .resume         =3D sdhci_pci_gli_resume,
-> > --
-> > 2.25.1
-> >
+
+在 2024/6/21 9:40, Zizhi Wo 写道:
+> 
+> 
+> 在 2024/6/21 4:35, Darrick J. Wong 写道:
+>> On Wed, Jun 19, 2024 at 09:05:29AM +0800, Zizhi Wo wrote:
+>>>
+>>>
+>>> 在 2024/6/19 8:22, Darrick J. Wong 写道:
+>>>> On Tue, Jun 18, 2024 at 09:32:08PM +0800, Zizhi Wo wrote:
+>>>>> A concurrent file creation and little writing could unexpectedly 
+>>>>> return
+>>>>> -ENOSPC error since there is a race window that the allocator could 
+>>>>> get
+>>>>> the wrong agf->agf_longest.
+>>>>>
+>>>>> Write file process steps:
+>>>>> 1) Find the entry that best meets the conditions, then calculate 
+>>>>> the start
+>>>>>      address and length of the remaining part of the entry after 
+>>>>> allocation.
+>>>>> 2) Delete this entry and update the agf->agf_longest.
+>>>>> 3) Insert the remaining unused parts of this entry based on the
+>>>>>      calculations in 1), and update the agf->agf_longest again if 
+>>>>> necessary.
+>>>>>
+>>>>> Create file process steps:
+>>>>> 1) Check whether there are free inodes in the inode chunk.
+>>>>> 2) If there is no free inode, check whether there has space for 
+>>>>> creating
+>>>>>      inode chunks, perform the no-lock judgment first.
+>>>>> 3) If the judgment succeeds, the judgment is performed again with 
+>>>>> agf lock
+>>>>>      held. Otherwire, an error is returned directly.
+>>>>>
+>>>>> If the write process is in step 2) but not go to 3) yet, the create 
+>>>>> file
+>>>>> process goes to 2) at this time, it will be mistaken for no space,
+>>>>> resulting in the file system still has space but the file creation 
+>>>>> fails.
+>>>>>
+>>>>> We have sent two different commits to the community in order to fix 
+>>>>> this
+>>>>> problem[1][2]. Unfortunately, both solutions have flaws. In [2], I
+>>>>> discussed with Dave and Darrick, realized that a better solution to 
+>>>>> this
+>>>>> problem requires the "last cnt record tracking" to be ripped out of 
+>>>>> the
+>>>>> generic btree code. And surprisingly, Dave directly provided his 
+>>>>> fix code.
+>>>>> This patch includes appropriate modifications based on his tmp-code to
+>>>>> address this issue.
+>>>>>
+>>>>> The entire fix can be roughly divided into two parts:
+>>>>> 1) Delete the code related to lastrec-update in the generic btree 
+>>>>> code.
+>>>>> 2) Place the process of updating longest freespace with cntbt 
+>>>>> separately
+>>>>>      to the end of the cntbt modifications. And only these two 
+>>>>> scenarios
+>>>>>      need to be considered:
+>>>>>      2.1) In the deletion scenario, directly update the longest to the
+>>>>>           rightmost record of the cntbt.
+>>>>>      2.2) In the insertion scenario, determine whether the cntbt 
+>>>>> has the
+>>>>>           record that larger than the previous longest.
+>>>>>
+>>>>> [1] 
+>>>>> https://lore.kernel.org/all/20240419061848.1032366-2-yebin10@huawei.com
+>>>>> [2] 
+>>>>> https://lore.kernel.org/all/20240604071121.3981686-1-wozizhi@huawei.com
+>>>>>
+>>>>> Reported by: Ye Bin <yebin10@huawei.com>
+>>>>> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+>>>>> ---
+>>>>>    fs/xfs/libxfs/xfs_alloc.c       | 116 
+>>>>> ++++++++++++++++++++++++++++++++
+>>>>>    fs/xfs/libxfs/xfs_alloc_btree.c |  64 ------------------
+>>>>>    fs/xfs/libxfs/xfs_btree.c       |  51 --------------
+>>>>>    fs/xfs/libxfs/xfs_btree.h       |  16 ++---
+>>>>>    4 files changed, 120 insertions(+), 127 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+>>>>> index 6c55a6e88eba..74e40f75a278 100644
+>>>>> --- a/fs/xfs/libxfs/xfs_alloc.c
+>>>>> +++ b/fs/xfs/libxfs/xfs_alloc.c
+>>>>> @@ -465,6 +465,99 @@ xfs_alloc_fix_len(
+>>>>>        args->len = rlen;
+>>>>>    }
+>>>>> +/*
+>>>>> + * Determine if the cursor points to the block that contains the 
+>>>>> right-most
+>>>>> + * block of records in the by-count btree. This block contains the 
+>>>>> largest
+>>>>> + * contiguous free extent in the AG, so if we modify ia record in 
+>>>>> this block we
+>>>>
+>>>>                                                           a record
+>>>>
+>>>>> + * need to call xfs_alloc_fixup_longest() once the modifications 
+>>>>> are done to
+>>>>> + * ensure the agf->agf_longest field is kept up to date with the 
+>>>>> longest free
+>>>>> + * extent tracked by the by-count btree.
+>>>>> + */
+>>>>> +static bool
+>>>>> +xfs_alloc_cursor_at_lastrec(
+>>>>> +    struct xfs_btree_cur    *cnt_cur)
+>>>>> +{
+>>>>> +    struct xfs_btree_block    *block;
+>>>>> +    union xfs_btree_ptr    ptr;
+>>>>> +    struct xfs_buf        *bp;
+>>>>> +
+>>>>> +    block = xfs_btree_get_block(cnt_cur, 0, &bp);
+>>>>> +
+>>>>> +    xfs_btree_get_sibling(cnt_cur, block, &ptr, XFS_BB_RIGHTSIB);
+>>>>> +    if (!xfs_btree_ptr_is_null(cnt_cur, &ptr))
+>>>>> +        return false;
+>>>>> +    return true;
+>>>>> +}
+>>>>> +
+>>>>> +/*
+>>>>> + * Update the longest contiguous free extent in the AG from the 
+>>>>> by-count cursor
+>>>>> + * that is passed to us. This should be done at the end of any 
+>>>>> allocation or
+>>>>> + * freeing operation that touches the longest extent in the btree.
+>>>>> + *
+>>>>> + * Needing to update the longest extent can be determined by calling
+>>>>> + * xfs_alloc_cursor_at_lastrec() after the cursor is positioned 
+>>>>> for record
+>>>>> + * modification but before the modification begins.
+>>>>> + */
+>>>>> +static int
+>>>>> +xfs_alloc_fixup_longest(
+>>>>> +    struct xfs_btree_cur    *cnt_cur,
+>>>>> +    int            reason)
+>>>>> +{
+>>>>> +    struct xfs_perag    *pag = cnt_cur->bc_ag.pag;
+>>>>> +    struct xfs_agf        *agf;
+>>>>> +    struct xfs_buf        *bp;
+>>>>> +    struct xfs_btree_block    *block;
+>>>>> +    int            error;
+>>>>> +    int            i;
+>>>>> +    int            numrecs;
+>>>>> +
+>>>>> +    /*
+>>>>> +     * Lookup last rec and update AGF.
+>>>>> +     *
+>>>>> +     * In case of LASTREC_DELREC, after called 
+>>>>> xfs_alloc_lookup_ge(), the
+>>>>> +     * ptr is in the rightmost edge, and we need to update the 
+>>>>> last record
+>>>>> +     * of this block as the longest free extent.
+>>>>> +     *
+>>>>> +     * In case of LASTREC_INSREC, because only one new record is 
+>>>>> inserted
+>>>>> +     * each time, only need to check whether the cntbt has a 
+>>>>> record that
+>>>>> +     * larger than the previous longest. Note that we can't update 
+>>>>> the
+>>>>> +     * longest with xfs_alloc_get_rec() as the xfs_verify_agbno() 
+>>>>> may not
+>>>>> +     * pass because pag->block_count is updated on the outside.
+>>>>> +     */
+>>>>> +    error = xfs_alloc_lookup_ge(cnt_cur, 0, pag->pagf_longest + 1, 
+>>>>> &i);
+>>>>> +    if (error)
+>>>>> +        return error;
+>>>>> +
+>>>>> +    if (i == 1 || reason == LASTREC_DELREC) {
+>>>>> +        if (XFS_IS_CORRUPT(pag->pag_mount,
+>>>>> +                   i == 1 && reason == LASTREC_DELREC)) {
+>>>>> +            xfs_btree_mark_sick(cnt_cur);
+>>>>> +            return -EFSCORRUPTED;
+>>>>> +        }
+>>>>> +
+>>>>> +        block = xfs_btree_get_block(cnt_cur, 0, &bp);
+>>>>> +        numrecs = xfs_btree_get_numrecs(block);
+>>>>> +
+>>>>> +        if (numrecs) {
+>>>>> +            xfs_alloc_rec_t *rrp;
+>>>>> +
+>>>>> +            rrp = XFS_ALLOC_REC_ADDR(cnt_cur->bc_mp, block,
+>>>>> +                         numrecs);
+>>>>> +            pag->pagf_longest = be32_to_cpu(rrp->ar_blockcount);
+>>>>> +        } else {
+>>>>> +            /* empty tree */
+>>>>> +            pag->pagf_longest = 0;
+>>>>> +        }
+>>>>> +    }
+>>>>
+>>>> Hum.  Would it work if we did:
+>>>>
+>>>>     xfs_extlen_t    len;
+>>>>
+>>>>     xfs_alloc_lookup_le(cnt_cur, 0, mp->m_sb.sb_agsize, &i);
+>>>>
+>>>>     if (i)
+>>>>         xfs_alloc_get_rec(cnt_cur, ..., &len, &i);
+>>>>     if (!i)
+>>>>         len = 0;
+>>>>
+>>>>     pag->pagf_longest = len;
+>>>>
+>>>> This performs a LE lookup on the longest possible free extent (aka the
+>>>> AG size).  If we get pointed at a record, that's the longest free 
+>>>> extent
+>>>> and we can set pag->pagf_longest to that.  If we get no record, then
+>>>> there's zero space and we can zero it.
+>>>>
+>>>
+>>> I checked it out, and it doesn't seem to work that way, for two reasons:
+>>> 1) In the insertion scenario, if the longest extent is continuous with
+>>> the extent to be inserted, the system deletes the longest extent first,
+>>> and then inserts a more longer extent. So in the last update, we should
+>>> not look at le, but ge.
+>>> 2) For the deletion scenario, because the start block is 0, the extent
+>>> value found is not the next longest extent value, but probably a very
+>>> small extent value (for example, its start block is very small), which
+>>> will also cause us to update incorrectly.
+>>>
+>>> So in summary, I think it is appropriate to use ge here.
+>>
+>> Ah, right, you're correct.
+>>
+>> LE could work if you were willing to do:
+>>
+>>     xfs_alloc_lookup_le(cnt_cur, mp->m_sb.sb_agsize,
+>>             mp->m_sb.sb_agsize, &i);
+>>
+>> But you might as well stick with the GE lookup.
+>>
+>>>                                                           On the other
+>>> hand, xfs_alloc_get_rec() introduces problems. As I wrote in the
+>>> comment, an internal call to xfs_verify_agbno() may fail because the
+>>> longest extent added, it could be greater than pag->block_count as
+>>> pag->block_count is later than the longest update.
+>>
+>> Oh, because xfs_ag_extend_space (aka growfs) calls xfs_free_extent
+>> before updating pag->block_count.  But still, please don't use
+>> XFS_ALLOC_REC_ADDR when you already have a btree cursor handy.
+>>
+>>     union xfs_btree_rec    *rec;
+>>
+>>     xfs_alloc_lookup_ge(cnt_cur, 0, mp->m_sb.sb_agsize, &i);
+>>     if (i)
+>>         xfs_btree_get_rec(cur, &rec, &i);
+>>     if (i) {
+>>         struct xfs_alloc_rec_incore irec;
+>>
+>>         /*
+>>          * pagf->block_count updates lag cntbt updates, so
+>>          * open-code the btree record access
+>>          */
+>>         xfs_alloc_btrec_to_irec(rec, &irec);
+>>         pagf->pagf_longest = irec.ar_blockcount;
+>>     } else {
+>>         /* empty tree */
+>>         pagf->pagf_longest = 0;
+>>     }
+>>
+>> --D
+>>
+> 
+> Thank you for pointing that out. Using XFS_ALLOC_REC_ADDR when already
+> holding a cursor indeed reduces efficiency. However, there are still two
+> points that I don't understand and worth discussing.
+> 1) Is the "mp->m_sb.sb_agsize" means "pag->pagf_longest"? Because I can 
+> not find the "sb_agsize" definition in xfs_mount structure.
+> 2) If "mp->m_sb.sb_agsize" means the longest, then in a deletion
+> scenario, if the record being deleted is not the longest, -i- in
+> xfs_alloc_lookup_ge() will be 0. The above code will incorrectly update
+> the longest to 0 instead of keeping it as original. Therefore, in this
+> scenario, would it be better to move the cursor one record to the left?
+> But if we move the cursor to the left, we still need to retrieve the
+> record. So, compared to directly calling XFS_ALLOC_REC_ADDR, I do not 
+> know which approach is better...
+> 
+> These are my two points of confusion. I hope to get your answers. Thank
+> you very much!
+> 
+
+Sorry, let me reframe my point...
+1) If "mp->m_sb.sb_agsize" means "pag->pagf_longest", then the deletion
+scenario has no problem but the insertion has. Because at this time, the
+record we found based on the previous longest may no longer be the
+current largest.
+2) If "mp->m_sb.sb_agsize" means "pag->pagf_longest + 1", then the
+insertion scenarios has no problem but the deletion has. The reason is
+what I described in the second point above: it may not find a record
+larger than longest + 1, and incorrectly update longest to 0.
+
+So, to combine these two situations, I used the XFS_ALLOC_REC_ADDR
+even when a cursor was available...
+
+
+> Thanks,
+> Zizhi Wo
+> 
+>>>> Then I think you don't need the @reason argument either.
+>>>
+>>> Mm-hm, the reasons for this will be removed from the comment and stated
+>>> next time in the commit message.
+>>>
+>>> Thanks
+>>> Zizhi Wo
+>>>
+>>>>
+>>>> --D
+>>>
+>>>>
+>>>>> +
+>>>>> +    bp = cnt_cur->bc_ag.agbp;
+>>>>> +    agf = bp->b_addr;
+>>>>> +    agf->agf_longest = cpu_to_be32(pag->pagf_longest);
+>>>>> +    xfs_alloc_log_agf(cnt_cur->bc_tp, bp, XFS_AGF_LONGEST);
+>>>>> +
+>>>>> +    return 0;
+>>>>> +}
+>>>>> +
+>>>>>    /*
+>>>>>     * Update the two btrees, logically removing from freespace the 
+>>>>> extent
+>>>>>     * starting at rbno, rlen blocks.  The extent is contained 
+>>>>> within the
+>>>>> @@ -489,6 +582,7 @@ xfs_alloc_fixup_trees(
+>>>>>        xfs_extlen_t    nflen1=0;    /* first new free length */
+>>>>>        xfs_extlen_t    nflen2=0;    /* second new free length */
+>>>>>        struct xfs_mount *mp;
+>>>>> +    bool        fixup_longest = false;
+>>>>>        mp = cnt_cur->bc_mp;
+>>>>> @@ -577,6 +671,10 @@ xfs_alloc_fixup_trees(
+>>>>>            nfbno2 = rbno + rlen;
+>>>>>            nflen2 = (fbno + flen) - nfbno2;
+>>>>>        }
+>>>>> +
+>>>>> +    if (xfs_alloc_cursor_at_lastrec(cnt_cur))
+>>>>> +        fixup_longest = true;
+>>>>> +
+>>>>>        /*
+>>>>>         * Delete the entry from the by-size btree.
+>>>>>         */
+>>>>> @@ -654,6 +752,10 @@ xfs_alloc_fixup_trees(
+>>>>>                return -EFSCORRUPTED;
+>>>>>            }
+>>>>>        }
+>>>>> +
+>>>>> +    if (fixup_longest)
+>>>>> +        return xfs_alloc_fixup_longest(cnt_cur, LASTREC_DELREC);
+>>>>> +
+>>>>>        return 0;
+>>>>>    }
+>>>>> @@ -1956,6 +2058,7 @@ xfs_free_ag_extent(
+>>>>>        int                i;
+>>>>>        int                error;
+>>>>>        struct xfs_perag        *pag = agbp->b_pag;
+>>>>> +    bool                fixup_longest = false;
+>>>>>        bno_cur = cnt_cur = NULL;
+>>>>>        mp = tp->t_mountp;
+>>>>> @@ -2219,8 +2322,13 @@ xfs_free_ag_extent(
+>>>>>        }
+>>>>>        xfs_btree_del_cursor(bno_cur, XFS_BTREE_NOERROR);
+>>>>>        bno_cur = NULL;
+>>>>> +
+>>>>>        /*
+>>>>>         * In all cases we need to insert the new freespace in the 
+>>>>> by-size tree.
+>>>>> +     *
+>>>>> +     * If this new freespace is being inserted in the block that 
+>>>>> contains
+>>>>> +     * the largest free space in the btree, make sure we also fix 
+>>>>> up the
+>>>>> +     * agf->agf-longest tracker field.
+>>>>>         */
+>>>>>        if ((error = xfs_alloc_lookup_eq(cnt_cur, nbno, nlen, &i)))
+>>>>>            goto error0;
+>>>>> @@ -2229,6 +2337,8 @@ xfs_free_ag_extent(
+>>>>>            error = -EFSCORRUPTED;
+>>>>>            goto error0;
+>>>>>        }
+>>>>> +    if (xfs_alloc_cursor_at_lastrec(cnt_cur))
+>>>>> +        fixup_longest = true;
+>>>>>        if ((error = xfs_btree_insert(cnt_cur, &i)))
+>>>>>            goto error0;
+>>>>>        if (XFS_IS_CORRUPT(mp, i != 1)) {
+>>>>> @@ -2236,6 +2346,12 @@ xfs_free_ag_extent(
+>>>>>            error = -EFSCORRUPTED;
+>>>>>            goto error0;
+>>>>>        }
+>>>>> +    if (fixup_longest) {
+>>>>> +        error = xfs_alloc_fixup_longest(cnt_cur, LASTREC_INSREC);
+>>>>> +        if (error)
+>>>>> +            goto error0;
+>>>>> +    }
+>>>>> +
+>>>>>        xfs_btree_del_cursor(cnt_cur, XFS_BTREE_NOERROR);
+>>>>>        cnt_cur = NULL;
+>>>>> diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c 
+>>>>> b/fs/xfs/libxfs/xfs_alloc_btree.c
+>>>>> index 6ef5ddd89600..585e98e87ef9 100644
+>>>>> --- a/fs/xfs/libxfs/xfs_alloc_btree.c
+>>>>> +++ b/fs/xfs/libxfs/xfs_alloc_btree.c
+>>>>> @@ -115,67 +115,6 @@ xfs_allocbt_free_block(
+>>>>>        return 0;
+>>>>>    }
+>>>>> -/*
+>>>>> - * Update the longest extent in the AGF
+>>>>> - */
+>>>>> -STATIC void
+>>>>> -xfs_allocbt_update_lastrec(
+>>>>> -    struct xfs_btree_cur        *cur,
+>>>>> -    const struct xfs_btree_block    *block,
+>>>>> -    const union xfs_btree_rec    *rec,
+>>>>> -    int                ptr,
+>>>>> -    int                reason)
+>>>>> -{
+>>>>> -    struct xfs_agf        *agf = cur->bc_ag.agbp->b_addr;
+>>>>> -    struct xfs_perag    *pag;
+>>>>> -    __be32            len;
+>>>>> -    int            numrecs;
+>>>>> -
+>>>>> -    ASSERT(!xfs_btree_is_bno(cur->bc_ops));
+>>>>> -
+>>>>> -    switch (reason) {
+>>>>> -    case LASTREC_UPDATE:
+>>>>> -        /*
+>>>>> -         * If this is the last leaf block and it's the last record,
+>>>>> -         * then update the size of the longest extent in the AG.
+>>>>> -         */
+>>>>> -        if (ptr != xfs_btree_get_numrecs(block))
+>>>>> -            return;
+>>>>> -        len = rec->alloc.ar_blockcount;
+>>>>> -        break;
+>>>>> -    case LASTREC_INSREC:
+>>>>> -        if (be32_to_cpu(rec->alloc.ar_blockcount) <=
+>>>>> -            be32_to_cpu(agf->agf_longest))
+>>>>> -            return;
+>>>>> -        len = rec->alloc.ar_blockcount;
+>>>>> -        break;
+>>>>> -    case LASTREC_DELREC:
+>>>>> -        numrecs = xfs_btree_get_numrecs(block);
+>>>>> -        if (ptr <= numrecs)
+>>>>> -            return;
+>>>>> -        ASSERT(ptr == numrecs + 1);
+>>>>> -
+>>>>> -        if (numrecs) {
+>>>>> -            xfs_alloc_rec_t *rrp;
+>>>>> -
+>>>>> -            rrp = XFS_ALLOC_REC_ADDR(cur->bc_mp, block, numrecs);
+>>>>> -            len = rrp->ar_blockcount;
+>>>>> -        } else {
+>>>>> -            len = 0;
+>>>>> -        }
+>>>>> -
+>>>>> -        break;
+>>>>> -    default:
+>>>>> -        ASSERT(0);
+>>>>> -        return;
+>>>>> -    }
+>>>>> -
+>>>>> -    agf->agf_longest = len;
+>>>>> -    pag = cur->bc_ag.agbp->b_pag;
+>>>>> -    pag->pagf_longest = be32_to_cpu(len);
+>>>>> -    xfs_alloc_log_agf(cur->bc_tp, cur->bc_ag.agbp, XFS_AGF_LONGEST);
+>>>>> -}
+>>>>> -
+>>>>>    STATIC int
+>>>>>    xfs_allocbt_get_minrecs(
+>>>>>        struct xfs_btree_cur    *cur,
+>>>>> @@ -493,7 +432,6 @@ const struct xfs_btree_ops xfs_bnobt_ops = {
+>>>>>        .set_root        = xfs_allocbt_set_root,
+>>>>>        .alloc_block        = xfs_allocbt_alloc_block,
+>>>>>        .free_block        = xfs_allocbt_free_block,
+>>>>> -    .update_lastrec        = xfs_allocbt_update_lastrec,
+>>>>>        .get_minrecs        = xfs_allocbt_get_minrecs,
+>>>>>        .get_maxrecs        = xfs_allocbt_get_maxrecs,
+>>>>>        .init_key_from_rec    = xfs_allocbt_init_key_from_rec,
+>>>>> @@ -511,7 +449,6 @@ const struct xfs_btree_ops xfs_bnobt_ops = {
+>>>>>    const struct xfs_btree_ops xfs_cntbt_ops = {
+>>>>>        .name            = "cnt",
+>>>>>        .type            = XFS_BTREE_TYPE_AG,
+>>>>> -    .geom_flags        = XFS_BTGEO_LASTREC_UPDATE,
+>>>>>        .rec_len        = sizeof(xfs_alloc_rec_t),
+>>>>>        .key_len        = sizeof(xfs_alloc_key_t),
+>>>>> @@ -525,7 +462,6 @@ const struct xfs_btree_ops xfs_cntbt_ops = {
+>>>>>        .set_root        = xfs_allocbt_set_root,
+>>>>>        .alloc_block        = xfs_allocbt_alloc_block,
+>>>>>        .free_block        = xfs_allocbt_free_block,
+>>>>> -    .update_lastrec        = xfs_allocbt_update_lastrec,
+>>>>>        .get_minrecs        = xfs_allocbt_get_minrecs,
+>>>>>        .get_maxrecs        = xfs_allocbt_get_maxrecs,
+>>>>>        .init_key_from_rec    = xfs_allocbt_init_key_from_rec,
+>>>>> diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
+>>>>> index d29547572a68..a5c4af148853 100644
+>>>>> --- a/fs/xfs/libxfs/xfs_btree.c
+>>>>> +++ b/fs/xfs/libxfs/xfs_btree.c
+>>>>> @@ -1331,30 +1331,6 @@ xfs_btree_init_block_cur(
+>>>>>                xfs_btree_owner(cur));
+>>>>>    }
+>>>>> -/*
+>>>>> - * Return true if ptr is the last record in the btree and
+>>>>> - * we need to track updates to this record.  The decision
+>>>>> - * will be further refined in the update_lastrec method.
+>>>>> - */
+>>>>> -STATIC int
+>>>>> -xfs_btree_is_lastrec(
+>>>>> -    struct xfs_btree_cur    *cur,
+>>>>> -    struct xfs_btree_block    *block,
+>>>>> -    int            level)
+>>>>> -{
+>>>>> -    union xfs_btree_ptr    ptr;
+>>>>> -
+>>>>> -    if (level > 0)
+>>>>> -        return 0;
+>>>>> -    if (!(cur->bc_ops->geom_flags & XFS_BTGEO_LASTREC_UPDATE))
+>>>>> -        return 0;
+>>>>> -
+>>>>> -    xfs_btree_get_sibling(cur, block, &ptr, XFS_BB_RIGHTSIB);
+>>>>> -    if (!xfs_btree_ptr_is_null(cur, &ptr))
+>>>>> -        return 0;
+>>>>> -    return 1;
+>>>>> -}
+>>>>> -
+>>>>>    STATIC void
+>>>>>    xfs_btree_buf_to_ptr(
+>>>>>        struct xfs_btree_cur    *cur,
+>>>>> @@ -2420,15 +2396,6 @@ xfs_btree_update(
+>>>>>        xfs_btree_copy_recs(cur, rp, rec, 1);
+>>>>>        xfs_btree_log_recs(cur, bp, ptr, ptr);
+>>>>> -    /*
+>>>>> -     * If we are tracking the last record in the tree and
+>>>>> -     * we are at the far right edge of the tree, update it.
+>>>>> -     */
+>>>>> -    if (xfs_btree_is_lastrec(cur, block, 0)) {
+>>>>> -        cur->bc_ops->update_lastrec(cur, block, rec,
+>>>>> -                        ptr, LASTREC_UPDATE);
+>>>>> -    }
+>>>>> -
+>>>>>        /* Pass new key value up to our parent. */
+>>>>>        if (xfs_btree_needs_key_update(cur, ptr)) {
+>>>>>            error = xfs_btree_update_keys(cur, 0);
+>>>>> @@ -3617,15 +3584,6 @@ xfs_btree_insrec(
+>>>>>                goto error0;
+>>>>>        }
+>>>>> -    /*
+>>>>> -     * If we are tracking the last record in the tree and
+>>>>> -     * we are at the far right edge of the tree, update it.
+>>>>> -     */
+>>>>> -    if (xfs_btree_is_lastrec(cur, block, level)) {
+>>>>> -        cur->bc_ops->update_lastrec(cur, block, rec,
+>>>>> -                        ptr, LASTREC_INSREC);
+>>>>> -    }
+>>>>> -
+>>>>>        /*
+>>>>>         * Return the new block number, if any.
+>>>>>         * If there is one, give back a record value and a cursor too.
+>>>>> @@ -3983,15 +3941,6 @@ xfs_btree_delrec(
+>>>>>        xfs_btree_set_numrecs(block, --numrecs);
+>>>>>        xfs_btree_log_block(cur, bp, XFS_BB_NUMRECS);
+>>>>> -    /*
+>>>>> -     * If we are tracking the last record in the tree and
+>>>>> -     * we are at the far right edge of the tree, update it.
+>>>>> -     */
+>>>>> -    if (xfs_btree_is_lastrec(cur, block, level)) {
+>>>>> -        cur->bc_ops->update_lastrec(cur, block, NULL,
+>>>>> -                        ptr, LASTREC_DELREC);
+>>>>> -    }
+>>>>> -
+>>>>>        /*
+>>>>>         * We're at the root level.  First, shrink the root block 
+>>>>> in-memory.
+>>>>>         * Try to get rid of the next level down.  If we can't then 
+>>>>> there's
+>>>>> diff --git a/fs/xfs/libxfs/xfs_btree.h b/fs/xfs/libxfs/xfs_btree.h
+>>>>> index f93374278aa1..670470874630 100644
+>>>>> --- a/fs/xfs/libxfs/xfs_btree.h
+>>>>> +++ b/fs/xfs/libxfs/xfs_btree.h
+>>>>> @@ -154,12 +154,6 @@ struct xfs_btree_ops {
+>>>>>                       int *stat);
+>>>>>        int    (*free_block)(struct xfs_btree_cur *cur, struct 
+>>>>> xfs_buf *bp);
+>>>>> -    /* update last record information */
+>>>>> -    void    (*update_lastrec)(struct xfs_btree_cur *cur,
+>>>>> -                  const struct xfs_btree_block *block,
+>>>>> -                  const union xfs_btree_rec *rec,
+>>>>> -                  int ptr, int reason);
+>>>>> -
+>>>>>        /* records in block/level */
+>>>>>        int    (*get_minrecs)(struct xfs_btree_cur *cur, int level);
+>>>>>        int    (*get_maxrecs)(struct xfs_btree_cur *cur, int level);
+>>>>> @@ -222,15 +216,13 @@ struct xfs_btree_ops {
+>>>>>    };
+>>>>>    /* btree geometry flags */
+>>>>> -#define XFS_BTGEO_LASTREC_UPDATE    (1U << 0) /* track last rec 
+>>>>> externally */
+>>>>> -#define XFS_BTGEO_OVERLAPPING        (1U << 1) /* overlapping 
+>>>>> intervals */
+>>>>> +#define XFS_BTGEO_OVERLAPPING        (1U << 0) /* overlapping 
+>>>>> intervals */
+>>>>>    /*
+>>>>> - * Reasons for the update_lastrec method to be called.
+>>>>> + * Reasons for the xfs_alloc_fixup_longest() to be called.
+>>>>>     */
+>>>>> -#define LASTREC_UPDATE    0
+>>>>> -#define LASTREC_INSREC    1
+>>>>> -#define LASTREC_DELREC    2
+>>>>> +#define LASTREC_INSREC    0
+>>>>> +#define LASTREC_DELREC    1
+>>>>>    union xfs_btree_irec {
+>>>>> -- 
+>>>>> 2.39.2
+>>>>>
+> 
 
