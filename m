@@ -1,143 +1,193 @@
-Return-Path: <linux-kernel+bounces-224202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B09911EB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:27:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D6E911EC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 306851F25470
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:27:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 141D41F25B57
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F4516D4E6;
-	Fri, 21 Jun 2024 08:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC9316D4DD;
+	Fri, 21 Jun 2024 08:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/+F0EfU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BPLsdwW1"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2040.outbound.protection.outlook.com [40.107.237.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F48616B3B9;
-	Fri, 21 Jun 2024 08:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718958460; cv=none; b=O7LZTeg9hZ8UwLeUi+nf0APQVmoCBDxNCikcntnnSPFd6zceZJKGKjYhWizMD4WYnY7idG5EGBYtmj9DV7Eu6VWwx0H7oL+4CLLwhgKZFN/s+2+YGcO+f3FLgThNdkY1FKWKGSAm1MGIBAGwiEe5ILQNzGqIrx2qeXR3yIJ0OlA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718958460; c=relaxed/simple;
-	bh=wuZBbOonZAFOS0sB1XJO28DAm8t6RfuaFgesGkuVgmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BUP0bxOjnJIm//43Xi8AHE1px/KSriZqtvgfs9/1SF5S2R2kPSdxdgAkzNgoJcrs64fFzo6AlFpP+lZdZyi8N5a9RANS0xCdLgxIdOqGQWQuav3ftiJRTckul4mUnAkRyPCOIJ8mH8/xaP5sy/jw4PLzdVP8gkp8Z7JYLhInGZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/+F0EfU; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718958459; x=1750494459;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=wuZBbOonZAFOS0sB1XJO28DAm8t6RfuaFgesGkuVgmA=;
-  b=K/+F0EfUyMc/mjYwXznhW5pimJVD33jNdWIL4G9Qn6tMhTRn+YUyere4
-   AsD423Yy30WbD93SvKN7pM4qrAcwxnotCY0A7j1b7RTkWl2pc9d8iMKsC
-   OURIDPVtPPZ2fqs1WdrSzuJBcLLNv0Lt9HKjGkUYiv1OpXolQ4ZW2mxHX
-   7oNrzIYc9DY7N4XTXZeTLNodLE5N4knv8tZeQys+UmXnP0m3rtTsLamyJ
-   c0bAuo5OypSUpqKNRZB712Be3xOPOf1YttvjoX0bh8bm/GcPN40pXjoS9
-   Og31rpqRL2LPwhv3RUXnpmDh1iUBjeWIWTqgebr/InSHeLXgocWMvevBV
-   Q==;
-X-CSE-ConnectionGUID: mK8Vwa3sQ0WD3Dp7TfoKFA==
-X-CSE-MsgGUID: k3kIITlfQha56Vt1fJC7Tg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="33438310"
-X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
-   d="scan'208";a="33438310"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 01:27:38 -0700
-X-CSE-ConnectionGUID: 83RXG4JlThiu0gr95hxjnw==
-X-CSE-MsgGUID: bZhtUY6HTEaIIglKI2p5DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
-   d="scan'208";a="42628778"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.246.142]) ([10.245.246.142])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 01:27:33 -0700
-Message-ID: <90463a4e-c2e7-4b59-9a79-23533b4acd1e@linux.intel.com>
-Date: Fri, 21 Jun 2024 10:27:29 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8840542AA9;
+	Fri, 21 Jun 2024 08:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718958612; cv=fail; b=vE/qWXoCni5xZhFd5onuYBGED+iHwA0kxvJAd7dSE4M+J+WBdZ2lGHps47iC/1Ark6npgeHDtaAd60E8Ks2lsgSw6t8ZzH6ahGQ812wHqQDUB0J8VKvn+d5lCvmyE/logtPy2pgYeRGmfEIEeuHZ1iSs1EFVDQbSk99FBJh7WdM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718958612; c=relaxed/simple;
+	bh=dJC6c+W8/dlHCFdqaRKmBZ3I4OB7CMSub7F55LaItMI=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y2zZvSQd4BXCpWVK4X0K2eQH7GXDID6UlEWm5Olr4L0FI1+mOFN0EzB032t4qzyLSSuVPGvKyUlzh6sc6aU/XA/mNlLMs0rAUpHHoGLgsr/OufQ2eetuVjKDu/MnvEpmsz9Ek7KmOWkeHQz/bDF9oRPGQ6lfLqm5ed+6lPUFY9g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BPLsdwW1; arc=fail smtp.client-ip=40.107.237.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ijQXbsi0ep/VnVDoUxS89oBtOhYUokZv1Mmeeh9RIqJFelR2UO1ZQAP4ajW5BuKcixPihQ8NdYmuLMhpCJbG79yUk78AhfvbcndUVRSvjrRsc3hBbVJTLYB/v8B2JEJBKAYPyt90fAPpTBus/9PwIEDwIttRUOxsEbvN23KLLqzPm76M/5eD996vy456hXOWByEKwnvTTELe/JqtQdwe4t7FJk06HiPOHvTwMUOuWtXP5MGkOIBTG1SgBarlJwYIKH5xwEPyJ2dghrl8YozpgqYYH7cwDJetftJt33kOiLAUiy5TwZQuJ3dbUWn+j1RLbEBypNejEj0iwlY5+ZGIyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GdPNngRH7t1nALIYU7tnbgzWWCk9JuUrvkiRRC+MDzI=;
+ b=NvqrwaVw0QGdlZGExWobPhrwuJ4hyN3WTgxPNYuNfFSVJzL96LZMN3JOyqv8BW5JvdFnDl2GlW8dcNmNsbxMd+b+ExLmnMVo9yjmlboibI7FLKETL/bu/rGQsefya/tjlX2bOY0IEFzbhQ/vfYzgWvLmG5Zcy627ufrPn9Zp6bw3TceRIsGHHYRagBgJ2BBbfIPkMGFVkVqGnmE3a+a3WqkRGz0aCdBSmCSAwFE59s4Tl4Jg7clOOcHYwbFpldSfqAeehiYp1hjTiMT/7yc8AWllN0TjYA6YQqUK7W75CYmraWcjr4MbT/s3vqwTdxbL22Bg5aJGmroXIbeBmSRkZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GdPNngRH7t1nALIYU7tnbgzWWCk9JuUrvkiRRC+MDzI=;
+ b=BPLsdwW1/CKyzbKovOu/gtFjmLhurJHjCA8lbFEuKY8csgoCLwY8wl3XkepujLjSR8LsguDP2TFV7Nq92ZO+zY0m/reAcCPLQh38RdbsV7uw8a3D7VhAu3T95RV6Cxbj+a2Z6rvh9ck5ClqvvNtJ9FJa1AEOdlpbzzS0CCHHxI4=
+Received: from SN7PR04CA0160.namprd04.prod.outlook.com (2603:10b6:806:125::15)
+ by MN2PR12MB4343.namprd12.prod.outlook.com (2603:10b6:208:26f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
+ 2024 08:30:07 +0000
+Received: from SN1PEPF0002529E.namprd05.prod.outlook.com
+ (2603:10b6:806:125:cafe::3e) by SN7PR04CA0160.outlook.office365.com
+ (2603:10b6:806:125::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.33 via Frontend
+ Transport; Fri, 21 Jun 2024 08:30:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF0002529E.mail.protection.outlook.com (10.167.242.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Fri, 21 Jun 2024 08:30:07 +0000
+Received: from BLRRASHENOY1 (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Jun
+ 2024 03:30:01 -0500
+From: Gautham R.Shenoy <gautham.shenoy@amd.com>
+To: Perry Yuan <perry.yuan@amd.com>, <Mario.Limonciello@amd.com>
+CC: <rafael.j.wysocki@intel.com>, <viresh.kumar@linaro.org>,
+	<Alexander.Deucher@amd.com>, <Xinmei.Huang@amd.com>, <Xiaojian.Du@amd.com>,
+	<Li.Meng@amd.com>, <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 7/8] cpufreq: amd-pstate: enable shared memory type
+ CPPC by default
+In-Reply-To: <c705507cf3ee790e544251cfd897ed11e8e57712.1718811234.git.perry.yuan@amd.com>
+References: <cover.1718811234.git.perry.yuan@amd.com>
+ <c705507cf3ee790e544251cfd897ed11e8e57712.1718811234.git.perry.yuan@amd.com>
+Date: Fri, 21 Jun 2024 13:59:53 +0530
+Message-ID: <87cyoavgu6.fsf@BLR-5CG11610CF.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
-To: Wesley Cheng <quic_wcheng@quicinc.com>,
- =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- robh@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
- <20240610235808.22173-33-quic_wcheng@quicinc.com>
- <5be51e1f-70c9-4bbc-96fa-1e50e441bd35@linux.intel.com>
- <408d9e8e-0f40-7e66-54be-2f8d2c0783a3@quicinc.com>
- <ca1e1063-e1bd-4e03-a7cd-91985e9954e9@linux.intel.com>
- <096d59a0-5e18-092c-c9ae-d98130226f06@quicinc.com>
- <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
- <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
- <510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com>
- <c7a95157-1b71-1489-3657-8fe67f9acb4e@quicinc.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <c7a95157-1b71-1489-3657-8fe67f9acb4e@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002529E:EE_|MN2PR12MB4343:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8bbb2f5-89b9-425e-d085-08dc91cc5b5b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|1800799021|376011|36860700010|82310400023;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?raVz81cyuuoz6pJHgpJ28kc6Ri68jOqVmyUIYp2aRYRzevpXrrEPqa7AwfZv?=
+ =?us-ascii?Q?x0aj5s6dA5zm9AwFjKbz9mXoKiOj1ggo8sLn2Wf7nGl3L9SWW9cU49MYEH/G?=
+ =?us-ascii?Q?p1V0UbxntqVeWqfgstAnlO8SA59cghsIa5LIYh1QGg5sDDsxIxGlhwQ9FHCy?=
+ =?us-ascii?Q?+eLScK4KogdEvrjEWDinuhilOp+MviQB9KwBXpf8eE5W3VsORhkWt3yhPx83?=
+ =?us-ascii?Q?YbZ+SvbEfC12lJ8tYdAawPFjhG6e05LHLVEFLiP+uBLxxMyCQQC9buTQTb8m?=
+ =?us-ascii?Q?JnUyQPYA54Gf4Uh3ODoSXSoXNx+ZEDCeyKCTmTAZtYO1CScKCIRFFAgIQyQb?=
+ =?us-ascii?Q?YSoY/0mmx8GVMiwbg5//jLdkCHydu/pyLM9K9JycZt6Z4r3aE02INtAmGJzG?=
+ =?us-ascii?Q?VI7HIZPpY9Or1VABNLiEAseLXzmg116055Qer6n5r+GVpaDVN1eGpp330zqg?=
+ =?us-ascii?Q?lP5VW03frqr1ydsSpYod1eUeXYEF5Oz+XcGNu8SLpgmbWxpZ/KRxGizOrSs8?=
+ =?us-ascii?Q?cB6xciYuHo5Gl1WOWxedK4q6eL6+nMEhh8xh+0pdvnp7gERHzgzkjTXG07NX?=
+ =?us-ascii?Q?uyAzpS8nJBJ8RxAG37y+AREyBKHErWk3Jx7GOPKroLZUAvWvqLAfEjtIxXZl?=
+ =?us-ascii?Q?TGw5Xmd2lGqABHPgvDN4Qk/pD2oODVC8twbBQXNFYbx0+JTXBup+oKlaCl0X?=
+ =?us-ascii?Q?YhxTqVcMFqGYJMbg0PLH6GRDnOXs9eNtTiG4aQaIjIauzEgBEKkuDgmARCKy?=
+ =?us-ascii?Q?ePMn2d3cQ5AOn9Rn5RiGgNmNeLbA2bOyThE6MoRTMRJjMg+6FffBjuXRpNuD?=
+ =?us-ascii?Q?TQB4hU55djLObhXudfKUYzNcfLfcgeENt5cVjtoK7J+JCOXbZC6emDedQsYL?=
+ =?us-ascii?Q?pUk9FZSB1+SIWNGwY2rOsTCxoTaVgGjI9V1AuIDnqX8I/pDEDiR1ULoSLaog?=
+ =?us-ascii?Q?2AZ2wDBIBP6Bsm+vo+pXyhPfKhQu7s/TyJvFRDsqd4HLp+lIVa0qMu2CIIWl?=
+ =?us-ascii?Q?rNcW0G4DHtDqMzCw/5fB0RXuARuN7OGav5+xYmz8EACVFdIydSTnyujXlPWY?=
+ =?us-ascii?Q?TmD0/J7tleW4rTsFkMwBv0imdHMzx+9J8O99bcEbrhzT1CrbAcWggs8rEl4S?=
+ =?us-ascii?Q?p1gb+GBoJHsdacPHhw1jMt2FA4Bwg3wJHEaafCCYdKhS/TbCbMrZEWPz5YhY?=
+ =?us-ascii?Q?OsWNu4OEvbLUAkLwDndu71ftR3WdeOt1F3tHMvyNOhepOeqeqHSEITduM/lQ?=
+ =?us-ascii?Q?t7Ch7RWPquc5Xp9WSjqXrkC3VV4zL3qcm3/7b2VvRI/+5skYZAETr1ltsnRi?=
+ =?us-ascii?Q?xsRTFtNP3WodMTtfBe05tlB3f2uWajavXgfbLf5L6kD+SoCCTLcMGFN6ejxY?=
+ =?us-ascii?Q?scA1lEG79hKs/D86//eJMWhbZbJ6UGcyImYCyYHO+5+nBCH00A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(376011)(36860700010)(82310400023);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 08:30:07.0930
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8bbb2f5-89b9-425e-d085-08dc91cc5b5b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002529E.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4343
 
+Perry Yuan <perry.yuan@amd.com> writes:
 
+> The amd-pstate-epp driver has been implemented and resolves the
+> performance drop issue seen in passive mode for shared memory type
+> CPPC systems. Users who enable the active mode driver will not
+> experience a performance drop compared to the passive mode driver.
+> Therefore, the EPP driver should be loaded by default for shared
+> memory type CPPC system to get better performance.
+>
+> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 
-> I'll spend some time to evaluate your suggestion about moving the logic
-> to control the offloading from USB SND versus ASoC, since there are
-> valid points.  However, before I do that, I just want to make sure folks
-> are also inline with that thinking.  I've had to put a lot of effort
-> moving things around such as the previous example, and now you've
-> suggested to move it back to the vendor specific drivers.
-> 
-> @Pierre, since you've helped with providing a lot of valuable input in
-> the previous revisions on the kcontrol uses, what do you think about the
-> proposal from Amadeusz?  Basically shifting the offload device selection
-> into USB SND from the ASoC USB BE driver, and having this per USB SND
-> device.
-> 
-> [1]
-> https://lore.kernel.org/linux-usb/20231017200109.11407-30-quic_wcheng@quicinc.com/
-
-This thread is very hard to follow, I am not sure I fully understood the
-initial proposal, and I am not sure I follow Amadeusz' either.
-
-There are really multiple layers to deal with
-
-a) is the controller able to support the offload path? IIRC this is
-embedded in an obscure XHCI property, it would make sense to expose it
-as a control, or component string, of the USB card.
-
-b) is there a companion card capable of dealing with the offload path?
-Since the presence of this card may depend on driver probe, there should
-be a control on the USB card. userspace could detect changes to this
-control and detect if that path is or is no longer enabled.
-
-c) which PCM device is actually offloaded? This could be plural for some
-implementations. The mapping between PCM devices exposed by the USB
-card, and those exposed by the companion card, should be known to
-userspace. I am not sure how this would be done though, a variable
-number of controls is a sure way to confuse userspace.
-
-At any rate, I would put all the controls under the USB generic card,
-because it's always present no matter what the controller or DSP
-configurations are.
-
-
-
-
+> ---
+>  drivers/cpufreq/amd-pstate.c | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
+>
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index cb750ef305fe..0f8ffbc0dc2a 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -86,15 +86,6 @@ struct quirk_entry {
+>  	u32 lowest_freq;
+>  };
+>  
+> -/*
+> - * TODO: We need more time to fine tune processors with shared memory solution
+> - * with community together.
+> - *
+> - * There are some performance drops on the CPU benchmarks which reports from
+> - * Suse. We are co-working with them to fine tune the shared memory solution. So
+> - * we disable it by default to go acpi-cpufreq on these processors and add a
+> - * module parameter to be able to enable it manually for debugging.
+> - */
+>  static struct cpufreq_driver *current_pstate_driver;
+>  static struct cpufreq_driver amd_pstate_driver;
+>  static struct cpufreq_driver amd_pstate_epp_driver;
+> @@ -1815,11 +1806,9 @@ static int __init amd_pstate_init(void)
+>  		/* Disable on the following configs by default:
+>  		 * 1. Undefined platforms
+>  		 * 2. Server platforms
+> -		 * 3. Shared memory designs
+>  		 */
+>  		if (amd_pstate_acpi_pm_profile_undefined() ||
+> -		    amd_pstate_acpi_pm_profile_server() ||
+> -		    !cpu_feature_enabled(X86_FEATURE_CPPC)) {
+> +		    amd_pstate_acpi_pm_profile_server()) {
+>  			pr_info("driver load is disabled, boot with specific mode to enable this\n");
+>  			return -ENODEV;
+>  		}
+> -- 
+> 2.34.1
 
