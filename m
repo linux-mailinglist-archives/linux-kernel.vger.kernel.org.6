@@ -1,162 +1,147 @@
-Return-Path: <linux-kernel+bounces-224410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424099121F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:16:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379829121E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1ACF281DA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:16:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07BB1F28AAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B801E17B43B;
-	Fri, 21 Jun 2024 10:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="lPa50+kF"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B115171648;
-	Fri, 21 Jun 2024 10:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B6417838A;
+	Fri, 21 Jun 2024 10:12:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E118A173346
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718964772; cv=none; b=L/64TbsCggDh/Be0hW7dpuwQTFYzEUeWwd2qO7rR+nXEqHLlqHAOG9uEJlP3ewvGQ6JftQIDEAHVPZjID1rBtBUtC2npOv6452dFJH5Fx/Oy6f8BQPrt9pdUimw8ged5FMaBaV/426PtPIFbd8bcwKS/SzVIZcr+WoRTHwhqros=
+	t=1718964737; cv=none; b=m69WnAtsCKDyGARWyO9XJpkPwkOQgzYztJtNqhpoh7S2m+DJIDg4U241U1/onB/vbIL5hpLgCEKnN+Xa0qlUl/rieS3m6sHoNESBvwEkAFKDdE20MFC7oeztzje3RdVOVk01KYnGQQwYgfteWiyajsIk2C++Npl9lbufE63oQT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718964772; c=relaxed/simple;
-	bh=qIPAKUsfdrunLjZpUxB95w4pFXbAFx7meVdFYH0CVL0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ty8bP+ZUXESJO5KBmuI4GElS/e7/aOp5gm0wzkuWhf4Ch3AFZ6/xFDodGZz4B1ostpEsyAcCFihMXEunM5HR1tJA7GTGCdR7tt8b5hfCyxpYptgu5BK+2g0T7kbAXcS4GPIXjgVuPKVzXfEgiO77HUpkHvGA+rh0ZoSQ4CSgf0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=lPa50+kF; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718964770; x=1750500770;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qIPAKUsfdrunLjZpUxB95w4pFXbAFx7meVdFYH0CVL0=;
-  b=lPa50+kFeslLsy49zPO6gdpc/lko+oHrlou8TIYUM/N9yvxFcY7p1dXe
-   X+ihXtVwbphsbef+wNKrAqcsZDZTTY+3Rb8t91IBPvMI2htHjsY/sXL+W
-   ThOOSWOWjipuL0k/7W07K6xQNEtizdCyko6tuspW5zpyzL4gQZ6HDfwqp
-   3sY8mTRaG6P9Ae4tzB+iau62PmIu1aMin7yj35a+FZbjpfT3Woc+vNbqy
-   Vy0Yb/WNs+s6dSKR65/jc1GivtP9mvgfbCqXxMto1htEpukEUVQ+j2CC5
-   u1G6Utt5fPbH1yX8jDCwR1z27Nz5Cd7eciCMLRF+n7z6g8NVhSBdqvCPk
-   g==;
-X-CSE-ConnectionGUID: +aZhim/bRGe+fZL72SyFNQ==
-X-CSE-MsgGUID: nsaDAPolS1GA6r4yoC3nFw==
-X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
-   d="asc'?scan'208";a="28315238"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Jun 2024 03:12:48 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 21 Jun 2024 03:12:17 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Fri, 21 Jun 2024 03:12:14 -0700
-Date: Fri, 21 Jun 2024 11:11:56 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Andrew Jones <ajones@ventanamicro.com>
-CC: Anup Patel <apatel@ventanamicro.com>, Conor Dooley <conor@kernel.org>,
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <kvm-riscv@lists.infradead.org>,
-	<kvm@vger.kernel.org>, <alex@ghiti.fr>, <greentime.hu@sifive.com>,
-	<vincent.chen@sifive.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
-Message-ID: <20240621-flanking-twiddling-c3b6c9108438@wendy>
-References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
- <20240605121512.32083-3-yongxuan.wang@sifive.com>
- <20240605-atrium-neuron-c2512b34d3da@spud>
- <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
- <20240621-10d503a9a2e7d54e67db102c@orel>
+	s=arc-20240116; t=1718964737; c=relaxed/simple;
+	bh=AWYhBXoKVmT5sd39qRCJQfJw9GklLb+NkTg9looisKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iv+uZLpObjSSxaCcnBXiEgULL0oEWel836vdnbo1CY8N/tw0lSram+pp6ukwLgqdzQCPYGnlL3wD/AAGxZsvXx4JkKh4d+3ewbW3CBNwYBcsODvjCQism+ZTl/I7G3lW6jB0QSJ9gfrmQEf9vKOK1nBwdgJdpqOCAtiCk9YtMJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7695EDA7;
+	Fri, 21 Jun 2024 03:12:39 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DC1D3F6A8;
+	Fri, 21 Jun 2024 03:12:12 -0700 (PDT)
+Date: Fri, 21 Jun 2024 11:12:06 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Lingyue <lingyue@xiaomi.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, dianders@chromium.org,
+	swboyd@chromium.org, frederic@kernel.org, james.morse@arm.com,
+	scott@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, huangshaobo3@xiaomi.com,
+	huangjun7@xiaomi.com
+Subject: Re: [PATCH] arm64: smp: do not allocate CPU IDs to invalid CPU nodes
+Message-ID: <ZnVR9sdoqfayKNrI@J2N7QTR9R3>
+References: <20240621075045.249798-1-lingyue@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uIOl3MGYsZNkzbCU"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621-10d503a9a2e7d54e67db102c@orel>
+In-Reply-To: <20240621075045.249798-1-lingyue@xiaomi.com>
 
---uIOl3MGYsZNkzbCU
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jun 21, 2024 at 03:50:45PM +0800, Lingyue wrote:
+> Many modules, such as arch topology, rely on num_possible_cpus() to
+> allocate memory and then access the allocated space using CPU IDs.
+> These modules assume that there are no gaps in cpu_possible_mask.
 
-On Fri, Jun 21, 2024 at 10:33:03AM +0200, Andrew Jones wrote:
-> On Thu, Jun 20, 2024 at 11:55:44AM GMT, Anup Patel wrote:
-> > On Wed, Jun 5, 2024 at 10:25=E2=80=AFPM Conor Dooley <conor@kernel.org>=
- wrote:
-> > >
-> > > On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
-> > > > Add entries for the Svade and Svadu extensions to the riscv,isa-ext=
-ensions
-> > > > property.
-> > > >
-> > > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> > > > ---
-> > > >  .../devicetree/bindings/riscv/extensions.yaml | 30 +++++++++++++++=
-++++
-> > > >  1 file changed, 30 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yam=
-l b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > index 468c646247aa..1e30988826b9 100644
-> > > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > @@ -153,6 +153,36 @@ properties:
-> > > >              ratified at commit 3f9ed34 ("Add ability to manually t=
-rigger
-> > > >              workflow. (#2)") of riscv-time-compare.
-> > > >
-> > > > +        - const: svade
-> > > > +          description: |
-> > > > +            The standard Svade supervisor-level extension for rais=
-ing page-fault
-> > > > +            exceptions when PTE A/D bits need be set as ratified i=
-n the 20240213
-> > > > +            version of the privileged ISA specification.
-> > > > +
-> > > > +            Both Svade and Svadu extensions control the hardware b=
-ehavior when
-> > > > +            the PTE A/D bits need to be set. The default behavior =
-for the four
-> > > > +            possible combinations of these extensions in the devic=
-e tree are:
-> > > > +            1. Neither svade nor svadu in DT: default to svade.
-> > >
-> > > I think this needs to be expanded on, as to why nothing means svade.
-> >=20
-> > Actually if both Svade and Svadu are not present in DT then
-> > it is left to the platform and OpenSBI does nothing.
->=20
-> This is a good point, and maybe it's worth integrating something that
-> states this case is technically unknown into the final text. (Even though
-> historically this has been assumed to mean svade.)
+Is there any documented requirement that cpu_possible_mask has no gaps?
 
-If that is assumed to mean svade at the moment, then that's what it has
-to mean going forwards also.
+It looks like other architectures can have gaps in their
+cpu_possible_mask, there's no documented requiremetns AFAICT, and there
+are a bunch of commits handling cpu_possible_mask having gaps, e.g.
 
---uIOl3MGYsZNkzbCU
-Content-Type: application/pgp-signature; name="signature.asc"
+  bc75e99983df1efd ("rcu: Correctly handle sparse possible cpus")
+  3da43104d3187184 ("ARC: Adjust cpuinfo for non-continuous cpu ids")
+  72917235fd5f0863 ("tracing: Fix for non-continuous cpu ids")
 
------BEGIN PGP SIGNATURE-----
+... so I don't think that the topology code should assume that there are
+no gaps in cpu_possible_mask.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnVR7AAKCRB4tDGHoIJi
-0oVHAP4siHUZEfCCwMM83p0CPjCOAJEGoNcOdr0nkhPzLVIczAD/Q7yiuanMfYXr
-nzrBjtDPUd3Y5QR0QzLeGN78fexxmAw=
-=728p
------END PGP SIGNATURE-----
+> However, in of_parse_and_init_cpus(), CPU IDs are still allocated
+> for invalid CPU nodes, leading to gaps in cpu_possible_mask and
+> resulting in out-of-bounds memory access. So it is crucial to avoid
+> allocating CPU IDs to invalid CPU nodes.
 
---uIOl3MGYsZNkzbCU--
+AFAICT the topology code could use 'nr_cpu_ids' instead of
+'nr_possible_cpus()', like the tracing commit above, or it could use a
+per-cpu allocation to avoid this.
+
+> This issue can be reproduced easily on QEMU with KASAN enabled, by
+> modifing reg property of a CPU node to 0xFFFFFFFF
+> 
+> [    0.197756] BUG: KASAN: slab-out-of-bounds in topology_normalize_cpu_scale.part.0+0x2cc/0x34c
+> [    0.199518] Read of size 4 at addr ffff000007ebe924 by task swapper/0/1
+> [    0.200087]
+> [    0.200739] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.10.0-rc4 #3
+> [    0.201647] Hardware name: linux,dummy-virt (DT)
+> [    0.203067] Call trace:
+> [    0.203404]  dump_backtrace+0x90/0xe8
+> [    0.203974]  show_stack+0x18/0x24
+> [    0.204424]  dump_stack_lvl+0x78/0x90
+> [    0.205090]  print_report+0x114/0x5cc
+> [    0.205908]  kasan_report+0xa4/0xf0
+> [    0.206488]  __asan_report_load4_noabort+0x20/0x2c
+> [    0.207427]  topology_normalize_cpu_scale.part.0+0x2cc/0x34c
+> [    0.208275]  init_cpu_topology+0x254/0x430
+> [    0.209518]  smp_prepare_cpus+0x20/0x25c
+> [    0.210824]  kernel_init_freeable+0x1dc/0x4fc
+> [    0.212047]  kernel_init+0x24/0x1ec
+> [    0.213143]  ret_from_fork+0x10/0x20
+> 
+> Signed-off-by: Lingyue <lingyue@xiaomi.com>
+> ---
+>  arch/arm64/kernel/smp.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> index 31c8b3094dd7..5b4178145920 100644
+> --- a/arch/arm64/kernel/smp.c
+> +++ b/arch/arm64/kernel/smp.c
+> @@ -638,12 +638,12 @@ static void __init of_parse_and_init_cpus(void)
+>  		u64 hwid = of_get_cpu_hwid(dn, 0);
+>  
+>  		if (hwid & ~MPIDR_HWID_BITMASK)
+> -			goto next;
+> +			continue;
+>  
+>  		if (is_mpidr_duplicate(cpu_count, hwid)) {
+>  			pr_err("%pOF: duplicate cpu reg properties in the DT\n",
+>  				dn);
+> -			goto next;
+> +			continue;
+>  		}
+>  
+>  		/*
+> @@ -656,7 +656,7 @@ static void __init of_parse_and_init_cpus(void)
+>  			if (bootcpu_valid) {
+>  				pr_err("%pOF: duplicate boot cpu reg property in DT\n",
+>  					dn);
+> -				goto next;
+> +				continue;
+>  			}
+>  
+
+People get very upset when CPU numbering changes, so I'd prefer to avoid
+this if possible.
+
+Mark.
+
+>  			bootcpu_valid = true;
+> -- 
+> 2.34.1
+> 
 
