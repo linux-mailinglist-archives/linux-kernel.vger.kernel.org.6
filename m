@@ -1,103 +1,229 @@
-Return-Path: <linux-kernel+bounces-224984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2970791298F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:25:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56408912990
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C3CD1C260A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CD022820A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFD884A54;
-	Fri, 21 Jun 2024 15:24:52 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E316B82D7C;
+	Fri, 21 Jun 2024 15:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oohu9eJK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D012581AC1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFB05CDE9
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983491; cv=none; b=pSq+Ihrifn8u21aEhtmVbzX86gQ1LMnXzsNtZD7vDdwvO6aas9FnqGL1MIS8mD36dffjH/1YGdbNv71jwKmNgn7NzRvmTE27Fgh+5SspQQlRVhNf+5d0svmsMSkTlIGt5wLQdWThn94MXk3ppM3+D6ItXC7Cjv4XyvZhWi788iI=
+	t=1718983502; cv=none; b=FSEzF/Nx2jdQjRc7ORMQlhkBTd1JTDHtYpqaPd8YpsEsSDMyNqhRnj4TkBQbKVfiE3ooqzWmzhihj6BikinqDTb3/XCWtgiRXDeuBbck5WXiX7E5X6GiefTPH2q06XMWMG1r+dnC/ryiqi47xAEiiJhSJEI6vd6YjDwL+fWzJXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718983491; c=relaxed/simple;
-	bh=S8K2wQr0lkrJTD04cxS37uS9JhPOcydaq6dpbxgMClc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tROixBTENKOlbj3J4Do2zpMBLDs3jet33MfmxFPSpAj0z+ZkfLAoqI2Bm26nX3rutpm4HJyD8zTzNKpJZTEMyj8i0THdwGZDb1hmDf03jk7uNOixFzZF7YDASyUTpW3EbdrWoA9juUfpoMHc3w7MH7Qw1ebVYL8AXJrbiajsz+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sKg86-0008LY-O5; Fri, 21 Jun 2024 17:24:46 +0200
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Fri, 21 Jun 2024 17:24:47 +0200
-Subject: [PATCH] reset: zynqmp: allow building under COMPILE_TEST
+	s=arc-20240116; t=1718983502; c=relaxed/simple;
+	bh=bmkYWAVI1sPzC2Tz8D+HXizAK7xoAr/bIp5KhRtXd+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBZbuqKpxLMdTpXcNTNy95+2ZCJJP/6Tfxo+NldeRuBavCLu29vnq0+ltwatsf3LKZNTFE4f+wSxEhyMiDYGj5wboNaFKN5V+fuqExk+413TP11hH0MFpIkmOYEXbAiom1ElZV7iDNxn7SsCFmVs5ZIoxT6dmTQ8vDnIa1v+6MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oohu9eJK; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718983500; x=1750519500;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bmkYWAVI1sPzC2Tz8D+HXizAK7xoAr/bIp5KhRtXd+k=;
+  b=Oohu9eJKUa38Yw5WCKEXgH9bLp0LcvdjeykQp3ijByjgQI8TV3jIIHIu
+   b5oTafz1aHOUMxuYKHZjMfASW9KLQL8OcnBAhWsWkcKwaaLWH0vxKFBf+
+   MD6UnJKG/EbScyDYI4TPeOwkSL5x8goIpch1rqiN7aoG1z9kmZAJV3s15
+   SUYxzDSUrJcieakOOcR6Ws3iA0q9FpNN62Fwnf4JvljLjV061z6Jpy9cV
+   q65imI3tBdszJRDixoVEoWwh0fh4z5dunPC/dCaBwNYR6R2b1K0ALDhJz
+   bphlLVgh1VoAibdgChzcQC3pqg1BuLi/1sGYC5z6eftnsqNalnKWr/7HZ
+   A==;
+X-CSE-ConnectionGUID: 7spRRmlGRxCvIQkA2rjtng==
+X-CSE-MsgGUID: xZrpoIm2TrCdYK9psNNLNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="27156130"
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="27156130"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 08:25:00 -0700
+X-CSE-ConnectionGUID: XFuC6ewVRFSjZIKv8NlNrg==
+X-CSE-MsgGUID: 9HN/t6cYS06enMWdrKY6Vg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="47561224"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 08:24:59 -0700
+Date: Fri, 21 Jun 2024 08:24:57 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: "Yu, Fenghua" <fenghua.yu@intel.com>,
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH v20 07/18] x86/resctrl: Block use of mba_MBps mount
+ option on Sub-NUMA Cluster (SNC) systems
+Message-ID: <ZnWbSTY64N9_aSWA@agluck-desk3.sc.intel.com>
+References: <20240610183528.349198-1-tony.luck@intel.com>
+ <20240610183528.349198-8-tony.luck@intel.com>
+ <649913a3-0694-48b6-b4fc-0ec6e5e85bbc@intel.com>
+ <SJ1PR11MB608342C2230D448CF27EAC26FCC82@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <74ed79c1-b024-4b22-9858-14c1e5284a20@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240621-reset-compile-zynqmp-v1-1-ede43ab18101@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIAD6bdWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyND3aLU4tQS3eT83ILMnFTdqsq8wtwCXbNUs6TUlGQzU4vENCWg1oK
- i1LTMCrCx0bG1tQBlky5oZgAAAA==
-To: Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
-X-Mailer: b4 0.14-dev
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::54
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <74ed79c1-b024-4b22-9858-14c1e5284a20@intel.com>
 
-The ZynqMP reset driver can be compiled without ARCH_ZYNQMP being
-enabled. Allow it to be built under COMPILE_TEST.
+On Thu, Jun 20, 2024 at 06:56:56PM -0700, Reinette Chatre wrote:
+> Hi Tony,
+> 
+> On 6/20/24 3:07 PM, Luck, Tony wrote:
+> > > > When SNC is enabled there is a mismatch between the MBA control function
+> > > > which operates at L3 cache scope and the MBM monitor functions which
+> > > > measure memory bandwidth on each SNC node.
+> > > > 
+> > > > Block use of the mba_MBps when scopes for MBA/MBM do not match.
+> > > > 
+> > > > Signed-off-by: Tony Luck <tony.luck@intel.com>
+> > > > ---
+> > > >    arch/x86/kernel/cpu/resctrl/rdtgroup.c | 4 +++-
+> > > >    1 file changed, 3 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> > > > index eb3bbfa96d5a..a0a43dbe011b 100644
+> > > > --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> > > > +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> > > > @@ -2339,10 +2339,12 @@ static void mba_sc_domain_destroy(struct rdt_resource *r,
+> > > >     */
+> > > >    static bool supports_mba_mbps(void)
+> > > >    {
+> > > > +   struct rdt_resource *rmbm = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
+> > > >      struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_MBA].r_resctrl;
+> > > > 
+> > > >      return (is_mbm_local_enabled() &&
+> > > > -           r->alloc_capable && is_mba_linear());
+> > > > +           r->alloc_capable && is_mba_linear() &&
+> > > > +           r->ctrl_scope == rmbm->mon_scope);
+> > > >    }
+> > > > 
+> > > >    /*
+> > > 
+> > > The function comments of supports_mba_mbps() needs an update to accompany
+> > > this new requirement.
+> > 
+> > Will add comment on extra requirement.
+> > 
+> > > I also think that the "mba_MBps" mount option is now complicated enough to
+> > > warrant a clear error to user space when using it fails. invalfc() is
+> > > available for this and enables user space to get detailed log message
+> > > from a read() on an fd created by fsopen().
+> > > 
+> > > Perhaps something like (please check line length and feel free to improve
+> > > since as is it may quite cryptic):
+> > >        rdt_parse_param(...)
+> > >        {
+> > > 
+> > > 
+> > >        ...
+> > >        case Opt_mba_mbps:
+> > >                if (!supports_mba_mbps())
+> > >                        return invalfc(fc, "mba_MBps requires both MBM and (linear scale) MBA at L3 scope");
+> > >        ...
+> > >        }
+> > 
+> > Line length is indeed a problem (108 characters). Usual line split methods barely help as the moving the
+> > string to the next line and aligning with the "(" only saves 4 characters.
+> > 
+> > How about this (suggestions for a shorter variable name - line is 97 characters)
+> > 
+> > static char mba_mbps_invalid[] = "mba_MBps requires both MBM and (linear scale) MBA at L3 scope";
+> > 
+> > rdt_parse_param(...)
+> > {
+> > 	...
+> > 	case Opt_mba_mbps:
+> > 		if (!supports_mba_mbps())
+> > 			return invalfc(fc, mba_mbps_invalid);
+> > 	...
+> > }
+> 
+> On 6/20/24 3:12 PM, Luck, Tony wrote:
+> > > static char mba_mbps_invalid[] = "mba_MBps requires both MBM and (linear scale) MBA at L3 scope";
+> > 
+> > checkpatch recommends "static const char ..." pushing this over 100 chars :-(
+> > 
+> 
+> How about something like below that reaches 96:
+> 
+> 	case Opt_mba_mbps:
+> 		if (!supports_mba_mbps())
+> 			return invalfc(fc,
+> 				       "mba_MBps requires both MBM and linear MBA at L3 scope");
+> 
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Reinette,
+
+Alternative option. Move the messaging into supports_mba_mbps() and
+split into shorter pieces for each reason. The other callers of
+supports_mba_mbps() that are just re-checking status would pass
+a NULL argument.
+
+If this looks reasonable I can do it in two patches. First to add
+invalfc() for the existing cases. Second to add the SNC change.
+
+-Tony
+
 ---
- drivers/reset/Kconfig  | 6 ++++++
- drivers/reset/Makefile | 2 +-
- 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 7112f5932609..9b914f8818ef 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -328,6 +328,12 @@ config RESET_ZYNQ
- 	help
- 	  This enables the reset controller driver for Xilinx Zynq SoCs.
- 
-+config RESET_ZYNQMP
-+	bool "ZYNQMP Reset Driver" if COMPILE_TEST
-+	default ARCH_ZYNQMP
-+	help
-+	  This enables the reset controller driver for Xilinx ZynqMP SoCs.
-+
- source "drivers/reset/starfive/Kconfig"
- source "drivers/reset/sti/Kconfig"
- source "drivers/reset/hisilicon/Kconfig"
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index fd8b49fa46fc..544ae3488e3f 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -41,4 +41,4 @@ obj-$(CONFIG_RESET_TN48M_CPLD) += reset-tn48m.o
- obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
- obj-$(CONFIG_RESET_UNIPHIER_GLUE) += reset-uniphier-glue.o
- obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
--obj-$(CONFIG_ARCH_ZYNQMP) += reset-zynqmp.o
-+obj-$(CONFIG_RESET_ZYNQMP) += reset-zynqmp.o
+static bool supports_mba_mbps(struct fs_context *fc)
+{
+			return invalfc(fc, mba_mbps_invalid);
+	struct rdt_resource *rmbm = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
+	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_MBA].r_resctrl;
 
----
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-change-id: 20240621-reset-compile-zynqmp-6e6bedc658af
+	if (!is_mbm_local_enabled()) {
+		if (fc)
+			invalfc(fc, "mba_MBps requires local MBM");
+		return false;
+	}
+	if (!r->alloc_capable) {
+		if (fc)
+			invalfc(fc, "mba_MBps requires MBA");
+		return false;
+	}
+	if (!is_mba_linear()) {
+		if (fc)
+			invalfc(fc, "mba_MBps requires linear MBA");
+		return false;
+	}
+	if (r->ctrl_scope != rmbm->mon_scope) {
+		if (fc)
+			invalfc(fc, "mba_MBps requires MBM/MBA at L3 scope");
+		return false;
+	}
 
-Best regards,
--- 
-Philipp Zabel <p.zabel@pengutronix.de>
+	return true;
+}
 
+rdt_parse_param(...)
+{
+	...
+	case Opt_mba_mbps:
+		if (!supports_mba_mbps(fc))
+			return -EINVAL;
+	...
+}
 
