@@ -1,131 +1,239 @@
-Return-Path: <linux-kernel+bounces-224522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3119391238A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 890E8912389
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 627D21C25220
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:28:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB8A31C251FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B0F176ACF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BC8176AC5;
 	Fri, 21 Jun 2024 11:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Un0i7p2K"
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WyipYmHz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k6Hgy0By";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="duZ7Mh3d";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="psEfHHaC"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41F817333D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD8E176254;
+	Fri, 21 Jun 2024 11:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969125; cv=none; b=cv9Vuiei/3rgAI+x57QGezPPz703mYItdXb88/EoBi6vSSNJrMFdysKkCnYGNy1+EEqWFHuWBYZhv66qUCbZ6fYa3S5Bwfgbktjm7a0XT8hFOo/uRbI6yIFQUDuEdpL/c2/9VjSLse4GVvyLTxGtKpGebLy1kFvQqYCcgalzy4s=
+	t=1718969124; cv=none; b=cqXmDZocdt5aXIwPdlp8quU2o/YfQvamAaT17GwZTg+i3zJuciAAMiIyFAW7cQDBF7SDzy5S/cWq+Q2mc5Pw9kWC/SBWdcW6ZQG8QDgQ+YtZ+knshgeQhl+GUU0oGwmTudzcPMqbIMZqjQYFnMygo1t62Cms6FOJzXWly9JUt2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969125; c=relaxed/simple;
-	bh=/78T4gIP6Vl7qO16NoY/Yc+0FArSmsilMMQukCe6F6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lA58KVmn5HepkTGlwyJbFe77K8oDaUeiEEAvtRon2iU+lDYpxi6Lg1xE0SaYcodcUH2ZFYajMY3+aBNT7I4dMUo7uRDExvIhkgQddOjP4v3JlDvtaNL9dfLOK3I+eDHtq8jsYRXjRF+RjHKMnoT6KHBm+ie15ARXfsxXW7bnD08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Un0i7p2K; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-57d0eca877cso2199152a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:25:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718969121; x=1719573921; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NVqer5McNqdNZnecI/834Szrx4B8E3Deyrvm1bBN9j4=;
-        b=Un0i7p2K6bw0p+YO4Sxsmx+evq4Aq3M4dyXapGavjzfqtxmBSy4C9McKXsQCBQvS/N
-         RDAjAkvj3lifiiej0NVA7dDSTca99Tn+/3JrAqu9sNPzuozBKaXrqa7Or83Orx9iPqAE
-         EI3rv5if4dGHvhPR8FUifG66WhngykGyYCA9eiSSyk2lCCA/kpREjjz60XAgDLvrzwQ5
-         GMwXoQ109Ic7YdWuYeQu8sTp2gb9/p+vQXpH06KCoRLS2hcm8VxVNjFlCLSXB/yluWLy
-         W3+E+8jNpZoujli8Fx4ezpKfnyO5ZknmSp0t5NuiseYQRgnHRblPflRltiItnW70P4Pu
-         Vg+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718969121; x=1719573921;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NVqer5McNqdNZnecI/834Szrx4B8E3Deyrvm1bBN9j4=;
-        b=Lm6lPfxyTGcivuaPDxlfl7bc52PCWuYNGHKEgjBoNvrNnw2wIfhUP382pJhMerTrW3
-         9Vd2+bzjXh+QQCNEIUVQ9Bbr9fs68xvEIFPOf53pyDNgj4UfzbVogKCqpiAuBjCxQyj8
-         UTCWwskXGGlobFkDeA/WrMFGvs7ZQ1s3s6hoomafNBaMU2uHnT4b7L2RKI28C899fI8Q
-         m3AiZ3XEAdySqFRjXHFLfRAVaOQkJVfHRcI16rioyK5fqizUGUr7uwRqkSrYDmX6gOhC
-         Ph1KM+KhJHghKrBZjkXW+Et1mhCh0fv2mVObqe8DS0HGGIm4XBk7x51W9SL5Ips4oUEP
-         CtmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/+7RB9q8Qas2bzwUm+voLBySJmkUyq9XW9VhObO6euiBMr5hb+UXQ84PzxMT27HzhJk2itghhxzx0xP3GwWz6N3q48KrHDDLciLgw
-X-Gm-Message-State: AOJu0YyCNXPqKD9WG2kXcwLVzQCHlmjkcDflF3SFZPBqQdwtmWtiRgms
-	bO5dIz1ACDDYIVSp9b1VkbzvvGTUVMaHigy5/UjRUOSK6gW/61Ug6waSU3/+76E=
-X-Google-Smtp-Source: AGHT+IH126ydw90RFkIhA8Jjhs+0tNi7TXjbkKjB2FNHRMNyT4BERWZyQz9kSzzxO2pfpg2TTTUqyA==
-X-Received: by 2002:a17:906:b41:b0:a6f:1445:9de8 with SMTP id a640c23a62f3a-a6fab778da9mr570586766b.54.1718969120996;
-        Fri, 21 Jun 2024 04:25:20 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf489e1asm73538966b.47.2024.06.21.04.25.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 04:25:20 -0700 (PDT)
-Message-ID: <cd9b5612-1160-4284-be7f-4efbcbbbe346@linaro.org>
-Date: Fri, 21 Jun 2024 12:25:18 +0100
+	s=arc-20240116; t=1718969124; c=relaxed/simple;
+	bh=7Wg8YiT2kEFpC+UB7M62V8+RiaolnmozV8kRePzaDdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IRQ1xz/YP89WrVrsyzPSdqDD5oLYRmDRwDFc/LJHetyAhnkCkVlUwpL7yUSsdXmNcJUPZuoH7tq9g+5fc2upKAOdpyUVcNOvb89vt5n8XoVciIa2bLQPsNo3XhcqBlQPCIpWdWgfu9lqwykOEoH/DtKLKxv8aDWTH3ALmjLqqhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WyipYmHz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k6Hgy0By; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=duZ7Mh3d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=psEfHHaC; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DF16821AED;
+	Fri, 21 Jun 2024 11:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718969121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
+	b=WyipYmHzsG1UAensuD//zh5tTO0fzOPs90KBZq0WUzubYGpdqbcbFRYZv2TeTotlZ6QFMx
+	p7zMk0h2BQ3WPIPSbj4lm9worX4DD9q7Oa/DRzBWrOguXx8KJRbVShidJgQEXg0Czy0k2O
+	coGFlAD9ukNAUcmlYvyR9/e4MPb8q3s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718969121;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
+	b=k6Hgy0BykMdAbsgfLELPDkuW6C8/vvVBNZkUwBjFkOEByT9IduZld8v4ZMRae6eWu2OI/e
+	rxNtVd3cGCHwvoCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718969119; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
+	b=duZ7Mh3dWNJOGRI1wVpiqdQDtFTsVWVoFmpvtpJdAxFxL5JsZqpJSv0NumVzFG2RRKNPjN
+	MUPoH7TMVnllyAvu2vEIwtjkXGDC66yVXqJozbFyZVvm/BUcwUmFqY+FYxx6fCiO+E2URs
+	kh/WUNfKhRVUf0rRR9R9rvXL3Wrgo5A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718969119;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
+	b=psEfHHaCiNdyW2oUvRKBMaH3zkWtCYLj+uWmsjhmO+9mJNQ8I+ZzbC3vWLbHNupKxyEAZ8
+	/8aRzplsLixJ83Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D461A13AAA;
+	Fri, 21 Jun 2024 11:25:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dMzRMx9jdWbWZwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 21 Jun 2024 11:25:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 81A10A087E; Fri, 21 Jun 2024 13:25:19 +0200 (CEST)
+Date: Fri, 21 Jun 2024 13:25:19 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
+	jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: reorder checks in may_create_in_sticky
+Message-ID: <20240621112519.vp26sqmehxbihqgc@quack3>
+References: <20240620120359.151258-1-mjguzik@gmail.com>
+ <20240621-affekt-denkzettel-3c115f68355a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] media: qcom: camss: csiphy-3ph: Add Gen2 v1.2.2
- two-phase MIPI CSI-2 DPHY init
-To: gchan9527@gmail.com, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240621-b4-sc7180-camss-v1-0-14937929f30e@gmail.com>
- <20240621-b4-sc7180-camss-v1-3-14937929f30e@gmail.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240621-b4-sc7180-camss-v1-3-14937929f30e@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621-affekt-denkzettel-3c115f68355a@brauner>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,zeniv.linux.org.uk,suse.cz,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-On 21/06/2024 10:40, George Chan via B4 Relay wrote:
-> From: George Chan <gchan9527@gmail.com>
+On Fri 21-06-24 09:45:03, Christian Brauner wrote:
+> On Thu, Jun 20, 2024 at 02:03:59PM GMT, Mateusz Guzik wrote:
+> > The routine is called for all directories on file creation and weirdly
+> > postpones the check if the dir is sticky to begin with. Instead it first
+> > checks fifos and regular files (in that order), while avoidably pulling
+> > globals.
+> > 
+> > No functional changes.
+> > 
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> >  fs/namei.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 63d1fb06da6b..b1600060ecfb 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -1246,9 +1246,9 @@ static int may_create_in_sticky(struct mnt_idmap *idmap,
+> >  	umode_t dir_mode = nd->dir_mode;
+> >  	vfsuid_t dir_vfsuid = nd->dir_vfsuid;
+> >  
+> > -	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
+> > -	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
+> > -	    likely(!(dir_mode & S_ISVTX)) ||
+> > +	if (likely(!(dir_mode & S_ISVTX)) ||
+> > +	    (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
+> > +	    (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
+> >  	    vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
+> >  	    vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
+> >  		return 0;
 > 
-> Add a PHY configuration sequence for the sc7180 which uses a Qualcomm
-> Gen 2 version 1.2.2 CSI-2 PHY.
+> I think we really need to unroll this unoly mess to make it more readable?
+
+I guess my neural network has adapted to these kind of things in the kernel :)
+
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 3e23fbb8b029..1dd2d328bae3 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1244,25 +1244,43 @@ static int may_create_in_sticky(struct mnt_idmap *idmap,
+>                                 struct nameidata *nd, struct inode *const inode)
+>  {
+>         umode_t dir_mode = nd->dir_mode;
+> -       vfsuid_t dir_vfsuid = nd->dir_vfsuid;
+> +       vfsuid_t dir_vfsuid = nd->dir_vfsuid, i_vfsuid;
+> +       int ret;
+> +
+> +       if (likely(!(dir_mode & S_ISVTX)))
+> +               return 0;
+> +
+> +       if (S_ISREG(inode->i_mode) && !sysctl_protected_regular)
+> +               return 0;
+> +
+> +       if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
+> +               return 0;
+> +
+> +       i_vfsuid = i_uid_into_vfsuid(idmap, inode);
+> +
+> +       if (vfsuid_eq(i_vfsuid, dir_vfsuid))
+> +               return 0;
 > 
-> The PHY can be configured as two phase or three phase in C-PHY or D-PHY
-> mode. This configuration supports two-phase D-PHY mode.
+> -       if (likely(!(dir_mode & S_ISVTX)) ||
+> -           (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
+> -           (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
+> -           vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
+> -           vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
+> +       if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
+>                 return 0;
 > 
-> Signed-off-by: George Chan <gchan9527@gmail.com>
-> ---
->   .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     | 120 +++++++++++++++++++++
->   1 file changed, 120 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> index df7e93a5a4f6..181bb7f7c300 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> @@ -348,6 +348,121 @@ csiphy_reg_t lane_regs_sm8250[5][20] = {
->   	},
->   };
->   
-> +/* GEN2 1.2.2 2PH */
+> -       if (likely(dir_mode & 0002) ||
+> -           (dir_mode & 0020 &&
+> -            ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
+> -             (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
+> -               const char *operation = S_ISFIFO(inode->i_mode) ?
+> -                                       "sticky_create_fifo" :
+> -                                       "sticky_create_regular";
+> -               audit_log_path_denied(AUDIT_ANOM_CREAT, operation);
+> +       if (likely(dir_mode & 0002)) {
+> +               audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
+>                 return -EACCES;
+>         }
+> +
+> +       if (dir_mode & 0020) {
+> +               if (sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) {
+> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create_fifo");
+> +                       return -EACCES;
+> +               }
+> +
+> +               if (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode)) {
+> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create_regular");
+> +                       return -EACCES;
+> +               }
+> +       }
+> +
+>         return 0;
+>  }
 
-This is the init sequence for 1_2_1 not 1_2_2
+But this definitely looks nicer to read... Feel free to add:
 
-https://review.lineageos.org/c/LineageOS/android_kernel_xiaomi_sm8250/+/311931/10/techpack/camera/drivers/cam_sensor_module/cam_csiphy/include/cam_csiphy_1_2_1_hwreg.h
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-https://review.lineageos.org/c/LineageOS/android_kernel_xiaomi_sm8250/+/311931/10/techpack/camera/drivers/cam_sensor_module/cam_csiphy/include/cam_csiphy_1_2_2_hwreg.h
-
-Please fix.
-
----
-bod
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
