@@ -1,136 +1,175 @@
-Return-Path: <linux-kernel+bounces-224722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D8D91260C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 290C6912610
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92AC2287020
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D32AC2842EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33179153BDB;
-	Fri, 21 Jun 2024 12:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C860153506;
+	Fri, 21 Jun 2024 12:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VE9KLRT8"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XXLst56z"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABF215C3;
-	Fri, 21 Jun 2024 12:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E03714D45A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718974448; cv=none; b=F/2+DZv7FIQmANl/VPJB3RpMLaMAcE9zos2kP5LIfRdVFzAHpE9ZMjq2fR7HSlSnfYO10RGAcqO9Z4sXolf9QVbCFZjz1hvAyJJ7sS7aoeHCIW3rAw1klNeAxugGamq7ycjm4APMJwsRl/HgrfXitl3f8xf5r0j1tHXzcLPgopY=
+	t=1718974484; cv=none; b=qtvzXRnvylHEt5kBK3Q1a6Z1vouxLftekJlXctfzLRc/DwNIUa/ciMrCBGbUEqXWkezlGutlGpMnzv/NpY5KgkQLF7Ou4lRVxcG9iwm26UuzIa046dXk/UJ5S/n2jaztf+qokJeMTfiNo/iCr7xTP/97NYL3ET6TtyAjILeNF+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718974448; c=relaxed/simple;
-	bh=LSQJ9I0cgRdYxNFwJwcV1JJibD4wbsNz2zrUxK+ak8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2TvbnvgL6XzMQZA/uJXVB0dKUBIkez0YLaF/N+9MoOO6emf+tsEU5wC87uddcvxCHqmPnwXoqUYfc/666cLjPTsbQhMLmdDT3l+4rvXO1EMEZ4HF4Ka9DlDQUYN8UqaDbe1z/Ovh2Kh9JScSLAoQAxlTt/uZ4H1OuU9JXL6Ts0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VE9KLRT8; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6fd4d1c173so63385166b.2;
-        Fri, 21 Jun 2024 05:54:06 -0700 (PDT)
+	s=arc-20240116; t=1718974484; c=relaxed/simple;
+	bh=Od8+egiUvcnM9EgLFfEIVEJKblhocI4amkFz7FC2SEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mnIHe/9FMFb1i4HMD7/Noo5/h1V1ARoWOzgJArEoFrCvmO3vVvPSfU7fCkCXLN2bx4+JtqF93BVMn4kusyMiF/ahOxJ68oaXHXNEUQeqWw4Agp14jkLFMgmqa3CUUhsSZ5gqveGt4aqbCH8BtVnAMjJJeeLxHZT5hDz01fr02Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XXLst56z; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso28393881fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:54:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718974445; x=1719579245; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qYJaA7XS25MstQlFWDdKfpHlFF9Sx8XLgOyXscP6JLU=;
-        b=VE9KLRT8c1lrBtBzQrgjE/LrieIiZCf0OGotZv16YcarjqDQYF3i+EJET5GS6L7rlG
-         HcHAe67R6P6MhCDrWPd3yStcOQKP7ZluXjUspR4g9XxO8FrGLPcSZpwe1Z5XGB62Dj9v
-         RQ+W9nxgHPlcRmTEktvQcMiBAHTUW6QORiOI9bByDqB9nR2O6nAKrEY1g0eemPR1Bbhx
-         tlsurwyMsJMOwNPJIOQb3vVkUFIagy/2MvAFv4w6z4ZU6tv9K7fsA0AF9I9Ll4QDXwln
-         BU2cIVwmGXn+gtdhB8CHi+qZsn+4tevCqMUkBtzJqgLmTfuPWqPuWh8ia0ieT64PAoTr
-         e83w==
+        d=tuxon.dev; s=google; t=1718974481; x=1719579281; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nrTwlYyUewM020gU0HwmTEQfK5aZ3iGGdgEUfErTPYY=;
+        b=XXLst56zeUsF0Vrvi0n105xPkTuR8iSMw3fHVNtoUgUUX/AxNUSnh34dP8DlNYK4mm
+         OjRMu890lLlXj9oR75Vo/gD598zlIEX62g7RDKGsNnssDGS7v9l7LjGgWnIiplxBkuvX
+         365GGqA2DhhFAGXV1jI/8Mhdi79tnJRHgWB/gKCPlT8fwSfcAaNTdUpSvUOjn+o0pWG1
+         xQO6WFlf/8SUZBEujQX2LbwWx1o4xlcLlVkfXaDENyYRMhzDEi0V9cvfC8QNZ95rgRGz
+         Ol17X3wQwRYGySmvvsyBQ7YT+KDzPsCRbNFPKyM+2LvlGfX9pRR9X8UU1z/cp6Ny/b+f
+         1sVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718974445; x=1719579245;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qYJaA7XS25MstQlFWDdKfpHlFF9Sx8XLgOyXscP6JLU=;
-        b=W/jDu1pjU95FjT/fENJUpYhbr7jhaK7q1g1lgl37tJwklpD0+nI7wWSqcxYG3beBNB
-         I6luG+YeLyEfi83c2QONk8bj33BUr7gfnvi26Y06L1Bj+7WjzxGVnY5IhyWPkZR6+Q/p
-         ZlNKFwvzitL+Laab1xdmBAW6yjmG1zA5FaqBCijoCa98ST0YiooEZyWksj3k03P20pUt
-         0UVAC/zJ9WfHeD+VryKqB0lIE5ds0TTa47pTBjnG29Gcbu6xHfLiuQV8MyrikE3H1MCW
-         d5KtHB2UPcMwwYz6erTT9+MDRSRT2RZpXOKt3ktSMPpvwF/iSyxBGYBB++RISULI8+sv
-         kdaw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8t2F+XCScwqmFUeJergyn5Fyf0cBIid/rpDlR/bNaJ1gFdbO9MlSpmQfJYVep4ReVkV4yZM5uiW+5YmKq8AyeovR0eqMj5QaPLA4oit2/NlOdJHPMhc8CiQ60ako+yioGDru9vr8jDc3K0M/CYNMslv8MPaMDTYuec2neUNzKEw5leA==
-X-Gm-Message-State: AOJu0Ywb3ic8SffTSXWiomu8ut3aW3FFUSY8hv1Im2t1U53RCD+FOuO2
-	65Z+bGUTCjVbu+zJuEx3IeDfUPuEVLJZLUVConqQ/PL3mQQzKfGj
-X-Google-Smtp-Source: AGHT+IHRru8dj1JPrNty1M+sqrOOATWLXykc/0tIQFtaLKd3tUycWUm6+/vMJitFroUxg9wBZEO6Ew==
-X-Received: by 2002:a17:907:a4c7:b0:a6f:c167:614e with SMTP id a640c23a62f3a-a6fc167622bmr318798866b.31.1718974444550;
-        Fri, 21 Jun 2024 05:54:04 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf560532sm80916166b.163.2024.06.21.05.54.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 05:54:04 -0700 (PDT)
-Date: Fri, 21 Jun 2024 15:54:01 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v3 3/3] arm64: dts: fsl-ls1043a-rdb: use common
- spi-cs-setup(hold)-delay-ns
-Message-ID: <20240621125401.of5rge7imyp4fdhz@skbuf>
-References: <20240620-ls_qspi-v3-0-1a2afcf417e4@nxp.com>
- <20240620-ls_qspi-v3-0-1a2afcf417e4@nxp.com>
- <20240620-ls_qspi-v3-3-1a2afcf417e4@nxp.com>
- <20240620-ls_qspi-v3-3-1a2afcf417e4@nxp.com>
+        d=1e100.net; s=20230601; t=1718974481; x=1719579281;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nrTwlYyUewM020gU0HwmTEQfK5aZ3iGGdgEUfErTPYY=;
+        b=ezhWOMjGxm1AdEZQN+nrkNFH7CdYLOwJpXZ1T4DYzTJtRVGTJQKduoehz684RvKrw3
+         lGA7Q/pidpaB6U88fZ9sK8T9tqWBBEUQYmNpWYLz1NOOAH+Lb9NAayrvjDYZYuO9sJI6
+         nGnpxNlPWRdvwZCfe/mtryB9a/QoxLY3SBoMZW8LB7PwnP0iS99oEFZ6SS2dHt+qOihS
+         gOokpekH39qaL8hZSxbOKd/lTF+yfY58oN9ZUf+Y5Z4n8VGgNpQcrMBbBgg1vQA/+5kS
+         OSwfDiF5ckOFc/QG7+dO0uavAiaDfT2qahdNddFfuK/YLY+tiVVEgpkZ/gyolm1umA/L
+         w79g==
+X-Forwarded-Encrypted: i=1; AJvYcCUz5VIHwyXrd1pCB9bsGDk5JoTR1M406dwNL9UdkJBqtsEjQ081S/0RfmxXj0E4tTq8WQ0+lZiX9Z9T85fjVsqDBXdyYHrA6tF2TMWe
+X-Gm-Message-State: AOJu0YyK69+kKvryqAUyuczEBF1Cm/wamRucP1UZPd2ezUrDbwogmuEW
+	WWQgtqBPINCQ10oABBXszCjlZW+yF5e9QrHGm4GhHssg7mRO8ShXHdsHmAdqKjQ=
+X-Google-Smtp-Source: AGHT+IHnJUFdRaoNKZNGoZTXIVxvhc7reGoMUOhOtNv10BGFn0TeNceciLMxCfNCMU8M2tawShhFqg==
+X-Received: by 2002:a2e:b01a:0:b0:2ec:5258:e889 with SMTP id 38308e7fff4ca-2ec5258ea0cmr3118831fa.46.1718974480740;
+        Fri, 21 Jun 2024 05:54:40 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48b3a6sm81477266b.87.2024.06.21.05.54.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 05:54:40 -0700 (PDT)
+Message-ID: <0bc78e5e-de37-4ff6-ac74-571f615b97f9@tuxon.dev>
+Date: Fri, 21 Jun 2024 15:54:37 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620-ls_qspi-v3-3-1a2afcf417e4@nxp.com>
- <20240620-ls_qspi-v3-3-1a2afcf417e4@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
+ R9A08G045 support
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346105D3D3DD46AEF8CD44986C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB11346105D3D3DD46AEF8CD44986C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 20, 2024 at 12:58:29PM -0400, Frank Li wrote:
-> Use SPI common propteries 'spi-cs-setup-delay-ns' and
 
-properties
 
-> 'spi-cs-hold-delay-ns', mark private properties 'fsl,spi-cs-sck-delay'
-> and 'fsl,spi-sck-cs-delay' as depericated.
+On 21.06.2024 15:34, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Friday, June 21, 2024 12:23 PM
+>> Subject: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the R9A08G045 support
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible with the version available on
+>> Renesas RZ/V2H (R9A09G075). Most of the IP variants that the RIIC driver is working with supports
+>> fast mode plus.
+>> However, it happens that on the same SoC to have IP instatiations that support fast mode plus as
+>> well as IP instantiation that doesn't support it. For this, introduced the renesas,riic-no-fast-
+>> mode-plus property.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>  Documentation/devicetree/bindings/i2c/renesas,riic.yaml | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>> b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>> index 91ecf17b7a81..c0964edbca69 100644
+>> --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>> +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>> @@ -25,6 +25,10 @@ properties:
+>>                - renesas,riic-r9a07g054  # RZ/V2L
+>>            - const: renesas,riic-rz      # RZ/A or RZ/G2L
+>>
+>> +      - items:
+>> +          - const: renesas,riic-r9a08g045   # RZ/G3S
+>> +          - const: renesas,riic-r9a09g057
+>> +
+>>        - const: renesas,riic-r9a09g057   # RZ/V2H(P)
+>>
+>>    reg:
+>> @@ -66,6 +70,10 @@ properties:
+>>    resets:
+>>      maxItems: 1
+>>
+>> +  renesas,riic-no-fast-mode-plus:
+>> +    description: specifies if fast mode plus is not supported
+>> +    type: Boolean
+> 
+> Can't this info, as part of device data?? Based on frequency and device data
+> is enough to derive this info??
 
-deprecated
+We can't rely completely on device data because on RZ/G3S we have 2 RIIC
+channels that support fast mode plus and 2 that doesn't support it.
+
+Thank you,
+Claudiu Beznea
 
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+> Cheers,
+> Biju
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
-> index 26f8540cb101b..fef3534157a1d 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
-> @@ -104,6 +104,11 @@ flash@0 {
->  		compatible = "n25q128a13", "jedec,spi-nor";  /* 16MB */
->  		reg = <0>;
->  		spi-max-frequency = <1000000>; /* input clock */
-> +		/* Add common SPI property */
-
-I guess if you do insist on adding comments for this (not necessary IMO),
-we could improve on the stylistic elegance by saying "Standard CS timing
-properties replace the deprecated vendor variants below" or something
-like that. But currently it doesn't look great when there is a verb in
-the present tense and another in the past tense. Also, the plural form
-should have been used for 'property'.
-
-Additionally, I don't believe that a new line between the groups of
-properties is necessary.
-
-> +		spi-cs-setup-delay-ns = <100>;
-> +		spi-cs-hold-delay-ns = <100>;
-
-Do you plan on deprecating the fsl, CS timing parameters tree-wide, or
-are you going to stop at the LS1043A-RDB?
+>> +
+>>  required:
+>>    - compatible
+>>    - reg
+>> --
+>> 2.39.2
+>>
+> 
 
