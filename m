@@ -1,111 +1,194 @@
-Return-Path: <linux-kernel+bounces-225236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A362912DEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:34:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA786912DED
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B26283B4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:34:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ADA31F217A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C52F17B4EB;
-	Fri, 21 Jun 2024 19:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8598317B4FE;
+	Fri, 21 Jun 2024 19:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xtnmt/hZ"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ifraVQh4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0231717C20E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2562B168482
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718998444; cv=none; b=Q+s9Lum6ofDt+c9dpYFvZZSoVybyUTpj9a68VYboDGB/OhFQARXnhQ2qPX0YeVrYLGzh/PEHhfCUk9vhaZyxYIzZAvOTwK42qgAEZ/DurXKZ3RBBVCmygMdiHHsO03ZReQplifuvSyPcKw3wX/dwaV/zX9MCNgFsxVRorMefGys=
+	t=1718998447; cv=none; b=YXG9g5S5pTNLbUksklCCtopLurTgND6IPCN3vGwr7I+kU8j6boJsPC51w0QlIBvicWYkWtD62Y3fDSGuP+hxZGs9fz114h0PAD0+sVKIV/pb+woT1cuRubxGji6R0cuzicvDR9C3Wqn8RSzbKMmM/ksuzOmURfNm1X08EgKhubA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718998444; c=relaxed/simple;
-	bh=22bAKJA6pR5A3fau1FPfbtJIxdk2LdaJWM67dwRA6io=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U7OvBloUlVvqcicxaroKmY1pI6T3pXKquERn+B/gJJahsyAUYgjSMX0W4GZyE0ANdo14pAX9K7+D1+paGKNe2TxM7iUJmrF072Rj2dbxryg0/F3Ax2oIuOtHn778Qd6ziVLDXiFg6O31mTTRVplaAajyq+t/Ee21/kAi+k9pHMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xtnmt/hZ; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-443586c2091so589621cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:34:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718998442; x=1719603242; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TcjyGl0poFmJvaQIN/Tb4xXEEBm1p2om5dg/4ZRBoHA=;
-        b=Xtnmt/hZ7U0H84Hzk79GfR9fobS3HNJNKTVGF+df/NGNALBk/RL9uustBv9NfRNa6t
-         AaNZX3i+2eakj7OFcG5Qd3HggWbdl4b6DGHrf50pal5ZLrWZYQVsIZafak0+OfFqsJwp
-         j3T46x6LBnY4TFWtcThshUqCYFo0Qobx8j1ZB+MY559qT5O2X/T3YVv9ovRweFEIkm42
-         jxRLuhez8THw/AC5cW2NRsoVQ4ZYFl5qVgBF+OL7oQAM6NNRYOjm9NWEsuU9lKN1NmH6
-         C5/3PMOObMoLudk+TSmg+MjkOc+7vglScWrnD3l4GmQJ3MoCjiDKD3teiKDD7ZRC1pPW
-         dvJw==
+	s=arc-20240116; t=1718998447; c=relaxed/simple;
+	bh=IR6hXThYDmDCgdqkKA8YX+vJFJpWjz/cBEd5coBfDOo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aqmgsxE/aeZK3g2LM5/WDQ+5Efut45Zm7Vq4fHqQfbLu8OLwOhxKdr1BvRahvRLMBwqp1Ag4ME1tcoGHO7Tmirt2nW3qBTYCWLF1WvcxcOHmz5pX3z5Q4KldQIpYGPKLDBhJAQw6USZLWoTC9qoElOlJPWopA1f0Sz8Ax9WL5Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ifraVQh4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718998445;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iP+mWh+oai2lKyD3HjCZKvKZXTzmQCGTy8Y+p6hNoq4=;
+	b=ifraVQh4utRcpHPRh6wvr1tBw3OyVrJHyjzdytPr1WJmgonxFc33jsrWnTeXY7ef8T04Xx
+	2PWEbPcNSzUh8Pods4R4CjTxnfeNdQpR9g9PS3C2Vk/YRc+VlUB9rrYg5g7ppQf6jKG+8m
+	mkOZcwm1SoY6Hi9381Z9nrweTHmBrrA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-462-SRStz9fRN1ihBSdqYQnWQw-1; Fri, 21 Jun 2024 15:34:03 -0400
+X-MC-Unique: SRStz9fRN1ihBSdqYQnWQw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-421791c4eadso12621495e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:34:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718998442; x=1719603242;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TcjyGl0poFmJvaQIN/Tb4xXEEBm1p2om5dg/4ZRBoHA=;
-        b=iZOlkJ/DKbbUgNU8rwD5pXWbhsCdUxjOMiG273CM8IWyGJmLWiIWECqrIv8GEo5DvK
-         4Vtd5YMgi/r4Hc76X+5NndzSJ/klX1v1eQtB8wJTpbiovtFs3SIScOKdu8kOG/tD1M8T
-         7UpF0YYrKMiZNyTGj9em6VWccfb+vdVBu23PvEMBMi4dTMND8eLdOQtE4sO8A2rPn9IC
-         6PHSZV0ornNQiBqioT1j9h68QshAX+DhQJQx89S+GNkIPTk1t9BUbriWETs4bcMjT3Xn
-         JZmChaWVoc0d8LFG3MokyAMPK3NuwTt2Pa2fe8Aa5vkISVegZK+uW43rTrNbBDX0AmoB
-         Jv+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVBgvRBexWrVg2tIG92dB/NiSIK9fbzsQ2K8UgLHlSR6VDf4/cf5ZZ5wAtdU/4wMe7nNkdGm4gA38XY4hUh7u+wqEvzPLOyLd4wvHMy
-X-Gm-Message-State: AOJu0Yw5hql3srjh57xsUjhu9gNYJxQdCj5aqiAeYbFdsG+ay0dZQQqQ
-	eCRJPHGk1Q4HO1CcuXREMdHzMTyf4ZRJqIGVz8+lSxQBb8B92J3hlgYkvL/kgKdG5XFOxqx0C2m
-	VLHQnLRQa5+SaBm651d3Z/viDLAbJFpiNoOX4
-X-Google-Smtp-Source: AGHT+IHOnCXVNj6jxV8LpXQHq3BlC9ork7/0wY+nUji69T+kI2ZaEuQxzQC3D1JRanjzh53xix7c9zbM8luwO4E45L8=
-X-Received: by 2002:ac8:5748:0:b0:444:cdc4:fef5 with SMTP id
- d75a77b69052e-444ce38fbebmr159621cf.27.1718998441772; Fri, 21 Jun 2024
- 12:34:01 -0700 (PDT)
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iP+mWh+oai2lKyD3HjCZKvKZXTzmQCGTy8Y+p6hNoq4=;
+        b=YYuELbihtGKkGu7D1ALLIvIkfXbwQAb6CMHvjBrxo/wOHo7ev2jp4CtohwcDHtxUut
+         DZY3WV/PmawzYzZphhoGjvhxvIH2NypbMdfmhQLEDg8vytn7iTBRbe57kRv6voEmEZIZ
+         p8AXcPHJDTnTB9GexWaFTLC3Z8ZiaJuuXo6ph95vYLefWFWAz0Dykbcy1WA9BGQ5gN5e
+         rsYx1pJarR9gAQ7exmJlh7Mkk3PMx+Ko3PRcsIMi5E6vgEIEfEMD9HelemvPtgBA0a4Q
+         WHMighOZuU3JFD/2WKthJ3y6gjm2M82mR5DeMJctQYs78bAm1t4gm887ez3h6u9Yl/g9
+         aUNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzxtEh6kMfILpmDnre4bW2E7Cq2Ts/3V6WIdZ0UegHnFUPbqKe0jSrDOY3M75A9RWY7Hj+PDkiWfSCUEjvw0iaNKHfNc/tvgHBOxOI
+X-Gm-Message-State: AOJu0YyWncn2lt0VvZtKp+GVwK7uLlHBg9nsF9jIVh1K5XlNDqzbkaDb
+	vPZtGAg/s9iQdb3dd7oVf0rGVypLF5YFfaBbUBx0nB5I9adapqKHOYhKdHZbc+mxLAXskwWt+Fy
+	VxZy/4fbXPlntPpSdglXyXDbyLwguj1xuL8+MV66gQeaBHKj+FAGzbQEzlD+vhg==
+X-Received: by 2002:a05:600c:181c:b0:421:f346:6b06 with SMTP id 5b1f17b1804b1-42475298e68mr68730475e9.28.1718998442301;
+        Fri, 21 Jun 2024 12:34:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGUgi1RJw4/XDIAAjAQl+jUyCuY5PEjY+CKK/rd+iuv279adLiMlR3MbhNJooFF7lsCy198mg==
+X-Received: by 2002:a05:600c:181c:b0:421:f346:6b06 with SMTP id 5b1f17b1804b1-42475298e68mr68730275e9.28.1718998441707;
+        Fri, 21 Jun 2024 12:34:01 -0700 (PDT)
+Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0beb08sm83051605e9.17.2024.06.21.12.34.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 12:34:01 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>, linux-kernel@vger.kernel.org,
+ Maxime Ripard <mripard@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David
+ Airlie <airlied@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/ssd130x: Add drm_panic support
+In-Reply-To: <ZnWsQ36q44l4CmOJ@phenom.ffwll.local>
+References: <20240620222222.155933-1-javierm@redhat.com>
+ <24205cdf-a3c6-475e-ba8a-a52d039a402d@redhat.com>
+ <87h6dmjry6.fsf@minerva.mail-host-address-is-not-set>
+ <87ed8qjo8y.fsf@minerva.mail-host-address-is-not-set>
+ <ZnWsQ36q44l4CmOJ@phenom.ffwll.local>
+Date: Fri, 21 Jun 2024 21:34:00 +0200
+Message-ID: <87bk3ujdjr.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620080509.18504-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240620080509.18504-5-lvzhaoxiong@huaqin.corp-partner.google.com>
-In-Reply-To: <20240620080509.18504-5-lvzhaoxiong@huaqin.corp-partner.google.com>
-From: Doug Anderson <dianders@google.com>
-Date: Fri, 21 Jun 2024 12:33:49 -0700
-Message-ID: <CAD=FV=UjFvi53W2gkfhJTz10ALSsR=E+9ZLCH_8KCr9h5bHSaQ@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] drm/panel: jd9365da: Add the function of adjusting orientation
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
-	benjamin.tissoires@redhat.co, hsinyi@google.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi,
+Daniel Vetter <daniel@ffwll.ch> writes:
 
-On Thu, Jun 20, 2024 at 1:05=E2=80=AFAM Zhaoxiong Lv
-<lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
+Hello Sima,
+
+Thanks for your comment and explanations.
+
+> On Fri, Jun 21, 2024 at 05:42:53PM +0200, Javier Martinez Canillas wrote:
+>> Javier Martinez Canillas <javierm@redhat.com> writes:
+>> 
+>> > Jocelyn Falempe <jfalempe@redhat.com> writes:
+>> >
+>> > Hello Jocelyn, thanks for your feedback!
+>> >
+>> >> On 21/06/2024 00:22, Javier Martinez Canillas wrote:
+>> >>> Add support for the drm_panic infrastructure, which allows to display
+>> >>> a user friendly message on the screen when a Linux kernel panic occurs.
+>> >>> 
+>> >>> The display controller doesn't scanout the framebuffer, but instead the
+>> >>> pixels are sent to the device using a transport bus. For this reason, a
+>> >>> .panic_flush handler is needed to flush the panic image to the display.
+>> >>
+>> >> Thanks for this patch, that's really cool that drm_panic can work on 
+>> >> this device too.
+>> >>
+>> >
+>> > Indeed, that's why I did it. Just to see if it could work :)
+>> >
+>> > [...]
+>> >
+>> >>> +static void ssd130x_primary_plane_helper_panic_flush(struct drm_plane *plane)
+>> >>> +{
+>> >>> +	struct drm_plane_state *plane_state = plane->state;
+>> >>> +	struct ssd130x_plane_state *ssd130x_plane_state = to_ssd130x_plane_state(plane_state);
+>> >>> +	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(plane_state);
+>> >>> +	struct drm_crtc *crtc = plane_state->crtc;
+>> >>> +	struct ssd130x_crtc_state *ssd130x_crtc_state = to_ssd130x_crtc_state(crtc->state);
+>> >>> +
+>> >>> +	ssd130x_fb_blit_rect(plane_state->fb, &shadow_plane_state->data[0], &plane_state->dst,
+>> >>> +			     ssd130x_plane_state->buffer, ssd130x_crtc_state->data_array,
+>> >>> +			     &shadow_plane_state->fmtcnv_state);
+>> >>
+>> >> ssd130x_fb_blit_rect() will call regmap->write(), which involve mutex 
+>> >> and might sleep. And if the mutex is taken when the panic occurs, it 
+>> >> might deadlock the panic handling.
+>> >
+>> > That's a good point and I something haven't considered...
+>> >
+>> >> One solution would be to configure the regmap with config->fast_io and 
+>> >> config->use_raw_spinlock, and check that the lock is available with 
+>> >> try_lock(map->raw_spin_lock)
+>> >> But that means it will waste cpu cycle with busy waiting for normal 
+>> >> operation, which is not good.
+>> >>
+>> >
+>> > Yeah, I would prefer to not change the driver for normal operation.
+>> >
+>> 
+>> Another option, that I believe makes more sense, is to just disable the
+>> regmap locking (using struct regmap_config.disable_locking field [0]).
+>> 
+>> Since this regmap is not shared with other drivers and so any concurrent
+>> access should already be prevented by the DRM core locking scheme.
+>> 
+>> Is my understanding correct?
 >
-> @@ -893,6 +901,12 @@ static int jadard_dsi_probe(struct mipi_dsi_device *=
-dsi)
->         drm_panel_init(&jadard->panel, dev, &jadard_funcs,
->                        DRM_MODE_CONNECTOR_DSI);
+> Quick irc discussion summary: Since these are panels that sit on i2c/spi
+> buses, you need to put the raw spinlock panic locking into these
+> subsystems. Which is going to be extreme amounts of fun, becuase:
 >
-> +       ret =3D of_drm_get_panel_orientation(dev->of_node, &jadard->orien=
-tation);
-> +       if (ret < 0) {
-> +               dev_err(dev, "%pOF: failed to get orientation %d\n", dev-=
->of_node, ret);
-> +               return ret;
-> +       }
+> - You need to protect innermost register access with a raw spinlock, but
+>   enough so that every access is still consistent.
+>
+> - You need separate panic paths which avoid all the existing subsystem
+>   locking (i2c/spi have userspace apis, so they need mutexes) and only
+>   rely on the caller having done the raw spinlock trylocking.
+>
+> - Bonus points: Who even owns that raw spinlock ...
+>
+> I'm afraid, this is going to be a tough nut to crack :-/
+>
 
-nit: use dev_err_probe(). Also no need to include a %pOF, AKA:
+Yeah, not worth the effort then. I'll just drop this patch.
 
-if (ret < 0)
-  return dev_err_probe(dev, ret, "Failed to get orientation\n");
+> Cheers, Sima
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
+>
+
+-- 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
