@@ -1,128 +1,125 @@
-Return-Path: <linux-kernel+bounces-224167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DCF911DF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:09:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1A7911DF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B94C9B25635
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:09:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA92BB24444
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2403D16DECA;
-	Fri, 21 Jun 2024 08:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABD916FF30;
+	Fri, 21 Jun 2024 08:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsAgSmpU"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7l2ga2O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148B984A3B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8683484A3B;
+	Fri, 21 Jun 2024 08:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718956857; cv=none; b=e6iWwnyjhwWylTWhSTz5BNNImZCNVgRAm3YNkIylxJqWW3vZixmDrSptN21RFZ4U3NyAgiRfbqc2HkSrqRu752UFDXPLAr+li8vWe9XLrcLKVBq79ydhFDv0E1fHFTZhPdjiDymm+7GI95SCjBm91waiQx/9s6HpUJxGSD8OFVk=
+	t=1718956862; cv=none; b=MF3xSjdjG7cqYli0u+jqu6rh9fZfqgiMvJa+kIU7A6NP+Kc5AKKLnKCo8MidXeyqafooo+izDZIjNWS4uA0q8+Eq5gq6PUi7sUD8x0x3tReq17NH+POJLYrjDoHC26/mwXZUe4C3AjVRglVopiu2FaG8Vy87xR88Th7sNlwGNys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718956857; c=relaxed/simple;
-	bh=17ZElb9x600FIgJ3uSEvYNzmBsGbPPjBGxIz7EagCMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NBHKNQvTFBs0DfEtLgoswpsiU09ebfmYtxIOcYxKHYj7/hpwCnxCHRPC17pMwD8K729XwywfRceleZlZLgFmT59khJ0TD3itB6SGoTe8ZPLtS0iVEaTWzoi4Mtti6V36EF+dZuBNiI4paQKdZ4qD3WAfvwp590E5+lbvacKsImg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsAgSmpU; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c70c08d98fso1468883a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718956855; x=1719561655; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A10uLI/mw5BPIFxNPTyi9eTFLYJc1j4b8EnpD6ygN/E=;
-        b=RsAgSmpUQ0Oubt06rzF/RZLhNmX3iepaCeBeOuAbGhGNpKmqR3U6VM/wMbZL2pYPt0
-         3uE2kiR/XCZ5X7YzjLd2mJrg0POUEMXZAiTcaLZMoUdimCX1Kk6eIHiVoMeatiq+e7J0
-         E1/KzfsyrvZyXobbvizmPSwjRHOb0DWTKIZtevB4PWz8o8gI9UMCZ1APWRL5WS38zmHp
-         gq58IvstsQ2cB8UePK2qRAcbJwgPeAcMhz9yIV3QFXKRUs3JhRAZLBL3FvkE5AUsffU4
-         1sCeMWvljWL4pemQH7qJcICm6ahFZXf1zxP5pDAX8YNgpQ41DrgnVZYnJv5sjgmWO2X2
-         2M5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718956855; x=1719561655;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A10uLI/mw5BPIFxNPTyi9eTFLYJc1j4b8EnpD6ygN/E=;
-        b=tx3uguEl5g7N9tvbNx2W7pvkkb/obX3MdVupfv8+HKDGKdmQcv6Km2H4srtCVkqlca
-         n6H3n9enxUujJSisyy9cj0Jh4G0roeyOHpcaLupeoRMKVWfwhLBL0nHOYsLSDx8pJQzA
-         XQ+qaBEDJgMZ5a3iWoJL74FPnxtxjPoW6NcfFAt9ERWH4wiWv/8nudU1m9mFTad/b9hy
-         0IYyHsluHWWjFP2d/B2ZSzGASN8iVTR3DCyAvrwKA4gbD0s3K60Xnv3gPlQi0JXBk7uT
-         EPRL3skZUmTnxROJnBzghVaZ3L1ppy5epH7UU1Dc7BtWd94EtaNxuZddrhwjIvMeXafr
-         cfrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTLMe/5zBDO/Oo1adQqf6AqhomFlZkB4mjDVtXgcIqT6N45zWSVTG6+G+T6wNNFeNALXXgSK/VkCu4gtY6V8Jd2Yygf+fEE/PydwNG
-X-Gm-Message-State: AOJu0Yyxv7VkyLAd1GtexKpzGy/l07pRZZu8q6fPGyNJPJL0oOIx1RPB
-	ygYB8T4GAwWQGfcBLPeU32IXMFrGgCwXB2vNniNLVlGv2GtczBjuiMFw/loDTYQeTQO9E6uDETJ
-	Q1MH3rgXefkEoDjU/xfcw2bokx1c=
-X-Google-Smtp-Source: AGHT+IGc68H9WcHj8y15EEUf6zY/mIOxdH/h8ZT3XcHAgoC0HxXPonbeX3d4GDnX62zQsLJSuwIM6Rj8VwETKjhkIgU=
-X-Received: by 2002:a17:90a:77c8:b0:2c4:e772:a864 with SMTP id
- 98e67ed59e1d1-2c7b5dc9e68mr7896458a91.40.1718956855165; Fri, 21 Jun 2024
- 01:00:55 -0700 (PDT)
+	s=arc-20240116; t=1718956862; c=relaxed/simple;
+	bh=79uHlnttJepyz6wjLqBHqDBH9rnuTEAmit5+JYFFtgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=Pa6MEtDf5Ecijh+NHB4yDrUPD0am2bwGJDzFOs5vcf6iw454hDOm6rVHGAp97NewFDWeNeYPon1FiQq1f1hjub0uvhg/YnhDMVqFneIAJR8JcixUpINKo2kljwiArdvEh+GXNzM2j2fvrC8rZLPYZIBs2hZmUDE3l47JT4WDGvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7l2ga2O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D97C4AF07;
+	Fri, 21 Jun 2024 08:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718956862;
+	bh=79uHlnttJepyz6wjLqBHqDBH9rnuTEAmit5+JYFFtgI=;
+	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+	b=u7l2ga2OpM+1ELNAwlwCWVUVHmHa47s8I/9/KEB4vCZAvhSwWHWUqzdIFI6JGwYjP
+	 j7W3fDOkdkiet4895wDHQf00kYB1BO9UgW8gw4t0PhlQ6biGCpxqcU/PBHY9kXvT9t
+	 acoqyfgdhwxaAzMj3vITW9yOBUhdpjJaUx2FIe82tDnKWng7qU3Nq6bvi/9WrFISxD
+	 UTwd3Zv2Ntq/7020K+hVyLEgSNgoxmb8FLQeW8hp2eoce2WInO/pvFqbfafwhChGG4
+	 RUk9ply8M+T3hossQa9SSizJO4SPdIRrWCg+NktimMut0QrZrW38TLjsQ0imt2B8CG
+	 RTN6I8Zd7DmEA==
+Message-ID: <101b0854-7b39-486d-af63-4fe72566e8e1@kernel.org>
+Date: Fri, 21 Jun 2024 10:00:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621062617.595007-1-yi.sun@unisoc.com> <20240621062617.595007-2-yi.sun@unisoc.com>
-In-Reply-To: <20240621062617.595007-2-yi.sun@unisoc.com>
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-Date: Fri, 21 Jun 2024 16:00:43 +0800
-Message-ID: <CAJhGHyASBtZ6pE3hUB=qB7qv3CQ=OAwarxNaQ=iojcFznfORpg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] workqueue: add io priority to work_struct
-To: Yi Sun <yi.sun@unisoc.com>
-Cc: sunyibuaa@gmail.com, tj@kernel.org, jaegeuk@kernel.org, chao@kernel.org, 
-	ebiggers@google.com, kent.overstreet@linux.dev, linux-kernel@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, niuzhiguo84@gmail.com, 
-	Hao_hao.Wang@unisoc.com, yunlongxing23@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rtla/osnoise: set the default threshold to 1us
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+ Steven Rostedt <rostedt@goodmis.org>
+References: <Zmb-QhiiiI6jM9To@uudg.org>
+Content-Language: en-US, pt-BR, it-IT
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>
+From: Daniel Bristot de Oliveira <bristot@kernel.org>
+In-Reply-To: <Zmb-QhiiiI6jM9To@uudg.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello
+Hi Luis,
 
-On Fri, Jun 21, 2024 at 2:27=E2=80=AFPM Yi Sun <yi.sun@unisoc.com> wrote:
+This is not rtla/osnoise but tracing/osnoise, so the Subject would be:
 
-> index 4c38824f3ab4..d9969596bbc3 100644
-> --- a/include/linux/workqueue_types.h
-> +++ b/include/linux/workqueue_types.h
-> @@ -17,6 +17,12 @@ struct work_struct {
->         atomic_long_t data;
->         struct list_head entry;
->         work_func_t func;
-> +       /* If the work does submit_bio, io priority may be needed. */
-> +       unsigned short ioprio;
-> +       /* Record kworker's original io priority. */
-> +       unsigned short ori_ioprio;
-> +       /* Whether the work has set io priority? */
-> +       long ioprio_flag;
+[PATCH] tracing/osnoise: Set the default threshold to 1 us
 
-I don't see any ioprio code being integrated into workqueue in your
-patchset, from which what you need might be:
+On 6/10/24 15:23, Luis Claudio R. Goncalves wrote:
+> Change the default threshold for osnoise to 1us, so that any noise
+> equal or above this value is recorded. Let the user set a higher
+> threshold if necessary.
 
-struct ioprio_work {
-       /******* the work item to be scheduled *******/
-       struct work_struct work;
+The reason why I place fear instead of one was "fear" of having the loop
+taking more then one us, creating false noise notifications because of
+execution time.
 
-       /******* the stuff need for ioprio ******/
+But it actually never happened, even on low speed arm boxes... Also,
+all users I know are setting it to 1 on rtla... so I think it is safe to
+move the value to 1.
 
-       /* If the work does submit_bio, io priority may be needed. */
-       unsigned short ioprio;
-       /* Record kworker's original io priority. */
-       unsigned short ori_ioprio;
-       /* Whether the work has set io priority? */
-       long ioprio_flag;
-}
+Acked-by: Daniel Bristot de Oliveira <bristot@kernel.org>
 
-And if ioprio needs to be integrated into workqueue, it should be attribute=
-s
-added to the workqueue itself as in the struct workqueue_attrs.
+> Suggested-by: Daniel Bristot de Oliveira <bristot@kernel.org>
+> Reviewed-by: Clark Williams <williams@redhat.com>
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> ---
+>  Documentation/trace/osnoise-tracer.rst | 2 +-
+>  kernel/trace/trace_osnoise.c           | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/trace/osnoise-tracer.rst b/Documentation/trace/osnoise-tracer.rst
+> index 140ef2533d26a..a520adbd34765 100644
+> --- a/Documentation/trace/osnoise-tracer.rst
+> +++ b/Documentation/trace/osnoise-tracer.rst
+> @@ -108,7 +108,7 @@ The tracer has a set of options inside the osnoise directory, they are:
+>     option.
+>   - tracing_threshold: the minimum delta between two time() reads to be
+>     considered as noise, in us. When set to 0, the default value will
+> -   be used, which is currently 5 us.
+> +   be used, which is currently 1 us.
+>   - osnoise/options: a set of on/off options that can be enabled by
+>     writing the option name to the file or disabled by writing the option
+>     name preceded with the 'NO\_' prefix. For example, writing
+> diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+> index a8e28f9b9271c..66a871553d4a1 100644
+> --- a/kernel/trace/trace_osnoise.c
+> +++ b/kernel/trace/trace_osnoise.c
+> @@ -1444,9 +1444,9 @@ static int run_osnoise(void)
+>  	save_osn_sample_stats(osn_var, &s);
+>  
+>  	/*
+> -	 * if threshold is 0, use the default value of 5 us.
+> +	 * if threshold is 0, use the default value of 1 us.
+>  	 */
+> -	threshold = tracing_thresh ? : 5000;
+> +	threshold = tracing_thresh ? : 1000;
+>  
+>  	/*
+>  	 * Apply PREEMPT and IRQ disabled options.
 
-Thanks
-Lai
 
