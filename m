@@ -1,176 +1,174 @@
-Return-Path: <linux-kernel+bounces-224316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741F19120AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:33:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA81912120
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C46C1F24C98
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:33:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA1FFB21A29
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F8A16E895;
-	Fri, 21 Jun 2024 09:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="VhKjjRrK"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A23516EC09;
+	Fri, 21 Jun 2024 09:46:58 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1631616D32E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6F516EBE2;
+	Fri, 21 Jun 2024 09:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718962388; cv=none; b=FdDFoq1h7ch23qUoPOV7zgCqwTtcEeRop+7kWRIwI2XK3nq8NO1A11LIGJFkG8DJc33/NGjFOfw4KNUdnNL6pp6JPOfhmMYIuEar1DpXL9lrzHZO5O+lyiL6ujuLpPNxlIkYnu9ZZ/98P3asMXetxTS6raHezXX5hlIA6fyrmsw=
+	t=1718963217; cv=none; b=WPJKE04TMGaADSh37XXEZeICyL2UP1Y26pDGKHy7T0E8JChiqxkFGO6tW+cYXmk1T/mvFgrUELhyT2rheRx0NS0parjK1P7+Gw5CLKxvWdKe55ciXhADMrNTnno1d/cwwqnd4tytfc3MAndrIP6eiBvMIJQfb+NYguP/Cq0/Miw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718962388; c=relaxed/simple;
-	bh=E9cYpE4iW5KxYJc5t6VcgPWDNJ7zI+gXmn7e5IvxHj0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VzEy7E+6QYnFYdD/2b1s7UMa8sMOVAKMhyXppzbQFgMnuKAyDX6FtMzdvvRBmJuc8t8Ir82mgqtlq5gdKOgUh2qQckPFrdr12LJEez5AVEFJ5xIorTlUWcccCXTeKxGXNBs5EvIkDPhA1u/yYlbpny+6+u+mojkVpaxyZDdhjV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=VhKjjRrK; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Envelope-To: daniel@makrotopia.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1718962383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OwyKB6XsVezaf31h9Csn0ERhorbwkY4Vv9b4XERmN7w=;
-	b=VhKjjRrKfeDUSL0Fh1j6EQQMHRry83jtwLDLaOIMKjyfXh+pgxkMifNrIfDOzzo/9fKAeG
-	YqM6f6xi2NT3CLK9VU2VB+OdaltyUI8XQMzp8Jwwg9/7EvnT4NibVV/vbgcMg7q0U5IWvK
-	gXSqgEaG2qhQdtlXnmc8nY6Z/PR0qndd/4FgYvCXRrD+kyy5vQdIwUuA1FZY6tJJtmbye7
-	s9U7nEVgH5XPimBn0pOKOoMvoz9sG/6OtXVbMRtkCyGZoTpVcRhT+z/PYCdfr289tkWpc8
-	yW8W7BBCRbLQ8010+5JASTc8cpMAi4asNiI7BFq2uVLIENtdAEeZG54c0U5iGg==
-X-Envelope-To: aurelien@aurel32.net
-X-Envelope-To: olivia@selenic.com
-X-Envelope-To: herbert@gondor.apana.org.au
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: krzk+dt@kernel.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: heiko@sntech.de
-X-Envelope-To: p.zabel@pengutronix.de
-X-Envelope-To: ukleinek@debian.org
-X-Envelope-To: sebastian.reichel@collabora.com
-X-Envelope-To: linux.amoon@gmail.com
-X-Envelope-To: dsimic@manjaro.org
-X-Envelope-To: s.hauer@pengutronix.de
-X-Envelope-To: martin@kaiser.cx
-X-Envelope-To: ardb@kernel.org
-X-Envelope-To: linux-crypto@vger.kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: daniel@makrotopia.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Daniel Golle <daniel@makrotopia.org>,
- Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>,
- Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Anand Moon <linux.amoon@gmail.com>, Dragan Simic <dsimic@manjaro.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>,
- Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Daniel Golle <daniel@makrotopia.org>
-Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
-Date: Fri, 21 Jun 2024 11:32:47 +0200
-Message-ID: <2947104.hVmBtEWnvU@bagend>
-Organization: Connecting Knowledge
-In-Reply-To:
- <57a7fb13451f066ddc8d1d9339d8f6c1e1946bf1.1718921174.git.daniel@makrotopia.org>
-References:
- <cover.1718921174.git.daniel@makrotopia.org>
- <57a7fb13451f066ddc8d1d9339d8f6c1e1946bf1.1718921174.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1718963217; c=relaxed/simple;
+	bh=HJTFm3ne3G9N/E5vIgWrPP8CfAEG4zIi627y5AOehJE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EjgLCNtHs0zSh/S1VW6HIPEzXkz/6ikLvLDSgSCyRiJLDgr/HAW5Zo4UO6LJjQ9CdTXl03NqplNL5NSKSgs/wNNMN5Tj8HiO4Ix2bIM6fuSZ+TKpPEEP5jfLtwPxBadzp4g2Dh1J/vSsYndy8ZjMsZZYjRVTt4fq+OJPLUM0Nqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L7PHc8026598;
+	Fri, 21 Jun 2024 02:34:26 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yvrmq8p5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 21 Jun 2024 02:34:26 -0700 (PDT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 21 Jun 2024 02:34:26 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Fri, 21 Jun 2024 02:34:24 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com>
+CC: <bfoster@redhat.com>, <kent.overstreet@linux.dev>,
+        <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] bcachefs: fix deadlock in bch2_gc_mark_key
+Date: Fri, 21 Jun 2024 17:34:23 +0800
+Message-ID: <20240621093423.1874314-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000c43781061b5fbdcd@google.com>
+References: <000000000000c43781061b5fbdcd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1935094.npV3YSaYj1";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: eS3u-ap7tF52Pq7eMUnI8kgw38g8yCsy
+X-Proofpoint-GUID: eS3u-ap7tF52Pq7eMUnI8kgw38g8yCsy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_04,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ adultscore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
+ mlxlogscore=900 suspectscore=0 clxscore=1011 malwarescore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2406140001 definitions=main-2406210071
 
---nextPart1935094.npV3YSaYj1
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-Cc: Daniel Golle <daniel@makrotopia.org>
-Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
-Date: Fri, 21 Jun 2024 11:32:47 +0200
-Message-ID: <2947104.hVmBtEWnvU@bagend>
-Organization: Connecting Knowledge
-MIME-Version: 1.0
+[Syz reported]
+the existing dependency chain (in reverse order) is:
 
-Hi,
+-> #1 (&c->btree_root_lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       bch2_btree_roots_to_journal_entries+0xbb/0x980 fs/bcachefs/btree_update_interior.c:2633
+       bch2_fs_mark_clean+0x2cc/0x6d0 fs/bcachefs/sb-clean.c:376
+       bch2_fs_read_only+0x1101/0x1210 fs/bcachefs/super.c:381
+       __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:615
+       generic_shutdown_super+0x136/0x2d0 fs/super.c:642
+       bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2037
+       deactivate_locked_super+0xc4/0x130 fs/super.c:473
+       cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
+       task_work_run+0x24f/0x310 kernel/task_work.c:180
+       ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
+       ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+       ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+       syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
+       syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+       syscall_exit_to_user_mode+0x273/0x370 kernel/entry/common.c:218
+       do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-On Friday, 21 June 2024 03:25:18 CEST Daniel Golle wrote:
-> diff --git a/drivers/char/hw_random/rockchip-rng.c
-> b/drivers/char/hw_random/rockchip-rng.c new file mode 100644
-> index 000000000000..6070abb73847
-> --- /dev/null
-> +++ b/drivers/char/hw_random/rockchip-rng.c
-> @@ -0,0 +1,229 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * rockchip-rng.c True Random Number Generator driver for Rockchip SoCs
-> + *
-> + * Copyright (c) 2018, Fuzhou Rockchip Electronics Co., Ltd.
-> + * Copyright (c) 2022, Aurelien Jarno
-> + * Authors:
-> + *  Lin Jinhan <troy.lin@rock-chips.com>
-> + *  Aurelien Jarno <aurelien@aurel32.net>
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/hw_random.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
-> +#include <linux/slab.h>
+-> #0 (&c->sb_lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       bch2_gc_mark_key+0xc66/0x1010 fs/bcachefs/btree_gc.c:600
+       bch2_gc_btree fs/bcachefs/btree_gc.c:648 [inline]
+       bch2_gc_btrees fs/bcachefs/btree_gc.c:697 [inline]
+       bch2_check_allocations+0x3e06/0xcca0 fs/bcachefs/btree_gc.c:1224
+       bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:182
+       bch2_run_recovery_passes+0x19e/0x820 fs/bcachefs/recovery_passes.c:225
+       bch2_fs_recovery+0x2370/0x3720 fs/bcachefs/recovery.c:807
+       bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1035
+       bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2127
+       bch2_mount+0x6b0/0x13a0 fs/bcachefs/fs.c:1919
+       legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+       vfs_get_tree+0x90/0x2a0 fs/super.c:1780
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+       do_mount fs/namespace.c:3692 [inline]
+       __do_sys_mount fs/namespace.c:3898 [inline]
+       __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-I've been using a modified version of Aurelien's patch myself and I added the 
-following to my commit description:
+other info that might help us debug this:
 
-```
-hwrng: rockchip: Explicitly include correct DT includes
+ Possible unsafe locking scenario:
 
-Similar to commit 
-045a44d4c9b3 ("regulator: Explicitly include correct DT includes")
-replace ``of_platform.h`` include with ``of.h`` and ``platform_device.h``.
+       CPU0                    CPU1
+       ----                    ----
+  lock(&c->btree_root_lock);
+                               lock(&c->sb_lock);
+                               lock(&c->btree_root_lock);
+  lock(&c->sb_lock);
 
-Link: https://git.kernel.org/linus/045a44d4c9b32578aacf0811063e5bb741c7c32c
-```
+[Analysis]
+bch2_btree_roots_to_journal_entries() does not need to hold sb_lock, so
+we can remove sb_lock to avoid deadlock.
 
-BUT I don't (really) know what I'm doing, so could you verify whether there is 
-some merit to it?
+Reported-by: syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=050e797ad21ccc3f5d1a
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ fs/bcachefs/sb-clean.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Cheers,
-  Diederik
---nextPart1935094.npV3YSaYj1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZnVIvwAKCRDXblvOeH7b
-bqE7AQDF37/CXTAUyN3awVxvukKshJxjy4bD/LzGPF6vKKjeMwD+OQtj9mn9qg9S
-9VINqYzabKxos3rXWoGeIEgjc7TYkwM=
-=DxWI
------END PGP SIGNATURE-----
-
---nextPart1935094.npV3YSaYj1--
-
-
+diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
+index 47f10ab57f40..7a75615ba745 100644
+--- a/fs/bcachefs/sb-clean.c
++++ b/fs/bcachefs/sb-clean.c
+@@ -373,6 +373,7 @@ void bch2_fs_mark_clean(struct bch_fs *c)
+ 
+ 	entry = sb_clean->start;
+ 	bch2_journal_super_entries_add_common(c, &entry, 0);
++	mutex_unlock(&c->sb_lock);
+ 	entry = bch2_btree_roots_to_journal_entries(c, entry, 0);
+ 	BUG_ON((void *) entry > vstruct_end(&sb_clean->field));
+ 
+@@ -383,6 +384,7 @@ void bch2_fs_mark_clean(struct bch_fs *c)
+ 	 * this should be in the write path, and we should be validating every
+ 	 * superblock section:
+ 	 */
++	mutex_lock(&c->sb_lock);
+ 	ret = bch2_sb_clean_validate_late(c, sb_clean, WRITE);
+ 	if (ret) {
+ 		bch_err(c, "error writing marking filesystem clean: validate error");
+-- 
+2.43.0
 
 
