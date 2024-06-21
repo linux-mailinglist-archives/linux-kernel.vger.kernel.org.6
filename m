@@ -1,144 +1,110 @@
-Return-Path: <linux-kernel+bounces-223706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4195191172D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:11:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF4B91171B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A49C12834DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:11:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC20D282013
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FAE625;
-	Fri, 21 Jun 2024 00:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6A2631;
+	Fri, 21 Jun 2024 00:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWUZpZhk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8C2s4Bb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608C6197
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 00:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E7F17C;
+	Fri, 21 Jun 2024 00:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718928656; cv=none; b=AcCZYJkWPkzjHcB8Kbd0JxA7h/vAz7wtV61P3ohwk+wCxgjSl+pisHCbj3AauSUR3/M7EacxcvTLjOutmj5XWRH4I3JBZgZN05qesDdM3inWUELet0oxKXhL5LsqGnKJDZRV0S6UkPkcPUPIweQELMB/9NRhpD+N8Rk6HNKC8SY=
+	t=1718928337; cv=none; b=aa7RNG15NFqYvtDxyVAQWUXz/66YaCL0c/BeT3g05Wq2g6j55+TV+uaLkmzr7TwDYSPaQuYvtyMC9n1sNBZ9vAbRvBSSitt27eltbw7vpHnBy4VOs5bJI9A7cmOTMdGlE+Ou9sCWx6SFTU0ZfhHAvrBdb7UIz3SKvKWyG0+0ihI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718928656; c=relaxed/simple;
-	bh=DVc+oZ8IpmajrWn8uMMOY6RL2NOLHfDxJNeCdHePKgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xb7nRnxPc1zn/V1fXpWlG7xEJVAOnJs2r8gp2pNDlndGuwE+4fK83wm7pPUosFTVFxwCKrohMokll6sUowLACdRJvROClhnqAXr/QF5X7jI3zDspMqJ5HqBY3jbewbOWoIKXS+zpU+DMJYxgNKUMSP2ERamtytraPBCvs7hQgKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWUZpZhk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F7A5C2BD10;
-	Fri, 21 Jun 2024 00:10:54 +0000 (UTC)
+	s=arc-20240116; t=1718928337; c=relaxed/simple;
+	bh=fJPlLHdMqCmgtQq/twO+a2QC2xncnSMWw9IGmj20ENw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NjPwN27m28rIa2PfLxuw+Pyh9OZTzlnDFUPwRymmcjLTGCBOTBDl2fvGHl5zKEb5uyvLf+KDo/RUhOwNL5eX+xyCA+ht2LOjYkUx8tKlvUtTu7Zhyb9O9mb8eOET8E9WYdNYNHnVeOWl37F8nPGxa9WKQ4siZqS1bZMNNM96Jyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8C2s4Bb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B27C2BD10;
+	Fri, 21 Jun 2024 00:05:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718928655;
-	bh=DVc+oZ8IpmajrWn8uMMOY6RL2NOLHfDxJNeCdHePKgg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tWUZpZhkar/bqgnu5QJIUR2WDZmrEDCqDQl/Wt9gCmNpuMJLA8RZ7aFzGwtt6L6lU
-	 X7/5/EvkILpOcBMSMR8MmL77N5k+UcTmddkUN998iHeaxqq/0byRHWYbIZ+XpYsN+c
-	 DEW/vRk9M0Z/yRExKwYEvfxTwndWbskG9LwaDC0zAqptY3Y+d2BInEYenQ2ul33HWF
-	 /un6QR868O/pDMl5JRnh0qbCtPygFX+30BM9qnZIRbat6ekFDNveQH7HK6tfgun0g6
-	 DlpLrcuAbNwWctRWfbk0kvmyAib6nuI/G05ioQ84d6s9DGxnWIq2bHu8JrYWsu10tr
-	 ZYh4Ylb90JT7g==
-Date: Fri, 21 Jun 2024 07:56:56 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Cyril Bur <cyrilbur@tenstorrent.com>, Deepak Gupta <debug@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] riscv: convert bottom half of exception handling to C
-Message-ID: <ZnTByNTDWnVdtiDr@xhacker>
-References: <20240616170553.2832-1-jszhang@kernel.org>
- <20240616170553.2832-4-jszhang@kernel.org>
- <ZnMPhcaTKFRbbE1i@debug.ba.rivosinc.com>
- <CANtDSipXbYSuz6NakbXw-8k0_ZN5hdT7VWMushXvQ5VB0Am_Ng@mail.gmail.com>
- <95a081a9-2307-4e5b-8ae2-082be16b327e@rivosinc.com>
+	s=k20201202; t=1718928336;
+	bh=fJPlLHdMqCmgtQq/twO+a2QC2xncnSMWw9IGmj20ENw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=o8C2s4BbJyisd0IM/JcnEhu3RJKkogMRaeHD5G2yUWSOM4S0MB18zltnpnJmbIrsW
+	 DuPxJ+Zuy1FLOyTixepK+xYMLFrw3dOZipT2DnEhfSxtrIq4aHEuCkf7NRE3pnMSK4
+	 4Z5m7n4MOujfDptBewZogGsApitfiLAP5aar2z00aVzxT8W04uC4RDG5OmkG9JDYJT
+	 FbRpQQIqNJwDNd4Qkx7o9WHA958ibgGcf+XgQgn4qqb06K68Mg6Eqxg8wg/SfW6yca
+	 Vkg77+kcc7Qba23+amlfV+mPrLhQRAiXehj5Fvl9E19ezomoDwqtUziIamPq+FyBfJ
+	 nCHGnweXvE9wQ==
+Message-ID: <e25962a1-cd0c-47c9-9e10-008c475f22cb@kernel.org>
+Date: Fri, 21 Jun 2024 09:05:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <95a081a9-2307-4e5b-8ae2-082be16b327e@rivosinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] ata: libata-scsi: Generate ATA PT sense data when
+ ATA ERR/DF are set
+To: Niklas Cassel <cassel@kernel.org>, Igor Pylypiv <ipylypiv@google.com>
+Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>,
+ linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240614191835.3056153-1-ipylypiv@google.com>
+ <20240614191835.3056153-3-ipylypiv@google.com> <ZnAeFbdt02zge2my@ryzen.lan>
+ <ZnIBdj02yKFz4sK8@google.com> <ZnQm3-OL95x_Z_VP@ryzen.lan>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <ZnQm3-OL95x_Z_VP@ryzen.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 20, 2024 at 10:06:15AM +0200, Clément Léger wrote:
+On 6/20/24 21:55, Niklas Cassel wrote:
+>> Thanks for pointing this out! Looks like ATA PASS-TRHOUGH case is fine
+>> since the flag is always set by ata_scsi_pass_thru() as you pointed out.
+>> Do we still want to add the check even though we know that it is always
+>> set by ata_scsi_pass_thru()?
+>>
+>> If the answer is "yes", I wonder if we should use the ATA_QCFLAG_RTF_FILLED
+>> flag instead? Currently it is used for ahci only but looks like it can be
+>> expanded to other drivers. inic_qc_fill_rtf() will benefit from this change
+>> because it is not always setting the status/error values:
+>> https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/ata/sata_inic162x.c#L583-L586
+>>
+>> For the non passthough case qc->result_tf in ata_gen_ata_sense() is also valid
+>> because fill_result_tf() is being called for failed commands regardless of
+>> the ATA_QCFLAG_RESULT_TF flag:
+>> https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/ata/libata-core.c#L4856-L4873
+>>
+>> In this case using ATA_QCFLAG_RTF_FILLED will be more accurate because
+>> fill_result_tf() is being called even when ATA_QCFLAG_RESULT_TF is not set.
+>>
+>> With that said I'm not sure if it makes sense to update all of the ATA
+>> error handling to start checking for the ATA_QCFLAG_RTF_FILLED flag.
+>>
+>> What are your thoughts on this?
 > 
+> I see your point, we will fill the result if there is an error,
+> even if ATA_QCFLAG_RESULT_TF wasn't set.
 > 
-> On 20/06/2024 02:02, Cyril Bur wrote:
-> > On Thu, Jun 20, 2024 at 3:04 AM Deepak Gupta <debug@rivosinc.com> wrote:
-> >>
-> >> On Mon, Jun 17, 2024 at 01:05:50AM +0800, Jisheng Zhang wrote:
-> >>> For readability, maintainability and future scalability, convert the
-> >>> bottom half of the exception handling to C.
-> >>>
-> >>> Mostly the assembly code is converted to C in a relatively
-> >>> straightforward manner.
-> >>>
-> >>> However, there are two modifications I need to mention:
-> >>>
-> >>> 1. the CSR_CAUSE reg reading and saving is moved to the C code
-> >>> because we need the cause to dispatch the exception handling,
-> >>> if we keep the cause reading and saving, we either pass it to
-> >>> do_traps() via. 2nd param or get it from pt_regs which an extra
-> >>> memory load is needed, I don't like any of the two solutions becase
-> >>> the exception handling sits in hot code path, every instruction
-> >>> matters.
-> >>
-> >> CC: Clement.
-> >>
-> >> I think its better to save away cause in pt_regs prior to calling
-> >> `do_traps`. Once control is transferred to C code in `do_traps`,
-> >> another trap can happen. It's a problem anyways today without CPU support.
-> >>
-> >> Although with Ssdbltrp [1] extension and it kernel support [2] for it,
-> >> I expect asm code would clear up `SDT` bit in mstatus. Whenever `Ssdbltrp` lands,
+> Perhaps we should modify fill_result_tf() to set ATA_QCFLAG_RTF_FILLED,
+> after it has called ap->ops->qc_fill_rtf(qc);
 
-Hi Deepak, Clément,
+Yes, let's do that.
 
-Currently, SR_IE bit is is set(setting means enable irq) in c, could the
-'SDT' bit be cleared in c as well when Ssdbltrp lands?
+> Then this code can check if ATA_QCFLAG_RTF_FILLED is set, like you suggested.
 
-Thanks
-> >> I think `do_traps` should expect nesting of traps and thus cause should be saved
-> >> away before it gets control so that safely traps can be nested.
-> 
-> Hi,
-> 
-> Indeed, every register that is "unique" to a trap and than can be
-> overwritten by a second trap should be saved before reenabling them when
-> using Ssdbltrp. So that would be nice to preserve that.
-> 
-> >>
-> > 
-> > Is a possible solution to do both options Jisheng suggested? Save the
-> > cause before
-> > calling do_traps but also pass it via second param?
-> 
-> I guess so if it fits your performance requirements.
-> 
-> Thanks,
-> 
-> Clément
-> 
-> > 
-> >> [1] - https://github.com/riscv/riscv-double-trap/releases/download/v1.0-rc1/riscv-double-trap.pdf
-> >> [2] - https://lore.kernel.org/all/20240418133916.1442471-1-cleger@rivosinc.com/
-> >>
-> >>>
-> >>> 2.To cope with SIFIVE_CIP_453 errata, it looks like we don't need
-> >>> alternative mechanism any more after the asm->c convertion. Just
-> >>> replace the excp_vect_table two entries.
-> >>>
-> >>> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> >>
-> >> _______________________________________________
-> >> linux-riscv mailing list
-> >> linux-riscv@lists.infradead.org
-> >> http://lists.infradead.org/mailman/listinfo/linux-riscv
+And I wonder if we should not just drop ATA_QCFLAG_RESULT_TF and *always* set
+the result tf for all commands. I fail to see why this is conditional to that flag.
+
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
