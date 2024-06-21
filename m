@@ -1,63 +1,86 @@
-Return-Path: <linux-kernel+bounces-223937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6880911A9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:47:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6338911A97
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6FE2834D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ED68281B61
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EAE137775;
-	Fri, 21 Jun 2024 05:47:13 +0000 (UTC)
-Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267E9130A7D;
+	Fri, 21 Jun 2024 05:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="r3CqK0Rs"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2047.outbound.protection.outlook.com [40.107.212.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FAE13699E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718948832; cv=none; b=uCCCR2RA1qn3WEuSeXs556ONUehpm3pXQbuI0Oa4Fgxd62Z4HuDix08nkYpWuq4cq5khMqJjaZhWgg7cr80zJYiM1scc206aBUU9QGnNCG3/tvtQECS2Vvt69juJjRSeoG7xXEvfdbfKcD5okiN7HoFmhvlTz5JMtCWGNyiJWHM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718948832; c=relaxed/simple;
-	bh=ClD5XEoChg+MURjDPcYB0UiROtr4843NdmqsXRuM4v8=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=ZOq6cLN1krzgzBoqIqOYCkq6aVR6YimUhzIBx1uch8tAkUMuYTKL7Q0cpdsxpcx0sfNuEx64An73ehOM55QodOWriQy/iZ96Rx9BAzvfn3bLinmdTdYv9x6t/ZFM17P2qHnOX24suzIa8FPFTnrDg2xrrCSKmewKUaQAh67N/oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:47652)
-	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sKX71-000CEV-Cu; Thu, 20 Jun 2024 23:47:03 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:34496 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sKX70-008p7B-C2; Thu, 20 Jun 2024 23:47:03 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Tejun Heo <tj@kernel.org>,
-  linux-kernel@vger.kernel.org
-References: <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
-	<20240610152902.GC20640@redhat.com>
-	<20240613154541.GD18218@redhat.com>
-	<87ikyamf4u.fsf@email.froward.int.ebiederm.org>
-	<20240617183758.GB10753@redhat.com>
-	<87iky5k2yi.fsf@email.froward.int.ebiederm.org>
-	<87o77xinmt.fsf_-_@email.froward.int.ebiederm.org>
-	<87iky5inlv.fsf_-_@email.froward.int.ebiederm.org>
-	<20240619155016.GC24240@redhat.com>
-	<87cyocerda.fsf@email.froward.int.ebiederm.org>
-	<20240619191105.GE24240@redhat.com>
-Date: Fri, 21 Jun 2024 00:46:15 -0500
-In-Reply-To: <20240619191105.GE24240@redhat.com> (Oleg Nesterov's message of
-	"Wed, 19 Jun 2024 21:11:06 +0200")
-Message-ID: <874j9mdf14.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C300A34;
+	Fri, 21 Jun 2024 05:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718948796; cv=fail; b=Y/EeNCA6OgcxoKl9tFEJeGaFJWnIhQnBzjaCMJPGRE3lKTEhgAHDqA1Qdc596OnyOLtxDwwYtGwDqfehbPT7IBb19s55UhNzRfb4ZELiPKdpx8zvSJXKpskMzFWEA3wGaaYtFbzYiyxb72J81We4xkxpnNVgJfIQn7Ze8r/zoQ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718948796; c=relaxed/simple;
+	bh=jSvGPEBc/1OQU28T3lVt1VfeylDp6cByFD9uwkW69xE=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bF5fzT4hkvF+86pKj1wAhS3Y/EwikXPZqdGTcaugpmiGForoVhmHDqpiaJ0Tuc3fvNMXnuUfGRDCFZfnt0TFRX5udOFn22Yx8QJdQfdcoHt3uMlJYSyxrMr5ukKUspZ/bfDF217O0oamKK1rcAb1jDhYf3/8JVYaq16aQ83HsJk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=r3CqK0Rs; arc=fail smtp.client-ip=40.107.212.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ig7dWrwt9oTmUMNlCbnc4q69eC1c9SRVyDDIcOvTpW8iMVht+GstpinchTPWEi0gYG48sRLQ7Z6P4obPmaKWuTFr73ED2J1FsXcMtJhEOY3LCNYyAq3KFBBgknEISbfhJYumCWn5ehuESnBv6Iqk4D+vmoJxk1NLWiboUTZsfSOazzl/K40AqX5oDJ9CqF5T8srKzlwjjZ67cSbSgAnmmjnTWPR+FtkvjZfa9WKUV9/3WSyrTRmWCzJtIAmHS1QR0dxTBRJr8qLCHIv5+R/lldMFugCo08R62J7IQKfT+XnT2WNzNEiu1zDbFTYyfClRWoIETw+Mh8zPLd27X/sNLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9ysLAw7txxdOlxij8xkAnue/KWsvoqsjXGr++e5qfvw=;
+ b=IBUIDgnAboZU9wPvsOaurUzOeJQpAVdQfhMKhMwsDucguf9vndVodmUBatwVY0mYO2H8JimXfB8meKA/t7nB25vUYtnXk0cMoLJlQ58e6HH7tzhPS/hPQCHp7IekMaXuoFvP7KmaBE1syLE6VY8HgMs72FhFXmyd3CxdrWqGZ4Av1Y2fdmBL6XK/ZUBhJ8cPpTxyhmZZRMzqG0WYmLwyGTPefmOhoa9ajiCFuZGaNeAyzOyrM68JcQQLnjFiP5BaH5hYAUzgp2XcgwudZIo/wI40fLRAn3XKAS9QQQN6oETXShLIYQu7mc3spiVjcHgJMUueWikzjZNPP8sREcsARw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9ysLAw7txxdOlxij8xkAnue/KWsvoqsjXGr++e5qfvw=;
+ b=r3CqK0RslaMjvLVWqUlAARV/m0oq6MA5Ly0Pu8/v7+FZ1rkNXgQ7V9v9bauih5UWFlLZ+VGIux7G4I2Z6+S5hYHJ6N7UsxNw3tiYinPswvYAaBZEdhuw2OiAijClcYtjtwQ1fAEhPZFw1pcMlHVBQY08twGoxPmpcO3vSgqyAjs=
+Received: from SA9PR13CA0142.namprd13.prod.outlook.com (2603:10b6:806:27::27)
+ by SJ2PR12MB7893.namprd12.prod.outlook.com (2603:10b6:a03:4cc::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Fri, 21 Jun
+ 2024 05:46:31 +0000
+Received: from SN1PEPF0002BA4D.namprd03.prod.outlook.com
+ (2603:10b6:806:27:cafe::75) by SA9PR13CA0142.outlook.office365.com
+ (2603:10b6:806:27::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.32 via Frontend
+ Transport; Fri, 21 Jun 2024 05:46:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF0002BA4D.mail.protection.outlook.com (10.167.242.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Fri, 21 Jun 2024 05:46:29 +0000
+Received: from BLRRASHENOY1 (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Jun
+ 2024 00:46:26 -0500
+From: Gautham R.Shenoy <gautham.shenoy@amd.com>
+To: Perry Yuan <perry.yuan@amd.com>, <rafael.j.wysocki@intel.com>,
+	<Mario.Limonciello@amd.com>, <viresh.kumar@linaro.org>
+CC: <Xinmei.Huang@amd.com>, <Xiaojian.Du@amd.com>, <Li.Meng@amd.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12 7/9] cpufreq: amd-pstate: fix the MSR highest perf
+ will be reset issue while cpb boost off
+In-Reply-To: <df44ee42774efd7d1c656ed43ff3b35988e22e60.1718787627.git.perry.yuan@amd.com>
+References: <cover.1718787627.git.perry.yuan@amd.com>
+ <df44ee42774efd7d1c656ed43ff3b35988e22e60.1718787627.git.perry.yuan@amd.com>
+Date: Fri, 21 Jun 2024 11:16:24 +0530
+Message-ID: <87frt6voen.fsf@BLR-5CG11610CF.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,128 +88,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1sKX70-008p7B-C2;;;mid=<874j9mdf14.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/xha5W1X2licUXIpVEEYb0Xg5Aqdj9vRo=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: **
-X-Spam-Virus: No
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4994]
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
-	*      patterns
-X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 428 ms - load_scoreonly_sql: 0.03 (0.0%),
-	signal_user_changed: 4.3 (1.0%), b_tie_ro: 3.0 (0.7%), parse: 0.78
-	(0.2%), extract_message_metadata: 3.2 (0.7%), get_uri_detail_list:
-	1.69 (0.4%), tests_pri_-2000: 3.1 (0.7%), tests_pri_-1000: 1.83 (0.4%),
-	 tests_pri_-950: 1.08 (0.3%), tests_pri_-900: 0.79 (0.2%),
-	tests_pri_-90: 83 (19.4%), check_bayes: 82 (19.1%), b_tokenize: 6
-	(1.5%), b_tok_get_all: 8 (2.0%), b_comp_prob: 2.00 (0.5%),
-	b_tok_touch_all: 62 (14.4%), b_finish: 0.81 (0.2%), tests_pri_0: 314
-	(73.2%), check_dkim_signature: 0.40 (0.1%), check_dkim_adsp: 2.9
-	(0.7%), poll_dns_idle: 1.49 (0.3%), tests_pri_10: 2.8 (0.7%),
-	tests_pri_500: 8 (1.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 01/17] signal: Make SIGKILL during coredumps an explicit
- special case
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4D:EE_|SJ2PR12MB7893:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e6e6c6c-944a-4bee-0091-08dc91b57fa5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|82310400023|36860700010|1800799021|376011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jQ96Oz5AcD0kKqfgZ3zmUP8y7Nihu5ZirmCP08ZvyU7OX+4XhsoUEfCGyxbk?=
+ =?us-ascii?Q?M3Qi/2S6v1qQlqeN/Y+nDWXFSDspNzrP3F4Unf+Z07uKBopnGbsmNF6E8hE+?=
+ =?us-ascii?Q?eoACb6y48yEWakrgp5P+jAD7VuqTd3xeXvpdKBC6AQpCBa2BgL8KyHid9ipY?=
+ =?us-ascii?Q?7I+uleJr/65AOaGUtWRnqQ9hSL0t/rZHnrTY3tub36+1NJ7P8CUJb357/gNO?=
+ =?us-ascii?Q?Wtt4sV/0RmCx2ZORyrN8uRoikrtYyo0BN/F0Yrp3W/+DekORVa1/cM8sJMVE?=
+ =?us-ascii?Q?I/RbtkdAYwSXx+aek6iJ+tyXXqZqsPaqjcw0kp89dMynbGnKFixn494nsIhZ?=
+ =?us-ascii?Q?ksvpStfO4WpgyemPSSY1Dv0xbkeFOBSJ6zjqxGPcZgJeOM2EyhSAwrjtIrAl?=
+ =?us-ascii?Q?uUN9QLrqc3K6smskrngGU6oB04+vfC18Ej4DCMz1rxr6F/wucRXSI8qrr05G?=
+ =?us-ascii?Q?SjFjBDNT2DfvEGttq2RktqssIsVzpEi48XmRA+Qcb3u0XdfEejQvWZV2QXZz?=
+ =?us-ascii?Q?X+6u5rCDguQXcW1DlhkmUki62u/GfX2eX+PZGU7r10rsqjdi5EGNY/ynAk6t?=
+ =?us-ascii?Q?DV8NhJxoXoPNtM2iQcZFayyhjOJx0QJNC+VQDrAofj1knE+3WVGnHSPI9HVF?=
+ =?us-ascii?Q?ixAkJ18axKUO6/FDHoF1tZZQcW+DqhT6hHY9+R0fpWQzYjs/q3aLTDUsHjc5?=
+ =?us-ascii?Q?tR1Sj2xXiB1bZISc0JWyyDBRGmqoNuIId44T90d1sQfec6sHHxyiPgdivuVq?=
+ =?us-ascii?Q?yDCVfhO59/3lyKHcWUxFxJUuwTX99t51pZYA5SdGFLm/ZC33C3n8gPx89KVt?=
+ =?us-ascii?Q?uYEc5BLUvol4acz9Ww1ZQihTOSyFOOFLBStaCkGDnKeUn/4C9CIi6nXI1CCr?=
+ =?us-ascii?Q?0vAvun1u5FLhMmLI/PulxOc7+L5jpDI5kCZfZZm25LyrstptA2YeKBCeIin8?=
+ =?us-ascii?Q?m1oJUbKmejNMEteyIjgTJqAEKKAtEsn64NROI/ZE1QbE0LsTre7lzSPrI5Rz?=
+ =?us-ascii?Q?WrUqhGK1QYcIDAGhM+3Mmr9zewmjH1yaX3mJZJze7nugHRs52Um0L2dxQ2jx?=
+ =?us-ascii?Q?3SRaJ1hhsu/SCbbMITXbGD6m9LUVHlE0NF66yRfuVnoxQyv07zS//ToEfHcr?=
+ =?us-ascii?Q?CqAPxxJ7RZb2eAjVLWAfzZAbVTlBQwV4PhaLybWHVAszk/YEJIyMroJpeT8m?=
+ =?us-ascii?Q?QYUjqQfdkDcCyouIhrXiYYuKHYEArBcLo4ZCCLw+qbhgW9q5nKCl4Y0nvPSG?=
+ =?us-ascii?Q?IKQ1/fsnd8Bbmx1xR32KrNO2BlRwiGL9E+EXTjTuT9O41/l5aogZfenonLlg?=
+ =?us-ascii?Q?rv57sUKMZucJTPmhC7Y6O5uUZvCXGEELlxAHZfV7Fp/9rU/w5DSBbXt0kut/?=
+ =?us-ascii?Q?UfiEZrS+cTNPf2Y7IrPNJlShRSZzVID92R3tNKWCOkBL5GYbEQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(82310400023)(36860700010)(1800799021)(376011);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 05:46:29.5614
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e6e6c6c-944a-4bee-0091-08dc91b57fa5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002BA4D.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7893
 
-Oleg Nesterov <oleg@redhat.com> writes:
+Perry Yuan <perry.yuan@amd.com> writes:
 
-> On 06/19, Eric W. Biederman wrote:
->>
->> Oleg Nesterov <oleg@redhat.com> writes:
->>
->> > Hi Eric,
->> >
->> > I'll _try_ to read this (nontrivial) changes this week. To be honest,
->> > right now I don't really understand your goals after the quick glance...
->> >
->> > So far I have only looked at this simple 1/17 and it doesn't look right
->> > to me.
->>
->> It might be worth applying them all on a branch and just looking at the
->> end result.
+> From: Perry Yuan <Perry.Yuan@amd.com>
 >
-> Perhaps. Say, the next 2/17 patch. I'd say it is very difficult to understand
-> the purpose unless you read the next patches. OK, at least the change log
-> mentions "in preparation".
+> Select the min perf to fix the highest perf value while update pstate
+> CPPC request MSR register, here it needs to limit the max perf value when
+> CPU boost is disabled in case of that highest perf value in the MSR will be
+> reset to original highest perf value which cause the BOOST control
+> failed.
+
+Perhaps we could rephrase this as
+
+"When Core Performance Boost is disabled by the user, the
+CPPC_REQ.max_perf should not exceed the nominal_perf since by definition
+the frequencies between nominal_perf and the highest_perf are in the
+boost range. Fix this in amd_pstate_update()"
+
+Also change the subject to
+
+"cpufreq:amd-pstate: Cap the CPPC.max_perf to nominal_perf if CPB is off"
+
+?
 >
->> > 	- complete_signal() won't be called, so signal->group_exit_code
->> > 	  won't be updated.
->> >
->> > 	  coredump_finish() won't change it too so the process will exit
->> > 	  with group_exit_code == signr /* coredumping signal */.
->> >
->> > 	  Yes, the fix is obvious and trivial...
->>
->> The signal handling from the coredump is arguably correct.  The process
->> has already exited, and gotten an exit code.
+> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
+> Acked-by: Huang Rui <ray.huang@amd.com>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+
+Other than that,
+
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> ---
+>  drivers/cpufreq/amd-pstate.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 >
-> And zap_process() sets roup_exit_code = signr. But,
->
->> But I really don't care about the exit_code either way.  I just want to
->> make ``killing'' a dead process while it core dumps independent of
->> complete_signal.
->>
->> That ``killing'' of a dead process is a completely special case.
->
-> Sorry I fail to understand...
->
-> If the coredumping process is killed by SIGKILL, it should exit with
-> group_exit_code = SIGKILL, right? At least this is what we have now.
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 299e52d4b17e..f2ccef089acc 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -524,6 +524,7 @@ static void amd_pstate_update(struct amd_cpudata *cpudata, u32 min_perf,
+>  			      u32 des_perf, u32 max_perf, bool fast_switch, int gov_flags)
+>  {
+>  	u64 prev = READ_ONCE(cpudata->cppc_req_cached);
+> +	u32 nominal_perf = READ_ONCE(cpudata->nominal_perf);
+>  	u64 value = prev;
+>  
+>  	min_perf = clamp_t(unsigned long, min_perf, cpudata->min_limit_perf,
+> @@ -543,6 +544,10 @@ static void amd_pstate_update(struct amd_cpudata *cpudata, u32 min_perf,
+>  	value &= ~AMD_CPPC_DES_PERF(~0L);
+>  	value |= AMD_CPPC_DES_PERF(des_perf);
+>  
+> +	/* limit the max perf when core performance boost feature is disabled */
+> +	if (!amd_pstate_global_params.cpb_boost)
+> +		max_perf = min_t(unsigned long, nominal_perf, max_perf);
+> +
+>  	value &= ~AMD_CPPC_MAX_PERF(~0L);
+>  	value |= AMD_CPPC_MAX_PERF(max_perf);
+>  
+> -- 
+> 2.34.1
 
-In general when a fatal signal is sent:
-- It is short circuit delivered.
-- If SIGNAL_GROUP_EXIT is not set
-   SIGNAL_GROUP_EXIT is set
-   signal->group_exit_code is set
-
-Under those rules group_exit_code should not be updated.  Frankly no
-signals should even be processed (except to be queued) after a fatal
-signal comes in.
-
-There is an issue that short circuit delivery does not work on coredump
-signals (because of the way the coredump code works).  So it winds up
-being zap_threads that tests if SIGNAL_GROUP_EXIT is already set and
-zap_process that sets SIGNAL_GROUP_EXIT.  Essentially the logic remains
-the same, and importantly no later signal is able to set
-group_exit_code.  Or really have any effect because the signal sent was
-fatal.
-
-Except except except when the kernel in the context of the userspace
-process is writing a coredump for that userspace process.  Then we allow
-the kernel to be sent SIGKILL to stop it's coredumping activities
-because sometimes it can block indefinitely otherwise.
-
-Which is why I call handling that SIGKILL after a coredump has
-begun and SIGNAL_GROUP_EXIT is already set a completely special case.
-
-We might have to change group_exit_code to SIGKILL in that special case,
-if someone in userspace cares.  However I expect no one cares.
-
-Further if adding support for SIGKILL during a coredump were being added
-from scratch.  The semantics I would choose would be for that SIGKILL
-and indeed all of the coredumping activity would be invisible to
-userspace except for the delay to make it happen.  Otherwise a coredump
-which every occasionally gets it's return code changed could introduce
-heisenbugs.
-
-But none of this is documented in the change description and at a bare
-minimum this change of behavior should be before such code is merged.
-
-Eric
-
+--
+Thanks and Regards
+gautham.
 
