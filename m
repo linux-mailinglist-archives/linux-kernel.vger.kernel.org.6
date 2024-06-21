@@ -1,226 +1,258 @@
-Return-Path: <linux-kernel+bounces-223759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 228169117DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:06:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D258B9117E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45F6C1C21021
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:06:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F411F22CA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0E546AF;
-	Fri, 21 Jun 2024 01:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EA64696;
+	Fri, 21 Jun 2024 01:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eI0Niftz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GKgKb3v6"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3251366;
-	Fri, 21 Jun 2024 01:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718932003; cv=fail; b=bggjsDjI0vt7BjOihxiaGv2J5js/MN6fbXAAxQhAzP20uT5QMR1uPY05yCZwhes5KM2Dxw+GFbG2EOnHoltsTwMipFYtF1tvpYVpkFemBZvi0g9BGWMKFlKZgWtYpFyNU1X0WowFhSGt77bR7z0bCQ4nVYKvrVs/dGRwg3+sBEo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718932003; c=relaxed/simple;
-	bh=CNFELbruhOhLQvwSmOOCKIyB7WMjV03adyu6bC366tY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=iyEYzqO0u1AcqWBl7adbLqrX+6nWJT8siWNyp54qHrOS9kNmKD6eOft+0CRDNfbPgphydbXWytquZNmAkJgUxKjeHvWJyml0wFTL/7atlZyDsJf8sd5V0qbzhnYTRTc5aWH/wc2kl2zsXZqgXV6raBXyNf2OSdeWO5mKIYQl+zQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eI0Niftz; arc=fail smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718932002; x=1750468002;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=CNFELbruhOhLQvwSmOOCKIyB7WMjV03adyu6bC366tY=;
-  b=eI0Niftzp58ae8ImFU6jpIbln+BBJmM8JsOALWBHAMzkc/Ml80owToPc
-   zpYUI1GHpM3GHcQW0ypzgMDyQbemTdnMFrvKgxlAQVYY05zgwyd5D5fsG
-   a7EKSfols0DKz9JVcEsi7STfj2yKB8yqNvWdmlqAfOc5wTegJwCXjxLFC
-   2Y09hrSYxuP/FMSCnbDJJTprMeARxk9FLsONEiInMBdYR5bhMfess2vCH
-   noH8WMIF7gFRHTsGwUcKJOsYooAf/+13R0XHY2CKJnieU3Ja99jHna940
-   zTD2HwwkZ/td5gJ+lqiRdgaO9ZvzcYFQ11Z7YVjkGT/ovdeY7W8kTu2mX
-   w==;
-X-CSE-ConnectionGUID: v33L8PmHQP+IT/x+6OZg/A==
-X-CSE-MsgGUID: L30uBVkjQmywxNq7SpU29w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15927376"
-X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="15927376"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 18:06:41 -0700
-X-CSE-ConnectionGUID: gWpFeOIGS/CXvg2HYPrDuQ==
-X-CSE-MsgGUID: GMXR88LuRXWJGV6O2ayUrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="42533366"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Jun 2024 18:06:40 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 20 Jun 2024 18:06:40 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 20 Jun 2024 18:06:39 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 20 Jun 2024 18:06:39 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 20 Jun 2024 18:06:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j0VPkC5gKtByn3J+YyXLZjm9ko5P/AK9zi0CUu1aXY2DAH4jCpDtkcBzaXRh/8dhwHRL9aZNYg8zzUpeNVDvSxt82t0Zt91weWUyRZpqYiBN4bngB1aZqPpCJlzQKAxOrTLn+Ag5WhfbLGHE48tda9EborNG+IbQ3jPP6NN2uqKKQva8ytClRCOKGbukF1T7nOvYiDHra1B4XEPqgW4/9K8bhlVl6CIwBT0tMBjq7tCPG9n9RWiKdDvGB1PpHrPxT/EMYueSQsyBlOL+a1gVTqH6a2t1k9jQ8wB5qUEO/AwPEPWO06rWbrvM8g3W/m2Uy0iPvFEG/MIhOeCMBNU6Yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CNFELbruhOhLQvwSmOOCKIyB7WMjV03adyu6bC366tY=;
- b=AcJMq/lbIOoHxB+j/OYqGafe43VVG6qousrUzLLzXGB/xi6AdZFRNZO1W5kqYl+I/OeNspd6QSVwUNzt7tdnA+Ah34nDOK6fDgCI4UxFn1Sen9sfSnkXwOHRz4HV0H8lmKBpyFffFJW1W5BYA9xVCHXQX5HunkL2PTE3fI1fmgeLNesXRw+R8JZGfMCLQFVk3jQa3qMTwnTfShavqu+YJkoBgK0v1LvFluwivYWkQ5qnP5+5Z1fpkXCKb4gZZPccocAHM0ymv3NX94kVKrsk3zKB2sGlbgEjJp10/Ou0FsxnhHeUKc/1wVd1xCDB2JpRqd3lGZ/H3uOfZEqBGq4zlA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by IA0PR11MB7814.namprd11.prod.outlook.com (2603:10b6:208:408::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
- 2024 01:06:37 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%4]) with mapi id 15.20.7698.017; Fri, 21 Jun 2024
- 01:06:37 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "seanjc@google.com" <seanjc@google.com>
-CC: "Huang, Kai" <kai.huang@intel.com>, "sagis@google.com" <sagis@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Zhao, Yan Y"
-	<yan.y.zhao@intel.com>, "Aktas, Erdem" <erdemaktas@google.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"dmatlack@google.com" <dmatlack@google.com>
-Subject: Re: [PATCH 0/5] Introduce a quirk to control memslot zap behavior
-Thread-Topic: [PATCH 0/5] Introduce a quirk to control memslot zap behavior
-Thread-Index: AQHavVgfQPm70dQw5Eee10kcdYgSb7HGHiqAgAWlogCAAdqzgIADeY8AgABJaACAABJgAA==
-Date: Fri, 21 Jun 2024 01:06:37 +0000
-Message-ID: <218550c574bd7670e079e9afe068ef88c3aa8cdf.camel@intel.com>
-References: <20240613060708.11761-1-yan.y.zhao@intel.com>
-	 <aa43556ea7b98000dc7bc4495e6fe2b61cf59c21.camel@intel.com>
-	 <ZnAMsuQsR97mMb4a@yzhao56-desk.sh.intel.com> <ZnGa550k46ow2N3L@google.com>
-	 <21b18171d36a8284987f8cf3f2d02f9d783d1c25.camel@intel.com>
-	 <ZnTCsuShrupzHpAm@google.com>
-In-Reply-To: <ZnTCsuShrupzHpAm@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|IA0PR11MB7814:EE_
-x-ms-office365-filtering-correlation-id: 362bb680-f3ec-4a8a-4960-08dc918e6695
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|366013|1800799021|376011|38070700015;
-x-microsoft-antispam-message-info: =?utf-8?B?c1VtVkI1ZmM4SDNpbGN3SmdhRnBLeFI3VktoZ3hDWlJFaVVwU3FYQVdZL0M0?=
- =?utf-8?B?Qm5WQVlPZFF0OEV4dU9WZ3RtYTJ3WlNyVHVtbzkwVmVaSXhqRDZPbXBHUk9y?=
- =?utf-8?B?eGVNYlNCUS9Zd1ZCdEJGYmV0MmlVMHBkYWhHMElzRHhWRTB2Unkwc0ZHdzRR?=
- =?utf-8?B?NXBtTHVVYlN4NStscXlQUVpYTTdsaTRYeFdXemJ4cWFVZWgxRStyMGFBeFo4?=
- =?utf-8?B?SEVVQVozM29tL1FGV1loYW9Ea0dIeDRvSC9tWGVMaHpiTUY4S1ZHNkE4TlZZ?=
- =?utf-8?B?TVNXZ0UyZEFoajZWems4eE4rNVZhU2ZacFZMUmtEZkdaTDNWRWVWaFo2NEV6?=
- =?utf-8?B?dXBxbXNZMUFKMmpjS2gvNTRVdGNGYjNiaDBXOUVtd2NscUFyOGNoVHE0ZVRh?=
- =?utf-8?B?djB6cVlMRlRKZTZGeE5yWG5VL243SDVUbmxkNEZ6dlRhL05HVUpsUDdaWVZW?=
- =?utf-8?B?WDVnRmJFamxhQmlFSytpNER2cnZpQWFMUEd1UDlpZCtVc0tPZkhuaVprRXNK?=
- =?utf-8?B?a3NLQXg4S1BXVFpBQXpMSWdWams5aEV4dnRJK1lFekQ4N21TMk1ZR0tOT3hV?=
- =?utf-8?B?ditidUJnZVVDYlFrSXJzaXVvMDZuZFppVnJaaWpST2lGT3c4SkZnTGdvK3l1?=
- =?utf-8?B?NVdIakZ6a0VlNm51NU5ETlcwTS82Z01mNzh5cUlBenJla0xLNXlndzZPYk5Y?=
- =?utf-8?B?dEFRaFdybFc0ZW1reEc5V1MvL1VKZXR4ZlZHYnVhT3hhMnN4MFlHbVZLdVp1?=
- =?utf-8?B?R3dVcWYrM3lHeTZLVi9EM3c2TVZ5WmUvOGVmalk0c1lSaFk0Y0htV0Vld0VH?=
- =?utf-8?B?SGZneDdxSkE1amFWK1htNGFDaktJb0NYeXFLWnMyVFRwVEJ0N2poZnZuanNz?=
- =?utf-8?B?a1VoYW1yZGJITjFuYnErcUdteExLcitNdTZmYWJBd0xMdlBPOEFieHhzVGw2?=
- =?utf-8?B?b1hGMktqd1BRZ3NKWmpRZytxaTlUKzk0bVR1V1RxUmNVNnpjZWJCdEZwTmdm?=
- =?utf-8?B?QTJsSXBHVHB1Z1JCeEVsN0ovV0IzNEZ6T3lJckFOQlJzTktSVk5tVmp5Qkxt?=
- =?utf-8?B?U1BYTFRIN3ZhTklzMnZ0bndWSndCbVlSc1NNUC9vclRKbDNUc1Z6N0srS1BB?=
- =?utf-8?B?MThBWGgzdjlNVHNhQ0JITWNOL08xUm0zZDZlUGtsZUg0dFdaMUFYUC8xQmsz?=
- =?utf-8?B?R2dsbU1LMjRRQTNHQ3cycW12dk9TMlZ2b0xkUmRJT1Z5Y1VIdGM4ODZzemhm?=
- =?utf-8?B?SVJBWXZVR2F3TDZ4UGVtOVNWNXdKRlpMZ2ZDMGpKL0lKUmsyMGxCTXNRelJU?=
- =?utf-8?B?ZUxFWlRpSnB3M0c0dWRwRWplQWUrcmd6QXFoWjN4R081UUxEbHNZb0t0ZnhX?=
- =?utf-8?B?NzBnM2lVSHNqZ1Boa1ZTUzliU254V3VISmJmZklhaDl0S2gxRDRJSHZpM245?=
- =?utf-8?B?dFFReTlGVFVISEZWdHphNkNWWVNDclFPVHVVK3ZqOG1sVkEyMUZOQzJLeGJE?=
- =?utf-8?B?eTRyb3BZbWhCQVQ5am5ETW1QSVNoUE02OXZkNkdUWlFKS1FIK244RlNpWldX?=
- =?utf-8?B?QkVHeC9yM2NVWHgzUXp4RmZjRHE4M2h3R0pJa1d2Z0FHMzRQZTRBUm5NaDRL?=
- =?utf-8?B?K1l5TnRrZk92WjBHOEFCMVlWZU9yRVJNNEhYajVtNVQydWNoY3ptUHptMEVw?=
- =?utf-8?B?Q0JCZFdxUTFDcDFoNWZEWEh6UTVCSTA1bHMwMXRlRmRvRkNwZmNtNjRsSVVs?=
- =?utf-8?B?dHhtbisrNC9SYXRDbXdZaTBwNzZYdUc4azg5ekF4M0ErOW9CaUtnTTlKQkRI?=
- =?utf-8?Q?kMoVd0fBXtnb1omxBPi6HZblQIce/Cj2+zQbU=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(1800799021)(376011)(38070700015);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RkZLRTRWWnM0VGplaW1Eb0pPWUJPTXNUUlVKVTJWeWtCQXdGeDhtZHJsR1Ji?=
- =?utf-8?B?UEN1bS9BVldoNm1jK1VsR290dWFNSDRGcjZ5KzBXL1VheE1Ed2gyRFJEcStm?=
- =?utf-8?B?QlpkRjNSNTZDdEFoS0kyNjJ0TUZvWjVpaHdVNmpWUmg0ZmpRT094b2h4dnds?=
- =?utf-8?B?WHpObVc3REx6QmtoanNWODBOOHlrSTY3SWpXeGxIRlV2S2oySTJmZU5Bb2Np?=
- =?utf-8?B?dm9SenIwWDd0enlrS3Bkd29SVzlQWE5oeW5JSUlNMk9JTHRabkM2aFNrVXdL?=
- =?utf-8?B?dlZKMFkyUHdpWlFSbmVmL1djZVFYaFBuM3hNQUltaXpqcGVTSWloV2hIamVP?=
- =?utf-8?B?SUx0RWZ5WWtaZzRXd01xU2s5RzgrN011c3R6Zll1bkNHLzF0R1hIRHRBQU56?=
- =?utf-8?B?bU9pSWdjK25FQWQ5eWdySEdFNWJhM1JMb1IxV1hPVllKSWVEc01zRkhLd1VY?=
- =?utf-8?B?cUE2TWdSRFFQbHFCell4Ujk3Vm83SVN4VzFFQkR5RVorblR2cll6VTJvQzRB?=
- =?utf-8?B?NlpGWUtYS1Z0dm1GL2NScXVlK1kveGJpZlppSHM2MGdzRXVMNUsrTm51TVhE?=
- =?utf-8?B?d2NnajNlY1B4dERNRituaG1tNnZBSzI4aWh2U1pEV2h0N1BLb1FDOThYa2hV?=
- =?utf-8?B?N2pGNjRpZnUvb2hldy8xaVd0a25mTUEvS1V2aDlQV3hBNlVqTTQvSnhNZEFO?=
- =?utf-8?B?Wk5TWjlJanJpQ2xLeW5BN0VPM09LUWVRYXQySkV2RGZGODl6MWdWQUlnV2FU?=
- =?utf-8?B?bWFqbks3NG95U2pESGt3Ni9va3VCWXh2ZSthcDNIMVdzeG80MDIyOS80SlRX?=
- =?utf-8?B?cnF2TExmTWIySm8xRjVTeXl5Z3VKLzV6YldxVkZJSUJkYTRqNDc3SWxsTzI2?=
- =?utf-8?B?UVpYdkV4VUx6ekdvNmpkNzVGclAxYjZBUGsxUEhqaklPWDg3NWJmN1NRak03?=
- =?utf-8?B?aGpvZDErYi92Rjl2dk9tTkNIK1FZR0F3aVh2TUdCNXhSQmpJUk9aL1hrNnRT?=
- =?utf-8?B?ZnNmTzVsZ1o4djV4RDVvRWkycjZvT2U5QVAyTmVTalV6MmptQk54TG1rUEJM?=
- =?utf-8?B?cXMvS1Vxa1k4bjlQUWxWNjFaRFRxc3dXTk0rRWg0bGk0UFFtcEprcVI2Ynkv?=
- =?utf-8?B?TFJPQS8vMHlMTHhUUFJGUFM4MXFKOU5jS25VK2dFU24vTlNtcmlMenhCZWZt?=
- =?utf-8?B?ZFYvbndrU2YyR3B2QzRDbkc5aEpLelRDQzVjTlNjV3FCNk82M0loa3VPalhD?=
- =?utf-8?B?amNQejZPajQ4alNWOStsSmRKUWY0NkZaUmNCL2psTlhuZjkvY0VRVUtHTm5k?=
- =?utf-8?B?KzQyRUxOT0FES2xNVHVSS3k2b2hPdGZQaFYvNGlHOC9iQm9qTGVaVTlQK1lR?=
- =?utf-8?B?eTYwdHp3SExPM2l1TWxoeWxuczBxN0NzNjR1UHJCSHhHREhUOGJzRFdLMmdE?=
- =?utf-8?B?RzBVakxlZmNJb3pDeStYQ2FsZWZLWkpqMkVBa0V2d05qVzJwQ1NkOW9XM1hD?=
- =?utf-8?B?L3l4a0dtRzQzWUtBSlFHQUkrZmJkZHFFUmZoWEdBS2dzUjdwR0RMWWlvSzdO?=
- =?utf-8?B?QW4vNGoxY2lHTWtGK1ZOdEpXbk9QV2JQUW5YdXJ0M2h1N0pRYVQvU3dZQjh6?=
- =?utf-8?B?N1J0WUo4TDhvZ2xrRnFzamhLdmQyTmxmM2MyMVlXZ0JldHV4OGVSV29OaDhC?=
- =?utf-8?B?c1R6ZXlScWtTeWhCaURkME1BMEprNXJHN29EMURxaTNPOUFlVktIUUQremQz?=
- =?utf-8?B?ejFPV2czKzY4WENuUWdVeEc5NVZYa1diRlRHczY1SmsvMzNHZ2dyVDVyQlAy?=
- =?utf-8?B?d3pGZzNGb1Q1aTFHQ2x4NkNTZ2t5eDNDWGhyaHNHNlBlT1lwY0RCWUhPd2NE?=
- =?utf-8?B?MXFZYnhFQyt3Z0dGU2tqd3Qya1RMTEJoeDdlYzFkcTNuWncxZ1lNL3MyUER4?=
- =?utf-8?B?OWM1M3VtaUtlQkJMTGR4d1hrcmtHZzZSVnBzSDZHZ3BveGQ2NlpPRnlZelEr?=
- =?utf-8?B?WWFPcHJJTk41clhmdk5lblJLdDkwdEdnNkFYZWY0T1NhTUF3NWQrWnVoK1pK?=
- =?utf-8?B?czRHRVJhWjFlZ2loSFF0ejRhUEo5anQ1SVJTVlRlbHVPUlppMC9SbFI5NnhL?=
- =?utf-8?B?d0Y1UkdwK0RPQWNwdjlJNnl1VnJnMFlsSTFzb2NBUnA4dE5UVG9aS3J3MlQ5?=
- =?utf-8?Q?8OyxoHtpLIaPyvSUsQzydJI=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <17755A19B8DF5646AC266E3919AE38DE@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8571AB65F
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718932082; cv=none; b=MW8wtjl2hM/BSupYLu4q/Tbp/72aGP5Bm6qCiBU3+yN7Q6Ne+i38Lz+zAJgDgzSYwFIzLhkOm/EDpWTTF+U9tNhHGdT1Jvq1rdTOhPYRPnNJrXTK13PlhIVXryyeWNoNdchBygxtHcUjluLfqbgAoT1OQFxkMci9GDxjZnLuYA4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718932082; c=relaxed/simple;
+	bh=jalegPIbn+AP7VNc2KA+5u5x9/D9v5CerlM8o45H0lg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DHHg+l9D/wN5gWKEm+/RHNt9Kt6iAw7uAmOxIZARjPjfYnGnOT8XIfLxC14ol+94w3OKjkdonn3Fk0od7BNDzSWGLayvs4nMILGW33s9XFClVusnXixUwfjslRkx4PwmkBC7LT83Yycui94TsUnVpJ0eKlLFz5wV7zhF2UJhTtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GKgKb3v6; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4405dffca81so62871cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:08:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718932079; x=1719536879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RdQ0lVDvBBPg2VjlcnH8vb7UwZ7F+RAkB6K0VjIZf5A=;
+        b=GKgKb3v6B6ISt4BoB/ttcopvptm7hN+3kCw9GEOJcwVHdcQXCISLZ/pJt9JRQBh9rb
+         fvwzAubV20PeMAU2x4ezQ0cMwea6L7iFopb07NsOJ04eO+XVz17bFbsxgwbJdznvrgvf
+         PJ2pQFme920lIYBVzdpAaj+atV7D60RM4PccF6qZW1b4Gs9KlwCEYkdCaqNOc4+xc/T9
+         L8MxaWWWGRiN16tMLRmjgkCfhAKxIqBov8d9hY7FdMwJO8PYOOJsoGFi9eddBWq9/OEk
+         z49Q6L88q/CAZRYd82oTSrUxiN8hcWJ8S9p+hhfzQystt2i9lBCNLf7FzYk8KOBPTMkf
+         fpIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718932079; x=1719536879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RdQ0lVDvBBPg2VjlcnH8vb7UwZ7F+RAkB6K0VjIZf5A=;
+        b=HywWywQf0UBKxa6S1L4jebuVKD6Y24LJ10soEEabcIT0064xbXl7J35pECesq8yk8y
+         VvKO/QFVAS+S3AtNwv2zOb92szScp8Lg9nRfjIZ76SDPJ1GAE0T2iKUvVHYyf9OQx+RW
+         i0FaEItROqWFRYWLVK6yeNhYyK/AkZK0Kk9X7TABoPlYfkBibQOkXcmraRwhcK5GoFzq
+         KFmkiTKzC5cRgZMoXzBkvpQMaRrc2opH6Uvdyxq2B2LjbkZOJLwtYvUscJzAvTYLoNOi
+         dtGnNUU2g9zVEa04d7H1OYAEtYzoMUGWNmbT2kROAGNCm0nesRkoGuvXxEAmDcnPWTxV
+         679w==
+X-Forwarded-Encrypted: i=1; AJvYcCUnH5PIPa5PDa8+7CC41QIJD02obhP+Fke9aqxTtgya3MLT/JV18UmrB93wT9dlMb/SdKhfIij9IEl9F5d6COerL0MhdZElYO9ZMtQG
+X-Gm-Message-State: AOJu0YzVbi30+gqoaf2XTS8hv+mj92zFV2CRHJZxWPlLxcVJWhKAsyvw
+	u2e7EaijBiY2QPgVKGNlSzdMudXAduOXJ3mQ7/3OZ6Jz1ze38GxhAtH14PMg+6JexRQt3XR4gbX
+	TrthE0mWe6FRl2aURM46HayfR4Jf95YTWnrd0
+X-Google-Smtp-Source: AGHT+IHNKO5qr2WTmG1Oxs7Fv63Gwg/dT8tseRKkrxi6AKbLZajjRe3K0QfYDRO/F5TDQy2urTyYGLj+kwmP0/ISKjY=
+X-Received: by 2002:ac8:57cf:0:b0:43f:fbb0:b74 with SMTP id
+ d75a77b69052e-444c362afdemr839581cf.29.1718932079140; Thu, 20 Jun 2024
+ 18:07:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 362bb680-f3ec-4a8a-4960-08dc918e6695
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2024 01:06:37.1572
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5+jNCiRCN+7jegFU7c6JBWEry1VA5R7YElUh8Tu3zRKH4BXA+06ky31odrjv8li8QPLMwh6uZtrswH2Sl7V67cfApByswaicERPw3RWQ9bk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7814
-X-OriginatorOrg: intel.com
+References: <cover.1716811405.git.geert+renesas@glider.be> <CAPDyKFpa4LZF3eN7x-NT+b9=dKB3Oe6RY8RAyetdRBSR1-LQoQ@mail.gmail.com>
+ <0a025885-ed95-45d3-bf76-d2a043baaed7@ideasonboard.com> <CAPDyKFrxUDhnUUfz5wHpGVQfNYssxoWO5Eb2wtmZMTcMYhEjxQ@mail.gmail.com>
+ <1bda8e8f-10df-4a10-a217-26cf50ef3577@ideasonboard.com>
+In-Reply-To: <1bda8e8f-10df-4a10-a217-26cf50ef3577@ideasonboard.com>
+From: Saravana Kannan <saravanak@google.com>
+Date: Thu, 20 Jun 2024 18:07:20 -0700
+Message-ID: <CAGETcx-T54w=x=gv524dUJtnRGmOiXFA2CRYHE5Pawbux8_Tig@mail.gmail.com>
+Subject: Re: [PATCH/RFC 0/3] pmdomain: renesas: rmobile-sysc: Remove serial
+ console handling
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, Peng Fan <peng.fan@nxp.com>, 
+	linux-pm@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVGh1LCAyMDI0LTA2LTIwIGF0IDE3OjAwIC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
-b3RlOg0KPiANCj4gV2hhdCBJIHdhcyBzdWdnZXN0aW5nIGlzIHRoYXQgd2UgY29uZGl0aW9uIHRo
-ZSBza2lwcGluZyBvZiB0aGUgbWlycm9yL3ByaXZhdGUNCj4gRVBUIHBhZ2VzIHRhYmxlcyBvbiB0
-aGUgcXVpcmssIGkuZS4gemFwICpldmVyeXRoaW5nKiBmb3IgVERYIFZNcyBpZiB0aGUgcXVpcmsN
-Cj4gaXMNCj4gZW5hYmxlZC7CoCBIZW5jZSB0aGUgdmVyeSBiaXphcnJlIEFCSS4NCg0KQWgsIEkg
-c2VlIG5vdy4gWWVzLCB0aGF0IHdvdWxkIGJlIHN0cmFuZ2UuDQo=
+On Wed, Jun 5, 2024 at 4:16=E2=80=AFAM Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+>
+> On 05/06/2024 13:53, Ulf Hansson wrote:
+> > On Wed, 5 Jun 2024 at 12:41, Tomi Valkeinen
+> > <tomi.valkeinen@ideasonboard.com> wrote:
+> >>
+> >> Hi Ulf,
+> >>
+> >> On 05/06/2024 12:34, Ulf Hansson wrote:
+> >>> + Tomi
+> >>>
+> >>> On Mon, 27 May 2024 at 14:41, Geert Uytterhoeven
+> >>> <geert+renesas@glider.be> wrote:
+> >>>>
+> >>>>           Hi all,
+> >>>>
+> >>>> Since commit a47cf07f60dcb02d ("serial: core: Call
+> >>>> device_set_awake_path() for console port"), the serial driver proper=
+ly
+> >>>> handles the case where the serial console is part of the awake path,=
+ and
+> >>>> it looked like we could start removing special serial console handli=
+ng
+> >>>> from PM Domain drivers like the R-Mobile SYSC PM Domain driver.
+> >>>> Unfortunately the devil is in the details, as usual...
+> >>>>
+> >>>> Earlycon relies on the serial port to be initialized by the firmware
+> >>>> and/or bootloader.  Linux is not aware of any hardware dependencies =
+that
+> >>>> must be met to keep the port working, and thus cannot guarantee they
+> >>>> stay met, until the full serial driver takes over.
+> >>>>
+> >>>> E.g. all unused clocks and unused PM Domains are disabled in a late
+> >>>> initcall.  As this happens after the full serial driver has taken ov=
+er,
+> >>>> the serial port's clock and/or PM Domain are no longer deemed unused=
+,
+> >>>> and this is typically not a problem.
+> >>>>
+> >>>> However, if the serial port's clock or PM Domain is shared with anot=
+her
+> >>>> device, and that other device is runtime-suspended before the full
+> >>>> serial driver has probed, the serial port's clock and/or PM Domain w=
+ill
+> >>>> be disabled inadvertently.  Any subsequent serial console output wil=
+l
+> >>>> cause a crash or system lock-up.  E.g. on R/SH-Mobile SoCs, the seri=
+al
+> >>>> ports share their PM Domain with several other I/O devices.  After t=
+he
+> >>>> use of pwm (Armadillo-800-EVA) or i2c (KZM-A9-GT) during early boot,
+> >>>> before the full serial driver takes over, the PM Domain containing t=
+he
+> >>>> early serial port is powered down, causing a lock-up when booted wit=
+h
+> >>>> "earlycon".
+> >>>
+> >>> Hi Geert,
+> >>>
+> >>> Thanks for the detailed description of the problem! As pointed out in
+> >>> regards to another similar recent patch [1], this is indeed a generic
+> >>> problem, not limited to the serial console handling.
+> >>>
+> >>> At Linaro Connect a few weeks ago I followed up with Saravana from th=
+e
+> >>> earlier discussions at LPC last fall. We now have a generic solution
+> >>> for genpd drafted on plain paper, based on fw_devlink and the
+> >>> ->sync_state() callback. I am currently working on the genpd series,
+> >>> while Saravana will re-spin the series (can't find the link to the
+> >>> last version) for the clock framework. Ideally, we want these things
+> >>> to work in a very similar way.
+> >>>
+> >>> That said, allow me to post the series for genpd in a week or two to
+> >>> see if it can solve your problem too, for the serial console.
+> >>
+> >> Both the genpd and the clock solutions will make suppliers depend on a=
+ll
+> >> their consumers to be probed, right?
+> >>
+> >> I think it is a solution, and should be worked on, but it has the
+> >> drawback that suppliers that have consumers that will possibly never b=
+e
+> >> probed, will also never be able to turn off unused resources.
+> >>
+> >> This was specifically the case with the TI ti-sci pmdomain case I was
+> >> looking at: the genpd driver (ti_sci_pm_domains.c) provides a lot of
+> >> genpds for totally unrelated devices, and so if, e.g., you don't have =
+or
+> >> don't want to load a driver for the GPU, all PDs are affected.
+> >>
+> >> Even here the solutions you mention will help: instead of things getti=
+ng
+> >> broken because genpds get turned off while they are actually in use, t=
+he
+> >> genpds will be kept enabled, thus fixing the breakage. Unfortunately,
+> >> they'll be kept enabled forever.
+> >>
+> >> I've been ill for quite a while so I haven't had the chance to look at
+> >> this more, but before that I was hacking around a bit with something I
+> >> named .partial_sync_state(). .sync_state() gets called when all the
+> >> consumers have probed, but .partial_sync_state() gets called when _a_
+> >> consumer has been probed.
+> >>
+> >> For the .sync_state() things are easy for the driver, as it knows
+> >> everything related has been probed, but for .partial_sync_state() the
+> >> driver needs to track resources internally. .partial_sync_state() will
+> >> tell the driver that a consumer device has probed, the driver can then
+> >> find out which specific resources (genpds in my case) that consumer
+> >> refers to, and then... Well, that's how far I got with my hacks =3D).
+> >>
+> >> So, I don't know if this .partial_sync_state() can even work, but I
+> >> think we do need something more on top of the .sync_state().
+> >
+> > Thanks for the update!
+> >
+> > You certainly have a point, but rather than implementing some platform
+> > specific method, I think we should be able enforce the call to
+> > ->sync_state(), based upon some condition/timeout - and even if all
+> > consumers haven't been probed.
+>
+> Hmm, I think that was already implemented in some of the serieses out
+> there (or even in mainline already?), as I remember doing some
+> experiments with it. I don't like it much, though.
+>
+> With a simple timeout, it'll always be just a bit too early for some
+> user (nfs mount took a bit more time than expected -> board frozen).
+>
+> The only condition I can see that would somewhat work is a manual
+> trigger from the userspace. The boot scripts could then signal the
+> kernel when all the modules have been loaded and probably a suitable,
+> platform/use case specific amount of time has passed to allow the
+> drivers to probe.
+
+This is also already supported in mainline.
+
+Devices with sync_state() implementations (once Ulf adds it) will have
+a state_synced file in sysfs. It shows where it has been called yet or
+not. But you can also echo 1 into it to force the sync_state()
+callback (only if it hasn't been called already). So, yeah, all
+methods of handling this are available if you implement the
+sync_state() callback.
+
+By default it's all strict (wait till all consumers probe
+successfully). But you can set it to timeout (fw_devlink.sync_state).
+And you also have the option I mentioned above that you can use with
+both cases.
+
+-Saravana
+
+>
+> It just feels a bit too much of a "let's hope this work" approach.
+>
+> That said, the timeout/condition is probably acceptable for many cases,
+> where turning off a resource forcefully will just result in, say, a
+> temporarily blanked display, or something else that gets fixed if and
+> when the proper driver is probed.
+>
+> Unfortunately, here with the case I have, the whole board gets halted if
+> the display subsystem genpd is turned off and the display driver is
+> loaded after that.
+>
+>   Tomi
+>
 
