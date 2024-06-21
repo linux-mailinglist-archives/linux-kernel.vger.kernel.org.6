@@ -1,127 +1,107 @@
-Return-Path: <linux-kernel+bounces-224613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8518B9124C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:08:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824049124CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B61281C20FD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3457E1F22385
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504E4175546;
-	Fri, 21 Jun 2024 12:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9A3174ED2;
+	Fri, 21 Jun 2024 12:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="bwNl9B2b"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNOtTTRF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A40174EC5
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2077495E5
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718971697; cv=none; b=J79T2Ws4Z6WaM6q9IxBmFLGYrCl3Bv80ufJa2TUzn4W+sAtOjOtTthjDXgSts3h4QZ5f4ONjba4SudQGGfEBDHPkTiu7+EQ1CoQxXwE2PzHH3m+rNSazvSuPd7Ukc+RrGpznvBQDvwn+bkYdJxvjCuGjXBo4xbMVcc1F9P97Fj8=
+	t=1718971789; cv=none; b=OVFMiLH5afkg9Hy/sKMxgOG+XKQlCzS5Urr93AlNnZuURKLwT5frl2HeI6fZhPEKdvxTT9xkB9zUl0hdAYK5s3fhHooOTHDkxKSwwaPqV7WCE6HvknkadlQ23Y2CLKed/5FzRSRKudDZ7x5vEslVLXNsYWw3AtyxNH2O37Ghupw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718971697; c=relaxed/simple;
-	bh=5CsIqk65T8h28pv7LSZHK/r+thMfNFgpmh7VKRl0UWQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QSm61UehE6/0phloIX5YeyhJc4pflZzwnx9OzGex5BM4/JMI4YDvXtysyHPtX2yTBgmUYSC3721B+IVmKvv0xUz38zPe34bCSrwolVy1FinugG34hPcv1+tMTliQAjta2/ksJJkOXDvige6G1tYx8ZIVNWaq2+hB/2YkMN+sigY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=bwNl9B2b; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b50c3aeb83so7889446d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1718971694; x=1719576494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5CsIqk65T8h28pv7LSZHK/r+thMfNFgpmh7VKRl0UWQ=;
-        b=bwNl9B2b5uBkts+d4e1DdRjRmxBlNK3fTwlrYckofd8DFZRyHpP+wuYJNoiJFzIY0N
-         6J2XMZlIWqrBJdPaUYzL7AaytwBd2cv+HOibYo5pDM/cXmrBDsHNLJJg2+DNxDbfTG01
-         PGNcSY0E5srlf0xby1j0hw0vKWRgAxMKkG1uK9hQshCVklS2nrHA+8JMmi+OcLH9ExEM
-         76uZVM00QNMp5apgZUS8HFiWsw1t/COUYq6QZDqgb2TK+SDiYiCU5xgaajdsU4GHyF4a
-         TgfV1+fSkkp2MooWuTU1LdWf577gqcZAi+/zsQBwMkDc00qjp1XBC1jfhw4NHZJs/Mg0
-         fn5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718971694; x=1719576494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5CsIqk65T8h28pv7LSZHK/r+thMfNFgpmh7VKRl0UWQ=;
-        b=fAPi0XuxUy+XhBJM0iNUEV6EP7S5LPu1ZZ2ZiK9x87eIfe5xQzOlG2c2T39elkBLoN
-         gmLi0cHErvCo04EzzLoxNaa1BsFdbTynD7G089JvGKFC+rksmjBJOAo6ZKStd4CeM3P+
-         j8kHkaNJziKUMchIspWVOb4ggrEkuK9I9DqoNgh/DfTdVRzJ3nv6tlXpb7QKTvCfUZDX
-         ylRSjw9eFNAUHIKKVezc+speJBfFFcSPMq6HEFkU+Bca5JHJceunlPSlujkPFA8rHyeY
-         DTZF6Y1+JtpSTwdIpWSRWZSMyuPXvyM2O4RnUl4DlpoF8tI8Kd22Qe/p2WOCCxD5PBg2
-         tZQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeVmbgBqh30lNs86q3TicsXN18u+TSQjWevoZ2DTIyZGGW18yTxM5ux7biDh2KG3UqObFIf15cjxcgmQ057H4XKLdmGLb6qK+hXT4j
-X-Gm-Message-State: AOJu0YyL+L1XMYdvClz7yu2gw7zbPmfzmfPpaSrYDIm1oW25mdjUmkq/
-	xxvFqCt7Uja7XS2wcx6bx4Jp88wiBPXmMKAD2lLc2QGLtfYg5MJX6tsm9WZw0VHahHGVPLu1r5x
-	7Y7nCArR+FYgBKcjTgr8lSCRcvDHNoXxg84yclw==
-X-Google-Smtp-Source: AGHT+IH9SeiO8vfdoOxDABbDkc1VlJaHvluIQfS8YUVwP2eXorBPvqf3BAKJdJfTNAn0CNJ3/z1faNaXrP6fson02ac=
-X-Received: by 2002:ad4:4245:0:b0:6b0:6629:bdf9 with SMTP id
- 6a1803df08f44-6b501e2c710mr72849356d6.21.1718971694039; Fri, 21 Jun 2024
- 05:08:14 -0700 (PDT)
+	s=arc-20240116; t=1718971789; c=relaxed/simple;
+	bh=wMuaz9BDxJLFVN7qWbG997fw4//1Q5akSsaDTLrpVEw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mizdKR9B5Ed2Qe1MuvZUDs1JrbRRBPit23Ed1JNzQxkL2oskwk93os6Z753w4BQoq+HHxMSOhfi2VkPZnUTOROzZFzFs5V9vFjs3CKMaG3xnblwWNjsWNR/1JnJhz54B7sYpcuyP1KilAK8P4L7I2mlRYWjDYf7gIgJkHPcmxkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNOtTTRF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA15C2BBFC;
+	Fri, 21 Jun 2024 12:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718971788;
+	bh=wMuaz9BDxJLFVN7qWbG997fw4//1Q5akSsaDTLrpVEw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HNOtTTRF0I3LzUwqWoj28stx4qfPA0jX2uJmg4YHPUAv33N4dlDV1OgBbCj17qx0r
+	 5WOtcuf1XKAveAWM1GMbbQgLwRjg1nXowscH4zcYo3kn1Veh59gsLyeuTBJh3bfysf
+	 uSnp3Ex7PZ4PHGaWYi6K46/6KClB70nGfVxA0om0Qr/W8Llylyt3K3ZVBNbMI5wGse
+	 /ey8LpfEZ5rExS0YKwEmAyDPZDH/M5KchMAkGu4rIeZhgtKCvQPQEmzc32wYiAOcaS
+	 21ioY6QOVhZYoY/UMSHOI7XHlTnUIh3/PEI+VnOw6KjdaGH4B1aQjpRKZJXvu/Ak+U
+	 y0u6xcEjwATlQ==
+From: Michael Walle <mwalle@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Esben Haabendal <esben@geanix.com>,
+	Hartmut Birr <e9hack@gmail.com>
+Subject: [PATCH v2] mtd: spi-nor: winbond: fix w25q128 regression
+Date: Fri, 21 Jun 2024 14:09:29 +0200
+Message-Id: <20240621120929.2670185-1-mwalle@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
- <20240620175657.358273-11-piotr.wojtaszczyk@timesys.com> <jgqhlnysuwajlfxjwetas53jzdk6nnmewead2xzyt3xngwpcvl@xbooed6cwlq4>
-In-Reply-To: <jgqhlnysuwajlfxjwetas53jzdk6nnmewead2xzyt3xngwpcvl@xbooed6cwlq4>
-From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Date: Fri, 21 Jun 2024 14:08:03 +0200
-Message-ID: <CAG+cZ04suU53wR5f0PhudgNmkxTRtwEXTS1cWH1o9_rTNM94Cg@mail.gmail.com>
-Subject: Re: [Patch v4 10/10] i2x: pnx: Use threaded irq to fix warning from del_timer_sync()
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"J.M.B. Downing" <jonathan.downing@nautel.com>, Vladimir Zapolskiy <vz@mleia.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>, Yangtao Li <frank.li@vivo.com>, 
-	Li Zetao <lizetao1@huawei.com>, Chancel Liu <chancel.liu@nxp.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	Markus Elfring <Markus.Elfring@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Andi,
+Commit 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+removed the flags for non-SFDP devices. It was assumed that it wasn't in
+use anymore. This wasn't true. Add the no_sfdp_flags as well as the size
+again.
 
-On Fri, Jun 21, 2024 at 12:57=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org>=
- wrote:
-> On Thu, Jun 20, 2024 at 07:56:41PM GMT, Piotr Wojtaszczyk wrote:
-> > When del_timer_sync() is called in an interrupt context it throws a war=
-ning
-> > because of potential deadlock. Threaded irq handler fixes the potential
-> > problem.
-> >
-> > Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
->
-> did you run into a lockdep splat?
->
-> Anything against using del_timer(), instead? Have you tried?
+We add the additional flags for dual and quad read because they have
+been reported to work properly by Hartmut using both older and newer
+versions of this flash, the similar flashes with 64Mbit and 256Mbit
+already have these flags and because it will (luckily) trigger our
+legacy SFDP parsing, so newer versions with SFDP support will still get
+the parameters from the SFDP tables.
 
-I didn't get a lockdep splat but console was flooded with warnings from
-https://github.com/torvalds/linux/blob/v6.10-rc4/kernel/time/timer.c#L1655
-In the linux kernel v5.15 I didn't see these warnings.
+Reported-by: Hartmut Birr <e9hack@gmail.com>
+Closes: https://lore.kernel.org/r/CALxbwRo_-9CaJmt7r7ELgu+vOcgk=xZcGHobnKf=oT2=u4d4aA@mail.gmail.com/
+Fixes: 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+---
+As mentioned this is for fixing the regression and a proper fix will
+make use of the TRY_SFDP (or whatever it will be named) mechanism.
+---
+ drivers/mtd/spi-nor/winbond.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I'm not a maintainer of the driver and I didn't do any research on
-what kind of impact
-would have using del_timer() instad. Maybe Vladimir Zapolskiy will know tha=
-t.
+diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
+index ca67bf2c46c3..6b6dec6f8faf 100644
+--- a/drivers/mtd/spi-nor/winbond.c
++++ b/drivers/mtd/spi-nor/winbond.c
+@@ -105,7 +105,9 @@ static const struct flash_info winbond_nor_parts[] = {
+ 	}, {
+ 		.id = SNOR_ID(0xef, 0x40, 0x18),
+ 		.name = "w25q128",
++		.size = SZ_16M,
+ 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
++		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+ 	}, {
+ 		.id = SNOR_ID(0xef, 0x40, 0x19),
+ 		.name = "w25q256",
+-- 
+2.39.2
 
---=20
-Piotr Wojtaszczyk
-Timesys
 
