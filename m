@@ -1,166 +1,78 @@
-Return-Path: <linux-kernel+bounces-225332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F3C912F33
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:08:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77F4912F38
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D3A7B22742
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:08:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC7611C23C12
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18D617C21E;
-	Fri, 21 Jun 2024 21:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CF217C210;
+	Fri, 21 Jun 2024 21:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qaqRYFcA"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6SAsJ24"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7496117C21B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0A816D4F5;
+	Fri, 21 Jun 2024 21:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719004103; cv=none; b=OAcuWV/c7/cpdDs/eLHIdhAZUAeoW9gO5dczXmMc2MBDLpEfnbgBBBlppAT5aZLlUvmUYVEXuepUEOOEUcRivI5vVYtawne5bhLHLPjU9J6u02O7/xqhbn7lLv012OCkMRz2QxzY/V1d7uFmqDVG+RoE15UPXVKaZcxueTrR/Yk=
+	t=1719004145; cv=none; b=AmGdQ2/V2uydsTr0gaHl+RRcUsppUwmkQkTxrj6BOFx/ndmJmnh2XPDqENZtlQigH8aDXWwyuXx9P+99VldBZisQhJfJERhZcZP33TafJQ1ljJ8M0KN2OzPW45tEYyH2sVWDxSz44IlSziOAFkiJ9FDfKoZ7ktaTHL0kLrRsshQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719004103; c=relaxed/simple;
-	bh=bPLaeEhvuwdvCfoGzBAsG2GsboVlPdH3OleZXzQ7dak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F+YBQAeOm61U1jCAtKjn9GtU845mr+PvwL0g/pUs5AtKAcjX9hcnHZoX3aHbbpnfFrP/Yahiq1zaEyX72+1jZS/0R4bEs3sE1OrFDPwtJF0fqCCdmgAL/wlNhg9NeFuItJdrmD5eum46RwbBwNbX/8F3jcWCO5pFOLNzxG/pCdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qaqRYFcA; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ec3c0dada3so31412561fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719004100; x=1719608900; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bKDn9WDsvMx1u3mvfwAal5NXqfcR5qwHZLdccCOZ9ts=;
-        b=qaqRYFcAmCec6jLfffwLdpzqB6PXubz5oL1WOZ2Keu9cZC7djFzBkrekEqnWQgi0b0
-         UvKLlA52xhNTHws1M8iiL1YJGAJncQA8gpT+MCTUrshz4T9edtgHUR5PHCjKccAB/wL7
-         9BVxgnpt3ku5Mu0vF67gICfHoOXMB2TsG3iUidPCJxB8TcyMEEd58ZHALxgJ5ZmZKH6u
-         RXwgG+weH/NoU3iVwHp9qWAkKpCj5vDCgDDvhhbraz6nYSp3MYxthie3QIdkXVCppjvb
-         M7nL2yr7nzuDp5KRdtKnXPFI3p2GdfuGxUKBvYUNkbbBYGbSa13PCz06LkEn2jZnUpNF
-         WWQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719004100; x=1719608900;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bKDn9WDsvMx1u3mvfwAal5NXqfcR5qwHZLdccCOZ9ts=;
-        b=Azqx18/rpASUXPglivt7S+UM+XwY6+ZFb62gFjctz0byLBseMmr7CVrE8cwv3ki5/t
-         SkOcX0HUZgwXbxFQfNVSaVOmcWUOlUFdKRkCgjXyDV8TO7YxEQuIR18shdxJ1rjFmDc9
-         FTWfXh4kI/WMcl7GiH4lNG98B6uzLDm6OYnFti2+fBY2AHpBoxBy5MFv3kVjeA/iZu85
-         nqWgXya8tIcqiCxSBMkt4A1jx1SZrYHnhCGF/mAhI6EquuFLoVQ6xjD2yKkDgt5CbdsP
-         u5O0zxhOyDDRk7AlUwS7fVK3vC3bBka8pqOFWjr0SXPjCVRFxkXZswnm7HOQZqo2Wydj
-         OUEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEDniY2WsPT+qimX0pWT7HJkkUcTUuS90sOmfXjAsvdttpPykelfkaKcfYts8uzqvE/gJwiSQ3dx3vJnpBv6iXAQncYjcRKvMUgVk8
-X-Gm-Message-State: AOJu0YxOoN4VYKQFF8kYSYOUYnjjJBQZ9R+Q75xJWIZvQd34gSDH1YcT
-	sz+2bFInP3R33giuFkj8zbBrM8QMl2t4BWwY6MlLakPaT+vyyDWqMaqNooirWfI=
-X-Google-Smtp-Source: AGHT+IFUk+V09aZUixf6lRl8ihl3H4k0wsEnZZx8TWif1xVFqV5G9crEcfDXDGZ4O1vGwGWzVcQI6Q==
-X-Received: by 2002:a05:6512:76:b0:52c:84a7:f9d5 with SMTP id 2adb3069b0e04-52ccaa5a0abmr5695233e87.69.1719004099612;
-        Fri, 21 Jun 2024 14:08:19 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63b48f8sm308949e87.2.2024.06.21.14.08.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 14:08:19 -0700 (PDT)
-Date: Sat, 22 Jun 2024 00:08:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-Cc: sboyd@kernel.org, andersson@kernel.org, bjorn.andersson@linaro.org, 
-	david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, 
-	robh@kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
-Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
-Message-ID: <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
+	s=arc-20240116; t=1719004145; c=relaxed/simple;
+	bh=+LIbyvjPcMeXkeMa2lo8e5prHheBCLudLjRyC8TIAEY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=AJUuJOLTXvXRzTw+8Eg4sgzsVk/8qGi6JAhakoy93x9SrPTNWkqJYmlkGPfeA2NyUQ2aJqESK5EnlgtSo+HjWz/kXiTV7W5SnNyA1yIMxl/sYT3m1g9z+Fq7zgMAYJJo/CWSZVMCTtW1GR8ed8g69IyWUGy1t5BwzlQrFFdV1So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6SAsJ24; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FAC9C4AF07;
+	Fri, 21 Jun 2024 21:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719004145;
+	bh=+LIbyvjPcMeXkeMa2lo8e5prHheBCLudLjRyC8TIAEY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=i6SAsJ24LZai2hLmeNahcLCi77UFlYzp9mYx7uKa6C3eeT0zrwMRp7HHq2fm5rBZU
+	 nwBkkAeIwMY4Wy3fN6dAoS0JbGwQSe3pnOkD41/38gg4M67IDhIjX3tZmxdMnCcxs1
+	 9uiO4As99m/wcvQr42GlY3QmAmuxeQ+zc5+Nb1xYKwIT0cf0F+61vdDknkMB3b3ePU
+	 1PdjKMA0Twg/5xk2MeC4j3oAFNUS12+FuN4Rr+oLpsLmEWsPnIHi+xyNYNfoM+l7Zb
+	 251Q6ZJFRMYPt8SUWIiBroaDBF8Y8JaAWc6OO0YkzYGyiom+FxybLc6nZEvh5xvitG
+	 w3/tE/nC3aCSQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6291ACF3B94;
+	Fri, 21 Jun 2024 21:09:05 +0000 (UTC)
+Subject: Re: [GIT PULL] overlayfs fixes for 6.10-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJfpegvm9M9Kzmtd=X66YijMOoJpKX62vuL4maD+7xBJ0-n5Zw@mail.gmail.com>
+References: <CAJfpegvm9M9Kzmtd=X66YijMOoJpKX62vuL4maD+7xBJ0-n5Zw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJfpegvm9M9Kzmtd=X66YijMOoJpKX62vuL4maD+7xBJ0-n5Zw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git tags/ovl-fixes-6.10-rc5
+X-PR-Tracked-Commit-Id: 004b8d1491b4bcbb7da1a3206d1e7e66822d47c6
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 264efe488fd82cf3145a3dc625f394c61db99934
+Message-Id: <171900414539.4758.3763719464003191294.pr-tracker-bot@kernel.org>
+Date: Fri, 21 Jun 2024 21:09:05 +0000
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, overlayfs <linux-unionfs@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
 
-On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
-> PRNG clock is needed by the secure PIL, support for the same
-> is added in subsequent patches.
+The pull request you sent on Fri, 21 Jun 2024 21:54:28 +0200:
 
-Which 'same'?
-What is 'secure PIL'?
+> git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git tags/ovl-fixes-6.10-rc5
 
-> 
-> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
-> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
-> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-> ---
->  drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
->  1 file changed, 47 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-> index 94f68c919ee6..366b19cbd994 100644
-> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-> @@ -91,19 +91,6 @@ enum {
->  	WCSS_QCS404,
->  };
->  
-> -struct wcss_data {
-> -	const char *firmware_name;
-> -	unsigned int crash_reason_smem;
-> -	u32 version;
-> -	bool aon_reset_required;
-> -	bool wcss_q6_reset_required;
-> -	const char *ssr_name;
-> -	const char *sysmon_name;
-> -	int ssctl_id;
-> -	const struct rproc_ops *ops;
-> -	bool requires_force_stop;
-> -};
-> -
->  struct q6v5_wcss {
->  	struct device *dev;
->  
-> @@ -128,6 +115,7 @@ struct q6v5_wcss {
->  	struct clk *qdsp6ss_xo_cbcr;
->  	struct clk *qdsp6ss_core_gfmux;
->  	struct clk *lcc_bcr_sleep;
-> +	struct clk *prng_clk;
->  	struct regulator *cx_supply;
->  	struct qcom_sysmon *sysmon;
->  
-> @@ -151,6 +139,21 @@ struct q6v5_wcss {
->  	struct qcom_rproc_ssr ssr_subdev;
->  };
->  
-> +struct wcss_data {
-> +	int (*init_clock)(struct q6v5_wcss *wcss);
-> +	int (*init_regulator)(struct q6v5_wcss *wcss);
-> +	const char *firmware_name;
-> +	unsigned int crash_reason_smem;
-> +	u32 version;
-> +	bool aon_reset_required;
-> +	bool wcss_q6_reset_required;
-> +	const char *ssr_name;
-> +	const char *sysmon_name;
-> +	int ssctl_id;
-> +	const struct rproc_ops *ops;
-> +	bool requires_force_stop;
-> +};
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/264efe488fd82cf3145a3dc625f394c61db99934
 
-Move this back and use forward-declaration of struct q6v5_wcss.
-
-> +
->  static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
->  {
->  	int ret;
+Thank you!
 
 -- 
-With best wishes
-Dmitry
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
