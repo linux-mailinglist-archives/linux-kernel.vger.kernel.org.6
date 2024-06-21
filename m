@@ -1,104 +1,85 @@
-Return-Path: <linux-kernel+bounces-225174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5EC2912D19
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:13:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46D0912D1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591891F241F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:13:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E493B1C22DF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1542317995B;
-	Fri, 21 Jun 2024 18:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB156179202;
+	Fri, 21 Jun 2024 18:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="fbAaTOmn"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="exm+5gBM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA92C1667CF;
-	Fri, 21 Jun 2024 18:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD0C156227
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 18:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718993599; cv=none; b=t3GZYfQX5I9kfFm0qcXTk0poXkGE00FY/8HWRl6gWogBm1vdJfvLhiaWFF8R+baww2UnN9J2oGyrGEu6wciyLxjSHsU5M4EZBqNpRvY7MmzMRc9blRO8T57l5vwj4Zf9VHj6MpguHM2iaf3jqOoSy0MNqjRZowdjKqIecl8jG4A=
+	t=1718993642; cv=none; b=Ze2LOiZbpO9cSYFQgDx10U7N/QB9DJByPSNFAQd2S0JtPXfEVrRZUnfUq+9+RnjkqSUYerZfq7FGrEM+2oOEJc9leFIhek9ZLiGRncN5qv7ZjjgkDKXp0GR+xUD/2UUll0+HgVRyYRv8RYYSRM8RH7fbFrEwQhOihNQTKvkwuG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718993599; c=relaxed/simple;
-	bh=LZ0iYmZkSzEwlSv99nqaHY3jPJ/b/fOk4KxJwrNfLm0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=GtMiGEb/POF00D4PHahrAgyRyxc+HjoTohi7d9+hMZDPusRt3yW7a1hSP79KxiAnwmOhr3Tfm/AP7eAknKdQi+/yw9aFCG6jm7cIgTQdFo1g9U8Uk8l9h7e/bfvCYSAUS5n8DIm33aH54KMjPdk/RDh0t/gttUUt+16mIKi44/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=fbAaTOmn; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1718993642; c=relaxed/simple;
+	bh=TTsj2YNoQ6/dtVSKs4TxAaXgrBdBy/eSZcbDthrumo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jNnKnCjOeUPDNoBFk8RgQL9YILJJBFc0J6ugKVULOS04gWG3UhiiUuLPRRwcUH8u4++1ad4eicWCHco79jR8gFFMews8+5adei9bXBNiNdBiVlEDEChbL2gAlt7roYg12JX7cNsNI53eUb/86KJDxHZnNGURK2uWVLChNdOAyQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=exm+5gBM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8CaEQPz8O8rxqBnGpTbHDs7svMvy0Qf5Sggnc6KPEyQ=; b=exm+5gBM0vKdyiPkc7w8hOqrjj
+	EJeERKQpbiqJrHqYCBN/yoUl9zH4e+9TFixngqwpq8dNe0itUlJM306cfIbQJUCyhwsQRWeLwRqG0
+	jTRg+tTnsG3555RsrQ7boEfhZgsL11xqGJlTfGQKrmAIEAOR2GaNFel8dxH44xyV8Y6PxQ8zrmWnm
+	wUfzLN1lQroylfu0JiBm0SaUTYnEPzmXtREvm3ZpHekToDBrwBdtd6NZQW5fT3SDCg0z8bhOdctIb
+	CY1HRGUfQ9W9Kvr6zDlmGvqThfIN3V389zOUdukmSwKds3EPkOQpdMMfRq5r5cPnQzuKwAGNGIvtd
+	Eky3gdAA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sKilq-00000007T4K-03r0;
+	Fri, 21 Jun 2024 18:13:58 +0000
+Date: Fri, 21 Jun 2024 19:13:57 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	akpm@linux-foundation.org, vbabka@suse.cz, hannes@cmpxchg.org,
+	anna-maria@linutronix.de, tglx@linutronix.de
+Subject: Re: [PATCH] mm/vmstat: Fix -Wenum-enum-conversion warning in vmstat.h
+Message-ID: <ZnXC5Xa4R0Mp7FCB@casper.infradead.org>
+References: <20240621111604.25330-1-shivamurthy.shastri@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1718993593;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oF3mZo1VFDTjJ8h7Wuq2E3h4BU0kvs78+Dm/ptq/cD8=;
-	b=fbAaTOmnqaoD3oG8vocepB00x8sRNHPWzj9Hw6y3RORWi8aRrtkyfaolBJgaWalyo/t17b
-	svKXjQA6eljRoko99JasfzdGExxQ9eIRlJYCsTlj6da6yje2DoQosKeJoUZupHWlGIxaaQ
-	P3LPhMfHfW4kitBEe4zBl+Z1ul/Yb/lBGow8uwLFWh/O8+78WIIrJKAqD9d8xdZZMyxPm8
-	4umP5ug3QHoa95y6rcJZxDsZyeaOsZGD+tJppn2sUJMm0Jlx1vLW3/aUVnF6Bvy5PTaacF
-	6ODlLFtAjGXQAEtYgzWMUNvFPmoVmBwdehacUaab1/EBQhAJ4NnNnXRkaYWuyQ==
-Date: Fri, 21 Jun 2024 20:13:08 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Daniel Golle <daniel@makrotopia.org>, Aurelien Jarno
- <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko
- Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>, Sebastian Reichel
- <sebastian.reichel@collabora.com>, Anand Moon <linux.amoon@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>, Ard
- Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
-In-Reply-To: <f8e6b1b9-f8ff-42df-b1ef-bcc439c2e913@kernel.org>
-References: <cover.1718921174.git.daniel@makrotopia.org>
- <57a7fb13451f066ddc8d1d9339d8f6c1e1946bf1.1718921174.git.daniel@makrotopia.org>
- <f8e6b1b9-f8ff-42df-b1ef-bcc439c2e913@kernel.org>
-Message-ID: <173ce1663186ab8282356748abcac3f4@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621111604.25330-1-shivamurthy.shastri@linutronix.de>
 
-Hello Krzysztof,
+On Fri, Jun 21, 2024 at 01:16:04PM +0200, Shivamurthy Shastri wrote:
+> A W=1 build with -Wenum-enum-conversion enabled, results in the
+> following build warning due to an arithmetic operation between different
+> enumeration types 'enum node_stat_item' and 'enum lru_list':
 
-On 2024-06-21 11:57, Krzysztof Kozlowski wrote:
-> On 21/06/2024 03:25, Daniel Golle wrote:
->> From: Aurelien Jarno <aurelien@aurel32.net>
+OK, but why do we want -Wenum-enum-conversion enabled?  The code looks
+perfectly fine before, and now it looks ugly.  What bugs does this
+warning catch?
 
-[snip]
+>  static inline const char *lru_list_name(enum lru_list lru)
+>  {
+> -	return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+> +	return node_stat_name(NR_LRU_BASE + (enum node_stat_item)lru) + 3; // skip "nr_"
+>  }
 
->> +	pm_runtime_set_autosuspend_delay(dev, RK_RNG_AUTOSUSPEND_DELAY);
->> +	pm_runtime_use_autosuspend(dev);
->> +	pm_runtime_enable(dev);
->> +
->> +	ret = devm_hwrng_register(dev, &rk_rng->rng);
->> +	if (ret)
->> +		return dev_err_probe(&pdev->dev, ret, "Failed to register Rockchip 
->> hwrng\n");
->> +
->> +	dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
-> 
-> Drop, driver should be silent on success.
-
-I respectfully disagree.  Many drivers print a single line upon
-successful probing, which I find very useful.  In this particular
-case, it's even more useful, because some people may be concerned
-about the use of hardware TRNGs, so we should actually make sure
-to announce it.
+and honestly, I'd convert it to an int instead of enum node_stat_item.
+Because it is not a node_stat_item, and it wouldn't make sense to
+add two node_stat_items together.  Just like it doesn't make sense to
+add two pointers together (but it does make sense to add an integer to a
+pointer).
 
