@@ -1,92 +1,104 @@
-Return-Path: <linux-kernel+bounces-224191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305E3911E91
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:22:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C8F911E87
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEE06B24323
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:22:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3371F2291D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897D516D9B1;
-	Fri, 21 Jun 2024 08:22:23 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF5916D4F4;
-	Fri, 21 Jun 2024 08:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6A316D9DF;
+	Fri, 21 Jun 2024 08:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="evd2eRBz"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABF116D9AC;
+	Fri, 21 Jun 2024 08:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718958143; cv=none; b=sUSi2zXhztXWYYsfEJhN3zIYa2LHTq0cM+tEsOLNrddRRtMsmhr28dwXSSgGGTa4OY+G1+Vd0sXPWsYjs89ZO1vNJvLLiNJ7LdSHC69scFGO3kZPk6q66aWa+2vkoUn6FsrJcFfYYgeDBI/UoWXcwVAoQ9ZgT3oxOpjDDMqOQIw=
+	t=1718958092; cv=none; b=HCN1W6tqB2tK+UGVX1EmqU4EYkb781WBdHSFANVsXjARnr6uORLG90Ei/TKgTMn31q30ZKwIPGvJ7bQrQf+EkjtnuEhbxwyKoq03Dp3HjgYI37wAgp0qRh8n7bIgYSj378bUYmyUoACd3B52JI76LPZ6BdwyLni13uEprhZmNOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718958143; c=relaxed/simple;
-	bh=dgT8q2RUD4AsRrCrgspBvokTXMmqeYQLjIWJc/q4mjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFDfmdP5ufbVCFcTVwxhk7RyUp/qO+V/6PANDyvNmT7H2zftfGK79Sky5XAhHZ9tlrNgb39CZxqTQajvNUdSQX9UvY3IsMbdt6HfyPTx/R6DVA8QP1bY0hOolO7QcnE2EwNbMu8u1aKznHoHfgBgj4j7o/TSVaT3FTGgOeIKGEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sKZWX-0001Oj-00; Fri, 21 Jun 2024 10:21:33 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 88B31C0120; Fri, 21 Jun 2024 10:21:17 +0200 (CEST)
-Date: Fri, 21 Jun 2024 10:21:17 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>,
-	Aleksandar Rikalo <arikalo@gmail.com>,
-	Chao-ying Fu <cfu@wavecomp.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>,
-	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	"paulburton@kernel.org" <paulburton@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 00/14] MIPS: Support I6500 multi-cluster configuration
-Message-ID: <ZnU3/c1T55k4WbYx@alpha.franken.de>
-References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com>
- <ZnRtYFr5HFffyK7E@alpha.franken.de>
- <ff6fe06d-6209-4e34-9cc8-eb516fa4ffae@app.fastmail.com>
+	s=arc-20240116; t=1718958092; c=relaxed/simple;
+	bh=K+R2RKmiuFqLEon+vHwnwnwqTqmBWoIoUN07WehQFFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NlKmj1oRfdwATKoTwByzta/1UUB7/gjI7SZWMWobE2Ar1XN+h3wspr5Ws2Zo29nHF2gn1ZKmP+VbnPE8E/2ugMmfnC4CiVbwbXtmvmzTUY5WD3HyfI50oIOhOAQP2Snutkjf/uzYlC0G0aljaoD116r9i1qwHf53/uhYHuCfbTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=evd2eRBz; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=C7AamCqstwrWaOAl+kCPc5rixsS4G4AQ56sFqgwTcz0=;
+	t=1718958090; x=1719390090; b=evd2eRBzbrXEYrumqIhIv1mDubpM7/ZAsCYCSZPL3oyVckd
+	368w382J+GUjMiabds0W4wxf+ISIMARA8qKNvhiB7ElBTVhL3ZGmpe+F5sDLKD0VyrvxTYFEsoUy3
+	ZExR6QYSTmtFzpm0R2HsUViK1KP2S5ZjllLM6dq3UC8osxrhM3qrED2xZjXtCihP3RquRjYNM15rx
+	mf8WID3N4T7xQGFkSnA+EhlFi0+t0ri3hMPAb99fHl8rQTkalLxM0KfVEQb6ap7Bgv9CB1YRP2N5y
+	tmFCHW1Wk2YOTnOewiqSTe5cBgXqgU/1Mxzg08PTPC1k8fhFUPuoJaiIFDCGlKNg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sKZWQ-0005mj-Vr; Fri, 21 Jun 2024 10:21:27 +0200
+Message-ID: <acaf2d70-d821-4951-9072-931cb56b1b9f@leemhuis.info>
+Date: Fri, 21 Jun 2024 10:21:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ff6fe06d-6209-4e34-9cc8-eb516fa4ffae@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: omap2-mcspi multi mode
+To: Colin Foster <colin.foster@in-advantage.com>,
+ Mark Brown <broonie@kernel.org>, Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ miquel.raynal@bootlin.com,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <Zl/V0dU6SjAMkpLG@colin-ia-desktop>
+ <ZmFt7yfZFFJdsZuJ@localhost.localdomain> <ZmJ7E305ow91ez2U@euler>
+ <ZmMrJ8uaw85a03Ce@finisterre.sirena.org.uk>
+ <ZmhdWw/dV5HRU/Nh@colin-ia-desktop>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <ZmhdWw/dV5HRU/Nh@colin-ia-desktop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718958090;66025cb3;
+X-HE-SMSGID: 1sKZWQ-0005mj-Vr
 
-On Fri, Jun 21, 2024 at 12:05:32AM +0100, Jiaxun Yang wrote:
+On 11.06.24 16:21, Colin Foster wrote:
+> On Fri, Jun 07, 2024 at 04:45:43PM +0100, Mark Brown wrote:
+>> On Thu, Jun 06, 2024 at 10:14:27PM -0500, Colin Foster wrote:
+>>
+>>> So I think the question I have is:
+>>
+>>> Should the CS line be de-asserted at the end of "spi_write"?
+>>
+>> Absent bodging with cs_change after any spi message the chip select
+>> should be left deasserted.
 > 
-> 
-> 在2024年6月20日六月 下午6:56，Thomas Bogendoerfer写道：
-> > On Sat, May 11, 2024 at 12:43:27PM +0200, Aleksandar Rikalo wrote:
-> >> Taken from Paul Burton MIPS repo with minor changes from Chao-ying Fu.
-> >> Tested with 64r6el_defconfig on Boston board in 2 cluster/2 VPU and
-> >> 1 cluster/4 VPU configurations.
-> >
-> > which existing CPUs can use this ?
-> 
-> Besides Boston are some multi cluster I6500 systems in wild, including Fungible F1,
-> which comes with 52 cores in data panel.
-> 
-> Those vendors show no interest on mainline kernel support though.
+> Do you have hardware to reproduce my results of two spi messages no
+> longer toggling the CS line and leaving the line at GND through the
+> transactions?
 
-ok, so looking at the series it touches areas with different maintainers,
-I'm fine taking the MIPS parts, can I simply cherry-pick them out
-of the series ?
+Hmmm, I might have missed something, but it looks like nothing happened
+since that exchange. Did this regression fall through the cracks or can
+I consider the issue resolved for some reason?
 
-Thomas.
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+#regzbot poke
+
+
 
