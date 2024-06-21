@@ -1,237 +1,142 @@
-Return-Path: <linux-kernel+bounces-225076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88138912B94
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:41:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA4B912B97
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA6651C25D2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:41:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 427341F27309
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C150171E75;
-	Fri, 21 Jun 2024 16:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC76C1607AF;
+	Fri, 21 Jun 2024 16:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="b+974Ov7"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eZzbd4LL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974DB1684AD;
-	Fri, 21 Jun 2024 16:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3E91607A4
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718988000; cv=none; b=O2m0FGSQMNei9CUQ+5UAZwX2NjjL+TVN3H6I1G7d6nxGksend/a5qZbffRee9ED9egX6TPOCvNZNXwawdEIRrj0go+GNd1y9eW+NQb2K80/NfDOBa/eCQOOT8VCyj1pxoPjn3frZi8+nYTpmDPYPmHZinpbCwSgfe1NSp1e9V+4=
+	t=1718988028; cv=none; b=HRhPSJl0ULh+hZYGAJ3gDGuy0/tEpI41Z8J0FlR0vgCBWLC+DNlogb6ECtmba8UsFOu7D4aYkQfM6Elnuv2LdBtwMvfHIfap8JBcvUCkbYyE1f6P4aK7Ft8cFWcMMb5SoM1ttztSCFffPcuV3ACXMYlHdejFaw1xciNnKUG1OH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718988000; c=relaxed/simple;
-	bh=hWo1gVxlWo8njHZbS2+ISUJ4MaU/Z08cT/W2pZCsCxE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=WHUlpg2E7bJujLPk36hH/JrP7pA7ujBxJbwdfSAlHGOyHLLsQmpNIksjEQvTu1SpuYW9FPVi3njlOQj3at4SaT3MQN0/JoAdc4C7JvDUwDcDdBrKHHpkUnfKz7SUVYI/H2g0SmsUC/B0JqfSVYq5KL77qOBPPuJe2Yoj0E3lstw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=b+974Ov7; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LGdknq091082;
-	Fri, 21 Jun 2024 11:39:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718987986;
-	bh=D1lHDBEabw6iFa5eoXj6w/4O8h6lIdgdEQcuBn3HstE=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=b+974Ov7Tplz+TfybU4x/oWH/5Qkn3xsa2QeiF4ALxQ7OhYww8pFjgSSS/bb22aL7
-	 jCaeV7jsS65c1NesFKAWeIZdyV2+omZRvUTuGVgGXpVLp9H3uYuOPqpej7tBFECD/t
-	 Na2n3Vof6rZrMiwRHpiktA9SGGyxDZ/UYIvc4p6Y=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LGdkjk062054
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 11:39:46 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Jun 2024 11:39:46 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Jun 2024 11:39:46 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LGdkLB057989;
-	Fri, 21 Jun 2024 11:39:46 -0500
-From: Bryan Brattlof <bb@ti.com>
-Date: Fri, 21 Jun 2024 11:39:41 -0500
-Subject: [PATCH v3 5/5] DONOTMERGE: arm64: dts: ti: k3-am62a: add in opp
- table
+	s=arc-20240116; t=1718988028; c=relaxed/simple;
+	bh=8hdNbZbi5xq5u9eRxtbKlmpKUqx241yys8KmhV24ge0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KkNc0p8aUXVMyoQk3h3T8QBX7k/Wxy7zSFjR34Lvnx15HUD54OrhHxZ84FIdMC565D46gUOm3FdY0X/tDJsjXyT2I5if6sIeRcVQj9VHwqr52hNPJmpXAFB5IIXSU4au1J5Ts7DOll+bIZ6dZHjw2XcTfbzvrwICqV6u8n05XM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eZzbd4LL; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718988025; x=1750524025;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8hdNbZbi5xq5u9eRxtbKlmpKUqx241yys8KmhV24ge0=;
+  b=eZzbd4LLosYcgaO6AL2u6mgfABxrtcKhgwhPmxTnW/po0T4xEhS5Dfi4
+   RVJOC6Bkt2fw20aLZ35vBYi/9KaqvpZbiSc7ZZBtIAl0W+WbpaUHtEY0y
+   fall+VqK+RcNmrHpohTZC4Rc88HbDntkzPsNhRcD+V4RBr3BpC85p8C5c
+   vnnwg6UPUWg5RktqPAHsadi/3xauFKVsFWD8UtzvgzEW8tSuZ21WoYaoN
+   wc9BCu1ZtAaPrUI8uSLKzWFzPpglQjFUE5PWizN3QQLci+JsWv9/PRv9d
+   k6XBJpzkBOpmbkXFbGRzX11NNaLjw4zcyt1ZI3GpV+VXb5p4xPjgUqpgc
+   Q==;
+X-CSE-ConnectionGUID: SlLJlSIUQ5qjPYz4lHP3Ag==
+X-CSE-MsgGUID: 5k6220fvRYeDKz0OtPw9Ew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="38549229"
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="38549229"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 09:40:25 -0700
+X-CSE-ConnectionGUID: zr5/jxCSQv+X+JZf2iKC2A==
+X-CSE-MsgGUID: XtVe/A3qT4eXt3UUOUq/BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="43315176"
+Received: from bmurrell-mobl.amr.corp.intel.com (HELO [10.124.221.70]) ([10.124.221.70])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 09:40:25 -0700
+Message-ID: <a2e7b9a1-15ff-41c3-a6b9-bdab4ead904b@intel.com>
+Date: Fri, 21 Jun 2024 09:40:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] x86: mm: disable KMSAN instrumentation for physaddr.c
+To: Alexander Potapenko <glider@google.com>
+Cc: elver@google.com, dvyukov@google.com, dave.hansen@linux.intel.com,
+ peterz@infradead.org, akpm@linux-foundation.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20240621094901.1360454-1-glider@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240621094901.1360454-1-glider@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240621-ti-opp-updates-v3-5-d857be6dac8b@ti.com>
-References: <20240621-ti-opp-updates-v3-0-d857be6dac8b@ti.com>
-In-Reply-To: <20240621-ti-opp-updates-v3-0-d857be6dac8b@ti.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>, Lee Jones <lee@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>
-CC: Vibhore Vardhan <vibhore@ti.com>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Bryan Brattlof <bb@ti.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3806; i=bb@ti.com;
- h=from:subject:message-id; bh=hWo1gVxlWo8njHZbS2+ISUJ4MaU/Z08cT/W2pZCsCxE=;
- b=owNCWmg5MUFZJlNZePdFTQAAZn////9v/+fr/cz+zxG/l6san/7qz/X17+vLU0+89xNp//ewA
- Rs21kABiMgDTQ0aAAaA0wmmmjRpoDCaADQyAAyYQaZDCADQYjCAPUYjIyb1EHqaMIA0GhoAANDR
- owhoDQaGhoAA0aGmgyGho09IA9ENNBpoeiNHqYyIGQaNDNSPUMnqNGg0NPSMgHqDTQaaBo0ABoA
- DQAaAAAADQADQaeoNAaeoeoD1PU9TNQMMcTgTLHM7eN6CfPu7Dj3lCeHPLTtFdDxro+OwRa/5uy
- O0LQOZUMKp4WYy6t/fUZ98garnzMFFSG8Xes20ot2UoZ5oQDEXPVA8zjM6dGSVjiuA+DO9X4ZnE
- NkBUcl24TP0ACmUZXKu4M5Gd+hkrZXm0ut3BAOjMcsuhXbFZVxq3mQ9bEZz3lSa1997fHX5nQ0U
- B0+UK8+xQA787wRoOxgmsLz44DXTuv/F/7hYLJrRu+RbgMFPsnRZPMesSESUsdJZ4DE0haQjSki
- CazNMvijCgstlyslLaMwBZEeYiEI4rljzW+BeW8w9VebXLOWthRCiZDR0KEC3DuAnmmiEX+ECvV
- N+ODLE3BYkP3QLSQamAaye2ClXNLdigFMfnI+MBWUKTKJEYZf20tq4soonZ/v1DH4ppvEBYoiwA
- Upwj04DigC7kinChIPHuipo
-X-Developer-Key: i=bb@ti.com; a=openpgp;
- fpr=D3D177E40A38DF4D1853FEEF41B90D5D71D56CE0
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-To help reduce power consumption, reduce the frequency of the CPU cores
-when they sit idle by specifying their supported OPP entries.
+On 6/21/24 02:48, Alexander Potapenko wrote:
+> Enabling CONFIG_DEBUG_VIRTUAL=y together with KMSAN led to infinite
+> recursion, because kmsan_get_metadata() ended up calling instrumented
+> __pfn_valid() from arch/x86/mm/physaddr.c.
+> 
+> Prevent it by disabling instrumentation of the whole file.
 
-Signed-off-by: Bryan Brattlof <bb@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi |  5 +++
- arch/arm64/boot/dts/ti/k3-am62a7-sk.dts     |  9 +++++
- arch/arm64/boot/dts/ti/k3-am62a7.dtsi       | 51 +++++++++++++++++++++++++++++
- 3 files changed, 65 insertions(+)
+This does seem rather ad-hoc.  It's the same basic reason we have
+"noinstr": code instrumentation infrastructure uses generally can't be
+instrumented itself.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-index 98043e9aa316b..bf16b29c3953b 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
-@@ -13,6 +13,11 @@ wkup_conf: syscon@43000000 {
- 		#size-cells = <1>;
- 		ranges = <0x00 0x00 0x43000000 0x20000>;
- 
-+		opp_efuse_table: syscon@18 {
-+			compatible = "ti,am62-opp-efuse-table", "syscon";
-+			reg = <0x18 0x4>;
-+		};
-+
- 		chipid: chipid@14 {
- 			compatible = "ti,am654-chipid";
- 			reg = <0x14 0x4>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-index f241637a5642a..852a066585d6d 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
-@@ -59,6 +59,15 @@ wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
- 		};
- 	};
- 
-+	opp-table {
-+		/* Add 1.4GHz OPP for am62p5-sk board. Requires VDD_CORE at 0v85 */
-+		opp-1400000000 {
-+			opp-hz = /bits/ 64 <1400000000>;
-+			opp-supported-hw = <0x01 0x0004>;
-+			clock-latency-ns = <6000000>;
-+		};
-+	};
-+
- 	vmain_pd: regulator-0 {
- 		/* TPS25750 PD CONTROLLER OUTPUT */
- 		compatible = "regulator-fixed";
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-index f86a23404e6dd..6c99221beb6bd 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a7.dtsi
-@@ -48,6 +48,8 @@ cpu0: cpu@0 {
- 			d-cache-line-size = <64>;
- 			d-cache-sets = <128>;
- 			next-level-cache = <&L2_0>;
-+			operating-points-v2 = <&a53_opp_table>;
-+			clocks = <&k3_clks 135 0>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -62,6 +64,8 @@ cpu1: cpu@1 {
- 			d-cache-line-size = <64>;
- 			d-cache-sets = <128>;
- 			next-level-cache = <&L2_0>;
-+			operating-points-v2 = <&a53_opp_table>;
-+			clocks = <&k3_clks 136 0>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -76,6 +80,8 @@ cpu2: cpu@2 {
- 			d-cache-line-size = <64>;
- 			d-cache-sets = <128>;
- 			next-level-cache = <&L2_0>;
-+			operating-points-v2 = <&a53_opp_table>;
-+			clocks = <&k3_clks 137 0>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -90,6 +96,51 @@ cpu3: cpu@3 {
- 			d-cache-line-size = <64>;
- 			d-cache-sets = <128>;
- 			next-level-cache = <&L2_0>;
-+			operating-points-v2 = <&a53_opp_table>;
-+			clocks = <&k3_clks 138 0>;
-+		};
-+	};
-+
-+	a53_opp_table: opp-table {
-+		compatible = "operating-points-v2-ti-cpu";
-+		opp-shared;
-+		syscon = <&opp_efuse_table>;
-+
-+		opp-200000000 {
-+			opp-hz = /bits/ 64 <200000000>;
-+			opp-supported-hw = <0x01 0x0007>;
-+			clock-latency-ns = <6000000>;
-+		};
-+
-+		opp-400000000 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-supported-hw = <0x01 0x0007>;
-+			clock-latency-ns = <6000000>;
-+		};
-+
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-supported-hw = <0x01 0x0007>;
-+			clock-latency-ns = <6000000>;
-+		};
-+
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-supported-hw = <0x01 0x0007>;
-+			clock-latency-ns = <6000000>;
-+		};
-+
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-supported-hw = <0x01 0x0006>;
-+			clock-latency-ns = <6000000>;
-+		};
-+
-+		opp-1250000000 {
-+			opp-hz = /bits/ 64 <1250000000>;
-+			opp-supported-hw = <0x01 0x0004>;
-+			clock-latency-ns = <6000000>;
-+			opp-suspend;
- 		};
- 	};
- 
+How hard would it be to make sure that kmsan_get_metadata() and friends
+don't call any symbols that were compiled with -fsanitize=kernel-memory?
 
--- 
-2.45.2
-
+I do also think I'd much rather see __no_kmsan_checks on the functions
+than doing whole files.  I *guarantee* if code gets moved around that
+whoever does it will miss the KMSAN_SANITIZE_physaddr.o in the makefile.
 
