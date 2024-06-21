@@ -1,125 +1,208 @@
-Return-Path: <linux-kernel+bounces-224978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A51912983
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:24:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D2A912982
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D8A282978
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:24:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FED92824F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B809B74413;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865E26FE16;
 	Fri, 21 Jun 2024 15:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rd/xkAHs"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFE957CA7;
-	Fri, 21 Jun 2024 15:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D208847A66
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983433; cv=none; b=ameoITLKV56DEDrSJ79bd19bfr0LOcFgALF5AH+9t4AWi6oY8RrxYMzDp0APPNkngjjhgktkyS1wQ/ukg7Z5GYcisNdfVEK+jwROY5DGaZ8OjauMJY0luK/gVQPehUhMLHZfPRnDfia1ae92f4JDOnM7PzDW55Ulbg1LnktSOCk=
+	t=1718983433; cv=none; b=C18ZrPvKz7UNfFWmdV+CZLh2Euzql6NFF/sAiysFfRC68mM3qhsAcl30LmOhnNiosecd1QsUEfiLUAKon+mK47865u/rZ9djoG0fYv5hmHQws1Ajpce66ZP2mGG1cnYlq5tyvqnXDJXYuK3DcWyBu4PoQ0Qij5psvwlXEsh0Yf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718983433; c=relaxed/simple;
-	bh=Q+xmARk2gmWy+xi8lwX1HreTsVtyXA4cJ2V9Ld478Wg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OYGDqKlEVafQa3Mp6AQ0ZtBAmBX7AuGOAFpbDveTaAVdueyJ3kNfQg+8WFKidWHek0sDSBnvySuVqYR6Zl1zg+sRf3vWuZhHCZeQGUD+M3RYEngtLuHUfepnCFxWblscjExdbmvBBmWr4tpR/rUzA5ehK9jyp6H4ERfG3AqiOOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rd/xkAHs; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LFNgmb074653;
-	Fri, 21 Jun 2024 10:23:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718983422;
-	bh=9f94b/D8ANRqhat16jWrutUQv6VRYGl/PLuwcC9ivQY=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=rd/xkAHsJ1ob8oeziqBg/pohLj7vDI+US/QGOtmvzUOnLcPp+GEwaxaSTuzXsQHee
-	 fIjE+WE/LQhnGNDPD9wZyugx+LqFP5H89yMnoLOpviOVGWWLlZm87jmpDHpUR/LsdG
-	 rABWgxGI5AODle3Ee9OcT2TxNZSeU9q9c7nRq1Vk=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LFNgUW021160
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 10:23:42 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Jun 2024 10:23:41 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Jun 2024 10:23:42 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LFNcVj097459;
-	Fri, 21 Jun 2024 10:23:38 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, Nathan Morrisson <nmorrisson@phytec.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>,
-        <w.egorov@phytec.de>
-Subject: Re: [PATCH v3 0/4] Add overlays to disable optional hardware in k3-am6xx-phycore-som boards
-Date: Fri, 21 Jun 2024 20:53:35 +0530
-Message-ID: <171898028154.2272421.5900858100796814907.b4-ty@ti.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240613230759.1984966-1-nmorrisson@phytec.com>
-References: <20240613230759.1984966-1-nmorrisson@phytec.com>
+	bh=GbxrimKpnCu8pEGr/Ptk8gaTnt5JFxC58RLlMvrs9bQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J4GRwfOYehzEQ0KThtfnzcw7Hu4lIpP3E87tMV37EK+8ZUu15+dbzpuJquLzv5ulMflPXTCCeWDWWTrFtdnHTJQFr2apb64LG5kf2qKw1dkOBWczfneHGaA7ELVqXwJQxfXM6qkp1P2B3b4fia4p+G5pz1IlkngOfCb1SMlRHaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 770D660008;
+	Fri, 21 Jun 2024 15:23:39 +0000 (UTC)
+Message-ID: <caaeb1d1-12c5-4d07-b299-34734f0099ab@ghiti.fr>
+Date: Fri, 21 Jun 2024 17:23:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/1] riscv: mm: Add support for Svinval extension
+Content-Language: en-US
+To: Andrew Jones <ajones@ventanamicro.com>,
+ Mayuresh Chitale <mchitale@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Samuel Holland <samuel.holland@sifive.com>
+References: <20240609112103.285190-1-mchitale@ventanamicro.com>
+ <20240609112103.285190-2-mchitale@ventanamicro.com>
+ <20240621-469a3d5eb7bb2c0cc8ae0611@orel>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240621-469a3d5eb7bb2c0cc8ae0611@orel>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hi Nathan Morrisson,
+Hi Mayuresh, Andrew,
 
-On Thu, 13 Jun 2024 16:07:55 -0700, Nathan Morrisson wrote:
-> Add three overlays to disable the eth phy, rtc, and spi nor. These
-> overlays will be used to disable device tree nodes for components
-> that are optionally not populated.
-> 
-> v3:
->   - Explain the logic behind adding the overlays in commit messages
-> 
-> [...]
+On 21/06/2024 11:15, Andrew Jones wrote:
+> On Sun, Jun 09, 2024 at 04:51:03PM GMT, Mayuresh Chitale wrote:
+>> The Svinval extension splits SFENCE.VMA instruction into finer-grained
+>> invalidation and ordering operations and is mandatory for RVA23S64 profile.
+>> When Svinval is enabled the local_flush_tlb_range_threshold_asid function
+>> should use the following sequence to optimize the tlb flushes instead of
+>> a simple sfence.vma:
+>>
+>> sfence.w.inval
+>> svinval.vma
+>>    .
+>>    .
+>> svinval.vma
+>> sfence.inval.ir
+>>
+>> The maximum number of consecutive svinval.vma instructions that
+>> can be executed in local_flush_tlb_range_threshold_asid function
+>> is limited to 64. This is required to avoid soft lockups and the
+>> approach is similar to that used in arm64.
+>>
+>> Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
+>> ---
+>>   arch/riscv/mm/tlbflush.c | 58 ++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 58 insertions(+)
+>>
+>> diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
+>> index 9b6e86ce3867..49d7978ac8d3 100644
+>> --- a/arch/riscv/mm/tlbflush.c
+>> +++ b/arch/riscv/mm/tlbflush.c
+>> @@ -6,6 +6,54 @@
+>>   #include <linux/hugetlb.h>
+>>   #include <asm/sbi.h>
+>>   #include <asm/mmu_context.h>
+>> +#include <asm/cpufeature.h>
+>> +
+>> +#define has_svinval()	riscv_has_extension_unlikely(RISCV_ISA_EXT_SVINVAL)
+>> +
+>> +static inline void local_sfence_inval_ir(void)
+>> +{
+>> +	/*
+>> +	 * SFENCE.INVAL.IR
+>> +	 * 0001100 00001 00000 000 00000 1110011
+>> +	 */
+>> +	__asm__ __volatile__ (".word 0x18100073" ::: "memory");
+>> +}
+>> +
+>> +static inline void local_sfence_w_inval(void)
+>> +{
+>> +	/*
+>> +	 * SFENCE.W.INVAL
+>> +	 * 0001100 00000 00000 000 00000 1110011
+>> +	 */
+>> +	__asm__ __volatile__ (".word 0x18000073" ::: "memory");
+>> +}
+>> +
+>> +static inline void local_sinval_vma_asid(unsigned long vma, unsigned long asid)
+> Please name this to
+>
+>    void local_sinval_vma(unsigned long vaddr, unsigned long asid)
+>
+> to match the spec's naming. But, if we want the arguments in the name,
+> then it should be something like
+>
+>    void local_sinval_vma_addr_asid(unsigned long vaddr, unsigned long asid)
+>
+> but I think that's unnecessary.
+>
+>> +{
+>> +	if (asid != FLUSH_TLB_NO_ASID) {
+>> +		/*
+>> +		 * rs1 = a0 (VMA)
+>> +		 * rs2 = a1 (asid)
+>> +		 * SINVAL.VMA a0, a1
+>> +		 * 0001011 01011 01010 000 00000 1110011
+>> +		 */
+>> +		__asm__ __volatile__ ("add a0, %0, zero\n"
+>> +					"add a1, %1, zero\n"
+>> +					".word 0x16B50073\n"
+>> +					:: "r" (vma), "r" (asid)
+>> +					: "a0", "a1", "memory");
+>> +	} else {
+>> +		/*
+>> +		 * rs1 = a0 (VMA)
+>> +		 * rs2 = 0
+>> +		 * SINVAL.VMA a0
+>> +		 * 0001011 00000 01010 000 00000 1110011
+>> +		 */
+>> +		__asm__ __volatile__ ("add a0, %0, zero\n"
+>> +					".word 0x16050073\n"
+>> +					:: "r" (vma) : "a0", "memory");
+>> +	}
+> Please create an SINVAL_VMA instruction in insn-def.h to allow the
+> compiler to choose which registers will be used for asid and vaddr. And,
+> since SINVAL_VMA will be in insn-def.h, then we might as well add
+> SFENCE_INVAL_IR and SFENCE_W_INVAL there too for consistency, even though
+> they don't have operands. We should still create the three static inline
+> wrapper functions here though.
+>
+>> +}
+>>   
+>>   /*
+>>    * Flush entire TLB if number of entries to be flushed is greater
+>> @@ -26,6 +74,16 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
+>>   		return;
+>>   	}
+>>   
+>> +	if (has_svinval()) {
+>> +		local_sfence_w_inval();
+>> +		for (i = 0; i < nr_ptes_in_range; ++i) {
+> Where do we limit this to 64 as the commit message states it does?
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
 
-[1/4] arm64: dts: ti: k3-am64-phycore-som: Add serial_flash label
-      commit: 1fc3858a906bf3e8c48a14587106bb61c2f8d7c5
-[2/4] arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disable eth phy
-      commit: 1322b1796d7143dfa75e10e036c6099927ef510d
-[3/4] arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disable rtc
-      commit: a0b552605f8c588fdd9ea062886fb90d50534a8d
-[4/4] arm64: dts: ti: k3-am6xx-phycore-som: Add overlay to disable spi nor
-      commit: 9a32378884931d8f66d0d7122873156199fa422f
+If the number of ptes to flush is greater than tlb_flush_all_threshold 
+(= 64), we don't get there so this is indeed limited to 64 entries max.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+I think this limit should be different when using svinval, but we can do 
+that later and the goal is to allow the vendors to come with their own 
+threshold anyway.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Thanks for reviving this Mayuresh, I'll add my RB in the next version 
+when you fix Andrew's comments.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Alex
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
-
+>
+>> +			local_sinval_vma_asid(start, asid);
+>> +			start += stride;
+>> +		}
+>> +		local_sfence_inval_ir();
+>> +		return;
+>> +	}
+>> +
+>>   	for (i = 0; i < nr_ptes_in_range; ++i) {
+>>   		local_flush_tlb_page_asid(start, asid);
+>>   		start += stride;
+>> -- 
+>> 2.34.1
+>>
+> Thanks,
+> drew
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
