@@ -1,128 +1,210 @@
-Return-Path: <linux-kernel+bounces-224524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0C091238F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:29:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64195912396
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E9A81C23A25
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:29:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4B87B260E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC79178394;
-	Fri, 21 Jun 2024 11:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E6B17B423;
+	Fri, 21 Jun 2024 11:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFpX9f7q"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="m+S4/uR1"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2064.outbound.protection.outlook.com [40.107.103.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2A5176254;
-	Fri, 21 Jun 2024 11:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969166; cv=none; b=Wkk4wYB0sd+BNNYEzvJh74oqHJyhAAIiKmPp5IRWhhyhx3wBkp0blh8zDKaO2s+5sNUzsddUDidvQtf+O9aQAk0Qze35vbHeIi0QtQ25utehAp+fC1zUtAEAw3MYt2SBZHn8noT84iAxOsLkmIuEPgLgZofr8CuRPvWuqvsQQBo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969166; c=relaxed/simple;
-	bh=Q8DyGdBcYAgq64z9X9TWI+/sf0rsMrpXcgbn82Vmdc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXiTZ2vcDfo8CoOJtbJA/laWdTUnuiYbImAOn7g4zw4VmXvNi4sk+9hJMNjjb9nSp3adIQz0n7xoNYUlZwx/d6QbP1nj04oaNCK7K8eVD7ZAMY90PZ55gvOPoIwnS4vglu29wx2K7QTn90Vi/hH7Fl7XAyDjDa4EKqP1bv+3ehg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFpX9f7q; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso265014566b.3;
-        Fri, 21 Jun 2024 04:26:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718969163; x=1719573963; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i8sLZv1n+Ku2QMjcmS+4EdIPRc6Cam45MqmcajWwNAI=;
-        b=iFpX9f7qrZqD2nv3NfjMY/YQhJpZxJQKuolCxt24Eu/iMdV+GbuBnZiUTiGXXi2bph
-         DnlvMVqTEAFLHzCCGhU3d+cavpdKtgv9tdne0Zj4hGteS/kh6dBCjUDl+6yPr61yhmDF
-         s06eCV+aRRp2iXabGHfVsNoI4HLnzO2GI+kY2kPLYAxNkUqJSzoaSs55ZhjpCmcriBD3
-         HKGkZtJKqYcnNANewbZ/UYhjeNg2LC5t8nlIiVAaM//Y2VU5MgLk8J4YbpazJHUMv3bv
-         akxdG2iCw+/RLJiaUI8xfXWaVcO4RUvn8y3rsBAV/JSongdoHEXaixTmRU0ZHEY1RbXz
-         411w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718969163; x=1719573963;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i8sLZv1n+Ku2QMjcmS+4EdIPRc6Cam45MqmcajWwNAI=;
-        b=v3krMuxs2DMmlRQoZ3kToW8VNzdR5t9FcpfSGZnAYJ5z8yU6P6SeGRnbyCvt+odlyc
-         96uPh1id1O0C0ZaKEqxi6QOVmMEdF8U47bLYGcBLn80OycMIA7K8gcaLQmiyQwiMXEMT
-         E0tAKKlIRDFLZr/9BEb1EsY1x0VUQR34eriKgpjN/pirdCclXzCVtSouLHRmaM/dzLCA
-         4U/Gp5eGN8gsAaQQdvlcf9J9PcqeH7WqskZuHXLl3+dsV2eGwZ7o+dk2RHkoUaldMImW
-         +c+WZPNXxir8NOvPVqflism0tWnXwk/AfIMR2tBu7m+/aQztdUKipJwyD7tOU5juGfGn
-         I5Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCXd+5jTdgq53kP/yrXua9FtS9n7H3E3zdjGXnKb2Yyq/2aWVAaGgCCYGIcI0aNJg/aJfIthYTckJ6IyzHZYOMMcKVNkBW57a/Y1hjsy0zscezX9WEnocFop/yxf4B5rjVkne+AZ2gEvoeVdl9n8e9CiXEj7I2y2WQ4/uKu4SAtMU56SFA==
-X-Gm-Message-State: AOJu0Yx6jBU7+AfT1FjxNzCFtlj6VrHisB7qnf5iNCMQAxg9Vcn+ZTGN
-	xNr49cMEKZfQK/0NcKyIJgPTUPu335gBL3LZ56qOAPUlPNAupSoq
-X-Google-Smtp-Source: AGHT+IEyjIILM29yLfV/vXCYggcQVFh0n6Mx/M2e70SYGzH2rtFIwFqH2zYjTAuliqRLT+DG1jMAKA==
-X-Received: by 2002:a17:906:d283:b0:a6f:6701:cd5a with SMTP id a640c23a62f3a-a6fab643427mr420372166b.44.1718969162970;
-        Fri, 21 Jun 2024 04:26:02 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48b17esm73795266b.88.2024.06.21.04.26.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 04:26:02 -0700 (PDT)
-Date: Fri, 21 Jun 2024 14:26:00 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v3 1/3] spi: fsl-dspi: use common proptery
- 'spi-cs-setup(hold)-delay-ns'
-Message-ID: <20240621112600.sshdjicucwtigq64@skbuf>
-References: <20240620-ls_qspi-v3-0-1a2afcf417e4@nxp.com>
- <20240620-ls_qspi-v3-1-1a2afcf417e4@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49D617B409;
+	Fri, 21 Jun 2024 11:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718969231; cv=fail; b=V00zWHK9vBYw4mXNadkWOFUlvT15hH3rqQSm+fzS3xRPb1jWqO6OS0jlJJVyrBKab1iSCipIVngAqFjEqVlI+MdAxPgYmZg1RO+GK9OxBXaOgQEeWIqMzXnXnUTbjThXMNM0sJs8vn7d14wYXhagAb69hqW0q2fOAijLL8bQj1g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718969231; c=relaxed/simple;
+	bh=2YfOy7qFNNuArukRtWEz+k3DfgSZdcKpkAXALwjAhjY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JX9EIz22esdqtbWnO/JFSZZ0tNARauGwKSY0ToSA5a/tCIvyLxOZbPaqXuwo7w475oMMFq8zAcKBVHrQ2owHwSn2dnCDTK6t6XTUYcUMpaYUPyxFoVi1XcaUuU3qgrRBx/yoLB7D81+7bn9SsYk46Xw/vPzs1KBcmkst8O9rIP0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=2n.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=m+S4/uR1; arc=fail smtp.client-ip=40.107.103.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=2n.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WgzbroDttfJoQ5fKCEcy77JWbxhZg7orvReiWm/l3Mf+oDTgGiNrAVY2lI8Vj5xjXsviWGF9DF95Yei4TzjUpNlR9VSTNoVDdGFQXI4pxUwlwmK7mE8y+b4EmjflUmZZNR+Jun+i/G2gjpL/qnwAhhdAeJzr2l1V8Gds4+nfmHuH3/PyDMw42mAElKsiLLHL+CxPQiWD1tYe7jva8NTCxrvoRBtTt5eHmBscNcqgZq3WHvTAM54SkhYjoSkDZvhoNWugMwBdyvWRwIwNvqE6QOQEdUoSZv53d8Dax+9cX3qd2dQHBEqEIQQAsWJxTDbGt2a8XdHgBnyOEdAepGjphg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kRpHa77vYawAswSBBMOlNFgB75BYIko/dRF4Dx+f77I=;
+ b=TcJeAl0wpQzd1TObkq4tVzTctcSx58MgRgQ8TtzL6oF09V+GDSHYp36Jf4qZ+RmexphDYmB8VMiAaIcKbcR0kLO8j6CDs5A7LUWASb4APMYHTDH7YhR+N0SutJLZ1TZtM4w+GM713T/4dC4oGTbyV7hVRUh3nLllrxs/FsULKNE16iCba26OvsTiCHdj9TS+V35TTnoIqfirFNF1stpGmK9oVmjL1KgeWA4ZpVl+KPgoOZid1/zJ7iP9jsVyiLIxPZ3ymRBqeauKINAvs7YNEw1Ff6PK4pUjXPAyv0nGDQ0L9PXmYvSHV7nCKj69jz2PNLfGrYLNs2HqhbqaK4Dc4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=broadcom.com smtp.mailfrom=2n.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kRpHa77vYawAswSBBMOlNFgB75BYIko/dRF4Dx+f77I=;
+ b=m+S4/uR1qx8tlTpW9jy0kcihBGIpeLeg0xgKLJ/twD7/3460BkKk8jN4rIEWhnKdYIslxi/XEB+gLIryvAjIh5a8GEdurykZzrA6IblM4k6xYPJRY40OB6GkqGch1OHoxXoZOJMUImYKTHUTUt/eYXOw/DuFjqVGqhN6F/G8ihM=
+Received: from AM0PR02CA0023.eurprd02.prod.outlook.com (2603:10a6:208:3e::36)
+ by AS4PR02MB8383.eurprd02.prod.outlook.com (2603:10a6:20b:51a::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.22; Fri, 21 Jun
+ 2024 11:27:06 +0000
+Received: from AM4PEPF00027A67.eurprd04.prod.outlook.com
+ (2603:10a6:208:3e:cafe::97) by AM0PR02CA0023.outlook.office365.com
+ (2603:10a6:208:3e::36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.37 via Frontend
+ Transport; Fri, 21 Jun 2024 11:27:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=2n.com; dkim=none (message not signed) header.d=none;dmarc=fail
+ action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of 2n.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AM4PEPF00027A67.mail.protection.outlook.com (10.167.16.84) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Fri, 21 Jun 2024 11:27:05 +0000
+Received: from pcczc3457tyd.2n.cz.axis.com (10.0.5.60) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Jun
+ 2024 13:27:04 +0200
+From: =?UTF-8?q?Kamil=20Hor=C3=A1k=20=282N=29?= <kamilh@axis.com>
+To: <florian.fainelli@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <kamilh@axis.com>, <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v9 0/4] net: phy: bcm5481x: add support for BroadR-Reach mode
+Date: Fri, 21 Jun 2024 13:26:29 +0200
+Message-ID: <20240621112633.2802655-1-kamilh@axis.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620-ls_qspi-v3-1-1a2afcf417e4@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: se-mail02w.axis.com (10.20.40.8) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A67:EE_|AS4PR02MB8383:EE_
+X-MS-Office365-Filtering-Correlation-Id: b822cad8-b194-41f3-108b-08dc91e51475
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|1800799021|82310400023|376011|7416011|36860700010|921017;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?djhheWNpZDNyQVRIeXFoMDBTV1UydXVEZjV4U0k3ZWNuUW52bzQ3S0hxK1ha?=
+ =?utf-8?B?TkZZa1ZGRWhGcmxONCtBRWN0bFdOdjkrdngwNUtCZzhTR3NzZndHaGJoejRC?=
+ =?utf-8?B?STRLQ3kwZG8zYjBIM0Z5QmVNdTV1aTlzWUdGMEpFb1VxV1RUemJ0RTc1SUZ1?=
+ =?utf-8?B?ZEV2TkxMOHZrTWVFTU02VG9kaTZQcjNlVjMveFFkeHVpUkJXL0Z2a2xIU25V?=
+ =?utf-8?B?K3ZHT2k1b0tCM1RQK3NrSWZ0R3NwSG42RDlhb0tvNVdSSWI0RVRIQTlobTk5?=
+ =?utf-8?B?U2RoMnZWTVRaUzZyR00wYVQ4Y2k3Wm1ETEt4Y1Exbm5pTlRSR3JCZUsxUkdr?=
+ =?utf-8?B?cWNGamU2a1ZTdjdQNDRkbDlyVEhYa0xTcko2dzNBVktuUitlQ0xKM2dyOXBH?=
+ =?utf-8?B?R3BEaEw1cWdXMVBUK3pNWmlJbjF0bVlPZ1Z1eTJUN2xXcTM5RU1VTEdXNTdV?=
+ =?utf-8?B?d3BLMzJuQUpraVBmMGJUY25meUhJUU81NFVkd2xyMFRsVEVPRS9ONGV1aEhY?=
+ =?utf-8?B?Wm5laTB1SWl4WFJLZUhHa1ZjS3lqK0VFUE1HYkxESDVicTZZVWdxbVN1TjNw?=
+ =?utf-8?B?Yk9PK0lRZXZUYjArYUpGYmhKQ3UxdEx0T1ZpT2dpNzVkQmVKbGdyZDVpVjJ6?=
+ =?utf-8?B?bGQ4a1VpN0MweWYxc2ZZLys5bDM1Y1FjTFpjZWlxVm41eDh6VkxnWUE4M0Zn?=
+ =?utf-8?B?QWVTaGh3QkkwUEZNcVNEbHhsSFczcWRoeTZzRkpsU0VzRFRTV2VIWWZReWl0?=
+ =?utf-8?B?Smdqd2c4TjY3UTB6SGVUL1FsdDRJcDkwMk5ZY21pM3lrN0krTm16bWl6QWpz?=
+ =?utf-8?B?RWJldktsSGRyTGZ5RHBNbmlzaG5OWUZ3c2VsVWtjWk0rZjNyNmFhcHNXYTlE?=
+ =?utf-8?B?ZHEyU3NWSnpiRWlQYklBWEpGVDJhYysyZ2VFUmxUbDM0TGJNdHBTdGlvSmw1?=
+ =?utf-8?B?VGY3YWhTaVNieS90Q29PNzlJYURMVTVrK0N0UUgrdmdGTDF5QnhPYVlFZ3hJ?=
+ =?utf-8?B?cFVyWDFVQW1mZ0F3UFgvakxHT2JpRHlSWG1JR3dTT0hseElSbmcwalU4Y1Z4?=
+ =?utf-8?B?YUJDMmExbWFISlRrcGNOUjRPQ3hKRk9SS0hBbytBRU9xc1k4Uk0rTko5NEVn?=
+ =?utf-8?B?d09PbGhlek1Nb3JLNzFwSDZ0ZEtlSlJVbjhCaU43YTI1cStwcmxTS2V1a2hE?=
+ =?utf-8?B?VWJxekFiV2FPWUpKbDBWU2crbXFPSm1BRUdzcEllV0ROeW9LbDlBQW1Cb01i?=
+ =?utf-8?B?aTdJaS9Ib1QrdDBkRUV0ZkxLKysyK0RkSnZCSUdiUWEzR1dsajRHZzNBNUk4?=
+ =?utf-8?B?dDFjR0JrT1pVbzJsNjRNUXdjdmxDdnpsbWZLTzB1U0hsdyswTFZKMEZaMHBp?=
+ =?utf-8?B?bU00TUJHcmxzYjNIcDJPbFM3RnhHMi9rZE1FaVRRalgrVjRJcVVseFNNd2FI?=
+ =?utf-8?B?N2s0dmhHZXZ1OUVzM2w0QkUvcmxISXN0SlM4Qm1YQnVNRnNZUVFyZ2dtV2tX?=
+ =?utf-8?B?QndzUGpDTCtrcFlRUUJRa2lOcUNYSVBVcXdwakhCak5ZYUJ1SktGcldjYXpj?=
+ =?utf-8?B?SFNpQjNTRk4rMk9rSkJLUGpHRkRwb2JrMVNiMk1KeDVvK1UyalhQdzl3QWtB?=
+ =?utf-8?B?MHhwUkZCN0lCN2N6TEk1aGNtU3hqSjNPTTE2ejQ1OVlScW5IakZKVTVqVVNR?=
+ =?utf-8?B?Vkl5c295amN5SlBWSzZybG1YZTlBUkoxcnNGVWJTaWxmaElWMjZkM0tWcjlJ?=
+ =?utf-8?B?OWFBUlEydFFSdXNlbGxmNFduZUF1eitSQi9GVFpEOVdheW9abTJQQldJdXJn?=
+ =?utf-8?B?UlBJVVcxTFFYWG9YR0dzR2tiV2Q2c01TUldNTm5UM1NkNUZsVEE4Y0dlUmdP?=
+ =?utf-8?B?VzBFN0NIRDBnN3JYeEdFRUV6cmtqR1p5TS8vZXFqNEFIZ3dUYjkzN0hoOTFW?=
+ =?utf-8?Q?nCg0CXQ/swI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(82310400023)(376011)(7416011)(36860700010)(921017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 11:27:05.6209
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b822cad8-b194-41f3-108b-08dc91e51475
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM4PEPF00027A67.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR02MB8383
 
-Typo in title: property
+PATCH 1 - Add the 10baseT1BRR_Full link mode
 
-On Thu, Jun 20, 2024 at 12:58:27PM -0400, Frank Li wrote:
-> Use SPI common DT binding properties 'spi-cs-setup-delay-ns' and
-> 'spi-cs-hold-delay-ns'. If these properties do not exist, fall back to
-> legacy 'fsl,spi-cs-sck-delay' and 'fsl,spi-sck-cs-delay'.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/spi/spi-fsl-dspi.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-> index 0a2730cd07c6a..7c1f8af9d215e 100644
-> --- a/drivers/spi/spi-fsl-dspi.c
-> +++ b/drivers/spi/spi-fsl-dspi.c
-> @@ -1018,11 +1018,15 @@ static int dspi_setup(struct spi_device *spi)
->  	pdata = dev_get_platdata(&dspi->pdev->dev);
->  
->  	if (!pdata) {
-> -		of_property_read_u32(spi->dev.of_node, "fsl,spi-cs-sck-delay",
-> -				     &cs_sck_delay);
-> -
-> -		of_property_read_u32(spi->dev.of_node, "fsl,spi-sck-cs-delay",
-> -				     &sck_cs_delay);
-> +		cs_sck_delay = spi_delay_to_ns(&spi->cs_setup, NULL);
-> +		if (!cs_sck_delay)
-> +			of_property_read_u32(spi->dev.of_node, "fsl,spi-cs-sck-delay",
-> +					     &cs_sck_delay);
-> +
-> +		sck_cs_delay = spi_delay_to_ns(&spi->cs_hold, NULL);
-> +		if (!sck_cs_delay)
-> +			of_property_read_u32(spi->dev.of_node, "fsl,spi-sck-cs-delay",
-> +					     &sck_cs_delay);
+PATCH 2 - Add the definitions of LRE registers, necessary to use
+   BroadR-Reach modes on the BCM5481x PHY
 
-Keep the 80 character line limit please.
+PATCH 3 - Add brr-mode flag to switch between IEEE802.3 and BroadR-Reach
+
+PATCH 4 - Implementation of the BroadR-Reach modes for the Broadcom
+   PHYs
+
+Changes in v2:
+  - Divided into multiple patches, removed useless link modes
+
+Changes in v3:
+  - Fixed uninitialized variable in bcm5481x_config_delay_swap function
+
+Changes in v4:
+  - Improved the division of functions between bcm-phy library and broadcom.c
+  - Changed the BroadR-Reach / IEEE mode switching to device tree boolean as
+    these modes are mutually exclusive and barely could coexist in one hardware
+  - Made the link mode selection compatible with current ethtool (i.e. the
+    linkmode is selected by choosing speed and master-slave)
+
+Changes in v5:
+  - Fixed the operator precedence as reported by the kernel test robot
+  - Fixed doc of bcm_linkmode_adv_to_mii_adv_t function
+
+Changes in v6:
+  - Moved the brr-mode flag to separate commit as required by the rules for 
+    DT binding patches
+  - Renamed some functions to make clear they handle LRE-related stuff
+  - Reordered variable definitions to match the coding style requirements
+
+Changes in v7:
+  - Fixed the changes distribution into patches (first one was not buildable)
+
+Changes in v8:
+  - Fixed coding style and did other changes on behalf of the reviewers
+
+Changes in v9:
+  - Applied reviewed tags to unchanged commits, reformatted the submitter's address
+
+Kamil Horák (2N) (4):
+  net: phy: bcm54811: New link mode for BroadR-Reach
+  net: phy: bcm54811: Add LRE registers definitions
+  dt-bindings: ethernet-phy: add optional brr-mode flag
+  net: phy: bcm-phy-lib: Implement BroadR-Reach link modes
+
+ .../devicetree/bindings/net/ethernet-phy.yaml |   7 +
+ drivers/net/phy/bcm-phy-lib.c                 | 115 +++++
+ drivers/net/phy/bcm-phy-lib.h                 |   4 +
+ drivers/net/phy/broadcom.c                    | 392 +++++++++++++++++-
+ drivers/net/phy/phy-core.c                    |   3 +-
+ include/linux/brcmphy.h                       |  89 ++++
+ include/uapi/linux/ethtool.h                  |   1 +
+ net/ethtool/common.c                          |   3 +
+ 8 files changed, 595 insertions(+), 19 deletions(-)
+
+-- 
+2.39.2
+
 
