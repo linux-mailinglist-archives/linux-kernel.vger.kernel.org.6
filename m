@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-225049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA623912B0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:15:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A330912B14
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CA6286641
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:15:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24EFC1F29738
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C82115FA9C;
-	Fri, 21 Jun 2024 16:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50E815FCFB;
+	Fri, 21 Jun 2024 16:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="klLoX33H"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PlKBEnFj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE00A15FA6C;
-	Fri, 21 Jun 2024 16:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF4A2772A;
+	Fri, 21 Jun 2024 16:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718986496; cv=none; b=H9oJG0yAczKh4VMzjfJLdc6FGWfdPnw6ehpwL+6Mma2q4Zt64QjDSIvP/BTTvuSWySOYRwc/XHBT5GyEqs+kbhpZb3IjXmd45tbQwUvKsYNVi30hpE+/SOUcDXD1Ps/kgl1YM6bFnWs5+3rNDQX3Ipz9JF0xE9cI93LolJLB3/k=
+	t=1718986542; cv=none; b=Vr3vyXd87UefXdR0YsGhDa82zbFPU+jf95b+LwNjjFX2p+QM7FAWJ0I9pDtUCcxTyKWxjMiGOrm54c7AyaCDddJeKVWOlACH282qqGHUg2KXv0fD5xlxPCoEIPlIUbFConI9UGueYtWCBYZr8hSIg7qNcq8i1tkWA+AV1kd+Prc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718986496; c=relaxed/simple;
-	bh=b7MpNwrhbxp7wFiXQH5J0bM5Ti2raMUUWEzZOd/dU6Y=;
+	s=arc-20240116; t=1718986542; c=relaxed/simple;
+	bh=mIBPSubn+A+rwfRdqEMhcD6Z9rKRDA+vQOru7HxGBSg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bCS3AjdLPUzLLEB8SKPwjAYeoiqx4u31eSxULB5tAQNXt6PZfk/d92IuHbZPaaVHz7WUlc4Tm7l8hcY0YNArou3wDQR+7JEexKcCngf+D2O2E3NpkWcxuOfn3Argir0rQawwd7Ysk1du6jggjoqmEzXmx11ar7NAOm2ZbAbh9aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=klLoX33H; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LGEkxN046341;
-	Fri, 21 Jun 2024 11:14:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718986486;
-	bh=syTK7l/prnGj+f5oxRzOtqn+SH670xlXIdLII55WPVw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=klLoX33HmwBOOEZdcwadE6NQFnxPna1YpjQz7h+9mkO8WOt+xAEXYD1yhvZcPkM2v
-	 R2TGwl5o5jKMGvmFjTavcFqatek3pJQF7LjXgE34ifUPXfs1wHerYIn26m8kP5wV1p
-	 pexLHQmpUPhQGcbcyuzXW/WKpmfwRpuxWtSRWFtM=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LGEk7N007182
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 11:14:46 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Jun 2024 11:14:46 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Jun 2024 11:14:46 -0500
-Received: from [10.249.130.181] ([10.249.130.181])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LGEX7T021157;
-	Fri, 21 Jun 2024 11:14:34 -0500
-Message-ID: <1b5e3175-c9b7-4fb5-b405-e46373a6a469@ti.com>
-Date: Fri, 21 Jun 2024 21:44:30 +0530
+	 In-Reply-To:Content-Type; b=O4Yy7ruXef5LpBX1yOb7S67hOV937Q1u3J8pN6Pbdh6410d0EAyaOqlkjmH+K76ytoOs2E3wQyrLt5Un75mOPgSKBRkZG2yH5XsRqCfeW2Z50iqXOakxL3CfjjTnvJzoBysapbICSA88+LFZvPIDxTov33h/V2P6hxgyyfCqXQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PlKBEnFj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LDI6rV017550;
+	Fri, 21 Jun 2024 16:15:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Gn6OCO8KpDARrbaPjyz9cq4ME5Nm1k9iw+OzFSfwA2U=; b=PlKBEnFjb2NI5jKA
+	DpsCVcnMmV4CYQfnP8K5ryJ+oEMTprIVLiC01xnAPbpPmimhQ2Fwv8yTHyM93F1C
+	97H5/WDm1TWHrsbasLyk+JaTRhovVt+aBeEuJZX47olU02se13ehr9Vld7xY/hXU
+	d2hKw+L7plJ2XlEKUkhDiDrG5TTetPhTrMkXADylLG7J/I9eJutyg4uLVVaum4p3
+	0zXu5ryo7P+TdmdeUF72/IzIeYt8NPcY4Q8unjvYvs4i2P6ay3qmBne9mhHEBfKD
+	rmvM1Wgqup9xsw1MLc9KIojcNP2ghNOycvyE0WNsGXtB5ktP1C5XdDko1CW4gwt6
+	6leLvw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrkrb3qj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 16:15:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45LGF4Dq010537
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 16:15:04 GMT
+Received: from [10.216.56.78] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Jun
+ 2024 09:14:57 -0700
+Message-ID: <815b4da1-606e-4cc9-8c62-cefc605c209c@quicinc.com>
+Date: Fri, 21 Jun 2024 21:44:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,59 +64,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: ti: k3-am62p5-sk: Reserve 576 MiB of
- global CMA
-To: Brandon Brnich <b-brnich@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <praneeth@ti.com>, <a-bhatia1@ti.com>,
-        <j-luthra@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>
-References: <20240613150902.2173582-1-devarsht@ti.com>
- <20240613150902.2173582-4-devarsht@ti.com>
- <20240614170409.zu4vaatdac4o6w2o@udba0500997>
+Subject: Re: [PATCH v9 7/8] clk: qcom: Add WCSSAON reset
 Content-Language: en-US
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <20240614170409.zu4vaatdac4o6w2o@udba0500997>
-Content-Type: text/plain; charset="UTF-8"
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, <sboyd@kernel.org>,
+        <andersson@kernel.org>, <bjorn.andersson@linaro.org>,
+        <david.brown@linaro.org>, <devicetree@vger.kernel.org>,
+        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <mark.rutland@arm.com>,
+        <mturquette@baylibre.com>, <ohad@wizery.com>, <robh@kernel.org>,
+        <sricharan@codeaurora.org>
+CC: <gokulsri@codeaurora.org>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-8-quic_gokulsri@quicinc.com>
+From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <20240621114659.2958170-8-quic_gokulsri@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: WNHLYVBFJwBEdrhRIs57Zv6DPAroIWAp
+X-Proofpoint-GUID: WNHLYVBFJwBEdrhRIs57Zv6DPAroIWAp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_08,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 phishscore=0 impostorscore=0
+ adultscore=0 bulkscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406210117
 
-Hi Vignesh,
 
-On 14/06/24 22:34, Brandon Brnich wrote:
-[..]
 
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
->> index fb980d46e304..5ef74d9f8eea 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
->> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
->> @@ -48,6 +48,13 @@ reserved-memory {
->>  		#size-cells = <2>;
->>  		ranges;
->>  
->> +		linux,cma {
->> +			compatible = "shared-dma-pool";
->> +			reusable;
->> +			size = <0x00 0x24000000>;
->> +			linux,cma-default;
->> +		};
+On 6/21/2024 5:16 PM, Gokul Sriram Palanisamy wrote:
+> Add WCSSAON reset required for Q6v5 on IPQ8074 SoC.
+
+Commit title can be written as "clk: qcom: ipq8074: Add WCSSAON reset" ?
+
+With that,
+
+Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+
 > 
-> Since AM62p has 8gb memory, this allocation can come from upper portion.
-> Doing so breaks Wave5 encoding/decoding as the driver can not yet handle
-> 48 bit addressing. 48bit support is scheduled to be upstreamed, but unsure of
-> when this will actually make it in.  
+> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>   drivers/clk/qcom/gcc-ipq8074.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> Could we force this into lower 32bits using same
-> alloc-ranges as done in your AM62a patch[0]?
-> 
-
-
-I would like to take a look at this separately, is it possible for you
-to drop this patch [3/3] from series due to above comments and take the
-rest two from the series ?
-
-Regards
-Devarsh
+> diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+> index 32fd01ef469a..d382d16b9c10 100644
+> --- a/drivers/clk/qcom/gcc-ipq8074.c
+> +++ b/drivers/clk/qcom/gcc-ipq8074.c
+> @@ -4712,6 +4712,7 @@ static const struct qcom_reset_map gcc_ipq8074_resets[] = {
+>   	[GCC_NSSPORT4_RESET] = { .reg = 0x68014, .bitmask = BIT(27) | GENMASK(9, 8) },
+>   	[GCC_NSSPORT5_RESET] = { .reg = 0x68014, .bitmask = BIT(28) | GENMASK(11, 10) },
+>   	[GCC_NSSPORT6_RESET] = { .reg = 0x68014, .bitmask = BIT(29) | GENMASK(13, 12) },
+> +	[GCC_WCSSAON_RESET] = { 0x59010, 0 },
+>   };
+>   
+>   static struct gdsc *gcc_ipq8074_gdscs[] = {
 
