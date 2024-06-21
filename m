@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-224085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E194D911CFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:39:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB98911CFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CFCF2817BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:39:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 414FE1F223BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65C816C863;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2209616B722;
 	Fri, 21 Jun 2024 07:39:19 +0000 (UTC)
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C74259C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CCA14D449;
 	Fri, 21 Jun 2024 07:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718955559; cv=none; b=dGPhrZQ67SB5WNQr+U1Kt/OZckTusII2s3Tv5UXrzZWUI0Uwrx1Rh0jFBlDCIpg3tSfPjemArXd+l6PQdHX89Un7q35TG63uD9ShF0IkGie16gcdgczKP+h0FUyTzc0CI0Cr1LpZ2YhVaxgvtMqk5+6nr8rD4VUD5PwxHsPvw04=
+	t=1718955558; cv=none; b=lYMujcPX+C0vPZ0Yh86NeYLyDRs/Tg5QZoiznFZ4Ar9Av9/NOBjvu6eU3OrPkaLduerGsno9mvpqOHRpu1MC3gf7q5URsA/nwDAu0h1d99R54A5itmipEDH1TAvvqAk0pE03J6OfKpXfQCfSHaqdMcuH3JmYt6Sdoi3rTVxXTtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718955559; c=relaxed/simple;
-	bh=ppG0XSkNgecIfzGrMB63byd0fkNXG6e93Jv4TzajFg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AQEBPR+qbDFQbu62LQNJRkij96icIP/OaCIhOOWLFscz2IRtJaAwNkGoD31X5IQAWwv7/M2gtvqPGguXKRClT7FNoWXhjqXaXzpgLlsD3H04Gb76lBoRDxI1zzm21WBlWF6QMLA3ZFJ5hpzT0xPcErlh/+zl/o5vRe69KXbvDg8=
+	s=arc-20240116; t=1718955558; c=relaxed/simple;
+	bh=fny5qmN5Zof2ylj9b+oRQj/l3DHFhHzzbmYllH4d2Fs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cZlOzO9w/ctDuly4VoceXS4BGOTeJMl3Yk1UpZHKk7jCp3gZ99O+9knYNmaA1jKYQUw9YFebCGY3+bfReW9ahKB0KUimANSssPtdeF4nrQs4L4U43n+sKpWn3z6rJjzsVgM26lrFDy6/oiwj9GHLtECU82cGGlPzyuUEYBmNeWE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
 Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxFPAgLnVmjssIAA--.35648S3;
-	Fri, 21 Jun 2024 15:39:12 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____8Dx2OkhLnVmlcsIAA--.23038S3;
+	Fri, 21 Jun 2024 15:39:13 +0800 (CST)
 Received: from linux.localdomain (unknown [113.200.148.30])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxPMcfLnVmIjgrAA--.39322S2;
-	Fri, 21 Jun 2024 15:39:11 +0800 (CST)
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxPMcfLnVmIjgrAA--.39322S3;
+	Fri, 21 Jun 2024 15:39:12 +0800 (CST)
 From: Tiezhu Yang <yangtiezhu@loongson.cn>
 To: Will Deacon <will@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
@@ -44,10 +45,12 @@ To: Will Deacon <will@kernel.org>,
 Cc: linux-arm-kernel@lists.infradead.org,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] hw_breakpoint: Save privilege of access control via ptrace
-Date: Fri, 21 Jun 2024 15:39:07 +0800
-Message-ID: <20240621073910.8465-1-yangtiezhu@loongson.cn>
+Subject: [PATCH v2 1/3] perf: Add perf_event_attr::bp_priv
+Date: Fri, 21 Jun 2024 15:39:08 +0800
+Message-ID: <20240621073910.8465-2-yangtiezhu@loongson.cn>
 X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20240621073910.8465-1-yangtiezhu@loongson.cn>
+References: <20240621073910.8465-1-yangtiezhu@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,56 +58,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8DxPMcfLnVmIjgrAA--.39322S2
+X-CM-TRANSID:AQAAf8DxPMcfLnVmIjgrAA--.39322S3
 X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrKFy5XF48ZF18WFykXrW7KFX_yoWktwc_WF
-	yIya4DKw109r1Fya45tw1fZF93Kw4Y9rn0vw1vgrZxGF9ava4ruws5AF95u347XF4avrWD
-	Xw15Ww1qvrnIgosvyTuYvTs0mTUanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbSxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q
-	6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
-	vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4YLvDUUUU
+X-Coremail-Antispam: 1Uk129KBj93XoW7Zr1DAr1fZF45Cw13Gw47KFX_yoW8WFyrpr
+	ZrZrn5K3y8JayS9w13Ga1q9345JrZ7W39Fgay5Kw4FyFs8u393GasrWFnIvFn5Wr4jyayS
+	qwnFqr4qqa4UtFXCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
+	AKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
+	6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8XTm3UUUUU==
 
-Hi all,
+Add a member "bp_priv" at the end of the uapi struct perf_event_attr
+to make a bridge between ptrace and hardware breakpoint.
 
-Thank you very much for your feedbacks in the v1 patch.
-This series is based on 6.10-rc4, cross compile tested only.
+This is preparation for later patch on some archs such as ARM, ARM64
+and LoongArch which have privilege level of breakpoint.
 
-As far as I can tell, these changes are not relevant with tools/perf,
-on some archs such as ARM, ARM64 and LoongArch which have privilege
-level of breakpoint, the initial aim is to make use of the value of
-ctrl->privilege saved in decode_ctrl_reg() and then remove the check
-whether bp virtual address is in kernel space to assign value for
-hw->ctrl.privilege in arch_build_bp_info().
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ include/uapi/linux/perf_event.h | 3 +++
+ kernel/events/hw_breakpoint.c   | 1 +
+ 2 files changed, 4 insertions(+)
 
-v2:
-  -- Put the new member "bp_priv" at the end of the uapi
-     struct perf_event_attr and add PERF_ATTR_SIZE_VER9.
-  -- Update the commit message to make the goal clear.
-
-Tiezhu Yang (3):
-  perf: Add perf_event_attr::bp_priv
-  arm: hw_breakpoint: Save privilege of access control via ptrace
-  arm64: hw_breakpoint: Save privilege of access control via ptrace
-
- arch/arm/kernel/hw_breakpoint.c   |  4 +---
- arch/arm/kernel/ptrace.c          |  2 ++
- arch/arm64/kernel/hw_breakpoint.c | 11 ++---------
- arch/arm64/kernel/ptrace.c        |  2 ++
- include/uapi/linux/perf_event.h   |  3 +++
- kernel/events/hw_breakpoint.c     |  1 +
- 6 files changed, 11 insertions(+), 12 deletions(-)
-
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 3a64499b0f5d..f9f917e854e6 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -379,6 +379,7 @@ enum perf_event_read_format {
+ #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
+ #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
+ #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
++#define PERF_ATTR_SIZE_VER9	144	/* add: bp_priv */
+ 
+ /*
+  * Hardware event_id to monitor via a performance monitoring event:
+@@ -522,6 +523,8 @@ struct perf_event_attr {
+ 	__u64	sig_data;
+ 
+ 	__u64	config3; /* extension of config2 */
++
++	__u8	bp_priv; /* privilege level of breakpoint */
+ };
+ 
+ /*
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 6c2cb4e4f48d..3ad16b226e4f 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -754,6 +754,7 @@ static void hw_breakpoint_copy_attr(struct perf_event_attr *to,
+ 	to->bp_addr = from->bp_addr;
+ 	to->bp_type = from->bp_type;
+ 	to->bp_len  = from->bp_len;
++	to->bp_priv = from->bp_priv;
+ 	to->disabled = from->disabled;
+ }
+ 
 -- 
 2.42.0
 
