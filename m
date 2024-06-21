@@ -1,223 +1,79 @@
-Return-Path: <linux-kernel+bounces-224277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8651791201D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:07:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F98912022
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8BB01C23129
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:07:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6701C22880
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2733616D9DF;
-	Fri, 21 Jun 2024 09:07:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3490716D9B1;
+	Fri, 21 Jun 2024 09:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IqnToB/9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A2C1C02
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7656A1C02;
+	Fri, 21 Jun 2024 09:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718960856; cv=none; b=ij3qgj/95YRkgO2ONyc16xmutlClJYw/zYt6Dt5IEiDsH0HavgbEshV4l0YWvCTKKY3NXLPOrJtHOiKQ4rBdxd3zh2kJjCdtKgR3PfrRFAVwWse0Jwn9nrLKOMO/tQDwSxHLJ4YW96+Bpot6syt4nEyBM0VYDias4PII/kPUaxo=
+	t=1718960902; cv=none; b=TeOr4IOwUh/NAG0oMnwntf63F/I3DKQG3VGgJdipuX8t+C8IvX8FHSqjVb0shEiwg0StcFMTNUzqVX00HzHfGIVRYSPJ5PYMnkGi3VHupkLcONabiMlCJN1z68zgzmPBobU5lE9zYaVO/yajtRYsvtp6q1BnjaT9cLzFL5NjnoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718960856; c=relaxed/simple;
-	bh=SgOaTcKG835gy60m4IjLp/H/2iKKSCvbSBekjHONJqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aR9S1z0QdET5mnalOcb4LIvwnNPEVsw/8VR9nZQTMspj7uxCkOTEIc5hwvA6I6Xh7bdh7XTjGVFD49Ur77JG7JEeqzhnTE5ufWKm6Owq95AhgIDat+MZk2UdU3TNCjSZvkqpPl+vQB9iNHXmFEB/N2Rpt+VcAgPWeqnsijZYSiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sKaEy-0002kG-Pq; Fri, 21 Jun 2024 11:07:28 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sKaEx-003uIs-RK; Fri, 21 Jun 2024 11:07:27 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sKaEx-006Jek-2N;
-	Fri, 21 Jun 2024 11:07:27 +0200
-Date: Fri, 21 Jun 2024 11:07:27 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Kalle Valo <kvalo@kernel.org>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Lin <yu-hao.lin@nxp.com>,
-	Francesco Dolcini <francesco@dolcini.it>
-Subject: Re: [PATCH] [RFC] mwifiex: Fix NULL pointer deref
-Message-ID: <ZnVCzx3-pvbcYQLm@pengutronix.de>
-References: <20240619070824.537856-1-s.hauer@pengutronix.de>
- <87wmmll5mf.fsf@kernel.org>
- <ZnSHcZttq79cJS3l@google.com>
+	s=arc-20240116; t=1718960902; c=relaxed/simple;
+	bh=JIeqoaIa7EKTaeKtvAYQWwAw9IeCYkgkrJJWV2KYcqo=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=YJaJZxelmodIUIaiZgFnOEd4lPHMRlo1hTlADskpHIhXql5+SDCJMMjH+E6yi8Sc55WyFLIfu37R84y/FFutZlZNJ32YxfxFdqV2RfQD84AH99uxlub5yCD5+9A0d2Yrc/EpHqyxRCGbNAR2TjZXCgSiThIg5HNOAJxYTAyGlhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IqnToB/9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7475EC2BBFC;
+	Fri, 21 Jun 2024 09:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718960902;
+	bh=JIeqoaIa7EKTaeKtvAYQWwAw9IeCYkgkrJJWV2KYcqo=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=IqnToB/9X11ppEn/xXYZbNOhbMPxLenETGWyexBKZU+fzT1WxXbi2gFFDBg05vY53
+	 oNEhYAOhKD/KcxT8ezrzqbzO54kcdxO2ZPszBFU4BJougE4i7zvdnrPsavceCNUQVA
+	 ln3PzOO0eusBGoJqczNT2sggxvpFMiZ0iJJgC/djlvuO2UyDalykT702p0BEzJXW54
+	 zqwnhMXS0whYj21c1eNeToyzDH3B2E5pjcghvWQUSlilxgvxqifRw+r01NNJhwBFOA
+	 3BLui8oJabIWm8JjXQW9Ld1HwUW7s3TYHWEtmWI/MC5vgpdUMJy2MRV4FZ3X/YLloj
+	 dk8uo8g4D4Xzw==
+Message-ID: <a1086246d73bb548d72799324dc96983@kernel.org>
+Date: Fri, 21 Jun 2024 09:08:19 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH RFC 1/5] drm/bridge: lt9611: use HDMI Connector helper
+ to set InfoFrames
+In-Reply-To: <20240615-drm-bridge-hdmi-connector-v1-1-d59fc7865ab2@linaro.org>
+References: <20240615-drm-bridge-hdmi-connector-v1-1-d59fc7865ab2@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, "Andrzej
+ Hajda" <andrzej.hajda@intel.com>, "Daniel Vetter" <daniel@ffwll.ch>, "David
+ Airlie" <airlied@gmail.com>, "Jaroslav Kysela" <perex@perex.cz>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Liam Girdwood" <lgirdwood@gmail.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Mark Brown" <broonie@kernel.org>, "Maxime
+ Ripard" <mripard@kernel.org>, "Neil Armstrong" <neil.armstrong@linaro.org>, "Robert
+ Foss" <rfoss@kernel.org>, "Takashi Iwai" <tiwai@suse.com>, "Thomas
+ Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnSHcZttq79cJS3l@google.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2024 at 12:48:01PM -0700, Brian Norris wrote:
-> Hi Sascha,
+On Sat, 15 Jun 2024 20:53:30 +0300, Dmitry Baryshkov wrote:
+> Use new HDMI Connector helpers in the Lontium LT9611 bridge driver.
+> Program InfoFrames using the helper's callbacks. Also use TMDS char rate
+> validation callback to filter out modes, instead of hardcoding 4k@30.
 > 
-> On Wed, Jun 19, 2024 at 11:05:28AM +0300, Kalle Valo wrote:
-> > Sascha Hauer <s.hauer@pengutronix.de> writes:
-> > 
-> > > When an Access Point is repeatedly started it happens that the
-> > > interrupts handler is called with priv->wdev.wiphy being NULL, but
-> > > dereferenced in mwifiex_parse_single_response_buf() resulting in:
-> > >
-> > > | Unable to handle kernel NULL pointer dereference at virtual address 0000000000000140
-> ...
-> > > | pc : mwifiex_get_cfp+0xd8/0x15c [mwifiex]
-> > > | lr : mwifiex_get_cfp+0x34/0x15c [mwifiex]
-> > > | sp : ffff8000818b3a70
-> > > | x29: ffff8000818b3a70 x28: ffff000006bfd8a5 x27: 0000000000000004
-> > > | x26: 000000000000002c x25: 0000000000001511 x24: 0000000002e86bc9
-> > > | x23: ffff000006bfd996 x22: 0000000000000004 x21: ffff000007bec000
-> > > | x20: 000000000000002c x19: 0000000000000000 x18: 0000000000000000
-> > > | x17: 000000040044ffff x16: 00500072b5503510 x15: ccc283740681e517
-> > > | x14: 0201000101006d15 x13: 0000000002e8ff43 x12: 002c01000000ffb1
-> > > | x11: 0100000000000000 x10: 02e8ff43002c0100 x9 : 0000ffb100100157
-> > > | x8 : ffff000003d20000 x7 : 00000000000002f1 x6 : 00000000ffffe124
-> > > | x5 : 0000000000000001 x4 : 0000000000000003 x3 : 0000000000000000
-> > > | x2 : 0000000000000000 x1 : 0001000000011001 x0 : 0000000000000000
-> > > | Call trace:
-> > > |  mwifiex_get_cfp+0xd8/0x15c [mwifiex]
-> > > |  mwifiex_parse_single_response_buf+0x1d0/0x504 [mwifiex]
-> > > |  mwifiex_handle_event_ext_scan_report+0x19c/0x2f8 [mwifiex]
-> > > |  mwifiex_process_sta_event+0x298/0xf0c [mwifiex]
-> > > |  mwifiex_process_event+0x110/0x238 [mwifiex]
-> > > |  mwifiex_main_process+0x428/0xa44 [mwifiex]
-> > > |  mwifiex_sdio_interrupt+0x64/0x12c [mwifiex_sdio]
-> > > |  process_sdio_pending_irqs+0x64/0x1b8
-> > > |  sdio_irq_work+0x4c/0x7c
-> > > |  process_one_work+0x148/0x2a0
-> > > |  worker_thread+0x2fc/0x40c
-> > > |  kthread+0x110/0x114
-> > > |  ret_from_fork+0x10/0x20
-> > > | Code: a94153f3 a8c37bfd d50323bf d65f03c0 (f940a000)
-> > > | ---[ end trace 0000000000000000 ]---
-> > >
-> > > Fix this by adding a NULL check before dereferencing this pointer.
-> > >
-> > > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > >
-> > > ---
-> > >
-> > > This is the most obvious fix for this problem, but I am not sure if we
-> > > might want to catch priv->wdev.wiphy being NULL earlier in the call
-> > > chain.
-> > 
-> > I haven't looked at the call but the symptoms sound like that either we
-> > are enabling the interrupts too early or there's some kind of locking
-> > problem so that an other cpu doesn't see the change.
+> The Audio InfoFrame isn't yet handled by these helpers, it requires
 > 
-> I agree with Kalle that there's a different underlying bug involved, and
-> (my conclusion:) we shouldn't whack-a-mole the NULL pointer without
-> addressing the underlying problem.
-> 
-> Looking a bit closer (and without much other context to go on): I believe 
-> that one potential underlying problem is the complete lack of locking
-> between cfg80211 entry points (such as mwifiex_add_virtual_intf() or
-> mwifiex_cfg80211_change_virtual_intf()) and most stuff in the main loop
-> (mwifiex_main_process()). The former call sites only hold the wiphy
-> lock, and the latter tends to ... mostly not hold any locks, but rely on
-> sequentialization with itself, and using its |main_proc_lock| for setup
-> and teardown. It's all really bad and ready to fall down like a house of
-> cards at any moment. Unfortunately, no one has spent time on
-> rearchitecting this driver.
-> 
-> So it's possible that mwifiex_process_event() (mwifiex_get_priv_by_id()
-> / mwifiex_get_priv()) is getting a hold of a not-fully-initialized
-> 'priv' structure.
-> 
-> BTW, in case I can reproduce and poke at your scenario, what exactly
-> is your test case? Are you just starting / killing / restarting hostapd
-> in a loop?
+> [ ... ]
 
-I am running plain wpa_supplicant -i mlan0 with this config:
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-network={
-        ssid="somessid"
-        mode=2
-        frequency=2412
-        key_mgmt=WPA-PSK WPA-PSK-SHA256
-        proto=RSN
-        group=CCMP
-        pairwise=CCMP
-        psk="12345678"
-}
-
-wait for the AP to be established, <ctrl-c> wpa_supplicant and start it
-again.
-
-It doesn't seem to be a locking problem, see the patch below which fixes
-my problem. At some point during incoming events the correct adapter->priv[]
-is selected based on bss_num and bss_type. when adapter->priv[0] is used
-for AP mode then an incoming event with type MWIFIEX_BSS_TYPE_STA leads
-to adapter->priv[1] being picked which is unused and doesn't have a
-wiphy attached to it.
-
-Sascha
-
--------------------------8<----------------------------
-
-From 3357963821294ff7de26259a154a1cb5bab760cb Mon Sep 17 00:00:00 2001
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Tue, 18 Jun 2024 12:20:20 +0200
-Subject: [PATCH] mwifiex: Do not return unused priv in
- mwifiex_get_priv_by_id()
-
-mwifiex_get_priv_by_id() returns the priv pointer corresponding to the
-bss_num and bss_type, but without checking if the priv is actually
-currently in use.
-Unused priv pointers do not have a wiphy attached to them which can lead
-to NULL pointer dereferences further down the callstack.
-Fix this by returning only used priv pointers which have priv->bss_mode
-set to something else than NL80211_IFTYPE_UNSPECIFIED.
-
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- drivers/net/wireless/marvell/mwifiex/main.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
-index 175882485a195..c5164ae41b547 100644
---- a/drivers/net/wireless/marvell/mwifiex/main.h
-+++ b/drivers/net/wireless/marvell/mwifiex/main.h
-@@ -1287,6 +1287,9 @@ mwifiex_get_priv_by_id(struct mwifiex_adapter *adapter,
- 
- 	for (i = 0; i < adapter->priv_num; i++) {
- 		if (adapter->priv[i]) {
-+			if (adapter->priv[i]->bss_mode == NL80211_IFTYPE_UNSPECIFIED)
-+				continue;
-+
- 			if ((adapter->priv[i]->bss_num == bss_num) &&
- 			    (adapter->priv[i]->bss_type == bss_type))
- 				break;
--- 
-2.39.2
-
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks!
+Maxime
 
