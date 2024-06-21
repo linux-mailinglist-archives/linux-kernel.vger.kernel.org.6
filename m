@@ -1,210 +1,114 @@
-Return-Path: <linux-kernel+bounces-225434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8396B91306D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:40:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 853FB913062
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC428B26394
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:40:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60691C2230F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE81416FF4F;
-	Fri, 21 Jun 2024 22:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4F016F0C5;
+	Fri, 21 Jun 2024 22:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DfNFsGV+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gmvzLRj/"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F3216F295
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47A8208C4;
+	Fri, 21 Jun 2024 22:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719009556; cv=none; b=dCMY6Usl3/rh39/FVRWteE/RCeJgSpMX/t2mBo1uNyOLh4RFcqNALGn2aSoBYLvO0hxMkkrFM/EZa4a+MpMkqGrO+rL8RxWW/DEzmjdkz6cCzvdVpNCZkne2Rwmn1Vv/jGDUSONaskLzK8kL7CY4FyLDs/aOz00024I8wm42IWI=
+	t=1719009534; cv=none; b=cOiuszUrZXGV9nJvLiHsFqKJhZxK3MpzZNd5FKM6e/BH5moiD2jEmulLUYr4N8ivqlSVpsivKFTquLG8M7tkttWntlrG0Hhum/hVECYE7sQAgNtuaoCHGFSHEJiqe9U3nvV/rWPdegGCRSU3ubY+NOuKsFtgDWvcG+3P+Q5GOp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719009556; c=relaxed/simple;
-	bh=HpN0fZNgjLZmcSihQeKSECqN5OpJxfxDgnhxOxN+MP4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZdiqJa04DEMgX2l9/knzwTCm1qeN3Hh/FljSdqG9JMp8ihBUr8SHFoW6ZXNeZEBwj5UUMFOwBBqKUr+HUG+Ou6ceOiuW51ulrmr7wQt//Y6wxzCFsNpORnWDMWKP/xBZnmQYCxvwddY5QKYFVkaDxATPpzolL0FQZidLMSp8UZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DfNFsGV+; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719009554; x=1750545554;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HpN0fZNgjLZmcSihQeKSECqN5OpJxfxDgnhxOxN+MP4=;
-  b=DfNFsGV+Kar4e3TGzqw7DNcv6ftZNVmNxJ1OzIgyiRsV5PJOp3BcmVgL
-   otil3WvS5MABsIDJQa45uIP9c5cPzbLKQGyxl6AQZo8L3QvXkn083Y8Dy
-   sZWyRRPRyyRVa7pZ/o/Z0ZsPByOyEkDgt/DxnkYu8SdTS2i+DBYxEuara
-   t5LSUYrWH4LX0DLVYEcteHmeMz63hHvAi+Johq3aM+GWFqsuFFd09/Pdh
-   cZcekn1C0T9eQek3bC0EANl1Sks13JzGt9CWX4wz8AuhHQy2+m90Cu9WA
-   wB75oRNXxjgs6XIHAYzpSbpo979pboJloE18u6n3JK0c7uoQ2BhlmjDyR
-   A==;
-X-CSE-ConnectionGUID: 7sPucKpiTXiNltnFXBpu5A==
-X-CSE-MsgGUID: lTOE0/xoRF2YXQ1dNT4rtQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="26691305"
-X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
-   d="scan'208";a="26691305"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 15:39:08 -0700
-X-CSE-ConnectionGUID: yFNospDXSu+nThV+XC5SMA==
-X-CSE-MsgGUID: yzN3/Y+GSoeJPCWk+/CSNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
-   d="scan'208";a="73935662"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 15:39:08 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v21 08/18] x86/resctrl: Prepare for new Sub-NUMA Cluster (SNC) monitor files
-Date: Fri, 21 Jun 2024 15:38:49 -0700
-Message-ID: <20240621223859.43471-9-tony.luck@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240621223859.43471-1-tony.luck@intel.com>
-References: <20240621223859.43471-1-tony.luck@intel.com>
+	s=arc-20240116; t=1719009534; c=relaxed/simple;
+	bh=iuxCD6SXr+LIzZGYfpPXvUJ7nV8ibWRlt4gRpZUawzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HHfjgB8Z/Zg40Sw4WhyDuRrxu7e0UD9PICjFtOTlru5rgklE8v8D9ZosNHNU2PeX0xP9NBD8f2g4YI/c5rUdrfSIrw9oatqLFo2IbsuksKRcL9lIoVXsMPyQEozyIFQ5miNU38EnvoEsOb80XJjYCdkf9LthikfsziEIQX6wqqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gmvzLRj/; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f480624d10so20811365ad.1;
+        Fri, 21 Jun 2024 15:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719009532; x=1719614332; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=abeU2GGQMEFPwQcngO4m8ohAO9d8OVamW3SQd0gTR/I=;
+        b=gmvzLRj/qyZ3wsu6eoWkxRC1bulv/8w4Xrb6cV0k10hxaw5qgRwlFU1nUdrkKcK117
+         fNJSCWfWoFeQlRuv6D7xdxtb82V7545MMzQmkiQPpxsadywlajkYL6dOkYQqyVDikyrm
+         6TlGe3hEr7CLIrTRWv0fnMMqxhyQYZma90KGr1005nQPsaJdLBzLlA0TkW2m/U4ftgdE
+         ahWYUvS1jhQa7Ujnbt5XUkwBnZImMEwMbxdNCEKX1hfiEfwVm4W//itkp6AQvepLzuZT
+         IKCDkzY3ORkHKOI8dI+wQYxtBJLMUPjqZAv8coExrN2/xDzQ2oE47ZCwsB512PoWCdK2
+         ukGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719009532; x=1719614332;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=abeU2GGQMEFPwQcngO4m8ohAO9d8OVamW3SQd0gTR/I=;
+        b=jnPAhEEDvfmOTq3Oj44IgwcoivF7hups3xMjZxSb5H2+tiRzehQsrq8ZldHykD1+F4
+         Tv4C/K0wnTHrY3gHD/kf5FvIzSRB7ai2gaiTWwS6mxAQF2SSoDF5NeWot5jyHUOGB7GH
+         thiTym9Zw3IpPqaTXZ02ekMLnBsnrXJmmP/lEXKK8X+G9RV2s0OuoiicIyVg5U6Qz5oF
+         ePr3ln6bJM0j06eE3FMLMRqdlQso77T5YlHOSA+UFEzR7yDoCefDwlScpKe+YC57iYMq
+         DBEX3ryzutSoXDATfc0mFHCD/O6VbMGnlJk7wOnpkWZZaBk2UhryeILm2Y2JsRA8O9/Z
+         UP7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWUr2xbh2m89S4T15rL2VGefQxLMBLkXWLOylOWLN5Vr8UWs40xIllMzQ7aTRj7tbs9ZnLQ46YDkiXTa8BNxaAHzgfYVzb2tkupcdNJ
+X-Gm-Message-State: AOJu0YwCoVZiDL6yQyzdyx9/RmbkR8xMLAcZYX4ewoa4kcWZhkfE9Q1f
+	R+hWhVaLqos9G8WX+mLXwVu9o2ZH534QSD43XBiwHtRRT9ehEjjx
+X-Google-Smtp-Source: AGHT+IHpSEg3XHl2cj+523T94EXl++q2aLaanr1Vrm1C8htxO3NPr4o3CPXRYbhssuHnegqyRjXmhg==
+X-Received: by 2002:a17:903:22ce:b0:1f9:fca9:7433 with SMTP id d9443c01a7336-1f9fca976efmr18690715ad.34.1719009531795;
+        Fri, 21 Jun 2024 15:38:51 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f2a4bsm19255645ad.57.2024.06.21.15.38.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 15:38:51 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Fri, 21 Jun 2024 12:38:50 -1000
+From: Tejun Heo <tj@kernel.org>
+To: rafael@kernel.org, viresh.kumar@linaro.org
+Cc: linux-pm@vger.kernel.org, void@manifault.com,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	mingo@redhat.com, peterz@infradead.org,
+	David Vernet <dvernet@meta.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH 1/2] cpufreq_schedutil: Refactor sugov_cpu_is_busy()
+Message-ID: <ZnYA-hrec6cVADtJ@slm.duckdns.org>
+References: <20240619031250.2936087-1-tj@kernel.org>
+ <20240619031250.2936087-2-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619031250.2936087-2-tj@kernel.org>
 
-When SNC is enabled monitoring data is collected at the SNC node
-granularity, but must be reported at L3-cache granularity for
-backwards compatibility in addition to reporting at the node
-level.
+On Tue, Jun 18, 2024 at 05:12:02PM -1000, Tejun Heo wrote:
+> sugov_cpu_is_busy() is used to avoid decreasing performance level while the
+> CPU is busy and called by sugov_update_single_freq() and
+> sugov_update_single_perf(). Both callers repeat the same pattern to first
+> test for uclamp and then the business. Let's refactor so that the tests
+> aren't repeated.
+> 
+> The new helper is named sugov_hold_freq() and tests both the uclamp
+> exception and CPU business. No functional changes. This will make adding
+> more exception conditions easier.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reviewed-by: David Vernet <dvernet@meta.com>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
 
-Add a "ci" field to the rdt_mon_domain structure to save the
-cache information about the enclosing L3 cache for the domain.
-This provides:
+Applied to sched_ext/for-6.11.
 
-1) The cache id which is needed to compose the name of the legacy
-monitoring directory, and to determine which domains should be
-summed to provide L3-scoped data.
+Thanks.
 
-2) The shared_cpu_map which is needed to determine which CPUs can
-be used to read the RMID counters with the MSR interface.
-
-This is the first step to an eventual goal of monitor reporting files
-like this (for a system with two SNC nodes per L3):
-
-$ cd /sys/fs/resctrl/mon_data
-$ tree mon_L3_00
-mon_L3_00			<- 00 here is L3 cache id
-├── llc_occupancy		\  These files provide legacy support
-├── mbm_local_bytes		 > for non-SNC aware monitor apps
-├── mbm_total_bytes		/  that expect data at L3 cache level
-├── mon_sub_L3_00		<- 00 here is SNC node id
-│   ├── llc_occupancy		\  These files are finer grained
-│   ├── mbm_local_bytes		 > data from each SNC node
-│   └── mbm_total_bytes		/
-└── mon_sub_L3_01
-    ├── llc_occupancy		\
-    ├── mbm_local_bytes		 > As above, but for node 1.
-    └── mbm_total_bytes		/
-
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- include/linux/resctrl.h                   | 3 +++
- arch/x86/kernel/cpu/resctrl/core.c        | 7 ++++++-
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 1 -
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 1 -
- 4 files changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 64b6ad1b22a1..b0875b99e811 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -2,6 +2,7 @@
- #ifndef _RESCTRL_H
- #define _RESCTRL_H
- 
-+#include <linux/cacheinfo.h>
- #include <linux/kernel.h>
- #include <linux/list.h>
- #include <linux/pid.h>
-@@ -96,6 +97,7 @@ struct rdt_ctrl_domain {
- /**
-  * struct rdt_mon_domain - group of CPUs sharing a resctrl monitor resource
-  * @hdr:		common header for different domain types
-+ * @ci:			cache info for this domain
-  * @rmid_busy_llc:	bitmap of which limbo RMIDs are above threshold
-  * @mbm_total:		saved state for MBM total bandwidth
-  * @mbm_local:		saved state for MBM local bandwidth
-@@ -106,6 +108,7 @@ struct rdt_ctrl_domain {
-  */
- struct rdt_mon_domain {
- 	struct rdt_domain_hdr		hdr;
-+	struct cacheinfo		*ci;
- 	unsigned long			*rmid_busy_llc;
- 	struct mbm_state		*mbm_total;
- 	struct mbm_state		*mbm_local;
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index b86c525d0620..95ef8fe3cb50 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -19,7 +19,6 @@
- #include <linux/cpu.h>
- #include <linux/slab.h>
- #include <linux/err.h>
--#include <linux/cacheinfo.h>
- #include <linux/cpuhotplug.h>
- 
- #include <asm/cpu_device_id.h>
-@@ -608,6 +607,12 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
- 	d = &hw_dom->d_resctrl;
- 	d->hdr.id = id;
- 	d->hdr.type = RESCTRL_MON_DOMAIN;
-+	d->ci = get_cpu_cacheinfo_level(cpu, RESCTRL_L3_CACHE);
-+	if (!d->ci) {
-+		pr_warn_once("Can't find L3 cache for CPU:%d resource %s\n", cpu, r->name);
-+		mon_domain_free(hw_dom);
-+		return;
-+	}
- 	cpumask_set_cpu(cpu, &d->hdr.cpu_mask);
- 
- 	if (arch_domain_mbm_alloc(r->num_rmid, hw_dom)) {
-diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 70f0069b87d8..e69489d48625 100644
---- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -11,7 +11,6 @@
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
--#include <linux/cacheinfo.h>
- #include <linux/cpu.h>
- #include <linux/cpumask.h>
- #include <linux/debugfs.h>
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index d3b0fa958266..70d41a8fd788 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -12,7 +12,6 @@
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
--#include <linux/cacheinfo.h>
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
- #include <linux/fs.h>
 -- 
-2.45.2
-
+tejun
 
