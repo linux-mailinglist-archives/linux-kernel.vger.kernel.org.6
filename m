@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-225406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8440891303B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:22:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B1C91303C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D5AF1C23B5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:22:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7D98B232AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD8316DEBB;
-	Fri, 21 Jun 2024 22:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF68216EB78;
+	Fri, 21 Jun 2024 22:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lStu89Kg"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GeoNJ8Vn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9529412E1E9
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EC812E1E9;
+	Fri, 21 Jun 2024 22:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719008568; cv=none; b=s7Tp3V4FQkTUKSvHq0cMUMoCDNqeQY3RsjXkV0rrmoQd+OHg3cnbiW2Vjxup9c2XAp7qEi5Vn8kTUjB+YIJQY1HrCou04ewGgtmFRJW+CxEbqSNXmQVQB+F657QZIWZhjqkblmu08dhPxx+1DXDO/p3JvxTXgZ4jNfFhjlOuOIc=
+	t=1719008639; cv=none; b=pv1B/qhtBoJ0530+z//74Xzpt2a/ttrwfqyYmGZruP4nGN9Xq8ZtFdmfKxl2LjZtwzM5XJheYYkvQa1u/BEmBrEZ7ouwUwLOGmuD9XNDie4fJ2Yrn0QYV7ja6ubm1x4wIu9R4Y27KdbZeonmCU+Ed9sDb/1OHLvJi7crOc6Ow90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719008568; c=relaxed/simple;
-	bh=8PoHB1+iNVVWg8t/RPg2r9VCF8spozdok5YxPwDRVdc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kbVVLg3mMaikKtBGltz9F69HQZevuY7X1dIfAnqaF2V2pd2A6tJM7pCvc4dr5XSjs5MVnVfj7XUqOcGtYhIDsDRmhRMw0LpHM3D4G5Sw8CE8zDAJkLxmQtmm+uOB/jNxGox5vTIwF5MQhDcqgxwPGsSxDpjiiXujmRI0tZFo3M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lStu89Kg; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5b9706c84e5so1419612eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719008564; x=1719613364; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jlIty+WgdwDoohW5XXFoR1hOthwU+4uED/1nhbuq/KU=;
-        b=lStu89KgLrVrp2G5NTYGp2uyfg5nVhlDQ8z/9xppOQYd3irrSloHJQUhpK7SRXn2+A
-         tAEBOB+xkLWvV0mcrCt3YeLBQbW3hWKmqTbRIimJLdOeQ9M4wQqQaoSzWv/JhQfy5sr+
-         7aDfty1Hcg2NwUtgAS8MCBPM2RavI26jgqg5vwwjvRQB3/VwU4W9NeEj9OudFBe00kJJ
-         i6Dq1HxMKRT0d8TamsAA3RliE20S9jANfhPbvALudiSmq2a9g3y/RbTYrqN+ND3N9CTe
-         Y08WZj3Y7rfIRZe9I/wiDqGPCGjrDG3QTAWNu1UTOBnUW5A6ykowi1UYgGWA9BCiPiOD
-         D89A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719008564; x=1719613364;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jlIty+WgdwDoohW5XXFoR1hOthwU+4uED/1nhbuq/KU=;
-        b=vYqPrH73F6d9/0GFWOqZPsivgUlfXKLOuU/oKyiWSfv7p+lgbBlPeKsaNpqiG++464
-         k9XBv0uiA4M4GXsASQSM7J8XCoFviXGMHKDLzDCRll+6qAOnjqvP2bh/TRAx4coN0YOD
-         jiymKqKGCBNytbJ2PePbcXwIbl6fImf0OaQ1Sf13H0w2MbudeW56sTfawKG0Hsi9eAGX
-         t9tmT59eNaqqMLK4+MJC9OXS87n5eUjFOFa63ZKsgZNRsKefc3zEw2Jv5Y5lfCuTPCfc
-         jtfwsajXlXQn2H+vDWV9gn5Wga8w+vHNZoemadKhq0vuPGfW3SV6YXyOrZeWZo1zbhaR
-         VtbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfMTlOKVB6VonUZHh9+0iw/+lId4vp27fPBTxORo4R051LT/nT8T+TQfiGdoUZiREen5Lhuyvk6gWqPxB/lULF5X7GhHBXTtMXwwxM
-X-Gm-Message-State: AOJu0YxWwnV90uS2nlnJ5JfqLxma49rJjMQwdRoHiQonw5UZ6Wa5etlb
-	2rt0lUdjzvlnSUs+dyVPnH3KGBJvWt6LOuyQghUTcKHedn2lmKULd4YmyNJq/i0=
-X-Google-Smtp-Source: AGHT+IG+p63Zxmf2rAXWjvPijY7SoPMWPclMbCezJsVfap4w6qjRMVX7Qof09UrimH4j8vFNbWCoxA==
-X-Received: by 2002:a4a:2407:0:b0:5bb:2d23:8aeb with SMTP id 006d021491bc7-5c1adb3b4f8mr10056699eaf.2.1719008564634;
-        Fri, 21 Jun 2024 15:22:44 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c1d5901473sm414841eaf.43.2024.06.21.15.22.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 15:22:44 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: William Breathitt Gray <wbg@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Judith Mendez <jm@ti.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] counter: ti-eqep: enable clock at probe
-Date: Fri, 21 Jun 2024 17:22:40 -0500
-Message-ID: <20240621-ti-eqep-enable-clock-v2-1-edd3421b54d4@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719008639; c=relaxed/simple;
+	bh=+ne5Lbkjbf1ZBPupvceOAgaiCrWOTXDw9K56r3OtFO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ru2F0+vY+37/V1Gmh7aFLeSPmkORa/TVSsw+553s2SEVppX0GpHSeqos6nDeQCVLpphcJT4+Gs6BWsAdfn26oRuW62AXmzhJ6TRe01ceOilZBsZSJYyct2gVrsw8eqKvnA/15zVo8O8LlA4YMgaSfNyLneR0OyOfNtNiHpQsC2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GeoNJ8Vn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384E1C32789;
+	Fri, 21 Jun 2024 22:23:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719008638;
+	bh=+ne5Lbkjbf1ZBPupvceOAgaiCrWOTXDw9K56r3OtFO4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GeoNJ8VnSg+MEPfSaq1MFuOJf3igvE3+N1sWohMgBce2NtmzA7j6BT8HHPxdJrrCv
+	 G6IuFSuBpN7n/9zdLtQlJef4Ug6hECYqA2kCB16xP3xkFNgaszJHCNrcMZd4x4agvp
+	 jfzaN4DzhVh5wCkbI9u3oolpIZ03+Mb23tVS9lPDpniNPvw2IrjkT/ZLZ+EheSDuxh
+	 VbKtneCU8d4VxHoTcBKRkdt5xc4HyFKkBiofwia1BlB1RMwlZZgE9TlbFNV3ce/KOz
+	 b6IIpay9ZgbHUzN6mmrpYHqY7aL7j2PQjapH07PpXa+qbV8289m5Yt6KNFpe4GqRol
+	 uZf0C5GZBufog==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [RFC/PATCHSET 0/8] perf record: Use a pinned BPF program for filter (v2)
+Date: Fri, 21 Jun 2024 15:23:49 -0700
+Message-ID: <20240621222357.717374-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.12.4
 Content-Transfer-Encoding: 8bit
 
-The TI eQEP clock is both a functional and interface clock. Since it is
-required for the device to function, we should be enabling it at probe.
+Hello,
 
-Up to now, we've just been lucky that the clock was enabled by something
-else on the system already.
+This is to support the unprivileged BPF filter for profiling per-task events.
+Until now only root (or any user with CAP_BPF) can use the filter and we
+cannot add a new unprivileged BPF program types.  After talking with the BPF
+folks at LSF/MM/BPF 2024, I was told that this is the way to go.  Finally I
+managed to make it working with pinned BPF objects. :)
 
-Fixes: f213729f6796 ("counter: new TI eQEP driver")
-Reviewed-by: Judith Mendez <jm@ti.com>
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
-Changes in v2:
-- Added Fixes: tag to commit message
-- Picked up Judith's Reviewed-by tag
-- Link to v1: https://lore.kernel.org/r/20240609-ti-eqep-enable-clock-v1-1-1e9e7626467e@baylibre.com
----
- drivers/counter/ti-eqep.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+v2 changes)
+ * rebased onto Ian's UID/GID (non-sample data based) filter term change
+ * support separate lost counts for each use case
+ * update the test case to allow normal users (if supported)
 
-diff --git a/drivers/counter/ti-eqep.c b/drivers/counter/ti-eqep.c
-index 072b11fd6b32..825ae22c3ebc 100644
---- a/drivers/counter/ti-eqep.c
-+++ b/drivers/counter/ti-eqep.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/clk.h>
- #include <linux/counter.h>
- #include <linux/kernel.h>
- #include <linux/mod_devicetable.h>
-@@ -376,6 +377,7 @@ static int ti_eqep_probe(struct platform_device *pdev)
- 	struct counter_device *counter;
- 	struct ti_eqep_cnt *priv;
- 	void __iomem *base;
-+	struct clk *clk;
- 	int err;
- 
- 	counter = devm_counter_alloc(dev, sizeof(*priv));
-@@ -415,6 +417,10 @@ static int ti_eqep_probe(struct platform_device *pdev)
- 	pm_runtime_enable(dev);
- 	pm_runtime_get_sync(dev);
- 
-+	clk = devm_clk_get_enabled(dev, NULL);
-+	if (IS_ERR(clk))
-+		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable clock\n");
-+
- 	err = counter_add(counter);
- 	if (err < 0) {
- 		pm_runtime_put_sync(dev);
 
----
-base-commit: bb3f1c5fc434b0b177449f7f73ea9b112b397dd1
-change-id: 20240609-ti-eqep-enable-clock-91697095ca81
+This only supports the per-task mode for normal users and root still uses
+its own instance of the same BPF program - not shared with other users.
+But it requires the one-time setup (by root) before using it by normal users
+like below.
+
+  $ sudo perf record --setup-filter pin
+
+This will load the BPF program and maps and pin them in the BPF-fs.  Then
+normal users can use the filter.
+
+  $ perf record -o- -e cycles:u --filter 'period < 10000' perf test -w noploop | perf script -i-
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.011 MB - ]
+        perf  759982 448227.214189:          1 cycles:u:      7f153719f4d0 _start+0x0 (/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+        perf  759982 448227.214195:          1 cycles:u:      7f153719f4d0 _start+0x0 (/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+        perf  759982 448227.214196:          7 cycles:u:      7f153719f4d0 _start+0x0 (/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+        perf  759982 448227.214196:        223 cycles:u:      7f153719f4d0 _start+0x0 (/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+        perf  759982 448227.214198:       9475 cycles:u:  ffffffff8ee012a0 [unknown] ([unknown])
+        perf  759982 448227.548608:          1 cycles:u:      559a9f03c81c noploop+0x5c (/home/namhyung/linux/tools/perf/perf)
+        perf  759982 448227.548611:          1 cycles:u:      559a9f03c81c noploop+0x5c (/home/namhyung/linux/tools/perf/perf)
+        perf  759982 448227.548612:         12 cycles:u:      559a9f03c81c noploop+0x5c (/home/namhyung/linux/tools/perf/perf)
+        perf  759982 448227.548613:        466 cycles:u:      559a9f03c81c noploop+0x5c (/home/namhyung/linux/tools/perf/perf)
+
+It's also possible to unload (and unpin, of course) using this command:
+
+  $ sudo perf record --setup-filter unpin
+
+The code is avaiable in 'perf/pinned-filter-v2' branch at
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+
+Thanks,
+Namhyung
+
+
+Namhyung Kim (8):
+  perf bpf-filter: Make filters map a single entry hashmap
+  perf bpf-filter: Pass 'target' to perf_bpf_filter__prepare()
+  perf bpf-filter: Split per-task filter use case
+  perf bpf-filter: Support pin/unpin BPF object
+  perf bpf-filter: Support separate lost counts for each filter
+  perf record: Fix a potential error handling issue
+  perf record: Add --setup-filter option
+  perf test: Update sample filtering test
+
+ tools/perf/Documentation/perf-record.txt     |   5 +
+ tools/perf/builtin-record.c                  |  23 +-
+ tools/perf/builtin-stat.c                    |   2 +-
+ tools/perf/builtin-top.c                     |   2 +-
+ tools/perf/builtin-trace.c                   |   2 +-
+ tools/perf/tests/shell/record_bpf_filter.sh  |  13 +-
+ tools/perf/util/bpf-filter.c                 | 406 +++++++++++++++++--
+ tools/perf/util/bpf-filter.h                 |  19 +-
+ tools/perf/util/bpf_skel/sample-filter.h     |   2 +
+ tools/perf/util/bpf_skel/sample_filter.bpf.c |  75 +++-
+ tools/perf/util/evlist.c                     |   5 +-
+ tools/perf/util/evlist.h                     |   4 +-
+ tools/perf/util/python.c                     |   3 +-
+ 13 files changed, 485 insertions(+), 76 deletions(-)
+
+-- 
+2.45.2.741.gdbec12cfda-goog
+
 
