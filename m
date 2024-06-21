@@ -1,103 +1,177 @@
-Return-Path: <linux-kernel+bounces-224974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F091912955
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:21:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3838912966
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:22:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92AD11C21D80
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:21:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C5F1281F85
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC7B7D095;
-	Fri, 21 Jun 2024 15:21:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8545FB8A;
+	Fri, 21 Jun 2024 15:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="WNIv1Prk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fTv5X9rv"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7796B4EB51
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E953B7AC;
+	Fri, 21 Jun 2024 15:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983279; cv=none; b=aI/VVQwBkn3sfHo7RBU1yc7tbpIuEUFNBYVkacyc8FbYZ4Oej8v3AUcnByvdcDRHZVWROWFAd+vygtu8g0P7k5I3UoQrHe7Pp6pUgGlniejzWJh1kzMPnBBgz1fpJD4VUur0iradNp9HpXq2ksAQ08Y5opW1jLgEDRWb6P2x5d8=
+	t=1718983331; cv=none; b=kNp4mSiXrftz4kfhHfKwZM7QXR301R9zvQ5hVCIpfFKdHDcCKvPkiLwhc+hGFn+C+jeh1xnbjo14bjXwAZ/GLdY02IbjELci7IfSvCrozEzlD8GuP3QCBM6JrRSWirtqbdl/Yvx06r/Ox0EexQM7Bx+4oOlTCmnbCjxC/OXZ/xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718983279; c=relaxed/simple;
-	bh=PA/4Jt+uZ9BVn9W11/ioyDi0MwIWlu6jd0biIaDvqJ0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p/iKOyo0PeOu/beovXTPstsvJ6nSYDzoRwwfe+3qTsIDKvI6B7+qcp9DrV73QsqiVSULotC+OaoA/p0GxPUu2qq+Z2qX6sCZk4eFsQJqixPjj5/MIr/iBAkSii8hzM3oQjt1fTS/wEP0L3lovcpIQZrzTLuy2F0egltNq06eCL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sKg4f-0007eK-CK; Fri, 21 Jun 2024 17:21:13 +0200
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Fri, 21 Jun 2024 17:21:09 +0200
-Subject: [PATCH] reset: sti: allow building under COMPILE_TEST
+	s=arc-20240116; t=1718983331; c=relaxed/simple;
+	bh=bwzVVU0DpaOag2gJQjv5Wo7VFmiNol555mt6C8q3IGs=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=Zd4qegSADY5SwJwxKV2j502jst6YqyXhwka/mf9VlUZMPbgfvfFFN3UekHC4Sl8+U5iM08O52quHqZR2byECzQS1t5a+xwBl7dq0x93MIhz5GrW0blXwln5ZKYghrpyDPioBILsJhTqdOQOKsrKSgr1GBTs7pvSS5nMjJByHbmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=WNIv1Prk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fTv5X9rv; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4D30011400AD;
+	Fri, 21 Jun 2024 11:22:08 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Fri, 21 Jun 2024 11:22:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1718983328;
+	 x=1719069728; bh=sxE25uVd20ukxwTOUCuTr+p1UO+6v1RmLwyafcdb1cg=; b=
+	WNIv1PrkDW48ZDK4Ccwgpy7G/sSLfPEZJrPl/Is+F58mVw0+dCsVu5+M/32wLC48
+	N91ud+LGN/jCrhtaDN7vd04Kzt3dVV5ZKOj1DZhGZBcZ+L1op5N4XNwf4GlDEtHA
+	yi0qe7n3+9m1NIe/U7nTDhrz6ScGGQa0mhci2lwnfbNsk3X51DsABtPWYioUzj/w
+	O2ZXAivgz7sSpUr9b+HTBM+dpnibLcEHFyEmmbRPIFEvOkOLHL8LrE2JIplgODgK
+	WaHiBqhPt4DJV2QEVsRMXI0t7UpGO/0y3WsQgA7H1XH/fXVAoR4E24nKegPA3GDf
+	cHeIWENOgJZ+mxm5H9uZhg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718983328; x=
+	1719069728; bh=sxE25uVd20ukxwTOUCuTr+p1UO+6v1RmLwyafcdb1cg=; b=f
+	Tv5X9rvVlAaoEj80J8CzZKYkyA4o07gPGAoKICe/rnUiFUaS+q99NEwnlLAWMY3v
+	XbyfNhVxUMJA2zjuD3MlcXrDWvGXr+pcvRJ3ckmVj2JjcAtC7FzYLd9W8g3JS2ub
+	erqVGGNUSbB+J0Dd9pVp5VobWd/pEUdWq2KeLU0FZPCiKtQvT0S3oqqtRLTyF36Y
+	OFO85RV0oF8+Em4o3bYsKSxnYz4gEerWamDTuSNHJjnsewedFTN/RGZ+1qYC30sw
+	TwSLWZaLVLT7VHN1qM+Rb0FKdRwWFQ4c+jKfs5r2baZxm98srhEmFevG2p4zo2ar
+	otvH2FyxUmglHKFKjZz6Q==
+X-ME-Sender: <xms:n5p1Zi_BdyaqkOwg1i22NzNH3TUoMdbj_LLDSKDfbAAUP_0jXaBWFw>
+    <xme:n5p1ZiuX1xlmTSjMg0s85By-mpYZugfYf67_sUKA9taR3yIQyPSeekez6ErYZBKbu
+    6xEYETrzmQJfKihGro>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefgedgkeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:n5p1ZoBXoE-VUUPqgmywCUvFkNj6h_5SR_h_YbiMscURP7nA-qYxGg>
+    <xmx:n5p1ZqetxeRUJuE0Z20AVYB3tduaek-5o5cH1BjWeXrAQ4B4K8_iZg>
+    <xmx:n5p1ZnO-ZiaroVQsnvDd50IowXj7np4IGJBzN0gzjZFbsMYqDufMlQ>
+    <xmx:n5p1ZkkFxXV3HdwkeMXtUa4f7CybuxupUdikif94bi4qVKSwLDkWqA>
+    <xmx:oJp1Zsouy4CvRvJLRFZVW780P0QWGBtuNDVixUFWJwQhmHxEX6nXBW62>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 9885636A0074; Fri, 21 Jun 2024 11:22:07 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240621-reset-compile-sti-v1-1-b7a66ce29911@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIAGSadWYC/x3MMQqAMAxA0atIZgO1SgevIg6SRg1oK42IUHp3i
- +Mb/s+gnIQVxiZD4kdUYqjo2gZoX8LGKL4arLGDcbbDxMo3UjwvORj1FqTFkfXeG3I91O5KvMr
- 7P6e5lA9hQLaqYwAAAA==
-To: Patrice Chotard <patrice.chotard@foss.st.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
-X-Mailer: b4 0.14-dev
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::54
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Message-Id: <83cf475c-86a3-4acb-bc82-d94c66c53779@app.fastmail.com>
+In-Reply-To: <alpine.DEB.2.21.2406211446500.43454@angie.orcam.me.uk>
+References: <20240612-mips-llsc-v2-0-a42bd5562bdb@flygoat.com>
+ <20240612-mips-llsc-v2-2-a42bd5562bdb@flygoat.com>
+ <alpine.DEB.2.21.2406210041140.43454@angie.orcam.me.uk>
+ <2c26a07f-fa68-48f1-8f3b-3b5e4f77130b@app.fastmail.com>
+ <alpine.DEB.2.21.2406211446500.43454@angie.orcam.me.uk>
+Date: Fri, 21 Jun 2024 16:21:49 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Jonas Gorski" <jonas.gorski@gmail.com>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] MIPS: Introduce config options for LLSC availability
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The STIH407 reset driver can be compiled without ARCH_STI being
-enabled. Allow it to be built under COMPILE_TEST.
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/reset/Makefile    | 2 +-
- drivers/reset/sti/Kconfig | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index fd8b49fa46fc..ff716f9afc84 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -2,7 +2,7 @@
- obj-y += core.o
- obj-y += hisilicon/
- obj-y += starfive/
--obj-$(CONFIG_ARCH_STI) += sti/
-+obj-y += sti/
- obj-$(CONFIG_ARCH_TEGRA) += tegra/
- obj-$(CONFIG_RESET_A10SR) += reset-a10sr.o
- obj-$(CONFIG_RESET_ATH79) += reset-ath79.o
-diff --git a/drivers/reset/sti/Kconfig b/drivers/reset/sti/Kconfig
-index a2622e146b8b..0b599f7cf6ed 100644
---- a/drivers/reset/sti/Kconfig
-+++ b/drivers/reset/sti/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
--if ARCH_STI
-+if ARCH_STI || COMPILE_TEST
- 
- config STIH407_RESET
--	bool
-+	bool "STIH407 Reset Driver" if COMPILE_TEST
- 
- endif
+=E5=9C=A82024=E5=B9=B46=E6=9C=8821=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
+=8D=882:57=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
+> On Fri, 21 Jun 2024, Jiaxun Yang wrote:
+>
+>> >  I think this ought not to be done in two places independently and =
+the=20
+>> > pieces in <asm/mach-*/cpu-feature-overrides.h> need to be removed, =
+likely=20
+>> > in the same change even, *however* not without double-checking whet=
+her=20
+>> > there is not a case among them where a platform actually has LL/SC =
+support=20
+>> > disabled despite the CPU used there having architectural support fo=
+r the=20
+>> > feature.  Otherwise we may end up with a case where a platform has =
+LL/SC=20
+>> > support disabled via its <asm/mach-*/cpu-feature-overrides.h> setti=
+ng and=20
+>> > yet we enable ARCH_SUPPORTS_ATOMIC_RMW or ARCH_HAVE_NMI_SAFE_CMPXCH=
+G for=20
+>> > it via Kconfig.
+>>=20
+>> IMO it's necessary for platforms who know what are they doing such as=
+ ATH25,
+>> which we took care in this series.
+>>=20
+>> I'll add a build time assertion to ensure when CONFIG_CPU_HAS_LLSC is=
+ selected
+>> kernel_uses_llsc is statically 1, so any incorrect overrides can be s=
+potted
+>> at build time.
+>
+>  That might do in the interim as a sanity check, however ultimately th=
+e=20
+> sole reason these <asm/mach-*/cpu-feature-overrides.h> exist (and the=20
+> `cpu_has_llsc' setting there) is so that a dynamic check at run time i=
+s=20
+> avoided where the result is known from elsewhere beforehand anyway, an=
+d=20
+> your change effectively supersedes the overrides, and therefore they n=
+eed=20
+> to be removed.
+>
+No, overrides are still valid if platform did CPU_MAY_HAVE_LLSC, this is=
+ at
+least valid for R10000 systems (IP28 decided to opt-out from llsc someho=
+w),
+ATH25 (platform made assumption on IP version shipped with CPU), cavium
+octeon (platform decided to opt-out llsc for non-SMP build). I'm not con=
+fident
+with handling them all in Kconfig so I think the best approach so far is=
+ to do
+build time assertion.
 
----
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-change-id: 20240621-reset-compile-sti-ca6c2ddd0c63
+Does anyone reckon the reason behind opt-out LLSC for IP28? As far as I =
+understand
+there is no restriction on using LLSC after workaround being applied. If=
+ it's purely
+performance reason, I think I'll need to move kernel_uses_llsc logic to =
+Kconfig as well.
 
-Best regards,
--- 
-Philipp Zabel <p.zabel@pengutronix.de>
+Thanks
+>
+>   Maciej
 
+--=20
+- Jiaxun
 
