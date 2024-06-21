@@ -1,149 +1,149 @@
-Return-Path: <linux-kernel+bounces-224788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F078D9126E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:43:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D149126E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42209B273FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:43:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F2491F26FB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D762BA31;
-	Fri, 21 Jun 2024 13:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB5B9475;
+	Fri, 21 Jun 2024 13:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Gro7t4v8"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUrcKABM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FC2B667
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921361366
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718977376; cv=none; b=ktu0zMK7ErC4lLkxdMgA8gwc5iE/zgRhS5mp5rW0uI1moJqLfIwG2egcVAcVVkDyi39XXKqdrdjd81rOBBrcibeKNxrufiruDuWf/Co366brtMqWu2oGSw2/k1ggZshGggrna4JoziRggYK3HvS5GlemsC/XWuRVyEq8PgetYfI=
+	t=1718977419; cv=none; b=akl8LS7p33WgepR15A4duUrouwK9t72RAutzesf7U+CTRUVwKyJLCAQYvQk16nceCvYOR/Xiz2QyVPF2DQMXmMKaHTjpnJhSIx/VarKkODGRbV2/FTV9G3riQQvOrO5UX0L0J7DdMFcBrTpkpfIQpmlT2zLrWDq3Utyajm2Y+eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718977376; c=relaxed/simple;
-	bh=xTDco5y5zMHfNQrIXpXx9hG93QyktZFABb4TC1wrwiA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uk2eTVUJRE3fvjrLP2QpriQcjyT5ZUYJtaX4jJ0d7WWbR1QKKxzxCVvETOFig3/qCTowTyOtV2UCqqd0lzhebNvvVho5RcGtETJc0T64gJJs9wycUo0kwj74HB0QM+QnI1MDEJRX5/7sMJjp7nN9/RsYSjcOjrWqI0mz40P1v0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Gro7t4v8; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52c815e8e9eso2109858e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:42:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718977372; x=1719582172; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/ok5aSN9mBgn8wrFYODhxaqdyy2yPpSIKzg8yKMrNqU=;
-        b=Gro7t4v8IQ1tvOAerQff5wO4SCPfoMGUkwnreo7DcOe5UmIQFKkZBF0JYyzYgJY9Du
-         O9lu9SJwbcCfqOhlS5jzNM0A81tdNrB63xQx9iyTUUfIKSS7YX0IYqrwGeIwNFtl2Ocl
-         O6O26Cu1jwU286u2H1PVTWXAwLI+TdemYeGWiuP7t9HVRw+ijNd9cIx45QHE1rte6Sbq
-         VAlcgq98LX1ZL4lPLdxzOo9WNzVQkVpAaC30DVdFr5vE1mPnxEL+uJElrjdy+kkHK/z6
-         QFDHVoJa+I7N9cAFz7G6sszKMQbTe152cj7OfyDfTB9E9P4Qws9p32cpSCdPk9titY+W
-         oJFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718977372; x=1719582172;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/ok5aSN9mBgn8wrFYODhxaqdyy2yPpSIKzg8yKMrNqU=;
-        b=uJxN4bog9cnfMF3S5Np+otH0hNROvm5Ur9+F5iRv4bgIjacK85YZhORbEr4Ex4Q/zT
-         e8/AszPizeg4N7O9zrZpd+5iiKeXbniy8lJyVrojIN21RC/Jt/Bpfh3t0F4Q3vH0Gcjt
-         QANoFZ3SDoKg/v5ExHCe9+UWTra12XXR6CF4F4UiN9wSIs2rfCfMXL5cAITmcLeRDEn6
-         oGPioBIgiHlzkrFilH/oLoYbndfJiC2sl5/0pn80xInPiN8gDgAQcgUstnD90mUs8N0S
-         at+kZpx0EAZsmTMuWPgAFW5MvBNNbmRnK8DmwwwvbrINT9Ul5RcjCEzX7PIz2io3rVog
-         lKqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWt+ppElgGRSVxdykrt6xEYUwp3OenuCz9sHRDGi4jlJDFwXLzp+7wJyTfMzRedjtvTAf3WBmMbjqDOmDKFYy5YBnkPaDJzopOC8/0A
-X-Gm-Message-State: AOJu0YwWz1OH2IypY41Dl2xgdg8sv3ZVuWWRMr8l51ucvES0c2vh8Lt9
-	ZCw23TXgo5VHmOK6PpPFbhASuK6BKRQUJNXVxzM2ZFw9VP+Qe8Vomnytne2kuu3HZ/zi3RMnWv4
-	zqSt4oz1o9UQ/WJtV+lSB7HExfB51PdKMKeHRRw==
-X-Google-Smtp-Source: AGHT+IHdpPft57o1H9+QCaSg+D/jEJgjvnJh9jmVAke5h3wFi+XaALCQ+22Vt7cHkTOx5G0TXYGs34rFU5FJ7o52p94=
-X-Received: by 2002:a05:6512:3582:b0:52c:dbc7:3d36 with SMTP id
- 2adb3069b0e04-52cdbc73f0bmr285147e87.26.1718977372099; Fri, 21 Jun 2024
- 06:42:52 -0700 (PDT)
+	s=arc-20240116; t=1718977419; c=relaxed/simple;
+	bh=QLNmheYAvaWvs1YBIykDFhXYvxKiXkI3zQ5sRSuGg7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BnFZL2pxhsD3e03kSnzzkoNAw+T/cF1YVmtWB8jZrVK2e289CbUxKKZtLlfCufKNIOKD9Jux8ZGw1ZCxll3ZoXxUjcMPlHN+L/nD6FL1QiDaNx3wc/rckqyCYRM9h93IkvGXz+8NA+AYRiWuZmJTFFaxdLMYXzmXuJdIo+P9Me4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUrcKABM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75410C2BBFC;
+	Fri, 21 Jun 2024 13:43:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718977419;
+	bh=QLNmheYAvaWvs1YBIykDFhXYvxKiXkI3zQ5sRSuGg7k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MUrcKABMaTYh1LPZeAd0YxqmY2kjsdPh/ZkLHxs6q9wPuMrMgZgUqoZHxEbff4BjT
+	 wiUoB9L5DTYq1hoCCBFc4wjeaYMrISnXKgHg3DBLnu20Um3mty4CDyoZFLYR0xmvUi
+	 673WYUYzIaW7tlMirTnaJAYeBxQIF9AZTnCLoTU2dVecaGEq6ngcWR7PjCo5FX3rpR
+	 HvyZTp4e6SW1xU3DWuricVZO31rkity1CTQWkPf4CTr+HqTgVvhr0eQ3sBkX5dypv7
+	 rArqO7DjrPh5hlPzO+sjMMnsce8XOfB9lvho5SxvXfe8NtJdbZcP0ETVrYuf7IK8Jm
+	 ZoLgmVVNQwE/w==
+Message-ID: <b14879eb-cbc9-4e53-b703-ab7b451b7687@kernel.org>
+Date: Fri, 21 Jun 2024 15:43:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527-shm-bridge-v10-0-ce7afaa58d3a@linaro.org>
- <20240527-shm-bridge-v10-13-ce7afaa58d3a@linaro.org> <20240620155335645-0700.eberman@hu-eberman-lv.qualcomm.com>
-In-Reply-To: <20240620155335645-0700.eberman@hu-eberman-lv.qualcomm.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 21 Jun 2024 15:42:40 +0200
-Message-ID: <CAMRc=McKtc5CSJPhJ8syqukGnVC8MXuWdv0oEFY-Jaxi_GM19g@mail.gmail.com>
-Subject: Re: [PATCH v10 13/15] firmware: qcom: scm: clarify the comment in qcom_scm_pas_init_image()
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Robert Marko <robimarko@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Maximilian Luz <luzmaximilian@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Srini Kandagatla <srinivas.kandagatla@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alex Elder <elder@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@quicinc.com, 
-	Andrew Halaney <ahalaney@redhat.com>, Deepti Jaggi <quic_djaggi@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 0/9] SCHED_DEADLINE server infrastructure
+To: Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
+ linux-kernel@vger.kernel.org, Luca Abeni <luca.abeni@santannapisa.it>,
+ Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+ Thomas Gleixner <tglx@linutronix.de>, Joel Fernandes
+ <joel@joelfernandes.org>, Vineeth Pillai <vineeth@bitbyteword.org>,
+ Shuah Khan <skhan@linuxfoundation.org>, Phil Auld <pauld@redhat.com>,
+ Suleiman Souhlal <suleiman@google.com>,
+ Youssef Esmat <youssefesmat@google.com>
+References: <cover.1716811043.git.bristot@kernel.org>
+ <ZnWCBF9QkQmO01nw@jlelli-thinkpadt14gen4.remote.csb>
+Content-Language: en-US, pt-BR, it-IT
+From: Daniel Bristot de Oliveira <bristot@kernel.org>
+In-Reply-To: <ZnWCBF9QkQmO01nw@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 21, 2024 at 12:54=E2=80=AFAM Elliot Berman <quic_eberman@quicin=
-c.com> wrote:
->
-> On Mon, May 27, 2024 at 02:55:03PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > The "memory protection" mechanism mentioned in the comment is the SHM
-> > Bridge. This is also the reason why we do not convert this call to usin=
-g
-> > the TZ memory allocator.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > Tested-by: Andrew Halaney <ahalaney@redhat.com> # sc8280xp-lenovo-think=
-pad-x13s
-> > Tested-by: Deepti Jaggi <quic_djaggi@quicinc.com> #sa8775p-ride
-> > Reviewed-by: Elliot Berman <quic_eberman@quicinc.com>
-> > ---
-> >  drivers/firmware/qcom/qcom_scm.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/q=
-com_scm.c
-> > index c82957727650..86e26f17ca19 100644
-> > --- a/drivers/firmware/qcom/qcom_scm.c
-> > +++ b/drivers/firmware/qcom/qcom_scm.c
-> > @@ -583,6 +583,13 @@ int qcom_scm_pas_init_image(u32 peripheral, const =
-void *metadata, size_t size,
-> >        * During the scm call memory protection will be enabled for the =
-meta
-> >        * data blob, so make sure it's physically contiguous, 4K aligned=
- and
-> >        * non-cachable to avoid XPU violations.
-> > +      *
-> > +      * For PIL calls the hypervisor creates SHM Bridges for the blob
-> > +      * buffers on behalf of Linus so we must not do it ourselves henc=
-e
->                                 Linux
+On 6/21/24 15:37, Juri Lelli wrote:
+> Hi Daniel,
+> 
+> On 27/05/24 14:06, Daniel Bristot de Oliveira wrote:
+>> This is v7 of Peter's SCHED_DEADLINE server infrastructure
+>> implementation [1].
+> 
+> I finally managed to give this a go and can report that it works great
+> for what I've seen. :)
+> 
+> So, please consider this reply a
+> 
+> Tested-by: Juri Lelli <juri.lelli@redhat.com>
 
-Can this be fixed when applying? I don't think there's anything else
-that warrants a respin.
+Thanks!
 
-Bart
+>> SCHED_DEADLINE servers can help fixing starvation issues of low priority
+>> tasks (e.g., SCHED_OTHER) when higher priority tasks monopolize CPU
+>> cycles. Today we have RT Throttling; DEADLINE servers should be able to
+>> replace and improve that.
+> 
+> ...
+> 
+>> The problem with DL server only implementation is that FIFO tasks might
+>> suffer preemption from NORMAL even when spare CPU cycles are available.
+>> In fact, fair deadline server is enqueued right away when NORMAL tasks
+>> wake up and they are first scheduled by the server, thus potentially
+>> preempting a well behaving FIFO task. This is of course not ideal.
+>>
+>> We had discussions about it, and one of the possibilities would be
+>> using a different scheduling algorithm for this. But IMHO that is
+>> an overkill.
+>>
+>> Juri and I discussed this and though about delaying the server
+>> activation for the (period - runtime), thus enabling the server
+>> only if the fair scheduler is about to starve. We called it
+>> the defer server.
+>>
+>> The defer the server start to the (absolute deadline - runtime)
+>> point in time. This is achieved by starting the dl server throttled,
+>> with a next replenishing time set to activate the server at
+>> (absolute deadline - runtime).
+>>
+>> The server is enqueued with the runtime replenished. As the fair
+>> scheduler runs without boost, its runtime is consumed. If the
+>> fair server has its runtime before the runtime - deadline time,
+>> the a new period is set, and the timer armed for the new
+>> deadline.
+> 
+> I also wanted to pay particular attention to this part implementing the
+> deferred server, but failed to find enough focus time for now. I will
+> keep trying. One thing that I wondered though is if this change (and the
+> move towards this replacing current RT throttling) would call for a Doc
+> update. What do you think?
 
-> > +      * not using the TZMem allocator here.
-> > +      *
-> > +      * If we pass a buffer that is already part of an SHM Bridge to t=
-his
-> > +      * call, it will fail.
-> >        */
-> >       mdata_buf =3D dma_alloc_coherent(__scm->dev, size, &mdata_phys,
-> >                                      GFP_KERNEL);
-> >
-> > --
-> > 2.43.0
-> >
+Yeah, am I planning a v8 for the next week. It has no code changes, just a rebase
+and the addition of documentation.
+
+I am not mentioning the RT throttling in the documentation. Instead, I am treating
+this as a new feature on its own, which is inline with the comments over the code.
+
+I will add an rv monitor to it, extending the documentation, but I will do it
+on another series... once we get this done.
+
+Thoughts?
+
+Peter/Ingo, which branch should I rebase it?
+
+-- Daniel
+
+> Thanks!
+> Juri
+> 
+
 
