@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-224948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7679128FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:09:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62B19128CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC14D1C25A12
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:09:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8391428BB5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597ED55C0A;
-	Fri, 21 Jun 2024 15:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F6D4AEF2;
+	Fri, 21 Jun 2024 15:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="f3oiNN+X"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SuypfJph"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DAD3987D;
-	Fri, 21 Jun 2024 15:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BDB47A4C;
+	Fri, 21 Jun 2024 15:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718982557; cv=none; b=aSdXX6l1o5PTdiplMGo0kS7OCuufM4i4eg5Qh3IzqqLqxwb8JUpAi1SAQ+xAnD9yrJmNj/H614TnDQV09iig7E8siFkkOLvQkvVIkTM50jaM6RMohCYXQ1F9bK0UvWN9FM1SsK5iRRpacJRBp1OGDHM+w9ld+57rJDkDMDuLZLI=
+	t=1718982201; cv=none; b=jet+UpIkK5FRi4FA8f4dMWgD5geOfY2xi/7A074a+teHQc4LHwsspLPo2uzrK+bGhf4X6La9iDZHxqITVi81Sub4ZLUfTumNXOcJakb6xg//6QQhBuMfernDz6+tOMhiwli+NdOJzMjEf+OmvnwC5cG3li4iruirIFzeeBMqrAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718982557; c=relaxed/simple;
-	bh=sVkHYUzchJZmDdzs/amWdjxvo08cI5C5ingJuyXLnfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dXqv+RlECafmPyuU9qY0M8kxF/jZ6nlp0eNxCKqtSf3d6hBawDWCNPsxMb6n7KF4hJuE2ULtk/sPUHaFQ2D2rzy8tXCRKQ5HuiT1zXtIe5UttNQz0BOvb/RZRW6zczfMNt79aSgE5F3P2vyIeXyUd0myTLVpcQi5McCaZBq4rSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=f3oiNN+X; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1718982181;
-	bh=sVkHYUzchJZmDdzs/amWdjxvo08cI5C5ingJuyXLnfM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f3oiNN+Xo2MwELUXMvR9dWVJ/IlEYpSQWdQFX9pYyYs+25TPDaqa5jICJ5/sfFpAW
-	 W8qXxoh8dc1CwXqlk/LUAsXhwnf/BP63RUDg4KA+ZJ3dMfo+gCfiosQDcPBRyu2JyR
-	 FP+WkyzJcH2LKlncW5ymVUh+xpvxEbAnzYruwC7RsXfljZr9VDpZ9P/lk+ORwBTqaJ
-	 nqPaQ3G3BI5dtiuO3MbMCPmIUeqciZO0LjfvsQIXF4bzjgOuf7iw1MpZb3yoP6BaYB
-	 a43TKVFaShAGvJpJkjKcC75ho/DuLzu1y/GiqUb85DX0Y8cBDsdR4qZDFGJUbUo5pn
-	 8SETdXf3Tm+Sg==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id EC25560078;
-	Fri, 21 Jun 2024 15:03:00 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by x201s (Postfix) with ESMTP id 8D8E9200D72;
-	Fri, 21 Jun 2024 15:02:55 +0000 (UTC)
-Message-ID: <c3f9a3ae-7bf6-4c31-b19e-f98e6bd6caed@fiberby.net>
-Date: Fri, 21 Jun 2024 15:02:55 +0000
+	s=arc-20240116; t=1718982201; c=relaxed/simple;
+	bh=mHg+TybOHtOAmIgNPcoUah11ra0PgiuqsoffSKove2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ll/tILpqFbH3lYceJVUN8lgQd4oWHSth1idnKpMPRFioaSHB7rUP6oDcSEhUaKxnuP+et6LQRVlhRy+IMKnE/TvBS4KkTrS6z8iVIzv4tgPQkKtW0wERCGNQ3nT9hRLiDOuFfJdpjq1+JE8NQcH6+0K/dVojs7Vp2nA5omC6ap4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SuypfJph; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 795F940003;
+	Fri, 21 Jun 2024 15:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718982191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CPQNBZF2T4OwsyRXKPeKHMueHnpDIXDCfTcrUfs9CyQ=;
+	b=SuypfJph33aGeMO+JfCa4k1Se77o5KwqAfZBgKPaNOEoSjpxjLwksVEzyyXBHXZ1UAEllu
+	utrcgZIYmVu1JJnAzkO1KAIHFJROPFg3zXV5Y4GjSoax+er9iOUvyyadIwdf9PfVmLMdtF
+	hYgLaCrfeZ5mXbWSCoQbJbnZ+nq8naSH3gcN/stRyIdBZ/0PC7Wuw+N3cne+J/LfJPpnJt
+	oS2BoYZeogb88X8h01yKqrfdYSGymT1UHZGHFQnr2VeaQOCHimseoO/cmPiDFY6YxjqQuV
+	88sTOr2nNIb/rkCVOGPrpXyxBMpX/xx9ldKMVv2CYoVXA8j2rD+fhmFAwy/NFA==
+Date: Fri, 21 Jun 2024 17:03:11 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Sean Anderson <sean.anderson@seco.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Joy Chakraborty <joychakr@google.com>, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] rtc: abx80x: Fix return value of nvmem callback on
+ read
+Message-ID: <202406211503118dfe2df1@mail.local>
+References: <20240613120750.1455209-1-joychakr@google.com>
+ <171895100442.14088.18136838489262595773.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH net-next 5/9] flow_dissector: set encapsulated control
- flags from tun_flags
-To: Davide Caratti <dcaratti@redhat.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>,
- Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ilya Maximets <i.maximets@ovn.org>,
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>
-References: <20240611235355.177667-1-ast@fiberby.net>
- <20240611235355.177667-6-ast@fiberby.net>
-Content-Language: en-US
-From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
-In-Reply-To: <20240611235355.177667-6-ast@fiberby.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171895100442.14088.18136838489262595773.b4-ty@linaro.org>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hi Davide,
-
-On 6/11/24 11:53 PM, Asbjørn Sloth Tønnesen wrote:
-> Set the new FLOW_DIS_F_TUNNEL_* encapsulated control flags, based
-> on if their counter-part is set in tun_flags.
+On 21/06/2024 07:23:24+0100, Srinivas Kandagatla wrote:
 > 
-> These flags are not userspace visible yet, as the code to dump
-> encapsulated control flags will first be added, and later activated
-> in the following patches.
+> On Thu, 13 Jun 2024 12:07:50 +0000, Joy Chakraborty wrote:
+> > Read callbacks registered with nvmem core expect 0 to be returned on
+> > success and a negative value to be returned on failure.
+> > 
+> > abx80x_nvmem_xfer() on read calls i2c_smbus_read_i2c_block_data() which
+> > returns the number of bytes read on success as per its api description,
+> > this return value is handled as an error and returned to nvmem even on
+> > success.
+> > 
+> > [...]
 > 
-> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
-> ---
->   net/core/flow_dissector.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
+> Applied, thanks!
 > 
-> diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
-> index 86a11a01445ad..6e9bd4cecab66 100644
-> --- a/net/core/flow_dissector.c
-> +++ b/net/core/flow_dissector.c
-> @@ -396,6 +396,15 @@ skb_flow_dissect_tunnel_info(const struct sk_buff *skb,
->   
->   	key = &info->key;
->   
-> +	if (test_bit(IP_TUNNEL_CSUM_BIT, key->tun_flags))
-> +		ctrl_flags |= FLOW_DIS_F_TUNNEL_CSUM;
-> +	if (test_bit(IP_TUNNEL_DONT_FRAGMENT_BIT, key->tun_flags))
-> +		ctrl_flags |= FLOW_DIS_F_TUNNEL_DONT_FRAGMENT;
-> +	if (test_bit(IP_TUNNEL_OAM_BIT, key->tun_flags))
-> +		ctrl_flags |= FLOW_DIS_F_TUNNEL_OAM;
-> +	if (test_bit(IP_TUNNEL_CRIT_OPT_BIT, key->tun_flags))
-> +		ctrl_flags |= FLOW_DIS_F_TUNNEL_CRIT_OPT;
-> +
->   	switch (ip_tunnel_info_af(info)) {
->   	case AF_INET:
->   		skb_flow_dissect_set_enc_control(FLOW_DISSECTOR_KEY_IPV4_ADDRS,
+> [1/1] rtc: abx80x: Fix return value of nvmem callback on read
+>       commit: 126b2b4ec0f471d46117ca31b99cd76b1eee48d8
+> 
 
-I am not too familiar with the bitmap helpers, so this is the part of this
-RFC series that I am most unsure of.
+Please drop it from your tree, I'm going to handle the rtc related
+patches...
 
-These should maybe have been test_bit(*_BIT, &key->tun_flags), test_bit() in
-general is mostly used with a reference, but with tun_flags it's a mixed bag:
-
-git grep 'test_bit(' | grep tun_flags
+> Best regards,
+> -- 
+> Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
 
 -- 
-Best regards
-Asbjørn Sloth Tønnesen
-Network Engineer
-Fiberby - AS42541
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
