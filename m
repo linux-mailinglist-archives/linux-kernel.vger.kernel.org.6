@@ -1,176 +1,169 @@
-Return-Path: <linux-kernel+bounces-223708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2583E911735
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:18:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0EB911738
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494741C215C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:18:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A95B1C213FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E8C63B9;
-	Fri, 21 Jun 2024 00:18:35 +0000 (UTC)
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2109.outbound.protection.outlook.com [40.107.215.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC7E15C9;
+	Fri, 21 Jun 2024 00:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYeec+xV"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E6D4A02;
-	Fri, 21 Jun 2024 00:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.109
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718929114; cv=fail; b=JY86yf3M9Zb2drzsk1EH90DxRoGlK7AyqH6dckPXF2/nO74eIsFH6mwbI5Kci/H2Cu8oCQJ/xm12SgDXtPFXdTR0b7PSFu45sCznB7BXactYwBp/BBth7kPGbDd1LEB5KKO6S+npCeX3IJJsrtJrxqQThRltpXAKQ3mQaz9KBmU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718929114; c=relaxed/simple;
-	bh=NZU+re/DcuA+YydxxSfhJMgpu3a9MjAa9Wfph7eNBPU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ua/yuCxJFQpC/kPkqbtyROipkYJYIySEAdPfa3fbgNydpN9R59EAwp1awnMCxYajw4zis876N7W2IsQUlELjznTI0bXSPn5TIybQpmfjKSXYqBi1NI7KxFeyOu0t0nECw7PWDBJINbZ/TufQDCgCI1+0eyEvt4cm2Bm7djYBs3E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.215.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kiTlHUvhNc7SKOTdJnofVsoF5gXek4kY7jUpHsT8rze+snPo26XX0GfiEJMzbPaGkizZZJE+BNl3FiQ4XCpnQXis0tFSQ262Xbdnq4nCrf3r3Hm2j69HfE5ux2ZZN1zuMMZlMldW5/yLoM0YYWTUsONiF3IpKuss1lAQiGJHiEM2B5kXjYrpx/x1KptZ9iEfXj2o7sZEPozSemaO/CP1m2OTzurhR108Pkrc1rGQQ4lSc7lHUipiWELrg4HjDx8/zFlsfd85xStBFCdvQ46t1zfLioMRT4ruU9ii/T3zCscT/3MJR2CxbjR+4Bcqxc/efxg2NyyW/Ke0M5b+Jl/HBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NZU+re/DcuA+YydxxSfhJMgpu3a9MjAa9Wfph7eNBPU=;
- b=SF1n00oao6V6SpINmM0/walXrVZWYlIbrl/3r4jSLZCUtF+HjPe3LLhakMWJUk5w9dGmXofN9fr7+H9QnnWW5S1h+BYtn6xChvI++21tsRq9tLBIWw9wkDuXKuRnoZ7/j/vfPn/obudG45DXC2E5jPGTFNFidPfbkwLn9x6RlTtKv+VvGIySCSdKm2irTRfh4hyEH9rwwjo3sp9WRZIYuCU9u0/oYow8DtxLKg/vXnqcdgPDH2x9dnFJcERmVhWYS8r/GaHLroZFNKBKdrHTqqd9Q/fEmj3jvFE2IWrlZLjiT79r78/QAGHeJShScFVAB4W4TZCJM5NScFkKpZgNXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
- dkim=pass header.d=wesion.com; arc=none
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
- by TYZPR03MB8133.apcprd03.prod.outlook.com (2603:1096:400:45a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Fri, 21 Jun
- 2024 00:18:29 +0000
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0%6]) with mapi id 15.20.7677.029; Fri, 21 Jun 2024
- 00:18:29 +0000
-From: Jacobe Zang <jacobe.zang@wesion.com>
-To: Arend Van Spriel <arend.vanspriel@broadcom.com>
-CC: "kvalo@kernel.org" <kvalo@kernel.org>, "duoming@zju.edu.cn"
-	<duoming@zju.edu.cn>, "bhelgaas@google.com" <bhelgaas@google.com>,
-	"minipli@grsecurity.net" <minipli@grsecurity.net>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
-	"brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
-	"megi@xff.cz" <megi@xff.cz>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "heiko@sntech.de" <heiko@sntech.de>, Nick Xie
-	<nick@khadas.com>, "efectn@protonmail.com" <efectn@protonmail.com>,
-	"jagan@edgeble.ai" <jagan@edgeble.ai>, "dsimic@manjaro.org"
-	<dsimic@manjaro.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
-	<linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 0/3] Add AP6275P wireless support
-Thread-Topic: [PATCH v1 0/3] Add AP6275P wireless support
-Thread-Index: AQHawrWe8szxUUEiVU6ofxAnEJGD6bHQ6nUAgABxMlo=
-Date: Fri, 21 Jun 2024 00:18:29 +0000
-Message-ID:
- <TYZPR03MB700158175919906A22D06AB180C92@TYZPR03MB7001.apcprd03.prod.outlook.com>
-References: <20240620020015.4021696-1-jacobe.zang@wesion.com>
- <19036b5bb30.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <19036b5bb30.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wesion.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB7001:EE_|TYZPR03MB8133:EE_
-x-ms-office365-filtering-correlation-id: 5934fcf0-0674-4e3e-7731-08dc9187ad23
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230037|376011|7416011|1800799021|366013|38070700015;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?/voxlk1O2stQkdSK5P6530VN41sigQmunxYaOes4nATrtSNd5Pc03lPkU8?=
- =?iso-8859-1?Q?dmknNDABoD5jC1+RwoOV3h1uWPib8BZaQx6EiGs7DB2wUea3sn33C8bDMH?=
- =?iso-8859-1?Q?49F+o8FUIJokzY9gjwOPSlUBNhHj/ykLTXvc83TyjN+gIXDnbbku7yClyO?=
- =?iso-8859-1?Q?bRp4d35LcE7FAkNjkIGHfTohktoa7MkOzMeNAnOgBXV+U6nFhXSHh6s2Pg?=
- =?iso-8859-1?Q?u+tf+pXifUminUDHYggiqdP8ewjK+XKkTeRwz+k3Zes7S4atnx2hJIcjyl?=
- =?iso-8859-1?Q?B5Cj8ByPdzjRII8VkF/LIzoCbuZpNcf9HajyRHpp8uPJy8AuwxRTAnKAvI?=
- =?iso-8859-1?Q?+sDj5/t/AenOBnfzIEgRbf2abc8hjrLOZMonno4WEo5IHBnEK9d9ddNtMd?=
- =?iso-8859-1?Q?bzzv0muMbyLKxm03StPgPchxGjdGHLVNIsib9RLiLjUwNHhmn9rM4E0vzP?=
- =?iso-8859-1?Q?NKvtMjk94TmA/pCxt5CJerm/x43r7QWtj1TvNJroFYHoHnZKYsqxQKoqN1?=
- =?iso-8859-1?Q?T4RdLNsN524T5RxCK6iqsplOJohtDNjwI9gAu5FihtMwv8Q61VJPwmxf+I?=
- =?iso-8859-1?Q?FEviHRaVyJ6IJDDnT6TrXnyRBLoqzrEwaMpTO/Kgh90w3Ai9O0kufIWYvW?=
- =?iso-8859-1?Q?WpGPCTGVfMudsPwg2BqZu49vNtAk0aoGl5ZrkzGYDRumSkW458XUX02KZK?=
- =?iso-8859-1?Q?oL1gZ2DOWpQ6qqv0DtTIHEiO51iKoyh7FF9iEesFcAlCYWn/t6YjPspdsb?=
- =?iso-8859-1?Q?Ot+EDSuNCelotZK5FEcYXr1AHOmRFuuQAlNuWikhVqWlEFl7w8G7KfDsa0?=
- =?iso-8859-1?Q?XzGe/46zEDN+YuS49IFIaGqCSsZcsd9sgc8TpwbYtoEWcEchcqU5RtkPkF?=
- =?iso-8859-1?Q?R+OeQO7+4co6dOVrDaih7eaom640oicC43jntNBh8szKxNYNBNjuER16VV?=
- =?iso-8859-1?Q?3ISKMrwywhgbuonYatYGfyE1cGGyAgBwC5t72eqTMfuDgTP6G/PeGrfwMy?=
- =?iso-8859-1?Q?pzjuDFcxI2THRyjt1x8OT0lGO110+3qAUrdGc7cx+ktxpYxhP2DtUyUljA?=
- =?iso-8859-1?Q?Y0HYEbH/7qSyLOLj8heJanJ/wI5tyB22w9DdegNqekPF93G+fno/lduY1I?=
- =?iso-8859-1?Q?s6zWLEQjHXKn/QrbuuxdjJX7Mw3MaLmPqXc0a039RwjKF/yALZ7tkuK2gO?=
- =?iso-8859-1?Q?TqX5guVuBcTDP+sUytBD3PnhaVeg7uBzBzNN4WciZDMyu17mOnaoUULOQk?=
- =?iso-8859-1?Q?ZRossRx/UrUD9PHQieLQtMQo1ysh0OTUPqKg9+KLVRtyg907TlGAUnxgDv?=
- =?iso-8859-1?Q?VlvuzvnK8DdSkDWW9FKHr9ncWqaRB+VCq9CGAEm7nI1r1yuO7wEOH86KMJ?=
- =?iso-8859-1?Q?xuhwFgimXJkiDe68KMRKtMnWh81nYL5bgB7cPLHYTui0ZDywC2fzs=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(7416011)(1800799021)(366013)(38070700015);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?nyjGFCoCjUBLZCK0Og4j21ho81eZP/0cwR5l2chOwFwctjOk59bORdI6Cx?=
- =?iso-8859-1?Q?AO07wS7uYC4uvpKrJHx9qMCtnVQGyVqRGQWoOJjiGcFtvkqMtIhhv0KZZJ?=
- =?iso-8859-1?Q?Uubms1MhDZ4/HTyULgO2obePHks15rakszoJmhT2Hn6P2l1ZbUH1v77Fah?=
- =?iso-8859-1?Q?wrVuWvxG7zlFJirWg0tvH/Zy2XxbrbABt1D5MNhHnYsAulkTrTeLEmz6oP?=
- =?iso-8859-1?Q?3cong6pCjcSLIEtC7g5eDjkS7NNPEU6kIVQDg3V44B/njHK9zzaRs1AnY8?=
- =?iso-8859-1?Q?iZFgugAplecaVLK5sfLmVhyELMVkU5JJwRKnButLpu75w44FqAPGPDwVjc?=
- =?iso-8859-1?Q?JAf+eqUjEwTrtNJbEx3te08KT538pC5gB8wz/xlwqoKnTImbA8Q9vSqHBR?=
- =?iso-8859-1?Q?KvsqxSWliwOCA421gUGQlJM66ebna1ByaQ7LcXQrMIUn96c7063+QyeoIw?=
- =?iso-8859-1?Q?yiCvRhgevl3ycv4ICHCD/fE00bpTjWJ5PuFEVIpeNgbVxww9+uXf6R1E8J?=
- =?iso-8859-1?Q?VNCsf4n0xzgAediimwD1VRZ6/voHgRkE+sTxRpjUsgVKhBk9ehgRj7m+BJ?=
- =?iso-8859-1?Q?4qwcK9uQNuDlwQNdXh4aUgJ2+n2n4JGxqhbft0t2g04ebyX5ePMzeRVdlz?=
- =?iso-8859-1?Q?dD9nuc8v+5IIWHAKaUxU2DVWJBfevuurhgzJKNr+KVkyo5O557HWIvwT3P?=
- =?iso-8859-1?Q?DeE3BT97E/sZGnP+30eBc4J77Dbo3N0omZU80iZXD2hp27f3sayj9YrJmy?=
- =?iso-8859-1?Q?0NktLkIImL4vaqHfEkbae2I0o9lvo4Dgc4pzrekZf48bZnYKcScPeHjo/j?=
- =?iso-8859-1?Q?FMANohf4WmcSNANshw9P+h65BCrUM2BwrNI00wAzgTfcajQ0IOa8CIRWhV?=
- =?iso-8859-1?Q?gCeYWqh99LoUk3ULJAi4tzA+UrCTznwhsNbpdaaBNnFcAP85vEdbdDTred?=
- =?iso-8859-1?Q?Pt7tSQHe4fg6Gw8lDx1aEH6d94GVVN4hA3++c66ixiD9ZeHNoVmpazVvhB?=
- =?iso-8859-1?Q?y8xSr39+V0ALjGNcHfXZVJaGj/gWTiFBEI0RfbhmJEUk23ly1mwmnzRtEg?=
- =?iso-8859-1?Q?H5t8ni3+zMpHDWWGuZHG3fA2Hn6NXrpnNkrdhi3V3uXqDL3HnMeRPbQQpy?=
- =?iso-8859-1?Q?Ntp1CYGhBe+8uxXl5Xc3eXzsSGSUhsGtuyNm+C6z+W13CYvXtbuWkBKqAy?=
- =?iso-8859-1?Q?n+SxFGmMzBOMbSDaK8c4ZPxLjJAmoYgBb+fTFgOtKqeIFW3AhOMupJLQG1?=
- =?iso-8859-1?Q?D5w4Y3a2SmWmewxa3wTliHZNiGj/FxoLpI5TenqESIABxUUrsTxlDSNhcN?=
- =?iso-8859-1?Q?48mGKJcqc6ezYU9LomtepTXexT+P1zrTHORL6gvMMzLI8PENOST/QK+V3d?=
- =?iso-8859-1?Q?3+YEOUmq2tz6VYq83PJqNoaeGyxwHc3tWf2Mcg2UG3m6yHy5Ux9FRFyqIc?=
- =?iso-8859-1?Q?Vo5VcsPsbCfXJzqQyOot/94l0bcmFELqMOMyXBR+3aKUNR6vnJDI7SkNOC?=
- =?iso-8859-1?Q?/kQYNSYoQ1lDHmon4neKdgzZ1rHPpmH+TtbNMWCExSRYIhk3FSrj4kTfzb?=
- =?iso-8859-1?Q?Z6xNQ4td6qHu+LeFQ6Aa4rplx0TMOzTmhLpjEjQMtR9SkDLsDkxGbEoyk1?=
- =?iso-8859-1?Q?+Kmk1qgsLBL4TYtVIuCrxL0kighMQ50Go3?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D24A10E3;
+	Fri, 21 Jun 2024 00:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718929200; cv=none; b=CGvunNhaoPI5DTkvunZN3Iq1AX2ZSU1tPmgZ5VgtEfihkcye97DsZmkK8XMRYFhAfK32xsVq4do5e5w8+Z0uZ8dKcurzhzBOaksBV9rwV0+2erRmZ+ZOIX6WpP7uXyKtbxrubfAN3OUXhNh7WvP6mJwFbjAeDAxzqg/INpDNDY8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718929200; c=relaxed/simple;
+	bh=iI4kwQgyg+ISbUOBOYdNYwBf/i79YdZuFSSt9bWcDCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OuHFihLq0EIaRXcFKKo0NlUvsgk5CzDG2P5FKrqXziaVz+EdhuzJkOn47DeAB3SJ+HJUkUawlogKxGZH9KF4SqT3x7HuxQbM3GPNh3Aah+Sk1Ixxlkyh4NUU5xW09rcc5ul58xlGNLFAW4C/TJOtB5aSs9iM9zqnhbnJcm1FGL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYeec+xV; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-70df213542bso1038818a12.3;
+        Thu, 20 Jun 2024 17:19:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718929197; x=1719533997; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mmyzvfs2YZd9tfytvhjIOO7J1yZlWjymeFYN5lNqh4Y=;
+        b=bYeec+xVyAz8q9GLwVbtdEO8GKhVUGNOg4bUY4gDZQVamc3+bU1cWYhfAOq3i0ty7z
+         09cWiKgAb1yThx5VrihZi4YGCszDmeTivSQ5xkSFuhremWg7onTMF7JamSJEjtsoOYGH
+         DQEJjKgYzNhs6bnMpaQp/3p04NNYlsE4B4spxISvhzsNe14TKUOVlFpdVwwU1ulgtiGb
+         6JIxBqugw4U50zekxw+Af13ulDMLSSl9TQoXHNMb5Z8laogVfWD2q3XvcbmsxFIh2l9S
+         cwvzR2l0K28JCGfUnc/V+ars47wtwG3zByah2ZmtrHWRQN2Ijj+U9ccwYSnceo0ZhLIX
+         4/Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718929197; x=1719533997;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mmyzvfs2YZd9tfytvhjIOO7J1yZlWjymeFYN5lNqh4Y=;
+        b=VHOchnxrPpD9tUbN/L81FMwVKPJI+Mn4ThqD/3v9l/0ki+70noKPWWN+axO03Cs0GI
+         CAE3QgkYsrVwtHYfZfdez8EfM28X6pPNDgdpOF6lLP4lq6Vfkus3c+9ZpiG3PgdY3kqo
+         kQ0uapSwwa8NI9gYSQEtZVEmTOvCPt0kYfyf/MhJYmd9JHVoyBsbPKMcokk8GZJ6xN/r
+         jqYWVgvV3KhR0meyrsq/RBeE6EFXRYMCaEzvXNcVxRYD62ihHBoMaEqrsVSYMOBasam9
+         IMkHFUL7Dy4p+L5ul31rj1JZEdy/445wr94z8ZHgQb8tXaay3skAyhey8KoU1PBaghtu
+         2nKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXD9NG6wz1BiJ48eQlL5SERb7a031MMkwiGRyc3z9m6PHiM6CoH1LesZ9HZDDW6eqpaUtSY+mcR+lOVsrMztC7+bUKHMHMW/uvOobXuPeernKz5oD3BdFNZsX6ccxS1yU6GdWkTahd38GFWglLPZEldvA5yzWN58w+HibUXJumFyqgV0+ySWTobnsQxrQ==
+X-Gm-Message-State: AOJu0YwKGTyZY6knop3dRhjCG6iPQV6Gx+3nz5h3J2ebS0HGATxaTIEx
+	q5qNSgBMV0K63hC0iri4Me6MjFmfQ9jxZ+7h7pozaLNbfqGsbIWl
+X-Google-Smtp-Source: AGHT+IG/rSd+vUkEL02DpRF2yXVYcvE7LDEdA2oMiNCQz4GfaPD03BvGgAWtiAuLoEzSXMx04zoJoQ==
+X-Received: by 2002:a05:6a20:12cf:b0:1b4:3f96:f1d8 with SMTP id adf61e73a8af0-1bcbb385db8mr8347462637.13.1718929197355;
+        Thu, 20 Jun 2024 17:19:57 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e55dccbfsm2316700a91.32.2024.06.20.17.19.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 17:19:56 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 20 Jun 2024 17:19:55 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Kees Cook <keescook@chromium.org>
+Cc: Eric Biederman <ebiederm@xmission.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 2/2] exec: Avoid pathological argc, envc, and bprm->p
+ values
+Message-ID: <fbc4e2e4-3ca2-45b7-8443-0a8372d4ba94@roeck-us.net>
+References: <20240520021337.work.198-kees@kernel.org>
+ <20240520021615.741800-2-keescook@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: wesion.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5934fcf0-0674-4e3e-7731-08dc9187ad23
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2024 00:18:29.0971
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2i7M3iuPzKyRp3HmAI8patz7Vlc5TX5Ir+Bq+aB7Rsh1MTnzJmrOxtTxeObSR70X7euGL1kGICejxGCjXfRTdw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB8133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520021615.741800-2-keescook@chromium.org>
 
-> Focus on getting agreement on that before=0A=
-> throwing in DTS and driver details.=0A=
-=0A=
-Got it. I will focus on pushing the patch of defination first.=0A=
-=0A=
----=0A=
-Best Regards=0A=
-Jacobe=
+Hi,
+
+On Sun, May 19, 2024 at 07:16:12PM -0700, Kees Cook wrote:
+> Make sure nothing goes wrong with the string counters or the bprm's
+> belief about the stack pointer. Add checks and matching self-tests.
+> 
+> For 32-bit validation, this was run under 32-bit UML:
+> $ tools/testing/kunit/kunit.py run --make_options SUBARCH=i386 exec
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+
+With this patch in linux-next, the qemu m68k:mcf5208evb emulation
+fails to boot. The error is:
+
+Run /init as init process
+Failed to execute /init (error -7)
+Run /sbin/init as init process
+Starting init: /sbin/init exists but couldn't execute it (error -7)
+Run /etc/init as init process
+Run /bin/init as init process
+Run /bin/sh as init process
+Starting init: /bin/sh exists but couldn't execute it (error -7)
+Kernel panic - not syncing: No working init found.  Try passing init= option to kernel. See Linux Documentation/admin-guide/init.rst for guidance.
+CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.10.0-rc4-next-20240620 #1
+Stack from 4081ff74:
+        4081ff74 40387a22 40387a22 00000000 0000000a 4039db60 4031b2fe 40387a22
+        40314742 00000000 00000000 4039db60 00000000 40314186 4031b494 00000000
+        00000000 4031b57e 4037f784 403a3440 40020474 00000000 00000000 00000000
+        00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+        00000000 00002000 00000000
+Call Trace: [<4031b2fe>] dump_stack+0xc/0x10
+ [<40314742>] panic+0xce/0x262
+ [<40314186>] try_to_run_init_process+0x0/0x38
+ [<4031b494>] kernel_init+0x0/0xf0
+ [<4031b57e>] kernel_init+0xea/0xf0
+ [<40020474>] ret_from_kernel_thread+0xc/0x14
+
+bisect essentially points to the merge of the for-next/execve branch;
+see below. Subsequent failures are false positives. Branch analysis
+then pointed to this patch. The image boots after reverting this patch
+(or after reverting the entire merge).
+
+Guenter
+
+---
+# bad: [b992b79ca8bc336fa8e2c80990b5af80ed8f36fd] Add linux-next specific files for 20240620
+# good: [6ba59ff4227927d3a8530fc2973b80e94b54d58f] Linux 6.10-rc4
+git bisect start 'HEAD' 'v6.10-rc4'
+# good: [c02e717c5a89654b244fec58bb5cda32770966b5] Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git
+git bisect good c02e717c5a89654b244fec58bb5cda32770966b5
+# good: [29e7d78253b7ebf4b76fcf6d95e227d0b0c57dc0] Merge branch 'msm-next' of https://gitlab.freedesktop.org/drm/msm.git
+git bisect good 29e7d78253b7ebf4b76fcf6d95e227d0b0c57dc0
+# good: [bf8fd0d956bfcbf4fd6ff063366374c4bf87d806] Merge branch 'non-rcu/next' of git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+git bisect good bf8fd0d956bfcbf4fd6ff063366374c4bf87d806
+# good: [1110f16317b1e0742521eaef5613eb1eb17f55ca] Merge branch 'icc-next' of git://git.kernel.org/pub/scm/linux/kernel/git/djakov/icc.git
+git bisect good 1110f16317b1e0742521eaef5613eb1eb17f55ca
+# good: [63f3716198e5644713748d83e6a6df3b4a6a3b10] Merge branch 'gpio/for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
+git bisect good 63f3716198e5644713748d83e6a6df3b4a6a3b10
+# good: [91b48d9adafddb242264ba19c0bae6e23f71b18a] Merge branch 'kunit' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
+git bisect good 91b48d9adafddb242264ba19c0bae6e23f71b18a
+# good: [c54c059b3c3c980c66e2a34b08724d9e529f590d] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git
+git bisect good c54c059b3c3c980c66e2a34b08724d9e529f590d
+# good: [de95d30c03c42225c4fad714bf657c9ebb345fe9] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
+git bisect good de95d30c03c42225c4fad714bf657c9ebb345fe9
+# bad: [cb328321926903f7f54866029590abb8faf48ef6] Merge branch 'for-next/execve' of git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
+git bisect bad cb328321926903f7f54866029590abb8faf48ef6
+# bad: [aef9d25e7f5631543a0276d0532151f2c61174d6] sysctl: Remove superfluous empty allocations from sysctl internals
+git bisect bad aef9d25e7f5631543a0276d0532151f2c61174d6
+# bad: [c819e252c2874479b27f6a356b44f8aa73cf5a81] sysctl: Add module description to sysctl-testing
+git bisect bad c819e252c2874479b27f6a356b44f8aa73cf5a81
+# bad: [b5ffbd1396885f76bf87e67d590a3ef063e6d831] sysctl: move the extra1/2 boundary check of u8 to sysctl_check_table_array
+git bisect bad b5ffbd1396885f76bf87e67d590a3ef063e6d831
+# bad: [98ca62ba9e2be5863c7d069f84f7166b45a5b2f4] sysctl: always initialize i_uid/i_gid
+git bisect bad 98ca62ba9e2be5863c7d069f84f7166b45a5b2f4
+# first bad commit: [98ca62ba9e2be5863c7d069f84f7166b45a5b2f4] sysctl: always initialize i_uid/i_gid
 
