@@ -1,160 +1,230 @@
-Return-Path: <linux-kernel+bounces-224845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA8D5912791
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:23:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64969912792
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764A028C1A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7FB61F272C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366F720DC8;
-	Fri, 21 Jun 2024 14:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B494C20335;
+	Fri, 21 Jun 2024 14:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="agXfzdad"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xAjRQ0qf"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E995A1C6BD
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18E72031D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718979784; cv=none; b=MmzbUQjFgb1DQidrYrLfXtqDK7G/kxMCHkGslW8auM0dcIvXOKpEvYDijzst9YXVijo4XuSR7sH+rQ90jiZiqQSTRfyFQeHZaw0jxLLFV06lZvlAgWhy7YP7GHLkUYfnSVbjMZYbxBWUt5me1Anqmrsib8Kwz4sT/Z+4LAhUVI4=
+	t=1718979818; cv=none; b=uyP+Jls9ac3va2/07dphiHe8IGa5MVBnci7b26fCDpupsmRi/zKZtxuBiauPsJ0HKg8j2UfYN2+e4jDNtYgPX4c6dP4lptL5ChGaKCtlOJjwdoaAl0LE0LvW4o0Wb6UtgUaCQVGCEV9WDkvvci058EiqnTWAUH/SkGaKcXFPZ/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718979784; c=relaxed/simple;
-	bh=dtD5FZtqo+wNEOZYQrefbfY6liBnv6eMThh82Nzq/Cw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XaaHv6eCp08KE45ZLlEzh74iCBxcI/EmIYsSbiCEWVtfCamJ6/vaw5IcLEiXekdpDTMCkz0D5AvizBWwXZnTVvLNEWqqnb/C/vIjWxwZHS2ph6qvbx0kg2ox434VI3nQJKubJDbXqAj53aYTO29pP+PBe8FFn/0xnFRaHUjS/OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=agXfzdad; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718979782;
+	s=arc-20240116; t=1718979818; c=relaxed/simple;
+	bh=TaXH7pCplav4h8M21Q+xBag3i9Cj23O1agV31TPskGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dQ2+yVEIiSKIDVUBZD4lXcC0vm5Xaqken/LvYWqFjpMOTWjGj/Wy9GqDkX7AuuqdvgLvUibo5db3SK8dGwzdXO9JQTUmgqo2ozCYM/+nhFzCj1q/pKSajsQB7VS85+6u/5i6ctKcey5ero6nsCruOdRx6jweGTNU+dkkdKb+nNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xAjRQ0qf; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: yi.sun@unisoc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718979815;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qV90C7UJlVmCFYl+NUkqoGghcuANzyZHieaRfwTm4mo=;
-	b=agXfzdadxZwaTq/G+3ceyztNXRfGOJZm5c4IsP/YBdaZUmyKsuFiGa0lulmHDym4nyNVio
-	1PyP/armlmqVhyjA8lB5QWkdIr5zv4akKX8Pg32tDQc53PkF3XGr09QFl6akk2AH5kZiSH
-	GViQUEzysWWMW5cal1VXSamU09A7RO4=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-75-1wYxKo-uOxeoepLiC2x2YQ-1; Fri, 21 Jun 2024 10:23:00 -0400
-X-MC-Unique: 1wYxKo-uOxeoepLiC2x2YQ-1
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52c84d02b7fso1541179e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:23:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718979779; x=1719584579;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qV90C7UJlVmCFYl+NUkqoGghcuANzyZHieaRfwTm4mo=;
-        b=ooDIbpjyBpAvewHMVJuU05XQehiNXZNJizLWdpoGVEklpBE6WqjsYcxsFmnSVHK0cA
-         FMCGHCw+a28WYHVvQSlZpGF3avvbfw5AVyGzDVjFKlZ4TqyVW+rXDJ49WXNlX5+dhp0t
-         sRR9nwjjOcwReqC0OTufMx0myDegcSe1DBHIxR+e0/frhYrSEhkKbsINWeVn78yRtSaO
-         4P8Xk/mGnr0fdnSEFHncvNpNn/l9yOqNEoI0KQzSc0puaKSbGgYpA9Qh7B5CBYvHZwq1
-         jObImK42rNslL9gcJo2o256etRYMvYjuseZCb2VBxiChRRyx3v0e89prmAZDVlDnkFyL
-         WLfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjgYtaLwHYIQgEgSYEN/Hksqoq0ukFCdtuCKvMXFJIDuXLvAnAatwkvHHEE6SPhvEDCjEp59p1zfpLPdFIbQQ28QTax6ZoZ4BEN99i
-X-Gm-Message-State: AOJu0YzGbHTr33Nh64khx+ICHuL4bxwzGWZG02wG5SoNrgXNKgH1Co+X
-	D6nD1CxYAh/oyJtdTV2VOrvEjh+Ccd0cnUKoOE5hsd4xvxVFdsnXwQgCuBP6YimxJk/CEtY9vNJ
-	TtqOkhEJUNpCHoyZmIaYCegVRpD/xDQHO/abXJTCF6TD9UTWoWHRuED8yTkn8pA==
-X-Received: by 2002:a05:6512:1242:b0:52c:8837:718a with SMTP id 2adb3069b0e04-52ccaa918b4mr7215876e87.43.1718979779025;
-        Fri, 21 Jun 2024 07:22:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzAV6+Rl/xfj+isJfV3mrm2ePVS6gx8oMmzBUO+GxqHw6XoMk3+zLYkOix/dNQI0VJ7gDQ9Q==
-X-Received: by 2002:a05:6512:1242:b0:52c:8837:718a with SMTP id 2adb3069b0e04-52ccaa918b4mr7215852e87.43.1718979778456;
-        Fri, 21 Jun 2024 07:22:58 -0700 (PDT)
-Received: from localhost ([185.124.31.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366389b88easm1884384f8f.39.2024.06.21.07.22.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 07:22:58 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Maxime Ripard <mripard@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/ssd130x: Add drm_panic support
-In-Reply-To: <24205cdf-a3c6-475e-ba8a-a52d039a402d@redhat.com>
-References: <20240620222222.155933-1-javierm@redhat.com>
- <24205cdf-a3c6-475e-ba8a-a52d039a402d@redhat.com>
-Date: Fri, 21 Jun 2024 16:22:57 +0200
-Message-ID: <87h6dmjry6.fsf@minerva.mail-host-address-is-not-set>
+	bh=7s3nraX3meU88oDt2QxTb0nIt092nRV6YyzqRLfGesw=;
+	b=xAjRQ0qfong4mJ7qrVMt9jyf6XGP4CctOHJ/+3A+ta9Fl5fSiVki1lM8bhcMoJKOXf60WO
+	90doMTyqBOujiLFcyxoeTk58oHuxEFgejEGsY8QsLTdiTo4fJpPFFRQVnNQgo1JJsT9qkg
+	FhfEXj0FMq6xNOQHDsCZJB+uHwjLWw4=
+X-Envelope-To: sunyibuaa@gmail.com
+X-Envelope-To: tj@kernel.org
+X-Envelope-To: jaegeuk@kernel.org
+X-Envelope-To: chao@kernel.org
+X-Envelope-To: ebiggers@google.com
+X-Envelope-To: jiangshanlai@gmail.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-f2fs-devel@lists.sourceforge.net
+X-Envelope-To: niuzhiguo84@gmail.com
+X-Envelope-To: hao_hao.wang@unisoc.com
+X-Envelope-To: yunlongxing23@gmail.com
+Date: Fri, 21 Jun 2024 10:23:31 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Yi Sun <yi.sun@unisoc.com>
+Cc: sunyibuaa@gmail.com, tj@kernel.org, jaegeuk@kernel.org, 
+	chao@kernel.org, ebiggers@google.com, jiangshanlai@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, niuzhiguo84@gmail.com, 
+	Hao_hao.Wang@unisoc.com, yunlongxing23@gmail.com
+Subject: Re: [PATCH 1/2] workqueue: add io priority to work_struct
+Message-ID: <dst4qsqyrj4mvnpgrgaaqdzazn27xghjaudzdmpdwyb2guklag@ggrdrcpjclhb>
+References: <20240621062617.595007-1-yi.sun@unisoc.com>
+ <20240621062617.595007-2-yi.sun@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621062617.595007-2-yi.sun@unisoc.com>
+X-Migadu-Flow: FLOW_OUT
 
-Jocelyn Falempe <jfalempe@redhat.com> writes:
+On Fri, Jun 21, 2024 at 02:26:16PM +0800, Yi Sun wrote:
+> Many works will go to submit_bio(), and in many cases the io priority of
+> kworker cannot meet the real-time requirements of this work.
+> 
+> So add the basic attribute ioprio to work_struct, and kworker can adjust
+> its io priority according to this attribute.
+> 
+> Add function set_work_ioprio() to set the io priority of this work.
+> Add function may_adjust_work_task_ioprio() to adjust kworker's io priority.
+> Add function restore_work_task_ioprio() to restore kworker's io priority.
 
-Hello Jocelyn, thanks for your feedback!
+work_struct!?
 
-> On 21/06/2024 00:22, Javier Martinez Canillas wrote:
->> Add support for the drm_panic infrastructure, which allows to display
->> a user friendly message on the screen when a Linux kernel panic occurs.
->> 
->> The display controller doesn't scanout the framebuffer, but instead the
->> pixels are sent to the device using a transport bus. For this reason, a
->> .panic_flush handler is needed to flush the panic image to the display.
->
-> Thanks for this patch, that's really cool that drm_panic can work on 
-> this device too.
->
+there's a lot of task_struct properties we would want work_struct to
+inherit if we went this route, but it's just not feasible, work_struct
+should be small and thin.
 
-Indeed, that's why I did it. Just to see if it could work :)
+You're always embedding work_struct into your own struct, I would
+suggest tracking this yourself - or coming up with a new heavier
+standard struct that embeds a work_struct and has io path options,
+there's more than just priority.
 
-[...]
-
->> +static void ssd130x_primary_plane_helper_panic_flush(struct drm_plane *plane)
->> +{
->> +	struct drm_plane_state *plane_state = plane->state;
->> +	struct ssd130x_plane_state *ssd130x_plane_state = to_ssd130x_plane_state(plane_state);
->> +	struct drm_shadow_plane_state *shadow_plane_state = to_drm_shadow_plane_state(plane_state);
->> +	struct drm_crtc *crtc = plane_state->crtc;
->> +	struct ssd130x_crtc_state *ssd130x_crtc_state = to_ssd130x_crtc_state(crtc->state);
->> +
->> +	ssd130x_fb_blit_rect(plane_state->fb, &shadow_plane_state->data[0], &plane_state->dst,
->> +			     ssd130x_plane_state->buffer, ssd130x_crtc_state->data_array,
->> +			     &shadow_plane_state->fmtcnv_state);
->
-> ssd130x_fb_blit_rect() will call regmap->write(), which involve mutex 
-> and might sleep. And if the mutex is taken when the panic occurs, it 
-> might deadlock the panic handling.
-
-That's a good point and I something haven't considered...
-
-> One solution would be to configure the regmap with config->fast_io and 
-> config->use_raw_spinlock, and check that the lock is available with 
-> try_lock(map->raw_spin_lock)
-> But that means it will waste cpu cycle with busy waiting for normal 
-> operation, which is not good.
->
-
-Yeah, I would prefer to not change the driver for normal operation.
-
-> So for this particular device, I think it's ok, because it's unlikely 
-> you'll run kdump or other kernel panic handlers.
-> But I would like to know what others think about it, and if it's 
-> acceptable or not.
->
-
-I don't know either. I guess that after a panic everything is best effort
-anyways so it may be acceptable? But let's see what others think about it.
-
+> 
+> Signed-off-by: Yi Sun <yi.sun@unisoc.com>
+> ---
+>  include/linux/workqueue.h       |  9 ++++++
+>  include/linux/workqueue_types.h |  6 ++++
+>  kernel/workqueue.c              | 51 +++++++++++++++++++++++++++++++++
+>  3 files changed, 66 insertions(+)
+> 
+> diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+> index fb3993894536..f6191774b730 100644
+> --- a/include/linux/workqueue.h
+> +++ b/include/linux/workqueue.h
+> @@ -286,6 +286,9 @@ static inline unsigned int work_static(struct work_struct *work) { return 0; }
+>  		lockdep_init_map(&(_work)->lockdep_map, "(work_completion)"#_work, (_key), 0); \
+>  		INIT_LIST_HEAD(&(_work)->entry);			\
+>  		(_work)->func = (_func);				\
+> +		(_work)->ioprio = 0;					\
+> +		(_work)->ori_ioprio = 0;				\
+> +		(_work)->ioprio_flag = 0;				\
+>  	} while (0)
+>  #else
+>  #define __INIT_WORK_KEY(_work, _func, _onstack, _key)			\
+> @@ -294,6 +297,9 @@ static inline unsigned int work_static(struct work_struct *work) { return 0; }
+>  		(_work)->data = (atomic_long_t) WORK_DATA_INIT();	\
+>  		INIT_LIST_HEAD(&(_work)->entry);			\
+>  		(_work)->func = (_func);				\
+> +		(_work)->ioprio = 0;					\
+> +		(_work)->ori_ioprio = 0;				\
+> +		(_work)->ioprio_flag = 0;				\
+>  	} while (0)
+>  #endif
+>  
+> @@ -585,6 +591,9 @@ extern struct work_struct *current_work(void);
+>  extern bool current_is_workqueue_rescuer(void);
+>  extern bool workqueue_congested(int cpu, struct workqueue_struct *wq);
+>  extern unsigned int work_busy(struct work_struct *work);
+> +extern void set_work_ioprio(struct work_struct *work, unsigned short ioprio);
+> +extern void may_adjust_work_task_ioprio(struct work_struct *work);
+> +extern void restore_work_task_ioprio(struct work_struct *work);
+>  extern __printf(1, 2) void set_worker_desc(const char *fmt, ...);
+>  extern void print_worker_info(const char *log_lvl, struct task_struct *task);
+>  extern void show_all_workqueues(void);
+> diff --git a/include/linux/workqueue_types.h b/include/linux/workqueue_types.h
+> index 4c38824f3ab4..d9969596bbc3 100644
+> --- a/include/linux/workqueue_types.h
+> +++ b/include/linux/workqueue_types.h
+> @@ -17,6 +17,12 @@ struct work_struct {
+>  	atomic_long_t data;
+>  	struct list_head entry;
+>  	work_func_t func;
+> +	/* If the work does submit_bio, io priority may be needed. */
+> +	unsigned short ioprio;
+> +	/* Record kworker's original io priority. */
+> +	unsigned short ori_ioprio;
+> +	/* Whether the work has set io priority? */
+> +	long ioprio_flag;
+>  #ifdef CONFIG_LOCKDEP
+>  	struct lockdep_map lockdep_map;
+>  #endif
+> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+> index 003474c9a77d..a44a8f92eec2 100644
+> --- a/kernel/workqueue.c
+> +++ b/kernel/workqueue.c
+> @@ -55,6 +55,7 @@
+>  #include <linux/kvm_para.h>
+>  #include <linux/delay.h>
+>  #include <linux/irq_work.h>
+> +#include <linux/ioprio.h>
+>  
+>  #include "workqueue_internal.h"
+>  
+> @@ -6025,6 +6026,56 @@ unsigned int work_busy(struct work_struct *work)
+>  }
+>  EXPORT_SYMBOL_GPL(work_busy);
+>  
+> +/**
+> + * set_work_ioprio - set io priority for the current work
+> + * @work: the work to be set
+> + * @ioprio: desired io priority
+> + *
+> + * This function can be called after INIT_WORK if the io priority
+> + * of the work needs to adjust. And it is recommended to use this
+> + * function together with may_adjust_work_task_ioprio() and
+> + * restore_work_task_ioprio().
+> + */
+> +void set_work_ioprio(struct work_struct *work, unsigned short ioprio)
+> +{
+> +	work->ioprio = ioprio;
+> +	work->ioprio_flag = 1;
+> +}
+> +EXPORT_SYMBOL_GPL(set_work_ioprio);
+> +
+> +/**
+> + * may_adjust_work_task_ioprio - adjust the io priority of kworker
+> + * @work: the work that kworker will do
+> + *
+> + * It is recommended to use this function together with set_work_ioprio()
+> + * and restore_work_task_ioprio().
+> + */
+> +void may_adjust_work_task_ioprio(struct work_struct *work)
+> +{
+> +	if (work->ioprio_flag) {
+> +		work->ori_ioprio = get_current_ioprio();
+> +		set_task_ioprio(current, work->ioprio);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(may_adjust_work_task_ioprio);
+> +
+> +/**
+> + * restore_work_task_ioprio - restore the io priority of kworker
+> + * @work: the work that kworker just did
+> + *
+> + * When kworker finishes the work, the original io priority of
+> + * kworker should be restored. It is recommended to use this function
+> + * together with set_work_ioprio() and may_adjust_work_task_ioprio().
+> + */
+> +void restore_work_task_ioprio(struct work_struct *work)
+> +{
+> +	if (work->ioprio_flag) {
+> +		set_task_ioprio(current, work->ori_ioprio);
+> +		work->ioprio_flag = 0;
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(restore_work_task_ioprio);
+> +
+>  /**
+>   * set_worker_desc - set description for the current work item
+>   * @fmt: printf-style format string
 > -- 
->
-> Jocelyn
-
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+> 2.25.1
+> 
 
