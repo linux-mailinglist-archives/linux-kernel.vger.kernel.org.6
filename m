@@ -1,125 +1,264 @@
-Return-Path: <linux-kernel+bounces-224821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47C491273A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:04:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D516091273D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9100828B4A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:04:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1F41F28DA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0529412E5E;
-	Fri, 21 Jun 2024 14:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C3118E3F;
+	Fri, 21 Jun 2024 14:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3O31GzIq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c44WSDYK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oET6lsg4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEECA21;
-	Fri, 21 Jun 2024 14:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17789134BC;
+	Fri, 21 Jun 2024 14:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718978675; cv=none; b=UD2ff9NJ53fVM51U9SpH1E7OuzNJTEt9uY7/dXiN7J2o8ElHxIvcPNa9mmy/Nh8q+vBaxbpvZNQYC6Y3Sc/BF+H0+6iJijYUqO81BaoPwS2jlmWJ9/h6yS3YiuYcbexwI6mOHN2oiGjX61GGXFYIIyxDTdGtzCRcgMw7qpCLBmc=
+	t=1718978693; cv=none; b=s7c4VEvPlOkHSIlSr0kdwfirUyLzUlpEqx53abY8ZjBJ4ITWSg2xspRFxVHcI5T95RglxHBnFjqowziiB8rTRqqo8J2DCYUkYslmoamdGc2MxFnrrAZsLACbfoafO97G4BjcW/abZiwC9qR6eDXxBkRLaRlTdYq3WTWusYoEU/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718978675; c=relaxed/simple;
-	bh=Bh63jgLkIskV2XJ/cPyspmcVUfQYnsLqEDPsMyYSF8Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SQ2UFKCy/lxUhCrU1fFEoAM75G2J/QXzdQgrP3NHUsi/N1Vtb7q5AU8JtmFS68GKPjhr34WjcGf26o0zhI9dLJeJK0niGvJrAuve4iFSZy7PSeuP6tRxdc7fIBZm4XxnxipY1x4gPUufWTp7zi+TTszAVQQHQr1A2O9rr2jWjC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3O31GzIq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c44WSDYK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718978668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9vxYLRaM0g0hLDEgQ8vsw75W1q+Hkmc7pGfCU1ZZdT4=;
-	b=3O31GzIqzYpWk9Lzp2k8vutGkUFZ+IxeVJ0KvoKS/pm+u44o/prmAwQ2sTmGQeO+unqmgL
-	jZfPg5Ta9SWbRSGvBs7h/G/EsN+ETE4U8Da3bkfqCaDwhMR2S4CNp5LKv++rZN7BlSRzAX
-	lz3NiGPgaWT+q3MXl5cBAL3NJPznEFTeRkz65RaoOERoMgMb5Nj0msrXAeTAKJhvUzLN73
-	kJpf/cd6HYgaOBEDUZQfuhCzE1P908mBFk3y7aI59H/rfOkU4rZcMZYOvEI6wF1osIplFK
-	0S9rZOMzGaHmVKN8TSFpmRsHZlj6Tu9eju097O6sbWcRxerq+MzpqEeUMEqeSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718978668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9vxYLRaM0g0hLDEgQ8vsw75W1q+Hkmc7pGfCU1ZZdT4=;
-	b=c44WSDYK/TeAI2oxSjPi9TXvGYnylf68EKuN95zvRde+oDPWqd/SrCa2CA3K+a+fpgWs+Y
-	KfIjKhdEJMR5cqBA==
-To: Marc Zyngier <maz@kernel.org>
-Cc: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-pci@vger.kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
- s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
- rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com,
- apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com,
- den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com,
- sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
- rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
- lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org,
- robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
- vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
- andersson@kernel.org, mark.rutland@arm.com,
- shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com
-Subject: Re: [PATCH v3 14/24] genirq/gic-v3-mbi: Remove unused wired MSI
- mechanics
-In-Reply-To: <87ed8vu033.ffs@tglx>
-References: <20240614102403.13610-1-shivamurthy.shastri@linutronix.de>
- <20240614102403.13610-15-shivamurthy.shastri@linutronix.de>
- <86le36jf0q.wl-maz@kernel.org> <87plsfu3sz.ffs@tglx>
- <86h6drk9h1.wl-maz@kernel.org> <87h6dru0pb.ffs@tglx> <87ed8vu033.ffs@tglx>
-Date: Fri, 21 Jun 2024 16:04:28 +0200
-Message-ID: <87le2yo0ib.ffs@tglx>
+	s=arc-20240116; t=1718978693; c=relaxed/simple;
+	bh=KWONXLjIDswlsmFvy16KVHeYndfVYsx2KlAtEwqZ4dU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F+P/js4kTaRCtkOTkHb5ZfQSAGdmLSXEZ7V6nlNxMm8oqyLMTGsSCptvP4xwXoVlalsYNVAp3YLxYiuMKrfu27+E/JudzS80glmL25c2IkAAEpOcN2nEzpbE8A3d1E7uTaUPJ5p9xBzoUYnU5azqEO1V7Sl5IFSNo1S71CsEg7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oET6lsg4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62082C2BBFC;
+	Fri, 21 Jun 2024 14:04:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718978692;
+	bh=KWONXLjIDswlsmFvy16KVHeYndfVYsx2KlAtEwqZ4dU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oET6lsg4mKcAgsDQrC0hA/Q3BbSXRXajfx26T9gI1bPB+UEUoBLFKq0YJtFNV70ib
+	 it2BQbNLzutOEjK5w/r3P5dr9QY+/gTjWGaaXIqAH/c2LpcUadIMkDteFkgUgJT28y
+	 ouTaof7EjAYOAzigL2dMMuULJSeqz1nlvxvPcnsjByat4Aj5l8JwqKEj19MV/6kYGp
+	 /+k8rqlLbjvtXPNgI1SfldUVWYTvQo58LlkKEhOV5AapBu0FcpZmrcpGLfgFgr7zBp
+	 DEHmoG3Fr2iu+l6EJjXKRHZPJ3Gffo2pHdoOKaJi3IcIZnocKH1X/iVdzF3wenjO0Q
+	 bRtpPlwegkcdQ==
+Date: Fri, 21 Jun 2024 15:04:47 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+	greentime.hu@sifive.com, vincent.chen@sifive.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+Message-ID: <20240621-glutton-platonic-2ec41021b81b@spud>
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-3-yongxuan.wang@sifive.com>
+ <20240605-atrium-neuron-c2512b34d3da@spud>
+ <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
+ <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr>
+ <20240621-viewless-mural-f5992a247992@wendy>
+ <edcd3957-0720-4ab4-bdda-58752304a53a@ghiti.fr>
+ <20240621-9bf9365533a2f8f97cbf1f5e@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qd/Kua9U59FyvKVK"
+Content-Disposition: inline
+In-Reply-To: <20240621-9bf9365533a2f8f97cbf1f5e@orel>
 
 
-Gentle ping!
+--qd/Kua9U59FyvKVK
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17 2024 at 16:15, Thomas Gleixner wrote:
-> On Mon, Jun 17 2024 at 16:02, Thomas Gleixner wrote:
->> On Mon, Jun 17 2024 at 14:03, Marc Zyngier wrote:
->>> Patch 9/24 rewrites the mbigen driver. Which has nothing to do with
->>> what the gic-v3-mbi code does. They are different blocks, and the sole
->>> machine that has the mbigen IP doesn't have any gic-v3-mbi support.
->>> All they have in common are 3 random letters.
->>>
->>> What you are doing here is to kill any support for *devices* that need
->>> to signal level-triggered MSIs in that driver, and nothing to do with
->>> wire-MSI translation.
->>>
->>> So what replaces it?
->>
->> Hrm. I must have misread this mess. Let me stare some more.
->
-> Ok. Found my old notes.
->
-> AFAICT _all_ users of platform_device_msi_init_and_alloc_irqs():
->
->         ufs_qcom_config_esi()
->         smmu_pmu_setup_msi()
->         flexrm_mbox_probe()
->         arm_smmu_setup_msis()
->         hidma_request_msi()
->         mv_xor_v2_probe()
->
-> just install their special MSI write callback. I don't see any of those
-> setting up LEVEL triggered MSIs.
->
-> But then I'm might be missing something. If so can you point me please
-> to the usage instance which actually uses level signaled MSI?
->
-> Thanks,
->
->         tglx
+On Fri, Jun 21, 2024 at 03:15:10PM +0200, Andrew Jones wrote:
+> On Fri, Jun 21, 2024 at 02:42:15PM GMT, Alexandre Ghiti wrote:
+> >=20
+> > On 21/06/2024 12:17, Conor Dooley wrote:
+> > > On Fri, Jun 21, 2024 at 10:37:21AM +0200, Alexandre Ghiti wrote:
+> > > > On 20/06/2024 08:25, Anup Patel wrote:
+> > > > > On Wed, Jun 5, 2024 at 10:25=E2=80=AFPM Conor Dooley <conor@kerne=
+l.org> wrote:
+> > > > > > On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
+> > > > > > > Add entries for the Svade and Svadu extensions to the riscv,i=
+sa-extensions
+> > > > > > > property.
+> > > > > > >=20
+> > > > > > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > > > > > > ---
+> > > > > > >    .../devicetree/bindings/riscv/extensions.yaml | 30 +++++++=
+++++++++++++
+> > > > > > >    1 file changed, 30 insertions(+)
+> > > > > > >=20
+> > > > > > > diff --git a/Documentation/devicetree/bindings/riscv/extensio=
+ns.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > > > > index 468c646247aa..1e30988826b9 100644
+> > > > > > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > > > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > > > > @@ -153,6 +153,36 @@ properties:
+> > > > > > >                ratified at commit 3f9ed34 ("Add ability to ma=
+nually trigger
+> > > > > > >                workflow. (#2)") of riscv-time-compare.
+> > > > > > >=20
+> > > > > > > +        - const: svade
+> > > > > > > +          description: |
+> > > > > > > +            The standard Svade supervisor-level extension fo=
+r raising page-fault
+> > > > > > > +            exceptions when PTE A/D bits need be set as rati=
+fied in the 20240213
+> > > > > > > +            version of the privileged ISA specification.
+> > > > > > > +
+> > > > > > > +            Both Svade and Svadu extensions control the hard=
+ware behavior when
+> > > > > > > +            the PTE A/D bits need to be set. The default beh=
+avior for the four
+> > > > > > > +            possible combinations of these extensions in the=
+ device tree are:
+> > > > > > > +            1. Neither svade nor svadu in DT: default to sva=
+de.
+> > > > > > I think this needs to be expanded on, as to why nothing means s=
+vade.
+> > > > > Actually if both Svade and Svadu are not present in DT then
+> > > > > it is left to the platform and OpenSBI does nothing.
+> > > > >=20
+> > > > > > > +            2. Only svade in DT: use svade.
+> > > > > > That's a statement of the obvious, right?
+> > > > > >=20
+> > > > > > > +            3. Only svadu in DT: use svadu.
+> > > > > > This is not relevant for Svade.
+> > > > > >=20
+> > > > > > > +            4. Both svade and svadu in DT: default to svade =
+(Linux can switch to
+> > > > > > > +               svadu once the SBI FWFT extension is availabl=
+e).
+> > > > > > "The privilege level to which this devicetree has been provided=
+ can switch to
+> > > > > > Svadu if the SBI FWFT extension is available".
+> > > > > >=20
+> > > > > > > +        - const: svadu
+> > > > > > > +          description: |
+> > > > > > > +            The standard Svadu supervisor-level extension fo=
+r hardware updating
+> > > > > > > +            of PTE A/D bits as ratified at commit c1abccf ("=
+Merge pull request
+> > > > > > > +            #25 from ved-rivos/ratified") of riscv-svadu.
+> > > > > > > +
+> > > > > > > +            Both Svade and Svadu extensions control the hard=
+ware behavior when
+> > > > > > > +            the PTE A/D bits need to be set. The default beh=
+avior for the four
+> > > > > > > +            possible combinations of these extensions in the=
+ device tree are:
+> > > > > > @Anup/Drew/Alex, are we missing some wording in here about it o=
+nly being
+> > > > > > valid to have Svadu in isolation if the provider of the devicet=
+ree has
+> > > > > > actually turned on Svadu? The binding says "the default behavio=
+ur", but
+> > > > > > it is not the "default" behaviour, the behaviour is a must AFAI=
+CT. If
+> > > > > > you set Svadu in isolation, you /must/ have turned it on. If yo=
+u set
+> > > > > > Svadu and Svade, you must have Svadu turned off?
+> > > > > Yes, the wording should be more of requirement style using
+> > > > > must or may.
+> > > > >=20
+> > > > > How about this ?
+> > > > > 1) Both Svade and Svadu not present in DT =3D> Supervisor may
+> > > > >       assume Svade to be present and enabled or it can discover
+> > > > >       based on mvendorid, marchid, and mimpid.
+> > > > > 2) Only Svade present in DT =3D> Supervisor must assume Svade
+> > > > >       to be always enabled. (Obvious)
+> > > > > 3) Only Svadu present in DT =3D> Supervisor must assume Svadu
+> > > > >       to be always enabled. (Obvious)
+> > > >=20
+> > > > I agree with all of that, but the problem is how can we guarantee t=
+hat
+> > > > openSBI actually enabled svadu?
+> > > Conflation of an SBI implementation and OpenSBI aside, if the devicet=
+ree
+> > > property is defined to mean that "the supervisor must assume svadu to=
+ be
+> > > always enabled", then either it is, or the firmware's description of =
+the
+> > > hardware is broken and it's not the supervisor's problem any more. It=
+'s
+> > > not the kernel's job to validate that the devicetree matches the
+> > > hardware.
+> > >=20
+> > > > This is not the case for now.
+> > > What "is not the case for now"? My understanding was that, at the
+> > > moment, nothing happens with Svadu in OpenSBI. In turn, this means th=
+at
+> > > there should be no devicetrees containing Svadu (per this binding's
+> > > description) and therefore no problem?
+> >=20
+> >=20
+> > What prevents a dtb to be passed with svadu to an old version of opensbi
+> > which does not support the enablement of svadu? The svadu extension wil=
+l end
+> > up being present in the kernel but not enabled right?
+
+If you'll allow me use of my high horse, relying on undocumented
+(or deprecated I suppose in this case) devicetree properties is always
+going to leave people exposed to issues like this. If the property isn't
+documented, then you shouldn't be passing it to the kernel.
+
+> I understand the concern; old SBI implementations will leave svadu in the
+> DT but not actually enable it. Then, since svade may not be in the DT if
+> the platform doesn't support it or it was left out on purpose, Linux will
+> only see svadu and get unexpected exceptions. This is something we could
+> force easily with QEMU and an SBI implementation which doesn't do anything
+> for svadu. I hope vendors of real platforms, which typically provide their
+> own firmware and DTs, would get this right, though, especially since Linux
+> should fail fast in their testing when they get it wrong.
+
+I'll admit, I wasn't really thinking here about something like QEMU that
+puts extensions into the dtb before their exact meanings are decided
+upon. I almost only ever think about "real" systems, and in those cases
+I would expect that if you can update the representation of the hardware
+provided to (or by the firmware to Linux) with new properties, then updating
+the firmware itself should be possible.
+
+Does QEMU have the this exact problem at the moment? I know it puts
+Svadu in the max cpu, but does it enable the behaviour by default, even
+without the SBI implementation asking for it?
+
+Sorta on a related note, I'm completely going head-in-sand here for ACPI,
+cos I have no idea how that is being dealt with - other than that Linux
+assumes that all ACPI properties have the same meaning as the DT ones. I
+don't really think that that is sustainable, but it is what we are doing
+at present. Maybe I should put that in boot.rst or in acpi.rst?
+
+Also on the ACPI side of things, and I am going an uber devil's advocate
+here, the version of the spec that we documented as defining our parsing
+rules never mentions svade or svadu, so is it even valid to use them on
+ACPI systems?
+
+
+
+
+--qd/Kua9U59FyvKVK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnWIfwAKCRB4tDGHoIJi
+0q/dAP4kNGqCQqfmua36oZyQabQDESU4lnBPcaNqz4EP05qYHwEAv0/Przk2eqiW
+eKknt2R9xQc1PxpjjybKTm7K30FMVAU=
+=WPCG
+-----END PGP SIGNATURE-----
+
+--qd/Kua9U59FyvKVK--
 
