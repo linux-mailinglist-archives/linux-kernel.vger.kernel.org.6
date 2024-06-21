@@ -1,163 +1,133 @@
-Return-Path: <linux-kernel+bounces-224913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C615691289D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:55:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 518969128C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A3D81F2679E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:55:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70F371C2625A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE1D3A1C9;
-	Fri, 21 Jun 2024 14:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EB74084D;
+	Fri, 21 Jun 2024 15:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EukmjfWC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BfmrTB14";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NwDdPl7p";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3tRrfoPY"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YZsdXlQq"
+Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16F3383A2;
-	Fri, 21 Jun 2024 14:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353A9250EC
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718981752; cv=none; b=iQoz81hTYswNEzp8EXnoAOaWLY/hf+6KotLtOS82uWpBhvKu99BAauvx4LKLxI3j8LClZ34TQALxybIYR3KGo2AOoCm+QY2oe+5+1uSIIzCh5TXwDtGJPwzUt0MFhrdJbOhGu392KQoElq1JsdD3znSoPZ6zR2nM3FWC81DR+q0=
+	t=1718982098; cv=none; b=UR4/+Y2dnDDDk4tWabgu80uWnWqdlgz90COdM8RvIqENPhv9Wxy9hCTtOjiOV9OzL3ckZFf7qbXh0jPwb2sf+HG4vMyfL9898TsI4obim4s6kDMko/suyDub/pMxgQ+3fnb3zeaXBNOTiODWaBwqX8Kd2vdZZoeVCeqmVsw7NvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718981752; c=relaxed/simple;
-	bh=FgVdijDU0BtB3Yp38vf7dWgs4zrbtpChVLwuhV1ycjc=;
-	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=gbri9QMjOfJJizwCxR59D34n6ic747zNpUwpb2jNqm8Cy3j1XGdqumP7jBTlbX9fehtm6rrPUtzRmUfMIKSIEBkgrjcqfluIhQ4vYZQsKU7RKhyEkon2ILQDCNAf5HeHx4mTWsDuDVdyzPXR8o2cMSS569LNNwlvlyzyKmke+04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EukmjfWC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BfmrTB14; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NwDdPl7p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3tRrfoPY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A9B8D1FB80;
-	Fri, 21 Jun 2024 14:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718981749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9cBWSUlwLGO8g801If0Hzc9joacR0slodg2mwVbceUs=;
-	b=EukmjfWCJRqqs4u7B9Va97XA/bQbz+gfPCCTKpa/Ypwa+DI+f6Ylp0QYH1GMyrGhyv4Cw/
-	slKfGQvujOXRiP3lu81q/CuyJgn42eQW1leZQZTAZZ7qTtJOChFkb9JG2CIMcuLHGHeNdZ
-	WRMybSLPNYyx426W87gECOIv4wOrzTU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718981749;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9cBWSUlwLGO8g801If0Hzc9joacR0slodg2mwVbceUs=;
-	b=BfmrTB14dDy/T9ELlBYdyW3sLQqaL2cAwoUe3zgB0nlMXMHeWucQoVfJuiA52MPb0XiwSv
-	WeBn8b1huXE62cDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NwDdPl7p;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=3tRrfoPY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718981746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9cBWSUlwLGO8g801If0Hzc9joacR0slodg2mwVbceUs=;
-	b=NwDdPl7pFUNSmB67fbK1upmIR/7JKB8qE7qPg5i/UVhQD33hCmEkgeuY0kYyhbRVTc6Mfp
-	5QaqaBwflMkW1/H6zX9sdHjci095coHnnC/fnmveA4phQxvwbEbmVpfdiu01XxVmYxPE1D
-	rGHMrglPOE8a0qGJ1lCbgpp57lYoi44=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718981746;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9cBWSUlwLGO8g801If0Hzc9joacR0slodg2mwVbceUs=;
-	b=3tRrfoPYaiEhrz4PL9JM6Yzae5eugDRi/HyekJhUrl/NNVzX4jK1rOa2WTG2LBWIe6GGKq
-	OBDySSIwAXFPIcAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B8A713ABD;
-	Fri, 21 Jun 2024 14:55:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id B2/cIHKUdWZjMgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 21 Jun 2024 14:55:46 +0000
-Date: Fri, 21 Jun 2024 16:56:12 +0200
-Message-ID: <87sex6xs37.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] sound fixes for 6.10-rc5 #2
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1718982098; c=relaxed/simple;
+	bh=93O4/7DFpdjROLypmde/a3JcWpFq0dkcjGqSHxHkJOI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=TKcES2gUM8K6AyeqU8HWLoJXrAw1k1btTgZi/bRLxHediUvPyET7wx2zaQE6+nEY81tUeazhHmNFE+ik7R1Occ7PekGLFYYx0scxow599nzooQurCFoEzhu+KAyXgbHHMtd3duJgHxEbWSX38zho8abx2RW1Kvxgk/8s9yEQbG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YZsdXlQq; arc=none smtp.client-ip=203.205.221.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1718981787; bh=u11VC9vTA/IZRdXHWSyfPdljHk8ljFmOZB+QjWrnNKw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=YZsdXlQqKSnvtO2szpQpI9O9FsBf1A4wZmFF2LiHqbVph1rxb68+hHijzgB3QhdNL
+	 HwExJfCtDkx1h1enCX6/CKBg/Xi5hM/BnlB6vsYw5omiN2GfmuXBYxEHArBufDnHfm
+	 xpLeaK6qJn3Xk+qR//MgTMWXCT0R8Uk8g2jHfu+8=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
+	id E19A0E51; Fri, 21 Jun 2024 22:56:25 +0800
+X-QQ-mid: xmsmtpt1718981785tljmbu58d
+Message-ID: <tencent_EF3CBD367097AC370E4A5E7525769D668209@qq.com>
+X-QQ-XMAILINFO: MprdIpiwXvQIZJGIMSzOwI9Gs5wqc0M3LGfI190cfBEB8DfzPY/zelSjNJXHmv
+	 DDpFRQJVLjY+yYdDEGOATPDLV5/68LPY74I42h5fJsHXQSZu8qImT6EXxMp94HVA4lKhWUqvD/dF
+	 62+fr22tVj/spn1oUdzXbgyflDgJd1ZWiUNLECmU8Tdk6pe1i1FC2qQBi/UquRw0P4C0ATaDBMV2
+	 6vtNNnP7UKYSl6gqEeNWlSAIfg+pYK3NhCl1+JLGWCN4h+nBAxQp6dibGASdDpvl5dXOFuPJsNBS
+	 p1mBL4H31u/oLJjjjpvAAcPSgy+s5rb26O1eNABfihdUrZ/WBsIkXUXEpZLNW4zw0GAYKAavDINE
+	 0AvZG7d0MaMmEp6CwGYQLjXbtIImN5d5/CeFCZUs4DzQhxaYEOkq0dPylao4N5qV4AUhvfB+d1mG
+	 LGUF1fmzGhjte/FTkHQ/utlVsmyEyoFrEGoS8XQBcF5HeQfn5MF0igzMm8cfzSdMvj2NQsCACER8
+	 orPB69oe083BGLDAnK8Dfw/yLbvgmcZr6y/O6MD+OK1Fbd0+o0fP0ackctTNUw+WYkpmbs4aUDp5
+	 q4YHtdkb2u/5cko+CfNmRrFTJbriHa7gEVZPDDSrvx7dDqrdWMP7D2x47THB+0XPAoEtyM/Y8n2a
+	 9E7vfG39p8Y9WVgI0suu9mnrkT8JuIqvfULjIYy5iVAQAYx2+XxHZQdloM1YXVjUKd0rAI78SUf2
+	 bOCzmPl3redEFChgmVsQK4Mf3O21G9gNk3N0fReXPUr8Dh0gk2De8quPy8HJsFi3Vk3Kz4C+BXAc
+	 kyQucMl9hfk6flAhsCVx7Fu/p5iMLLJEQueJKWoMVcljHhRyGRCNYY/XoA4l8CgITwybnHDkModK
+	 kxTGgnjMevFvfe2X+JEtRo8ELNE3NgWjrflWP9RYU+encPp2TRvQd0Ea4yBMc/sNkZSj154CekdD
+	 RIUGX/Twk=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] general protection fault in l2cap_sock_recv_cb
+Date: Fri, 21 Jun 2024 22:56:26 +0800
+X-OQ-MSGID: <20240621145625.2692300-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000b0906d061a468b93@google.com>
+References: <000000000000b0906d061a468b93@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: A9B8D1FB80
-X-Spam-Score: -3.51
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-Linus,
+please test null ptr defref in l2cap_sock_recv_cb
 
-please pull additional sound fixes for v6.10-rc5 from:
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git cc8ed4d0a848
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.10-rc5-2
-
-The topmost commit is 17563b4a19d1844bdbccc7a82d2f31c28ca9cfae
-
-----------------------------------------------------------------
-
-sound fixes for 6.10-rc5 #2
-
-A follow-up fix of the previous PR for a random build issue,
-as well as another trivial HD-audio quirk.
-
-----------------------------------------------------------------
-
-Pablo Caño (1):
-      ALSA: hda/realtek: Add quirk for Lenovo Yoga Pro 7 14AHP9
-
-Takashi Iwai (1):
-      ALSA: hda: Use imply for suggesting CONFIG_SERIAL_MULTI_INSTANTIATE
-
----
- sound/pci/hda/Kconfig         | 4 ++--
- sound/pci/hda/patch_realtek.c | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+index 6db60946c627..c0fe74a6b45e 100644
+--- a/net/bluetooth/l2cap_sock.c
++++ b/net/bluetooth/l2cap_sock.c
+@@ -47,6 +47,7 @@ static void l2cap_sock_init(struct sock *sk, struct sock *parent);
+ static struct sock *l2cap_sock_alloc(struct net *net, struct socket *sock,
+ 				     int proto, gfp_t prio, int kern);
+ static void l2cap_sock_cleanup_listen(struct sock *parent);
++static DEFINE_MUTEX(chan_data_lock);
+ 
+ bool l2cap_is_socket(struct socket *sock)
+ {
+@@ -1239,6 +1240,9 @@ static void l2cap_sock_kill(struct sock *sk)
+ 
+ 	BT_DBG("sk %p state %s", sk, state_to_string(sk->sk_state));
+ 
++	mutex_lock(&chan_data_lock);
++	l2cap_pi(sk)->chan->data = NULL;
++	mutex_unlock(&chan_data_lock);
+ 	/* Kill poor orphan */
+ 
+ 	l2cap_chan_put(l2cap_pi(sk)->chan);
+@@ -1481,10 +1485,18 @@ static struct l2cap_chan *l2cap_sock_new_connection_cb(struct l2cap_chan *chan)
+ 
+ static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *skb)
+ {
+-	struct sock *sk = chan->data;
+-	struct l2cap_pinfo *pi = l2cap_pi(sk);
++	struct sock *sk;
++	struct l2cap_pinfo *pi;
+ 	int err;
+ 
++	mutex_lock(&chan_data_lock);
++	sk = chan->data;
++	if (!sk) {
++		mutex_unlock(&chan_data_lock);
++		return -ENXIO;
++	}
++
++	pi = l2cap_pi(sk);
+ 	lock_sock(sk);
+ 
+ 	if (chan->mode == L2CAP_MODE_ERTM && !list_empty(&pi->rx_busy)) {
+@@ -1535,6 +1547,7 @@ static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *skb)
+ 
+ done:
+ 	release_sock(sk);
++	mutex_unlock(&chan_data_lock);
+ 
+ 	return err;
+ }
 
 
