@@ -1,408 +1,114 @@
-Return-Path: <linux-kernel+bounces-224519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F689912382
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:27:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CD3912381
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1B9B1C25219
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 869EE1F269AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A701175545;
-	Fri, 21 Jun 2024 11:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E22174EEB;
+	Fri, 21 Jun 2024 11:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itqT7Nt3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UryOmKbO"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F00D17554C;
-	Fri, 21 Jun 2024 11:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356DE173321
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969086; cv=none; b=psgBAf0GVnxfqqKIS/vHzvrNgLkwZS1OnRaHAbcrPgyXOKDxB09BuDSrTlbsy2uiTGjNBxIifa7PBiUX5XObCMGXNlG4YBLFNZeOHtmh6lxi37kgbg0jEiVJCTaA4ianaGwbdsVlcqRzyiPdYFZ7DXfVBb1GuqVQUD993h8C6O0=
+	t=1718969083; cv=none; b=p+MWmsV0m1SQIwf4/i+hySoETwp3nMWMfL/RuPqFFAgOOwlC+xdDSYwCPzfDmL7Ose5pigs4W0c09BVA+HJrS+YhZGAAH4oZUHi1/Ury3lyOC8al8PeDN9sAYpHskFA2PTbw0LJykb4AwQQyZ5nLPrkfr9V2gqH/um04x7jfK/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969086; c=relaxed/simple;
-	bh=L7JjblD6NxFMjjAB+LyBJ0Xf6SmrXIxcxeMWAQI2IE4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q4kBz/MSYHN7jyF5SR9Hhro4zjAbTkKnxdrRA055Z3nS08Idil0YEa3qyh7MwH8u/lZqWz6ZGzTONYkwmnv/zi+W2VCbOcWuVbBKRyPel0wvKQC6M5m8opfgMJzJM7y6bO7XUDvEV1hZK/SH23tah0XYIcwE8O1R2OIR7LEKPyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itqT7Nt3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A831EC2BBFC;
-	Fri, 21 Jun 2024 11:24:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718969085;
-	bh=L7JjblD6NxFMjjAB+LyBJ0Xf6SmrXIxcxeMWAQI2IE4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=itqT7Nt3jCWG9FJQIDpIySFf3uAKJWTkw13MK1naXU045q1vMO1ALwcmTSyKVdxuK
-	 UtdkG3f3418hqB3F40uiGAEhPPxZ2fokzcr3W0DEBjVwETGt8xVTB2xAPI+yk6Xfrh
-	 yf9h4BfDpxxBwDEZd9jJOyPSk2Q8/KhaKa7AwxwD5ACh6pIczyc8dQ+9nT3/6KQ0hA
-	 WoO6JEW0pgs21Vl6iBhfWZ54hN/Qu2iYWyAJ7k9AW+Y6rWHecblkyNMiZPcOzfxaY2
-	 P1Tmj3dDYQSARd1HlYxtgMG9A6dFEgCwWWzLYAhbizqyYPQz09Hzu9y/yUt4wGa5aw
-	 QjbcpxoTIWbbQ==
-Received: from ip-185-104-136-29.ptr.icomera.net ([185.104.136.29] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sKcNn-0066cW-AY;
-	Fri, 21 Jun 2024 12:24:43 +0100
-Date: Fri, 21 Jun 2024 12:24:34 +0100
-Message-ID: <878qyy35e5.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP & HDFGRTR2_GROUP based FGU handling
-In-Reply-To: <4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
-References: <20240620065807.151540-1-anshuman.khandual@arm.com>
-	<20240620065807.151540-11-anshuman.khandual@arm.com>
-	<865xu3kh4r.wl-maz@kernel.org>
-	<4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1718969083; c=relaxed/simple;
+	bh=6SmldyM8LbjrmrwGeQd9OVKUpI6EzcMUULxdWwtoXOI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kr+qeTxhR6FNNDQdgcUfzdnLFyEhKM1bh5ovnnFtKtP2tBobicuRef9w/rMicSosDi02CTBja5IcN2hfO4dlnbQZ5MOMq2jU/X5JVJCoWkxCyNe+BQR3/s8kzGTPaj2Sf5g9PIMtem+34PKrWCu8i/4m4E3/Kcn9aIOP9kTuI0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UryOmKbO; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7e238fa7b10so71984239f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718969081; x=1719573881; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+S06MNn50wcg8UPLv5wQp64pmlD3c1WFVYG/FEEEnRI=;
+        b=UryOmKbObJHIfmJJ4mwK4HNNYMCS3FFXSdpyaswj99UdP5uweixzDUSxlDQtUDIkLA
+         Nvff6rAQvP+T+G5r3IESsxNvk8GX4ENNZQlbZeYjmDOR4MLlZ/0JMC8w5IDYhwqlTWRZ
+         GrLwxw61y1ruRWK38AYLLH1EkC3KiJUNZogq4bLtUDXqugf2Kf/zJRCRSMFjvgY34qri
+         Y+ovN9gLQMsE9Z4oqdJsOdh4KJ9E+OTZtyw9QNdWyibIi4xclAI1FgDz93Q/8gWG7itt
+         +76M4r85KPOl111yy6PUagV2lLaHoJUJjxSDfzg6V2H9NpvvnXJOsqksaEYM4hRwwfoD
+         K8CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718969081; x=1719573881;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+S06MNn50wcg8UPLv5wQp64pmlD3c1WFVYG/FEEEnRI=;
+        b=UVA1XWUqoVtNNVw9SebW35WUws1LQeRTIYqfWfsx4xRNsG8oV4ktxzKi7Nh8AGj5p1
+         t07PuKwbILr8ZAv9yLA45R9W0WyFM5EmIghfADBPwZHViPopqWUlEkghj50fD1nS1Iqe
+         AyLhadpitBQYNLt0kx05zPfB8+gJB816eUaFvcSyON8i82YQd72IYfCSTaNhurgN0hex
+         ntE7RxMjUVQQyGJ06rHL+GCKIbb84HkPsRF2jDOBHEcUrx/Hs2guV/El+sEtmMkzaNLX
+         KIselvYmfKIT98UOaCNZqYyR/RHLuj3+SGMiyj6RsRKpUJQxedPG7IDkKBwgvG6tTZa+
+         8r/w==
+X-Forwarded-Encrypted: i=1; AJvYcCV5Yww+DICV/1scGo7vax5a3DaLKdggfo2PHVW4/KCtoPB6aZZtz1wULcZqquXlgCPV5eYo2i+hC2KaENmyzo2n2G0D4rMnfzOF+MWr
+X-Gm-Message-State: AOJu0YwqFcxmJUgMzltYb7ojrXXdxZjHDrkD/dkaVXC6N3uDICqLr5e4
+	MrccaJ17w7oCi6/XHyedlOFdscNX2I8U4xy8mphVbLP9q5BfOWGVpKC3juuKGOY=
+X-Google-Smtp-Source: AGHT+IGefmpV6J+T59fS6X6SBJ+mFebCSYWultcx3leNVTbcAwyJlKZxxMjb/c9n+2WSDWc3cUTt6A==
+X-Received: by 2002:a05:6602:1347:b0:7ec:4c1:14fb with SMTP id ca18e2360f4ac-7f13ede43a9mr945383139f.3.1718969081164;
+        Fri, 21 Jun 2024 04:24:41 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9d1110304sm308207173.62.2024.06.21.04.24.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 04:24:40 -0700 (PDT)
+Message-ID: <fcdb072d-6099-4423-b4b5-21e9052b82cc@linaro.org>
+Date: Fri, 21 Jun 2024 12:24:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.104.136.29
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] media: dt-bindings: media: camss: Add
+ qcom,sc7180-camss binding
+To: gchan9527@gmail.com, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240621-b4-sc7180-camss-v1-0-14937929f30e@gmail.com>
+ <20240621-b4-sc7180-camss-v1-1-14937929f30e@gmail.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240621-b4-sc7180-camss-v1-1-14937929f30e@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 21 Jun 2024 08:56:15 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
-> On 6/20/24 16:36, Marc Zyngier wrote:
-> > On Thu, 20 Jun 2024 07:58:07 +0100,
-> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> >>
-> >> This adds new HDFGRTR2_GROUP and HDFGWTR2_GROUP groups in enum fgt_group_id
-> >> for FGU handling managed with HDFGRTR2_EL2 and HDFGWTR2_EL2 registers.
-> >>
-> >> Cc: Marc Zyngier <maz@kernel.org>
-> >> Cc: Oliver Upton <oliver.upton@linux.dev>
-> >> Cc: James Morse <james.morse@arm.com>
-> >> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >> Cc: linux-arm-kernel@lists.infradead.org
-> >> Cc: kvmarm@lists.linux.dev
-> >> Cc: linux-kernel@vger.kernel.org
-> >> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> >> ---
-> >>  arch/arm64/include/asm/kvm_arm.h        |  8 +++++
-> >>  arch/arm64/include/asm/kvm_host.h       |  2 ++
-> >>  arch/arm64/kvm/emulate-nested.c         | 14 ++++++++
-> >>  arch/arm64/kvm/hyp/include/hyp/switch.h | 10 ++++++
-> >>  arch/arm64/kvm/nested.c                 | 36 ++++++++++++++++++++
-> >>  arch/arm64/kvm/sys_regs.c               | 45 +++++++++++++++++++++++++
-> >>  6 files changed, 115 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> >> index b2adc2c6c82a..b3fb368bcadb 100644
-> >> --- a/arch/arm64/include/asm/kvm_arm.h
-> >> +++ b/arch/arm64/include/asm/kvm_arm.h
-> >> @@ -354,6 +354,14 @@
-> >>  #define __HFGRTR_EL2_MASK	GENMASK(49, 0)
-> >>  #define __HFGRTR_EL2_nMASK	~(__HFGRTR_EL2_RES0 | __HFGRTR_EL2_MASK)
-> >>  
-> >> +#define __HDFGRTR2_EL2_RES0	HDFGRTR2_EL2_RES0
-> >> +#define __HDFGRTR2_EL2_MASK	(GENMASK(22, 22) | GENMASK(20, 0))
-> > 
-> > How about bit 23? How comes you are considering all these bits as positive?
-> 
-> It had 23 earlier looking into DDI0601 2024-03 but then referred into ARM
-> ARM DDI 0487K.A which changed it as 22 - which was wrong, will change this
-> again if required.
+On 21/06/2024 10:40, George Chan via B4 Relay wrote:
+> +  power-domains:
+> +    items:
+> +      - description: IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: Titan GDSC - Titan ISP Block, Global Distributed Switch Controller.
 
-I guess we're past that point now, and we should delete the comment
-that limits it to K.a. Anything that is published as part of the XML
-drop (DDI 0602) is now fair game.
+Please name these power-domains and require them in your yaml, 
+remembering to add them into the DTS.
 
-> 
-> > 
-> >> +#define __HDFGRTR2_EL2_nMASK	~(__HDFGRTR2_EL2_RES0 | __HDFGRTR2_EL2_MASK)
-> > 
-> > Note the *nMASK* here. 'n' is for *negative*. Just look at how
-> > __HDFGRTR_EL2_MASK and __HDFGRTR_EL2_nMASK are written.
-> 
-> Still trying to understand what does these three masks represent
-> for a given FGT register XXXX
-> 
-> 	- __XXXX_RES0
+See
 
-RES0 bits.
+Commit: d89751c61279 ("media: qcom: camss: Add support for named 
+power-domains")
 
-> 	- __XXXX_MASK
-
-Positive trap bits.
-
-> 	- __XXXX_nMASK
-
-Negative trap bits.
-
-> 
-> But from the mentioned example for HDFGRTR_EL2.
-> 
-> #define __HDFGRTR_EL2_RES0      HDFGRTR_EL2_RES0
-> #define __HDFGRTR_EL2_MASK      (BIT(63) | GENMASK(58, 50) | GENMASK(48, 43) | \
->                                  GENMASK(41, 40) | GENMASK(37, 22) | \
->                                  GENMASK(19, 9) | GENMASK(7, 0))
-> #define __HDFGRTR_EL2_nMASK     ~(__HDFGRTR_EL2_RES0 | __HDFGRTR_EL2_MASK)
-> 
-> Looking at HDFGRTR_EL2 definition inside arch/arm64/tools/sysreg
-> 
-> HDFGRTR_EL2_RES0 = BIT(49) | GENMASK(39, 38) | GENMASK(21, 20) | BIT(8)
-> 
-> is representing the entire mask in the register which are RES0. But then what
-> does __HDFGRTR_EL2_MASK signify ? Positive trap bits mask ?
-> 
-> The following bits belong in __HDFGRTR_EL2_MASK
-> 
-> HDFGRTR_EL2.PMBIDR_EL1    (63)
-> HDFGRTR_EL2.PMCEIDn_EL0   (58)
-> 
-> Where as the following bits belong in __HDFGRTR_EL2_nMASK
-> 
-> HDFGRTR_EL2.nPMSNEVFR_EL1 (61)
-> HDFGRTR_EL2.nBRBCTL	  (60) 
-> 
-> Reworking proposed HDFGRTR2_EL2 and HDFGWTR2_EL2. 
-> 
-> #define __HDFGRTR2_EL2_RES0     HDFGRTR2_EL2_RES0
-> #define __HDFGRTR2_EL2_MASK     0
-> #define __HDFGRTR2_EL2_nMASK    ~(__HDFGRTR2_EL2_RES0 | __HDFGRTR2_EL2_MASK)
-> 
-> #define __HDFGWTR2_EL2_RES0     HDFGWTR2_EL2_RES0
-> #define __HDFGWTR2_EL2_MASK     0
-> #define __HDFGWTR2_EL2_nMASK    ~(__HDFGWTR2_EL2_RES0 | __HDFGWTR2_EL2_MASK)
-> 
-> Please note that all trap bits in both these registers are negative ones
-> hence __HDFGRTR2_EL2_MASK/__HDFGWTR2_EL2_MASK should be 0.
-
-That's because you're looking at the XML, and not the ARM ARM this was
-written against.
-
-> 
-> > 
-> >> +
-> >> +#define __HDFGWTR2_EL2_RES0	HDFGWTR2_EL2_RES0
-> >> +#define __HDFGWTR2_EL2_MASK	(GENMASK(22, 19) | GENMASK(16, 7) | GENMASK(5, 0))
-> > 
-> > Again, how about bit 23? Same remark for the polarity.
-> > 
-> >> +#define __HDFGWTR2_EL2_nMASK	~(__HDFGWTR2_EL2_RES0 | __HDFGWTR2_EL2_MASK)
-> >> +
-> >>  /*
-> >>   * The HFGWTR bits are a subset of HFGRTR bits. To ensure we don't miss any
-> >>   * future additions, define __HFGWTR* macros relative to __HFGRTR* ones.
-> >> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> >> index 7b44e96e7270..d6fbd6ebc32d 100644
-> >> --- a/arch/arm64/include/asm/kvm_host.h
-> >> +++ b/arch/arm64/include/asm/kvm_host.h
-> >> @@ -239,6 +239,8 @@ enum fgt_group_id {
-> >>  	HDFGWTR_GROUP = HDFGRTR_GROUP,
-> >>  	HFGITR_GROUP,
-> >>  	HAFGRTR_GROUP,
-> >> +	HDFGRTR2_GROUP,
-> >> +	HDFGWTR2_GROUP = HDFGRTR2_GROUP,
-> >>  
-> >>  	/* Must be last */
-> >>  	__NR_FGT_GROUP_IDS__
-> >> diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
-> >> index 54090967a335..bc5ea1e60a0a 100644
-> >> --- a/arch/arm64/kvm/emulate-nested.c
-> >> +++ b/arch/arm64/kvm/emulate-nested.c
-> >> @@ -1724,6 +1724,9 @@ static const struct encoding_to_trap_config encoding_to_fgt[] __initconst = {
-> >>  	SR_FGT(SYS_AMEVCNTR0_EL0(2),	HAFGRTR, AMEVCNTR02_EL0, 1),
-> >>  	SR_FGT(SYS_AMEVCNTR0_EL0(1),	HAFGRTR, AMEVCNTR01_EL0, 1),
-> >>  	SR_FGT(SYS_AMEVCNTR0_EL0(0),	HAFGRTR, AMEVCNTR00_EL0, 1),
-> >> +
-> >> +	/* HDFGRTR2_EL2 */
-> >> +	SR_FGT(SYS_MDSELR_EL1,		HDFGRTR2, nMDSELR_EL1, 1),
-> > 
-> > No. See the 'n' prefix on this bit?
-> 
-> Right, that should be a 0 instead.
-> 
-> > 
-> > Also, where are all the other bits for the HDFRxTR2 registers?
-> 
-> This will require a number of new registers being added into tools sysreg
-> expanding the series further, but will go ahead add all that is required.
-
-Please do.
-
-> Although I had asked about this in the cover letter.
-> 
-> - Probably an entry is needed for SYS_MDSELR_EL1 in encoding_to_fgt[] table
->   inside the file arch/arm64/kvm/emulate-nested.c, but while trying to test
->   features for all individual bits in HDFGRTR2_EL2, it seemed a lot of new
->   register definitions from various features need to be added as well, thus
->   expanding the scope further. Should all required new system registers be
->   added for completeness ?
-
-Anything on which you expect KVM to interact with *must* be fully
-described.  I don't want to have to second guess the exception routing
-tables when we add support for a feature.
-
-In short, this is the end of half baked feature support in KVM. When
-you add support for a trap register, it comes with everything it
-traps, recursively.
-
-[...]
-
-> >> diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-> >> index bae8536cbf00..ebe4e3972fed 100644
-> >> --- a/arch/arm64/kvm/nested.c
-> >> +++ b/arch/arm64/kvm/nested.c
-> >> @@ -384,6 +384,42 @@ int kvm_init_nv_sysregs(struct kvm *kvm)
-> >>  		res0 |= HDFGRTR_EL2_nPMSNEVFR_EL1;
-> >>  	set_sysreg_masks(kvm, HDFGRTR_EL2, res0 | HDFGRTR_EL2_RES0, res1);
-> >>  
-> >> +	/* HDFG[RW]TR2_EL2 */
-> >> +	res0 = res1 = 0;
-> >> +
-> >> +	/* FEAT_TRBE_MPAM is not exposed to the guest */
-> >> +	res0 |= HDFGRTR2_EL2_nTRBMPAM_EL1;
-> > 
-> > No. We are moving away from hard-coded features, so you have to
-> > explicitly check it.
-> 
-> The above code was just temporary for this RFC. But you are right, these
-> features need to be checked properly but there is a challenge. As I have
-> mentioned in the cover letter
-
-You are wasting everybody's time with these RFCs. Either you *try* do
-the right thing from the first post, or you don't bother posting the
-patches. What's the point of posting them if you know this isn't
-right?
-
-Writing these reviews take time and energy, and there is no shortage
-of this I'd rather do instead of having to write these emails. If you
-have questions, just ask. You don't need to dump 10 patches on the
-list for that.
-
-> 
-> - TRBIDR_EL1.MPAM needs to be probed for setting HDFGRTR2_EL2_nTRBMPAM_EL1
->   but kvm_has_feat() does not operate a non-ID register which causes build
->   warnings. The same problem exists for probing PMSIDR_EL1.FDS which is
->   needed for setting HDFGRTR2_EL2_nPMSDSFR_EL1 as well. Currently both the
->   bits mentioned earlier are set, assuming the features are not present in
->   nested virtualization. Do we need some new helpers to probe these non-ID
->   registers as well ?
-> 
-> How do you suggest we proceed on this - testing features in TRBIDR_EL1 and
-> PMSIDR_EL1 ?
-
-Let's look at the spec.
-
-For TRBMPAM_EL1 being implemented (from K.a):
-
-* This register is present only when FEAT_TRBE_MPAM is
-  implemented. Otherwise, direct accesses to TRBMPAM_EL1 are
-  UNDEFINED.
-
-* If FEAT_TRBE_MPAM is implemented, then FEAT_TRBE_EXT is implemented.
-
-* The following fields identify the presence of FEAT_TRBE_EXT:
-  * ID_AA64DFR0_EL1.ExtTrcBuff.
-
-This allows you do shortcut it one level above the particular MPAM
-requirement, which is good enough (I don't expect external traces to
-be exposed to a VM). Therefore no need to look at TRBIDR_EL1.
-
-For PMSDSFR_EL1 being implemented (from K.a):
-
-* This register is present only when FEAT_SPE_FDS is
-  implemented. Otherwise, direct accesses to PMSDSFR_EL1 are
-  UNDEFINED.
-
-* If FEAT_SPE_FDS is implemented, then FEAT_SPEv1p4 is implemented.
-
-* The following field identifies the presence of FEAT_SPEv1p4:
-  * ID_AA64DFR0_EL1.PMSVer.
-
-So again that's your cut-off point. Until we support this level of SPE
-in KVM, we're pretty safe (and I seriously doubt we'll get there in my
-lifetime, given the current pace of progress).
-
-If at some point we need to support ID registers that are not in the
-feature range, we'll do that (Oliver has some stuff already for
-CTR_EL0).  But don't hardcode things.
-
-[...]
-
-> >> +	set_sysreg_masks(kvm, HDFGRTR2_EL2, res0 | HDFGRTR2_EL2_RES0, res1);
-> >> +	set_sysreg_masks(kvm, HDFGWTR2_EL2, res0 | HDFGWTR2_EL2_RES0, res1);
-> > 
-> > How about the HDFGxTR2_EL2_RES1 bits?
-> 
-> I assume you are suggesting something like this.
-> 
-> -       set_sysreg_masks(kvm, HDFGRTR2_EL2, res0 | HDFGRTR2_EL2_RES0, res1);
-> -       set_sysreg_masks(kvm, HDFGWTR2_EL2, res0 | HDFGWTR2_EL2_RES0, res1);
-> +       set_sysreg_masks(kvm, HDFGRTR2_EL2, res0 | HDFGRTR2_EL2_RES0, res1 | HDFGRTR2_EL2_RES1);
-> +       set_sysreg_masks(kvm, HDFGWTR2_EL2, res0 | HDFGWTR2_EL2_RES0, res1 | HDFGWTR2_EL2_RES1);
-> 
-> But guess both HDFGRTR2_EL2_RES1 and HDFGWTR2_EL2_RES1 will be empty (0) as there
-> are no res1 bit positions in either of these registers. But will change as above.
-
-I don't care about these values being 0. I want the reassuring feeling
-that we're not missing anything, because debugging this is hell if you
-have a guest that sets/clears random bits.
-
-[...]
-
-> >> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> >> index f921af014d0c..8029f408855d 100644
-> >> --- a/arch/arm64/kvm/sys_regs.c
-> >> +++ b/arch/arm64/kvm/sys_regs.c
-> >> @@ -4110,6 +4110,51 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
-> >>  		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
-> >>  						  HAFGRTR_EL2_RES1);
-> >>  
-> >> +	/* FEAT_TRBE_MPAM is not exposed to the guest */
-> >> +	kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nTRBMPAM_EL1);
-> > 
-> > Same thing about dynamic configuration.
-> > 
-> > But more importantly, you are disabling anything *but* MPAM.  Does it
-> > seem right to you?
-> 
-> Did not get that, should the inverse ~ be dropped here and also for all
-> other negative trap bits across the register ?
-
-Look at the way FGU works. A bit set to 1 means that if we have
-trapped because of this bit (as per the FGT table), we inject an
-UNDEF.
-
-> 
-> > 
-> >> +
-> >> +	/* FEAT_SPE_FDS is not exposed to the guest */
-> >> +	kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMSDSFR_EL1);
-> > 
-> > Same thing.
-> 
-> As mentioned earlier there is a challenge in checking for the features
-> via non-ID registers i.e TRBIDR_EL1.MPAM and PMSIDR_EL1.FDS.
-
-As I wrote, there is no problem. You always get enough ID-reg
-information to do something sensible. And if we need to eventually add
-the infrastructure for that, so be it.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+---
+bod
 
