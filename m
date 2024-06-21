@@ -1,206 +1,179 @@
-Return-Path: <linux-kernel+bounces-224800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95AD09126FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:51:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F5C9126FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBC7E288FB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:51:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31891C2202E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABB94688;
-	Fri, 21 Jun 2024 13:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EF04688;
+	Fri, 21 Jun 2024 13:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="P0/Ocgao"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2061.outbound.protection.outlook.com [40.107.101.61])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="icKZ+3Z5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62818631
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718977857; cv=fail; b=W1/lr6PcLojz9YEud6GmRbyYOs3n1+TTmoidex08WP1keyB4RZlGbutVRMAMf6gbc4AMC9+9Vby2KBULZ6XSruQZagFb7EYIYmlO/XCsdAiDWqMu1L4XWn0ZMGmFw4noXqnCoIbpTHrBVjlzNY/oGEvfQjZDcrWaEybxhFYbMUI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718977857; c=relaxed/simple;
-	bh=f4YWEf1oGi5hU8N/9Y/va1Lc0x7h1yIkDY62L+/rnCU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=N1KjGSVftzLRrhuKi9KOFF0HEPdlX3qgLX4H3ieU9NNq8nX24KA3TQ8Cyl/AR47ogt8yy1+lWWIbnVAoQa0fsUenJ5jERUMBuf8dHBsoR+Gz2grMqEQUYoSYyVSR8dY3NskL87s4y+IqOYHioCsmSAFevadGU4vEQQvc/OOafWc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=P0/Ocgao; arc=fail smtp.client-ip=40.107.101.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NuQCc7KvSXtlTayyr4mJfVbi69ImdxuUMy1M7WOI+yxpr6t/U5QVldcr0dQM4LaHLZ0ekzq0OkX9zzUFrH7zXII/Bi/IIg7YaqPZxb4ge4lqSXID3dlWXmJUsP+gm/S/o+58mjI+BQd50TFbLlWwyMp9oBBVc1lkSSg/hDlMZV0cG7/YDGMSEGovpELdoh32YnrlXawJx+f7sudNl+F6wDYT8KCGUe/zxboF9tTwe8zyvfeJcujqDMH8sjZr3NmQ85RG8PRNVSyHydMAjzORCr9nii6YUlKP1hEYiGHLUpm1Z3hEEsVHPutcpTpAYaSrOkX2uiwKp+xrDgRShvtClA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VMujnvx2qrBFNVFO6JUlM5EavgCY84W0uuQhxq7fSaU=;
- b=eVXgYtwrYYqeHR41Rze6pjxzLkrA6sEADltYGqo7c94lf2AXzMomJU4lVaKUoI/7o9i9rnDEaNTexbojLplH/LMgbOeoKFGW9AsM/o4WyCtVAZ57bTVxjdQWNrWiZtdQXr9l7e/qLRaxkMto3AgPL3VfgDRr5995XjL1wofQxAvII9a6hUIzL051oNPIqei0d6oDLhsnWOhDhQW76DkkWaOJzteJP7RZaMgjqWmXI9htnAzgcbCsjOlLeJEYlhIFiq9sFZ6PC8NZcquKYfWVQTlkps5u2eWJyCEIdjIe2SioA9TpsamcNv4FWV++Tm26910xSbEzg/+JhETtOetdNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VMujnvx2qrBFNVFO6JUlM5EavgCY84W0uuQhxq7fSaU=;
- b=P0/OcgaopREPBDizJ5civ8sgU3DA0gBcLZ5dcnCyq2bB3K3BpmM0/U3+HkiXZLVSwBOb4EPpm1+iGJ/FCr9xdcwDrR8Z42ZTaUxjc2o/JDdQqaff1CJ/lCe7UMP44g0LBkZ0r5pKD6E9NUxQVrALzE3hovybLsOh+/yI3RsyPa8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
- by PH7PR12MB5781.namprd12.prod.outlook.com (2603:10b6:510:1d0::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Fri, 21 Jun
- 2024 13:50:51 +0000
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52%7]) with mapi id 15.20.7698.020; Fri, 21 Jun 2024
- 13:50:51 +0000
-Message-ID: <cc92836d-3d29-52e5-f28e-f177153ed688@amd.com>
-Date: Fri, 21 Jun 2024 08:50:51 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] x86/sev: Move SEV compilation units
-Content-Language: en-US
-To: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "Borislav Petkov (AMD)"
- <bp@alien8.de>, Ashish Kalra <Ashish.Kalra@amd.com>,
- Joerg Roedel <joro@8bytes.org>, Michael Roth <michael.roth@amd.com>,
- Nikunj A Dadhania <nikunj@amd.com>
-References: <20240619093014.17962-1-bp@kernel.org>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20240619093014.17962-1-bp@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR05CA0025.namprd05.prod.outlook.com
- (2603:10b6:805:de::38) To BL1PR12MB5732.namprd12.prod.outlook.com
- (2603:10b6:208:387::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A57107A6
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718977867; cv=none; b=S1wnd4x5Fbe4d5vupvdoMMZOaEe/OgnYEgqSJ7WM3KKA7GK9GRuvQ+luvbB4jzHel1ypktbWGJu28hkcZKyU2n/lZmUwR5Y4gwt5DzrpcDO5Hp8yJOjnQl41+/NdSPBTdd1LuSSEmXIMQ8VBa6zju0aApyb4L2XOdHew1qGMYTA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718977867; c=relaxed/simple;
+	bh=GkXBO7iYfH0fRObPP0KB+1zKiyXs1BaZ53Xwf+jzXlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B03ys7/hZOoAnaFH/XcRleWevLF2XLeUl5MxVMpycutZKZwiAS2vgsEcULCg5q5lFmxCrIAfoBgJfkvlwHwMS4gV9wQqNqfJW4aI/grBIpfqBOPcyHeZuNKXMKU/GrlnKrvXpShHFb26jpG8BvZfCK8Fz3ZXsWmosOSStkJKGWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=icKZ+3Z5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718977864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ix4gt7F+iMkMJ3zgzdJl56zdz642sRiEPFq0R57sQXs=;
+	b=icKZ+3Z5vPvc5PMbmmYUQcJ1LiKJxePzerxv98xKKpdl26OFyxF6tDqA0VqrwborJaUjGE
+	rJgXUnKKHKMj7cdDQzd1Rtclkqpg5WIyWQ7mQGwGwmZRedFBVzr/mrGAaBv3z9jUfSvbQ/
+	y99kww9hQCuyYUFe+Yq53MgatpHauh4=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-318-sD64Q4ljOmCPAtSSaIGjGA-1; Fri, 21 Jun 2024 09:51:02 -0400
+X-MC-Unique: sD64Q4ljOmCPAtSSaIGjGA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4247047e74aso19074575e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:51:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718977861; x=1719582661;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ix4gt7F+iMkMJ3zgzdJl56zdz642sRiEPFq0R57sQXs=;
+        b=E1Bzu4oCLX3Iq1TAbt22LTAGlJANY6fjsDDGzBzdJuzKr/e5Mrk971db3vyE9/sAeb
+         nwE3C0Hk6kdxcZLjQECStYtE+nlI9scg9AAf3U59y3aw/xWl1TByDXMW9WnNLOJzho54
+         Xe88nqSGGx02gAfG7g6H1sa7/4j+D4sFOrLu+Yoq6T5bkfViH19OO/PMpFA7RBGlnS67
+         l0y3o+5esZAG27p1JJOhacEcHM8oqAf5JZCZh/RtQM/iIJrIv6nclFjy7FPg2GYJs/ZQ
+         sjk7XppTeC3k7qQylVaZeONYRyo+nC/GWIL8HUS1MRfqljCe3BJN3w4p/SvEem431/c1
+         zEPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZzlMwFh9ngN+2d45A76wzm62J3hG9QvYDoL07Qs1fuQJVqU/QlSGhyPRQSBNiAUO1xFWQdo4ZbwFNkyF0QQ9uye7FSxcVhIX+WkEG
+X-Gm-Message-State: AOJu0Yxx1Wc4mZZbUdZIc9s1DmjVHRxTEU0MuVfbu66YhQhiAtcrAPwU
+	7YVA8DpXzn3xM9ic1Hn+rWNJ+IvYSjH3VzZXpjmtMVizmwYw8sU+5ayDX97BDzKOVxSjbItFhDM
+	G0jWUeVijnlSBYpfu4CF085PAar5WI3pqrzKwxBL6xdKI2HmwPU0p9sYkpWyOdA==
+X-Received: by 2002:a05:600c:4853:b0:421:7bb1:eb9b with SMTP id 5b1f17b1804b1-42475296a7amr76553595e9.28.1718977861602;
+        Fri, 21 Jun 2024 06:51:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFS92bxMdqtDdu+lfCyEG8UvGo/6cN8YYEKQjjMePLVJ/maSC/rvayrWhtJnByxTbJllK9uyw==
+X-Received: by 2002:a05:600c:4853:b0:421:7bb1:eb9b with SMTP id 5b1f17b1804b1-42475296a7amr76553255e9.28.1718977861166;
+        Fri, 21 Jun 2024 06:51:01 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.3.168])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42471e65fb7sm78541245e9.1.2024.06.21.06.50.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 06:51:00 -0700 (PDT)
+Date: Fri, 21 Jun 2024 15:50:58 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Daniel Bristot de Oliveira <bristot@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Vineeth Pillai <vineeth@bitbyteword.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Phil Auld <pauld@redhat.com>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Youssef Esmat <youssefesmat@google.com>
+Subject: Re: [PATCH V7 0/9] SCHED_DEADLINE server infrastructure
+Message-ID: <ZnWFQqQ_Yix9tS8D@jlelli-thinkpadt14gen4.remote.csb>
+References: <cover.1716811043.git.bristot@kernel.org>
+ <ZnWCBF9QkQmO01nw@jlelli-thinkpadt14gen4.remote.csb>
+ <b14879eb-cbc9-4e53-b703-ab7b451b7687@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|PH7PR12MB5781:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f5ddf2e-498b-4b2e-10fe-08dc91f929b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|1800799021|366013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z2FCcGtUQWZBYzlYVnllc2hLUWoyR1RGSUhBSWZ1T0sxeGNKQ2Y3a0JkaGt4?=
- =?utf-8?B?RVdmb2FoNTNRU0trajlMK1BDYUx2bEJ1Qm9pSnBkWEVBQzFFUDdDNnV5RlVz?=
- =?utf-8?B?M1RrMmQyNjV6dWYzMWdnTUE4ZG1ZUmdPS2pRTFRFQUsyRHVnai93cmFEcWRI?=
- =?utf-8?B?elhES1FZQmd3TlNrR29OS1lWZjNnWWN0YjYwL21XTDNUR3dkbStVajVHbGpz?=
- =?utf-8?B?Z0puRjBEdUxjelVLc3ZBK1NBK3ordEtvaXVIeEhRYzNKRG8xK1ZLQkFkMWk1?=
- =?utf-8?B?YWpzY1JDTUp2TjdjWVVEbDNBRGczdmdFOC8rK0oxSWdyODZpZWE3ZngzZ3Vw?=
- =?utf-8?B?QXVYNzZKZzRFU0s5SnNEQ1BsOE96UWZUUVdnTmhjOXVmN3ZydDNQdmNWTTc5?=
- =?utf-8?B?NWkvZUd3L3VFYnNzNU9naEY1VzY5T3ZKOXpTQ1UwaTNIRmZaRG41WWVXOXpC?=
- =?utf-8?B?R2E4V3oybGhUNnNqYkRNRHJqRG9FdlZnOWRJUHhPTkZha3E0cFdXTE5SWHVL?=
- =?utf-8?B?YlBGSFRDd0Z6Nk90TEZsM1hZaDRhU1B5cC9XRlRXMzdBQUw0UVF6UW1yRHdC?=
- =?utf-8?B?QnQvdCsxZXkvWDlVaitLM1ZQbWFWSVNPeTBhUDFQVWJUTkdiWUhsTWhqM2w4?=
- =?utf-8?B?ckZVOXN0aTRiUml4VXhhQnRyeHJXYU5UeFJPVGZWcldTc0tLY2dlNEdQVWVU?=
- =?utf-8?B?aTJ2ZDF2MVBQejdnTFI1TUkwbjNqTjE5Y3ErRXZXa0VIUmFnRm1pQjhUUy9z?=
- =?utf-8?B?ajhacndacS9TUmE4SW8rZFRoY0t1WTBqdjhUeEdONVdZbjJ0dnR6Slk0MzZx?=
- =?utf-8?B?QmV4N3Z1KzJ2a1VmeGV3RnU5QkM2WXZvUGFNUWd3Z1JraHVoWmhvajRBUFNa?=
- =?utf-8?B?cVFlWGk4ZDNVRUxIL3NnT1hxMkNJaUVSVE1DNmlob3hEd0VIUHNJYzNWeVRl?=
- =?utf-8?B?bFlkYVN0Rk5BcTFhbGM2alJ4ZThoZkNzVWc4NlE2SkdrYzByckVjR2tOUFFE?=
- =?utf-8?B?ZmV5bCsvUExrUzFtQXM4QlpQa2VPWkpYZFlOTWRlOCtranhiYy9FR1J4a0Fx?=
- =?utf-8?B?M1M2dFRYVFZza2dqbGZ5K3c2ckZwZjJwQ2FUZ3poMG1FU3d0WDBpdnZ2eTMr?=
- =?utf-8?B?VDVKNVdtWTh5aUVaUElEV2s1UGtGREhQdklhZ3BHYU1tekp2VjgybDhOYzFo?=
- =?utf-8?B?UmZwbnltaWZhUjQvaGg1cEpyakRlNm5yV1JzdSthNFZzY1ZQc2d5R21lcnNo?=
- =?utf-8?B?S2dZTmdlRHlJZWFIRlJzN2RCVnlmdjR5c25EUlNSTVpLc1N4NEdUMFMwVklM?=
- =?utf-8?B?TkJvTXVtOTNTOTZyOVNaUTBsQW0zUGd6SkRZNndweWw0RWVXLzBVMmc2azM1?=
- =?utf-8?B?N0Y4Z3c2MVR1TGNneURtOTk0M2V0N3U1azhycXFSRC8zbG1CeXlVMkxMbjZm?=
- =?utf-8?B?M0w5Z24ydE1wVkJKNWt3Y0ZEb21UQ3h3REp3cmhuMDdUeHR3UjJoNlhZR0Rh?=
- =?utf-8?B?MGl3dzk3TWFoR3NDR3U5U0xuamx0b0cvbjhyRDBhMU1nd3pWWk5JYlh4OFRn?=
- =?utf-8?B?anl3UXRHeGtWR2gyQ1dRd0IyUU5UYXA5K1ZSN3p4Ykl1V0hvU2tlNVkvQ3lq?=
- =?utf-8?B?cFBLMW1NRTU1MWlSNDJxZkFTbUpPRWtDYkJaS1dKOTVNeFQzOGhTWjdOdUZ5?=
- =?utf-8?Q?tc2z8AjzzMYzfQTtIJKW?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SG5tYUh3VjFUVUp2YU1jd0lZWFVOa2dMZGdWVWwzUGVnRnRLL1dBMUJiSVRk?=
- =?utf-8?B?aHoxZWZCL1pBNjhhRklWUEtpS1hmNTVCNS85NndHSEhHSTNoU2tHR2x1bTln?=
- =?utf-8?B?dDBhNVF4VGV4WDFUSTYzZEYyZXJNNjBZRE10UWhqNk5Wb25aYWZtcC9CTzZZ?=
- =?utf-8?B?bEx3TWRKN0llRnpheElMUUkvTGErNnlMTnRtbGV6OUJCZ0VIYUE2dVVlak8v?=
- =?utf-8?B?all5dkpmU3I3c2VVcjFHSFJGd0RhNkp4OFlOOUJOZCtpNkk4YzZETWZkaUIr?=
- =?utf-8?B?Zkt1a1pUYmlLNzdGNGJhNEdLM2xSN1BKeGh6dmxEekgwZllzTTlITkZXaDVj?=
- =?utf-8?B?ZWNWWlpxalg3OGlwQ1pDblhWaW5keWZ5Snc4R1RjL29jVHVTY0hRNTJGc1dj?=
- =?utf-8?B?RlBKSTUvbFBrTzFPa3Z0RFZSWDZ0NlVhRXcrZ1lmbGJGcDlDWkZjZnBJNnZU?=
- =?utf-8?B?MzRXZFFMR2NDeVltenhkOGwvampXMExGT0U0RTQrWmhPSWVEUHhxUjJJNkhZ?=
- =?utf-8?B?TS90Ty9HTlplZTVEeUdLRWNIK053TnBoR0w0RUltdnc3elN3OTlSNWlSRkNN?=
- =?utf-8?B?UlR0cHFlY1V4U0ZyTWZ3VUs2VXhybTQ3cEh5QmRZaHo4RkxxQXpuQ3c1aXZs?=
- =?utf-8?B?RjczRVVBRFIydnV4RmVlQ3RLTjVLcy9scGI4R2tpcXhRK29hUmVoakpQTld3?=
- =?utf-8?B?eStuekxST3hyNDhnK3JVYVgrWWdPUHMxWnBDd3h4ZVhwSWQrN2lFSFJGYnFk?=
- =?utf-8?B?Wk9RUGh2MTdvRzhGUzZHNlVxaTlHOTYvVEwwdm11T1l0RVoyTGtiTjhiMlBn?=
- =?utf-8?B?d3BqazdqY21HNUpaOTFseVJtWmE0RUtwSk1OU1BlK2VPeUdXZkJmcXl1YW9t?=
- =?utf-8?B?ZkdkbnZzNEFtVDhpTlF1YjhvYXNabFBWR0RnalhzV2RJTWtyQm8zY1dQK3I2?=
- =?utf-8?B?WDhhY1ppUUdDeC85NUNObHhOU1hWZU1SL1NkWkxOR3BqL0xycmFXajl5d2xH?=
- =?utf-8?B?bW9LTUhQN1EwWWRiY3VqRHYzRStvSzBvYkZ3b0ZrSGNUdDJiSytrcXZJRm9z?=
- =?utf-8?B?Tkl3RzF4YnlIL0RvSFpPL1o1enZUUlU1bk1URm5tTmNIUnc2MkIyZGZmV2F2?=
- =?utf-8?B?OW84cFZVNHErc21PVE0zN3M4NE1kUlNmTWE5NzIrdm91YXkvc3h4MDV4UWZJ?=
- =?utf-8?B?Z2tNenpXTW5ReWxMSHBYWVZiVTBHTU0ydGYwR2hlODI4RzF6aVdpVnJ6ei9z?=
- =?utf-8?B?cC9aczlwK0p5dWFlUFVmNnJrcFlRVGNvek5HSTdZL0R6RU1zWDBVNUhwY2VV?=
- =?utf-8?B?SEhabWNOOFVHU05wTXhTcEVmT24wM1JTM0xMZFRPeEh3SG1KTnJMN1MrTUZs?=
- =?utf-8?B?QmQvYzJ6YnZzcVYwYVU0UWdxTDVIaElTZGtVOUh3RWhnNFAyU3ZYTUt2d2Iz?=
- =?utf-8?B?TkhRTnljNlhoUStuVG1hTUZXcjJmU04wOXUvczNlYUoxSm1qS3JTY200eUlh?=
- =?utf-8?B?bWhneWlpbURjU2Z2SndjdEFCMjlkbGhYY280YlVJMGZWdDVFVndMZStzZFM0?=
- =?utf-8?B?QUZma2FpSUV0V21WMkNxSVRja3VoQ01uNjJ3MFVPM0FoYlZOWHJPbjFMVkk2?=
- =?utf-8?B?NEhCSXlVRlBTKzhPblgrOHZKNkNxakYyNElxTVJiSlhBaU16M0xUdEcydjh4?=
- =?utf-8?B?TmszenNwZE51OWxxbVN2TmtOeFpSSnBPRWRJek5DQkxtTENIbjMzWVBsa01G?=
- =?utf-8?B?WWlUNFFGY29sTjIrKzBMdStwRFFFYUx3aE9qNW4vcHpRTVQ0VU1iLzRxSE1X?=
- =?utf-8?B?MDNvM0JkVjdRY2xKMlhNazhjd2FsN2laSWlVaE81SGhmNlJ5dDhXQjhrbUlX?=
- =?utf-8?B?Vnorc0RpUzhwYVVDWDZjUHNGcm1ZZDVpMS9mZE5pWGxKVExrU0tMSVRMUE1M?=
- =?utf-8?B?NUhkeStMaGZvL0VSN1VPb1krUDRBaEMwcklmU3h5R29WeUxhRGdEWHZ3UXBB?=
- =?utf-8?B?UFFVQkxsWFVNeTJKanhvdTh2TGs4QjdVNG9XYTM5OUUyb0w3QnlPWW1TcklD?=
- =?utf-8?B?b3NLNnFMSFVCdU9RTkJuL1pUYUNCMVZCK040MEVhVUc4R0ZGNUtsS2J6QVNN?=
- =?utf-8?Q?XHEthgEa+/MBLiouga409dlRI?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f5ddf2e-498b-4b2e-10fe-08dc91f929b8
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 13:50:51.3938
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l6K59Bgp4weuzUgOohO8A1zoK0plgQkmtaMkZVkBwjoEZw3e5rKdXqsEumwOBwhwKdZOtw2ONGXyPUsgN1Vnow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5781
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b14879eb-cbc9-4e53-b703-ab7b451b7687@kernel.org>
 
-On 6/19/24 04:30, Borislav Petkov wrote:
-> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On 21/06/24 15:43, Daniel Bristot de Oliveira wrote:
+> On 6/21/24 15:37, Juri Lelli wrote:
+> > Hi Daniel,
+> > 
+> > On 27/05/24 14:06, Daniel Bristot de Oliveira wrote:
+> >> This is v7 of Peter's SCHED_DEADLINE server infrastructure
+> >> implementation [1].
+> > 
+> > I finally managed to give this a go and can report that it works great
+> > for what I've seen. :)
+> > 
+> > So, please consider this reply a
+> > 
+> > Tested-by: Juri Lelli <juri.lelli@redhat.com>
 > 
-> A long time ago we said that we're going to move the coco stuff where it
-> belongs
+> Thanks!
 > 
->   https://lore.kernel.org/all/Yg5nh1RknPRwIrb8@zn.tnic
+> >> SCHED_DEADLINE servers can help fixing starvation issues of low priority
+> >> tasks (e.g., SCHED_OTHER) when higher priority tasks monopolize CPU
+> >> cycles. Today we have RT Throttling; DEADLINE servers should be able to
+> >> replace and improve that.
+> > 
+> > ...
+> > 
+> >> The problem with DL server only implementation is that FIFO tasks might
+> >> suffer preemption from NORMAL even when spare CPU cycles are available.
+> >> In fact, fair deadline server is enqueued right away when NORMAL tasks
+> >> wake up and they are first scheduled by the server, thus potentially
+> >> preempting a well behaving FIFO task. This is of course not ideal.
+> >>
+> >> We had discussions about it, and one of the possibilities would be
+> >> using a different scheduling algorithm for this. But IMHO that is
+> >> an overkill.
+> >>
+> >> Juri and I discussed this and though about delaying the server
+> >> activation for the (period - runtime), thus enabling the server
+> >> only if the fair scheduler is about to starve. We called it
+> >> the defer server.
+> >>
+> >> The defer the server start to the (absolute deadline - runtime)
+> >> point in time. This is achieved by starting the dl server throttled,
+> >> with a next replenishing time set to activate the server at
+> >> (absolute deadline - runtime).
+> >>
+> >> The server is enqueued with the runtime replenished. As the fair
+> >> scheduler runs without boost, its runtime is consumed. If the
+> >> fair server has its runtime before the runtime - deadline time,
+> >> the a new period is set, and the timer armed for the new
+> >> deadline.
+> > 
+> > I also wanted to pay particular attention to this part implementing the
+> > deferred server, but failed to find enough focus time for now. I will
+> > keep trying. One thing that I wondered though is if this change (and the
+> > move towards this replacing current RT throttling) would call for a Doc
+> > update. What do you think?
 > 
-> and not keep it in arch/x86/kernel. TDX did that and SEV can't find time
-> to do so. So lemme do it. If people have trouble converting their
-> ongoing featuritis patches, ask me for a sed script.
+> Yeah, am I planning a v8 for the next week. It has no code changes, just a rebase
+> and the addition of documentation.
 > 
-> No functional changes.
+> I am not mentioning the RT throttling in the documentation. Instead, I am treating
+> this as a new feature on its own, which is inline with the comments over the code.
 > 
-> Cc: Ashish Kalra <Ashish.Kalra@amd.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Michael Roth <michael.roth@amd.com>
-> Cc: Nikunj A Dadhania <nikunj@amd.com>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> I will add an rv monitor to it, extending the documentation, but I will do it
+> on another series... once we get this done.
+> 
+> Thoughts?
 
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Works for me! Guess we can deal with the RT throttling references in the
+future when that gets eventually pruned.
 
-> ---
->  arch/x86/boot/compressed/sev.c                      | 2 +-
->  arch/x86/coco/Makefile                              | 1 +
->  arch/x86/coco/sev/Makefile                          | 3 +++
->  arch/x86/{kernel/sev.c => coco/sev/core.c}          | 2 +-
->  arch/x86/{kernel/sev-shared.c => coco/sev/shared.c} | 0
->  arch/x86/kernel/Makefile                            | 2 --
->  6 files changed, 6 insertions(+), 4 deletions(-)
->  create mode 100644 arch/x86/coco/sev/Makefile
->  rename arch/x86/{kernel/sev.c => coco/sev/core.c} (99%)
->  rename arch/x86/{kernel/sev-shared.c => coco/sev/shared.c} (100%)
-> 
 
