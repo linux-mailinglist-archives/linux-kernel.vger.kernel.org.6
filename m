@@ -1,208 +1,123 @@
-Return-Path: <linux-kernel+bounces-224979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D2A912982
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:24:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A24912986
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FED92824F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:24:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B8881F238CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865E26FE16;
-	Fri, 21 Jun 2024 15:23:53 +0000 (UTC)
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA876F2F0;
+	Fri, 21 Jun 2024 15:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dRuE8Jiq"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D208847A66
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CF65CDE9;
+	Fri, 21 Jun 2024 15:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983433; cv=none; b=C18ZrPvKz7UNfFWmdV+CZLh2Euzql6NFF/sAiysFfRC68mM3qhsAcl30LmOhnNiosecd1QsUEfiLUAKon+mK47865u/rZ9djoG0fYv5hmHQws1Ajpce66ZP2mGG1cnYlq5tyvqnXDJXYuK3DcWyBu4PoQ0Qij5psvwlXEsh0Yf0=
+	t=1718983450; cv=none; b=VgbNAQOKo9mAXzzPrOevZ4czxYpVrm+NhnH36nNdlH0qmG2SL0+yVEg9p2Va29CaRqvLhGd4csnHcWi+RGHxzCgozDgGCPqEBGixSAyVe6U/IhjOdq/ViohdkS7jwVLoC33Yvvs/JfGt4Jg8l7Z76L3XSyxXddeLU/Id/rBZLiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718983433; c=relaxed/simple;
-	bh=GbxrimKpnCu8pEGr/Ptk8gaTnt5JFxC58RLlMvrs9bQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J4GRwfOYehzEQ0KThtfnzcw7Hu4lIpP3E87tMV37EK+8ZUu15+dbzpuJquLzv5ulMflPXTCCeWDWWTrFtdnHTJQFr2apb64LG5kf2qKw1dkOBWczfneHGaA7ELVqXwJQxfXM6qkp1P2B3b4fia4p+G5pz1IlkngOfCb1SMlRHaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 770D660008;
-	Fri, 21 Jun 2024 15:23:39 +0000 (UTC)
-Message-ID: <caaeb1d1-12c5-4d07-b299-34734f0099ab@ghiti.fr>
-Date: Fri, 21 Jun 2024 17:23:38 +0200
+	s=arc-20240116; t=1718983450; c=relaxed/simple;
+	bh=vmGPQ/nGhuUSDMAHeSfDoAofA9bUXkDZKgTZ5Nm88IM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EvL9qzmEbyk0ZeiHzoBZkQBqx3C8JOOhNcDE65iXDxXSaMlP8tT87xx93wZ1D7VG3VXEFXyAhBY3sH3C8K4mp5MvPTPIwOOpYTjFFpo90+iLgi6SASBjBNpKfdBFRDl6698vetEPP+uaCN56Q2CSljh4g9+zp+59CYfsy+LSiO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dRuE8Jiq; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LFNx7b081622;
+	Fri, 21 Jun 2024 10:23:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718983439;
+	bh=PKbOMgWFMOAROfionESq/dKnFk1fBHFBELlmG6LkIG8=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=dRuE8JiqKNCrnQyvJcF0O7751mjK0nCe3S14cSklrliLsqWNiwbVmEob6J/JROI8n
+	 aLWChHToeEd0TwBpBA8Hdo1N72u/oZGYory12BA5fybUFEOJV/Vc70avjfAJXrV00E
+	 xX3rsuURi8TJanSs0Eq7m7fe96IUYY772DQVFcBs=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LFNx5X044523
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 21 Jun 2024 10:23:59 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
+ Jun 2024 10:23:59 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 21 Jun 2024 10:23:59 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LFNtA7097663;
+	Fri, 21 Jun 2024 10:23:56 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, Nathan Morrisson <nmorrisson@phytec.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>,
+        <w.egorov@phytec.de>
+Subject: Re: [PATCH v4 0/2] Add PCIe overlay for am642-phyboard-electra
+Date: Fri, 21 Jun 2024 20:53:53 +0530
+Message-ID: <171898028150.2272421.11282073369892997083.b4-ty@ti.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240613195012.1925920-1-nmorrisson@phytec.com>
+References: <20240613195012.1925920-1-nmorrisson@phytec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/1] riscv: mm: Add support for Svinval extension
-Content-Language: en-US
-To: Andrew Jones <ajones@ventanamicro.com>,
- Mayuresh Chitale <mchitale@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- Samuel Holland <samuel.holland@sifive.com>
-References: <20240609112103.285190-1-mchitale@ventanamicro.com>
- <20240609112103.285190-2-mchitale@ventanamicro.com>
- <20240621-469a3d5eb7bb2c0cc8ae0611@orel>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240621-469a3d5eb7bb2c0cc8ae0611@orel>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Mayuresh, Andrew,
+Hi Nathan Morrisson,
 
-On 21/06/2024 11:15, Andrew Jones wrote:
-> On Sun, Jun 09, 2024 at 04:51:03PM GMT, Mayuresh Chitale wrote:
->> The Svinval extension splits SFENCE.VMA instruction into finer-grained
->> invalidation and ordering operations and is mandatory for RVA23S64 profile.
->> When Svinval is enabled the local_flush_tlb_range_threshold_asid function
->> should use the following sequence to optimize the tlb flushes instead of
->> a simple sfence.vma:
->>
->> sfence.w.inval
->> svinval.vma
->>    .
->>    .
->> svinval.vma
->> sfence.inval.ir
->>
->> The maximum number of consecutive svinval.vma instructions that
->> can be executed in local_flush_tlb_range_threshold_asid function
->> is limited to 64. This is required to avoid soft lockups and the
->> approach is similar to that used in arm64.
->>
->> Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
->> ---
->>   arch/riscv/mm/tlbflush.c | 58 ++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 58 insertions(+)
->>
->> diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
->> index 9b6e86ce3867..49d7978ac8d3 100644
->> --- a/arch/riscv/mm/tlbflush.c
->> +++ b/arch/riscv/mm/tlbflush.c
->> @@ -6,6 +6,54 @@
->>   #include <linux/hugetlb.h>
->>   #include <asm/sbi.h>
->>   #include <asm/mmu_context.h>
->> +#include <asm/cpufeature.h>
->> +
->> +#define has_svinval()	riscv_has_extension_unlikely(RISCV_ISA_EXT_SVINVAL)
->> +
->> +static inline void local_sfence_inval_ir(void)
->> +{
->> +	/*
->> +	 * SFENCE.INVAL.IR
->> +	 * 0001100 00001 00000 000 00000 1110011
->> +	 */
->> +	__asm__ __volatile__ (".word 0x18100073" ::: "memory");
->> +}
->> +
->> +static inline void local_sfence_w_inval(void)
->> +{
->> +	/*
->> +	 * SFENCE.W.INVAL
->> +	 * 0001100 00000 00000 000 00000 1110011
->> +	 */
->> +	__asm__ __volatile__ (".word 0x18000073" ::: "memory");
->> +}
->> +
->> +static inline void local_sinval_vma_asid(unsigned long vma, unsigned long asid)
-> Please name this to
->
->    void local_sinval_vma(unsigned long vaddr, unsigned long asid)
->
-> to match the spec's naming. But, if we want the arguments in the name,
-> then it should be something like
->
->    void local_sinval_vma_addr_asid(unsigned long vaddr, unsigned long asid)
->
-> but I think that's unnecessary.
->
->> +{
->> +	if (asid != FLUSH_TLB_NO_ASID) {
->> +		/*
->> +		 * rs1 = a0 (VMA)
->> +		 * rs2 = a1 (asid)
->> +		 * SINVAL.VMA a0, a1
->> +		 * 0001011 01011 01010 000 00000 1110011
->> +		 */
->> +		__asm__ __volatile__ ("add a0, %0, zero\n"
->> +					"add a1, %1, zero\n"
->> +					".word 0x16B50073\n"
->> +					:: "r" (vma), "r" (asid)
->> +					: "a0", "a1", "memory");
->> +	} else {
->> +		/*
->> +		 * rs1 = a0 (VMA)
->> +		 * rs2 = 0
->> +		 * SINVAL.VMA a0
->> +		 * 0001011 00000 01010 000 00000 1110011
->> +		 */
->> +		__asm__ __volatile__ ("add a0, %0, zero\n"
->> +					".word 0x16050073\n"
->> +					:: "r" (vma) : "a0", "memory");
->> +	}
-> Please create an SINVAL_VMA instruction in insn-def.h to allow the
-> compiler to choose which registers will be used for asid and vaddr. And,
-> since SINVAL_VMA will be in insn-def.h, then we might as well add
-> SFENCE_INVAL_IR and SFENCE_W_INVAL there too for consistency, even though
-> they don't have operands. We should still create the three static inline
-> wrapper functions here though.
->
->> +}
->>   
->>   /*
->>    * Flush entire TLB if number of entries to be flushed is greater
->> @@ -26,6 +74,16 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
->>   		return;
->>   	}
->>   
->> +	if (has_svinval()) {
->> +		local_sfence_w_inval();
->> +		for (i = 0; i < nr_ptes_in_range; ++i) {
-> Where do we limit this to 64 as the commit message states it does?
+On Thu, 13 Jun 2024 12:50:10 -0700, Nathan Morrisson wrote:
+> Remove PCIe pinmuxing from the am642-phyboard-electra device tree and
+> provide an overlay to mux and enable PCIe.
+> 
+> v4:
+>   - Add explanation for disabling usb3 to commit message
+> 
+> v3:
+>   - Fix typo from .dtbs to -dtbs in Makefile for overlay testing
+> 
+> [...]
 
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-If the number of ptes to flush is greater than tlb_flush_all_threshold 
-(= 64), we don't get there so this is indeed limited to 64 entries max.
+[1/2] arm64: dts: ti: am642-phyboard-electra: Remove PCIe pinmuxing
+      commit: 927718d246fcf14b2b642691936f2abe2e80917e
+[2/2] arm64: dts: ti: am642-phyboard-electra: Add overlay to enable PCIe
+      commit: e9bb631b3eb41309063fd8ad804a3935665009a4
 
-I think this limit should be different when using svinval, but we can do 
-that later and the goal is to allow the vendors to come with their own 
-threshold anyway.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Thanks for reviving this Mayuresh, I'll add my RB in the next version 
-when you fix Andrew's comments.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Alex
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
->
->> +			local_sinval_vma_asid(start, asid);
->> +			start += stride;
->> +		}
->> +		local_sfence_inval_ir();
->> +		return;
->> +	}
->> +
->>   	for (i = 0; i < nr_ptes_in_range; ++i) {
->>   		local_flush_tlb_page_asid(start, asid);
->>   		start += stride;
->> -- 
->> 2.34.1
->>
-> Thanks,
-> drew
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
+
 
