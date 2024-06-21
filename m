@@ -1,238 +1,238 @@
-Return-Path: <linux-kernel+bounces-224797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B519126F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:46:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D299126DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84491F26FF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:46:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9F03289690
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F131D55D;
-	Fri, 21 Jun 2024 13:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576341CD38;
+	Fri, 21 Jun 2024 13:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dKoI40pu"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2066.outbound.protection.outlook.com [40.107.102.66])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Bo+Cyb2Y";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HkOzS7QH"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C71EAE1;
-	Fri, 21 Jun 2024 13:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E50412E5E;
+	Fri, 21 Jun 2024 13:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718977526; cv=fail; b=SyDCFO5d12BZJJLRJRw1Z0ceAPCIopXN93w6v9lEfs7Mm0+tK9udQ/S48j5KbLPwfwsrttFVDBJl0Rf3ycBQwQPTnaYr3AyXoTNMd0p2ecu/i6iSacSQW75rXxla9u5njQv3OXGmivEadXjT5C4viSnJCEyYq62jbjGgw4mYTxM=
+	t=1718977273; cv=fail; b=PCwZoPaHj9RaE9Bvo4l/9Wr3/UH2r0Od26Ju3IVIb5EGFSfIhPuqZXZ7MDN3LnSicEG43NeRVAFLm1rxprwknpQNGpozXX0fx1lbIrIZcWy7TtrxrsQXCuP7IC6CEcCQxov/8Ty0eXOSmwlWa3CezxbIxfQ893S6UvAz5ldN2Ig=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718977526; c=relaxed/simple;
-	bh=3ZrbkPvGoaRf+9JcCXtfdmnAY5rncolct6Jkv60rgQE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QYgAu7lfITAodn8SbUZpusf5NQGbd8Yvj9nm9lz4lgARbBVsdVvRo3klJpmDJnqDAGzpMtRZKwjbrmm8FT63n5kLVU813M+9ziqYQHFC4Dl+Z6Mvwm1827JiEf78b6xxEj6D1A+pGDujdsd82ZEGiUMzqbpMZUYcGLGMwWnv2Aw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dKoI40pu; arc=fail smtp.client-ip=40.107.102.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1718977273; c=relaxed/simple;
+	bh=ILCkVdvvDENIS8JAIfqexK5pIvE8gQqsOSvSixfl6uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nbroYN+b1Gf8J9+mWtYK4oq43ZeRbQ2QWe28py6xIkVZrlHsV88GNasQjMJlWibwHQPMT/sEfhYEg3rcvi6RkwdFe7MVSJR+kWSDSgs0Uzd+KS6zJzSrlDW1IaG2Pq6fobjmOB7e79ZCeoAG6YxymskNUQgoS+t5Wqf11rQ5VSM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Bo+Cyb2Y; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HkOzS7QH; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L7fVMs026946;
+	Fri, 21 Jun 2024 13:40:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=vr8opnYJPnz5uxS
+	kJfue2PumZxha72jMw9SYifdURpI=; b=Bo+Cyb2YN1X+dLVU/9kdJxpSobftPgK
+	a7kDPMsY4S75bY+hzXQVvFNUpGeGaw+tY3t7322SrDSbKF1EU0RIuZXzsgR2nwRa
+	SLKfCIHIFMGI8potNzdWkvf5kZex8wgR37UH5KL1fPDZdnhJb4T9v1qIcrE5a2ix
+	pPXazXGx/LeK47wb/phYZSJ7fXQ+gzj5TCJuf6mOLjlGWahYth5rX70/3K6lREiA
+	+isuBl+oaW5U8RoC5kJbW18N9oZs7xVgyjewtfC96BKCxg9s/JbZCxxhOUcQoB1o
+	ttmRe/QQH83GaX1L9M2Va2dJnj9BLVv1EZw6vJYXfs6GzZl5TTpVKag==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yvrkjsstj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Jun 2024 13:40:55 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45LDAgW4025304;
+	Fri, 21 Jun 2024 13:40:53 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2048.outbound.protection.outlook.com [104.47.55.48])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yvrn646ad-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Jun 2024 13:40:53 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EaF6XDt5oXK+vYQAwlIUfN6JHuVueRfVoBdbMKidpvZheS3v95xJSjH8hNpA8qHQfjkdlKaxJpQH5QA9jm3qGS247kZOhVFPnDuDkXwQk+kd/0KMAuo10RPFak0u+H0+a9gfad5R17N7nYZDyjWmBmQqdV9gs1vsaSS5sg0RE9yGlpXiTSbwx7H0CuGBJLPv/tBPMYbZJtmh6MFeDbMgKSJZq1Ne4U3G7O+t1RwabovU/LrDulI1owylioNEvkG19sxoYoIA//vGskEpYozfRebUe8OsiyGkdknoW7Ggv4aXNl6JSu5qvKZ5DBH38q8Ix/9J/tJR/sK8FDTSeabHhw==
+ b=ZZ2pUhiE3tgxx3XU97SKFd/VHC9joAJ24xleiDKGdGXS1qVr6/0+UHWQhBiTNrCh8/sjWPKqSEKtKgoJuJgPcs0zN3juriWA0ETIKT1XnBOsAK1B7FSsUmlMeT2p7ZYqeUB0d6m3cuzAy7Mj1k7oHsd9T6zrFdbCcc3Q1UEd+Qev51QjDnapEDdO13VKwslh9lS6Ui8jj4lNIBYx3uI6HxSfOxND+y8uJYMum3j7yAe/2E4/03ATkkiSvOK1HCBeqTHvWmDvw+pR2T85Uw7Z86K2Oyak083bnDIz4e4vim5wM+YAasoljrd8bUlOI2yUDRZacaHQsU7Ddz32CvoJkg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZWqFxH32eMGp7ZZHQKb2AtZwawQdd2H5mkR806QZQWE=;
- b=OXuc4zjZUm3v2yVkddmFQgjRryIhML012KNRsllnyRbJcKGSeTw74bHOnY8oAp6o9BI30gwe62NWzMyeU6b1VCraWyEAGGtWR8hzEclzhOABV4fo7WfHF5y2j6kRjVyx9RPB/aiPehkoT3kqnYOPIu2t58OUT8GcYOk2Vb6gWa/l3251RIamLM045XiXoCxvTagwy5vR/is4za8fXnbBbUXU5pqEf6UXohhDXJZwn7JxZx8/RDIzpoLOU5atUCR29q0BWPsyEw46erRn0KXYYZyl5dqTOToM6TyRqJiwJmPCxIbcYH0/NK4tNbR/0BE9glckj1ODSVEsLLjzUk+dMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=vr8opnYJPnz5uxSkJfue2PumZxha72jMw9SYifdURpI=;
+ b=V6VGQrx3oiXq6aactHqEs+gESFZF0N58U6LtqvrPKizDlnVfkdyOJ1AVMVtaF1ZSexsSwR9n4f2ObjRtNItSFH10q8hd0LisvtfkIQO1ulP3tqDPdeVhCJj1bMSHNqZmW2JdUdded07eBlVPA1sjpmtNg7Xncy7ngW9y/g6upJShHn+KU3jsxyPPM3Yrr/8D9ZbYrpDNoVXsz9N6GXJBAVgiGZSQinDEKLZnYdcr7SQpFhfPro9WLXYLnzQ9DTdi/IsY1zY0SvxgG14JJcHcCeSDz1r4J2qnoqIjEiA0+hdmf9EAnkxMRcnRv7Xewz/HTIBGUnoxcND65BEJwGzC5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZWqFxH32eMGp7ZZHQKb2AtZwawQdd2H5mkR806QZQWE=;
- b=dKoI40puBJdmt4HT+VrUuOMRGAdA58bjUgC4hP/xsyyQORMlw3qadbT7HgLp4dit1EwBKFDGgrkJ+ej6eMBptXOYlaY3ZKTdmyh0muWgMp81HmhfINDnt5Xa7lhIyXh6qM6D7kW4nqqQf9QXTf8OMqyEPJkI04IAH/V/B6EQa2U=
-Received: from PH8PR21CA0004.namprd21.prod.outlook.com (2603:10b6:510:2ce::11)
- by DS7PR12MB6069.namprd12.prod.outlook.com (2603:10b6:8:9f::13) with
+ bh=vr8opnYJPnz5uxSkJfue2PumZxha72jMw9SYifdURpI=;
+ b=HkOzS7QHX8K/8fPV3nDPROWqiC7ra209m+KZtJGkLw4xGieaL07GgDaT5+jPmgHO6v6WdplB1WhAB8Hl75I/5kBOQKViaFw0m7X84k2VH5dbTkoNq/bw9rrUe49PBWIM7+ZKaCxDrZGgyufykPd3dKzLtnQexRHr2DgpSuKWBR0=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by PH7PR10MB6652.namprd10.prod.outlook.com (2603:10b6:510:20b::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.22; Fri, 21 Jun
- 2024 13:45:19 +0000
-Received: from CY4PEPF0000EE3D.namprd03.prod.outlook.com
- (2603:10b6:510:2ce:cafe::e1) by PH8PR21CA0004.outlook.office365.com
- (2603:10b6:510:2ce::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.14 via Frontend
- Transport; Fri, 21 Jun 2024 13:45:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EE3D.mail.protection.outlook.com (10.167.242.15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Fri, 21 Jun 2024 13:45:18 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Jun
- 2024 08:45:17 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: <kvm@vger.kernel.org>
-CC: <linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<x86@kernel.org>, <pbonzini@redhat.com>, <seanjc@google.com>,
-	<jroedel@suse.de>, <thomas.lendacky@amd.com>, <pgonda@google.com>,
-	<ashish.kalra@amd.com>, <bp@alien8.de>, <pankaj.gupta@amd.com>,
-	<liam.merwick@oracle.com>
-Subject: [PATCH v1 5/5] KVM: SEV: Add certificate support for SNP_EXTENDED_GUEST_REQUEST events
-Date: Fri, 21 Jun 2024 08:40:41 -0500
-Message-ID: <20240621134041.3170480-6-michael.roth@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240621134041.3170480-1-michael.roth@amd.com>
-References: <20240621134041.3170480-1-michael.roth@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
+ 2024 13:40:51 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%4]) with mapi id 15.20.7698.020; Fri, 21 Jun 2024
+ 13:40:51 +0000
+Date: Fri, 21 Jun 2024 09:40:49 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        akpm@linux-foundation.org, willy@infradead.org,
+        quic_jjohnson@quicinc.com
+Subject: Re: [PATCH] tools/testing/radix-tree: add missing MODULE_DESCRIPTION
+ definition
+Message-ID: <rs6fzee44ilw6rhq2wauqwxdgnkgy3wudgr5alf2fuolrjm55f@32sznnbteorf>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org, 
+	willy@infradead.org, quic_jjohnson@quicinc.com
+References: <20240617195221.106565-1-sidhartha.kumar@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617195221.106565-1-sidhartha.kumar@oracle.com>
+User-Agent: NeoMutt/20231103
+X-ClientProxiedBy: YT3PR01CA0004.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:86::7) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3D:EE_|DS7PR12MB6069:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33a74383-3b02-448c-83ce-08dc91f86363
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|PH7PR10MB6652:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5ad39c5b-1b3b-4edc-c4f5-08dc91f7c419
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|7416011|36860700010|376011|82310400023|1800799021;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pNJ9YuxAQYy3pByXeOIYeUTRLUqJmyLMlS8XL83FiQ3hnQE9UcVVwnWl0pHI?=
- =?us-ascii?Q?mwbTGSaWA8bKTEj2sRS72GhQXq5/tli0cVb08E6ZaReLi4iE+BZpsqQeC4aD?=
- =?us-ascii?Q?20dETrAEx05sUSeLCQXRhco4N0UoIqE5KP9BtON6KkNShE/rqSLz4LQYv16Z?=
- =?us-ascii?Q?W6FFnztfwPpCIdWuqgFuTfkPB9imblppo73nVYOydeBuMMYTRL2mS85vvVxn?=
- =?us-ascii?Q?Sdy6EKacYyhI7OKz9EOIAYP8JACHhpLRw6eif9Y/31lLxeOBMxFejCTvUxXg?=
- =?us-ascii?Q?Tz7kRWoG3KcFVVsjgMsPlm7JQ/t8cT89oFji9hlKkEkaXDvgLQ3JTRPAr748?=
- =?us-ascii?Q?ze+ugNl8llTKVLA3UIzPmr8F8kIdM/CyT3382Uw7oUTYHNUfwr6TrabfTiBI?=
- =?us-ascii?Q?pYSmoWCcBG+EQAp/l+bCCzR0958IOBkyWrWSj0pIu+3zUu850HimFFmvWsI8?=
- =?us-ascii?Q?an+jO2iuE/6byaSIYMMk/bQMqj8yJElfMqAcCiHudXPuxQFXzkOevTMDySoH?=
- =?us-ascii?Q?mvN+H6moq/HZOg3R++xHgXBw0HwZkXr41vzemXrXF/b9PqOosKpF21IO6D6X?=
- =?us-ascii?Q?Ow+D6B4wncFMOYHfJsKkexPgbqgzawnrspzCqZSga+fioIhtcESFj7D/Ay72?=
- =?us-ascii?Q?i/G3awvrQNDCwft2hXOM5Pv5yD0H3z+U04Ha4StfFwn34dGCRtWXEU87kV71?=
- =?us-ascii?Q?AcKShh+kVQT5QMC5AsjapB7rW0VcEI+kgnIEM2qyZwNkfDx33+e5Ll8zSyP1?=
- =?us-ascii?Q?tBdd+5HkIq6Tec69TrQNK/cRAIwpT8kSY8CEOm93wgSPsRcKLXr/LFhdn8ik?=
- =?us-ascii?Q?1xq4Pnqihpay6Bn1m9CqXe3leEbD/G9PeKz9/GEfexPLD1+SK9bV+YFh4XXJ?=
- =?us-ascii?Q?Fu5Bz0xN7v4V0IOil0tmlZvuvtdbb7cjBjVPnY8AiPymvVaHjawGsH+EE08l?=
- =?us-ascii?Q?SZ6YJpGNdgjEu5PluF52O55AqMeNtfplUjf3/blzHf+tOKCfDYkiRzBzooVA?=
- =?us-ascii?Q?uDP+NUOL16gJKWLZgLysRIA16DlMzMx0xOuv3EGnb4uu0lH3YoW++JkU44Ht?=
- =?us-ascii?Q?QJdFtZEuBJA6/Tf3Lk+KH/GWpuIiHworwxvBL2+jAkczErXhO6EJLLcnkzXo?=
- =?us-ascii?Q?wGOgL0nsI/p/5jEWW7Ls00JeBWpCpSaSQccchsKNWBiL5j5wLiK8Gv35HV7r?=
- =?us-ascii?Q?E7Dw9sAWpl5RJLsQC4fNa9h6T0vTq6aaiuAgRD7ZCErGLjEmgepEuFcSfujD?=
- =?us-ascii?Q?4H+l35fKILHjopDP9fTe5EyYzxZNTScFK7VGuNkdR9R9PGtigp9GsXOPOz8L?=
- =?us-ascii?Q?iONdQqcXCyHvftbhUou50O2E2YQNMO/j0piveQP8i8FWuX19+s+XIWTQHC+6?=
- =?us-ascii?Q?30jSsuDAlJiOB/2TvWVSwcDXFuGSRRNRPDOuJj5k/ce/OqHqNw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(7416011)(36860700010)(376011)(82310400023)(1800799021);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 13:45:18.4525
+X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|366013|376011;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?YLLT2hAO9EGT7UcZMdiBrsVaM9PLtykNnkpgoMUSYTovogXvKuB4Ss1H7bYe?=
+ =?us-ascii?Q?DouXZpyTJ4LtcvrpFQtF5irCu6dwbGE92ufIZT/ftI9W0wSyttkQ6wxmGALK?=
+ =?us-ascii?Q?NNVbxRXFVNDydbylj8+5R4yqg4RxVVJoT/3dUkPT+2HpdsYlSKeBLPpnFDfu?=
+ =?us-ascii?Q?I5G/eVqpL4BEfinTMCd90kV1beir609JeRxWECat7Gphgdc2xcJbWQK4byA9?=
+ =?us-ascii?Q?+Jgzc+Uz4x1r/JyzZQsHw5ejPHGcYnEOYTuJsNIA01yR2iOFURhsH7nrRC/w?=
+ =?us-ascii?Q?C/eYwVEtgxSE8fxBEdUzmqLgu3qp6SSkbKZ/Ir5ScHXKIrF74+lkmnZjS+EJ?=
+ =?us-ascii?Q?Qq+x3WsZLH6EndWnlR0PO9Qb2a9MbjQAh1OmHGSlxjmvlEvggKfMMRSIYOLS?=
+ =?us-ascii?Q?JZudRGSWL/DOHIng/oHNaUScSaOA1WPwbbgSGslm1SrbRJaMyU0XinVBos3r?=
+ =?us-ascii?Q?3I1suhVks1YdHtWqhpNTofOQ/hDthhXt7hR1colTPicaAEmomPlJGkvwSR9+?=
+ =?us-ascii?Q?lVJrC5t/aEItuF1nT6ZFuU13uVxO2F5vyoLQpgXSthAXOf53byg065z4q7sY?=
+ =?us-ascii?Q?QyNUMsISzDIGaaAAi9kYXNObjacAyw3uK6XoEpfjGim3TQkfdfhjJOIISL6O?=
+ =?us-ascii?Q?0Jdistp3Bfou6/x4VzwN+XifS+CFCRzOz+5ce7LDTmuLLoDUkbXdZpVnK8XI?=
+ =?us-ascii?Q?7xc47d8km/8ZwxKb7Tc8gHARJkNiuNWuyCbqTQDXtNJnC7MYf9oJfe6bIMHV?=
+ =?us-ascii?Q?lXuDwo9jdWXHsHQliCALyYpfKx3kMv8NXmbNJ3LvQkGXzmIo+133Y3gOvuop?=
+ =?us-ascii?Q?GJHD7jPNAqVoKbbihC1aeL5CUnM5S23OTP4QLxWHumvvOwHQNvGOYAlhFY2V?=
+ =?us-ascii?Q?fPLlG5PVsolQ9mS4KjfFYeqqUp/fFXEsnS6vLWBJM41PHrtp8qZpYW9Fiiuj?=
+ =?us-ascii?Q?VTqfWdDlwYuiCDKGGX8eYPWnZeTBDPDd4X4aAU2DNjolHmXVbQFlwW/RzRPN?=
+ =?us-ascii?Q?lojI0vboIlGZ5JrO9isuLjOvTMAMawMeDYrRD0mWIQTlArtznwAaxYYeHOTU?=
+ =?us-ascii?Q?tT6IcHnwJBoDMlwEYs78xiLoFZwdiD163x4w1QwhsS6IfJ2aSvUhfv/UKUno?=
+ =?us-ascii?Q?0aA/cLtUBhf1B3r23zbydLdr9fFso45dwEtSUVo3GrFgTNS66YM6apjF4Uq2?=
+ =?us-ascii?Q?D3DeXKtG6TMExv8nZK0+o84Lfldt4is0RnsPP+NW/GCRFj9hXYwel5jjDk4N?=
+ =?us-ascii?Q?2gXp1dUOVGaWEQQt70BrU0Y6GTWyKPUmcWOH9nRfFFD51nDYDmHTKO9cgKmh?=
+ =?us-ascii?Q?bMInrR/PHfh9bvgtjZUs72zw?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(376011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?79JCUiTNVJqRDO6gDy9zoDJ2ySgSbtkKMUlrYFcvA1u15xaLnxeRkyy7g2LK?=
+ =?us-ascii?Q?NPSlOmiy/sG+eeyT7s/20u8Hqtot2zMF8mcvEe+1auPtfPdkveHT091u6egu?=
+ =?us-ascii?Q?9cDESiRZNI9WhdHGLKTs9kYWm6JcteGPWsijxrRo7O7ZUgN+NbDNO/WdFD75?=
+ =?us-ascii?Q?7epCPvJVV25e+uPpAuxRB7sgy1R4v3F1Kh9a8VDibXf1fZwoGey2DewdB+Xq?=
+ =?us-ascii?Q?f0Gi1Mi7waSd3JN8k/x3d42LN2SZH5iy77QNOuZmTACgUTTtbj8rPtOcuZ1h?=
+ =?us-ascii?Q?97I+JAo0BNRfZD0ySTEE9gkgj2TCTxAML+r2exhgI5Mh19LUdGsQTO63wP+Y?=
+ =?us-ascii?Q?CCVRbz0/7YnUZhcySbyH7cN3euRJkcBdRNaNtoqqF4YxSKUgQVSes4YDXDZE?=
+ =?us-ascii?Q?kDwzRW8AL1yfHwkiesMGwmd2lKu7Dz6qqOGtvgd7zT6yyzbvWXkmTqWVARXp?=
+ =?us-ascii?Q?CdteLOZO6ZO/Xop8t1Y+2Rxe7VdWdPdM8RTwVb3mdRT8QoTtDJuNPuPOjNiv?=
+ =?us-ascii?Q?fX1OcZSRxDVwzb7OCEqzD7VaLZ8daFWRmSy6Xo45D2VZGJegU2z6ewts3q5A?=
+ =?us-ascii?Q?qHyBBdG+thay/WaJsvMTAl1+uVW2Xxd+c1HoyikLKis/Ch9uRAZWAzmLbeEH?=
+ =?us-ascii?Q?HcAJGkWtScSznMOiE8q6JIExf5YCHNZNo3SYlQi7XDUTrfcHO9zMfxafUr/G?=
+ =?us-ascii?Q?vhm/pI3f2eR8MhMcxGO32ecnzAShhIXJMZVdMrHbpEuYM1xpiuDVnuVzj3Td?=
+ =?us-ascii?Q?Fk5znsHYvgtbZyfF5Hd0ZI3CdCiwOoVyNK43RJX4OiRwgKhLNB4FEepjsByb?=
+ =?us-ascii?Q?vCykwWnVCo4r5fCFRqPgeUMHx1yEe5Xb+xCOUDMyMBvZeE2UMW4tYXXr5BO6?=
+ =?us-ascii?Q?UKxQdxiIj7gl+lABlZuJ+sSGk5jeyn3Y35W+8m0cS/zu12EgU2mhQ2puhJzR?=
+ =?us-ascii?Q?Bln9k9RwhvBBeECyX3dPLxYldol0Ib9ZG+9EXC1hN0kvSrGZ1ZRewAgjBKPY?=
+ =?us-ascii?Q?MYLrbQ4Kkmbs0Cs9F9ihWOooSDcqbM2pCCK9Vhzvp0st/z3AhDPSNwasMEeQ?=
+ =?us-ascii?Q?z1f/eB75LY1+5sOPA4NxQNcvV7LoP6XIwd2h/Un8MpkQdptATMg8le3nIHP6?=
+ =?us-ascii?Q?n1+Uy6FHwJRkquwId6vmBEePjSMLrijP5LzEDHkR3Heo2n8Cq8n+67DBWhgK?=
+ =?us-ascii?Q?3hn3rXbl5Iz/gCU5GRV1xe2dBCJ9igXZ0OLw/kzHcONcueqLaKwoTYpyTopC?=
+ =?us-ascii?Q?jnX3liUNJ3CyMeMfDNNQGvA6UdFL43R6IFcSNcHNY4Y5MkvVyW9ua9EiRYCx?=
+ =?us-ascii?Q?NMRn8OeKyPKCVgnlyruoBYiD4Nysy7k61R9OnWdjELGD1TBWcLEvOpJAbmOW?=
+ =?us-ascii?Q?QQMjY3PbQM01XkQ8/IxSKZQcYh0VeJxqkro0SPDpz+Htl2UuKuA7BiN15tA9?=
+ =?us-ascii?Q?lY2ycfDZ3JRXwb07/p9hCVYdBygd47BO/F63QpqM32iD/QrMuaFYGAnKY3Ib?=
+ =?us-ascii?Q?IrUp1457cHHH7oovyzvt2q5X72C16xgLuIWWkEed9wsrEjfeV0ffpno6h8Z1?=
+ =?us-ascii?Q?1HWFaVMVD7jLw8tlUssZP/te/38EJHNw6GTRCaco?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	nxhf6YfoEhLDhKLdQw6GXOBpCt7XHkoJUcQJ87r8bIE0K1R7+J/8PThiWVSZtWC6y+yxjumtEIqJ9prWS7vSjxS3SPh1YARMPOBzttd4BDvrUDXZJlF/eZ0uFyIE2zjrK4s8+p1Spg1hIcF9lnbYjM9FjE6XZA3aFsUghng3hjIm2kPq/PjYmlIGMGwrgNk7/Tt0DnqpVNBeVbjdjHS5CML88+57MmsKxLge5OaGgE6Cqj8Yv/ygVs3hMC5YmDmPDdZ4K7ioPzxMTGKlKwCH2orwO/kxvLRyiHBH+HUeypKCZ2jMoI8h4nm7fmSRBtEeoeAsT8Roq+axEzZdn4Oqca47/HSaOQ/bZ1YQ7jSPAt1dnLHZQKwZjPNee0dCvMbw93KwjTYGUdIBfzQHq/NQTI7vTY3e8sZ0QpXG1n01YHgNg3Nj1Qqpx5s9LtS70cFMKbFA7/6O7OqZV/o+ekUZI4oQMa4rNwv0nn1BN9mJeFuqxkmQE+9o6p8D433FJQIgnHFXaOeRcoo5Ts5Q0h99hnZblmrg9sLwXcA2DSyrz1XBo2Ho+DYbQyg1H37IvuBwd8aTLd2PjugxgaG6HlQS88rZPrMI8LOd1ea1bdnCTBA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ad39c5b-1b3b-4edc-c4f5-08dc91f7c419
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 13:40:51.4287
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33a74383-3b02-448c-83ce-08dc91f86363
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE3D.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6069
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s5kwE179v+K9eb5h2SOZ/hNdumxSm41J1+9feFUUsnMEI0xgzeKObjPPLmuGNqFMWrcj0C3uYNI9sjvM+1eIug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6652
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_05,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 phishscore=0 adultscore=0 malwarescore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2406180000 definitions=main-2406210100
+X-Proofpoint-GUID: yYFSzHml_cpYxYFLsJW9zpF22UzXZQFw
+X-Proofpoint-ORIG-GUID: yYFSzHml_cpYxYFLsJW9zpF22UzXZQFw
 
-Currently KVM implements a stub version of SNP Extended Guest Requests
-that always supplies NULL certificate data alongside the attestation
-report. Make use of the newly-defined KVM_EXIT_COCO_REQ_CERTS event to
-provide a way for userspace to optionally supply this certificate data.
+* Sidhartha Kumar <sidhartha.kumar@oracle.com> [240617 15:52]:
+> Userspace builds of the radix-tree testing suite fails because of commit
+> test_maple_tree: add the missing MODULE_DESCRIPTION() macro. Add the
+> proper defines to tools/testing/radix-tree/maple.c and
+> tools/testing/radix-tree/xarray.c so MODULE_DESCRIPTION has a definition.
+> This allows the build to succeed.
+> 
+> Fixes: 9f8090e8c4d1 ("test_maple_tree: add the missing MODULE_DESCRIPTION() macro")
+> Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 
-This implements the actual handling for KVM_EXIT_COCO_REQ_CERTS, so
-allow it to be enabled via KVM_CAP_EXIT_COCO.
+Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-Signed-off-by: Michael Roth <michael.roth@amd.com>
----
- arch/x86/kvm/svm/sev.c | 41 +++++++++++++++++++++++++++++++++++------
- arch/x86/kvm/x86.c     |  2 +-
- 2 files changed, 36 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index b5dcf36b50f5..8af56a4544d1 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -4006,6 +4006,27 @@ static int snp_handle_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t resp_
- 	return ret;
- }
- 
-+static int snp_complete_req_certs(struct kvm_vcpu *vcpu)
-+{
-+	struct vcpu_svm *svm = to_svm(vcpu);
-+	struct vmcb_control_area *control = &svm->vmcb->control;
-+
-+	if (vcpu->run->coco.req_certs.ret) {
-+		if (vcpu->run->coco.req_certs.ret == KVM_EXIT_COCO_REQ_CERTS_ERR_INVALID_LEN) {
-+			vcpu->arch.regs[VCPU_REGS_RBX] = vcpu->run->coco.req_certs.npages;
-+			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
-+						SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_INVALID_LEN, 0));
-+		} else {
-+			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
-+						SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_GENERIC, 0));
-+		}
-+
-+		return 1; /* resume guest */
-+	}
-+
-+	return snp_handle_guest_req(svm, control->exit_info_1, control->exit_info_2);
-+}
-+
- /*
-  * As per GHCB spec (see "SNP Extended Guest Request"), the certificate table
-  * is terminated by 24-bytes of zeroes.
-@@ -4027,12 +4048,10 @@ static int snp_handle_ext_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t r
- 	/*
- 	 * As per GHCB spec, requests of type MSG_REPORT_REQ also allow for
- 	 * additional certificate data to be provided alongside the attestation
--	 * report via the guest-provided data pages indicated by RAX/RBX. The
--	 * certificate data is optional and requires additional KVM enablement
--	 * to provide an interface for userspace to provide it, but KVM still
--	 * needs to be able to handle extended guest requests either way. So
--	 * provide a stub implementation that will always return an empty
--	 * certificate table in the guest-provided data pages.
-+	 * report via the guest-provided data pages indicated by RAX/RBX. If
-+	 * userspace enables KVM_EXIT_COCO_REQ_CERTS, then exit to userspace
-+	 * to fetch the certificate data. Otherwise, return an empty certificate
-+	 * table in the guest-provided data pages.
- 	 */
- 	if (msg_type == SNP_MSG_REPORT_REQ) {
- 		struct kvm_vcpu *vcpu = &svm->vcpu;
-@@ -4048,6 +4067,16 @@ static int snp_handle_ext_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t r
- 		if (!PAGE_ALIGNED(data_gpa))
- 			goto abort_request;
- 
-+		if ((vcpu->kvm->arch.coco_exit_enabled & BIT_ULL(KVM_EXIT_COCO_REQ_CERTS))) {
-+			vcpu->run->exit_reason = KVM_EXIT_COCO;
-+			vcpu->run->coco.nr = KVM_EXIT_COCO_REQ_CERTS;
-+			vcpu->run->coco.req_certs.gfn = gpa_to_gfn(data_gpa);
-+			vcpu->run->coco.req_certs.npages = data_npages;
-+			vcpu->run->coco.req_certs.ret = 0;
-+			vcpu->arch.complete_userspace_io = snp_complete_req_certs;
-+			return 0; /* fetch certs from userspace */
-+		}
-+
- 		if (data_npages &&
- 		    kvm_write_guest(kvm, data_gpa, empty_certs_table,
- 				    sizeof(empty_certs_table)))
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 94c3a82b02c7..1a0087af1714 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -125,7 +125,7 @@ static u64 __read_mostly cr4_reserved_bits = CR4_RESERVED_BITS;
- #define KVM_X2APIC_API_VALID_FLAGS (KVM_X2APIC_API_USE_32BIT_IDS | \
-                                     KVM_X2APIC_API_DISABLE_BROADCAST_QUIRK)
- 
--#define KVM_EXIT_COCO_VALID_MASK 0
-+#define KVM_EXIT_COCO_VALID_MASK BIT_ULL(KVM_EXIT_COCO_REQ_CERTS)
- 
- static void update_cr8_intercept(struct kvm_vcpu *vcpu);
- static void process_nmi(struct kvm_vcpu *vcpu);
--- 
-2.25.1
-
+> ---
+>  tools/testing/radix-tree/maple.c  | 1 +
+>  tools/testing/radix-tree/xarray.c | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+> index 175bb3346181..11f1efdf83f9 100644
+> --- a/tools/testing/radix-tree/maple.c
+> +++ b/tools/testing/radix-tree/maple.c
+> @@ -19,6 +19,7 @@
+>  #define module_init(x)
+>  #define module_exit(x)
+>  #define MODULE_AUTHOR(x)
+> +#define MODULE_DESCRIPTION(X)
+>  #define MODULE_LICENSE(x)
+>  #define dump_stack()	assert(0)
+>  
+> diff --git a/tools/testing/radix-tree/xarray.c b/tools/testing/radix-tree/xarray.c
+> index f20e12cbbfd4..d0e53bff1eb6 100644
+> --- a/tools/testing/radix-tree/xarray.c
+> +++ b/tools/testing/radix-tree/xarray.c
+> @@ -10,6 +10,7 @@
+>  #define module_init(x)
+>  #define module_exit(x)
+>  #define MODULE_AUTHOR(x)
+> +#define MODULE_DESCRIPTION(X)
+>  #define MODULE_LICENSE(x)
+>  #define dump_stack()	assert(0)
+>  
+> -- 
+> 2.45.2
+> 
 
