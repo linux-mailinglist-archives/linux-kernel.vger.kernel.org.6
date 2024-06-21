@@ -1,128 +1,117 @@
-Return-Path: <linux-kernel+bounces-225455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABA791309A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:56:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91A591309D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 145A4B20F5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14BB1F22AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A40816DEC5;
-	Fri, 21 Jun 2024 22:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3AF16F29B;
+	Fri, 21 Jun 2024 22:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qffyzywr"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpnhcEiU"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5309F15D1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F28316F269;
+	Fri, 21 Jun 2024 22:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719010561; cv=none; b=h96uOK15S9zgEtIBET08sfLD/82pM5Xaw+8hONSpMWMRbGAND8NLExy9CsepFsg6FI40sSxhvgsBgZOOz/pCbMzvbmKe8Hbs6mb0xGy1xnL7N7e0NiiH+YzbIegXdbUZCpA6dljRfVahD0GgY5PqFxJOhcNMhz1x7zCbpo8jFS4=
+	t=1719010565; cv=none; b=W9ZGcZ3GoujPgbX2jthg6/R+QgOopPTZMZI9lo8xSE0Zo8tJV/iO++N4WCmhBP1eGcjoGxL2WHrqoExOzCuTXE7uMFrgHYUUADKS7+soNmX6E3rpsxzxtLbeHNrY1XLaaqVtla8bwcQo7WvOQ3VSPS98eaOkXl/2jj1EodpWibM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719010561; c=relaxed/simple;
-	bh=/fGMQstslMAQ1sAwKBQnY3piKVTdf0FZ+sfr3d5+kQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UIbQzVfS54YxsdpKMabx4PmAxdRXkz1/WR0D37xknlzxpuPpTuCAPegHoClnPJ7YLJtsUFTaYkewed4guypyAqrLVwlulYBCmyPkF2iCUwT9mqPM6Ihn4lhEltwbeLnT7qwX+m6rOz5b0EMAZazy5+F49CDfLR9Z8V61kf8DmDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qffyzywr; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-63ba688bdc9so25015067b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:56:00 -0700 (PDT)
+	s=arc-20240116; t=1719010565; c=relaxed/simple;
+	bh=4oUdsvqCDrLiUkMVo03wVv5uUKw1KazsqU/cnfG6uhs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pxBesKO1X46HwiAklYuYAzT7VRMckip/obOrsnoApCJdj57tBtZNuA2Wi0N4t1sIqhUX2tAMLJEKXoLmfi60aAsY2+mNY3MHnCB9wLDvblrJH0IppCTrD7D+dg8fZDKjFSihxfjhRy/NFVtlTMmkR6V/oIVypWpI8YpbsLitya8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RpnhcEiU; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d1012e52fso2878904a12.3;
+        Fri, 21 Jun 2024 15:56:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719010559; x=1719615359; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/fGMQstslMAQ1sAwKBQnY3piKVTdf0FZ+sfr3d5+kQU=;
-        b=QffyzywrIMiiOUDrInGm2s+cz3kMzPYkPPwCFB3j5KIOPr355fiTeqBYglaNXBe054
-         kCKazQ5sK0diOLVl19gQcT7DWvlNfZAoPYqYtF3KWCYarWFh7qPu/1w7D6RED2aVQVw6
-         /5FBs/KRahanQgxXCbMs1L+Xe8cvCYNl/hVQX9XCQT+qUY96wZMe4CDwce54IZCI/c7Y
-         J0Op/PEeumJUez43jQjjkOZBNQlDFtM+rqLnVUgEq1WZovuULnjt74yEK8oZqSDI9s51
-         ZWEGUfNCgPwD1v1By3ODqSe4Bm6NBA9Af9DAhECATRlAWH+nbIEG9hC8PlSCEXVnPKbv
-         C1dA==
+        d=gmail.com; s=20230601; t=1719010562; x=1719615362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o6JyC8iY2Muk9y3RK0oBca3B3yHY25hFFfJVNqJVifY=;
+        b=RpnhcEiUYYOJlE5qcJkpkGmIdXNALB06vtFzmr2A9aIT7DNwJUvQ5gWnxQyaz1iG6H
+         jK2MEQ7EFNz8iN+fe9lhpNEXdFnCSWNaOUXiBoX9pFYE2jUzHe7wwYjQ98Gz150xbi83
+         8H7rCiX5+lwNrjbemWUe9KOzG0Fjqn9Q4QtS9MXhldDC67LHZO2k4UeCEn+WRj4GO9Iz
+         mqgWB2ovi4ypyFBqP7pacEq8GeRbmlp1qzxFFYsKvjmgehYgnm+to1rrzk0jZY+9o6Sb
+         mNGLx6rGGzQasQU2Koxzq+PJJ0Mggw3KWE5tzaRrU93NC5MPKXS7CQiuXSmFlWS44qNw
+         0PwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719010559; x=1719615359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/fGMQstslMAQ1sAwKBQnY3piKVTdf0FZ+sfr3d5+kQU=;
-        b=NsvfCDMS+PlT4yrLjYOudR8MGJGEFskF24xtTFBL7q0OPfa4Us8npkPdj7OU5z2u9x
-         wHHxsMXi7fUUraVheBZKY9HUSdC5o0qrRsvmgBidfgPXDHQ6ufJ6Nwnx6Kzf102hk9KA
-         eYePEtZty7rvl/UO6ciorFr9sNFG5dzaBxPQkqJhrsLOo/ixpN8VFav2vMdYE1TRalCS
-         FS+chVR1YxraL+bmpl6EUz0C1qEz3ThgMUP+pC8KH+ioQUOC51fzi63EixakQMGzfxov
-         qlo6aCU9D7XIGVnE0DCxmfxwh/FD7uULV1zr0dtWXKInXOktP8mp1uMVzgIckEz5ebbg
-         ULTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNKqeLopKjew8FQR9k3Zb1/WwMLhulQTqQWdj+dvCbgP++nSpCfx2BRhdbtGZ2ljMXbXkePP18eTDjveUWCE2x3boUDilidC/yR/+7
-X-Gm-Message-State: AOJu0YxqtocsdfPnpwYmfC7t+OUoU1tza0zQGAK5vgU324jKwZBd7ugQ
-	5G23PTWUxgvTFz//6n1aX89DTEyToHxVLaSKVD3sBx3C0rU5hcT1nkngaGZElVLx4EyMpqL4ytN
-	Rd0gIE4A3LIxtmo1I6paK0XAnVSJ+aEUzpcCxFQ==
-X-Google-Smtp-Source: AGHT+IEADyU6jrow5QVvxIIaLO6aTLEpPe+v44mG82CDywhDOOxA21g7uo+yUCib/NcuqiEIGJo5wYXwLqozIVXQNcg=
-X-Received: by 2002:a81:be12:0:b0:62f:23c3:1b68 with SMTP id
- 00721157ae682-63a8f9fb0b9mr92774257b3.48.1719010559268; Fri, 21 Jun 2024
- 15:55:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719010562; x=1719615362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o6JyC8iY2Muk9y3RK0oBca3B3yHY25hFFfJVNqJVifY=;
+        b=NZjuro3UlziRHBKjiJZjQtP9/4Ha3X1i+gHZ/bsLpYoZTMrG0yV1+dgaMQeWtWep+l
+         cGGqLYxuQO78aGuy35HA1rdcsJtmFQh0Oc2+dtj/wlZqgGLY/62EVSzUJDNEp5BLbJfZ
+         J2tY0kBxYZ+kb9PFQxf6q4hXpBxHK9NwN0doFVci2VA4wEX5sy5DOE+i3TdK13q2w9DM
+         eLndknlUzaxGbzx9MbkSReAmKTOhKff7skoGjFjE1w5CA5L0wVx2guJvBQSMdofneSJh
+         e7Ymh5tkOzRqOKZWz5Sh5ZGzTDWcqdOGNpqYngE1xMNYcG6DYKriV+OnXBUnqJG/oX6P
+         z0kA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3TRiDzikPHH07afKU43e+tRH02NoLhFaX54hD+pNvhTvqN9fsJPP7nsrcuPpGwCdDsNOcNrnH9DeedHu3rIq7CRq1ZF/H/1V3AmgsT5qLIrilFrpRRLXkNrhpbzLuurwZwzHfF4x4EWgV4VQ=
+X-Gm-Message-State: AOJu0Yw6shbTA0IBKh49oEkQ2g4VulZoFRjv3Fce7kE5HlAMurflTDcC
+	MFRGSGah8Ae/VbluhsRPqv732Ej7Acn90F2kuTQya/AUFlKHzv8=
+X-Google-Smtp-Source: AGHT+IGMzl+xBQUL7dOvE+TEcJ/gGUJX9+zMX68SSdTV8Tvv2glRsSTXnvBMZenX9Rr13Y/oi/SAXA==
+X-Received: by 2002:a50:d6d7:0:b0:57c:5f74:d8ff with SMTP id 4fb4d7f45d1cf-57d07e750c8mr5784439a12.21.1719010561093;
+        Fri, 21 Jun 2024 15:56:01 -0700 (PDT)
+Received: from U4.lan ([2a02:810b:f40:4600:aed6:1d20:313e:7dc1])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3042d421sm1537795a12.42.2024.06.21.15.56.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 15:56:00 -0700 (PDT)
+From: Alex Bee <knaerzche@gmail.com>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-kernel@vger.kernel.org
+Cc: Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH] wifi: brcmfmac: of: Support interrupts-extended
+Date: Sat, 22 Jun 2024 00:55:58 +0200
+Message-ID: <20240621225558.280462-1-knaerzche@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240621221113eucas1p25c2fbadceef48913c4a7b164e6d14890@eucas1p2.samsung.com>
- <CAPLW+4njmKxXSMqNazX6t6LS=fHNh6Pi8_icF1=aPw27G0J3PQ@mail.gmail.com> <oypijdcyoarlou.fsf%l.stelmach@samsung.com>
-In-Reply-To: <oypijdcyoarlou.fsf%l.stelmach@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 21 Jun 2024 17:55:48 -0500
-Message-ID: <CAPLW+4nQa_hnqg=UxgZ7EZ1z26HX+Y0Y-fV8rtHb4Sb7NQ47CQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] hwrng: exynos: Add SMC based TRNG operation
-To: Lukasz Stelmach <l.stelmach@samsung.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Anand Moon <linux.amoon@gmail.com>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 21, 2024 at 5:11=E2=80=AFPM Lukasz Stelmach <l.stelmach@samsung=
-.com> wrote:
+This "new" version of defining external interrupts is around for a very
+long time now and supported and preferred by irq_of_parse_and_map
+respectively of_irq_parse_one.
 
-[snip]
+Support it in brcmfmac as well by checking if either "interrupts" or
+"interrupts-extended" property exists as indication if irq_of_parse_and_map
+should be called.
 
-> >> This is good, thank you for adding it. It can be even better though, i=
-f
-> >> you don't skimp on message length (-; I mean, I know what BL is, I can
-> >> fingure what LDFW is because you have explained to me and I can see th=
-e
-> >> source code, but somewone who sees it for the first time will be only
-> >> slightly less surprised than with v2 error message only. Come on, you
-> >> can make this message twice as long and it will still fit in 80 charac=
-ters (-;
-> >>
-> >
-> > Guess my OCD got in the way and I just didn't want to break the line
-> > :) But yeah, LDFW =3D Loadable Firmware, and BL =3D bootloader. There i=
-s
-> > an "ldfw" partition on eMMC, and I noticed Samsung usually uses LDFW
-> > term, so I figured it was not a big deal to throw that abbreviation at
-> > the user. But I totally agree on BL part, it might be confusing. I
-> > don't have any strong opinion on this one. If you are going to apply
-> > v3, can I kindly ask you to change that message the way you want it to
-> > be?
->
-> I guess Olivia or Herbert will be applying it. Let me try=E2=80=A6 How ab=
-out:
->
-> "Check if your bootloader loads the firmware (SMC) part of the driver."
->
+Signed-off-by: Alex Bee <knaerzche@gmail.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Much better. Thanks, Lukasz!
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+index e406e11481a6..6cdc941552e3 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+@@ -129,7 +129,8 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
+ 		sdio->drive_strength = val;
+ 
+ 	/* make sure there are interrupts defined in the node */
+-	if (!of_property_present(np, "interrupts"))
++	if (!of_property_present(np, "interrupts") &&
++	    !of_property_present(np, "interrupts-extended"))
+ 		return;
+ 
+ 	irq = irq_of_parse_and_map(np, 0);
+-- 
+2.45.2
 
-> >> Don't change it if v3 is the last. If not, please, make it more verbos=
-e.
-> >>
 
