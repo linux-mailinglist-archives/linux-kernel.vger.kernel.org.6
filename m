@@ -1,125 +1,172 @@
-Return-Path: <linux-kernel+bounces-224098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBB9911D33
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:46:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78719911D39
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6439F1F216B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:46:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BA471C22139
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F607E58D;
-	Fri, 21 Jun 2024 07:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E58516C6B6;
+	Fri, 21 Jun 2024 07:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="S47PT+kb"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErtuEyC5"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D58F16C865
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCF416D322;
+	Fri, 21 Jun 2024 07:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718955946; cv=none; b=F/D1WRpT5+jk/7qY8Pcw5Q7L3bXoZ0F58Tk0XdjGj7FCaJ3Hr8iVxCuD2YfZqyGcfDqYSrW9aZYOca0e+Bf1ph6zPs8x2hAlOI3oXkcTaMsCe5bdfYjzZy8uk+PrcOmBQVnyYV1vqkGIBh5dnNLLbTq+85Qv6ecAFNpanEw7KYo=
+	t=1718956037; cv=none; b=mfNI96X83N2MHWD4mNwZ4HDQFPIBzbsmCK2F68dnWR7bdgeYnQAH3VkrfGF+B/5gII/hfT+XehEpnESKeQ3K4sOv0sjUtmZ3vKU7MwcaWb1giDEJdaJeki/VcEt9c67GnogWGM4o0EySHNYB+TKl3wCc52Qpsc80M2OgGghgqGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718955946; c=relaxed/simple;
-	bh=0FWngs3a9ZHYGOcRauLAltFY8V/DpYo7ul6GUKGsYC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Utazj7v89MHtz6hGfF9JGfcAraejN93t0io+b/vaybQOz616rSYtXm5BH+rBAVDAvTp+8I5hPKlfCvgYT87/xBIZa7vPg1QTkqsxIRRdlvHkfwxfeMFonABTaAIuWmJOUtqCgrBi/Eq73kXP1F3C0B8fTSS0t+7X4sQwfQJNNfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=S47PT+kb; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=0FWn
-	gs3a9ZHYGOcRauLAltFY8V/DpYo7ul6GUKGsYC0=; b=S47PT+kbsPnj0Y14yMLn
-	w9Kd8evfOrsU/kNcvPBCXu3vO4Ee9MYNoj7DG4jFzxNu+Ni3dP+2aSPbJQx6Y3Fc
-	8KO7TV8FhldqzHPRpx8p8OitEdnMVu4SAaIiPmyDXn2EruhXVafwmQ6Aq1/HbogT
-	UqY3d02oJCmcwMoSsfIfefLlczJ9xMeYeaGhEmSzsTxx8oCcYZBdgDqklHWz22/B
-	xyMj9/4TbiHgtwBEY/AauUNn4wuqnzxCJ0NsvKaJywn9+mAAwIgy08I+7b1CwSHB
-	hTjqr+g1AiiOs1ATVtn7FDfFxnUHmIGty8WdsX8/1F401HWP+B3nlJ7QAQzY9mg3
-	pQ==
-Received: (qmail 1283791 invoked from network); 21 Jun 2024 09:45:42 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 09:45:42 +0200
-X-UD-Smtp-Session: l3s3148p1@EIFNnmEbQrggAwDPXzjQABqqX1QYyOSW
-Date: Fri, 21 Jun 2024 09:45:41 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P)
- SoC
-Message-ID: <riweh6pybbbadjfgenwrdclquurzsvoxudq63v63ip372qpkca@frk4gtnxt3bt>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240613091721.525266-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdU0oFH61fHNp2txOOJi_pWihKrK=UdETrzBs-bDeULTqQ@mail.gmail.com>
- <CA+V-a8v_r5efeR3U+J0MK7cKxPR7a6s0z4fws0iHO1-uezAuTA@mail.gmail.com>
+	s=arc-20240116; t=1718956037; c=relaxed/simple;
+	bh=hb2Fy9ZwHI1dYIHOgnUy42pdbjf6n2Bld7IZk3B0d8I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GINiEJZlTz8Ylw8nsN7GYzqW17Aee6OmE9j55RlI0sAj4uRmFK1E13TPcIHC0vBh2vE6ALZ5ORASrp7dgEqEhIRDZpWnF9h73qare4+Nn1DP58NHEoVZpArfk2bUw7lwS5hKPBDjgl/31DLfJUAP/l2TsX3s0DrEA+o+mXk4Vnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ErtuEyC5; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-48f3b3165e1so63125137.3;
+        Fri, 21 Jun 2024 00:47:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718956035; x=1719560835; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hb2Fy9ZwHI1dYIHOgnUy42pdbjf6n2Bld7IZk3B0d8I=;
+        b=ErtuEyC5DFkTDPcHoTK10JJetcU2w4gdI5n1b+taKRqaiKoi/n/Svj0x+OzCtfoiR9
+         vBfp3U3JCaycjFUjIRPUiwIbdVbAQ9s+fg0KB6Ycc4Mz/BmbXPqtHcXurTmv7wLbQ66J
+         SpNSDM8YxZPL+0g6j3xxKd4AfsqaK8KlMUsUQtKjkWqosdhVVS5GGC+pnwPIMstaLvfW
+         A7UdIvjHe6GxbIo0/eTYW5JZfxkq2e8navx5dl9whxnn4+tawTGYArQQ7kus0s4wBHP6
+         ocR6JZy+8nB/3K5KMlziVoophYTGhRLx7g22gfmbewhDJ2nXG8xL0mgg93WycHL15uk3
+         KQcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718956035; x=1719560835;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hb2Fy9ZwHI1dYIHOgnUy42pdbjf6n2Bld7IZk3B0d8I=;
+        b=mYdTPpAb1hTIyB7uM4YFbl+ioABEdvZGEFMJ3ruQyzL0DXSiixgai/ozWyn6vLMvRj
+         eZbtLXM0DjZQt95TkeO1OLBqWkDWOj0fJOTEqddE5iRYmBk3bFttHnd7MDIfrSM2sYu7
+         hu2eYE+GsU22t9HzFsqbvgf2rlN2lhQ1NsvKaKJsZcfM+TiH1mcejSN1pUeQOpuRlBUy
+         W9aOrLUFBH7YOnguRxC8Zc2LIOzCBRbRMb5imx/2aB2VlZ0KQwKqy0qIYh5iYcA8f6ID
+         nvwDj00lbD0rE86wOw7O3RdIrukE92M0pVt5aJmLmF0yWxTO0aEj//EwGw2hfpjdw3bK
+         +odw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmUjNK6QpYwC0aiK7ASH+FW2MgeZPDMOhFRBIQiA3yvOYcLxyrV/raSzDHohdU06DyHt1dILob+dC9UhuhgwN+uuPBU+ZoVJD27jyve8y2SsdWamQbJIBRZEYWLxsfU/bLlwEhDCzt2qB8QPNu
+X-Gm-Message-State: AOJu0YzSmVzZKKbUKP9CoCScOJ+lOBjYMPAglC0e7a6DjS3uarW+0Ycr
+	fztxq6Umfulm0NOcTzSvuMLG6ydNeUyAfCgsQNv5jQzV3mu89n864sYU0o9hcnQzoR7eyamzgyS
+	Gjuqgt3+U8AWojHxGl93KNuKC84A=
+X-Google-Smtp-Source: AGHT+IENxJpB3fR9O1qG5MmYWU2eUwfRE0yy8BBUjnzGd+z9Xs2T3ZKskBIctY2so5qNjGrbh91CJEO2hUli5f90diw=
+X-Received: by 2002:a67:f505:0:b0:48f:30cd:d94c with SMTP id
+ ada2fe7eead31-48f30cde5f3mr2014409137.6.1718956034943; Fri, 21 Jun 2024
+ 00:47:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="u4gfhepvy5ou23jk"
-Content-Disposition: inline
-In-Reply-To: <CA+V-a8v_r5efeR3U+J0MK7cKxPR7a6s0z4fws0iHO1-uezAuTA@mail.gmail.com>
-
-
---u4gfhepvy5ou23jk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240620002648.75204-1-21cnbao@gmail.com> <f3c18806-34ac-41d3-8c79-d7dd6504547e@arm.com>
+ <d0b20f47-384d-49f1-8449-0da6da11089c@redhat.com> <b99c2f80-3b53-4b04-b610-a66179b928a9@arm.com>
+In-Reply-To: <b99c2f80-3b53-4b04-b610-a66179b928a9@arm.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 21 Jun 2024 19:47:02 +1200
+Message-ID: <CAGsJ_4y_pjMpNOFzrPZ6u7=M83-CQ0umDCPt=ZDuSKJWssiCqA@mail.gmail.com>
+Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
+ entry allocation for thp_swapout
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, shuah@kernel.org, 
+	linux-mm@kvack.org, chrisl@kernel.org, hughd@google.com, 
+	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	ying.huang@intel.com, linux-kselftest@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jun 21, 2024 at 7:25=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com>=
+ wrote:
+>
+> On 20/06/2024 12:34, David Hildenbrand wrote:
+> > On 20.06.24 11:04, Ryan Roberts wrote:
+> >> On 20/06/2024 01:26, Barry Song wrote:
+> >>> From: Barry Song <v-songbaohua@oppo.com>
+> >>>
+> >>> Both Ryan and Chris have been utilizing the small test program to aid
+> >>> in debugging and identifying issues with swap entry allocation. While
+> >>> a real or intricate workload might be more suitable for assessing the
+> >>> correctness and effectiveness of the swap allocation policy, a small
+> >>> test program presents a simpler means of understanding the problem an=
+d
+> >>> initially verifying the improvements being made.
+> >>>
+> >>> Let's endeavor to integrate it into the self-test suite. Although it
+> >>> presently only accommodates 64KB and 4KB, I'm optimistic that we can
+> >>> expand its capabilities to support multiple sizes and simulate more
+> >>> complex systems in the future as required.
+> >>
+> >> I'll try to summarize the thread with Huang Ying by suggesting this te=
+st program
+> >> is "neccessary but not sufficient" to exhaustively test the mTHP swap-=
+out path.
+> >> I've certainly found it useful and think it would be a valuable additi=
+on to the
+> >> tree.
+> >>
+> >> That said, I'm not convinced it is a selftest; IMO a selftest should p=
+rovide a
+> >> clear pass/fail result against some criteria and must be able to be ru=
+n
+> >> automatically by (e.g.) a CI system.
+> >
+> > Likely we should then consider moving other such performance-related th=
+ingies
+> > out of the selftests?
+>
+> Yes, that would get my vote. But of the 4 tests you mentioned that use
+> clock_gettime(), it looks like transhuge-stress is the only one that does=
+n't
+> have a pass/fail result, so is probably the only candidate for moving.
+>
+> The others either use the times as a timeout and determines failure if th=
+e
+> action didn't occur within the timeout (e.g. ksm_tests.c) or use it to ad=
+d some
+> supplemental performance information to an otherwise functionality-orient=
+ed test.
 
-> > There is a similar instance of regulator driver [1] which is
-> > controlled via register bit write, but in our case the SD_STATUS
-> > register is part of the SDHI IP block itself.
->=20
-> ... I could imagine that the SDHI driver itself exposes a regulator
-> driver. Just without a <reg>-property. The compatible will induce which
-> register and bit to use.
+Thank you very much, Ryan. I think you've found a better home for this
+tool . I will
+send v2, relocating it to tools/mm and adding a function to swap in
+either the whole
+mTHPs or a portion of mTHPs by "-a"(aligned swapin).
 
-That would mean we have a compatible-entry per SDHI instance per SoC?
-Did I get this right? I think that will be too many compatibles.
+So basically, we will have
 
-What is the drawback of using an "internal-regulator" property within
-the SDHI node?
+1. Use MADV_PAGEPUT for rapid swap-out, putting the swap allocation code un=
+der
+high exercise in a short time.
 
+2. Use MADV_DONTNEED to simulate the behavior of libc and Java heap in free=
+ing
+memory, as well as for munmap, app exits, or OOM killer scenarios. This ens=
+ures
+new mTHP is always generated, released or swapped out, similar to the behav=
+ior
+on a PC or Android phone where many applications are frequently started and
+terminated.
 
---u4gfhepvy5ou23jk
-Content-Type: application/pgp-signature; name="signature.asc"
+3. Swap in with or without the "-a" option to observe how fragments
+due to swap-in
+and the incoming swap-in of large folios will impact swap-out fallback.
 
------BEGIN PGP SIGNATURE-----
+And many thanks to Chris for the suggestion on improving it within
+selftest, though I
+prefer to place it in tools/mm.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ1L6UACgkQFA3kzBSg
-KbYf0RAAj58OS56vrdI1QNgWNvWlkONIcy7KZA/msnwfCY3Tk1EeIcdz52dKOiQa
-Yd6lvlyXY4J2qzWDS/2d9t1ATcpEZLOqwogfKURsLIHjAtbzvcVY9Ah09ibUJP4L
-89pKY1t9AJ7n2Qpt/F1sYnM2vZkHMvtH2P+KuX2Ov0iawEZeFTNHlgHwZQOACEK1
-GqcwcnUt4wU2TEQdHCj6ailRQGlAaAXYElNYqzaBavvHm+zlz2neVoQ9bYiDv3Us
-EIx8tW2LH6JxvWSSwoC0PNmlAqNmbkHaMsv9E7r/584z1Gpj816CZY+BSRb9dPCK
-aTywMeGoLSy+HR+c62NhIaLY/bULrYbAFJ1AnL9tbWeAE+uj6+eMpwvETIIrKgLq
-sSIGAHZpm2DxHWHLtxLbUk+PHjq6YIxP0kwc7KdAwiJ9k0or1wWYtZnNGtGHAFJg
-TpUAL8YLtW7IuC3GFoRFZ4ep6ePtCOe+zzBBknNSz7D9lM6QgyfJ1BV/BfmTkyM/
-aBtGREGiLvQTQv7g93hLmmFzpj1S5oFaP0A09iaru1sgcjwbC3wmRMm9LrfDwR2+
-CxTSu7pG7+5vUZYJxK1ZePq/pvPgrxeNiuRoFGqc8s2WulVsE9TgA2l1+rsKKiIp
-Hg9OayMcv2M0CHhIbqRmHVL3qeiNhky+hkC3S1yYxNcVq1WQQxk=
-=CUbe
------END PGP SIGNATURE-----
-
---u4gfhepvy5ou23jk--
+Thanks
+Barry
 
