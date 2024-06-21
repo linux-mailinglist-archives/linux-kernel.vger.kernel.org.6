@@ -1,205 +1,203 @@
-Return-Path: <linux-kernel+bounces-224178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981D9911E57
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:16:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D8F911E5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23DC51F233D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7586C1F2143D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712D616E89B;
-	Fri, 21 Jun 2024 08:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A975216F84D;
+	Fri, 21 Jun 2024 08:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="VzMPvGDr"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTd/qoj+"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A730016B3B9;
-	Fri, 21 Jun 2024 08:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D80083CDA;
+	Fri, 21 Jun 2024 08:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718957495; cv=none; b=kphdX98PMbD12gr2kxwXE8n10C0Cl7mHVPR7pf0IzRbbM1ZAER4nWWyGqoxnB4HZZMbfwuh/MPu8fX5zRKj8CiXYZR1uuoMRElY+OaHzIZ/kVK2tJ86ox/iFe6XN/6iVJCqFYW42qcFCcIVdxMZaqj2c5TTGcmJvk8HgozWk/fI=
+	t=1718957596; cv=none; b=GNexAO7A9+khP+Y5ACFZr6OJWSUIZrqO69kc8eLRHfAXtF5dnCYyQ9toPXwMFlE+7HxWq3byo+4+U0YYTZfKHpQrBtYAioULz1hGWFWDr9MONMGnTSPGINrV8g4SVZ/YSE3OeLBM+d/9O2clWgkEny4kH3HnOo4MqFXwiZ6fCXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718957495; c=relaxed/simple;
-	bh=FZt/DWJEEp/5li3lA/a0/SUwkfL4yBvvNmxl0hPbA9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ku3S7rtz1+HCyvuDqhONPNi4fN2C5H8cVqojErhd5GQQ8IJ3ThrbVHPUo1YbIdoSJA7cKqo3LlMUE75ORtf3ZWa3hTO1QsksSRwfc4/Z6rLJ9KRigLvG3VzZIZ/YbwibyyIM55LWJnsthY0bwbYJ1xkV7PwfB/Doktooe9hLvI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=VzMPvGDr; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3BF9614812CF;
-	Fri, 21 Jun 2024 10:11:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1718957489; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=/PHaPkrFE8dOiW71pVXS6Z7fuekbEPZyv75L8IzPRbs=;
-	b=VzMPvGDrGu1RZHrNeBng3EVtPnIy2wjLcy73LjNTtUKLBAP1Yi8hYnlQMQ8mL3WzZe5FTR
-	vK1aUN5Vv9XiJEOEeBBUSzveReuTRSCB9y4YE9G/b4rOxMSqov2OJez30H8IIjSE4rxr80
-	l1PqaF+Hf7Q7pnzwuWAonqqZoiJxWA3Jh7uoskvX+Zo3pDvZheAlANsqrDV1v2yD0vkch1
-	YvS/VppvIooX4UY+bRHGxsKiuaQvOPRciBgjZaJcacd9Cij6lVMOpvche1bwKAzUJ0/hLh
-	eY7MseiYGcxnr1qsw1Q0BI//AwfZ78kJ9k5eve/eRaDTN7wUvswAwKIzadg47Q==
-Date: Fri, 21 Jun 2024 10:11:24 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: iansdannapel@gmail.com, mdf@kernel.org, hao.wu@intel.com,
-	yilun.xu@intel.com, trix@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-fpga@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: fpga: Add Efinix serial SPI programming
- binding description
-Message-ID: <20240621-operation-trapezoid-844948baa860@thorsis.com>
-Mail-Followup-To: Conor Dooley <conor@kernel.org>, iansdannapel@gmail.com,
-	mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com,
-	trix@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-fpga@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240620144440.125374-1-iansdannapel@gmail.com>
- <20240620-rubdown-buffing-312d308c2d4d@spud>
+	s=arc-20240116; t=1718957596; c=relaxed/simple;
+	bh=8+VZHTU2jFGo52Yyrj/mk50mKDw9czDVv92M41YAUd8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oKxXdFkFMCNtB4Vh0mWkJa9oN/ANstY6yRbo1x45Qt+le1iLpD0mVZQER9YYjvL3vFphbO7n3diQew3xzOe+dTVTb/JePD4dr6mZsxx2W6wFH/HwelQ/GoAozpEwLMsHkuLVduJT11XU/hNJQIwus+lyLpSwmEyinkYowdy153k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UTd/qoj+; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f09b457fdso177852366b.2;
+        Fri, 21 Jun 2024 01:13:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718957593; x=1719562393; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1sN2kaOXNFqFWe9kiqdAd1f/ImH+CzYIHZyEKRSmTnc=;
+        b=UTd/qoj+7663XtYIgub4g5w31RSN36/zvkS3MBKtzYPdpAXCbALxMteDmM1FG3bHFb
+         G9K0zCRkI6scz44KT+SFInpt0DFuaF26UZ+F1evYDZbVZd8lSMIC/64b+D3ZS1RPmBVr
+         ibgnydYW9oPUt7o78+GrBcHKHSbOfBdaUCnydKStd2ba++XrUgM1UbA1dboHA3Wyd9dI
+         Kr+XLg6/40VSOs8OdR7SBAuB6R/g3iSvpZ1s/HW9vMC6xsIrtylVoNy6cptJTtixsArx
+         S3CMcFm6Uhh6uf7YBsuITzJjisUUdVHLwtodJ02DB0uoSTyPiYCxjTsq0l59pBd6a+bE
+         Mypg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718957593; x=1719562393;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1sN2kaOXNFqFWe9kiqdAd1f/ImH+CzYIHZyEKRSmTnc=;
+        b=fPlRwnxHoopldRK0SN9Z5Mf3Ydempouh3cLtviHE+loU/By27tSFaGwkQQPx5VGnyp
+         7nzP6rOVS0KNTmrg6QSqjrKMOseufHcswH3+bbfuCaOTHH3a+OWa6BEMdjJxCR1NeEZe
+         mCCVWMtBmpYpr+7IDt37zD595NFhKvbdksL3tBS/Oqg+SxMHT4xG71xgIuc61q1dvRK1
+         613JeDa91ts0MPnL0KCEsELq88F4j/ZGTDzFaAHLTXd2RA3bIHidNldJoCIdxLzVBVYI
+         7lLkHuARrGnykoXG/QlCbNz8Sa1n4P6oOmV/vefl1HCwIn8Y4CO2CHFK4m8mplK4VTuM
+         u+zA==
+X-Forwarded-Encrypted: i=1; AJvYcCURac45r74q0j5hhyzPZwqtbdyWeOn85CVJMyd/i4WSwTxbb/QWIc45AI/3DHrPcaLyTpYIPMqlMjE8TS3KnUiPnzsciw8V8e56oOGefLaRh5GRTjyp3lrS3z/100VtIbJbggKkvFQ=
+X-Gm-Message-State: AOJu0YxtGl93ACzkQfaDKAegdMmplRUalGKwtCgthGc3BBE06DbdQJ4l
+	hdZywE444jJF+50iYiLyDVxFcJtTRHkbyFE2KFoedL7trLIfEPey
+X-Google-Smtp-Source: AGHT+IGRfof+CWgm0E47jiiOZvBTdunoNDcShffSWcpWkZ8dzL2AXDRCYbELQi8dMFGU6MtNPTrmeg==
+X-Received: by 2002:a17:906:d83:b0:a65:7643:3849 with SMTP id a640c23a62f3a-a6fab7d6be4mr443486766b.73.1718957593073;
+        Fri, 21 Jun 2024 01:13:13 -0700 (PDT)
+Received: from [127.0.1.1] (31-179-0-202.dynamic.chello.pl. [31.179.0.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf560977sm55996566b.183.2024.06.21.01.13.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 01:13:12 -0700 (PDT)
+From: Roman Storozhenko <romeusmeister@gmail.com>
+Date: Fri, 21 Jun 2024 10:13:08 +0200
+Subject: [PATCH] cpupower: Make help command available for custom install
+ dir
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620-rubdown-buffing-312d308c2d4d@spud>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240621-fix-help-issue-v1-1-7906998d46eb@gmail.com>
+X-B4-Tracking: v=1; b=H4sIABM2dWYC/x2MQQqAIBAAvxJ7bsHMkvpKdEjbciEqXIpA+nvSc
+ WBmEghFJoG+SBDpZuFjz1CVBfgw7Sshz5lBK21UW3W48IOBthNZ5CJsbO2Ncq412kKOzkjZ+If
+ D+L4fhkHge2AAAAA=
+To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Roman Storozhenko <romeusmeister@gmail.com>
+X-Mailer: b4 0.14.0
 
-Hello,
+When the 'cpupower' utility installed in the custom dir, it fails to
+render appopriate help info for a particular subcommand:
+$ LD_LIBRARY_PATH=lib64/ bin/cpupower help monitor
+with error message like 'No manual entry for cpupower-monitor.1'
+The issue is that under the hood it calls 'exec' function with
+the following args: 'man cpupower-monitor.1'. In turn, 'man' search
+path is defined in '/etc/manpath.config'. Of course it contains only
+standard system man paths.
+Make subcommands man pages available for user using the following rule:
+Render a man page if it is installed in the custom install dir, otherwise
+allow man to search this page by name system-wide as a last resort.
 
-Am Thu, Jun 20, 2024 at 04:47:41PM +0100 schrieb Conor Dooley:
-> On Thu, Jun 20, 2024 at 04:44:40PM +0200, iansdannapel@gmail.com wrote:
-> > From: Ian Dannapel <iansdannapel@gmail.com>
-> > 
-> > Add device tree binding documentation for configuring Efinix FPGA
-> > using serial SPI passive programming mode.
-> > 
-> > Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
-> > ---
-> >  .../bindings/fpga/efnx,fpga-passive-spi.yaml  | 76 +++++++++++++++++++
-> >  1 file changed, 76 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/fpga/efnx,fpga-passive-spi.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/fpga/efnx,fpga-passive-spi.yaml b/Documentation/devicetree/bindings/fpga/efnx,fpga-passive-spi.yaml
-> > new file mode 100644
-> > index 000000000000..855ceb3b89e8
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/fpga/efnx,fpga-passive-spi.yaml
-> > @@ -0,0 +1,76 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/fpga/efnx,fpga-passive-spi.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Efinix SPI FPGA Manager
-> > +
-> > +description: |
-> > +  Efinix Trion and Titanium Series FPGAs support a method of loading the
-> > +  bitstream over what is referred to as "SPI Passive Programming".
-> > +  Only serial (1x bus width) is supported, setting the programming mode
-> > +  is not in the scope the this manager and must be done elsewhere.
-> > +
-> > +  References:
-> > +  - https://www.efinixinc.com/docs/an033-configuring-titanium-fpgas-v2.6.pdf
-> > +  - https://www.efinixinc.com/docs/an006-configuring-trion-fpgas-v6.0.pdf
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - efnx,fpga-spi-passive
-> 
-> Ahh, here is the user. Can you please add specific compatibles for the
-> Trion and Titanium series FPGAs? And when you do, make the filename
-> match a compatible please.
-> 
-> Additionally, why "efnx" and not "efinix"?
+Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
+---
+ tools/power/cpupower/utils/cpupower.c | 54 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 47 insertions(+), 7 deletions(-)
 
-FWIW, there already is "altr,fpga-passive-serial" for Altera devices.
+diff --git a/tools/power/cpupower/utils/cpupower.c b/tools/power/cpupower/utils/cpupower.c
+index 9ec973165af1..da4bc6de7494 100644
+--- a/tools/power/cpupower/utils/cpupower.c
++++ b/tools/power/cpupower/utils/cpupower.c
+@@ -12,6 +12,8 @@
+ #include <unistd.h>
+ #include <errno.h>
+ #include <sched.h>
++#include <libgen.h>
++#include <limits.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/utsname.h>
+@@ -21,6 +23,8 @@
+ #include "helpers/bitmask.h"
+ 
+ #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
++#define MAN_REL_PATH "/../man/man1/"
++#define MAN_SUFFIX ".1"
+ 
+ static int cmd_help(int argc, const char **argv);
+ 
+@@ -80,14 +84,17 @@ static void print_help(void)
+ 
+ static int print_man_page(const char *subpage)
+ {
+-	int len;
+-	char *page;
++	char *page, *man_path, *exec_dir;
++	char exec_path[PATH_MAX];
++	int subpage_len;
+ 
+-	len = 10; /* enough for "cpupower-" */
+-	if (subpage != NULL)
+-		len += strlen(subpage);
++	if (!subpage)
++		return -EINVAL;
+ 
+-	page = malloc(len);
++	subpage_len = 10; /* enough for "cpupower-" */
++	subpage_len += strlen(subpage);
++
++	page = malloc(subpage_len);
+ 	if (!page)
+ 		return -ENOMEM;
+ 
+@@ -97,7 +104,40 @@ static int print_man_page(const char *subpage)
+ 		strcat(page, subpage);
+ 	}
+ 
+-	execlp("man", "man", page, NULL);
++	/* Get current process image name full path */
++	if (readlink("/proc/self/exe", exec_path, PATH_MAX) > 0) {
++
++		man_path = malloc(PATH_MAX);
++		if (!man_path) {
++			free(page);
++			return -ENOMEM;
++		}
++
++		exec_dir = strdup(exec_path);
++		if (!exec_dir) {
++			free(page);
++			free(man_path);
++			return -ENOMEM;
++		}
++
++		*man_path = '\0';
++		strncat(man_path, dirname(exec_dir), strlen(exec_dir));
++		strncat(man_path, MAN_REL_PATH, strlen(MAN_REL_PATH));
++		strncat(man_path, page, strlen(page));
++		strncat(man_path, MAN_SUFFIX, strlen(MAN_SUFFIX));
++
++		free(exec_dir);
++
++		/* Check if file exists */
++		if (access(man_path, F_OK) == -1) {
++			free(man_path);
++			man_path = page;
++		}
++	} else {
++		man_path = page;
++	}
++
++	execlp("man", "man", man_path, NULL);
+ 
+ 	/* should not be reached */
+ 	return -EINVAL;
 
-Not sure why Altera got this short vendor prefix, but that was 2013
-with commit 5db17a71a526 ("of: add vendor prefix for Altera Corp.")
-and we probably never know?
+---
+base-commit: 2102cb0d050d34d50b9642a3a50861787527e922
+change-id: 20240619-fix-help-issue-573c40bb6427
 
-The method of transferring the configuration data over SPI into the
-FPGA is comparable.  I would go so far to claim a single driver could
-support both device families for passive configuration over SPI.  I've
-done that in a non-public driver for U-Boot few months ago, and used
-"efinix,fpga-passive-serial" as a compatible there.  The difference is
-basically Altera requiring more GPIOs considered, and Efinix keeping
-the SPI clock on for some time after data is already transfered.
-
-Greets
-Alex
-
-> 
-> > +
-> > +  spi-cpha: true
-> > +  spi-cpol: true
-> > +
-> > +  spi-max-frequency:
-> > +    maximum: 25000000
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  reset-gpios:
-> > +    description:
-> > +      reset pin (low active)
-> > +    maxItems: 1
-> > +
-> > +  cs-gpios:
-> > +    description:
-> > +      chip-select pin (low active)
-> > +    maxItems: 1
-> > +
-> > +  done-gpios:
-> > +    description:
-> > +      optional programming done pin, referred as CDONE (high active)
-> 
-> Why not call it "cdone-gpios" if that;s what it is referred to as?
-> 
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - reset-gpios
-> > +  - cs-gpios
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    &spi2 {
-> > +      #address-cells = <1>;
-> > +      #size-cells = <0>;
-> > +
-> > +      fpga_mgr_spi: fpga-mgr@0 {
-> > +        compatible = "efnx,fpga-spi-passive";
-> > +        spi-max-frequency = <25000000>;
-> > +        spi-cpha;
-> > +        spi-cpol;
-> > +        reg = <0>;
-> 
-> order of compatible, reg, others here please.
-> 
-> > +        reset-gpios = <&gpio4 17 GPIO_ACTIVE_LOW>;
-> > +        cs-gpios = <&gpio5 13 GPIO_ACTIVE_LOW>;
-> > +        done-gpios = <&gpio0 9 GPIO_ACTIVE_HIGH>;
-> > +      };
-> > +    };
-> > +...
-> > -- 
-> > 2.34.1
-> > 
-
+Best regards,
+-- 
+Roman Storozhenko <romeusmeister@gmail.com>
 
 
