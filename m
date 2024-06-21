@@ -1,118 +1,92 @@
-Return-Path: <linux-kernel+bounces-224827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5769C912750
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:14:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CE7912753
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 897431C224AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:14:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456201C25EC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9191C19479;
-	Fri, 21 Jun 2024 14:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9331C6AE;
+	Fri, 21 Jun 2024 14:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="jV7Dt4KG"
-Received: from mail-40130.protonmail.ch (mail-40130.protonmail.ch [185.70.40.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tptKVN5T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ACFF4FA;
-	Fri, 21 Jun 2024 14:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B084134BC;
+	Fri, 21 Jun 2024 14:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718979233; cv=none; b=ZiZ0N2SgIay/DpfY5su2mCnYqKgCJxv9Kl1TjYJDUUo+cxhE0RZgM8gWlX9MY1cU0bKYKxa9KnYcUTbpZtc45bfvclh0nxQxwSgxzF5MdTGvDvnKVx9gWPoy6eE1hpfCXKhSuyqZ8DBP5MVH4BRpFExGNymMGbsbYvB3k7zhQX4=
+	t=1718979264; cv=none; b=Mpp5RWLmG8XG8X7YSJSPJ6yS4hXKSERohPYHUt0M92NGHOnCDwS+RF6z2JjSEnyMDpHzukBHGXnkZMKQaqu0xmmYueg9iBD6sw5EtUtwUChSsF/YIGdDg+Tt98dqESsebYgDH7gEjoeRA1YicF7wCf3lM1p0dF70yn4AgYHPBhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718979233; c=relaxed/simple;
-	bh=nQ4+wUt5CyLv6ZNzugRNBeJC/TdP5J/vV00LiCmuuvc=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=OvatGcPULTNnCLb7c/rr5ba/TVWyoIOOUqktfLo5OHC7JnkjRhUXdL40N3o1FoLaNLcKib5cOY9Olmxf4VQTzhPp5/LLP/k0jbuekyDpUTOl1y4+j/HKWC5TdZJMfYBNAmibrHqoMpp9ml1+CIFW03ow/BVolsDd2wL5gGW2JuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=jV7Dt4KG; arc=none smtp.client-ip=185.70.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1718979223; x=1719238423;
-	bh=phbpiE/1uu6UZY1iql0eHzSjR4wmgdFmktGqssfgZYg=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=jV7Dt4KGAH/eR4mnkBSsTXMsBaU2baKUQZYlAJXTqcX76VaHz92UC9KXZgfytooUq
-	 jFQmnOTRYVtZ2qG0xJFVC9zSsMV72eIA0RcNlidGJBnydaDHrEELhVp2j5K47R9VHk
-	 6hyNJ1wt2itq/QLUxxtSb+z+FKMFnidOTB2vPsqtEQyzI2GYYq11lAmikjolf/CASs
-	 f7GkrbQSsvUCjmkKLiUneckbZiGMhgKOXYlpfthWay2lzrrbOBSXX5DvytwnhL0H1g
-	 tbvUU/Qjud6xlsRLjS/bGfY6VM0RAgrRpOu26w5PdsFbx7q+Zf1TxWRcJGOBmStF04
-	 R9AFyaRAMtmLQ==
-Date: Fri, 21 Jun 2024 14:13:33 +0000
-To: linux-kernel@vger.kernel.org
-From: "Lin, Meng-Bo" <linmengbo06890@proton.me>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: [PATCH] arm64: dts: qcom: msm8916-gplus-fl8005a: Add BMS
-Message-ID: <20240621141319.347088-1-linmengbo06890@proton.me>
-Feedback-ID: 112742687:user:proton
-X-Pm-Message-ID: 51c028cd8bbb19aca92887c15f2dde8a5e75b1ca
+	s=arc-20240116; t=1718979264; c=relaxed/simple;
+	bh=1PXHlcy1RPLlp/k1X4kBVrzLnL0LJH/jIPGrJe+uGCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h42P33rFe+MYPMqAEDFiBSGGuUDHoOlzAwe2L176SGDpB0JScXy0o/S4Vvs9n1CsmjsEjXQZz1aeaig2Ddhdw3tKut0rcU+29fqjzPxSL7d4qhCm3Vj8SzABh8oWfadfZ26R7ZrA8L8LAct4UVejaDqLIeCY8jvMDx+7pu7XI+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tptKVN5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26B1BC2BBFC;
+	Fri, 21 Jun 2024 14:14:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718979263;
+	bh=1PXHlcy1RPLlp/k1X4kBVrzLnL0LJH/jIPGrJe+uGCM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tptKVN5TL80GOp2HQwmHzHcoUan/wUy5DdrCaE2AFQuBdaqqNbGajN52llmjsyPb6
+	 MlYuoLb1odXWQd9nFyreq6XLZnsNdi2fZ+tYgqiZaD3F9wKHZ/zHmRL9LcKsu9oJGE
+	 zYGegGNCJADdAWxF+ZsUEWl6K7hwPoZRNCoWqW9WayRZyQ4W4KVKb8F3PPR/xkmOpk
+	 1zV3bhQoSNGw5CwwNgt4WaUc4+CWoDD5l4+/qc0K6f4AlFcOUlQ6BzMmKHqhLbH2GN
+	 2Wf/zqiYjvxrIM3Y5AEd7rQv5DoEUjBqThF+ZVS8zCUK6ck2EBLBzaAhdBdY9SnntG
+	 l1M072XTcUMCw==
+Date: Fri, 21 Jun 2024 15:14:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrei Simion <andrei.simion@microchip.com>
+Cc: brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, arnd@arndb.de, gregkh@linuxfoundation.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: eeprom: at24: Add at24,mac02e4 and
+ at24,mac02e6
+Message-ID: <20240621-ripeness-elitism-36650131a6f0@spud>
+References: <20240621121340.114486-1-andrei.simion@microchip.com>
+ <20240621121340.114486-4-andrei.simion@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZAdZyBNQiOGLtnaj"
+Content-Disposition: inline
+In-Reply-To: <20240621121340.114486-4-andrei.simion@microchip.com>
+
+
+--ZAdZyBNQiOGLtnaj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-There is PM8916 Battery voltage monitor on GPLUS FL8005A.
-Add PM8916 BMS and the battery to the device tree.
+On Fri, Jun 21, 2024 at 03:13:40PM +0300, Andrei Simion wrote:
+> Update regex check and add pattern to match both EEPROMs.
+>=20
+> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
 
-Signed-off-by: "Lin, Meng-Bo" <linmengbo06890@proton.me>
----
- .../boot/dts/qcom/msm8916-gplus-fl8005a.dts   | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-gplus-fl8005a.dts b/arch/arm6=
-4/boot/dts/qcom/msm8916-gplus-fl8005a.dts
-index e6ed5544a11b..f7be7e371820 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-gplus-fl8005a.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-gplus-fl8005a.dts
-@@ -24,6 +24,28 @@ chosen {
- =09=09stdout-path =3D "serial0";
- =09};
-=20
-+=09battery: battery {
-+=09=09compatible =3D "simple-battery";
-+=09=09device-chemistry =3D "lithium-ion-polymer";
-+=09=09voltage-min-design-microvolt =3D <3700000>;
-+=09=09voltage-max-design-microvolt =3D <4200000>;
-+=09=09energy-full-design-microwatt-hours =3D <13690000>;
-+=09=09charge-full-design-microamp-hours =3D <3700000>;
-+
-+=09=09ocv-capacity-celsius =3D <25>;
-+=09=09ocv-capacity-table-0 =3D
-+=09=09=09<4186000 100>, <4126000 95>, <4078000 90>,
-+=09=09=09<4036000 85>, <3997000 80>, <3962000 75>,
-+=09=09=09<3932000 70>, <3904000 65>, <3874000 60>,
-+=09=09=09<3839000 55>, <3809000 50>, <3792000 45>,
-+=09=09=09<3780000 40>, <3772000 35>, <3764000 30>,
-+=09=09=09<3752000 25>, <3731000 20>, <3704000 16>,
-+=09=09=09<3677000 13>, <3670000 11>, <3668000 10>,
-+=09=09=09<3666000 9>, <3662000 8>, <3658000 7>, <3648000 6>,
-+=09=09=09<3624000 5>, <3580000 4>, <3518000 3>, <3434000 2>,
-+=09=09=09<3310000 1>, <3000000 0>;
-+=09};
-+
- =09flash-led-controller {
- =09=09/* Actually qcom,leds-gpio-flash */
- =09=09compatible =3D "sgmicro,sgm3140";
-@@ -116,6 +138,11 @@ &mpss_mem {
- =09reg =3D <0x0 0x86800000 0x0 0x5000000>;
- };
-=20
-+&pm8916_bms {
-+=09monitored-battery =3D <&battery>;
-+=09status =3D "okay";
-+};
-+
- &pm8916_codec {
- =09qcom,micbias-lvl =3D <2800>;
- =09qcom,mbhc-vthreshold-low =3D <150 180 237 450 500>;
---=20
-2.39.2
+--ZAdZyBNQiOGLtnaj
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnWKugAKCRB4tDGHoIJi
+0sUWAQDm6B3+IjZHb/IU+aV0iPSwE3ZySN7RptGN8U5nkdcW/QEA61ogSy1tOvwH
+CqWDd1CfaO4EFORbmAx+4uipZbJOKQY=
+=97VR
+-----END PGP SIGNATURE-----
+
+--ZAdZyBNQiOGLtnaj--
 
