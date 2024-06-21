@@ -1,59 +1,68 @@
-Return-Path: <linux-kernel+bounces-224042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41590911C70
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:09:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67395911C76
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9E51F215AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:09:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC299B21AAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1248B169AD5;
-	Fri, 21 Jun 2024 07:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED4D16C445;
+	Fri, 21 Jun 2024 07:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YuiNfFBj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNq1eGwh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282D614038F;
-	Fri, 21 Jun 2024 07:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE34B14038F;
+	Fri, 21 Jun 2024 07:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718953747; cv=none; b=mLXG5MYF7WDl0q1SVJyByXeBP0+VJP6IYm9I/lJq/0hU98Rte4bTw+44OofLca/TDCh28vJMLD/+JnEu5xrXazLmVgOgpsKIRIJ6rGnKkGRW7iWO1ToRJ4oVswTIytjNZluVUei3KKDVYXb2gimX/SHgUEiAjgf6xvzIhjy6rxw=
+	t=1718953755; cv=none; b=kNz81AyO+ZN1y08ONMVG3znUJ7udcceOEQr/VDWKYhn8wBbugRnzKCIHyKM+wD/S+gBnKP7WAeSrb9cEtQXpFqZ6Ep+7sjQRHvbQN+SYVmBMohWxgP7Kh1IqNDAb2cZz6NPT1qUfeaSotODsoAgVSMT4KfX9tG4NKi/f13i6cVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718953747; c=relaxed/simple;
-	bh=JNeSznPsu6rMM8q9i1YN4cUCJ34wg5WxXaxe2u+XauI=;
+	s=arc-20240116; t=1718953755; c=relaxed/simple;
+	bh=u0vhe0zqMs5Sy8rTYox/NGGE8oBJtjiHtJOPAUxZARU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYGEkNJKZc0QHUQepdlBsIXSPEfEB3cTOKiTeQfxEpoUYTsHPwGX/f6Z48VqpsSf/W5KiP4AV1Q9dOw/qTyGi/Ndg+HRy+CLhLkVJCZM5PwTQc3XZd5XTFysY7+lr+0FfhKP+P+5upJoUFArZ7LcG4OiBUybphZImBDfeyfYtAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YuiNfFBj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 522EBC2BBFC;
-	Fri, 21 Jun 2024 07:09:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718953746;
-	bh=JNeSznPsu6rMM8q9i1YN4cUCJ34wg5WxXaxe2u+XauI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=iOp1h026NeLFiCw/jfUWq3+6SJV4W7fABoN9cicoHTSjFc09K4QcwdJa3hyWQQeDmNgzp/G3ZJIL8kUo4UBVvwDcPqmRf1jfz7tqgc1+fRmCJUFjufOVf9+Gwlkk5T92Mb6SawAHctMxA6D8o005CwEo1QnyXYBo2501Tmn/nw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNq1eGwh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D8AC2BBFC;
+	Fri, 21 Jun 2024 07:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718953754;
+	bh=u0vhe0zqMs5Sy8rTYox/NGGE8oBJtjiHtJOPAUxZARU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YuiNfFBjYQZ4LWbVZN2X73hS5tUPBXHgfp6QswTqOZ2KDQNS6n7gypHuB7O9Ltu5l
-	 btpKVynQuyMi1uu5NaLbZzYltuiNLZoYU/ya58uhWbgtzPeJf7s6FrsaSqhBSNKVta
-	 8AB9fKEKDbvJHvK/anMsronwVvkEkcxdaDOw0rcQ=
-Date: Fri, 21 Jun 2024 09:09:03 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: joswang <joswang1221@gmail.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	Jos Wang <joswang@lenovo.com>
-Subject: Re: [PATCH v7] usb: dwc3: core: Workaround for CSR read timeout
-Message-ID: <2024062126-whacky-employee-74a4@gregkh>
-References: <20240619114529.3441-1-joswang1221@gmail.com>
- <2024062051-washtub-sufferer-d756@gregkh>
- <CAMtoTm06MTJ_Gc4NvenycvWRxhLSaPptT1DLvBRs4RWVZO9Y_g@mail.gmail.com>
- <2024062151-professor-squeak-a4a7@gregkh>
- <20240621054239.mskjqbuhovydvmu4@synopsys.com>
- <2024062150-justify-skillet-e80e@gregkh>
- <20240621062036.2rhksldny7dzijv2@synopsys.com>
+	b=lNq1eGwhTNeOpkK9YsjekhMnPYqCfAedSVRmRHNMbdf4aeB/9D+zs1CrdzzASh6C4
+	 Maf7DhWqeLVEpF4KQEehVBKMm1cJoVh9EPYfS+yepq3tAEjsydKxiI4rtjYFzFLCuR
+	 K4G7MpuUTZdEm6yo6puU+n7u/0RTXerFzKxf55Nsf5kairPX2eyXlOQi8bBhCAYjqc
+	 X/twLc6wl8sQTLvX/olSZYVRPkvixcmITIyfJDSYgj16lS797Ip960DrepCfU7mH7Q
+	 6MKx+CIt1g2fhTe1olIQIEbjsh0QvACjeCVEG6doqO9oc6g6olhnMMeO5Qjbw2BTHF
+	 Qcz/Pt9DgHS/w==
+Date: Fri, 21 Jun 2024 12:39:09 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com,
+	Paul Cercueil <paul@crapouillou.net>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-iio@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Julia Lawall <julia.lawall@inria.fr>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [v11 3/7] iio: core: Add new DMABUF interface infrastructure
+Message-ID: <ZnUnFeum1Z2ahm9M@matsya>
+References: <202406191014.9JAzwRV6-lkp@intel.com>
+ <c25aab0d-48f6-4754-b514-d6caf8d51fd1@web.de>
+ <ZnRUSaHJhz7XLcKa@matsya>
+ <20240620170522.GU3029315@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,91 +72,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240621062036.2rhksldny7dzijv2@synopsys.com>
+In-Reply-To: <20240620170522.GU3029315@google.com>
 
-On Fri, Jun 21, 2024 at 06:20:38AM +0000, Thinh Nguyen wrote:
-> On Fri, Jun 21, 2024, Greg KH wrote:
-> > On Fri, Jun 21, 2024 at 05:42:42AM +0000, Thinh Nguyen wrote:
-> > > On Fri, Jun 21, 2024, Greg KH wrote:
-> > > > On Fri, Jun 21, 2024 at 09:40:10AM +0800, joswang wrote:
-> > > > > On Fri, Jun 21, 2024 at 1:16 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > > >
-> > > > > > On Wed, Jun 19, 2024 at 07:45:29PM +0800, joswang wrote:
-> > > > > > > From: Jos Wang <joswang@lenovo.com>
-> > > > > > >
-> > > > > > > This is a workaround for STAR 4846132, which only affects
-> > > > > > > DWC_usb31 version2.00a operating in host mode.
-> > > > > > >
-> > > > > > > There is a problem in DWC_usb31 version 2.00a operating
-> > > > > > > in host mode that would cause a CSR read timeout When CSR
-> > > > > > > read coincides with RAM Clock Gating Entry. By disable
-> > > > > > > Clock Gating, sacrificing power consumption for normal
-> > > > > > > operation.
-> > > > > > >
-> > > > > > > Cc: stable@vger.kernel.org
-> > > > > > > Signed-off-by: Jos Wang <joswang@lenovo.com>
-> > > > > >
-> > > > > > What commit id does this fix?  How far back should it be backported in
-> > > > > > the stable releases?
-> > > > > >
-> > > > > > thanks,
-> > > > > >
-> > > > > > greg k-h
-> > > > > 
-> > > > > Hello Greg Thinh
-> > > > > 
-> > > > > It seems first begin from the commit 1e43c86d84fb ("usb: dwc3: core:
-> > > > > Add DWC31 version 2.00a controller")
-> > > > > in 6.8.0-rc6 branch ?
-> > > > 
-> > > > That commit showed up in 6.9, not 6.8.  And if so, please resend with a
-> > > > proper "Fixes:" tag.
-> > > > 
+On 20-06-24, 18:05, Lee Jones wrote:
+> On Thu, 20 Jun 2024, Vinod Koul wrote:
+> 
+> > On 20-06-24, 12:45, Markus Elfring wrote:
+> > > …
+> > > > All errors (new ones prefixed by >>):
+> > > >
+> > > >>> drivers/iio/industrialio-buffer.c:1715:3: error: cannot jump from this goto statement to its label
+> > > >     1715 |                 goto err_dmabuf_unmap_attachment;
+> > > …
 > > > 
-> > > This patch workarounds the controller's issue.
+> > > Which software design options would you like to try out next
+> > > so that such a questionable compilation error message will be avoided finally?
 > > 
-> > So it fixes a bug?  Or does not fix a bug?  I'm confused.
+> > The one where all emails from Markus go to dev/null
 > 
-> The bug is not a driver's bug. The fix applies to a hardware bug and not
-> any particular commit that can be referenced with a "Fixes" tag.
+> Play nice please.
 
-So it's a bug that the kernel needs to work around, that's fine.  But
-that implies it should go to "all" stable kernels that it can, right?
+Would love to... but Markus has been repeat offender
 
-> > > It doesn't resolve any
-> > > particular commit that requires a "Fixes" tag. So, this should go on
-> > > "next". It can be backported as needed.
-> > 
-> > Who would do the backporting and when?
-> 
-> For anyone who doesn't use mainline kernel that needs this patch
-> backported to their kernel version.
+Sadly, I am yet to see a constructive approach or even better a helpful
+patch which improve something, rather than vague suggestions on the list
 
-I can not poarse this, sorry.  We can't do anything about people who
-don't use our kernel trees, so what does this mean?
-
-> > > If it's to be backported, it can
-> > > probably go back to as far as v4.3, to commit 690fb3718a70 ("usb: dwc3:
-> > > Support Synopsys USB 3.1 IP"). But you'd need to collect all the
-> > > dependencies including the commit mention above.
-> > 
-> > I don't understand, sorry.  Is this just a normal "evolve the driver to
-> > work better" change, or is it a "fix broken code" change, or is it
-> > something else?
-> > 
-> > In other words, what do you want to see happen to this?  What tree(s)
-> > would you want it applied to?
-> > 
-> 
-> It's up to you, but it seems to fit "usb-testing" branch more since it
-> doesn't have a "Fixes" tag. The severity of this fix is debatable since
-> it doesn't apply to every DWC_usb31 configuration or every scenario.
-
-As it is "cc: stable" that implies that it should get to Linus for
-6.10-final, not wait for 6.11-rc1 as the 6.11 release is months away,
-and anyone who has this issue would want it fixed sooner.
-
-still confused,
-
-greg k-h
+-- 
+~Vinod
 
