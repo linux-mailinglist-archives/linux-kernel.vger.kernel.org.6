@@ -1,127 +1,254 @@
-Return-Path: <linux-kernel+bounces-224020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50450911C0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:44:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C607911C12
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 031AE281CF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:44:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B2711C20E04
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D23167D8C;
-	Fri, 21 Jun 2024 06:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EA1158DA1;
+	Fri, 21 Jun 2024 06:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhsBvx0v"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbYwXriI"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5555315A863;
-	Fri, 21 Jun 2024 06:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5712156255;
+	Fri, 21 Jun 2024 06:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718952263; cv=none; b=C5cy+OV85uLvNHACosVHMwAUGS/Ndje/5ZBRtomW8p52aX/5Fvqv/5hrm7tC9NyCIKxrwS/vFdSUDbOxDoj0PWnv24eJUcNHdehiEDe5j19BoVhvWSb+3Hib7ayzTj72hfD2vO4kvbP+Gt7cQ2FMEME+RHT6s0W7BYLNPhB7HCI=
+	t=1718952304; cv=none; b=STALmNCa3KDD+GKenXCjLjOGheuXvqz/FLIlNRWd9RF2TvgIUH6clp1N2s2EpXNoQ0mQer1nF6qPQgRa2ddOh2G9D2oucEkRnsTOZ5n4TVDieqWIwQC1KdNrjZSKY+rm57rULamrz7C6XdWOq71aNcK8kwLOq2fOFD+cTM2DzjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718952263; c=relaxed/simple;
-	bh=e8vsqUTPR8hmmzvnBxNMNmNl9t0csZwAExFhrGl8H6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RLbH6tbBEx8GG7j6ebZM5dfq6s7daOXBZ8bRsFVUjG+6aQM+KPMsowxrJMuNhq+72IkevIYVOqkIe6+Kye5t/Tdm8n1KlKjA39qPH/vceB8t3ycYJpg4GDlr5intx09A+Li71gfp4lfHpvdbVqTqpXIDRRBf0s5n+Eaybj6xyrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhsBvx0v; arc=none smtp.client-ip=209.85.160.54
+	s=arc-20240116; t=1718952304; c=relaxed/simple;
+	bh=bOAOpB7dVKydRPjsPJ3/3Z4gKdCLdwKiRfXS4eARVt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iJlY6R8DNQQJ/1MWO+bKrvIGI2FZsC1o/8t6Oh4An/BWHBxIMfhQH/A0aU8KbFDRrIU6AEhbmo+tRvD8RfFLo4bjVbJuQ87mbLZIC5V967n3CEseR9scx67+U/BFRDQxG3qrw2QspSJueMng7LgRilbUv0Bede4QfJFPWgzLLtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YbYwXriI; arc=none smtp.client-ip=209.85.161.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-25980546baeso828719fac.2;
-        Thu, 20 Jun 2024 23:44:22 -0700 (PDT)
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5b5254f9c32so773966eaf.0;
+        Thu, 20 Jun 2024 23:45:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718952261; x=1719557061; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w24n82/vIpX8B4Z/eMTSwnntz2rc9ZV12ox6TxguyJY=;
-        b=mhsBvx0vl1lD/8SRgHpBrvba4MFjqrXakeFB702z5lDk4lTtnf+qR/H9uEqlWeSucx
-         RPuhv8d5smrH+hy/8vKbnztds6G1Cuhw8+gUKsXM+iMPrekPJLvMImnqLRdtS4Vt+YJ1
-         XD1MV8Ov/kH6+AcA/bk3fVPbu2LTkiwFJHnKsxvZfjnE/1Ur0c559h+IaF/9QV6iy8+i
-         F+seGueXoZ5Ncd8YBvk6u34DzMZFNzs3a4AQDSgeD+36Fc/PPIGO54DAf6JVnXjLuIYC
-         ye0APx4mgiiOUirKy+pFNjHMqDkUyY0YpBAYNiop4B6bR0L67plceBnEQbcSv8032tfn
-         qEaA==
+        d=gmail.com; s=20230601; t=1718952302; x=1719557102; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oM3ItnukudfPSjacUNsBaUKyLolfdMbpOCb7tOfpFSc=;
+        b=YbYwXriIYaaQAr0PWrHI31wN3YBD6iwbtdmfCTwoK/zupK+Vjo0q9FHlX3OPCn81Jy
+         ftlaL/JOkAw1mQ0/+2Rl2Q3tCL4IgrllDd+EV2d6Be25BoOUK4Ec/rVy6x/VuH7oKCQr
+         p1tf1dfeGinHIS9v1b7QgSBnNHE+kKzTi52hdSGcjd730vKUYQ78PsL6p7BiaStDITa0
+         w6u7LI0I69M8xK/ez8Jo5XnPqatJ9bV+468Hxz3sLD/3cv9Fv4JSAC5DU9AAvgNx1sta
+         Pc/borENP/HokrPLyW+CZEDkp6M6OgKOmvJC1lGAIF0X6oUynj9eqvKLpLOw0hxYWhi6
+         3nNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718952261; x=1719557061;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w24n82/vIpX8B4Z/eMTSwnntz2rc9ZV12ox6TxguyJY=;
-        b=eN4zFh3aPso3Yy1cyOURrhYojhxFBTE/vV6K/On5Txq8Cx6kuQ6Bs/NW/vgVw7tH3s
-         ZTwcL0NqwFKIvmXUh7WMK7qEGUBsgAh8E70lflimndqA6YZXEa9l0xCBam7c9zeWbWer
-         VzgxUpQIssCUNlV1kfK6C84DDCb0CDeYA6j8bulAZkJkitJVBfJBkM4d1teYpoun/vSH
-         vGhsIV1UGKA5zUBdr2+vnUkKb4Rv9I5z2unNCfZFiYSoa9i9f29LPR2uAFwXqDLsD9NE
-         pBP0tyH+mqRtbb/R3k0iBGFVIZf5A17HT6E/Jv+uooyv6ylIxOAaoQlkpZJtMwqSHcXz
-         BlWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrcBuZpghhofnXxyW5l/1FJBtNyCom7tjxuy5VPkmkaXNvYtLebsxv/ydDs3aVPFywxApub4byfEuEaigVwRy6+NvB1L41bNxFXgg7ytIRmQmGm7mhrDU+ZwE0pH9oceqKrQq+LWoIbUIAzll9wvRmFDuWvHp5hlCf2NpEhsDQzQoSBQ==
-X-Gm-Message-State: AOJu0Yw5AMoMlILcqpblEfkSfi33xtQ4cXM6rmR+qkXXGT6fP8qjD82y
-	tROwE/oo+MSBno7sQztwyCq7rF5e+9O4pybN0okMbZz2/jJZlgRg
-X-Google-Smtp-Source: AGHT+IEANZZHgCyKdIftWd3cOp2dSGvWG7foIJAXLX+nyVQbywXPbr3RDWjgbnU4m/tFyceWACZ1kg==
-X-Received: by 2002:a05:6870:b50d:b0:254:9501:db80 with SMTP id 586e51a60fabf-25c949a6b97mr8705807fac.14.1718952261214;
-        Thu, 20 Jun 2024 23:44:21 -0700 (PDT)
-Received: from [172.19.1.51] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716c950d71asm515928a12.62.2024.06.20.23.44.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 23:44:20 -0700 (PDT)
-Message-ID: <b6bda253-3fdf-41c5-934a-66b79c991582@gmail.com>
-Date: Fri, 21 Jun 2024 14:44:15 +0800
+        d=1e100.net; s=20230601; t=1718952302; x=1719557102;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oM3ItnukudfPSjacUNsBaUKyLolfdMbpOCb7tOfpFSc=;
+        b=A0ZvI/k7x2glFm+7/jBrrLgd+T+MG6hXFx+YDYuisY/phTHhFKo86k1errqRiQCpaA
+         6Ng8JvD/ctDspngCAMADgEMrN/UwcWipyjeFRkyyAxggc5xvOOaxj1LvEd32AxE66QvL
+         G77yIkiDXpdul7FOo1TLtrZ6W7tSJ2w7rRcOzVS8vZ3zK1EDF3NfYB0C7L9+52ABjYkT
+         widPSc8HNuwPKhVvZRyCDeGNMnxLw86F9TliaSS1+ceq/8zS2dOLbVfNaDxKqkZ/CIBP
+         N47GYuoEqbDI+o8Is5coJ4OXOM+63h2U5lt3tjeegWjyE3Pw3/VYYRyZOOyvOfPfR+1B
+         V68Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvVw3ihqD/Kwd4W4gY1tUIHSPo3l1tX17bqZRi6PC7MtmLDCCrhkrMHzkLvQV81JIlCetmPP7sughlJDY3hL9JYSymUQ1KwAUnHkj5MvihTfzQhZRzqjOeY10GIEZUslvAZX7QQt6R
+X-Gm-Message-State: AOJu0YwRoxq1LItYx8OJfaWYIeTuv7Bgf6pDpLbLt3Px0rbSgu7Y7vs9
+	qpyav7mAPOYum4UQcloojsMU3L03sWTGM/Hhj0NGKkCbX3dXqgsz
+X-Google-Smtp-Source: AGHT+IEbBzdQwiRjqR4y3v1rWDL1v5yalWbizkktabDpr8Ar27TT3aqBRN1VEIr4V47mZdBBKvXSQA==
+X-Received: by 2002:a05:6871:82c:b0:24f:c7cf:17fb with SMTP id 586e51a60fabf-25c949901f1mr8202912fac.22.1718952301635;
+        Thu, 20 Jun 2024 23:45:01 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70651194776sm683117b3a.67.2024.06.20.23.44.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 23:45:01 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	kernel test robot <lkp@intel.com>,
+	linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] PCI: rockchip: Simplify clock handling by using clk_bulk*() function
+Date: Fri, 21 Jun 2024 12:14:20 +0530
+Message-ID: <20240621064426.282048-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document
- MA35D1 SDHCI controller
-To: Krzysztof Kozlowski <krzk@kernel.org>, ulf.hansson@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- adrian.hunter@intel.com, p.zabel@pengutronix.de, pbrobinson@gmail.com,
- serghox@gmail.com, mcgrof@kernel.org,
- prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com,
- tmaimon77@gmail.com, andy.shevchenko@gmail.com,
- linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ychuang3@nuvoton.com, schung@nuvoton.com
-References: <20240619054641.277062-1-shanchun1218@gmail.com>
- <20240619054641.277062-2-shanchun1218@gmail.com>
- <3d193f01-2c8b-4d6c-8139-11f2d9a34d2d@kernel.org>
- <42ec842e-84c0-40fd-b6fc-e59d25ede89f@gmail.com>
- <f315c1cd-1f78-46e0-a86b-5240a869bb31@kernel.org>
-Content-Language: en-US
-From: Shan-Chun Hung <shanchun1218@gmail.com>
-In-Reply-To: <f315c1cd-1f78-46e0-a86b-5240a869bb31@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Dear Krzysztof,
+Refactors the clock handling in the Rockchip PCIe driver,
+introducing a more robust and efficient method for enabling and
+disabling clocks using clk_bulk*() API. Using the clk_bulk APIs,
+the clock handling for the core clocks becomes much simpler.
 
-Thanks for your review.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406200818.CQ7DXNSZ-lkp@intel.com/
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+Fix compilation error reported by Intel test robot
+---
+ drivers/pci/controller/pcie-rockchip.c | 64 ++++----------------------
+ drivers/pci/controller/pcie-rockchip.h | 15 ++++--
+ 2 files changed, 21 insertions(+), 58 deletions(-)
 
-On 2024/6/21 下午 02:04, Krzysztof Kozlowski wrote:
-> On 21/06/2024 01:53, Shan-Chun Hung wrote:
->>>> +
->>>> +  interrupts:
->>>> +    maxItems: 1
->>>> +
->>>> +  pinctrl-names:
->>>> +    description:
->>>> +      Should at least contain default and state_uhs.
->>> ? Contradicts constraints.
->> I will modify the description to "Should at least contain default.
->> state_uhs is mandatory in this scenario."
-> Then just drop it. Don't repeat constraints in free form text.
->
->
-> Best regards,
-> Krzysztof
-OK , I will drop the description.
+diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
+index 0ef2e622d36e..166dad666a35 100644
+--- a/drivers/pci/controller/pcie-rockchip.c
++++ b/drivers/pci/controller/pcie-rockchip.c
+@@ -30,7 +30,7 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct device_node *node = dev->of_node;
+ 	struct resource *regs;
+-	int err;
++	int err, i;
+ 
+ 	if (rockchip->is_rc) {
+ 		regs = platform_get_resource_byname(pdev,
+@@ -127,28 +127,13 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
+ 					     "failed to get ep GPIO\n");
+ 	}
+ 
+-	rockchip->aclk_pcie = devm_clk_get(dev, "aclk");
+-	if (IS_ERR(rockchip->aclk_pcie)) {
+-		dev_err(dev, "aclk clock not found\n");
+-		return PTR_ERR(rockchip->aclk_pcie);
+-	}
+-
+-	rockchip->aclk_perf_pcie = devm_clk_get(dev, "aclk-perf");
+-	if (IS_ERR(rockchip->aclk_perf_pcie)) {
+-		dev_err(dev, "aclk_perf clock not found\n");
+-		return PTR_ERR(rockchip->aclk_perf_pcie);
+-	}
+-
+-	rockchip->hclk_pcie = devm_clk_get(dev, "hclk");
+-	if (IS_ERR(rockchip->hclk_pcie)) {
+-		dev_err(dev, "hclk clock not found\n");
+-		return PTR_ERR(rockchip->hclk_pcie);
+-	}
++	for (i = 0; i < ROCKCHIP_NUM_CLKS; i++)
++		rockchip->clks[i].id = rockchip_pci_clks[i];
+ 
+-	rockchip->clk_pcie_pm = devm_clk_get(dev, "pm");
+-	if (IS_ERR(rockchip->clk_pcie_pm)) {
+-		dev_err(dev, "pm clock not found\n");
+-		return PTR_ERR(rockchip->clk_pcie_pm);
++	err = devm_clk_bulk_get(dev, ROCKCHIP_NUM_CLKS, rockchip->clks);
++	if (err) {
++		dev_err(dev, "rockchip clk bulk get failed\n");
++		return err;
+ 	}
+ 
+ 	return 0;
+@@ -372,39 +357,13 @@ int rockchip_pcie_enable_clocks(struct rockchip_pcie *rockchip)
+ 	struct device *dev = rockchip->dev;
+ 	int err;
+ 
+-	err = clk_prepare_enable(rockchip->aclk_pcie);
++	err = clk_bulk_prepare_enable(ROCKCHIP_NUM_CLKS, rockchip->clks);
+ 	if (err) {
+-		dev_err(dev, "unable to enable aclk_pcie clock\n");
++		dev_err(dev, "rockchip clk bulk prepare enable failed\n");
+ 		return err;
+ 	}
+ 
+-	err = clk_prepare_enable(rockchip->aclk_perf_pcie);
+-	if (err) {
+-		dev_err(dev, "unable to enable aclk_perf_pcie clock\n");
+-		goto err_aclk_perf_pcie;
+-	}
+-
+-	err = clk_prepare_enable(rockchip->hclk_pcie);
+-	if (err) {
+-		dev_err(dev, "unable to enable hclk_pcie clock\n");
+-		goto err_hclk_pcie;
+-	}
+-
+-	err = clk_prepare_enable(rockchip->clk_pcie_pm);
+-	if (err) {
+-		dev_err(dev, "unable to enable clk_pcie_pm clock\n");
+-		goto err_clk_pcie_pm;
+-	}
+-
+ 	return 0;
+-
+-err_clk_pcie_pm:
+-	clk_disable_unprepare(rockchip->hclk_pcie);
+-err_hclk_pcie:
+-	clk_disable_unprepare(rockchip->aclk_perf_pcie);
+-err_aclk_perf_pcie:
+-	clk_disable_unprepare(rockchip->aclk_pcie);
+-	return err;
+ }
+ EXPORT_SYMBOL_GPL(rockchip_pcie_enable_clocks);
+ 
+@@ -412,10 +371,7 @@ void rockchip_pcie_disable_clocks(void *data)
+ {
+ 	struct rockchip_pcie *rockchip = data;
+ 
+-	clk_disable_unprepare(rockchip->clk_pcie_pm);
+-	clk_disable_unprepare(rockchip->hclk_pcie);
+-	clk_disable_unprepare(rockchip->aclk_perf_pcie);
+-	clk_disable_unprepare(rockchip->aclk_pcie);
++	clk_bulk_disable_unprepare(ROCKCHIP_NUM_CLKS, rockchip->clks);
+ }
+ EXPORT_SYMBOL_GPL(rockchip_pcie_disable_clocks);
+ 
+diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
+index 6111de35f84c..72346e17e45e 100644
+--- a/drivers/pci/controller/pcie-rockchip.h
++++ b/drivers/pci/controller/pcie-rockchip.h
+@@ -11,6 +11,7 @@
+ #ifndef _PCIE_ROCKCHIP_H
+ #define _PCIE_ROCKCHIP_H
+ 
++#include <linux/clk.h>
+ #include <linux/kernel.h>
+ #include <linux/pci.h>
+ #include <linux/pci-ecam.h>
+@@ -287,6 +288,15 @@
+ 		(((c) << ((b) * 8 + 5)) & \
+ 		 ROCKCHIP_PCIE_CORE_EP_FUNC_BAR_CFG_BAR_CTRL_MASK(b))
+ 
++#define ROCKCHIP_NUM_CLKS	ARRAY_SIZE(rockchip_pci_clks)
++
++static const char * const rockchip_pci_clks[] = {
++	"aclk",
++	"aclk-perf",
++	"hclk",
++	"pm",
++};
++
+ struct rockchip_pcie {
+ 	void	__iomem *reg_base;		/* DT axi-base */
+ 	void	__iomem *apb_base;		/* DT apb-base */
+@@ -299,10 +309,7 @@ struct rockchip_pcie {
+ 	struct	reset_control *pm_rst;
+ 	struct	reset_control *aclk_rst;
+ 	struct	reset_control *pclk_rst;
+-	struct	clk *aclk_pcie;
+-	struct	clk *aclk_perf_pcie;
+-	struct	clk *hclk_pcie;
+-	struct	clk *clk_pcie_pm;
++	struct  clk_bulk_data clks[ROCKCHIP_NUM_CLKS];
+ 	struct	regulator *vpcie12v; /* 12V power supply */
+ 	struct	regulator *vpcie3v3; /* 3.3V power supply */
+ 	struct	regulator *vpcie1v8; /* 1.8V power supply */
 
-Best Regards,
-
-Shan-Chun
+base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+-- 
+2.44.0
 
 
