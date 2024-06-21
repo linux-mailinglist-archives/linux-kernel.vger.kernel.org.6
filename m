@@ -1,177 +1,111 @@
-Return-Path: <linux-kernel+bounces-224975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3838912966
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:22:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08BD91297A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C5F1281F85
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:22:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402251F22323
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8545FB8A;
-	Fri, 21 Jun 2024 15:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385A16EB4C;
+	Fri, 21 Jun 2024 15:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="WNIv1Prk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fTv5X9rv"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AJoVrlRB"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E953B7AC;
-	Fri, 21 Jun 2024 15:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE382487BF
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983331; cv=none; b=kNp4mSiXrftz4kfhHfKwZM7QXR301R9zvQ5hVCIpfFKdHDcCKvPkiLwhc+hGFn+C+jeh1xnbjo14bjXwAZ/GLdY02IbjELci7IfSvCrozEzlD8GuP3QCBM6JrRSWirtqbdl/Yvx06r/Ox0EexQM7Bx+4oOlTCmnbCjxC/OXZ/xc=
+	t=1718983366; cv=none; b=rpWmzDsHRWgWdIPCHaR/0Wb7KKq0QHvdYnMJHei3yKBbkyypz2UNFSTpp6KoYUawPc/QYDmQd1balj7nNi6MsBd2QwZVnqqQuoZhswETdckHijPyxAxuKHWw8fVt1gnAdbzeamIamx5vrLnz77S7Z7KNgeNnvgNPGCxm/Trf8rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718983331; c=relaxed/simple;
-	bh=bwzVVU0DpaOag2gJQjv5Wo7VFmiNol555mt6C8q3IGs=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Zd4qegSADY5SwJwxKV2j502jst6YqyXhwka/mf9VlUZMPbgfvfFFN3UekHC4Sl8+U5iM08O52quHqZR2byECzQS1t5a+xwBl7dq0x93MIhz5GrW0blXwln5ZKYghrpyDPioBILsJhTqdOQOKsrKSgr1GBTs7pvSS5nMjJByHbmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=WNIv1Prk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fTv5X9rv; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4D30011400AD;
-	Fri, 21 Jun 2024 11:22:08 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Fri, 21 Jun 2024 11:22:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718983328;
-	 x=1719069728; bh=sxE25uVd20ukxwTOUCuTr+p1UO+6v1RmLwyafcdb1cg=; b=
-	WNIv1PrkDW48ZDK4Ccwgpy7G/sSLfPEZJrPl/Is+F58mVw0+dCsVu5+M/32wLC48
-	N91ud+LGN/jCrhtaDN7vd04Kzt3dVV5ZKOj1DZhGZBcZ+L1op5N4XNwf4GlDEtHA
-	yi0qe7n3+9m1NIe/U7nTDhrz6ScGGQa0mhci2lwnfbNsk3X51DsABtPWYioUzj/w
-	O2ZXAivgz7sSpUr9b+HTBM+dpnibLcEHFyEmmbRPIFEvOkOLHL8LrE2JIplgODgK
-	WaHiBqhPt4DJV2QEVsRMXI0t7UpGO/0y3WsQgA7H1XH/fXVAoR4E24nKegPA3GDf
-	cHeIWENOgJZ+mxm5H9uZhg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718983328; x=
-	1719069728; bh=sxE25uVd20ukxwTOUCuTr+p1UO+6v1RmLwyafcdb1cg=; b=f
-	Tv5X9rvVlAaoEj80J8CzZKYkyA4o07gPGAoKICe/rnUiFUaS+q99NEwnlLAWMY3v
-	XbyfNhVxUMJA2zjuD3MlcXrDWvGXr+pcvRJ3ckmVj2JjcAtC7FzYLd9W8g3JS2ub
-	erqVGGNUSbB+J0Dd9pVp5VobWd/pEUdWq2KeLU0FZPCiKtQvT0S3oqqtRLTyF36Y
-	OFO85RV0oF8+Em4o3bYsKSxnYz4gEerWamDTuSNHJjnsewedFTN/RGZ+1qYC30sw
-	TwSLWZaLVLT7VHN1qM+Rb0FKdRwWFQ4c+jKfs5r2baZxm98srhEmFevG2p4zo2ar
-	otvH2FyxUmglHKFKjZz6Q==
-X-ME-Sender: <xms:n5p1Zi_BdyaqkOwg1i22NzNH3TUoMdbj_LLDSKDfbAAUP_0jXaBWFw>
-    <xme:n5p1ZiuX1xlmTSjMg0s85By-mpYZugfYf67_sUKA9taR3yIQyPSeekez6ErYZBKbu
-    6xEYETrzmQJfKihGro>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefgedgkeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:n5p1ZoBXoE-VUUPqgmywCUvFkNj6h_5SR_h_YbiMscURP7nA-qYxGg>
-    <xmx:n5p1ZqetxeRUJuE0Z20AVYB3tduaek-5o5cH1BjWeXrAQ4B4K8_iZg>
-    <xmx:n5p1ZnO-ZiaroVQsnvDd50IowXj7np4IGJBzN0gzjZFbsMYqDufMlQ>
-    <xmx:n5p1ZkkFxXV3HdwkeMXtUa4f7CybuxupUdikif94bi4qVKSwLDkWqA>
-    <xmx:oJp1Zsouy4CvRvJLRFZVW780P0QWGBtuNDVixUFWJwQhmHxEX6nXBW62>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 9885636A0074; Fri, 21 Jun 2024 11:22:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718983366; c=relaxed/simple;
+	bh=gzQEX5tQ5Du16/4LAjJEnYJx4Gc+yE5OCEuO4ng/t9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DHCepwdHqc+1yQDUNEtH9NEGHNvvsTjPDVVc73i7AaYl1sKwgxOmLbnj6Pf9oqsqyZE/bh9XJgnAt3XYCznzL8px+zGST0tx/+DhZ0iOEy4wB50NrNHSIIQDWT6wxG6L1p5Myvx+0DtMvFtxVnng1eCh6l0+sJPFbHk5OMrk2GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AJoVrlRB; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: linux@roeck-us.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718983361;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8CFnXEzQV3Qc/B9H3rZ93Sy5QZLgRiFgAQG++E7wW6k=;
+	b=AJoVrlRBcHQJqY+q0AJFrbX3KI4Y64uzhyuEgszaFtuBjIesoi86n//jGv39xF6G0HH/b7
+	CfXb4BzveK4xdHWM2bwL1IPBEkUmEBbyLxRZdmFsXwqACOA5qHRz0LSuo2yNcoRWD+m+xp
+	WA6qM6Mq9KQVBP8ixf8IK0SdpOYxhyk=
+X-Envelope-To: jic23@kernel.org
+X-Envelope-To: jdelvare@suse.com
+X-Envelope-To: linux-iio@vger.kernel.org
+X-Envelope-To: linux-hwmon@vger.kernel.org
+X-Envelope-To: lars@metafoo.de
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <55dbe61b-c2df-4eeb-80ac-cc2c83e9cdd3@linux.dev>
+Date: Fri, 21 Jun 2024 11:22:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <83cf475c-86a3-4acb-bc82-d94c66c53779@app.fastmail.com>
-In-Reply-To: <alpine.DEB.2.21.2406211446500.43454@angie.orcam.me.uk>
-References: <20240612-mips-llsc-v2-0-a42bd5562bdb@flygoat.com>
- <20240612-mips-llsc-v2-2-a42bd5562bdb@flygoat.com>
- <alpine.DEB.2.21.2406210041140.43454@angie.orcam.me.uk>
- <2c26a07f-fa68-48f1-8f3b-3b5e4f77130b@app.fastmail.com>
- <alpine.DEB.2.21.2406211446500.43454@angie.orcam.me.uk>
-Date: Fri, 21 Jun 2024 16:21:49 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Jonas Gorski" <jonas.gorski@gmail.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] MIPS: Introduce config options for LLSC availability
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] hwmon: iio: Add labels from IIO channels
+To: Guenter Roeck <linux@roeck-us.net>, Jonathan Cameron <jic23@kernel.org>,
+ Jean Delvare <jdelvare@suse.com>, linux-iio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org
+References: <20240620211310.820579-1-sean.anderson@linux.dev>
+ <20240620211310.820579-3-sean.anderson@linux.dev>
+ <0c74406c-291d-4b0f-935e-989fb2f870ce@roeck-us.net>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <0c74406c-291d-4b0f-935e-989fb2f870ce@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+On 6/21/24 11:08, Guenter Roeck wrote:
+> On 6/20/24 14:13, Sean Anderson wrote:
+>> Add labels from IIO channels to our channels. This allows userspace to
+>> display more meaningful names instead of "in0" or "temp5".
+>>
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>>
+>>   drivers/hwmon/iio_hwmon.c | 33 ++++++++++++++++++++++++++++++---
+>>   1 file changed, 30 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
+>> index 4c8a80847891..588b64c18e63 100644
+>> --- a/drivers/hwmon/iio_hwmon.c
+>> +++ b/drivers/hwmon/iio_hwmon.c
+>> @@ -33,6 +33,17 @@ struct iio_hwmon_state {
+>>       struct attribute **attrs;
+>>   };
+>>   +static ssize_t iio_hwmon_read_label(struct device *dev,
+>> +                  struct device_attribute *attr,
+>> +                  char *buf)
+>> +{
+>> +    struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
+>> +    struct iio_hwmon_state *state = dev_get_drvdata(dev);
+>> +    struct iio_channel *chan = &state->channels[sattr->index];
+>> +
+>> +    return iio_read_channel_label(chan, buf);
+> 
+> This can return -EINVAL if there is no label. Since the label attribute
+> is created unconditionally, every affected system would end up with
+> lots of error messages when running the "sensors" command.
+> This is not acceptable.
 
+The sensors command gracefully handles this. There are no errors, and the label is unused.
 
-=E5=9C=A82024=E5=B9=B46=E6=9C=8821=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
-=8D=882:57=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
-> On Fri, 21 Jun 2024, Jiaxun Yang wrote:
->
->> >  I think this ought not to be done in two places independently and =
-the=20
->> > pieces in <asm/mach-*/cpu-feature-overrides.h> need to be removed, =
-likely=20
->> > in the same change even, *however* not without double-checking whet=
-her=20
->> > there is not a case among them where a platform actually has LL/SC =
-support=20
->> > disabled despite the CPU used there having architectural support fo=
-r the=20
->> > feature.  Otherwise we may end up with a case where a platform has =
-LL/SC=20
->> > support disabled via its <asm/mach-*/cpu-feature-overrides.h> setti=
-ng and=20
->> > yet we enable ARCH_SUPPORTS_ATOMIC_RMW or ARCH_HAVE_NMI_SAFE_CMPXCH=
-G for=20
->> > it via Kconfig.
->>=20
->> IMO it's necessary for platforms who know what are they doing such as=
- ATH25,
->> which we took care in this series.
->>=20
->> I'll add a build time assertion to ensure when CONFIG_CPU_HAS_LLSC is=
- selected
->> kernel_uses_llsc is statically 1, so any incorrect overrides can be s=
-potted
->> at build time.
->
->  That might do in the interim as a sanity check, however ultimately th=
-e=20
-> sole reason these <asm/mach-*/cpu-feature-overrides.h> exist (and the=20
-> `cpu_has_llsc' setting there) is so that a dynamic check at run time i=
-s=20
-> avoided where the result is known from elsewhere beforehand anyway, an=
-d=20
-> your change effectively supersedes the overrides, and therefore they n=
-eed=20
-> to be removed.
->
-No, overrides are still valid if platform did CPU_MAY_HAVE_LLSC, this is=
- at
-least valid for R10000 systems (IP28 decided to opt-out from llsc someho=
-w),
-ATH25 (platform made assumption on IP version shipped with CPU), cavium
-octeon (platform decided to opt-out llsc for non-SMP build). I'm not con=
-fident
-with handling them all in Kconfig so I think the best approach so far is=
- to do
-build time assertion.
+--Sean
 
-Does anyone reckon the reason behind opt-out LLSC for IP28? As far as I =
-understand
-there is no restriction on using LLSC after workaround being applied. If=
- it's purely
-performance reason, I think I'll need to move kernel_uses_llsc logic to =
-Kconfig as well.
-
-Thanks
->
->   Maciej
-
---=20
-- Jiaxun
 
