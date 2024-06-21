@@ -1,300 +1,257 @@
-Return-Path: <linux-kernel+bounces-225035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A46C912AE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA9D912AE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BED21C247E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:07:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EF1F1C25C72
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49C715AACD;
-	Fri, 21 Jun 2024 16:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292181607A1;
+	Fri, 21 Jun 2024 16:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qXSVxcs+"
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b8rjB5uo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB54615F30D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718986021; cv=none; b=CvxdDPZz8vr0sOSMWIevwwAimSVXgqfOMIb9H8UBcJCQU+3Bi4GKUhQvYfhUJ5hriF6yLseXt9cBaYRvbCYdZhz/NBCsRPpB57KK1mAuXPDZT15Zh9tOjNFY8wCJSx4XmedVTpC4dohe+WakQENwVagMW7dmfMt93t5AW4NZD5k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718986021; c=relaxed/simple;
-	bh=4JXEbivYBcsxYTgIWZVnh5SdG3somsUbAFEAVWYGAQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=g7b1/LvHuxEaoYkD+thevUtgMClcCHYztFs9+GnhlTe4Tg0EmAVsQ7K9N5BwF04jwUTPdO1GVT7xn/W4TxZJwYeJc8pNrIoOmL7ReCPmPo7gMIvikPxgtAzsHW6luU3D9Al7nW5MGxVNr1zPGqU6H/MSusYsGti6nYmqf1WV28E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qXSVxcs+; arc=none smtp.client-ip=66.163.187.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718986018; bh=OUlshDAGcf4r9tpcl9XAZhSVZg2AM0tLoTIMQEFIi2o=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=qXSVxcs+GtEjbZ0d5k+4l2SAnxGZ90p8r7pSM+sPQh0gwiWK7oGOPt5A/djfgiWq3axN8FuWsOFcEd4VoiiaLQjnrZnE4KpF0HL3p4wcQEQVLCfR//kRrNPfMqeWmQ6UnqotKJJguw532wrh9Htx/3jxi0q1bNTIx9oOVTzal8v3Y46/Sp7Dmwct4LWKvmvBYPp8H4P53BoRpBRCZdFn7YAHCAjTjOqhMXYkS/3XL0UlEm648T/Wa2QxsDyguB2hpqCTlQiiAHDKG+iQ3tj4lmX0SlcPy4XxfQuCy0nv4ohAkCMZeKFwE7YiSNFUZYpcL4BkZJ4JLKPeSepJJkngYA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718986018; bh=UhRdylbyR4htXfQ3ksARAjZ+RHaqucn3VSCr8yka/PI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=k5vdivu9A40A7njFYrRvHuSrHcq6MDFQ4uOP6lf2zpAcGjgw7pbMhMkq/HUOtB5VS8MnXBXxMRID1MmG1I/ovptzCojf3kq7Ezuyl/J7Znr59053iXGSIuLhlwgnBzjK6uSvzWP+rdq+0rQK4qcdEtV+eYvWjVkAQ3ZE21tUIhHh3CLGjdiQflS60u3lhE0P+rmdun1cnfbZ3zV48B/YSTwtfnX011aBu0YPsPBI5q42CI9YZkBph6y5tmuK+9R63bQeKz5HFlsZHdKmCPk72Xu7lDSYVuIscWiHynOig52r4A8UCxB3ntfSlXFiPQQShdGWW8ekfDG1PMSpJPhztQ==
-X-YMail-OSG: UOgmaHYVM1l.B2Lrwvs9KpB9HMayDYjTI.v_pcGE.wyV8yJdV__a0iUF6w8M_ZQ
- 9DjlRcCmrDJAhwYa_DkAW._pe1YFEAdBPbisx6IBljY6jPDBVytM15A3b9y_ICOOf6Y2gQyZZQEG
- vbd2Ra5Z5dETlmzIeIem5nfBDxGPXM1pS9AQQLiG8TTrc9bp1D8vFoxjewkEv.hgn.vFmLHmFiOk
- F690WplsukRvEIs6ORdxhnao6.LAE601yD5uRlvFI0F2xivoOQxcfl7IkyeelamXEfWJXhJqi0mt
- m5X6mp56a_Gh3YoMT2OP.MUPl5qWpfqu_pvLuaYwF4QfB87ApZ7_J3Q7AQJPNoMwqcS6y7Ns2dge
- 9i3gRXrET3MvwMizhVvjrhr05YyzZqyypfOdvxvWi5fNLqHE8vLbTqWHjC3LPIinledP0Oizg8iC
- ej3v0aVoGCou.qFqoLnLLKEzpkrVPxC1g826XwPCOLCde4QgW1JcNCAO0Lm7S7DnqJUgI7AeQsir
- .E3QINU30eyLN27Xw_crEpXNJaGkBuGXMPMebwXz7T2yVOgXBVarAoLG9EjeO.icxB.4Km9yQi4r
- _SieKbYMH1vuLQxciuDMp_O7_Jo.hodJyD8LlL9JPw38l43TUDCTvJpsSL7hy9s036PLrBveClYF
- eDbEtIVfEb4YJTf9ElyIrvYOKiNDU61pA4waE0vaA.a6036kUAQi4rjqszjaEG73uKevvXLuut9U
- RSbOb6PAMSdPFZI9nu2SzqKUTs7gDFAWYcekbebo_fbyy6Rb4ryZkDLaUEM.pRYDBYihY6tCnEjP
- mcbJ0v21C1a4JlKj6h6.ts6rWqiXZDU7OHKxyAmK9pT.E0iYVloph6MPEUEwwHnOJf08eZUHvcWB
- ON._nTJNBbw10Je5FWqkz77Ca8_2kgcBTrSkCsmzeziJpPTpqIKZMLSD9rh67uIqajVByCXKKcFp
- 5xeHHXNHYLdWiZMhyi2C3lFunwBdK6JQPqLq62hA0D9PwH19C1QSTGg1J7OZehcMEYkrvKm35Cey
- 6GlqyiC7W2AT0a5bGyotkT6hrwpyyUuINqiYBcC1zWbpqoZXi3Eom_jNBVTpwvwJfPopb2QNoOJ8
- 64qDnw2fj93bG9Lc27MP9W6MKLW3QpRe8HcX6GOC._NfQthkrcwjkgTLHfPGWEKCChwlRvqgBSNY
- b_qOYv_tqcePaCCtN.tus.xdI7qVNoGRS_LcqH3hqbGf1oBzQXDIc1sgypqGoCs62Vr1a0F2YEf1
- MX3DjJH6pp2jarQG2BgP1jrHWzNyCdwHPZdwA7zM9NKn5T8BW18OwsAm7ziVT1vebnbkW_hlmXFx
- lA9ERpKKBEB7AYpH2B2.343nl2pJ7jnrLGV3hCkf4i6J8Q0TRF68_lfwSQ0a1lglJsDxXC_qPmXd
- BQuc0YZ79q2QNaUvSYM.aCsKnovkTLoXfuGhYX_.fIktvZYhSkydkUZc56t1F1PAuCb4rC2jGkjp
- rpngP_51S0IuaTBR5XtdzSzVupHco63RcaAS0Zu3iGqf8s24Ku4mdnAATcX1BtEvohK0dIxPuEos
- oitPQJMCvG_BN4pZSQDGuyhVAeYm.GM1fLquHub6fQrb4wvqIssazbb58JiN.NUU2ESj1.RGllLx
- z1IOcg_QAymfklby7q8FFoOZ_fRuL38bHX95Vfhxc6jbcQpr9akYcAq76U4dPRrevo7zalZ0xgdN
- rMYxWlGZvQfuhRBvZbIGgAhPxQwqnMjJd9N9SWpC93I9g1S5QAWQvYCR48IdbRZRWNZJETdn76AK
- pThh8UpEzWYOxyaxKVPfDzIPm92kp_lUyxV4Sb_QpFrLsYqrYRbYvcMjg6HDAP7DC1YEs811wqad
- ayFe7IrbomLVkvRjQskGjt65kVsBUd3alLX6iNZ_aUA48kmGeKlF5jUw0iatgnj358cIaarUO7dC
- YUwZawNqdEQyEdFmqagmEoCCIjSdL9q2Na8c7Lg0fmDEUYo4yt606buaBldxbgivtrlQbq1.hdbR
- f_5IFiDe66qpM9V1PoWMwKKgcHNGHYBIrx_6m2bfiBKZ.QtA5tUnk.UI_ejS4Q3rFyiMwqKl9vji
- eAPYIl1sRp4Javo.3VcYbK1N82X1vfOUJ4gR9ovSbF4TDICFRC5qbgyoLKvwwHWuk5WrgbJ2nxAw
- 2gKVpMPJW70ZUXk_ZeRrzcExGs11R5z6s9SSOimuV0UIwXSGTVqKh5pMN6.kaYV8O6iaBejXCMK8
- G3i3Cjsw2qH1R5rpPQF4n7h6WTVs0EZfhJjG.1s8kSan7AdOlq_Xtt42lX6y2STwOtAWH
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 63602443-7919-45b5-95cb-a0501af045f3
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jun 2024 16:06:58 +0000
-Received: by hermes--production-gq1-5b4c49485c-4rmzt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a6ae495510b30a623b4b0801ff5ab356;
-          Fri, 21 Jun 2024 16:06:55 +0000 (UTC)
-Message-ID: <c59a4954-913b-4672-b502-21aa683d7cdb@schaufler-ca.com>
-Date: Fri, 21 Jun 2024 09:06:53 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6491715FCED
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718986025; cv=fail; b=mNt7gVCbkSWur+a0oGf+yXi3HDEW87LeltADeQLNXigMBibEBiXzbWMALGJRMjds6hotp4309/IlLooeDeBjl+qmd4g7wc7CfQ8/A9aQ/syhOAGD2Sw6LF7eg4JsSD8KL27Gct8o5McP1xtPYfJ6rHUm1atP4YcVZn46i26yCNI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718986025; c=relaxed/simple;
+	bh=PCfpogaHks1vICXEwiYNyME4XlwhEm6l68Od5PxNvLQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=il+UPRWjLXWkS6T98g6pSHidDRAr4tponVhpPnIHy7Lc7sD/nfe050upUKzZ3yxRhTkgtGgR5f9oU0DjYJrz/SJdIfNLBSUtg5+bZgxVeV6n+9ImePIcmv1f5ffxe/qI3JeCuk0Vp0Af5hX7EkNzVdWylcevyu3KlWg5V+QT5u0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b8rjB5uo; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718986024; x=1750522024;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=PCfpogaHks1vICXEwiYNyME4XlwhEm6l68Od5PxNvLQ=;
+  b=b8rjB5uoUZrTSexaYbCC/exdi2Ukwidn5B4YSPGHBtuI7SX010mvsKBC
+   emYMaspVjxZQXOBjMOW9oexVKWwSqQlxPTyg87lBAMWJ4FY+L0buaRQtw
+   z+WD2dOBCPa0/P+Avn7y6Fa+2+dTolt2+C4vyPtNcjZYmmhuOM5fIS2T9
+   mzlh3T9wXybzVPCD4H8SaxsdJCjRsEfbyXLLp942lSO7i8zHF3zI9xHBS
+   aVtDth/YJ/GFaCmCnX9o15e3tDm2PbCnN7r3FOP4kOkhqCldS1/xLqSd6
+   5Y4htLCH0bzhErB7kh/IVeYhwwpdt8IdOco1nA1m7gUia+B9IsZGW26RL
+   w==;
+X-CSE-ConnectionGUID: 1QH7Sn2/STm0rQ6jeigPNg==
+X-CSE-MsgGUID: OlnnMCvjSRu/isi1WIezlA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="15998821"
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="15998821"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 09:07:03 -0700
+X-CSE-ConnectionGUID: 8ENN5EtyRB2k46GlHTsn3A==
+X-CSE-MsgGUID: dJB9SpT+RBqiBmGnJ6yWrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="42728117"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Jun 2024 09:07:03 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 21 Jun 2024 09:07:02 -0700
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 21 Jun 2024 09:07:02 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 21 Jun 2024 09:07:02 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.44) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 21 Jun 2024 09:07:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XiNlxOFKtMBdLeWGDNyD+UdCwIn8wrFTKDb9A1FzY1tgP4YgGwrcHCm2ieWXxXXDqP93EFZjG24xnesAAYsc9UaDmwvb7vJBwoElIpDdMss8j3VNB/n42WiF/XsPtBVsiEygS+RVS6pxagMN407Qjhbi3qNqKBjflGvbz/TvTMtGqaDbmrFghMU9aBwo/wyHysyspMzbmi41Yza8zHBXl9OqADYU9vrjRqELTI+JqF1THqfzmxT1bXAnODa/uepiuvSr0g83m6gviDTpt0qonOxT6WKv8qP0mgI6O5DrTjYXAD2Ctovd8fcQByZQrYSB+14Cuna5zCwZzajytdb5qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PCfpogaHks1vICXEwiYNyME4XlwhEm6l68Od5PxNvLQ=;
+ b=CHHet0boOCngGTO4hwoBo2j9TBgAOlATiiqszL0NxMGELpCiDiCL1j8YLt9OPUYn/Xxj1Zt/70vWZxD6lXWRM6JhIYOhS1N0fYHgz81kFp9nPuNS1vzFcORT/kSgGjgc2uSIUa0taddrqqXj0BaGbVxw4N8g7p+IsvAyEITffdJxKCdJ4XDRcR1F3FJ6nND/cK5kRF/UKs1MV1hA0peJmplkafvuxqFG8jeIpbwHsv90tW7ms2htgxthg5fHeYNV4VVEokQPEghRZGIaOCc2JrqsS6h67QfHPamtDpwJATA5D+TJGCiLkHDUGIo2bVSXrH3SMZGxw13agGBDUF4Vlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by DS7PR11MB7835.namprd11.prod.outlook.com (2603:10b6:8:db::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Fri, 21 Jun
+ 2024 16:07:00 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%5]) with mapi id 15.20.7698.017; Fri, 21 Jun 2024
+ 16:07:00 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: "Chatre, Reinette" <reinette.chatre@intel.com>, "Yu, Fenghua"
+	<fenghua.yu@intel.com>, "Wieczor-Retman, Maciej"
+	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
+ Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>
+CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>
+Subject: RE: [PATCH v20 09/18] x86/resctrl: Add a new field to struct
+ rmid_read for summation of domains
+Thread-Topic: [PATCH v20 09/18] x86/resctrl: Add a new field to struct
+ rmid_read for summation of domains
+Thread-Index: AQHau2UDun5MbjmM/EypFZCVcSKIObHROS+AgAAUVTCAADjvAIAA6qhA
+Date: Fri, 21 Jun 2024 16:07:00 +0000
+Message-ID: <SJ1PR11MB6083DDC10766D10326BE7D6CFCC92@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20240610183528.349198-1-tony.luck@intel.com>
+ <20240610183528.349198-10-tony.luck@intel.com>
+ <1bba8391-6ee3-48aa-935f-b9c08bee049b@intel.com>
+ <SJ1PR11MB6083E7C6C3FB2345A2495480FCC82@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <cd5c42db-2dea-4a01-bf02-b4316b0ba11d@intel.com>
+In-Reply-To: <cd5c42db-2dea-4a01-bf02-b4316b0ba11d@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|DS7PR11MB7835:EE_
+x-ms-office365-filtering-correlation-id: 1afc4cb9-899c-4bc9-10e5-08dc920c2ec9
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|376011|1800799021|366013|38070700015|921017;
+x-microsoft-antispam-message-info: =?utf-8?B?aWlXZWhyZHV6eVlvSldzalhCVWk5U1ZVNVhrODFFUTVPanhxUHpsdDVOOGFN?=
+ =?utf-8?B?L29yV2ZjS3RvL2NWUVgzemYxVGlDeFZyOGJWQ2RkU09yUjd1NHl4Rlc1Ym5z?=
+ =?utf-8?B?ZFVNODQzWDh4Yjh5V0RlTm9VVU5TTWVXOXAxNVhPSHdqUlZEemlZRkdJVGw2?=
+ =?utf-8?B?TGluOWIySE50Q1NWTmtrczB3R3FUN2UrWVpXWHZVbkE3Yy96MUcxZE1Ra0Nj?=
+ =?utf-8?B?TjhRQ1BYTnpyaGpxVTY4WUZVWSt6YmwwYjByK0xNNjFDV1c2TlhuQmc3QkhH?=
+ =?utf-8?B?WVl4QzI4cE55Y0FoWE42VmdrNTRONWh1Z2IwZFVFaE9MaUNoT1BtMlpzS3dW?=
+ =?utf-8?B?V2toamN6SStDOHBUL2RDTFg3akI3LzRVYkFhRFVHbWtzWFU3SDNGbjFjK1dW?=
+ =?utf-8?B?KzM1c1dleEM2REFuQlg1Mkh2dk0vZTAySXJqdVlRYXh4bmd4aGhUcXlPdE9j?=
+ =?utf-8?B?U3RuaU5mcXV0S20wQXVYVDJsaFQyTlBkZXh5c0JzdlNIWkRvWFlVYUpHU0Rj?=
+ =?utf-8?B?Y3M2aG54NldXVHprMzIyS0RHZXkyOHg0UUY0UEFpK3doYXc5cFpIYkVRakdY?=
+ =?utf-8?B?YTNOR3ZqRno0VlVMTVJTZVF6OVJuVUJ2S3RURlg2RktHRGE2clRKSnFsQUs1?=
+ =?utf-8?B?NHZFaWtnT09OeDFldGVGSmhGaS9XeFBRanY1Ymxsd0FNNUY2Y1Z6alhjelRO?=
+ =?utf-8?B?czNPNDk5WXM1cGRSMEU3ZGkyd1R1anVQOTFzQSszdFBRTHdYQyt6YnJDUHVk?=
+ =?utf-8?B?ZVRTN2FLc0psU3FRTmw2dEtHSi9GOVdKaEQ2bXpDWFd2azc4OTMxU25hOGJK?=
+ =?utf-8?B?VTdUR1pxY0R2eVRjdytuVFRpQWFEUzVBVXVaeGRIdEV2M1VMTjdkSW9vZ2U4?=
+ =?utf-8?B?bG45VVJubThidEQ5V2xhYytUWGZtc0pEYUFPZUlwMzlwUkJrZTA4VGdwUXJT?=
+ =?utf-8?B?czB0cFZxcFFKRElseEo2OEJXdXhQOFBoRFNhQ2tIR1VtZ09JREtqN2JkWmNz?=
+ =?utf-8?B?OEZSN1ZEeTFFYzZVWWxjaXBtMTlLazBXWGI1QnNVTjYvRi8yVXd3T3JUMmJS?=
+ =?utf-8?B?VkZVbERmYnVlWlEvNUw3NzVvaitzSEE0QWR0bFRoMVBwaHYvL2dQVDk1MXM2?=
+ =?utf-8?B?ZzFodUtNMWo5eWQwSmtXOWFGU1dmNnJ1TmhpcDZubTdLcFNFK2FFTGkxdTRW?=
+ =?utf-8?B?R0VHeFNVMDhGeElhQVJqdXc4T3hiWjk2R1h5MXhjQVltUnJDSzdlbUl5VW1S?=
+ =?utf-8?B?RlVSK1Y5Q0lMdVpycjc0VEdsSWtuS1JCcC9aRXpKL3FHcW9LVlBnK1NybXdi?=
+ =?utf-8?B?MXk2SFZIaDI4VEtzaHp4U3NZMWVhamJ1dm50b05uMlJPZCtBdUtNb1VzMmRj?=
+ =?utf-8?B?LzhWR2NXUGtOSytwZk1jWm1zK2ZhalRYMXlZampXbHZxNU5LUGtjSVZJR0Yx?=
+ =?utf-8?B?WkJCc1B2YkhpWGhoM2xRdU9wTVYxSzFLN2ZadXV1WE1hMitFRmE2aXNxcmR0?=
+ =?utf-8?B?TGE3dEJ2WFZ3UFVDMDVKUEF2Y0hqaXNCaFJRRXRPdkUzTHo1MjNaUkVQeFJ1?=
+ =?utf-8?B?MzFYSFE3WXZRK2w1dGlmSUhKMmtkNkRTeGU2VXJvcU1wdU1ndWk1SlEzNzBv?=
+ =?utf-8?B?SE5xUXppaE5ka1BrSU1Ja0xqZzVqNjMvakxrbGF6S2g5UWV1QXpreXNXcFlz?=
+ =?utf-8?B?c3d5d3FmKy8yOFFYOWkrSE4wVUo0c2ovdDFxSjFJM3IrbHNodlpjS2ZpY1lK?=
+ =?utf-8?B?M0hlbFdNSTRIMDB5NEtDcCtQcnJzY0VWY3dKS1hBbXB3L3phL0U0bW5VNkty?=
+ =?utf-8?B?aDJjeFFJcmdkc2RCeStueVNGT3JPRUlkUFRDRFNzeTkwTHlPU1RlWXI2a2RB?=
+ =?utf-8?Q?3pmD3NKe13VUr?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(366013)(38070700015)(921017);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?M2hmeTI4aEREQ1Y1SU50SGZmanIrT3ovM01iNWxXV1V3R1E5R1JHSUsvcWhV?=
+ =?utf-8?B?SFg0SS94SmRuU2YwQzNLK0t0b0pFOUxRcjZtWDZrVUVQN2dlU24wSFJBYlZo?=
+ =?utf-8?B?bll3emFZZWk0N2IxL0pXbGRTNFkySkkyeSs1QjRYdXZKYW9PUnFHQU1SNG5Z?=
+ =?utf-8?B?UldVSnFUc0lFNnk1bFlTemtSdURKd0hLN0U5VHJuQS8vVVpMMlFYYzFpeFZ2?=
+ =?utf-8?B?dHByYmkvcFlaYVFVdThQNXlVNUNHcUNhSTdSRlBFeTNvcDNST3VWZmIxVHlm?=
+ =?utf-8?B?NHBpbUVNeU95RkR4QmV2SHQ2WGtGdE9LdWp3T0tPU3lBZTkxSzZzcThHQkdD?=
+ =?utf-8?B?bHNpZktIaWdJRm0rREVTbnlKaThVaFBiZTVLNU91SUJ0czJYZGtiejlTS296?=
+ =?utf-8?B?QTJjYjZyUEhHL2w4Y2JhVXIrU1RoVUdadGdPTEVqZVBOOGNVbWFvRC9pR0g4?=
+ =?utf-8?B?Mi9RVFo5ak93blNmWlRDTVpZbHNMeDlPc1hIWXM5ZG01TnFEVlR1b3JIcnJn?=
+ =?utf-8?B?bVdVUGpEbUZCRWNsaCt6OWF1SndJWVcvc0R6QmhYd0xnWVJXN09ESS9Kdzhh?=
+ =?utf-8?B?eWJoVGhVWjlmZkhvZWJIc2M4bGJlSEppUEFuNnhxcmxhcTNOejR3RlVaTHl6?=
+ =?utf-8?B?aUVweSs0R1BNdUNXTDJYQTFMNyt5QnYwUWtZdnhlNmZGYkZKMVJ0TU00RWJQ?=
+ =?utf-8?B?SXBranpBT2xxdUVqVjFVMmxkYXpaM0tneTAzdHhtcE9HSlJkTDBaL2RjUFBP?=
+ =?utf-8?B?SGU0OS9UaG52dGJ6QTZFakpzUXo4WU9Mb2Z1VTZjN3VUa1BYY21qNUU2L0hS?=
+ =?utf-8?B?c1dJci9lUVk2c21hN2tDb3p1Z3Y5RGRqaytWc1B0VmJEOVFjNGtRUjg0NEdp?=
+ =?utf-8?B?cUJiNVJrcXFvWFBhbWR5ckpuM2lDZzVjbFhRZUVLQXlCMjRxd3pUSWE0ZDZs?=
+ =?utf-8?B?TkhORm5PN3hQVi9MQ3Jjb2NRdVpDSFZvMVlpM3dnUkFQcEppTFdndXhKRUJk?=
+ =?utf-8?B?M0s4VFRacTBvaTgyanFjMXcwZlExYW1rTVg1Vkt2RjJtczQySjZwMDRMQzJt?=
+ =?utf-8?B?LzRYSCtMcWZ3bSt0UVZBNG1ERC9nVmtzR3ZhVmpmNkFLdnZkSHY1bzVQT01D?=
+ =?utf-8?B?cm9vVlFhaTdmbGxXVXpwMSt0UHZqd050SmFlSGVEZGUzNDlQZHh6WDhxZjl6?=
+ =?utf-8?B?bnZreEE0WWNJM1VTQXdYM1hjSXB5clROSVNSR3dJTUtMUENHNTkyNlJOdk9I?=
+ =?utf-8?B?OFUxSFpIRjRqWkI1K0Rpd2h6dldFam5qMVp0cUc3U1RwdlJveFppelJRWUlQ?=
+ =?utf-8?B?Q0N6SWVKTDUvbkRVb3pNMURGSkk4WDczU2xqcTNLVVVwdk1hT2Z3R0I2bHJw?=
+ =?utf-8?B?NE8vVUhDb3doRHRNaTRiT1ZzbW5tMktDbmZEMXEwRDlqQlg1WGV6a2hXOEhz?=
+ =?utf-8?B?dVRyZ3NTaU9jMm1pTGVLSVhOVno5QTNVTlEyWVM4cDhmRHpWZ2JzRWgvTy9X?=
+ =?utf-8?B?YjZ6WXFCeXFPWFZ2cUV2Tm42V2N5OXpOVWxPU2JEVlYxN1laYThNdFNrV1lx?=
+ =?utf-8?B?MlVYczBGTzFqZXQ5U052L1pIeW5qcU9WdllmKzMrMWxNMmtObUhxNW91dGE5?=
+ =?utf-8?B?OUpONUVlYWZ2RkVnbFo1cEE5T0lpRkRaZ3hxSGpkU2IxZzNqeTJldTlDTFln?=
+ =?utf-8?B?UnFmRWVMQzh3SGJ1a2xTNE45M0RMd1k5anJKL0hYWk04TUFhN0hQUTF1OEtM?=
+ =?utf-8?B?YnZMam1NSUVkckRzbGw2clY3MTBuNUFVMXlORnRMc0tOS0x5WkNGaHBvYmFW?=
+ =?utf-8?B?MEtQczRrOHhyS015TDBmSVBrSGF6N3M0d0ZEaERHQ2xPclpwcGdYZ0dlNWJ5?=
+ =?utf-8?B?YjIvMlp5NTUxa0YzZVRHbDdBWFV4emQ0NXB3akFOUTJ2MDBxOTE5WUw5YnVq?=
+ =?utf-8?B?N1kycy9TdUhCQzFqaUlEUmhyQkJ2NytqcEJZMGVjSWZ2SWFjay9hT3cxbDBL?=
+ =?utf-8?B?Uk9JNlRqVE5zay9wMEp0R2J0WGpqNnVKK09lN3pmeTV4WW1wVnd1eWo3cUcv?=
+ =?utf-8?B?UkFuVEt4TWIrR1lrdmJLY2FZdlRnSWxJNFFxOS9Ga3RBUHlubU11UElKQjBV?=
+ =?utf-8?Q?z77T8lCWqrtMs08iuZh/rBHws?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] LSM, net: Add SO_PEERCONTEXT for peer LSM data
-To: Paul Moore <paul@paul-moore.com>,
- LSM List <linux-security-module@vger.kernel.org>, netdev@vger.kernel.org,
- linux-api@vger.kernel.org,
- Linux kernel mailing list <linux-kernel@vger.kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
- <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1afc4cb9-899c-4bc9-10e5-08dc920c2ec9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2024 16:07:00.1818
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: x1+VdZ8Mu83dlxGiXQ22HMH5k20pXmK7kIJO2ANlMUp4K3z3zHztQz/STf+D36YKFILROarm6dFQBbgCiOlzVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7835
+X-OriginatorOrg: intel.com
 
-On 6/20/2024 2:05 PM, Paul Moore wrote:
-> On May 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> We recently introduced system calls to access process attributes that
->> are used by Linux Security Modules (LSM). An important aspect of these
->> system calls is that they provide the LSM attribute data in a format
->> that identifies the LSM to which the data applies. Another aspect is that
->> it can be used to provide multiple instances of the attribute for the
->> case where more than one LSM supplies the attribute.
->>
->> We wish to take advantage of this format for data about network peers.
->> The existing mechanism, SO_PEERSEC, provides peer security data as a
->> text string. This is sufficient when the LSM providing the information
->> is known by the user of SO_PEERSEC, and there is only one LSM providing
->> the information. It fails, however, if the user does not know which
->> LSM is providing the information.
->>
->> Discussions about extending SO_PEERSEC to accomodate either the new
-> Spelling nitpick -> "accommodate" :)
-
-Thanks.
-
->> format or some other encoding scheme invariably lead to the conclusion
->> that doing so would lead to tears. Hence, we introduce SO_PEERCONTEXT
->> which uses the same API data as the LSM system calls.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> ---
->>  arch/alpha/include/uapi/asm/socket.h  |  1 +
->>  arch/mips/include/uapi/asm/socket.h   |  1 +
->>  arch/parisc/include/uapi/asm/socket.h |  1 +
->>  arch/sparc/include/uapi/asm/socket.h  |  1 +
->>  include/linux/lsm_hook_defs.h         |  2 +
->>  include/linux/security.h              | 18 ++++++++
->>  include/uapi/asm-generic/socket.h     |  1 +
->>  net/core/sock.c                       |  4 ++
->>  security/apparmor/lsm.c               | 39 ++++++++++++++++
->>  security/security.c                   | 86 +++++++++++++++++++++++++++++++++++
->>  security/selinux/hooks.c              | 35 ++++++++++++++
->>  security/smack/smack_lsm.c            | 25 ++++++++++
->>  12 files changed, 214 insertions(+)
-> ..
->
->> diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
->> index 8ce8a39a1e5f..e0166ff53670 100644
->> --- a/include/uapi/asm-generic/socket.h
->> +++ b/include/uapi/asm-generic/socket.h
->> @@ -134,6 +134,7 @@
->>  
->>  #define SO_PASSPIDFD		76
->>  #define SO_PEERPIDFD		77
->> +#define SO_PEERCONTEXT		78
-> Bikeshed time ... how about SO_PEERLSMCTX since we are returning a
-> lsm_ctx struct?
-
-Sure.
-
-
->> diff --git a/security/security.c b/security/security.c
->> index e387614cb054..fd4919c28e8f 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -874,6 +874,64 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
->>  	return rc;
->>  }
->>  
->> +/**
->> + * lsm_fill_socket_ctx - Fill a socket lsm_ctx structure
->> + * @optval: a socket LSM context to be filled
->> + * @optlen: uctx size
-> "@optlen: @optval size"
-
-Thank you.
-
-
->> + * @val: the new LSM context value
->> + * @val_len: the size of the new LSM context value
->> + * @id: LSM id
->> + * @flags: LSM defined flags
->> + *
->> + * Fill all of the fields in a lsm_ctx structure.  If @optval is NULL
->> + * simply calculate the required size to output via @optlen and return
->> + * success.
->> + *
->> + * Returns 0 on success, -E2BIG if userspace buffer is not large enough,
->> + * -EFAULT on a copyout error, -ENOMEM if memory can't be allocated.
->> + */
->> +int lsm_fill_socket_ctx(sockptr_t optval, sockptr_t optlen, void *val,
->> +			size_t val_len, u64 id, u64 flags)
->> +{
->> +	struct lsm_ctx *nctx = NULL;
->> +	unsigned int nctx_len;
->> +	int loptlen;
-> u32?
-
-Probably. I'll revise in line with your comment below.
-
->> +	int rc = 0;
->> +
->> +	if (copy_from_sockptr(&loptlen, optlen, sizeof(int)))
->> +		return -EFAULT;
-> It seems the current guidance prefers copy_safe_from_sockptr(), see
-> the note in include/linux/sockptr.h.
-
-Always a good idea to follow guidance.
-
->> +	nctx_len = ALIGN(struct_size(nctx, ctx, val_len), sizeof(void *));
->> +	if (nctx_len > loptlen && !sockptr_is_null(optval))
->> +		rc = -E2BIG;
-> Why do we care if @optval is NULL or not?  We are in a -E2BIG state,
-> we're not copying anything into @optval anyway.  In fact, why are we
-> doing the @rc check below?  Do it here like we do in lsm_fill_user_ctx().
->
->   if (nctx_len > loptlen) {
->     rc = -E2BIG;
->     goto out;
->   }
-
-That's a bit sloppy on my part. I'll clean it up.
-
-
->> +	/* no buffer - return success/0 and set @uctx_len to the req size */
-> "... set @opt_len ... "
-
-Yes.
-
->> +	if (sockptr_is_null(optval) || rc)
->> +		goto out;
-> Do the @rc check above, not here.
->
->> +	nctx = kzalloc(nctx_len, GFP_KERNEL);
->> +	if (!nctx) {
->> +		rc = -ENOMEM;
->> +		goto out;
->> +	}
->> +	nctx->id = id;
->> +	nctx->flags = flags;
->> +	nctx->len = nctx_len;
->> +	nctx->ctx_len = val_len;
->> +	memcpy(nctx->ctx, val, val_len);
->> +
->> +	if (copy_to_sockptr(optval, nctx, nctx_len))
->> +		rc = -EFAULT;
-> This is always going to copy to the start of @optval which means we
-> are going to keep overwriting previous values in the multi-LSM case.
-
-The multiple LSM case isn't handled in this version. I don't want this
-patch to depend on multiple LSM support.
-
-> I think we likely want copy_to_sockptr_offset(), or similar.  See my
-> comment in security_socket_getpeerctx_stream().
->
->> +	kfree(nctx);
->> +out:
->> +	if (copy_to_sockptr(optlen, &nctx_len, sizeof(int)))
->> +		rc = -EFAULT;
->> +
->> +	return rc;
->> +}
->> +
->> +
->>  /*
->>   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
->>   * can be accessed with:
->> @@ -4743,6 +4801,34 @@ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
->>  	return LSM_RET_DEFAULT(socket_getpeersec_stream);
->>  }
->>  
->> +/**
->> + * security_socket_getpeerctx_stream() - Get the remote peer label
->> + * @sock: socket
->> + * @optval: destination buffer
->> + * @optlen: size of peer label copied into the buffer
->> + * @len: maximum size of the destination buffer
->> + *
->> + * This hook allows the security module to provide peer socket security state
->> + * for unix or connected tcp sockets to userspace via getsockopt
->> + * SO_GETPEERCONTEXT.  For tcp sockets this can be meaningful if the socket
->> + * is associated with an ipsec SA.
->> + *
->> + * Return: Returns 0 if all is well, otherwise, typical getsockopt return
->> + *         values.
->> + */
->> +int security_socket_getpeerctx_stream(struct socket *sock, sockptr_t optval,
->> +				      sockptr_t optlen, unsigned int len)
->> +{
->> +	struct security_hook_list *hp;
->> +
->> +	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeerctx_stream,
->> +			     list)
->> +		return hp->hook.socket_getpeerctx_stream(sock, optval, optlen,
->> +							 len);
->> +
->> +	return LSM_RET_DEFAULT(socket_getpeerctx_stream);
->> +}
-> Don't we need the same magic that we have in security_getselfattr() to
-> handle the multi-LSM case?
-
-Yes. I would like to move this ahead independently of the multi-LSM support.
-Putting the multi-LSM magic in is unnecessary and rather pointless until then.
-
-> --
-> paul-moore.com
-
-Thank you for the review. Expect v2 before very long.
-
+PiBJIGRvIG5vdCB0aGluayB0aGVyZSBpcyBhIG5lZWQgdG8gaW50cm9kdWNlIG5ldyBzeW50YXgu
+IEl0IHdpbGwgYmUgZWFzaWVzdA0KPiB0byBqdXN0IGhhdmUgYWxsIHNlbnRlbmNlcyBlbmQgd2l0
+aCBhIHBlcmlvZC4gVGhlIGJlbmVmaXQgb2YgdGhpcyBpcyB0aGF0IGl0DQo+IGVuY291cmFnZXMg
+dXNlZnVsIGZ1bGwgc2VudGVuY2UgZGVzY3JpcHRpb25zLiBGb3IgZXhhbXBsZSwgYmVsb3cgaXMg
+YSBfZHJhZnRfIG9mDQo+IHN1Y2ggYSBkZXNjcmlwdGlvbi4gUGxlYXNlIG5vdGUgdGhhdCBJIHdy
+b3RlIGl0IHF1aWNrbHkgYW5kIGhvcGUgaXQgd2lsbCBiZSBpbXByb3ZlZA0KPiAoYW5kIGNvcnJl
+Y3RlZCEpLiBUaGUgZ29hbCBvZiBpdCBiZWluZyBoZXJlIGlzIHRvIGdpdmUgaWRlYXMgb24gaG93
+IHRoaXMga2VybmVsZG9jDQo+IGNhbiBiZSB3cml0dGVuIHRvIGJlIHVzZWZ1bCBhbmQgY29uc2lz
+dGVudC4NCj4NCj4gLyoqDQo+ICAgKiBzdHJ1Y3Qgcm1pZF9yZWFkIC0gRGF0YSBwYXNzZWQgYWNy
+b3NzIHNtcF9jYWxsKigpIHRvIHJlYWQgZXZlbnQgY291bnQNCg0KU2hvdWxkIHRoaXMgZW5kIHdp
+dGggYSBwZXJpb2QgdG9vPyAgSW4gdGhlIHJlc2N0cmwgY29kZSBhIGZldyBjYXNlcyB1c2UgIi4i
+LA0KbW9zdCBkb24ndC4gU28gbm8gcGVyaW9kIG1hdGNoZXMgcmVzY3RybCBzdHlsZS4gQnV0IHRo
+ZSBleGFtcGxlIGluDQpEb2N1bWVudGF0aW9uL2RvYy1ndWlkZS9rZXJuZWwtZG9jLnJzdCBkb2Vz
+IGVuZCB3aXRoIGEgcGVyaW9kLg0KDQo+ICAgKiBAcmdycDogIFJlc291cmNlIGdyb3VwIGZvciB3
+aGljaCB0aGUgY291bnRlciBpcyBiZWluZyByZWFkLiBJZiBpdCBpcyBhIHBhcmVudA0KPiAgICog
+ICAgICByZXNvdXJjZSBncm91cCB0aGVuIGl0cyBldmVudCBjb3VudCBpcyBzdW1tZWQgd2l0aCB0
+aGUgY291bnQgZnJvbSBhbGwNCj4gICAqICAgICAgaXRzIGNoaWxkIHJlc291cmNlIGdyb3Vwcy4N
+Cj4gICAqIEByOiAgICAgICAgICBSZXNvdXJjZSBkZXNjcmliaW5nIHRoZSBwcm9wZXJ0aWVzIG9m
+IHRoZSBldmVudCBiZWluZyByZWFkLg0KPiAgICogQGQ6ICAgICAgICAgIERvbWFpbiB0aGF0IHRo
+ZSBjb3VudGVyIHNob3VsZCBiZSByZWFkIGZyb20uIElmIE5VTEwgdGhlbiBzdW0gYWxsDQo+ICAg
+KiAgICAgIGRvbWFpbnMgaW4gQHIgc2hhcmluZyBMMyBAY2kuaWQNCj4gICAqIEBldnRpZDogV2hp
+Y2ggbW9uaXRvciBldmVudCB0byByZWFkLg0KPiAgICogQGZpcnN0OiBJbml0aWFsaXplIE1CTSBj
+b3VudGVyIHdoZW4gdHJ1ZS4NCj4gICAqIEBjaTogICAgQ2FjaGVpbmZvIGZvciBMMy4gT25seSBz
+ZXQgd2hlbiBAZCBpcyBOVUxMLiBVc2VkIHdoZW4gc3VtbWluZyBkb21haW5zLg0KPiAgICogQGVy
+cjogICBFcnJvciBlbmNvdW50ZXJlZCB3aGVuIHJlYWRpbmcgY291bnRlci4NCj4gICAqIEB2YWw6
+ICAgUmV0dXJuZWQgdmFsdWUgb2YgZXZlbnQgY291bnRlci4gSWYgQHJncnAgaXMgYSBwYXJlbnQg
+cmVzb3VyY2UgZ3JvdXAsDQo+ICAgKiAgICAgIEB2YWwgY29udGFpbnMgdGhlIHN1bSBvZiBldmVu
+dCBjb3VudHMgZnJvbSBpdHMgY2hpbGQgcmVzb3VyY2UgZ3JvdXBzLg0KPiAgICogICAgICBJZiBA
+ZCBpcyBOVUxMLCBAdmFsIGNvbnRhaW5zIHRoZSBzdW0gb2YgYWxsIGRvbWFpbnMgaW4gQHIgc2hh
+cmluZyBAY2kuaWQsDQo+ICAgKiAgICAgIChzdW1tZWQgYWNyb3NzIGNoaWxkIHJlc291cmNlIGdy
+b3VwcyBpZiBAcmdycCBpcyBhIHBhcmVudCByZXNvdXJjZSBncm91cCkuDQo+ICAgKiBAYXJjaF9t
+b25fY3R4OiBIYXJkd2FyZSBtb25pdG9yIGFsbG9jYXRlZCBmb3IgdGhpcyByZWFkIHJlcXVlc3Qg
+KE1QQU0gb25seSkuDQo+ICAgKi8NCg0KVGhpcyBhbGwgbG9va3MgZ29vZCB0byBtZS4gIFNpbmNl
+IHlvdSBoYXZlIHN1cHBsaWVkIDk5JSBvZiB0aGUgY29udGVudCBmb3IgdGhpcw0KcGF0Y2ggaW4g
+dGhlIHNlcmllcyBJIHNob3VsZCBhc3NpZ24gYXV0aG9yc2hpcCB0byB5b3UgKHdoaWNoIHJlcXVp
+cmVzIHlvdXINClNpZ25lZC1vZmYtYnkgdGFnKS4gSXMgdGhhdCBPSz8gU2hvdWxkIEkgc3BsaXQg
+aW50byB0d28gcGFydHM/IEZpcnN0IHRvIGFkZCB0aGUNCmtlcm5lbGRvYyAoYnkgeW91KS4gU2Vj
+b25kIHRvIGFkZCB0aGUgbmV3IGZpZWxkIChieSBtZSkuDQoNCi1Ub255DQo=
 
