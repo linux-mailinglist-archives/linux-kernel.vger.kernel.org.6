@@ -1,183 +1,125 @@
-Return-Path: <linux-kernel+bounces-224301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B573291206D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:24:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 123F2912075
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351621F241DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:24:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3DD1F2280A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B002A16E86B;
-	Fri, 21 Jun 2024 09:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C0616E881;
+	Fri, 21 Jun 2024 09:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xjr+1la/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="LPT4HTFD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fLokdyMT"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0569912D1EB;
-	Fri, 21 Jun 2024 09:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6172916DEDA;
+	Fri, 21 Jun 2024 09:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718961886; cv=none; b=IpcRC4fmu7RkZsiHah9ELbjzO+aiwd5bq0EUsJl9KQYtxn2SLiSm4QGiyjGKZXcv71GgldsR4zE3yQR3CxtIbObJ5rz+2FqK/NnJiKBWK18Bmulv/7ei7KdcyVZGfi0dcwaBRP07CLPa5CQomeQVsWvaH36MbT5GQzpVr8SrxPE=
+	t=1718961929; cv=none; b=omHHxkZg1KdYM8RUKoDH++htGt8G7Jj2QKI/IIdpADgm7ynseRp9mGBE3oCHXqizrrryEAMc0z9sY78SNMN4Nu7MIiOib0/3ps+NPK5E702LsSfgnFzXX0ocntXXF6MVFFYmOf4FX2+NpeAbgOu4IZg53wXsUVd70Li351R0Yaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718961886; c=relaxed/simple;
-	bh=NBWTcpKZIKcW6NL5NChdd9KplU+HhaBpcnqHOd3GkH4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lfIoKYNGPYW9cNHvlFd+4u/LI2DUXFPCOrjMZyKhuyMExl7j+jbG5qJHVQwkn1KUEoPFQI4T4jBCuMtuBwdOAabr0rAHxb5YEyT03kMsizE1Jxflm3RTYsmpzgnPTmcj7xUVUDlDh+UEWvlqVjn7QM/HCrF3gQEurmfKeN8XXf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xjr+1la/; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718961884; x=1750497884;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=NBWTcpKZIKcW6NL5NChdd9KplU+HhaBpcnqHOd3GkH4=;
-  b=Xjr+1la/RYE8GyospQ++KXqNTjwku905qConReluT5tFSOj0sQE3JCG6
-   3Hx+O+yuRKW75Yps+NJAWFE0Mj7PRwePhCQlTFHqHjP8fZ20kPukDx2cH
-   xtfCm42b+VupvN5ZG1ACNB3ZAA6Cj6/z8avsOXBgm7YhVLZ0BPfX9Jv2m
-   cQgTMp70S9JCE7yhaR8duRTp1d+RVDIuvq4bmJJK1b9RAU6vm9+xc0OqD
-   /42yCY+S/sulrJ5zKkoLIZGi061Q/Z6WN4dgN+pU91zBtjWk7ys99goFQ
-   B4och0PmkCC1uzOk3KpwksyE05+gNvFou71qJrwmzia881JPowrkt+9pr
-   Q==;
-X-CSE-ConnectionGUID: 90Ys6P04TCOakwPiuE3+uA==
-X-CSE-MsgGUID: 3k4KlAn1TgyjhPF5C1pZcw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15821218"
-X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
-   d="scan'208";a="15821218"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 02:24:43 -0700
-X-CSE-ConnectionGUID: 22g+VwFiQBWSlHtaAoNqOg==
-X-CSE-MsgGUID: f/88ox6tSbeoFtvnlyIrMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
-   d="scan'208";a="43203306"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 02:24:40 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,  David Hildenbrand
- <david@redhat.com>,  akpm@linux-foundation.org,  shuah@kernel.org,
-  linux-mm@kvack.org,  chrisl@kernel.org,  hughd@google.com,
-  kaleshsingh@google.com,  kasong@tencent.com,
-  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,  Barry
- Song <v-songbaohua@oppo.com>
-Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
- entry allocation for thp_swapout
-In-Reply-To: <CAGsJ_4y_pjMpNOFzrPZ6u7=M83-CQ0umDCPt=ZDuSKJWssiCqA@mail.gmail.com>
-	(Barry Song's message of "Fri, 21 Jun 2024 19:47:02 +1200")
-References: <20240620002648.75204-1-21cnbao@gmail.com>
-	<f3c18806-34ac-41d3-8c79-d7dd6504547e@arm.com>
-	<d0b20f47-384d-49f1-8449-0da6da11089c@redhat.com>
-	<b99c2f80-3b53-4b04-b610-a66179b928a9@arm.com>
-	<CAGsJ_4y_pjMpNOFzrPZ6u7=M83-CQ0umDCPt=ZDuSKJWssiCqA@mail.gmail.com>
-Date: Fri, 21 Jun 2024 17:22:49 +0800
-Message-ID: <87cyoa1wgm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718961929; c=relaxed/simple;
+	bh=SIATBHynFPT4f+uIOXa3YInhK69wX4k++ZVS8wWjv5w=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=e40MiSyvzOUV550BpwAqvrSa1AxMQjauG9sUibUG0KgNdrYhwKfCUQJxndgU1MyQBxkmlWxePnmDxSwummaaHepEcpXY5m9ZJkMwftG76E89H45gZeGUML5VRssje0hvTcM5gDXcfhR6e9tpLYiu9rY+bmyXkZUJ3kEablX7uhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=LPT4HTFD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fLokdyMT; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 5D05C1140227;
+	Fri, 21 Jun 2024 05:25:25 -0400 (EDT)
+Received: from imap41 ([10.202.2.91])
+  by compute2.internal (MEProxy); Fri, 21 Jun 2024 05:25:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1718961925; x=1719048325; bh=/yr39+Xu06
+	R6chuqcUrLF7krLetllE+7yriX4oNGtLE=; b=LPT4HTFDM/hI9/ZaAoTIzxwKRe
+	BZ9OBVXZI9UM1+VsXe9NkrCSjZW8XShs5d9s/cMSrZzxye7doyOyU13IjxhBTXwz
+	UeNp7QF/tLzETXxXG0ki1Z7e6qk3irOZQPuUWpYZblME8lFM03XEL9+xG10Y7NvH
+	t+Lv46QtarTCzsKwIzohso1wdo1d6zvk60L8lNgbTj8zrJizW1eEfUfQ+GDRqbYY
+	BJSGH+HjEj1ChfIP3Fztuvui3BSQBgZuD2o4Dk4tF1pfN/EzMOWy6p96j8lY6RwU
+	eqLMQdndw+m8frnELWO4aXlvEVBJV/kpyqUxFeyMmgm7qNoN/izyEQyDX6TA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1718961925; x=1719048325; bh=/yr39+Xu06R6chuqcUrLF7krLetl
+	lE+7yriX4oNGtLE=; b=fLokdyMThmaAdWVgXue8YQXjDhjjoNuzHpgVthyohscc
+	AcTuggRWKhc1tNwo43gcr1IBF8VeYfhzzJNBaVEDY4icLLYUBfn/myxlXssRxxFT
+	HMmA6Hdq4m+qh7sl66yy2G8it6F0VIwKwwup1VHmee/lqitWqXUXwkjL5/KjPuEB
+	n8+AcyLEJkmhda60lpxpF/TxNoylg1IQoXTGmypKDXMdJuv/VSrTMkUBwD10U/d1
+	1aQXl5i90prbEx/txpHaOhHSwivmvPyfMiwfQJ1mzfxE+1AvEl1UE5/PnY++z5jk
+	WNSEqYkGQAPo+7b/S0QAP5BQb/F7b9KVkxP/k7E1yQ==
+X-ME-Sender: <xms:BEd1ZpbmyDA35KtpPFayUxkoDb7NjX2PwggrG-51xE1E10Ioin5_eQ>
+    <xme:BEd1ZgYO8zJmCBVW0Nf3O3ztoyzXO4RXIy_jg857Xw8A7asiim67Ex2iJXfe2HBYM
+    lVK9iyfiOrv67yduMc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefgedgudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfnfhu
+    khgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtth
+    gvrhhnpedutdelgfdvgeekueeuteevffelfedukeeitedugfdvtdeutdetjeduudeuvdeg
+    gfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluh
+    hkvgeslhhjohhnvghsrdguvghv
+X-ME-Proxy: <xmx:BEd1Zr-0_ihlzj1MovG12SIBC5Yrh1fjvFIU9206enxYuv5p-cHmHQ>
+    <xmx:BEd1Znr7zdFasBTh1Q9SJAOUnFYjxaxHARyQQYRKz8mJJG8n_fdiBw>
+    <xmx:BEd1ZkpzX0HSN_WvoTrsMKc73wG1JkSq2HaXcvu6uUeZRpnXXoL1Fg>
+    <xmx:BEd1ZtQuV4ycGbVDHAzK3euhlZdXqggAtrKGCmVIjKuyMnVYRynGnA>
+    <xmx:BUd1ZpCzBzEOjcSfKk_3ZBTqxxJbgm-eFpzPIQ6fU-J6P-IyHh77CXHl>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A549B2340082; Fri, 21 Jun 2024 05:25:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <e47d7929-0977-4f2f-a894-632779ba992e@app.fastmail.com>
+In-Reply-To: <a18c8b3a-90b0-47a7-aff6-a289ecddc2c0@doubly.so>
+References: <20240620082223.20178-1-dev@doubly.so>
+ <20240620082223.20178-2-dev@doubly.so>
+ <ede8505f-bcf6-403e-bda2-6848cd4ff4c7@app.fastmail.com>
+ <a18c8b3a-90b0-47a7-aff6-a289ecddc2c0@doubly.so>
+Date: Fri, 21 Jun 2024 21:25:04 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Devin Bayer" <dev@doubly.so>, corentin.chary@gmail.com
+Cc: "Hans de Goede" <hdegoede@redhat.com>,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-api@vger.kernel.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: support camera disable LED
+Content-Type: text/plain
 
-Barry Song <21cnbao@gmail.com> writes:
 
-> On Fri, Jun 21, 2024 at 7:25=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.co=
-m> wrote:
->>
->> On 20/06/2024 12:34, David Hildenbrand wrote:
->> > On 20.06.24 11:04, Ryan Roberts wrote:
->> >> On 20/06/2024 01:26, Barry Song wrote:
->> >>> From: Barry Song <v-songbaohua@oppo.com>
->> >>>
->> >>> Both Ryan and Chris have been utilizing the small test program to aid
->> >>> in debugging and identifying issues with swap entry allocation. While
->> >>> a real or intricate workload might be more suitable for assessing the
->> >>> correctness and effectiveness of the swap allocation policy, a small
->> >>> test program presents a simpler means of understanding the problem a=
-nd
->> >>> initially verifying the improvements being made.
->> >>>
->> >>> Let's endeavor to integrate it into the self-test suite. Although it
->> >>> presently only accommodates 64KB and 4KB, I'm optimistic that we can
->> >>> expand its capabilities to support multiple sizes and simulate more
->> >>> complex systems in the future as required.
->> >>
->> >> I'll try to summarize the thread with Huang Ying by suggesting this t=
-est program
->> >> is "neccessary but not sufficient" to exhaustively test the mTHP swap=
--out path.
->> >> I've certainly found it useful and think it would be a valuable addit=
-ion to the
->> >> tree.
->> >>
->> >> That said, I'm not convinced it is a selftest; IMO a selftest should =
-provide a
->> >> clear pass/fail result against some criteria and must be able to be r=
-un
->> >> automatically by (e.g.) a CI system.
->> >
->> > Likely we should then consider moving other such performance-related t=
-hingies
->> > out of the selftests?
->>
->> Yes, that would get my vote. But of the 4 tests you mentioned that use
->> clock_gettime(), it looks like transhuge-stress is the only one that doe=
-sn't
->> have a pass/fail result, so is probably the only candidate for moving.
->>
->> The others either use the times as a timeout and determines failure if t=
-he
->> action didn't occur within the timeout (e.g. ksm_tests.c) or use it to a=
-dd some
->> supplemental performance information to an otherwise functionality-orien=
-ted test.
->
-> Thank you very much, Ryan. I think you've found a better home for this
-> tool . I will
-> send v2, relocating it to tools/mm and adding a function to swap in
-> either the whole
-> mTHPs or a portion of mTHPs by "-a"(aligned swapin).
->
-> So basically, we will have
->
-> 1. Use MADV_PAGEPUT for rapid swap-out, putting the swap allocation code =
-under
-> high exercise in a short time.
->
-> 2. Use MADV_DONTNEED to simulate the behavior of libc and Java heap in fr=
-eeing
-> memory, as well as for munmap, app exits, or OOM killer scenarios. This e=
-nsures
-> new mTHP is always generated, released or swapped out, similar to the beh=
-avior
-> on a PC or Android phone where many applications are frequently started a=
-nd
-> terminated.
+On Fri, 21 Jun 2024, at 7:50 PM, Devin Bayer wrote:
+> 
+> Thanks for the review, Luke.
+> 
+> On 20/06/2024 23.40, Luke Jones wrote:
+> >>   
+> >> + if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_CAMERA_LED)) {
+> >> + asus->camera_led.name = "platform::camera";
+> > 
+> > What do other devices label their camera LED as? The one I could find appears to use `<vendor>::camera`. So maybe `asus::camera` would be better? This also keeps in line with `asus::kbd_backlight`.
+> 
+> I reasoned it would be better to keep the name generic is so out of the 
+> box desktops could toggle the camera and the LED when KEY_CAMERA is 
+> pressed, just like with micmute and mute.
 
-MADV_DONTNEED 64KB memory, then memset() it, this just simulates the
-large folio swap-in exactly, which hasn't been merged by upstream.  I
-don't think that it's a good idea to make such kind of trick.
+This might be true if one relies solely on the filesystem path, which in any case is a bad move and likely to cause the moon to drift away from earth eventually. Most Linux software will use the udev libraries available to filter devices according to any amount of criteria (and if they are not they *really should* - udev is pretty powerful and freeing.
 
-> 3. Swap in with or without the "-a" option to observe how fragments
-> due to swap-in
-> and the incoming swap-in of large folios will impact swap-out fallback.
+I've tried finding prior art again and there's just not a lot to go on. ".name = "platform" shows very little except a few micmute labels. "::cam" gets one entry. So my guess is this is still a very new thing or it's not important enough to be used..
 
-It's good to create fragmentation with swap-in.  Which is more practical
-and future-proof.  And, I believe that we can reduce large folio
-swap-out fallback rate without the large folio swap-in trick.
-
-> And many thanks to Chris for the suggestion on improving it within
-> selftest, though I
-> prefer to place it in tools/mm.
-
---
-Best Regards,
-Huang, Ying
+In any case looking at the rest of the possible LED entries, mostly those following keyboard, the last part of the name being sensible is what counts the most (e.g "scrolllock", "camera"). This might be setting a precedent, and if so I'd be happy with "::camera" in the LED class conveying expectations well enough.
 
