@@ -1,99 +1,98 @@
-Return-Path: <linux-kernel+bounces-223820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCCE9118CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5599118CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A0BB22250
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:40:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD45B1C21E32
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FE284FD6;
-	Fri, 21 Jun 2024 02:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B9784FAC;
+	Fri, 21 Jun 2024 02:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seacLH7m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC17A7E799;
-	Fri, 21 Jun 2024 02:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="f/Hr90Bi"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7AF7E799
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718937627; cv=none; b=RW2gJSRnfwdYHf04zJzrkTfTkssyl3ynBuNtad6UstOI5qNKzPTRi1np7CZsWtERDGgl2YvB5aYPgsW8IiaXOKQDE2eNme5euziOZF4wy+kPkpmDNtsvVqRdii0tJby5xS+yuq7CLhTTyfIF9jI6qM7nE3aQpUgHbgo3wBSHqQM=
+	t=1718937697; cv=none; b=R+cEmBH1pYhTXbldtQk4y7TIrgCDX4pi7rky6inFk1k7miWONQTAMGKo0/4HE1AeNpqlDkL/EWBfKeye7yB7pAE++hl8s4+RMon52bmVRJXQsiN/X0CL1hXF0nUWQG+n0/82jrM1RvwoAmJs9uEZkTinCOomyxQJaRQAc2CPjW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718937627; c=relaxed/simple;
-	bh=xJZIYVbUP0t+JbPBKaSKgjcIw13Hyj2UtyKRDIikHCo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=r9iZlqiciIa3KFBCU+87vqGSYGwMfDXGYXOkKr/CR18GhHyXW/7ieyZShPElur4A7AZ8xvWefttp+QJIEPYmj/qwhF8pKeWdTxQwiOVJeOWRjidGV+RGKYEqGvwJ6b54OfuZchTZzUETc8BDxdMBe2USVkKxgOoOALqTYXF73KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seacLH7m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 46E7BC4AF07;
-	Fri, 21 Jun 2024 02:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718937627;
-	bh=xJZIYVbUP0t+JbPBKaSKgjcIw13Hyj2UtyKRDIikHCo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=seacLH7mXRCeWEugfPHXgqH3FDxgKL/ZBcE5P5twXfe8bjpEJbm6uKpmzFVJLbbBM
-	 lLovx3vZYBm5po2rBJuh9cA+w4AJL+o0D6nfBG0zmxwvrhvMUtugPAe5VVGo0HC/Jj
-	 +W4lb1zGsCi0nz/tQLxo62bKIUBTT1VwICL73o5Zv7x85IvlOjYIEuQyaigFxN7UEV
-	 4xu1ALI9KFRxT2xKimDmdWYb89uN5Lmkyy/1RDituR3XO0cRQcIHXca+wWtDxxjtsq
-	 rJo1r8XE0c5vAXV3flJ7pIS0daYeBFqFQDkxO8doLeEatNSkS3r5Ud7q5dXy+S9DX6
-	 FvfnCQ9nRMhAA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3545CE7C4C8;
-	Fri, 21 Jun 2024 02:40:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718937697; c=relaxed/simple;
+	bh=Omnit98zDPQ8zEbhRt6NcSzwKNhOVJPP8EA7TahPI48=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=U+Rhk8df+19oqnsoaFAQR9bNKBguPAl+ROnCuE1+DKsI4HWT4Di8j+LFIpqX4fJyxwRw13uBN0U3WM3iKQTuk52XYrFmZU3VEs6Z4etikJGjT6cUZbyE3WOvSrncL01RaEk6aiwnKU/1LPPbo/CsbGuNAfDhFY0K2/M6YYISuNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=f/Hr90Bi; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:From:Subject:
+	Content-Type; bh=EXZH6Y00n0A5f9mRlS4gzqQT4Ccb/lcVaPVwyfNtmJU=;
+	b=f/Hr90Bib8fx437arN+PxbeU0S1eXxk+styBTDJvad4hCjYufR/uFkk1uwb7N/
+	jBNN8xuBISdEKTd90fDJeNXtn/Ll03bIPqwV8xUEu4q9ahyRv4El8C1W8nnJ/tEs
+	pvWvUqgcfUXNG1Md8q7QJVYbAtCnCRR+dfKIYEnIeyx6o=
+Received: from [172.22.5.12] (unknown [27.148.194.72])
+	by gzga-smtp-mta-g3-5 (Coremail) with SMTP id _____wD3X9hI6HRm+RWIBQ--.14621S2;
+	Fri, 21 Jun 2024 10:41:12 +0800 (CST)
+Message-ID: <24ac3144-c6bc-4fd9-b592-d1a88505e65a@163.com>
+Date: Fri, 21 Jun 2024 10:41:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v1 net] net: dsa: microchip: fix initial port flush problem
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171893762721.9082.9601801186482901167.git-patchwork-notify@kernel.org>
-Date: Fri, 21 Jun 2024 02:40:27 +0000
-References: <1718756202-2731-1-git-send-email-Tristram.Ha@microchip.com>
-In-Reply-To: <1718756202-2731-1-git-send-email-Tristram.Ha@microchip.com>
-To:  <Tristram.Ha@microchip.com>
-Cc: woojung.huh@microchip.com, andrew@lunn.ch, vivien.didelot@gmail.com,
- f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, tristram.ha@microchip.com
+User-Agent: Mozilla Thunderbird
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Jianguo Wu <wujianguo106@163.com>
+Subject: [PATCH] netfilter: fix undefined reference to 'netfilter_lwtunnel_*'
+ when CONFIG_SYSCTL=n
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wD3X9hI6HRm+RWIBQ--.14621S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tw43KFykJry5Kr13AFWDJwb_yoW8WrWDpa
+	n8uw1UJr1jgFWrKrWvg348ZF1Ygay5ta48urZ0k34kXF1q9w4DGwsa9FW7Xa1UWw4kKFW5
+	WF10qw43J34DJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UDxhJUUUUU=
+X-CM-SenderInfo: 5zxmxt5qjx0iiqw6il2tof0z/1tbiNw4FkGXAlz3dhQAAs7
 
-Hello:
+From: Jianguo Wu <wujianguo@chinatelecom.cn>
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+if CONFIG_SYSFS is not enabled in config, we get the below compile error,
 
-On Tue, 18 Jun 2024 17:16:42 -0700 you wrote:
-> From: Tristram Ha <tristram.ha@microchip.com>
-> 
-> The very first flush in any port will flush all learned addresses in all
-> ports.  This can be observed by unplugging the cable from one port while
-> additional ports are connected and dumping the fdb entries.
-> 
-> This problem is caused by the initially wrong value programmed to the
-> REG_SW_LUE_CTRL_1 register.  Setting SW_FLUSH_STP_TABLE and
-> SW_FLUSH_MSTP_TABLE bits does not have an immediate effect.  It is when
-> ksz9477_flush_dyn_mac_table() is called then the SW_FLUSH_STP_TABLE bit
-> takes effect and flushes all learned entries.  After that call both bits
-> are reset and so the next port flush will not cause such problem again.
-> 
-> [...]
+All errors (new ones prefixed by >>):
 
-Here is the summary with links:
-  - [v1,net] net: dsa: microchip: fix initial port flush problem
-    https://git.kernel.org/netdev/net/c/ad53f5f54f35
+   csky-linux-ld: net/netfilter/core.o: in function `netfilter_init':
+   core.c:(.init.text+0x42): undefined reference to `netfilter_lwtunnel_init'
+>> csky-linux-ld: core.c:(.init.text+0x56): undefined reference to `netfilter_lwtunnel_fini'
+>> csky-linux-ld: core.c:(.init.text+0x70): undefined reference to `netfilter_lwtunnel_init'
+   csky-linux-ld: core.c:(.init.text+0x78): undefined reference to `netfilter_lwtunnel_fini'
 
-You are awesome, thank you!
+Fixes: a2225e0250c5 ("netfilter: move the sysctl nf_hooks_lwtunnel into the netfilter core")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406210511.8vbByYj3-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202406210520.6HmrUaA2-lkp@intel.com/
+Signed-off-by: Jianguo Wu <wujianguo@chinatelecom.cn>
+---
+ net/netfilter/nf_hooks_lwtunnel.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/net/netfilter/nf_hooks_lwtunnel.c b/net/netfilter/nf_hooks_lwtunnel.c
+index 7cdb59bb4459..d8ebebc9775d 100644
+--- a/net/netfilter/nf_hooks_lwtunnel.c
++++ b/net/netfilter/nf_hooks_lwtunnel.c
+@@ -117,4 +117,7 @@ void netfilter_lwtunnel_fini(void)
+ {
+ 	unregister_pernet_subsys(&nf_lwtunnel_net_ops);
+ }
++#else
++int __init netfilter_lwtunnel_init(void) { return 0; }
++void netfilter_lwtunnel_fini(void) {}
+ #endif /* CONFIG_SYSCTL */
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+1.8.3.1
 
 
