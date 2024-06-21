@@ -1,147 +1,189 @@
-Return-Path: <linux-kernel+bounces-224868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB159127DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 258069127E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 977A72819DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:32:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7FEF284137
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79802208CE;
-	Fri, 21 Jun 2024 14:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B0F21A19;
+	Fri, 21 Jun 2024 14:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KOEkO6kP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lw7RZSee"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF35208A1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D884436;
+	Fri, 21 Jun 2024 14:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718980332; cv=none; b=aisEB0PUGY5g2TYMNEVxEA33tWneZYMvrH7tiZXXlSI9cwalofnPsr9J9YNpBEvRH3+G/MbRDpCtbvpZhIQ2J3XXySSa/NqD2cPo5ywWqJZVhm/B+t2e+siF+XOmzSo56+tGUTM6pytT9HP2Th/0x7SY4nYX0sfuKMjrx0e49VE=
+	t=1718980376; cv=none; b=XSW+Bi+TKPav+ZAX8DvilZ0oUl+dJt3OkQcAk2giY4wKEwfPARryNbQRA9HxHbwoBrRt9V70cCp9zYu5HX4i8BfTznEtl1Uf7aHGWoOBe1yoH9XoHnuvhJTaLfkvaoh4BgFpdHKU5eNVCDUA/G4TkivKxzF4pX4Tcwm52ll0NrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718980332; c=relaxed/simple;
-	bh=SCV4XnLDPwX4vm7ZchPPteJullsBv/S+vDAJVlZdLhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BZggkNgWX8SoC+/qgkTWF9gdwdkBpfbrc8cRvpjPv8HAZ9XJrKtthQVz/fKcdg53Wgqavem+RepfVPmR/2X3uiFjF3v+J4FH4MA+p1LJPnxZbVJmZsmi4VlwcRsr2XdTFytEETT5c5UVthyDUEmFcFXxFgckcSfuBbNUyvPNn2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KOEkO6kP; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718980331; x=1750516331;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SCV4XnLDPwX4vm7ZchPPteJullsBv/S+vDAJVlZdLhA=;
-  b=KOEkO6kPMOcfMUgevYL+/2pGeH7ykTwYDyAvX06+cTMcNZOwS+y20zzR
-   /iCt6R9r3Is6S6wsowYYOydRU7l0EP3jWKBmk0FFAI1DALotdiWUceiEQ
-   BTKwzZ2T8inf0cU9imSiY2oHikW1/4BzRmfNXniiByyAS4jsjZlMODN3f
-   vqeWdo4Oy6ye0SQW/KeUwvwNY8ReVoWMuR32HDSwK6SKo3jork2vKcJyj
-   NNUf0XgJG3RNFNkvUVHosAtc/g3yhlyOAzGX5zz/4k+dD408ARafF+G0a
-   rZUdUsx+sqKUXviPrfUm+3Hfjhec64X4xX7VeYJB/3MEkQpfJDRvTo3hP
-   w==;
-X-CSE-ConnectionGUID: 9/nRtTzxTtKiaOIKv1zqyA==
-X-CSE-MsgGUID: +hFECc7JRHCdrUwCd/7jqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="41420533"
-X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
-   d="scan'208";a="41420533"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 07:32:10 -0700
-X-CSE-ConnectionGUID: qwXb30wBQOKcJIT2kbiqwA==
-X-CSE-MsgGUID: NYXjrJQvTViS1Ij6Y5vCtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
-   d="scan'208";a="42706810"
-Received: from bmurrell-mobl.amr.corp.intel.com (HELO [10.124.221.70]) ([10.124.221.70])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 07:32:08 -0700
-Message-ID: <afffce60-f03d-4f0f-ab03-410b4571d52b@intel.com>
-Date: Fri, 21 Jun 2024 07:32:09 -0700
+	s=arc-20240116; t=1718980376; c=relaxed/simple;
+	bh=ez03aVKBlqGthUjZy/ZRNjr5TOr2Y00yZXdbgrk//tQ=;
+	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=QiZciIcY8SYWvyPig7JlTWvHz+lx81PbIPg05p9wovC1DGUh0th/HhfTRDak/DBEH3T+92vkYhiRkpNoSgh5j9GleW+qFGnkYaqfH8hZmrU9FFcJoM/F24TOigzgDkxZN7hxWtZh93MpJb4X/qsABbsAiMv/u6mAsJO/ds+qKmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lw7RZSee; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44796C4AF08;
+	Fri, 21 Jun 2024 14:32:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718980375;
+	bh=ez03aVKBlqGthUjZy/ZRNjr5TOr2Y00yZXdbgrk//tQ=;
+	h=Subject:From:To:Cc:Date:From;
+	b=Lw7RZSeeaO9duH9TTQvuqZ1NRkCsIavqwGDeNGjGj1lPcgKSG1tMmPb86gwmYTBEp
+	 QBBUS9aGRHw3hTTB+q+2eYwpmJDQMr5koen1v0X0zEO0El95ER1+Qw41KR+GLGpYLH
+	 sYIm37RwkhMnY/w6GkRTYLy0ksOaHWIpS5eQePfEAFOs8S+5j5p4O2T/aUz8iegk9L
+	 GlIpFuIJahJkUbE3fXuQNmH2OCuAkCBhIveOnA9kPe+fAVwnAHo1cNUPV3oRjJx2Kq
+	 rn6/SfVxO8alI3p8CrTDRMxmrpJU2Lu286EXChTP3D3SoLcv/g0HpR1mk35X1FeK2b
+	 OOhC//SFZB/xQ==
+Subject: [PATCH v1] cgroup/rstat: Avoid thundering herd problem by kswapd
+ across NUMA nodes
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+To: tj@kernel.org, cgroups@vger.kernel.org, yosryahmed@google.com,
+ shakeel.butt@linux.dev
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, hannes@cmpxchg.org,
+ lizefan.x@bytedance.com, longman@redhat.com, kernel-team@cloudflare.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date: Fri, 21 Jun 2024 16:32:50 +0200
+Message-ID: <171898037079.1222367.13467317484793748519.stgit@firesoul>
+User-Agent: StGit/1.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] mm/x86: Make pud_leaf() only cares about PSE bit
-To: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>,
- Dave Jiang <dave.jiang@intel.com>, "Kirill A . Shutemov"
- <kirill@shutemov.name>, Ingo Molnar <mingo@redhat.com>,
- Oscar Salvador <osalvador@suse.de>, Matthew Wilcox <willy@infradead.org>,
- Vlastimil Babka <vbabka@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Michael Ellerman <mpe@ellerman.id.au>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, linuxppc-dev@lists.ozlabs.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Rik van Riel <riel@surriel.com>, Mel Gorman <mgorman@techsingularity.net>,
- "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
- Nicholas Piggin <npiggin@gmail.com>, Huang Ying <ying.huang@intel.com>
-References: <20240621142504.1940209-1-peterx@redhat.com>
- <20240621142504.1940209-6-peterx@redhat.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20240621142504.1940209-6-peterx@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 6/21/24 07:25, Peter Xu wrote:
-> An entry should be reported as PUD leaf even if it's PROT_NONE, in which
-> case PRESENT bit isn't there. I hit bad pud without this when testing dax
-> 1G on zapping a PROT_NONE PUD.
+Avoid lock contention on the global cgroup rstat lock caused by kswapd
+starting on all NUMA nodes simultaneously. At Cloudflare, we observed
+massive issues due to kswapd and the specific mem_cgroup_flush_stats()
+call inlined in shrink_node, which takes the rstat lock.
 
-Yeah, looks like pmd_leaf() got fixed up because of its involvement in
-THP, but PUDs got missed.  This patch also realigns pmd_leaf() and
-pud_leaf() behavior, which is important.
+On our 12 NUMA node machines, each with a kswapd kthread per NUMA node,
+we noted severe lock contention on the rstat lock. This contention
+causes 12 CPUs to waste cycles spinning every time kswapd runs.
+Fleet-wide stats (/proc/N/schedstat) for kthreads revealed that we are
+burning an average of 20,000 CPU cores fleet-wide on kswapd, primarily
+due to spinning on the rstat lock.
 
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+To help reviewer follow code: When the Per-CPU-Pages (PCP) freelist is
+empty, __alloc_pages_slowpath calls wake_all_kswapds(), causing all
+kswapdN threads to wake up simultaneously. The kswapd thread invokes
+shrink_node (via balance_pgdat) triggering the cgroup rstat flush
+operation as part of its work. This results in kernel self-induced rstat
+lock contention by waking up all kswapd threads simultaneously.
+Leveraging this detail: balance_pgdat() have NULL value in
+target_mem_cgroup, this cause mem_cgroup_flush_stats() to do flush with
+root_mem_cgroup.
+
+To resolve the kswapd issue, we generalized the "stats_flush_ongoing"
+concept to apply to all users of cgroup rstat, not just memcg. This
+concept was originally reverted in commit 7d7ef0a4686a ("mm: memcg:
+restore subtree stats flushing"). If there is an ongoing rstat flush,
+limited to the root cgroup, the flush is skipped. This is effective as
+kswapd operates on the root tree, sufficiently mitigating the thundering
+herd problem.
+
+This lowers contention on the global rstat lock, although limited to the
+root cgroup. Flushing cgroup subtree's can still lead to lock contention.
+
+Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
+Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+---
+ include/linux/cgroup.h |    5 +++++
+ kernel/cgroup/rstat.c  |   28 ++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
+
+diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+index 2150ca60394b..ad41cca5c3b6 100644
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -499,6 +499,11 @@ static inline struct cgroup *cgroup_parent(struct cgroup *cgrp)
+ 	return NULL;
+ }
+ 
++static inline bool cgroup_is_root(struct cgroup *cgrp)
++{
++	return cgroup_parent(cgrp) == NULL;
++}
++
+ /**
+  * cgroup_is_descendant - test ancestry
+  * @cgrp: the cgroup to be tested
+diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+index fb8b49437573..5aba95e92d31 100644
+--- a/kernel/cgroup/rstat.c
++++ b/kernel/cgroup/rstat.c
+@@ -11,6 +11,7 @@
+ 
+ static DEFINE_SPINLOCK(cgroup_rstat_lock);
+ static DEFINE_PER_CPU(raw_spinlock_t, cgroup_rstat_cpu_lock);
++static atomic_t root_rstat_flush_ongoing = ATOMIC_INIT(0);
+ 
+ static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu);
+ 
+@@ -350,8 +351,25 @@ __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
+ {
+ 	might_sleep();
+ 
++	/*
++	 * This avoids thundering herd problem on global rstat lock. When an
++	 * ongoing flush of the entire tree is in progress, then skip flush.
++	 */
++	if (atomic_read(&root_rstat_flush_ongoing))
++		return;
++
++	/* Grab right to be ongoing flusher, return if loosing race */
++	if (cgroup_is_root(cgrp) &&
++	    atomic_xchg(&root_rstat_flush_ongoing, 1))
++		return;
++
+ 	__cgroup_rstat_lock(cgrp, -1);
++
+ 	cgroup_rstat_flush_locked(cgrp);
++
++	if (cgroup_is_root(cgrp))
++		atomic_set(&root_rstat_flush_ongoing, 0);
++
+ 	__cgroup_rstat_unlock(cgrp, -1);
+ }
+ 
+@@ -362,13 +380,20 @@ __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
+  * Flush stats in @cgrp's subtree and prevent further flushes.  Must be
+  * paired with cgroup_rstat_flush_release().
+  *
++ * Current invariant, not called with root cgrp.
++ *
+  * This function may block.
+  */
+ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
+ 	__acquires(&cgroup_rstat_lock)
+ {
+ 	might_sleep();
++
+ 	__cgroup_rstat_lock(cgrp, -1);
++
++	if (atomic_read(&root_rstat_flush_ongoing))
++		return;
++
+ 	cgroup_rstat_flush_locked(cgrp);
+ }
+ 
+@@ -379,6 +404,9 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
+ void cgroup_rstat_flush_release(struct cgroup *cgrp)
+ 	__releases(&cgroup_rstat_lock)
+ {
++	if (cgroup_is_root(cgrp))
++		atomic_set(&root_rstat_flush_ongoing, 0);
++
+ 	__cgroup_rstat_unlock(cgrp, -1);
+ }
+ 
+
 
 
