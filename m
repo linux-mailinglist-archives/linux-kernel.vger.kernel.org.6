@@ -1,145 +1,116 @@
-Return-Path: <linux-kernel+bounces-225251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CDA7912E1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:51:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696D4912E21
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6BEA1C21625
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:51:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4111B22E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3725F17B50D;
-	Fri, 21 Jun 2024 19:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0FF17BB31;
+	Fri, 21 Jun 2024 19:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgxUqQ9Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WzWdq4KX"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CE05664;
-	Fri, 21 Jun 2024 19:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5252417BB06
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718999459; cv=none; b=jg3+M6Tgkeh+RJR36p50ZfPlj7RJeADqDn+3kGVZFdmnVc4nv2FCAA4NPfSmT8NVpZ5NYI9JGLvRUzhycPUjKK70rPisrVwruKau5d6EgM2g+PdiT6Rnz9CkSS0JH5KLF8G8a9MqQKWDc3rRN+ppUNk0ndV6XAMlqobk4/p32lE=
+	t=1718999553; cv=none; b=IOpkTkrEvQvnpLXggMXaLIaYECaZ5bThxNo2jAfdd+UJeowog7es2MF6Tlh8kb+r2R50pgg9i06Vcxanck21hz+gpEEsnsm7gnHjMU4Q/r4CuPIOFuIYfk0oIRJyeM74Moz+geVmbBmq/yvZHA4xNOHe7zT2aTaFtEZmBwZMb5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718999459; c=relaxed/simple;
-	bh=rB6V0Nwk3vOo+iDf5YMWh0T5Y3UT4s8EuBKwjeSnFxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jKFPK/5rbtTLEWjwf9d/U9XXtAaDKw2l5drUbu05650QSWfykMS5CYZgobHU0zPgPwY3ftUBB+W9Qq3NNWF4Au4Zk/K2sFOTKbbh2r1qKClhzbcOfvllABhTSKtXSlfUDceY5QWk54N1faV8rTo8RKI8o8OcQ8leCwwz1HnlB3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgxUqQ9Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D16D2C2BBFC;
-	Fri, 21 Jun 2024 19:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718999458;
-	bh=rB6V0Nwk3vOo+iDf5YMWh0T5Y3UT4s8EuBKwjeSnFxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mgxUqQ9Q3urZD4YxmjWfmF5/+0Lr3AWpMAbgC+XJolUIupUldNxifhIUMe/4I7Lvo
-	 1wvFZo/GUhenNP3wSyjwIXnJjy5hAld9iA+fiP617YKxye6KYM43dT1vei1lUpn2fA
-	 fTm8+iZhBKpU/rlTw8Akiy0xOY6LOvqHPduG3OYFoT6QR/b6yEZ/x0cXbXyD5sc1dW
-	 Wwxc8SYGlRhiyc+2ONDp1dyTS8tBlIvsXpfGl/JO40U9D9UoyCqegcoHduh7OlwafN
-	 dolVHdI7psEKaHpceTJgilBywJZuOcfbkmm/IuGFtLt7TCe5cTl2iWzpsTTysyqKfF
-	 AkQGUFhIxRGag==
-Date: Fri, 21 Jun 2024 12:50:58 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH 02/13] xfs: always tail align maxlen allocations
-Message-ID: <20240621195058.GS3058325@frogsfrogsfrogs>
-References: <20240621100540.2976618-1-john.g.garry@oracle.com>
- <20240621100540.2976618-3-john.g.garry@oracle.com>
+	s=arc-20240116; t=1718999553; c=relaxed/simple;
+	bh=jMKGPY/7u8TnNMIfIPhSGai4Rza/s0QV24uQBC0AouE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=trUeI377poYknBKS2PXaThlvJViC80ZNGN27jEthMHuc/+YRi/Vs5KYi+vBW3gu6y33NyKdY/LZw0BJR9oLsHUZ21w/lPN6ApwniMFerYCBFY1bXe7i1acMBYQYdzb9F4eXzXitWpGEn225ChHYMLc6GqLW2wk2eEyeqqeyJ8Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WzWdq4KX; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-79bc769b014so155150085a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:52:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718999550; x=1719604350; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jMKGPY/7u8TnNMIfIPhSGai4Rza/s0QV24uQBC0AouE=;
+        b=WzWdq4KX0+sibrKQkTCA8/NuTTHci2EEOx5uAH4cMxDcK9UyxLEA1EJY+gvTi9ItdZ
+         8suK3NsJ/9L0mHqGsFIDU5QS6HmIbbK7wW3MWMgnW1Lvb73CIrtaO5HsvdB9uRAzJp3+
+         Gbao/eVTc++ZbDSxoTA9eHCzNOitZUIcK6OXA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718999550; x=1719604350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jMKGPY/7u8TnNMIfIPhSGai4Rza/s0QV24uQBC0AouE=;
+        b=xNBnoJReyBtr7yejqAhbZ57p/xVkDi5wTHvb1qpkG0N1G8gcTuplJ0oaU1mI7EgMdW
+         DLduefsREf4dQ4lg078biZ7g8KAdZzOfavXi27oW35KGvq3ePiFqVfImENA8+/yaMFhi
+         4swUwycEy5OduTMXKaLrcuchm5nXkEy9CspF/rr/Ca3uyppzflizUALKoEr2cHIiQKBt
+         3S38IvpQVM9dyB8Bj6pRUgT+H78SazIj/EjDO95gRli1vD1H8pbF1CvGLYjaus7BUM1W
+         2GItEwNkHjTw7H9xDeGy8bH5PQqe/6wc59UDPCFSIKxNVeblHZxXVUGwIK6GPwTAa4c9
+         Drtg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3RnkXIVVhqRWHRZ0F0PH6sSpMjbaObH2IE2o5w4IIBtjKk4xJHhCDI2xYNUwO2FVOUudhB2B1yS3OfyrfNQkBJHWokcrLq4uDh+y9
+X-Gm-Message-State: AOJu0YySS8IdtILBZJv4u4OfKFDZ0gODVLMdBcv4muOf4PB198iIaLKa
+	GJkH4j4GKcZg43Uyd4l4HOjeB0Mvm5JKo6/7zVyeqYzqFDaFjMtB0swm/ccpBJMvbdlF5Wy4Uno
+	=
+X-Google-Smtp-Source: AGHT+IGHAw3GBnJugSXlUNkTTcByHLxuMlkOvz6bke2hqRYOAWGJ9JY80qn4iStXc6dOjjvuAQNz3A==
+X-Received: by 2002:a05:620a:31a6:b0:79b:d9b2:d34a with SMTP id af79cd13be357-79bd9b2d44emr128069385a.23.1718999550178;
+        Fri, 21 Jun 2024 12:52:30 -0700 (PDT)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce8c3775sm111795585a.59.2024.06.21.12.52.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 12:52:29 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-443580f290dso455441cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:52:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWlFOwuvZ9RXCBGOy8gRzLl4QCyPh5QMkd+wNdz/0Vr+RCYDT1OCmJm1ATjTqtltul5rie59CvW3t7hwIC+FaunjnAr+0Cs/FwAcgRh
+X-Received: by 2002:a05:622a:1a01:b0:444:92a6:188a with SMTP id
+ d75a77b69052e-444ce2be63dmr297041cf.9.1718999548030; Fri, 21 Jun 2024
+ 12:52:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621100540.2976618-3-john.g.garry@oracle.com>
+References: <20240618003546.4144638-1-dianders@chromium.org>
+ <20240617173426.13.I572fb3cf62fae1e728dd154081101ae264dc3670@changeid>
+ <20240618155938.GG11330@aspen.lan> <CAD=FV=VTegKBcHY9pgfFUs7T1Ug5r1yg+CxLE6sBhBBt4csfkw@mail.gmail.com>
+ <20240621154349.GE285771@aspen.lan>
+In-Reply-To: <20240621154349.GE285771@aspen.lan>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 21 Jun 2024 12:52:12 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UHh1L13GDSQrSQMJOwwkcFku5X9zCuKt0aZw3Qq9a+VQ@mail.gmail.com>
+Message-ID: <CAD=FV=UHh1L13GDSQrSQMJOwwkcFku5X9zCuKt0aZw3Qq9a+VQ@mail.gmail.com>
+Subject: Re: [PATCH 13/13] kdb: Add mdi, mdiW / mdiWcN commands to show
+ iomapped memory
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: kgdb-bugreport@lists.sourceforge.net, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Jason Wessel <jason.wessel@windriver.com>, 
+	Thorsten Blum <thorsten.blum@toblux.com>, Yuran Pereira <yuran.pereira@hotmail.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 10:05:29AM +0000, John Garry wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> When we do a large allocation, the core free space allocation code
-> assumes that args->maxlen is aligned to args->prod/args->mod. hence
-> if we get a maximum sized extent allocated, it does not do tail
-> alignment of the extent.
-> 
-> However, this assumes that nothing modifies args->maxlen between the
-> original allocation context setup and trimming the selected free
-> space extent to size. This assumption has recently been found to be
-> invalid - xfs_alloc_space_available() modifies args->maxlen in low
-> space situations - and there may be more situations we haven't yet
-> found like this.
-> 
-> Force aligned allocation introduces the requirement that extents are
-> correctly tail aligned, resulting in this occasional latent
-> alignment failure to e reclassified from an unimportant curiousity
+Hi,
 
-                    to be
+On Fri, Jun 21, 2024 at 8:43=E2=80=AFAM Daniel Thompson
+<daniel.thompson@linaro.org> wrote:
+>
+> For example I have long wanted to be able to let
+> the user see /proc/interrupts before the usespace comes up but the spin
+> locks get in the way.
 
-> to a must-fix bug.
-> 
-> Removing the assumption about args->maxlen allocations always being
-> tail aligned is trivial, and should not impact anything because
-> args->maxlen for inodes with extent size hints configured are
-> already aligned. Hence all this change does it avoid weird corner
-> cases that would have resulted in unaligned extent sizes by always
-> trimming the extent down to an aligned size.
+BTW the "gdb" scripts are supposed to handle this with
+"lx-interruptlist", though when I try it right now it doesn't seem to
+work.
 
-IOWs, we always trim rlen, unless there is no alignment (prod==1) or
-rlen is less than mod.  For a forcealign file, it should never be the
-case that minlen < mod because we'll have returned ENOSPC, right?
+...actually, there's also a script "lx-iomem" which sounds great but
+only has the physical addresses. :(
 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-
-If the answer is 'yes' and the typo gets fixed,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> ---
->  fs/xfs/libxfs/xfs_alloc.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
-> index 5855a21d4864..32f72217c126 100644
-> --- a/fs/xfs/libxfs/xfs_alloc.c
-> +++ b/fs/xfs/libxfs/xfs_alloc.c
-> @@ -432,20 +432,18 @@ xfs_alloc_compute_diff(
->   * Fix up the length, based on mod and prod.
->   * len should be k * prod + mod for some k.
->   * If len is too small it is returned unchanged.
-> - * If len hits maxlen it is left alone.
->   */
-> -STATIC void
-> +static void
->  xfs_alloc_fix_len(
-> -	xfs_alloc_arg_t	*args)		/* allocation argument structure */
-> +	struct xfs_alloc_arg	*args)
->  {
-> -	xfs_extlen_t	k;
-> -	xfs_extlen_t	rlen;
-> +	xfs_extlen_t		k;
-> +	xfs_extlen_t		rlen = args->len;
->  
->  	ASSERT(args->mod < args->prod);
-> -	rlen = args->len;
->  	ASSERT(rlen >= args->minlen);
->  	ASSERT(rlen <= args->maxlen);
-> -	if (args->prod <= 1 || rlen < args->mod || rlen == args->maxlen ||
-> +	if (args->prod <= 1 || rlen < args->mod ||
->  	    (args->mod == 0 && rlen < args->prod))
->  		return;
->  	k = rlen % args->prod;
-> -- 
-> 2.31.1
-> 
-> 
+-Doug
 
