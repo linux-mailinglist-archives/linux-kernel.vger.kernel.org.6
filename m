@@ -1,304 +1,214 @@
-Return-Path: <linux-kernel+bounces-225111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED84912BE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:55:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AABD912BE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9361428C0EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:55:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BCA41F211CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE59E17B400;
-	Fri, 21 Jun 2024 16:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABAB1667FA;
+	Fri, 21 Jun 2024 16:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="p7lBTVUC"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2068.outbound.protection.outlook.com [40.107.103.68])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ccTmi/2A"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0BE179972;
-	Fri, 21 Jun 2024 16:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718988744; cv=fail; b=cV7mQpF1ImJp+l1FE6Gcn+Kd9o0WPzv1AWGoyJvK67rgDPbBX1NVOU//+TgkbMdq2+zEoOq1xR+Zb4MVzrpO93ac0nUQZTOJ/rRRHER58L3qnzbEIgWoBMOjavOVihOMwRRUPGz2O1BaKGW1DArEBcg93JfXeiEIV2D4ihHy9KM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718988744; c=relaxed/simple;
-	bh=gQx6uOKzzKS0Bll7jaAdB0ziR+MGyleGJaCiGybqzR4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cNyuFTZsZrDlrjKuBF3YdgfyZyxYV7lZu3tZMJtDhCheugcuM6N2TEqc5FFKS5lPoWzLXA+moWpo+vXrzogzlTXyV5oKiVW1i9tz1nS/0f3aq+w83SN5FyxzYUpkKWh+rynQqjSK8k+Frd5tvczfKN5FgdUTxRgYNXgkHikWmmk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=p7lBTVUC; arc=fail smtp.client-ip=40.107.103.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PCC+uBGycdX4S4+RPkhN/LJmwo0cchZgzzIsWxJXCRRIXfgf8KTiHcSf1uPr9C54VbmVTQJqwlzyxkFveiPHTuzaMcmBwMWa5KTPkcVdKcI4hqFfCYsBoUKI/CFajsy6gW7kIof30HcqhGF5QMVtF6JueJ7C5YPBQZN8lGhHo9M5XZmhiyS+qH7SyrMST85iSUk3V25dcpgKMdWb1IukW2Yk6DOLqt/gmy5r7lBNr7BdB8Nly3MrpGA49e6k2+qO8SS+eh4Kvlbny11gl9y0w+0/etQpRs7vfXwdBaleg8YO6waP508e9l6QQQjWeX6Vd0338l38iuGqvYLCj4tggw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4qaOxvWcbSXooGjoZ0TzegtRWy2YIfbXYTnfjOw+GaA=;
- b=cFfGBl8FSTRqdoPGz43h2VvnKtla3TJUc3vWMSup6V8FQQK1b4L007qO8Xc9wcRxKAdljRyxVISdWAcYZOec+dedTb0og2TxcP1yMkFDPFsX+KoM9zPvUuuuMmMNhjhgEAKbfM6Rz2bFqczc+SCtihCoKzkZe/loJy+7aliZLAePoRTm5TRtsIKAvDF5paW8DIWClxDjUeMG5SiNeNbH+by8wnt8b4IaqNaiHisvVGoiwgwywg34pAzH87OhngJfKsiudJLTQkInDFRQwQMGqgwWYDFgoLjs+Toat4Z9Wd7xJ+IBpQygRQQHFs5eZbbj9ePNaLVCHE8pcIahO6DWgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4qaOxvWcbSXooGjoZ0TzegtRWy2YIfbXYTnfjOw+GaA=;
- b=p7lBTVUCyMB8ZF6qKrkdacUPtossHNDxJwGYYLjkOaWZSv2agJxlg7fVkmkM3ECsfx4+vlB3oni7gSR1qgGS9JPrI/reJuq50xQ7QAgSnYhh91rjOzmN2uGKrprdeshbqWHIFEU5l80q20aprgYFzUfttPbewnEPpB31LB8T1X4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM8PR04MB7937.eurprd04.prod.outlook.com (2603:10a6:20b:248::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
- 2024 16:52:21 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7698.020; Fri, 21 Jun 2024
- 16:52:21 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 6/6] arm64: dts: layerscape: remove compatible string 'fsl,fman-xmdio' for fman3
-Date: Fri, 21 Jun 2024 12:51:49 -0400
-Message-Id: <20240621165149.2275794-6-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240621165149.2275794-1-Frank.Li@nxp.com>
-References: <20240621165149.2275794-1-Frank.Li@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR05CA0054.namprd05.prod.outlook.com
- (2603:10b6:a03:74::31) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B419815AACD
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718988837; cv=none; b=bP3bKY1atoC2jXTolZDGxlklRcwVshQn1MpJ6jEz3FYNGrOgkLhgmekQXQbVrwNEmglE/qDoLRBbAh+rDP3umnB6E03j6AiQdxApYuPJ2dpiNJ88W+x8D7IIyv64vfroaHlm1tiGlyf++6Iq0pTjwA0C0Gyp/v/dRMXTL3CwKjA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718988837; c=relaxed/simple;
+	bh=ZlSwBMzBHxWlNWqUuyqs5XqfDTQcYh+6+TrNc2i2/yQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ePvLoANAJyECE1DZlhCXl5p9JHtGDU97xhsrprdN67CMQv8MJzFSzc0n0Id0whSKIDAfU3rg0tdrJHcO4iCV/N0DMqeyZQJCCLgij7s9mhMKr5eGpURDckkpBJcMdYq+bMmut2pIXaVn8dt1ftZRAnwBc3P1bWVkfQJgzMonNbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ccTmi/2A; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718988833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=98J4OC312FGkaowbYujp5y890n377gkjQxs8ni0Mxpk=;
+	b=ccTmi/2APyUWenhNxIimy+dhTCcliajowVVrs9jadzMwpVrgUCIfW6rkW92uh6mMBNQpv8
+	eO1wPSifzzYppcBc9yxVVR4y/fCJzJgLPpIG045LGqkbOQgEVyDO4fDaHiSSQ/4rIrAaQj
+	kaY4nUzIc/nEDRlEVybkcqJ03BJHCtY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-411-iW8OVxfZPCiS8LTj9Vh5vQ-1; Fri,
+ 21 Jun 2024 12:53:49 -0400
+X-MC-Unique: iW8OVxfZPCiS8LTj9Vh5vQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA93D1955DC9;
+	Fri, 21 Jun 2024 16:53:44 +0000 (UTC)
+Received: from lorien.usersys.redhat.com (unknown [10.22.9.79])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1F4C23000218;
+	Fri, 21 Jun 2024 16:53:30 +0000 (UTC)
+Date: Fri, 21 Jun 2024 12:53:27 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
+	pjt@google.com, derkling@google.com, haoluo@google.com,
+	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
+	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
+	memxor@gmail.com, andrea.righi@canonical.com,
+	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH 04/30] sched: Add sched_class->switching_to() and expose
+ check_class_changing/changed()
+Message-ID: <20240621165327.GA51310@lorien.usersys.redhat.com>
+References: <20240618212056.2833381-1-tj@kernel.org>
+ <20240618212056.2833381-5-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM8PR04MB7937:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7419c542-b1a1-45e8-56ca-08dc921284ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|52116011|376011|1800799021|366013|38350700011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?a5/B1EtR9d/EL48EDlhABPFhGZyzlfJBO9U6RRPrrl0Di9BnfsZqufDF4Ii0?=
- =?us-ascii?Q?XsLFcg8wiJjkaouEYO8ulC6z44E8+zkBxQI9TVQzFKUv9Z2biQjnBWx45nU7?=
- =?us-ascii?Q?ZOquhP2Almo4An77y/gqnsgFnCEA1484RXbm/dBltkPxG4Tn1aRG2nQDZ5Ov?=
- =?us-ascii?Q?biAgWZloLz+Z4J4B8lkanJR+sUhB5UxXunsATFwnQTbCbO95G64twTjuMcY9?=
- =?us-ascii?Q?rIwkgy0M+/dpHovLxulzT4JahudagBGhwRNQrx1YTAGb5ZxX+Y9sWdI6k81c?=
- =?us-ascii?Q?RAOtCkZ87FD+7+dZ3JlxewHGnmAuS2hoVip5+0z7Xm4AA5YuBN1UR8mf1cee?=
- =?us-ascii?Q?14GhzWNLniFsEUNQjCn3GFUqYKYeShSlcgGpQxzXTR7hL9y/Nubs0fk8N08z?=
- =?us-ascii?Q?SCVRE3zj24HUWeDjf0EToVZ81+UcaBdCFA2jsy1h8JCOW7OpcwHBbiuNHNFp?=
- =?us-ascii?Q?78I2iU/fmXlwERLpHlAknYNqM3q/5nGnQEtaNp3uWTTyokLTt7BpkZ0NlcU7?=
- =?us-ascii?Q?jcHEUNQjwjUVzFrq3t2XZ3nXm5cD+ENu0LBOb4/WnBCkDtEZ0sI5FQ45xKMY?=
- =?us-ascii?Q?J8LSotErCe+oFAOZ4Zve4d4mVLMr15cRR3Of1+L6oAERR+n0tvZwrrIg/mr1?=
- =?us-ascii?Q?vwvv6LhEN+bn4+OmjR0twLzSBv9y7T91sVXUVW8FBVkQi8Q6mk4fq21OCbR/?=
- =?us-ascii?Q?4wx/0mAfiLCuSs43N1CbZEzNTnmwtYW0f9TTr3NmRRmnD0jfFsP7gsRC3cs0?=
- =?us-ascii?Q?K69yStCk5z0hHpl3EgBoXk+9bpNdyJGfta0B7p2Z6DudhNU3LDrE9UCowqSk?=
- =?us-ascii?Q?ZjWJ4Wz8CEMUfDplx/KMRMUIR5YM/6GqyqA7yy5GhM44ftyq4fMcXMaJj741?=
- =?us-ascii?Q?nszM1mBpTRYjuqBVGE8yuG2Xb8ETUI4vO8OzKZcwCoB2NsNxlmY5/04kXywR?=
- =?us-ascii?Q?k8e5PjMgyXO0rx5zFiMwJl7vmtFJlMuSEGpY7AsCFGyqzUHnb1e0qlK6qYpP?=
- =?us-ascii?Q?n+PxgSHjcE4bP9KtbNkO80KzMLICUyKvhs2uRi1IfEWNS9a50iL8geGVKlSx?=
- =?us-ascii?Q?0z2kpUsDR7fmSMGa/GkFA5QLP735xtmSEbI8AIz28grGE5K19XZpwNDhubfM?=
- =?us-ascii?Q?j4oUoIMkH7vDwRqtxBMzT5mf8mLv3wdvr0/DITFHrCi802NEmcGzwihv7bvp?=
- =?us-ascii?Q?rT5HkR1XB5Wr4An2pAKuauIZeuPNKtrkrPkk6Y7jgTUtpejoW46bQz8E3qoa?=
- =?us-ascii?Q?2gdXvxlV77BxkZEASyU/TTo2l2SIgguUtnOdJE6q3zWgzChHmbv0I8jOV4OA?=
- =?us-ascii?Q?Y/tayyopDV/K+fTfUP5R7mGrMd8lZ4gbqgeye9BVDMEUuQQyseIeHY45fvPV?=
- =?us-ascii?Q?f6p4J38=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(52116011)(376011)(1800799021)(366013)(38350700011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0lA4ZKz8zqfL9RnXqteUkgtlUUzTIQOI45Hp11KfTMnYggBk44preE8dShCH?=
- =?us-ascii?Q?8lx6Rpb/nMP4wIgXmEIAHLByUhG5K9j+feuAzuwhcoxXXwU3muqNB1e6N2uO?=
- =?us-ascii?Q?DMeI3dAeTZ6ybbasqFikf4H9aNNl64f14dNGnQ3aERxci4/RxA2E95pUYlHm?=
- =?us-ascii?Q?ReW4dnvCt2b33o4keAMbgz0xDfHws4bCBsIjeW6sb0ZVvyV7DDt5wg2OWp0j?=
- =?us-ascii?Q?6ZJ8SdJx9mSvmaya8UVWjzpGHFPVuiRa/hQdJfjtK2OOvrgsga87aSZFNk2P?=
- =?us-ascii?Q?+CKM/6Nj8zQil0Q8w8xE1MaqCFM7UztnlZum16acmTlPr24U2aWyzsZcfq3+?=
- =?us-ascii?Q?WChtwdZPIf2UOCn8UrrJuz7auo5/Ak/Dv9ZxNoBtGhvgLLAJDxlfVued0z/M?=
- =?us-ascii?Q?6eBS7w09QE7RwNQsM4l+33DCzdYs4wbd90GMx8X1gprVUiigdTirXfiSp3Gf?=
- =?us-ascii?Q?hG041UVDEU3eq4WvZiTzuSAM7lcKf41vMeB5+dNckR+NlGYH70gyAmJnwMYe?=
- =?us-ascii?Q?oK9G1+DplQJoivO0TJ6FghESyMFycA4JQv55QNkSagIN6kXrxG+QZ2eptJaM?=
- =?us-ascii?Q?23J/jgGq8gkzjag6TvPBT7Vwb91VC/Zdea6mGZJUYhCLnpuWil1zDlGwZ9Er?=
- =?us-ascii?Q?0XubgjkCTokcOS1tJbkiL4c8q6QvR5esgYlKhynoveQcfErTmi0cGGhrEHIJ?=
- =?us-ascii?Q?aQGCas/4dXP2vf+1kpbvk4z8bvlK3tDnLb2d5g8GEX0cfVNYHa9avwbErri/?=
- =?us-ascii?Q?+6oHVGf86loeC5SHBhq+2N9RUuyF7qmS9LrJpAv3yaqFIlpl0aGGGllzKSb3?=
- =?us-ascii?Q?iEsABsnzpoKvejhOxQ4atU2I4idLvDDhqBPlIcs33Ar0EHBF9EQGd3dvkkqo?=
- =?us-ascii?Q?uFbSSeKMGIiMoadVxdHGLmD/Epx3B6xVa7d8Hk/1zpMr5wzZe5KVFV51hBgu?=
- =?us-ascii?Q?U+4zMuR2taT4IhkIiC7W6y0sTzjGuWI/naycDht+58GJHtSmCgP5SBONCgU+?=
- =?us-ascii?Q?NweTqusLSRGYZLMmPxqq7cWo5mnAzdfNGLtgmpoLTtE70edK3VkTg0b4Lxtd?=
- =?us-ascii?Q?jycUhANijYOoXAY5t+sH9XFj5EngfM+jGBeNOSE8wMvdLFAi6muVEHFLQiAH?=
- =?us-ascii?Q?M5P7fhPI0XWZBZqH/C2XxYigYu6hRe7+9v7AvodeIjjE8fp6uHBRzhYCbHde?=
- =?us-ascii?Q?I4FBvBP81MvmTEjy8SOeMvahrgG9URddQ9fzDo2Y7hnMsnAvVlbjOc3vsmwb?=
- =?us-ascii?Q?4tS//jc/1WQE2B9peMGxN4zbLtefPNw7j2zf6lSRDoz0ivGYcIHIjWvDrWsF?=
- =?us-ascii?Q?psGYJBKr86hbjVomNhgLniAwHYAf1n4F9q10FCVufqp9gHf41YtWeMOXR8YJ?=
- =?us-ascii?Q?IOGYMyjvLL82MmVsen7/yPCExaKIwr/F1xzks5MJlwXe4S5BE5u7bwoobACA?=
- =?us-ascii?Q?DEMMztFBAPydMRGYBdgpZ1fhTvlpHtxHFnAuzjfx8Oiy+KTTBgnbfSDp+fX1?=
- =?us-ascii?Q?3b14pesmPyXjQP0Yo83Geq3sDtBdgAv4YMRfkjrFwNqguhHtcU59zfnP+/ao?=
- =?us-ascii?Q?OWwB1xa721XunkmpJNUksLuEshh4hVvcCIsOuo1o?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7419c542-b1a1-45e8-56ca-08dc921284ad
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 16:52:21.4277
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6X4/00yMz+SFbkjzNvxomN4tQEC0stQZQlH9gJ8EDxTIGMQGIvSM9GGM07ziKNhX8M61p0Y8L03k9NqO1i75Rw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7937
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618212056.2833381-5-tj@kernel.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Fman3 should use 'fsl,fman-memac-mdio'. 'fsl,fman-xmdio' is for fman2.
-Fix below CHECK_DTBS warning.
-fman@1a00000: mdio@eb000:compatible: ['fsl,fman-memac-mdio', 'fsl,fman-xmdio'] is too long
+On Tue, Jun 18, 2024 at 11:17:19AM -1000 Tejun Heo wrote:
+> When a task switches to a new sched_class, the prev and new classes are
+> notified through ->switched_from() and ->switched_to(), respectively, after
+> the switching is done.
+> 
+> A new BPF extensible sched_class will have callbacks that allow the BPF
+> scheduler to keep track of relevant task states (like priority and cpumask).
+> Those callbacks aren't called while a task is on a different sched_class.
+> When a task comes back, we wanna tell the BPF progs the up-to-date state
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-0.dtsi | 2 +-
- arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-1.dtsi | 2 +-
- arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-0.dtsi  | 2 +-
- arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-1.dtsi  | 2 +-
- arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-2.dtsi  | 2 +-
- arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-3.dtsi  | 2 +-
- arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-4.dtsi  | 2 +-
- arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-5.dtsi  | 2 +-
- arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi       | 4 ++--
- 9 files changed, 10 insertions(+), 10 deletions(-)
+"wanna" ?   How about "want to"?
 
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-0.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-0.dtsi
-index dbd2fc3ba790e..65f7b5a50eb51 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-0.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-0.dtsi
-@@ -32,7 +32,7 @@ ethernet@f0000 {
- 	mdio@f1000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
-+		compatible = "fsl,fman-memac-mdio";
- 		reg = <0xf1000 0x1000>;
- 
- 		pcsphy6: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-1.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-1.dtsi
-index 6fc5d25600571..3f70482c98c30 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-1.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-10g-1.dtsi
-@@ -32,7 +32,7 @@ ethernet@f2000 {
- 	mdio@f3000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
-+		compatible = "fsl,fman-memac-mdio";
- 		reg = <0xf3000 0x1000>;
- 
- 		pcsphy7: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-0.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-0.dtsi
-index 4e02276fcf993..78841c1f32527 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-0.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-0.dtsi
-@@ -31,7 +31,7 @@ ethernet@e0000 {
- 	mdio@e1000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
-+		compatible = "fsl,fman-memac-mdio";
- 		reg = <0xe1000 0x1000>;
- 
- 		pcsphy0: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-1.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-1.dtsi
-index 0312fa43fa777..1f43fa6662221 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-1.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-1.dtsi
-@@ -31,7 +31,7 @@ ethernet@e2000 {
- 	mdio@e3000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
-+		compatible = "fsl,fman-memac-mdio";
- 		reg = <0xe3000 0x1000>;
- 
- 		pcsphy1: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-2.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-2.dtsi
-index af2df07971dd9..de0aa017701dd 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-2.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-2.dtsi
-@@ -31,7 +31,7 @@ ethernet@e4000 {
- 	mdio@e5000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
-+		compatible = "fsl,fman-memac-mdio";
- 		reg = <0xe5000 0x1000>;
- 
- 		pcsphy2: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-3.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-3.dtsi
-index 4ac98dc8b2279..6904aa5d8e547 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-3.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-3.dtsi
-@@ -31,7 +31,7 @@ ethernet@e6000 {
- 	mdio@e7000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
-+		compatible = "fsl,fman-memac-mdio";
- 		reg = <0xe7000 0x1000>;
- 
- 		pcsphy3: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-4.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-4.dtsi
-index bd932d8b0160b..a3d29d470297e 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-4.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-4.dtsi
-@@ -31,7 +31,7 @@ ethernet@e8000 {
- 	mdio@e9000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
-+		compatible = "fsl,fman-memac-mdio";
- 		reg = <0xe9000 0x1000>;
- 
- 		pcsphy4: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-5.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-5.dtsi
-index 7de1c5203f3e2..01b78c0463a74 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-5.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0-1g-5.dtsi
-@@ -31,7 +31,7 @@ ethernet@ea000 {
- 	mdio@eb000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
-+		compatible = "fsl,fman-memac-mdio";
- 		reg = <0xeb000 0x1000>;
- 
- 		pcsphy5: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
-index ae1c2abaaf362..b0390b711fef4 100644
---- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
-+++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
-@@ -67,14 +67,14 @@ fman0_oh_0x7: port@87000 {
- 	mdio0: mdio@fc000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
-+		compatible = "fsl,fman-memac-mdio";
- 		reg = <0xfc000 0x1000>;
- 	};
- 
- 	xmdio0: mdio@fd000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
-+		compatible = "fsl,fman-memac-mdio";
- 		reg = <0xfd000 0x1000>;
- 	};
- };
+That makes me wanna stop reading right there... :)
+
+
+> before the task gets enqueued, so we need a hook which is called before the
+> switching is committed.
+> 
+> This patch adds ->switching_to() which is called during sched_class switch
+> through check_class_changing() before the task is restored. Also, this patch
+> exposes check_class_changing/changed() in kernel/sched/sched.h. They will be
+> used by the new BPF extensible sched_class to implement implicit sched_class
+> switching which is used e.g. when falling back to CFS when the BPF scheduler
+> fails or unloads.
+> 
+> This is a prep patch and doesn't cause any behavior changes. The new
+> operation and exposed functions aren't used yet.
+> 
+> v3: Refreshed on top of tip:sched/core.
+> 
+> v2: Improve patch description w/ details on planned use.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reviewed-by: David Vernet <dvernet@meta.com>
+> Acked-by: Josh Don <joshdon@google.com>
+> Acked-by: Hao Luo <haoluo@google.com>
+> Acked-by: Barret Rhoden <brho@google.com>
+> ---
+>  kernel/sched/core.c     | 12 ++++++++++++
+>  kernel/sched/sched.h    |  3 +++
+>  kernel/sched/syscalls.c |  1 +
+>  3 files changed, 16 insertions(+)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 48f9d00d0666..b088fbeaf26d 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2035,6 +2035,17 @@ inline int task_curr(const struct task_struct *p)
+>  	return cpu_curr(task_cpu(p)) == p;
+>  }
+>  
+> +/*
+> + * ->switching_to() is called with the pi_lock and rq_lock held and must not
+> + * mess with locking.
+> + */
+> +void check_class_changing(struct rq *rq, struct task_struct *p,
+> +			  const struct sched_class *prev_class)
+> +{
+> +	if (prev_class != p->sched_class && p->sched_class->switching_to)
+> +		p->sched_class->switching_to(rq, p);
+> +}
+
+Does this really need wrapper? The compiler may help but it doesn't seem to
+but you're doing a function call and passing in prev_class just to do a
+simple check.  I guess it's not really a fast path. Just seemed like overkill.
+
+I guess I did read past the commit message ...
+
+
+Cheers,
+Phil
+
+
+
+> +
+>  /*
+>   * switched_from, switched_to and prio_changed must _NOT_ drop rq->lock,
+>   * use the balance_callback list if you want balancing.
+> @@ -7021,6 +7032,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+>  	}
+>  
+>  	__setscheduler_prio(p, prio);
+> +	check_class_changing(rq, p, prev_class);
+>  
+>  	if (queued)
+>  		enqueue_task(rq, p, queue_flag);
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index a2399ccf259a..0ed4271cedf5 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -2322,6 +2322,7 @@ struct sched_class {
+>  	 * cannot assume the switched_from/switched_to pair is serialized by
+>  	 * rq->lock. They are however serialized by p->pi_lock.
+>  	 */
+> +	void (*switching_to) (struct rq *this_rq, struct task_struct *task);
+>  	void (*switched_from)(struct rq *this_rq, struct task_struct *task);
+>  	void (*switched_to)  (struct rq *this_rq, struct task_struct *task);
+>  	void (*reweight_task)(struct rq *this_rq, struct task_struct *task,
+> @@ -3608,6 +3609,8 @@ extern void set_load_weight(struct task_struct *p, bool update_load);
+>  extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
+>  extern void dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+>  
+> +extern void check_class_changing(struct rq *rq, struct task_struct *p,
+> +				 const struct sched_class *prev_class);
+>  extern void check_class_changed(struct rq *rq, struct task_struct *p,
+>  				const struct sched_class *prev_class,
+>  				int oldprio);
+> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> index ae1b42775ef9..cf189bc3dd18 100644
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -797,6 +797,7 @@ int __sched_setscheduler(struct task_struct *p,
+>  		__setscheduler_prio(p, newprio);
+>  	}
+>  	__setscheduler_uclamp(p, attr);
+> +	check_class_changing(rq, p, prev_class);
+>  
+>  	if (queued) {
+>  		/*
+> -- 
+> 2.45.2
+> 
+> 
+
 -- 
-2.34.1
 
 
