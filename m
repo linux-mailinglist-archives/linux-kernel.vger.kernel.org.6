@@ -1,95 +1,203 @@
-Return-Path: <linux-kernel+bounces-224450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9029912299
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:40:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 546E29122AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0A928CDDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:40:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 768A31C239D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AE5171E73;
-	Fri, 21 Jun 2024 10:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F645171E68;
+	Fri, 21 Jun 2024 10:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8t9UdNi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fBx6KK4b"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A848F16D33A;
-	Fri, 21 Jun 2024 10:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B58484D13
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718966428; cv=none; b=qOOhC/KbkqSNn0pS9gG7BPKlerIYGNUNc2LCbZVguIAJGP0EBpcuQumf+Pkt6ho7s5/RSapdWVKTaxjPU8IKeiEH0BX4YfmZMF+fscxMUIAgzch3Nxrs+dQ5KxC17S8ArtcfafNg8Eb5+l20puVewq+DGgsBg3vgoYp7C4aXlBg=
+	t=1718966534; cv=none; b=Z5Ge2DHpFBGVkZcf7BTOF1AIzFj8GiuK5b7PsGHoj1C5fiqihYqkV5TVgOgzKjQikXkAZxtl8rmqCr8xceZmK2WNq872FXdDYEuKovWl5PZ+oM3YxpgXnKaV9SoewvY/RkotrWg0OthCIfZ/txgMR8mDt1A8lihR61k3iiZT5Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718966428; c=relaxed/simple;
-	bh=EbXQDV4cwCvlnWvzO7TCfsF21yNFddXHuwZYbz+n24M=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=jiXF6m1LRAyjBsaZs1bU2ZlYvYHjGuAZesGN5bkEqfrWrA0eF9u9BkLnDBBifnR4S72ySzUwgGG6yVOMx/OsNPPGvmV12NtCaibwZQD2Mwc6ZdgRBehpqYcFNs4UkhN1k5ErMZYYlOsyeuO7Sa04XcHBUsZysamUcecW2+927to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8t9UdNi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7C8B8C32781;
-	Fri, 21 Jun 2024 10:40:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718966428;
-	bh=EbXQDV4cwCvlnWvzO7TCfsF21yNFddXHuwZYbz+n24M=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=C8t9UdNiIV9qKfNlkLCtFTMUFfWOEvt8E+5fpaIFsNrFoU3F79bpobaor7qJGZCEj
-	 ujWfmkdJiQOrCloDfcR0dEYpsjSFmA75nDc/1VRea/JB6BYBf25GWswsA0kmtHKeFD
-	 0J9fo4LY1lRtHEoYDw6kC2Qj09VEoW0YTEF1E9I1rPgzOuGCDXjCXB0HY898G7PBW3
-	 +fEjgsc8eSZrxUJjWXUnJq2zO6/Y6eNRFhTXQyu/qgN/C6dIOo8/rx8jfHOKnOsimy
-	 srV07lYexpHUPXt5KG1/mwvfvaU00WWTUoof148RUvW3oxR2gFiQKijU5diF+ofHut
-	 An8ttt6AeTtxw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6C3E3C4332D;
-	Fri, 21 Jun 2024 10:40:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718966534; c=relaxed/simple;
+	bh=e0lneDv0XVfAsjpfwlrEeAiY6Nyn4oMTN19eMojpOwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SMb2vlqCZDkuS6D94cHrdBfFfIcFebuxGN7rM3vuQsCNFjmIMyJU/maokUUVZx2KrU0xLYktfp5NYMo6f7EE3m8ug9kSYRoDEM+Lb0q44apL9/nHR5fUFVcVTvU5Fqn+21DprQkkckl9FcHVKPyfZapE3OghKNb/QSrfcSZverg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fBx6KK4b; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718966532;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JvHPwnHmvUMWczmas1ZyeH5ED9yTS9wSm2/pLH+otv4=;
+	b=fBx6KK4bSw7LA8aaFk8jY+vrDQpawPXevJ03q6mPCQgxF0XwAq1Xz+mWWWTYjdPSMdmHBw
+	FPkONZ7uksxzbM1ft8mKqGB7MXFuYV6OF5yPH0IZDsQIca6VaPJ42X8O86T9yBxwt9lYj2
+	q2YJKHq30Nq7vXi71zdTvFCxR3bfhEo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-634-dkxzKmu1MkyDinE017XUcw-1; Fri,
+ 21 Jun 2024 06:42:07 -0400
+X-MC-Unique: dkxzKmu1MkyDinE017XUcw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 97E5D1956086;
+	Fri, 21 Jun 2024 10:42:06 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.114])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B2C411956087;
+	Fri, 21 Jun 2024 10:42:04 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 21 Jun 2024 12:40:34 +0200 (CEST)
+Date: Fri, 21 Jun 2024 12:40:32 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/17] signal: Make SIGKILL during coredumps an explicit
+ special case
+Message-ID: <20240621104031.GA12521@redhat.com>
+References: <20240613154541.GD18218@redhat.com>
+ <87ikyamf4u.fsf@email.froward.int.ebiederm.org>
+ <20240617183758.GB10753@redhat.com>
+ <87iky5k2yi.fsf@email.froward.int.ebiederm.org>
+ <87o77xinmt.fsf_-_@email.froward.int.ebiederm.org>
+ <87iky5inlv.fsf_-_@email.froward.int.ebiederm.org>
+ <20240619155016.GC24240@redhat.com>
+ <87cyocerda.fsf@email.froward.int.ebiederm.org>
+ <20240619191105.GE24240@redhat.com>
+ <874j9mdf14.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: pse-pd: Kconfig: Fix missing firmware loader config
- select
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171896642843.6147.2008287276840776733.git-patchwork-notify@kernel.org>
-Date: Fri, 21 Jun 2024 10:40:28 +0000
-References: <20240620095751.1911278-1-kory.maincent@bootlin.com>
-In-Reply-To: <20240620095751.1911278-1-kory.maincent@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: andrew@lunn.ch, kuba@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, lkp@intel.com, thomas.petazzoni@bootlin.com,
- o.rempel@pengutronix.de, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874j9mdf14.fsf@email.froward.int.ebiederm.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hello:
+Another case when I can hardly understand your reply...
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
+This patch adds a minor user visible change, that was my point.
 
-On Thu, 20 Jun 2024 11:57:50 +0200 you wrote:
-> Selecting FW_UPLOAD is not sufficient as it allows the firmware loader
-> API to be built as a module alongside the pd692x0 driver built as builtin.
-> Add select FW_LOADER to fix this issue.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202406200632.hSChnX0g-lkp@intel.com/
-> Fixes: 9a9938451890 ("net: pse-pd: Add PD692x0 PSE controller driver")
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> 
-> [...]
+If you say that the new behaviour is better / more consistent -
+I won't really argue, "I expect no one cares" below is probably
+true. In my opinion group_exit_code = SIGKILL makes more sense
+in this special case, but again, I won't insist.
 
-Here is the summary with links:
-  - [net] net: pse-pd: Kconfig: Fix missing firmware loader config select
-    https://git.kernel.org/netdev/net/c/7eadf50095bc
+But then this change should be mentioned and explained in the
+changelog, agree?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+As for "zap_threads that tests if SIGNAL_GROUP_EXIT is already set",
+this is another thing but probably I misundertood you. It is not that
+zap_threads/zap_process do not set ->group_exit_code in this case,
+in this case do_coredump() will be aborted.
 
+And to remind, zap_threads() used to set SIGNAL_GROUP_COREDUMP, not
+SIGNAL_GROUP_EXIT. Because to me the coredumping process is not exiting
+yet, it tries to handle the coredumping signal. That is why I prefer
+group_exit_code = SIGKILL if it is killed during the dump. But this is
+slightly offtopic today.
+
+Oleg.
+
+On 06/21, Eric W. Biederman wrote:
+>
+> Oleg Nesterov <oleg@redhat.com> writes:
+>
+> > On 06/19, Eric W. Biederman wrote:
+> >>
+> >> Oleg Nesterov <oleg@redhat.com> writes:
+> >>
+> >> > Hi Eric,
+> >> >
+> >> > I'll _try_ to read this (nontrivial) changes this week. To be honest,
+> >> > right now I don't really understand your goals after the quick glance...
+> >> >
+> >> > So far I have only looked at this simple 1/17 and it doesn't look right
+> >> > to me.
+> >>
+> >> It might be worth applying them all on a branch and just looking at the
+> >> end result.
+> >
+> > Perhaps. Say, the next 2/17 patch. I'd say it is very difficult to understand
+> > the purpose unless you read the next patches. OK, at least the change log
+> > mentions "in preparation".
+> >
+> >> > 	- complete_signal() won't be called, so signal->group_exit_code
+> >> > 	  won't be updated.
+> >> >
+> >> > 	  coredump_finish() won't change it too so the process will exit
+> >> > 	  with group_exit_code == signr /* coredumping signal */.
+> >> >
+> >> > 	  Yes, the fix is obvious and trivial...
+> >>
+> >> The signal handling from the coredump is arguably correct.  The process
+> >> has already exited, and gotten an exit code.
+> >
+> > And zap_process() sets roup_exit_code = signr. But,
+> >
+> >> But I really don't care about the exit_code either way.  I just want to
+> >> make ``killing'' a dead process while it core dumps independent of
+> >> complete_signal.
+> >>
+> >> That ``killing'' of a dead process is a completely special case.
+> >
+> > Sorry I fail to understand...
+> >
+> > If the coredumping process is killed by SIGKILL, it should exit with
+> > group_exit_code = SIGKILL, right? At least this is what we have now.
+>
+> In general when a fatal signal is sent:
+> - It is short circuit delivered.
+> - If SIGNAL_GROUP_EXIT is not set
+>    SIGNAL_GROUP_EXIT is set
+>    signal->group_exit_code is set
+>
+> Under those rules group_exit_code should not be updated.  Frankly no
+> signals should even be processed (except to be queued) after a fatal
+> signal comes in.
+>
+> There is an issue that short circuit delivery does not work on coredump
+> signals (because of the way the coredump code works).  So it winds up
+> being zap_threads that tests if SIGNAL_GROUP_EXIT is already set and
+> zap_process that sets SIGNAL_GROUP_EXIT.  Essentially the logic remains
+> the same, and importantly no later signal is able to set
+> group_exit_code.  Or really have any effect because the signal sent was
+> fatal.
+>
+> Except except except when the kernel in the context of the userspace
+> process is writing a coredump for that userspace process.  Then we allow
+> the kernel to be sent SIGKILL to stop it's coredumping activities
+> because sometimes it can block indefinitely otherwise.
+>
+> Which is why I call handling that SIGKILL after a coredump has
+> begun and SIGNAL_GROUP_EXIT is already set a completely special case.
+>
+> We might have to change group_exit_code to SIGKILL in that special case,
+> if someone in userspace cares.  However I expect no one cares.
+>
+> Further if adding support for SIGKILL during a coredump were being added
+> from scratch.  The semantics I would choose would be for that SIGKILL
+> and indeed all of the coredumping activity would be invisible to
+> userspace except for the delay to make it happen.  Otherwise a coredump
+> which every occasionally gets it's return code changed could introduce
+> heisenbugs.
+>
+> But none of this is documented in the change description and at a bare
+> minimum this change of behavior should be before such code is merged.
+>
+> Eric
+>
 
 
