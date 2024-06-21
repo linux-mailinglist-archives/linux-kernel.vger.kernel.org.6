@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-225137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0B2912C61
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:21:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F33912C69
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D9471C2336D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:21:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D360AB27516
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DAC168483;
-	Fri, 21 Jun 2024 17:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D798A1607AD;
+	Fri, 21 Jun 2024 17:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UC0EotE8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="GAHwt3Ng"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F193015D1;
-	Fri, 21 Jun 2024 17:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E1E129A7B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 17:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718990485; cv=none; b=CTdWkeHxd/J9pPFCuw/bMO0DxVoIrK3wwNm+0UqayxA17vBVqK1gIoETihcct9Bp8L0qXiyXDdQito+zOHI8pm/OK37wLvzkbDJCPQaRRA9ol4Pla5oUMfJpwM9PVLwBK27eZFT0i+ZkXMVOKEQBEq6kgipPzxzuaQxmj+7raJo=
+	t=1718990712; cv=none; b=oZc7l8MGqx1jp0DjhUtdKYoucOndMLHWFK3XLq7Zi28yc+o2zC+2YrjU7ieM/Qpwwcu+AlORWHD1NRPkH6hijX9/gtpt8hImAtCZ3hy6H163/+T1HTqVaqf62zSpMXWoZRZPfk/aS87ekZtskrWo6zfZHvyXmz6YC6FwJSms0e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718990485; c=relaxed/simple;
-	bh=gHG1QdUJNeFc3vcLi2Zi9Sh5x+SNXv0tH2HEkixWrnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MBn4BnYbIQvZhysYLDDvZgoysej+fxEPB+3OkKo3RU6+3yYbe9KSRdK0pryUpICv/UV/M7CXxX4VGdarFU4qE5b/40/6pVt52THuzmWYn5y3ZLU2xn4w7j5NeYfbu61Ra+Xxlp3f581hAGpiVMEhSEwaa9AK/Ob2FEFMsMfWoRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UC0EotE8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED23C2BBFC;
-	Fri, 21 Jun 2024 17:21:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718990484;
-	bh=gHG1QdUJNeFc3vcLi2Zi9Sh5x+SNXv0tH2HEkixWrnE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=UC0EotE8rvPIrAnMCcOPUjj0whhdYdm+vevKBQRs0tTY/ABRKQ0LN9vk+z86nR3a/
-	 YJuO0hYKrQsftcYluyN3ZSpm1oNbfNni1r/r/qr7hpVBBTPS6zMBtp+4s+fjP1a/rM
-	 C1qBXmF/ejq9PsPS8pdBJcdU7qjRghMHm9cGLGMR3sexDnxgcrpheV9onayAF/fmFM
-	 PK4nEvFqRNXw7E6EYRynkFRxZ3zNLkvov6ckw0KLXJXuiGshMp0wYu0YqYvkiyy7an
-	 HXm5ADtSmbKfPUVuyouiI2HHClcsJtyjocRUzNzV/M+Ff+xV1IoeaH4oKeeT1a4w33
-	 Qu+vewO9OV6kg==
-Date: Fri, 21 Jun 2024 18:21:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wei Wang <wei.w.wang@intel.com>
-Subject: linux-next: manual merge of the kvm-x86 tree with the origin tree
-Message-ID: <ZnW2kD1V0EoViS7i@sirena.org.uk>
+	s=arc-20240116; t=1718990712; c=relaxed/simple;
+	bh=nqQ6rwUDudOVLD+y4Ywsq9YADm/xyJ2u6MWLZ/I/hp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=itMSp74zJjQhCzKNcu4sJA5Yblj2PUVPucoilzSDSEnd1egPx9uE8HXwdC3pMq1apYZ4vnpABfHaNishhqWS0EFlQdDivC5v/qFe5pPh3sVmwF/eyzTLXfV3BkMrV24DZV+6sR0XqRPh2Evcvm740nbiVW4gR0f+qBLTytKaw2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=GAHwt3Ng; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 79A501C0098; Fri, 21 Jun 2024 19:25:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1718990700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BdiGiqxre9gyA5OMrbkSKDrBhhoRtLwT7ZTr2IVHfww=;
+	b=GAHwt3NgW0B9LyuLCG2g3l0yBHMphX7lVglp4LtOXh4HhTFtJ5JBWqEpx98sM4WNj3mrbA
+	M9OnTWURQb17Jz7xrGlx1gzyO5OLdimsV7Tow8qN5aeabyAk4zttjkBoScGRU+4AyJXsea
+	BBjoFXauipP1U0DGHRXTWnqLL5xzB2Y=
+Date: Fri, 21 Jun 2024 19:23:05 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: martin f krafft <madduck@madduck.net>
+Cc: linux kernel mailing list <linux-kernel@vger.kernel.org>
+Subject: Re: USB device causing reboot
+Message-ID: <ZnW2+S+lxJoOCjFt@duo.ucw.cz>
+References: <rqlax4nkaff2vhzgtlvldh7wggtvlpc4n2ryx3m7hk3d6v3ssm@aknbt3urp44l>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i8rhaj9TblMjFHzw"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sGmF+d/LeZkZzkdt"
 Content-Disposition: inline
+In-Reply-To: <rqlax4nkaff2vhzgtlvldh7wggtvlpc4n2ryx3m7hk3d6v3ssm@aknbt3urp44l>
 
 
---i8rhaj9TblMjFHzw
+--sGmF+d/LeZkZzkdt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi!
 
-Today's linux-next merge of the kvm-x86 tree got a conflict in:
+> I built myself a new computer with quality components, and was=20
+> surprised to have kernel 6.8.9 randomly reboot (at least once per=20
+> day). Thanks to netconsole, I was able to see one of the last=20
+> messages prior to reboot:
+>=20
+> ```
+> [30315.872267] xhci_hcd 0000:0c:00.3: Controller not ready at resume -19
+> [30315.872295] xhci_hcd 0000:0c:00.3: PCI post-resume error -19!
+> [30315.872298] xhci_hcd 0000:0c:00.3: HC died; cleaning up
+> [30315.872316] usb 3-1: USB disconnect, device number 2
+> ```
+>=20
+> So I removed `xhci_hcd` for a test, and the system didn't reboot=20
+> anymore. So I removed all USB devices, loaded it again, and=20
+> subsequently proceeded to add back the USB devices one by one.
+>=20
+> Turns out the bad boy is the combination of a [Genesys Logic=20
+> Hub](https://linux-hardware.org/?id=3Dusb:05e3-0608), a [MosArt=20
+> Wireless=20
+> Mouse](https://linux-hardware.org/index.php?id=3Dusb:062a-4102)=20
+> plugged into a USB2.0 port on the motherboard.
+>=20
+> After I moved the hub to a USB1.1 port, the problem didn't occur=20
+> again.
+>=20
+> I am happy it works now, and not really keen on wanting to keep=20
+> testing this (I am using the system, and reboots are painful), but I=20
+> also think this is a bug, and wanted to ask what I could provide to=20
+> help isolate the issue, and permit a fix being developed?
 
-  arch/x86/kvm/x86.c
+You may want to try most recent kernel, and cc usb developers. See
+MAINTAINERS file.
 
-between commit:
+BR,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-  f3ced000a2df5 ("KVM: x86: Always sync PIR to IRR prior to scanning I/O AP=
-IC routes")
-
-=66rom the origin tree and commit:
-
-  aebed32e4985a ("KVM: x86: Introduce kvm_x86_call() to simplify static cal=
-ls of kvm_x86_ops")
-
-=66rom the kvm-x86 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/x86/kvm/x86.c
-index ba0ad76f53bcc,c13bae3e8dfbc..0000000000000
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-
---i8rhaj9TblMjFHzw
+--sGmF+d/LeZkZzkdt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ1to8ACgkQJNaLcl1U
-h9Ak0Qf/dCGp2SGgmtyZpWIjgTQsHgHTDABWmflXw5r/HspNpxXS5s8wMfx6D6vH
-P8OeR5CxKciLKLVsOihSBgCIt2CPDM1q84x0gjWIZ2JL4VYitisCTJpZ3BoWQKwV
-E/y3rw7wNxTjs184Z5RsLK45+5CgENmkCV8do18Ss5tB5fHkrUEP8tLZkwME8ap8
-TPJkJly8mIl/Uf9zSUm1X5XYjW+A9XQIYbyRvYnkEeaIJshRX10zg5GaSvcRh2wo
-8Qtv24p7NNg43j8qKYVDKQ3/An4ZAtecJCWIUgSBhNhYoLsNTEVZoKzZOaJYM4Mt
-2ZQzVR2JZ5h4VaLdY6ti2uHR9vsqjw==
-=G2in
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZnW2+QAKCRAw5/Bqldv6
+8teEAKCYomwYX0ByAjfW/fnYUF85HY+/6QCgwsE4UyAJRQ2LOhVC0+eoibPSrho=
+=Sk4k
 -----END PGP SIGNATURE-----
 
---i8rhaj9TblMjFHzw--
+--sGmF+d/LeZkZzkdt--
 
