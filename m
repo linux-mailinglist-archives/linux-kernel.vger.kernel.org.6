@@ -1,70 +1,53 @@
-Return-Path: <linux-kernel+bounces-224094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B15911D26
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:45:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0E3911D28
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49F91B244E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 442BE1F210E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E701616D306;
-	Fri, 21 Jun 2024 07:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3D716C864;
+	Fri, 21 Jun 2024 07:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHcU5OcK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGixSzB2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC327E58D;
-	Fri, 21 Jun 2024 07:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B7316C863;
+	Fri, 21 Jun 2024 07:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718955907; cv=none; b=V9XjUxSAUC75Uh326/Q3RBprCVX3rt3nc1njBXs9kNJM1kg/BhljPrWM3BqlrXSZ+Yj7dZO8RWHj4ff+JpK8rEQJ7anZ2HLtZgq6Cc8pA3uoEZ5XyAZFgVKtt7gwwpV2bkjHQQJKEMmrf+Uc5IXfxPXjxDfAJVM8qgZxc2rAZhc=
+	t=1718955909; cv=none; b=QZgSWQdWG5J02t9y3ZHlU1zkt0VLc/SMaTbpprxO3YM+xuulDP0q+vOByv3XP7no+DIVjNtzeJHpoXnw9RyIdecdwpKDroWDW/aRS6O233dlDpby6oWZln79RpQiclbYdiwmI7Bx0jfRJIzLTNBt/7BlZ0l4sgyTrTxv0XjY4xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718955907; c=relaxed/simple;
-	bh=kaVMXrwTmSC64V9oowdkW3LocVFxxI6q7Bieew/jhU4=;
+	s=arc-20240116; t=1718955909; c=relaxed/simple;
+	bh=BKloq4l0KXsDbGYa0GQa6fYov7fV7968BcqnN8MWPjs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfPAbTdq4ajlY9DT79mibCbJiBdGrXgn33H6j3eYRRXm+6gABJ76T8ApKxWEGJIDiUPWb6rfjinEUw5PrU+NSvhmJaA6NvNF5mcMil1TJm3himiFWS5BXCegfbJVEWE/vGQ1Chk2CdC6Lf7x1ngbLD7UPeLBmLsRcj5d7nEGvKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHcU5OcK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A549BC2BBFC;
-	Fri, 21 Jun 2024 07:45:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJzPsacPpxusINOwyVUBhy79NyLZYAkViuvdgn3YUQfTRTHRx8+Q2b2R05NjdtEls1kz7B+3vwtPHm0p+P63GZaZiuKF7a0rwiQDbGA3PCgKbr7JjKBzZ/dOb3oZ/l7wNEes3A1DkS5n7Cnve6OsfdsYAfhtcw35GcPaPFCwGfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGixSzB2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 324D0C4AF08;
+	Fri, 21 Jun 2024 07:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718955906;
-	bh=kaVMXrwTmSC64V9oowdkW3LocVFxxI6q7Bieew/jhU4=;
+	s=k20201202; t=1718955908;
+	bh=BKloq4l0KXsDbGYa0GQa6fYov7fV7968BcqnN8MWPjs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VHcU5OcKmyIuSvFX2uiCfjL+hqzmLLUuXSpxQkSHq290dmv2VLJhQ4Ta69W49r4Nk
-	 uirkX9qtF2gwmdG1GscRoyErHl9DlfDUe44+Yh+AS6Z4lR/aZ3g4gKMawl1Xc6IgEn
-	 oagGpD0YxZXKrpnOurjlzGmtWfOwmP4XgtUkg2Ac0ncef6ZnwCaHM92NX08d7xgJKr
-	 a1uwzIT4X0/2Zk3peizz7HR8/P1MY7wMhCKjy08jJ9d0yxXEVHVULJ02ZVXc+HQelZ
-	 w2FYmT3aSRxqx9efS351bY1cxqsRu9O443MHLLDnCqdeKFc4QmbjElYWuvO6qWmFig
-	 7zxU5x/94AxYg==
-Date: Fri, 21 Jun 2024 08:44:59 +0100
-From: Lee Jones <lee@kernel.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Markus Elfring <Markus.Elfring@web.de>,
-	lkp@intel.com, Paul Cercueil <paul@crapouillou.net>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Julia Lawall <julia.lawall@inria.fr>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [v11 3/7] iio: core: Add new DMABUF interface infrastructure
-Message-ID: <20240621074459.GF1318296@google.com>
-References: <202406191014.9JAzwRV6-lkp@intel.com>
- <c25aab0d-48f6-4754-b514-d6caf8d51fd1@web.de>
- <ZnRUSaHJhz7XLcKa@matsya>
- <20240620170522.GU3029315@google.com>
- <ZnUnFeum1Z2ahm9M@matsya>
- <b7283f9458047e63e7d8c8b80daf2bd6232403cb.camel@gmail.com>
+	b=pGixSzB2urtBGQHaEj1PJq2l1YxK33I/GFyO8CAtI61LjhZrXm5HVhXRrGPj8OOKm
+	 6OuKRpqwEDPNlwzUnAKwK9LjiCMr/d47L9TSaro7UipMH2We02CJL/JXrCViVofqWT
+	 1h8YChg6AfNKq6w/VxSWwtc7WGIue6E/ShLliIt4dD5CeeZOhgG2Rn36W6Jx4Mbjxs
+	 u3h0GqedLl4Dc0LDKp5MEoYyxaGWcIRr+z3g4l4RIuljV1KRMzzSXgwdgCICyD68y+
+	 KDDrtsjXS3GFDVSHSf6/F4IWqBkAmQe4sls92al0ojLcRk+aZsEbOv0hOBWbFZr0U/
+	 5j0DbR2DbAJPQ==
+Date: Fri, 21 Jun 2024 09:45:03 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: reorder checks in may_create_in_sticky
+Message-ID: <20240621-affekt-denkzettel-3c115f68355a@brauner>
+References: <20240620120359.151258-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,46 +56,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b7283f9458047e63e7d8c8b80daf2bd6232403cb.camel@gmail.com>
+In-Reply-To: <20240620120359.151258-1-mjguzik@gmail.com>
 
-On Fri, 21 Jun 2024, Nuno Sá wrote:
+On Thu, Jun 20, 2024 at 02:03:59PM GMT, Mateusz Guzik wrote:
+> The routine is called for all directories on file creation and weirdly
+> postpones the check if the dir is sticky to begin with. Instead it first
+> checks fifos and regular files (in that order), while avoidably pulling
+> globals.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>  fs/namei.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 63d1fb06da6b..b1600060ecfb 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1246,9 +1246,9 @@ static int may_create_in_sticky(struct mnt_idmap *idmap,
+>  	umode_t dir_mode = nd->dir_mode;
+>  	vfsuid_t dir_vfsuid = nd->dir_vfsuid;
+>  
+> -	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
+> -	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
+> -	    likely(!(dir_mode & S_ISVTX)) ||
+> +	if (likely(!(dir_mode & S_ISVTX)) ||
+> +	    (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
+> +	    (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
+>  	    vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
+>  	    vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
+>  		return 0;
 
-> On Fri, 2024-06-21 at 12:39 +0530, Vinod Koul wrote:
-> > On 20-06-24, 18:05, Lee Jones wrote:
-> > > On Thu, 20 Jun 2024, Vinod Koul wrote:
-> > > 
-> > > > On 20-06-24, 12:45, Markus Elfring wrote:
-> > > > > …
-> > > > > > All errors (new ones prefixed by >>):
-> > > > > > 
-> > > > > > > > drivers/iio/industrialio-buffer.c:1715:3: error: cannot jump from
-> > > > > > > > this goto statement to its label
-> > > > > >     1715 |                 goto err_dmabuf_unmap_attachment;
-> > > > > …
-> > > > > 
-> > > > > Which software design options would you like to try out next
-> > > > > so that such a questionable compilation error message will be avoided
-> > > > > finally?
-> > > > 
-> > > > The one where all emails from Markus go to dev/null
-> > > 
-> > > Play nice please.
-> > 
-> > Would love to... but Markus has been repeat offender
-> > 
-> > Sadly, I am yet to see a constructive approach or even better a helpful
-> > patch which improve something, rather than vague suggestions on the list
+I think we really need to unroll this unoly mess to make it more readable?
 
-Right, there are communication issues.
+diff --git a/fs/namei.c b/fs/namei.c
+index 3e23fbb8b029..1dd2d328bae3 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1244,25 +1244,43 @@ static int may_create_in_sticky(struct mnt_idmap *idmap,
+                                struct nameidata *nd, struct inode *const inode)
+ {
+        umode_t dir_mode = nd->dir_mode;
+-       vfsuid_t dir_vfsuid = nd->dir_vfsuid;
++       vfsuid_t dir_vfsuid = nd->dir_vfsuid, i_vfsuid;
++       int ret;
++
++       if (likely(!(dir_mode & S_ISVTX)))
++               return 0;
++
++       if (S_ISREG(inode->i_mode) && !sysctl_protected_regular)
++               return 0;
++
++       if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
++               return 0;
++
++       i_vfsuid = i_uid_into_vfsuid(idmap, inode);
++
++       if (vfsuid_eq(i_vfsuid, dir_vfsuid))
++               return 0;
 
-Doesn't mean we have to lower our own standards.
+-       if (likely(!(dir_mode & S_ISVTX)) ||
+-           (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
+-           (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
+-           vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
+-           vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
++       if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
+                return 0;
 
-> Yeah, just look at how many automatic replies he get's from Greg pretty much
-> saying to ignore his comments.
+-       if (likely(dir_mode & 0002) ||
+-           (dir_mode & 0020 &&
+-            ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
+-             (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
+-               const char *operation = S_ISFIFO(inode->i_mode) ?
+-                                       "sticky_create_fifo" :
+-                                       "sticky_create_regular";
+-               audit_log_path_denied(AUDIT_ANOM_CREAT, operation);
++       if (likely(dir_mode & 0002)) {
++               audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
+                return -EACCES;
+        }
++
++       if (dir_mode & 0020) {
++               if (sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) {
++                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create_fifo");
++                       return -EACCES;
++               }
++
++               if (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode)) {
++                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create_regular");
++                       return -EACCES;
++               }
++       }
++
+        return 0;
+ }
 
-Yes, Greg is also grumpy about it, but at least he remains polite.
+That gives us:
 
--- 
-Lee Jones [李琼斯]
+static int may_create_in_sticky(struct mnt_idmap *idmap,
+				struct nameidata *nd, struct inode *const inode)
+{
+	umode_t dir_mode = nd->dir_mode;
+	vfsuid_t dir_vfsuid = nd->dir_vfsuid, i_vfsuid;
+	int ret;
+
+	if (likely(!(dir_mode & S_ISVTX)))
+		return 0;
+
+	if (S_ISREG(inode->i_mode) && !sysctl_protected_regular)
+		return 0;
+
+	if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
+		return 0;
+
+	i_vfsuid = i_uid_into_vfsuid(idmap, inode);
+
+	if (vfsuid_eq(i_vfsuid, dir_vfsuid))
+		return 0;
+
+	if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
+		return 0;
+
+	if (likely(dir_mode & 0002)) {
+		audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
+		return -EACCES;
+	}
+
+	if (dir_mode & 0020) {
+		if (sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) {
+			audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create_fifo");
+			return -EACCES;
+		}
+
+		if (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode)) {
+			audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create_regular");
+			return -EACCES;
+		}
+	}
+
+	return 0;
+}
 
