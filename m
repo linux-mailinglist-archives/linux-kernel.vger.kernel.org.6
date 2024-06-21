@@ -1,182 +1,145 @@
-Return-Path: <linux-kernel+bounces-225199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2766C912D78
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63BB0912D8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5CAD28B31B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:48:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA65283EF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6D417C7AE;
-	Fri, 21 Jun 2024 18:47:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3FC17C229;
-	Fri, 21 Jun 2024 18:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A73B17B42D;
+	Fri, 21 Jun 2024 18:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="DLFr7q3X"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E138C1E;
+	Fri, 21 Jun 2024 18:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718995633; cv=none; b=EgC/o+kU4XDlOrb0YjcEFYvvVQ+TZkcm98yoNVRt38MI1TVhox/ZxEVk79LvR56Ib9qaHuflDqqc1YAljyi6VolWWvCiyavRdOT4Otd5uzXUvpJmhEaQ+p2HPdV5x227bDy03vQePJGH2OWJOCLN3TtQHJJrY2jDBMmoo99lqFw=
+	t=1718995951; cv=none; b=Gqdlrt0jtCAjU4waovkU55lWvCbLXw51KsWA57SATT9uFRCZa/9YuOhyBwYl4mXxP/o04eg/9ZUWiPEhzU1pLAhPXP776lgjz5yW11XZApu+a+nraJDR8C300U0e7bA8/hwwSUy5paynSYOt2uddqyUbVfg8TyfL5jXQSFHfCFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718995633; c=relaxed/simple;
-	bh=aYPnJnEzGsbJdSK4T3qlU+s8YUyGN02BaHTPLx9oxUw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SArM0An2oar3lUKEjlvRqn69roNkS4SwSVeYdtwHaGeSc6K5KeQTNByGATurTpEztuEap9dsuKOcRxpn+eaxgr+vXA4iepz+ZpSGFn5o6+WKz/RqEzzXals3mRvF/jwnnJQjl+ZOOtX0dyNT1N+dZUKLGex2mZMVO9nzENhcuh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 99A57143D;
-	Fri, 21 Jun 2024 11:47:36 -0700 (PDT)
-Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6B5AA3F6A8;
-	Fri, 21 Jun 2024 11:47:09 -0700 (PDT)
-From: Robin Murphy <robin.murphy@arm.com>
-To: Will Deacon <will@kernel.org>,
-	Joerg Roedel <joro@8bytes.org>
-Cc: linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v2 4/4] iommu: Remove iommu_fwspec ops
-Date: Fri, 21 Jun 2024 19:46:39 +0100
-Message-Id: <42722975eb1309a3e43f58099ff5b6c7bfb23d3d.1718994350.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.39.2.101.g768bb238c484.dirty
-In-Reply-To: <cover.1718994350.git.robin.murphy@arm.com>
-References: <cover.1718994350.git.robin.murphy@arm.com>
+	s=arc-20240116; t=1718995951; c=relaxed/simple;
+	bh=ecwtGev0KvQNSzwp35e+yNAtAWdvf51o9B6zM/n6gQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZSTfifgJfjPGpmWXZNp75Pq2B4pZs3LgQI6JT7lU7xlXEMt9AERvpJ+q+UcBQ537V6W2qgQL1O8kvPZ4ys9Nuwv/j2+ebO561ze1cig64jSnOJrbHUu36Es+5D/03+FWXwvmP1iGVYoFWAKIRD78QWxhRoDSfpWphjqmAxfCXP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=DLFr7q3X; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id F1A7E100002;
+	Fri, 21 Jun 2024 21:52:06 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1718995927; bh=xUGHglTcHE+deAdqIJapo1+7Zs90p4nFF+okhK8BfmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=DLFr7q3XqgXTXr8TWhGqMLSnWx9ePg6/0RHwcWOPy/aN9NbwSWHhW7VYR14E/MLy4
+	 PeaVMvdZyyVhEcmRX8CSaXCDgVHkly8Algcff7NTayOXz8WDeqdN4f34rDGZebLBOj
+	 wUwoFG7smwZv7r57Ts7v+aJ8KOSIU6j4CcoyYEyUp4bZscbCOpXBWo+2BfACFqCoZG
+	 wypmMpU6jIX/QDPOgoU4LAwRw3JEhe5EPEQ/Ke2WreHizKdObcWhRxt8AXv97WdX+V
+	 i3ftbSvyMbAsi4iyZq/tbeiF5QLSGKXMOVljzvAXbrklTc38U2sibVBZHzblbquySs
+	 aPNGBjzBGW4xQ==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Fri, 21 Jun 2024 21:51:10 +0300 (MSK)
+Received: from [172.17.214.6] (172.17.214.6) by ta-mail-02 (172.17.13.212)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Jun
+ 2024 21:50:50 +0300
+Message-ID: <f6b0e5fb-c692-4d67-ac0e-36ddbbc0a784@t-argos.ru>
+Date: Fri, 21 Jun 2024 21:47:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: davinci: Validate the obtained number of IRQs
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Grygorii Strashko <grygorii.strashko@ti.com>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+References: <20240618144344.16943-1-amishin@t-argos.ru>
+ <CAMRc=Me5R+YLmx6mh_mfszRj7TKx25cL9Vx3J-7mvRTuat8Puw@mail.gmail.com>
+Content-Language: ru
+From: Aleksandr Mishin <amishin@t-argos.ru>
+In-Reply-To: <CAMRc=Me5R+YLmx6mh_mfszRj7TKx25cL9Vx3J-7mvRTuat8Puw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186064 [Jun 21 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, git.kernel.org:7.1.1;t-argos.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mx1.t-argos.ru.ru:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/06/21 15:05:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/06/21 14:39:00 #25651428
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-The ops in iommu_fwspec are only needed for the early configuration and
-probe process, and by now are easy enough to derive on-demand in those
-couple of places which need them, so remove the redundant stored copy.
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
- drivers/iommu/iommu-priv.h |  5 +++++
- drivers/iommu/iommu.c      | 11 ++---------
- drivers/iommu/of_iommu.c   |  4 +++-
- include/linux/iommu.h      |  2 --
- 4 files changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/iommu/iommu-priv.h b/drivers/iommu/iommu-priv.h
-index 078cafcf49b4..a34efed2884b 100644
---- a/drivers/iommu/iommu-priv.h
-+++ b/drivers/iommu/iommu-priv.h
-@@ -19,6 +19,11 @@ static inline const struct iommu_ops *dev_iommu_ops(struct device *dev)
- 
- const struct iommu_ops *iommu_ops_from_fwnode(const struct fwnode_handle *fwnode);
- 
-+static inline const struct iommu_ops *iommu_fwspec_ops(struct iommu_fwspec *fwspec)
-+{
-+	return iommu_ops_from_fwnode(fwspec ? fwspec->iommu_fwnode : NULL);
-+}
-+
- int iommu_group_replace_domain(struct iommu_group *group,
- 			       struct iommu_domain *new_domain);
- 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 7618c4285cf9..e15ae1dd494b 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -510,7 +510,6 @@ DEFINE_MUTEX(iommu_probe_device_lock);
- static int __iommu_probe_device(struct device *dev, struct list_head *group_list)
- {
- 	const struct iommu_ops *ops;
--	struct iommu_fwspec *fwspec;
- 	struct iommu_group *group;
- 	struct group_device *gdev;
- 	int ret;
-@@ -523,12 +522,7 @@ static int __iommu_probe_device(struct device *dev, struct list_head *group_list
- 	 * be present, and that any of their registered instances has suitable
- 	 * ops for probing, and thus cheekily co-opt the same mechanism.
- 	 */
--	fwspec = dev_iommu_fwspec_get(dev);
--	if (fwspec && fwspec->ops)
--		ops = fwspec->ops;
--	else
--		ops = iommu_ops_from_fwnode(NULL);
--
-+	ops = iommu_fwspec_ops(dev_iommu_fwspec_get(dev));
- 	if (!ops)
- 		return -ENODEV;
- 	/*
-@@ -2831,7 +2825,7 @@ int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode)
- 		return -EPROBE_DEFER;
- 
- 	if (fwspec)
--		return ops == fwspec->ops ? 0 : -EINVAL;
-+		return ops == iommu_fwspec_ops(fwspec) ? 0 : -EINVAL;
- 
- 	if (!dev_iommu_get(dev))
- 		return -ENOMEM;
-@@ -2843,7 +2837,6 @@ int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode)
- 
- 	fwnode_handle_get(iommu_fwnode);
- 	fwspec->iommu_fwnode = iommu_fwnode;
--	fwspec->ops = ops;
- 	dev_iommu_fwspec_set(dev, fwspec);
- 	return 0;
- }
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index c946521a5906..559c5db78edb 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -17,6 +17,8 @@
- #include <linux/slab.h>
- #include <linux/fsl/mc.h>
- 
-+#include "iommu-priv.h"
-+
- static int of_iommu_xlate(struct device *dev,
- 			  struct of_phandle_args *iommu_spec)
- {
-@@ -32,7 +34,7 @@ static int of_iommu_xlate(struct device *dev,
- 	if (ret)
- 		return ret;
- 
--	ops = dev_iommu_fwspec_get(dev)->ops;
-+	ops = iommu_ops_from_fwnode(&iommu_spec->np->fwnode);
- 	if (!ops->of_xlate || !try_module_get(ops->owner))
- 		return -ENODEV;
- 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 81893aad9ee4..11ae1750cb1d 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -968,7 +968,6 @@ extern struct iommu_group *generic_single_device_group(struct device *dev);
- 
- /**
-  * struct iommu_fwspec - per-device IOMMU instance data
-- * @ops: ops for this device's IOMMU
-  * @iommu_fwnode: firmware handle for this device's IOMMU
-  * @flags: IOMMU_FWSPEC_* flags
-  * @num_ids: number of associated device IDs
-@@ -979,7 +978,6 @@ extern struct iommu_group *generic_single_device_group(struct device *dev);
-  * consumers.
-  */
- struct iommu_fwspec {
--	const struct iommu_ops	*ops;
- 	struct fwnode_handle	*iommu_fwnode;
- 	u32			flags;
- 	unsigned int		num_ids;
+On 21.06.2024 16:59, Bartosz Golaszewski wrote:
+> On Tue, Jun 18, 2024 at 4:45 PM Aleksandr Mishin <amishin@t-argos.ru> wrote:
+>>
+>> Value of pdata->gpio_unbanked is taken from Device Tree. In case of broken
+>> DT due to any error this value can be any. Without this value validation
+>> there can be out of chips->irqs array boundaries access in
+>> davinci_gpio_probe().
+>>
+>> Validate the obtained nirq value so that it won't exceed the maximum
+>> number of IRQs per bank.
+>>
+>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>>
+> 
+> Why not Reported-by: ?
+
+It is an established practice for our project, you can find 700+ applied
+patches with similar line:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?qt=grep&q=linuxtesting.org
+
+> 
+> Bart
+> 
+>> Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ numbering")
+>> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+>> ---
+>>   drivers/gpio/gpio-davinci.c | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+>> index bb499e362912..1d0175d6350b 100644
+>> --- a/drivers/gpio/gpio-davinci.c
+>> +++ b/drivers/gpio/gpio-davinci.c
+>> @@ -225,6 +225,11 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+>>          else
+>>                  nirq = DIV_ROUND_UP(ngpio, 16);
+>>
+>> +       if (nirq > MAX_INT_PER_BANK) {
+>> +               dev_err(dev, "Too many IRQs!\n");
+>> +               return -EINVAL;
+>> +       }
+>> +
+>>          chips = devm_kzalloc(dev, sizeof(*chips), GFP_KERNEL);
+>>          if (!chips)
+>>                  return -ENOMEM;
+>> --
+>> 2.30.2
+>>
+
 -- 
-2.39.2.101.g768bb238c484.dirty
-
+Kind regards
+Aleksandr
 
