@@ -1,127 +1,167 @@
-Return-Path: <linux-kernel+bounces-223933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D75911A92
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:45:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BAC911A94
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5042C2815E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:45:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B723BB23C96
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8514814E2E4;
-	Fri, 21 Jun 2024 05:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BCF15624C;
+	Fri, 21 Jun 2024 05:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FByPLpwk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Y8znqxa5"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B952912C7F9;
-	Fri, 21 Jun 2024 05:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A93155CA9;
+	Fri, 21 Jun 2024 05:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718948717; cv=none; b=ezE5f7XtlpbLsJwLZvBA1Kdb2lNQzB0UtQJd3Xs6dRV61bputtLaxELaNe3uo5xazIGtVMnnCPRmYqtZauivdRHikuKwBELVzibYg3cEzSHMVPBtOMD78LF4r3euaINrQCKwUTwvBALH2ywy2zzAyupl5gyeX2Iy98XiNzC/o/A=
+	t=1718948722; cv=none; b=owvleOkBk44NPzOwTBlryh66mURMsJwpGteGMjBjzgSia2TWERr6kLiX6SjzIKQot2GKz+iYr8xRUEhRQYBoRgbDmXZGFCQFmtK2icpSUskGNX5MpA7jg+5LuTiE1X62Boohaw8mdSJiAfJdLLuDaKbAOQxiOS8D8MV+aItLr2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718948717; c=relaxed/simple;
-	bh=h5D18kB/jJ92V9TMO/5fhp21VV4JzGcvLvRCpsgdkQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZzaISNXkiFwOKMIKpKZTQLhzWFkWZIByDcC4yZX5xEUerq1PmSRobOhw3QqLYSDyG3BOU70yocfCuotLHZwexMwXIaHilH+mIm3d7O5JJUEmPR62NW2BcLTpgkb/duOeji+fAQqXmG63qzni5f1PbZL984EvQWoTPYo9QTE3Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FByPLpwk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271C8C2BBFC;
-	Fri, 21 Jun 2024 05:45:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718948717;
-	bh=h5D18kB/jJ92V9TMO/5fhp21VV4JzGcvLvRCpsgdkQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FByPLpwkqnhIX2qh0PzKcNtRAh7HHeQhNhg5LjlvwtVeQypznKWAn9A93W7c3oQc5
-	 /Z9AicwJAVWHuuXljtbN/GxMoXFeEi1QMXMIWI4BtzdqR9+cPGih2aAQTerFXk3p6l
-	 40NHPSftykwyTq64CgbXYHBL8vciwqzDoMPcPhL1q1dlwMqkWNp2SUQkv8P95ZBSao
-	 zPOSumIY6Nkb1gR23gLZmHpq0nEctPZHujQNEsLmgNJ/3ThBU4gd2ZpAXRcOhxUhVK
-	 5kqFZ7SLJ1Fc93uD6/LU9ifM6dwZSxHqvv7Ys5fteuv1KpApkJyxxmSbkW0TGGrRPF
-	 VrWODNPreVT5g==
-Date: Fri, 21 Jun 2024 00:45:14 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: konrad.dybcio@linaro.org, djakov@kernel.org, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, srinivas.kandagatla@linaro.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org, 
-	dmitry.baryshkov@linaro.org, abel.vesa@linaro.org
-Subject: Re: [PATCH V2 2/3] soc: qcom: icc-bwmon: Allow for interrupts to be
- shared across instances
-Message-ID: <vjes4lm3um44f6oguvrq3gozemquzmmmicj47ieczwfuqkmaqp@aby3dj6ttdig>
-References: <20240618154306.279637-1-quic_sibis@quicinc.com>
- <20240618154306.279637-3-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1718948722; c=relaxed/simple;
+	bh=GN1oOMDS213cL8pOkvgVzj842DNfj9f/a/AxPNBm2PY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JLQiRWiNLnCG+6lNossS43Bq0kR5c1FTZlsImk24iANjomKxlCfbNOFtbsFzNGCJUh9EwS1BhqFlX578admiicFa6QutiOQJtpiQL94FSpENxWqn9VZhEGIRFBl1AscZ3fTMl6pylBM2TyFx1Hnu/M4evIHogwWSpHZ/3yLhgZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Y8znqxa5; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718948719;
+	bh=GN1oOMDS213cL8pOkvgVzj842DNfj9f/a/AxPNBm2PY=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Y8znqxa5H60VPj/ZvGTZ6BeXB4aILZQuU0MrtgYdsOmZdd2VM+7t8fIZIsHak03r8
+	 ibGPC67MIf8VPL508V/FyShf+eTFFWLNd142SKQryPisPvJfwFyZWyyaZH4hoxLs9J
+	 d592GASpgneI80w5svT6ZOVojmLdhkmL+8jPQqclSDUGWVnytQsRPUeaPYugKCQ0Rm
+	 sknrTNdYZK2e4W1hOz5GSLHpWIkLdSIn94I0/X5/iqle9PTmp95JFG2OTKqxeSSMIA
+	 64JQaDCQ6+JI5XqAZdHjzhAkdp0MZbEde2z01rm8uK9ZRZCkEtjsx04f9MhMyuCo+W
+	 FpK0T1t6HT+FA==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4389E378143B;
+	Fri, 21 Jun 2024 05:45:12 +0000 (UTC)
+Message-ID: <0f9ec70e-2faf-4bb9-ae79-6cea8f4c3a66@collabora.com>
+Date: Fri, 21 Jun 2024 10:45:48 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618154306.279637-3-quic_sibis@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com
+Subject: Re: [PATCH] selftests/futex: Order calls in futex_requeue
+To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
+ <andrealmeid@igalia.com>
+References: <20240619002204.2492673-1-edliaw@google.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20240619002204.2492673-1-edliaw@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 18, 2024 at 09:13:05PM GMT, Sibi Sankar wrote:
-> The multiple BWMONv4 instances available on the X1E80100 SoC use the
-> same interrupt number. Mark them are shared to allow for re-use across
-> instances. Handle the ensuing race introduced by relying on bwmon_disable
-
-In an effort to educate the reader, could you please describe what the
-race condition is here.
-
-It would also make sense to break this ("Handle...") into a separate
-paragraph.
-
-Regards,
-Bjorn
-
-> to disable the interrupt and coupled with explicit request/free irqs.
+On 6/19/24 5:22 AM, Edward Liaw wrote:
+> Like fbf4dec70277 ("selftests/futex: Order calls to futex_lock_pi"),
+> which fixed a flake in futex_lock_pi due to racing between the parent
+> and child threads.
 > 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> The same issue can occur in the futex_requeue test, because it expects
+> waiterfn to make progress to futex_wait before the parent starts to
+> requeue. This is mitigated by the parent sleeping for WAKE_WAIT_US, but
+> it still fails occasionally. This can be reproduced by adding a sleep in
+> the waiterfn before futex_wait:
+> 
+> TAP version 13
+> 1..2
+> not ok 1 futex_requeue simple returned: 0
+> not ok 2 futex_requeue simple returned: 0
+> not ok 3 futex_requeue many returned: 0
+> not ok 4 futex_requeue many returned: 0
+> 
+> Instead, replace the sleep with barriers to make the sequencing
+> explicit.
+> 
+> Fixes: 7cb5dd8e2c8c ("selftests: futex: Add futex compare requeue test")
+> Signed-off-by: Edward Liaw <edliaw@google.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+
 > ---
+>  .../selftests/futex/functional/futex_requeue.c       | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
-> v2:
-> * Use explicit request/free irq and add comments regarding the race
->   introduced when adding the IRQF_SHARED flag. [Krzysztof/Dmitry]
-> 
->  drivers/soc/qcom/icc-bwmon.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
-> index fb323b3364db..4a4e28b41509 100644
-> --- a/drivers/soc/qcom/icc-bwmon.c
-> +++ b/drivers/soc/qcom/icc-bwmon.c
-> @@ -781,9 +781,10 @@ static int bwmon_probe(struct platform_device *pdev)
->  	bwmon->dev = dev;
+> diff --git a/tools/testing/selftests/futex/functional/futex_requeue.c b/tools/testing/selftests/futex/functional/futex_requeue.c
+> index 51485be6eb2f..8f7d3e8bf32a 100644
+> --- a/tools/testing/selftests/futex/functional/futex_requeue.c
+> +++ b/tools/testing/selftests/futex/functional/futex_requeue.c
+> @@ -12,9 +12,9 @@
 >  
->  	bwmon_disable(bwmon);
-> -	ret = devm_request_threaded_irq(dev, bwmon->irq, bwmon_intr,
-> -					bwmon_intr_thread,
-> -					IRQF_ONESHOT, dev_name(dev), bwmon);
+>  #define TEST_NAME "futex-requeue"
+>  #define timeout_ns  30000000
+> -#define WAKE_WAIT_US 10000
+>  
+>  volatile futex_t *f1;
+> +static pthread_barrier_t barrier;
+>  
+>  void usage(char *prog)
+>  {
+> @@ -32,6 +32,8 @@ void *waiterfn(void *arg)
+>  	to.tv_sec = 0;
+>  	to.tv_nsec = timeout_ns;
+>  
+> +	pthread_barrier_wait(&barrier);
 > +
-> +	/* SoCs with multiple cpu-bwmon instances can end up using a shared interrupt line */
-> +	ret = request_threaded_irq(bwmon->irq, bwmon_intr, bwmon_intr_thread,
-> +				   IRQF_ONESHOT | IRQF_SHARED, dev_name(dev), bwmon);
->  	if (ret)
->  		return dev_err_probe(dev, ret, "failed to request IRQ\n");
+>  	if (futex_wait(f1, *f1, &to, 0))
+>  		printf("waiter failed errno %d\n", errno);
 >  
-> @@ -798,6 +799,13 @@ static void bwmon_remove(struct platform_device *pdev)
->  	struct icc_bwmon *bwmon = platform_get_drvdata(pdev);
+> @@ -70,13 +72,15 @@ int main(int argc, char *argv[])
+>  	ksft_print_msg("%s: Test futex_requeue\n",
+>  		       basename(argv[0]));
 >  
->  	bwmon_disable(bwmon);
-> +
-> +	/*
-> +	 * Handle the race introduced, when dealing with multiple bwmon instances
-> +	 * using a shared interrupt line, by relying on bwmon_disable to disable
-> +	 * the interrupt and followed by an explicit free.
-> +	 */
-> +	free_irq(bwmon->irq, bwmon);
->  }
+> +	pthread_barrier_init(&barrier, NULL, 2);
+>  	/*
+>  	 * Requeue a waiter from f1 to f2, and wake f2.
+>  	 */
+>  	if (pthread_create(&waiter[0], NULL, waiterfn, NULL))
+>  		error("pthread_create failed\n", errno);
 >  
->  static const struct icc_bwmon_data msm8998_bwmon_data = {
-> -- 
-> 2.34.1
-> 
+> -	usleep(WAKE_WAIT_US);
+> +	pthread_barrier_wait(&barrier);
+> +	pthread_barrier_destroy(&barrier);
+>  
+>  	info("Requeuing 1 futex from f1 to f2\n");
+>  	res = futex_cmp_requeue(f1, 0, &f2, 0, 1, 0);
+> @@ -99,6 +103,7 @@ int main(int argc, char *argv[])
+>  		ksft_test_result_pass("futex_requeue simple succeeds\n");
+>  	}
+>  
+> +	pthread_barrier_init(&barrier, NULL, 11);
+>  
+>  	/*
+>  	 * Create 10 waiters at f1. At futex_requeue, wake 3 and requeue 7.
+> @@ -109,7 +114,8 @@ int main(int argc, char *argv[])
+>  			error("pthread_create failed\n", errno);
+>  	}
+>  
+> -	usleep(WAKE_WAIT_US);
+> +	pthread_barrier_wait(&barrier);
+> +	pthread_barrier_destroy(&barrier);
+>  
+>  	info("Waking 3 futexes at f1 and requeuing 7 futexes from f1 to f2\n");
+>  	res = futex_cmp_requeue(f1, 0, &f2, 3, 7, 0);
+
+-- 
+BR,
+Muhammad Usama Anjum
 
