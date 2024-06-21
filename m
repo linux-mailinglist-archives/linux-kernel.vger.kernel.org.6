@@ -1,102 +1,114 @@
-Return-Path: <linux-kernel+bounces-224841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828B091277B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:21:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFAE91277E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B40E61C25208
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9A1128AE9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A6D2C6BB;
-	Fri, 21 Jun 2024 14:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D20F1D55D;
+	Fri, 21 Jun 2024 14:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DP61nD8c"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="C0V1Ihdp"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AA428DC1
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5D22C697
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718979670; cv=none; b=KO5F/XTZhIggB65g9sm4o1kTWbRfrGmUIP9OdazssRVOMolIXrQQ9C4+Q+hSHO1h/KsDe7wUwF+vowFJBsy3v9Qd3K9CwOjNIGtCCcVPq/oG3aP0yfhwUiixunvybV61Wn7V/rfi9jOpCMpgBprdV3I7/na/Ga1peuL7NgL9tYM=
+	t=1718979672; cv=none; b=WGCVCjpbxNJ/OTxaktpjMWtinM3KaFpivLJMOpDybjPk1A4IQgLmT4yqGk6I/beE8bZD8xltieNspisJuPNZ0r+gSY9jxo4HTEIJni151D6hVW+AvTNelaFB/kdqinsC4BKXfuGkzc9SJj1bkI6xiF49p/Pe1tzWZTVbkoQLDGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718979670; c=relaxed/simple;
-	bh=gIsAYvc7V06aARwVwNxvDtx9375NHja9zxf8RAiawlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXt4yy+l7rEMdRFxA0P6lLCWYyOOqTAKvSOqogTON4Grvi1cib8t6d4qhzRT/4JcpCQFCGNvI+BnYZ9uDPWSZd+BiX9vWVDnQ+N9K+xrO+lbN/GN0/WSlDSqiBIV+GPSTabnl4y52yyS4nuYqru0g3HjQBip1JFAvNi0rVN67/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DP61nD8c; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: bigeasy@linutronix.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718979663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mDg/bErLUvNLFGhkln1hOOoZ0QemIVkLLqNOX1eZjvc=;
-	b=DP61nD8cD+WMlBNVxN5rxuw+H7kQ6yW/DOZv+JW6Z9j1S9s4E2wRynhrjNxyzEYG8hbvz9
-	y6k8bd5jMefXElAlou8muA3XDqhOJSvy8rWQugQQXYi+8KlzLcW+ozHOccy2uDvWiqYG+f
-	kP6YzLaOH6z/vUFTQsRH+q8gwNTWyRc=
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: bsegall@google.com
-X-Envelope-To: bristot@redhat.com
-X-Envelope-To: dietmar.eggemann@arm.com
-X-Envelope-To: mingo@redhat.com
-X-Envelope-To: juri.lelli@redhat.com
-X-Envelope-To: klarasmodin@gmail.com
-X-Envelope-To: mgorman@suse.de
-X-Envelope-To: peterz@infradead.org
-X-Envelope-To: rostedt@goodmis.org
-X-Envelope-To: surenb@google.com
-X-Envelope-To: tglx@linutronix.de
-X-Envelope-To: vschneid@redhat.com
-X-Envelope-To: vincent.guittot@linaro.org
-Date: Fri, 21 Jun 2024 10:20:58 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Ben Segall <bsegall@google.com>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Klara Modin <klarasmodin@gmail.com>, Mel Gorman <mgorman@suse.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH] sched/task_struct: Move alloc_tag to the end of the
- struct.
-Message-ID: <7zretxxixkpfxt6lr7x64n67ql2v2qpb7abbbjklclwlu4u2kx@22o5sdlnpkea>
-References: <20240621102750.oH9p1FQq@linutronix.de>
+	s=arc-20240116; t=1718979672; c=relaxed/simple;
+	bh=u643VJh2oU1OtvvUxbU6rDcSMmWtMVuATUFQDSbqB1g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ch2sEPzYxtXtQzBtIJZa04C9rpC2EWId2vm8pq+oG/9AdG0ZFzl5wO0d6o29UyevjMtUfN+c/aSBznq700mu0xfJAvBcNMbJPb7jjyAKujurmJwYavrEz6exgg5ncsK1alpOyA6NXVXi7LiDCnKwl7es7AcIekt5DCVUoV8qHFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=C0V1Ihdp; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-361785bfa71so1711392f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:21:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718979669; x=1719584469; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S207Ig52Bpf6LcZJI3z8V0iTOAy5HZYvaWdXquSHjE8=;
+        b=C0V1IhdpFyuTAyHrjqiInka9RMNSdPSEYQZRs2PqrcuufYajytrgtpTeisEmrgrFRR
+         iOO+32a9GtHlvajTaxxUoluZo6XmaNs5n4PMbzj8CECPbqOLBX/MxfvGSclHeJwfof6Q
+         LBDkWeHet3l7r7nkY720VMJ6mMHsmD56SocUrywPWo2rmB6v2iMIsuKCsQ+uDrPBpt2v
+         gOneD99QG2W7wj3TSvGWu0J0m7nJ+QZBEAuwsKFo9Y1quNIoZ4cD6VtSC2yUPAtAGigK
+         Rt1KsP9grBX4s21nvLku0M4Go6lQDFa46wrUg8AwNK0X2SFZaAIY9HXKhSURkkeJ6Je7
+         Txmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718979669; x=1719584469;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S207Ig52Bpf6LcZJI3z8V0iTOAy5HZYvaWdXquSHjE8=;
+        b=HYh4kMNXGvYd2lbKBys58rTq+thPR+j6v2FtVT7VTH+X4fW2Xb6uohaXH66t06bekf
+         Vqj9JSFfw2jGt0EokynwuPgmtXsmKNFijf7F5A+R/T9hPYpLm1F7o7H0yRR5sTQ9ixun
+         EbRS9TBgEpVVJ/WnTjKVEYZ/AgvcwqKevOdC0c3wtpQ/oLWPm7F8GedTy3XsjJrd+Y+L
+         E2PCXCUvW80XoiAei2OwPVHlM/QMfz/0RhXTmEjvsIUtJ/DsfCTQkYe6/EMu6R6ToaZ/
+         6K2riOWJPKPSgQUg8Et0ncU86PSR1ICUR0SgIAtqRUtUfwwyjDXi2lTGqhlI3Yw+0d/o
+         7Wyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHqwIn6vOqX5GJyOKcrmMkGNB5o5vPAlNt5WZpV7/n4pwpJ1sHHQMhgTHJgvrXWOIPtAAN61bfxfeyPfwPtdv9IKygX1n/NMGJOxj0
+X-Gm-Message-State: AOJu0YzZudrb7ag/jrMASsX9nAhp/M+RZMicAZSZoNr+zb2CJKrWtmLa
+	8QyOF67v0KIGTHqLKWA4V0c3gqXlGZF4tZr5YpcdltcFCt+b/dlje5n1EMfsMWg=
+X-Google-Smtp-Source: AGHT+IHwelUxlHig5WHO7wvrctg5rxkqKt5u6s53c4sbYnwCFPVyK4QD9+b9IJ4xs7uN8noMbw/ZDA==
+X-Received: by 2002:a05:6000:154c:b0:365:f52f:cd39 with SMTP id ffacd0b85a97d-365f52fceb8mr2356725f8f.50.1718979669492;
+        Fri, 21 Jun 2024 07:21:09 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2c93:fc28:1af9:fa5a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f9924sm1886848f8f.72.2024.06.21.07.21.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 07:21:08 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Ian Ray <ian.ray@gehealthcare.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: pca953x: fix pca953x_irq_bus_sync_unlock race
+Date: Fri, 21 Jun 2024 16:21:06 +0200
+Message-ID: <171897966254.11715.12696876070141243343.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240620042915.2173-1-ian.ray@gehealthcare.com>
+References: <20240620042915.2173-1-ian.ray@gehealthcare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621102750.oH9p1FQq@linutronix.de>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 21, 2024 at 12:27:50PM +0200, Sebastian Andrzej Siewior wrote:
-> The alloc_tag member has been added to task_struct at the very
-> beginning. This is a pointer and on 64bit architectures it forces 4 byte
-> padding after `ptrace' and then forcing another another 4 byte padding
-> after `on_cpu'. A few members later, `se' requires a cacheline aligned
-> due to struct sched_avg resulting in 52 hole before `se'.
-> 
-> This is the case on 64bit-SMP architectures.
-> The 52 byte hole can be avoided by moving alloc_tag away where it
-> currently resides.
-> 
-> Move alloc_tag to the end of task_struct. There is likely a hole before
-> `thread' due to its alignment requirement and the previous members are
-> likely to be already pointer-aligned.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-We sure we want it at the end? we do want it on a hot cacheline
+
+On Thu, 20 Jun 2024 07:29:15 +0300, Ian Ray wrote:
+> Ensure that `i2c_lock' is held when setting interrupt latch and mask in
+> pca953x_irq_bus_sync_unlock() in order to avoid races.
+> 
+> The other (non-probe) call site pca953x_gpio_set_multiple() ensures the
+> lock is held before calling pca953x_write_regs().
+> 
+> The problem occurred when a request raced against irq_bus_sync_unlock()
+> approximately once per thousand reboots on an i.MX8MP based system.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] gpio: pca953x: fix pca953x_irq_bus_sync_unlock race
+      commit: bfc6444b57dc7186b6acc964705d7516cbaf3904
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
