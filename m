@@ -1,117 +1,94 @@
-Return-Path: <linux-kernel+bounces-224584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B6B912443
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:47:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C7A91244C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0C1528A937
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CDAD1F21C55
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8DE176AD2;
-	Fri, 21 Jun 2024 11:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8a6+4ZR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0375017839E;
+	Fri, 21 Jun 2024 11:44:07 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F8E176ABA;
-	Fri, 21 Jun 2024 11:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C37172BDD;
+	Fri, 21 Jun 2024 11:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718970101; cv=none; b=Z4uaD/g3+FacdzICSdiglL2B8JdVlfe0wH5GKfnmTB/rDKEE2CJx/6kyyH1HRiAkM/FjD6dw/dEi94N+DQXn9Zobe5mK4kDXNbosVOkI81NUQ2mqcYkvHos+aouihtHZanUn1lhb4nS9ItTlhZVoaqfoyMxmaAk5OgCCWHSxYH8=
+	t=1718970246; cv=none; b=QTZ+lOClmQ+Y0XvaU5qrX53CJhMjaQIFPujxCKMzL6MBrBOsVWjdHXPEmQzzEhevlxJU1J/uosZw69Npzb8XVjX+r4YrwJrF5ZbSMEWByJW0LiYioMjmmNrdkhbZqRDneXlCWi4rRhAHql1lZhI7XpDGHM3z9g54PrABOJehgUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718970101; c=relaxed/simple;
-	bh=EENKriqcUosyBwebOuQyqUuOakrjeRRQo/qqQGWIARY=;
+	s=arc-20240116; t=1718970246; c=relaxed/simple;
+	bh=5U/twcyxaoe03rH0mYq7ye7EeNzyf5UN/ga7u1iBxQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boupkN1H2vbNejg1q4i5uBDDMzJ7APC2VNgVj4/NLRgo95t6+8RtbwafJKVthQ4DfyVpP+bwgzuU6stxKEAhGd2PDAFf5BbKcOZlC2KiG1hrMzJsECdDAlGhwD+M8cavqWK+ihE5VZZjHu4/p1oQpabM1m+JrrCn1DwykgrsJNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8a6+4ZR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B7E1C3277B;
-	Fri, 21 Jun 2024 11:41:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718970100;
-	bh=EENKriqcUosyBwebOuQyqUuOakrjeRRQo/qqQGWIARY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W8a6+4ZRa0avGsf3+QFxZk8VzyAUkhITS3N7a3ISc8lgPPQqeq2mqg66uKa66H3xD
-	 vYGhqcOouh5+91oIqmI6wHk+4H6U9wq5fvNw8qYT/jjvfoyOoO9hGhqUivt4ivoxHZ
-	 6vFhdeIy5c1k6KOvVzkEMV0qSxY4AXdKE0v9TJfo0OIKnsHMSG97MnsdeVcLlAu2BU
-	 2baTvIo57KpAfZflzWedaUhJhzLe0UifOhd0zX7EE0rIiKMUeKSyRxBVz10pCD7hLX
-	 A/3/72W6Ks2TwgyErxgGCFqFJFvdFh2m2Ajzvwnk8LiBfGcEBACdNEjUKzV5FTCDHE
-	 2LqMuBEDwefTw==
-Date: Fri, 21 Jun 2024 13:41:36 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Igor Pylypiv <ipylypiv@google.com>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] ata: libata-scsi: Generate ATA PT sense data when
- ATA ERR/DF are set
-Message-ID: <ZnVm8Ah2KyvosTs0@ryzen.lan>
-References: <20240614191835.3056153-1-ipylypiv@google.com>
- <20240614191835.3056153-3-ipylypiv@google.com>
- <ZnAeFbdt02zge2my@ryzen.lan>
- <ZnIBdj02yKFz4sK8@google.com>
- <ZnQm3-OL95x_Z_VP@ryzen.lan>
- <e25962a1-cd0c-47c9-9e10-008c475f22cb@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLBIdU1hMioAsWa+jy8iIvZyrJZLT7d4E5co1A0c+DhlUvWBjNMyMi1QZzMbE+oBCzQiZ7uPnFPq0An+jPE/SL3R4hY31HaehPmCGFBhotwIKwXKSFRR1tDoPH9Kgc1uA9OX3vMbUPg8/TxClebmlPyxd3fhG8G6a0+CCYE35B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=45678 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1sKcgC-000OiP-Nz; Fri, 21 Jun 2024 13:43:47 +0200
+Date: Fri, 21 Jun 2024 13:43:42 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Jianguo Wu <wujianguo106@163.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: fix undefined reference to
+ 'netfilter_lwtunnel_*' when CONFIG_SYSCTL=n
+Message-ID: <ZnVnbv9sBtmflZj-@calendula>
+References: <24ac3144-c6bc-4fd9-b592-d1a88505e65a@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e25962a1-cd0c-47c9-9e10-008c475f22cb@kernel.org>
+In-Reply-To: <24ac3144-c6bc-4fd9-b592-d1a88505e65a@163.com>
+X-Spam-Score: -1.9 (-)
 
-On Fri, Jun 21, 2024 at 09:05:33AM +0900, Damien Le Moal wrote:
-> On 6/20/24 21:55, Niklas Cassel wrote:
-> > 
-> > Perhaps we should modify fill_result_tf() to set ATA_QCFLAG_RTF_FILLED,
-> > after it has called ap->ops->qc_fill_rtf(qc);
+Cc'ing netfilter-devel
+
+On Fri, Jun 21, 2024 at 10:41:13AM +0800, Jianguo Wu wrote:
+> From: Jianguo Wu <wujianguo@chinatelecom.cn>
 > 
-> Yes, let's do that.
+> if CONFIG_SYSFS is not enabled in config, we get the below compile error,
 > 
-> > Then this code can check if ATA_QCFLAG_RTF_FILLED is set, like you suggested.
+> All errors (new ones prefixed by >>):
 > 
-> And I wonder if we should not just drop ATA_QCFLAG_RESULT_TF and *always* set
-> the result tf for all commands. I fail to see why this is conditional to that flag.
-
-I'm guessing that originally this was just an optimization, that you did
-not read the taskfile register for a command that was completed successfully.
-(Since they did not see a need for it.)
-
-And a command that failed would have gotten an error IRQ anyway, so the
-result TF would be populated for those.
-
-I'm not sure how much time we save by not reading the TF register for non-NCQ
-commands... Most likely it would be possible to read the TF register for all
-drivers for non-NCQ commands on completion.
-
-E.g. we set the ATA_QCFLAG_RESULT_TF flag for internal commands and for
-ATA-passthru commands, however, both of these are non-NCQ commands.
-
-
-
-I think it is NCQ commands that are the problem...
-
-For AHCI it is possible to get ATA status and ATA error, for NCQ commands,
-if we extract it from the FIS rather than reading the PxTFD register,
-and this is what we do in ahci_qc_ncq_fill_rtf().
-
-Probably, most other drivers could also extract this from the FIS,
-if we spend the effort on implementing that for every driver.
-
-But if we don't do that, the drivers will read the TF register,
-which e.g. for:
-https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/ata/sata_nv.c#L1400-L1407
-doesn't seem to work for NCQ commands.
-
-So I'm not sure if we can remove ATA_QCFLAG_RESULT_TF, but we could
-definitely set it unconditionally for non-NCQ commands if we want.
-
-
-Kind regards,
-Niklas
+>    csky-linux-ld: net/netfilter/core.o: in function `netfilter_init':
+>    core.c:(.init.text+0x42): undefined reference to `netfilter_lwtunnel_init'
+> >> csky-linux-ld: core.c:(.init.text+0x56): undefined reference to `netfilter_lwtunnel_fini'
+> >> csky-linux-ld: core.c:(.init.text+0x70): undefined reference to `netfilter_lwtunnel_init'
+>    csky-linux-ld: core.c:(.init.text+0x78): undefined reference to `netfilter_lwtunnel_fini'
+> 
+> Fixes: a2225e0250c5 ("netfilter: move the sysctl nf_hooks_lwtunnel into the netfilter core")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406210511.8vbByYj3-lkp@intel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406210520.6HmrUaA2-lkp@intel.com/
+> Signed-off-by: Jianguo Wu <wujianguo@chinatelecom.cn>
+> ---
+>  net/netfilter/nf_hooks_lwtunnel.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/net/netfilter/nf_hooks_lwtunnel.c b/net/netfilter/nf_hooks_lwtunnel.c
+> index 7cdb59bb4459..d8ebebc9775d 100644
+> --- a/net/netfilter/nf_hooks_lwtunnel.c
+> +++ b/net/netfilter/nf_hooks_lwtunnel.c
+> @@ -117,4 +117,7 @@ void netfilter_lwtunnel_fini(void)
+>  {
+>  	unregister_pernet_subsys(&nf_lwtunnel_net_ops);
+>  }
+> +#else
+> +int __init netfilter_lwtunnel_init(void) { return 0; }
+> +void netfilter_lwtunnel_fini(void) {}
+>  #endif /* CONFIG_SYSCTL */
+> -- 
+> 1.8.3.1
+> 
 
