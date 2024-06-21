@@ -1,112 +1,150 @@
-Return-Path: <linux-kernel+bounces-225354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461BE912F84
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:26:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7146F912F87
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E348F1F24148
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:26:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C77E28692B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B7C17C221;
-	Fri, 21 Jun 2024 21:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012CD17C227;
+	Fri, 21 Jun 2024 21:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bbc40YNs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rktJcpWa"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378B2770FB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C731B81AC1
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719005179; cv=none; b=Lww0ychqrzjxgQdCqqLIYV1plCR5NV7Hh98vI5eim0KSN8sPf1B5cO0c+M0TSdfsVuoCc3ToUYSjk5n9k1/QvUyf/FJtEGWn1ysDot3kdOinNPOJQt17qrYYSpH4V0FgfahfJ5ejXiVgM16gBvfbqnNL+K7VyKmo2a+9BDIPfRc=
+	t=1719005261; cv=none; b=nZuJB31cKbBlcqYUlgZjNRW1J8sf6poDjNYDCl7r5lwN6AWxcIu17bq7i77YK50MHT0uSoVsGDtRDbb4K+yTswQE3M0/AmYwVE5pkiiNqVidPmi0yXmag5xQkO9T9nIT5InWQUbRlLdBD/LopI1yLdS4OuEx04D6Ehn+9HcFHMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719005179; c=relaxed/simple;
-	bh=MoG5LOlPDEy0odETqyI2UZk2OgwVvJkIV2zODFlshVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bxxDPChareLuHeVIjuYcSKR9cl1fstRO8XI7UzFpw2W8LufF55e5LnZ7Stn03Av/ff+gqDv3aHG9XlhrUntfmiiZfZ9wm5EJ/Eca1JCaXd8/KbF+1kvTSDs5dNli16mjqKN4cfN8phoYv2/T5bgZAtgYfF4k8D3mF08KPIYOkes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bbc40YNs; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719005177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=thP0nEUDrtQW96/5jB0/Xvoruza3ct4JGkvDNzAWKaw=;
-	b=Bbc40YNs34zdK7Gz6BVNiIGIhmHUs7ywpnKdFwjJC4iohbA5jPVXmN6yVQx218zLyYhLXO
-	L8IQ0L8dH7iVpmiynzbZxKlTUM1TZU7WojXTPvNIVIZHE1sg6BkNHsuQ9VKf794oXt3dAy
-	3LAdBWglLpS0Aa5gUyDJUxeiLybWRLI=
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
- [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-323-5_q2mBcYMVafb8adgOQwfQ-1; Fri, 21 Jun 2024 17:26:16 -0400
-X-MC-Unique: 5_q2mBcYMVafb8adgOQwfQ-1
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3d1c1f3d698so260249b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:26:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719005175; x=1719609975;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1719005261; c=relaxed/simple;
+	bh=uMNzYRIgleMfYnwYF+a0ZGkYj4KN0oRJZLd7rVFB5WU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tIpgob7H6uhTZfAPR70wJlSUsoxL7SzmYEzDAkbJsn67uQ6dR4HH1Pkr+vCBMm+M75eqkuKI8lLS0mZg0UAWCIpidP0Vp28ZkGp9bkBnd/OBB1NEj5Mg9D2xq9N6YhLCd5yihQkERRs/IrJtUvXZkeaUj8tkctg352NJiAzInls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rktJcpWa; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-48c2d01994eso744491137.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:27:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719005257; x=1719610057; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=thP0nEUDrtQW96/5jB0/Xvoruza3ct4JGkvDNzAWKaw=;
-        b=UygIMWA7zPXS44m1aSaZkzgvLEgqZZViEiY+zq5+1h3+UZLVEiToUjm0EQa73a7IHg
-         GPtIuoTc33zCQJbhWwn5xi8joaz/DO9Ez0ZBZRsViVCyunLGwhkFtFVCLs5h9v6RPDet
-         9QOaDun3Ozt+u9epj8mpVRdizVv1FVM4hm8H4LrNeJUh9bnTxd9G7tQds9jEBSKVJysC
-         oXDZzunfebTSYuIVGcXvPaSc/9PiP6fou5/WliiAI7kaU4uNGyve9lJvmqbvlef9r8pI
-         EIEX8OzyXiD7R4TOW/KYdtBz1TtXQ9898k492SSK5se4j6NPX6yIzi3Ba/UGEZZK0Pr3
-         VdEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXucRst1L56B5f2SryIWJouK414MyQ1V9+Zn7uj2AaMlSUYcYLyIt4QPcmAB/68GicInYHhp1feVZXDnGk2V+KuMbbW+mUgIaIypIpL
-X-Gm-Message-State: AOJu0YzPeUQ4zRdTs9bvUVEMAKaBmHa4ncOLZ/8H5Qe9UjHUXzvD/q/m
-	wxz837gK1Lh5V4YwCYaII1/0GNY0j6vc40FeSXenugJFMVGY3h16lmhWPm2udEzS8RWmfgseTNY
-	H3vcREwZ3zrZsQ2+8sSFDsPboG8A4IQIQUctdr700y68Bc6Sh3I46MLvsOQO61w==
-X-Received: by 2002:a05:6870:96a4:b0:259:8928:85ec with SMTP id 586e51a60fabf-25cf3c9e387mr51764fac.2.1719005175007;
-        Fri, 21 Jun 2024 14:26:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGKlfNdgfrg3d44ggCIG2pMpMdjiG1vA5US9y7a35Taet6dJbuCF3xZJpWG2QJBFSDX/uR1IQ==
-X-Received: by 2002:a05:6870:96a4:b0:259:8928:85ec with SMTP id 586e51a60fabf-25cf3c9e387mr51736fac.2.1719005174490;
-        Fri, 21 Jun 2024 14:26:14 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444c2b989aasm15017181cf.49.2024.06.21.14.26.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 14:26:14 -0700 (PDT)
-Date: Fri, 21 Jun 2024 17:26:12 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Audra Mitchell <audra@redhat.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	aarcange@redhat.com, akpm@linux-foundation.org,
-	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shuah@kernel.org,
-	linux-kselftest@vger.kernel.org, raquini@redhat.com
-Subject: Re: [PATCH v2 2/3] Update uffd-stress to handle EINVAL for unset
- config features
-Message-ID: <ZnXv9Kc_Yt4j7YtW@x1n>
-References: <20240621181224.3881179-1-audra@redhat.com>
- <20240621181224.3881179-2-audra@redhat.com>
+        bh=B9YYJN6gO8sKB5sQbYzsaO+MvxbhNg/Nzd2XouVD5g0=;
+        b=rktJcpWaL9+43LdIemRNDkcDdDjrv+RRCH26Di6a+AOiDnRrLUx1nk6JzUh22uFojI
+         rsTzcwqEwt56cYEjSKnvQpJIne26igR3Y6L/706L5QEN3xynoaajPd0BsYyhWxk3a7Ls
+         60rnqfeFBpk6QJWWZIPk6maIIIVz+mTkYY+9Mpy/yZ968FDA3oXeJ8+dbsWqoiSTYwly
+         73VeanyDtECRlwK1+/oD5obRLTe4S6Nkxwj0d0xETHSDgIZboPUeHJoDaAAX1UCKnuNe
+         hVALuNzpmMMgdWVv47cS5uqcP67uhLF5ove5gR1zD+Abk0Bmeitm2f0TZ9FUYQP++bs3
+         oaBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719005257; x=1719610057;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B9YYJN6gO8sKB5sQbYzsaO+MvxbhNg/Nzd2XouVD5g0=;
+        b=w7kF9IiSkuNJ2HFEPcDsPIq/seKwJhlxi7UjFWQdJ0kj7wjg2LLTUj1zFkh6E1IBMi
+         oP1hT79G2o8Xpd9hweJN7G6VT+c5F4/HZ4P3vHPDbMYT1/0aS8EIH5HIrdqr1HJEeIY5
+         A2S6s+CUJ+U4u1abY7eCGovYQUBqQm2Zx2VIVsAuVcnOt8lknYDjZnxL7Hu6vTVkGSMF
+         O7Dkn7Km7/O3g5qruD6FWAoWqfFhX8q32vXXK7MfZtEKX4d9xZhswavCwEXJKRqtyciv
+         T52vB/IAPgcF3m8Xk5ux9GTFAlHIuqPTYTM4p1UPIGDQIw+K/NMas6weLtbWqmMllmnc
+         326A==
+X-Forwarded-Encrypted: i=1; AJvYcCXSGxMhPp6pxdbI4HssP/Az6yIJ1VbPboHMTkUvPfGq0/jOCPpFoJOPGgOJkvMaOHQor8m2LIHSzKmKIupkFIYFwA/OVAb6GpdANQGZ
+X-Gm-Message-State: AOJu0YxJnhAf5fDvkSxd/faOpuJs/KixdaAMczK2zRzTPg4pWRdV9daz
+	2FqH0sBmoL9VtGEYZ8Vt8gfxBfN6sOijb+o5Qow7/NWAbEzcZWO3jIAT2Ndqzh7TIWbnPHuas0Q
+	+9Gm9OqMErVAc52OFpLjfMj4sWaG/JHTIUdiH
+X-Google-Smtp-Source: AGHT+IFJsXHscUZN1ArxTSIV4VXg2gnQo9OEeHipRr4oFQUE6eYw6FyYq4qABzIJaAuPwBpxGEH9hruTNr2gkbg4xXw=
+X-Received: by 2002:a67:e20c:0:b0:48f:3fe2:1560 with SMTP id
+ ada2fe7eead31-48f3fe21584mr2043664137.11.1719005257518; Fri, 21 Jun 2024
+ 14:27:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240621181224.3881179-2-audra@redhat.com>
+References: <20240621211819.1690234-1-yabinc@google.com>
+In-Reply-To: <20240621211819.1690234-1-yabinc@google.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 21 Jun 2024 14:27:25 -0700
+Message-ID: <CAKwvOdmYWEp8SaksnereMRPBq1q614kWJAWtcSyAeTVZ=geQfg@mail.gmail.com>
+Subject: Re: [PATCH v2] Fix initializing a static union variable
+To: Yabin Cui <yabinc@google.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 02:12:23PM -0400, Audra Mitchell wrote:
-> Now that we have updated userfaultfd_api to correctly return
-> EIVAL when a feature is requested but not available, let's fix
-> the uffd-stress test to only set the UFFD_FEATURE_WP_UNPOPULATED
-> feature when the config is set. In addition, still run the test if
-> the CONFIG_PTE_MARKER_UFFD_WP is not set, just dont use the corresponding
-> UFFD_FEATURE_WP_UNPOPULATED feature.
-> 
-> Signed-off-by: Audra Mitchell <audra@redhat.com>
+On Fri, Jun 21, 2024 at 2:18=E2=80=AFPM Yabin Cui <yabinc@google.com> wrote=
+:
+>
+> saddr_wildcard is a static union variable initialized with {}.
+>
+> Empty brace initialization of union types is unspecified prior to C23,
+> and even in C23, it doesn't guarantee zero initialization of all fields
+> (see sections 4.5 and 6.2 in
+> https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2900.htm).
+>
+> Clang currently only initializes the first field to zero, leaving other
+> fields undefined. This can lead to unexpected behavior and optimizations
+> that produce random values (with some optimization flags).
+> See https://godbolt.org/z/hxnT1PTWo.
+>
+> The issue has been reported to Clang upstream (
+> https://github.com/llvm/llvm-project/issues/78034#issuecomment-2183233517=
+).
+> This commit mitigates the problem by avoiding empty brace initialization
+> in saddr_wildcard.
 
-Acked-by: Peter Xu <peterx@redhat.com>
+Thanks for the patch. The links add a lot more context.
 
--- 
-Peter Xu
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
+>
+> Fixes: 08ec9af1c062 ("xfrm: Fix xfrm_state_find() wrt. wildcard source ad=
+dress.")
+> Signed-off-by: Yabin Cui <yabinc@google.com>
+>
+> ---
+>
+> Changes in v2:
+> - Update commit message to add/update links.
+>
+> ---
+>  net/xfrm/xfrm_state.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+> index 649bb739df0d..9bc69d703e5c 100644
+> --- a/net/xfrm/xfrm_state.c
+> +++ b/net/xfrm/xfrm_state.c
+> @@ -1139,7 +1139,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const =
+xfrm_address_t *saddr,
+>                 struct xfrm_policy *pol, int *err,
+>                 unsigned short family, u32 if_id)
+>  {
+> -       static xfrm_address_t saddr_wildcard =3D { };
+> +       static const xfrm_address_t saddr_wildcard;
+>         struct net *net =3D xp_net(pol);
+>         unsigned int h, h_wildcard;
+>         struct xfrm_state *x, *x0, *to_put;
+> --
+> 2.45.2.741.gdbec12cfda-goog
+>
+
+
+--=20
+Thanks,
+~Nick Desaulniers
 
