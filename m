@@ -1,105 +1,283 @@
-Return-Path: <linux-kernel+bounces-224292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BF391204B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:17:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B312912050
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C4EB284F23
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:17:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E6B81C235F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CC416E862;
-	Fri, 21 Jun 2024 09:17:02 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD82E16DEC1;
+	Fri, 21 Jun 2024 09:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QrvArpCu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB05116C698;
-	Fri, 21 Jun 2024 09:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E25616C698
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718961422; cv=none; b=YDjLVQUeDWMZdpaWXhui3nUE4enzp+HXpYJgCFHTsWD9CfRn6uYHTsQMZVqKAiFNrVSquqicHCWmuFjRNjRCspfnJs3MQcHxvXvZa1PVGnmuiIIpqOfZB6XhSJLdm5qsMrWw81ezJrqqHNNbQvckOm1Rv6c1m64zEGwXljevgY0=
+	t=1718961511; cv=none; b=WJ0fjWBNvfuLvxSwd+DogabDI3vXTzI1dPbmTwQz7i9/KJAiZhm5hPJjNXVFiAmoiqaRU3O0+6Aku5KJ7LyIkheHJkULGLvZ5XVqJ1dzZlC9jvVGlSbA/+3opwzzk0+/cGSVmVCNvqdLF0x6UVK3TNGYaTsHIBHp2s9lvB3Fpto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718961422; c=relaxed/simple;
-	bh=61p25ATK1e0R9fBYFveQbbb+jL+lpz6dGVy/tPsjI6s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IZO+pH4OKrSL0UxG/kIBPRI3pWYDRXFAy1uauBZnzmR9JSOSbW2RM/qitOOPMBmsA7h1P67ik/5uy1Bv65YRQIeZQY1aDUEvn39A+4VO7ZbKEXKrHSqxoNhbaJw7CuL4nz3K+Rto+p2zzMncD4sjAsKn89AR/TSPMhTFsv85kk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowADHzhICRXVmgfDqCw--.8650S2;
-	Fri, 21 Jun 2024 17:16:50 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] pinctrl: mlxbf3: Fix return value check for devm_platform_ioremap_resource
-Date: Fri, 21 Jun 2024 17:16:37 +0800
-Message-Id: <20240621091637.2299310-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718961511; c=relaxed/simple;
+	bh=Vfcs9pDQ0tA7Lrv9qvO57lb44mtpBDbIGqidtr4rYTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LnniIsadY8TVshjfC6/CuDvSv3o8pviniz2pqI5Mo21SfaebXA1G9hRUNDpu0YRKB8AbL09VGOLkC6Muv5DuXAdltQQBSojmlAhMqDcqiIbL1401fMAkm9s3rSeWC5bW923EYDeB3Ctti9rW1f9/Ar/bKJUOZ0WlBwBdk5whJkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QrvArpCu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718961509;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fmNKGBn/d/UHImXCWFCHyqNE5ol7HkHGQOjWdhN4Z6U=;
+	b=QrvArpCu1iCeuIIUyZfvASnCptAyFGPZ25ZDXXMWUmNPNF/H4bMj7vh/tVqv9THMSimcew
+	QWpLTrmN0ZxnLyjNZg5AcN4RJL1tBC9PyYyUejFnkf9wtmIc6Pp58lbbqEmu9FL8V4V8CA
+	psbvwKmHxGCMgYPR7URWXEDlLonLS6w=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-312-INzKReTOPeGL2pTybZ6_ig-1; Fri, 21 Jun 2024 05:18:27 -0400
+X-MC-Unique: INzKReTOPeGL2pTybZ6_ig-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4247d49a373so13198155e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:18:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718961506; x=1719566306;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fmNKGBn/d/UHImXCWFCHyqNE5ol7HkHGQOjWdhN4Z6U=;
+        b=Gpi2Bq4CEDRfKFfYzMhQ8/QUdH2RnpcF5M6Wliu4g5xJDzEO7ZoYGm03GO17mmZtgk
+         xEkrl3+rM14/ss6TDdX6Ei4UhXWU3wtCYFZWQO1fgIPS8R5DL0UPZxvSUJ4cIzk8jxps
+         v1ZmnnxcvbY4sGzAu0V6GSfy1qUE4gEekkW0F65NLWnj/FPjFnxSvMlDybUM5aM5jUwN
+         Jvq8YnYPiA74ysWS2ajBZ+kwiZbMIEIJIgZ2IFZwjDRWPNmTqT/teCKwn0gaNzLB+EMH
+         1Ml34D27Dg3J8GAs17ZcBb/IbhnlnDNwkN9pgvFaOv5t3Ac1hgf3RzZ53G0wkrBv0nZ2
+         wZXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtPazKTwgM/ypIDoopOnqxhM8d/pmQjWjuBOXBoj8Kh7Sl0uyfnzc0K2fWE/ovi/G93K8jcbDNDHDhBfng5u3NqqofM/3WONp4/0ux
+X-Gm-Message-State: AOJu0YweOXGpcDWL2NkA0OUvi2otjJ9iSG0lYrwdIyTibrC6vACM81Ty
+	UvDvkG9eJMFZ6iG37BuEGlnUjgIYnS8l3/ghpdeWbx21qZSREqFP42uMYqllDBN4H4+LqwH5D3Q
+	E6PlstmLJZBBVPKTBJ3IoYbwsCeX/9uoR5JPo6Y+E0L7zsj2K+fFi6FL1/53lzg==
+X-Received: by 2002:a05:600c:4c24:b0:424:7e0c:68e2 with SMTP id 5b1f17b1804b1-4247e0c6af1mr29679905e9.12.1718961506142;
+        Fri, 21 Jun 2024 02:18:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHgvSRVkeQNmVImikLIebQnTxOpk6aC8WiXLcRaMoHwYaeVj2QwsTFG2DI7PeorMsbIv6fCpg==
+X-Received: by 2002:a05:600c:4c24:b0:424:7e0c:68e2 with SMTP id 5b1f17b1804b1-4247e0c6af1mr29679755e9.12.1718961505702;
+        Fri, 21 Jun 2024 02:18:25 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff2358f.dip0.t-ipconnect.de. [79.242.53.143])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248191116fsm19727005e9.37.2024.06.21.02.18.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 02:18:25 -0700 (PDT)
+Message-ID: <02b87f01-69c9-4007-b0d0-5ce9ce35876d@redhat.com>
+Date: Fri, 21 Jun 2024 11:18:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] mm: use folio_add_new_anon_rmap() if
+ folio_test_anon(folio)==false
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ baolin.wang@linux.alibaba.com, chrisl@kernel.org,
+ linux-kernel@vger.kernel.org, mhocko@suse.com, ryan.roberts@arm.com,
+ shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com,
+ willy@infradead.org, ying.huang@intel.com, yosryahmed@google.com,
+ yuzhao@google.com, Shuai Yuan <yuanshuai@oppo.com>
+References: <20240617231137.80726-1-21cnbao@gmail.com>
+ <20240617231137.80726-3-21cnbao@gmail.com>
+ <f9cb01c2-967f-406c-9304-5e31a82b6b0f@redhat.com>
+ <CAGsJ_4yuBJW578sL5dsKvWP2A=x54zV5b+qbwfy9vj8rFiQM1Q@mail.gmail.com>
+ <60a075da-7c7e-4d99-ac52-059e5a17b72e@redhat.com>
+ <CAGsJ_4xg6z1sy7JoNxf8kAzK_BDGgwFRakLbE_T6MGjk3HnGcA@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAGsJ_4xg6z1sy7JoNxf8kAzK_BDGgwFRakLbE_T6MGjk3HnGcA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADHzhICRXVmgfDqCw--.8650S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uryUGr1UJFy5JF1kZr1fZwb_yoW8GF18p3
-	93ZF4fJr98JFWDtryxtw13XFy3Ca1xKa15Ka4UX3s3Z3ZxAry5Gw1FgrW5tFZxKrZ0vF45
-	t3y3AFW5uF40vFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkq14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4f
-	MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0E
-	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
-	W8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
-	cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUj_WrJUUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Fix return value check for devm_platform_ioremap_resource() in
-mlxbf3_pinctrl_probe().
+On 20.06.24 11:59, Barry Song wrote:
+> On Thu, Jun 20, 2024 at 8:49 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 20.06.24 10:33, Barry Song wrote:
+>>> On Thu, Jun 20, 2024 at 7:46 PM David Hildenbrand <david@redhat.com> wrote:
+>>>>
+>>>> On 18.06.24 01:11, Barry Song wrote:
+>>>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>>>
+>>>>> For the !folio_test_anon(folio) case, we can now invoke folio_add_new_anon_rmap()
+>>>>> with the rmap flags set to either EXCLUSIVE or non-EXCLUSIVE. This action will
+>>>>> suppress the VM_WARN_ON_FOLIO check within __folio_add_anon_rmap() while initiating
+>>>>> the process of bringing up mTHP swapin.
+>>>>>
+>>>>>     static __always_inline void __folio_add_anon_rmap(struct folio *folio,
+>>>>>                     struct page *page, int nr_pages, struct vm_area_struct *vma,
+>>>>>                     unsigned long address, rmap_t flags, enum rmap_level level)
+>>>>>     {
+>>>>>             ...
+>>>>>             if (unlikely(!folio_test_anon(folio))) {
+>>>>>                     VM_WARN_ON_FOLIO(folio_test_large(folio) &&
+>>>>>                                      level != RMAP_LEVEL_PMD, folio);
+>>>>>             }
+>>>>>             ...
+>>>>>     }
+>>>>>
+>>>>> It also improves the code’s readability. Currently, all new anonymous
+>>>>> folios calling folio_add_anon_rmap_ptes() are order-0. This ensures
+>>>>> that new folios cannot be partially exclusive; they are either entirely
+>>>>> exclusive or entirely shared.
+>>>>>
+>>>>> Suggested-by: David Hildenbrand <david@redhat.com>
+>>>>> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+>>>>> Tested-by: Shuai Yuan <yuanshuai@oppo.com>
+>>>>> ---
+>>>>>     mm/memory.c   |  8 ++++++++
+>>>>>     mm/swapfile.c | 13 +++++++++++--
+>>>>>     2 files changed, 19 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>>> index 1f24ecdafe05..620654c13b2f 100644
+>>>>> --- a/mm/memory.c
+>>>>> +++ b/mm/memory.c
+>>>>> @@ -4339,6 +4339,14 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>>>>>         if (unlikely(folio != swapcache && swapcache)) {
+>>>>>                 folio_add_new_anon_rmap(folio, vma, address, RMAP_EXCLUSIVE);
+>>>>>                 folio_add_lru_vma(folio, vma);
+>>>>> +     } else if (!folio_test_anon(folio)) {
+>>>>> +             /*
+>>>>> +              * We currently only expect small !anon folios, for which we now
+>>>>> +              * that they are either fully exclusive or fully shared. If we
+>>>>> +              * ever get large folios here, we have to be careful.
+>>>>> +              */
+>>>>> +             VM_WARN_ON_ONCE(folio_test_large(folio));
+>>>>> +             folio_add_new_anon_rmap(folio, vma, address, rmap_flags);
+>>>>>         } else {
+>>>>>                 folio_add_anon_rmap_ptes(folio, page, nr_pages, vma, address,
+>>>>>                                         rmap_flags);
+>>>>> diff --git a/mm/swapfile.c b/mm/swapfile.c
+>>>>> index ae1d2700f6a3..69efa1a57087 100644
+>>>>> --- a/mm/swapfile.c
+>>>>> +++ b/mm/swapfile.c
+>>>>> @@ -1908,8 +1908,17 @@ static int unuse_pte(struct vm_area_struct *vma, pmd_t *pmd,
+>>>>>                 VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
+>>>>>                 if (pte_swp_exclusive(old_pte))
+>>>>>                         rmap_flags |= RMAP_EXCLUSIVE;
+>>>>> -
+>>>>> -             folio_add_anon_rmap_pte(folio, page, vma, addr, rmap_flags);
+>>>>> +             /*
+>>>>> +              * We currently only expect small !anon folios, for which we now that
+>>>>> +              * they are either fully exclusive or fully shared. If we ever get
+>>>>> +              * large folios here, we have to be careful.
+>>>>> +              */
+>>>>> +             if (!folio_test_anon(folio)) {
+>>>>> +                     VM_WARN_ON_ONCE(folio_test_large(folio));
+>>>>
+>>>> (comment applies to both cases)
+>>>>
+>>>> Thinking about Hugh's comment, we should likely add here:
+>>>>
+>>>> VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
+>>>>
+>>>> [the check we are removing from __folio_add_anon_rmap()]
+>>>>
+>>>> and document for folio_add_new_anon_rmap() in patch #1, that when
+>>>> dealing with folios that might be mapped concurrently by others, the
+>>>> folio lock must be held.
+>>>
+>>> I assume you mean something like the following for patch#1?
+>>>
+>>> diff --git a/mm/rmap.c b/mm/rmap.c
+>>> index df1a43295c85..20986b25f1b2 100644
+>>> --- a/mm/rmap.c
+>>> +++ b/mm/rmap.c
+>>> @@ -1394,7 +1394,8 @@ void folio_add_anon_rmap_pmd(struct folio
+>>> *folio, struct page *page,
+>>>     *
+>>>     * Like folio_add_anon_rmap_*() but must only be called on *new* folios.
+>>>     * This means the inc-and-test can be bypassed.
+>>> - * The folio does not have to be locked.
+>>> + * The folio doesn't necessarily need to be locked while it's
+>>> exclusive unless two threads
+>>> + * map it concurrently. However, the folio must be locked if it's shared.
+>>>     *
+>>>     * If the folio is pmd-mappable, it is accounted as a THP.
+>>>     */
+>>> @@ -1406,6 +1407,7 @@ void folio_add_new_anon_rmap(struct folio
+>>> *folio, struct vm_area_struct *vma,
+>>>           int nr_pmdmapped = 0;
+>>>
+>>>           VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
+>>> +       VM_WARN_ON_FOLIO(!exclusive && !folio_test_locked(folio), folio);
+>>
+>> For now this would likely do. I was concerned about a concurrent
+>> scenario in the exclusive case, but that shouldn't really happen I guess.
+>>
+> 
+> Since this is primarily a documentation update, I'll wait for two or
+> three days to see if
+> there are any more Linux-next reports before sending v3 combining these fixes
+> together(I've already fixed another doc warn reported by lkp) and seek Andrew's
+> assistance to drop v2 and apply v3.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/pinctrl/pinctrl-mlxbf3.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Feel free to send fixup patches for such small stuff (for example, as 
+reply to this mail). Usually, no need for a new series. Andrew will 
+squash all fixups before merging it to mm-stable.
 
-diff --git a/drivers/pinctrl/pinctrl-mlxbf3.c b/drivers/pinctrl/pinctrl-mlxbf3.c
-index 7d1713824a89..ffb5dda364dc 100644
---- a/drivers/pinctrl/pinctrl-mlxbf3.c
-+++ b/drivers/pinctrl/pinctrl-mlxbf3.c
-@@ -259,16 +259,16 @@ static int mlxbf3_pinctrl_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->fw_ctrl_set0);
- 
- 	priv->fw_ctrl_clr0 = devm_platform_ioremap_resource(pdev, 1);
--	if (IS_ERR(priv->fw_ctrl_set0))
--		return PTR_ERR(priv->fw_ctrl_set0);
-+	if (IS_ERR(priv->fw_ctrl_clr0))
-+		return PTR_ERR(priv->fw_ctrl_clr0);
- 
- 	priv->fw_ctrl_set1 = devm_platform_ioremap_resource(pdev, 2);
--	if (IS_ERR(priv->fw_ctrl_set0))
--		return PTR_ERR(priv->fw_ctrl_set0);
-+	if (IS_ERR(priv->fw_ctrl_set1))
-+		return PTR_ERR(priv->fw_ctrl_set1);
- 
- 	priv->fw_ctrl_clr1 = devm_platform_ioremap_resource(pdev, 3);
--	if (IS_ERR(priv->fw_ctrl_set0))
--		return PTR_ERR(priv->fw_ctrl_set0);
-+	if (IS_ERR(priv->fw_ctrl_clr1))
-+		return PTR_ERR(priv->fw_ctrl_clr1);
- 
- 	ret = devm_pinctrl_register_and_init(dev,
- 					     &mlxbf3_pin_desc,
 -- 
-2.25.1
+Cheers,
+
+David / dhildenb
 
 
