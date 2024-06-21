@@ -1,94 +1,130 @@
-Return-Path: <linux-kernel+bounces-224413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98240912212
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:18:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E450912219
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CEA028760F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:18:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3C47B22FF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A52173352;
-	Fri, 21 Jun 2024 10:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pC4Yxdrq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495B317164B;
+	Fri, 21 Jun 2024 10:16:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B029173338;
-	Fri, 21 Jun 2024 10:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49FD16DEA8
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718964979; cv=none; b=Y/DeucfKf+ypSBsEOZCRLHctIzd314nP3dkvM1xSvWHmqvUIES+0beMVWAr0wIDJbQCBP9sJK6KvRgFi4Akgm/8G/GdJIO5YL8ClARu+0RtBFz/ABqzqTHhvNFtq1Zf+HRzCUxyD3T+M8G2j4a74DFZ2P0kb12//VxeralGJmxg=
+	t=1718965003; cv=none; b=K3iQJKer4Hklb3FA3gEz1Z5bEuHPzS7YEx57UNIWDBPxPy7Bdg8U4eLJTPgSjJrlI4MXC0pB79+jckpXzTpSocvtrDOUoY6JrXfNQgozbXuVRav43ZonQulEHCQq7YagynHh+0Jtc7gZ9ENir2gjs8W3D2AxrwL15edVDTItYqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718964979; c=relaxed/simple;
-	bh=A0J53uMMX8HJS2MDtBNVrL68qeXtbtsy57wU79YR4bY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o6JKoCH17CaScdntSFFNsOHiQ6s1QH6MaoojaxxEOQRd4EcMDzF4MzVyusfzCg4nqIaf1x9O/5BNKqHHkjrcbjbGG9mBIyWK/IF8cCjEPbuB67WSJvia/S2+trOVL28+XKpJ7/g2p/JVsO7F6zcXlNV34GuPgq/lRFSUuHBJXqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pC4Yxdrq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 196F0C4AF08;
-	Fri, 21 Jun 2024 10:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718964979;
-	bh=A0J53uMMX8HJS2MDtBNVrL68qeXtbtsy57wU79YR4bY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pC4Yxdrq3iWtH4DzBLsuwci0qV+sQsmJfmft3fsqVrz0RPgqy4zh9SritXzjWxymZ
-	 E4VjxxWNSo+cDZoUWBh9r9OVRzdasVIIN65pJr3A6EA9LsffJelF7U5luWWl8qvCwN
-	 c7bZ4i9T0/LiKG1TJyi3C6yHqASAiOp98EwlCfPU/KUdZYiiXdLQjtFd/zZlVZkbgN
-	 dHYR4c5xawQ1HY1f6imiKJUXs56QpIaXK1MwHIjN3M1rw7HeBhYgFfq85gqxPT9mYF
-	 3PCwrPr9aDBPZIkuuXXdEb6wjEzoMBScFNSRuItYjC0DA9G7VzNU+oGEpLCFzD5uWw
-	 OqKS+waw+TORg==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-25cc44857a1so71568fac.3;
-        Fri, 21 Jun 2024 03:16:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6iA1WPGCQr7T+aHcY5KVF7wAwNsn+MuwjI0iKjYjVQ1Km6tjgI09oqlqN92fQYWUtBvY6qKdaXFKpQ0Tqf7K5prSvKWH7LSUlzsw4py1MeiZnhptpvwVfut/TxdjuK8ZJRlGctHH9wQ==
-X-Gm-Message-State: AOJu0YwOEMPVMLx1fDWXHQY3JA2ygKcJ9fey2spJWp7oX0kmBUjl3fZp
-	jeSI3lvbs+/w2+gaR/ME+l5+fWz8C/nE5d35J2zZayhCTjTxRZCO96htyzUiDgUZfLftFxjrrQW
-	S4YTO0/wWESMKyEvUATpMT7D2cps=
-X-Google-Smtp-Source: AGHT+IH96NlTGboWpZ1N8t19sfFHYnm26QATqImDEh465B33eF7aJh7HyDzkRvLVqlDInBVxkFj2sZ1BUawrXWlI+p8=
-X-Received: by 2002:a05:6870:a2cc:b0:254:affe:5a08 with SMTP id
- 586e51a60fabf-25c94983780mr8402996fac.2.1718964978445; Fri, 21 Jun 2024
- 03:16:18 -0700 (PDT)
+	s=arc-20240116; t=1718965003; c=relaxed/simple;
+	bh=z/vMJ/233cW88QFWLyoyAyDnxzzbRSS6ywN0tB7Mq3o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=U01UgG48ipc+XrM/yOtmZnEzPx68r2JxoFYdg4NNhVUFOZ2guicfaGajbYbWRtaeGbYCgBeDYVIkfgy4nN1W5XuNIiQ2PskaIP4IarD1aSx0glIbP5TjtHHVNz2XtH5gQE58TsbSNGN8/Ffbibb0NvB//2Fv3yiO6UwU7qEj2wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sKbJb-0000u2-Ur; Fri, 21 Jun 2024 12:16:19 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sKbJZ-003uxc-IY; Fri, 21 Jun 2024 12:16:17 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1sKbJZ-0006sF-1W;
+	Fri, 21 Jun 2024 12:16:17 +0200
+Message-ID: <4530ebe947b3754dd03b3614bc805195dd69db2e.camel@pengutronix.de>
+Subject: Re: [PATCH 04/17] reset: core: add get_device()/put_device on rcdev
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Herve Codina <herve.codina@bootlin.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lee Jones
+ <lee@kernel.org>,  Arnd Bergmann <arnd@arndb.de>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>,  UNGLinuxDriver@microchip.com, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Saravana Kannan <saravanak@google.com>, Bjorn
+ Helgaas <bhelgaas@google.com>, Lars Povlsen <lars.povlsen@microchip.com>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>,  Daniel Machon
+ <daniel.machon@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Allan Nielsen
+ <allan.nielsen@microchip.com>,  Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?ISO-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>
+Date: Fri, 21 Jun 2024 12:16:17 +0200
+In-Reply-To: <20240430083730.134918-5-herve.codina@bootlin.com>
+References: <20240430083730.134918-1-herve.codina@bootlin.com>
+	 <20240430083730.134918-5-herve.codina@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606115541.2069-1-ptesarik@suse.com> <20240621104848.3f14d60e@mordecai.tesarici.cz>
-In-Reply-To: <20240621104848.3f14d60e@mordecai.tesarici.cz>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 21 Jun 2024 12:16:06 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hBR1qGgSq3+sYU_7ChphHuL_R7E1-LBjXE3FdWUPkWpg@mail.gmail.com>
-Message-ID: <CAJZ5v0hBR1qGgSq3+sYU_7ChphHuL_R7E1-LBjXE3FdWUPkWpg@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: CPPC: add sysfs entry for guaranteed performance
-To: Petr Tesarik <petr.tesarik@suse.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2024 at 10:49=E2=80=AFAM Petr Tesarik <petr.tesarik@suse.co=
-m> wrote:
->
-> On Thu,  6 Jun 2024 13:55:41 +0200
-> Petr Tesarik <ptesarik@suse.com> wrote:
->
-> > Expose the CPPC guaranteed performance as reported by the platform thro=
-ugh
-> > GuaranteedPerformanceRegister.
-> >
-> > The current value is already read in cppc_get_perf_caps() and stored in
-> > struct cppc_perf_caps (to be used by the intel_pstate driver), so only =
-the
-> > attribute itself needs to be defined.
->
-> Are there any objections to exposing this CPPC register through sysfs?
-> I mean, if everybody is OK with it, the patch could be acked and queued
-> for 6.11, right?
+On Di, 2024-04-30 at 10:37 +0200, Herve Codina wrote:
+> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>=20
+> Since the rcdev structure is allocated by the reset controller drivers
+> themselves, they need to exists as long as there is a consumer. A call to
+> module_get() is already existing but that does not work when using
+> device-tree overlays. In order to guarantee that the underlying reset
+> controller device does not vanish while using it, add a get_device() call
+> when retrieving a reset control from a reset controller device and a
+> put_device() when releasing that control.
+>=20
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  drivers/reset/core.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index dba74e857be6..999c3c41cf21 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -812,6 +812,7 @@ __reset_control_get_internal(struct reset_controller_=
+dev *rcdev,
+>  	kref_init(&rstc->refcnt);
+>  	rstc->acquired =3D acquired;
+>  	rstc->shared =3D shared;
+> +	get_device(rcdev->dev);
+>=20
 
-It actually has been queued already, sorry for the missing notice.
+Looks good to me, but can we put this right after the try_module_get()
+above ...
+=20
+>  	return rstc;
+>  }
+> @@ -826,6 +827,7 @@ static void __reset_control_release(struct kref *kref=
+)
+>  	module_put(rstc->rcdev->owner);
+> =20
+>  	list_del(&rstc->list);
+> +	put_device(rstc->rcdev->dev);
 
-It's been in linux-next for some time even.
+... and this right before module_put()?
+
+regards
+Philipp
 
