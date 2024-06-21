@@ -1,328 +1,228 @@
-Return-Path: <linux-kernel+bounces-225007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4EA912A81
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:41:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A175A912A7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 094EFB2A29D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:41:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5612F280E93
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3186F152516;
-	Fri, 21 Jun 2024 15:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13335142620;
+	Fri, 21 Jun 2024 15:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gsRhugAq"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="dlXuFeO1"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B920E84A4C;
-	Fri, 21 Jun 2024 15:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE0815444C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718984450; cv=none; b=rIELrpzL6P3Q3tD7+/ZomZesy76ToaiF2WknYtW9abdjDV+WqCfLC7rvsvRQ3dmaxippFGnR7xMg3COT9KdEEMp2E6X/F5nKKnsFiGL7WJJ6CSCltWc1IQYgkwnFXRlScZLL0AXvAvkQ3QWE4BvQBXwXDdw8k5heDRaEGnnV8aw=
+	t=1718984459; cv=none; b=gqzKLPdZXmKPHCSeDM6gsrlBD51V/v3yD5ghjQ6JIxO29Y8WamzDjj2pdvVG5ZNATZrdKgCS3SofTu73oVAYcv1FgTCvbgDr8wbscB8fEH4/FbjA1A/MMSKyLBaWltU3usVuVKiJtbVr08jpfvR2i0F0Y1XVNEraoCVAW+WpNSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718984450; c=relaxed/simple;
-	bh=J9beTWQ6nBQMACRt3dW6ixHUj30KwKhEXz5zO1lRtlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cX6El45p3i6Sb0UiYzenGHEBjrQ3/RXL0AePD5u3fk1zeesrXI5VWcENKSKyXzjnQ93Xym6HvaAF55jRTNcUIL6wuwV7MrKUjGA7QBk/pKA8uxpGJqNPZaar224zUckhomie7XvpRLnSM+x6oAcg0JMuSIAVtVDQlXsVlCbIB0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gsRhugAq; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7042a8ad9f5so1916419b3a.0;
-        Fri, 21 Jun 2024 08:40:48 -0700 (PDT)
+	s=arc-20240116; t=1718984459; c=relaxed/simple;
+	bh=M5hQFADkyAXAzxKb0j5OaON7Ocd4rbvfXil7V15NScY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SKdTJlcQ7JQt+UZ7LzdrFrMA4vLSvLdz0ubIoa9AXRx00yrCCsrm1emq6e8vzS8HcIXB54erJjcZPaMIXJ6m9hE/u10qisblNqt1GHnPwE655Gsa/5Or6Ipj2KHhwHJuN35G5iDSwfQaclspDN45UMfKwrSgSOVrKh6wMn8uQgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=dlXuFeO1; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec52fbb50aso2771631fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:40:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718984448; x=1719589248; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9lNEeiRMZyfbNEcygdR2xAKFEd5icF+LSS0bm07Oqsk=;
-        b=gsRhugAqxoG9lvlKyazDDzrsHNU04jy9nsqlKvhPyMIlqf3iIEiAOd2FOalYpHjDIf
-         bgd6AgF5zr0654KPzrvoGUqI0FBvH1hZTAFwGAoP2GikEps7eCXd6qE48n/s37bcAAnp
-         SOn30qeGBugBpOeQ3dZ735lUCxTkLPsSUM3xW8R2fRnxoslMbvsa9eLZ42ecVTH4OMkg
-         0rV0IrUmWV4/TAklMhKGipNeJYk0ARcVsetJHVBsdyH06SFaqaI0RmUbiD3xFA+85+Hn
-         5EAe8Ng/9z7YkDFzX8yiCEe78nVkkYz9tKTVUD524TY3duQFJcqCrvDH0vRVXYPUg6U7
-         ww3Q==
+        d=cloudflare.com; s=google09082023; t=1718984455; x=1719589255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ITQplhMiV0b/XVFET6r9dSYiL51VVA3294UIGshKU6M=;
+        b=dlXuFeO1EusRyFDKRGOZWRUlyeLu2Z6omlZYQBKk7/Bf8QJy9V1VIqiuJqs23DNHJa
+         4ZvsMdPMEdfY/5fm6IRRFhauAttjL6awCBJYpfH05cF7vCnSTdFEYHZYi4JN3HgMx+Bz
+         /douloCTAr6tdPHlfhxzHy0q+xbWFpwGRNdbIzVcv9W8zoMBVDCTpPFIiBABuHBrt5oC
+         uThbjKiH+bStNO1AbcQu+pMdtu3ZNZFXJqhwkgHFRLaAVVckECj6Y6AAwuqifbm9/CkI
+         HTVUszkoIKw0XZtoY4AOydxy4+B/GCRjw6INPaWW7eWy6SEBUzU3BKHZ4vXT2CWqN1oE
+         1d+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718984448; x=1719589248;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9lNEeiRMZyfbNEcygdR2xAKFEd5icF+LSS0bm07Oqsk=;
-        b=aHT7LFBirRjjTQR2AdG4tGZk8qZGFc0JpHe++ud1Qjk8FY7B8JrrqdM1yPTRcOJl03
-         Je0WtbJxpFEbL8SS9MbiWcFd2oZhOrFHAR/vKxhNqm34W8DyPn7LTYS1GV2OjZ9fyAZr
-         B+NC+GxiPkwhl5Lpx/jDMj8GmJsO/YmOz6xUXS/NWvd8fNwz2jXE8U4bSOfCvIrGhFC8
-         tm15EFtR5WIo8Hn84lgkTLA4a10/DH76ThTNqxNrnqT9qbrfg0L5xNewt/WhErNjOVXE
-         geV3qwndhwufoZ6huG0+LXAzZRvZt7ekiU4QjCHjH+swiXFMG9JNwv3s827j7xBB8fII
-         sbxg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1I+9l3KVNah0qA7249cS0TlemQ9rvmt0p2VgIs6mfQlWYFm4Kmx4Xn/P9v7y5pK0/rxoG2nY4RbIWO+9r4H8pUSTLXVEPCuyxXxh6SgH0ygvdl+I37m8nFmxfJL5n3qZmVSmCRZsc+2l79qXqr15LxSkI+iDFUoMQNYbuZ8atT0il66Zi
-X-Gm-Message-State: AOJu0Yxm7P8vZmPT+u/B6uow+4DazfIeVdLokTXUa+xeFGsg06iddKZW
-	VbYLcKnNQQSOCnxou/BqfCIjz+KYhkfPKXw3FC5PQ0Nt0uDDtJ11
-X-Google-Smtp-Source: AGHT+IGRTpgRoS9Ooc2BHJ4NPBqzyh8zsWzwUoEzcYv0F/1FXItq5OIJQG5dLJb24ilLB+6dDw0BTA==
-X-Received: by 2002:a05:6a20:3252:b0:1b5:88f5:5823 with SMTP id adf61e73a8af0-1bce65cabe9mr186358637.27.1718984447745;
-        Fri, 21 Jun 2024 08:40:47 -0700 (PDT)
-Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716baf4acd1sm1271070a12.75.2024.06.21.08.40.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 08:40:47 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: animeshagarwal28@gmail.com,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: dt-bindings: realtek,rt5645: Convert to dtschema
-Date: Fri, 21 Jun 2024 21:10:27 +0530
-Message-ID: <20240621154034.489037-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1718984455; x=1719589255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ITQplhMiV0b/XVFET6r9dSYiL51VVA3294UIGshKU6M=;
+        b=cL7nVc0DK9v5juELQD91SCzV+p3/tQNsVXafRZ1Px88FwwkmHSu22nmdoQ2nuC+KmV
+         g5UH1QzcAxgQIKq8v5zp260iWGyn5R7ymGE+u7XIxh6bc/QWj6Q+eJvAJehidSuZtieJ
+         bJG+Z17egQpVo831/piIWBAONgpPwifmUvOZQGACPLEfhfb3I8yDS5vcMsxo2gY6CcvK
+         ZKVBX2b8wcu+er3PUiK5LX0oDDEaGiF0neTh0f51cwCLLvn698JSgBWiLkFoZlZeZb42
+         7JMe8cy9MH1YB634nxQeul3jt2yO2XcG99IGT9biy2bcdX1hur1AiTQ8yhKEQU/4d9JL
+         5oIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWqZ0MJD+dcAd1Ox0ayvup0G7AjgTaMJHlCFH51RxB/F/kE9vl/MQiFa29nhtCKpC9Pmgx5fzfWI94DaNIwvc83l7PCoqdekMlp7sG
+X-Gm-Message-State: AOJu0Yxk6ZelIfuKwNxNhUPZnc9A3/PDxPI05VUnrEy4/QXCxhx0QDNG
+	/dtUaH4v9ZT0jNYwtzFe4IdQCEpt9OM8xUE6cgebBdVxEAo4Yd9201Alf1dXW4CfJlG5vyGCT5L
+	I4ttFwaSC9TuIAOTeWCfxpMR4qjxqeaj4PXJChA==
+X-Google-Smtp-Source: AGHT+IH2IostdubtS6pKCWbrAkESd03OxM2FOyVGOL1lqEbwnPW82ccU4bdIloRvLJ0wnlGCr1La92Iy2sC6XmDoY50=
+X-Received: by 2002:a05:651c:20f:b0:2eb:f6bd:e4ec with SMTP id
+ 38308e7fff4ca-2ec3cea1b44mr65343691fa.24.1718984455332; Fri, 21 Jun 2024
+ 08:40:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1718919473.git.yan@cloudflare.com> <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
+ <17c0b83b-b3f4-43c0-be3f-d72a56e4087e@intel.com>
+In-Reply-To: <17c0b83b-b3f4-43c0-be3f-d72a56e4087e@intel.com>
+From: Yan Zhai <yan@cloudflare.com>
+Date: Fri, 21 Jun 2024 10:40:44 -0500
+Message-ID: <CAO3-PbpB-Wqji-9vFifCTExah-ctRkPSpz60EQvsA=oYdPpQZQ@mail.gmail.com>
+Subject: Re: [RFC net-next 1/9] skb: introduce gro_disabled bit
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Willem de Bruijn <willemb@google.com>, Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>, 
+	Mina Almasry <almasrymina@google.com>, Abhishek Chauhan <quic_abchauha@quicinc.com>, 
+	David Howells <dhowells@redhat.com>, David Ahern <dsahern@kernel.org>, 
+	Richard Gobert <richardbgobert@gmail.com>, Antoine Tenart <atenart@kernel.org>, 
+	Felix Fietkau <nbd@nbd.name>, Soheil Hassas Yeganeh <soheil@google.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the RT5650/RT5645 audio CODEC bindings to DT schema.
+On Fri, Jun 21, 2024 at 4:13=E2=80=AFAM Alexander Lobakin
+<aleksander.lobakin@intel.com> wrote:
+>
+> From: Yan Zhai <yan@cloudflare.com>
+> Date: Thu, 20 Jun 2024 15:19:10 -0700
+>
+> > Software GRO is currently controlled by a single switch, i.e.
+> >
+> >   ethtool -K dev gro on|off
+> >
+> > However, this is not always desired. When GRO is enabled, even if the
+> > kernel cannot GRO certain traffic, it has to run through the GRO receiv=
+e
+> > handlers with no benefit.
+> >
+> > There are also scenarios that turning off GRO is a requirement. For
+> > example, our production environment has a scenario that a TC egress hoo=
+k
+> > may add multiple encapsulation headers to forwarded skbs for load
+> > balancing and isolation purpose. The encapsulation is implemented via
+> > BPF. But the problem arises then: there is no way to properly offload a
+> > double-encapsulated packet, since skb only has network_header and
+> > inner_network_header to track one layer of encapsulation, but not two.
+>
+> Implement it in the kernel then? :D
+>
+It would be a big commitment that I dare not make :) Out of curiosity,
+is it something that devices can handle today?
 
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
----
- .../bindings/sound/realtek,rt5645.yaml        | 129 ++++++++++++++++++
- .../devicetree/bindings/sound/rt5645.txt      |  82 -----------
- 2 files changed, 129 insertions(+), 82 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/realtek,rt5645.yaml
- delete mode 100644 Documentation/devicetree/bindings/sound/rt5645.txt
+> > On the other hand, not all the traffic through this device needs double
+> > encapsulation. But we have to turn off GRO completely for any ingress
+> > device as a result.
+> >
+> > Introduce a bit on skb so that GRO engine can be notified to skip GRO o=
+n
+> > this skb, rather than having to be 0-or-1 for all traffic.
+> >
+> > Signed-off-by: Yan Zhai <yan@cloudflare.com>
+> > ---
+> >  include/linux/netdevice.h |  9 +++++++--
+> >  include/linux/skbuff.h    | 10 ++++++++++
+> >  net/Kconfig               | 10 ++++++++++
+> >  net/core/gro.c            |  2 +-
+> >  net/core/gro_cells.c      |  2 +-
+> >  net/core/skbuff.c         |  4 ++++
+> >  6 files changed, 33 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> > index c83b390191d4..2ca0870b1221 100644
+> > --- a/include/linux/netdevice.h
+> > +++ b/include/linux/netdevice.h
+> > @@ -2415,11 +2415,16 @@ struct net_device {
+> >       ((dev)->devlink_port =3D (port));                         \
+> >  })
+> >
+> > -static inline bool netif_elide_gro(const struct net_device *dev)
+> > +static inline bool netif_elide_gro(const struct sk_buff *skb)
+> >  {
+> > -     if (!(dev->features & NETIF_F_GRO) || dev->xdp_prog)
+> > +     if (!(skb->dev->features & NETIF_F_GRO) || skb->dev->xdp_prog)
+> >               return true;
+> > +
+> > +#ifdef CONFIG_SKB_GRO_CONTROL
+> > +     return skb->gro_disabled;
+> > +#else
+> >       return false;
+> > +#endif
+> >  }
+> >
+> >  #define      NETDEV_ALIGN            32
+> > diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+> > index f4cda3fbdb75..48b10ece95b5 100644
+> > --- a/include/linux/skbuff.h
+> > +++ b/include/linux/skbuff.h
+> > @@ -1008,6 +1008,9 @@ struct sk_buff {
+> >  #if IS_ENABLED(CONFIG_IP_SCTP)
+> >       __u8                    csum_not_inet:1;
+> >  #endif
+> > +#ifdef CONFIG_SKB_GRO_CONTROL
+> > +     __u8                    gro_disabled:1;
+> > +#endif
+> >
+> >  #if defined(CONFIG_NET_SCHED) || defined(CONFIG_NET_XGRESS)
+> >       __u16                   tc_index;       /* traffic control index =
+*/
+> > @@ -1215,6 +1218,13 @@ static inline bool skb_wifi_acked_valid(const st=
+ruct sk_buff *skb)
+> >  #endif
+> >  }
+> >
+> > +static inline void skb_disable_gro(struct sk_buff *skb)
+> > +{
+> > +#ifdef CONFIG_SKB_GRO_CONTROL
+> > +     skb->gro_disabled =3D 1;
+> > +#endif
+> > +}
+> > +
+> >  /**
+> >   * skb_unref - decrement the skb's reference count
+> >   * @skb: buffer
+> > diff --git a/net/Kconfig b/net/Kconfig
+> > index 9fe65fa26e48..47d1ee92df15 100644
+> > --- a/net/Kconfig
+> > +++ b/net/Kconfig
+> > @@ -289,6 +289,16 @@ config MAX_SKB_FRAGS
+> >         and in drivers using build_skb().
+> >         If unsure, say 17.
+> >
+> > +config SKB_GRO_CONTROL
+> > +     bool "allow disable GRO on per-packet basis"
+> > +     default y
+> > +     help
+> > +       By default GRO can only be enabled or disabled per network devi=
+ce.
+> > +       This can be cumbersome for certain scenarios.
+> > +       Toggling this option will allow disabling GRO for selected pack=
+ets,
+> > +       e.g. by XDP programs, so that it is more flexibile.
+> > +       Extra overhead should be minimal.
+>
+> I don't think we need a Kconfig option for that. Can't it be
+> unconditional? Is there any real eye-visible overhead?
 
-diff --git a/Documentation/devicetree/bindings/sound/realtek,rt5645.yaml b/Documentation/devicetree/bindings/sound/realtek,rt5645.yaml
-new file mode 100644
-index 000000000000..d2d97d2bca2e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/realtek,rt5645.yaml
-@@ -0,0 +1,129 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/realtek,rt5645.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: RT5650/RT5645 audio CODEC
-+
-+maintainers:
-+  - Animesh Agarwal <animeshagarwal28@gmail.com>
-+
-+description: |
-+  This device supports I2C only.
-+
-+  Pins on the device (for linking into audio routes) for RT5645/RT5650:
-+    * DMIC L1
-+    * DMIC R1
-+    * DMIC L2
-+    * DMIC R2
-+    * IN1P
-+    * IN1N
-+    * IN2P
-+    * IN2N
-+    * Haptic Generator
-+    * HPOL
-+    * HPOR
-+    * LOUTL
-+    * LOUTR
-+    * PDM1L
-+    * PDM1R
-+    * SPOL
-+    * SPOR
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - realtek,rt5645
-+      - realtek,rt5650
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+    description: The CODEC's interrupt output.
-+
-+  avdd-supply:
-+    description: Power supply for AVDD, providing 1.8V.
-+
-+  cpvdd-supply:
-+    description: Power supply for CPVDD, providing 3.5V.
-+
-+  hp-detect-gpios:
-+    description: 
-+      A GPIO spec for the external headphone detect pin. If jd-mode = 0, we
-+      will get the JD status by getting the value of hp-detect-gpios.
-+
-+  cbj-sleeve-gpios:
-+    description:
-+      A GPIO spec to control the external combo jack circuit to tie the
-+      sleeve/ring2 contacts to the ground or floating. It could avoid some
-+      electric noise from the active speaker jacks.
-+
-+  realtek,in2-differential:
-+    description:
-+      Indicate MIC2 input are differential, rather than single-ended.
-+    type: boolean
-+
-+  realtek,dmic1-data-pin:
-+    description: Specify which pin to be used as DMIC1 data pin.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum:
-+      - 0 # dmic1 is not used
-+      - 1 # using IN2P pin as dmic1 data pin
-+      - 2 # using GPIO6 pin as dmic1 data pin
-+      - 3 # using GPIO10 pin as dmic1 data pin
-+      - 4 # using GPIO12 pin as dmic1 data pin
-+
-+  realtek,dmic2-data-pin:
-+    description: Specify which pin to be used as DMIC2 data pin.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum:
-+      - 0 # dmic2 is not used
-+      - 1 # using IN2N pin as dmic2 data pin
-+      - 2 # using GPIO5 pin as dmic2 data pin
-+      - 3 # using GPIO11 pin as dmic2 data pin
-+
-+  realtek,jd-mode:
-+    description: The JD mode of rt5645/rt5650.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum:
-+      - 0 # rt5645/rt5650 JD function is not used
-+      - 1 # Mode-0 (VDD=3.3V), two port jack detection
-+      - 2 # Mode-1 (VDD=3.3V), one port jack detection
-+      - 3 # Mode-2 (VDD=1.8V), one port jack detection
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - avdd-supply
-+  - cpvdd-supply
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        codec@1a {
-+            compatible = "realtek,rt5650";
-+            reg = <0x1a>;
-+            hp-detect-gpios = <&gpio 19 0>;
-+            cbj-sleeve-gpios = <&gpio 20 0>;
-+            interrupt-parent = <&gpio>;
-+            interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
-+            avdd-supply = <&avdd_reg>;
-+            cpvdd-supply = <&cpvdd_supply>;
-+            realtek,jd-mode = <3>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/sound/rt5645.txt b/Documentation/devicetree/bindings/sound/rt5645.txt
-deleted file mode 100644
-index c1fa379f5f3e..000000000000
---- a/Documentation/devicetree/bindings/sound/rt5645.txt
-+++ /dev/null
-@@ -1,82 +0,0 @@
--RT5650/RT5645 audio CODEC
--
--This device supports I2C only.
--
--Required properties:
--
--- compatible : One of "realtek,rt5645" or "realtek,rt5650".
--
--- reg : The I2C address of the device.
--
--- interrupts : The CODEC's interrupt output.
--
--- avdd-supply: Power supply for AVDD, providing 1.8V.
--
--- cpvdd-supply: Power supply for CPVDD, providing 3.5V.
--
--Optional properties:
--
--- hp-detect-gpios:
--  a GPIO spec for the external headphone detect pin. If jd-mode = 0,
--  we will get the JD status by getting the value of hp-detect-gpios.
--
--- cbj-sleeve-gpios:
--  a GPIO spec to control the external combo jack circuit to tie the sleeve/ring2
--  contacts to the ground or floating. It could avoid some electric noise from the
--  active speaker jacks.
--
--- realtek,in2-differential
--  Boolean. Indicate MIC2 input are differential, rather than single-ended.
--
--- realtek,dmic1-data-pin
--  0: dmic1 is not used
--  1: using IN2P pin as dmic1 data pin
--  2: using GPIO6 pin as dmic1 data pin
--  3: using GPIO10 pin as dmic1 data pin
--  4: using GPIO12 pin as dmic1 data pin
--
--- realtek,dmic2-data-pin
--  0: dmic2 is not used
--  1: using IN2N pin as dmic2 data pin
--  2: using GPIO5 pin as dmic2 data pin
--  3: using GPIO11 pin as dmic2 data pin
--
---- realtek,jd-mode : The JD mode of rt5645/rt5650
--   0 : rt5645/rt5650 JD function is not used
--   1 : Mode-0 (VDD=3.3V), two port jack detection
--   2 : Mode-1 (VDD=3.3V), one port jack detection
--   3 : Mode-2 (VDD=1.8V), one port jack detection
--
--Pins on the device (for linking into audio routes) for RT5645/RT5650:
--
--  * DMIC L1
--  * DMIC R1
--  * DMIC L2
--  * DMIC R2
--  * IN1P
--  * IN1N
--  * IN2P
--  * IN2N
--  * Haptic Generator
--  * HPOL
--  * HPOR
--  * LOUTL
--  * LOUTR
--  * PDM1L
--  * PDM1R
--  * SPOL
--  * SPOR
--
--Example:
--
--codec: rt5650@1a {
--	compatible = "realtek,rt5650";
--	reg = <0x1a>;
--	hp-detect-gpios = <&gpio 19 0>;
--	cbj-sleeve-gpios = <&gpio 20 0>;
--	interrupt-parent = <&gpio>;
--	interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
--	realtek,dmic-en = "true";
--	realtek,en-jd-func = "true";
--	realtek,jd-mode = <3>;
--};
--- 
-2.45.2
+Normally if it is a single branch I would not worry about it. But I
+know I am touching a hot potato here so I just want to be cautious :)
 
+best
+Yan
+
+>
+> Thanks,
+> Olek
 
