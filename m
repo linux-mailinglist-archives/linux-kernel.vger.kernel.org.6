@@ -1,174 +1,282 @@
-Return-Path: <linux-kernel+bounces-223777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A742911810
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:36:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8DC911816
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CA241C20F78
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:36:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773BE1F22500
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7668249A;
-	Fri, 21 Jun 2024 01:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="H7c+XXED"
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2061.outbound.protection.outlook.com [40.107.6.61])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136A28287D;
+	Fri, 21 Jun 2024 01:39:51 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E037E110;
-	Fri, 21 Jun 2024 01:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718933793; cv=fail; b=XR92zWB/mz00w+srjxaeSKqYcfMPWmi+GW8pUr+SzGSzjIl5/LCJNoQHY74V07LzCp6JbZ7wMEGeMgVVM1uwVwh7Unq5l0BN4HGa6XGEWiPhFnppDkDcgGE8lERJ6jf2zGSmPzjPcZ43zp0o78pdC9QYtrbvIX6rUFErpSurJEA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718933793; c=relaxed/simple;
-	bh=H7wtZu8f9S2YF3hbkGeoH+C5muM8VSy6k5nIrwzBEhs=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tU2CjUVS41T3rLsRCi5p3H0Dn70BbILOpsGmBZQSQwobqlHkucc/E3wrlI+Y1oSRLm7jOdy9BLikBMaBWNu6/S0w/Z8otxb/hcuIgjyF7npOZKZZEC+MLo9ZoaqGHq6bsbXobasMvXWzFmOl+KZt+zP0pgOrR7JcELyOq/ufgPE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=H7c+XXED; arc=fail smtp.client-ip=40.107.6.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eN35OYy9yxBr9DmBfHB5xteMb0sv2/pUs1lsrIPR1P+vE4wN8uM7WifdHUSXXjFav+jJyXbhAK5n/kgM9kls3wGzdAHktptCVFkfdHiz+c/NWeNwl81qzIHiCNMbvXIAdPudZRf+iriCSzWx7zznDKDzx2LksTvr8Sdj3vziVv9Fj3GgOnrwhyLawxjMzFTPAZAEaWHn4HQQmtRCHoORbF/q5mhixAMfCM8jp5CC/2HkZANeHw/H6H98zcW8wvk6+8s62WzqiIkikIQKXb7HdYR9OoDwTzHAAiCCxRqlkRPQANV5ob1kheJlDhDJX8ySZXodGthtnLXWxzir20FdXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H7wtZu8f9S2YF3hbkGeoH+C5muM8VSy6k5nIrwzBEhs=;
- b=G66yoFv+PFtoG7x6UUKwRyNB4DL9vgxXOVME1tQmBUPN9KmVx6Rd4F3HlvMFsvawAhaJInBo6s19wu2hVk2e3d31lGlvlpyP8jJIk4nTDuJy6dbK0V6Hb39iPHbVyuJAn5qht8NHQuJltkokYkz4D9W0+EVEtVIoOxlJgjk687SaZdFnRAwYEZAoHmvGwm6Enazr+gjhBuxslCPJNE1pbC/BX0gDpCaW7aF3GDMO1cQgzTFfibKDLNUpwMi9czJONUYWLBXYSwBiLefY6GeEu182wIM/w+1DjiHotsOIzmeLarXv1XAyjWVkHVCZHPZffcfWTu938sfy7rCL5dAY9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H7wtZu8f9S2YF3hbkGeoH+C5muM8VSy6k5nIrwzBEhs=;
- b=H7c+XXEDWCL7H5e7glkFQiq6Q08v8s1S1j/kdSEQYFt8YYxQqOKOkx7t3iQc47vLDGIZStN0Mz0H7/NtqAeNnceOq0N5aJXYCeoLIRtjqDyK5B+QH0zC8nSMUFPsXPOKJxqRhABwdtu+eWVcj/dKIoXsHQcF4AibC41AVpoSkIk=
-Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
- by DBBPR04MB7737.eurprd04.prod.outlook.com (2603:10a6:10:1e5::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
- 2024 01:36:28 +0000
-Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
- ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
- ([fe80::9f4e:b695:f5f0:5256%4]) with mapi id 15.20.7698.017; Fri, 21 Jun 2024
- 01:36:27 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Frank Li <frank.li@nxp.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-	<devicetree@vger.kernel.org>, "open list:ARM/FREESCALE IMX / MXC ARM
- ARCHITECTURE" <imx@lists.linux.dev>, "moderated list:ARM/FREESCALE IMX / MXC
- ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 3/4] arm64: dts: imx95-19x19-evk: add lpi2c7 and
- expander gpio pcal6524
-Thread-Topic: [PATCH v2 3/4] arm64: dts: imx95-19x19-evk: add lpi2c7 and
- expander gpio pcal6524
-Thread-Index: AQHawy1hpmY8bScXJEC+62K4A3HworHRcF7g
-Date: Fri, 21 Jun 2024 01:36:27 +0000
-Message-ID:
- <AM6PR04MB5941DE0CC49993C143BC304F88C92@AM6PR04MB5941.eurprd04.prod.outlook.com>
-References: <20240620161622.3986692-1-Frank.Li@nxp.com>
- <20240620161622.3986692-3-Frank.Li@nxp.com>
-In-Reply-To: <20240620161622.3986692-3-Frank.Li@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|DBBPR04MB7737:EE_
-x-ms-office365-filtering-correlation-id: c98f21d4-d8d5-448d-8d62-08dc91929199
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230037|7416011|376011|1800799021|366013|38070700015|921017;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?r9yepJF30UXueDYfi4T6C8d2j2Gt2xoyaAglyeOi8vKafB/qXqeuFMqg9Dnz?=
- =?us-ascii?Q?h7uEY34owwtm+tdqcb+TzqRu8Jt+QmZlFk0mTOEz88dqM1A95k8JbOV5I8WR?=
- =?us-ascii?Q?bdEPptXvreS7mcKZcb6yi2IkVeVqbIXt/fc98JVdV39oB6pgFyGNTsdJMJJh?=
- =?us-ascii?Q?jqT4ZuhEza1ATreO9/G10o3ELWnGgLA6ex/oZKSjb1BC5lmiBZrdPHbxjZmT?=
- =?us-ascii?Q?kxpNKzuv0mQM0zGKGPJVFPtobOQCreXJvoLAkArML4uGQk1KKZO4fx6rzs/f?=
- =?us-ascii?Q?EL/Zj+7dX15gkwLhoWp6wzSiVltAAUTyNZFlO/Z44Q1fnoP7648soeLSkdYb?=
- =?us-ascii?Q?W2UIWtDim5s5xGyVMHd+L/1RX6DAjVJ6ie4P5tyvRCjgHV0mn3FE2gfHa9ke?=
- =?us-ascii?Q?NyT3r3Ajku2kri8JOf8YNJDMFZeLAqzRPNngGH7GEV9EeIH8L3shpZAPouBh?=
- =?us-ascii?Q?yelxgSfkPx8quQiI/c8ldWXC2A4CvorBafYgFUvtnTy6Y6eVwuouiAHOAgId?=
- =?us-ascii?Q?nVPeUEablaxFZ12cO4rKcyefM4a9BiBHsrvMHyN15OsQ9jXdBpNEIzfViYhs?=
- =?us-ascii?Q?cvtrlv3ri+OqPnkPKsHKAXI9+LNAVVtCDp1GR+dVgnASsx8sirYiab5faOjQ?=
- =?us-ascii?Q?bc9zFw3Xw92n6fxGJ9tlE1pGHgHJ43ZNg44nmxURvq3UOORBC/RJ/ebt5jE4?=
- =?us-ascii?Q?OCdGJxAtfl+NwLBwQRdmi9pC/SnjuD5e5QsqdpWfB02DtZMPav/ZSBVizUeC?=
- =?us-ascii?Q?/XdP0AqfvzrZtfpi/pFNI7/H/PtnHj0h8LgJU0Z16khs8s4jeNBeWzGSinva?=
- =?us-ascii?Q?MtOMK1gPzLlP9iKoOpDwqvZUWQ38Jwr5iLyMJ4IrKs/qp8iF7PN8Q2VkeVKD?=
- =?us-ascii?Q?5wRRe5LghEr/zdc0RJV0YbfnKANROWjB9/owtV34HjEVFV++f15SIPar1P4W?=
- =?us-ascii?Q?k7dpat7nuvKXpFR6O8xkscmZVMSLwmdQs4S7l447EqhwBU0I7SDg7NfWnDDR?=
- =?us-ascii?Q?yj2YSCiVhJAVEQlwKH3Ov59I0IhRS8rmA/7lERe3mEjN2X6y1VUwg2UJA9si?=
- =?us-ascii?Q?WhiWg5rNu+u3BI34lfQ10hY6Ez5mrrGg/z6xJ37r7FY+eG0omerp8CskKTJz?=
- =?us-ascii?Q?pTRELyzp+XEcA4oNdtPnHJgrQDzhkSE6fqbKo3QfcMHQGQfM2vzzZUZ3UMHG?=
- =?us-ascii?Q?HRHIntVCI4l+dY0lo1P7VTqf2VwpOC110gKt/RdhYOPmQR9OtI6rEH7gkCws?=
- =?us-ascii?Q?EUZEOemExpbNkmJK414GTXt3fGoeAlIugCujiYoXA0O+HEtmIPmfUQTYUQ/Y?=
- =?us-ascii?Q?JoVLL2elRvXDa7u47HPmr+6Xf04NyWPMn55hvBK42t20Rd9jkGOdzhPqhyPR?=
- =?us-ascii?Q?VNiN0ftPw/uJfhJhxsWJOLPs7RLB?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(7416011)(376011)(1800799021)(366013)(38070700015)(921017);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?8MD+ixYJYQlP0y8gQ6keCqT0LCJXIGEl1SympuCaqORa7glI3+iJIjtVHUmc?=
- =?us-ascii?Q?xIkv2PK695bba8toTDFTToVwxXVikE/v1ivt+F52hoG4zYEMrNxnKAYuc35m?=
- =?us-ascii?Q?xAd/wpfE/pcP7TvhqtROYf2WHKCK11mo8sqTIpruG+/ue7WNnuFhJXEv8brg?=
- =?us-ascii?Q?JUgP7fpLQUn06KiVPPRyz7M3iVPlMrQQgB8ujq45cjkNeqHhhrJLnJUhHssp?=
- =?us-ascii?Q?OziZt24rdsaTGi17jNPpsGrZMqsktvZCh4l7Rq42utf/8KZlBjNWYZYg7FtE?=
- =?us-ascii?Q?j72ml2nrD71rDFgQktNk9yH2wIO69h6d4aGzJuVhCtvaFlTW1gczhUt0i7kL?=
- =?us-ascii?Q?U+cd6F467+8lDcM4EDQXmlSo4/EhyySoL/pbrwjeGWVEhI0U1y1EQYNHBkJK?=
- =?us-ascii?Q?ovdZEmlYCjUr6WLkEYo/ili3JwVB9tUunLSUZ8G0t6uFZah1QOcpZzExvHLT?=
- =?us-ascii?Q?TOOuR9AOthgVFGhXK/VP2qQH+61zW/+RqHXhn1Ph+p5HT3mlcx4Bstytk7XU?=
- =?us-ascii?Q?xjhgFh2vRF9tdUiXQCU7sBR9UiYW/K0/qq4o6moeSFATiQ4t3sASC7JKgpte?=
- =?us-ascii?Q?VrSSWLlVy+RSZPAlgnKf7pEMRnPSPRoUTqvpHwiVKQVe1+iUX2YHHrhBzoJ9?=
- =?us-ascii?Q?AyfDAUH5RXv/fQLnD1l1xP46OJuGgCrjP8d4D+4GHh/EaoK0yZ1d9lCu6PIW?=
- =?us-ascii?Q?UxQfMrmdd2Y2AiJc3bimJxd3GS5o9Whn2qcjVxiH+0ZcCwfis6wFf+RQvOjp?=
- =?us-ascii?Q?UzT0PcDfc+Dr/uYmngc8O/5WGguNXIIPNakz6PO2GnvpiGHcDdZkqh9zwfuJ?=
- =?us-ascii?Q?CE3nwkSkl3WXx50NoiKfeWubAH0OK0ANKuGp6QliPGUL1LncujUuFuU9VaXe?=
- =?us-ascii?Q?JVcpoKr7zKEcCl2BAyQr6CzbVJrWf5ZRLaUy5qAxm/ansze5ZF7OTvE1DxWP?=
- =?us-ascii?Q?FAnSqOadb2drneIcmTQb10a4dxEu/KhUTRc2BmG/5BaIIA99dgP0Zw7nMmK0?=
- =?us-ascii?Q?UvRIBoaPvr5RGWcO59CjXvykrNfwkL8juQSaL+o7vt877SyqNICrk0tFAiQA?=
- =?us-ascii?Q?8ZvmvhMc3NN1xk8Hxf0SmYgCR8Ogmh1rFX+w2WOBuqXthtG6K7bBg172lpxa?=
- =?us-ascii?Q?UhHSJlNBwuVpxpEAJTEFzaSXCRDX+NHH5KC0r21caKbZurUZxMbxOLP/0Adn?=
- =?us-ascii?Q?ipe/PjdOWTiMMrCh4I94PDE+TFg06xo9PeovLAb/o+jE94yNn0eLqnL2D0UI?=
- =?us-ascii?Q?pygPwVaOuPNNknaZYqfH7IZ/r/m1c7tSm5aW7dhc58DWV0wTniW03m69pZBM?=
- =?us-ascii?Q?mFwyu/zsEUBK6pYkJ4WrbHXwJdChSqYzGHfhahP3mP4PdparkxpJXmBc7hra?=
- =?us-ascii?Q?/o7ny2Ait0a1fRP+QS+nR5XaMsheQhG6UI2Aw3I4apd62J8xNpFc48/31vhD?=
- =?us-ascii?Q?yFlH6lZabtbDe1TL5b3yFQLgJnu0JDUpuJvf0Z5BJWrKaMRRHTYBr5OVqzbU?=
- =?us-ascii?Q?11lIzI/30WfX6YDxdzIghowkvfAwSCLjQXOZ42RPhXKw06UwJeJudl4qvNPs?=
- =?us-ascii?Q?Mb0torBBi+tMPmQuJG0=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6273410E3;
+	Fri, 21 Jun 2024 01:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718933990; cv=none; b=bbLNSJ81Iud/V0C13fmzJdUOw2BRC+11lbtQS6FOkD+yC9QgqaY+5rSBVJY9htrBKWuMtNpxPIB6bQ2duztVbYibYixFFaFY0r3FWd1yjUT3rP4O7HN3D9Vp/LpMVlq//14ehDwu7knHxRKjsysC9z/lb0qMsdsaAXJaDaDUqhk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718933990; c=relaxed/simple;
+	bh=ylVSDJAg3VnwGnHSfLRMM20U9258dmgtowJjtoYTEUo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XJ4ip7hp89KC3D+U30csKAWV/qKOnGwElGfBWHmWlodyCmAh/xEJ4dxTZ+a3Qelgc/WiefuZ0tZagkQQur8bq0BhBewSsshaTkMzzjQY+gyd/5d3EZiajcwArJ/GT5I+XwECzcxl30InUwhyWEOHCVOtUJEVO7fRh/C1jUx1rNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 213de3882f6f11ef9305a59a3cc225df-20240621
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:751243a8-5f08-4b65-96f2-8cbda62ac60d,IP:10,
+	URL:0,TC:0,Content:-25,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,AC
+	TION:release,TS:-30
+X-CID-INFO: VERSION:1.1.38,REQID:751243a8-5f08-4b65-96f2-8cbda62ac60d,IP:10,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-30
+X-CID-META: VersionHash:82c5f88,CLOUDID:5096c713223ac34296952acfad85d7cd,BulkI
+	D:2406210939427IK7KIMX,BulkQuantity:0,Recheck:0,SF:24|17|19|44|66|38|102,T
+	C:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
+	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: 213de3882f6f11ef9305a59a3cc225df-20240621
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <luoxuanqiang@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 945668833; Fri, 21 Jun 2024 09:39:41 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 49FE7B803C9E;
+	Fri, 21 Jun 2024 09:39:31 +0800 (CST)
+X-ns-mid: postfix-6674D9D2-981081146
+Received: from localhost.localdomain (unknown [10.42.12.252])
+	by node2.com.cn (NSMail) with ESMTPA id 57C29B803C9D;
+	Fri, 21 Jun 2024 01:39:30 +0000 (UTC)
+From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+To: kuniyu@amazon.com,
+	edumazet@google.com,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	pabeni@redhat.com
+Cc: dccp@vger.kernel.org,
+	dsahern@kernel.org,
+	fw@strlen.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	alexandre.ferrieux@orange.com
+Subject: [PATCH net v4] Fix race for duplicate reqsk on identical SYN
+Date: Fri, 21 Jun 2024 09:39:29 +0800
+Message-Id: <20240621013929.1386815-1-luoxuanqiang@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c98f21d4-d8d5-448d-8d62-08dc91929199
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2024 01:36:27.3313
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: k2OgI9lenkJ9T5OhNMxlSA+osFUOjIBaFnl+ogS/bc7FiI3HMbJjjiTY/8YEfCy8jUwRr5EtQCCACx4c0QhZow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7737
+Content-Transfer-Encoding: quoted-printable
 
-> Subject: [PATCH v2 3/4] arm64: dts: imx95-19x19-evk: add lpi2c7 and
-> expander gpio pcal6524
->=20
-> Add lpi2c7 and expander gpio pcal6524.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+When bonding is configured in BOND_MODE_BROADCAST mode, if two identical
+SYN packets are received at the same time and processed on different CPUs=
+,
+it can potentially create the same sk (sock) but two different reqsk
+(request_sock) in tcp_conn_request().
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+These two different reqsk will respond with two SYNACK packets, and since
+the generation of the seq (ISN) incorporates a timestamp, the final two
+SYNACK packets will have different seq values.
+
+The consequence is that when the Client receives and replies with an ACK
+to the earlier SYNACK packet, we will reset(RST) it.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+This behavior is consistently reproducible in my local setup,
+which comprises:
+
+                  | NETA1 ------ NETB1 |
+PC_A --- bond --- |                    | --- bond --- PC_B
+                  | NETA2 ------ NETB2 |
+
+- PC_A is the Server and has two network cards, NETA1 and NETA2. I have
+  bonded these two cards using BOND_MODE_BROADCAST mode and configured
+  them to be handled by different CPU.
+
+- PC_B is the Client, also equipped with two network cards, NETB1 and
+  NETB2, which are also bonded and configured in BOND_MODE_BROADCAST mode=
+.
+
+If the client attempts a TCP connection to the server, it might encounter
+a failure. Capturing packets from the server side reveals:
+
+10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
+10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
+localhost > 10.10.10.10.45182: Flags [S.], seq 2967855116,
+localhost > 10.10.10.10.45182: Flags [S.], seq 2967855123, <=3D=3D
+10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
+10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
+localhost > 10.10.10.10.45182: Flags [R], seq 2967855117, <=3D=3D
+localhost > 10.10.10.10.45182: Flags [R], seq 2967855117,
+
+Two SYNACKs with different seq numbers are sent by localhost,
+resulting in an anomaly.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+The attempted solution is as follows:
+Add a return value to inet_csk_reqsk_queue_hash_add() to confirm if the
+ehash insertion is successful (Up to now, the reason for unsuccessful
+insertion is that a reqsk for the same connection has already been
+inserted). If the insertion fails, release the reqsk.
+
+Due to the refcnt, Kuniyuki suggests also adding a return value check
+for the DCCP module; if ehash insertion fails, indicating a successful
+insertion of the same connection, simply release the reqsk as well.
+
+Simultaneously, In the reqsk_queue_hash_req(), the start of the
+req->rsk_timer is adjusted to be after successful insertion.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
+---
+ include/net/inet_connection_sock.h |  2 +-
+ net/dccp/ipv4.c                    |  7 +++++--
+ net/dccp/ipv6.c                    |  7 +++++--
+ net/ipv4/inet_connection_sock.c    | 17 +++++++++++++----
+ net/ipv4/tcp_input.c               |  7 ++++++-
+ 5 files changed, 30 insertions(+), 10 deletions(-)
+
+diff --git a/include/net/inet_connection_sock.h b/include/net/inet_connec=
+tion_sock.h
+index 7d6b1254c92d..c0deaafebfdc 100644
+--- a/include/net/inet_connection_sock.h
++++ b/include/net/inet_connection_sock.h
+@@ -263,7 +263,7 @@ struct dst_entry *inet_csk_route_child_sock(const str=
+uct sock *sk,
+ struct sock *inet_csk_reqsk_queue_add(struct sock *sk,
+ 				      struct request_sock *req,
+ 				      struct sock *child);
+-void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock =
+*req,
++bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock =
+*req,
+ 				   unsigned long timeout);
+ struct sock *inet_csk_complete_hashdance(struct sock *sk, struct sock *c=
+hild,
+ 					 struct request_sock *req,
+diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+index ff41bd6f99c3..5926159a6f20 100644
+--- a/net/dccp/ipv4.c
++++ b/net/dccp/ipv4.c
+@@ -657,8 +657,11 @@ int dccp_v4_conn_request(struct sock *sk, struct sk_=
+buff *skb)
+ 	if (dccp_v4_send_response(sk, req))
+ 		goto drop_and_free;
+=20
+-	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+-	reqsk_put(req);
++	if (unlikely(!inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT)=
+))
++		reqsk_free(req);
++	else
++		reqsk_put(req);
++
+ 	return 0;
+=20
+ drop_and_free:
+diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+index 85f4b8fdbe5e..da5dba120bc9 100644
+--- a/net/dccp/ipv6.c
++++ b/net/dccp/ipv6.c
+@@ -400,8 +400,11 @@ static int dccp_v6_conn_request(struct sock *sk, str=
+uct sk_buff *skb)
+ 	if (dccp_v6_send_response(sk, req))
+ 		goto drop_and_free;
+=20
+-	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+-	reqsk_put(req);
++	if (unlikely(!inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT)=
+))
++		reqsk_free(req);
++	else
++		reqsk_put(req);
++
+ 	return 0;
+=20
+ drop_and_free:
+diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_s=
+ock.c
+index d81f74ce0f02..d4f0eff8b20f 100644
+--- a/net/ipv4/inet_connection_sock.c
++++ b/net/ipv4/inet_connection_sock.c
+@@ -1122,25 +1122,34 @@ static void reqsk_timer_handler(struct timer_list=
+ *t)
+ 	inet_csk_reqsk_queue_drop_and_put(oreq->rsk_listener, oreq);
+ }
+=20
+-static void reqsk_queue_hash_req(struct request_sock *req,
++static bool reqsk_queue_hash_req(struct request_sock *req,
+ 				 unsigned long timeout)
+ {
++	bool found_dup_sk =3D false;
++
++	if (!inet_ehash_insert(req_to_sk(req), NULL, &found_dup_sk))
++		return false;
++
++	/* The timer needs to be setup after a successful insertion. */
+ 	timer_setup(&req->rsk_timer, reqsk_timer_handler, TIMER_PINNED);
+ 	mod_timer(&req->rsk_timer, jiffies + timeout);
+=20
+-	inet_ehash_insert(req_to_sk(req), NULL, NULL);
+ 	/* before letting lookups find us, make sure all req fields
+ 	 * are committed to memory and refcnt initialized.
+ 	 */
+ 	smp_wmb();
+ 	refcount_set(&req->rsk_refcnt, 2 + 1);
++	return true;
+ }
+=20
+-void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock =
+*req,
++bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock =
+*req,
+ 				   unsigned long timeout)
+ {
+-	reqsk_queue_hash_req(req, timeout);
++	if (!reqsk_queue_hash_req(req, timeout))
++		return false;
++
+ 	inet_csk_reqsk_queue_added(sk);
++	return true;
+ }
+ EXPORT_SYMBOL_GPL(inet_csk_reqsk_queue_hash_add);
+=20
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 9c04a9c8be9d..c6b08a43ce00 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -7256,7 +7256,12 @@ int tcp_conn_request(struct request_sock_ops *rsk_=
+ops,
+ 		tcp_rsk(req)->tfo_listener =3D false;
+ 		if (!want_cookie) {
+ 			req->timeout =3D tcp_timeout_init((struct sock *)req);
+-			inet_csk_reqsk_queue_hash_add(sk, req, req->timeout);
++			if (unlikely(!inet_csk_reqsk_queue_hash_add(sk, req,
++								    req->timeout))) {
++				reqsk_free(req);
++				return 0;
++			}
++
+ 		}
+ 		af_ops->send_synack(sk, dst, &fl, req, &foc,
+ 				    !want_cookie ? TCP_SYNACK_NORMAL :
+--=20
+2.25.1
+
 
