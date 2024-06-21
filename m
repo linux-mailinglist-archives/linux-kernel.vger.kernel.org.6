@@ -1,96 +1,147 @@
-Return-Path: <linux-kernel+bounces-224915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0EA9128A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:57:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2479128C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759A21F2680A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:57:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F90DB29A9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DEF383A5;
-	Fri, 21 Jun 2024 14:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BE93D984;
+	Fri, 21 Jun 2024 14:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J6nwqOYW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBmZ5TVu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6AC383A2
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD52A38DF2;
+	Fri, 21 Jun 2024 14:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718981867; cv=none; b=oRGJYYBmsHxlGEPb9roAcINbqEazo5oNLh2k17JYVPrBjV04EWnpqJ3TA3mYR3wbmQIMHKP3LFWQnGkddDaoGuq54HOpQLiPLvpbjm31s4645V0jNa6mIHyI6Ufrwf+7sELRGNwtAFV5zBkrisXDwsrozHTpYKW3a3HhO8jTi38=
+	t=1718981903; cv=none; b=fguw09yFig5ELZ+p5WNl5RuMtIrJ/2lQH0/upmp2lKEoYFCemm1b8cP0QXESEawa2aaESJcRhQZVWWq2QmUs1GQftcfTXmAeg8mEwWQDzUOe8xy1di1BN7da9PP7qDsfUQkxSLpmQxuoxR02yFaiA9lN3pnfwSSKBFvh/LMpitQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718981867; c=relaxed/simple;
-	bh=f+FI8F/RVw+kmJ2lzU7rBzGsP7+oH8tGfXkDtW06Y4M=;
+	s=arc-20240116; t=1718981903; c=relaxed/simple;
+	bh=/N0zW1HmRgZHiAuUDZ099fGXSiJzEZf+VzrO/OmldTc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IrnMcpZlbZUNCEXhLuXvnBwF1k8gMA/oUf+eLNlN/42Mi6Pjajl3yAhNNqboXo/uyMhx7OwG8+jMd+jwdzbeVMFTSK8tnAGU4jku0cng7KE3aQNu3D83pnL7FhVlyjybcdwQSRis9zZRPtKStaA00NQS8y+hsWmugNt5m8T/D7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J6nwqOYW; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718981865; x=1750517865;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f+FI8F/RVw+kmJ2lzU7rBzGsP7+oH8tGfXkDtW06Y4M=;
-  b=J6nwqOYWkYINcZ4ktVZYdR7i80EQOJy2a6//5s6rhm9D1CLugZJWeDdE
-   IcBF4ugQbKPg/nMamKz7mAg8CwbHgZ8nsxnyyLw/gQ9ZrgIqU/5hP72NI
-   NsABhRQCLHKOIGmYTFAmSBHlhwqnFCl6D4WBZ3btD5w2bRpDzCe3qy3QM
-   5q6GhG1q6xclVTEpJSSE1r3oGHZdY5imnIoAC9zbkIAphR8aH9MIOafCT
-   0XIUHu/Ff9MCjU83JhrffdmOBVdQHV5n46hr5Pfxb3nmNvikva1tp7Kti
-   D8HmnJtxFKddwWJ2NgVXOJ+ddkbXQnmv2pu6806FTqhIFTbHp3CTAg2ab
-   Q==;
-X-CSE-ConnectionGUID: UEX4QxXITWSNDWv1NpZfZA==
-X-CSE-MsgGUID: UKE64xNyQuqFChWqto3SXw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="19901453"
-X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
-   d="scan'208";a="19901453"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 07:57:44 -0700
-X-CSE-ConnectionGUID: hbo5rgyHTUKD0mlS+syVgA==
-X-CSE-MsgGUID: FfylbZ6vQaaFX1yW3aDQMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
-   d="scan'208";a="43296381"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 21 Jun 2024 07:57:42 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 4CA2E1D6; Fri, 21 Jun 2024 17:57:40 +0300 (EEST)
-Date: Fri, 21 Jun 2024 17:57:40 +0300
-From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-To: Alexander Potapenko <glider@google.com>
-Cc: elver@google.com, dvyukov@google.com, dave.hansen@linux.intel.com, 
-	peterz@infradead.org, akpm@linux-foundation.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH 1/3] x86: mm: disable KMSAN instrumentation for physaddr.c
-Message-ID: <pi2i2qtsrip43yjji3ao26oqazplbkelma7hv24onxymkisqzm@ee6zflgdgmrc>
-References: <20240621094901.1360454-1-glider@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UI7YZffcTLKlLkPBBgyxu4vq14Gb2VY24BMsw5dRtp9s0chJozrdHy9djBPlw2IEDzNVHX1ub9XEzjM2o1BeJOuXWCkMEN/yLGYBmbxe5TtXay3zH3NfSKB2HtKScPF4FH+FGkngOX8hv7LAkiIaDbhQn+EznrmIMpY7uDfR+Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBmZ5TVu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3495CC2BBFC;
+	Fri, 21 Jun 2024 14:58:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718981903;
+	bh=/N0zW1HmRgZHiAuUDZ099fGXSiJzEZf+VzrO/OmldTc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZBmZ5TVueSExguMe00HI/IeWnKyG1SljHOkXRRoVKSsOdWOuj8tb0neCxlwDuyVLv
+	 dJheJL/AA37THMdxMcMKAa0Cn0zSZRunsIcIvAuIuzfUNDAojnWJBznoabATc0Nde0
+	 DS4zcDnK6RTxSDPdrrjnr8JW/Uskz2gwqdSLQGAdDQXAKIpE+Yw91n9F1E8tSfZF0a
+	 9CS6EGVny5WzwWhbr9AhZypkGqMnXeWB28TF5s9ldQtCzkPaZaIB69jEMfd1pJFI3M
+	 ofQvPbmNzlLx+Kuo134BHChi8Q8KrI7FG9tXkY4DX5cSiP0XAt6w/SUQs4wMMfvnun
+	 gsKru6MwVcq6Q==
+Date: Fri, 21 Jun 2024 15:58:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+	greentime.hu@sifive.com, vincent.chen@sifive.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+Message-ID: <20240621-surging-flounder-58a653747e1d@spud>
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-3-yongxuan.wang@sifive.com>
+ <20240605-atrium-neuron-c2512b34d3da@spud>
+ <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
+ <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr>
+ <20240621-viewless-mural-f5992a247992@wendy>
+ <edcd3957-0720-4ab4-bdda-58752304a53a@ghiti.fr>
+ <20240621-9bf9365533a2f8f97cbf1f5e@orel>
+ <20240621-glutton-platonic-2ec41021b81b@spud>
+ <20240621-a56e848050ebbf1f7394e51f@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="8hAPi/SVNrIs/7zQ"
+Content-Disposition: inline
+In-Reply-To: <20240621-a56e848050ebbf1f7394e51f@orel>
+
+
+--8hAPi/SVNrIs/7zQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621094901.1360454-1-glider@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 11:48:59AM +0200, Alexander Potapenko wrote:
-> Enabling CONFIG_DEBUG_VIRTUAL=y together with KMSAN led to infinite
-> recursion, because kmsan_get_metadata() ended up calling instrumented
-> __pfn_valid() from arch/x86/mm/physaddr.c.
-> 
-> Prevent it by disabling instrumentation of the whole file.
-> 
-> Reported-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Closes: https://github.com/google/kmsan/issues/95
-> Signed-off-by: Alexander Potapenko <glider@google.com>
+On Fri, Jun 21, 2024 at 04:52:09PM +0200, Andrew Jones wrote:
+> On Fri, Jun 21, 2024 at 03:04:47PM GMT, Conor Dooley wrote:
+> > On Fri, Jun 21, 2024 at 03:15:10PM +0200, Andrew Jones wrote:
+> > > On Fri, Jun 21, 2024 at 02:42:15PM GMT, Alexandre Ghiti wrote:
 
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > > I understand the concern; old SBI implementations will leave svadu in=
+ the
+> > > DT but not actually enable it. Then, since svade may not be in the DT=
+ if
+> > > the platform doesn't support it or it was left out on purpose, Linux =
+will
+> > > only see svadu and get unexpected exceptions. This is something we co=
+uld
+> > > force easily with QEMU and an SBI implementation which doesn't do any=
+thing
+> > > for svadu. I hope vendors of real platforms, which typically provide =
+their
+> > > own firmware and DTs, would get this right, though, especially since =
+Linux
+> > > should fail fast in their testing when they get it wrong.
+> >=20
+> > I'll admit, I wasn't really thinking here about something like QEMU that
+> > puts extensions into the dtb before their exact meanings are decided
+> > upon. I almost only ever think about "real" systems, and in those cases
+> > I would expect that if you can update the representation of the hardware
+> > provided to (or by the firmware to Linux) with new properties, then upd=
+ating
+> > the firmware itself should be possible.
+> >=20
+> > Does QEMU have the this exact problem at the moment? I know it puts
+> > Svadu in the max cpu, but does it enable the behaviour by default, even
+> > without the SBI implementation asking for it?
+>=20
+> Yes, because QEMU has done hardware A/D updating since it first started
+> supporting riscv, which means it did svadu when neither svadu nor svade
+> were in the DT. The "fix" for that was to ensure we have svadu and !svade
+> by default, which means we've perfectly realized Alexandre's concern...
+> We should be able to change the named cpu types that don't support svadu
+> to only have svade in their DTs, since that would actually be fixing those
+> cpu types, but we'll need to discuss how to proceed with the generic cpu
+> types like 'max'.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Correct me please, since I think I am misunderstanding: At the moment
+QEMU does A/D updating whether or not the SBI implantation asks for it,
+with the max CPU. The SBI implementation doesn't understand Svadu and
+won't strip it. The kernel will get a DT with Svadu in it, but Svadu will
+be enabled, so it is not a problem.
+
+--8hAPi/SVNrIs/7zQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnWVCQAKCRB4tDGHoIJi
+0vOtAQDlXct24q3+5xwPuu3xdxQDI0UlyBOK0l80As/W7VUFAgD/dg4Zzqtg9N+j
+ocw/Xv5W3AHDcfI4joWSya+p51csqww=
+=er2I
+-----END PGP SIGNATURE-----
+
+--8hAPi/SVNrIs/7zQ--
 
