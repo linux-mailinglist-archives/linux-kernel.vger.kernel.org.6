@@ -1,226 +1,125 @@
-Return-Path: <linux-kernel+bounces-223828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73CEE9118E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:10:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70529118FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03E2C1F232E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:10:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D16C61C216FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DDA8528F;
-	Fri, 21 Jun 2024 03:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DFF127E37;
+	Fri, 21 Jun 2024 03:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="oP3ghbIx"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D84C3207
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 03:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="nd6HCeTf"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3D3197;
+	Fri, 21 Jun 2024 03:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718939403; cv=none; b=MDuZvXP6pcCUQ70KfmwqNaiLV/DqRiXLLhnQp7scCrs59WDiJxzBTum7mDEYaFOw3F4/Hm6wEgGOktrNNCSiAC1Ve7DaZdEYaj7JWiyU6a6QDpht4xNDepa7Nvu5uzJF294Gx231byFA3+KF4HFCTJsqxOwgem3e05MX8Vkq4To=
+	t=1718940392; cv=none; b=iUT5Gz0u3ccNBPOGUpRX6cYxgEAr8oorAX2CJhwhA8UbQkL3EFj/MuFsNI3VfD2SO1q7lqkdXV673FkllixPI18/lXVyxX0Rl7QxgDSCLwpv26maT2tF0bo3N3pJ8prbRrWXvre3Xs4QJSFtuRvS4QQzybS4mZviC10JTaFKpd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718939403; c=relaxed/simple;
-	bh=ADR0M9bzYb/z4xy1FJbEfBdV6vztRWzQN93xqp0dV1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aIMRwRo9Hm6+mQBvJXkZCuIAdB+h/i9BTZDQVkjw83Dt8DBHAlzUoDUIyEzIXVNE1EKtx+rFqP5eaa3OFDUKpe0n5XJAAfd8fH7M1Whnqs36h/w+tZ7BW1Vwe9ltlW/kMFCCYfw4RhJUgzunPlQ8cSWsOc698zTIAJklp92eWs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=oP3ghbIx; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f47f07aceaso12301635ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 20:10:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718939400; x=1719544200; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0v4GHVLko6b2d6yCPPJ+7mz46mQ9AAseTgFJ3I+E9Ss=;
-        b=oP3ghbIxB/l1cOmk3pq4j0X7Zf8FdMjxmNOZoWXjQqrnDf9Y5gVSOAz0jnw60FTJl/
-         T3QpCUGjAPrmVMYAYyX2wIqhAsZvqLP6Xeg3D5enfvOY2OVlqfA0BV5tOAQWS4qScs+d
-         sWgTk6rkP9a1znXT6pHImXK4QwkpLNIACSZTkddkSHKspV1EgZFnp8a7U5Zc5Si78q7y
-         47sFPO0GoIJif2e9lAHLk+xXL9yU0VAZB9wiSGFZNr0lagFCTP8/NaIABcAQLm7OZOrf
-         ohAq0MxqkQxJsawkEUpF31Op4ErWpgmXUMRjchrQNkg94IVmjwZp3NDY6TR/bFHYgiVj
-         GmaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718939400; x=1719544200;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0v4GHVLko6b2d6yCPPJ+7mz46mQ9AAseTgFJ3I+E9Ss=;
-        b=bj7bgZ3ZrLd2IokWhO4gk6y5DovBx/S//sKhm728dhPwY0OCkxmMVlwAL7XWyfFbTV
-         V4vGgyKnDhhees+DQ70wSFG9mUhhPl1ODRBdz/FU8J+xII5MtR7dWTnuvR5FmS2l9BPx
-         VmATnq1liFTpwenhUSVDYHu6fPUHo5DvqwpKns/GbxeskvxMKModJjvAR0e/0HMBTFJC
-         aYwe9F9TGU9jeaAi/ZR4lP1Oza/hJD2QfHWbr33p9OqR+NGqfItUpx0MF1m5G1k6tZsy
-         SZ/oErgVgnIdBZAJjJbDi5M/c0rvqbfPGCk89ZH64wKhdxsRaDmHrQqGuvavcKTkG0M2
-         dCxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVooQtaCHxMZ3wv4RGXYXB1ehvszPQSnI3K/pmcAi/i6BatVJV+QguUQ9nvr5m5vTY+8IbFi3yFmDgNnWdaTmkAiv8jMHYwQpbI1RTb
-X-Gm-Message-State: AOJu0Yw0bRrBtDZ2M82QQzgQ5pZebuEw/clM+RzsrPT773EyZW/HIiOe
-	JmSERYLTfM2CJoVxkAGtJB8HIlhrJCC/fVJQr5JTdvADLKUcI2ME30jrYln4DjM=
-X-Google-Smtp-Source: AGHT+IFFY2CE7Fj0jGtDzkU4sKdGCQMRvDZCbXWHqL9tztfL9yqPx3keG5JRhkAANqhTh3TGHFGhmA==
-X-Received: by 2002:a17:903:32d1:b0:1f9:c52f:d9b5 with SMTP id d9443c01a7336-1f9c52fdcefmr46099765ad.66.1718939400383;
-        Thu, 20 Jun 2024 20:10:00 -0700 (PDT)
-Received: from ghost ([2601:647:5700:6860:c36f:e04a:309e:a49])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c644fsm3537945ad.145.2024.06.20.20.09.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 20:09:59 -0700 (PDT)
-Date: Thu, 20 Jun 2024 20:09:54 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alexghiti@rivosinc.com, akpm@linux-foundation.org, bhe@redhat.com,
-	rppt@kernel.org, dawei.li@shingroup.cn, jszhang@kernel.org,
-	namcao@linutronix.de, bjorn@rivosinc.com, vishal.moola@gmail.com,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [External] Re: [PATCH] RISC-V: cmdline: Add support for 'memmap'
- parameter
-Message-ID: <ZnTvArAQpfCm10tc@ghost>
-References: <20240618120842.15159-1-cuiyunhui@bytedance.com>
- <ZnTRbptoowL+1GOP@ghost>
- <CAEEQ3wnNZJviirqWCAG7mXsbynC+=Gq5q4jh6b4yamm8cnzMAw@mail.gmail.com>
+	s=arc-20240116; t=1718940392; c=relaxed/simple;
+	bh=vMWTWeQ8yQS1mpLRBhYhJ7DiJfhYh9N2PlX1oHWDMOA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=OcKzG9uU9YPxqB3Z8Os4Tc/m4NPBtGAPR0Xei9cN3yFI1r/mfkUD4YDlOjoQipRMVA1BVXfDpq4zVleyprbvy+l8Emb9g+EKSxOB3DudrT5rce9wPuCLh5QOuo8A4ktREDkeV1kfala8tkzn2IPoVThLQgPDg97A3okGf1BqRus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=nd6HCeTf reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=Fo88QUrNuP7FNnqZTa22w81geRP5wEvUU2/XeQwG2es=; b=n
+	d6HCeTf6QiASWhaY0ImjRdDTGScSDlGz7xhjT/z1nJCz0tEFKHykXb6XArxtTkpz
+	iaWH2gOjWcIY3hr2NQD1HE+aGR+2nxRFZvfrtIRGjAhsK8in8acdx3fTTRwxvOoS
+	1PRDmJ4sOsoM436vXqjS6IRbbE3h0zeX40rSrWZa+k=
+Received: from slark_xiao$163.com ( [223.104.68.12] ) by
+ ajax-webmail-wmsvr-40-116 (Coremail) ; Fri, 21 Jun 2024 11:10:21 +0800
+ (CST)
+Date: Fri, 21 Jun 2024 11:10:21 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Sergey Ryazanov" <ryazanov.s.a@gmail.com>
+Cc: manivannan.sadhasivam@linaro.org, loic.poulain@linaro.org, 
+	johannes@sipsolutions.net, quic_jhugo@quicinc.com, 
+	netdev@vger.kernel.org, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v2 2/2] net: wwan: mhi: make default data link id
+ configurable
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <0b24c10f-1c20-4bd1-958b-dbf89cb28792@gmail.com>
+References: <20240612093941.359904-1-slark_xiao@163.com>
+ <0b24c10f-1c20-4bd1-958b-dbf89cb28792@gmail.com>
+X-NTES-SC: AL_Qu2aCvWYtkwp5ymcbekfmk0SheY6UMayv/4v1IZSPZ98jD3p3QcLX3NqG1LaysKhCzCnijG+azJw1u9ZWrBoQqwXkG7PRbh5R2RojK6tJeC24g==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEEQ3wnNZJviirqWCAG7mXsbynC+=Gq5q4jh6b4yamm8cnzMAw@mail.gmail.com>
+Message-ID: <269323e2.35a6.19038c60d00.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3v9Ae73RmTI90AA--.7927W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNQoFZGV4IM2ADQACsh
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Fri, Jun 21, 2024 at 10:08:39AM +0800, yunhui cui wrote:
-> Hi Charlie,
-> 
-> On Fri, Jun 21, 2024 at 9:03 AM Charlie Jenkins <charlie@rivosinc.com> wrote:
-> >
-> > On Tue, Jun 18, 2024 at 08:08:42PM +0800, Yunhui Cui wrote:
-> > > Implement support for parsing 'memmap' kernel command line parameter.
-> > >
-> > > This patch covers parsing of the following two formats for 'memmap'
-> > > parameter values:
-> > >
-> > > - nn[KMG]@ss[KMG]
-> > > - nn[KMG]$ss[KMG]
-> > >
-> > > ([KMG] = K M or G (kilo, mega, giga))
-> > >
-> > > These two allowed formats for parameter value are already documented
-> > > in file kernel-parameters.txt in Documentation/admin-guide folder.
-> > > Some architectures already support them, but Mips did not prior to
-> >
-> > Copy-paste from a Mips patch? Should say riscv :)
-> >
-> > It looks like this code is duplicated from xtensa and is effectively the
-> > same as mips. Can this code be placed in a generic file so that the code
-> > can be shared between mips, riscv, and xtensa -- maybe a new config that
-> > gets selected by mips/riscv/xtensa?
-> 
-> Yeah, that's actually what I was thinking. Which general file do you
-> think would be more suitable to put it in?
-
-I am not sure the best place to put it. What do you think about
-mm/memblock.c next to the "memblock" early param?
-
-> 
-> > - Charlie
-> >
-> > > this patch.
-> > >
-> > > Excerpt from Documentation/admin-guide/kernel-parameters.txt:
-> > >
-> > > memmap=nn[KMG]@ss[KMG]
-> > > [KNL] Force usage of a specific region of memory.
-> > > Region of memory to be used is from ss to ss+nn.
-> > >
-> > > memmap=nn[KMG]$ss[KMG]
-> > > Mark specific memory as reserved.
-> > > Region of memory to be reserved is from ss to ss+nn.
-> > > Example: Exclude memory from 0x18690000-0x1869ffff
-> > > memmap=64K$0x18690000
-> > > or
-> > > memmap=0x10000$0x18690000
-> > >
-> > > There is no need to update this documentation file with respect to
-> > > this patch.
-> > >
-> > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > > ---
-> > >  arch/riscv/mm/init.c | 50 ++++++++++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 50 insertions(+)
-> > >
-> > > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> > > index e3405e4b99af..7be7ec3092ad 100644
-> > > --- a/arch/riscv/mm/init.c
-> > > +++ b/arch/riscv/mm/init.c
-> > > @@ -208,6 +208,56 @@ static int __init early_mem(char *p)
-> > >  }
-> > >  early_param("mem", early_mem);
-> > >
-> > > +static void __init parse_memmap_one(char *p)
-> > > +{
-> > > +     char *oldp;
-> > > +     unsigned long start_at, mem_size;
-> > > +
-> > > +     if (!p)
-> > > +             return;
-> > > +
-> > > +     oldp = p;
-> > > +     mem_size = memparse(p, &p);
-> > > +     if (p == oldp)
-> > > +             return;
-> > > +
-> > > +     switch (*p) {
-> > > +     case '@':
-> > > +             start_at = memparse(p + 1, &p);
-> > > +             memblock_add(start_at, mem_size);
-> > > +             break;
-> > > +
-> > > +     case '$':
-> > > +             start_at = memparse(p + 1, &p);
-> > > +             memblock_reserve(start_at, mem_size);
-> > > +             break;
-> > > +
-> > > +     case 0:
-> > > +             memblock_reserve(mem_size, -mem_size);
-> > > +             break;
-> > > +
-> > > +     default:
-> > > +             pr_warn("Unrecognized memmap syntax: %s\n", p);
-> > > +             break;
-> > > +     }
-> > > +}
-> > > +
-> > > +static int __init parse_memmap_opt(char *str)
-> > > +{
-> > > +     while (str) {
-> > > +             char *k = strchr(str, ',');
-> > > +
-> > > +             if (k)
-> > > +                     *k++ = 0;
-> > > +
-> > > +             parse_memmap_one(str);
-> > > +             str = k;
-> > > +     }
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +early_param("memmap", parse_memmap_opt);
-> > > +
-> > >  static void __init setup_bootmem(void)
-> > >  {
-> > >       phys_addr_t vmlinux_end = __pa_symbol(&_end);
-> > > --
-> > > 2.20.1
-> > >
-> > >
-> > > _______________________________________________
-> > > linux-riscv mailing list
-> > > linux-riscv@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
-> 
-> Thanks,
-> Yunhui
+CgoKCgoKCgoKQXQgMjAyNC0wNi0xMyAwNTo1NDowMywgIlNlcmdleSBSeWF6YW5vdiIgPHJ5YXph
+bm92LnMuYUBnbWFpbC5jb20+IHdyb3RlOgo+SGVsbG8gU2xhcmssIE1hbml2YW5uYW4sCj4KPk9u
+IDEyLjA2LjIwMjQgMTI6MzksIFNsYXJrIFhpYW8gd3JvdGU6Cj4+IEZvciBTRFg3MiBNQklNIGRl
+dmljZSwgaXQgc3RhcnRzIGRhdGEgbXV4IGlkIGZyb20gMTEyIGluc3RlYWQgb2YgMC4KPj4gVGhp
+cyB3b3VsZCBsZWFkIHRvIGRldmljZSBjYW4ndCBwaW5nIG91dHNpZGUgc3VjY2Vzc2Z1bGx5Lgo+
+PiBBbHNvIE1CSU0gc2lkZSB3b3VsZCByZXBvcnQgImJhZCBwYWNrZXQgc2Vzc2lvbiAoMTEyKSIu
+Cj4+IFNvIHdlIGFkZCBhIGxpbmsgaWQgZGVmYXVsdCB2YWx1ZSBmb3IgdGhlc2UgU0RYNzIgcHJv
+ZHVjdHMgd2hpY2gKPj4gd29ya3MgaW4gTUJJTSBtb2RlLgo+Cj5UaGUgcGF0Y2ggaXRzZWxmIGxv
+b2tzIGdvb2QgdG8gbWUgZXhjZXB0IGEgdGlueSBuaXRwaWNrIChzZWUgYmVsb3cpLiAKPk1lYW53
+aGlsZSwgSSBjYW4gbm90IHVuZGVyc3RhbmQgd2hlbiB3ZSBzaG91bGQgbWVyZ2UgaXQuIER1cmlu
+ZyB0aGUgVjEgCj5kaXNjdXNzaW9uLCBJdCB3YXMgbWVudGlvbmVkIHRoYXQgd2UgbmVlZCB0aGlz
+IGNoYW5nZSBzcGVjaWZpY2FsbHkgZm9yIAo+Rm94Y29ubiBTRFg3MiBtb2RlbS4gV2l0aG91dCBh
+bnkgYWN0dWFsIHVzZXJzIHRoZSBjb25maWd1cmFibGUgZGVmYXVsdCAKPmRhdGEgbGluayBpZCBp
+cyBhIGRlYWQgY29kZS4KPgo+QWNjb3JkaW5nIHRvIHRoZSBBUk0gTVNNIHBhdGNod29yayBbMV0s
+IHRoZSBtYWluIEZveGNvbm4gU0RYNzIgCj5pbnRyb2R1Y2luZyBwYXRjaCBpcyAoYSkgbm90IHll
+dCBtZXJnZWQsIChiKSBubyBtb3JlIGFwcGxpY2FibGUuIFNvLCBhcyAKPmZhciBhcyBJIHVuZGVy
+c3RhbmQsIGl0IHNob3VsZCBiZSByZXNlbmQuIEluIHRoaXMgY29udGV4dCwgYSBiZXN0IHdheSB0
+byAKPm1lcmdlIHRoZSBtb2RlbSBzdXBwb3J0IGlzIHRvIHByZXBlbmQgdGhlIG1vZGVtIGludHJv
+ZHVjdGlvbiBwYXRjaCB3aXRoIAo+dGhlc2UgY2hhbmdlcyBmb3JtaW5nIGEgc2VyaWVzOgo+MS8z
+OiBidXM6IG1oaTogaG9zdDogSW1wb3J0IG11eF9pZCBpdGVtCj4yLzM6IG5ldDogd3dhbjogbWhp
+OiBtYWtlIGRlZmF1bHQgZGF0YSBsaW5rIGlkIGNvbmZpZ3VyYWJsZQo+My8zOiBidXM6IG1oaTog
+aG9zdDogQWRkIEZveGNvbm4gU0RYNzIgcmVsYXRlZCBzdXBwb3J0Cj4KPkFuZCBtZXJnZSB0aGUg
+c2VyaWVzIGFzIHdob2xlLCB3aGVuIGV2ZXJ5dGhpbmcgd2lsbCBiZSByZWFkeS4gVGhpcyB3aWxs
+IAo+aGVscCB1cyB0byBhdm9pZCBwYXJ0aWFsbHkgbWVyZ2VkIHdvcmsgYW5kIHdpbGwga2VlcCB0
+aGUgbW9kZW0gc3VwcG9ydCAKPmludHJvZHVjdGlvbiBjbGVhci4KPgoKWWVzLCBjdXJyZW50bHkg
+dGhlc2UgMyBwYXRjaGVzIHdvdWxkIGJlIG1lcmdlZCBieSBNYW5pIGF0IHRoZSBzYW1lIHRpbWUu
+ClNvIEkgdGhpbmsgdGhlcmUgaXMgbm8gYnVpbGQgZmFpbHVyZSByaXNrLgoKPk1hbml2YW5uYW4s
+IGNvdWxkIHlvdSBzaGFyZSB0aGUgbWFpbiBbMV0gRm94Y29ubiBTRFg3MiBpbnRyb2R1Y3Rpb24g
+Cj5wYXRjaCBzdGF0dXMsIGFuZCB5b3VyIHRob3VnaHRzIHJlZ2FyZGluZyB0aGUgbWVyZ2luZyBw
+cm9jZXNzPwoKV2Ugd2VyZSBkaXNjdXNzaW5nIGFub3RoZXIgcGF0Y2ggaW4gbGFzdCB3ZWVrcy4g
+QW5kIHdlIHN0aWxsIGhhdmUgbm90CnJlYWNoZWQgYSBjb25zZW5zdXMuIExldCdzIGZvY3VzIG9u
+IHRoYXQgcGF0Y2ggZmlyc3RseS4KQW5kIE1hbmksIHBsZWFzZSBsZXQgdXMga25vdyBhYm91dCB0
+aGUgbWVyZ2luZyBwcm9jZXNzIHNpbmNlIHRoZSBuZXcKbWVyZ2Ugd2luZG93IGlzIG9wZW4gb3Ig
+d2lsbCBvcGVuIHNvb24/CgpUaGFua3MKPgo+Cj4xLiAKPmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5l
+bC5vcmcvcHJvamVjdC9saW51eC1hcm0tbXNtL3BhdGNoLzIwMjQwNTIwMDcwNjMzLjMwODkxMy0x
+LXNsYXJrX3hpYW9AMTYzLmNvbS8KPgo+PiBTaWduZWQtb2ZmLWJ5OiBTbGFyayBYaWFvIDxzbGFy
+a194aWFvQDE2My5jb20+Cj4+IC0tLQo+PiAgIGRyaXZlcnMvbmV0L3d3YW4vbWhpX3d3YW5fbWJp
+bS5jIHwgMyArKy0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0
+aW9uKC0pCj4+IAo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd3dhbi9taGlfd3dhbl9tYmlt
+LmMgYi9kcml2ZXJzL25ldC93d2FuL21oaV93d2FuX21iaW0uYwo+PiBpbmRleCAzZjcyYWU5NDNi
+MjkuLmM3MzFmZTIwODE0ZiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9uZXQvd3dhbi9taGlfd3dh
+bl9tYmltLmMKPj4gKysrIGIvZHJpdmVycy9uZXQvd3dhbi9taGlfd3dhbl9tYmltLmMKPj4gQEAg
+LTYxOCw3ICs2MTgsOCBAQCBzdGF0aWMgaW50IG1oaV9tYmltX3Byb2JlKHN0cnVjdCBtaGlfZGV2
+aWNlICptaGlfZGV2LCBjb25zdCBzdHJ1Y3QgbWhpX2RldmljZV9pZAo+PiAgIAltYmltLT5yeF9x
+dWV1ZV9zeiA9IG1oaV9nZXRfZnJlZV9kZXNjX2NvdW50KG1oaV9kZXYsIERNQV9GUk9NX0RFVklD
+RSk7Cj4+ICAgCj4+ICAgCS8qIFJlZ2lzdGVyIHd3YW4gbGluayBvcHMgd2l0aCBNSEkgY29udHJv
+bGxlciByZXByZXNlbnRpbmcgV1dBTiBpbnN0YW5jZSAqLwo+PiAtCXJldHVybiB3d2FuX3JlZ2lz
+dGVyX29wcygmY250cmwtPm1oaV9kZXYtPmRldiwgJm1oaV9tYmltX3d3YW5fb3BzLCBtYmltLCAw
+KTsKPj4gKwlyZXR1cm4gd3dhbl9yZWdpc3Rlcl9vcHMoJmNudHJsLT5taGlfZGV2LT5kZXYsICZt
+aGlfbWJpbV93d2FuX29wcywgbWJpbSwKPj4gKwkJbWhpX2Rldi0+bWhpX2NudHJsLT5saW5rX2lk
+KTsKPgo+SnVzdCBhIG5pdHBpY2suIFRoZSBzZWNvbmQgbGluZSBoYWQgYmV0dGVyIGJlIGFsaWdu
+ZWQgd2l0aCB0aGUgb3BlbmluZyAKPmJyYWNrZXQ6Cj4KPnJldHVybiB3d2FuX3JlZ2lzdGVyX29w
+cygmY250cmwtPi4uLgo+ICAgICAgICAgICAgICAgICAgICAgICAgICBtaGlfZGV2LT4uLi4KPgo+
+PiAgIH0KPj4gICAKPj4gICBzdGF0aWMgdm9pZCBtaGlfbWJpbV9yZW1vdmUoc3RydWN0IG1oaV9k
+ZXZpY2UgKm1oaV9kZXYpCj4KPi0tCj5TZXJnZXkK
 
