@@ -1,101 +1,112 @@
-Return-Path: <linux-kernel+bounces-224214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E38B911EF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:38:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44668911EF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169CC1F24B58
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:38:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BABFDB20D51
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E36916D4DA;
-	Fri, 21 Jun 2024 08:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="iceT/iqF"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11F316D4DF;
+	Fri, 21 Jun 2024 08:39:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205BB16D31E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC87A13C9A7
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718959123; cv=none; b=PMajLzaF5XpoG/tVfmHPl5VweqqHpn1fW1KrQuMQusgtJesShQmcLvA39mBbpTgVY8AhrF/9GDDm02e3zVoB7gXuf00LCcLdAfdn1trBTg328CJaqCcis74j8qUHQQvz3v9xa49waGRq9c0ghZvEka/xx2X3Zi/9DkAJBaZfX8g=
+	t=1718959198; cv=none; b=o3xcxMSdTbmND7Kk2AjutIC2ijlSMgYYFyCNrQ4lZC1/eA8IjZMBfI68QY/ug9Ytd6euXtC/0IXgW3TnhSg8MZeZXLt2h+jhcuaE/HvK0+J+mR0E3Feqp8/g6LtjTN4mStll6T/SZBpusnnOhF/tYwi9cew7RV2Y99cc8RhKfAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718959123; c=relaxed/simple;
-	bh=jmuD9ij6chyK8MTqocqlyj2la/6Cg/k6crdy5De8/FI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sJsyJhgZ8CmKYt6pwI5Nl2OHHQDN3E5jUYZqlRshi9N+ABHnMAbhwIiRJI8q3agSGVUMnTN29KXV8bTBlPl057UKwwl5/bO74N5P8qtEVYNtLGkEMtuBtICTxJReSck04ryoCdo4pswIdIiETnGH+RiXPQSq2WbF6JQpQp8ZN8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=iceT/iqF; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-62a2424ed00so19803267b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1718959121; x=1719563921; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jmuD9ij6chyK8MTqocqlyj2la/6Cg/k6crdy5De8/FI=;
-        b=iceT/iqFEAfxajYycndQB7ZuK29itP0byDkn1MWUq23cRucOZ7TP1v3SsRBlkJ/P+N
-         fGOc5meH0NpDhY0OKiKeLue716cnEh1d678Frvsw7d9UITYTWw9hta2U+ixBDHkDCpj8
-         ceO2OVn9rQdFnM/alh4hxa657xQr12HKL7ib9DOBslI+Eu9TAkbqi2Mc1RmY8xxC3Egw
-         z+dxvTva3yl8yEwIgcdx5KsIbDyalLfcqc4f1PQqZahSFfHRsXR2c27GiUK5CyOYmi5V
-         Luh11OA6woyIWr+5/Wme0veV8rt8kAkKiR8AglTdpPhLGBdTtdqx/O+tO5kfLAOThWVU
-         NPYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718959121; x=1719563921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jmuD9ij6chyK8MTqocqlyj2la/6Cg/k6crdy5De8/FI=;
-        b=Uftm3/KdL777RxeKUjq9tfscHeBUm/K16J2aTIESJ+4hnnPEpyMMVjmZ0WtwHhHdxL
-         CP87NdA1lAkzBrTvzR47+EgTZ2JoC2UD2TJXHsrYfAUgclXhQTn/bRaASqsNdzfqDoiH
-         EJgmZdMZjejs0L3H7BeHPhenRc435UqOPPfYyEI1DIpWfbk6GjErFAH9g1B1sbbB/sFR
-         dpXcJZud1W0t23bhmNBLT6IlHjEqY906cHnLHVhKfIk00qgFKXsZ++drCtnR9feOGS4k
-         K9G5Riai63cenYf8YYqqw3LVhb7CGHSMH2xzDzI43EywTNabIUmxQNFqrsfor7E10Gij
-         /3kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbOL31wESkSjpPek8g0at7lGmgfI2NVfC/oMprJMC09DaHooSSeFkEi5EWS0/CZXBBP6fXB0xcP1gunU1+tRtNl1eM5QGnTZFFWS2h
-X-Gm-Message-State: AOJu0YyX4gCVOER0/ZrJ80l5F+P2DxJpOWWnfbGWZ2sk9SK6513PzYdx
-	TeRYZcTmH+R2MDNZxefixpfLS9B9tTW5UbaJREKSRvjRQ9E+jMazXUSQo1SxK66K/UnFkAaZtYi
-	ZrYUhtLpNZmsrZa7Wsnovupg34L1uDB7pJ5ahPQ==
-X-Google-Smtp-Source: AGHT+IF912ccGWjWI9KaFr/46jfr9YC6MYpl/J6B8gC/LJE0T8xr9OXEwfRFOQ4rmWJjIRKdkcAoXsOlgo0V93Pg20I=
-X-Received: by 2002:a0d:eb01:0:b0:631:4e00:2c06 with SMTP id
- 00721157ae682-63a8d82c7efmr80902067b3.2.1718959121093; Fri, 21 Jun 2024
- 01:38:41 -0700 (PDT)
+	s=arc-20240116; t=1718959198; c=relaxed/simple;
+	bh=uXBgHevjrFEApEJTDKrrkPPnFg9epgsgwPy9K/sEoms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SizIVXsdL4LzNnHk0cS0AIjaxnOwO3iANYJHlXPYjXDVt5vWx8AIpf0sMpzaA593Bg/O0TihmEmhZGXQoEMe8s0ZKhWmT7FS4jT90M8e254pxOPfc/H2T48ZTjddYWn7nLLAqoNUlfhRHA8Sd6bQdOG2HB2KVJ+uayvh9BFWuzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sKZo7-0000u2-11; Fri, 21 Jun 2024 10:39:43 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sKZo6-003tw7-61; Fri, 21 Jun 2024 10:39:42 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id E08012EE59B;
+	Fri, 21 Jun 2024 08:39:41 +0000 (UTC)
+Date: Fri, 21 Jun 2024 10:39:41 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: mailhol.vincent@wanadoo.fr, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, extja@kvaser.com, 
+	carsten.schmidt-achim@t-online.de, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] can: kvaser_usb: fix return value for hif_usb_send_regout
+Message-ID: <20240621-cyan-cuttlefish-from-eldorado-11bff2-mkl@pengutronix.de>
+References: <20240521041020.1519416-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240609-support_vendor_extensions-v2-0-9a43f1fdcbb9@rivosinc.com>
- <20240609-support_vendor_extensions-v2-4-9a43f1fdcbb9@rivosinc.com>
-In-Reply-To: <20240609-support_vendor_extensions-v2-4-9a43f1fdcbb9@rivosinc.com>
-From: Andy Chiu <andy.chiu@sifive.com>
-Date: Fri, 21 Jun 2024 16:38:30 +0800
-Message-ID: <CABgGipWk=8v=bgZ0OaA=HSDrm2iX3qk6WQuBcqLCzTr_HVYANw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] riscv: cpufeature: Extract common elements from
- extension checking
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor.dooley@microchip.com>, 
-	Evan Green <evan@rivosinc.com>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jiubb3efwkr2svb2"
+Content-Disposition: inline
+In-Reply-To: <20240521041020.1519416-1-nichen@iscas.ac.cn>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--jiubb3efwkr2svb2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 12:34=E2=80=AFPM Charlie Jenkins <charlie@rivosinc.=
-com> wrote:
->
-> The __riscv_has_extension_likely() and __riscv_has_extension_unlikely()
-> functions from the vendor_extensions.h can be used to simplify the
-> standard extension checking code as well. Migrate those functions to
-> cpufeature.h and reorganize the code in the file to use the functions.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+On 21.05.2024 12:10:20, Chen Ni wrote:
+> As the potential failure of usb_submit_urb(), it should be better to
+> return the err variable to catch the error.
+>=20
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 
-Reviewed-by: Andy Chiu <andy.chiu@sifive.com>
+Applied to linux-can.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--jiubb3efwkr2svb2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZ1PEsACgkQKDiiPnot
+vG+cBgf/aA6QRdkplMyfag2SBpDs/bGj74Watxxyx0RceqY4NU/bIWwq9GhCNXBV
+UAGOhx4IdEeWYn7UbDf+/bV0JK1GI/8CWFoqzBvCBdh4sgejtYz91CC+jHw/XItk
+GsX/Lvmlpxz6xUmdlcLpsH6f3684Pazqc25jCOpWRvtasG2NR+YVBiNntFIZGO88
+jrTs8qeng2cWPFC8ZceHHk6+RX6PKW0hs8KTNYrDhkt7x3yOm3Fs4MoEWXw8im6W
+aWASIXMOQnhiOsZYcTIS9dPtgsnMz6U0Sm6WqUujaI6geWN53VIMvXXa6dIao8nB
+v8CRbwj4JVRIv6h2rvuVQRWwnLXZdA==
+=PAuB
+-----END PGP SIGNATURE-----
+
+--jiubb3efwkr2svb2--
 
