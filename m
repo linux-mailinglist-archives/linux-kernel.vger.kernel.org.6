@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-223924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16668911A83
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:43:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D011911A84
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5254281629
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:43:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EE728149F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE8416B72E;
-	Fri, 21 Jun 2024 05:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5F716C6AC;
+	Fri, 21 Jun 2024 05:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghaTGi+U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsjvEN5G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100E216C444
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FDF16C6A6
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718948552; cv=none; b=XgpvVacXVnIx6shTgoFjrWWRNa2rjWLFtMg7HxXRX3PDm6pxb7Ypie8bbItYVk8SfkEdg68bHlDbPTE78zDQyIxlm2703h1MperQaSODJTmun/+5d00D072WBOtzZ8dvy0xqcNuXvFgUDOG9rTsLcLi7gBSjLqSD/jD12isnpbk=
+	t=1718948555; cv=none; b=Zzgy/1sjvRLLB48AsNJReWTXtoC8k7i02DbnMde4hBWHfT2nIZMHdJEDu1jWekfu0IbECkn4rr8koOTCHqZ+vU9wUmgfYoxCkG13tS3xzQosN1evU2b6nVWmBZCge7mroIC+Nx8WSZyffYAFPUdEj/PydlVm89Y5TSzJnlx+JVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718948552; c=relaxed/simple;
-	bh=y6KoeLhtvm8xPFObZNaibmIhv/1vXuAoQWjifV7MAf4=;
+	s=arc-20240116; t=1718948555; c=relaxed/simple;
+	bh=Sd2Phg+JvwLSFmEURLUSKjCDab85FD2bJliNqmZmxJc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pfWQs9GrkA6z+p9p+QtEn5MXMek4AYZ7WxeQQHxBqYytcBKVZ/EE5ddHpeH1dK3zifRewSxr8+uWZHcuPzGcz4vgnAkP1pf4yTc1U2MeZT2RimOiYbqQDkVVZryMMMDrLW4WCnZQX80s2toxREqnVgW+t9OziKlrcnEdq6IRtsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghaTGi+U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DA2EC4AF0A;
-	Fri, 21 Jun 2024 05:42:29 +0000 (UTC)
+	 MIME-Version; b=b4DP9M5TdhxsUGGeeUmyNyxgQKuvfaKl9CcYs4w1mahtdRGtar3ZED/1stasGdTWfPm2Nq9YoxriKcI1NIg3BIRRh/8S//xPEtJE9uL2h+10NICsjZh3VfjeIHgp589CQWLFmtu5/tqopVToLlWmHR3hPKrdNdA09cNiO4tdfFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsjvEN5G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89007C2BBFC;
+	Fri, 21 Jun 2024 05:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718948551;
-	bh=y6KoeLhtvm8xPFObZNaibmIhv/1vXuAoQWjifV7MAf4=;
+	s=k20201202; t=1718948555;
+	bh=Sd2Phg+JvwLSFmEURLUSKjCDab85FD2bJliNqmZmxJc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ghaTGi+UM7rTyHmBOXsg4g/Q87Fxag1B+8BTmn51DnnCTFVZEYWtdlc1Bq6m3a9OI
-	 rQmyMjlhsXeMSLdsf0OBDkZ1iiUBcbohmeGSHet9Zbf7odS2O+5sYO1rxn7TGCFPwB
-	 7nWzR442GxYjaomeWTuFa/aYTj8j5EeBGaln1+26V2j470pWPmGx2LJEwONvA9SvRT
-	 e0BhQPgYEahIKbmo0CW1nY82aDZg1EpHbZQQ1YQgHfehQwIA20edDZL8ekXeXcPzUa
-	 /paqNPM9jXw3gMc1gIQbA8PPVvb3zcgJ6xvaBNXvzos35sn6ju19wMc/BEc7n5v5x5
-	 nRmPjpjlYopSQ==
+	b=IsjvEN5G5UtwH5nf6m44K+yulQm1RsG8bHkIVkguFk1JvLe7qVG7hIdWTy4Kjs6Pe
+	 VAiFIQIHfPdS+46prNFdVC42cOugMQXDmwTViUO66+hLNc28yBDx172D/Esdp9mqyB
+	 tQ1rxcUrko5b+IiC101fBhNBvOcgzADOF/MTa6NS7Rq1aJXjNLgi6RyfKTiNUEPIzd
+	 ItWxesPk2knISOhVPZf1M8Z5+JvBXQG1WaNJki8upVSP04V1DDxv5DypiOBa1t7nE9
+	 XTTxK9Nqj8U8AH8xM38UDDCQ6j1EQihjMZ6aEueUdq74JdFqt5WsYVwfBssqvfzOKK
+	 2igffWYGHyERg==
 From: alexs@kernel.org
 To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Miaohe Lin <linmiaohe@huawei.com>,
@@ -52,9 +52,9 @@ To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	david@redhat.com,
 	42.hyeyoo@gmail.com
 Cc: Alex Shi <alexs@kernel.org>
-Subject: [PATCH 09/15] mm/z3fold: use zpdesc in z3fold_compact_page and do_compact_page
-Date: Fri, 21 Jun 2024 13:46:49 +0800
-Message-ID: <20240621054658.1220796-10-alexs@kernel.org>
+Subject: [PATCH 10/15] mm/z3fold: use zpdesc in __z3fold_alloc
+Date: Fri, 21 Jun 2024 13:46:50 +0800
+Message-ID: <20240621054658.1220796-11-alexs@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240621054658.1220796-1-alexs@kernel.org>
 References: <20240621054658.1220796-1-alexs@kernel.org>
@@ -68,79 +68,52 @@ Content-Transfer-Encoding: 8bit
 
 From: Alex Shi <alexs@kernel.org>
 
-The main purpose is converting page->private to zpdesc->zppage_flag too.
+The main purpose is converting page->private to zpdesc->zppage_flag.
 
 Signed-off-by: Alex Shi <alexs@kernel.org>
 ---
- mm/z3fold.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ mm/z3fold.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/mm/z3fold.c b/mm/z3fold.c
-index 97580e2224c2..3d36448885c9 100644
+index 3d36448885c9..f164eb4e1139 100644
 --- a/mm/z3fold.c
 +++ b/mm/z3fold.c
-@@ -691,12 +691,12 @@ static struct z3fold_header *compact_single_buddy(struct z3fold_header *zhdr)
- /* Has to be called with lock held */
- static int z3fold_compact_page(struct z3fold_header *zhdr)
+@@ -790,7 +790,7 @@ static inline struct z3fold_header *__z3fold_alloc(struct z3fold_pool *pool,
+ 						size_t size, bool can_sleep)
  {
--	struct page *page = virt_to_page(zhdr);
-+	struct zpdesc *zpdesc = page_zpdesc(virt_to_page(zhdr));
- 
--	if (test_bit(MIDDLE_CHUNK_MAPPED, &page->private))
-+	if (test_bit(MIDDLE_CHUNK_MAPPED, &zpdesc->zppage_flag))
- 		return 0; /* can't move middle chunk, it's used */
- 
--	if (unlikely(PageIsolated(page)))
-+	if (unlikely(PageIsolated(zpdesc_page(zpdesc))))
- 		return 0;
- 
- 	if (zhdr->middle_chunks == 0)
-@@ -739,14 +739,13 @@ static int z3fold_compact_page(struct z3fold_header *zhdr)
- static void do_compact_page(struct z3fold_header *zhdr, bool locked)
- {
- 	struct z3fold_pool *pool = zhdr_to_pool(zhdr);
+ 	struct z3fold_header *zhdr = NULL;
 -	struct page *page;
-+	struct zpdesc *zpdesc = page_zpdesc(virt_to_page(zhdr));
++	struct zpdesc *zpdesc;
+ 	struct list_head *unbuddied;
+ 	int chunks = size_to_chunks(size), i;
  
--	page = virt_to_page(zhdr);
- 	if (locked)
- 		WARN_ON(z3fold_page_trylock(zhdr));
- 	else
- 		z3fold_page_lock(zhdr);
--	if (WARN_ON(!test_and_clear_bit(NEEDS_COMPACTING, &page->private))) {
-+	if (WARN_ON(!test_and_clear_bit(NEEDS_COMPACTING, &zpdesc->zppage_flag))) {
- 		z3fold_page_unlock(zhdr);
- 		return;
- 	}
-@@ -757,8 +756,8 @@ static void do_compact_page(struct z3fold_header *zhdr, bool locked)
- 	if (put_z3fold_locked(zhdr))
- 		return;
+@@ -823,9 +823,9 @@ static inline struct z3fold_header *__z3fold_alloc(struct z3fold_pool *pool,
+ 		zhdr->cpu = -1;
+ 		spin_unlock(&pool->lock);
  
--	if (test_bit(PAGE_STALE, &page->private) ||
--	    test_and_set_bit(PAGE_CLAIMED, &page->private)) {
-+	if (test_bit(PAGE_STALE, &zpdesc->zppage_flag) ||
-+	    test_and_set_bit(PAGE_CLAIMED, &zpdesc->zppage_flag)) {
- 		z3fold_page_unlock(zhdr);
- 		return;
- 	}
-@@ -766,7 +765,7 @@ static void do_compact_page(struct z3fold_header *zhdr, bool locked)
- 	if (!zhdr->foreign_handles && buddy_single(zhdr) &&
- 	    zhdr->mapped_count == 0 && compact_single_buddy(zhdr)) {
- 		if (!put_z3fold_locked(zhdr)) {
--			clear_bit(PAGE_CLAIMED, &page->private);
-+			clear_bit(PAGE_CLAIMED, &zpdesc->zppage_flag);
+-		page = virt_to_page(zhdr);
+-		if (test_bit(NEEDS_COMPACTING, &page->private) ||
+-		    test_bit(PAGE_CLAIMED, &page->private)) {
++		zpdesc = page_zpdesc(virt_to_page(zhdr));
++		if (test_bit(NEEDS_COMPACTING, &zpdesc->zppage_flag) ||
++		    test_bit(PAGE_CLAIMED, &zpdesc->zppage_flag)) {
  			z3fold_page_unlock(zhdr);
- 		}
- 		return;
-@@ -774,7 +773,7 @@ static void do_compact_page(struct z3fold_header *zhdr, bool locked)
+ 			zhdr = NULL;
+ 			migrate_enable();
+@@ -868,9 +868,9 @@ static inline struct z3fold_header *__z3fold_alloc(struct z3fold_pool *pool,
+ 			zhdr->cpu = -1;
+ 			spin_unlock(&pool->lock);
  
- 	z3fold_compact_page(zhdr);
- 	add_to_unbuddied(pool, zhdr);
--	clear_bit(PAGE_CLAIMED, &page->private);
-+	clear_bit(PAGE_CLAIMED, &zpdesc->zppage_flag);
- 	z3fold_page_unlock(zhdr);
- }
- 
+-			page = virt_to_page(zhdr);
+-			if (test_bit(NEEDS_COMPACTING, &page->private) ||
+-			    test_bit(PAGE_CLAIMED, &page->private)) {
++			zpdesc = page_zpdesc(virt_to_page(zhdr));
++			if (test_bit(NEEDS_COMPACTING, &zpdesc->zppage_flag) ||
++			    test_bit(PAGE_CLAIMED, &zpdesc->zppage_flag)) {
+ 				z3fold_page_unlock(zhdr);
+ 				zhdr = NULL;
+ 				if (can_sleep)
 -- 
 2.43.0
 
