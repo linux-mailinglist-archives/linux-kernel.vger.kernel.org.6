@@ -1,158 +1,119 @@
-Return-Path: <linux-kernel+bounces-224754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3AB912682
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:18:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D547912685
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 740AB1F22B2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:18:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07B3EB22362
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B418155758;
-	Fri, 21 Jun 2024 13:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F331514C1;
+	Fri, 21 Jun 2024 13:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LwDmfFsg"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="lyu+vL2M"
+Received: from mail-ed1-f99.google.com (mail-ed1-f99.google.com [209.85.208.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69BA2E622;
-	Fri, 21 Jun 2024 13:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D58E1EA80
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718975884; cv=none; b=aEGSDNN2SxdiR9zbtKkrrhPY6g0eIq5E42NjYLdGLIixlVFx2lTXcIQW3YsN4/J43XKNBcAutBNGT1WUUlT1dra+SAF55vyn5BdhOO/xh7GfRgIq9BYbW8CCTZq3TRS7HS6ZFWqysa/52P6v6yycPwwbhRonNMUYYhZf/oJDTLQ=
+	t=1718975979; cv=none; b=buiC0BsbZUIP3WZgBmSSSSvsq2gN7LDUEV3pNHGThOLVMcLlYLSDDEJNV8fudKhhyfD2ZP+p3bu+NPwYERFxofASUBagXUG72WpJEitkxYX6NBTq+ScqjhzVd+Jn4Kv2czTBD8R8eq1DnqbO3RVCsvIHextDNfKgsg1r3FhUGyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718975884; c=relaxed/simple;
-	bh=NTlU4MzAnhhcT3IXIo/UnGQRRM53fAqVg82XwxlIG3s=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p8patnco3wykoXMp46UB+EImT3yPY1czHBIa63BmVL8PkM6w4pkI8cANIHL3qTREvu2gA9ZqaaG8+qiPTYvHd9FS+OMOrMnjTsLnJZ5fnRY7Tdny6DinwILNLr75h61UktmeUcmPIxDSlW80uQl9UhDnchmnfXxtZapkJA0wMiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LwDmfFsg; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52cdb0d8107so454631e87.1;
-        Fri, 21 Jun 2024 06:18:02 -0700 (PDT)
+	s=arc-20240116; t=1718975979; c=relaxed/simple;
+	bh=8phWsW4UQP4S3MsRvE9yMpzW048VSwveP4al4mLYhbU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sO9s4sk5leiky9fAPykyXFCdkjloR3v1cOwG5ICt3PtADURSKmEvJEkFtEyRa5dixkumlztKclQdxkQVIm9dy2QFsAGCk/nfki3pKgpYNlzd6jkQtnp8exFDYvncpvCOFS8kCC86L4Mut24ShUrIbaFZPWmDboH4Yph8wXI26RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=lyu+vL2M; arc=none smtp.client-ip=209.85.208.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-ed1-f99.google.com with SMTP id 4fb4d7f45d1cf-57d20d89748so2025880a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:19:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718975881; x=1719580681; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Va7fQxN9lBsLo744XPC53nXOlbU4afLajRDQWh9HAcM=;
-        b=LwDmfFsgIgqXSJLe7vkAQorPvrkxgUoi9GwHAAjqtdXUj7BldJCP+CpE9sTNQR4HkE
-         NNOwil3Be5uxnON1hKy/U+tPXfZQ3rLbGLhZaD3wslW0DU7iw2/sPASpu4VfdkItySPj
-         KiEbpF7b2jrEi1q7hg4NaDtzcqprDpaJihUFUkruJz84ha7x37IPNNKJXuFfcH3QW592
-         EBg1AbkgkaPyUcFP64ywEhf+36U8v+GsXUhxNZRV/16Vf5TvOlrmOEU7y+pXSBIfrT1y
-         4s7kM95McoWqtKtwbFcBIojIoYD7VA8edHUmmDqV5OySSjY3ByL921bkKFbeP7D/lEQg
-         YUgA==
+        d=raspberrypi.com; s=google; t=1718975975; x=1719580775; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ywqgUozraqYshx47u4jI8RUlSAv6wf2P9H7IH0f1xAo=;
+        b=lyu+vL2MekikVh7bLJkffBy4kdJHvVkpnH+HKbU4pOMWqPlwxZ6QeB7dfnKumCGDUS
+         uGtuGqLrN36x/hgDqg/CfeBDsJvGJE3A4TUlovq23WM3r5LWZ91+BtvMFfjbAOA6ix7D
+         pLZQPpfAPmsfXDxzjVw02WxaJXj0T+1wMUyGR6NZgQl2uvO7eQtG7/4cOba7ojjdZvtN
+         bPuMn12MwqHcdZ54DSJQkobeYKBHtrWXL8HZUWLKF5m6qVXQjJKF6jP5abmF4SuAedL7
+         bBhoIjjglUOwLWeFB0RWQmEDIGoC/JNdHfj1rF4UuOYbnNthIoJ80/fedpxkDjKftS7W
+         cRNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718975881; x=1719580681;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Va7fQxN9lBsLo744XPC53nXOlbU4afLajRDQWh9HAcM=;
-        b=Clh7Utq606K45dhxCpq8LNFQ16JbJsRFEkvy8KqDn6+GeJg5QFoGn3D2K669HhB78Q
-         j7wcuDyXT2q5hHEpaHyoevG0CUa09mSlOqqTeZxAtnWeplphKZCW4fuxNXJxSgwifQyg
-         VSsbLLP1XueHAtVBA4rI/JzFc89JV7KX/Q1CsrZ3jrl/AFh8e30m6AITd6y83V0ELCDc
-         YY4cNHEUqQ/3IsfNTWo654O0dVoN582mcUzwnxlYQ8PMrIidnLxYUYDlVxHg5ZUmQwd1
-         eHjiLpxD9QoRKOVSuInDLoiT7WgYKv0V3fMX6WCzLx5vPHmvIZx1BbMuo/GbuhU5D4KQ
-         6Vtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpl99QsDDLdMow1ZioOEzDLn4Z3aA5pxFKsPuVkxLUTNaUTUtgk3EKKWCOrLjSWTu5qZImNywTNG8TuBlhUoopjQdAhjGJjX+6YWbUid4xGLAd0IngopZP38WunfKDRNMF/d7DTNOPXLfFFK2TM/aKfAZrVEf+FJh9HrLciDBTQU5iViKO
-X-Gm-Message-State: AOJu0Yy6hpo6G08SfD9Onk4HjsqjDr3l2RMwzFccuotVNUM0S7UDCRZk
-	UxfaKBOT6UGfDgc0Scv7QKvFy9yJBRlmI9lzX0lbbsmRsfcFQEV9
-X-Google-Smtp-Source: AGHT+IHkhqARK5Dooq1qSnFt+7oS2w45OWcGar+Ac/wnacPVJSV9FXzNu8K18xQUDgDf/Jb4mgoyTA==
-X-Received: by 2002:a05:6512:138c:b0:52c:cda0:18b9 with SMTP id 2adb3069b0e04-52ccda01977mr5931095e87.59.1718975880879;
-        Fri, 21 Jun 2024 06:18:00 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a8d8esm27985845e9.12.2024.06.21.06.18.00
+        d=1e100.net; s=20230601; t=1718975976; x=1719580776;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ywqgUozraqYshx47u4jI8RUlSAv6wf2P9H7IH0f1xAo=;
+        b=HnLcQlwVXtcfwPCBcc6wUnDrTX/rta9YxM+qUDxgw3Ul1lPECnEoTNK47nvBt+4OC+
+         mv7qxNVIpQFeovgvOsicRq/HVaMJ4mEoR0qjRHmc4R8KN0BCPFtll9ij7mw2tT1OJkMu
+         yWmopgFZVGFLlsZbk+LCzPvh0H0j2Ebot+ftq6os+2pJ4j3Job6/vHCBG7XCCZMnEk9b
+         NIszPTVFppxw1cQS8j2TufhTTaght8mBw8oA+62g6sxweIRYpWjju8tB2fiPshE04JtO
+         xqKHrPkwqsO/4nyufpaBSiegpf8C6r83n5xJ76Ww+lAOBGdflDg0BVUfK5XOxL/ceKa1
+         Slvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlhxDpVAj3+vP99zgu+TR3Q/4+QzTZFczAhRLKpuZImG1uI6HcVsr2pHYsurJxHCNFB5YhXbPIvjfkjiHSsF6hXdChZIWvsmC7BQzU
+X-Gm-Message-State: AOJu0YydGjYgynH1M8o8AZ6o3f6PGIGpyEEmBdhRFX3fTuI74ZS4ysk4
+	aCVxISJTgt/vtFQ0f4sR1NktSDze0pJtaOI1upej+yyLlUtWQ0mU5+G2BS8RCDLR2bQlnbMCmHM
+	ASVf/V6Czfj4asG4mi2k3iunNTGL5Oyqy
+X-Google-Smtp-Source: AGHT+IE8U46ju+ybrG/Rx2Vzp4N6v27VN6j8n+u25aLnXW0S9ZEwDZZhxgamy3ur/j4ffUnG/J7SLhtrZvnR
+X-Received: by 2002:a50:c35a:0:b0:57c:4db6:c0fc with SMTP id 4fb4d7f45d1cf-57d07e7acdbmr4405556a12.10.1718975975405;
+        Fri, 21 Jun 2024 06:19:35 -0700 (PDT)
+Received: from raspberrypi.com ([188.39.149.98])
+        by smtp-relay.gmail.com with ESMTPS id 4fb4d7f45d1cf-57d303c64c4sm28772a12.0.2024.06.21.06.19.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 06:18:00 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 21 Jun 2024 15:17:58 +0200
-To: Oleg Nesterov <oleg@redhat.com>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	loongarch@lists.linux.dev
-Subject: Re: [PATCH] uprobe: Do not use UPROBE_SWBP_INSN as static initializer
-Message-ID: <ZnV9hvOP5388YJtw@krava>
-References: <20240618194306.1577022-1-jolsa@kernel.org>
- <CAEf4BzbN4Li2iesQm28ZYEV2nXsLre8_qknmvkSy510EV7h=SA@mail.gmail.com>
- <20240620193846.GA7165@redhat.com>
- <CAEf4BzaqgbjPfxKmzF-M7nzGroOwKikA0BM7Tnw7dKzKS+x9ZQ@mail.gmail.com>
- <20240621120149.GB12521@redhat.com>
+        Fri, 21 Jun 2024 06:19:35 -0700 (PDT)
+X-Relaying-Domain: raspberrypi.com
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+To: Maxime Ripard <mripard@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: [PATCH v2 1/2] MAINTAINERS: drm: vc4: Add Raspberry Pi as maintainers
+Date: Fri, 21 Jun 2024 14:19:25 +0100
+Message-Id: <20240621131926.3133484-1-dave.stevenson@raspberrypi.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240621120149.GB12521@redhat.com>
 
-On Fri, Jun 21, 2024 at 02:01:50PM +0200, Oleg Nesterov wrote:
-> On 06/20, Andrii Nakryiko wrote:
-> >
-> > On Thu, Jun 20, 2024 at 12:40 PM Oleg Nesterov <oleg@redhat.com> wrote:
-> > >
-> > > But I can't understand what does it do, it calls emit_break() and
-> > > git grep -w emit_break finds nothing.
-> > >
-> >
-> > It's DEF_EMIT_REG0I15_FORMAT(break, break_op) in
-> > arch/loongarch/include/asm/inst.h
-> >
-> > A bunch of macro magic, but in the end it produces some constant
-> > value, of course.
-> 
-> I see, thanks!
-> 
-> Then perhaps something like below?
+Add myself as maintainer for VC4 alongside Maxime, and
+our internal review list as reviewer.
 
-lgtm, added loong arch list/folks
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+---
 
-for context:
-  https://lore.kernel.org/bpf/20240614174822.GA1185149@thelio-3990X/
+v1->v2
+Changed the internal list from M to R.
 
-thanks,
-jirka
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 
-> Oleg.
-> 
-> 
-> --- x/arch/loongarch/include/asm/uprobes.h
-> +++ x/arch/loongarch/include/asm/uprobes.h
-> @@ -9,7 +9,7 @@ typedef u32 uprobe_opcode_t;
->  #define MAX_UINSN_BYTES		8
->  #define UPROBE_XOL_SLOT_BYTES	MAX_UINSN_BYTES
->  
-> -#define UPROBE_SWBP_INSN	larch_insn_gen_break(BRK_UPROBE_BP)
-> +#define UPROBE_SWBP_INSN	(uprobe_opcode_t)(BRK_UPROBE_BP | (break_op << 15))
->  #define UPROBE_SWBP_INSN_SIZE	LOONGARCH_INSN_SIZE
->  
->  #define UPROBE_XOLBP_INSN	larch_insn_gen_break(BRK_UPROBE_XOLBP)
-> --- x/arch/loongarch/kernel/uprobes.c
-> +++ x/arch/loongarch/kernel/uprobes.c
-> @@ -7,6 +7,13 @@
->  
->  #define UPROBE_TRAP_NR	UINT_MAX
->  
-> +static __init int __ck_insn(void)
-> +{
-> +	BUG_ON(UPROBE_SWBP_INSN != larch_insn_gen_break(BRK_UPROBE_BP));
-> +	return 0;
-> +}
-> +late_initcall(__ck_insn);
-> +
->  int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe,
->  			     struct mm_struct *mm, unsigned long addr)
->  {
-> 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d1566c647a50..8dabcb16d29f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7520,6 +7520,8 @@ F:	include/uapi/drm/v3d_drm.h
+ 
+ DRM DRIVERS FOR VC4
+ M:	Maxime Ripard <mripard@kernel.org>
++M:	Dave Stevenson <dave.stevenson@raspberrypi.com>
++R:	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+ S:	Supported
+ T:	git git://github.com/anholt/linux
+ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+-- 
+2.34.1
+
 
