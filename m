@@ -1,131 +1,189 @@
-Return-Path: <linux-kernel+bounces-224600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C384191248B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:56:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E41491248C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00E391C245B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:56:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDAD0284150
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68E0174EC6;
-	Fri, 21 Jun 2024 11:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8CA17554C;
+	Fri, 21 Jun 2024 11:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uRJDSg3o"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P3PxiIeg"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA4317278D;
-	Fri, 21 Jun 2024 11:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B373413D615
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718970951; cv=none; b=SRLq6rR0vInalB5jPMQRWuI0OUuG1zJFoYB1k/V8zBD7WJkt+rlJUDbee4Nqe0dENyTZap4SaxQQchHC3XrL8HwV+HhcNH9f8ur15g7+WnAxpB10fKsDQwkMXdSxuQtXH12C8jiATvGHhZG9JiQA//d8QN70nq0/PyqmR+SRCVc=
+	t=1718970952; cv=none; b=FScCH2iu47+XmaK/LkFddBSmR9zqay49v5I58MIny02AZLcJ6Hj2cObUGYNmYjZQZNF539JgFCqtQm84CUE30m15Uogrh+Lny9jngHR7JpgrHuFherG3QHwVfme7q2LYW3S7UE1l/bVuJlyKSHmEBy+4y5MH6NaPU10zdsyYvFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718970951; c=relaxed/simple;
-	bh=9EWTfhevVP6TT+S5MmRO88VX1lFmzRE/f5ndlAriqq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=of7VHU/HDHTxUEGZAjZFyI6mG5gGtir6arJknriVEafmTG50fCeLnJqmFGtzB3YOfOEimY1y/Dw9xIWD6+McIbp2QdLcPODT4z+ZDkFKWxN77jav9untDiaEnkB6zMreS+CdLZgj+8f/mpZDn24UrHVG9DQX0tqfNQSGM8mzUKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uRJDSg3o; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LBtR4H106155;
-	Fri, 21 Jun 2024 06:55:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718970927;
-	bh=N2ZE99Uz1VZASX7cXNMBkj1q/fbnzsz/c+sABmANsi8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=uRJDSg3ooqlVPxSOB5UehIxqHLNJhOtMSgY2wD7JGPZWe1pma8rRWTlxa0+HZmWv2
-	 rsxoRvW0WiYtVTypdsouue5yr7oNyQ6Dy29Jww2wcDZkwDDPteZ6Y1KzKlex6Wemie
-	 fQ6xsnTDGyhHu/1s6IprjOTg2jiX2VTBiBWPXSNw=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LBtRvu012474
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 06:55:27 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Jun 2024 06:55:26 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Jun 2024 06:55:26 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LBtLXe023771;
-	Fri, 21 Jun 2024 06:55:22 -0500
-Message-ID: <98e52732-36fa-3e76-cd2c-fde9181bdeb7@ti.com>
-Date: Fri, 21 Jun 2024 17:25:21 +0530
+	s=arc-20240116; t=1718970952; c=relaxed/simple;
+	bh=gIYUPaRLaqQdrTEadtQVbh9QzpoHT0q2BKQGmXoTq3U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U82Eq1IYIDuX+m44m4z4VdBHm38NsoHg0YOoxJBGtxo5gKRLNP+t42kzLuC/isjB4oHcw4eOaY9/qrOTlAkrSdjX4FdiKp6VKoT2CM3/iNW5V2TsGt0C/g+EEIwbxla4vbqrkaavQPK2pUS2Pb/zKDBZb08QqkYBIyBFl45o+Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P3PxiIeg; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4230366ad7bso21848675e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718970948; x=1719575748; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PCo1F6Ya6OR/yQ3uF5qfJxG3DZzXGFh5E4PjRee+Y8I=;
+        b=P3PxiIegdjukZ5RoJbZ+iua/AQOSvTb0zI6+zw7D22mM5Um0EuRGYE1rY8cWrL/nyz
+         ZRRAEY8BHfvA/LuV2dZjwd8HmiKLs5pwMBNUKExJYRYaiZgJ945N+5yge1CayIFsjHAq
+         w8r33Ah9D9YrnXXU2m1g1gumm3tXvUwUKwRym3ZTorAvSLAcJUtpsZgLO6TUnZjQvFEL
+         d2iQZnAfsa1GK6geFVW1WyVQxEaxQRbwoPYBNbHz2xpO08TlF52Xpf73vgAlRzL9Cx1s
+         JRNMCmDn98yfHuCsRXfj6GtUk7vYBhocKiuev94M808sfI03Oz3Z5g32t9yMAqNQZkyx
+         T7Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718970948; x=1719575748;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PCo1F6Ya6OR/yQ3uF5qfJxG3DZzXGFh5E4PjRee+Y8I=;
+        b=vB+6mpIHT/G9e3QqsOnMAAn6Ql8ywPlq9SD9KH6NbVqaWABddYcQH4BqFB4bDqL9hD
+         X/ukHhylOTP8qbYroLQWmxuK3bPZUMRhdHKIueQP0tAyXZ2m/gyZ4SKNX2UyAvWdeAtE
+         1507yrZSvVBw4V0pnsr9RQ4r8CLvgmQ/VCd6Tcl5kHW8BUqU4E/E3ode/jKDTIlniDIR
+         /l/1FEb+9RlTW6LoHpEz70nS3yNOtRsLl36d3ndjZwPsF1d6Jz4h37A8apg6XMWNFP3Q
+         3ZNjC2iI6m7rS+cssiqIHeabTE5At8NMADzs8vSDzV8RC2LI+ZuMfibx8UTEd9eBnx3p
+         mI3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWOPfTBOZHPSsz3ifWWgyUdFxlZR4I9Dxoem9MSM+Q4tHHQj7pb4dh/fY9HN9evdI61y97P+6Oj7c6g4WcJdzt1WS+Zex6Y2OE5MgXx
+X-Gm-Message-State: AOJu0YyhAXyV80t51sUCqMae/dXIVmp6T/OiT0H7DRSPiFcKz4MiyPL7
+	8bDjfc44DC4sWOqO5JhWMKAOdjfQQv4I0ujnNkLIZcI0jHRbV4g+w1vLRwYOtHM=
+X-Google-Smtp-Source: AGHT+IG2ZzeF2yecrvNq84hEyosATlepWWCUYD4rioXxs0/RdSHjwr3JFRh5RYSXgIR/x10AU78J2g==
+X-Received: by 2002:a05:600c:6a8f:b0:424:7b64:18da with SMTP id 5b1f17b1804b1-4247b6419ecmr62155565e9.0.1718970947732;
+        Fri, 21 Jun 2024 04:55:47 -0700 (PDT)
+Received: from gpeter-l.lan ([2a0d:3344:2e8:8510::3aa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d208dcesm60386725e9.31.2024.06.21.04.55.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 04:55:47 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+To: lee@kernel.org,
+	arnd@arndb.de,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org,
+	saravanak@google.com,
+	willmcvicker@google.com,
+	semen.protsenko@linaro.org,
+	kernel-team@android.com,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v3 0/2] Add syscon of_syscon_register_regmap api
+Date: Fri, 21 Jun 2024 12:55:42 +0100
+Message-ID: <20240621115544.1655458-1-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support runtime
- suspend/resume
-Content-Language: en-US
-To: "jackson.lee" <jackson.lee@chipsnmedia.com>,
-        Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-        Nas Chung
-	<nas.chung@chipsnmedia.com>,
-        "lafley.kim" <lafley.kim@chipsnmedia.com>,
-        "b-brnich@ti.com" <b-brnich@ti.com>, "Luthra, Jai" <j-luthra@ti.com>,
-        Vibhore
-	<vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
-        Aradhya <a-bhatia1@ti.com>, "Raghavendra, Vignesh" <vigneshr@ti.com>
-References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
- <20240617104818.221-3-jackson.lee@chipsnmedia.com>
- <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
- <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
- <SE1P216MB130382374B76CD8BC9FFCFE5EDC82@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
- <881dcea1-a592-4506-083a-9d5f3c6a8781@ti.com>
- <b2f7552d37075538e22640f7b42838d29d3f8b3e.camel@collabora.com>
- <e901967f-59df-f4b0-de51-61e542c04161@ti.com>
- <07d56a690d5fed16082e73c5565b67777e31494a.camel@collabora.com>
- <SE1P216MB13033A129DF3DF878ECD4F85EDC92@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <SE1P216MB13033A129DF3DF878ECD4F85EDC92@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
-Hi Jackson,
+Hi Lee, Arnd, Krzysztof, all,
 
-On 21/06/24 06:00, jackson.lee wrote:
-> Hi Nicolas / Devarsh
-> 
-> 
-> There are lots of mail thread in the loop, I have confusion.
-> I'd like to make check-up list for the "Support runtime suspend/resume" patch.
-> 
-> 1. Profiling resume latency
-> 2. after that, adjusting the time.
-> 
+This series adds support to syscon driver for a new of_syscon_register_regmap()
+api.
 
-Beyond above two points,
+Platforms such as gs101 require a special regmap to access PMU registers, which
+in the existing upstream client drivers are accessed via syscon regmap. This
+issue was partly solved in [1] whereby a custom regmap is created in exynos-pmu
+and a new API exynos_get_pmu_regmap_by_phandle() created.
 
-3. I think this patchset also breaks hrtimer polling and so the VPU operation
-on AM62A which completely relies on polling, you can test with removing the
-interrupt property from your dts file before/after this patch-set. With the
-polling it needs to be taken care that polling is started only after device is
-on power-on state and is stopped before device gets suspended.
+One issue with the approach in [1] is that it required client drivers to be
+updated from syscon_regmap_lookup_by_phandle() to
+exynos_get_pmu_regmap_by_phandle() when obtaining the regmap.
 
-4. There is some discussion going on between me and Nicholas on whether
-delayed suspend is really required after last instance close or not. My
-thought was that we should suspend immediately after last instance close, but
-Nicolas mentioned some concerns w.r.t use-cases such as gapless playback so I
-am following up with him.
+Whilst updating to exynos_get_pmu_regmap_by_phandle() was OK for exynos
+specific drivers, it meant other drivers like syscon-reboot and syscon-poweroff
+which span multiple SoC architectures could not be easily re-used.
 
-Regards
-Devarsh
+In previous review feedback for USB phy and gs101 poweroff driver Krzysztof
+requested [2] that we take a more generic approach that other SoCs can also
+leverage.
+
+The new of_syscon_register_regmap() api overcomes this limitation by allowing
+a SoC driver like exynos-pmu to register it's SoC specific regmap with the
+syscon driver. This keeps the SoC complexity out of syscon driver, and allows
+client drivers to continue using syscon_regmap_lookup_by_phandle() as before.
+The solution allows more code re-use and can be used by other SoC archs.
+
+Notes on probe ordering
+
+exynos-pmu runs at postcore_initcall, so all but one of the client drivers
+(ufs phy, usb phy, watchdog) run after the regmap is created and registered.
+
+The one exception to this is pinctrl-samsung driver which is also
+postcore_initcall level. The exynos_get_pmu_regmap() and
+exynos_get_pmu_regmap_by_phandle() have been temporarily left to support
+-EPROBE_DEFER for pinctrl-samsung driver.
+
+The longer term plan to solve that probe ordering issue is to enable
+fw_devlink for syscon dt properties so they are correctly listed as
+suppliers in /sys/class/devlink. I tested a PoC patch (see below) for
+fw_devlink and that seemed to work fine. Once fw_devlink supports syscon I
+believe exynos_get_pmu_regmap_by_phandle() api could be removed. The main issue
+currently with fw_devlink syscon support is the wide diversity of dt property
+naming currently in use. That was discussed previously here [3]
+
+1248a1256,1257
+> DEFINE_SUFFIX_PROP(syscon_phandle, "syscon-phandle", NULL)
+> DEFINE_SUFFIX_PROP(pmu_syscon, "pmu-syscon", NULL)
+1358a1368,1369
+>     { .parse_prop = parse_syscon_phandle, },
+>     { .parse_prop = parse_pmu_syscon, },
+
+
+Note one previous concern from Saravana about syscon potentially probing
+before exynos-pmu driver and it relying on drivers/Makefile ordering. I tested
+this and even if mfd is listed before soc in drivers/Makefile exynos-pmu
+always probes first due to syscon driver not setting a .of_match_table entry.
+
+Once the syscon and exynos-pmu patchs are queued I will send patches for
+watchdog and ufs phy drivers to switch back to syscon_regmap_lookup_by_phandle()
+
+Many thanks,
+
+Peter.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20240219204238.356942-1-peter.griffin@linaro.org/T/
+[2] https://lore.kernel.org/lkml/06383015-51b2-4f4c-9fd8-e4f7ce12f44e@kernel.org/
+[3] https://lore.kernel.org/all/CAGETcx-CCpaV7R0O0HpDpoX6KxQBuJiMmKdWA8nDE-5Qj2Sa7g@mail.gmail.com/
+
+Changes since v2:
+ - Move allocation outside spinlock area (Arnd)
+Link to v2:
+ - https://lore.kernel.org/linux-arm-kernel/20240620112446.1286223-1-peter.griffin@linaro.org/
+
+Changes since v1:
+ - Collect by tags
+ - Keep syscon lock held for check and adding entry (Krzysztof)
+ - pass pmu_np not np to syscon_node_to_regmap() (William)
+
+Link to v1:
+ - https://lore.kernel.org/linux-arm-kernel/20240614140421.3172674-1-peter.griffin@linaro.org/
+
+Peter Griffin (2):
+  mfd: syscon: add of_syscon_register_regmap() API
+  soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
+
+ drivers/mfd/syscon.c             | 48 ++++++++++++++++++++++++++++++++
+ drivers/soc/samsung/exynos-pmu.c | 38 ++++++++++---------------
+ include/linux/mfd/syscon.h       |  8 ++++++
+ 3 files changed, 70 insertions(+), 24 deletions(-)
+
+-- 
+2.45.2.741.gdbec12cfda-goog
+
 
