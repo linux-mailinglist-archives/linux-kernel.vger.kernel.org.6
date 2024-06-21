@@ -1,138 +1,274 @@
-Return-Path: <linux-kernel+bounces-224836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387DC912770
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:19:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C94B912766
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98B35B27A7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80DA2884A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F2421360;
-	Fri, 21 Jun 2024 14:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11DE1D55D;
+	Fri, 21 Jun 2024 14:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="L/kGsDc0"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUlkHe9e"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819CC208A4;
-	Fri, 21 Jun 2024 14:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499631C6BD
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718979540; cv=none; b=fzt9DOGiQHBQqAGJ5SBQJrxEvUai2VgAdQ49wFgi/vO5DmGS7DfYRSfk66O8+4iyum1A6/tf348M6Y8xJAKfeN28FKYiZP1ybS16sTvKwA+E5MAc/HcdMS3UZ3A2Dak/GIEh8gk0rYtp0QRGnrdYywNeb1zUlGFvQ8xHdac92PU=
+	t=1718979518; cv=none; b=L1j4jWFra7rTBl7UC5PDuTL0MV/SAO9xPTRwfMrTjXB7FET6a3/TYJtcp07evjUmLvVO65brs+hPn4CjPof7SB8tjeVv94sJMh8u6nv+lwzNGyoq1MAMeTsLD2cxejWQR4jFeqJvWjgT8Z7H9pwRaUl+AgvDksZRqCNYympk6+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718979540; c=relaxed/simple;
-	bh=1c8Qc1Y5GCm2rehTE2RjE51jiJjppd4c+lxxUpnpk1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dQ2C7vLD70uWs0ZRjEHfL1syynIOAlzOHqzSsrBxsh6hUL6igeUY10JGJawHqpCVjliYm5CaJIvnUwm9hOFTKd3awsWXVfB1dLctgIvHfeh2kPGTpPqNQpwD9wK+nW0pFmDWeX9eRKV42FqAdA9AYDtepqz6g0mpvsRvSVM3faQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=L/kGsDc0; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LDmh2Q002183;
-	Fri, 21 Jun 2024 14:17:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=LF1s2xvSDPljT0oEHiEGquZZeto
-	2SHuFoShwJ3ChVqM=; b=L/kGsDc0HEiswhQufYopyCdldOClTJuhdzH8JmGDxfz
-	Lk6zfv7ZyAlKnlmxJRrrh4aH4Vo6AZ29JHrHYdzne6RrZ4VcWKqV2+MkkG5QRfhy
-	0qSKEGCUNJuiNPU3fsTgezxRrE19zpuQPZuyJojvXd57h4Yj8KrPObmRu8KNTLke
-	EUFZoNvo/uubNeebvEIH/6KQFdffHWduJsAL68+/zmvfOSbM3fvgFWlSvxrd10Us
-	O0u6hG6qdpucSGkxfJgvRJWn+W4PbMfk8oRJ2Q7wUTAY+t7wJCsvfANxwea+5aMZ
-	H9e98wxZ3Yopq6+ZaYKDwc/LvuNqTd9Eoqe7SGyTp4A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ywa0mr7fu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 14:17:46 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45LEHjOc030057;
-	Fri, 21 Jun 2024 14:17:45 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ywa0mr7fn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 14:17:45 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45LBuPa6031319;
-	Fri, 21 Jun 2024 14:17:44 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yvrrq7k29-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 14:17:44 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45LEHe7240436050
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Jun 2024 14:17:42 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 38C4E2004D;
-	Fri, 21 Jun 2024 14:17:40 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1861F20040;
-	Fri, 21 Jun 2024 14:17:39 +0000 (GMT)
-Received: from osiris (unknown [9.171.32.192])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 21 Jun 2024 14:17:39 +0000 (GMT)
-Date: Fri, 21 Jun 2024 16:17:37 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org, Helge Deller <deller@gmx.de>,
-        linux-parisc@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, Brian Cain <bcain@quicinc.com>,
-        linux-hexagon@vger.kernel.org, Guo Ren <guoren@kernel.org>,
-        linux-csky@vger.kernel.org, linux-s390@vger.kernel.org,
-        Rich Felker <dalias@libc.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-        libc-alpha@sourceware.org, musl@lists.openwall.com, ltp@lists.linux.it
-Subject: Re: [PATCH 12/15] s390: remove native mmap2() syscall
-Message-ID: <20240621141737.14882-B-hca@linux.ibm.com>
-References: <20240620162316.3674955-1-arnd@kernel.org>
- <20240620162316.3674955-13-arnd@kernel.org>
+	s=arc-20240116; t=1718979518; c=relaxed/simple;
+	bh=UHbPsxSUPCcvat6x6uNlUR19md2kOXItdY0264QL1UU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VUgnP9/OPhRftSx4eqT3QjVOXpaFwhL8xBRsmcUdDUBcU+Q9lHpHO0ensFntd420WqjYlHl/lC5lRgF07OLrVDsXShBxLy+6fxrkHzWwBaFW7W+3+WQKKUerCh5JCVK5o1bWbVH++WdMkJtj2wYcYlx2wf9ZHJ3LSiusVmwkY9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MUlkHe9e; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b5052defa6so10263866d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:18:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718979516; x=1719584316; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xQFKOyIb/X2A62XAtBgt1V7e2XMdzNyMO4HKZbrKe/w=;
+        b=MUlkHe9ekRBU92eMh2YsBlJyN4RQex+R0SOAQiSTsO6j08ItOIJpZb2+2dlMKjw7yc
+         qWRtN8Z9Xo7JRNUa/OVvtfmIi13uP6wLGYL+sYjeBQao1XNAPcXkfY3E1qzEPuDp905T
+         uGyh2A7JCeLt/y7ChufKKkVi+btHV8BVc94nKNpLqj5ShbV9AQZ1aoGJ7bZt99ykWIxh
+         fXLSmJVRAzncGolDlsAbdkf/S2fJEZYtaDL2s9U/iqn8ZP/HjaCrdOQu9zmOwCSaBqEe
+         sj0dh4nisjH3IN10RQX78OFCn6XUSzn7aKR73aO3g+l3x/oQRBBG8HbnKQdx0izPQVx0
+         gvuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718979516; x=1719584316;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xQFKOyIb/X2A62XAtBgt1V7e2XMdzNyMO4HKZbrKe/w=;
+        b=Im93r8tLDsF+aSnxzTtGHKU8H5n/hEm87NE9xAZdsp5WNJJjYJ1bwOt/W3xgVtQR5M
+         H5ZMN/qe2dMciEEUd+A863ODkODmOO+A2W4M/FDB3Vo1SDDYqoUZEUoV7xs7kJuW/N3B
+         EZL2GIeSAg0HWxP+iEQX9sGd+NXCVm2+qgSkzklKmEheG47G5EgXGt6+t2c24LS5POJE
+         Oc/sDWM7YcksPeLe7kpHYQUu8xen6urDKO+zZxUHUVlcol3AqQSsgook0zOXaI9ufJE0
+         fRtWBFlYSO9Pq1JakSVCMTOx8rxmzQd8gAKe9W/cNogYF44dSfvVTNiTPqblZyE2OWLf
+         vl6w==
+X-Forwarded-Encrypted: i=1; AJvYcCW+r2x/O1/uZdXonOeHzAYcsIIQl0yHTPjsXW6kl+txF/VoICAw70HTAG75CPqWNusWSsaUjKB1iVmTpInJbsp3SYKnvAvvx9L8Ipwy
+X-Gm-Message-State: AOJu0Yx9EqzhMIEjzYmL2GsAjb8n2jk1GlyAZ/lb8syNw2BIDGv3MPSO
+	yb/H4GY15jnBCWeh2CWFPpAJZ1jg8+HrX4wq6qVuis1MEtsqDXrVe55vUoGB
+X-Google-Smtp-Source: AGHT+IHZnnPlI9o4pC/Z8FM/FcaBV7b+8mx98jpca2U98Rn+X9TW18nxm5KfxBo9jqScZ5kYTcZQSw==
+X-Received: by 2002:a0c:ed50:0:b0:6b5:2763:5f7c with SMTP id 6a1803df08f44-6b52763600amr9743036d6.63.1718979515982;
+        Fri, 21 Jun 2024 07:18:35 -0700 (PDT)
+Received: from localhost.localdomain ([142.198.217.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ef67021sm9143186d6.128.2024.06.21.07.18.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 07:18:35 -0700 (PDT)
+From: Wu Hoi Pok <wuhoipok@gmail.com>
+To: 
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	Wu Hoi Pok <wuhoipok@gmail.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 3/7] drm/radeon: rdev->ddev to rdev_to_drm(rdev) 2
+Date: Fri, 21 Jun 2024 10:18:08 -0400
+Message-ID: <20240621141810.19964-1-wuhoipok@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620162316.3674955-13-arnd@kernel.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: fSdaLowT_gOM0sMbXX9GJzu_e6RTRa0y
-X-Proofpoint-ORIG-GUID: fxa5htH3kxDrqY5Kq65cIpVvdeHEdHtv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_06,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
- lowpriorityscore=0 bulkscore=0 malwarescore=0 suspectscore=0 mlxscore=0
- mlxlogscore=341 priorityscore=1501 impostorscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406210101
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024 at 06:23:13PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The mmap2() syscall has never been used on 64-bit s390x and should
-> have been removed as part of 5a79859ae0f3 ("s390: remove 31 bit
-> support").
-> 
-> Remove it now.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/s390/kernel/syscall.c | 27 ---------------------------
->  1 file changed, 27 deletions(-)
+Please see Patch v2 1/7 for details.
 
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
+---
+ drivers/gpu/drm/radeon/r300.c     |  6 +++---
+ drivers/gpu/drm/radeon/r420.c     |  6 +++---
+ drivers/gpu/drm/radeon/r520.c     |  2 +-
+ drivers/gpu/drm/radeon/r600.c     | 12 ++++++------
+ drivers/gpu/drm/radeon/r600_cs.c  |  2 +-
+ drivers/gpu/drm/radeon/r600_dpm.c |  4 ++--
+ 6 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpu/drm/radeon/r300.c b/drivers/gpu/drm/radeon/r300.c
+index 1620f534f55f..05c13102a8cb 100644
+--- a/drivers/gpu/drm/radeon/r300.c
++++ b/drivers/gpu/drm/radeon/r300.c
+@@ -616,7 +616,7 @@ DEFINE_SHOW_ATTRIBUTE(rv370_debugfs_pcie_gart_info);
+ static void rv370_debugfs_pcie_gart_info_init(struct radeon_device *rdev)
+ {
+ #if defined(CONFIG_DEBUG_FS)
+-	struct dentry *root = rdev->ddev->primary->debugfs_root;
++	struct dentry *root = rdev_to_drm(rdev)->primary->debugfs_root;
+ 
+ 	debugfs_create_file("rv370_pcie_gart_info", 0444, root, rdev,
+ 			    &rv370_debugfs_pcie_gart_info_fops);
+@@ -1452,7 +1452,7 @@ int r300_resume(struct radeon_device *rdev)
+ 			RREG32(R_0007C0_CP_STAT));
+ 	}
+ 	/* post */
+-	radeon_combios_asic_init(rdev->ddev);
++	radeon_combios_asic_init(rdev_to_drm(rdev));
+ 	/* Resume clock after posting */
+ 	r300_clock_startup(rdev);
+ 	/* Initialize surface registers */
+@@ -1538,7 +1538,7 @@ int r300_init(struct radeon_device *rdev)
+ 	/* Set asic errata */
+ 	r300_errata(rdev);
+ 	/* Initialize clocks */
+-	radeon_get_clock_info(rdev->ddev);
++	radeon_get_clock_info(rdev_to_drm(rdev));
+ 	/* initialize AGP */
+ 	if (rdev->flags & RADEON_IS_AGP) {
+ 		r = radeon_agp_init(rdev);
+diff --git a/drivers/gpu/drm/radeon/r420.c b/drivers/gpu/drm/radeon/r420.c
+index a979662eaa73..9a31cdec6415 100644
+--- a/drivers/gpu/drm/radeon/r420.c
++++ b/drivers/gpu/drm/radeon/r420.c
+@@ -322,7 +322,7 @@ int r420_resume(struct radeon_device *rdev)
+ 	if (rdev->is_atom_bios) {
+ 		atom_asic_init(rdev->mode_info.atom_context);
+ 	} else {
+-		radeon_combios_asic_init(rdev->ddev);
++		radeon_combios_asic_init(rdev_to_drm(rdev));
+ 	}
+ 	/* Resume clock after posting */
+ 	r420_clock_resume(rdev);
+@@ -414,7 +414,7 @@ int r420_init(struct radeon_device *rdev)
+ 		return -EINVAL;
+ 
+ 	/* Initialize clocks */
+-	radeon_get_clock_info(rdev->ddev);
++	radeon_get_clock_info(rdev_to_drm(rdev));
+ 	/* initialize AGP */
+ 	if (rdev->flags & RADEON_IS_AGP) {
+ 		r = radeon_agp_init(rdev);
+@@ -493,7 +493,7 @@ DEFINE_SHOW_ATTRIBUTE(r420_debugfs_pipes_info);
+ void r420_debugfs_pipes_info_init(struct radeon_device *rdev)
+ {
+ #if defined(CONFIG_DEBUG_FS)
+-	struct dentry *root = rdev->ddev->primary->debugfs_root;
++	struct dentry *root = rdev_to_drm(rdev)->primary->debugfs_root;
+ 
+ 	debugfs_create_file("r420_pipes_info", 0444, root, rdev,
+ 			    &r420_debugfs_pipes_info_fops);
+diff --git a/drivers/gpu/drm/radeon/r520.c b/drivers/gpu/drm/radeon/r520.c
+index 6cbcaa845192..08e127b3249a 100644
+--- a/drivers/gpu/drm/radeon/r520.c
++++ b/drivers/gpu/drm/radeon/r520.c
+@@ -287,7 +287,7 @@ int r520_init(struct radeon_device *rdev)
+ 		atom_asic_init(rdev->mode_info.atom_context);
+ 	}
+ 	/* Initialize clocks */
+-	radeon_get_clock_info(rdev->ddev);
++	radeon_get_clock_info(rdev_to_drm(rdev));
+ 	/* initialize AGP */
+ 	if (rdev->flags & RADEON_IS_AGP) {
+ 		r = radeon_agp_init(rdev);
+diff --git a/drivers/gpu/drm/radeon/r600.c b/drivers/gpu/drm/radeon/r600.c
+index 087d41e370fd..8b62f7faa5b9 100644
+--- a/drivers/gpu/drm/radeon/r600.c
++++ b/drivers/gpu/drm/radeon/r600.c
+@@ -950,7 +950,7 @@ void r600_hpd_set_polarity(struct radeon_device *rdev,
+ 
+ void r600_hpd_init(struct radeon_device *rdev)
+ {
+-	struct drm_device *dev = rdev->ddev;
++	struct drm_device *dev = rdev_to_drm(rdev);
+ 	struct drm_connector *connector;
+ 	unsigned enable = 0;
+ 
+@@ -1017,7 +1017,7 @@ void r600_hpd_init(struct radeon_device *rdev)
+ 
+ void r600_hpd_fini(struct radeon_device *rdev)
+ {
+-	struct drm_device *dev = rdev->ddev;
++	struct drm_device *dev = rdev_to_drm(rdev);
+ 	struct drm_connector *connector;
+ 	unsigned disable = 0;
+ 
+@@ -3280,7 +3280,7 @@ int r600_init(struct radeon_device *rdev)
+ 	/* Initialize surface registers */
+ 	radeon_surface_init(rdev);
+ 	/* Initialize clocks */
+-	radeon_get_clock_info(rdev->ddev);
++	radeon_get_clock_info(rdev_to_drm(rdev));
+ 	/* Fence driver */
+ 	radeon_fence_driver_init(rdev);
+ 	if (rdev->flags & RADEON_IS_AGP) {
+@@ -4136,7 +4136,7 @@ int r600_irq_process(struct radeon_device *rdev)
+ 					DRM_DEBUG("IH: D1 vblank - IH event w/o asserted irq bit?\n");
+ 
+ 				if (rdev->irq.crtc_vblank_int[0]) {
+-					drm_handle_vblank(rdev->ddev, 0);
++					drm_handle_vblank(rdev_to_drm(rdev), 0);
+ 					rdev->pm.vblank_sync = true;
+ 					wake_up(&rdev->irq.vblank_queue);
+ 				}
+@@ -4166,7 +4166,7 @@ int r600_irq_process(struct radeon_device *rdev)
+ 					DRM_DEBUG("IH: D2 vblank - IH event w/o asserted irq bit?\n");
+ 
+ 				if (rdev->irq.crtc_vblank_int[1]) {
+-					drm_handle_vblank(rdev->ddev, 1);
++					drm_handle_vblank(rdev_to_drm(rdev), 1);
+ 					rdev->pm.vblank_sync = true;
+ 					wake_up(&rdev->irq.vblank_queue);
+ 				}
+@@ -4358,7 +4358,7 @@ DEFINE_SHOW_ATTRIBUTE(r600_debugfs_mc_info);
+ static void r600_debugfs_mc_info_init(struct radeon_device *rdev)
+ {
+ #if defined(CONFIG_DEBUG_FS)
+-	struct dentry *root = rdev->ddev->primary->debugfs_root;
++	struct dentry *root = rdev_to_drm(rdev)->primary->debugfs_root;
+ 
+ 	debugfs_create_file("r600_mc_info", 0444, root, rdev,
+ 			    &r600_debugfs_mc_info_fops);
+diff --git a/drivers/gpu/drm/radeon/r600_cs.c b/drivers/gpu/drm/radeon/r600_cs.c
+index 6cf54a747749..1b2d31c4d77c 100644
+--- a/drivers/gpu/drm/radeon/r600_cs.c
++++ b/drivers/gpu/drm/radeon/r600_cs.c
+@@ -884,7 +884,7 @@ int r600_cs_common_vline_parse(struct radeon_cs_parser *p,
+ 	crtc_id = radeon_get_ib_value(p, h_idx + 2 + 7 + 1);
+ 	reg = R600_CP_PACKET0_GET_REG(header);
+ 
+-	crtc = drm_crtc_find(p->rdev->ddev, p->filp, crtc_id);
++	crtc = drm_crtc_find(rdev_to_drm(p->rdev), p->filp, crtc_id);
+ 	if (!crtc) {
+ 		DRM_ERROR("cannot find crtc %d\n", crtc_id);
+ 		return -ENOENT;
+diff --git a/drivers/gpu/drm/radeon/r600_dpm.c b/drivers/gpu/drm/radeon/r600_dpm.c
+index 64980a61d38a..81d58ef667dd 100644
+--- a/drivers/gpu/drm/radeon/r600_dpm.c
++++ b/drivers/gpu/drm/radeon/r600_dpm.c
+@@ -153,7 +153,7 @@ void r600_dpm_print_ps_status(struct radeon_device *rdev,
+ 
+ u32 r600_dpm_get_vblank_time(struct radeon_device *rdev)
+ {
+-	struct drm_device *dev = rdev->ddev;
++	struct drm_device *dev = rdev_to_drm(rdev);
+ 	struct drm_crtc *crtc;
+ 	struct radeon_crtc *radeon_crtc;
+ 	u32 vblank_in_pixels;
+@@ -180,7 +180,7 @@ u32 r600_dpm_get_vblank_time(struct radeon_device *rdev)
+ 
+ u32 r600_dpm_get_vrefresh(struct radeon_device *rdev)
+ {
+-	struct drm_device *dev = rdev->ddev;
++	struct drm_device *dev = rdev_to_drm(rdev);
+ 	struct drm_crtc *crtc;
+ 	struct radeon_crtc *radeon_crtc;
+ 	u32 vrefresh = 0;
+-- 
+2.45.2
+
 
