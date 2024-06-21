@@ -1,104 +1,82 @@
-Return-Path: <linux-kernel+bounces-225280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA012912E7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:31:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B854912E92
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5551F22B9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC9E7B27380
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FEF16D9CC;
-	Fri, 21 Jun 2024 20:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbktpSIw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C75374DD;
-	Fri, 21 Jun 2024 20:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3060B17BB10;
+	Fri, 21 Jun 2024 20:32:30 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5C6146017;
+	Fri, 21 Jun 2024 20:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719001856; cv=none; b=UbaVhLG9DtY0ERf+3IcZ4B+6hFxyjLtDACRX8M60mX73CWE4ZNp9KUsWs1yWPPIAHBtsRKxnI6D/NR2T6aETPscJ/ukwtaJaoFeij38g83a9D9tfzUDLvMFYHoaJLOhefB5J7i67SPi9zIMkwzCip8+HcvlyDHDJSxMc/cpsMT0=
+	t=1719001949; cv=none; b=tkR4Sy919mlfV9dDsw8BBMtQtGAHVMKpBxDuPjvvndHcaWF256KgawbF1uIs+VLWIRr3RZGNAaVLN805Vp7pjPs/YPeO7q7ipPtnfKqk4GgIyTAg6cuVPDDvLhySXyfnw4yEbNnMRNyMvdyWvmYkdI8I9qbieLn4KPKHNjy6mJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719001856; c=relaxed/simple;
-	bh=Fz1obuJu2KySblgdOnyn6EyXXspLQtoucM1rWIb5h1c=;
+	s=arc-20240116; t=1719001949; c=relaxed/simple;
+	bh=gE2ViUah1IOM2sFBbFJHidv3pjaO7zrqCmYujLwwOeg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BHzGi9y3iXnkOqVtj2SR/aZ414qMZaP6GECK7XUqIZxBeeyIGVzH11b2Wc2izKgDtZfQWALajzOGgTDTyADPm0TcIVIHKAiRP+NaQI1vYdEri9HJZnDjZKeF/nt5hlJeT9QE1JS8cvId8x7xGNcTKNHUdoJ16CRvpVztwQRjQcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbktpSIw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41883C2BBFC;
-	Fri, 21 Jun 2024 20:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719001855;
-	bh=Fz1obuJu2KySblgdOnyn6EyXXspLQtoucM1rWIb5h1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fbktpSIwNSQbvA4sxhtDrhE/2nesPbwVyH2OPBo4aQ8dF+JnNEyM1XqmvDw3BrO6g
-	 0gBs0oiu1yxRfEGCOD2lju4Qmxwg0eHxzqySH3tryUQoGPPx0pZfYoWNl9em4VzqTn
-	 E/wCdXf49bEnuBLUzHukl2lY9exFUWraJIGXclNuFXGrm7nEIX7Etp1HPdcMgkykHV
-	 nbPNgmmT87SwrxYX7PuXYXU46/i+uJimFKr4lo1Yix8xSQrNG1Xye+pXK72hzSQjSb
-	 KRNWmWOk5MQqiE2TbKOnK6Andlwc4Frh25cN1rFmhY9jPGLMenwqMSTW2lb8p81VFS
-	 ooPo94YcR4Hog==
-Date: Fri, 21 Jun 2024 21:30:51 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Gowans, James" <jgowans@amazon.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-	"jbeulich@suse.com" <jbeulich@suse.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"rppt@kernel.org" <rppt@kernel.org>
-Subject: Re: linux-next: manual merge of the memblock tree with the origin
- tree
-Message-ID: <cf013a59-a297-4685-94ac-87566023aa5d@sirena.org.uk>
-References: <ZnRQv-EVf2LQ1Cjv@sirena.org.uk>
- <eb58b1b2f84444acde3f9e25219fa40c73c499f8.camel@amazon.com>
- <db13f2b7-88da-42db-85ed-d78cdd5f6c62@sirena.org.uk>
- <e6f1bf73d13060635520c70df269c0b390352f37.camel@amazon.com>
- <44ce3730-8e4d-42f9-8b17-104805e46f93@sirena.org.uk>
- <9262bfba5d65c603dcad49a75e5a30564f75c3d4.camel@amazon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESmNV8oIOLVwt9jqDr3xRwOFBeoxiKPe2wbZ/Mn3F+ZRB5/B7i9fCMl7rrPIsZIxWyRYAsMCJ0WSVLpyVLcRm5TqberqoRyuVMtMx/sVVwoeCvLMCVMuN6NxuDvFNiu6oE1IbTb4g06R2v6Vzxjl5nuQ4UpmB1G34sBia78eLWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sKkva-0000N7-00; Fri, 21 Jun 2024 22:32:10 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 6A9EFC0120; Fri, 21 Jun 2024 22:31:21 +0200 (CEST)
+Date: Fri, 21 Jun 2024 22:31:21 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Jonas Gorski <jonas.gorski@gmail.com>,
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] MIPS: Introduce config options for LLSC
+ availability
+Message-ID: <ZnXjGRoKoRUeWpI+@alpha.franken.de>
+References: <20240612-mips-llsc-v2-0-a42bd5562bdb@flygoat.com>
+ <20240612-mips-llsc-v2-2-a42bd5562bdb@flygoat.com>
+ <alpine.DEB.2.21.2406210041140.43454@angie.orcam.me.uk>
+ <2c26a07f-fa68-48f1-8f3b-3b5e4f77130b@app.fastmail.com>
+ <alpine.DEB.2.21.2406211446500.43454@angie.orcam.me.uk>
+ <83cf475c-86a3-4acb-bc82-d94c66c53779@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Guoj/QETIVZljXJc"
-Content-Disposition: inline
-In-Reply-To: <9262bfba5d65c603dcad49a75e5a30564f75c3d4.camel@amazon.com>
-X-Cookie: Androphobia:
-
-
---Guoj/QETIVZljXJc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <83cf475c-86a3-4acb-bc82-d94c66c53779@app.fastmail.com>
 
-On Fri, Jun 21, 2024 at 08:08:53PM +0000, Gowans, James wrote:
-> On Thu, 2024-06-20 at 19:00 +0100, Mark Brown wrote:
+On Fri, Jun 21, 2024 at 04:21:49PM +0100, Jiaxun Yang wrote:
+> Does anyone reckon the reason behind opt-out LLSC for IP28? As far as I understand
+> there is no restriction on using LLSC after workaround being applied. If it's purely
+> performance reason, I think I'll need to move kernel_uses_llsc logic to Kconfig as well.
 
-> > Yes, the merge in -next is wrong.
+commit 46dd40aa376c8158b6aa17510079caf5c3af6237
+Author: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Date:   Wed Oct 7 12:17:04 2020 +0200
 
-> What's the next step to fix the incorrect merge commit?
-> Looking at today's -next I see the same issue:
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/mm/memblock.c?h=next-20240621&id=f689ee4c062317a0831fbffeeb30d7816608b2e7
+    MIPS: SGI-IP28: disable use of ll/sc in kernel
+    
+    SGI-IP28 systems only use broken R10k rev 2.5 CPUs, which could lock
+    up, if ll/sc sequences are issued in certain order. Since those systems
+    are all non-SMP, we can disable ll/sc usage in kernel.
+    
+    Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 
-It's remembered by rerere, hopefully I'll convince rerere to forget it
-on Monday.
 
---Guoj/QETIVZljXJc
-Content-Type: application/pgp-signature; name="signature.asc"
+Thomas.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ14voACgkQJNaLcl1U
-h9CQ1Qf+JW1zyHEWAdd4W3LSLlCiyB2U3kwn+bug8P2iTXmIrQOQALbleXwmZXiS
-pPLI+DMwiULsJ47Iuw69L6twkg5zdLg3l4p47q9PAmj4nIp6gw2AjeErFu+Kh20f
-gDMhwr4vkFJOwyZ4Z13C+kQUsPhPOd4GhkifP3eQa/srCysqQ/RvdlSYYO+0ylRU
-5XymmxXgCCeuvySC33CG1eLOi7eSASyJRduJAt3weYNAhz1pOSWBq7wghiDbMEAP
-wkNe1oV+nm9KoLWghC99iHrCNxApukLGfWw5AHGo0dHuawAh/JgEHd3PiIhxPNCx
-SfkmOWg5tBfO4EqlJZoqK3afc6Wf/Q==
-=/IqT
------END PGP SIGNATURE-----
-
---Guoj/QETIVZljXJc--
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
