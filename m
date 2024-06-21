@@ -1,113 +1,183 @@
-Return-Path: <linux-kernel+bounces-224300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1119F912067
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:22:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B573291206D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F87B1C20FA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:22:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351621F241DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFBA16E882;
-	Fri, 21 Jun 2024 09:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B002A16E86B;
+	Fri, 21 Jun 2024 09:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GtoADSXS"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xjr+1la/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EEF52F71;
-	Fri, 21 Jun 2024 09:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0569912D1EB;
+	Fri, 21 Jun 2024 09:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718961763; cv=none; b=CeLYRnRMOvLGy9mpUJuddHPhzdFLGWyteIuO78ayMjcUDRR1ZWACog4tmSague/zrhXIvPZZ3kw/w7ciRV/KvVf4GArvO2C4kNzdjc9v/dGgtoQ4//E5By8Rt4RJMs6Z9Fl/DAXbhNG5xc4zUFrtEwsRpvI1YAttFQDvDkaGaYw=
+	t=1718961886; cv=none; b=IpcRC4fmu7RkZsiHah9ELbjzO+aiwd5bq0EUsJl9KQYtxn2SLiSm4QGiyjGKZXcv71GgldsR4zE3yQR3CxtIbObJ5rz+2FqK/NnJiKBWK18Bmulv/7ei7KdcyVZGfi0dcwaBRP07CLPa5CQomeQVsWvaH36MbT5GQzpVr8SrxPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718961763; c=relaxed/simple;
-	bh=0DChm4oZFs0LJKI90R8W/14zMUVHY5Ac9kAsA7OIYR4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Nk7T8dVhjllybIdfwKXAuSrf4hwEStUJCrnVajl0a0lYHAjVkU6o2OatrGz5XXYXQ9X+MT6aWYQjPu6z5wTbzVhI6P8fBEnMY3+XthM2d9sT1hBZFy0Y3vUU6j3Ew6WA6iLkd1DAt6WTPsE3leLnS3bSqppfihGVbKXebWH8yAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GtoADSXS; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f44b5b9de6so14794535ad.3;
-        Fri, 21 Jun 2024 02:22:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718961762; x=1719566562; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0DChm4oZFs0LJKI90R8W/14zMUVHY5Ac9kAsA7OIYR4=;
-        b=GtoADSXSXrvesm5fRdcPc0Z9z/x2EE28KE/P4qzIhWXT+FRC6blVjTQbXNDzGqbcwb
-         T/kOBXh8/ysm1aGhTx8q6KBdmIGjYNI3oUGyAz0QKNpKEqY/ZAsIcxvPCtYf3e6vt1+j
-         RyDf7YksOvXjmztYJgL3PvO2Wg+nQwKBHavIWPIZwkV/gEpIbVHL5DJ5UDH3ABdU26mM
-         3jJAdxHr69Pz6mesqtdPa5f2u/Nzd0wCBK32FYUtHThc69LhFPGoSuhR/kuYCnLJUCNO
-         jdG3jN/K6uKSU/85187ZhIMmGunyqXxo3QuzPKMM4HkEQ15+JQ/TQIXK05D3j3eVttiC
-         0f+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718961762; x=1719566562;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0DChm4oZFs0LJKI90R8W/14zMUVHY5Ac9kAsA7OIYR4=;
-        b=V091Qczd1vNe3ZBxskTiaWDvksRvGRlNAsj1dIzVy+8cAPohzMgt/mtmbWCXqZdoMA
-         HSnpOrJdHMuJevTcJluakpp3eiDwshbJyJcVexdrO2Z1sNzaudCA/iZQ8MT1H9mQVluz
-         0xm6no4t8bzPOFcsXh6WBsQY/IQ1+ll5+mj0EE20VE/6o3zxtxR/lgvJJx2PkQHBfaTD
-         B9qD/yB88LxdEdZewvwdXctt9uAJDL2HYP/Aer9qxtD6wWgePSr9dOzYMUwich94FdEK
-         bFru+bIWrEl33NUFaPMoN7ipPD9JxpwGKDaTKwikba8+3quUE4PCb3UQTvoXdRI9J14l
-         D5/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXs7itZRnJ84I/YpP7fdEVvQK++mlS8qBHtc1tZJoB50P5g8FvI4O5ta+1iHAYDLPoG8jeMfliqfx0RIK4QWq581z2EJp3E4BDiC2CUczB5w/+EjtePXETkH17VHmJUTcq7ExeRF6cGJn8sFsUbd1uTNCNCYMr/cdo56iPwWVXeycBbjZh7
-X-Gm-Message-State: AOJu0Yw9SxCm64hCxnxtZVbNj/PgMXCwgwBlc9eIcQF6yLSYdH3wXkZX
-	GWjQSUB3Qw08ypFRUjVSrkV7TXzmZwCRppqq8pTKHshG+Mz8umpE
-X-Google-Smtp-Source: AGHT+IEapwoXM3TE/uZjttS5wEj6FJq1+Ictg80vAM9P5mq/tKCuoOcx6e+5kChf/aTCKpsl/dBlgg==
-X-Received: by 2002:a17:902:e808:b0:1f7:1a9:bf09 with SMTP id d9443c01a7336-1f9aa458609mr89974475ad.51.1718961761807;
-        Fri, 21 Jun 2024 02:22:41 -0700 (PDT)
-Received: from localhost.localdomain ([221.220.128.96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c5bf9sm9761485ad.122.2024.06.21.02.22.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 02:22:41 -0700 (PDT)
-From: Jianfeng Liu <liujianfeng1994@gmail.com>
-To: sebastian.reichel@collabora.com
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	ezequiel@vanguardiasur.com.ar,
-	frattaroli.nicolas@gmail.com,
-	heiko@sntech.de,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	linkmauve@linkmauve.fr,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	liujianfeng1994@gmail.com,
-	nicolas.dufresne@collabora.com,
-	p.zabel@pengutronix.de,
-	robh@kernel.org,
-	sigmaris@gmail.com,
-	detlev.casanova@collabora.com
-Subject: Re: [PATCH v7 6/6] arm64: dts: rockchip: Add VPU121 support for RK3588
-Date: Fri, 21 Jun 2024 17:22:34 +0800
-Message-Id: <20240621092234.280171-1-liujianfeng1994@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240618183816.77597-7-sebastian.reichel@collabora.com>
-References: <20240618183816.77597-7-sebastian.reichel@collabora.com>
+	s=arc-20240116; t=1718961886; c=relaxed/simple;
+	bh=NBWTcpKZIKcW6NL5NChdd9KplU+HhaBpcnqHOd3GkH4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lfIoKYNGPYW9cNHvlFd+4u/LI2DUXFPCOrjMZyKhuyMExl7j+jbG5qJHVQwkn1KUEoPFQI4T4jBCuMtuBwdOAabr0rAHxb5YEyT03kMsizE1Jxflm3RTYsmpzgnPTmcj7xUVUDlDh+UEWvlqVjn7QM/HCrF3gQEurmfKeN8XXf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xjr+1la/; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718961884; x=1750497884;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=NBWTcpKZIKcW6NL5NChdd9KplU+HhaBpcnqHOd3GkH4=;
+  b=Xjr+1la/RYE8GyospQ++KXqNTjwku905qConReluT5tFSOj0sQE3JCG6
+   3Hx+O+yuRKW75Yps+NJAWFE0Mj7PRwePhCQlTFHqHjP8fZ20kPukDx2cH
+   xtfCm42b+VupvN5ZG1ACNB3ZAA6Cj6/z8avsOXBgm7YhVLZ0BPfX9Jv2m
+   cQgTMp70S9JCE7yhaR8duRTp1d+RVDIuvq4bmJJK1b9RAU6vm9+xc0OqD
+   /42yCY+S/sulrJ5zKkoLIZGi061Q/Z6WN4dgN+pU91zBtjWk7ys99goFQ
+   B4och0PmkCC1uzOk3KpwksyE05+gNvFou71qJrwmzia881JPowrkt+9pr
+   Q==;
+X-CSE-ConnectionGUID: 90Ys6P04TCOakwPiuE3+uA==
+X-CSE-MsgGUID: 3k4KlAn1TgyjhPF5C1pZcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15821218"
+X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
+   d="scan'208";a="15821218"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 02:24:43 -0700
+X-CSE-ConnectionGUID: 22g+VwFiQBWSlHtaAoNqOg==
+X-CSE-MsgGUID: f/88ox6tSbeoFtvnlyIrMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
+   d="scan'208";a="43203306"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 02:24:40 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,  David Hildenbrand
+ <david@redhat.com>,  akpm@linux-foundation.org,  shuah@kernel.org,
+  linux-mm@kvack.org,  chrisl@kernel.org,  hughd@google.com,
+  kaleshsingh@google.com,  kasong@tencent.com,
+  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,  Barry
+ Song <v-songbaohua@oppo.com>
+Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
+ entry allocation for thp_swapout
+In-Reply-To: <CAGsJ_4y_pjMpNOFzrPZ6u7=M83-CQ0umDCPt=ZDuSKJWssiCqA@mail.gmail.com>
+	(Barry Song's message of "Fri, 21 Jun 2024 19:47:02 +1200")
+References: <20240620002648.75204-1-21cnbao@gmail.com>
+	<f3c18806-34ac-41d3-8c79-d7dd6504547e@arm.com>
+	<d0b20f47-384d-49f1-8449-0da6da11089c@redhat.com>
+	<b99c2f80-3b53-4b04-b610-a66179b928a9@arm.com>
+	<CAGsJ_4y_pjMpNOFzrPZ6u7=M83-CQ0umDCPt=ZDuSKJWssiCqA@mail.gmail.com>
+Date: Fri, 21 Jun 2024 17:22:49 +0800
+Message-ID: <87cyoa1wgm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sebastian,
+Barry Song <21cnbao@gmail.com> writes:
 
-Detlev is working on rkvdec2 and gstreamer can't deal with two h264
-stateless decoders. So it's better to disable h264 decoding feature of
-this vpu121, just like what we have done for rk3399. If your multicore
-patch can handle the jpeg enc node at fdb50000 with other VEPU121 nodes
-properly, we can just use compatible string "rockchip,rk3399-vpu" instead
-of "rockchip,rk3568-vpu".
+> On Fri, Jun 21, 2024 at 7:25=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.co=
+m> wrote:
+>>
+>> On 20/06/2024 12:34, David Hildenbrand wrote:
+>> > On 20.06.24 11:04, Ryan Roberts wrote:
+>> >> On 20/06/2024 01:26, Barry Song wrote:
+>> >>> From: Barry Song <v-songbaohua@oppo.com>
+>> >>>
+>> >>> Both Ryan and Chris have been utilizing the small test program to aid
+>> >>> in debugging and identifying issues with swap entry allocation. While
+>> >>> a real or intricate workload might be more suitable for assessing the
+>> >>> correctness and effectiveness of the swap allocation policy, a small
+>> >>> test program presents a simpler means of understanding the problem a=
+nd
+>> >>> initially verifying the improvements being made.
+>> >>>
+>> >>> Let's endeavor to integrate it into the self-test suite. Although it
+>> >>> presently only accommodates 64KB and 4KB, I'm optimistic that we can
+>> >>> expand its capabilities to support multiple sizes and simulate more
+>> >>> complex systems in the future as required.
+>> >>
+>> >> I'll try to summarize the thread with Huang Ying by suggesting this t=
+est program
+>> >> is "neccessary but not sufficient" to exhaustively test the mTHP swap=
+-out path.
+>> >> I've certainly found it useful and think it would be a valuable addit=
+ion to the
+>> >> tree.
+>> >>
+>> >> That said, I'm not convinced it is a selftest; IMO a selftest should =
+provide a
+>> >> clear pass/fail result against some criteria and must be able to be r=
+un
+>> >> automatically by (e.g.) a CI system.
+>> >
+>> > Likely we should then consider moving other such performance-related t=
+hingies
+>> > out of the selftests?
+>>
+>> Yes, that would get my vote. But of the 4 tests you mentioned that use
+>> clock_gettime(), it looks like transhuge-stress is the only one that doe=
+sn't
+>> have a pass/fail result, so is probably the only candidate for moving.
+>>
+>> The others either use the times as a timeout and determines failure if t=
+he
+>> action didn't occur within the timeout (e.g. ksm_tests.c) or use it to a=
+dd some
+>> supplemental performance information to an otherwise functionality-orien=
+ted test.
+>
+> Thank you very much, Ryan. I think you've found a better home for this
+> tool . I will
+> send v2, relocating it to tools/mm and adding a function to swap in
+> either the whole
+> mTHPs or a portion of mTHPs by "-a"(aligned swapin).
+>
+> So basically, we will have
+>
+> 1. Use MADV_PAGEPUT for rapid swap-out, putting the swap allocation code =
+under
+> high exercise in a short time.
+>
+> 2. Use MADV_DONTNEED to simulate the behavior of libc and Java heap in fr=
+eeing
+> memory, as well as for munmap, app exits, or OOM killer scenarios. This e=
+nsures
+> new mTHP is always generated, released or swapped out, similar to the beh=
+avior
+> on a PC or Android phone where many applications are frequently started a=
+nd
+> terminated.
 
-Best regards,
-Jianfeng
+MADV_DONTNEED 64KB memory, then memset() it, this just simulates the
+large folio swap-in exactly, which hasn't been merged by upstream.  I
+don't think that it's a good idea to make such kind of trick.
+
+> 3. Swap in with or without the "-a" option to observe how fragments
+> due to swap-in
+> and the incoming swap-in of large folios will impact swap-out fallback.
+
+It's good to create fragmentation with swap-in.  Which is more practical
+and future-proof.  And, I believe that we can reduce large folio
+swap-out fallback rate without the large folio swap-in trick.
+
+> And many thanks to Chris for the suggestion on improving it within
+> selftest, though I
+> prefer to place it in tools/mm.
+
+--
+Best Regards,
+Huang, Ying
 
