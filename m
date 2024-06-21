@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-224411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 919A091220E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:17:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57B7912210
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356151F28BA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E89901C2366D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC18171E66;
-	Fri, 21 Jun 2024 10:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA86172BD1;
+	Fri, 21 Jun 2024 10:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLdrdDzY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHgaVrg1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7829171062;
-	Fri, 21 Jun 2024 10:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AF716F8EF;
+	Fri, 21 Jun 2024 10:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718964868; cv=none; b=qIFDDRZZRrLM9QF9c8PTVNM+ARXj0OWLMpEFq+3egPtdL/khd6oNhSoOsOvtFI66VHFjd5QXK5mpkO7fXpvdNpiunBOBipY8TcqitetHVBIPGxAvTpBWcTZtxV71g23rTdqfFqooTI2QiWZNdamHQffq/jOKM16QiXBWDZU55nk=
+	t=1718964974; cv=none; b=C+alsV6gwdrZiCZNSzDCa3d6ZIyZ6nSvDGKcpeWfkLvp1VWN9ooXlBCekH0rqzqmpgN1NkM5VAwWlYAGWf6HwDgkRtKrYCZ09txfovIlDLPhWYDG4gAjzXrbCgu7CmN+cRRZpfX8fzkuUW3cQftFaayorUIjIVtmYvI6/Mkh+r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718964868; c=relaxed/simple;
-	bh=mkYEDP/YXO6DS57YMdoORyJiiNR4AuIuioT8DgJSFsM=;
+	s=arc-20240116; t=1718964974; c=relaxed/simple;
+	bh=Rc6oFQfBw9lEgCWZSSl8FCKlopyKaW/ibzbQ+QbjQsA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jImiao7bhRHIPH3guuikSQIgKFA0paTTBN+l4HuqqNeAzfSh2kTfyMU6tB2h0C5qrF+i8kQIC9tIsLxfR5qQML14fdK7uf2THibXrI5kbJU5imyyK27ECT67JN1m4Ll6pclKu2Ov4i399Dm2g+OwHxIwzYHMQQyEw3kjNAUzc2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLdrdDzY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD993C2BBFC;
-	Fri, 21 Jun 2024 10:14:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=hSjng4PIoDrXrtFbnXSR9jfpSQrrMR+0/dtWxV01IcuATq11/dcdJray2YQePFcSHetKAE4fcqLC2jOPCOMboaGuFLHSGo91dbQapvH+BoV4wXFkVYzcOo3VAvuOG2P/TC518n1rhvDz3UlPTGdUBV7hlpS1vgthpVnRrh3naTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHgaVrg1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E01F6C2BBFC;
+	Fri, 21 Jun 2024 10:16:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718964868;
-	bh=mkYEDP/YXO6DS57YMdoORyJiiNR4AuIuioT8DgJSFsM=;
+	s=k20201202; t=1718964974;
+	bh=Rc6oFQfBw9lEgCWZSSl8FCKlopyKaW/ibzbQ+QbjQsA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NLdrdDzY3KwJZ3O+RO79Uo6g0BP7dPf5JXbWH/kohkfToNyoPTQXy+ZhbctcNMI7D
-	 N7dPusUjDUGNRo36JAf/xbwnE1v6R/qFEeLqmI1+1cHAnMaUU9BI6fU0BGIkmg5vwA
-	 2f+1dqf627X0zfSZ72olfIYdc8PBuoQaLnQRLhzn+c+cGpvjBxktUGQ5JGQ+tM7nLG
-	 W6MhCXYeX3T5ouNAmHp0V0iCSlnK1urLKa9r4bR35ybQFuHuW1J8iaCT5YhiC9OJdi
-	 sf8jXOxI+xdTzKYLvUCapqV+4JUrD8WY8pzjOCtKpbVH/qrLsvcyq3bT0BI6Us/UO0
-	 W+uNyMLoBkHMg==
-Message-ID: <269b5d3e-bf25-4b32-8e39-479057221c6b@kernel.org>
-Date: Fri, 21 Jun 2024 12:14:20 +0200
+	b=YHgaVrg1erHGicqd5/JAKQ8pwtzdbGI6bltoWXEeZgKetccp1k1YJtFldPwWmZ8hy
+	 J85LhjEFTLHO06HeFE02brayHDj/Zwlz5U8yylUN/UWr1CbLoeLLegDo8wKPCgNsD8
+	 Mg+ZqLXj/orsr5nsSnuM7z1xmko8r5jhlRT746biWgTuSWbNtfQpnihVabglEmxc+E
+	 FnOowjoWAIECoPw36eOtCGWxW90d8mvzT7zEWwsR9tHyY20/7lEzQP7I9YeRwEVnOH
+	 ejUbA4nkpxK74kmBGNiZcmW3QnNnQ3ALAoU3co7Cw/EkJXjzvAQRDC0DBCywo1rhrs
+	 ymw9ikKnIG4Fg==
+Message-ID: <fdf4da20-93a8-45c3-84cf-fd3fdc500f2b@kernel.org>
+Date: Fri, 21 Jun 2024 12:16:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: mfd: rk809: Use correct compatible in
- the example
+Subject: Re: [PATCH 2/5] dt-bindings: mfd: rk809: Add missing audio codec
+ properties
 To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
  Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -63,7 +63,7 @@ Cc: kernel@collabora.com, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20240619-rk809-fixes-v1-0-fa93bc5313f4@collabora.com>
- <20240619-rk809-fixes-v1-1-fa93bc5313f4@collabora.com>
+ <20240619-rk809-fixes-v1-2-fa93bc5313f4@collabora.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,21 +109,101 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240619-rk809-fixes-v1-1-fa93bc5313f4@collabora.com>
+In-Reply-To: <20240619-rk809-fixes-v1-2-fa93bc5313f4@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 19/06/2024 13:23, Cristian Ciocaltea wrote:
-> The example is not able to actually test the schema since it uses a
-> wrong compatible 'rockchip,rk808' instead of 'rockchip,rk809'.
+> The RK809 MFD provides a RK817 compatible audio codec, supported by the
+> rk817_codec driver.
 > 
-> Use the correct compatible and drop the wrong properties in the
-> example section so that dt_binding_check passes.
+> This has been already in use by several boards: rk3566-quartz64-b,
+> k3566-roc-pc, rk3568-evb1-v10, rk3568-lubancat-2, rk3568-odroid-m1,
+> rk3568-rock-3a.  However, dtbs_check fails for all of them:
+> 
+>   DTC_CHK arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dtb
+>   rk3568-rock-3a.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks', 'codec' do not match any of the regexes: 'pinctrl-[0-9]+'
+>     from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+> 
+> Document the missing audio codec properties as found on the
+> rockchip,rk817 schema.
 > 
 > Fixes: 6c38ca03406e ("dt-bindings: mfd: rk808: Convert bindings to yaml")
 > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  .../devicetree/bindings/mfd/rockchip,rk809.yaml    | 30 +++++++++++++++++++++-
+>  1 file changed, 29 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/rockchip,rk809.yaml b/Documentation/devicetree/bindings/mfd/rockchip,rk809.yaml
+> index a327d73f3c43..cadfb5f1c631 100644
+> --- a/Documentation/devicetree/bindings/mfd/rockchip,rk809.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/rockchip,rk809.yaml
+> @@ -12,7 +12,7 @@ maintainers:
+>  
+>  description: |
+>    Rockchip RK809 series PMIC. This device consists of an i2c controlled MFD
+> -  that includes regulators, an RTC, and power button.
+> +  that includes regulators, an RTC, a power button and an audio codec.
+>  
+>  properties:
+>    compatible:
+> @@ -93,6 +93,34 @@ properties:
+>          unevaluatedProperties: false
+>      unevaluatedProperties: false
+>  
+> +  clocks:
+> +    description:
+> +      The input clock for the audio codec.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Instead, maxItems. Or items with description.
+
+> +
+> +  clock-names:
+> +    description:
+> +      The clock name for the codec clock.
+
+Drop description.
+
+> +    items:
+> +      - const: mclk
+> +
+> +  '#sound-dai-cells':
+> +    description:
+> +      Needed for the interpretation of sound dais.
+
+Description looks redundant, drop.
+
+> +    const: 0
+> +
+> +  codec:
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      The child node for the codec to hold additional properties. If no
+> +      additional properties are required for the codec, this node can be
+> +      omitted.
+
+Useless description. Say something hardware relevant, not about DTS syntax.
+
+> +    type: object
+> +    additionalProperties: false
+> +    properties:
+> +      rockchip,mic-in-differential:
+> +        type: boolean
+> +        description:
+> +          Describes if the microphone uses differential mode.
+
+No resources? Then it goes to parent.
+
+> +
+>  allOf:
+
+Add $ref to dai-common.yaml.
+
+>    - if:
+>        properties:
+> 
 
 Best regards,
 Krzysztof
