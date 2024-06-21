@@ -1,137 +1,100 @@
-Return-Path: <linux-kernel+bounces-224183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9190D911E69
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 647AF911E74
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D851F21AEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:17:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8D51F2298E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E5816D9AF;
-	Fri, 21 Jun 2024 08:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC5C16C87D;
+	Fri, 21 Jun 2024 08:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+khuzoB"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fVkSAAgT"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64A016D4E8;
-	Fri, 21 Jun 2024 08:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D917E16B3B9
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718957681; cv=none; b=pJGqgmS85co90+GIcNzdUV0Q64xc7gPn8ucvuh6tWTrb/qygcQNwWf5K/0qBgOMzC/j8gzEIocMmkdY+bsvYt+m2DWDDiUhVk/R/xOr3QT2VA9R0J3VqHCZS+RByaH177N5gr+5o9W0/VrRTvERFCqNrW709ITwSP5O8+auCOnA=
+	t=1718958062; cv=none; b=eaniEZzlLJJRFYXVWT5MBMR99aWeN3vxFwO+3OvrZwZ79Lor26V2E04PjmQkeyC7F0GZuDG6niu2NQoAIqelIetbhsF+nfSE0w9YML369fEuAEsbU+5CIrCaggxfgjIIhbS16ClWkYh3iNLcX7601HjTq++ce3RB+s0Dg8WU6w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718957681; c=relaxed/simple;
-	bh=xFO0qgIbZZSZGxvGjihJgB2It0l8Hs4sqlpsLip0Fe8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cWnNQWsT6BMKp9agqvTLLGx68iO+sR3XTuwo8JbTz9eVpIXHj7r/7Bvl1qxnz59NyagIX+EmK+LXsHN6J7IJX9GZ3S12zQrtT5161wda/cb4/QWsF3c3Uvbb5KLsZX9IcOCpkKCpKXbQmFj6m/xd7Co+aH1ADEVCzJ7jSerxaY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+khuzoB; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52cccd44570so1975045e87.2;
-        Fri, 21 Jun 2024 01:14:39 -0700 (PDT)
+	s=arc-20240116; t=1718958062; c=relaxed/simple;
+	bh=BHs522MQJBFhV9ohTCDDfuazR6Fijf/OOyDX4mfhwRo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eaNu3Js/lHmiFWzGlA6Q/yEGSJ0oQv0vDD/Imws42mQV04hBDeczuDOENI9Qh5Q1nYsncxdMsya+VOBoRoFFCoG1zdx/LfpEvcja3snJKqwI89bIVx6xx7XEPUEGMDTrXveccSWW8AE70M85Io8tOGcnpN3/PWd3uL6XSaUXVuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fVkSAAgT; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b42574830fso7628806d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:21:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718957677; x=1719562477; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0O/Dqe2KMVumxXzco1OedBrrN88fxS2sDSxa3fRQNVo=;
-        b=R+khuzoBqAltiH4u9l6/uJM7yUJPjk8pl8dIJpIa/BmKcNWpTZMqiMDCnx0vsGifQj
-         oPByo4vHQFwmHCOqOIAduVyyFYLwGV18ZWOu1Fp4otfjSxtcJkVIrI0BZDez0alJv9AM
-         maAWukaU0lkkJpji1fakvn8TQBi6Nj9f4gPRGq24gaasA9V28JfgE8Vsxy/m1ze/beu3
-         lXPL2gAxBmlKzp5iPOasNZfwZFQRjqe9qVzAcw5q9WmwYMHpxdOosTm12EWnPbRuXU/w
-         kVSviV8T9I0ROgTTDccL9lsvOBWdYZrFHAd9PPyqaxLaQ2nUVSPwl02x0xaGEBuutkdy
-         N/yA==
+        d=google.com; s=20230601; t=1718958060; x=1719562860; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BHs522MQJBFhV9ohTCDDfuazR6Fijf/OOyDX4mfhwRo=;
+        b=fVkSAAgT9bU7aUKMxg+VmFqLwrlV6yjhzlTkf1rPaDDC4HI9Ll791piF+VazIGkU38
+         zcGhuLEh/v8i8dkZUIYx9xou6cHPbG520+p7/Q7nPWQznGyKniKhyN5jsMwsuCd5zEDG
+         nSWbB/eMaDGAsfDAVaj5m/oOZI6p7NkDWmceprYBQ5Gl2NtzbIeRQ2wtMDN5jaFa1sIR
+         LwcMRreUJHaqW+pW/tsFZUsZceh/hKGAFNeoQs+u4wRl8/uLjsV6tiUmnh77ldJ4LCmn
+         +2fquYU4FevidS9DM1Gs4Ji1CZ+XiFStymcw3eSyJPKIgcCasoObFVjk32v2cYyU02fN
+         bDvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718957677; x=1719562477;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718958060; x=1719562860;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0O/Dqe2KMVumxXzco1OedBrrN88fxS2sDSxa3fRQNVo=;
-        b=c3ww1NnRKH2YfRbF4yBdKwCY38sMkYmUlt3FNon3qY65n9sUm3wyQLvrM6gksUMo5i
-         5/Li1UvKnbHDKrzLlaNQ4KXx8wTN5+lNb6TblxM85pejxqNobHJ2vda6jyxOtYZ4/bfK
-         pr8zS4aaWLdU+geY0G/cnUepqYNpIfLIvKInRKoRUuR1iyFg5EtP8l+VcgjyroCNVFUL
-         0W7Ge18eNjuYxThmPAMfv9oDrtoGqtRNCl7KgvQIf4TeBlqaJ2y/Sdw6ctn0t4hXsBMS
-         Ps8JkX0oHA9Q4cm7IqHlfJWYOpdeplAeboB0oLmp7k9EraGaoH7WKm8cEWx219UQWyfQ
-         VTiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRk7lgSMblje+o4uYY7LAi6ivIMwl5GeBruM3WdQg/exdAAu8ifjzXAEtzmELLx45YuIVFcknpiQm0lyCILUAHACms0jBCxvCAaHiHlEfWMwUf3uHdIbF4Dg40MhNNZALyr///QKLAbcggF2lGnlPe58E8M6gzisIJw76qmJfv3KQ31dBD
-X-Gm-Message-State: AOJu0YwDm0J5DRFO29r7FumCtc80JHsQquSC07BDSBIls6areBR6gJzS
-	KUhzuWYnk6rw6KpzaigYVwAj6JJqrK62RiwWjEfDnW5yBmoWlqLOpjv8VCicbEA=
-X-Google-Smtp-Source: AGHT+IFmXhWWsuxsSkJtNcuigvqkVVr1UAdGQByG20qWApyuUQTDSSBWWR3F15WjD5aFMfM657DezQ==
-X-Received: by 2002:a05:6512:3127:b0:52c:c032:538d with SMTP id 2adb3069b0e04-52ccaa5be51mr4443598e87.27.1718957677223;
-        Fri, 21 Jun 2024 01:14:37 -0700 (PDT)
-Received: from deepthought.lan ([2a00:1e88:40c0:c300::729])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd643e419sm125548e87.243.2024.06.21.01.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 01:14:36 -0700 (PDT)
-From: Valeriy Klimin <vdos63@gmail.com>
-Date: Fri, 21 Jun 2024 11:14:48 +0300
-Subject: [PATCH 3/3] ARM: dts: qcom: msm8974-sony-shinano: increase load on
- l21 for sdhc2
+        bh=BHs522MQJBFhV9ohTCDDfuazR6Fijf/OOyDX4mfhwRo=;
+        b=WJvR8YmXuC8IPEK9e5s1crNarYYlgvDyjWrXBqdB98by8QP0YjtoxNz/juHWVF/M9o
+         SWu6Uz3aJ0J3JFRYRBkbB9NMU1aw3nJsYQS0lYLStcIiatC0cI5qQD/PRBdyhfAQINtI
+         jvimIKMFoFMUfTDUcXcI2ttq6zuCsm0HT+30/0uH9SOSUia9eo3r4VxUWNbpG+thy41t
+         B1U91YYqr/gZ0ovOi2rpeiw1ELHmgX3gmb4iW5ur2XrIvk2iTz5QusdylBiITU7fl6N/
+         /kyyVa0a/dA2Ap7vlAXaQ63C0tIp7XOJJLEsAmvZgzMsNpSr9jixpp+0AqC7PWH32KRx
+         fChg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIFQQ0vGTw6NqBgoga7fhvVxi6WijJgFUNoJkz0mdf6uh0u3VtxaTslyiINO9Jd6lgxbDcYeiY5sI6S2tfH26jSBzT+FABE6BNtsx/
+X-Gm-Message-State: AOJu0YwxHrx7V3Own54JxpA69XSKMM53WDbCuHFMLPNWUgJgr9nWIhDM
+	DCMaxjieSffBcmkOYTmnjcHpBToEJlMVciPFzIj1EuNNvXtzP7LkEkiC3oAvP9Z2VP0Sf4DUGzn
+	ruZncNz60Lw7EE9qjEwlJb2OkWthIXXVS834E
+X-Google-Smtp-Source: AGHT+IGXcWKjE2wEB/FB3zctbVztmZY2T0ghhs3sX62Jp/C/wU0GXj1rKHaik6sGne1rqKXer3niMAyr4JKJZuHyBVU=
+X-Received: by 2002:ad4:4e52:0:b0:6b0:8f42:2435 with SMTP id
+ 6a1803df08f44-6b50d8e188dmr52575026d6.51.1718958059567; Fri, 21 Jun 2024
+ 01:20:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240621-sony-aries-v1-3-bcf96876980e@gmail.com>
-References: <20240621-sony-aries-v1-0-bcf96876980e@gmail.com>
-In-Reply-To: <20240621-sony-aries-v1-0-bcf96876980e@gmail.com>
-To: ~postmarketos/upstreaming <~postmarketos/upstreaming@lists.sr.ht>, 
- phone-devel <phone-devel@vger.kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Valeriy Klimin <vdos63@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=997; i=vdos63@gmail.com;
- h=from:subject:message-id; bh=xFO0qgIbZZSZGxvGjihJgB2It0l8Hs4sqlpsLip0Fe8=;
- b=owEBbQKS/ZANAwAIAQ4Juwrzgg1aAcsmYgBmdTaMO55zgZkXeo5FuKQfLy+PdRD0EFqiNVRjh
- bL4U6jyQx6JAjMEAAEIAB0WIQT/ENLr7ksLn/+UbhAOCbsK84INWgUCZnU2jAAKCRAOCbsK84IN
- WuihD/99DdSmt0QhpONeoqKvN1+5EVxUXYYfsENQcx3lHvgA5N18bihFQqf/7VaLtAoek5BHMaf
- Ox+MebFr9e4fKWdvqjdHAmUw3hbtRsbwd9+RVYHy+VOW55uXBF37iBtx4N5f0CBmv1u5qUZzz+t
- 9CBVq3Z2HvcT8erjB4WGUKqz7mLA6BFmpGWaK8dzsyC8iC9OkPPMu8sWaak6cvU7FSCUBD8INAl
- cD7A9E3VxWIdV+POlhIlFD54+oNHG4tg0Hwj8Q0NCjHlg9tpv3LVxjtcpjGMzbc17Tbb8Y0+97L
- 2KBFLC6vTRvh23MIMEYn51tlVEFzd0JVc1x1RwHuCW7IUx6rPAsyWpcUaq1wJCg9gP+QHu7zQ46
- GRhb6mYoxYKe0mU0x1MPZ50RC7PBXPJbD938Pjk/YfJLq5JXI98X844qAagMx5RK1+4WNBfSys1
- r6C1KSYhpEVT7xJo82mDAlcFlyWv5+KbNky+Zhek0nSAOIrJeYnFwb50FrmGk2dGpy63Go+P7aJ
- H0OYonU02/a9n82/qVOgxaBn2LMBKSK6mL03k9HxQdBRO+o0o7bUYDXoayoVLUYbgzKqqrLs+fR
- tB/aLC/5cMtHTPYe8A2QBgF2aqRGSTD3W3BJlE4INKLNlOVbPkeVo7yB0uRyOHRkKifoL72Ev5I
- uVFFtbQZdQmiPUg==
-X-Developer-Key: i=vdos63@gmail.com; a=openpgp;
- fpr=FF10D2EBEE4B0B9FFF946E100E09BB0AF3820D5A
+References: <20240621002616.40684-1-iii@linux.ibm.com> <20240621002616.40684-33-iii@linux.ibm.com>
+In-Reply-To: <20240621002616.40684-33-iii@linux.ibm.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Fri, 21 Jun 2024 10:20:18 +0200
+Message-ID: <CAG_fn=UNT0s1q82Jb=j+HAnGXJs2j=ip2FL6zut+jtnwq57pUA@mail.gmail.com>
+Subject: Re: [PATCH v6 32/39] s390/ptdump: Add KMSAN page markers
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SD cards would exhibit errors similar to ones described in commit
-27fe0fc05f35 ("ARM: dts: msm8974-FP2: Increase load on l20 for sdhci")
-
-This patch applies the same change to the regulator for sdhc2.
-
-Signed-off-by: Valeriy Klimin <vdos63@gmail.com>
----
- arch/arm/boot/dts/qcom/qcom-msm8974pro-sony-xperia-shinano-common.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8974pro-sony-xperia-shinano-common.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8974pro-sony-xperia-shinano-common.dtsi
-index e129bb1bd6ec..6af7c71c7158 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8974pro-sony-xperia-shinano-common.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8974pro-sony-xperia-shinano-common.dtsi
-@@ -380,6 +380,8 @@ pm8941_l20: l20 {
- 		pm8941_l21: l21 {
- 			regulator-min-microvolt = <2950000>;
- 			regulator-max-microvolt = <2950000>;
-+			regulator-system-load = <500000>;
-+			regulator-allow-set-load;
- 			regulator-boot-on;
- 		};
- 
-
--- 
-2.43.2
-
+On Fri, Jun 21, 2024 at 2:27=E2=80=AFAM Ilya Leoshkevich <iii@linux.ibm.com=
+> wrote:
+>
+> Add KMSAN vmalloc metadata areas to kernel_page_tables.
+>
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
