@@ -1,256 +1,227 @@
-Return-Path: <linux-kernel+bounces-224969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47550912981
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:23:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C2991294A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED578B2A9EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:17:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB491F22035
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAD355E73;
-	Fri, 21 Jun 2024 15:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD6E6F2F1;
+	Fri, 21 Jun 2024 15:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UByxV7t0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="soE/sBnO"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2027.outbound.protection.outlook.com [40.92.23.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2632128DB3;
-	Fri, 21 Jun 2024 15:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718983070; cv=none; b=I+eX/je7MXkqBFtjt1Zt7CIFpkSdtBho9dMq0A1IPl75OyY/u1b0Ll4lVT2qKAEcCOXhU5/c/P5vKVYqFt0/YYTZd751UZ4r+A3ol+YTdx93NZJvG9StMgTK4pB6+L+7w19w47V4vjSlOtcWVa4eyD+D0BHtzNa0FqAaVX2QvNY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718983070; c=relaxed/simple;
-	bh=T4+TI+8ndBdHiFbq61X7WaaGwYLRFKgaWSWHvteO3J0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p5hbgCtGghc7AtKWCOKIz6mYxVrCb+nZ3sev/R32pknnWzHzbBi6emsEjzMNx7evUPkhLeeCn8JGz7utB8pm5XVdCrAK034tfxPOq7LSPidFAr2TneguL9t1c4KMJpRP2gFuNsbjp4cDYpGQ+0IF/1yPVJnrReqSNZKP12qdsCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UByxV7t0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72A26C2BBFC;
-	Fri, 21 Jun 2024 15:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718983069;
-	bh=T4+TI+8ndBdHiFbq61X7WaaGwYLRFKgaWSWHvteO3J0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UByxV7t0eq8J0Qw7PACb4hbk2DnhiRy8zVF4eLQHFo/aC1LZniQEOMioSZbMHRxSR
-	 oq96gBrVYbppoWkEYMptNWEQSNWa44ERIuQ8pH5I1YjDCvjzx4+iRH90PFeNrLHeId
-	 Wm6GAURJ/fAcNhkin8QuCuxjO7cTGF4N5k0c0aVhbQcp4EWttBWQnNFQ67LvylPKrq
-	 mdvRJEkX2n99ntQ+R/VOvy2I6P/YvLWzztckT5ivL24ln7EZJ1OexkPJr8UNcjrPXp
-	 DP1r+3se4mL2r26c1cEaXoFfvAvBeMEn7Snuh6bqyEC+pSmb5wOEvTnmpccGhfznIi
-	 677YuWSHl+4Fg==
-Message-ID: <49f4c98b-88eb-404b-ba77-e892309725db@kernel.org>
-Date: Fri, 21 Jun 2024 17:17:42 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171AE38DE1;
+	Fri, 21 Jun 2024 15:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718983119; cv=fail; b=RXobiIr9ha7hwljajaXK2ARLAQFl0NNXOAbKn3jhUt+uynueyBAc0WU1PQhzEW12GGiLSMhiI99R6NuhrwDROz+tpi/jaB/KLQyDv7wC/5cWDD3OFvqVNymGgUz2qE7XoMEjYeWIFEi6SKjsgU1OJ8IJP3RtyZJ8qHrVgqY/Xx0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718983119; c=relaxed/simple;
+	bh=SRHwyjZXTEaCiZnoY9QUdRUkB2ktF+ALQo37gRdq7SI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PQTckGvYGc+YwI/KSSbmgkJfnrYfZTtHOIURq6CUDhlvVhG4n0rwKyFHlpgXS5hpom3xQqvZ1dFD3NK8fm6mI7T5KpbkJy+w8Crk50CuQp9eseiqs5WNdTrYFyOT7ne7CLMCaJSCl2usHFQPTTZi7s07vkTCtt5NlFzZNKkuDMw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=soE/sBnO; arc=fail smtp.client-ip=40.92.23.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BH2HTfFN4k85dkdAPIilQ3XY8kBCO3X9DrdsbHyBSqVg5NgQghv1OMWXYfFGYjrlx5dbNBJKreDWpr0FyYZUjcQ4ZfGKtAzmWpCPJskLoJqmZcHHs9TexoMnYlR/JZsZOqsP8izgPkdUevX8tiDH5puyflXKfcokeuxEeduOdgtkQIuJsYBYQSKP5R5XJlAm4mle/cVC0QhFL5HV75q2Ydb/fl6kQ4SQg4ai2jmdoayWVNvVDa1bEgxMfvXeefkCsrm7JlOZkpDwlTfdieZ8tsKjxp2b1LrLX+uSbcQ6O9bMv+OZsEgy47H6kbEqmmjqroSyWMaQoDVWD38TVFx9jQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HF1y6NiatmkPVsUBu2jZEF2IEgCXTGFfvNOsLwWzJSE=;
+ b=Ivs3qy/D9kbfYFCw5NU6oYLdllLlUW878ZVbyommK8JpwfqmW+vFk31MARqQeCH2x8YjfF80P64tFovg0PDXeXLlbLKIyuS5yZLKhu+4vu2EUUsCPG5d5jftoRPRNREKAYzbcm7Rh3+LyZqaJj1WG+kSlclw94bYGbphn/ZFEBd25wH5RHyEvRb33zmzBYjhxgRsA4uuQzQ7FJVFf7GxflvBNdsT8SEDAQOK47JuH/2FAibLvurZWU+2EXreY4UIbQWZltbxs50rD1XzvmlUdL5ejzi9Wyj9l37XNObxnvMIWeZMpVIB/hvMh+9wTIa+Xd4PgWWmwMyt/FZVlsBt6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HF1y6NiatmkPVsUBu2jZEF2IEgCXTGFfvNOsLwWzJSE=;
+ b=soE/sBnOMU+UMjbvyT1cMYc/lxp1HfOA3hjcJ6w+inwFFaVQOJSPy5OyNEK9gAZ3swvbHonGsJrkW+IKV6z3ypqFCwbFRhFfD3JRCRcnE3W0ZXfQHabj7FjT2EoGtjWrNMHU3wVPzSbyfIQ+UYQ0IPUs4gZYjmtdnzjhOAu8zseAN9gHdArNqkDHRa0taLTeQTZAvvJfrhsYg/yJdRzR8yU28zBJz22tSDrY8oCXrFmh7tMHWqaAPKuyvwYdlEtMyLDpw5OA1tFpa6wQCPi/41s7TQrXQ1dVrWh2cZ1UaRot5Iylwp1xVn2MZSQaP10adetkxyR5bzaR2M3wXsp30Q==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SJ0PR02MB8497.namprd02.prod.outlook.com (2603:10b6:a03:3e5::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.22; Fri, 21 Jun
+ 2024 15:18:32 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7698.017; Fri, 21 Jun 2024
+ 15:18:31 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Dexuan Cui <decui@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H. Peter
+ Anvin" <hpa@zytor.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "open
+ list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>, "open
+ list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
+CC: "stable@vger.kernel.org" <stable@vger.kernel.org>, Roman Kisel
+	<romank@linux.microsoft.com>
+Subject: RE: [PATCH v2] clocksource: hyper-v: Use lapic timer in a TDX VM
+ without paravisor
+Thread-Topic: [PATCH v2] clocksource: hyper-v: Use lapic timer in a TDX VM
+ without paravisor
+Thread-Index: AQHaw6KqBhSJMhSVSU+BM+3i2rTULrHSVPkQ
+Date: Fri, 21 Jun 2024 15:18:31 +0000
+Message-ID:
+ <SN6PR02MB4157A232D59ADF60CA3BD265D4C92@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240621061614.8339-1-decui@microsoft.com>
+In-Reply-To: <20240621061614.8339-1-decui@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [SD+EfaiptBWMiS58pP4W3G6dYj6hGzUr]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SJ0PR02MB8497:EE_
+x-ms-office365-filtering-correlation-id: 71a3fa82-36c5-4143-326e-08dc9205690b
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199025|440099025|3412199022|102099029;
+x-microsoft-antispam-message-info:
+ dwcONAf9tdJZHH81odxkfp6q1Sotyopiu4sy74HyUBrdQ/gpTXCHPfL+XgxBuYq+uouVOz23gZfie9x8C2ROcj0aiZdjErpRwietauI6X6m9KjEaNWaocbTeHwt1TX2J5DSrIDlfzpEU7B0LQ1uUl12+4dfCrlOh/bXbWiByQuxft9mvKcNTETpCnLKYVa52GmWJxWbboPHiMDyRFqhEn8WrLxAokd11bh8uT2vhC7spSWCst/yI/WiAOlxkuQEe+dUMqquT53jqVQFSjv5n4Qzd33VBizRXCvoJtH8hCnLxjFIZhNHONCPpro1WD6T+oHXBlZN0TK6SmRXLsL57e47jaYlEWS2nJ8FV9sMO3qiy2DAGk98nf4BCk8j3uLjj29yH9JXiN880ke4XZSz1RXZdSPChSVnJJqdcwF34qFVNfYP7wmKk8bNkATuv6t5XZbLoZnE1h40vCet5ZYr31uVxdE0f7Riygj7vgQiaKDKAUibKe9vgc0b5CFqv1OuJYN4JmRGtlFL5a1bSf4b7fEq1tYlwtFtr4c3FyYEPSmZHExbg8yW88yJWwDnK2LYF
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?S+sYVzWtCa5R2tn9sbM7l3Fh4BtjQN9dzX+wU7w4iWLfcRBqww7v+woMhf3H?=
+ =?us-ascii?Q?BdIvTRZxo1Mf7JjNY78bSgQyaoJ4dWp0a39aV+7FsX3OBp86RWWkmFqEBe9g?=
+ =?us-ascii?Q?tnP6t3s8IwT1HwGJe8zMaBUbzCUkoFR94qB7gfzEe3LREjTlVn702hJA31Ai?=
+ =?us-ascii?Q?qUcgaw//HW9B3I/Hr0PxoomMdRRZQEqYjADeb0Er+PuIQSnG3nxn4drrHzD6?=
+ =?us-ascii?Q?gJ57zaCZ6jd2A1Mn77R+gLzA5FBupAnQlA3rg0b32SDVTpIXCiJe56WXkZoq?=
+ =?us-ascii?Q?6huHm7h7AbcAL896V78z7b7ZjRhV2uzVTS2NaZOjMqLlXI4DOrJUQ8paKvmx?=
+ =?us-ascii?Q?nONiDDRAYMfhUZeojJt26YHV/v4JshSLbz9lh+iDSr1xJ3X47GXSnwwgotId?=
+ =?us-ascii?Q?HZIgWSR9rVTo1mi6MbfSCanK+PAKhFsEn6f9WvEB8fskfm6Zkm2nxJRCKBXP?=
+ =?us-ascii?Q?RetvnK7ryFy+eR967Gdcy0/6PJc8hHqeYErt+gV3PO8nlgKs40gCg/jPX/LP?=
+ =?us-ascii?Q?qsR5wxVZsqMfTdq0sWcmsWTtVhFpSJgYxUk/efadPjBo0YU97n3wo+V7izB/?=
+ =?us-ascii?Q?/6VIZeTwOurNkD5O2DgDEMSVgadTO3U70EwCC/BbHGEencOatiYeCWEYBa3u?=
+ =?us-ascii?Q?NWqjc64ua0rbGAk5N6Z9fMPOIUup7Ip/anDyWfu22X8u1ShIgxKNvkNe0MkG?=
+ =?us-ascii?Q?n14gr/F/1/5anb8KNng8MMV33lrWgCPjo13oyZVe2jLp86yi2od/J4faOXPf?=
+ =?us-ascii?Q?LSL6dTh/zEB9E957blFnc5UdgI6UUF9IcKGb7X/iLL3Wa/a//6MT42IehqvG?=
+ =?us-ascii?Q?2mV1DQK/iF6mw0O1WyoprN8yJsuCx0AWL6o+EpHhRFwiu4gnWCotpq+IzZDP?=
+ =?us-ascii?Q?34yb+Bx4v+15YsKdvBve5DOYUmQjDi36kHn6ZgsvWhCWhJxFm8EZQw3MtrIj?=
+ =?us-ascii?Q?JQM8e1ixqPrVUP94+2VmI9tvnxyG6ZACEB3mnnb4vT/Dm8EFflm3Oc1QJLHu?=
+ =?us-ascii?Q?2A9ZhfJ2ON/cwO5W3WfZD+TWr9pUMCvcYxnNk0TxBV84mOpJafMiWmBkR10z?=
+ =?us-ascii?Q?f2DW8kIyV15QdVDQGApmr5HMz9XO4lIdQHJTX6fYhYaH8cbzi4pOdGn27iRo?=
+ =?us-ascii?Q?YwzrKd2T4zf6yj92HodChvq38WowUot8enBjwwmFytQmm6Mb1K+IWqz3UVg8?=
+ =?us-ascii?Q?sUjs3cDw0aMdrNliDzaS0vBOmrJBkGoUQJfoZ6CMht0vJZvMWRrT284aO6A?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: display: st7701: Add Anbernic RG28XX
- panel
-To: Hironori KIKUCHI <kikuchan98@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org
-References: <20240618081515.1215552-1-kikuchan98@gmail.com>
- <20240618081515.1215552-2-kikuchan98@gmail.com>
- <0455975b-837b-4a1c-8ea3-e9a504db53d0@kernel.org>
- <CAG40kxHaAwGowQ0dRoEkGSiAUJA5SyKw3SSECUmBApKaAjcHKw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAG40kxHaAwGowQ0dRoEkGSiAUJA5SyKw3SSECUmBApKaAjcHKw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71a3fa82-36c5-4143-326e-08dc9205690b
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2024 15:18:31.4315
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB8497
 
-On 21/06/2024 12:59, Hironori KIKUCHI wrote:
-> Hello Krzysztof,
-> 
-> Thank you for your reply!
-> 
-> On Tue, Jun 18, 2024 at 6:17 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 18/06/2024 10:15, Hironori KIKUCHI wrote:
->>> The RG28XX panel is a panel specific to the Anbernic RG28XX.
->>> It is 2.8 inches in size (diagonally) with a resolution of 480x640.
->>>
->>> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
->>> ---
->>>  .../display/panel/sitronix,st7701.yaml        | 36 +++++++++++++++++--
->>>  1 file changed, 34 insertions(+), 2 deletions(-)
->>
->> Nothing explains in the commit msg why rg28xx is actually st7701.
->> Changing interface to SPI suggests it is not.
-> 
-> Thanks, I'll explain like this;
+From: Dexuan Cui <decui@microsoft.com> Sent: Thursday, June 20, 2024 11:16 =
+PM
+>=20
+> In a TDX VM without paravisor, currently the default timer is the Hyper-V
+> timer, which depends on the slow VM Reference Counter MSR: the Hyper-V TS=
+C
+> page is not enabled in such a VM because the VM uses Invariant TSC as a
+> better clocksource and it's challenging to mark the Hyper-V TSC page shar=
+ed
+> in very early boot.
+>=20
+> Lower the rating of the Hyper-V timer so the local APIC timer becomes the
+> the default timer in such a VM, and print a warning in case Invariant TSC
+> is unavailable in such a VM. This change should cause no perceivable
+> performance difference.
+>=20
+> Cc: stable@vger.kernel.org # 6.6+
+> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
 > ---
-> dt-bindings: display: st7701: Add Anbernic RG28XX panel
-> 
-> The RG28XX panel is a panel specific to the Anbernic RG28XX
-> handheld device. It is 2.8 inches in size (diagonally) with a
-> resolution of 480x640.
-> 
-> This panel is driven by a variant of ST7701 driver IC internally,
-> confirmed by dumping and analyzing its BSP initialization sequence
-> by using a logic analyzer. It is very similar to the existing
-> densitron,dmt028vghmcmi-1a panel, but differs in some unknown
-> register values, so add a new entry for the panel to distinguish them.
-> 
-> Additionally, it is connected over SPI, instead of MIPI DSI. So
-> add and modify for SPI as well.
-> ---
+>=20
+> Changes in v2:
+>     Improved the comments in ms_hyperv_init_platform() [Michael Kelley]
+>     Added "print a warning in case Invariant TSC  unavailable" in the cha=
+ngelog.
+>     Added Roman's Reviewed-by.
+>=20
+>  arch/x86/kernel/cpu/mshyperv.c     | 16 +++++++++++++++-
+>  drivers/clocksource/hyperv_timer.c | 16 +++++++++++++++-
+>  2 files changed, 30 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyper=
+v.c
+> index e0fd57a8ba840..954b7cbfa2f02 100644
+> --- a/arch/x86/kernel/cpu/mshyperv.c
+> +++ b/arch/x86/kernel/cpu/mshyperv.c
+> @@ -449,9 +449,23 @@ static void __init ms_hyperv_init_platform(void)
+>  			ms_hyperv.hints &=3D ~HV_X64_APIC_ACCESS_RECOMMENDED;
+>=20
+>  			if (!ms_hyperv.paravisor_present) {
+> -				/* To be supported: more work is required.  */
+> +				/*
+> +				 * Mark the Hyper-V TSC page feature as disabled
+> +				 * in a TDX VM without paravisor so that the
+> +				 * Invariant TSC, which is a better clocksource
+> +				 * anyway, is used instead.
+> +				 */
+>  				ms_hyperv.features &=3D ~HV_MSR_REFERENCE_TSC_AVAILABLE;
+>=20
+> +				/*
+> +				 * The Invariant TSC is expected to be available
+> +				 * in a TDX VM without paravisor, but if not,
+> +				 * print a warning message. The slower Hyper-V MSR-based
+> +				 * Ref Counter should end up being the clocksource.
+> +				 */
+> +				if (!(ms_hyperv.features & HV_ACCESS_TSC_INVARIANT))
+> +					pr_warn("Hyper-V: Invariant TSC is unavailable\n");
+> +
+>  				/* HV_MSR_CRASH_CTL is unsupported. */
+>  				ms_hyperv.misc_features &=3D ~HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE;
+>=20
+> diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyp=
+erv_timer.c
+> index b2a080647e413..99177835cadec 100644
+> --- a/drivers/clocksource/hyperv_timer.c
+> +++ b/drivers/clocksource/hyperv_timer.c
+> @@ -137,7 +137,21 @@ static int hv_stimer_init(unsigned int cpu)
+>  	ce->name =3D "Hyper-V clockevent";
+>  	ce->features =3D CLOCK_EVT_FEAT_ONESHOT;
+>  	ce->cpumask =3D cpumask_of(cpu);
+> -	ce->rating =3D 1000;
+> +
+> +	/*
+> +	 * Lower the rating of the Hyper-V timer in a TDX VM without paravisor,
+> +	 * so the local APIC timer (lapic_clockevent) is the default timer in
+> +	 * such a VM. The Hyper-V timer is not preferred in such a VM because
+> +	 * it depends on the slow VM Reference Counter MSR (the Hyper-V TSC
+> +	 * page is not enbled in such a VM because the VM uses Invariant TSC
+> +	 * as a better clocksource and it's challenging to mark the Hyper-V
+> +	 * TSC page shared in very early boot).
+> +	 */
+> +	if (!ms_hyperv.paravisor_present && hv_isolation_type_tdx())
+> +		ce->rating =3D 90;
+> +	else
+> +		ce->rating =3D 1000;
+> +
+>  	ce->set_state_shutdown =3D hv_ce_shutdown;
+>  	ce->set_state_oneshot =3D hv_ce_set_oneshot;
+>  	ce->set_next_event =3D hv_ce_set_next_event;
+> --
+> 2.25.1
 
-OK.
-
-> 
->>
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
->>> index b348f5bf0a9..04f6751ccca 100644
->>> --- a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
->>> +++ b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
->>> @@ -22,19 +22,21 @@ description: |
->>>
->>>  allOf:
->>>    - $ref: panel-common.yaml#
->>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
->>>
->>>  properties:
->>>    compatible:
->>>      items:
->>>        - enum:
->>>            - anbernic,rg-arc-panel
->>> +          - anbernic,rg28xx-panel
->>
->> What is xx? Wildcards are not allowed, in general.
->>
->> Can it be anything else than panel? If not, then drop "-panel".
-> 
-> It's supprising but it actually is a product name of the handheld device...
-> The panel comes with the device, and part# is completely unknown.
-
-OK
-
-> 
->>
->>
->>>            - densitron,dmt028vghmcmi-1a
->>>            - elida,kd50t048a
->>>            - techstar,ts8550b
->>>        - const: sitronix,st7701
->>>
->>>    reg:
->>> -    description: DSI virtual channel used by that screen
->>> +    description: DSI / SPI channel used by that screen
->>>      maxItems: 1
->>>
->>>    VCC-supply:
->>> @@ -43,6 +45,13 @@ properties:
->>>    IOVCC-supply:
->>>      description: I/O system regulator
->>>
->>> +  dc-gpios:
->>> +    maxItems: 1
->>> +    description: |
->>
->> Do not need '|' unless you need to preserve formatting.
-> 
-> Thanks, I'll remove it.
-> 
->>
->>> +      Controller data/command selection (D/CX) in 4-line SPI mode.
->>> +      If not set, the controller is in 3-line SPI mode.
->>> +      No effect for DSI.
->>
->> Which devices can be connected over SPI? It seems not all, so this
->> should be disallowed (": false" in allOf:if:then:; move the allOf to
->> bottom like in example-schema) for them.
-> 
-> Hmm... That's a difficult question...
-> 
-> There are 3 types of connection that trying to support:
-> DSI, SPI with D/CX pin, and SPI without D/CX pin.
-> 
-> The dc-gpios is required for SPI with D/CX pin, but not for others.
-> 
-> DSI:
-> - anbernic,rg-arc-panel
-> - densitron,dmt028vghmcmi-1a
-> - elida,kd50t048a
-> - techstar,ts8550b
-> 
-> SPI without D/CX pin:
-> - anbernic,rg28xx-panel
-> 
-> But, there are no panels with D/CX pin so far.
-> How should I deal with this? just disallow all, perhaps?
-
-You can disallow for all existing panels, if you are unsure.
-
-> 
-> 
-> BTW, does panel's compatible string consider to include it's interface?
-
-No, the compatible defines the device, not its wiring (bus). The parent
-node defines which bus is needed.
-
-> ie, what if two panels use the exact same commands and timings, but
-> over different interface,
-> ... are they "compatible" or not?
-
-
-Best regards,
-Krzysztof
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
 
