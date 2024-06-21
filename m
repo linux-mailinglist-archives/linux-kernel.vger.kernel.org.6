@@ -1,111 +1,354 @@
-Return-Path: <linux-kernel+bounces-223865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4ADE911996
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:38:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA3991199E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FBC4B230ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:38:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 931F21F21CD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C886D12CD9B;
-	Fri, 21 Jun 2024 04:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865C512D1ED;
+	Fri, 21 Jun 2024 04:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GR4+8wNb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kD4DgRwY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF8843687
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C46EBE;
+	Fri, 21 Jun 2024 04:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718944710; cv=none; b=Q1gaPu85Hvm3TOlAkVXLGVsOufdQZRHB/ybM1mr+npyDvkMnTYDWJN85yODTxAwghxuUd7we+zsqD/02hqmZSODrIq+xU27rglIrdS8yhsLmfs9NXOWxUmF+BqEA5er50XTZGM18FfB0/ivkgLInB0wr2PQEEGEmDlF7yQMFFDo=
+	t=1718944788; cv=none; b=BrRq+VlxQvrY2AttbSvXNbRLreWseqQCYHezoWW/OJzjOX4jQVnydsaxCFNLnn7ZlrjfQLcu/gOquLKxPJ60hJQsp5sUUoqUUH401N2n7LJXMQ023KlnjsJdjLxBc/azou97+r1u/qQoZEwqYb5hrYIJv0i/ETjKLJRzX5qFTU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718944710; c=relaxed/simple;
-	bh=gNwz/g7O+nsS27JCGHYoWE+4IVggQp+k+Y26cxAwxFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oV0fwd53GwVjiLDi9i0xR8AnckCPgAxThsTA/x4qQdQBtlFyfvgijedmJCNIHY3h8XTpXclauZTEpG17qWNOUNkc3vJ/O8jDfW4A/9ickD9fqUm9AQ+MM4RLMGncqKdJpyE8ipUglYrMIMJA+G5Wse8UYzw9MPLSYfiWGV5FYQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GR4+8wNb; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718944708; x=1750480708;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=gNwz/g7O+nsS27JCGHYoWE+4IVggQp+k+Y26cxAwxFI=;
-  b=GR4+8wNbCYETho3WECNlumOxOnkD0BqKeRIF6JeZ2mXA004P56DgYyo3
-   W9W+ZxLShzX4LxDc+biHdAM5kvgVQ04x4lkQTNjkyLkd9jOLtPfEZjxR9
-   og6i1ikDzQFV6fwK/LLSMCV3A0F7tkfVpCxjBbaiC2VTWHUFeW4Giwr8N
-   JvygUg/EVhDDmVyvyxeo9s19jxxDziM+2iW+9bjinO8mnGOqI3DraEc46
-   dRQ5ThDLcf8hANdeGoe+6OiBRde5YHfRmnA3+s6JrDMfHDCFvqIrP6BKE
-   wQdxAQFsCo/3RONswl7oYYnsiS7Wt+4APfEHkZujhh6X1S6AYj7jyrRx8
-   w==;
-X-CSE-ConnectionGUID: eEfHCPsfQ8iwkUZpq3q02w==
-X-CSE-MsgGUID: mctMvjizRE69heK3/rfDMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="19739619"
-X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="19739619"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 21:38:27 -0700
-X-CSE-ConnectionGUID: 245XCLHJTK26G6XdGkuIrA==
-X-CSE-MsgGUID: 18OuxUEYSB2nGtexs3zRew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="47659668"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 20 Jun 2024 21:38:25 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKW2Z-0008Ec-2a;
-	Fri, 21 Jun 2024 04:38:23 +0000
-Date: Fri, 21 Jun 2024 12:38:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Simon Trimmer <simont@opensource.cirrus.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: serial-multi-instantiate.c:undefined reference to
- `spi_unregister_device'
-Message-ID: <202406211244.oLhoF3My-lkp@intel.com>
+	s=arc-20240116; t=1718944788; c=relaxed/simple;
+	bh=Wewpl2QV5Wg6PNSqVyRuurfj/a+BJk24Qfha/M0GzuM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=oBJkHb7vPg9luXHdKyPABGTAJqBM6F63m2/QH/LqHmR/58MJ0w2Q6LqHktqQnwzdr/B8aRlgX0npcPR5+EO3hk18wcj9YJmiizvhZGPuzrC9XZhcSJXFr01Loj2fDg2fdDArI/F1oUQXMW4vUdhl75x/UZdnTb/71IfwisiCKEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kD4DgRwY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F11FC2BBFC;
+	Fri, 21 Jun 2024 04:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718944788;
+	bh=Wewpl2QV5Wg6PNSqVyRuurfj/a+BJk24Qfha/M0GzuM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kD4DgRwYeSC24FRKtA8OwS6RC2nD55twbieniX1OtTaZuEF/MxagVMzsW7VVVu3D/
+	 /gO3I6M1oGqM0eEh4sfpPOlKfa94d1IhoX+EpVq/WZXBN/+QjfDJ4aLdiRn/EiFZt2
+	 UWWTnGrZ0+uedvZz0fei+dY0tYaj4i3LExqoBk5HGVkqVRlZiXb8XO75B7+0Gx129x
+	 lPBDzByclB1kT8S37cwEu0Ng5DylmLHr37UKEhw4UffwDpdASpGegQVtobqw3FHWkz
+	 irE8XVlHTECn5xLzSFdUtlbf0UoyfVinvcOOqAWHeKIn4r65/Psw24eFEcJvdTedEy
+	 8oUGpQbMjcuaA==
+Date: Fri, 21 Jun 2024 13:39:43 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, Anil S Keshavamurthy
+ <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
+ Kees Cook <kees@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] KUnit: add missing MODULE_DESCRIPTION() macros for
+ lib/test_*.ko
+Message-Id: <20240621133943.c16a37133cb0e8b419a8726b@kernel.org>
+In-Reply-To: <20240619-md-lib-test-v2-1-301e30eeba1e@quicinc.com>
+References: <20240619-md-lib-test-v2-1-301e30eeba1e@quicinc.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   50736169ecc8387247fe6a00932852ce7b057083
-commit: 9b1effff19cdf2230d3ecb07ff4038a0da32e9cc ALSA: hda: cs35l56: Select SERIAL_MULTI_INSTANTIATE
-date:   21 hours ago
-config: x86_64-buildonly-randconfig-003-20231229 (https://download.01.org/0day-ci/archive/20240621/202406211244.oLhoF3My-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240621/202406211244.oLhoF3My-lkp@intel.com/reproduce)
+On Wed, 19 Jun 2024 13:59:15 -0700
+Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406211244.oLhoF3My-lkp@intel.com/
+> make allmodconfig && make W=1 C=1 reports for lib/test_*.ko:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_hexdump.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_dhry.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_firmware.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sysctl.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_hash.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ida.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_list_sort.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_min_heap.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_module.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sort.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_static_keys.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_static_key_base.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_memcat_p.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_blackhole_dev.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_meminit.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_free_pages.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_kprobes.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ref_tracker.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bits.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Changes in v2:
+> - Updated the description of lib/test_kprobes.c per Masami
 
-All errors (new ones prefixed by >>):
+Confirmed. Thanks!
 
-   ld: vmlinux.o: in function `smi_devs_unregister':
->> serial-multi-instantiate.c:(.text+0x313dcfc): undefined reference to `spi_unregister_device'
-   ld: vmlinux.o: in function `smi_spi_probe':
->> serial-multi-instantiate.c:(.text+0x313e335): undefined reference to `acpi_spi_count_resources'
->> ld: serial-multi-instantiate.c:(.text+0x313e4e1): undefined reference to `spi_add_device'
->> ld: serial-multi-instantiate.c:(.text+0x313e593): undefined reference to `acpi_spi_device_alloc'
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for SERIAL_MULTI_INSTANTIATE
-   Depends on [n]: X86_PLATFORM_DEVICES [=y] && I2C [=y] && SPI [=n] && ACPI [=y]
-   Selected by [y]:
-   - SND_HDA_SCODEC_CS35L56_I2C [=y] && SOUND [=y] && SND [=y] && SND_HDA [=y] && I2C [=y] && (ACPI [=y] || COMPILE_TEST [=y]) && SND_SOC [=y]
+> - Removed references to lib/test_user_copy since that is being renamed in
+>   https://lore.kernel.org/all/20240612195921.2685842-2-kees@kernel.org/
+>   and the description added in
+>   https://lore.kernel.org/all/20240619202659.work.532-kees@kernel.org/
+> - Link to v1: https://lore.kernel.org/r/20240601-md-lib-test-v1-1-a728620e37d8@quicinc.com
+> ---
+>  lib/dhry_run.c             | 1 +
+>  lib/test-kstrtox.c         | 1 +
+>  lib/test_bits.c            | 1 +
+>  lib/test_blackhole_dev.c   | 1 +
+>  lib/test_firmware.c        | 1 +
+>  lib/test_free_pages.c      | 1 +
+>  lib/test_hash.c            | 1 +
+>  lib/test_hexdump.c         | 1 +
+>  lib/test_ida.c             | 1 +
+>  lib/test_kprobes.c         | 3 ++-
+>  lib/test_list_sort.c       | 1 +
+>  lib/test_memcat_p.c        | 1 +
+>  lib/test_meminit.c         | 1 +
+>  lib/test_min_heap.c        | 1 +
+>  lib/test_module.c          | 1 +
+>  lib/test_ref_tracker.c     | 3 ++-
+>  lib/test_sort.c            | 1 +
+>  lib/test_static_key_base.c | 1 +
+>  lib/test_static_keys.c     | 1 +
+>  lib/test_sysctl.c          | 1 +
+>  20 files changed, 22 insertions(+), 2 deletions(-)
+> 
+> diff --git a/lib/dhry_run.c b/lib/dhry_run.c
+> index e6a279dabf84..4a6d05ce4361 100644
+> --- a/lib/dhry_run.c
+> +++ b/lib/dhry_run.c
+> @@ -83,4 +83,5 @@ static int __init dhry_init(void)
+>  module_init(dhry_init);
+>  
+>  MODULE_AUTHOR("Geert Uytterhoeven <geert+renesas@glider.be>");
+> +MODULE_DESCRIPTION("Dhrystone benchmark test module");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test-kstrtox.c b/lib/test-kstrtox.c
+> index f355f67169b6..ee87fef66cb5 100644
+> --- a/lib/test-kstrtox.c
+> +++ b/lib/test-kstrtox.c
+> @@ -732,4 +732,5 @@ static int __init test_kstrtox_init(void)
+>  	return -EINVAL;
+>  }
+>  module_init(test_kstrtox_init);
+> +MODULE_DESCRIPTION("Module test for kstrto*() APIs");
+>  MODULE_LICENSE("Dual BSD/GPL");
+> diff --git a/lib/test_bits.c b/lib/test_bits.c
+> index c9368a2314e7..01313980f175 100644
+> --- a/lib/test_bits.c
+> +++ b/lib/test_bits.c
+> @@ -72,4 +72,5 @@ static struct kunit_suite bits_test_suite = {
+>  };
+>  kunit_test_suite(bits_test_suite);
+>  
+> +MODULE_DESCRIPTION("Test cases for functions and macros in bits.h");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_blackhole_dev.c b/lib/test_blackhole_dev.c
+> index f247089d63c0..ec290ac2a0d9 100644
+> --- a/lib/test_blackhole_dev.c
+> +++ b/lib/test_blackhole_dev.c
+> @@ -96,4 +96,5 @@ module_init(test_blackholedev_init);
+>  module_exit(test_blackholedev_exit);
+>  
+>  MODULE_AUTHOR("Mahesh Bandewar <maheshb@google.com>");
+> +MODULE_DESCRIPTION("module test of the blackhole_dev");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+> index 9cfdcd6d21db..bcb32cbff188 100644
+> --- a/lib/test_firmware.c
+> +++ b/lib/test_firmware.c
+> @@ -1567,4 +1567,5 @@ static void __exit test_firmware_exit(void)
+>  module_exit(test_firmware_exit);
+>  
+>  MODULE_AUTHOR("Kees Cook <keescook@chromium.org>");
+> +MODULE_DESCRIPTION("interface to trigger and test firmware loading");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_free_pages.c b/lib/test_free_pages.c
+> index 9ebf6f5549f3..48952364c540 100644
+> --- a/lib/test_free_pages.c
+> +++ b/lib/test_free_pages.c
+> @@ -44,4 +44,5 @@ static void m_ex(void)
+>  module_init(m_in);
+>  module_exit(m_ex);
+>  MODULE_AUTHOR("Matthew Wilcox <willy@infradead.org>");
+> +MODULE_DESCRIPTION("Check that free_pages() doesn't leak memory");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_hash.c b/lib/test_hash.c
+> index bb25fda34794..a7af39662a0a 100644
+> --- a/lib/test_hash.c
+> +++ b/lib/test_hash.c
+> @@ -235,4 +235,5 @@ static struct kunit_suite hash_test_suite = {
+>  
+>  kunit_test_suite(hash_test_suite);
+>  
+> +MODULE_DESCRIPTION("Test cases for <linux/hash.h> and <linux/stringhash.h>");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
+> index fe2682bb21e6..751645645988 100644
+> --- a/lib/test_hexdump.c
+> +++ b/lib/test_hexdump.c
+> @@ -253,4 +253,5 @@ static void __exit test_hexdump_exit(void)
+>  module_exit(test_hexdump_exit);
+>  
+>  MODULE_AUTHOR("Andy Shevchenko <andriy.shevchenko@linux.intel.com>");
+> +MODULE_DESCRIPTION("Test cases for lib/hexdump.c module");
+>  MODULE_LICENSE("Dual BSD/GPL");
+> diff --git a/lib/test_ida.c b/lib/test_ida.c
+> index 072a49897e71..c80155a1956d 100644
+> --- a/lib/test_ida.c
+> +++ b/lib/test_ida.c
+> @@ -214,4 +214,5 @@ static void ida_exit(void)
+>  module_init(ida_checks);
+>  module_exit(ida_exit);
+>  MODULE_AUTHOR("Matthew Wilcox <willy@infradead.org>");
+> +MODULE_DESCRIPTION("Test the IDA API");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_kprobes.c b/lib/test_kprobes.c
+> index 0648f7154f5c..b7582010125c 100644
+> --- a/lib/test_kprobes.c
+> +++ b/lib/test_kprobes.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-or-later
+>  /*
+> - * test_kprobes.c - simple sanity test for *probes
+> + * test_kprobes.c - simple sanity test for k*probes
+>   *
+>   * Copyright IBM Corp. 2008
+>   */
+> @@ -400,4 +400,5 @@ static struct kunit_suite kprobes_test_suite = {
+>  
+>  kunit_test_suites(&kprobes_test_suite);
+>  
+> +MODULE_DESCRIPTION("simple sanity test for k*probes");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_list_sort.c b/lib/test_list_sort.c
+> index cc5f335f29b5..30879abc8a42 100644
+> --- a/lib/test_list_sort.c
+> +++ b/lib/test_list_sort.c
+> @@ -119,4 +119,5 @@ static struct kunit_suite list_sort_suite = {
+>  
+>  kunit_test_suites(&list_sort_suite);
+>  
+> +MODULE_DESCRIPTION("list_sort() KUnit test suite");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_memcat_p.c b/lib/test_memcat_p.c
+> index 849c477d49d0..7e0797a6bebf 100644
+> --- a/lib/test_memcat_p.c
+> +++ b/lib/test_memcat_p.c
+> @@ -112,4 +112,5 @@ static void __exit test_memcat_p_exit(void)
+>  module_init(test_memcat_p_init);
+>  module_exit(test_memcat_p_exit);
+>  
+> +MODULE_DESCRIPTION("Test cases for memcat_p() in lib/memcat_p.c");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_meminit.c b/lib/test_meminit.c
+> index 0dc173849a54..6298f66c964b 100644
+> --- a/lib/test_meminit.c
+> +++ b/lib/test_meminit.c
+> @@ -436,4 +436,5 @@ static int __init test_meminit_init(void)
+>  }
+>  module_init(test_meminit_init);
+>  
+> +MODULE_DESCRIPTION("Test cases for SL[AOU]B/page initialization at alloc/free time");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_min_heap.c b/lib/test_min_heap.c
+> index 7b01b4387cfb..a2dd478997bb 100644
+> --- a/lib/test_min_heap.c
+> +++ b/lib/test_min_heap.c
+> @@ -191,4 +191,5 @@ static void __exit test_min_heap_exit(void)
+>  }
+>  module_exit(test_min_heap_exit);
+>  
+> +MODULE_DESCRIPTION("Test cases for the min max heap");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_module.c b/lib/test_module.c
+> index debd19e35198..3d1b29b74807 100644
+> --- a/lib/test_module.c
+> +++ b/lib/test_module.c
+> @@ -31,4 +31,5 @@ static void __exit test_module_exit(void)
+>  module_exit(test_module_exit);
+>  
+>  MODULE_AUTHOR("Kees Cook <keescook@chromium.org>");
+> +MODULE_DESCRIPTION("module loading subsystem test module");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_ref_tracker.c b/lib/test_ref_tracker.c
+> index 49970a7c96f3..b983ceb12afc 100644
+> --- a/lib/test_ref_tracker.c
+> +++ b/lib/test_ref_tracker.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Referrence tracker self test.
+> + * Reference tracker self test.
+>   *
+>   * Copyright (c) 2021 Eric Dumazet <edumazet@google.com>
+>   */
+> @@ -112,4 +112,5 @@ static void __exit test_ref_tracker_exit(void)
+>  module_init(test_ref_tracker_init);
+>  module_exit(test_ref_tracker_exit);
+>  
+> +MODULE_DESCRIPTION("Reference tracker self test");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/lib/test_sort.c b/lib/test_sort.c
+> index be02e3a098cf..81aef88b48b5 100644
+> --- a/lib/test_sort.c
+> +++ b/lib/test_sort.c
+> @@ -45,4 +45,5 @@ static struct kunit_suite sort_test_suite = {
+>  
+>  kunit_test_suites(&sort_test_suite);
+>  
+> +MODULE_DESCRIPTION("sort() KUnit test suite");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_static_key_base.c b/lib/test_static_key_base.c
+> index 5089a2e2bdd8..9f507672afa5 100644
+> --- a/lib/test_static_key_base.c
+> +++ b/lib/test_static_key_base.c
+> @@ -57,4 +57,5 @@ module_init(test_static_key_base_init);
+>  module_exit(test_static_key_base_exit);
+>  
+>  MODULE_AUTHOR("Jason Baron <jbaron@akamai.com>");
+> +MODULE_DESCRIPTION("Kernel module to support testing static keys");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_static_keys.c b/lib/test_static_keys.c
+> index 42daa74be029..00c715f30df9 100644
+> --- a/lib/test_static_keys.c
+> +++ b/lib/test_static_keys.c
+> @@ -236,4 +236,5 @@ module_init(test_static_key_init);
+>  module_exit(test_static_key_exit);
+>  
+>  MODULE_AUTHOR("Jason Baron <jbaron@akamai.com>");
+> +MODULE_DESCRIPTION("Kernel module for testing static keys");
+>  MODULE_LICENSE("GPL");
+> diff --git a/lib/test_sysctl.c b/lib/test_sysctl.c
+> index 9321d850931f..b6696fa1d426 100644
+> --- a/lib/test_sysctl.c
+> +++ b/lib/test_sysctl.c
+> @@ -280,4 +280,5 @@ static void __exit test_sysctl_exit(void)
+>  module_exit(test_sysctl_exit);
+>  
+>  MODULE_AUTHOR("Luis R. Rodriguez <mcgrof@kernel.org>");
+> +MODULE_DESCRIPTION("proc sysctl test driver");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: b050496579632f86ee1ef7e7501906db579f3457
+> change-id: 20240601-md-lib-test-16083d9d77e2
+> 
+
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
