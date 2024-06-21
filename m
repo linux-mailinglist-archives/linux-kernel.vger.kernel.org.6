@@ -1,127 +1,278 @@
-Return-Path: <linux-kernel+bounces-224620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1577E9124DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:16:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454019124DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4FF328776B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622E11F24197
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B478A15279E;
-	Fri, 21 Jun 2024 12:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ECF28399;
+	Fri, 21 Jun 2024 12:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="br6XBrqI"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VjrRL1lw"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D1A482ED
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C31E40861;
+	Fri, 21 Jun 2024 12:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718972124; cv=none; b=aIRNbptNTjGslQDKfDqkz7zK7bYGrfvXWW5gANsNI09AwUEP0MhsaE/ONNYMnUutgjVq+fd5Uz2Rb5cPxkgB5GyHrSfhk5pigyGjNS6RlNNEfT2+aNhO5cEabGNxVYTxwTpzRtrZdcrfHrV6ljN7s9BgD0fYmRujOu5/XMvdWPA=
+	t=1718972121; cv=none; b=QFPYIKmXsaCJZ0mpYpvnGbg/vbF0KmyH8WOLV4G61by709GhpN/tpP+mSoU/hcZE72eS1BZVyPpAlSO1glBQVU50hzcV75s2aW313OJQTNGWlqzQ7liG/PWkbmi1tZO3Y4xKf9CrPpKOUBDxQ2e9OzcAvdMgS1Do6RoaGyis9Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718972124; c=relaxed/simple;
-	bh=Ul4UPYH/+TY+vUx++IuWcHjMYpRIIfVR+t0N7A/0g94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dbQrH8VYwrb2GVA4ZKyEguz7hSnOm7NgOZkmtxc2E8PKysdlawFjP93AK4TcthHb9SC9b2j2GzHpvOMhhXfN9LpeD48WRkOiMZ9iBsx12O/mbWdi6q3OHcFVrZ7MUo0uZ3zFeEejvJqd4BZLGqpgaP+RDnN9IpvwfAmJe1j+9B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=br6XBrqI; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso27821641fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:15:21 -0700 (PDT)
+	s=arc-20240116; t=1718972121; c=relaxed/simple;
+	bh=cIPNiu/gEF0HK1CBHnIMlx3R04l5LgkBN4c4sNzkFzg=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=fIcmx+V1Cbz4JR1Yz0nq4aVXndubT+J7CDOn0foO8E8y2tqyXsX86Pn9qtYGjBt1x/Hq87rLfTx41rR/HWnavFuQBxupOy197txC2gc0lsPiDo3yjfDHcWap4dHJKKYpOrTT9EoQ/S0r39m01Lw5jPicS5gqEx+EpjyoLMaJCCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VjrRL1lw; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7954dcf3158so112011185a.3;
+        Fri, 21 Jun 2024 05:15:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1718972119; x=1719576919; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6xH4TjJ1vLeO7hvhqxB1jVAlRByyOLroRcKk1YzxwLQ=;
-        b=br6XBrqIgFKrlXfFCWa2cyRVqNBbxtwrzvbhZV77Z35bkJ+YKAfa1UVKxThHs64KR1
-         9CplcFrFXuDWqr9a4OLgzEM3cdMG2ougs9IcO2kpj4WFYDyC+QqTK0DesC8RV5yw3/7v
-         Tmtf6xcS2IUWLsrPVornHpkRb4zjwdtFprb2vbmAQxzJ97rHrbOaxR2YmrLLAro9NWJ4
-         CgEqspfaUx71anH5H6mtVSJ0oAdDZ02kOgUY46PBJT2CNOG7guU37g+3r8xHM+nLv/Ut
-         HO9J48O6qMuzoK8yFxMdK1UphQIeHikgWgMwURtZVa3dJ+A0KoXQ1MtKjdL/KZ6502Qw
-         6/gg==
+        d=gmail.com; s=20230601; t=1718972119; x=1719576919; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2E6XacsjAwWDKM7tAVWRLWVOqk2WqIKzpAc0VY30v6o=;
+        b=VjrRL1lw6kiGem2y5tzeeX7QuFqaLlZ6Kkdp7njOQK/OS77W/Z+Nx2tc1jouC1U/RU
+         5X4fiGPvq9m/WDEdbLpE3RJfqOqt7g6TpMJAyICU0VMuOM5I+qzGKQTi73upqr5KjV9O
+         j9Lu2XOx2ebjXcGbfgUA+005yomw07+sjUsHF7mF6f3pt399fWVUG40qf/KgvfXXLhcg
+         NMgm3lg/a23UPilmIFSiTSvEvl/Yvr1WtYvv9FdmQSDf7OmZehQog6kcqKN1Lj0pJdeb
+         cKFCydGbUtNwV3EG10PalwCP0AGICfykHsY8a9VQJJ449LuIVmE3cj8492QqyUvJ74Aq
+         HQcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718972119; x=1719576919;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6xH4TjJ1vLeO7hvhqxB1jVAlRByyOLroRcKk1YzxwLQ=;
-        b=PmQbq3jHvRfMeqZvHpwUu5R8N10jM8I9lbJxQOmSiuN7/ZbWzi+d8krLOirUGTX+4v
-         WkPygsb0OQrQmGBZjNaNm5fvgzwDt0s5HxheD2s0m7CNLuGJnlovp4732KFYiiQJd/Fr
-         5NbzkVLnO/wvZivM4onayz/YkTjIj/1bf/wt7xk3HVHk9xURqoaPlqPCv2fEwalMZMyS
-         EOHKM7VwA9vEIXAUcqllsNTPKGJccO2vSU/TwvvSYtyt2ZV4vPHlB3tvMi5ALwkEMyXE
-         aeHKN2eAinpSc6ZsPD5kcrh8mr1XqpXOp2caoSGUG0hWHCJmVJMhEl1KvxEydLhqdM/C
-         MldA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3tNw60OtYBFKK0YQoI5bqd+iL63IoTnny1VUAs6lbmejyd+X2LU97o9ly+kN2HqViqL8/yNX43ssqeQwuVjaoEGN8eIu7YCZV2qrH
-X-Gm-Message-State: AOJu0YytCvJ9zUif7DqV7hP19NsrHURrz+S4FD4uOdQs6P6cF4uw9ZpU
-	rkxDGzoxN+1t2gqqgl9xrG9SdxrgHaQB6m46wK8KPsRotkmN8JfMZHpWXnOamk0=
-X-Google-Smtp-Source: AGHT+IGTk3TufthfvrmTzsIzthh/R+FGLBg4ydeD9dSFSJdwe3KkpatXVXYn3/PLrKsUx4xzR+4XkQ==
-X-Received: by 2002:a2e:7c10:0:b0:2ea:e1fe:2059 with SMTP id 38308e7fff4ca-2ec3ced180emr63245121fa.27.1718972119493;
-        Fri, 21 Jun 2024 05:15:19 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb321c24sm12834335ad.97.2024.06.21.05.15.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2E6XacsjAwWDKM7tAVWRLWVOqk2WqIKzpAc0VY30v6o=;
+        b=aPA05k1u8iSNNzMmYRINMhsRLGk2hp1pila1VItPahzF5YKZGDXJYCHfqsY1C1x9Oz
+         081b7+/Pf94TDhgNDt3czjRUyCGfYRquU0RGaZECQCy1Cl6PquonnfmKKXVECHxo+pYB
+         Cf79ojQv5pq4OZbZhntn8SZfsxqGratxF8xruhHT25geXVOjLh6+6CZFBma0irX24Pjh
+         6GBeIh0YDPEv9+uLjUdvsFgBmozTisyFpRHiHapGyNcEu21wu5KnRHo8fRrGRNj5bz9f
+         SSAhDCVMHdyo3vJ2uSVtdO1H76bN/k0/pQ5ZmuCnzb42yk+wAOInLoutU1tmxDujXqPw
+         AcIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjprUtXeWAvFJaLki47x6MeMFGrgFTP7ZEeBtEfnl32rNzgJoy12apKS5A33sF8JTjbSihtd/Eggz5Mg8iGYECHepTUvvhcZ/B4m8GzOJgfDXOjt2rMRPH9YeUUy0p93SVg24ypCeYPfFHQWMcX90bJCviqhjd01/p
+X-Gm-Message-State: AOJu0YwsLmZpxKFCOF+xSyyeeIEEdZ3esdUJYvC2g4QaTIWgoKYNccHl
+	ERmWc8EnAk7e2Aii8RsDGI4Tq5CANXDU8BwBIt5V0yySK+qwdYMo
+X-Google-Smtp-Source: AGHT+IEn9FUQygN9w/1i0M1N6zLdsUlHCdn8LnwTaa/JuDCqlYaQXN/DUjsKv+XrwynmaavdzDNtwA==
+X-Received: by 2002:a05:620a:2606:b0:795:5896:f842 with SMTP id af79cd13be357-79bb3ee6e0fmr719006285a.76.1718972118698;
         Fri, 21 Jun 2024 05:15:18 -0700 (PDT)
-Date: Fri, 21 Jun 2024 14:15:09 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Tony Lindgren <tony.lindgren@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] serial: core: Revert unusable console quirk
- handling
-Message-ID: <ZnVuzXMqoH_HLdhB@pathway.suse.cz>
-References: <20240620124541.164931-1-tony.lindgren@linux.intel.com>
- <20240620124541.164931-4-tony.lindgren@linux.intel.com>
+Received: from localhost (56.148.86.34.bc.googleusercontent.com. [34.86.148.56])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce930b8dsm80912885a.102.2024.06.21.05.15.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 05:15:16 -0700 (PDT)
+Date: Fri, 21 Jun 2024 08:15:15 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Yan Zhai <yan@cloudflare.com>, 
+ netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ Jesper Dangaard Brouer <hawk@kernel.org>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Willem de Bruijn <willemb@google.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Florian Westphal <fw@strlen.de>, 
+ Mina Almasry <almasrymina@google.com>, 
+ Abhishek Chauhan <quic_abchauha@quicinc.com>, 
+ David Howells <dhowells@redhat.com>, 
+ Alexander Lobakin <aleksander.lobakin@intel.com>, 
+ David Ahern <dsahern@kernel.org>, 
+ Richard Gobert <richardbgobert@gmail.com>, 
+ Antoine Tenart <atenart@kernel.org>, 
+ Yan Zhai <yan@cloudflare.com>, 
+ Felix Fietkau <nbd@nbd.name>, 
+ Soheil Hassas Yeganeh <soheil@google.com>, 
+ Pavel Begunkov <asml.silence@gmail.com>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>, 
+ =?UTF-8?B?VGhvbWFzIFdlacOfc2NodWg=?= <linux@weissschuh.net>, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org
+Message-ID: <66756ed3f2192_2e64f929491@willemb.c.googlers.com.notmuch>
+In-Reply-To: <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
+References: <cover.1718919473.git.yan@cloudflare.com>
+ <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
+Subject: Re: [RFC net-next 1/9] skb: introduce gro_disabled bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620124541.164931-4-tony.lindgren@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 2024-06-20 15:45:28, Tony Lindgren wrote:
-> There is no point of trying to handle the console quirks in the serial
-> core instead of console_setup() currently.
+Yan Zhai wrote:
+> Software GRO is currently controlled by a single switch, i.e.
 > 
-> With the console_setup() related changes, we are now deferring the
-> DEVNAME:0.0 style consoles based on the ":" naming only. So the serial
-> core console quirk handling would not do anything for the "ttyS" named
-> consoles as they are not deferred.
+>   ethtool -K dev gro on|off
 > 
-> Also the earlier approach would have depended on further changes to be
-> able to drop the serial port quirk handling from console_setup().
+> However, this is not always desired. When GRO is enabled, even if the
+> kernel cannot GRO certain traffic, it has to run through the GRO receive
+> handlers with no benefit.
 > 
-> Let's revert the following console quirk handling related serial core
-> commits:
+> There are also scenarios that turning off GRO is a requirement. For
+> example, our production environment has a scenario that a TC egress hook
+> may add multiple encapsulation headers to forwarded skbs for load
+> balancing and isolation purpose. The encapsulation is implemented via
+> BPF. But the problem arises then: there is no way to properly offload a
+> double-encapsulated packet, since skb only has network_header and
+> inner_network_header to track one layer of encapsulation, but not two.
+> On the other hand, not all the traffic through this device needs double
+> encapsulation. But we have to turn off GRO completely for any ingress
+> device as a result.
 > 
-> b20172ca6bf4 ("serial: core: Fix ifdef for serial base console functions")
-> 4547cd76f08a ("serial: 8250: Fix add preferred console for serial8250_isa_init_ports()")
-> a8b04cfe7dad ("serial: 8250: Add preferred console in serial8250_isa_init_ports()")
-> a0f32e2dd998 ("serial: core: Handle serial console options")
-> 787a1cabac01 ("serial: core: Add support for DEVNAME:0.0 style naming for kernel console")
+> Introduce a bit on skb so that GRO engine can be notified to skip GRO on
+> this skb, rather than having to be 0-or-1 for all traffic.
 > 
-> Once the console quirk handling is gone, we add back the DEVNAME:0.0
-> functionality with a minimal patch.
+> Signed-off-by: Yan Zhai <yan@cloudflare.com>
+> ---
+>  include/linux/netdevice.h |  9 +++++++--
+>  include/linux/skbuff.h    | 10 ++++++++++
+>  net/Kconfig               | 10 ++++++++++
+>  net/core/gro.c            |  2 +-
+>  net/core/gro_cells.c      |  2 +-
+>  net/core/skbuff.c         |  4 ++++
+>  6 files changed, 33 insertions(+), 4 deletions(-)
 > 
-> Suggested-by: Petr Mladek <pmladek@suse.com>
-> Link: https://lore.kernel.org/linux-serial/ZnGQ8JAu2OQf0GX8@pathway.suse.cz/
-> Signed-off-by: Tony Lindgren <tony.lindgren@linux.intel.com>
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index c83b390191d4..2ca0870b1221 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -2415,11 +2415,16 @@ struct net_device {
+>  	((dev)->devlink_port = (port));				\
+>  })
+>  
+> -static inline bool netif_elide_gro(const struct net_device *dev)
+> +static inline bool netif_elide_gro(const struct sk_buff *skb)
+>  {
+> -	if (!(dev->features & NETIF_F_GRO) || dev->xdp_prog)
+> +	if (!(skb->dev->features & NETIF_F_GRO) || skb->dev->xdp_prog)
+>  		return true;
+> +
+> +#ifdef CONFIG_SKB_GRO_CONTROL
+> +	return skb->gro_disabled;
+> +#else
+>  	return false;
+> +#endif
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Yet more branches in the hot path.
 
-Best Regards,
-Petr
+Compile time configurability does not help, as that will be
+enabled by distros.
+
+For a fairly niche use case. Where functionality of GRO already
+works. So just a performance for a very rare case at the cost of a
+regression in the common case. A small regression perhaps, but death
+by a thousand cuts.
+
+>  }
+>  
+>  #define	NETDEV_ALIGN		32
+> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+> index f4cda3fbdb75..48b10ece95b5 100644
+> --- a/include/linux/skbuff.h
+> +++ b/include/linux/skbuff.h
+> @@ -1008,6 +1008,9 @@ struct sk_buff {
+>  #if IS_ENABLED(CONFIG_IP_SCTP)
+>  	__u8			csum_not_inet:1;
+>  #endif
+> +#ifdef CONFIG_SKB_GRO_CONTROL
+> +	__u8			gro_disabled:1;
+> +#endif
+>  
+>  #if defined(CONFIG_NET_SCHED) || defined(CONFIG_NET_XGRESS)
+>  	__u16			tc_index;	/* traffic control index */
+> @@ -1215,6 +1218,13 @@ static inline bool skb_wifi_acked_valid(const struct sk_buff *skb)
+>  #endif
+>  }
+>  
+> +static inline void skb_disable_gro(struct sk_buff *skb)
+> +{
+> +#ifdef CONFIG_SKB_GRO_CONTROL
+> +	skb->gro_disabled = 1;
+> +#endif
+> +}
+> +
+>  /**
+>   * skb_unref - decrement the skb's reference count
+>   * @skb: buffer
+> diff --git a/net/Kconfig b/net/Kconfig
+> index 9fe65fa26e48..47d1ee92df15 100644
+> --- a/net/Kconfig
+> +++ b/net/Kconfig
+> @@ -289,6 +289,16 @@ config MAX_SKB_FRAGS
+>  	  and in drivers using build_skb().
+>  	  If unsure, say 17.
+>  
+> +config SKB_GRO_CONTROL
+> +	bool "allow disable GRO on per-packet basis"
+> +	default y
+> +	help
+> +	  By default GRO can only be enabled or disabled per network device.
+> +	  This can be cumbersome for certain scenarios.
+> +	  Toggling this option will allow disabling GRO for selected packets,
+> +	  e.g. by XDP programs, so that it is more flexibile.
+> +	  Extra overhead should be minimal.
+> +
+>  config RPS
+>  	bool "Receive packet steering"
+>  	depends on SMP && SYSFS
+> diff --git a/net/core/gro.c b/net/core/gro.c
+> index b3b43de1a650..46232a0d1983 100644
+> --- a/net/core/gro.c
+> +++ b/net/core/gro.c
+> @@ -476,7 +476,7 @@ static enum gro_result dev_gro_receive(struct napi_struct *napi, struct sk_buff
+>  	enum gro_result ret;
+>  	int same_flow;
+>  
+> -	if (netif_elide_gro(skb->dev))
+> +	if (netif_elide_gro(skb))
+>  		goto normal;
+>  
+>  	gro_list_prepare(&gro_list->list, skb);
+> diff --git a/net/core/gro_cells.c b/net/core/gro_cells.c
+> index ff8e5b64bf6b..1bf15783300f 100644
+> --- a/net/core/gro_cells.c
+> +++ b/net/core/gro_cells.c
+> @@ -20,7 +20,7 @@ int gro_cells_receive(struct gro_cells *gcells, struct sk_buff *skb)
+>  	if (unlikely(!(dev->flags & IFF_UP)))
+>  		goto drop;
+>  
+> -	if (!gcells->cells || skb_cloned(skb) || netif_elide_gro(dev)) {
+> +	if (!gcells->cells || skb_cloned(skb) || netif_elide_gro(skb)) {
+>  		res = netif_rx(skb);
+>  		goto unlock;
+>  	}
+> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+> index 2315c088e91d..82bd297921c1 100644
+> --- a/net/core/skbuff.c
+> +++ b/net/core/skbuff.c
+> @@ -6030,6 +6030,10 @@ void skb_scrub_packet(struct sk_buff *skb, bool xnet)
+>  	ipvs_reset(skb);
+>  	skb->mark = 0;
+>  	skb_clear_tstamp(skb);
+> +#ifdef CONFIG_SKB_GRO_CONTROL
+> +	/* hand back GRO control to next netns */
+> +	skb->gro_disabled = 0;
+> +#endif
+>  }
+>  EXPORT_SYMBOL_GPL(skb_scrub_packet);
+>  
+> -- 
+> 2.30.2
+> 
+> 
+
+
 
