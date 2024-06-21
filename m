@@ -1,106 +1,132 @@
-Return-Path: <linux-kernel+bounces-224203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF713911EC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:28:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB86911EA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A0171F258A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:28:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0710E1F21EB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5476B16D4E8;
-	Fri, 21 Jun 2024 08:28:28 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16AD3AC1F;
-	Fri, 21 Jun 2024 08:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC72216D335;
+	Fri, 21 Jun 2024 08:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2LqyFda"
+Received: from mail-oi1-f194.google.com (mail-oi1-f194.google.com [209.85.167.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08E1127B5A;
+	Fri, 21 Jun 2024 08:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718958507; cv=none; b=JnIKjN/t7QEcIsETyA9asE/RVx2suYBo61YhZd3ZVFR+LFrTghMUkXvR0b8l6PUcd+uGmohyFYnm6Mpq9xoCazlEznUGXrM+zxx0V3dwev/1uHWKUedJ1UMRYJFzewDh7qIT+ckvAqp9XnaS3TK93mfK08ioolP2mZMPAJg2oIg=
+	t=1718958357; cv=none; b=PwQBF9+s2vyMBxN//yUJbMiAXmUtuxRl0uRuqpQOeiCyu33bvJnqJDJvC+ZpwI7sojo0oCljoUAIn8HIfbeY6KYBtRcJJrpcDG0YLQe5sZv/ddr/1CwjGBb9JJt68TRyhTEpd+5GBloZOJ+wqdizUSGAGihBiSrC7WQupObVDzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718958507; c=relaxed/simple;
-	bh=qcVbwN+dhj8TYggsWmgVtWaoNotrBJlRv0mGP9WVNwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkenvMdvwbf4CWx6uD05BNiWOtNaxguuf+wvm0b1Ux9cszUHMftOdjdcNuLoeFD/5jH0A5R+DZMvQ0CHGKVJRiVwmq/9PXJlbCblFXTBDTY+Aqs/Og4bpt7b+Os4aeb9V0YF4nftCL9wFbGHdfHBRk4ulkfq6re+RHLa/K/+GP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sKZbl-0001Si-00; Fri, 21 Jun 2024 10:26:57 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 2189CC0120; Fri, 21 Jun 2024 10:25:23 +0200 (CEST)
-Date: Fri, 21 Jun 2024 10:25:23 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, linux-mips@vger.kernel.org,
-	Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org, Brian Cain <bcain@quicinc.com>,
-	linux-hexagon@vger.kernel.org, Guo Ren <guoren@kernel.org>,
-	linux-csky@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-	linux-s390@vger.kernel.org, Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zenIV.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, libc-alpha@sourceware.org,
-	musl@lists.openwall.com, ltp@lists.linux.it
-Subject: Re: [PATCH 03/15] mips: fix compat_sys_lseek syscall
-Message-ID: <ZnU480Ypb3f3nOek@alpha.franken.de>
-References: <20240620162316.3674955-1-arnd@kernel.org>
- <20240620162316.3674955-4-arnd@kernel.org>
+	s=arc-20240116; t=1718958357; c=relaxed/simple;
+	bh=VJQJ8CcnNOzqYFH6HD1lzJUneopK06wtZw1yONb4nH4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ULwE0ZFYBMQVAZp0oLL8UTwcp+70Lz1s/D1YfXsmYPoE7Q8wdTEUOSJPjosDRmKgx4u2fLwIWAMvov1hbDpA+sBVjUUFTxJNPqS9mkPOmAI/P2vFQwMUZmVYGv0GfxICeDa+QcydwbD5ONK70h8yL/xfGbWvke9TnkvwdLHciEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2LqyFda; arc=none smtp.client-ip=209.85.167.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f194.google.com with SMTP id 5614622812f47-3cabac56b38so978802b6e.3;
+        Fri, 21 Jun 2024 01:25:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718958355; x=1719563155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=La5B2FGT+ErHbprZY/EFG+LalvzBERwzjgNBo11Bf84=;
+        b=I2LqyFdaLfKC4Qt98JYeVabQMSeBG5wTLb3gJbi+Zoa8Of2TvKEDRPvcBkNkuEgYXu
+         LR9IUWJmZFE2lBbLzC/dHhUrWyv8081uCf67z1AQbbSuJhtzDCHitGz9YbF9lpFWIatO
+         XqFQsTeMKLXvWdXFd3dBvSVvOCucfNfpHrKUin4rA1njovvraCNERTj1LHAnQCnGBzE9
+         R1ZXg4QobxsGM9V6JJSzFmOJjOG2YBnYfj5l0jfxZeZeUFu9TpiYXox2plZHRxGE7Dmx
+         Rtivcq/1rEaXGqErvc8wKdImsTaUWAiXGt/Q1u5rMakpzaSwHZXwoncT+7dI2HQrlUUu
+         +ySg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718958355; x=1719563155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=La5B2FGT+ErHbprZY/EFG+LalvzBERwzjgNBo11Bf84=;
+        b=wLL8msVhj1bLTgDv/nV4ACDOvGi++BDAjf3yPP5xjxLjr8PnG0dzhkkBNy26J0OzBo
+         h8mKuQOz3pfSntp79ne0NKjKOtnxSx0KMFcrE73BedfKnCTDckrcHyW3MXYucO1pf2vV
+         EHplDq5oRToV85H9PJnaGaDYfVVLxWY3vbqs2uR9G/s0v+7mkZBVoOR/pYnGj1C3ROQZ
+         aZxKzCpqJ27N1IIxdvi+6AcGPqpx71B3xH79oePKlkVzZkkpqO2cCZygKWg3gS57tD1j
+         7E7mOvZ+3pg4srQPvqlUC1WKAUOYFSjQRO3MtXF3e7OIS0DTBgIy70g2x613f0TP2ut8
+         FDUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZp+iWltWm/dBBN9jXhhDAClz09yHdLR7gtAdkDqvbh9TWaoexA7fyUmNozA7kTD6NT/AIBQwlDiTMMlNlZpQ8SF4QCyYtLbPFSToe
+X-Gm-Message-State: AOJu0YzDaOWc0iURrxkP8nJbTqvNeqxnDSERVdWEY/08UE9OBjMyMCLP
+	nkl/vSiZvJ/sCFjxbzQcnPzvuEdDfIQ5UMPhVGLR32eRidj6pGx1
+X-Google-Smtp-Source: AGHT+IGSanTw/9nbSjINGB+wa0ekuWSNdPXw0eV0oWOmOdDDWwbFvq1UjP8cchG3w+zKsb3D1P321A==
+X-Received: by 2002:a05:6808:130c:b0:3d2:178a:c18b with SMTP id 5614622812f47-3d51baea352mr8661807b6e.46.1718958354744;
+        Fri, 21 Jun 2024 01:25:54 -0700 (PDT)
+Received: from lhy-a01-ubuntu22.. ([106.39.42.164])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065119503csm860459b3a.76.2024.06.21.01.25.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 01:25:54 -0700 (PDT)
+From: Huai-Yuan Liu <qq810974084@gmail.com>
+To: james.smart@broadcom.com,
+	dick.kennedy@broadcom.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Huai-Yuan Liu <qq810974084@gmail.com>
+Subject: [PATCH V4] scsi: lpfc: Fix a possible null pointer dereference
+Date: Fri, 21 Jun 2024 16:25:45 +0800
+Message-Id: <20240621082545.449170-1-qq810974084@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620162316.3674955-4-arnd@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024 at 06:23:04PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> This is almost compatible, but passing a negative offset should result
-> in a EINVAL error, but on mips o32 compat mode would seek to a large
-> 32-bit byte offset.
-> 
-> Use compat_sys_lseek() to correctly sign-extend the argument.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/mips/kernel/syscalls/syscall_o32.tbl | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-> index 85751c9b9cdb..2439a2491cff 100644
-> --- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-> +++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-> @@ -27,7 +27,7 @@
->  17	o32	break				sys_ni_syscall
->  # 18 was sys_stat
->  18	o32	unused18			sys_ni_syscall
-> -19	o32	lseek				sys_lseek
-> +19	o32	lseek				sys_lseek			compat_sys_lseek
->  20	o32	getpid				sys_getpid
->  21	o32	mount				sys_mount
->  22	o32	umount				sys_oldumount
-> -- 
-> 2.39.2
+In function lpfc_xcvr_data_show, the memory allocation with kmalloc might
+fail, thereby making rdp_context a null pointer. In the following context
+and functions that use this pointer, there are dereferencing operations,
+leading to null pointer dereference.
 
-applied to mips-fixes.
+To fix this issue, a null pointer check should be added. If it is null,
+use scnprintf to notify the user and return len.
 
-Thomas.
+Fixes: 479b0917e447 ("scsi: lpfc: Create a sysfs entry called lpfc_xcvr_data for transceiver info")
+Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
+---
+V2:
+* In patch V2, we have removed the unnecessary 'out of memory' message.
+  Thank Bart Van Assche for helpful advice.
+V3:
+* In patch V3, we return len directly instead of goto out_free_rdp.
+  Thanks to Justin Tee for his suuestion.
+V4:
+* In patch V4, we log something before return len, which would result in a
+silent when len is 0.
+  Thanks to Justin Tee again for additional explanation.
+---
+ drivers/scsi/lpfc/lpfc_attr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
+index a46c73e8d7c4..0a9d6978cb0c 100644
+--- a/drivers/scsi/lpfc/lpfc_attr.c
++++ b/drivers/scsi/lpfc/lpfc_attr.c
+@@ -1907,6 +1907,11 @@ lpfc_xcvr_data_show(struct device *dev, struct device_attribute *attr,
+ 
+ 	/* Get transceiver information */
+ 	rdp_context = kmalloc(sizeof(*rdp_context), GFP_KERNEL);
++	if (!rdp_context) {
++		len = scnprintf(buf, PAGE_SIZE - len,
++				"SPF info NA: alloc failure\n");
++		return len;
++	}
+ 
+ 	rc = lpfc_get_sfp_info_wait(phba, rdp_context);
+ 	if (rc) {
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.34.1
+
 
