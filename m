@@ -1,198 +1,135 @@
-Return-Path: <linux-kernel+bounces-236404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-236463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1696591E1CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:03:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E384C91E2AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 16:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380001C22819
-	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:03:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DFE5283676
+	for <lists+linux-kernel@lfdr.de>; Mon,  1 Jul 2024 14:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DF915EFD7;
-	Mon,  1 Jul 2024 14:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AE316B736;
+	Mon,  1 Jul 2024 14:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nxwP+Q9n";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LurVQOTi";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ub/6WAXL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yOZG147l"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F5vRh8u3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77F93D72;
-	Mon,  1 Jul 2024 14:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E171E4696
+	for <linux-kernel@vger.kernel.org>; Mon,  1 Jul 2024 14:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719842622; cv=none; b=hFBguvGgFYRFY02CZTLrf8ac6YIr18CKM3pDRjvWYNxTMeonPhcdnz01qAsm/ji988iqoKT3lScZzyWVEfVxvXI6R6+TmxMaIC78xgNz6bDwEP8Pc0wDqUrsdPjU/8qN/+zrVjBjngoBk+kAlxF/rbM1U5hQAs0M+qEy9KIp7vU=
+	t=1719845002; cv=none; b=OKFZmsYRCNNhRT5vRbgSsVpw8xaTTQDh8kW5IoeB+UmNnektRODExK34j9RUViMwdaXF+ayZqVqrr2aNcFuxbKV/webUBFbJq7Gm1i8nKUD64Y/NWrF/+KtxxYp904hTrVGCr+o47mU8A9Ra5zv6zYODM7J1//tGkfELqHMd1P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719842622; c=relaxed/simple;
-	bh=w+fq7hAZICwQ8ms4QU9zqAnifRtgEhMdLeDYpMFOr0A=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JZ3DDHksvXTJNWmgYKaC2sB2c3RG5VWA/VO9Z2SeNU8DkNVu4rvFHKI7bP6b3xBir+Y5i+jy9Az4C1UEQnwOHX/M6rNr/BvlPVtWmSFmcz9biQVK0MW9gqfUtoegafjK6WALSi8WkZiPxYgu4ZKBbT524F1zleh7+JgDcAF9kuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nxwP+Q9n; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LurVQOTi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ub/6WAXL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yOZG147l; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C87BC219AE;
-	Mon,  1 Jul 2024 14:03:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719842619; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=40Z2bpgm5kijfu/PKJMA05su7yleimcmmr2QFL4+IbM=;
-	b=nxwP+Q9nLHejCyTv8hmik6ylkRFgJqBt1oszlyYZrG+GWi0jfOJ2Lk2A4xdluxtxZgv3zL
-	SfUsurk9gD4r9rRCH5bcLg1uKlh8R4k8bDzOU9W7LESetfTzRodezuRGf8Hsu3vHOLR9/2
-	SjzHHvKVp1lKzkgXWymCh2UB2egxMMs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719842619;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=40Z2bpgm5kijfu/PKJMA05su7yleimcmmr2QFL4+IbM=;
-	b=LurVQOTiQEBIZYfVO1Yo0uiasq5uqX8GhFmWPh8OB+7gDjkCg2lNzjsB/qeGeJfG4PKEbh
-	FaOeFslRPkQVARDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="ub/6WAXL";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yOZG147l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719842618; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=40Z2bpgm5kijfu/PKJMA05su7yleimcmmr2QFL4+IbM=;
-	b=ub/6WAXLNxFJWS8zhP7rSpSzcSnd0r1nyEJLVZUKMP2vf7ypH3P006LIpgIFEgYGgP0NBU
-	ECEVdgv0OiIOG1ErE/A3AA5Z0XesgDk9jtM7Py7aAR2gDMvTFW7uCMZ7dojj6vD96OhUTC
-	QXi4m89fuYKN3v9mK7BtNo9QQyzSUX8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719842618;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=40Z2bpgm5kijfu/PKJMA05su7yleimcmmr2QFL4+IbM=;
-	b=yOZG147lLhEJDc2w6yhhoxL5Wv+TCNV1IiquuW5olXtA7QOhdrJIrn7v4wF33235NqAckX
-	2oV5BRQCdlhgIzBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 83E1F13800;
-	Mon,  1 Jul 2024 14:03:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rGz9Hjq3gmZOZwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 01 Jul 2024 14:03:38 +0000
-Date: Mon, 01 Jul 2024 16:04:06 +0200
-Message-ID: <875xtp43ah.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: kernel test robot <lkp@intel.com>,
-	Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	oe-kbuild-all@lists.linux.dev,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ALSA: pcm: add support for 128kHz sample rate
-In-Reply-To: <1j1q4ej50k.fsf@starbuckisacylon.baylibre.com>
-References: <20240628122429.2018059-2-jbrunet@baylibre.com>
-	<202406300718.iL828kaG-lkp@intel.com>
-	<1j1q4ej50k.fsf@starbuckisacylon.baylibre.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1719845002; c=relaxed/simple;
+	bh=rlxVV7EQRoPLIq0qGRgISDIedccfU22EckJfvQVaVVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IWuWPX8opSkyKNUhVIAAFE9XlWdJ2l9fHP+N7i397Zfy/Z9hmKdQKy59lMkPz0mNnNSZEN1o/Uqc3LU2R8dvsE3zKLkiyhzckF0FqGbBuYxLMtSHOB+H+UFuUwdFzngP8Yj+UrwW+FyCTfdaXGYu5G8SbMHa8GNJ11Ml7RFm7xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F5vRh8u3; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719845001; x=1751381001;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=rlxVV7EQRoPLIq0qGRgISDIedccfU22EckJfvQVaVVE=;
+  b=F5vRh8u3Zkmo8Ypm2DKgVsL8ZRWfYZN4eTu3SE3oqdTnDJe8cy3lmpse
+   WuV68c+6CYfzi6YPBDsBKcQiMm/pdWhIkIs3hGMebg0G08hBryaZWhqov
+   52la/1DM7cPt+x2oWifuHqOjitElfQCtj+slY/ExLlNyXJ/OWukZIZAN7
+   TplhP6CaeEUO5hLIaXoKXr2LiLaWeilV4slQLZMEhKmAd6OKVeTGj9ImW
+   nqnNRPihPnNgt2l8/y9aVrbhkQtLE5MFoZHpqRsHEfiF2DjRWNQ5H6Q4c
+   /7B2Mas0dZi7q9xUqQ2lZHoF9RJ58h4AX4uRtr9pzKZwRS3ct1Qi9ywZ/
+   Q==;
+X-CSE-ConnectionGUID: 6jcqKKrpTFS5uq2e6i2KFw==
+X-CSE-MsgGUID: G5aBc01USuCqWwCokQhipw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11120"; a="27571868"
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="27571868"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 07:43:20 -0700
+X-CSE-ConnectionGUID: PDTDgxzeQMaW1EAg+NtB/Q==
+X-CSE-MsgGUID: qRW8Z8hNT5WSfLwvtBc7OQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,176,1716274800"; 
+   d="scan'208";a="76731148"
+Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.111.36]) ([10.125.111.36])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2024 07:43:18 -0700
+Message-ID: <33e838a0-dd84-48b2-b2d6-aea173ab8ced@intel.com>
+Date: Fri, 21 Jun 2024 09:16:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[intel.com,kernel.org,gmail.com,suse.com,perex.cz,lists.linux.dev,alsa-project.org,vger.kernel.org];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[git-scm.com:url,intel.com:email,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: C87BC219AE
-X-Spam-Flag: NO
-X-Spam-Score: -3.51
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] lib/Kconfig.debug: disable LOCK_DEBUGGING_SUPPORT
+ under KMSAN
+To: Alexander Potapenko <glider@google.com>
+Cc: elver@google.com, dvyukov@google.com, dave.hansen@linux.intel.com,
+ peterz@infradead.org, akpm@linux-foundation.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20240621094901.1360454-1-glider@google.com>
+ <20240621094901.1360454-2-glider@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240621094901.1360454-2-glider@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 30 Jun 2024 08:53:15 +0200,
-Jerome Brunet wrote:
-> 
-> On Sun 30 Jun 2024 at 07:29, kernel test robot <lkp@intel.com> wrote:
-> 
-> > Hi Jerome,
-> >
-> > kernel test robot noticed the following build errors:
-> >
-> > [auto build test ERROR on tiwai-sound/for-next]
-> > [also build test ERROR on tiwai-sound/for-linus broonie-sound/for-next linus/master v6.10-rc5 next-20240628]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/ALSA-pcm-add-support-for-128kHz-sample-rate/20240629-201915
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
-> > patch link:    https://lore.kernel.org/r/20240628122429.2018059-2-jbrunet%40baylibre.com
-> > patch subject: [PATCH 1/3] ALSA: pcm: add support for 128kHz sample rate
-> > config: i386-buildonly-randconfig-004-20240630
-> > compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
-> > reproduce (this is a W=1 build):
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202406300718.iL828kaG-lkp@intel.com/
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >>> sound/usb/caiaq/audio.c:179:2: error: #error "Change this table"
-> >     #error "Change this table"
-> >      ^~~~~
-> >
-> >
-> > vim +179 sound/usb/caiaq/audio.c
-> >
-> > 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  176  
-> > 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  177  /* this should probably go upstream */
-> > 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  178  #if SNDRV_PCM_RATE_5512 != 1 << 0 || SNDRV_PCM_RATE_192000 != 1 << 12
-> > 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26 @179  #error "Change this table"
-> > 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  180  #endif
-> > 523f1dce37434a sound/usb/caiaq/caiaq-audio.c Daniel Mack 2007-03-26  181  
-> 
-> This file is not in mainline or
-> https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git for-next
-> branch ...
+On 6/21/24 02:49, Alexander Potapenko wrote:
+>  config LOCK_DEBUGGING_SUPPORT
+>  	bool
+> -	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
+> +	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT && !KMSAN
+>  	default y
 
-It's sound/usb/caiaq/audio.c.
-
-
-Takashi
+This kinda stinks.  It ends up doubling the amount of work that ks
 
