@@ -1,208 +1,379 @@
-Return-Path: <linux-kernel+bounces-223790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79F6911830
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:49:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA11F911832
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 074E2B21D38
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:49:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C5BE1F230CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8808287E;
-	Fri, 21 Jun 2024 01:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6AD82C6B;
+	Fri, 21 Jun 2024 01:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l37Hz3Ji"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2058.outbound.protection.outlook.com [40.107.95.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bOxOY8WO"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81AD42052
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718934564; cv=fail; b=LjFfWGuuahWzIMG93ps92yH6Y/jlyub3I0lNZh//1wMrmeHcSdXUBEh1LnxrNqh1KcLkLxBJ63TV9RzuFuqllaxcNiSyjIMNdgt6mjn5YcrndfyOBCZEBOsscm+GfdrWagPwyAN165b/ZJ9PxiLJcsJf3Mz8kdrqCJ0sBsOwwhM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718934564; c=relaxed/simple;
-	bh=PAHY2GgIoXvqF+j169QDYG0IZEup1l37f7/8AGKP684=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TWpttL2lbYGeVhI+W9af/60x8s+EdupFkl3CodUd6RLw8mxVphaYosbn+EDDb1hryYNkaAP8e+dFmYaZmygvai44tdqAj7k6VN6gq5xpDsFwny/rxUfSrQTYB0WInEqE27/oC6VURu2Bzr+RmcqGhRFuPRU9k9+E4F/tLOm+Lc8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l37Hz3Ji; arc=fail smtp.client-ip=40.107.95.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=n1ZXA6hZ39I65RWgWfhTGUdWdB3Xdh02HahkvzGTwGDhHq0OChCjEn/9jqPjbBqzpBfaDDCQZW90qcrb2ja5S7NpKJ3ebJZc0AR3DBSSVQ9iqqKqwRGQWzl3wq79QikWYF7ruGzteyJg7H01XUsKoij9vcdPjj9izRaLfJNLMZbek5I+/eoaAScvaOBXvJVOIwsEBhjWcmBmXlA9Uf1UjDtpI9Sj8FGCCCr77jui5Qxh/Udq85ePyczgbfzju3j3DPEND6S6hVSzQwjbQ/QMhxlfvDvcpjQdBzNXiUiSY3VxPzg6kZ7ts5axOv/J2lZQ65fp7gU7e3a980vvbjS3jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m35XQfgiFnccqZpscanjIpRbz6ecx5UqwiOYBRMTatI=;
- b=Ya1BDwgFy9Qg7NwPqFN3TnO4ZOdFwh1EhBEZ/s2ZKoN3p1bXeSvN5Sx+UhQIV0nDormp4j7giRHgDibGFs6qvhgVO3tQLgljeU08UFtD2nMC3xu4WZkSucNxECxHINM8A1SQ8RCepwrXSAuENeVRqsTnyA8Sp7uwZIL/zFS1z8Bwd03MAYwfP3ku9R0eXAZEz6LzUPP1xQBjp68EzVbpT6UCco7VtJxF5a6UEWOtp6/YBwM1ZRCXXpiPbN1IAJ6vlc6EV8zebjz0mdeUZJWYkB5UA4Zbil99JDaWfT1s1gic22pTwacBk7DRNWpwmM6+0dzNZngORIejC5qLUlgeWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m35XQfgiFnccqZpscanjIpRbz6ecx5UqwiOYBRMTatI=;
- b=l37Hz3JivfOyEQuGommcl/5mglqZVk6XtF80M8P8ry4276JmNExbI3UlxlUValbyGezyYQgFRlmeOftn5vgHnmFSrV6n3xH5X2+WaCKgflPUwHc8FHDLyVEDMq7ARSP95zmnZTPJLRHgxiKYb488/8N7MZB3RRFeOlBfMR1QHRcWW11V2Z1nwFMwQIgnu/lBNUU+UX85X6jjRGZnFM8JYgpIGILfF0z9oiTXPtvor3mFabaUuG+cOu12EGVFWVV7fcesYn5mYRokldz9xFmv/RS6yeSn9VvGvqSvo7/xw7HeOOFKOhtPbru+VXq5T21HLMZIbcz8XwmYgOShR8mdaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
- BL1PR12MB5706.namprd12.prod.outlook.com (2603:10b6:208:385::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
- 2024 01:49:14 +0000
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e]) by DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e%4]) with mapi id 15.20.7698.017; Fri, 21 Jun 2024
- 01:49:14 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Yosry Ahmed <yosryahmed@google.com>
-Subject: Re: [PATCH v1] mm/rmap: cleanup partially-mapped handling in
- __folio_remove_rmap()
-Date: Thu, 20 Jun 2024 21:49:12 -0400
-X-Mailer: MailMate (1.14r6038)
-Message-ID: <E5B837D4-A5EE-4EFB-A80E-20DEFC80FAD2@nvidia.com>
-In-Reply-To: <20240618151026.521019-1-david@redhat.com>
-References: <20240618151026.521019-1-david@redhat.com>
-Content-Type: multipart/signed;
- boundary="=_MailMate_C59290BB-B6E4-4921-8FD7-DDBC0632AD5C_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
-X-ClientProxiedBy: BL1PR13CA0261.namprd13.prod.outlook.com
- (2603:10b6:208:2ba::26) To DS7PR12MB5744.namprd12.prod.outlook.com
- (2603:10b6:8:73::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929333EA6C;
+	Fri, 21 Jun 2024 01:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718934609; cv=none; b=sv+ek3Shopoz/6LnE8y67NNFPZP15HaRb30ww4KlP3sWB0e1w6cHXFKwni92QA6J/5OxwihRIQzq/noiNLZmoKevAVqUzRojiTIJ2RyN9SZaK5d0Ja435NQ2khE9It1VzMyg4C0XofaU5wwdpzCC72Zm3FZnFys3qRnh0grJZ2g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718934609; c=relaxed/simple;
+	bh=po76r3KYyy1RfKlwuCH3suQv0JZgZA/wrSZoQGyi3tE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IK+3SfaCxu78oqozH7au6XdcKhMiyAvRNvXxaAXMIKShF+WUccVM33uptChGuBY6O9fTvgAQ/dfqsKLgv1+doxCNbgG/6fZQzuAuIL4T580DUFxsRRqf3m/TAgiY+2fohno0tJcDH4McHIyWoBHn/bnrXSKeSGzdkLMK1F7cogI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bOxOY8WO; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6f7b785a01so152827166b.1;
+        Thu, 20 Jun 2024 18:50:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718934604; x=1719539404; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/3Fa/DcfbTEjl+B1uq/Ob35NLfRLpvSwMg2zwgjGtIs=;
+        b=bOxOY8WO+cJ5yBRmfp8o/cNEiIboqZxHTuQivwbZ4DDjtylaV2R/YCJB8IDKInfGob
+         z595RYlDxcs1ogFQ9FSxiJ23U8hajPf0xvFuk58YvoWUZ4RfUbwWMQu8SbOb7maPABYn
+         4SHGocfxXI7I8YuWJdyxMHTFsNURoWvB8+vN2pyEtNg0CX/6SNFv9tZglCFiuUjaiOQP
+         N1gpvD/bWLIxzVb46Yf+gXNhmJqapFu7OtytDms109/XeaRIY+MUJ45EUv/mvZ0SBVe9
+         krkY8LyhGWGd/DAfZnwqVCjiYNBL31+DEwKG2S4MFPWCYr9fLnoEKbdYI+hhwDd0aHbl
+         wGbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718934604; x=1719539404;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/3Fa/DcfbTEjl+B1uq/Ob35NLfRLpvSwMg2zwgjGtIs=;
+        b=KGyCml3DQlN745KJK1zkFAHWrIl3KwkiaYdhcvd+S65nvVMuRcQLJl59/u4DKQfHKg
+         S6TSBvM9yaZ90aTYlD0fyT9JZxoDtyhS9wwGkTREd9fKXtXizxX0eiZMDapei11YWyrz
+         sHpoBKK7K3HEaWDyFrdbTQbYP6sgXHqyMfHwkNk+hJIr3V+i8EtD3oupNcT0kPANed78
+         GP3UIFJNRMUcNwRHaWTbcKyLFy4cg4yF2qpOsiFCTnXaQX/4Ecqd/zUGKyNzNihnk8Nb
+         4Pbzs8lnxqo3gkurDEce1m8ZE71UH5gaki8lbjaPoF1+KJ0wnUnT/Y3KBRk8hvafbqmw
+         u0kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuC1ostWWLQOqmofXcMJ2oIECG5C2fQWm8WnKAHMY/p0srwKpRs07Dv5ui91GlTgDPoxTMQrQTiOk0eHQMbvkE7QelRExK7n3YNqGQ/tWNHIiGNiHmCKOmvwb/pnCrSF/2bBy103FP
+X-Gm-Message-State: AOJu0YxBdrA/okvkRv4nD+EL2TeXMRxkUcA1IT6Lnv2IqPYc2Z5zCEJv
+	lA4g5c81mp2VgUVOH8BhI1AiqIqMmK7llG0gWugMKUjzEWrZsI2NA39KQxWWZQ2SwtR/5Iib4xD
+	KdjJiQOuwnHkL2A1zFche38Qbhh8=
+X-Google-Smtp-Source: AGHT+IGr7JPsPEBOe+OOfAy4tfNLNJOtqWni1JL+hIWuIqf191at0kJMq/cjydeZChhj/ctobdGpxyAbOyskjA0K40E=
+X-Received: by 2002:a17:907:6b8e:b0:a6f:33d6:2d45 with SMTP id
+ a640c23a62f3a-a6fab7717d8mr475474366b.60.1718934603211; Thu, 20 Jun 2024
+ 18:50:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|BL1PR12MB5706:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a03e85c-6ece-4c26-ffa8-08dc91945aef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|1800799021|366013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fXmXAIH9U7q9pTjZOtYMrsJsXPxNjnx/5hgRI/FE5Xxas2dUk2zVytwhleVk?=
- =?us-ascii?Q?MiJCstin4p5dZwaxarrp4R03RNA+mOzu8jWIjC0mEURB82HeZxYHoH6qCkfQ?=
- =?us-ascii?Q?XYMvs8dEKNMKUDcyBnABTzsNezu5fjjTLKBoPiy0dlgsh+pC8bEjW2a3Yo+F?=
- =?us-ascii?Q?FWs4xnCcoIHGCM206pFhAlm7F4j2VWJh6ZoZ26R6gM4jEBf1Am3391dUBYBB?=
- =?us-ascii?Q?5VTirckFN12/5itwMvlAGku6wrCHQUaEPvYcGV2zAlZJWERzdFcE880HnsSh?=
- =?us-ascii?Q?IdAH8DzlddmjoBrael0l09DtJW/yNuRNdLEhlckKz9lPYbrS2U5r/5OLwvB9?=
- =?us-ascii?Q?dYpKa4cZyDnhj1JIasn9vfJM2q/wcc1WaYuSxJv7UHcBpBCSONZdQrf6/U3j?=
- =?us-ascii?Q?hL14+JPcI0cmhekE2lg6ECAMvfRuSDocp/GYZU4j6JEXsh0yUu/F3K5nxPmQ?=
- =?us-ascii?Q?mSOopQWdzX5gOQBKHUhVkfY6KEs6WmdC61z1WpjMBgpfnWQc78+gRULbgkFC?=
- =?us-ascii?Q?DbDt36DRf3aX+lIRio/mCa5PAKRQqA7+6OwUJLZlRx/p/i4Cey6uCqfwaGx7?=
- =?us-ascii?Q?xMs2woBUl6qRnsK6+08xAh4ZSomTFTXL5IPbp8HAUI8WLq55/z+3mZu0RR9/?=
- =?us-ascii?Q?nZGpPnitY3/1CAj+1vy4A5FT9oyxupjraaf6XktTqKp8wDyTEPS/YJGo0Pxs?=
- =?us-ascii?Q?KuTUTSUInjiQMy7NXWzAKEMKCS5hYvpzNmByG85E/xz0m/wW0xSDSTAJ5LTF?=
- =?us-ascii?Q?2iApMA88Rf9B+YkU/7h4sfdlWnCQYKrP6e5SQbc9L3YJUPMyni5dcTicX4ly?=
- =?us-ascii?Q?i+VB+gdSiEmZHACGOwROCxbhPUMxcml2CH9ZdbviSBVwkqDSYWPCcg6kNwJD?=
- =?us-ascii?Q?rCBxapWcmcfx1Ph+T1x9j2j3TAwCHwdyuQUgklaHEwVPgiamFXLocxtlrXri?=
- =?us-ascii?Q?iIQWERogjLFsJKdkMoo+VITFICpLqyMimjDrKV0AAvDDj8sjyod2inRVk6fM?=
- =?us-ascii?Q?crFfrlcWZDUPjTc5H469kUuzuJbP4qjZmDp4DBhaGVtc14WBYGjQjieGkNRs?=
- =?us-ascii?Q?iEqeW7mzipFFftYV4jKBkZp8VUVcMUOYiG61tKg7Dury+pLrIcWr0OplCWwN?=
- =?us-ascii?Q?XRv9bDKZSOcyr5ow+KJ7s3x0NVzZEPb63VYnvCjQOJ16d0da2I4vMEFORUGV?=
- =?us-ascii?Q?Z6qG1lwh3QKU3HXcO44vn8dNafEGqidzVNJHQsTZRAEjvK72S/P7AeLdv6eR?=
- =?us-ascii?Q?VhTgl9GL+9VKVd6hNGGgd8lbdWRKYOgfjeU9W8ocMRaOVxSmjw6Nfki+JbEO?=
- =?us-ascii?Q?tOjWiJrmBF7wr/9RzVo/TGON?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/D4TzYVaL/p3FgUxdYtPBM9X2fhZXnCcpHO9kvTyoho7ntVPSVjQalnAB/8a?=
- =?us-ascii?Q?YF97Za0PW5JNVe2168feDqfkOYDavOGwMfwiXtXPwkjZSafot8DPdNGrwIZK?=
- =?us-ascii?Q?l3KE8cWE0FmIUyGg3b1xoAxwWY6I+uiMCOPCUDuYx4gNgBM9JUsgohJra4SL?=
- =?us-ascii?Q?PczoS+yXyD9x/oD89v77tYqhOOxnpSYKMUZ35eLe7cU4yh27u4X1oBta0a6N?=
- =?us-ascii?Q?S7VuNaRvCjwX9S+Yzk9gRdJokBqLgNwRMimzmjxUA2lt/i67XpNUchPyD4Ek?=
- =?us-ascii?Q?eMn3LuYQzsHYu33/XUkBQdm74KcL6chZbsu9UF0wB3c7mm29mjQoqX6moyuO?=
- =?us-ascii?Q?knJCamZlAkYKRUoD1Th2udML0Xo9FWHLEJUUhDw1iFqNz+iI8QCm1QSrmTEt?=
- =?us-ascii?Q?ckhDevlXuk1SISHdCIIUxqe19R+9l3MmHofRydaCZF+53Md4TBf7EE8na2kL?=
- =?us-ascii?Q?i5nVbt9eQbA/9pAU0AbrgiUKcLLbYLyyNillIyWyO0+yh+5XF5OR27KB83K7?=
- =?us-ascii?Q?va/dj67s0KZwz191iy+NnUw1CADPCCC0ZWWfFiGg885ttoP/VRtJinLOfk9G?=
- =?us-ascii?Q?/VUXeZGOnvfHje1JSqq4pPRKn54B2SoFBjMV5he1x6Ret1OOz8MnmwXNTpWh?=
- =?us-ascii?Q?GJdWiu/Ysv1Z27VvR9XlpPKbUzW7n10VL7EAWsgUqICENGLVhTk7vfJE8Iwm?=
- =?us-ascii?Q?uDHiVDl759WbJdo2CjIFuupT3TbjnIiarDeeUbb9iqr1ounCPaXpsmAnHIid?=
- =?us-ascii?Q?fdlawpB1fRWWDkoujbA0+LxG8xc0aPDCZrcIlsu7ITnj3412TzqS0KNobGgv?=
- =?us-ascii?Q?6rPhYceWIf6e4LxctRN+I+7Fvm1dGpayvlt+EhL+VQeSDyfuWDNORoSJ5elZ?=
- =?us-ascii?Q?+f0VTqXF85V30Q2lq0dFBL0wLwqgRlatnaFY+zKeTCJYtDSqzJLLWUz9v5b8?=
- =?us-ascii?Q?riA09BeUHNJ40PGEkveAvzkZScUG/px+WVuYs0y+wD5AvFGTScTsEMh4qt4q?=
- =?us-ascii?Q?iRQLkKCM/4bUxum3g0uL2Az+06jK727MLb6P9cehjI7qhc60PaJxl0DDf7g5?=
- =?us-ascii?Q?s1/6UVkyND38p0jmtCB3L5iRSp0ntcZOh3j7rawEbSEB87aHKPOZJfLn5m1A?=
- =?us-ascii?Q?dOnNYvCQJXpRD8PSijA5O/J08Y0uwV0qos8S7WxFC6Uv90B5Fr2c3CXatfVw?=
- =?us-ascii?Q?87lcVrVeVQRCkpHyERWrgSqbCB9VFNYh/pS/46U3jIpxbC4X+D/QmfNNk+mW?=
- =?us-ascii?Q?7kgqm+6696yo0Rdk4Thsfon0SqhQH9GRpOsXOpLcTu6hFiUP7yiDzwxEsuYY?=
- =?us-ascii?Q?+ViRaVyW2Gt/RCdGhMCmGJqBglyCwVD9eSiENcqtuGQ1DIreehasolkYcuCk?=
- =?us-ascii?Q?Ewbz0wBHI/8Dcn9gjCs/VEVhw1oc3YNtf+mMZG2+NnSh1Dgg5wJLj12z6gdv?=
- =?us-ascii?Q?DdazDpRZE6GNqqdTOo4HvtbDjQEhgH60vwifBCDEnWAth6aMWJk3q6vGRvXk?=
- =?us-ascii?Q?7HHC6lxut7FdCBmcicFUFKeMhCb8kbN1VBrnw1xhAYjB2jlPsXUmngc6L0Wl?=
- =?us-ascii?Q?w9dbGPLSV1xwKFivTQ6LUBRfxBg5hdG/KitxWb1P?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a03e85c-6ece-4c26-ffa8-08dc91945aef
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 01:49:14.7568
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XceBUSXLSMvDLUQrxQzZgNBIrz4lEv5winRHRKeyeC19HS7/w9yMpeNccwfn+SiT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5706
+References: <20240620104444.5862-1-victorshihgli@gmail.com> <20240620104444.5862-23-victorshihgli@gmail.com>
+In-Reply-To: <20240620104444.5862-23-victorshihgli@gmail.com>
+From: Ben Chuang <benchuanggli@gmail.com>
+Date: Fri, 21 Jun 2024 09:49:49 +0800
+Message-ID: <CACT4zj9Nfd=W9ntQX4dDWzZJRFbP+vve9=BkaRjtmZY7752qfA@mail.gmail.com>
+Subject: Re: [PATCH V17 22/22] mmc: sdhci-pci-gli: enable UHS-II mode for GL9767
+To: Victor Shih <victorshihgli@gmail.com>
+Cc: ulf.hansson@linaro.org, adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, HL.Liu@genesyslogic.com.tw, 
+	Greg.tu@genesyslogic.com.tw, takahiro.akashi@linaro.org, dlunev@chromium.org, 
+	Ben Chuang <ben.chuang@genesyslogic.com.tw>, 
+	Victor Shih <victor.shih@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---=_MailMate_C59290BB-B6E4-4921-8FD7-DDBC0632AD5C_=
-Content-Type: text/plain
+Hi Victor,
 
-On 18 Jun 2024, at 11:10, David Hildenbrand wrote:
-
-> Let's simplify and reduce code indentation. In the RMAP_LEVEL_PTE case, we
-> already check for nr when computing partially_mapped.
+On Thu, Jun 20, 2024 at 6:46=E2=80=AFPM Victor Shih <victorshihgli@gmail.co=
+m> wrote:
 >
-> For RMAP_LEVEL_PMD, it's a bit more confusing. Likely, we don't need the
-> "nr" check, but we could have "nr < nr_pmdmapped" also if we stumbled
-> into the "/* Raced ahead of another remove and an add? */" case. So
-> let's simply move the nr check in there.
+> From: Victor Shih <victor.shih@genesyslogic.com.tw>
 >
-> Note that partially_mapped is always false for small folios.
+> Changes are:
+>  * Enable the internal clock when do reset on UHS-II mode.
+>  * Increase timeout value before detecting UHS-II interface.
+>  * Add vendor settings for UHS-II mode.
 >
-> No functional change intended.
->
-> Cc: Yosry Ahmed <yosryahmed@google.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
 > ---
->  mm/rmap.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
+>
+> Updates in V17:
+>  - Use mmc_card_uhs2() to simplify the code in the sdhci_gl9767_reset().
+>  - Use mmc_card_uhs2() to simplify the code in the
+>    sdhci_gl9767_set_power().
+>  - Add sdhci_gli_overcurrent_event_enable() to sdhci_gl9767_set_power().
+>
+> Updates in V15:
+>  - Add gl9767 to support uhs2 function.
+>
+> ---
+>
+>  drivers/mmc/host/sdhci-pci-gli.c | 150 ++++++++++++++++++++++++++++++-
+>  1 file changed, 148 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pc=
+i-gli.c
+> index a4164948de81..37c63c45bdc9 100644
+> --- a/drivers/mmc/host/sdhci-pci-gli.c
+> +++ b/drivers/mmc/host/sdhci-pci-gli.c
+> @@ -210,6 +210,10 @@
+>  #define   PCIE_GLI_9767_SCR_CORE_PWR_D3_OFF              BIT(21)
+>  #define   PCIE_GLI_9767_SCR_CFG_RST_DATA_LINK_DOWN       BIT(30)
+>
+> +#define PCIE_GLI_9767_UHS2_PHY_SET_REG1                                0=
+x90C
+> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR            GENMASK=
+(31, 29)
+> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE      0x3
+> +
+>  #define PCIE_GLI_9767_SDHC_CAP                 0x91C
+>  #define   PCIE_GLI_9767_SDHC_CAP_SDEI_RESULT     BIT(5)
+>
+> @@ -228,9 +232,15 @@
+>  #define   PCIE_GLI_9767_SD_EXPRESS_CTL_SD_EXPRESS_MODE   BIT(1)
+>
+>  #define PCIE_GLI_9767_SD_DATA_MULTI_CTL                                0=
+x944
+> +#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2            BIT(5)
+> +#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL        BIT(8)
+>  #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME        GENMASK=
+(23, 16)
+>  #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME_VALUE         =
+ 0x64
+>
+> +#define PCIE_GLI_9767_UHS2_PHY_SET_REG2                                 =
+       0x948
+> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING               =
+ GENMASK(22, 21)
+> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE         =
+         0x0
+> +
+>  #define PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2                       0=
+x950
+>  #define   PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2_SDEI_COMPLETE        =
+ BIT(0)
+>
+> @@ -240,6 +250,28 @@
+>  #define PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2                     =
+       0x958
+>  #define   PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2_SDEI_COMPLETE_SIGN=
+AL_EN    BIT(0)
+>
+> +#define PCIE_GLI_9767_UHS2_CTL1                                0x95C
+> +#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS             BIT(5)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE       0x1
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL           BIT(6)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE     0x1
+> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN            GENMASK(10, 7)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE      0x3
+> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV            GENMASK(14, 11)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE      0xf
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS              GENMASK(16, 15)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE        0x3
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV               GENMASK(18, 17)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE         0x0
+> +#define   PCIE_GLI_9767_UHS2_CTL1_PDRST                          BIT(25)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE            0x1
+> +
+> +#define PCIE_GLI_9767_UHS2_CTL2                        0x964
+> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC             GENMASK(3, 0)
+> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE       0xb
+> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL         BIT(6)
+> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE   0x1
+> +
+>  #define GLI_MAX_TUNING_LOOP 40
+>
+>  /* Genesys Logic chipset */
+> @@ -1197,8 +1229,32 @@ static void gl9767_hw_setting(struct sdhci_pci_slo=
+t *slot)
+>
+>  static void sdhci_gl9767_reset(struct sdhci_host *host, u8 mask)
+>  {
+> -       sdhci_reset(host, mask);
+> -       gli_set_9767(host);
+> +       u16 clk_ctrl;
+> +       u16 ctrl2;
+> +
+> +       if (mmc_card_uhs2(host->mmc)) {
+> +               /* need internal clock */
+> +               if (mask & SDHCI_RESET_ALL) {
+> +                       ctrl2 =3D sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +                       clk_ctrl =3D sdhci_readw(host, SDHCI_CLOCK_CONTRO=
+L);
+> +
+> +                       if ((ctrl2 & SDHCI_CTRL_V4_MODE) && (ctrl2 & SDHC=
+I_CTRL_UHS2_ENABLE)) {
+> +                               sdhci_writew(host, SDHCI_CLOCK_INT_EN, SD=
+HCI_CLOCK_CONTROL);
+> +                       } else {
+> +                               sdhci_writew(host, SDHCI_CLOCK_INT_EN, SD=
+HCI_CLOCK_CONTROL);
+> +                               sdhci_wait_clock_stable(host);
+> +                               sdhci_writew(host, SDHCI_CTRL_V4_MODE, SD=
+HCI_HOST_CONTROL2);
+> +                       }
+> +               }
+> +               if (mask & (SDHCI_RESET_CMD | SDHCI_RESET_DATA))
 
-LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
+Is this your intention?
+    -> if ((mask & SDHCI_RESET_CMD) |
+            (mask & SDHCI_RESET_DATA))
 
---
-Best Regards,
-Yan, Zi
+Best regards,
+Ben Chuang
 
---=_MailMate_C59290BB-B6E4-4921-8FD7-DDBC0632AD5C_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQJDBAEBCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmZ03BgPHHppeUBudmlk
-aWEuY29tAAoJEOJ/noEUByhUgv8QAIagX3l3se6HyZHVG3innJ7ku2hAqaVAIjtL
-ZnpeqibaSgZkT4aqwJjGdupqqJyiPokjbTiREsiGpujWb/W19ad+1mHoR+jjbPPg
-HrCBuggzpbs79aw6iH19TUzNTWYGRMnhxMb0Tdfj8ZZU58gskDF2Ad0e/tFqGpBN
-g5wgeDdn6XfBSH7Hb8R2tWGPqCovG7Ak+o6oQa/K7V7+hPvXGVDXdlxOUt9psuRs
-z6fzt8QnmrJptuJyWafHmFnWvBM/Wx6w+H0HMvPqyVLOwxY7iZ9dHuWkExvdq8Ko
-LjEaplENsdju4rhCmeHEjCSwLyQerl0nvjLgHY7DwVosuCcB7jirbrpNiTGulanr
-nHRjmN9m5+wPY+7yKq6C8O5mgthJK9qjGbx/DhzUrfoZQGMiVUShHT7caT2DF0ZE
-CYM7vMMSivbN6mb/LjH1Bl2w+rC1rmBmIs+vVqIMLsuAC7W4pGeyc25VZFbkdgNZ
-ezasuqPK4ppT0zB+ew8skeS5tsUWnBggKAOaHFBKi70J61zi+PtT6e+ziYc6C4Iv
-fPyC0j0OiB6epmPzGcttnSwxmkySJTSIl5JSAqHReTOfqYudBOWcrN5HDBN+Pp0V
-a/nELZWL5sMFngrdGW0Sqf8e8o7KNOjQic+zqEmuuvUzRcN8WjIIIiK35Laomu+C
-GanuXqGh
-=xjSm
------END PGP SIGNATURE-----
-
---=_MailMate_C59290BB-B6E4-4921-8FD7-DDBC0632AD5C_=--
+> +                       sdhci_gli_uhs2_reset_sd_tran(host);
+> +
+> +               sdhci_uhs2_reset(host, mask);
+> +               gli_set_9767(host);
+> +       } else {
+> +               sdhci_reset(host, mask);
+> +               gli_set_9767(host);
+> +       }
+>  }
+>
+>  static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios *=
+ios)
+> @@ -1288,6 +1344,88 @@ static int gl9767_init_sd_express(struct mmc_host =
+*mmc, struct mmc_ios *ios)
+>         return 0;
+>  }
+>
+> +static void gl9767_vendor_init(struct sdhci_host *host)
+> +{
+> +       struct sdhci_pci_slot *slot =3D sdhci_priv(host);
+> +       struct pci_dev *pdev =3D slot->chip->pdev;
+> +       u32 value;
+> +
+> +       gl9767_vhs_write(pdev);
+> +
+> +       pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, &val=
+ue);
+> +       value |=3D FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR=
+,
+> +                           PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_V=
+ALUE);
+> +       pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, val=
+ue);
+> +
+> +       pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, &val=
+ue);
+> +       value |=3D FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SET=
+TING,
+> +                           PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTI=
+NG_VALUE);
+> +       pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, val=
+ue);
+> +
+> +       pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, &value);
+> +       value |=3D FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS,
+> +                           PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE) |
+> +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL,
+> +                           PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE) |
+> +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN,
+> +                           PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE) |
+> +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV,
+> +                           PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE) |
+> +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS,
+> +                           PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE) |
+> +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_RECV,
+> +                           PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE) |
+> +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_PDRST,
+> +                           PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE);
+> +       pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, value);
+> +
+> +       pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
+> +       value |=3D FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC,
+> +                           PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE) |
+> +                FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC_CTL,
+> +                           PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE);
+> +       pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
+> +
+> +       gl9767_vhs_read(pdev);
+> +}
+> +
+> +static void sdhci_gl9767_set_power(struct sdhci_host *host, unsigned cha=
+r mode,        unsigned short vdd)
+> +{
+> +       struct sdhci_pci_slot *slot =3D sdhci_priv(host);
+> +       struct pci_dev *pdev;
+> +       u32 value;
+> +
+> +       pdev =3D slot->chip->pdev;
+> +
+> +       if (mmc_card_uhs2(host->mmc)) {
+> +               gl9767_vhs_write(pdev);
+> +
+> +               pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_C=
+TL, &value);
+> +               value |=3D PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
+> +                        PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL;
+> +               pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_=
+CTL, value);
+> +
+> +               gl9767_vhs_read(pdev);
+> +
+> +               sdhci_gli_overcurrent_event_enable(host, false);
+> +               sdhci_uhs2_set_power(host, mode, vdd);
+> +               sdhci_gli_overcurrent_event_enable(host, true);
+> +       } else {
+> +               gl9767_vhs_write(pdev);
+> +
+> +               pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_C=
+TL, &value);
+> +               value &=3D ~(PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 =
+|
+> +                          PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CT=
+L);
+> +               pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_=
+CTL, value);
+> +
+> +               gl9767_vhs_read(pdev);
+> +
+> +               sdhci_gli_overcurrent_event_enable(host, false);
+> +               sdhci_set_power(host, mode, vdd);
+> +               sdhci_gli_overcurrent_event_enable(host, true);
+> +       }
+> +}
+> +
+>  static int gli_probe_slot_gl9750(struct sdhci_pci_slot *slot)
+>  {
+>         struct sdhci_host *host =3D slot->host;
+> @@ -1324,6 +1462,7 @@ static int gli_probe_slot_gl9767(struct sdhci_pci_s=
+lot *slot)
+>         host->mmc->caps2 |=3D MMC_CAP2_SD_EXP;
+>         host->mmc_host_ops.init_sd_express =3D gl9767_init_sd_express;
+>         sdhci_enable_v4_mode(host);
+> +       gl9767_vendor_init(host);
+>
+>         return 0;
+>  }
+> @@ -1827,12 +1966,19 @@ static const struct sdhci_ops sdhci_gl9767_ops =
+=3D {
+>         .reset                   =3D sdhci_gl9767_reset,
+>         .set_uhs_signaling       =3D sdhci_set_uhs_signaling,
+>         .voltage_switch          =3D sdhci_gl9767_voltage_switch,
+> +       .dump_uhs2_regs          =3D sdhci_uhs2_dump_regs,
+> +       .set_timeout             =3D sdhci_uhs2_set_timeout,
+> +       .irq                     =3D sdhci_uhs2_irq,
+> +       .set_power               =3D sdhci_gl9767_set_power,
+> +       .uhs2_pre_detect_init    =3D sdhci_gli_pre_detect_init,
+>  };
+>
+>  const struct sdhci_pci_fixes sdhci_gl9767 =3D {
+>         .quirks         =3D SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
+>         .quirks2        =3D SDHCI_QUIRK2_BROKEN_DDR50,
+>         .probe_slot     =3D gli_probe_slot_gl9767,
+> +       .add_host       =3D sdhci_pci_uhs2_add_host,
+> +       .remove_host    =3D sdhci_pci_uhs2_remove_host,
+>         .ops            =3D &sdhci_gl9767_ops,
+>  #ifdef CONFIG_PM_SLEEP
+>         .resume         =3D sdhci_pci_gli_resume,
+> --
+> 2.25.1
+>
 
