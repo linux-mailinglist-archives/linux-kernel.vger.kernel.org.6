@@ -1,132 +1,109 @@
-Return-Path: <linux-kernel+bounces-224796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9261E9126F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:45:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E949124D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC08289925
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9F48286D11
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5815415E88;
-	Fri, 21 Jun 2024 13:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="L8B9Gp1r"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E466D174EF1;
+	Fri, 21 Jun 2024 12:14:24 +0000 (UTC)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A9120335;
-	Fri, 21 Jun 2024 13:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A733B495E5;
+	Fri, 21 Jun 2024 12:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718977504; cv=none; b=qdLL7FRTIQX8CXZYp0QeT1mrvpvjb346fBGWAO7rR/EoWqEZB2CyWvuQ6la3DN2BSCfgm4mBdDohjx5WWAwGS8tHqFMI042opd3Yax2iyZrAZNjaKSHR62sRI1iukNQthNeFQKYYNJKSBg96WRji2PMXJwW2pHIv1o7WDsyqQLs=
+	t=1718972064; cv=none; b=iaol/Ts4pvuFy9QPUV46lxnpaHp7WEP0myCQpnnRnAbEc94z4OmZSY54wQBC3HhwalVd3llSqW28dgNwi+0DUeibjkO1VW0ljh8FWfMl3dXrYB5Nf2cFiDrXoxhlDTCYNI5ntXVU/DFYyU4ObKrZ8YzPBXDvO2Y45xeb5ozSA9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718977504; c=relaxed/simple;
-	bh=WoquWunYmCSL+/95Rrnl6iED+A+KdzoiIUpUW0JykN4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jWogVBkYvtsUW2F7gYb4UMRPZACjHguz53bIlkBIIx2MRBnO+UaZ6jDyD2C5J8KtJn21+kFmaXkA6xxjuMWxDtyzwqeaVgU0to6PhtGN4ZnpYHbf5/VWunO1Mi4ykTyYyCkZ9XCBrlFa91VMmcE6G8MR4dlW5Mw72TojIH1Jw4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=L8B9Gp1r; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LBel53014651;
-	Fri, 21 Jun 2024 08:14:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=FRa3aI0ad3u7nydsNc44sEFGNZQ
-	hulyTRHX1Q7HOfYY=; b=L8B9Gp1rQuEvKJ70pgMgEIohqQzyUnXFuEishOXEnsx
-	G5dKGv97qbZc/OuF7Ty636rO6Ma19DNRsldTlSI4lG4CfgyQYXihTPG5kqzxnHao
-	U04a+dlR1YD2aXLO9cZg6rR0QFvW9BsGRHu0OwgPxmQganQds8Bi3g8k5PnYKcGs
-	K1DNzFMDD3DEGVqpT7uMtW8tITpdHLVxOFaEV2QDQKtUlMvgXiGYZSGdGCi23jF6
-	I2Ge70brJvm47F0OZY/r9Zz5uSpjnR46Am0Ay6LeHmfv7MvkMd2YZONso5L9qk6p
-	0xdhB+pBHnkRPbAKLZ103YAwCQVHPXXzJJD/YH146Iw==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yw4yxs5v7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 08:14:23 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 45LCEMf0021835
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 08:14:22 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 21 Jun
- 2024 08:14:21 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Fri, 21 Jun 2024 08:14:21 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.120])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 45LCE6Su032255;
-	Fri, 21 Jun 2024 08:14:08 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Lars-Peter Clausen
-	<lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan
- Cameron <jic23@kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>,
-        Conor Dooley
-	<conor.dooley@microchip.com>
-Subject: [PATCH v6 1/2] dt-bindings: iio: adf4350: add clk provider prop
-Date: Fri, 21 Jun 2024 15:13:58 +0300
-Message-ID: <20240621121403.47912-1-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718972064; c=relaxed/simple;
+	bh=x4vqn5Hh8k99MfrNwz41Ev55uDW6SlGUmskYi4S6Zjs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hyp4O1DK7srmJf0DTa46agGHV9H7tngQgdukWd7UBGbawokClKm5fOus4LhUcgxUPkch2DmdfAoJ8ho+C180A4xGMgr7Xv6fic7iwQvfHjnZyGnxdggXNjaXwwM4mtaGe9KSLDpYjy4EOPP1CacOl8s3r24pjy82BSBfINgpaO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62cddff7f20so18613137b3.3;
+        Fri, 21 Jun 2024 05:14:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718972061; x=1719576861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QcWHAhSO81y854xZHbFbt4ihTOVyDirYk3vDpI2/9rM=;
+        b=KnikcwJsUNc/AlVm8aCGsjvZsQakpvSL3Qy2EmkiKpXk16okHSiLTdgGsL/nTkSWCT
+         CNA2TGAvTjP+/wk2QCVz/iKDwE11+N1lCJdt6A6JB2hwKkgVQo2F/FRUl1wWolug+O7F
+         TZOBmT5u1HHEqVYCQZcjE42deOeoppUM9wl6bRtFmynlkARpjySF//Tj0tDMzbSpOyP/
+         69LfHmKTMud7OnB8ZK6ghSyQ4/HB/khlZTu6CZbnpJ12u4T8d/bpoK3hEc5Z2X7fLp8P
+         6/Qa2mJV6NtRnIS8m9LSXiwEmeAvurDEWCYBQDieV08e5USAhGvtEJwXyD2bvFzueyiM
+         PpQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUYzHgtioxBX3EhlQGHZ+tp51AUjZmJ4KLGRSxMsbR8TszFYmqh7tRwYj3HXQo7SAwQKOywGDBGgkTDRGizuf6agy2ckMgn4BdqnevoywZU1F4VlraRbLl868Zoa8vFN79I+/U0gwAWxj8QswuFHPI2Mi3q7t3mDBe86mCAE0IBxrczNrDAyWLmRxn
+X-Gm-Message-State: AOJu0Yy6bkaA9LQT6bPqAzNkzPD7NGO/YCRKyjpBBkTM9QICwkDorntX
+	bslq0SaL6VAWpDIxZgCk0+/aDzL0hwQiBXp1jZqx2PWIZWbMwvDdyouL96Hj
+X-Google-Smtp-Source: AGHT+IH/5ChzJr5RjYiCwbXy8Y6Izt3WFkC8l60TmJ0EHP4W0Haf9uDvmMpEoC7+F2CMaqfIfB52lA==
+X-Received: by 2002:a81:4c49:0:b0:63b:ce8d:c7db with SMTP id 00721157ae682-63bce8dc8fdmr50485757b3.0.1718972061163;
+        Fri, 21 Jun 2024 05:14:21 -0700 (PDT)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f11b0f98esm3027867b3.35.2024.06.21.05.14.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 05:14:20 -0700 (PDT)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e026a2238d8so1997767276.0;
+        Fri, 21 Jun 2024 05:14:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVFiK+RyRyNQu9r49lXygis9AhEEy7qsMqxSbaEI3IOaJ+sfCT0ojJiAAfxyDpZQ4MN5dqQD6Ih2j/mx3C+c+jEHus2kSK1peM9MNOhpatiGzRHqtqxTLSbjqD9ucW+8mT1d3V7ZDgwgQzw0+70IVlHUfWmaItIiktwASFtnR2fR+cGV+4Uw9sEW9yO
+X-Received: by 2002:a25:bd5:0:b0:e02:bc1a:8ee1 with SMTP id
+ 3f1490d57ef6-e02be16fd4emr7657695276.29.1718972060172; Fri, 21 Jun 2024
+ 05:14:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: q5lCPQa3DyGBp6-UeJoXADohoYHrnZur
-X-Proofpoint-ORIG-GUID: q5lCPQa3DyGBp6-UeJoXADohoYHrnZur
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_04,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- bulkscore=0 malwarescore=0 spamscore=0 mlxscore=0 phishscore=0
- impostorscore=0 clxscore=1015 mlxlogscore=999 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406210091
+References: <20240618174831.415583-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240618174831.415583-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240618174831.415583-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Jun 2024 14:14:08 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV8jNPeRbrxAxej3FZEHzregsLpYi9e=pzCLVSpVSBm5A@mail.gmail.com>
+Message-ID: <CAMuHMdV8jNPeRbrxAxej3FZEHzregsLpYi9e=pzCLVSpVSBm5A@mail.gmail.com>
+Subject: Re: [PATCH 1/4] pinctrl: renesas: rzg2l: Update PIN_CFG_MASK() macro
+ to be 32-bit wide
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add properties required for providing clock to other consumers.
+On Tue, Jun 18, 2024 at 7:48=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Modify the `PIN_CFG_MASK()` macro to be 32-bit wide. The current maximum
+> value for `PIN_CFG_*` is `BIT(21)`, which fits within a 32-bit mask.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
-no changes in v6.
- .../devicetree/bindings/iio/frequency/adi,adf4350.yaml      | 6 ++++++
- 1 file changed, 6 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v6.11.
 
-diff --git a/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml b/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml
-index 43cbf27114c7..d1d1311332f8 100644
---- a/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml
-+++ b/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml
-@@ -28,6 +28,12 @@ properties:
-   clock-names:
-     const: clkin
- 
-+  '#clock-cells':
-+    const: 0
-+
-+  clock-output-names:
-+    maxItems: 1
-+
-   gpios:
-     maxItems: 1
-     description: Lock detect GPIO.
--- 
-2.45.2
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
