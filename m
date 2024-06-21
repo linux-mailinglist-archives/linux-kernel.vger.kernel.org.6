@@ -1,129 +1,161 @@
-Return-Path: <linux-kernel+bounces-224483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4028E9122F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:03:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873379122FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D642818CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:03:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDFF1B21FEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B78A17279B;
-	Fri, 21 Jun 2024 11:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F222172796;
+	Fri, 21 Jun 2024 11:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="glNe/R9F"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF9482D72;
-	Fri, 21 Jun 2024 11:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="UMhZM4ev";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eu/ZJ/O3"
+Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD96A16C841;
+	Fri, 21 Jun 2024 11:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718967809; cv=none; b=UqVZMdaZXMFArQC6FEzO9/UZ9VrQDsxdboiKbGh2xrGIhO8qvKRdhX4IfMhJCHQCmp10SOOwwRtWXP+ZDdyeYEpBWT5CSpnDFp2JAkyWWnQAvEm7Jen70V2T23bUa8bOm9kavDSxyj6edUbl6dtg+2xaZxejHQEunj1JmS2aLRM=
+	t=1718967895; cv=none; b=u4AQfr4N36p16ZcW768fThtLiii++b17Ll5XvBVFwCHSr/0aOfLSKu0h7cdnXZfOacs823FSbKuOlwdiiJIEnruxpUGXYuBtv079KUMsvrDSnuwu9gIxOHXWGZcSF518Ocidh3TwCtm7RGj5kKZf//H+7OqnJI3An6zNSYDHyDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718967809; c=relaxed/simple;
-	bh=G2mzDOlegupd7MzLPF0RMcnflCyfQVj0L1mDtkuQYmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZOK7aJNLoSbmZt+11X9KRRgrulnLwAqAPccrCqN3tJTTAt7bdAbDK08kiYY5PCuwRwc6HzkeTCID/ZHoNnS+XuqDudHasNVtNo5MsQdLroneVSAy/DaonZR8HCt8hrM4Lvt+lvF4/0pt2mofrx7wj9+joUWrg8WKB3t5NhOD3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=glNe/R9F; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id EC65420B7001; Fri, 21 Jun 2024 04:03:27 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EC65420B7001
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1718967807;
-	bh=NJIMPP/SpG3fq6y5+juMSnV7btfcUNm6kl6T9nrkIG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=glNe/R9F96iK2xJmXyMvod2m/iy71i+/wz+mR6o2s1kH0xMko/4b0bT3kgh3i6tHY
-	 9gfpQ/0EhE5VLJFOqObDe6kMjg0MdXnxDT4fdt0UYhPMgQpTGXuEw+18cSFKax/rbs
-	 RWPJTjdQwjY6tRA/jwO7ZQLF3cnmvsRgYjcHLhXc=
-Date: Fri, 21 Jun 2024 04:03:27 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Wei Liu <wei.liu@kernel.org>
-Cc: Michael Kelley <mhklinux@outlook.com>,
-	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-	"stable@kernel.org" <stable@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Dexuan Cui <decui@microsoft.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jake Oshins <jakeo@microsoft.com>,
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: hv: fix reading of PCI_INTERRUPT_LINE and
- PCI_INTERRUPT_PIN
-Message-ID: <20240621110327.GA19602@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20240621014815.263590-1-wei.liu@kernel.org>
- <SN6PR02MB4157C9FD41483E9AC7ED9E70D4C92@SN6PR02MB4157.namprd02.prod.outlook.com>
- <ZnUbWUdVE7q8oNjj@liuwe-devbox-debian-v2>
+	s=arc-20240116; t=1718967895; c=relaxed/simple;
+	bh=Dvl6H46jFeCW+DGyx4Y0OyUZ/HEvoRul4cNbU+tVke8=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=Nl9uRjKpsIKYq5Xpiaa5NW1miSkM7w0E4xZuq6xDJNEYo/7CbMXf14I27rRZbpRDxW0WIC/Y9BTxy7g81eUglTFRf1YHb1ps86ZXr6UMlOxDYl8EiSUa0TWvj21t5N0hojuq5m3VQDUSWhzDPWnH4o1qDBT2VhOjWe26ybipFqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=UMhZM4ev; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eu/ZJ/O3; arc=none smtp.client-ip=64.147.123.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.west.internal (Postfix) with ESMTP id D916A18000C0;
+	Fri, 21 Jun 2024 07:04:51 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Fri, 21 Jun 2024 07:04:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1718967891;
+	 x=1719054291; bh=+4mawVHHYxsHrUFmP/eKSqPBJjxMmF/qeY0j0U2cW4E=; b=
+	UMhZM4evlJnKXb3TMuLdm6YJGCy3vpVSl0zzRZOh+Sh/Ngj8PsDq2axmlNWM5Ng4
+	5g6mObhwIIfsOQrccadvbe1nwkM5yrBjdEh8uWyXNfnWBhsJQv7rF/VXDPJouIpA
+	GagGutD0TqvRLlvbaksNmUjKoqFRuPF0k/bCjnVWOkXDB1FX6LYFK/7f807eUrNi
+	sqxwSdnpdl/iGsV5MGC36TUO5MfQSkd7+fM1Rc89GC+LbCLlY23MPzw/Pl5ep6Oo
+	RZVsZLm4KMZM09CE1Z1AJ9VSvM2Wa2H2Bw91H/D3koTVWyoWhzX/BrKJ0ytbomNj
+	11F7/IbLTeljRmCOwYA61g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718967891; x=
+	1719054291; bh=+4mawVHHYxsHrUFmP/eKSqPBJjxMmF/qeY0j0U2cW4E=; b=e
+	u/ZJ/O3W7FQSOPbxaSZe5H17letI4OVk3kOTIf+84H8TFTZa4T72RYEL1+chMlpc
+	Xfi25od7YQlnojj3XVu54rhgCkY6RpW5cQ1FheMRrI6mctlpmU49t+N6g3NGP+5S
+	eubvK4/eG7/b50mKTKDnQ/J/Sjar1HiVNuXNgKnVOCMcoddPF84B7G4sthj8+991
+	iQSDJyCLVagzP8f9OiYU0I3v0Xg9D7M28lCxTJKOOHSrAH47tuTioSYnVmK/mcDx
+	CxHSavA+AoE97hY263hPKEAbqpUwRXB6KI+f6qtTvrwLE70vz7jOrqMyntAvmX0s
+	7tB8OYComBcuIXOR/TM9Q==
+X-ME-Sender: <xms:Ul51Zqbq95Gop7NZPUGtl2JKjyqbORNifnQ1eb76gvAZ_5Kvw9oa3w>
+    <xme:Ul51ZtYoXnDifZoJcXp_VOSP3_xslVPybbhsZyR_NTCrTZw1T0KCO9oqD-mX0IHrh
+    cjEH8NM3j6o5VdU7Gw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefgedgfeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:Ul51Zk__b6ELkqgfk2SsxTllgfXx2r2Urcb9WX7_0NYJvC7_iMhOLA>
+    <xmx:Ul51ZsoayH-cbnpW_tsaUkKzbqKbGgtFfSukR5pCk7tdMhgIgkW_aA>
+    <xmx:Ul51ZlqowEoljjm-1ENIKNmk3MvQcSF4-2e4PCi2SjIhy7E_GrseFA>
+    <xmx:Ul51ZqQmJ6v0-AgWQglvlPp-xVbrWjEFk5sQfv40qqzoW1Xn8F5teg>
+    <xmx:U151Zra_Mg46cIanT2eoEH8Q5PPliVsuLNRZlRG8-Ge21Jy80NQ0g9oM>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 7777936A0074; Fri, 21 Jun 2024 07:04:50 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnUbWUdVE7q8oNjj@liuwe-devbox-debian-v2>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-
-On Fri, Jun 21, 2024 at 06:19:05AM +0000, Wei Liu wrote:
-> On Fri, Jun 21, 2024 at 03:15:19AM +0000, Michael Kelley wrote:
-> > From: Wei Liu <wei.liu@kernel.org> Sent: Thursday, June 20, 2024 6:48 PM
-> > > 
-> > > The intent of the code snippet is to always return 0 for both fields.
-> > > The check is wrong though. Fix that.
-> > > 
-> > > This is discovered by this call in VFIO:
-> > > 
-> > >     pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
-> > > 
-> > > The old code does not set *val to 0 because the second half of the check is
-> > > incorrect.
-> > > 
-> > > Fixes: 4daace0d8ce85 ("PCI: hv: Add paravirtual PCI front-end for Microsoft Hyper-V
-> > > VMs")
-
-12 characters are preferred for Fixes commit id.
-'Fixes: 4daace0d8ce8 ("PCI: hv: Add paravirtual PCI front-end for Microsoft Hyper-V VMs")'
-
-> > > Cc: stable@kernel.org
-> > > Signed-off-by: Wei Liu <wei.liu@kernel.org>
-> > > ---
-> > >  drivers/pci/controller/pci-hyperv.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> > > index 5992280e8110..eec087c8f670 100644
-> > > --- a/drivers/pci/controller/pci-hyperv.c
-> > > +++ b/drivers/pci/controller/pci-hyperv.c
-> > > @@ -1130,8 +1130,8 @@ static void _hv_pcifront_read_config(struct hv_pci_dev
-> > > *hpdev, int where,
-
-<snip>
+Message-Id: <9d64bd8d-e146-46e7-8526-e85192ee14ed@app.fastmail.com>
+In-Reply-To: <ZnU3/c1T55k4WbYx@alpha.franken.de>
+References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com>
+ <ZnRtYFr5HFffyK7E@alpha.franken.de>
+ <ff6fe06d-6209-4e34-9cc8-eb516fa4ffae@app.fastmail.com>
+ <ZnU3/c1T55k4WbYx@alpha.franken.de>
+Date: Fri, 21 Jun 2024 12:04:30 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "Aleksandar Rikalo" <aleksandar.rikalo@syrmia.com>,
+ "Aleksandar Rikalo" <arikalo@gmail.com>, "Chao-ying Fu" <cfu@wavecomp.com>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Greg Ungerer" <gerg@kernel.org>, "Hauke Mehrtens" <hauke@hauke-m.de>,
+ "Ilya Lipnitskiy" <ilya.lipnitskiy@gmail.com>, linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "Marc Zyngier" <maz@kernel.org>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Serge Semin" <fancer.lancer@gmail.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Tiezhu Yang" <yangtiezhu@loongson.cn>
+Subject: Re: [PATCH v4 00/14] MIPS: Support I6500 multi-cluster configuration
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
-> I had a version that looked like this:
-> 
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> index 5992280e8110..cdd5be16021d 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -1130,8 +1130,8 @@ static void _hv_pcifront_read_config(struct hv_pci_dev *hpdev, int where,
->                    PCI_CAPABILITY_LIST) {
->                 /* ROM BARs are unimplemented */
->                 *val = 0;
-> -       } else if (where >= PCI_INTERRUPT_LINE && where + size <=
-> -                  PCI_INTERRUPT_PIN) {
-> +       } else if ((where >= PCI_INTERRUPT_LINE && where + size <= PCI_INTERRUPT_PIN) ||
-> +                  (where >= PCI_INTERRUPT_PIN && where + size <= PCI_MIN_GNT)) {
 
-IMHO, I prefer this one due to consistency. We can have these 2 condition as separate "else if"
-as well, which would align better with the rest of the logic in this function. However, I don't
-have a strong preference on this matter.
+=E5=9C=A82024=E5=B9=B46=E6=9C=8821=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=E5=
+=8D=889:21=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
+> On Fri, Jun 21, 2024 at 12:05:32AM +0100, Jiaxun Yang wrote:
+>>=20
+>>=20
+>> =E5=9C=A82024=E5=B9=B46=E6=9C=8820=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=
+=E5=8D=886:56=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
+>> > On Sat, May 11, 2024 at 12:43:27PM +0200, Aleksandar Rikalo wrote:
+>> >> Taken from Paul Burton MIPS repo with minor changes from Chao-ying=
+ Fu.
+>> >> Tested with 64r6el_defconfig on Boston board in 2 cluster/2 VPU and
+>> >> 1 cluster/4 VPU configurations.
+>> >
+>> > which existing CPUs can use this ?
+>>=20
+>> Besides Boston are some multi cluster I6500 systems in wild, includin=
+g Fungible F1,
+>> which comes with 52 cores in data panel.
+>>=20
+>> Those vendors show no interest on mainline kernel support though.
+>
+> ok, so looking at the series it touches areas with different maintaine=
+rs,
+> I'm fine taking the MIPS parts, can I simply cherry-pick them out
+> of the series ?
 
-- Saurabh
+For irqchip part I think it must be taken together with MIPS arch part.
+It's a part of MIPS CORE DRIVERS maintainers entry as well.
+
+For FDC I think functionally it's not a prerequisite.
+
+Thanks
+>
+> Thomas.
+>
+> --=20
+> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
+rily a
+> good idea.                                                [ RFC1925, 2=
+.3 ]
+
+--=20
+- Jiaxun
 
