@@ -1,267 +1,160 @@
-Return-Path: <linux-kernel+bounces-224498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9CE912326
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:18:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F319D912329
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBE3BB22444
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:18:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73141F234B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55578172BB6;
-	Fri, 21 Jun 2024 11:18:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F5312D771
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF636172BC3;
+	Fri, 21 Jun 2024 11:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="nAtmHxbl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dBxu0SwG"
+Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B90E3A1CD;
+	Fri, 21 Jun 2024 11:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718968681; cv=none; b=KNftETo8rvTbuSkHxx0cCQw5PWT0Mi4P16cB+BBiF3C3y+4L8e9BkMyEgzWHoJcO7e3EiDY9i2YCmlaw6pzotoa2fW84D1WBcGXvAKdBBBGPyP9zuDz8raL7PEQ19rQYE+jehpA+lPkJrmj+39XrTQEqxKTlcIorc+ai8ojzdpQ=
+	t=1718968711; cv=none; b=Br5gMZuY3LwR6/sgzrLyuPKr6Wnaqh7K0LW2KbJ1kFxbiGUaAImHrJ6nKMgyS0fMhLuacpx9oJKGcRnP6OOtxKXGwrwRRg4VornJpXg+laD0DCfj956urSnIWQ3PCENvvH2ldtepxVcezY/fSshHLJNplhMbYjOrgLWzEdLXqjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718968681; c=relaxed/simple;
-	bh=BzmQXJO3hjknYA5yLaNmF4yH0r+++siyIfmEb9Jxe3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L5SbrKlTq2EmXwuy3bZwN6kUTFcYFMH6cd666XrNbciZc/0DgvA6D4/KcOcoYEsOC76dUyudI/Ll7wDexitNXRt7WjoYQ1g1UyYCYuPyAK8wB3bUm/WdDlREKiHIckYksJNutIJlY/b+zXNHvhs/h++yCH1a8yAbeZktTwCQsM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F79CDA7;
-	Fri, 21 Jun 2024 04:18:23 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 040803F6A8;
-	Fri, 21 Jun 2024 04:17:56 -0700 (PDT)
-Date: Fri, 21 Jun 2024 12:17:54 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: linux-arm-kernel@lists.infradead.org, alexandru.elisei@arm.com,
-	catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-	maz@kernel.org, tglx@linutronix.de, will@kernel.org
-Subject: Re: [PATCH v2 2/5] irqchip/gic-common: Remove sync_access callback
-Message-ID: <ZnVhYiqy45y4GJKv@J2N7QTR9R3>
-References: <20240617111841.2529370-1-mark.rutland@arm.com>
- <20240617111841.2529370-3-mark.rutland@arm.com>
- <6c16eeb4-f382-89a5-3481-548c405d4f8e@huawei.com>
+	s=arc-20240116; t=1718968711; c=relaxed/simple;
+	bh=+fY7tkigpTQXc5Fku/J8C2gMCAOJnpPj6kuyBUVHayg=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=fMTwUMN4Xt1a3HHvhaylJAjrjqGtGoZRHXEfHfZ6mJ+zgNwWjicsspyTyZgExXREoTxEk7jFfjIhNWGqLkWf8/6CfSdR/NhWHZNiHZPsXGEN3hxOmBQL4iRbeosH0/0H9s+Q7iQK9O+5gfqLCHPKJGiqg+ab6Bg1Fdz/cmK9Ww0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=nAtmHxbl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dBxu0SwG; arc=none smtp.client-ip=64.147.123.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 2F4CD18000BB;
+	Fri, 21 Jun 2024 07:18:28 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Fri, 21 Jun 2024 07:18:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1718968707;
+	 x=1719055107; bh=G0G1El3uK8k2KjVN3fQ6GgP+FCi/pQffGpLCPF/vvhA=; b=
+	nAtmHxblkVwYf1+7Jq2u6m1VmZGiN9TSZLEJFshiPsDMlAegGOiNHf+UE+4216dT
+	htbiTLMSoaFX92ECFSGXq3F+QpleL98i78t8z+rdIcbyYTpavyMV6JSXHaSxk6PL
+	JOkiuNZ6qSyqyyByhm9AzSIqmcopudyqmKoZtTLxsJJTsBjHqvlNzSwAmuJICJPC
+	xAkI+sCOWXpsbJNKWByYDHbMZSo8+twogxKc+snXzQX7HJadXzejaEfWqA/6sBHh
+	emcjdSHSG9Bo4FI1CD5/aX8Jxvwoln4y6udQuP1YYdzVawOyynR9Gxm05Fbrpyr+
+	WB/7o7hfo/3BZhUhG6ANNQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718968707; x=
+	1719055107; bh=G0G1El3uK8k2KjVN3fQ6GgP+FCi/pQffGpLCPF/vvhA=; b=d
+	Bxu0SwGZw0WkHjTnlnS7fq0zY56CagKJUR47SpgMY7tm6B9aM/Y1dStGHEeQdnDg
+	fCRkvjCgGazP2+UAsbWXGxIX4TiO36d0PYJoOC57DTO3WhDbYh5xK7zBmoVWOLQd
+	UV4EBFBYqO7zBd5J+yASORFYRWi03tNDqnbRTbKRNbo+q+zXd7VgW8v0wiWvr1B7
+	rr2bTE7y7Dc524RRp4nxBdIA76939GnwKcZdixRChC50ONqTr1ex/3RAV1znusd1
+	qVxKhyuBnM1lqA9rP9631v35ZlxNjclnFqSQxEdrw2Rq0rUlgSbfXPnyye1vThMO
+	HKi85rCTn8v3rXqgdA37A==
+X-ME-Sender: <xms:g2F1ZobL1r5dayGb6_dx20VuVd8FBDgwufb-Bfiftejw-qkKSzpUFg>
+    <xme:g2F1ZjYozVdl2unO9nK0bwGLrNn3obOQ6jEuV1fZcrNSLO8g0lxxVu71WBEH0SQ8c
+    LuxKocgWiSj9kafDa4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefgedgfeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:g2F1Zi_7opE70T8E4hvvoIxcDxWUnYzIMUPeLlAZ13rdHvzzcm8Vpg>
+    <xmx:g2F1ZiqZSAYUjyGJQIjONpqp-oO0L90SzbNFf0Dan5AkSXCqxAvW1g>
+    <xmx:g2F1Zjq3gMEeAhz6Zrx5ISXwXxhEyZe36v_DrzbBAqREz0GH_JhbTg>
+    <xmx:g2F1ZgS8yr65kj-LojYGQVGFpxzEflGJ5gpbkoz33gE6-8bc_CSGJA>
+    <xmx:g2F1ZkceRkZjBi65qbQal4Sjl6wjS8sAUiKyTFcdy42gAMyIgNykgtBn>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 3A04236A0074; Fri, 21 Jun 2024 07:18:27 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c16eeb4-f382-89a5-3481-548c405d4f8e@huawei.com>
+Message-Id: <58f65f4b-9433-44a2-b8de-f18b8d8b0c46@app.fastmail.com>
+In-Reply-To: <20240612-mips-clks-v2-6-a57e6f49f3db@flygoat.com>
+References: <20240612-mips-clks-v2-0-a57e6f49f3db@flygoat.com>
+ <20240612-mips-clks-v2-6-a57e6f49f3db@flygoat.com>
+Date: Fri, 21 Jun 2024 12:18:07 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Daniel Lezcano" <daniel.lezcano@linaro.org>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Serge Semin" <fancer.lancer@gmail.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>
+Subject: Re: [PATCH v2 6/7] clocksource: mips-gic-timer: Refine rating computation
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 10:22:26AM +0800, Jinjie Ruan wrote:
-> 
-> 
-> On 2024/6/17 19:18, Mark Rutland wrote:
-> > The gic_configure_irq(), gic_dist_config(), and gic_cpu_config()
-> > functions each take an optional "sync_access" callback, but in almost
-> > all cases this is not used. The only user is the GICv3 driver's
-> > gic_cpu_init() function, which uses gic_redist_wait_for_rwp() as the
-> > "sync_access" callback for gic_cpu_config().
-> > 
-> > It would be simpler and clearer to remove the callback and have the
-> > GICv3 driver call gic_redist_wait_for_rwp() explicitly after
-> > gic_cpu_config().
-> > 
-> > Remove the "sync_access" callback, and call gic_redist_wait_for_rwp()
-> > explicitly in the GICv3 driver.
-> > 
-> > There should be no functional change as a result of this patch.
-> 
-> There seems to be a similar patch already:
-> 
-> https://lore.kernel.org/all/20230902134106.1969-1-yuzenghui@huawei.com/
 
-Ok; looking at the diffstat and the diff, that patch didn't adjust
-gic_cpu_config(), and Marc has already reviewed and tested this.
 
-Thanks for the pointer, but I don't think that changes anything?
+=E5=9C=A82024=E5=B9=B46=E6=9C=8812=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=E5=
+=8D=889:54=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+> It is a good clocksource which usually go as fast as CPU core
+> and have a low access latency, so raise the base of rating
+> from Good to desired when we know that it has a stable frequency.
+>
+> Increase frequency addend dividend to 10000000 (10MHz) to
+> reasonably accommodate multi GHz level clock, also cap rating
+> within current level.
+>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-Mark.
+Hi Daniel,
 
-> 
-> > 
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Alexandru Elisei <alexandru.elisei@arm.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Will Deacon <will@kernel.org>
-> > Reviewed-by: Marc Zyngier <maz@kernel.org>
-> > Tested-by: Marc Zyngier <maz@kernel.org>
-> > ---
-> >  drivers/irqchip/irq-gic-common.c | 16 +++-------------
-> >  drivers/irqchip/irq-gic-common.h |  7 +++----
-> >  drivers/irqchip/irq-gic-v3.c     |  7 ++++---
-> >  drivers/irqchip/irq-gic.c        |  6 +++---
-> >  drivers/irqchip/irq-hip04.c      |  6 +++---
-> >  5 files changed, 16 insertions(+), 26 deletions(-)
-> > 
-> > diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-> > index afd6a1841715a..4ed17620dc4d7 100644
-> > --- a/drivers/irqchip/irq-gic-common.c
-> > +++ b/drivers/irqchip/irq-gic-common.c
-> > @@ -45,7 +45,7 @@ void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
-> >  }
-> >  
-> >  int gic_configure_irq(unsigned int irq, unsigned int type,
-> > -		       void __iomem *base, void (*sync_access)(void))
-> > +		       void __iomem *base)
-> >  {
-> >  	u32 confmask = 0x2 << ((irq % 16) * 2);
-> >  	u32 confoff = (irq / 16) * 4;
-> > @@ -84,14 +84,10 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
-> >  
-> >  	raw_spin_unlock_irqrestore(&irq_controller_lock, flags);
-> >  
-> > -	if (sync_access)
-> > -		sync_access();
-> > -
-> >  	return ret;
-> >  }
-> >  
-> > -void gic_dist_config(void __iomem *base, int gic_irqs,
-> > -		     void (*sync_access)(void))
-> > +void gic_dist_config(void __iomem *base, int gic_irqs)
-> >  {
-> >  	unsigned int i;
-> >  
-> > @@ -118,12 +114,9 @@ void gic_dist_config(void __iomem *base, int gic_irqs,
-> >  		writel_relaxed(GICD_INT_EN_CLR_X32,
-> >  			       base + GIC_DIST_ENABLE_CLEAR + i / 8);
-> >  	}
-> > -
-> > -	if (sync_access)
-> > -		sync_access();
-> >  }
-> >  
-> > -void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void))
-> > +void gic_cpu_config(void __iomem *base, int nr)
-> >  {
-> >  	int i;
-> >  
-> > @@ -144,7 +137,4 @@ void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void))
-> >  	for (i = 0; i < nr; i += 4)
-> >  		writel_relaxed(GICD_INT_DEF_PRI_X4,
-> >  					base + GIC_DIST_PRI + i * 4 / 4);
-> > -
-> > -	if (sync_access)
-> > -		sync_access();
-> >  }
-> > diff --git a/drivers/irqchip/irq-gic-common.h b/drivers/irqchip/irq-gic-common.h
-> > index f407cce9ecaaa..c230175dd584c 100644
-> > --- a/drivers/irqchip/irq-gic-common.h
-> > +++ b/drivers/irqchip/irq-gic-common.h
-> > @@ -20,10 +20,9 @@ struct gic_quirk {
-> >  };
-> >  
-> >  int gic_configure_irq(unsigned int irq, unsigned int type,
-> > -                       void __iomem *base, void (*sync_access)(void));
-> > -void gic_dist_config(void __iomem *base, int gic_irqs,
-> > -		     void (*sync_access)(void));
-> > -void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void));
-> > +                       void __iomem *base);
-> > +void gic_dist_config(void __iomem *base, int gic_irqs);
-> > +void gic_cpu_config(void __iomem *base, int nr);
-> >  void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
-> >  		void *data);
-> >  void gic_enable_of_quirks(const struct device_node *np,
-> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> > index 6fb276504bcc8..d95dda2383fb5 100644
-> > --- a/drivers/irqchip/irq-gic-v3.c
-> > +++ b/drivers/irqchip/irq-gic-v3.c
-> > @@ -670,7 +670,7 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
-> >  
-> >  	offset = convert_offset_index(d, GICD_ICFGR, &index);
-> >  
-> > -	ret = gic_configure_irq(index, type, base + offset, NULL);
-> > +	ret = gic_configure_irq(index, type, base + offset);
-> >  	if (ret && (range == PPI_RANGE || range == EPPI_RANGE)) {
-> >  		/* Misconfigured PPIs are usually not fatal */
-> >  		pr_warn("GIC: PPI INTID%ld is secure or misconfigured\n", irq);
-> > @@ -940,7 +940,7 @@ static void __init gic_dist_init(void)
-> >  		writel_relaxed(GICD_INT_DEF_PRI_X4, base + GICD_IPRIORITYRnE + i);
-> >  
-> >  	/* Now do the common stuff */
-> > -	gic_dist_config(base, GIC_LINE_NR, NULL);
-> > +	gic_dist_config(base, GIC_LINE_NR);
-> >  
-> >  	val = GICD_CTLR_ARE_NS | GICD_CTLR_ENABLE_G1A | GICD_CTLR_ENABLE_G1;
-> >  	if (gic_data.rdists.gicd_typer2 & GICD_TYPER2_nASSGIcap) {
-> > @@ -1282,7 +1282,8 @@ static void gic_cpu_init(void)
-> >  	for (i = 0; i < gic_data.ppi_nr + SGI_NR; i += 32)
-> >  		writel_relaxed(~0, rbase + GICR_IGROUPR0 + i / 8);
-> >  
-> > -	gic_cpu_config(rbase, gic_data.ppi_nr + SGI_NR, gic_redist_wait_for_rwp);
-> > +	gic_cpu_config(rbase, gic_data.ppi_nr + SGI_NR);
-> > +	gic_redist_wait_for_rwp();
-> >  
-> >  	/* initialise system registers */
-> >  	gic_cpu_sys_reg_init();
-> > diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-> > index 98aa383e39db1..87255bde960fc 100644
-> > --- a/drivers/irqchip/irq-gic.c
-> > +++ b/drivers/irqchip/irq-gic.c
-> > @@ -303,7 +303,7 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
-> >  			    type != IRQ_TYPE_EDGE_RISING)
-> >  		return -EINVAL;
-> >  
-> > -	ret = gic_configure_irq(gicirq, type, base + GIC_DIST_CONFIG, NULL);
-> > +	ret = gic_configure_irq(gicirq, type, base + GIC_DIST_CONFIG);
-> >  	if (ret && gicirq < 32) {
-> >  		/* Misconfigured PPIs are usually not fatal */
-> >  		pr_warn("GIC: PPI%ld is secure or misconfigured\n", gicirq - 16);
-> > @@ -479,7 +479,7 @@ static void gic_dist_init(struct gic_chip_data *gic)
-> >  	for (i = 32; i < gic_irqs; i += 4)
-> >  		writel_relaxed(cpumask, base + GIC_DIST_TARGET + i * 4 / 4);
-> >  
-> > -	gic_dist_config(base, gic_irqs, NULL);
-> > +	gic_dist_config(base, gic_irqs);
-> >  
-> >  	writel_relaxed(GICD_ENABLE, base + GIC_DIST_CTRL);
-> >  }
-> > @@ -516,7 +516,7 @@ static int gic_cpu_init(struct gic_chip_data *gic)
-> >  				gic_cpu_map[i] &= ~cpu_mask;
-> >  	}
-> >  
-> > -	gic_cpu_config(dist_base, 32, NULL);
-> > +	gic_cpu_config(dist_base, 32);
-> >  
-> >  	writel_relaxed(GICC_INT_PRI_THRESHOLD, base + GIC_CPU_PRIMASK);
-> >  	gic_cpu_if_up(gic);
-> > diff --git a/drivers/irqchip/irq-hip04.c b/drivers/irqchip/irq-hip04.c
-> > index 46161f6ff289d..5285150fd9096 100644
-> > --- a/drivers/irqchip/irq-hip04.c
-> > +++ b/drivers/irqchip/irq-hip04.c
-> > @@ -130,7 +130,7 @@ static int hip04_irq_set_type(struct irq_data *d, unsigned int type)
-> >  
-> >  	raw_spin_lock(&irq_controller_lock);
-> >  
-> > -	ret = gic_configure_irq(irq, type, base + GIC_DIST_CONFIG, NULL);
-> > +	ret = gic_configure_irq(irq, type, base + GIC_DIST_CONFIG);
-> >  	if (ret && irq < 32) {
-> >  		/* Misconfigured PPIs are usually not fatal */
-> >  		pr_warn("GIC: PPI%d is secure or misconfigured\n", irq - 16);
-> > @@ -260,7 +260,7 @@ static void __init hip04_irq_dist_init(struct hip04_irq_data *intc)
-> >  	for (i = 32; i < nr_irqs; i += 2)
-> >  		writel_relaxed(cpumask, base + GIC_DIST_TARGET + ((i * 2) & ~3));
-> >  
-> > -	gic_dist_config(base, nr_irqs, NULL);
-> > +	gic_dist_config(base, nr_irqs);
-> >  
-> >  	writel_relaxed(1, base + GIC_DIST_CTRL);
-> >  }
-> > @@ -287,7 +287,7 @@ static void hip04_irq_cpu_init(struct hip04_irq_data *intc)
-> >  		if (i != cpu)
-> >  			hip04_cpu_map[i] &= ~cpu_mask;
-> >  
-> > -	gic_cpu_config(dist_base, 32, NULL);
-> > +	gic_cpu_config(dist_base, 32);
-> >  
-> >  	writel_relaxed(0xf0, base + GIC_CPU_PRIMASK);
-> >  	writel_relaxed(1, base + GIC_CPU_CTRL);
+Can I get a Review or Ack for this series? As it's mainly clocksource re=
+lated.
+
+Thanks.
+- Jiaxun
+
+> ---
+> v2: Fix number of zeros for 10 MHz
+> ---
+>  drivers/clocksource/mips-gic-timer.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clocksource/mips-gic-timer.c=20
+> b/drivers/clocksource/mips-gic-timer.c
+> index b3ae38f36720..7a03d94c028a 100644
+> --- a/drivers/clocksource/mips-gic-timer.c
+> +++ b/drivers/clocksource/mips-gic-timer.c
+> @@ -197,7 +197,11 @@ static int __init __gic_clocksource_init(void)
+>  	gic_clocksource.mask =3D CLOCKSOURCE_MASK(count_width);
+>=20
+>  	/* Calculate a somewhat reasonable rating value. */
+> -	gic_clocksource.rating =3D 200 + gic_frequency / 10000000;
+> +	if (mips_cm_revision() >=3D CM_REV_CM3 || !IS_ENABLED(CONFIG_CPU_FRE=
+Q))
+> +		gic_clocksource.rating =3D 300; /* Good when frequecy is stable */
+> +	else
+> +		gic_clocksource.rating =3D 200;
+> +	gic_clocksource.rating +=3D clamp(gic_frequency / 10000000, 0, 99);
+>=20
+>  	ret =3D clocksource_register_hz(&gic_clocksource, gic_frequency);
+>  	if (ret < 0)
+>
+> --=20
+> 2.43.0
+
+--=20
+- Jiaxun
 
