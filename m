@@ -1,239 +1,224 @@
-Return-Path: <linux-kernel+bounces-224521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890E8912389
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:28:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74074912392
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB8A31C251FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA73287B89
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BC8176AC5;
-	Fri, 21 Jun 2024 11:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2AD17967A;
+	Fri, 21 Jun 2024 11:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WyipYmHz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k6Hgy0By";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="duZ7Mh3d";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="psEfHHaC"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnGQS1B2"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD8E176254;
-	Fri, 21 Jun 2024 11:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94042173324;
+	Fri, 21 Jun 2024 11:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969124; cv=none; b=cqXmDZocdt5aXIwPdlp8quU2o/YfQvamAaT17GwZTg+i3zJuciAAMiIyFAW7cQDBF7SDzy5S/cWq+Q2mc5Pw9kWC/SBWdcW6ZQG8QDgQ+YtZ+knshgeQhl+GUU0oGwmTudzcPMqbIMZqjQYFnMygo1t62Cms6FOJzXWly9JUt2Q=
+	t=1718969193; cv=none; b=mP7ppoDEqpjgR53puh7xpYJItEloUDy6aRokcTEiuaWuDs2uo+3kYIFEwh0SgMyvk3X8p6fIRLrUtrYVV4XY3rORsIVewoSc4V1nSIYRHAERdlUzOzXNKdg1bR1IdQxkM4ZhcyAAO2WSrn1YGmYOxIZ+7a86MN5gPmK88FGWLFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969124; c=relaxed/simple;
-	bh=7Wg8YiT2kEFpC+UB7M62V8+RiaolnmozV8kRePzaDdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IRQ1xz/YP89WrVrsyzPSdqDD5oLYRmDRwDFc/LJHetyAhnkCkVlUwpL7yUSsdXmNcJUPZuoH7tq9g+5fc2upKAOdpyUVcNOvb89vt5n8XoVciIa2bLQPsNo3XhcqBlQPCIpWdWgfu9lqwykOEoH/DtKLKxv8aDWTH3ALmjLqqhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WyipYmHz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k6Hgy0By; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=duZ7Mh3d; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=psEfHHaC; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DF16821AED;
-	Fri, 21 Jun 2024 11:25:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718969121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
-	b=WyipYmHzsG1UAensuD//zh5tTO0fzOPs90KBZq0WUzubYGpdqbcbFRYZv2TeTotlZ6QFMx
-	p7zMk0h2BQ3WPIPSbj4lm9worX4DD9q7Oa/DRzBWrOguXx8KJRbVShidJgQEXg0Czy0k2O
-	coGFlAD9ukNAUcmlYvyR9/e4MPb8q3s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718969121;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
-	b=k6Hgy0BykMdAbsgfLELPDkuW6C8/vvVBNZkUwBjFkOEByT9IduZld8v4ZMRae6eWu2OI/e
-	rxNtVd3cGCHwvoCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718969119; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
-	b=duZ7Mh3dWNJOGRI1wVpiqdQDtFTsVWVoFmpvtpJdAxFxL5JsZqpJSv0NumVzFG2RRKNPjN
-	MUPoH7TMVnllyAvu2vEIwtjkXGDC66yVXqJozbFyZVvm/BUcwUmFqY+FYxx6fCiO+E2URs
-	kh/WUNfKhRVUf0rRR9R9rvXL3Wrgo5A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718969119;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gtibqh13Q5Q7EF+VQJmr7nL2jQiH8PMdmBYn5dAvs+0=;
-	b=psEfHHaCiNdyW2oUvRKBMaH3zkWtCYLj+uWmsjhmO+9mJNQ8I+ZzbC3vWLbHNupKxyEAZ8
-	/8aRzplsLixJ83Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D461A13AAA;
-	Fri, 21 Jun 2024 11:25:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dMzRMx9jdWbWZwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 21 Jun 2024 11:25:19 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 81A10A087E; Fri, 21 Jun 2024 13:25:19 +0200 (CEST)
-Date: Fri, 21 Jun 2024 13:25:19 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
-	jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: reorder checks in may_create_in_sticky
-Message-ID: <20240621112519.vp26sqmehxbihqgc@quack3>
-References: <20240620120359.151258-1-mjguzik@gmail.com>
- <20240621-affekt-denkzettel-3c115f68355a@brauner>
+	s=arc-20240116; t=1718969193; c=relaxed/simple;
+	bh=6Z4wpojLz/hacj79e57BMfp429TSIJBj0CjR5tMbUrU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=joL3+eZd9Lvtxi9aj119/MCegC2ZzDfwROxO5atclLNThVfE6ErgKdMW7m7Rjc4mCL1Gm2TLqxXmEFe0+M5jNhL7TqtpgYFtP8YzKYM64pZP3gyOIX7ydA5UXOcn8sQh3871X8rmauWhr5DXMgsGMkRRyqV69ZR4NOLklhMGqW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnGQS1B2; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so2173816a12.3;
+        Fri, 21 Jun 2024 04:26:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718969190; x=1719573990; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q0NS7LlelhpSen05TQ03Z1wb2gyNuCOX1l5VdBrZGKM=;
+        b=cnGQS1B24Or85wx5TZlYZ2q9+XcyMQ4LkxV9ST5vhMQ1Ojj5eFVL/JZthtnKNKKisp
+         c93Z3K8YwKc0hSaaSeWYRwl6a9FZAzZX0mWNphShJ1tHOPgDdfp6zI+NAdA+bzU/qV/B
+         3oCRleIIeI1S8qlYcAKt+HX9dUHiOaZ+kOCgWWF2n2uuqDEXZShEzvbrKk+y2pe2TNyw
+         Bk8bGgFusX3oGRpBpkk8sBNJGpExTikCNQMIi4xFFjl1AMocGAjb6uaG9D6DDaavhmtG
+         bWHZ9wuhwt89FOCcdcgKewDRbTzP48/SRM2ZYkVTEVBwFjZ92CZpv5egLguzBfHusjek
+         9kyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718969190; x=1719573990;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q0NS7LlelhpSen05TQ03Z1wb2gyNuCOX1l5VdBrZGKM=;
+        b=WqloSIrZUPbLcQAVRMfdhFneHBbQoXlxKVNvbGYcI0DzKYFVvFoRwq6DDPAXng5/Ri
+         WUgHLhMGob+IUiEhiWPnOwTn8aavnMC77LZ9ysjUzQlIvm5HBe+ZlEpXrXg/XMfbd4L2
+         kZC0UvlzY5yGaAQH0ovNfslfE1safqRPVh+gH47Dqtxurc3BGd+ymBSah58vFA85n4wm
+         orpLSvZmQ6oJJFY88tzBXa866Oj2nqc+aZgAfAcK6/3DjvJhNL4P99qE+YoOEiA6fVNo
+         sOahBNZ6lqLrQpXktYBJEP8R3w9rUIYLUr4fhS4DzcVKBvtdc4/l8lQOOmr+yNk5iBfo
+         MU5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjJHjbTsvqKFFa4DrSgqo9WbD/O9atSgVeS/gBf3udG8KOi7MlkHj3tvYePGtU6teq6thc1Dhos1xlvJsqryKmFhVYifg4MPOcs7/W/OyjBOUkbwf3Bl/mJ/I+fQ9ggFVubjO0IOAJ9ljHcdbXcHzS/E0+gOMWHkiEnZH3QdqtXED9Ow==
+X-Gm-Message-State: AOJu0Yyiw/ub3MLY3XwIK2JQRE9Xn3TW7EyOswmf/OGBllgfYgOQaCij
+	uFfhsWEYv7IPV7BKjyP1h85vgYtTi8nneuqSSFD2q9OHiaP+x7xIHCDHhclWbXa0RpHJGme+UkA
+	E6QOvXahJNpv9i+D7BK/1EOMsQe1xyqjI
+X-Google-Smtp-Source: AGHT+IEj3xJiyLNIRUImQfeckjZNz/P5iTFKuJO/ro0q3UwgZoaarlsLmvCBnakUjtcivQryct+kRTzskos2kA1Ceks=
+X-Received: by 2002:a17:906:80c:b0:a6f:2de0:54d with SMTP id
+ a640c23a62f3a-a6fab7d6c69mr582759066b.76.1718969189569; Fri, 21 Jun 2024
+ 04:26:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621-affekt-denkzettel-3c115f68355a@brauner>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,zeniv.linux.org.uk,suse.cz,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+References: <20240619054641.277062-1-shanchun1218@gmail.com>
+ <20240619054641.277062-3-shanchun1218@gmail.com> <CAHp75VcJGoDaAbD7vWin8yTGarrLZbVQqucHs+M9rAAS0BZd9g@mail.gmail.com>
+ <1e249c77-def1-4ffc-bbd6-d64f7e95b0ac@gmail.com>
+In-Reply-To: <1e249c77-def1-4ffc-bbd6-d64f7e95b0ac@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 21 Jun 2024 13:25:52 +0200
+Message-ID: <CAHp75VfpPR3Nat2dJrwLaxvnQNmn6KbpAfLcD-BvadwyHXDE1A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mmc: sdhci-of-ma35d1: Add Novoton MA35D1 SDHCI driver
+To: Shan-Chun Hung <shanchun1218@gmail.com>
+Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, adrian.hunter@intel.com, p.zabel@pengutronix.de, 
+	pbrobinson@gmail.com, serghox@gmail.com, mcgrof@kernel.org, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com, 
+	tmaimon77@gmail.com, linux-arm-kernel@lists.infradead.org, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ychuang3@nuvoton.com, schung@nuvoton.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 21-06-24 09:45:03, Christian Brauner wrote:
-> On Thu, Jun 20, 2024 at 02:03:59PM GMT, Mateusz Guzik wrote:
-> > The routine is called for all directories on file creation and weirdly
-> > postpones the check if the dir is sticky to begin with. Instead it first
-> > checks fifos and regular files (in that order), while avoidably pulling
-> > globals.
-> > 
-> > No functional changes.
-> > 
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
-> >  fs/namei.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 63d1fb06da6b..b1600060ecfb 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -1246,9 +1246,9 @@ static int may_create_in_sticky(struct mnt_idmap *idmap,
-> >  	umode_t dir_mode = nd->dir_mode;
-> >  	vfsuid_t dir_vfsuid = nd->dir_vfsuid;
-> >  
-> > -	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
-> > -	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
-> > -	    likely(!(dir_mode & S_ISVTX)) ||
-> > +	if (likely(!(dir_mode & S_ISVTX)) ||
-> > +	    (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
-> > +	    (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
-> >  	    vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
-> >  	    vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
-> >  		return 0;
-> 
-> I think we really need to unroll this unoly mess to make it more readable?
+On Fri, Jun 21, 2024 at 10:06=E2=80=AFAM Shan-Chun Hung <shanchun1218@gmail=
+.com> wrote:
+> On 2024/6/20 =E4=B8=8A=E5=8D=88 03:09, Andy Shevchenko wrote:
+> > On Wed, Jun 19, 2024 at 7:47=E2=80=AFAM Shan-Chun Hung<shanchun1218@gma=
+il.com>  wrote:
 
-I guess my neural network has adapted to these kind of things in the kernel :)
+...
 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 3e23fbb8b029..1dd2d328bae3 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1244,25 +1244,43 @@ static int may_create_in_sticky(struct mnt_idmap *idmap,
->                                 struct nameidata *nd, struct inode *const inode)
->  {
->         umode_t dir_mode = nd->dir_mode;
-> -       vfsuid_t dir_vfsuid = nd->dir_vfsuid;
-> +       vfsuid_t dir_vfsuid = nd->dir_vfsuid, i_vfsuid;
-> +       int ret;
-> +
-> +       if (likely(!(dir_mode & S_ISVTX)))
-> +               return 0;
-> +
-> +       if (S_ISREG(inode->i_mode) && !sysctl_protected_regular)
-> +               return 0;
-> +
-> +       if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
-> +               return 0;
-> +
-> +       i_vfsuid = i_uid_into_vfsuid(idmap, inode);
-> +
-> +       if (vfsuid_eq(i_vfsuid, dir_vfsuid))
-> +               return 0;
-> 
-> -       if (likely(!(dir_mode & S_ISVTX)) ||
-> -           (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
-> -           (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
-> -           vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
-> -           vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
-> +       if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
->                 return 0;
-> 
-> -       if (likely(dir_mode & 0002) ||
-> -           (dir_mode & 0020 &&
-> -            ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
-> -             (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
-> -               const char *operation = S_ISFIFO(inode->i_mode) ?
-> -                                       "sticky_create_fifo" :
-> -                                       "sticky_create_regular";
-> -               audit_log_path_denied(AUDIT_ANOM_CREAT, operation);
-> +       if (likely(dir_mode & 0002)) {
-> +               audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
->                 return -EACCES;
->         }
-> +
-> +       if (dir_mode & 0020) {
-> +               if (sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) {
-> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create_fifo");
-> +                       return -EACCES;
-> +               }
-> +
-> +               if (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode)) {
-> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create_regular");
-> +                       return -EACCES;
-> +               }
-> +       }
-> +
->         return 0;
->  }
+> > You are missing a lot of header inclusions, please follow IWYU principl=
+e.
+> I am not familiar with IWYU yet, but I will learn it and use it for
+> checks later on.
 
-But this definitely looks nicer to read... Feel free to add:
+"Include What You Use". But some of the headers may be omitted as they
+are guaranteed to be included by others. It's a bit hard because one
+should know and follow the kernel development, currently the headers
+in the kernel are a bit of a mess.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+...
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> >> +#define BOUNDARY_OK(addr, len) \
+> >> +       ((addr | (SZ_128M - 1)) =3D=3D ((addr + len - 1) | (SZ_128M - =
+1)))
+> > Besides sizes.h being missed, this can be done with help of ALIGN()
+> > macro (or alike). So, kill this and use the globally defined macro
+> > inline.
+> I will add sizes.h and directly apply globally defined  ALIGN() macro
+> instead
+
+Also check what header should be included for that macro, IIRC it's align.h=
+.
+
+...
+
+> >> +               for (idx =3D 0; idx < ARRAY_SIZE(restore_data); idx++)=
+ {
+> >> +                       if (restore_data[idx].width =3D=3D 32)
+> > sizeof(u32) ?
+> Your idea is better, I will change it.
+
+You might probably want to use the same in the restore_data array initialis=
+er.
+
+> >> +                               val[idx] =3D sdhci_readl(host, restore=
+_data[idx].reg);
+> >> +                       else if (restore_data[idx].width =3D=3D 8)
+> > sizeof(u8) ?
+> I will fix it.
+> >> +                               val[idx] =3D sdhci_readb(host, restore=
+_data[idx].reg);
+> >> +               }
+
+...
+
+> >> +               pltfm_host->clk =3D devm_clk_get(&pdev->dev, NULL);
+> >> +               if (IS_ERR(pltfm_host->clk)) {
+> >> +                       err =3D PTR_ERR(pltfm_host->clk);
+> >> +                       dev_err(&pdev->dev, "failed to get clk: %d\n",=
+ err);
+> > Use
+> >
+> >    return dev_err_probe(...);
+> I will use dev_err_probe() instead of dev_err()
+> >> +                       goto free_pltfm;
+> > This is wrong. You may not call non-devm before devm ones, otherwise
+> > it makes a room for subtle mistakes on remove-probe or unbind-bind
+> > cycles. Have you tested that?
+> I have tested it, there is no error messages during driver initial proces=
+s.
+>
+> My thought is that sdhci_pltfm_init() and sdhci_pltfm_free() are used tog=
+ether.
+>
+> If there's any error after the successful execution of sdhci_pltfm_init()=
+,
+> I'll use sdhci_pltfm_free().
+>
+> I am not entirely sure if this answers your question.
+
+Yes, they are, the problem is that freeing resources happens in
+non-reversed order (for some of the resources). This might lead to
+subtle mistakes as I said above. The rule of thumb is to avoid mixing
+devm_*() with non-devm_*() calls. If you have both, they have to be
+grouped as all devm_*() followed by all non-devm_*().
+In some cases you might need to wrap existing calls to become managed.
+This may be done with the help of devm_add_action_or_reset(). Check
+other drivers which are using that.
+
+> >> +               }
+> >> +               err =3D clk_prepare_enable(pltfm_host->clk);
+> >> +               if (err)
+> >> +                       goto free_pltfm;
+> > Use _enabled variant of devm_clk_get() instead.
+> I will use devm_clk_get_optional_enabled() instead.
+> >> +       }
+
+...
+
+> >> +free_pltfm:
+> >> +       sdhci_pltfm_free(pdev);
+> > This should go to be correct in ordering.
+>
+> I am not entirely sure if it is similar to the "goto free_pltfm;" issue.
+
+Yes. It's part of the same issue.
+
+> >> +       return err;
+> >> +}
+> >> +
+> >> +static int ma35_remove(struct platform_device *pdev)
+> > Use remove_new callback.
+> I will fix it.
+> >> +{
+> >> +       struct sdhci_host *host =3D platform_get_drvdata(pdev);
+> >> +       struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> >> +
+> >> +       sdhci_remove_host(host, 0);
+> >> +       clk_disable_unprepare(pltfm_host->clk);
+> >> +       sdhci_pltfm_free(pdev);
+> > At least these two will go away as per probe error path.
+> I will use sdhci_pltfm_remove instead of  the ma35_remove.
+
+After fixing the ordering issues in ->probe() this might need more
+modifications.
+
+> >> +       return 0;
+> >> +}
+
+
+--
+With Best Regards,
+Andy Shevchenko
 
