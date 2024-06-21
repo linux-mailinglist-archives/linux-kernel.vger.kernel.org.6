@@ -1,212 +1,168 @@
-Return-Path: <linux-kernel+bounces-224443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31D8912279
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:32:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A1B91227B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4531E1F2414B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:32:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669131C232F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2031C171E48;
-	Fri, 21 Jun 2024 10:32:04 +0000 (UTC)
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD73F16D33A;
+	Fri, 21 Jun 2024 10:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="HbQ9PieP"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E5417109B;
-	Fri, 21 Jun 2024 10:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6221574416
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718965923; cv=none; b=XP7pEmyCFGSGdCF7uxUe/EyQBuMii9oIClY4CBH27XwM/U6tK9+4Ud/2TcIGD89vgT4Qfe6FB5hf0S9z9uYYw98p17ghKDNv6DJK7/DjNXAM0Oaq2xsOPD25tRNt7V+3prTaibMouejbGb1BXzL/9E0nr3sfEheglvmEyEvMMfk=
+	t=1718966062; cv=none; b=e3JBIY7NA450mUMs+0E/uNi8ING4yKa620TebZAqaTtLqZpjhgBvbwa91mRzlGQeHFQ1A4oxaNEvxTeni4/SpTL7bOgbw85IPtkeNDdJmmsnxxAf4GZrKmeOGBk3IS3N4zgi76d0jKyQcFR15fZFAlG7BNLty9GopLjf4RSNXjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718965923; c=relaxed/simple;
-	bh=notFlVZDTS5uhtUDn26Tx/ggY9aKzBhfxPUNGypPFM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j/6a81UblyF2WQ+/13a1itN9gkHKJFnNImFK5s9KTZLV0SK26knsLg7sZk5vzYTrvbJnjv+KW+/lgURS3dhF88f/YVf4gn11clp8ur0ROGLNeAtZqqYMZDqJEpbfFTchu7WwccF992X8YoDQUs9BQg09FCMJHXqKNDUnxYzWovQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4FE4A240005;
-	Fri, 21 Jun 2024 10:31:50 +0000 (UTC)
-Message-ID: <d8055c61-1e01-4fec-99e5-b866d7aed4a1@ghiti.fr>
-Date: Fri, 21 Jun 2024 12:31:48 +0200
+	s=arc-20240116; t=1718966062; c=relaxed/simple;
+	bh=KTDze4UhK+Qdt8yDIqVr+68kui2rsKo2uZ2LpKfsXZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sz28wu6HKmTNcFpoEmyQ+nLwXVNVmHT5g29nzF6wNRneGUC3Dzm24qi5rren4yWeUFiS8P011f4n4sqXNNVqjL23bjZ3cYKMdkyxVnD/JPHqVWQvHDfx+EbhBW25vY6I/PvD/0ENa8PE7z1s75B36aQ/Wmn8tnStqLK1pI3Tw4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=HbQ9PieP; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25c95299166so973059fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 03:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1718966059; x=1719570859; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uiEIJ+aB3LoELXi0g19POXyK7Fvva+QATDGmieXdJiU=;
+        b=HbQ9PiePGP/K51PkFFmxyY7Rcpr8t+skWon4ZEvYbJPVirkHwE6bF4kxTs8qJCY6B5
+         B5howHbC8JHyKWfSAEjvBq8Bn0r04HQ7zwmi949k4TTLTCN7yUrT1U9d0FISgPWjphq9
+         KZrR2wKYPeE7CaqjA8m6MkZ+0brhFKTmlUn8P4rjcKLRw8hACwFOJClwrsY+Z45Um/40
+         Yt7A//OnaRhwBfcV/fE3NDKkFBsMjf/8coP35/DuLShdDeZiTiJYpcjoskC2rDxWhAzD
+         33507KUz2FqwSTdWyF5gI4k6At+GszXssNxoRkPWCqzzI+GUxREd/oFYus9wMmkHUJHi
+         GBZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718966059; x=1719570859;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uiEIJ+aB3LoELXi0g19POXyK7Fvva+QATDGmieXdJiU=;
+        b=Hq9dB8oB/U93o9VbMBwjEzMLosVsPCTSnnTIf/Hk8UmSCScg4AObTHynsAYuwzSJDF
+         JbqdGgI8DtLi4sANNxR9c8P2fpMtneUV/zYwyQat5vI1ErHKCb1cuZ9d0E2d+H/ugwlc
+         ZJWt9XH0FZ6Xr1HT21A23UcWvTWg0KGYaYWgigvgyQMQ4RLqnPfr/Fz+hD69RRH1tzXH
+         pBSmZ/c77e3ND8XYZmdOXnsF1Mwi9oxl6wx34eeaDUmN8oB9p1t95qssaN7cGBoPhGvY
+         eQdHcE17AKIrK6T6CEJhksXvY/ROF4TiAR6ASmJ5ro0X5kH9dFq7rk+M6696q1mMrAQx
+         jEjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5Nfherq3/WYPccDzk9zAVOGEg12bpHFp8VA8jhna4yC/Dyeor9O387UcmSAPWqwxMp7VSwIFZTLeQsrB6VouTMLi939yOUAtBoJz4
+X-Gm-Message-State: AOJu0YytIgQ3bD3kK3+9ufxhyZ0D/qRz3TOEJmPoUpLFRpr2Gx32RRdN
+	4SThWv5BhgGagyxjhZAxfQueqFDFRK3GxKUWy6igIGyXCvE3qMDT7AdZc+H3Er9iQiT6onk75m6
+	h+dSvJNwUN7bGVPivcqA3zCivG0148yvgJAiprQ==
+X-Google-Smtp-Source: AGHT+IFl6dpz/wOwOogwSSMMm3/tdCg8DTplBhqHoRnvMWb06zdb/xiwjF6rv5JWL8TKTe41hMECUKSqGMX19Tn1ZxQ=
+X-Received: by 2002:a05:6870:41cf:b0:24c:4fcc:9011 with SMTP id
+ 586e51a60fabf-25c949a7793mr8938055fac.19.1718966059436; Fri, 21 Jun 2024
+ 03:34:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] RISC-V: Add Svade and Svadu Extensions Support
-Content-Language: en-US
-To: Conor Dooley <conor.dooley@microchip.com>,
- Andrew Jones <ajones@ventanamicro.com>
-Cc: Yong-Xuan Wang <yongxuan.wang@sifive.com>, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
- kvm@vger.kernel.org, apatel@ventanamicro.com, greentime.hu@sifive.com,
- vincent.chen@sifive.com, Jinyu Tang <tjytimi@163.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Anup Patel <anup@brainfault.org>,
- Mayuresh Chitale <mchitale@ventanamicro.com>,
- Atish Patra <atishp@rivosinc.com>, wchen <waylingii@gmail.com>,
- Samuel Ortiz <sameo@rivosinc.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
- <cleger@rivosinc.com>, Evan Green <evan@rivosinc.com>,
- Xiao Wang <xiao.w.wang@intel.com>, Alexandre Ghiti <alexghiti@rivosinc.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Mike Rapoport (IBM)" <rppt@kernel.org>,
- Kemeng Shi <shikemeng@huaweicloud.com>,
- Samuel Holland <samuel.holland@sifive.com>,
- Jisheng Zhang <jszhang@kernel.org>, Charlie Jenkins <charlie@rivosinc.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Leonardo Bras <leobras@redhat.com>
-References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
- <20240605121512.32083-2-yongxuan.wang@sifive.com>
- <20240621-d1b77d43adacaa34337238c2@orel>
- <20240621-nutty-penknife-ca541ee5108d@wendy>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240621-nutty-penknife-ca541ee5108d@wendy>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+References: <20240618114653.12485-1-cuiyunhui@bytedance.com>
+ <2BA519C8-D258-4D98-AD49-AC7D30D8B0D2@jrtc27.com> <3c20c9f15cd7a9fb1f2e88560c1b089ac8032898.camel@icenowy.me>
+ <CAEEQ3w=HZptMOgXp2Rtuz-VtzPabN=h5N3=3wS4AMk3Lo7E7FQ@mail.gmail.com> <8fac6e0f11ab5f5fc28be6e73f196b38e99f8c39.camel@icenowy.me>
+In-Reply-To: <8fac6e0f11ab5f5fc28be6e73f196b38e99f8c39.camel@icenowy.me>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Fri, 21 Jun 2024 18:34:08 +0800
+Message-ID: <CAEEQ3wmX9r=Xv=Ue9HOwEvBAHV2=CM5dTiHgd=hzgHBMn27sbw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] RISC-V: Provide the frequency of mtime via hwprobe
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Jessica Clarke <jrtc27@jrtc27.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
+	Evan Green <evan@rivosinc.com>, Conor Dooley <conor.dooley@microchip.com>, costa.shul@redhat.com, 
+	Andy Chiu <andy.chiu@sifive.com>, samitolvanen@google.com, linux-doc@vger.kernel.org, 
+	linux-riscv <linux-riscv@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Palmer Dabbelt <palmer@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Icenowy,
 
-On 21/06/2024 12:24, Conor Dooley wrote:
-> On Fri, Jun 21, 2024 at 10:43:58AM +0200, Andrew Jones wrote:
->> On Wed, Jun 05, 2024 at 08:15:07PM GMT, Yong-Xuan Wang wrote:
->>> Svade and Svadu extensions represent two schemes for managing the PTE A/D
->>> bits. When the PTE A/D bits need to be set, Svade extension intdicates
->>> that a related page fault will be raised. In contrast, the Svadu extension
->>> supports hardware updating of PTE A/D bits. Since the Svade extension is
->>> mandatory and the Svadu extension is optional in RVA23 profile, by default
->>> the M-mode firmware will enable the Svadu extension in the menvcfg CSR
->>> when only Svadu is present in DT.
->>>
->>> This patch detects Svade and Svadu extensions from DT and adds
->>> arch_has_hw_pte_young() to enable optimization in MGLRU and
->>> __wp_page_copy_user() when we have the PTE A/D bits hardware updating
->>> support.
->>>
->>> Co-developed-by: Jinyu Tang <tjytimi@163.com>
->>> Signed-off-by: Jinyu Tang <tjytimi@163.com>
->>> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
->>> ---
->>>   arch/riscv/Kconfig               |  1 +
->>>   arch/riscv/include/asm/csr.h     |  1 +
->>>   arch/riscv/include/asm/hwcap.h   |  2 ++
->>>   arch/riscv/include/asm/pgtable.h | 14 +++++++++++++-
->>>   arch/riscv/kernel/cpufeature.c   |  2 ++
->>>   5 files changed, 19 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->>> index b94176e25be1..dbfe2be99bf9 100644
->>> --- a/arch/riscv/Kconfig
->>> +++ b/arch/riscv/Kconfig
->>> @@ -36,6 +36,7 @@ config RISCV
->>>   	select ARCH_HAS_PMEM_API
->>>   	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
->>>   	select ARCH_HAS_PTE_SPECIAL
->>> +	select ARCH_HAS_HW_PTE_YOUNG
->>>   	select ARCH_HAS_SET_DIRECT_MAP if MMU
->>>   	select ARCH_HAS_SET_MEMORY if MMU
->>>   	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
->>> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
->>> index 25966995da04..524cd4131c71 100644
->>> --- a/arch/riscv/include/asm/csr.h
->>> +++ b/arch/riscv/include/asm/csr.h
->>> @@ -195,6 +195,7 @@
->>>   /* xENVCFG flags */
->>>   #define ENVCFG_STCE			(_AC(1, ULL) << 63)
->>>   #define ENVCFG_PBMTE			(_AC(1, ULL) << 62)
->>> +#define ENVCFG_ADUE			(_AC(1, ULL) << 61)
->>>   #define ENVCFG_CBZE			(_AC(1, UL) << 7)
->>>   #define ENVCFG_CBCFE			(_AC(1, UL) << 6)
->>>   #define ENVCFG_CBIE_SHIFT		4
->>> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
->>> index e17d0078a651..35d7aa49785d 100644
->>> --- a/arch/riscv/include/asm/hwcap.h
->>> +++ b/arch/riscv/include/asm/hwcap.h
->>> @@ -81,6 +81,8 @@
->>>   #define RISCV_ISA_EXT_ZTSO		72
->>>   #define RISCV_ISA_EXT_ZACAS		73
->>>   #define RISCV_ISA_EXT_XANDESPMU		74
->>> +#define RISCV_ISA_EXT_SVADE             75
->>> +#define RISCV_ISA_EXT_SVADU		76
->>>   
->>>   #define RISCV_ISA_EXT_XLINUXENVCFG	127
->>>   
->>> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
->>> index aad8b8ca51f1..7287ea4a6160 100644
->>> --- a/arch/riscv/include/asm/pgtable.h
->>> +++ b/arch/riscv/include/asm/pgtable.h
->>> @@ -120,6 +120,7 @@
->>>   #include <asm/tlbflush.h>
->>>   #include <linux/mm_types.h>
->>>   #include <asm/compat.h>
->>> +#include <asm/cpufeature.h>
->>>   
->>>   #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _PAGE_PFN_SHIFT)
->>>   
->>> @@ -288,7 +289,6 @@ static inline pte_t pud_pte(pud_t pud)
->>>   }
->>>   
->>>   #ifdef CONFIG_RISCV_ISA_SVNAPOT
->>> -#include <asm/cpufeature.h>
->>>   
->>>   static __always_inline bool has_svnapot(void)
->>>   {
->>> @@ -624,6 +624,18 @@ static inline pgprot_t pgprot_writecombine(pgprot_t _prot)
->>>   	return __pgprot(prot);
->>>   }
->>>   
->>> +/*
->>> + * Both Svade and Svadu control the hardware behavior when the PTE A/D bits need to be set. By
->>> + * default the M-mode firmware enables the hardware updating scheme when only Svadu is present in
->>> + * DT.
->>> + */
->>> +#define arch_has_hw_pte_young arch_has_hw_pte_young
->>> +static inline bool arch_has_hw_pte_young(void)
->>> +{
->>> +	return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU) &&
->>> +	       !riscv_has_extension_likely(RISCV_ISA_EXT_SVADE);
->> It's hard to guess what is, or will be, more likely to be the correct
->> choice of call between the _unlikely and _likely variants. But, while we
->> assume svade is most prevalent right now, it's actually quite unlikely
->> that 'svade' will be in the DT, since DTs haven't been putting it there
->> yet. Anyway, it doesn't really matter much and maybe the _unlikely vs.
->> _likely variants are better for documenting expectations than for
->> performance.
-> binding hat off, and kernel hat on, what do we actually do if there's
-> neither Svadu or Svade in the firmware's description of the hardware?
-> Do we just arbitrarily turn on Svade, like we already do for some
-> extensions:
-> 	/*
-> 	 * These ones were as they were part of the base ISA when the
-> 	 * port & dt-bindings were upstreamed, and so can be set
-> 	 * unconditionally where `i` is in riscv,isa on DT systems.
-> 	 */
-> 	if (acpi_disabled) {
-> 		set_bit(RISCV_ISA_EXT_ZICSR, isainfo->isa);
-> 		set_bit(RISCV_ISA_EXT_ZIFENCEI, isainfo->isa);
-> 		set_bit(RISCV_ISA_EXT_ZICNTR, isainfo->isa);
-> 		set_bit(RISCV_ISA_EXT_ZIHPM, isainfo->isa);
-> 	}
-
-
-I'd say yes, svade just put a name on a HW mechanism that is required to 
-make an OS work properly (if Svadu is not present). So if a platform 
-only supports Svadu and it's not in the device tree, that's a bug on 
-their hand.
-
-So if neither Svadu nor Svade are present in the device tree, we can 
-legitimately assume that Svade is enabled.
-
-
+On Fri, Jun 21, 2024 at 1:18=E2=80=AFPM Icenowy Zheng <uwu@icenowy.me> wrot=
+e:
 >
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> =E5=9C=A8 2024-06-21=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 11:01 +0800=EF=
+=BC=8Cyunhui cui=E5=86=99=E9=81=93=EF=BC=9A
+> > Hi Icenowy,
+> >
+> > On Wed, Jun 19, 2024 at 7:51=E2=80=AFAM Icenowy Zheng <uwu@icenowy.me> =
+wrote:
+> > >
+> > > =E5=9C=A8 2024-06-18=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 18:11 +0100=
+=EF=BC=8CJessica Clarke=E5=86=99=E9=81=93=EF=BC=9A
+> > > > On 18 Jun 2024, at 12:46, Yunhui Cui <cuiyunhui@bytedance.com>
+> > > > wrote:
+> > > > >
+> > > > > From: Palmer Dabbelt <palmer@rivosinc.com>
+> > > > >
+> > > > > A handful of user-visible behavior is based on the frequency of
+> > > > > the
+> > > > > machine-mode time.
+> > > > >
+> > > > > Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+> > > > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > > >
+> > > > I would suggest referring to the user-mode CSR instead, i.e.
+> > > > =E2=80=9Ctime=E2=80=9D
+> > > > rather than =E2=80=9Cmtime=E2=80=9D throughout in names and descrip=
+tions, since
+> > > > that=E2=80=99s
+> > > > the thing that user-mode software is actually reading from.
+> > >
+> > > Agree. MTIME isn't even a thing defined in RISC-V ISA -- it's part
+> > > of
+> > > the ACLINT timer spec, but before ACLINT gets widely accepted, it's
+> > > just some SiFive thing that got copied by many other vendors (and
+> > > vendors such as T-Head even provides CLINT w/o MTIME register (well
+> > > because these T-Head cores have reference source code available,
+> > > this
+> > > is because of their CPU design uses an external counter fed as TIME
+> > > register)).
+> >
+> > Okay, Thanks for your suggestions,  I think this modification is more
+> > appropriate:
+> >
+> > RISC-V: Provide the frequency of time counter via hwprobe
+>
+> Sure, or you could just say time CSR, which is a defined CSR in the
+> user ISA document, and allow to be read from userspace.
+>
+Okay, I will update it on v2.
+
+> >
+> > A handful of user-visible behavior is based on the frequency of the
+> > time counter.
+> >
+> > What do you think ?
+> >
+> > >
+> > > >
+> > > > Jess
+> > > >
+> > > >
+> > > > _______________________________________________
+> > > > linux-riscv mailing list
+> > > > linux-riscv@lists.infradead.org
+> > > > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> > >
+> >
+> > Thanks,
+> > Yunhui
+>
+
+Thanks,
+Yunhui
 
