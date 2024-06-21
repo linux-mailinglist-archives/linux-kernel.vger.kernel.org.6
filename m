@@ -1,128 +1,119 @@
-Return-Path: <linux-kernel+bounces-223938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B60911AA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:49:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F99B911AA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34221282E5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:49:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11561C21ED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6DD13C802;
-	Fri, 21 Jun 2024 05:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E742913CFB8;
+	Fri, 21 Jun 2024 05:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Jr1Hn7Bl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="g9WFBtZJ"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7560FBF3;
-	Fri, 21 Jun 2024 05:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5883207;
+	Fri, 21 Jun 2024 05:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718948978; cv=none; b=JbJUJhgVdWykjJ//X7McADbgrh5FKOkrtlyEumRcG0iiAsbqw9bzQes3bqSGH/++kv44nshSjwVkVbWtlbQ9JjNu6nestc7Rut0S0/tEMEzmPq0M3sbbxUHzi/evcIl80RVsZbvZqrMlHbU1xK53bWTs/JsM5u8vpzu3XLsZjzo=
+	t=1718949164; cv=none; b=am6WMuOe0Mmv/PHkONZaqR4eY8Q35EHn+l9XhQlcR45D3pg1ED2uUJnzq4Nsf0nX3J3s2ctsTxk+VuBWZ8Y1I9sHNh8Q3C9cs6zPUx0yQrk2N05Mb4dkQDVqbyocto1MUlQQ1/pXqqV/uEBpacRE1qlKhVz9vygEM4fNkCPRUU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718948978; c=relaxed/simple;
-	bh=ALp1fh1/2Wru2SLYgT/Kja0Ly1+GVV327a7a9kMnmjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFB/sYrUzGFN7rpn3rVAB0aAZupeNu2eq31RvlUS9D1dZwyHkZskc++/gAt9gWEgYtxo+23Ra+WRpdVNiZMHmcE8DzBMqEcwtGD2PLBuF11KqzNlr51o4137NQ8+nXYKolrauWISEATfVf6omIXiZcVp+xwIeN0pTtP5hbHL4II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Jr1Hn7Bl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDB1C2BBFC;
-	Fri, 21 Jun 2024 05:49:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718948978;
-	bh=ALp1fh1/2Wru2SLYgT/Kja0Ly1+GVV327a7a9kMnmjU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jr1Hn7BlE7F3YMnL62fQ0K9PvNRZ3S5ysQFn18pr7v4+3B42O97/DQJ4B+8lLQZvQ
-	 cBVo/dMgIhaccfRMc4Zyba9ZnHqumpqlcwgYyFG2j2Nll7BwUHuuy/b7CUeX8Ccj3Y
-	 dmjNhCBjCvO1m3IyxhDcWo/jSiTDtfkrNt2/Hmpw=
-Date: Fri, 21 Jun 2024 07:49:38 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: joswang <joswang1221@gmail.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	Jos Wang <joswang@lenovo.com>
-Subject: Re: [PATCH v7] usb: dwc3: core: Workaround for CSR read timeout
-Message-ID: <2024062150-justify-skillet-e80e@gregkh>
-References: <20240619114529.3441-1-joswang1221@gmail.com>
- <2024062051-washtub-sufferer-d756@gregkh>
- <CAMtoTm06MTJ_Gc4NvenycvWRxhLSaPptT1DLvBRs4RWVZO9Y_g@mail.gmail.com>
- <2024062151-professor-squeak-a4a7@gregkh>
- <20240621054239.mskjqbuhovydvmu4@synopsys.com>
+	s=arc-20240116; t=1718949164; c=relaxed/simple;
+	bh=B/FtBrdM0MhQsIGzDSXhE0531n+bBkbvzx6WIgFpcl4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=WF5dh5mhoERM/ShgLyO8maIbFDy93rbAGIiD5ixNvwJo9S4gV/8Pg/02WRT1RBbOywVONjiOfCxb4zzliOLfwctkgHtXYhiiZJzIbuYgf2/m4OU8Bkfl2Apz8mz+OR++ShzAO3lhOuUKfpaFIXllLGoF8gCPdSkya8zuB1IROUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=g9WFBtZJ; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718949090; x=1719553890; i=markus.elfring@web.de;
+	bh=B/FtBrdM0MhQsIGzDSXhE0531n+bBkbvzx6WIgFpcl4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:Cc:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=g9WFBtZJ6jlB7Xhm4LApEB33Lek0861qyFNqPb11SiEuEbAqlDQlxKGJ5LkLcnKc
+	 BLrvnBx5OAZfeh7r05oZsGab+pZ3zwUw4URvK5pCKhai8AwyJ+I/pjcANj2N0e0Ok
+	 Mkmv5/vIM+W39FeC0LdnMz95DnOVdsSFEQ+vZOZ9m7d1f1aLUhBTEz2FlVHJ+Msge
+	 F2abgY6fqjIjiJCuN8Xjwe9BEutZDXssCtL8EMyIa8rMKy/KVuzTLEbV1DW2YCUKl
+	 jfdAXFHp5JAi+4+MgmH6z/bfnkBLFFTvtuXHYcrAekFxHSUZpK4NhTH0MVAPA7ATR
+	 7Ouc4OrP0NrGubXFlQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MQPdl-1ryJTH0wtN-00XZsv; Fri, 21
+ Jun 2024 07:51:30 +0200
+Message-ID: <62a564df-e78f-470b-a1b3-2e49b6c05395@web.de>
+Date: Fri, 21 Jun 2024 07:51:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240621054239.mskjqbuhovydvmu4@synopsys.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v4 06/10] dmaengine: Add dma router for pl08x in LPC32XX
+ SoC
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "J.M.B. Downing" <jonathan.downing@nautel.com>,
+ Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Yangtao Li <frank.li@vivo.com>, Arnd Bergmann <arnd@arndb.de>,
+ Li Zetao <lizetao1@huawei.com>, Chancel Liu <chancel.liu@nxp.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, dmaengine@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+ linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+ <20240620175657.358273-7-piotr.wojtaszczyk@timesys.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240620175657.358273-7-piotr.wojtaszczyk@timesys.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:bPaZvoxzJ/h40pvO52zJQM/EXwvqLuVGmwbJlhznsZdSb7+5vV9
+ ivg/UFZwjDfRawbpm6w0wCBUaQyp9SJcyDqFrot02cTYmewtQVP7vrWLKc5MV0m8Yvuzqml
+ 3MMYaa56tKHofEPv+LYWJE+ygSMZ+e5P2grD4YKSoPHdjNrcG5SnDh1+y4SlXyeVzIcF9Y6
+ 7Ufmk6v6MTeNw2cuMzL1w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UuJ6HPlnuco=;b+auAotmGPrPfJRrtNoxICqpvzR
+ pKZtILPKcz2H6Q3tjierCqUY1bw3iXANbljk6kGRZQ8Ir2J+sNZeAoqtxl3Ol0bMTRtSR+4A5
+ R+79tcqE/AFMIX8Tj1+dTIq7iGX7H4Z/u4Wn+kGkiczsJT8uP+YBDZA8XWHHbBvTsgBvIgd/M
+ t9dbgwBnBviEkn54bA4PV6n6FJWZ2Y4y+qtNc/0yhyMsZfG7v0588p63zWHDOl0BeqabSRk0R
+ iSEF/OpLj1jUM9QoM53KVYIxp38zUjrP0FNRW9Bg99ZVq+9y4Cm4pt4oIst1Zi6lZ24WYkyvF
+ BbLoTfMQq5eSvbcruXX4b4W4yMHhw5+LoDEdfBn/pTE++mjkuh4AWG5xEAjppkayQT5jEk7+e
+ yfcqBPTlRwvN6YwtV8y0qh3+k0GcUhaS/rk5Zy7282DcKttFw8dGIzfia8vte2yv9T+KDpp7x
+ ZoVyYf4Iic/IeCnBZg6D0yD+WT406j6qhg495/RmOh3i+X08miyIXWRWAtUxvD+Z2q98HXkGZ
+ OnDeEaI4pDSADbegqEszNfdwJ/7SJuW4t99TgT5m1p647pYuyGNkeHX71fk1jCeF/cva/8v4g
+ TaikQTpWxd8OrwGHTigbYnrR3Vlnp1LmtBfdQRH8Cw/GcZVyr+9cvXVDmQondRXAg7T013/yY
+ IUdhxPtFPZpkDp9Ex3fUOe4K5g0Yvq38AyBxinSmvccQ0O9581SX9FEcl6oyvQFs6TqaswsiA
+ v9A67FvaC4G/xzhDWdxVjzSCMCp7GXb3ZVKMN2KLd4wMMcDjDQRJ1S4hyog0GLC1LbvrxWaTj
+ pBtdYg/1eB+cdDSUEzEgIwCtPrPRwhWBwKvX/wkLonUvM=
 
-On Fri, Jun 21, 2024 at 05:42:42AM +0000, Thinh Nguyen wrote:
-> On Fri, Jun 21, 2024, Greg KH wrote:
-> > On Fri, Jun 21, 2024 at 09:40:10AM +0800, joswang wrote:
-> > > On Fri, Jun 21, 2024 at 1:16 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Wed, Jun 19, 2024 at 07:45:29PM +0800, joswang wrote:
-> > > > > From: Jos Wang <joswang@lenovo.com>
-> > > > >
-> > > > > This is a workaround for STAR 4846132, which only affects
-> > > > > DWC_usb31 version2.00a operating in host mode.
-> > > > >
-> > > > > There is a problem in DWC_usb31 version 2.00a operating
-> > > > > in host mode that would cause a CSR read timeout When CSR
-> > > > > read coincides with RAM Clock Gating Entry. By disable
-> > > > > Clock Gating, sacrificing power consumption for normal
-> > > > > operation.
-> > > > >
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Signed-off-by: Jos Wang <joswang@lenovo.com>
-> > > >
-> > > > What commit id does this fix?  How far back should it be backported in
-> > > > the stable releases?
-> > > >
-> > > > thanks,
-> > > >
-> > > > greg k-h
-> > > 
-> > > Hello Greg Thinh
-> > > 
-> > > It seems first begin from the commit 1e43c86d84fb ("usb: dwc3: core:
-> > > Add DWC31 version 2.00a controller")
-> > > in 6.8.0-rc6 branch ?
-> > 
-> > That commit showed up in 6.9, not 6.8.  And if so, please resend with a
-> > proper "Fixes:" tag.
-> > 
-> 
-> This patch workarounds the controller's issue.
+=E2=80=A6
+> this driver allows to route a signal request line thru the multiplexer f=
+or
+> given peripheral.
 
-So it fixes a bug?  Or does not fix a bug?  I'm confused.
+Would you like to choose an imperative wording for an improved change desc=
+ription?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n94
 
-> It doesn't resolve any
-> particular commit that requires a "Fixes" tag. So, this should go on
-> "next". It can be backported as needed.
-
-Who would do the backporting and when?
-
-> If it's to be backported, it can
-> probably go back to as far as v4.3, to commit 690fb3718a70 ("usb: dwc3:
-> Support Synopsys USB 3.1 IP"). But you'd need to collect all the
-> dependencies including the commit mention above.
-
-I don't understand, sorry.  Is this just a normal "evolve the driver to
-work better" change, or is it a "fix broken code" change, or is it
-something else?
-
-In other words, what do you want to see happen to this?  What tree(s)
-would you want it applied to?
-
-thanks,
-
-greg k-h
+Regards,
+Markus
 
