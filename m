@@ -1,109 +1,115 @@
-Return-Path: <linux-kernel+bounces-224249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA63C911F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:53:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F261911F5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4C5428CD4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:53:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55F931F27BBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA46F16D9D1;
-	Fri, 21 Jun 2024 08:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF9216E861;
+	Fri, 21 Jun 2024 08:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZaUs2T40"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="oFqUcFAA"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F3B16D9D9;
-	Fri, 21 Jun 2024 08:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6917916D9C8;
+	Fri, 21 Jun 2024 08:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718959956; cv=none; b=VYhrKAtLV61m9VEnA8AEtHTldLnUUNYw+NbgaOocUOE+Mbm/FB3Dh3tNChsKwPeh0M67Rk9Nk86s04gwnXj8KJCwNNrEsawV/Wo39FlpDc6iz5PHv/I9ywunKbXvU4M76gix+1KleVTZQoLpTFOoYQQg+jYY/EePwB5WSH5mVLw=
+	t=1718959936; cv=none; b=tcRVoWk6vTWStxOR8wLCYTeOqj2DjdS0JlCc54asFFpv2aVPN9Bzp2ehELkwzygHfByotwUxRb3wl9OWVCJWIxahxYFWYuLNSkg5LTy204YqIzdF8KvI5Lt+pTpw4SxxqfwytfHnyeKSqBAjDcX8JME/Ka4Swry6TJ3RiTkpzPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718959956; c=relaxed/simple;
-	bh=XUPgZRc7Ta7oH6EIynHqMqYwufey9HztEnlLZxu2Awg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FV4aTRppspwnPSC6rbvce4coCSFEFRuNcML5aQhi/lTJ2siqYwG65LtF8xU6kzYCMdcb+1VwL/6Uzz8mAohIcP0MuTehFM1t8wMKudu7zb917T7E2uaWlE8sbXmlsdXc7z/R7oNYjmeSVPyNzs1yVR2oGuLmOdwhAi9YNTTSlp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZaUs2T40; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45L8qCKE118153;
-	Fri, 21 Jun 2024 03:52:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718959932;
-	bh=rN5v7uY3PMeSoDtnJhh+lfEw9upw15azmYDqHH25tlc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ZaUs2T40xblbdrl2+6VOwYPMZQ0ZarbL+O6qzXg//4X2m6ywSlP4KSHght68NyFku
-	 eUW1My81+ynUel0VYiAnq0Ew8+8gZoAPu1Z81IDzEqZ9/ccHtvLa7iAOAx+aRRaMPc
-	 yy1vkcXIx720cC6GCR1Ki3SzUbf4THQgyy0pnQ2w=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45L8qCJJ066492
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 03:52:12 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Jun 2024 03:52:11 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Jun 2024 03:52:11 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45L8q6BR044615;
-	Fri, 21 Jun 2024 03:52:06 -0500
-Message-ID: <02462e7e-bd55-2374-10e2-240e9d94c5db@ti.com>
-Date: Fri, 21 Jun 2024 14:22:05 +0530
+	s=arc-20240116; t=1718959936; c=relaxed/simple;
+	bh=OXpw1xUICMAzJQCRysi22dc+8HN8teDI4jqllRp8u2A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GK7Wok6U+A34+q40KjP/PqZ33WAaWST/BuV3UijIpB+I/b7yMcQzgAwDgRdsc8RDdxEXlH/Cm+iCJkrnxU6MyVMf4GsNO4g3/m+f1WA96xKz2mVYv+e4FQ+hIqvtbg+EG9q8Uozl9cG9ib+4rEzQgLNGdjqIO1WR+sPinuebNKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=oFqUcFAA; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=E4Wi5d7bXBV7z5XVlT8JIza/vfQrRm742lmMk6jnmUc=; t=1718959933; x=1719564733; 
+	b=oFqUcFAAjK8lMsyAxWZU36WLF8ez+1fnAZnXwhspjmpJk/yTi83lg+6tCZPqWGKYzYyT1UiSGFq
+	dOnfJh3ysIbcNd1MZVb0vCEYAJmMVGnSuUiR/GyC8SGDVFzuGN3a8+71Mn7jZ13sM9ngnyg82Ge4l
+	zq6660EphKPszy0k5FAAheWe6Z9x4FYrONOYslVBg6sfox8sl2KafsKpbSkqYI/fkOOJMoKudFGIU
+	y/ZZeT8IDgs0Bl18wEwnICcMa3r8ekPzi5mFR4jOsS7D6S1oxRdzql81K98Tg5PMVTbwqeftmgeQr
+	q6vH8tQVe3OOiHrqAcI47nL0E9ClRCRsD9eg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sKa09-00000001yDB-3V13; Fri, 21 Jun 2024 10:52:10 +0200
+Received: from p5b13a475.dip0.t-ipconnect.de ([91.19.164.117] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sKa0A-00000001dsi-0AE7; Fri, 21 Jun 2024 10:52:10 +0200
+Message-ID: <1537113c4396cd043a08a72bdca80cccfa2d54d9.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 07/15] parisc: use generic sys_fanotify_mark
+ implementation
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Helge Deller <deller@gmx.de>, Arnd Bergmann <arnd@kernel.org>, 
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
+ linux-parisc@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, sparclinux@vger.kernel.org, Michael
+ Ellerman <mpe@ellerman.id.au>,  Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N . Rao"
+ <naveen.n.rao@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, Brian Cain
+ <bcain@quicinc.com>, linux-hexagon@vger.kernel.org, Guo Ren
+ <guoren@kernel.org>,  linux-csky@vger.kernel.org, Heiko Carstens
+ <hca@linux.ibm.com>,  linux-s390@vger.kernel.org, Rich Felker
+ <dalias@libc.org>,  linux-sh@vger.kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+ Brauner <brauner@kernel.org>,  linux-fsdevel@vger.kernel.org,
+ libc-alpha@sourceware.org,  musl@lists.openwall.com, ltp@lists.linux.it,
+ Adhemerval Zanella <adhemerval.zanella@linaro.org>
+Date: Fri, 21 Jun 2024 10:52:08 +0200
+In-Reply-To: <e80809ba-ee81-47a5-9b08-54b11f118a78@gmx.de>
+References: <20240620162316.3674955-1-arnd@kernel.org>
+	 <20240620162316.3674955-8-arnd@kernel.org>
+	 <e80809ba-ee81-47a5-9b08-54b11f118a78@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v13 03/13] media: v4l2-jpeg: Export reference quantization
- and huffman tables
-Content-Language: en-US
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, <mchehab@kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>,
-        Markus Elfring
-	<Markus.Elfring@web.de>
-References: <20240607131900.3535250-1-devarsht@ti.com>
- <20240607132831.3551333-1-devarsht@ti.com>
- <59866428-342b-4ba4-a7c7-2df1477aa7e6@xs4all.nl>
- <e948cea7-d5c7-a7e6-d921-ad7c2f93cd5a@ti.com>
- <904289bb-96a0-4a0d-9046-96acd8843b98@xs4all.nl>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <904289bb-96a0-4a0d-9046-96acd8843b98@xs4all.nl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Hi Sebastian,
+Hi Helge and Arnd,
 
-On 20/06/24 12:32, Hans Verkuil wrote:
-> On 19/06/2024 16:19, Devarsh Thakkar wrote:
-[..]
-> I've reviewed v14 3/6, so Sebastian when Sebastian posts a new PR I can process
-> it.
-> 
-> Ignore any reviews by Markus Elfring, he's a troll.
-> 
+On Thu, 2024-06-20 at 23:21 +0200, Helge Deller wrote:
+> The patch looks good at first sight.
+> I'll pick it up in my parisc git tree and will do some testing the
+> next few days and then push forward for 6.11 when it opens....
 
-Just wanted to check if we are good w.r.t V14 [1] and it's possible for you to
-create a PR with V14 as discussed above?
+Isn't this supposed to go in as one series or can arch maintainers actually
+pick the patches for their architecture and merge them individually?
 
-[1]: https://lore.kernel.org/all/20240618193651.2771478-1-devarsht@ti.com/
+If yes, I would prefer to do that for the SuperH patch as well as I usually
+prefer merging SuperH patches in my own tree.
 
-Regards
-Devarsh
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
