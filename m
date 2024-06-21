@@ -1,96 +1,145 @@
-Return-Path: <linux-kernel+bounces-224121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA46B911D75
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:56:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025E6911D88
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85164282D80
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:56:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD5C1C21155
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B1E16F854;
-	Fri, 21 Jun 2024 07:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B284816FF59;
+	Fri, 21 Jun 2024 07:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b="BbrROZ5Y"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVJlnJCG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C014316F281;
-	Fri, 21 Jun 2024 07:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AB017083C;
+	Fri, 21 Jun 2024 07:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718956402; cv=none; b=JcFdtZVC25+mErDpLWwV/kR/r6PAzV0c7+9qXXOwU8BNkUeevFhOlZ5u5WU9TqFu1yL9RGk2Vr/Z5L3uh/B5Vr6hSDAl/9DC/9L+7m+dRwc54AgEq7q61rAzjNRfUp6xzygzaWez9P3kwoaVzKZfmAmt4pAaASO5v82rGHQbejI=
+	t=1718956416; cv=none; b=GrGNv9mP0EEUAh/seIGaB4WQikZMvcOaEQ5MsG+rAGEEEdWj9ruFnV5cU6tQT9ejQq05EwCgBydoYy6y/FYix+KmZPg0SsBXKFCmcylsmlZPLATwJc5Yeavjwl4NE1y+GsSZRij0V9dFo8PQ3nnBw9WJQnx8wtTOWgqo6B18Rr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718956402; c=relaxed/simple;
-	bh=G6/B8syO5+PEL4vg78bCZhaB/0cgVxzhJly8Yc87OHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kkVb7x+M5ph+Z/md19bEgzWwivpz55jmyUd1fVSXWuYG4u505ygKcxiIOg3c+KG5GaTijRAFmUkaGfnmYArE/h1L9+oG0U9xmMxUpvpKVkC74DUMDbIKcUobDJV/LUZMbT/xTbdpFzPyySKJnZ/XvIUDNIybSnHLCwfQNvFW1TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so; spf=pass smtp.mailfrom=doubly.so; dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b=BbrROZ5Y; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=doubly.so
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W58jm51v0z9sRl;
-	Fri, 21 Jun 2024 09:53:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=doubly.so; s=MBO0001;
-	t=1718956396;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2DJYF0glbYGpdetfYjUqjJgpDNiNFn0QVt9n+HS0D64=;
-	b=BbrROZ5YcvbPV5OeWLv5nbDIoRgnTi01FPEkJ5Ile6jHKQhsiKWTzC9WP7uBFgPSAMv+D/
-	1eaUR5kvPTJZ1webN/uI239shefjk218vY7lfbKWPfrYF1m385U0SB/KW+nEhdfA7JWHiU
-	Vremelk7cag0wFEi8cEa8ApPIeLnInq+JvVTzL2Kq5N4BDij2tp2PYtJfs3Vqd8PedwXdz
-	vrZxLZmCSr6n/e8MBIXqzDylQ+irQDy6KVVJ5udjhTGyFXvI3NOws4W8U9sCZsZJj1ElmD
-	N5w97D3tAhQ1iyp3eHCfeDCwAnCE11GeaiMH/JiKGUhtC/za6qEdSc2PqIdAmA==
-Message-ID: <a0188274-8420-4d10-857a-b0d680e4a989@doubly.so>
-Date: Fri, 21 Jun 2024 09:53:14 +0200
+	s=arc-20240116; t=1718956416; c=relaxed/simple;
+	bh=eWeBwZ8/Lk6nImbfjWKt6XAuHYSDXDTd7xgQ3zt0uuA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Prtw/Druw+j04/ONvRy7ym2bbT8g6EWOeioh7ey42lwcKN5xHeUWp3Q/g4ZGVYx0/MB+/zE03/OwMwpfLG0IPyoBIIomUwFM4qDIWbHiJaRt2+Lw4eo5d2xqTcKmNGij+NK/bihxx0IO17Rsxhwhj5VtVXRwFtYn+tDwZDa9rW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVJlnJCG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79671C2BBFC;
+	Fri, 21 Jun 2024 07:53:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718956415;
+	bh=eWeBwZ8/Lk6nImbfjWKt6XAuHYSDXDTd7xgQ3zt0uuA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tVJlnJCGU3Ze6y91aA9mNXAeaKUrXYNa2sVodHGKsiRh4ebOIw1qfrUjg1SqtmC7V
+	 Bb6ECx/rwVvmajkN/+95vkWcjK5DDb0Qf03sBEEYO14PYePRkjb4FRV2BqQvIYA3Wc
+	 y+/jIbcCr0d7hU3OTrZYEoXzuEhQywVCHr0Ks0MlYSYje9ufuEM0J6LylY9RxgZPb2
+	 a7dUPFSwffA4Yu6406bblU23YZcuYwkgS95qvQ88rZuGyziJ9V/ahHxPv2s2c9BNYO
+	 ETQwhiHXSXH+ClJG5vttCBYf4kOm3BvHBOHxN2y0GUk4VLaOeHjSRq3d9ZB97ymNC7
+	 jmhYrDCmkg8Kw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sKZ5R-0062nT-7i;
+	Fri, 21 Jun 2024 08:53:33 +0100
+Date: Fri, 21 Jun 2024 08:53:32 +0100
+Message-ID: <861q4qk9z7.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Shaoqin Huang <shahuang@redhat.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	kvmarm@lists.linux.dev,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose
+ <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] KVM: arm64: Allow userspace to change ID_AA64PFR1_EL1
+In-Reply-To: <f73cabc6-8c48-4c12-9d60-269e50df41f3@redhat.com>
+References: <20240618063808.1040085-1-shahuang@redhat.com>
+	<20240618063808.1040085-2-shahuang@redhat.com>
+	<86ed8uk8cr.wl-maz@kernel.org>
+	<f73cabc6-8c48-4c12-9d60-269e50df41f3@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] platform/x86: asus-wmi: support newer fan_boost_mode
- dev_id
-To: Luke Jones <luke@ljones.dev>, corentin.chary@gmail.com
-Cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20240620082223.20178-1-dev@doubly.so>
- <20240620082223.20178-3-dev@doubly.so>
- <19cb366a-e6d8-4608-98c9-0fad389363ee@app.fastmail.com>
-Content-Language: en-US
-From: Devin Bayer <dev@doubly.so>
-In-Reply-To: <19cb366a-e6d8-4608-98c9-0fad389363ee@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: shahuang@redhat.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-
-
-On 20/06/2024 23.17, Luke Jones wrote:
->  
->> #define ASUS_WMI_FNLOCK_BIOS_DISABLED BIT(0)
->> -#define ASUS_WMI_DEVID_CAMERA_LED 0x00060079
+On Fri, 21 Jun 2024 07:17:57 +0100,
+Shaoqin Huang <shahuang@redhat.com> wrote:
 > 
-> Be careful not to introduce extraneous changes.
-
-Yes, will do.
-
-> Thank you for the work on this. But I must point out that the same 0x00110019 method has already been submitted as a patch to work with the existing "throttle_thermal" functionality, which itself is also tied to platoform_profile class support.
+> Hi Marc,
 > 
-> See https://lore.kernel.org/platform-driver-x86/20240609144849.2532-1-mohamed.ghanmi@supcom.tn/T/#mcd18e74676084e21d5c15af84bc08d8c6b375fb9
+> On 6/18/24 15:39, Marc Zyngier wrote:
+> > On Tue, 18 Jun 2024 07:38:06 +0100,
+> > Shaoqin Huang <shahuang@redhat.com> wrote:
+> >> 
+> >> Allow userspace to change the guest-visible value of the register with
+> >> some severe limitation:
+> >> 
+> >>    - No changes to features not virtualized by KVM (MPAM_frac, RAS_frac)
+> >> ---
+> >>   arch/arm64/kvm/sys_regs.c | 3 ++-
+> >>   1 file changed, 2 insertions(+), 1 deletion(-)
+> >> 
+> >> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> >> index 22b45a15d068..bead81867bce 100644
+> >> --- a/arch/arm64/kvm/sys_regs.c
+> >> +++ b/arch/arm64/kvm/sys_regs.c
+> >> @@ -2306,7 +2306,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+> >>   		   ID_AA64PFR0_EL1_GIC |
+> >>   		   ID_AA64PFR0_EL1_AdvSIMD |
+> >>   		   ID_AA64PFR0_EL1_FP), },
+> >> -	ID_SANITISED(ID_AA64PFR1_EL1),
+> >> +	ID_WRITABLE(ID_AA64PFR1_EL1, ~(ID_AA64PFR1_EL1_RAS_frac |
+> >> +				       ID_AA64PFR1_EL1_MPAM_frac)),
+> >>   	ID_UNALLOCATED(4,2),
+> >>   	ID_UNALLOCATED(4,3),
+> >>   	ID_WRITABLE(ID_AA64ZFR0_EL1, ~ID_AA64ZFR0_EL1_RES0),
+> > 
+> > This isn't a valid patch.
+> > 
+> > Furthermore, how about all the other features that may or may not be
+> > currently handled by KVM? Please see [1] and make sure that all
+> > existing fields have a known behaviour (a combination of masked,
+> > preserved, capped, writable or read-only).
+> > 
+> > I can at least see problems with MTE_frac and MTEX, plus all the other
+> > things that KVM doesn't know how to save/restore (THE, GCS, NMI...).
+> > 
+> > What I asked you to handle the whole register, I really meant it.
+> 
+> I currently only found the BT and SSBS fields can be written without
+> any unknown behavior.
 
-I see that now.
+I can only assume you haven't looked hard enough.
 
-> If you could submit only the first patch instead please?
+> 
+> All other fields in the ID_AA64PFR1_EL1 are either not supported by
+> KVM or the field involved with other register and KVM don't know how
+> to handle them.
 
-I'll followup on this topic in the other thread.
+Why can't CSV2_frac be writable? Why can't most of the other fields be
+hidden depending on the VM configuration, as pointed out above?
 
-~ Dev
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
