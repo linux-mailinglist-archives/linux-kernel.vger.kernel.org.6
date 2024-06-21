@@ -1,130 +1,146 @@
-Return-Path: <linux-kernel+bounces-225341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80DC5912F50
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:18:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16494912F5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1E21F23124
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C140D2822A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA0A17C21B;
-	Fri, 21 Jun 2024 21:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4965B17C206;
+	Fri, 21 Jun 2024 21:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N/WNm3vc"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZZQtfcVr"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4125F1607AF
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E46516D4CE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719004704; cv=none; b=mkaSO7GHajvljQR6C68m72MEBHW9a11y090b/i4Jq0WXx7c2FOxDSTxVWWOPxMGNNaDfUuoZGG/oDm9ra6K07ziQ0zgrLLSs270ja7SLn0Et6P5L/PgIEMhZ9r9Z2JwWbXsQ1kFrmqeXs+sk5cQcQkyJduUq5vBa7SJsL+9A274=
+	t=1719004745; cv=none; b=V0C16wtzTTM0ucVr1UPWdjS1JWO2wfVO1llMmwLsl5+LDXijt8OnsgGLpoLy7ZQml3p9gL1st26bTgHyM4s0/s23R4z9+N5KMGtGhy6Rijo2nDAzqnVpERxaxBKUhiPycRj6hzo8aSxyWW1+jLdMOTPv8vom2/4rymXka++Zxcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719004704; c=relaxed/simple;
-	bh=B+G9QtsD7C2Jc3sDzbUlvXmN736PbhSU6BpyDPCIla8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=E+BohqGCeschvsMSr96g7/9rz+WD7gnKmtsn+YZEWqCMLjaLo175DFSYjACuztLiMetQy1z7bXGiZJOW8V3xsTL4UpyFAAUB2OeZ5B00X+P22EglVwzOPlH2MmxC5cVoDRTww6OM0VZ3MEkMcYWuAnBeSgpjlG4eaRhdQkRHwhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yabinc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N/WNm3vc; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yabinc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-63c88ec6b76so42352637b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:18:23 -0700 (PDT)
+	s=arc-20240116; t=1719004745; c=relaxed/simple;
+	bh=X9WSMFU/wNIJq2RKIpQCKPYG8Sq+Ik2gDt2GAk8E5kA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gIXTxEuDQWCWeh20+se46j+MQGz4UL4PlC6uNxCq39o/lYoc+jNmwnm9tuk1pKPfozlZPY432jh31Hs8DmOPu9vPvgGuv05jSIi/ZNBvsAbl9TmcQFPsyutUeg0qT87/VEJGCTwaZRRFpdvSRaI6cjluwvxbLADOcbwi4MGyirc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZZQtfcVr; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso2591093276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:19:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719004702; x=1719609502; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lEa6AhAPPJv6m60+8usBRJvGW03PUOWIeiJHHFIJ3k4=;
-        b=N/WNm3vc9n+ujg5+G3tuA6wnC+rytZnaoKChCEU/abyVu+pn0dpxyQ93GWS8AIlYkL
-         IdU/D2L6j77bwcalfAGbYvc+xDCTakNN1bgI2dQvbzU2Yf8djU6I/6tBmWSFC90K5Ic+
-         2OVolDin1HWx/FwdWKvnr3FgUDul0rKxv6kOGV3fHk2Hk8xam2dMw8cFdZ6QJV2nm+ej
-         irTCTNsSoTrp2rxUhujFCpMKcwYy1LjWsgpKpmotHM6A/cO4pzYK639ygXZ6UsjUusHE
-         +CByxlUWiVcnS3wVWowobRRVnHfzAaOkrJOaC06D9tmur94uPa7AsYzfEOaCHbvHTFOQ
-         klhg==
+        d=paul-moore.com; s=google; t=1719004741; x=1719609541; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pCD4r20mrpTxmvcMRXNwOiX5qAdOlLJEKmqvDoOzpPQ=;
+        b=ZZQtfcVr4rAIifpUrpBSrSr0wwaRMF2r56zZSDIge/Es78JpQj6HlQD55SzUo35QoB
+         qDMSibqzG1qXRU0vaMjAI8RI37Et6X/cDpJxKcFGuboY2D+A2qohA5fMrRkD1k9PDnwt
+         V+rZDtpnIAURXlNJN3xcvt87/P4UKtKJemWv/yS4CpVFmExYLSi5Q+sm7ddasog0Zvpm
+         R7LsaOTz/0u/XZdSRrB/mY8bd3Wz9j2mes60YF45yB6AABSYbjUKk715qtvByOMINFdV
+         epc5CRpGY55ykQMR8Iy24GgxhU/9j4MRr+Wsu7DYSM2bhnn99KWdw0BTXIDpBX0oqkzx
+         OpBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719004702; x=1719609502;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lEa6AhAPPJv6m60+8usBRJvGW03PUOWIeiJHHFIJ3k4=;
-        b=is0rjxCBbe8UWFUUrPoHi1L4pXXmCK0JkjOVw+TKyTp0qss8oyMxAQIEZmvFPb8hb3
-         4vIq5GckuQpajAAkrw4kxxYAbHmMs/RAkwUiHQ5DVzv6SBygQkemAaHZLaKORH5Dzw58
-         eU9pabQPCUs1cllDDJJsW0LpJtkCmDn8X0IQBqzt169J4uazVr6dOZweow0CoA6UNKdm
-         EZjPeE7a/yjkdr4Nm9T5cPAD31MBAR1ksHvkm7BbS04cJq5lAK2pWsL49hJukd870Pdv
-         +b58HgvMVmsWNR1NQAj6GxGXfL4XSKP/wR23PpvPzK4H9fHMai8e3rLWDXQh8zOac5ZA
-         GBCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUN4RCzWCDO7uAwZJrAVEfm3IHqqg96R2ABSY3awnHQb2CNyeSBTHltpkq6Qyn2JAInYaGKsbigHyDUJG6qrErO5/GRAaCb4BNYHGP1
-X-Gm-Message-State: AOJu0YzC6Nk7HhLcuIxwpmGmGKsmJGnbA7Lz7XtboJS3HMCzTnetuOpZ
-	h61fGDbBk4smMWnC4dmU4IJnYfookHxr0QsKGzaSA5a8c5UQgsFp9Cy3Pns5QeK3BCd67FfcwsS
-	B
-X-Google-Smtp-Source: AGHT+IEP/2Rh6WitHSvCa6ePiTeFcXPS1z9OBz0PJKzZRVE8qWAYk4K12RXfyoLq827IauC3/poGWrv3R4c=
-X-Received: from yabinc-desktop.mtv.corp.google.com ([2620:15c:211:202:9257:c357:1f0c:2e57])
- (user=yabinc job=sendgmr) by 2002:a05:690c:6106:b0:627:a962:4252 with SMTP id
- 00721157ae682-63a8faf1313mr15919837b3.7.1719004702263; Fri, 21 Jun 2024
- 14:18:22 -0700 (PDT)
-Date: Fri, 21 Jun 2024 14:18:19 -0700
+        d=1e100.net; s=20230601; t=1719004741; x=1719609541;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pCD4r20mrpTxmvcMRXNwOiX5qAdOlLJEKmqvDoOzpPQ=;
+        b=XchvOIxaQSg05x7hwgbQWq3eM5FJQYFYeexaTUVYF8H+1ZCSP0/Fpnjz3eIqxeA/aH
+         XzeNqrLjwHqcJaatwI3egGSRdrZxAjYoB/WC7C2FM14FC9Ntb5ojy/AqVljNXhUdW388
+         nScILh+sOuQeexysc0vnoPtuq/7vVGWTZ+/eysXOeUpn1MEPbx6IVXIhMQedcZhvmfmS
+         EiwZ5fmTaQw3YSy4LEtGhUpqwjSJly4fO02FbGg3uX6QHdj4TBJefS5LECMDCXnbMohk
+         7UF/zDXLmeAYCF+1cHC3tQ7misEn4gsleHuZkT2aoVr14vNh+tmI5O/N6GzmGstr2n8/
+         Rt0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVuz1wzqv4etmysQqGVQofpl+I2XNYM101sQOf0MZkk7uDtP2yE8RcLkXoPh5fxFQaudbkqVzUNMnDlkOptttasE5KOEEdrLtCGsDD4
+X-Gm-Message-State: AOJu0YyNDdUzQh7Q5J5kzov1Ou1Ux6OvBmyIQYjRtNi0CvzsuraHgXUD
+	CTPJ9+ngSIWbKr2Yd0eXBdnprpR1HNdkcvPefh9/Yxc0qIc6EIPOMl7KRuVgWd158ZxgB2d8kf0
+	ZzQ9ez3k0uw43KU1ZsNKXSXB23EoecrlynxYD
+X-Google-Smtp-Source: AGHT+IFe108rxfdI4dceOPLQyYzs1eDja/U43G2YmMGoBEVShtoTYQzpQ8euwTVDfc0m+2FKogi3L+jAlR4yzx48SCE=
+X-Received: by 2002:a25:5f50:0:b0:e02:b9ac:1486 with SMTP id
+ 3f1490d57ef6-e02be22e5ebmr9441533276.57.1719004741560; Fri, 21 Jun 2024
+ 14:19:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Message-ID: <20240621211819.1690234-1-yabinc@google.com>
-Subject: [PATCH v2] Fix initializing a static union variable
-From: Yabin Cui <yabinc@google.com>
-To: Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	Yabin Cui <yabinc@google.com>
+MIME-Version: 1.0
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+ <20231215221636.105680-2-casey@schaufler-ca.com> <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
+ <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com> <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
+In-Reply-To: <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 21 Jun 2024 17:18:50 -0400
+Message-ID: <CAHC9VhTPE-dcwVWeMf=S8ci2J_h9Cm4B54knaskFKBOaYSEWiw@mail.gmail.com>
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from security_audit_rule
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, linux-security-module@vger.kernel.org, 
+	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
+	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, mic@digikod.net, 
+	linux-integrity@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-saddr_wildcard is a static union variable initialized with {}.
+On Fri, Jun 21, 2024 at 4:27=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Fri, 2024-06-21 at 15:07 -0400, Paul Moore wrote:
+> > On Fri, Jun 21, 2024 at 12:50=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > On Fri, Dec 15, 2023 at 5:16=E2=80=AFPM Casey Schaufler <casey@schauf=
+ler-ca.com> wrote:
+> > > > Create real functions for the ima_filter_rule interfaces.
+> > > > These replace #defines that obscure the reuse of audit
+> > > > interfaces. The new functions are put in security.c because
+> > > > they use security module registered hooks that we don't
+> > > > want exported.
+> > > >
+> > > > Acked-by: Paul Moore <paul@paul-moore.com>
+> > > > Reviewed-by: John Johansen <john.johansen@canonical.com>
+> > > > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > > To: Mimi Zohar <zohar@linux.ibm.com>
+> > > > Cc: linux-integrity@vger.kernel.org
+> > > > ---
+> > > >  include/linux/security.h     | 24 ++++++++++++++++++++++++
+> > > >  security/integrity/ima/ima.h | 26 --------------------------
+> > > >  security/security.c          | 21 +++++++++++++++++++++
+> > > >  3 files changed, 45 insertions(+), 26 deletions(-)
+> > >
+> > > Mimi, Roberto, are you both okay if I merge this into the lsm/dev
+> > > branch?  The #define approach taken with the ima_filter_rule_XXX
+> > > macros likely contributed to the recent problem where the build
+> > > problem caused by the new gfp_t parameter was missed during review;
+> > > I'd like to get this into an upstream tree independent of the larger
+> > > stacking effort as I believe it has standalone value.
+> >
+> > ... and I just realized neither Mimi or Roberto were directly CC'd on
+> > that last email, oops.  Fixed.
+>
+> Paul, I do see things posted on the linux-integrity mailing list pretty q=
+uickly.
+> Unfortunately, something came up midday and I'm just seeing this now.  As=
+ for
+> Roberto, it's probably a time zone issue.
 
-Empty brace initialization of union types is unspecified prior to C23,
-and even in C23, it doesn't guarantee zero initialization of all fields
-(see sections 4.5 and 6.2 in
-https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2900.htm).
+Oh, no worries at all, please don't take my comment above to mean I
+was expecting an immediate response!  I try to make sure that if I'm
+addressing someone directly that they are explicitly included on the
+To/CC line.  I was writing another email and it occurred to me that I
+didn't check for that when emailing the two of you, and sure enough,
+you guys weren't on the To/CC line ... I was just trying to fix my
+screw-up :)
 
-Clang currently only initializes the first field to zero, leaving other
-fields undefined. This can lead to unexpected behavior and optimizations
-that produce random values (with some optimization flags).
-See https://godbolt.org/z/hxnT1PTWo.
+> The patch looks ok, but I haven't had a chance to apply or test it.  I'll=
+ look
+> at it over the weekend and get back to you.
 
-The issue has been reported to Clang upstream (
-https://github.com/llvm/llvm-project/issues/78034#issuecomment-2183233517).
-This commit mitigates the problem by avoiding empty brace initialization
-in saddr_wildcard.
+No rush, enjoy your weekend, the patch isn't going to run away :)
 
-Fixes: 08ec9af1c062 ("xfrm: Fix xfrm_state_find() wrt. wildcard source address.")
-Signed-off-by: Yabin Cui <yabinc@google.com>
-
----
-
-Changes in v2:
-- Update commit message to add/update links.
-
----
- net/xfrm/xfrm_state.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 649bb739df0d..9bc69d703e5c 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -1139,7 +1139,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
- 		struct xfrm_policy *pol, int *err,
- 		unsigned short family, u32 if_id)
- {
--	static xfrm_address_t saddr_wildcard = { };
-+	static const xfrm_address_t saddr_wildcard;
- 	struct net *net = xp_net(pol);
- 	unsigned int h, h_wildcard;
- 	struct xfrm_state *x, *x0, *to_put;
--- 
-2.45.2.741.gdbec12cfda-goog
-
+--=20
+paul-moore.com
 
