@@ -1,163 +1,142 @@
-Return-Path: <linux-kernel+bounces-224766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A239126A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:26:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D89119126A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E5B287B00
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:26:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F9D0B2679E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99125155C84;
-	Fri, 21 Jun 2024 13:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330BF155CA6;
+	Fri, 21 Jun 2024 13:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="joVfdosG"
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JxgGvYQx"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A38315531E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BAB153BD2;
+	Fri, 21 Jun 2024 13:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718976404; cv=none; b=WhqZCL5A9jDCsGmrVW8ZGYFVNKPVhq1pDMQHG14nIcZAtP0C1TSt9D9pxLBwEis4DBEWq1NLFA/LZKSviwBkaKZnJeswAKus2rlZfzz9XOHI2AoU4xBTHbBrvscuarLFVVZ9Z8jjFhArmctUqAT+JaxNGowSWlyQLBOyLitQPpM=
+	t=1718976423; cv=none; b=PGAx2iAvo18wmlA+R7ct1CP4J/OdSLfLg9gX8Fa46UMkm6UtRiOg1tVUzSQcQN0zYc+MCNcibzCnGSO7oQ1urNKqQRbQoOF5x0N7+9U0+1ae8nsT84XR1YZKTU1K8rS3odXtI8MvNpBrZwZN9ctap/v/JAyebhLjtI7s1KIvplI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718976404; c=relaxed/simple;
-	bh=M8ICS2gUnqSAKdwVYa3WwNL+rTtc7oafu3hZ4D7sEm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EgEiRXkx43hd6Xr+XCU+2DjiaIo5nQYGQMwvxSraamQgxU5u6r6ciGDU2rbRrfcJS2s/wk/Rjm8hEQ1WExIEs4ufwAfF/pRDUeGyhvkmeSyA64BBm57EpT3shV93Ay9dVCLmraAq3Qpq/bGvpcqjGX0KObqXH6ZSYWRHkCNRVhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=joVfdosG; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-48c37216a1cso87027137.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:26:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718976400; x=1719581200; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cxkGI4IDUNtwkih25Bt66Jpt1EbuMgTL6TuQaswoa08=;
-        b=joVfdosGXl0ihqrtc4WgzxFrW9QIEhqYAtH9OU+7zwyi/jX2bG+1pPZHVlSNWQq3dn
-         0e8V/Hy1WJy3Pn+AjxMdOc3Q5pm33s99AXkmGUixAaFxRy94wEASz4uoyaUdcaZSVQlK
-         6g/9LUxH2hdNCuZ2bH7jYkUjLy1wyWszjOA7ydJyDiyy04B/9hhpl2MZz6xCE+f/9kHm
-         gqbH25VPQqrFg4mlN4ur9GBUqp1FIeJ51iaZJip1+rJjpqNY/4niTiYMisVHhok+uNzy
-         a6XLl/og8WfbZtkMPQX8wAS6rHcSOw9lFPifFgu748VlyWuTVpCNmIv4HOpdC9Cyt8a/
-         TTRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718976400; x=1719581200;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cxkGI4IDUNtwkih25Bt66Jpt1EbuMgTL6TuQaswoa08=;
-        b=cwS0zmhRkjhswWAnZEDYO95WQVXM+pOlkmNnyxW2JqHIiLFwpEjlmmjlKIgCSQuBof
-         B3wtetllN8kk4M6b6HElIiOkpNAWfWx2eK5K1ud/TukkKng7TA9AYfYHBvyPQTAzcW1+
-         NRUDQMdhMvgu4LQ/iOaftkvFe5hV8WGjTx0aKXOSnJqgDUAJNZpUBsCWUHF4AD+L3hNm
-         m0oDeqp1kGfylVvhAH0k6MUpsd8DOsty+zzU48NFUp8faNPW6TqjesOzXt3FUtJqbQOT
-         yQccbPQ9EBB8CSw2rBD1FKuQ7OCvUcXt5byR2co/ki8+NXRBg/8cwpEgGXclH7r9Q+P1
-         wcNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9/fadPyIgoFXRHLOxLObQOaxU/xgoki5vTi1Wl2oYMsZpwrxjuLTH9aMBjk2sKYbB2U1+9nAFLlQ//bTgDA61LilZgwOmSIIDei48
-X-Gm-Message-State: AOJu0YwUPI7NHPKwMBC4TBL3gs1jxaRQENAmKcT9l/IP1lSmgQwM83+e
-	iZO8vGFLoEbA2Uch5aRj0Z5aKRUbGwsBaqQIof4FZAPtudral+qryxMQfoysuWVDodAHvQRV1eJ
-	+7LCHQbJWHikwceW2b6foUBEEsMIPNUgVT4ZwKA==
-X-Google-Smtp-Source: AGHT+IFJFLnbZtfruK6baf9YWIg4LeyaPPP4GvccEFGIJqLdkPRkvc9ZCu4GwSE7nESYwJfha+my+CzBCme0z4pjarg=
-X-Received: by 2002:a05:6102:54a0:b0:48d:b0a3:fe34 with SMTP id
- ada2fe7eead31-48f131a9f6cmr8780548137.2.1718976400058; Fri, 21 Jun 2024
- 06:26:40 -0700 (PDT)
+	s=arc-20240116; t=1718976423; c=relaxed/simple;
+	bh=osld6dK3jXn9QfIFzrfdCXJj+wgJTV1og7IU+S2Vsr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dj1UAzTRYQAH7JRH4JY6Bg3+F91qmSxN7T3fOuU89P9e9I9gELMifx0kgcVSvCL0GAGAZYnaJXVlnM604KehcNsaXjtTsRsaWL+dckPd6Gt8fMJ/MbI33iHmSUaZLajf2aScGQJbzV4RfJtTfXGma5TmWVG+7dfa0SivwIhjjbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JxgGvYQx; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718976420;
+	bh=osld6dK3jXn9QfIFzrfdCXJj+wgJTV1og7IU+S2Vsr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JxgGvYQxSjR6XDCF8N//FsUZaEWtBizAcw48r40ry1BYk+990Kb6YJ85wmYo2nqr7
+	 XF1NicpZRH6FuchNagMoT2k54vpdFpfckwDYiUD07aou4vNrdv2leQwRSnJg113pm9
+	 gU7xf+G1xjTLCxCWx9bID2HO4YRyVkvS63HVyR90Cm6WJLZoLqiY1Kjh1dP3KRdLNK
+	 5EZqsFzioieJ8sa+PWFlga/c3SIEi3ZTom+GtbxkFrsXc39p6hrjM2HhDvWVNto1rv
+	 g0RGEu1zEAc9ZpgAtb/f7mfZ8GA1nvoYKUaAUIK889Xa3sGL8qV/96lijrlOqQ3ET7
+	 jDRNPHfHu0q/w==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sebastianfricke)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E9C4837821DD;
+	Fri, 21 Jun 2024 13:26:59 +0000 (UTC)
+Date: Fri, 21 Jun 2024 15:26:58 +0200
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, hverkuil-cisco@xs4all.nl,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	benjamin.gaignard@collabora.com, laurent.pinchart@ideasonboard.com,
+	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
+	j-luthra@ti.com, b-brnich@ti.com, detheridge@ti.com,
+	p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com,
+	nicolas@ndufresne.ca, afd@ti.com
+Subject: Re: [PATCH v14 2/6] media: imagination: Add E5010 JPEG Encoder driver
+Message-ID: <20240621132658.m2utqnvwaicgiwqr@basti-XPS-13-9310>
+References: <20240618193651.2771478-1-devarsht@ti.com>
+ <20240618193651.2771478-3-devarsht@ti.com>
+ <20240621123715.enqtdqxskdkod5ze@basti-XPS-13-9310>
+ <8dda9d0c-3154-a7fd-1233-ca5be59639de@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621120539.31351-1-dumitru.ceclan@analog.com>
-In-Reply-To: <20240621120539.31351-1-dumitru.ceclan@analog.com>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Fri, 21 Jun 2024 16:26:29 +0300
-Message-ID: <CA+GgBR_7OXJLytDeF-MSJSAAgFRJm39wBbEXxSR6HUV_zcWg_A@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: ad_sigma_delta: fix disable_one callback
-To: Dumitru Ceclan <mitrutzceclan@gmail.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, dumitru.ceclan@analog.com0, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dumitru Ceclan <dumitru.ceclan@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8dda9d0c-3154-a7fd-1233-ca5be59639de@ti.com>
 
-On Fri, Jun 21, 2024 at 3:05=E2=80=AFPM Dumitru Ceclan <mitrutzceclan@gmail=
-.com> wrote:
->
-> The ADC ad7192 is a sigma delta ADC with a sequencer that does not
-> require a disable_one callback as all enable channel bits are within
-> the same register.
->
-> Remove the requirement of the disable_one callback for sigma delta ADCs
-> with a sequencer.
->
-> This patch could be squashed with the commit that it fixes from patch
-> series: Add support for AD411x
->
+Hey Devarsh,
 
-This fix looks fine.
-But, then this raises a question if this needs be to extended to the
-`disable_all` and maybe `indio_dev->info->update_scan_mode` check.
-And if so, how should this be handled?
-
-For example:
-drivers/iio/adc/ad7124.c:    .disable_all =3D ad7124_disable_all,
-drivers/iio/adc/ad7173.c:    .disable_all =3D ad7173_disable_all,
-drivers/iio/adc/ad7192.c:    .disable_all =3D ad7192_disable_all,
-drivers/iio/adc/ad7192.c:    .disable_all =3D ad7192_disable_all,
-
-And:
-drivers/iio/adc/ad7124.c:    ret =3D ad_sd_init(&st->sd, indio_dev, spi,
-&ad7124_sigma_delta_info);
-drivers/iio/adc/ad7173.c:    ret =3D ad_sd_init(&st->sd, indio_dev, spi,
-&ad7173_sigma_delta_info);
-drivers/iio/adc/ad7192.c:    ret =3D ad_sd_init(&st->sd, indio_dev, spi,
-st->chip_info->sigma_delta_info);
-drivers/iio/adc/ad7780.c:    ad_sd_init(&st->sd, indio_dev, spi,
-&ad7780_sigma_delta_info);
-drivers/iio/adc/ad7791.c:    ad_sd_init(&st->sd, indio_dev, spi,
-&ad7791_sigma_delta_info);
-drivers/iio/adc/ad7793.c:    ad_sd_init(&st->sd, indio_dev, spi,
-&ad7793_sigma_delta_info);
-
-At least the ad7791.c & ad7793.c drivers support parts with more than
-1 channel, and there does not seem to be any `disable_all` hook
-defined (at least in iio/testing).
-I have not gone too deep with `indio_dev->info->update_scan_mode`, but
-it would be worth to do a check there as well
-
-
-> Fixes: a25a0aab2187 ("iio: adc: ad_sigma_delta: add disable_one callback"=
-)
-> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
-> ---
->  drivers/iio/adc/ad_sigma_delta.c | 5 -----
->  1 file changed, 5 deletions(-)
+On 21.06.2024 18:14, Devarsh Thakkar wrote:
+>Hi Sebastian
 >
-> diff --git a/drivers/iio/adc/ad_sigma_delta.c b/drivers/iio/adc/ad_sigma_=
-delta.c
-> index d6b5fca034a0..8c062b0d26e3 100644
-> --- a/drivers/iio/adc/ad_sigma_delta.c
-> +++ b/drivers/iio/adc/ad_sigma_delta.c
-> @@ -672,11 +672,6 @@ int ad_sd_init(struct ad_sigma_delta *sigma_delta, s=
-truct iio_dev *indio_dev,
->                         dev_err(&spi->dev, "ad_sigma_delta_info lacks dis=
-able_all().\n");
->                         return -EINVAL;
->                 }
-> -
-> -               if (!info->disable_one) {
-> -                       dev_err(&spi->dev, "ad_sigma_delta_info lacks dis=
-able_one().\n");
-> -                       return -EINVAL;
-> -               }
->         }
+>On 21/06/24 18:07, Sebastian Fricke wrote:
+>> Hey Devarsh,
+>>
+>> This doesn't compile without errors for me, curious, it probably did
+>> compile without problems for you right?
+>>
+>> drivers/media/platform/imagination/e5010-jpeg-enc.c:1622:19: error:
+>> initialization of ‘int (*)(struct platform_device *)’ from incompatible
+>> pointer type ‘void (*)(struct platform_device *)’
+>> [-Werror=incompatible-pointer-types]
+>>  1622 |         .remove = e5010_remove,
+>>       |                   ^~~~~~~~~~~~
+>> drivers/media/platform/imagination/e5010-jpeg-enc.c:1622:19: note: (near
+>> initialization for ‘e5010_driver.remove’)
+>> cc1: some warnings being treated as errors
+>>
 >
->         if (info->irq_line)
-> --
-> 2.43.0
+>Yes I think it did compile fine for me.
+>Did you try this on tip of linux-next ?
+
+Nope the media subsystem is not based on linux-next, but instead on:
+https://git.linuxtv.org/media_stage.git/log/
+Please make sure that your patches compile on top of that.
+
 >
+>As mentioned in changelog, there was update in platform driver for return type
+>of remove function which got changed to void return type. Please check if you
+>have this patch [1] in your tree which got recently merged.
+
+No that patch is not part of the tree yet.
+
+Please note also the following section in that patch:
+
+  	/*
+	 * Traditionally the remove callback returned an int which however is
+	 * ignored by the driver core. This led to wrong expectations by driver
+	 * authors who thought returning an error code was a valid error
+	 * handling strategy. To convert to a callback returning void, new
+	 * drivers should implement .remove_new() until the conversion it done
+	 * that eventually makes .remove() return void.
+
+So your driver is expected to implement remove_new().
+
+I will take care of this for the PR, but please note for the future:
+It has to work with media_stage, unless you have a very good reason for
+something different.
+
 >
+>Kindly let me know if you still face any issues.
+>
+>[1]:
+>https://lore.kernel.org/all/20240527083416.1177106-2-u.kleine-koenig@pengutronix.de/
+>
+>Regards
+>Devarsh
+
+Regards,
+Sebastian
 
