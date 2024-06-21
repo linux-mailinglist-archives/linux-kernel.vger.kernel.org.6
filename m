@@ -1,147 +1,121 @@
-Return-Path: <linux-kernel+bounces-224749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF012912673
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:13:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E37912679
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64723B22557
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:13:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 011982888F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244631553B4;
-	Fri, 21 Jun 2024 13:12:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6898155305;
-	Fri, 21 Jun 2024 13:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C0F15444C;
+	Fri, 21 Jun 2024 13:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IBCJA1WN"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E4D155380
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718975576; cv=none; b=qz/vXySd0rZTXvPzGj0DK0+HtDlPoJ/dgl+UnLVlCn2QCc9Iu0KZiTPKgeK/Qk7Xss6Y6D4/NEtrTX5Ob8ay3p/0Of+o/D1qOWh8znrPZZgicSf1RtDs7ObCcpz3mhTHxsn/RI9alhPmImZ3xopClkN7in5e95vjJv/H54Ef2rU=
+	t=1718975666; cv=none; b=dEeUHhbAGmHVvU2uyYca1vxcw76/mrYDLRICcffAxNjcbOJcuJGDGnSHrM3y8oFkWrX4wiQFd8n3dbCBarISAdw2rXmjbhK2k1WiQDKi8+UncYes61fqrfpTNlS7ENutesip4iyx6TtxWlrC7u8N+ZVN6HOMTvMduxxffvSEDa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718975576; c=relaxed/simple;
-	bh=9AkTqDX/NnbWAxlw4BdQztKH+iaRpYlS0M/PcBbMIMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mczwGJZQnQ8udfPru3uXE/6ncMy50eFidHmd7TkdkUwM0/ib7G7rt/hFkyMbI3k5Mpf+pZIoUlqsQt8J57/4CApqHEF1YjsX5faVhxmGVrfdcgG9dR7tO7pJitYnp+hrAWcGZsuhU2Hgt8IZd36ptFltvf1bJpEMk/60woEuAZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1F56DA7;
-	Fri, 21 Jun 2024 06:13:18 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C68C53F73B;
-	Fri, 21 Jun 2024 06:12:51 -0700 (PDT)
-Date: Fri, 21 Jun 2024 14:12:49 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	will@kernel.org, catalin.marinas@arm.com,
-	Mark Brown <broonie@kernel.org>, James Clark <james.clark@arm.com>,
-	Rob Herring <robh@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Suzuki Poulose <suzuki.poulose@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>, kvmarm@lists.linux.dev
-Subject: Re: [PATCH V18 6/9] KVM: arm64: nvhe: Disable branch generation in
- nVHE guests
-Message-ID: <ZnV8UWIolF2ZI_9y@J2N7QTR9R3.cambridge.arm.com>
-References: <20240613061731.3109448-1-anshuman.khandual@arm.com>
- <20240613061731.3109448-7-anshuman.khandual@arm.com>
- <ZmxgZqxXWnRqwbDC@J2N7QTR9R3.cambridge.arm.com>
- <774a63cb-21e6-4ef2-b2ab-0ff8937523b2@arm.com>
- <ZnAEVlVZFR3DLHHb@J2N7QTR9R3>
- <ccfc2b96-acf3-4511-920a-2633305f940d@arm.com>
+	s=arc-20240116; t=1718975666; c=relaxed/simple;
+	bh=lT3/0UqtMDn26n/9FLC4BSIBh/uUYJWYvZjdb5CfcLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lBkKYQ10rUwx+pWfVxm18lWSmcLm0qOAg60hzNPzcGTXyjuy+NYzSB47tiIcKwlKKfEs7vTI8033X+yP5nU5Div3pahmgxI+NB7BpZdEXBpg3UYto8iukEuQxzjLQe52uD/9Hl6LVEVBAR2UX9WM5y85SUQU3DCkT+/5mCjzFU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IBCJA1WN; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dff06b3f413so1916372276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:14:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718975664; x=1719580464; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=St4J3uvn8l8JSYyCUFuUaA3lT6tDkhwwUDqJHgH5Ff8=;
+        b=IBCJA1WN+2UAECsHaPoXrMbwYXAh4dh927AK12Ir6t7/AxpjvpP8cxiKigm5UKltf3
+         utnrzkdAunvrScCGfbwbX3l8xBxqdU1vVhQvV/9B5MeJ7Rh7sasyyd3bZCkaMZRPZZmq
+         vU3zwJCPBb45q2PPFtqWq+IQzQi5DDI7BDdbE0Go4Zi1GBJOioWTYs/cZLvo2DYzbnHI
+         1l6+nKj8ILVHkq1sqW8EbUPPqY9Icf6k4fwayB73M/App05ZDO4cSDB34jdwTWijZoNY
+         4Oxb1+ULTDtmeasIidy+nFSWgxx5zcTDtT11lULNy6Da4dGzd8lKYtZhrFIBbfBCAh6D
+         M0ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718975664; x=1719580464;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=St4J3uvn8l8JSYyCUFuUaA3lT6tDkhwwUDqJHgH5Ff8=;
+        b=UzLS1KLP7Gf+/FkqTqkuDhxNJAWknabrdS9k29UaHAexSMYBtOr2OPJaLGJpJesaTt
+         tblwpi2HONp6szk+SDB6h/h/zgH3N1oyc+cv+qdNPaj5X5E2lERIBKs6jFUCS820T++H
+         klqOf0SMd+i/mit61GmKp0X0+qPl18Zts8dszcgjHx7+k/O7P4qrWB+EUAQo8AobhsQi
+         7rO9HDDJ98gNra6eLcdbYQ5eICIWwCWdEpsX3/oN56qBuzg6pglzUZbCQYPpZKlO0u7n
+         QhH3GiptmRcWskEYJkCXtl+1Ad+JI8k+INenCYK1F7JdCF7ozOTgCMRVN0lAIkXi1MuD
+         X7pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNjfabZl239lD+XeaHg9ujCrO8WMY4ZetanHrOXz/yxZc8JCUlK17ronqemunB25lOQf0WCkDpiiPPynSEYjlCUjbBIVCdlTrFjP8U
+X-Gm-Message-State: AOJu0YzM/oKP3vcvagAsNfwFZMSwZ23zm0F2BUc0VwYfP22Bu2laFG2K
+	bgQu0XeketZefufy8RhvHjiYz35uSGePoK7/1UOk3RmtRSKfueoUOQAZT64HXQZWvy9LeFO6sLp
+	9vyh3Nlp0+O++xEMB0T9u85WUKDjKTVD1GrfYsA==
+X-Google-Smtp-Source: AGHT+IF5Kjmxgdie6GcMoOwWvEJr0hx8dV3HK+rzPmDaF3nNfHrnmvu2DU8t6Caag/RxJgO2Tk62vCZRxGA02P6OtL0=
+X-Received: by 2002:a25:820d:0:b0:e02:c4fa:2180 with SMTP id
+ 3f1490d57ef6-e02c4fa246bmr6862131276.14.1718975664432; Fri, 21 Jun 2024
+ 06:14:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ccfc2b96-acf3-4511-920a-2633305f940d@arm.com>
+References: <20240619183255.34107-1-brgl@bgdev.pl> <20240619183255.34107-3-brgl@bgdev.pl>
+ <henuash23dwkj5fcmub6sabygwo4kam7fgots2pp2j3eu4asuk@cn3o7a62lo74>
+In-Reply-To: <henuash23dwkj5fcmub6sabygwo4kam7fgots2pp2j3eu4asuk@cn3o7a62lo74>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Fri, 21 Jun 2024 15:14:13 +0200
+Message-ID: <CACMJSes7XcXPZt8NgZm9mQ7h2B6A=+mL13gpZEHY6UnTFqXdOA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sa8775p-ride-r3: add new board file
+To: Andrew Halaney <ahalaney@redhat.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 20, 2024 at 09:52:05AM +0530, Anshuman Khandual wrote:
-> On 6/17/24 15:09, Mark Rutland wrote:
-> > On Mon, Jun 17, 2024 at 12:15:15PM +0530, Anshuman Khandual wrote:
-> >> On 6/14/24 20:53, Mark Rutland wrote:
-> >>> On Thu, Jun 13, 2024 at 11:47:28AM +0530, Anshuman Khandual wrote:
-> >>>> Disable the BRBE before we enter the guest, saving the status and enable it
-> >>>> back once we get out of the guest. This avoids capturing branch records in
-> >>>> the guest kernel or userspace, which would be confusing the host samples.
-> >>>
-> >>> It'd be good to explain why we need to do this for nVHE, but not for
-> >>> VHE. I *think* that you're relying on BRBCR_EL2.EL0HBRE being ignored
-> >>> when HCR_EL2.TGE == 0, and BRBCR_EL1.E{1,0}BRE being initialized to 0
-> >>> out-of-reset.
-> >>
-> >> That's right, there is no possibility for the host and guest BRBE config
-> >> to overlap.
-> >>
-> >>> What should a user do if they *want* samples from a guest? Is that
-> >>
-> >> That is not supported currently. But in order to enable capturing guest
-> >> branch samples from inside the host - BRBCR_EL2 configs need to migrate
-> >> into BRBCR_EL1 when the guest runs on the cpu.
-> >>
-> >>> possible to do on other architectures, or do is that always prevented?
-> >>
-> >> I am not sure about other architectures, but for now this falls within
-> >> guest support which might be looked into later. But is not the proposed
-> >> patch complete in itself without any further guest support ?
-> > 
-> > My concern here is ABI rather than actual support.
-> I am trying to understand how this is an ABI problem. Because perf debug
-> tools could be described as - a best effort based sample collection. All
-> samples that could be collected for a given perf_event_attr request might
-> change if the underlying assumptions change later on. AFAICT semantics of
-> expectations for a given attribute request is not a hard ABI requirement.
+On Thu, 20 Jun 2024 at 18:04, Andrew Halaney <ahalaney@redhat.com> wrote:
+>
+> > +
+> > +&mdio {
+> > +     compatible = "snps,dwmac-mdio";
+> > +     #address-cells = <1>;
+> > +     #size-cells = <0>;
+> > +
+> > +     sgmii_phy0: phy@8 {
+> > +             compatible = "ethernet-phy-id31c3.1c33";
+> > +             reg = <0x8>;
+> > +             device_type = "ethernet-phy";
+> > +             interrupts-extended = <&tlmm 7 IRQ_TYPE_EDGE_FALLING>;
+> > +             reset-gpios = <&pmm8654au_2_gpios 8 GPIO_ACTIVE_LOW>;
+> > +             reset-assert-us = <11000>;
+> > +             reset-deassert-us = <70000>;
+>
+> I need to read your other series still wrt "ocsgmii", but any chance you
+> have access to docs indicating the reset timing? I've never had docs for
+> the specific Marvell phy on the prior board or the Aquantia one on the
+> new board...
+>
 
-The ABI requirements are certainly unclear, but people get *very* upset
-when behaviour changes, so I think we need to have some certainty that
-we're not backing ourselves into a corner where we have to make
-substantial behavioural changes later.
+I have but they're not public. :(
 
-Surely we can figure out how this works on other architectures today?
+> Boot time is something automotive is always concerned over, so I just
+> want to make sure that this timing isn't any longer than it needs to be.
+> Right now it looks the same as the Marvell phy's in the "v2" boards etc
+> and that made me raise my eyebrows.
+>
 
-There's a substantial argument for aligning with x86, so can we figure
-out under which conditions x86 would provide guest samples? e.g. is that
-always, never, or when certain attr options are configured?
+That's a good point but what else can we do? This should typically
+execute in its own thread anyway.
 
-> > It's not clear to me how this works across architectures, and we should
-> > have some idea of how this would work (e.g. if we're going to require
-> > new ABI or not), so that we don't have to break ABI later on.
-> 
-> BRBE HW does not have any guest filter in itself, unless BRBCR_EL2 gets
-> migrated across BRBCR_EL1 during guest transition, guest branch records
-> would not be captured.
-> 
-> event->attr.exclude_guest = 0 could have been denied during armpmu_add()
-> for preventing events with guest branch sample requests being scheduled
-> on the PMU. But it turns out to be not a very reliable parameter in that
-> sense as well.
-> 
-> event->attr.exclude_guest = 0 remains clear even for a standard session.
-> 
-> ./perf record -e instructions:k -j any_call,save_type ls
-> 
-> perf tools will need some changes in order to avoid the above scenarios
-> as a default behaviour which would not be desirable as well.
-
-If we're liable to need perf tool changes, then we *definitely* need to
-understand this better.
-
-> These semantics could be worked out later on when BRBE guest support gets
-> included, and the current proposal would not prevent any potential future
-> changes in this regard.
-
-That depends entirely on what changes we'd expect would be necessary in
-the perf tools. We need to be certain that we don't enable some use case
-that subseuqent changes break.
-
-Mark.
+Bart
 
