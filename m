@@ -1,114 +1,151 @@
-Return-Path: <linux-kernel+bounces-225424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853FB913062
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:39:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201D991306B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60691C2230F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:39:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD2A1F22158
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4F016F0C5;
-	Fri, 21 Jun 2024 22:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEE916FF4D;
+	Fri, 21 Jun 2024 22:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gmvzLRj/"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bt/99xF5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47A8208C4;
-	Fri, 21 Jun 2024 22:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD9915532C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719009534; cv=none; b=cOiuszUrZXGV9nJvLiHsFqKJhZxK3MpzZNd5FKM6e/BH5moiD2jEmulLUYr4N8ivqlSVpsivKFTquLG8M7tkttWntlrG0Hhum/hVECYE7sQAgNtuaoCHGFSHEJiqe9U3nvV/rWPdegGCRSU3ubY+NOuKsFtgDWvcG+3P+Q5GOp0=
+	t=1719009557; cv=none; b=W0ArKviCwJtWokmbXAWoYGDJgubqUIDGPgyoB7AjednSC0SThcAgPEJWDw1HHbSmo66gkhGRWOgiWnEripaceHvwk+clveX9aVVJCDwQZ25+PNPDduR/pCC+phWrHuQLteuDCWXcHJ8q90+IS+UztSaxbT/YGbCc96cMt42KYs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719009534; c=relaxed/simple;
-	bh=iuxCD6SXr+LIzZGYfpPXvUJ7nV8ibWRlt4gRpZUawzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HHfjgB8Z/Zg40Sw4WhyDuRrxu7e0UD9PICjFtOTlru5rgklE8v8D9ZosNHNU2PeX0xP9NBD8f2g4YI/c5rUdrfSIrw9oatqLFo2IbsuksKRcL9lIoVXsMPyQEozyIFQ5miNU38EnvoEsOb80XJjYCdkf9LthikfsziEIQX6wqqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gmvzLRj/; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f480624d10so20811365ad.1;
-        Fri, 21 Jun 2024 15:38:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719009532; x=1719614332; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=abeU2GGQMEFPwQcngO4m8ohAO9d8OVamW3SQd0gTR/I=;
-        b=gmvzLRj/qyZ3wsu6eoWkxRC1bulv/8w4Xrb6cV0k10hxaw5qgRwlFU1nUdrkKcK117
-         fNJSCWfWoFeQlRuv6D7xdxtb82V7545MMzQmkiQPpxsadywlajkYL6dOkYQqyVDikyrm
-         6TlGe3hEr7CLIrTRWv0fnMMqxhyQYZma90KGr1005nQPsaJdLBzLlA0TkW2m/U4ftgdE
-         ahWYUvS1jhQa7Ujnbt5XUkwBnZImMEwMbxdNCEKX1hfiEfwVm4W//itkp6AQvepLzuZT
-         IKCDkzY3ORkHKOI8dI+wQYxtBJLMUPjqZAv8coExrN2/xDzQ2oE47ZCwsB512PoWCdK2
-         ukGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719009532; x=1719614332;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=abeU2GGQMEFPwQcngO4m8ohAO9d8OVamW3SQd0gTR/I=;
-        b=jnPAhEEDvfmOTq3Oj44IgwcoivF7hups3xMjZxSb5H2+tiRzehQsrq8ZldHykD1+F4
-         Tv4C/K0wnTHrY3gHD/kf5FvIzSRB7ai2gaiTWwS6mxAQF2SSoDF5NeWot5jyHUOGB7GH
-         thiTym9Zw3IpPqaTXZ02ekMLnBsnrXJmmP/lEXKK8X+G9RV2s0OuoiicIyVg5U6Qz5oF
-         ePr3ln6bJM0j06eE3FMLMRqdlQso77T5YlHOSA+UFEzR7yDoCefDwlScpKe+YC57iYMq
-         DBEX3ryzutSoXDATfc0mFHCD/O6VbMGnlJk7wOnpkWZZaBk2UhryeILm2Y2JsRA8O9/Z
-         UP7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWUr2xbh2m89S4T15rL2VGefQxLMBLkXWLOylOWLN5Vr8UWs40xIllMzQ7aTRj7tbs9ZnLQ46YDkiXTa8BNxaAHzgfYVzb2tkupcdNJ
-X-Gm-Message-State: AOJu0YwCoVZiDL6yQyzdyx9/RmbkR8xMLAcZYX4ewoa4kcWZhkfE9Q1f
-	R+hWhVaLqos9G8WX+mLXwVu9o2ZH534QSD43XBiwHtRRT9ehEjjx
-X-Google-Smtp-Source: AGHT+IHpSEg3XHl2cj+523T94EXl++q2aLaanr1Vrm1C8htxO3NPr4o3CPXRYbhssuHnegqyRjXmhg==
-X-Received: by 2002:a17:903:22ce:b0:1f9:fca9:7433 with SMTP id d9443c01a7336-1f9fca976efmr18690715ad.34.1719009531795;
-        Fri, 21 Jun 2024 15:38:51 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f2a4bsm19255645ad.57.2024.06.21.15.38.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 15:38:51 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 21 Jun 2024 12:38:50 -1000
-From: Tejun Heo <tj@kernel.org>
-To: rafael@kernel.org, viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org, void@manifault.com,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	mingo@redhat.com, peterz@infradead.org,
-	David Vernet <dvernet@meta.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH 1/2] cpufreq_schedutil: Refactor sugov_cpu_is_busy()
-Message-ID: <ZnYA-hrec6cVADtJ@slm.duckdns.org>
-References: <20240619031250.2936087-1-tj@kernel.org>
- <20240619031250.2936087-2-tj@kernel.org>
+	s=arc-20240116; t=1719009557; c=relaxed/simple;
+	bh=xalcDH7xFOjOU7DCVtWTUs2cEEKmxyG55J7Dr5SEIFI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BErSJMwx4tToGptazHrwA4adB2y3UaRq9RjiuW9UBey3spdPV7cFqcoebSC4ZAVyP973Lmq98D3OppmPfMHRcnlQYLdjBeLESfNRxtyjEzXdqw3YjHo7FDg4g52eRamEnsjkYcM6eF8EBttktCr32bSPAO378/1nLHWS87FmQnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bt/99xF5; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719009555; x=1750545555;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=xalcDH7xFOjOU7DCVtWTUs2cEEKmxyG55J7Dr5SEIFI=;
+  b=bt/99xF5eG0IubC2SVjFSc6MzDLYpuz330c9RPoAAfEN2UWhmbzUb6Bx
+   SSclIucMopXZfoMDD7t8J0HSputACyYPs0Dt7v15rWayaAhjzl25wEOxu
+   YMI7Re0EiWnkgvw9iFghBx4d6z4fNb5IbQgJn0/oah+37D74RSRwZmp0w
+   sjLTgpPaBwZ4dn1d812OS6t8BE/2A6q14xOW4osV771aRvg9kVWHXDzmN
+   6+CY3e4xL2wv+UaQQapKGGgA7cme5fB+H1dMrJKoXn2itwwdkDx7FmzJu
+   DsiQ16k7WJEmtQIAYIQUgQS/2ndb1tjS/uslh0rNmDw6mu9VqWJT4UAOi
+   A==;
+X-CSE-ConnectionGUID: k5yAvy/jTx+xIbjbsSgnwA==
+X-CSE-MsgGUID: nWTznuHcSsed1mieD79+qA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="26691312"
+X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
+   d="scan'208";a="26691312"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 15:39:08 -0700
+X-CSE-ConnectionGUID: Vd5SlHl2S0avmLchpcO93w==
+X-CSE-MsgGUID: bOPiIp2mRjSwvifUxk6ybg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
+   d="scan'208";a="73935665"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 15:39:08 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v21 09/18] x86/resctrl: Add a new field to struct rmid_read for summation of domains
+Date: Fri, 21 Jun 2024 15:38:50 -0700
+Message-ID: <20240621223859.43471-10-tony.luck@intel.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240621223859.43471-1-tony.luck@intel.com>
+References: <20240621223859.43471-1-tony.luck@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619031250.2936087-2-tj@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 18, 2024 at 05:12:02PM -1000, Tejun Heo wrote:
-> sugov_cpu_is_busy() is used to avoid decreasing performance level while the
-> CPU is busy and called by sugov_update_single_freq() and
-> sugov_update_single_perf(). Both callers repeat the same pattern to first
-> test for uclamp and then the business. Let's refactor so that the tests
-> aren't repeated.
-> 
-> The new helper is named sugov_hold_freq() and tests both the uclamp
-> exception and CPU business. No functional changes. This will make adding
-> more exception conditions easier.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: David Vernet <dvernet@meta.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+When a user reads a monitor file rdtgroup_mondata_show() calls
+mon_event_read() to package up all the required details into an rmid_read
+structure which is passed across the smp_call*() infrastructure to code
+that will read data from hardware and return the value (or error status)
+in the rmid_read structure.
 
-Applied to sched_ext/for-6.11.
+Sub-NUMA Cluster (SNC) mode adds files with new semantics. These require
+the smp_call-ed code to sum event data from all domains that share an
+L3 cache.
 
-Thanks.
+Add a pointer to the L3 "cacheinfo" structure to struct rmid_read
+for the data collection routines to use to pick the domains to be
+summed.
 
+Reinette suggested that the rmid_read structure has become complex enough
+to warrant documentation of each of its fields and provided the kerneldoc
+documentation for struct rmid_read.
+
+Co-developed-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+---
+ arch/x86/kernel/cpu/resctrl/internal.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index 135190e0711c..d04018b8b571 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -144,12 +144,31 @@ union mon_data_bits {
+ 	} u;
+ };
+ 
++/**
++ * struct rmid_read - Data passed across smp_call*() to read event count.
++ * @rgrp:  Resource group for which the counter is being read. If it is a parent
++ *	   resource group then its event count is summed with the count from all
++ *	   its child resource groups.
++ * @r:	   Resource describing the properties of the event being read.
++ * @d:	   Domain that the counter should be read from. If NULL then sum all
++ *	   domains in @r sharing L3 @ci.id
++ * @evtid: Which monitor event to read.
++ * @first: Initialize MBM counter when true.
++ * @ci:    Cacheinfo for L3. Only set when @d is NULL. Used when summing domains.
++ * @err:   Error encountered when reading counter.
++ * @val:   Returned value of event counter. If @rgrp is a parent resource group,
++ *	   @val contains the sum of event counts from its child resource groups.
++ *	   If @d is NULL, @val includes the sum of all domains in @r sharing @ci.id,
++ *	   (summed across child resource groups if @rgrp is a parent resource group).
++ * @arch_mon_ctx: Hardware monitor allocated for this read request (MPAM only).
++ */
+ struct rmid_read {
+ 	struct rdtgroup		*rgrp;
+ 	struct rdt_resource	*r;
+ 	struct rdt_mon_domain	*d;
+ 	enum resctrl_event_id	evtid;
+ 	bool			first;
++	struct cacheinfo	*ci;
+ 	int			err;
+ 	u64			val;
+ 	void			*arch_mon_ctx;
 -- 
-tejun
+2.45.2
+
 
