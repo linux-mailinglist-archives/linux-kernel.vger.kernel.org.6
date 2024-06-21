@@ -1,120 +1,100 @@
-Return-Path: <linux-kernel+bounces-224952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C3391294B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:18:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCA3912908
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F55AB2DB93
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:10:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEEB71C22CBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E91768FD;
-	Fri, 21 Jun 2024 15:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD7F55E73;
+	Fri, 21 Jun 2024 15:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b="j9Q3m6ui"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0Ql9WIT"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E160757F8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636E538FA0;
+	Fri, 21 Jun 2024 15:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718982598; cv=none; b=jI99T2q1tv4Zind3Goo7YRgQrumNShHqwp0HZqHgmwESUaAaqGGRd2Ie+9uc/5aO58FL7La04HXGHcENu/OWVLra8VdS/o75vRbp8tnz2fvMmtgpZIiOAPXB9mtNwa8btxYnAdc1oCry+6jz4ho8PHOy7X/Rc0fyD6y9dNihSeI=
+	t=1718982588; cv=none; b=hkEGo923keri94dIZ5xR/xL4J/33bQMIAqzZby9S37XQd9cE4A7kvK0lsr/L1yAtwywSxsbkwSkq1j6G1lwlqgjtv/mgyXSm7X+/TX8TsIHI+g6qnSPTzyH7AQhbZng6GOwGa7hFBQ1mJfW7b3pwQdTf/jX/9QFXc/K4YxiHql0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718982598; c=relaxed/simple;
-	bh=iHNlBypQqnWvEq3zZsh0TVR1D0RIgs9Qb8YN4aw6Xp8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gbNbcUMmBklO/OOaP/tduE7A58knwOA+ghbtCwfGsC9KldQGhD8hVDkvK2sKEnom/pDlV6XXlOzM9eEtfP6WEMPZSKESy2sOBSkVeEf46n7qO/vczJjl/mhunGxnEYM+5xXZRmoQ211R4buiAIrci/kW8D+FO1TZHTPXc8d2K/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org; spf=pass smtp.mailfrom=bitbyteword.org; dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b=j9Q3m6ui; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitbyteword.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0272692096so1983187276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:09:55 -0700 (PDT)
+	s=arc-20240116; t=1718982588; c=relaxed/simple;
+	bh=0VMF9n+QtL3+3e8cyhyYJCm5O5ipnpmBnXL6xMoEx0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AWsRnSXlmybtmu9Ia9uBqH+CRsetv9HjG5DWOa8iMaHWrpF+O88ynLP+tD9HfStgwPvzFVEvPXd8hT3pUW3qNWY1RAgOhOMPhoVWM60wpQ3tC3guFOFS5OxqmrscrUf/QdURdh0TN7JJO7w3jO4oj8xzsZErioxjjpga9+d355Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0Ql9WIT; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2c8065e1666so1193026a91.2;
+        Fri, 21 Jun 2024 08:09:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bitbyteword.org; s=google; t=1718982595; x=1719587395; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iHNlBypQqnWvEq3zZsh0TVR1D0RIgs9Qb8YN4aw6Xp8=;
-        b=j9Q3m6uiYTXFmYb9u9DcFgKE8u9BrIHW3atvcRyevjWXpZbMG+iD6Ji2LdhJp0sgXG
-         7ZW9aeNG/CIJwzPg5A4OiPOjH8g5c2ozfENBWvSZHGbnuqYqRprmwaILaVde8LPKz8ph
-         +/2vANedVQFF4qszrE7pVHKnjte2g/AvU4sMxJFGMMHeGlsMBGn4oF1Fdl4E3qjbPdH9
-         A8zhzpOyF/CFKv98aAEGYqbel+u+HTa1pjHs42TehN0wGF4wOoaHqRCuzikIKJEhknFh
-         si46sbO5WtRm6FSPefeFZ1tcG9JrZygnb2WxCfE7kTy0lX3eVv/TbJEnKwaBU1zNtZPw
-         PFYA==
+        d=gmail.com; s=20230601; t=1718982587; x=1719587387; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vD78Ry4oM+SZFSOpnK1UvmdpLaurNsJCZMHc+5y/b/o=;
+        b=e0Ql9WIT7LsOb1TJz5hcwUFi0CXcZPDab0PIvSxZrfcKbO8Hp8LWRhg2sOPTI3PNNI
+         acdQ8Pqz7Krtbq1jeA6BKKaYUal+eDEMrplgiS/VGlt1qPFDl9YJRQ9G8l+n0gNbLY8B
+         UY7OUFbCOyU0vVojDhSr8Wxl8ufg4rQoxHWbJ93nikdn48dDdA/v2EXgTwT6TZ7YwYwo
+         k18riC46NT73qL7HqNN5ZFI5odw/PL5uqtOn/mh4V00MquODYtIwk9JWknxYOBSl0+yt
+         kQIz5/Qu+9YfOVFPp2BS9IdwtSrCtbsFK98D0gfPc9BZXl5cAplCsNbCQDo+XetoV/3S
+         uxgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718982595; x=1719587395;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718982587; x=1719587387;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iHNlBypQqnWvEq3zZsh0TVR1D0RIgs9Qb8YN4aw6Xp8=;
-        b=izX/cr+W6LasvW594QuZygdkc+bYol93foWv/oorYoR/4ljIL6aLx0xZyTPo4DYIDi
-         HaI14dM8sKyrukWAzRzNbfszVlqLytL5YKjb64DbtTkq5F80WJIsNb1znoHhGHJ1uECm
-         SJQxUdgAs7Qvc7p8rS/2V1qyxZmy2SAJUgpMg9LvzcmoEJ2T8dkwGqn4yit5BtoS0OjK
-         ebkHhV61pPW/sgfT687TR6d4zfnzLYhcRY81232RBD6dgXbx2JAkigaUvcBvZ/pJ4EDC
-         Fd6REhFEGPN4js+8VtG6AajJJO3wkiGy9E8yIvLvLpNOGdYEv5fonaQQc2MfC9Ps7N5G
-         nGDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPDTgVapmCuEzF1TBs3H2hi/hNkSAN/KXyAvNiIsZzz6RAOi6BBBAcYYZFm3DAUhWWxF/BCKRmaTf96Vv2buMzdLGKnNEjcW2n3dy1
-X-Gm-Message-State: AOJu0YzCisVfmWb5rlmy6IOqXLvUlIiswHF3bgQ3DDtKkpHh4EJoxNGr
-	+1oOaT1jYsHQLj7hknwlLi8hM5o+XJzEzjjR/xuTJz6Dap9HY+Ed/mOWzqxMMgY/ex0FTU/vApq
-	doYGMag4zWbM9DgSioOyEk+uu6bCstRrZwz/Bkg==
-X-Google-Smtp-Source: AGHT+IEMfqe/p+KWPQj/U59OJ6pPq52NpQk1bFTQzunLjwN87sg82a9VsBUAQ//TFtPgISR9/iOl/OXUwE7g3JzrIpE=
-X-Received: by 2002:a25:bc87:0:b0:e02:b745:b2c6 with SMTP id
- 3f1490d57ef6-e02be201656mr8816068276.44.1718982595145; Fri, 21 Jun 2024
- 08:09:55 -0700 (PDT)
+        bh=vD78Ry4oM+SZFSOpnK1UvmdpLaurNsJCZMHc+5y/b/o=;
+        b=U/2Gx9la3/pi08xC1yug/x1wQDJuUKM4zL/kNcJROdkarBBWbjZbPCfZ3UCeDwfZ3P
+         9Y37w78+ph6BVIbwavylfLo5hUQp9wObxxRmdaCI8qUYqjJPgUUqYjX23LG2tesfjznG
+         5jsAGP4XVofmMpnpguvMpUYVFs6OsanX1w4UkMB7ZeAsJyQMxIiVBjr76mohKTw8LQen
+         9XHSnzVwm0HDfKtQbYN7s4lh3Hz3JZJPGpLdPiM2r1/VmrK2/2DP8EH+FqgZ4zjYVnj9
+         J4caSkwtl7VdOP4ZaXKgkaNk+isFe4xg8ZLUGx2ymcF7X4dTPCxr3IM2VFiWN03EFaNL
+         ZOyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcvaHx0M27DAjnnmJ0nd/r1YRiukgduG4WGHdHuIRjyyBjoZ4rMQhqr1EiV+8qsI1WJbmcx2pFJKVHSV40N1RcVzr9YVzGcKdVSD3jiGzwRBDDW4aOqkncC7wWeC1HBbFu0sCopFvg26M=
+X-Gm-Message-State: AOJu0YzC540s5igY39Y0a2jt8sGyF9I/n9A8rnYHza43vyzO2ztgorqN
+	iQOYuTkDEslg0qyLBExsXZVewCspXQbFHsfcPot3QoqrWGlKjoNY
+X-Google-Smtp-Source: AGHT+IF8UKWJTRpcmvflOOzP+qhIAdQw5fFI4pueBDFbxMdSZx8+AH1CJi64a8/TxSHjJjtzoOaH/g==
+X-Received: by 2002:a17:90a:ec09:b0:2c7:a8b6:1bdb with SMTP id 98e67ed59e1d1-2c7b5cc9e2emr7976646a91.24.1718982586647;
+        Fri, 21 Jun 2024 08:09:46 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e55dcc7fsm3717649a91.29.2024.06.21.08.09.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 08:09:45 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 21 Jun 2024 08:09:44 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: iio: Use iio_read_channel_processed_scale for
+ IIO_POWER
+Message-ID: <cba10629-b24d-4252-a358-1816d9063600@roeck-us.net>
+References: <20240620212005.821805-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1716811043.git.bristot@kernel.org> <CAO7JXPhWvLaaGqCGUZ_YCuja2T1ciWZoUnsUDnNPQ2b4yDB2Jw@mail.gmail.com>
- <ea45abdd-c301-4cf9-abb7-6983b73b2824@kernel.org>
-In-Reply-To: <ea45abdd-c301-4cf9-abb7-6983b73b2824@kernel.org>
-From: Vineeth Remanan Pillai <vineeth@bitbyteword.org>
-Date: Fri, 21 Jun 2024 11:09:44 -0400
-Message-ID: <CAO7JXPgmwnn=njmpMVGLNYQ=9hmmRPFeJ5d=o9VW81Vt2k-UwA@mail.gmail.com>
-Subject: Re: [PATCH V7 0/9] SCHED_DEADLINE server infrastructure
-To: Daniel Bristot de Oliveira <bristot@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
-	Luca Abeni <luca.abeni@santannapisa.it>, 
-	Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>, Thomas Gleixner <tglx@linutronix.de>, 
-	Joel Fernandes <joel@joelfernandes.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Phil Auld <pauld@redhat.com>, Suleiman Souhlal <suleiman@google.com>, 
-	Youssef Esmat <youssefesmat@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620212005.821805-1-sean.anderson@linux.dev>
 
-On Fri, Jun 21, 2024 at 10:59=E2=80=AFAM Daniel Bristot de Oliveira
-<bristot@kernel.org> wrote:
->
-> On 6/21/24 16:41, Vineeth Remanan Pillai wrote:
-> > Sorry that I could not get to reviewing and testing this revision. In
-> > v6 we had experienced a minor bug where suspend/resume had issues with
-> > dlserver. Since suspend does not do dequeue, dlserver is not stopped
-> > and this causes the premature wakeups.
->
-> Ouch! I will have a look next week on this. Do you guys know any other bu=
-g?
->
-> an earlier report without necessarily a fix/work around is a good thing
-> for us to try to reproduce it/think about it as earlier as we can...
->
-Sorry my mistake, I was buried in other things and missed reporting
-this earlier.
+On Thu, Jun 20, 2024 at 05:20:05PM -0400, Sean Anderson wrote:
+> Instead of rescaling power channels after the fact, use the dedicated
+> scaling API. This should reduce any inaccuracies resulting from the
+> scaling.
+> 
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 
-There was another minor regression seen lately after we fixed the
-above issue- idle cpu was spending more time in C7 than C10 with the
-dlserver changes. This was reported very recently and we haven't
-investigated this much yet. Just a heads up and will keep you posted
-as we know more.
+Applied.
 
 Thanks,
-Vineeth
+Guenter
 
