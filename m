@@ -1,140 +1,122 @@
-Return-Path: <linux-kernel+bounces-224356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8874912149
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:53:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D000491214C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A43CA289EF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 850D128A34F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AA416F85A;
-	Fri, 21 Jun 2024 09:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910FC16F8EB;
+	Fri, 21 Jun 2024 09:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYhYpWgI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tz36Mecs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3400382D66;
-	Fri, 21 Jun 2024 09:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D932A82D66
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718963576; cv=none; b=BB4yKGfPLfvvea75ZT8z2HeIMaepoL/1TgIi9iVmXSSh+Zz+0r4rQ8DTZfI7YBH/zIpi63bLoWSVVYqX0MyTdkJp76+YMNk3+oIEUSW6m6EhwMx2t9QZMpY3wobAvmoz265zRx1wza4Hz4hCghQEcPcBacL5rGBKzCITmxlQ6rg=
+	t=1718963581; cv=none; b=cdR0HU1mtBEdPD5zmumvWtpgCl2+zxL73nvC9xU3JBdungeiIzAknkGLzgg33WK1wqzMtOXFwytgqfd2NIhnSqLSX+gW91+EG+u4/y+275I3bOgYjgOf69hZz5JhuKq+QcAfBPYbCRogwXHdMTUh+MhyRYGXIEqyuruFNLSt8go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718963576; c=relaxed/simple;
-	bh=0NHzm6VNlu4nLnPyUAj59dHeuyvRJkkEV1Tubkf8NUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=N/Il1RhzCSzfQ83CB91VYzxoT6TPh1lrdNaVOHFUEV43qS7WIcw67+7nHhHK+UeDq2hNFTIAdxOtWNoSMgDWpHF2K375oXppn3aX4rgwpL+0zi6+vU67YfXW17AQocoTyocwF+aSkyBHXCAm4Z/9XAQ57VzDSUT/Vw/jEcBl2eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYhYpWgI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DCA7C4AF0B;
-	Fri, 21 Jun 2024 09:52:48 +0000 (UTC)
+	s=arc-20240116; t=1718963581; c=relaxed/simple;
+	bh=i5bfEeplWnyWogs/5yMTdMhW3dUlLLlGYGg7SlEI0oU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NkMDiXNxKoFGl7/agmWTCpxibvgDKXOYE9QOZBxufWRSWwBUVbKoV+LrvzOdFrUHMOLjxIuAAUVEH1lormfyarCKIwArlpkmc485Sb5kDB5dCnNCRv5cvCRb4a7TJaixEmHOM1pWN6VbZXa15y65S5BJ4p+nx69EMjcsCVk46Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tz36Mecs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A4BAC4AF09
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:53:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718963575;
-	bh=0NHzm6VNlu4nLnPyUAj59dHeuyvRJkkEV1Tubkf8NUI=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=uYhYpWgIQeY7mY1FBbAI1EhEtu5m/4WOaksEyoXZ/HWzIE5suPZ9tqAcw4glJ111q
-	 gEI7mhpAnyZLXsFPoYHWLbv0Av4Q9vAO2vYxCfa9aeuE2rMaPk2RKxER9oO7p7Xr/Z
-	 AJjuE7fIIdHdH1uqPUpk8iCzstVy3rwkncH8ZpAyAanYGxmr/RchocGX85NOQhfrUy
-	 ElvPWKKXpCrAeRn31JqZfYnu182IOYhNMCz0X+C9JbtgIFLbhOexbCrjeirn8wN4Xv
-	 qx9ldNM67OB6oLCnNo5iRRPVuYS3qCzUYY56aZ3GaB6QOhoUjawd8Tb1TEQx6A5Iut
-	 equBFtDv5aqcw==
-Message-ID: <75ca3bed-f57b-4c89-bafd-7cd170dcdf94@kernel.org>
-Date: Fri, 21 Jun 2024 11:52:46 +0200
+	s=k20201202; t=1718963581;
+	bh=i5bfEeplWnyWogs/5yMTdMhW3dUlLLlGYGg7SlEI0oU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Tz36MecswDHgsv+lPB1rkILFu9WMmxBQmISr/2P3hk/1XeoiibIXvaDT8pUiQ7IZA
+	 xI7e1avmEjbexZDCNJ/6Mcww9re/HOhuDkDs/IBks5bDwkiN40J3boJ2uShhRIm6lC
+	 FyD5+K9x9jnrRuwpd2xkXxCu/Owa67WaBKzMYlq7i/9BlnSvzkfs7Q/5vtRzIGMvTU
+	 ynydXQ6s/4j/GiCbrFXYiHyTd4BCR7XUeRoOXQ6CSo6vjcmptthSfvHziDqTIttvHE
+	 2a15VCQHlIYldtgg3p03je5/HCX/kENcu6E1GmXVyZfaJ2QRB6g7eUL/5OuQ1Z4X4E
+	 iYJl6g0PkyDQA==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52c94cf4c9bso2300003e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:53:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU9vE6/I8x1xbmU04tbVug6+aaW3UzuM+7XNvJbBEn3xaTj3+dc3t95p5pQoyCjgqWL47ZYZt84NBKy5HKF3ZXhKMfM1Gact2vYySAn
+X-Gm-Message-State: AOJu0YwPvELfMjd84Y1viUNpkXAEbYo35AQeMWw1iccL1UgJOz6rGg86
+	A20WVDQV8m336jD3ualkz+s0N6pQHBQNMF1V2M+bLrifKeCXA1pcl70cX3iMlvUSy6551Gfw31s
+	cfBkvIcmQ/ooGlYSZ+m5diqMWl4E=
+X-Google-Smtp-Source: AGHT+IEoBNnkImkbHiBM6XSY+i0yKhYlNhhX/wuINaWl9Idb2f8QzczAmnsMxc1VAsOwbaXZdDyAjrAk3OPqfJYRHLI=
+X-Received: by 2002:a05:6512:b20:b0:52c:842b:c276 with SMTP id
+ 2adb3069b0e04-52ccaa53e9dmr7320353e87.53.1718963579690; Fri, 21 Jun 2024
+ 02:52:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: RNG: Add Rockchip RNG bindings
-To: Daniel Golle <daniel@makrotopia.org>,
- Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heikomemcpy_fromio Stuebner <heiko@sntech.de>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Anand Moon <linux.amoon@gmail.com>, Dragan Simic <dsimic@manjaro.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>,
- Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1718921174.git.daniel@makrotopia.org>
- <10f621d0711c80137afd93f62a03b1b10009715c.1718921174.git.daniel@makrotopia.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <10f621d0711c80137afd93f62a03b1b10009715c.1718921174.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240621092809.162-1-yuzenghui@huawei.com>
+In-Reply-To: <20240621092809.162-1-yuzenghui@huawei.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 21 Jun 2024 11:52:47 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEH0ohn57DUrCu6S-AJW=B9CyrpMwyabpjBpD9tD4VV=A@mail.gmail.com>
+Message-ID: <CAMj1kXEH0ohn57DUrCu6S-AJW=B9CyrpMwyabpjBpD9tD4VV=A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: Clear the initial ID map correctly before remapping
+To: Zenghui Yu <yuzenghui@huawei.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, wanghaibin.wang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 21/06/2024 03:25, Daniel Golle wrote:
-> From: Aurelien Jarno <aurelien@aurel32.net>
-> 
-> Add the RNG bindings for the RK3568 SoC from Rockchip
-> 
-> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+On Fri, 21 Jun 2024 at 11:28, Zenghui Yu <yuzenghui@huawei.com> wrote:
+>
+> In the attempt to clear and recreate the initial ID map for LPA2, we
+> wrongly use 'start - end' as the map size and make the memset() almost a
+> nop.
+>
+> Fix it by passing the correct map size.
+>
+> Fixes: 9684ec186f8f ("arm64: Enable LPA2 at boot if supported by the system")
+> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+> ---
+>
+> Found by code inspection (don't have the appropriate HW to test it).
+>
 
-<form letter>
-This is a friendly reminder during the review process.
+Good catch!
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+Even though memset() takes an unsigned size_t, the zeroing path in
+arm64's memset.S does a signed compare on the provided size, and will
+zero at most 63 bytes if the size has the sign bit set. So in the end,
+it does not clear anything. Note that in this particular case, that
+doesn't actually matter - the memory is reused immediately to create
+another copy of the ID map, and any unused regions containing garbage
+will just be ignored.
 
-Thank you.
-</form letter>
+Nonetheless,
+
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 
 
-Best regards,
-Krzysztof
 
+
+>  arch/arm64/kernel/pi/map_kernel.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/kernel/pi/map_kernel.c b/arch/arm64/kernel/pi/map_kernel.c
+> index 5fa08e13e17e..f374a3e5a5fe 100644
+> --- a/arch/arm64/kernel/pi/map_kernel.c
+> +++ b/arch/arm64/kernel/pi/map_kernel.c
+> @@ -173,7 +173,7 @@ static void __init remap_idmap_for_lpa2(void)
+>          * Don't bother with the FDT, we no longer need it after this.
+>          */
+>         memset(init_idmap_pg_dir, 0,
+> -              (u64)init_idmap_pg_dir - (u64)init_idmap_pg_end);
+> +              (u64)init_idmap_pg_end - (u64)init_idmap_pg_dir);
+>
+>         create_init_idmap(init_idmap_pg_dir, mask);
+>         dsb(ishst);
+> --
+> 2.33.0
+>
 
