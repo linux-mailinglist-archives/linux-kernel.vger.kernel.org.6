@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-224423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41459912234
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:21:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7151F912244
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFDA12861B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC7F1F2776D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC091176224;
-	Fri, 21 Jun 2024 10:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD0417164D;
+	Fri, 21 Jun 2024 10:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MMlJsY+n"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEqat2jW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692AD175548
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1245213C689;
+	Fri, 21 Jun 2024 10:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718965140; cv=none; b=P50xkTgztLWogkRw+hS2ThS9VSR+QWoFBcguwBCFqDvL/cGRal0D3hih7cOgX3FGSHdkW7MT+mOeoK0vNm+laZspw/yv3m/Qhz6tvEoBX+j6ueic9+5GTbpaX9M+wbXSPMZpFPr65RYZOAPe4g59scX1UFNGakTj4/uxM5XAUDE=
+	t=1718965247; cv=none; b=dq/GBzA3ymguIM+7si9kCQV+GYv99Byz42lpIOsKam0/CjWZ1j3N5o9f14f6btAgHRrKn3f375idqgNBrjeYI66mDhKz9CT0jf//1/lclCypD6s3Nf3HPvSCTYPXJ8860u+knl/wIpg5gcNfb1tvTN+ghnDlPxR+5P1WeNaIn8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718965140; c=relaxed/simple;
-	bh=Irh6LKeHFMit3xI3LCk0mLIKhIax0dw+R2mZ1n2BkN0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EryTtYBw4p7V0h30Oeu2PV+ksQTQFRszyDkznc1pGaDRYO7HzIoVYQMz7+2OqFTXcrFDplR6oHW50bGlPFvsRxyDUSXmNWm6kBx8y/e5UoDVx4jIsPgn8Mxg3t3NVByZarJqAEtFhvnmOAJLQrrvTBNc+G5V+/Rrppt7hC4cFyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MMlJsY+n; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f70fdc9645so105985ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 03:18:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718965137; x=1719569937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IU1bg2dMVQ265vEPTNKmS8g5kwwQUrFLWWoCI3lVA/k=;
-        b=MMlJsY+nS58hXGWw7wS39cSa95htA+oUVst1qp/iuUT5GEuihrNZ/miDM461cZzZ3I
-         WK44uOIXePeJKRittwvynKoSOK/U8wXhmNrHBPvtBDQ9vgbknrZUFUt0WLi2tH8XPtsj
-         ccGmBxCOL1owcnXxnUM7iCFAi2KcYWpK4zSSu+a0fHEnc7Ghlm/akEXxNVz8g8n5q4Eb
-         xUMEOSIAlbAgZRzK8XPZZkm1/jVmy4Uky01TiEhd6EgZa0v6MpUp5rAZ05ihX5v5k63E
-         0mEM2TqYvIx+QywCASHbS3VotP5GFiyNCR1XnEjDfkV5pfLc+z/FyjJdahGt4xaXZlIj
-         UVRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718965137; x=1719569937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IU1bg2dMVQ265vEPTNKmS8g5kwwQUrFLWWoCI3lVA/k=;
-        b=r6rQaWOKIHwhNTVz/h+sTSkLT2uyOATdjjYLfdCCbzLzcvM1uxq5vV6HUC/NGCibwJ
-         jLbKAQCvz3R1cnb0pieL+2n6VG/fNIOaUerUcfCt1+4N6xHLMurEGDysjqE06fsuEDye
-         eVfux10CejAQmg2oUPAXORAJG7P3TwodpdlVM0MdMjjZ/metsSgkiglWBHOjoYE0/MzU
-         bnDUvbQDmyPRfy5ycpKN+5zqEa5glq5uhEAoEVJ2DRdvlDfol30A+i1Ne5AvDBrAGRdv
-         dUL7XN05BmZgMWgLsZWRuxcneoDzpc374ZxyAZXCAo7+a5nYDRi3utyAbzhzDhHleSBv
-         TN2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWvG+FL6cf/pjvJIGnR0aY13aOd8SKw4to/a1JWzjjvTHKo7hHv0RZvJF9iaFlurYCXT47koinOAZy7nc0jrQcKbDyeFWCAthGUPzDf
-X-Gm-Message-State: AOJu0YxiwGggSnYYcjYaHxcefrDoCM3SqjhfXdD+mW5LrglkmkOLH/ia
-	sdCdWHoUZDipq8QrWfIKRzyPGkqu+C1D/3iUX7NSO0aZcug9mI4gyUFZ/ifSr3/KYKxBW8ZYjDM
-	+WiN5XigzdChCuu5vX+o/n0rW7fqSvS+6fUTRWOtIYtEYTp0X0EA6
-X-Google-Smtp-Source: AGHT+IHBJXlLTJPiymH4cuxAVsfUWreoKvT/nu29ZPC0PHACuKcDP0Sp21CPPYTfVUgc3FyAkwe3NO5WwDh83Ty4pvk=
-X-Received: by 2002:a17:902:6a8c:b0:1f7:1c96:d2e8 with SMTP id
- d9443c01a7336-1f9e7f8a31fmr2557535ad.10.1718965136334; Fri, 21 Jun 2024
- 03:18:56 -0700 (PDT)
+	s=arc-20240116; t=1718965247; c=relaxed/simple;
+	bh=8sIyQrK2MiTV1Zz4aSs5CXNwGqPgRm/aRVhyZ4IU0sM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PIBR7ZrcbnsUZJSNi/ySJ0snk7PVja3C0D/3dQcxOCH6/heerrZpN+CqIMs0Rlna5d4Bo4t/cTWC+P1etHd1PhrQ/RAFPWkqlUb9dn311sECOB+YstEFLHufzaPKT+d5jsr7Y4KHbBMdKUFF+xf9BCb7tp0+reSoAKmzjXzs4hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEqat2jW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE86C2BBFC;
+	Fri, 21 Jun 2024 10:20:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718965246;
+	bh=8sIyQrK2MiTV1Zz4aSs5CXNwGqPgRm/aRVhyZ4IU0sM=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=AEqat2jWmDWp5expRJ/tQrXSxWUftEkE96x0gIZSSux7qMB+QlhsGMMaWum4+VYZt
+	 ogK3QtcxKelyVGdGB59RBNyOotPAKjG6PGDki00de600REyv5nQQ4pRXO7qQXzEmT/
+	 71l/RFnfdoU3Yv0SwqZPUxXiRrnRArOvd6s/6htoq9zX9AkmswUKmd/2NJGcVaHJu3
+	 j/cm+jV6h2zqEUfYCSbys/l8vxSmQK3Fe/tMt8qSiO52mL5ENDXYXCwbiIsf9+QtkU
+	 TQqxPIg6mqmE6l/jQJHw/kkNiUy2XS3QVh5B9BGDljUCUtHGfny+jwnmX/xO57QV3X
+	 5iAL4wSVqM39w==
+Message-ID: <7bee89c6-605e-4ac6-ab4c-e1c0b68e6a77@kernel.org>
+Date: Fri, 21 Jun 2024 12:20:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202406201538.SMBucNWT-lkp@intel.com>
-In-Reply-To: <202406201538.SMBucNWT-lkp@intel.com>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Fri, 21 Jun 2024 12:18:44 +0200
-Message-ID: <CANp29Y5Nz_nf1HPfr_dY4Nrg=S6w0gJgWe0uS1d90GLDZsd0ZA@mail.gmail.com>
-Subject: Re: kernel/kcov.c:635:32: error: 'KCOV_MODE_REMOTE' undeclared
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: iio: accel: add ADXL380
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Ramona Gradinariu <ramona.gradinariu@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Matti Vaittinen <mazziesaccount@gmail.com>,
+ Jun Yan <jerrysteve1101@gmail.com>, Mehdi Djait <mehdi.djait.k@gmail.com>,
+ Mario Limonciello <mario.limonciello@amd.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20240621101756.27218-1-antoniu.miclaus@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240621101756.27218-1-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 20, 2024 at 9:53=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t master
-> head:   e5b3efbe1ab1793bb49ae07d56d0973267e65112
-> commit: 01c8f9806bde438ca1c8cbbc439f0a14a6694f6c kcov: don't lose track o=
-f remote references during softirqs
-> date:   5 days ago
-> config: x86_64-randconfig-014-20240202 (https://download.01.org/0day-ci/a=
-rchive/20240620/202406201538.SMBucNWT-lkp@intel.com/config)
-> compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20240620/202406201538.SMBucNWT-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406201538.SMBucNWT-lkp=
-@intel.com/
->
+On 21/06/2024 12:17, Antoniu Miclaus wrote:
+> From: Ramona Gradinariu <ramona.gradinariu@analog.com>
+> 
+> Add dt-bindings for ADXL380/ADLX382 low noise density, low
+> power, 3-axis accelerometer with selectable measurement ranges.
+> 
+> Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 
-I was unable to reproduce the problem with the attached config/script.
+It's v2 but no changelog (no cover letter either). Were all previous
+issues skipped and comments ignored? Please provide proper changelog.
 
-> All errors (new ones prefixed by >>):
->
->          |                     ^~
->    include/asm-generic/rwonce.h:55:27: note: in definition of macro '__WR=
-ITE_ONCE'
->       55 |         *(volatile typeof(x) *)&(x) =3D (val);                =
-            \
->          |                           ^
->    kernel/kcov.c:363:9: note: in expansion of macro 'WRITE_ONCE'
->      363 |         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
->          |         ^~~~~~~~~~
->    kernel/kcov.c:363:21: error: 'struct task_struct' has no member named =
-'kcov_mode'
->      363 |         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
+Best regards,
+Krzysztof
 
-It looks as if CONFIG_KCOV is not enabled, but
-1) It is enabled in the attached config file.
-2) If it's not enabled, the kernel/kcov.c file should not have been
-compiled in the first place.
-
->          |                     ^~
->    include/asm-generic/rwonce.h:55:34: note: in definition of macro '__WR=
-ITE_ONCE'
->       55 |         *(volatile typeof(x) *)&(x) =3D (val);                =
-            \
->          |                                  ^
->    kernel/kcov.c:363:9: note: in expansion of macro 'WRITE_ONCE'
->      363 |         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
->          |         ^~~~~~~~~~
->    kernel/kcov.c:363:34: error: 'KCOV_MODE_DISABLED' undeclared (first us=
-e in this function); did you mean 'KCOV_DISABLE'?
->      363 |         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
-
-This looks again as if CONFIG_KCOV is not set (and there follow the
-same two conclusions).
-
---=20
-Aleksandr
 
