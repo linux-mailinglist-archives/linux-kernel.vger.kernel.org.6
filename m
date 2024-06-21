@@ -1,158 +1,147 @@
-Return-Path: <linux-kernel+bounces-225390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF848913014
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:10:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D41913007
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AEBEB21D0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A891C1F253DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00A117C20E;
-	Fri, 21 Jun 2024 22:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EAF17D89B;
+	Fri, 21 Jun 2024 22:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="oLK1UBMf"
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DAE6TQs/"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B355738FB9
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CEB17D888
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719007839; cv=none; b=Dgwcwg1wjNNCRX2Tfgcp41Fw6Kx7HqVNr7pfD/YUQvldw6m2eX1EEO+GA4Q240d48Xg8fWbqvMyqCBXd5gU+pmOyU6D5koi8cqnBXa/MxgrtFx/S/ELFFhNBO5WnTdRHRjVBm7CV2Qm+/mH3Rg6R5jaxpB7TECEHFv8fYXxrzg0=
+	t=1719007438; cv=none; b=Y0hp/n3089vj/AzblKM3txOF8VSzZujviKvELvVMBgTJf+29o/xBh1I5BnOMQiDevfwSzHugsiNfrHNRSn9rLIxBfGMuNfj7E+R10GbUoncsjBnrEALPVCmz/ZP1zUcPgfaO4qKzRS0FKLEWovYn62loKiI5NEiKkibBT/ItdZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719007839; c=relaxed/simple;
-	bh=/3OUXbxbh4HVBBwvgsX+pbK2kz+8OtQOGQtbeuGta1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UJV2tJ/IlLHGTgEfbBJaKq5AzMx3W7rvuB59wpC2tVfqxXUOPLXxGBflZBSDjYaJsyOa5o505JlRVGM7KDIijF+jAUWvO/l/wmYuYdJHg2RnBNKQrvmn0ICzZ1svbRd4NTvG0GeDvjrmkuFvhao87C9vLSLgn3SLK4xOp6OmvJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=oLK1UBMf; arc=none smtp.client-ip=66.163.188.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719007836; bh=W93MUuqF8YI2qTC2EngAWFfgxbIWTzpfO4cxB6FzZ44=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=oLK1UBMfeYWQKHziJOMQRMOzGJoxij5iClwpnN1q1dhXsC4ug8kDEVzB2clQiTXgY5qb9HYSb3NxImVVPlQyiVC/yAQO13BzVZiJBnGaTGY3e6ApH7U3L50XggewLCQ5LH6cqQX3yzIu0CzCu9XnMjryZ5HHV3zqKPbcOPbgEUNNl6/hAFtr4xfhl6XG1ToJszn8aA/kHwpq8NxhqMEDXPhGtIMcYrkOuLemTeHJvqZi0vXM/aGnj4BXJTIJl9fA1ZEna/mmoZMRZ+BpivT3INLJlXZqEDPbEIEGGtRTSrA2Wh7iG6ZLuKRtx+TswxZcsCKaBLfDYM7EpQLsVQMcIQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1719007836; bh=eVyNnyzdgTy49bWrcLkx/0jZM++O2wdu6nB73AljJwS=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=iu0C5x1mpU+SZGKu6lRWE/oUQyQEfk160dCCB+CB4l72ztDOYAc4BlHfOh+uedkEWD/DWAeMLpC79cMkmYnFUfTukSr+c5dQbTixfbixqXU5csX0322D0LokPk07RGpIWOia4jr3p4suJvPXa4iKLzEsHI0Jdah8r1a0AVRhPPH+sTWy2wVugwbkS1OGm9e/ZcpsJd+WlcPV8yBfNLzwS0cyCWaI5YEQScWxXHFJD3hf03K3XwNJ5gV2qzC0aWDgmYJtRQ0ZFmeclqZO2QlkxyCJMBYApXnNaeHoYqoCA8wev/h0kpVRPip5Bm6DHlb8MTxjr98LfpiQTKaVpHZ7Bw==
-X-YMail-OSG: xHIJgvYVM1l_e5pHrqiy_yh8PxQUmnnZNw03DwldaoYhvIGtjxoRyA1hUkbJVF2
- SyOTADNPwKlhsH4_83zkPIKbRq.Q0DDQVZXhiAYJiSXcCpI4pkxrfdfI3vWbH_etfKHXhHTVjZSE
- HA9zfNysDePb7ZPyH_ti6YBa2UBkPKPpnnvew_UvKOdqFRm71QQRYfAegjLsmc9dSBpn_3HWkfhq
- 2x0HKa_ysth7HW2P1UYkZvIszKuYDsub_iF_rSh8nYr65Q1fDLOSK9UpkwRw1a12c3eFmJlbg0gG
- Ps.qhuEdAr69Y3LbxLYIrKwm1QmlWSyFaCxW4GRYkAmyhSzc8GD..EoXavTvvE8fvz8AAOZYWO2Q
- o3oiK8stAertTzEtGqR0VWSFo1XxCDtA2Im6C9LiZ99jz75WJ.24MDm1a5yBTXJFqFBe0p13NiRI
- laAyoDkDOk1F11Zw.0bvEP5UrWMudvqUqBMOcoVmVQHQCeUBz8ignD9gGW8tWJmNH5YIn9OL1EAC
- sLK6kt9hL_Pg00d2R.TgEfim0FuBicqwA1PecLiM4YD_llWpfGSbZ1LIDtys8G2TXmDsA52XupJx
- PMZjxcX8z7U_Z4l19e7ijxZrDfSkg02CsUczSeAbhYVo.NUZLs_Rb6nmI.15KZLAmHmqd_xQlpSE
- HmNNwR.v7AxvawVtBWhMpYm4Fien70j10RRBAXyJ3xDHBseTIV7f_f1eAJzEQfKRtHy1jSFI_5O6
- 9W4ox2yyxPEAeIyvRTDJ3DpJXsE_QCHuPUaY23.mIkOVS6vbqAUc6Jes1P2vRpSC2fto3GRdtTCt
- BuaJOI1owyBSFNasUaLZb3jT1bVk.4EKVT2a56pf.sHQCSbSxXgGi6aJ0BJffqA2gp_i8u1oSZ3f
- 6N.WKA.hUb2iRQ7lBTIaV.2JXAVAuRJdP0_rCTSyDr443NZTQ_GHzuY3STxDEXNsHP2BX2lIa2JT
- UPUwrhHrgTQGt40I8FtCXt0fPc.do3fDAEvnbMj3yd5kzy34.U2DukQcJ3ykWDIRnZKgwaQBFlbT
- 2SPn6B6Yfte1JmW9oVQBt6Bcr0eQv.Jwsjrus0mnWb1DVqrjLzOZuLMlwC3u0oxqaRTJfpvyZcQD
- k_bAPui8HfxrlGg_yH.wqVeDrUAvUUuOv66uKwagBp2Eyl_eVayXfj3f2RzP2xxd8enU.owi.whw
- 4j1OiGmAUtbNINy3mzjjRpaIQoFuR577yzUkFvYzKka61bZN61J_YbfDuPhwUlBePngWeWdasony
- XyvXRR9ac5F2y3agMebnLJSGv0E0n1RJurZ12HYCGD_mRUNfVTw_vyGNYReqT.7d32FalsrkhXNM
- YE7X70zZYy.QvxBzsj9hBywvB1wAn131GV3nDNvyu03jd9V32qpkMJUAeZ2O0s36i_sjiky2RBnE
- IR9_V9wk3p3jbdJ7umKG0BtTNjwHO2yc.K1TxmSmTGg.YyAgWznGK4qarj.5z_LAWmyAVyNnpFVI
- EUIeRBnK.jdm.oeBa_etlm.RFulscNElPDHZJaIfhlqoxSiSf0pApy_vsW756ibuOUjqt9RIaFfy
- FiaURzn6l_1w4u6FvRoYbgGCOW1tSciD3ceLtTOCX_0Az.et8w67gzyvtLQ9wApkF8Pru3jCYO3U
- SqnGkd1jqaq.D.BWNalIaF3QkpLZor5mF09f1GiHTJTmQLzRtdMbbmXBF6cDdoHhmBSgAFBWvScq
- b.DzMpIcEfNHzmK.O17slhHyZ_jfQFXwhAIJAbifTkTVWxx.PwMVxHWIpeLuhEukWJgfAF8Off20
- VCejX_LNPVoO5MDUVNnB.UeFvWep7en17N7Y6GMQ3jmJWoF7EUmjPdDrF.JPqiWCXfeksdI5Cwfx
- oKAkT7Eci3JBKS0SDAE9z3tItrRYpvceo37.dySQuLtrLhJa0ImT69QsKnCtTEo95RjTqcDKLJL0
- dxMhgkNhQdt3.dTjhhaQdvRTgawMLhdFz5vaILGYncO00Zy03VhwmPwkoaYJG2GlPcd.flgMobOs
- 3tsHIk32BxbadWd5a5QpKTxIP9VT4cScMqPZr0iu.ikEYWkmxj15JdbnXchSsW7B_J_QDOGtprtl
- bKecFPJEE5a1OCuLLQKrB1xulpgMCgz24Ns60rT13dXBf4iSvPUG_fruCb1xupgZhY4HVVIHS0uD
- SHd1H0ZWEvi9xgJFapzZbp_zTk1SpF3cNUx3FPJc6.k7Y2YYZ2rba22bJEOwnDg5Y6dpidlYfXBz
- YOknam3R1lChQ7W0ePQWNYxezpArxdnk8PnmZkKVtSmrwCXzeAxdoz3O1wLXzb.2IT3Ln8viyS9w
- -
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 40e448d0-786a-4711-84b1-e00c610a0ba3
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jun 2024 22:10:36 +0000
-Received: by hermes--production-gq1-5b4c49485c-75jqb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fa3be147b3108ab3bb88dd26f261d3a7;
-          Fri, 21 Jun 2024 22:00:25 +0000 (UTC)
-Message-ID: <2cddc480-f911-44e3-b415-33e0cec2964c@schaufler-ca.com>
-Date: Fri, 21 Jun 2024 15:00:22 -0700
+	s=arc-20240116; t=1719007438; c=relaxed/simple;
+	bh=VJPBx5efPOq30t+7qwsRircNZM52T3GKxalqnCPh2ug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VHKIvKqBorKCiz9SYVQ/7iIvt/1luIf1VvsI4Xz+5RLhxLM199hZ96bCLtB9kxMIa4RlXuUEJV2hoL/J41bfLCdxYOs+/f2mGUbKnj8jO/2SmJhXfmrpFvuPwVVo8hI76p7+gDET6j0uqY9S69fVgnt8Qxz7+8HtISRTZpmCVm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DAE6TQs/; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6fe617966fso1264166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:03:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1719007434; x=1719612234; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q7VevD/tun51OukWgbAoZ4Cm2u23YTJzraHYAs/IYAE=;
+        b=DAE6TQs/RQCNJqTW9yXsdCcDGA3UGeh4GUOb6Y9VUM7UPPbdWo2d93fYNmp3wNIahY
+         CggDgCYq7v3xH4P6IUoEBFVzOoecUhlHe0jIhOLARSM1SwxvjfV+sX3tNa8hl8SZ4+mm
+         i7z7+KJStDA/UTGyELXDRuGDVoCRlsBafX25E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719007434; x=1719612234;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q7VevD/tun51OukWgbAoZ4Cm2u23YTJzraHYAs/IYAE=;
+        b=OZ1VG/qZawVAO2eozCzNBZCVEQz4rlWX1fH93kgtMh9O/ew48iS2vg2MmF0qQnAK64
+         Ci9Y2Qu0RMLAOqowgF9MOEUzufAgCCLjXh7ALrGp4vPuDxmgCpedqEQV5W3R8f4Bz/5m
+         5yNcPMGs9ckG92KdnujMTowS4E0cS8ls4bHKAa9pBjp+ZH158MhLOhHUvkvj1lRpwC1e
+         2rljZtHF3sLcueDb5oAz6zJ2Z2wNDnEqRn5XefjS4DVppsyQ33Z/tmEayJwMtFRUKAcI
+         YHqNfhcHPhkbjHeiWk0Z8E7PFcBQeP19AHuOvuhWkllFBfVywgqiOh855LVTMl02ntwM
+         zSaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTdMagxhZ7zceS1IiTBB8GjN1kDyynePByx8l/WADyXQrqJMfUV5FjT9u71fJa2bacLm1DVyEvC3Hthu+XKDoJFi9qZVU+OP2xnugR
+X-Gm-Message-State: AOJu0YzEypbzmUkWJz/ap3p9De9BRgef1lAIEnVIyYDAGz0g++yV1NBT
+	JQp8HYkGrQWxxzg7rg/at/IEvbo+MpfjQe39urdw5NLYZzfIpn1i6VWBLkFWaJOyR2xzxz49MJb
+	24fxV3w==
+X-Google-Smtp-Source: AGHT+IFVSpXNfpmO6FuysIOMzuv9mXJwq3AIxUxD/bdN66yT+TY/eSwGCUpDm7q++8QDgTSZmN7Ekw==
+X-Received: by 2002:a17:906:5944:b0:a6e:f646:6fdb with SMTP id a640c23a62f3a-a6fab7d6cf8mr558880766b.72.1719007433933;
+        Fri, 21 Jun 2024 15:03:53 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48b47fsm124921466b.59.2024.06.21.15.03.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 15:03:53 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57d07464aa9so2305553a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:03:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXGARtKJObKoVXyswBQLd9FsnPMqsCNj8lg5mPc6uzHUohTed2rbyb++D7p/0qP3knuNj/AHSUZi1Wu1yUtWTUZRxFURy/2QCsbTvoG
+X-Received: by 2002:a50:d613:0:b0:579:e7c5:1001 with SMTP id
+ 4fb4d7f45d1cf-57d07e6f4ecmr5627181a12.23.1719007432440; Fri, 21 Jun 2024
+ 15:03:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] LSM, net: Add SO_PEERCONTEXT for peer LSM data
-To: Paul Moore <paul@paul-moore.com>
-Cc: LSM List <linux-security-module@vger.kernel.org>, netdev@vger.kernel.org,
- linux-api@vger.kernel.org,
- Linux kernel mailing list <linux-kernel@vger.kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
- <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
- <c59a4954-913b-4672-b502-21aa683d7cdb@schaufler-ca.com>
- <CAHC9VhRjbWuFeprjNP3r7tU27cW6bEZytWq-3XTjzoN7Ki-zzQ@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhRjbWuFeprjNP3r7tU27cW6bEZytWq-3XTjzoN7Ki-zzQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <317d2de5fdb5e27f8f493e0e0ad23640a41b6acf.camel@HansenPartnership.com>
+In-Reply-To: <317d2de5fdb5e27f8f493e0e0ad23640a41b6acf.camel@HansenPartnership.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 21 Jun 2024 15:03:35 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whEQRH6eS=_JwanytAKERuWO1JQdzRb4YiLK4omzL2J-Q@mail.gmail.com>
+Message-ID: <CAHk-=whEQRH6eS=_JwanytAKERuWO1JQdzRb4YiLK4omzL2J-Q@mail.gmail.com>
+Subject: Re: [GIT PULL] SCSI fixes for 6.10-rc4
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-scsi <linux-scsi@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/21/2024 12:41 PM, Paul Moore wrote:
-> On Fri, Jun 21, 2024 at 12:06 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 6/20/2024 2:05 PM, Paul Moore wrote:
->>> On May 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> ..
+On Fri, 21 Jun 2024 at 14:16, James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
 >
->>>> +/**
->>>> + * security_socket_getpeerctx_stream() - Get the remote peer label
->>>> + * @sock: socket
->>>> + * @optval: destination buffer
->>>> + * @optlen: size of peer label copied into the buffer
->>>> + * @len: maximum size of the destination buffer
->>>> + *
->>>> + * This hook allows the security module to provide peer socket security state
->>>> + * for unix or connected tcp sockets to userspace via getsockopt
->>>> + * SO_GETPEERCONTEXT.  For tcp sockets this can be meaningful if the socket
->>>> + * is associated with an ipsec SA.
->>>> + *
->>>> + * Return: Returns 0 if all is well, otherwise, typical getsockopt return
->>>> + *         values.
->>>> + */
->>>> +int security_socket_getpeerctx_stream(struct socket *sock, sockptr_t optval,
->>>> +                                  sockptr_t optlen, unsigned int len)
->>>> +{
->>>> +    struct security_hook_list *hp;
->>>> +
->>>> +    hlist_for_each_entry(hp, &security_hook_heads.socket_getpeerctx_stream,
->>>> +                         list)
->>>> +            return hp->hook.socket_getpeerctx_stream(sock, optval, optlen,
->>>> +                                                     len);
->>>> +
->>>> +    return LSM_RET_DEFAULT(socket_getpeerctx_stream);
->>>> +}
->>> Don't we need the same magic that we have in security_getselfattr() to
->>> handle the multi-LSM case?
->> Yes. I would like to move this ahead independently of the multi-LSM support.
->> Putting the multi-LSM magic in is unnecessary and rather pointless until then.
-> Starting with the LSM syscalls, I want any new user visible API that
-> can support multiple LSMs to have support for multiple LSMs.  Yes, the
-> setselfattr API doesn't support multiple LSMs, but that is because we
-> agreed there was never going to be a way to safely support that usage.
-> In this particular case, that same argument does not apply, we could
-> have multiple LSMs returning a socket's network peer information (even
-> if we don't currently see that), so let's make sure our API supports
-> it from the start.
+> Two fixes: one in the ufs driver fixing an obvious memory leak and the
+> other (with a core flag based update) trying to prevent USB crashes by
+> stopping the core from issuing a request for the I/O Hints mode page.
 
-OK. I'll put that in v2 as well.
+Honestly, this mode page issue seems to happen every single time
+somebody adds a new query.
 
->
-> Unrelated to the above, it would also be good to datagram support as a
-> patch 2/2 thing in a future version of this patchset.  Please be
-> careful not to carry over the mistakes we made with SCM_SECURITY (see
-> the GH discussion linked below).
+Can we place just make the rule be that new mode pages are opt-in, and
+*NOT* this kind of broken "opt-out several months later when we
+noticed that it inevitably caused problems"?
 
-That's "in my queue". I didn't want to spend time on it until I got
-feedback on this one.
+Because if it isn't some mode page that we have already used for
+years, it clearly isn't *that* important.
 
->
-> * https://github.com/SELinuxProject/selinux-kernel/issues/24
->
+I'd like to note that the wikipedia page for SCSI mode pages doesn't
+even mention 0a/05, and I had to go to some SCSI command document on
+seagate.com to find it.
+
+The only other hits on the first page of google? Linux kernel discussions.
+
+That should give people a big heads up that "maybe this thing isn't
+very common or commonly known about"?
+
+Which in turn should be a big damn hint to not query it by default.
+
+I've pulled this, but let's aim for this being the LAST TIME we add
+some idiotic query for a magical mode page that is mentioned on page
+413 in an obscure document, and that didn't exist ten years ago.
+
+Because at this point, blaming "some USB devices" for not reacting
+well to it is kind of silly. This isn't our first rodeo. You should
+have known about this.
+
+Maybe add a BIG COMMENT in sd_revalidate_disk() to not read random
+code pages willy-nilly.
+
+Not that people read comments, but maybe it will remind somebody that
+we've done this before, and it never works.
+
+I mean, we literally have this comment for just checking the read-only bit:
+
+                 * First attempt: ask for all pages (0x3F), but only 4 bytes.
+                 * We have to start carefully: some devices hang if we ask
+                 * for more than is available.
+
+and that's a mode sense command that is at least mentioned on the
+wikipedia page.
+
+(And no, I don't consider wikipedia to be somehow special or
+authoritative - but it's at least a sign of "does anybody know about
+this thing?")
+
+             Linus
 
