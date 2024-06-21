@@ -1,151 +1,125 @@
-Return-Path: <linux-kernel+bounces-224314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 002E491209C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:31:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637519120B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE68F288920
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:31:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F4ED282634
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22FE16EB59;
-	Fri, 21 Jun 2024 09:30:58 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6B216E894;
+	Fri, 21 Jun 2024 09:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ppa1S6Pz"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528D51422D5;
-	Fri, 21 Jun 2024 09:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1F278C8D;
+	Fri, 21 Jun 2024 09:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718962258; cv=none; b=W/Y1U1BcxT9VTkNj/S5AoVtGd6IQFvVLt3jsvK7bikD0b0VXSdzSl15KCubFnpnqCL10Ht8zPs0JmltQ3dHk00rdGO52rWd2SqPDiSAVrKeFiQhIvl82IEhrrjctRG7skwPCO2ei0a/5+DO0naU84f+wuaecaqP5NFYixecxWek=
+	t=1718962441; cv=none; b=oz2ClLCCVFZ9D+cm97zh0tJ4vvHnP7nCObCynWrvFUvKRJEtEbIWstEmp6r/z8uwLVyHBR3qVoY8EkZ8e1nPKx+3sDJu3MUAkibzUEifZ4G9bi/LHBy9vgQAcqsGbpZDQ+jjJDNTJ6Y6Ft4oPxNxvtrhvtgV28RtdaNF/O+cDds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718962258; c=relaxed/simple;
-	bh=knU0U978+YFGwVxRaxVg7IzrQTXS7X/L6fDq3g53y7E=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LlKUXlHi3VZZA+YH3SNEH+JQfGGg4XTi13Fa+YVPseCX+E9uOhLmzeAKfAkZmYYjjydzEQcFemFf1P53bKWqRuDJ049aVN4+boEya1HVnM3fhD2v78/WAmRT7pM7f6O60nBH9OoCWJh136FItqnQSY2LONSg3e8vq/e/h2SOpoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W5BrY6bzFz6K8wb;
-	Fri, 21 Jun 2024 17:29:17 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 66279140C72;
-	Fri, 21 Jun 2024 17:30:52 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Jun
- 2024 10:30:51 +0100
-Date: Fri, 21 Jun 2024 10:30:50 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>, "Rafael
- J. Wysocki" <rafael@kernel.org>, Shiju Jose <shiju.jose@huawei.com>, Tony
- Luck <tony.luck@intel.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>, "Alison Schofield"
-	<alison.schofield@intel.com>, Ard Biesheuvel <ardb@kernel.org>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ira Weiny
-	<ira.weiny@intel.com>, Len Brown <lenb@kernel.org>, Shuai Xue
-	<xueshuai@linux.alibaba.com>, <linux-acpi@vger.kernel.org>,
-	<linux-edac@vger.kernel.org>, <linux-efi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] efi/cper: align ARM CPER type with UEFI
- 2.9A/2.10 specs
-Message-ID: <20240621103050.00004ec0@Huawei.com>
-In-Reply-To: <d808b8b76c58054ccd4a8c49dcc2d23fee5ed397.1718906288.git.mchehab+huawei@kernel.org>
-References: <cover.1718906288.git.mchehab+huawei@kernel.org>
-	<d808b8b76c58054ccd4a8c49dcc2d23fee5ed397.1718906288.git.mchehab+huawei@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718962441; c=relaxed/simple;
+	bh=UQtLFqj0hfhWLB4hel6J1+AjzvJGftbnprF84jEbx1E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SJq+ceIX2IjfRN0fYjOf/65kSmqtrm5mvWButCY+LVX4RXTetItU3T/pS001XwMdWnfHf2T10joeLs8mvgKKJpCXcj5newoxox5a2oyYvCSyyboFc5jl2jaSoGLkZTd9/GGudPEI5ZyrAnvSZqcgLh1gvnzsM4cLcsC9byBKaBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ppa1S6Pz; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70436048c25so1801123b3a.0;
+        Fri, 21 Jun 2024 02:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718962439; x=1719567239; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6EuLE0zsm5KH8c0x8QdqGW/DlRecU3YrYL3GIe8b3zw=;
+        b=Ppa1S6Pz75E8D3TuSQdNicEkKuI3spY5mBGsO1uiStWGfvlb3gEnI2k6MB8rBJXINN
+         bqcWu+x01ipXhttrU3UTJrSGBvozLf9dhnPa/b577ixOB1VTNnwHoGh/HC9szbyY2xsy
+         V4K1ZDUigf/s8HI2JKlCyn29o5Ky9Jfwew55MlXlOskK5aSI0onKdmYxUjPW3M0Gby1Z
+         WZbdaiJP9YIY2xg4jc+hrTFlfahf91EvR3Q+DN/a8lgVfm4bcm7v5czS8vDoAeeVZ6Fg
+         tOmwN6w/ARb9jIq18Qd8o/t2Wj28pOQneN92Gamte08nsHbwkZr/4zriA5jHceBM0oIe
+         +bag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718962439; x=1719567239;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6EuLE0zsm5KH8c0x8QdqGW/DlRecU3YrYL3GIe8b3zw=;
+        b=TgM05U2jVk1OOZadb7c4l2mBnWY5i+0qMAImwSYyJqlCbgYZVhN3RcZEgV7TtOFhjn
+         JrwIkXcKq1bzqhSXXJmZA+y7h3WUhP/KCq2j38D6PeoevMxIHG03f4dTMEA6G/QgnHfe
+         9P8HncjLugpuRNTgJnfOWYa28W5/a9BeEdGtCI1NpDg26H5zeF88X4fMNI20evJ2DnSx
+         2Nj1JgM7Oh21s27Zc0s0EWE8XQsFaIyTHkuMCDXmtSRWEN25kO/GtF3omi6vEgTJjK4r
+         xukXNWwEeE9oGUP7wYwqzNUFMFP6OSYjN0/JMnnKuYONVM8Q5Dopc5mhjhPOYFUDEweQ
+         5nFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9agp4Ly+7RfwAZ3u+dbFq9wpADZRq1W5AQH6J0fniY+eB8ETbTki9SQ4J6/cs2LaVpLg/5zSWf67Er9AvxJkibmjwr8X+ajueh5RVQac83rL75i9Pma35Mya8squoRMXBCqMMr2hCFiVzxpKaITUc/9I+vPheRkbwLGwFkUApLMzvaC0=
+X-Gm-Message-State: AOJu0Yzo0uMv05qLAdsTQxQOuYeOy6lPDAImL1WLVjrFYOOe+itPH6Py
+	SYpPwNUXSp2pLuyQA/ANFtKtfmPXDJQdP3mMUYZ1PQ3Y+NlULjqM
+X-Google-Smtp-Source: AGHT+IGqbYxg7cu+HPCe8VWGFd/57+AVyKBihDN8pav/FDazcA3yRQCWyOHk5hXwaIUXi2kEcRMoJA==
+X-Received: by 2002:a05:6a20:3aaf:b0:1b4:cd5f:4e0a with SMTP id adf61e73a8af0-1bcbb3e0e03mr7220194637.13.1718962438881;
+        Fri, 21 Jun 2024 02:33:58 -0700 (PDT)
+Received: from localhost.localdomain (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbc72e9sm9810365ad.296.2024.06.21.02.33.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 02:33:58 -0700 (PDT)
+From: Potin Lai <potin.lai.pt@gmail.com>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>
+Cc: linux-aspeed@lists.ozlabs.org,
+	openbmc@lists.ozlabs.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Patrick Williams <patrick@stwcx.xyz>,
+	Cosmo Chou <cosmo.chou@quantatw.com>,
+	Potin Lai <potin.lai@quantatw.com>
+Subject: [PATCH v4 0/2] add ast2600 NCSI pin groups
+Date: Fri, 21 Jun 2024 17:31:40 +0800
+Message-Id: <20240621093142.698529-1-potin.lai.pt@gmail.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-On Thu, 20 Jun 2024 20:01:46 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+In the NCSI pin table, the reference clock output pin (RMIIXRCLKO) is not
+needed on the management controller side.
 
-> Up to UEFI spec, the type byte of CPER struct for ARM processor was
-> defined simply as:
-> 
-> Type at byte offset 4:
-> 
-> 	- Cache error
-> 	- TLB Error
-> 	- Bus Error
-> 	- Micro-architectural Error
-> 	All other values are reserved
-> 
-> Yet, there was no information about how this would be encoded.
-> 
-> Spec 2.9A errata corrected it by defining:
-> 
-> 	- Bit 1 - Cache Error
-> 	- Bit 2 - TLB Error
-> 	- Bit 3 - Bus Error
-> 	- Bit 4 - Micro-architectural Error
-> 	All other values are reserved
-> 
-> That actually aligns with the values already defined on older
-> versions at N.2.4.1. Generic Processor Error Section.
-> 
-> Spec 2.10 also preserve the same encoding as 2.9A
-> 
-> See: https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-information
-> 
-> Adjust CPER and GHES handling code for both generic and ARM
-> processors to properly handle UEFI 2.9A and 2.10 encoding.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+LINK: [v1] https://lore.kernel.org/all/20240613080725.2531580-1-potin.lai.pt@gmail.com/
+LINK: [v2] https://lore.kernel.org/all/20240620012512.3109518-1-potin.lai.pt@gmail.com/
+LINK: [v3] https://lore.kernel.org/all/20240620084337.3525690-1-potin.lai.pt@gmail.com/
 
-I think you can avoid complexity of your masking solution.
-Cost is we don't have that function print that there were reserved bits
-set, but that could be easily handled at the caller including notifying
-on bits above the defined range which might be helpful.
+changes v3 --> v4:
+- remove pin list in dt-bindings commit message
+- add note in dt-bindings document to descript the reason of adding NCSI
+  groups
 
-> diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-arm.c
-> index d9bbcea0adf4..4c101a09fd80 100644
-> --- a/drivers/firmware/efi/cper-arm.c
-> +++ b/drivers/firmware/efi/cper-arm.c
-...
+changes v2 --> v3:
+- fix commit message typo
+- move dt-bindings patch forward
 
->  	if (error_info & CPER_ARM_ERR_VALID_PROC_CONTEXT_CORRUPT) {
-> @@ -241,6 +232,7 @@ void cper_print_proc_arm(const char *pfx,
->  	struct cper_arm_err_info *err_info;
->  	struct cper_arm_ctx_info *ctx_info;
->  	char newpfx[64], infopfx[65];
-> +	char error_type[120];
->  
->  	printk("%sMIDR: 0x%016llx\n", pfx, proc->midr);
->  
-> @@ -289,9 +281,11 @@ void cper_print_proc_arm(const char *pfx,
->  				       newpfx);
->  		}
->  
-> -		printk("%serror_type: %d, %s\n", newpfx, err_info->type,
-> -			err_info->type < ARRAY_SIZE(cper_proc_error_type_strs) ?
-> -			cper_proc_error_type_strs[err_info->type] : "unknown");
-> +		cper_bits_to_str(error_type, sizeof(error_type), err_info->type,
-> +				 cper_proc_error_type_strs,
-> +				 ARRAY_SIZE(cper_proc_error_type_strs),
-> +				 CPER_ARM_ERR_TYPE_MASK);
+changes v1 --> v2:
+- add NCSI pin group in dt-bindings document
 
-Maybe drop this mask complexity and just use
-FIELD_GET() to extract the relevant field with no shift from 0.
+Potin Lai (2):
+  dt-bindings: pinctrl: aspeed,ast2600-pinctrl: add NCSI groups
+  pinctrl: aspeed-g6: Add NCSI pin group config
 
+ .../bindings/pinctrl/aspeed,ast2600-pinctrl.yaml       |  7 +++++++
+ drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c             | 10 ++++++++--
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
-> +		printk("%serror_type: %s\n", newpfx, error_type);
->  		if (err_info->validation_bits & CPER_ARM_INFO_VALID_ERR_INFO) {
->  			printk("%serror_info: 0x%016llx\n", newpfx,
->  			       err_info->error_info);
-
+-- 
+2.31.1
 
 
