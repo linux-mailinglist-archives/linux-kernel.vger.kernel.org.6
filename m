@@ -1,157 +1,109 @@
-Return-Path: <linux-kernel+bounces-224322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD8F9120C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:37:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB2D9120C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDBB4B2333F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:37:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93C7E1F23B1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C04416EB55;
-	Fri, 21 Jun 2024 09:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED9016E895;
+	Fri, 21 Jun 2024 09:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="UTGblEpV"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A7McZitc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nkbfNvaj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF82216E885;
-	Fri, 21 Jun 2024 09:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF33B1C02
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718962612; cv=none; b=a19w2cbfDa+xu4AursrYpsWm3ijQtjDyjunCcFQUS2y4UWWfNrlJvvfVgMbi7bo+g8cvcHAd9PlKbU4vDE7i1aGOYKvuE7oE2DKPeuPyDkVFHw6Be3HerxZfFTFioeUd31dkGwOdFiWr/Su25TxKn4aUPcKExsMQR+NN8LIfbr8=
+	t=1718962677; cv=none; b=RsD/g3oj3QmsNdfyl9ayPUY7KLjV2gHDUALtkkOMMezhRCmKR6H/wlhrBGaJN+uBfwF+GQqYfObF2MEbop5gwqa8cEPFTofEN2yUM6aAoNyWZ3FimOx8wLODj43z5553XUlJhZXA0jenoDATQH8ULU44vvVet5MhzKjN8wwhNuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718962612; c=relaxed/simple;
-	bh=ylbZICfxbniUhJiXjboEvGYMsTr7jOnhrJ7HtvySKxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FtPeS7depQo2oVXDlK+y6L/ccqMlRk3h2rqNREio6ugQl0MxjmSzQTfm4ueoxiTB89JehWJsMaJqkS+k3WhACfBMEizcC7EBXW49CJmrGs/zU34KVAW1cqNQzQ41hBKLuiqhZFFGpebgJQOvHJAuapaQTZB6lZ8jrqSOr151Qhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=UTGblEpV; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Envelope-To: daniel@makrotopia.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1718962608;
+	s=arc-20240116; t=1718962677; c=relaxed/simple;
+	bh=KVJZo+2Hq8SQGkCmhtfuKpFH5c+yIZcNIezdL4bB2fc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F9gkpC52IlfgTZNOS+wZ3/z9qo3ftSoMUXG2GZVF7GGMXjznVI1DtEZhLS4X2qozGQxQP8pjeGpI8+JkL3fzFfT0RavsFRrOo89JI3rgGx1B/+MDGZIwdml+at/3YMOiWZc54tdLa4LvAxrUh89ZD6Dni7zCXUG/WpHCi6n0DW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A7McZitc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nkbfNvaj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718962674;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7tocwp9lNfOnGFlQhgrKD+Lp7CcVz+tHpAKPZsWSJzg=;
-	b=UTGblEpVdd3T+psQYU9COc2q3jV5L5PhuGGv2162hEoex83pduUNObt1D5UEm/fv7Jj39H
-	cgAwnVpYY54HNcEc7qlPAM6jZ6Ullzwc6AQ4ltqbeeyOJYvuRSLFWsdXtPknfR8ZPQdtkq
-	6g44YJSyOaDW8mAL+EdmTlOwzzog1LMdMLho/hYfSqHpwPj/I66Bxc6x/s0gnmNPdis+Y1
-	VYBwo4Kpkw+msHIBUTxd9Dygl1SIgx1QZWIyWytFO73/7YptRo//l8XkyrvdPjZ1Yv1mP7
-	KjrYoFl4Y1h8FJveU68MBYGwtSJ3GBQozEwb+NlcqOFR8Yrr8GsRJ8ItLGoWNg==
-X-Envelope-To: aurelien@aurel32.net
-X-Envelope-To: olivia@selenic.com
-X-Envelope-To: herbert@gondor.apana.org.au
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: krzk+dt@kernel.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: heiko@sntech.de
-X-Envelope-To: p.zabel@pengutronix.de
-X-Envelope-To: ukleinek@debian.org
-X-Envelope-To: sebastian.reichel@collabora.com
-X-Envelope-To: linux.amoon@gmail.com
-X-Envelope-To: dsimic@manjaro.org
-X-Envelope-To: s.hauer@pengutronix.de
-X-Envelope-To: martin@kaiser.cx
-X-Envelope-To: ardb@kernel.org
-X-Envelope-To: linux-crypto@vger.kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: daniel@makrotopia.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Daniel Golle <daniel@makrotopia.org>,
- Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>,
- Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Anand Moon <linux.amoon@gmail.com>, Dragan Simic <dsimic@manjaro.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>,
- Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Daniel Golle <daniel@makrotopia.org>
-Subject:
- Re: [PATCH v3 3/3] arm64: dts: rockchip: add DT entry for RNG to RK356x
-Date: Fri, 21 Jun 2024 11:36:45 +0200
-Message-ID: <5870442.3KgWVfgXFx@bagend>
-Organization: Connecting Knowledge
-In-Reply-To:
- <bd08c142ce6b32cd98014c875c7ccf3657c63f23.1718921174.git.daniel@makrotopia.org>
-References:
- <cover.1718921174.git.daniel@makrotopia.org>
- <bd08c142ce6b32cd98014c875c7ccf3657c63f23.1718921174.git.daniel@makrotopia.org>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ImW1blG59sHAp+VqsRI4ftejETb/hMrEEkAXhK7LQ3A=;
+	b=A7McZitcq4gwWzPMT/AI9tVl0HAb4es33LbSttDHihvwHOJM5Eej/64/xT9e92IfFfEKtc
+	yjXk4+p1mzbUlnYHjj/nJ1+IVw8cRQ6vDCVfkRYch5qsFg6A5wcFk1yRZDtkxX4h9eBrgC
+	x+p+dc2E0V80ZyX+IzwcBe/MO+9cVhhUrTwajzJsLcTjZjkj8vQkNHBwc30Nqm1WBn7qDZ
+	4ENegoiwocZAs1L3egaBvPySSW3fCb3UNyFxuwSFkBKJsFDedmfhhatbjzRrMJ1/Z57QQR
+	oMNXBWiYuDKPzeRSBvPm3TEm/lnjEUD6L17g4YTCj93VBqgYxY02WHgG82ahlQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718962674;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ImW1blG59sHAp+VqsRI4ftejETb/hMrEEkAXhK7LQ3A=;
+	b=nkbfNvajJtYcDQBfzwP/wvYVgQdN/8UKfxVi6+mN5X5ed7yq/6zpvMvUy553u3DZkURLIq
+	jSnDPtnqoeDrabAw==
+Subject: [PATCH 0/3] timer_migration: Fix a possible race and improvements
+Date: Fri, 21 Jun 2024 11:37:05 +0200
+Message-Id: <20240621-tmigr-fixes-v1-0-8c8a2d8e8d77@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2326598.u92GhurISB";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMFJdWYC/x3LQQqAIBBA0avIrBOcwYK6SrQIHW0WWWhEEN49a
+ fn4/BcKZ+ECk3oh8y1FjtSAnQK3rSmyFt8MZMiagVBfu8SsgzxctCfXYyCLo3XQjjPzH9owL7V
+ +KAmKtl0AAAA=
+To: Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Narasimhan V <Narasimhan.V@amd.com>
 
---nextPart2326598.u92GhurISB
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-Cc: Daniel Golle <daniel@makrotopia.org>
-Date: Fri, 21 Jun 2024 11:36:45 +0200
-Message-ID: <5870442.3KgWVfgXFx@bagend>
-Organization: Connecting Knowledge
-MIME-Version: 1.0
+Borislav reported a warning in timer migration deactive path
 
-On Friday, 21 June 2024 03:25:30 CEST Daniel Golle wrote:
-> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> b/arch/arm64/boot/dts/rockchip/rk356x.dtsi index d8543b5557ee..57c8103500ea
-> 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> @@ -1855,6 +1855,15 @@ usb2phy1_otg: otg-port {
->                 };
->         };
-> 
-> +       rng: rng@fe388000 {
-> +               compatible = "rockchip,rk3568-rng";
-> +               reg = <0x0 0xfe388000 0x0 0x4000>;
-> +               clocks = <&cru CLK_TRNG_NS>, <&cru HCLK_TRNG_NS>;
-> +               clock-names = "core", "ahb";
-> +               resets = <&cru SRST_TRNG_NS>;
-> +               reset-names = "reset";
-> +       };
-> +
->         pinctrl: pinctrl {
->                 compatible = "rockchip,rk3568-pinctrl";
->                 rockchip,grf = <&grf>;
-> --
+  https://lore.kernel.org/r/20240612090347.GBZmlkc5PwlVpOG6vT@fat_crate.local
 
-I had placed the node between ``sdhci: mmc@fe310000`` and
-``i2s0_8ch: i2s@fe400000`` which I think is the proper order.
+Sadly it doesn't reproduce directly. But with the change of timing (by
+adding a trace prinkt before the warning), it is possible to trigger the
+warning reliable at least in my test setup. The problem here is a racy
+check agains group->parent pointer. This is also used in other places in
+the code and fixing this racy usage is adressed by the first patch.
 
-Cheers,
-  Diederik
---nextPart2326598.u92GhurISB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+While working with the code, I saw two things which could be improved
+(tracing and update of per cpu group wakeup value). This improvements are
+adressed by the other two patches.
 
------BEGIN PGP SIGNATURE-----
+Patches are available here:
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZnVJrQAKCRDXblvOeH7b
-biBSAQCMa4hNIGCHuiNhbaI8GKE6K+tGfAz4PV8PCWjZL2SX8gEAp/afD39PReUl
-9q2MBI5TXF+g0+JU6oBWjxcSlvzXcAw=
-=IJaH
------END PGP SIGNATURE-----
+  https://git.kernel.org/pub/scm/linux/kernel/git/anna-maria/linux-devel.git timers/misc
 
---nextPart2326598.u92GhurISB--
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
 
+Thanks,
 
+Anna-Maria
+
+---
+Anna-Maria Behnsen (3):
+      timer_migration: Do not rely always on group->parent
+      timer_migration: Spare write when nothing changed
+      timer_migration: Improve tracing
+
+ kernel/time/timer_migration.c | 55 ++++++++++++++++++++-----------------------
+ kernel/time/timer_migration.h | 12 +++++++++-
+ 2 files changed, 36 insertions(+), 31 deletions(-)
 
 
