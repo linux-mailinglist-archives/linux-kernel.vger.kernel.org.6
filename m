@@ -1,130 +1,194 @@
-Return-Path: <linux-kernel+bounces-224415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E450912219
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:18:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55997912215
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3C47B22FF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D370287D64
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495B317164B;
-	Fri, 21 Jun 2024 10:16:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0991175561;
+	Fri, 21 Jun 2024 10:16:29 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49FD16DEA8
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC41171068;
+	Fri, 21 Jun 2024 10:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718965003; cv=none; b=K3iQJKer4Hklb3FA3gEz1Z5bEuHPzS7YEx57UNIWDBPxPy7Bdg8U4eLJTPgSjJrlI4MXC0pB79+jckpXzTpSocvtrDOUoY6JrXfNQgozbXuVRav43ZonQulEHCQq7YagynHh+0Jtc7gZ9ENir2gjs8W3D2AxrwL15edVDTItYqU=
+	t=1718964989; cv=none; b=Dk9r/iFeb6M584HiKBEOPy8P636x+B9FtWwtH0JxpbzIzWINAD9bsfb1awyties8waGZGa4AMDrz7FnjIn03dI+tHlBgOqW3AQVVBUQvc+D/qyGKIsJtmRPki6SnbTDzJL6kKybZ10GOeT2Yyyoph02L/V+Z7mPFonpgLU5be18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718965003; c=relaxed/simple;
-	bh=z/vMJ/233cW88QFWLyoyAyDnxzzbRSS6ywN0tB7Mq3o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=U01UgG48ipc+XrM/yOtmZnEzPx68r2JxoFYdg4NNhVUFOZ2guicfaGajbYbWRtaeGbYCgBeDYVIkfgy4nN1W5XuNIiQ2PskaIP4IarD1aSx0glIbP5TjtHHVNz2XtH5gQE58TsbSNGN8/Ffbibb0NvB//2Fv3yiO6UwU7qEj2wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sKbJb-0000u2-Ur; Fri, 21 Jun 2024 12:16:19 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sKbJZ-003uxc-IY; Fri, 21 Jun 2024 12:16:17 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sKbJZ-0006sF-1W;
-	Fri, 21 Jun 2024 12:16:17 +0200
-Message-ID: <4530ebe947b3754dd03b3614bc805195dd69db2e.camel@pengutronix.de>
-Subject: Re: [PATCH 04/17] reset: core: add get_device()/put_device on rcdev
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Herve Codina <herve.codina@bootlin.com>, Thomas Gleixner
- <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lee Jones
- <lee@kernel.org>,  Arnd Bergmann <arnd@arndb.de>, Horatiu Vultur
- <horatiu.vultur@microchip.com>,  UNGLinuxDriver@microchip.com, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Saravana Kannan <saravanak@google.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Lars Povlsen <lars.povlsen@microchip.com>,
- Steen Hegelund <Steen.Hegelund@microchip.com>,  Daniel Machon
- <daniel.machon@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Allan Nielsen
- <allan.nielsen@microchip.com>,  Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?ISO-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>
-Date: Fri, 21 Jun 2024 12:16:17 +0200
-In-Reply-To: <20240430083730.134918-5-herve.codina@bootlin.com>
-References: <20240430083730.134918-1-herve.codina@bootlin.com>
-	 <20240430083730.134918-5-herve.codina@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1718964989; c=relaxed/simple;
+	bh=tvFkEouXFKKtc7kniYd3ifcNhvOpKScmMlR6pCekqn0=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WmljYqYxDfZtKORhIs5eMtinJEVH/unOblUjth4EdhrSRSFKFR13auVprXDXUlkw2vICIc3DUdULIgDjLNohzY/EsBwdvfvokt8K24h7WHqXFClT1fXWdU8mSedpfcKxLDDsSXkMnBQa/ujxt0lJmAOHqh/6/SAVq+ItfSFLrt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W5Cny0SG2z1SCyb;
+	Fri, 21 Jun 2024 18:12:06 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 851E618001C;
+	Fri, 21 Jun 2024 18:16:23 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 21 Jun 2024 18:16:22 +0800
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <imx@lists.linux.dev>,
+	<kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] perf: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Frank Li <Frank.li@nxp.com>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	Yicong Yang <yangyicong@hisilicon.com>
+References: <20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <6d9e17f7-80e6-e616-d3b8-719de73875f3@huawei.com>
+Date: Fri, 21 Jun 2024 18:16:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20240620-md-drivers-perf-v2-1-1f88f8a08e48@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-On Di, 2024-04-30 at 10:37 +0200, Herve Codina wrote:
-> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
->=20
-> Since the rcdev structure is allocated by the reset controller drivers
-> themselves, they need to exists as long as there is a consumer. A call to
-> module_get() is already existing but that does not work when using
-> device-tree overlays. In order to guarantee that the underlying reset
-> controller device does not vanish while using it, add a get_device() call
-> when retrieving a reset control from a reset controller device and a
-> put_device() when releasing that control.
->=20
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+On 2024/6/21 9:46, Jeff Johnson wrote:
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/fsl_imx8_ddr_perf.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/marvell_cn10k_ddr_pmu.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/arm_cspmu_module.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/nvidia_cspmu.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm_cspmu/ampere_cspmu.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
+> 
+> This includes drivers/perf/hisilicon/hisi_uncore_pmu.c which, although
+> it did not produce a warning with the x86 allmodconfig configuration,
+> may cause this warning with arm64 configurations.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  drivers/reset/core.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index dba74e857be6..999c3c41cf21 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -812,6 +812,7 @@ __reset_control_get_internal(struct reset_controller_=
-dev *rcdev,
->  	kref_init(&rstc->refcnt);
->  	rstc->acquired =3D acquired;
->  	rstc->shared =3D shared;
-> +	get_device(rcdev->dev);
->=20
-
-Looks good to me, but can we put this right after the try_module_get()
-above ...
-=20
->  	return rstc;
+> Changes in v2:
+> - Updated hisi_uncore_pmu.c description per Yicong Yang
+> - Link to v1: https://lore.kernel.org/r/20240611-md-drivers-perf-v1-1-c001bae6da5c@quicinc.com
+> ---
+>  drivers/perf/arm-ccn.c                   | 1 +
+>  drivers/perf/arm_cspmu/ampere_cspmu.c    | 1 +
+>  drivers/perf/arm_cspmu/arm_cspmu.c       | 1 +
+>  drivers/perf/arm_cspmu/nvidia_cspmu.c    | 1 +
+>  drivers/perf/cxl_pmu.c                   | 1 +
+>  drivers/perf/fsl_imx8_ddr_perf.c         | 1 +
+>  drivers/perf/hisilicon/hisi_uncore_pmu.c | 1 +
+>  drivers/perf/marvell_cn10k_ddr_pmu.c     | 1 +
+>  8 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
+> index 86ef31ac7503..65f4882531db 100644
+> --- a/drivers/perf/arm-ccn.c
+> +++ b/drivers/perf/arm-ccn.c
+> @@ -1561,4 +1561,5 @@ module_init(arm_ccn_init);
+>  module_exit(arm_ccn_exit);
+>  
+>  MODULE_AUTHOR("Pawel Moll <pawel.moll@arm.com>");
+> +MODULE_DESCRIPTION("ARM CCN (Cache Coherent Network) driver support");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/perf/arm_cspmu/ampere_cspmu.c b/drivers/perf/arm_cspmu/ampere_cspmu.c
+> index f146a455e838..426b3cfcb52e 100644
+> --- a/drivers/perf/arm_cspmu/ampere_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/ampere_cspmu.c
+> @@ -269,4 +269,5 @@ static void __exit ampere_cspmu_exit(void)
+>  module_init(ampere_cspmu_init);
+>  module_exit(ampere_cspmu_exit);
+>  
+> +MODULE_DESCRIPTION("Ampere SoC PMU (Performance Monitor Unit) driver");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/perf/arm_cspmu/arm_cspmu.c b/drivers/perf/arm_cspmu/arm_cspmu.c
+> index c318dc909767..c21c564840d6 100644
+> --- a/drivers/perf/arm_cspmu/arm_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/arm_cspmu.c
+> @@ -1427,4 +1427,5 @@ EXPORT_SYMBOL_GPL(arm_cspmu_impl_unregister);
+>  module_init(arm_cspmu_init);
+>  module_exit(arm_cspmu_exit);
+>  
+> +MODULE_DESCRIPTION("ARM CoreSight Architecture PMU driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> index 5b84b701ad62..0dea47e48ac5 100644
+> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> @@ -417,4 +417,5 @@ static void __exit nvidia_cspmu_exit(void)
+>  module_init(nvidia_cspmu_init);
+>  module_exit(nvidia_cspmu_exit);
+>  
+> +MODULE_DESCRIPTION("NVIDIA Coresight Architecture PMU driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/perf/cxl_pmu.c b/drivers/perf/cxl_pmu.c
+> index 1f93a66eff5b..8b6ce9ea5a55 100644
+> --- a/drivers/perf/cxl_pmu.c
+> +++ b/drivers/perf/cxl_pmu.c
+> @@ -972,6 +972,7 @@ static __exit void cxl_pmu_exit(void)
+>  	cpuhp_remove_multi_state(cxl_pmu_cpuhp_state_num);
 >  }
-> @@ -826,6 +827,7 @@ static void __reset_control_release(struct kref *kref=
-)
->  	module_put(rstc->rcdev->owner);
-> =20
->  	list_del(&rstc->list);
-> +	put_device(rstc->rcdev->dev);
+>  
+> +MODULE_DESCRIPTION("CXL Performance Monitoring Unit driver");
+>  MODULE_LICENSE("GPL");
+>  MODULE_IMPORT_NS(CXL);
+>  module_init(cxl_pmu_init);
+> diff --git a/drivers/perf/fsl_imx8_ddr_perf.c b/drivers/perf/fsl_imx8_ddr_perf.c
+> index 1bbdb29743c4..a6683b38315c 100644
+> --- a/drivers/perf/fsl_imx8_ddr_perf.c
+> +++ b/drivers/perf/fsl_imx8_ddr_perf.c
+> @@ -850,4 +850,5 @@ static struct platform_driver imx_ddr_pmu_driver = {
+>  };
+>  
+>  module_platform_driver(imx_ddr_pmu_driver);
+> +MODULE_DESCRIPTION("Freescale i.MX8 DDR PMU driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> index 6392cbedcd06..0ac5182a5e45 100644
+> --- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> @@ -537,4 +537,5 @@ void hisi_pmu_init(struct hisi_pmu *hisi_pmu, struct module *module)
+>  }
+>  EXPORT_SYMBOL_GPL(hisi_pmu_init);
+>  
+> +MODULE_DESCRIPTION("HiSilicon SoC uncore PMU driver framework");
 
-... and this right before module_put()?
+Reviewed-by: Yicong Yang <yangyicong@hisilicon.com> # for HiSilicon PMU
 
-regards
-Philipp
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/perf/marvell_cn10k_ddr_pmu.c b/drivers/perf/marvell_cn10k_ddr_pmu.c
+> index e2abca188dbe..94f1ebcd2a27 100644
+> --- a/drivers/perf/marvell_cn10k_ddr_pmu.c
+> +++ b/drivers/perf/marvell_cn10k_ddr_pmu.c
+> @@ -763,4 +763,5 @@ module_init(cn10k_ddr_pmu_init);
+>  module_exit(cn10k_ddr_pmu_exit);
+>  
+>  MODULE_AUTHOR("Bharat Bhushan <bbhushan2@marvell.com>");
+> +MODULE_DESCRIPTION("Marvell CN10K DRAM Subsystem (DSS) Performance Monitor Driver");
+>  MODULE_LICENSE("GPL v2");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240611-md-drivers-perf-5d834208964d
+> 
+> .
+> 
 
