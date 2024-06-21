@@ -1,427 +1,262 @@
-Return-Path: <linux-kernel+bounces-224372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BFE91217D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:05:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E355D91218E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79391C224E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:05:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BA25B2332B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D345171079;
-	Fri, 21 Jun 2024 10:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BCF171E40;
+	Fri, 21 Jun 2024 10:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSOXbhtb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SFkmZ9Gh";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="mQ1/5ukf"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2459716EB6D;
-	Fri, 21 Jun 2024 10:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718964313; cv=none; b=YqJIct9sHG8gLhmdXy6TTv/dk8pHQATeAiXZrhyeR4BtRuEhKjsyFtfKromtfGy44CaUK1i9qXCHz4YIEmKBhZozTtVeXjREOyx0yAECbIydmMuF2U506I11nL5aullkMQctgFJpBx1ZT9agyeBsfBAleaZnA/G6kRJLedz48Qw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718964313; c=relaxed/simple;
-	bh=sWooJUNnSRTxZaphXkNkS4PHKpxvylR8017xEvjmVTo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kk2Zsl+FU+a9RemZq1krDQBSdus1h+dxvjdYQIeeeB3zG7J83O/pinQXMKC7yaiiMpWVtYzDv9etYaBatsToz0zrD1uBItNenmZgOK4czhGYMgyarCMQCoe7J2JdriE45LIM1HF3pyhAwu78zyW9hvgMstWEhEp4iTLqWAEdExw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSOXbhtb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 857F4C4AF08;
-	Fri, 21 Jun 2024 10:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718964312;
-	bh=sWooJUNnSRTxZaphXkNkS4PHKpxvylR8017xEvjmVTo=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=VSOXbhtbI8XUEtiujkkmCHEn2uIXfgznyRGR9aV94a/ippMZJYHPlVIHXdb2huCpx
-	 6S2eVWywRBKpEGgm5PjVHXzzd9DY4PU0AZiMn9vlngP19Gd9k8V/TdUSNXDf4Q0zGW
-	 WuYTbQQENYV6EJK75Hxq5b5nemh7xJiv7Mr5u/4SZW1c2656fXC3aM+70xl99tqbeU
-	 wwgr7KtYbnRefB9osmwBy7e4I14WUSdAmT6tV3bJJL2dXzqkt5TLEEE6KMB4BR1pOp
-	 Wg6dS+4i1dGj5m1UOZTi+dNidbcEqj6M6pC26vieY+k+RF/QCqJtqFe6CxdllGzMUq
-	 aj18SdEOU8tLA==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so19840071fa.3;
-        Fri, 21 Jun 2024 03:05:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX+RrWs1+pc7hbPuYIgBu9UiOiSb+endDE9ztHYmUDxHFbMWZ2Yan2D+wKvoeL6DWk/hrfsUnvK3RzniCX01eGRA1b0nQRB/98sRYr/nXEEhHk8y+hMym+Gkw8atk3vz1s5xSLqtEdyTbt4xaS1+Bv0VYlLw5abVVwgXyCWWtQZrZ/1SJKu8g==
-X-Gm-Message-State: AOJu0Yxlhyel3oB5HMRISmsMD/fIhkrmYV1Vp0wrhzoVeoLRS9+OwZz4
-	KJSmN6d2gaYZma2xYYHh7CXP2leYJpi9B4F++94jMfp9bMkJteefUZxhFN7uD1bp2Tyrgbz6szl
-	YnoSo3RPNt97F/tAkoXd8aCxoUrw=
-X-Google-Smtp-Source: AGHT+IG0/TKUdLOJXVBxNUhWdxczbTTZyRwZYLSRed8/6CELFGOI4aCq3MuLoVJkEn+d7Fh05SdBmvc3Ckl0Rmk2h6o=
-X-Received: by 2002:a2e:9098:0:b0:2ec:165a:224a with SMTP id
- 38308e7fff4ca-2ec3cfe69a9mr52136071fa.36.1718964310821; Fri, 21 Jun 2024
- 03:05:10 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EE7171062;
+	Fri, 21 Jun 2024 10:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718964381; cv=fail; b=Ec53cfGKMQ9yh+F+zHKla3Vcfq08BCCMgl/XOHtIHWqr84pMbEz5Ufhtrs9ZVh8RNpkbb6l2SCa8hXlBuy6XZTdOD1a8Cd0IdGr1Un8xCvbMy/i9GO0JOtYRYK4fzNNkIaaYg4Jf+MRhx//9jilSPuB4rmCNso86tR7Laudo4fI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718964381; c=relaxed/simple;
+	bh=HngHPCaEepxjXAGlXFJEL4o5XWv16tVNk3NcIb0bW1U=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ktnh06p/dy29De0/ByzaJ9KVg9R8nS2DcXIkOn2oroQg4nOSmJDHqtLZoCNBUlmL1hTXcdtwJC5D7Hgg0M60C60ZaJMkgyJnSffCohBR8JjZv6KXwalBhCBTO3+/JNRHL45YBRljY8rutC8Z2Xt5jE6o0deh8JFEB0GZ9uhpATw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=SFkmZ9Gh; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=mQ1/5ukf; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L7fQNi018887;
+	Fri, 21 Jun 2024 10:06:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:content-transfer-encoding
+	:content-type:mime-version; s=corp-2023-11-20; bh=PRQhDbayiJgP9y
+	zhCFFENHgIHSKaDfPn3Gd+8TIju6k=; b=SFkmZ9Gh7CQOXS/QEvaAkiasF+27yx
+	TPOSge4I1TKEYtszN8WzcDKgsqI9wNsPMNBpnRRAGwrwniaqq3rUXCNbnwTIFwj7
+	IZIBznHPaE2bo2Hc+GyBZt9i4htF2vKFe1T4uyTJfXs82SkpsENPNKIuXwgWt59u
+	V4gvBw7SZJvSBIOdMkQJLS7Hby9kb7r6AiHtrYGyXaTRqrG3u1az3SMdVt6ceWgP
+	wUQ4YXsuWsvmlkPWswBFoAlLhdQjMRUBsXnyAr+nQmZoUAN4fpULGdfTmJ1T1NcQ
+	i0Ok+U2dvK1EmuBCJu9ijZ/8JBEo9IJUlU1pzy4bH0SzQ4vCFizbQ59A==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yvrkfsee6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Jun 2024 10:06:03 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45L8nh5j025177;
+	Fri, 21 Jun 2024 10:06:02 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3yvrn5wc8p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Jun 2024 10:06:02 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jgdCxcZvsmyo+L2ddtSH2vNYQt29FYoO83oa38y9LsXhIkG3vvqD339u4LAp9Ueege9+MSXtCMti7Qlfn3bPQ6g6EU3wuceqTcr4B930u3A+OoCPd8mkNX8oCGICjPmKhtvttqksgxPJx1p/vUBnatyNXrcFG+3HxNgn+UvrgOqna8FflsqzhFCCVGU21IFGaUZCGYCfAIKiKsNvBhOTlQmZGGpTLWBq/7p9dJ2fbhqHF1QB035TBDow4eNlc0jwvv4hnE8/3OHZCtXCJ4DW6z5zi7tNq/PX9HDbJ2JnO0xoH2tRGK4UuXtxUZ0SimB5VdOq3E7xlbXWxbu/gl05lA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PRQhDbayiJgP9yzhCFFENHgIHSKaDfPn3Gd+8TIju6k=;
+ b=PzUY8l1YL20LUWSx3i3Gnf87qRlfkh7D8454EnqXY7Ohg1BruKDEh1Gohq3nON9Vm4NJvWkLah4A5xpqmKWmOjOQYNYfHIde7yE+Lcnmp1h57IbD6e0iiJcgGRHsm+ZhvGS4g2reRFqt5NqegQQ9SnpHtxaY7VoTs5Y9EWhTV/iiPXcamS4H59NudBG4sf+p2euSiPP08Baiik9l2ZXsUR0dOl394rMmWhZ8GNbTjW1jTOvYSRBcPRG8E21VHenXFMMqtdP7MGsz3wFp/bHaLI9iGyU3JeM9IV1je+8DUAAlmE44rUeQJ4uG9MlYswU/dwM0DTw0YwgeiTX0OxLSWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PRQhDbayiJgP9yzhCFFENHgIHSKaDfPn3Gd+8TIju6k=;
+ b=mQ1/5ukfCrkcoIkvtMGP8Caw+uL3VseIc/uah22tg1MHqX1nsXIgqEfsSt7gyqIrI5BV2Q0y7EakO4eWIHpFhbUMSF5Ck4OMtekTPA8XQWZMAvRDKUeOpfn0Ql6fr3Sn1EE/F3WBG2ttMCN0Od8LtBlC5NvLnorzsVELrW1GcUM=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CH3PR10MB6884.namprd10.prod.outlook.com (2603:10b6:610:145::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Fri, 21 Jun
+ 2024 10:06:00 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.7698.020; Fri, 21 Jun 2024
+ 10:06:00 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: chandan.babu@oracle.com, djwong@kernel.org, dchinner@redhat.com,
+        hch@lst.de
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+        martin.petersen@oracle.com, John Garry <john.g.garry@oracle.com>
+Subject: [PATCH 00/13] forcealign for xfs
+Date: Fri, 21 Jun 2024 10:05:27 +0000
+Message-Id: <20240621100540.2976618-1-john.g.garry@oracle.com>
+X-Mailer: git-send-email 2.31.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MN2PR15CA0024.namprd15.prod.outlook.com
+ (2603:10b6:208:1b4::37) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1718921174.git.daniel@makrotopia.org> <57a7fb13451f066ddc8d1d9339d8f6c1e1946bf1.1718921174.git.daniel@makrotopia.org>
-In-Reply-To: <57a7fb13451f066ddc8d1d9339d8f6c1e1946bf1.1718921174.git.daniel@makrotopia.org>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 21 Jun 2024 18:04:58 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67nETGOHj4dWbZE1AWHOpVA58-votveV7Q=bP7eTjFQdA@mail.gmail.com>
-Message-ID: <CAGb2v67nETGOHj4dWbZE1AWHOpVA58-votveV7Q=bP7eTjFQdA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@debian.org>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Anand Moon <linux.amoon@gmail.com>, 
-	Dragan Simic <dsimic@manjaro.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CH3PR10MB6884:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81874d83-1bd6-4c95-d6fa-08dc91d9c098
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|376011|366013;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?wJB2/vBNpcCjSmYf0B2V1q92BqvW6W49sdNpz2Eh3ebhb82c2Ly/mWtOtmSs?=
+ =?us-ascii?Q?u/7Th6wY/XSVQ41W4ddEI5UeclogTodM90/DVL8FUPxuyxPDv7OzORM9gln5?=
+ =?us-ascii?Q?WP4TKZAWT2b/oLExrZykInPWNJfMIe92Opns/WMXxjPrsIrCzKvTUqr3gzHb?=
+ =?us-ascii?Q?0WdV6KqFiDmY0sTFN5QIvmZO2HhUhnw4MuYZIvYzMztLaoUEmsjfPGagbhVx?=
+ =?us-ascii?Q?Rl21qQ2NgL7qdzRXxyiIFdyFZQmvvfsIbC2Kguf6g9vyKNvx/oGtuNmHbp4O?=
+ =?us-ascii?Q?PY264vcn6zlpMK4wFbhh7UwhOaIzE8EqzDxjHnqib4di9J/3WZ85ttnTyIhh?=
+ =?us-ascii?Q?VyGBiLGLqjdWfsw0fI2poO84fniFRVVeAh2i5F5MrXhpVsPJ+l852nrRfiSs?=
+ =?us-ascii?Q?zFisi4AoKQaUDZ/BDEn1e6jB67GGJIGOVBVmWqqx74K9Bs7OiSSrnuw8346w?=
+ =?us-ascii?Q?cAZaLhOFIVxAYlYdR+PMT4BhsZUlv5bHoY26RQkeWYjaRkHXLv93YDI80ipT?=
+ =?us-ascii?Q?L/oZGmo6e/mnZ9BCf2kZ27ypC0L1dKs0UGljA39BRQg0Q4JFkGxwirPuJvY+?=
+ =?us-ascii?Q?Ys3pE40aeWsLx0iVUucZ4mRMDuzuUig2C562YREsVRefOf0DC6yW/W8oYDyE?=
+ =?us-ascii?Q?ZhHcfhQ+nuqRNBYr36IKnqXzpk1Kc+z6rgzV/Hxlmx4L3b8WMCjU25xCeLRi?=
+ =?us-ascii?Q?4SZQQYalaBg7gwpC2uNUwrm4C+hjtSPx0x49U9aFrnwL1kjDSlvSbxpTk0/6?=
+ =?us-ascii?Q?LYwBgDRLTvNSIRziaP9RdH3F0O/ahp+GxLiPkzUm30y6NC4DuzZDUck8JAXi?=
+ =?us-ascii?Q?vBZIldg+bBmrzU7G4g+t8kEaGkMjiRU/I1Q8N5jX+GM/Gal+nDmhJ0DMzLZF?=
+ =?us-ascii?Q?1uc1RZoX/z8w1B+SbtQs+H94LFymncBm9oaRq7Rv2t5cOwccyWO4q7l2jWIO?=
+ =?us-ascii?Q?YfCkteXqDQFf+4o0u2MsOTeBp46bNJzSk2IdmA8iDYHAevTlQitslyZ9IWP/?=
+ =?us-ascii?Q?QwHm8HvlLuvk/gOR0/t4VBiW7s6GlIFDlJWD9FjY0EetpMqdrx2Nj5PDGOEb?=
+ =?us-ascii?Q?Lorx1Ibd21rqfTSEWzZuFy6vOSOccKnW0vsNQVZnDHTCBYkg+5MXjJH6i7Lp?=
+ =?us-ascii?Q?ZvqhD6YZKHPJ4O7fAx5YZz3ffEib8nE/eM+Eur7be5hLAJ7bloX8pnMZJTGZ?=
+ =?us-ascii?Q?HA1oDpLRyvy/0XftFPSz3//z4bdFpOM4tXiKW5JXnHr3/WPtmJ04edH1Ozud?=
+ =?us-ascii?Q?7Ukfpwc0+PXHRPb/PMlwWayAKV5SnjqKX7t/FTNlsw=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(366013);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?Up5QwjgF1ZO8zui2QNuvjMTFZNGAn5++q7uQLX5h7owa/vaH5eKjPGBjwZEQ?=
+ =?us-ascii?Q?Ro9KeWHfOxCssbr2jsiENMVe9Hz7ZYwWfluGkbeDNbHlDSGmmy/bvgraTlUL?=
+ =?us-ascii?Q?cIJNWtW0Xg7vZJZTosizQH/ECFbi3e4QddFJtfxcQzYKoLNIVEFw1lU/8tRl?=
+ =?us-ascii?Q?lnAs2HAPcSfgIR4OXE7cb40qebUnm2k4L6Q8v88Aon9T5hp/mV+A9meD2FRZ?=
+ =?us-ascii?Q?8zq9sUpcziNgk4MQ/NGgT501PRZ69WmzxBGJhEQ9cAGAC1SNcGLrP99WJ3KQ?=
+ =?us-ascii?Q?KHviH0aNtuA4AB0EIzCQPFwySuGcD4HBO6lSBSoar8GrjEWK6vkGx9BkT0rt?=
+ =?us-ascii?Q?GVp0pRnfoRLhtCVDCckdHC2zA17nwlNmO7Ipl1MblktHupok4bR+ieYO12+p?=
+ =?us-ascii?Q?cWomoJ02azjL/3+8kjKf2hqK0SBNDauoHdnNsaZiIDDLCG/VU1/vxO6+zetH?=
+ =?us-ascii?Q?XvmsfnY8ZbbGryK0awBA9f0oy+lu9qGTyjh7N1xhHyPgTm5QVByy5JzMfNCu?=
+ =?us-ascii?Q?y+Jtr7gDR5SRzNUQ4+ypYaH2a1/TQqiK9ZY5KMfZeX+y+A65Yi9Hibirooa2?=
+ =?us-ascii?Q?ENfkm3qaOlbvogpGK6ZV2Jptr1HzuqwZ3sFNNCT3Jpy7cOZCilFoLrNDSvO/?=
+ =?us-ascii?Q?z7Eyj83RdzBr/2SQ60uPIUh7PIMWLAvvEBu+Q9+KojooIVJIpks+B+vweE3D?=
+ =?us-ascii?Q?ALwRmNWRufCnMjCTFbGuQ24V1Kk9mTOjB+P9qx+6coq7E7tbnEXz+s53tVVo?=
+ =?us-ascii?Q?SQvHHjohz+lmDUKh+/+Wz9Vy5djw+Yxuh2Foh02PQMkXjm/Extaom4G6IaHB?=
+ =?us-ascii?Q?ccM8CPPiltcZiVwOxVfcsMebPOguTeOIbmydJtISpB1OEQr/9k+tzNtLNPaA?=
+ =?us-ascii?Q?txup+6/7KdvbTVQZW+FwxhGFY0tP8+GtmCBuYpPIrdOamOQOsSjgCGg2hJTn?=
+ =?us-ascii?Q?cd72nBVu6ezZv0FfJpq9VSO+VKeCmMOeecIwcZPkuTS8693HzCYEUdeYK6aU?=
+ =?us-ascii?Q?u/U0gr3QnuorLMx3ZckowuXGus9qLlsXqVF5Wn1RyDqMhYqWyLsb0uNMjpnz?=
+ =?us-ascii?Q?jgxcLLDcPSW8cVJgLkPAAaRL2GrxX1IqVx6BBR902loL03JWMVJce/aUb9JV?=
+ =?us-ascii?Q?VZmvn5lL8tWXNPZ1c+CmBmjFYj2cqTYWg4Aec9iFgg8k/4dFbXxe/yJsnwlH?=
+ =?us-ascii?Q?hNQIuwdnq3ohg8eh6Lx3OtKva6eOUHciqyRNcmS98u2XmGdpu61eLtPU4pzE?=
+ =?us-ascii?Q?JQA/bbgvV2jedho1dN2qYcPEBiDQZUvlhotyJ33Re5+GjYNM2NH4kDqAmyzH?=
+ =?us-ascii?Q?AnvpHRjg8/1SJMus93U/XQ6rzxpQAJxcjDHq9tOiuRjt9qQ+sgWlC+3ZnqcE?=
+ =?us-ascii?Q?HEbKOJpMuGBP2T6JPdXXv3LYglBliXuPv4MOohALnTaZ9jUk3kJ9GZqBy0rR?=
+ =?us-ascii?Q?QydRbwAP980jI0iZXzsiw1oP8Qd88P+J4eei/tQ5Aw2n4OIUv2/Gn5pLfzFH?=
+ =?us-ascii?Q?0H2KDPa61NnYZ3fnXL8Z0fqg8yblzyPuIIMHnZtInyuNTIs7sQ97bkq4VNL+?=
+ =?us-ascii?Q?Mk8qrlh+EuepCxCkoakMplO8+9LocYI+pyzBfe7npCkEOjaX/YZ2KKIlk7G/?=
+ =?us-ascii?Q?bA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	zaOD8VcMg6RFBe7beK28zgatJ/ygj65rNz81tddHd1uHhDTy9Y0Acxjd26WSZT593EG/TdJTDO5AJ5xCtEgzdjdB3wemp+GtpiofI5VwsbpPXjTCglNEZj5BgI1NkVMz/WjjvJWFIuGtL8yrJN8OF2ClN/bCrJdGHOZ24M6+EElbr7qXBGqxBj5StTfF/M7wENAXjaCv5HxK8YosElV5+LAqfxoJnJ/AV0sn0MQOL/xIZotZDyvHuMX7m8XpmI3PfpPHXitLe1E54MIv1OT7yoQ5ECxZzToaOI306+pyuc/7UmHnXMITG8t65GB/8N5hBGKvcH3wgyWYKM5YL41G3JkjNVbD5zvglERxCeKm4f22/v+0jBJq8KWpWqM10vaQGsFhXlYrDP3qxglGMDqiFtB501c9ZfoC9ZPZi9865cMWhSW8mSKv4u0VZ4iQklz3+xzM5GD7EyfzL2oFMlkXzTsr2/eSdh1EDB6LpkW69xuNYym6IVMCa8SpLnH5xtUpo+c5uuGMerM4dhU2p6OXMqDWTH/2T7Vx3lARjecafzmZbQZZ+XPKQ6zKvOkL+QNCIFbNkbNQNpk43kCVVOCx6D1xUgOxAs6Xv7lPXEuAtlM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81874d83-1bd6-4c95-d6fa-08dc91d9c098
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 10:06:00.5973
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PW7qLP+1/4zeFa9ACs8N2ZgDiJuS7QR08CgQwrE0zsoMrnxJcNOL7XakWvdZ+ClQboIWqZn4zxYjQedYN7s/eQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6884
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_04,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 phishscore=0 adultscore=0 malwarescore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2406180000 definitions=main-2406210074
+X-Proofpoint-GUID: 6LXZhQO_ht3Dal4qyE1wz4hidA6nYVwF
+X-Proofpoint-ORIG-GUID: 6LXZhQO_ht3Dal4qyE1wz4hidA6nYVwF
 
-On Fri, Jun 21, 2024 at 9:25=E2=80=AFAM Daniel Golle <daniel@makrotopia.org=
-> wrote:
->
-> From: Aurelien Jarno <aurelien@aurel32.net>
->
-> Rockchip SoCs used to have a random number generator as part of their
-> crypto device, and support for it has to be added to the corresponding
-> driver. However newer Rockchip SoCs like the RK356x have an independent
-> True Random Number Generator device. This patch adds a driver for it,
-> greatly inspired from the downstream driver.
->
-> The TRNG device does not seem to have a signal conditionner and the FIPS
-> 140-2 test returns a lot of failures. They can be reduced by increasing
-> RK_RNG_SAMPLE_CNT, in a tradeoff between quality and speed. This value
-> has been adjusted to get ~90% of successes and the quality value has
-> been set accordingly.
->
-> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> [daniel@makrotpia.org: code style fixes]
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
->  MAINTAINERS                           |   1 +
->  drivers/char/hw_random/Kconfig        |  14 ++
->  drivers/char/hw_random/Makefile       |   1 +
->  drivers/char/hw_random/rockchip-rng.c | 229 ++++++++++++++++++++++++++
->  4 files changed, 245 insertions(+)
->  create mode 100644 drivers/char/hw_random/rockchip-rng.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 77d449c89bf2..299b8c1a5fb5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19493,6 +19493,7 @@ M:      Daniel Golle <daniel@makrotopia.org>
->  M:     Aurelien Jarno <aurelien@aurel32.net>
->  S:     Maintained
->  F:     Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml
-> +F:     drivers/char/hw_random/rockchip-rng.c
->
->  ROCKCHIP RASTER 2D GRAPHIC ACCELERATION UNIT DRIVER
->  M:     Jacob Chen <jacob-chen@iotwrt.com>
-> diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kcon=
-fig
-> index 442c40efb200..2b62cd08f91a 100644
-> --- a/drivers/char/hw_random/Kconfig
-> +++ b/drivers/char/hw_random/Kconfig
-> @@ -573,6 +573,20 @@ config HW_RANDOM_JH7110
->           To compile this driver as a module, choose M here.
->           The module will be called jh7110-trng.
->
-> +config HW_RANDOM_ROCKCHIP
-> +       tristate "Rockchip True Random Number Generator"
-> +       depends on HW_RANDOM && (ARCH_ROCKCHIP || COMPILE_TEST)
-> +       depends on HAS_IOMEM
-> +       default HW_RANDOM
-> +       help
-> +         This driver provides kernel-side support for the True Random Nu=
-mber
-> +         Generator hardware found on some Rockchip SoC like RK3566 or RK=
-3568.
-> +
-> +         To compile this driver as a module, choose M here: the
-> +         module will be called rockchip-rng.
-> +
-> +         If unsure, say Y.
-> +
->  endif # HW_RANDOM
->
->  config UML_RANDOM
-> diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Mak=
-efile
-> index 32549a1186dc..01f012eab440 100644
-> --- a/drivers/char/hw_random/Makefile
-> +++ b/drivers/char/hw_random/Makefile
-> @@ -48,4 +48,5 @@ obj-$(CONFIG_HW_RANDOM_XIPHERA) +=3D xiphera-trng.o
->  obj-$(CONFIG_HW_RANDOM_ARM_SMCCC_TRNG) +=3D arm_smccc_trng.o
->  obj-$(CONFIG_HW_RANDOM_CN10K) +=3D cn10k-rng.o
->  obj-$(CONFIG_HW_RANDOM_POLARFIRE_SOC) +=3D mpfs-rng.o
-> +obj-$(CONFIG_HW_RANDOM_ROCKCHIP) +=3D rockchip-rng.o
->  obj-$(CONFIG_HW_RANDOM_JH7110) +=3D jh7110-trng.o
-> diff --git a/drivers/char/hw_random/rockchip-rng.c b/drivers/char/hw_rand=
-om/rockchip-rng.c
-> new file mode 100644
-> index 000000000000..6070abb73847
-> --- /dev/null
-> +++ b/drivers/char/hw_random/rockchip-rng.c
-> @@ -0,0 +1,229 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * rockchip-rng.c True Random Number Generator driver for Rockchip SoCs
-> + *
-> + * Copyright (c) 2018, Fuzhou Rockchip Electronics Co., Ltd.
-> + * Copyright (c) 2022, Aurelien Jarno
-> + * Authors:
-> + *  Lin Jinhan <troy.lin@rock-chips.com>
-> + *  Aurelien Jarno <aurelien@aurel32.net>
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/hw_random.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
+This series is being spun off the block atomic writes for xfs series at
+[0].
 
-Need to explicitly include linux/platform_device.h for |struct platform_dev=
-ice|
-and devm_platform_iomap_resource().
+That series has got too big and also has a dependency on the core block
+atomic writes support at [1].
 
-> +#include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
-> +#include <linux/slab.h>
-> +
-> +#define RK_RNG_AUTOSUSPEND_DELAY       100
-> +#define RK_RNG_MAX_BYTE                        32
-> +#define RK_RNG_POLL_PERIOD_US          100
-> +#define RK_RNG_POLL_TIMEOUT_US         10000
-> +
-> +/*
-> + * TRNG collects osc ring output bit every RK_RNG_SAMPLE_CNT time. The v=
-alue is
-> + * a tradeoff between speed and quality and has been adjusted to get a q=
-uality
-> + * of ~900 (~90% of FIPS 140-2 successes).
-> + */
-> +#define RK_RNG_SAMPLE_CNT              1000
-> +
-> +/* TRNG registers from RK3568 TRM-Part2, section 5.4.1 */
-> +#define TRNG_RST_CTL                   0x0004
-> +#define TRNG_RNG_CTL                   0x0400
-> +#define TRNG_RNG_CTL_LEN_64_BIT                (0x00 << 4)
-> +#define TRNG_RNG_CTL_LEN_128_BIT       (0x01 << 4)
-> +#define TRNG_RNG_CTL_LEN_192_BIT       (0x02 << 4)
-> +#define TRNG_RNG_CTL_LEN_256_BIT       (0x03 << 4)
-> +#define TRNG_RNG_CTL_OSC_RING_SPEED_0  (0x00 << 2)
-> +#define TRNG_RNG_CTL_OSC_RING_SPEED_1  (0x01 << 2)
-> +#define TRNG_RNG_CTL_OSC_RING_SPEED_2  (0x02 << 2)
-> +#define TRNG_RNG_CTL_OSC_RING_SPEED_3  (0x03 << 2)
-> +#define TRNG_RNG_CTL_ENABLE            BIT(1)
-> +#define TRNG_RNG_CTL_START             BIT(0)
-> +#define TRNG_RNG_SAMPLE_CNT            0x0404
-> +#define TRNG_RNG_DOUT                  0x0410
-> +
-> +struct rk_rng {
-> +       struct hwrng rng;
-> +       void __iomem *base;
-> +       struct reset_control *rst;
-> +       int clk_num;
-> +       struct clk_bulk_data *clk_bulks;
-> +};
-> +
-> +static int rk_rng_init(struct hwrng *rng)
-> +{
-> +       struct rk_rng *rk_rng =3D container_of(rng, struct rk_rng, rng);
-> +       int ret;
-> +
-> +       /* start clocks */
-> +       ret =3D clk_bulk_prepare_enable(rk_rng->clk_num, rk_rng->clk_bulk=
-s);
-> +       if (ret < 0) {
-> +               dev_err((struct device *) rk_rng->rng.priv,
-> +                       "Failed to enable clks %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       /* set the sample period */
-> +       writel(RK_RNG_SAMPLE_CNT, rk_rng->base + TRNG_RNG_SAMPLE_CNT);
-> +
-> +       /* set osc ring speed and enable it */
-> +       writel_relaxed(TRNG_RNG_CTL_LEN_256_BIT |
-> +                      TRNG_RNG_CTL_OSC_RING_SPEED_0 |
-> +                      TRNG_RNG_CTL_ENABLE,
-> +                      rk_rng->base + TRNG_RNG_CTL);
-> +
-> +       return 0;
-> +}
-> +
-> +static void rk_rng_cleanup(struct hwrng *rng)
-> +{
-> +       struct rk_rng *rk_rng =3D container_of(rng, struct rk_rng, rng);
-> +
-> +       /* stop TRNG */
-> +       writel_relaxed(0, rk_rng->base + TRNG_RNG_CTL);
-> +
-> +       /* stop clocks */
-> +       clk_bulk_disable_unprepare(rk_rng->clk_num, rk_rng->clk_bulks);
-> +}
-> +
-> +static int rk_rng_read(struct hwrng *rng, void *buf, size_t max, bool wa=
-it)
-> +{
-> +       struct rk_rng *rk_rng =3D container_of(rng, struct rk_rng, rng);
-> +       size_t to_read =3D min_t(size_t, max, RK_RNG_MAX_BYTE);
-> +       u32 reg;
-> +       int ret =3D 0;
-> +
-> +       ret =3D pm_runtime_get_sync((struct device *) rk_rng->rng.priv);
-> +       if (ret < 0)
-> +               goto out;
-> +
-> +       /* Start collecting random data */
-> +       writel_relaxed(TRNG_RNG_CTL_START, rk_rng->base + TRNG_RNG_CTL);
-> +
-> +       ret =3D readl_poll_timeout(rk_rng->base + TRNG_RNG_CTL, reg,
-> +                                !(reg & TRNG_RNG_CTL_START),
-> +                                RK_RNG_POLL_PERIOD_US,
-> +                                RK_RNG_POLL_TIMEOUT_US);
-> +       if (ret < 0)
-> +               goto out;
-> +
-> +       /* Read random data stored in the registers */
-> +       memcpy_fromio(buf, rk_rng->base + TRNG_RNG_DOUT, to_read);
-> +out:
-> +       pm_runtime_mark_last_busy((struct device *) rk_rng->rng.priv);
-> +       pm_runtime_put_sync_autosuspend((struct device *) rk_rng->rng.pri=
-v);
-> +
-> +       return to_read;
-> +}
-> +
-> +static int rk_rng_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct rk_rng *rk_rng;
-> +       int ret;
-> +
-> +       rk_rng =3D devm_kzalloc(dev, sizeof(*rk_rng), GFP_KERNEL);
-> +       if (!rk_rng)
-> +               return -ENOMEM;
-> +
-> +       rk_rng->base =3D devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(rk_rng->base))
-> +               return PTR_ERR(rk_rng->base);
-> +
-> +       rk_rng->clk_num =3D devm_clk_bulk_get_all(dev, &rk_rng->clk_bulks=
-);
-> +       if (rk_rng->clk_num < 0)
-> +               return dev_err_probe(dev, rk_rng->clk_num,
-> +                                    "Failed to get clks property\n");
-> +
-> +       rk_rng->rst =3D devm_reset_control_array_get(&pdev->dev, false, f=
-alse);
-> +       if (IS_ERR(rk_rng->rst))
-> +               return dev_err_probe(dev, PTR_ERR(rk_rng->rst),
-> +                                    "Failed to get reset property\n");
-> +
-> +       reset_control_assert(rk_rng->rst);
-> +       udelay(2);
-> +       reset_control_deassert(rk_rng->rst);
-> +
-> +       platform_set_drvdata(pdev, rk_rng);
-> +
-> +       rk_rng->rng.name =3D dev_driver_string(dev);
-> +#ifndef CONFIG_PM
-> +       rk_rng->rng.init =3D rk_rng_init;
-> +       rk_rng->rng.cleanup =3D rk_rng_cleanup;
-> +#endif
-> +       rk_rng->rng.read =3D rk_rng_read;
-> +       rk_rng->rng.priv =3D (unsigned long) dev;
-> +       rk_rng->rng.quality =3D 900;
-> +
-> +       pm_runtime_set_autosuspend_delay(dev, RK_RNG_AUTOSUSPEND_DELAY);
-> +       pm_runtime_use_autosuspend(dev);
-> +       pm_runtime_enable(dev);
+The actual forcealign patches are the same in this series, modulo an
+attempt for a fix in xfs_bunmapi_align()
 
-You can use devm_pm_runtime_enable(dev) here and simply get rid of the
-remove function, and also no explicit cleanup needed.
+Why forcealign?
+In some scenarios to may be required to guarantee extent alignment and
+granularity.
 
-> +
-> +       ret =3D devm_hwrng_register(dev, &rk_rng->rng);
-> +       if (ret)
-> +               return dev_err_probe(&pdev->dev, ret, "Failed to register=
- Rockchip hwrng\n");
+For example, for atomic writes, the maximum atomic write unit size would
+be limited at the extent alignment and granularity, guaranteeing that an
+atomic write would not span data present in multiple extents.
 
-This is missing cleanup for pm_runtime_enable().
+forcealign may be useful as a performance tuning optimization in other
+scenarios.
 
-> +
-> +       dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
-> +
-> +       return 0;
-> +}
-> +
-> +static int rk_rng_remove(struct platform_device *pdev)
+Early development xfsprogs support is at:
+https://github.com/johnpgarry/xfsprogs-dev/tree/forcealign_and_atomicwrites_for_v4_xfs_block_atomic_writes
 
-Return type of remove callback has been changed to void. This needs to be
-updated.
+Catherine has been working on a formal version of this support, which
+I need to update to.
 
+Baseline:
+xfs/for-next @ 348a1983cf4c ("xfs: fix unlink vs cluster buffer
+instantiation race")
++ https://lore.kernel.org/linux-xfs/20240528171510.3562654-1-john.g.garry@oracle.com/
 
-ChenYu
+[0] https://lore.kernel.org/linux-xfs/20240607143919.2622319-1-john.g.garry@oracle.com/
+[1] https://lore.kernel.org/linux-nvme/20240620125359.2684798-1-john.g.garry@oracle.com/T/#m4ab84ddd627d95e6e957b62c29bbf815ca6e44e2
 
-> +{
-> +       pm_runtime_disable(&pdev->dev);
-> +
-> +       return 0;
-> +}
-> +
-> +#ifdef CONFIG_PM
-> +static int rk_rng_runtime_suspend(struct device *dev)
-> +{
-> +       struct rk_rng *rk_rng =3D dev_get_drvdata(dev);
-> +
-> +       rk_rng_cleanup(&rk_rng->rng);
-> +
-> +       return 0;
-> +}
-> +
-> +static int rk_rng_runtime_resume(struct device *dev)
-> +{
-> +       struct rk_rng *rk_rng =3D dev_get_drvdata(dev);
-> +
-> +       return rk_rng_init(&rk_rng->rng);
-> +}
-> +#endif
-> +
-> +static const struct dev_pm_ops rk_rng_pm_ops =3D {
-> +       SET_RUNTIME_PM_OPS(rk_rng_runtime_suspend,
-> +                               rk_rng_runtime_resume, NULL)
-> +       SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +                               pm_runtime_force_resume)
-> +};
-> +
-> +static const struct of_device_id rk_rng_dt_match[] =3D {
-> +       { .compatible =3D "rockchip,rk3568-rng", },
-> +       { /* sentinel */ },
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, rk_rng_dt_match);
-> +
-> +static struct platform_driver rk_rng_driver =3D {
-> +       .driver =3D {
-> +               .name   =3D "rockchip-rng",
-> +               .pm     =3D &rk_rng_pm_ops,
-> +               .of_match_table =3D rk_rng_dt_match,
-> +       },
-> +       .probe  =3D rk_rng_probe,
-> +       .remove =3D rk_rng_remove,
-> +};
-> +
-> +module_platform_driver(rk_rng_driver);
-> +
-> +MODULE_DESCRIPTION("Rockchip True Random Number Generator driver");
-> +MODULE_AUTHOR("Lin Jinhan <troy.lin@rock-chips.com>, Aurelien Jarno <aur=
-elien@aurel32.net>");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.45.2
->
+Darrick J. Wong (2):
+  xfs: Introduce FORCEALIGN inode flag
+  xfs: Enable file data forcealign feature
+
+Dave Chinner (6):
+  xfs: only allow minlen allocations when near ENOSPC
+  xfs: always tail align maxlen allocations
+  xfs: simplify extent allocation alignment
+  xfs: make EOF allocation simpler
+  xfs: introduce forced allocation alignment
+  xfs: align args->minlen for forced allocation alignment
+
+John Garry (5):
+  xfs: Do not free EOF blocks for forcealign
+  xfs: Update xfs_inode_alloc_unitsize_fsb() for forcealign
+  xfs: Unmap blocks according to forcealign
+  xfs: Only free full extents for forcealign
+  xfs: Don't revert allocated offset for forcealign
+
+ fs/xfs/libxfs/xfs_alloc.c     |  33 ++--
+ fs/xfs/libxfs/xfs_alloc.h     |   3 +-
+ fs/xfs/libxfs/xfs_bmap.c      | 313 +++++++++++++++++++---------------
+ fs/xfs/libxfs/xfs_format.h    |   9 +-
+ fs/xfs/libxfs/xfs_ialloc.c    |  12 +-
+ fs/xfs/libxfs/xfs_inode_buf.c |  53 ++++++
+ fs/xfs/libxfs/xfs_inode_buf.h |   3 +
+ fs/xfs/libxfs/xfs_sb.c        |   2 +
+ fs/xfs/xfs_bmap_util.c        |  14 +-
+ fs/xfs/xfs_inode.c            |  15 ++
+ fs/xfs/xfs_inode.h            |  23 +++
+ fs/xfs/xfs_ioctl.c            |  47 ++++-
+ fs/xfs/xfs_mount.h            |   2 +
+ fs/xfs/xfs_reflink.h          |  10 --
+ fs/xfs/xfs_super.c            |   4 +
+ fs/xfs/xfs_trace.h            |   8 +-
+ include/uapi/linux/fs.h       |   2 +
+ 17 files changed, 371 insertions(+), 182 deletions(-)
+
+-- 
+2.31.1
+
 
