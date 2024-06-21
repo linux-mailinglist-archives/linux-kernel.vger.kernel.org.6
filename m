@@ -1,61 +1,65 @@
-Return-Path: <linux-kernel+bounces-223955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C74911AFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:11:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79055911B00
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6F51F236B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33AAD2841E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1287147C79;
-	Fri, 21 Jun 2024 06:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D757145FE9;
+	Fri, 21 Jun 2024 06:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tf5NqtGu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElspQL0H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B0712F365;
-	Fri, 21 Jun 2024 06:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F65153BFA;
+	Fri, 21 Jun 2024 06:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718950294; cv=none; b=WZT6VRfYEGX6+i/zrfB9DN7UyOCICR1yascgFYrsT9ZGvkxJmzhceREIuOs2zI8L8Wj0XP01fLPePwfVFsqp9/eoribA8dcy7ziPGa6aKZO8TOFLWwDOs2K1Ddo40f474dLAl/vmG7Z0w2OCrhsrZY56xFmX0phBeYsgUCpyYLc=
+	t=1718950295; cv=none; b=kRkN7fN75ymqqSZSO58yyja+wP2UMGs8Y90Q0oxRjWfM7FdbOZQFnLNblSx+iwEC2aCzn//Pt3weSVHDyIr1ewmXqtxYK7opQS8bXKAisQZEuaCeRLRkghrE6ow1QmhuB/2bP9DjUqf+7lxfSOe1AywUZ/yNhYsZ8r6loEe9XbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718950294; c=relaxed/simple;
-	bh=e0vsw5nwjPnUAuyS8sN1Vi1xOfmaXbEYZAX8tllR9sA=;
+	s=arc-20240116; t=1718950295; c=relaxed/simple;
+	bh=Cml5C1S7f6/nQZnMLFyS7sOsEvX7W1GC/inrEntxftQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SvUOYCKQSzo3XDjyvKW5vUkHbivXQnUiECItY5wCrsjE0bwnsSxpPClCYl08lC8OByiI5bX97qkZzfnKbz7PhnBLEsy4s5L11YW2nM0/Jdd4e9fohJjyVzQ4mhcmo7ljAP31YOOWiZA9B1MMOavZjK6z4lCeX15vvZrbe5P2HxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tf5NqtGu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD318C2BBFC;
-	Fri, 21 Jun 2024 06:11:32 +0000 (UTC)
+	 MIME-Version:Content-Type; b=YNd8Gdn8qLTilaXjI98tvJBp6gvh9UcurgZCB/GXbHXJAxHM+8FlmjrsYlezQgFvrMFnXy5/8EPzYkurA23Eobdh3+iYSWxWuzArNdTYHkZKlurQm1mEBy4KJQq4ut4MP5usGthXWamhm+5ZbncJWQAgT85XAe8WmAajtadvpXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElspQL0H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EEA9C4AF0D;
+	Fri, 21 Jun 2024 06:11:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718950293;
-	bh=e0vsw5nwjPnUAuyS8sN1Vi1xOfmaXbEYZAX8tllR9sA=;
+	s=k20201202; t=1718950295;
+	bh=Cml5C1S7f6/nQZnMLFyS7sOsEvX7W1GC/inrEntxftQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Tf5NqtGumxv2sPWJxBqxTbXUMiFE0tg5++7xp7kL/Mx0TbLGzXR5t46NRUXenwBDT
-	 97pCR4mOgCQIBxcsvY33eI9NXe29h2b0NUU/KXPraECd1WaHcTGNTC1j9PVGPI85PE
-	 lkbSWwzsieKpa8nPkFE3pp0iI6Jjd9P7PQmDQnYOLB2Exlqw45+fYGdX9GRVCTExwv
-	 L01iPYMlsVl1fIdsy7+Q35+U1epU84BJBPyR0eRNeZm/L0BqF0WpDMzCa9NwdCVqy0
-	 FM1S+A8bStyn3qfAIutzcMg5erCSHCQoZ5aHzsneOMkcbAFdReLrZ8KmsHVFLZ61t1
-	 mntTpmNmuAi2A==
+	b=ElspQL0HG1gJGt8TlT9MmebLwlvvghO6OPwtni6rb3gMRDBwH3Nw1VQNVC+Hf1hsC
+	 BntmUg6aEu7d18DMYTZKAd8F1Ov9zvbGjPEbaSOGbiKR/MHwCUr6Fui+lJrQlH609v
+	 IlLicgp+HdAxA0OgzzyHnLvaB+5se294E23r7rP8EzX6FAoZxUdbGJ7v6lZgxanqCP
+	 EvYNgZKgKCjV85N4ELzg6U/BS40uirFDpDeslu5hawYBoNcNiCIde8Pqr6pSSCuMA4
+	 DzRCiYcyn4gJm9OpgWg5cte4pH+opQV85JEcoYrHs0IvJ0LjuYAqMuaxj98ymgV7mU
+	 e9w0CbOa9qe2A==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	linux-phy@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v9 0/4] arm64: dts: qcom: add WiFi modules for several platforms
-Date: Fri, 21 Jun 2024 01:11:15 -0500
-Message-ID: <171895028808.12506.14730340902963805368.b4-ty@kernel.org>
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH v3 0/5] phy: qcom: qmp-pcie: drop second clock-output-names entry
+Date: Fri, 21 Jun 2024 01:11:17 -0500
+Message-ID: <171895028797.12506.8337547267879269845.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240605122729.24283-1-brgl@bgdev.pl>
-References: <20240605122729.24283-1-brgl@bgdev.pl>
+In-Reply-To: <20240614-fix-pcie-phy-compat-v3-0-730d1811acf4@linaro.org>
+References: <20240614-fix-pcie-phy-compat-v3-0-730d1811acf4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,29 +70,26 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 05 Jun 2024 14:27:25 +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Hi!
-> 
-> Here are the DTS changes for several Qualcomm boards from the
-> power-sequencing series. To keep the cover-letter short, I won't repeat
-> all the details, they can be found in the cover-letter for v8. Please
-> consider picking them up into the Qualcomm tree. They have all been
-> thorougly tested with the pwrseq series.
+On Fri, 14 Jun 2024 13:18:23 +0300, Dmitry Baryshkov wrote:
+> While testing the linux-next on SM8450-HDK I noticed that one of the
+> PCIe hosts stays in the deferred state, because the corresponding PHY
+> isn't probed. A quick debug pointed out that while the patches that
+> added support for the PIPE AUX clock to the PHY driver have landed,
+> corresponding DT changes were not picked up for 6.10. Restore the
+> compatibility with the existing DT files by dropping the second entry in
+> the clock-output-names array and always generating the corresponding
+> name on the fly.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] arm64: dts: qcom: sm8550-qrd: add the Wifi node
-      commit: 4908128724491de1feadee87aba9955eccaf5269
-[2/4] arm64: dts: qcom: sm8650-qrd: add the Wifi node
-      commit: a05737bf76316677ae1d7af93df6218dcf1ae494
-[3/4] arm64: dts: qcom: sm8650-hdk: add the Wifi node
-      commit: 4d76a2314810b78b0469c96bcb265af1af7e13a5
-[4/4] arm64: dts: qcom: qrb5165-rb5: add the Wifi node
-      commit: bd37ce2eeb84cd42ec8edebaa3cb8cffade2dc0c
+[3/5] arm64: dts: qcom: sm8450: drop second clock name from clock-output-names
+      commit: 831f66d3423c22457ec1d686e565e152b10fbd91
+[4/5] arm64: dts: qcom: sm8550: drop second clock name from clock-output-names
+      commit: 84ea430eb0719ebe4c423bdc9c92e0f94a46a47e
+[5/5] arm64: dts: qcom: sm8650: drop second clock name from clock-output-names
+      commit: dc323623c3b87c48c99fe8dbbd1962f0129d3da9
 
 Best regards,
 -- 
