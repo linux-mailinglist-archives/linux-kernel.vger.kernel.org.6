@@ -1,156 +1,242 @@
-Return-Path: <linux-kernel+bounces-224359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5274B912150
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:53:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E49291215A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 754881C2392C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:53:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A13881C20CEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1E716F85C;
-	Fri, 21 Jun 2024 09:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04B216F8E8;
+	Fri, 21 Jun 2024 09:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="JfJzCQK0"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EHIAoa68"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498D216EB59
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02A516E87B;
+	Fri, 21 Jun 2024 09:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718963629; cv=none; b=L1jFvZwK+19F3rRh5dBTyoyhAWDOxl55xSzqr++8+ILNcEgRgy7mimzDUjf4b0Jy70A1j04jBMScV8zoop/RuI7dLY21xmMGsYckhYA46BWXhKBv3k5LP661YZkpMn9JQxnJyQKP39bgYBShWSyHxwSu/tnkPpN5jOnEv3J5gr4=
+	t=1718963756; cv=none; b=TkXjwfDnIH7Wl1ph5zTMOzfWUhhEeqtgTaKb8x1B+rZwILdrc9Rpv9Pv0WM6JKsGGRuUXbx72wSqaFkzYXeNTTWRFnMmtYXMXQn+2LUPcYdF9ee88f7c36lvGeNwldeiwluaL6QwYS4C9ICm/LogunNqL5u07VRtOjnHTARik9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718963629; c=relaxed/simple;
-	bh=9X27kAi88t13JEAFL9myOVAMxXzM/vgQYLhQyo43drE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndhRsg+sbdlxWx6ZiTloaGAXvVqvjkQsysVl+nC8IASGJJ5MFfMBKn3hO+VGEBD77JGxHMPCVeWFWUFTZUfURygoC07uk3OsHmPLyooG3AeGjeyoZNGWuEl8Q2ZgXkaSNMqXipzFD9UGQWyZRGUb9Zbf8EElyNFLKWdC65lF/vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=JfJzCQK0; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=RPfT
-	8u6a3+40tK3oCZZfl86nwYXzLiH9ajhehJvBjqs=; b=JfJzCQK0ozaPEuqmU/lq
-	8h/+hfxTrqCfF0yKoNf5BY1by4bKOrS3weHMmmqAD2hCgk9zoWs/etD3B3iTVI7j
-	qYLp9HRiCzt0qgaosA1jZz2oYj33/h4EriTTD0c/ziUWCJgIgiL0QqvVsnxxLbbP
-	Kzj0oF0UdKzsCG2ntXXe/AuL6erfPPSJQA0hdgf8MIPulqO6Umd1GPAWb3bV5ZXj
-	zABGh8fc0vEBOKAddFTf8k9tiLeiINDjk7ViMnMRtndwfdHLilDztl4EKlsKUkOQ
-	sSi9Z+2s9e3UGLXgOt3t0SsCJLfr0Up+yFOuq4MD1+EA3fzcCh+JHh2lS8szanCs
-	ww==
-Received: (qmail 1326092 invoked from network); 21 Jun 2024 11:53:44 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 11:53:44 +0200
-X-UD-Smtp-Session: l3s3148p1@6DcuaGMbKqogAwDPXzjQABqqX1QYyOSW
-Date: Fri, 21 Jun 2024 11:53:43 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Allen Pais <allen.lkml@gmail.com>
-Cc: Aubin Constans <aubin.constans@microchip.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Manuel Lauss <manuel.lauss@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
-	Jaehoon Chung <jh80.chung@samsung.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
-	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, 
-	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3] mmc: Convert from tasklet to BH workqueue
-Message-ID: <gw6adkoy3ndjdjufti2gs2gnk3xdgylt6tnia2zha76hsgdwtq@dr3czbxjij66>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Allen Pais <allen.lkml@gmail.com>, Aubin Constans <aubin.constans@microchip.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Manuel Lauss <manuel.lauss@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
-	Jaehoon Chung <jh80.chung@samsung.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
-	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, 
-	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20240618225210.825290-1-allen.lkml@gmail.com>
+	s=arc-20240116; t=1718963756; c=relaxed/simple;
+	bh=2uvIOYm/6Txt3aNQXCJHHxUsOvqbKc3bO0kcqt5t4o0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dQ9E/SoiRcW5i0q0Ljn4lkMtAdZ0MKJm3qw5dAomH5Ajbvn/CUtUtCvsdB/MoHtc1Czv2qOFI8zQzxgwojjPV55rfrP7sZ5hARFMlxph0gUE6i+3knVPtt8ak75WYnv+F0WrMfDemXXFI69Gbl2BnmquXYc0M6InSi0leAfZZJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EHIAoa68; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L9oWQO006674;
+	Fri, 21 Jun 2024 09:55:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	C7r0iU1QgDXiHzLeAODaeM49VGbxfg8Jjfz3e4wQM0g=; b=EHIAoa68lEPLqNCN
+	62sdCoH09X+OrSriYqZvh66c8566fiYsymgi5imHRKbs0Np+70f9GK/DLYrOqGgK
+	xCCaGszrShk+WPGRXAL5/5gzuZssVzER4yAsipQeItPQvNRQz+frp2yLBqapfutx
+	czFtCjo+sDfISAoRR69SPU1lr4tmS1xEMJLzbssJj/0boTPI5MLESfFZvTJH94aZ
+	dHT9jkJwbJjW/c49yKpbuqaco2UyeIcxXJy5OhNcv4EvcWLss2pcbPiSmuDxHpCT
+	nGW/dk4UkOV3BWBwMyiGieFU1wiffqkNQIWNT6Yz0La0oWz22tTQgCZ8Pya7KWv+
+	rT/lgA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrkkj8p5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 09:55:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45L9tgRM002205
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 09:55:42 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Jun
+ 2024 02:55:34 -0700
+Message-ID: <7c0ca78a-51ea-4421-af95-46f91d1fdbb9@quicinc.com>
+Date: Fri, 21 Jun 2024 15:24:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gq4kufue4w3vtipq"
-Content-Disposition: inline
-In-Reply-To: <20240618225210.825290-1-allen.lkml@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6 3/5] clk: qcom: gdsc: Add set and get hwmode callbacks
+ to switch GDSC mode
+To: Caleb Connolly <caleb.connolly@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Ulf Hansson" <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki"
+	<rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek
+	<pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy
+ Gross <agross@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        "Satya
+ Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20240619141413.7983-1-quic_jkona@quicinc.com>
+ <20240619141413.7983-4-quic_jkona@quicinc.com>
+ <18c0b683-97c8-4d53-9852-840a21c11d9a@linaro.org>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <18c0b683-97c8-4d53-9852-840a21c11d9a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: lVY92_RC4gy1AddugClrJViwzS1DjiS4
+X-Proofpoint-ORIG-GUID: lVY92_RC4gy1AddugClrJViwzS1DjiS4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_04,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1011
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 mlxlogscore=999
+ bulkscore=0 phishscore=0 spamscore=0 malwarescore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406210073
 
 
---gq4kufue4w3vtipq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 6/20/2024 3:40 AM, Caleb Connolly wrote:
+> Hi Jagadeesh,
+> 
+> Sorry, some grammar nitpicks.
+> 
+> On 19/06/2024 16:14, Jagadeesh Kona wrote:
+>> Some GDSC client drivers require the GDSC mode to be switched dynamically
+>> to HW mode at runtime to gain the power benefits. Typically such client
+>> drivers require the GDSC to be brought up in SW mode initially to enable
+>> the required dependent clocks and configure the hardware to proper state.
+>> Once initial hardware set up is done, they switch the GDSC to HW mode to
+>> save power. At the end of usecase, they switch the GDSC back to SW mode
+>> and disable the GDSC.
+>>
+>> Introduce HW_CTRL_TRIGGER flag to register the set_hwmode_dev and
+>> get_hwmode_dev callbacks for GDSC's whose respective client drivers
+>> require the GDSC mode to be switched dynamically at runtime using
+>> dev_pm_genpd_set_hwmode() API.
+>>
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> ---
+>>   drivers/clk/qcom/gdsc.c | 42 +++++++++++++++++++++++++++++++++++++++++
+>>   drivers/clk/qcom/gdsc.h |  1 +
+>>   2 files changed, 43 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+>> index df9618ab7eea..6acc7af82255 100644
+>> --- a/drivers/clk/qcom/gdsc.c
+>> +++ b/drivers/clk/qcom/gdsc.c
+>> @@ -363,6 +363,44 @@ static int gdsc_disable(struct generic_pm_domain 
+>> *domain)
+>>       return 0;
+>>   }
+>> +static int gdsc_set_hwmode(struct generic_pm_domain *domain, struct 
+>> device *dev, bool mode)
+>> +{
+>> +    struct gdsc *sc = domain_to_gdsc(domain);
+>> +    int ret;
+>> +
+>> +    ret = gdsc_hwctrl(sc, mode);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    /*
+>> +     * Wait for the GDSC to go through a power down and
+>> +     * up cycle. In case SW/FW end up polling status
+>> +     * bits for the gdsc before the power cycle is completed
+>> +     * it might read the status wrongly.
+> 
+> If we poll the status register before the power cycle is finished we 
+> might read incorrect values.
 
-On Tue, Jun 18, 2024 at 03:52:07PM GMT, Allen Pais wrote:
-> The only generic interface to execute asynchronously in the BH context is
-> tasklet; however, it's marked deprecated and has some design flaws. To
-> replace tasklets, BH workqueue support was recently added. A BH workqueue
-> behaves similarly to regular workqueues except that the queued work items
-> are executed in the BH context.
->=20
-> This patch converts drivers/mmc/* from tasklet to BH workqueue.
->=20
-> Based on the work done by Tejun Heo <tj@kernel.org>
+Thanks Caleb for your review. Sure, will take care of these comments in
+next series.
 
-Has this been fully build-tested?
+Thanks,
+Jagadeesh
 
-=3D=3D=3D
-drivers/mmc/host/renesas_sdhi_internal_dmac.c: In function =E2=80=98renesas=
-_sdhi_internal_dmac_complete_work_fn=E2=80=99:
-=2E/include/linux/container_of.h:20:54: error: =E2=80=98struct tmio_mmc_hos=
-t=E2=80=99 has no member named =E2=80=98dma_complete=E2=80=99
-=3D=3D=3D
-
-In deed, 'dma_complete' is only in 'struct renesas_sdhi_dma'. From
-there, we can get to the parent 'struct renesas_sdhi' using
-container_of. But then, I don't see a way to go to 'struct
-tmio_mmc_host' from there. The other way around is possible because
-there is the pointer 'struct tmio_mmc_data *pdata' in the TMIO struct
-pointing to the data contained in 'struct renesas_sdhi'. 'host_to_priv()'
-does the math. But I don't see a path the other way around.
-
-So, it doesn't look like the workqueue interface can provide a
-generic pointer like tasklets could do? This means we have to add a
-pointer from 'struct renesas_sdhi' to 'struct tmio_mmc_host'?
-
-All the best,
-
-   Wolfram
-
-
---gq4kufue4w3vtipq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ1TaMACgkQFA3kzBSg
-KbanVQ//dqEZ+e/wVpBJ/SIXoF0cFcPn3VByooLZaUBcc7mmkHJCynUy3IleRLG2
-zyPZXbb4367ZgKpi4MtZ9xFVQB2l1+Vwcag8Si0wn6HT6uJfAZpzICet+yovlam/
-alBGpZQBCQbiRNXakttLhByw9+KHIcQHMQQlsdzW5V8L8w1LZYgr/N2vxnz3Bwqv
-c3XSf1Cpvyc5r2Ztce6d2GXKxPsmWTCcGCAAnj5oPe2FkyMpmZeStL1RZYc/spTa
-YjEDtOMrckbNpCXoLu5OjvZRv4NFicsuRojKCtbFScaj9uSS654P6JJY8rfSWJp4
-rWOuidtkkkKlE6y+rT79fnPikKc4UoMMKsf6D9EWETKBP9jEIsO3Vr1kz0/wME0R
-iolEdaUwvOC6EHmE86tEleFEmYZIK3RF7NpmyVofqy2kMAsNj5dIAuvPyxXN1vOh
-bXM9JLI0Io+YxwYfoW2ycYMZTFVIQXdsWefZmFoTQnPND5aE21UwQYX4bCE2vz+x
-eCcUo0hTOAnz1quoiDuyr7eNLXyGTfyhkQ/VHgE9dez7hFUtNxVcGunp38fd6Zbh
-KFXGX7wtIkVPHLvls7WsellcB6Bz6mckcW0UwThPUYjEkw4G28nm14FRUwGJLj6L
-qXTveQ7e7fp720pxFi7JCuf1dl/rL/uS7ub1hjkEi/8/3UZKEg0=
-=CZvf
------END PGP SIGNATURE-----
-
---gq4kufue4w3vtipq--
+>> +     */
+>> +    udelay(1);
+>> +
+>> +    /*
+>> +     * When GDSC is switched to HW mode, HW can disable the GDSC.
+> The GDSC
+>> +     * When GDSC is switched back to SW mode, the GDSC will be enabled
+> The GDSC
+>> +     * again, hence need to poll for GDSC to complete the power 
+>> uphence we need to poll
+> 
+> Kind regards,
+>> +     */
+>> +    if (!mode)
+>> +        return gdsc_poll_status(sc, GDSC_ON);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static bool gdsc_get_hwmode(struct generic_pm_domain *domain, struct 
+>> device *dev)
+>> +{
+>> +    struct gdsc *sc = domain_to_gdsc(domain);
+>> +    u32 val;
+>> +
+>> +    regmap_read(sc->regmap, sc->gdscr, &val);
+>> +
+>> +    return !!(val & HW_CONTROL_MASK);
+>> +}
+>> +
+>>   static int gdsc_init(struct gdsc *sc)
+>>   {
+>>       u32 mask, val;
+>> @@ -451,6 +489,10 @@ static int gdsc_init(struct gdsc *sc)
+>>           sc->pd.power_off = gdsc_disable;
+>>       if (!sc->pd.power_on)
+>>           sc->pd.power_on = gdsc_enable;
+>> +    if (sc->flags & HW_CTRL_TRIGGER) {
+>> +        sc->pd.set_hwmode_dev = gdsc_set_hwmode;
+>> +        sc->pd.get_hwmode_dev = gdsc_get_hwmode;
+>> +    }
+>>       ret = pm_genpd_init(&sc->pd, NULL, !on);
+>>       if (ret)
+>> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+>> index 803512688336..1e2779b823d1 100644
+>> --- a/drivers/clk/qcom/gdsc.h
+>> +++ b/drivers/clk/qcom/gdsc.h
+>> @@ -67,6 +67,7 @@ struct gdsc {
+>>   #define ALWAYS_ON    BIT(6)
+>>   #define RETAIN_FF_ENABLE    BIT(7)
+>>   #define NO_RET_PERIPH    BIT(8)
+>> +#define HW_CTRL_TRIGGER    BIT(9)
+>>       struct reset_controller_dev    *rcdev;
+>>       unsigned int            *resets;
+>>       unsigned int            reset_count;
+> 
 
