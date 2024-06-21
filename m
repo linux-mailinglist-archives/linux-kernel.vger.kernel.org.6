@@ -1,157 +1,155 @@
-Return-Path: <linux-kernel+bounces-225147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00239912C99
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:47:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D4B912C9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29E131C229F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:47:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB11D1C23B8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCEB169AD0;
-	Fri, 21 Jun 2024 17:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7982816A922;
+	Fri, 21 Jun 2024 17:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzi/yily"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLyDDW6j"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3950854FB5;
-	Fri, 21 Jun 2024 17:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF1F15FD0E;
+	Fri, 21 Jun 2024 17:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718992058; cv=none; b=Lriz/XHB6QDSpKXiPhmF+WtGukkCCN64YTHPl3nQtrQX5NzjP1anr3m+yISpR4Xhc/jkSy+mT8O550X1n7jr03XgRz9qXF18cvhKYNvzzk0lq80/o/c20tN1tsbSPtXjS6FzCqfhj12XBf9bsHfe8buff+u4snmc4rFOwLz9xDI=
+	t=1718992088; cv=none; b=NEMGyi+L81t1o+YBN5Gp3OIm/h/I60fNwc2C/k2bFsv9eplU06XUzFjaUHruetsHVy8ypXtOOw/OPawPEisGlTuUkOrvb891VbStioyLRwo0sd1RfWoh/cl4pPbDfNFoMjRYe89leiVX3uel5s27zadxKb6nfofRHsLqooUdPc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718992058; c=relaxed/simple;
-	bh=aqx777HwFvNcT/eoFXPK+umOv2NCOdADxPLgOhv7eIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NA6Aur/zmoU+nmzyBVywfSewIYDCQcrX2jWMEQ4cqc/bWAvGx+8GS3BU4zqz2uvprYUFHIlFg+wk4WF9mVN3zM3B2h7thDXr/X4oJAJX5kNFfCKLnAkmX+iI5hy6sVZYGQGVHENy71+rK+GVS/gRgpXE1k1Phhf0dPpQfKwcJhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzi/yily; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FCD9C2BBFC;
-	Fri, 21 Jun 2024 17:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718992057;
-	bh=aqx777HwFvNcT/eoFXPK+umOv2NCOdADxPLgOhv7eIk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jzi/yilyBcEOU+wEadoe+lJlhDGhYmP38JUSYi9ArLCBwTbeyXLUjmYrPAUBY0Nex
-	 sSNlOtJTW1nDytLQLzMY8JNg5GZpq2XE2u92PmUF4Jljf73YRglNrumee12Yd9EXWM
-	 HWH+U4x+zo+kRivJTKdbOT47BQhY0Iy1qT8L0KujsE9cDkm3J7WUojZw82JeZ6aDYh
-	 ZNrF73DsLoXlkiaAlFoiXArykkvabkqUeU9YjcD10VD5X0L8ZEGVyqHQBv0qFBbHyL
-	 MPlZDgkI3RhJLFFD+LewihSQAIoNg+h17Eip3P0bYcFxtR+XcJqYVLPWY5FlpZ4jcL
-	 FEmEu6P76J8lg==
-Date: Fri, 21 Jun 2024 18:47:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Gustavo Silva <gustavograzs@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Tejun Heo <tj@kernel.org>
-Subject: linux-next: manual merge of the char-misc tree with the sched-ext
- tree
-Message-ID: <ZnW8tfHMHBKH4yj9@sirena.org.uk>
+	s=arc-20240116; t=1718992088; c=relaxed/simple;
+	bh=mQ5L2vYcZRCcrLtYFaBkfoz0TXVWKORjITMqPyTNnlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=RzfTVYPwMmAMVM3PYLZtUutOKsgvNLgRA4fdnq6Zj5UWf/de99G8NnAqKO+fH0OtICCluEXg938HuHC+3zr6z/TcaaqCIwMl52fx51CZbrdnUeZpT9FmsG9A7UT3h70ZPOfCw6cGSK9IsM8Jh62kDoAva4UItrL95fHWXxW/o8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLyDDW6j; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-80f6cc81aa4so353951241.2;
+        Fri, 21 Jun 2024 10:48:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718992086; x=1719596886; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=81ObmjHXbEwa7gKh45uz6idV8z3omKUYoqXG05RakrE=;
+        b=FLyDDW6jUcz1RfebPvBnPSoPO5IHFDPFuN6ONc0hgauR0YWSf2wvbyfO8LuWnMBCNj
+         JmsHXPoViElWKKDJghvqxledpIGTKr0K39+RIwDTJG2vYtdI51hXrO7dKC0y/HyaAUIw
+         tSUXPPW3p2UQxBtQdfC6pjmzRlSUdt1R8UICZ0hcfp0YPvJ69cTg2isSvTYibIvkYVLm
+         qflbLh2AP52uCjeQmboNEpC/bF34+P/YskNnr4LR+jWIofMUlc/wzGFfUtw1Z05RLXlw
+         HkHYh+XPTK+vz2mIhVCSSVkv+V7mGRcp7ozcPR3vKEgKU84/+ujx9v6sDVRpL+wlf54h
+         TYhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718992086; x=1719596886;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=81ObmjHXbEwa7gKh45uz6idV8z3omKUYoqXG05RakrE=;
+        b=hIG/1cdRWYBQvUYdy+pddsW6EgifaHy7EwLgO7YtUKzkFQGn/XsW1zyNbHffbaVpgI
+         Wlfj+SZ8a6ljrVm3cR8FLC3+3IickegIQ5b//Qp821uRcB2j3wc6bpfYQf2D1ogVDHsP
+         RdNQ6IdRj2rVmA03AZ2/485eHWjVXHhp0K8JhwLPHmazztBC1xU/srPHKvKFF0pbq/LB
+         oe9emOmb92MhcENFouF7/e3c82MAJnUjcaVclLDAjU/4r9Vlp9n/Qd5HpfGhTVn7Vbb0
+         yDqpGrvyKrGJXhXNUvRUIcbq+Cyt5s5JV7IjNu3befF8A4WBwEiAoF8YGvTpdNRPtUGP
+         sFFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCXjV2pyoJtc+dcHAtz1TbEFMAQCPHOnoQ5L4EvTzOl6n5ek4L5ppIQsezHhtLJgRNPIuNtYb1+EvNvPx7GnrJvR6PuzRYQSsgFlYvKjancHstXivL6plVJjDukl+bISyElYuC43AXqO9d+irl7kCev5pqmL9PB1HFBhz8HliWCVeKHPY/VuTa4++7tmVdLQvx289cxOqI3iBDNCNfZEyf5xy8XEi8
+X-Gm-Message-State: AOJu0YwerkS4r4v1KHDhdcyldn3qCrwBRleNK26fsx5VV6pwbGqG5pMl
+	4dpV6+JmWxfQ5tLBxbyJVDfr2kCvJvdmnSHOfdzrU4MoekfNvFdwVTblR1IzpCXyNF61cYUA+g9
+	bqxuKRuS2LZpNTGFZA2CqA2oF8Kk=
+X-Google-Smtp-Source: AGHT+IGuB2z+co8OUz9vMffmlPdrxKTYQViMR/EpC9iBEu86iSA4jDVHANAWyQ0JOxVMxt1gemx/eb204mkQAI8RZ4I=
+X-Received: by 2002:a05:6122:18a1:b0:4ef:53ad:97bd with SMTP id
+ 71dfb90a1353d-4ef53ad9c40mr1421229e0c.3.1718992086037; Fri, 21 Jun 2024
+ 10:48:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yhPS/foK5T+Eokda"
-Content-Disposition: inline
-
-
---yhPS/foK5T+Eokda
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240618225210.825290-1-allen.lkml@gmail.com> <gw6adkoy3ndjdjufti2gs2gnk3xdgylt6tnia2zha76hsgdwtq@dr3czbxjij66>
+In-Reply-To: <gw6adkoy3ndjdjufti2gs2gnk3xdgylt6tnia2zha76hsgdwtq@dr3czbxjij66>
+From: Allen <allen.lkml@gmail.com>
+Date: Fri, 21 Jun 2024 10:47:54 -0700
+Message-ID: <CAOMdWS+p4Dt2xDGWvwoXtWinsRZintLwPmADddbsmaEfLvRQkw@mail.gmail.com>
+Subject: Re: [PATCH v3] mmc: Convert from tasklet to BH workqueue
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Allen Pais <allen.lkml@gmail.com>, 
+	Aubin Constans <aubin.constans@microchip.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Manuel Lauss <manuel.lauss@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
+	Jaehoon Chung <jh80.chung@samsung.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
+	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, linux-mmc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+> On Tue, Jun 18, 2024 at 03:52:07PM GMT, Allen Pais wrote:
+> > The only generic interface to execute asynchronously in the BH context =
+is
+> > tasklet; however, it's marked deprecated and has some design flaws. To
+> > replace tasklets, BH workqueue support was recently added. A BH workque=
+ue
+> > behaves similarly to regular workqueues except that the queued work ite=
+ms
+> > are executed in the BH context.
+> >
+> > This patch converts drivers/mmc/* from tasklet to BH workqueue.
+> >
+> > Based on the work done by Tejun Heo <tj@kernel.org>
+>
+> Has this been fully build-tested?
+>
+> =3D=3D=3D
+> drivers/mmc/host/renesas_sdhi_internal_dmac.c: In function =E2=80=98renes=
+as_sdhi_internal_dmac_complete_work_fn=E2=80=99:
+> ./include/linux/container_of.h:20:54: error: =E2=80=98struct tmio_mmc_hos=
+t=E2=80=99 has no member named =E2=80=98dma_complete=E2=80=99
+> =3D=3D=3D
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+ Yes, it does break. My bad, my local compile testing failed to catch this.
 
-  MAINTAINERS
+>
+> In deed, 'dma_complete' is only in 'struct renesas_sdhi_dma'. From
+> there, we can get to the parent 'struct renesas_sdhi' using
+> container_of. But then, I don't see a way to go to 'struct
+> tmio_mmc_host' from there. The other way around is possible because
+> there is the pointer 'struct tmio_mmc_data *pdata' in the TMIO struct
+> pointing to the data contained in 'struct renesas_sdhi'. 'host_to_priv()'
+> does the math. But I don't see a path the other way around.
+>
 
-between commit:
+ I have been looking at this code since the issue was reported. Yes it
+is a bit tricky and so far, the only way I found was to introduce a new poi=
+nter.
+But, I am not very familiar with the code and have asked Ulf for pointers.
 
-  f0e1a0643a59b ("sched_ext: Implement BPF extensible scheduler class")
+If introducing the pointer is the only way forward and is an
+acceptable solution,
+I can send out a draft.
 
-=66rom the sched-ext tree and commit:
+Thanks,
+Allen
 
-  4c4daafc996a8 ("MAINTAINERS: Add ScioSense ENS160")
+> So, it doesn't look like the workqueue interface can provide a
+> generic pointer like tasklets could do? This means we have to add a
+> pointer from 'struct renesas_sdhi' to 'struct tmio_mmc_host'?
+>
+> All the best,
+>
+>    Wolfram
+>
 
-=66rom the char-misc tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 56ad56d7733e9,044e2001f4e3a..0000000000000
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@@ -1264,8 -1254,8 +1264,10 @@@ patternProperties
-      description: Smart Battery System
-    "^schindler,.*":
-      description: Schindler
- +  "^schneider,.*":
- +    description: Schneider Electric
-+   "^sciosense,.*":
-+     description: ScioSense B.V.
-    "^seagate,.*":
-      description: Seagate Technology PLC
-    "^seeed,.*":
-diff --cc MAINTAINERS
-index c3a397c60b693,24d372f7653ed..0000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -20032,19 -19947,14 +20043,27 @@@ F:	include/linux/wait.
-  F:	include/uapi/linux/sched.h
-  F:	kernel/sched/
- =20
- +SCHEDULER - SCHED_EXT
- +R:	Tejun Heo <tj@kernel.org>
- +R:	David Vernet <void@manifault.com>
- +L:	linux-kernel@vger.kernel.org
- +S:	Maintained
- +W:	https://github.com/sched-ext/scx
- +T:	git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git
- +F:	include/linux/sched/ext.h
- +F:	kernel/sched/ext.h
- +F:	kernel/sched/ext.c
- +F:	tools/sched_ext/
- +F:	tools/testing/selftests/sched_ext
- +
-+ SCIOSENSE ENS160 MULTI-GAS SENSOR DRIVER
-+ M:	Gustavo Silva <gustavograzs@gmail.com>
-+ S:	Maintained
-+ F:	drivers/iio/chemical/ens160_core.c
-+ F:	drivers/iio/chemical/ens160_i2c.c
-+ F:	drivers/iio/chemical/ens160_spi.c
-+ F:	drivers/iio/chemical/ens160.h
-+=20
-  SCSI LIBSAS SUBSYSTEM
-  R:	John Garry <john.g.garry@oracle.com>
-  R:	Jason Yan <yanaijie@huawei.com>
-
---yhPS/foK5T+Eokda
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ1vLQACgkQJNaLcl1U
-h9C1Vgf9E4/oGzPyppL2Wj4pAosIPYjDkqeBvbpvJoJJfsqCT496C4znB0cMbiaL
-aUqc1SA9y6PLnRAJyO2vR8h0Oo7OqNjV4AwQZuKSkfnoaQGhucv0jHHf0YmGoRZs
-k9TcNpeoMFATq72YKI7nLak/xCrbOgnMvga1QyqUKV9xQi1dkQhqNWr6uA6PczfY
-FwsWsm1YqFgxreZh+wEIVCKCpSUWg85QC3OHTm6TakCOpZoTLBjL3G8W2xExIVSB
-fAxEVT8nYpurocg20N+5S4J6+NWlx9cWy06R7vFvF9Q5mb9jq9JNqGSmiF+2BqnY
-oJLxg7HnVTIHZlp/h1XDE755KEDUzA==
-=W3i2
------END PGP SIGNATURE-----
-
---yhPS/foK5T+Eokda--
+--=20
+       - Allen
 
