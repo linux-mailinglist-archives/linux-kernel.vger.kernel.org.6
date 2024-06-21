@@ -1,202 +1,225 @@
-Return-Path: <linux-kernel+bounces-225135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2010C912C5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4379912C5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2E2284061
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:19:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B45282AED
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157B1166314;
-	Fri, 21 Jun 2024 17:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C328168494;
+	Fri, 21 Jun 2024 17:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IlMkybCE"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="QOdNyeZW"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B79815D1;
-	Fri, 21 Jun 2024 17:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994E413D521
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 17:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718990391; cv=none; b=D5j/61btjUHea3D45y2AjWcsD/mLnAV+NMIJF2sr5pgvLQ2HgPXRBVM4VmQ8mEvZmu2kQHWTn/3OmY35SYzHV8hJy5CLbrIpQqRkWi/I9LIoePX0iI599Y1bmVgq9H6OK/RsoZ2baPnomJBl+6fnMCc2OK0tBwsoTPuBijx//4g=
+	t=1718990471; cv=none; b=YlIXwxzPD/ci0kDVv8r4XqHTZf+6Va8HUc4FM6YH4931Uq8mPR1hl1da2u05CPH7+mNoHa1Vs7N64RV7WtLp3F9B5s1tsmqinS4zMXxkVN4n9D1nujjm/fuH5HxkxtNeiHLdc4XiiP3QWt72/FVnSTyG4BBl9AZ1SM8neW9nByQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718990391; c=relaxed/simple;
-	bh=y9kbB7HFUrCLqdBJ41fu7SZ/WYPPcl+gMB2WfRzL49w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nIWZqjdcpamds/fxEzAhUnPIgm5kgUV3so8Qm1QgO/hE286NYjM5GLaGTDTMVkfs4LHl8rL2W/eAnxCAVUT41+mg2BYiVRMbetWtk+/1S1HnmChilKlK/peCbpMl6XiiA9EXRSycUpF02MvNBC+p/PWD5vNia6ikPGwE4neZ92g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IlMkybCE; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LHDQTR005485;
-	Fri, 21 Jun 2024 17:19:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:content-transfer-encoding
-	:mime-version; s=pp1; bh=4xu5lsln1wbQg+E6FFWcUNL78KQ5JaTOAnoVCEW
-	nK+A=; b=IlMkybCE3hRqBuYXS4ObLA3y8wzqqXvRPoHratbBdflqikxRTiPilZd
-	Ztcutx+VrO5sYpxXBN/PBnFK5elOqV6jbK1a+yfDtFHw7ScWDi1JKWm9kf51pQR2
-	Hl394De/NomO10Er+P00eUIpu1X0A1qqpFhYoIv+YIchr3v/z6NYGREBeNXoX0wS
-	9BYqLqz7WkXLyRrEFvD826P8HTFDxjCRfbhwmEkfhF4talQgBO8TcprebbyaACdF
-	CxFLqipZv9ZaNstFzzTx6AxjbOkKJeEQMwUQhiXDboH2ZbagMrm68tFk9YnaJcOW
-	IVoX9M8jO1f3cK/GMuwZ4OvjbWVXGMA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ywdqu009g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 17:19:28 +0000 (GMT)
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45LHJStu016671;
-	Fri, 21 Jun 2024 17:19:28 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ywdqu009c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 17:19:27 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45LFlxR4007675;
-	Fri, 21 Jun 2024 17:19:27 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yvrspga7v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 17:19:27 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45LHJNCn22151700
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Jun 2024 17:19:25 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5C13B2004F;
-	Fri, 21 Jun 2024 17:19:23 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 59F102004D;
-	Fri, 21 Jun 2024 17:19:17 +0000 (GMT)
-Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.ibm.com.com (unknown [9.43.41.60])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Jun 2024 17:19:17 +0000 (GMT)
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-        James Clark <james.clark@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-        Chen Yu <yu.c.chen@intel.com>, Fernand Sieber <sieberf@amazon.com>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: [PATCH v2] perf sched replay: Fix -r/--repeat command line option for infinity
-Date: Fri, 21 Jun 2024 22:49:09 +0530
-Message-ID: <20240621171909.24119-1-vineethr@linux.ibm.com>
-X-Mailer: git-send-email 2.43.2
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: N_lTH6tjQfc1gIIj_6KegK2FRTHQCFLq
-X-Proofpoint-GUID: _GzKlr0hmKVkwa0iaYcFrGDjmAkJp2Zb
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1718990471; c=relaxed/simple;
+	bh=I/luRIkvOcbcT9wuLGb2btKD8UMXkYQlJQH8n4fvvRU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lZEFGzzC9Fb8qqjd3ssMw6ZWNv7+95d3TyTLU6yfXgLBZgeEwVc1ftz0zDy49fs59Iupqe2SR9+jbCwX/1IMwk1mQ3kazqXfWcr44UmvHIVgGWszmxQOqEvOhuuhTPsNanqDo2MUTAODQ/WY/oTyrgQJWQIriaMEgAdR0YeY8Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=QOdNyeZW; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6fd7bee2feso67675366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1718990468; x=1719595268; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E5geVM6kNOmyxNjLK0qy8h1CsiCtOOy9GQmItUlINgo=;
+        b=QOdNyeZWSN7rjT8DD1gKHMvAMznVhDlrzelP1N5q8SFWaCJ78BURlG/wRpnbOPTxz4
+         bMQHOv4EkDuQteqEHRxSji8F2xI662V2j9NobIegjZUaHOPcBmQlHzLfAK2WL6bSiQNt
+         gH5nsCO3L+TTXWlixuCWSKTaqXRstCr7B4XVJPNpZwEoSkh+nhx1VA4l2F5AZFio+YRy
+         nhkUNgbppxYV7j+gHJFt33HfsHfjH83cdpHlAhM6tSSxYU/p1kpdurjMcY55Iu0Zn3Ao
+         zDi7dY55b7LNgX2+wJh7gNFMSiYKVmG6WfwzPuKNcY8IPBgWyhnp7O+FVw6etDLD71og
+         /vJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718990468; x=1719595268;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E5geVM6kNOmyxNjLK0qy8h1CsiCtOOy9GQmItUlINgo=;
+        b=ikKL3oMCH9siUOiaKMwPSSEk7LtEESfhgYitG0420iYAjJ0rB4hZUUy79u7zwGNDPB
+         FrcZZhMHGJeKel7FQeSJkvayia7Sc4BhRBRJ0KaiN9HYjqch2pp7WoA4MOS3vnkfpJCF
+         ujuAQQrI28mHNNpOvqDUmj2yFhraGx+N3Xvk+mClFLIalYnJElK1QEwD5q2yUUSFAwsj
+         H3zR/Z0XMvTcm/Xl+kcIB3XezZUNYMWT5TMeRc6WLlvSURY931P0fbxVIRy6UaymiR66
+         Np6JXTHlWq/MzXtulvNdtsb3YfLj+FlBGuQSJ/VmOXWywIUsuLcu1NYISnh+uQcOHnC8
+         AA8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUKPM2ozZ+icCbP2mLe6xIkwDPfTJcvRvW4uaZCQyNH+ZQbcHmvOaB8bVXtJilCGGRwlekWOxrVzDkyAP52guhjoo0Y0mrJk6JZ3Oz0
+X-Gm-Message-State: AOJu0Yx7kncPsa0QKJ1zpalRyP++2FbRNpcrzXXjhRTNxQQxPlAR8po9
+	kK8Q3LHKslo0wD/8cBsjYUs/tmwIJSssheCWGsfYrblQ0QPslnplBmnJ9VeGepPbsatKzpd/418
+	r2b1YcnRpO1qjEg34qgQc119S2RuY6UwlUfCqnQ==
+X-Google-Smtp-Source: AGHT+IG4FB5C+nnJ3fPlzdu5kNLw931HpbPpKfZhcOo9WuAIJG6c2cz6pS9CQ9UI0emKRbU1bfH9gBo9EY35Yyqmbu4=
+X-Received: by 2002:a17:906:d83:b0:a65:7643:3849 with SMTP id
+ a640c23a62f3a-a6fab7d6be4mr535810166b.73.1718990467879; Fri, 21 Jun 2024
+ 10:21:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_08,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- priorityscore=1501 phishscore=0 clxscore=1015 mlxscore=0 adultscore=0
- lowpriorityscore=0 spamscore=0 impostorscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406210122
+References: <cover.1718919473.git.yan@cloudflare.com> <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
+ <66756ed3f2192_2e64f929491@willemb.c.googlers.com.notmuch>
+ <44ac34f6-c78e-16dd-14da-15d729fecb5b@iogearbox.net> <CAO3-PbrhnvmdYmQubNsTX3gX917o=Q+MBWTBkxUd=YWt4dNGuA@mail.gmail.com>
+ <e6553be1-4eaa-e90a-17f8-dece2bb95e7b@iogearbox.net>
+In-Reply-To: <e6553be1-4eaa-e90a-17f8-dece2bb95e7b@iogearbox.net>
+From: Yan Zhai <yan@cloudflare.com>
+Date: Fri, 21 Jun 2024 12:20:55 -0500
+Message-ID: <CAO3-PboYruuLrF7D_rMiuG-AnWdR4BhsgP+MhVmOm-f3MzJFyQ@mail.gmail.com>
+Subject: Re: [RFC net-next 1/9] skb: introduce gro_disabled bit
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	kernel-team <kernel-team@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, the -r/--repeat option accepts values from 0 and complains
-for -1. The help section specifies:
--r, --repeat <n>      repeat the workload replay N times (-1: infinite)
+On Fri, Jun 21, 2024 at 11:41=E2=80=AFAM Daniel Borkmann <daniel@iogearbox.=
+net> wrote:
+>
+> On 6/21/24 6:00 PM, Yan Zhai wrote:
+> > On Fri, Jun 21, 2024 at 8:13=E2=80=AFAM Daniel Borkmann <daniel@iogearb=
+ox.net> wrote:
+> >> On 6/21/24 2:15 PM, Willem de Bruijn wrote:
+> >>> Yan Zhai wrote:
+> >>>> Software GRO is currently controlled by a single switch, i.e.
+> >>>>
+> >>>>     ethtool -K dev gro on|off
+> >>>>
+> >>>> However, this is not always desired. When GRO is enabled, even if th=
+e
+> >>>> kernel cannot GRO certain traffic, it has to run through the GRO rec=
+eive
+> >>>> handlers with no benefit.
+> >>>>
+> >>>> There are also scenarios that turning off GRO is a requirement. For
+> >>>> example, our production environment has a scenario that a TC egress =
+hook
+> >>>> may add multiple encapsulation headers to forwarded skbs for load
+> >>>> balancing and isolation purpose. The encapsulation is implemented vi=
+a
+> >>>> BPF. But the problem arises then: there is no way to properly offloa=
+d a
+> >>>> double-encapsulated packet, since skb only has network_header and
+> >>>> inner_network_header to track one layer of encapsulation, but not tw=
+o.
+> >>>> On the other hand, not all the traffic through this device needs dou=
+ble
+> >>>> encapsulation. But we have to turn off GRO completely for any ingres=
+s
+> >>>> device as a result.
+> >>>>
+> >>>> Introduce a bit on skb so that GRO engine can be notified to skip GR=
+O on
+> >>>> this skb, rather than having to be 0-or-1 for all traffic.
+> >>>>
+> >>>> Signed-off-by: Yan Zhai <yan@cloudflare.com>
+> >>>> ---
+> >>>>    include/linux/netdevice.h |  9 +++++++--
+> >>>>    include/linux/skbuff.h    | 10 ++++++++++
+> >>>>    net/Kconfig               | 10 ++++++++++
+> >>>>    net/core/gro.c            |  2 +-
+> >>>>    net/core/gro_cells.c      |  2 +-
+> >>>>    net/core/skbuff.c         |  4 ++++
+> >>>>    6 files changed, 33 insertions(+), 4 deletions(-)
+> >>>>
+> >>>> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> >>>> index c83b390191d4..2ca0870b1221 100644
+> >>>> --- a/include/linux/netdevice.h
+> >>>> +++ b/include/linux/netdevice.h
+> >>>> @@ -2415,11 +2415,16 @@ struct net_device {
+> >>>>       ((dev)->devlink_port =3D (port));                         \
+> >>>>    })
+> >>>>
+> >>>> -static inline bool netif_elide_gro(const struct net_device *dev)
+> >>>> +static inline bool netif_elide_gro(const struct sk_buff *skb)
+> >>>>    {
+> >>>> -    if (!(dev->features & NETIF_F_GRO) || dev->xdp_prog)
+> >>>> +    if (!(skb->dev->features & NETIF_F_GRO) || skb->dev->xdp_prog)
+> >>>>               return true;
+> >>>> +
+> >>>> +#ifdef CONFIG_SKB_GRO_CONTROL
+> >>>> +    return skb->gro_disabled;
+> >>>> +#else
+> >>>>       return false;
+> >>>> +#endif
+> >>>
+> >>> Yet more branches in the hot path.
+> >>>
+> >>> Compile time configurability does not help, as that will be
+> >>> enabled by distros.
+> >>>
+> >>> For a fairly niche use case. Where functionality of GRO already
+> >>> works. So just a performance for a very rare case at the cost of a
+> >>> regression in the common case. A small regression perhaps, but death
+> >>> by a thousand cuts.
+> >>
+> >> Mentioning it here b/c it perhaps fits in this context, longer time ag=
+o
+> >> there was the idea mentioned to have BPF operating as GRO engine which
+> >> might also help to reduce attack surface by only having to handle pack=
+ets
+> >> of interest for the concrete production use case. Perhaps here meta da=
+ta
+> >> buffer could be used to pass a notification from XDP to exit early w/o
+> >> aggregation.
+> >
+> > Metadata is in fact one of our interests as well. We discussed using
+> > metadata instead of a skb bit to carry this information internally.
+> > Since metadata is opaque atm so it seems the only option is to have a
+> > GRO control hook before napi_gro_receive, and let BPF decide
+> > netif_receive_skb or napi_gro_receive (echo what Paolo said). With BPF
+> > it could indeed be more flexible, but the cons is that it could be
+> > even more slower than taking a bit on skb. I am actually open to
+> > either approach, as long as it gives us more control on when to enable
+> > GRO :)
+>
+> Oh wait, one thing that just came to mind.. have you tried u64 per-CPU
+> counter map in XDP? For packets which should not be GRO-aggregated you
+> add count++ into the meta data area, and this forces GRO to not aggregate
+> since meta data that needs to be transported to tc BPF layer mismatches
+> (and therefore the contract/intent is that tc BPF needs to see the differ=
+ent
+> meta data passed to it).
+>
 
-The -r -1 option raises an error because replay_repeat is defined as
-an unsigned int.
+Very very sorry to resendx2 :( Not sure why my laptop also decided to
+switch on html... I removed CCs from the message hopefully it reduces
+some noises...
 
-In the current implementation, the workload is repeated n times when
--r <n> is used, except when n is 0.
+We did this before accidentally (we put a timestamp for debugging
+purposes in metadata) and this actually caused about 20% of OoO for
+TCP in production: all PSH packets are reordered. GRO does not fire
+the packet to the upper layer when a diff in metadata is found for a
+non-PSH packet, instead it is queued as a =E2=80=9Cnew flow=E2=80=9D on the=
+ GRO list
+and waits for flushing. When a PSH packet arrives, its semantic is to
+flush this packet immediately and thus precedes earlier packets of the
+same flow.
 
-When -r is set to 0, the workload is also repeated once. This happens
-because when -r=0, the run_one_test function is not called. (Note that
-mutex unlocking, which is essential for child threads spawned to emulate
-the workload, happens in run_one_test.) However, mutex unlocking is
-still performed in the destroy_tasks function. Thus, -r=0 results in the
-workload running once coincidentally.
+The artifact of this behavior can also cause latency increase and hash
+degradation since the mismatch does not result in flushing, it results
+in extra queuing on the same hash list, until the list is flushed.
+It=E2=80=99s another reason we want to disable GRO when we know metadata ca=
+n
+be set differently for tracing purposes (I didn=E2=80=99t mention this thou=
+gh
+because it seems distracting).
 
-To clarify and maintain the existing logic for -r >= 1 (which runs the
-workload the specified number of times) and to fix the issue with infinite
-runs, make -r=0 perform an infinite run.
+Thanks
+Yan
 
-Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Reviewed-by: James Clark <james.clark@arm.com>
-
----
-Changes in v2:
-- Kept the existing 'for' loop and added a condition for infinite
-  looping. (James Clark)
-- This change also ensures that integer overflow doesn't occur when
-  'replay_repeat' is zero.
-- Add Reviewed-by tag from James Clark.
-- Rebase against perf-tools-next commit 788c5160526a ("perf vendor
-  events: Add westmereex counter information")
-- Link to v1: https://lore.kernel.org/all/20240618112907.15131-1-vineethr@linux.ibm.com/
-
- tools/perf/Documentation/perf-sched.txt |  7 +++++++
- tools/perf/builtin-sched.c              | 11 ++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-index a216d2991b19..f1be8f0b249e 100644
---- a/tools/perf/Documentation/perf-sched.txt
-+++ b/tools/perf/Documentation/perf-sched.txt
-@@ -202,6 +202,13 @@ OPTIONS for 'perf sched timehist'
- --state::
- 	Show task state when it switched out.
- 
-+OPTIONS for 'perf sched replay'
-+------------------------------
-+
-+-r::
-+--repeat <n>::
-+	repeat the workload n times (0: infinite). Default is 10.
-+
- SEE ALSO
- --------
- linkperf:perf-record[1]
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 8cdf18139a7e..51b3dea404bc 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -3383,8 +3383,13 @@ static int perf_sched__replay(struct perf_sched *sched)
- 	sched->thread_funcs_exit = false;
- 	create_tasks(sched);
- 	printf("------------------------------------------------------------\n");
--	for (i = 0; i < sched->replay_repeat; i++)
--		run_one_test(sched);
-+	if (sched->replay_repeat == 0) {
-+		while (1)
-+			run_one_test(sched);
-+	} else {
-+		for (i = 0; i < sched->replay_repeat; i++)
-+			run_one_test(sched);
-+	}
- 
- 	sched->thread_funcs_exit = true;
- 	destroy_tasks(sched);
-@@ -3548,7 +3553,7 @@ int cmd_sched(int argc, const char **argv)
- 	};
- 	const struct option replay_options[] = {
- 	OPT_UINTEGER('r', "repeat", &sched.replay_repeat,
--		     "repeat the workload replay N times (-1: infinite)"),
-+		     "repeat the workload replay N times (0: infinite)"),
- 	OPT_PARENT(sched_options)
- 	};
- 	const struct option map_options[] = {
--- 
-2.31.1
-
+> Thanks,
+> Daniel
 
