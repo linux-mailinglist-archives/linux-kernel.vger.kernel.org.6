@@ -1,234 +1,155 @@
-Return-Path: <linux-kernel+bounces-225176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFD5912D1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 492D7912D20
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95D75B21B26
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:19:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2DFA1F236C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0E4178CD2;
-	Fri, 21 Jun 2024 18:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE221791FC;
+	Fri, 21 Jun 2024 18:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OytInhHV"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="VNgmT2+N"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75068C1E;
-	Fri, 21 Jun 2024 18:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA0B8C1E;
+	Fri, 21 Jun 2024 18:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718993946; cv=none; b=JvnTcKMa1F2/jaax9Efbdcu3laLvnLD4Syt36fIAOxx4Hj8kiacXEMXPjSm0nl+wlOKVUSCixKQdZI3zM2DqE/cInmIrouBho+zQgf/9mI+XHVfAbpN8P9oZir5aeKlDtvn1owQ/TVPKe98gBRyx2vWDg5ibSVpvclDq7KIrbSw=
+	t=1718994017; cv=none; b=bhWstYpVxeeMgsQo+lmHeVXnxSBLKZpKx5AS9NwmE+wsHjNZM21lbWXxca0n1KiQcVzfZiI2aDzy9yMwmFNvqcnf2j+Bd6pLXvGlEW3V5x+vR5ugqWqsF1cyntGAkuUwZYYcrJtFpRYPI7fLKC6T750nLL079hO+aOX28rT2WOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718993946; c=relaxed/simple;
-	bh=vkjVfVSKNRVirrgvI+TLcy4nhfx47DfgnhJuexdliUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VU9FW56UdFUnn/D+aqWQ4oGOagvI0n56A+jGdG0lmP6j8n+42hY9j2G33vQdmpsr3RJHYjGiyd08fRF2DkeAvzbAMu22bpWXcwwI8sqE/1b5GFE3DZmzGUtpK6cY9XpucdfBs1+BzkHYmMVenA538uDaigd7f42RdSH/UBFQlLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OytInhHV; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57d21b1c8efso2492824a12.3;
-        Fri, 21 Jun 2024 11:19:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718993943; x=1719598743; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+dT7BE9vS3IAurT8KcadCRcpuNa2YZkMbwMwKoRwsu8=;
-        b=OytInhHVXyC6nhhT+AlVIjykVe/NFARXTgDfFZ/CoaSq5TWKfF9S0dgffiOjf3R2RP
-         BKv0caOllJQsdDa3Zq73owuXZx3SnAIjf6m5Zln+Vp+Da6xUPrsyAhT2QIjinb9jgGsy
-         zVg7vkOtaicerxEMDJCbtqMYbYcKuZ4lcgdKC/I+w2qmv38RHHIy2gSxb7c39z9g7+zC
-         C1TOZuY/pgS3sKrDO+39n7Bl2d6X40YgqY3nhz2n28SpvYfstjwhwGDcjIv/EA+h73by
-         G8nIB71FjLgC5AOrV3kmND8A/ySWX90HybimaHKvPjW2LKSuRYSVXPiUg89tuSFibW+Z
-         TJEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718993943; x=1719598743;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+dT7BE9vS3IAurT8KcadCRcpuNa2YZkMbwMwKoRwsu8=;
-        b=SNo8cF5s52Oppx8wNS6wemlTiQ0wN+DwFxIJoDH3H2awIqJBXizi+9vIIIJSfhDV8c
-         dv9V24TkETvivW86Za/LNMcjmI8MuFnvwpnu0n4Asf0ed1mXLSNs4tU6AJw6pJLL45A1
-         wm2eEQBKbiArCSLIQTz/D2R1keaqabNkQ7dxK5NQtgNmgBqW9vYDp6Qf+Jzt5CXd69mO
-         Q6tA204vhybNJU8SK6CwFJIBZZ9h0Q8fSyBdtoCXYFchPo/TlnvyxKoRiXGcpI31+Vmn
-         zox5TLM1HEenZguEwHpMSU5lfN2F1vABZEZcZTLC+75hN1kWsVsmyQWvolrREdqK9uDw
-         v47g==
-X-Forwarded-Encrypted: i=1; AJvYcCXe3hMh5MFbk2sZrVZ7aDhZJJIQGexVTP8v97Vn5UwT4BCrsDIjGATfh8VwrDCZD7dmAmLTH+GADkxlTmxgSue4qlsd3hJc4jrlVVZDvlGOo0a+qGZmvOwwwYm/pVfwD+VJfdVa4mk=
-X-Gm-Message-State: AOJu0YxWpmbdX3yNhecyEnlsZHD/Zo1fyWlxqLmBQX41QtIW4/VImFTb
-	lXkQSG2rVD9LgagtIvIWEDj0OBJZQfVolnX34FuCcB8Yn1Oq06VtDUT8htH9zwvDu4zkC1/T2O6
-	d2LVMKry0wvetzVucSsU3HZR2fFtR2RYC
-X-Google-Smtp-Source: AGHT+IH6voJPAJ/Pv/FQ95s9QMgmm8yX7etPdoCAizaXJMl95+4+kYLX/5NCw2hUPnb9FDBMuSNQXcnXJHn9HdLgrpg=
-X-Received: by 2002:a50:c30f:0:b0:57d:40aa:9486 with SMTP id
- 4fb4d7f45d1cf-57d40aa94ebmr31723a12.22.1718993942840; Fri, 21 Jun 2024
- 11:19:02 -0700 (PDT)
+	s=arc-20240116; t=1718994017; c=relaxed/simple;
+	bh=pWNOYa3A8Axfk6v5p2GuB9JD/anJz4Y0Rm4H6P9Hk1o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hkBLH3T2T9A24PYPXuf0YoUicAXbV6pRV2SlTW/w+1k6EmICLeqh7/+3L/lfrxzXiMUNtsLPbz90GKbnsUIjMxcTg+xDkZGHKlQ7T06aOIXl9g5aCNoyOU+hlOyy8LfXi89bT0NDoF3x5zCmD+zxua4rpUxbr6oO4buGwYDZPV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=VNgmT2+N; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=v/oqZBS8M6pULcE3kdgAW1T68k5CRvVqyXLUiedQwc8=;
+	t=1718994012; x=1720203612; b=VNgmT2+NqF1co/jNkBvGFcngoAtgWMZbi1ZUA9qBzI6rHvo
+	AhQ04OGoq+Wep+2IEkb4dMZ4TBKUspOjKRLGMot1ZDhwxGAl9ITcrUX7tex55250+t/5+Z/V4NSGo
+	jymrPRHkgnuU/N5M1cX7LfkVDUXIcSOe184E9tAgluDX7I5QJx8v/VWDQXe4AQfoLnbEh2YklhVTd
+	h59F7jhYyQl5e9MuU9OuK9IhPC/lYkvisHpPGkGvSgHPpYECX3zQ4nEX/ZSKH+BHqfxwab7eHKnZD
+	W+ymte44B3oEiSDxkHhfX7VT4k6gAiz12IHpl004OB0OMpAImWOCgopkugJfL4eQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sKirp-0000000C8cT-2luw;
+	Fri, 21 Jun 2024 20:20:09 +0200
+Message-ID: <5f5c42585e168e252a5fa3f43325aaa360f6d27a.camel@sipsolutions.net>
+Subject: Re: [PATCH 00/43] wifi: nxpwifi: create nxpwifi to support iw61x
+From: Johannes Berg <johannes@sipsolutions.net>
+To: David Lin <yu-hao.lin@nxp.com>, linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org,
+ kvalo@kernel.org,  francesco@dolcini.it, tsung-hsien.hsieh@nxp.com
+Date: Fri, 21 Jun 2024 20:20:08 +0200
+In-Reply-To: <20240621075208.513497-1-yu-hao.lin@nxp.com>
+References: <20240621075208.513497-1-yu-hao.lin@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621-fix-help-issue-v1-1-7906998d46eb@gmail.com> <6d745d8d-33b1-4aed-b9c5-095073bc8cde@linuxfoundation.org>
-In-Reply-To: <6d745d8d-33b1-4aed-b9c5-095073bc8cde@linuxfoundation.org>
-From: Roman Storozhenko <romeusmeister@gmail.com>
-Date: Fri, 21 Jun 2024 20:18:50 +0200
-Message-ID: <CALsPMBPd1O2zBxyvfTJiPvuWO+zaTxrYizmiKULr1A-77ME_Rw@mail.gmail.com>
-Subject: Re: [PATCH] cpupower: Make help command available for custom install dir
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-malware-bazaar: not-scanned
 
-On Fri, Jun 21, 2024 at 5:02=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.o=
-rg> wrote:
->
-> On 6/21/24 02:13, Roman Storozhenko wrote:
-> > When the 'cpupower' utility installed in the custom dir, it fails to
-> > render appopriate help info for a particular subcommand:
->
-> appopriate -> appropriate
-> Spell check the commit message.
+On Fri, 2024-06-21 at 15:51 +0800, David Lin wrote:
+>=20
+>   wifi: nxpwifi: add ioctl.h
 
-Thanks for highlighting this, will fix.
->
-> > $ LD_LIBRARY_PATH=3Dlib64/ bin/cpupower help monitor
-> > with error message like 'No manual entry for cpupower-monitor.1'
-> > The issue is that under the hood it calls 'exec' function with
-> > the following args: 'man cpupower-monitor.1'. In turn, 'man' search
-> > path is defined in '/etc/manpath.config'. Of course it contains only
-> > standard system man paths.
-> > Make subcommands man pages available for user using the following rule:
-> > Render a man page if it is installed in the custom install dir, otherwi=
-se
-> > allow man to search this page by name system-wide as a last resort.
-> >
->
-> Good find.
->
-> > Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
-> > ---
-> >   tools/power/cpupower/utils/cpupower.c | 54 ++++++++++++++++++++++++++=
-++++-----
-> >   1 file changed, 47 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/tools/power/cpupower/utils/cpupower.c b/tools/power/cpupow=
-er/utils/cpupower.c
-> > index 9ec973165af1..da4bc6de7494 100644
-> > --- a/tools/power/cpupower/utils/cpupower.c
-> > +++ b/tools/power/cpupower/utils/cpupower.c
-> > @@ -12,6 +12,8 @@
-> >   #include <unistd.h>
-> >   #include <errno.h>
-> >   #include <sched.h>
-> > +#include <libgen.h>
-> > +#include <limits.h>
-> >   #include <sys/types.h>
-> >   #include <sys/stat.h>
-> >   #include <sys/utsname.h>
-> > @@ -21,6 +23,8 @@
-> >   #include "helpers/bitmask.h"
-> >
-> >   #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
-> > +#define MAN_REL_PATH "/../man/man1/"
-> > +#define MAN_SUFFIX ".1"
-> >
-> >   static int cmd_help(int argc, const char **argv);
-> >
-> > @@ -80,14 +84,17 @@ static void print_help(void)
-> >
-> >   static int print_man_page(const char *subpage)
-> >   {
-> > -     int len;
-> > -     char *page;
-> > +     char *page, *man_path, *exec_dir;
-> > +     char exec_path[PATH_MAX];
-> > +     int subpage_len;
-> >
-> > -     len =3D 10; /* enough for "cpupower-" */
-> > -     if (subpage !=3D NULL)
-> > -             len +=3D strlen(subpage);
-> > +     if (!subpage)
-> > +             return -EINVAL;
-> >
-> > -     page =3D malloc(len);
-> > +     subpage_len =3D 10; /* enough for "cpupower-" */
-> > +     subpage_len +=3D strlen(subpage);
-> > +
-> > +     page =3D malloc(subpage_len);
-> >       if (!page)
-> >               return -ENOMEM;
-> >
-> > @@ -97,7 +104,40 @@ static int print_man_page(const char *subpage)
-> >               strcat(page, subpage);
-> >       }
-> >
-> > -     execlp("man", "man", page, NULL);
-> > +     /* Get current process image name full path */
-> > +     if (readlink("/proc/self/exe", exec_path, PATH_MAX) > 0) {
-> > +
-> > +             man_path =3D malloc(PATH_MAX);
-> > +             if (!man_path) {
-> > +                     free(page);
-> > +                     return -ENOMEM;
-> > +             }
-> > +
-> > +             exec_dir =3D strdup(exec_path);
-> > +             if (!exec_dir) {
-> > +                     free(page);
-> > +                     free(man_path);
-> > +                     return -ENOMEM;
-> > +             }
-> > +
-> > +             *man_path =3D '\0';
-> > +             strncat(man_path, dirname(exec_dir), strlen(exec_dir));
-> > +             strncat(man_path, MAN_REL_PATH, strlen(MAN_REL_PATH));
-> > +             strncat(man_path, page, strlen(page));
-> > +             strncat(man_path, MAN_SUFFIX, strlen(MAN_SUFFIX));
-> > +
-> > +             free(exec_dir);
-> > +
-> > +             /* Check if file exists */
-> > +             if (access(man_path, F_OK) =3D=3D -1) {
-> > +                     free(man_path);
-> > +                     man_path =3D page;
-> > +             }
-> > +     } else {
-> > +             man_path =3D page;
-> > +     }
-> > +
-> > +     execlp("man", "man", man_path, NULL);
->
-> You can simplify all of this by using getenv() to get the environment
-> variables for the program.
->
-> Take a look getenv() usages in the kernel sources for reference.
+even the name here sounds questionable :)
 
-If you mean that I can extract the current working directory and then add
-relative path to man page to it then yes, I can. But the issue with
-this approach
-is that this will work only if I run the binary from its directory,
-otherwise it fail,
-because current_working_directory is not the image_path. And there is no
-environment variable which defines the path to the process's binary.
-Just in case, I looked to the kernel sources which use getenv() in userspac=
-e and
-also examined the list of the POSIX environment variables:
-https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap08.html
-And nothing came to my mind in terms of simplification.
-So, please suggest me what I could change.
+>  48 files changed, 34928 insertions(+)
+>=20
 
-> >
->
-> thanks,
-> -- Shuah
->
+This is ... huge. I don't know who could possibly review it at all.
+
+A quick look suggests that it's got a bunch of things we probably really
+don't want to do that way any more, like
+
+using semaphores in a wifi driver:
+
+> +#include <linux/semaphore.h>
+
+having a bunch of (sometimes wrong!) element definitions in a driver:
+
+> +struct ieee_types_aid {
+...
+> +	u16 aid;
+
+embedding a (default?) wireless_dev when clearly the driver supports
+more than one netdev/wdev:
+
+> +	struct wireless_dev wdev;
+
+Having multiple own workqueues is probably also unreasonable:
+
+> +	struct workqueue_struct *dfs_cac_workqueue;
+> +	struct workqueue_struct *dfs_chan_sw_workqueue;
+> +	struct workqueue_struct *workqueue;
+> +	struct workqueue_struct *rx_workqueue;
+> +	struct workqueue_struct *host_mlme_workqueue;
+
+as is a misnamed mutex, but really you could use wiphy work and likely
+not have a mutex at all:
+
+> +	/* mutex for scan */
+> +	struct mutex async_mutex;
+
+(even mac80211 only has one mutex left, and that's for a specific case
+where otherwise we have some issues!)
+
+questionable locking schemes, as evidenced simply by "is something
+locked" variables existing:
+
+> +	bool rx_locked;
+> +	bool main_locked;
+
+locking code, rather than data?
+
+> +	/* spin lock for main process */
+> +	spinlock_t main_proc_lock;
+
+but also simple things like not wanting to use ERR_PTR()?
+
+> +static int nxpwifi_register(void *card, struct device *dev,
+> +			    struct nxpwifi_if_ops *if_ops, void **padapter)
+
+(padapter is an out parameter)
+
+Why random numbers for cookies instead of just assigning from a static
+variable:
+
+> +		*cookie =3D get_random_u32() | 1;
+
+Open-coding -EPERM?
+
+> +	if (nxpwifi_deinit_priv_params(priv))
+> +		return -1;
+
+Using -EFAULT for FW errors seems like a really bad idea:
+
+> +	if (nxpwifi_drv_get_data_rate(priv, &rate)) {
+> +		nxpwifi_dbg(priv->adapter, ERROR,
+> +			    "getting data rate error\n");
+> +		return -EFAULT;
 
 
---=20
-Kind regards,
-Roman Storozhenko
+But I really just scrolled through this briefly, this wasn't a real
+review. I don't know who could do a real review, but as is, it looks
+like someone _should_.
+
+johannes
 
