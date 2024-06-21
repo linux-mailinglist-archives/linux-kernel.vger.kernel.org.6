@@ -1,110 +1,119 @@
-Return-Path: <linux-kernel+bounces-223701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF4B91171B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:05:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E112C91171D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC20D282013
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:05:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C78CB2164A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6A2631;
-	Fri, 21 Jun 2024 00:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFE64436;
+	Fri, 21 Jun 2024 00:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8C2s4Bb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HneLpggF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E7F17C;
-	Fri, 21 Jun 2024 00:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E193207;
+	Fri, 21 Jun 2024 00:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718928337; cv=none; b=aa7RNG15NFqYvtDxyVAQWUXz/66YaCL0c/BeT3g05Wq2g6j55+TV+uaLkmzr7TwDYSPaQuYvtyMC9n1sNBZ9vAbRvBSSitt27eltbw7vpHnBy4VOs5bJI9A7cmOTMdGlE+Ou9sCWx6SFTU0ZfhHAvrBdb7UIz3SKvKWyG0+0ihI=
+	t=1718928375; cv=none; b=jhR3qorLf1OfkHjOfwdvySmUj42pp2+ab+GvF7IXfRFIPgXwP6lLDPgoFJ4kiqjBAvqaDluwD3V6lBXlTg5+1NP4qHzzapuV/JXl+La5AwC7FA0M7q0Y4jVtlIK3QDufLyCRyoA/Rxm7c8S61BVf6ZfIyteJmp6h03nTWGtHYSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718928337; c=relaxed/simple;
-	bh=fJPlLHdMqCmgtQq/twO+a2QC2xncnSMWw9IGmj20ENw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NjPwN27m28rIa2PfLxuw+Pyh9OZTzlnDFUPwRymmcjLTGCBOTBDl2fvGHl5zKEb5uyvLf+KDo/RUhOwNL5eX+xyCA+ht2LOjYkUx8tKlvUtTu7Zhyb9O9mb8eOET8E9WYdNYNHnVeOWl37F8nPGxa9WKQ4siZqS1bZMNNM96Jyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8C2s4Bb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B27C2BD10;
-	Fri, 21 Jun 2024 00:05:34 +0000 (UTC)
+	s=arc-20240116; t=1718928375; c=relaxed/simple;
+	bh=VNSCHiO08SIk0htqWDW6NDFuvYyhidq/ovhyfUV5Kwg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Cou3aXMVkXhHGYGF+zvRkCV3R0pqhbEX9BTHjLYUA4xVAeMxd0scQxRzbzftBfbP4K28nfuKQESgoCf/8JMJTtXpQ0MlSvkQSM76fi1tHmdRRMBOWz1rL7aZdwRnkEeYWWbmeibDGEykCS5QD2iE01LOjff1d5hiPHrgUVaTq0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HneLpggF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E3A7C2BD10;
+	Fri, 21 Jun 2024 00:06:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718928336;
-	bh=fJPlLHdMqCmgtQq/twO+a2QC2xncnSMWw9IGmj20ENw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o8C2s4BbJyisd0IM/JcnEhu3RJKkogMRaeHD5G2yUWSOM4S0MB18zltnpnJmbIrsW
-	 DuPxJ+Zuy1FLOyTixepK+xYMLFrw3dOZipT2DnEhfSxtrIq4aHEuCkf7NRE3pnMSK4
-	 4Z5m7n4MOujfDptBewZogGsApitfiLAP5aar2z00aVzxT8W04uC4RDG5OmkG9JDYJT
-	 FbRpQQIqNJwDNd4Qkx7o9WHA958ibgGcf+XgQgn4qqb06K68Mg6Eqxg8wg/SfW6yca
-	 Vkg77+kcc7Qba23+amlfV+mPrLhQRAiXehj5Fvl9E19ezomoDwqtUziIamPq+FyBfJ
-	 nCHGnweXvE9wQ==
-Message-ID: <e25962a1-cd0c-47c9-9e10-008c475f22cb@kernel.org>
-Date: Fri, 21 Jun 2024 09:05:33 +0900
+	s=k20201202; t=1718928375;
+	bh=VNSCHiO08SIk0htqWDW6NDFuvYyhidq/ovhyfUV5Kwg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=HneLpggF5aKAge/YLzIW5cLkwl1JRmjRPAHCL9AVCFqQnPr25XKP9Z/YFuOrHFRQM
+	 Z8WthZPFSd05AbkIJE7UTae1fx3IHUq3s75yr3U83zQfEU7QtJmzJG4jZ8kmRpLC7g
+	 GnaeNLH2rHkUxgRcg5o5IBMpWKQ/TttntERYGpR3LDYgcAM/3dsaPM6l7wBTgQGhA/
+	 neiEPwmWUsUSVCSmbh9khUQsFK/ciT5j9FvzPL9Bf9Mf7fJu9oYg+fsrARZuPkG5Mc
+	 9+IhU4KVKb2ttRGmnF0TsxJugRTTvceAmV7z+zF4iyxnLV1CDS4yio89WNd6nDyYyV
+	 k6sIw0QXHXRaA==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
+ Nicolin Chen <nicoleotsuka@gmail.com>, 
+ Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
+ linuxppc-dev@lists.ozlabs.org, 
+ Philip-Dylan <philip-dylan.gleonec@savoirfairelinux.com>
+In-Reply-To: <20240620132511.4291-1-elinor.montmasson@savoirfairelinux.com>
+References: <20240620132511.4291-1-elinor.montmasson@savoirfairelinux.com>
+Subject: Re: (subset) [PATCHv5 0/9] ASoC: fsl-asoc-card: add S/PDIF
+ controller
+Message-Id: <171892836830.273016.4379202325839599426.b4-ty@kernel.org>
+Date: Fri, 21 Jun 2024 01:06:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] ata: libata-scsi: Generate ATA PT sense data when
- ATA ERR/DF are set
-To: Niklas Cassel <cassel@kernel.org>, Igor Pylypiv <ipylypiv@google.com>
-Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240614191835.3056153-1-ipylypiv@google.com>
- <20240614191835.3056153-3-ipylypiv@google.com> <ZnAeFbdt02zge2my@ryzen.lan>
- <ZnIBdj02yKFz4sK8@google.com> <ZnQm3-OL95x_Z_VP@ryzen.lan>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <ZnQm3-OL95x_Z_VP@ryzen.lan>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-On 6/20/24 21:55, Niklas Cassel wrote:
->> Thanks for pointing this out! Looks like ATA PASS-TRHOUGH case is fine
->> since the flag is always set by ata_scsi_pass_thru() as you pointed out.
->> Do we still want to add the check even though we know that it is always
->> set by ata_scsi_pass_thru()?
->>
->> If the answer is "yes", I wonder if we should use the ATA_QCFLAG_RTF_FILLED
->> flag instead? Currently it is used for ahci only but looks like it can be
->> expanded to other drivers. inic_qc_fill_rtf() will benefit from this change
->> because it is not always setting the status/error values:
->> https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/ata/sata_inic162x.c#L583-L586
->>
->> For the non passthough case qc->result_tf in ata_gen_ata_sense() is also valid
->> because fill_result_tf() is being called for failed commands regardless of
->> the ATA_QCFLAG_RESULT_TF flag:
->> https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/ata/libata-core.c#L4856-L4873
->>
->> In this case using ATA_QCFLAG_RTF_FILLED will be more accurate because
->> fill_result_tf() is being called even when ATA_QCFLAG_RESULT_TF is not set.
->>
->> With that said I'm not sure if it makes sense to update all of the ATA
->> error handling to start checking for the ATA_QCFLAG_RTF_FILLED flag.
->>
->> What are your thoughts on this?
+On Thu, 20 Jun 2024 15:25:02 +0200, Elinor Montmasson wrote:
+> This is the v5 of the series of patches aiming to make the machine
+> driver `fsl-asoc-card` compatible with S/PDIF controllers on imx boards.
+> The main goal is to allow the use of S/PDIF controllers with ASRC
+> modules.
 > 
-> I see your point, we will fill the result if there is an error,
-> even if ATA_QCFLAG_RESULT_TF wasn't set.
+> The `imx-spdif` machine driver already has specific support for S/PDIF
+> controllers but doesn't support using an ASRC with it. However, the
+> `fsl-asoc-card` machine driver has the necessary code to create a sound
+> card which can use an ASRC module.
+> It is then possible to extend the support for S/PDIF audio cards by
+> merging the `imx-spdif` driver into `fsl-asoc-card`.
 > 
-> Perhaps we should modify fill_result_tf() to set ATA_QCFLAG_RTF_FILLED,
-> after it has called ap->ops->qc_fill_rtf(qc);
+> [...]
 
-Yes, let's do that.
+Applied to
 
-> Then this code can check if ATA_QCFLAG_RTF_FILLED is set, like you suggested.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-And I wonder if we should not just drop ATA_QCFLAG_RESULT_TF and *always* set
-the result tf for all commands. I fail to see why this is conditional to that flag.
+Thanks!
 
+[1/9] ASoC: fsl-asoc-card: set priv->pdev before using it
+      commit: 90f3feb24172185f1832636264943e8b5e289245
 
--- 
-Damien Le Moal
-Western Digital Research
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
