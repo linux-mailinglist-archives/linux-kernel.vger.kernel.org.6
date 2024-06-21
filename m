@@ -1,133 +1,123 @@
-Return-Path: <linux-kernel+bounces-225183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEAA912D38
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5603912D39
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539F21F25D9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:32:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6897D289D75
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF09717B416;
-	Fri, 21 Jun 2024 18:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A417417B4E2;
+	Fri, 21 Jun 2024 18:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6D94MCr"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cvbs2Gzz"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D27F17A934
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 18:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A5617A92E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 18:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718994751; cv=none; b=ljUGGn0XSd3jmQvYb5KkFQfq5AW3h26dt9ZFO61RkNWNpKfw4QZtn60uF4Prx+MklRtvsebkfgEiWzU9NvPBmf7OBguEDOTNIjUP6QY8DLt1XTsGXrQgHLS0KAPIHMEXWftKpcT4sclE0zD4brHDF48nV7SBhTwczwpm3vbxask=
+	t=1718994759; cv=none; b=WH7OHjzFlokKwbsP98491pqwqSoO6c2TLiHia+EASNcWL1CZY1SNmEjb+VUw/8IEffNH1pFNzpAorE7bYOSUQRLKZGJ/Kg9ogFje5B4YQYcp/g3OBFrwQJpIesYlUVGxPXQ3aE2OY/BpqhLrknmUq/+wdsBDGuT1NoMwokcmcEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718994751; c=relaxed/simple;
-	bh=thhtlSie8YVBkDY1b+PMHQ9EaUfvPElL5+RTRl0VROg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfTR1QZ9xL3o4SjeuQBTS+vPdut05zp6lQzkqbaDXYf0lipuN7YG9LHIbP5LdiACgbptL2xU3bt0MEk6KocMkcvKPQQnMutUd8MibOr0OzmAJGT1tJzIwE199ejqB9aDdLMKPv5oVg0jPg4Jpz+cpFBcpRhKZDUu7+11bCzX/AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6D94MCr; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cd87277d8so835031e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:32:29 -0700 (PDT)
+	s=arc-20240116; t=1718994759; c=relaxed/simple;
+	bh=0H34soARn+l9ua3hOFI0BtyYnn5z/+diQyMIqihfAwY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=W2ZJUEVLRJO71XUyrJZhp0TdBQADv+8MTb3yc0rIoelzMQ4NiRLJBM5wUYm92qY3P2pL7Nk+MI8dOHni78SpKFx/TWzjhOo2Z/YN0KhFabQpDWt/a5QVNpaRvpC85bUCbZNdZce9tMkZpR15P4biOhKxcPvI3SU6Mc66vhg4vKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cvbs2Gzz; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-631b498f981so37308697b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:32:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718994748; x=1719599548; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bq0UL8IzpOonk6RfZKl80LUoC0gW9D6P21SahttrDvM=;
-        b=O6D94MCrQ4RvjZaibfsJ/Bx2+8yK7wX7DyQKFJgQKwpMFg86giHgdFPMPyn7Jd6GAW
-         1nbRWo67vu/tQTte84gAsNo35Sy0ihk0dxuTTKnFQKEV7y2gLTnAazbuFv2kTub6fUpn
-         RD+MFgS7HxJ/9WukN0aFWW3pW05dEZR/dPwy1tM7dH5TLY2NR6YScjyb+92Rm23FbjTq
-         b4yiXdxmD8v1IJev9s+InHpR6t5guattkwrspGMajcqH1mdnjs50uU4PR5ej6rVH34n3
-         28+4aiEzAG5XTvHky6oQBg1hF4HdjJwsZCNlk6j1HIHmQURh9psTzfXothSGn+92h9yn
-         Kw3A==
+        d=google.com; s=20230601; t=1718994756; x=1719599556; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wjq+poPO8VKzj2zS+5inMc+koR44iKdQ85yHH57Hmm4=;
+        b=cvbs2Gzz+uUCkXQJddyah/FnohdJxL3JJG2tmjixdVONRsfod4QQvpNV9vf8/68R/A
+         GuwkVc5W/vWM4aC383r4NTBBapf0+91nGWUWFo/Kx99zUq17lSm95Dzskt2DYW80F3a2
+         CTeO+nsmkAEEH3rj/U1Meu24tw39QNh7ADjGVYkn1L4q8UzpcywSV9XM9a4PiLfMTDPc
+         Jy3w2YkNr7NlKk8lOxPa+KFFzwhNCJ69Bw6Xh3ZsScaftie+5MOrzIdalUTQ3BveDQKg
+         T9GYGnz1ZQmYjKm2ReGayBb2YyWzVZ0lvThABurWwFALGhAzv/st4oZ5b33Xi/Rp2e97
+         ysqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718994748; x=1719599548;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bq0UL8IzpOonk6RfZKl80LUoC0gW9D6P21SahttrDvM=;
-        b=DYhc4VvDXOVT5faj5q6cwJbrSFhg2MFqpGT7hJzoMmTWlXamE5ybBh7HQO+tdu0OCB
-         j20NPBpk/ADCLM0bxWQVqcCKXwkFdQKFIOozVLf3A1FCOgdD05ajgwDAsNrEUpmm8fss
-         Tvc9D3VJRAE4g2/s6QcmlDyW2xWQ7+9+azA6DKhi64V9L/BO3BzAcyA+ZPRLmmjjZrFw
-         lVd+0G/eKjOsX9IroD+R0sYdaV6dfApppIVtmyKliUfQeIAcBN9JCVpr8CiX8fi7mp8r
-         JvXuwu5/c7553pG8e5OcJnKuyoHd8ze4noci50EIaI+yHxeIaClc38QZ2Ah7k7rZ6aKW
-         by0A==
-X-Gm-Message-State: AOJu0YzcqrSaz5Jfra/gzuuTt9Xtz/fKXrW61z+WsSKQUlW2pXltfhgv
-	aaTIrnCyLmt4NDFjwPDOHMZiX/EEVkjJlZDEfBWarP6WvgylqAA=
-X-Google-Smtp-Source: AGHT+IHzg95NzN8ePMceXpdhLLVEiWevt2VQizHAjHxnmLlaZjvMGCSW/E0kFTwyTHIPrCDE9GmgXw==
-X-Received: by 2002:a05:6512:3995:b0:52c:8b72:3cdd with SMTP id 2adb3069b0e04-52ccaa9190fmr6935367e87.47.1718994747471;
-        Fri, 21 Jun 2024 11:32:27 -0700 (PDT)
-Received: from p183 ([46.53.254.81])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf54944esm108628166b.101.2024.06.21.11.32.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 11:32:26 -0700 (PDT)
-Date: Fri, 21 Jun 2024 21:32:25 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH] build-id: require program headers to be right after ELF
- header
-Message-ID: <ef904b3b-e9b2-4fb4-bce6-72eb4f2018e2@p183>
-References: <0e13fa2e-2d1c-4dac-968e-b1a0c7a05229@p183>
- <20240621100752.ea87e0868591dd3f49bbd271@linux-foundation.org>
+        d=1e100.net; s=20230601; t=1718994756; x=1719599556;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wjq+poPO8VKzj2zS+5inMc+koR44iKdQ85yHH57Hmm4=;
+        b=vXSRXv68ENQtRuH+6diVr7qX06OTUR+oDPqjJFJMg5BqEyMst1FWuUzJ7rM0sGw/M+
+         EAaHKwqhw79YACOcMopOLAQhBI0LAHru1LwXLO3aVpBGqaUvBCfR9I2XC+1MRH+qxjlz
+         7PYUJdpMwqBDZgMveh36JR04+qrDPgcQhNj1TMscNrAOMIIvmaYzRiLdpYIZiEOtJGFh
+         JWdFTOsmwt0tpnh/ubQEzTinI/8Yz2SmgXjS1unCQREI4o7LMrwIOIzTDs05g5OB3bEz
+         GpzSBTdabgLyTDD3Lzo55VHeMerRhyJC9DIPtT/EBwMZBL+sePyrF4gvbA6Ukz5wA4aP
+         K3JA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBS0uaOb+muddsNbBFBkTbGoHegDoL3snm11+s3nnZL1afe1nGnIB372qp8M4SjaUR8e7D+XqgXHPPaB1OPA9GZkekJtND4R1tnE6Q
+X-Gm-Message-State: AOJu0Ywr+LtCOpmuiLStJ16e6B3lffjag718VG3P66cvaWrHQkDC517L
+	v7v6l3t3hVsAr+PgimuDgXHho+i2SYi1mmZbD+5XsYC6my1O9kXCjmD/CnA4ZhCo40rNcEvoAsx
+	1AA==
+X-Google-Smtp-Source: AGHT+IGEjW89Y/O/38ZL3Tnu7qb0RJLIju4LabxToEhzi7MadqEX4RhJshNX3Tuav4hl19hd3OuuQC4QDCc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:25c7:b0:62c:de05:5a78 with SMTP id
+ 00721157ae682-63a8f524cebmr11574467b3.6.1718994756418; Fri, 21 Jun 2024
+ 11:32:36 -0700 (PDT)
+Date: Fri, 21 Jun 2024 11:32:34 -0700
+In-Reply-To: <20240229025759.1187910-1-stevensd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240621100752.ea87e0868591dd3f49bbd271@linux-foundation.org>
+Mime-Version: 1.0
+References: <20240229025759.1187910-1-stevensd@google.com>
+Message-ID: <ZnXHQid_N1w4kLoC@google.com>
+Subject: Re: [PATCH v11 0/8] KVM: allow mapping non-refcounted pages
+From: Sean Christopherson <seanjc@google.com>
+To: David Stevens <stevensd@chromium.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	Isaku Yamahata <isaku.yamahata@gmail.com>, Zhi Wang <zhi.wang.linux@gmail.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Jun 21, 2024 at 10:07:52AM -0700, Andrew Morton wrote:
-> On Fri, 21 Jun 2024 18:05:50 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+On Thu, Feb 29, 2024, David Stevens wrote:
+> From: David Stevens <stevensd@chromium.org>
 > 
-> > ELF spec doesn't require program header to be placed right after
-> > ELF header, but build-id code very much assumes such placement:
-> > 
-> > 	find_get_page(vma->vm_file->f_mapping, 0);
-> > 
-> > and later check against PAGE_SIZE.
-> > 
-> > Returns errors for now until someone rewrites build-id parser
-> > to be more correct.
-> >
-> > ...
-> >
-> > --- a/lib/buildid.c
-> > +++ b/lib/buildid.c
-> > @@ -73,6 +73,9 @@ static int get_build_id_32(const void *page_addr, unsigned char *build_id,
-> >  	Elf32_Phdr *phdr;
-> >  	int i;
-> >  
-> > +	if (ehdr->e_phoff != sizeof(Elf32_Ehdr)) {
-> > +		return -EINVAL;
-> > +	}
-> >  	/* only supports phdr that fits in one page */
-> >  	if (ehdr->e_phnum >
-> >  	    (PAGE_SIZE - sizeof(Elf32_Ehdr)) / sizeof(Elf32_Phdr))
-> > @@ -98,6 +101,9 @@ static int get_build_id_64(const void *page_addr, unsigned char *build_id,
-> >  	Elf64_Phdr *phdr;
-> >  	int i;
-> >  
-> > +	if (ehdr->e_phoff != sizeof(Elf64_Ehdr)) {
-> > +		return -EINVAL;
-> > +	}
-> >  	/* only supports phdr that fits in one page */
-> >  	if (ehdr->e_phnum >
-> >  	    (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
+> This patch series adds support for mapping VM_IO and VM_PFNMAP memory
+> that is backed by struct pages that aren't currently being refcounted
+> (e.g. tail pages of non-compound higher order allocations) into the
+> guest.
 > 
-> Well can we get comments in here eplaining the shortcoming?  That way
-> we're more likely to get a volunteer.
+> Our use case is virtio-gpu blob resources [1], which directly map host
+> graphics buffers into the guest as "vram" for the virtio-gpu device.
+> This feature currently does not work on systems using the amdgpu driver,
+> as that driver allocates non-compound higher order pages via
+> ttm_pool_alloc_page().
+> 
+> First, this series replaces the gfn_to_pfn_memslot() API with a more
+> extensible kvm_follow_pfn() API. The updated API rearranges
+> gfn_to_pfn_memslot()'s args into a struct and where possible packs the
+> bool arguments into a FOLL_ flags argument. The refactoring changes do
+> not change any behavior.
+> 
+> From there, this series extends the kvm_follow_pfn() API so that
+> non-refconuted pages can be safely handled. This invloves adding an
+> input parameter to indicate whether the caller can safely use
+> non-refcounted pfns and an output parameter to tell the caller whether
+> or not the returned page is refcounted. This change includes a breaking
+> change, by disallowing non-refcounted pfn mappings by default, as such
+> mappings are unsafe. To allow such systems to continue to function, an
+> opt-in module parameter is added to allow the unsafe behavior.
+> 
+> This series only adds support for non-refcounted pages to x86. Other
+> MMUs can likely be updated without too much difficulty, but it is not
+> needed at this point. Updating other parts of KVM (e.g. pfncache) is not
+> straightforward [2].
 
-Sure.
-
-> And please drop the braces?
-
-Bracers are good. It took hundred years to drop -Wdeclaration-after-statement,
-I hope to see mandatory bracers by 2050.
+FYI, on the off chance that someone else is eyeballing this, I am working on
+revamping this series.  It's still a ways out, but I'm optimistic that we'll be
+able to address the concerns raised by Christoph and Christian, and maybe even
+get KVM out of the weeds straightaway (PPC looks thorny :-/).
 
