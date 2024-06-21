@@ -1,153 +1,208 @@
-Return-Path: <linux-kernel+bounces-224438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74F091226B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:30:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D410C912274
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:31:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B991C239B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:30:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D3A41F2181C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5075117167B;
-	Fri, 21 Jun 2024 10:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D2D171E53;
+	Fri, 21 Jun 2024 10:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGo14M/O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="dQrzCNes"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1DB17109B;
-	Fri, 21 Jun 2024 10:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718965794; cv=none; b=HlI4PweJpnfwXAzcTR01R9BiP80bDH0oAGK//wTELGmo+TbBAk96hGaZ2P831aaYQDqIUwpbzblRnFoCTw+8EkUeoGlB3MWeslxO28HBrATz/GuG/sC9WlYdvF7MK4/1sjE6PfAGIT6DLbgEEtX5sWTDc5JC2Je3qqqICMBokr8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718965794; c=relaxed/simple;
-	bh=PeKv9k8X+PilrORiusMPipyJYYvxOeI/t16tF6szs5I=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=VIJvfsOt56PVVQl7IUYFz6bBkSO2ljt050jpLPIt21PUR20ougB7f59Ozty0xBPybLXdVHv2UhKuecB/by8Pps1l+0Qu/cdKOcjMbPLwNS7ZbnRSrmKYu3t6RIgHAgDptjWYTtaBTazV91wK5MDnPJ7t2oEFL55Ek7oKurp4hLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGo14M/O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C62A2C2BBFC;
-	Fri, 21 Jun 2024 10:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718965794;
-	bh=PeKv9k8X+PilrORiusMPipyJYYvxOeI/t16tF6szs5I=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=RGo14M/OYHn4kJqUWYEDDubinNXp3PPBzScxS5iT3zuUQQPs9JDXiy5zryEaxlos9
-	 4Uw22bnmNCbRBPPRhVmfCI3SXOKpv3RE8mLPz1APBAX3UAxVwu4SH01l5j6F7MkAo0
-	 9gq9qoyPyvS/fMUWC641NUdd6IokKULuA5AopEqbq8n1fZMxblONAUB8y6i6CKxgyU
-	 MHdX/s0uz96Y5pNb+sbU5PvsU4W8nSiKvilB8RNKJN7S80J2FJfBvrNuFfnWHl9uFl
-	 InOJ1DK2eOlLxTbB5Mf5hxegGKsHkz8rFPzUWbpgOvBnaMgMW7y90qo88jweTC2Uo6
-	 fvyXvsS6cGLUg==
-Date: Fri, 21 Jun 2024 04:29:52 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D079F76034;
+	Fri, 21 Jun 2024 10:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718965842; cv=fail; b=YqzVcMlXKy4eywTPOAvP2Oo81jvQ5HcQr5lcB4URacT3/dqLPC7xD53bPTrSEvBAxk3Hvp56JlsaUOTtBF7QAJjviPfhsgfBMZf7iTa+9jd2Q1+l/h12PzWJjrzI9IQaeXGpgJn1fbqruqIyA9+XKjlhPKgv5+ArvoR/tlmjGPI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718965842; c=relaxed/simple;
+	bh=uGSetLINLTfRX0fm22kpg95zvRvYLt+kgMSK63RAs3Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VKojPd4X7j7ofHVVRggDKuqD1lH7XyDjzZIDZUezDsQl9nDHMeAUme1J1HRSxU9o2xOEuAAozf1Rghlh50e4eVZ+aa6qo2JWDjt26n0P8jO9zJRzDOXDO53plIGfnpEqrTrxqRZ0pyLOXDZ4kweC/hn9+Xg/82OTHNwu0NSl2Y4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=dQrzCNes; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L3WEYm011456;
+	Fri, 21 Jun 2024 03:30:21 -0700
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2169.outbound.protection.outlook.com [104.47.73.169])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3yvrj3ba63-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 03:30:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TQb+JYsma3kQZBR5BeljyCicOiQm6lz8y8nEKKzSGN/SdOJhnVt29EGCZWbHJVDOZPAwECXguBdwJFcDOwGJiymsxp6CnnX1KkdfGsGkkdlCLZniyoEYdNNCRygPJUEV715LRGtdO60VKSNvyUvQGaN9HjhGH3XHoJlqHNr+vkEClmGq+wcpTuvKLhG6I2nZetS8igpYUIz60dDIOGQRoxKsPRsnj6szNvL/Uu1l/W5ewSqYQVzAcB+kvupNepniYttiTPSnWP85U7x4iGD6MuxNoxmw99Wep560DK/NPMKo9xromsB7T4W8VqSBGgUUlnbTTrl0N4c03FZmGXgUeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uGSetLINLTfRX0fm22kpg95zvRvYLt+kgMSK63RAs3Q=;
+ b=QL/pRcd4PtDuqpibyU9EFOeCg7nW255Y+d88vHuJHi30TR5gTmp++SdpafT+C3ZMokhs7xXyGlZ89fk7iJTXstnhPrKc2piunkoNsRbOL1QAhm1mOTE/6tts8auoeW0Z6xcYdiL+zOyKjmUOMCpmqUWnLlDLBxqnaHeMOdqkBybs+AGY7f0wM4zCcr8fQL4gynCgy8qrbNbPaN8UhEDJ26aBkgotHxBi2oHyC9Vp3fSZSkCc9Kvb/rk66EW4cSi5R2USiG1dVGCOBmgTYmHVceZZ74oS5CWzmk9VxIcpXTrj6DqceFBeXY8y2oG/Czw/S4PafsTTFndhaUi3BCmNuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uGSetLINLTfRX0fm22kpg95zvRvYLt+kgMSK63RAs3Q=;
+ b=dQrzCNesurJVGwjgaLZd501dz0Y15b6Fb9l0iSvE0EFFyTb101ASWz2ihN+/f8/fDKdQWtp4rekkHQw7GCj2C4zfM6xFHhOGIi8pRhxyuuyEm4D/+tZgy2WHjowM15pg9hlve7wn410FZoDOp+Mim3wuJx37+j7MraNrtRPrdqQ=
+Received: from BY3PR18MB4737.namprd18.prod.outlook.com (2603:10b6:a03:3c8::7)
+ by SA0PR18MB3520.namprd18.prod.outlook.com (2603:10b6:806:96::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Fri, 21 Jun
+ 2024 10:30:19 +0000
+Received: from BY3PR18MB4737.namprd18.prod.outlook.com
+ ([fe80::1598:abb8:3973:da4e]) by BY3PR18MB4737.namprd18.prod.outlook.com
+ ([fe80::1598:abb8:3973:da4e%5]) with mapi id 15.20.7698.020; Fri, 21 Jun 2024
+ 10:30:18 +0000
+From: Sunil Kovvuri Goutham <sgoutham@marvell.com>
+To: Omer Shpigelman <oshpigelman@habana.ai>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org"
+	<linux-rdma@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+CC: "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        Zvika Yehudai
+	<zyehudai@habana.ai>
+Subject: RE: [PATCH 06/15] net: hbl_cn: debugfs support
+Thread-Topic: [PATCH 06/15] net: hbl_cn: debugfs support
+Thread-Index: AQHawndlNaIwRtcBdEGH7Y0EfiL4XrHSA6QAgAAC4GA=
+Date: Fri, 21 Jun 2024 10:30:18 +0000
+Message-ID: 
+ <BY3PR18MB47373D1A7ACBDB92DDDAB655C6C92@BY3PR18MB4737.namprd18.prod.outlook.com>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-7-oshpigelman@habana.ai>
+ <BY3PR18MB473757A4F450A2F5C115D5A9C6CF2@BY3PR18MB4737.namprd18.prod.outlook.com>
+ <ac16e551-b8d6-4ca7-9e3c-f2e8de613947@habana.ai>
+In-Reply-To: <ac16e551-b8d6-4ca7-9e3c-f2e8de613947@habana.ai>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BY3PR18MB4737:EE_|SA0PR18MB3520:EE_
+x-ms-office365-filtering-correlation-id: 4eb3f877-cc5b-4eb6-1bd0-08dc91dd25e0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|1800799021|376011|366013|38070700015;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?bzJ6ZG5RSWFiVFhiMTB6dm9RWlZYQW56c05xMXlyQk5MQWpWODdjUWNPSjNw?=
+ =?utf-8?B?WEVSQXZWcG9ka3FDQzFsSWRXMXhtOCtacCtKVDBOaFRlVnh5bXYyR3hBVUtp?=
+ =?utf-8?B?Si80aDhCYkxWbTNxRGdmMHVzUWgyUG5ycFhGWmtOUnF0aThtQ1ZHWGV6bW83?=
+ =?utf-8?B?ckJMbTNOWEo0dzI1Z0xqT2pYT0FaZTFqejdQcFVUTC9EUXgzZzZZY1lRSFUy?=
+ =?utf-8?B?WW8xZ0FYZ1RTQVNWRnFmNXpleU5zL1pxdTR2czMxTmlpUGd2MnJiY0hwUUtn?=
+ =?utf-8?B?amMvTnpOWmtxa1E4ejF4cWhXNVlXUEpvSExoK29MaWtRNURtRmk2UlJzL3BL?=
+ =?utf-8?B?SzJPS1VIK2ZRNXR0S1AvanVTSUxVdkNUYm53WDVXd2pGNWFwcTRIWXpHOVV6?=
+ =?utf-8?B?cWZQT0ZXcEZYRENZUzlJb0RTckhUMlNjTmhKWWZUcGdVZjJJN1AyVjZsSXBG?=
+ =?utf-8?B?bDBtdVMzUUtBN0plSVJIaWRCT0Z5NjdwZ1pYQU8yWXF4VzVQNXNTSGpaV1FM?=
+ =?utf-8?B?azUyL0dXNW0rQkpKM000MUdZZkx5ZTZIZDRhYUFvNnEwTzkyOExud2ZZc1px?=
+ =?utf-8?B?amRqdG4zOWI2SlByZ2JKYm9EN3BjZk5sNEhBMmJrNzYrSEhpa3FEZXZYK1po?=
+ =?utf-8?B?RWJrYnI3My9BK1A1M00yZU9uZVZ6ZmtVNXRoVUZRcEsyRmhTTWtleDhvZGlq?=
+ =?utf-8?B?VUY1NktUK0cxeU56MXIvb1VyclVWK0wvYkg5WjNCWkNwK3B6ZzFqd0hFMGdX?=
+ =?utf-8?B?Y2FYUFRSc2xHVjZQQXNnZjNKaTRVZHZ3VVhvK3NhNWtDRUhHdlVYTDFUYUN6?=
+ =?utf-8?B?dnlNcTJ5NHRQMGVya3lQalpUNGc1am1HT1ZIT1FVQyt1OEY5bWtRMHlOaHQ5?=
+ =?utf-8?B?MzlRVnl2QkNLU3ZxemYvRDk2VEJjZmh4TTluZ0xjSmJ4NGs3UUVsYmxMYmZQ?=
+ =?utf-8?B?bXFGUGVLVVFwUU5Vd1dsZ2dRcEZuR1dZZ00xSTNyQ3ozZE13bEVRM0ZobmFE?=
+ =?utf-8?B?UU1GK1BkY0JUejgyR3h1YUVxQnEwSEJoNDcxK2Z5WkRlZThzWHplbEcvdHBS?=
+ =?utf-8?B?cmhFdkUrU0tqYU5mbUJ3L3RrZ1ZZb0JhVjhhVllBYWJ6a2lmUFRoakhuS2pN?=
+ =?utf-8?B?czZldlZsVWlBeTM5YWFQWmhOcHhVSU85V0ZXZHQ0Q3hLMkJVbHdpNGFVWEZr?=
+ =?utf-8?B?dWpGUEpsN3B4MndwNk9iQjY1TTRTclhtTkUyVUE5K0Z2T2NDYjZ4M3A1cmZU?=
+ =?utf-8?B?K1FmdWFNQTdQc05VQXhIMnczMDRXbU85TDNtR2JoRk1EZHJWQ0Q3OGZRbzlj?=
+ =?utf-8?B?Qkc0cXMwMGppTVhSaUZ5RWo5WkRXMWtMajJIQ3IraU52TC9SNGswY1Mxem1V?=
+ =?utf-8?B?TWxSVzJkNkRHSnBxWHNFdnRVN3JpZVgzTFFVTkNVUnNyVHFoSXI0U0kydDBv?=
+ =?utf-8?B?TU5uWDE2RkJ5MDBvTTR2TktGV0l6elpDNStMN2VPZXJaakdMUGwyZHFqdk1P?=
+ =?utf-8?B?QjFDMUpSTjY1d0lsR3VTejhrWHJNRWVFSzhqOFBTOTNLMDl0NHhRcGRZNGk2?=
+ =?utf-8?B?RjVUUHp6MFFBQWNoOVBtWmdnS3V5Vm9oT1JockFuOExnRW5UMWc2SFhUK015?=
+ =?utf-8?B?ZkdNQlM4WURTYm04ZlAwNHJiVStVSWJuRjFOT1psdFcwblVRc3N0Sm9iQ0RL?=
+ =?utf-8?B?SXRwMUlpVFJrN0hpWE1BWWdKMjV6T2VOcFZYb09TWTQ5d1pCWUg2aWVwdGRL?=
+ =?utf-8?B?cnhHVXlnUm53SitrK3Nnc2ZkaVhPZVdJSDNReUlOcStLUFZUWUx3OGNMZUdO?=
+ =?utf-8?Q?tzqqknEkmz0YMvR1wUoPXHOTgK8rxXiBCjG/I=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR18MB4737.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(366013)(38070700015);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?OFhUWjg5d1g5WmlyRFJNSHZ6MlpYWnlvNTcyS3VEbGZaQXZQREVtbGFFTnc3?=
+ =?utf-8?B?TGtZUnZkamhnQ1JOUkxFUW9Td2JJZjgrczN5TWF0WkI1Y0wvV3pjSEFuU2JB?=
+ =?utf-8?B?bkl6MVdiOXBRNXdzK2toOXFzS1dOdEhUS3RQTHo2UUxYWkhmdzROaGgwQUc4?=
+ =?utf-8?B?djVUdzZ2ZDN4TytuaDluWjdid2RiakthbEpUbG5HV2docjkycVZOTXRRckcv?=
+ =?utf-8?B?empqUENoS3QrcXhWbnF2SHpNKzA0YlVyeTBjSDFNcE4zd1Y1Qnp5YzY1WFRE?=
+ =?utf-8?B?SnNGc2RKRjhkUVVvQ1AwNnFxZ0I5cFl1SjlySEU3Z1VhVWdlcnF1alYzZHpl?=
+ =?utf-8?B?K3FrSXNSeWhRUmJFeXBGd2lnZXMzRWpQU3k2Q2QxS1RLTWdUaEpEUjJqMkhH?=
+ =?utf-8?B?djl1YndXOENVNkVJZmdQSURMR0ozd2RSQmd2TVVuUUt6ZEFKaUVCZTNZcDQr?=
+ =?utf-8?B?SnVicWVFRHRyWlppU3huKzhNWHlUclFyWDBOS1VNcVh1TGs2RHFTTnJkV0lO?=
+ =?utf-8?B?V0FHTG9hTExoOEtDcWVNTVZGazUrUnUvTlV4WHNubjdhdHlIbWtiakFxS1cy?=
+ =?utf-8?B?cC9rN3VsazY1d29JVnRoazhpdS9vbDFqSnFXUVZuVEx1UUNqSU5uWk1sOU5m?=
+ =?utf-8?B?ZHp5Tzl4bHNXb2RnZU83b0xWeEVkU3RFYTE1QytMRnRGOXZSQlVvRUhjQkRF?=
+ =?utf-8?B?R0dBMk0xcXRFNDNnRFhnRjBXdlBpbk51L2JNVXJqRlRVaUE2S095MWozTmpw?=
+ =?utf-8?B?L3B5TnBPZmNRS3o5d1JjUDVCdk4vZ1U2VHhqeWVYRUsxbXZpT2N3a1VROHpz?=
+ =?utf-8?B?SmxEK05mYUNaL0lEMU9Ic2FaL3g0c3ZrOHVCNWlVWnRyOHdhbTJaWVhqZktB?=
+ =?utf-8?B?b1EwNzZyRktnU2Fqa3cyR2h3V2NsYlBLWjJoQXErUHl4YTNRK1V4NXUweTFi?=
+ =?utf-8?B?MmhnT1ZmRWhtZ1dFUFdud2pBcXRLcUFEbnp4YXJ5aS9MNmFXQVQyWGdhVzk3?=
+ =?utf-8?B?SkI5SldhWGh6T0NYOU9hdHZkemZXMkhSVnBhOFh5d3FUclZaWUcxN0tUa2Q2?=
+ =?utf-8?B?M015NkhyVWthcEV0SWFxQnVHUDlkUUo5dlIxWElpUXZLc0FweEJnU0YyYkVt?=
+ =?utf-8?B?Sk5FbHR0VUhzVnhNUWJzS1NiSitEaXBuK1hSV0NzWlhqKzBqTVA2UUFyK2Fn?=
+ =?utf-8?B?Q2Z5T2pZMHhlZmtxY1lGazYwclN5LzcrRmZaUkxhTVBuSThNcENWMm9iRllO?=
+ =?utf-8?B?UlkyKzNleXQ5b28wblBRcWRPYVpNSDdPL3dpSkU0YkVpSWw1Yk5pMVFWN2Jq?=
+ =?utf-8?B?NmllY3BzSVhBL0ZlcWhlaldJaUVobjFGaHlhN3VNMjRKRzRnSDI4cW9SVEJ3?=
+ =?utf-8?B?MFAzTmVPMEtPRXp2Zm9naTMzeXY5M1c4Uzl5NGZSWE1xT0p5R0RHb0wzMXpC?=
+ =?utf-8?B?L3ZyWEE5RlNtTFJEa1lLS3pWS080aWhKcmJ3YlFNa1dyc2ZLMEQ5blZJZVow?=
+ =?utf-8?B?MjlDR0Jqc3IzRHRZNnZvbXFGZDc4eHo5dnlyenlWWUM2dGlZdzVIY1ZqTGFC?=
+ =?utf-8?B?bUhZYVcyQUNKR1NwZ2VFdGdUY1NBQmdqbnNaUXFNZVZNUkF0Q3ZPMjExQmtL?=
+ =?utf-8?B?Q1M5VzR4V2VJS1VOREZBVGlSR25iYlp4a3hkcE5GWXR3ZHRwYWNqbHVNYzBY?=
+ =?utf-8?B?QUU0TTFFSytKRnR4Ri9vOStSS3hjZUNDcmNQakhhMWloS3VYVDgxYkRnYzVV?=
+ =?utf-8?B?b0p5MVVUYW8xN09DK0VhS3hjQkdrc043bzJ6eVNZb1pKMklVa2pTUy9Ta0t5?=
+ =?utf-8?B?ZXZOemxFSFhZdE5tRzM3SXZkQklPbENzQ1B6dFBGRHJLRktMSU5GSUhzQkYz?=
+ =?utf-8?B?TlZlam1aTHpzSkNxMzBpRUQxUjlNVHoyNElpcUFaOHJMaXdWL0VUYjJ4TzlC?=
+ =?utf-8?B?eTh0MStjcVU3anNuVVlGeExsRjh6N2w1TUxSNUxGeWtobUttNVNRRGRjZ1U0?=
+ =?utf-8?B?UEtoMUE0NDFzTHR2VWZjT04xRy9RcWpRV1pRcytUVHVNbWVIa3FhMW9JUjhu?=
+ =?utf-8?B?TzcvdHVsL1ZvZGtILzB5cWd1c2lHRzBJYlEvd05WM0RiNS9qZW5qcDQ1YlVa?=
+ =?utf-8?Q?83toFO0UHg5Up4mCCnban5MRZ?=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: George Chan <gchan9527@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, Robert Foss <rfoss@kernel.org>, 
- devicetree@vger.kernel.org
-In-Reply-To: <20240621-b4-sc7180-camss-v1-1-14937929f30e@gmail.com>
-References: <20240621-b4-sc7180-camss-v1-0-14937929f30e@gmail.com>
- <20240621-b4-sc7180-camss-v1-1-14937929f30e@gmail.com>
-Message-Id: <171896579289.1052121.7134078173104120668.robh@kernel.org>
-Subject: Re: [PATCH 1/6] media: dt-bindings: media: camss: Add
- qcom,sc7180-camss binding
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4737.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4eb3f877-cc5b-4eb6-1bd0-08dc91dd25e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2024 10:30:18.8667
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GKQoIGo5gBDQHgbkg29vXF6yU/CpY8WaN/NSrHTerhuIQg8Bp495BN+6wKoKHgmDoYMEoozRVzx73dGdL/nBFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR18MB3520
+X-Proofpoint-ORIG-GUID: rrSfUr_X9YyeL94HGiWJKXqbcnYknpzA
+X-Proofpoint-GUID: rrSfUr_X9YyeL94HGiWJKXqbcnYknpzA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_04,2024-06-20_04,2024-05-17_01
 
-
-On Fri, 21 Jun 2024 17:40:53 +0800, George Chan wrote:
-> Add bindings for qcom,sc7180-camss in order to support the camera
-> subsystem for sm7125 as found in the Xiaomi Redmi 9 Pro cellphone.
-> 
-> Signed-off-by: George Chan <gchan9527@gmail.com>
-> ---
->  .../bindings/media/qcom,sc7180-camss.yaml          | 324 +++++++++++++++++++++
->  1 file changed, 324 insertions(+)
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clocks: [[4294967295, 6], [4294967295, 12], [4294967295, 37], [4294967295, 44], [4294967295, 50], [4294967295, 22], [4294967295, 14], [4294967295, 23], [4294967295, 16], [4294967295, 24], [4294967295, 18], [4294967295, 25], [4294967295, 20], [4294967295, 10], [4294967295, 11], [4294967295, 77], [4294967295, 33], [4294967295, 34], [4294967295, 36], [4294967295, 40], [4294967295, 41], [4294967295, 43], [4294967295, 47], [4294967295, 49]] is too short
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:2: 'cphy_rx_src' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:3: 'csi0' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:4: 'csi1' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:5: 'csi2' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:6: 'csiphy0' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:7: 'csiphy0_timer' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:8: 'csiphy1' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:9: 'csiphy1_timer' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:10: 'csiphy2' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:11: 'csiphy2_timer' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:12: 'csiphy3' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:13: 'csiphy3_timer' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:14: 'gcc_camera_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:15: 'gcc_camera_axi' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:16: 'soc_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:17: 'vfe0_axi' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:18: 'vfe0' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:19: 'vfe0_cphy_rx' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:20: 'vfe1_axi' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:21: 'vfe1' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:22: 'vfe1_cphy_rx' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names:23: 'vfe_lite' was expected
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: clock-names: ['camnoc_axi', 'cpas_ahb', 'csi0', 'csi1', 'csi2', 'csiphy0', 'csiphy0_timer', 'csiphy1', 'csiphy1_timer', 'csiphy2', 'csiphy2_timer', 'csiphy3', 'csiphy3_timer', 'gcc_camera_ahb', 'gcc_camera_axi', 'soc_ahb', 'vfe0_axi', 'vfe0', 'vfe0_cphy_rx', 'vfe1_axi', 'vfe1', 'vfe1_cphy_rx', 'vfe_lite', 'vfe_lite_cphy_rx'] is too short
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/qcom,sc7180-camss.example.dtb: camss@acb3000: iommus: [[4294967295, 2080, 0], [4294967295, 2112, 0], [4294967295, 2144, 0]] is too short
-	from schema $id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240621-b4-sc7180-camss-v1-1-14937929f30e@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Pj4+ICsNCj4+PiArV2hhdDogICAgICAgICAgIC9zeXMva2VybmVsL2RlYnVnL2hhYmFuYWxhYnNf
+Y24vaGJsX2NuPG4+L25pY19kaXNhYmxlX2RlY2FwDQo+Pj4gK1doYXQ6ICAgICAgICAgICAvc3lz
+L2tlcm5lbC9kZWJ1Zy9oYWJhbmFsYWJzX2NuL2hibF9jbjxuPi9uaWNfaW5qZWN0X3J4X2Vycg0K
+Pj4+ICtXaGF0Og0KPi9zeXMva2VybmVsL2RlYnVnL2hhYmFuYWxhYnNfY24vaGJsX2NuPG4+L25p
+Y19tYWNfbGFuZV9yZW1hcA0KPj4NCj4+IERvbid0IHRoaW5rIGRlYnVnZnMgaXMgdGhlIGNvcnJl
+Y3QgaW50ZXJmYWNlIGZvciBhbGwgdGhpcyBjb25maWd1cmF0aW9uLg0KPj4gRGVidWdmcyBzaG91
+bGQgaWRlYWxseSBiZSB1c2VkIGZvciBkdW1waW5nIHJ1bnRpbWUgZGV2aWNlIHN0YXRlIGluZm8g
+Zm9yIGRlYnVnDQo+cHVycG9zZXMuDQo+Pg0KPg0KPkkgc2VlIG90aGVyIHZlbmRvcnMgaGF2ZSBk
+ZWJ1Z2ZzIGVudHJpZXMgZm9yIGRlYnVnIGNvbmZpZ3VyYXRpb25zIG9yIHNldHRpbmdzLCBub3QN
+Cj5qdXN0IGZvciBkdW1waW5nIGRlYnVnIGluZm8uDQo+DQoNCkJ1dCBkaXNhYmxlX2RlY2FwIC8g
+bWFjX2xhbmVfcmVtYXAgc2VlbXMgY29uZmlndXJhdGlvbiByZWxhdGVkIHdoaWNoIGNoYW5nZXMg
+dGhlIHdheSBwa3RzIGFyZSBwcm9jZXNzZWQgbm90IGRlYnVnLg0KQ29uZmlndXJhdGlvbnMgYXJl
+IHN1cHBvcnRlZCB2aWEgZGV2bGluay4NCg0KVGhhbmtzLA0KU3VuaWwuDQo=
 
