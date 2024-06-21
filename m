@@ -1,128 +1,254 @@
-Return-Path: <linux-kernel+bounces-224495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D2E091231C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:16:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB5C912325
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C76371F23652
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:16:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3532B2249F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3D0172BD3;
-	Fri, 21 Jun 2024 11:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB0D172BCA;
+	Fri, 21 Jun 2024 11:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lVHr/P6n"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1qVOfPD"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA61172BA7
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE5812D771;
+	Fri, 21 Jun 2024 11:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718968584; cv=none; b=M1KREmfOxx1orpMth9o7ZiP6ssj0N4fit93mYI6aQQN05U4nopuSMqIl0ZsfwkSzWIR8/OR9M1cTTH69i678b2kfLPsDX09SBFVgVt/pzkkVQSUeMXF9CwGwCz71SDOF7LWAsbjhREXYeHQkPbL03JzUisqkLqr8pIJAOj+IjUQ=
+	t=1718968654; cv=none; b=jcfm9dILGTBL8yQJXhoC8b/oG42SxgiBBV0j1bWJsLeufR/JWMNdYgIdTPMYyQiRSoGKofJj+B6zTH7FN9xpnZCu7ODq8popaioEJUfimpGhU0unnPbsmxXZWCM8DsdLrvICCFXJmi0X1jczKFvvgGrORexrFighyq3BZHLNAko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718968584; c=relaxed/simple;
-	bh=BshDJQdhNhXf11L2xygSIbCgPvzBsBsrcg9+j+hrxIA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hG7veg/zc3jtoJHhYUHXiOoiyHCgUol4Oe9kJxNqkdM17poGdn7KnPDwlPwL/9i5dZdIpW+huIaEa1BpfPKQGylXiQlspJdMsb6PznhcKJiW1JzuJ5QMhCKhsHR/Ob199vdRaBgbvur4JcZusMIlwdXNhA9RidWCqmCW+RVsynI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lVHr/P6n; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42172ab4b60so18296565e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:16:22 -0700 (PDT)
+	s=arc-20240116; t=1718968654; c=relaxed/simple;
+	bh=sVzc/YicQt/3Bw6kdGjiDZDnTvmjCjYj4ieJizyeyeY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=st9GX68wML/SRtWfTw3b6TRMkN55Kbdm9tMdu/6vF24Bg4wiCA+GAruL3VfG0T9sXbxwNboBmJIn6e5meZjNg7AfOufBb1pTS/sM4WAIMUC95cDimPLKU6CnGLMCY0iKGtWEI0FjiRLa+ex8LUAX5cYYG/0MGhlCzFk3130r0Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1qVOfPD; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6efacd25ecso104167766b.1;
+        Fri, 21 Jun 2024 04:17:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718968581; x=1719573381; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bPEEtZOHgOmd9n8/jwJKYJBhpCqajSuBe3eF47dbP/M=;
-        b=lVHr/P6n6fNHFm3wxISbNYNWoUzEx+8rlKIn5YEaROvaHCPfUB4jNSK5xX2y5mlfUB
-         elqOmknRLYmDRLqZj9ww/pkGCj6z3xySNh4O57402tgDRn/J3HFW7wHwBuqpG9GEQczF
-         VQ7vSnBbXAvMW3VOSjoN45ZlnAwTPRSWUmEikeqx7/iW5xWSeE1r8lpdPHKq8ndntmuE
-         N4QD9RqkJawT90arooRZmLKlr88wzHNCIatJLAcP6OKfB/2dqx6EkoR4QiRhw2afmX99
-         0ceKGb0iKiafSr4IwW6Yzv2bOj/NheeuxDPDWMx+9jEsCoqvf2YzxTdf//xAjcwB9KXl
-         H8bg==
+        d=gmail.com; s=20230601; t=1718968651; x=1719573451; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g7Y9S7C57tDOTQYtWaBtzx3CbVPOS8YYr0zKSVtRrMQ=;
+        b=O1qVOfPDlmJ8eXXLZUTXATPgo2AvFqF+kG61BUkdytglILlNJrPatFb0MeEI+9kXpO
+         sAODLqsXQqLecBdonN4mtPfuD0l302pLXCpf0xTc0GqJ0pW9lLUz3z70PJ0uWhFXBmU2
+         j4QZMqPR0yQhg1D2g3xwzFf21/F60o/LJB5QDDcDl6tFVWA5cpFMtswWLr1A3py1PkOa
+         R8sFZfDxHU2O6M5Hlw0LfuDGw2GAUEzTccrWmUHWTS6NHeb1xCiRR7ZA/+mDvOGUDlep
+         clxmHCGxBKokw1LLVoSFi4CFMRQ7KcX6Eh+fA9rJgTHE/OFOE3RKlm11igakPEBRB9sI
+         RBHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718968581; x=1719573381;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bPEEtZOHgOmd9n8/jwJKYJBhpCqajSuBe3eF47dbP/M=;
-        b=oL2S4ViqhkAFFLMZlkqvtr28Bj4HO56u/DBAwDmmagcHdg+qYQZ+YafshbWAsUfdb8
-         AK9EOFQKccz/7YmvjRHOddob4sd4xaE4behiJrYQBbabp7+Ly1tEvZQmoTq9V71bR9Xb
-         6nGhSkTJoRzXUmvV1h/KscOedDVY+nMfz2tJEtYm1wLn5WzAJBU7fBPV2US0KP0iZ3jt
-         8pXVzeG5Gqk1EGpIYnWTZ26aNphNZgpzXimfWedn0RQGh1fsNg4+9Z+abQsoWOx2s9Q6
-         ge7dnka6nNNgsPvHPVxKoN1nFE4vyTeqGsFGd+oCYx/hzUk88t767ORgpDhu/hqcnK3z
-         iCzw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8mmB+ZOscOhZDfo73DR4YFR+7xkd19onqQQujWsdaCOIvgtmDcJu4W6+dq8nWSYE6CHWF6ef3dYNZphNULXK77c9X+46Rnu27TqWk
-X-Gm-Message-State: AOJu0YzRjlZZE0mxdD9hST2+M3uBfUxjPmwqIzLs9azypAFUVZiQl9tl
-	QVycoWoTGzCj91AubLRgYh1enVZflfHADEj5DztknZOCO5HyroWX50Ece/fopnA=
-X-Google-Smtp-Source: AGHT+IGELu0uHxfAlwboPDwjRtRyDqLbieRNBQ+AhZbFVs2b5uEh5KXbhEXjKnW5TwDgBrj6qXfxtQ==
-X-Received: by 2002:a05:600c:2e54:b0:424:6c83:a78e with SMTP id 5b1f17b1804b1-4247529c9e0mr50294075e9.40.1718968581086;
-        Fri, 21 Jun 2024 04:16:21 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a8d8esm23675535e9.12.2024.06.21.04.16.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 04:16:20 -0700 (PDT)
-Message-ID: <be3d384f-82e2-4849-b3c4-070de8d08ba0@linaro.org>
-Date: Fri, 21 Jun 2024 12:16:19 +0100
+        d=1e100.net; s=20230601; t=1718968651; x=1719573451;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g7Y9S7C57tDOTQYtWaBtzx3CbVPOS8YYr0zKSVtRrMQ=;
+        b=NrRwmtZqzZvxR4g4+F0PbsMg4GsO30XZDsZXfW+iLuaCbX4NZAaZ0KM2xoiaDJk1SQ
+         v84L8jDs9UAsigVl50oGvk09Ypo6QqNPchsGKz7N1C8u1mLjGwKvq/Kv8JTdx/8ZBWd6
+         VfaYsqoh07O88GxZY4IdTJja15u67HXQzMAQVWzdi8TQL+tNhtCu+APwelgXn6WAVeyC
+         0FmiIafFYJW8rcshlTcGQ7aMQBYWJziH43Jl0d60b7YXwy+LEFx3I1obJBCtor9GYs4+
+         +ckxGRmI7BQ6le4s0XMpQfgyG7Z9QuMCJFp1lDIXI13/MCxBox0/J9ebbaRBMRnleb4G
+         yDzw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1OrQhCBPhPyRFtPMj/FDrS3cIwjjxja8LK6WLUJpxyyepu8fRzcWC+5rJgei0tHackIBBM72avwDuaKIEi+4RiRcTDO/7QHQhAFTu8gR2sedfaYFSzrCbEf1QIYedanfC0eOJB+nOuw2D+w==
+X-Gm-Message-State: AOJu0YyI7I+SPgTTG5cpvYM01qm/7zLmuLb4zOLZ6UNRkTzw22VHDOrh
+	AyWboU1eRde1L4JBQY4bqpforwfH+CzI1MoZV9mQvJsVGC+Kq34JoLpLW5D4sIW9iZVQvYYboyu
+	werolF/dRDyXbrs3afzh0sKYbqM8=
+X-Google-Smtp-Source: AGHT+IGVZAg20oIBvCbGXF8iXdeGiupDamoCVJcG/qovlSTHPYhqL6+kjJ32aTE5BJxHG1JdE+Baw+bQq4LcCmgRuwU=
+X-Received: by 2002:a50:9fc9:0:b0:57d:3df:f881 with SMTP id
+ 4fb4d7f45d1cf-57d07e0d0a9mr6050621a12.3.1718968651088; Fri, 21 Jun 2024
+ 04:17:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] media: qcom: camss: Add CAMSS_SC7180 enum
-To: Krzysztof Kozlowski <krzk@kernel.org>, gchan9527@gmail.com,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240621-b4-sc7180-camss-v1-0-14937929f30e@gmail.com>
- <20240621-b4-sc7180-camss-v1-2-14937929f30e@gmail.com>
- <f835bd3c-82a7-4798-ac49-cf0d0014d70c@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <f835bd3c-82a7-4798-ac49-cf0d0014d70c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240620120359.151258-1-mjguzik@gmail.com> <20240621-affekt-denkzettel-3c115f68355a@brauner>
+In-Reply-To: <20240621-affekt-denkzettel-3c115f68355a@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 21 Jun 2024 13:17:17 +0200
+Message-ID: <CAGudoHFeNy55qOw676ohM9-9P-n_P9HNX2qL+kRT-B2SmwguSQ@mail.gmail.com>
+Subject: Re: [PATCH] vfs: reorder checks in may_create_in_sticky
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/06/2024 11:03, Krzysztof Kozlowski wrote:
-> On 21/06/2024 11:40, George Chan via B4 Relay wrote:
->> From: George Chan <gchan9527@gmail.com>
->>
->> Adds a CAMSS SoC identifier for the SC7180.
->>
->> Signed-off-by: George Chan <gchan9527@gmail.com>
->> ---
->>   drivers/media/platform/qcom/camss/camss.h | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
->> index ac15fe23a702..5e750c481b74 100644
->> --- a/drivers/media/platform/qcom/camss/camss.h
->> +++ b/drivers/media/platform/qcom/camss/camss.h
->> @@ -76,6 +76,7 @@ enum camss_version {
->>   	CAMSS_8x96,
->>   	CAMSS_660,
->>   	CAMSS_845,
->> +	CAMSS_7180,
-> 
-> This patch on its own makes no sense. Squash it with patch adding 7180.
-> 
-> Best regards,
-> Krzysztof
-> 
+On Fri, Jun 21, 2024 at 9:45=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Thu, Jun 20, 2024 at 02:03:59PM GMT, Mateusz Guzik wrote:
+> > The routine is called for all directories on file creation and weirdly
+> > postpones the check if the dir is sticky to begin with. Instead it firs=
+t
+> > checks fifos and regular files (in that order), while avoidably pulling
+> > globals.
+> >
+> > No functional changes.
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> >  fs/namei.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 63d1fb06da6b..b1600060ecfb 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -1246,9 +1246,9 @@ static int may_create_in_sticky(struct mnt_idmap =
+*idmap,
+> >       umode_t dir_mode =3D nd->dir_mode;
+> >       vfsuid_t dir_vfsuid =3D nd->dir_vfsuid;
+> >
+> > -     if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
+> > -         (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
+> > -         likely(!(dir_mode & S_ISVTX)) ||
+> > +     if (likely(!(dir_mode & S_ISVTX)) ||
+> > +         (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
+> > +         (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
+> >           vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
+> >           vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid=
+()))
+> >               return 0;
+>
+> I think we really need to unroll this unoly mess to make it more readable=
+?
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 3e23fbb8b029..1dd2d328bae3 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1244,25 +1244,43 @@ static int may_create_in_sticky(struct mnt_idmap =
+*idmap,
+>                                 struct nameidata *nd, struct inode *const=
+ inode)
+>  {
+>         umode_t dir_mode =3D nd->dir_mode;
+> -       vfsuid_t dir_vfsuid =3D nd->dir_vfsuid;
+> +       vfsuid_t dir_vfsuid =3D nd->dir_vfsuid, i_vfsuid;
+> +       int ret;
+> +
+> +       if (likely(!(dir_mode & S_ISVTX)))
+> +               return 0;
+> +
+> +       if (S_ISREG(inode->i_mode) && !sysctl_protected_regular)
+> +               return 0;
+> +
+> +       if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
+> +               return 0;
+> +
+> +       i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
+> +
+> +       if (vfsuid_eq(i_vfsuid, dir_vfsuid))
+> +               return 0;
+>
+> -       if (likely(!(dir_mode & S_ISVTX)) ||
+> -           (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
+> -           (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
+> -           vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
+> -           vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid=
+()))
+> +       if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
+>                 return 0;
+>
+> -       if (likely(dir_mode & 0002) ||
+> -           (dir_mode & 0020 &&
+> -            ((sysctl_protected_fifos >=3D 2 && S_ISFIFO(inode->i_mode)) =
+||
+> -             (sysctl_protected_regular >=3D 2 && S_ISREG(inode->i_mode))=
+))) {
+> -               const char *operation =3D S_ISFIFO(inode->i_mode) ?
+> -                                       "sticky_create_fifo" :
+> -                                       "sticky_create_regular";
+> -               audit_log_path_denied(AUDIT_ANOM_CREAT, operation);
+> +       if (likely(dir_mode & 0002)) {
+> +               audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
+>                 return -EACCES;
+>         }
+> +
+> +       if (dir_mode & 0020) {
+> +               if (sysctl_protected_fifos >=3D 2 && S_ISFIFO(inode->i_mo=
+de)) {
+> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
+reate_fifo");
+> +                       return -EACCES;
+> +               }
+> +
+> +               if (sysctl_protected_regular >=3D 2 && S_ISREG(inode->i_m=
+ode)) {
+> +                       audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
+reate_regular");
+> +                       return -EACCES;
+> +               }
+> +       }
+> +
+>         return 0;
+>  }
+>
+> That gives us:
+>
+> static int may_create_in_sticky(struct mnt_idmap *idmap,
+>                                 struct nameidata *nd, struct inode *const=
+ inode)
+> {
+>         umode_t dir_mode =3D nd->dir_mode;
+>         vfsuid_t dir_vfsuid =3D nd->dir_vfsuid, i_vfsuid;
+>         int ret;
+>
+>         if (likely(!(dir_mode & S_ISVTX)))
+>                 return 0;
+>
+>         if (S_ISREG(inode->i_mode) && !sysctl_protected_regular)
+>                 return 0;
+>
+>         if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
+>                 return 0;
+>
+>         i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
+>
+>         if (vfsuid_eq(i_vfsuid, dir_vfsuid))
+>                 return 0;
+>
+>         if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
+>                 return 0;
+>
+>         if (likely(dir_mode & 0002)) {
+>                 audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
+>                 return -EACCES;
+>         }
+>
+>         if (dir_mode & 0020) {
+>                 if (sysctl_protected_fifos >=3D 2 && S_ISFIFO(inode->i_mo=
+de)) {
+>                         audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
+reate_fifo");
+>                         return -EACCES;
+>                 }
+>
+>                 if (sysctl_protected_regular >=3D 2 && S_ISREG(inode->i_m=
+ode)) {
+>                         audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_c=
+reate_regular");
+>                         return -EACCES;
+>                 }
+>         }
+>
+>         return 0;
+> }
 
-Agreed you can put it into the PHY init sequence in patch #3
+That does look better. :)
 
----
-bod
+So as far as I'm concerned my patch can be just dropped, just in case
+I'll note there is no need to mention me anywhere near this.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
