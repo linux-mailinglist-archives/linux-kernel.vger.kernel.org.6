@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-223809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561D2911869
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:22:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B703091186D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B74DDB213A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B47ED1C221D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0A783CDA;
-	Fri, 21 Jun 2024 02:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFC384A22;
+	Fri, 21 Jun 2024 02:24:59 +0000 (UTC)
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF97383CD2
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C610A82886;
+	Fri, 21 Jun 2024 02:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718936556; cv=none; b=S6Ny2q9CpFgvAlxcu/Q8NEuQDcLSUCOpX19NYDDGjrK3hCmm9SFFy5Gia2oiHVk1rta/kED8dLMdFjxHas3QGbJmhXmemsHM2gN1IIyAeylz7V5Joe32mBmk0xVjodc4r0VKImFAzpGoe4XT2MXZ+nDz0N+qrc1+2vmXZuHcmbk=
+	t=1718936699; cv=none; b=Is+Nm89EMhGkiR2QOh3AkEOtEVfJTZ9EVOy3gDGalcFNtWXfbWWojIK9V8pf66bQJBLNtbsDg6+qQYbkYxtlrV4tTw/HU485RY1CtvdDff5rEFwfBYKoaRWmmiD2kHR4wfCvUX0ZVccHbKsQGSQClxrWmbBY5v6lexxZNXYz8FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718936556; c=relaxed/simple;
-	bh=9KxMSHTm+DVfNnqGV5KkSla6BsSLATfeLVjHGFBl/RE=;
+	s=arc-20240116; t=1718936699; c=relaxed/simple;
+	bh=PraBJhcoPBo5S5n6x2fO4drOmb0FI0JqOZb9NqLnUYQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eRFWVRxL/BbcHlHrK1lbQfZHPc/4Uc3kBgmw5xEjrgG5PvjUnXxj4axWS2ac4trWpUeUfnb9EnaHZf/nxCEb+SAe9mNLtKnLosIh6nmuxqbsIMRXOZpUjMlSlzhxuKh3jXKqHQqgx+wyvWqMVXQ4D6MaRYUzZ9ZjSVNnIT+YNeM=
+	 In-Reply-To:Content-Type; b=CpYEQ9qFKaBv+EQjn+MtKVdwbbZvQ6X5mBj3erebT7RKhUxshHtl1DyJIzeouT/Q0kuIRs6SCaEZro6tLnvqge6smOKyMJNxVldtZeHJ41JiOS9CX3icbBMtaNnVENV2gM4NHbb3o9AeaBEIK62iNili1ZStCuExvGMCNm4NlJI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W51GM22r3zVm4j;
-	Fri, 21 Jun 2024 10:17:31 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W51K90pJpzVlQc;
+	Fri, 21 Jun 2024 10:19:57 +0800 (CST)
 Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4026F18007E;
-	Fri, 21 Jun 2024 10:22:28 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 157591402CF;
+	Fri, 21 Jun 2024 10:24:54 +0800 (CST)
 Received: from [10.67.109.254] (10.67.109.254) by
  kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 21 Jun 2024 10:22:27 +0800
-Message-ID: <6c16eeb4-f382-89a5-3481-548c405d4f8e@huawei.com>
-Date: Fri, 21 Jun 2024 10:22:26 +0800
+ 15.1.2507.39; Fri, 21 Jun 2024 10:24:53 +0800
+Message-ID: <bb1ea7f5-973d-54cf-36ab-fe4d55c1b5bc@huawei.com>
+Date: Fri, 21 Jun 2024 10:24:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,17 +48,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.0
-Subject: Re: [PATCH v2 2/5] irqchip/gic-common: Remove sync_access callback
+Subject: Re: [PATCH] ARM: Add support for STACKLEAK gcc plugin
 Content-Language: en-US
-To: Mark Rutland <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: <alexandru.elisei@arm.com>, <catalin.marinas@arm.com>,
-	<linux-kernel@vger.kernel.org>, <maz@kernel.org>, <tglx@linutronix.de>,
-	<will@kernel.org>
-References: <20240617111841.2529370-1-mark.rutland@arm.com>
- <20240617111841.2529370-3-mark.rutland@arm.com>
+To: Kees Cook <kees@kernel.org>
+CC: <linux@armlinux.org.uk>, <ardb@kernel.org>, <arnd@arndb.de>, <afd@ti.com>,
+	<akpm@linux-foundation.org>, <rmk+kernel@armlinux.org.uk>,
+	<linus.walleij@linaro.org>, <eric.devolder@oracle.com>, <robh@kernel.org>,
+	<masahiroy@kernel.org>, <palmer@rivosinc.com>, <samitolvanen@google.com>,
+	<xiao.w.wang@intel.com>, <alexghiti@rivosinc.com>, <nathan@kernel.org>,
+	<jan.kiszka@siemens.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-efi@vger.kernel.org>, Alexander Popov
+	<alex.popov@linux.com>
+References: <20240620131649.886995-1-ruanjinjie@huawei.com>
+ <202406201136.A441E0B7@keescook>
 From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240617111841.2529370-3-mark.rutland@arm.com>
+In-Reply-To: <202406201136.A441E0B7@keescook>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
@@ -66,204 +70,118 @@ X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
 
 
 
-On 2024/6/17 19:18, Mark Rutland wrote:
-> The gic_configure_irq(), gic_dist_config(), and gic_cpu_config()
-> functions each take an optional "sync_access" callback, but in almost
-> all cases this is not used. The only user is the GICv3 driver's
-> gic_cpu_init() function, which uses gic_redist_wait_for_rwp() as the
-> "sync_access" callback for gic_cpu_config().
+On 2024/6/21 2:38, Kees Cook wrote:
+> On Thu, Jun 20, 2024 at 09:16:49PM +0800, Jinjie Ruan wrote:
+>> Add the STACKLEAK gcc plugin to arm32 by adding the helper used by
+>> stackleak common code: on_thread_stack(). It initialize the stack with the
+>> poison value before returning from system calls which improves the kernel
+>> security. Additionally, this disables the plugin in EFI stub code and
+>> decompress code, which are out of scope for the protection.
 > 
-> It would be simpler and clearer to remove the callback and have the
-> GICv3 driver call gic_redist_wait_for_rwp() explicitly after
-> gic_cpu_config().
+> Oh very cool! Thanks for sending this!
 > 
-> Remove the "sync_access" callback, and call gic_redist_wait_for_rwp()
-> explicitly in the GICv3 driver.
+>> Before the test on Qemu versatilepb board:
+>> 	# echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIRECT
+>> 	lkdtm: Performing direct entry STACKLEAK_ERASING
+>> 	lkdtm: XFAIL: stackleak is not supported on this arch (HAVE_ARCH_STACKLEAK=n)
+>>
+>> After:
+>> 	# echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIRECT
+>> 	lkdtm: Performing direct entry STACKLEAK_ERASING
+>> 	lkdtm: stackleak stack usage:
+>> 	  high offset: 80 bytes
+>> 	  current:     280 bytes
+>> 	  lowest:      696 bytes
+>> 	  tracked:     696 bytes
+>> 	  untracked:   192 bytes
+>> 	  poisoned:    7220 bytes
+>> 	  low offset:  4 bytes
+>> 	lkdtm: OK: the rest of the thread stack is properly erased
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> ---
+>>  arch/arm/Kconfig                      | 1 +
+>>  arch/arm/boot/compressed/Makefile     | 1 +
+>>  arch/arm/include/asm/stacktrace.h     | 5 +++++
+>>  arch/arm/kernel/entry-common.S        | 3 +++
+>>  drivers/firmware/efi/libstub/Makefile | 3 ++-
+>>  5 files changed, 12 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+>> index 036381c5d42f..b211b7f5a138 100644
+>> --- a/arch/arm/Kconfig
+>> +++ b/arch/arm/Kconfig
+>> @@ -86,6 +86,7 @@ config ARM
+>>  	select HAVE_ARCH_PFN_VALID
+>>  	select HAVE_ARCH_SECCOMP
+>>  	select HAVE_ARCH_SECCOMP_FILTER if AEABI && !OABI_COMPAT
+>> +	select HAVE_ARCH_STACKLEAK
+>>  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+>>  	select HAVE_ARCH_TRACEHOOK
+>>  	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if ARM_LPAE
+>> diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+>> index 6bca03c0c7f0..945b5975fce2 100644
+>> --- a/arch/arm/boot/compressed/Makefile
+>> +++ b/arch/arm/boot/compressed/Makefile
+>> @@ -9,6 +9,7 @@ OBJS		=
+>>  
+>>  HEAD	= head.o
+>>  OBJS	+= misc.o decompress.o
+>> +CFLAGS_decompress.o += $(DISABLE_STACKLEAK_PLUGIN)
+>>  ifeq ($(CONFIG_DEBUG_UNCOMPRESS),y)
+>>  OBJS	+= debug.o
+>>  AFLAGS_head.o += -DDEBUG
+>> diff --git a/arch/arm/include/asm/stacktrace.h b/arch/arm/include/asm/stacktrace.h
+>> index 360f0d2406bf..a9b4b72ed241 100644
+>> --- a/arch/arm/include/asm/stacktrace.h
+>> +++ b/arch/arm/include/asm/stacktrace.h
+>> @@ -26,6 +26,11 @@ struct stackframe {
+>>  #endif
+>>  };
+>>  
+>> +static inline bool on_thread_stack(void)
+>> +{
+>> +	return !(((unsigned long)(current->stack) ^ current_stack_pointer) & ~(THREAD_SIZE - 1));
+>> +}
+>> +
+>>  static __always_inline
+>>  void arm_get_current_stackframe(struct pt_regs *regs, struct stackframe *frame)
+>>  {
+>> diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
+>> index 5c31e9de7a60..f379c852dcb7 100644
+>> --- a/arch/arm/kernel/entry-common.S
+>> +++ b/arch/arm/kernel/entry-common.S
+>> @@ -119,6 +119,9 @@ no_work_pending:
+>>  
+>>  	ct_user_enter save = 0
+>>  
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +	bl	stackleak_erase_on_task_stack
+>> +#endif
+>>  	restore_user_regs fast = 0, offset = 0
+>>  ENDPROC(ret_to_user_from_irq)
+>>  ENDPROC(ret_to_user)
+>> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+>> index 06f0428a723c..20d8a491f25f 100644
+>> --- a/drivers/firmware/efi/libstub/Makefile
+>> +++ b/drivers/firmware/efi/libstub/Makefile
+>> @@ -27,7 +27,8 @@ cflags-$(CONFIG_ARM64)		+= -fpie $(DISABLE_STACKLEAK_PLUGIN) \
+>>  cflags-$(CONFIG_ARM)		+= -DEFI_HAVE_STRLEN -DEFI_HAVE_STRNLEN \
+>>  				   -DEFI_HAVE_MEMCHR -DEFI_HAVE_STRRCHR \
+>>  				   -DEFI_HAVE_STRCMP -fno-builtin -fpic \
+>> -				   $(call cc-option,-mno-single-pic-base)
+>> +				   $(call cc-option,-mno-single-pic-base) \
+>> +				   $(DISABLE_STACKLEAK_PLUGIN)
+>>  cflags-$(CONFIG_RISCV)		+= -fpic -DNO_ALTERNATIVE -mno-relax
+>>  cflags-$(CONFIG_LOONGARCH)	+= -fpie
 > 
-> There should be no functional change as a result of this patch.
+> This looks very straight forward! If an ARM person can Ack this, I could
+> carry it via the hardening tree. Otherwise, it should probably go via
+> rmk's patch tracker?
 
-There seems to be a similar patch already:
-
-https://lore.kernel.org/all/20230902134106.1969-1-yuzenghui@huawei.com/
+Thank you for your attention and reply.
 
 > 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexandru Elisei <alexandru.elisei@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Will Deacon <will@kernel.org>
-> Reviewed-by: Marc Zyngier <maz@kernel.org>
-> Tested-by: Marc Zyngier <maz@kernel.org>
-> ---
->  drivers/irqchip/irq-gic-common.c | 16 +++-------------
->  drivers/irqchip/irq-gic-common.h |  7 +++----
->  drivers/irqchip/irq-gic-v3.c     |  7 ++++---
->  drivers/irqchip/irq-gic.c        |  6 +++---
->  drivers/irqchip/irq-hip04.c      |  6 +++---
->  5 files changed, 16 insertions(+), 26 deletions(-)
+> -Kees
 > 
-> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-> index afd6a1841715a..4ed17620dc4d7 100644
-> --- a/drivers/irqchip/irq-gic-common.c
-> +++ b/drivers/irqchip/irq-gic-common.c
-> @@ -45,7 +45,7 @@ void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
->  }
->  
->  int gic_configure_irq(unsigned int irq, unsigned int type,
-> -		       void __iomem *base, void (*sync_access)(void))
-> +		       void __iomem *base)
->  {
->  	u32 confmask = 0x2 << ((irq % 16) * 2);
->  	u32 confoff = (irq / 16) * 4;
-> @@ -84,14 +84,10 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
->  
->  	raw_spin_unlock_irqrestore(&irq_controller_lock, flags);
->  
-> -	if (sync_access)
-> -		sync_access();
-> -
->  	return ret;
->  }
->  
-> -void gic_dist_config(void __iomem *base, int gic_irqs,
-> -		     void (*sync_access)(void))
-> +void gic_dist_config(void __iomem *base, int gic_irqs)
->  {
->  	unsigned int i;
->  
-> @@ -118,12 +114,9 @@ void gic_dist_config(void __iomem *base, int gic_irqs,
->  		writel_relaxed(GICD_INT_EN_CLR_X32,
->  			       base + GIC_DIST_ENABLE_CLEAR + i / 8);
->  	}
-> -
-> -	if (sync_access)
-> -		sync_access();
->  }
->  
-> -void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void))
-> +void gic_cpu_config(void __iomem *base, int nr)
->  {
->  	int i;
->  
-> @@ -144,7 +137,4 @@ void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void))
->  	for (i = 0; i < nr; i += 4)
->  		writel_relaxed(GICD_INT_DEF_PRI_X4,
->  					base + GIC_DIST_PRI + i * 4 / 4);
-> -
-> -	if (sync_access)
-> -		sync_access();
->  }
-> diff --git a/drivers/irqchip/irq-gic-common.h b/drivers/irqchip/irq-gic-common.h
-> index f407cce9ecaaa..c230175dd584c 100644
-> --- a/drivers/irqchip/irq-gic-common.h
-> +++ b/drivers/irqchip/irq-gic-common.h
-> @@ -20,10 +20,9 @@ struct gic_quirk {
->  };
->  
->  int gic_configure_irq(unsigned int irq, unsigned int type,
-> -                       void __iomem *base, void (*sync_access)(void));
-> -void gic_dist_config(void __iomem *base, int gic_irqs,
-> -		     void (*sync_access)(void));
-> -void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void));
-> +                       void __iomem *base);
-> +void gic_dist_config(void __iomem *base, int gic_irqs);
-> +void gic_cpu_config(void __iomem *base, int nr);
->  void gic_enable_quirks(u32 iidr, const struct gic_quirk *quirks,
->  		void *data);
->  void gic_enable_of_quirks(const struct device_node *np,
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index 6fb276504bcc8..d95dda2383fb5 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -670,7 +670,7 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
->  
->  	offset = convert_offset_index(d, GICD_ICFGR, &index);
->  
-> -	ret = gic_configure_irq(index, type, base + offset, NULL);
-> +	ret = gic_configure_irq(index, type, base + offset);
->  	if (ret && (range == PPI_RANGE || range == EPPI_RANGE)) {
->  		/* Misconfigured PPIs are usually not fatal */
->  		pr_warn("GIC: PPI INTID%ld is secure or misconfigured\n", irq);
-> @@ -940,7 +940,7 @@ static void __init gic_dist_init(void)
->  		writel_relaxed(GICD_INT_DEF_PRI_X4, base + GICD_IPRIORITYRnE + i);
->  
->  	/* Now do the common stuff */
-> -	gic_dist_config(base, GIC_LINE_NR, NULL);
-> +	gic_dist_config(base, GIC_LINE_NR);
->  
->  	val = GICD_CTLR_ARE_NS | GICD_CTLR_ENABLE_G1A | GICD_CTLR_ENABLE_G1;
->  	if (gic_data.rdists.gicd_typer2 & GICD_TYPER2_nASSGIcap) {
-> @@ -1282,7 +1282,8 @@ static void gic_cpu_init(void)
->  	for (i = 0; i < gic_data.ppi_nr + SGI_NR; i += 32)
->  		writel_relaxed(~0, rbase + GICR_IGROUPR0 + i / 8);
->  
-> -	gic_cpu_config(rbase, gic_data.ppi_nr + SGI_NR, gic_redist_wait_for_rwp);
-> +	gic_cpu_config(rbase, gic_data.ppi_nr + SGI_NR);
-> +	gic_redist_wait_for_rwp();
->  
->  	/* initialise system registers */
->  	gic_cpu_sys_reg_init();
-> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-> index 98aa383e39db1..87255bde960fc 100644
-> --- a/drivers/irqchip/irq-gic.c
-> +++ b/drivers/irqchip/irq-gic.c
-> @@ -303,7 +303,7 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
->  			    type != IRQ_TYPE_EDGE_RISING)
->  		return -EINVAL;
->  
-> -	ret = gic_configure_irq(gicirq, type, base + GIC_DIST_CONFIG, NULL);
-> +	ret = gic_configure_irq(gicirq, type, base + GIC_DIST_CONFIG);
->  	if (ret && gicirq < 32) {
->  		/* Misconfigured PPIs are usually not fatal */
->  		pr_warn("GIC: PPI%ld is secure or misconfigured\n", gicirq - 16);
-> @@ -479,7 +479,7 @@ static void gic_dist_init(struct gic_chip_data *gic)
->  	for (i = 32; i < gic_irqs; i += 4)
->  		writel_relaxed(cpumask, base + GIC_DIST_TARGET + i * 4 / 4);
->  
-> -	gic_dist_config(base, gic_irqs, NULL);
-> +	gic_dist_config(base, gic_irqs);
->  
->  	writel_relaxed(GICD_ENABLE, base + GIC_DIST_CTRL);
->  }
-> @@ -516,7 +516,7 @@ static int gic_cpu_init(struct gic_chip_data *gic)
->  				gic_cpu_map[i] &= ~cpu_mask;
->  	}
->  
-> -	gic_cpu_config(dist_base, 32, NULL);
-> +	gic_cpu_config(dist_base, 32);
->  
->  	writel_relaxed(GICC_INT_PRI_THRESHOLD, base + GIC_CPU_PRIMASK);
->  	gic_cpu_if_up(gic);
-> diff --git a/drivers/irqchip/irq-hip04.c b/drivers/irqchip/irq-hip04.c
-> index 46161f6ff289d..5285150fd9096 100644
-> --- a/drivers/irqchip/irq-hip04.c
-> +++ b/drivers/irqchip/irq-hip04.c
-> @@ -130,7 +130,7 @@ static int hip04_irq_set_type(struct irq_data *d, unsigned int type)
->  
->  	raw_spin_lock(&irq_controller_lock);
->  
-> -	ret = gic_configure_irq(irq, type, base + GIC_DIST_CONFIG, NULL);
-> +	ret = gic_configure_irq(irq, type, base + GIC_DIST_CONFIG);
->  	if (ret && irq < 32) {
->  		/* Misconfigured PPIs are usually not fatal */
->  		pr_warn("GIC: PPI%d is secure or misconfigured\n", irq - 16);
-> @@ -260,7 +260,7 @@ static void __init hip04_irq_dist_init(struct hip04_irq_data *intc)
->  	for (i = 32; i < nr_irqs; i += 2)
->  		writel_relaxed(cpumask, base + GIC_DIST_TARGET + ((i * 2) & ~3));
->  
-> -	gic_dist_config(base, nr_irqs, NULL);
-> +	gic_dist_config(base, nr_irqs);
->  
->  	writel_relaxed(1, base + GIC_DIST_CTRL);
->  }
-> @@ -287,7 +287,7 @@ static void hip04_irq_cpu_init(struct hip04_irq_data *intc)
->  		if (i != cpu)
->  			hip04_cpu_map[i] &= ~cpu_mask;
->  
-> -	gic_cpu_config(dist_base, 32, NULL);
-> +	gic_cpu_config(dist_base, 32);
->  
->  	writel_relaxed(0xf0, base + GIC_CPU_PRIMASK);
->  	writel_relaxed(1, base + GIC_CPU_CTRL);
 
