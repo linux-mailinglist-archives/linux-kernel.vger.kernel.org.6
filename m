@@ -1,218 +1,378 @@
-Return-Path: <linux-kernel+bounces-225228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8A8912DD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:24:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BDC912DD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40496B25659
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:24:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9659A1C21F97
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF5217B4F5;
-	Fri, 21 Jun 2024 19:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752FE17BB08;
+	Fri, 21 Jun 2024 19:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dCuKbGLZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bGkpEX9E"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F59F4644C;
-	Fri, 21 Jun 2024 19:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718997841; cv=fail; b=r6ubV0hhKRKfm1Or6PrUpqjppAmiePWwKYDCwp60IfRbGhvwG8CG5zEoU4DhT3fHaqGGLVoSLxD1DssZdavloSwlflxA7ZY3KooZF2mn02XJAcbvfcGV9dgqP6nRDlQcOfSGOaah+hWJrO+AVIEmC4XajLRPr+0+WrbxDklXSLA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718997841; c=relaxed/simple;
-	bh=OogoxmR90tGvWAPnLqaHRigOfUriTSYM4Hdvslb6pwY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VEk41EWebiFw1LTQ//MAUVvEf92kEq6sSAn3uxP9Y3evFWCYLnPqAw9LtBcfB+dIzCiQjNqYkMwkTIhyul1G4ufSNBL6/lpWji7NDmo+4T+37EoYOBckrKzkHgUsv+Js5dzSI3PMsvQH+Y7XNZwMKOJHHLAqJhXsFe6MqnPYOLE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dCuKbGLZ; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718997840; x=1750533840;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=OogoxmR90tGvWAPnLqaHRigOfUriTSYM4Hdvslb6pwY=;
-  b=dCuKbGLZ6DwslgLgIl1PhvyPBqxTrGkXxGrVxgEahgwiqapOwKEMRhzb
-   NqJk+TLtYGCEP69wAwirCiE1cIgWZABoVrLPRMoZdN/gb2NtWX5sv8PHR
-   ga6wk0OD9SFjTWaRQp1C5PCkmbcuCqIkGo1qaC4kaM+jab64HVtUbApUw
-   vHPlWgpfSifpj3Je2zqCtfGheY16rDtO91mRhF+GBJQghsI5e2Yqe5umS
-   hcPQwlXTVijl4F0JDEXyYzPhlpGYoW0L8YDFFQ+JJrtO+tubvsEurrq1a
-   kQbNt6R+Eaanztu/qOVbKlbdir0KzvS3+z0wOppR8pHbS8mqOggny0gYF
-   A==;
-X-CSE-ConnectionGUID: OS1QWzB4ThagyzW+hYNOdQ==
-X-CSE-MsgGUID: ePnkNEOkQbyalH1ttG6U7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="19824713"
-X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
-   d="scan'208";a="19824713"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 12:24:00 -0700
-X-CSE-ConnectionGUID: biON4d/sRnKBnl8XwR33JA==
-X-CSE-MsgGUID: fD4we5ekS2mc+qx1GmVsxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
-   d="scan'208";a="42647253"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Jun 2024 12:23:59 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 21 Jun 2024 12:23:58 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 21 Jun 2024 12:23:58 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 21 Jun 2024 12:23:58 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kSMfyrh2DoyUTaaMyN8zAczR+mxa9j+XZ+NFgCPTizD+VicpL+ibhREnrvMdnK4E0Rz1R9WWOmi1yN3lxOZl8SaZZOCxURRC8eRG+melFN/6CafR+DPFAXxbJqIlXtTo4iDmNndXWbj3G3H9LFL5mOZBIt8RAJeTg6raic5W8WAe7Fbq61Gvdf3zptU7U9N7arJNrcNVtjZ3WGquObyt56rD47169xD6YvAmW/46GDUwOQzwiwJhdSDeCafL85taGfy9ef1xXdt2POujpk8OCY4gdCUbtkeUwoixojSuw6SD9ksPpTJ/6DS1iqp+xO/4e/N6rswabKZHam4f0m1MZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qBFJdsQwCEeDXigv+iuyoACVbtd+AAg5UK2rAt3YyeI=;
- b=f/QyykMbbzAPBiT8inF3WeeMNsNoTdcQSrpLH08sQCUTG/abKo8O4stSAkTpMElFq/jpGOaFgNI/SOfPMSIhXrfcZOn5A7fHjQtqH1KeEoNroqcScqWv1axWKRJepDHMWm/76OoO906VFrrSUxdaQQDXUQwzaPcZLlHJG93yV+SqLtzSw0tMT2lfodY7ldF8EzJtdba/Qjt4vZoiVvbPFggMNhCLeKjuFwFEq7FXPuy8Q48EGd7wBOnkICx+dAMsmWR+QmqLxsScT+EPXA/38vCjh+Vt1pHgJ+9vHZ8ZO/o4pji7EKvLHgYVxtrgyxfCkJmKcjV0xAHASd6R1HstrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SA2PR11MB5097.namprd11.prod.outlook.com (2603:10b6:806:11a::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.22; Fri, 21 Jun
- 2024 19:23:55 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.7633.021; Fri, 21 Jun 2024
- 19:23:55 +0000
-Date: Fri, 21 Jun 2024 12:23:52 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Terry Bowman <terry.bowman@amd.com>, <dan.j.williams@intel.com>,
-	<ira.weiny@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <ming4.li@intel.com>,
-	<vishal.l.verma@intel.com>, <jim.harris@samsung.com>,
-	<ilpo.jarvinen@linux.intel.com>, <ardb@kernel.org>,
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <Yazen.Ghannam@amd.com>,
-	<Robert.Richter@amd.com>
-CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/9] PCI/AER: Call AER CE handler before clearing AER
- CE status register
-Message-ID: <6675d34860e5e_57ac294a2@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20240617200411.1426554-1-terry.bowman@amd.com>
- <20240617200411.1426554-3-terry.bowman@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240617200411.1426554-3-terry.bowman@amd.com>
-X-ClientProxiedBy: MW4P220CA0004.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:303:115::9) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E106017B423
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718997862; cv=none; b=p4giMxEmGdxMqIWT+QuXdyoF+JjN7RY4r0vkPwxJLIHLD5VROz+O1yAMk5m/fLpwT03ZrU2Wvy7NWwzCaGedr6R0U/9ijFKxHceVRQcTSM/7/EtJpNpxt6UG7ReQn2a1IDa/Kzlms7k6CHwSLCtn3jw7SfgW98OVDvCtqkfF3Mw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718997862; c=relaxed/simple;
+	bh=f/0mdw+gak8aRWs0+54sJCNRpJ6DOHVu4w1+/OzRLAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cdTCKylQ/rDyJDsoCSufbIG0xLX0rzLtm2hHFoxrW3NkXovpBCzSg2bslmxXbU8g0AMA8cuJXS0Ywi2J+WYgBVNmeSKrBuWDw7xyUpjkxhIeP6kzo+6XJNb3qo6zwARF7KEX1M2wo6w5mQLbske+4RXVS6j2Oi0iwPce7dkl3qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bGkpEX9E; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e02eb6f06d8so731070276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718997859; x=1719602659; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MMRkW6HVYaY+ih6EGlax6foMFlmxvxZE0NopDaNbQms=;
+        b=bGkpEX9E76AupDo3DGIN8vbbOq84AQd5X6TeKwuvilj3yINvqQmTVwWLckmhyklLLQ
+         7XmiLGiIlv1FKoKxxuKKGhdD/4RHjAKjknft4BrEWq1/m7mENPUbWAEVbSXCrUbaP8ew
+         oqbc8ypjURV6tMg9zAbtGfrXG6Dw5h8CE6T95L7tX0z/aSHRbUL13db4VT2rVb+Mt8Hg
+         l70wKwkBYd2kfot4sDDHEQljDBfxVSNVKX2Fs6dLvecuLArK9bG0QdnIWT6yITbbWmjo
+         +R7E78rhOUSEif7+zOzhZmQB9yrSebyNjD1kcs718sMBRQgJG3/KEz8VjapOfmJolwJJ
+         jMYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718997859; x=1719602659;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MMRkW6HVYaY+ih6EGlax6foMFlmxvxZE0NopDaNbQms=;
+        b=ErlcvRdEcoUltrPF4AT6VEOkKXgAPgFX9O77IUdIKFoQrypRB9/0B8sP8n/BeH8j/a
+         btaebJPir1lnOkzabL5HBDjK1pWsoW14hNGqIlcJXWqhMMHmPqrErkuwgWbpW7BqKTKD
+         1rr2/3Tea9ctFre4m1uv16l5LMsDShC/d++lBtr6LWB4dSqFgjRu+MLUvoIOW0j8Wo7E
+         LCrm1v8kRUjqlo3wDGnClZepNEWoGLQ+8afr0xOMXCXaTptWnL2Pl8FOg3RXbRKduAve
+         +fGxw88bSRY/CM40C0c9zWvOpJIuR/c98NQUpv/Ir1/xEx39NffbXsylWttcqXhOQJrT
+         a26A==
+X-Forwarded-Encrypted: i=1; AJvYcCWwgxEfmAVAERUyFAvwkCktB56UQ5vb5PefAQ/e6YYL3sV8qoOv6o5mo+WeOaxSFLmbk7kSXC5wGUmFqTwxSV52Bviw0Mb9rKJV9lX/
+X-Gm-Message-State: AOJu0YyfhSNhGOsCJf9wFvZ6pvkGfv0qmiAaERKUz9btBzfSlyjK33fr
+	WpdJDOhsBLSOmp4ynU3sHg9jerSMoYJLmxil7MuswzRr6apydWiz6QukvVuKrVl6xjUtul0pPAd
+	jkryXUYjvVw0IpcOsRkdOisUmF7QGxar8y9Sklw==
+X-Google-Smtp-Source: AGHT+IHfq6nSNPSimxxufcc5BIl8xw+HnqSl3HW48e3ewWnssZE7ccygAMxFQfMP6P+xGldOIvsj8zXf6ThEq4n/KG0=
+X-Received: by 2002:a25:c750:0:b0:e02:b989:ac55 with SMTP id
+ 3f1490d57ef6-e02be1f3761mr8964179276.40.1718997858617; Fri, 21 Jun 2024
+ 12:24:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SA2PR11MB5097:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72085719-c7ef-4dce-5169-08dc9227b11c
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|1800799021|366013|7416011|921017;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?GJWplHnh/mM0Xj8al4mIbiiKTXYeiB143QKCj2FT4n4ZOJZfgxBTlQWcfPwx?=
- =?us-ascii?Q?qP5mpT9XpSEvmlbYUzZwDnhsxlGBG7noeWDC1IluJZYDJMtmYyNQc/p3BPbb?=
- =?us-ascii?Q?rEHt9c8vuEqk5Wi5ilCwzbzbTpNfNv69CjuYCy5qPlDwFwgDbeLdpVtQdPZX?=
- =?us-ascii?Q?3y8orln+RkXXGqO6AVImL3zsv/IPyo1mbZd6HftjR2S8zTUBLGSaHJahVqEc?=
- =?us-ascii?Q?ts7cJ4xJ9Jg5F8TfR6mzTxnye5LXeJ2YuRJTOaTvS+43AcEZPgOuxIMKneq1?=
- =?us-ascii?Q?Ezbdk9CfPVS7/Wm3/ggWTmomLUjZVNQ2scq7z4ALbRx7V34QioRapLcMx2qV?=
- =?us-ascii?Q?8aNYtXR74DHz15tZu5+q8xOI4jXeEHdCD7GiULycYdicWVxWsGsUvdCU7aC4?=
- =?us-ascii?Q?jNb0IdrMrgQyB3J+MuDZICfU/ADeIBV8kwKtUM3bWJrifarnukUE90XwQwpP?=
- =?us-ascii?Q?AbwS1w+4aFwgDpM1KuoE/PGiKiF9qcctS/+rHsiiCgC+l8T73o379SAWza+r?=
- =?us-ascii?Q?9DXLONOJX8fbUmC/8U4ZOruR7Cixn8eOU4ognyZ0tWMPNs2Qld7RQYf8O001?=
- =?us-ascii?Q?zNk5Z7BU5pZKy4b9a9zjBhjiL7hPQljK1aFDhsdQIz1ur7CpjqSW0lFKu+RJ?=
- =?us-ascii?Q?QwjGM+xFUnEdQCTRSvnVGByIqW9lgEeLR8Qj9Z8+tHUoyFqqggBzgEMwLgRO?=
- =?us-ascii?Q?un3rM7owCbmAMviGbk6jlZu2sjOLzKjRGIXvx6+ig58By3bmnMpL4NdMOFp7?=
- =?us-ascii?Q?kmWIKxAktIlFbKDF2+HYsmpiOvZsxLJqchw/cwKo/8E0gwo89pX2JYyYdvK4?=
- =?us-ascii?Q?5c8jrBH6jAsZ+ghXxsDUgMFjlmoIXZ+hkg5leO9k6c5XAeGHuVQ4vYJR2ifo?=
- =?us-ascii?Q?15dyhwH7WMjDb6K2WyFw0+bUQaNFvOieEm/Elf3NWsCsm02+GomohyAgEpEY?=
- =?us-ascii?Q?re01RhHM1KTGlVXpn7cyzFaVa9VgGSJRx4lTqrh8GlUdGZRqgBms7rhusJUB?=
- =?us-ascii?Q?zyLzq+ig4G3tx8PAQGBDWlqT7Ab2idsQ+NeybHh3gsIGgaogx7DATokyr44G?=
- =?us-ascii?Q?IPXtITr4GvNbiSAH7o91GuuS59KlMSYezz6zxx9K3KULUpDpoOABy3wdsjWr?=
- =?us-ascii?Q?RsvKdSY2ag1hK4Wx1cXsKWj2P12mXXIeG/V2mRh7eFU7HWMfCLV9aKeiH+2I?=
- =?us-ascii?Q?5nhCIEpfxnlgFtEAe+hUYMqIIn0B0imGqhGhuMiXArWa2h5WkjpQPVWRbWTZ?=
- =?us-ascii?Q?jK3saUlDH/H91z3OeaoLu0Kc9dR5QGx/VyemAwg5t6gTJaA84kU/F16OkdmO?=
- =?us-ascii?Q?ymorQmPPGc5E38V8PQAM4ycvXQTfo4Mtf+P7vbAWRKJcycXfhs19FbFNvizF?=
- =?us-ascii?Q?qZKoucU=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(366013)(7416011)(921017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BPgBhAb11/HIf9GW+2TFsuKqRXFkesCE5Xv/220RQRd2OssLAVJ0aXLrAG4f?=
- =?us-ascii?Q?DHLQxeXs/W+ml9blE2lJYBjIXJOfpcwUu+1MAKAUc16ZFj3ozhNrLRg/kVtO?=
- =?us-ascii?Q?XoAVYBFgrdVEzatcWn09yw9RBQFFoVxbYef4Kl8I9wXAiVggGGYjbWRRwiuM?=
- =?us-ascii?Q?8Ce4NLG4PtVwrF4CByemIbMrsxyZ5WsClhJ5f/NBKlhH/EFcKvjmlThCp9Se?=
- =?us-ascii?Q?1Gdbeakyj177XxjMBHjSZB+YOQnBqbuoAp0GKnkJt2UfMdEIZrs0lFwfqGvN?=
- =?us-ascii?Q?c1DjWywsss/RN8YrwsUfV5csUTgEyZ/iCEWtudTvkeKpvAM0RCYBU3C1YSx7?=
- =?us-ascii?Q?zJOk92QQI39OJwbTOkf3nHmpdZPcPlqeSwk82gjnQaiaBF7OEr9rq04TStnm?=
- =?us-ascii?Q?eZeg8XKHuKBy53k8vCWcBhtUe7cGhlr0cxQH2yj3glgZKpOIXnQgfsZ9c0KP?=
- =?us-ascii?Q?DXK89RWAqBD8iUap8WamrUWBlJmdC4TF0C8T+cD2p9T4IEwYPfwYsChQ4nrk?=
- =?us-ascii?Q?Afv5QEX/0Yi0cyhYLzDdelKnSIYtDkIEY7ySCWRC02fMqadCfU/eJSoC/jUx?=
- =?us-ascii?Q?7PmhykxDO/yFS/+G3MuLch+bPtwIyrHBXN3uLNhX/y8FwoSuvEJixLo5jRKg?=
- =?us-ascii?Q?5iLkHwVgycMa65I8LEhwvgdwVxUn1l3H5dqGLzQdad5J9//q4/mckxFqPBIz?=
- =?us-ascii?Q?mDH12y1xnSmD9d6hBqlEO5UgE/OkHlAluAHnTn5bRjlLngfMARUyp4Ly2ewu?=
- =?us-ascii?Q?cva5duHkg4Lss4PVoVDM98Da2B5QHKsyGdH6WLy5LBIVuyhaiy+5mLu736XS?=
- =?us-ascii?Q?sXCVtmImmKCph74ZfC8PYcPcYRQPQQnQ/AmSWkiW+b0qtVkuzk4XLojk4vdy?=
- =?us-ascii?Q?b9rum5gdyObRt1LtC6cy5V3xfj2z4sKhM7osJcF0xT9YTI5sBRrRA50ElXbO?=
- =?us-ascii?Q?J1ihGzGL5MuOJMzEVA9q1xSWYwHU3qNS6Xny6PaKuFww8mgr72coo5CgU6YU?=
- =?us-ascii?Q?wPkG3chPQnogJ2xLN0P/yGLfCfEkjQXx9JrpNZgjeyws0vXHjnP/wrWbheCs?=
- =?us-ascii?Q?QyqUyD5uU4Z+JjlEMo3M5qld0yGQbv9kh8GB8s0cFAho4dI66IsHD3qTr0b5?=
- =?us-ascii?Q?4OnpXfY93jiMIYLHBgs1z8ah5VqhHw9CNtW4QZuajopFG61kogghH9Pm2+XM?=
- =?us-ascii?Q?ysnilWZTAhmg0uCMaboZkZRu1RIpoCbLT9Z1LwKL/oY0y7kGtqvTqHFnCLmn?=
- =?us-ascii?Q?RsWRIo12Q7HgrLRRYwLlqSE5mSgz7/LCrZ0jKzE+7u+3HZsxvre/pEzdm2Em?=
- =?us-ascii?Q?1rDWTC6Q1RMaiJx720Ok73uSbPlDxMyGojMO8L/N0b0y2KsZlu0fNf7oK4Vz?=
- =?us-ascii?Q?xgSNvB73AG+2695lxF58xoXP16shxFHUMByf7qkzIx9MTGfLz8xdOdK7XIHN?=
- =?us-ascii?Q?yZR4JYgvHITRObepAzX80qTN1GreFBdlHe1PmQ1Yi8ys+N6azrcEKXhMjPbJ?=
- =?us-ascii?Q?UtfX8v2gbgmUbfv6rZLLNx0zay7mqPWZ+sP+upGjTuQfqy0oAZvvQdkjIuNa?=
- =?us-ascii?Q?eyXaEEzX9MP2g8keEG4iXk+VpWPDqqX0xDQs7O8JlcJPnoA9cRr4rFw8oPB5?=
- =?us-ascii?Q?Dw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72085719-c7ef-4dce-5169-08dc9227b11c
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 19:23:55.4027
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GWY9k/5UTdszc18iFTGejiLQijrRxxk0gMBxMTqRtGjDWp5HZiKw11OSABSDMa89UqmY9RoaYZ10F+903g2vG74dQVSHXHR2tJnM4hPMULg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5097
-X-OriginatorOrg: intel.com
+References: <96e2ce4b154a4f918be0bc2a45011e6d@quicinc.com> <CAA8EJppGpv7N_JQQNJZrbngBBdEKZfuqutR9MPnS1R_WqYNTQw@mail.gmail.com>
+ <3a15df00a2714b40aba4ebc43011a7b6@quicinc.com> <CAA8EJpoZ0RR035QwzMLguJZvdYb-C6aqudp1BgHgn_DH2ffsoQ@mail.gmail.com>
+ <20240621044747.GC4362@sol.localdomain> <CAA8EJppXsbpFCeGJOMGKOQddy0fF4uW3rt4RUuDTQq6mPunBkg@mail.gmail.com>
+ <20240621153939.GA2081@sol.localdomain> <CAA8EJpqV4CW9kKLVUZgfo+hkSv+tn0t+k0McmHEyXNJUpsZF1w@mail.gmail.com>
+ <20240621163127.GC2081@sol.localdomain> <CAA8EJpqytynwQrCAqqBsmx2XYgV5tsNeV4hpYzT6snqu+r8Wdg@mail.gmail.com>
+ <20240621183645.GE2081@sol.localdomain>
+In-Reply-To: <20240621183645.GE2081@sol.localdomain>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 21 Jun 2024 22:24:07 +0300
+Message-ID: <CAA8EJprydVC6Sp8g9b1TOyxN8Awc33=MxKY8=Upi_zag=kDBHA@mail.gmail.com>
+Subject: Re: [PATCH v5 04/15] soc: qcom: ice: add hwkm support in ice
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "andersson@kernel.org" <andersson@kernel.org>, 
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, 
+	"srinivas.kandagatla" <srinivas.kandagatla@linaro.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel <kernel@quicinc.com>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"Om Prakash Singh (QUIC)" <quic_omprsing@quicinc.com>, 
+	"Bao D. Nguyen (QUIC)" <quic_nguyenb@quicinc.com>, 
+	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>, 
+	"konrad.dybcio@linaro.org" <konrad.dybcio@linaro.org>, 
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "jejb@linux.ibm.com" <jejb@linux.ibm.com>, 
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>, "mani@kernel.org" <mani@kernel.org>, 
+	"davem@davemloft.net" <davem@davemloft.net>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Sonal Gupta <sonalg@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Terry Bowman wrote:
-> The AER service driver clears the AER correctable error (CE) status before
-> calling the correctable error handler. This results in the error's status
-> not correctly reflected if read from the CE handler.
-> 
-> The AER CE status is needed by the portdrv's CE handler. The portdrv's
-> CE handler is intended to only call the registered notifier callbacks
-> if the CE error status has correctable internal error (CIE) set.
+On Fri, 21 Jun 2024 at 21:36, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Fri, Jun 21, 2024 at 08:49:56PM +0300, Dmitry Baryshkov wrote:
+> > On Fri, 21 Jun 2024 at 19:31, Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > On Fri, Jun 21, 2024 at 07:06:25PM +0300, Dmitry Baryshkov wrote:
+> > > > On Fri, 21 Jun 2024 at 18:39, Eric Biggers <ebiggers@kernel.org> wrote:
+> > > > >
+> > > > > On Fri, Jun 21, 2024 at 06:16:37PM +0300, Dmitry Baryshkov wrote:
+> > > > > > On Fri, 21 Jun 2024 at 07:47, Eric Biggers <ebiggers@kernel.org> wrote:
+> > > > > > >
+> > > > > > > On Thu, Jun 20, 2024 at 02:57:40PM +0300, Dmitry Baryshkov wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > > Is it possible to use both kind of keys when working on standard mode?
+> > > > > > > > > > > > If not, it should be the user who selects what type of keys to be used.
+> > > > > > > > > > > > Enforcing this via DT is not a way to go.
+> > > > > > > > > > > >
+> > > > > > > > > > >
+> > > > > > > > > > > Unfortunately, that support is not there yet. When you say user, do
+> > > > > > > > > > > you mean to have it as a filesystem mount option?
+> > > > > > > > > >
+> > > > > > > > > > During cryptsetup time. When running e.g. cryptsetup I, as a user, would like
+> > > > > > > > > > to be able to use either a hardware-wrapped key or a standard key.
+> > > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > What we are looking for with these patches is for per-file/folder encryption using fscrypt policies.
+> > > > > > > > > Cryptsetup to my understanding supports only full-disk , and does not support FBE (File-Based)
+> > > > > > > >
+> > > > > > > > I must admit, I mostly used dm-crypt beforehand, so I had to look at
+> > > > > > > > fscrypt now. Some of my previous comments might not be fully
+> > > > > > > > applicable.
+> > > > > > > >
+> > > > > > > > > Hence the idea here is that we mount an unencrypted device (with the inlinecrypt option that indicates inline encryption is supported)
+> > > > > > > > > And specify policies (links to keys) for different folders.
+> > > > > > > > >
+> > > > > > > > > > > The way the UFS/EMMC crypto layer is designed currently is that, this
+> > > > > > > > > > > information is needed when the modules are loaded.
+> > > > > > > > > > >
+> > > > > > > > > > > https://lore.kernel.org/all/20231104211259.17448-2-ebiggers@kernel.org
+> > > > > > > > > > > /#Z31drivers:ufs:core:ufshcd-crypto.c
+> > > > > > > > > >
+> > > > > > > > > > I see that the driver lists capabilities here. E.g. that it supports HW-wrapped
+> > > > > > > > > > keys. But the line doesn't specify that standard keys are not supported.
+> > > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > Those are capabilities that are read from the storage controller. However, wrapped keys
+> > > > > > > > > Are not a standard in the ICE JEDEC specification, and in most cases, is a value add coming
+> > > > > > > > > from the SoC.
+> > > > > > > > >
+> > > > > > > > > QCOM SOC and firmware currently does not support both kinds of keys in the HWKM mode.
+> > > > > > > > > That is something we are internally working on, but not available yet.
+> > > > > > > >
+> > > > > > > > I'd say this is a significant obstacle, at least from my point of
+> > > > > > > > view. I understand that the default might be to use hw-wrapped keys,
+> > > > > > > > but it should be possible for the user to select non-HW keys if the
+> > > > > > > > ability to recover the data is considered to be important. Note, I'm
+> > > > > > > > really pointing to the user here, not to the system integrator. So
+> > > > > > > > using DT property or specifying kernel arguments to switch between
+> > > > > > > > these modes is not really an option.
+> > > > > > > >
+> > > > > > > > But I'd really love to hear some feedback from linux-security and/or
+> > > > > > > > linux-fscrypt here.
+> > > > > > > >
+> > > > > > > > In my humble opinion the user should be able to specify that the key
+> > > > > > > > is wrapped using the hardware KMK. Then if the hardware has already
+> > > > > > > > started using the other kind of keys, it should be able to respond
+> > > > > > > > with -EINVAL / whatever else. Then the user can evict previously
+> > > > > > > > programmed key and program a desired one.
+> > > > > > > >
+> > > > > > > > > > Also, I'd have expected that hw-wrapped keys are handled using trusted
+> > > > > > > > > > keys mechanism (see security/keys/trusted-keys/). Could you please point
+> > > > > > > > > > out why that's not the case?
+> > > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > I will evaluate this.
+> > > > > > > > > But my initial response is that we currently cannot communicate to our TPM directly from HLOS, but
+> > > > > > > > > goes through QTEE, and I don't think our qtee currently interfaces with the open source tee
+> > > > > > > > > driver. The interface is through QCOM SCM driver.
+> > > > > > > >
+> > > > > > > > Note, this is just an API interface, see how it is implemented for the
+> > > > > > > > CAAM hardware.
+> > > > > > > >
+> > > > > > >
+> > > > > > > The problem is that this patchset was sent out without the patches that add the
+> > > > > > > block and filesystem-level framework for hardware-wrapped inline encryption
+> > > > > > > keys, which it depends on.  So it's lacking context.  The proposed framework can
+> > > > > > > be found at
+> > > > > > > https://lore.kernel.org/linux-block/20231104211259.17448-1-ebiggers@kernel.org/T/#u
+> > > > > >
+> > > > > > Thank you. I have quickly skimmed through the patches, but I didn't
+> > > > > > review them thoroughly. Maybe the patchset already implements the
+> > > > > > interfaces that I'm thinking about. In such a case please excuse me. I
+> > > > > > will give it a more thorough look later today.
+> > > > > >
+> > > > > > > As for why "trusted keys" aren't used, they just aren't helpful here.  "Trusted
+> > > > > > > keys" are based around a model where the kernel can request that keys be sealed
+> > > > > > > and unsealed using a trust source, and the kernel gets access to the raw
+> > > > > > > unsealed keys.  Hardware-wrapped inline encryption keys use a different model
+> > > > > > > where the kernel never gets access to the raw keys.  They also have the concept
+> > > > > > > of ephemeral wrapping which does not exist in "trusted keys".  And they need to
+> > > > > > > be properly integrated with the inline encryption framework in the block layer.
+> > > > > >
+> > > > > > Then what exactly does qcom_scm_derive_sw_secret() do? Does it rewrap
+> > > > > > the key under some other key?
+> > > > >
+> > > > > It derives a secret for functionality such as filenames encryption that can't
+> > > > > use inline encryption.
+> > > > >
+> > > > > > I had the feeling that there are two separate pieces of functionality
+> > > > > > being stuffed into a single patchset and into a single solution.
+> > > > > >
+> > > > > > First one is handling the keys. I keep on thinking that there should
+> > > > > > be a separate software interface to unseal the key and rewrap it under
+> > > > > > an ephemeral key.
+> > > > >
+> > > > > There is.  That's what the BLKCRYPTOPREPAREKEY ioctl is for.
+> > > > >
+> > > > > > Some hardware might permit importing raw keys.
+> > > > >
+> > > > > That's what BLKCRYPTOIMPORTKEY is for.
+> > > > >
+> > > > > > Other hardware might insist on generating the keys on-chip so that raw keys
+> > > > > > can never be used.
+> > > > >
+> > > > > And that's what BLKCRYPTOGENERATEKEY is for.
+> > > >
+> > > > Again, this might be answered somewhere, but why can't we use keyctl
+> > > > for handling the keys and then use a single IOCTL to point the block
+> > > > device to the key in the keyring?
+> > >
+> > > All the same functionality would need to be supported, and I think that
+> > > shoehorning it into the keyrings service instead of just adding new ioctls would
+> > > be more difficult.  The keyrings service was not designed for this use case.
+> > > We've already had a lot of problems trying to take advantage of the keyrings
+> > > service in fscrypt previously.  The keyrings service is something that sounds
+> > > useful but really isn't all that useful.
+> >
+> > I would be really interested in reading or listening to any kind of
+> > summary or parts of the issues.
+> > I'm slightly pushy towards keyctl / keyrings, because it already
+> > provides support for different kinds of key wrapping and key
+> > management. Encrypted keys, trusted keys - those are all kinds of key
+> > management, which either will be missing or will have to be
+> > reimplemented for block layers.
+> >
+> > I know that keyrings are clumsy and not that logical, but then their
+> > API needs to be improved. Just ignoring the existing mechanisms sounds
+> > like a bad idea.
+>
+> One thing to keep in mind is that keyring service keys can't be used directly
+> for storage encryption.  So if a component that manages storage encryption (such
+> as fscrypt or dm-crypt) is given a keyring service key, in practice it has to
+> extract the payload from the keyring service key, and not use the keyring
+> service key any further.  So the keyring service can, at most, serve as a way to
+> create and prepare the key, and after that it doesn't serve a purpose.
 
-Is this a fix or a prep patch? It reads like a "fix", but there are no
-notifiers to worry about today.
+Yes, this sounds good enough.
 
-> This is not a problem for AER uncorrrectbale errors (UCE). The UCE status
-> is still present in the AER capability and available for reading, if
-> needed, when the UCE handler is called.
-> 
-> Change the order of clearing the CE status and calling the CE handler.
-> Make it to call the CE handler first and then clear the CE status
-> after returning.
+>
+> (fscrypt used to use the keyring service a bit more: it looked up a key whenever
+> a file was opened, and it supported evicting per-file keys by revoking the
+> corresponding keyring key.  But this turned out to be totally broken.  E.g., it
+> didn't provide the correct semantics for filesystem encryption where the key
+> should either be present or absent filesystem-wide.)
+>
+> We do need the ability to create HW-wrapped keys in long-term wrapped form,
+> either via "generate" or "import", return those long-term wrapped keys to
+> userspace so that they can be stored on-disk, and convert them into
+> ephemerally-wrapped form so they can be used.  It probably would be possible to
+> support all of this through the keyrings service, but it would need a couple new
+> key types:
+>
+> - One key type that can be instantiated with a raw key (or NULL to request
+>   generation of a key) and that automagically creates a long-term wrapped key
+>   and supports userspace reading it back.  This would be vaguely similar to
+>   "trusted", but without any support for using the key directly.
+>
+> - One key type that can be instantiated using a long-term wrapped key which gets
+>   automagically converted to an ephemerally-wrapped key.  This would be what is
+>   passed to other kernel subsystems.  Functions specific to this key type would
+>   need to be provided for users to use.
 
-With the changelog clarified to indicate whether this has any impact on
-current behavior you can add:
+I think having one key type should be enough. The userspace loads /
+generates&reads / wraps and reads back the 'exported' version wrapped
+using the platform-specific key. In kernel the key is unsealed and
+represented as binary key to be loaded to the hardware + a cookie for
+the ephemeral key and device that have been used to wrap it. When
+userspace asks the device to program the key, the cookie is verified
+to match the device / ephemeral key and then the binary is programmed
+to the hardware. Maybe it's enough to use the struct device as a
+cookie.
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+> I think it would be possible, but it feels like a bit of a shoehorned API.  The
+> ioctls are a more straightforward solution.
+
+Are we going to have another set of IOCTLs for loading the encrypted
+keys? keys sealed by TPM?
+
+> > > By "a single IOCTL to point the block device to the key in the keyring", you
+> > > seem to be referring to configuring full block device encryption with a single
+> > > key.  That's not something that's supported by the upstream kernel yet, and it's
+> > > not related to this patchset; currently only fscrypt supports inline encryption.
+> >
+> > I see that dm has at least some provisioning and hooks for
+> > CONFIG_BLK_INLINE_ENCRYPTION. Thus I thought that it's possible to use
+> > inline encryption through DM.
+>
+> device-mapper supports passing through the inline encryption support of
+> underlying devices in certain cases, but it doesn't yet support using it itself.
+
+I see. I was confused by the dm code then. Please excuse me.
+
+>
+> >
+> > > Support for it will be added at some point, which will likely indeed take the
+> > > form of an ioctl to set a key on a block device.  But that would be the case
+> > > even without HW-wrapped keys.  And *requiring* the key to be given in a keyring
+> > > (instead of just in a byte array passed to the ioctl) isn't very helpful, as it
+> > > just makes the API harder to use.  We've learned this from the fscrypt API
+> > > already where we actually had to move away from the keyrings service in order to
+> > > fix all the issues caused by it (see FS_IOC_ADD_ENCRYPTION_KEY).
+> > >
+> > > > >
+> > > > > > Second part is the actual block interface. Gaurav wrote about
+> > > > > > targeting fscrypt, but there should be no actual difference between
+> > > > > > crypto targets. FDE or having a single partition encrypted should
+> > > > > > probably work in the same way. Convert the key into blk_crypto_key
+> > > > > > (including the cookie for the ephemeral key), program the key into the
+> > > > > > slot, use the slot to en/decrypt hardware blocks.
+> > > > > >
+> > > > > > My main point is that the decision on the key type should be coming
+> > > > > > from the user.
+> > > > >
+> > > > > That's exactly how it works.  There is a block interface for specifying an
+> > > > > inline encryption key along with each bio.  The submitter of the bio can specify
+> > > > > either a standard key or a HW-wrapped key.
+> > > >
+> > > > Not in this patchset. The ICE driver decides whether it can support
+> > > > HW-wrapped keys or not and then fails to support other type of keys.
+> > > >
+> > >
+> > > Sure, that's just a matter of hardware capabilities though, right?  The block
+> > > layer provides a way for drivers to declare which inline encryption capabilities
+> > > they support.  They can declare they support standard keys, HW-wrapped keys,
+> > > both, or neither.  If Qualcomm SoCs can't support both types of keys at the same
+> > > time, that's unfortunate, but I'm not sure what your poitnt is.  The user (e.g.
+> > > fscrypt) still has control over whether they use the functionality that the
+> > > hardware provides.
+> >
+> > It's a matter of policy. Harware / firmware doesn't support using both
+> > kinds of keys concurrently, if I understood Gaurav's explanations
+> > correctly. But the user should be able to make a judgement and use
+> > non-hw-wrapped keys if it fits their requirements. The driver should
+> > not make this kind of judgement. Note, this is not an issue of your
+> > original patchset, but it's a driver flaw in this patchset.
+>
+> If the driver has to make a decision about which type of keys to support (due to
+> the hardware and firmware supporting both but not at the same time), I think
+> this will need to be done via a module parameter, e.g.
+> qcom_ice.hw_wrapped_keys=1 to support HW-wrapped keys instead of standard keys.
+
+No, the user can not set modparams on  e.g. Android device. In my
+opinion it should be first-come-first-serve. If the user wants
+hw-wrapped keys (and the platform is fine with that), then further
+attempts to use raw keys should fail. If the user loads a raw key,
+further attempts to set hw-wrapped key should fail (maybe until the
+last raw key has been evicted from the hw, if such thing is actually
+supported).
+
+-- 
+With best wishes
+Dmitry
 
