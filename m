@@ -1,141 +1,208 @@
-Return-Path: <linux-kernel+bounces-223882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5E19119F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:00:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C650E9119F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12AB1C2387C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:00:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A11D6B23929
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5753912D20F;
-	Fri, 21 Jun 2024 05:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AD512D76F;
+	Fri, 21 Jun 2024 05:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P40Yn1tM"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRrEAbY2"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435691D52C;
-	Fri, 21 Jun 2024 05:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8F123A6;
+	Fri, 21 Jun 2024 05:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718946012; cv=none; b=phYy5RW5sw9x6ghFHczNFdDVBLtAN9VjOhJ4DUpnEoxXQDilhWzT6G0RUb9SHyArNqDr21J3Q54+R9tgeduifoTwMQBxwe+cToZrOF/+HyBrk/LV+B/NSCQtb2TWJGN6mzh+khbUEXZG9gONyWzPLJZluBu+jbB0N46vXfxBWNo=
+	t=1718946342; cv=none; b=MPLzI0rGHeLQ0v8GMAcTBZyTwy/QA0nJrf9UNNSaU4gIU2PY7AzPjwHUHEUJsjYytjMNhLsh5Ibw3tSSWq28g48tD1gwUIsS3tOdmhmLm5TjENsrIZfuhjktIHJF8C6zXcPb9Ke5m/tvyP3cwLrUrSTIjH23xQMKc5X/8DITw0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718946012; c=relaxed/simple;
-	bh=N+HOeYMxJ4Oynd9qnidNqx76FjL3Ch8ZDXU/hRcyDvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nRiWbMSCTCVctkrl6wB6sDyoOSgAgrTkR/GnqNkR5r9S/LSa6sByMResLx5lfoZezSIf0FChaj9P2/g6biHC0bSE9exNVNB3nzPggNKE/CMHnxgbkmk0Xlw+SQw9eCQ7XYk3BbJdRf8aN0wXPNZi6XBgB9N5cLGbGCeCyZn76SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P40Yn1tM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=ejaN9jzv23+csQVIqr6qNGmq0JDrOqzMj21IY9AmYOM=; b=P40Yn1tMca0expYGXzDATjHlnk
-	y1eI27fIjIfQBHzHhOziu85/B1g8RJiOFXcxAVXE0vL/ATyMOB3Vzi6ppztI76vA4TfitcLbY5RU0
-	KpvYDP3yzNCayhcSWDQezWplLu/Ndxm/FQ2qOR+0ZQdw/bxW0YvmfC2u/r+If2jny+nm2kL5vIYPs
-	92wD2yAF0IjEJEJ2jzSs9TgDVmvu20NUY9MBgeyzjytQPhHnWEBhUl0igcALuBYs/jK81ba/KhShl
-	BVyUszHiI66kFspaGIECgSRWoGhgtNDBLjjCtKjCQa9lMmA0SUi0yDAix2lrsXJqMh8ka6MqXw/bG
-	8WfsPskQ==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sKWNc-00000007hlo-08MF;
-	Fri, 21 Jun 2024 05:00:08 +0000
-Message-ID: <5286745e-0100-40f3-b0e9-afc204c348f2@infradead.org>
-Date: Thu, 20 Jun 2024 22:00:05 -0700
+	s=arc-20240116; t=1718946342; c=relaxed/simple;
+	bh=rApctIhVi7cdAOhEyqi+uhU0WgA1lcXErGhYm2mePr0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xq04OBHh4eve7etjdxwq/fTKBcihzIawieezkOZ39ua1ko5fe/7L7rOoTG6IP1ho/uIaFL968/XkLDCyLXDKjWK18qroHhkt5XU19GdVz0klNOMr4kwpCOXLqwJZLxexJ9b94xVGK6t61WkdYGR3iw2zzi3GSGJ2hn8naKgl9ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRrEAbY2; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5c1d6064557so174253eaf.2;
+        Thu, 20 Jun 2024 22:05:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718946339; x=1719551139; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3/GH/FDXuyfNhUERuFE3PVy696MmJwbOJjjtZC6JyQ0=;
+        b=gRrEAbY2KaVW59T/edP5Pd3KZThb1831lstBzh0l+mStzmaFatyhEtiI7xfPTy03sw
+         GnQDobWFrsPEDNWz8QWlhjQmcg6bSFM6PwIctMB4D37ifAOQZFVzBJTlhzi1YqKmbk7d
+         HqofJCvKhWnC+3mdSmKB5wsDU3OtwJdWelASq61pIOSbhPaPUM5cUZwHlM6jjcv+NyrK
+         sWLmS/+VkJVK7+qnko8BRd3w6KRSZZ0igA0yDLNI4GWzG/FzcefOI3KqEVJJ3Z0qqUFz
+         iqN0JE1yr3SXRujKZyiOOP5mZuG7+dMuncQpOX9+o8QpDyu1oeTL9lxCbo+nU+9IKTKz
+         6Chw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718946339; x=1719551139;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3/GH/FDXuyfNhUERuFE3PVy696MmJwbOJjjtZC6JyQ0=;
+        b=WIqkYUz4FvP9eevZLMtBJKAcD5PEACCkGhPa+gMiKV6ILiHLGP3z7QEuOVZNeQLJWL
+         AMsAurHKl0Lsxc0s227VJwwK8HddrxRofjpiFuApCbsUmV5TBvG9aQ4g9qhuJIiNahfs
+         TNPNcFxVROOEgPeoH/bUCzlI6aB04yNjProJ9rTNS026p2q0x4iosSRetS8EONbQcLaw
+         XDy2fPEqOkDV7VCKUge1fswY2AcWU+2+L/9pm1GiUR9TmPVHHbmiPnaZMP4ulQ0bBRql
+         PGMdvb04sa2OxmDd/P6LNM4eQZLflRp3sMdqoOf8Z9W73nlE+R20FDgHs1scqbq8IgiK
+         qcPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxz3MlW7VNrIHplpEGNj/wYdjhw27y13C3lcZqt9s6YfAVXleQaZW6q57BoOnVkqaUG7yQevFiZD9oH/SVrcFnZrmcCeecQEeoIyDxcL/ii7aWPdgmvz+IFoP2MZwvKrae+1SHrPjmWA==
+X-Gm-Message-State: AOJu0YzIHNbeB/gA3Brts5mwPC/PTKyLE7rK9NRl8VQZWFeOo1MF5quF
+	7Wf4WaQAMNMyG0Mo72gQIsfqCT082cnl9zUBPxrPQa7NQXnKUGvr
+X-Google-Smtp-Source: AGHT+IGMY6E0I5Lt8Z85le6hJOlyVtMszZFqEfk0DT9XTrMxx1GhYOasQGgVO71VoHPbCv7kOB5J6g==
+X-Received: by 2002:a05:6358:3127:b0:19f:2c7e:a226 with SMTP id e5c5f4694b2df-1a1fd3d9559mr891749455d.5.1718946339443;
+        Thu, 20 Jun 2024 22:05:39 -0700 (PDT)
+Received: from apais-devbox.. ([2001:569:766d:6500:fb4e:6cf3:3ec6:9292])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716c950d71asm371308a12.62.2024.06.20.22.05.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 22:05:39 -0700 (PDT)
+From: Allen Pais <allen.lkml@gmail.com>
+To: kuba@kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: jes@trained-monkey.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	kda@linux-powerpc.org,
+	cai.huoqing@linux.dev,
+	dougmill@linux.ibm.com,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	aneesh.kumar@kernel.org,
+	naveen.n.rao@linux.ibm.com,
+	nnac123@linux.ibm.com,
+	tlfalcon@linux.ibm.com,
+	cooldavid@cooldavid.org,
+	marcin.s.wojtas@gmail.com,
+	mlindner@marvell.com,
+	stephen@networkplumber.org,
+	nbd@nbd.name,
+	sean.wang@mediatek.com,
+	Mark-MC.Lee@mediatek.com,
+	lorenzo@kernel.org,
+	borisp@nvidia.com,
+	bryan.whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com,
+	louis.peens@corigine.com,
+	richardcochran@gmail.com,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acenic@sunsite.dk,
+	linux-net-drivers@amd.com,
+	Allen Pais <allen.lkml@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH 00/15] ethernet: Convert from tasklet to BH workqueue
+Date: Thu, 20 Jun 2024 22:05:10 -0700
+Message-Id: <20240621050525.3720069-1-allen.lkml@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] Docs/mm/damon/maintainer-profile: introduce
- HacKerMaiL
-To: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, damon@lists.linux.dev,
- linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240620220337.76942-1-sj@kernel.org>
- <20240620220337.76942-2-sj@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240620220337.76942-2-sj@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The only generic interface to execute asynchronously in the BH context is
+tasklet; however, it's marked deprecated and has some design flaws. To
+replace tasklets, BH workqueue support was recently added. A BH workqueue
+behaves similarly to regular workqueues except that the queued work items
+are executed in the BH context.
 
-On 6/20/24 3:03 PM, SeongJae Park wrote:
-> Since DAMON has merged into the mainline, I periodically received some
-> questions around DAMON's mailing lists based workflow.  The workflow is
-> not different from the normal ones that well documented, but it is also
-> true that it is not always easy and familiar for everyone.
-> 
-> I personally overcame it by developing and using a simple tool, named
-> HacKerMaiL (hkml)[1].  Based on my experience, I believe it is matured
-> enough to be used for simple workflows like that of DAMON.  Actually
-> some DAMON contributors and Linux kernel developers other than myself
-> told me they are using the tool.
-> 
-> As DAMON maintainer, I also believe helping new DAMON community members
-> onboarding to the worklow is one of the most important parts of my
-> responsibilities.  For the reason, the tool is announced[2] to support
-> DAMON community.  To further increasing the visibility of the fact,
-> document the tool and the support plan on DAMON maintainer's profile.
-> 
-> [1] https://github.com/damonitor/hackermail
-> [2] https://github.com/damonitor/hackermail/commit/3909dad91301
-> 
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
->  Documentation/mm/damon/maintainer-profile.rst | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/Documentation/mm/damon/maintainer-profile.rst b/Documentation/mm/damon/maintainer-profile.rst
-> index 8213cf61d38a..aede61f2d6a8 100644
-> --- a/Documentation/mm/damon/maintainer-profile.rst
-> +++ b/Documentation/mm/damon/maintainer-profile.rst
-> @@ -53,6 +53,22 @@ Mon-Fri) in PT (Pacific Time).  The response to patches will occasionally be
->  slow.  Do not hesitate to send a ping if you have not heard back within a week
->  of sending a patch.
->  
-> +Mailing tool
-> +------------
-> +
-> +Like many other Linux kernel subsystems, DAMON uses the mailing lists
-> +(damon@lists.linux.dev and linux-mm@kvack.org) as the major communication
-> +channel.  There is a simple tool called HacKerMaiL (``hkml``) [8]_ , which is
-> +for people who are not very faimiliar with the mailing lists based
+This patch converts a few drivers in drivers/ethernet/* from tasklet
+to BH workqueue. The next set will be sent out after the next -rc is
+out.
 
-                               familiar
+This series is based on 
+commit a6ec08beec9e ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
 
-> +communication.  The tool could particularly helpful for DAMON community members
+First version converting all the drivers can be found at:
+https://lore.kernel.org/all/20240507190111.16710
+-2-apais@linux.microsoft.com/
 
-                   The tool could be particularly helpful
 
-> +since it is developed and maintained by DAMON maintainer.  The tool is also
-> +officially announced to support DAMON and general Linux kernel developement
+Allen Pais (15):
+  net: alteon: Convert tasklet API to new bottom half workqueue
+    mechanism
+  net: xgbe: Convert tasklet API to new bottom half workqueue mechanism
+  net: cnic: Convert tasklet API to new bottom half workqueue mechanism
+  net: macb: Convert tasklet API to new bottom half workqueue mechanism
+  net: cavium/liquidio: Convert tasklet API to new bottom half workqueue
+    mechanism
+  net: octeon: Convert tasklet API to new bottom half workqueue
+    mechanism
+  net: thunderx: Convert tasklet API to new bottom half workqueue
+    mechanism
+  net: chelsio: Convert tasklet API to new bottom half workqueue
+    mechanism
+  net: sundance: Convert tasklet API to new bottom half workqueue
+    mechanism
+  net: hinic: Convert tasklet API to new bottom half workqueue mechanism
+  net: ehea: Convert tasklet API to new bottom half workqueue mechanism
+  net: ibmvnic: Convert tasklet API to new bottom half workqueue
+    mechanism
+  net: jme: Convert tasklet API to new bottom half workqueue mechanism
+  net: marvell: Convert tasklet API to new bottom half workqueue
+    mechanism
+  net: mtk-wed: Convert tasklet API to new bottom half workqueue
+    mechanism
 
-                                                                  development
-
-> +workflow.
-> +
-> +In other words, ``hkml`` [8]_ is a mailing tool for DAMON community, which
-> +DAMON maintainer is committed to support.  Please feel free to try and report
-> +issues or feature requests for the tool to the maintainer.
-> +
->  
->  .. [1] https://git.kernel.org/akpm/mm/h/mm-unstable
->  .. [2] https://git.kernel.org/sj/h/damon/next
-> @@ -61,3 +77,4 @@ of sending a patch.
->  .. [5] https://github.com/awslabs/damon-tests/blob/master/corr/tests/kunit.sh
->  .. [6] https://github.com/awslabs/damon-tests/tree/master/corr
->  .. [7] https://github.com/awslabs/damon-tests/tree/master/perf
-> +.. [8] https://github.com/damonitor/hackermail
+ drivers/net/ethernet/alteon/acenic.c          | 26 +++----
+ drivers/net/ethernet/alteon/acenic.h          |  8 +--
+ drivers/net/ethernet/amd/xgbe/xgbe-drv.c      | 30 ++++----
+ drivers/net/ethernet/amd/xgbe/xgbe-i2c.c      | 16 ++---
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c     | 16 ++---
+ drivers/net/ethernet/amd/xgbe/xgbe-pci.c      |  4 +-
+ drivers/net/ethernet/amd/xgbe/xgbe.h          | 10 +--
+ drivers/net/ethernet/broadcom/cnic.c          | 19 ++---
+ drivers/net/ethernet/broadcom/cnic.h          |  2 +-
+ drivers/net/ethernet/cadence/macb.h           |  3 +-
+ drivers/net/ethernet/cadence/macb_main.c      | 10 +--
+ .../net/ethernet/cavium/liquidio/lio_core.c   |  4 +-
+ .../net/ethernet/cavium/liquidio/lio_main.c   | 24 +++----
+ .../ethernet/cavium/liquidio/lio_vf_main.c    | 10 +--
+ .../ethernet/cavium/liquidio/octeon_droq.c    |  4 +-
+ .../ethernet/cavium/liquidio/octeon_main.h    |  4 +-
+ .../net/ethernet/cavium/octeon/octeon_mgmt.c  | 13 ++--
+ drivers/net/ethernet/cavium/thunder/nic.h     |  5 +-
+ .../net/ethernet/cavium/thunder/nicvf_main.c  | 24 +++----
+ .../ethernet/cavium/thunder/nicvf_queues.c    |  4 +-
+ .../ethernet/cavium/thunder/nicvf_queues.h    |  2 +-
+ drivers/net/ethernet/chelsio/cxgb/sge.c       | 19 ++---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |  9 +--
+ .../net/ethernet/chelsio/cxgb4/cxgb4_main.c   |  2 +-
+ .../ethernet/chelsio/cxgb4/cxgb4_tc_mqprio.c  |  4 +-
+ .../net/ethernet/chelsio/cxgb4/cxgb4_uld.c    |  2 +-
+ drivers/net/ethernet/chelsio/cxgb4/sge.c      | 40 +++++------
+ drivers/net/ethernet/chelsio/cxgb4vf/sge.c    |  6 +-
+ drivers/net/ethernet/dlink/sundance.c         | 41 +++++------
+ .../net/ethernet/huawei/hinic/hinic_hw_cmdq.c |  2 +-
+ .../net/ethernet/huawei/hinic/hinic_hw_eqs.c  | 17 +++--
+ .../net/ethernet/huawei/hinic/hinic_hw_eqs.h  |  2 +-
+ drivers/net/ethernet/ibm/ehea/ehea.h          |  3 +-
+ drivers/net/ethernet/ibm/ehea/ehea_main.c     | 14 ++--
+ drivers/net/ethernet/ibm/ibmvnic.c            | 24 +++----
+ drivers/net/ethernet/ibm/ibmvnic.h            |  2 +-
+ drivers/net/ethernet/jme.c                    | 72 +++++++++----------
+ drivers/net/ethernet/jme.h                    |  8 +--
+ .../net/ethernet/marvell/mvpp2/mvpp2_main.c   |  4 +-
+ drivers/net/ethernet/marvell/skge.c           | 12 ++--
+ drivers/net/ethernet/marvell/skge.h           |  3 +-
+ drivers/net/ethernet/mediatek/mtk_wed_wo.c    | 12 ++--
+ drivers/net/ethernet/mediatek/mtk_wed_wo.h    |  3 +-
+ 43 files changed, 273 insertions(+), 266 deletions(-)
 
 -- 
-~Randy
+2.34.1
+
 
