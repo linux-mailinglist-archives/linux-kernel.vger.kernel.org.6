@@ -1,142 +1,197 @@
-Return-Path: <linux-kernel+bounces-223875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3694E9119D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:55:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BF69119DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A041F22E66
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:55:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 178E61C2196D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6579212D1EA;
-	Fri, 21 Jun 2024 04:55:42 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5E812D773;
+	Fri, 21 Jun 2024 04:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JX46NLHk"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2083.outbound.protection.outlook.com [40.107.237.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E27AEA4
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718945741; cv=none; b=saSGAdGq909ttBmd4Qz0wr3PNwq+00Aq9VWvE5VI2el8kVqFU4MjbqpvKimHt7fs2V0b6CKQ+GsczHxkOQuzjsqhPlBYJUIUd7tYoI43/sEJCOBU+zForNUYJ0QeZwJXwuEQd+ltyF4ja6qVCS5GmF5iUuwgV0HBLXTeCeorTZA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718945741; c=relaxed/simple;
-	bh=USr+jluwtxcYgL0+ww1HGRX8JzlHNQX1UAIWWsngaK0=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=mKnbLJbRpnfufTIuhxZsfwhKkfwyaEjtJdXZyBEfA9cOYeKm7YcVnKG5Ehh4ECufz0SjqM/NBZRuXJdxzjkb9+NWLajsegrfYfxPpW5z8GFhQj11assZc5ZXbTV6NWU0G+KVsNMLNKEmuGXTqYxFvKAkV3ghNn75o4ZKF4NB0NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W54gg5ZQfz1N7wp;
-	Fri, 21 Jun 2024 12:51:11 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id ED958180060;
-	Fri, 21 Jun 2024 12:55:28 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 21 Jun 2024 12:55:27 +0800
-Subject: Re: [PATCH v2] ubi: gluebi: Fix NULL pointer dereference caused by
- ftl notifier
-To: Gagan Sidhu <broly@mac.com>
-CC: Daniel Golle <daniel@makrotopia.org>, Richard Weinberger <richard@nod.at>,
-	ZhaoLong Wang <wangzhaolong1@huawei.com>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mtd <linux-mtd@lists.infradead.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>, yangerkun <yangerkun@huawei.com>, yi zhang
-	<yi.zhang@huawei.com>
-References: <CFAC276E-E652-40CD-B3D8-563B95E679A8@mac.com>
- <E3E2C13C-1E52-46F2-BE2D-D2592C3369DB@mac.com>
- <F2DCFCE7-68FA-4C09-AE5B-09F2233575F1@mac.com>
- <48D8B89B-0402-4D8B-B045-86104C0C797F@mac.com>
- <303502000.252057.1718647746641.JavaMail.zimbra@nod.at>
- <90A90DA4-8B68-432D-9577-0D3635AF84BB@mac.com>
- <296007365.252185.1718649153090.JavaMail.zimbra@nod.at>
- <3841F21D-CA54-456C-9D9C-F06EEA332A30@mac.com>
- <136290141.252319.1718650375432.JavaMail.zimbra@nod.at>
- <ZnCcsPA-flVcxiAT@makrotopia.org>
- <C20708FB-0626-475E-A996-DE42ACF57A8B@mac.com>
- <C7514984-8CEB-4D1F-A896-BD6E653D311B@mac.com>
- <251ae039-9f46-081b-a7ee-fe47de268865@huawei.com>
- <EFEC7C06-A3B2-46D6-99F4-ADA7F7199188@mac.com>
- <45d2ef27-95cc-16c4-8b0a-4413421d785b@huawei.com>
- <772249DB-434C-4AB9-AE6B-1CB684E1E11A@mac.com>
- <e562e94b-274d-4a82-3dad-d3e1109a2607@huawei.com>
- <7558AC97-FFFC-4593-B946-9F8FBD8D62FA@mac.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <da6f4aa8-e79d-d70a-eeb5-0068ffc1ef52@huawei.com>
-Date: Fri, 21 Jun 2024 12:55:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B803CEA4;
+	Fri, 21 Jun 2024 04:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718945869; cv=fail; b=Ol5uIU1vKavhy93ts07iELg8rCJRpS5e+fly1O3VGCy9/dUCUN6O0OoOI1DZ4KNGZy6Mhxhk2+H+4RK+C4Zq5sePP5P8lpeGQfAbypob8vf9zrr6dUQlHxHn1AgnhLXw5SDyuMJu6cERLnh3GPRkIyWLIsqKSwVgNQjaBRhwSRk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718945869; c=relaxed/simple;
+	bh=1rW0NQIPlnhrNMgVe5psvTjJUzgIiPbxqgAroMC3Rv0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s+Q5lTVbvjjKuSXYs0KoKUj0gitbQrIa+gkHlMw8JlPdmOBiX75p5pd7ieUXMtb7/irF1vwq3Ef30YgqjyLiM0N3HU66ufor7UDJYa/mFnrurQtXa9njYv/THo2ti2kOPm5dPnKmJR932K8mpWKBfeDXaKcDqzCvV3PDsWuBpVk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JX46NLHk; arc=fail smtp.client-ip=40.107.237.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Kcd+LHGl3o23BGGmin2BZjky/frfG4ep5v5ffaJaBVYiZ4y1buQXOJ8EEY26mZA8+ugRQSsFGRniRQhzOsjdMGZ2PV/hnx2Rnbb9/FZZ023jeIcFs35qgHpXphynKutgtMfhVpKyVsGiNqAvuIuiao4ZUlJlR1pn0rM8EUzy7y4VHlMgNbVLk2dRfsWZj8GP/IFzm6LTtWyQmYNp9zPSbCW6wdKOCiEOLmbaq343c7Qtvp5V/6mioD2m86Aa00SD7jCC3ynGSAge0jpX1zdWApGqEdFKt/rTUith0zhz70y/0vFIB8/FEHpfd7qz+75ZTTTRKEq8O4UUA8iCquQU/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2JQe7GkGGdNGHjO8VwLZlIC1PtkwbAy1ivUb1RUlCOE=;
+ b=NYXFBwvFOVpiRmzOPtucQcf3r/xCpjMMuD8q5mUeBJnyVvRjVYnyqBRAcSgy31gGpOUHERVBCHH0yxgCdvvKCgfls9QbFqWcZMbvu5prFhIR4yztK+Mqvea6ZITY+gp0sXY8Ndqm2NsUDbsN2R+SYo11VCTFHXDPXhXvci+YNU5D3+gdo3AoFv7SdTJBb05dfNYFiqYETklMuQv0FSWX8ljeBUYBPCvngBzA30gHCle5kb9fXSY3yJcYi02p/Afo36rGi4M/bbVGSgXiNiv63zohS33duJnwf/vrdofF+88aD7ugOBmyhk5iZzJ38jFYwZrVsVtBzhd5lGLY5MAMIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=microchip.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2JQe7GkGGdNGHjO8VwLZlIC1PtkwbAy1ivUb1RUlCOE=;
+ b=JX46NLHkAYSxt8h5bAUinFbZaD6dihqMtXYtaZqw/bk3Je8EWVQ6BhI30dnFXoCw0/Zr2GAcMbzkiXp995Gsv550SuEIWjJi07ZuyxaHGf66KHCxYW1+7+guzUEa1NUn8vlb5xyI5j6FqNMYUYw/9YKQ7VCB1NCRSRME2xpsp8c=
+Received: from MN2PR05CA0053.namprd05.prod.outlook.com (2603:10b6:208:236::22)
+ by SN7PR12MB7345.namprd12.prod.outlook.com (2603:10b6:806:298::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Fri, 21 Jun
+ 2024 04:57:42 +0000
+Received: from BL6PEPF0001AB4B.namprd04.prod.outlook.com
+ (2603:10b6:208:236:cafe::13) by MN2PR05CA0053.outlook.office365.com
+ (2603:10b6:208:236::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.33 via Frontend
+ Transport; Fri, 21 Jun 2024 04:57:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF0001AB4B.mail.protection.outlook.com (10.167.242.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Fri, 21 Jun 2024 04:57:41 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Jun
+ 2024 23:57:40 -0500
+Received: from xhdvineethc40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 20 Jun 2024 23:57:36 -0500
+From: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
+To: <nicolas.ferre@microchip.com>, <claudiu.beznea@tuxon.dev>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<linux@armlinux.org.uk>, <vadim.fedorenko@linux.dev>, <andrew@lunn.ch>
+CC: <vineeth.karumanchi@amd.com>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <git@amd.com>
+Subject: [PATCH net-next v7 0/4] net: macb: WOL enhancements
+Date: Fri, 21 Jun 2024 10:27:31 +0530
+Message-ID: <20240621045735.3031357-1-vineeth.karumanchi@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <7558AC97-FFFC-4593-B946-9F8FBD8D62FA@mac.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm000013.china.huawei.com (7.193.23.81)
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: vineeth.karumanchi@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4B:EE_|SN7PR12MB7345:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4244be6-90d5-4c46-9d28-08dc91aeae8b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|1800799021|82310400023|7416011|376011|36860700010|921017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CbD9Q7wWn3zomJcOaLkyxkGBjRVLPmnmd8IflGTUU0KD2O1bp6pfWMNX66JQ?=
+ =?us-ascii?Q?8yt9BIJuE2T6DQG1GXcunSdyvP1IXqm86oPV2jXModcTMXNW6TivCzS+8Gry?=
+ =?us-ascii?Q?8l9sXFv9/5gMyYmPLtkqFUXp+vQ2KyHtXeSrCieSak5ka+c2gjv2IyJOx2u3?=
+ =?us-ascii?Q?I4Nzg533JkNAgZpBXtbrHu05UNE3d7g24qh0SXWo50DMS0zDy+i4eX1RijTv?=
+ =?us-ascii?Q?dwb9RLgukuAvU2hxHzCx3zUhe7ElBtfQrIOavJISj4tK0AG1BH7bWnVkX3Gz?=
+ =?us-ascii?Q?WUh5DA+yh5ryu/O4AikcZMfDGKVxtFAIlT8rdNcHkeHjPdi7S72kKVcoz37u?=
+ =?us-ascii?Q?hXtdTNVix0FivtTKSbXrtwifD7ntYg3al2Um+VyWARA/7Tvf+tqUgfiApfxU?=
+ =?us-ascii?Q?taPvojSIRG9xoNCIqIYW2+ZlNLLCqpUm3iFsVfqjL7HaPaJzuzMvyhEcanms?=
+ =?us-ascii?Q?jNaUyvpak0mhL+ihFKFBXdfXjyFpBWOd/+wEsKYAPC6bMJQjk579iYqvlSLQ?=
+ =?us-ascii?Q?kshTLgAG8qA3Y3s/u27YMlbmM9h+l/lK/bOp9MdsiqqV3CiKpTcFyo9DsQtj?=
+ =?us-ascii?Q?LRZonGB7nJFOVR0/hpbLebSEZ0S8B4gZoCDhmUJLIL++9RbrVseS7DQfG44F?=
+ =?us-ascii?Q?ZdTDRLIbsLSIhEu8QL1qlnDQPW9Thvl75qwJFLRHW5jlWnv4GK7y0o6jzHY2?=
+ =?us-ascii?Q?uxYNfHlThkUg05gAakLEE3R6HXWvZPujz/yXyF6JGs30Vfr/7DJ6E1w1TPNV?=
+ =?us-ascii?Q?RAiW4W4AbQT19/kRvJFwpdx7zRacLjYhEAdOw+Us9MjYVT/tvEak7/w2LREM?=
+ =?us-ascii?Q?C7AhuXiAxShyVbYq0Kz+QacCRL/kS1zegMm2L+wfS4C5Wp+SAIN7F0o9cOsQ?=
+ =?us-ascii?Q?dEmWkKv2BFyY7/NRwlD24DD52l1i0NHIDbUAdECzxR6S8rOMVnzaaASOhUpz?=
+ =?us-ascii?Q?M3r32vkJeRHrdwFghY/UOagK1MYrMY9GiB0/bRqRMlHtR13oca55s2ifaHDt?=
+ =?us-ascii?Q?qF3NvYlOmr1dKTrZ3WFeeYQRWYa2whlATi7N1zPo65BupHRI+nXPJksHa8pL?=
+ =?us-ascii?Q?c80hKxwLt7KZ7knlFQS9yveqj4pjjFMMfKOOab1w+s3M/K8x8AOJxJcl2klT?=
+ =?us-ascii?Q?kScqqq9w96VPfo0Nh7nh//0W6fjbYcDdosWXbaf4Auqy4c7+5NprSCExPpUe?=
+ =?us-ascii?Q?7OEFqLlD4OrGACxzqQLPxdev9WY0RGPWjO9lrsRyD7SCa6IQxoQ3/mRdVzTE?=
+ =?us-ascii?Q?zHAhaSWgURlFGSMBnRi23b8Rq9MoXIjfrvlnnbiy2Vq9IxOZKcwzmLX7UMlw?=
+ =?us-ascii?Q?qGvLwWgEiHdLsFyo5/dv5HAMr/zaJ2yCn3R1uAQMbAmSoCXXFSLru7Y7HMxT?=
+ =?us-ascii?Q?li+f9FA2Am5bpYW1cq3o7JuZz5Ir?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(82310400023)(7416011)(376011)(36860700010)(921017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 04:57:41.7865
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4244be6-90d5-4c46-9d28-08dc91aeae8b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB4B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7345
 
-在 2024/6/21 12:27, Gagan Sidhu 写道:
-> 
-> 
->> On Jun 20, 2024, at 9:03 PM, Zhihao Cheng <chengzhihao1@huawei.com> wrote:
->>
->> 在 2024/6/21 10:09, Gagan Sidhu 写道:
->>> Thanks,
->>> Gagan
->>>> On Jun 20, 2024, at 7:59 PM, Zhihao Cheng <chengzhihao1@huawei.com> wrote:
->>>>
->>>> 在 2024/6/21 6:06, Gagan Sidhu 写道:
->>>>> hi zhihao,
->>>>> so i assume my crude paraphrase is correct? that i may have unintentionally pointed the finger at you, but the real issue is GLUEBI existing with BLOCK on the same volume?
->>>>
->>>> Uhhh, I don't think I mean this. We will make it clear after getting the layers' information about your device.
->>>> Everything goes well from you guys talking, this patch did reject the mtdblock loading from a gluebi device, which may lead booting failed if your rootfs depends on a mtdblock(which is generated from the gluebi device).
->>>>  From your description 'spoke to a user, gave him a build without MTD_GLUEBI, restoring changes made by (HAHAHA you are! huawei), it booted fine'. One thing I'm curious about, if the device boots from the mtdblock(which is generated from gluebi device), the gluebi device won't be generated because you have turned off the CONFIG_MTD_UBI_GLUEBI, then the device boots successfully, which means that your rootfs is most likely loaded from ubiblock0_0. My questions are:
->>>> Q1. According to previous talking, the booting configuration is
->>>> https://github.com/torvalds/linux/blob/master/drivers/mtd/mtdcore.c#L774, why the device could boot from ubiblock0_0?(it looks like that the device uses config from https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/generic/pending-5.15/493-ubi-set-ROOT_DEV-to-ubiblock-rootfs-if-unset.patch;h=266a6331c2acc0f7c17d9ac72f54659d31b56249;hb=HEAD [pointed by Richard]). I'm unfamilar with openwrt(Maybe you and Daniel know much), is that possible the device could automatically choose boot device in the openwrt framework?
->>> yes, that patch will, effectively, allow an “autoselect” of the ubi partition because it looks for the string “rootfs” in the ubi-formatted file.
->>> once it finds the “rootfs” partition, it will rename it to “ubi” and that will be set as the boot/root partition
->>
->> Oh, maybe I know what has happened. According to the configuration of https://github.com/torvalds/linux/blob/master/drivers/mtd/mtdcore.c#L774, openwrt decides to boot rootfs from mtdblock(which is generated from the gluebi device), because the mtd char device (which is genertated from gluebi device) is found by openwrt. However, this patch stops generating mtdblock from gluebi device, so the mounting failed by missed mtdblock. After disabling the CONFIG_MTD_UBI_GLUEBI, the gluebi device is not generated, so openwrt decides to boot rootfs from ubiblock0_0, then your device booted successfully.
->> The key is the rootfs device judgement in openwrt, openwrt chooses the rootfs device according to the existence of mtd char device, openwrt not check whether the corresponding mtdblock exists before mouting it. Should openwrt check the existence of mtdblock beforing using it? Or maybe openwrt could turn to use ubiblock if the mtdblock device is not found?
-> 
-> as i understand it, the openwrt patch requires the mtdblock device to exist before finding it. it does not rely on gluebi to generate anything.
+- Add provisioning for queue tie-off and queue disable during suspend.
+- Add support for ARP packet types to WoL.
+- Advertise WoL attributes by default.
+- Extend MACB supported WoL modes to the PHY supported WoL modes.
+- Deprecate magic-packet property.
 
-Yes, openwrt knows nothing under the mtd layer(Whatever the mtd is 
-generated by a gluebi device or the mtd is a real physical nand flash). 
-I mean, the layers' inforamtion on your device could be(The squashfs 
-image is stored in UBI volume ubi0_0.):
+Changes in V7:
+- change cpu_to_be32p() to be32_to_cpu(), eliminating unneeded conversions.
 
-                                       ↗ ubiblock0_0
-mtdX(nand) -> UBI(holds volume ubi0_0)
-                                       ↘ mtd12(gluebi) -> mtdblock12
+Changes in V6:
+- Use rcu_access_pointer() instead of rcu_dereference()
+- Add conditional check on __in_dev_get_rcu() return pointer
+v6 link : https://lore.kernel.org/netdev/20240617070413.2291511-1-vineeth.karumanchi@amd.com/
 
-The openwrt only sees ubiblock0_0, mtd12 and mtdblock12(The ubi0_0 and 
-gluebi are not awared by openwrt). The openwrt detects that mtd12 has 
-label 'linux,rootfs' in device tree, so it tries mouting mtdblock12 
-without checking the existence of mtdblock12.
-Could that be possible?
+Changes in V5:
+- Update comment and error message.
+v5 link : https://lore.kernel.org/netdev/20240611162827.887162-1-vineeth.karumanchi@amd.com/
 
-> 
-> the mtd char device is not generated from gluebi. openwrt does not use gluebi at all. i was just being paranoid and had too many options enabled.
-> 	-however, my paranoia has illuminated an issue with regards to GLUEBI and UBI_BLOCK’s coexistence.
-> 
-> https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/generic/pending-5.15/400-mtd-mtdsplit-support.patch;h=46ef15d127dfb686e4458fd5838c3eaec8aa2cd7;hb=HEAD
-> 
-> openwrt relies on device tree, in this case with attribute “fixed-partition” and additional parameter
-> openwrt’s split_rootfs_dev merely requires a partition with the label rootfs to be used, and it will automatically create the rootfs (if the splitting criteria) are satisfied.
-> 
-> split_rootfs_dev requires, as a prerequisite, that there is a partition on the flash that can be “split”. after that, it will rely on ubi to create rootfs for boot.
-> 	-i’m a little lazy right now on explaining the details, but trust me it doesn’t need gluebi to create the block device.
-> 
-> 
+Changes in V4:
+- Extend MACB supported wol modes to the PHY supported modes.
+- Drop previous ACK from v2 series on 4/4 patch for further review.
+v4 link : https://lore.kernel.org/lkml/20240610053936.622237-1-vineeth.karumanchi@amd.com/
 
+Changes in V3:
+- Advertise WOL by default.
+- Drop previous ACK for further review.
+v3 link : https://lore.kernel.org/netdev/20240605102457.4050539-1-vineeth.karumanchi@amd.com/
+
+Changes in v2:
+- Re-implement WOL using CAPS instead of device-tree attribute.
+- Deprecate device-tree "magic-packet" property.
+- Sorted CAPS values.
+- New Bit fields inline with existing implementation.
+- Optimize code.
+- Fix sparse warnings.
+- Addressed minor review comments.
+v2 link : https://lore.kernel.org/netdev/20240222153848.2374782-1-vineeth.karumanchi@amd.com/
+
+v1 link : https://lore.kernel.org/lkml/20240130104845.3995341-1-vineeth.karumanchi@amd.com/#t
+
+Vineeth Karumanchi (4):
+  net: macb: queue tie-off or disable during WOL suspend
+  net: macb: Enable queue disable
+  net: macb: Add ARP support to WOL
+  dt-bindings: net: cdns,macb: Deprecate magic-packet property
+
+ .../devicetree/bindings/net/cdns,macb.yaml    |   1 +
+ drivers/net/ethernet/cadence/macb.h           |   8 ++
+ drivers/net/ethernet/cadence/macb_main.c      | 121 +++++++++++++-----
+ 3 files changed, 100 insertions(+), 30 deletions(-)
+
+-- 
+2.34.1
 
 
