@@ -1,234 +1,398 @@
-Return-Path: <linux-kernel+bounces-225457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2E29130C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 01:01:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6021E9130C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 01:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A051F22410
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:01:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D605A1F22809
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DB816EC0A;
-	Fri, 21 Jun 2024 23:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B0B16EBFC;
+	Fri, 21 Jun 2024 23:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q0W7/g9E"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gJGN08q1"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463AA745E2;
-	Fri, 21 Jun 2024 23:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719010861; cv=fail; b=F3ikfCUQ8lUTHWTzjnyodVVE8GVYfTbEpim71HL+34/Fid/lLRQcYS0yZNFWQgHPgAzJvk+wbKzEbI4W46J1VY54vhqZFbr3d7pX4sbzwX0j3QKEbEq1FO7XagMIYynXMwrdWGoHSz/nqdIAbVVHEc0Sa4vVTYnHAOX+cZM+8lk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719010861; c=relaxed/simple;
-	bh=/0Rk+5VRs87luSTezdymzN5F61+c1U+7JoKpknAXX2o=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fhBWHRkC+yXnD8I7IjSgoQ4yA5YPvNzjmA/u5kPhKso0UZk8tgu/hiToRJJfgIvpGZQDK9LLd83ciInF/qSdzx1NrHRsIYYQkpL7OTFdME20nKJTyRMRp0ozMSmhM1KkDHOcCc2lYk8gdwSl6RHPsM+li3rMAa7yCoi/4uEdG50=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q0W7/g9E; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719010860; x=1750546860;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=/0Rk+5VRs87luSTezdymzN5F61+c1U+7JoKpknAXX2o=;
-  b=Q0W7/g9E9igj2OvSkr8Xyb+Oa3K1Ng1McU8cumuTiUGyUtqI+AVkuzrO
-   bwC3DTbq/rJkEPffKDg/kbEe6eOcb6bprWYQRZeceSA2/1moTShQhYUU7
-   MqgmWD04OXrMFQZqfEH4lEjYfBFe+7x29RQ6EDjjMC258tCqxq1FOT1VY
-   gn+YPojd8bKfnPySo0DWKzIMBsyRM6lg/aZiAcWGhCDssf6qmhIFZkFNJ
-   BfUvW4Z4puGXe6Mt1Yz1dBHj34LFhkraulaSsHvZw8/A5GLOetynlM86A
-   An3M1+ct0o5b/VYjMsZr0MKZGxZDMNZFCtdIyVkeu6VFEMHhtOXaPnX07
-   A==;
-X-CSE-ConnectionGUID: Ly4Cs5IgTQ2Vs9yKGA0xyg==
-X-CSE-MsgGUID: fuVGmhDEQNWVS6KoCUu6oA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="16181103"
-X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
-   d="scan'208";a="16181103"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 16:00:59 -0700
-X-CSE-ConnectionGUID: AxvZXYoEQu6AR+n2rQmX2A==
-X-CSE-MsgGUID: eqG7GsqVQ8CoiUJ6DG7xdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
-   d="scan'208";a="47899479"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Jun 2024 16:00:58 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 21 Jun 2024 16:00:57 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 21 Jun 2024 16:00:57 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 21 Jun 2024 16:00:57 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.40) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 21 Jun 2024 16:00:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QKqEg2+CdNZfC5t69dWuWDu/LsxNy1Ol2K3xBI6sLtThr+BJ0t4yxlbxPQxIg+noK7IqwCqRcjkLUBCtjd4pp0O76RNYZH2g8n097iVkTse5sMWaBJ+DATLVsOELesqXiS2+Bos97CLrmth0OQ/XyBCoK7b+sC953+yFi6Xw+FIw7XcA+MEqYVwOOreAJatih6KzOO1yKbmwktJHHCQWHAb7dLP+sckWAbRzj3ZH9nkcSCoG6J28Wj/8slusDe0o39pLQ6o9YQZQOFrMTtBD54g+RblgLZZQPROhNaVKz+6nboYj3YG3c5gZUxT5GDzaC+XEwZ/gf4Gz928V7kSVkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PMYua/RRceJrJUEGD7FifOnTAwYQ6Svg6k62Zq6zubQ=;
- b=k05OpL6nMOzRzcDhGRvIIPZCtFivGW8m69hIQUB1V07lPYT2b3r/5eGNMr8YvI5clsp12eZlyNNQm0GeR65PUPAzaTGENgJz01Y9tfp9Na/Gg/bqX+GHOcXRBBtco5/kTg4FYkp7uQP3iD8C+6exMBDkVKLbAbslztO+ERCTv75b7xrsf8b5/W6T9Aot2pZCstnRzwNKBfP4Pj3lgXmDjZVcU1QXoYE9UpXRH+v0briqDZpyXaLXjnC/+I+OoTPdMPj9hIKOlMvb1Ggg0963krN9Je3FC0p/XuZ+iRiT7t3tGvwz22O0NXRbrJatJ98BM2HIlm0Ixq8h9quRB0eEVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
- by CY8PR11MB7011.namprd11.prod.outlook.com (2603:10b6:930:55::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Fri, 21 Jun
- 2024 23:00:50 +0000
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b%5]) with mapi id 15.20.7698.017; Fri, 21 Jun 2024
- 23:00:49 +0000
-Message-ID: <5c1f24aa-79f0-4142-80b2-f13c41b91d76@intel.com>
-Date: Fri, 21 Jun 2024 16:00:47 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] x86/irq: Add enumeration of NMI source reporting
- CPU feature
-To: Xin Li <xin@zytor.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, "X86
- Kernel" <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Thomas
- Gleixner" <tglx@linutronix.de>, Dave Hansen <dave.hansen@intel.com>, "H.
- Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, <linux-perf-users@vger.kernel.org>, Peter Zijlstra
-	<peterz@infradead.org>
-CC: Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>
-References: <20240611165457.156364-1-jacob.jun.pan@linux.intel.com>
- <20240611165457.156364-2-jacob.jun.pan@linux.intel.com>
- <de99f490-8b8d-4ae9-9f87-e0336e563aba@zytor.com>
-Content-Language: en-US
-From: Sohil Mehta <sohil.mehta@intel.com>
-In-Reply-To: <de99f490-8b8d-4ae9-9f87-e0336e563aba@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0365.namprd03.prod.outlook.com
- (2603:10b6:a03:3a1::10) To BYAPR11MB3320.namprd11.prod.outlook.com
- (2603:10b6:a03:18::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9D182490
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 23:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719011048; cv=none; b=E14hh5CrHoyQ38AA6yoD5DlZf6g7jJXRPEJ5WrQ5dn7qftqmQ7EjemWBuqzCobolSPRQZaT9xUQ8OjoFo/mme/Tb7NkE9tsqTWlAALHEEQExOQwm3wHJLGoMHe0wJpVdZfBklv/Dq16CeJ4tSWGbjIxTbUWdLMngAvXGOByqfPM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719011048; c=relaxed/simple;
+	bh=LtmWsPMZoRBhKSBBkk24JsnNSXKW2YfxfQ6txvQJk84=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cOkI9Pu2dVs5Jf8+7OppW3/mDV6brrv371Yj/0gCB7TBrLzUO21/oS01wsbW8sLVTSrj3HZV7w0yF45gTtFo4FtS1YvBIirYj1ZGCkAZn7yFfWfO4oVeDSh1GjOqwx7knTI7ROC2TV+axduGWCqLPzibAzZdSvwHOqgR5tV/xmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gJGN08q1; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-362b32fbb3bso1753298f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:04:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719011044; x=1719615844; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QyIxA/oNpBTPt4ny609aB/kSdO2414ppktI5EQ6EabI=;
+        b=gJGN08q10GooDRBeS/jeo3zkTJ73SpENSwvPjZ6ElCH2orSizH6HyoQcn73LAr7EeC
+         mNJ49kV07FAQAGEeRbwEuy97279IVQaxOoGKYG4qUXLpglVoNLKoESo3dLgAhnyKOwZ7
+         Yr/8zDNxuo4gB/Wk8KvzckQqL2SFxL0XKNct8LORqeyO0hYwYYkB1o1u+l0zcnbw0C9G
+         cYoFwjGy6acbj6BTkVph0V1lB9bQ2wDu9DCKTrj5b/bvt+/1MG5nzAKxg8uVcwWeZkbP
+         bypafhRUvviuWj41w4RleGmiX/8Oqb/g2U7kWdakmCei8ZJGfLjsXJ7EnIYtkscgUfQN
+         jyFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719011044; x=1719615844;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QyIxA/oNpBTPt4ny609aB/kSdO2414ppktI5EQ6EabI=;
+        b=dFrJtrAWuIrmyJ5xxDvd6l4+/s8h8P2uvbPnn9aQ+vQOtloa9azwTXN28IJa/t4K4j
+         BVOU+Jn9cMa2CKaax7HHzw5EH+OHgXO6Waicx7c7SmKnQbPOp5WOKLXdsN+NTTO2juB3
+         kvdre5R45y6TwD4sc6yQhlm4dPG+Wk3xycpLiPEnxAf6Jn2MFzrJ+Cl3oZSqjCko4fNo
+         aoll1XJV4T4AraS3Jo0L+FQWZaCBRJHTIzfKRmtv4flugnCHrwQio7Ge1Gt7Rrq/CJmv
+         MLqqwiqXM2tP0xDrtInCapEtlMOdPf0wjBUZ6Kj/VkLcg3Ru0oQUsSlW1GA91lMpd8zf
+         00Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVy1EQ4UCS5mMFk/smjJGmy+9z5utIUIH2L5bkzXC41LkRGzI7PwyNiZCScU6lguKE1YeJGzXggiw+I4Nza9qDG2BaDF/YC3ExRWa6c
+X-Gm-Message-State: AOJu0YwouAhedUcMgHj++FsPA2jAeKgym6PTvlBiljKT8cD5Whzdgw5z
+	/8uldkQE46/vqAnzfDGYZ/2hkXIHM0ivkZZaT1C4B5V+nLXagmjjcxXi5f+eX12gau9t/7U43Wx
+	7rRkbqqgXXlyLZcwqAyhF0tP9MmajLN9pscRi
+X-Google-Smtp-Source: AGHT+IGdt97m2HbrRSMe6Qgmb/piNElKrTuWxumai62rKRGIt2GILaEk2AU9o+H7bVMrdkha90OYmZU3J/39eOp4IRM=
+X-Received: by 2002:adf:f791:0:b0:362:9313:e535 with SMTP id
+ ffacd0b85a97d-363192ce38bmr6585083f8f.48.1719011043943; Fri, 21 Jun 2024
+ 16:04:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|CY8PR11MB7011:EE_
-X-MS-Office365-Filtering-Correlation-Id: acc42d13-bd9c-4ea7-64af-08dc9245fe3b
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|7416011|366013|376011|921017;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MnJCbFdjcVQzb0EzUkEydjE5dUlITy9qbVp1N0dLMWpIUnBNRjRtNWZlN0xm?=
- =?utf-8?B?U25Kalk5MVVXT1NlVTBlV29KRmNRUWkxUGsyMUxkWk9kQ2ppazVmRDZnb1Zi?=
- =?utf-8?B?MGlGZVpYK05BQzZrK1ZVNVFkM3lrVnRzTU1uUndodHAwTTFpOGNCS21lMU9V?=
- =?utf-8?B?SzAwYzFjY0cvVWFJUmpZcUFSQ0kwdm5uMTVSR0VwNGc2bFp6aU1jeXBoNXo2?=
- =?utf-8?B?Mlc2bE9ienNrM3ozWXlXUEpUQ1FjcWxMMmFPQ01JSXlXd0UzbzU2U1QwcGRL?=
- =?utf-8?B?ZTRDbTZLdUlQZDlOTWRyS0g2QTUxMDZUVzNGNnRhNUwzcG1HTG9XZ2lPTFJo?=
- =?utf-8?B?TmxzOUFKeWR1dFBXRTNGazhNaHZGY2ZBcWNGNTliMnVOS0twakMzK1hrZFFF?=
- =?utf-8?B?S3lZZGpqTEY3eW13VnRhYmJJeW5VUUFBQUZZRDZhelh6alJMQ2VzeENSdXQ3?=
- =?utf-8?B?QkE5OWF5K21SSXRaY2g2OHVTSEpzYUwvZ1ZjWE1VdHFtdjM2RkZqdG9WWjBD?=
- =?utf-8?B?UUVoVHNDQ09oZWFlbzI5UXlOZGhyM1RLVGFHL0VOQUlXQ0pNU3dVdnpCeUFz?=
- =?utf-8?B?dDlnU292aVpoWmFrN1ZrZHJTZDNjL1RRVkhzQnZvV0FvOTk4cU1hcHdlQnA2?=
- =?utf-8?B?WXpuOHFnSS9rU0NQUU1EOEFVZVV0V2Q2ME5ZZWxCU1l0d3NRVHJYOVU5YjJT?=
- =?utf-8?B?ZkoxTE15TGNjSE9Od1diODkzckJGbDhHVThwK3V2eENGbWlrQUx1THhReVRh?=
- =?utf-8?B?S0t0Q1N6Y0I3S3hXVjRHVkcvTTlWVU81bjlmRi9hSUdDaGhWUFRmQm1rYlRp?=
- =?utf-8?B?TE10VjhwcHlDNU04eU1VZ2FYMDhFaWlwM250ODZJZkpzSDl1NERhMnZkU0tw?=
- =?utf-8?B?YUY4TWthaHRKYmpPRW9IR1FXVzZFYXlFRExNbDRzRnkxb0V5R1Z4Vi84b0or?=
- =?utf-8?B?djc2MXZqZ1kzSGFwZGRlekRrRzlmaFZFOWlxaWw3bjBadGNoUmgyNkxvSGJs?=
- =?utf-8?B?Q0UxdjZCOGp4eDNhSW1QSnI5SDJnSnRVajM2d1UrV1plS0FsTllRMVZMZWlv?=
- =?utf-8?B?VkRvSE1pQldJaDZDMUNyVjlRR2JTNkZHZ2NVTE91T2lhN3dEUjFEQXpFMDNN?=
- =?utf-8?B?RU13ZHpKL0trcDc1N1lVcitKVWd3am50dmF4U0hOd0FaNDhwNWFqU1gvMTh1?=
- =?utf-8?B?WE1CM3RlVjlDaXc2VjFMU2dqZHRoczV1YTAycE0zYzNzMXA3bHIrZDF1TE9k?=
- =?utf-8?B?cnFXRzFZQTJDRVdXSURwWTFnUFRudUdoR1BtMlFoTi9Sa0lsZlNkTG9HZHJQ?=
- =?utf-8?B?U0tGZHVFZ1BOdGpJS3ZyUzlsM1M5eVliUVVLbTFmck1LSkk4YjNpWDdmSm5l?=
- =?utf-8?B?MUV3UW1VVkFJd0wzNFdJOXhBL1BVdmZUL09FVTVJdGVBWlZlY3RHYjFSVkVn?=
- =?utf-8?B?ZzE4V1JqR2FSRGZ5VlVZVVV4d1pEa3c0N2RVSi9YOVJUdU9lWVJOMW82RnJr?=
- =?utf-8?B?aXo3SkxnWXUzRkxKcEFhRC9nT2xVU0R4UnZTNDlpVzMwWVREU0dzQmJvNVJY?=
- =?utf-8?B?TDcvM3ZIc01uVWRYeU9nRDRZbk80R3dXMWpvRE45TDBwYTdCTE9BN0lxczYx?=
- =?utf-8?B?dXBLeGNOeU5aaThvS1RFZ1NLL1RvNW5LQTRkOFU1bVBscUFnaG15WFg3eS82?=
- =?utf-8?B?NU5DV3VRSHkxS01DaDlNT1ptUWVTRFd4dDRRVFhHU0JyRTZiTTVZN014WUVy?=
- =?utf-8?B?bExVSDlIYUw5RStZVEdMOTh6TXJXT3NvZ3dGMk1hQVVpbzRwVVc3WjNseUkx?=
- =?utf-8?Q?5Pj30tq6npFh3EU4TSOriaxNO7V6zew3W0i/w=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(7416011)(366013)(376011)(921017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TDdEbDVlRkhPVjlmQnpzS2ZwYkhNQVNKV0ZQM0lCNGxQaStVejFpR01ZdmRC?=
- =?utf-8?B?TGRQYms1SUxqeXI1OUFQZDFlUVBtclFqVTdUWXMyLys2RUQ4amZUMURnMllW?=
- =?utf-8?B?czQ0K1l6T3JqSkI0ZEx0VUtiNmcveEI2SEhLNjNyYVp3YjNNVFNZV0VnbjFU?=
- =?utf-8?B?M1ZiWmVtOHlITFhLVU1oVDFIZFZ6YkZSUjN3YmtJalB3RElhMDVOZ2xzSVhJ?=
- =?utf-8?B?L3NtZzBQNTUvdG54WG93cmg5bDNMSU1nRzhxN1BRMFJESXhRZ1N4UFk3cks5?=
- =?utf-8?B?S1BPNmx4d0FwU3pxanZoTWhQNmpDWStKaytqTFhPN1B3TEtxZ1E2TUpxS2NJ?=
- =?utf-8?B?YmptbmhWR0VjRkQ4dndCL1M1MVZNZDZkcVNmaGxEOTJNMWxvUVcxQ0hSbk1J?=
- =?utf-8?B?enJjYlc3clVQQmtlOVZPYTc0NXNrWXl4MnFUVGxrVGZYZzB6NmZZOWxkSnV6?=
- =?utf-8?B?SnZGWWp2eGdVbmJKUUd0Zzh6Z3lKcjlWaFFlUWV4WnlTY1M3WlgvMnc3ZUdC?=
- =?utf-8?B?eUdqQlZVWUd5bkEyVG5HK2FjUjNaVEZyTDg0d1JFSHhPK1puNGdaTHIxMElC?=
- =?utf-8?B?SzVMTllKZWc2TktkTGZ6aWg1TGFiSnZ4YjlZZW5VUHBIT0lqRTd2TFk0UFBp?=
- =?utf-8?B?WXdHMHZCMFVsQ2J0STBJZmRCSUMrdGlFUk5LT1JMUXQ0a0dzRVQ5YWk5VzJU?=
- =?utf-8?B?ZnRxczdnMWtBd09qSldrNmlLUW5EMmVDeVdCVUhjKzRMcFVOWVRWMDRzY29C?=
- =?utf-8?B?VmlWcFVoanM2TDBXRHdXaE1MT2I3eUtyNHpmK3htcjVYY0h4bzR6dGpLcERj?=
- =?utf-8?B?Y2JtWXFka2k4SGV6d1FVMWptWm0wYWZDd2FsZUF5N1F2K2hqdFNIU2JUUDcr?=
- =?utf-8?B?NHF1Qm9CdlRkZ3ozNDhqY3dwWTNibUJON05TYUFHQUVvQlBMZGZ6bC80YXJw?=
- =?utf-8?B?d1NoZDMyd1NkazV6bnFHSGgxd2FJTStYRVlETTBKYm93eTVkR3NYS1dzMUZi?=
- =?utf-8?B?bGZialp5RTRTNXMzakE5YVVpQ09SZi9DOXZqYklrK1NXRWVxVHNPTThoNk1M?=
- =?utf-8?B?R0dFSnQ0WFZsOEYxY29PSU92RXhJWWZwS1oxL2pLR3hxRllXRTdxMm4waFFO?=
- =?utf-8?B?QjF5aEM4ZzFaUlhnUVd0K3dHMWpBUG9RM3lscXNUOEszWFRCZG1BdmRPcFN2?=
- =?utf-8?B?Q1dLWm8vL09LbkdnRVgwbzRQNjh5V05DTDNpWUJxUWI5NmtrTDRXUVRQOCsw?=
- =?utf-8?B?cG04VWxFR3MzZzNTcGMvMzZId0tWU2s0MU9GNWdYL1IyeGQ4TGhhQ1dQUDBl?=
- =?utf-8?B?Umx0S21iclVTeWZUU0pWOVhOS0JOU1orUHRkSGtaQXhwTktYU2x2ajBIZ0ht?=
- =?utf-8?B?WUlBRDZPcmlBVWExM0VERUIxRkZCNHFrNjBUZnVwTlRwL2RuajNLVHlldEdl?=
- =?utf-8?B?ZzdqYlZiYW03U0Jnek5xRnJ4K0doZTBNaGp2WTM2OTZrMVRFcDNRSFNxejBo?=
- =?utf-8?B?Rkp6bVJ0QlFRWEtHY2RLZzVHTEo1WTg5eStHNlBKTTZFNDRSSUt3Vk5EZzNk?=
- =?utf-8?B?M2txc24xOEhxQ29VeUVuMzd4ZXMzc0tLdnhhZ1ZnMUFPZmlSWVR5aTQxUWxm?=
- =?utf-8?B?aFE5c2MwVEM1cWxqMGo1K0l5SGFKY0ZxK2Vvb3RFUjFqdFRXUFFjdUNnRTJa?=
- =?utf-8?B?elN0S2c1M3pWeTVSTjZidC9WVDJob2oybzQrR2VUSzBTQ291RTJmaVRSSXg4?=
- =?utf-8?B?TUpxeEROaDU1NFFhQkpuczJwYkovSWZBdkpvMDI3T2M0T2NZMUhDVGQ5ZGxF?=
- =?utf-8?B?QUQ2aTlITmZqcmVjandlNE14QlRQZ0liWWFlTFRqT2QrWUpVTXpvRUtQQlpT?=
- =?utf-8?B?cklaMlJPd2R2Mk1nT1QxUUdHUVRlUXJ1YzdsSi9OUXV4Wk1SRys4K3Q5cGtN?=
- =?utf-8?B?QWtxMmlCUGx6bmxOdkV5blo1S1BDSFZVMWdCSnJGTWlsTTI5RzIyVThSYXVP?=
- =?utf-8?B?Z3dOdFgxeEp6TndXR3NGZFFNOU1oeFh6TC9wdC9WTU8zRnZkVkpMYzFMdVF4?=
- =?utf-8?B?OWtZN2VRREN3NmhwU1I1cEhrb3dXRkFRWWNuRDYvK1l0T09xMmJLdXlRQ2tK?=
- =?utf-8?Q?SE6T8K10hw4xefont8jqnxQ3i?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: acc42d13-bd9c-4ea7-64af-08dc9245fe3b
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 23:00:49.6431
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4y2yfhNA6R/oI+M12/VSTLKOzKZ+wBTH4evQOjFLmRUA5gSQgY3gG3sDwfoxshSv289WFIRoVnK2mKRvlXnCUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7011
-X-OriginatorOrg: intel.com
+References: <ef22d289-eadb-4ed9-863b-fbc922b33d8d@I-love.SAKURA.ne.jp>
+In-Reply-To: <ef22d289-eadb-4ed9-863b-fbc922b33d8d@I-love.SAKURA.ne.jp>
+From: Axel Rasmussen <axelrasmussen@google.com>
+Date: Fri, 21 Jun 2024 16:03:25 -0700
+Message-ID: <CAJHvVcgfgjPQMxRn09+QKV0G-6AOS6UA7hMbtu2azMquMW4JCA@mail.gmail.com>
+Subject: Re: [PATCH] mm: mmap_lock: replace get_memcg_path_buf() with on-stack buffer
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: linux-mm <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Nicolas Saenz Julienne <nsaenzju@redhat.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jun 20, 2024 at 6:08=E2=80=AFPM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Commit 2b5067a8143e ("mm: mmap_lock: add tracepoints around lock
+> acquisition") introduced TRACE_MMAP_LOCK_EVENT() macro using
+> preempt_disable() in order to let get_mm_memcg_path() return a percpu
+> buffer exclusively used by normal, softirq, irq and NMI contexts
+> respectively.
+>
+> Commit 832b50725373 ("mm: mmap_lock: use local locks instead of disabling
+> preemption") replaced preempt_disable() with local_lock(&memcg_paths.lock=
+)
+> based on an argument that preempt_disable() has to be avoided because
+> get_mm_memcg_path() might sleep if PREEMPT_RT=3Dy.
+>
+> But syzbot started reporting
+>
+>   inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
+>
+> and
+>
+>   inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+>
+> messages, for local_lock() does not disable IRQ.
+>
+> We could replace local_lock() with local_lock_irqsave() in order to
+> suppress these messages. But this patch instead replaces percpu buffers
+> with on-stack buffer, for the size of each buffer returned by
+> get_memcg_path_buf() is only 256 bytes which is tolerable for allocating
+>  from current thread's kernel stack memory.
+>
+> Reported-by: syzbot <syzbot+40905bca570ae6784745@syzkaller.appspotmail.co=
+m>
+> Closes: https://syzkaller.appspot.com/bug?extid=3D40905bca570ae6784745
+> Fixes: 832b50725373 ("mm: mmap_lock: use local locks instead of disabling=
+ preemption")
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+> Only compile tested.
+>
+>  mm/mmap_lock.c | 175 ++++++-------------------------------------------
+>  1 file changed, 20 insertions(+), 155 deletions(-)
 
->> +config X86_NMI_SOURCE
-> 
-> Lets reuse X86_FRED instead of adding another hard config option. See
-> below.
-> 
+No objections. Looking back all the way to the first version [1] the
+buffers were already percpu, instead of on the stack like this. IOW,
+there was no on-list discussion about why this shouldn't go on the
+stack. It has been a while, but if memory serves I opted to do it that
+way just out of paranoia around putting large buffers on the stack.
+But, I agree 256 bytes isn't all that large.
 
-I mostly agree with the suggestion here but there seems to be a bit of
-confusion regarding feature availability and feature activation.
+That v1 patch wasn't all that complex, but then again it didn't deal
+with various edge cases properly :) so it has grown significantly more
+complex over time. Reconsidering the approach seems reasonable now,
+given how much code this removes.
 
-Availability and activation of X86_FEATURE_NMI_SOURCE depends on FRED
-but not the other way around.
+This change looks straightforwardly correct to me. You can take:
 
-In other words, CONFIG_X86_NMI_SOURCE would only be useful if someone
-wants to disable NMI_SOURCE even if both X86_FEATURE_FRED and
-X86_FEATURE_NMI_SOURCE are available on a platform.
+Reviewed-by: Axel Rasmussen <axelrasmussen@google.com>
 
-This seems unlikely to me. Reusing CONFIG_X86_FRED seems reasonable.
+[1]: https://lore.kernel.org/all/20200917154258.1a364cdf@gandalf.local.home=
+/T/
 
-Sohil
+>
+> diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
+> index 1854850b4b89..368b840e7508 100644
+> --- a/mm/mmap_lock.c
+> +++ b/mm/mmap_lock.c
+> @@ -19,14 +19,7 @@ EXPORT_TRACEPOINT_SYMBOL(mmap_lock_released);
+>
+>  #ifdef CONFIG_MEMCG
+>
+> -/*
+> - * Our various events all share the same buffer (because we don't want o=
+r need
+> - * to allocate a set of buffers *per event type*), so we need to protect=
+ against
+> - * concurrent _reg() and _unreg() calls, and count how many _reg() calls=
+ have
+> - * been made.
+> - */
+> -static DEFINE_MUTEX(reg_lock);
+> -static int reg_refcount; /* Protected by reg_lock. */
+> +static atomic_t reg_refcount;
+>
+>  /*
+>   * Size of the buffer for memcg path names. Ignoring stack trace support=
+,
+> @@ -34,136 +27,22 @@ static int reg_refcount; /* Protected by reg_lock. *=
+/
+>   */
+>  #define MEMCG_PATH_BUF_SIZE MAX_FILTER_STR_VAL
+>
+> -/*
+> - * How many contexts our trace events might be called in: normal, softir=
+q, irq,
+> - * and NMI.
+> - */
+> -#define CONTEXT_COUNT 4
+> -
+> -struct memcg_path {
+> -       local_lock_t lock;
+> -       char __rcu *buf;
+> -       local_t buf_idx;
+> -};
+> -static DEFINE_PER_CPU(struct memcg_path, memcg_paths) =3D {
+> -       .lock =3D INIT_LOCAL_LOCK(lock),
+> -       .buf_idx =3D LOCAL_INIT(0),
+> -};
+> -
+> -static char **tmp_bufs;
+> -
+> -/* Called with reg_lock held. */
+> -static void free_memcg_path_bufs(void)
+> -{
+> -       struct memcg_path *memcg_path;
+> -       int cpu;
+> -       char **old =3D tmp_bufs;
+> -
+> -       for_each_possible_cpu(cpu) {
+> -               memcg_path =3D per_cpu_ptr(&memcg_paths, cpu);
+> -               *(old++) =3D rcu_dereference_protected(memcg_path->buf,
+> -                       lockdep_is_held(&reg_lock));
+> -               rcu_assign_pointer(memcg_path->buf, NULL);
+> -       }
+> -
+> -       /* Wait for inflight memcg_path_buf users to finish. */
+> -       synchronize_rcu();
+> -
+> -       old =3D tmp_bufs;
+> -       for_each_possible_cpu(cpu) {
+> -               kfree(*(old++));
+> -       }
+> -
+> -       kfree(tmp_bufs);
+> -       tmp_bufs =3D NULL;
+> -}
+> -
+>  int trace_mmap_lock_reg(void)
+>  {
+> -       int cpu;
+> -       char *new;
+> -
+> -       mutex_lock(&reg_lock);
+> -
+> -       /* If the refcount is going 0->1, proceed with allocating buffers=
+. */
+> -       if (reg_refcount++)
+> -               goto out;
+> -
+> -       tmp_bufs =3D kmalloc_array(num_possible_cpus(), sizeof(*tmp_bufs)=
+,
+> -                                GFP_KERNEL);
+> -       if (tmp_bufs =3D=3D NULL)
+> -               goto out_fail;
+> -
+> -       for_each_possible_cpu(cpu) {
+> -               new =3D kmalloc(MEMCG_PATH_BUF_SIZE * CONTEXT_COUNT, GFP_=
+KERNEL);
+> -               if (new =3D=3D NULL)
+> -                       goto out_fail_free;
+> -               rcu_assign_pointer(per_cpu_ptr(&memcg_paths, cpu)->buf, n=
+ew);
+> -               /* Don't need to wait for inflights, they'd have gotten N=
+ULL. */
+> -       }
+> -
+> -out:
+> -       mutex_unlock(&reg_lock);
+> +       atomic_inc(&reg_refcount);
+>         return 0;
+> -
+> -out_fail_free:
+> -       free_memcg_path_bufs();
+> -out_fail:
+> -       /* Since we failed, undo the earlier ref increment. */
+> -       --reg_refcount;
+> -
+> -       mutex_unlock(&reg_lock);
+> -       return -ENOMEM;
+>  }
+>
+>  void trace_mmap_lock_unreg(void)
+>  {
+> -       mutex_lock(&reg_lock);
+> -
+> -       /* If the refcount is going 1->0, proceed with freeing buffers. *=
+/
+> -       if (--reg_refcount)
+> -               goto out;
+> -
+> -       free_memcg_path_bufs();
+> -
+> -out:
+> -       mutex_unlock(&reg_lock);
+> -}
+> -
+> -static inline char *get_memcg_path_buf(void)
+> -{
+> -       struct memcg_path *memcg_path =3D this_cpu_ptr(&memcg_paths);
+> -       char *buf;
+> -       int idx;
+> -
+> -       rcu_read_lock();
+> -       buf =3D rcu_dereference(memcg_path->buf);
+> -       if (buf =3D=3D NULL) {
+> -               rcu_read_unlock();
+> -               return NULL;
+> -       }
+> -       idx =3D local_add_return(MEMCG_PATH_BUF_SIZE, &memcg_path->buf_id=
+x) -
+> -             MEMCG_PATH_BUF_SIZE;
+> -       return &buf[idx];
+> +       atomic_dec(&reg_refcount);
+>  }
+>
+> -static inline void put_memcg_path_buf(void)
+> -{
+> -       local_sub(MEMCG_PATH_BUF_SIZE, &this_cpu_ptr(&memcg_paths)->buf_i=
+dx);
+> -       rcu_read_unlock();
+> -}
+> -
+> -#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                            =
+       \
+> -       do {                                                             =
+      \
+> -               const char *memcg_path;                                  =
+      \
+> -               local_lock(&memcg_paths.lock);                           =
+      \
+> -               memcg_path =3D get_mm_memcg_path(mm);                    =
+        \
+> -               trace_mmap_lock_##type(mm,                               =
+      \
+> -                                      memcg_path !=3D NULL ? memcg_path =
+: "",   \
+> -                                      ##__VA_ARGS__);                   =
+      \
+> -               if (likely(memcg_path !=3D NULL))                        =
+        \
+> -                       put_memcg_path_buf();                            =
+      \
+> -               local_unlock(&memcg_paths.lock);                         =
+      \
+> +#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                    \
+> +       do {                                                    \
+> +               char buf[MEMCG_PATH_BUF_SIZE];                  \
+> +               get_mm_memcg_path(mm, buf, sizeof(buf));        \
+> +               trace_mmap_lock_##type(mm, buf, ##__VA_ARGS__); \
+>         } while (0)
+>
+>  #else /* !CONFIG_MEMCG */
+> @@ -185,37 +64,23 @@ void trace_mmap_lock_unreg(void)
+>  #ifdef CONFIG_TRACING
+>  #ifdef CONFIG_MEMCG
+>  /*
+> - * Write the given mm_struct's memcg path to a percpu buffer, and return=
+ a
+> - * pointer to it. If the path cannot be determined, or no buffer was ava=
+ilable
+> - * (because the trace event is being unregistered), NULL is returned.
+> - *
+> - * Note: buffers are allocated per-cpu to avoid locking, so preemption m=
+ust be
+> - * disabled by the caller before calling us, and re-enabled only after t=
+he
+> - * caller is done with the pointer.
+> - *
+> - * The caller must call put_memcg_path_buf() once the buffer is no longe=
+r
+> - * needed. This must be done while preemption is still disabled.
+> + * Write the given mm_struct's memcg path to a buffer. If the path canno=
+t be
+> + * determined or the trace event is being unregistered, empty string is =
+written.
+>   */
+> -static const char *get_mm_memcg_path(struct mm_struct *mm)
+> +static void get_mm_memcg_path(struct mm_struct *mm, char *buf, size_t bu=
+flen)
+>  {
+> -       char *buf =3D NULL;
+> -       struct mem_cgroup *memcg =3D get_mem_cgroup_from_mm(mm);
+> +       struct mem_cgroup *memcg;
+>
+> +       buf[0] =3D '\0';
+> +       /* No need to get path if no trace event is registered. */
+> +       if (!atomic_read(&reg_refcount))
+> +               return;
+> +       memcg =3D get_mem_cgroup_from_mm(mm);
+>         if (memcg =3D=3D NULL)
+> -               goto out;
+> -       if (unlikely(memcg->css.cgroup =3D=3D NULL))
+> -               goto out_put;
+> -
+> -       buf =3D get_memcg_path_buf();
+> -       if (buf =3D=3D NULL)
+> -               goto out_put;
+> -
+> -       cgroup_path(memcg->css.cgroup, buf, MEMCG_PATH_BUF_SIZE);
+> -
+> -out_put:
+> +               return;
+> +       if (memcg->css.cgroup)
+> +               cgroup_path(memcg->css.cgroup, buf, buflen);
+>         css_put(&memcg->css);
+> -out:
+> -       return buf;
+>  }
+>
+>  #endif /* CONFIG_MEMCG */
+> --
+> 2.43.0
+>
 
