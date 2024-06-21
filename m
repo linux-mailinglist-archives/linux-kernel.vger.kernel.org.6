@@ -1,138 +1,99 @@
-Return-Path: <linux-kernel+bounces-223819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589FC9118C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FCCE9118CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 872ECB2219A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:36:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A0BB22250
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000F584E0D;
-	Fri, 21 Jun 2024 02:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FE284FD6;
+	Fri, 21 Jun 2024 02:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="edMnv3jy"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seacLH7m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEEF839F4
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC17A7E799;
+	Fri, 21 Jun 2024 02:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718937405; cv=none; b=bgKRjOU+WBsdZYbewiGc/TUtn10Y1rzq6woDJCTYrE1a7UGYKXU3W9d+GBrJvBBWyOnL6j08fJUFgRkZoq6dPnBpPtxYQyVlAT75G+dHNohWtPVS6HgTfntb49gs2bIGO9JJ1rq2Ov00EXsZNDXCXdUe18REUCoPt3VMM9e6yIg=
+	t=1718937627; cv=none; b=RW2gJSRnfwdYHf04zJzrkTfTkssyl3ynBuNtad6UstOI5qNKzPTRi1np7CZsWtERDGgl2YvB5aYPgsW8IiaXOKQDE2eNme5euziOZF4wy+kPkpmDNtsvVqRdii0tJby5xS+yuq7CLhTTyfIF9jI6qM7nE3aQpUgHbgo3wBSHqQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718937405; c=relaxed/simple;
-	bh=XpCVL9a3HAJzUcDsCRQhjlGYzoYp9tRjJO+SvqvT5Uk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EKp2ba9B2GcU7iVbY0D5Q4CzddU6sd1Z9k5muQZqhLDUkwwKSuBxKtfYmsh4MSkdVp4ngDwW+U8VIjxGbRc2bRbIpAd+xbHGwCxNAoArWgX+VmyjdT2F0Gfj8k/Zw7Q3RbcTwn3pxXIkPurPqrdw40LUUBacsCAz0QGpfY0y4cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=edMnv3jy; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-70a365a4532so1395930a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:36:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1718937403; x=1719542203; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MZ29XVyr2F7PE1OlyXcXzhHYCQ8VYiYUNotAJkqWiP4=;
-        b=edMnv3jyRVSM96UEeE5zrtXULT9j7q9g40FQrZGgZqsF3o1u8JMaggI420I7p+YuXG
-         vmoFBaTIl2eZT+GdWug8DBt/B/XS5fMdHyiMxkUnGv3OmJqgu90WU3FkYbaFK07ske6h
-         Q1HJF0ZZNMoajZnXzpZjt3w4yma2MDadgFv5BNnVt/EF/o4Q6RYPmv0R5VXCQR1e1yt7
-         imYzmGRehFgDSQGjrzq1vKIPr0CQwqa8atSzk6JVgK6Lx3NEzfnSFtBu0f4FfY4XnUuS
-         rE1wl4CNRjWOM/7WDkYfD6ga9wZXbWqlUAC+MHKS5ATsVKvHtv1n+Q0x7R8wxLJadfi6
-         /OWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718937403; x=1719542203;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MZ29XVyr2F7PE1OlyXcXzhHYCQ8VYiYUNotAJkqWiP4=;
-        b=Nl7VNa4RENKofNW2Ws3b30ZmtjmiD+8cUX8zE5OUwILatQrMVDScf4BeIp7BRMYEVt
-         GRxejZrzM+vrQwlm477eITfaAqB2DuqOPnpEKwkMgdh4Jx2TzWAgmO+sH8O+cbnhkeVt
-         yqViv3lT4ZaJBce3hUnvmECyAo+oDM7eTpoCoTFYeyoUF6lgeD+pS32v7Ow2s6XrmVQT
-         +UeZhzmiVQc1KtPey3PG2aq8inc6M2F8jXZxzumUVZDSb90d1xEgOSibmnzXP27DBlM8
-         +iwMpYCZmk8DmVH4uIO9GcYdMz9pJXSZSL3NHPmeZui+QfBtmOHNpsneKR61TG+ybeqN
-         84oA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvN2ajI79444+oGPQ8pO7uSYnw0/uParS4FVW0sXyZludeezgVdoofEZu3GJXR/cQ2n0VU7HjDcYrDmdYNnB97hMhz/Mt/LujCel/Y
-X-Gm-Message-State: AOJu0YyBnOZN0KGlQ9onXkdjJEhXH4+EFdkjt7aYtw68xmVdH8vAwqOY
-	syqFAN11LEK3XV4kQkJUWD2/40SDbg73J/ihCWh0oNIpaDEDGW9OOxXnDePpziQ=
-X-Google-Smtp-Source: AGHT+IErLRidr7JcKQ7BI8LT1ghwTfF/DmMM7EmNAp9djFIXW0H3ppZINezGbMwGItwjeJhSvbnvPw==
-X-Received: by 2002:a05:6a20:4c8f:b0:1b5:d143:72f2 with SMTP id adf61e73a8af0-1bcbb60f7f3mr7108765637.57.1718937403211;
-        Thu, 20 Jun 2024 19:36:43 -0700 (PDT)
-Received: from [10.54.24.59] ([143.92.118.3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f2690sm3337225ad.40.2024.06.20.19.36.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 19:36:42 -0700 (PDT)
-Message-ID: <03658a84-09e0-40a1-aa30-9f92e82a6b0d@shopee.com>
-Date: Fri, 21 Jun 2024 10:36:37 +0800
+	s=arc-20240116; t=1718937627; c=relaxed/simple;
+	bh=xJZIYVbUP0t+JbPBKaSKgjcIw13Hyj2UtyKRDIikHCo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=r9iZlqiciIa3KFBCU+87vqGSYGwMfDXGYXOkKr/CR18GhHyXW/7ieyZShPElur4A7AZ8xvWefttp+QJIEPYmj/qwhF8pKeWdTxQwiOVJeOWRjidGV+RGKYEqGvwJ6b54OfuZchTZzUETc8BDxdMBe2USVkKxgOoOALqTYXF73KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seacLH7m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 46E7BC4AF07;
+	Fri, 21 Jun 2024 02:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718937627;
+	bh=xJZIYVbUP0t+JbPBKaSKgjcIw13Hyj2UtyKRDIikHCo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=seacLH7mXRCeWEugfPHXgqH3FDxgKL/ZBcE5P5twXfe8bjpEJbm6uKpmzFVJLbbBM
+	 lLovx3vZYBm5po2rBJuh9cA+w4AJL+o0D6nfBG0zmxwvrhvMUtugPAe5VVGo0HC/Jj
+	 +W4lb1zGsCi0nz/tQLxo62bKIUBTT1VwICL73o5Zv7x85IvlOjYIEuQyaigFxN7UEV
+	 4xu1ALI9KFRxT2xKimDmdWYb89uN5Lmkyy/1RDituR3XO0cRQcIHXca+wWtDxxjtsq
+	 rJo1r8XE0c5vAXV3flJ7pIS0daYeBFqFQDkxO8doLeEatNSkS3r5Ud7q5dXy+S9DX6
+	 FvfnCQ9nRMhAA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3545CE7C4C8;
+	Fri, 21 Jun 2024 02:40:27 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] fuse: do not generate interrupt requests for fatal signals
-To: Bernd Schubert <bernd.schubert@fastmail.fm>,
- Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240613040147.329220-1-haifeng.xu@shopee.com>
- <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
- <a8d0c5da-6935-4d28-9380-68b84b8e6e72@shopee.com>
- <CAJfpegsvzDg6fUy9HGUaR=7x=LdzOet4fowPvcbuOnhj71todg@mail.gmail.com>
- <20240617-vanille-labil-8de959ba5756@brauner>
- <2cf34c6b-4653-4f48-9a5f-43b484ed629e@shopee.com>
- <db4ed4e5-7c23-468d-8bac-cee215ace19e@fastmail.fm>
-From: Haifeng Xu <haifeng.xu@shopee.com>
-In-Reply-To: <db4ed4e5-7c23-468d-8bac-cee215ace19e@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v1 net] net: dsa: microchip: fix initial port flush problem
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171893762721.9082.9601801186482901167.git-patchwork-notify@kernel.org>
+Date: Fri, 21 Jun 2024 02:40:27 +0000
+References: <1718756202-2731-1-git-send-email-Tristram.Ha@microchip.com>
+In-Reply-To: <1718756202-2731-1-git-send-email-Tristram.Ha@microchip.com>
+To:  <Tristram.Ha@microchip.com>
+Cc: woojung.huh@microchip.com, andrew@lunn.ch, vivien.didelot@gmail.com,
+ f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tristram.ha@microchip.com
 
+Hello:
 
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 2024/6/21 05:40, Bernd Schubert wrote:
+On Tue, 18 Jun 2024 17:16:42 -0700 you wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
 > 
+> The very first flush in any port will flush all learned addresses in all
+> ports.  This can be observed by unplugging the cable from one port while
+> additional ports are connected and dumping the fdb entries.
 > 
-> On 6/20/24 08:43, Haifeng Xu wrote:
->>
->>
->> On 2024/6/17 15:25, Christian Brauner wrote:
->>> On Fri, Jun 14, 2024 at 12:01:39PM GMT, Miklos Szeredi wrote:
->>>> On Thu, 13 Jun 2024 at 12:44, Haifeng Xu <haifeng.xu@shopee.com> wrote:
->>>>
->>>>> So why the client doesn't get woken up?
->>>>
->>>> Need to find out what the server (lxcfs) is doing.  Can you do a
->>>> strace of lxcfs to see the communication on the fuse device?
->>>
->>> Fwiw, I'm one of the orignal authors and maintainers of LXCFS so if you
->>> have specific questions, I may be able to help.
->>
->> Thanks. All server threads of lcxfs wokrs fine now.
->>
->> So can we add another interface to abort those dead request?
->> If the client thread got killed and wait for relpy, but the fuse sever didn't 
->> send reply for some unknown reason，we can use this interface to wakeup the client thread.
+> This problem is caused by the initially wrong value programmed to the
+> REG_SW_LUE_CTRL_1 register.  Setting SW_FLUSH_STP_TABLE and
+> SW_FLUSH_MSTP_TABLE bits does not have an immediate effect.  It is when
+> ksz9477_flush_dyn_mac_table() is called then the SW_FLUSH_STP_TABLE bit
+> takes effect and flushes all learned entries.  After that call both bits
+> are reset and so the next port flush will not cause such problem again.
 > 
-> Isn't that a manual workaround? I.e. an admin or a script needs to trigger it?
+> [...]
 
-Yes.
+Here is the summary with links:
+  - [v1,net] net: dsa: microchip: fix initial port flush problem
+    https://git.kernel.org/netdev/net/c/ad53f5f54f35
 
-> 
-> There is a discussion in this thread to add request timeouts
-> https://urldefense.proofpoint.com/v2/url?u=https-3A__lore.kernel.org_linux-2Dkernel_20240605153552.GB21567-40localhost.localdomain_T_&d=DwIDaQ&c=R1GFtfTqKXCFH-lgEPXWwic6stQkW4U7uVq33mt-crw&r=3uoFsejk1jN2oga47MZfph01lLGODc93n4Zqe7b0NRk&m=8O09nPSMPRZHOnfDnsm3lTwcO7AV93meeZP-F_k_u8w7XO04ISrP36bbcoEMUSrW&s=FRDpgmP8jGWJnoZna3OrFnvx44cCgywsGOeMY3fCeFc&e= 
-> I guess for interrupted requests that would be definitely a case where timeouts could be
-> applied?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Yes. If the requset can be cancelled until the timeout elapsed, we don't need to abort the dead requests manually.
 
-Thanks!
-
-> 
-> 
-> Thanks,
-> Bernd
 
