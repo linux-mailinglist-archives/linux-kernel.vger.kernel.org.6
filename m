@@ -1,142 +1,248 @@
-Return-Path: <linux-kernel+bounces-224767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89119126A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:27:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B6E9126AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F9D0B2679E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:27:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB72289259
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330BF155CA6;
-	Fri, 21 Jun 2024 13:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F36615A878;
+	Fri, 21 Jun 2024 13:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JxgGvYQx"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T5iKPGsh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/Dq6fTzn";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T5iKPGsh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/Dq6fTzn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BAB153BD2;
-	Fri, 21 Jun 2024 13:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4551586CB;
+	Fri, 21 Jun 2024 13:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718976423; cv=none; b=PGAx2iAvo18wmlA+R7ct1CP4J/OdSLfLg9gX8Fa46UMkm6UtRiOg1tVUzSQcQN0zYc+MCNcibzCnGSO7oQ1urNKqQRbQoOF5x0N7+9U0+1ae8nsT84XR1YZKTU1K8rS3odXtI8MvNpBrZwZN9ctap/v/JAyebhLjtI7s1KIvplI=
+	t=1718976490; cv=none; b=P5VXHB309NUPVWp4aUsVrh20+oF0JB/bwpdr3OGXNl1nLehz6guEp/ypFrrpF8cpdVoyQOA2A39wi29NdZPQ9jThFa+I+0sA8Gtr6Vmf3k/SD1Ql+hYriyncuvI5NSFhJFabJ7LltCE6FJe7zvVRegEfVY7kc8ZM0ahsLWgKSc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718976423; c=relaxed/simple;
-	bh=osld6dK3jXn9QfIFzrfdCXJj+wgJTV1og7IU+S2Vsr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dj1UAzTRYQAH7JRH4JY6Bg3+F91qmSxN7T3fOuU89P9e9I9gELMifx0kgcVSvCL0GAGAZYnaJXVlnM604KehcNsaXjtTsRsaWL+dckPd6Gt8fMJ/MbI33iHmSUaZLajf2aScGQJbzV4RfJtTfXGma5TmWVG+7dfa0SivwIhjjbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JxgGvYQx; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718976420;
-	bh=osld6dK3jXn9QfIFzrfdCXJj+wgJTV1og7IU+S2Vsr8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JxgGvYQxSjR6XDCF8N//FsUZaEWtBizAcw48r40ry1BYk+990Kb6YJ85wmYo2nqr7
-	 XF1NicpZRH6FuchNagMoT2k54vpdFpfckwDYiUD07aou4vNrdv2leQwRSnJg113pm9
-	 gU7xf+G1xjTLCxCWx9bID2HO4YRyVkvS63HVyR90Cm6WJLZoLqiY1Kjh1dP3KRdLNK
-	 5EZqsFzioieJ8sa+PWFlga/c3SIEi3ZTom+GtbxkFrsXc39p6hrjM2HhDvWVNto1rv
-	 g0RGEu1zEAc9ZpgAtb/f7mfZ8GA1nvoYKUaAUIK889Xa3sGL8qV/96lijrlOqQ3ET7
-	 jDRNPHfHu0q/w==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	s=arc-20240116; t=1718976490; c=relaxed/simple;
+	bh=9sUiGG1pdsYhTI5e99Pry3JMsbAJCkFt5Cx5Twn+El0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UvZ9F29Utsmo26U8TdbyHrtkqwYpBOHqn93dm7dPu2EPlGZFxTj6EhcSsj7rKSBuu1GOEEyt+NMaasFyIQ9L4iKFneaFWGmIXnQOO0biK4JKIyFvDbgVJqhQx853diZqbc2ChCyMkco6YC7F6llYUvkeXYZAPAfUlpvblzyoBBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T5iKPGsh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/Dq6fTzn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T5iKPGsh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/Dq6fTzn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: sebastianfricke)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E9C4837821DD;
-	Fri, 21 Jun 2024 13:26:59 +0000 (UTC)
-Date: Fri, 21 Jun 2024 15:26:58 +0200
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, hverkuil-cisco@xs4all.nl,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	benjamin.gaignard@collabora.com, laurent.pinchart@ideasonboard.com,
-	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
-	j-luthra@ti.com, b-brnich@ti.com, detheridge@ti.com,
-	p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com,
-	nicolas@ndufresne.ca, afd@ti.com
-Subject: Re: [PATCH v14 2/6] media: imagination: Add E5010 JPEG Encoder driver
-Message-ID: <20240621132658.m2utqnvwaicgiwqr@basti-XPS-13-9310>
-References: <20240618193651.2771478-1-devarsht@ti.com>
- <20240618193651.2771478-3-devarsht@ti.com>
- <20240621123715.enqtdqxskdkod5ze@basti-XPS-13-9310>
- <8dda9d0c-3154-a7fd-1233-ca5be59639de@ti.com>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 31326210F0;
+	Fri, 21 Jun 2024 13:28:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718976486; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BJCuq+h5u3aPiWrkexa1qYa0vicdpzfh6UYJP9LV0a4=;
+	b=T5iKPGshDECy3ig2kF+G9FsBsOQ2KN6xZjXV+C3GxzI4s5wJTv5Yz4zlIIZZrc5iBmPwQt
+	DY12WSbrERDETH3qye3KLnfKQJmjqA103giLa5q93YvB06Yd+fvxSIfHJx/3ZA2qxNi8Xn
+	BJilSOrydVDXT4uG+ArcYegO3PY7yRA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718976486;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BJCuq+h5u3aPiWrkexa1qYa0vicdpzfh6UYJP9LV0a4=;
+	b=/Dq6fTzniVTfsGx5mdV1MQh1MJcoZa+vH0uXFNbRwXRbnS4vbhZVGyFzkSxOPdlaI2hVYf
+	TOZ0fuH3RNglGRDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=T5iKPGsh;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="/Dq6fTzn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718976486; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BJCuq+h5u3aPiWrkexa1qYa0vicdpzfh6UYJP9LV0a4=;
+	b=T5iKPGshDECy3ig2kF+G9FsBsOQ2KN6xZjXV+C3GxzI4s5wJTv5Yz4zlIIZZrc5iBmPwQt
+	DY12WSbrERDETH3qye3KLnfKQJmjqA103giLa5q93YvB06Yd+fvxSIfHJx/3ZA2qxNi8Xn
+	BJilSOrydVDXT4uG+ArcYegO3PY7yRA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718976486;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BJCuq+h5u3aPiWrkexa1qYa0vicdpzfh6UYJP9LV0a4=;
+	b=/Dq6fTzniVTfsGx5mdV1MQh1MJcoZa+vH0uXFNbRwXRbnS4vbhZVGyFzkSxOPdlaI2hVYf
+	TOZ0fuH3RNglGRDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E875E13AAA;
+	Fri, 21 Jun 2024 13:28:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0y/EN+V/dWZ4FAAAD6G6ig
+	(envelope-from <hare@suse.de>); Fri, 21 Jun 2024 13:28:05 +0000
+Message-ID: <a5b472de-6918-4bcc-b33f-9d9f43f83e92@suse.de>
+Date: Fri, 21 Jun 2024 15:28:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 04/11] readahead: allocate folios with
+ mapping_min_order in readahead
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Matthew Wilcox <willy@infradead.org>, david@fromorbit.com,
+ djwong@kernel.org, chandan.babu@oracle.com, brauner@kernel.org,
+ akpm@linux-foundation.org, mcgrof@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+ Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org, p.raghav@samsung.com,
+ linux-fsdevel@vger.kernel.org, hch@lst.de, gost.dev@samsung.com,
+ cl@os.amperecomputing.com, john.g.garry@oracle.com
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-5-kernel@pankajraghav.com>
+ <ZmnuCQriFLdHKHkK@casper.infradead.org>
+ <20240614092602.jc5qeoxy24xj6kl7@quentin>
+ <ZnAs6lyMuHyk2wxI@casper.infradead.org>
+ <20240617160420.ifwlqsm5yth4g7eo@quentin>
+ <ZnBf5wXMOBWNl52x@casper.infradead.org>
+ <20240617163931.wvxgqdxdbwsbqtrx@quentin>
+ <ac136000-1ae0-4cab-9858-abb68ff53b66@suse.de>
+ <20240621121903.xbw4j2ijy4k32owv@quentin>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240621121903.xbw4j2ijy4k32owv@quentin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8dda9d0c-3154-a7fd-1233-ca5be59639de@ti.com>
+X-Spamd-Result: default: False [-6.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[sent.com];
+	FREEMAIL_CC(0.00)[infradead.org,fromorbit.com,kernel.org,oracle.com,linux-foundation.org,kvack.org,vger.kernel.org,os.amperecomputing.com,sent.com,samsung.com,lst.de];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 31326210F0
+X-Spam-Flag: NO
+X-Spam-Score: -6.50
+X-Spam-Level: 
 
-Hey Devarsh,
-
-On 21.06.2024 18:14, Devarsh Thakkar wrote:
->Hi Sebastian
->
->On 21/06/24 18:07, Sebastian Fricke wrote:
->> Hey Devarsh,
+On 6/21/24 14:19, Pankaj Raghav (Samsung) wrote:
+> On Tue, Jun 18, 2024 at 08:56:53AM +0200, Hannes Reinecke wrote:
+>> On 6/17/24 18:39, Pankaj Raghav (Samsung) wrote:
+>>> On Mon, Jun 17, 2024 at 05:10:15PM +0100, Matthew Wilcox wrote:
+>>>> On Mon, Jun 17, 2024 at 04:04:20PM +0000, Pankaj Raghav (Samsung) wrote:
+>>>>> On Mon, Jun 17, 2024 at 01:32:42PM +0100, Matthew Wilcox wrote:
+>>>>> So the following can still be there from Hannes patch as we have a
+>>>>> stable reference:
+>>>>>
+>>>>>    		ractl->_workingset |= folio_test_workingset(folio);
+>>>>> -		ractl->_nr_pages++;
+>>>>> +		ractl->_nr_pages += folio_nr_pages(folio);
+>>>>> +		i += folio_nr_pages(folio);
+>>>>>    	}
+>>>>
+>>>> We _can_, but we just allocated it, so we know what size it is already.
+>>> Yes.
+>>>
+>>>> I'm starting to feel that Hannes' patch should be combined with this
+>>>> one.
+>>>
+>>> Fine by me. @Hannes, is that ok with you?
 >>
->> This doesn't compile without errors for me, curious, it probably did
->> compile without problems for you right?
->>
->> drivers/media/platform/imagination/e5010-jpeg-enc.c:1622:19: error:
->> initialization of ‘int (*)(struct platform_device *)’ from incompatible
->> pointer type ‘void (*)(struct platform_device *)’
->> [-Werror=incompatible-pointer-types]
->>  1622 |         .remove = e5010_remove,
->>       |                   ^~~~~~~~~~~~
->> drivers/media/platform/imagination/e5010-jpeg-enc.c:1622:19: note: (near
->> initialization for ‘e5010_driver.remove’)
->> cc1: some warnings being treated as errors
->>
->
->Yes I think it did compile fine for me.
->Did you try this on tip of linux-next ?
+>> Sure. I was about to re-send my patchset anyway, so feel free to wrap it in.
+> Is it ok if I add your Co-developed and Signed-off tag?
+> This is what I have combining your patch with mine and making willy's
+> changes:
+> 
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index 389cd802da63..f56da953c130 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -247,9 +247,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+>                  struct folio *folio = xa_load(&mapping->i_pages, index + i);
+>                  int ret;
+>   
+> -
+>                  if (folio && !xa_is_value(folio)) {
+> -                       long nr_pages = folio_nr_pages(folio);
+>                          /*
+>                           * Page already present?  Kick off the current batch
+>                           * of contiguous pages before continuing with the
+> @@ -259,18 +257,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+>                           * not worth getting one just for that.
+>                           */
+>                          read_pages(ractl);
+> -
+> -                       /*
+> -                        * Move the ractl->_index by at least min_pages
+> -                        * if the folio got truncated to respect the
+> -                        * alignment constraint in the page cache.
+> -                        *
+> -                        */
+> -                       if (mapping != folio->mapping)
+> -                               nr_pages = min_nrpages;
+> -
+> -                       VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
+> -                       ractl->_index += nr_pages;
+> +                       ractl->_index += min_nrpages;
+>                          i = ractl->_index + ractl->_nr_pages - index;
+>                          continue;
+>                  }
+> @@ -293,8 +280,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+>                  if (i == mark)
+>                          folio_set_readahead(folio);
+>                  ractl->_workingset |= folio_test_workingset(folio);
+> -               ractl->_nr_pages += folio_nr_pages(folio);
+> -               i += folio_nr_pages(folio);
+> +               ractl->_nr_pages += min_nrpages;
+> +               i += min_nrpages;
+>          }
+>   
+>          /*
+> 
+Yes, that looks fine.
+Go.
 
-Nope the media subsystem is not based on linux-next, but instead on:
-https://git.linuxtv.org/media_stage.git/log/
-Please make sure that your patches compile on top of that.
+Cheers,
 
->
->As mentioned in changelog, there was update in platform driver for return type
->of remove function which got changed to void return type. Please check if you
->have this patch [1] in your tree which got recently merged.
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
-No that patch is not part of the tree yet.
-
-Please note also the following section in that patch:
-
-  	/*
-	 * Traditionally the remove callback returned an int which however is
-	 * ignored by the driver core. This led to wrong expectations by driver
-	 * authors who thought returning an error code was a valid error
-	 * handling strategy. To convert to a callback returning void, new
-	 * drivers should implement .remove_new() until the conversion it done
-	 * that eventually makes .remove() return void.
-
-So your driver is expected to implement remove_new().
-
-I will take care of this for the PR, but please note for the future:
-It has to work with media_stage, unless you have a very good reason for
-something different.
-
->
->Kindly let me know if you still face any issues.
->
->[1]:
->https://lore.kernel.org/all/20240527083416.1177106-2-u.kleine-koenig@pengutronix.de/
->
->Regards
->Devarsh
-
-Regards,
-Sebastian
 
