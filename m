@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-224295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7ED912057
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:20:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E0B912058
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 364A5B20E7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:20:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDC0AB20FA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F06A16EB66;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B826E16EBE4;
 	Fri, 21 Jun 2024 09:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Af/e2FBo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwPxV1gL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00CB16E862;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021F916E86F;
 	Fri, 21 Jun 2024 09:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718961631; cv=none; b=SLYYOYiuq8ShqhyXVqLeI1/IzizH3yYdjp+uyMgIZ5kvCteBeTDcRRxZZCzwaNY5PTDPXu38IXuwhfjWxFlEelFUu1fOstCOiKrUCEokWfQLZehBO5E6Oe++dfISZOZvIbOCumNlc++eXZdKPDfd/hDzK4tVKlI4S9iCLjy1jXM=
+	t=1718961632; cv=none; b=aIeOZXtHqBe5fuoYFP3AOJZGfK1c7rvETKNgfFl5RxUCi2vSYHYj9KOI+1ahILAzCWk772Fj/VyzFY0HJRFu9oyh1paPENjBDtJqHR/9WFY6ypAI7b7pA+z32jP6tDot/ptkoEuLudpw96qcvbhhEKpcIQRBUB6Rop2yDrLkyZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718961631; c=relaxed/simple;
-	bh=g0c2J8l1AVStje0/uF5fYXZ83d8hO/iWIMUtbgnpBzE=;
+	s=arc-20240116; t=1718961632; c=relaxed/simple;
+	bh=DdfBUSruCOMmVc04SJP9LQBray58f2G8GWiu7++ObGY=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=KjlbfjR4fYkePuKAMefe3NBpHuxwwKeVnJ5Cvh87In9hhFW/3ZkIqCNSCOjjM+P6LhBzILVIICyfm4rj2tjWEvcpYa5Chq8zsx02RXN4Z/TN0WkyKu27nb37hgQhP0sK8pbhskKvM+Zzshpz0mrEBbpqBcpywGiKBQvdIH29PbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Af/e2FBo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 76288C4AF0E;
+	 In-Reply-To:To:Cc; b=gPwji1nrMuH5aOTSmj/ENrY9FK3cOuOiU6dZqhB3qcCqHLFi3Y6/fNCCQVFrhti0u+3viEjlSUExlzA3Mu0SSPfefO8W/VfSaTI9+gwoANg558KpzpX1QssQY3TWUOMXZi2+z42KR4VAAmDcnp7PY/LIoMlltP3P5uFDFPR9+TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwPxV1gL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 88ED2C4AF11;
 	Fri, 21 Jun 2024 09:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1718961631;
-	bh=g0c2J8l1AVStje0/uF5fYXZ83d8hO/iWIMUtbgnpBzE=;
+	bh=DdfBUSruCOMmVc04SJP9LQBray58f2G8GWiu7++ObGY=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Af/e2FBoCd4iKnJA/V4ujshU+Dye1OPShjCsIkjMTsjZeUiXe3N02y5AdSzeMiCTE
-	 NcRqHYoho4ZEsX3GhEKj/ZE+HQ4e5+UWuwE52hpuZUe6k912fYqC080K/LXdiQCc43
-	 TRc7uyMKpr/AEf61Z2TAgGHzMmwpFGt4f+C7lyI+k+3W5MzHkNC2a2sCN4LnNpqWfn
-	 kIGU27UGZZ+QfgxrPuskTbBLrjJb/PFBQ5nTHUiDkEDLW+LqLKkvxsVHE9R6YhcHdp
-	 Pg+HrP3TVergb+m79qPwDFbi6QdBwyfSI3wV5F9woNfZbUm4TNNv4V4KH8XTWURGPl
-	 a9YOQk//NHu/g==
+	b=hwPxV1gLc8S89t1n0Hk+M6QQuEbWSuBecMPD5HTs4oSSCRvBg6voSgWT7Mw3AJuuF
+	 xOVuyKdMB0d+pqVm1ZG/z1U+NN9bOAA48tJivS1eQup/Hi3zEESK95m5jHC9HFumRJ
+	 SmUWrTIf2P5RPVI5Slec0SJcB5dcXveJRrOXfTA/bXpDSG/BEd0j3JdFpG8ZkdgrFu
+	 w7tmotBE1cVMQmtIJJjQpOwvuuMlzdjbN0kX/mrkGt7qGK1q/8l26amztkK53BZDHj
+	 4k6+2H1W/cP0gUcWqFlJzCDYj85ApcTmY4ViS8WfDvrpkzKLUg19XWO2Vq7bc0aN6j
+	 vYLipJPpSFN8Q==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 658B1CF3B9B;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 78D4FCF3B9C;
 	Fri, 21 Jun 2024 09:20:31 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,41 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 net-next] net: dsa: ksz_common: Allow only up to two HSR HW
- offloaded ports for KSZ9477
+Subject: Re: [PATCH resubmit 3] net: fec: Fix FEC_ECR_EN1588 being cleared on
+ link-down
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171896163141.20195.5158269251673335777.git-patchwork-notify@kernel.org>
+ <171896163149.20195.11694633975704847703.git-patchwork-notify@kernel.org>
 Date: Fri, 21 Jun 2024 09:20:31 +0000
-References: <20240619145809.1252915-1-lukma@denx.de>
-In-Reply-To: <20240619145809.1252915-1-lukma@denx.de>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: olteanv@gmail.com, kuba@kernel.org, netdev@vger.kernel.org,
- pabeni@redhat.com, edumazet@google.com, davem@davemloft.net,
- o.rempel@pengutronix.de, Tristram.Ha@microchip.com, bigeasy@linutronix.de,
- horms@kernel.org, dan.carpenter@linaro.org, ricardo@marliere.net,
- casper.casan@gmail.com, linux-kernel@vger.kernel.org,
- woojung.huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch
+References: <20240619123111.2798142-1-csokas.bence@prolan.hu>
+In-Reply-To: <20240619123111.2798142-1-csokas.bence@prolan.hu>
+To: =?utf-8?b?Q3PDs2vDoXMgQmVuY2UgPGNzb2thcy5iZW5jZUBwcm9sYW4uaHU+?=@codeaurora.org
+Cc: Frank.Li@freescale.com, davem@davemloft.net, imx@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ richardcochran@gmail.com, andrew@lunn.ch, wei.fang@nxp.com,
+ shenwei.wang@nxp.com, xiaoning.wang@nxp.com, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by David S. Miller <davem@davemloft.net>:
 
-On Wed, 19 Jun 2024 16:58:09 +0200 you wrote:
-> The KSZ9477 allows HSR in-HW offloading for any of two selected ports.
-> This patch adds check if one tries to use more than two ports with
-> HSR offloading enabled.
+On Wed, 19 Jun 2024 14:31:11 +0200 you wrote:
+> FEC_ECR_EN1588 bit gets cleared after MAC reset in `fec_stop()`, which
+> makes all 1588 functionality shut down, and all the extended registers
+> disappear, on link-down, making the adapter fall back to compatibility
+> "dumb mode". However, some functionality needs to be retained (e.g. PPS)
+> even without link.
 > 
-> The problem is with RedBox configuration (HSR-SAN) - when configuring:
-> ip link add name hsr0 type hsr slave1 lan1 slave2 lan2 interlink lan3 \
-> 	supervision 45 version 1
+> Fixes: 6605b730c061 ("FEC: Add time stamping code and a PTP hardware clock")
+> Cc: Richard Cochran <richardcochran@gmail.com>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Link: https://lore.kernel.org/netdev/5fa9fadc-a89d-467a-aae9-c65469ff5fe1@lunn.ch/
+> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
 > 
 > [...]
 
 Here is the summary with links:
-  - [v3,net-next] net: dsa: ksz_common: Allow only up to two HSR HW offloaded ports for KSZ9477
-    https://git.kernel.org/netdev/net-next/c/dcec8d291da8
+  - [resubmit,3] net: fec: Fix FEC_ECR_EN1588 being cleared on link-down
+    https://git.kernel.org/netdev/net-next/c/c32fe1986f27
 
 You are awesome, thank you!
 -- 
