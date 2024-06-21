@@ -1,77 +1,100 @@
-Return-Path: <linux-kernel+bounces-225143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B2D912C79
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:33:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEAF912C7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E494F2899DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:33:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C2B91C21F1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB9D168490;
-	Fri, 21 Jun 2024 17:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F031684B1;
+	Fri, 21 Jun 2024 17:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="is+THI1y"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z2co8RlL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CDC128812;
-	Fri, 21 Jun 2024 17:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D12F2E417;
+	Fri, 21 Jun 2024 17:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718991192; cv=none; b=P/fDdI5D2E5CzctB+7ZCw4ZInpGS+5iFXGUBHzlVyBbcOEH4vFHJjd0ZO5bGDWdxWm3z4xScVoftCX77HkTo8XRd6d+AHkL1UtEN8NOPAyj1p3S0P7rNdPo30fyoaK2IcvmnGe7IqFLZDSsNZRxdKNIGuYO9i+nsynAc0fXApAY=
+	t=1718991378; cv=none; b=Zwnmfr17dUBStT1eJjb7NXTL4NdyrQvspOf9RVzRkeoCpD5hB+p+yxinWB37qGUpfZlxFiKmRLIYq1A3t0d6Cb7uStsdHRApLcuUJPuJm0w84Q/pYWeeL2sRoR5Z4MNiAkA9CxfrfAHaE/UaEiP85WGiYpWr6JE2nI4W982B5R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718991192; c=relaxed/simple;
-	bh=5VRvJRsLhxyImQgvICYSbl5XZTyKkvy3XVaQTzwx/SI=;
+	s=arc-20240116; t=1718991378; c=relaxed/simple;
+	bh=qcPvzmgYj12g8ImX1mzdEnkJ4xTcuDJBE3vsD6BBM/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FEBg/U0+OQTaFd9WpS+d1a0VbGKAnj5slsBRZPlPX8DyMIe0stwkC4j6Fwcn/6KMIzvW4C/t3ti8bve7YdTssHttOCcGqNyC/FFgKMISZOvbjqU+ja+UfmwK6otFWCykQcobscKOHHolMy574jYhnXP77sRpy0woRkAQ5AqmRP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=is+THI1y; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2416E40E01F9;
-	Fri, 21 Jun 2024 17:33:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id yfj0BQ_yC9uh; Fri, 21 Jun 2024 17:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718991183; bh=Rhva3/MPW5AdxxQuixV5zRlTNA/U0pgCD1iJBw3vFIA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=is+THI1yaShkfTTz+5TA+uIIdjaB22NopFKAtePkMzH83YipmOrD6kZ79HplRhUjW
-	 B9B4LyXFRb5LcbX5GB3yX76pCLFkXbrg4T5PNx7l/1omt0uD1jslQFYyaRlFYWWkzy
-	 IMS0OfON1Sb1NUqgN0XWyziAnm6hiBskG2Va9H+XrM54FEKGiXA0wkSGVPaT1aIenQ
-	 2jSqdeW61CHbuN3Uf8gtM2wGSkIJV1RLbuUI9wPmBTwZwgf9U8aYMMWgfZke07onqf
-	 gAi1HWSmPe24fjglExG8/Inr6m8DZ4Jn396RwH0lyls5+FnuQd09vzky82SQMjeK2L
-	 4BQAIHw9cxILg+DHvdtZZEZH4Z16A7YuHyz50nniakFqRPj4ehG6a8i8ULD2RDAC3L
-	 w010BPBi3qqU5QDTb9jNoSKD+WUExx8QB/mmR2KHiFLYFDZgISEXkPArHO0lgS9t1P
-	 6dR+u+uNhnf7mKWmrxQp+0rLdNwJ1qfvNHUsrOMF3YoR9KXYixFWDTqZhW/cROGyXK
-	 VgpVryr4ffKid2rGOfarsj1KCQDph7b5FT4vCwWTUXZVSAgixQ8CYOUDYvxNY6YyWe
-	 be1AdcDaRYDoZWZQDQMTF7hfkLk+NzkR1tyccEEtpC3i3jwqle1UkT7xm5pJMMuXTl
-	 Vt9KCrcWglQrv3aJbObkPmaM=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AD60640E01D6;
-	Fri, 21 Jun 2024 17:32:50 +0000 (UTC)
-Date: Fri, 21 Jun 2024 19:32:45 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, will@kernel.org,
-	peterz@infradead.org, akpm@linux-foundation.org, acme@kernel.org,
-	namhyung@kernel.org
-Subject: Re: [PATCH v2 1/3] x86/cpufeatures: Add {required,disabled} feature
- configs
-Message-ID: <20240621173245.GKZnW5PVnf4ota5pL4@fat_crate.local>
-References: <20240616085743.1100704-1-xin@zytor.com>
- <20240616085743.1100704-2-xin@zytor.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNIJiC2WJMEyq10ldkwK7AK/jp+wEvyRleUoF/eQLutV207SuPsuIHp9Ww9gpnOybOLJM8UFIdgrKIZKSG9hdY6RLqKKkCOaCqYpN3gioPGlvA855TmuDKkMMNju6Fw8ZB58vMGaQz+AB4KicQRH44N4T3pDlMbf4o1iFkyIbtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z2co8RlL; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718991377; x=1750527377;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=qcPvzmgYj12g8ImX1mzdEnkJ4xTcuDJBE3vsD6BBM/8=;
+  b=Z2co8RlLYAN8D+wvTAguu6XCH5ag5Uwwu9k8UXVB+df/bsRELZbcvBWN
+   pSZ5K3Hu6VK+LDUsigRNKQMKePul15I49i4bttX1sz9Xe/bzrZV4JkssN
+   IA/PJBbD7EWmkVYPMELS1+pIyobn1im2a68CbRXYTpUeAYRO05FjB8lMD
+   /7T/6SZBExBxvnDcVQP09JHvph4QzS4f7rIXc080nm6iCX8uw5qpe8iKm
+   Ch6v0RizVnj6V/4nitdzKnG60WD9yQJO6Ehb49RCdNA+r905x2KNOKK17
+   vLxeBnRTQp88hQ2+K52OYjMHNHqJOhfIJNvoQrtGF2YYL1P5tQ8qCZLl6
+   Q==;
+X-CSE-ConnectionGUID: vcBk/8plTl6iC9P/BV5yxg==
+X-CSE-MsgGUID: Fx6LAm2TR+uemhrv/2HGlw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="15793894"
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="15793894"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 10:36:15 -0700
+X-CSE-ConnectionGUID: H9IYCJeiSDarIWFxa6sdhA==
+X-CSE-MsgGUID: 3ooXh5iNSpCEYlpT4ljgOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="43333717"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 10:36:08 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id A070711F855;
+	Fri, 21 Jun 2024 20:36:04 +0300 (EEST)
+Date: Fri, 21 Jun 2024 17:36:04 +0000
+From: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Zhi Mao =?utf-8?B?5q+b5pm6?= <zhi.mao@mediatek.com>,
+	angelogioacchino.delregno@collabora.com, conor+dt@kernel.org,
+	krzk+dt@kernel.org, mchehab@kernel.org, robh@kernel.org,
+	dongchun.zhu@mediatek.com, "heiko@sntech.de" <heiko@sntech.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"laurent.pinchart+renesas@ideasonboard.com" <laurent.pinchart+renesas@ideasonboard.com>,
+	"yunkec@chromium.org" <yunkec@chromium.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"hdegoede@redhat.com" <hdegoede@redhat.com>,
+	"bingbu.cao@intel.com" <bingbu.cao@intel.com>,
+	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Yaya Chang =?utf-8?B?5by16ZuF5riF?= <Yaya.Chang@mediatek.com>,
+	Shengnan Wang =?utf-8?B?546L5Zyj55S3?= <shengnan.wang@mediatek.com>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"alain.volmat@foss.st.com" <alain.volmat@foss.st.com>,
+	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>,
+	"10572168@qq.com" <10572168@qq.com>,
+	"hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"mehdi.djait@bootlin.com" <mehdi.djait@bootlin.com>
+Subject: Re: [PATCH v3 2/3] media: i2c: Add GT97xx VCM driver
+Message-ID: <ZnW6BO0ZLPPI71TP@kekkonen.localdomain>
+References: <20240612012019.19078-1-zhi.mao@mediatek.com>
+ <20240612012019.19078-3-zhi.mao@mediatek.com>
+ <7c71534f-9815-4ea3-969f-c04d249d35d2@collabora.com>
+ <18d2c28fc8b47889689a1506957ea2a308c80fa2.camel@mediatek.com>
+ <171823714905.1550852.13442340621133903705@ping.linuxembedded.co.uk>
+ <CAHp75VcA9yZ6bVt+10FrzB3L3wPj8fW5UBB9D7p0iHjLaxWCpA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,59 +103,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240616085743.1100704-2-xin@zytor.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VcA9yZ6bVt+10FrzB3L3wPj8fW5UBB9D7p0iHjLaxWCpA@mail.gmail.com>
 
-On Sun, Jun 16, 2024 at 01:57:41AM -0700, Xin Li (Intel) wrote:
-> diff --git a/arch/x86/Kconfig.cpufeatures b/arch/x86/Kconfig.cpufeatures
-> new file mode 100644
-> index 000000000000..5ed24e45df87
-> --- /dev/null
-> +++ b/arch/x86/Kconfig.cpufeatures
-> @@ -0,0 +1,197 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# x86 feature bits (see arch/x86/include/asm/cpufeatures.h) that are
-> +# either REQUIRED to be enabled, or DISABLED (always ignored) for this
-> +# particular compile-time configuration.  The tests for these features
-> +# are turned into compile-time constants via the generated
-> +# <asm/featuremasks.h>.
-> +#
-> +# The naming of these variables *must* match asm/cpufeatures.h, e.g.,
-> +#     X86_FEATURE_ALWAYS <==> X86_REQUIRED_FEATURE_ALWAYS
-> +#     X86_FEATURE_FRED   <==> X86_DISABLED_FEATURE_FRED
-> +#
-> +# And these REQUIRED and DISABLED config options are manipulated in an
-> +# AWK script as the following example:
-> +#
-> +#                          +----------------------+
-> +#                          |    X86_FRED = y ?    |
-> +#                          +----------------------+
-> +#                              /             \
-> +#                           Y /               \ N
-> +#  +-------------------------------------+   +-------------------------------+
-> +#  | X86_DISABLED_FEATURE_FRED undefined |   | X86_DISABLED_FEATURE_FRED = y |
-> +#  +-------------------------------------+   +-------------------------------+
-> +#                                                        |
-> +#                                                        |
-> +#     +-------------------------------------------+      |
-> +#     | X86_FEATURE_FRED: feature word 12, bit 17 | ---->|
-> +#     +-------------------------------------------+      |
-> +#                                                        |
-> +#                                                        |
-> +#                                     +-------------------------------+
-> +#                                     | set bit 17 of DISABLED_MASK12 |
-> +#                                     +-------------------------------+
-> +#
+Hi Andy, others,
 
-Look ma, a picture. :-)
+On Thu, Jun 13, 2024 at 09:51:03PM +0200, Andy Shevchenko wrote:
+> On Thu, Jun 13, 2024 at 2:05 AM Kieran Bingham
+> <kieran.bingham@ideasonboard.com> wrote:
+> > Also - Cc: Dongchun Zhu <dongchun.zhu@mediatek.com> who is listed as the
+> > DW9768 VCM driver author...
+> > Quoting Zhi Mao (毛智) (2024-06-12 12:13:40)
+> > > On Wed, 2024-06-12 at 09:07 +0200, AngeloGioacchino Del Regno wrote:
+> 
+> ...
+> 
+> > > Our project uses Giantec VCM hardware.
+> > > For detailed vendor information, please visit: (
+> > > https://en.giantec-semi.com/yqmd/164).
+> > > The VCM datasheet we are referencing is provided by Giantec.
+> > > Currently, the relationship between Giantec VCM and Dongwoon VCM is
+> > > unclear, but Dongwoon seems to be another manufacturer of VCM
+> > > hardware.
+> 
+> There may be plenty of manufacturers of the same/similar IPs, but it's
+> not an excuse to have a duplication like this.
+> 
+> > > From the perspective of software driver development and maintenance, it
+> > > makes sense for each vendor's hardware should have its own software
+> > > driver.
+> >
+> > Personally, I don't think so. If two vendors make identical parts, we
+> > shouldn't have two identical drivers.
+> 
+> Exactly! That's why we have compatible strings or other means of
+> reusing the same code base as much as possible. This in particular
+> reduces maintenance costs (of all means!) _a lot_.
 
-But yeah, this is better.
+Indeed. I'll mark these thus "rejected" in Patchwork.
 
-Thx.
+If there's something that needs to be handled differently for the other
+VCM, that can be taken into account in the driver.
 
 -- 
-Regards/Gruss,
-    Boris.
+Kind regards,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Sakari Ailus
 
