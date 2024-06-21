@@ -1,134 +1,171 @@
-Return-Path: <linux-kernel+bounces-223861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E098B91197F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:34:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69AFD911985
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B115284252
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:34:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DA2D1C217D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D368E12CD9B;
-	Fri, 21 Jun 2024 04:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2866612C7FB;
+	Fri, 21 Jun 2024 04:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mJ8aNvCj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bZt6ex5o"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86BAEBE;
-	Fri, 21 Jun 2024 04:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1B9EBE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718944455; cv=none; b=jkmeo3CZ3pOCeU2My/K5dAncAXbTT/xQXy7eDhr/QaU3XJVR1R1ADlmN9nvR0Jb5K7FwsrpqYTEUHiGBrlHl4ebagwSbXs5MOI0jkQkT5iL1TEb32iMjcpkohaLNRr391lJsq5WLPTgBKcG7C9GRkBq4h3RccS6iSazqIuSjTSo=
+	t=1718944546; cv=none; b=beqXFWr22u43NUV7u1XYlIsa68cuL1X7EyBP2m4nXuqb1fF3zUbRQQto0KiMLhhnqTuabZ2vlXeRTP5yk1wLWCtRb+OBVpMh8U6O4QhrFyf273etCmO0Ju/Yon4SB+OLK/7mBYzNBswBG5boPfNg8hR1dlozcw8DTFQaWNno0kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718944455; c=relaxed/simple;
-	bh=BoS/tIDHw9tMTBj4Fpfa4bXjNsqBWr/XXVzf3vePCa0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ojjBYwG61LY2DYOxno72ei/sHezrLSgyNTkgCAFAkOdVrOE9bkeJceKGOf3z45DfZ8vi13E5tB+PXQ8vByle7NMK6MffZhQQgNvlFwPDriby8trPltdJeKYNp8JDM64RGbtZ13A4YE21Tv3FFtaq8FnuBavH+Lnkz0Bz6DBzS7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mJ8aNvCj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L4P5Le022511;
-	Fri, 21 Jun 2024 04:34:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PwjfkBZCfAbe9fUHJY7I6WnMh4SDhfak2gHRLZ/Osmo=; b=mJ8aNvCjGF9Txl9n
-	mxUHggwVbb/9iIaLfObQ4EiWxlO8UV4SnGKQ43s/QifCuveGa1WWCLVE4cn/NbDT
-	bgfCMk0N1CZOAU9v2qqiVqSE5K0yb/J7zLyVjF4oKSIe++18+jhhA1miT6eiBT3P
-	9e0aLnSEJEl+q/dD2YT5vxcCPb8IbR2P3ZqkfrQ6oyg6hDu5Xx19+CcpCB4sKLgl
-	8yccEl/OUWqYrF2pR+FlzBT2LGjMuSg70x8taYo8pjNsd8eDA/21x0epKeW8eNwn
-	MC7pTox6uKEO+bDiOlBeu7n0g97NG264JSxx6luG8ZRqElrwnAjw3PX9V1cZsxho
-	dTu91Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrnyhcbj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 04:34:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45L4Y8tf005173
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 04:34:08 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
- 2024 21:34:02 -0700
-Message-ID: <053e047b-7594-48bc-ac1b-2368c0c8f1cc@quicinc.com>
-Date: Fri, 21 Jun 2024 10:03:57 +0530
+	s=arc-20240116; t=1718944546; c=relaxed/simple;
+	bh=F0/IEQHK4NYukk9YktmoTxchz1Hr9pucQDHiX73lGMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eECyZvbJrFUjK1WIq7tuBHVFaR7FIaZSxUmAMHYQrPT8NtCLoB4EtQE/uH26dPiox2ztrMF3kC1qmyx+Gx3i52VLcvrLFvQf9cFS2Sjoqpv+OTWhrW+NZwA7q5Ur3B2hPGCQneL37z9805mhwNn6LDt1g/mNzABbf5xKNnruzBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bZt6ex5o; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bc335e49aso1759269e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:35:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718944543; x=1719549343; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQx67tCsQc9ncbiFWlfbAhhvQ0ez57Hz7TCMM1DLrFE=;
+        b=bZt6ex5ovoXxUamgFEX14ZKMs7p9c6HGYoxu3eCZN+Kc4jS2K27V/yHtRQhupb/6hX
+         Wh0hLa+u9L5Va9KQYa5/lcd6xCB9gusm23Stt23JrHVugglMDwx4uKEfW3mn8TrpGVyx
+         PExOLXnGbgRCLlYVg8flWK14BEcvOMMTnbW3pXx3gJ9am+MApOOQzKSDSXRvuFBSTePY
+         5jgj2Inq80pQdur4FDwcKjlTomXUX5eks8KCIyxbbk7WkhtqQOkvzClS557uwVklhRwh
+         vN0GHpnp2lV/+S0pcq+LMW99U2NyyYIv29AMfuI19RKHWPRoZR2nqh/jrIzHlikexwoq
+         T6UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718944543; x=1719549343;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qQx67tCsQc9ncbiFWlfbAhhvQ0ez57Hz7TCMM1DLrFE=;
+        b=atD8KMyU3v0nUB09OU3QC8qi29T2BomhAUUJi998Gy6nE9ikxvEvbaKJ/g3WSILBlE
+         pqNBteQmOmWHmF95/599qifsrzi6OCe63IOjRJvIgJrfEOHEiP5GTpeCiAV7ozAFEZTo
+         S5SBKq/OFawsdo4V3e67o79eyYtT4wTIIHDT5YETibubYPHUnc+Sy6020fakBCmuyVLk
+         C6AUav8zrUwloUDoBMCL68j0A7EkgjTmJ6cJjmiBHc+OAehynKDd23qXZeJZkoDhX4uu
+         UobQDfdHRe/k+UWzNDWy+js35jq4dCMyo9hv671j57W+PyfUvpxfyVr7qZdafMHlY0WU
+         nWdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCch0bm8I72i4Nxnn6/vb4Zn/SU/HbuoiRuyJEXioi+ltA0hRtDHxRTx4GYo6Z0SF5vswxY+Sa1dxrlkyb6rpobZN0zCgwEJreF0FN
+X-Gm-Message-State: AOJu0Yx9Xh8c35Sh74dYL8zc8e58Qda/WeXI49xThjXsGhEaFuTGbVjY
+	gBuOr+nqbLVfUNtYh2tkWz1hP8XrOomEryBbVGqyux0udkrGwO219rIPVz5hjfw=
+X-Google-Smtp-Source: AGHT+IHLs9cD/51RoIAFFl2xG3t848k8TnB+ORN3BmrfiSJJIYHz/ijJxpMNl2c0/ckODh2VcfGGGg==
+X-Received: by 2002:a05:6512:3e21:b0:52c:95d1:87ae with SMTP id 2adb3069b0e04-52ccaa5954cmr5112985e87.12.1718944542591;
+        Thu, 20 Jun 2024 21:35:42 -0700 (PDT)
+Received: from linaro.org ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247b608f94sm27434495e9.0.2024.06.20.21.35.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 21:35:42 -0700 (PDT)
+Date: Fri, 21 Jun 2024 07:35:40 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, imx@lists.linux.dev, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V3 00/15] clk: imx: misc update/fix
+Message-ID: <ZnUDHCHbA6izeV6B@linaro.org>
+References: <20240607133347.3291040-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] clk: qcom: Add support for Display clock Controllers
- on SA8775P
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_jkona@quicinc.com>, <quic_imrashai@quicinc.com>
-References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
- <20240612-sa8775p-mm-clock-controllers-v1-6-db295a846ee7@quicinc.com>
- <37bbd466-742a-4a23-b3f7-97f8da109608@linaro.org>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <37bbd466-742a-4a23-b3f7-97f8da109608@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sXulWohIsmaG89yWtgjJuRyGmaKO5vRo
-X-Proofpoint-ORIG-GUID: sXulWohIsmaG89yWtgjJuRyGmaKO5vRo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_12,2024-06-20_04,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 spamscore=0 bulkscore=0
- adultscore=0 mlxlogscore=913 clxscore=1015 phishscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406210031
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240607133347.3291040-1-peng.fan@oss.nxp.com>
 
-
-
-On 6/13/2024 10:16 PM, Konrad Dybcio wrote:
-> 
-> 
-> On 6/12/24 12:47, Taniya Das wrote:
->> Add support for display0 and display1 clock controllers on SA8775P
->> platform.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> ---
-> 
-> Please merge this into one to save on boilerplate, take a look
-> at dispcc-sc8280xp.c
+On 24-06-07 21:33:32, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
 
-I did take a look at the dispcc for SC8280XP before posting the series, 
-but it kind of looked tricky to add fixes for a particular dispcc.
-Debugging could also be difficult in my opinion.
-Though I understand that we are trying to optimize by re-using few 
-common structures/probe but from clocks side they are all redefined.
-That was the reason to keep them separate.
+Whole series LGTM.
 
-> Konrad
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
--- 
-Thanks & Regards,
-Taniya Das.
+
+> Changes in v3:
+> - Drop two patches
+>       clk: imx: pll14xx: Add constraint for fvco frequency
+>       clk: imx: pll14xx: use rate_table for audio plls
+> - Update 8ULP PCC check to not return Error
+> - Update commit log and Add R-b for 
+>   "clk: imx: imx8mp: fix clock tree update of TF-A managed clocks"
+> - Link to v2: https://lore.kernel.org/all/20240510-imx-clk-v2-0-c998f315d29c@nxp.com/
+> 
+> 
+> Changes in v2:
+> - Drop "clk: imx: pll14xx: potential integer overflow eliminated by
+>        casting to u64"
+> - Add Fixes tag  "clk: imx: imx8mp-audiomix: remove sdma root clock"
+> - Link to v1: https://lore.kernel.org/r/20240504-imx-clk-v1-0-f7915489d58d@nxp.com
+> 
+> Upstream several patches landed in NXP downstream repo for some time.
+> - i.MX8M/93/7ULP composite clk update
+> - Fix Fracn-gppll MFN got lost
+> - PLL14xx update
+> - i.MX8MP DRAM CLK fix
+> - i.MX8MM/N misc update
+> - Init i.MX8QXP parent clk before child clk
+> 
+> Downstream tags are kept for the patches got R-b
+> 
+> Although there are a few fixes, non-urgent for 6.10.
+> 
+> Adrian Alonso (1):
+>   clk: imx: imx8mn: add sai7_ipg_clk clock settings
+> 
+> Jacky Bai (2):
+>   clk: imx: composite-93: keep root clock on when mcore enabled
+>   clk: imx: imx8mm: Change the 'nand_usdhc_bus' clock to non-critical
+>     one
+> 
+> Oliver F. Brown (1):
+>   clk: imx: imx8qxp: Add clock muxes for MIPI and PHY ref clocks
+> 
+> Peng Fan (8):
+>   clk: imx: composite-8m: Enable gate clk with mcore_booted
+>   clk: imx: imx8mp-audiomix: remove sdma root clock
+>   clk: imx: Remove CLK_SET_PARENT_GATE for DRAM mux for i.MX7D
+>   clk: imx: add CLK_SET_RATE_PARENT for lcdif_pixel_src for i.MX7D
+>   clk: imx: imx8qxp: Add LVDS bypass clocks
+>   clk: imx: imx8qxp: Register dc0_bypass0_clk before disp clk
+>   clk: imx: imx8qxp: Parent should be initialized earlier than the clock
+>   clk: imx: fracn-gppll: update rate table
+> 
+> Pengfei Li (1):
+>   clk: imx: fracn-gppll: fix fractional part of PLL getting lost
+> 
+> Ye Li (1):
+>   clk: imx: composite-7ulp: Check the PCC present bit
+> 
+> Zhipeng Wang (1):
+>   clk: imx: imx8mp: fix clock tree update of TF-A managed clocks
+> 
+>  drivers/clk/imx/clk-composite-7ulp.c  |  7 ++++
+>  drivers/clk/imx/clk-composite-8m.c    | 53 +++++++++++++++++++++------
+>  drivers/clk/imx/clk-composite-93.c    | 15 ++++----
+>  drivers/clk/imx/clk-fracn-gppll.c     |  6 +++
+>  drivers/clk/imx/clk-imx7d.c           |  6 +--
+>  drivers/clk/imx/clk-imx8mm.c          |  2 +-
+>  drivers/clk/imx/clk-imx8mn.c          |  1 +
+>  drivers/clk/imx/clk-imx8mp-audiomix.c |  1 -
+>  drivers/clk/imx/clk-imx8mp.c          |  4 +-
+>  drivers/clk/imx/clk-imx8qxp.c         | 51 +++++++++++++++++---------
+>  10 files changed, 103 insertions(+), 43 deletions(-)
+> 
+> -- 
+> 2.37.1
+> 
 
