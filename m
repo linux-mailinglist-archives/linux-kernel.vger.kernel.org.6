@@ -1,48 +1,84 @@
-Return-Path: <linux-kernel+bounces-224523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DAC591238E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:29:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0C091238F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 436C5B256A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:29:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E9A81C23A25
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6657178372;
-	Fri, 21 Jun 2024 11:26:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EC0173336;
-	Fri, 21 Jun 2024 11:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC79178394;
+	Fri, 21 Jun 2024 11:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFpX9f7q"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2A5176254;
+	Fri, 21 Jun 2024 11:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969166; cv=none; b=T39foboPJ0QHjyRqB9Q/hpuBeOx5WXaF8Ex6Ll7x9lPnXHlRuAAKz4GyNl4sr/HOOLw9iewz5tW1I+vaQ6ivRRK3Q1uLvUonTDa8OoMubbPktCQNqJGdyWsnM6ff8Dv74k/PAfF0+GZGx+gvifjwOqkn7PYLbu3nZ0egefa90wU=
+	t=1718969166; cv=none; b=Wkk4wYB0sd+BNNYEzvJh74oqHJyhAAIiKmPp5IRWhhyhx3wBkp0blh8zDKaO2s+5sNUzsddUDidvQtf+O9aQAk0Qze35vbHeIi0QtQ25utehAp+fC1zUtAEAw3MYt2SBZHn8noT84iAxOsLkmIuEPgLgZofr8CuRPvWuqvsQQBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718969166; c=relaxed/simple;
-	bh=V3B7lVlTltqqQwmYDTOmhjOvpdBEBQlP8Q5IvXhj3nE=;
+	bh=Q8DyGdBcYAgq64z9X9TWI+/sf0rsMrpXcgbn82Vmdc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=It0JT3EkHvWx712VO8jjIyZ9pW2HJfiopbn0kfpsms9v928yZkDZkFuLZ7Yh2B5iuX/gtKQ3tdKa+VZSepLRnQiXhb6gEJEfLbXKT5FcOzY9wVPxL1DLWLnU34mwXgeH2kzFRoHRWbM1VU6SR8LqQFWu8UOSRJcZ4odN//wwl1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7E6ADA7;
-	Fri, 21 Jun 2024 04:26:27 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 178823F6A8;
-	Fri, 21 Jun 2024 04:26:01 -0700 (PDT)
-Date: Fri, 21 Jun 2024 12:25:59 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Zhouyi Zhou <zhouzhouyi@gmail.com>, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	lance@osuosl.org
-Subject: Re: [PATCH V4] rcutorture: Add CFcommon.arch for the various arch's
- need
-Message-ID: <ZnVjR0Z9MjHbdlx6@J2N7QTR9R3>
-References: <20240619230658.805185-1-zhouzhouyi@gmail.com>
- <673d737a-cf17-4480-a9e2-7ff1668f4b44@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXiTZ2vcDfo8CoOJtbJA/laWdTUnuiYbImAOn7g4zw4VmXvNi4sk+9hJMNjjb9nSp3adIQz0n7xoNYUlZwx/d6QbP1nj04oaNCK7K8eVD7ZAMY90PZ55gvOPoIwnS4vglu29wx2K7QTn90Vi/hH7Fl7XAyDjDa4EKqP1bv+3ehg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFpX9f7q; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso265014566b.3;
+        Fri, 21 Jun 2024 04:26:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718969163; x=1719573963; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i8sLZv1n+Ku2QMjcmS+4EdIPRc6Cam45MqmcajWwNAI=;
+        b=iFpX9f7qrZqD2nv3NfjMY/YQhJpZxJQKuolCxt24Eu/iMdV+GbuBnZiUTiGXXi2bph
+         DnlvMVqTEAFLHzCCGhU3d+cavpdKtgv9tdne0Zj4hGteS/kh6dBCjUDl+6yPr61yhmDF
+         s06eCV+aRRp2iXabGHfVsNoI4HLnzO2GI+kY2kPLYAxNkUqJSzoaSs55ZhjpCmcriBD3
+         HKGkZtJKqYcnNANewbZ/UYhjeNg2LC5t8nlIiVAaM//Y2VU5MgLk8J4YbpazJHUMv3bv
+         akxdG2iCw+/RLJiaUI8xfXWaVcO4RUvn8y3rsBAV/JSongdoHEXaixTmRU0ZHEY1RbXz
+         411w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718969163; x=1719573963;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i8sLZv1n+Ku2QMjcmS+4EdIPRc6Cam45MqmcajWwNAI=;
+        b=v3krMuxs2DMmlRQoZ3kToW8VNzdR5t9FcpfSGZnAYJ5z8yU6P6SeGRnbyCvt+odlyc
+         96uPh1id1O0C0ZaKEqxi6QOVmMEdF8U47bLYGcBLn80OycMIA7K8gcaLQmiyQwiMXEMT
+         E0tAKKlIRDFLZr/9BEb1EsY1x0VUQR34eriKgpjN/pirdCclXzCVtSouLHRmaM/dzLCA
+         4U/Gp5eGN8gsAaQQdvlcf9J9PcqeH7WqskZuHXLl3+dsV2eGwZ7o+dk2RHkoUaldMImW
+         +c+WZPNXxir8NOvPVqflism0tWnXwk/AfIMR2tBu7m+/aQztdUKipJwyD7tOU5juGfGn
+         I5Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCXd+5jTdgq53kP/yrXua9FtS9n7H3E3zdjGXnKb2Yyq/2aWVAaGgCCYGIcI0aNJg/aJfIthYTckJ6IyzHZYOMMcKVNkBW57a/Y1hjsy0zscezX9WEnocFop/yxf4B5rjVkne+AZ2gEvoeVdl9n8e9CiXEj7I2y2WQ4/uKu4SAtMU56SFA==
+X-Gm-Message-State: AOJu0Yx6jBU7+AfT1FjxNzCFtlj6VrHisB7qnf5iNCMQAxg9Vcn+ZTGN
+	xNr49cMEKZfQK/0NcKyIJgPTUPu335gBL3LZ56qOAPUlPNAupSoq
+X-Google-Smtp-Source: AGHT+IEyjIILM29yLfV/vXCYggcQVFh0n6Mx/M2e70SYGzH2rtFIwFqH2zYjTAuliqRLT+DG1jMAKA==
+X-Received: by 2002:a17:906:d283:b0:a6f:6701:cd5a with SMTP id a640c23a62f3a-a6fab643427mr420372166b.44.1718969162970;
+        Fri, 21 Jun 2024 04:26:02 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48b17esm73795266b.88.2024.06.21.04.26.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 04:26:02 -0700 (PDT)
+Date: Fri, 21 Jun 2024 14:26:00 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v3 1/3] spi: fsl-dspi: use common proptery
+ 'spi-cs-setup(hold)-delay-ns'
+Message-ID: <20240621112600.sshdjicucwtigq64@skbuf>
+References: <20240620-ls_qspi-v3-0-1a2afcf417e4@nxp.com>
+ <20240620-ls_qspi-v3-1-1a2afcf417e4@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,121 +87,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <673d737a-cf17-4480-a9e2-7ff1668f4b44@paulmck-laptop>
+In-Reply-To: <20240620-ls_qspi-v3-1-1a2afcf417e4@nxp.com>
 
-On Thu, Jun 20, 2024 at 10:57:27AM -0700, Paul E. McKenney wrote:
-> On Wed, Jun 19, 2024 at 11:06:58PM +0000, Zhouyi Zhou wrote:
-> > Add CFcommon.arch for the various arch's need for rcutorture.
-> >     
-> > In accordance with [1], [2] and [3], move x86 specific kernel option
-> > CONFIG_HYPERVISOR_GUEST to CFcommon.arch, also move kernel option
-> > CONFIG_KVM_GUEST which only exists on x86 & PowerPC to CFcommon.arch. 
-> >     
-> > [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
-> > [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
-> > [3] https://lore.kernel.org/all/ZnBkHosMDhsh4H8g@J2N7QTR9R3/
-> >     
-> > Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
-> >    
-> > Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
-> > Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> > Suggested-by: Mark Rutland <mark.rutland@arm.com>
-> > Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Typo in title: property
+
+On Thu, Jun 20, 2024 at 12:58:27PM -0400, Frank Li wrote:
+> Use SPI common DT binding properties 'spi-cs-setup-delay-ns' and
+> 'spi-cs-hold-delay-ns'. If these properties do not exist, fall back to
+> legacy 'fsl,spi-cs-sck-delay' and 'fsl,spi-sck-cs-delay'.
 > 
-> Thank you!  I have reverted the earlier version to queue this one.
-> Please check below to make sure that my usual wordsmithing did not mess
-> things up.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/spi/spi-fsl-dspi.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
 > 
-> Mark, any suggestions for any needed ARM CFcommon.arch files?  Or does
-> moving out the x86/PowerPC-specific Kconfig options take care of things
-> for you guys?  (Hey, I can dream, can't I?)
-
-I'm not aware of anything that we specifically need enabled, so pulling
-out those bits should be everything -- I've given my Ack below.
-
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> commit 9d6767c47ce4de2ef817e47a5882748d8008ebe9
-> Author: Zhouyi Zhou <zhouzhouyi@gmail.com>
-> Date:   Wed Jun 19 23:06:58 2024 +0000
-> 
->     rcutorture: Add CFcommon.arch for arch-specific Kconfig options
->     
->     Add CFcommon.arch for arch-specific Kconfig options.
->     
->     In accordance with [1], [2] and [3], move the x86-specific kernel option
->     CONFIG_HYPERVISOR_GUEST to CFcommon.i686 and CFcommon.x86_64, and also
->     move the x86/PowerPC CONFIG_KVM_GUEST Kconfig option to CFcommon.i686,
->     CFcommon.x86_64, and CFcommon.ppc64le.
->     
->     The "arch" in CFcommon.arch is taken from the "uname -m" command.
->     
->     [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
->     [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
->     [3] https://lore.kernel.org/all/ZnBkHosMDhsh4H8g@J2N7QTR9R3/
->     
->     Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
->     
->     Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
->     Suggested-by: Paul E. McKenney <paulmck@kernel.org>
->     Suggested-by: Mark Rutland <mark.rutland@arm.com>
->     Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
->     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Mark.
-
-
-> 
-> diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> index b33cd87536899..ad79784e552d2 100755
-> --- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> +++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-> @@ -68,6 +68,8 @@ config_override_param "--gdb options" KcList "$TORTURE_KCONFIG_GDB_ARG"
->  config_override_param "--kasan options" KcList "$TORTURE_KCONFIG_KASAN_ARG"
->  config_override_param "--kcsan options" KcList "$TORTURE_KCONFIG_KCSAN_ARG"
->  config_override_param "--kconfig argument" KcList "$TORTURE_KCONFIG_ARG"
-> +config_override_param "$config_dir/CFcommon.$(uname -m)" KcList \
-> +		      "`cat $config_dir/CFcommon.$(uname -m) 2> /dev/null`"
->  cp $T/KcList $resdir/ConfigFragment
+> diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+> index 0a2730cd07c6a..7c1f8af9d215e 100644
+> --- a/drivers/spi/spi-fsl-dspi.c
+> +++ b/drivers/spi/spi-fsl-dspi.c
+> @@ -1018,11 +1018,15 @@ static int dspi_setup(struct spi_device *spi)
+>  	pdata = dev_get_platdata(&dspi->pdev->dev);
 >  
->  base_resdir=`echo $resdir | sed -e 's/\.[0-9]\+$//'`
-> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> index 0e92d85313aa7..217597e849052 100644
-> --- a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-> @@ -1,7 +1,5 @@
->  CONFIG_RCU_TORTURE_TEST=y
->  CONFIG_PRINTK_TIME=y
-> -CONFIG_HYPERVISOR_GUEST=y
->  CONFIG_PARAVIRT=y
-> -CONFIG_KVM_GUEST=y
->  CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC=n
->  CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n
-> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-> new file mode 100644
-> index 0000000000000..d8b2f555686fb
-> --- /dev/null
-> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-> @@ -0,0 +1,2 @@
-> +CONFIG_HYPERVISOR_GUEST=y
-> +CONFIG_KVM_GUEST=y
-> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
-> new file mode 100644
-> index 0000000000000..133da04247ee0
-> --- /dev/null
-> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
-> @@ -0,0 +1 @@
-> +CONFIG_KVM_GUEST=y
-> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-> new file mode 100644
-> index 0000000000000..d8b2f555686fb
-> --- /dev/null
-> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-> @@ -0,0 +1,2 @@
-> +CONFIG_HYPERVISOR_GUEST=y
-> +CONFIG_KVM_GUEST=y
+>  	if (!pdata) {
+> -		of_property_read_u32(spi->dev.of_node, "fsl,spi-cs-sck-delay",
+> -				     &cs_sck_delay);
+> -
+> -		of_property_read_u32(spi->dev.of_node, "fsl,spi-sck-cs-delay",
+> -				     &sck_cs_delay);
+> +		cs_sck_delay = spi_delay_to_ns(&spi->cs_setup, NULL);
+> +		if (!cs_sck_delay)
+> +			of_property_read_u32(spi->dev.of_node, "fsl,spi-cs-sck-delay",
+> +					     &cs_sck_delay);
+> +
+> +		sck_cs_delay = spi_delay_to_ns(&spi->cs_hold, NULL);
+> +		if (!sck_cs_delay)
+> +			of_property_read_u32(spi->dev.of_node, "fsl,spi-sck-cs-delay",
+> +					     &sck_cs_delay);
+
+Keep the 80 character line limit please.
 
