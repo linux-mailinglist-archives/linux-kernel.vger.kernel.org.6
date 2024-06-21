@@ -1,99 +1,115 @@
-Return-Path: <linux-kernel+bounces-223911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3DD911A69
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:32:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08269911A74
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90D52284657
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:32:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3954D1C216AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D59E12CDBE;
-	Fri, 21 Jun 2024 05:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D763313BC05;
+	Fri, 21 Jun 2024 05:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mZZbpZ2x"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OxGxApPm"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4887BFBF3
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11B7FBF3;
+	Fri, 21 Jun 2024 05:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718947950; cv=none; b=YKIeEXW8CZidyab0LzHUvlobjD5gTIambYsdl2yVm2Pzn+lMIbTXD7RkfmXThzMilrswS+3sEJH4EBqbBSJMoEvM13ZocdbKAAkplg/spdsXHYIdnnduMmyQyxeMjQUJnrONv8qPzbfjqPY9EXSK9hXDFcKAaHINMbIj34yJUJI=
+	t=1718948277; cv=none; b=hqkZRm28JqzMj5YurTcJ0wnmKpOxZyyUK8eA1mvnJVB3Y+Sk/abw6BDevapIEmckszq548IoHMg+DHLJcaGusRG7vQVrd8Iv6jxFWJIeRCcMPhExr+7hGOaP27VvpWFxjhV5Lk2SLuVhwhjKThvauA0XE4RB3Aj8b8cwnZ6eZ+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718947950; c=relaxed/simple;
-	bh=A2Cfg+xAAwVj9TakTKUkVW0tFfkQR+aQMfv+fqDHTvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZwXVPqQvfs2V8AZ4oPcCBbDan1UXfZO1iJ6MfeCrvxUX2ocXbhf/nozvYax44Hu+Zc1xBc9+7N06U9TBjII0cGDpl6MyNWE0RjVb7G0oySaZIkQ+wZfy5v8OfKYBMcINGll4PG4ERujk88Y1/L+e67bywMia6aWJxxqJKku3vBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mZZbpZ2x; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718947949; x=1750483949;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=A2Cfg+xAAwVj9TakTKUkVW0tFfkQR+aQMfv+fqDHTvs=;
-  b=mZZbpZ2x9ZWJjAnGySSIA4N3qUhrZbS/JnEy65hQbcdD3gmGFuB/HmPp
-   0dN0QSnrObJnkNnLJ81YdNyF6pARxqaUEx8kq0TyJyJGNe/br/2/LVC4W
-   EO2a/Xvfjf95MFipV5F2fue6ZgQ9ZBI2GaZwDYKRhiHfIIoNUPGU5AbDk
-   SmCazcMyxqnB7vemLqawnbENDQ5PJHVuXQwWx/OhGkkS0SqItwiJWXcY2
-   bmGGS+YXXUHUGHKt2S9rMiXUNsZ3S9qidJS6gIUbBNAtkvqySRBvSpp10
-   RIYBPlbvCvw2k1xPagqLLrfhOtd0IKJx4YDFkntWvp0JUNCiH+d8Af2Ws
-   w==;
-X-CSE-ConnectionGUID: sEPojny7T/uGKdsw7s+jWA==
-X-CSE-MsgGUID: ot0NzeQkRmaavhrgORybWA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15798496"
-X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="15798496"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 22:32:29 -0700
-X-CSE-ConnectionGUID: oQux34xuQaaPYfgXs2UyBA==
-X-CSE-MsgGUID: VIQwFODVSJ62QwJuNa0ylw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="43155510"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 20 Jun 2024 22:32:28 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKWsr-0008GG-1p;
-	Fri, 21 Jun 2024 05:32:25 +0000
-Date: Fri, 21 Jun 2024 13:31:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: io_uring/memmap.o: warning: objtool: unexpected relocation symbol
- type in .rela.discard.reachable
-Message-ID: <202406211339.BCuCbD2g-lkp@intel.com>
+	s=arc-20240116; t=1718948277; c=relaxed/simple;
+	bh=LLFy4E3fQZogzsjSkuuitSHmxQQmS4uiYTMS6JzbgpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=cDPFlUOMxWT/0QB+gKAx2/kPMB8paYPfZ4jofzwtBmjyuqp+ZmGdsREERe6SwsK6/Ltxg0nTauF3R6J+UPggg5QZwC7gjHGIC9NLRLwXmdAZvhO/HYf+0pFCbxx9U96CgzPWAAacMBk6lhJYGT7OMAsXRrFSQqXY8GVUqxlP4R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OxGxApPm; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718948207; x=1719553007; i=markus.elfring@web.de;
+	bh=1SQIJLyP8KM0t0hXj5dAJLCq9lDBaf/TIWUVsJ97Ung=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:Cc:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=OxGxApPm3qrh/Uq5UHSKdmuHA/EdQNdVJma2RSdg+S1AafTTsW8sFpAYf2MgTKfv
+	 fZqivsvv+R5zbqNTRfhhkPPlGppoe5bmTcmMuGHMKC0k/OAykV552sZwl8awTQDsB
+	 AGzeQ4RW7xxaGjveQJX3GD9ERf6C+RV4Ym6AX+TKIf52lZS7atgVBQbv1mV4RtSRH
+	 KkLEhiS7KHYlRbJUQEAALxh1GO9FOVOYR0xJfPw94pP+vbFbjZ76u0PXn2nVtSrHY
+	 6zTbgoX3wK0YvcjZsvq6EeqaZsHZhLuAlAjT+yQReM8MI5A86H1yxI1+ANljXev5R
+	 k8YcZrvMI2bYGwTXBg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Zs0-1sWp6x1rro-018Giw; Fri, 21
+ Jun 2024 07:36:47 +0200
+Message-ID: <a39f024c-7ab0-41f2-839d-ee2f62ddd6e9@web.de>
+Date: Fri, 21 Jun 2024 07:36:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v4 04/10] ARM: dts: lpc32xx: Add missing dma and i2s
+ properties
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "J.M.B. Downing" <jonathan.downing@nautel.com>,
+ Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Arnd Bergmann <arnd@arndb.de>, Yangtao Li <frank.li@vivo.com>,
+ Li Zetao <lizetao1@huawei.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Chancel Liu <chancel.liu@nxp.com>, dmaengine@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+ linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+ <20240620175657.358273-5-piotr.wojtaszczyk@timesys.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240620175657.358273-5-piotr.wojtaszczyk@timesys.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Q7NNgNryQC4SvaqLSK46kUdFDA/ZWIIeO+B+DYHgCi0VqphfXz0
+ LxOkeihG+Vrnw4q7094DPBzn7YDv2hUbpmVAdrJiShrqQhvj/8VJB5CO1x9U8dSN1exLjhS
+ laSizbk3rhAQA4KMMEgqhwVU706cLgRCb467YcJy47Twkvz6B9MtZOubwGfQ9bMn5k+qiZq
+ UXTnwNamwsXRAU6cK3a+Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:sxFXbRmwiow=;ItU3h73LSNWoHkiePPzF614YhOu
+ vuWij/Wyd7G8C5bGFuxA34oRBoufqeSTJ1sO9oRDCQE17yA7yy+qUu1NsP3rGmwp607imLjET
+ tlxMODkKmLWwjZN6WYB6OA00j+fL4/qe6kTDDGUFCsG3taFS+ziaS/XOF31nR0iYxmcGadXTF
+ 6WbDUOyp+fcYOvOUMdt9RtSb2KDjSlAT7V/u2dyxjIY7X2vNdA2A3LesS4hrWtUQ/j9jjsvCn
+ 9beVtwcM8ulERcSMjuM741ha+Tw/qMRQ7gvbaw8+RqndqAdbkDOMNKreIXpENNCPmnCrs2u7d
+ uu7d4ceOXvKIb0nfzXvE8ZxudF5gVftjMcbGm9p5v/g2bWH7hYwtq5BZvz2s5DSK5Ta2ADRIX
+ Zj2gqGUTQD6PH2NOVY/JvDoxrqN45EWShbKqn6+ZNV5ks/kb+tYB/7ZiQ0Pa0HXSr9tf+A+so
+ 2m0HXc6DpDDbA5nZafQpxxhgKpzPfPkjIo0773z24llMY/3IgrJYUbesX+Q5vBXyKqmi9y2M0
+ LK96kUrboZ04zfJ43TiSAduhHGvUqMa0Jd2kkqNGi3fbr9ha1sNkt9rYqZm5yiKLdvXbfM2No
+ 5QPLKvW7DEDeT5xgYTZuSUEhGr0NvKoFBDWXfNP1E1JvGayANL1ZwqCpCoC1SFc5KVhOkyEO2
+ 22iZ/kQ+CA2ClHf081/2WBHIHecK0qpypwt0wXVmjFbC/kbygWKAOart5LMzLQ+2A7RERaKAl
+ 2v4BF7zzWd40QCWglLMTkaLvdwDoghAUBkoMXKoI+FWfJV1ZYWSEIJdBn8GPUvZFcmMAMgaTm
+ TmADuSAnsOy9ft+lNhrWayN5+XfvhQrVkx6wjoHCE4kfM=
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   50736169ecc8387247fe6a00932852ce7b057083
-commit: f15ed8b4d0ce2c0831232ff85117418740f0c529 io_uring: move mapping/allocation helpers to a separate file
-date:   10 weeks ago
-config: loongarch-randconfig-r071-20240620 (https://download.01.org/0day-ci/archive/20240621/202406211339.BCuCbD2g-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240621/202406211339.BCuCbD2g-lkp@intel.com/reproduce)
+> Adds properties declared in the new DT bindings:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406211339.BCuCbD2g-lkp@intel.com/
+  Add?                                How do you think about to replace such an abbreviation?
 
-All warnings (new ones prefixed by >>):
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc4#n94
 
->> io_uring/memmap.o: warning: objtool: unexpected relocation symbol type in .rela.discard.reachable
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Markus
 
