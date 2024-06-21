@@ -1,160 +1,125 @@
-Return-Path: <linux-kernel+bounces-225256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBF8912E2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:58:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E013912E31
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C541F252C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 391702890DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD22C17B4F1;
-	Fri, 21 Jun 2024 19:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E193716D303;
+	Fri, 21 Jun 2024 20:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0mLGEEh"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="o/bQAOwa"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23A35664;
-	Fri, 21 Jun 2024 19:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53E212BE9E;
+	Fri, 21 Jun 2024 20:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718999921; cv=none; b=oVBGa/GGg7SYdzmJ1xT0wJx3pl8u4h3Ra+Fxw+S6TyTlzqQ1g9Z7XJp22x4ghbF0nAvpXhpg2ouprtkoN7LdjQUOOpDo2q6FBPLdDaonCeuq76JyRGGL00st6eXLTJI8Y5aNxC01grDmqJe/9BqbdbEveWp+4/nzjYWEzSnPY/o=
+	t=1719000018; cv=none; b=iu4JFuVHjALJeEiYpmQugTYMQyVr9ri4LGvyUK3U8OTW4ZSQAPMRSgnWsy547YWaEiT30AMAItOh6I6CV0PNlXbNX88we1MrNAH9lDNJ5mYcMcGmi15POhg14CXHH2iwfPpHQgUvRaNbVku/i5sDqiUAJpRkll7hy4Y2FmBYxLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718999921; c=relaxed/simple;
-	bh=XyJ6ZKYOxBuwdpsCynz52u9C7vHXEfljd7bOrtd+TQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fqEBHqaqrsy0snUhipRgXFVDq4IV7J7qOgdopPU9+9mxU1bVmmRBrCSoTlHGY5SpoC20Zp0Wlp6sDI9lXELwJFHr+No/jYZ1XwHp3Utod3XS3LtVRcz55hmGLg56BCPrNnxBQRkjserOo1knLh/ovRsF3bFciNjMMDukwwQWKrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0mLGEEh; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5c1a6685cd5so1223989eaf.1;
-        Fri, 21 Jun 2024 12:58:39 -0700 (PDT)
+	s=arc-20240116; t=1719000018; c=relaxed/simple;
+	bh=FI/0tEmc4OrzQICRAJDQmwB80W2DKE27iYV+3AqZ6ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vB5Q+yAVQFMw+ecHzM138ZsZss/117LK/qVpc4WVvIvkVlNaYqpLoUkUo+CWdfWDwwGXxOJ/WPm4tRB9ZnrI+Z/62s/4Qqhk+XaiJuS1HngZKLyNY+HZ9FG1iqJoYspJI3EQLqe/U4lSyK8YVTA49u64dKmbF+DBr5nJtnl4IXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=o/bQAOwa; arc=none smtp.client-ip=212.227.17.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718999918; x=1719604718; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uZT85xg/u3etg74tod0wWvhARm1bf9HjZcOhri8SiLA=;
-        b=C0mLGEEhcsI2qGET320c5uo5bncJ0r78t7CkkKqT2tHWwB/ESoRybzlOl7nGWj6tTf
-         42zVG66c0TNOqRUuiTQuw59LLNLL3G9yQYUFduwiw52dD9ZwyX2Tk0wJ0FVVb2QHcGck
-         J+W+7oaTe4pDacCJ+RlWzOx5+s7xys9e0j00pJh4BSexj0qeFNeYYHtGqN6SUF3RjH5Y
-         BTb1Wvd+aFggneYj8IsCW1cXCNLPW4FLGgdisTOUmjuuLxxEvXKkELG4vDMe+gA8deJh
-         txZLG+LsdaTkvNPfbb2mxMVbyUFEN7XveVx+KPJVThRC56jZgx1BWB1V8z5chb3uzVHQ
-         zWhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718999918; x=1719604718;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uZT85xg/u3etg74tod0wWvhARm1bf9HjZcOhri8SiLA=;
-        b=oTB+/yrLcR2jXJyVd3ik+tuqiOwYQPpC25iZagSHgXD9fo0Ez8tAOrBBJ5xCOLY5x0
-         AgOutCxp2qOpAUFn/osE3j4iUfawJ/ivEtBW1v+lJTOWwnu/5+jaDNE29ruYYsaG82Pa
-         /Ya8sTaYTUWgP1prLlGELs50gKTsKEZYtiwwiOmZQMtR9rXTY6jfLzvmqkA3JdrNRJ0V
-         ja5WV4/Ou+gCgApTX4lEFeoCH6KaL0lLletODApqz/HgDJnEFfjdiD+O8YiwgFLCLvJU
-         0sCvL7bBgrJLDFFjN2NMqkGFGNj4drkTWXHtXWQWWY1PFyg3ztkY/iOdTMsDlR3Sriaq
-         wttw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlWr/PqrRYT/kWn1z/a0suBWBlmb2jlduI8/AFj6KnG+C8cbAgnk3R5nGGOCVN8EX/NJxjBTqC6Te6LWSEkFQ5sY3kJKco6l8ABERmQLMAFoy0UoM1l4SY7DPg6N6EU86fdKzFgxIHZA==
-X-Gm-Message-State: AOJu0YzWgykNdNxJY+8/9/d4x9jvUYzrYzZGgzDVeJsTS2CifcjT4YLR
-	Q+z+z1exxsbwsJbdxeycdPSnkjNlFODHOvPLTyS9hgJCp0HAUzJv
-X-Google-Smtp-Source: AGHT+IFczQG/r/FziE5lHomIhZKAzT1QDlQTYWIYUS249ULPQp3760g6B/uCINnT2+aOuTODaKtM9Q==
-X-Received: by 2002:a05:6358:7e87:b0:19f:6bb4:e23b with SMTP id e5c5f4694b2df-1a1fd45b454mr1045049155d.18.1718999918391;
-        Fri, 21 Jun 2024 12:58:38 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:30ae:a791:227a:a35f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716ba6aa524sm1468593a12.63.2024.06.21.12.58.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 12:58:37 -0700 (PDT)
-Date: Fri, 21 Jun 2024 12:58:34 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-acpi@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v3] software node: Implement device_get_match_data fwnode
- callback
-Message-ID: <ZnXbaubPVAUdDIu0@google.com>
-References: <20240427203650.582989-1-sui.jingfeng@linux.dev>
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1718999993; x=1719604793;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=w39pSbtwaT7fcka6jbgmU/6r3OCDP6+qZhZfAsB82t0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=o/bQAOwaeV7wjwdmJYfFmOUz4Vn6WjJOvdpHUSKaMBhJNkt4tmszbrLG+AD8yH9A
+	 rFt14FAPymoaqYnEf4FHCuZco4TP3itvRz/tqlJCkWshElkM/aFH/oMx1t6Cj+pnw
+	 DLaY9LDmfJ1XkBATxijkAwwcIKMgD9vgoJSAs0mL03StCbprEoqaglto98WeWfgW3
+	 noiA4GLHuBtz47iZNF89WeyQB3KZJfWjA85fLvIBbMs9KWfk39mSG57ckfVllP8Hg
+	 208+/+liY9qEGlc/ybe8hvU2EzRvWOkm89n4A+UJ0DZSSiIVkuQk7E9FaPw6TWrHj
+	 L2zddy3QB3QW0pSjiQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.78] ([62.226.32.41]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MQuLB-1rxq7K07c7-00YZXv; Fri, 21 Jun 2024 21:59:53 +0200
+Message-ID: <ebb02ff6-e0d3-45d0-b78e-7785d763e01b@oldschoolsolutions.biz>
+Date: Fri, 21 Jun 2024 21:59:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240427203650.582989-1-sui.jingfeng@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: cpufreq/thermal regression in 6.10
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Steev Klimaszewski <steev@kali.org>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev
+References: <ZmVfcEOxmjUHZTSX@hovoldconsulting.com>
+ <CAJZ5v0gVnjVyd_O6KgXy2sXr3b3M3vyTLyUCasyxP0GrAXro4Q@mail.gmail.com>
+ <CAJZ5v0iz7gwhpvT53CH0ZEA_q3U=dnn6XR8HdLk6LpP3ye4Zkg@mail.gmail.com>
+ <6759ce9f-281d-4fcd-bb4c-b784a1cc5f6e@oldschoolsolutions.biz>
+ <CAJZ5v0gueSnaci601OkVq9_Ui09k8EsByRL08tFkzDoDGJpp6g@mail.gmail.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <CAJZ5v0gueSnaci601OkVq9_Ui09k8EsByRL08tFkzDoDGJpp6g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:seB3cm46O0wXLMy/GWgAZ4NghxwXbMYBfOyobMg2dbPB3R1I/Z5
+ 7fI3/4HcSp3d1eldVUqhv6NpswMrsDh7ns8QmTTuwU8C0QUoAI/2roUFr6hGpdBPY+gG6XM
+ A5pHDvXyGUqk8oTB41MYjiNOBHLwUkIa6/caikA0LdyfDKYFeY/7mcrZJF909Zev0ID35eD
+ 01j4C3R5ShiRkqNh/qcgg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ADKfqHl0ZVc=;QS4uLQ0fszDmH+IRyIqyycSIX5D
+ AehWkLL6/hM5zKmPxXvUPbWGBQhtwtFEUbiIJeNVmnvfUQACO3k4Byf7ybcejkVr9Hkla5853
+ NVwu0NjIlnc0oeXF+UipNeP/drU73oM+fNPmMGC9SOa54kR7BAR3qKcHj9AtHEslk1gNnMU6+
+ olvtJWBxuVCEGujWbXnGFLo83xfUxmuFFXPU3mAtP7PEMqUZrcSNB3vZ3P1+qGtzaQVlNykxs
+ wnU63rDsWe3U0AHNtK0m6mo5l4JQHzKG33Z2h2gxIY2PFPvfr7E4KC28zbemo4FBmaKehgH18
+ Qib9JsRQ04owdGC5a0wDoKeW/ay9xK9eBHChXvSFskemxdk9DyBQlDA2si3iawPruB6OqhFyV
+ ljlh2yYTCZ0HnwAnBAh/XGt4J/tr8CIUUj8QGju8i14Vt9g3E4ojjwTghhW9f+q0pN+SMzzFR
+ Dn3djFoRYOuuQxFWTUHrQgo8pGJGrT6WsgAOGI1U8PJwjSaBb2HFnoYzGD5nvi0+IN601wsHo
+ f2VSLBB0hu2leGNbw+2ijgUA9U/tSS/gLSVfIfGHETaqEXcE/nXAjRx8lfLKsVCKcwe/7D8Su
+ 0ipUzu/m/qxnCAkLzE+AMG1dyVQWPRbWnw0gcSX8PdNm+y6jGlFKxri1qExrGoEX142/HdSIL
+ 562oauKvcNrLIiMSzC1rYYMqAMsLQiSy/22mEhPopTUuyKtazzzIo2+u3F3+3Cd7d0pEWJny2
+ 3jztBf2dKbBPJNVMd9XIlW+TB7scmQ7M2jnUmerjdgSohsuJrv8H/g=
 
-Hi Sui,
+Hi there,
 
-On Sun, Apr 28, 2024 at 04:36:50AM +0800, Sui Jingfeng wrote:
-> Because the software node backend of the fwnode API framework lacks an
-> implementation for the .device_get_match_data function callback. This
-> makes it difficult to use(and/or test) a few drivers that originates
-> from DT world on the non-DT platform.
-> 
-> Implement the .device_get_match_data fwnode callback, which helps to keep
-> the three backends of the fwnode API aligned as much as possible. This is
-> also a fundamental step to make a few drivers OF-independent truely
-> possible.
-> 
-> Device drivers or platform setup codes are expected to provide a software
-> node string property, named as "compatible". At this moment, the value of
-> this string property is being used to match against the compatible entries
-> in the of_device_id table. It can be extended in the future though.
+thank you for the fast fix. Applied, built, installed. Test is
+successful, performance core scaling up to 2995200 comes back when skin
+temp drops below 55=C2=B0C.
 
-I am sorry, but this is not really correct. Software nodes are used to
-augment missing or incomplete parameters, but are never primary objects
-in the matching process. Sometimes "compatible" property is used with
-software nodes, but it does not participate in the matching process.
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 
-There are several ways for various buses to match a device and a driver,
-but none of them operate on software nodes. Consider for example how
-devices on SPI bus are matched (see
-drivers/spi/spi.c::spi_match_device()):
+Cheers
 
-1. OF/device tree based match. It *requires* the device to have
-dev->of_node which is coming from a DTB. It does not work on software
-nodes. In case of match the match data should come from of_device_id
-entry.
+Jens
 
-2. ACPI-based match. The match is done based either on OF-compatible
-data (which includes "compatible" property) in _DSD (if driver supports
-OF-based matching), or based on HID/CID data. In the latter case the
-match data is coming from acpi_device_id entry.
-
-3. Name-based match, typically used for board-instantiated devices. In
-this case match is done by comparing device name under which it was
-instantiated against names listed in the drivers id_table. The match
-data is coming from spi_device_id entry.
-
-Similar matching processes are implemented for i2c and platform buses,
-as well as others.
-
-Your patch is effectively hijacks the #3 matching process and
-substitutes the bus-specific match data (from
-spi_device_id/i2c_device_id/etc) with OF data. This is not expected and
-while we may want this in a long term (so we can eventually remove these
-bus-specific device ids and only have ACPI/OF ones) I do not think we
-are ready for this yet. At the very least this needs to be very clearly
-documented.
-
-> 
-> Fixes: ffb42e64561e ("drm/tiny/repaper: Make driver OF-independent")
-> Fixes: 5703d6ae9573 ("drm/tiny/st7735r: Make driver OF-independent")
-
-As other people mentioned this patch does not fix the aforementioned
-commits because they are not broken. In case of non-OF match (which
-includes the case where you use software nodes) the match data is coming
-from matching spi_device_id entry in the driver.
-
-Thanks.
-
--- 
-Dmitry
+On 6/21/24 18:41, Rafael J. Wysocki wrote:
+> Hi,
+>
+> On Fri, Jun 21, 2024 at 5:53=E2=80=AFPM Jens Glathe
+> <jens.glathe@oldschoolsolutions.biz> wrote:
+>> Hi there,
+>>
+>> unfortunately I experienced the issue with the fix applied. I had to
+>> revert this and  the original commit to get back to normal behaviour. M=
+y
+>> system (also Lenovo Thinkpad X13s) uses the schedutil governor, the
+>> behaviour is as described from Steev and Johan. The full throttling
+>> happened during a package build and left the performance cores at 94080=
+0.
+> So can you please test the attached patch, on top of the fix?
 
