@@ -1,99 +1,388 @@
-Return-Path: <linux-kernel+bounces-223784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 347E4911821
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E78911813
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFE7B1F2258A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:42:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287161F2268B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8A782899;
-	Fri, 21 Jun 2024 01:42:44 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC4782D89;
+	Fri, 21 Jun 2024 01:36:41 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9502F2F;
-	Fri, 21 Jun 2024 01:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E166F10E3;
+	Fri, 21 Jun 2024 01:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718934164; cv=none; b=HulN/HZrdI/TGsP3SzEC5SY9jDmyjHntBO2hXpQcBx87FTsR/qUKHi6yGuFx0i20DRKcsuvOmp1YZjgdDgxhaaGFE1KYpNnURuUwT+yTPqiX6pXSjoWQ/c8nCMpagTFsYJIczojn7tXzilryaNdi7gSE1FaO7xkqziRIM8h/ww0=
+	t=1718933800; cv=none; b=ILv9jM4W/kK245uiyrHMlb/JzEILdriHDnWHgLdZ/vwRCdbGk3HAvcWc2TEDuiutRAtc4f7FU0tGVT+4fKC8nAKHTWrtlUxTH3Km4CL21Lm1kYmNyB+Iz8CW5l7/OOM1Tk9JWnPi3m5ZL1km9m5p3FQESEGAtMHUfjoXSg4+Byc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718934164; c=relaxed/simple;
-	bh=DZEVQTJMhVQBoUZ4+jSBDdNj0mLZGNkY2CZLSefgrho=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ENmxv/2GtP3IF9mWAUg9gWNPFiqqlFKJvWy1v3KLcMG0tJbDZT1ye2gywoYwxmUxCXL+4Jilpi4o7EQPnKIdXp2VxH4l92T+LwCEq4imvYhF10sopnyX6qWSjkZ7N9W4EHBJXBlvKJRsHmZlpjLFyPYNvSeSrZDqI+/rn3G45ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowAD355g72XRmjgneCw--.1501S2;
-	Fri, 21 Jun 2024 09:37:00 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: rfoss@kernel.org,
-	todor.too@gmail.com,
-	bryan.odonoghue@linaro.org,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] media: qcom: camss: Add check for v4l2_fwnode_endpoint_parse
-Date: Fri, 21 Jun 2024 09:35:22 +0800
-Message-Id: <20240621013522.1704762-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718933800; c=relaxed/simple;
+	bh=f1lUzGrNttZNp3wLOBzLTMlkvcvk1eCekF6iV4dmk2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cG9b+LjuJ2P9HyO4auabWqOm6Kjf5yPvURk5zYD0WCuJhjurRpXVbFkZ/ViKIZKR4lmS/ps+B54Hz09fHvlrX+z3Tm6AH3omSQB+YYH5spdzJBJhJrteACOW3xYsezEsCefxml1C3rhSOJwV89Mq5q+ajuvJXRT6l45Ho/zV9/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: ab4e7d0e2f6e11ef9305a59a3cc225df-20240621
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:a2ca5ed6-ab13-4f50-9986-fb5f91654265,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-5
+X-CID-INFO: VERSION:1.1.38,REQID:a2ca5ed6-ab13-4f50-9986-fb5f91654265,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:82c5f88,CLOUDID:20a29486e40e81aea773cbac1da97898,BulkI
+	D:240617193145NAFL2O91,BulkQuantity:6,Recheck:0,SF:64|66|24|17|19|44|102,T
+	C:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,
+	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR
+X-UUID: ab4e7d0e2f6e11ef9305a59a3cc225df-20240621
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <luoxuanqiang@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 2095884178; Fri, 21 Jun 2024 09:36:23 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 8C2E9B803C9D;
+	Fri, 21 Jun 2024 09:36:23 +0800 (CST)
+X-ns-mid: postfix-6674D917-446331139
+Received: from [10.42.12.252] (unknown [10.42.12.252])
+	by node2.com.cn (NSMail) with ESMTPA id 480E0B803C9D;
+	Fri, 21 Jun 2024 01:36:16 +0000 (UTC)
+Message-ID: <6508a8d3-cf46-7f28-c7d1-b2a4662d08f7@kylinos.cn>
+Date: Fri, 21 Jun 2024 09:36:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAD355g72XRmjgneCw--.1501S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFy3KrWfZw4UurW3uryfJFb_yoWDGFX_GF
-	W8ZFZ3WFy8Gr1kGr4jy34SkryUt3ykuF109F4aqFy3ta1DCas7JrWvvr1DXryxuFyqvF1D
-	G34qvr9xC3srCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbc8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVWk
-	MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0E
-	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
-	W8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
-	cVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUOMKZDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH net v3] Fix race for duplicate reqsk on identical SYN
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: alexandre.ferrieux@orange.com, davem@davemloft.net, dccp@vger.kernel.org,
+ dsahern@kernel.org, edumazet@google.com, fw@strlen.de, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com
+References: <2f96ebeb-f366-fda1-f6d6-88ff2637c7cd@kylinos.cn>
+ <20240620191424.50269-1-kuniyu@amazon.com>
+Content-Language: en-US
+From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+In-Reply-To: <20240620191424.50269-1-kuniyu@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Add check for the return value of v4l2_fwnode_endpoint_parse() and
-return the error if it fails in order to catch the error.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/media/platform/qcom/camss/camss.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+=E5=9C=A8 2024/6/21 03:14, Kuniyuki Iwashima =E5=86=99=E9=81=93:
+> From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+> Date: Thu, 20 Jun 2024 10:38:36 +0800
+>> =E5=9C=A8 2024/6/20 03:53, Kuniyuki Iwashima =E5=86=99=E9=81=93:
+>>> From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+>>> Date: Wed, 19 Jun 2024 14:54:15 +0800
+>>>> =E5=9C=A8 2024/6/18 01:59, Kuniyuki Iwashima =E5=86=99=E9=81=93:
+>>>>> From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+>>>>> Date: Mon, 17 Jun 2024 15:56:40 +0800
+>>>>>> When bonding is configured in BOND_MODE_BROADCAST mode, if two ide=
+ntical
+>>>>>> SYN packets are received at the same time and processed on differe=
+nt CPUs,
+>>>>>> it can potentially create the same sk (sock) but two different req=
+sk
+>>>>>> (request_sock) in tcp_conn_request().
+>>>>>>
+>>>>>> These two different reqsk will respond with two SYNACK packets, an=
+d since
+>>>>>> the generation of the seq (ISN) incorporates a timestamp, the fina=
+l two
+>>>>>> SYNACK packets will have different seq values.
+>>>>>>
+>>>>>> The consequence is that when the Client receives and replies with =
+an ACK
+>>>>>> to the earlier SYNACK packet, we will reset(RST) it.
+>>>>>>
+>>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>>>>>
+>>>>>> This behavior is consistently reproducible in my local setup,
+>>>>>> which comprises:
+>>>>>>
+>>>>>>                      | NETA1 ------ NETB1 |
+>>>>>> PC_A --- bond --- |                    | --- bond --- PC_B
+>>>>>>                      | NETA2 ------ NETB2 |
+>>>>>>
+>>>>>> - PC_A is the Server and has two network cards, NETA1 and NETA2. I=
+ have
+>>>>>>      bonded these two cards using BOND_MODE_BROADCAST mode and con=
+figured
+>>>>>>      them to be handled by different CPU.
+>>>>>>
+>>>>>> - PC_B is the Client, also equipped with two network cards, NETB1 =
+and
+>>>>>>      NETB2, which are also bonded and configured in BOND_MODE_BROA=
+DCAST mode.
+>>>>>>
+>>>>>> If the client attempts a TCP connection to the server, it might en=
+counter
+>>>>>> a failure. Capturing packets from the server side reveals:
+>>>>>>
+>>>>>> 10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
+>>>>>> 10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
+>>>>>> localhost > 10.10.10.10.45182: Flags [S.], seq 2967855116,
+>>>>>> localhost > 10.10.10.10.45182: Flags [S.], seq 2967855123, <=3D=3D
+>>>>>> 10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
+>>>>>> 10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
+>>>>>> localhost > 10.10.10.10.45182: Flags [R], seq 2967855117, <=3D=3D
+>>>>>> localhost > 10.10.10.10.45182: Flags [R], seq 2967855117,
+>>>>>>
+>>>>>> Two SYNACKs with different seq numbers are sent by localhost,
+>>>>>> resulting in an anomaly.
+>>>>>>
+>>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>>>>>
+>>>>>> The attempted solution is as follows:
+>>>>>> In the tcp_conn_request(), while inserting reqsk into the ehash ta=
+ble,
+>>>>>> it also checks if an entry already exists. If found, it avoids
+>>>>>> reinsertion and releases it.
+>>>>>>
+>>>>>> Simultaneously, In the reqsk_queue_hash_req(), the start of the
+>>>>>> req->rsk_timer is adjusted to be after successful insertion.
+>>>>>>
+>>>>>> Signed-off-by: luoxuanqiang <luoxuanqiang@kylinos.cn>
+>>>>>> ---
+>>>>>>     include/net/inet_connection_sock.h |  4 ++--
+>>>>>>     net/dccp/ipv4.c                    |  2 +-
+>>>>>>     net/dccp/ipv6.c                    |  2 +-
+>>>>>>     net/ipv4/inet_connection_sock.c    | 19 +++++++++++++------
+>>>>>>     net/ipv4/tcp_input.c               |  9 ++++++++-
+>>>>>>     5 files changed, 25 insertions(+), 11 deletions(-)
+>>>>>>
+>>>>>> diff --git a/include/net/inet_connection_sock.h b/include/net/inet=
+_connection_sock.h
+>>>>>> index 7d6b1254c92d..8ebab6220dbc 100644
+>>>>>> --- a/include/net/inet_connection_sock.h
+>>>>>> +++ b/include/net/inet_connection_sock.h
+>>>>>> @@ -263,8 +263,8 @@ struct dst_entry *inet_csk_route_child_sock(co=
+nst struct sock *sk,
+>>>>>>     struct sock *inet_csk_reqsk_queue_add(struct sock *sk,
+>>>>>>     				      struct request_sock *req,
+>>>>>>     				      struct sock *child);
+>>>>>> -void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct reques=
+t_sock *req,
+>>>>>> -				   unsigned long timeout);
+>>>>>> +bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct reques=
+t_sock *req,
+>>>>>> +				   unsigned long timeout, bool *found_dup_sk);
+>>>>>>     struct sock *inet_csk_complete_hashdance(struct sock *sk, stru=
+ct sock *child,
+>>>>>>     					 struct request_sock *req,
+>>>>>>     					 bool own_req);
+>>>>>> diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+>>>>>> index ff41bd6f99c3..13aafdeb9205 100644
+>>>>>> --- a/net/dccp/ipv4.c
+>>>>>> +++ b/net/dccp/ipv4.c
+>>>>>> @@ -657,7 +657,7 @@ int dccp_v4_conn_request(struct sock *sk, stru=
+ct sk_buff *skb)
+>>>>>>     	if (dccp_v4_send_response(sk, req))
+>>>>>>     		goto drop_and_free;
+>>>>>>    =20
+>>>>>> -	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+>>>>>> +	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL);
+>>>>>>     	reqsk_put(req);
+>>>>>>     	return 0;
+>>>>>>    =20
+>>>>>> diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+>>>>>> index 85f4b8fdbe5e..493cdb12ce2b 100644
+>>>>>> --- a/net/dccp/ipv6.c
+>>>>>> +++ b/net/dccp/ipv6.c
+>>>>>> @@ -400,7 +400,7 @@ static int dccp_v6_conn_request(struct sock *s=
+k, struct sk_buff *skb)
+>>>>>>     	if (dccp_v6_send_response(sk, req))
+>>>>>>     		goto drop_and_free;
+>>>>>>    =20
+>>>>>> -	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+>>>>>> +	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT, NULL);
+>>>>>>     	reqsk_put(req);
+>>>>>>     	return 0;
+>>>>>>    =20
+>>>>>> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_conne=
+ction_sock.c
+>>>>>> index d81f74ce0f02..2fa9b33ae26a 100644
+>>>>>> --- a/net/ipv4/inet_connection_sock.c
+>>>>>> +++ b/net/ipv4/inet_connection_sock.c
+>>>>>> @@ -1122,25 +1122,32 @@ static void reqsk_timer_handler(struct tim=
+er_list *t)
+>>>>>>     	inet_csk_reqsk_queue_drop_and_put(oreq->rsk_listener, oreq);
+>>>>>>     }
+>>>>>>    =20
+>>>>>> -static void reqsk_queue_hash_req(struct request_sock *req,
+>>>>>> -				 unsigned long timeout)
+>>>>>> +static bool reqsk_queue_hash_req(struct request_sock *req,
+>>>>>> +				 unsigned long timeout, bool *found_dup_sk)
+>>>>>>     {
+>>>>> Given any changes here in reqsk_queue_hash_req() conflicts with 4.1=
+9
+>>>>> (oldest stable) and DCCP does not check found_dup_sk, you can defin=
+e
+>>>>> found_dup_sk here, then you need not touch DCCP at all.
+>>>> Apologies for not fully understanding your advice. If we cannot modi=
+fy
+>>>> the content of reqsk_queue_hash_req() and should avoid touching the =
+DCCP
+>>>> part, it seems the issue requires reworking some interfaces. Specifi=
+cally:
+>>>>
+>>>> The call flow to add reqsk to ehash is as follows:
+>>>>
+>>>> tcp_conn_request()
+>>>>
+>>>> dccp_v4(6)_conn_request()
+>>>>
+>>>>        -> inet_csk_reqsk_queue_hash_add()
+>>>>
+>>>>            -> reqsk_queue_hash_req()
+>>>>
+>>>>                -> inet_ehash_insert()
+>>>>
+>>>> tcp_conn_request() needs to call the same interface inet_csk_reqsk_q=
+ueue_hash_add()
+>>>> as dccp_v4(6)_conn_request(), but the critical section for installat=
+ion check and
+>>>> insertion into ehash is within inet_ehash_insert().
+>>>> If reqsk_queue_hash_req() should not be modified, then we need to re=
+write
+>>>> the interfaces to distinguish them. I don't see how redefining found=
+_dup_sk
+>>>> alone can resolve this conflict point.
+>>> I just said we cannot avoid conflict so suggested avoiding found_dup_=
+sk
+>>> in inet_csk_reqsk_queue_hash_add().
+>>>
+>>> But I finally ended up modifying DCCP because we return before settin=
+g
+>>> refcnt.
+>>>
+>>> ---8<---
+>>> diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+>>> index ff41bd6f99c3..b2a8aed35eb0 100644
+>>> --- a/net/dccp/ipv4.c
+>>> +++ b/net/dccp/ipv4.c
+>>> @@ -657,8 +657,11 @@ int dccp_v4_conn_request(struct sock *sk, struct=
+ sk_buff *skb)
+>>>    	if (dccp_v4_send_response(sk, req))
+>>>    		goto drop_and_free;
+>>>   =20
+>>> -	inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+>>> -	reqsk_put(req);
+>>> +	if (unlikely(inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_IN=
+IT)))
+>>> +		reqsk_free(req);
+>>> +	else
+>>> +		reqsk_put(req);
+>>> +
+>>>    	return 0;
+>>>   =20
+>>>    drop_and_free:
+>>> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connecti=
+on_sock.c
+>>> index d81f74ce0f02..7dd6892b10b9 100644
+>>> --- a/net/ipv4/inet_connection_sock.c
+>>> +++ b/net/ipv4/inet_connection_sock.c
+>>> @@ -1122,25 +1122,33 @@ static void reqsk_timer_handler(struct timer_=
+list *t)
+>>>    	inet_csk_reqsk_queue_drop_and_put(oreq->rsk_listener, oreq);
+>>>    }
+>>>   =20
+>>> -static void reqsk_queue_hash_req(struct request_sock *req,
+>>> +static bool reqsk_queue_hash_req(struct request_sock *req,
+>>>    				 unsigned long timeout)
+>>>    {
+>>> +	bool found_dup_sk;
+>>> +
+>>> +	if (!inet_ehash_insert(req_to_sk(req), NULL, &found_dup_sk))
+>>> +		return false;
+>>> +
+>>>    	timer_setup(&req->rsk_timer, reqsk_timer_handler, TIMER_PINNED);
+>>>    	mod_timer(&req->rsk_timer, jiffies + timeout);
+>>>   =20
+>>> -	inet_ehash_insert(req_to_sk(req), NULL, NULL);
+>>>    	/* before letting lookups find us, make sure all req fields
+>>>    	 * are committed to memory and refcnt initialized.
+>>>    	 */
+>>>    	smp_wmb();
+>>>    	refcount_set(&req->rsk_refcnt, 2 + 1);
+>>> +	return true;
+>>>    }
+>>>   =20
+>>> -void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_s=
+ock *req,
+>>> +bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_s=
+ock *req,
+>>>    				   unsigned long timeout)
+>>>    {
+>>> -	reqsk_queue_hash_req(req, timeout);
+>>> +	if (!reqsk_queue_hash_req(req, timeout))
+>>> +		return false;
+>>> +
+>>>    	inet_csk_reqsk_queue_added(sk);
+>>> +	return true;
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(inet_csk_reqsk_queue_hash_add);
+>>>   =20
+>>> ---8<---
+>> Thank you for your patient explanation. I understand
+>> your point and will send out the V4 version, looking
+>> forward to your review.
+>>
+>> Also, I'd like to confirm a detail with you. For the DCCP part, is it
+>>    sufficient to simply call reqsk_free() for the return value, or sho=
+uld
+>> we use goto drop_and_free? The different return values here will
+>> determine whether a reset is sent, and I lack a comprehensive
+>> understanding of DCCP. so could you please help me confirm this
+>> from a higher-level perspective?
+> I think we need not send RST because in this case there's another
+> establishing request already in ehash and we should not abort it
+> as we don't do so in tcp_conn_request().
+>
+> Thanks!
 
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 1923615f0eea..c90a28fa8891 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -1406,8 +1406,11 @@ static int camss_of_parse_endpoint_node(struct device *dev,
- 	struct v4l2_mbus_config_mipi_csi2 *mipi_csi2;
- 	struct v4l2_fwnode_endpoint vep = { { 0 } };
- 	unsigned int i;
-+	int ret;
- 
--	v4l2_fwnode_endpoint_parse(of_fwnode_handle(node), &vep);
-+	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(node), &vep);
-+	if (ret)
-+		return ret;
- 
- 	csd->interface.csiphy_id = vep.base.port;
- 
--- 
-2.25.1
+Thank you for confirming. Best wishes!=C2=A0:)
 
+>
+>> diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+>> index ff41bd6f99c3..5926159a6f20 100644
+>> --- a/net/dccp/ipv4.c
+>> +++ b/net/dccp/ipv4.c
+>> @@ -657,8 +657,11 @@ int dccp_v4_conn_request(struct sock *sk, struct =
+sk_buff *skb)
+>>           if (dccp_v4_send_response(sk, req))
+>>                   goto drop_and_free;
+>>   =20
+>> -       inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIMEOUT_INIT);
+>> -       reqsk_put(req);
+>> +       if (unlikely(!inet_csk_reqsk_queue_hash_add(sk, req, DCCP_TIME=
+OUT_INIT)))
+>> +               reqsk_free(req);    // or  goto drop_and_free:   <=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +       else
+>> +               reqsk_put(req);
+>> +
+>>           return 0;
+>>   =20
+>> drop_and_free:
+>>       reqsk_free(req);
+>> drop:
+>>       __DCCP_INC_STATS(DCCP_MIB_ATTEMPTFAILS);
+>>       return -1;
+>> }
 
