@@ -1,104 +1,130 @@
-Return-Path: <linux-kernel+bounces-224103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A91911D49
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:48:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F46911D47
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C32A81C22269
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:48:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E00E283B75
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C1716D318;
-	Fri, 21 Jun 2024 07:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5965A16C863;
+	Fri, 21 Jun 2024 07:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="nDHehLuQ"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8rtbsNo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DC87E58D;
-	Fri, 21 Jun 2024 07:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11701411DF
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718956116; cv=none; b=sC4QwySbqJnvRdWBfrGklA0NkjevNGo/R2Xb5SHqu1Ds184Hc0zB3TvNVEcBQPelT3oDsOp/IYXDWf4ZNfb2ow3vAN/ZkYZ03junGObzi3fpeqBIM8WF1/9JK+U3lh0l4GX/Qpziw/PK7dp88NFidRcEeAfj0U3nAA5eIxnadHE=
+	t=1718956115; cv=none; b=qhE8V+0aDrD+lYVYsRT696BXtnJviwc6q6EuCOeNrG2w1nmw4D8l6OLvZ6StlYlVluHwwtpvKWY1kEIsetsSUYIZha0qoY+fWOreBIipBXVCEAfhEyWyD8tAhQJTeMxCuqnS9wRmecC/MpJM+5LCLVzPKomVg7dP2fFO6DSOKC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718956116; c=relaxed/simple;
-	bh=+EhfIqDCxvAn5pgilOswqS+omcw5oGDRGBmQLYWykCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fyCtoXDyJOhpAVVQGnrjHZHz5ZurRu7oFSX+MVV7ovamWPPnncIYZK4E3gUv3zC+r8OGQnBCguvsQ8U/6i6N6iO5gQ0rMTlpXNZAcRRkGlPpPRiIpVH7WTfq+z4/EFVwQNngoKYJ5i9cYPOkvGsnDJzbVrqlt7AJFO1t5MfV01c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=nDHehLuQ; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4B13CA0796;
-	Fri, 21 Jun 2024 09:48:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=OB0z767zdZiUMHyqre9h
-	c5AMqLSuctfCp1/ZdkYsUxU=; b=nDHehLuQ8zSJZvveTYE1uUR/3yUw+67dLpnb
-	mcU3XOmobcoP5xXN2vxGRMAh8EF2MQ3R+R69OPcj5BbzCGEu9T3iDbZbJTZTBUf7
-	8QKmNf/Hy1S7wurNWqH2czXfp2JX3TYIiVgmsPN7XXXtANir7nRqJLrXauwHZ1u+
-	Xg1ESDEorrem66Lmp6WDKuBaPG1OKFiTGxSke7SRcjNiE1Th0kKKk6Yw62COmnZV
-	C7kkPVDn/uwHsOmdixuKbhR4mipBoopaxNIwuWxfLNrUgl8yG03z5nTS5ID7fJ5A
-	U/0rD+ywxCtfTXgT4kliiPFLGWy3eiSnFn0nM5kNcIWv+O/E4Ur0Vi5JPP9c2Hi2
-	1iaHGZD/mCRgL9L+jJplzwqolLtKI7paISpQmyS7cy4ToEk5+oHwuOKRvNxH2K44
-	TuhhZYnf8yMvZc2wDWoVfLuZhFK731qkGcSe2Fe7n+gIH06iWrDKIAx//2LI0bpc
-	/9CATeZr9vdAKQ/zhjXo+uvQrIwReB9/Po7D9Mr9V0AmCyzagBt2O8GxV/+EOEP+
-	sQ/rFw9aSRKnhpt8dSB+FV5WW+jgSixk3akBEhjcDXJtROLoDvhwTIohDBZLXVMF
-	Kng/TNt6UDVcTposUYp4fbHx10l+5S7cmGYjq30LuhHfZ8Jn9hNDkx/TVOt3lFS3
-	FFlUlzE=
-Message-ID: <f216c0b9-3d0d-4d4c-aa33-ba02b0722052@prolan.hu>
-Date: Fri, 21 Jun 2024 09:48:23 +0200
+	s=arc-20240116; t=1718956115; c=relaxed/simple;
+	bh=v6YwumNUs0waG2EwfOyQoHGn/4/KwigQL/39chM0Fvo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CPTOVsxS/zKR+gWqsdx+VAzFi7UWA/FtN90rhlFdiWRPex1yoTOC24DAyek9knCf4NZHANzcxs23/mbBMf0NL0BJXfmleuaFV3oOVGkJDjVAL6/QKBe8xSJMdOPA6CbQMH1wGXv+MBOdGha322C48M06wQ3jx+9lZMM7nP1zCAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8rtbsNo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20B11C4AF08;
+	Fri, 21 Jun 2024 07:48:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718956115;
+	bh=v6YwumNUs0waG2EwfOyQoHGn/4/KwigQL/39chM0Fvo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=R8rtbsNod3y3nEH7edbhvyrTCt/qDY6rIHivMM7Rgtc0cgt36ot0CHofBYnxSZ5Nc
+	 k7kObC8Mqp3TVzVS2e/2ne6TIvUCVk0jxoWtkJU9J2oJd+eAZoGdkEav6jnVdJuqjn
+	 GPBcJryQBnuz0NadRpNQ/PrplMczLR9SWK9b2iUHAlGeneCtOETTwklUlhCXCuFFYV
+	 zQNj3Dt08k9IvmsGA7/ZjFDQ1o/YgO53Uo9j9NaOIAJvFvaCpO1jy7mdbCmNWw67zu
+	 MSJ3aeONhSLtPg5sC4F/nNhavLJ6iY4fX7sZdWKZop6tx9WrmFIABz9fad5XX0S4WJ
+	 k8iqBFSaeYr8Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sKZ0a-0062iE-M5;
+	Fri, 21 Jun 2024 08:48:32 +0100
+Date: Fri, 21 Jun 2024 08:48:32 +0100
+Message-ID: <8634p6ka7j.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<alexandru.elisei@arm.com>,
+	<catalin.marinas@arm.com>,
+	<linux-kernel@vger.kernel.org>,
+	<tglx@linutronix.de>,
+	<will@kernel.org>
+Subject: Re: [PATCH v2 5/5] arm64: irqchip/gic-v3: Select priorities at boot time
+In-Reply-To: <39b2bce8-3bc1-b1d9-3e4a-8132a92059c6@huawei.com>
+References: <20240617111841.2529370-1-mark.rutland@arm.com>
+	<20240617111841.2529370-6-mark.rutland@arm.com>
+	<39b2bce8-3bc1-b1d9-3e4a-8132a92059c6@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 resub 1/2] net: include: mii: Refactor: Define LPA_* in
- terms of ADVERTISE_*
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Vladimir Oltean
-	<olteanv@gmail.com>, <trivial@kernel.org>, Heiner Kallweit
-	<hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>
-References: <20240619124622.2798613-1-csokas.bence@prolan.hu>
- <c82256a5-6385-4205-ba74-ab102396abb6@lunn.ch>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <c82256a5-6385-4205-ba74-ab102396abb6@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2945A129576C7567
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: liaochang1@huawei.com, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org, alexandru.elisei@arm.com, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, tglx@linutronix.de, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi
+On Fri, 21 Jun 2024 07:23:54 +0100,
+"Liao, Chang" <liaochang1@huawei.com> wrote:
+>=20
+>=20
+>=20
+> =E5=9C=A8 2024/6/17 19:18, Mark Rutland =E5=86=99=E9=81=93:
+> >  	cpus_have_group0 =3D gic_has_group0();
+>=20
+> > +#define __gicv3_prio_to_ns(p)	(0xff & ((p) << 1))
+> > +#define __gicv3_ns_to_prio(ns)	(0x80 | ((ns) >> 1))
+>=20
+> What about refactoring the gic_has_group0() using the mapping macros
+> between PMR priority and GIC priority like this:
+>=20
+> ---------------%<-----------------
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -882,6 +882,7 @@ static bool gic_has_group0(void)
+>  {
+>         u32 val;
+>         u32 old_pmr;
+> +       u32 prio =3D BIT(8 - gic_get_pribits());
+>=20
+>         old_pmr =3D gic_read_pmr();
+>=20
+> @@ -896,12 +897,12 @@ static bool gic_has_group0(void)
+>          * becomes 0x80. Reading it back returns 0, indicating that
+>          * we're don't have access to Group0.
+>          */
+> -       gic_write_pmr(BIT(8 - gic_get_pribits()));
+> +       gic_write_pmr(prio);
+>         val =3D gic_read_pmr();
+>=20
+>         gic_write_pmr(old_pmr);
+>=20
+> -       return val !=3D 0;
+> +       return val !=3D (__gicv3_prio_to_ns(__gicv3_ns_to_prio(prio)));
+>  }
+> --------------->%-----------------
 
-On 6/20/24 21:07, Andrew Lunn wrote:
-> On Wed, Jun 19, 2024 at 02:46:22PM +0200, Csókás, Bence wrote:
->> Ethernet specification mandates that these bits will be equal.
->> To reduce the amount of magix hex'es in the code, just define
->> them in terms of each other.
-> 
-> I have a quick email exchange with other PHY maintainers, and we
-> agree. We will reject these changes, they are just churn and bring no
-> real benefit.
-> 
-> NACK
-> 
->      Andrew
-> 
+No, that's terrible, and makes it simply impossible to understand what
+is happening without looking at 3 layers of indirection.
 
-The benefit is that I don't have to constantly convert between "n-th bit 
-set" (which is how virtually all datasheets, specifications, 
-documentation etc. represent MII bits) and these hex values. In most 
-places in the kernel, register bits are already represented with BIT() 
-et al., so why not here?
+Read the comment, and realise that the code implements exactly that.
 
-Bence
+	M.
 
+--=20
+Without deviation from the norm, progress is not possible.
 
