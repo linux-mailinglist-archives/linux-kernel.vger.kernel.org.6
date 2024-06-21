@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-224940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29E519128E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:06:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8C19128EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD282896E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:06:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CA7B1C26863
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADAC6BFD5;
-	Fri, 21 Jun 2024 15:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309EC81AA5;
+	Fri, 21 Jun 2024 15:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OAWi4UWA"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nqu0vAR6"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D6E46542
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0808755C0A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718982356; cv=none; b=rKC13rSKL92r/Zyfj230KzNdc1lnfkrIalP4CKeV2KKIXsbg5P2eyZuOnd/j+DJYHmXbFt5O0TJvffK89kbjTrVUmtU+OOKAqHhh4TWh2givG0Ea5WQ9djqH7ZO9UhAelnxybg8mF5JeXR5+Va5f1Bn9tW/fc1U76uaBnlMJ/Qg=
+	t=1718982357; cv=none; b=kRq8FBLhCJ4hoK+eNwl5p5hdSGj8NfnNosJ3RBEN4USfnxdKVDkqOjlWbJNmebymH2OQjAahSr3wX3tr0rb8b88sDJaDGavyeqZPw6xkRJQA/1D5J901qkeJ+Qi661Om3f24EPyXdE1E2qA/sM6NsGLDcMlgm9QEyqHZwC6zCgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718982356; c=relaxed/simple;
-	bh=hKlmi4fFTPRGO10vsF7qWw2HrJ4Vezl1dk0jCpdusZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l++H9ERWyN7Dqg+i2R3ylMjg0jtZzNh9ylfJeI+5DhuNBsikyEQNsaGZCTpoX8bsx97eFg4Q9XPyamZF6FD7metLaRsQyZkuAes5cwQ1wsw80OEr2S9l8ChCa5haEYkBmJFv5LDDKLeiphEccw4uVv5udkT/Hzq7w6exyIpMs4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OAWi4UWA; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d07f07a27so2360387a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:05:54 -0700 (PDT)
+	s=arc-20240116; t=1718982357; c=relaxed/simple;
+	bh=G+mYgkoXZiQsyDpucn2Iesz72bn8U+Hhkl0q0srU2NE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZOD3sDp6XuxqGgf0Fzv6n+3Wh0m3TSmduU4FXF8txT5tOgwg2IU8bhVlDEEjMOIXHmIwBReWtBUA0+Ru8s8WsHAs8IGOqiqLU3yhncocpYZ0Nc4F9u4CiPAdQdElHIWvCo224hOSwAZYI6X52R7ZWp+dIiX3UJhZezcDXFQ5BH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nqu0vAR6; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52cc5d5179aso2848650e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:05:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718982353; x=1719587153; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=linaro.org; s=google; t=1718982354; x=1719587154; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ntDdia3lKWo//qtzdE08p3c3U1eFAFQAfNQTnQZ4y2Y=;
-        b=OAWi4UWAgbtdeyuJk96Avkx9RQLsrHmkaUl4NRdzsJv+nHfhrkmV0DIchfJVMcEB53
-         9ErmuxAUGJrCD12TQvZ7C3nYcPDnzBF48bOjY3GujuW2G90baGS8i6xB75hFDEHV/UzV
-         zbDX1jhiVIZOsa0ZHWKy80lt0Fv9r+4hPVhnqFsEEwqycneydrzq0aUYt1X+RUA9ulRO
-         eMu/TcS+kbr5MuOwBz40gF7ADebrDyLFNrdaPnEgbH3V6MgBABN1FmaDQQjGqeNwMZmS
-         mFQhYJryh3LlNnlk+xlRWmMCkOpKj+hbqSHKBKsH6neG/7AEkFHbctj2ILgKAxOl19Tg
-         qeIw==
+        bh=n0zXKUpFt3HIy66YqTJgW3hPCLpl7FlzWR/y3/jevlk=;
+        b=Nqu0vAR64jyg+T8Lit6A00XAT+pc6jvbStvhXYqJzszPtL9YKhVAKZLgkngi37v7b8
+         1zhAMMdNE0iqS+b4HEAm5QNrmL231zLSbzuD/K0N3JmVl1xudyInrgPMAKBS0O4skQk7
+         SNe47BW0I/9qCAPS4zR6NTrNrRsjri+l4o1V/92e6rNZ62LaWlHmkmqWd3UNGPPK2AT9
+         SsEF5qLBV8fM70hHrbj4N46MF1mPHKwrOCzwj38drzCpysrB930N+kTuxG4QX4pmFalk
+         U6lHUb0DIDC5wVnAnnAvdoX7Q2uYDy2kDEIE6OgMdn/Ra8jPHRIMyvfpkBwxDAKRPe06
+         +x8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718982353; x=1719587153;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1718982354; x=1719587154;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ntDdia3lKWo//qtzdE08p3c3U1eFAFQAfNQTnQZ4y2Y=;
-        b=dppAoqG/e31Pr4whwhqLRs6/UTShdDBrd1fCII61q14ROtBYo8T9TYcDVTYthjH4EO
-         5aSDGoYwhrT2/sf5V54Q1btG2k/gDsKmB8plWZDdp4gYhqn3ZO/mVbF59V2LG1kKgPyp
-         mPejO/6tKQXjiaQz1L5Wt9EXofErO9qpTU6iXrwz1FxCiWZq74CRCTo8OF8UQVXS5c8O
-         yS7VBXxPgRCKYv9NJS6Z0w/uwi2L4qqlm2y2ynlnlWpWU1zO7wlrSD1Ee+xZsIj1iYpf
-         hnXzkBDzynTICFTpsHYb4Jj73nR7Sx8qSAPMyGGyh6/grOB+4UuTCH5kxjZ7szc9VA4v
-         ecow==
-X-Gm-Message-State: AOJu0YyzmKagVHu5lg8vg+QUreGKSWcW+KkYnkdhwcYs2oGkvWrOZ6Ly
-	84AllIXCmXoNnNS5aqi9BynBxDOSYUn3wP6OF/1vU/VxqCSowmO9Jt2i
-X-Google-Smtp-Source: AGHT+IE27dqeJLs/Cp3P08P5M9G6h2+jsAWPfzXSgBZZcEiObAm28R4chObwG7zllMkPTMrTrMoJ2Q==
-X-Received: by 2002:a50:9982:0:b0:57a:2ccb:b3e5 with SMTP id 4fb4d7f45d1cf-57d07ec1e50mr5096867a12.42.1718982352875;
-        Fri, 21 Jun 2024 08:05:52 -0700 (PDT)
-Received: from p183 ([46.53.254.81])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3048b7f3sm1079934a12.52.2024.06.21.08.05.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 08:05:52 -0700 (PDT)
-Date: Fri, 21 Jun 2024 18:05:50 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>
-Subject: [PATCH] build-id: require program headers to be right after ELF
- header
-Message-ID: <0e13fa2e-2d1c-4dac-968e-b1a0c7a05229@p183>
+        bh=n0zXKUpFt3HIy66YqTJgW3hPCLpl7FlzWR/y3/jevlk=;
+        b=IDczxWTAOQ+OWvIQbjYXVwxUaOhqQL7S6zZXIwybOGU8cK5OdJYc0undEt9KF0m8gS
+         u+AaQuya8cW5De5vWxXAM2sTUgtACvRNSVVbNNSCn2jXBbud5J7ARJCcXpgsmKxppiHR
+         U7XFZYsC2YI86o4mZnn1nizPtuP4OViugk8uUjkI4yBHJTNjCLxeMPYkkMfLD6mk0YF0
+         FcfJ2zV7SDrSZVm0RtmLHGG+9H4fC2I631TIxgslrQoohOLI7I2B/xKTetSClKU1jZxn
+         zrfK8yveXiAv7SKRI+VOFaxpLCJrX5JDcHyDtBSyG3QVw31Feb4HmIE6TugH0xWEzWoA
+         SYnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9wZf1DGhCBWsq8JD439R+rk/N87xZQBH1EAn1srEe+WkmgZIt0C3P8Z21xzGrkW8m8EfIaiT6ihlbCy/59j3wMVtZRjaibI1tkgdr
+X-Gm-Message-State: AOJu0YxQCSABy1CSwpeMGW2ge7sj2CE1WJxzwgNm8zvhR025Ozm0ziaY
+	KGtTreBGhbZDbMZ29vXF1DosDJdcdPm6XM7apB2LVV7psZ3k7KEReMoD40klui0=
+X-Google-Smtp-Source: AGHT+IEfL7G9aHS6bfUhymdTWrbANj27kvbkwNl8qgMD31/YD89xOjyVWmB/WolaGLt2Pb5aDV58fg==
+X-Received: by 2002:a05:6512:5cf:b0:52c:8984:6b63 with SMTP id 2adb3069b0e04-52ccaa33da4mr5246271e87.26.1718982354242;
+        Fri, 21 Jun 2024 08:05:54 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248192243esm31996695e9.44.2024.06.21.08.05.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 08:05:53 -0700 (PDT)
+Message-ID: <01e915ed-b190-42fd-9fb7-4e96c673c5d3@linaro.org>
+Date: Fri, 21 Jun 2024 16:05:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 7/8] media: qcom: camss: Decompose register and link
+ operations
+To: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, andersson@kernel.org, konrad.dybcio@linaro.org,
+ mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com,
+ hverkuil-cisco@xs4all.nl, quic_hariramp@quicinc.com
+References: <20240522154659.510-1-quic_grosikop@quicinc.com>
+ <20240522154659.510-8-quic_grosikop@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240522154659.510-8-quic_grosikop@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-ELF spec doesn't require program header to be placed right after
-ELF header, but build-id code very much assumes such placement:
+On 22/05/2024 16:46, Gjorgji Rosikopulos wrote:
+> From: Atanas Filipov <quic_afilipov@quicinc.com>
+> 
+> Split link and register operations.
+> Add dedicated link callback according to SoC identifier.
+> 
+> Signed-off-by: Atanas Filipov <quic_afilipov@quicinc.com>
+> Signed-off-by: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # sc8280xp/sm8250/sdm845/apq8016
+> ---
 
-	find_get_page(vma->vm_file->f_mapping, 0);
+Acked-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-and later check against PAGE_SIZE.
-
-Returns errors for now until someone rewrites build-id parser
-to be more correct.
-
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- lib/buildid.c |    6 ++++++
- 1 file changed, 6 insertions(+)
-
---- a/lib/buildid.c
-+++ b/lib/buildid.c
-@@ -73,6 +73,9 @@ static int get_build_id_32(const void *page_addr, unsigned char *build_id,
- 	Elf32_Phdr *phdr;
- 	int i;
- 
-+	if (ehdr->e_phoff != sizeof(Elf32_Ehdr)) {
-+		return -EINVAL;
-+	}
- 	/* only supports phdr that fits in one page */
- 	if (ehdr->e_phnum >
- 	    (PAGE_SIZE - sizeof(Elf32_Ehdr)) / sizeof(Elf32_Phdr))
-@@ -98,6 +101,9 @@ static int get_build_id_64(const void *page_addr, unsigned char *build_id,
- 	Elf64_Phdr *phdr;
- 	int i;
- 
-+	if (ehdr->e_phoff != sizeof(Elf64_Ehdr)) {
-+		return -EINVAL;
-+	}
- 	/* only supports phdr that fits in one page */
- 	if (ehdr->e_phnum >
- 	    (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
 
