@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-224063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FBF911CC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:30:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E85911CC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C9D7B2218D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2AE1F22D79
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1223116D303;
-	Fri, 21 Jun 2024 07:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4B716D33F;
+	Fri, 21 Jun 2024 07:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kC84yBZi"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="edU3hlkR"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C255616B748
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E91316B75B
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718954996; cv=none; b=IDRAX8pzo2e9u2ymyKcoVHfcuMLLGtfm6mxh5hwpGjO8TOVf8EYz/uuhGtDWZ4j6dKZmGbTYUeU0ddsNvSIP2B9HHB5f939fyY6FWATmk7Q/VoJF/dOuOPf23jIKxBcphsUHQwBcgBTGtTYycqJ0WeAc9d4hNzxisME56PiCh3o=
+	t=1718954999; cv=none; b=VHYfqiOgrslxJqtmOSDMr9AxJ+EL6GTI0+8LbMNp4b7Wk3eIY4WLRMT825RmCWI5atX4JLzhpI32zdSQB4dy/y+e490DbxdtqxxcTeVuz8jZcUraCJvxIubj7p4S+Y2cVx8bhnBBa6DUmw3n/F9EhlSAhsnhDic4FkAflnDBnfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718954996; c=relaxed/simple;
-	bh=FZc60W1D4prLgx9i7Jc3Zhf9Nh67kWwv4Lplh2hE0Vk=;
+	s=arc-20240116; t=1718954999; c=relaxed/simple;
+	bh=YjU2g1+wutM3QV7zQCcyIGcj/Ah5HqR145W3+dp7nGE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d4YazM80S7m0zYmEajlcfQ6LgrlmMdlDYCE9Hi9u588cp6LdfoPrdvbWNY4bEen/T2fW+9naH9ARyH0P6PzGG8D0G5Gj3BZ0BpIgu2qWu9ZgnI+Acpk8SCOUFSlU+J9iIFI6ZcyCZ2ponWnlQO0hpaCX6m6vkqpXp8hOIyPpHc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kC84yBZi; arc=none smtp.client-ip=209.85.167.181
+	 MIME-Version; b=O1/2Ea3DrPJ6iqtasiXwekOo9JTTL5AXR8u1b1daS9iZxn/IB/sl3VwD2265330kq+ZSS6rQxHr15qSIEJoZqhgdNRLKXpopVcnfFzAUyopW312v3lYzK45D4Ce3PlU7IiC/mrTPW9kVKOt4LhwYrMqr4viqzvNYINQa6yTanE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=edU3hlkR; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d4430b8591so892664b6e.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 00:29:54 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-705fff50de2so1200316b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 00:29:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718954993; x=1719559793; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718954997; x=1719559797; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3DA4WJliprSRDwpu0SuE5J5N4pXsY0CSpLvln4uW1pg=;
-        b=kC84yBZi3BL5SmayDPIADrSROJs3tTshvaRfVTTfLHZZPblWNrPPVSxhpSt47Gp94P
-         MksOQo7FP4vMOtAfFTKs1Np5k/5re3Tc0vSLlH7Z7aC2H0g1ec5v8YGe8n5KZGenqtz+
-         UDCmJBmHtUPpum6dJuaZOPHRUcqmimX13np4dOH/hvE7PIPS54mRP2SCoaWZqHTeC/IQ
-         xtkaVW65V0rj/3R6TakKJO2mJWs4a8DxdC7U9kC1IJ4Hue+tmfhvk6Lvwk9oL5NW+Cmv
-         nhJ/utnKXxbiGGGsxUtuQ8ip/ffs+GbQQvZVWwmzYt03gobz0VmXs/Jm9pAv2C6MRTlb
-         RNJw==
+        bh=NeZC5A5/V+xzjKS1B6H8sOnZGAk45J9pzGB5ap2eybo=;
+        b=edU3hlkRNJ7EquW52ZmX92KnrRKIVc8UwJXloElbUi8sh0vu1eC1NeWy2T8pp+BtkQ
+         3kPZXmjnp+EL/er4m1xtlGS3VKNN6aL80LzAtDYXkJK7vUT63jyKC5Asa/FHAe8BWK2j
+         YdBUjr+Xp0Dl+IXKHbfvsS0izeNNZy/HCBfdys9QN2xI3YT+rmC2jiu+sxrftbyCVuIN
+         MN1c7UAMDs+ryaK9HzaPtr82JLWONIkXKRb4PQf7wXU2GT8jzjnOUjqQM47ykbzjCJzO
+         tF9LZS7W48gAcEn/h96DQBRSK8vEaVOON9RYZIlJg8TImuCzFChU7nrBP+cDd5zRxrQs
+         atSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718954993; x=1719559793;
+        d=1e100.net; s=20230601; t=1718954997; x=1719559797;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3DA4WJliprSRDwpu0SuE5J5N4pXsY0CSpLvln4uW1pg=;
-        b=plFtzYASsQftJqa6cu1pjT//Hl82eE0FamGDMnJzURPonONnrio0Hpfl/2XkUU0WPm
-         hp+p9Y+AEwry/Kh2Bi6cgeZBqrTz7RdkNsTzi2R99iP3PpUPzXZYIdXJS7PFGPppi5Pf
-         65IEPQy8AH0dX3kACvg9G3LM1cG7OoVTVzrvXfJZzXpLVYbUpeP9JTHf/wj9+yYAZJWR
-         GSkigwzPtxrBeAI3q0D0ebMTyZtLGOZ/u4qNpMIoH3/c67vY21RIlT+4gH5DPM38rAZ1
-         7z0wrNzkG3ORTecJNz3AiY0OwLg+k0EZIdv7m8C2TPqUezedTg2nJGQVVqEN6emazhjY
-         1N4g==
-X-Gm-Message-State: AOJu0YyPA8OXgbZjsK36ZeVv+mHKTas6+/KAqporaiVWfReaw3510K8m
-	gxaVMYfO9hsXSHKgGLcFOQ4Q7kHKruGvyjFWjB9/lS3qNSKdoynMws8dhA==
-X-Google-Smtp-Source: AGHT+IEc+rVG2JNPVSkQ2x7EL2wuL8Atz66faM4+WF1ldSAzcZ5e2TaCJ1vindP1viHUywzsKT4AJw==
-X-Received: by 2002:a05:6808:13d6:b0:3d2:1c91:86e8 with SMTP id 5614622812f47-3d51baea0c7mr8575872b6e.45.1718954993173;
-        Fri, 21 Jun 2024 00:29:53 -0700 (PDT)
-Received: from localhost ([198.11.176.14])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706511945f8sm765540b3a.69.2024.06.21.00.29.52
+        bh=NeZC5A5/V+xzjKS1B6H8sOnZGAk45J9pzGB5ap2eybo=;
+        b=cnFOc21tVz6MzrVVsX6uEO0/Rc8iS2Py+WO9cwY7xPL0DEdaLQ1qC5ZhAIL9VtjqhU
+         HzF284MffZibC87ug/uDhlPrANrk854FiVMtjEwgiOVWhSu/T4xuxq0Zk7URudMw5hpa
+         t/9MmZB6sj7susHMA2LxXKy4wPgGLN7AtDEFXOmJttUcnE/BTzISWpNbwi1YS9+tC064
+         qmXmHOuuUPm7Sja9OQze1hH2FhKjoTtTd0OhSjUSvSfmSqd3hITO+944zoyS0byqkIp3
+         rGsxqMdfTDCeDGe8biBil6fNfwU6Wkov47PGetFXeu0YFlpRdCve2VsohbOshahHh331
+         aS6Q==
+X-Gm-Message-State: AOJu0YyjSJrxdhb67dzZQdAhzIcC7k2c/4bWU0QIqSYeoooAPToGv3NP
+	DkEegvxboBs+zmyAW7jY38JQJt0xCdk/9/fgeHgJbtIgOyCbSrv3exX7ew==
+X-Google-Smtp-Source: AGHT+IEEm0KzKTm3QDcstJ8dzqqFHta5cOn9wM2z2Po/BXblNDT78pefyekYmDwGwgapjoYIbGUoQg==
+X-Received: by 2002:a62:e309:0:b0:706:1ff1:c5ff with SMTP id d2e1a72fcca58-70628f770f3mr10844624b3a.1.1718954996685;
+        Fri, 21 Jun 2024 00:29:56 -0700 (PDT)
+Received: from localhost ([198.11.178.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512cb0d8sm757616b3a.167.2024.06.21.00.29.55
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Jun 2024 00:29:52 -0700 (PDT)
+        Fri, 21 Jun 2024 00:29:56 -0700 (PDT)
 From: Lai Jiangshan <jiangshanlai@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
 	Valentin Schneider <vschneid@redhat.com>,
 	Tejun Heo <tj@kernel.org>,
 	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH 3/4] workqueue: Detach workers directly in idle_cull_fn()
-Date: Fri, 21 Jun 2024 15:32:24 +0800
-Message-Id: <20240621073225.3600-4-jiangshanlai@gmail.com>
+Subject: [PATCH 4/4] workqueue: Remove useless pool->dying_workers
+Date: Fri, 21 Jun 2024 15:32:25 +0800
+Message-Id: <20240621073225.3600-5-jiangshanlai@gmail.com>
 X-Mailer: git-send-email 2.19.1.6.gb485710b
 In-Reply-To: <20240621073225.3600-1-jiangshanlai@gmail.com>
 References: <20240621073225.3600-1-jiangshanlai@gmail.com>
@@ -87,121 +87,49 @@ Content-Transfer-Encoding: 8bit
 
 From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
 
-The code to kick off the destruction of workers is now in a process
-context (idle_cull_fn()), and the detaching of a worker is not required
-to be inside the worker thread now, so just do the detaching directly
-in idle_cull_fn().
+A dying worker is first moved from pool->workers to pool->dying_workers
+in set_worker_dying() and removed from pool->dying_workers in
+detach_dying_workers().  The whole procedure is in the some lock context
+of wq_pool_attach_mutex.
 
-wake_dying_workers() is renamed to detach_dying_workers() and the unneeded
-wakeup in wake_dying_workers() is also removed.
+So pool->dying_workers is useless, just remove it and keep the dying
+worker in pool->workers after set_worker_dying() and remove it in
+detach_dying_workers() with wq_pool_attach_mutex held.
 
 Cc: Valentin Schneider <vschneid@redhat.com>
 Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
 ---
- kernel/workqueue.c | 45 +++++++++++++++++++--------------------------
- 1 file changed, 19 insertions(+), 26 deletions(-)
+ kernel/workqueue.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 93b87ca63a7e..e9ca42ef425a 100644
+index e9ca42ef425a..dc9acf8ecd0c 100644
 --- a/kernel/workqueue.c
 +++ b/kernel/workqueue.c
-@@ -2695,6 +2695,16 @@ static void unbind_worker(struct worker *worker)
- 		WARN_ON_ONCE(set_cpus_allowed_ptr(worker->task, cpu_possible_mask) < 0);
- }
+@@ -215,7 +215,6 @@ struct worker_pool {
  
-+
-+static void detach_worker(struct worker *worker)
-+{
-+	lockdep_assert_held(&wq_pool_attach_mutex);
-+
-+	unbind_worker(worker);
-+	list_del(&worker->node);
-+	worker->pool = NULL;
-+}
-+
- /**
-  * worker_detach_from_pool() - detach a worker from its pool
-  * @worker: worker which is attached to its pool
-@@ -2711,11 +2721,7 @@ static void worker_detach_from_pool(struct worker *worker)
- 	WARN_ON_ONCE(pool->flags & POOL_BH);
+ 	struct worker		*manager;	/* L: purely informational */
+ 	struct list_head	workers;	/* A: attached workers */
+-	struct list_head        dying_workers;  /* A: workers about to die */
  
- 	mutex_lock(&wq_pool_attach_mutex);
--
--	unbind_worker(worker);
--	list_del(&worker->node);
--	worker->pool = NULL;
--
-+	detach_worker(worker);
- 	mutex_unlock(&wq_pool_attach_mutex);
+ 	struct ida		worker_ida;	/* worker IDs for task name */
  
- 	/* clear leftover flags without pool->lock after it is detached */
-@@ -2807,24 +2813,12 @@ static struct worker *create_worker(struct worker_pool *pool)
- 	return NULL;
- }
+@@ -2862,7 +2861,6 @@ static void set_worker_dying(struct worker *worker, struct list_head *list)
+ 	worker->flags |= WORKER_DIE;
  
--static void wake_dying_workers(struct list_head *cull_list)
-+static void detach_dying_workers(struct list_head *cull_list)
- {
- 	struct worker *worker;
+ 	list_move(&worker->entry, list);
+-	list_move(&worker->node, &pool->dying_workers);
  
--	list_for_each_entry(worker, cull_list, entry) {
--		unbind_worker(worker);
--		/*
--		 * If the worker was somehow already running, then it had to be
--		 * in pool->idle_list when set_worker_dying() happened or we
--		 * wouldn't have gotten here.
--		 *
--		 * Thus, the worker must either have observed the WORKER_DIE
--		 * flag, or have set its state to TASK_IDLE. Either way, the
--		 * below will be observed by the worker and is safe to do
--		 * outside of pool->lock.
--		 */
--		wake_up_process(worker->task);
--	}
-+	list_for_each_entry(worker, cull_list, entry)
-+		detach_worker(worker);
- }
+ 	/* get an extra task struct reference for later kthread_stop_put() */
+ 	get_task_struct(worker->task);
+@@ -4721,7 +4719,6 @@ static int init_worker_pool(struct worker_pool *pool)
+ 	timer_setup(&pool->mayday_timer, pool_mayday_timeout, 0);
  
- static void reap_dying_workers(struct list_head *cull_list)
-@@ -2930,9 +2924,9 @@ static void idle_cull_fn(struct work_struct *work)
+ 	INIT_LIST_HEAD(&pool->workers);
+-	INIT_LIST_HEAD(&pool->dying_workers);
  
- 	/*
- 	 * Grabbing wq_pool_attach_mutex here ensures an already-running worker
--	 * cannot proceed beyong worker_detach_from_pool() in its self-destruct
--	 * path. This is required as a previously-preempted worker could run after
--	 * set_worker_dying() has happened but before wake_dying_workers() did.
-+	 * cannot proceed beyong set_pf_worker() in its self-destruct path.
-+	 * This is required as a previously-preempted worker could run after
-+	 * set_worker_dying() has happened but before detach_dying_workers() did.
- 	 */
- 	mutex_lock(&wq_pool_attach_mutex);
- 	raw_spin_lock_irq(&pool->lock);
-@@ -2953,7 +2947,7 @@ static void idle_cull_fn(struct work_struct *work)
- 	}
- 
- 	raw_spin_unlock_irq(&pool->lock);
--	wake_dying_workers(&cull_list);
-+	detach_dying_workers(&cull_list);
- 	mutex_unlock(&wq_pool_attach_mutex);
- 
- 	reap_dying_workers(&cull_list);
-@@ -3336,7 +3330,6 @@ static int worker_thread(void *__worker)
- 
- 		set_task_comm(worker->task, "kworker/dying");
- 		ida_free(&pool->worker_ida, worker->id);
--		worker_detach_from_pool(worker);
- 		WARN_ON_ONCE(!list_empty(&worker->entry));
- 		return 0;
- 	}
-@@ -4921,7 +4914,7 @@ static void put_unbound_pool(struct worker_pool *pool)
- 	WARN_ON(pool->nr_workers || pool->nr_idle);
- 	raw_spin_unlock_irq(&pool->lock);
- 
--	wake_dying_workers(&cull_list);
-+	detach_dying_workers(&cull_list);
- 
- 	mutex_unlock(&wq_pool_attach_mutex);
- 
+ 	ida_init(&pool->worker_ida);
+ 	INIT_HLIST_NODE(&pool->hash_node);
 -- 
 2.19.1.6.gb485710b
 
