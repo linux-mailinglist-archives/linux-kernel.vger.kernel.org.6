@@ -1,151 +1,136 @@
-Return-Path: <linux-kernel+bounces-225444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB0D913077
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:42:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F1C91306F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA497288B12
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:42:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83338B214BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A874F17DE05;
-	Fri, 21 Jun 2024 22:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614E617C7BC;
+	Fri, 21 Jun 2024 22:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="luAahNR6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWTKVkbx"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFFA17C9FB
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCA216F8EB;
+	Fri, 21 Jun 2024 22:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719009564; cv=none; b=HLC2fPXM0h+JhAUqCa3BH5qqBvtIPOfGQbRCRbWq4YxzAvIOvimZNfBHokT6fftRPv17Oo0KqF72oripyCit9GqxhElFwQUYuDJDB3FwZMlRYW0u4EFqLr/vuwFcp9JbX/6AEpIwkk5FyIkeNtCLdnaUBR72OIQxlsXsKPqkH70=
+	t=1719009558; cv=none; b=bulKo37lv4dEtdUAAC053c/xeC+1jl0AT+jw9hAdTcw3XJMOqTQNrINLgHDY8QW2gyPnubM3ot4pYU2yI+glznXTs82J6syljm5EwvDus0eib7lJwyYwn+SLLU9koDL6aPLAb4iiZm2cjr1VkiEYvoFVUp8+CuohH9FOkLs8ruo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719009564; c=relaxed/simple;
-	bh=2l7f6lDOELlYeE6YGD7wOuDWjXUX38xsa3dzLbcLFzk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lWl8mAprHIDhwRkvgmlE6uM0OukbSk3/2s1xIRqikX4ILImUibQCgZgpCEmugID+6Uzer+cqRYe8CySQAbZiYFNWKgCAPOaDtyUUNGtoeaj9W843nAxG/Ucn945KlaKW1pUZIbEZibu0Aw/m95xA9OYP24qhaz+8AbE1JtPsLXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=luAahNR6; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719009562; x=1750545562;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2l7f6lDOELlYeE6YGD7wOuDWjXUX38xsa3dzLbcLFzk=;
-  b=luAahNR6wIXNA33AL3QUpcE+i/tt/QWxC7nZQxhW4ac9zJpIBtkDDWIe
-   Z8eNa44YYnxTzgAZytq2wPRhv2pDLGgB7n3DsKuJbhhu2JY9WfyDOpHm0
-   D+LzTm856M9cHxGlqIg2zIXZUYLPjkB0KhUXUlNTKtHObVi7FdO4ceXOw
-   BFMMp5IxOAKRsRv5LhPTCzm7B/UGnqduGxrAZN/G5dprclsP9egOAgzHj
-   9kxLE6/1J0WL8pyaSr1CkB6z+SMp/p/pABT30AaEzQojjjrXZzwsJxAyI
-   WoX97kLaFxm8pa5NAqgQ7tlnambrE7WGzT5Mx2Ci21ArlrEcmU2Evpcqh
-   A==;
-X-CSE-ConnectionGUID: kBipKT/6TBSRUenzHmooiw==
-X-CSE-MsgGUID: 5ERYXN7yQzasWoWc2z0GGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="26691376"
-X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
-   d="scan'208";a="26691376"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 15:39:09 -0700
-X-CSE-ConnectionGUID: PaRqZGfbT0yLJhHV7AJ7hg==
-X-CSE-MsgGUID: +ueKP6e6Q5iQ4+/I4tNCuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,256,1712646000"; 
-   d="scan'208";a="73935696"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 15:39:09 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v21 18/18] x86/resctrl: Update documentation with Sub-NUMA cluster changes
-Date: Fri, 21 Jun 2024 15:38:59 -0700
-Message-ID: <20240621223859.43471-19-tony.luck@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240621223859.43471-1-tony.luck@intel.com>
-References: <20240621223859.43471-1-tony.luck@intel.com>
+	s=arc-20240116; t=1719009558; c=relaxed/simple;
+	bh=3FslPl0z1lsr0r15RJMn+3ebQ3RZ8TNFsumiLRrjTNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iORWGRS1U1zYnn08MEJCyuVrY2nZu72l/nMTm+PPSTPo03rbRrK6vlPSwYVo5VlH3ewEzlXLFfnzq/TBSbnFQC3P94kNsr3XeHCuiRjwQLr9MKjyRtBlBK+yzsIylYXqPfSAACs+vxpPTGCy1dDGhvrKdJPQGg3XDUwsOYwouII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWTKVkbx; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f9b52ef481so22441495ad.1;
+        Fri, 21 Jun 2024 15:39:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719009555; x=1719614355; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=84xlG0RFkWqZzTZs4oPKt0M6Xd1r+ZZ1W+UC4V77keU=;
+        b=dWTKVkbxRmdRez5/rKJnxViUcocG3KyIey33KIyDXRRUKpNPpYELDAMO8auPWFPMPV
+         uJYgKkwQNYuiNQLFVNxRON+UJU6fZsn28C5cYPD4omPmk5G1pwm8xcLmjTYQOC5ejpuP
+         q1nVe8WRT7FLAvVLIa4ath51YYQeOg78bxWXWUyIPe7rldA5BkRc1x/SLMSw473p5doS
+         qh8dZs2gZJBEp/VHweHhOY9L/haREIMdOhydd2SiqyttJOrtQXNbqXf7jefBXrhpVT7+
+         Kro4Dqdrso3/Q9l5q57IR2tHzLja6dCg7ajuH5oUhB6YvtpkIn/IyGdTOAr4zIDX7a0d
+         n5OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719009555; x=1719614355;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=84xlG0RFkWqZzTZs4oPKt0M6Xd1r+ZZ1W+UC4V77keU=;
+        b=uno5B2bVh9r+MiYrepceYwsuJ2mxzzpovK6Tw0r4h6ijxQJSpYd6bkhma6NtzDcLCK
+         JSOrQisF4UAi4ugi+ch5MuVvigvnF7UX/nI27VeJCqyxrnlKPTNc+Yf+hvtgptIP1CmR
+         Qr3RnFIylDQeUaSQjkKz2JD3T2nzQobNtV31nJzPoSUVkFTFlja3/n8TPTPAX3f77cZ1
+         VgSsToPQfjT1A4+9t4LKofpJGoKOg/sp7Ezd6PHYu0+Fo2zBEQRXjvxq9GBIRneh9BgV
+         ftztSyKmk6X4KNJYiVtELg0exh/ICa8PloJDw9jJPT5o4K2j9AGaDWmnhHG+aUJFu6CG
+         mKCA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/7rtbj0hOjsZGdt8hT7Tg1h6X+pUwsUdrj/ZPkqMYs2C0IxGQjYET54Mf/DP/qHkFLpewS3ZlXKTHxhmV9GYWB8AbGHPx8TiBJEyl
+X-Gm-Message-State: AOJu0YylfhJ94JPyge/hQyWWckopdz0fbawuSx0tb9uHS5e7m8xTzYFB
+	ya4N+HEfXP0bjNvG/ANtps0PRjLRYpyHm+JSSqZ/1S71BLOXXgWt
+X-Google-Smtp-Source: AGHT+IEI8ZlgZkwjeYIY3LNhn9nbBGUfVLjL/V9WwJfcDbpobLN6+2WWlAKFXR4tNvSUqayxG3FaWg==
+X-Received: by 2002:a17:902:e5ca:b0:1f6:a606:539e with SMTP id d9443c01a7336-1f9aa471fefmr109125935ad.61.1719009555258;
+        Fri, 21 Jun 2024 15:39:15 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbb302csm19144595ad.252.2024.06.21.15.39.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 15:39:14 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Fri, 21 Jun 2024 12:39:13 -1000
+From: Tejun Heo <tj@kernel.org>
+To: rafael@kernel.org, viresh.kumar@linaro.org
+Cc: linux-pm@vger.kernel.org, void@manifault.com,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	mingo@redhat.com, peterz@infradead.org,
+	David Vernet <dvernet@meta.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v2 2/2] sched_ext: Add cpuperf support
+Message-ID: <ZnYBEdSE3K2ukTI2@slm.duckdns.org>
+References: <20240619031250.2936087-1-tj@kernel.org>
+ <20240619031250.2936087-3-tj@kernel.org>
+ <ZnM2ywDVRZbrN6OC@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnM2ywDVRZbrN6OC@slm.duckdns.org>
 
-With Sub-NUMA Cluster (SNC) mode enabled the scope of monitoring resources
-is per-NODE instead of per-L3 cache. Backwards compatibility is maintained
-by providing files in the mon_L3_XX directories that sum event counts
-for all SNC nodes sharing an L3 cache.
+On Wed, Jun 19, 2024 at 09:51:39AM -1000, Tejun Heo wrote:
+> sched_ext currently does not integrate with schedutil. When schedutil is the
+> governor, frequencies are left unregulated and usually get stuck close to
+> the highest performance level from running RT tasks.
+> 
+> Add CPU performance monitoring and scaling support by integrating into
+> schedutil. The following kfuncs are added:
+> 
+> - scx_bpf_cpuperf_cap(): Query the relative performance capacity of
+>   different CPUs in the system.
+> 
+> - scx_bpf_cpuperf_cur(): Query the current performance level of a CPU
+>   relative to its max performance.
+> 
+> - scx_bpf_cpuperf_set(): Set the current target performance level of a CPU.
+> 
+> This gives direct control over CPU performance setting to the BPF scheduler.
+> The only changes on the schedutil side are accounting for the utilization
+> factor from sched_ext and disabling frequency holding heuristics as it may
+> not apply well to sched_ext schedulers which may have a lot weaker
+> connection between tasks and their current / last CPU.
+> 
+> With cpuperf support added, there is no reason to block uclamp. Enable while
+> at it.
+> 
+> A toy implementation of cpuperf is added to scx_qmap as a demonstration of
+> the feature.
+> 
+> v2: Ignore cpu_util_cfs_boost() when scx_switched_all() in sugov_get_util()
+>     to avoid factoring in stale util metric. (Christian)
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reviewed-by: David Vernet <dvernet@meta.com>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Christian Loehle <christian.loehle@arm.com>
 
-New files provide per-SNC node event counts.
+Applied to sched_ext/for-6.11.
 
-Users should be aware that SNC mode also affects the amount of L3 cache
-available for allocation within each SNC node.
+Thanks.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
----
- Documentation/arch/x86/resctrl.rst | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/arch/x86/resctrl.rst
-index 627e23869bca..a824affd741d 100644
---- a/Documentation/arch/x86/resctrl.rst
-+++ b/Documentation/arch/x86/resctrl.rst
-@@ -375,6 +375,10 @@ When monitoring is enabled all MON groups will also contain:
- 	all tasks in the group. In CTRL_MON groups these files provide
- 	the sum for all tasks in the CTRL_MON group and all tasks in
- 	MON groups. Please see example section for more details on usage.
-+	On systems with Sub-NUMA Cluster (SNC) enabled there are extra
-+	directories for each node (located within the "mon_L3_XX" directory
-+	for the L3 cache they occupy). These are named "mon_sub_L3_YY"
-+	where "YY" is the node number.
- 
- "mon_hw_id":
- 	Available only with debug option. The identifier used by hardware
-@@ -484,6 +488,29 @@ if non-contiguous 1s value is supported. On a system with a 20-bit mask
- each bit represents 5% of the capacity of the cache. You could partition
- the cache into four equal parts with masks: 0x1f, 0x3e0, 0x7c00, 0xf8000.
- 
-+Notes on Sub-NUMA Cluster mode
-+==============================
-+When SNC mode is enabled, Linux may load balance tasks between Sub-NUMA
-+nodes much more readily than between regular NUMA nodes since the CPUs
-+on Sub-NUMA nodes share the same L3 cache and the system may report
-+the NUMA distance between Sub-NUMA nodes with a lower value than used
-+for regular NUMA nodes.
-+
-+The top-level monitoring files in each "mon_L3_XX" directory provide
-+the sum of data across all SNC nodes sharing an L3 cache instance.
-+Users who bind tasks to the CPUs of a specific Sub-NUMA node can read
-+the "llc_occupancy", "mbm_total_bytes", and "mbm_local_bytes" in the
-+"mon_sub_L3_YY" directories to get node local data.
-+
-+Memory bandwidth allocation is still performed at the L3 cache
-+level. I.e. throttling controls are applied to all SNC nodes.
-+
-+L3 cache allocation bitmaps also apply to all SNC nodes. But note that
-+the amount of L3 cache represented by each bit is divided by the number
-+of SNC nodes per L3 cache. E.g. with a 100MB cache on a system with 10-bit
-+allocation masks each bit normally represents 10MB. With SNC mode enabled
-+with two SNC nodes per L3 cache, each bit only represents 5MB.
-+
- Memory bandwidth Allocation and monitoring
- ==========================================
- 
 -- 
-2.45.2
-
+tejun
 
