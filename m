@@ -1,136 +1,181 @@
-Return-Path: <linux-kernel+bounces-224064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E85911CC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:31:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9510911CE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2AE1F22D79
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:31:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58146280E91
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4B716D33F;
-	Fri, 21 Jun 2024 07:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C6216B723;
+	Fri, 21 Jun 2024 07:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="edU3hlkR"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xc4JgbPl"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E91316B75B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123CF15665D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718954999; cv=none; b=VHYfqiOgrslxJqtmOSDMr9AxJ+EL6GTI0+8LbMNp4b7Wk3eIY4WLRMT825RmCWI5atX4JLzhpI32zdSQB4dy/y+e490DbxdtqxxcTeVuz8jZcUraCJvxIubj7p4S+Y2cVx8bhnBBa6DUmw3n/F9EhlSAhsnhDic4FkAflnDBnfM=
+	t=1718955167; cv=none; b=CUUa4KfikjMR1xpN5z/HMB/0olk6WS4fYz0Oy+Qakn/EDy2Rz7hmo9fSvFWxZQs71mBHpemO4hl9wLaY6Rgi5P+srcd3twkZczeXD74PfiXVcNasOEVvwuUjMsyVbhtL0xtBpQ4wiRNj1k98o5ixv081MTwsL8Wy5mvdJ65Oez8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718954999; c=relaxed/simple;
-	bh=YjU2g1+wutM3QV7zQCcyIGcj/Ah5HqR145W3+dp7nGE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=O1/2Ea3DrPJ6iqtasiXwekOo9JTTL5AXR8u1b1daS9iZxn/IB/sl3VwD2265330kq+ZSS6rQxHr15qSIEJoZqhgdNRLKXpopVcnfFzAUyopW312v3lYzK45D4Ce3PlU7IiC/mrTPW9kVKOt4LhwYrMqr4viqzvNYINQa6yTanE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=edU3hlkR; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-705fff50de2so1200316b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 00:29:57 -0700 (PDT)
+	s=arc-20240116; t=1718955167; c=relaxed/simple;
+	bh=mAkyVAfjwU9JX2bFu681SWPgxd7Q8ZRlIEpIvbijX04=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pskw5DJ+ZaMbSnHbjiztbycIiJ2c0c1ZLPJ2Jmgpe9/73WGR8LwLuaDdXqaSwjXb/0qjjbeZHAQU9sCXUIBbcDvKFfi3SPGbVoRtDHhRrKANzdntY83vACm5/+3FWSjfFvDqAqNkVzeR0KHzMkgIkans7rlzoMuWZqRLlIh5nFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xc4JgbPl; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so1987592a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 00:32:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718954997; x=1719559797; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NeZC5A5/V+xzjKS1B6H8sOnZGAk45J9pzGB5ap2eybo=;
-        b=edU3hlkRNJ7EquW52ZmX92KnrRKIVc8UwJXloElbUi8sh0vu1eC1NeWy2T8pp+BtkQ
-         3kPZXmjnp+EL/er4m1xtlGS3VKNN6aL80LzAtDYXkJK7vUT63jyKC5Asa/FHAe8BWK2j
-         YdBUjr+Xp0Dl+IXKHbfvsS0izeNNZy/HCBfdys9QN2xI3YT+rmC2jiu+sxrftbyCVuIN
-         MN1c7UAMDs+ryaK9HzaPtr82JLWONIkXKRb4PQf7wXU2GT8jzjnOUjqQM47ykbzjCJzO
-         tF9LZS7W48gAcEn/h96DQBRSK8vEaVOON9RYZIlJg8TImuCzFChU7nrBP+cDd5zRxrQs
-         atSQ==
+        d=google.com; s=20230601; t=1718955164; x=1719559964; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e1fAFm+e+fwl4p3avvK+TEsJDfR37gnsqnlBJ9746Co=;
+        b=Xc4JgbPl3y5oGzKX12XBWBud6X8fJommiMj9JlNe6V7f7reZOtXM4zzQaV6k4hP94k
+         RoJ7iptEF7kDd7yloBtHNpu9PfzFQeB9QUXquUg+oi29Sj+MjT0H9ILMjTMEK8jmBRzQ
+         QQes7Qfl1sDrqJqvZtRHVlM8iPrurpanmdb5eIp5/KBtNDo4HkTRAYsKU1EUq+tpvjj9
+         C7TtVhnjzMPVbtalvhKjDI+mZJYel+9CqqCMrRMltlAsbEn8+lwDdkQN623UrIT1PZPg
+         of9wFVF70XA+5pSt9pxpnrXaCn/u88mIj8Cg9Qv21gGal4xm39hpc7Rjto/pNv7KvAqA
+         A73g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718954997; x=1719559797;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NeZC5A5/V+xzjKS1B6H8sOnZGAk45J9pzGB5ap2eybo=;
-        b=cnFOc21tVz6MzrVVsX6uEO0/Rc8iS2Py+WO9cwY7xPL0DEdaLQ1qC5ZhAIL9VtjqhU
-         HzF284MffZibC87ug/uDhlPrANrk854FiVMtjEwgiOVWhSu/T4xuxq0Zk7URudMw5hpa
-         t/9MmZB6sj7susHMA2LxXKy4wPgGLN7AtDEFXOmJttUcnE/BTzISWpNbwi1YS9+tC064
-         qmXmHOuuUPm7Sja9OQze1hH2FhKjoTtTd0OhSjUSvSfmSqd3hITO+944zoyS0byqkIp3
-         rGsxqMdfTDCeDGe8biBil6fNfwU6Wkov47PGetFXeu0YFlpRdCve2VsohbOshahHh331
-         aS6Q==
-X-Gm-Message-State: AOJu0YyjSJrxdhb67dzZQdAhzIcC7k2c/4bWU0QIqSYeoooAPToGv3NP
-	DkEegvxboBs+zmyAW7jY38JQJt0xCdk/9/fgeHgJbtIgOyCbSrv3exX7ew==
-X-Google-Smtp-Source: AGHT+IEEm0KzKTm3QDcstJ8dzqqFHta5cOn9wM2z2Po/BXblNDT78pefyekYmDwGwgapjoYIbGUoQg==
-X-Received: by 2002:a62:e309:0:b0:706:1ff1:c5ff with SMTP id d2e1a72fcca58-70628f770f3mr10844624b3a.1.1718954996685;
-        Fri, 21 Jun 2024 00:29:56 -0700 (PDT)
-Received: from localhost ([198.11.178.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512cb0d8sm757616b3a.167.2024.06.21.00.29.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Jun 2024 00:29:56 -0700 (PDT)
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH 4/4] workqueue: Remove useless pool->dying_workers
-Date: Fri, 21 Jun 2024 15:32:25 +0800
-Message-Id: <20240621073225.3600-5-jiangshanlai@gmail.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
-In-Reply-To: <20240621073225.3600-1-jiangshanlai@gmail.com>
-References: <20240621073225.3600-1-jiangshanlai@gmail.com>
+        d=1e100.net; s=20230601; t=1718955164; x=1719559964;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e1fAFm+e+fwl4p3avvK+TEsJDfR37gnsqnlBJ9746Co=;
+        b=N9hI2q5NKFzMwDPwDPYBPHXln7WgWmwSIzU0K/nkkf4Mh7C4HGRH3yI6zbYQ5PxWnE
+         NWZjDkTjz0rItj6I+9eWTFh5oGiUbi8geeDgoGJpsj63/WbbuOUF0guZWi6aHKlU4lrH
+         jYhJa743nINWX19u+IO67ojFo9fTdDeUcM51hm4CS2OSs3NCa98G9JPJe5yQb+dklRVT
+         mqs/f8qUOPVoMgeallufJFBf/e9+kcyKKTjilixdAUWLVTtaaMHXf18LLKFqOgeKhBzH
+         XukKmaJtGx2r8WcgzHu51ov3mwJL3uCBD9UnV2waLeadKo69TRpo7rVohZ08waklZILd
+         G2ug==
+X-Forwarded-Encrypted: i=1; AJvYcCWUpI+fGAhSi7VHelzxVxwBfdz20ontZGg5C8leYHB7O/i9O2hLjUpAjoZ+BV8pXAcnoseVXCq6EhzQvo/3fKgoejad4i11Pk7dhsk4
+X-Gm-Message-State: AOJu0Yzn5kkuVUKh/Rafv4A3/kR9Adkgz37z1xVhqzcJGm6WFl0S9mtW
+	EmE9nUIrAeBDO09NCY88Wz3N21S2BetYMRcyC5xoGspEexq+lLFkXVfM1rtx/Q==
+X-Google-Smtp-Source: AGHT+IGQUGmgU0uXOViTqXbPvvn37qtzDP+kkZ4bvmoG0/DYSamWSm6G++bLxYcqakW19CJtXkx5Qw==
+X-Received: by 2002:aa7:d153:0:b0:57d:7ef:573b with SMTP id 4fb4d7f45d1cf-57d07ef576amr5115522a12.38.1718955164162;
+        Fri, 21 Jun 2024 00:32:44 -0700 (PDT)
+Received: from google.com (118.240.90.34.bc.googleusercontent.com. [34.90.240.118])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303d7b10sm550126a12.15.2024.06.21.00.32.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 00:32:43 -0700 (PDT)
+Date: Fri, 21 Jun 2024 07:32:40 +0000
+From: Quentin Perret <qperret@google.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Elliot Berman <quic_eberman@quicinc.com>,
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	maz@kernel.org, kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, pbonzini@redhat.com
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+Message-ID: <ZnUsmFFslBWZxGIq@google.com>
+References: <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+ <20240619115135.GE2494510@nvidia.com>
+ <ZnOsAEV3GycCcqSX@infradead.org>
+ <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
+ <20240620135540.GG2494510@nvidia.com>
+ <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
+ <20240620142956.GI2494510@nvidia.com>
+ <20240620140516768-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <20240620231814.GO2494510@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620231814.GO2494510@nvidia.com>
 
-From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+On Thursday 20 Jun 2024 at 20:18:14 (-0300), Jason Gunthorpe wrote:
+> On Thu, Jun 20, 2024 at 03:47:23PM -0700, Elliot Berman wrote:
+> > On Thu, Jun 20, 2024 at 11:29:56AM -0300, Jason Gunthorpe wrote:
+> > > On Thu, Jun 20, 2024 at 04:01:08PM +0200, David Hildenbrand wrote:
+> > > > Regarding huge pages: assume the huge page (e.g., 1 GiB hugetlb) is shared,
+> > > > now the VM requests to make one subpage private. 
+> > > 
+> > > I think the general CC model has the shared/private setup earlier on
+> > > the VM lifecycle with large runs of contiguous pages. It would only
+> > > become a problem if you intend to to high rate fine granual
+> > > shared/private switching. Which is why I am asking what the actual
+> > > "why" is here.
+> > > 
+> > 
+> > I'd let Fuad comment if he's aware of any specific/concrete Anrdoid
+> > usecases about converting between shared and private. One usecase I can
+> > think about is host providing large multimedia blobs (e.g. video) to the
+> > guest. Rather than using swiotlb, the CC guest can share pages back with
+> > the host so host can copy the blob in, possibly using H/W accel. I
+> > mention this example because we may not need to support shared/private
+> > conversions at granularity finer than huge pages. 
+> 
+> I suspect the more useful thing would be to be able to allocate actual
+> shared memory and use that to shuffle data without a copy, setup much
+> less frequently. Ie you could allocate a large shared buffer for video
+> sharing and stream the video frames through that memory without copy.
+> 
+> This is slightly different from converting arbitary memory in-place
+> into shared memory. The VM may be able to do a better job at
+> clustering the shared memory allocation requests, ie locate them all
+> within a 1GB region to further optimize the host side.
+> 
+> > Jason, do you have scenario in mind? I couldn't tell if we now had a
+> > usecase or are brainstorming a solution to have a solution.
+> 
+> No, I'm interested in what pKVM is doing that needs this to be so much
+> different than the CC case..
 
-A dying worker is first moved from pool->workers to pool->dying_workers
-in set_worker_dying() and removed from pool->dying_workers in
-detach_dying_workers().  The whole procedure is in the some lock context
-of wq_pool_attach_mutex.
+The underlying technology for implementing CC is obviously very
+different (MMU-based for pKVM, encryption-based for the others + some
+extra bits but let's keep it simple). In-place conversion is inherently
+painful with encryption-based schemes, so it's not a surprise the
+approach taken in these cases is built around destructive conversions as
+a core construct. But as Elliot highlighted, the MMU-based approach
+allows for pretty flexible and efficient zero-copy, which we're not
+ready to sacrifice purely to shoehorn pKVM into a model that was
+designed for a technology that has very different set of constraints.
+A private->shared conversion in the pKVM case is nothing more than
+setting a PTE in the recipient's stage-2 page-table.
 
-So pool->dying_workers is useless, just remove it and keep the dying
-worker in pool->workers after set_worker_dying() and remove it in
-detach_dying_workers() with wq_pool_attach_mutex held.
+I'm not at all against starting with something simple and bouncing via
+swiotlb, that is totally fine. What is _not_ fine however would be to
+bake into the userspace API that conversions are not in-place and
+destructive (which in my mind equates to 'you can't mmap guest_memfd
+pages'). But I think that isn't really a point of disagreement these
+days, so hopefully we're aligned.
 
-Cc: Valentin Schneider <vschneid@redhat.com>
-Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
----
- kernel/workqueue.c | 3 ---
- 1 file changed, 3 deletions(-)
+And to clarify some things I've also read in the thread, pKVM can
+handle the vast majority of faults caused by accesses to protected
+memory just fine. Userspace accesses protected guest memory? Fine,
+we'll SEGV the userspace process. The kernel accesses via uaccess
+macros? Also fine, we'll fail the syscall (or whatever it is we're
+doing) cleanly -- the whole extable machinery works OK, which also
+means that things like load_unaligned_zeropad() keep working as-is.
+The only thing pKVM does is re-inject the fault back into the kernel
+with some extra syndrome information it can figure out what to do by
+itself.
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index e9ca42ef425a..dc9acf8ecd0c 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -215,7 +215,6 @@ struct worker_pool {
- 
- 	struct worker		*manager;	/* L: purely informational */
- 	struct list_head	workers;	/* A: attached workers */
--	struct list_head        dying_workers;  /* A: workers about to die */
- 
- 	struct ida		worker_ida;	/* worker IDs for task name */
- 
-@@ -2862,7 +2861,6 @@ static void set_worker_dying(struct worker *worker, struct list_head *list)
- 	worker->flags |= WORKER_DIE;
- 
- 	list_move(&worker->entry, list);
--	list_move(&worker->node, &pool->dying_workers);
- 
- 	/* get an extra task struct reference for later kthread_stop_put() */
- 	get_task_struct(worker->task);
-@@ -4721,7 +4719,6 @@ static int init_worker_pool(struct worker_pool *pool)
- 	timer_setup(&pool->mayday_timer, pool_mayday_timeout, 0);
- 
- 	INIT_LIST_HEAD(&pool->workers);
--	INIT_LIST_HEAD(&pool->dying_workers);
- 
- 	ida_init(&pool->worker_ida);
- 	INIT_HLIST_NODE(&pool->hash_node);
--- 
-2.19.1.6.gb485710b
+It's really only accesses via e.g. the linear map that are problematic,
+hence the exclusive GUP approach proposed in the series that tries to
+avoid that by construction. That has the benefit of leaving
+guest_memfd to other CC solutions that have more things in common. I
+think it's good for that discussion to happen, no matter what we end up
+doing in the end.
 
+I hope that helps!
+
+Thanks,
+Quentin
 
