@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-224964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3936912932
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:16:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E5A912979
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1615F1C24ADF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:16:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 756DDB26FBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6668F548F7;
-	Fri, 21 Jun 2024 15:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF894F8BB;
+	Fri, 21 Jun 2024 15:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vVnhNJm8"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eO5vruJY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7C5EAC8;
-	Fri, 21 Jun 2024 15:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7ACF17554
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718982961; cv=none; b=d9O6SPQt2rUmVvYcAKKVWZ2Tpay2RGEDYW9XNDI/UKz4hgtsGwAskA3auod+7FI1vBQ9XLW6en+EJ7h/cNRzxraqC5eDRFyZSCJ17UT0ZsE4msPCX2YUnVCM5+I3xE2tOXlcF9hslT12sITkDlCcS2VlalxTm1OulYdSev0n5I4=
+	t=1718982999; cv=none; b=FsyXKWdbutjPXjDI0y7VyQFnKG2PGQB+MzfJ2J0Ss4aILpdouwCiDJMbQAO8LuQK5OuAbDvvVeFh081OvNEn1oeGNUj9YPwQ1FKSNRQU+IKXgTlp1TAQ04Yfnkas18rykQdKWpNrmzg0NDDDOfAVC0x2VRPHm/C+FgXyV2k28XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718982961; c=relaxed/simple;
-	bh=7v8ej1iY9M+A2N+qWcvSGZRkoHNl4Z/1daZhWJzyN5g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n6SgASur9veOZqf9WxDpf2dQm1li3p284BLOqtfdPizt2OX23k1PZdUa1hFtkGLEYbLAsKa/d9kIFQfN7A0HiNzd1h3i4nBKtMs0uMF5Vpq6VwNHxk/Kh+4FYRtAZWbTjnVQ7P/x+annTmBA+OZOxJ3KnXdPFvD4Oz9+VMyx180=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vVnhNJm8; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LFFsZd073542;
-	Fri, 21 Jun 2024 10:15:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718982954;
-	bh=RRFPu7deYk9IDG+eVZrGypiMB6D2D6xdke4ksLDULzY=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=vVnhNJm8X2JBk16AoQCsMN9/udqMWhCuZQWXrFJ1Fipa44ZQUyEAF+hA70lZSeJJ0
-	 xNyQHepC47H6OVbWKRlcrKx6VkxCRkspovJiP0QDuxNyN73h9MLCrx4XFBM41NiQry
-	 Uv8EH6OPbf4Zt5mV/2WirI3nraHBb2BtiOShNiGA=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LFFsIv040130
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 10:15:54 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Jun 2024 10:15:54 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Jun 2024 10:15:54 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LFFno2087600;
-	Fri, 21 Jun 2024 10:15:50 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: <nm@ti.com>, <afd@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rogerq@kernel.org>,
-        Siddharth
- Vadapalli <s-vadapalli@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <u-kumar1@ti.com>, <danishanwar@ti.com>, <srk@ti.com>
-Subject: Re: [PATCH v7 0/8] Add PCIe, SERDES and USB DT support for J722S
-Date: Fri, 21 Jun 2024 20:45:46 +0530
-Message-ID: <171898028153.2272421.7541252743648207333.b4-ty@ti.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240615081600.3602462-1-s-vadapalli@ti.com>
-References: <20240615081600.3602462-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1718982999; c=relaxed/simple;
+	bh=BEgcMrpXviXEcUyWNPzFdkOjUBbxUKOkaq+MN2IQJSs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QVrp1Hy389H+xvnNmQILz+X7Nn1JB/3caVySO1QtyiL8KJQNmYWthik1VIwk8lwZDuwCdWH4orLgAETvbL54bNQ9P0s21IIGycRPjAzX74Rx9elyAzXTcxp+OPkYGSuGIuQ7govjkf7jK0YKovCZQps3uqNUgQ+NN/X8ES1JI08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eO5vruJY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A16CC2BBFC;
+	Fri, 21 Jun 2024 15:16:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718982999;
+	bh=BEgcMrpXviXEcUyWNPzFdkOjUBbxUKOkaq+MN2IQJSs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eO5vruJYjJIuveG4KIRMBCt7oSBEhof924nUfFhiYiUJXsP+Zn+jhKYLKNMEL+/4d
+	 Km0eDymAaAsHNCe8DB07c6+yZBChkfU4BUkXMlE/0EFVj6LZeLG/eD5XpH8Pp0OjXL
+	 7FgYHrNRQA0T7Rj1fo9cZstG2NzXcAKvMnx/IENJtDVQdKU6Z3mguyueSKTLx8oLLS
+	 61KQdwSFmFC/Tu127AzmDqMjILVUgcYtGrWG6z4QsXenFhCQzWnlODBDOVU+v6s0zZ
+	 SFXNTv6Dzl90yMpAXCkqNK1EqJ7ukXFJvdkamFvtrgia18FDOCWU1iZtXcyERmKCdP
+	 ab325iluRQ3vw==
+Message-ID: <466f9ee9-74c5-4e2a-8874-dba549fca2f2@kernel.org>
+Date: Fri, 21 Jun 2024 17:16:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 0/9] SCHED_DEADLINE server infrastructure
+To: Vineeth Remanan Pillai <vineeth@bitbyteword.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
+ linux-kernel@vger.kernel.org, Luca Abeni <luca.abeni@santannapisa.it>,
+ Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+ Thomas Gleixner <tglx@linutronix.de>, Joel Fernandes
+ <joel@joelfernandes.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ Phil Auld <pauld@redhat.com>, Suleiman Souhlal <suleiman@google.com>,
+ Youssef Esmat <youssefesmat@google.com>
+References: <cover.1716811043.git.bristot@kernel.org>
+ <CAO7JXPhWvLaaGqCGUZ_YCuja2T1ciWZoUnsUDnNPQ2b4yDB2Jw@mail.gmail.com>
+ <ea45abdd-c301-4cf9-abb7-6983b73b2824@kernel.org>
+ <CAO7JXPgmwnn=njmpMVGLNYQ=9hmmRPFeJ5d=o9VW81Vt2k-UwA@mail.gmail.com>
+Content-Language: en-US, pt-BR, it-IT
+From: Daniel Bristot de Oliveira <bristot@kernel.org>
+In-Reply-To: <CAO7JXPgmwnn=njmpMVGLNYQ=9hmmRPFeJ5d=o9VW81Vt2k-UwA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Siddharth Vadapalli,
+On 6/21/24 17:09, Vineeth Remanan Pillai wrote:
+> On Fri, Jun 21, 2024 at 10:59 AM Daniel Bristot de Oliveira
+> <bristot@kernel.org> wrote:
+>>
+>> On 6/21/24 16:41, Vineeth Remanan Pillai wrote:
+>>> Sorry that I could not get to reviewing and testing this revision. In
+>>> v6 we had experienced a minor bug where suspend/resume had issues with
+>>> dlserver. Since suspend does not do dequeue, dlserver is not stopped
+>>> and this causes the premature wakeups.
+>>
+>> Ouch! I will have a look next week on this. Do you guys know any other bug?
+>>
+>> an earlier report without necessarily a fix/work around is a good thing
+>> for us to try to reproduce it/think about it as earlier as we can...
+>>
+> Sorry my mistake, I was buried in other things and missed reporting
+> this earlier.
 
-On Sat, 15 Jun 2024 13:45:52 +0530, Siddharth Vadapalli wrote:
-> This series adds the device-tree support for enabling PCIe and USB
-> functionality on J722S-EVM.
+no worries.
+
 > 
-> Since AM62P and J722S SoCs share most of the peripherals, the files have
-> been renamed to indicate the same. The main domain peripherals on both
-> SoCs that aren't shared are present in the "soc-main.dtsi" files.
-> This change has been made based on Roger's feedback at:
-> https://lore.kernel.org/r/f52d9569-a399-422f-9cf0-b0bf69b64d18@kernel.org/
-> 
-> [...]
+> There was another minor regression seen lately after we fixed the
+> above issue- idle cpu was spending more time in C7 than C10 with the
+> dlserver changes. This was reported very recently and we haven't
+> investigated this much yet. Just a heads up and will keep you posted
+> as we know more.
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
+Maybe that is an expected side effect because of the timer for the server, AFAIR you
+guys are using a short period large runtime (25ms/50ms)?
 
-[1/8] arm64: dts: ti: am62p: Rename am62p-{}.dtsi to am62p-j722s-common-{}.dtsi
-      commit: 3ad6579f106db8f94fb8495063cb4b0f0eaaaa9a
-[2/8] arm64: dts: ti: k3-am62p-j722s: Move AM62P specific USB1 to am62p-main.dtsi
-      commit: 77044cfb9346d1601bfe8759b7d785c664a73f84
-[3/8] arm64: dts: ti: k3-j722s: Add main domain peripherals specific to J722S
-      commit: 731626cc3180b263216805f82e006ca1f1df02c3
-[4/8] arm64: dts: ti: k3-j722s: Switch to k3-am62p-j722s-common-{}.dtsi includes
-      commit: 18fb2b7c8a09ca454709b806efc5c38b8a012ab4
-[5/8] arm64: dts: ti: k3-serdes: Add SERDES0/SERDES1 lane-muxing macros for J722S
-      commit: 6f9323f6ad818008fc58d2f804ee4140c1b8424d
-[6/8] arm64: dts: ti: k3-j722s-main: Add SERDES and PCIe support
-      commit: 628e0a0118e69bed9dad14e7dbd8a8802652f5f2
-[7/8] arm64: dts: ti: k3-j722s: Enable PCIe and USB support on J722S-EVM
-      commit: 485705df5d5fc0ad6bc5b3657fa63a96a421770d
-[8/8] arm64: dts: ti: k3-am62p-j722s: Move SoC-specific node properties
-      commit: ed07d82f9e3e8220d8e2f92afd323d718b860f21
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
+> Thanks,
+> Vineeth
 
 
