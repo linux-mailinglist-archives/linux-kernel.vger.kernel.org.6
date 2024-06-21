@@ -1,146 +1,184 @@
-Return-Path: <linux-kernel+bounces-224250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B574F911F65
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:53:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F26911F69
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4B3628D1FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:53:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08A4428D69B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549C116D9CA;
-	Fri, 21 Jun 2024 08:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0A316D9C6;
+	Fri, 21 Jun 2024 08:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="aN/6VRiO"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIhxydNv"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3568B16C856
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CF216C856;
+	Fri, 21 Jun 2024 08:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718960017; cv=none; b=sYV+3/5QQa92B5OONdeD8IUAFiwYOVrth6W/JUveEOGB7QeR2DxCL27JIrQSnIsbGdqmi90Sjt4MWtqhS2vzMfrftmg7FEBO5bIDcLjiU9wPPYjGRCxADY5Z5SlY0pe78hH+vVA+YPj7TiOOt5Y99LCUApHMPbXkEQmpf6X3+eU=
+	t=1718960035; cv=none; b=csnA7YIthm9orDnObyN3YSjKqoTjgAnC3koFr9v2hPZE4EE7jyaGFkhFKTvusP240sJkVsXmArEAaWrssXzL141XbN/lncslqQJiw5f8DjDkCKvMnMUqo+Ms6dNhMUfCgNfp4IXIudWMPaYfj4fAMZL/ZsHnbX7yhC8lagmlxV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718960017; c=relaxed/simple;
-	bh=SIpWqkNa7EJeNFdbr+PQ/hPGHfJPvIwqRgf+d2kpABI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Km1ZksNy6DKgVb+rdviCHiGacQatTVJ+r429lUgPOAN22S1+ZMV5hLpyiHgFtP5/Dod058v2gSRqVfrXoa2nfOy05Nnl01NCBJnjLQCj3wHCmKbr7PskretQa9pG0q1ssQ7TPeU1PKOwgkOL8fZBcM4Ph+kLbosLYWzKArDAEik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=aN/6VRiO; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f04afcce1so204843766b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:53:34 -0700 (PDT)
+	s=arc-20240116; t=1718960035; c=relaxed/simple;
+	bh=AtFinZsMgiIIHjA21Sc0KoGjJvdqQ5HCKFk1uDEBWL8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=keoybxCJL/8c6tRu4x/qFvj6wJpg3eVB0AdZBxfoW/07H9Ju1mNL44P+VQaUk1j46+6cBm/uoAZJQ320c0E9vwG024qhUIpRkh0C9enWrXYomwF00b5Fk3eLF/LbM6byf0YlaZwInysOdXxLr2ii7YiHzylfelNDYACXUFsH8iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIhxydNv; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so33362471fa.0;
+        Fri, 21 Jun 2024 01:53:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1718960013; x=1719564813; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wHbob/VjuwQy7mgeQNSOdhI4orkGQDAEUkxEcv4Rw3I=;
-        b=aN/6VRiOCNLSxcAEh0P0f70JbmYMkW6Yw2qPEQj8n3rMElAPkWQTPBja9bLCOtcupe
-         HJB+g+tqiQUUNoEz4BJ4RqQZ7sdzIM1hq1ND/Yi1eW5mZYcPl/TnXkG1Knn8VRh98YQh
-         s3Sjm+rJXMvxMaFImuDyu2lo/qdc2yfDxBfFFPZb4oL7ThexRybPuDto39GIbpGmJKDM
-         O0gl1qkKgF+yRaA3QsoIwNDyta7D0oYJMQZYAJsPQlFxFLs6blbBnF9x8bYLu/usTMVK
-         80pCms+W3wlVk7fbPsIFsiSdAiY0H+Jjq08ODEM3fc09imwkDGYTF2WzWnXKKoUb5gNt
-         1udg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718960013; x=1719564813;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718960032; x=1719564832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wHbob/VjuwQy7mgeQNSOdhI4orkGQDAEUkxEcv4Rw3I=;
-        b=OnZDdVzWuKS1ySkJJU3s5ms8PYb1ff5uXtB+XnpaeHzL9hGMT44YQ1SUIx3rlWc2cc
-         HrPk8FLTYF6Bkb7bffGH7M2Grjz9+3MhcCjj2TsPNwcWET4ADQiMMxjMBJvbXj/Xb9p9
-         5EtQY6zgWMfpJ4+bI3hbbs+a5VNfTTUK185LJj/UxliMwh88eMb09cyzhRmvME5pC5Ic
-         MY4m++Gd7MKQuoTF6k2eHwNS/Ie8bGVJT4CzTEVhBq3633d5jAxIkBzk4CPV9KyoNXsa
-         +LQDUeclbVBgvLKX2wYAoZs8intyHEzK4/QcLKwneJmkUvjuEMOjd5GTax2KZTwuEb6k
-         amsQ==
-X-Gm-Message-State: AOJu0YxHOGS/IvvJ+rUqmYSbbW5P/5cYtB8rPClZwvyz9NA673o8J7Op
-	fGPjNa+BlzRm9qE8re26HIYmY9xeiM1yTkt9DGefBUEdhqn/i1P3NgmAfWwR8uU=
-X-Google-Smtp-Source: AGHT+IHkm/oNBDIDLkuaQ777H0KNvj0PKQQ8b7Mc9eNVWoGzQpZxRs7ccJxtYM++XnYbEFlLwFFDDA==
-X-Received: by 2002:a17:907:1b0b:b0:a6a:ab5:6f2a with SMTP id a640c23a62f3a-a6fab60a12fmr716591066b.11.1718960013134;
-        Fri, 21 Jun 2024 01:53:33 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48b4ddsm59093666b.67.2024.06.21.01.53.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 01:53:32 -0700 (PDT)
-Date: Fri, 21 Jun 2024 10:53:31 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, apatel@ventanamicro.com, alex@ghiti.fr, 
-	greentime.hu@sifive.com, vincent.chen@sifive.com, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] KVM: riscv: selftests: Add Svade and Svadu
- Extension to get-reg-list test
-Message-ID: <20240621-f02c058395f929dfac9f3883@orel>
-References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
- <20240605121512.32083-5-yongxuan.wang@sifive.com>
+        bh=C2NbmAeSPtr+VJPCDZGzIPSzbzCrEPpKv2Ul8cjGJpg=;
+        b=SIhxydNvnzMqk3equVSf3SmEblz7poLkj2sOUODgHPrQCp0b6UH1FjdtWqZlWDkInn
+         dsNV7j+5IQnjWu4N6tvTJoPJFi1RP0m+VkcBStpmy/hM9inb+hB5R2hXj8zx4NNL6EKJ
+         /9HRCCxLpYzBH65ynnFYddhj9wNTqrw7FeBOmlkJIx3IA6T1FH57YJdxiuduh0Xn+q77
+         NrnoHaKTAqPqcRDqWRMEZs+310Bpz5rlekx6DExnLyTh+65LZfHhGiEf0xuR4xx2idq2
+         M7L3yVYb4uM41sPBaJcdQIFL3HfSdDkV4kk6cKD+0/ovfm5xluBc6bceDeJbZHOEaCdW
+         ovzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718960032; x=1719564832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C2NbmAeSPtr+VJPCDZGzIPSzbzCrEPpKv2Ul8cjGJpg=;
+        b=HIJvuOKuFT/y+/AjN3tY9Z6re0w+Q61vjuznDYghELeeiIy7tsYMWbre98jokbTTiT
+         SwxuetjZuCtWRU7mXoUCnKsNctRg8vFMxVE9XZ+Qj/v8NPuiWf8ivci/3J47mtGa8lUu
+         icT/4SK+rU6GTA/vtVvzw/4r25f7sQR7HsE9wzWPTGnYW8A2wMs6QvzMsMlSUEFdN8Qw
+         3LwzGMP4GHpb6lwbp1OKDLNhv8zSQDbcK97OkKAEZ+SrE6mvTdXxVJq2a9DKHMaWWzDe
+         n3MZLIhUYHFLsSTyvaWznVvckNjQoQKwqHYjKXk+KXPu2q1RZwSkKgphCsonHYfSU//o
+         w68A==
+X-Forwarded-Encrypted: i=1; AJvYcCVM+ok2BcItshtC/UV/psOD98unBrN27uK23KqQIKS5sETpxVbev0HxGBUkOdxbhnNJb1U21eTWkNxIOXHGcP04GUmDZYq3tp5cat7vVrWr4Z3ym4uigLeOQR4hY+KiMUNV7mWA8NyrW1xBDa8lvJwzjyVhFosQky6gipSzd1NVWf3Ly0I=
+X-Gm-Message-State: AOJu0YxjvpdR1eywBn1NNZJn21RQk6pOjRSmlujCbum/qCiDCmn9B8N0
+	a2UoTPfRu++9k7Sm7UJF5NNLiqGT2viwLZ1dTUDakbk0Pw7twDrzQxmIrX85xOvbFmgxL0k0gIp
+	hEXYCtjPSVF248j9iDnEcm/SQdc8=
+X-Google-Smtp-Source: AGHT+IFACBZJL/JrK568qW0O9LvAd+FrY4FSuAOLFmRWXPL7E3VDBY2O378p7oDlZU5U3E2pPeP3u6Glqf31Mu/d0J0=
+X-Received: by 2002:a05:6512:4ca:b0:52c:d5e4:9a99 with SMTP id
+ 2adb3069b0e04-52cd5e49ccfmr1025377e87.17.1718960031907; Fri, 21 Jun 2024
+ 01:53:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240605121512.32083-5-yongxuan.wang@sifive.com>
+References: <20240620084337.3525690-1-potin.lai.pt@gmail.com>
+ <20240620084337.3525690-2-potin.lai.pt@gmail.com> <cb55efedaef63e4580c11415aa2e29606edcaf9f.camel@codeconstruct.com.au>
+In-Reply-To: <cb55efedaef63e4580c11415aa2e29606edcaf9f.camel@codeconstruct.com.au>
+From: Potin Lai <potin.lai.pt@gmail.com>
+Date: Fri, 21 Jun 2024 16:53:40 +0800
+Message-ID: <CAGfYmwWp2dayGvySdYvU+nmtxZ-x3PPW_j69ZoBD4mxzPMQAzg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: pinctrl: aspeed,ast2600-pinctrl: add
+ NCSI group
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Joel Stanley <joel@jms.id.au>, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Patrick Williams <patrick@stwcx.xyz>, Cosmo Chou <cosmo.chou@quantatw.com>, 
+	Potin Lai <potin.lai@quantatw.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 05, 2024 at 08:15:10PM GMT, Yong-Xuan Wang wrote:
-> Update the get-reg-list test to test the Svade and Svadu Extensions are
-> available for guest OS.
-> 
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> ---
->  tools/testing/selftests/kvm/riscv/get-reg-list.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> index 222198dd6d04..1d32351ad55e 100644
-> --- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> +++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-> @@ -45,6 +45,8 @@ bool filter_reg(__u64 reg)
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SSAIA:
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SSCOFPMF:
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SSTC:
-> +	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVADE:
-> +	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVADU:
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVINVAL:
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVNAPOT:
->  	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_SVPBMT:
-> @@ -411,6 +413,8 @@ static const char *isa_ext_single_id_to_str(__u64 reg_off)
->  		KVM_ISA_EXT_ARR(SSAIA),
->  		KVM_ISA_EXT_ARR(SSCOFPMF),
->  		KVM_ISA_EXT_ARR(SSTC),
-> +		KVM_ISA_EXT_ARR(SVADE),
-> +		KVM_ISA_EXT_ARR(SVADU),
->  		KVM_ISA_EXT_ARR(SVINVAL),
->  		KVM_ISA_EXT_ARR(SVNAPOT),
->  		KVM_ISA_EXT_ARR(SVPBMT),
-> @@ -935,6 +939,8 @@ KVM_ISA_EXT_SIMPLE_CONFIG(h, H);
->  KVM_ISA_EXT_SUBLIST_CONFIG(smstateen, SMSTATEEN);
->  KVM_ISA_EXT_SIMPLE_CONFIG(sscofpmf, SSCOFPMF);
->  KVM_ISA_EXT_SIMPLE_CONFIG(sstc, SSTC);
-> +KVM_ISA_EXT_SIMPLE_CONFIG(svade, SVADE);
-> +KVM_ISA_EXT_SIMPLE_CONFIG(svadu, SVADU);
->  KVM_ISA_EXT_SIMPLE_CONFIG(svinval, SVINVAL);
->  KVM_ISA_EXT_SIMPLE_CONFIG(svnapot, SVNAPOT);
->  KVM_ISA_EXT_SIMPLE_CONFIG(svpbmt, SVPBMT);
-> @@ -991,6 +997,8 @@ struct vcpu_reg_list *vcpu_configs[] = {
->  	&config_smstateen,
->  	&config_sscofpmf,
->  	&config_sstc,
-> +	&config_svade,
-> +	&config_svadu,
->  	&config_svinval,
->  	&config_svnapot,
->  	&config_svpbmt,
-> -- 
-> 2.17.1
+On Fri, Jun 21, 2024 at 8:46=E2=80=AFAM Andrew Jeffery
+<andrew@codeconstruct.com.au> wrote:
 >
+> Hi Potin,
+>
+> On Thu, 2024-06-20 at 16:43 +0800, Potin Lai wrote:
+> > In the NCSI pin table, the reference clock output pin (RMIIXRCLKO) is n=
+ot
+> > needed on the management controller side.
+> >
+> > Add NCSI group to distinguish the pin group between RMII and NCSI.
+> >
+> > - RMII pins:
+> >   - RMIIXRCLKI
+> >   - RMIIXRXD0
+> >   - RMIIXRXD1
+> >   - RMIIXCRSDV
+> >   - RMIIXRXER
+> >   - RMIIXRCLKO
+> >   - RMIIXTXEN
+> >   - RMIIXTXD0
+> >   - RMIIXTXD1
+> >
+> > - NCSI pins:
+> >   - RMIIXRCLKI
+> >   - RMIIXRXD0
+> >   - RMIIXRXD1
+> >   - RMIIXCRSDV
+> >   - RMIIXRXER
+> >   - RMIIXTXEN
+> >   - RMIIXTXD0
+> >   - RMIIXTXD1
+>
+> I think listing all the pins for both groups obscures the fact that
+> there aren't more changes than removing RMIIXRCLKO.
+>
+> Can we instead drop these lists and replace
+>
+> > Add NCSI group to distinguish the pin group between RMII and NCSI.
+>
+> With:
+>
+> > Add "NCSI" pin groups that are equivalent to the RMII pin groups,
+> > but without the RMIIXRCLKO pin
+>
+> ?
+>
+Got it, will update it in the next version.
 
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> >
+> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
+> > ---
+> >  .../devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml     | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-p=
+inctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinc=
+trl.yaml
+> > index 00b6974a5ed3d..3f02dc94a7ce2 100644
+> > --- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.=
+yaml
+> > +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.=
+yaml
+> > @@ -337,6 +337,8 @@ additionalProperties:
+> >          - MDIO2
+> >          - MDIO3
+> >          - MDIO4
+> > +        - NCSI3
+> > +        - NCSI4
+>
+> Can we also do this for RMII{1,2}RCLKO (and in the driver patch as
+> well)?
+>
+The power of RMII{1,2} is 1.8v, which does not meet NCSI requirements.
+
+> >          - NCTS1
+> >          - NCTS2
+> >          - NCTS3
+>
+> Overall, what I was hoping for with the comment on the earlier patch
+> was that you would add the discussion in the commit message to the
+> "description" entry in the binding YAML. Can you please do so? That way
+> the information is always present for people reading the binding
+> without them having to look at the binding's change history.
+>
+Got it, I will add note into aspeed,ast2600-pinctrl.yaml.
+
+> Thanks,
+>
+> Andrew
 
