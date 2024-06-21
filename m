@@ -1,224 +1,171 @@
-Return-Path: <linux-kernel+bounces-224525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74074912392
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:29:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DAC591238E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA73287B89
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:29:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 436C5B256A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2AD17967A;
-	Fri, 21 Jun 2024 11:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnGQS1B2"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94042173324;
-	Fri, 21 Jun 2024 11:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6657178372;
+	Fri, 21 Jun 2024 11:26:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EC0173336;
+	Fri, 21 Jun 2024 11:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969193; cv=none; b=mP7ppoDEqpjgR53puh7xpYJItEloUDy6aRokcTEiuaWuDs2uo+3kYIFEwh0SgMyvk3X8p6fIRLrUtrYVV4XY3rORsIVewoSc4V1nSIYRHAERdlUzOzXNKdg1bR1IdQxkM4ZhcyAAO2WSrn1YGmYOxIZ+7a86MN5gPmK88FGWLFY=
+	t=1718969166; cv=none; b=T39foboPJ0QHjyRqB9Q/hpuBeOx5WXaF8Ex6Ll7x9lPnXHlRuAAKz4GyNl4sr/HOOLw9iewz5tW1I+vaQ6ivRRK3Q1uLvUonTDa8OoMubbPktCQNqJGdyWsnM6ff8Dv74k/PAfF0+GZGx+gvifjwOqkn7PYLbu3nZ0egefa90wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969193; c=relaxed/simple;
-	bh=6Z4wpojLz/hacj79e57BMfp429TSIJBj0CjR5tMbUrU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=joL3+eZd9Lvtxi9aj119/MCegC2ZzDfwROxO5atclLNThVfE6ErgKdMW7m7Rjc4mCL1Gm2TLqxXmEFe0+M5jNhL7TqtpgYFtP8YzKYM64pZP3gyOIX7ydA5UXOcn8sQh3871X8rmauWhr5DXMgsGMkRRyqV69ZR4NOLklhMGqW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnGQS1B2; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so2173816a12.3;
-        Fri, 21 Jun 2024 04:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718969190; x=1719573990; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q0NS7LlelhpSen05TQ03Z1wb2gyNuCOX1l5VdBrZGKM=;
-        b=cnGQS1B24Or85wx5TZlYZ2q9+XcyMQ4LkxV9ST5vhMQ1Ojj5eFVL/JZthtnKNKKisp
-         c93Z3K8YwKc0hSaaSeWYRwl6a9FZAzZX0mWNphShJ1tHOPgDdfp6zI+NAdA+bzU/qV/B
-         3oCRleIIeI1S8qlYcAKt+HX9dUHiOaZ+kOCgWWF2n2uuqDEXZShEzvbrKk+y2pe2TNyw
-         Bk8bGgFusX3oGRpBpkk8sBNJGpExTikCNQMIi4xFFjl1AMocGAjb6uaG9D6DDaavhmtG
-         bWHZ9wuhwt89FOCcdcgKewDRbTzP48/SRM2ZYkVTEVBwFjZ92CZpv5egLguzBfHusjek
-         9kyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718969190; x=1719573990;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q0NS7LlelhpSen05TQ03Z1wb2gyNuCOX1l5VdBrZGKM=;
-        b=WqloSIrZUPbLcQAVRMfdhFneHBbQoXlxKVNvbGYcI0DzKYFVvFoRwq6DDPAXng5/Ri
-         WUgHLhMGob+IUiEhiWPnOwTn8aavnMC77LZ9ysjUzQlIvm5HBe+ZlEpXrXg/XMfbd4L2
-         kZC0UvlzY5yGaAQH0ovNfslfE1safqRPVh+gH47Dqtxurc3BGd+ymBSah58vFA85n4wm
-         orpLSvZmQ6oJJFY88tzBXa866Oj2nqc+aZgAfAcK6/3DjvJhNL4P99qE+YoOEiA6fVNo
-         sOahBNZ6lqLrQpXktYBJEP8R3w9rUIYLUr4fhS4DzcVKBvtdc4/l8lQOOmr+yNk5iBfo
-         MU5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVjJHjbTsvqKFFa4DrSgqo9WbD/O9atSgVeS/gBf3udG8KOi7MlkHj3tvYePGtU6teq6thc1Dhos1xlvJsqryKmFhVYifg4MPOcs7/W/OyjBOUkbwf3Bl/mJ/I+fQ9ggFVubjO0IOAJ9ljHcdbXcHzS/E0+gOMWHkiEnZH3QdqtXED9Ow==
-X-Gm-Message-State: AOJu0Yyiw/ub3MLY3XwIK2JQRE9Xn3TW7EyOswmf/OGBllgfYgOQaCij
-	uFfhsWEYv7IPV7BKjyP1h85vgYtTi8nneuqSSFD2q9OHiaP+x7xIHCDHhclWbXa0RpHJGme+UkA
-	E6QOvXahJNpv9i+D7BK/1EOMsQe1xyqjI
-X-Google-Smtp-Source: AGHT+IEj3xJiyLNIRUImQfeckjZNz/P5iTFKuJO/ro0q3UwgZoaarlsLmvCBnakUjtcivQryct+kRTzskos2kA1Ceks=
-X-Received: by 2002:a17:906:80c:b0:a6f:2de0:54d with SMTP id
- a640c23a62f3a-a6fab7d6c69mr582759066b.76.1718969189569; Fri, 21 Jun 2024
- 04:26:29 -0700 (PDT)
+	s=arc-20240116; t=1718969166; c=relaxed/simple;
+	bh=V3B7lVlTltqqQwmYDTOmhjOvpdBEBQlP8Q5IvXhj3nE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=It0JT3EkHvWx712VO8jjIyZ9pW2HJfiopbn0kfpsms9v928yZkDZkFuLZ7Yh2B5iuX/gtKQ3tdKa+VZSepLRnQiXhb6gEJEfLbXKT5FcOzY9wVPxL1DLWLnU34mwXgeH2kzFRoHRWbM1VU6SR8LqQFWu8UOSRJcZ4odN//wwl1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7E6ADA7;
+	Fri, 21 Jun 2024 04:26:27 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 178823F6A8;
+	Fri, 21 Jun 2024 04:26:01 -0700 (PDT)
+Date: Fri, 21 Jun 2024 12:25:59 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Zhouyi Zhou <zhouzhouyi@gmail.com>, linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	lance@osuosl.org
+Subject: Re: [PATCH V4] rcutorture: Add CFcommon.arch for the various arch's
+ need
+Message-ID: <ZnVjR0Z9MjHbdlx6@J2N7QTR9R3>
+References: <20240619230658.805185-1-zhouzhouyi@gmail.com>
+ <673d737a-cf17-4480-a9e2-7ff1668f4b44@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619054641.277062-1-shanchun1218@gmail.com>
- <20240619054641.277062-3-shanchun1218@gmail.com> <CAHp75VcJGoDaAbD7vWin8yTGarrLZbVQqucHs+M9rAAS0BZd9g@mail.gmail.com>
- <1e249c77-def1-4ffc-bbd6-d64f7e95b0ac@gmail.com>
-In-Reply-To: <1e249c77-def1-4ffc-bbd6-d64f7e95b0ac@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 21 Jun 2024 13:25:52 +0200
-Message-ID: <CAHp75VfpPR3Nat2dJrwLaxvnQNmn6KbpAfLcD-BvadwyHXDE1A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: sdhci-of-ma35d1: Add Novoton MA35D1 SDHCI driver
-To: Shan-Chun Hung <shanchun1218@gmail.com>
-Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, adrian.hunter@intel.com, p.zabel@pengutronix.de, 
-	pbrobinson@gmail.com, serghox@gmail.com, mcgrof@kernel.org, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com, 
-	tmaimon77@gmail.com, linux-arm-kernel@lists.infradead.org, 
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ychuang3@nuvoton.com, schung@nuvoton.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <673d737a-cf17-4480-a9e2-7ff1668f4b44@paulmck-laptop>
 
-On Fri, Jun 21, 2024 at 10:06=E2=80=AFAM Shan-Chun Hung <shanchun1218@gmail=
-.com> wrote:
-> On 2024/6/20 =E4=B8=8A=E5=8D=88 03:09, Andy Shevchenko wrote:
-> > On Wed, Jun 19, 2024 at 7:47=E2=80=AFAM Shan-Chun Hung<shanchun1218@gma=
-il.com>  wrote:
+On Thu, Jun 20, 2024 at 10:57:27AM -0700, Paul E. McKenney wrote:
+> On Wed, Jun 19, 2024 at 11:06:58PM +0000, Zhouyi Zhou wrote:
+> > Add CFcommon.arch for the various arch's need for rcutorture.
+> >     
+> > In accordance with [1], [2] and [3], move x86 specific kernel option
+> > CONFIG_HYPERVISOR_GUEST to CFcommon.arch, also move kernel option
+> > CONFIG_KVM_GUEST which only exists on x86 & PowerPC to CFcommon.arch. 
+> >     
+> > [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
+> > [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
+> > [3] https://lore.kernel.org/all/ZnBkHosMDhsh4H8g@J2N7QTR9R3/
+> >     
+> > Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
+> >    
+> > Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
+> > Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+> > Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> > Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+> 
+> Thank you!  I have reverted the earlier version to queue this one.
+> Please check below to make sure that my usual wordsmithing did not mess
+> things up.
+> 
+> Mark, any suggestions for any needed ARM CFcommon.arch files?  Or does
+> moving out the x86/PowerPC-specific Kconfig options take care of things
+> for you guys?  (Hey, I can dream, can't I?)
 
-...
+I'm not aware of anything that we specifically need enabled, so pulling
+out those bits should be everything -- I've given my Ack below.
 
-> > You are missing a lot of header inclusions, please follow IWYU principl=
-e.
-> I am not familiar with IWYU yet, but I will learn it and use it for
-> checks later on.
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+> commit 9d6767c47ce4de2ef817e47a5882748d8008ebe9
+> Author: Zhouyi Zhou <zhouzhouyi@gmail.com>
+> Date:   Wed Jun 19 23:06:58 2024 +0000
+> 
+>     rcutorture: Add CFcommon.arch for arch-specific Kconfig options
+>     
+>     Add CFcommon.arch for arch-specific Kconfig options.
+>     
+>     In accordance with [1], [2] and [3], move the x86-specific kernel option
+>     CONFIG_HYPERVISOR_GUEST to CFcommon.i686 and CFcommon.x86_64, and also
+>     move the x86/PowerPC CONFIG_KVM_GUEST Kconfig option to CFcommon.i686,
+>     CFcommon.x86_64, and CFcommon.ppc64le.
+>     
+>     The "arch" in CFcommon.arch is taken from the "uname -m" command.
+>     
+>     [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
+>     [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
+>     [3] https://lore.kernel.org/all/ZnBkHosMDhsh4H8g@J2N7QTR9R3/
+>     
+>     Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
+>     
+>     Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
+>     Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+>     Suggested-by: Mark Rutland <mark.rutland@arm.com>
+>     Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 
-"Include What You Use". But some of the headers may be omitted as they
-are guaranteed to be included by others. It's a bit hard because one
-should know and follow the kernel development, currently the headers
-in the kernel are a bit of a mess.
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-...
-
-> >> +#define BOUNDARY_OK(addr, len) \
-> >> +       ((addr | (SZ_128M - 1)) =3D=3D ((addr + len - 1) | (SZ_128M - =
-1)))
-> > Besides sizes.h being missed, this can be done with help of ALIGN()
-> > macro (or alike). So, kill this and use the globally defined macro
-> > inline.
-> I will add sizes.h and directly apply globally defined  ALIGN() macro
-> instead
-
-Also check what header should be included for that macro, IIRC it's align.h=
-.
-
-...
-
-> >> +               for (idx =3D 0; idx < ARRAY_SIZE(restore_data); idx++)=
- {
-> >> +                       if (restore_data[idx].width =3D=3D 32)
-> > sizeof(u32) ?
-> Your idea is better, I will change it.
-
-You might probably want to use the same in the restore_data array initialis=
-er.
-
-> >> +                               val[idx] =3D sdhci_readl(host, restore=
-_data[idx].reg);
-> >> +                       else if (restore_data[idx].width =3D=3D 8)
-> > sizeof(u8) ?
-> I will fix it.
-> >> +                               val[idx] =3D sdhci_readb(host, restore=
-_data[idx].reg);
-> >> +               }
-
-...
-
-> >> +               pltfm_host->clk =3D devm_clk_get(&pdev->dev, NULL);
-> >> +               if (IS_ERR(pltfm_host->clk)) {
-> >> +                       err =3D PTR_ERR(pltfm_host->clk);
-> >> +                       dev_err(&pdev->dev, "failed to get clk: %d\n",=
- err);
-> > Use
-> >
-> >    return dev_err_probe(...);
-> I will use dev_err_probe() instead of dev_err()
-> >> +                       goto free_pltfm;
-> > This is wrong. You may not call non-devm before devm ones, otherwise
-> > it makes a room for subtle mistakes on remove-probe or unbind-bind
-> > cycles. Have you tested that?
-> I have tested it, there is no error messages during driver initial proces=
-s.
->
-> My thought is that sdhci_pltfm_init() and sdhci_pltfm_free() are used tog=
-ether.
->
-> If there's any error after the successful execution of sdhci_pltfm_init()=
-,
-> I'll use sdhci_pltfm_free().
->
-> I am not entirely sure if this answers your question.
-
-Yes, they are, the problem is that freeing resources happens in
-non-reversed order (for some of the resources). This might lead to
-subtle mistakes as I said above. The rule of thumb is to avoid mixing
-devm_*() with non-devm_*() calls. If you have both, they have to be
-grouped as all devm_*() followed by all non-devm_*().
-In some cases you might need to wrap existing calls to become managed.
-This may be done with the help of devm_add_action_or_reset(). Check
-other drivers which are using that.
-
-> >> +               }
-> >> +               err =3D clk_prepare_enable(pltfm_host->clk);
-> >> +               if (err)
-> >> +                       goto free_pltfm;
-> > Use _enabled variant of devm_clk_get() instead.
-> I will use devm_clk_get_optional_enabled() instead.
-> >> +       }
-
-...
-
-> >> +free_pltfm:
-> >> +       sdhci_pltfm_free(pdev);
-> > This should go to be correct in ordering.
->
-> I am not entirely sure if it is similar to the "goto free_pltfm;" issue.
-
-Yes. It's part of the same issue.
-
-> >> +       return err;
-> >> +}
-> >> +
-> >> +static int ma35_remove(struct platform_device *pdev)
-> > Use remove_new callback.
-> I will fix it.
-> >> +{
-> >> +       struct sdhci_host *host =3D platform_get_drvdata(pdev);
-> >> +       struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
-> >> +
-> >> +       sdhci_remove_host(host, 0);
-> >> +       clk_disable_unprepare(pltfm_host->clk);
-> >> +       sdhci_pltfm_free(pdev);
-> > At least these two will go away as per probe error path.
-> I will use sdhci_pltfm_remove instead of  the ma35_remove.
-
-After fixing the ordering issues in ->probe() this might need more
-modifications.
-
-> >> +       return 0;
-> >> +}
+Mark.
 
 
---
-With Best Regards,
-Andy Shevchenko
+> 
+> diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
+> index b33cd87536899..ad79784e552d2 100755
+> --- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
+> +++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
+> @@ -68,6 +68,8 @@ config_override_param "--gdb options" KcList "$TORTURE_KCONFIG_GDB_ARG"
+>  config_override_param "--kasan options" KcList "$TORTURE_KCONFIG_KASAN_ARG"
+>  config_override_param "--kcsan options" KcList "$TORTURE_KCONFIG_KCSAN_ARG"
+>  config_override_param "--kconfig argument" KcList "$TORTURE_KCONFIG_ARG"
+> +config_override_param "$config_dir/CFcommon.$(uname -m)" KcList \
+> +		      "`cat $config_dir/CFcommon.$(uname -m) 2> /dev/null`"
+>  cp $T/KcList $resdir/ConfigFragment
+>  
+>  base_resdir=`echo $resdir | sed -e 's/\.[0-9]\+$//'`
+> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
+> index 0e92d85313aa7..217597e849052 100644
+> --- a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
+> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
+> @@ -1,7 +1,5 @@
+>  CONFIG_RCU_TORTURE_TEST=y
+>  CONFIG_PRINTK_TIME=y
+> -CONFIG_HYPERVISOR_GUEST=y
+>  CONFIG_PARAVIRT=y
+> -CONFIG_KVM_GUEST=y
+>  CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC=n
+>  CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n
+> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
+> new file mode 100644
+> index 0000000000000..d8b2f555686fb
+> --- /dev/null
+> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
+> @@ -0,0 +1,2 @@
+> +CONFIG_HYPERVISOR_GUEST=y
+> +CONFIG_KVM_GUEST=y
+> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
+> new file mode 100644
+> index 0000000000000..133da04247ee0
+> --- /dev/null
+> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
+> @@ -0,0 +1 @@
+> +CONFIG_KVM_GUEST=y
+> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
+> new file mode 100644
+> index 0000000000000..d8b2f555686fb
+> --- /dev/null
+> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
+> @@ -0,0 +1,2 @@
+> +CONFIG_HYPERVISOR_GUEST=y
+> +CONFIG_KVM_GUEST=y
 
