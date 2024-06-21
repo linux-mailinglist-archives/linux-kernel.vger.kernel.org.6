@@ -1,258 +1,300 @@
-Return-Path: <linux-kernel+bounces-225034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A2B912ADF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A46C912AE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29F201C243C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:06:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BED21C247E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8552E15FA9E;
-	Fri, 21 Jun 2024 16:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49C715AACD;
+	Fri, 21 Jun 2024 16:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e+xmhos4"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qXSVxcs+"
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902AF15F31D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB54615F30D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718986002; cv=none; b=tWuqWXCO8EJ7BHVw3NeUeNpx9Juy3ULx2zh1IyrXmFvmHDWE9so8c2+f1EGHFlB80Fy4hLUyBkTsyRVuusjilig0W/Qm8viF6JK4bV60JCNCKEYiBzVHi1KF3Z16tnfFmZ6GMvka3jZ0cId8h/Zxvbw/K4bq9YBvExZfBgIGe00=
+	t=1718986021; cv=none; b=CvxdDPZz8vr0sOSMWIevwwAimSVXgqfOMIb9H8UBcJCQU+3Bi4GKUhQvYfhUJ5hriF6yLseXt9cBaYRvbCYdZhz/NBCsRPpB57KK1mAuXPDZT15Zh9tOjNFY8wCJSx4XmedVTpC4dohe+WakQENwVagMW7dmfMt93t5AW4NZD5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718986002; c=relaxed/simple;
-	bh=RKRMpTOKRm1ujovFZqL3WHfrxYQVRqgjDm+JkPgvrLM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eZw0OzAgzGzPn95gppkzK5qpJ0pjBqdgreWyyQEVuxk9L37uRXHN7nO8ul9QYlqIxfhb/FB2HmTfYl3U0+Dk45n1i9IZs35cuaOMGoJiRRp+YYt342eAL0N4htvTwskjlBbbWnhlbGb5oE+MeMb2PeHQbmVUIcbAfaNxYwtQDQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e+xmhos4; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02a6d4bdbeso2040370276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718985999; x=1719590799; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=AQp9dlO5pAgdUf8FaDRgU2ZwQcaWQQ47LVCfMxenQGw=;
-        b=e+xmhos4DaPy+J4f7NTm0y/W8wtZUkwGcqzN5I3mLBKgX1jgPNRmhOv9Fg14exgvaR
-         szbRn/VcXxwc2p6tH7i0u3+rTolUFFPqehj1CH5VDunGpAU7PWL2FQ4sHKolmzvPl56m
-         zmX63DMLIC4/7VbOSvc5w6zkbfvv2txej32Fj+YIouAFuXnx9zKm+7uqEF9mGrfZeKkt
-         nfh+zcsdh+K5Y4E48kbPfZOg9NtGfXxZwQnwXc7sy+3uPKxYgeIKUscsi3e7I3kfy/cn
-         EVa6TKt+ZMdXxZr1AmZvhOQLOm/WJFL9uRbwnKaI/843kxgcwb872f5ibE2Q/WMLEgMC
-         x+kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718985999; x=1719590799;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AQp9dlO5pAgdUf8FaDRgU2ZwQcaWQQ47LVCfMxenQGw=;
-        b=hXZ6QjuQS/S0jg0fzJwHGLO7kQKDZLXlr7l8ZFmOdGrI3X73xfIjl6owL6rNtsQsZK
-         eLNryDrAUpM+cC5/XlEhWROy+ZW9pMR+crwW9gVJ+fW6k0AI/l31WK+LmthWYme1dqOG
-         ywI9oMlijT0ppGjtuPtGiG0joxNunWOXIZKdSPj2S4pTkG59O+CZPixHJPEmYVsWjg6D
-         ACfmYvLKK3F79W4cLAi5vs2BEN5gCzSj31JDnCOtHdzyN8XrMF6jKI574l19TrdTWSLZ
-         rLVSQRotoPrjLkspHYkOqrKvvz+Z06VN8E3ViqjsQB/qpZqZ1cwfb7O0HKSA4XUjmXSR
-         15IA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlk+wixYOntSfHLzSY4AE9Vxd0L7kvnu/L82ADWsQC0SU3aJyqi4c21Bw75a0n1ICKcW+IYNOkm0jZhMREhiavOkYYs70c746cJman
-X-Gm-Message-State: AOJu0YwLFvPDIqNZQgporG1WVtnNuch7Ppn92cq/GwqgsiVbKD1ZPeZ3
-	+JcXgPfP5bUswrXthVeIOozSJOsh9sae/CdJoIwd5dTO1bK1QEq8wH/obqQWVBbc51KECLJyon5
-	2sAnwMvBrRf43q6wWTaVGBnba0zdGJ0gfaZD0aQ==
-X-Google-Smtp-Source: AGHT+IFsKhI5/ZpPFPGZgfj7WNLVrLaPZ7KiG2qpvVEJu3dcWK/Nil0xzuhyY4wPN4X4t78JmuDWQRQioq2fNcEPqZk=
-X-Received: by 2002:a25:aa04:0:b0:e02:c343:ffa7 with SMTP id
- 3f1490d57ef6-e02c344047fmr7674276276.25.1718985999405; Fri, 21 Jun 2024
- 09:06:39 -0700 (PDT)
+	s=arc-20240116; t=1718986021; c=relaxed/simple;
+	bh=4JXEbivYBcsxYTgIWZVnh5SdG3somsUbAFEAVWYGAQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=g7b1/LvHuxEaoYkD+thevUtgMClcCHYztFs9+GnhlTe4Tg0EmAVsQ7K9N5BwF04jwUTPdO1GVT7xn/W4TxZJwYeJc8pNrIoOmL7ReCPmPo7gMIvikPxgtAzsHW6luU3D9Al7nW5MGxVNr1zPGqU6H/MSusYsGti6nYmqf1WV28E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qXSVxcs+; arc=none smtp.client-ip=66.163.187.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718986018; bh=OUlshDAGcf4r9tpcl9XAZhSVZg2AM0tLoTIMQEFIi2o=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=qXSVxcs+GtEjbZ0d5k+4l2SAnxGZ90p8r7pSM+sPQh0gwiWK7oGOPt5A/djfgiWq3axN8FuWsOFcEd4VoiiaLQjnrZnE4KpF0HL3p4wcQEQVLCfR//kRrNPfMqeWmQ6UnqotKJJguw532wrh9Htx/3jxi0q1bNTIx9oOVTzal8v3Y46/Sp7Dmwct4LWKvmvBYPp8H4P53BoRpBRCZdFn7YAHCAjTjOqhMXYkS/3XL0UlEm648T/Wa2QxsDyguB2hpqCTlQiiAHDKG+iQ3tj4lmX0SlcPy4XxfQuCy0nv4ohAkCMZeKFwE7YiSNFUZYpcL4BkZJ4JLKPeSepJJkngYA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1718986018; bh=UhRdylbyR4htXfQ3ksARAjZ+RHaqucn3VSCr8yka/PI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=k5vdivu9A40A7njFYrRvHuSrHcq6MDFQ4uOP6lf2zpAcGjgw7pbMhMkq/HUOtB5VS8MnXBXxMRID1MmG1I/ovptzCojf3kq7Ezuyl/J7Znr59053iXGSIuLhlwgnBzjK6uSvzWP+rdq+0rQK4qcdEtV+eYvWjVkAQ3ZE21tUIhHh3CLGjdiQflS60u3lhE0P+rmdun1cnfbZ3zV48B/YSTwtfnX011aBu0YPsPBI5q42CI9YZkBph6y5tmuK+9R63bQeKz5HFlsZHdKmCPk72Xu7lDSYVuIscWiHynOig52r4A8UCxB3ntfSlXFiPQQShdGWW8ekfDG1PMSpJPhztQ==
+X-YMail-OSG: UOgmaHYVM1l.B2Lrwvs9KpB9HMayDYjTI.v_pcGE.wyV8yJdV__a0iUF6w8M_ZQ
+ 9DjlRcCmrDJAhwYa_DkAW._pe1YFEAdBPbisx6IBljY6jPDBVytM15A3b9y_ICOOf6Y2gQyZZQEG
+ vbd2Ra5Z5dETlmzIeIem5nfBDxGPXM1pS9AQQLiG8TTrc9bp1D8vFoxjewkEv.hgn.vFmLHmFiOk
+ F690WplsukRvEIs6ORdxhnao6.LAE601yD5uRlvFI0F2xivoOQxcfl7IkyeelamXEfWJXhJqi0mt
+ m5X6mp56a_Gh3YoMT2OP.MUPl5qWpfqu_pvLuaYwF4QfB87ApZ7_J3Q7AQJPNoMwqcS6y7Ns2dge
+ 9i3gRXrET3MvwMizhVvjrhr05YyzZqyypfOdvxvWi5fNLqHE8vLbTqWHjC3LPIinledP0Oizg8iC
+ ej3v0aVoGCou.qFqoLnLLKEzpkrVPxC1g826XwPCOLCde4QgW1JcNCAO0Lm7S7DnqJUgI7AeQsir
+ .E3QINU30eyLN27Xw_crEpXNJaGkBuGXMPMebwXz7T2yVOgXBVarAoLG9EjeO.icxB.4Km9yQi4r
+ _SieKbYMH1vuLQxciuDMp_O7_Jo.hodJyD8LlL9JPw38l43TUDCTvJpsSL7hy9s036PLrBveClYF
+ eDbEtIVfEb4YJTf9ElyIrvYOKiNDU61pA4waE0vaA.a6036kUAQi4rjqszjaEG73uKevvXLuut9U
+ RSbOb6PAMSdPFZI9nu2SzqKUTs7gDFAWYcekbebo_fbyy6Rb4ryZkDLaUEM.pRYDBYihY6tCnEjP
+ mcbJ0v21C1a4JlKj6h6.ts6rWqiXZDU7OHKxyAmK9pT.E0iYVloph6MPEUEwwHnOJf08eZUHvcWB
+ ON._nTJNBbw10Je5FWqkz77Ca8_2kgcBTrSkCsmzeziJpPTpqIKZMLSD9rh67uIqajVByCXKKcFp
+ 5xeHHXNHYLdWiZMhyi2C3lFunwBdK6JQPqLq62hA0D9PwH19C1QSTGg1J7OZehcMEYkrvKm35Cey
+ 6GlqyiC7W2AT0a5bGyotkT6hrwpyyUuINqiYBcC1zWbpqoZXi3Eom_jNBVTpwvwJfPopb2QNoOJ8
+ 64qDnw2fj93bG9Lc27MP9W6MKLW3QpRe8HcX6GOC._NfQthkrcwjkgTLHfPGWEKCChwlRvqgBSNY
+ b_qOYv_tqcePaCCtN.tus.xdI7qVNoGRS_LcqH3hqbGf1oBzQXDIc1sgypqGoCs62Vr1a0F2YEf1
+ MX3DjJH6pp2jarQG2BgP1jrHWzNyCdwHPZdwA7zM9NKn5T8BW18OwsAm7ziVT1vebnbkW_hlmXFx
+ lA9ERpKKBEB7AYpH2B2.343nl2pJ7jnrLGV3hCkf4i6J8Q0TRF68_lfwSQ0a1lglJsDxXC_qPmXd
+ BQuc0YZ79q2QNaUvSYM.aCsKnovkTLoXfuGhYX_.fIktvZYhSkydkUZc56t1F1PAuCb4rC2jGkjp
+ rpngP_51S0IuaTBR5XtdzSzVupHco63RcaAS0Zu3iGqf8s24Ku4mdnAATcX1BtEvohK0dIxPuEos
+ oitPQJMCvG_BN4pZSQDGuyhVAeYm.GM1fLquHub6fQrb4wvqIssazbb58JiN.NUU2ESj1.RGllLx
+ z1IOcg_QAymfklby7q8FFoOZ_fRuL38bHX95Vfhxc6jbcQpr9akYcAq76U4dPRrevo7zalZ0xgdN
+ rMYxWlGZvQfuhRBvZbIGgAhPxQwqnMjJd9N9SWpC93I9g1S5QAWQvYCR48IdbRZRWNZJETdn76AK
+ pThh8UpEzWYOxyaxKVPfDzIPm92kp_lUyxV4Sb_QpFrLsYqrYRbYvcMjg6HDAP7DC1YEs811wqad
+ ayFe7IrbomLVkvRjQskGjt65kVsBUd3alLX6iNZ_aUA48kmGeKlF5jUw0iatgnj358cIaarUO7dC
+ YUwZawNqdEQyEdFmqagmEoCCIjSdL9q2Na8c7Lg0fmDEUYo4yt606buaBldxbgivtrlQbq1.hdbR
+ f_5IFiDe66qpM9V1PoWMwKKgcHNGHYBIrx_6m2bfiBKZ.QtA5tUnk.UI_ejS4Q3rFyiMwqKl9vji
+ eAPYIl1sRp4Javo.3VcYbK1N82X1vfOUJ4gR9ovSbF4TDICFRC5qbgyoLKvwwHWuk5WrgbJ2nxAw
+ 2gKVpMPJW70ZUXk_ZeRrzcExGs11R5z6s9SSOimuV0UIwXSGTVqKh5pMN6.kaYV8O6iaBejXCMK8
+ G3i3Cjsw2qH1R5rpPQF4n7h6WTVs0EZfhJjG.1s8kSan7AdOlq_Xtt42lX6y2STwOtAWH
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 63602443-7919-45b5-95cb-a0501af045f3
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Jun 2024 16:06:58 +0000
+Received: by hermes--production-gq1-5b4c49485c-4rmzt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a6ae495510b30a623b4b0801ff5ab356;
+          Fri, 21 Jun 2024 16:06:55 +0000 (UTC)
+Message-ID: <c59a4954-913b-4672-b502-21aa683d7cdb@schaufler-ca.com>
+Date: Fri, 21 Jun 2024 09:06:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617005825.1443206-1-quic_gaurkash@quicinc.com>
- <20240617005825.1443206-5-quic_gaurkash@quicinc.com> <3eehkn3cdhhjfqtzpahxhjxtu5uqwhntpgu22k3hknctrop3g5@f7dhwvdvhr3k>
- <96e2ce4b154a4f918be0bc2a45011e6d@quicinc.com> <CAA8EJppGpv7N_JQQNJZrbngBBdEKZfuqutR9MPnS1R_WqYNTQw@mail.gmail.com>
- <3a15df00a2714b40aba4ebc43011a7b6@quicinc.com> <CAA8EJpoZ0RR035QwzMLguJZvdYb-C6aqudp1BgHgn_DH2ffsoQ@mail.gmail.com>
- <20240621044747.GC4362@sol.localdomain> <CAA8EJppXsbpFCeGJOMGKOQddy0fF4uW3rt4RUuDTQq6mPunBkg@mail.gmail.com>
- <20240621153939.GA2081@sol.localdomain>
-In-Reply-To: <20240621153939.GA2081@sol.localdomain>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 21 Jun 2024 19:06:25 +0300
-Message-ID: <CAA8EJpqV4CW9kKLVUZgfo+hkSv+tn0t+k0McmHEyXNJUpsZF1w@mail.gmail.com>
-Subject: Re: [PATCH v5 04/15] soc: qcom: ice: add hwkm support in ice
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>, 
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "andersson@kernel.org" <andersson@kernel.org>, 
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, 
-	"srinivas.kandagatla" <srinivas.kandagatla@linaro.org>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel <kernel@quicinc.com>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"Om Prakash Singh (QUIC)" <quic_omprsing@quicinc.com>, 
-	"Bao D. Nguyen (QUIC)" <quic_nguyenb@quicinc.com>, 
-	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>, 
-	"konrad.dybcio@linaro.org" <konrad.dybcio@linaro.org>, 
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "jejb@linux.ibm.com" <jejb@linux.ibm.com>, 
-	"martin.petersen@oracle.com" <martin.petersen@oracle.com>, "mani@kernel.org" <mani@kernel.org>, 
-	"davem@davemloft.net" <davem@davemloft.net>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Sonal Gupta <sonalg@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] LSM, net: Add SO_PEERCONTEXT for peer LSM data
+To: Paul Moore <paul@paul-moore.com>,
+ LSM List <linux-security-module@vger.kernel.org>, netdev@vger.kernel.org,
+ linux-api@vger.kernel.org,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
+ <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <83ef6981a29c441b58b525e9292c866a@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22407 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, 21 Jun 2024 at 18:39, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Fri, Jun 21, 2024 at 06:16:37PM +0300, Dmitry Baryshkov wrote:
-> > On Fri, 21 Jun 2024 at 07:47, Eric Biggers <ebiggers@kernel.org> wrote:
-> > >
-> > > On Thu, Jun 20, 2024 at 02:57:40PM +0300, Dmitry Baryshkov wrote:
-> > > > > > >
-> > > > > > > > Is it possible to use both kind of keys when working on standard mode?
-> > > > > > > > If not, it should be the user who selects what type of keys to be used.
-> > > > > > > > Enforcing this via DT is not a way to go.
-> > > > > > > >
-> > > > > > >
-> > > > > > > Unfortunately, that support is not there yet. When you say user, do
-> > > > > > > you mean to have it as a filesystem mount option?
-> > > > > >
-> > > > > > During cryptsetup time. When running e.g. cryptsetup I, as a user, would like
-> > > > > > to be able to use either a hardware-wrapped key or a standard key.
-> > > > > >
-> > > > >
-> > > > > What we are looking for with these patches is for per-file/folder encryption using fscrypt policies.
-> > > > > Cryptsetup to my understanding supports only full-disk , and does not support FBE (File-Based)
-> > > >
-> > > > I must admit, I mostly used dm-crypt beforehand, so I had to look at
-> > > > fscrypt now. Some of my previous comments might not be fully
-> > > > applicable.
-> > > >
-> > > > > Hence the idea here is that we mount an unencrypted device (with the inlinecrypt option that indicates inline encryption is supported)
-> > > > > And specify policies (links to keys) for different folders.
-> > > > >
-> > > > > > > The way the UFS/EMMC crypto layer is designed currently is that, this
-> > > > > > > information is needed when the modules are loaded.
-> > > > > > >
-> > > > > > > https://lore.kernel.org/all/20231104211259.17448-2-ebiggers@kernel.org
-> > > > > > > /#Z31drivers:ufs:core:ufshcd-crypto.c
-> > > > > >
-> > > > > > I see that the driver lists capabilities here. E.g. that it supports HW-wrapped
-> > > > > > keys. But the line doesn't specify that standard keys are not supported.
-> > > > > >
-> > > > >
-> > > > > Those are capabilities that are read from the storage controller. However, wrapped keys
-> > > > > Are not a standard in the ICE JEDEC specification, and in most cases, is a value add coming
-> > > > > from the SoC.
-> > > > >
-> > > > > QCOM SOC and firmware currently does not support both kinds of keys in the HWKM mode.
-> > > > > That is something we are internally working on, but not available yet.
-> > > >
-> > > > I'd say this is a significant obstacle, at least from my point of
-> > > > view. I understand that the default might be to use hw-wrapped keys,
-> > > > but it should be possible for the user to select non-HW keys if the
-> > > > ability to recover the data is considered to be important. Note, I'm
-> > > > really pointing to the user here, not to the system integrator. So
-> > > > using DT property or specifying kernel arguments to switch between
-> > > > these modes is not really an option.
-> > > >
-> > > > But I'd really love to hear some feedback from linux-security and/or
-> > > > linux-fscrypt here.
-> > > >
-> > > > In my humble opinion the user should be able to specify that the key
-> > > > is wrapped using the hardware KMK. Then if the hardware has already
-> > > > started using the other kind of keys, it should be able to respond
-> > > > with -EINVAL / whatever else. Then the user can evict previously
-> > > > programmed key and program a desired one.
-> > > >
-> > > > > > Also, I'd have expected that hw-wrapped keys are handled using trusted
-> > > > > > keys mechanism (see security/keys/trusted-keys/). Could you please point
-> > > > > > out why that's not the case?
-> > > > > >
-> > > > >
-> > > > > I will evaluate this.
-> > > > > But my initial response is that we currently cannot communicate to our TPM directly from HLOS, but
-> > > > > goes through QTEE, and I don't think our qtee currently interfaces with the open source tee
-> > > > > driver. The interface is through QCOM SCM driver.
-> > > >
-> > > > Note, this is just an API interface, see how it is implemented for the
-> > > > CAAM hardware.
-> > > >
-> > >
-> > > The problem is that this patchset was sent out without the patches that add the
-> > > block and filesystem-level framework for hardware-wrapped inline encryption
-> > > keys, which it depends on.  So it's lacking context.  The proposed framework can
-> > > be found at
-> > > https://lore.kernel.org/linux-block/20231104211259.17448-1-ebiggers@kernel.org/T/#u
-> >
-> > Thank you. I have quickly skimmed through the patches, but I didn't
-> > review them thoroughly. Maybe the patchset already implements the
-> > interfaces that I'm thinking about. In such a case please excuse me. I
-> > will give it a more thorough look later today.
-> >
-> > > As for why "trusted keys" aren't used, they just aren't helpful here.  "Trusted
-> > > keys" are based around a model where the kernel can request that keys be sealed
-> > > and unsealed using a trust source, and the kernel gets access to the raw
-> > > unsealed keys.  Hardware-wrapped inline encryption keys use a different model
-> > > where the kernel never gets access to the raw keys.  They also have the concept
-> > > of ephemeral wrapping which does not exist in "trusted keys".  And they need to
-> > > be properly integrated with the inline encryption framework in the block layer.
-> >
-> > Then what exactly does qcom_scm_derive_sw_secret() do? Does it rewrap
-> > the key under some other key?
->
-> It derives a secret for functionality such as filenames encryption that can't
-> use inline encryption.
->
-> > I had the feeling that there are two separate pieces of functionality
-> > being stuffed into a single patchset and into a single solution.
-> >
-> > First one is handling the keys. I keep on thinking that there should
-> > be a separate software interface to unseal the key and rewrap it under
-> > an ephemeral key.
->
-> There is.  That's what the BLKCRYPTOPREPAREKEY ioctl is for.
->
-> > Some hardware might permit importing raw keys.
->
-> That's what BLKCRYPTOIMPORTKEY is for.
->
-> > Other hardware might insist on generating the keys on-chip so that raw keys
-> > can never be used.
->
-> And that's what BLKCRYPTOGENERATEKEY is for.
+On 6/20/2024 2:05 PM, Paul Moore wrote:
+> On May 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> We recently introduced system calls to access process attributes that
+>> are used by Linux Security Modules (LSM). An important aspect of these
+>> system calls is that they provide the LSM attribute data in a format
+>> that identifies the LSM to which the data applies. Another aspect is that
+>> it can be used to provide multiple instances of the attribute for the
+>> case where more than one LSM supplies the attribute.
+>>
+>> We wish to take advantage of this format for data about network peers.
+>> The existing mechanism, SO_PEERSEC, provides peer security data as a
+>> text string. This is sufficient when the LSM providing the information
+>> is known by the user of SO_PEERSEC, and there is only one LSM providing
+>> the information. It fails, however, if the user does not know which
+>> LSM is providing the information.
+>>
+>> Discussions about extending SO_PEERSEC to accomodate either the new
+> Spelling nitpick -> "accommodate" :)
 
-Again, this might be answered somewhere, but why can't we use keyctl
-for handling the keys and then use a single IOCTL to point the block
-device to the key in the keyring?
+Thanks.
 
+>> format or some other encoding scheme invariably lead to the conclusion
+>> that doing so would lead to tears. Hence, we introduce SO_PEERCONTEXT
+>> which uses the same API data as the LSM system calls.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  arch/alpha/include/uapi/asm/socket.h  |  1 +
+>>  arch/mips/include/uapi/asm/socket.h   |  1 +
+>>  arch/parisc/include/uapi/asm/socket.h |  1 +
+>>  arch/sparc/include/uapi/asm/socket.h  |  1 +
+>>  include/linux/lsm_hook_defs.h         |  2 +
+>>  include/linux/security.h              | 18 ++++++++
+>>  include/uapi/asm-generic/socket.h     |  1 +
+>>  net/core/sock.c                       |  4 ++
+>>  security/apparmor/lsm.c               | 39 ++++++++++++++++
+>>  security/security.c                   | 86 +++++++++++++++++++++++++++++++++++
+>>  security/selinux/hooks.c              | 35 ++++++++++++++
+>>  security/smack/smack_lsm.c            | 25 ++++++++++
+>>  12 files changed, 214 insertions(+)
+> ..
 >
-> > Second part is the actual block interface. Gaurav wrote about
-> > targeting fscrypt, but there should be no actual difference between
-> > crypto targets. FDE or having a single partition encrypted should
-> > probably work in the same way. Convert the key into blk_crypto_key
-> > (including the cookie for the ephemeral key), program the key into the
-> > slot, use the slot to en/decrypt hardware blocks.
-> >
-> > My main point is that the decision on the key type should be coming
-> > from the user.
+>> diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
+>> index 8ce8a39a1e5f..e0166ff53670 100644
+>> --- a/include/uapi/asm-generic/socket.h
+>> +++ b/include/uapi/asm-generic/socket.h
+>> @@ -134,6 +134,7 @@
+>>  
+>>  #define SO_PASSPIDFD		76
+>>  #define SO_PEERPIDFD		77
+>> +#define SO_PEERCONTEXT		78
+> Bikeshed time ... how about SO_PEERLSMCTX since we are returning a
+> lsm_ctx struct?
+
+Sure.
+
+
+>> diff --git a/security/security.c b/security/security.c
+>> index e387614cb054..fd4919c28e8f 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -874,6 +874,64 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
+>>  	return rc;
+>>  }
+>>  
+>> +/**
+>> + * lsm_fill_socket_ctx - Fill a socket lsm_ctx structure
+>> + * @optval: a socket LSM context to be filled
+>> + * @optlen: uctx size
+> "@optlen: @optval size"
+
+Thank you.
+
+
+>> + * @val: the new LSM context value
+>> + * @val_len: the size of the new LSM context value
+>> + * @id: LSM id
+>> + * @flags: LSM defined flags
+>> + *
+>> + * Fill all of the fields in a lsm_ctx structure.  If @optval is NULL
+>> + * simply calculate the required size to output via @optlen and return
+>> + * success.
+>> + *
+>> + * Returns 0 on success, -E2BIG if userspace buffer is not large enough,
+>> + * -EFAULT on a copyout error, -ENOMEM if memory can't be allocated.
+>> + */
+>> +int lsm_fill_socket_ctx(sockptr_t optval, sockptr_t optlen, void *val,
+>> +			size_t val_len, u64 id, u64 flags)
+>> +{
+>> +	struct lsm_ctx *nctx = NULL;
+>> +	unsigned int nctx_len;
+>> +	int loptlen;
+> u32?
+
+Probably. I'll revise in line with your comment below.
+
+>> +	int rc = 0;
+>> +
+>> +	if (copy_from_sockptr(&loptlen, optlen, sizeof(int)))
+>> +		return -EFAULT;
+> It seems the current guidance prefers copy_safe_from_sockptr(), see
+> the note in include/linux/sockptr.h.
+
+Always a good idea to follow guidance.
+
+>> +	nctx_len = ALIGN(struct_size(nctx, ctx, val_len), sizeof(void *));
+>> +	if (nctx_len > loptlen && !sockptr_is_null(optval))
+>> +		rc = -E2BIG;
+> Why do we care if @optval is NULL or not?  We are in a -E2BIG state,
+> we're not copying anything into @optval anyway.  In fact, why are we
+> doing the @rc check below?  Do it here like we do in lsm_fill_user_ctx().
 >
-> That's exactly how it works.  There is a block interface for specifying an
-> inline encryption key along with each bio.  The submitter of the bio can specify
-> either a standard key or a HW-wrapped key.
+>   if (nctx_len > loptlen) {
+>     rc = -E2BIG;
+>     goto out;
+>   }
 
-Not in this patchset. The ICE driver decides whether it can support
-HW-wrapped keys or not and then fails to support other type of keys.
+That's a bit sloppy on my part. I'll clean it up.
 
+
+>> +	/* no buffer - return success/0 and set @uctx_len to the req size */
+> "... set @opt_len ... "
+
+Yes.
+
+>> +	if (sockptr_is_null(optval) || rc)
+>> +		goto out;
+> Do the @rc check above, not here.
 >
-> Again, take a look at the patchset
-> https://lore.kernel.org/linux-block/20231104211259.17448-1-ebiggers@kernel.org/T/#u.
-> That's where all this stuff is.
+>> +	nctx = kzalloc(nctx_len, GFP_KERNEL);
+>> +	if (!nctx) {
+>> +		rc = -ENOMEM;
+>> +		goto out;
+>> +	}
+>> +	nctx->id = id;
+>> +	nctx->flags = flags;
+>> +	nctx->len = nctx_len;
+>> +	nctx->ctx_len = val_len;
+>> +	memcpy(nctx->ctx, val, val_len);
+>> +
+>> +	if (copy_to_sockptr(optval, nctx, nctx_len))
+>> +		rc = -EFAULT;
+> This is always going to copy to the start of @optval which means we
+> are going to keep overwriting previous values in the multi-LSM case.
 
-I was mostly looking at the hardware-specific implementation.
+The multiple LSM case isn't handled in this version. I don't want this
+patch to depend on multiple LSM support.
 
--- 
-With best wishes
-Dmitry
+> I think we likely want copy_to_sockptr_offset(), or similar.  See my
+> comment in security_socket_getpeerctx_stream().
+>
+>> +	kfree(nctx);
+>> +out:
+>> +	if (copy_to_sockptr(optlen, &nctx_len, sizeof(int)))
+>> +		rc = -EFAULT;
+>> +
+>> +	return rc;
+>> +}
+>> +
+>> +
+>>  /*
+>>   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
+>>   * can be accessed with:
+>> @@ -4743,6 +4801,34 @@ int security_socket_getpeersec_stream(struct socket *sock, sockptr_t optval,
+>>  	return LSM_RET_DEFAULT(socket_getpeersec_stream);
+>>  }
+>>  
+>> +/**
+>> + * security_socket_getpeerctx_stream() - Get the remote peer label
+>> + * @sock: socket
+>> + * @optval: destination buffer
+>> + * @optlen: size of peer label copied into the buffer
+>> + * @len: maximum size of the destination buffer
+>> + *
+>> + * This hook allows the security module to provide peer socket security state
+>> + * for unix or connected tcp sockets to userspace via getsockopt
+>> + * SO_GETPEERCONTEXT.  For tcp sockets this can be meaningful if the socket
+>> + * is associated with an ipsec SA.
+>> + *
+>> + * Return: Returns 0 if all is well, otherwise, typical getsockopt return
+>> + *         values.
+>> + */
+>> +int security_socket_getpeerctx_stream(struct socket *sock, sockptr_t optval,
+>> +				      sockptr_t optlen, unsigned int len)
+>> +{
+>> +	struct security_hook_list *hp;
+>> +
+>> +	hlist_for_each_entry(hp, &security_hook_heads.socket_getpeerctx_stream,
+>> +			     list)
+>> +		return hp->hook.socket_getpeerctx_stream(sock, optval, optlen,
+>> +							 len);
+>> +
+>> +	return LSM_RET_DEFAULT(socket_getpeerctx_stream);
+>> +}
+> Don't we need the same magic that we have in security_getselfattr() to
+> handle the multi-LSM case?
+
+Yes. I would like to move this ahead independently of the multi-LSM support.
+Putting the multi-LSM magic in is unnecessary and rather pointless until then.
+
+> --
+> paul-moore.com
+
+Thank you for the review. Expect v2 before very long.
+
 
