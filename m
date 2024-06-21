@@ -1,129 +1,137 @@
-Return-Path: <linux-kernel+bounces-223770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584AE9117FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:23:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F07911801
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D5551F21DA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E2D22826F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B526548F7;
-	Fri, 21 Jun 2024 01:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="L2dz/yDS"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490915C8EF;
+	Fri, 21 Jun 2024 01:25:04 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E2C4EB45;
-	Fri, 21 Jun 2024 01:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F091052F9B;
+	Fri, 21 Jun 2024 01:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718933026; cv=none; b=PS+gSPrG64FSaoHvAvPj6GCpfcEv4lRXwsB9u1YBPM3/g4taqE8WbHEt4u81poWF1KRA7oU4C2iayJ1VpazLckA2rFYRYpU2uevHyEqiInz/XP2VkFUNf3gIZaqNpNf6aa+ishEuNdY00abrRt/OLrF5M+fUNuyqYxB40DG2Tac=
+	t=1718933103; cv=none; b=rwN6PnFGU0M+D36BIwPJxj3fst+Eg3UsAO6U+PZmAFK37V4/0U/+MgxHShW9JDg2EVHlcWFEabq9lE7r4iodQdJCDjCBW6y+kEsurYFY3JJryE6Krv7k0/W/CgQ4Fmn4qjky8aleZ5rv9qYYQ43I5vaAFfNpoU3u68GS3o+EnGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718933026; c=relaxed/simple;
-	bh=S/Y+XD9EEnIR15Y7mRl6RrqRYyY+K+WmygZUm5wATzo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dECeFFE//GVk85mi2H8z2EvVQW/E+I7ASr2enplhHiTl+hT95huPaiwRmsFalBJQ2fcmrlLsYedKYXt2uXHxua7JpwsYvew/TBGR9zUGAgkMiN6wYlFgc7YXeH4cCS79MqgeuDNFJaU4jv7xv2tyoTLXV6vbiGJBdcLWhDP0lZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=L2dz/yDS; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718933022;
-	bh=S/Y+XD9EEnIR15Y7mRl6RrqRYyY+K+WmygZUm5wATzo=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=L2dz/yDSW0PG56ChLFne9pA3VPa3SAhhoxfa6nEqxFvc+g92GCayvWkpfw3N9lckd
-	 PUdCvjFlmNg2Q+A4yNwfa627epfMxTufbR5lm8s9Ypck4O3wuANihNFOEOSfAMHwu+
-	 2eCysVofl9oyYQzfjbNOmFp2A6R5n601anu6SyQzNCCXqRgls5EwFtcs0KbRQ6JBC2
-	 pC0xPHkWOmbIlw8H5wvU91IXsQnBytxR/OCNlEIYF0pger3soEk89cb9rL6KF8fEt4
-	 G37KYh7o3d/s9JsCaNxhTVXxbg/cKSjmMFhMM14BCurmPsoUYQ1EBuYUgq2+/k5O6O
-	 4fjoFBQn0OLfA==
-Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B1D5A3780FF1;
-	Fri, 21 Jun 2024 01:23:41 +0000 (UTC)
-Message-ID: <1fce65a2-b752-4bab-84e5-314b60d682f0@collabora.com>
-Date: Fri, 21 Jun 2024 04:23:41 +0300
+	s=arc-20240116; t=1718933103; c=relaxed/simple;
+	bh=d84lgjVEEm0ZT03aEeBtLSkrbkS5gEWl6DEC1ywpEvU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KVv68wCsNxhlaIX+DpthQsh+YXMwpecpzBa9+Ftx7JV5i/zxfPIzjtnNaoA6UM/g4Rii8bWdoaM8Oe5FHteYa1VzWZy5vSjq5+Mn2VVJF5S4lxH1sFGZJ8zuiuiZ7V4DCdEK2pQ65SLGdqoIUS6HihNIH7JMHKWm/BLEx1UBl5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sKT0r-000000004db-0C1t;
+	Fri, 21 Jun 2024 01:24:25 +0000
+Date: Fri, 21 Jun 2024 02:24:17 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Daniel Golle <daniel@makrotopia.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Anand Moon <linux.amoon@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] hwrng: add hwrng support for Rockchip RK3568
+Message-ID: <cover.1718921174.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] arm64: dts: rockchip: Fix mic-in-differential usage
- on rk3568-rock-3a
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Chris Zhong <zyw@rock-chips.com>, Zhang Qing <zhangqing@rock-chips.com>,
- Chris Morgan <macromorgan@hotmail.com>,
- Furkan Kardame <f.kardame@manjaro.org>,
- Michael Riesch <michael.riesch@wolfvision.net>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240619-rk809-fixes-v1-0-fa93bc5313f4@collabora.com>
- <20240619-rk809-fixes-v1-3-fa93bc5313f4@collabora.com>
- <c35b3e80-7889-473d-8365-88436c3cb9a9@kwiboo.se>
- <4015ded1-5ec4-4374-982e-9c7f23b43884@collabora.com>
-Content-Language: en-US
-In-Reply-To: <4015ded1-5ec4-4374-982e-9c7f23b43884@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 6/19/24 3:56 PM, Cristian Ciocaltea wrote:
-> Hi Jonas,
-> 
-> On 6/19/24 3:22 PM, Jonas Karlman wrote:
->> Hi Cristian,
->>
->> On 2024-06-19 13:23, Cristian Ciocaltea wrote:
->>> The 'mic-in-differential' DT property supported by the RK809/RK817 audio
->>> codec driver is actually valid if prefixed with 'rockchip,':
->>>
->>>   DTC_CHK arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dtb
->>>   rk3568-rock-3a.dtb: pmic@20: codec: 'mic-in-differential' does not match any of the regexes: 'pinctrl-[0-9]+'
->>> 	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
->>>
->>> Make use of the correct property name.
->>>
->>> Fixes: a84ffd2ef1ff ("arm64: dts: rockchip: Fix mic-in-differential usage on rock-3a")
->>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->>> ---
->>>  arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
->>> index ebdedea15ad1..0b54dfe92d6e 100644
->>> --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
->>> +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
->>> @@ -533,7 +533,7 @@ regulator-state-mem {
->>>  		};
->>>  
->>>  		codec {
->>> -			mic-in-differential;
->>> +			rockchip,mic-in-differential;
->>
->> If I understand the schematics correctly, only one wire is connected so
->> this board cannot really use differential signaling, and this should
->> probably instead be dropped.
-> 
-> Thanks for pointing this out, I will drop it in v2.
+Rockchip SoCs used to have a random number generator as part of their
+crypto device, and support for it has to be added to the corresponding
+driver.
 
-I've also checked the schematics which indicate the PMIC RK809 CODEC
-receives both MIC1_INN and MIC1_INP signals; the former comes from the
-Jack input, while the latter is generated by the SLM42Q3AT MEMS Microphone.
+However newer Rockchip SoCs like the RK3568 have an independent True
+Random Number Generator device. This patchset adds a driver for it and
+enable it in the device tree.
 
-However, I'm not sure the Mic presence on the board is dependent on the
-HW revision - on REV V1.3 the "NC_" prefix under U24 component label
-suggests it is not connected.  So maybe we should keep the property?!
+v2 of this patchset has been submitted by Aurelien Jarno in November
+2022. A follow-up submission addressing the comments received for v2
+never happened.
 
-Cristian
+As I believe that using the TRNG is generally desireable as it reduces
+the time needed to boot significantly as userspace no longer waits due
+blocking read of /dev/random while still lacking entropy I have picked
+up Aurelien's previous work and completed it.
+
+Link to v2: https://patchwork.kernel.org/project/linux-arm-kernel/cover/20221128184718.1963353-1-aurelien@aurel32.net/
+
+v2 -> v3:
+ * Patch 1: address comments of Krzysztof Kozlowski, add MAINTAINERS
+   - improved description
+   - meaningful clock-names
+   - add entry in MAINTAINERS files
+
+ * Patch 2: numerous code-style improvements
+   - drop misleading rk_rng_write_ctl(), simplify I/O writes
+   - drop unused TRNG_RNG_DOUT_[1-7] macros
+   - handle error handling for pm_runtime_get_sync()
+   - use memcpy_fromio() instead of open coding for-loop
+   - some minor white-spaces fixes
+
+ * Patch 3:
+   - use clock-names as defined in dt-bindings
+
+v1 -> v2:
+ * Patch 1: fix issues reported by Rob Herring and Krzysztof Kozlowski:
+   - Rename rockchip-rng.yaml into rockchip,rk3568-rng.yaml
+   - Fix binding title and description
+   - Fix compatible property
+   - Rename clocks and add the corresponding descriptions
+   - Drop reset-names
+   - Add a bus definition with #address-cells and #size-cells to the
+     example.
+
+ * Patch 2: fix issue reported by kernel test robot <lkp@intel.com>
+   - Do not read the random registers as big endian, looking at the
+     RK3568 TRM this is actually not needed. This fixes a sparse
+     warning.
+
+ * Patch 3: unchanged
+
+Aurelien Jarno (3):
+  dt-bindings: RNG: Add Rockchip RNG bindings
+  hwrng: add Rockchip SoC hwrng driver
+  arm64: dts: rockchip: add DT entry for RNG to RK356x
+
+ .../bindings/rng/rockchip,rk3568-rng.yaml     |  60 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/rockchip/rk356x.dtsi      |   9 +
+ drivers/char/hw_random/Kconfig                |  14 ++
+ drivers/char/hw_random/Makefile               |   1 +
+ drivers/char/hw_random/rockchip-rng.c         | 229 ++++++++++++++++++
+ 6 files changed, 320 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml
+ create mode 100644 drivers/char/hw_random/rockchip-rng.c
+
+-- 
+2.45.2
 
