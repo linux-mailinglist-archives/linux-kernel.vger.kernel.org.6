@@ -1,171 +1,138 @@
-Return-Path: <linux-kernel+bounces-224429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0EB691224B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:22:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584D3912254
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F77328981D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E091C23A83
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6E7171664;
-	Fri, 21 Jun 2024 10:22:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA07171095
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE725171643;
+	Fri, 21 Jun 2024 10:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9cbJDMk"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5F416DEA9;
+	Fri, 21 Jun 2024 10:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718965333; cv=none; b=c/EJRQ8sMxmqmKhdmBEi3S685mUB4vKhoFkpw+yO2gEeMxPTCjP8Ir/HbEfflDoVhZapvUbPSqXqRCIwF8YtTjjIsjLjhFRxYaFg0cKg4nEo3OGUFmSctKvszphmMF4jq1fb7XHneepgsozOCblPT8UichiIgz6hNLl3eZY7DNc=
+	t=1718965378; cv=none; b=AMnqv33R4PjbDz2gUDoVKUSbecIBKCoicMl7GUHhRYklDR/3Gd8xcpfy2qAGxNhuBUmkF18BV3axeERU59qnh424//LTWvxsgUB7sMMlbq5jhx1lizga2OkyGUExLaM23c4cGAjEQOuVTc7U25eNJAiilMGCbEUKEkSoJR/nznU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718965333; c=relaxed/simple;
-	bh=n9SaKTUmqIJE/U4/Sgk/iC5P36tqEZkn6Qgrv1losIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TeG+N4ds+jMYbNiZXgQBWlZW8RApkaleCDzGuTw9zvI7ogdKcpYqJ3D2xDLsAsousgzePS34g7ONLN43Mwcz9WBa18Dg2TJPCMfKr+36oVSzEVLBL9QV0LMHW0AM67RIxVQk7mzjf6o76HXl8J3LheKcyVvbJJU4JfJJioKgous=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 695A9FEC;
-	Fri, 21 Jun 2024 03:22:35 -0700 (PDT)
-Received: from [192.168.178.110] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A8FF3F6A8;
-	Fri, 21 Jun 2024 03:22:08 -0700 (PDT)
-Message-ID: <e2fdb89d-7594-4025-8e20-299dddc80497@arm.com>
-Date: Fri, 21 Jun 2024 12:22:07 +0200
+	s=arc-20240116; t=1718965378; c=relaxed/simple;
+	bh=TSwRMDRga/1dOIySBpm82JhQM0xRqtYGsuG5K6KhxEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LEw/DrY2Zfj/fB2vZFJzVexNnZoCK9YAHO8tBTGtCRmndxfDtGu+w5Kg8Aa26VyglsYkYpPnTNir7Jr8+JjnomgFXkEFlJEvBvD1VNPDsuU9XqAvKvZTifjVCB0uMcuh+/zEFpk8RD6DYkFJGWf2dVvl/te0/ZQm6u5Ni7UwQVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9cbJDMk; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57d106e69a2so3032948a12.0;
+        Fri, 21 Jun 2024 03:22:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718965374; x=1719570174; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KRU/CLMPMIdyJLsUDddkWEnZJa3UQNsHKLmP0cyv9wU=;
+        b=i9cbJDMklYT6l8Oi+gyKIdUUridFoUTGVayevJA7X0JFb8M1UPXzAZYO97VTZAc1sv
+         Ij3NuZNJlTHExlvec9fpuGOKld0ZYZFyGxqPLF+zWcThFPgIFhNv8jjoiUbZQZ6C+/41
+         WeflDtKWdmDqXHHk6xTO2rIbL2o6BAWx2/44Tj6BNCx7QD3cDlVOyAp7Dz8PtYXtXf2u
+         mdUhfwQruSq/6wv0OkPePZLLSOeESkxkYZVswaHdvXZkqeJbXEsxBaAl3670SdlYF0Lf
+         w7c1i6GiR2gSGA1NhtjhukC7XMaFrKIGmZR8N+Jpxi37xBktxzpU0p1T7TcMGqNrYwmO
+         YmcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718965374; x=1719570174;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KRU/CLMPMIdyJLsUDddkWEnZJa3UQNsHKLmP0cyv9wU=;
+        b=HV23yHdnfFL2sxRleKPA5pVxEqEatRHVR7DPXOX0t8HIo6P56Oljlv2pbgUBgd+p0g
+         AQht4RuK3TUEJYtEjz92P1I+MQGiNZ8Nh6/CpmuSBiCUC1/8iXvB1Ewk8XzikAlwGGV9
+         vgbpCdMUs5YiaprcXShRfjoWzV0NGCdddzkd64z/cDw6Cj3en+Zb4Tjo0SeWVS33s9q1
+         h4Pf0eQjN+tMzPwxbqChwV1VGUxtK621kbTzoYF0Kbb4SvixqxRJMJuCDRWnKqv2x56j
+         Gi+gzq4XtHf4BE2NhTIEPdXsXPa8ojhIW2RT7ZC+S2OZGpTcGrp49jQ+urRonV+EK+7s
+         /viw==
+X-Forwarded-Encrypted: i=1; AJvYcCV46saGmxRyMIh2bl5KUU9TEb2WjDCMNHzQE5pDvHMlEHWZLuOiHk/CvRhu4GeGjpviwc7gSlRwcRksaVnHNxKg8jecePdLlQwBWfNSZmQxGxlLtwrtPgZ1NGXb+bB1eYoVcRg92gXrEYdSG2I+OJDb51uTYfbWWBjU0FJOQ4TC1NDJWA==
+X-Gm-Message-State: AOJu0Yx+bBWoqDRh5kppQdWhAKPyOMeWLeUDY62jpCvGHqlhNn1nEm2C
+	PulB6N1EL0kxsZ7+ln3mrdDu0nlnwlvz9OBAYuiERzqx0JvVqBRR
+X-Google-Smtp-Source: AGHT+IGwy3qhXOfp29GIKRxhqtXvx9J6dgCw1Tr9xWky4wRxbgPQtZwYLyM+DZSsRDqAp9hh6L6OqA==
+X-Received: by 2002:aa7:c603:0:b0:578:6360:aa11 with SMTP id 4fb4d7f45d1cf-57cf7a5732fmr8074633a12.5.1718965374192;
+        Fri, 21 Jun 2024 03:22:54 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30564be6sm723550a12.93.2024.06.21.03.22.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 03:22:53 -0700 (PDT)
+Date: Fri, 21 Jun 2024 13:22:50 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: [PATCH v3 1/3] spi: fsl-dspi: use common proptery
+ 'spi-cs-setup(hold)-delay-ns'
+Message-ID: <20240621102250.oc2cck26tpoqsywz@skbuf>
+References: <20240620-ls_qspi-v3-0-1a2afcf417e4@nxp.com>
+ <20240620-ls_qspi-v3-1-1a2afcf417e4@nxp.com>
+ <AM6PR04MB5941CD3048D65DABD19256A488C92@AM6PR04MB5941.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding
- actual_cpu_capacity
-To: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- bristot@redhat.com, vschneid@redhat.com, vincent.donnefort@arm.com,
- qyousef@layalina.io, ke.wang@unisoc.com, linux-kernel@vger.kernel.org
-References: <20240606070645.3295-1-xuewen.yan@unisoc.com>
- <0763f870-e30c-46cf-aefa-b879f2ebdba4@arm.com>
- <CAB8ipk_TjqoNetBZ7dbjRxuBHAP=nz9=ZNomnjnaCEikLQSK2A@mail.gmail.com>
- <64115627-c6c7-416b-99f9-0df22cbdca6b@arm.com>
- <CAB8ipk-86-oJJ2XhJ2y5=ek3QwmMe0OJ+ry9FddmXrrChqu6+A@mail.gmail.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <CAB8ipk-86-oJJ2XhJ2y5=ek3QwmMe0OJ+ry9FddmXrrChqu6+A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM6PR04MB5941CD3048D65DABD19256A488C92@AM6PR04MB5941.eurprd04.prod.outlook.com>
 
-On 07/06/2024 12:37, Xuewen Yan wrote:
-> On Fri, Jun 7, 2024 at 6:30 PM Dietmar Eggemann
-> <dietmar.eggemann@arm.com> wrote:
->>
->> On 07/06/2024 10:20, Xuewen Yan wrote:
->>> Hi Dietmar
->>>
->>> On Fri, Jun 7, 2024 at 3:19 PM Dietmar Eggemann
->>> <dietmar.eggemann@arm.com> wrote:
->>>>
->>>> On 06/06/2024 09:06, Xuewen Yan wrote:
->>>>> Because the effective_cpu_util() would return a util which
->>>>> maybe bigger than the actual_cpu_capacity, this could cause
->>>>> the pd_busy_time calculation errors.
->>>>
->>>> Doesn't return effective_cpu_util() either scale or min(scale, util)
->>>> with scale = arch_scale_cpu_capacity(cpu)? So the util sum over the PD
->>>> cannot exceed eenv->cpu_cap?
->>>
->>> In effective_cpu_util, the scale = arch_scale_cpu_capacity(cpu);
->>>  Although there is the clamp of eenv->pd_cap, but let us consider the
->>> following simple scenario:
->>> The pd cpus are 4-7, and the arch_scale_capacity is 1024, and because
->>> of cpufreq-limit,
->>
->> Ah, this is due to:
->>
->> find_energy_efficient_cpu()
->>
->>    ...
->>    for (; pd; pd = pd->next)
->>        ...
->>        cpu_actual_cap = get_actual_cpu_capacity(cpu)
->>
->>        for_each_cpu(cpu, cpus)
->>            ...
->>            eenv.pd_cap += cpu_actual_cap
->>
->> and:
->>
->> get_actual_cpu_capacity()
->>
->>    ...
->>    capacity = arch_scale_cpu_capacity(cpu)
->>
->>    capacity -= max(hw_load_avg(cpu_rq(cpu)), cpufreq_get_pressure(cpu))
->>
->> which got introduced by f1f8d0a22422 ("sched/cpufreq: Take cpufreq
->> feedback into account").
+On Fri, Jun 21, 2024 at 01:28:28AM +0000, Peng Fan wrote:
+> > +		cs_sck_delay = spi_delay_to_ns(&spi->cs_setup, NULL);
+> > +		if (!cs_sck_delay)
 > 
-> I don't think it was introduced by f1f8d0a22422, because f1f8d0a22422
-> just replaced the cpu_thermal_cap with get_actual_cpu_capacity(cpu).
-> The eenv.cpu_cap was  introduced by 3e8c6c9aac42 ("sched/fair: Remove
-> task_util from effective utilization in feec()").
+> `if (cs_sck_delay <= 0)` ?
 
-Yes, you're right. 3e8c6c9aac42 changed it from per-CPU to per-PD
-capping.
+spi_delay_to_ns() returns error only for SPI_DELAY_UNIT_SCK and for
+unknown units.
 
-In case we want to go back to per-CPU then we should remove the
-eenv->pd_cap capping in eenv_pd_busy_time().
+The first case never appears to be set by the core. Only spi-dw-core.c
+and spi-dw-dma.c set SPI_DELAY_UNIT_SCK.
 
--->8--
+The latter case seems to be mostly avoidable defensive programming.
+spi_alloc_device() gives you zero-initialized memory, which means
+spi->cs_hold.unit is by default SPI_DELAY_UNIT_USECS (0) and so is
+spi->cs_setup.unit. Nothing seems to set the unit to an invalid value,
+so the default case appears dead code. If "u8 unit" from within
+struct spi_delay was an enum type, it would have likely been fine to
+even omit the default case altogether.
 
-@@ -7864,16 +7864,15 @@ static inline void eenv_pd_busy_time(struct energy_env *eenv,
-                                     struct cpumask *pd_cpus,
-                                     struct task_struct *p)
- {
--       unsigned long busy_time = 0;
-        int cpu;
- 
-        for_each_cpu(cpu, pd_cpus) {
-                unsigned long util = cpu_util(cpu, p, -1, 0);
- 
--               busy_time += effective_cpu_util(cpu, util, NULL, NULL);
-+               util = effective_cpu_util(cpu, util, NULL, NULL);
-+               util = min(util, eenv->cpu_cap);
-+               eenv->pd_busy_time += util;
-        }
--
--       eenv->pd_busy_time = min(eenv->pd_cap, busy_time);
- }
+There's also the curious case of integer type (signedness) mismatch
+between:
+- the u32 type of "delay" processed and returned by spi_delay_to_ns()
+- the int return type of spi_delay_to_ns()
+- the u32 type of the "cs_sck_delay" and "sck_cs_delay" variables used
+  by Frank to store the output from spi_delay_to_ns() inside the dspi
+  driver
 
+The interaction between these data types means that:
+- The "if (cs_sck_delay <= 0)" snippet you suggest will simply not work,
+  because the spi_delay_to_ns() function output is assigned to an
+  unsigned variable, which is never negative.
+- There is a theoretical possibility that a large u32 delay returned by
+  spi_delay_to_ns() is misinterpreted as an error by a caller which does
+  make an attempt to check for negative values. However, simply casting
+  the value back to unsigned as Frank does eliminates that possibility.
+  Given that ultimately, the setup and hold times come from u32 device
+  tree properties which aren't range-checked, it might just well happen
+  for someone who does check for < 0 to trip over this. It might be
+  worth somebody having a closer look at this situation.
 
-
-I'm wondering whether we would need the:
-
-if (dst_cpu >= 0)
-    busy_time = min(eenv->pd_cap, busy_time + eenv->task_busy_time);
-
-in compute_energy() anymore since we only get a candidate CPU in feec()
-after checking with util_fits_cpu() if cpu can accommodate p :
-
-feec()
-
-    ...
-
-    for_each_cpu()
-
-        util = cpu_util(cpu, p, cpu, ...)
-        cpu_cap = capacity_of()
-
-        ...
-
-        fits = util_fits_cpu(util, ..., cpu);
-        if (!fits)
-            continue
-
-        /* check if candidate CPU */
+I don't think that your suggestion will produce better code.
 
