@@ -1,163 +1,176 @@
-Return-Path: <linux-kernel+bounces-224241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FFB8911F48
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:50:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C6E911F4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 907A41F27BB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:50:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4A4EB232DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C974316D9A3;
-	Fri, 21 Jun 2024 08:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F2C16D9AE;
+	Fri, 21 Jun 2024 08:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="iIhR7FzE";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="iIhR7FzE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4ytXGOm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BDF18E20
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD87B18E20;
+	Fri, 21 Jun 2024 08:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718959823; cv=none; b=JobCpzEk3ghOFazSwHqbhQYhzLqNt0iRQCyBF130cn4nx4i8OZTmJRlWIdWeLFnxmc63Ivh5S4dmYU9sDgTn2E0ldX8biVADjbkHWqcSVkXGEagFlkjf5Ezig+ujxS4afp93+MOpSBAv9ZyvlPHdjqH6O2LVopjToPqPIUuPmDg=
+	t=1718959848; cv=none; b=MRn8Ylys2Q1x4AFfJ4w7lOxN5QgF77otHNX+0ajVeuZEMg4QTNEXl+U133HjtplHLPkokmWVJrOYJLAzuQbBkjjlaVQKz8BFsf37BAMdCBbY3moRegA2ysy2P5lUQ2rUgcMR2/oTqr+e48ibhYvJWtzrU+d4jOWM0cFlRlMFysw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718959823; c=relaxed/simple;
-	bh=1EOieLYALgDf3OC33tQ9uV5hkGF+ygvbKawrP3xPyWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jUAvYbQecO2gRBJM6rLakEapCpDL6s52fNZnCqEc2hLUJb6WIzUwCECrMviewEMo4qnk4gRc/DwEnMzZLuBpE/XorQnCeQjzVsviaRYmv6IIVW8LcCKBKn7wtb5aYvNSFXA+mdoVltrAtqoXL+X3ZwCDlUWr4RxmSF//X15CUGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=iIhR7FzE; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=iIhR7FzE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B147521AD8;
-	Fri, 21 Jun 2024 08:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718959815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4IBFY55aY3D9MyZlJoKqwYGdFQP0jr3zjoMUTUGofdc=;
-	b=iIhR7FzEJGs/zGPIlfZppTXopHjXVLCnP5MjHuwuOAum0PiC48QyeuoPLMR3p/C8wndJvM
-	lvAFeNf1QL2ruYvFEsjDPxzW9eJY8K+7Kh6+ucM7F6M8kNamvejRsuWQevL8Nl0RuJ4PLc
-	aRAVIDa1k2Zw2yI1NDBd8l0ajBEycMg=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718959815; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4IBFY55aY3D9MyZlJoKqwYGdFQP0jr3zjoMUTUGofdc=;
-	b=iIhR7FzEJGs/zGPIlfZppTXopHjXVLCnP5MjHuwuOAum0PiC48QyeuoPLMR3p/C8wndJvM
-	lvAFeNf1QL2ruYvFEsjDPxzW9eJY8K+7Kh6+ucM7F6M8kNamvejRsuWQevL8Nl0RuJ4PLc
-	aRAVIDa1k2Zw2yI1NDBd8l0ajBEycMg=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8CC7813ABD;
-	Fri, 21 Jun 2024 08:50:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ok9sH8c+dWbZMQAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Fri, 21 Jun 2024 08:50:15 +0000
-Date: Fri, 21 Jun 2024 10:50:10 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: alexjlzheng@gmail.com, "Eric W. Biederman" <ebiederm@xmission.com>,
-	akpm@linux-foundation.org, brauner@kernel.org, axboe@kernel.dk,
-	tandersen@netflix.com, willy@infradead.org, mjguzik@gmail.com,
-	alexjlzheng@tencent.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2] mm: optimize the redundant loop of
- mm_update_next_owner()
-Message-ID: <ZnU-wlFE5usvo9ah@tiehlicka>
-References: <20240620152744.4038983-1-alexjlzheng@tencent.com>
- <20240620172958.GA2058@redhat.com>
+	s=arc-20240116; t=1718959848; c=relaxed/simple;
+	bh=PZK+y9IrBmfcyL/NEma5WNE67KPzT5Vfy29QsNFdLTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XOcXM2ZJh8PvHr73KTtTBf/9bfM91vrwnj95wX1SPZtV0HPeWMx/wJNdLyoz/8whJd3LisA03j3p5PbNl+NVkt7fjMKnQeE0roXIQgmcUv1nYcXZE+lJao2uGHg/wEBN0GeGIrHqhJikunuznuPitOhN/Yn4Fa1zDldKXAyWoKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4ytXGOm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6405CC4AF0C;
+	Fri, 21 Jun 2024 08:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718959848;
+	bh=PZK+y9IrBmfcyL/NEma5WNE67KPzT5Vfy29QsNFdLTE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=U4ytXGOm45qB6KIjZ1kb557AnaG6CYKw4iJZwhRN0/L74mmUZXeywYHZ/AVwB+55N
+	 tGIq5ELrXS7axJAxf+P7O/l7HE7C8QI5k4MlmGrtOYG97kz7h8v3zs/N7Agrh4MhJw
+	 a0Ff6Ycgod9u2V5kApL8zxmXiZkVlnXIqJoDiy3QuhHV6chZuz5Sw0atQ24p07u2eG
+	 ErYl9ctHE0kc1UET2GhksU1SMOACACqFjx/L6B1euo6XXxRNTLIcHsFEOfe7V18vl/
+	 TeNeAnBs77pAt4zSWNQ8ZqAMKp7j6/oZRkcPJqX91iliPIcFI5CKbeAPPnvwxkFkJ8
+	 o8T4A7rZt33Ew==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52bbf73f334so1520012e87.2;
+        Fri, 21 Jun 2024 01:50:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6XAtXhcr19lNPlRWVSzq2JJJDV/vnBpV4zBaw9jRwacGJT5KMoeM+MFHJ3r9HNrtVnSp8g4PW5JsyWsVkIpYa3I0f9n9wLDq6H24Luc/WApXLkE5swHJNI3mwf7fS9FidspaWqhjBoWTL7N79
+X-Gm-Message-State: AOJu0YyjpP1zPMih5K8LtFDFR/ey+a/L2pOtHAEMckUqO46jByHnnmEH
+	9tsu9Gcr4wrRpcQWcBFVXiFL8nccaA76jDXMUe3D+STZkJJ07c8K7LVjjcLMVbwJJo2tODAjgm8
+	bzzOhrjVq6RFcjXaH4lEUbaVdCA==
+X-Google-Smtp-Source: AGHT+IGZ4e8uRVE52VeLsDYoPWEaG0mJ9iQuxHimYcfx3rr7/xXSmVv+Q+yczg1q7bSKqw5UBCj0KNWaAQ0+bKY18+8=
+X-Received: by 2002:a19:4347:0:b0:52c:8318:dc14 with SMTP id
+ 2adb3069b0e04-52ccaa5dc33mr4448995e87.25.1718959846994; Fri, 21 Jun 2024
+ 01:50:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620172958.GA2058@redhat.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,xmission.com,linux-foundation.org,kernel.org,kernel.dk,netflix.com,infradead.org,tencent.com,vger.kernel.org,kvack.org];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+References: <20240620002648.75204-1-21cnbao@gmail.com> <f3c18806-34ac-41d3-8c79-d7dd6504547e@arm.com>
+ <d0b20f47-384d-49f1-8449-0da6da11089c@redhat.com> <b99c2f80-3b53-4b04-b610-a66179b928a9@arm.com>
+ <CAGsJ_4y_pjMpNOFzrPZ6u7=M83-CQ0umDCPt=ZDuSKJWssiCqA@mail.gmail.com>
+In-Reply-To: <CAGsJ_4y_pjMpNOFzrPZ6u7=M83-CQ0umDCPt=ZDuSKJWssiCqA@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 21 Jun 2024 01:50:35 -0700
+X-Gmail-Original-Message-ID: <CANeU7QnURKHyz8c5KzfdCW1fFCcsJw9HbTAL2d4L0RP6hiCoMA@mail.gmail.com>
+Message-ID: <CANeU7QnURKHyz8c5KzfdCW1fFCcsJw9HbTAL2d4L0RP6hiCoMA@mail.gmail.com>
+Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
+ entry allocation for thp_swapout
+To: Barry Song <21cnbao@gmail.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, 
+	shuah@kernel.org, linux-mm@kvack.org, hughd@google.com, 
+	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	ying.huang@intel.com, linux-kselftest@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 20-06-24 19:30:19, Oleg Nesterov wrote:
-> Can't review, I forgot everything about mm_update_next_owner().
-> So I am sorry for the noise I am going to add, feel free to ignore.
-> Just in case, I see nothing wrong in this patch.
-> 
-> On 06/20, alexjlzheng@gmail.com wrote:
+On Fri, Jun 21, 2024 at 12:47=E2=80=AFAM Barry Song <21cnbao@gmail.com> wro=
+te:
+>
+> On Fri, Jun 21, 2024 at 7:25=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.co=
+m> wrote:
 > >
-> > When mm_update_next_owner() is racing with swapoff (try_to_unuse()) or /proc or
-> > ptrace or page migration (get_task_mm()), it is impossible to find an
-> > appropriate task_struct in the loop whose mm_struct is the same as the target
-> > mm_struct.
+> > On 20/06/2024 12:34, David Hildenbrand wrote:
+> > > On 20.06.24 11:04, Ryan Roberts wrote:
+> > >> On 20/06/2024 01:26, Barry Song wrote:
+> > >>> From: Barry Song <v-songbaohua@oppo.com>
+> > >>>
+> > >>> Both Ryan and Chris have been utilizing the small test program to a=
+id
+> > >>> in debugging and identifying issues with swap entry allocation. Whi=
+le
+> > >>> a real or intricate workload might be more suitable for assessing t=
+he
+> > >>> correctness and effectiveness of the swap allocation policy, a smal=
+l
+> > >>> test program presents a simpler means of understanding the problem =
+and
+> > >>> initially verifying the improvements being made.
+> > >>>
+> > >>> Let's endeavor to integrate it into the self-test suite. Although i=
+t
+> > >>> presently only accommodates 64KB and 4KB, I'm optimistic that we ca=
+n
+> > >>> expand its capabilities to support multiple sizes and simulate more
+> > >>> complex systems in the future as required.
+> > >>
+> > >> I'll try to summarize the thread with Huang Ying by suggesting this =
+test program
+> > >> is "neccessary but not sufficient" to exhaustively test the mTHP swa=
+p-out path.
+> > >> I've certainly found it useful and think it would be a valuable addi=
+tion to the
+> > >> tree.
+> > >>
+> > >> That said, I'm not convinced it is a selftest; IMO a selftest should=
+ provide a
+> > >> clear pass/fail result against some criteria and must be able to be =
+run
+> > >> automatically by (e.g.) a CI system.
+> > >
+> > > Likely we should then consider moving other such performance-related =
+thingies
+> > > out of the selftests?
 > >
-> > If the above race condition is combined with the stress-ng-zombie and
-> > stress-ng-dup tests, such a long loop can easily cause a Hard Lockup in
-> > write_lock_irq() for tasklist_lock.
+> > Yes, that would get my vote. But of the 4 tests you mentioned that use
+> > clock_gettime(), it looks like transhuge-stress is the only one that do=
+esn't
+> > have a pass/fail result, so is probably the only candidate for moving.
 > >
-> > Recognize this situation in advance and exit early.
-> 
-> But this patch won't help if (say) ptrace_access_vm() sleeps while
-> for_each_process() tries to find another owner, right?
-> 
-> > @@ -484,6 +484,8 @@ void mm_update_next_owner(struct mm_struct *mm)
-> >  	 * Search through everything else, we should not get here often.
-> >  	 */
-> >  	for_each_process(g) {
-> > +		if (atomic_read(&mm->mm_users) <= 1)
-> > +			break;
-> 
-> I think this deserves a comment to explain that this is optimization
-> for the case we race with the pending mmput(). mm_update_next_owner()
-> checks mm_users at the start.
-> 
-> And. Can we drop tasklist and use rcu_read_lock() before for_each_process?
-> Yes, this will probably need more changes even if possible...
-> 
-> 
-> Or even better. Can't we finally kill mm_update_next_owner() and turn the
-> ugly mm->owner into mm->mem_cgroup ?
+> > The others either use the times as a timeout and determines failure if =
+the
+> > action didn't occur within the timeout (e.g. ksm_tests.c) or use it to =
+add some
+> > supplemental performance information to an otherwise functionality-orie=
+nted test.
+>
+> Thank you very much, Ryan. I think you've found a better home for this
+> tool . I will
+> send v2, relocating it to tools/mm and adding a function to swap in
+> either the whole
+> mTHPs or a portion of mTHPs by "-a"(aligned swapin).
+>
+> So basically, we will have
+>
+> 1. Use MADV_PAGEPUT for rapid swap-out, putting the swap allocation code =
+under
+> high exercise in a short time.
+>
+> 2. Use MADV_DONTNEED to simulate the behavior of libc and Java heap in fr=
+eeing
+> memory, as well as for munmap, app exits, or OOM killer scenarios. This e=
+nsures
+> new mTHP is always generated, released or swapped out, similar to the beh=
+avior
+> on a PC or Android phone where many applications are frequently started a=
+nd
+> terminated.
 
-Yes, dropping the mm->owner should be a way to go. Replacing that by
-mem_cgroup sounds like an improvemnt. I have a vague recollection that
-this has some traps on the way. E.g. tasks sharing the mm but living in
-different cgroups. Things have changes since the last time I've checked
-and for example memcg charge migration on task move will be deprecated
-soon so chances are that there are less roadblocks on the way.
--- 
-Michal Hocko
-SUSE Labs
+Will this cover the case that the ratio of order 0 and order 4 swap
+requests change during LMK, and swapfile is almost full?
+
+If not, please add that :-)
+
+> 3. Swap in with or without the "-a" option to observe how fragments
+> due to swap-in
+> and the incoming swap-in of large folios will impact swap-out fallback.
+>
+> And many thanks to Chris for the suggestion on improving it within
+> selftest, though I
+> prefer to place it in tools/mm.
+
+I am perfectly fine with that. Looking forward to your V2.
+
+Chris
 
