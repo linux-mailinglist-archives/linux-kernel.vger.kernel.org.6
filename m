@@ -1,85 +1,90 @@
-Return-Path: <linux-kernel+bounces-224309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9814291208B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:28:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217D191208C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 429D31F24BAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:28:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4496F1C20BA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5983916E886;
-	Fri, 21 Jun 2024 09:28:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CDA16EBE4;
+	Fri, 21 Jun 2024 09:28:30 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833FE16E86B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1CC16EB51
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718962085; cv=none; b=GBmOQzmIkL/hTzh9SUKutK60oB/aajx/sirLXgI4fuhZHWbGCCeSdqMFK/cirB0KViD3Ba+zkDtAtkXGSK0fRkFQsOKePUwzqklD0Ch3dnQeyjD1OyAK57miTUIdm95hf5WAngXIcwN3+8s0p0AHp8D3MQJ74ElIJPncVImICo0=
+	t=1718962109; cv=none; b=cqTG9JXlQf6Yk2cNNSjI5RJiUp3RA6A2RONpE+iMB/Us1l8kiSRo+aXsL7mUYJ6Aja2iKC/xF1Zsqgj5ci4TiBALe75PT3dan4mDTCFgB6N1uhKkapJnCzFmKQ5KRvYZfsA3kjM8HE1XI4tHLbD9/jXPL8N7V5ZlHnaieCWADPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718962085; c=relaxed/simple;
-	bh=chcLdnudVw3VBTNwebjZ2XSpX2O5cHNSqetyp483ZBQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NNBtnQlp24dw3a2RRDvfwL8NFtZwNHeUiwvm65fBSKAeQeMgm6lMoGuw4dtVwAXh+ONUzdH96gP3naFK0pQGS/19YtugnbHmM7L7YoOAg9YV/L+IRqBEsbAnx+Ngyn+VeZudd8WLY3obTb5345Mh+9KV6NKz3KmYF4Xdf0j8t8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7ebcbef22c8so198646539f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:28:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718962083; x=1719566883;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uF1pUIXuAQfHqmWTRvGI4AsCP+HoZBBkyKWCWWPcvtM=;
-        b=oISiiXu82dHZVNizjT+GfzLrgVJ83ZTF8lghxZCi/HbG72JN+/oxEO3diZ2xLRxEGC
-         ULW7HqzWkOLV8lhkqmaxrWhyS/W0GBTnGQzLuART8ybRFpEKN2H/nJ5kNpjhvg4OcMrx
-         v9fltOYDNQAZVx+nx78lmeay0iboj1pDivzKNpVZt3uUKExiXSzdonXX7dgq6oX+EViU
-         vKgV8CyuuZlPtvUhRo/V75PGoJAWlWBelH+XBT8sk7WUXfU9lqjkttbg7b0d9cmeV+Pe
-         cbRA8EcYAH0tRnRsq4tUEUfdmW/rea4CBIufkmKojNr95vFHJMktc010NloTnoFvPBXu
-         KTIg==
-X-Gm-Message-State: AOJu0YzkMLYfKuUNZ7wQTTvMKS/Htphz8YgDDO6TzV6dG0KbV4Qcda8e
-	RM+3Zzjnoazg9D4rbv6gNfBGRl0/9/s/zPo5r5DqY/MNI0NUNkiyVLiZToGwOFDe16XDdBHEmVn
-	k9s8a9276z69eJl890dUR17XZZ2KymcaGwmxnGSwtiuW1ZbFubXAVF8U=
-X-Google-Smtp-Source: AGHT+IECIiUv1rXoxW5gipcCJCX5neVtzJL1bq42ETtKDSPQ2tBzw3h/v8L0+M4kjLQTcmV++Woqhxmwg/ZGQf663xLoeVIg1Ytn
+	s=arc-20240116; t=1718962109; c=relaxed/simple;
+	bh=6Jn1cQgmYX3CLOw8EBxpLFWxnjXVAJbMI/3ZjSWUlhI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LOook5d2pXGIzN/jQu1CBn4ft2AzYOtpQY+QI5Nh8ZMPgw3kFnnyIa/NPnT6nN9YSdSNTV7oJitpTaFYGSx+f+88EhRoBYlXLo5vNG5q+9NoeAsn+LKL4JSFWoBaASwmP2EvgwvfTOmWlOenHHynXlD0W5Q/fn6r2AiwOqTjYj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W5BkZ3gw4zZcHP;
+	Fri, 21 Jun 2024 17:24:06 +0800 (CST)
+Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
+	by mail.maildlp.com (Postfix) with ESMTPS id 213E114037B;
+	Fri, 21 Jun 2024 17:28:24 +0800 (CST)
+Received: from DESKTOP-8RFUVS3.china.huawei.com (10.174.185.179) by
+ kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 21 Jun 2024 17:28:23 +0800
+From: Zenghui Yu <yuzenghui@huawei.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <ardb@kernel.org>,
+	<wanghaibin.wang@huawei.com>, Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH] arm64: Clear the initial ID map correctly before remapping
+Date: Fri, 21 Jun 2024 17:28:09 +0800
+Message-ID: <20240621092809.162-1-yuzenghui@huawei.com>
+X-Mailer: git-send-email 2.23.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:871a:b0:4b9:23bf:6fd5 with SMTP id
- 8926c6da1cb9f-4b9abff3e2amr220463173.6.1718962083674; Fri, 21 Jun 2024
- 02:28:03 -0700 (PDT)
-Date: Fri, 21 Jun 2024 02:28:03 -0700
-In-Reply-To: <20240621085812.1588215-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000614a36061b630ce2@google.com>
-Subject: Re: [syzbot] [bcachefs?] possible deadlock in bch2_gc_mark_key
-From: syzbot <syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm600007.china.huawei.com (7.193.23.208)
 
-Hello,
+In the attempt to clear and recreate the initial ID map for LPA2, we
+wrongly use 'start - end' as the map size and make the memset() almost a
+nop.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Fix it by passing the correct map size.
 
-Reported-and-tested-by: syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com
+Fixes: 9684ec186f8f ("arm64: Enable LPA2 at boot if supported by the system")
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+---
 
-Tested on:
+Found by code inspection (don't have the appropriate HW to test it).
 
-commit:         50736169 Merge tag 'for-6.10-rc4-tag' of git://git.ker..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f1c341980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=12f98862a3c0c799
-dashboard link: https://syzkaller.appspot.com/bug?extid=050e797ad21ccc3f5d1a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1001c201980000
+ arch/arm64/kernel/pi/map_kernel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Note: testing is done by a robot and is best-effort only.
+diff --git a/arch/arm64/kernel/pi/map_kernel.c b/arch/arm64/kernel/pi/map_kernel.c
+index 5fa08e13e17e..f374a3e5a5fe 100644
+--- a/arch/arm64/kernel/pi/map_kernel.c
++++ b/arch/arm64/kernel/pi/map_kernel.c
+@@ -173,7 +173,7 @@ static void __init remap_idmap_for_lpa2(void)
+ 	 * Don't bother with the FDT, we no longer need it after this.
+ 	 */
+ 	memset(init_idmap_pg_dir, 0,
+-	       (u64)init_idmap_pg_dir - (u64)init_idmap_pg_end);
++	       (u64)init_idmap_pg_end - (u64)init_idmap_pg_dir);
+ 
+ 	create_init_idmap(init_idmap_pg_dir, mask);
+ 	dsb(ishst);
+-- 
+2.33.0
+
 
