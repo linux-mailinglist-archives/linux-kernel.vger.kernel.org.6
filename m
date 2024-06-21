@@ -1,316 +1,184 @@
-Return-Path: <linux-kernel+bounces-224224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4BC911F17
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1497F911F19
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1BEC1F25DE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDADC288670
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906E716DED6;
-	Fri, 21 Jun 2024 08:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06DB16D4FE;
+	Fri, 21 Jun 2024 08:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psdp6Wn+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KzlcT3Cs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCAD16D9C4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4CD16DEAA
 	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718959443; cv=none; b=Lb93yr2PQElb8RsQcNLc7+rxx9mcVERpNSkwhrk4zO3Y/BJK1pE39E/A6PFsGZrvTiMPiSoagRpzMhKLewAVXyQdlEoPpBoXpGzeIo05QpAsHOWKcALDwaVgT95Oy9XF/nNEeXhW3mlgMGh6OEtcdSp/VS3YauFIsyXZLoTaMc4=
+	t=1718959445; cv=none; b=VffnDUFTaQvw1E1B6+hpI2D+Pa48rYfssNEW/si1YPIw9adwhV2lOlK7ZtZfDiqPFKECEyvs6haPuXO15v40gXJwrYfUBfL0ZoJOvkdQmUMDi8LiFnok2EugfLiqo310PI0HYqtRqR0rJhQ6VaJOgfXQs+QiR/fIn0+KJeVjx7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718959443; c=relaxed/simple;
-	bh=o0Av5eK5HMA8bUT1/2JpuZm4T45XRAPVuU2vzw/2gok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nTQQtDq7hKOLfzCVHroq1aArHfobSwbgYWf9OV7NfmTQzoECCt+jkJO0TeP1XXE5zaim5ybWLO7ASAnWIFvSdzGUK4nfzcnY529QswV5d9Ta8rb1QYV52h5dkQ/XUHRM4cSj9k7Bf1Lg+Nf9jJgB0IpLe8kYV+UUflU/FwkUIWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psdp6Wn+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1AEDC4AF0F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718959442;
-	bh=o0Av5eK5HMA8bUT1/2JpuZm4T45XRAPVuU2vzw/2gok=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=psdp6Wn+IOWU+uWrZqm5/Kjyxzv/9hOkNDmhuB6Ymp2iDa/1DmsVbZq9rmldjlDsZ
-	 IXuB+Kre/7lnXakmpcZzsjoHIcYSPoO8ne6js9whK1vRaH/I7mqpNOu7xKGDBMKBwe
-	 3PlFASmX1vPqWk6b49XL/xkDWlvnj4W4PSSiEg6u9vsM9kuW20ELuSK9m0h1tqUrTN
-	 H/pyS90b1ncyCImAoNrJkhV0Mnew4EXr3cbsMzAARh4t85O7wfgNXrLMVHCcoa1cSC
-	 SRTqhD7/E0IDXNxnpuvRhdTjg18ZpvoMFaC8GF5efoC8uWHBE7XOGUjfCSDoILVB1a
-	 P1nGAPc2PIVSg==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec10324791so19195981fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:44:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUlA9EXlFQYBTGOXHZOb1noIU2rQTKobX6IQwXi6jskZh/v+XtozkqsH4uAae4uDFcuzZ9su3CfOnmFYSSlZctvK1+KKoSlJcD6t7nD
-X-Gm-Message-State: AOJu0YwA0K3E8D6Gn4qSGCQYBwzjqFnm1VD6fwdTcubf0zZfcLkJ5z2k
-	S8nit7pjRuZ5e/s70WuoUipl5DfPt9ZHOEXZW7gw0gALmzB4drzYkZNpcvzZ2zB5T27e6k7hxDB
-	z21m8gi6Uv8HLs70svyQVoH2j1Q==
-X-Google-Smtp-Source: AGHT+IG+eAqntFEIwdnZSD69ZmTYMe1Yr1liB/5jhvYvIBL53EFxw3XhnO0rgnmc1RzNtqcZaeuxbQgHpGTWuQtEB1Q=
-X-Received: by 2002:a2e:9e03:0:b0:2ec:40cf:fa9 with SMTP id
- 38308e7fff4ca-2ec40cf117amr44259111fa.29.1718959441416; Fri, 21 Jun 2024
- 01:44:01 -0700 (PDT)
+	s=arc-20240116; t=1718959445; c=relaxed/simple;
+	bh=PUmN4XsW0Nz9edwBR5542tFh9arkVyDs5u6ltSHiJUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S3m8xmK0rU5OeT4lEOZo6Bd3qjTTQEVfv4qzK1bR7YdXC1Rq1I+jIrKwji17kVi6K50WrZCiFsidyLvacs20k2LB+ehEv//U02AW/PYLyfm137uxQA+Mk6hOv6iRXJxAqx4YgWaUjpdFR/mVT63Ru8kI+kyqFg3L/I0ZEzvdgtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KzlcT3Cs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718959442;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VU90d8rIY7+e8nZJdYV+B/wIyrHGdSqZeVXkqOxNvFc=;
+	b=KzlcT3Cs3QhWXm4wsUWqBMSZLmyXcMSMsCQ0HSAvJ2BQ2qtwpT/05v6jW/J1IlCOH+umMH
+	mhR0ug0ai1DENEuhGQW4GJuEbc/M2nHwqHTmlykAVRpqUzZQA7t6n7UqtYRlvyJa89s4zH
+	Ped7/lyzPvwqTudwCfGtio6lCsCHDK0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-168-B4b_xIT4NQqdCLzJP33mrQ-1; Fri, 21 Jun 2024 04:43:58 -0400
+X-MC-Unique: B4b_xIT4NQqdCLzJP33mrQ-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3648793ae51so965623f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:43:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718959437; x=1719564237;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VU90d8rIY7+e8nZJdYV+B/wIyrHGdSqZeVXkqOxNvFc=;
+        b=F/Lx4VRJyuU9AnDAGc2woQCVf7GKqGmbNicH4Fu/cD7lycSp33WvT/mtFG3EgnlWXs
+         POEq4n+IalZfAY/TfFi9XAXrwYZ00Q5dPF0rf+9YX3xrscGhKnsmypKd1r9P0Ei/zc95
+         xnhVYBom2gKIO8YSUGjY5Y52dIZZNAPuKkMy9fxnHYxsmdAAtXLR/hgBd9pmUIqKMDJh
+         uR2QLdBZt9U1+4zX7QoH8lKxp5HA9sBJV0szhUgriyFGb2cWTye/GpSYC2m1YI/vgx/3
+         eeUJZglrGKOFvzkQglxMUHjQs48mDbjjH940OqPEbzSgvyADWKYiCeUxoQIRVp9z18/U
+         LpXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSNR8olwd4sFaGo9U/io+fOr5rQvOX1LeQHFAPHwXAG+CkE+3ZAh51ngVgEKjlhCPkaobvAXB7zrAgBEjq/rKNlt1Z/gwIH2h9C9Xb
+X-Gm-Message-State: AOJu0Yykaq2UIhqQiD8zQ+39q7ZYC3I2Xryvz05gVBqg+Nqf++OKdpmd
+	Dd3eZ/VJjlFgTY18/JwzayXW5XYAutpJHYQYm2O0bacJ/uTOetLwZW6t9ndvBMDM3Awkf7cjUtX
+	fCVwDPXjw1nwkENZanUBF69jRw5p7wh0VXR+KFnWzQepM87I4oR3QgpYgI+saEg==
+X-Received: by 2002:adf:ea01:0:b0:35f:1bc3:50b0 with SMTP id ffacd0b85a97d-36319a855bamr5420992f8f.63.1718959437640;
+        Fri, 21 Jun 2024 01:43:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFiasjYrLg90qQVpUX0kw3ikfNJqrMMvB9SgRGxmoh8eFyR1j+l0uMDDPJS1zuvGqqtRVJD+w==
+X-Received: by 2002:adf:ea01:0:b0:35f:1bc3:50b0 with SMTP id ffacd0b85a97d-36319a855bamr5420970f8f.63.1718959437216;
+        Fri, 21 Jun 2024 01:43:57 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c725:e600:4063:2059:fd18:9d65? (p200300cbc725e60040632059fd189d65.dip0.t-ipconnect.de. [2003:cb:c725:e600:4063:2059:fd18:9d65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638f86566sm1069864f8f.64.2024.06.21.01.43.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 01:43:56 -0700 (PDT)
+Message-ID: <4c8b81a0-3a76-4802-875f-f26ff1844955@redhat.com>
+Date: Fri, 21 Jun 2024 10:43:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619-swap-allocator-v3-0-e973a3102444@kernel.org> <87v8242vng.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87v8242vng.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 21 Jun 2024 01:43:49 -0700
-X-Gmail-Original-Message-ID: <CANeU7Qno3o-nDjYP7Pf5ZTB9Oh_zOGU0Sv_kV+aT=Z0j_tdKjg@mail.gmail.com>
-Message-ID: <CANeU7Qno3o-nDjYP7Pf5ZTB9Oh_zOGU0Sv_kV+aT=Z0j_tdKjg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] mm: swap: mTHP swap allocator base on swap cluster order
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Barry Song <baohua@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+To: Fuad Tabba <tabba@google.com>, Sean Christopherson <seanjc@google.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
+ Elliot Berman <quic_eberman@quicinc.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ pbonzini@redhat.com
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
+ <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+ <20240619115135.GE2494510@nvidia.com>
+ <CA+EHjTz_=J+bDpqciaMnNja4uz1Njcpg5NVh_GW2tya-suA7kQ@mail.gmail.com>
+ <ZnRMn1ObU8TFrms3@google.com>
+ <CA+EHjTxvOyCqWRMTS3mXHznQtAJzDJLgqdS0Er2GA9FGdxd1vA@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CA+EHjTxvOyCqWRMTS3mXHznQtAJzDJLgqdS0Er2GA9FGdxd1vA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 19, 2024 at 7:32=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
->
-> Chris Li <chrisl@kernel.org> writes:
->
-> > This is the short term solutiolns "swap cluster order" listed
-> > in my "Swap Abstraction" discussion slice 8 in the recent
-> > LSF/MM conference.
-> >
-> > When commit 845982eb264bc "mm: swap: allow storage of all mTHP
-> > orders" is introduced, it only allocates the mTHP swap entries
-> > from new empty cluster list.  It has a fragmentation issue
-> > reported by Barry.
-> >
-> > https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp+=
-Ah+NSgNQ@mail.gmail.com/
-> >
-> > The reason is that all the empty cluster has been exhausted while
-> > there are planty of free swap entries to in the cluster that is
-> > not 100% free.
-> >
-> > Remember the swap allocation order in the cluster.
-> > Keep track of the per order non full cluster list for later allocation.
-> >
-> > User impact: For users that allocate and free mix order mTHP swapping,
-> > It greatly improves the success rate of the mTHP swap allocation after =
-the
-> > initial phase.
-> >
-> > Barry provides a test program to show the effect:
-> > https://lore.kernel.org/linux-mm/20240615084714.37499-1-21cnbao@gmail.c=
-om/
-> >
-> > Without:
-> > $ mthp-swapout
-> > Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 2: swpout inc: 219, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 4: swpout inc: 219, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 5: swpout inc: 110, swpout fallback inc: 117, Fallback percen=
-tage: 51.54%
-> > Iteration 6: swpout inc: 0, swpout fallback inc: 230, Fallback percenta=
-ge: 100.00%
-> > Iteration 7: swpout inc: 0, swpout fallback inc: 229, Fallback percenta=
-ge: 100.00%
-> > Iteration 8: swpout inc: 0, swpout fallback inc: 223, Fallback percenta=
-ge: 100.00%
-> > Iteration 9: swpout inc: 0, swpout fallback inc: 224, Fallback percenta=
-ge: 100.00%
-> > Iteration 10: swpout inc: 0, swpout fallback inc: 216, Fallback percent=
-age: 100.00%
-> > Iteration 11: swpout inc: 0, swpout fallback inc: 212, Fallback percent=
-age: 100.00%
-> > Iteration 12: swpout inc: 0, swpout fallback inc: 224, Fallback percent=
-age: 100.00%
-> > Iteration 13: swpout inc: 0, swpout fallback inc: 214, Fallback percent=
-age: 100.00%
-> >
-> > $ mthp-swapout -s
-> > Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 2: swpout inc: 227, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 4: swpout inc: 224, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 5: swpout inc: 33, swpout fallback inc: 197, Fallback percent=
-age: 85.65%
-> > Iteration 6: swpout inc: 0, swpout fallback inc: 229, Fallback percenta=
-ge: 100.00%
-> > Iteration 7: swpout inc: 0, swpout fallback inc: 223, Fallback percenta=
-ge: 100.00%
-> > Iteration 8: swpout inc: 0, swpout fallback inc: 219, Fallback percenta=
-ge: 100.00%
-> > Iteration 9: swpout inc: 0, swpout fallback inc: 212, Fallback percenta=
-ge: 100.00%
-> >
-> > With:
-> > $ mthp-swapout
-> > Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 2: swpout inc: 219, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 4: swpout inc: 219, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 5: swpout inc: 227, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 6: swpout inc: 230, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > ...
-> > Iteration 94: swpout inc: 224, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 95: swpout inc: 221, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 96: swpout inc: 229, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 97: swpout inc: 219, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 98: swpout inc: 222, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 99: swpout inc: 223, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 100: swpout inc: 224, swpout fallback inc: 0, Fallback percen=
-tage: 0.00%
-> >
-> > $ mthp-swapout -s
-> > Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 2: swpout inc: 227, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 4: swpout inc: 224, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 5: swpout inc: 230, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 6: swpout inc: 229, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 7: swpout inc: 223, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > Iteration 8: swpout inc: 219, swpout fallback inc: 0, Fallback percenta=
-ge: 0.00%
-> > ...
-> > Iteration 94: swpout inc: 223, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 95: swpout inc: 212, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 96: swpout inc: 220, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 97: swpout inc: 220, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 98: swpout inc: 216, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 99: swpout inc: 223, swpout fallback inc: 0, Fallback percent=
-age: 0.00%
-> > Iteration 100: swpout inc: 225, swpout fallback inc: 0, Fallback percen=
-tage: 0.00%
->
-> Unfortunately, the data is gotten using a special designed test program
-> which always swap-in pages with swapped-out size.  I don't know whether
-> such workloads exist in reality.  Otherwise, you need to wait for mTHP
+>> Again from that thread, one of most important aspects guest_memfd is that VMAs
+>> are not required.  Stating the obvious, lack of VMAs makes it really hard to drive
+>> swap, reclaim, migration, etc. from code that fundamentally operates on VMAs.
+>>
+>>   : More broadly, no VMAs are required.  The lack of stage-1 page tables are nice to
+>>   : have; the lack of VMAs means that guest_memfd isn't playing second fiddle, e.g.
+>>   : it's not subject to VMA protections, isn't restricted to host mapping size, etc.
+>>
+>> [1] https://lore.kernel.org/all/Zfmpby6i3PfBEcCV@google.com
+>> [2] https://lore.kernel.org/all/Zg3xF7dTtx6hbmZj@google.com
+> 
+> I wonder if it might be more productive to also discuss this in one of
+> the PUCKs, ahead of LPC, in addition to trying to go over this in LPC.
 
-The test program is designed to simulate mTHP swap behavior using
-zsmalloc and 64KB buffer.
-If we insist on only designing for existing workloads, then zsmalloc
-using 64KB buffer usage will never be able to run, exactly due the
-kernel has high failure rate allocating swap entries for 64KB. There
-is a bit of a chick and egg problem there, such a usage can not exist
-because the kernel can't support it yet. Kernel can't add patches to
-support it because such simulation tests are not "real".
+I don't know in  which context you usually discuss that, but I could 
+propose that as a topic in the bi-weekly MM meeting.
 
-We need to break this cycle to support something new.
+This would, of course, be focused on the bigger MM picture: how to mmap, 
+how how to support huge pages, interaction with page pinning, ... So 
+obviously more MM focused once we are in agreement that we want to 
+support shared memory in guest_memfd and how to make that work with core-mm.
 
-> swap-in to be merged firstly, and people reach consensus that we should
-> always swap-in pages with swapped-out size.
+Discussing if we want shared memory in guest_memfd might be betetr 
+suited for a different, more CC/KVM specific meeting (likely the "PUCKs" 
+mentioned here?).
 
-We don't have to be always. We can identify the situation that makes
-sense. For the zram/zsmalloc 64K buffer usage case, swap out as the
-same swap in size makes sense.
-I think we have agreement on such zsmalloc 64K usage cases we do want
-to support.
+-- 
+Cheers,
 
->
-> Alternately, we can make some design adjustment to make the patchset
-> work in current situation (mTHP swap-out, normal page swap-in).
->
-> - One non-full cluster list for each order (same as current design)
->
-> - When one swap entry is freed, check whether one "order+1" swap entry
->   becomes free, if so, move the cluster to "order+1" non-full cluster
->   list.
+David / dhildenb
 
-In the intended zsmalloc usage case, there is no order+1 swap entry request=
-.
-Moving the cluster to "order+1" will make less cluster available for "order=
-".
-For that usage case it is negative gain.
-
-> - When allocate swap entry with "order", get cluster from free, "order",
->   "order+1", ... non-full cluster list.  If all are empty, fallback to
-
-I don't see that it is useful for the zsmalloc 64K buffer usage case.
-There will be order 0 and order 4 and nothing else.
-
-How about let's keep it simple for now. If we identify some workload
-this algorithm can help. We can do that as a follow up step.
-
->   order 0.
->
-> Do you think that this works?
->
-> > Reported-by: Barry Song <21cnbao@gmail.com>
-> > Signed-off-by: Chris Li <chrisl@kernel.org>
-> > ---
-> > Changes in v3:
-> > - Using V1 as base.
-> > - Rename "next" to "list" for the list field, suggested by Ying.
-> > - Update comment for the locking rules for cluster fields and list,
-> >   suggested by Ying.
-> > - Allocate from the nonfull list before attempting free list, suggested
-> >   by Kairui.
->
-> Haven't looked into this.  It appears that this breaks the original
-> discard behavior which helps performance of some SSD, please refer to
-
-Can you clarify by "discard" you mean SSD discard command or just the
-way swap allocator recycles free clusters?
-
-> commit 2a8f94493432 ("swap: change block allocation algorithm for SSD").
-
-I did read that change log. Help me understand in more detail which
-discard behavior you have in mind. A lot of low end micro SD cards
-have proper FTL wear leveling now, ssd even better on that.
-
-> And as pointed out by Ryan, this may reduce the opportunity of the
-> sequential block device writing during swap-out, which may hurt
-> performance of SSD too.
-
-Only at the initial phase. If the swap IO continues, after the first
-pass fills up the swap file, the write will be random on the swapfile
-anyway. Because the swapfile only issues 2M discards commands when all
-512 4K pages are free. The discarded area will be much smaller than
-the free area on swapfile. That combined with the random write page on
-the whole swap file. It might produce a worse internal write
-amplification for SSD, compared to only writing a subset of the
-swapfile area. I would love to hear from someone who understands SSD
-internals to confirm or deny my theory.
-
-Even let's assume the SSD wants a free block over a nonfull cluster
-first. Zswap and zram swap are not subject to SSD property. We might
-want to have a kernel option to select using  nonfree clusters over
-the free one for zram and zswap (ghost swapfile). That will help
-contain the fragmented swap area.
-
-Chris
 
