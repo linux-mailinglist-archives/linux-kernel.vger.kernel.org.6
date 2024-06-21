@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-224050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86845911C9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:16:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D62A911C9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D130282095
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:16:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F2221F216B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9504216B390;
-	Fri, 21 Jun 2024 07:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B145212D74E;
+	Fri, 21 Jun 2024 07:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hm1aa+AG"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AAEy6Q8q"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A59A12D74E
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A58129A74
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718954147; cv=none; b=jBuix1zusZrTqCmBfjJ4CIx5kFsbfCa4VthJBc0GBYbgYosv88IklTuktUzxE64SJ2Ni0kaqR1XCskAq9Ta63jfplSesGI9D4Nx92WAkTYAnH7k91YH4sb/BAEkJd1DG4YCzZIY22tdBKcA810LNlCvtqXo1H5hjUOHVa1YORtI=
+	t=1718954151; cv=none; b=XztU2B6IFbcPXUqqSfWz/844G6CRG0cZ9NU6bA1qeXrqlJFQcC9sGszTCrg2t7NkW4MVF53WfqihjrAxQImnts8tqkIJaTB/mjzOnBUe0SCLmlsiU1Q9+W2l4pB2GpmjJyo9HtK9M8NL/8HUBVAooX3pbC+w/xAxtY7DQ3YiEOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718954147; c=relaxed/simple;
-	bh=RvNVJoE3TzTjiAxCWXUnTGNhmX2AfOERL3opyizU/oo=;
+	s=arc-20240116; t=1718954151; c=relaxed/simple;
+	bh=7D3T7yM8Ob4tOureTBkgzH9fmQTasZoU94aL1jswHyU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VLXptMWYHock9d3kwdA1JYUsEW/diOp+6IKMEFHlvNBIw8vpfQ/Y8AqGI6nQlTV7kXMC9FmQa0EgUh1wH2lprhhmmgytrkeri8ZTBpAvvdzTKwsWf74bXHLGPtDYQBr6GbHkrHQQKCrroBUsXkqHWdY2GO4z0ueB4b3HNOQEpXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hm1aa+AG; arc=none smtp.client-ip=91.218.175.180
+	 In-Reply-To:To:Cc; b=Wo0/4+f6q7xqPSD9GYuY+V1HO3o6rsoiHbwKM4PvXK27CFCrujRIQ5ybhcOhKwaTQi7Zp/r2tPKJS0IZYGIORQhVX6+6eQvWPrlbXbkcmzEYJfvTuWUKN/s9M1qzXCJ4QJ69eb8B0vRPV41TqSyNDO09zmDfbXx4CzlxPaLBMMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AAEy6Q8q; arc=none smtp.client-ip=91.218.175.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Envelope-To: nphamcs@gmail.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718954143;
+	t=1718954147;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=n5V79APV9SLPspx3kdrd68+FrzReeozu5pmIiu2TBnw=;
-	b=hm1aa+AGXSuv1zSJwTgOjJFEBd5by/7+6roN/KjMuuCUDuABbgHokxd6agqI4cRyK/RrYE
-	lB3kfJHwqGkkL6LkOX/GXz8YpNDs78OCK8QsiV0EE0yu6JViZyzmer4JlcagkJlVN49cW5
-	r4Mo0PmIz2NcDhDCabvSL/iLWh6jDEg=
+	bh=CYdTXTKYKtxpSFisk6BbhTPD4FTbLOjBtWhY7hcv+m0=;
+	b=AAEy6Q8qMThfp8kju3S0+6cahdNf6SL7krmx7kKmZxDZqLUkrCic+qYfM2S6DCjAorPsyl
+	CpXV7PUVRqGash7dK+FHYkF2Dl5YrOXyd69BoZsID0WC5m+qnk2yyWzr2+YIjRa6uhYDFa
+	cutl+bIlz4gc45U/G18ydx2LjOsEl4c=
 X-Envelope-To: yosryahmed@google.com
 X-Envelope-To: dan.carpenter@linaro.org
 X-Envelope-To: chengming.zhou@linux.dev
@@ -55,8 +55,8 @@ X-Envelope-To: flintglass@gmail.com
 X-Envelope-To: minchan@kernel.org
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Chengming Zhou <chengming.zhou@linux.dev>
-Date: Fri, 21 Jun 2024 15:15:09 +0800
-Subject: [PATCH v2 1/2] mm/zsmalloc: change back to per-size_class lock
+Date: Fri, 21 Jun 2024 15:15:10 +0800
+Subject: [PATCH v2 2/2] mm/zswap: use only one pool in zswap
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240621-zsmalloc-lock-mm-everything-v2-1-d30e9cd2b793@linux.dev>
+Message-Id: <20240621-zsmalloc-lock-mm-everything-v2-2-d30e9cd2b793@linux.dev>
 References: <20240621-zsmalloc-lock-mm-everything-v2-0-d30e9cd2b793@linux.dev>
 In-Reply-To: <20240621-zsmalloc-lock-mm-everything-v2-0-d30e9cd2b793@linux.dev>
 To: Minchan Kim <minchan@kernel.org>, 
@@ -77,325 +77,221 @@ Cc: Yu Zhao <yuzhao@google.com>, Takero Funaki <flintglass@gmail.com>,
  Chengming Zhou <zhouchengming@bytedance.com>, 
  Dan Carpenter <dan.carpenter@linaro.org>, linux-mm@kvack.org, 
  linux-kernel@vger.kernel.org, Chengming Zhou <chengming.zhou@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718954135; l=10469;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718954135; l=7684;
  i=chengming.zhou@linux.dev; s=20240617; h=from:subject:message-id;
- bh=RvNVJoE3TzTjiAxCWXUnTGNhmX2AfOERL3opyizU/oo=;
- b=t0Kg4JgGK+PxXkVt+dhJ2z2PqxO9wJwqxxDdsSxmGORGTsqlUmPme7oUSR7tUH9AewG/oLn+R
- rvUdwH+AEILAkDSm5yuWtZQylu1JbKr84BYOm0yzd7H17+WXAtGZd9i
+ bh=7D3T7yM8Ob4tOureTBkgzH9fmQTasZoU94aL1jswHyU=;
+ b=8sdShy75MzwC/1IFMnr18SRcRbKvQCp+VzBanMFYq6w/l2N6ol5uzzF1PQ9WaWRTmkpeR30Yh
+ u576rjAX3CKBSC1rNo6BhQSlRBwj42Y/lHwdKCcU1Hr+SqBuF1IZCDl
 X-Developer-Key: i=chengming.zhou@linux.dev; a=ed25519;
  pk=/XPhIutBo+zyUeQyf4Ni5JYk/PEIWxIeUQqy2DYjmhI=
 X-Migadu-Flow: FLOW_OUT
 
-This patch is almost the revert of the commit c0547d0b6a4b ("zsmalloc:
-consolidate zs_pool's migrate_lock and size_class's locks"), which
-changed to use a global pool->lock instead of per-size_class lock and
-pool->migrate_lock, was preparation for suppporting reclaim in zsmalloc.
-Then reclaim in zsmalloc had been dropped in favor of LRU reclaim in
-zswap.
+Zswap uses 32 pools to workaround the locking scalability problem in
+zswap backends (mainly zsmalloc nowadays), which brings its own problems
+like memory waste and more memory fragmentation.
 
-In theory, per-size_class is more fine-grained than the pool->lock,
-since a pool can have many size_classes. As for the additional
-pool->migrate_lock, only free() and map() need to grab it to access
-stable handle to get zspage, and only in read lock mode.
+Testing results show that we can have near performance with only one
+pool in zswap after changing zsmalloc to use per-size_class lock instead
+of pool spinlock.
 
+Testing kernel build (make bzImage -j32) on tmpfs with memory.max=1GB,
+and zswap shrinker enabled with 10GB swapfile on ext4.
+
+                                real    user    sys
+6.10.0-rc3                      138.18  1241.38 1452.73
+6.10.0-rc3-onepool              149.45  1240.45 1844.69
+6.10.0-rc3-onepool-perclass     138.23  1242.37 1469.71
+
+And do the same testing using zbud, which shows a little worse performance
+as expected since we don't do any locking optimization for zbud. I think
+it's acceptable since zsmalloc became a lot more popular than other
+backends, and we may want to support only zsmalloc in the future.
+
+                                real    user    sys
+6.10.0-rc3-zbud			138.23  1239.58 1430.09
+6.10.0-rc3-onepool-zbud		139.64  1241.37 1516.59
+
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
 Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
 ---
- mm/zsmalloc.c | 85 +++++++++++++++++++++++++++++++++++------------------------
- 1 file changed, 50 insertions(+), 35 deletions(-)
+ mm/zswap.c | 60 +++++++++++++++++++-----------------------------------------
+ 1 file changed, 19 insertions(+), 41 deletions(-)
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 44e0171d6003..fec1a39e5bbe 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -34,7 +34,8 @@
- /*
-  * lock ordering:
-  *	page_lock
-- *	pool->lock
-+ *	pool->migrate_lock
-+ *	class->lock
-  *	zspage->lock
+diff --git a/mm/zswap.c b/mm/zswap.c
+index e25a6808c2ed..7925a3d0903e 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -122,9 +122,6 @@ static unsigned int zswap_accept_thr_percent = 90; /* of max pool size */
+ module_param_named(accept_threshold_percent, zswap_accept_thr_percent,
+ 		   uint, 0644);
+ 
+-/* Number of zpools in zswap_pool (empirically determined for scalability) */
+-#define ZSWAP_NR_ZPOOLS 32
+-
+ /* Enable/disable memory pressure-based shrinker. */
+ static bool zswap_shrinker_enabled = IS_ENABLED(
+ 		CONFIG_ZSWAP_SHRINKER_DEFAULT_ON);
+@@ -160,7 +157,7 @@ struct crypto_acomp_ctx {
+  * needs to be verified that it's still valid in the tree.
   */
+ struct zswap_pool {
+-	struct zpool *zpools[ZSWAP_NR_ZPOOLS];
++	struct zpool *zpool;
+ 	struct crypto_acomp_ctx __percpu *acomp_ctx;
+ 	struct percpu_ref ref;
+ 	struct list_head list;
+@@ -237,7 +234,7 @@ static inline struct xarray *swap_zswap_tree(swp_entry_t swp)
  
-@@ -183,6 +184,7 @@ static struct dentry *zs_stat_root;
- static size_t huge_class_size;
+ #define zswap_pool_debug(msg, p)				\
+ 	pr_debug("%s pool %s/%s\n", msg, (p)->tfm_name,		\
+-		 zpool_get_type((p)->zpools[0]))
++		 zpool_get_type((p)->zpool))
  
- struct size_class {
-+	spinlock_t lock;
- 	struct list_head fullness_list[NR_FULLNESS_GROUPS];
- 	/*
- 	 * Size of objects stored in this class. Must be multiple
-@@ -237,7 +239,8 @@ struct zs_pool {
- #ifdef CONFIG_COMPACTION
- 	struct work_struct free_work;
- #endif
--	spinlock_t lock;
-+	/* protect page/zspage migration */
-+	rwlock_t migrate_lock;
- 	atomic_t compaction_in_progress;
- };
+ /*********************************
+ * pool functions
+@@ -246,7 +243,6 @@ static void __zswap_pool_empty(struct percpu_ref *ref);
  
-@@ -336,7 +339,7 @@ static void cache_free_zspage(struct zs_pool *pool, struct zspage *zspage)
- 	kmem_cache_free(pool->zspage_cachep, zspage);
- }
- 
--/* pool->lock(which owns the handle) synchronizes races */
-+/* class->lock(which owns the handle) synchronizes races */
- static void record_obj(unsigned long handle, unsigned long obj)
+ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
  {
- 	*(unsigned long *)handle = obj;
-@@ -431,7 +434,7 @@ static __maybe_unused int is_first_page(struct page *page)
- 	return PagePrivate(page);
- }
- 
--/* Protected by pool->lock */
-+/* Protected by class->lock */
- static inline int get_zspage_inuse(struct zspage *zspage)
- {
- 	return zspage->inuse;
-@@ -569,7 +572,7 @@ static int zs_stats_size_show(struct seq_file *s, void *v)
- 		if (class->index != i)
- 			continue;
- 
--		spin_lock(&pool->lock);
-+		spin_lock(&class->lock);
- 
- 		seq_printf(s, " %5u %5u ", i, class->size);
- 		for (fg = ZS_INUSE_RATIO_10; fg < NR_FULLNESS_GROUPS; fg++) {
-@@ -580,7 +583,7 @@ static int zs_stats_size_show(struct seq_file *s, void *v)
- 		obj_allocated = zs_stat_get(class, ZS_OBJS_ALLOCATED);
- 		obj_used = zs_stat_get(class, ZS_OBJS_INUSE);
- 		freeable = zs_can_compact(class);
--		spin_unlock(&pool->lock);
-+		spin_unlock(&class->lock);
- 
- 		objs_per_zspage = class->objs_per_zspage;
- 		pages_used = obj_allocated / objs_per_zspage *
-@@ -837,7 +840,7 @@ static void __free_zspage(struct zs_pool *pool, struct size_class *class,
- {
- 	struct page *page, *next;
- 
--	assert_spin_locked(&pool->lock);
-+	assert_spin_locked(&class->lock);
- 
- 	VM_BUG_ON(get_zspage_inuse(zspage));
- 	VM_BUG_ON(zspage->fullness != ZS_INUSE_RATIO_0);
-@@ -1196,19 +1199,19 @@ void *zs_map_object(struct zs_pool *pool, unsigned long handle,
- 	BUG_ON(in_interrupt());
- 
- 	/* It guarantees it can get zspage from handle safely */
--	spin_lock(&pool->lock);
-+	read_lock(&pool->migrate_lock);
- 	obj = handle_to_obj(handle);
- 	obj_to_location(obj, &page, &obj_idx);
- 	zspage = get_zspage(page);
- 
- 	/*
--	 * migration cannot move any zpages in this zspage. Here, pool->lock
-+	 * migration cannot move any zpages in this zspage. Here, class->lock
- 	 * is too heavy since callers would take some time until they calls
- 	 * zs_unmap_object API so delegate the locking from class to zspage
- 	 * which is smaller granularity.
- 	 */
- 	migrate_read_lock(zspage);
--	spin_unlock(&pool->lock);
-+	read_unlock(&pool->migrate_lock);
- 
- 	class = zspage_class(pool, zspage);
- 	off = offset_in_page(class->size * obj_idx);
-@@ -1364,8 +1367,8 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
- 	size += ZS_HANDLE_SIZE;
- 	class = pool->size_class[get_size_class_index(size)];
- 
--	/* pool->lock effectively protects the zpage migration */
--	spin_lock(&pool->lock);
-+	/* class->lock effectively protects the zpage migration */
-+	spin_lock(&class->lock);
- 	zspage = find_get_zspage(class);
- 	if (likely(zspage)) {
- 		obj = obj_malloc(pool, zspage, handle);
-@@ -1377,7 +1380,7 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
- 		goto out;
- 	}
- 
--	spin_unlock(&pool->lock);
-+	spin_unlock(&class->lock);
- 
- 	zspage = alloc_zspage(pool, class, gfp);
- 	if (!zspage) {
-@@ -1385,7 +1388,7 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
- 		return (unsigned long)ERR_PTR(-ENOMEM);
- 	}
- 
--	spin_lock(&pool->lock);
-+	spin_lock(&class->lock);
- 	obj = obj_malloc(pool, zspage, handle);
- 	newfg = get_fullness_group(class, zspage);
- 	insert_zspage(class, zspage, newfg);
-@@ -1397,7 +1400,7 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
- 	/* We completely set up zspage so mark them as movable */
- 	SetZsPageMovable(pool, zspage);
- out:
--	spin_unlock(&pool->lock);
-+	spin_unlock(&class->lock);
- 
- 	return handle;
- }
-@@ -1442,14 +1445,16 @@ void zs_free(struct zs_pool *pool, unsigned long handle)
- 		return;
- 
- 	/*
--	 * The pool->lock protects the race with zpage's migration
-+	 * The pool->migrate_lock protects the race with zpage's migration
- 	 * so it's safe to get the page from handle.
- 	 */
--	spin_lock(&pool->lock);
-+	read_lock(&pool->migrate_lock);
- 	obj = handle_to_obj(handle);
- 	obj_to_page(obj, &f_page);
- 	zspage = get_zspage(f_page);
- 	class = zspage_class(pool, zspage);
-+	spin_lock(&class->lock);
-+	read_unlock(&pool->migrate_lock);
- 
- 	class_stat_dec(class, ZS_OBJS_INUSE, 1);
- 	obj_free(class->size, obj);
-@@ -1458,7 +1463,7 @@ void zs_free(struct zs_pool *pool, unsigned long handle)
- 	if (fullness == ZS_INUSE_RATIO_0)
- 		free_zspage(pool, class, zspage);
- 
--	spin_unlock(&pool->lock);
-+	spin_unlock(&class->lock);
- 	cache_free_handle(pool, handle);
- }
- EXPORT_SYMBOL_GPL(zs_free);
-@@ -1780,12 +1785,16 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
- 	pool = zspage->pool;
- 
- 	/*
--	 * The pool's lock protects the race between zpage migration
-+	 * The pool migrate_lock protects the race between zpage migration
- 	 * and zs_free.
- 	 */
--	spin_lock(&pool->lock);
-+	write_lock(&pool->migrate_lock);
- 	class = zspage_class(pool, zspage);
- 
-+	/*
-+	 * the class lock protects zpage alloc/free in the zspage.
-+	 */
-+	spin_lock(&class->lock);
- 	/* the migrate_write_lock protects zpage access via zs_map_object */
- 	migrate_write_lock(zspage);
- 
-@@ -1815,9 +1824,10 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
- 	replace_sub_page(class, zspage, newpage, page);
- 	/*
- 	 * Since we complete the data copy and set up new zspage structure,
--	 * it's okay to release the pool's lock.
-+	 * it's okay to release migration_lock.
- 	 */
--	spin_unlock(&pool->lock);
-+	write_unlock(&pool->migrate_lock);
-+	spin_unlock(&class->lock);
- 	migrate_write_unlock(zspage);
- 
- 	get_page(newpage);
-@@ -1861,20 +1871,20 @@ static void async_free_zspage(struct work_struct *work)
- 		if (class->index != i)
- 			continue;
- 
--		spin_lock(&pool->lock);
-+		spin_lock(&class->lock);
- 		list_splice_init(&class->fullness_list[ZS_INUSE_RATIO_0],
- 				 &free_pages);
--		spin_unlock(&pool->lock);
-+		spin_unlock(&class->lock);
- 	}
- 
- 	list_for_each_entry_safe(zspage, tmp, &free_pages, list) {
- 		list_del(&zspage->list);
- 		lock_zspage(zspage);
- 
--		spin_lock(&pool->lock);
- 		class = zspage_class(pool, zspage);
-+		spin_lock(&class->lock);
- 		__free_zspage(pool, class, zspage);
--		spin_unlock(&pool->lock);
-+		spin_unlock(&class->lock);
- 	}
- };
- 
-@@ -1938,7 +1948,8 @@ static unsigned long __zs_compact(struct zs_pool *pool,
- 	 * protect the race between zpage migration and zs_free
- 	 * as well as zpage allocation/free
- 	 */
--	spin_lock(&pool->lock);
-+	write_lock(&pool->migrate_lock);
-+	spin_lock(&class->lock);
- 	while (zs_can_compact(class)) {
- 		int fg;
- 
-@@ -1964,13 +1975,15 @@ static unsigned long __zs_compact(struct zs_pool *pool,
- 		src_zspage = NULL;
- 
- 		if (get_fullness_group(class, dst_zspage) == ZS_INUSE_RATIO_100
--		    || spin_is_contended(&pool->lock)) {
-+		    || rwlock_is_contended(&pool->migrate_lock)) {
- 			putback_zspage(class, dst_zspage);
- 			dst_zspage = NULL;
- 
--			spin_unlock(&pool->lock);
-+			spin_unlock(&class->lock);
-+			write_unlock(&pool->migrate_lock);
- 			cond_resched();
--			spin_lock(&pool->lock);
-+			write_lock(&pool->migrate_lock);
-+			spin_lock(&class->lock);
- 		}
- 	}
- 
-@@ -1980,7 +1993,8 @@ static unsigned long __zs_compact(struct zs_pool *pool,
- 	if (dst_zspage)
- 		putback_zspage(class, dst_zspage);
- 
--	spin_unlock(&pool->lock);
-+	spin_unlock(&class->lock);
-+	write_unlock(&pool->migrate_lock);
- 
- 	return pages_freed;
- }
-@@ -1992,10 +2006,10 @@ unsigned long zs_compact(struct zs_pool *pool)
- 	unsigned long pages_freed = 0;
- 
- 	/*
--	 * Pool compaction is performed under pool->lock so it is basically
-+	 * Pool compaction is performed under pool->migrate_lock so it is basically
- 	 * single-threaded. Having more than one thread in __zs_compact()
--	 * will increase pool->lock contention, which will impact other
--	 * zsmalloc operations that need pool->lock.
-+	 * will increase pool->migrate_lock contention, which will impact other
-+	 * zsmalloc operations that need pool->migrate_lock.
- 	 */
- 	if (atomic_xchg(&pool->compaction_in_progress, 1))
- 		return 0;
-@@ -2117,7 +2131,7 @@ struct zs_pool *zs_create_pool(const char *name)
+-	int i;
+ 	struct zswap_pool *pool;
+ 	char name[38]; /* 'zswap' + 32 char (max) num + \0 */
+ 	gfp_t gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
+@@ -267,18 +263,14 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
+ 	if (!pool)
  		return NULL;
  
- 	init_deferred_free(pool);
--	spin_lock_init(&pool->lock);
-+	rwlock_init(&pool->migrate_lock);
- 	atomic_set(&pool->compaction_in_progress, 0);
+-	for (i = 0; i < ZSWAP_NR_ZPOOLS; i++) {
+-		/* unique name for each pool specifically required by zsmalloc */
+-		snprintf(name, 38, "zswap%x",
+-			 atomic_inc_return(&zswap_pools_count));
+-
+-		pool->zpools[i] = zpool_create_pool(type, name, gfp);
+-		if (!pool->zpools[i]) {
+-			pr_err("%s zpool not available\n", type);
+-			goto error;
+-		}
++	/* unique name for each pool specifically required by zsmalloc */
++	snprintf(name, 38, "zswap%x", atomic_inc_return(&zswap_pools_count));
++	pool->zpool = zpool_create_pool(type, name, gfp);
++	if (!pool->zpool) {
++		pr_err("%s zpool not available\n", type);
++		return NULL;
+ 	}
+-	pr_debug("using %s zpool\n", zpool_get_type(pool->zpools[0]));
++	pr_debug("using %s zpool\n", zpool_get_type(pool->zpool));
  
- 	pool->name = kstrdup(name, GFP_KERNEL);
-@@ -2189,6 +2203,7 @@ struct zs_pool *zs_create_pool(const char *name)
- 		class->index = i;
- 		class->pages_per_zspage = pages_per_zspage;
- 		class->objs_per_zspage = objs_per_zspage;
-+		spin_lock_init(&class->lock);
- 		pool->size_class[i] = class;
+ 	strscpy(pool->tfm_name, compressor, sizeof(pool->tfm_name));
  
- 		fullness = ZS_INUSE_RATIO_0;
+@@ -311,8 +303,7 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
+ error:
+ 	if (pool->acomp_ctx)
+ 		free_percpu(pool->acomp_ctx);
+-	while (i--)
+-		zpool_destroy_pool(pool->zpools[i]);
++	zpool_destroy_pool(pool->zpool);
+ 	kfree(pool);
+ 	return NULL;
+ }
+@@ -361,15 +352,12 @@ static struct zswap_pool *__zswap_pool_create_fallback(void)
+ 
+ static void zswap_pool_destroy(struct zswap_pool *pool)
+ {
+-	int i;
+-
+ 	zswap_pool_debug("destroying", pool);
+ 
+ 	cpuhp_state_remove_instance(CPUHP_MM_ZSWP_POOL_PREPARE, &pool->node);
+ 	free_percpu(pool->acomp_ctx);
+ 
+-	for (i = 0; i < ZSWAP_NR_ZPOOLS; i++)
+-		zpool_destroy_pool(pool->zpools[i]);
++	zpool_destroy_pool(pool->zpool);
+ 	kfree(pool);
+ }
+ 
+@@ -464,8 +452,7 @@ static struct zswap_pool *zswap_pool_find_get(char *type, char *compressor)
+ 	list_for_each_entry_rcu(pool, &zswap_pools, list) {
+ 		if (strcmp(pool->tfm_name, compressor))
+ 			continue;
+-		/* all zpools share the same type */
+-		if (strcmp(zpool_get_type(pool->zpools[0]), type))
++		if (strcmp(zpool_get_type(pool->zpool), type))
+ 			continue;
+ 		/* if we can't get it, it's about to be destroyed */
+ 		if (!zswap_pool_get(pool))
+@@ -492,12 +479,8 @@ unsigned long zswap_total_pages(void)
+ 	unsigned long total = 0;
+ 
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(pool, &zswap_pools, list) {
+-		int i;
+-
+-		for (i = 0; i < ZSWAP_NR_ZPOOLS; i++)
+-			total += zpool_get_total_pages(pool->zpools[i]);
+-	}
++	list_for_each_entry_rcu(pool, &zswap_pools, list)
++		total += zpool_get_total_pages(pool->zpool);
+ 	rcu_read_unlock();
+ 
+ 	return total;
+@@ -802,11 +785,6 @@ static void zswap_entry_cache_free(struct zswap_entry *entry)
+ 	kmem_cache_free(zswap_entry_cache, entry);
+ }
+ 
+-static struct zpool *zswap_find_zpool(struct zswap_entry *entry)
+-{
+-	return entry->pool->zpools[hash_ptr(entry, ilog2(ZSWAP_NR_ZPOOLS))];
+-}
+-
+ /*
+  * Carries out the common pattern of freeing and entry's zpool allocation,
+  * freeing the entry itself, and decrementing the number of stored pages.
+@@ -814,7 +792,7 @@ static struct zpool *zswap_find_zpool(struct zswap_entry *entry)
+ static void zswap_entry_free(struct zswap_entry *entry)
+ {
+ 	zswap_lru_del(&zswap_list_lru, entry);
+-	zpool_free(zswap_find_zpool(entry), entry->handle);
++	zpool_free(entry->pool->zpool, entry->handle);
+ 	zswap_pool_put(entry->pool);
+ 	if (entry->objcg) {
+ 		obj_cgroup_uncharge_zswap(entry->objcg, entry->length);
+@@ -939,7 +917,7 @@ static bool zswap_compress(struct folio *folio, struct zswap_entry *entry)
+ 	if (comp_ret)
+ 		goto unlock;
+ 
+-	zpool = zswap_find_zpool(entry);
++	zpool = entry->pool->zpool;
+ 	gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
+ 	if (zpool_malloc_support_movable(zpool))
+ 		gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
+@@ -968,7 +946,7 @@ static bool zswap_compress(struct folio *folio, struct zswap_entry *entry)
+ 
+ static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
+ {
+-	struct zpool *zpool = zswap_find_zpool(entry);
++	struct zpool *zpool = entry->pool->zpool;
+ 	struct scatterlist input, output;
+ 	struct crypto_acomp_ctx *acomp_ctx;
+ 	u8 *src;
+@@ -1467,7 +1445,7 @@ bool zswap_store(struct folio *folio)
+ 	return true;
+ 
+ store_failed:
+-	zpool_free(zswap_find_zpool(entry), entry->handle);
++	zpool_free(entry->pool->zpool, entry->handle);
+ put_pool:
+ 	zswap_pool_put(entry->pool);
+ freepage:
+@@ -1683,7 +1661,7 @@ static int zswap_setup(void)
+ 	pool = __zswap_pool_create_fallback();
+ 	if (pool) {
+ 		pr_info("loaded using pool %s/%s\n", pool->tfm_name,
+-			zpool_get_type(pool->zpools[0]));
++			zpool_get_type(pool->zpool));
+ 		list_add(&pool->list, &zswap_pools);
+ 		zswap_has_pool = true;
+ 		static_branch_enable(&zswap_ever_enabled);
 
 -- 
 2.45.2
