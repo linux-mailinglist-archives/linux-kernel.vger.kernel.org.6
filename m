@@ -1,207 +1,218 @@
-Return-Path: <linux-kernel+bounces-223757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200B69117D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:03:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172319117D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 03:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8C8FB2103C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:03:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 442B91C21E17
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25F715C9;
-	Fri, 21 Jun 2024 01:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D17E1C14;
+	Fri, 21 Jun 2024 01:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zCMvXKjG"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QM0R3jb4"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02528625
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07325625;
+	Fri, 21 Jun 2024 01:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718931828; cv=none; b=L49XzrsdtQrqgtoda9dty2LwckWWNH+Wm9TGm5xemexEnAXszq2iTmIwn2tIPlGx4xOmRGG7v8iC61l1oS8xYtF7svKjgG/SGB1vUG4AoQ6RiwAqcKAQCVtAem1/4a5cJBiHu3T2DWiFt9rTTBdmz2Vxixvp80As7NR5f6aIk2E=
+	t=1718931915; cv=none; b=rT2N5rn/9M3bymZMrz+9wPca6/tqbvAq91fcIHuTmyb0l2wfgrBlUpCgi8m4WMOQ4DApGHL0IHjLfZhxC/UzdXIybzieE8JeXsZBCObQdV3aDIVERZ482iAHIftKyuYIvwrVqkmYhHXf80LB3/JxGgBrHuXwAZueOoR3mkW0hTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718931828; c=relaxed/simple;
-	bh=F59EqtuW5khvkB0+BXMWVfsZkm7n4ZLH60tLs4QrbkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IcwWXFdhAd3GzZCyH3R6KJSLJJdV/zJYl42BldtT88T5CCtKqmwrIQJcpOd6KPh6IRFT9q+fUT8TrpXnFbaUEEZ96GdjZsexPxXGVTc6eLvttYZePBmSzLcd5w/OySiYdG5W3WCu3PA57/XffQfFGKvE1Vdb/m1fo5guS517jxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zCMvXKjG; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f6da06ba24so11232215ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:03:45 -0700 (PDT)
+	s=arc-20240116; t=1718931915; c=relaxed/simple;
+	bh=quFMaldFa9X38ZMJn06ygjjx4LlG1mhbgRP0FSjft/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cr4VSCv6B9Ml33yP6i3UT6P6aJV+6AdiyKTUwlS5zFID0Eo12SL/cdA+HP3witVuV8uVx9+nhLP1LeCHVIRAbR8CcvhYWShiQW345wIH2tUURknuiJz0MJGCuH5l4iDekxuHixNxV1jeSyyFmW4+iqa4VBVXgMVqiQaFD4eXW3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QM0R3jb4; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c7c61f7ee3so1279918a91.1;
+        Thu, 20 Jun 2024 18:05:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718931825; x=1719536625; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s1haH7YBDu+P173UfNQ13ypdZ+PVdQ4InMnIfKHy+Oc=;
-        b=zCMvXKjGuOrLecVoyDqRr1JtIX9zt0zTQ6cimZW0aXrO05XhL+eiH1Ugi66N26hCif
-         9iUBVhI5nLKOSLerPkU5FIKt3ISUPQvDUyndP2rcOBSRhCQyt/PBP/QYNedsv0eH9FhB
-         D8Kf6fzL6SxoSUQFunCRr/GXfSIDXghIlLiKcrjDpiy75/mSOuE/fbzMulialXp1EsUF
-         Zgxb7dPVgY4rAZu3Z0pjrF8aWYLegKDgTcRR/JVEtUCaredDj33DzarvH9c+p7nlpfCf
-         pvUOZcDb8/+j03e49c0ibx5GAEwOO7QjeH440xg+YEQYcFBPS3fNEPDUcd4aJ6klcJ96
-         K88g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718931825; x=1719536625;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718931913; x=1719536713; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s1haH7YBDu+P173UfNQ13ypdZ+PVdQ4InMnIfKHy+Oc=;
-        b=Mv9Q+KFVM6nTwCOb9Q+loz0FVFvCl6vHL6xsPwnsgBEluBbxoub24P0ZTSzCAYdguX
-         //zsNYalOZXD8/Q8oiM7hW+U4jcXweGZHhJ7CtgdsIz+t7eyB07hmTXEE3FfO2zeIDyp
-         Q1POOGZQE+yX0kk56NdywoBVSYtCacd73mN0X64muG07hrAHF/D3xqkSgCUkSuPcrmJ7
-         JAk3BiOWdX87YbvFhdFlvTkUpTfVaEbdY4KRcLwBPlXfs/BztPvM90MK/GmXnw7Rg2k/
-         Ob20l1qxzZwjgrowbagNP+NRRpL4vSVQoMhv4eaj8s8s1xFFA2agCU2QG8OfHXwrtQWr
-         kRVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVHLK1OEfzgOvaGXhkgTHYVcgQEGYnVeYHeEwHvoa66lCLhmRXtSD/D3rfeYU8DV1NO3IrjCgHKjbJ8+LvdMRwXbiz7/mIAS5GfpXJ
-X-Gm-Message-State: AOJu0Yxq1kHPZt0RsbxRnODjCV19hK4hSrpnqGafsN9Htbfc2ZdDG12d
-	sa3yJJl3NWJUcpsFNvSpoULjTsktUR9YGVNLqzkgq9l2Mdfkm1/CNQL30M6Uszo=
-X-Google-Smtp-Source: AGHT+IGu8qLWME7uH03Xg6l6zR9dVoABsK411ijDXY+wd3PmxDALgviUPmuQn9akpQ/LqS6WroNeCg==
-X-Received: by 2002:a17:902:da8e:b0:1f7:6ed:7389 with SMTP id d9443c01a7336-1f9aa4802a7mr84132235ad.66.1718931825123;
-        Thu, 20 Jun 2024 18:03:45 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c6ca7sm2390805ad.177.2024.06.20.18.03.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 18:03:44 -0700 (PDT)
-Date: Thu, 20 Jun 2024 18:03:42 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alexghiti@rivosinc.com, akpm@linux-foundation.org, bhe@redhat.com,
-	rppt@kernel.org, dawei.li@shingroup.cn, jszhang@kernel.org,
-	namcao@linutronix.de, chenjiahao16@huawei.com, bjorn@rivosinc.com,
-	vishal.moola@gmail.com, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RISC-V: cmdline: Add support for 'memmap' parameter
-Message-ID: <ZnTRbptoowL+1GOP@ghost>
-References: <20240618120842.15159-1-cuiyunhui@bytedance.com>
+        bh=nUIiselN6aNygKYqR/gG69pZatewEjIOFlDm5aKgKok=;
+        b=QM0R3jb4UdQyWiEa3nGTCzgz9r5rEkclIxCA6y4Vpy6l13pf+YlWy7OLL9LlvfunuE
+         GHYMAI8xtOOX4gCv7DjBhefR1tBvFVk5wStXl2Fb1mXfcdJnY+0qmp48vQg0RB2iaAD3
+         oKD8lPSWADxKw//aAniDG+hV3WqVKCMeMFsuKiXmkhcBjHi6dKpAUNM1E41a0oGmcQim
+         BGi9UDED07yDG2h0i+XWmpnnIhsfOxnyrg+Jb8sOKzQoLxtLyCtKqAP7bWHjL5QqxlNF
+         AIdWrz9zieksDBSj2JvPMJUV2feNQN70Oldk8S824a9HpL6CaiXgDYG/oCJXglrzZ4NG
+         PbIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718931913; x=1719536713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nUIiselN6aNygKYqR/gG69pZatewEjIOFlDm5aKgKok=;
+        b=p7qWJB7m60K9uYbAXK6+ps047UZTfPgsA0ySbLQord9IAdItIycmBWrrCCtr7diKN6
+         r+z8mtKZaJGBP4zuQ5uT7PLtxcBNMm0PX0HGuDmU0vTbW/nMKSSKQKa6cK9fuFeO0O/F
+         iQlidSZiqq6Cyndu/QB8633f/1l9tKETnEd71c2wpdu4M1YpbLUBqKe6nG0TkT4A3w2+
+         CS19bG0jlWWpanjBezNGdUWtChEya2T6ggVg7sM73Wf5DNw1DbTXNaJ1vB7SIadZUe8M
+         fHzNSGviUvCmM6K9CG8jQWueLroAX8VSLHXUIFND7LuYcILGeeTozNOjBZDjFGBh888D
+         I0eA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjb4E/hJzhVuLtq1ovtNSsvHiNRkv94Fm8FCaxMJ/nHYpeCUdC+kjUKCevTlN7ilmj9JW5h4XzXwxWlVDTAZ442mrWXj64LUlbpGVM9qmba5MpcUgV8na/DvtubZ9zG4GCtoCO
+X-Gm-Message-State: AOJu0YzNzh93PKKtTAtQuT0VeUPcFcpzbOnytWypiWWgrwd540A2xpNv
+	ThiRvva9OC21napSXFM6keZIDZ37YxqxlwTXtNzh9aTURV3bd4d/1mZpewljWwU0FDEbqo5ktgy
+	Mx3+DfHhsPM/7ZdrrUSir/6N3DTg=
+X-Google-Smtp-Source: AGHT+IHy/dmus3ScgDMFm90pxEkbbLcbvEhZYkXi09/AjVzNDXnip5kENJ4RpNA0OSe6QmVmNHjjlM68sILOy7nGiB4=
+X-Received: by 2002:a17:90a:6047:b0:2c2:d813:bffa with SMTP id
+ 98e67ed59e1d1-2c7b5dc805cmr6615824a91.43.1718931913186; Thu, 20 Jun 2024
+ 18:05:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618120842.15159-1-cuiyunhui@bytedance.com>
+References: <20240619230658.805185-1-zhouzhouyi@gmail.com> <673d737a-cf17-4480-a9e2-7ff1668f4b44@paulmck-laptop>
+In-Reply-To: <673d737a-cf17-4480-a9e2-7ff1668f4b44@paulmck-laptop>
+From: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Date: Fri, 21 Jun 2024 09:05:02 +0800
+Message-ID: <CAABZP2xa4T_E1KHLFFSF=1SURdg6fQJmj_rnGjvKoK0gnmDSeA@mail.gmail.com>
+Subject: Re: [PATCH V4] rcutorture: Add CFcommon.arch for the various arch's need
+To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, lance@osuosl.org, mark.rutland@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 08:08:42PM +0800, Yunhui Cui wrote:
-> Implement support for parsing 'memmap' kernel command line parameter.
-> 
-> This patch covers parsing of the following two formats for 'memmap'
-> parameter values:
-> 
-> - nn[KMG]@ss[KMG]
-> - nn[KMG]$ss[KMG]
-> 
-> ([KMG] = K M or G (kilo, mega, giga))
-> 
-> These two allowed formats for parameter value are already documented
-> in file kernel-parameters.txt in Documentation/admin-guide folder.
-> Some architectures already support them, but Mips did not prior to
+On Fri, Jun 21, 2024 at 1:57=E2=80=AFAM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
+>
+> On Wed, Jun 19, 2024 at 11:06:58PM +0000, Zhouyi Zhou wrote:
+> > Add CFcommon.arch for the various arch's need for rcutorture.
+> >
+> > In accordance with [1], [2] and [3], move x86 specific kernel option
+> > CONFIG_HYPERVISOR_GUEST to CFcommon.arch, also move kernel option
+> > CONFIG_KVM_GUEST which only exists on x86 & PowerPC to CFcommon.arch.
+> >
+> > [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gma=
+il.com/
+> > [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@pa=
+ulmck-laptop/
+> > [3] https://lore.kernel.org/all/ZnBkHosMDhsh4H8g@J2N7QTR9R3/
+> >
+> > Tested in x86_64 and PPC VM of Open Source Lab of Oregon State Universi=
+ty.
+> >
+> > Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
+> > Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+> > Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> > Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+>
+> Thank you!  I have reverted the earlier version to queue this one.
+> Please check below to make sure that my usual wordsmithing did not mess
+> things up.
+I have studied the edition thoroughly, it is wonderful, and I learn a
+lot through this
+process!
+>
+> Mark, any suggestions for any needed ARM CFcommon.arch files?  Or does
+> moving out the x86/PowerPC-specific Kconfig options take care of things
+> for you guys?  (Hey, I can dream, can't I?)
+Thank you both for your guidance!
 
-Copy-paste from a Mips patch? Should say riscv :)
-
-It looks like this code is duplicated from xtensa and is effectively the
-same as mips. Can this code be placed in a generic file so that the code
-can be shared between mips, riscv, and xtensa -- maybe a new config that
-gets selected by mips/riscv/xtensa?
-
-- Charlie
-
-> this patch.
-> 
-> Excerpt from Documentation/admin-guide/kernel-parameters.txt:
-> 
-> memmap=nn[KMG]@ss[KMG]
-> [KNL] Force usage of a specific region of memory.
-> Region of memory to be used is from ss to ss+nn.
-> 
-> memmap=nn[KMG]$ss[KMG]
-> Mark specific memory as reserved.
-> Region of memory to be reserved is from ss to ss+nn.
-> Example: Exclude memory from 0x18690000-0x1869ffff
-> memmap=64K$0x18690000
-> or
-> memmap=0x10000$0x18690000
-> 
-> There is no need to update this documentation file with respect to
-> this patch.
-> 
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> ---
->  arch/riscv/mm/init.c | 50 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index e3405e4b99af..7be7ec3092ad 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -208,6 +208,56 @@ static int __init early_mem(char *p)
->  }
->  early_param("mem", early_mem);
->  
-> +static void __init parse_memmap_one(char *p)
-> +{
-> +	char *oldp;
-> +	unsigned long start_at, mem_size;
-> +
-> +	if (!p)
-> +		return;
-> +
-> +	oldp = p;
-> +	mem_size = memparse(p, &p);
-> +	if (p == oldp)
-> +		return;
-> +
-> +	switch (*p) {
-> +	case '@':
-> +		start_at = memparse(p + 1, &p);
-> +		memblock_add(start_at, mem_size);
-> +		break;
-> +
-> +	case '$':
-> +		start_at = memparse(p + 1, &p);
-> +		memblock_reserve(start_at, mem_size);
-> +		break;
-> +
-> +	case 0:
-> +		memblock_reserve(mem_size, -mem_size);
-> +		break;
-> +
-> +	default:
-> +		pr_warn("Unrecognized memmap syntax: %s\n", p);
-> +		break;
-> +	}
-> +}
-> +
-> +static int __init parse_memmap_opt(char *str)
-> +{
-> +	while (str) {
-> +		char *k = strchr(str, ',');
-> +
-> +		if (k)
-> +			*k++ = 0;
-> +
-> +		parse_memmap_one(str);
-> +		str = k;
-> +	}
-> +
-> +	return 0;
-> +}
-> +early_param("memmap", parse_memmap_opt);
-> +
->  static void __init setup_bootmem(void)
->  {
->  	phys_addr_t vmlinux_end = __pa_symbol(&_end);
-> -- 
-> 2.20.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Regards
+Zhouyi
+>
+>                                                         Thanx, Paul
+>
+> ------------------------------------------------------------------------
+>
+> commit 9d6767c47ce4de2ef817e47a5882748d8008ebe9
+> Author: Zhouyi Zhou <zhouzhouyi@gmail.com>
+> Date:   Wed Jun 19 23:06:58 2024 +0000
+>
+>     rcutorture: Add CFcommon.arch for arch-specific Kconfig options
+>
+>     Add CFcommon.arch for arch-specific Kconfig options.
+>
+>     In accordance with [1], [2] and [3], move the x86-specific kernel opt=
+ion
+>     CONFIG_HYPERVISOR_GUEST to CFcommon.i686 and CFcommon.x86_64, and als=
+o
+>     move the x86/PowerPC CONFIG_KVM_GUEST Kconfig option to CFcommon.i686=
+,
+>     CFcommon.x86_64, and CFcommon.ppc64le.
+>
+>     The "arch" in CFcommon.arch is taken from the "uname -m" command.
+>
+>     [1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@g=
+mail.com/
+>     [2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@=
+paulmck-laptop/
+>     [3] https://lore.kernel.org/all/ZnBkHosMDhsh4H8g@J2N7QTR9R3/
+>
+>     Tested in x86_64 and PPC VM of Open Source Lab of Oregon State Univer=
+sity.
+>
+>     Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
+>     Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+>     Suggested-by: Mark Rutland <mark.rutland@arm.com>
+>     Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+>
+> diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/t=
+ools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
+> index b33cd87536899..ad79784e552d2 100755
+> --- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
+> +++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
+> @@ -68,6 +68,8 @@ config_override_param "--gdb options" KcList "$TORTURE_=
+KCONFIG_GDB_ARG"
+>  config_override_param "--kasan options" KcList "$TORTURE_KCONFIG_KASAN_A=
+RG"
+>  config_override_param "--kcsan options" KcList "$TORTURE_KCONFIG_KCSAN_A=
+RG"
+>  config_override_param "--kconfig argument" KcList "$TORTURE_KCONFIG_ARG"
+> +config_override_param "$config_dir/CFcommon.$(uname -m)" KcList \
+> +                     "`cat $config_dir/CFcommon.$(uname -m) 2> /dev/null=
+`"
+>  cp $T/KcList $resdir/ConfigFragment
+>
+>  base_resdir=3D`echo $resdir | sed -e 's/\.[0-9]\+$//'`
+> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon b/to=
+ols/testing/selftests/rcutorture/configs/rcu/CFcommon
+> index 0e92d85313aa7..217597e849052 100644
+> --- a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
+> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
+> @@ -1,7 +1,5 @@
+>  CONFIG_RCU_TORTURE_TEST=3Dy
+>  CONFIG_PRINTK_TIME=3Dy
+> -CONFIG_HYPERVISOR_GUEST=3Dy
+>  CONFIG_PARAVIRT=3Dy
+> -CONFIG_KVM_GUEST=3Dy
+>  CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC=3Dn
+>  CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=3Dn
+> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686=
+ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
+> new file mode 100644
+> index 0000000000000..d8b2f555686fb
+> --- /dev/null
+> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
+> @@ -0,0 +1,2 @@
+> +CONFIG_HYPERVISOR_GUEST=3Dy
+> +CONFIG_KVM_GUEST=3Dy
+> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc6=
+4le b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
+> new file mode 100644
+> index 0000000000000..133da04247ee0
+> --- /dev/null
+> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
+> @@ -0,0 +1 @@
+> +CONFIG_KVM_GUEST=3Dy
+> diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_=
+64 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
+> new file mode 100644
+> index 0000000000000..d8b2f555686fb
+> --- /dev/null
+> +++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
+> @@ -0,0 +1,2 @@
+> +CONFIG_HYPERVISOR_GUEST=3Dy
+> +CONFIG_KVM_GUEST=3Dy
 
