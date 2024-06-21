@@ -1,97 +1,132 @@
-Return-Path: <linux-kernel+bounces-224808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0509D912718
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:58:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC7A91271B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9B11F23FF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:58:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E006283B72
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29C1F4FC;
-	Fri, 21 Jun 2024 13:57:55 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730194C90;
-	Fri, 21 Jun 2024 13:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D2F1C14;
+	Fri, 21 Jun 2024 13:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XHsI+mre"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D12186A
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718978275; cv=none; b=uMWRaCpuP/R7biYKJSBDvs9FPA7GcipGBXDzR6tIuhCT0f/9GaYOkVJB4ygN0KW2RIaZbOOW3imPN55F83MAianvj/G+uHoz1GFzEkAs6tk9yr5mtwfm5v1yJdyTp0nZJrCeZXqgKNN0KZnbcId3DcyySe7s6yGfrnUZsI/tuWs=
+	t=1718978387; cv=none; b=CTmi8M+v9QnB/LsdvTtFN3pZBMJLO9Z6unKo1GKn7Za+3Qcm1TpPXpZibJljcyc8DDYyd44IcwwAx2Ms+kfk8g6rjaBFd6I+MrkD8wjEbbdT324GivscGXsk1V64xKyOu9NbkOqajNS7lQllLZ1JAnOJz5hCz9uT+NRBkaJrlJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718978275; c=relaxed/simple;
-	bh=/W9hKVOwOaTWtfg8Pb2Jm9lMM9GEm/nu0JlkK2xkykA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gIxQYCOBO+XXYnxzt+4Y+eW0T04wdREZiZHmcuIAcJRgTro8P8Or+MFwf2cwhODrVnNcTJ3897w9osEih0smZoJWyfnQD/g/iAMXFRqoOm1TaT/wN3sr+79Ogml4G+MuCU+doawbM/2Xo0GlcaAkG39qZGAE3ppd0g7NdlL5D78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 8F74A92009C; Fri, 21 Jun 2024 15:57:50 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 887DB92009B;
-	Fri, 21 Jun 2024 14:57:50 +0100 (BST)
-Date: Fri, 21 Jun 2024 14:57:50 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Jonas Gorski <jonas.gorski@gmail.com>, 
-    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] MIPS: Introduce config options for LLSC
- availability
-In-Reply-To: <2c26a07f-fa68-48f1-8f3b-3b5e4f77130b@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2406211446500.43454@angie.orcam.me.uk>
-References: <20240612-mips-llsc-v2-0-a42bd5562bdb@flygoat.com> <20240612-mips-llsc-v2-2-a42bd5562bdb@flygoat.com> <alpine.DEB.2.21.2406210041140.43454@angie.orcam.me.uk> <2c26a07f-fa68-48f1-8f3b-3b5e4f77130b@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1718978387; c=relaxed/simple;
+	bh=FZYuR10D3WxYTlWhA72cyRk2pMy6zS8D3yx7lj0lctw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZW9eOzIVoFPM1usQGO8UZ2geJuAPByuxVK2V6R4hDb9aUalNK+5OjCkPOvIL69IA2tiCLNXU9UQNtBwEun5XPmJIBxsv23pxI/gzmqjZ34cFC5SxzBR+9gjWqtZcaWqX8TMgh6ozEYK97uVMg0t+2iwrRKrN5tQs9oqxmbeErcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XHsI+mre; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52c4b92c09bso2845200e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:59:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718978384; x=1719583184; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b9o75QltN1QiHAAa6uL1Tv0SbyB0F3wn6OTH/+H2NLk=;
+        b=XHsI+mrea6CkAzeapGubED2x4YTCN4JljbHp0L/1f7ExpOSXKlpSm7C5upB6HKjYU7
+         lMv+Yl7/aeMjO2B0SkzWsgRBZLFdVavTfNFW0Es88bX++hKpGulyI8P1wsNqsknVt1cx
+         e9Iw3E9MHo1IW/aLpzhaD8KUjNG28S053sVANHPHRhqXcmvq17M1N+h2jCIK4lwr5R8N
+         BVrk784Iei5BpMPlEYOFdj9qdUUNDnI+L+KDozTEDaSQJLN5UvufUvpg6Ix6J17L2uJK
+         xIoMGd4wpMzRW+D6PwO7ZVIbEfE8Hm6YFEz+ilW2HK8fKyQgYfi13T+FdODH3h8erftP
+         efmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718978384; x=1719583184;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b9o75QltN1QiHAAa6uL1Tv0SbyB0F3wn6OTH/+H2NLk=;
+        b=CPq5YGmwX9OV0TOvSRNWs3qF/L5uhbZZ6k/wihQcVCLOn6Jxfyp6mGRBuBao30/aXa
+         czkJRcJu6PpT79G38mBx53tCK/y2dHe+8992+2E9sECL0w1nsp4HWx4btbHc359HH6u1
+         pAgSESMYSPILIw0tBHpk6vmiOD5BsltraZl4NMBp8StyYcknnvmJK6p2GW4tmQ9ciT7r
+         BVAz0caAR9wjUfVm+21L97M/a6THv3C2JWxwV2DSX5YV6QjWTKcDoPq4bxuoKS0095cM
+         eQYydqvVXjIQ5qLje1BrM1qLGJBqVtt93GEGXySpU71BcZ2Vks6UNAOKk8HJZ+03bUYh
+         375g==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ8uqG4ZJn2GCjYrfeQwWzQ23gXDbOvj/yoCmRAN26U9pPO8yvZAAD1GRha/R8kPP4ZbNcPe/ECsfBdYM0tkBJJjUdX8TUVFk1kSDx
+X-Gm-Message-State: AOJu0Yz8co0jdvyP9BEyeH4qRLcUSHkPK2jHZf7UrmSt7sW89mGysGd1
+	vxBq6NrcS3zmm3YrDSjVxablcUXdPbPx96EjhqUrL9geRTBuz75k9pHHbPdM3G0xzEUImYPmuQG
+	d2jqptMpP3j7g2C4uskmYYL8k5Wn+XLimyR7HJw==
+X-Google-Smtp-Source: AGHT+IEoK/OVfXsccAiGXwUvTPgQ52p+TiJ9oX6eFqWuApRKUphFPSrr58bci/V9aJZ459iRSeF82xV5dmH+pw6OQH4=
+X-Received: by 2002:a05:6512:3988:b0:52c:cb8d:6374 with SMTP id
+ 2adb3069b0e04-52ccb8d6456mr7618391e87.11.1718978384534; Fri, 21 Jun 2024
+ 06:59:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240618144344.16943-1-amishin@t-argos.ru>
+In-Reply-To: <20240618144344.16943-1-amishin@t-argos.ru>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 21 Jun 2024 15:59:33 +0200
+Message-ID: <CAMRc=Me5R+YLmx6mh_mfszRj7TKx25cL9Vx3J-7mvRTuat8Puw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: davinci: Validate the obtained number of IRQs
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Keerthy <j-keerthy@ti.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Grygorii Strashko <grygorii.strashko@ti.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 21 Jun 2024, Jiaxun Yang wrote:
+On Tue, Jun 18, 2024 at 4:45=E2=80=AFPM Aleksandr Mishin <amishin@t-argos.r=
+u> wrote:
+>
+> Value of pdata->gpio_unbanked is taken from Device Tree. In case of broke=
+n
+> DT due to any error this value can be any. Without this value validation
+> there can be out of chips->irqs array boundaries access in
+> davinci_gpio_probe().
+>
+> Validate the obtained nirq value so that it won't exceed the maximum
+> number of IRQs per bank.
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
 
-> >  I think this ought not to be done in two places independently and the 
-> > pieces in <asm/mach-*/cpu-feature-overrides.h> need to be removed, likely 
-> > in the same change even, *however* not without double-checking whether 
-> > there is not a case among them where a platform actually has LL/SC support 
-> > disabled despite the CPU used there having architectural support for the 
-> > feature.  Otherwise we may end up with a case where a platform has LL/SC 
-> > support disabled via its <asm/mach-*/cpu-feature-overrides.h> setting and 
-> > yet we enable ARCH_SUPPORTS_ATOMIC_RMW or ARCH_HAVE_NMI_SAFE_CMPXCHG for 
-> > it via Kconfig.
-> 
-> IMO it's necessary for platforms who know what are they doing such as ATH25,
-> which we took care in this series.
-> 
-> I'll add a build time assertion to ensure when CONFIG_CPU_HAS_LLSC is selected
-> kernel_uses_llsc is statically 1, so any incorrect overrides can be spotted
-> at build time.
+Why not Reported-by: ?
 
- That might do in the interim as a sanity check, however ultimately the 
-sole reason these <asm/mach-*/cpu-feature-overrides.h> exist (and the 
-`cpu_has_llsc' setting there) is so that a dynamic check at run time is 
-avoided where the result is known from elsewhere beforehand anyway, and 
-your change effectively supersedes the overrides, and therefore they need 
-to be removed.
+Bart
 
-> It's better to clean up platform's overrides at some point, I'll leave
-> it to a future patch.
-
- I think it will best be done now while we are at it and the change is in 
-scope.
-
- It should be possible to automatically run over the available defconfigs 
-and see if there is any change to `vmlinux' produced between the current 
-state upstream and the state where this patch has been applied and the 
-`cpu_has_llsc' setting removed from <asm/mach-*/cpu-feature-overrides.h> 
-both at a time for each defconfig.  There should be none.
-
- It'll be tougher once your changes to add ARCH_SUPPORTS_ATOMIC_RMW or 
-ARCH_HAVE_NMI_SAFE_CMPXCHG have been applied.
-
-  Maciej
+> Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ numberi=
+ng")
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> ---
+>  drivers/gpio/gpio-davinci.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+> index bb499e362912..1d0175d6350b 100644
+> --- a/drivers/gpio/gpio-davinci.c
+> +++ b/drivers/gpio/gpio-davinci.c
+> @@ -225,6 +225,11 @@ static int davinci_gpio_probe(struct platform_device=
+ *pdev)
+>         else
+>                 nirq =3D DIV_ROUND_UP(ngpio, 16);
+>
+> +       if (nirq > MAX_INT_PER_BANK) {
+> +               dev_err(dev, "Too many IRQs!\n");
+> +               return -EINVAL;
+> +       }
+> +
+>         chips =3D devm_kzalloc(dev, sizeof(*chips), GFP_KERNEL);
+>         if (!chips)
+>                 return -ENOMEM;
+> --
+> 2.30.2
+>
 
