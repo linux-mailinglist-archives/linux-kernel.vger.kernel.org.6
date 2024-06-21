@@ -1,93 +1,153 @@
-Return-Path: <linux-kernel+bounces-224236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6846D911F3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:48:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F71911F3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131B71F27BC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:48:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020171C21190
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD3116D9C4;
-	Fri, 21 Jun 2024 08:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2217016D4FA;
+	Fri, 21 Jun 2024 08:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qGm3uYFK"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="K4OGeB1S"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E3A85283
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7A118E20;
+	Fri, 21 Jun 2024 08:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718959707; cv=none; b=MHqEiU2wtKQmq4XOORSO6X0IWoP/BdMtiqjCk1pt6b376nHHIUhQAeCKVrLF+tgr2qJC37VOg1gYXisCSwwMAcCId2WLPyOmaTTJVyhQj+x+GFQCLRDoftgFtCb8EZoi+ymdR6ZxzDe5p1/kx/YdcCHUXIbvNGxj/2w3R+opBkw=
+	t=1718959732; cv=none; b=e5iyJERz2V/64gDmWp/k744CP343h+ENy+5cO0Uj47uR+bqFBR4jZqR4CicKU8olsqHG6bxQGcSHUDtsPK/6+4t6vPPViuVdDeSgcmo6+Vgbn7g0PN+qqTk0WQH9ByVMzvBeDVw5NuPCuw051Ui6wQF1w/XVWBxpej7U7IeaBsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718959707; c=relaxed/simple;
-	bh=cmNro0s81V3ggh/XTjBQaqQoYmXEBF36FlD7ZvBjvqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dAWQbYMytuzON7JKuVXvihhKI0va+j4qEyFqPUu77l+bwU59mUFNNfgl5E1FfM7f6kjQ7tf1ZPwIMGIzAWbMgkjPYsO+Dlc0Xm8QIv8u8pklap9whBTlg20cTPTMqTQNcJ+Zkr/oX1aJyq7Bq4gCRExG+ptfDJgLsPrJ7dqwoMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qGm3uYFK; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718959697; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=3vsqKJpmmEF1YlrnBNdvTctEj6bpEdbnO2+TdQxtZ1w=;
-	b=qGm3uYFKG9nlkiFJ6tpLIypL+Moz0n7fV3TT8uNjLHXGt++y8m90jBJiHMF2NweGMY6Xd5U5Hg9KtF96FNqrzQ1zui4avl4wsdQdSaY89967NdGv81bF4ckHQmdO23z8xUmMwvLYi7qizqdUaV53xK1qHQCp4GUJeruH5u/XgdU=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=hengqi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W8vhyN2_1718959694;
-Received: from 30.221.148.166(mailfrom:hengqi@linux.alibaba.com fp:SMTPD_---0W8vhyN2_1718959694)
-          by smtp.aliyun-inc.com;
-          Fri, 21 Jun 2024 16:48:15 +0800
-Message-ID: <78a99414-314d-452e-938b-07e86182a8bf@linux.alibaba.com>
-Date: Fri, 21 Jun 2024 16:48:13 +0800
+	s=arc-20240116; t=1718959732; c=relaxed/simple;
+	bh=E8CCwaNxTOtcgV/FCnCW/+NV+DJ2IGbkxo3fNLla1NQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Wno4Dv1ZoxcYQifZXZ3pLAK9zlpKKag1GBjyJYZVw1hMxzAAMISDABXLz36vUP5lYGpiWigGolXdN1VLh9yPKyg1ZQQAiQNZN31llFEiQqNXsrcpyUer7+5HlpTgmBnKjYVbK/sIW3wFO/Nh2kduAFaUBvXZ9+wvtiTsnNOtXlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=K4OGeB1S; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ix+NkQr4REwpET3Ad0FPePtCiykRvKA7YhCWjna0BtM=; t=1718959729; x=1719564529; 
+	b=K4OGeB1SeImIDsvwtlYNCGuUjOuePBtA1sjqaj3ov7ONsX1XEhByUvvL1wcjrom1sah5a6BQlDu
+	L34LuGT0vu70UfCNa7GQwN7r2SDSW7Abl9e+6AeQXLAXKUKnQdanlMHaJzg9mDcQDdiKZlzeaZ/So
+	0sLCfYqSlJya0WUMDWe9zibMSkfYbNWrnhr/4+9AlLidKKFSZSxoNJiwwEp6ccxblNgQsu1LYUc+R
+	fk+lu9E/046IsdoTBLVfJcYY14IojvXBPlmKo1+K4t2GNScudg+Y8bA6J+7OFuJSr0/Gi747/ePol
+	CJx0NzdGvPWyqkhqf1QjJrOkjFRcY7w/9o/Q==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sKZwr-00000001vJq-19HR; Fri, 21 Jun 2024 10:48:45 +0200
+Received: from p5b13a475.dip0.t-ipconnect.de ([91.19.164.117] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sKZwr-00000001dOn-2Cnm; Fri, 21 Jun 2024 10:48:45 +0200
+Message-ID: <4bd2e538d70d8acbdc8da7b0fdb05b93e0614e43.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v4 33/40] sh: mach-x3proto: optimize ilsel_enable()
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org, 
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, linux-sh@vger.kernel.org
+Cc: Alexey Klimov <alexey.klimov@linaro.org>, Bart Van Assche
+ <bvanassche@acm.org>, Jan Kara <jack@suse.cz>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+ Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>, Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>, Sergey Shtylyov <s.shtylyov@omp.ru>
+Date: Fri, 21 Jun 2024 10:48:44 +0200
+In-Reply-To: <20240620175703.605111-34-yury.norov@gmail.com>
+References: <20240620175703.605111-1-yury.norov@gmail.com>
+	 <20240620175703.605111-34-yury.norov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/qxl: Add check for drm_cvt_mode
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- airlied@redhat.com, kraxel@redhat.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- noralf@tronnes.org
-References: <20240621071031.1987974-1-nichen@iscas.ac.cn>
-From: Heng Qi <hengqi@linux.alibaba.com>
-In-Reply-To: <20240621071031.1987974-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
+Hi Yury,
 
-在 2024/6/21 下午3:10, Chen Ni 写道:
-> Add check for the return value of drm_cvt_mode() and return the error if
-> it fails in order to avoid NULL pointer dereference.
->
-> Fixes: 1b043677d4be ("drm/qxl: add qxl_add_mode helper function")
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+thanks for your patch!
+
+On Thu, 2024-06-20 at 10:56 -0700, Yury Norov wrote:
+> Simplify ilsel_enable() by using find_and_set_bit().
+>=20
+> Geert also pointed the bug in the old implementation:
+>=20
+> 	I don't think the old code worked as intended: the first time
+> 	no free bit is found, bit would have been ILSEL_LEVELS, and
+> 	test_and_set_bit() would have returned false, thus terminating
+> 	the loop, and continuing with an out-of-range bit value? Hence
+> 	to work correctly, bit ILSEL_LEVELS of ilsel_level_map should
+> 	have been initialized to one?  Or am I missing something?
+>=20
+> The new code does not have that issue.
+>=20
+> CC: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> Signed-off-by: Yury Norov <yury.norov@gmail.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->   drivers/gpu/drm/qxl/qxl_display.c | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
-> index c6d35c33d5d6..86a5dea710c0 100644
-> --- a/drivers/gpu/drm/qxl/qxl_display.c
-> +++ b/drivers/gpu/drm/qxl/qxl_display.c
-> @@ -236,6 +236,9 @@ static int qxl_add_mode(struct drm_connector *connector,
->   		return 0;
->   
->   	mode = drm_cvt_mode(dev, width, height, 60, false, false, false);
-> +	if (!mode)
-> +		return 0;
-> +
->   	if (preferred)
->   		mode->type |= DRM_MODE_TYPE_PREFERRED;
->   	mode->hdisplay = width;
+>  arch/sh/boards/mach-x3proto/ilsel.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/sh/boards/mach-x3proto/ilsel.c b/arch/sh/boards/mach-x3=
+proto/ilsel.c
+> index f0d5eb41521a..35b585e154f0 100644
+> --- a/arch/sh/boards/mach-x3proto/ilsel.c
+> +++ b/arch/sh/boards/mach-x3proto/ilsel.c
+> @@ -8,6 +8,7 @@
+>   */
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> =20
+> +#include <linux/find_atomic.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> @@ -99,8 +100,8 @@ int ilsel_enable(ilsel_source_t set)
+>  	}
+> =20
+>  	do {
+> -		bit =3D find_first_zero_bit(&ilsel_level_map, ILSEL_LEVELS);
+> -	} while (test_and_set_bit(bit, &ilsel_level_map));
+> +		bit =3D find_and_set_bit(&ilsel_level_map, ILSEL_LEVELS);
+> +	} while (bit >=3D ILSEL_LEVELS);
+> =20
+>  	__ilsel_enable(set, bit);
 
-Reviewed-by: Heng Qi <hengqi@linux.alibaba.com>
+I will need to take a closer look at the whole code in ilsel_enable() to un=
+derstand what's
+happening here. If Geert's explanation is correct, it sounds more like you'=
+re fixing a bug
+and saying you're optimizing the function in the patch subject would sound =
+more like an
+euphemism.
 
-Thanks.
+Also, I think we should add a Fixes tag if possible in case your patch fixe=
+s an actual bug.
+
+I will have a closer look over the weekend.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
