@@ -1,126 +1,120 @@
-Return-Path: <linux-kernel+bounces-224950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF52C912905
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:10:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C3391294B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEE528C14A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:10:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F55AB2DB93
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B3659168;
-	Fri, 21 Jun 2024 15:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E91768FD;
+	Fri, 21 Jun 2024 15:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/COZ9j4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b="j9Q3m6ui"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D495A0E0;
-	Fri, 21 Jun 2024 15:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E160757F8
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718982574; cv=none; b=gQ76D6N62KXcuSsRj3S+ilFkKRoiQXpH0LEpmDKmV4FguGn6lr0XWw+9Lslg9oSaIDjKKa92pKUAjuKZ7sjZ7JT9cW3MLviIu1w98VddFy76z/ew4s/8j21//b8SYguJgJpY+Cm+owIbmGsUGFRSewaZTitfmu8aK48CBHqylqw=
+	t=1718982598; cv=none; b=jI99T2q1tv4Zind3Goo7YRgQrumNShHqwp0HZqHgmwESUaAaqGGRd2Ie+9uc/5aO58FL7La04HXGHcENu/OWVLra8VdS/o75vRbp8tnz2fvMmtgpZIiOAPXB9mtNwa8btxYnAdc1oCry+6jz4ho8PHOy7X/Rc0fyD6y9dNihSeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718982574; c=relaxed/simple;
-	bh=bDKB1wHsiRH388Qngx6ZzxxVAop7Ev34W6mUhLjovhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SEbXzPfC8cr0oZYrPGK9FPVi7CHdtV7AAwldFOLruDNmsXh3Ig1qkNQdsDDUW9Ry39oWMQRTo+2YknWPO6b8Za323F0QnhZjnqI2HI4U7II+swlKWbC/WpGvMrYuXrVPzMxRKzCHs0V4N3GPVcSM3UjKZi+JIMpQZhw3XHpz+Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/COZ9j4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE3FC2BBFC;
-	Fri, 21 Jun 2024 15:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718982573;
-	bh=bDKB1wHsiRH388Qngx6ZzxxVAop7Ev34W6mUhLjovhA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=J/COZ9j4oVhToipxXF6nDEREjszpOIi9ReiR2qsXx/av2FUGRSSgrSJMYFq8tkY6Z
-	 IoMOeejYYhD0ey+PY7Q9gBSeSY+zkja2j0MIYyvLorLfktEy3XOZQOvYmrjrWBxA7h
-	 d8Ok7V5378nXUJWXEFshiGt6kVdgh9RQRAFgEhk9RSKNoFEW6jSV/7pkDN5UtnKgbm
-	 R6wFHJBpJ+ZEcSM+MCeRBXDbC+AEi01BWH4Qq6omWxUlSSNclU7tH9r/L9HjkgQGvJ
-	 MIiYV+fYdYl7KK+bzNycEQjVM08ZO2n0vtg2sOeq74ExJNANUXwkQc2gRP2xX2lt2a
-	 cibnEnJVVOIzw==
-Message-ID: <cd0533b8-bb47-4c68-b970-6bad4204c636@kernel.org>
-Date: Fri, 21 Jun 2024 17:09:25 +0200
+	s=arc-20240116; t=1718982598; c=relaxed/simple;
+	bh=iHNlBypQqnWvEq3zZsh0TVR1D0RIgs9Qb8YN4aw6Xp8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gbNbcUMmBklO/OOaP/tduE7A58knwOA+ghbtCwfGsC9KldQGhD8hVDkvK2sKEnom/pDlV6XXlOzM9eEtfP6WEMPZSKESy2sOBSkVeEf46n7qO/vczJjl/mhunGxnEYM+5xXZRmoQ211R4buiAIrci/kW8D+FO1TZHTPXc8d2K/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org; spf=pass smtp.mailfrom=bitbyteword.org; dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b=j9Q3m6ui; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitbyteword.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0272692096so1983187276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:09:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bitbyteword.org; s=google; t=1718982595; x=1719587395; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iHNlBypQqnWvEq3zZsh0TVR1D0RIgs9Qb8YN4aw6Xp8=;
+        b=j9Q3m6uiYTXFmYb9u9DcFgKE8u9BrIHW3atvcRyevjWXpZbMG+iD6Ji2LdhJp0sgXG
+         7ZW9aeNG/CIJwzPg5A4OiPOjH8g5c2ozfENBWvSZHGbnuqYqRprmwaILaVde8LPKz8ph
+         +/2vANedVQFF4qszrE7pVHKnjte2g/AvU4sMxJFGMMHeGlsMBGn4oF1Fdl4E3qjbPdH9
+         A8zhzpOyF/CFKv98aAEGYqbel+u+HTa1pjHs42TehN0wGF4wOoaHqRCuzikIKJEhknFh
+         si46sbO5WtRm6FSPefeFZ1tcG9JrZygnb2WxCfE7kTy0lX3eVv/TbJEnKwaBU1zNtZPw
+         PFYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718982595; x=1719587395;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iHNlBypQqnWvEq3zZsh0TVR1D0RIgs9Qb8YN4aw6Xp8=;
+        b=izX/cr+W6LasvW594QuZygdkc+bYol93foWv/oorYoR/4ljIL6aLx0xZyTPo4DYIDi
+         HaI14dM8sKyrukWAzRzNbfszVlqLytL5YKjb64DbtTkq5F80WJIsNb1znoHhGHJ1uECm
+         SJQxUdgAs7Qvc7p8rS/2V1qyxZmy2SAJUgpMg9LvzcmoEJ2T8dkwGqn4yit5BtoS0OjK
+         ebkHhV61pPW/sgfT687TR6d4zfnzLYhcRY81232RBD6dgXbx2JAkigaUvcBvZ/pJ4EDC
+         Fd6REhFEGPN4js+8VtG6AajJJO3wkiGy9E8yIvLvLpNOGdYEv5fonaQQc2MfC9Ps7N5G
+         nGDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPDTgVapmCuEzF1TBs3H2hi/hNkSAN/KXyAvNiIsZzz6RAOi6BBBAcYYZFm3DAUhWWxF/BCKRmaTf96Vv2buMzdLGKnNEjcW2n3dy1
+X-Gm-Message-State: AOJu0YzCisVfmWb5rlmy6IOqXLvUlIiswHF3bgQ3DDtKkpHh4EJoxNGr
+	+1oOaT1jYsHQLj7hknwlLi8hM5o+XJzEzjjR/xuTJz6Dap9HY+Ed/mOWzqxMMgY/ex0FTU/vApq
+	doYGMag4zWbM9DgSioOyEk+uu6bCstRrZwz/Bkg==
+X-Google-Smtp-Source: AGHT+IEMfqe/p+KWPQj/U59OJ6pPq52NpQk1bFTQzunLjwN87sg82a9VsBUAQ//TFtPgISR9/iOl/OXUwE7g3JzrIpE=
+X-Received: by 2002:a25:bc87:0:b0:e02:b745:b2c6 with SMTP id
+ 3f1490d57ef6-e02be201656mr8816068276.44.1718982595145; Fri, 21 Jun 2024
+ 08:09:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
-To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, sboyd@kernel.org,
- andersson@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org,
- devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
- robh@kernel.org, sricharan@codeaurora.org
-Cc: gokulsri@codeaurora.org
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1716811043.git.bristot@kernel.org> <CAO7JXPhWvLaaGqCGUZ_YCuja2T1ciWZoUnsUDnNPQ2b4yDB2Jw@mail.gmail.com>
+ <ea45abdd-c301-4cf9-abb7-6983b73b2824@kernel.org>
+In-Reply-To: <ea45abdd-c301-4cf9-abb7-6983b73b2824@kernel.org>
+From: Vineeth Remanan Pillai <vineeth@bitbyteword.org>
+Date: Fri, 21 Jun 2024 11:09:44 -0400
+Message-ID: <CAO7JXPgmwnn=njmpMVGLNYQ=9hmmRPFeJ5d=o9VW81Vt2k-UwA@mail.gmail.com>
+Subject: Re: [PATCH V7 0/9] SCHED_DEADLINE server infrastructure
+To: Daniel Bristot de Oliveira <bristot@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
+	Luca Abeni <luca.abeni@santannapisa.it>, 
+	Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>, Thomas Gleixner <tglx@linutronix.de>, 
+	Joel Fernandes <joel@joelfernandes.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Phil Auld <pauld@redhat.com>, Suleiman Souhlal <suleiman@google.com>, 
+	Youssef Esmat <youssefesmat@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/06/2024 13:46, Gokul Sriram Palanisamy wrote:
->  
-> -static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
-> +static int ipq8074_init_clock(struct q6v5_wcss *wcss)
-> +{
-> +	int ret;
-> +
-> +	wcss->prng_clk = devm_clk_get(wcss->dev, "prng");
+On Fri, Jun 21, 2024 at 10:59=E2=80=AFAM Daniel Bristot de Oliveira
+<bristot@kernel.org> wrote:
+>
+> On 6/21/24 16:41, Vineeth Remanan Pillai wrote:
+> > Sorry that I could not get to reviewing and testing this revision. In
+> > v6 we had experienced a minor bug where suspend/resume had issues with
+> > dlserver. Since suspend does not do dequeue, dlserver is not stopped
+> > and this causes the premature wakeups.
+>
+> Ouch! I will have a look next week on this. Do you guys know any other bu=
+g?
+>
+> an earlier report without necessarily a fix/work around is a good thing
+> for us to try to reproduce it/think about it as earlier as we can...
+>
+Sorry my mistake, I was buried in other things and missed reporting
+this earlier.
 
-Missing binding.
+There was another minor regression seen lately after we fixed the
+above issue- idle cpu was spending more time in C7 than C10 with the
+dlserver changes. This was reported very recently and we haven't
+investigated this much yet. Just a heads up and will keep you posted
+as we know more.
 
-Best regards,
-Krzysztof
-
+Thanks,
+Vineeth
 
