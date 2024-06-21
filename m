@@ -1,275 +1,295 @@
-Return-Path: <linux-kernel+bounces-224194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C01D911E9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:24:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84D9911E9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6C1E281BD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:24:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E5E1F22748
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D63F16D4C9;
-	Fri, 21 Jun 2024 08:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567EE16D4C9;
+	Fri, 21 Jun 2024 08:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K8TjsYdi"
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="srH4FgSX"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2055.outbound.protection.outlook.com [40.107.220.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D192F16B3B9
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718958260; cv=none; b=bFHAeIxXbSRi+Pf96by75UcwP4IfL13ewg89Z7s3qDxI+99OehGSq9AhTpg/Mxj4uXFlRDfZWPUZRdnFUOAKS7liPbYcwCIPnsOpBgj1RiH6fz5ARH8JwWS9RQUvpLi3xWW9/vsrNvOwOPBfOt+YSGvLRlbJ5nVUJoTvzXKONaw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718958260; c=relaxed/simple;
-	bh=zNb31ljHYMVCkZLfGOU3WfbbUpuUMo7NTgMJDQTRcKc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nGkMv/dqaCZbOjLU2uvoYy//Vc1vmzMdZETteq7i6iJxLOiSYgvxtc1F1IzRPZY+JidTZ3OWhNPG1/9OpW6+YllgFFERcSdraURok8kfrhW6RLlS7URVWvnctwv+MN+y1vX66VP6pQ7AKBFv5EIiVpy0ZJyatFVnr6yUY7qsuZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K8TjsYdi; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-80d6c63af28so481752241.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:24:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718958258; x=1719563058; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hSL4jxfV9+DvzrB5xjyOhPkA4JDFq4ANvkv63lZh6Ho=;
-        b=K8TjsYdiD7kZJZbBfwTUAiUFNTHViBXFGQngxHYwrxLUpbelkzCaPX635p540o76/W
-         RLOv6fibpMqPI8+oDVQN+pApxzlCIbfSTTjTei4jkvqMVEMtU3NTGtLGdP0Us0EzRN0+
-         DbfKKa5Q+kY4oPkzkRiQlp7CRCzboGsY+0OsTrbxtgQPcKEgh1vwAGN6fWppy7fe4JJ7
-         gsVFwySyNJKH35bCfY/HIZJUwAlVaWhrpTRcMOpYr0jbUBtDYF1cHb58tYiX1gWvROOj
-         S/EKTmvvNms4fog7s0CZkNPVkvJSCod6wHPtDkpKbcCRnxKbl43xUXnPVTcJe77MfVqJ
-         zoCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718958258; x=1719563058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hSL4jxfV9+DvzrB5xjyOhPkA4JDFq4ANvkv63lZh6Ho=;
-        b=ohxHh2IYi82s2NoASbIwxEA7IBzPKrv254A4U/6jRSwpTIjSuM3AawHEPDqfWLoHUP
-         jJVSxSces8FTEEBGK3KKMPmGVtnNjYDqcrSGum9AxB1awki3M3m6ucaGZFoYtFWqbG0Z
-         vjIsBiXcq+9yMzvhvDovGDtcIrZZjwqkBbtgfaTxNB01YbnXUm0wDCizPlesLXa+bre/
-         5GTrG4DrevCo3Wa21q0RtjnaFgsoafzCdbkqG9ag6asnLfEOQhnArqh/sBieTm51KJmR
-         6FNI7D5enDSKh75CyWI11rtddpLWPokO4Z0RfBpERQebRQrtedYVm1JGkZfIDVW1Gpv7
-         3lIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqGONBNZaFOotGZCnDL8J6ohS5VrvE1GDiRrro0YnDF/U9l/K/8DphaeEBZO/KR3U5r9klpNvQn1p/gUAETXYg7NyQt2ex96Wy4Voi
-X-Gm-Message-State: AOJu0YxalLyw+XrD38uf1HnVKtI+rcX2eh3hDemky48x8FU1wCtuAEYE
-	PVsuH8dK3E9QY3K2N2CqJA1AvzbK00CU6YqELlN1+MPc3iRvDDBE4PNedFEVY0UqOxFLy4apmGD
-	oJtCUEWacsX0IR0LXm2sTy7w7GjmM1Eb2zHAH
-X-Google-Smtp-Source: AGHT+IFOm3+J7HmNxfiqvxOkkiwF5vyaMcHsOCQZWMdwd3gCNyLm2HD7cdpJGLriJIJX24RcWbLSAdpJ42Ukykvu0xA=
-X-Received: by 2002:a05:6102:743:b0:48f:205e:9b8 with SMTP id
- ada2fe7eead31-48f205e0aafmr5713897137.34.1718958257567; Fri, 21 Jun 2024
- 01:24:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE9C127B5A;
+	Fri, 21 Jun 2024 08:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718958279; cv=fail; b=ckiWpAWIFJQze/SGzJ8ibWArzj11yXqx02ca6pa9fCJXpRIgcVb2Q3yiXe/AqE+2Bo5NQglPNRXF3rA8jskoZ5qTNBc7yb0sQgwWCC7RyL2FI5l6F7j87KxdzzFx/bZMWN+zvLDD8MI2k+chXoV9gQdmjGZiyUk7d0SwlWBvKyQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718958279; c=relaxed/simple;
+	bh=frrQUpi9pWxnTQ1j5fnEsIcVkqYVZ+nUvpBGqHSNJAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GYk3wDfGK8QApsI251wAsXaJnyTh9JIH6ueByxrnb1pDm450hqBmBQXWeqXLhsCzWK22nUJ15uL4uBB0XVHMXplnLXe8jKuFdhMbc4bsbe8dJXEVlpwYHkml+Zw0yZSEtbXlR5HhrZbVEb2kGYVfBxfx7PTRc3rwQVtRAstfP4k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=srH4FgSX; arc=fail smtp.client-ip=40.107.220.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mPkQEM+4som/FByBfhd7ZwNmWEhHxZ/ksBaOryGNUAhHslnodA7KrfK+v2DODb1+bwxlrDSugC6132nV50VvclK4YzqgLoNTjg9aPHu4+2knUoOInZYpQTNQ+20RmfpMRSujm/cEivd2ZyPVTBZmRn9Fmxg7ij2t636eCA38Z3x7N1sPZUofpvaCoepzIiuTyIO6lvypwSE9Jq8u3GN9vLITq7KOq2J9V4ixNQ94RImxg9PEDsLUOvwn/QLOw09WquJJBtATLGU3pzS1e3ikdCNSjDU6f0tGmad45yzwDKzlmeX8uOqkAtOlUqSOPw+dtf2ZdxTUCnrQoku5fFcQHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SGr7UX0Te0wMya+7F1XKgIKopnVFsLhKqvZldSDQtyA=;
+ b=QTVCkIb1Axw5g6LIwmO0WgPgz2kklR318gUvNcrXR25CPGklg3O2L/OZhWU3cb0P/+L0bu/pjtjcYfQ6Uf+PLRidxD0rqCZeJnHRESM1AjCmQ9vhOPy0GQIzDWoqndO3l/IDDTYTEYsOn0B5JHjS4ipEWNrBlI88VxUd9eFQJQKZg46+62U4GurBsJzIZDLsicCce2w0gyLUl9biitpBZCOn9YC4c1y3Vm21CTMGeA7PhsNcZZwj0CuY56v9nnRTQmcyW7M1cqfxreIZEJT5W12EQzCkTj8dILwXoylI5gqZpFmTzLLDENINxix7W9DHdOQivQ3AvoF2Uby8zQWHJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SGr7UX0Te0wMya+7F1XKgIKopnVFsLhKqvZldSDQtyA=;
+ b=srH4FgSX6QcdLuNm1dGWg7syJ1cBCUZygTnLVsU0Mu8krDYjYA7c4jfZsCeVS36wIgAOnC+8TD8GMDl9pI6b8Nz0+0VIWtrtPNUQoEWM3i2u0U3jjpEDuc0DjCbVf3eZnSCeC3EovPh2VB6NU1i3Z+0GfHKkmBiciwBOjcHam1U=
+Received: from BY5PR17CA0007.namprd17.prod.outlook.com (2603:10b6:a03:1b8::20)
+ by PH7PR12MB6443.namprd12.prod.outlook.com (2603:10b6:510:1f9::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
+ 2024 08:24:32 +0000
+Received: from CO1PEPF000044EE.namprd05.prod.outlook.com
+ (2603:10b6:a03:1b8:cafe::65) by BY5PR17CA0007.outlook.office365.com
+ (2603:10b6:a03:1b8::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.36 via Frontend
+ Transport; Fri, 21 Jun 2024 08:24:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044EE.mail.protection.outlook.com (10.167.241.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Fri, 21 Jun 2024 08:24:32 +0000
+Received: from [10.136.33.236] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Jun
+ 2024 03:24:24 -0500
+Message-ID: <a26b9774-f9da-763e-aebf-5d66a6d44377@amd.com>
+Date: Fri, 21 Jun 2024 13:54:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
- <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com> <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
- <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
- <20240619115135.GE2494510@nvidia.com> <CA+EHjTz_=J+bDpqciaMnNja4uz1Njcpg5NVh_GW2tya-suA7kQ@mail.gmail.com>
- <ZnRMn1ObU8TFrms3@google.com>
-In-Reply-To: <ZnRMn1ObU8TFrms3@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Fri, 21 Jun 2024 09:23:41 +0100
-Message-ID: <CA+EHjTxvOyCqWRMTS3mXHznQtAJzDJLgqdS0Er2GA9FGdxd1vA@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-To: Sean Christopherson <seanjc@google.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
-	Elliot Berman <quic_eberman@quicinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>, maz@kernel.org, 
-	kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	pbonzini@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH v2 0/9] Add per-core RAPL energy counter support for AMD
+ CPUs
+Content-Language: en-US
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-hardening@vger.kernel.org>, <ananth.narayan@amd.com>,
+	<gautham.shenoy@amd.com>, <ravi.bangoria@amd.com>, <sandipan.das@amd.com>,
+	<linux-pm@vger.kernel.org>, <rui.zhang@intel.com>,
+	<oleksandr@natalenko.name>, <peterz@infradead.org>, <mingo@redhat.com>,
+	<acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, <kees@kernel.org>, <gustavoars@kernel.org>
+References: <20240620125703.3297-1-Dhananjay.Ugwekar@amd.com>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20240620125703.3297-1-Dhananjay.Ugwekar@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044EE:EE_|PH7PR12MB6443:EE_
+X-MS-Office365-Filtering-Correlation-Id: 961cea88-776d-48a3-3b43-08dc91cb93ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|36860700010|376011|7416011|1800799021|82310400023;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OENJTDh3T0lua0Urc05sSFJiVXFrNHlnVUtlMldwVkJHSGFZa0p6YXhyRkpo?=
+ =?utf-8?B?S1ZabStscmZyRTNsejg0WkdNTW11bVRXb0NCSER1YVhISHlXaWJJdGJ5Y0xS?=
+ =?utf-8?B?M1JHUGVUcVhTOG93bVIrczdtVGdXamJXUWN3dmVOcitWRW1rRk5ZRDM3cGFY?=
+ =?utf-8?B?QXdiL3RsMGdPS1p0TW1OeW0yeFVxUlM4QWppcnEram4zendKbmxoZDZ3azla?=
+ =?utf-8?B?Y0ZMcG1qMXJ5bDljZ2h3VDVIUEtjOWFOQ3E3c1ZKdnY4NWpBS3FGbzR5Kyt1?=
+ =?utf-8?B?dnFzd1VReUJ3dTF5bDlIZ0ZZUDZqQzZVZlJla25Nd0p3eG1IOVhHKzFkTVhk?=
+ =?utf-8?B?Tm5lMjZpbXF3bzk4bFdXQzgvS3EwMkwwazlRMFV3SE5iNUJ4cG1VZ0phanBn?=
+ =?utf-8?B?dEo3N1VTNVlNVmVqNlh3L01qTWU3N3NjM2YyM1I1anJGNkQ3c2xLdkRib0o2?=
+ =?utf-8?B?bWpoVEd4VTJNdE15c3FkYVJJSzhwbEwwRTdIYnQwMFZpQ0t0eEk5dERSczA3?=
+ =?utf-8?B?LzdmbWt0MVZvSTg1ZnNMbGdpQnBiZTV0N29XQVpwK2tzMnl1bkx6OXFOY0sx?=
+ =?utf-8?B?UzVCNm5mcFY0R09peGtleGpZQm9YUkVmeTAyZzRBeTVMbnhGUlJpSzFpVXFZ?=
+ =?utf-8?B?NERmRVBJVmQ5Q0FUY3JJblBRSi9kSjBIcVNKRW1mcFQ5REJDU0wvenVzQVlT?=
+ =?utf-8?B?bUVFQ3k3QThjdnVmc3NIQVFYM292SUw3cEFWeW4rc3d3MHYxSkVrcEpuSXBw?=
+ =?utf-8?B?aVJ4eHZCc05zQWs3Y2V2Vk0yWHA2TkRjeTF5NDNVVElkbU5wMjFlYzBsSDh5?=
+ =?utf-8?B?TVdldzVvKzhEZFJxUE92NGxoRzlOcFB3SWlkMDZUdXlQVEFMMWx6QzNERXc0?=
+ =?utf-8?B?VXE4aTJ4WGVFM3VhSURJVFFSeVZkMk9EdWw4NGRHaHdhTTVBM0lnRkdnRkk2?=
+ =?utf-8?B?OUlwdmpmTDRTdjg5My9GeDZGS25WQmpTU3IwMlFhREk5VHp2VzllbXpJWjBD?=
+ =?utf-8?B?dUF5eDBMNjZDKzJTS3cwRTlONG54UHd2WEpzMkYwQUh0YWhsZ2VpQTFSZ25X?=
+ =?utf-8?B?cDJKNzJ0b3Z3YXQxZFBMWU4yTWhOa2V1TllZY2xGazVySWRmd09HM1dUajZr?=
+ =?utf-8?B?YnJhUzNhWUNuNkxKR0x1V00wekNIc09sQ2FWM0tkeGl6YUtrbVNXQS9SVlBB?=
+ =?utf-8?B?ZFRFWUkvSlJUdUN6QnVTVjBHRHNDNUsxc3QwTk9ERU12bE9nS2JnaWgrVnZa?=
+ =?utf-8?B?QjhHTlQrR092N1RPQ3V2S1dnT3c2dVdKNjFLb0E0YmtSRC93T2lKa0lEemRp?=
+ =?utf-8?B?RDBabGJ1aG5GV3krNldPTlUwU1Jvc3diK0ZqMkVpUEJtTFJOSXdtVWd3ZFA4?=
+ =?utf-8?B?QTNvOURud1Y4OTBFZTFueEZaQjlWWXphNi9MWlZjRWVlV0pPcDFobkxNYkdG?=
+ =?utf-8?B?ekJYUGQ3bmpQaVlKdnByZE1YdE93OXFJWjYwWGxPSUdOQ2VBWElTOHl3a3pH?=
+ =?utf-8?B?V2FFQkVySDlMcGZjUndDYUVXeHlCNWNVdjFFRkUyMEZsRUp4UmZFWXZkRktT?=
+ =?utf-8?B?MlZ5K2M5L3laUTJqUFJxTnduRlBoajZ1K1h1dnRsZGhCWjQ4Qk9GaDJ3VjBK?=
+ =?utf-8?B?aW82d0lpUzRNdjF1VStZaTJJbU1iUC9RM0U3MVpETXVBY25yb2JOdVkyelhO?=
+ =?utf-8?B?aVB3U1JqK1hKRWQ4ZE1PWE9sbEVSRGNDV2pRUU03MWtKSDVNaFA0QWpFZHlX?=
+ =?utf-8?B?M0NMKzNYMHFMUVdLSXBEMzJXWm5jNVNrMkdKRDZVanVwbkdGSkpSQThvUk5R?=
+ =?utf-8?B?eG10TDZpLzFGUkdQUWxFdz09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(36860700010)(376011)(7416011)(1800799021)(82310400023);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 08:24:32.0737
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 961cea88-776d-48a3-3b43-08dc91cb93ba
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044EE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6443
 
-Hi Sean,
+Hello Dhananjay,
 
-On Thu, Jun 20, 2024 at 4:37=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Wed, Jun 19, 2024, Fuad Tabba wrote:
-> > Hi Jason,
-> >
-> > On Wed, Jun 19, 2024 at 12:51=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.co=
-m> wrote:
-> > >
-> > > On Wed, Jun 19, 2024 at 10:11:35AM +0100, Fuad Tabba wrote:
-> > >
-> > > > To be honest, personally (speaking only for myself, not necessarily
-> > > > for Elliot and not for anyone else in the pKVM team), I still would
-> > > > prefer to use guest_memfd(). I think that having one solution for
-> > > > confidential computing that rules them all would be best. But we do
-> > > > need to be able to share memory in place, have a plan for supportin=
-g
-> > > > huge pages in the near future, and migration in the not-too-distant
-> > > > future.
-> > >
-> > > I think using a FD to control this special lifetime stuff is
-> > > dramatically better than trying to force the MM to do it with struct
-> > > page hacks.
-> > >
-> > > If you can't agree with the guest_memfd people on how to get there
-> > > then maybe you need a guest_memfd2 for this slightly different specia=
-l
-> > > stuff instead of intruding on the core mm so much. (though that would
-> > > be sad)
-> > >
-> > > We really need to be thinking more about containing these special
-> > > things and not just sprinkling them everywhere.
-> >
-> > I agree that we need to agree :) This discussion has been going on
-> > since before LPC last year, and the consensus from the guest_memfd()
-> > folks (if I understood it correctly) is that guest_memfd() is what it
-> > is: designed for a specific type of confidential computing, in the
-> > style of TDX and CCA perhaps, and that it cannot (or will not) perform
-> > the role of being a general solution for all confidential computing.
->
-> That isn't remotely accurate.  I have stated multiple times that I want g=
-uest_memfd
-> to be a vehicle for all VM types, i.e. not just CoCo VMs, and most defini=
-tely not
-> just TDX/SNP/CCA VMs.
+On 6/20/2024 6:26 PM, Dhananjay Ugwekar wrote:
+> Currently the energy-cores event in the power PMU aggregates energy
+> consumption data at a package level. On the other hand the core energy
+> RAPL counter in AMD CPUs has a core scope (which means the energy
+> consumption is recorded separately for each core). Earlier efforts to add
+> the core event in the power PMU had failed [1], due to the difference in
+> the scope of these two events. Hence, there is a need for a new core scope
+> PMU.
+> 
+> This patchset adds a new "power_per_core" PMU alongside the existing
+> "power" PMU, which will be responsible for collecting the new
+> "energy-per-core" event.
+> 
+> Tested the package level and core level PMU counters with workloads
+> pinned to different CPUs.
+> 
+> Results with workload pinned to CPU 1 in Core 1 on an AMD Zen4 Genoa
+> machine:
+> 
+> $ perf stat -a --per-core -e power_per_core/energy-per-core/ sleep 1
 
-I think that there might have been a slight misunderstanding between
-us. I just thought that that's what you meant by:
+When testing this on a 2P 3rd Generation EPYC System (2 x 64/128T), I
+ran into an issue where it seems like the energy reporting for the
+system is coming from the second socket. Following are the CPUs on each
+socket of the system:
 
-: And I'm saying say we should stand firm in what guest_memfd _won't_
-support, e.g.
-: swap/reclaim and probably page migration should get a hard "no".
+     Node 0: 0-63,   128-191
+     Node 1: 64-127, 192-255
 
-https://lore.kernel.org/all/Zfmpby6i3PfBEcCV@google.com/
+Following are the experiments I ran:
 
-> What I am staunchly against is piling features onto guest_memfd that will=
- cause
-> it to eventually become virtually indistinguishable from any other file-b=
-ased
-> backing store.  I.e. while I want to make guest_memfd usable for all VM *=
-types*,
-> making guest_memfd the preferred backing store for all *VMs* and use case=
-s is
-> very much a non-goal.
->
-> From an earlier conversation[1]:
->
->  : In other words, ditch the complexity for features that are well served=
- by existing
->  : general purpose solutions, so that guest_memfd can take on a bit of co=
-mplexity to
->  : serve use cases that are unique to KVM guests, without becoming an unm=
-aintainble
->  : mess due to cross-products.
-> > > > Also, since pin is already overloading the refcount, having the
-> > > > exclusive pin there helps in ensuring atomic accesses and avoiding
-> > > > races.
-> > >
-> > > Yeah, but every time someone does this and then links it to a uAPI it
-> > > becomes utterly baked in concrete for the MM forever.
-> >
-> > I agree. But if we can't modify guest_memfd() to fit our needs (pKVM,
-> > Gunyah), then we don't really have that many other options.
->
-> What _are_ your needs?  There are multiple unanswered questions from our =
-last
-> conversation[2].  And by "needs" I don't mean "what changes do you want t=
-o make
-> to guest_memfd?", I mean "what are the use cases, patterns, and scenarios=
- that
-> you want to support?".
+   $ # Run a busy loop on each thread of the first socket
+   $ for i in `seq 0 63` `seq 128 191`; do taskset -c $i ~/scripts/loop & done
+   $ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 5
 
-I think Quentin's reply in this thread outlines what it is pKVM would
-like to do, and why it's different from, e.g., TDX:
-https://lore.kernel.org/all/ZnUsmFFslBWZxGIq@google.com/
+   S0-D0-C0              1               0.00 Joules power_per_core/energy-per-core/
+   S0-D0-C1              1               0.00 Joules power_per_core/energy-per-core/
+   S0-D0-C2              1               0.00 Joules power_per_core/energy-per-core/
+   S0-D0-C3              1               0.00 Joules power_per_core/energy-per-core/
+   ...
+   S0-D0-C63             1               0.00 Joules power_per_core/energy-per-core/
+   S1-D1-C0              1               0.00 Joules power_per_core/energy-per-core/
+   S1-D1-C1              1               0.00 Joules power_per_core/energy-per-core/
+   S1-D1-C2              1               0.00 Joules power_per_core/energy-per-core/
+   S1-D1-C3              1               0.00 Joules power_per_core/energy-per-core/
+   ...
+   S1-D1-C63             1               0.00 Joules power_per_core/energy-per-core/
 
-To summarize, our requirements are the same as other CC
-implementations, except that we don't want to pay a penalty for
-operations that pKVM (and Gunyah) can do more efficiently than
-encryption-based CC, e.g., in-place conversion of private -> shared.
+ From the energy data, it looks as if the system is entirely idle.
 
-Apart from that, we are happy to use an interface that can support our
-needs, or at least that we can extend in the (near) future to do that.
-Whether it's guest_memfd() or something else.
+If I repeat the same, pinning the running busy loop on the threads of
+second socket, I see the following:
 
->  : What's "hypervisor-assisted page migration"?  More specifically, what'=
-s the
->  : mechanism that drives it?
+   $ # Run a busy loop on each thread of the second socket
+   $ for i in `seq 64 127` `seq 192 255`; do taskset -c $i ~/scripts/loop & done
+   $ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 5
 
-I believe what Will specifically meant by this is that, we can add
-hypervisor support for migration in pKVM for the stage 2 page tables.
+   S0-D0-C0              1              11.79 Joules power_per_core/energy-per-core/
+   S0-D0-C1              1              11.80 Joules power_per_core/energy-per-core/
+   S0-D0-C2              1              11.90 Joules power_per_core/energy-per-core/
+   S0-D0-C3              1              11.88 Joules power_per_core/energy-per-core/
+   ...
+   S0-D0-C63             1              11.76 Joules power_per_core/energy-per-core/
+   S1-D1-C0              1              11.81 Joules power_per_core/energy-per-core/
+   S1-D1-C1              1              11.80 Joules power_per_core/energy-per-core/
+   S1-D1-C2              1              11.90 Joules power_per_core/energy-per-core/
+   S1-D1-C3              1              11.88 Joules power_per_core/energy-per-core/
+   ...
+   S1-D1-C63             1              11.76 Joules power_per_core/energy-per-core/
 
-We don't have a detailed implementation for this yet, of course, since
-there's no point yet until we know whether we're going with
-guest_memfd(), or another alternative.
+The whole system seems to be busy this time around. I've verified that
+only half the system is busy using htop in either case.
 
->  : Do you happen to have a list of exactly what you mean by "normal mm st=
-uff"?  I
->  : am not at all opposed to supporting .mmap(), because long term I also =
-want to
->  : use guest_memfd for non-CoCo VMs.  But I want to be very conservative =
-with respect
->  : to what is allowed for guest_memfd.   E.g. host userspace can map gues=
-t_memfd,
->  : and do operations that are directly related to its mapping, but that's=
- about it.
->
-> That distinction matters, because as I have stated in that thread, I am n=
-ot
-> opposed to page migration itself:
->
->  : I am not opposed to page migration itself, what I am opposed to is add=
-ing deep
->  : integration with core MM to do some of the fancy/complex things that l=
-ead to page
->  : migration.
+Running some more experiments, I see the following:
 
-So it's not a "hard no"? :)
+   $ taskset -c 1 ~/scripts/loop& # First thread from Core 1, Socket
+   $ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 5
 
-> I am generally aware of the core pKVM use cases, but I AFAIK I haven't se=
-en a
-> complete picture of everything you want to do, and _why_.
-> E.g. if one of your requirements is that guest memory is managed by core-=
-mm the
-> same as all other memory in the system, then yeah, guest_memfd isn't for =
-you.
-> Integrating guest_memfd deeply into core-mm simply isn't realistic, at le=
-ast not
-> without *massive* changes to core-mm, as the whole point of guest_memfd i=
-s that
-> it is guest-first memory, i.e. it is NOT memory that is managed by core-m=
-m (primary
-> MMU) and optionally mapped into KVM (secondary MMU).
+   S0-D0-C0              1               0.02 Joules power_per_core/energy-per-core/
+   S0-D0-C1              1               0.21 Joules power_per_core/energy-per-core/
+   S0-D0-C2              1               0.20 Joules power_per_core/energy-per-core/
+   S0-D0-C3              1               0.00 Joules power_per_core/energy-per-core/
+   ...
+   (Seemingly idle system)
 
-It's not a requirement that guest memory is managed by the core-mm.
-But, like we mentioned, support for in-place conversion from
-shared->private, huge pages, and eventually migration are.
 
-> Again from that thread, one of most important aspects guest_memfd is that=
- VMAs
-> are not required.  Stating the obvious, lack of VMAs makes it really hard=
- to drive
-> swap, reclaim, migration, etc. from code that fundamentally operates on V=
-MAs.
->
->  : More broadly, no VMAs are required.  The lack of stage-1 page tables a=
-re nice to
->  : have; the lack of VMAs means that guest_memfd isn't playing second fid=
-dle, e.g.
->  : it's not subject to VMA protections, isn't restricted to host mapping =
-size, etc.
->
-> [1] https://lore.kernel.org/all/Zfmpby6i3PfBEcCV@google.com
-> [2] https://lore.kernel.org/all/Zg3xF7dTtx6hbmZj@google.com
+   $ taskset -c 65 ~/scripts/loop&
+   $ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 5
 
-I wonder if it might be more productive to also discuss this in one of
-the PUCKs, ahead of LPC, in addition to trying to go over this in LPC.
+   S0-D0-C0              1               0.01 Joules power_per_core/energy-per-core/
+   S0-D0-C1              1              16.73 Joules power_per_core/energy-per-core/
+   S0-D0-C2              1               0.00 Joules power_per_core/energy-per-core/
+   S0-D0-C3              1               0.00 Joules power_per_core/energy-per-core/
+   ...
+   S0-D0-C63             1               0.00 Joules power_per_core/energy-per-core/
+   S1-D1-C0              1               0.01 Joules power_per_core/energy-per-core/
+   S1-D1-C1              1              16.73 Joules power_per_core/energy-per-core/
+   S1-D1-C2              1               0.00 Joules power_per_core/energy-per-core/
+   S1-D1-C3              1               0.00 Joules power_per_core/energy-per-core/
+   ...
+   S1-D1-C63             1               0.00 Joules power_per_core/energy-per-core/
 
-Cheers,
-/fuad
+   (Core 1 from both sockets look busy reporting identical energy
+    values)
+
+Hope it helps narrow down the issue.
+
+> 
+>   Performance counter stats for 'system wide':
+> 
+> S0-D0-C0         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C1         1          5.72 Joules power_per_core/energy-per-core/
+> S0-D0-C2         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C3         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C4         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C5         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C6         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C7         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C8         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C9         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C10        1          0.02 Joules power_per_core/energy-per-core/
+> 
+> [1]: https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b14228868d@linux.intel.com/
+> 
+> This patchset applies cleanly on top of v6.10-rc4 as well as latest
+> tip/master.
+
+P.S. I tested these changes on top of tip:perf/core
+
+> 
+> [..snip..]
+> 
+
+-- 
+Thanks and Regards,
+Prateek
 
