@@ -1,92 +1,74 @@
-Return-Path: <linux-kernel+bounces-224944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B889128F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:08:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A8679128FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54D8D1F26E66
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:08:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56A95288CAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EFD55E73;
-	Fri, 21 Jun 2024 15:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CA754FB5;
+	Fri, 21 Jun 2024 15:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="EbLTCULT"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V9crWYyg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35043208CE
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8302D60C
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718982486; cv=none; b=oOjq8h8hYm4pByE+T+uXqNNbJ0cBj2LQEUiMfY+AKm+l2PqaVYxB5DYQiFxORPYe+WVPZ+D8bo1la8yPA/F1SYoNHnohxMCWlQMEGBKw8SC7BNjf7TdvUiT7R9uy15slFH8d91yWhXdD0A6tGdHWaqyGpLHOjeAsepdLTf3i7QU=
+	t=1718982546; cv=none; b=KfaaVCP0gc0SDBQUxn0cvCVU4Ozj7DnWCLTt7g446BAydx+2XkLyJdM1GgH8ssp4a4QdzbSNm7NHgK11d7CU4Upgc81gsmN88dm/JGYUprNq/DHvdkc+etgmkylHw7Bo7Pg+uwaVo7HbW81Lrv3qlPVQEw+0gOYIj5RjenL8PmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718982486; c=relaxed/simple;
-	bh=Mfbs86+7m7VjWbpg442N0c7HyCNSgaJeK9YGCTPFwj4=;
+	s=arc-20240116; t=1718982546; c=relaxed/simple;
+	bh=1Ym4N4OTEcvKa9VGmSUR7VmYCKVaZFoFDh4ahOMB1/U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gok6cdN1fRCdwIF1pt5IOkmQVQGRyTa7QJYVIEDhywKVai5b07r5mu/hfvjcUxSZeyCj3qBOfAf7PHDURhL3hN9KahttGpRZIPCbYU/JhwdOcGvqGtOpAXihmNBjZUvZ1p4ilSOvuyDY1ZFgZ3ZuGjoe9kuUInP60jwq/MgD2m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=EbLTCULT; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-421b9068274so20078395e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:08:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1718982483; x=1719587283; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UTWHPV88FmCEJH+LG722CyH2FEJ+u15rMxRs38TdpJE=;
-        b=EbLTCULTTau4CB7cnTmZFS3zWxJMxSMtJZsUC/kbEC3J2uH4LuwAGxEGXduSvH0x18
-         PMU8ATRJc1j+GSG4iZcE3pxY30+AB52qL0gXG9nQ3PumU0BtJQOCmby5Q43HnunHb7Yx
-         R+LZLpy6knTIkSH+9C2N0Qnk1Jjo2l0jx0EOFCCD8/Q81v4qfOvBJZiFYyLmy6x4g9+2
-         Wd5rSwNWjbx3BRKQWjMAwAOaDc1YJLRdsklsQtmvysVZTOtrH/21fk9r3LG/mixkl4TE
-         xMUCvUFsHr4KFT4Ii+hg2AC9m4pOt8R49AUt6WYF5tVLUaJbd0yybxhTVN3VnO25qTHf
-         CxPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718982483; x=1719587283;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UTWHPV88FmCEJH+LG722CyH2FEJ+u15rMxRs38TdpJE=;
-        b=UA2Ac7rTyduC+Pa9kw8986zSYYQhGZ1HyK0aX2VhfPYYmo9ZbPCSu6k8MW/v+i5vGk
-         rtvJulISZXaEtwkiNUHhGPYbE1C7h6JAzGUy3P1AcEWb7JSYzLPHHByWpPgDBKVs8j/f
-         w0Uiyi2qEqtoIur6kHL4dH+9Amf31xuYiQqU+VIljyV1xtmdrUlYSTaLzo2/FDYJ/SXK
-         WfNfqEJJL+SErGOcHaCeW3sgF6mhL5uRk8vI0y3cj4mzVyG/37mf0KKdGL/8N8fYC6o9
-         W9jYvchq3iTUnk1rC6blyQ1VroMQYLjMWb9SSLJIv84/v1KVFEjfDnrrgccHcgocvPz3
-         DTqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJN1YfUFRsS7laiMn+iqqjwltW0HvEYxUI6gdvl1vImTBwn0LeopFeL1nUctgYqMZzXnbBp3i+8Gd7/4OkQAvSb3eB8aX3RjksrstN
-X-Gm-Message-State: AOJu0YyGR4J0HGcHkjWtdRMSZSEeauZnGxEOenraE3rI8Gji4HLdijY5
-	jB5zTmUNXKw39oyyji4G123cKM9xYmWRh9tzp4La9fVlw9ZtJz4eLd2R9/Tulek=
-X-Google-Smtp-Source: AGHT+IEIRpUWHcw8XTIcAv4v8Oe5k9VV3v98Ohw140EkoEs6DEAbUs8kPNn5uZbUGX5eMmzZdCfjhg==
-X-Received: by 2002:a05:600c:4f45:b0:424:777d:dcc with SMTP id 5b1f17b1804b1-424777d1648mr63667245e9.0.1718982483038;
-        Fri, 21 Jun 2024 08:08:03 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3664178f5f7sm1935800f8f.19.2024.06.21.08.08.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 08:08:02 -0700 (PDT)
-Date: Fri, 21 Jun 2024 17:08:01 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, 
-	Conor Dooley <conor.dooley@microchip.com>, Anup Patel <apatel@ventanamicro.com>, 
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com, 
-	vincent.chen@sifive.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
-Message-ID: <20240621-8422c24612ae40600f349f7c@orel>
-References: <20240605121512.32083-3-yongxuan.wang@sifive.com>
- <20240605-atrium-neuron-c2512b34d3da@spud>
- <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
- <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr>
- <20240621-viewless-mural-f5992a247992@wendy>
- <edcd3957-0720-4ab4-bdda-58752304a53a@ghiti.fr>
- <20240621-9bf9365533a2f8f97cbf1f5e@orel>
- <20240621-glutton-platonic-2ec41021b81b@spud>
- <20240621-a56e848050ebbf1f7394e51f@orel>
- <20240621-surging-flounder-58a653747e1d@spud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=A5FE5Zu89Fd+KcP6g40qgQvtIDbwd+npldQR6xlN5Uw6QeTbSgBHQd+4SUHrrCf6AtQuty4psee0IRdNbJH5yxM1VulMjDDP73IoZ2u1SctCFn04FC3QnA9kSHRNq1zMZMBSG3mztWIhxx618TpyrtIRunVkZ4PJMbhoiwID0HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V9crWYyg; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718982545; x=1750518545;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1Ym4N4OTEcvKa9VGmSUR7VmYCKVaZFoFDh4ahOMB1/U=;
+  b=V9crWYygyoFvcpBQUMp7QdCCbFO6XeXtR4lP8OwXV5XaioLSxVjlgXo2
+   lS9xcXHaXV3s5q6gPA1mBKaV1/I5T3pjxekdFWyWNlp3RsBIbx5kVKSEZ
+   KBTL5XAfTMEgjbIwouehd65HnebRz7tTHElaZD1ECjONZ4jhhdyQpo71p
+   jnX4y9LOWl+46gv66g5XCbH7/TXJqosjyiZEJcqEfw1r3UnMydpXIPmUR
+   cwHY/9mZg/NlS8ftxwpRi09LrHEor5h+16j4iQyVpaedbX+fS/hWXSRfq
+   sm+RDIPqbXiSr07ps2aKctQVfX54QUNOKCo2lqkfnWjPwKCHgLflgY7Hh
+   Q==;
+X-CSE-ConnectionGUID: ljaX5NH9SwWoHMDiCfcRYw==
+X-CSE-MsgGUID: 6NmyVV9FQNGLwTrLalrSRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="16165397"
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="16165397"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 08:09:04 -0700
+X-CSE-ConnectionGUID: YbU7dMI6RI+u4QDHK8umag==
+X-CSE-MsgGUID: ZklpEeAzTBiJdOjc2iQKEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="46976933"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 21 Jun 2024 08:09:02 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 9E8421D6; Fri, 21 Jun 2024 18:09:00 +0300 (EEST)
+Date: Fri, 21 Jun 2024 18:09:00 +0300
+From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To: Alexander Potapenko <glider@google.com>
+Cc: elver@google.com, dvyukov@google.com, dave.hansen@linux.intel.com, 
+	peterz@infradead.org, akpm@linux-foundation.org, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com
+Subject: Re: [PATCH 3/3] x86/traps: fix an objtool warning in handle_bug()
+Message-ID: <l3fpuot4mubvhlr2zmioc7rzz3akk2fafptfdwmcmwphyisan7@7mojjgo5ovae>
+References: <20240621094901.1360454-1-glider@google.com>
+ <20240621094901.1360454-3-glider@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,52 +77,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621-surging-flounder-58a653747e1d@spud>
+In-Reply-To: <20240621094901.1360454-3-glider@google.com>
 
-On Fri, Jun 21, 2024 at 03:58:18PM GMT, Conor Dooley wrote:
-> On Fri, Jun 21, 2024 at 04:52:09PM +0200, Andrew Jones wrote:
-> > On Fri, Jun 21, 2024 at 03:04:47PM GMT, Conor Dooley wrote:
-> > > On Fri, Jun 21, 2024 at 03:15:10PM +0200, Andrew Jones wrote:
-> > > > On Fri, Jun 21, 2024 at 02:42:15PM GMT, Alexandre Ghiti wrote:
+On Fri, Jun 21, 2024 at 11:49:01AM +0200, Alexander Potapenko wrote:
+> Because handle_bug() is a noinstr function, call to
+> kmsan_unpoison_entry_regs() should be happening within the
+> instrumentation_begin()/instrumentation_end() region.
 > 
-> > > > I understand the concern; old SBI implementations will leave svadu in the
-> > > > DT but not actually enable it. Then, since svade may not be in the DT if
-> > > > the platform doesn't support it or it was left out on purpose, Linux will
-> > > > only see svadu and get unexpected exceptions. This is something we could
-> > > > force easily with QEMU and an SBI implementation which doesn't do anything
-> > > > for svadu. I hope vendors of real platforms, which typically provide their
-> > > > own firmware and DTs, would get this right, though, especially since Linux
-> > > > should fail fast in their testing when they get it wrong.
-> > > 
-> > > I'll admit, I wasn't really thinking here about something like QEMU that
-> > > puts extensions into the dtb before their exact meanings are decided
-> > > upon. I almost only ever think about "real" systems, and in those cases
-> > > I would expect that if you can update the representation of the hardware
-> > > provided to (or by the firmware to Linux) with new properties, then updating
-> > > the firmware itself should be possible.
-> > > 
-> > > Does QEMU have the this exact problem at the moment? I know it puts
-> > > Svadu in the max cpu, but does it enable the behaviour by default, even
-> > > without the SBI implementation asking for it?
-> > 
-> > Yes, because QEMU has done hardware A/D updating since it first started
-> > supporting riscv, which means it did svadu when neither svadu nor svade
-> > were in the DT. The "fix" for that was to ensure we have svadu and !svade
-> > by default, which means we've perfectly realized Alexandre's concern...
-> > We should be able to change the named cpu types that don't support svadu
-> > to only have svade in their DTs, since that would actually be fixing those
-> > cpu types, but we'll need to discuss how to proceed with the generic cpu
-> > types like 'max'.
+> Fortunately, the same noinstr annotation lets us dereference @regs
+> in handle_bug() without unpoisoning them, so we don't have to move the
+> `is_valid_bugaddr(regs->ip)` check below instrumentation_begin().
+
+Imperative mood, please. And capitalize "fix" in the subject.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/Documentation/process/maintainer-tip.rst#n134
 > 
-> Correct me please, since I think I am misunderstanding: At the moment
-> QEMU does A/D updating whether or not the SBI implantation asks for it,
-> with the max CPU. The SBI implementation doesn't understand Svadu and
-> won't strip it. The kernel will get a DT with Svadu in it, but Svadu will
-> be enabled, so it is not a problem.
+> Reported-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Link: https://groups.google.com/g/kasan-dev/c/ZBiGzZL36-I/m/WtNuKqP9EQAJ
+> Signed-off-by: Alexander Potapenko <glider@google.com>
 
-Oh, of course you're right! I managed to reverse things some odd number of
-times (more than once!) in my head and ended up backwards...
+Otherwise, looks good.
 
-Thanks,
-drew
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
