@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-225395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC5C0913023
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:12:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48481913024
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D91EB25C0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 036B72886B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E716917C7D8;
-	Fri, 21 Jun 2024 22:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2AC17CA01;
+	Fri, 21 Jun 2024 22:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1pXtyYya"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HUlHdQfs"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1D417C227
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEF417C20E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 22:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719007927; cv=none; b=myfYqhPHLOLRq9l/VtV8/Gt0RXuW+sNggY40qYZijFjR0t4lLAnSx5ZHuCCcEmD3OPFUFRxI5i7Y3ZtEkievfxiIb9B5Ss+W5q1k1Ckt6G6jqmwygK7I5V8YEyTsEsQ66pOKejghfNtliLICFwcwAqxIaKlrmZoI6Serhe2gzzs=
+	t=1719007927; cv=none; b=FqzCXfj5eC+l94Zbl0pZZgCOHmhJaFEhbw6A94PxkYOucb+/CczvFIYCQSw09m8okUD4e+hmWArJe5kaLwgnK8OQLP4jCpS7r1UTlezOQFr284x2bieK5kxSn9XWB/dYimYuTTV3CpYusj1GspXdjXoqxdpFSYMmlg2XKe+WeAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719007927; c=relaxed/simple;
-	bh=72ifk851A+wshsZunu+4+cPq6YsaruRIFtb/gWfz2Gk=;
+	bh=eHaw5nWHJd8mueamkfUEqSM5JDcu9mmRoW0cSKrcZN0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tB42eKoQ/18YfeLIpDWXO+M/nUISBr8vwkQLK/u+4/ecxVoncB4EjkLIwBoen9bbhobi97ZM0NtS3guk7Waz1Ld79wAmdVjH2SZ0A/7hHVY3cc36VRpPcGVrbYBEwkLenPIGpo1ushxpc6vKmFNUN3m81bL/LHz/22KgwYBt7hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1pXtyYya; arc=none smtp.client-ip=209.85.161.45
+	 MIME-Version:Content-Type; b=hOptCsHY/jwrMJ/NFy7HW/RbF0zVNg/UWzFsmj554VIzm+iT1Ccu/GUtYu7quxW9QBgSwHkmK00Es1aG6I71NlGjNS3QaAOtFEyA3GHsAqEE7e1UQS7cvyyQwb8e4pQHFG5ZyWqtt8LztIPukR5EOvMlOqqVV/He/qkw+I5IYlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HUlHdQfs; arc=none smtp.client-ip=209.85.161.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5b970a97e8eso1389237eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:12:05 -0700 (PDT)
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b9776123a3so1124816eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:12:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719007924; x=1719612724; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719007925; x=1719612725; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cA2vZ5H4zhrRVMGC41BbSeo0sgv1/DHDpLqlssCbQtI=;
-        b=1pXtyYyae8kHfLqsm0MJrlVoF10LnG9A0v4nE1rxPZLXR56BRO/+KyAeMMYvHT0jLr
-         WOOMPbPvxJjyN21EweQWqOB3kos3p8tOdg3ZZJyZrTRZbgTlXQ++4pCZCbFPnnAQKqa4
-         iR//aHLHeiHlnoksKvsF6t40YU2oG4hoNTDs70+XO2Km79thJtsyp+oEBHdZt3b1q0lL
-         nbw5H2VGhZJgCxqZObtxBUSHQ/i84gjmsWagv02/An0FKgQVSmDxER+R2djyt1EMS3rr
-         vrdogpc2acDnxtxCba0G5w6YQ2KgGJBNZy0j9nZ7chfunNVnwoUiGJaF0IqQ08XIpqir
-         VOMg==
+        bh=TqnA463lWGmo1DkYd27gIKH1c3eeWL6q+1Fm9JrS/t8=;
+        b=HUlHdQfsKCS1ekYyBvCyuTL7A2SsloE6Lbr1jRjYJ++3qHZwl/zi/uq1i2sy7lpseR
+         RwOg2lyZIiIhgZ+QTmSq5BDO0y2XAQbEWaitKSRvXMkkwyFuOziT0FafIeqMFRsvttFk
+         5ajwfmasK37qTFYlOiIFuHwn7N878r4oIIlN1soRMxxgKiVV3nXTxu/fFEaAqfjnsz5s
+         YV1MJTB1qeGhhTvMLDxQhyC4aY7msMy+rJEzl1uVevM7frsfR//ne6IIk1AVZbUS/al3
+         TazxJwqQf6YPx7qKUWSLYktaYcYZ89U9ICxYKJgrcG77OLG4QCxfrDT8BsSY1MFzyipD
+         c7zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719007924; x=1719612724;
+        d=1e100.net; s=20230601; t=1719007925; x=1719612725;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cA2vZ5H4zhrRVMGC41BbSeo0sgv1/DHDpLqlssCbQtI=;
-        b=DXVPqX4pVF49K1262O8nsrluCtT3ALEYYmUO97q5eVlBwDwYu3YR9h7VAJPxIAXRqB
-         aF7YMN21/ZoX/zZ7Md/AqqeohwRc5s+WUxlw4JvhmHOjAO4LOIWfiEh1C3BG4fWOFfs+
-         aivpgpfl51zru/uTSDltPRDVRtzBTM4NnQapEj7kvh68XtnD4xGtTANqkbTfrjDDwNMG
-         BTPmb/no/jlmrYl9MChGKCleTEoB8dKj2Yyhf+AIc4tlWDkYi8Qdeia9H6MIaDoL5AXD
-         djHwoJLQWPEzXprVlgeLvWNgTO7ogOF707OiKgz9uXd9txAdB37gGpRQkjh1StvEgLB5
-         gyoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvDIPSJ7TkKtZz9mqH/D779YheXK9vObPk6M+N62z0g4FwEnzdvwn84ejDFlEjSG2bLR/flY8UEYw3Y8lBtSbkDmbNlF5XA8KZOP2u
-X-Gm-Message-State: AOJu0Yy7irEvlAM/YqCQePGqF09LuC/QPY+75JHehbEhEijEWQZN0lYW
-	lBX1g3HxPgO2DOGePNB5HIUcWPNYHzSQAYN96aRcOkEEK043PfIrAxCnRBTBn34=
-X-Google-Smtp-Source: AGHT+IGPEjYzZuYy0PUyybo/Jr5W5tkGRhnX5VFZ0jGpJucieHOIXpFu0GRrOvhhGuVkoDgVWKm7XQ==
-X-Received: by 2002:a4a:7619:0:b0:5bb:288:e955 with SMTP id 006d021491bc7-5c1adc6fb4emr9863944eaf.8.1719007924414;
-        Fri, 21 Jun 2024 15:12:04 -0700 (PDT)
+        bh=TqnA463lWGmo1DkYd27gIKH1c3eeWL6q+1Fm9JrS/t8=;
+        b=LNZBACGz/PjDfMoGZqZ2DxFWgm+L2SiQJQ7yZ4LPVro7o9zxB+kDcyaDBTnEXfgwrR
+         jmhM22uTnisAlOtVlBymb75ceSGLOzekGoF8PWyn7vYXtueed7ZjMkGOz11OPkWN8snF
+         5W5WX6zKIlsgs/5w9m5YlB3FG3nrNmfyO47AeP9V+91VTvvvC85Pz/YMgqIKLL+ZJWfj
+         3EdPCgjqudDj91+rCe1P1+U0EJDnXLJw3j7l4dl4YlCZK2zubzJTsnPiSHN6djjbSb++
+         WOXADshsDJR5svbceUfPFZ1gwm9MuA5xZbs6lA/sKC9dhhrY1OsPqStC7TM/AURPReF9
+         rqJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+Lt2cml9zI0MZN1ZTuIhF4etqAMJst2HRmvGFuNZqRZVD9KVz5TpvE/26m0p2chyEvcDLv3gwnQXWkjTcLW856w0BhddrfM1t+6p1
+X-Gm-Message-State: AOJu0YyiD8mph20mZjO0EeBv51Y2XCJsciRzuq5jH4jwZVtSFlSjCqsU
+	kaRkb9U0+4hs1gjDw7Uh9b9W3ZVXkQki1oFwt16nV3LrQcmQUH/1JVY4SLwfixU=
+X-Google-Smtp-Source: AGHT+IGyOuPixSMNWTrgJ93EOZnRr5Mc7Ev97HbXaH84J6/Bv30RS8z/PVagDiDtAkY5vq1kH6S7MA==
+X-Received: by 2002:a4a:6251:0:b0:5bf:aa53:2de7 with SMTP id 006d021491bc7-5c1adbca083mr9462944eaf.5.1719007925247;
+        Fri, 21 Jun 2024 15:12:05 -0700 (PDT)
 Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c1d94fb2a4sm329837eaf.10.2024.06.21.15.12.03
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c1d94fb2a4sm329837eaf.10.2024.06.21.15.12.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 21 Jun 2024 15:12:04 -0700 (PDT)
 From: David Lechner <dlechner@baylibre.com>
@@ -80,9 +80,9 @@ Cc: David Lechner <dlechner@baylibre.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 02/10] iio: adc: hx711: use devm_regulator_get_enable_read_voltage()
-Date: Fri, 21 Jun 2024 17:11:49 -0500
-Message-ID: <20240621-iio-regulator-refactor-round-2-v1-2-49e50cd0b99a@baylibre.com>
+Subject: [PATCH 03/10] iio: adc: hx711: remove hx711_remove()
+Date: Fri, 21 Jun 2024 17:11:50 -0500
+Message-ID: <20240621-iio-regulator-refactor-round-2-v1-3-49e50cd0b99a@baylibre.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240621-iio-regulator-refactor-round-2-v1-0-49e50cd0b99a@baylibre.com>
 References: <20240621-iio-regulator-refactor-round-2-v1-0-49e50cd0b99a@baylibre.com>
@@ -96,84 +96,78 @@ Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.12.4
 Content-Transfer-Encoding: 8bit
 
-Use the devm_regulator_get_enable_read_voltage() helper to simplify the
-code.
+By using a few more devm_ functions, we can remove the hx711_remove()
+function in the hx711 driver.
+
+platform_set_drvdata() is also removed since there are no more
+callers of platform_get_drvdata().
 
 Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- drivers/iio/adc/hx711.c | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
+ drivers/iio/adc/hx711.c | 27 +++++----------------------
+ 1 file changed, 5 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/iio/adc/hx711.c b/drivers/iio/adc/hx711.c
-index fef97c1d226a..6efdc971689c 100644
+index 6efdc971689c..8461b1fe6bad 100644
 --- a/drivers/iio/adc/hx711.c
 +++ b/drivers/iio/adc/hx711.c
-@@ -80,7 +80,6 @@ struct hx711_data {
- 	struct device		*dev;
- 	struct gpio_desc	*gpiod_pd_sck;
- 	struct gpio_desc	*gpiod_dout;
--	struct regulator	*reg_avdd;
- 	int			gain_set;	/* gain set on device */
- 	int			gain_chan_a;	/* gain for channel A */
- 	struct mutex		lock;
-@@ -497,11 +496,7 @@ static int hx711_probe(struct platform_device *pdev)
- 		return PTR_ERR(hx711_data->gpiod_dout);
- 	}
+@@ -539,43 +539,27 @@ static int hx711_probe(struct platform_device *pdev)
+ 	hx711_data->data_ready_delay_ns =
+ 				1000000000 / hx711_data->clock_frequency;
  
--	hx711_data->reg_avdd = devm_regulator_get(dev, "avdd");
--	if (IS_ERR(hx711_data->reg_avdd))
--		return PTR_ERR(hx711_data->reg_avdd);
+-	platform_set_drvdata(pdev, indio_dev);
 -
--	ret = regulator_enable(hx711_data->reg_avdd);
-+	ret = devm_regulator_get_enable_read_voltage(dev, "avdd");
- 	if (ret < 0)
- 		return ret;
+ 	indio_dev->name = "hx711";
+ 	indio_dev->info = &hx711_iio_info;
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+ 	indio_dev->channels = hx711_chan_spec;
+ 	indio_dev->num_channels = ARRAY_SIZE(hx711_chan_spec);
  
-@@ -517,9 +512,6 @@ static int hx711_probe(struct platform_device *pdev)
- 	 * approximately to fit into a 32 bit number:
- 	 * 1 LSB = (AVDD * 100) / GAIN / 1678 [10^-9 mV]
- 	 */
--	ret = regulator_get_voltage(hx711_data->reg_avdd);
--	if (ret < 0)
--		goto error_regulator;
- 
- 	/* we need 10^-9 mV */
- 	ret *= 100;
-@@ -559,7 +551,7 @@ static int hx711_probe(struct platform_device *pdev)
- 							hx711_trigger, NULL);
+-	ret = iio_triggered_buffer_setup(indio_dev, iio_pollfunc_store_time,
+-							hx711_trigger, NULL);
++	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
++					      iio_pollfunc_store_time,
++					      hx711_trigger, NULL);
  	if (ret < 0) {
  		dev_err(dev, "setup of iio triggered buffer failed\n");
--		goto error_regulator;
+ 		return ret;
+ 	}
+ 
+-	ret = iio_device_register(indio_dev);
++	ret = devm_iio_device_register(dev, indio_dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "Couldn't register the device\n");
+-		goto error_buffer;
 +		return ret;
  	}
  
- 	ret = iio_device_register(indio_dev);
-@@ -573,25 +565,17 @@ static int hx711_probe(struct platform_device *pdev)
- error_buffer:
- 	iio_triggered_buffer_cleanup(indio_dev);
- 
--error_regulator:
--	regulator_disable(hx711_data->reg_avdd);
+ 	return 0;
 -
- 	return ret;
- }
- 
- static void hx711_remove(struct platform_device *pdev)
- {
--	struct hx711_data *hx711_data;
- 	struct iio_dev *indio_dev;
- 
- 	indio_dev = platform_get_drvdata(pdev);
--	hx711_data = iio_priv(indio_dev);
- 
- 	iio_device_unregister(indio_dev);
+-error_buffer:
+-	iio_triggered_buffer_cleanup(indio_dev);
 -
- 	iio_triggered_buffer_cleanup(indio_dev);
+-	return ret;
+-}
 -
--	regulator_disable(hx711_data->reg_avdd);
+-static void hx711_remove(struct platform_device *pdev)
+-{
+-	struct iio_dev *indio_dev;
+-
+-	indio_dev = platform_get_drvdata(pdev);
+-
+-	iio_device_unregister(indio_dev);
+-	iio_triggered_buffer_cleanup(indio_dev);
  }
  
  static const struct of_device_id of_hx711_match[] = {
+@@ -587,7 +571,6 @@ MODULE_DEVICE_TABLE(of, of_hx711_match);
+ 
+ static struct platform_driver hx711_driver = {
+ 	.probe		= hx711_probe,
+-	.remove_new	= hx711_remove,
+ 	.driver		= {
+ 		.name		= "hx711-gpio",
+ 		.of_match_table	= of_hx711_match,
 
 -- 
 2.45.2
