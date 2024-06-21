@@ -1,134 +1,156 @@
-Return-Path: <linux-kernel+bounces-224625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11842912502
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:18:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B49C9912504
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1501F212EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:18:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F62B281708
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A264F1514D3;
-	Fri, 21 Jun 2024 12:17:58 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C167A1509BC;
+	Fri, 21 Jun 2024 12:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ZRD6OMol"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A670528399;
-	Fri, 21 Jun 2024 12:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6C128399;
+	Fri, 21 Jun 2024 12:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718972278; cv=none; b=IfbIEcE2TEmjEbYG2EAAMxSDGKexPFsTbRH7CbR8ocfn0JM4fGzyb1vRlYaWdQAl0A1dihVAEOcFZ2BO2pvtTv1ynrGyWNPzOfCxSYKGsekZdKf13x4G+4Kw45TdrN2Ic73P7rOObG81fGKnC595NAVjmsJR2zblLTlRtKnylIY=
+	t=1718972362; cv=none; b=ndAci0OCoEkNitFYlJKBJPFZadIOljcUetUFPJXdd+Mp0QMfizDS6YGUnjWf48h8mhrUplqWxolLdhKnk955CUp2SE/hxnmNhpjl/Uj8AfiD8oPGxXHP2NnDH0iXMM6Dv1ptrDoMb09HbpWtiMvtjwaesq3RI6TZMYksX5QL5LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718972278; c=relaxed/simple;
-	bh=FQ2agrzVuW/zD2YoBosKlJoO2acppwXAoeG7ssgZZQ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p8QbMJGW4I/qwbd9S9QD7Obl4AgTf5lZVQ4RfEl5fIIOJ0yAcqGDHCxYLXDZLLFb7bQKUFKps0gL9kp1jp7N2C7ms3X+HyLqk6L3CqByt1bVWdbLUdCi3MStiMg0pmFZmgr7wk1yfmqV6uyJF+3M8pOUyNMpvTdjRd6V24ZKD08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-63bce128c70so14954277b3.0;
-        Fri, 21 Jun 2024 05:17:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718972275; x=1719577075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nkLxurEt5Br1ag4C5ykRvVNSQUrZUXOds76HNbkyPkI=;
-        b=b+Y04k6hy4HIK1NV6W9ysx1VhCrNJI3WUYLSBSU71pHM/KACOCCnEDE7ZInqvXTEUB
-         OFMiogiZev+uF0oqCMZeHPnnpt2ZNXOD60inpk2eMODHD+UMMxzCMv6tE03vEprvoDvi
-         YFOI0VrRYp8CpxExbbsh5ef7bZLwjk0L7EqkNcot3oF7WZ8FvDeRPdcdUxSqLiiuQP0m
-         pC8j5Y5bDr36Q5rnjg1838V7x7JQiCtxvC3rDkyv8qzQY7IT0CYbpH4f2wctGj959K/D
-         1xP+4pLiwVqB68Zc9VhS+mn1jKFKxzD1QXAI6pIeHI3+VJ+cQnzlt8xeYcehYyRKeASN
-         bLKw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6586nJl+Wt7mKjafSlY5QDNpj1IkGDIiE8efescPxlMYVbJYs1ByDrUHjtIghD4YIMQ0okFkJUjStteBDu/56x8oJ0SlZMMRdmU3sAXpQoUmQk+7rRJnwB4UR9DX1Avi8EMwodKErHI4EDRv0x82IxN++R9k5MZ0loKoWwB8DvM6Pv0lt8XeGfuk9
-X-Gm-Message-State: AOJu0YwOE9azwr/R27zchbUeebvAvZwgNYw+0B7udtW3+QuHG81y1/IF
-	z26CiqQmKCwGtFwnlso6wzpUsCnkOPOkQCrZpjtmSN+9fyAUp9zVcO7d2M1n
-X-Google-Smtp-Source: AGHT+IFU+3htLiKj5pRSrsdqyJkJY7b6bVLRAKM/R4hLM4yrdY19HMoLSTyJLdNLnwVngJDqcYn4zA==
-X-Received: by 2002:a81:4425:0:b0:615:2fa1:c55d with SMTP id 00721157ae682-63e1cd4c8cemr23159427b3.19.1718972275105;
-        Fri, 21 Jun 2024 05:17:55 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f154d5ef8sm3051577b3.117.2024.06.21.05.17.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 05:17:54 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62f3ccc877eso22111987b3.1;
-        Fri, 21 Jun 2024 05:17:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV8oG8H06Y8xROoBuZwH0wLN+dvgztfnv1rAM+uDnbwSg9qsGB8Vd53cfcgQeBL5j0qyPtOOumiVJVQEAvHtO7fp+UYkz7DeO9KSXWtooZ1n/7AynTJOud1S3Unc2cZNgkDhk9552zNMFCPBe1l03uO+uvBZyxlL/PEJkzMZYgjPEh+hNgwMK1RYebO
-X-Received: by 2002:a81:c30b:0:b0:640:aec2:101c with SMTP id
- 00721157ae682-640aec2106dmr2504997b3.2.1718972274448; Fri, 21 Jun 2024
- 05:17:54 -0700 (PDT)
+	s=arc-20240116; t=1718972362; c=relaxed/simple;
+	bh=a1mihZG1lHcPV7HaoxsEzDesMFbiaYmJjBF6OYYxoI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OsGzS+Ybn+2hrG5v5ljBv6Qa9lrKz2uzqvfXu6lEuNbh3r8pR8vj90f764CTAo4Zq5aZDvxLNIcF0miAO2ZqYkKVtkY/yNDNv3/otE/x8x0IEx5tgBe44hPjArObI1pUJK8uJWVjXcAqaLceDacP0CKWyJ7OnyMma1fhGXJiMwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ZRD6OMol; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4W5GcY4hghz9sRt;
+	Fri, 21 Jun 2024 14:19:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1718972349;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+FhklCvUMZIPSHQOWeqSqeXZ11wze5Ce0+xk5qHDK2E=;
+	b=ZRD6OMol1+Im+tzEVQvrGSNx7W/8EBp/UXeyvzTwRIaDEuX+yAFtJ7OyyeW8j+lITVmeE8
+	r79jDBFXzKdxy5rvedN/lAWp30mZ0N5ZoyGuqK2m8nMlho0Igzyy6kxkK72i3EAY6poxvU
+	vf0aoa4iAQ9dek2h/iPT7f0F2X/udWImBsbumyGB22185XSIXCKdqO10U4tbFRhwOdKp7I
+	uYAKKXPcxPP4o8AKc+3/S1PDQODA5sVQSazLSVW+JBDcRYpGx562gvwxiDz5RrZH43XP7A
+	8KErXtYeus774GNTp4q+YwJIT+Ad2/zjh25xcTRtYM6RZY/6mJi7Ou5ZRch4JQ==
+Date: Fri, 21 Jun 2024 12:19:03 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Matthew Wilcox <willy@infradead.org>, david@fromorbit.com,
+	djwong@kernel.org, chandan.babu@oracle.com, brauner@kernel.org,
+	akpm@linux-foundation.org, mcgrof@kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	Zi Yan <zi.yan@sent.com>, linux-xfs@vger.kernel.org,
+	p.raghav@samsung.com, linux-fsdevel@vger.kernel.org, hch@lst.de,
+	gost.dev@samsung.com, cl@os.amperecomputing.com,
+	john.g.garry@oracle.com
+Subject: Re: [PATCH v7 04/11] readahead: allocate folios with
+ mapping_min_order in readahead
+Message-ID: <20240621121903.xbw4j2ijy4k32owv@quentin>
+References: <20240607145902.1137853-1-kernel@pankajraghav.com>
+ <20240607145902.1137853-5-kernel@pankajraghav.com>
+ <ZmnuCQriFLdHKHkK@casper.infradead.org>
+ <20240614092602.jc5qeoxy24xj6kl7@quentin>
+ <ZnAs6lyMuHyk2wxI@casper.infradead.org>
+ <20240617160420.ifwlqsm5yth4g7eo@quentin>
+ <ZnBf5wXMOBWNl52x@casper.infradead.org>
+ <20240617163931.wvxgqdxdbwsbqtrx@quentin>
+ <ac136000-1ae0-4cab-9858-abb68ff53b66@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618174831.415583-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240618174831.415583-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240618174831.415583-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 21 Jun 2024 14:17:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV16Sd5HoJr-td+OJJ8gCesbCzz3BSXNFpBpd1iR9=u4w@mail.gmail.com>
-Message-ID: <CAMuHMdV16Sd5HoJr-td+OJJ8gCesbCzz3BSXNFpBpd1iR9=u4w@mail.gmail.com>
-Subject: Re: [PATCH 4/4] pinctrl: renesas: rzg2l: Reorganize variable
- configuration macro
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac136000-1ae0-4cab-9858-abb68ff53b66@suse.de>
 
-Hi Prabhakar,
+On Tue, Jun 18, 2024 at 08:56:53AM +0200, Hannes Reinecke wrote:
+> On 6/17/24 18:39, Pankaj Raghav (Samsung) wrote:
+> > On Mon, Jun 17, 2024 at 05:10:15PM +0100, Matthew Wilcox wrote:
+> > > On Mon, Jun 17, 2024 at 04:04:20PM +0000, Pankaj Raghav (Samsung) wrote:
+> > > > On Mon, Jun 17, 2024 at 01:32:42PM +0100, Matthew Wilcox wrote:
+> > > > So the following can still be there from Hannes patch as we have a
+> > > > stable reference:
+> > > > 
+> > > >   		ractl->_workingset |= folio_test_workingset(folio);
+> > > > -		ractl->_nr_pages++;
+> > > > +		ractl->_nr_pages += folio_nr_pages(folio);
+> > > > +		i += folio_nr_pages(folio);
+> > > >   	}
+> > > 
+> > > We _can_, but we just allocated it, so we know what size it is already.
+> > Yes.
+> > 
+> > > I'm starting to feel that Hannes' patch should be combined with this
+> > > one.
+> > 
+> > Fine by me. @Hannes, is that ok with you?
+> 
+> Sure. I was about to re-send my patchset anyway, so feel free to wrap it in.
+Is it ok if I add your Co-developed and Signed-off tag?
+This is what I have combining your patch with mine and making willy's
+changes:
 
-Thanks for your patch!
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 389cd802da63..f56da953c130 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -247,9 +247,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+                struct folio *folio = xa_load(&mapping->i_pages, index + i);
+                int ret;
+ 
+-
+                if (folio && !xa_is_value(folio)) {
+-                       long nr_pages = folio_nr_pages(folio);
+                        /*
+                         * Page already present?  Kick off the current batch
+                         * of contiguous pages before continuing with the
+@@ -259,18 +257,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+                         * not worth getting one just for that.
+                         */
+                        read_pages(ractl);
+-
+-                       /*
+-                        * Move the ractl->_index by at least min_pages
+-                        * if the folio got truncated to respect the
+-                        * alignment constraint in the page cache.
+-                        *
+-                        */
+-                       if (mapping != folio->mapping)
+-                               nr_pages = min_nrpages;
+-
+-                       VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
+-                       ractl->_index += nr_pages;
++                       ractl->_index += min_nrpages;
+                        i = ractl->_index + ractl->_nr_pages - index;
+                        continue;
+                }
+@@ -293,8 +280,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+                if (i == mark)
+                        folio_set_readahead(folio);
+                ractl->_workingset |= folio_test_workingset(folio);
+-               ractl->_nr_pages += folio_nr_pages(folio);
+-               i += folio_nr_pages(folio);
++               ractl->_nr_pages += min_nrpages;
++               i += min_nrpages;
+        }
+ 
+        /*
 
-On Tue, Jun 18, 2024 at 7:48=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> The `PIN_CFG_VARIABLE` macro did not indicate the capabilities of a pin
-> but served as a flag indicating that the pins of a port have different
-> capabilities.
->
-> To better reflect its purpose, move the `PIN_CFG_VARIABLE` macro beside
-> `RZG2L_SINGLE_PIN` and rename it to `RZG2L_CFG_VARIABLE`. Additionally,
-
-Do you mind me renaming it to RZG2L_VARIABLE_CFG while applying?
-
-> introduce new macros for packing variable port configurations:
->
-> - `RZG2L_GPIO_PORT_PACK_VARIABLE(n, a)`: Combines `RZG2L_CFG_VARIABLE`
->   with `RZG2L_GPIO_PORT_PACK` to handle variable pin configurations
->   for a packed port.
-> - `RZG2L_GPIO_PORT_SPARSE_PACK_VARIABLE(m, a)`: Combines
->   `RZG2L_CFG_VARIABLE` with `RZG2L_GPIO_PORT_SPARSE_PACK` to handle
->   variable pin configurations for a sparse port.
->
-> Due to the above change the configuration macros have been reorganized
-> as follows:
-> - Shift the bit positions of `PIN_CFG_NOGPIO_INT`, `PIN_CFG_NOD`,
->   `PIN_CFG_SMT`, `PIN_CFG_ELC`, and `PIN_CFG_IOLH_RZV2H` down by one
->   to accommodate the removal of `PIN_CFG_VARIABLE`.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.11.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
