@@ -1,113 +1,155 @@
-Return-Path: <linux-kernel+bounces-225447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441DB913080
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:43:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F1891307B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B256FB2759C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89FE2886A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18BE16F901;
-	Fri, 21 Jun 2024 22:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216F016F299;
+	Fri, 21 Jun 2024 22:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="G4MJ77J/"
-Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Hl/q2ulA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAA516F282;
-	Fri, 21 Jun 2024 22:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7956716F0E9;
+	Fri, 21 Jun 2024 22:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719009642; cv=none; b=tQcgC8K+d7Jc0Z4BWXsDry9ZoG2rfVmz7edc+eYlTC1zg4I+c+fEavFSInASA691zSZk94fbDT0xQ3RXgYyK7xg7dqAIXpM/96cg3q/Mm55v815+NgKXZqzOHB805Wxn5yBVCkc+E+hvnJ/ET6wd4h7lxmDz/xnfDGmC1qPwXPc=
+	t=1719009641; cv=none; b=PTKemJO4E0EkcKMIlImrQYR5+rrvry0HUQ7cr52u80flga/MZLhUQJergU52/n9+b2EQW4Cnu2u88lVH9oGt5HH2uGlRELaPwmtehrx6sNxp8HynAEGuI6L+XkNTOsSlpQCVc9aN7+1YK8pLzf3xCWxlPkO2hUtnGpj/zK5uS68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719009642; c=relaxed/simple;
-	bh=eFOl7PcsP3agx3qzdhbJJDR4zXY2SAfO3NMK3tEzZdQ=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=jsJu1Peak6hjSWFgJkLT0+Idfy6dkLS0Cn/ctOS0eTupuZJZkDPT6UPWYe+UlxAO05VCxRymoPyp7MWssWq56xAVKqkIR8z2i7sWoqYSj6OJ8D/XIGRz00+rm2Sg1+j32Im6flbYQGL+PJG3Bv/FwKQHcggu7wRoOD3+o2+FLQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=G4MJ77J/; arc=none smtp.client-ip=161.97.139.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
-	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sKmvi-000Utr-3C;
-	Sat, 22 Jun 2024 00:40:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:MIME-Version:
-	Message-Id:Date:Subject:To:From:Sender:Reply-To:Cc:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=utpz7iYXHktEzXWIgy4GD/ao0gKYmCpXe/gyJxy70Cg=; b=G4MJ77J/2S5l+fJbgJ8ldn4cVi
-	ODiG79zUspt+f6hkGB7Wo6sRgl8QCCUQu3HsUPcGKEp//Wjcy1X+4J4/bk4kxxaobMsIUhvWvTnbv
-	D7PVk8UfBMbiFW1Imlq6HT6XKVAtA89WdTcxY/iLp+zVLY5bZFA95R9CtGmuYRJLkeDSzYeBUQjMz
-	H450bhdl92E8NDRbuzqzSIJ4SO3DZt1Yfsh/Njh+nYjehBEXxixcVGKvG2+pywr1J/4lZgtIXLsj/
-	7z0JTtwxCCOrgcmhYR3RqbdvL+JLUuv8vn4EuZBQwD38C642dbvRI6Q945GQLVYIP8lB4SxlVioxZ
-	WYcW2yJg==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sKmvh-003Pl3-08;
-	Sat, 22 Jun 2024 00:40:26 +0200
-Received: from andi by aktux with local (Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sKmvh-006nff-30;
-	Sat, 22 Jun 2024 00:40:25 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: dmitry.torokhov@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andreas@kemnade.info,
-	hdegoede@redhat.com,
-	andy.shevchenko@gmail.com,
-	u.kleine-koenig@pengutronix.de,
-	siebren.vroegindeweij@hotmail.com,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND v3 0/3] Input: Add ektf2232 support
-Date: Sat, 22 Jun 2024 00:40:19 +0200
-Message-Id: <20240621224022.1620897-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1719009641; c=relaxed/simple;
+	bh=jsDCV0bFqKXaxTxHhx/XJTLwaJ9xWnrya+1wxZ/zwTk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rK8RfRYjM5qJUeAoSFNk6DbRa8UqUoivp5FYA4XikPkkIyutSG5EBa+IbYuLM3Zs6enCkv17CgBTNnKXu4z4srj2FlDEoZ11jX/lVK/UY/MBxrFbsNs1/9Cx/zqe0+XUSRZsjjCnSDxBmfsvPKZQDCgZpR9Fsb7P09QeAl3ut4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Hl/q2ulA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LLwZZl027622;
+	Fri, 21 Jun 2024 22:40:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=h0ddb+WIGiR/+5uLz3IQifrs
+	TNo9FDwj5crMyEw4ZCE=; b=Hl/q2ulAwXsiKpKKwVdNjvkKe5lbKS8pmdleHwVQ
+	48ITA6zHpmkXbXNSQ1RrK2BWt1xal0XjDxU+txHhcjSGrc7Tmkyz0yEv43++/u38
+	zKCp2P7Fr2iDzyENfZWVH7KRd8RZkh5XJQpXTWl2GnGA5kogyspNpiytRJ7h4yPD
+	hNoOXb8QYevpjDlcxZciE/Jj8zDBl8S6x5G6G7ZZ9DkLEW55xDMPxLaovek6t6iK
+	KmmSrFvSuUsmZ07QtgiheLSZvAx8gUcQzyRpZgTgGXr1ujI0jVYPbgK4qodGWU0D
+	hhN1bVsq7k2Z58RExNxyzV7jyKLGcxg1ukybtjnhVtS91Q==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywhw581r4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 22:40:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45LMeLeK023284
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 22:40:21 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 21 Jun 2024 15:40:20 -0700
+Date: Fri, 21 Jun 2024 15:40:20 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Simon Glass <sjg@chromium.org>
+CC: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Amrit Anand <quic_amrianan@quicinc.com>,
+        "Peter
+ Griffin" <peter.griffin@linaro.org>,
+        Caleb Connolly
+	<caleb.connolly@linaro.org>,
+        Andy Gross <agross@kernel.org>, Doug Anderson
+	<dianders@chromium.org>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Julius Werner
+	<jwerner@chromium.org>,
+        "Humphreys, Jonathan" <j-humphreys@ti.com>,
+        "Sumit
+ Garg" <sumit.garg@linaro.org>,
+        Michal Simek <michal.simek@amd.com>,
+        <boot-architecture@lists.linaro.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH RFC v3 0/9] dt-bindings: hwinfo: Introduce board-id
+Message-ID: <20240621142054973-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
+ <CAFLszTjexpNEjo1sGVs67L0CAgGZLNkyn9RGfHRD7iHak_mtmg@mail.gmail.com>
+ <20240605100246481-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <CAFLszThbe_aUAq_5rCCiPV-bj60oq9UCc=vdDHwM3i6t44ohLw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAFLszThbe_aUAq_5rCCiPV-bj60oq9UCc=vdDHwM3i6t44ohLw@mail.gmail.com>
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: aMnnWvPZXbpMlGkJtooadWu_tY6AtbVb
+X-Proofpoint-ORIG-GUID: aMnnWvPZXbpMlGkJtooadWu_tY6AtbVb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_12,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 spamscore=0
+ clxscore=1011 adultscore=0 phishscore=0 suspectscore=0 mlxscore=0
+ priorityscore=1501 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406210165
 
-Add support for the EKTF2232 to the ektf2127 driver which
-contains support for similar chips.
+Hi Simon,
 
-Add the needed compatible to bindings and convert them.
+On Thu, Jun 06, 2024 at 10:00:54AM -0600, Simon Glass wrote:
+> On Wed, 5 Jun 2024 at 11:17, Elliot Berman <quic_eberman@quicinc.com> wrote:
+> > On Wed, Jun 05, 2024 at 07:17:35AM -0600, Simon Glass wrote:
+> > > Hi Elliot,
+> > >
+> > > I am just picking up the discussion here, which was started on another thread.
+> > >
+> > > I can't see why this new feature is needed. We should be able to use
+> > > compatible strings, as we do now. I added a 'usage' section to the FIT
+> > > spec [1] which might help. I also incorporated the board revision and
+> > > variant information and some notes on how to add to the available
+> > > suffixes.
+> > >
+> > > Does that handle your use case?
+> >
+> > -rev and -sku don't fit the versioning scheme for QTI devices, so this
+> > isn't a generic enough approach. Patch 5 in this series describes the
+> > versioning scheme for us.
+> >
+> > In the other thread, we had talked about using some regex based approach
+> > for matching the root node compatible. I haven't had chance to work on
+> > that proposal and will try to get to it in the next couple weeks.
+> 
+> OK, I look forward to it. Please do check the FIT best match approach
+> and see how it might be extended to handle your requirements. So far I
+> have not seen a need for regexes, but it is certainly a possibility.
+> 
 
-Changes in v3:
-- use dev_err_probe
-- use i2c_get_match_data
+I spent some time collecting feedback from the team on using compatible
+strings + regex-style approach and we're not able to add a regex library
+into firmware, so this approach unfortunately won't work for us.
+Because we have more axes of board identification than chromebook, using
+FIT's compatible strings isn't a scalable solution for us. I don't think
+we have incompatible problems, we only have more than 2-3 axes of
+information.
 
-Changes in v2:
-- separate patch for adding compatible
-- use match data for selecting status shift
-
-Andreas Kemnade (3):
-  dt-bindings: touchscreen: convert elan,ektf2127 to json-schema
-  dt-bindings: touchscreen: elan,ektf2127: Add EKTF2232
-  Input: ektf2127 - add ektf2232 support
-
- .../bindings/input/touchscreen/ektf2127.txt   | 25 --------
- .../input/touchscreen/elan,ektf2127.yaml      | 58 +++++++++++++++++++
- drivers/input/touchscreen/ektf2127.c          | 36 ++++++++++--
- 3 files changed, 88 insertions(+), 31 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/ektf2127.txt
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/elan,ektf2127.yaml
-
--- 
-2.39.2
+Thanks,
+Elliot
 
 
