@@ -1,126 +1,123 @@
-Return-Path: <linux-kernel+bounces-224192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B648911E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:23:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB14911E96
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB34E2825CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:23:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB72FB23287
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F82716C856;
-	Fri, 21 Jun 2024 08:22:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2C813C9A9
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF1716D310;
+	Fri, 21 Jun 2024 08:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iVekqMff"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCF1127B5A;
+	Fri, 21 Jun 2024 08:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718958166; cv=none; b=t9brqY8eLzHtW6eKvMt/Y/UdHAuWX6sgmpzLQXqNjOHA7cDKYdwK/+61NuKAhMD2FUScXpdwgmgq7mLmC7+OWd3+hGCK+6lgE3AIuI3evjabP+fFxGu8Y/rIfV9rh1xUxn6pdAamtLY2e1REuOfkWznu2+/Nai3CwrdjW/lzieI=
+	t=1718958219; cv=none; b=F7bei61yQRtubjyqnHhntyClIUDjPdarHIk2aj+8cJDeCUA7tpUiE+3ZhrBwNvjPTftcjj6uXEm8XnNfWD2BQH1hwNYsMFrxl1aYsf96xIGDOxLUTEDGJMl4CbN7/o4+vxFcQYsaHqVeK/s2NnTidOh4n8qCXtZ0cCX69pfIVyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718958166; c=relaxed/simple;
-	bh=70aOEx1E8D/ozj7dO7c5swj+/sTVUG3v51eeHL51maQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lIJ5HNKY5vy6s0Z7Q95NgNr+SEHvN43irhRfJTAZDD43hTSrHodgX1yq4hAHDMetxt/lg5luyVNUDp0AtRCw/9C23+w5l8cZ7lg0axeC5a8Q7+5w8F0JTAKDj2Ro1UJOUVgjhhjUGVfADkrQSz/1NFsBbI4r9e3EEVM5JR9ycLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6612DDA7;
-	Fri, 21 Jun 2024 01:23:08 -0700 (PDT)
-Received: from [192.168.178.110] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C2B53F64C;
-	Fri, 21 Jun 2024 01:22:41 -0700 (PDT)
-Message-ID: <3bfb4e65-b746-449e-a9e7-acda24897045@arm.com>
-Date: Fri, 21 Jun 2024 10:22:40 +0200
+	s=arc-20240116; t=1718958219; c=relaxed/simple;
+	bh=ePrxxgryd/7FzegnkgHpqwceMtBAXBZvcz3wII1dPSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J3+pCn+eGff2k/p26MKOElADsTi9jFsWlXi/rGqA+8//RgwbIE9gLmHnWhS9MPf2iWPkL7az6csh1OLDRN+epkq6E4AQMkl6qqVbSLivvYSf8+v18R0H+exLbAjNPmkDIP1gr+k2GGtGbn6+SoXjC7xyl1sCKlmEf1kyrm/FrcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iVekqMff; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a63359aaaa6so243183766b.2;
+        Fri, 21 Jun 2024 01:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718958216; x=1719563016; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nbBOwJgSwHet5zGetbp8psP9VLRM440EvYC4FeqP2lk=;
+        b=iVekqMffl1bf9Sd6q0hIorJZfSCDw2PPUYs2t20w/5ifQG5E6EMIAtAM+lh2UbduQR
+         TzK2KJOnXYf0qziHB/ZuTAV26xXeqkx+rIN0Jxb9u4RMYa7p7RxSq1VtRm1IfdhT/X+h
+         APP4eRC/TgPaVvqRYPNypFOM1FbYmeFyzKUaKbd0AbMwBzrwhowgrW9oUsHKQ6+upfmG
+         iGeQbvaYuZzgUuh3FrEEzVs5TpO6fQb3ONo/hX3axH0OpRZXR7UeTyUa/LUCySB1uIcH
+         0VC9fqOcRZiWj0OYGlXaDGhLH0hRsHFYokDtCPocQB3KUn6GLhBdiaqkzoOg6sw6Kok5
+         leSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718958216; x=1719563016;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nbBOwJgSwHet5zGetbp8psP9VLRM440EvYC4FeqP2lk=;
+        b=u8i+6D06Z0Wd/qFmp1eNbcdooTopjJIuDD4AAPF9vgWQMwNW09HkIgCmVzVTw236yG
+         U2/daiWOqSHkm3gxI4clHX9dGjf/7J/tmaNaGzBGydhg7YG98SxyEkcTfjfp8U8STrG+
+         UmGtgCMBq7UwtFp8OSa4XtOlGoX390ItQ4QcMOFkSyIFH4JuKArgMV5hMcNPi6fBsf6I
+         P3EAOisgaAb4f5BWQwsFMyLZuJ4x/YIuMwGeLxFCuZioIl6S3Jtw6L0lZ25rEfC67LeY
+         TxL39IhhiQaOiM4U2ZIf+scRHQBi49M0r5YESSG3PDIDTO80DByMvLcScXFlme0zFgAD
+         OVTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUw8CfKRA8dqoh90awkIn2++Mud4veXsNUoZorMpk5yfmjZZa07VLydF9IMbKzGKtkQlbET2+0XgEHC8kRCXfuFusJaOv3e5jpNxPqg2aC1EBOgySwVsaM/NjQNR3scGQFW2EgrDBEWOw==
+X-Gm-Message-State: AOJu0YwKEqeXXmi+p4/jeGiTGaICfV0kNAucvzFdC8onwP2axnf8cutG
+	0P1ky1MFmbInGCVMwnrTcGhmwSwroLqZOW/4LhZhilS2UvqpydnO
+X-Google-Smtp-Source: AGHT+IHD5G0x+UDvvWQKLy0OgQRXOfYYf+1EbCyu7B+fCvtM9QvTCKDqyhEyTIoEjpyQiNOL1W55yQ==
+X-Received: by 2002:a17:906:6a15:b0:a66:c338:65cc with SMTP id a640c23a62f3a-a6fab62bbe3mr533490166b.19.1718958215296;
+        Fri, 21 Jun 2024 01:23:35 -0700 (PDT)
+Received: from andrea (host-82-50-195-19.retail.telecomitalia.it. [82.50.195.19])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf56efcfsm56550066b.200.2024.06.21.01.23.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 01:23:34 -0700 (PDT)
+Date: Fri, 21 Jun 2024 10:23:28 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Marco Elver <elver@google.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH lkmm 0/2] tools/memory-model: Add locking.txt and
+ glossary.txt to README
+Message-ID: <ZnU4gE+OB+xvvW+I@andrea>
+References: <ae2b0f62-a593-4e7c-ab51-06d4e8a21005@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding
- actual_cpu_capacity
-To: Qais Yousef <qyousef@layalina.io>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Xuewen Yan <xuewen.yan94@gmail.com>, Xuewen Yan <xuewen.yan@unisoc.com>,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- bristot@redhat.com, vschneid@redhat.com, vincent.donnefort@arm.com,
- ke.wang@unisoc.com, linux-kernel@vger.kernel.org, christian.loehle@arm.com
-References: <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
- <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
- <20240616222003.agcz5osb2nkli75h@airbuntu>
- <CAKfTPtBikWsyPon6HweEZg5qjSP+QX=WZDQu4NHs7PUcSCqDDA@mail.gmail.com>
- <20240617105348.ebtony3ciwxhvj2w@airbuntu>
- <CAKfTPtDPCPYvCi1c_Nh+Cn01ZVS7E=tAHQeNX-mArBt3BXdjYw@mail.gmail.com>
- <20240618153931.ub5ezml3imd5mwu7@airbuntu>
- <CAB8ipk86jmb6xnEUnv_Vs5=A5EnNfnHTy3FXYZRhKhuEFKhzDw@mail.gmail.com>
- <20240619181021.kxcjxaqe47fkve42@airbuntu>
- <CAKfTPtA1cKiB=mv-QUAYOLtiwOE+Rcg+HkAirkVW=irTQtqNVw@mail.gmail.com>
- <20240620113756.hivzk7sj4uj4sm6j@airbuntu>
-Content-Language: en-US
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-In-Reply-To: <20240620113756.hivzk7sj4uj4sm6j@airbuntu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae2b0f62-a593-4e7c-ab51-06d4e8a21005@gmail.com>
 
-On 20/06/2024 13:37, Qais Yousef wrote:
-> On 06/20/24 09:45, Vincent Guittot wrote:
->> On Wed, 19 Jun 2024 at 20:10, Qais Yousef <qyousef@layalina.io> wrote:
->>>
->>> On 06/19/24 11:05, Xuewen Yan wrote:
->>>> On Tue, Jun 18, 2024 at 11:39 PM Qais Yousef <qyousef@layalina.io> wrote:
->>>>>
->>>>> On 06/18/24 17:23, Vincent Guittot wrote:
->>>>>> On Mon, 17 Jun 2024 at 12:53, Qais Yousef <qyousef@layalina.io> wrote:
->>>>>>>
->>>>>>> On 06/17/24 11:07, Vincent Guittot wrote:
-
-[...]
-
->>>> diff --git a/drivers/thermal/cpufreq_cooling.c
->>>> b/drivers/thermal/cpufreq_cooling.c
->>>> index 280071be30b1..a8546d69cc10 100644
->>>> --- a/drivers/thermal/cpufreq_cooling.c
->>>> +++ b/drivers/thermal/cpufreq_cooling.c
->>>> @@ -164,7 +164,7 @@ static u32 get_load(struct cpufreq_cooling_device
->>>> *cpufreq_cdev, int cpu,
->>>>  {
->>>>         unsigned long util = sched_cpu_util(cpu);
->>>>
->>>> -       return (util * 100) / arch_scale_cpu_capacity(cpu);
->>>> +       return (util * 100) / get_actual_cpu_capacity(cpu);
->>>>  }
->>>>  #else /* !CONFIG_SMP */
->>>>  static u32 get_load(struct cpufreq_cooling_device *cpufreq_cdev, int cpu,
->>>>
->>>>
->>>> Because if still use arch_scale_cpu_capacity(), the load pct may be decreased,
->>>> It may affect the thermal-IPA-governor's power consideration.
->>>
->>> I am not sure about this one. But looks plausible. Vincent?
->>
->> I don't see why we should change them ? We don't want to change
->> sched_cpu_util() as well
->> AFAICT, the only outcome of this thread is that we should use
->> get_actual_cpu_capacity() instead of arch_scale_cpu_capacity() in
->> util_fits_cpu(). capping the utilization only make the estimation
->> worse
+On Fri, Jun 21, 2024 at 01:08:24PM +0900, Akira Yokosawa wrote:
+> Hi all,
 > 
-> Yes my bad. Only util_fits_cpu() is needed now
+> [+CC: Marco, as Patch 1/2 includes update related to access-marking.txt.]
+> 
+> Looks to me like Andrea's herd-representation.txt has stabilized.
+> Patch 1/2 fills missing pieces in docs/README.
+> 
+> While skimming through documents, I noticed a typo in simple.txt.
+> Patch 2/2 fixes it.
+> 
+>         Thanks, Akira
+> --
+> Akira Yokosawa (2):
+>   tools/memory-model: Add locking.txt and glossary.txt to README
+>   tools/memory-model: simple.txt: Fix dangling reference to
+>     recipes-pairs.txt
 
-Looks like that's for the uclamp part (2. part) of util_fits_cpu().
+For the series,
 
-For the first part we use capacity_of() which bases on
-get_actual_cpu_capacity() [scale_rt_capacity()] and changes each 4ms
-[250 Hz].
+Acked-by: Andrea Parri <parri.andrea@gmail.com>
 
-Our assumption is that hw_load_avg() and cpufreq_get_pressure() change
-way less frequent than that, right?
+I do get some "trailing whitespace" warning, for patch #1, you might
+want to clean up when applying/reposting the series.
 
-So we can use capacity_of() and get_actual_cpu_capacity() in the same
-code path.
+  Andrea
 
