@@ -1,247 +1,238 @@
-Return-Path: <linux-kernel+bounces-225037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99394912AE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:07:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79C9912AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48CBE2885A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:07:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE2361F26A11
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C608815FA6C;
-	Fri, 21 Jun 2024 16:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5DF15FA9C;
+	Fri, 21 Jun 2024 16:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="g7z+96IM"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2079.outbound.protection.outlook.com [40.107.236.79])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="If0MpBZm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337695028C;
-	Fri, 21 Jun 2024 16:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718986049; cv=fail; b=MTo6cdKfagA9MpRGOi3X5OUP6v/hlmrbFP/m7miFHOPFCU0cpGkIGhOFRvZmx7M5qoqCkJMLWnUYaA9+9Z/4unureTuHg6x3MYHL8i6Bs5KhwqljXYOLoO11RLnv5ORDWa+1sOQTYrTtxkt4A4yzkgA1DFijy0eYzmmoj1zAhUs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718986049; c=relaxed/simple;
-	bh=JpaYyBN08u0EjPWtYvmvWyQkWpUC9RpxgGK/lHXCmtM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=senhihGoMyJfva/aFo0/H3zMsU88f7rB4PF31vM4+emsy6ZQbjzyD4zchli6bedpI9RT2VouuruiKhfhHra5uVB+U4kn4cmGSrKbzliVtF5WapZ7ZuJZTcuG9yoxJhkg4hZ3pFFFFK8OEXXMjnYwi8rf3+/brWwPo6SJWDvvW9I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=g7z+96IM; arc=fail smtp.client-ip=40.107.236.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AVStwhTyBxeqh69mEjdin0d/D8tthZsIwPN71bcGReI118QBKQ8ziED7cnuwEVE4ZXcpvTl+Lt0IYnxhcOmR8/eTlENCcRx3ObAzyO6wJ4Qx+Z2hrCoYvqvaTuVkChOqOCr26k4AaCSS2T/cxO08VByY7pJ0QiFBZ7b7MeHMSo+4VFP6+ZxIOpQ3XnWBQXvqbY8Yc0zgUkSjQ0C8IWLvRj24hv9AIrerkrDcCr3CAT/JMo1QmUaiHfDV+E4LgL0nLrY4X4FM2EUjZorDYPXlAfWTS6GdkRO4/W9/BxVeWRtwO2Dk/q45UWf3F6QPlv24c2qav+emNfBm4OoZrEL6fA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mKy/LFnobdYp08OxvJgM0t0R2emTMLUxoOqowSDGHlQ=;
- b=afnhSmNKMkg33MmVblzA1dlK93NZB7FZHXCQzqHITO9a69M0ICLa/HvtdpMpWoLWhZNm/vsa7d0fAcxpiF4zcGNFKmx5cVDfo/yfsr0Fli82MlVp1Op6uzUNKx+PuhhyaqBfH/6WZA2fX/BohVqBl3cuNQ+SmuYvWNZWy09Af23OrKfxaSRn6stB6V04a6VQ3yaTkGL8YiZE7DCa6teCpCQy6cZ2MOwDXVa/DPQ2w2LZ1kIrwpqjAAMFkFap8soJDkYV1AJA3fPrxTWnGZ60+aneBUT3HWTbTF2rAyek6ZAXJ4F4yFephbOnvoOBgm0UFSXy7xpNeAoIC68n8yvJvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mKy/LFnobdYp08OxvJgM0t0R2emTMLUxoOqowSDGHlQ=;
- b=g7z+96IM8UK45Z3t6dndhLAMRB3BUUgmNW6JbzmomXpZaz9dQlnQBb4dzCAvFG0ReEx/lZEmOcDXIxITyc/ee3amb2AGUUQmCA8/M78Z0FpnpwbBRdPhtJif6O6askUVM5TENhnQQoYPCOCbgEOiNs8BFULIQylw5C+dKR7aH8M=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by CH2PR12MB4263.namprd12.prod.outlook.com (2603:10b6:610:a6::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Fri, 21 Jun
- 2024 16:07:22 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.7698.017; Fri, 21 Jun 2024
- 16:07:21 +0000
-Message-ID: <0c7a7447-957e-6b89-9928-ebbe560339b0@amd.com>
-Date: Fri, 21 Jun 2024 11:07:15 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v4 14/19] x86/resctrl: Add the interface to assign ABMC
- counter
-Content-Language: en-US
-To: Reinette Chatre <reinette.chatre@intel.com>, babu.moger@amd.com,
- corbet@lwn.net, fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1716552602.git.babu.moger@amd.com>
- <631092558e7fe0ac2e6267070e40c4a97b300f57.1716552602.git.babu.moger@amd.com>
- <e649a49f-344f-4dbd-be2f-d70f932a80f4@intel.com>
- <16b7768c-8f68-65fb-19a5-55a117dd0603@amd.com>
- <13297090-926c-4585-95ac-02a865ad1e49@intel.com>
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <13297090-926c-4585-95ac-02a865ad1e49@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA1P222CA0070.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:2c1::26) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130F515AACD;
+	Fri, 21 Jun 2024 16:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718986075; cv=none; b=tlC3jY5z17IKUaVAHfFaQ5sR839b6wpvSXIew9YpSt0Q5QqSzOrVfCoEb7qbNdejwWPk0bWPAYIptB7RxyLU5TQhlKVSgcfl9K4uvGBr65BQxUIEXkxGFz0wJBvfxGZjWp/HUOEkqm6gsZyAh9r+EDtOjzVcq0pTpPp9Xz0hP9w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718986075; c=relaxed/simple;
+	bh=gO9EeVPhBWB13Nc4aWHFAvzESeisDjjOut+Bi6ra9wU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bv0NX8nLecZXohprUKjsqUYa8MV12FS0Xmb2KXVO1bwFijNvj7Ox4sFKfMGNuGSlRSFpYDYVjOPGoLWyUfukx7nmcpMiSmOy0Q0MFVGXhHtlbiiQptRq8KSpT5lyX2Ky4PkLnSTDXjVvpPeNWCdfT1Q69Nwy3vpvArN3ATFs+2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=If0MpBZm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 412BFC2BBFC;
+	Fri, 21 Jun 2024 16:07:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718986074;
+	bh=gO9EeVPhBWB13Nc4aWHFAvzESeisDjjOut+Bi6ra9wU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=If0MpBZmpGGFB3v6qNjI/XkCycDsTAE/Rmi4fW4GI8gkwHPynD/fzM1hC6VFiHzui
+	 J+CP1TCfHDKGag0nGVrx2TIRmbOPsI1A2bmgn503rs9uNFYV6MP4YFdLwcms7/bPnQ
+	 JYgOOY9wmXvQ2VIcLVV7eHzWnIKc5FDSMWD0C5Vtz2nA+bVpweZs5JFpBvPK1m3/YO
+	 1CVob9CJqjRvIjUZQ+ns6VGQ6pLAGXqHzrReXihNbrTH/FOVcy+SW7VUJde94mLwKA
+	 GJa4p/doWmDZ2AKmxhdflTul/IH3K4iSl3BIJxkgpRJFkU68E37DloDq7SDiJW0+1b
+	 3150ofmcL5Y7w==
+Date: Fri, 21 Jun 2024 09:07:52 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] perf trace: Add test for enum augmentation
+Message-ID: <ZnWlWG0ScTa22s0O@google.com>
+References: <20240619082042.4173621-1-howardchu95@gmail.com>
+ <20240619082042.4173621-6-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|CH2PR12MB4263:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3504e903-59d4-438f-a8c1-08dc920c3b28
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|7416011|376011|1800799021;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TTdIUFpsWWZBMFZMeWxKV3FudkZMUVQ4VEF4b0dteTJwOUpVTDhnMkorRU1x?=
- =?utf-8?B?a1MzYzl6VXppMEp2TXdQMmUvdk5LeVZ5R25OUWt1akdDUHhCcThobW1iNHVq?=
- =?utf-8?B?bm9TTVBPRW9SV3RlcW9VbEI3M0VYdCtFZE9nUDNjUjFmWnhsamV5bTJ0Z0Fi?=
- =?utf-8?B?WWN1cnlFT3FSSEE0VWRpdVJVK2VjbzJjWnA0a0JkWnhWclo2MW9aRWhGVGlD?=
- =?utf-8?B?NUtCUW9kd3lrWEhteHErRnZjWnljOU5ZTDF5bFVscjZTR0VwajhqRUFNZUV6?=
- =?utf-8?B?UVNtcDlWcDR4eUtmTEd2NEpQQmJpMW1meW1COUNwMTkrYnBVOTgyN0gwRDFs?=
- =?utf-8?B?Q1ZNbG0wUkx0YVdsT3dSaitOanhoWEpuSm9QbC9TdEVaRW9ScVVvNXBlMlh5?=
- =?utf-8?B?T0dtWXBKUlkwZ3RyZGt5OUtsbDNNNllNTEsweUFqNnNyK2w4WG45cDMra2Fm?=
- =?utf-8?B?UTNobG1DWXJDZlkzMHNEUENkRHBXcE1jUVM0eHQ5Rno1dWNiWHNMbUJ5K085?=
- =?utf-8?B?S1oxdjBsb1hhQ0VKeEZuU2tqSDBOWWkzS1FUcmZrUzlKQ2ZkUzgxY3d3bnkx?=
- =?utf-8?B?VkJtdWFMSnJQVW5XdEdtdm5CYTBYWkM5UnltRDhkRVUwcGhjc1JvNmVZOFNq?=
- =?utf-8?B?dk16eVZhc2RKZjlxQkl6YVZpOTNUL2FzVEtSWFkvM24wZ2prMU1lSFhQQXBO?=
- =?utf-8?B?Sk1KeE8vdDNHMlV1WCtnOGdRZTRvYTZLN1FiTW55R0gvR1dsdEkwbjhPTE1x?=
- =?utf-8?B?a01lZE44MnZmOXJCbU9wT0xkdC9ydEl4ZkppTnRPa1Z6d0Z4TEd4Tkk4RmJZ?=
- =?utf-8?B?Y1BxVEEvVTZBYWxLanUwSkJydGRvdGJqYTRQZXRaTU0xREliTk55Wk1GdC9Q?=
- =?utf-8?B?d2gyTXJ3SldPTlZpZDR5R1R3SHNsZUs2RVhBUlV4V1Nuc1hweEFOTWxHZ2du?=
- =?utf-8?B?am1jc0tDTkE3R3BRWVc3STcxVUIzdS9hTXQ2bERCR1hUei9pSHdldmptLzQ4?=
- =?utf-8?B?YWNic2g2TW4xUFZ3dm9lMUJlZTN2TUhQK3FXL2llU3RmWjR3a2tDbnF2M2JO?=
- =?utf-8?B?ZGNIRVFvQURtZzlzeEtJN3hpVVpGNFJmeU55SEFrQW15SnFTaVhEeURkL2NT?=
- =?utf-8?B?VVdvenBuY1pDSnhmVVZQcHFPTG5oaklFT29vQTJMVU5YWjJ5MjV4aGo4MEo3?=
- =?utf-8?B?VHkyTzMvMmhwTWlkV0NNVFpnU3FRQVFBR3JNRE43VVNjem9kZDgrM2laSFVn?=
- =?utf-8?B?dEswK2ZlTGRtaVpWMDFEYUpwSndYU29EbGVGcC8wZ0ZiamRuZ0tRWEg0aWx3?=
- =?utf-8?B?dnJSMjBDd1JwWWVIVFlVLzUydEJ2UWt6VE42TFdYQ3dGemtOMExQSEFsVkht?=
- =?utf-8?B?YUU2UUVINE5mK2xmV2xYY0UyUVRqbHIvRit3eGk4SDNiQlcwTVlDWHVMOTJF?=
- =?utf-8?B?NEhpZkJueVp1ODA0a3JITDV5UFFBeXFha3ZicmZ3dzRmWlV4R29PbGI2dVFz?=
- =?utf-8?B?cFo3cGlNZm9rTW9YU2JVTlZpU2tZbkFXSFkwRGJ3eVl2Q01jelN3TndvbTEz?=
- =?utf-8?B?Q29kTmxEbnhmUzV0RE05T0Q5Mlp6WTlUZm9EWm95dHMvMkJ2TGY0Z3N3UDZw?=
- =?utf-8?B?WlhUdldQbTN6Z01jTkxjR1lsb25NM0kvSVl4YjllSy9zb01jSVNIRVRwZ2NQ?=
- =?utf-8?B?eHEyUncyOFFHUjRqdFZYOXBKNWt0eTVldTJmdG9SMkZxRDlyNHNQblhhZlFs?=
- =?utf-8?Q?ijsT/VhOpvEpfDDk28Q+LN8GPXgm4WplAIlKZi9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OGhaREhrSGFQWG5EUDVKOVp5REhNemdOUlFYQ1FieTRFeGp2bUkxa2RqNDln?=
- =?utf-8?B?UEdkZ2xFakE3K0JNdlVISWZvQkRZSmZlSFF0ZXliMVdPQWZHTG1YL3VIb2Iw?=
- =?utf-8?B?OHdpSm5HdnZBZ1VZajlZSVVFNFB4NUhoek1hV3B0ZTdSd0RGWHdxaHhQOVpx?=
- =?utf-8?B?aFFQbzZqc2lhVVNLMHJycXBHaHZkZDJZV1dUWW53N01yalcxYTFsN2Jnd1lZ?=
- =?utf-8?B?dnNrT29ZWnI5RWR5eHlRNG9rQ0llMVJzbFM2bG9hUGtBQm9mVXFGZXk3bE5B?=
- =?utf-8?B?KzdXNXBERU8vNVA4TDFEVnMyTXN5NHBYQ2RPR2FRSHFnWWFUK2Zpc05xZEha?=
- =?utf-8?B?T2lRWUVnMkRoRlFPMHNiWnVXWUdGa3pScHhMOS9JQnExZVJNbTJCOVYzOVhS?=
- =?utf-8?B?NWJnUUJvV2ZzZ3UxZG1DZlRzVEpxL25LanVuYjgxL3JBYXA1VXdaeUJkUFB3?=
- =?utf-8?B?Uzl3K2htSEU1OFQwL3dHWmxuNWlDU3dtbUtUSHl5OU8yQ0NGYXVwRVl6Rkp6?=
- =?utf-8?B?enk0QmpkQW5oMWJ4TmZtWTNLaXpxWVQvZXEzZUtvOWdPOTdwT282ZUw5TWhK?=
- =?utf-8?B?MkJQblVBaGRVMFBabTVtMnRnM0xhMC85QlRJYWxpSmVVM2FDSzJYWnJzTXYv?=
- =?utf-8?B?UERBTGc4cEcwNytaYkhzWEhOVDVSQjhxaUVvNEx6RnkwU3pncjhrWllDOEZS?=
- =?utf-8?B?dGh4ZVZxUGVjcUdaZVVSdy93ckRNdy9zOVVVcE44K1Nmdm1WSklXSFFkSkp0?=
- =?utf-8?B?L29ldHpsNk1mNWtFNXlrQkVsaG1odUs2OWl5S3FEMVExemgyRVdEOWZ0UnhU?=
- =?utf-8?B?L3VINUtVVVdFR3FueDZoNW1yd29lSndDUTRhcXFZMkRPL2k0THkyaitMNGI4?=
- =?utf-8?B?cmpyekorQnBTd2JLR2ZMSWlRcS94RERtSGk3UFQvai9yREc2c0dxUUM4U1ly?=
- =?utf-8?B?cEZNTFRIenkyZC9EMDA3SDVEdWk4NFRFNXNiVmZJU3VZTGFPUWpwbWRwWWFv?=
- =?utf-8?B?MWxDdjZubVJwaTBsSUVPYWEvNzVJdk95R2dIRFkxczJuTlZITkR5dFZvVmNo?=
- =?utf-8?B?M1g3ZmxBN08wYVd0N2ZGQ0hsaWZCQzZWcnpvUzRKMDRpQnV4MHhlaDE1dzhn?=
- =?utf-8?B?K2N0Mmd3eHBKWGF4azI3Zk5JekFMMk5zRktWS3FmOEhVREIrSHRtQVdFUU1I?=
- =?utf-8?B?WFNsNldRcStuUVdSKzdtaVFhamhuNFFaT0YxK3dPVFAwelF6NWJPaUg2ZXgv?=
- =?utf-8?B?NDYrUSs4RE8zdWZLaEdQYUhXZ0N5cyttT3ZWU0dUR2piamJuSWpBdHRpUVJK?=
- =?utf-8?B?bmEyNnFibXhPYUlWNEE3YUxwdG53M3FvMk92NEVmS2s0Nkx3dERmcHIrMzFu?=
- =?utf-8?B?bkoxZ2g5K0ZxMERocEYrcnkvZFlORGRCcW40ZmtaVEw3U1dHOFk3WmJkRlJM?=
- =?utf-8?B?cno4T0Fqank5Wkp5Z1hLT0xUckwrYklzMDROcDdlQWh5M0l2TXNGUWRNU0Fu?=
- =?utf-8?B?R0wxSjBlWWFZTFVjbTBxOWhPUmdpbWhEQzc3eDdwaThNVDFxbmFucHpURWlx?=
- =?utf-8?B?NHpnajVhYnA5MDgzTWpjVXdhY0tBbGhNbGhNSjV6elpZVERTcHpieC9wUTll?=
- =?utf-8?B?QlJDb1B2d1ROQlZ4SkR1R1E4MXk0Y2NPOGRzeGxTdWJkbE9MVHJOODF5WkNv?=
- =?utf-8?B?SEVHcHpGcTlXTy9YdTBJUUFITTNqZ3QxcFkwRjBOTkpJclRndU1icExSR0s0?=
- =?utf-8?B?b3puNEJ2cmtIM1NtcDYxdzIvcy9MbU5sL2ZGQjB3TktHU01nYk1BOHdlM2RU?=
- =?utf-8?B?NXJ4N0cwMUhMK0dUalRFVHFHeTNDUjJ6YkEzcFBhZDNSSjRqZTJST2phUVV3?=
- =?utf-8?B?ZmRtejliUDMyYVYvaW1JZHJnd0NIdkx3VFNnVHlCaER6UVV1bTIxUHRzYitO?=
- =?utf-8?B?QXEyTU1BSC92alZUM1hXV2ZLMU9jRzFlbitGYldDak56UzNoakhtTTRSZng5?=
- =?utf-8?B?U2Exdm1oQnlQZDlLQTJJaWhkdkJrR25sTFpMeUg3QW5IOG00V1FHV2N3QUxW?=
- =?utf-8?B?MENIUXNSOFZhUFRTYm9wa3ljZzhYNVpzaENCMEE2V3cxS1J6UTQyY2kwRE9x?=
- =?utf-8?Q?PUrs=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3504e903-59d4-438f-a8c1-08dc920c3b28
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 16:07:21.1749
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hL8e1mhFv6RKk+k/28WzDU6pHe43SQ4iFXHkse1TjqWgNjUsuRlu6Igcfs0b9U1P
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4263
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240619082042.4173621-6-howardchu95@gmail.com>
 
-Hi Reinette,
+Hi Howard,
 
-On 6/20/2024 5:50 PM, Reinette Chatre wrote:
-> Hi Babu,
+On Wed, Jun 19, 2024 at 04:20:42PM +0800, Howard Chu wrote:
+> Check for vmlinux's existence in sysfs as prerequisite.
 > 
-> On 6/19/24 3:38 PM, Moger, Babu wrote:
->> On 6/13/2024 8:48 PM, Reinette Chatre wrote:
->>> On 5/24/24 5:23 AM, Babu Moger wrote:
-> 
->>>> +int resctrl_arch_assign(struct rdt_domain *d, u32 evtid, u32 rmid,
->>>> +            u32 ctr_id, u32 closid, bool enable)
->>>> +{
->>>> +    struct rdt_hw_domain *hw_dom = resctrl_to_arch_dom(d);
->>>> +    union l3_qos_abmc_cfg abmc_cfg = { 0 };
->>>> +    struct arch_mbm_state *arch_mbm;
->>>> +
->>>> +    abmc_cfg.split.cfg_en = 1;
->>>> +    abmc_cfg.split.ctr_en = enable ? 1 : 0;
->>>> +    abmc_cfg.split.ctr_id = ctr_id;
->>>> +    abmc_cfg.split.bw_src = rmid;
->>>> +
->>>> +    /*
->>>> +     * Read the event configuration from the domain and pass it as
->>>> +     * bw_type.
->>>> +     */
->>>> +    if (evtid == QOS_L3_MBM_TOTAL_EVENT_ID) {
->>>> +        abmc_cfg.split.bw_type = hw_dom->mbm_total_cfg;
->>>> +        arch_mbm = &hw_dom->arch_mbm_total[rmid];
->>>> +    } else {
->>>> +        abmc_cfg.split.bw_type = hw_dom->mbm_local_cfg;
->>>> +        arch_mbm = &hw_dom->arch_mbm_local[rmid];
->>>> +    }
->>>> +
->>>> +    smp_call_function_any(&d->cpu_mask, rdtgroup_abmc_cfg, 
->>>> &abmc_cfg, 1);
->>>> +
->>>> +    /* Reset the internal counters */
->>>
->>> "internal counters"? This needs a definition ... but since this is not
->>> a new data structure the comment can be more specific about what is done
->>> and why.
->>
->> How about?
->> /* Reset internal mbm event counters. */
-> 
-> I think it is potentially confusing to introduce a new concept of
-> "internal counters". This is just the architectural state helping to
-> detect overflows. This commit has no mention of this but I assume that
-> the re-configuration of the counter will reset it, which explains
-> why it is required to reset the state maintained by software.
-> A similar comment to what can be found in mbm_config_write_domain()
-> would be useful. This does not have to be so elaborate, maybe just 
-> something
-> like (please feel free to improve):
-> 
->      Configuring a hardware counter resets it. Reset architectural
->      state to match.
-> 
+> Add landlock_add_rule.c workload. Trace landlock_add_rule syscall to see
+> if the output is desirable.
 
-Sure. Thanks
-- Babu Moger
+Do you expect to add more things to the landlock workload?  I think we
+could simply call it landlock.c and probably do other things according
+to the argument, if needed (e.g. landlock add).
+
+Thanks,
+Namhyung
+
+> 
+> Trace the non-syscall tracepoint 'timer:hrtimer_init' and
+> 'timer:hrtimer_start', see if the 'mode' argument is augmented,
+> the 'mode' enum argument has the prefix of 'HRTIMER_MODE_'
+> in its name.
+> 
+> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/tests/builtin-test.c               |  1 +
+>  tools/perf/tests/shell/trace_btf_enum.sh      | 57 +++++++++++++++++++
+>  tools/perf/tests/tests.h                      |  1 +
+>  tools/perf/tests/workloads/Build              |  1 +
+>  .../perf/tests/workloads/landlock_add_rule.c  | 32 +++++++++++
+>  5 files changed, 92 insertions(+)
+>  create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
+>  create mode 100644 tools/perf/tests/workloads/landlock_add_rule.c
+> 
+> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+> index c3d84b67ca8e..e83200415ad1 100644
+> --- a/tools/perf/tests/builtin-test.c
+> +++ b/tools/perf/tests/builtin-test.c
+> @@ -152,6 +152,7 @@ static struct test_workload *workloads[] = {
+>  	&workload__sqrtloop,
+>  	&workload__brstack,
+>  	&workload__datasym,
+> +	&workload__landlock_add_rule,
+>  };
+>  
+>  static int num_subtests(const struct test_suite *t)
+> diff --git a/tools/perf/tests/shell/trace_btf_enum.sh b/tools/perf/tests/shell/trace_btf_enum.sh
+> new file mode 100755
+> index 000000000000..4861983553ab
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/trace_btf_enum.sh
+> @@ -0,0 +1,57 @@
+> +#!/bin/sh
+> +# perf trace enum augmentation tests
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +err=0
+> +set -e
+> +
+> +syscall="landlock_add_rule"
+> +non_syscall="timer:hrtimer_init,timer:hrtimer_start"
+> +
+> +TESTPROG="perf test -w landlock_add_rule"
+> +
+> +. "$(dirname $0)"/lib/probe.sh
+> +skip_if_no_perf_trace || exit 2
+> +
+> +check_vmlinux() {
+> +  echo "Checking if vmlinux exists"
+> +  if ! ls /sys/kernel/btf/vmlinux 1>/dev/null 2>&1
+> +  then
+> +    echo "trace+enum test [Skipped missing vmlinux BTF support]"
+> +    err=2
+> +  fi
+> +}
+> +
+> +trace_landlock() {
+> +  echo "Tracing syscall ${syscall}"
+> +  if perf trace -e $syscall $TESTPROG 2>&1 | \
+> +     grep -q -E ".*landlock_add_rule\(ruleset_fd: 11, rule_type: (LANDLOCK_RULE_PATH_BENEATH|LANDLOCK_RULE_NET_PORT), rule_attr: 0x[a-f0-9]+, flags: 45\) = -1.*"
+> +  then
+> +    err=0
+> +  else
+> +    err=1
+> +  fi
+> +}
+> +
+> +trace_non_syscall() {
+> +  echo "Tracing non-syscall tracepoint ${non-syscall}"
+> +  if perf trace -e $non_syscall --max-events=1 2>&1 | \
+> +     grep -q -E '.*timer:hrtimer_.*\(.*mode: HRTIMER_MODE_.*\)$'
+> +  then
+> +    err=0
+> +  else
+> +    err=1
+> +  fi
+> +}
+> +
+> +check_vmlinux
+> +
+> +if [ $err = 0 ]; then
+> +  trace_landlock
+> +fi
+> +
+> +if [ $err = 0 ]; then
+> +  trace_non_syscall
+> +fi
+> +
+> +exit $err
+> diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
+> index 3aa7701ee0e9..69126299bb08 100644
+> --- a/tools/perf/tests/tests.h
+> +++ b/tools/perf/tests/tests.h
+> @@ -205,6 +205,7 @@ DECLARE_WORKLOAD(leafloop);
+>  DECLARE_WORKLOAD(sqrtloop);
+>  DECLARE_WORKLOAD(brstack);
+>  DECLARE_WORKLOAD(datasym);
+> +DECLARE_WORKLOAD(landlock_add_rule);
+>  
+>  extern const char *dso_to_test;
+>  extern const char *test_objdump_path;
+> diff --git a/tools/perf/tests/workloads/Build b/tools/perf/tests/workloads/Build
+> index a1f34d5861e3..5b12b93ecffa 100644
+> --- a/tools/perf/tests/workloads/Build
+> +++ b/tools/perf/tests/workloads/Build
+> @@ -6,6 +6,7 @@ perf-y += leafloop.o
+>  perf-y += sqrtloop.o
+>  perf-y += brstack.o
+>  perf-y += datasym.o
+> +perf-y += landlock_add_rule.o
+>  
+>  CFLAGS_sqrtloop.o         = -g -O0 -fno-inline -U_FORTIFY_SOURCE
+>  CFLAGS_leafloop.o         = -g -O0 -fno-inline -fno-omit-frame-pointer -U_FORTIFY_SOURCE
+> diff --git a/tools/perf/tests/workloads/landlock_add_rule.c b/tools/perf/tests/workloads/landlock_add_rule.c
+> new file mode 100644
+> index 000000000000..529b5f1ea5a7
+> --- /dev/null
+> +++ b/tools/perf/tests/workloads/landlock_add_rule.c
+> @@ -0,0 +1,32 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#include <linux/compiler.h>
+> +#include <uapi/asm-generic/unistd.h> // for __NR_landlock_add_rule
+> +#include <unistd.h>
+> +#include <linux/landlock.h>
+> +#include "../tests.h"
+> +
+> +static int landlock_add_rule(int argc __maybe_unused, const char **argv __maybe_unused)
+> +{
+> +	int fd = 11;
+> +	int flags = 45;
+> +
+> +	struct landlock_path_beneath_attr path_beneath_attr = {
+> +	    .allowed_access = LANDLOCK_ACCESS_FS_READ_FILE,
+> +	    .parent_fd = 14,
+> +	};
+> +
+> +	struct landlock_net_port_attr net_port_attr = {
+> +	    .port = 19,
+> +	    .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +	};
+> +
+> +	syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_PATH_BENEATH,
+> +		&path_beneath_attr, flags);
+> +
+> +	syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_NET_PORT,
+> +		&net_port_attr, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +DEFINE_WORKLOAD(landlock_add_rule);
+> -- 
+> 2.45.2
+> 
 
