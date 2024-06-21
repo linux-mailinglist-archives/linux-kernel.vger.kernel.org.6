@@ -1,175 +1,120 @@
-Return-Path: <linux-kernel+bounces-224104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9044A911D4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:49:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C99911D8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF5DE1C21057
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:49:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D018EB22562
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEF816C86D;
-	Fri, 21 Jun 2024 07:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="DBlbpCdB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="mgMFAjs5"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071A8168C3A;
-	Fri, 21 Jun 2024 07:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1FC16DEB2;
+	Fri, 21 Jun 2024 07:53:43 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7568917164D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718956147; cv=none; b=flDdB5tnbRIgY4GkhX9J8QMtVKQ9Bl90xw43IVKtjr2pI7wHPh00JWOiBjLYMWq6iRVwsEZVpAVRmfdx0SoNUeyGUOH/2OISZOTUJ1LWB+DWTzOkrTGZYDm79KW1qBMJ17ADe7DkbSgtMWBzBCCtsUxQWa/sit7U+RhVIKUWs3I=
+	t=1718956423; cv=none; b=sJAfwWwH9cy1G5mwUuQDDqFyUCRZqARG05Xykfvm3NZeCPc/3JKdU/miQhnNQaa0IsToSuXmiMHol7G3D++J+kx8sGR8UUrllmnaCKQBL3UxC8rTvMqidzou4aamQzPcmw7qM7DbSK7oVhrTXxuQ6qoyEbQVcJ/6WmxS6quNs/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718956147; c=relaxed/simple;
-	bh=wIlmEkajVgionahbTspK538zjM57VKi+YSPROMBtrCM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q5AwTCeo8jcKRq++lXckAeNBb0R3ollWizFBpWCNxhafWw4aFFpdHANTH/7S5Um+e+Rm1uvJurQSTQmM3San68dLmgDs8Fvopfj30nvb0UM7zfRf1U2uagBYP4Wm2+II4SpswsV1DiAiVikkiJp8uvhb69WZQCGZH6kkteEuk3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=DBlbpCdB; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=mgMFAjs5 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1718956143; x=1750492143;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wIlmEkajVgionahbTspK538zjM57VKi+YSPROMBtrCM=;
-  b=DBlbpCdBlgvg89nMtcbkjg2pf3QGeUKROKke80Dv0mLdVSedaFVhuxUl
-   Xqkp10yan6dKajxkbGlhm9/rupsF7Y4vt3m8F2/rwxkydR0ryIt9NAr+z
-   WaRfCGgvFKw+jeWbGwC/oqd5lGO3zlTaEB4xa/ZIIB+QfYEszmaotfyM6
-   rPAv72Aygro5Io7zJ4gsbrAQUvdc5EGvnT0Pj49R7Ecaq/lW45xVuGZEJ
-   vFg2CErI4QLuXOB/JsJDDcP5+lyUK0OOTxEVQeBQhu0RO0fL5H3tlqKUg
-   1qjHSm7zmAC4iP4rv0P404O33LJm4lr79tt2ygbA0EsBcGvP1uEZ+ZCEx
-   A==;
-X-CSE-ConnectionGUID: s8GHXRv/SRCOEcMmDwWgyg==
-X-CSE-MsgGUID: SQUcTY4bRNqbIS5VTrS2oA==
-X-IronPort-AV: E=Sophos;i="6.08,254,1712613600"; 
-   d="scan'208";a="37515205"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 21 Jun 2024 09:48:59 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A9407160A30;
-	Fri, 21 Jun 2024 09:48:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1718956135;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=wIlmEkajVgionahbTspK538zjM57VKi+YSPROMBtrCM=;
-	b=mgMFAjs5PkqL7DA5WhALlYJLzMWua/S6uYkLRX1dtyDPUUkdkChkAN/ZLy6tAht+56Giwf
-	IGikV/5Kopjj4czSVeOmOznPBmfGgwxS4nYkeHknIukwuWOedcpGgY9KQEa1ZbWFwWhTC5
-	gFn+wfN5MCD6bSU5fKCYXGlXJ3dvQKPN9SubqLy/1xGp0nbxL6p/5KJAP+jzhzdoeWToks
-	19nxDRcY/soKwOhotRxhwLVtNwKA25I0wEVoPTKsSH7tlezsVdYjidK76xZjl3wr6WHq79
-	LrteIRg4wvOAyXyFaI9PJ9PWASzeGFVBHormvE2TWHDozerE1Ep5AWGNOdONKg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael Walle <mwalle@kernel.org>, Thorsten Scherer <t.scherer@eckelmann.de>
-Cc: linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marex@denx.de>, Imre Kaloz <kaloz@openwrt.org>, Andrew Lunn <andrew@lunn.ch>, Flavio Suligoi <f.suligoi@asem.it>
-Subject: Re: [PATCH] dt-bindings: mtd: spi-nor: deprecate Everspin MRAM devices
-Date: Fri, 21 Jun 2024 09:48:56 +0200
-Message-ID: <114624730.nniJfEyVGO@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <D25I9KDHREE9.29RPCOHXUA70A@kernel.org>
-References: <20240604074231.1874972-1-mwalle@kernel.org> <23574950.6Emhk5qWAg@steina-w> <D25I9KDHREE9.29RPCOHXUA70A@kernel.org>
+	s=arc-20240116; t=1718956423; c=relaxed/simple;
+	bh=yOtdE28v36LZJIJwy0A4ttQSFa2gB+PbTLoJFgRiu+4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YcH0idGWTdSLTifPZF2qFBpMh9D6nnP1VxhTBn4CEiPHIh++jsDnwmKFW+qD87nOzpVJ2vLyYXnMmusvXmG7w8x+xfsynVfoNJIHt2SsKOd5g5VBHWNudDjmfzyYjxYPqKMALnPdSKrW9b5C8tu7UmbWS0Q9k8VIiLQvHYmrMgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: 6jajDp3AQfqKBqJRO5HZFg==
+X-CSE-MsgGUID: x2L0l/TUTMiiXCGOgMj94g==
+X-IronPort-AV: E=Sophos;i="6.08,254,1712592000"; 
+   d="scan'208";a="114532156"
+From: Lingyue <lingyue@xiaomi.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>,
+	<dianders@chromium.org>, <swboyd@chromium.org>, <frederic@kernel.org>,
+	<james.morse@arm.com>, <scott@os.amperecomputing.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <huangshaobo3@xiaomi.com>, <huangjun7@xiaomi.com>, Lingyue
+	<lingyue@xiaomi.com>
+Subject: [PATCH] arm64: smp: do not allocate CPU IDs to invalid CPU nodes
+Date: Fri, 21 Jun 2024 15:50:45 +0800
+Message-ID: <20240621075045.249798-1-lingyue@xiaomi.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bj-mbx09.mioffice.cn (10.237.8.129) To BJ-MBX13.mioffice.cn
+ (10.237.8.133)
 
-Hi,
+Many modules, such as arch topology, rely on num_possible_cpus() to
+allocate memory and then access the allocated space using CPU IDs.
+These modules assume that there are no gaps in cpu_possible_mask.
+However, in of_parse_and_init_cpus(), CPU IDs are still allocated
+for invalid CPU nodes, leading to gaps in cpu_possible_mask and
+resulting in out-of-bounds memory access. So it is crucial to avoid
+allocating CPU IDs to invalid CPU nodes.
 
-removing Uwe from CC as this address bounces.
+This issue can be reproduced easily on QEMU with KASAN enabled, by
+modifing reg property of a CPU node to 0xFFFFFFFF
 
-Am Freitag, 21. Juni 2024, 09:09:56 CEST schrieb Michael Walle:
-> On Fri Jun 21, 2024 at 8:49 AM CEST, Alexander Stein wrote:
-> > Hi everyone,
-> >
-> > sorry for being late to the party. I just noticed this discussion while
-> > reading [1].
-> >
-> > Am Dienstag, 4. Juni 2024, 09:42:31 CEST schrieb Michael Walle:
-> > > These devices are more like an AT25 compatible EEPROM instead of
-> > > flashes. Like an EEPROM the user doesn't need to explicitly erase the
-> > > memory, nor are there sectors or pages. Thus, instead of the SPI-NOR
-> > > (flash) driver, one should instead use the at25 EEPROM driver.
-> > >=20
-> > > Signed-off-by: Michael Walle <mwalle@kernel.org>
-> > > Cc: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> > > Cc: Thorsten Scherer <t.scherer@eckelmann.de>
-> > > Cc: Marek Vasut <marex@denx.de>
-> > > Cc: Imre Kaloz <kaloz@openwrt.org>
-> > > Cc: Andrew Lunn <andrew@lunn.ch>
-> > > Cc: Flavio Suligoi <f.suligoi@asem.it>
-> > > ---
-> > > The referenced binding only supports the true AT25 compatible EEPROMs
-> > > where you have to specify additional properties like size and page si=
-ze
-> > > or cypress FRAM devices where all the properties are discovered by the
-> > > driver. I don't have the actual hardware, therefore I can't work on a
-> > > proper driver and binding. But I really want to deprecate the use of
-> > > these EEPROM like devices in SPI-NOR. So as a first step, mark the
-> > > devices in the DT bindings as deprecated.
-> > >=20
-> > > There are three in-tree users of this. I hope I've CCed all the relev=
-ant
-> > > people. With the switch to the at25 driver also comes a user-space
-> > > facing change: there is no more MTD device. Instead there is an "eepr=
-om"
-> > > file in /sys now, just like for every other EEPROM.
-> > >=20
-> > > Marek already expressed, that the sps1 dts can likely be removed
-> > > altogether. I'd like to hear from the other board DTS maintainers if
-> > > they seem some problems moving to the EEPROM interface - or maybe that
-> > > device isn't used at all anyway. So in the end, we can hopefully move
-> > > all the users over to the at25 driver.
-> >
-> > So instead of spi-nor you want to use at25 for this MRAM devices?
->=20
-> Yes.
->=20
-> > AFAICS at25 is a spi only driver, but spi-nor is a spi-mem driver. So I=
- am
-> > wondering if at25 driver is capable of using QSPI hosts.
->=20
-> spi-mem support could be added to the at25 driver. But probably
-> mainly because there are SPI controllers out there which only have
-> an interface to attach memory (like the FlexSPI from NXP).
+[    0.197756] BUG: KASAN: slab-out-of-bounds in topology_normalize_cpu_scale.part.0+0x2cc/0x34c
+[    0.199518] Read of size 4 at addr ffff000007ebe924 by task swapper/0/1
+[    0.200087]
+[    0.200739] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.10.0-rc4 #3
+[    0.201647] Hardware name: linux,dummy-virt (DT)
+[    0.203067] Call trace:
+[    0.203404]  dump_backtrace+0x90/0xe8
+[    0.203974]  show_stack+0x18/0x24
+[    0.204424]  dump_stack_lvl+0x78/0x90
+[    0.205090]  print_report+0x114/0x5cc
+[    0.205908]  kasan_report+0xa4/0xf0
+[    0.206488]  __asan_report_load4_noabort+0x20/0x2c
+[    0.207427]  topology_normalize_cpu_scale.part.0+0x2cc/0x34c
+[    0.208275]  init_cpu_topology+0x254/0x430
+[    0.209518]  smp_prepare_cpus+0x20/0x25c
+[    0.210824]  kernel_init_freeable+0x1dc/0x4fc
+[    0.212047]  kernel_init+0x24/0x1ec
+[    0.213143]  ret_from_fork+0x10/0x20
 
-Yes, FlexSPI is my current area of interest.
+Signed-off-by: Lingyue <lingyue@xiaomi.com>
+---
+ arch/arm64/kernel/smp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> > Everspin EMxxLXB devices are capable of running in xSPI modes.
-> > Regarding QSPI (DSPI/OSPI as well) I assumed spi-nor is a given, but ma=
-ybe
-> > I am completely wrong here. Maybe someone could clarify this.
->=20
-> These newer devices should also support the erase command, right? So
-> they can be a "real" flash. If they support SFDP, the would even be
-> supported out of the box. The mentioned everspin devices are much
-> older and behaves more like an EEPROM instead of a flash.
-
-I see this is about older devices, I got misled by the subject.
-The new devices EMxxLX devices do not support SFDP. There are erase command=
-s,
-but unless you want to set sectors/whole chip to a defined state, this seems
-unneeded, so SPI_NOR_NO_ERASE would be sensible.
-I'm wondering if the comment in [1] is still applicable unconditionally, as
-there still is a use-case for spi-nor on flexspi.
-
-Best regards,
-Alexander
-
-[1] https://lore.kernel.org/linux-kernel/D0C9NCOMI27O.2VW2U3FNFTSPK@kernel.=
-org/
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 31c8b3094dd7..5b4178145920 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -638,12 +638,12 @@ static void __init of_parse_and_init_cpus(void)
+ 		u64 hwid = of_get_cpu_hwid(dn, 0);
+ 
+ 		if (hwid & ~MPIDR_HWID_BITMASK)
+-			goto next;
++			continue;
+ 
+ 		if (is_mpidr_duplicate(cpu_count, hwid)) {
+ 			pr_err("%pOF: duplicate cpu reg properties in the DT\n",
+ 				dn);
+-			goto next;
++			continue;
+ 		}
+ 
+ 		/*
+@@ -656,7 +656,7 @@ static void __init of_parse_and_init_cpus(void)
+ 			if (bootcpu_valid) {
+ 				pr_err("%pOF: duplicate boot cpu reg property in DT\n",
+ 					dn);
+-				goto next;
++				continue;
+ 			}
+ 
+ 			bootcpu_valid = true;
+-- 
+2.34.1
 
 
