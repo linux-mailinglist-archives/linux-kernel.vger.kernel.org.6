@@ -1,226 +1,117 @@
-Return-Path: <linux-kernel+bounces-224961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E7A912924
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:14:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10DDD912928
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9F301C20AAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:14:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 445291C2259A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1866E548F7;
-	Fri, 21 Jun 2024 15:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807E35CDE9;
+	Fri, 21 Jun 2024 15:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="StlKORTv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ofcvR19f"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814875EE8D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 15:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FCF374D1;
+	Fri, 21 Jun 2024 15:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718982830; cv=none; b=a+6epKHavXgzugpEr8ntqYxGTqoqoOd1afO4o2JBUnjCuu8HZy6gloGjAzeY0YY9QCHIud8nbEWPcgqGNn2WkzkcgytYhFckoUXqvFYStA7CEX0rhGyv3nWJgPKTnTh1y598SOccRf53v/XDfgX76e33A94Dm3hskpTu39k7Kxk=
+	t=1718982869; cv=none; b=N/4v2knzUfFzoY1i7ALx0/57GDwUu6qyIQyUewVvz0S8C0kCUa+06FYMNw7p28K/2FMPs+cO4YOB9tKDdkejpzHtc3fzUiKb0uPPTFaC4csQ99EOa+yEtR0lp4aE6sP0P3wgXwAiv2E2bHdEUjygQt749yet473OeQsKAaQqPU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718982830; c=relaxed/simple;
-	bh=DZJlAi4dyBH8I99r68PHVwY0JqwlfNNiIzz24nZFbXY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TjN5G7XRPoMUPe05+dVxy0+IY9w1NTwlVFVM2n67SLYK0l7+MVX/ypPZyA5xjAg5AFa2fIU4+uY89gOaG53d15lIpbQigyYJpT4HEXBdKyqqVl77mfJRzHTagu10o7+U7dn7IyNTar54oxy9hFU7LKQVvj3oeyaJQemA/uq1sqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=StlKORTv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718982827;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EP/kWpZ/AZr0wzKgF+O2dWS3CSDCoLm/7KmRqzqigc4=;
-	b=StlKORTvVCxHGNnGx8w+1SLOQAGC9MokDw9z5MkgTuCE/38SO0yll4ytSkfleNqimahfKs
-	mIy06RJ8g3D/cVQTJNRu2tDDnszVu1URm85/2Eap4SY5VkeYMH2z544a3in8/Zj3eVIO5p
-	hcgrvuXX5RN1BEOrK0RwJRkVujlTWMQ=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-52-qD7zYqEPO-GFO_glMF_BXw-1; Fri,
- 21 Jun 2024 11:13:44 -0400
-X-MC-Unique: qD7zYqEPO-GFO_glMF_BXw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2273C1956055;
-	Fri, 21 Jun 2024 15:13:42 +0000 (UTC)
-Received: from [10.22.17.209] (unknown [10.22.17.209])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AC86B3000605;
-	Fri, 21 Jun 2024 15:13:39 +0000 (UTC)
-Message-ID: <f75c9256-1969-4b34-bc93-106581157042@redhat.com>
-Date: Fri, 21 Jun 2024 11:13:38 -0400
+	s=arc-20240116; t=1718982869; c=relaxed/simple;
+	bh=umC54IYckTgkQeoniX9VSI4d9IzVAPV0mFUWWUNAxcQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QW3qkgC2UoqgI6z3ywsVhGufmEZcSXWKZbxZ0geN2pKUdEBx3jAEjSA2pScLLxjOUkXmzikWUKjwF0nkLEsBhvuEQEKH6mtS6XrebgdqNk8bhWpit4cH0GEq/rysUVEeIDj8s9URK0lL2IAg3ugr1gWctL8gWMYLiDRiLDPyGvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ofcvR19f; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LFEIK5073022;
+	Fri, 21 Jun 2024 10:14:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718982858;
+	bh=nYRRWkXd19SnsQRtzTSJ/QxcrDstVG9Wz1Q3ayqJNkw=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=ofcvR19fvDYS00WW9sja4fbtLpbYHWX9rF4DW9/57FfSx5wscfE9/neRoL0hrNi2D
+	 XUtNZYAyC0nuFtZ2nFya74MnzV25lydmoXXoI3NOwfeY0EtsLRnfoWAKHZ0AnFLBgL
+	 fJqJQWvXB9o3P7tu/tCq8jUZJOd2fRIAkk3FbGsI=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LFEI7J016262
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 21 Jun 2024 10:14:18 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
+ Jun 2024 10:14:18 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 21 Jun 2024 10:14:18 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LFEFV7062734;
+	Fri, 21 Jun 2024 10:14:15 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am642-sk: Add power supply temperature sensors
+Date: Fri, 21 Jun 2024 20:44:12 +0530
+Message-ID: <171898028149.2272421.15510099849827395952.b4-ty@ti.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240612183826.121856-1-afd@ti.com>
+References: <20240612183826.121856-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cgroup/rstat: Avoid thundering herd problem by kswapd
- across NUMA nodes
-To: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org,
- cgroups@vger.kernel.org, yosryahmed@google.com, shakeel.butt@linux.dev
-Cc: hannes@cmpxchg.org, lizefan.x@bytedance.com, kernel-team@cloudflare.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <171898037079.1222367.13467317484793748519.stgit@firesoul>
- <bb5d0ff3-c130-4f98-bac1-e3b95ddc7791@kernel.org>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <bb5d0ff3-c130-4f98-bac1-e3b95ddc7791@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 6/21/24 10:47, Jesper Dangaard Brouer wrote:
->
-> Hold off applying this patch, as test kernel didn't boot with this patch
-> applied on top of TJ's cgroup tree (on commit ec9eeb89e60d86).  I don't
-> know if this is related to this patch or not.
+Hi Andrew Davis,
 
-Commit ec9eeb89e60d86 is just a snapshot of the Linus' tree. You should 
-use for-next/for-6.11 tag as a base.
+On Wed, 12 Jun 2024 13:38:26 -0500, Andrew Davis wrote:
+> The SK-AM64 board has two TMP100 temperature sensors, add these here.
+> 
+> 
 
-Cheers,
-Longman
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
->
-> --Jesper
->
-> On 21/06/2024 16.32, Jesper Dangaard Brouer wrote:
->> Avoid lock contention on the global cgroup rstat lock caused by kswapd
->> starting on all NUMA nodes simultaneously. At Cloudflare, we observed
->> massive issues due to kswapd and the specific mem_cgroup_flush_stats()
->> call inlined in shrink_node, which takes the rstat lock.
->>
->> On our 12 NUMA node machines, each with a kswapd kthread per NUMA node,
->> we noted severe lock contention on the rstat lock. This contention
->> causes 12 CPUs to waste cycles spinning every time kswapd runs.
->> Fleet-wide stats (/proc/N/schedstat) for kthreads revealed that we are
->> burning an average of 20,000 CPU cores fleet-wide on kswapd, primarily
->> due to spinning on the rstat lock.
->>
->> To help reviewer follow code: When the Per-CPU-Pages (PCP) freelist is
->> empty, __alloc_pages_slowpath calls wake_all_kswapds(), causing all
->> kswapdN threads to wake up simultaneously. The kswapd thread invokes
->> shrink_node (via balance_pgdat) triggering the cgroup rstat flush
->> operation as part of its work. This results in kernel self-induced rstat
->> lock contention by waking up all kswapd threads simultaneously.
->> Leveraging this detail: balance_pgdat() have NULL value in
->> target_mem_cgroup, this cause mem_cgroup_flush_stats() to do flush with
->> root_mem_cgroup.
->>
->> To resolve the kswapd issue, we generalized the "stats_flush_ongoing"
->> concept to apply to all users of cgroup rstat, not just memcg. This
->> concept was originally reverted in commit 7d7ef0a4686a ("mm: memcg:
->> restore subtree stats flushing"). If there is an ongoing rstat flush,
->> limited to the root cgroup, the flush is skipped. This is effective as
->> kswapd operates on the root tree, sufficiently mitigating the thundering
->> herd problem.
->>
->> This lowers contention on the global rstat lock, although limited to the
->> root cgroup. Flushing cgroup subtree's can still lead to lock 
->> contention.
->>
->> Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
->> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
->> ---
->>   include/linux/cgroup.h |    5 +++++
->>   kernel/cgroup/rstat.c  |   28 ++++++++++++++++++++++++++++
->>   2 files changed, 33 insertions(+)
->>
->> diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
->> index 2150ca60394b..ad41cca5c3b6 100644
->> --- a/include/linux/cgroup.h
->> +++ b/include/linux/cgroup.h
->> @@ -499,6 +499,11 @@ static inline struct cgroup 
->> *cgroup_parent(struct cgroup *cgrp)
->>       return NULL;
->>   }
->>   +static inline bool cgroup_is_root(struct cgroup *cgrp)
->> +{
->> +    return cgroup_parent(cgrp) == NULL;
->> +}
->> +
->>   /**
->>    * cgroup_is_descendant - test ancestry
->>    * @cgrp: the cgroup to be tested
->> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
->> index fb8b49437573..5aba95e92d31 100644
->> --- a/kernel/cgroup/rstat.c
->> +++ b/kernel/cgroup/rstat.c
->> @@ -11,6 +11,7 @@
->>     static DEFINE_SPINLOCK(cgroup_rstat_lock);
->>   static DEFINE_PER_CPU(raw_spinlock_t, cgroup_rstat_cpu_lock);
->> +static atomic_t root_rstat_flush_ongoing = ATOMIC_INIT(0);
->>     static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu);
->>   @@ -350,8 +351,25 @@ __bpf_kfunc void cgroup_rstat_flush(struct 
->> cgroup *cgrp)
->>   {
->>       might_sleep();
->>   +    /*
->> +     * This avoids thundering herd problem on global rstat lock. 
->> When an
->> +     * ongoing flush of the entire tree is in progress, then skip 
->> flush.
->> +     */
->> +    if (atomic_read(&root_rstat_flush_ongoing))
->> +        return;
->> +
->> +    /* Grab right to be ongoing flusher, return if loosing race */
->> +    if (cgroup_is_root(cgrp) &&
->> +        atomic_xchg(&root_rstat_flush_ongoing, 1))
->> +        return;
->> +
->>       __cgroup_rstat_lock(cgrp, -1);
->> +
->>       cgroup_rstat_flush_locked(cgrp);
->> +
->> +    if (cgroup_is_root(cgrp))
->> +        atomic_set(&root_rstat_flush_ongoing, 0);
->> +
->>       __cgroup_rstat_unlock(cgrp, -1);
->>   }
->>   @@ -362,13 +380,20 @@ __bpf_kfunc void cgroup_rstat_flush(struct 
->> cgroup *cgrp)
->>    * Flush stats in @cgrp's subtree and prevent further flushes.  
->> Must be
->>    * paired with cgroup_rstat_flush_release().
->>    *
->> + * Current invariant, not called with root cgrp.
->> + *
->>    * This function may block.
->>    */
->>   void cgroup_rstat_flush_hold(struct cgroup *cgrp)
->>       __acquires(&cgroup_rstat_lock)
->>   {
->>       might_sleep();
->> +
->>       __cgroup_rstat_lock(cgrp, -1);
->> +
->> +    if (atomic_read(&root_rstat_flush_ongoing))
->> +        return;
->> +
->>       cgroup_rstat_flush_locked(cgrp);
->>   }
->>   @@ -379,6 +404,9 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
->>   void cgroup_rstat_flush_release(struct cgroup *cgrp)
->>       __releases(&cgroup_rstat_lock)
->>   {
->> +    if (cgroup_is_root(cgrp))
->> +        atomic_set(&root_rstat_flush_ongoing, 0);
->> +
->>       __cgroup_rstat_unlock(cgrp, -1);
->>   }
->>
->>
->
+[1/1] arm64: dts: ti: k3-am642-sk: Add power supply temperature sensors
+      commit: b82feb3a56e25919d6729b98c8152d950045fc5b
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
 
