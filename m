@@ -1,122 +1,97 @@
-Return-Path: <linux-kernel+bounces-224344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08D2791211F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:47:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36979912123
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B846D28155C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:46:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32121F264C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B49C81AC6;
-	Fri, 21 Jun 2024 09:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FC316F847;
+	Fri, 21 Jun 2024 09:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpEEAGkK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6488342AA0
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XpNDUMs9"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC9616EB59;
+	Fri, 21 Jun 2024 09:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718963213; cv=none; b=kgFn8dkixGoIhziKZ9bFPERjuMbflnlxEy/q7o7Pio4kH2dFBE922KOvfYMXPaWZa/ZZwKWwb4VrW/SBdv+j1fZVcKFlVeOZNMXP8l64nzconyMx8tvFvX1TkuQtiMA23aywCmnGU9UHFOCcS99QT+Jl3jQeBG6D9oxxPQC9MgE=
+	t=1718963291; cv=none; b=GlY5IBq87F7J3vKWvuyZEH2Zs/LvkSOeu5FEeBYPcyXO/YlFp/apr2ckYSA7gXKAhvGLLQ9YQBOBCehi3Qb+pLB5c8Er64/mLqWKl8L03rMfIYI+A+tXDW8m4kjdgDXyu1xDNEUVNmUmYZMpL0FThNolUlf561UycLPhoXiTNP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718963213; c=relaxed/simple;
-	bh=jKBzzFJgP4KGZzGVeyg+1aMf2D+AkSK2i7HSacskoWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oUIxZGZKxFrKq0PFDT83q+pXMDPsnCyjmPTrDLONwhPOO+FTUI4ie4+TpNY7W+6TF8KYvi6k3nKFzyNkdMFcjQR/bOT13ina3bnWznlEWWCyuN6H64ii2HG7ZL2V1TJDicu1tgZFOfm8WvTBwhz37NL3cWLqnRcGaDzDO3A3mvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpEEAGkK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54661C2BBFC;
-	Fri, 21 Jun 2024 09:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718963212;
-	bh=jKBzzFJgP4KGZzGVeyg+1aMf2D+AkSK2i7HSacskoWs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bpEEAGkKPvS3woD/fde1frxnhvxNw/jTA6ZZx4AJtZrYFJB/eYJM1itc6Df1Ve/Y2
-	 z1b7aclAlvQ7R3EhVPmYcVFx/5iFMbH/CbIBkUMZ57C5MBeNTW26tZURx+Yiwq6FEz
-	 jPg/i65bh90jKxf9ZuV7/iCZu+KFgQYhW5svNgmTJcKHz5c0wt/Rb8RjC9gW78oszh
-	 4NjKAG+4evw9EJ7EZ81GguE0sgzALFYmHA7SxVyPNAXq+yUibNBaPNeplP28Zz5RQB
-	 lD0irnWvn/3TSYiPnOtvFWstXaszYIiVqDQWq+1Vo5bRDtRZfUnXyhuAickaXdFdsy
-	 ALeNAytRZbcEA==
-Date: Fri, 21 Jun 2024 15:16:48 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: soundwire fixes for v6.10
-Message-ID: <ZnVMCAG3F5JLdl5I@matsya>
+	s=arc-20240116; t=1718963291; c=relaxed/simple;
+	bh=pTK2uk7dTedHpm+HT2VnhvW2RAAVd5OtodFRrb2p3Tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tpHwAoZLH4EY+a0461a50Kog4iGXOxxXGe3XXj4LNQZaZm5Qu/21H/72ARYSyjigRovn2w+8frv8BA3akorD8p2810uXB/gX1tn44bwHXXFQU1w3Lf7hky3SF+okb1oyNPwif3+8ECWMJFfa7Lnd2N4ZqNpg/IywpD0h2vbpnxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XpNDUMs9; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 2F02920B7001; Fri, 21 Jun 2024 02:48:07 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2F02920B7001
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1718963287;
+	bh=jOQ1R1Gu/tsvIRuTjwZzd2lF8ZLheCSPiAPtGPLzvtE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XpNDUMs9RVdxqIxdhNCmuIS3E04RplHmZSj6RJHgloqBfagTATLBZK2hja3rz1JOZ
+	 rTu3bPc811gGAKZmW7w12YO+7lRPqHzlPtS8bTXbJQNDbhio1nFygGIDkzFC4DA8qN
+	 U9+HwPWc57kbpYSx1B2G5Ln0kioN9TcJVnnAw6gQ=
+Date: Fri, 21 Jun 2024 02:48:07 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Rachel Menge <rachelmenge@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com, longli@microsoft.com,
+	chrco@linux.microsoft.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Drivers: hv: Remove deprecated hv_fcopy declarations
+Message-ID: <20240621094807.GA12314@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20240620225040.700563-1-rachelmenge@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PNvFnR5VwBpONmnf"
-Content-Disposition: inline
-
-
---PNvFnR5VwBpONmnf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240620225040.700563-1-rachelmenge@linux.microsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hello Linus,
-
-Please pull to receive single fix for soundwire subsystem.
-
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/so=
-undwire-6.10-fixes
-
-for you to fetch changes up to e2d8ea0a066a6db51f31efd2710057271d685d2e:
-
-  soundwire: fix usages of device_get_named_child_node() (2024-06-03 17:35:=
-24 +0530)
-
-----------------------------------------------------------------
-soundwire fixes for 6.10
-
- - Single fix for calling fwnode_handle_put() on the
-   returned fwnode pointer
-
-----------------------------------------------------------------
-Pierre-Louis Bossart (1):
-      soundwire: fix usages of device_get_named_child_node()
-
- drivers/soundwire/amd_manager.c     |  3 +++
- drivers/soundwire/intel_auxdevice.c |  6 +++++-
- drivers/soundwire/mipi_disco.c      | 30 ++++++++++++++++++++++++------
- 3 files changed, 32 insertions(+), 7 deletions(-)
-
---=20
-~Vinod
-
---PNvFnR5VwBpONmnf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmZ1TAgACgkQfBQHDyUj
-g0cvug//TjZqGCsgeijXKVyhhrMKbf+SpZaRK+TboAtFnegzfAa/BkoGQsXxFNo4
-b5+cQtxvVMl63vYZTeIdkvMFibCYgsyn+yfOIPCkgXmqKaHYKE0nqDDCRVf4UfRy
-PJe3QtfN5l4X89oiOc+TLH4S/yVXP2NSoEbbmqgrmNG16KrwA40xKxDaRkmua4V7
-/kiZUvYtn63Q6La6FIRQLQlHf3ENKCx83AD4tIOMOU+nKNY3xIyuEfegy30uvsGP
-OCT8OFyZG9TsRnXlGd69PBMJkZogEf48cNXXHwwpkbTq+/mIBKl9Gs/sfotQ36eI
-loFwMJbyQv1qHfHeFKtKAJaCxPPg0g2RqBR2I2Tl3GagXYWKWQALvLHSGw5gx7Ps
-W/68Me0Wqyw1JqCD8Ba8Jnw+opLF8ENnjg1rFoXT6keW3MBAzaeXN6TpVnpdUEQ9
-pgZ/NTdmKHNIwK8VjIgQPfDZmsLmPB/bQJYgUtVOyon1ro6P5BPByp8K3/39VEAq
-raY71Bks26E4ys8kqCRsiSclxzQkhVwww7TQ+saA67nWn8r1SkS52O3mEPOsx0NG
-332pSKrmv+72aTENa9KGMkCEgcDCK+PtSuPuvwXMmD37Kdjl/pIEmfTgXvMFBMiZ
-BoCgP6PPRi3BRmDqIo3fsYCuwu4oqTqCIqD5/zwZrorHsbv3CqM=
-=rcFK
------END PGP SIGNATURE-----
-
---PNvFnR5VwBpONmnf--
+On Thu, Jun 20, 2024 at 06:50:40PM -0400, Rachel Menge wrote:
+> There are lingering hv_fcopy declarations which do not have definitions.
+> The fcopy driver was removed in commit ec314f61e4fc ("Drivers: hv: Remove
+> fcopy driver").
+> 
+> Therefore, remove the hv_fcopy declarations which are no longer needed
+> or defined.
+> 
+> Fixes: ec314f61e4fc ("Drivers: hv: Remove fcopy driver")
+> Signed-off-by: Rachel Menge <rachelmenge@linux.microsoft.com>
+> ---
+>  drivers/hv/hyperv_vmbus.h | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> index 76ac5185a01a..d2856023d53c 100644
+> --- a/drivers/hv/hyperv_vmbus.h
+> +++ b/drivers/hv/hyperv_vmbus.h
+> @@ -380,12 +380,6 @@ void hv_vss_deinit(void);
+>  int hv_vss_pre_suspend(void);
+>  int hv_vss_pre_resume(void);
+>  void hv_vss_onchannelcallback(void *context);
+> -
+> -int hv_fcopy_init(struct hv_util_service *srv);
+> -void hv_fcopy_deinit(void);
+> -int hv_fcopy_pre_suspend(void);
+> -int hv_fcopy_pre_resume(void);
+> -void hv_fcopy_onchannelcallback(void *context);
+>  void vmbus_initiate_unload(bool crash);
+>  
+>  static inline void hv_poll_channel(struct vmbus_channel *channel,
+> -- 
+> 2.34.1
+>
+Thanks for the patch,
+Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com> 
 
