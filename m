@@ -1,75 +1,49 @@
-Return-Path: <linux-kernel+bounces-224535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CEA9123B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:32:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE9C9123B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 466721C2520F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:32:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841AD28BB06
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7064F176AC5;
-	Fri, 21 Jun 2024 11:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD20178371;
+	Fri, 21 Jun 2024 11:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BdZhAPw3"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eL4A/A4J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C40174EC2;
-	Fri, 21 Jun 2024 11:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090F2173354;
+	Fri, 21 Jun 2024 11:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969405; cv=none; b=MEOg7QZjsYLnv2hfy9dJ5shMTnDtBqLY6cprl1gk+xiSLgFzdRA5WEBAPRe6/CyanJqVCOGPuZBsPB6CXO6EdJOecNvj05y/GS5NDJnghaAEhH8Hk6uMiH0Ick6IFjqrXlz6oGTMoLuf+W7LmNB7Y8Etc9KaNkXtqRg3jUPotu4=
+	t=1718969431; cv=none; b=AG8BxwgWtL6pyxljXwAMVMvVtiTBDKjTX3jO5aTtMlo7lHQKzDET/qp4pArv6cPK9XYHqAsmmixxJEKw/+OqvYNmKIrZDDzAFRMe/lssPftKzZabSC0dGiloj0cqDIadrTc4l8UxWNHDQlTy3T688dakc4mChz06voB9CJaSifo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969405; c=relaxed/simple;
-	bh=eOM+rlNe4Ccmiqqj78VRC7CbyAJhediEgq9+gqUJt5c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kDiRTkI40vB4Swy4WZcma/JTsC/kQf17Kqu5KJJ532D5mvqiRn8U8HQojyZ8OPgU8bTwDIV3e/7kdHFqQ+1oN4+CuzEcaXTMhHnh37JW8x6pgTl0LNP0Gow83FhbfL/EcNrmq84Qab0rwvlqh/H+zTE9o0uJmrXbn1ffGE/PmpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BdZhAPw3; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718969404; x=1750505404;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=eOM+rlNe4Ccmiqqj78VRC7CbyAJhediEgq9+gqUJt5c=;
-  b=BdZhAPw3wQu9V3Zy94zBjcAjDhLAJUdD9eKdTFjG8zHfdFAa/KJ1EmMl
-   q0ThJ9lM9U6mGcCioVpqZXtv/M+RNA2biDy6X543Z9PkiVUd1sgidphB9
-   /JCilIkhSlgTmEzvz+o3oHveCJkhCYhzA9pOqLSG3v3ns6nwJ3Z2I0ujt
-   JN0mGoRnDrmBo85AzGLhXvdYvRUeNYn3+d33yZhUUGNlX4YeqKa1ee1TL
-   JCnYso7e7WqDo14c6YxUVMpi0QscwXz3LU3qFmafVBn0SPh2iuiZ46QYN
-   DTT0tNzrK2lPUnIxIXmNO8VCLxP5CqlD+GX/kzVUGKKJXBlLd2wFBHC7W
-   g==;
-X-CSE-ConnectionGUID: MLVdO+kgSZidOgeJsnHSMg==
-X-CSE-MsgGUID: dO+OJ/qNSuS3vu3+Mtuk5A==
-X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
-   d="scan'208";a="259209056"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Jun 2024 04:30:02 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 21 Jun 2024 04:29:36 -0700
-Received: from daire-X570.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 21 Jun 2024 04:29:33 -0700
-From: <daire.mcnamara@microchip.com>
-To: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <conor.dooley@microchip.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <daire.mcnamara@microchip.com>,
-	<ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v4 3/3] dt-bindings: PCI: microchip,pcie-host: allow dma-noncoherent
-Date: Fri, 21 Jun 2024 12:29:15 +0100
-Message-ID: <20240621112915.3434402-4-daire.mcnamara@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240621112915.3434402-1-daire.mcnamara@microchip.com>
-References: <20240621112915.3434402-1-daire.mcnamara@microchip.com>
+	s=arc-20240116; t=1718969431; c=relaxed/simple;
+	bh=vV9wCK9hoYqqOcklrFgBuYYByRX11AIgQ1XylLrlNsA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=u5Dt4Q0Fw3gz0PKbSOSaVtOzTDNWOTTjC1rcNAt4KWznQGIYBDvOXpgSYO/ppzAEed6QX3lb1OvGibpGp1s4513KVTJXEkmXdkPS8XAFICj0mdW4Z+LvnD2pYfFoCHeXnT3sxczD946loFQIBRyD9j71ZAey6/Ch9I/BWMOvP1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eL4A/A4J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 882A4C4AF08;
+	Fri, 21 Jun 2024 11:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718969430;
+	bh=vV9wCK9hoYqqOcklrFgBuYYByRX11AIgQ1XylLrlNsA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=eL4A/A4JE8aRIwjStROYhp1X9S5BXkdOnIY0vkeqKrDCJXd7rpdp4HEWZkkEjSsFo
+	 TezOKuZVovDIp/njWUE7t1b2KcRavJSAzHZXMEN0jyVC+SACzKwObnZfr9fyHuCFoJ
+	 qKQ4RPCGjCTwjNcxeojSHikAcP3Ihs1yraE97B0No8LjeePhKrS8EYWtoXnLZk3KYi
+	 aX1kD1Dr5dy6g2kYvJmzU7ErgminHHBlmEfTocoUluq3SAQlWjKUwIM/PXBiyaRi4F
+	 EhvIoNCY9EDhUZzQfy/rxtlz/YBhSU3n+05OXfJOkyc0I6FXhaDLp3X9WX/tX8LIF8
+	 xdsKSl1Lh+yIA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 71EB5CF3B9B;
+	Fri, 21 Jun 2024 11:30:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,34 +51,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Subject: Re: [PATCH net-next 0/3] net: dsa: qca8k: cleanup and port isolation
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171896943046.2605.7186195507093229147.git-patchwork-notify@kernel.org>
+Date: Fri, 21 Jun 2024 11:30:30 +0000
+References: <cover.1718899575.git.mschiffer@universe-factory.net>
+In-Reply-To: <cover.1718899575.git.mschiffer@universe-factory.net>
+To: Matthias Schiffer <mschiffer@universe-factory.net>
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ ansuelsmth@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Hello:
 
-PolarFire SoC may be configured in a way that requires non-coherent DMA
-handling. On RISC-V, buses are coherent by default & the dma-noncoherent
-property is required to denote buses or devices that are non-coherent.
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
----
- Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, 20 Jun 2024 19:25:47 +0200 you wrote:
+> A small cleanup patch, and basically the same changes that were just
+> accepted for mt7530 to implement port isolation.
+> 
+> Matthias Schiffer (3):
+>   net: dsa: qca8k: do not write port mask twice in bridge join/leave
+>   net: dsa: qca8k: factor out bridge join/leave logic
+>   net: dsa: qca8k: add support for bridge port isolation
+> 
+> [...]
 
-diff --git a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-index f7a3c2636355..c84e1ae20532 100644
---- a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-+++ b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-@@ -52,6 +52,8 @@ properties:
-     items:
-       pattern: '^fic[0-3]$'
- 
-+  dma-noncoherent: true
-+
-   interrupts:
-     minItems: 1
-     items:
+Here is the summary with links:
+  - [net-next,1/3] net: dsa: qca8k: do not write port mask twice in bridge join/leave
+    https://git.kernel.org/netdev/net-next/c/e85d3e6fea05
+  - [net-next,2/3] net: dsa: qca8k: factor out bridge join/leave logic
+    https://git.kernel.org/netdev/net-next/c/412e1775f413
+  - [net-next,3/3] net: dsa: qca8k: add support for bridge port isolation
+    https://git.kernel.org/netdev/net-next/c/422b64025ec1
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
