@@ -1,104 +1,102 @@
-Return-Path: <linux-kernel+bounces-224189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C8F911E87
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E19FF911E8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3371F2291D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:22:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94BD81F22CA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6A316D9DF;
-	Fri, 21 Jun 2024 08:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1903C16D33A;
+	Fri, 21 Jun 2024 08:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="evd2eRBz"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1eG/NfN0"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABF116D9AC;
-	Fri, 21 Jun 2024 08:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E91E16B722
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718958092; cv=none; b=HCN1W6tqB2tK+UGVX1EmqU4EYkb781WBdHSFANVsXjARnr6uORLG90Ei/TKgTMn31q30ZKwIPGvJ7bQrQf+EkjtnuEhbxwyKoq03Dp3HjgYI37wAgp0qRh8n7bIgYSj378bUYmyUoACd3B52JI76LPZ6BdwyLni13uEprhZmNOE=
+	t=1718958128; cv=none; b=vGFbt0zvIUScpZu7C3gJgUcjiK8M88lANPkqgCd1iC37X+difhA39pbyugClrw7fwB4hyLnd8WaLzHRZ4rYNbbl6bmtyvRFavSjkM15nBFv1LGEOZG+eEmSrnBSBhW/N1B0+mqRT26BOmHkvKiLw4rx9iuckYlGDn+S3sR3GE2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718958092; c=relaxed/simple;
-	bh=K+R2RKmiuFqLEon+vHwnwnwqTqmBWoIoUN07WehQFFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NlKmj1oRfdwATKoTwByzta/1UUB7/gjI7SZWMWobE2Ar1XN+h3wspr5Ws2Zo29nHF2gn1ZKmP+VbnPE8E/2ugMmfnC4CiVbwbXtmvmzTUY5WD3HyfI50oIOhOAQP2Snutkjf/uzYlC0G0aljaoD116r9i1qwHf53/uhYHuCfbTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=evd2eRBz; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=C7AamCqstwrWaOAl+kCPc5rixsS4G4AQ56sFqgwTcz0=;
-	t=1718958090; x=1719390090; b=evd2eRBzbrXEYrumqIhIv1mDubpM7/ZAsCYCSZPL3oyVckd
-	368w382J+GUjMiabds0W4wxf+ISIMARA8qKNvhiB7ElBTVhL3ZGmpe+F5sDLKD0VyrvxTYFEsoUy3
-	ZExR6QYSTmtFzpm0R2HsUViK1KP2S5ZjllLM6dq3UC8osxrhM3qrED2xZjXtCihP3RquRjYNM15rx
-	mf8WID3N4T7xQGFkSnA+EhlFi0+t0ri3hMPAb99fHl8rQTkalLxM0KfVEQb6ap7Bgv9CB1YRP2N5y
-	tmFCHW1Wk2YOTnOewiqSTe5cBgXqgU/1Mxzg08PTPC1k8fhFUPuoJaiIFDCGlKNg==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sKZWQ-0005mj-Vr; Fri, 21 Jun 2024 10:21:27 +0200
-Message-ID: <acaf2d70-d821-4951-9072-931cb56b1b9f@leemhuis.info>
-Date: Fri, 21 Jun 2024 10:21:26 +0200
+	s=arc-20240116; t=1718958128; c=relaxed/simple;
+	bh=GiWp0R3m1O2e8FqlZeCTxBARLk8raP5XQEmY3Orplv4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bFCmkkX/GEIpW4xNe8w82freBt0FUIogU+3ryA8PbBcABhQH3NKcMPpKbkWCSo0vWnz4v1taS51IZYgEtUpEqq8MLqrjM5nLm2QgBoxCmoV1ACK9hz8oZ7qsToG2ABrHmmUa6JgUW9cGuC7Q/pTUSTWgVO3Y04A6sGa5/PH3jEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1eG/NfN0; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b50018e054so8384746d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718958126; x=1719562926; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GiWp0R3m1O2e8FqlZeCTxBARLk8raP5XQEmY3Orplv4=;
+        b=1eG/NfN0jaGe3ZnPl3fgAgNp62mc8cly+lC3xeN+OUNj6yRKCxL9Ge17+X3kvTHSiT
+         V+hiMSSzmNFvrdv165b2RPjJBuIcp5a+g5q+B9PLCNn5UKoGU7GR+mMZM6uPjPeAcOZ1
+         LOAg1NdKjyjDDoBwxucx+4Rdz/L15A0eajmAWVzsQdxAAHuf6RNOnzlmAJ9TcTOiBxDt
+         NwYGIJXA6dUiMVkALlpy+gbzoEpSlK1UUnPb4IpqmDL/dNov6khWdoR655Apnmb3qjrM
+         rsp/XPaTl6WJ3jRykz4kpvZL5Mhr8WQLX81cEN37Oo34MdE7aMCQVdcYdmniima2ht7N
+         +aGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718958126; x=1719562926;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GiWp0R3m1O2e8FqlZeCTxBARLk8raP5XQEmY3Orplv4=;
+        b=q+FUHjnpHdYb3DXlDXbZ5WHHMf8kfvD9DSmnTxDaLl71kjBGUquJbgs9sz8MFenFuf
+         KuVXMEBHgixsLAFdOWOp9h4+TAjQX/w8TUCahy6l4BU5oRpNjFU9Ld6dvfELcid0WE1f
+         ho60aBPdgIe/U6ieGEZDfpf9hAfbo1QgTirmXoF7LAgJesqle/FLd/O+D0juIdZqIXLn
+         7j7ABnSS19ngl2LmDDCUVaSy+/JB2l7lzFiPOEWtv4AnNrNLpCQDOoVWa4RdOG8YiD6I
+         9Hp1hkSoIjt/8Zd8ZwfDu5GD/2Hm70K5xhQ6nbvkFWoP/8HuTKL5pJXU2WsG3hD0SvuP
+         6DlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKX7t4B6ChzsFF7SZXfWUR740qZZ6ul0eQhrQnLwGH084U16aIGnidCl4Za/mXkpf8AYoqWv7+ElzI/+l1J0ub1qCyZE12s5c0Y/oR
+X-Gm-Message-State: AOJu0Yzi3SZAmrne5khEAOx2sSZmsYbvVEi1eKJkRyyJ0j+XzV41zR8E
+	34D//JVOqpDTZqh+5+AT9QlfFY0yVC8iGysEDySe/c6BHyOX1PxvvGiMwc/pPJfhsP4Lt3nRhlC
+	FgpI8HFVtO3nyUd36AQBW6ordQc+Fl/b4MZ8d
+X-Google-Smtp-Source: AGHT+IEqLUO3OT9Bhboypnctwqc8Ohld/THbrsKqdROXjqX2LTf1GcH5jlfhi1RSDxSEenbd4gpWPErmzbl81ksieb4=
+X-Received: by 2002:ad4:5842:0:b0:6b4:fe1a:9ea9 with SMTP id
+ 6a1803df08f44-6b501df8ce0mr76732636d6.6.1718958125525; Fri, 21 Jun 2024
+ 01:22:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: omap2-mcspi multi mode
-To: Colin Foster <colin.foster@in-advantage.com>,
- Mark Brown <broonie@kernel.org>, Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- miquel.raynal@bootlin.com,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <Zl/V0dU6SjAMkpLG@colin-ia-desktop>
- <ZmFt7yfZFFJdsZuJ@localhost.localdomain> <ZmJ7E305ow91ez2U@euler>
- <ZmMrJ8uaw85a03Ce@finisterre.sirena.org.uk>
- <ZmhdWw/dV5HRU/Nh@colin-ia-desktop>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <ZmhdWw/dV5HRU/Nh@colin-ia-desktop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718958090;66025cb3;
-X-HE-SMSGID: 1sKZWQ-0005mj-Vr
+References: <20240621002616.40684-1-iii@linux.ibm.com> <20240621002616.40684-17-iii@linux.ibm.com>
+In-Reply-To: <20240621002616.40684-17-iii@linux.ibm.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Fri, 21 Jun 2024 10:21:29 +0200
+Message-ID: <CAG_fn=XKAdJ_VR8_fsOFSRqZxqGRB+GsHMMQjuy4gQGEGi9aDQ@mail.gmail.com>
+Subject: Re: [PATCH v6 16/39] kmsan: Expose KMSAN_WARN_ON()
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11.06.24 16:21, Colin Foster wrote:
-> On Fri, Jun 07, 2024 at 04:45:43PM +0100, Mark Brown wrote:
->> On Thu, Jun 06, 2024 at 10:14:27PM -0500, Colin Foster wrote:
->>
->>> So I think the question I have is:
->>
->>> Should the CS line be de-asserted at the end of "spi_write"?
->>
->> Absent bodging with cs_change after any spi message the chip select
->> should be left deasserted.
-> 
-> Do you have hardware to reproduce my results of two spi messages no
-> longer toggling the CS line and leaving the line at GND through the
-> transactions?
-
-Hmmm, I might have missed something, but it looks like nothing happened
-since that exchange. Did this regression fall through the cracks or can
-I consider the issue resolved for some reason?
-
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-#regzbot poke
-
-
+On Fri, Jun 21, 2024 at 2:26=E2=80=AFAM Ilya Leoshkevich <iii@linux.ibm.com=
+> wrote:
+>
+> KMSAN_WARN_ON() is required for implementing s390-specific KMSAN
+> functions, but right now it's available only to the KMSAN internal
+> functions. Expose it to subsystems through <linux/kmsan.h>.
+>
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
