@@ -1,255 +1,96 @@
-Return-Path: <linux-kernel+bounces-225252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C0C912E1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:52:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD4B912E25
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88ED1F25530
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:52:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F40A1C2107F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158BB17B50D;
-	Fri, 21 Jun 2024 19:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A3C17B512;
+	Fri, 21 Jun 2024 19:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHxNRryk"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jzaRl8Wr"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABA75664;
-	Fri, 21 Jun 2024 19:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD2715F336
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718999550; cv=none; b=bqrdBiNIMLNz5CGeZdy3eL5slVG7M6GJui0d61fzHEhmrnyXCJ+h3fUY6d8PA3CjHG7cdhUcW9LFVa+fabcNMlkkahdhyO47FaaMC8Yrda2H3XKAtMGdCm3LBPVS5cnqlA44fKpVWer8/BU5YvQ2dYIyxaZxyqklBuzLV+aX/pQ=
+	t=1718999685; cv=none; b=n+AdN3ywkeCq+nfpmlVtf4jgkiZGn3SeC+RDX3Evawwp5KyDEyX5YCdZznqef9Bgsx0gVUh/X0hfsGMy/MpgQRMX/v232MbIjs84d00Od1P5dy4/LMR37yJYKdS2rJEdM0V7ndzYPZscnbqJXloNt0TnPfzM11NDIpU8GHEmAD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718999550; c=relaxed/simple;
-	bh=mbDTRYewWKN1yM/XYOg/MmIXNhPo4QLWCjVwir+awD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PPaAC1ETedWQt/XGj4jDw5268pCwrxeui20ZGYEqzy6bU23ZmJkQYqZ5gT9jElFi+yVG2rTVSXGtjOKE2u8IpDvMbINKl0rF32KGYCe3LMk6CkAAbCu70BYIR2oEs7UXbEJepIuYAnF5UxHp89jrV+Pnkq0gKmNxOUlGTC8h63g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHxNRryk; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-681bc7f50d0so2526716a12.0;
-        Fri, 21 Jun 2024 12:52:28 -0700 (PDT)
+	s=arc-20240116; t=1718999685; c=relaxed/simple;
+	bh=D3ymLZciavul1Y12MVNcx4+feyXXYgMZz6/03/D75sE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=IN0r4yUdt6gSuFaHjCHLrCGmu4GozoTq41XtBf4b7oM1fLatfGJ5uE2trk2gjYImR43QDAge78gv/40r0l0ygy4cGURVSRI7dlx/88G+hFiJ6r/HLIlmkK5XNcHbKSwgbH2JHAFW2QFD54xuFXo2cHZwJMPLtcUiyp2onPMF4cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jzaRl8Wr; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6ef46d25efso279251366b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:54:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718999548; x=1719604348; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gjkik/3XL/G5m00jILuBxm5N7shcQAH7kSL/k0oIZZU=;
-        b=HHxNRrykD4iz4PDPAPTZAJ/1wqiMJrCHvEdwsd900FVdb8mm83D9+41Sh69HJDKZ4J
-         g4BmLklJmS10a1VTku6Gnr6SDHDH0/WVB7pWCo/JOcvwqKBtLtH7pO9zyAV6OWK/BKWj
-         RQgAsKcsqfo4jiewJJf2oQbD8prnnbDQ92PsOQDLrhfe9CT/G5mzhHTrAWXnulsOTx28
-         EDSYcyvf//H+6sESufm0qoLuYRezvT2ZTF6c8z6PuEkmb4WscZN00BMqSL7qR0d97waT
-         1SRM/gP1wA6r8tFVeW2V2AdDJcpHlpewoVMa1LeLZbrkTil+nrnkuUQCsI9/h8RbKY35
-         Ohhw==
+        d=szeredi.hu; s=google; t=1718999680; x=1719604480; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=33jEI5/feKxqme62YiuJFqZt4cfWs+d7SXX2h8CWrRk=;
+        b=jzaRl8Wrd7mvryJbCn5CX40Pe8/BJSiffXlFf/g7a5vo6zGimnPkCFrVbzWbiI/E7a
+         YlUxJANtONOZOzf3/CQ1jqKezaLfzNJQ7DVYxj1TdLEFFYrHUg/fdzPCg2kkuIwGRHm2
+         HkgvHeAi9eNeL8mNml+8m/Tn4n5PankPDw+CE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718999548; x=1719604348;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gjkik/3XL/G5m00jILuBxm5N7shcQAH7kSL/k0oIZZU=;
-        b=CYGo4001Tpcu67dYocH4mfH+TfNena+YMaGqYIv/JWgz9j7bTslrTmJoI5CuBoCe20
-         4+mFAfD7AZFmA6q3MVPuZJeGE9E/2iPL1MRDLen6R8E4aZNFNrbK23G7YTef1wGK+OuJ
-         0chH4fBWv9W9dHd1HRehprkTkpyxIdtd71SnTuvFl8Nf/ks35y5FHRzoykPOoo9nj1Xd
-         TwYP9MzNY8goX8h/0T87rIZPksk76Y/UNRTo5/01BOlDqOMO0jkhYeNK2E9Ym6DXiqdM
-         /Vrdp74rAX1x5LFrvWh9CnLu6Hyf5Oeg1+Wqql7hq2UH9RYaxW/Zn0qExxIE+uVRomE5
-         nCeg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4Sy4JYNyxEXYKGFS4hMt/gKrHLyne1b55ywPuazL4n8nzU86x6JZydkfkZRUrJxPRdmAvGSFn5xzO+VeSodffkibOT0aEh5LPuUMEvXq+eKE0hZPIoRk3af859tYxjpZl
-X-Gm-Message-State: AOJu0Yx0Jb1ZMJj1f6QO66RVh3TjtzHRzJrHXbbIEKJGZbERLELMdGdR
-	D6CN8Eik+JMSUx0L5n5bvFWyptkLG+wjNIdJw0dGk+ESBnv+uiYU
-X-Google-Smtp-Source: AGHT+IGGvHYmwg6vw009jL9LiKBxVitJ8s5iCBIL2NAu/1k9ddEIOZ3sk2kPzOVULQIzlgsg69gsYg==
-X-Received: by 2002:a17:90a:d494:b0:2c2:c3f5:33c3 with SMTP id 98e67ed59e1d1-2c83c1d4e6cmr980857a91.6.1718999547844;
-        Fri, 21 Jun 2024 12:52:27 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819dcf1a7sm1975713a91.50.2024.06.21.12.52.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 12:52:27 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 21 Jun 2024 09:52:26 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH sched_ext/for-6.11] sched, sched_ext: Replace
- scx_next_task_picked() with sched_class->switch_class()
-Message-ID: <ZnXZ-inMW0zif3Xe@slm.duckdns.org>
-References: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
- <87ed8sps71.ffs@tglx>
- <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
- <87bk3wpnzv.ffs@tglx>
- <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
- <878qz0pcir.ffs@tglx>
- <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
- <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
- <ZnRptXC-ONl-PAyX@slm.duckdns.org>
- <ZnSp5mVp3uhYganb@slm.duckdns.org>
+        d=1e100.net; s=20230601; t=1718999680; x=1719604480;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=33jEI5/feKxqme62YiuJFqZt4cfWs+d7SXX2h8CWrRk=;
+        b=fz+FEXKOG6r7CTwSRn/rPlqt4WVDoWgdFwQeLWLuJl3KMxkmxY6edISi//G1eimQey
+         90ipRHd7GvjTlahluB7PF/M6KAKZA7lANzZD+9VBQ4PdgP5SpNWrS2/79LnZ6Ws80iIL
+         HSt8t7Ztc7YRh334ETkz427YcD3420taZhoCFE2Z7Ar66OyeRdSLS05+7RMEqL9Fgl62
+         noatac2LvnS/39uUtg5B0t20V2QKc2JGov/pC5aULVV9c64LuurXGnycFCrW2kiX8sFB
+         74ihSW6Nc38xjgZWU1qaEeMYmYTyIibnd4fVG7FNQjeTQLHIrRFBwxjJsnvl+LoyDjLt
+         OlCA==
+X-Gm-Message-State: AOJu0YxCR/v4z+t6Hk6pqCpWblaAgezuwr49KuS/bo1CyHTTBPjwdk94
+	kAECfV3ViYTPN+VuPr600BXFYUnvyv/6fRSEt15P61wCMWUr263rz1pL3Xs/TbeHJG1qmF0GhkG
+	7WYg6NMCh5YOWMTitbFQwBGcd0GAYH4Ddcqzv1w==
+X-Google-Smtp-Source: AGHT+IHMPxRSpeWfFETILoj83QSpeXgYk8tMPeCiUlyNTt4XtvfyTrE0PqN0dcALyeXIod8bt3F7q/kAGJ/d13yodi8=
+X-Received: by 2002:a17:906:7148:b0:a6f:6292:2425 with SMTP id
+ a640c23a62f3a-a6fab648959mr496741166b.38.1718999679727; Fri, 21 Jun 2024
+ 12:54:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnSp5mVp3uhYganb@slm.duckdns.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 21 Jun 2024 21:54:28 +0200
+Message-ID: <CAJfpegvm9M9Kzmtd=X66YijMOoJpKX62vuL4maD+7xBJ0-n5Zw@mail.gmail.com>
+Subject: [GIT PULL] overlayfs fixes for 6.10-rc5
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From b999e365c2982dbd50f01fec520215d3c61ea2aa Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Thu, 20 Jun 2024 12:15:02 -1000
+Hi Linus,
 
-scx_next_task_picked() is used by sched_ext to notify the BPF scheduler when
-a CPU is taken away by a task dispatched from a higher priority sched_class
-so that the BPF scheduler can, e.g., punt the task[s] which was running or
-were waiting for the CPU to other CPUs.
+Please pull from:
 
-Replace the sched_ext specific hook scx_next_task_picked() with a new
-sched_class operation switch_class().
+  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git
+tags/ovl-fixes-6.10-rc5
 
-The changes are straightforward and the code looks better afterwards.
-However, when !CONFIG_SCHED_CLASS_EXT, this ends up adding an unused hook
-which is unlikely to be useful to other sched_classes. For further
-discussion on this subject, please refer to the following:
+Fix two bugs, one originating in this cycle and one from 6.6.
 
-  http://lkml.kernel.org/r/CAHk-=wjFPLqo7AXu8maAGEGnOy6reUg-F4zzFhVB0Kyu22h7pw@mail.gmail.com
+Thanks,
+Miklos
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
 ---
-Hello,
+Miklos Szeredi (2):
+      ovl: fix copy-up in tmpfile
+      ovl: fix encoding fid for lower only root
 
-Applied to sched_ext/for-6.11. The only difference from the previous posting
-is the description.
-
-Thanks.
-
- kernel/sched/core.c  |  5 ++++-
- kernel/sched/ext.c   | 20 ++++++++++----------
- kernel/sched/ext.h   |  4 ----
- kernel/sched/sched.h |  2 ++
- 4 files changed, 16 insertions(+), 15 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5eec6639773b..1092955a7d6e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5907,7 +5907,10 @@ __pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 	for_each_active_class(class) {
- 		p = class->pick_next_task(rq);
- 		if (p) {
--			scx_next_task_picked(rq, p, class);
-+			const struct sched_class *prev_class = prev->sched_class;
-+
-+			if (class != prev_class && prev_class->switch_class)
-+				prev_class->switch_class(rq, p);
- 			return p;
- 		}
- 	}
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index f814e84ceeb3..390623a4a376 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2749,10 +2749,9 @@ preempt_reason_from_class(const struct sched_class *class)
- 	return SCX_CPU_PREEMPT_UNKNOWN;
- }
- 
--void scx_next_task_picked(struct rq *rq, struct task_struct *p,
--			  const struct sched_class *active)
-+static void switch_class_scx(struct rq *rq, struct task_struct *next)
- {
--	lockdep_assert_rq_held(rq);
-+	const struct sched_class *next_class = next->sched_class;
- 
- 	if (!scx_enabled())
- 		return;
-@@ -2769,12 +2768,11 @@ void scx_next_task_picked(struct rq *rq, struct task_struct *p,
- 
- 	/*
- 	 * The callback is conceptually meant to convey that the CPU is no
--	 * longer under the control of SCX. Therefore, don't invoke the
--	 * callback if the CPU is is staying on SCX, or going idle (in which
--	 * case the SCX scheduler has actively decided not to schedule any
--	 * tasks on the CPU).
-+	 * longer under the control of SCX. Therefore, don't invoke the callback
-+	 * if the next class is below SCX (in which case the BPF scheduler has
-+	 * actively decided not to schedule any tasks on the CPU).
- 	 */
--	if (likely(active >= &ext_sched_class))
-+	if (sched_class_above(&ext_sched_class, next_class))
- 		return;
- 
- 	/*
-@@ -2789,8 +2787,8 @@ void scx_next_task_picked(struct rq *rq, struct task_struct *p,
- 	if (!rq->scx.cpu_released) {
- 		if (SCX_HAS_OP(cpu_release)) {
- 			struct scx_cpu_release_args args = {
--				.reason = preempt_reason_from_class(active),
--				.task = p,
-+				.reason = preempt_reason_from_class(next_class),
-+				.task = next,
- 			};
- 
- 			SCX_CALL_OP(SCX_KF_CPU_RELEASE,
-@@ -3496,6 +3494,8 @@ DEFINE_SCHED_CLASS(ext) = {
- 	.put_prev_task		= put_prev_task_scx,
- 	.set_next_task		= set_next_task_scx,
- 
-+	.switch_class		= switch_class_scx,
-+
- #ifdef CONFIG_SMP
- 	.balance		= balance_scx,
- 	.select_task_rq		= select_task_rq_scx,
-diff --git a/kernel/sched/ext.h b/kernel/sched/ext.h
-index c41d742b5d62..bf6f2cfa49d5 100644
---- a/kernel/sched/ext.h
-+++ b/kernel/sched/ext.h
-@@ -33,8 +33,6 @@ static inline bool task_on_scx(const struct task_struct *p)
- 	return scx_enabled() && p->sched_class == &ext_sched_class;
- }
- 
--void scx_next_task_picked(struct rq *rq, struct task_struct *p,
--			  const struct sched_class *active);
- void scx_tick(struct rq *rq);
- void init_scx_entity(struct sched_ext_entity *scx);
- void scx_pre_fork(struct task_struct *p);
-@@ -82,8 +80,6 @@ bool scx_prio_less(const struct task_struct *a, const struct task_struct *b,
- #define scx_enabled()		false
- #define scx_switched_all()	false
- 
--static inline void scx_next_task_picked(struct rq *rq, struct task_struct *p,
--					const struct sched_class *active) {}
- static inline void scx_tick(struct rq *rq) {}
- static inline void scx_pre_fork(struct task_struct *p) {}
- static inline int scx_fork(struct task_struct *p) { return 0; }
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index c0d6e42c99cc..3989bf8f2a1b 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2355,6 +2355,8 @@ struct sched_class {
- 	void (*put_prev_task)(struct rq *rq, struct task_struct *p);
- 	void (*set_next_task)(struct rq *rq, struct task_struct *p, bool first);
- 
-+	void (*switch_class)(struct rq *rq, struct task_struct *next);
-+
- #ifdef CONFIG_SMP
- 	int (*balance)(struct rq *rq, struct task_struct *prev, struct rq_flags *rf);
- 	int  (*select_task_rq)(struct task_struct *p, int task_cpu, int flags);
--- 
-2.45.2
-
+---
+ fs/overlayfs/dir.c    | 8 ++++----
+ fs/overlayfs/export.c | 6 +++++-
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
