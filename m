@@ -1,154 +1,144 @@
-Return-Path: <linux-kernel+bounces-225247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7120F912E0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE0B912E0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD421F232AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:42:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 272AD1F22D99
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C336A17BB2A;
-	Fri, 21 Jun 2024 19:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D4A17BB2B;
+	Fri, 21 Jun 2024 19:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="E87BPt0G"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CR2AIQkz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65774179203
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDA317BB08;
+	Fri, 21 Jun 2024 19:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718998921; cv=none; b=RMuR6mqL0AVPg/wctYf5a2dwOdqB/b5Gy1nOEfxOv2w1pZMandmmsXDK+fwC62LY90oTjyloMYnm93IGgQE9m66WVEkEdZNEGq+SHwdRGHFDk4ZRoi28wNUD6HrLxBZugREcUdMM5ch+TmHR5z1Rwbwn7bbsJ3Xpwy6s+VE8KRk=
+	t=1718998946; cv=none; b=jXq5l08R/XIQhtEezbyz8X61uQHHiqUbqQAN9+V0yErYyiC7vWJZ/CIgXTD8ck0YCSvPJwtACdrfNCmj0bgF3d3qFfKo0WnT6e51t0hREODCw4b2+7I69J3K9na+iBrH3YCilF53fXc+eYfSPhrLqTYhkuy5yW7MUPl2lt4dW8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718998921; c=relaxed/simple;
-	bh=KExI450lv/6bXsywXkdu57kjeIUgpdTEDKHbVulI/1E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gtdspV2wmogMKsfq0p79+DY1Wuw1ujKmcLSkwDxKvQmeEXi1YX3HzBSfjGeGro/qb9CNKpHb9Yl+18rWN/ZIBnXToWGpiSl8y32ejd/HJ5ZdJFWk41JY2h/oiaMGU7+IhYqkhQAbrILtpiW9pAlicQlIskl9A7gTNyURP72lJNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=E87BPt0G; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dfe41f7852cso2447470276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:41:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718998917; x=1719603717; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0nl8PAG0N3k7cl8uPP8GgJj3UXR/oTyrXr4zXcY81uw=;
-        b=E87BPt0G49cjChg3cyn94cnOi1n69M0oBxkU56hZGirtgejr5bVnBIdKAzHD/gENWH
-         Pajj/j3HUw6h03qX33Jw4ektkAgkGYM221KEcNCMwit5Wkxgaf3MpoW3fA1tz7BMHXet
-         JaZyIeQ/VSkXFKhyyqpVhaKOhp+mfj/RJaoW+BwhzPlH2owf5d/XCinAMfeWU1Jcejas
-         votWGthaVfyGMvwWKyMT4r/JWLtAuJPZ4ePep/fFTzEdQ4MvZe4tnVYNLkIg4YTN2wNx
-         Y2SyTu1QSaMQvdydWIdEusvSJp/d2zZFzGiRH3ioTLUMM1t/tGk1S7CovalgI/yUl83s
-         e4Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718998917; x=1719603717;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0nl8PAG0N3k7cl8uPP8GgJj3UXR/oTyrXr4zXcY81uw=;
-        b=dhU5ndfwXxePIToERqhSCU2fSgulexGvZ5I8vnYZTB7iXcE6ZFz1YoP2pu8WaTzbt+
-         K/xhHnnPcvHQA1Vhr3OiGUYuowfwa3wNqmhVRa0Bwam+yXYz797AHfEE6CUxZ1ioQ/OH
-         yCfy2ouyCXl8GVLij28DVfDGdG4fqT9jYizV5nq6uX4IzcFxA5a3RFWlnlsywQmhBWJw
-         1D5NhXIr836bWYRlPMSADmSS5eH26WzFUVGHjNW2EJuEKoR95l77Foo6xqyS4rVnaOt/
-         FoWl/IXJiiNAfOICg0Oga5tRNTseBXU6Za+pV/3wwpC6K8SbNqcHoZ+DNGpAsuNMNDEu
-         hjoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUypmVFt5LKQaMlGGzG2yfcuE9/wlOVHSSM3fn3j3YvC+i4F29JpBde2ZJKOslxBHSIya3lJKXSZHoljAVE0LqTJLlFmbve2OpE1id9
-X-Gm-Message-State: AOJu0YwyFPLHgpQAXU6OyqMq86Ejw9yHfDxHRhYs7RayBkR6Rslr511m
-	TEzSi6ja4nHNKE4GBm9948L/IaiCCbSl7xdxq/UDibstyWliUunCjYPdt26MVuvLiIbdhaEttY5
-	6s7tUJ4sQu+ZITl3PJTnyubNUjiKWQl6zfz2r
-X-Google-Smtp-Source: AGHT+IFqjYGwpyoxRZyIZIHsISDeLu99Cg9u66E+BBx796GAV73iaiCq6pmo1MtrecjU3A0LbW+kOkA/juAriiJ/AhI=
-X-Received: by 2002:a25:818f:0:b0:e02:92cf:4bb6 with SMTP id
- 3f1490d57ef6-e02be22d29cmr10427519276.56.1718998917309; Fri, 21 Jun 2024
- 12:41:57 -0700 (PDT)
+	s=arc-20240116; t=1718998946; c=relaxed/simple;
+	bh=YxoHs/MZgzWYB+EBfGrNrzS7EXBm148ckuCUwY2V2/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QEFeWPUhZJFltcGVpI6prAmc+lBszef825K82kcfmBb3XyZzAhJyt+gWvNJU+Khhknamf0b6OaPYtOdaIHzqltq4WCDcFM80ouXh1pdGzg8TChyB0ef0JMYe1BJwOU2iLoMWMziiFtC5voDoOePBTrB4rb5H/djzn1OGvNop3Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CR2AIQkz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1180C2BBFC;
+	Fri, 21 Jun 2024 19:42:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718998946;
+	bh=YxoHs/MZgzWYB+EBfGrNrzS7EXBm148ckuCUwY2V2/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CR2AIQkzqBmC5ymH7i6NPNzRQOvW3RU7o+FzsFnIZF1boFfulZTlAKnSnk+3Jk5pZ
+	 4QE5Sg7dRqovKnoIX7qDeagad0P0Uy1ZXoyOGVli1kSnO9dycbLHCclm1yrY3P2lkZ
+	 mNs6xLexX/qEYA79NIefufKmuRTCthrDxmpfthmIg3tHMbUdsfdK64JgKfOwoL4Ubn
+	 3Fuh8a8ylZlYCzNdIZVvELhCE0UjUGOgO+5KZeJN/+dnuPU2Ol8atYQolqPSaWJ1gD
+	 8ifP0WFbHF5X8KO1mWAlDFmQ1LdS0wjcHZl5JES+0JFJwLYhQT5eUJUWibkCZBTijq
+	 21IDhezDi1hGw==
+Date: Fri, 21 Jun 2024 12:42:25 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH 01/13] xfs: only allow minlen allocations when near ENOSPC
+Message-ID: <20240621194225.GR3058325@frogsfrogsfrogs>
+References: <20240621100540.2976618-1-john.g.garry@oracle.com>
+ <20240621100540.2976618-2-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <763db426-6f60-4d36-b3f9-b316008889f7@schaufler-ca.com>
- <83ef6981a29c441b58b525e9292c866a@paul-moore.com> <c59a4954-913b-4672-b502-21aa683d7cdb@schaufler-ca.com>
-In-Reply-To: <c59a4954-913b-4672-b502-21aa683d7cdb@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 21 Jun 2024 15:41:46 -0400
-Message-ID: <CAHC9VhRjbWuFeprjNP3r7tU27cW6bEZytWq-3XTjzoN7Ki-zzQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] LSM, net: Add SO_PEERCONTEXT for peer LSM data
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: LSM List <linux-security-module@vger.kernel.org>, netdev@vger.kernel.org, 
-	linux-api@vger.kernel.org, 
-	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621100540.2976618-2-john.g.garry@oracle.com>
 
-On Fri, Jun 21, 2024 at 12:06=E2=80=AFPM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
-> On 6/20/2024 2:05 PM, Paul Moore wrote:
-> > On May 13, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Fri, Jun 21, 2024 at 10:05:28AM +0000, John Garry wrote:
+> From: Dave Chinner <dchinner@redhat.com>
+> 
+> When we are near ENOSPC and don't have enough free
+> space for an args->maxlen allocation, xfs_alloc_space_available()
+> will trim args->maxlen to equal the available space. However, this
+> function has only checked that there is enough contiguous free space
+> for an aligned args->minlen allocation to succeed. Hence there is no
+> guarantee that an args->maxlen allocation will succeed, nor that the
+> available space will allow for correct alignment of an args->maxlen
+> allocation.
+> 
+> Further, by trimming args->maxlen arbitrarily, it breaks an
+> assumption made in xfs_alloc_fix_len() that if the caller wants
+> aligned allocation, then args->maxlen will be set to an aligned
+> value. It then skips the tail alignment and so we end up with
+> extents that aren't aligned to extent size hint boundaries as we
+> approach ENOSPC.
+> 
+> To avoid this problem, don't reduce args->maxlen by some random,
+> arbitrary amount. If args->maxlen is too large for the available
+> space, reduce the allocation to a minlen allocation as we know we
+> have contiguous free space available for this to succeed and always
+> be correctly aligned.
+> 
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/libxfs/xfs_alloc.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+> index 6c55a6e88eba..5855a21d4864 100644
+> --- a/fs/xfs/libxfs/xfs_alloc.c
+> +++ b/fs/xfs/libxfs/xfs_alloc.c
+> @@ -2409,14 +2409,23 @@ xfs_alloc_space_available(
+>  	if (available < (int)max(args->total, alloc_len))
+>  		return false;
+>  
+> +	if (flags & XFS_ALLOC_FLAG_CHECK)
+> +		return true;
+> +
+>  	/*
+> -	 * Clamp maxlen to the amount of free space available for the actual
+> -	 * extent allocation.
+> +	 * If we can't do a maxlen allocation, then we must reduce the size of
+> +	 * the allocation to match the available free space. We know how big
+> +	 * the largest contiguous free space we can allocate is, so that's our
+> +	 * upper bound. However, we don't exaclty know what alignment/size
+> +	 * constraints have been placed on the allocation, so we can't
+> +	 * arbitrarily select some new max size. Hence make this a minlen
+> +	 * allocation as we know that will definitely succeed and match the
+> +	 * callers alignment constraints.
+>  	 */
+> -	if (available < (int)args->maxlen && !(flags & XFS_ALLOC_FLAG_CHECK)) {
+> -		args->maxlen = available;
+> +	alloc_len = args->maxlen + (args->alignment - 1) + args->minalignslop;
 
-...
+Didn't we already calculate alloc_len identically under "do we have
+enough contiguous free space for the allocation?"?  AFAICT we haven't
+alter anything in @args since then, right?
 
-> >> +/**
-> >> + * security_socket_getpeerctx_stream() - Get the remote peer label
-> >> + * @sock: socket
-> >> + * @optval: destination buffer
-> >> + * @optlen: size of peer label copied into the buffer
-> >> + * @len: maximum size of the destination buffer
-> >> + *
-> >> + * This hook allows the security module to provide peer socket securi=
-ty state
-> >> + * for unix or connected tcp sockets to userspace via getsockopt
-> >> + * SO_GETPEERCONTEXT.  For tcp sockets this can be meaningful if the =
-socket
-> >> + * is associated with an ipsec SA.
-> >> + *
-> >> + * Return: Returns 0 if all is well, otherwise, typical getsockopt re=
-turn
-> >> + *         values.
-> >> + */
-> >> +int security_socket_getpeerctx_stream(struct socket *sock, sockptr_t =
-optval,
-> >> +                                  sockptr_t optlen, unsigned int len)
-> >> +{
-> >> +    struct security_hook_list *hp;
-> >> +
-> >> +    hlist_for_each_entry(hp, &security_hook_heads.socket_getpeerctx_s=
-tream,
-> >> +                         list)
-> >> +            return hp->hook.socket_getpeerctx_stream(sock, optval, op=
-tlen,
-> >> +                                                     len);
-> >> +
-> >> +    return LSM_RET_DEFAULT(socket_getpeerctx_stream);
-> >> +}
-> >
-> > Don't we need the same magic that we have in security_getselfattr() to
-> > handle the multi-LSM case?
->
-> Yes. I would like to move this ahead independently of the multi-LSM suppo=
-rt.
-> Putting the multi-LSM magic in is unnecessary and rather pointless until =
-then.
+> +	if (longest < alloc_len) {
+> +		args->maxlen = args->minlen;
 
-Starting with the LSM syscalls, I want any new user visible API that
-can support multiple LSMs to have support for multiple LSMs.  Yes, the
-setselfattr API doesn't support multiple LSMs, but that is because we
-agreed there was never going to be a way to safely support that usage.
-In this particular case, that same argument does not apply, we could
-have multiple LSMs returning a socket's network peer information (even
-if we don't currently see that), so let's make sure our API supports
-it from the start.
+Is it possible to reduce maxlen the largest multiple of the alignment
+that is still less than @longest?
 
-Unrelated to the above, it would also be good to datagram support as a
-patch 2/2 thing in a future version of this patchset.  Please be
-careful not to carry over the mistakes we made with SCM_SECURITY (see
-the GH discussion linked below).
+--D
 
-* https://github.com/SELinuxProject/selinux-kernel/issues/24
-
---=20
-paul-moore.com
+>  		ASSERT(args->maxlen > 0);
+> -		ASSERT(args->maxlen >= args->minlen);
+>  	}
+>  
+>  	return true;
+> -- 
+> 2.31.1
+> 
+> 
 
