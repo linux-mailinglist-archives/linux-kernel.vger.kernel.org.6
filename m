@@ -1,154 +1,118 @@
-Return-Path: <linux-kernel+bounces-223814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2E8911877
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:27:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12BE911870
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE7F1F22AE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:27:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 530A6B2125D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F1C84A3B;
-	Fri, 21 Jun 2024 02:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4F084A22;
+	Fri, 21 Jun 2024 02:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BnfQMtAV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="IVd2TsfR"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69DB83CD4;
-	Fri, 21 Jun 2024 02:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EEF82886
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718936844; cv=none; b=IEfWvYEC2JleJ9BnV5ejMhGhaKjQ/NX4FWbcqGMOfmO1zI77HD4xRcybGjmPQvGYWIfFwqfS15ZUbsDlsiQCpHb53X1bMqtA3zN2OmCBJeKR8zca+mP+h81BXZ0eIRDvXY0IB3Kouu31p5DeE/LY+WP0fSEin/vTuFXwdV0pSJM=
+	t=1718936776; cv=none; b=Au0wW/K495c6c5Oy/wOgsztUGyFpS6TaTRL+122o4iClw4/ePCgSXG4ZsgcaU+N/VuiZsl0OCEwTstjgNWR0w3UcdRHO9KMfWUjWZ4/k4O7Rp2J+TZ/t2omqAoTQ/rH3+kZ3HXSEP1Fc1slDquL19iBV4fWXHTg8viFfG+MA0nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718936844; c=relaxed/simple;
-	bh=Wptugyt91HQIamfAU4jbgvpcqaICqBPYTL6Zjz5rPqw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ivfoA47PPjZVwe15NjSJWOTF9bNc86wgtZJD+x7DtLy2ttFgBgjPhwYP8YMOSzHzX6dVciwyk55SKuKl96F0GjVFOrhQtIMn/i4wh3G8b1doIzIpP/mZgsWrof8VtkP9CM4pyyg04oAuJDJacfqFvhgfJZMWYq0mab+uw11oyO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BnfQMtAV; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718936843; x=1750472843;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=Wptugyt91HQIamfAU4jbgvpcqaICqBPYTL6Zjz5rPqw=;
-  b=BnfQMtAV8Su+6KOnbIGJmV5AcG+n1MzGX/2hAT3x4ZgQhP7dpM/r/Zkn
-   Eg0OXXaqkHees5nQywAtVoac0iIrwUlGNOdSZTz6pjXVotDdPCRz6LnuI
-   peTy0SYn0dEvtnbGkCJR8I+dpNmwNjsiuhcFq2i+jBBK0HJxcra6CDEBZ
-   wynoor8CjmN+WcX754x8SOoJf9spi2r4oiAIAguRVwo2k95Qk9v3G1sCD
-   xdDHpBKZyhWro8wuPPVKF0mlSV0aqFlp4Jza+XqEaypDsVJn2tn/KhDed
-   H1m7GKbBJMwFqUvQLDjAcLzLFtUqYxHyVD42quvxFYhDUjpXjhDguf/J5
-   Q==;
-X-CSE-ConnectionGUID: fCLb9dEnQ6O4sdK4ael6+Q==
-X-CSE-MsgGUID: e2owq4iFTDGUm+FwUozdXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="26548763"
-X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="26548763"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 19:27:22 -0700
-X-CSE-ConnectionGUID: 3lfHA8SQRRG1Ez3N4P3YeQ==
-X-CSE-MsgGUID: IkC/uqcYTyChInZcq2PBjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="42896215"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 19:27:17 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,  Dave Jiang
- <dave.jiang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,  <linux-cxl@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  Alison Schofield
- <alison.schofield@intel.com>,  Andrew Morton <akpm@linux-foundation.org>,
-  Bharata B Rao <bharata@amd.com>,  Alistair Popple <apopple@nvidia.com>,
-  "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,  Davidlohr Bueso
- <dave@stgolabs.net>,  Vishal Verma <vishal.l.verma@intel.com>,  Ira Weiny
- <ira.weiny@intel.com>
-Subject: Re: [PATCH v3 3/3] cxl/region: Simplify cxl_region_nid()
-In-Reply-To: <20240620121517.00006e3e@Huawei.com> (Jonathan Cameron's message
-	of "Thu, 20 Jun 2024 12:15:17 +0100")
-References: <20240618084639.1419629-1-ying.huang@intel.com>
-	<20240618084639.1419629-4-ying.huang@intel.com>
-	<20240620121517.00006e3e@Huawei.com>
-Date: Fri, 21 Jun 2024 10:25:24 +0800
-Message-ID: <87wmmj117v.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718936776; c=relaxed/simple;
+	bh=Z9KMADyVh0mQcX2BDjXHtJuSjrpaFdPxZVpM+ZPe7w4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=rlGyRnb7cpZKqk+25/bJ2znWRFrCneeSgc3LXjQpsKCbrrlpUVlArQgxjQvJY4YvU5xlE01I5qhLfkk+9zQSSGkalngu42iqf1rozJmZBTqftCpBYg7smTM+iM7WKgWD81XzjHpuDyWrFldTw4hQX8CQGHTUXzw5eSxuVr63MYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=IVd2TsfR; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7042d98792eso28091b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:26:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1718936775; x=1719541575; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gU/GXfDYissHQA31wolSfkKE1r7btzOAHUHtzGx9jJ0=;
+        b=IVd2TsfRQcZsR8vj+68kgD9MezF1lUR57eE22DMKuC2BxzZCDVZHc/xco61cmZqUkm
+         YekZUDVfc7XAvpQtXog4i+j9oZ3WLsZ56r5z/jchczJhqCxrqYWg5ly2QZgwYSuJijWy
+         B2D9MY45YLnfV6G9x7bGfT3nL7MKcWKoqt755XnFp+4lDJQ9Rag5fJDuMY4/38q5Jxgz
+         OabypTaj028NvmOMNUme+QrmU3vpinb+4zFNZdoqq6uQGmR6fXbV0eSG6XwQ97UDW2Xj
+         XIpMSxdsJF2CFfx+vCmJg4gYwtP9fmkcZQWbYvEYfDeO16xngoSqQYJ3wwBQAEtf4R2R
+         HvCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718936775; x=1719541575;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gU/GXfDYissHQA31wolSfkKE1r7btzOAHUHtzGx9jJ0=;
+        b=O5aQB98kreDMZqi0Bq4R7+APeUsvp5KZLvZnAqWtRIRMoDGT04lO27TsC44P7Y+b7D
+         5g2yCrHExg9dK7zHSirgA+UYEOgA/O+Qs7uynkoQm1GkcW1CHzaxig9ObHZRancbbUkS
+         HrErPuDzMEtYkI4uD2KN1pYvE7Wn6pC4kSfWmbwIU5eDf0Hl8kbIk1/0Y2TyToVDZ87a
+         l2sVtwIiB0CXm5Sb5dZqvj+tmDtT6ObtSBn9SFNG/S6DpwJjgDLViKBB8IW/Ns69FvFv
+         XWRDTqfcFY/q1u1wU3HQM1U4xCwR2vSmAmrVEwaaGFvjvrPzHieCXwmAOWHtAUgaPrNp
+         3Gtg==
+X-Gm-Message-State: AOJu0YxjH9XDS4eIQu3/F9NNkK7wruby5zpd2SmYMupqCNnr2eWVeoki
+	UxRf22ZquEcVioc7cKpiXFgRts1gx3tJFL4Z5w4FGu0tIvMPVyEnjUccQx8nKdFQm5cjCq1X82T
+	BVEU=
+X-Google-Smtp-Source: AGHT+IF88NkQTHvqVRk5v5bIhOu9r7lYOFwiOKiZa6lIqLpLL/qsCwPaq41QpJjUF1Lr1yIjG8PNrA==
+X-Received: by 2002:a05:6a00:c90:b0:705:d88f:4a94 with SMTP id d2e1a72fcca58-70629c6c508mr7473065b3a.1.1718936774542;
+        Thu, 20 Jun 2024 19:26:14 -0700 (PDT)
+Received: from mozart.vkv.me ([192.184.166.71])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065119d734sm331516b3a.59.2024.06.20.19.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 19:26:13 -0700 (PDT)
+From: Calvin Owens <calvin@wbinvd.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Calvin Owens <calvin@wbinvd.org>
+Subject: [RESEND PATCH v2] kbuild: buildtar: Add explicit 32-bit arm support
+Date: Thu, 20 Jun 2024 19:25:59 -0700
+Message-Id: <6bc61e82eaae9e614cbd50a322322173f593c90c.1718936424.git.calvin@wbinvd.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <ZhmKzqxHXaSZmXee@mozart.vkv.me>
+References: <ZhmKzqxHXaSZmXee@mozart.vkv.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
 
-Jonathan Cameron <Jonathan.Cameron@Huawei.com> writes:
+Implement buildtar for 32-bit arm, so the zImage (or xipimage) appears
+at boot/vmlinuz-$foo, rather than at boot/vmlinux-kbuild-$foo, matching
+the structure of the tar-pkg on arm64 and other architectures.
 
-> On Tue, 18 Jun 2024 16:46:39 +0800
-> Huang Ying <ying.huang@intel.com> wrote:
->
->> The node ID of the region can be gotten via resource start address
->> directly.  This simplifies the implementation of cxl_region_nid().
->> 
->> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
->> Suggested-by: Alison Schofield <alison.schofield@intel.com>
->> Cc: Dan Williams <dan.j.williams@intel.com>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Cc: Dave Jiang <dave.jiang@intel.com>
->> Cc: Bharata B Rao <bharata@amd.com>
->> Cc: Alistair Popple <apopple@nvidia.com>
->> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
->> Cc: Davidlohr Bueso <dave@stgolabs.net>
->> Cc: Vishal Verma <vishal.l.verma@intel.com>
->> Cc: Ira Weiny <ira.weiny@intel.com>
->> ---
->>  drivers/cxl/core/region.c | 10 ++++------
->>  1 file changed, 4 insertions(+), 6 deletions(-)
->> 
->> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->> index dc15ceba7ab7..605efe3562c6 100644
->> --- a/drivers/cxl/core/region.c
->> +++ b/drivers/cxl/core/region.c
->> @@ -2309,15 +2309,13 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
->>  static int cxl_region_nid(struct cxl_region *cxlr)
->>  {
->>  	struct cxl_region_params *p = &cxlr->params;
->> -	struct cxl_endpoint_decoder *cxled;
->> -	struct cxl_decoder *cxld;
->> +	struct resource *res;
->>  
->>  	guard(rwsem_read)(&cxl_region_rwsem);
->> -	cxled = p->targets[0];
->> -	if (!cxled)
->> +        res = p->res;
->
-> Odd indent - I think spaces rather than tab.  Otherwise seems
-> reasonable.
+Link: https://lore.kernel.org/all/ZhmKzqxHXaSZmXee@mozart.vkv.me/
+Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+---
+ scripts/package/buildtar | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Good catch!  I used spaces accidently.
+diff --git a/scripts/package/buildtar b/scripts/package/buildtar
+index eb67787f8673..23d7ff675396 100755
+--- a/scripts/package/buildtar
++++ b/scripts/package/buildtar
+@@ -104,6 +104,9 @@ case "${ARCH}" in
+ 				cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}";;
+ 		esac
+ 		;;
++	arm)
++		[ -f "${KBUILD_IMAGE}" ] && cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
++		;;
+ 	*)
+ 		cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
+ 		;;
+-- 
+2.39.2
 
-Hi, Dave,
-
-Do you need me to send a new version?  Or you can change it?
-
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-Thank you very much for your review!
-
---
-Best Regards,
-Huang, Ying
-
->
->> +	if (!res)
->>  		return NUMA_NO_NODE;
->> -	cxld = &cxled->cxld;
->> -	return phys_to_target_node(cxld->hpa_range.start);
->> +	return phys_to_target_node(res->start);
->>  }
->>  
->>  static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
 
