@@ -1,183 +1,140 @@
-Return-Path: <linux-kernel+bounces-224231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 117BB911F2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EE7911F30
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16C328A275
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:46:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC7828A633
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4236E16DEA7;
-	Fri, 21 Jun 2024 08:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kl4f1XQP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AFD16D9B1;
+	Fri, 21 Jun 2024 08:46:35 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7538916D4FE;
-	Fri, 21 Jun 2024 08:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1A318E20
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718959577; cv=none; b=OjOca8mGFYhzXazYqcK7ml0yuFZ8awRnWh2kIUHvuhfQVhiYoels2sF3pHTNirN1dcB9S0TmCR3PdtZjSSrETtslhdSYtD4AmhFhai1tZ/5NKtMl90cPLdXZRSwPijKPydjfvV7Z78FAHiD885lacODJqDRAeEV/7cp9BkbR9tQ=
+	t=1718959594; cv=none; b=s1L/L4bOGxDSJUXxN8eBz4dnJm0urpVDOuXBSOhGfGh5K8nxtbKOLctl91VzX898/PA9xnQQl25ik4nXhgLBqxI/iCBXEoVuWDVzXljSK705EOdoWDZbAhTlicSAuunIQ801UQHi4yJPembFSmZEgsYeCZUsjA+NvXML7we5x+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718959577; c=relaxed/simple;
-	bh=OexbvJJQPcse02BM2DvA0BV+L4iJ2rtwhwgVcED68cM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U6ssrgce7t5Ejs2Hxym0pkigFCLvicJoZFbOekSxrkJbG5le3KpTHsFNoGnBv8W2YjqlcdjbVOLaGsY0v5NjwOVZoHfoGoHCkhzZojyXFz5DcR+/iw15Y9ROHtrYwjnCL24o4O/oBh3IeucHzPDUDb+Q/HetaTJ3bcISQDT5KE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kl4f1XQP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 494D9C2BBFC;
-	Fri, 21 Jun 2024 08:46:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718959577;
-	bh=OexbvJJQPcse02BM2DvA0BV+L4iJ2rtwhwgVcED68cM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kl4f1XQPvVobSXO77Km68OiFEluIaP/hmmdkskC1C3hK4Jt9tO/z4dflgTt9dVqML
-	 TSr9xTVx/Yy4MiuesEkZ7agKC0j1eN8/M4RNdatmLZJhsoB8kc8iU4gpVF0vFKQ8Sy
-	 hbHw/sHOEsmzc364P/y3KSGsaMUbBq/hmXux+OqrwBTuq8aVK8knYNUpAjwlZobEt5
-	 wDuvdmEhijRfJWhPLByyrQLfNlKHIzlFm/0YC4S7n66CeF5C0OsHlkIPdbmQYYyYFK
-	 oIxyG803Kf+utSD6lTFtwHiStgKK/VBM3b83TnJDEkdOwBtlKMtWMWXvEchPjkOweX
-	 kbAMXQf0haCbg==
-Message-ID: <4eca8d31-780b-46b5-a8ea-5ccc34370656@kernel.org>
-Date: Fri, 21 Jun 2024 10:46:12 +0200
+	s=arc-20240116; t=1718959594; c=relaxed/simple;
+	bh=JBA97vHqUcrYOqs1UJsb2QIBrtsaj8MberWuOGafYoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ehVJBffvGI+11MNGj76pfMkzMNaj3MbL5TBX2+Xn3iMm6s/VpzzB2qBxGflfko9hHhkwbYl/4lSefeOvJAVOrGTyCGUxNL0a7cItHxc8bwtvKN/gtNe3Uf0X9SR0WaMjKyLDafRYWerfkrcFHP4JgwTNJUT0eckcV11ma4M1YlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sKZuZ-0001RS-G9; Fri, 21 Jun 2024 10:46:23 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sKZuY-003tx4-Ed; Fri, 21 Jun 2024 10:46:22 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 211C62EE5B2;
+	Fri, 21 Jun 2024 08:46:22 +0000 (UTC)
+Date: Fri, 21 Jun 2024 10:46:21 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Vitor Soares <ivitro@gmail.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Thomas Kopp <thomas.kopp@microchip.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Vitor Soares <vitor.soares@toradex.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v6] can: mcp251xfd: fix infinite loop when xmit fails
+Message-ID: <20240621-wise-thistle-hound-49a307-mkl@pengutronix.de>
+References: <20240517134355.770777-1-ivitro@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] rtla: Add dependency on libcpupower
-To: tglozar@redhat.com, rostedt@goodmis.org
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- jkacur@redhat.com, jwyatt@redhat.com,
- Arnaldo Carvalho de Melo <acme@redhat.com>
-References: <20240612145439.206990-1-tglozar@redhat.com>
- <20240612145439.206990-2-tglozar@redhat.com>
-Content-Language: en-US, pt-BR, it-IT
-From: Daniel Bristot de Oliveira <bristot@kernel.org>
-In-Reply-To: <20240612145439.206990-2-tglozar@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Hi Thomas
-
-On 6/12/24 16:54, tglozar@redhat.com wrote:
-> From: Tomas Glozar <tglozar@redhat.com>
-
-I think we can split this into two patches, this first part on tools/Build:
-
-> Add a test for libcpupower into feature tests and use it to add a
-> dependency on libcpupower to rtla.
-> 
-> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
-> ---
->  tools/build/Makefile.feature           | 1 +
->  tools/build/feature/Makefile           | 4 ++++
->  tools/build/feature/test-libcpupower.c | 8 ++++++++
->  tools/tracing/rtla/Makefile            | 2 ++
->  tools/tracing/rtla/Makefile.config     | 9 +++++++++
->  5 files changed, 24 insertions(+)
->  create mode 100644 tools/build/feature/test-libcpupower.c
-> 
-> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-> index 1e2ab148d5db..e4fb0a1fbddf 100644
-> --- a/tools/build/Makefile.feature
-> +++ b/tools/build/Makefile.feature
-> @@ -53,6 +53,7 @@ FEATURE_TESTS_BASIC :=                  \
->          libslang-include-subdir         \
->          libtraceevent                   \
->          libtracefs                      \
-> +        libcpupower                     \
->          libcrypto                       \
->          libunwind                       \
->          pthread-attr-setaffinity-np     \
-> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-> index ed54cef450f5..c93d62afc1e8 100644
-> --- a/tools/build/feature/Makefile
-> +++ b/tools/build/feature/Makefile
-> @@ -38,6 +38,7 @@ FILES=                                          \
->           test-libslang.bin                      \
->           test-libslang-include-subdir.bin       \
->           test-libtraceevent.bin                 \
-> +         test-libcpupower.bin                   \
->           test-libtracefs.bin                    \
->           test-libcrypto.bin                     \
->           test-libunwind.bin                     \
-> @@ -212,6 +213,9 @@ $(OUTPUT)test-libslang-include-subdir.bin:
->  $(OUTPUT)test-libtraceevent.bin:
->  	$(BUILD) -ltraceevent
->  
-> +$(OUTPUT)test-libcpupower.bin:
-> +	$(BUILD) -lcpupower
-> +
->  $(OUTPUT)test-libtracefs.bin:
->  	 $(BUILD) $(shell $(PKG_CONFIG) --cflags libtraceevent 2>/dev/null) -ltracefs
->  
-> diff --git a/tools/build/feature/test-libcpupower.c b/tools/build/feature/test-libcpupower.c
-> new file mode 100644
-> index 000000000000..a346aa332a71
-> --- /dev/null
-> +++ b/tools/build/feature/test-libcpupower.c
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <cpuidle.h>
-> +
-> +int main(void)
-> +{
-> +	int rv = cpuidle_state_count(0);
-> +	return rv;
-> +}
-> diff --git a/tools/tracing/rtla/Makefile b/tools/tracing/rtla/Makefile
-> index b5878be36125..a6a7dee16622 100644
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5dpitlhc7bwdsspr"
+Content-Disposition: inline
+In-Reply-To: <20240517134355.770777-1-ivitro@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-And this part for rtla:
+--5dpitlhc7bwdsspr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> --- a/tools/tracing/rtla/Makefile
-> +++ b/tools/tracing/rtla/Makefile
-> @@ -32,8 +32,10 @@ DOCSRC		:= ../../../Documentation/tools/rtla/
->  
->  FEATURE_TESTS	:= libtraceevent
->  FEATURE_TESTS	+= libtracefs
-> +FEATURE_TESTS	+= libcpupower
->  FEATURE_DISPLAY	:= libtraceevent
->  FEATURE_DISPLAY	+= libtracefs
-> +FEATURE_DISPLAY	+= libcpupower
->  
->  ifeq ($(V),1)
->    Q		=
-> diff --git a/tools/tracing/rtla/Makefile.config b/tools/tracing/rtla/Makefile.config
-> index 0b7ecfb30d19..8b6bc91e5dff 100644
-> --- a/tools/tracing/rtla/Makefile.config
-> +++ b/tools/tracing/rtla/Makefile.config
-> @@ -42,6 +42,15 @@ else
->    $(info libtracefs is missing. Please install libtracefs-dev/libtracefs-devel)
->  endif
->  
-> +$(call feature_check,libcpupower)
-> +ifeq ($(feature-libcpupower), 1)
-> +  $(call detected,CONFIG_LIBCPUPOWER)
-> +  $(call lib_setup,cpupower)
-> +else
+On 17.05.2024 14:43:55, Vitor Soares wrote:
+> From: Vitor Soares <vitor.soares@toradex.com>
+>=20
+> When the mcp251xfd_start_xmit() function fails, the driver stops
+> processing messages, and the interrupt routine does not return,
+> running indefinitely even after killing the running application.
+>=20
+> Error messages:
+> [  441.298819] mcp251xfd spi2.0 can0: ERROR in mcp251xfd_start_xmit: -16
+> [  441.306498] mcp251xfd spi2.0 can0: Transmit Event FIFO buffer not empt=
+y. (seq=3D0x000017c7, tef_tail=3D0x000017cf, tef_head=3D0x000017d0, tx_head=
+=3D0x000017d3).
+> ... and repeat forever.
+>=20
+> The issue can be triggered when multiple devices share the same
+> SPI interface. And there is concurrent access to the bus.
+>=20
+> The problem occurs because tx_ring->head increments even if
+> mcp251xfd_start_xmit() fails. Consequently, the driver skips one
+> TX package while still expecting a response in
+> mcp251xfd_handle_tefif_one().
+>=20
+> This patch resolves the issue by starting a workqueue to write
+> the tx obj synchronously if err =3D -EBUSY. In case of another error,
+> it decrements tx_ring->head, removes skb from the echo stack, and
+> drops the message.
+>=20
+> Fixes: 55e5b97f003e ("can: mcp25xxfd: add driver for Microchip MCP25xxFD =
+SPI CAN")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
 
-Also, it is better to make it optional: if the system has this library,
-set a CONFIG_HAS_LIBCPUPOWER, otherwise no..
+I've reworked the last sentence for a bit and applied to linux-can.
 
-> +  STOP_ERROR := 1
-> +  $(info libcpupower is missing. Please install libcpupower-dev/kernel-tools-libs-devel)
-> +endif
+Thanks,
+Marc
 
-Then, place your code inside this option. If the option is called
-but the tool was not compiled with CONFIG_HAS_LIBCPUPOWER, just
-complain saying that the option is not supported because it was
-compiled without it. Then put this info there, to compile
-with these options enabled.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
->  ifeq ($(STOP_ERROR),1)
->    $(error Please, check the errors above.)
->  endif
+--5dpitlhc7bwdsspr
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZ1PdsACgkQKDiiPnot
+vG/3Jwf/Q7/WWQa/V0JIjwsh++Q42TCZN2oOvdIDCEeKutISQF4MybxEk09tyNLy
+8P2q4KyB1Vb1IG/pWNQQD3TWs/05UcYEzxUSx6ciiGlzf6cyCra8CDmtLegxWOcW
+IAwTuXv6bBK7H1Hhpy8Bx6pOpYoQUuJ2DSuqMcdUoLDctm6mvhpWugICpxZEY5FG
+AsUwLGpwg+PXV/2UE0ivdwfvEb7/P4iJVbiaQgg80550rLaE1zGSTaOoaY+N/OWM
+5kU63kScoE1veTrCR1QPAxWOMLWl+EoVkrSTHaCC8Qcp/L0MwPBilsQV5sJf+uv5
+eFH428lDYCgthJkveWj8tOiOaHaMDA==
+=AosI
+-----END PGP SIGNATURE-----
+
+--5dpitlhc7bwdsspr--
 
