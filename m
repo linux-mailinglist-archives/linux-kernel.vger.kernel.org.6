@@ -1,143 +1,110 @@
-Return-Path: <linux-kernel+bounces-224774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0245C9126BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:34:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C1009126C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79C0AB21A31
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:34:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10EE8B22121
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621FE79D8;
-	Fri, 21 Jun 2024 13:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2816F8BFD;
+	Fri, 21 Jun 2024 13:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="joQzu6Pf"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hQZiExZy"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A788F63BF
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF314A20;
+	Fri, 21 Jun 2024 13:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718976846; cv=none; b=hPnPnj3bcWBu4mog45ju1Llwc5LwFXdw3pxNQx1YK3mJGJt/dEfJnbyMwITqGuW+V0I2dHGNFS1QiJMcLVlTZ871vRZuQGwojwYa2qQHkkjsWKP8cwivCzS6JV1WhKSOxewUPsUN0SyP3DNqrX3sj9Ep/f5hcYP4gKaBwgX1Yhs=
+	t=1718977011; cv=none; b=gDctmPRNIpB1MuVnm0Zl0K8knlBjDIOe2ZKjwbKlVBkTnlfiQSiHAH7vYJjwmMRRphW0dlWPokbR+hKqNcXxTYYIS8lia6bBnME+0PI/XnokDL1aC9MLTdqUHAdQ83iCHxbjCwuuOWwea8JWC/zZ5qft9BmABbUca6/yZL00PfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718976846; c=relaxed/simple;
-	bh=7V0RclItNFdKo29WOSpHddexvDxa6KYtY5l56bgncyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:CC:From:
-	 In-Reply-To:Content-Type; b=IO4BzKngovoGkZbX2jNzvLNQbrNiF18/HpsOajVOmy5/3usLAff+gLaam/7U2D/Gk9xeta09jfDSrTzv1OTxmPpAyQF9zFw6vLoksslaZuM6QG8vhk6OoqyPGTZETqFPCpEvpw2u7ZQ3Si2vOj2bRkXbNhgV3WwG0RG0zeEKREc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=joQzu6Pf; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LB3BRq021260;
-	Fri, 21 Jun 2024 15:33:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	7V0RclItNFdKo29WOSpHddexvDxa6KYtY5l56bgncyo=; b=joQzu6Pf829wWuft
-	mvJv87vpSqWVXiOZWA+bAqqmzslUFyEAvPJuzYRN+lI0yNlCl+M+uPn7exIwGDkQ
-	bgxV/lz9d1yWH5QkfCyCpH73vz2G5cz+njQMV5CYx7tTwE8xXfrP9nB9aVJfVkpp
-	EITOg+lucS4jbqqjnAJt5Z+10Kzc0PPv5OH8jI4NZ7LRy/hxO5AkiyvogIdd7piN
-	m+hb+DtY9tk7heqkHsTK4wdwsCc7KLL5dPXMSZcD0JUs4xCU4wJ/IrE20E61zs6X
-	8O7lpsr99DGIRiBaRACWH45Isxcv2y5dgyJFWpN4wKqg9RL3Md/iLtW0ak9DPDba
-	ShZsZA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yvrkbkvv3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 15:33:42 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B679B40044;
-	Fri, 21 Jun 2024 15:33:35 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C2B4D221942;
-	Fri, 21 Jun 2024 15:32:54 +0200 (CEST)
-Received: from [10.48.87.177] (10.48.87.177) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 21 Jun
- 2024 15:32:54 +0200
-Message-ID: <902e6037-9ba9-41ab-bfd0-a25fe2c26bce@foss.st.com>
-Date: Fri, 21 Jun 2024 15:32:53 +0200
+	s=arc-20240116; t=1718977011; c=relaxed/simple;
+	bh=VmXZW32hCjidF+0Rl4VnEUEIwG58npl0O0ibS45psjc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fLhGi9jdtwKNltfHt+YaImXw20pwbbFf1RTNyQETbHrumdiK9BkudRJPym3FKCXlasnzMUP7PFwN56TBRQQKcfzgI8hJAEFSrGdBO0DSyyw4r00CUFCev1u+5gPxT9+CDV1ZE5m27KgedAVOzAa/+mDYN01qpc+yPOuAcNmjGgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hQZiExZy; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LDaaHF052343;
+	Fri, 21 Jun 2024 08:36:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718976997;
+	bh=jO3qwjFYPAmtp5fMhPJin8eIQO27BhIN/9LFR+mQksc=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=hQZiExZykvjBDt1MV47J8d9I4eFKrjr17jRdtU4Ywo/91qcZIBeNznGf8lKO/KxO0
+	 mTO8cMQEVjxwrECF2v2K1DlKwObvifb+fkES+dL7p3vnZOmjpBygnKVicgemiYOZBN
+	 ef70Z9Yu3xqMZnyWKFfjhN1vYdw/kbvRMKZDT8do=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LDaarA114465
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 21 Jun 2024 08:36:36 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
+ Jun 2024 08:36:36 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 21 Jun 2024 08:36:36 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LDaaHQ046592;
+	Fri, 21 Jun 2024 08:36:36 -0500
+Date: Fri, 21 Jun 2024 08:36:36 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Andrew Davis <afd@ti.com>, Linus Walleij <linus.walleij@linaro.org>
+CC: "Rob Herring (Arm)" <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tony
+ Lindgren <tony@atomide.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: pinctrl-single: Define a max count
+ for "pinctrl-single,gpio-range"
+Message-ID: <20240621133636.wfy3ucf2qkcqphdf@lantern>
+References: <20240618165102.2380159-1-nm@ti.com>
+ <171873566448.3500109.16734660300499772836.robh@kernel.org>
+ <20240618185705.5fwevm7drphgvwl2@dilation>
+ <c1b7a47e-cb05-4701-9766-d1fc13612f34@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: TR: [PATCH v4] drm/stm: Avoid use-after-free issues with crtc and
- plane
-To: Katya Orlova <e.orlova@ispras.ru>
-References: <20240216125040.8968-1-e.orlova@ispras.ru>
- <0b91cb58-b9ca-4c67-b15a-77c60bc2ee18@foss.st.com>
- <ef635048bc7b4521be09ca06c66b57a5@foss.st.com>
-Content-Language: en-US
-CC: Philippe Cornu <philippe.cornu@foss.st.com>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <lvc-project@linuxtesting.org>,
-        Raphael Gallais-Pou
-	<raphael.gallais-pou@foss.st.com>
-From: Yannick FERTRE <yannick.fertre@foss.st.com>
-In-Reply-To: <ef635048bc7b4521be09ca06c66b57a5@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_05,2024-06-21_01,2024-05-17_01
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <c1b7a47e-cb05-4701-9766-d1fc13612f34@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Katya,
+On 11:19-20240619, Andrew Davis wrote:
+[...]
 
-thanks for the patch.
+> 
+> This binding is a bit of a mess, the phandle is always a pointer to
+> a node with the cells length hard-coded to 3. This looks to have been done
+> to allow the driver to use the function "of_parse_phandle_with_args" which
+> needs a property name for to find the cell count. But that makes no sense
+> as the count is always 3, the driver cannot accept any other value. The
+> driver should have just looped of_get_property() 3 times but wanted to
+> use the helper. So a silly driver mistake has turned into a binding issue.
+> 
+> We should drop the "pinctrl-single,gpio-range" from the binding and
+> fix the driver.
 
-Tested-by: Yannick Fertre <yannick.fertre@foss.st.com>
+Linus W: pinctrl-single,gpio-range -> any thoughts here? I think it is a
+valid (if a bit too flexible design looking at the existing users who
+just use a single mux value mapping for all modes)
 
-BR
-
-Le 19/03/2024 à 14:47, Philippe CORNU - foss a écrit :
-> zut, déjà un acked-by de RGA...
-> tu confirmes que je prends?
-> Philippe
-> ________________________________________
-> De : Raphael GALLAIS-POU - foss
-> Envoyé : lundi 26 février 2024 14:50
-> À : Katya Orlova
-> Cc : Yannick FERTRE - foss; Philippe CORNU - foss; David Airlie; Daniel Vetter; Maxime Coquelin; Alexandre TORGUE - foss; Philipp Zabel; dri-devel@lists.freedesktop.org; linux-stm32@st-md-mailman.stormreply.com; linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; lvc-project@linuxtesting.org
-> Objet : Re: [PATCH v4] drm/stm: Avoid use-after-free issues with crtc and plane
->
-> On 2/16/24 13:50, Katya Orlova wrote:
->> ltdc_load() calls functions drm_crtc_init_with_planes(),
->> drm_universal_plane_init() and drm_encoder_init(). These functions
->> should not be called with parameters allocated with devm_kzalloc()
->> to avoid use-after-free issues [1].
->>
->> Use allocations managed by the DRM framework.
->>
->> Found by Linux Verification Center (linuxtesting.org).
->>
->> [1]
->> https://lore.kernel.org/lkml/u366i76e3qhh3ra5oxrtngjtm2u5lterkekcz6y2jkndhuxzli@diujon4h7qwb/
->>
->> Signed-off-by: Katya Orlova <e.orlova@ispras.ru>
-> Hi Katya,
->
->
-> Thanks for this submission.
->
-> Acked-by: Raphaël Gallais-Pou <raphael.gallais-pou@foss.st.com>
->
->
-> Regards,
-> Raphaël
->
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
