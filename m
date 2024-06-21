@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-223948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F75911ADF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:03:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB0C911AE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADBCCB21389
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:03:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E9F1F21785
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555E214535A;
-	Fri, 21 Jun 2024 06:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7AE1422D6;
+	Fri, 21 Jun 2024 06:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHuPW/l7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZZdTPnA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2B317BB9;
-	Fri, 21 Jun 2024 06:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CA61422A6;
+	Fri, 21 Jun 2024 06:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718949819; cv=none; b=nF1TPTPjyCwWAIMPve+4ZRhVdVB2S64OyUGI7sZE5ANd2n7gRr1u9Y9YWf8yjM7tODJwK5IIM0Rx6WAcwXOPUJhwrkqMl+LtZ3xyRNofOalzcuAd5gSWx9+2yIiCIaH56DjLSsV9Y972zYf0uIUvkOSD9pYURZ0FCAUmkq3FhJo=
+	t=1718949907; cv=none; b=ba2CKvRSK8Ygwk1lxoVaj6Of/q5FuvWMiSTUR0Dy67RYYroY2gh4VXqqKbysiyqvolUKi4TIPmBkawx/mN2L/I6S26WGovZRW3LAXVYvp0wdf6d2AGc4U9H0E2wKKTNZNLZoWjeYtW2EsIItFreyhYSmDrcavI/fV3AJq1m9s3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718949819; c=relaxed/simple;
-	bh=3HxjbrgVB9KXbMOlbGzr9Z5tVUPV8KpfS6W+akCYdZo=;
+	s=arc-20240116; t=1718949907; c=relaxed/simple;
+	bh=FKTuHiq9a9f8t62lOXBHngDzhtAoZftKMZ66t+Lrfpk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cNw8mQlKqd3uaBhXbEgInYIW6KUC/IhQup70q6L7G0A6cBZlfxAjK1swRxmEvMBxMm6WSU1JJtSRJ1/pDTCsGo8ECBRz1uSP7SgqEt6yhR6uW0CU07fkvAvLkiLl2b0cAQEsl3bKsvYGT9z2sFQhadnb0gUKgOOsLCdzBbo5kVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHuPW/l7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55039C2BBFC;
-	Fri, 21 Jun 2024 06:03:33 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tXK++KwbSCeFjBdmuzmYaVWm3trfRe25gC/AOqHjwacQtyGONziATZIEI5DGBN6PtetXw2y0og7KCimM+yPPFbl1Qi3fp8OX8362uFppT66Pp7qvbfuhdGddJ3aGfRVxA+QLnkywxamEdN5t5CobexsIAQHtpe+5v45TWCl8Pd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZZdTPnA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACF43C2BBFC;
+	Fri, 21 Jun 2024 06:05:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718949819;
-	bh=3HxjbrgVB9KXbMOlbGzr9Z5tVUPV8KpfS6W+akCYdZo=;
+	s=k20201202; t=1718949906;
+	bh=FKTuHiq9a9f8t62lOXBHngDzhtAoZftKMZ66t+Lrfpk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QHuPW/l7LVgedeyzPWjy7KryxLel9deWa+Zg+1o+NE2iR8Xq/T07MZeOdiQapTqNa
-	 6LOM28+9NOwTkfK0Sa9p66zZj9ir5jMv3ltMQf4kU9cVhoFMkDN29HKYp6gMTYN04t
-	 i/4C3bi4YfFcwk4pfaUnibp60Q6DssugXk7Lyr2hHoiEMZeWP+mVDPs6CbWShA0iva
-	 pZpCnjfbDc1H+6sTVzNBu6WOLl+7e9WagfrhOmd8Z91HRk4b0qZ/h0gGmVKP5iEkzi
-	 JRYXjgz70fsRDvoCN9OhFUn7dCRhid+LXOXRVxGCIhEC52R18X4g5uTOkiUckSUCRM
-	 12FykE/e1/r9A==
-Message-ID: <4533403d-11b1-4f73-b57d-3079be1e300f@kernel.org>
-Date: Fri, 21 Jun 2024 08:03:30 +0200
+	b=LZZdTPnAmkEihrLbDpk74L4Iu2m+/h8a+QKb43TLVfRIxngX50zStUTTN8AP3Z5qC
+	 LzNK0Zl+V+2HhKN1rJUnM5FLmhQfSeMgQSlTlY92lNxnTBCi156uWDOxPyU+6T0YUP
+	 I08MggNxYG9+Z3eFrwvf4CvDel3jxBGNaN+w3nt4wffoZaRQCsuSJrTTgA8kKsdsmU
+	 M/KEBS2scyWAW32qmLXZZSUxJAAfBguyPrO5sZSq1Rt5M4y/Mry0//3pxrVR1diOZf
+	 MZjTwybw4Y9jmSKkiO+Pc7SXjQblxl96U8IJv6JvoGkuLE6MSQI/5/DP2Dfl5OhuXi
+	 6zHzAYySM65zg==
+Message-ID: <f315c1cd-1f78-46e0-a86b-5240a869bb31@kernel.org>
+Date: Fri, 21 Jun 2024 08:04:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,33 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] net: wireless: brcmfmac: Add optional 32k clock
- enable support
-To: Jacobe Zang <jacobe.zang@wesion.com>,
- "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>
-Cc: "kvalo@kernel.org" <kvalo@kernel.org>,
- "duoming@zju.edu.cn" <duoming@zju.edu.cn>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "minipli@grsecurity.net" <minipli@grsecurity.net>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
- "brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
- "megi@xff.cz" <megi@xff.cz>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>,
- "efectn@protonmail.com" <efectn@protonmail.com>,
- "jagan@edgeble.ai" <jagan@edgeble.ai>,
- "dsimic@manjaro.org" <dsimic@manjaro.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240620020015.4021696-1-jacobe.zang@wesion.com>
- <20240620020015.4021696-3-jacobe.zang@wesion.com>
- <b8b89ef7-2e92-4e1a-9609-6b0fd6d64d7e@kernel.org>
- <TYZPR03MB700143E13635364FF5A316D080C92@TYZPR03MB7001.apcprd03.prod.outlook.com>
+Subject: Re: [PATCH 1/2] dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document
+ MA35D1 SDHCI controller
+To: Shan-Chun Hung <shanchun1218@gmail.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ adrian.hunter@intel.com, p.zabel@pengutronix.de, pbrobinson@gmail.com,
+ serghox@gmail.com, mcgrof@kernel.org,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com,
+ tmaimon77@gmail.com, andy.shevchenko@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com
+References: <20240619054641.277062-1-shanchun1218@gmail.com>
+ <20240619054641.277062-2-shanchun1218@gmail.com>
+ <3d193f01-2c8b-4d6c-8139-11f2d9a34d2d@kernel.org>
+ <42ec842e-84c0-40fd-b6fc-e59d25ede89f@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -121,21 +109,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <TYZPR03MB700143E13635364FF5A316D080C92@TYZPR03MB7001.apcprd03.prod.outlook.com>
+In-Reply-To: <42ec842e-84c0-40fd-b6fc-e59d25ede89f@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/06/2024 03:45, Jacobe Zang wrote:
-> Hello,
-> 
->> Where is the binding for this?
-> I seperate the binding in this patch " [PATCH v1 1/3] arm64: dts: rockchip: Add AP6275P wireless support to Khadas Edge 2 ", the specific code is 
-> +                       clocks = <&hym8563>;
-> +                       clock-names = "32k";
-> 
-> Should I combine these two patch to one?
+On 21/06/2024 01:53, Shan-Chun Hung wrote:
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 1
+>>> +
+>>> +  pinctrl-names:
+>>> +    description:
+>>> +      Should at least contain default and state_uhs.
+>> ? Contradicts constraints.
+> I will modify the description to "Should at least contain default. 
+> state_uhs is mandatory in this scenario."
 
-That's DTS, not binding. I ask about Devicetree binding.
+Then just drop it. Don't repeat constraints in free form text.
+
 
 Best regards,
 Krzysztof
