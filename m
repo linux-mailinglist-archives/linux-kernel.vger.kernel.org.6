@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-224290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5043D912046
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:16:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF8E912047
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80DFD1C232F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:16:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5E328DD4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D433F16EC11;
-	Fri, 21 Jun 2024 09:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D9516F0ED;
+	Fri, 21 Jun 2024 09:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RS5d0SOZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ohiki8X8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2574516EC0B
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE5A16F0D2
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718961377; cv=none; b=l8zUGe4tAm/GBKbHq/NTt4c17ggORfxpmEFDhtdnCrV6yoHcWgbm93fx8Szu1tqDKH1B18ZdmuQKjQDQGDEMfockOgJp4aMpyKeW/UiNi+FgL4E+wCme2sYmztvjYHG3f77EJ8BWk1XXm8ajaXWblZbdXI83rIrDnZd8s/OuP+s=
+	t=1718961380; cv=none; b=G99DkSQYTcuHYYyTHfdyn1iEtm8AF332ybvIY7vbIRQyD4by5cVcBu3gQyThiMmaPkTeQk/BtRl35SnIMXHE0JWvNEY54CkSrIzrLMrlKmozmFqN0+pHr8vdqAv3dUaHS83ZHcXnAWPpINoz0YIWFiP6f9a/Bu63uNHHnyWUX2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718961377; c=relaxed/simple;
-	bh=5XJeijBFwMIAQTzHMcx3zvbS0cEEi69GXEIlzTUup14=;
+	s=arc-20240116; t=1718961380; c=relaxed/simple;
+	bh=tIr6xsl9f1qlL3ubydb+4cEtOOda2NPwxbdGg11VU2k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GaIOL7LCJCJmXnwMswtuiYyjmB1cSgBNqtQZB4AFtkJmpXxyx3a+uoqy+PhVLZXvNWBMccRCg858PYDDGj9G1yvCYuBoH1GAC2pG17b9JYD4QYhgkv0R++dUIoqzT3fudlPg3UWoR3KPe98zA6vhFeWq+CUairZfiun8ZHOt65I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RS5d0SOZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 021D7C32781;
-	Fri, 21 Jun 2024 09:16:13 +0000 (UTC)
+	 MIME-Version; b=JbOyHU9/1fTozSGNIoW3BDtUutYzm0dHIwb100apG5zLHrmkBE8QOMChD4cdJkYmAxoaDDHHJZV8pTJXAUQaiY7XFRGoeWCRrOf0PCyqb8l1y/kM3d6zNowhMP8UsSKmoSvG0AlSMcglKt1lts7Os0KxRoEWN4gycocQwFFED/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ohiki8X8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 054FFC4AF09;
+	Fri, 21 Jun 2024 09:16:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718961376;
-	bh=5XJeijBFwMIAQTzHMcx3zvbS0cEEi69GXEIlzTUup14=;
+	s=k20201202; t=1718961379;
+	bh=tIr6xsl9f1qlL3ubydb+4cEtOOda2NPwxbdGg11VU2k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RS5d0SOZKDThKmdrWuPx65fT4JYdZp3xrJk3KwhRXbvClNnTCj8H1NboF+wRr9waK
-	 KosG5uIJWaPc0q0/OwFWCKMortW5EY+nWOut7S3wMcth4HQnsVMBZiCag8/aYthXwM
-	 Pn9JNun3+8Z4nYVwmeBOoHJCiOJZYFB5in2mj3cR66+uwXyUI181BA/ZCWLQHI9rI7
-	 21O34WCCRZSRwgQpmgIYJB4jLvmKbGUSG5tE4YPHLJx1qoY3nwlKYGRMSv2yPQ866B
-	 469xO1YUEbqrWp7R2kySxRWrIkec/OLi2cmWVHL6+dJE8VrtOOUXoCz826ygLMpWFj
-	 X+wg0pVaZzzkQ==
+	b=Ohiki8X8ilUGBaJ7gIupFINyIDRIkaniT7gVKr6Iwd9XrNDZKfOuVeufXr3czCW4E
+	 igxvoZsMarJ2BDeZZXD/HJXuFFsThKi5Ht/NdM3fTHOzphrJs0/2G6n/9Bfq0fQ5uR
+	 SwAzvZyNCFd6EcZQTLtBBK7qP+6y2dNSTAlONmafm8eOQCnHyisHgPk2t/+MPZYzM0
+	 SFiV7TWPpaaf6FIA5R3X/XCuCT/ww2qbKzisfr0NWRwbnWWQ/B5gbsVK7VsahRnl1o
+	 Dyj3CSxrvdda/NQtta8OUUA6pIV8z71yZo7f1gWBQRwH8awSB4Y8uvDVKWRmgWO94F
+	 rFx2bYrgbRR7g==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
@@ -53,9 +53,9 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
 	Ian Rogers <irogers@google.com>,
 	Adrian Hunter <adrian.hunter@intel.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 3/4] perf: Fix event leak upon exit
-Date: Fri, 21 Jun 2024 11:16:00 +0200
-Message-ID: <20240621091601.18227-4-frederic@kernel.org>
+Subject: [PATCH 4/4] perf: Fix event leak upon exec and file release
+Date: Fri, 21 Jun 2024 11:16:01 +0200
+Message-ID: <20240621091601.18227-5-frederic@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240621091601.18227-1-frederic@kernel.org>
 References: <20240621091601.18227-1-frederic@kernel.org>
@@ -67,83 +67,154 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When a task is scheduled out, pending sigtrap deliveries are deferred
-to the target task upon resume to userspace via task_work.
+The perf pending task work is never waited upon the matching event
+release. In the case of a child event, released via free_event()
+directly, this can potentially result in a leaked event, such as in the
+following scenario that doesn't even require a weak IRQ work
+implementation to trigger:
 
-However failures while adding an event's callback to the task_work
-engine are ignored. And since the last call for events exit happen
-after task work is eventually closed, there is a small window during
-which pending sigtrap can be queued though ignored, leaking the event
-refcount addition such as in the following scenario:
+schedule()
+   prepare_task_switch()
+=======> <NMI>
+      perf_event_overflow()
+         event->pending_sigtrap = ...
+         irq_work_queue(&event->pending_irq)
+<======= </NMI>
+      perf_event_task_sched_out()
+          event_sched_out()
+              event->pending_sigtrap = 0;
+              atomic_long_inc_not_zero(&event->refcount)
+              task_work_add(&event->pending_task)
+   finish_lock_switch()
+=======> <IRQ>
+   perf_pending_irq()
+      //do nothing, rely on pending task work
+<======= </IRQ>
 
-    TASK A
-    -----
+begin_new_exec()
+   perf_event_exit_task()
+      perf_event_exit_event()
+         // If is child event
+         free_event()
+            WARN(atomic_long_cmpxchg(&event->refcount, 1, 0) != 1)
+            // event is leaked
 
-    do_exit()
-       exit_task_work(tsk);
+Similar scenarios can also happen with perf_event_remove_on_exec() or
+simply against concurrent perf_event_release().
 
-       <IRQ>
-       perf_event_overflow()
-          event->pending_sigtrap = pending_id;
-          irq_work_queue(&event->pending_irq);
-       </IRQ>
-    =========> PREEMPTION: TASK A -> TASK B
-       event_sched_out()
-          event->pending_sigtrap = 0;
-          atomic_long_inc_not_zero(&event->refcount)
-          // FAILS: task work has exited
-          task_work_add(&event->pending_task)
-       [...]
-       <IRQ WORK>
-       perf_pending_irq()
-          // early return: event->oncpu = -1
-       </IRQ WORK>
-       [...]
-    =========> TASK B -> TASK A
-       perf_event_exit_task(tsk)
-          perf_event_exit_event()
-             free_event()
-                WARN(atomic_long_cmpxchg(&event->refcount, 1, 0) != 1)
-                // leak event due to unexpected refcount == 2
-
-As a result the event is never released while the task exits.
-
-Fix this with appropriate task_work_add()'s error handling.
+Fix this with synchonizing against the possibly remaining pending task
+work while freeing the event, just like is done with remaining pending
+IRQ work. This means that the pending task callback neither need nor
+should hold a reference to the event, preventing it from ever beeing
+freed.
 
 Fixes: 517e6a301f34 ("perf: Fix perf_pending_task() UaF")
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- kernel/events/core.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ include/linux/perf_event.h |  1 +
+ kernel/events/core.c       | 38 ++++++++++++++++++++++++++++++++++----
+ 2 files changed, 35 insertions(+), 4 deletions(-)
 
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index a5304ae8c654..393fb13733b0 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -786,6 +786,7 @@ struct perf_event {
+ 	struct irq_work			pending_irq;
+ 	struct callback_head		pending_task;
+ 	unsigned int			pending_work;
++	struct rcuwait			pending_work_wait;
+ 
+ 	atomic_t			event_limit;
+ 
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 8f908f077935..7c3218d31d1d 100644
+index 7c3218d31d1d..586d4f367624 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -2284,18 +2284,15 @@ event_sched_out(struct perf_event *event, struct perf_event_context *ctx)
- 	}
- 
- 	if (event->pending_sigtrap) {
--		bool dec = true;
--
- 		event->pending_sigtrap = 0;
+@@ -2288,7 +2288,6 @@ event_sched_out(struct perf_event *event, struct perf_event_context *ctx)
  		if (state != PERF_EVENT_STATE_OFF &&
--		    !event->pending_work) {
--			event->pending_work = 1;
--			dec = false;
-+		    !event->pending_work &&
-+		    !task_work_add(current, &event->pending_task, TWA_RESUME)) {
- 			WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
--			task_work_add(current, &event->pending_task, TWA_RESUME);
--		}
--		if (dec)
-+			event->pending_work = 1;
-+		} else {
+ 		    !event->pending_work &&
+ 		    !task_work_add(current, &event->pending_task, TWA_RESUME)) {
+-			WARN_ON_ONCE(!atomic_long_inc_not_zero(&event->refcount));
+ 			event->pending_work = 1;
+ 		} else {
  			local_dec(&event->ctx->nr_pending);
-+		}
+@@ -5203,9 +5202,35 @@ static bool exclusive_event_installable(struct perf_event *event,
+ static void perf_addr_filters_splice(struct perf_event *event,
+ 				       struct list_head *head);
+ 
++static void perf_pending_task_sync(struct perf_event *event)
++{
++	struct callback_head *head = &event->pending_task;
++
++	if (!event->pending_work)
++		return;
++	/*
++	 * If the task is queued to the current task's queue, we
++	 * obviously can't wait for it to complete. Simply cancel it.
++	 */
++	if (task_work_cancel(current, head)) {
++		event->pending_work = 0;
++		local_dec(&event->ctx->nr_pending);
++		return;
++	}
++
++	/*
++	 * All accesses related to the event are within the same
++	 * non-preemptible section in perf_pending_task(). The RCU
++	 * grace period before the event is freed will make sure all
++	 * those accesses are complete by then.
++	 */
++	rcuwait_wait_event(&event->pending_work_wait, !event->pending_work, TASK_UNINTERRUPTIBLE);
++}
++
+ static void _free_event(struct perf_event *event)
+ {
+ 	irq_work_sync(&event->pending_irq);
++	perf_pending_task_sync(event);
+ 
+ 	unaccount_event(event);
+ 
+@@ -6828,24 +6853,28 @@ static void perf_pending_task(struct callback_head *head)
+ 	struct perf_event *event = container_of(head, struct perf_event, pending_task);
+ 	int rctx;
+ 
++	/*
++	 * All accesses to the event must belong to the same implicit RCU read-side
++	 * critical section as the ->pending_work reset. See comment in
++	 * perf_pending_task_sync().
++	 */
++	preempt_disable_notrace();
+ 	/*
+ 	 * If we 'fail' here, that's OK, it means recursion is already disabled
+ 	 * and we won't recurse 'further'.
+ 	 */
+-	preempt_disable_notrace();
+ 	rctx = perf_swevent_get_recursion_context();
+ 
+ 	if (event->pending_work) {
+ 		event->pending_work = 0;
+ 		perf_sigtrap(event);
+ 		local_dec(&event->ctx->nr_pending);
++		rcuwait_wake_up(&event->pending_work_wait);
  	}
  
- 	perf_event_set_state(event, state);
+ 	if (rctx >= 0)
+ 		perf_swevent_put_recursion_context(rctx);
+ 	preempt_enable_notrace();
+-
+-	put_event(event);
+ }
+ 
+ #ifdef CONFIG_GUEST_PERF_EVENTS
+@@ -11959,6 +11988,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 	init_waitqueue_head(&event->waitq);
+ 	init_irq_work(&event->pending_irq, perf_pending_irq);
+ 	init_task_work(&event->pending_task, perf_pending_task);
++	rcuwait_init(&event->pending_work_wait);
+ 
+ 	mutex_init(&event->mmap_mutex);
+ 	raw_spin_lock_init(&event->addr_filters.lock);
 -- 
 2.45.2
 
