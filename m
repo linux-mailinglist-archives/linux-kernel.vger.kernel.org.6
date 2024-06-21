@@ -1,119 +1,94 @@
-Return-Path: <linux-kernel+bounces-224099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F752911D37
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:47:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B3C911D44
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02B33B2169A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:47:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD9F284A05
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F2616C86E;
-	Fri, 21 Jun 2024 07:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010A016D4DA;
+	Fri, 21 Jun 2024 07:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="I98jzGkb"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfFN+Huq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB9C7E58D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202D216C86E;
+	Fri, 21 Jun 2024 07:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718956033; cv=none; b=cMdIt9jvymEU7BPIf8uwmXc5Pbd26bxxygwbs6/fMSGGBeamd5iN3CLyiZ8SMmEsj2MEQPwmwRgHY0SsCjBan8duTMWHkxECGN6QF4RtiiyMcRjZH6WWdzEiU+0kGXVqsg1afVSS/B6sFFwSViLxi0rWFA4oslrsU8qb91XULzM=
+	t=1718956050; cv=none; b=n+AaWGSjWvK5G7bWBmJh+DsXfR+9t/8ifhRI4HYcOG4S42vzSxxbIfycsSL1gj12TacewVvE2cp/poFbK939RGb+NX9yc/YDuYcUGih3r27t5V16pTPe4xCQJKqFVIfh5XkaOINvNENE+hQBlSJ+b5xwyavxrCTfsA+vgJGsDWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718956033; c=relaxed/simple;
-	bh=43wEsokmzAswtfHgmvxKtwd8yObBMAd5Mf0kZWIONHs=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NitWkmH5mtdgQrn8sV/HzlsHU1MJfi6plVLoDGhXwpU4QhHatoLZSd32sYS9ymjAgOPAANeiDnN3Ua16ndI7h2YRcaHgHv3oQ7ciNetOqap2C8pYiXgAAQVD7eKKo31XYtnwe1UyqUakwiURUQHPtJcIKtqmWzz2D0sVnsSNgO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=I98jzGkb; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=43wE
-	sokmzAswtfHgmvxKtwd8yObBMAd5Mf0kZWIONHs=; b=I98jzGkbJXmYD05JlwVr
-	aLLRxqIqRdsM6R3INlSPqUyVLkryTc3ygMcm/+HPJlsY4dFdR017P7DQSNHJjlJy
-	G915k60xUI0NF8TvXjR5XT1FsWqvcql4OWfRtyUrp2pmpKnIcN8Yz49Kq0qf13iV
-	gsUComTPTrJlh6Zpf68oMGP2e7Zaxo19qsoMWBTqdRF73dbjG73BvPLQY8SxGfxi
-	O1dYYlpeuhdveZOmXHoRUqxXumMf8ROgrgkKphAYOfmf5HyLMFkc+4ymYz+5Kcjo
-	LqMCpRkMOHmtNK4o6U53keY5IeDnfddgJ2siiiBFaRx0kS2KjvkR/9B5v0cdHRRy
-	sA==
-Received: (qmail 1284233 invoked from network); 21 Jun 2024 09:47:09 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 09:47:09 +0200
-X-UD-Smtp-Session: l3s3148p1@/jmDo2EbytMgAwDPXzjQABqqX1QYyOSW
-Date: Fri, 21 Jun 2024 09:47:09 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P)
- SoC
-Message-ID: <7b4hwwnzvcjbgr3pqgvi7mx537kpprnmzkgu3qz27qggem2emg@ngac72ugnrjm>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240613091721.525266-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdU0oFH61fHNp2txOOJi_pWihKrK=UdETrzBs-bDeULTqQ@mail.gmail.com>
- <CA+V-a8v_r5efeR3U+J0MK7cKxPR7a6s0z4fws0iHO1-uezAuTA@mail.gmail.com>
- <riweh6pybbbadjfgenwrdclquurzsvoxudq63v63ip372qpkca@frk4gtnxt3bt>
+	s=arc-20240116; t=1718956050; c=relaxed/simple;
+	bh=+n1uE1MrLQMFhNN+7jwAvQajIquhPpIK6hC9WogIb1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V3iOUVHate0rd2oJjkAAYJ9xtqcdoYz7I68Bk6VG/WHEYVUOjSCcqJCoC//wN0rRTiysmui2KlWfNpjMfcaOaFUvWLMAvuKul2QuQc2p/8s3/R7YZh/fUm67sZFkk1xfNRlMmwdlitJFOjBotlfmbRnBFpMYx/EGN+EKwR1KgPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfFN+Huq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ED54C2BBFC;
+	Fri, 21 Jun 2024 07:47:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718956049;
+	bh=+n1uE1MrLQMFhNN+7jwAvQajIquhPpIK6hC9WogIb1Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VfFN+HuqInMOioum3nOUUAxrTdtVdjbZPYztVw5rmIyxcrJKkfr//GPMMvssZ97mF
+	 bc16USxoEeLnXgt2+ZWBhKfJaZxF6h94UXw/6wVZmRCosK7MzmOV/zy0hFkL9oAOTY
+	 pLA96PVGw92edy7QBoumKi8/eHn/jpPrkZVF8iciR02xYit0fMKT5AKfFI28z2S/Xo
+	 7cTGqzDyXh0801wUzYZXCV5iG5ibGw7x8NUtpfJaovfGEj4d4xgd71H8ZAoG1ltp5R
+	 DaYwRoRG9BedSojyfpOn0Rc1oP+3UrPp/XDKQIT4MVW7tJ4oBBcq8vXMRLFcoNlAPv
+	 I1hJb8yogM0Jw==
+Date: Fri, 21 Jun 2024 09:47:19 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	linux-mips@vger.kernel.org, Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	sparclinux@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, Brian Cain <bcain@quicinc.com>, 
+	linux-hexagon@vger.kernel.org, Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org, 
+	Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, libc-alpha@sourceware.org, 
+	musl@lists.openwall.com, ltp@lists.linux.it, stable@vger.kernel.org
+Subject: Re: [PATCH 01/15] ftruncate: pass a signed offset
+Message-ID: <20240621-jeden-hinab-e265b0d0807a@brauner>
+References: <20240620162316.3674955-1-arnd@kernel.org>
+ <20240620162316.3674955-2-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ozrb4oab2oirsgzp"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <riweh6pybbbadjfgenwrdclquurzsvoxudq63v63ip372qpkca@frk4gtnxt3bt>
+In-Reply-To: <20240620162316.3674955-2-arnd@kernel.org>
 
+On Thu, Jun 20, 2024 at 06:23:02PM GMT, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The old ftruncate() syscall, using the 32-bit off_t misses a sign
+> extension when called in compat mode on 64-bit architectures.  As a
+> result, passing a negative length accidentally succeeds in truncating
+> to file size between 2GiB and 4GiB.
+> 
+> Changing the type of the compat syscall to the signed compat_off_t
+> changes the behavior so it instead returns -EINVAL.
+> 
+> The native entry point, the truncate() syscall and the corresponding
+> loff_t based variants are all correct already and do not suffer
+> from this mistake.
+> 
+> Fixes: 3f6d078d4acc ("fix compat truncate/ftruncate")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
---ozrb4oab2oirsgzp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> That would mean we have a compatible-entry per SDHI instance per SoC?
-> Did I get this right? I think that will be too many compatibles.
->=20
-> What is the drawback of using an "internal-regulator" property within
-> the SDHI node?
-
-Ah, I found the other thread now. Will have a look.
-
-
---ozrb4oab2oirsgzp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ1L/0ACgkQFA3kzBSg
-KbaYTw/+JviggwM78QUwekzMP4NcWImIBkdDw8dlviDv/pYqpETaIDxhhUMK3gHi
-Bh4x4tEwsrRYjLiLHnj1a5R/GoGg/FsymvBO6z4QMrQ7G0gomH1B4IVUX0AxLQy7
-+7sF74F7sOm4z6rVzAb3fzgO8SH4lZILFKp8ghiv7kfmpAeEGpWbIQNe0l7/p8lD
-i1w5Vd3KyLbfwSrlGpxrDwYpYQ0I4W6mUZTjc2moWtVh4xvLF7l6IZHj03pZj4fq
-yf3p8WJ0Z3MpS35jDw+azrL6eLlpScr5iNwwCz7De66IS+C0XY1bBXAKUvKHJaAo
-z3272kds3o2pxllQArQ+0i9N3Ak5S2yXuHYj7ueBmZwRG52wN2ef7XJ4J/akR8qR
-8GUiW0zxt3zwWmG8ETKTZ5aQXxtEwaaIg8NZ2LHqG6BED813Qco4P5URfR6coOHV
-v9hhN3/Qm/BfcXqKuczoKB/SH09HTeuvUFubhjZ9NuFEKhfY4SM1J19bmRgaaQUr
-ConeZoBnQfRza2AfyeuqYeVjYW/qBzIY635xH/Y/mKdxKrLwjQr4KvTyDG3iU/T0
-pT1/en6laXZEP+5uJY5AqJIIZE+2l4w/6n5nOcdCxmi2noZcJT1zGlPlRuqi2rl3
-JtGsBCfefRjXj70NyoN2w2Vjo1iuL9WtP4WD6B6mc9Jz5ZPenXA=
-=08h7
------END PGP SIGNATURE-----
-
---ozrb4oab2oirsgzp--
+Looks good to me,
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
