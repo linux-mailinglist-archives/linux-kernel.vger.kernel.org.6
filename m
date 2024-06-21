@@ -1,145 +1,196 @@
-Return-Path: <linux-kernel+bounces-224126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025E6911D88
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:57:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AECE6911DB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD5C1C21155
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 659AF286F67
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B284816FF59;
-	Fri, 21 Jun 2024 07:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3488178CEA;
+	Fri, 21 Jun 2024 07:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVJlnJCG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="aN/W6cN0"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AB017083C;
-	Fri, 21 Jun 2024 07:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458B7176FA3
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718956416; cv=none; b=GrGNv9mP0EEUAh/seIGaB4WQikZMvcOaEQ5MsG+rAGEEEdWj9ruFnV5cU6tQT9ejQq05EwCgBydoYy6y/FYix+KmZPg0SsBXKFCmcylsmlZPLATwJc5Yeavjwl4NE1y+GsSZRij0V9dFo8PQ3nnBw9WJQnx8wtTOWgqo6B18Rr8=
+	t=1718956470; cv=none; b=VaQ2jWIqoA8u2m5nhNV8sL3xttTCA11u99GU8vx/y/sj8eStFbhlCHGPH2hOgcojYRP2xMpM93iIzQBZd4W/IcqBBtNUyf+AnMvH5/IqDkh/U5vEoCQhhfFK+Gmt6yaxSQkfr4TYjH3TPqJfgj81ZZZTXLqeZETUuK57hwOPFQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718956416; c=relaxed/simple;
-	bh=eWeBwZ8/Lk6nImbfjWKt6XAuHYSDXDTd7xgQ3zt0uuA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Prtw/Druw+j04/ONvRy7ym2bbT8g6EWOeioh7ey42lwcKN5xHeUWp3Q/g4ZGVYx0/MB+/zE03/OwMwpfLG0IPyoBIIomUwFM4qDIWbHiJaRt2+Lw4eo5d2xqTcKmNGij+NK/bihxx0IO17Rsxhwhj5VtVXRwFtYn+tDwZDa9rW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVJlnJCG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79671C2BBFC;
-	Fri, 21 Jun 2024 07:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718956415;
-	bh=eWeBwZ8/Lk6nImbfjWKt6XAuHYSDXDTd7xgQ3zt0uuA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tVJlnJCGU3Ze6y91aA9mNXAeaKUrXYNa2sVodHGKsiRh4ebOIw1qfrUjg1SqtmC7V
-	 Bb6ECx/rwVvmajkN/+95vkWcjK5DDb0Qf03sBEEYO14PYePRkjb4FRV2BqQvIYA3Wc
-	 y+/jIbcCr0d7hU3OTrZYEoXzuEhQywVCHr0Ks0MlYSYje9ufuEM0J6LylY9RxgZPb2
-	 a7dUPFSwffA4Yu6406bblU23YZcuYwkgS95qvQ88rZuGyziJ9V/ahHxPv2s2c9BNYO
-	 ETQwhiHXSXH+ClJG5vttCBYf4kOm3BvHBOHxN2y0GUk4VLaOeHjSRq3d9ZB97ymNC7
-	 jmhYrDCmkg8Kw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sKZ5R-0062nT-7i;
-	Fri, 21 Jun 2024 08:53:33 +0100
-Date: Fri, 21 Jun 2024 08:53:32 +0100
-Message-ID: <861q4qk9z7.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Shaoqin Huang <shahuang@redhat.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	kvmarm@lists.linux.dev,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose
- <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] KVM: arm64: Allow userspace to change ID_AA64PFR1_EL1
-In-Reply-To: <f73cabc6-8c48-4c12-9d60-269e50df41f3@redhat.com>
-References: <20240618063808.1040085-1-shahuang@redhat.com>
-	<20240618063808.1040085-2-shahuang@redhat.com>
-	<86ed8uk8cr.wl-maz@kernel.org>
-	<f73cabc6-8c48-4c12-9d60-269e50df41f3@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1718956470; c=relaxed/simple;
+	bh=Qiu2cnuLE3bINgaUTy01KWZeDAWULRjFMg9Ap2rFhOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EM6q8eKWEUwWh8GK7mk86beJuQ1oTew+jrbvbf0aEEIceGYJLLOzpizYS+d3lPZZ47K+RAgxpo2BzdTyNQYAQmCR3VL1HxFSZdyQeajhDyoURVu2w0Na0vhYS7fBmBvsP99sKqbjd4Ek9jla+Pi5oh+Z6tSapoIXx8LCUZgf7HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=aN/W6cN0; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=G+I7
+	Dy46Mrza8gu4LYO3j9ILWX+nGJyhLuq4M5ObIbo=; b=aN/W6cN0p5nSicAwI5OR
+	yW0sh78BFW0hvhjyiFZmnUfCmXusxuHOy31n/kO2gueaSVtcbmoorzc58OAeckcB
+	jHZH5S9mg+EqMB79lHB8g16caw760vUbQsLP9gBlFwyfjijEqnd36IdzaQY+Qtza
+	/BHueCZaIJfBtMKvlmxiuJDJvIStUhln2ETpG53zYW4/5gy4daTBDdo4X+D0D708
+	25LeFdUEUtzT07ULqXzMi/ySdFLf1VHky9uUxavDTR57u9xkvMzoJNJ6eIQ2TtJG
+	/fgGFahNR7p0nkDjDo2Pxd8YWDw5cUR/qBmE/7LM3Tdy6gWwwptdNWO+kaDo0o9b
+	uw==
+Received: (qmail 1287368 invoked from network); 21 Jun 2024 09:54:26 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 09:54:26 +0200
+X-UD-Smtp-Session: l3s3148p1@QYWHvWEbCucgAwDPXzjQABqqX1QYyOSW
+Date: Fri, 21 Jun 2024 09:54:25 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, linux-kernel@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P)
+ SoC
+Message-ID: <4lypqqf4o2wk22kzpyutlaarare5kurdrlokbm6mb4re3mstam@qo7c3d4tcpll>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, linux-kernel@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>
+References: <20240613091721.525266-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <prdvmtsp35yy2naohivbrya3go6vh5ji2cdjoebw3ovditcujo@bhck6tca6mhj>
+ <CA+V-a8u6KAFp1pox+emszjCHqvNRYrkOPpsv5XBdkAVJQMxjmA@mail.gmail.com>
+ <o7tswznmyk6gxoqfqvbvzxdndvf5ggkyc54nwafypquxjlvdrv@3ncwl5i5wyy3>
+ <CA+V-a8spwd82a3BTS-u-w-JY859YCRxCi0Os6XRn27-mkWz6WA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: shahuang@redhat.com, oliver.upton@linux.dev, kvmarm@lists.linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="v6w6c2dqsjx426ws"
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8spwd82a3BTS-u-w-JY859YCRxCi0Os6XRn27-mkWz6WA@mail.gmail.com>
 
-On Fri, 21 Jun 2024 07:17:57 +0100,
-Shaoqin Huang <shahuang@redhat.com> wrote:
-> 
-> Hi Marc,
-> 
-> On 6/18/24 15:39, Marc Zyngier wrote:
-> > On Tue, 18 Jun 2024 07:38:06 +0100,
-> > Shaoqin Huang <shahuang@redhat.com> wrote:
-> >> 
-> >> Allow userspace to change the guest-visible value of the register with
-> >> some severe limitation:
-> >> 
-> >>    - No changes to features not virtualized by KVM (MPAM_frac, RAS_frac)
-> >> ---
-> >>   arch/arm64/kvm/sys_regs.c | 3 ++-
-> >>   1 file changed, 2 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> >> index 22b45a15d068..bead81867bce 100644
-> >> --- a/arch/arm64/kvm/sys_regs.c
-> >> +++ b/arch/arm64/kvm/sys_regs.c
-> >> @@ -2306,7 +2306,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
-> >>   		   ID_AA64PFR0_EL1_GIC |
-> >>   		   ID_AA64PFR0_EL1_AdvSIMD |
-> >>   		   ID_AA64PFR0_EL1_FP), },
-> >> -	ID_SANITISED(ID_AA64PFR1_EL1),
-> >> +	ID_WRITABLE(ID_AA64PFR1_EL1, ~(ID_AA64PFR1_EL1_RAS_frac |
-> >> +				       ID_AA64PFR1_EL1_MPAM_frac)),
-> >>   	ID_UNALLOCATED(4,2),
-> >>   	ID_UNALLOCATED(4,3),
-> >>   	ID_WRITABLE(ID_AA64ZFR0_EL1, ~ID_AA64ZFR0_EL1_RES0),
-> > 
-> > This isn't a valid patch.
-> > 
-> > Furthermore, how about all the other features that may or may not be
-> > currently handled by KVM? Please see [1] and make sure that all
-> > existing fields have a known behaviour (a combination of masked,
-> > preserved, capped, writable or read-only).
-> > 
-> > I can at least see problems with MTE_frac and MTEX, plus all the other
-> > things that KVM doesn't know how to save/restore (THE, GCS, NMI...).
-> > 
-> > What I asked you to handle the whole register, I really meant it.
-> 
-> I currently only found the BT and SSBS fields can be written without
-> any unknown behavior.
 
-I can only assume you haven't looked hard enough.
+--v6w6c2dqsjx426ws
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> All other fields in the ID_AA64PFR1_EL1 are either not supported by
-> KVM or the field involved with other register and KVM don't know how
-> to handle them.
+Hi Prabhakar,
 
-Why can't CSV2_frac be writable? Why can't most of the other fields be
-hidden depending on the VM configuration, as pointed out above?
+> Based on the feedback from Rob I have now changed it to below, i.e.
+> the regulator now probes based on regulator-compatible property value
+> "vqmmc-r9a09g057-regulator" instead of regulator node name as the
+> driver has of_match in regulator_desc.
 
-	M.
+I like this a lot! One minor comment.
 
--- 
-Without deviation from the norm, progress is not possible.
+> static struct regulator_desc r9a09g057_vqmmc_regulator =3D {
+>     .of_match    =3D of_match_ptr("vqmmc-r9a09g057-regulator"),
+>     .owner        =3D THIS_MODULE,
+>     .type        =3D REGULATOR_VOLTAGE,
+>     .ops        =3D &r9a09g057_regulator_voltage_ops,
+>     .volt_table    =3D r9a09g057_vqmmc_voltages,
+>     .n_voltages    =3D ARRAY_SIZE(r9a09g057_vqmmc_voltages),
+> };
+>=20
+> SoC DTSI:
+>         sdhi1: mmc@15c10000 {
+>             compatible =3D "renesas,sdhi-r9a09g057";
+>             reg =3D <0x0 0x15c10000 0 0x10000>;
+>             interrupts =3D <GIC_SPI 737 IRQ_TYPE_LEVEL_HIGH>,
+>                      <GIC_SPI 738 IRQ_TYPE_LEVEL_HIGH>;
+>             clocks =3D <&cpg CPG_MOD 167>,
+>                  <&cpg CPG_MOD 169>,
+>                  <&cpg CPG_MOD 168>,
+>                  <&cpg CPG_MOD 170>;
+>             clock-names =3D "core", "clkh", "cd", "aclk";
+>             resets =3D <&cpg 168>;
+>             power-domains =3D <&cpg>;
+>             status =3D "disabled";
+>=20
+>             vqmmc_sdhi1: vqmmc-regulator {
+>                 regulator-compatible =3D "vqmmc-r9a09g057-regulator";
+>                 regulator-name =3D "vqmmc-regulator";
+
+This should have "sdhi<X>" somewhere in the name?
+
+>                 regulator-min-microvolt =3D <1800000>;
+>                 regulator-max-microvolt =3D <3300000>;
+>                 status =3D "disabled";
+>             };
+>         };
+>=20
+> Board DTS:
+>=20
+> &sdhi1 {
+>     pinctrl-0 =3D <&sdhi1_pins>;
+>     pinctrl-1 =3D <&sdhi1_pins>;
+>     pinctrl-names =3D "default", "state_uhs";
+>     vmmc-supply =3D <&reg_3p3v>;
+>     vqmmc-supply =3D <&vqmmc_sdhi1>;
+>     bus-width =3D <4>;
+>     sd-uhs-sdr50;
+>     sd-uhs-sdr104;
+>     status =3D "okay";
+> };
+>=20
+> &vqmmc_sdhi1 {
+>     status =3D "okay";
+> };
+
+Again, I like this. It looks like proper HW description to me.
+
+> Based on the feedback provided Geert ie to use set_pwr callback to set
+> PWEN bit and handle IOVS bit in voltage switch callback by dropping
+> the regulator altogether. In this case we will have to introduce just
+> a single "use-internal-regulator" property and if set make the vqmmc
+> regulator optional?
+
+Let's discuss with Geert. But I am quite convinced of your approach
+above.
+
+> > > Let me know if I have missed something obvious here.
+> >
+> > Nope, all good.
+
+Don't give up, I think we are close...
+
+All the best,
+
+   Wolfram
+
+
+--v6w6c2dqsjx426ws
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ1MbEACgkQFA3kzBSg
+KbZmzhAAhikx9DCJzN4RjY8IXdukZFrLpplVN2YzG4v2JaPtx3Io/CWxE/x0uqbf
+PBHqYGBG4cZSJxeRj05fmMNuQ3bWFPa7b66JzcboFked+yhEg6ZoSflK/N4zNAXD
+xZcriyJWSLbLRJu9/qoA+92KoB1OHEg5eetJETOcp0ipQLQcZA9mUQQ78b2VrlHj
+EaHQeQoIotN9dKbBLOwWFu6G60QI+oKwXvp4LNerh/4DJTiHzQ3olpZPJQGDPmcT
+8o55f60f4r1D75Wnvurx2Hodrd/POHCeEQI4dE5Gjljz1aQ3+5Eh1qVTgoYXUQbA
+E9d3uWDrMGGiLYD3q0HWuRtyN7Da3HhqlRodHG5erIYJ7dmefukEYIi6ghdrnsTY
+BcaKi+R+531wyhpqOXFw0mINfU1YlMTkn0RZNUJiUhctY2BFKHp/I/xvSy0saZbZ
+/2z9KWM1MqpfYwuXUH7YVLoqmvmiJ8LhpLubZ0i9OgsfOv/crv6osY+pxXHNfC9J
+C3sC+4Ybd5RrtJTRKCFe+ANFdYrWW3IkD041qs+HmFlRcN9XUMkrL5/+fGrjt/gQ
+uKw3fhpr3mvBYIA35hxPMjnIriFM7NTTH6qUW2uOgRLW4tTBszcfrkU1AJzRgxis
+gdOOjwfqn/Acov8nmXE8GDNPgjayH5XfJhbwgc02ZQYlwUtTg84=
+=hH6Q
+-----END PGP SIGNATURE-----
+
+--v6w6c2dqsjx426ws--
 
