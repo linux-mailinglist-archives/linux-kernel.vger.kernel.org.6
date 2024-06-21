@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-225259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77ADD912E3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC361912E3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B3BF1F255B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:02:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 614171F2138B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BD417A92C;
-	Fri, 21 Jun 2024 20:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F29016D303;
+	Fri, 21 Jun 2024 20:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cCHqmixM"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MYjh5UiL"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABF612BE9E;
-	Fri, 21 Jun 2024 20:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4811216A927
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719000135; cv=none; b=CDu67GMwuS2kxlbPimonz8Jew4KefSbHb7v//QO3bJ3j26wnyN3JRSy2XIja2lEanj88+KF9hvVj6QMF1fgPa5V7wDIUNq5xJ/eT6nLWzvPQNmRMwRIBbnJmwWKU6wW11RuYILLO76dzQODm5pbZ6k0G+FKN2XLxIoTYDhDeprg=
+	t=1719000172; cv=none; b=ui1mL0p6Se0c56iV8T1CHF4cQri+Ku+plgW/Qjf4Zyii/N7Cq35cixPmMSxno/wcnm+Dau5/EemfTbtQOR8KjSmJ5KOL/Hz0SKJZlQQ9GWfNY67TQZwAT+8jZ7EtxBMTA82ek3j0yn8V7Y1GWcwVngNQbcuXzdboXEdyQ4Fofb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719000135; c=relaxed/simple;
-	bh=Xt/toiP6N6asKpHif/mH1NLQU7AmC74j3JURpixHmuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U0fzXC0Z8GscaTftwwqU3yjW6YwjIAK0kGXz9M552l8wJ+kIn/zLlVYcreDCmdZqz7Doh+fuQ+LEKemDJ16e0DmES/LF12rJVlMdZMFta8i5vjYqKkKtDehQUd/JuHaZRQjuYhjRU5z65bDMamNBcZfoicncCxdoHD/IXXsG9EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cCHqmixM; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=+4uY3EQUbz0DrVfaPCZ2jsnH9YO74ydeFMqnW6Tj1Qs=; b=cCHqmixMNx4mQ7o42wyenotfxy
-	c9qb686CtVOYMbo/OVFYYDOrwJvABI5XTPxGcgzjGxPU6/LlCloNzMZY15Wrve0IFPJIUj+G+P+FY
-	pmFH8HDn0UIA0tb4uR+lQr3tmffQwCKdeGfQVwc3w4rNk8RWnGKPuij8cyqhqstS+owE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sKkS3-000hIR-QR; Fri, 21 Jun 2024 22:01:39 +0200
-Date: Fri, 21 Jun 2024 22:01:39 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
-	Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] net: stmmac: Add interconnect support in qcom-ethqos
- driver
-Message-ID: <b5096113-de85-485e-a226-a8112b3d5490@lunn.ch>
-References: <20240619-icc_bw_voting_from_ethqos-v1-0-6112948b825e@quicinc.com>
- <20240619-icc_bw_voting_from_ethqos-v1-1-6112948b825e@quicinc.com>
- <159700cc-f46c-4f70-82aa-972ba6e904ca@lunn.ch>
- <b075e5a8-ca75-49cc-84d6-84e28bc38eee@quicinc.com>
+	s=arc-20240116; t=1719000172; c=relaxed/simple;
+	bh=xLxrckKxenRWojAVtNotEwtfDdxzK9gUNGs+uK81Eo8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ayAmDWd/rMPtofp+BUL8xKNNGDtp9TNeYY2/TCmwnb5hBedU0O1+0BfoNnNEaPxvWbw5hTIKglht7VaziDEROzcOr/hmmGOkPP6Qj6tX0N0YC5VxJZ40XpFieWYSBPGkrVnPJ2ltjedgSZ5QATaX3fY3pp6jw1c6lNFgDQLdcHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MYjh5UiL; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-444cd0ee46aso1745331cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719000169; x=1719604969; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4/uBKlDZ6s/NosH2EbtFFnSeeJIPIQZN1klDMiCHdsc=;
+        b=MYjh5UiLSKQ9QSNp2s0TDYbL/Ebq7cZGYi2VEbrO92CJpalLsuJLrlHvtZgP4hbGJs
+         YP69eMyxDQgI0QhR2ansCmUD7lt/CDXnU+nRVM6eJFhKfFeSRKjCrEUDuILU1fvaZSQ/
+         b8YI+Li9izKd3WVVQ7kGsMm1IKMcUBPQsIxz8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719000169; x=1719604969;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4/uBKlDZ6s/NosH2EbtFFnSeeJIPIQZN1klDMiCHdsc=;
+        b=QdZqsXU007o0tVyl4K9iCisDK41eUbwb6A1R4rFm7FYGB99ACN80jewNwaFPQ/goK0
+         DJ3EntPm0GnkHCiMf+SHHkjfRqdOpUzGLnegCJgD6I/mPwhbcUWEHa5wa4rKSVi40/t3
+         Kp4iyWM3UinWmMGecAk0GS+9FME5hVESIzVh4pgARenAGtppF4ImaOQN5UpIXpbM/0DZ
+         Ek5s6Hz0i4Hd4PDmvqLSw1gl7xX8KOy0/uf+ylx2flbFwQxjexXse3hplTA7K6Txb8BH
+         gI/DRE1DXk7aeXFZFIk+/bENsYKx57Tttf9SdmgZhgCdZi+ITti4j6gsnlAqIJf5rB6U
+         R7zw==
+X-Forwarded-Encrypted: i=1; AJvYcCVP1ynvLPW150Pz/bJgY+tEkVwL5IACAMaKMyZM+iD8n3RS92Vk412iP4kMcCQedy6gsUL4Wbv49ZsaGaEYJYdlS43Sh48atd47zh8c
+X-Gm-Message-State: AOJu0YzOF5sAvwksNdOcZxY4GjECmVUhI3JYrO3HgMSble7D5sKRE2Z4
+	VSt88w6J+1TMdjPuhj6BBhyTxF+/5ESCQNUVAKrLwOJx/6KaUZ7IHqdxc4M4D0umGp5IAsYmPb0
+	=
+X-Google-Smtp-Source: AGHT+IEkzeyob5RALDSXFW9dpI2AGOr7t6DG55Lf4Sgp/2zvLrwwP9ufCN9WGmxiNZMI4hfipbESbw==
+X-Received: by 2002:ac8:5a52:0:b0:444:a628:6a1b with SMTP id d75a77b69052e-444a7a1e0f0mr99906061cf.10.1719000165428;
+        Fri, 21 Jun 2024 13:02:45 -0700 (PDT)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com. [209.85.160.182])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444cec59d0esm67511cf.72.2024.06.21.13.02.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 13:02:44 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4405dffca81so280461cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:02:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWkj74A+m9dcCrHbWBhZg1PRHtnNpyRuELhnijotTKIGastf+Wwb35k7PEAHmBk2p3zIi115ITO7XuYOvlGxeMFF15+CoOPxqHM3KJ4
+X-Received: by 2002:ac8:7d49:0:b0:441:55ac:c490 with SMTP id
+ d75a77b69052e-444ce362ac9mr242691cf.20.1719000164202; Fri, 21 Jun 2024
+ 13:02:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b075e5a8-ca75-49cc-84d6-84e28bc38eee@quicinc.com>
+References: <20240621131648.131667-1-tejasvipin76@gmail.com>
+In-Reply-To: <20240621131648.131667-1-tejasvipin76@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 21 Jun 2024 13:02:27 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WDA8LTpr84zfTqefFwxpbKC+rVo1BsSAVGVHReC3X0=w@mail.gmail.com>
+Message-ID: <CAD=FV=WDA8LTpr84zfTqefFwxpbKC+rVo1BsSAVGVHReC3X0=w@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel: asus-z00t-tm5p5-n35596: transition to mipi_dsi
+ wrapped functions
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > This all looks pretty generic. Any reason why this is just in the
-> > Qualcomm device, and not at a higher level so it could be used for all
-> > stmmac devices if the needed properties are found in DT?
-> > 
-> >        Andrew
-> ICC is a software framework to access the NOC bus topology of the
-> system, all though "axi" and "ahb" buses seem generic but the 
-> topologies of these NOC's are specific to the vendors of synopsys chipset hence
-> this framework might not be applicable to all the vendors of stmmac driver.
+Hi,
 
-There are however a number of SoCs using synopsys IP. Am i right in
-says they could all make use of this? Do we really want them to one by
-one copy/paste what you have here to other vendor specific parts of
-stmmac?
+On Fri, Jun 21, 2024 at 6:17=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com=
+> wrote:
+>
+> Use functions introduced in commit 966e397e4f60 ("drm/mipi-dsi:
+> Introduce mipi_dsi_*_write_seq_multi()") and commit f79d6d28d8fe
+> ("drm/mipi-dsi: wrap more functions for streamline handling") for the
+> asus-z00t-tm5p5-n35596 panel.
+>
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> ---
+>  .../drm/panel/panel-asus-z00t-tm5p5-n35596.c  | 140 ++++++++----------
+>  1 file changed, 59 insertions(+), 81 deletions(-)
 
-This code looks in DT. If there are no properties in DT, it does
-nothing. So in general it should be safe, right?
-
-	 Andrew
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
