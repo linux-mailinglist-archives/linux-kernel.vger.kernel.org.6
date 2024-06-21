@@ -1,151 +1,226 @@
-Return-Path: <linux-kernel+bounces-224319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E2C9120B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:34:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A1E9120A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F48BB22BAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:34:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FBB0281ABD
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798B716E886;
-	Fri, 21 Jun 2024 09:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4FC16EBF2;
+	Fri, 21 Jun 2024 09:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtNa0mZI"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHWS9DXt"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D10B16EC0B;
-	Fri, 21 Jun 2024 09:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D351E482C8;
+	Fri, 21 Jun 2024 09:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718962446; cv=none; b=G45jEeWv53wk2FVmnCIC5LKGTu5miCxKeJpvA4IwSt8xzO4jrUOP9Ddyuv9AookaTnvHkhg+lHj4FPCvlKF+QfRzP7qoFWIOW0jC0xbaBM2k96w9oEM9M8Bw7TXyTR3S2WOry4PXJjbRxe2KK5jz/9mrFEdJ8UVTD2077FrIxAE=
+	t=1718962338; cv=none; b=Uo8u30sQpnpgMhBssBYcui9caZahVcbWV8Qa3QoG7FiNo/xA8bJMvhrUn7yMHcr8w8HsiEgh+0qhocj+1E89TblcumCB+LZPoVeOfXdRpsO8hiivd1FP6YCxotsGhkAWeyynY1wfqh2MTDr+k4Q/eYAby2eBIIfUVe1jtSSNiok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718962446; c=relaxed/simple;
-	bh=IYpgjkNJ+3p8GkMwRIoKvBaYq1yJLDn4XIpVSdU6z7c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qPXVJfgmsKev+w1Rpi7QMjYOhZvReUk/eEhJGbO1or4Y+SIqeaynSOteJsAMLDq9NnIJ9Ric1QRMXW6MSaPJK6EcJRetXjGk/iH0v8acv2jlU0DA1kjwU63udYqCHmG76asDUw/o0+j33aNtZBZA6zXfsGwDl9miI9sW8Qal3H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtNa0mZI; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1718962338; c=relaxed/simple;
+	bh=tX3lbP0oIbLXstNsFkYy7tmCmp7K2WDT7BZj38Vc58w=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4HRfTm5EPxZyncVOyHzG2RwedWRBCeaNjk6VmLIkv2oE7EhMpw4YdqW6832zFwUAojLsEQmc/4saS8Ff8TqP57ecEjrauBP2PI/F8E1rknC9yWrOFPMsgX2FYfkI4KBd3wO+LTQMt5qjn2GpCaCaRMyjo0j9kSlpxiV4pplnI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHWS9DXt; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f6a837e9a3so11724915ad.1;
-        Fri, 21 Jun 2024 02:34:05 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57cc30eaf0aso951999a12.2;
+        Fri, 21 Jun 2024 02:32:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718962444; x=1719567244; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EiJfmKO8nNBSX1oUuFOSypNRXVZPBtzmshynKzoPzUw=;
-        b=FtNa0mZIFdfiZLdN/bQxlIE6Z51Ltp9jLDCGd/ZAOGHnOplYpKNCu4UtjAWnIX+vT7
-         py2WeCst/TflQXQNOGHKMHrXrA/KHw0Nv4qmVOdK/YhGcKcIKdPkevVgMMTQkZL8oqbR
-         r8tKDbh5AlQ/YteZVkZ58HOx6/she0wuuREkhkR8dVvnRB5JInFQlfVUXmuPPsihJTjy
-         u3OQFrFjrBTcDEfW6J8u9Az7w6v40pd5/+B1kQS66Y7wiU0xK2v+PoHpMu3/fobWONme
-         c5ag5WKY1vkgKzz9T7jZaa4vCEiUQ4k18VJVmJcj7zF3hoKJ4w8q2wBAFK2cat019f7k
-         8F/w==
+        d=gmail.com; s=20230601; t=1718962335; x=1719567135; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LXjbiUeKX1jEQnL+FwWLcen6cX7ksdYWye9qn3fwv6g=;
+        b=DHWS9DXt13LiribTgN2bFTRDmxtyLV6IugelHM34OjdJd2ZlVkJZrZVzo188uPm+6F
+         nJOebWgnUBywhTTS8Ax6m2BWlthz09YQm9I0ybOkWVpdiVl3ikslR7uqk/AeA7Dp0OHu
+         GxTcDEN2qtTwAZVEfitZKxqWR7Tzxvx9tY3FD3C1QoiS6kdr95Zf9Rp7NAY2dm0ebP8H
+         YamJigxkBQ+XWKofXRFmw2rEVpME2dPoRkqRz+RBxAPum+ADALYaM1UpF6KsyF2gV6gu
+         MMeMLSJ5M2eJThJU+tEyQHXT2unV7hp283rA7EcUVO1cKyfxJAx8eDaoXl2H9VZD7CS6
+         TGoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718962444; x=1719567244;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EiJfmKO8nNBSX1oUuFOSypNRXVZPBtzmshynKzoPzUw=;
-        b=OlYvuDcEKKcDcHEkEl1Rv2f5JrXPEoMe6Uzdq4n+2HRo+DiuMeyp5+7VeykmcVj+wa
-         iRHh0EUDKKD8lc9IVg/nCIB39xi9t+yJEKltOes7DFcxZT7CPnFQgkR1+ZxLhtTwgPfE
-         VsG7pu+i+rL7NELGXsgym6+GgHCiB0kAWTL7jWcWsZYvuAfbROJPbz1vxZFTwn9e8SZg
-         DjWyC50QIUcFY8utPiHCYRHTS/kMnd2g8fcX+ZtE/GeB7sZSxTedy62VpUCIObpyyJyU
-         1oC2q3rYzwLh7gKjcpeZdNxWe1kQtn2Ja7nZE/YKu/PLiXrPlHoaccwe9PSILezC5uHT
-         lyJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTgDCZSy18Ackm4egr/Gg9qDUB21Utinpbkr4CiNZ53u3q2wDn9qhDHqGuOaw9WgMs21iMsugQSnxm5XMVeO5wdUp5CpnlDoulOqpOmHmqIrcvjyPJYQHLYhT3ArRyLYYE+9RoWxxdhS2NdCun3QaykLwRA4t+meVFYzk2mIxiLXIYgkM=
-X-Gm-Message-State: AOJu0Yx/HtoCKCFPX26hvdj6lhZXJFxNitt2wi/4NqVEe24MkiputqnS
-	o5QkRMdtTwyifR4nPARfk6COCxPLsbCEPZuLOXZfocIRdI5QGsTZ
-X-Google-Smtp-Source: AGHT+IFOKXrh2SxGVKHFT+5si9TabUQXPaizDpK8J7kyQ+x11v7jWslxqA6il5ABG6GwYYLtHI0tSA==
-X-Received: by 2002:a17:902:d4c1:b0:1f6:7f8f:65c7 with SMTP id d9443c01a7336-1f9aa3e9e54mr90810285ad.26.1718962444561;
-        Fri, 21 Jun 2024 02:34:04 -0700 (PDT)
-Received: from localhost.localdomain (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbc72e9sm9810365ad.296.2024.06.21.02.34.01
+        d=1e100.net; s=20230601; t=1718962335; x=1719567135;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LXjbiUeKX1jEQnL+FwWLcen6cX7ksdYWye9qn3fwv6g=;
+        b=SEmlM5N11fHyWBqnA+j0sKITFQCOUyI1d740MV2oCGmlquzQ9K2F2/kkeNiouWsMhy
+         Hy4Dkke0nRk1mbNcj3FP5GG3r8n1wViYmjOlFT3+HQdhx8kjn8f144N8Wv3Gl5fWsYLr
+         pj4TbJST39aj3gpJ6L7ISKE+NPk7RKRu4VGB1RFtUhI7i7ZcEmj9crMwAPW6R/lGwo93
+         K67POJZPwSGheQe4pQSmtoeDNZCUNPBDH1DJ/R9aLywW+ezqJAqbpHZ82ZdddTEjlyd4
+         HUQe3sgh7A01I8ilUKUytwBxEChrbeCijlrmMfYBoSz81svheAucI2nfgbmQod6LEpW0
+         szKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsHXq3IZ+DU1wQFIte1T+StCLSQKiubG5fdrMQbufCImFUw/+WmzKXpS+G94YxTHYZMYPLxa3UiWLNflmF6mQDzPzx7Fci7TkqIRCdv98/6daniRcZreiYVkVqgvm2ImhIftkgAMDDrGbKgDynA/cDcXn0PpM7vHeolSW3CzJ3yMRm98KGJLDPicOBeDsukR2VclJoyAgnKW1f2lJsT1QWJpn4wIXQZGLS+nrtVzo9RTMujH4bdXtUbMQeeWFaGXiSD5A/oS5PoJLaMfGl9O9R3rkeuEtEkmU0U7J9K/YVrrJQLOOI3ePWefYkMzPo5I8gqPpzxjZIkhPYPWf2HE2FtP3+4sxgAbdBtStPDJU9AdL6i8lQNv4QwOEqj8ntCPbeCJOsorwyRrzo1SGdoAYPRGjljsARK+Kvp4JkKOQVub+hbZdQOpa+xgPQFw==
+X-Gm-Message-State: AOJu0YwnrLyS2yw9Wh8270dYG9hHynYiiWubYziAsEyVia3LuPplYFp4
+	jTiLXRI/L+6xR22gTZE7xa6KqUdqkMrxgW3gVjoK5hXcqvLWuyElAILmhpnIGJ0=
+X-Google-Smtp-Source: AGHT+IEG3QIZH1aO0GWd9T0Xk/3yUg93srj60sGG+BwmRF3tpMGbSRtFwCmQB/INPoCeCqb37IZhUg==
+X-Received: by 2002:a50:d60b:0:b0:57a:79c2:e9d6 with SMTP id 4fb4d7f45d1cf-57d07ea9ccbmr5867695a12.33.1718962334727;
+        Fri, 21 Jun 2024 02:32:14 -0700 (PDT)
+Received: from pc636 (176-227-201-31.ftth.glasoperator.nl. [31.201.227.176])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf56e9f3sm62345066b.215.2024.06.21.02.32.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 02:34:04 -0700 (PDT)
-From: Potin Lai <potin.lai.pt@gmail.com>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>
-Cc: linux-aspeed@lists.ozlabs.org,
-	openbmc@lists.ozlabs.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Patrick Williams <patrick@stwcx.xyz>,
-	Cosmo Chou <cosmo.chou@quantatw.com>,
-	Potin Lai <potin.lai@quantatw.com>
-Subject: [PATCH v4 2/2] pinctrl: aspeed-g6: Add NCSI pin group config
-Date: Fri, 21 Jun 2024 17:31:42 +0800
-Message-Id: <20240621093142.698529-3-potin.lai.pt@gmail.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20240621093142.698529-1-potin.lai.pt@gmail.com>
-References: <20240621093142.698529-1-potin.lai.pt@gmail.com>
+        Fri, 21 Jun 2024 02:32:14 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 21 Jun 2024 11:32:12 +0200
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: paulmck@kernel.org, Uladzislau Rezki <urezki@gmail.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <ZnVInAV8BXhgAjP_@pc636>
+References: <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
+ <3b6fe525-626c-41fb-8625-3925ca820d8e@paulmck-laptop>
+ <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
+ <ZnCDgdg1EH6V7w5d@pc636>
+ <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
+ <ZnFT1Czb8oRb0SE7@pc636>
+ <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
+ <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
+ <6dad6e9f-e0ca-4446-be9c-1be25b2536dd@paulmck-laptop>
+ <4cba4a48-902b-4fb6-895c-c8e6b64e0d5f@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4cba4a48-902b-4fb6-895c-c8e6b64e0d5f@suse.cz>
 
-Based on the NCSI pin table (Table 181) in NCSI spec[1], the reference
-clock output pin (RMIIXRCLKO) is not needed on the management controller
-side.
+On Wed, Jun 19, 2024 at 11:28:13AM +0200, Vlastimil Babka wrote:
+> On 6/18/24 7:53 PM, Paul E. McKenney wrote:
+> > On Tue, Jun 18, 2024 at 07:21:42PM +0200, Vlastimil Babka wrote:
+> >> On 6/18/24 6:48 PM, Paul E. McKenney wrote:
+> >> > On Tue, Jun 18, 2024 at 11:31:00AM +0200, Uladzislau Rezki wrote:
+> >> >> > On 6/17/24 8:42 PM, Uladzislau Rezki wrote:
+> >> >> > >> +
+> >> >> > >> +	s = container_of(work, struct kmem_cache, async_destroy_work);
+> >> >> > >> +
+> >> >> > >> +	// XXX use the real kmem_cache_free_barrier() or similar thing here
+> >> >> > > It implies that we need to introduce kfree_rcu_barrier(), a new API, which i
+> >> >> > > wanted to avoid initially.
+> >> >> > 
+> >> >> > I wanted to avoid new API or flags for kfree_rcu() users and this would
+> >> >> > be achieved. The barrier is used internally so I don't consider that an
+> >> >> > API to avoid. How difficult is the implementation is another question,
+> >> >> > depending on how the current batching works. Once (if) we have sheaves
+> >> >> > proven to work and move kfree_rcu() fully into SLUB, the barrier might
+> >> >> > also look different and hopefully easier. So maybe it's not worth to
+> >> >> > invest too much into that barrier and just go for the potentially
+> >> >> > longer, but easier to implement?
+> >> >> > 
+> >> >> Right. I agree here. If the cache is not empty, OK, we just defer the
+> >> >> work, even we can use a big 21 seconds delay, after that we just "warn"
+> >> >> if it is still not empty and leave it as it is, i.e. emit a warning and
+> >> >> we are done.
+> >> >> 
+> >> >> Destroying the cache is not something that must happen right away. 
+> >> > 
+> >> > OK, I have to ask...
+> >> > 
+> >> > Suppose that the cache is created and destroyed by a module and
+> >> > init/cleanup time, respectively.  Suppose that this module is rmmod'ed
+> >> > then very quickly insmod'ed.
+> >> > 
+> >> > Do we need to fail the insmod if the kmem_cache has not yet been fully
+> >> > cleaned up?
+> >> 
+> >> We don't have any such link between kmem_cache and module to detect that, so
+> >> we would have to start tracking that. Probably not worth the trouble.
+> > 
+> > Fair enough!
+> > 
+> >> >  If not, do we have two versions of the same kmem_cache in
+> >> > /proc during the overlap time?
+> >> 
+> >> Hm could happen in /proc/slabinfo but without being harmful other than
+> >> perhaps confusing someone. We could filter out the caches being destroyed
+> >> trivially.
+> > 
+> > Or mark them in /proc/slabinfo?  Yet another column, yay!!!  Or script
+> > breakage from flagging the name somehow, for example, trailing "/"
+> > character.
+> 
+> Yeah I've been resisting such changes to the layout and this wouldn't be
+> worth it, apart from changing the name itself but not in a dangerous way
+> like with "/" :)
+> 
+> >> Sysfs and debugfs might be more problematic as I suppose directory names
+> >> would clash. I'll have to check... might be even happening now when we do
+> >> detect leaked objects and just leave the cache around... thanks for the
+> >> question.
+> > 
+> > "It is a service that I provide."  ;-)
+> > 
+> > But yes, we might be living with it already and there might already
+> > be ways people deal with it.
+> 
+> So it seems if the sysfs/debugfs directories already exist, they will
+> silently not be created. Wonder if we have such cases today already because
+> caches with same name exist. I think we do with the zsmalloc using 32 caches
+> with same name that we discussed elsewhere just recently.
+> 
+> Also indeed if the cache has leaked objects and won't be thus destroyed,
+> these directories indeed stay around, as well as the slabinfo entry, and can
+> prevent new ones from being created (slabinfo lines with same name are not
+> prevented).
+> 
+> But it wouldn't be great to introduce this possibility to happen for the
+> temporarily delayed removal due to kfree_rcu() and a module re-insert, since
+> that's a legitimate case and not buggy state due to leaks.
+> 
+> The debugfs directory we could remove immediately before handing over to the
+> scheduled workfn, but if it turns out there was a leak and the workfn leaves
+> the cache around, debugfs dir will be gone and we can't check the
+> alloc_traces/free_traces files there (but we have the per-object info
+> including the traces in the dmesg splat).
+> 
+> The sysfs directory is currently removed only with the whole cache being
+> destryed due to sysfs/kobject lifetime model. I'd love to untangle it for
+> other reasons too, but haven't investigated it yet. But again it might be
+> useful for sysfs dir to stay around for inspection, as for the debugfs.
+> 
+> We could rename the sysfs/debugfs directories before queuing the work? Add
+> some prefix like GOING_AWAY-$name. If leak is detected and cache stays
+> forever, another rename to LEAKED-$name. (and same for the slabinfo). But
+> multiple ones with same name might pile up, so try adding a counter then?
+> Probably messy to implement, but perhaps the most robust in the end? The
+> automatic counter could also solve the general case of people using same
+> name for multiple caches.
+> 
+> Other ideas?
+> 
+One question. Maybe it is already late but it is better to ask rather than not.
 
-To optimize pin usage, add new NCSI pin group that excludes RMIIXRCLKO,
-reducing the number of required pins.
+What do you think if we have a small discussion about it on the LPC 2024 as a
+topic? It might be it is already late or a schedule is set by now. Or we fix
+it by a conference time.
 
-LINK: [1] https://www.dmtf.org/sites/default/files/standards/documents/DSP0222_1.2.0a.pdf
+Just a thought.
 
-Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
----
- drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-index 7938741136a2c..31e4e0b342a00 100644
---- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-+++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-@@ -249,7 +249,9 @@ PIN_DECL_2(E26, GPIOD3, RGMII3RXD3, RMII3RXER);
- 
- FUNC_GROUP_DECL(RGMII3, H24, J22, H22, H23, G22, F22, G23, G24, F23, F26, F25,
- 		E26);
--FUNC_GROUP_DECL(RMII3, H24, J22, H22, H23, G23, F23, F26, F25, E26);
-+GROUP_DECL(RMII3, H24, J22, H22, H23, G23, F23, F26, F25, E26);
-+GROUP_DECL(NCSI3, J22, H22, H23, G23, F23, F26, F25, E26);
-+FUNC_DECL_2(RMII3, RMII3, NCSI3);
- 
- #define F24 28
- SIG_EXPR_LIST_DECL_SESG(F24, NCTS3, NCTS3, SIG_DESC_SET(SCU410, 28));
-@@ -355,7 +357,9 @@ FUNC_GROUP_DECL(NRTS4, B24);
- 
- FUNC_GROUP_DECL(RGMII4, F24, E23, E24, E25, D26, D24, C25, C26, C24, B26, B25,
- 		B24);
--FUNC_GROUP_DECL(RMII4, F24, E23, E24, E25, C25, C24, B26, B25, B24);
-+GROUP_DECL(RMII4, F24, E23, E24, E25, C25, C24, B26, B25, B24);
-+GROUP_DECL(NCSI4, E23, E24, E25, C25, C24, B26, B25, B24);
-+FUNC_DECL_2(RMII4, RMII4, NCSI4);
- 
- #define D22 40
- SIG_EXPR_LIST_DECL_SESG(D22, SD1CLK, SD1, SIG_DESC_SET(SCU414, 8));
-@@ -1976,6 +1980,8 @@ static const struct aspeed_pin_group aspeed_g6_groups[] = {
- 	ASPEED_PINCTRL_GROUP(MDIO2),
- 	ASPEED_PINCTRL_GROUP(MDIO3),
- 	ASPEED_PINCTRL_GROUP(MDIO4),
-+	ASPEED_PINCTRL_GROUP(NCSI3),
-+	ASPEED_PINCTRL_GROUP(NCSI4),
- 	ASPEED_PINCTRL_GROUP(NCTS1),
- 	ASPEED_PINCTRL_GROUP(NCTS2),
- 	ASPEED_PINCTRL_GROUP(NCTS3),
--- 
-2.31.1
-
+--
+Uladzislau Rezki
 
