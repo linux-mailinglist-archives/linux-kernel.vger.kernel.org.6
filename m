@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-224237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F71911F3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:48:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10926911F3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020171C21190
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B914E1F27B5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2217016D4FA;
-	Fri, 21 Jun 2024 08:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A1716D9AE;
+	Fri, 21 Jun 2024 08:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="K4OGeB1S"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZLIF2xhG"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7A118E20;
-	Fri, 21 Jun 2024 08:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55D816D4EE
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718959732; cv=none; b=e5iyJERz2V/64gDmWp/k744CP343h+ENy+5cO0Uj47uR+bqFBR4jZqR4CicKU8olsqHG6bxQGcSHUDtsPK/6+4t6vPPViuVdDeSgcmo6+Vgbn7g0PN+qqTk0WQH9ByVMzvBeDVw5NuPCuw051Ui6wQF1w/XVWBxpej7U7IeaBsc=
+	t=1718959744; cv=none; b=L1zyQAMXrcDBEdIqwkiayITikAXZaOIG6tSnNAGvTqYxv3TkRWuwNgTGomxyVcmNZaMvubxvo+LUp2q7h3IGfIcWq0X8dR+ZAmJ+X0vVQEP/UErFrz29D0Lw4pmsEpmX91Y7EHm/A0VTRBe2/SsG3m1XtURvluVOtxy8waqNSwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718959732; c=relaxed/simple;
-	bh=E8CCwaNxTOtcgV/FCnCW/+NV+DJ2IGbkxo3fNLla1NQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Wno4Dv1ZoxcYQifZXZ3pLAK9zlpKKag1GBjyJYZVw1hMxzAAMISDABXLz36vUP5lYGpiWigGolXdN1VLh9yPKyg1ZQQAiQNZN31llFEiQqNXsrcpyUer7+5HlpTgmBnKjYVbK/sIW3wFO/Nh2kduAFaUBvXZ9+wvtiTsnNOtXlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=K4OGeB1S; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ix+NkQr4REwpET3Ad0FPePtCiykRvKA7YhCWjna0BtM=; t=1718959729; x=1719564529; 
-	b=K4OGeB1SeImIDsvwtlYNCGuUjOuePBtA1sjqaj3ov7ONsX1XEhByUvvL1wcjrom1sah5a6BQlDu
-	L34LuGT0vu70UfCNa7GQwN7r2SDSW7Abl9e+6AeQXLAXKUKnQdanlMHaJzg9mDcQDdiKZlzeaZ/So
-	0sLCfYqSlJya0WUMDWe9zibMSkfYbNWrnhr/4+9AlLidKKFSZSxoNJiwwEp6ccxblNgQsu1LYUc+R
-	fk+lu9E/046IsdoTBLVfJcYY14IojvXBPlmKo1+K4t2GNScudg+Y8bA6J+7OFuJSr0/Gi747/ePol
-	CJx0NzdGvPWyqkhqf1QjJrOkjFRcY7w/9o/Q==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1sKZwr-00000001vJq-19HR; Fri, 21 Jun 2024 10:48:45 +0200
-Received: from p5b13a475.dip0.t-ipconnect.de ([91.19.164.117] helo=[192.168.178.20])
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1sKZwr-00000001dOn-2Cnm; Fri, 21 Jun 2024 10:48:45 +0200
-Message-ID: <4bd2e538d70d8acbdc8da7b0fdb05b93e0614e43.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v4 33/40] sh: mach-x3proto: optimize ilsel_enable()
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>, linux-sh@vger.kernel.org
-Cc: Alexey Klimov <alexey.klimov@linaro.org>, Bart Van Assche
- <bvanassche@acm.org>, Jan Kara <jack@suse.cz>, Linus Torvalds
- <torvalds@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
- Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, Sergey Shtylyov <s.shtylyov@omp.ru>
-Date: Fri, 21 Jun 2024 10:48:44 +0200
-In-Reply-To: <20240620175703.605111-34-yury.norov@gmail.com>
-References: <20240620175703.605111-1-yury.norov@gmail.com>
-	 <20240620175703.605111-34-yury.norov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1718959744; c=relaxed/simple;
+	bh=rSxw4pa4t8IcwJVhLPl6MDGWM7dwZWWN62i7pdCWBQY=;
+	h=From:Date:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XYeaCw6CmWOclvOPWH7zI7njapL1fBMvUwFmTO+BML516qpH1QzpGn4vCF7OC4wcUZ+gXbIuEzvENFe7csg7yT3TDZEjq/hlZ9WmHU/ycc57Ghavvy9IZBv4beulPcyF/RlrchzwYVAYSXF2NHt5N8PJ/p4R+6z0QqTANhpmRJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZLIF2xhG; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-421d32fda86so20511765e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:49:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718959740; x=1719564540; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:date:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7iJELWqmHsWyPqLt5/DkXc5x6DSIixUK4AK2BKtFmaI=;
+        b=ZLIF2xhGYM6JoU0eGCmfkE+2wVC3hVj5SfJ8y+Sz5MEK/3s/P95aTCT4hUSTGfVv+p
+         AFQH7M/9XtRl3UmMTamznTlWyocWulJ4YLyL3fQuZwIKzGVdIPYqRDp1bPzaIgkEF1Sn
+         ZXxYSPuwrb4KN+ig9wc75nvzuyE30FidUXtfsCZ5CVlHQpLZrQ3PpDG+feyhMw/PteDv
+         RowPTePWLmH2JPm2gw6pHnpCw21W0jpnaJ2mtHt+Mb+kp4nrK4ExFwNurug0StzAMrIM
+         IXPwNftlZB68eHzoWP7aSSJbN9Q1LjtbYjjs5uMJaAbwKJJGZlaDDKDgDQtRnwTHmsyO
+         NtgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718959740; x=1719564540;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7iJELWqmHsWyPqLt5/DkXc5x6DSIixUK4AK2BKtFmaI=;
+        b=pIy5scnzHe9EhjMOXes+krSoZtM1vIC68VZtW57sHdF8RQMcpdXFMoeIVdMcp8ykXB
+         Ny5oFtZMh+HR3zHxg0j10V5OwttV+tuxL/OoXaFV+NlCRccBnQHWSlDpbz+gSXdM91mm
+         NvgNLdLvJD+Bl6PSPTOefC6FEpIt/JQv7yn1T5EC3ph8z62B7FS3chrHjHxVynSACyXf
+         unVxoFxztY7ZhbcXxO81QxvcbGWWljrlFo1VtD+mzNka1SBR9ZGevo0m/2ANrgd11PYQ
+         iYrg6Jm7wDrQXriusxvcOaHhIzfWsd0/drMoesTrICN9WpqMNJfstgGMOQKjhWUlaY7u
+         DqiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTyymMaTgqEuDLN+k5SmzGcylKHXo+KgANWQR7QGwVy9l+clY9RomwrOKCrYFjxlo5X/mSKkIe1SpvrAOcvfvws1zsebwnyRdaSewl
+X-Gm-Message-State: AOJu0Yz8GV+lvrAdQDb7ZwV2mc6b8tmC0b3fr9WitKq0YOCBrysNeINF
+	x30T+MxXHYAP0QAQ2gqQJ4WEYlPDhOWAKFJL3UpyGRyLPn4dlYYbqD/GBT/En9w=
+X-Google-Smtp-Source: AGHT+IHD0UiB/erhdyglKOgxMUboY8Pnov/khJEt6iFT9uzQrm3z/CAJybsWZyouvGL8/1RhtngtSA==
+X-Received: by 2002:adf:e909:0:b0:360:9d1a:a8d with SMTP id ffacd0b85a97d-363170ed4a0mr7437278f8f.13.1718959740270;
+        Fri, 21 Jun 2024 01:49:00 -0700 (PDT)
+Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638f85916sm1085258f8f.61.2024.06.21.01.48.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 01:49:00 -0700 (PDT)
+From: Petr Tesarik <petr.tesarik@suse.com>
+X-Google-Original-From: Petr Tesarik <ptesarik@suse.com>
+Date: Fri, 21 Jun 2024 10:48:48 +0200
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ACPI: CPPC: add sysfs entry for guaranteed performance
+Message-ID: <20240621104848.3f14d60e@mordecai.tesarici.cz>
+In-Reply-To: <20240606115541.2069-1-ptesarik@suse.com>
+References: <20240606115541.2069-1-ptesarik@suse.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yury,
+On Thu,  6 Jun 2024 13:55:41 +0200
+Petr Tesarik <ptesarik@suse.com> wrote:
 
-thanks for your patch!
+> Expose the CPPC guaranteed performance as reported by the platform through
+> GuaranteedPerformanceRegister.
+>=20
+> The current value is already read in cppc_get_perf_caps() and stored in
+> struct cppc_perf_caps (to be used by the intel_pstate driver), so only the
+> attribute itself needs to be defined.
 
-On Thu, 2024-06-20 at 10:56 -0700, Yury Norov wrote:
-> Simplify ilsel_enable() by using find_and_set_bit().
->=20
-> Geert also pointed the bug in the old implementation:
->=20
-> 	I don't think the old code worked as intended: the first time
-> 	no free bit is found, bit would have been ILSEL_LEVELS, and
-> 	test_and_set_bit() would have returned false, thus terminating
-> 	the loop, and continuing with an out-of-range bit value? Hence
-> 	to work correctly, bit ILSEL_LEVELS of ilsel_level_map should
-> 	have been initialized to one?  Or am I missing something?
->=20
-> The new code does not have that issue.
->=20
-> CC: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-> Signed-off-by: Yury Norov <yury.norov@gmail.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Are there any objections to exposing this CPPC register through sysfs?
+I mean, if everybody is OK with it, the patch could be acked and queued
+for 6.11, right?
+
+Petr T
+
+> Signed-off-by: Petr Tesa=C5=99=C3=ADk <ptesarik@suse.com>
 > ---
->  arch/sh/boards/mach-x3proto/ilsel.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  drivers/acpi/cppc_acpi.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >=20
-> diff --git a/arch/sh/boards/mach-x3proto/ilsel.c b/arch/sh/boards/mach-x3=
-proto/ilsel.c
-> index f0d5eb41521a..35b585e154f0 100644
-> --- a/arch/sh/boards/mach-x3proto/ilsel.c
-> +++ b/arch/sh/boards/mach-x3proto/ilsel.c
-> @@ -8,6 +8,7 @@
->   */
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index 1d857978f5f4..9976bb57356e 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -160,6 +160,7 @@ show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, hi=
+ghest_perf);
+>  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_perf);
+>  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_perf);
+>  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_nonlinear_perf=
+);
+> +show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, guaranteed_perf);
+>  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_freq);
+>  show_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_freq);
 > =20
-> +#include <linux/find_atomic.h>
->  #include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> @@ -99,8 +100,8 @@ int ilsel_enable(ilsel_source_t set)
->  	}
-> =20
->  	do {
-> -		bit =3D find_first_zero_bit(&ilsel_level_map, ILSEL_LEVELS);
-> -	} while (test_and_set_bit(bit, &ilsel_level_map));
-> +		bit =3D find_and_set_bit(&ilsel_level_map, ILSEL_LEVELS);
-> +	} while (bit >=3D ILSEL_LEVELS);
-> =20
->  	__ilsel_enable(set, bit);
+> @@ -196,6 +197,7 @@ static struct attribute *cppc_attrs[] =3D {
+>  	&highest_perf.attr,
+>  	&lowest_perf.attr,
+>  	&lowest_nonlinear_perf.attr,
+> +	&guaranteed_perf.attr,
+>  	&nominal_perf.attr,
+>  	&nominal_freq.attr,
+>  	&lowest_freq.attr,
 
-I will need to take a closer look at the whole code in ilsel_enable() to un=
-derstand what's
-happening here. If Geert's explanation is correct, it sounds more like you'=
-re fixing a bug
-and saying you're optimizing the function in the patch subject would sound =
-more like an
-euphemism.
-
-Also, I think we should add a Fixes tag if possible in case your patch fixe=
-s an actual bug.
-
-I will have a closer look over the weekend.
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
