@@ -1,107 +1,152 @@
-Return-Path: <linux-kernel+bounces-225325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB49912F1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:02:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E0C2912F1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C0461C216A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:02:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7585B247EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CCF17BB3C;
-	Fri, 21 Jun 2024 21:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vwNq7w0T"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4038517C7A0;
+	Fri, 21 Jun 2024 21:02:25 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D575217B42D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB8817C200
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 21:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719003742; cv=none; b=dK7mtNEhzaADXyM+UtvIE6JdL3/vut74nzNMSQL0chQ2dzq1NENuorid3D8ZjKJX3dDX6dHeRi5jPYvshU0dgoNXkneeRjphWhZ/NyCi+c/AX3zwAAK+upKq22B15/ix8sq+Dr/bn6B1wfBqo7P6BPkR1Nr85KEReDp7Bmkivqo=
+	t=1719003744; cv=none; b=g++cTfU+SNLnSTnw45+EF0KaSXJiEw3O0fByRCCl2GwDJAR6/Vhf/qNjcoWucA1KQwIA0Y6tG8cz+0aLveob83ObtAzS6oI5Y2aOWGNZ3JdGTdLSbOxqRtCBcieT1y5DbbrfMyzBTw4lHBahkBgttlXoZtZwIGh90QKk2ZLmIaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719003742; c=relaxed/simple;
-	bh=j54JWD/2tp28DryNhfjkHMogz6rdh/lUSRKB3jxkBpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBRx1Qc7mY/oQhCYnYf+hC0INb7f4oiINiPXiIaN0uOJVzj0knEjybObyzllYel6OgTx8M9SXxZYiprSwDUVfydy0R4mAM3wPuHAFVfU6jYto+Udh8G+F0/Hy1cQy1zFE2k3AcP8StKiRWipEwHpj6NuAXuw/umOwHYI+cN+pbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vwNq7w0T; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec3c0dada3so31362991fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:02:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719003739; x=1719608539; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wV3zc5+uIc10gjzJbQ0sxc5XsdFKbsu9Jk8PxhMdqEw=;
-        b=vwNq7w0Tjdu0Ffe1+CqgW8futqkiMARlXxkcyLWzPjTaygZj+7pIu37AZLKwaZRYrH
-         3i3/9uaYStqekq+g/kX8Bi0j0hKUz8sGNY4dvRCbNKK0bomMoc/TqEZbCK6H2UgRhCMt
-         WjNe7papY4SB98EjvLNlOP0dULt3kfMFQ9dS25x0g0YvfHjNy3z013hMl8iW7do7ZPAU
-         U9r1ukrHLq72L67br8760dW67+mKT9WD0YjH2/kzm5Zoo4y+VTWYiVcW5wGpoFYB14s4
-         xMglJogHRlNghWprSKiDS/L+QRo+qgM96wGyl1QP8r8iVHGNaAwh0Ph9It5fL+mNqGuk
-         M7wg==
+	s=arc-20240116; t=1719003744; c=relaxed/simple;
+	bh=xxan4YzsN2OGTJ+4BERon1rpvvV+mWZN0iLfUl2vvt0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WlUQ8lhK3WYO1MX+r0M/Lp3szoQ3cqaY07hDVaiRpTc5BVonjkYVnGziDgoOAlLOVfcWJttBh7qFvmiVd9YQNI5HOfufSKkzASvW0ndPfpU7YgIlw2+70AGlPt1CvTNYpOW6goNmkPl0Oftj8W3qIzR6U1L8dgyZ/KZHYoRjIno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7ebf00251b9so261779639f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:02:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719003739; x=1719608539;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wV3zc5+uIc10gjzJbQ0sxc5XsdFKbsu9Jk8PxhMdqEw=;
-        b=b5tAjnle/AMDzXXQbYoHm78dPQRZXUe/2K/NVeSA0/n3ESQhDUTFLGQBkcNIE0nCEe
-         7IaVAzWEiaCF1M3B4Twk2DrDXGteXgChDCt0xSNbWyftQVnCHOTpEkLGSwFjdaVKiFq/
-         yl5b8JMVSH86rsE0y5jxeHGj+rLmEOCNbkhJemq/efHIQnThv7xF4gbAsZ75cn2RFK7A
-         6dno4qMYXHF53iBRyIb5Fatg1Pl3xaxwkeyuDCqCOWkrN0JuAZbvuSYqLfM8dRmw7vkc
-         M7UC556wBo8NZilBZaVfbaoBEgvfmJ/1t2A03rJtrAMghMWpRmnUX5P99hO8eeMj6HXU
-         OMTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUA5ECM4vc9YBqQ33AtqtNzR0PfjArkkOHrZA+Nmvd+hpX1InxRsRXwybe2Vcv9qyUPk3C3TVTbx9Jf4ml5KpywhuwO8FO1H9SQJc2e
-X-Gm-Message-State: AOJu0YxnDZMxHXMsIc0vI1Sif9QyU2R/zdTNhCoxm0A6p0NsPib16B8s
-	s8Vr+nIz7i+JeG7mkwS3MnThnfPhEpaiTnNjgGl7VD874Dsl/iQxXBGBRQ+lNsY=
-X-Google-Smtp-Source: AGHT+IG4TWZnduOAOc8KqQQU1wC6JQHxbbkWfneKen4zXyBkG7DG8YoRBYSWmAaoMciOyj4A1w5egw==
-X-Received: by 2002:a2e:2416:0:b0:2eb:e137:6584 with SMTP id 38308e7fff4ca-2ec3ce940bamr69698641fa.20.1719003739098;
-        Fri, 21 Jun 2024 14:02:19 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d757fabsm3022631fa.77.2024.06.21.14.02.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 14:02:18 -0700 (PDT)
-Date: Sat, 22 Jun 2024 00:02:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: qcm6490-fairphone-fp5: Configure
- PM8008 regulators
-Message-ID: <p4v4msqx6io7mewq3vceb4d5gxcb25whcnuxehzwvfxh6c3dfc@wliip5e43phf>
-References: <20240621-fp4-fp5-pm8008-v1-0-dbedcd6f00f1@fairphone.com>
- <20240621-fp4-fp5-pm8008-v1-2-dbedcd6f00f1@fairphone.com>
+        d=1e100.net; s=20230601; t=1719003742; x=1719608542;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qpCCV7cceL621t9sxO3MRr+c4hrzR+1a37Oq8uziCOo=;
+        b=SCMCWAxdokdFCO+5YYMavDtCceZzN7vuFYlKcRdX6KgA0jho6TZR51Fl8Qiymnr6EE
+         B07RxQV2AzTiqvj2FflPLaOn4OHgoIG34d4bhFrSu6b79OO5Ee2+cyrrmOtEZQQgHyZ7
+         NrZOklEWzWBPu0nH4mneF7tF4w30uCMcJko5xGF8l+GwUtv6qoMYxFfr3dy8iTF76vCD
+         0ukzyz5Bx3BH11/rqBon+R3dZUsv+/S+cqRmWE6XvqQvGGHWY064wc6BWLxQB0BixgXU
+         KxNjH3cFCoTuy5Xp24vNZrBUocso2bKH8OD4Oxm3jKO/xu18RztSZ7PHrf8HcSV6E5lN
+         rFpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjGDsU04lo8ttjm7glkovZPZQtlY0xS7EM3RsFRJHwqrrfVlpkR1FMVWVunx9xN97WlKqqkFsgtTuQy2PmjOxUM/t5RY8/FaZOvg8j
+X-Gm-Message-State: AOJu0Yw2/QYMdQ8DjStiZOewOC1xA/2K6jURmZl8a9cL/7OXHuIlEHfw
+	wOFU/4lUYdA2bsBPkhfwieFU2icIrCxWVLk7gGcY5x+blKCjqEe/fz3Dmvq669AK63wfOvXV5y4
+	NAssOi18oxXeInY7ACUWwgu9uhrlbloebogAK2xWSMmXSmikkh3tP1ig=
+X-Google-Smtp-Source: AGHT+IGoY/E3LSjbEypLMJygS4kkfPm3Mwl+Y44oMzp7ubzoJtGt6bofoi7qgjh6BOInzvw4Q9BT8r2/zc6Kq6pt4IMFGQ6PA7it
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621-fp4-fp5-pm8008-v1-2-dbedcd6f00f1@fairphone.com>
+X-Received: by 2002:a05:6638:34a8:b0:4b9:662a:ca3e with SMTP id
+ 8926c6da1cb9f-4b9abe64f1fmr727443173.1.1719003742285; Fri, 21 Jun 2024
+ 14:02:22 -0700 (PDT)
+Date: Fri, 21 Jun 2024 14:02:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006d4e02061b6cbf22@google.com>
+Subject: [syzbot] [kernel?] WARNING: locking bug in sched_core_balance
+From: syzbot <syzbot+14641d8d78cc029add8a@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jun 21, 2024 at 10:42:31AM GMT, Luca Weiss wrote:
-> PM8008 regulators are used for the cameras found on FP5. Configure the
-> chip and its voltages.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 105 ++++++++++++++++++++-
->  1 file changed, 104 insertions(+), 1 deletion(-)
-> 
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17c092b6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
+dashboard link: https://syzkaller.appspot.com/bug?extid=14641d8d78cc029add8a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/27e64d7472ce/disk-2ccbdf43.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e1c494bb5c9c/vmlinux-2ccbdf43.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/752498985a5e/bzImage-2ccbdf43.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+14641d8d78cc029add8a@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(1)
+WARNING: CPU: 1 PID: 0 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
+WARNING: CPU: 1 PID: 0 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4773 [inline]
+WARNING: CPU: 1 PID: 0 at kernel/locking/lockdep.c:232 __lock_acquire+0x573/0x1fd0 kernel/locking/lockdep.c:5087
+Modules linked in:
+CPU: 1 PID: 0 Comm: swapper/1 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
+RIP: 0010:check_wait_context kernel/locking/lockdep.c:4773 [inline]
+RIP: 0010:__lock_acquire+0x573/0x1fd0 kernel/locking/lockdep.c:5087
+Code: 00 00 83 3d ee 11 3b 0e 00 75 23 90 48 c7 c7 20 ba ca 8b 48 c7 c6 c0 bc ca 8b e8 78 e4 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
+RSP: 0018:ffffc900001a76f0 EFLAGS: 00010046
+RAX: 07ded2e0bb41d000 RBX: 00000000000016f0 RCX: ffff888017ae0000
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000005 R08: ffffffff81585822 R09: fffffbfff1c39994
+R10: dffffc0000000000 R11: fffffbfff1c39994 R12: 0000000000000001
+R13: ffff888017ae0000 R14: 0000000000000005 R15: ffff888017ae0b28
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32e3f000 CR3: 0000000059698000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
+ raw_spin_rq_lock_nested+0xb0/0x140 kernel/sched/core.c:567
+ raw_spin_rq_lock kernel/sched/sched.h:1406 [inline]
+ raw_spin_rq_lock_irq kernel/sched/sched.h:1412 [inline]
+ sched_core_balance+0xfa6/0x1180 kernel/sched/core.c:6422
+ do_balance_callbacks kernel/sched/core.c:5051 [inline]
+ __balance_callbacks+0x18a/0x280 kernel/sched/core.c:5105
+ finish_lock_switch kernel/sched/core.c:5161 [inline]
+ finish_task_switch+0x1d3/0x870 kernel/sched/core.c:5280
+ context_switch kernel/sched/core.c:5411 [inline]
+ __schedule+0x17f0/0x4a20 kernel/sched/core.c:6745
+ schedule_idle+0x53/0x90 kernel/sched/core.c:6863
+ do_idle+0x56a/0x5d0 kernel/sched/idle.c:360
+ cpu_startup_entry+0x42/0x60 kernel/sched/idle.c:430
+ start_secondary+0x100/0x100 arch/x86/kernel/smpboot.c:313
+ common_startup_64+0x13e/0x147
+ </TASK>
 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
--- 
-With best wishes
-Dmitry
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
