@@ -1,151 +1,266 @@
-Return-Path: <linux-kernel+bounces-225083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E1F912B9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30194912B68
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0251F2727F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:43:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5321F1C224C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8FA1607AF;
-	Fri, 21 Jun 2024 16:42:35 +0000 (UTC)
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B8E1607AF;
+	Fri, 21 Jun 2024 16:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5CMEdUK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9636D128812
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 16:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C861208C4;
+	Fri, 21 Jun 2024 16:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718988155; cv=none; b=gjTWnO6rlenCub8b5OZmA8Oy7lI/AkdqzK1cQk7ydyxrhZF5yickg6nHPCz8LT01PzF+SyFEcrd3Uk1pNmYxzdmc6XXJIYveSKkGW5vgGG+jZwhvl+u51K0PGIwy9goDnuvg2CWUSahxzedtCnk4Tcz11p/sKuf+IqiUfTd2Rr4=
+	t=1718987490; cv=none; b=oDNS1UOUh45KisFUQVK7CI4VFlEtpsbC+tH18nvVMD1+kwQWj2y03evTtG9rVNY0qE65PJaKyRBSN0OGL1G3ycIaDQVY7Kmy4QAPLVhgDAmMm9NwsLRMQYU/oeI5HrOVAHFCygEPNrHIiZfluajpIwZqVe8xLxvvcQLGomcdBmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718988155; c=relaxed/simple;
-	bh=qHat51Srve/G3HpQgAsKGy0Go7E4L920HbWq8JbeVE4=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=cUl0gbJDRJVD59vK5CXjWrAiSTu5+hNogSpcSHaRGeegvRRfhho4P2Is9d5Pt8xyz9vzJHl3G0Wn5EERR34Rqevfw1qxCatOxq8Rx22ucpIOgxsDVHMzA9juU5GYdRJ9QuG3/b6g+uX+0m7kTnQF01xcK1H90oPJ5pCRuyDonM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:55426)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sKhLG-009GmF-62; Fri, 21 Jun 2024 10:42:26 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:41954 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1sKhLE-00HICf-Tn; Fri, 21 Jun 2024 10:42:25 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Tejun Heo <tj@kernel.org>,
-  linux-kernel@vger.kernel.org
-References: <20240613154541.GD18218@redhat.com>
-	<87ikyamf4u.fsf@email.froward.int.ebiederm.org>
-	<20240617183758.GB10753@redhat.com>
-	<87iky5k2yi.fsf@email.froward.int.ebiederm.org>
-	<87o77xinmt.fsf_-_@email.froward.int.ebiederm.org>
-	<87iky5inlv.fsf_-_@email.froward.int.ebiederm.org>
-	<20240619155016.GC24240@redhat.com>
-	<87cyocerda.fsf@email.froward.int.ebiederm.org>
-	<20240619191105.GE24240@redhat.com>
-	<874j9mdf14.fsf@email.froward.int.ebiederm.org>
-	<20240621104031.GA12521@redhat.com>
-Date: Fri, 21 Jun 2024 11:30:32 -0500
-In-Reply-To: <20240621104031.GA12521@redhat.com> (Oleg Nesterov's message of
-	"Fri, 21 Jun 2024 12:40:32 +0200")
-Message-ID: <87ed8qb6mv.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1718987490; c=relaxed/simple;
+	bh=nPphPUeEU2Y1VOGdc8liNZZNuQZI5X8YMgWw9y27L5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K3eKPIMLLeazwQ69/Iwx1/euQJYLEz17xgKK/j3f67Cd703qmqPMfY37WT6b9oBmjmw2F3RFcC1e77URv0xGvqGiby/5Z+T2m8GztHbmg95SvetQ+7e+NFkZ8v59H7jFqpBdhnc26idHeDZpAJPlpEEYaGupkuWKg3LM7bSc9wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5CMEdUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DBA0C2BBFC;
+	Fri, 21 Jun 2024 16:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718987489;
+	bh=nPphPUeEU2Y1VOGdc8liNZZNuQZI5X8YMgWw9y27L5Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P5CMEdUK+9O+VtZhP50Xja+3J1Ax0+1spF2JIzICS3tzGelE6VxNXyzlgEDnoOqC+
+	 vLSIZo3FSGD1UZfzBm/53edB+bhFy1cQ3qkMDIQQowLlOMuZ3Y1EdL8BLW3EQPb+s3
+	 H24KGWVbzLElqdtDDoAfylcQd/MsFmJX4v9Q5iC7u74eZoP7eD6r6y2/V6CzAfSrXY
+	 vfjH8TNHeK4QO68xkkjckspLpj0onmxa0DYIKEhauFVgPmfQZyxbB5dTdMbXLbV38z
+	 P9QeI2FS8MNa5wuxelTMuBWPNT/wX2vQO07tqNFP6b8YqxEsPlq0zY/DGLaA1mCz15
+	 lOj5veLn3CoVw==
+Date: Fri, 21 Jun 2024 09:31:27 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"andersson@kernel.org" <andersson@kernel.org>,
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+	"srinivas.kandagatla" <srinivas.kandagatla@linaro.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	kernel <kernel@quicinc.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"Om Prakash Singh (QUIC)" <quic_omprsing@quicinc.com>,
+	"Bao D. Nguyen (QUIC)" <quic_nguyenb@quicinc.com>,
+	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>,
+	"konrad.dybcio@linaro.org" <konrad.dybcio@linaro.org>,
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+	"jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"mani@kernel.org" <mani@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Sonal Gupta <sonalg@quicinc.com>
+Subject: Re: [PATCH v5 04/15] soc: qcom: ice: add hwkm support in ice
+Message-ID: <20240621163127.GC2081@sol.localdomain>
+References: <20240617005825.1443206-5-quic_gaurkash@quicinc.com>
+ <3eehkn3cdhhjfqtzpahxhjxtu5uqwhntpgu22k3hknctrop3g5@f7dhwvdvhr3k>
+ <96e2ce4b154a4f918be0bc2a45011e6d@quicinc.com>
+ <CAA8EJppGpv7N_JQQNJZrbngBBdEKZfuqutR9MPnS1R_WqYNTQw@mail.gmail.com>
+ <3a15df00a2714b40aba4ebc43011a7b6@quicinc.com>
+ <CAA8EJpoZ0RR035QwzMLguJZvdYb-C6aqudp1BgHgn_DH2ffsoQ@mail.gmail.com>
+ <20240621044747.GC4362@sol.localdomain>
+ <CAA8EJppXsbpFCeGJOMGKOQddy0fF4uW3rt4RUuDTQq6mPunBkg@mail.gmail.com>
+ <20240621153939.GA2081@sol.localdomain>
+ <CAA8EJpqV4CW9kKLVUZgfo+hkSv+tn0t+k0McmHEyXNJUpsZF1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1sKhLE-00HICf-Tn;;;mid=<87ed8qb6mv.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/KpdLaB19z7TGarVpCtNzqFwOpexImbBw=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: **
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4869]
-	*  0.7 XMSubLong Long Subject
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 366 ms - load_scoreonly_sql: 0.07 (0.0%),
-	signal_user_changed: 10 (2.8%), b_tie_ro: 9 (2.4%), parse: 1.31 (0.4%),
-	 extract_message_metadata: 4.1 (1.1%), get_uri_detail_list: 1.65
-	(0.5%), tests_pri_-2000: 3.3 (0.9%), tests_pri_-1000: 2.4 (0.7%),
-	tests_pri_-950: 1.30 (0.4%), tests_pri_-900: 1.03 (0.3%),
-	tests_pri_-90: 99 (27.0%), check_bayes: 97 (26.5%), b_tokenize: 6
-	(1.6%), b_tok_get_all: 6 (1.5%), b_comp_prob: 2.3 (0.6%),
-	b_tok_touch_all: 80 (21.9%), b_finish: 0.89 (0.2%), tests_pri_0: 223
-	(61.0%), check_dkim_signature: 0.62 (0.2%), check_dkim_adsp: 3.1
-	(0.9%), poll_dns_idle: 1.29 (0.4%), tests_pri_10: 3.0 (0.8%),
-	tests_pri_500: 7 (1.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 01/17] signal: Make SIGKILL during coredumps an explicit
- special case
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpqV4CW9kKLVUZgfo+hkSv+tn0t+k0McmHEyXNJUpsZF1w@mail.gmail.com>
 
-Oleg Nesterov <oleg@redhat.com> writes:
+On Fri, Jun 21, 2024 at 07:06:25PM +0300, Dmitry Baryshkov wrote:
+> On Fri, 21 Jun 2024 at 18:39, Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > On Fri, Jun 21, 2024 at 06:16:37PM +0300, Dmitry Baryshkov wrote:
+> > > On Fri, 21 Jun 2024 at 07:47, Eric Biggers <ebiggers@kernel.org> wrote:
+> > > >
+> > > > On Thu, Jun 20, 2024 at 02:57:40PM +0300, Dmitry Baryshkov wrote:
+> > > > > > > >
+> > > > > > > > > Is it possible to use both kind of keys when working on standard mode?
+> > > > > > > > > If not, it should be the user who selects what type of keys to be used.
+> > > > > > > > > Enforcing this via DT is not a way to go.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > Unfortunately, that support is not there yet. When you say user, do
+> > > > > > > > you mean to have it as a filesystem mount option?
+> > > > > > >
+> > > > > > > During cryptsetup time. When running e.g. cryptsetup I, as a user, would like
+> > > > > > > to be able to use either a hardware-wrapped key or a standard key.
+> > > > > > >
+> > > > > >
+> > > > > > What we are looking for with these patches is for per-file/folder encryption using fscrypt policies.
+> > > > > > Cryptsetup to my understanding supports only full-disk , and does not support FBE (File-Based)
+> > > > >
+> > > > > I must admit, I mostly used dm-crypt beforehand, so I had to look at
+> > > > > fscrypt now. Some of my previous comments might not be fully
+> > > > > applicable.
+> > > > >
+> > > > > > Hence the idea here is that we mount an unencrypted device (with the inlinecrypt option that indicates inline encryption is supported)
+> > > > > > And specify policies (links to keys) for different folders.
+> > > > > >
+> > > > > > > > The way the UFS/EMMC crypto layer is designed currently is that, this
+> > > > > > > > information is needed when the modules are loaded.
+> > > > > > > >
+> > > > > > > > https://lore.kernel.org/all/20231104211259.17448-2-ebiggers@kernel.org
+> > > > > > > > /#Z31drivers:ufs:core:ufshcd-crypto.c
+> > > > > > >
+> > > > > > > I see that the driver lists capabilities here. E.g. that it supports HW-wrapped
+> > > > > > > keys. But the line doesn't specify that standard keys are not supported.
+> > > > > > >
+> > > > > >
+> > > > > > Those are capabilities that are read from the storage controller. However, wrapped keys
+> > > > > > Are not a standard in the ICE JEDEC specification, and in most cases, is a value add coming
+> > > > > > from the SoC.
+> > > > > >
+> > > > > > QCOM SOC and firmware currently does not support both kinds of keys in the HWKM mode.
+> > > > > > That is something we are internally working on, but not available yet.
+> > > > >
+> > > > > I'd say this is a significant obstacle, at least from my point of
+> > > > > view. I understand that the default might be to use hw-wrapped keys,
+> > > > > but it should be possible for the user to select non-HW keys if the
+> > > > > ability to recover the data is considered to be important. Note, I'm
+> > > > > really pointing to the user here, not to the system integrator. So
+> > > > > using DT property or specifying kernel arguments to switch between
+> > > > > these modes is not really an option.
+> > > > >
+> > > > > But I'd really love to hear some feedback from linux-security and/or
+> > > > > linux-fscrypt here.
+> > > > >
+> > > > > In my humble opinion the user should be able to specify that the key
+> > > > > is wrapped using the hardware KMK. Then if the hardware has already
+> > > > > started using the other kind of keys, it should be able to respond
+> > > > > with -EINVAL / whatever else. Then the user can evict previously
+> > > > > programmed key and program a desired one.
+> > > > >
+> > > > > > > Also, I'd have expected that hw-wrapped keys are handled using trusted
+> > > > > > > keys mechanism (see security/keys/trusted-keys/). Could you please point
+> > > > > > > out why that's not the case?
+> > > > > > >
+> > > > > >
+> > > > > > I will evaluate this.
+> > > > > > But my initial response is that we currently cannot communicate to our TPM directly from HLOS, but
+> > > > > > goes through QTEE, and I don't think our qtee currently interfaces with the open source tee
+> > > > > > driver. The interface is through QCOM SCM driver.
+> > > > >
+> > > > > Note, this is just an API interface, see how it is implemented for the
+> > > > > CAAM hardware.
+> > > > >
+> > > >
+> > > > The problem is that this patchset was sent out without the patches that add the
+> > > > block and filesystem-level framework for hardware-wrapped inline encryption
+> > > > keys, which it depends on.  So it's lacking context.  The proposed framework can
+> > > > be found at
+> > > > https://lore.kernel.org/linux-block/20231104211259.17448-1-ebiggers@kernel.org/T/#u
+> > >
+> > > Thank you. I have quickly skimmed through the patches, but I didn't
+> > > review them thoroughly. Maybe the patchset already implements the
+> > > interfaces that I'm thinking about. In such a case please excuse me. I
+> > > will give it a more thorough look later today.
+> > >
+> > > > As for why "trusted keys" aren't used, they just aren't helpful here.  "Trusted
+> > > > keys" are based around a model where the kernel can request that keys be sealed
+> > > > and unsealed using a trust source, and the kernel gets access to the raw
+> > > > unsealed keys.  Hardware-wrapped inline encryption keys use a different model
+> > > > where the kernel never gets access to the raw keys.  They also have the concept
+> > > > of ephemeral wrapping which does not exist in "trusted keys".  And they need to
+> > > > be properly integrated with the inline encryption framework in the block layer.
+> > >
+> > > Then what exactly does qcom_scm_derive_sw_secret() do? Does it rewrap
+> > > the key under some other key?
+> >
+> > It derives a secret for functionality such as filenames encryption that can't
+> > use inline encryption.
+> >
+> > > I had the feeling that there are two separate pieces of functionality
+> > > being stuffed into a single patchset and into a single solution.
+> > >
+> > > First one is handling the keys. I keep on thinking that there should
+> > > be a separate software interface to unseal the key and rewrap it under
+> > > an ephemeral key.
+> >
+> > There is.  That's what the BLKCRYPTOPREPAREKEY ioctl is for.
+> >
+> > > Some hardware might permit importing raw keys.
+> >
+> > That's what BLKCRYPTOIMPORTKEY is for.
+> >
+> > > Other hardware might insist on generating the keys on-chip so that raw keys
+> > > can never be used.
+> >
+> > And that's what BLKCRYPTOGENERATEKEY is for.
+> 
+> Again, this might be answered somewhere, but why can't we use keyctl
+> for handling the keys and then use a single IOCTL to point the block
+> device to the key in the keyring?
 
-> Another case when I can hardly understand your reply...
->
-> This patch adds a minor user visible change, that was my point.
->
-> If you say that the new behaviour is better / more consistent -
-> I won't really argue, "I expect no one cares" below is probably
-> true. In my opinion group_exit_code = SIGKILL makes more sense
-> in this special case, but again, I won't insist.
->
-> But then this change should be mentioned and explained in the
-> changelog, agree?
+All the same functionality would need to be supported, and I think that
+shoehorning it into the keyrings service instead of just adding new ioctls would
+be more difficult.  The keyrings service was not designed for this use case.
+We've already had a lot of problems trying to take advantage of the keyrings
+service in fscrypt previously.  The keyrings service is something that sounds
+useful but really isn't all that useful.
 
-I very much agree.  It was an oversight and bug not to have included
-that in the change description.
+By "a single IOCTL to point the block device to the key in the keyring", you
+seem to be referring to configuring full block device encryption with a single
+key.  That's not something that's supported by the upstream kernel yet, and it's
+not related to this patchset; currently only fscrypt supports inline encryption.
+Support for it will be added at some point, which will likely indeed take the
+form of an ioctl to set a key on a block device.  But that would be the case
+even without HW-wrapped keys.  And *requiring* the key to be given in a keyring
+(instead of just in a byte array passed to the ioctl) isn't very helpful, as it
+just makes the API harder to use.  We've learned this from the fscrypt API
+already where we actually had to move away from the keyrings service in order to
+fix all the issues caused by it (see FS_IOC_ADD_ENCRYPTION_KEY).
 
-> As for "zap_threads that tests if SIGNAL_GROUP_EXIT is already set",
-> this is another thing but probably I misundertood you. It is not that
-> zap_threads/zap_process do not set ->group_exit_code in this case,
-> in this case do_coredump() will be aborted.
->
-> And to remind, zap_threads() used to set SIGNAL_GROUP_COREDUMP, not
-> SIGNAL_GROUP_EXIT. Because to me the coredumping process is not exiting
-> yet, it tries to handle the coredumping signal. That is why I prefer
-> group_exit_code = SIGKILL if it is killed during the dump. But this is
-> slightly offtopic today.
+> >
+> > > Second part is the actual block interface. Gaurav wrote about
+> > > targeting fscrypt, but there should be no actual difference between
+> > > crypto targets. FDE or having a single partition encrypted should
+> > > probably work in the same way. Convert the key into blk_crypto_key
+> > > (including the cookie for the ephemeral key), program the key into the
+> > > slot, use the slot to en/decrypt hardware blocks.
+> > >
+> > > My main point is that the decision on the key type should be coming
+> > > from the user.
+> >
+> > That's exactly how it works.  There is a block interface for specifying an
+> > inline encryption key along with each bio.  The submitter of the bio can specify
+> > either a standard key or a HW-wrapped key.
+> 
+> Not in this patchset. The ICE driver decides whether it can support
+> HW-wrapped keys or not and then fails to support other type of keys.
+> 
 
-Slightly.
+Sure, that's just a matter of hardware capabilities though, right?  The block
+layer provides a way for drivers to declare which inline encryption capabilities
+they support.  They can declare they support standard keys, HW-wrapped keys,
+both, or neither.  If Qualcomm SoCs can't support both types of keys at the same
+time, that's unfortunate, but I'm not sure what your point is.  The user (e.g.
+fscrypt) still has control over whether they use the functionality that the
+hardware provides.
 
-A major goal of this set of changes is to unify all of the process
-teardown in complete_signal, do_group_exit, and zap_process into a
-single subroutine for consistency.
-
-When a coredump is not generated the code for dumpable signals and
-other fatal signals should be the same.  Including short circuit
-delivery.  It isn't today.
-
-My rougher in progress patchset that follows this one makes, teaches
-get_signal to dequeue signals that have been processed with short
-circuit delivery and makes it so that do_coredump is just a little
-bit of extra code that runs.  With the net result that all of the code
-is simpler and easier to reason about.
-
-Messing with the coredump code today is a real pain because of io_uring
-and those funny interactions.
-
-Eric
-
+- Eric
 
