@@ -1,71 +1,58 @@
-Return-Path: <linux-kernel+bounces-224187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E901D911E7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:21:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305E3911E91
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53282814F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:21:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEE06B24323
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEE816D4D1;
-	Fri, 21 Jun 2024 08:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZFGUieu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D84155C82;
-	Fri, 21 Jun 2024 08:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897D516D9B1;
+	Fri, 21 Jun 2024 08:22:23 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF5916D4F4;
+	Fri, 21 Jun 2024 08:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718958081; cv=none; b=uvR69YPPPOthDPfPWxtY+NiN/Bj6sxTf/wqtojvFGN1tvUSgwnuhZnG9rDXU9iMVbJ9FyMOnS5+ibEX5C7y5XQNribDwRf9xLmqhdi+8pimTsWaQVUTgdUP6uLRHWVc72U6PYhe7EQgD+LBE2e8hvZwnS5UHT3I8vxvt+hTyOdU=
+	t=1718958143; cv=none; b=sUSi2zXhztXWYYsfEJhN3zIYa2LHTq0cM+tEsOLNrddRRtMsmhr28dwXSSgGGTa4OY+G1+Vd0sXPWsYjs89ZO1vNJvLLiNJ7LdSHC69scFGO3kZPk6q66aWa+2vkoUn6FsrJcFfYYgeDBI/UoWXcwVAoQ9ZgT3oxOpjDDMqOQIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718958081; c=relaxed/simple;
-	bh=QMtf0T6uDNCP6ThgxIUGFi47LfMO2/ulDirJ4mXjisY=;
+	s=arc-20240116; t=1718958143; c=relaxed/simple;
+	bh=dgT8q2RUD4AsRrCrgspBvokTXMmqeYQLjIWJc/q4mjM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UHkfZjYs+MKj7nwMqD2vGeW2c3pbILR8EAr3bE83VLXzpSd9z6/XdkVyHOjTDvDFI5UfFi1wVCp33Dtf6Qgtl4mFl67nKMjqUIDrVNfoZ/KppQ8QlxYiFOkQaXIiF3LKApsfB6MJfTKUavDgkslqkflDjjai0sk63OaAxIRFl8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZFGUieu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9536C4AF08;
-	Fri, 21 Jun 2024 08:21:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718958080;
-	bh=QMtf0T6uDNCP6ThgxIUGFi47LfMO2/ulDirJ4mXjisY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VZFGUieuixjnwWRarKrkMmWzTsHwOPQHkDnxJwsAOSI5Jhnj99ryVH33FrLocz8Vn
-	 ajhhezpNAxlr4qrsLKoW8egu3wGklMisIPIGR7fvy4gfhGh2kxFSubfki8EmLTGeqC
-	 FyNF6c+n9pHbcHgwI9omP7yG8Dbu5r7NL+bHQnZpXGWmAiNXQIhI61MO4uI4v+LAfB
-	 xgTleMqki5tjcafqHOsHci8B6Shewb4T8SEsWCMvgeQoX2/IGg/+pD/hxyZbRFdj/5
-	 60fqXFWW8FllRMXbMhWzg2/S3kF8EDze2ZQgoDbnj5FdlGcCcVmJHaUnZsK3Nklji7
-	 ujcmBQOVYa8Nw==
-Date: Fri, 21 Jun 2024 09:21:14 +0100
-From: Lee Jones <lee@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: lkp@intel.com, linux-iio@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, Vinod Koul <vkoul@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Julia Lawall <julia.lawall@inria.fr>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [RFC] Patch review challenges
-Message-ID: <20240621082114.GH1318296@google.com>
-References: <202406191014.9JAzwRV6-lkp@intel.com>
- <c25aab0d-48f6-4754-b514-d6caf8d51fd1@web.de>
- <ZnRUSaHJhz7XLcKa@matsya>
- <20240620170522.GU3029315@google.com>
- <ZnUnFeum1Z2ahm9M@matsya>
- <ebddd644-b9b1-4a87-a2e7-dcf255f4184d@web.de>
- <20240621075123.GG1318296@google.com>
- <302ce128-a0ef-41b4-9808-210a83bc6a48@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFDfmdP5ufbVCFcTVwxhk7RyUp/qO+V/6PANDyvNmT7H2zftfGK79Sky5XAhHZ9tlrNgb39CZxqTQajvNUdSQX9UvY3IsMbdt6HfyPTx/R6DVA8QP1bY0hOolO7QcnE2EwNbMu8u1aKznHoHfgBgj4j7o/TSVaT3FTGgOeIKGEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sKZWX-0001Oj-00; Fri, 21 Jun 2024 10:21:33 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 88B31C0120; Fri, 21 Jun 2024 10:21:17 +0200 (CEST)
+Date: Fri, 21 Jun 2024 10:21:17 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>,
+	Aleksandar Rikalo <arikalo@gmail.com>,
+	Chao-ying Fu <cfu@wavecomp.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>,
+	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	"paulburton@kernel.org" <paulburton@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: Re: [PATCH v4 00/14] MIPS: Support I6500 multi-cluster configuration
+Message-ID: <ZnU3/c1T55k4WbYx@alpha.franken.de>
+References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com>
+ <ZnRtYFr5HFffyK7E@alpha.franken.de>
+ <ff6fe06d-6209-4e34-9cc8-eb516fa4ffae@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,49 +62,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <302ce128-a0ef-41b4-9808-210a83bc6a48@web.de>
+In-Reply-To: <ff6fe06d-6209-4e34-9cc8-eb516fa4ffae@app.fastmail.com>
 
-On Fri, 21 Jun 2024, Markus Elfring wrote:
-
-> > The issue is one of communication and the way reviews are conducted.
+On Fri, Jun 21, 2024 at 12:05:32AM +0100, Jiaxun Yang wrote:
+> 
+> 
+> 在2024年6月20日六月 下午6:56，Thomas Bogendoerfer写道：
+> > On Sat, May 11, 2024 at 12:43:27PM +0200, Aleksandar Rikalo wrote:
+> >> Taken from Paul Burton MIPS repo with minor changes from Chao-ying Fu.
+> >> Tested with 64r6el_defconfig on Boston board in 2 cluster/2 VPU and
+> >> 1 cluster/4 VPU configurations.
 > >
-> > Reviewing other people's work is challenging and requires a certain
-> > skill-set, of which _excellent_ communication skills are non-negotiable.
+> > which existing CPUs can use this ?
 > 
-> Patch feedback and change tolerance can vary also according to involved communities.
-
-Agreed.
-
-For this community, I suggest you build your skills for a while longer.
-
-> > Why not concentrate on more complex submissions for a while and grow
-> > your repertoire of common review points,
+> Besides Boston are some multi cluster I6500 systems in wild, including Fungible F1,
+> which comes with 52 cores in data panel.
 > 
-> Further collateral evolution can be considered there depending on
-> corresponding development resources.
-> 
-> > rather than repeating the same few over and over?
-> 
-> Some factors are probably known also according to corresponding statistics.
-> Several contributors are stumbling on recurring improvement possibilities
-> in published information.
+> Those vendors show no interest on mainline kernel support though.
 
-Right, this will always be true, however the few you've picked up on
-are not important enough to keep reiterating.  By doing so, you're
-receiving undesirable attention.
+ok, so looking at the series it touches areas with different maintainers,
+I'm fine taking the MIPS parts, can I simply cherry-pick them out
+of the series ?
 
-> > Reading other, more experienced maintainer's reviews would also be a good use
-> > of your time.
-> 
-> I am trying to influence adjustments in desirable directions for a while.
-
-Never stop trying to improve.
-
-
-These are only my opinions of course.  Take the advice or leave it.
-
-There's no need to reply to this.
+Thomas.
 
 -- 
-Lee Jones [李琼斯]
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
