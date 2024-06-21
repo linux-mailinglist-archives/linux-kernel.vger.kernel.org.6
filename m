@@ -1,109 +1,150 @@
-Return-Path: <linux-kernel+bounces-223982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA530911B6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCD1911B75
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 632BD1F242D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867BA1F24308
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6336B16C858;
-	Fri, 21 Jun 2024 06:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850F016D4C9;
+	Fri, 21 Jun 2024 06:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ofgm5gtE"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQ5+RO+e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99ED152DF7
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0F31552E3;
+	Fri, 21 Jun 2024 06:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718950685; cv=none; b=BpFB5TZUGqGs3Mae8hABCg6hFiqvzXMu1TFa2RgcDiRfZwOL9Tjf+yJItgI67ZljLXK46Na5NpPTp5Ni+cpRUF1trBfwPDX6mvlquH+qHEEjhzZ0uK8fNBMMD/rki3ktMe4NDcFj5pO7H0KYDbBePysMuhcacAOhlajOaY+WfIg=
+	t=1718950735; cv=none; b=RtPYK6jmh7Y4+0YdOlrLZ4Y/ugo+bhhFsevuAz8ngb61Vt3BbSQUw+L830D7LPvXxllMZW0Y9dxSJRh6c8kM0OEbuTzzqjQawEGIwyN7wzzj78hhcLY7KmeM0B853U7cqfaMupxax077Oqo9pFtcIRjlP7ZREAr26DqdJ5MJNnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718950685; c=relaxed/simple;
-	bh=gsCxHz0NnDo414oRCn1OhO+A1Kd5SBw5weSt1z8Z5xk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=K30LjWgOQG/lKcWv9lWfFNcMv1sMbHhdTsmA5Oi4RfZxGEgYIelS2depRkAdUa9kA/+oWH5OQOYfNgrrBDwBrj6jY502l1yVsT7GeusaKgjzztb/tmxO8fLUKiekSRnB/xwLOxSeXlo0HD0+Y/jYbK+ESE584Xj9Z4Jx/yt1t6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ofgm5gtE; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so16188211fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:18:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718950682; x=1719555482; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8v/aKYe+JxVI3CfS2FvYP2HrkFepPdOtUXTcrjF4Iy0=;
-        b=ofgm5gtEYUTfXQNaqYyJtUoNghcyX5rq7o6gpyTxqePpoPKeEVxEx2b8lFk25qiyNN
-         YsEGb+J4fpXg/sCVH4xVITjT3Kj0p+b4jirPE30Exn89c4aZiyZYPFIGrBUbSq54ukuU
-         K65/BLEfCkdmKasOBmobARyDx7quJ5g566Sl88oRzH4YLJQOYaFB+wbss6M5+KX1ErTw
-         vgPu1NOlUnepuP7grHRQhIp7vw/QUTn95alTepTiCdmv8kEhRhZCLgwTw4ZZW8lovuf8
-         jZYqwjvCHU3RdFDEiHoFv5/oK0M2mdzOHbryGbQ4pfneIPwmKDKe/CXdlvMKhWu014xv
-         YLSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718950682; x=1719555482;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8v/aKYe+JxVI3CfS2FvYP2HrkFepPdOtUXTcrjF4Iy0=;
-        b=o3m0Z8BujFuE++Wlu5zAwfab0TbC4og+6g3I9W4aXWB+FcKH2bLhpYy1rAhNMfpXTy
-         oC5QhGTssYComZb8KcQG/cW8mnWx3pfFHwOS8AEg1iB67vnUy5r5QbCB82//z6MdOmNA
-         p+a0iMz3qQTkA4m0bQwXqlsFn0veJd8fNdPvp7LbaJxkLDKsB/1rREdgG3qnwKJjKTuJ
-         7AdcrCEGnMBCzvp7Z5dhPZN4px9Vzyrr/zw9xhzD5WC2JkEezojYwnKrQAFuLOvuLr85
-         1/UpSLsPw+uaJGJrZk6XQVYTCmcraZbA1Px4yZ2oeJh0moV3pGrwHiJ+NS4EjNpjP0H8
-         vzPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtAUzGoWK3oKYXDmHm6VseSrotd0XHFvA1UlsBtwyfYGB33sFz8FIZy6cDsmV/SNbH1vqCjo0kMPAKWbhuqZIywLVX15/N+yl/mhYA
-X-Gm-Message-State: AOJu0YwbJcVvFpd4DjqVIczz+ZEFDJ20QdNZd7i+/jQPdSUVz1yWLQL7
-	NrChCQ1AxVdIOtNJM8wcjB6yJkEwgvRyeWwOW5aTHMeVWRUDeS++QFPsPgyosJc=
-X-Google-Smtp-Source: AGHT+IGponEudPSsJyTnvE0/1vxRs81b4VCjNl2TJlLRqh1PuPPhoub4NIgzenIurozR+Yc7M8Yv9A==
-X-Received: by 2002:a2e:a710:0:b0:2ec:3d2e:2401 with SMTP id 38308e7fff4ca-2ec3d2e27dcmr38061871fa.40.1718950682006;
-        Thu, 20 Jun 2024 23:18:02 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42481910fc9sm14075635e9.33.2024.06.20.23.18.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 23:18:01 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240605-topic-amlogic-upstream-bindings-fixes-power-domains-nvmem-v1-1-ef6f10c86a63@linaro.org>
-References: <20240605-topic-amlogic-upstream-bindings-fixes-power-domains-nvmem-v1-1-ef6f10c86a63@linaro.org>
-Subject: Re: [PATCH] dt-bindings: nvmem: amlogic,meson-gx-efuse: add
- optional power-domains
-Message-Id: <171895068013.13708.3381966388951279908.b4-ty@linaro.org>
-Date: Fri, 21 Jun 2024 07:18:00 +0100
+	s=arc-20240116; t=1718950735; c=relaxed/simple;
+	bh=iOKs0kuwYeauur49traV6Ei5QgiBo+V6ci2r2oGoz5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=acpt4EWg4QwNT711+N8whGdQ2BSZLpLo8bhKDMT1pR2Oi6sWzgPjbPYWeRNMuLx+EXdhvSCfDHLH3SDI9KMzjABKlrE3mipzQaZBKvX+FvL/a9NrsHZJBcjgfzQGH6n2/+Cu377qB3VZwpHh9xRlvDHLuybTpKGe8QaSKMA9ftU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQ5+RO+e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22111C2BBFC;
+	Fri, 21 Jun 2024 06:18:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718950735;
+	bh=iOKs0kuwYeauur49traV6Ei5QgiBo+V6ci2r2oGoz5Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CQ5+RO+eixfOSNiyNe6mYshUgJvT0bBT4RbBHfzXKwWoWUVDdMTdin7bNvMeociBa
+	 nsxe1skVxv8y216/k3GjD97zpMhRmVcHnKNoQQjUEIDFLDXLOx3HazsbPRQpp8Wgtd
+	 URk3Blz7BFahR8cKNcyHmn2uxfK86Y/OqF9sI1Q245ew1hsIEgxFDimmiZ9+leoFKN
+	 bFTDPzHrfjIDkH0vL43WSNL6GWH6QcG//xXqawpgJXcVrGqP+6n8pqSHSc0LN28WsZ
+	 IWtKNkMhQE4HAfPFsV1PtgcWsaTID0wJ9ME+tjwO5TMqWlHdX4Miz81t8+Qz01ZGXY
+	 CxmBFLYjgBjFg==
+Message-ID: <f49c5ee8-6bdb-481b-a131-a6478526f1e1@kernel.org>
+Date: Fri, 21 Jun 2024 08:18:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v4 03/10] ASoC: dt-bindings: lpc32xx: Add lpc32xx i2s DT
+ binding
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "J.M.B. Downing" <jonathan.downing@nautel.com>,
+ Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Yangtao Li <frank.li@vivo.com>, Arnd Bergmann <arnd@arndb.de>,
+ Li Zetao <lizetao1@huawei.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Chancel Liu <chancel.liu@nxp.com>, dmaengine@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+ linuxppc-dev@lists.ozlabs.org, linux-sound@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-mtd@lists.infradead.org
+Cc: Markus Elfring <Markus.Elfring@web.de>
+References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+ <20240620175657.358273-4-piotr.wojtaszczyk@timesys.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240620175657.358273-4-piotr.wojtaszczyk@timesys.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
 
-
-On Wed, 05 Jun 2024 11:35:22 +0200, Neil Armstrong wrote:
-> On newer SoCs, the eFuse hardware can require a power-domain to operate,
-> add it as optional.
+On 20/06/2024 19:56, Piotr Wojtaszczyk wrote:
+> Add nxp,lpc3220-i2s DT binding documentation.
 > 
-> 
+> Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
 
-Applied, thanks!
+Thanks for doing this. Appreciated.
 
-[1/1] dt-bindings: nvmem: amlogic,meson-gx-efuse: add optional power-domains
-      commit: b654441eed93946538b5cb3801a5a6dd58b5d692
+>  
+> +FREESCALE SOC LPC32XX SOUND DRIVERS
+> +M:	J.M.B. Downing <jonathan.downing@nautel.com>
+> +M:	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+> +R:	Vladimir Zapolskiy <vz@mleia.com>
+> +L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+> +L:	linuxppc-dev@lists.ozlabs.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/sound/nxp,lpc3220-i2s.yaml
+> +N:	lpc32xx
+
+Drop the last "N:".
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
--- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Krzysztof
 
 
