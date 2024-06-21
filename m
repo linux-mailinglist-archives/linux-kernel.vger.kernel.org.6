@@ -1,64 +1,94 @@
-Return-Path: <linux-kernel+bounces-223976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB5A911B4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:18:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB31911B55
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 294F31F23EEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:18:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54888B229B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4713216D4CA;
-	Fri, 21 Jun 2024 06:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306DE16D9CC;
+	Fri, 21 Jun 2024 06:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ak8YUHis"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F+rL0Gn+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3tc0/dT5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lbq3GVVD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cKLugUhC"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A413716C872;
-	Fri, 21 Jun 2024 06:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBC7153580;
+	Fri, 21 Jun 2024 06:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718950554; cv=none; b=o6WjrOrgnLwuAX5EFGQezq3MSbalBJWa1IFTOMb9h61DrIQucnHcB7Xk5S44c//BSwFybIRKw8UqDa42kETrccSq1CIE2J0YF80RpvDOGqc4ZHKWLLSbGxvjrnGGCv25zQfLVfP2o8o9IHH5sW0gzcBL+Ryox7Tq2IoG24yvZ5c=
+	t=1718950564; cv=none; b=XEBpZ4D2Xwu+Q77NE5t5+pEZzIcVBZg4LHfpyR4Hfzrm+IZDuKxJnoUFiBmkq5wn8jwhqp1FOIyZUl4C+dImzqwz3zBXUhgjSB8TR5RYymKfuz4ncM4m2X/uEV/ZAiyiFz7Q480p0F70fZXpyC6W7T3cDLt+6K+6HHtHrPk6e4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718950554; c=relaxed/simple;
-	bh=b4YFrfIx8v91klVdzfn/68zAfExp9e6qzjIqoe5lMCA=;
+	s=arc-20240116; t=1718950564; c=relaxed/simple;
+	bh=K8njNEkJlHP1dW8n5uIPEzdz0eYwgn5OsKMv6AuVNbo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l7hT0midY7U0izfMQ8E6Zg0CWzDhEo83opUW5rH6QSe0nOjDhk0tU5eOr/47lC4INplV+b1KYXl7Eh49uErnIeB3ZnRaIDbyGvSHEIVc536z8+7NQOjvunsfFm/XOWt1NLtDoLzDAn72RdOhC93SzeUh/ttNPpK6Y4STiPiceIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ak8YUHis; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718950554; x=1750486554;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=b4YFrfIx8v91klVdzfn/68zAfExp9e6qzjIqoe5lMCA=;
-  b=ak8YUHis8aiRy9YHwW9S82RpNjkvsa1uBrEXkoe4U0Vwhfh7zjekmNef
-   uwn3OjL96GfgQbvdCKqwzu1RZx9icEgnRYubLUvdNxSanN23/5ZHdwznM
-   EtV90JviegN/9oTyRdmlf10bZKMOoDExL6Eo+K92vpqGjq/gwgaqDs5g0
-   P2DUTiNMsjVW6wuhmhFm1tfJk+/iaszB+IWBjejmr2YTmNUvVspDj1kXI
-   PJV0QFw10dOYXnYy0lWGTCEr8i7/6JB6JcNdwLZNrbKz6cM4kowl5mqKC
-   HG6tQEgK5WdBkOgB39xuXhuUrFQuDFAgcJ+cNv6RsthywupB6vnfgKYD7
-   Q==;
-X-CSE-ConnectionGUID: X+VzhjGhRYegNPj2QHEEHA==
-X-CSE-MsgGUID: h5Mv2hDCQvm46XHyZo/29g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="33426454"
-X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="33426454"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 23:15:53 -0700
-X-CSE-ConnectionGUID: GE9heTFRRcatzZBud09DlQ==
-X-CSE-MsgGUID: DDHedefNSbaBObOzoPaxdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
-   d="scan'208";a="47013825"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 23:15:49 -0700
-Message-ID: <3d44c749-6c81-4c11-9409-b01815fe1a91@linux.intel.com>
-Date: Fri, 21 Jun 2024 08:15:46 +0200
+	 In-Reply-To:Content-Type; b=ft4plCJlAFTsA9EbHeror2SZhwby6McnlwUoaXgn1EeCwnb8JWhDzue/axAtM+NHbGUpoCga82JMv2ZtGLKubqRfnH7yAp/0mOKheUgmi7Kf9iCturr0Yl3/WjCcKgNlay+qfxaSZK6APVk4sw4/G5fDirbk9MxPHREkPjbC5eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F+rL0Gn+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3tc0/dT5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lbq3GVVD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cKLugUhC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0B3721FB4E;
+	Fri, 21 Jun 2024 06:16:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718950561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tN4ivRLOJvdsi6A1Azz8+51sUsLN6tHsYHLb/nafu1k=;
+	b=F+rL0Gn+ddsFnW9jWe4IgRydpKj17zedr9GD6Zw2WnmjxViw9nrp9n4+BCl6W+bkyEIeVH
+	UETf7JsuOtDEldTF4Gh9fRa7P/F6xpx3Ssi8sUlmE7sT2wnp0QEg0WStxaIH3iO2Ac7687
+	hRGyzZju8zzpChA+rjgkAQKeRASxaGg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718950561;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tN4ivRLOJvdsi6A1Azz8+51sUsLN6tHsYHLb/nafu1k=;
+	b=3tc0/dT5IrG47kflHRs2TZ9IUywNV3213aDEoyl+BFR+c3sFvtFE/a6bQHjQ7t7K2rDGvA
+	iGBI6aUrHIhaHlCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718950560; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tN4ivRLOJvdsi6A1Azz8+51sUsLN6tHsYHLb/nafu1k=;
+	b=Lbq3GVVDW89VKCcmlSbFR1LVt5R8DBgzzYe/XmPybarPYxReLB10Kj1LcJqd3cV5DsDDwm
+	IUqr6MDMA6D0wTYpa/T1heRuK8L0rYigpc4NX+KLW9FOPx4jnx7wKqGznyMRETGk5UPG8i
+	PwC41JeKRJzlIEakGMKYcKWa3COFcoI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718950560;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tN4ivRLOJvdsi6A1Azz8+51sUsLN6tHsYHLb/nafu1k=;
+	b=cKLugUhCP7+wm7ysLbf99J7jta9PHMsKximFoiv/F5VDP95MNASe4X9+p8M0AFdKBCdngC
+	KVUZELZH7lTtDKBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA5DD13ABD;
+	Fri, 21 Jun 2024 06:15:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WBn+MJ4adWbDfAAAD6G6ig
+	(envelope-from <hare@suse.de>); Fri, 21 Jun 2024 06:15:58 +0000
+Message-ID: <141c769a-1642-424c-bae1-1d19441a115a@suse.de>
+Date: Fri, 21 Jun 2024 08:15:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,57 +96,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ALSA: hda: intel-dsp-config: Fix Azulle Access 4 quirk
- detection
+Subject: Re: [Patch v9 09/10] scsi: scsi_debug: Atomic write support
 Content-Language: en-US
-To: Allen Ballway <ballway@chromium.org>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Brady Norander <bradynorander@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
- Mark Hasemeyer <markhas@chromium.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Cezary Rojewski <cezary.rojewski@intel.com>
-References: <20240430212838.1.I77b0636d5df17c275042fd66cfa028de8ad43532@changeid>
- <83e218f9-29f5-4f35-bd0c-b298e3bb9e8c@linux.intel.com>
- <CAEs41JC-vJaMHj6fzmNO=-bu5oURRA-u565sN2=yzBeVtKb=4g@mail.gmail.com>
- <b2375610-4044-49e6-86e9-5c172abb2ffa@linux.intel.com>
- <CAEs41JAPPr3xRR42H6vKic5rVrtV-on4HyT5wNCXxbJtwijnCA@mail.gmail.com>
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <CAEs41JAPPr3xRR42H6vKic5rVrtV-on4HyT5wNCXxbJtwijnCA@mail.gmail.com>
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org,
+ hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ dchinner@redhat.com, jack@suse.cz
+Cc: djwong@kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+ linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org,
+ linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com,
+ ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev
+References: <20240620125359.2684798-1-john.g.garry@oracle.com>
+ <20240620125359.2684798-10-john.g.garry@oracle.com>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240620125359.2684798-10-john.g.garry@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[30];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,lists.infradead.org,mit.edu,google.com,linux.ibm.com,kvack.org,gmail.com,infradead.org,redhat.com,lists.linux.dev];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,oracle.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -2.79
+X-Spam-Level: 
 
-On 6/20/2024 9:27 PM, Allen Ballway wrote:
-> I filed a bug and after sharing the requested information it looks
-> like this device won't work on SOF without vendor support. Given this,
-> would the original patch returning this device to using HDAudio be
-> reasonable, or is there an preferred alternative to force this device
-> into using HDAudio?
+On 6/20/24 14:53, John Garry wrote:
+> Add initial support for atomic writes.
 > 
-
-And can you share link to the issue on mailing list, so someone reading 
-this thread in the future doesn't have to guess where it is? ;)
-
-Thanks,
-Amadeusz
-
->>
->>> Unfortunately the above patch didn't fix the issue, nor did I see any
->>> of the change logs in dmesg.
->>> Are there other alternative solutions or information I could gather to
->>> make a more general solution?
->>
->> File an issue here: https://github.com/thesofproject/linux/issues
->>
->> and attach the NHLT table:
->>
->> sudo cat /sys/firmware/acpi/tables/NHLT > nhtl.dat; gzip nhlt.dat
->>
->> as well as the results of alsa-info.
+> As is standard method, feed device properties via modules param, those
+> being:
+> - atomic_max_size_blks
+> - atomic_alignment_blks
+> - atomic_granularity_blks
+> - atomic_max_size_with_boundary_blks
+> - atomic_max_boundary_blks
 > 
+> These just match sbc4r22 section 6.6.4 - Block limits VPD page.
+> 
+> We just support ATOMIC WRITE (16).
+> 
+> The major change in the driver is how we lock the device for RW accesses.
+> 
+> Currently the driver uses a per-device lock for accessing device metadata
+> and "media" data (calls to do_device_access()) atomically for the duration
+> of the whole read/write command.
+> 
+> This should not suit verifying atomic writes. Reason being that currently
+> all reads/writes are atomic, so using atomic writes does not prove
+> anything.
+> 
+> Change device access model to basis that regular writes only atomic on a
+> per-sector basis, while reads and atomic writes are fully atomic.
+> 
+> As mentioned, since accessing metadata and device media is atomic,
+> continue to have regular writes involving metadata - like discard or PI -
+> as atomic. We can improve this later.
+> 
+> Currently we only support model where overlapping going reads or writes
+> wait for current access to complete before commencing an atomic write.
+> This is described in 4.29.3.2 section of the SBC. However, we simplify,
+> things and wait for all accesses to complete (when issuing an atomic
+> write).
+> 
+> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>   drivers/scsi/scsi_debug.c | 588 +++++++++++++++++++++++++++++---------
+>   1 file changed, 454 insertions(+), 134 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
