@@ -1,114 +1,167 @@
-Return-Path: <linux-kernel+bounces-224003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828FB911BB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:28:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B4C8911BCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D7BF1F260AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB8A1F2641B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1391C167DB1;
-	Fri, 21 Jun 2024 06:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5174915AAB8;
+	Fri, 21 Jun 2024 06:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IkmHfFN+"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YUfcwoBS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TsA19tge"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D6D15A49F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 06:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936C93C0D;
+	Fri, 21 Jun 2024 06:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718951260; cv=none; b=T6fuPW7JTBjiKM12RVVicO9TmqAcovO1i17ypMeT9+0PNkkX0dUHR6PzcNPeSiKo+u/uBNfonG5hwTshmL/5BtDr7OAozBdBEbnynMxA8LLXHhCATfy/0uTWXNWV/3tBTR+n91WTtVmEU41fixbmDYBi/9jul7vPSTND8qbpco4=
+	t=1718951418; cv=none; b=JrJ5X7HnFYyRibmcCf7RKcHoJJt6rcgeXyDEX65aeQtRxlCDvx8opqyR74lnoMAsQDcwrpjRLaKQTq62dKR/PJonIcMH03lPi5Vx25A5JbTtftS0md4dNN5nbLdnWcL4g7z0aOYHagXEL3I91SSrtW2EcH7/RrwyNo+2Ue2xXzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718951260; c=relaxed/simple;
-	bh=IwilEpxoWBhCfcRwNi6IPFn8TUid8ReCw/G+eRzc3ak=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=u4KUrp1cJKtK8BKLoPCortMy5nfG8oOmBTb0ksxerMpb0YI/yH1mjBrpCJLBrL5ZLOxQNuTydLdvwuPvFjDsZq1THcems/pxUhaLhp4FZXxBcU+C0CGZHE3hWoiPW1AIwsVC96fTxf4mpFD25vVcigzzgdKdRaMmXJAFX2SIWPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IkmHfFN+; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3650f2e540dso1041964f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:27:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718951257; x=1719556057; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cmm2AP8HdLA0xcCQlwNYSdjRGs2bIdgqgz6HJe1wJBM=;
-        b=IkmHfFN+ADXq9qvqUw8OyUQ4z101LNTLH5D057olDgsaT0yq7vC0fKY2jtxZO16D/O
-         tGxVrolbUC1i66hqwKR9CXuHvRV4x748e5NSmaJ0Ee/KUw2YqUt7H3aQI5hQm+05zg7F
-         92VMS/hevpzc/uEGWZmphqM2QkjcH2VzFjfvEdLKZtFdL8Q6D82K/YG/mbZHSekC+rof
-         2X8zlWDvVHxGpev7sbh7d1caWEZwosOJd7lYNNhCIO/FuRz88EU1B0odISwfIcxvryp7
-         0MXuw8nTQp60GmaZpUYPv4GTod9VWfnoUv22N0P87Xs5ydsV6pM/4rq8MkmoFrAtorA9
-         V1PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718951257; x=1719556057;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cmm2AP8HdLA0xcCQlwNYSdjRGs2bIdgqgz6HJe1wJBM=;
-        b=IjNJ/s7PFnDEuvDFFeyXR0SP51TYAafCXKzK9f3TEkzyX7ofSqi/IMAqxyKQnHQX10
-         E82SuNtQA3XUPOI7+ikim59NDGOOub/BnVTJ2r6t8wV2G5eWeTFjiabA2r5n5dWScoSX
-         EK28MMWHVM+PqH6/EQb7kKiGTPVlFExOepFE0ksRmhcazlrpIgQyURX98C77xwMw5YQg
-         joa4FqqDYS809Lo47O+xYYIyF4LV9r18E+BcIaO8sByw5N3raGCltMYaMtKsf641BhOm
-         n2tpNti0CyODHMNl+Yiq3MmqxPcAnAOd1RPFQpvLLXlB2DYLMWxRicAcrPTtNxXOBtWt
-         uapQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzC/IOW7MYVA1iSO5sZV3MuIGVOzm3FJ2qK85M8KjAPPdn3ecDBiHxqf+mdHQJWAhnKhVqUkHKPJXR6IOjmp9+9BFij/Bmqt5KdDpf
-X-Gm-Message-State: AOJu0YxQ4rr5TCT/aRHRvSXVhMs1OahtDm/ZBcjh61clmXAtHn310eFw
-	7xNMPwRankCAmkPlApYjN6s70tmn2yPBUR8dVkx+/LcGMcZDz78EWb4CUHJlWtkROlB5H6AfiKq
-	W
-X-Google-Smtp-Source: AGHT+IGNuPtTUWoR/fyqtIISKh2Cu4R7v9ETKaekvIPXTadAHe0SolPNV0MLSDlmZ8gtZV4ZTWZwZw==
-X-Received: by 2002:a5d:4e87:0:b0:360:89a3:5293 with SMTP id ffacd0b85a97d-36313fd379amr4629579f8f.0.1718951256942;
-        Thu, 20 Jun 2024 23:27:36 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366383f68acsm814013f8f.2.2024.06.20.23.27.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 23:27:36 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, 
- sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
- kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev, 
- shengjiu.wang@gmail.com, Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <1713848917-13380-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1713848917-13380-1-git-send-email-shengjiu.wang@nxp.com>
-Subject: Re: [PATCH] clk: imx: imx8mp: Use modern pm_ops
-Message-Id: <171895125570.3618049.5200843914649548447.b4-ty@linaro.org>
-Date: Fri, 21 Jun 2024 09:27:35 +0300
+	s=arc-20240116; t=1718951418; c=relaxed/simple;
+	bh=QTDvmlCgRLlBME4zt8gkdNo0SO4LeIf5kG63XslMO08=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=JTLcaXE9VWs/8QTVR1wiGkx7Ibvw113svzT9wDCrFfJOJ7cVtFR7OxapD/mQz5Dfiz8FRSLsb/jbJ5Dyvxfz2Tl6RZjkxZUdnzV1RThZFphJwaQuw717gR37OHAK8lSQV2Wvjaekq71Lqola5Iu8mDgaN2rSyWvDRMLR+o6UnEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YUfcwoBS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TsA19tge; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 84F2B138026C;
+	Fri, 21 Jun 2024 02:30:14 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 21 Jun 2024 02:30:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1718951414;
+	 x=1719037814; bh=0NAp6YpmQQzb+XaqCHOddozx1CwlQxt9qQHhSQdm/eM=; b=
+	YUfcwoBSCsdr4lbdFToY1N/Zs4J4ckS/QAFHkFhDVLoMlvGNE9DG/Up12YB02Xt2
+	EvdhpTEPC4jKy9ytn/wkuqfYy4S1cppgeD4oj7WA+/5sqCNg/z+lPwlRbPyO/Flv
+	86iciY4yavDos8ifYZIvOfII9G79cFp+BbP22J8pM9RrD+d18AtMZbn8j9nT03bV
+	c7xQT06XqtjmkNTJ3loldGGvKZUIHFOFW5y31AIvhjBqlktBLCcT2CdKqNOYzmSV
+	sMmQF4/bSVH0PEqvVO/XPs0/1B6SgKYgXBpAog/xndEaqaywJvgFOBJuhrryZ4PT
+	p2/5cEIyG3XclTxM5zIk6Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718951414; x=
+	1719037814; bh=0NAp6YpmQQzb+XaqCHOddozx1CwlQxt9qQHhSQdm/eM=; b=T
+	sA19tgeRrtyO5cROFsAr3JW3gCmvjTkfGvoIFyTvlgeMHOUsPYhUf63dPMHGumOG
+	SIVUOPVMYqUiSDU81ctnvLlpO9PEmKT5nYGuN8Yk6mi2deAmhqwvD8T8lcVqcfB1
+	GPqL5qicjYl82FohTt6bsxJU60LE/Hsa42KrOIywf7lBtaIPivddS4cPuSL9Zm6B
+	LHiJJ7dQip90rRSAu8Rm0KDbhCZ/X7xYsJbH8aqLdEew+kE5apOFPvumBP+Yp5Fz
+	Rr5E19oZ7V3IGyh5IXREy5PC+msQ9aq0CnRgKaDNrD+E/iA5xot89u78VGuhZWhK
+	zW007umSQsVkCbMOwZN5A==
+X-ME-Sender: <xms:9B11ZuBxjRBAW0tNynq8H1-YRQjdkmL-JPoLIbLq-orE5Mdjc1QF6A>
+    <xme:9B11ZojY_qLmvoF_ar3eB4_lK44-YnS7iEik2csxzA9Ys1vKqB1JAHCw16DZLb5Ul
+    cdeR1H2mE3zhLekbAU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeffedgudduudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
+    tehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrf
+    grthhtvghrnhepueelffeiudevhfettedvhfevkeekveevffehveehhefftdeiheduledu
+    iedtvdffnecuffhomhgrihhnpegrkhgrrdhmshenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:9B11Zhm6zOHfU1WuWgDdoSU71qsQzLDsjAJ7Nhxw117RxV0KzM2GHQ>
+    <xmx:9B11ZsweTZURJjYSmpSNhPg_buY1pvgdHiULQsyQVa-AcYIqIMlFBA>
+    <xmx:9B11ZjQp1WOoJc2XCjVhKQs5UkDHi7Xc0oSg1RRu1sY5kpyhJuIyfA>
+    <xmx:9B11ZnbfnZmS9DMt_cIsivY9q90FCfqmpn7bFXeT3Vnm0PLjcHHdDQ>
+    <xmx:9h11Zm92tL5faK9ZKeseMNCfbg9AEZegZt4gth5vlZ0KCBBhZQ4GEtV8>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 60EDBB6008D; Fri, 21 Jun 2024 02:30:12 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Message-Id: <1308b23a-d7c0-449e-becd-53c42114661e@app.fastmail.com>
+In-Reply-To: <e22d7cd7-d247-4426-9506-a3a644ae03c4@cs-soprasteria.com>
+References: <20240620162316.3674955-1-arnd@kernel.org>
+ <20240620162316.3674955-8-arnd@kernel.org>
+ <e80809ba-ee81-47a5-9b08-54b11f118a78@gmx.de>
+ <e22d7cd7-d247-4426-9506-a3a644ae03c4@cs-soprasteria.com>
+Date: Fri, 21 Jun 2024 08:28:40 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "LEROY Christophe" <christophe.leroy2@cs-soprasteria.com>,
+ "Helge Deller" <deller@gmx.de>, "Arnd Bergmann" <arnd@kernel.org>,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "Rich Felker" <dalias@libc.org>, "Andreas Larsson" <andreas@gaisler.com>,
+ guoren <guoren@kernel.org>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+ "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+ "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ "Heiko Carstens" <hca@linux.ibm.com>,
+ "musl@lists.openwall.com" <musl@lists.openwall.com>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "LTP List" <ltp@lists.linux.it>, "Brian Cain" <bcain@quicinc.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Xi Ruoyao" <libc-alpha@sourceware.org>,
+ "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "Adhemerval Zanella Netto" <adhemerval.zanella@linaro.org>,
+ "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 07/15] parisc: use generic sys_fanotify_mark implementation
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jun 21, 2024, at 07:26, LEROY Christophe wrote:
+> Le 20/06/2024 =C3=A0 23:21, Helge Deller a =C3=A9crit :
+>> [Vous ne recevez pas souvent de courriers de deller@gmx.de. D=C3=A9co=
+uvrez
+>> pourquoi ceci est important =C3=A0
+>> https://aka.ms/LearnAboutSenderIdentification ]
+>>
+>> On 6/20/24 18:23, Arnd Bergmann wrote:
+>>> From: Arnd Bergmann <arnd@arndb.de>
+>>>
+>>> The sys_fanotify_mark() syscall on parisc uses the reverse word order
+>>> for the two halves of the 64-bit argument compared to all syscalls on
+>>> all 32-bit architectures. As far as I can tell, the problem is that
+>>> the function arguments on parisc are sorted backwards (26, 25, 24, 2=
+3,
+>>> ...) compared to everyone else,
+>>
+>> r26 is arg0, r25 is arg1, and so on.
+>> I'm not sure I would call this "sorted backwards".
+>> I think the reason is simply that hppa is the only 32-bit big-endian
+>> arch left...
+>
+> powerpc/32 is big-endian: r3 is arg0, r4 is arg1, ... r10 is arg7.
 
-On Tue, 23 Apr 2024 13:08:37 +0800, Shengjiu Wang wrote:
-> Without CONFIG_PM, the driver warns about unused functions
-> 
-> ../drivers/clk/imx/clk-imx8mp-audiomix.c:363:12: warning: 'clk_imx8mp_audiomix_runtime_resume' defined but not used [-Wunused-function]
->   363 | static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
->       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ../drivers/clk/imx/clk-imx8mp-audiomix.c:356:12: warning: 'clk_imx8mp_audiomix_runtime_suspend' defined but not used [-Wunused-function]
->   356 | static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
->       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> [...]
+Right, I'm pretty sure the ordering is the same on arm, mips,
+s390, m68k, openrisc, sh and sparc when running 32-bit big-endian
+code.
 
-Applied, thanks!
+It's more likely to be related to the upward growing stack.
+I checked the gcc sources and found that out of the 50 supported
+architectures, ARGS_GROW_DOWNWARD is set on everything except
+for gcn, stormy16 and  32-bit parisc. The other two are
+little-endian though. STACK_GROWS_DOWNWARD in turn is set on
+everything other than parisc (both 32-bit and 64-bit).
 
-[1/1] clk: imx: imx8mp: Use modern pm_ops
-      (no commit info)
-
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
-
+      Arnd
 
