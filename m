@@ -1,252 +1,130 @@
-Return-Path: <linux-kernel+bounces-225054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F02912B27
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:17:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C371A912B2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12DC289D72
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D2EA28B41E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E73775804;
-	Fri, 21 Jun 2024 16:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B565315FD16;
+	Fri, 21 Jun 2024 16:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yyyZVVL7"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2069.outbound.protection.outlook.com [40.107.100.69])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KTFdl7io"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B28A10A39;
-	Fri, 21 Jun 2024 16:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718986654; cv=fail; b=rqq5Y3RPg4YirLCwVJF06ezivtCH79WUoU/70eVtug50fmL1nQcf1xLNGx0YYdX7+jDiyuS1zCeZdqY50CouDdBgPMJy4FUekp1aoCJxVFDxXHfFr0wO9NurNeoAPCXWSjbnorGD1itYeLgRiVTjYs3ENDgIUQPF53dRNMCsB9I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718986654; c=relaxed/simple;
-	bh=hfGMAjyRU3recA5WoFfP9paDJGcLo+RI7ydcApH34bU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OzDg3uqlT2nN1bxLiKK0JWBH95GxvCi05mwD8l3Koz97vL1vn87I5otJ/DuVci67IyUR4IUsWeXPZ7kyH51q5OI66tCU2w+CEeQBZB5azq4X65TlP9hx+kupGzVKdLhNXp3OIZElXY5o/QYFM7kH+4BqEzFAYha8OcWOVz1G8lE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yyyZVVL7; arc=fail smtp.client-ip=40.107.100.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NYoiow/ep9H62d1zLJyg81wONt/4ljn0WgyqSLUSnXXzkIl2jqgUnjkcovgdeG/YP8Z0rgzcExzLkqelWm3vFpCi0vtpGelrFDqaYq+J3t+fDDjURPTYxWgr/JfuDHGA+HjbVGvtfO8cGwtijXr3NVT7O7u+gy4zRhqNBkvRfiBHMvXHLiwsOhpwBE3UaXvNg/dpROvDmBLYiACn1kDwSKASkXU+1jQt8Ex2dn5MMXLyTfcreijWKtmO7V1ULTS/O/0JTF9sRAogVgfKl/Hcn0ww/ZUhxCeJKoI8LLwl202ngyQqG3zpkY9D5fGKzoY0pXXH6bprsv+nMlPW0h1Qjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KJPedQgxHiyx4W5hKuJdCgq7p/PCIPpXP0gO1yHhR9g=;
- b=X0Tkb/dq7MNTlQxibDIAbsXvwU6geH1zjLVfRJ7JT7GfjUNotqRY/7LRAGaklV1bMjE/0DZDIH8vlSvwyo9aYX7vmTcqPZQtbkta7r3Y2hEETMpbEM7ELyl0X8wQ7U2h7mrvQn9w0fDFLfmw0SjzaovDhRz7pMb4+2Ues91WXnbiEnDHZedRB1gBMUrgs76ZetAQ9ydj1su5ezlDBaLXY3IihDkrChgNZHls58mhhHMC0d1Rc94tyNvvq807JGUxtrslfQ4TYRZloMKWcMZd23tG3MTUtntTjfVM9GUTsy8WO2TLs1PAPC78bfx1WYfx9uZO5AknUmxDzsEuuKf5aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=oracle.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KJPedQgxHiyx4W5hKuJdCgq7p/PCIPpXP0gO1yHhR9g=;
- b=yyyZVVL73FwNqfTqYWxomsvpZLL89ygCNGX+viO+vbbVW6wLaYaavcRjKo1WK/V+siHRGg1ei8oJVQv0TRgpbz7OldMiWhR/Zol+k1Kx4pcYeWO+5SS2TTzEnnXq2yUoEYXnrbde/yTeSBAAcT8L67lbyykCwuzNzm0GSd/40zg=
-Received: from CY5P221CA0013.NAMP221.PROD.OUTLOOK.COM (2603:10b6:930:b::29) by
- CH0PR12MB8508.namprd12.prod.outlook.com (2603:10b6:610:18c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
- 2024 16:17:28 +0000
-Received: from CY4PEPF0000FCC1.namprd03.prod.outlook.com
- (2603:10b6:930:b:cafe::63) by CY5P221CA0013.outlook.office365.com
- (2603:10b6:930:b::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.33 via Frontend
- Transport; Fri, 21 Jun 2024 16:17:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000FCC1.mail.protection.outlook.com (10.167.242.103) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Fri, 21 Jun 2024 16:17:28 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Jun
- 2024 11:17:27 -0500
-Date: Fri, 21 Jun 2024 11:17:11 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: Liam Merwick <liam.merwick@oracle.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-coco@lists.linux.dev"
-	<linux-coco@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
-	<seanjc@google.com>, "jroedel@suse.de" <jroedel@suse.de>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "pgonda@google.com"
-	<pgonda@google.com>, "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
-	"bp@alien8.de" <bp@alien8.de>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>,
-	Brijesh Singh <brijesh.singh@amd.com>, Alexey Kardashevskiy <aik@amd.com>
-Subject: Re: [PATCH v1 1/5] KVM: SEV: Provide support for SNP_GUEST_REQUEST
- NAE event
-Message-ID: <20240621161711.fvx5kjugfdhl2r3p@amd.com>
-References: <20240621134041.3170480-1-michael.roth@amd.com>
- <20240621134041.3170480-2-michael.roth@amd.com>
- <8ac2b281-9aca-40ba-b094-165d18a08230@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A460510A39;
+	Fri, 21 Jun 2024 16:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718986698; cv=none; b=PxMCFXZudi5xrdIwJch/od2fWQBj/KIT+3xusjFKZy5sv0pFcG1/6wvnxC+MSbg5pN37CTITKD5asAp9OpR6fEf1UFgcjy7jfse9a4aOomf750EXLMJf6qIHYj97cAA5XkY+WW1LeTHlXG5rgKFtVR2qjgAPc09Wwvl5LMWy5n4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718986698; c=relaxed/simple;
+	bh=Swz2ynPBlGiRmTbCTIAX4xIYuoFo/w+tIjFVczbG9AY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g1e2/Ap5AKmNOiDvk4bFLV/Pw4dgwDPxulwneIkdd76N3RhwM5apozsCazUne++GeWolraUId9h5da1+UtZPIsn2PC686pOYZvvdvsbJxGFZ5wj5dYzt8NgGGawwvMWvjOx8wunCjTey/1wJl9qNX69As1SC5yu0+j7RgpkEs9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KTFdl7io; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LAr71O028340;
+	Fri, 21 Jun 2024 16:17:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	asLkkzKqiTTs+tTSBhJTgWkSi++DIrk834+Q6RphKdw=; b=KTFdl7ioPIcEYIye
+	vEGAHBlaCyJ3XwZ6zqqBlCKa1V+rv+yAfDwqK6DKfX/h2OCd7asuThycpe9EL8OJ
+	z6qZ3Q8RRKYc4InIaDgnjTlpQc7fxlruQJScoWZJs65XMZy3UXpD93C1d6ObkEKN
+	QBTv8HcP6T5A5XzD0odbKt5rhmDj5K0cmKICt24LmNHObSNP/dC2x7H3oAGIxfCF
+	RiEsA92Fqc1Y+HogKudrl1qXsGd/4HDkGv3L4f5Mw1rwJbYR155K4wqKQtsQXjO1
+	EVcy03Z9XuQRd0sg0tbf93q561E5NywrxVK0djb362rak6cGoXynnExXVnI52K8k
+	8OTQNA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yw85e0pjq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 16:17:40 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45LGHdx1013647
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 16:17:39 GMT
+Received: from [10.216.56.78] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Jun
+ 2024 09:17:32 -0700
+Message-ID: <74c5cb1d-93dd-4145-b176-7da4e91b3fac@quicinc.com>
+Date: Fri, 21 Jun 2024 21:47:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <8ac2b281-9aca-40ba-b094-165d18a08230@oracle.com>
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC1:EE_|CH0PR12MB8508:EE_
-X-MS-Office365-Filtering-Correlation-Id: eac194d9-fae3-47e5-cd4c-08dc920da55e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|7416011|376011|82310400023|36860700010;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pqP80boCRG921ZSN6RT1Ia2FWBnEzTK46xCOzkg+T+LW1MLaQUescSdwnTXV?=
- =?us-ascii?Q?4fjJE6KZ9QpNBqg0LrPTim+SzEiCAafNJz4FwMll69+mDKGU6+bRWTDVaJ0g?=
- =?us-ascii?Q?o8BedKrzKrTWdTiC68XB0+Tq0uj0DLA6ue+iWp7sfQzG5I2QQdwPlmAAW85A?=
- =?us-ascii?Q?LtyrBlRlfoVNQgJIsiIt/31WavTl/XA7nWyoRajeTCe45+FEgojrj6ptuMim?=
- =?us-ascii?Q?UbdvTeXtw5MM8uiptb/uiwNYnVSpkVhXN8j8e5mKJT+PyAjCZc9tIGz3RW8A?=
- =?us-ascii?Q?0M02LvR9lwLK5moN9VIMRwSwGx9WKRbyAanuIyt148NmoXcRnn8ZSDHhlnq3?=
- =?us-ascii?Q?APdeV+x81zdsOWJWGXJ1hpZx3otaSbscmXzyg5oWZu079XFAwfgeRVlMtMZ/?=
- =?us-ascii?Q?bhhWDhyI3biMFXEJMCrKwTbHJlxjiYDGVHJq7dZI9210XwZUVarmVZf+0CgL?=
- =?us-ascii?Q?khLVG+gbVSxfKjcgAoXnBiXzvEw0SaGDg4LIA3Nj6g6XYdd2Q6VmNl9GV1cB?=
- =?us-ascii?Q?mPdXk77o9IGHaRuima76gX0Aj7Yy6EFRusmgBHjMqv/OWP8rq4c/xiIYPXZl?=
- =?us-ascii?Q?4Dz/5JRNAvSs3XjOUN4u1dI7MQI7xgZTwdKpKClLAGpnkOqG4mb3eIQrm0Ti?=
- =?us-ascii?Q?VSz3BPpFWIc+7A9M7wiuGrJGitCF8vv+E0sNMcTilmPxzFxVdhjDOIJoRt7R?=
- =?us-ascii?Q?Z+KH+fpVnOJCoTXK00cRsbyF1CK2eMRBi06fcmzeeLJgQ7aLwWVOB+7yESjb?=
- =?us-ascii?Q?wdVwE8CT1vL+dJ2TKcppvJ6YRCrgyijD5w4RWCl16kV8NitqPgtYLHweUMPG?=
- =?us-ascii?Q?1eueZgooGVrgxs2krktTlSk434IYqHohcxFniqNmWNj1vDBPvg0UTGFnjQdz?=
- =?us-ascii?Q?j0Rhu6y1X5+WUZWHVeyRbpfJC6ID7fau2mLodPjrJPBDIBxqyMQIBSA5cUtd?=
- =?us-ascii?Q?8ogdUOLAHc/055Qxrd8HgoiTmVc2fXM+tXVPDVcGDOsGO+Ex3bA48NjEcz3S?=
- =?us-ascii?Q?TM3ZJti5yLAB/xgp6oIBLAj5n7VSKQkp3DCx8lOORIDNqrW55e+sb9aBNoXd?=
- =?us-ascii?Q?KIXNeNrsZrb7muPJ78kL51mLf6CkTuy6uI6DJSqWXfiAYJhioEfsFV+N10/9?=
- =?us-ascii?Q?NYcM4UDNEnu+hD94E14H59Pu2noxS98q1VuMustwXcjwrqdTY6nva6oVY6GI?=
- =?us-ascii?Q?+S8OS6yVzAB5pUBNFzUj3PWgWvDen2avzOGeL5gIMKfyJBRhQtn7t/wa01Co?=
- =?us-ascii?Q?OjGsP8MxCtgpRhA//D4K9keajlIKy/B5cjyLt/BmXswAFhexbmva70Tuai19?=
- =?us-ascii?Q?R+Oh3gMa4VVu5f/4/FuylZU7mgSBCbIBfuttMsGI0j/qG0kN5DURxHUegZoY?=
- =?us-ascii?Q?fXZ0iKXw+BdfPy1kRLerIsqrAmJV+yvrHiCgv0fJZFH3tG3LfQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(7416011)(376011)(82310400023)(36860700010);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 16:17:28.5201
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eac194d9-fae3-47e5-cd4c-08dc920da55e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000FCC1.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8508
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/8] dt-bindings: clock: qcom: Add reset for WCSSAON
+Content-Language: en-US
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, <sboyd@kernel.org>,
+        <andersson@kernel.org>, <bjorn.andersson@linaro.org>,
+        <david.brown@linaro.org>, <devicetree@vger.kernel.org>,
+        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <mark.rutland@arm.com>,
+        <mturquette@baylibre.com>, <ohad@wizery.com>, <robh@kernel.org>,
+        <sricharan@codeaurora.org>
+CC: <gokulsri@codeaurora.org>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-7-quic_gokulsri@quicinc.com>
+From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+In-Reply-To: <20240621114659.2958170-7-quic_gokulsri@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5mh8PJm9cLbBQuDA-VuW7fsteZ8To6wW
+X-Proofpoint-ORIG-GUID: 5mh8PJm9cLbBQuDA-VuW7fsteZ8To6wW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_08,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ phishscore=0 spamscore=0 bulkscore=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 mlxlogscore=999 lowpriorityscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406210117
 
-On Fri, Jun 21, 2024 at 03:52:35PM +0000, Liam Merwick wrote:
-> On 21/06/2024 14:40, Michael Roth wrote:
-> > From: Brijesh Singh <brijesh.singh@amd.com>
-> > 
-> > Version 2 of GHCB specification added support for the SNP Guest Request
-> > Message NAE event. The event allows for an SEV-SNP guest to make
-> > requests to the SEV-SNP firmware through hypervisor using the
-> > SNP_GUEST_REQUEST API defined in the SEV-SNP firmware specification.
-> > 
-> > This is used by guests primarily to request attestation reports from
-> > firmware. There are other request types are available as well, but the
-> > specifics of what guest requests are being made are opaque to the
-> > hypervisor, which only serves as a proxy for the guest requests and
-> > firmware responses.
-> > 
-> > Implement handling for these events.
-> > 
-> > Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-> > Co-developed-by: Alexey Kardashevskiy <aik@amd.com>
-> > Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
-> > Co-developed-by: Ashish Kalra <ashish.kalra@amd.com>
-> > Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> > Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> > [mdr: ensure FW command failures are indicated to guest, drop extended
-> >   request handling to be re-written as separate patch, massage commit]
-> > Signed-off-by: Michael Roth <michael.roth@amd.com>
-> > Message-ID: <20240501085210.2213060-19-michael.roth@amd.com>
-> > Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> > ---
-> >   arch/x86/kvm/svm/sev.c         | 69 ++++++++++++++++++++++++++++++++++
-> >   include/uapi/linux/sev-guest.h |  9 +++++
-> >   2 files changed, 78 insertions(+)
-> > 
-> > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> > index df8818759698..7338b987cadd 100644
-> > --- a/arch/x86/kvm/svm/sev.c
-> > +++ b/arch/x86/kvm/svm/sev.c
-> > @@ -19,6 +19,7 @@
-> >   #include <linux/misc_cgroup.h>
-> >   #include <linux/processor.h>
-> >   #include <linux/trace_events.h>
-> > +#include <uapi/linux/sev-guest.h>
-> >   
-> >   #include <asm/pkru.h>
-> >   #include <asm/trapnr.h>
-> > @@ -3321,6 +3322,10 @@ static int sev_es_validate_vmgexit(struct vcpu_svm *svm)
-> >   		if (!sev_snp_guest(vcpu->kvm) || !kvm_ghcb_sw_scratch_is_valid(svm))
-> >   			goto vmgexit_err;
-> >   		break;
-> > +	case SVM_VMGEXIT_GUEST_REQUEST:
-> > +		if (!sev_snp_guest(vcpu->kvm))
-> > +			goto vmgexit_err;
-> > +		break;
-> >   	default:
-> >   		reason = GHCB_ERR_INVALID_EVENT;
-> >   		goto vmgexit_err;
-> > @@ -3939,6 +3944,67 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
-> >   	return ret;
-> >   }
-> >   
-> > +static int snp_handle_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t resp_gpa)
-> > +{
-> > +	struct sev_data_snp_guest_request data = {0};
-> > +	struct kvm *kvm = svm->vcpu.kvm;
-> > +	kvm_pfn_t req_pfn, resp_pfn;
-> > +	sev_ret_code fw_err = 0;
-> > +	int ret;
-> > +
-> > +	if (!sev_snp_guest(kvm) || !PAGE_ALIGNED(req_gpa) || !PAGE_ALIGNED(resp_gpa))
-> > +		return -EINVAL;
-> > +
-> > +	req_pfn = gfn_to_pfn(kvm, gpa_to_gfn(req_gpa));
-> > +	if (is_error_noslot_pfn(req_pfn))
-> > +		return -EINVAL;
-> > +
-> > +	resp_pfn = gfn_to_pfn(kvm, gpa_to_gfn(resp_gpa));
-> > +	if (is_error_noslot_pfn(resp_pfn)) {
-> > +		ret = EINVAL;
-> > +		goto release_req;
-> > +	}
-> > +
-> > +	if (rmp_make_private(resp_pfn, 0, PG_LEVEL_4K, 0, true)) {
-> > +		ret = -EINVAL;
-> > +		kvm_release_pfn_clean(resp_pfn);
-> > +		goto release_req;
-> > +	}
-> > +
-> > +	data.gctx_paddr = __psp_pa(to_kvm_sev_info(kvm)->snp_context);
-> > +	data.req_paddr = __sme_set(req_pfn << PAGE_SHIFT);
-> > +	data.res_paddr = __sme_set(resp_pfn << PAGE_SHIFT);
-> > +
-> > +	ret = sev_issue_cmd(kvm, SEV_CMD_SNP_GUEST_REQUEST, &data, &fw_err);
-> > +	if (ret)
-> > +		return ret;
+
+
+On 6/21/2024 5:16 PM, Gokul Sriram Palanisamy wrote:
+> Add binding for WCSSAON reset required for Q6v5 reset on IPQ8074 SoC.
+
+Can we include ipq8074 in the title? "dt-bindings: clock: qcom: ipq8074: 
+Add reset for WCSSAON"
+
+
 > 
+> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>   include/dt-bindings/clock/qcom,gcc-ipq8074.h | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> Should this be goto release_req; ?
-> Does resp_pfn need to be dealt with as well?
-
-Argh... yes. I folded some helper functions into here and missed updating
-some of the return sites. I'll respond to this patch with a revised version.
-Sorry for the noise.
-
--Mike
+> diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+> index f9ea55811104..e47cbf7394aa 100644
+> --- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+> +++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
+> @@ -381,6 +381,7 @@
+>   #define GCC_NSSPORT4_RESET			143
+>   #define GCC_NSSPORT5_RESET			144
+>   #define GCC_NSSPORT6_RESET			145
+> +#define GCC_WCSSAON_RESET			146
+>   
+>   #define USB0_GDSC				0
+>   #define USB1_GDSC				1
 
