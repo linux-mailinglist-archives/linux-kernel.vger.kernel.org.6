@@ -1,127 +1,73 @@
-Return-Path: <linux-kernel+bounces-225193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D988912D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:42:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34937912D69
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E33B628279B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:42:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D765B1F25AF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0173817B416;
-	Fri, 21 Jun 2024 18:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB2D17B43C;
+	Fri, 21 Jun 2024 18:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i/An1dmj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qty+hXZ8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RyDOWkzQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D826E169AE2;
-	Fri, 21 Jun 2024 18:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1380B5BAF0;
+	Fri, 21 Jun 2024 18:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718995323; cv=none; b=M1j2aG4dmTQpENBEMUhMiwYRl5KtiduuHkQdA8+vMbWLRYF79sOLXRug65DlObnupWQ+fRY9EaPe/juNf6x3xa7KyvjQW6vzSwlAL2zJRAvuvBtHPWI9/kvFYSPByZF2XKXiCtN++0340SeMh9RQ815pFRnmNSf8DrLvC699+VA=
+	t=1718995593; cv=none; b=rTNcYmtUCJg6YLe/EufT2uxq6DobICd4MD3UxMZCJqYYUAzipRUlbpkV4zebM5Ie4vlXdFSFMmwC+8kObtQYQLsGgGuGZnp3vfsz0HFCpC1+ntodECgWM9UmXtuAP05m0F2hqnt+lNLJuhgyUVvFswnok5F0+5uon0FR2kfVMLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718995323; c=relaxed/simple;
-	bh=XYhg8CY9Pux0RNqDlKdarrBJ740NpQUMv82e3mKYDmg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Va6Pa2hRTRjujY16b7QrDohmE5m+DPuBRwMYJdGp2zjWFtuQG/KcTWZf1FuN5t10nGBsNpuaczws4bTjRJUg5uWeh4Q9+hLzcFT9ZcKIsg1DlEC3OXAsxauC+gKXA3P7UDa0QWbg5flLwlV5osIoiZW2FLW3ujO1Kg6f377bZ4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i/An1dmj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qty+hXZ8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 21 Jun 2024 18:41:59 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718995320;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=85kUs/qy8M1sk5YMoq/qWjMBeThfoCeL4ewRDb0jPr4=;
-	b=i/An1dmjbHC91FHZX08FXWjpp0hEa3Ngtph6dsPmh2ru2We/BvQ4XHP9GQszb+4CS5CwPL
-	DBi6VHyJ3C8iGyPXtW3Sbjibfo5DHTBGUm9ucD7OCTpt30ZQnqCxa1BPPqXxOu0ypjKgK5
-	vlX/yZo7lzfH/L+7Ixcs/9g8sZefhawLf5W4qFZlVjGNiUpl9y1xrrda53ShXS9PZYY+SE
-	/AwmTluvPI5+fq2o4FnFcqQHTq3cF+a7pidXo0PnXbkVZ2vYqgCbuXjnvwb+/si0MGqPp8
-	6OqhAgKUP8IYKB2A2rNctGXo7LX0lO8Toen31MTJuiHKXLM7Z+HMF7BqGcIvpw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718995320;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=85kUs/qy8M1sk5YMoq/qWjMBeThfoCeL4ewRDb0jPr4=;
-	b=qty+hXZ8V8SnEdR2Cq+vkjP+I+9dK+ydlNDTAlpcIf0VlEUTAHpyzQkGr6b0URJsXJudvC
-	mwqDER3Fj9AVYqBw==
-From: "tip-bot2 for Jisheng Zhang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/riscv-intc: Remove asmlinkage
-Cc: Jisheng Zhang <jszhang@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Anup Patel <anup@brainfault.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240614151955.1949-1-jszhang@kernel.org>
-References: <20240614151955.1949-1-jszhang@kernel.org>
+	s=arc-20240116; t=1718995593; c=relaxed/simple;
+	bh=hGWFaeKo6xY0d8c6EUHTKFxGmvR2STDskrDV3QJjCJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GwhH22s/SFfVxNtwyxueOt5h7rD9MB6d0521rC3YNjAOqV1GDmmGx3OOXa29/1mve8iN1MbwrLnqzhWqcZu3QQu0RemwHJFBJHAtLULyp/Kbnok0c0AUh+7pVdNbqwMGEfAgiIXQSV131CH9wqrap5+EufAYkQ43PldT66aOiSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RyDOWkzQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE150C2BBFC;
+	Fri, 21 Jun 2024 18:46:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718995592;
+	bh=hGWFaeKo6xY0d8c6EUHTKFxGmvR2STDskrDV3QJjCJ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RyDOWkzQNhc4cnXSG2+ek5wjUB23AHoh1Ua8eWl/X4+KBDAwZniV3sgHnVFk3ra/h
+	 3D+40sNMNRBX7a1L5S+ybM8/mqf+EQl0FhDyXIj9SNtt5Bwv9VRoudFOQyH2DFyanv
+	 vRMtNF6QO3NZXIQwx930cKGMkM9hi/zk4l747fxdgIOSBx04HBxK/B8Y68yasRvQ/t
+	 hDNPUVKVMpRDXB03G6mo03W6Dc/yBydkk40hHLp9FmEeM2dFzloahpIXpv99c4/OnR
+	 UzvxKIl0Mrk+Ma1OV9ahWztP04cuOphcoNqbwDlhMZljBE62Qo+/kpka3ubzqMGZOz
+	 YfUxWJlVcC15g==
+Date: Fri, 21 Jun 2024 12:46:29 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, Eric Curtin <ecurtin@redhat.com>
+Subject: Re: [PATCH v2] nvme-apple: add missing MODULE_DESCRIPTION()
+Message-ID: <ZnXKhUMDenD4tnrn@kbusch-mbp>
+References: <20240620-md-nvme-apple-v2-1-72e9d7151a1f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171899531960.10875.12877295810458778149.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620-md-nvme-apple-v2-1-72e9d7151a1f@quicinc.com>
 
-The following commit has been merged into the irq/core branch of tip:
+On Thu, Jun 20, 2024 at 09:42:18AM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvme/host/nvme-apple.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Commit-ID:     722c9389c7fa91d1b6c665252f655b352b3a32b8
-Gitweb:        https://git.kernel.org/tip/722c9389c7fa91d1b6c665252f655b352b3a32b8
-Author:        Jisheng Zhang <jszhang@kernel.org>
-AuthorDate:    Fri, 14 Jun 2024 23:19:55 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 21 Jun 2024 20:35:24 +02:00
-
-irqchip/riscv-intc: Remove asmlinkage
-
-The two functions riscv_intc_aia_irq() and riscv_intc_irq()
-are only called by C functions.
-
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Link: https://lore.kernel.org/r/20240614151955.1949-1-jszhang@kernel.org
-
----
- drivers/irqchip/irq-riscv-intc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
-index 9e71c44..983538a 100644
---- a/drivers/irqchip/irq-riscv-intc.c
-+++ b/drivers/irqchip/irq-riscv-intc.c
-@@ -26,7 +26,7 @@ static unsigned int riscv_intc_nr_irqs __ro_after_init = BITS_PER_LONG;
- static unsigned int riscv_intc_custom_base __ro_after_init = BITS_PER_LONG;
- static unsigned int riscv_intc_custom_nr_irqs __ro_after_init;
- 
--static asmlinkage void riscv_intc_irq(struct pt_regs *regs)
-+static void riscv_intc_irq(struct pt_regs *regs)
- {
- 	unsigned long cause = regs->cause & ~CAUSE_IRQ_FLAG;
- 
-@@ -34,7 +34,7 @@ static asmlinkage void riscv_intc_irq(struct pt_regs *regs)
- 		pr_warn_ratelimited("Failed to handle interrupt (cause: %ld)\n", cause);
- }
- 
--static asmlinkage void riscv_intc_aia_irq(struct pt_regs *regs)
-+static void riscv_intc_aia_irq(struct pt_regs *regs)
- {
- 	unsigned long topi;
- 
+Applied to nvme-6.10.
 
