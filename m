@@ -1,135 +1,156 @@
-Return-Path: <linux-kernel+bounces-224320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58739120BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:34:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237659120BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431AC1F24405
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:34:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25B1282CB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAF116E886;
-	Fri, 21 Jun 2024 09:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBFE16E89F;
+	Fri, 21 Jun 2024 09:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjIEVOqY"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H00XeCfO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jX03SBRQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C1316E87B;
-	Fri, 21 Jun 2024 09:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C4916E87B;
+	Fri, 21 Jun 2024 09:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718962483; cv=none; b=g068VrHf4QdsHfOgIT9pPFopPI/uR6szNQZY555kjLGczJZaJfnwaVNPYB1RTKt3Btld54xYWB8Af7mWrr0OBOAUBXVk14Gj/OMsfzfjj/3HGjsVJibtPnmbXgCM3aYG4K0m2b+iAC/VWVtcfz6Yw9KnQw5sbGSLnPlozLyrrLg=
+	t=1718962553; cv=none; b=OKBbcY9/XA1aqlXhdL8GeiAgSwlOQ0B6Y6eoSRaXGkYmJs4VeOWjKHHQjW9me02lZG6QN19jo6tji88XcAaUL89fS5E1mtc6p+hywW/sLM9dD4lwPO4lfc6cq0ViP7tBIPJ72GT7UfFm+4UzX1kgZPCXGG5JssrscSPK4U033c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718962483; c=relaxed/simple;
-	bh=jE51PnV5EwBj2vUe72KXHFR0KLjv+PHhidQiOR7Tnrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dvLo7V0/K6uLequZkIoHcT3JBbPkarCGwe7r0OV8VnuDS4AnFP/mXhIc4xu75nFGOxtDktTTIHkCgUDPDWfbykYUiM+AxiMBIDydd75LvthB0sn7FTj9ny6wHLT/rL2p3x8rNsvCiqmfwMv3onuGEfROFPwE9Wj0MCrw1dazT3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IjIEVOqY; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7062c11d0d1so1650502b3a.1;
-        Fri, 21 Jun 2024 02:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718962481; x=1719567281; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dOfOHGWM85MYwLzr4mYDa2Z5BOkt2sOF/968G/m/mOk=;
-        b=IjIEVOqYOmV0lYcNd2teDTYRCSM/Y1dj7EvnJ9BUm+6zUpgtS+A5GbfB848ZghllpQ
-         XwUkpcDMHdil5ugFacDBSFr2lR4UIAgbevafYklg5pS5YYX9FYx5T9tAI9FJIYW+kxuc
-         T4tpZs/OUwUcHAptZWB3Qb36haLfIdvb8DlSGeek94SJJtAFJccxPmvnjBm/3NKuYul/
-         s5HTik9mc6a6o97twqtJdC8oQBxE06zXC/iu09H5UlSWQP3/7h6CBVnd9tJ9TqaUXpfF
-         f4pIZzjOdEYOjnqAHvJjSGhpn+yClybriVVj+6MCg6ZVtptfepV5S8sNIGbxprinIXRV
-         5s2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718962481; x=1719567281;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dOfOHGWM85MYwLzr4mYDa2Z5BOkt2sOF/968G/m/mOk=;
-        b=DAZhpBW3/kznz2zygAG8PVDpFg+2ChAG4/5Q94+rLAxSj1gbr7eUtusmfbWicHk6jI
-         +7IqPNOvbVSir5k3a1/PleOLiurt25sgoyoaiaUOi/DZcaN8HDm5ND/VoroVzuoegcdN
-         rvzydTxpKUEeoaqMhn6EFOhMrgEEI8rrOo88aOGzATa8C4plV9tgorQIYdZF/++EQtus
-         4G9EmAg/+xfC/3mshmPpf/RvTCQHRTW6M1dfpA5nf9oCv1QYDxeEqFgya3bXpERPbh4g
-         3f8THgtd1/2EXWkGfoqJIpHotrAKdajfwx9e8E/5ZwF/a4gDqsdTRpo+lJA+VIyQNBqc
-         Ap+w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3xJbsUlwUGwxm5jCIE6k/ZCW17Xd7z9Ab2jHCu6xN/aYvDZ01I8zfePf5mqS1XoD3wdHondoyUqq/l5f2NS6LZ8CdplTjBfOEq3a2JL3iXLv031u62WEPntNsO5LVvLBo1b9rtCetIA==
-X-Gm-Message-State: AOJu0YxtlUWjezLituTNe5PMpbuEbjdLuhcyUgGj4Mz0/jsZ/rsHWK4Z
-	kTB3aV9VvPuCypedq78d4i+TT8fRVb8/O/ZyUvcNeni5k0ZlU2Ut
-X-Google-Smtp-Source: AGHT+IEeUxGDTwGB8VosTpIA20i9Q6XpmX/CnHOXS1fPPKScq1Qt8Sxnlk8mQiGfdUjlvHa1IOVBRg==
-X-Received: by 2002:a05:6a20:c412:b0:1b6:63b6:ea6d with SMTP id adf61e73a8af0-1bcbb39ff23mr7701203637.11.1718962481510;
-        Fri, 21 Jun 2024 02:34:41 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512e64afsm973769b3a.189.2024.06.21.02.34.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 02:34:41 -0700 (PDT)
-Message-ID: <64f00fbc-5bcd-439e-a0f4-94f35e84e5ec@gmail.com>
-Date: Fri, 21 Jun 2024 18:34:32 +0900
+	s=arc-20240116; t=1718962553; c=relaxed/simple;
+	bh=fueST5tq9tqjsbm1SF1O899MwneK4m+fej0WNIDv0rM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pX7wFaSpjbnJGJ+EVBcL1r/RsWzu3nzAQtTtj0NP/GuIRdUcqfcJJHzY2AhXULnmgtx43j1oSxld9F0IDi4R8Y39h6jyBJDQMj9RS2jiOz1LoimnOtS+2lAIlZFYObwHRN/QdoSi13E05V1mBJM9AXQV7J/UizROxqhzV0LLYtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H00XeCfO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jX03SBRQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718962549;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o1wbUsrKrmv5V0PcF6YSir/wKQTjZgw80G37FSqXWD4=;
+	b=H00XeCfO43+5VTc6fSQchdMPlGEsQEwrJBP1M0YDozxjHtGgUJS1ZmLFQURsgJJDkTYKXM
+	BfraIDkl4XJ5X+T38CuHONluq9xJzq/MZNRD0K+HP2fABjQPerrMtQ80OcIX4kmsC0IK7R
+	i6wRaMN/scWV3jx5MPlB+ICefVCE5JmZSiV9uwI4jU4MtsaZ4fHllJAbN2PITVTKeY+PAt
+	WFbNkivgc65ACVjfXaZUTHcCtbGq6WuaVPwHxkLueYkniwt6nQn5m0mTntDt8IC+qzVzYD
+	b/ob9lEG0Fo3NqZ1hsyGyEqcpycipH3t+5Lnw74kT9xhzfEg0FJlwfwW3M+fQA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718962549;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o1wbUsrKrmv5V0PcF6YSir/wKQTjZgw80G37FSqXWD4=;
+	b=jX03SBRQGQYBCVl1aL/D+1KTwMcAVrfxtIl7AjlA0YMo0P+t41nwz9C+n1IQ6cjD063Jve
+	1S4n6w+ndMPddwBw==
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Tejun Heo <tj@kernel.org>, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+ joshdon@google.com, brho@google.com, pjt@google.com, derkling@google.com,
+ haoluo@google.com, dvernet@meta.com, dschatzberg@meta.com,
+ dskarlat@cs.cmu.edu, riel@surriel.com, changwoo@igalia.com,
+ himadrics@inria.fr, memxor@gmail.com, andrea.righi@canonical.com,
+ joel@joelfernandes.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+In-Reply-To: <CAHk-=wgN6DRks55fsqiJYE3uV=_QTgzdxOvh1ZZNgm_YooKdYA@mail.gmail.com>
+References: <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
+ <871q4rpi2s.ffs@tglx>
+ <CAHk-=wgN6DRks55fsqiJYE3uV=_QTgzdxOvh1ZZNgm_YooKdYA@mail.gmail.com>
+Date: Fri, 21 Jun 2024 11:35:49 +0200
+Message-ID: <87v822ocy2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH lkmm 0/2] tools/memory-model: Add locking.txt and
- glossary.txt to README
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, Marco Elver <elver@google.com>,
- Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
- David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>,
- Luc Maranget <luc.maranget@inria.fr>, Daniel Lustig <dlustig@nvidia.com>,
- Joel Fernandes <joel@joelfernandes.org>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
- Akira Yokosawa <akiyks@gmail.com>
-References: <ae2b0f62-a593-4e7c-ab51-06d4e8a21005@gmail.com>
- <ZnU4gE+OB+xvvW+I@andrea>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <ZnU4gE+OB+xvvW+I@andrea>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Fri, 21 Jun 2024 10:23:28 +0200, Andrea Parri wrote:
-> On Fri, Jun 21, 2024 at 01:08:24PM +0900, Akira Yokosawa wrote:
->> Hi all,
+Linus!
+
+On Thu, Jun 20 2024 at 12:20, Linus Torvalds wrote:
+> On Thu, 20 Jun 2024 at 11:47, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> > But I get the very strong feeling that people wanted to limit the
+>> > amount of changes they made to the core scheduler code.
 >>
->> [+CC: Marco, as Patch 1/2 includes update related to access-marking.txt.]
->>
->> Looks to me like Andrea's herd-representation.txt has stabilized.
->> Patch 1/2 fills missing pieces in docs/README.
->>
->> While skimming through documents, I noticed a typo in simple.txt.
->> Patch 2/2 fixes it.
->>
->>         Thanks, Akira
->> --
->> Akira Yokosawa (2):
->>   tools/memory-model: Add locking.txt and glossary.txt to README
->>   tools/memory-model: simple.txt: Fix dangling reference to
->>     recipes-pairs.txt
-> 
-> For the series,
-> 
-> Acked-by: Andrea Parri <parri.andrea@gmail.com>
+>> Which is exactly the point.
+>
+> But Thomas - that's *MY* point.
 
-Thank you!
+You are seriously trying to lecture me of all people about out of tree
+code and how it's supposed to be merged?
 
-> 
-> I do get some "trailing whitespace" warning, for patch #1, you might
-> want to clean up when applying/reposting the series.
+I really don't know whether I should laugh, cry or just walk away.
 
-Ugh, I failed to setup a pre-commit hook for this repo.  :-/
+> If this code stays out of tree, the goal is always that "don't
+> integrate, make the patch easy to apply".
 
-Will send a v2 in a couple of days.
+That's absolutely not the goal. The goal is to do a proper and good
+integration so that all involved parties can move on.
 
-        Thanks, Akira
+That's what I clearly said and nothing else.
 
-> 
->   Andrea
+> This whole "keep things out until they are perfect" is a DISEASE.
+
+Nobody says that things need to be perfect. I'm very much a proponent of
+"perfect is the enemy of good".
+
+> It's a disease because it's counter-productive. First off, things will
+> never be "perfect" because you have people with different goals in the
+> first place.,
+>
+> But secondly, the "keep things out" is itself counter-productive.
+
+Says the one who kept asking me repeatedly whether I can't keep the
+remaining stuff of RT out of tree forever. The last time you asked that
+was not that long ago.
+
+Aside of that you are completely ignoring my point.
+
+Collaborative integration is the right thing to do no matter what. I've
+integrated and helped many others to integrate tons of controversial
+features in the past 20 years so I definitely know what I'm talking
+about. But I've also learned my lessons in the past 20 years.
+
+The whole notion of "let's get this in and sort it out later" only works
+when people collaborated to begin with and worked on making things more
+palatable in the first place. At some point they just agreed to get over
+it. That has nothing to do with perfect and keep stuff out of tree
+forever.
+
+In all other cases the stuff got merged and the "sort it out later" was
+left to those who had the least interest in the so exiting new feature.
+They had to mop up the mess to make progress with their own work. I
+wasted a substantial portion of my life mopping up the mess which was
+declared to be sorted out later and you know that.
+
+If that is your vision of a working and healthy community, then we have
+to agree that we disagree.
+
+The issue at hand is clearly both a technical and a social problem.
+Contrary to you I don't hate people and my goal is to bridge the rift
+which clearly exists. That rift is definitely not helpful to get things
+sorted out later in a constructive and collaborative way.
+
+I've offered _my_ time to help and sort this out. That's all I can do.
+
+If you don't care, so be it.
+
+Thanks,
+
+        tglx
+
 
 
