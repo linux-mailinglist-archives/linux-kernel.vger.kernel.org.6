@@ -1,79 +1,214 @@
-Return-Path: <linux-kernel+bounces-224278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F98912022
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:08:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 251A491202D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6701C22880
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:08:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D515E28CDA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3490716D9B1;
-	Fri, 21 Jun 2024 09:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56BC82D89;
+	Fri, 21 Jun 2024 09:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IqnToB/9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b0qIaDK5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7656A1C02;
-	Fri, 21 Jun 2024 09:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511E81C02
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718960902; cv=none; b=TeOr4IOwUh/NAG0oMnwntf63F/I3DKQG3VGgJdipuX8t+C8IvX8FHSqjVb0shEiwg0StcFMTNUzqVX00HzHfGIVRYSPJ5PYMnkGi3VHupkLcONabiMlCJN1z68zgzmPBobU5lE9zYaVO/yajtRYsvtp6q1BnjaT9cLzFL5NjnoY=
+	t=1718961019; cv=none; b=WW49taEP824k20Oop9Nj9IJmfYh30gootyWihokkLqtmIOPf+MpkBKSWdDPEFSmH/eqna4TwgsLSNTbfSPORc9pT0KpLi1YJIOc/WQpb0f8jpfsSnzNurr4DkvFzbnJCLrCPcB0dCzVqZ2E9YH+LSy41zv+x5uchb9ocOwtXKfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718960902; c=relaxed/simple;
-	bh=JIeqoaIa7EKTaeKtvAYQWwAw9IeCYkgkrJJWV2KYcqo=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=YJaJZxelmodIUIaiZgFnOEd4lPHMRlo1hTlADskpHIhXql5+SDCJMMjH+E6yi8Sc55WyFLIfu37R84y/FFutZlZNJ32YxfxFdqV2RfQD84AH99uxlub5yCD5+9A0d2Yrc/EpHqyxRCGbNAR2TjZXCgSiThIg5HNOAJxYTAyGlhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IqnToB/9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7475EC2BBFC;
-	Fri, 21 Jun 2024 09:08:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718960902;
-	bh=JIeqoaIa7EKTaeKtvAYQWwAw9IeCYkgkrJJWV2KYcqo=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=IqnToB/9X11ppEn/xXYZbNOhbMPxLenETGWyexBKZU+fzT1WxXbi2gFFDBg05vY53
-	 oNEhYAOhKD/KcxT8ezrzqbzO54kcdxO2ZPszBFU4BJougE4i7zvdnrPsavceCNUQVA
-	 ln3PzOO0eusBGoJqczNT2sggxvpFMiZ0iJJgC/djlvuO2UyDalykT702p0BEzJXW54
-	 zqwnhMXS0whYj21c1eNeToyzDH3B2E5pjcghvWQUSlilxgvxqifRw+r01NNJhwBFOA
-	 3BLui8oJabIWm8JjXQW9Ld1HwUW7s3TYHWEtmWI/MC5vgpdUMJy2MRV4FZ3X/YLloj
-	 dk8uo8g4D4Xzw==
-Message-ID: <a1086246d73bb548d72799324dc96983@kernel.org>
-Date: Fri, 21 Jun 2024 09:08:19 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH RFC 1/5] drm/bridge: lt9611: use HDMI Connector helper
- to set InfoFrames
-In-Reply-To: <20240615-drm-bridge-hdmi-connector-v1-1-d59fc7865ab2@linaro.org>
-References: <20240615-drm-bridge-hdmi-connector-v1-1-d59fc7865ab2@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, "Andrzej
- Hajda" <andrzej.hajda@intel.com>, "Daniel Vetter" <daniel@ffwll.ch>, "David
- Airlie" <airlied@gmail.com>, "Jaroslav Kysela" <perex@perex.cz>, "Jernej
- Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
- Pinchart" <Laurent.pinchart@ideasonboard.com>, "Liam Girdwood" <lgirdwood@gmail.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Mark Brown" <broonie@kernel.org>, "Maxime
- Ripard" <mripard@kernel.org>, "Neil Armstrong" <neil.armstrong@linaro.org>, "Robert
- Foss" <rfoss@kernel.org>, "Takashi Iwai" <tiwai@suse.com>, "Thomas
- Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1718961019; c=relaxed/simple;
+	bh=dG8ontMkTSewrc/LNzIbCPSnZVnWuN0xsvIe9bkTG7I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TyPxbPkJoNLhSSSXfYj4UlAt+93DfviaYaJsgBgliPVZS1xmsWM1dskOcHVVi5TKzn0AkJsM2Fwdmuc0kVEjC26PQ2X8IFOwW61wFviZwovTgtCLozEzruEheZfkhrYzljmsVesKMwyFIbMaGzQPfm5S8Hcf9GBPCUbzOMoW9t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b0qIaDK5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718961017;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gYejcBX91Zhx9zBhD+bnNzE1FrYHOgpUiQ+y0qItqUU=;
+	b=b0qIaDK5qkn14rmCiJIk+9GJRyGnxL9Eju95bhBmMZO7DvgnwlkApmx6j/HCO8l/wAW8ry
+	uujWNl6XVlohN3cikh7MBrT/hZPO+a6M/30QP0NxLFYFAZa86sHE36cC3sFlGJRaFYueW5
+	9AgVeo/zBGeR5YQWCWnvqUx/vR2yaXY=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-376-mOnzEoh8OGyMQ_WKwBp0NA-1; Fri, 21 Jun 2024 05:10:15 -0400
+X-MC-Unique: mOnzEoh8OGyMQ_WKwBp0NA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-421805fadadso14603785e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:10:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718961014; x=1719565814;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gYejcBX91Zhx9zBhD+bnNzE1FrYHOgpUiQ+y0qItqUU=;
+        b=lMAO0TdlJPDUeGDOrcQ6iihwuh3RYwBxnjng88KXqCaFiSNQm5lMa2mVNGkveXmyA1
+         xVdc8tpg+sesmORpCfKR2xFMPqNmd6M+1b9Tabu66BT0uaMyUmaLkhicX5jwkcVurFGX
+         QAwPnX2IuA7InRkuhLQc7n5HPgmeHfCCY/5TaEiG1jMluWWazOEogBTDVCxNfSaYabx1
+         mmRbe+rqiYMe5lLHdq4zm6EKYeJs93TM7qd8reN0aK0r2E/4u1fUnRfIZlSDEAvpFUzt
+         nmlGiJCNufTvWEA8coEVy4gjPcoqqgIa7dtWNzETJbR+lUjxipo+srGKD4909g2JL4C0
+         iluA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDgR+GcG4WnXok3Au3VMJ8N9NR789f9r59aYoXF0R14ruz7at1tonEgAzeS0kbMgWl71dT5IJ9ZyMpUk9yVHN7dIl2L5x0l568OVP9
+X-Gm-Message-State: AOJu0YyMNuZwW7++ZlraxJtXxxRXQlJbfoyaO3b62YrFHqW0tbe12FDQ
+	tgCSO/wYRBMlTe1UahasWf9vh33J/37Fa95JWh6CVzcHGjgABNM4SZVYPbmPiwB2APQCTE8uxMY
+	O5clQXR1rWtUe8ryR9J5QzD3JfRK+osMZXngYeQhbaCzl7R/XFMCJLxsqzFjjTw==
+X-Received: by 2002:a05:600c:1d05:b0:424:7780:ffc3 with SMTP id 5b1f17b1804b1-424778101b9mr48375165e9.5.1718961014320;
+        Fri, 21 Jun 2024 02:10:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGU90oPuoG7ZEQHn11qd8u510OI3LfnmEaaKKjLepvgJT1/MBU6PiG7DAfnb5yOTq9erHiYHw==
+X-Received: by 2002:a05:600c:1d05:b0:424:7780:ffc3 with SMTP id 5b1f17b1804b1-424778101b9mr48375035e9.5.1718961013836;
+        Fri, 21 Jun 2024 02:10:13 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c725:e600:4063:2059:fd18:9d65? (p200300cbc725e60040632059fd189d65.dip0.t-ipconnect.de. [2003:cb:c725:e600:4063:2059:fd18:9d65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366383f6d16sm1140229f8f.3.2024.06.21.02.10.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 02:10:13 -0700 (PDT)
+Message-ID: <8e9436f2-6ebb-4ce1-a44f-2a941d354e2a@redhat.com>
+Date: Fri, 21 Jun 2024 11:10:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+To: Fuad Tabba <tabba@google.com>, David Rientjes <rientjes@google.com>
+Cc: Sean Christopherson <seanjc@google.com>, Jason Gunthorpe
+ <jgg@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
+ Elliot Berman <quic_eberman@quicinc.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ pbonzini@redhat.com
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
+ <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+ <20240619115135.GE2494510@nvidia.com>
+ <CA+EHjTz_=J+bDpqciaMnNja4uz1Njcpg5NVh_GW2tya-suA7kQ@mail.gmail.com>
+ <ZnRMn1ObU8TFrms3@google.com>
+ <CA+EHjTxvOyCqWRMTS3mXHznQtAJzDJLgqdS0Er2GA9FGdxd1vA@mail.gmail.com>
+ <4c8b81a0-3a76-4802-875f-f26ff1844955@redhat.com>
+ <CA+EHjTzvjsc4DKsNFA6LVT44YR_1C5A2JhpVSPG=R9ottfu70A@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CA+EHjTzvjsc4DKsNFA6LVT44YR_1C5A2JhpVSPG=R9ottfu70A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, 15 Jun 2024 20:53:30 +0300, Dmitry Baryshkov wrote:
-> Use new HDMI Connector helpers in the Lontium LT9611 bridge driver.
-> Program InfoFrames using the helper's callbacks. Also use TMDS char rate
-> validation callback to filter out modes, instead of hardcoding 4k@30.
+On 21.06.24 10:54, Fuad Tabba wrote:
+> Hi David,
 > 
-> The Audio InfoFrame isn't yet handled by these helpers, it requires
+> On Fri, Jun 21, 2024 at 9:44 AM David Hildenbrand <david@redhat.com> wrote:
+>>
+>>>> Again from that thread, one of most important aspects guest_memfd is that VMAs
+>>>> are not required.  Stating the obvious, lack of VMAs makes it really hard to drive
+>>>> swap, reclaim, migration, etc. from code that fundamentally operates on VMAs.
+>>>>
+>>>>    : More broadly, no VMAs are required.  The lack of stage-1 page tables are nice to
+>>>>    : have; the lack of VMAs means that guest_memfd isn't playing second fiddle, e.g.
+>>>>    : it's not subject to VMA protections, isn't restricted to host mapping size, etc.
+>>>>
+>>>> [1] https://lore.kernel.org/all/Zfmpby6i3PfBEcCV@google.com
+>>>> [2] https://lore.kernel.org/all/Zg3xF7dTtx6hbmZj@google.com
+>>>
+>>> I wonder if it might be more productive to also discuss this in one of
+>>> the PUCKs, ahead of LPC, in addition to trying to go over this in LPC.
+>>
+>> I don't know in  which context you usually discuss that, but I could
+>> propose that as a topic in the bi-weekly MM meeting.
+>>
+>> This would, of course, be focused on the bigger MM picture: how to mmap,
+>> how how to support huge pages, interaction with page pinning, ... So
+>> obviously more MM focused once we are in agreement that we want to
+>> support shared memory in guest_memfd and how to make that work with core-mm.
+>>
+>> Discussing if we want shared memory in guest_memfd might be betetr
+>> suited for a different, more CC/KVM specific meeting (likely the "PUCKs"
+>> mentioned here?).
 > 
-> [ ... ]
+> Sorry, I should have given more context on what a PUCK* is :) It's a
+> periodic (almost weekly) upstream call for KVM.
+> 
+> [*] https://lore.kernel.org/all/20230512231026.799267-1-seanjc@google.com/
+> 
+> But yes, having a discussion in one of the mm meetings ahead of LPC
+> would also be great. When do these meetings usually take place, to try
+> to coordinate across timezones.
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+It's Wednesday, 9:00 - 10:00am PDT (GMT-7) every second week.
 
-Thanks!
-Maxime
+If we're in agreement, we could (assuming there are no other planned 
+topics) either use the slot next week (June 26) or the following one 
+(July 10).
+
+Selfish as I am, I would prefer July 10, because I'll be on vacation 
+next week and there would be little time to prepare.
+
+@David R., heads up that this might become a topic ("shared and private 
+memory in guest_memfd: mmap, pinning and huge pages"), if people here 
+agree that this is a direction worth heading.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
