@@ -1,112 +1,125 @@
-Return-Path: <linux-kernel+bounces-225221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2B8912DBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:14:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D92FD912DC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FAFC284C0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:14:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15E5F1C20B70
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE4017B504;
-	Fri, 21 Jun 2024 19:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328E017B4F1;
+	Fri, 21 Jun 2024 19:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzHjc/Ce"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ECAbtvCH"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F089B67D;
-	Fri, 21 Jun 2024 19:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A3C160790
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718997238; cv=none; b=m2r7Jhd1hV0cTUvtObKmnAgWNB+2dVKYzN3HbrljwbAjPG2dNMbekQrM7AeqDJfDrg3bjwdy6EriH+mKqTTKUeoCzxDQXs3al5Y0kpuzUIEaO3DQ2J729mX3sS7a4NZZuUHgb0CjI6gTb1yjf82HWfsDYVdZVphSZHVph7shRnU=
+	t=1718997430; cv=none; b=aHXJs/MNVpuhzFcsJb6VV0Xvv0tLQLohFijnxVpT88Eo+zy93BP9e1Et3s0SplJFrnwNh2QTfnzIlirgr5Fgndpk6/529rew2uS7QJMkL3qSEmKESFZyWSVUe6+EVgjpZ6+ShtxrEMUzohxzOb76TLCuNkOm5d++OUUyaYaC69U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718997238; c=relaxed/simple;
-	bh=0zyZ73ct1NhekP0iINSaiaQYX6M2DCA8CHBz7pfWunc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AGgvFW1zUz3VyI7pSExn8O8DiBK6I2UOHMjgzI5GReJfVya1Y/URCkRkSx51p/KKf/+MxLBd4RYvqU4b30qxkXyL7UqVzqlSynDVnzHVchQ3/pxChspe1w1mf5r6y5qVjTMYM/itFz4ou8bOZO+uIczQml3GRt4PvIzhX2gIgHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzHjc/Ce; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0966FC2BBFC;
-	Fri, 21 Jun 2024 19:13:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718997238;
-	bh=0zyZ73ct1NhekP0iINSaiaQYX6M2DCA8CHBz7pfWunc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QzHjc/CeDDROv6rVmUnD/fFH4PmnK5EDDoinhW2wdVYVaXMPUVUmHITgU4v3Q+zJN
-	 Mhd75q0TOZYNmWT4RtOQpBcSazgGldhGvZ30zyifNU0+2dwcgnd/LPVh5bA02waGcs
-	 J2S37PqnQF84UHJ3ML45pyjLzyNY/JUbETKiQuB6mgrbTqp/952QC/r1HDbMXg6ri8
-	 u66QwiEZuIL9QITG4sGe4ccoChD2cV0VVdkIb3KcraZIFLG449DZbA0iX4WeVzyd/m
-	 Sg2uVTDl+Z1ZSCrHiaiBgi1uNQuUg0yFtU3xtHQu5k5LVOLPa1UWxujGdT8SXJAkgz
-	 9UVsN1E4VwvIQ==
-Date: Fri, 21 Jun 2024 12:13:57 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com
-Subject: Re: [PATCH 12/13] xfs: Don't revert allocated offset for forcealign
-Message-ID: <20240621191357.GQ3058325@frogsfrogsfrogs>
-References: <20240621100540.2976618-1-john.g.garry@oracle.com>
- <20240621100540.2976618-13-john.g.garry@oracle.com>
+	s=arc-20240116; t=1718997430; c=relaxed/simple;
+	bh=7J5AIRkxOti8YYAHsz/gEyTkLUKSwh4/mHoyvBWhX2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KlIeYKznXrT2TWBP3o24Ffps+8OZZt9hFFGhAXgBWhiELp+7Bbv7RLO+B2P7E2ePughZ5IkPPK9Jz2GNLfEkiviMWk2NWMY9AUnC9uuxPKzYb3TpCarkZfMn8MPrA9+dH8+YFGPRD0/luKS0SjkpMTTgWjrCrOtNYHb3oTHaedU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ECAbtvCH; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57d20d89748so2407221a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:17:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718997426; x=1719602226; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7J5AIRkxOti8YYAHsz/gEyTkLUKSwh4/mHoyvBWhX2A=;
+        b=ECAbtvCHGsnw/7UdTSrKimVG62XhPwynNC/c44Jg0ctt5iFvTjFEJ+MY2XJiNMeVc/
+         a1p9hPwZZV1jufs5evXfKGO3GGJiDciWygJBcvWFsrOO3KhM4tnpn6KQUkNVqGlFN9JO
+         3jdprApHcy7eS4+77syeqiLz8FBT3Aa8jTLGY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718997426; x=1719602226;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7J5AIRkxOti8YYAHsz/gEyTkLUKSwh4/mHoyvBWhX2A=;
+        b=fL7ZNHf7t1xStIuy6B2oDc3+hJi/qSFhnFhYUDOrjSEuDn3uRpiKsJr2QMqqymCDOE
+         Q85heDMaPKnXilYmRuQZo5wCnGpQnk1ApQD2rqkA9ZDQ+WZjdg6UmdTPV86si7w6PDxd
+         Nb7tsHxnEBULZo6OZj2WRdv+GH6+NjdF+R2XEi3K03FG0OZwhGkInMM33UIOzlZnW79o
+         0/NtRlME5MPMja4U2o2DtlPujU128toVhIuES6sZXPqbgJeGyXzRwWL7/Y5pJp2NSSqJ
+         vkQ5oGBcky51OpiPRasUPVCrTbOdnRp/GgTFMDFNNugCztPhz5cPd17V6DQk5xQNT2+X
+         R1gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQc+FIMk2JuiutQEKQn0ekVKlmLXq8D49S0Yftdml/HePJq4ylWOQdwFA76945x/vuOFMJlTGSL/dDwWShZ5nvHaYeFRbMHBaN7+is
+X-Gm-Message-State: AOJu0YyA2Ya+c/Kcpco6Pi1qp/+MSzSTgx+kl1woJcP5qsom/u5N8vns
+	E/xopvgoESzbMNU8jHPDByfGui7olUZwr8o/JpXi+4/0NhQRY8lngSSxQzEhLxoB3tWlQ/HDYpA
+	=
+X-Google-Smtp-Source: AGHT+IE6FJ2+lfgQxUlXU/meALQ5iSRVZnPbyo0rfnX6VgZHGARnEq7OVi0cQNmY5KPVyAXQflKyiQ==
+X-Received: by 2002:aa7:c749:0:b0:57d:15ee:3d17 with SMTP id 4fb4d7f45d1cf-57d15ee42abmr4649089a12.14.1718997426346;
+        Fri, 21 Jun 2024 12:17:06 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3048b93asm1334558a12.56.2024.06.21.12.17.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 12:17:05 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6f21ff4e6dso326853366b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:17:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0dhnlV840XhOOp1jlsV2tqBe9juA3Ypv5B8EfC2Nl7jb/o4jOXu6QdPFAt0QD21jvjdqGYHMDeq+y5lEigwTyTVEFqS7CvcyilyDy
+X-Received: by 2002:a17:906:1f4f:b0:a6f:8265:8f2 with SMTP id
+ a640c23a62f3a-a6fab642399mr452321666b.37.1718997424907; Fri, 21 Jun 2024
+ 12:17:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621100540.2976618-13-john.g.garry@oracle.com>
+References: <20240530130156.1651174-1-s.hauer@pengutronix.de>
+ <ZnRvZMQJUr4APwUU@google.com> <ZnU-STTaTWjHViwW@pengutronix.de>
+In-Reply-To: <ZnU-STTaTWjHViwW@pengutronix.de>
+From: Brian Norris <briannorris@chromium.org>
+Date: Fri, 21 Jun 2024 12:16:50 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXMSyVbPrTz4Vag-4_yi7080bBtkwBgOLFYOTmwb=NDvNQ@mail.gmail.com>
+Message-ID: <CA+ASDXMSyVbPrTz4Vag-4_yi7080bBtkwBgOLFYOTmwb=NDvNQ@mail.gmail.com>
+Subject: Re: [PATCH] wifi: mwifiex: increase max_num_akm_suites
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 10:05:39AM +0000, John Garry wrote:
-> In xfs_bmap_process_allocated_extent(), for when we found that we could not
-> provide the requested length completely, the mapping is moved so that we
-> can provide as much as possible for the original request.
-> 
-> For forcealign, this would mean ignoring alignment guaranteed, so don't do
-> this.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+On Fri, Jun 21, 2024 at 1:48=E2=80=AFAM Sascha Hauer <s.hauer@pengutronix.d=
+e> wrote:
+> On Thu, Jun 20, 2024 at 11:05:24AM -0700, Brian Norris wrote:
+> > Possibly dumb question: what's unique about mwifiex here? Everything yo=
+u
+> > describe above sounds applicable to all drivers, IIUC, and I don't see
+> > any other driver that touches max_num_akm_suites.
+>
+> I asked myself the same question and I don't have an answer to it. To me
+> it looks like the number of akm suites is limited by the akm_suites array
+> size which is CFG80211_MAX_NUM_AKM_SUITES which is 10 and that could be
+> used for all drivers.
 
-Makes sense,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Yeah, I can't figure out a great answer either. Although I did find that
+(1) it's theoretically possible some driver could be confused by
+larger indices (which should be easy enough to audit...) and
+(2) there's at least 1 borderline example, in wilc1000 --
+wilc_join_bss_param is only prepared to handle up to 3 akm_suites. But
+it also has a (magic number) bound of 3, so it will silently drop the
+4th, 5th, ... suite.
 
---D
+So maybe it's a reasonable start to have drivers modify this as
+needed. If we later figure out all drivers should be OK with an
+increased limit, we can unify that later.
 
-> ---
->  fs/xfs/libxfs/xfs_bmap.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> index ebeb2969b289..42f3582c1574 100644
-> --- a/fs/xfs/libxfs/xfs_bmap.c
-> +++ b/fs/xfs/libxfs/xfs_bmap.c
-> @@ -3492,11 +3492,15 @@ xfs_bmap_process_allocated_extent(
->  	 * original request as possible.  Free space is apparently
->  	 * very fragmented so we're unlikely to be able to satisfy the
->  	 * hints anyway.
-> +	 * However, for an inode with forcealign, continue with the
-> +	 * found offset as we need to honour the alignment hint.
->  	 */
-> -	if (ap->length <= orig_length)
-> -		ap->offset = orig_offset;
-> -	else if (ap->offset + ap->length < orig_offset + orig_length)
-> -		ap->offset = orig_offset + orig_length - ap->length;
-> +	if (!xfs_inode_has_forcealign(ap->ip)) {
-> +		if (ap->length <= orig_length)
-> +			ap->offset = orig_offset;
-> +		else if (ap->offset + ap->length < orig_offset + orig_length)
-> +			ap->offset = orig_offset + orig_length - ap->length;
-> +	}
->  	xfs_bmap_alloc_account(ap);
->  }
->  
-> -- 
-> 2.31.1
-> 
-> 
+> max_num_akm_suites is introduced to be driver specific and so I changed
+> it only for the driver I am currently interested in.
+
+Sure. Seems fine to me.
+
+Acked-by: Brian Norris <briannorris@chromium.org>
 
