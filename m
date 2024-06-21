@@ -1,103 +1,182 @@
-Return-Path: <linux-kernel+bounces-225051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7946912B16
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CDE912B23
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 18:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62931C267F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:16:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADC4E1C25D54
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4AF15FA8E;
-	Fri, 21 Jun 2024 16:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143B715FD19;
+	Fri, 21 Jun 2024 16:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ulfri/PB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xP5EUaaO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7ypmpXw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1B110A39;
-	Fri, 21 Jun 2024 16:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF80210A39;
+	Fri, 21 Jun 2024 16:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718986568; cv=none; b=rnKjSzEKtx3yFUOl2OugxwX/41evLSRKv5uuRwoQTxIZuzDRhh2Ojpl1t8mROOHxgAm+tYeRqlh/9y66iII0c9MqTAQib8pz4IsFdRI7Myl4ML3uNq2NCZpAuKkvV0cjWzU3hQd4oGld356kMq3MueqJAXcTrRYUIslIt414dk4=
+	t=1718986641; cv=none; b=FPHYBhw6hWtFeE2LKhfWhWp9y+fSXvzQIZmiJkYT/SQ1lrzX+Q4RSCDdGgA9c7CTWFIcRZH3LmkevxqYXQm0LbRF9DAimi9I27ZmBnJrB8YYVqSQMp7wBERd58rwnrBflBjBTc7Q635JMcBK90oLBIgu6XFD51K91LKvh/k2nM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718986568; c=relaxed/simple;
-	bh=T5itJaF2GPUPMgCUlRygdt6GZFkWUXcjmXdWNn25L+g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ttz5OyBxToyijQyKt3tuW3vzx2RgJrVnLJ/kUqi8xFv1OgFi0/DXlFIp6YPVYsoJW2XL+zfhIOurWjYTsIkom69wqgNRayUbdWn15m6MTViV8aqIFQcb+3guKxjOUiuJPoFPBLBvpPSeiWrr6jCVaosaM09J+fZwMHONH3RqV+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ulfri/PB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xP5EUaaO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718986563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vKuUIHFoSQkLd3I03cNWLDqpfkajqHSdiXHRC5z6omo=;
-	b=ulfri/PBejAvqRb3NTZ8PgzXPzjg6d3chywau9DvL5fcdlE2Spzag7r/qx4vjqtPQ7GDJq
-	wwT5/CwUZTuWrI0dfguLorafCjxcljS5q5RoTVp7AE/G0TOZoIXU48F0bdKByFc3bMolY5
-	bQr6PFX5ao7O8mCbBNaC6uGUPR0F1rJ6NtAsB4vqV3dps6Puwu5FeCFSsHr23pakC9jjJZ
-	9k7lf1ssUHDjRieWgVGIrU5uPZJkAgg38kYMfqwy7rWWshniELCpNNh9LujKWd+9/OmRlg
-	qnqzAVy2U9I6ys+nCTy/zbB8dxCxeVuhMrQdGBXgS6fq4GaZXTI8LHs/HMlDfw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718986563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vKuUIHFoSQkLd3I03cNWLDqpfkajqHSdiXHRC5z6omo=;
-	b=xP5EUaaOT6+h9hUX6myDe9FoqdJcvWOdzf1MeN2woWSj3B39vT1yinlMklsp5hwcswAT0d
-	pHoWoZH7xqqk3rAw==
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz
- Golaszewski <bartosz.golaszewski@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] genirq/irq_sim: add a notifier for irqchip events
-In-Reply-To: <CAMRc=MejZYpY=Nb60LJ63d3L9JK8zBj4154mpeLGsk+_=ZLwVA@mail.gmail.com>
-References: <20240612115231.26703-1-brgl@bgdev.pl>
- <20240612115231.26703-2-brgl@bgdev.pl> <87bk3unw33.ffs@tglx>
- <CAMRc=MejZYpY=Nb60LJ63d3L9JK8zBj4154mpeLGsk+_=ZLwVA@mail.gmail.com>
-Date: Fri, 21 Jun 2024 18:16:02 +0200
-Message-ID: <877ceinuf1.ffs@tglx>
+	s=arc-20240116; t=1718986641; c=relaxed/simple;
+	bh=+Fxx6Sx301djtEaBC0yUcjU4BqsqCf6HkSgOkb8DcPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=svshcKo8c+MxLPHCIOLnbRti5/LUfsoclwMfD9GEZ9ekOs5mAR5TUFD9Tf650KnUkHJkkEZgT8ORlGxJN6HPohMw++rPy9vsEueKY2DBoQ91ZTuTzAC8GC7iPX7un6QEE9LTUv5ds2h8iJN51e2cjPQVvBz0ZawdBo3zaX7cISw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7ypmpXw; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718986640; x=1750522640;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+Fxx6Sx301djtEaBC0yUcjU4BqsqCf6HkSgOkb8DcPk=;
+  b=R7ypmpXwXDNF/p83FdyaLh/0g1cjCXj/G8OtzvvNbC1JSH38s4/ptFDa
+   7LPQKSni8OKTwdKlvj7UyqUrSOyz/TrXx0li2RftArLNumEVFuyUVrFqS
+   URcdzQlRDc2isPbEXgzHLFn6fcePTSPb5wuQpk/WzPA9bVf4tgDC2++sS
+   T0ElcqJ5mW5yuHDr/VLacLsaAioQylEidDui7AmZu3vnUrZTnmzU2NFXO
+   wk8JqMWVFmBaaGBs9oX1XOnuqwP1TozEIGW1/NzcQckpzo85/j2OmNFDl
+   31suEpE7tvQyCW3sWEQVJTJ4Zw4aJoUi/leRwM/jhRln4SPEXwroNiCLN
+   Q==;
+X-CSE-ConnectionGUID: VZtd603tSmKnAux4yErCcA==
+X-CSE-MsgGUID: QmJwelXgQBKrlOSc9xRAUw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="16156307"
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="16156307"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 09:17:19 -0700
+X-CSE-ConnectionGUID: GMnlQ7Z/R/acySIjDxt19w==
+X-CSE-MsgGUID: 1L4S/m1VTmS4FwAsgUW4jQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,255,1712646000"; 
+   d="scan'208";a="43077647"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 21 Jun 2024 09:17:12 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sKgwn-0008kC-2J;
+	Fri, 21 Jun 2024 16:17:09 +0000
+Date: Sat, 22 Jun 2024 00:16:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 12/23] mfd: Add new driver for MAX77705 PMIC
+Message-ID: <202406220025.tZN8mAeW-lkp@intel.com>
+References: <20240618-starqltechn_integration_upstream-v3-12-e3f6662017ac@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-starqltechn_integration_upstream-v3-12-e3f6662017ac@gmail.com>
 
-On Fri, Jun 21 2024 at 11:59, Bartosz Golaszewski wrote:
-> On Fri, 21 Jun 2024 17:40:00 +0200, Thomas Gleixner <tglx@linutronix.de> said:
-> If you're opposed to the notifier, can we at least make it somewhat
-> future-proof and more elegant with the following?
->
-> struct irq_sim_ops {
-> 	int (*irq_sim_irq_requested)(irq_hw_number_t hwirq , void *data);
-> 	int (*irq_sim_irq_released)(irq_hw_number_t hwirq, void *data);
+Hi Dzmitry,
 
-release wants to be void.
+kernel test robot noticed the following build errors:
 
-> };
->
-> struct irq_domain *irq_domain_create_sim_ext(struct fwnode_handle *fwnode,
-> 					     unsigned int num_irqs,
-> 					     const struct irq_sim_ops *ops,
-> 					     void *data);
->
-> This way we don't have to change the other call-site over at IIO at all nor
-> will need to change the prototype for irq_domain_create_sim_ext() if another
-> callback is needed.
+[auto build test ERROR on 6906a84c482f098d31486df8dc98cead21cce2d0]
 
-I'm fine with that. It's at least well defined, while the notifier
-business is not :)
+url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20240618-222456
+base:   6906a84c482f098d31486df8dc98cead21cce2d0
+patch link:    https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-12-e3f6662017ac%40gmail.com
+patch subject: [PATCH v3 12/23] mfd: Add new driver for MAX77705 PMIC
+config: mips-allmodconfig (https://download.01.org/0day-ci/archive/20240622/202406220025.tZN8mAeW-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240622/202406220025.tZN8mAeW-lkp@intel.com/reproduce)
 
-Thanks,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406220025.tZN8mAeW-lkp@intel.com/
 
-        tglx
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/mfd/max77705-core.c:20:
+>> include/linux/mfd/max77705-private.h:243:26: error: 'MAX77705_USBC_REG_END' undeclared here (not in a function); did you mean 'MAX77705_PMIC_REG_END'?
+     243 |         u8 reg_muic_dump[MAX77705_USBC_REG_END];
+         |                          ^~~~~~~~~~~~~~~~~~~~~
+         |                          MAX77705_PMIC_REG_END
 
 
+vim +243 include/linux/mfd/max77705-private.h
+
+   216	
+   217	struct max77705_dev {
+   218		struct device *dev;
+   219		struct i2c_client *i2c; /* 0xCC; Haptic, PMIC */
+   220		struct i2c_client *charger; /* 0xD2; Charger */
+   221		struct i2c_client *fuelgauge; /* 0x6C; Fuelgauge */
+   222		struct i2c_client *muic; /* 0x4A; MUIC */
+   223		struct i2c_client *debug; /* 0xC4; Debug */
+   224		struct mutex i2c_lock;
+   225	
+   226		struct regmap *regmap;
+   227		struct regmap *regmap_fg;
+   228		struct regmap *regmap_charger;
+   229		struct regmap *regmap_leds;
+   230	
+   231		int type;
+   232	
+   233		int irq;
+   234		int irq_base;
+   235		int irq_masks_cur[MAX77705_IRQ_GROUP_NR];
+   236		int irq_masks_cache[MAX77705_IRQ_GROUP_NR];
+   237		bool wakeup;
+   238		struct mutex irqlock;
+   239	
+   240	#ifdef CONFIG_HIBERNATION
+   241		/* For hibernation */
+   242		u8 reg_pmic_dump[MAX77705_PMIC_REG_END];
+ > 243		u8 reg_muic_dump[MAX77705_USBC_REG_END];
+   244		u8 reg_led_dump[MAX77705_LED_REG_END];
+   245	#endif
+   246	
+   247		/* pmic VER/REV register */
+   248		u8 pmic_rev;	/* pmic Rev */
+   249		u8 pmic_ver;	/* pmic version */
+   250	
+   251		u8 cc_booting_complete;
+   252	
+   253		wait_queue_head_t queue_empty_wait_q;
+   254		int doing_irq;
+   255		int is_usbc_queue;
+   256	
+   257		struct max77705_platform_data *pdata;
+   258	};
+   259	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
