@@ -1,205 +1,215 @@
-Return-Path: <linux-kernel+bounces-224603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44B6912490
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:56:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6AA912497
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 13:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0301C1C24B36
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:56:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5795CB2763E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D799117623F;
-	Fri, 21 Jun 2024 11:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V01Hk8jn"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8A517622A;
+	Fri, 21 Jun 2024 11:58:37 +0000 (UTC)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4784D173342
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 11:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD2E171E54;
+	Fri, 21 Jun 2024 11:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718970954; cv=none; b=rH1UNT3e94qfcCx8CbXintE4+8X7SgRat8g7ud2A1Hc7ZsPpuj8tKXYDwK4aU7/VIW6FJZF4xQSoFUfNyk/K/1QbH0OiOqLh07C1qeBWHbAa0CIzMT9C7sDMeBNBX2rUsClYxuslJncnGD6UX+y0udfrqFuaF7a+5kpHJXoZhj4=
+	t=1718971116; cv=none; b=q1+IAxPI6zLUgmhA/pGG7sw3TDZ1tzdNcZF/fo9VDl57oVvf+B3Sy4APW+vpJ7WVxko8lb9DBhNLUllmT9kQT1BjdpBt84+jECCVWMNHooRM6k9c1BJyfHwGZZMrdsTmm7B0JBP1J3KYUYP4CC/z5Q9eBj6s1Am3+9kTDOXgo2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718970954; c=relaxed/simple;
-	bh=vKPWK8/0GsBKUW/GP+s7u4nJI5WtPNaGSvLrCRfAjSY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Su33GHSY/2ui/wWZLIc9KPF8uK8oz1gIWoTCDZfg47KHXG2TK42jgNK82hDtOCqPSmRZVkldh+5bCwK7Kz9V1JTELYkVNTP9xKP4XCNG3dLMz0mLJyGvOCLz+dr4quTj02JP/5WXckpVrDhFoR4oc4LO0FHitkaoPxxn2gQrkA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V01Hk8jn; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so2354814e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:55:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718970950; x=1719575750; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LsZYfymlFvkNaC7UR+89xyL8YV5RjgSwqJCekyf0v2g=;
-        b=V01Hk8jnEF3o7LOCz8OEy3JzHXigQgo/woThlFA2XVxRoO9wmjSyv4Gvn7663/i2F0
-         LVlO77LU/Wm4DUpl1dOmYcZYvV0NuDdWMjUimUyYD4Bwkow6RyeBxKvTR/ZE98AXK1pg
-         AJ/RirDXTddioo5nxuR2PdmfUOEnfSiwBUPjGUscG/UU2ABYYLOqT5fiL8CUJbjT0O1N
-         zxiOZSA8/KaFq7y3rLFkYt1WvEMYSQJFLJR6SVIHGHt2QbSBkBFez8Da/dv6KR7d8zai
-         B7pa186oMxBIqdxY8sBVZQakAiXJC/hRj4+u9jHT8Nv/eLmcNkOAmn2K71Bb77DPrWhw
-         DQgQ==
+	s=arc-20240116; t=1718971116; c=relaxed/simple;
+	bh=XdJKUpMOfjs7xW7KNeqalxlxMZkmgjEczqSjunn5RpM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ukx/Thaq0nrUuHJaCtLhxNYnYwD1gkWdrJZtdjE+oJ58RlNC0Ix3zJQx0STqZd2bKyqo5MuhKfLFrHO1ESV+UcjpqAg/x+VLpzStkQEQlncHDl6+ijMiKWY3VvlzcOjdvMMkncB32ScTyhxPvXybdSErgNboYyDpEQdxE3fJ2bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-63bd10df78dso18061987b3.2;
+        Fri, 21 Jun 2024 04:58:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718970950; x=1719575750;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718971113; x=1719575913;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LsZYfymlFvkNaC7UR+89xyL8YV5RjgSwqJCekyf0v2g=;
-        b=dgOyG7KYdDHwMZxvcD/bBSe+ippfWIIhjTRh1FJ6/e1tG64/HFfF/KGLA3ZLM0sgiB
-         uVGnZmePJVAzPVpRFocrzvEC2Wc7X3lgoO6mHAIT+IdccOacMq2KHBd2DeeZ3U36DR+G
-         m8rLXkRZr+uYu1ud81gTYFdKukZyPIbOxj99mvuPoBhiA5gzwVSfEywEBPWoeEgXrqn9
-         sQnI6ZUwzoxU9axwhb+9+qU90MeybUymB69YXRwqJZ1JzLd6AusD2a91KCnvQyTE+0JT
-         /gOyRERx5/RiIRhdCaTxbwwTpZkArDRe+7ntAULfWD1yafw0fY3tUJGqMGier/YRBgA/
-         yhqw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7pRJBxB4qbYFrooK02co/QzLSQYb6iHBcUbu/X19uoadD/OWqdvDIwyX6VY3s2Rnzu08s14ibEYUmHgdOFt1OCwEP7PiL3Wj+3cBc
-X-Gm-Message-State: AOJu0YzTZ6DGuuP1SjRniXc8zBAWZD7kkd+OWEST58C9JJ6lgVcYSmZg
-	dLv0Kbzs3ovuMit/rcgZGYHE5cQccBS9tEgyHV0CI3gPyX3zXhSbwNXjMxYBEbA=
-X-Google-Smtp-Source: AGHT+IFGgH1vCBp0//n23+QcNNqzHrghhJighi2ENZGyzTBy64LZfl2gFclPwco/HnFbFKAV9o2QbA==
-X-Received: by 2002:ac2:52b2:0:b0:52b:796e:66a5 with SMTP id 2adb3069b0e04-52ccaaa2607mr4436785e87.66.1718970950311;
-        Fri, 21 Jun 2024 04:55:50 -0700 (PDT)
-Received: from gpeter-l.lan ([2a0d:3344:2e8:8510::3aa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d208dcesm60386725e9.31.2024.06.21.04.55.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 04:55:49 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: lee@kernel.org,
-	arnd@arndb.de,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	saravanak@google.com,
-	willmcvicker@google.com,
-	semen.protsenko@linaro.org,
-	kernel-team@android.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v3 2/2] soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
-Date: Fri, 21 Jun 2024 12:55:44 +0100
-Message-ID: <20240621115544.1655458-3-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-In-Reply-To: <20240621115544.1655458-1-peter.griffin@linaro.org>
-References: <20240621115544.1655458-1-peter.griffin@linaro.org>
+        bh=6CfxTc2ay7dMkeRR8i1FoggTgd547G3vjExlObGw368=;
+        b=MZd1w3q47qyJJSZe7Zxlbtm8+wfRREeF1fw2E4MEO2o6B9gLpHTwxcJG6edrrA05Fx
+         JHEmLlkNxBt+Fu2Zc+bJWyBmquhE3sivVfRR84XQR3lN7t3/yGXkQEf0Dq9I+ZASq4Fm
+         QSi2wXTZc1H0JZwq3EbhMBXaTLH2NSxDj3mj9QM4scYPEtKKpsBCCabLkK2BIlwGr+GB
+         autc42HUjuuKd6KhEU42tlw1nSE1JB4szUOpAmByxn158Ts97xn2/w88tFZHQkdG45dP
+         PHv+Azvga4t+VUMEmgs+28jZ6fUTVjqhuuJilxrQWOUl81nM4mSqt/Tmd8vwWW58uOCr
+         C4oA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8B3u9VKGUJTpzfUi82JtQtl3lWg9AqaRBPOtcQfdIjjddsSjCu+xJeOt1wnQGUaza2VSciVf257dBZuk7njIBNGrMP/DwA5U0oCqKO4muUz/XrHdtHlzD+kws/sesvW1vyk+R7UNJwN4uULV3r69w2DEMee/7X3C8D5H03XA6YuQBAJyuJJAzJd5iPKyAptm54iS/6QK18/+OkxzD1On9mN1WCFc4
+X-Gm-Message-State: AOJu0YwNJaHzUGGu7NDrXL7iRd8zxQjKvpt3ksF8Qb8zxh8xGDip+w/7
+	IZr2Wg1/Zyj2ZOyrnBXhCuWjDmEHedSXcrRcWg8cXSsDYlb5dazhBoOYKNlK
+X-Google-Smtp-Source: AGHT+IGU6+IPljA+GWBirS1yIkoda3RkNeEXEgUr5IH7xXsWgx3ZUP/EpHO+x/73+bR+xwemmCmqTA==
+X-Received: by 2002:a0d:e88f:0:b0:613:febf:7a7c with SMTP id 00721157ae682-63a8e0e2c4dmr72593207b3.16.1718971112781;
+        Fri, 21 Jun 2024 04:58:32 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f10d9f3aasm2935937b3.3.2024.06.21.04.58.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 04:58:32 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dff02b8a956so1883037276.1;
+        Fri, 21 Jun 2024 04:58:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVSK40vUwFL7dmO0h7fBol+wmQZ6OhIehG/MBgM7AOA9g8WMdG+UseCyzaqM5Ew8h/qMzIJnsQRsqMT6dZKK7Szy1fqcOu3eQ59jyXllDXl2TV2p3J0qJEse4PKXzyWlo/1BMUtwksJibOTeSCXAsvTjnco4np6I7fEDBYcv+tLdDzqVMaMNQoMCQYSkttVYTL3AB6qUN1m8HIFpztNEymxY5neUDeL
+X-Received: by 2002:a25:6ac5:0:b0:dfe:388e:2987 with SMTP id
+ 3f1490d57ef6-e02be228793mr7474675276.64.1718971112323; Fri, 21 Jun 2024
+ 04:58:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240613091721.525266-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <prdvmtsp35yy2naohivbrya3go6vh5ji2cdjoebw3ovditcujo@bhck6tca6mhj>
+ <CA+V-a8u6KAFp1pox+emszjCHqvNRYrkOPpsv5XBdkAVJQMxjmA@mail.gmail.com>
+ <o7tswznmyk6gxoqfqvbvzxdndvf5ggkyc54nwafypquxjlvdrv@3ncwl5i5wyy3>
+ <CA+V-a8spwd82a3BTS-u-w-JY859YCRxCi0Os6XRn27-mkWz6WA@mail.gmail.com> <4lypqqf4o2wk22kzpyutlaarare5kurdrlokbm6mb4re3mstam@qo7c3d4tcpll>
+In-Reply-To: <4lypqqf4o2wk22kzpyutlaarare5kurdrlokbm6mb4re3mstam@qo7c3d4tcpll>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 21 Jun 2024 13:58:20 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXeDTof+aPJVUma78DgxP8vuWjJHoiBTcX_mKjX9WduZA@mail.gmail.com>
+Message-ID: <CAMuHMdXeDTof+aPJVUma78DgxP8vuWjJHoiBTcX_mKjX9WduZA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P) SoC
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	linux-mmc@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	linux-kernel@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For SoCs like gs101 that need a special regmap, register this with
-of_syscon_register_regmap api, so it can be returned by
-syscon_regmap_lookup_by_phandle() and friends.
+Hi all,
 
-For SoCs that don't require a custom regmap, revert back to syscon
-creating the mmio regmap rather than duplicating the logic here.
+On Fri, Jun 21, 2024 at 9:54=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> > Based on the feedback from Rob I have now changed it to below, i.e.
+> > the regulator now probes based on regulator-compatible property value
+> > "vqmmc-r9a09g057-regulator" instead of regulator node name as the
+> > driver has of_match in regulator_desc.
+>
+> I like this a lot! One minor comment.
+>
+> > static struct regulator_desc r9a09g057_vqmmc_regulator =3D {
+> >     .of_match    =3D of_match_ptr("vqmmc-r9a09g057-regulator"),
+> >     .owner        =3D THIS_MODULE,
+> >     .type        =3D REGULATOR_VOLTAGE,
+> >     .ops        =3D &r9a09g057_regulator_voltage_ops,
+> >     .volt_table    =3D r9a09g057_vqmmc_voltages,
+> >     .n_voltages    =3D ARRAY_SIZE(r9a09g057_vqmmc_voltages),
+> > };
+> >
+> > SoC DTSI:
+> >         sdhi1: mmc@15c10000 {
+> >             compatible =3D "renesas,sdhi-r9a09g057";
+> >             reg =3D <0x0 0x15c10000 0 0x10000>;
+> >             interrupts =3D <GIC_SPI 737 IRQ_TYPE_LEVEL_HIGH>,
+> >                      <GIC_SPI 738 IRQ_TYPE_LEVEL_HIGH>;
+> >             clocks =3D <&cpg CPG_MOD 167>,
+> >                  <&cpg CPG_MOD 169>,
+> >                  <&cpg CPG_MOD 168>,
+> >                  <&cpg CPG_MOD 170>;
+> >             clock-names =3D "core", "clkh", "cd", "aclk";
+> >             resets =3D <&cpg 168>;
+> >             power-domains =3D <&cpg>;
+> >             status =3D "disabled";
+> >
+> >             vqmmc_sdhi1: vqmmc-regulator {
+> >                 regulator-compatible =3D "vqmmc-r9a09g057-regulator";
 
-exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
-the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
-is kept around until fw_devlink support for syscon property is added
-for the pinctrl-samsung driver that also runs at postcore_initcall
-level.
+renesas,r9a09g057-vqmmc-regulator?
 
-All other exynos client drivers can revert back to
-syscon_regmap_lookup_by_phandle().
+> >                 regulator-name =3D "vqmmc-regulator";
+>
+> This should have "sdhi<X>" somewhere in the name?
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v2:
- - None
- - Link to v2: https://lore.kernel.org/linux-arm-kernel/20240620112446.1286223-3-peter.griffin@linaro.org/
+Indeed.
 
-Changes since v1:
- - pass pmu_np (not np) to syscon_node_to_regmap() (reported by William)
- - Link to v1: https://lore.kernel.org/linux-arm-kernel/20240614140421.3172674-3-peter.griffin@linaro.org/
----
- drivers/soc/samsung/exynos-pmu.c | 38 ++++++++++++--------------------
- 1 file changed, 14 insertions(+), 24 deletions(-)
+>
+> >                 regulator-min-microvolt =3D <1800000>;
+> >                 regulator-max-microvolt =3D <3300000>;
+> >                 status =3D "disabled";
+> >             };
+> >         };
+> >
+> > Board DTS:
+> >
+> > &sdhi1 {
+> >     pinctrl-0 =3D <&sdhi1_pins>;
+> >     pinctrl-1 =3D <&sdhi1_pins>;
+> >     pinctrl-names =3D "default", "state_uhs";
+> >     vmmc-supply =3D <&reg_3p3v>;
+> >     vqmmc-supply =3D <&vqmmc_sdhi1>;
+> >     bus-width =3D <4>;
+> >     sd-uhs-sdr50;
+> >     sd-uhs-sdr104;
+> >     status =3D "okay";
+> > };
+> >
+> > &vqmmc_sdhi1 {
+> >     status =3D "okay";
+> > };
+>
+> Again, I like this. It looks like proper HW description to me.
+>
+> > Based on the feedback provided Geert ie to use set_pwr callback to set
+> > PWEN bit and handle IOVS bit in voltage switch callback by dropping
+> > the regulator altogether. In this case we will have to introduce just
+> > a single "use-internal-regulator" property and if set make the vqmmc
+> > regulator optional?
+>
+> Let's discuss with Geert. But I am quite convinced of your approach
+> above.
+>
+> > > > Let me know if I have missed something obvious here.
+> > >
+> > > Nope, all good.
+>
+> Don't give up, I think we are close...
 
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index fd8b6ac06656..624324f4001c 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -204,16 +204,6 @@ static const struct regmap_config regmap_smccfg = {
- 	.reg_update_bits = tensor_sec_update_bits,
- };
- 
--static const struct regmap_config regmap_mmiocfg = {
--	.name = "pmu_regs",
--	.reg_bits = 32,
--	.reg_stride = 4,
--	.val_bits = 32,
--	.fast_io = true,
--	.use_single_read = true,
--	.use_single_write = true,
--};
--
- static const struct exynos_pmu_data gs101_pmu_data = {
- 	.pmu_secure = true
- };
-@@ -290,7 +280,6 @@ EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap);
- struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- 						const char *propname)
- {
--	struct exynos_pmu_context *ctx;
- 	struct device_node *pmu_np;
- 	struct device *dev;
- 
-@@ -316,9 +305,7 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- 	if (!dev)
- 		return ERR_PTR(-EPROBE_DEFER);
- 
--	ctx = dev_get_drvdata(dev);
--
--	return ctx->pmureg;
-+	return syscon_node_to_regmap(pmu_np);
- }
- EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
- 
-@@ -355,19 +342,22 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 		regmap = devm_regmap_init(dev, NULL,
- 					  (void *)(uintptr_t)res->start,
- 					  &pmu_regmcfg);
-+
-+		if (IS_ERR(regmap))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
-+					     "regmap init failed\n");
-+
-+		ret = of_syscon_register_regmap(dev->of_node, regmap);
-+		if (ret)
-+			return ret;
- 	} else {
--		/* All other SoCs use a MMIO regmap */
--		pmu_regmcfg = regmap_mmiocfg;
--		pmu_regmcfg.max_register = resource_size(res) -
--					   pmu_regmcfg.reg_stride;
--		regmap = devm_regmap_init_mmio(dev, pmu_base_addr,
--					       &pmu_regmcfg);
-+		/* let syscon create mmio regmap */
-+		regmap = syscon_node_to_regmap(dev->of_node);
-+		if (IS_ERR(regmap))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
-+					     "syscon_node_to_regmap failed\n");
- 	}
- 
--	if (IS_ERR(regmap))
--		return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
--				     "regmap init failed\n");
--
- 	pmu_context->pmureg = regmap;
- 	pmu_context->dev = dev;
- 
--- 
-2.45.2.741.gdbec12cfda-goog
+The above indeed starts looking good to me.
+IIUIC, the use of the special vqmmc-r9a09g057-regulator is still
+optional, and the subnode can be left disabled? E.g. the board
+designer may still use a (different) GPIO to control the regulator,
+using "regulator-gpio"?
 
+Which brings me to another question: as both the SDmIOVS and SDmPWEN
+pins can be configured as GPIOs, why not ignore the special handling
+using the SDm_SD_STATUS register, and use "regulator-gpio" instead?
+We usually do the same for CD/WP, using "{cd,wp}-gpios" instead.
+Exceptions are old SH/R-Mobile and R-Car Gen1 boards:
+
+  arch/arm/boot/dts/renesas/r8a73a4-ape6evm.dts:          groups =3D
+"sdhi0_data4", "sdhi0_ctrl", "sdhi0_cd";
+  arch/arm/boot/dts/renesas/r8a7740-armadillo800eva.dts:
+groups =3D "sdhi0_data4", "sdhi0_ctrl", "sdhi0_wp";
+  arch/arm/boot/dts/renesas/r8a7778-bockw.dts:            groups =3D
+"sdhi0_cd", "sdhi0_wp";
+  arch/arm/boot/dts/renesas/r8a7779-marzen.dts:           groups =3D
+"sdhi0_data4", "sdhi0_ctrl", "sdhi0_cd";
+  arch/arm/boot/dts/renesas/sh73a0-kzm9g.dts:             groups =3D
+"sdhi0_data4", "sdhi0_ctrl", "sdhi0_cd", "sdhi0_wp";
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
