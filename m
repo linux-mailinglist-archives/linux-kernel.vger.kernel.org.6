@@ -1,86 +1,78 @@
-Return-Path: <linux-kernel+bounces-223709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0EB911738
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:20:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 701EB91173C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A95B1C213FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:20:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90701F22ECA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC7E15C9;
-	Fri, 21 Jun 2024 00:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC9A1366;
+	Fri, 21 Jun 2024 00:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYeec+xV"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="maP0PoYs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D24A10E3;
-	Fri, 21 Jun 2024 00:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45882625;
+	Fri, 21 Jun 2024 00:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718929200; cv=none; b=CGvunNhaoPI5DTkvunZN3Iq1AX2ZSU1tPmgZ5VgtEfihkcye97DsZmkK8XMRYFhAfK32xsVq4do5e5w8+Z0uZ8dKcurzhzBOaksBV9rwV0+2erRmZ+ZOIX6WpP7uXyKtbxrubfAN3OUXhNh7WvP6mJwFbjAeDAxzqg/INpDNDY8=
+	t=1718929326; cv=none; b=k2gn6AsxvRwQ75O/quPp2fNiniyl5N237NLulVN77DM6nyuZ2gqzCYmb7L9rdsYg/ZOn4ezWZpuJNWfCajxa4Vy0hUiL+nw0IRNKR5mw1cqYqe9p/K45F1pZ6m7ulMdTovLPDfEzTVPhvCWw7WbGAg51rOQni6mG/5GLBcUdRuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718929200; c=relaxed/simple;
-	bh=iI4kwQgyg+ISbUOBOYdNYwBf/i79YdZuFSSt9bWcDCM=;
+	s=arc-20240116; t=1718929326; c=relaxed/simple;
+	bh=A5oOZHXU+IU0z5IfE4+M02oaOKdsfUbdPWbbLMxbgBY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OuHFihLq0EIaRXcFKKo0NlUvsgk5CzDG2P5FKrqXziaVz+EdhuzJkOn47DeAB3SJ+HJUkUawlogKxGZH9KF4SqT3x7HuxQbM3GPNh3Aah+Sk1Ixxlkyh4NUU5xW09rcc5ul58xlGNLFAW4C/TJOtB5aSs9iM9zqnhbnJcm1FGL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYeec+xV; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-70df213542bso1038818a12.3;
-        Thu, 20 Jun 2024 17:19:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718929197; x=1719533997; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mmyzvfs2YZd9tfytvhjIOO7J1yZlWjymeFYN5lNqh4Y=;
-        b=bYeec+xVyAz8q9GLwVbtdEO8GKhVUGNOg4bUY4gDZQVamc3+bU1cWYhfAOq3i0ty7z
-         09cWiKgAb1yThx5VrihZi4YGCszDmeTivSQ5xkSFuhremWg7onTMF7JamSJEjtsoOYGH
-         DQEJjKgYzNhs6bnMpaQp/3p04NNYlsE4B4spxISvhzsNe14TKUOVlFpdVwwU1ulgtiGb
-         6JIxBqugw4U50zekxw+Af13ulDMLSSl9TQoXHNMb5Z8laogVfWD2q3XvcbmsxFIh2l9S
-         cwvzR2l0K28JCGfUnc/V+ars47wtwG3zByah2ZmtrHWRQN2Ijj+U9ccwYSnceo0ZhLIX
-         4/Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718929197; x=1719533997;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mmyzvfs2YZd9tfytvhjIOO7J1yZlWjymeFYN5lNqh4Y=;
-        b=VHOchnxrPpD9tUbN/L81FMwVKPJI+Mn4ThqD/3v9l/0ki+70noKPWWN+axO03Cs0GI
-         CAE3QgkYsrVwtHYfZfdez8EfM28X6pPNDgdpOF6lLP4lq6Vfkus3c+9ZpiG3PgdY3kqo
-         kQ0uapSwwa8NI9gYSQEtZVEmTOvCPt0kYfyf/MhJYmd9JHVoyBsbPKMcokk8GZJ6xN/r
-         jqYWVgvV3KhR0meyrsq/RBeE6EFXRYMCaEzvXNcVxRYD62ihHBoMaEqrsVSYMOBasam9
-         IMkHFUL7Dy4p+L5ul31rj1JZEdy/445wr94z8ZHgQb8tXaay3skAyhey8KoU1PBaghtu
-         2nKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXD9NG6wz1BiJ48eQlL5SERb7a031MMkwiGRyc3z9m6PHiM6CoH1LesZ9HZDDW6eqpaUtSY+mcR+lOVsrMztC7+bUKHMHMW/uvOobXuPeernKz5oD3BdFNZsX6ccxS1yU6GdWkTahd38GFWglLPZEldvA5yzWN58w+HibUXJumFyqgV0+ySWTobnsQxrQ==
-X-Gm-Message-State: AOJu0YwKGTyZY6knop3dRhjCG6iPQV6Gx+3nz5h3J2ebS0HGATxaTIEx
-	q5qNSgBMV0K63hC0iri4Me6MjFmfQ9jxZ+7h7pozaLNbfqGsbIWl
-X-Google-Smtp-Source: AGHT+IG/rSd+vUkEL02DpRF2yXVYcvE7LDEdA2oMiNCQz4GfaPD03BvGgAWtiAuLoEzSXMx04zoJoQ==
-X-Received: by 2002:a05:6a20:12cf:b0:1b4:3f96:f1d8 with SMTP id adf61e73a8af0-1bcbb385db8mr8347462637.13.1718929197355;
-        Thu, 20 Jun 2024 17:19:57 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e55dccbfsm2316700a91.32.2024.06.20.17.19.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 17:19:56 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 20 Jun 2024 17:19:55 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Kees Cook <keescook@chromium.org>
-Cc: Eric Biederman <ebiederm@xmission.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/2] exec: Avoid pathological argc, envc, and bprm->p
- values
-Message-ID: <fbc4e2e4-3ca2-45b7-8443-0a8372d4ba94@roeck-us.net>
-References: <20240520021337.work.198-kees@kernel.org>
- <20240520021615.741800-2-keescook@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=grTfe9iqzONniLC1dUOe8MwF2KvldP9k3nCLfn8/4sqRiCw8ykj8c5yrly2FVuN1B6PM6i0LSpiV33tNaR3XOBDQlj99t/uePPRy3gNap6FtgTxLPuwJFkfiPiUcKb1THUqfoN+8bYLzVmHHsowHHCKHAf4Tk1+rdpTsiSGkuC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=maP0PoYs; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718929326; x=1750465326;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=A5oOZHXU+IU0z5IfE4+M02oaOKdsfUbdPWbbLMxbgBY=;
+  b=maP0PoYscxPG82n+H+ZjD+6bvCxbber356XXMr5yiRnFi1+KwoEldT77
+   NkH9RGX+Vd3C2pTE8RWPMqXAGM5+OShxkmaqnj69+1DLFko1SLL91H/8X
+   CEpCl/0yihRNbJ5YjzFvkcBAXaV1/330HCTSBzn0nM6eRYoMrRH4D7zBP
+   mxze8XcJnCgCaRdbIrOnXGojV/nMvU+7q9EWOx0KQgA3FshOcgw6TvLEZ
+   kz159ZzWVz35NDX61P3fgDjo3tBXjGYficU8an7QgYKB3ef4tLa9w8uVI
+   bB8GAm3wAgRr7JeZU8rRSMWEmFcHSXktWsbASV2NjQq3Zv03p7h1veK6X
+   w==;
+X-CSE-ConnectionGUID: CUh+oiCnQEqLG8pxCQbIbg==
+X-CSE-MsgGUID: B3wViMDXTousl/KerEOrMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="33403640"
+X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
+   d="scan'208";a="33403640"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 17:22:05 -0700
+X-CSE-ConnectionGUID: 1vsqdwxiTimYX59IXwOCkg==
+X-CSE-MsgGUID: iV7byUPPTrWfWCnKRy86tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,253,1712646000"; 
+   d="scan'208";a="43094446"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 20 Jun 2024 17:22:01 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sKS2Q-00083Q-2G;
+	Fri, 21 Jun 2024 00:21:58 +0000
+Date: Fri, 21 Jun 2024 08:21:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yuntao Dai <d1581209858@live.com>, jassisinghbrar@gmail.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	unicorn_wang@outlook.com, inochiama@outlook.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Yuntao Dai <d1581209858@live.com>
+Subject: Re: [PATCH 3/3] mailbox: sophgo: add mailbox driver for cv18x SoCs
+Message-ID: <202406210836.gWHxzdUE-lkp@intel.com>
+References: <SYBP282MB2238F93AB57A398E322644C3C4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,81 +81,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240520021615.741800-2-keescook@chromium.org>
+In-Reply-To: <SYBP282MB2238F93AB57A398E322644C3C4CE2@SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM>
 
-Hi,
+Hi Yuntao,
 
-On Sun, May 19, 2024 at 07:16:12PM -0700, Kees Cook wrote:
-> Make sure nothing goes wrong with the string counters or the bprm's
-> belief about the stack pointer. Add checks and matching self-tests.
-> 
-> For 32-bit validation, this was run under 32-bit UML:
-> $ tools/testing/kunit/kunit.py run --make_options SUBARCH=i386 exec
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+kernel test robot noticed the following build warnings:
 
-With this patch in linux-next, the qemu m68k:mcf5208evb emulation
-fails to boot. The error is:
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.10-rc4 next-20240620]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Run /init as init process
-Failed to execute /init (error -7)
-Run /sbin/init as init process
-Starting init: /sbin/init exists but couldn't execute it (error -7)
-Run /etc/init as init process
-Run /bin/init as init process
-Run /bin/sh as init process
-Starting init: /bin/sh exists but couldn't execute it (error -7)
-Kernel panic - not syncing: No working init found.  Try passing init= option to kernel. See Linux Documentation/admin-guide/init.rst for guidance.
-CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.10.0-rc4-next-20240620 #1
-Stack from 4081ff74:
-        4081ff74 40387a22 40387a22 00000000 0000000a 4039db60 4031b2fe 40387a22
-        40314742 00000000 00000000 4039db60 00000000 40314186 4031b494 00000000
-        00000000 4031b57e 4037f784 403a3440 40020474 00000000 00000000 00000000
-        00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-        00000000 00002000 00000000
-Call Trace: [<4031b2fe>] dump_stack+0xc/0x10
- [<40314742>] panic+0xce/0x262
- [<40314186>] try_to_run_init_process+0x0/0x38
- [<4031b494>] kernel_init+0x0/0xf0
- [<4031b57e>] kernel_init+0xea/0xf0
- [<40020474>] ret_from_kernel_thread+0xc/0x14
+url:    https://github.com/intel-lab-lkp/linux/commits/Yuntao-Dai/dt-bindings-mailbox-add-Sophgo-cv18x-SoCs-mailbox/20240618-232307
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/SYBP282MB2238F93AB57A398E322644C3C4CE2%40SYBP282MB2238.AUSP282.PROD.OUTLOOK.COM
+patch subject: [PATCH 3/3] mailbox: sophgo: add mailbox driver for cv18x SoCs
+config: powerpc-randconfig-r121-20240621 (https://download.01.org/0day-ci/archive/20240621/202406210836.gWHxzdUE-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240621/202406210836.gWHxzdUE-lkp@intel.com/reproduce)
 
-bisect essentially points to the merge of the for-next/execve branch;
-see below. Subsequent failures are false positives. Branch analysis
-then pointed to this patch. The image boots after reverting this patch
-(or after reverting the entire merge).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406210836.gWHxzdUE-lkp@intel.com/
 
-Guenter
+sparse warnings: (new ones prefixed by >>)
+>> drivers/mailbox/cv1800b-mailbox.c:66:25: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/mailbox/cv1800b-mailbox.c:85:22: sparse: sparse: cast removes address space '__iomem' of expression
+>> drivers/mailbox/cv1800b-mailbox.c:87:21: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *d @@     got unsigned long long [usertype] *addr @@
+   drivers/mailbox/cv1800b-mailbox.c:87:21: sparse:     expected void volatile [noderef] __iomem *d
+   drivers/mailbox/cv1800b-mailbox.c:87:21: sparse:     got unsigned long long [usertype] *addr
 
----
-# bad: [b992b79ca8bc336fa8e2c80990b5af80ed8f36fd] Add linux-next specific files for 20240620
-# good: [6ba59ff4227927d3a8530fc2973b80e94b54d58f] Linux 6.10-rc4
-git bisect start 'HEAD' 'v6.10-rc4'
-# good: [c02e717c5a89654b244fec58bb5cda32770966b5] Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git
-git bisect good c02e717c5a89654b244fec58bb5cda32770966b5
-# good: [29e7d78253b7ebf4b76fcf6d95e227d0b0c57dc0] Merge branch 'msm-next' of https://gitlab.freedesktop.org/drm/msm.git
-git bisect good 29e7d78253b7ebf4b76fcf6d95e227d0b0c57dc0
-# good: [bf8fd0d956bfcbf4fd6ff063366374c4bf87d806] Merge branch 'non-rcu/next' of git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
-git bisect good bf8fd0d956bfcbf4fd6ff063366374c4bf87d806
-# good: [1110f16317b1e0742521eaef5613eb1eb17f55ca] Merge branch 'icc-next' of git://git.kernel.org/pub/scm/linux/kernel/git/djakov/icc.git
-git bisect good 1110f16317b1e0742521eaef5613eb1eb17f55ca
-# good: [63f3716198e5644713748d83e6a6df3b4a6a3b10] Merge branch 'gpio/for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
-git bisect good 63f3716198e5644713748d83e6a6df3b4a6a3b10
-# good: [91b48d9adafddb242264ba19c0bae6e23f71b18a] Merge branch 'kunit' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
-git bisect good 91b48d9adafddb242264ba19c0bae6e23f71b18a
-# good: [c54c059b3c3c980c66e2a34b08724d9e529f590d] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git
-git bisect good c54c059b3c3c980c66e2a34b08724d9e529f590d
-# good: [de95d30c03c42225c4fad714bf657c9ebb345fe9] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
-git bisect good de95d30c03c42225c4fad714bf657c9ebb345fe9
-# bad: [cb328321926903f7f54866029590abb8faf48ef6] Merge branch 'for-next/execve' of git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
-git bisect bad cb328321926903f7f54866029590abb8faf48ef6
-# bad: [aef9d25e7f5631543a0276d0532151f2c61174d6] sysctl: Remove superfluous empty allocations from sysctl internals
-git bisect bad aef9d25e7f5631543a0276d0532151f2c61174d6
-# bad: [c819e252c2874479b27f6a356b44f8aa73cf5a81] sysctl: Add module description to sysctl-testing
-git bisect bad c819e252c2874479b27f6a356b44f8aa73cf5a81
-# bad: [b5ffbd1396885f76bf87e67d590a3ef063e6d831] sysctl: move the extra1/2 boundary check of u8 to sysctl_check_table_array
-git bisect bad b5ffbd1396885f76bf87e67d590a3ef063e6d831
-# bad: [98ca62ba9e2be5863c7d069f84f7166b45a5b2f4] sysctl: always initialize i_uid/i_gid
-git bisect bad 98ca62ba9e2be5863c7d069f84f7166b45a5b2f4
-# first bad commit: [98ca62ba9e2be5863c7d069f84f7166b45a5b2f4] sysctl: always initialize i_uid/i_gid
+vim +/__iomem +66 drivers/mailbox/cv1800b-mailbox.c
+
+    51	
+    52	static irqreturn_t cv1800b_mbox_irq(int irq, void *dev_id)
+    53	{
+    54		struct cv1800b_mbox *mbox = (struct cv1800b_mbox *)dev_id;
+    55		u8 set, valid;
+    56		u64 *addr;
+    57		size_t i;
+    58	
+    59		set = readb(mbox->mbox_base + MBOX_SET_INT_REG(mbox->recvid));
+    60	
+    61		if (!set)
+    62			return IRQ_NONE;
+    63	
+    64		for (i = 0; i < MAILBOX_MAX_CHAN; i++) {
+    65			valid = set & (1 << i);
+  > 66			addr = (u64 *)(mbox->mbox_base + MAILBOX_CONTEXT_OFFSET) + i;
+    67			if (valid) {
+    68				mbox->content[i] = addr;
+    69				writeb(valid, mbox->mbox_base +
+    70						      MBOX_SET_CLR_REG(mbox->recvid));
+    71				writeb(~valid,
+    72				       mbox->mbox_base + MBOX_EN_REG(mbox->recvid));
+    73				return IRQ_WAKE_THREAD;
+    74			}
+    75		}
+    76	
+    77		return IRQ_NONE;
+    78	}
+    79	
+    80	static int cv1800b_mbox_send_data(struct mbox_chan *chan, void *data)
+    81	{
+    82		struct cv1800b_mbox *mbox = dev_get_drvdata(chan->mbox->dev);
+    83		int idx = (int)chan->con_priv;
+    84		u8 en, valid;
+    85		u64 *addr = (u64 *)(mbox->mbox_base + MAILBOX_CONTEXT_OFFSET) + idx;
+    86	
+  > 87		memcpy_toio(addr, data, 8);
+    88	
+    89		valid = 1 << idx;
+    90		writeb(valid, mbox->mbox_base + MBOX_SET_CLR_REG(mbox->sendto));
+    91		en = readb(mbox->mbox_base + MBOX_EN_REG(mbox->sendto));
+    92		writeb(en | valid, mbox->mbox_base + MBOX_EN_REG(mbox->sendto));
+    93		writeb(valid, mbox->mbox_base + MBOX_SET_REG);
+    94	
+    95		return 0;
+    96	}
+    97	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
