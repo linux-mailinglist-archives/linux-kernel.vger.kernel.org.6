@@ -1,140 +1,261 @@
-Return-Path: <linux-kernel+bounces-225281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FBB912E80
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:31:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A25F4912E89
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D8C9287C7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:31:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9204F1C21F23
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8740D16D9CC;
-	Fri, 21 Jun 2024 20:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED6217BB10;
+	Fri, 21 Jun 2024 20:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DxiDfXCr"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a1aBUw0V"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D95D59155
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EF317BB0D
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719001900; cv=none; b=vAobd0NcAykWXEFMqzbpvyiohwcXuVDOe3lTuA6hE5Cx+1M+ptTDTu5CwfFpu29BTBGoMBwjRO7cf2LMR5nKm8RWFOrRFxOCPrNidrL3EqG93cUUiJrQbL8N3DrSAdvJrNnVM0S+cgJr1P21/iZY5OMgbJjdDSXtl4ueL8hqYJY=
+	t=1719001907; cv=none; b=ghTxrWz5t4f1ENTgtUHdzkOpb1FbK1N7qHkyJratqzSXt3a8cpUKxNIaa5f4/CSkVkpjK3mf4IiGnPUcPvltclIzh4l0x9yjXbhj0zuBM6I7Tgqlfc5kbnVZTksRA73Ywa1oa1wG/FZaeysUpBPMg8thif0tGLUqd8iES+Qff40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719001900; c=relaxed/simple;
-	bh=LTZZDiMALKyPN5p+8hRA+YseHImtAb+JtUOdlmoeOic=;
+	s=arc-20240116; t=1719001907; c=relaxed/simple;
+	bh=J/WeQifhAeBIIgjlkHp6YVizjCJ078ih4ojm5iVrUNI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TSjwXqWL2EYCEB7BySVQLTKGU8LV3BuXDEXlooBwiP7jZtHDAPyJ0bwaOsY1qzuvDaMkemHYXNi8nm/X03BMGf5NUeCbSqWbhZThlvF8P45ch9gIB7Q61I0var4SZEbGMa1gFEyme0Qkh1CT7DTeTf+U5BDBRZd9MXOKp88Z200=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DxiDfXCr; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-62cddff7f20so23262177b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:31:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=bgl5UnAawW7MGqFdas8QcskLcIcnP64FzrmTjIoqYUkZ0Tymr87S1vfcyBIMoFqZAVYzM2PtTtB9IX7NHD5Q54pSaHo1Z3P3LK0Gk/znvvkxsKs6cVAvOgHkI+RpWm3M/1kwiHj/jtkPKM0Sjex1BtOqyO6NSoFb+tMlle8kIRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a1aBUw0V; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a63359aaacaso358851466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:31:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1719001898; x=1719606698; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719001904; x=1719606704; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y9aMPfF58vRykJrjRvRAhedQZI2SIlSrwcX7UpNjhsc=;
-        b=DxiDfXCrqA/tFmxO0p1Y2TxsSRJeYBfrsWTaHrtIwa99Y7mh+nFjvsSevtGrrVwM/p
-         bsZ8HDYZfUh7Mnucj5g8pLr6ixk0rCzcZQzCV5KEnlUL+8QRI1xroqgBHxbKKSwLdF3C
-         ohtZIKFG1xIKYzAcSiZ6rSgKK8pMUjHMO7yRUj7eqCcAlCjm1jr1G4MGUcWez4XwMjmT
-         VVi/emKzch8LpEvUNPWJhVrs0hHgEqubp9XXuYQ2dUIPHipPRbBw6gNVn0W68iAYQ815
-         8/1WoXzTKnqsZe32LpL28hA9hNl5bkyHWoSJP7DJXQjmRA1c+dd0KrD8LrKrhgdgNpVa
-         mvJg==
+        bh=CnCN0NXOSNtwy42IdVdysfTTD5ti/ff9XMDOhhfiLx4=;
+        b=a1aBUw0VkzZ3oSHlCqDR+ATOXDYi+sX+izSgTyOwlIGSfvtoki8ooXg63v6L0Z3SBf
+         KiyzZ1pJvQ1WWzksNTFwyyeoqTssrN8S10fKlK5s9S/d//Xvdx2XwzEhza32lsyerNAI
+         rrRvIQQqKXdtV/r5lndW2K+6e9aaYnNAPI/MpYaRwcXuVF5DzUOzTrBFgxEDNxedSwyv
+         BDdLcthc9hfrnKRIXR37CCa55VW1UJHSxCushckLKFvJozqRZelHSsccnM0cLejLlUU3
+         IKIynf0IwbAzXqvQqepVmjQ/q13kNtP0V4e9VpvIE+GxavHiACiAIZqmCNhoB7dnJzlU
+         DDtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719001898; x=1719606698;
+        d=1e100.net; s=20230601; t=1719001904; x=1719606704;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y9aMPfF58vRykJrjRvRAhedQZI2SIlSrwcX7UpNjhsc=;
-        b=C+bxDZFR6wW/GCfKDDmVNjmRaZCE06lYuaCicsgc8AyDspZJTzG6XgObtUKZOO0JQU
-         gX94NownPDJudtjW6c3uWJ28KVfQt4V6BUVWWRYYblbfqb/1NrDRtGW+tntWHMA5b3yD
-         EA873SF/pzSfYyhln7QSvgZTeBFcRobGT9/4aFxAFhyL7h9T7HbpTwY4t+teG+ALCWb/
-         6EO7NbBO2DVlJI9rFHYQXkGEjtHMVy0UOXD+rcKaFaa8UWPHtqPuW/dRt4CPl+ZHXxYY
-         Yw2jBRLahQYt3cYFHhUmvil3RK1/skm5O3gESp7fT98ABVTJUK2c5oQNIfxqTrAEC+N2
-         rvew==
-X-Forwarded-Encrypted: i=1; AJvYcCVcVnlCnrDl9limpihxkdAxLSc8uLUR5816jjf+78dxPTc1QONa/VXCNxXI3LCtZ3399wJPEnXS/U77ZHX6x6xqEvm1BZMHF4rXO5td
-X-Gm-Message-State: AOJu0YznvLcsuCA1UWiaVKxu4gAIS4OVkwGr3denzd0zQSf0ESKqp0yd
-	FRzwK5C/OZ1gOo5FSieHRs3C0dvjy/cgOlQzwmIyHKayNWwE8xq2G+rb49Fo5sdwWXHRpiZagUz
-	QhYNSzz4JAYFnDsn88r0Sp0yO8f831eDTq34I
-X-Google-Smtp-Source: AGHT+IEjbiKBZ1jiOYgJ/iLL5pMFWzx2q/MMT+P4u529zBOknbbnzGDr+QZeruNnZmKG91iwCdca30Gpp5qvkGowQU4=
-X-Received: by 2002:a0d:e810:0:b0:632:5b24:c0c with SMTP id
- 00721157ae682-63a8dc08affmr92557717b3.5.1719001898037; Fri, 21 Jun 2024
- 13:31:38 -0700 (PDT)
+        bh=CnCN0NXOSNtwy42IdVdysfTTD5ti/ff9XMDOhhfiLx4=;
+        b=Wmr4ojYwzJKS70ByQaQmzf7KwXih+TofMMRK6IUbnw8VspWANVZm0/5P3XAXomgA4B
+         Jz7RIYa+imGQUOUPvMoUBsQ1nJ7W/W07qscPDaE/yA5UpVqovugd9tIn7DyQoOz1cgNN
+         nJFAbzrJQ778xCcHuK5DX2msHAFJK9iAc6vMOVt2wp61PUNJYXWwpqxX6ngljEesYzJ0
+         /JdNxpeNm5ULWJKKIV1LE8ds7haI6C54Xhx+ApWI+8ldL0fkr/5W6sB5aGdAP2FkuwMB
+         vY9lflEX2ZjiH+7poTpamBKyBnVRYRaExqPVm7m+IFBjG+OYojvAPkNWrnilLcaY1lGy
+         OwjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJSVAzgrPp5MbRvld7aI0622mpj3UpUdRBL90KxKszY94CNgnOnR3us7nq4aAnJKpvOwD7+cPXCfrMn6txFju8ZLiQEoq9YmqnfKts
+X-Gm-Message-State: AOJu0Yxx3S2Z/TUgenycMNxdtl3FkwG/h/Sn/dNG/0vTRiJQyhirmW42
+	HSzE+A/Br6GzlixOQTywtDhVYX7OYhpETT9o3ObGYUkw0Vw36LQ7mA31nuf4krWpfiXMXMjY5cp
+	CHEK/2S+7WosLR9VctZhZcTFLsnWA7YzZX5MR
+X-Google-Smtp-Source: AGHT+IH800HqMIWMw3Gfm64r6WN21nh+bezjnNGagk7G9R1DzDSpY7p4WYQEQWPwKzYCAyy4hb9MTRJUxXOTUM+VMbg=
+X-Received: by 2002:a17:906:f349:b0:a6f:49eb:31a5 with SMTP id
+ a640c23a62f3a-a6fab7d0b64mr465681666b.77.1719001903259; Fri, 21 Jun 2024
+ 13:31:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231215221636.105680-1-casey@schaufler-ca.com> <20231215221636.105680-3-casey@schaufler-ca.com>
-In-Reply-To: <20231215221636.105680-3-casey@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 21 Jun 2024 16:31:27 -0400
-Message-ID: <CAHC9VhQnzrHPRWKvWPSuFLWHhcXkwqeAfXsFbEdBBOMcACZorg@mail.gmail.com>
-Subject: Re: [PATCH v39 02/42] SM: Infrastructure management of the sock security
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
-	keescook@chromium.org, john.johansen@canonical.com, 
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
-	linux-kernel@vger.kernel.org, mic@digikod.net
+References: <20240613013557.1169171-1-almasrymina@google.com>
+ <20240613013557.1169171-11-almasrymina@google.com> <20a6a727-d9f2-495c-bf75-72c27740dd82@gmail.com>
+In-Reply-To: <20a6a727-d9f2-495c-bf75-72c27740dd82@gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 21 Jun 2024 13:31:29 -0700
+Message-ID: <CAHS8izMce36FwLhFB0znHQYmxpe5hmTSXtZA7+b5VsmSJUfhRw@mail.gmail.com>
+Subject: Re: [PATCH net-next v12 10/13] tcp: RX path for devmem TCP
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
+	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 15, 2023 at 5:18=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
+On Mon, Jun 17, 2024 at 9:36=E2=80=AFAM Pavel Begunkov <asml.silence@gmail.=
+com> wrote:
 >
-> Move management of the sock->sk_security blob out
-> of the individual security modules and into the security
-> infrastructure. Instead of allocating the blobs from within
-> the modules the modules tell the infrastructure how much
-> space is required, and the space is allocated there.
+> On 6/13/24 02:35, Mina Almasry wrote:
+> >
+> > The pages awaiting freeing are stored in the newly added
+> > sk->sk_user_frags, and each page passed to userspace is get_page()'d.
+> > This reference is dropped once the userspace indicates that it is
+> > done reading this page.  All pages are released when the socket is
+> > destroyed.
 >
-> Acked-by: Paul Moore <paul@paul-moore.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: John Johansen <john.johansen@canonical.com>
-> Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  include/linux/lsm_hooks.h         |  1 +
->  security/apparmor/include/net.h   |  3 +-
->  security/apparmor/lsm.c           | 20 +-------
->  security/apparmor/net.c           |  2 +-
->  security/security.c               | 36 ++++++++++++++-
->  security/selinux/hooks.c          | 76 ++++++++++++++-----------------
->  security/selinux/include/objsec.h |  5 ++
->  security/selinux/netlabel.c       | 23 +++++-----
->  security/smack/smack.h            |  5 ++
->  security/smack/smack_lsm.c        | 70 ++++++++++++++--------------
->  security/smack/smack_netfilter.c  |  4 +-
->  11 files changed, 131 insertions(+), 114 deletions(-)
+> One small concern is that if the pool gets destroyed (i.e.
+> page_pool_destroy) before sockets holding netiov, page pool will
+> semi-busily poll until the sockets die or such and will spam with
+> pr_warn(). E.g. when a user drops the nl but leaks data sockets
+> and continues with its userspace business. You can probably do
+> it in a loop and create dozens of such pending
+> page_pool_release_retry().
+>
 
-I had to do some minor merge fixups, but I just merged this into the
-lsm/dev-staging branch to do some testing, assuming all goes well I'll
-move this over to the lsm/dev branch; I'll send another note if/when
-that happens.
+Yes, true, but this is not really an issue with netiovs per se, it's a
+quirk with the page_pool in general. If a non-devmem page_pool is
+destroyed while there are pages waiting in the receive queues to be
+recvmsg'd, the behavior you described happens anyway AFAIU.
 
-One of the things that has bothered me about the LSM framework is the
-inconsistency around allocation and management of the LSM security
-blobs (the `void *security` fields present in many kernel objects).
-In some cases the framework itself manages these fields, in other
-cases it is left up to the individual LSMs; while there are reasons
-for this (move to the framework on an as-needed basis), it is a little
-odd and with any inconsistency I worry about the potential for bugs.
-I think moving the allocation and management of all the LSM blobs into
-the LSM framework, similar to what was done here with the sock's
-sk_security field, would be a Very Good Thing and help bring some
-additional consistency to the LSM interfaces.  Looking quickly at only
-the SELinux code, I see six additional blobs that would need to be
-converted; it's possible there are others in use by other LSMs, but I
-haven't checked.
+Jakub did some work to improve this. IIRC he disabled the regular
+warning and he reparents the orphan page_pools so they appear in the
+stats of his netlink API.
 
-Casey, is this something you would be interested in pursuing or would
-you rather I give it a shot?
+Since this is behavior already applying to pages, I did not seek to
+improve it as I add devmem support, I just retain it. We could improve
+it in a separate patchset, but I do not see this behavior as a
+critical issue really, especially since the alarming pr_warn has been
+removed.
+
+> > +static int tcp_xa_pool_refill(struct sock *sk, struct tcp_xa_pool *p,
+> > +                           unsigned int max_frags)
+> > +{
+> > +     int err, k;
+> > +
+> > +     if (p->idx < p->max)
+> > +             return 0;
+> > +
+> > +     xa_lock_bh(&sk->sk_user_frags);
+> > +
+> > +     tcp_xa_pool_commit_locked(sk, p);
+> > +
+> > +     for (k =3D 0; k < max_frags; k++) {
+> > +             err =3D __xa_alloc(&sk->sk_user_frags, &p->tokens[k],
+> > +                              XA_ZERO_ENTRY, xa_limit_31b, GFP_KERNEL)=
+;
+> > +             if (err)
+> > +                     break;
+> > +     }
+> > +
+> > +     xa_unlock_bh(&sk->sk_user_frags);
+> > +
+> > +     p->max =3D k;
+> > +     p->idx =3D 0;
+> > +     return k ? 0 : err;
+> > +}
+>
+> Personally, I'd prefer this optimisation to be in a separate patch,
+> especially since there is some degree of hackiness to it.
+>
+>
+
+To be honest this optimization is very necessary from my POV. We ran
+into real production problems due to the excessive locking when we use
+regular xa_alloc(), and Eric implemented this optimization to resolve
+that. I simply squashed the optimization for this upstream series.
+
+If absolutely necessary I can refactor it into a separate patch or
+carry the optimization locally, but this seems like a problem everyone
+looking to use devmem TCP will re-discover, so probably worth just
+having here?
+
+> > +             /* if remaining_len is not satisfied yet, we need to go t=
+o the
+> > +              * next frag in the frag_list to satisfy remaining_len.
+> > +              */
+> > +             skb =3D skb_shinfo(skb)->frag_list ?: skb->next;
+> > +
+> > +             offset =3D offset - start;
+>
+> It's an offset into the current skb, isn't it? Wouldn't
+> offset =3D 0; be less confusing?
+>
+
+Seems so, AFAICT. Let me try to apply this and see if it trips up any tests=
+.
+
+> > +     } while (skb);
+> > +
+> > +     if (remaining_len) {
+> > +             err =3D -EFAULT;
+> > +             goto out;
+> > +     }
+>
+> Having data left is not a fault,
+
+I think it is. The caller of tcp_recvmsg_dmabuf() expects all of
+remaining_len to be used up, otherwise it messes up with the math in
+the caller. __skb_datagram_iter(), which is the equivalent to this one
+for pages, regards having left over data as a fault and also returns
+-EFAULT, AFAICT.
+
+> and to get here you
+> need to get an skb with no data left, which shouldn't
+> happen. Seems like everything you need is covered by
+> the "!sent" check below.
+>
+
+I think we can get here if we run out of skbs with data, no?
+
+> > @@ -2503,6 +2504,15 @@ static void tcp_md5sig_info_free_rcu(struct rcu_=
+head *head)
+> >   void tcp_v4_destroy_sock(struct sock *sk)
+> >   {
+> >       struct tcp_sock *tp =3D tcp_sk(sk);
+> > +     __maybe_unused unsigned long index;
+> > +     __maybe_unused void *netmem;
+>
+> How about adding a function to get rid of __maybe_unused?.
+>
+> static void sock_release_devmem_frags() {
+> #ifdef PP
+>         unsigned index;
+>         ...
+> #endif PP
+> }
+>
+
+Will do.
+
+> Also, even though you wire it up for TCP, since ->sk_user_frags
+> is in struct sock I'd expect the release to be somewhere in the
+> generic sock path like __sk_destruct(), and same for init.
+> Perhpas, it's better to leave it for later.
+>
+
 
 --=20
-paul-moore.com
+Thanks,
+Mina
 
