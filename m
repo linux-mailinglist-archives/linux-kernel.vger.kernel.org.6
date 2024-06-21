@@ -1,126 +1,140 @@
-Return-Path: <linux-kernel+bounces-224328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968409120D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:39:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8369120D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50BF2287C3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:39:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E6F01F22027
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D21816EB66;
-	Fri, 21 Jun 2024 09:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140C216EB6F;
+	Fri, 21 Jun 2024 09:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IJLF2ri/"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="M84UPz6W"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397A016E887;
-	Fri, 21 Jun 2024 09:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BE47710E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718962752; cv=none; b=YVS1HBxo+a3tlpg2cUqdzbFOQ5MmCEfqmbZdCPL+79KALe2v0bequsAmS7gA5/sUP0zI5XDaMMT7WrdypV4YuFRh8dHLgiyXVwygQsB+Hx798fzudDwOWgIYPR4KaeJoydVUZodMBf7oIFOwVcPHtv0dmEaSS50M4cWsrAwXDcY=
+	t=1718962786; cv=none; b=oM4bvtFr4zZ0u1RVt90bZfQXr6XQvbbW3t3TxnDzIbSX0Njd409TWthz44ftJPcjKQgQJyRtwBoS8H7yxvzWu7lu4qMY30k9+gaxpuDvBsyVL1VZuCT5NXC5q+gZ1i9KV+yghaC2owaG7UWqNvozLfNdEQ8Z1PXYjZvBbGynuMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718962752; c=relaxed/simple;
-	bh=T/aPMOBDsmq50nQycGqwzMw9pkeImqzsw4kg2uOJlsw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ns1bo9DayO142QHhho1Yb3a3KeqppUJzyQkyo7ZjC1LJYsXtbjrKoEY/Cg/Q3FlECEDoYuLGCf32vsKmhkVxWSGmNyTIFUH/BNdV0vw3NerKmdcqH8xBK9DOtX8hpmB0ZXfznI2qyuJTaYlGxfUQsPi//k5JTWm8vTsvG6zycN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IJLF2ri/; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718962681; x=1719567481; i=markus.elfring@web.de;
-	bh=LI+TUiiSLkqLlCWlQdpsZtnsM9Nk+W/XQI+XUAJ4VZ8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=IJLF2ri/yYIifJt4pww1wpP+lWTM2aP+oEhxmMIMpFQhV44AKRES8PQFvYekv9Ct
-	 0hJm19ZpN2vyQrkJpnoBEpJEOQUfb4/muTZE+u/lB2UP/5e2FmQmfNlPqKg1XMZUd
-	 cp5VHrQfhBmCDzq5nAw1360V0qKIEoVTAiJLzxAmWSg1tgZfUBk/JAfGqN29rRhvt
-	 EhnMp3Fq7DtAeJL/KkKXguCS13qnLqh/6gCNjuPYJig9IRZzL2KttHJTocas0JNu2
-	 3ItBqu3E4lVy32vLdqZv81P30BTUHfY2kmR9hJvee4+ldvojYOCgBBkqlpCpNsHKo
-	 Q3krXbwfmClHqjXM8A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1JB0-1sNKnz09zW-0099B3; Fri, 21
- Jun 2024 11:38:01 +0200
-Message-ID: <4c840379-5b7f-40ea-b42c-08031cffaae4@web.de>
-Date: Fri, 21 Jun 2024 11:37:53 +0200
+	s=arc-20240116; t=1718962786; c=relaxed/simple;
+	bh=FP38xlj8/r8bCZ8KQj6fPg81YiPJc6xm4wu0CROHhr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pGVFgStkqTApg2lNXMsNkkQABiaIoiMAqyiSLmcpkXAv4uUqj3nrMQUmPgI2F3YLWnctoIIPZroOiHTzHkOnt+A/vI6MDHJtqC8mOZ8PuV7oi6E7HY0rqkxpb6XW/16IvFGr1W7wMqkQMiZLTtjyOguPSkcHayv3cqSZ0IsAofQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=M84UPz6W; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: daniel@makrotopia.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1718962782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F17P9pKVySbI9fXVe++iTydSN358yg4hkbFcPDVCy1k=;
+	b=M84UPz6Wu0UdD81k8U0RjQXVLLhTxopBIriQfgTZL6bUK8n+gKUKsIz9KB3vMEXQl+M2Za
+	rJr+tk+CHZgryOqLzkPQ6Wm7Q9RLm5AIe+kAQ0F83m07A92nTXF9I/29ZAeUS3A1vHtlox
+	j9hh0Gk5ktVgr7nBn8WtgCkLbV2ijJpxO8eWNI5qG1OQqZBGaNqjAE6zqFULsW4si3fq8M
+	uCyvJZ9qxNTY44KhmNkkkoqC28BzPkcpnNOVti5Zh6P3CUthzdrwae5xUczj5iQ7u7dZKB
+	DclCF+2Tlwjxx+yJfXcbIIPxO4veiO6g+KSMZcjrTez/E57huvpw93GcQ/BjHg==
+X-Envelope-To: aurelien@aurel32.net
+X-Envelope-To: olivia@selenic.com
+X-Envelope-To: herbert@gondor.apana.org.au
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: p.zabel@pengutronix.de
+X-Envelope-To: ukleinek@debian.org
+X-Envelope-To: sebastian.reichel@collabora.com
+X-Envelope-To: linux.amoon@gmail.com
+X-Envelope-To: dsimic@manjaro.org
+X-Envelope-To: s.hauer@pengutronix.de
+X-Envelope-To: martin@kaiser.cx
+X-Envelope-To: ardb@kernel.org
+X-Envelope-To: linux-crypto@vger.kernel.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: daniel@makrotopia.org
+X-Envelope-To: didi.debian@cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Daniel Golle <daniel@makrotopia.org>,
+ Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Heikomemcpy_fromio Stuebner <heiko@sntech.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Anand Moon <linux.amoon@gmail.com>, Dragan Simic <dsimic@manjaro.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>,
+ Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Daniel Golle <daniel@makrotopia.org>,
+ Diederik de Haas <didi.debian@cknow.org>
+Subject: Re: [PATCH v3 1/3] dt-bindings: RNG: Add Rockchip RNG bindings
+Date: Fri, 21 Jun 2024 11:39:38 +0200
+Message-ID: <11022668.754mm22UMy@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <68762122.lzCB0yxN2V@bagend>
+References:
+ <cover.1718921174.git.daniel@makrotopia.org>
+ <10f621d0711c80137afd93f62a03b1b10009715c.1718921174.git.daniel@makrotopia.org>
+ <68762122.lzCB0yxN2V@bagend>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- linux-hardening@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-mm@kvack.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- David Rientjes <rientjes@google.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Hyeonggon Yoo
- <42.hyeyoo@gmail.com>, Jann Horn <jannh@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>, Julia Lawall <julia.lawall@inria.fr>,
- jvoisin <julien.voisin@dustri.org>,
- Kent Overstreet <kent.overstreet@linux.dev>, Lee Jones <lee@kernel.org>,
- Matteo Rizzo <matteorizzo@google.com>, Pekka Enberg <penberg@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Ruiqi Gong <gongruiqi@huaweicloud.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Graf <tgraf@suug.ch>,
- Xiu Jianfeng <xiujianfeng@huawei.com>
-References: <20240619193357.1333772-2-kees@kernel.org>
-Subject: Re: [PATCH v5 2/6] mm/slab: Plumb kmem_buckets into
- __do_kmalloc_node()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240619193357.1333772-2-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:BEYWf/UP7l4wwAmSOrMH8bbsktOyISHBhJIR6aSVd/kq2OOxTQw
- ftrg7iIh10zf9RcGZdVCIlSYg8D0ycukhR8p0oLjYV2Up0bzkbmHVDUVjmMq3//AyUeCODU
- OdoEwtlERy9p8a5U+l/9v4RJLFk/5oH8U51MrVi+AbWG1Y3NAQyc1jbPKFNQjvB7KLBbHyM
- xkaAP/zWFXEqp3YG5gm/g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Gfasfj2649I=;miT2W0lf6qO791rq2eAxJ/XCoDl
- Z2UnNOfndQw/ouoCDL4ep6yQmr3s7xRRtOmnv8UvLzIDGC3PAHzbkHwyHsgHBBVigBYuxmdFu
- ZDtWSvotNeh7tmpH1sKTEOQlFcswJ2K+oU4d54jD18TlQIdIQi3t8ODeV1TNpcEAZURyF9t0x
- VTr7KeSDDX16OY8Kn9Jf5tKIN53vBI2i7OLVTbqKb5ImxGzuFlpFEvLfCSMe3HwZV4ROcqmp8
- oVtjlBAwhJ1Fxt4lfRI0k9agml3kVGS6neUMKuD5wC6CROCY6RXgY/juF25KwpTuWFS4JRXdv
- 0CUDmqVSWDnGtFU9YnkIWKTrtXu9b5cc7rHi3iDV3bEwB2/n859kuOqUarlwVgPvCB4/grHaP
- 9om0m0jvQHYasZ3Bzk1lgmqmdq/Agw5htgMMlcFWIA+fl+GGv3U7peUIpiEinXjPSlwA7iIKu
- /PeCw5hy8Iu6dCmxvQz7Tvez8KSsNXjYVx6V9y7S15NaVSKkBKQjGsFfoCM3ujTKmupduer98
- 5g4w0m89rxKM8BR84PAbbs4zTUHq+7EvpZkoBJ0Pcb/gnKWCWjqBBnLCdIKlcSIXsEq/y9/s9
- UBvVc7Ug3xNz09lywFjJSQVeCMmL9GgVm17JreGF0GwYhYQ3kzDyYjDfQSOKoR4cX+D8o13eT
- 1XealuCgWVZ+3YFQ07oTbhy6kWYKvqpkRmds5zBgGyl1OEB+kXk3wA1izfMoC1/s4bREEXLfb
- TK69yDbQqRwM+9JwE9ZNJlZ7uv77CrWS+azX0TkfMP+bDQqbKtMyyp+Y8ghv3w6v5vd6hY7RF
- YCQVV9uR7Vi3sdw0VfM7ASQT0bl/a806XE9HG9SjMtWag=
+Content-Type: multipart/signed; boundary="nextPart33708828.OdkiG2bhLU";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-=E2=80=A6
-> functions can then been built without the argument, =E2=80=A6
+--nextPart33708828.OdkiG2bhLU
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+Date: Fri, 21 Jun 2024 11:39:38 +0200
+Message-ID: <11022668.754mm22UMy@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <68762122.lzCB0yxN2V@bagend>
+MIME-Version: 1.0
 
-                     be?
+On Friday, 21 June 2024 11:12:35 CEST Diederik de Haas wrote:
+> > +title: Rockchip TRNG
+> > +
+> > +description: True Random Number Generator on Rokchip RK3568 SoC
+> 
+> I *think* that the TRNG for rk3588 is different, so shouldn't the title be:
+> 
+> Rockchip TRNG for rk356x SoCs
+
+And I just noticed `Rokchip` in the description, so that's missing a `c`.
+--nextPart33708828.OdkiG2bhLU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZnVKWgAKCRDXblvOeH7b
+bo/WAQDnYl+LPfUhcypL7EAoGbH3FOzB3zav+r4xz8nCx6VAlAEA2EROli/zO/gU
+Gzgahi+rLvQnzlFGOyM3qgeOw2xCXgA=
+=BEBo
+-----END PGP SIGNATURE-----
+
+--nextPart33708828.OdkiG2bhLU--
 
 
-=E2=80=A6
-> +++ b/include/linux/slab.h
-=E2=80=A6
-> -void *kmalloc_node_track_caller_noprof(size_t size, gfp_t flags, int no=
-de,
-=E2=80=A6
-> +void *__kmalloc_node_track_caller_noprof(DECL_BUCKET_PARAMS(size, b), g=
-fp_t flags, int node,
-=E2=80=A6
 
-Would you ever like to reconsider the usage of double underscores in such =
-identifiers
-any more?
-https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
-efine+a+reserved+identifier
-
-Regards,
-Markus
 
