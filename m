@@ -1,105 +1,176 @@
-Return-Path: <linux-kernel+bounces-225751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E199134D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:25:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768949134CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F06D1F21E9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:25:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EABA9B24EF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E972170821;
-	Sat, 22 Jun 2024 15:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B0916FF2D;
+	Sat, 22 Jun 2024 15:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TiC6xX/q"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SLDq+EIK"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2161CB660;
-	Sat, 22 Jun 2024 15:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2242DB660;
+	Sat, 22 Jun 2024 15:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719069908; cv=none; b=sc2ELyi3pAekSNnKltqDLwgok5N6gc+aLrlrwtgrdBqO8Wijy5m7/o97Z0GfFOgmd6vrNtLc/tmaFtGfPBVteLmm2jNA39MbWwpbZog3P2EKZiGWh5f+vDZfeoJrNgCz9/V3sdEpBYrl5apqgNu6vz5j6LgKfw6fkJw8WtOmcCQ=
+	t=1719069900; cv=none; b=oLhY40GoO6QYdaOy8R1aOBFV1vfSikSniav09A2PZDviL2xC5Z1nsesk9CQ67/kwoVZv2zFcOZ2VLl6sX4hruNvG6QsIt/U2CDjqig2Ua7bYAQY3WcYAUnBIDNsZ9e8i3lopOgSsVPQIeS9ZPLsJPQprbRLEE4kvsG+JPYUAL5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719069908; c=relaxed/simple;
-	bh=fUdDu2yoZ6+wNUWrwToAORtf2lLzJ28mpOYZoq94kRY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=neLcfQLlBrx37q32apQ6HXbXKBk2fHXrYeu0vykpGM8RdwmkX060/cedeODZY2VJJPKsOJMRTPTkqRFALgIn99fBHpwkeLdFtJt0vSsQSCklffwBkx6cTIlwMEzI0bweTXE5WVChnkMZERXWoh8654UdvxoXvVdJSdrFgK6I7j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TiC6xX/q; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719069870; x=1719674670; i=markus.elfring@web.de;
-	bh=WECqVRv0TZb8C3EeVUwSaylaWepEfohQXMBJFu7n5+E=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=TiC6xX/qTiwXM7MccOqGzXJiM8o/dpIoCuaAGXGIu0lL3Z2+vQpe3lZNIgE2X7kS
-	 thJmUMEfvw1L2Brpg0vdQTpRABf137nKUrUTIWpAfhnCsgdIDftlMZZmWOJq1cQpy
-	 pNndir5cSc/kwWMvXonAnP9E9evOd4aV43k46dyNYeajDWrulZOTcHRPjTZtrkuAn
-	 AySA9dV5A2ClcTF+y9T4r6vChAFOpepBsiHdp0TJfOO2CknUodTj9OgM+O80n8Hai
-	 HHt3QZpVEil/Ho102vR/h+rf9qp7czrhCSRg1YVPXRr4siKGiOBkvcJE0zppEcaNh
-	 ++pne4RzU+7MgZjIkw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M6091-1sIZtd2lpL-00DHjP; Sat, 22
- Jun 2024 17:24:30 +0200
-Message-ID: <bb23a7b0-dce6-4359-995a-2c12cf30cfff@web.de>
-Date: Sat, 22 Jun 2024 17:24:25 +0200
+	s=arc-20240116; t=1719069900; c=relaxed/simple;
+	bh=6caVNfHTLv+Bqjo8900FUooAVRuNhA6RULeILJX/6/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s5f8sF5EUejaLHWuXlDgBe569gE0cO0Vj4OjDvAt733ibSyBfkL2IAdpnVjbMoJHKDEkxvGn50a/50MMwvwFVY0M/GXZOn+N3i6qwi9YKjtDqtK1KrHyaboPEKfKjo+0cjlVsT2aIayjikdvHyO6STpyPDuBs7oNUuTi9pr+pyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SLDq+EIK; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so34510571fa.3;
+        Sat, 22 Jun 2024 08:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719069897; x=1719674697; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LNJ3A3/ZoubiYa0vnJHTcpHavO0LE2V8lljWDxJfZl8=;
+        b=SLDq+EIKGeVyQnxXfq24S8wsdILu3pLOLByBt2fUQxaYXpwL6rmv1T2ubSlQLHuxTN
+         gNmLW4OLqRkv7A0PAOftpkyn1lj35YtghNHCzFy8NjquOtIFo1IUaxgVZAo4yRyzpwFw
+         9YvgnFvEG1zpZXBbedwBuwxakdlSvGOMGH7igHf6z+ot8i6xVloRrRrnOww4y2utzWSW
+         CJ2tH1Tgb5GVf3c3Wdx4E1MBu3Hydr9TTqzW9FEg0xHYBpDUf8su9SlK4nNOOXdKefe6
+         41aspPETudkC/WdK7vMXGfKSOXsWJddVOcbdIlnlaNKsMlWQRV6CXkSVWbzkgGT7Fsoa
+         4LhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719069897; x=1719674697;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LNJ3A3/ZoubiYa0vnJHTcpHavO0LE2V8lljWDxJfZl8=;
+        b=kt3V4L+LKBkGTY2rZiFNTmkiKHYKmVPmI4BuiB9Rmw6BgOMhIkrovxIgMOOIJJ2tWb
+         UGoTY28FqPk9KTAP3wMv8baYUD4FDowmKlp5ApkwVCNd1uCjwhWIJvrTCu+HgJeVLsFy
+         0VYKtDgfNzXvHaE1zi04nLkioU+Z+P+tKTs0diwT1cTv2LSolSnA91w8Vlrcv/0CNKg7
+         xpBs1LM4UeCghWeSzE/uaqoOetOh/Yg+NwCD9g7OLwSN/BVudnz0OXU6XTFInUg8tYe0
+         AOB+/g5IBU416FKIS9CGYIQ5jhPQNjHOVrUOAFq15ClU7melz1yh1HFGP+6LXils/2Ku
+         /aIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXS6CSJfWLNfXz+WCZSY0Q6Yvmk1WUQMhb7hIR0iLcQXAdYG7WL8xCiGHGieRL2ixRS7+V1j5jIOkuYkpeYwinunHHwSICSXm2+OHgpdZfOPJkq7d2BVVGhr51B0it/4I7uqirvgpkepQD/caVcYu7I9kYxxXZndOftZuqzasT11+SlqJpOmmF2UXcbg9LQvBWNNg0rZtwsCO1hIfLwrDnrAmfuww==
+X-Gm-Message-State: AOJu0YwfCxJcNH16I3wOIrJOGRPsXCJgaUuSG5iDietqASvkH/KvyAH/
+	fAEJzOQyL6LNVTIplGSZv6ry+wrD/sTVqeTZeY2Bt+eMrnuoMihRPkh0PCunOAi4dBsIPIxpVj+
+	D06fj1xIqr86EvsbKJSpDxvGD1Uo=
+X-Google-Smtp-Source: AGHT+IGBNs9qsdlFtAbkBUFgGsGr7NinG7KxjziUKHsUT5TWrmBFJLJFgJwjuQ/oH+YQlL8u4VsuXQjAQhxA5QH6Umc=
+X-Received: by 2002:a2e:7207:0:b0:2eb:f7a4:7289 with SMTP id
+ 38308e7fff4ca-2ec579ffb0fmr7211981fa.51.1719069896867; Sat, 22 Jun 2024
+ 08:24:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, linux-aspeed@lists.ozlabs.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Joel Stanley <joel@jms.id.au>, Neal Liu <neal_liu@aspeedtech.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240622095618.1890093-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] usb: gadget: aspeed_udc: validate endpoint index for ast
- udc
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240622095618.1890093-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
+References: <20240621-b4-sc7180-camss-v1-0-14937929f30e@gmail.com>
+ <20240621-b4-sc7180-camss-v1-1-14937929f30e@gmail.com> <c3e2e7a1-e424-4808-a690-a457e0526f3f@kernel.org>
+In-Reply-To: <c3e2e7a1-e424-4808-a690-a457e0526f3f@kernel.org>
+From: george chan <gchan9527@gmail.com>
+Date: Sat, 22 Jun 2024 23:24:43 +0800
+Message-ID: <CADgMGSv8fTO8Cft90MHria1fa=WKU70p5OrAts=bH6iUY=NgsA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] media: dt-bindings: media: camss: Add
+ qcom,sc7180-camss binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:yIDH9MnOrIf0xCjyLzgV99kn2dkVnUILL8Ig2mwCXjJ1DMn9JRf
- hwtJM/HMYJDzvWmRpWzeOVbgEWfOmdeqpLtVm6dy+WImF6+hxuh41iczAODFZj+4EjHeylD
- RWJTXrMJlJBKN5/aXx+aHfGF1vixbncCTvj6umHs2Vf0oeLQkx7xdhUDyhs9scmvZz+rlIc
- KrfidPgw7I1m/gpW/02/Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BtDLJqtpZP4=;YBAa051E6UtkLYeabXtx0bDWGu/
- O3XQy4Cw5LGx+hpgnHBQF7I1hj0zHDYrqkcxs0vfCcNBZ7MWjhJDV4XzO9n2OSExZMaCegZUX
- vEaznDvYvvI4Q6kIunFKmKtqeedik/tYOq1iyfwndJz0UB9YkQbpNQkg6SZW8rQ/uhX9V+fsU
- 0Oj9GMYfVFceTioDSTBp5MPOcXQGkSc+FFKsQsAvRSr9+OXiQpZgOFlZnZNFAvMvsYvMc6Lik
- KkTndu3bUBGdu1XsHLV7L1t8NlxoAZn5/666WLlY459CHusNOwHSf18g2hHo+sbSN9OoG5jjw
- X9kcDRBXaEJUCdONvGS/rQQpp5x8c+MP7JBEH6wkIhBRd7CytNABNLyUMKPURBPcRWztrY2AE
- PHWbs3SqMnpm2WFqOgjfoyTGWZ427jhDnJRzgZANAkD2Vv6oksEp0dgeYP8GOJ5dnyJnUluhw
- 3XaKyDVr7pfVxNcBcEcH6Umm1ypb22Mk5FZSfdT1MDgyJ55MNXHPMHHZNq0onLkY53unuZP/1
- kU68XdYcktGMkNnebqcZBQzhe1ZR4yJztjIPCmhGj2l/ttozoYQ11kBiHZbmmTXIAFTlG8Enh
- EzxzstMLsev/GzqPD1idi9+8P5gGvwoPTkStZ5j5a6NsIefh/fA5OL9PLiZuAK5e0sZlpMFHi
- kYlqQLs6SP0cOZh46dqHIPv2XP+bLl3u6e+l0MN0lofv5o7lWtXgjbFo+uwKCbnSNKIgGQNeL
- w+x9kUlgGE885pW5DbqiSdSJufJZfWP9pKdjggWsQ91JBcumc1hs0bnRzd1P+hJ/1D6rS3Jd8
- 5GmvR0yOUG+rLGwqv83NIZxwadLxHplV9kJP2OiEhni9g=
 
-> We should verify the bound of the array to assure that host
-> may not manipulate the index to point past endpoint array.
+On Fri, Jun 21, 2024 at 6:02=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 21/06/2024 11:40, George Chan via B4 Relay wrote:
+> > From: George Chan <gchan9527@gmail.com>
+> >
+> > Add bindings for qcom,sc7180-camss in order to support the camera
+> > subsystem for sm7125 as found in the Xiaomi Redmi 9 Pro cellphone.
+> >
+> > Signed-off-by: George Chan <gchan9527@gmail.com>
+>
+> Subject: just one media (first). No need to write media: media: ...
+>
+>
+> A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
+> prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree=
+/bindings/submitting-patches.rst#L18
 
-* Can an imperative wording be more desirable for such a change descriptio=
-n?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n94
+I found the cause of this, see if I can fix it next round.
 
-* Will any tags (like =E2=80=9CFixes=E2=80=9D) become relevant here?
+> > +title: Qualcomm CAMSS ISP
+>
+> What is CAMSS?
+>
 
+No idea from an outsider, i can suggest one like "title: Qualcomm
+Camera SubSystem"
 
-Regards,
-Markus
+> > +
+> > +maintainers:
+> > +  - Robert Foss <robert.foss@linaro.org>
+>
+> For sure this is not true. Robert does not work in Linaro and I doubt he
+> cares that much about camss.
+>
+Well, i might suggest to be like below if no objection
+
+ maintainers:
+-  - Robert Foss <robert.foss@linaro.org>
++  - Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+...
+> > +
+> > +description: |
+>
+> Do not need '|' unless you need to preserve formatting.
+
+How about this? I have no idea what this is, just modify it blindly below.
+-description: |
++description:
+
+Then drop all "minItems"
+...
+> > +required:
+> > +  - clock-names
+> > +  - clocks
+> > +  - compatible
+>
+> Keep the list ordered, the same as list properties.
+
+Sure for this "required" list
+...
+>
+> Missed alignment with previous <.
+>
+Sure
+...
+> > +        reg =3D <0 0xacb3000 0 0x1000>,
+>
+> reg is always the second property. See DTS coding style.
+>
+...
+> > +        reg-names =3D "csid0",
+>
+> So this will be the third property.
+>
+>
+>
+> Best regards,
+> Krzysztof
+>
+Best regards,
+George
 
