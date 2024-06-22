@@ -1,152 +1,126 @@
-Return-Path: <linux-kernel+bounces-225635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5627F913323
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:05:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79EC1913326
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C521D1F23217
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:05:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220B21F23215
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AC91509AE;
-	Sat, 22 Jun 2024 11:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7743F155336;
+	Sat, 22 Jun 2024 11:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lVGUvsSb"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="AnxmN8BL"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2055E14BF98
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8261F153567;
+	Sat, 22 Jun 2024 11:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719054297; cv=none; b=k/rfvlebPhPQnZXzxFg807q4We2WRikZdfs8SRRCwJIwdyUh9N1TEdH7EG1HaTMVZAGp8bahcHeL4kVnIh5MtwD6SRQMKmazepJofAeKzJ/72j3rPI0nC05tb2cKinFzRvqxC9nOvjwyqLbiPvJiidcayh4giO/uybCBVwPNAH8=
+	t=1719054300; cv=none; b=nl+eJ5cDKcXfG2r62sgPeEJ9Y4ugQsGs17uvDJ+FIfJZONh369PMqB3lGhyXbcINfkkCZoIvj2JMwP7RxY0ocTz9ywWhR6rtUK98qNtaDLkzk/UWcrUFp8dINjbFuLH9+BqoXepVlyapvwgbTKH2LMO64LHhn9UWYxXJ/7hIFK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719054297; c=relaxed/simple;
-	bh=I+mRjMWttkiuYPW+SQSOHOwhv6K+AN5Sep1rk7YplaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=heZ21t3qlfJRQIsj+nHV8mEUfVTE7575y4VYnoh7U72K2+ZE4tJ7BN0CMGojgpoGgrV3hfxnBf1050im4FRwwXWdciZ3qG3oPUdWar69HiJWOcnXbHQB8+vDv5FeoDjgqzcJ6l29I15QiPV3r6rfzLy6ut8HoihpgJT8gXpV6YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lVGUvsSb; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso296416766b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:04:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719054294; x=1719659094; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=s1I90TQbEvc+2WC5x6IbJlb3i9xpMTyN7+tGPOnmPaU=;
-        b=lVGUvsSbLo9wJZiEm+r5BbCFpki7Lc/1sScnfPatwPKdv8UDm7Cqc6GDTrWpHP12bs
-         UkIhzMnyXT9y/Y/V2tqRE6Tptrfi5spVsAJ9B59ZzmwtIlZcc7kshPRUczGQyqHSE0TR
-         ktnc0olfZzbQ+7hq78/K4M+eGQrspPcyzimgcQRLXwbz5uY5g8zinC1AOOOZvqHJ+Ppq
-         Cu8XsH36OtVYba8uxaf/KB3Jb9fbl8J1ujzrDtIJo5sxyexL6ijryeU9xQpEuaqQa5rk
-         88wD7McWkdT5PsoROi5MTzQQZhsQxPX1xCjhTP4k5MS+Wo1whTemDhqQfjk+R1cTlSSo
-         LpUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719054294; x=1719659094;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s1I90TQbEvc+2WC5x6IbJlb3i9xpMTyN7+tGPOnmPaU=;
-        b=ErFchN3zrjd+Y93T+WAbMnbdhqUj0S8KpoHZWMqhyLLHXHB+2KOWG4mVtDN2lo/xaZ
-         WVKERQ3h6NyTGMddJBSHpcB6CyXijo0GqINabfZgHEAlUb/BrMYWFZ/fyfCZlHAtzFPV
-         Aba5wBikI0tEc3wu/MATVvXHjjsMKEZ9OzSCwElkTnX3jS1II9HTxxSSrYASAjNAH6ZY
-         t026emt1aOO9DGgVoTSimZaiDoaR0FKheQS4BYoBgmYZS1Q1PM/cX2EsEdwya1CcGdDi
-         b18DvU2vfaaC08VzDCGTev39MPds5OlOJzZhlGTUcFu413R8kaXpI0lKXR7Nutwpj0ok
-         Qf8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWFJZBnSpo7yoZZrfq4BQhESxLTVNwWQ2FMFgzOm1qN5HZk2VSAGfRJB0yYO/uiR6llDAaFoPI8B2TelU0DUQIzZME+RKPQow/L76yX
-X-Gm-Message-State: AOJu0Yx+/8pAxkAtSirD6ft7BC73VUa/WCjm6tGTolS1W66j8HYqQffK
-	KYJOA80LUPXhfi4qpvN3KXrxFPbixlTIxMnZrA2mCz0bBuEYOjBK43qc1FdjaqM=
-X-Google-Smtp-Source: AGHT+IF+s3rXBAyDALz1gMTQaPWO072y2LorckG8YTUHRh9+/61CB1f1hOEfD4Ak00RcFEYxdubRLQ==
-X-Received: by 2002:a17:907:1603:b0:a6f:af31:6f5 with SMTP id a640c23a62f3a-a7242c9c10dmr9013466b.22.1719054294256;
-        Sat, 22 Jun 2024 04:04:54 -0700 (PDT)
-Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf560977sm183559566b.183.2024.06.22.04.04.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jun 2024 04:04:53 -0700 (PDT)
-Message-ID: <abf727db-f338-4295-8d02-18ab0d04697a@linaro.org>
-Date: Sat, 22 Jun 2024 13:04:51 +0200
+	s=arc-20240116; t=1719054300; c=relaxed/simple;
+	bh=NZNcXXX7oZ4Ic/I2g+QIbYzMDnjzRrmXaFWI7JJSPG4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Au1wCTJRwRYGtbV2Twg7bsPW1yKnZo4iqCJLo69khYkfa+sfxQpUlNl+TBXDukem8fvmPt8zllc3K5/QQB6KJekNOHGisyPhE4WGkbGcO+Djyh0dM0lpzda9QaVRMCxhVilLDH1WS4c+LqOkBJh4H9IboMng5haVGHv6i5J0boI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=AnxmN8BL; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1719054298;
+	bh=NZNcXXX7oZ4Ic/I2g+QIbYzMDnjzRrmXaFWI7JJSPG4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=AnxmN8BLmGsC/BO6Wk1w9jqw9fwm2EOqH4jG687DXDIT8f6HAPiLUMKIdpgvsgvpi
+	 67YDoXyVqIo/mgPva/eSD+KVIOTX5ealwvluRoHkSGg7i93PhmfZtY+LMAgDkb+tsR
+	 3jqvPbVAI8NQOCyBVLyFLeSEj8pcGsP48oalN3Fc=
+Received: from [192.168.124.13] (unknown [113.200.174.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id D8FA467190;
+	Sat, 22 Jun 2024 07:04:55 -0400 (EDT)
+Message-ID: <8c14c943ee0a5619bdc272adbdd76a61809b73b6.camel@xry111.site>
+Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
+From: Xi Ruoyao <xry111@xry111.site>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>, 
+ loongarch@lists.linux.dev, Linux-Arch <linux-arch@vger.kernel.org>, Xuefeng
+ Li <lixuefeng@loongson.cn>, guoren <guoren@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+ linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn, 
+ stable@vger.kernel.org
+Date: Sat, 22 Jun 2024 19:04:52 +0800
+In-Reply-To: <CAAhV-H4HaAnKJFnDpfUY6qdEtoKPxLSgHgU8isMryrab=cq6pA@mail.gmail.com>
+References: <20240511100157.2334539-1-chenhuacai@loongson.cn>
+	 <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com>
+	 <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
+	 <fcdeb993-37d6-42e0-8737-3be41413f03d@app.fastmail.com>
+	 <CAAhV-H4s_utEOtFDwjPTqxnMWTVjWhmS7bEVRX+t8HK5QDA8Vg@mail.gmail.com>
+	 <a21a0878-021e-4990-a59d-b10f204a018b@app.fastmail.com>
+	 <CAAhV-H7OR5tkbjj-BPLStneXFr=1DUaFvvh8+a5Bk_jhCAP25Q@mail.gmail.com>
+	 <cdef45d36d0e71da5f0534b3783b81c82405bda3.camel@xry111.site>
+	 <CAAhV-H4R_HJAB0baqUgA8ucbwWNVN4sc9EV91zAk9Ch302_7zg@mail.gmail.com>
+	 <56ace686-d4b4-4b4c-a8a6-af06ec0d48f2@app.fastmail.com>
+	 <08ff168afc09fd108ec489a3c9360d4e704fa7dc.camel@xry111.site>
+	 <a70e8b062fc422e351fe2369b9979a623fa05dfa.camel@xry111.site>
+	 <4fd0531d-e8f8-4a4c-9136-50fcc31ba5f2@app.fastmail.com>
+	 <c2b1ca127504e519c04a36179ba6c486f2ec0a08.camel@xry111.site>
+	 <CAAhV-H4HaAnKJFnDpfUY6qdEtoKPxLSgHgU8isMryrab=cq6pA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] arm64: dts: qcom: sa8775p-ride: support both board
- variants
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240619183255.34107-1-brgl@bgdev.pl>
- <4df2a52c-c21e-4da0-9ca0-13f28e81018c@linaro.org>
- <CAMRc=Mf4dZHMyexj1Xaw1dMVw0OT3=1t8OMfpHCB0xGJ9JdvSw@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CAMRc=Mf4dZHMyexj1Xaw1dMVw0OT3=1t8OMfpHCB0xGJ9JdvSw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 20.06.2024 9:07 AM, Bartosz Golaszewski wrote:
-> On Wed, Jun 19, 2024 at 8:50 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->>
->>
->> On 6/19/24 20:32, Bartosz Golaszewski wrote:
->>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>
->>> Split the current .dts into two: the existing one keeps the name and
->>> supports revision 2 of the board while patch 2 adds a .dts for revision 3.
->>
->> Are both gonna be actively used?
->>
-> 
-> Yes! This is the reason for the split. I initially wanted to just
-> change the PHY in the original .dts but then I learned there are a lot
-> of r2 boards in the wild at QCom so we need to support both.
+On Sat, 2024-06-22 at 15:45 +0800, Huacai Chen wrote:
+> Hi, Ruoyao,
+>=20
+> On Mon, Jun 17, 2024 at 2:45=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wr=
+ote:
+> >=20
+> > On Mon, 2024-06-17 at 08:35 +0200, Arnd Bergmann wrote:
+> > > On Sat, Jun 15, 2024, at 15:12, Xi Ruoyao wrote:
+> > > > On Sat, 2024-06-15 at 20:12 +0800, Xi Ruoyao wrote:
+> > > > >=20
+> > > > > [Firefox]:
+> > > > > https://searchfox.org/mozilla-central/source/security/sandbox/lin=
+u
+> > > > > x/SandboxFilter.cpp#364
+> > > >=20
+> > > > Just spent some brain cycles to make a quick hack adding a new stat=
+x
+> > > > flag.=C2=A0 Patch attached.
+> > > >=20
+> > >=20
+> > > Thanks for the prototype. I agree that this is not a good API
+> >=20
+> > What is particular bad with it?=C2=A0 Maybe we can improve before annoy=
+ing
+> > VFS guys :).
+> >=20
+> > > but that it would address the issue and I am fine with merging
+> > > something like this if you can convince the VFS maintainers.
+> >=20
+> > Before that I'd like someone to purpose a better name.=C2=A0 I really d=
+islike
+> > "AT_FORCE_EMPTY_PATH" but I cannot come up with something better.
+> Any updates? Have you submitted this patch? I hope we can end up at 6.11.=
+ :)
 
-Ok, thanks for confirming
+https://lore.kernel.org/linux-fsdevel/20240622105621.7922-1-xry111@xry111.s=
+ite/
 
-Konrad
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
