@@ -1,81 +1,60 @@
-Return-Path: <linux-kernel+bounces-225859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC9A91362D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:54:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5072291362E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5F21C21857
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:54:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4F91C21918
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6351876EEA;
-	Sat, 22 Jun 2024 21:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A507176EEA;
+	Sat, 22 Jun 2024 21:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TaE8Wyam"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OivEMamj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332575EE80;
-	Sat, 22 Jun 2024 21:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56AF5EE80;
+	Sat, 22 Jun 2024 21:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719093262; cv=none; b=k2Xy/pmizPX1rmlB1se9dvL3U9JYT2nHKY6zmIMobpSmuzGzvhAG/qi/DZDeOKE+9qMBMdsYOXyEduBIyc0FEQv/Tqf8voH2CMQwwpY5SUoM5wFctn6UgqlFkFPZAIpn+CtZ0I0f7hekOvisOsMjYabIm7qkdCrA5Lj4TirwiN0=
+	t=1719093367; cv=none; b=VbB4nDJ/ky1IiqT2Px1VobuARzXyN74HSDaQW6nBrjE9HkGBNAafJS+QIluoWlh1YStY8wvcjJjh7aJIApv2ND0Tr2te0fxOrmkYVdAbQjZFokrMAsP/3+sag+GO8levN1lZOPDODBTnSojL1A6iKmxdvUHMPB0Z7OnlU/zqAqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719093262; c=relaxed/simple;
-	bh=XdLgw78vP983A+TrIdqPxl7VoHeX0riB0ZOsS3TwwGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GeKl5ey2w3ORsO0YiurXuCNQPRmsA97G168aQZMXHOLe0zQtlkKxVZNuBLbvN972XDmM6cn9IZ4JITamYgdtO0kLGkASME+E0TzkEykA0nppVNNoBOYzwkP9IOy3RiZXuW+ktUYdirpbQejl1jhfLU3+hQFjdKivv0wiWEhm4XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TaE8Wyam; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec4eefbaf1so17879961fa.1;
-        Sat, 22 Jun 2024 14:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719093259; x=1719698059; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=psmXmpnFkPmw8m7RnDe0q4FMekfuWqvHUm1UB3CLbCg=;
-        b=TaE8WyamUvpxuRgU/sc2/v6i+C0YHxNupWZ0UA5wF40lOP3D8Vl7QvoBLtfLy/jpm7
-         4NVi+RTszUu8AUbzkmGzew/u92Afv/9SbTGx/kpwAdd+qAqVY13sg5XDAM3LSBvtfTrQ
-         gHlSiu+7J8NnekHxzmtjGW1Zcjwfc1yg05Z22Mw6Yldw8lwmBWR3/XrT9MtweYP0uV40
-         s9YDrLC1ZKyMWsygygXlM30/Lp97wScIc33iJ+d/YMtba2+0s64HEh/wy03waU13om+W
-         wcv557ryco7+chQkVP33BkidhFLbiQdMs54ES/XW/S1Ebe6uX7bnEM0BEGGP9jCrKWSe
-         VXqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719093259; x=1719698059;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=psmXmpnFkPmw8m7RnDe0q4FMekfuWqvHUm1UB3CLbCg=;
-        b=bpbgjlHktLU9kMNLEaGkUQBQowaQ2vtPvuXiSPm+JTzfExzobXXP3sJz3TicPvLgOQ
-         w5G1fFFEkCDXnpNLQxpUumKmLn3PSv3MLTyaYo2m4Vn9kYdDh6RVCallYnCj6WpDQwtx
-         BwpujR5OjrDemrwVxF8OBwaxEMkW6zd0S7gOZkY6DfHsXE6yAW8uycXIS67sB35N3unv
-         8I05iG6Jht6RaXAJU79iTADJlzC1Ol9/VoJDLD6+idzlhxKkUHXw3TpUvfvNcxPdVHxU
-         E3pISNlNiBxXkfp5Y9WwQwf0+mzNfx5JxIwXgbBZESwP+kakculFe7kWA9tTuRsH6RaQ
-         OlHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUDCsWpbWG+MTOEWSQ38qIBXJLCnI6ZN71djw4oVvWhva92jbuYeU5MPAaIbwam+bz+eVFNyggDiFxN1CX42iWQL0E0N4FnAwlKD7Hl66AAFeTm9gX8nn/+qhSdAn18YgoSdJouFsBLQU3Z9Q=
-X-Gm-Message-State: AOJu0YzPwYxRgTbWO5oQ5dYQJP384owRlbbgMY4/ul202lulosYMOviG
-	WKJhwZ5+uLmY5E+FMMmpUrvFsbd1GdDKRjDMQVVcTCsDL7VgXQw=
-X-Google-Smtp-Source: AGHT+IEkOv7yLf6PDm6Vje2xrzSTTbJGzsmhV1y3d5JhLXiHTmWHaXhFLL6OuSN92I/QDJCY3Gz80g==
-X-Received: by 2002:a2e:8191:0:b0:2ec:557b:f8a0 with SMTP id 38308e7fff4ca-2ec5b3d4abfmr3710991fa.38.1719093258554;
-        Sat, 22 Jun 2024 14:54:18 -0700 (PDT)
-Received: from U4.lan ([2a02:810b:f40:4600:108d:ce41:c0b8:26cd])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3056301bsm2796288a12.89.2024.06.22.14.54.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 14:54:18 -0700 (PDT)
-From: Alex Bee <knaerzche@gmail.com>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
+	s=arc-20240116; t=1719093367; c=relaxed/simple;
+	bh=sf98jSdXelohYzpNFAkZ2dct/moamDBOc/lFtl2cWJo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m6QU0eZ6LVEpWs+fjQZRmh5plULZ+YOoXr1EncJirymyNFtXqBzFAugozybcIaoW7+h8GftIrIjrbLXdbTn+Bq0w7xNNg3wY1DaM0z0zZV7oPC89g/l1DwF9WiAkNQpAqHaqIOrt2hh3CayGcZTt2OHVQIpahwAhq18DXsK5/80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OivEMamj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FCB1C3277B;
+	Sat, 22 Jun 2024 21:56:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719093366;
+	bh=sf98jSdXelohYzpNFAkZ2dct/moamDBOc/lFtl2cWJo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OivEMamjoZx3r3dCQaicsY+uUmMZxfLQ1Rz89s3I6skgavz/PNjMn71DXa1DAmaqM
+	 h2TR9WqAp3zY0Jj26vdaD6bMAin0jTd7QZxQr3rYrgTE+WzBupHtv0IGtQ14gXfxNB
+	 3Wd4S2KwWBMeZ/Du71CX4of1qez7Jd26JvfTjBJBzvH4D8PpQADZxYMFXRdsv6gGPY
+	 /jJyMjKOOKIQhpK/bft0CxvIckiIs5uHu4MoRHStTqHt45T2g9KkeIyFyk9MQeHrM7
+	 KO/td4q9jTrKl4TDvmTHg4jpMUJJUfdWyHe2H5+UQOdacXizss7XwbDSdvjifE08qy
+	 tDZEUWG/WpOnQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH v2] wifi: brcmfmac: of: Support interrupts-extended
-Date: Sat, 22 Jun 2024 23:54:16 +0200
-Message-ID: <20240622215416.659208-1-knaerzche@gmail.com>
-X-Mailer: git-send-email 2.45.2
+Subject: [GIT PULL] Rust fixes for 6.10
+Date: Sat, 22 Jun 2024 23:55:18 +0200
+Message-ID: <20240622215518.198080-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,49 +63,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The currently existing of_property_present check for interrupts does not
-cover all ways interrupts can be defined in a device tree, e.g.
-"interrupts-extended".
+Hi Linus,
 
-In order to support all current and future ways that can be done, drop that
-check and call of_irq_parse_one to figure out if an interrupt is defined
-and irq_create_of_mapping for the actual mapping and let it be handled by
-the interrupt subsystem.
+Please pull this fix for Rust.
 
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
----
-Link to v1:
-https://lore.kernel.org/all/20240621225558.280462-1-knaerzche@gmail.com/
+It has been in linux-next for more than a week.
 
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+No conflicts expected. No changes to the C side.
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-index e406e11481a6..fe4f65756105 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-@@ -70,6 +70,7 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
- {
- 	struct brcmfmac_sdio_pd *sdio = &settings->bus.sdio;
- 	struct device_node *root, *np = dev->of_node;
-+	struct of_phandle_args oirq;
- 	const char *prop;
- 	int irq;
- 	int err;
-@@ -129,10 +130,10 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
- 		sdio->drive_strength = val;
- 
- 	/* make sure there are interrupts defined in the node */
--	if (!of_property_present(np, "interrupts"))
-+	if (of_irq_parse_one(np, 0, &oirq))
- 		return;
- 
--	irq = irq_of_parse_and_map(np, 0);
-+	irq = irq_create_of_mapping(&oirq);
- 	if (!irq) {
- 		brcmf_err("interrupt could not be mapped\n");
- 		return;
--- 
-2.45.2
+Thanks!
 
+Cheers,
+Miguel
+
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
+
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/Rust-for-Linux/linux.git tags/rust-fixes-6.10
+
+for you to fetch changes up to a126eca844353360ebafa9088d22865cb8e022e3:
+
+  rust: avoid unused import warning in `rusttest` (2024-06-11 23:33:28 +0200)
+
+----------------------------------------------------------------
+Rust fixes for v6.10
+
+ - Avoid unused import warning in 'rusttest'.
+
+----------------------------------------------------------------
+Miguel Ojeda (1):
+      rust: avoid unused import warning in `rusttest`
+
+ rust/kernel/alloc/vec_ext.rs | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
