@@ -1,164 +1,140 @@
-Return-Path: <linux-kernel+bounces-225522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66DA9131C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 05:20:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13E99131CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 05:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9FF1F21EB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 03:20:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0936B2836C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 03:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7636C8C1D;
-	Sat, 22 Jun 2024 03:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B0E8F5D;
+	Sat, 22 Jun 2024 03:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUSbesyK"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF6A79C0
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bB+md6x0"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8A8748E
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719026422; cv=none; b=mS17TzhNx1TvOa7qdYY/g6c2qEZ3tBKmSrzWPtxsrD1dEVL1O/JcZWHzLpScxHxM/fotHOyQWr4XEtE3B91S8YuAHCzjQHJNhuZQ8AiQaaaUqejTcJmrVORm2Ym/I0acElLe6vOveb386x5l7nNvu/VllPRb2nM4TXkZn7W3zNw=
+	t=1719027573; cv=none; b=tMAWaFQummRh9oPBASwzqgQ+zoKxY4DQ3OUZu6RfpmO+5XmaHtYdRW7ZxpqUa2NP9WwyKN/AkVaTUr8Sg/QK2zBzSMRCkxWC+CP/sjF9JOJrai372TsdSMmcd2sxuZ4FhOn9ZXE6SZtuIblOcVenn/ADsLlLIHf3SvcsMZQ5Nrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719026422; c=relaxed/simple;
-	bh=I2qpG19Op/YTmIetnh/fRS6hI0Rtx4zMgUsQuKkAgFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pFtme+YrZFIvtlrQXWqGlyg+/SX/Wew7S9AVH1TrKCkpSPQbwyqbNz+PIScPSPwIZ7rFXtAvbmaIXMP7LAIP9Hc+NyLovO8eJYFPbBSHJ+MaG+dZ5zp8nT8Cx0B91QeyZbUP4AMZlXP17RpJIzsW2DIUXaqXuSf/tjHp93i26Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUSbesyK; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5c1da1f88dfso578327eaf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719026420; x=1719631220; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=noIRKzwOenkJYlyIgDWrCHnrYGfNUC84Fg2QmqzIHaQ=;
-        b=EUSbesyKlQ+nxVpcEco8ZNhqYzu8RYff0vsfSk9YRCd+Fu9JC5bYVcXYbhewy1mUD5
-         SxjjZUpvMt5lC3TMKCOl2VRfxJIdqjG2376Up+lPg4gaeJIRCHP7qwY/VyJ73A5iF5F3
-         MJNAoSJlZrAFkz99oVVh3QhjCsUaM7SRQqPx+VtUp/EsWX5Pm8b3qwLMt7lMQrizJ00S
-         SCd4+DM8cMdQudc9itsPD7r8BT1EAVd2lNWvqL17Gzgz/lgHxovNQ7oJA4ZfRsKlmLU9
-         Bb1HNuFufwTuR2nv7axx7g4O0v8LkMAn+GUBc+VxAavBmzjN7gDdC1wKj8pXh+BOtDD3
-         BWVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719026420; x=1719631220;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=noIRKzwOenkJYlyIgDWrCHnrYGfNUC84Fg2QmqzIHaQ=;
-        b=PLSB9d9qG3eE3ePeD3tL+VaZnbO3yxh7xLUu5djyc5/9Qnsvlpu0cJdNcfRZdj89ri
-         xezRA3Dtlvq3ayurt+/scDppRAnuy+WuwPJLD2bfNxlsYQEAjWoPmB7MQyD9AohvSxFW
-         9vQxdEZ2arcugG6AliZO+KSLrk+v8Wg1938+lTLNx6XTSz0dUAI/egOWxv9TC3IHJUse
-         vghDhLDYimFt5OxcpS4fsffcXvhyf2naLGwsnxIUoPJJWqBuf8/+f9TSRMyEB0jI28hk
-         PwZEkklL8sXkBzDHP5bzBAbgdUqMpwsSpjjVpvMTfClOlL0d+tKo4rjvKNMTgkmzmJTc
-         Yb/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXzK0W30tc2TTkoIm6CX41pwHDyLc3laMdAuANfj/sc5zRPaO8/CWmxPilbAdjjDumgLT40xdzGdg+jg+W9tK24KMlgB+O6gxT6dGxv
-X-Gm-Message-State: AOJu0YwGEjFoTlJI2fcVROthPETonuNa2BvuEXj9tIm8Gao9OBtn0lHK
-	0IO9VN+Ma2rn+OClMONjYCC28TSRSIlZ1rn4A8ng/zunqwkuObcX
-X-Google-Smtp-Source: AGHT+IFzHnx7M3tBygs51isXq4OUoLtq5aQdebcrHujNqGD7L2U/YJtdQ0FFKqmCpZXizQf75nioOw==
-X-Received: by 2002:a05:6358:6f11:b0:19f:174c:7fa0 with SMTP id e5c5f4694b2df-1a1fd559d12mr1201106555d.24.1719026420184;
-        Fri, 21 Jun 2024 20:20:20 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c738c1bb81sm5388045a91.1.2024.06.21.20.20.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 20:20:19 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: david@redhat.com,
-	akpm@linux-foundation.org
-Cc: baolin.wang@linux.alibaba.com,
-	chrisl@kernel.org,
+	s=arc-20240116; t=1719027573; c=relaxed/simple;
+	bh=BMw5JAzkP46NHEAdfpVxC+yvO2GvFSbohkUjQ+PGMyc=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=r/kqEoFrLMc6TiPRMDfRpGs/vG5ujeFCGg5ca/+qsFrIyH8CTOXn7hQrdAH9n0t4QyYbR3KoUzs33AtfbdL/+j8/EnHCWHCGddZG+21v5I4uKrAoV2IdKUo1fKsNxuiVgnk41n4Ezyt+svaTC07gzHT4wX3HK7M8t6KdiVMvrjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bB+md6x0; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=lIGxqX9x+SGOnQIbd5
+	VQLVmLF3zctLikoC965VXpZOc=; b=bB+md6x0/Nl4yd8sHTfCFwsPdM+God2ByX
+	itjAYN8Plm1LryGKMV09fz+ihx8Zw4XeAb/GMDjk9qKYyOsZV32wCkvDWIo29K1J
+	IS2x40Tyq8oFacW2nxqkv6iul9cW3sjN8f4O9AOMWjSO9tjDf6MyNfWrAUR/y/1U
+	Sm35KowAM=
+Received: from localhost.localdomain (unknown [120.229.10.157])
+	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wD3f4XMQ3ZmXFf2CQ--.59476S2;
+	Sat, 22 Jun 2024 11:23:57 +0800 (CST)
+From: "yongfa.hu" <hushange@163.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mhocko@suse.com,
-	ryan.roberts@arm.com,
-	shy828301@gmail.com,
-	surenb@google.com,
-	v-songbaohua@oppo.com,
-	willy@infradead.org,
-	ying.huang@intel.com,
-	yosryahmed@google.com,
-	yuanshuai@oppo.com,
-	yuzhao@google.com
-Subject: Re: [PATCH v2 2/3] mm: use folio_add_new_anon_rmap() if folio_test_anon(folio)==false
-Date: Sat, 22 Jun 2024 15:20:02 +1200
-Message-Id: <20240622032002.53033-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <02b87f01-69c9-4007-b0d0-5ce9ce35876d@redhat.com>
-References: <02b87f01-69c9-4007-b0d0-5ce9ce35876d@redhat.com>
+	hushange@163.com
+Subject: [PATCH] mm: rename no_progress_loops to reclaim_retris variable no_progress_loops exectly means reclaim retry counts, renameing makes it easier to understand. and has the same style as variable compaction_retries.
+Date: Sat, 22 Jun 2024 11:23:46 +0800
+Message-Id: <20240622032346.12250-1-hushange@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:_____wD3f4XMQ3ZmXFf2CQ--.59476S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAF4kCr4DAFWrXF1fCF4kZwb_yoW5Jw4fpF
+	4xu3ZrGrZYqFnxJFZ5Aa109F18A3s7KFZ8Xr1xKryxZw1fJrya9rW7Kry2vF18XF4DXayY
+	vFs8Ar40grn8Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRYg4-UUUUU=
+X-CM-SenderInfo: xkxvxtxqjhqiywtou0bp/1tbiRQ8GnmXAnBlJXgAAsl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-> >
-> > Since this is primarily a documentation update, I'll wait for two or
-> > three days to see if
-> > there are any more Linux-next reports before sending v3 combining these fixes
-> > together(I've already fixed another doc warn reported by lkp) and seek Andrew's
-> > assistance to drop v2 and apply v3.
->
-> Feel free to send fixup patches for such small stuff (for example, as
-> reply to this mail). Usually, no need for a new series. Andrew will
-> squash all fixups before merging it to mm-stable.
-
-Hi Andrew,
-
-Can you please squash this change(another one suggested by David)?
-
-From: Barry Song <v-songbaohua@oppo.com>
-Date: Sat, 22 Jun 2024 15:14:53 +1200
-Subject: [PATCH] enhance doc- mm: use folio_add_new_anon_rmap() if
- folio_test_anon(folio)==false
-
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Signed-off-by: yongfa.hu <hushange@163.com>
 ---
- mm/memory.c   | 1 +
- mm/swapfile.c | 1 +
- 2 files changed, 2 insertions(+)
+ mm/page_alloc.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 00728ea95583..982d81c83d49 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4346,6 +4346,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 		 * here, we have to be careful.
- 		 */
- 		VM_WARN_ON_ONCE(folio_test_large(folio));
-+		VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
- 		folio_add_new_anon_rmap(folio, vma, address, rmap_flags);
- 	} else {
- 		folio_add_anon_rmap_ptes(folio, page, nr_pages, vma, address,
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index b99b9f397c1c..ace2440ec0b7 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1923,6 +1923,7 @@ static int unuse_pte(struct vm_area_struct *vma, pmd_t *pmd,
- 		 */
- 		if (!folio_test_anon(folio)) {
- 			VM_WARN_ON_ONCE(folio_test_large(folio));
-+			VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
- 			folio_add_new_anon_rmap(folio, vma, addr, rmap_flags);
- 		} else {
- 			folio_add_anon_rmap_pte(folio, page, vma, addr, rmap_flags);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 9054645ed..1435a9587 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4107,7 +4107,7 @@ bool gfp_pfmemalloc_allowed(gfp_t gfp_mask)
+ static inline bool
+ should_reclaim_retry(gfp_t gfp_mask, unsigned order,
+ 		     struct alloc_context *ac, int alloc_flags,
+-		     bool did_some_progress, int *no_progress_loops)
++		     bool did_some_progress, int *reclaim_retries)
+ {
+ 	struct zone *zone;
+ 	struct zoneref *z;
+@@ -4119,11 +4119,11 @@ should_reclaim_retry(gfp_t gfp_mask, unsigned order,
+ 	 * always increment the no progress counter for them
+ 	 */
+ 	if (did_some_progress && order <= PAGE_ALLOC_COSTLY_ORDER)
+-		*no_progress_loops = 0;
++		*reclaim_retries = 0;
+ 	else
+-		(*no_progress_loops)++;
++		(*reclaim_retries)++;
+ 
+-	if (*no_progress_loops > MAX_RECLAIM_RETRIES)
++	if (*reclaim_retries > MAX_RECLAIM_RETRIES)
+ 		goto out;
+ 
+ 
+@@ -4150,7 +4150,7 @@ should_reclaim_retry(gfp_t gfp_mask, unsigned order,
+ 		wmark = __zone_watermark_ok(zone, order, min_wmark,
+ 				ac->highest_zoneidx, alloc_flags, available);
+ 		trace_reclaim_retry_zone(z, order, reclaimable,
+-				available, min_wmark, *no_progress_loops, wmark);
++				available, min_wmark, *reclaim_retries, wmark);
+ 		if (wmark) {
+ 			ret = true;
+ 			break;
+@@ -4222,14 +4222,14 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 	enum compact_priority compact_priority;
+ 	enum compact_result compact_result;
+ 	int compaction_retries;
+-	int no_progress_loops;
++	int reclaim_retries;
+ 	unsigned int cpuset_mems_cookie;
+ 	unsigned int zonelist_iter_cookie;
+ 	int reserve_flags;
+ 
+ restart:
+ 	compaction_retries = 0;
+-	no_progress_loops = 0;
++	reclaim_retries = 0;
+ 	compact_priority = DEF_COMPACT_PRIORITY;
+ 	cpuset_mems_cookie = read_mems_allowed_begin();
+ 	zonelist_iter_cookie = zonelist_iter_begin();
+@@ -4390,7 +4390,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 		goto nopage;
+ 
+ 	if (should_reclaim_retry(gfp_mask, order, ac, alloc_flags,
+-				 did_some_progress > 0, &no_progress_loops))
++				 did_some_progress > 0, &reclaim_retries))
+ 		goto retry;
+ 
+ 	/*
+@@ -4427,7 +4427,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+ 
+ 	/* Retry as long as the OOM killer is making progress */
+ 	if (did_some_progress) {
+-		no_progress_loops = 0;
++		reclaim_retries = 0;
+ 		goto retry;
+ 	}
+ 
 -- 
-2.34.1
-
->
-> --
-> Cheers,
->
-> David / dhildenb
->
-
-Thanks
-Barry
+2.17.1
 
 
