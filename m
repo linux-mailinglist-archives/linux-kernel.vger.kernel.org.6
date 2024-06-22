@@ -1,131 +1,218 @@
-Return-Path: <linux-kernel+bounces-225842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F72913605
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 22:26:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D27913607
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 22:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DED81F225A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:26:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E629AB24285
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75255FB9C;
-	Sat, 22 Jun 2024 20:26:45 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3655961FC4;
+	Sat, 22 Jun 2024 20:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aq6e104G"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400EB2D052;
-	Sat, 22 Jun 2024 20:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC78E441D;
+	Sat, 22 Jun 2024 20:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719088005; cv=none; b=sEGgXsVzB5II1N/raez0Lq34mYGqLCe9iSbVLX562pMh66DUGzP8J+/7SscCHkn9h5UU5MQUobZ3ndHt0sbhcDjDsntA5kgCgEr1Vd9t+jBUEquxZq9TbWp5uB/Am/cmcxmqMpftY1RcdoJvBI/10AP6ZdVbGsOWgWT6htsMQXc=
+	t=1719088128; cv=none; b=Uy+q7Da+Yp980IpOhjDit5Fexsx6PepevbnRVUxyxiwgHksqMEbagwh6mr3cPU/bFI1/UGjRRqjItoxMGQsVf1y4zW2Ruxu6gU4Vy8ENh6iZKuxnD6tNzteD72UIEsT9GmcOZkolsSuGtuIe8Q/Rc9W0nrSCFPr2eiEGdXPstrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719088005; c=relaxed/simple;
-	bh=ao+837YjdmlP6HZftP9TxacWBYhLQoAsFjco+i0cLQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CiUxr9BpVa58vD+VUR3kbODVZqzFpKyN3o7qsOBYoJT5V2ENxISXb/LczE4okEg2oWj9wAxhBEvURqrqNOAwnX3tnajzzgYnkV7JA7HIS6oSd4HenkpFhAllDlxAKtoHwefuctH5jzS9rPAQX3MzL9/dZoAipF211GJ9gY+/OkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875a87.versanet.de ([83.135.90.135] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sL7JC-0007Ef-VY; Sat, 22 Jun 2024 22:26:03 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@kernel.org>,
- Dragan Simic <dsimic@manjaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Daniel Golle <daniel@makrotopia.org>, Aurelien Jarno <aurelien@aurel32.net>,
- Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Anand Moon <linux.amoon@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
- linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
-Date: Sat, 22 Jun 2024 22:26:01 +0200
-Message-ID: <3660160.WbyNdk4fJJ@diego>
-In-Reply-To: <07fba45d99e9eabf9bcca71b86651074@manjaro.org>
-References:
- <cover.1718921174.git.daniel@makrotopia.org>
- <ead26406-dd3b-491c-b6ab-11002a2db11a@kernel.org>
- <07fba45d99e9eabf9bcca71b86651074@manjaro.org>
+	s=arc-20240116; t=1719088128; c=relaxed/simple;
+	bh=3naxbCWYWyb12WIaRMFMGCevr88ZJi3vnfvM+hQe39k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DZx16lfFPMJN9+nI2kTBTjrnsp9fE5RoKtK4bIQ+KHIvgaVRa84MP4fICdt+GIBww7xKNOzdT3/FFvrmQBWXKlR6QLwi6yu1cBpJ28GBbp3XDcP4v0Bpdytdh4b+ah/f4HVlhJoFZ2n3JVkV4n/lbWPa086JGLKtMv6GvpX5/nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aq6e104G; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5c1cabcb0c1so1456586eaf.0;
+        Sat, 22 Jun 2024 13:28:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719088126; x=1719692926; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Wz5Oa6/rWVrsFAb0cFynFRFfx1R/TSvc0ki+GhEz5L4=;
+        b=Aq6e104Gu2jkw5ZdZv/fPChx3zS5WU/N5eEnydoel6QQV6FpmowmL+5jl2DLHXaDnC
+         Y4N83drfF/Ve9oCocUOKVtTNEmBk+uirW/TNrnN0B+tBbiMcibRed+nBPtSnOh5sSUQR
+         bLQXDWcZwbl7l4Dl1ZagjcRD/JGCyQy67zw6kqUUVhJilQQr+5z7rYd8MlpFeiln1kWe
+         tEQWGX5to6oeaMVlHlvdH7cZjlpFOo0/gfusB7WJfPFkOOvXYdMBmeHli7Zya88ifjhg
+         48HCzSrqbZCGmrDYd+WTnrJ8Gpow07yT1LWq3vbk69ZMtaKxw6G0vVx8m+RoZWX1BH+C
+         kG6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719088126; x=1719692926;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wz5Oa6/rWVrsFAb0cFynFRFfx1R/TSvc0ki+GhEz5L4=;
+        b=Q3Xzg8snB5TZKayV++qsczw0ZPG3p4I7GXKwUROE+FXrlFz8hfnAT7seJ29nZfWfh6
+         Da4Xq48TDpC+iI7YV58pP1bRQRFRdNeOI3R8WyyRHFP1XdedZdIkPaNznH+XKYFNLswi
+         ka+U6UJRpDcXeN9+C3V1/+koG5Heq4KS4ElecmYnKtNrESL7CEJ5FDRYocWG8DXS4c9R
+         m6Vl4b0meJkwEpr8ykh0VGXDitK2TGi7lPvPwoqvB37YL4ynlzM2bK+Frcy/SkHT/vxl
+         oZySHyo/21cCjOsDIJ/Kb0F6FDDkj1NC7cvwcrWNxPOPcHFonwQrpSfsYIMAZtLMFRMN
+         5jNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtimIIpmaRVbILWC11R4jOdzxG0hOZidAEX2Ye7uIlphThAbOvxRyWz2tBQ4ocwjfTeo/1VMIzXibSObnh73jIlm6lREiCx9KGNrCgRMPGO81WlfMpCFxITqyzdF6OKzHl
+X-Gm-Message-State: AOJu0Yz5hsmddepJwZhKefkQYFAqUNjaneW2nOFBkMJdaTFjcmwhuh28
+	QXVxsaczM14ZitQLJCQYVUbYOT9PL08ttC3fG400AiSj0kugm8AE
+X-Google-Smtp-Source: AGHT+IE789iTevCzbZ7tRv7egdxCiedgWdhlftr81cGxwdKYHeUeTH4vqoVa4ggmavoKIxtlOnNaaw==
+X-Received: by 2002:a4a:764b:0:b0:5ba:ffcb:c759 with SMTP id 006d021491bc7-5c1eed1072cmr847344eaf.4.1719088125891;
+        Sat, 22 Jun 2024 13:28:45 -0700 (PDT)
+Received: from ?IPV6:2603:8080:2300:de:3d70:f8:6869:93de? ([2603:8080:2300:de:3d70:f8:6869:93de])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c1d55cd91asm749144eaf.15.2024.06.22.13.28.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Jun 2024 13:28:45 -0700 (PDT)
+Message-ID: <daee6ab7-7c1e-45e3-81a5-ea989cc1b099@gmail.com>
+Date: Sat, 22 Jun 2024 15:28:43 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/5] KVM: SEV: Provide support for
+ SNP_EXTENDED_GUEST_REQUEST NAE event
+To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org
+Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, x86@kernel.org,
+ pbonzini@redhat.com, seanjc@google.com, jroedel@suse.de,
+ thomas.lendacky@amd.com, pgonda@google.com, ashish.kalra@amd.com,
+ bp@alien8.de, pankaj.gupta@amd.com, liam.merwick@oracle.com
+References: <20240621134041.3170480-1-michael.roth@amd.com>
+ <20240621134041.3170480-4-michael.roth@amd.com>
+Content-Language: en-US
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+In-Reply-To: <20240621134041.3170480-4-michael.roth@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am Samstag, 22. Juni 2024, 12:29:33 CEST schrieb Dragan Simic:
-> Hello Uwe,
->=20
-> On 2024-06-22 00:16, Uwe Kleine-K=F6nig wrote:
-> > On 6/21/24 20:13, Dragan Simic wrote:
-> >> On 2024-06-21 11:57, Krzysztof Kozlowski wrote:
-> >>> On 21/06/2024 03:25, Daniel Golle wrote:
-> >>>> From: Aurelien Jarno <aurelien@aurel32.net>
-> >>=20
-> >> [snip]
-> >>=20
-> >>>> +    pm_runtime_set_autosuspend_delay(dev,=20
-> >>>> RK_RNG_AUTOSUSPEND_DELAY);
-> >>>> +    pm_runtime_use_autosuspend(dev);
-> >>>> +    pm_runtime_enable(dev);
-> >>>> +
-> >>>> +    ret =3D devm_hwrng_register(dev, &rk_rng->rng);
-> >>>> +    if (ret)
-> >>>> +        return dev_err_probe(&pdev->dev, ret, "Failed to register=20
-> >>>> Rockchip hwrng\n");
-> >>>> +
-> >>>> +    dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
-> >>>=20
-> >>> Drop, driver should be silent on success.
-> >>=20
-> >> I respectfully disagree.  Many drivers print a single line upon
-> >> successful probing, which I find very useful.  In this particular
-> >> case, it's even more useful, because some people may be concerned
-> >> about the use of hardware TRNGs, so we should actually make sure
-> >> to announce it.
-> >=20
-> > I agree to Krzysztof here. From the POV of a driver author, your own
-> > driver is very important and while you write it, it really interests
-> > *you* if the driver is successfully probed. However from a system
-> > perspective these are annoying: There are easily >50 devices[1] on a
-> > system, if all of these print a message in probe, you have little=20
-> > chance
-> > to see the relevant messages. Even if every driver author thinks their
-> > work is a special snow flake that is worth announcing, in practice=20
-> > users
-> > only care about your driver if there is a problem. Additionally each
-> > message takes time and so delays the boot process. Additionally each
-> > message takes place in the printk ring buffer and so edges out earlier
-> > messages that might be more important.
->=20
-> Well, I don't find those messages annoying, for the drivers I've had
-> nothing to do with.  Also, in my experience, 99.9% of users don't care
-> about the kernel messages at all, be it everything hunky-dory, or be
-> it something really wrong somewhere.
->=20
-> > So +1 for dropping the dev_info() or at least using dev_debug() for it.
+Hello folks,
 
-Just for 2ct ... I'm also in the don't print too much camp ;-) .
-When parsing kernel logs to see where things fail, messages just
-telling me about sucesses make things more difficult.
-
-So really this message should be dropped or at least as Uwe suggests
-made a dev_dbg.
+On 6/21/24 08:40, Michael Roth wrote:
+> Version 2 of GHCB specification added support for the SNP Extended Guest
+> Request Message NAE event. This event serves a nearly identical purpose
+> to the previously-added SNP_GUEST_REQUEST event, but for certain message
+> types it allows the guest to supply a buffer to be used for additional
+> information in some cases.
+>
+> Currently the GHCB spec only defines extended handling of this sort in
+> the case of attestation requests, where the additional buffer is used to
+> supply a table of certificate data corresponding to the attestion
+> report's signing key. Support for this extended handling will require
+> additional KVM APIs to handle coordinating with userspace.
+>
+> Whether or not the hypervisor opts to provide this certificate data is
+> optional. However, support for processing SNP_EXTENDED_GUEST_REQUEST
+> GHCB requests is required by the GHCB 2.0 specification for SNP guests,
+> so for now implement a stub implementation that provides an empty
+> certificate table to the guest if it supplies an additional buffer, but
+> otherwise behaves identically to SNP_GUEST_REQUEST.
+>
+> Signed-off-by: Michael Roth <michael.roth@amd.com>
+> ---
+>  arch/x86/kvm/svm/sev.c | 60 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 7338b987cadd..b5dcf36b50f5 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3323,6 +3323,7 @@ static int sev_es_validate_vmgexit(struct vcpu_svm *svm)
+>  			goto vmgexit_err;
+>  		break;
+>  	case SVM_VMGEXIT_GUEST_REQUEST:
+> +	case SVM_VMGEXIT_EXT_GUEST_REQUEST:
+>  		if (!sev_snp_guest(vcpu->kvm))
+>  			goto vmgexit_err;
+>  		break;
+> @@ -4005,6 +4006,62 @@ static int snp_handle_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t resp_
+>  	return ret;
+>  }
+>  
+> +/*
+> + * As per GHCB spec (see "SNP Extended Guest Request"), the certificate table
+> + * is terminated by 24-bytes of zeroes.
+> + */
+> +static const u8 empty_certs_table[24];
 
 
-Heiko
+Should this be:
+staticconstu8 empty_certs_table[24] = { 0};
+Besides that,
+Reviewed-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 
+
+> +
+> +static int snp_handle_ext_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t resp_gpa)
+> +{
+> +	struct kvm *kvm = svm->vcpu.kvm;
+> +	u8 msg_type;
+> +
+> +	if (!sev_snp_guest(kvm) || !PAGE_ALIGNED(req_gpa) || !PAGE_ALIGNED(resp_gpa))
+> +		return -EINVAL;
+> +
+> +	if (kvm_read_guest(kvm, req_gpa + offsetof(struct snp_guest_msg_hdr, msg_type),
+> +			   &msg_type, 1))
+> +		goto abort_request;
+> +
+> +	/*
+> +	 * As per GHCB spec, requests of type MSG_REPORT_REQ also allow for
+> +	 * additional certificate data to be provided alongside the attestation
+> +	 * report via the guest-provided data pages indicated by RAX/RBX. The
+> +	 * certificate data is optional and requires additional KVM enablement
+> +	 * to provide an interface for userspace to provide it, but KVM still
+> +	 * needs to be able to handle extended guest requests either way. So
+> +	 * provide a stub implementation that will always return an empty
+> +	 * certificate table in the guest-provided data pages.
+> +	 */
+> +	if (msg_type == SNP_MSG_REPORT_REQ) {
+> +		struct kvm_vcpu *vcpu = &svm->vcpu;
+> +		u64 data_npages;
+> +		gpa_t data_gpa;
+> +
+> +		if (!kvm_ghcb_rax_is_valid(svm) || !kvm_ghcb_rbx_is_valid(svm))
+> +			goto abort_request;
+> +
+> +		data_gpa = vcpu->arch.regs[VCPU_REGS_RAX];
+> +		data_npages = vcpu->arch.regs[VCPU_REGS_RBX];
+> +
+> +		if (!PAGE_ALIGNED(data_gpa))
+> +			goto abort_request;
+> +
+> +		if (data_npages &&
+> +		    kvm_write_guest(kvm, data_gpa, empty_certs_table,
+> +				    sizeof(empty_certs_table)))
+> +			goto abort_request;
+> +	}
+> +
+> +	return snp_handle_guest_req(svm, req_gpa, resp_gpa);
+> +
+> +abort_request:
+> +	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
+> +				SNP_GUEST_ERR(SNP_GUEST_VMM_ERR_GENERIC, 0));
+> +	return 1; /* resume guest */
+> +}
+> +
+>  static int sev_handle_vmgexit_msr_protocol(struct vcpu_svm *svm)
+>  {
+>  	struct vmcb_control_area *control = &svm->vmcb->control;
+> @@ -4282,6 +4339,9 @@ int sev_handle_vmgexit(struct kvm_vcpu *vcpu)
+>  	case SVM_VMGEXIT_GUEST_REQUEST:
+>  		ret = snp_handle_guest_req(svm, control->exit_info_1, control->exit_info_2);
+>  		break;
+> +	case SVM_VMGEXIT_EXT_GUEST_REQUEST:
+> +		ret = snp_handle_ext_guest_req(svm, control->exit_info_1, control->exit_info_2);
+> +		break;
+>  	case SVM_VMGEXIT_UNSUPPORTED_EVENT:
+>  		vcpu_unimpl(vcpu,
+>  			    "vmgexit: unsupported event - exit_info_1=%#llx, exit_info_2=%#llx\n",
+
+
+Thanks,
+Carlos
 
 
