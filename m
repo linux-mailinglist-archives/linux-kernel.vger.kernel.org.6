@@ -1,291 +1,174 @@
-Return-Path: <linux-kernel+bounces-225531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B1AE9131D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 05:55:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A9A9131D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 05:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F2EB1C21CB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 03:55:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2862CB21217
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 03:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E08B669;
-	Sat, 22 Jun 2024 03:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6529476;
+	Sat, 22 Jun 2024 03:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f7SiIvOI"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZDGUcx1+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A0E818
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047902119
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719028494; cv=none; b=A7rgLY2epS5zXeb1A0kobGKzGzF6xXj9VfbpSTeyjKTZq58Nie27XAmdQUCSoAKGQ0VrV2lo61NJofqPA9TseyN4+2Q0yRqLZ2jsbUVK1cBQ9BmUqOhDGDAGvN2p0IiIVGxMLSbmzlSHzazmKxK7B4QCuALydGnVEo3Q5eaIydA=
+	t=1719028725; cv=none; b=hdcsMb8nzg79mLC5rqS9QBGBZ8+Rj2c77DkSbiY0UAfZ7DdMsnx3H29uftrMQFNNgrLRL/ub/5pyG6hoc+MeGmI+XqesAIgJKmhKijAXzRxr9TXm49mMRZLLcWOtV5nMZV8iyK+5C2x25c9dER4UliSgprliOhw0PYGfGJKSbQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719028494; c=relaxed/simple;
-	bh=/RrUKDL+vW/8zRMMtlS/A1VrV0Bhny/iSxYfghZhlaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fp/PBtfKxbsooUkb+4qTZKSwbcn1eNL9tp9jDcd7vd1/1bl17IOZbUZIR5eoLyQ5GGs1NfHWnwk24OgI+g9hZy5QpY/xPMKTHl9G+6CoC3iTUZnNmqw83qeWvAqeKGt7AYcox7HK0k36ACeQaj2zOlh4kk3NtUS7PkuMEWUv6lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f7SiIvOI; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3c9cc681e4fso1336893b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:54:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719028492; x=1719633292; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WSffjO/WBtMMLGh1Lm5rhFUdKcIwSNJwS+J6sxe4xzs=;
-        b=f7SiIvOIb7/WzUEt5oBMqE0uzNZtuluYQCJPglsXbfp9Oc0QdYFQZEVtS5ImRbYuFn
-         83Q9xOIJaxxSvy740Ip4OnZ9xnqPBKI3i5WSFkP3Wer5pkdFhPI5gP4s9q2gsMYfqcaT
-         oO6JBU5MzAdW8gS7DK7jpOKsayAm2jLOCvNaPWKVHT56/tHJQIKUMREr3OASVns/8a2b
-         iwH4+aifcAw+laYWVnXaB0Ai/QoxXRK/y82Fl8lq5UNExNZFySMsYQkB2Zimv0d5PY1l
-         lYtUrzMUphb3e3PT+uxj4+sHtieMlQMZEoMFHx57JsKFadvw13Ctx8FCkXXyA6ICVL5j
-         sVxA==
+	s=arc-20240116; t=1719028725; c=relaxed/simple;
+	bh=oCuES5UOotTTeEWk7uHGX6oUQKdCAgtCD8Xmw9EevTw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IhCDVIBXuAPLtpaQBR7wHQqvOQrqSBBEy0Ad3eabaIrqyYXFCZdIkYoXegAvy/iQJqD5yA50iL3qXvycWjfVjij3bFD2R3DcAYAapxXWpgYBgRLEkqbZ3cxhES/AdO/+brFs4j18YK28mhDZSPRyna9cVlnO+i9e3Jq94MyFVn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZDGUcx1+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719028722;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=glHWFwF1PVhz6SvXAFFwFqrh96wIoW6X2gSfzajSRBE=;
+	b=ZDGUcx1+vpOxV1o3HYYC98s9INI7X41DcidNOD0zIoJcGW2vY/Wd3XCokI95teGf78hJ60
+	/F9RB4gtfP5LELxXU9fKQ1iD4nHxb7rcoPnYpZ2nSRrQ3ZhbtWorSmSMqc89Tq3/HztqxE
+	M+jIzk4Xo3pzjiamKGwA8iCBphzViMw=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-402-paFXp5xsMlGHo-Pjd_GFZQ-1; Fri, 21 Jun 2024 23:58:40 -0400
+X-MC-Unique: paFXp5xsMlGHo-Pjd_GFZQ-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1f9a3831aa9so24151445ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:58:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719028492; x=1719633292;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSffjO/WBtMMLGh1Lm5rhFUdKcIwSNJwS+J6sxe4xzs=;
-        b=UyRXtHKciSMztA4o6VLLtv6xKbmJaruyIptsZbHwzBmMFaw7ju2mODOp0jyBrnNKQx
-         o9Vs6FlRo0kGXsbokHIAShHsxkzCBZIjpApDcsS3v/EJhrP9vnO0q/6WpkfSEYTNgS5k
-         8UwsVHVYnIFeC/enupG9/8tU4w/RzpFnikfd9vDPltPKJbgqme84MSA3wMxg2VtjYx+i
-         LzxXgA9XehLeM5XyMd62UK2YrEh5eoJldJuFMkaYovJobHS7gYq2JlZPBT1WG49XS/PO
-         tj9DxgouCGPwKa+8xD8qD3kkwur1+s3R71Wx3EFKEWU3V7WPyHO1RwSZM0NajTOsmtiJ
-         tagA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJsVXw2LH248gEEg8/oTScB1/rwAJRSuSfEheLeo3I9mN2BguSSLIBVPGIJgo9aUjxOH7HhYojEq7bAO1jsgVVa1F+4Ap65hxgHMkX
-X-Gm-Message-State: AOJu0YzQc0EsSo5YChhxnqSI9RAC9aVQcMX9M1sxz1yw3eDr6E0psn4r
-	pKeZ2Sj+nwTJo1uJxM5tqJQ+WAzfpPuz6K9yBBSPGL0bpY+Zq0Sm2965Jh/r/g==
-X-Google-Smtp-Source: AGHT+IG0cHxivOc0gEpJePUthy7iVVOraPA9vUyWTNoK4WEkmPbaZWONEOU+ohHweTatkWVTWfi8qg==
-X-Received: by 2002:a05:6808:3006:b0:3d4:74f3:ebac with SMTP id 5614622812f47-3d51bafb1c2mr11873997b6e.49.1719028491799;
-        Fri, 21 Jun 2024 20:54:51 -0700 (PDT)
-Received: from thinkpad ([120.60.57.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70651301cbesm2165091b3a.203.2024.06.21.20.54.48
+        d=1e100.net; s=20230601; t=1719028719; x=1719633519;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=glHWFwF1PVhz6SvXAFFwFqrh96wIoW6X2gSfzajSRBE=;
+        b=ZW8wiP4H1UO4z0uOVnkYcyEP0nO2MuBAD6GVn5zoiSthUMDZnp2PNEdZByIfrBI2ym
+         2jorSR/PuKkt567ScclsnfG1YL/eP2TZbLkX7XiW+pLFuxzHFd/rDNWqf5Y6ka91QgL8
+         j5m32J6Ji7KTbNe70pWUArBdCvdD2sAB3mt+l5I+28VzVqPMXWbcT6D5MW+8gKlbxAkV
+         y/9JLU1huxSgXR9hnikOlsMhZxxyKSnfZ4bbkczAr1xTtu3jc/DTuVZ7azCvWEPAXitX
+         iucLitPetekrDzhJb40Re0aY13d128AK96mlsDg+glUlobmIXoae1fUtgVdqDKCKjxRE
+         C2Bw==
+X-Gm-Message-State: AOJu0YyQ2wasjyYUpg5NapWAlnEJQVIlRJNquOQSkhGtdwIzTaTGDhso
+	Q2hhpPbwsYV0MHIy88J+W22qGIA40aNaFHjQUWuubNI4RjazU1q5asnVU7f5YxOKusgbh7Xmwah
+	roARLNoe3qSIs765CqqkfrnoWjCnpzhhsTmFOcnjUf80hpsdYie08HO1/F0V0tw==
+X-Received: by 2002:a17:902:d4c3:b0:1f7:3163:831d with SMTP id d9443c01a7336-1f9aa396e3dmr125385705ad.14.1719028719317;
+        Fri, 21 Jun 2024 20:58:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGn6jq5za2vXIACul9YEe/UzkN4xzhEvsBbIbTzW3YiVVEm98izqyGGRygyQeD38+tfCNqDdw==
+X-Received: by 2002:a17:902:d4c3:b0:1f7:3163:831d with SMTP id d9443c01a7336-1f9aa396e3dmr125385545ad.14.1719028718901;
+        Fri, 21 Jun 2024 20:58:38 -0700 (PDT)
+Received: from LeoBras.redhat.com ([2804:1b3:a801:c138:e21d:3579:5747:ad1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb32b9edsm21832365ad.118.2024.06.21.20.58.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 20:54:51 -0700 (PDT)
-Date: Sat, 22 Jun 2024 09:24:44 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	robh@kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_mrana@quicinc.com
-Subject: Re: [PATCH v1] PCI: qcom: Avoid DBI and ATU register space mirror to
- BAR/MMIO region
-Message-ID: <20240622035444.GA2922@thinkpad>
-References: <20240620213405.3120611-1-quic_pyarlaga@quicinc.com>
+        Fri, 21 Jun 2024 20:58:38 -0700 (PDT)
+From: Leonardo Bras <leobras@redhat.com>
+To: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Leonardo Bras <leobras@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH v1 0/4] Introduce QPW for per-cpu operations
+Date: Sat, 22 Jun 2024 00:58:08 -0300
+Message-ID: <20240622035815.569665-1-leobras@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240620213405.3120611-1-quic_pyarlaga@quicinc.com>
 
-On Thu, Jun 20, 2024 at 02:34:05PM -0700, Prudhvi Yarlagadda wrote:
-> PARF hardware block which is a wrapper on top of DWC PCIe controller
-> mirrors the DBI and ATU register space. It uses PARF_SLV_ADDR_SPACE_SIZE
-> register to get the size of the memory block to be mirrored and uses
-> PARF_DBI_BASE_ADDR, PARF_ATU_BASE_ADDR registers to determine the base
-> address of DBI and ATU space inside the memory block that is being
-> mirrored.
-> 
+The problem:
+Some places in the kernel implement a parallel programming strategy
+consisting on local_locks() for most of the work, and some rare remote
+operations are scheduled on target cpu. This keeps cache bouncing low since
+cacheline tends to be mostly local, and avoids the cost of locks in non-RT
+kernels, even though the very few remote operations will be expensive due
+to scheduling overhead.
 
-This PARF_SLV_ADDR_SPACE register is a mystery to me. I tried getting to the
-bottom of it, but nobody could explain it to me clearly. Looks like you know
-more about it...
+On the other hand, for RT workloads this can represent a problem: getting
+an important workload scheduled out to deal with remote requests is
+sure to introduce unexpected deadline misses.
 
-From your description, it seems like this register specifies the size of the
-mirroring region (ATU + DBI), but the response from your colleague indicates
-something different [1].
+The idea:
+Currently with PREEMPT_RT=y, local_locks() become per-cpu spinlocks.
+In this case, instead of scheduling work on a remote cpu, it should
+be safe to grab that remote cpu's per-cpu spinlock and run the required
+work locally. Tha major cost, which is un/locking in every local function,
+already happens in PREEMPT_RT.
 
-[1] https://lore.kernel.org/linux-pci/f42559f5-9d4c-4667-bf0e-7abfd9983c36@quicinc.com/
+Also, there is no need to worry about extra cache bouncing:
+The cacheline invalidation already happens due to schedule_work_on().
 
-> When a memory region which is located above the SLV_ADDR_SPACE_SIZE
-> boundary is used for BAR region then there could be an overlap of DBI and
-> ATU address space that is getting mirrored and the BAR region. This
-> results in DBI and ATU address space contents getting updated when a PCIe
-> function driver tries updating the BAR/MMIO memory region. Reference
-> memory map of the PCIe memory region with DBI and ATU address space
-> overlapping BAR region is as below.
-> 
-> 			|---------------|
-> 			|		|
-> 			|		|
-> 	-------	--------|---------------|
-> 	   |	   |	|---------------|
-> 	   |	   |	|	DBI	|
-> 	   |	   |	|---------------|---->DBI_BASE_ADDR
-> 	   |	   |	|		|
-> 	   |	   |	|		|
-> 	   |	PCIe	|		|---->2*SLV_ADDR_SPACE_SIZE
-> 	   |	BAR/MMIO|---------------|
-> 	   |	Region	|	ATU	|
-> 	   |	   |	|---------------|---->ATU_BASE_ADDR
-> 	   |	   |	|		|
-> 	PCIe	   |	|---------------|
-> 	Memory	   |	|	DBI	|
-> 	Region	   |	|---------------|---->DBI_BASE_ADDR
-> 	   |	   |	|		|
-> 	   |	--------|		|
-> 	   |		|		|---->SLV_ADDR_SPACE_SIZE
-> 	   |		|---------------|
-> 	   |		|	ATU	|
-> 	   |		|---------------|---->ATU_BASE_ADDR
-> 	   |		|		|
-> 	   |		|---------------|
-> 	   |		|	DBI	|
-> 	   |		|---------------|---->DBI_BASE_ADDR
-> 	   |		|		|
-> 	   |		|		|
-> 	----------------|---------------|
-> 			|		|
-> 			|		|
-> 			|		|
-> 			|---------------|
-> 
-> Currently memory region beyond the SLV_ADDR_SPACE_SIZE boundary is not
-> used for BAR region which is why the above mentioned issue is not
-> encountered. This issue is discovered as part of internal testing when we
-> tried moving the BAR region beyond the SLV_ADDR_SPACE_SIZE boundary. Hence
-> we are trying to fix this.
-> 
+This will avoid schedule_work_on(), and thus avoid scheduling-out an 
+RT workload. 
 
-I don't quite understand this. PoR value of SLV_ADDR_SPACE_SIZE is 16MB and most
-of the platforms have the size of whole PCIe region defined in DT as 512MB
-(registers + I/O + MEM). So the range is already crossing the
-SLV_ADDR_SPACE_SIZE boundary.
+For patches 2, 3 & 4, I noticed just grabing the lock and executing
+the function locally is much faster than just scheduling it on a
+remote cpu.
 
-Ironically, the patch I pointed out above changes the value of this register as
-128MB, and the PCIe region size of that platform is also 128MB. The author of
-that patch pointed out that if the SLV_ADDR_SPACE_SIZE is set to 256MB, then
-they are seeing enumeration failures. If we go by your description of that
-register, the SLV_ADDR_SPACE_SIZE of 256MB should be > PCIe region size of
-128MB. So they should not see any issues, right?
+Proposed solution:
+A new interface called Queue PerCPU Work (QPW), which should replace
+Work Queue in the above mentioned use case. 
 
-> As PARF hardware block mirrors DBI and ATU register space after every
-> PARF_SLV_ADDR_SPACE_SIZE (default 0x1000000) boundary multiple, write
-> U64_MAX to PARF_SLV_ADDR_SPACE_SIZE register to avoid mirroring DBI and
-> ATU to BAR/MMIO region.
+If PREEMPT_RT=n, this interfaces just wraps the current 
+local_locks + WorkQueue behavior, so no expected change in runtime.
 
-Looks like you are trying to avoid this mirroring on a whole. First of all, what
-is the reasoning behind this mirroring?
+If PREEMPT_RT=y, queue_percpu_work_on(cpu,...) will lock that cpu's
+per-cpu structure and perform work on it locally. This is possible
+because on functions that can be used for performing remote work on
+remote per-cpu structures, the local_lock (which is already
+a this_cpu spinlock()), will be replaced by a qpw_spinlock(), which
+is able to get the per_cpu spinlock() for the cpu passed as parameter.
 
-> Write the physical base address of DBI and ATU
-> register blocks to PARF_DBI_BASE_ADDR (default 0x0) and PARF_ATU_BASE_ADDR
-> (default 0x1000) respectively to make sure DBI and ATU blocks are at
-> expected memory locations.
-> 
+Patch 1 implements QPW interface, and patches 2, 3 & 4 replaces the
+current local_lock + WorkQueue interface by the QPW interface in
+swap, memcontrol & slub interface.
 
-Why is this needed? Some configs in this driver writes 0 to PARF_DBI_BASE_ADDR.
-Does the hardware doesn't know where the registers are located?
+Please let me know what you think on that, and please suggest
+improvements.
 
-> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 40 ++++++++++++++++++++++----
->  1 file changed, 35 insertions(+), 5 deletions(-)
-> 
-> Tested:
-> - Validated NVME functionality with PCIe6a on x1e80100 platform.
-> - Validated WiFi functionality with PCIe4 on x1e80100 platform.
-> - Validated NVME functionality with PCIe0 and PCIe1 on SA8775p platform.
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 5f9f0ff19baa..864548657551 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -49,7 +49,12 @@
->  #define PARF_LTSSM				0x1b0
->  #define PARF_SID_OFFSET				0x234
->  #define PARF_BDF_TRANSLATE_CFG			0x24c
-> +#define PARF_DBI_BASE_ADDR_V2			0x350
-> +#define PARF_DBI_BASE_ADDR_V2_HI		0x354
->  #define PARF_SLV_ADDR_SPACE_SIZE		0x358
-> +#define PARF_SLV_ADDR_SPACE_SIZE_HI		0x35C
-> +#define PARF_ATU_BASE_ADDR			0x634
-> +#define PARF_ATU_BASE_ADDR_HI			0x638
->  #define PARF_NO_SNOOP_OVERIDE			0x3d4
->  #define PARF_DEVICE_TYPE			0x1000
->  #define PARF_BDF_TO_SID_TABLE_N			0x2000
-> @@ -319,6 +324,33 @@ static void qcom_pcie_clear_hpc(struct dw_pcie *pci)
->  	dw_pcie_dbi_ro_wr_dis(pci);
->  }
->  
-> +static void qcom_pcie_avoid_dbi_atu_mirroring(struct qcom_pcie *pcie)
-> +{
-> +	struct dw_pcie *pci = pcie->pci;
-> +	struct platform_device *pdev;
-> +	struct resource *atu_res;
-> +	struct resource *dbi_res;
-> +
-> +	pdev = to_platform_device(pci->dev);
-> +	if (!pdev)
-> +		return;
-> +
-> +	dbi_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-> +	if (dbi_res) {
-> +		writel(lower_32_bits(dbi_res->start), pcie->parf + PARF_DBI_BASE_ADDR_V2);
-> +		writel(upper_32_bits(dbi_res->start), pcie->parf + PARF_DBI_BASE_ADDR_V2_HI);
-> +	}
-> +
-> +	atu_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "atu");
-> +	if (atu_res) {
-> +		writel(lower_32_bits(atu_res->start), pcie->parf + PARF_ATU_BASE_ADDR);
-> +		writel(upper_32_bits(atu_res->start), pcie->parf + PARF_ATU_BASE_ADDR_HI);
-> +	}
-> +
+Thanks a lot!
+Leo
 
-Above 2 resources are already fetched by dw_pcie_get_resources(). So we should
-just store the phys addresses in 'struct dw_pcie' and make use of them here.
+Leonardo Bras (4):
+  Introducing qpw_lock() and per-cpu queue & flush work
+  swap: apply new queue_percpu_work_on() interface
+  memcontrol: apply new queue_percpu_work_on() interface
+  slub: apply new queue_percpu_work_on() interface
 
-- Mani
+ include/linux/qpw.h | 88 +++++++++++++++++++++++++++++++++++++++++++++
+ mm/memcontrol.c     | 20 ++++++-----
+ mm/slub.c           | 26 ++++++++------
+ mm/swap.c           | 26 +++++++-------
+ 4 files changed, 127 insertions(+), 33 deletions(-)
+ create mode 100644 include/linux/qpw.h
 
-> +	writel(lower_32_bits(U64_MAX), pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
-> +	writel(upper_32_bits(U64_MAX), pcie->parf + PARF_SLV_ADDR_SPACE_SIZE_HI);
-> +}
-> +
->  static void qcom_pcie_2_1_0_ltssm_enable(struct qcom_pcie *pcie)
->  {
->  	u32 val;
-> @@ -623,8 +655,7 @@ static int qcom_pcie_post_init_2_3_2(struct qcom_pcie *pcie)
->  	val &= ~PHY_TEST_PWR_DOWN;
->  	writel(val, pcie->parf + PARF_PHY_CTRL);
->  
-> -	/* change DBI base address */
-> -	writel(0, pcie->parf + PARF_DBI_BASE_ADDR);
-> +	qcom_pcie_avoid_dbi_atu_mirroring(pcie);
->  
->  	/* MAC PHY_POWERDOWN MUX DISABLE  */
->  	val = readl(pcie->parf + PARF_SYS_CTRL);
-> @@ -900,6 +931,8 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
->  	/* Wait for reset to complete, required on SM8450 */
->  	usleep_range(1000, 1500);
->  
-> +	qcom_pcie_avoid_dbi_atu_mirroring(pcie);
-> +
->  	/* configure PCIe to RC mode */
->  	writel(DEVICE_TYPE_RC, pcie->parf + PARF_DEVICE_TYPE);
->  
-> @@ -908,9 +941,6 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
->  	val &= ~PHY_TEST_PWR_DOWN;
->  	writel(val, pcie->parf + PARF_PHY_CTRL);
->  
-> -	/* change DBI base address */
-> -	writel(0, pcie->parf + PARF_DBI_BASE_ADDR);
-> -
->  	/* MAC PHY_POWERDOWN MUX DISABLE  */
->  	val = readl(pcie->parf + PARF_SYS_CTRL);
->  	val &= ~MAC_PHY_POWERDOWN_IN_P2_D_MUX_EN;
-> -- 
-> 2.25.1
-> 
 
+base-commit: 50736169ecc8387247fe6a00932852ce7b057083
 -- 
-மணிவண்ணன் சதாசிவம்
+2.45.2
+
 
