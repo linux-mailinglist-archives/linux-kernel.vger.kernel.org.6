@@ -1,78 +1,115 @@
-Return-Path: <linux-kernel+bounces-225760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34349913500
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:10:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34936913502
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 387F81C215DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:10:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F611F229C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B025C170840;
-	Sat, 22 Jun 2024 16:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16C5170820;
+	Sat, 22 Jun 2024 16:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1q57vLr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnFiIvtD"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E703C16F913;
-	Sat, 22 Jun 2024 16:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D193D82492;
+	Sat, 22 Jun 2024 16:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719072607; cv=none; b=GqBcwGkeBcmkhH2kSLWyI7+vVXTO/eqZDJOxn0kscgXClHJIOhQ6bsf2j0plO4A/DfaR9kS7D76BoCwakbN2Am9JJ8OYeKMUeWnG8P1h6Dow86X7vYfUbMmyjSxW9Va+dzRxDb+HAUfHWE+gK/486NgBYJ+UAuTtpo7atQ2Oz0c=
+	t=1719072809; cv=none; b=YtCSoaK7FHLfxZedq61Is6A+VJLsXReVG4f3oDPfJXka+RzFATy9Swj293CInkZgN+U+qSLOqo+/uO5L6lie8mp5qUx7jlBKkQsYUcVyKDXn+H8QgkxBrR0XkvV3fIeMCSfZZ40zdueivBOgNbsiHyxecmMfARjCRqJ+WK01kKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719072607; c=relaxed/simple;
-	bh=WpxSIouvBFxC9L1AhBoKoMtOGKHeq80LvsCWNT85bvg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=RTKwN9XYQqm0f6FT0WxmvRYw2fG2XwUc0mK5pSgT0zd2RkIuaw3vI50fYob4MBH35T154wqgyraeF2f5WBK9wGarWGUQFPbzQew3oxOVl+5AjkKZ54kQn2xAfyYB+YyTX8BGoT9DOFQgMn7K38kEFoZX2djMlHT0+i1ryAucczo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1q57vLr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C433AC4AF07;
-	Sat, 22 Jun 2024 16:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719072606;
-	bh=WpxSIouvBFxC9L1AhBoKoMtOGKHeq80LvsCWNT85bvg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Q1q57vLrDLngc7kshcOQ6/mqNeWL/MNSs2GBG05LJxpN/HIX1CBzsQ6ZK+nSDw7uN
-	 yfsUcvxb1DBfyj/TgZGj1wDGR7hLL8RLVokCgKsGHVC4PuJwvBrxPbYf2nKX4nLVhw
-	 CKGNLeE1CXls9iQyglCGu3ArsDswF095k5+4WzdNrzZFupa6AGdP4I5iBkVxtDMXW/
-	 1Rs/y2a8sUJ44YH7IYuHT+vMec7SXCnX20l/ftBA7JQ1QS1K0xvLhTbd0EUp4g6gSJ
-	 69jIn8nkJvP7ZeJNTp6f0KjZ1ybmndcV7nEVC/gtSbqNO+xA1kgbshCIs5AUJli9Y8
-	 Wx1vHb8QymmJw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A9E1ACF3B81;
-	Sat, 22 Jun 2024 16:10:06 +0000 (UTC)
-Subject: Re: [GIT PULL] bcachefs fixes for 6.10-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <nbed7rrwexwonrtxvv6zmlxrvheicxxx6vlzcq4hzcxhrtm7ps@s5nkcab6f3cp>
-References: <nbed7rrwexwonrtxvv6zmlxrvheicxxx6vlzcq4hzcxhrtm7ps@s5nkcab6f3cp>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <nbed7rrwexwonrtxvv6zmlxrvheicxxx6vlzcq4hzcxhrtm7ps@s5nkcab6f3cp>
-X-PR-Tracked-Remote: https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-06-22
-X-PR-Tracked-Commit-Id: bd4da0462ea7bf26b2a5df5528ec20c550f7ec41
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c3de9b572fc2063fb62e53df50cc55156d6bfb45
-Message-Id: <171907260669.30765.11576903904385555925.pr-tracker-bot@kernel.org>
-Date: Sat, 22 Jun 2024 16:10:06 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1719072809; c=relaxed/simple;
+	bh=WEPGh2g/eR7cqZD7kIrQgVnoclyRVeCV0igVlLbbYUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dny72tWAaSqqZ8zTOAViLoeiitw70VyfnHWEXbSSrQTp78FtYdNqg2ikKkJktrAKAIjWVIw+MyYJxf+RHtDJia/Y33KhxAaCoEkMB6NreUPjbLzGIrezzXwDwHNmWmiBSoPRcggXQNVYMqeb0yzyjr9s9FsiiE89dzaFt1TUwNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PnFiIvtD; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7066c9741fbso353155b3a.2;
+        Sat, 22 Jun 2024 09:13:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719072807; x=1719677607; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YfQgHJ9GHbuY/xBljEs+qzKYxxicnPA7xLZUoCwp3KU=;
+        b=PnFiIvtDdoPLnhoSjZRzPl5/c4qOiN8ydKzZsLr4NMILyXT8SF2fnDSOwe6Voyxjjz
+         rxN4QrGuuIHMaAAceouHv6/O24rvbLTB3E0KpZrAqHk5mtGGzS+p+rAXF6s06uyBJFZR
+         sgOZ/nomaXmTnO+mUeq1jAuNRLaIt1nBqlsJuZVpBzi+mzv8IYDiakQLeXGzrbYa60Js
+         e2uKELToRIPkf3cbwTRlKt+LWeLVdy6c3zLjevyISQ7/iw8dCPxRzjYjNIgqAULcJivN
+         rc+C6BpQmKoG9jsdU1EmAEXdowt/nBazccNSUkkMuNl90v780Kwe93ovtGipOZQcQvGr
+         ShqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719072807; x=1719677607;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YfQgHJ9GHbuY/xBljEs+qzKYxxicnPA7xLZUoCwp3KU=;
+        b=sTv7x2E1kc2nKhJrdhtdciNezEwGvh5X+mBlvl3qAeCN633XrnhHG3CsEIMD7r52h/
+         Ih0xwtLV34T5FSrdKQN7R5S3oWoN6ZdsGG2Efbi/y8Kh2OaCgB1XPQaMhNM1v+e/K17G
+         s+86O8g4F3WRx2sd2qEgw0wfb0W5QHApB3+BIaFoW3K6dwysOR9bx6Lmvdx4JeG9jPFa
+         wSzro3D0oqUb0+xTGszItFQtQLy4VKrAWA51NjpEiJ2EjHGhhnrQ6lzACiz2j7agI6+j
+         8+7iG/pg1XJSXyyp8GSisfIRerRviolpYawNxCIRkWlxnBKsQn6kfodMHvoPU2U6d87R
+         vheg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3y1Xb4KwqM1uJMVoqxDQmJAMYPA+xHRVwpSZ+03S2Hj6JwF4p00PtYzDKfhFAWFiHcWftdHMnZyXZWiX4EGvvW7FiiB9/d/x7E0gRmR+7JjWsH4Sh+g3/ZA5fIMYHv21fCEP/mg==
+X-Gm-Message-State: AOJu0Yx/FM+xANbMPQSawmqPeVBA2V1MkCxpyuYB6iFSQOgIOnvUi6Kz
+	S/Ha+ZQrvCA1ytmjFU0z50N88VdgqLMX1fcq+OUsi1gXBxf8CQXN
+X-Google-Smtp-Source: AGHT+IE8B4FaBx/XtPGumeAi8GNlm74hQSGkUmcpTZ/rZCmKAZG0B8TeUkJQVX7/3a6xGquhb22Tzg==
+X-Received: by 2002:a05:6a20:8ca1:b0:1b6:7a70:d46a with SMTP id adf61e73a8af0-1bcf7e7514dmr244180637.18.1719072806973;
+        Sat, 22 Jun 2024 09:13:26 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065107b62bsm3369411b3a.16.2024.06.22.09.13.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 09:13:26 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Sat, 22 Jun 2024 06:13:24 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Xavier <xavier_qy@163.com>
+Cc: longman@redhat.com, mkoutny@suse.com, lizefan.x@bytedance.com,
+	hannes@cmpxchg.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org
+Subject: Re: [PATCH-cpuset v6 0/2] Add Union-Find and use it to optimize
+ cpuset
+Message-ID: <Znb4JBpJoGZ3LS1W@slm.duckdns.org>
+References: <ZnXsUnAi7VnX0tZJ@slm.duckdns.org>
+ <20240622071424.215778-1-xavier_qy@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240622071424.215778-1-xavier_qy@163.com>
 
-The pull request you sent on Sat, 22 Jun 2024 10:00:27 -0400:
+Hello, Xavier.
 
-> https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-06-22
+On Sat, Jun 22, 2024 at 03:14:22PM +0800, Xavier wrote:
+> To Tejun,
+> Since union_find operation does not require contiguous physical memory, I
+> have replaced the previous allocation method with vzalloc.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c3de9b572fc2063fb62e53df50cc55156d6bfb45
+Oh, that's not what I meant. Sorry about not being clearer. What I was
+trying to say was that requiring consecutive allocation whether kzalloc or
+vzalloc is unlikely to work for kernel data structures. The reason why I
+mentioned vmalloc was because it's easy to end up in sizes that require
+vmalloc with consecutive allocations and vmallocs are rather expensive and
+not that great - ie. having to use vmalloc may negate the benefits of better
+algorithm in most cases.
 
-Thank you!
+Skimming the code, there's nothing requiring consecutive allocations. Is
+there a reason why this can't follow the usual convention that kernel data
+structures follow (e.g. list, rbtree) where allocation is left to the users?
+
+Thanks.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+tejun
 
