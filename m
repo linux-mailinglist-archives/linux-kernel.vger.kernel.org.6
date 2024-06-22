@@ -1,133 +1,170 @@
-Return-Path: <linux-kernel+bounces-225711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E95913439
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:44:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F16913437
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B00301C21AA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:44:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7E3C1C20DBA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18FB16F851;
-	Sat, 22 Jun 2024 13:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631C916F26D;
+	Sat, 22 Jun 2024 13:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/mSH8T6"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hb8qfco1"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D3482492;
-	Sat, 22 Jun 2024 13:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678C582492
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 13:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719063839; cv=none; b=o5OSMamhv1v0ZpafWS14ky1GNGAECgLikMT1MPtvg41qa2+7otuHeNGob8Werku9BwQ/sWaU81MHEdwWJ+5TDXR/KyfldYZsure2MgK8D/TxOgY2X2Hy4iuCxHWdPOmOa+Ak/cvGmRLYAnQ7POcT+ArBT3NwPbZEBTSw8wS1ppk=
+	t=1719063831; cv=none; b=A9iHBUbbVNH9faIWhiwKCyxEPGe3zrfoVqLhcs0ETAmI9TaionvjJfh55ySPN9Gd3gI++CZ23EJgCuCtWjV/0z5AIAmZnsmtqbgq/68ZzF7jcUxxMYQ7TM71llv9EsbgdSkZuJj3kydBLu0V+bUSdQBSSNgIzChpWi4eR9NOhNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719063839; c=relaxed/simple;
-	bh=FAe5RBSeVUQvSoNMovSUxUr4BZQMUMsViBXF99Eg278=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OwCzoPqIlgWeWY0/yBkDoS5OT3KmOTsR6Ee+cB17YvP3MCmYBQ+JB3v86QPNtUtEU99kviWnIbsMC5r8cpCvSvpnynm2AeSryLRRsbbI4ntNeY9ovrLW1EUun7Bb+ix89p9VjLjmyixdJHbN9y8JLa5Q/SdRnqKTEBe0rHRuXgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/mSH8T6; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so1796602a12.1;
-        Sat, 22 Jun 2024 06:43:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719063837; x=1719668637; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XBj9aeVGLx9lk0+gvee4j7l4tMQJNLmoyqkeXTYVawA=;
-        b=C/mSH8T6fA3ae8kTVx3hmn2UrvgXiQ2DjtShKn9UDUDtKy5vbeasUTgNooFvTZUb6T
-         l++KVn+5+oznFkN60HrNVQReaA/r134wSCA/OvdfcjigyayOaYL7czuPPQwSWGrDG6Lh
-         0/zdCYUvq4epQ/9E0fsB7hbDGFYiUSnxQNm3MLG1pmzuogjQlgozq1VQ1VtPJxrXJvj3
-         dRi9t2PZtQuRYX0xYOr+5MpBsfnZdFH/xiYNUSzzK7XzRFKXXf3nHgKUqmKbmIW1/FoH
-         11NkkRwuienGJDmNL/JDCOGY69kVk/CU5cHxVj/l+DB0AEfm40GbQVvZZVRBPzvWEfeS
-         PD4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719063837; x=1719668637;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XBj9aeVGLx9lk0+gvee4j7l4tMQJNLmoyqkeXTYVawA=;
-        b=rimBKP+sZ7EfLl+4FqHHzx+j8V5U71W+AmH+q7oRSNjQJEe6RnVx7vHTzYm9jPXabV
-         qJEAMJbhTtiz8Om2J5oAT6ZYWomQx6gGpdzOnOmGBopdNBsCYgZUZqbumgby8+4M0Mfp
-         H0T3TIsvt2KKqX/zGaRCiVS52bbp0v9xygutWET2bMvf3qIReKXm9YnyIA3B6TsWAYq7
-         2bryKc3PgbCShqfM8QMviBAiLm01k100Yl2GsZFANkZ7XN8ktlp4tRUX5uU8xEtSjZXP
-         6Sm3IgGzdmNpKAVj2UpKSAzNUkA4g71vNZpIwt3QIYdcTpjuM9l5GBjqZf9A4ppIE/m0
-         NXCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjqidCmJoP/TxoGMuDGrlkDeMjrOyeyJa5NGSjr/S5DJOUhvd4dik2Mozi7oh4H5tQvd1Ib7PJwR4bRUslv9eKUNmKPEoxHqAcftLuxtQ+4k4zy/1kAGuhklv27ux4bdxSakPkfDyZYOZg9+o=
-X-Gm-Message-State: AOJu0YxYCobibmnSpXu+dpPumDFUR3x3VSAE56ucdqDX0OUGz7ah1YX1
-	6oFjpW+LaUcAWNlSP/ubTbHqPm/KMfp36hyWToTAdJ1SD6zmkJmN
-X-Google-Smtp-Source: AGHT+IGmcA86UfiC6NQEJ4XvVpRnOH6WwIJzPhPSpA7BkgkuJxCwwpTqvinCsPwpD7h9iqNeDZwZlg==
-X-Received: by 2002:a05:6a20:6b9f:b0:1bc:c206:1449 with SMTP id adf61e73a8af0-1bcf4498f61mr373240637.25.1719063836706;
-        Sat, 22 Jun 2024 06:43:56 -0700 (PDT)
-Received: from localhost.localdomain ([187.120.159.154])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065107c287sm3081014b3a.21.2024.06.22.06.43.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 06:43:56 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: miriam.rachel.korenblit@intel.com,
-	kvalo@kernel.org,
-	rafael.j.wysocki@intel.com,
-	daniel.lezcano@linaro.org,
-	johannes.berg@intel.com,
-	gregory.greenman@intel.com,
-	dmantipov@yandex.ru
-Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v4] iwlwifi: mvm: adding check if the thermal firmware is running
-Date: Sat, 22 Jun 2024 10:43:30 -0300
-Message-ID: <20240622134331.15476-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719063831; c=relaxed/simple;
+	bh=Ss3hbPRbsgSXVijcPTiNw7QzpshL51MWDUghPWwv7Rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8jRO6Q5KwMUoNuWAJNuuLqVHrMY45aD0AhrBbunx+bRJq2JZ3Bbw5Hhqq7BO1LTUbl98C5mKYWxAhz96fTFUJrQ2q4wFWsd+8qSow9WC8envqDxZn0lI8KG9SuhJF/9+2J3WViZANNNoRJ/JfVu7EYluQdo9+i/ahgnC+1vLcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hb8qfco1; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: lizhi.xu@windriver.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719063826;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LRZAmMqJKIn14niIRNgriXgIOVU0yHmhEJpzSzRShXs=;
+	b=hb8qfco15DblCSmmQUCBBB+K8xww3gNNF5672JpQrukqK9uxgvIKru6zO6xgOZzxWGvS8S
+	/DsLMB4n7KI/pmQxIMzeynF8+djDYZ7bVOJK4PW2OPcP8VchQcr+X9Ax8nin4BNveibSKu
+	Y3QNbUd2z/v14eVB9U6Q+VQi7n3CsbU=
+X-Envelope-To: syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+Date: Sat, 22 Jun 2024 09:43:41 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com, 
+	bfoster@redhat.com, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] bcachefs: fix deadlock in bch2_gc_mark_key
+Message-ID: <zlg74w7gvxf4pyoudahzjswbxa3sadaoqhrv6ntoqngz6w5krx@egt6tjqbmwa4>
+References: <000000000000c43781061b5fbdcd@google.com>
+ <20240621093423.1874314-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621093423.1874314-1-lizhi.xu@windriver.com>
+X-Migadu-Flow: FLOW_OUT
 
-In the dmesg is showing the message "failed to read out thermal zone"
-as if the temperature read is failed by don't find the thermal zone.
+On Fri, Jun 21, 2024 at 05:34:23PM +0800, Lizhi Xu wrote:
+> [Syz reported]
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #1 (&c->btree_root_lock){+.+.}-{3:3}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+>        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>        bch2_btree_roots_to_journal_entries+0xbb/0x980 fs/bcachefs/btree_update_interior.c:2633
+>        bch2_fs_mark_clean+0x2cc/0x6d0 fs/bcachefs/sb-clean.c:376
+>        bch2_fs_read_only+0x1101/0x1210 fs/bcachefs/super.c:381
+>        __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:615
+>        generic_shutdown_super+0x136/0x2d0 fs/super.c:642
+>        bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2037
+>        deactivate_locked_super+0xc4/0x130 fs/super.c:473
+>        cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
+>        task_work_run+0x24f/0x310 kernel/task_work.c:180
+>        ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
+>        ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+>        ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+>        syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
+>        syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+>        __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+>        syscall_exit_to_user_mode+0x273/0x370 kernel/entry/common.c:218
+>        do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #0 (&c->sb_lock){+.+.}-{3:3}:
+>        check_prev_add kernel/locking/lockdep.c:3134 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+>        validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+>        __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+>        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>        bch2_gc_mark_key+0xc66/0x1010 fs/bcachefs/btree_gc.c:600
+>        bch2_gc_btree fs/bcachefs/btree_gc.c:648 [inline]
+>        bch2_gc_btrees fs/bcachefs/btree_gc.c:697 [inline]
+>        bch2_check_allocations+0x3e06/0xcca0 fs/bcachefs/btree_gc.c:1224
+>        bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:182
+>        bch2_run_recovery_passes+0x19e/0x820 fs/bcachefs/recovery_passes.c:225
+>        bch2_fs_recovery+0x2370/0x3720 fs/bcachefs/recovery.c:807
+>        bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1035
+>        bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2127
+>        bch2_mount+0x6b0/0x13a0 fs/bcachefs/fs.c:1919
+>        legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+>        vfs_get_tree+0x90/0x2a0 fs/super.c:1780
+>        do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+>        do_mount fs/namespace.c:3692 [inline]
+>        __do_sys_mount fs/namespace.c:3898 [inline]
+>        __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> other info that might help us debug this:
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&c->btree_root_lock);
+>                                lock(&c->sb_lock);
+>                                lock(&c->btree_root_lock);
+>   lock(&c->sb_lock);
+> 
+> [Analysis]
+> bch2_btree_roots_to_journal_entries() does not need to hold sb_lock, so
+> we can remove sb_lock to avoid deadlock.
+> 
+> Reported-by: syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=050e797ad21ccc3f5d1a
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+>  fs/bcachefs/sb-clean.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
+> index 47f10ab57f40..7a75615ba745 100644
+> --- a/fs/bcachefs/sb-clean.c
+> +++ b/fs/bcachefs/sb-clean.c
+> @@ -373,6 +373,7 @@ void bch2_fs_mark_clean(struct bch_fs *c)
+>  
+>  	entry = sb_clean->start;
+>  	bch2_journal_super_entries_add_common(c, &entry, 0);
+> +	mutex_unlock(&c->sb_lock);
+>  	entry = bch2_btree_roots_to_journal_entries(c, entry, 0);
+>  	BUG_ON((void *) entry > vstruct_end(&sb_clean->field));
+>  
+> @@ -383,6 +384,7 @@ void bch2_fs_mark_clean(struct bch_fs *c)
+>  	 * this should be in the write path, and we should be validating every
+>  	 * superblock section:
+>  	 */
+> +	mutex_lock(&c->sb_lock);
+>  	ret = bch2_sb_clean_validate_late(c, sb_clean, WRITE);
+>  	if (ret) {
+>  		bch_err(c, "error writing marking filesystem clean: validate error");
 
-After researching and debugging, I see that this specific error is
-occurrenced because the thermal try read the temperature when is started,
-but the firmware is not running yet.
-
-For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
-After this change, in my computer I compile and install kernel in /boot
-and in my dmesg the message "failed to read out thermal zone" is not show
-any more.
-
-I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> ,
-Kalle Valo <kvalo@kernel.org> and Johannes Berg <johannes@sipsolutions.net>
-for your suggestions in my previous patch.
-
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
----
- drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-index 8083c4b2ab6b..d1dd334b5049 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-@@ -620,8 +620,12 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
- 
- 	mutex_lock(&mvm->mutex);
- 
--	if (!iwl_mvm_firmware_running(mvm) ||
--	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
-+	if (!iwl_mvm_firmware_running(mvm)) {
-+		ret = -EAGAIN;
-+		goto out;
-+	}
-+
-+	if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
- 		ret = -ENODATA;
- 		goto out;
- 	}
--- 
-2.45.2
-
+that's not the right fix, you can't just arbitrarily drop and retake
+locks like that
 
