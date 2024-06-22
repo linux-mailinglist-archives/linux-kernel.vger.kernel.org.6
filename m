@@ -1,182 +1,148 @@
-Return-Path: <linux-kernel+bounces-225666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76112913374
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:45:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51594913369
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D00C1F23215
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:45:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74DA11C21183
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD081509AE;
-	Sat, 22 Jun 2024 11:44:58 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3B514B089;
+	Sat, 22 Jun 2024 11:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G7Gfb3NU"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E9615382E;
-	Sat, 22 Jun 2024 11:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE49B657
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719056697; cv=none; b=pkVkjN6u9B3uqU6CIsgcju1T4xowVROj4+vSOKOKM1Zf80kE64e6EwHNoZLAXZkH+HiceAjUsC30zY3PUp/fa/YemA1rVE7ZVT8zLdX/GOCQwwQqSZQCLc/isFPZULPFzP+YYRwpo/jyQBxWXt8UIe/yfYqQ6VVn0qvUAEjiA7w=
+	t=1719056388; cv=none; b=L7yPB6tpRC/IEo/Yv35SSGGUKGi3rJkKF6R9pHEa50j1C5qTCSrOrxh5TU2dcBpyMuGBeSfoo95on5MuYNfAxBAMkGz0yOxyR9ticfXZf2Y6TfrDk6+MTIoJ4prV5OShjsnliaGHP7EgWESyuSDl7AAljit3q29xPuY4deK/Nvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719056697; c=relaxed/simple;
-	bh=Y7ZpAfhDTUE6U93lIBNlr/+c6AoW+cOzf76hzYC8mwI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HL9OPbQRQJtI7Is4wa5it8BvF2oDk1kYTYeMt3DVXgN5z4S6H+wONxGVP6rnM0DQUEQ2VsltoXorWFXXp/O7ietQeBfgT/y8h7Gzo6CSCla+JCCDVv1WAd1qCjVbqjswZHGlBs8msnYb0mHYImyDeNQg62IKxIOOK7W0qsjSbH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W5sjV4QPNzxSXn;
-	Sat, 22 Jun 2024 19:40:30 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 11ED818007E;
-	Sat, 22 Jun 2024 19:44:46 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Sat, 22 Jun
- 2024 19:44:45 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<longman@redhat.com>
-CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] cgroup: fix uaf when proc_cpuset_show
-Date: Sat, 22 Jun 2024 11:38:14 +0000
-Message-ID: <20240622113814.120907-1-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719056388; c=relaxed/simple;
+	bh=OCdsOo/BOHyFx3+Z3l2bC9A5tuN2RyWDPRXhs4S8JMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qBZekKilYEMBx/Y54w/7Hib0Z89jfCB7GB46JbfvQtuqQO0duEGN8wEJ3TUh4JZ67Iwz1JwuowiWpW61wJit3U9/vBhOTFvkmsVuNEgXlvuiWG/Rz0EIr8e/zYhccWifD5XgZQUj8RZSfiUrXvBJLdpDnynj7zIq9SoXRhNaR/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G7Gfb3NU; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ce0140416so137195e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:39:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719056384; x=1719661184; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Kh1lIxhRvlZJlWBZQ3fVihNtTYBls5m4TXb40w4pSDE=;
+        b=G7Gfb3NUQbkIsTjW8i6snwZXelsv5h4jQ2m89YIJFoxvjnRW/JUMxNHEGrcPkKZ38u
+         VD/THeaNL3PFpnGqKxetOistIbpfqZHveJ8is4KAvIAlEwXWcugtL4GU7k4YQCWo488f
+         gTUNd6W9XCQfWqUAPD3CUXvHaYwVAAkPAuTlncIEClGy5Hi3XrnpGld2Qrfx595+qLuD
+         WyLwEFVWFE74Q/EX9DY6TnwyrCf+3ZXWt1x4/GcHVgi47oY+b+Hdt03tobVF2TfTsdp9
+         coLY376fwYxcFuRRgsc+YOaqF0vkeeAPTuJV+6ABMEe4fuurUq01kewcNTbCj9yufHE+
+         XJDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719056385; x=1719661185;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kh1lIxhRvlZJlWBZQ3fVihNtTYBls5m4TXb40w4pSDE=;
+        b=XLoQ3rWDlKCnaBvKszLozft16bo1fqPyg5lOo0ULxQ/0p0pIu0PY/GmLOn0OJ9K6Pj
+         KyrZvbyVCgUd4EHLHr2XLLsfSs7mJMzd0sIFMKyzE9KtVU0Q3vUPYxRPzikMlPyg5TZR
+         xaFTAafngpmTgB+qGbbrIDMrYbM6Artal0rcY0kRfUo9grRxig836dsKm0IirlX7bEyX
+         PTCCIlQm0H0efeHaIPTMHZOqswbpvqsFYcuqz0Wtpkcx78sKIgL1mnt/nSqW2uvaXj1N
+         f8et6vn5ajXGZeUxgZmk4D5KaP+8RzZTJmQp7CHLBfLwO28nKZGhP2Z8X/QunM2whEfM
+         fRgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXl+JpvFHNw/BaJ0hJB/w5N/wtXDIspwgVuF2zDAyC+Cov+IzaDKyqFP8fc3cDaMdpjf1232bjH+4EtSZxYZr4Ggnst3K8gauIl/gFM
+X-Gm-Message-State: AOJu0YyOB9HVou17YKIq/ecYLJxD+DQ54SI7aXwJYlTJhOY8lqsMMQ+J
+	Qu2jEu59OgZ5NcVBYYkZdPy2zQPxPkaoduV6PpmRo3C/24+3u4M7ojOMoGqHNS4=
+X-Google-Smtp-Source: AGHT+IH8k8QOA58L7YU6kzdfuHzkc3ehVV5Iyo7noGGH483YxSGNq0lgFwx7Vjua/ahxSsJU6oNR2g==
+X-Received: by 2002:ac2:4209:0:b0:52c:cb5a:a60d with SMTP id 2adb3069b0e04-52ce06104d7mr249031e87.8.1719056384543;
+        Sat, 22 Jun 2024 04:39:44 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63b4100sm474271e87.36.2024.06.22.04.39.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 04:39:44 -0700 (PDT)
+Date: Sat, 22 Jun 2024 14:39:42 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/dpu: guard ctl irq callback register/unregister
+Message-ID: <jeiz7tfgmhbswfhyrt4xervypw4ltonfbimoa45rykuaimkyst@yevqeplcrrwq>
+References: <20240509-ctl_irq-v1-1-9433f2da9dc7@gmail.com>
+ <151f3503-d7ce-b11d-0658-1d26a47b1920@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+In-Reply-To: <151f3503-d7ce-b11d-0658-1d26a47b1920@quicinc.com>
 
-We found a refcount UAF bug as follows:
+On Thu, May 09, 2024 at 12:14:19PM GMT, Abhinav Kumar wrote:
+> 
+> 
+> On 5/9/2024 10:52 AM, Barnabás Czémán wrote:
+> > CTLs on older qualcomm SOCs like msm8953 and msm8996 has not got interrupts,
+> > so better to skip CTL irq callback register/unregister
+> > make dpu_ctl_cfg be able to define without intr_start.
+> > 
+> 
+> Thanks for the patch.
+> 
+> Have msm8953 and msm8996 migrated to DPU or is there a series planned to
+> migrate them?
+> 
+> The change itself is correct but without the catalogs for those chipsets
+> merged, we will never hit this path.
 
-BUG: KASAN: use-after-free in cgroup_path_ns+0x112/0x150
-Read of size 8 at addr ffff8882a4b242b8 by task atop/19903
+I think I'm going to accept this patch. While we might not be supporting
+these chipsets, it's easier to have this in.
 
-CPU: 27 PID: 19903 Comm: atop Kdump: loaded Tainted: GF
-Call Trace:
- dump_stack+0x7d/0xa7
- print_address_description.constprop.0+0x19/0x170
- ? cgroup_path_ns+0x112/0x150
- __kasan_report.cold+0x6c/0x84
- ? print_unreferenced+0x390/0x3b0
- ? cgroup_path_ns+0x112/0x150
- kasan_report+0x3a/0x50
- cgroup_path_ns+0x112/0x150
- proc_cpuset_show+0x164/0x530
- proc_single_show+0x10f/0x1c0
- seq_read_iter+0x405/0x1020
- ? aa_path_link+0x2e0/0x2e0
- seq_read+0x324/0x500
- ? seq_read_iter+0x1020/0x1020
- ? common_file_perm+0x2a1/0x4a0
- ? fsnotify_unmount_inodes+0x380/0x380
- ? bpf_lsm_file_permission_wrapper+0xa/0x30
- ? security_file_permission+0x53/0x460
- vfs_read+0x122/0x420
- ksys_read+0xed/0x1c0
- ? __ia32_sys_pwrite64+0x1e0/0x1e0
- ? __audit_syscall_exit+0x741/0xa70
- do_syscall_64+0x33/0x40
- entry_SYSCALL_64_after_hwframe+0x67/0xcc
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-This is also reported by: https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
+> > Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+> > ---
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> > index 489be1c0c704..250d83af53a4 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+> > @@ -298,7 +298,7 @@ static void dpu_encoder_phys_cmd_irq_enable(struct dpu_encoder_phys *phys_enc)
+> >   				       phys_enc);
+> >   	dpu_encoder_phys_cmd_control_vblank_irq(phys_enc, true);
+> > -	if (dpu_encoder_phys_cmd_is_master(phys_enc))
+> > +	if (dpu_encoder_phys_cmd_is_master(phys_enc) && phys_enc->irq[INTR_IDX_CTL_START])
+> >   		dpu_core_irq_register_callback(phys_enc->dpu_kms,
+> >   					       phys_enc->irq[INTR_IDX_CTL_START],
+> >   					       dpu_encoder_phys_cmd_ctl_start_irq,
+> > @@ -311,7 +311,7 @@ static void dpu_encoder_phys_cmd_irq_disable(struct dpu_encoder_phys *phys_enc)
+> >   					   phys_enc->hw_pp->idx - PINGPONG_0,
+> >   					   phys_enc->vblank_refcount);
+> > -	if (dpu_encoder_phys_cmd_is_master(phys_enc))
+> > +	if (dpu_encoder_phys_cmd_is_master(phys_enc) && phys_enc->irq[INTR_IDX_CTL_START])
+> >   		dpu_core_irq_unregister_callback(phys_enc->dpu_kms,
+> >   						 phys_enc->irq[INTR_IDX_CTL_START]);
+> > 
+> > ---
+> > base-commit: 704ba27ac55579704ba1289392448b0c66b56258
+> > change-id: 20240509-ctl_irq-a90b2d7a0bf5
+> > 
+> > Best regards,
 
-This can be reproduced by the following methods:
-1.add an mdelay(1000) before acquiring the cgroup_lock In the
- cgroup_path_ns function.
-2.$cat /proc/<pid>/cpuset   repeatly.
-3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
-$umount /sys/fs/cgroup/cpuset/   repeatly.
-
-The race that cause this bug can be shown as below:
-
-(umount)		|	(cat /proc/<pid>/cpuset)
-css_release		|	proc_cpuset_show
-css_release_work_fn	|	css = task_get_css(tsk, cpuset_cgrp_id);
-css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
-cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
-rebind_subsystems	|
-cgroup_free_root 	|
-			|	// cgrp was freed, UAF
-			|	cgroup_path_ns_locked(cgrp,..);
-
-When the cpuset is initialized, the root node top_cpuset.css.cgrp
-will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation will
-allocate cgroup_root, and top_cpuset.css.cgrp will point to the allocated
-&cgroup_root.cgrp. When the umount operation is executed,
-top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
-
-The problem is that when rebinding to cgrp_dfl_root, there are cases
-where the cgroup_root allocated by setting up the root for cgroup v1
-is cached. This could lead to a Use-After-Free (UAF) if it is
-subsequently freed. The descendant cgroups of cgroup v1 can only be
-freed after the css is released. However, the css of the root will never
-be released, yet the cgroup_root should be freed when it is unmounted.
-This means that obtaining a reference to the css of the root does
-not guarantee that css.cgrp->root will not be freed.
-
-To solve this issue, we have added a cgroup reference count in
-the proc_cpuset_show function to ensure that css.cgrp->root will not
-be freed prematurely. This is a temporary solution. Let's see if anyone
-has a better solution.
-
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/cpuset.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index c12b9fdb22a4..782eaf807173 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -5045,6 +5045,7 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
- 	char *buf;
- 	struct cgroup_subsys_state *css;
- 	int retval;
-+	struct cgroup *root_cgroup = NULL;
- 
- 	retval = -ENOMEM;
- 	buf = kmalloc(PATH_MAX, GFP_KERNEL);
-@@ -5052,9 +5053,28 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
- 		goto out;
- 
- 	css = task_get_css(tsk, cpuset_cgrp_id);
-+	rcu_read_lock();
-+	/*
-+	 * When the cpuset subsystem is mounted on the legacy hierarchy,
-+	 * the top_cpuset.css->cgroup does not hold a reference count of
-+	 * cgroup_root.cgroup. This makes accessing css->cgroup very
-+	 * dangerous because when the cpuset subsystem is remounted to the
-+	 * default hierarchy, the cgroup_root.cgroup that css->cgroup points
-+	 * to will be released, leading to a UAF issue. To avoid this problem,
-+	 * get the reference count of top_cpuset.css->cgroup first.
-+	 *
-+	 * This is ugly!!
-+	 */
-+	if (css == &top_cpuset.css) {
-+		cgroup_get(css->cgroup);
-+		root_cgroup = css->cgroup;
-+	}
-+	rcu_read_unlock();
- 	retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
- 				current->nsproxy->cgroup_ns);
- 	css_put(css);
-+	if (root_cgroup)
-+		cgroup_put(root_cgroup);
- 	if (retval == -E2BIG)
- 		retval = -ENAMETOOLONG;
- 	if (retval < 0)
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
