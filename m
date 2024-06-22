@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-225634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6951191331F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:02:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5627F913323
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54B31F23199
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:01:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C521D1F23217
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A974714B942;
-	Sat, 22 Jun 2024 11:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AC91509AE;
+	Sat, 22 Jun 2024 11:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lYTzriPx"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lVGUvsSb"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8E58F5D
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2055E14BF98
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719054110; cv=none; b=iVzQCyvDZVEdDBgsRLrBE9MnnEtAoq8prnsPCJX1MXsZfcZCYtJUn7ZCf5AXGgsl/axpqfUC7NlZ4HmuVDidjhbLk8PVGO6+CmOMdXbU0QDByJaJUMRO3XfHD6+a9VkApk/X9X9DyluVPgeX6X84rmuPDkZsk5TTv9fI9GrCqPI=
+	t=1719054297; cv=none; b=k/rfvlebPhPQnZXzxFg807q4We2WRikZdfs8SRRCwJIwdyUh9N1TEdH7EG1HaTMVZAGp8bahcHeL4kVnIh5MtwD6SRQMKmazepJofAeKzJ/72j3rPI0nC05tb2cKinFzRvqxC9nOvjwyqLbiPvJiidcayh4giO/uybCBVwPNAH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719054110; c=relaxed/simple;
-	bh=F3gqfRmiUj+bYI01JOgOi0+RTUtI8rxBBXSadyCmGJQ=;
+	s=arc-20240116; t=1719054297; c=relaxed/simple;
+	bh=I+mRjMWttkiuYPW+SQSOHOwhv6K+AN5Sep1rk7YplaY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qkc9evHeqRxP1P56sli0qveiPsKE95D4FhRmooDgE8kcEUzge+FeqdUaf5bqgEpmtXcs8krz+6xIGLyN7A2QmgXfNoXi71LDB7R+sCNIyNZ43vdXl9v7gomtJqsX4XkCWoGFTpXdgxei/rkQZ5Sk6TRPzhemn5Nv5LfE7WKwYlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lYTzriPx; arc=none smtp.client-ip=209.85.208.179
+	 In-Reply-To:Content-Type; b=heZ21t3qlfJRQIsj+nHV8mEUfVTE7575y4VYnoh7U72K2+ZE4tJ7BN0CMGojgpoGgrV3hfxnBf1050im4FRwwXWdciZ3qG3oPUdWar69HiJWOcnXbHQB8+vDv5FeoDjgqzcJ6l29I15QiPV3r6rfzLy6ut8HoihpgJT8gXpV6YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lVGUvsSb; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec50a5e230so13792061fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:01:48 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso296416766b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719054107; x=1719658907; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719054294; x=1719659094; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=jXRUkjHTIgJfjCnNrNY9R3/Ef3KcLvNtWkpIANt8d5Y=;
-        b=lYTzriPxM1sfMe/Rop+6du5w9ArSWsz3nMiIqmo/aAqRlX/ziRpi3C9NtvL+P52wxL
-         cEQ6rJL9oikIrnHapvX6swYeI05PpJ6HpPOkpIX3JXu+uxef21iYHoKeEix9UqYcSpRu
-         ZjnNpqSfAfAQWFa00QwKhOTQcfyKSpA2RPeSjJPjQub5q77knEx5yz3DvvOaqi2dVV8A
-         m/vvGYpxJ2ad2MU3wuTZAY9+/Ol3WFp/eR2fp14+XOhq3IFMLzcyS4M0W1cRdDureqPJ
-         oXDG+xseE0OCExUXZOcxPWJ97LXtTOjZmEz0oVpDN8iHvBYnay6xrhPuznW8Q+Fmelab
-         iMlQ==
+        bh=s1I90TQbEvc+2WC5x6IbJlb3i9xpMTyN7+tGPOnmPaU=;
+        b=lVGUvsSbLo9wJZiEm+r5BbCFpki7Lc/1sScnfPatwPKdv8UDm7Cqc6GDTrWpHP12bs
+         UkIhzMnyXT9y/Y/V2tqRE6Tptrfi5spVsAJ9B59ZzmwtIlZcc7kshPRUczGQyqHSE0TR
+         ktnc0olfZzbQ+7hq78/K4M+eGQrspPcyzimgcQRLXwbz5uY5g8zinC1AOOOZvqHJ+Ppq
+         Cu8XsH36OtVYba8uxaf/KB3Jb9fbl8J1ujzrDtIJo5sxyexL6ijryeU9xQpEuaqQa5rk
+         88wD7McWkdT5PsoROi5MTzQQZhsQxPX1xCjhTP4k5MS+Wo1whTemDhqQfjk+R1cTlSSo
+         LpUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719054107; x=1719658907;
+        d=1e100.net; s=20230601; t=1719054294; x=1719659094;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jXRUkjHTIgJfjCnNrNY9R3/Ef3KcLvNtWkpIANt8d5Y=;
-        b=Ol4SITIXgpFrL8Kg9bM7lbrddM3WSTx+qJECwtwG6GsE5mlHCQ1MCOtLeAneqEzrWC
-         MSHyYHAnJumwSgIv8DYzC5+fvq6A4jkEYjtK3x+8w7C+Tn+5B+/Yh4Up3lUuSevKhn5D
-         tRsuqmcKg6wrOQ2yKgq7Y3/8+efx4UKKjhe7wJbKwLrIC4FK9QHnbwYGb/rBQYpATm8r
-         uvC41BwKWFFC2jf+XmgPmP80w1tTzugqcGXuQQqxkIcYGz0lhHt59FgYFLjZ95kYTQNt
-         njw91DKXHw9BpGVX8kV3/VVJ/r5McZcLmggtyawK4A2ki6w4tDCL/E1UkgUvVKirpeGY
-         bQRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0SlzYDnbcGeMq/TqgtvHEf6yIWnuZ4KQNiNlrBnHo/UCM/INa3litHlbIXRjfxLKZQlEIQkbyJSFf26lyCdUbgBaUFZ4s7gJbMtR9
-X-Gm-Message-State: AOJu0YwQsf1XSmGQl3kKCFUg762eDytPsjQS5UWn+x+yGEijhUoqYPaA
-	eHTwMBV/Z7Hud+XAUjz00gwrLLdhIlpyLokRrD5Tjmw15iPFOnhztbTabXC9W0c=
-X-Google-Smtp-Source: AGHT+IELT1vMCmwY6Vjcb3xgEIns4r8I00un0bZsJ8ozJP+j+xXOEMQnAgsIe1WzzaO/HXffS/b/Ug==
-X-Received: by 2002:a2e:9785:0:b0:2ec:59d8:a7e6 with SMTP id 38308e7fff4ca-2ec59d8aa0dmr280051fa.30.1719054106934;
-        Sat, 22 Jun 2024 04:01:46 -0700 (PDT)
+        bh=s1I90TQbEvc+2WC5x6IbJlb3i9xpMTyN7+tGPOnmPaU=;
+        b=ErFchN3zrjd+Y93T+WAbMnbdhqUj0S8KpoHZWMqhyLLHXHB+2KOWG4mVtDN2lo/xaZ
+         WVKERQ3h6NyTGMddJBSHpcB6CyXijo0GqINabfZgHEAlUb/BrMYWFZ/fyfCZlHAtzFPV
+         Aba5wBikI0tEc3wu/MATVvXHjjsMKEZ9OzSCwElkTnX3jS1II9HTxxSSrYASAjNAH6ZY
+         t026emt1aOO9DGgVoTSimZaiDoaR0FKheQS4BYoBgmYZS1Q1PM/cX2EsEdwya1CcGdDi
+         b18DvU2vfaaC08VzDCGTev39MPds5OlOJzZhlGTUcFu413R8kaXpI0lKXR7Nutwpj0ok
+         Qf8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWFJZBnSpo7yoZZrfq4BQhESxLTVNwWQ2FMFgzOm1qN5HZk2VSAGfRJB0yYO/uiR6llDAaFoPI8B2TelU0DUQIzZME+RKPQow/L76yX
+X-Gm-Message-State: AOJu0Yx+/8pAxkAtSirD6ft7BC73VUa/WCjm6tGTolS1W66j8HYqQffK
+	KYJOA80LUPXhfi4qpvN3KXrxFPbixlTIxMnZrA2mCz0bBuEYOjBK43qc1FdjaqM=
+X-Google-Smtp-Source: AGHT+IF+s3rXBAyDALz1gMTQaPWO072y2LorckG8YTUHRh9+/61CB1f1hOEfD4Ak00RcFEYxdubRLQ==
+X-Received: by 2002:a17:907:1603:b0:a6f:af31:6f5 with SMTP id a640c23a62f3a-a7242c9c10dmr9013466b.22.1719054294256;
+        Sat, 22 Jun 2024 04:04:54 -0700 (PDT)
 Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303da249sm2172422a12.14.2024.06.22.04.01.45
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf560977sm183559566b.183.2024.06.22.04.04.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jun 2024 04:01:46 -0700 (PDT)
-Message-ID: <d508f8e5-8303-4f84-83d4-d63f6c612a02@linaro.org>
-Date: Sat, 22 Jun 2024 13:01:43 +0200
+        Sat, 22 Jun 2024 04:04:53 -0700 (PDT)
+Message-ID: <abf727db-f338-4295-8d02-18ab0d04697a@linaro.org>
+Date: Sat, 22 Jun 2024 13:04:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,16 +76,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] clk: qcom: dispcc-sm8650: drop TCXO from table when
- using rcg2_shared_ops
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240621-topic-sm8650-upstream-fix-dispcc-v1-0-7b297dd9fcc1@linaro.org>
- <20240621-topic-sm8650-upstream-fix-dispcc-v1-3-7b297dd9fcc1@linaro.org>
+Subject: Re: [PATCH 0/2] arm64: dts: qcom: sa8775p-ride: support both board
+ variants
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240619183255.34107-1-brgl@bgdev.pl>
+ <4df2a52c-c21e-4da0-9ca0-13f28e81018c@linaro.org>
+ <CAMRc=Mf4dZHMyexj1Xaw1dMVw0OT3=1t8OMfpHCB0xGJ9JdvSw@mail.gmail.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -123,20 +124,29 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240621-topic-sm8650-upstream-fix-dispcc-v1-3-7b297dd9fcc1@linaro.org>
+In-Reply-To: <CAMRc=Mf4dZHMyexj1Xaw1dMVw0OT3=1t8OMfpHCB0xGJ9JdvSw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21.06.2024 4:01 PM, Neil Armstrong wrote:
-> Since those clocks are using rcg2_shared_ops to park on TCXO
-> instead of disable, no need to have TCXO in the frequency table.
+On 20.06.2024 9:07 AM, Bartosz Golaszewski wrote:
+> On Wed, Jun 19, 2024 at 8:50 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>>
+>>
+>> On 6/19/24 20:32, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>
+>>> Split the current .dts into two: the existing one keeps the name and
+>>> supports revision 2 of the board while patch 2 adds a .dts for revision 3.
+>>
+>> Are both gonna be actively used?
+>>
 > 
-> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
+> Yes! This is the reason for the split. I initially wanted to just
+> change the PHY in the original .dts but then I learned there are a lot
+> of r2 boards in the wild at QCom so we need to support both.
 
-I don't think that's correct.. some hardware can still run with the
-core clock @ 19.2 / 38.4 MHz
+Ok, thanks for confirming
 
 Konrad
 
