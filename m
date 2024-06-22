@@ -1,49 +1,100 @@
-Return-Path: <linux-kernel+bounces-225616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76359132F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:56:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DB99132F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E809328432B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:56:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB031C21129
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A548714D6F1;
-	Sat, 22 Jun 2024 09:56:48 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D2C14B948;
+	Sat, 22 Jun 2024 10:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5/gZdx9"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A10818;
-	Sat, 22 Jun 2024 09:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9466F4A20
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 10:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719050208; cv=none; b=auOQsiPNzXFCfe5vMGu/pZP0bQ5Du2vSlL+ClcU0kcCIysPvMo0YelCZZt0q/fQ4hDLLsEIP/AkuS9TSFWN6jTBTnKRgfLMdVIxQJyRAZlrnJ5VCZZtV1iSTbMXXzqKvk20DlbHwPGRLILKOetNxJuZPT7iHpiPDDfR4tff6NQw=
+	t=1719050495; cv=none; b=LFGk3RpJzUcFj8K3ZnW96sguf0iC3LY4FwnfbRYQEOJYNFECkKtulmngI3iv4ga121e0BQXdxmIRyJpxzkEW7DZP7wEg/HxIV25tNk2LmqXXn2yCx52KJ19mpFZwv9CcAVTeq0ppb393n5apcAdY6vb1GvaIlfLCkNS2Z3z7dbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719050208; c=relaxed/simple;
-	bh=PXvZUv63wE+rNiBZe+zRYXmlyGWiebS3Xnu/l4ljR2w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NdcXAl07mirMs4N6IjwFiFV6yLWK/XRWzKCXfj6q+THNyPbGwIpoVzKIndvLNY2rnesn6s02wjLRjV5JMCyWp/Cd15KbqrHowuXIT8gNls5f2drgKUTmtU/7LF3NhmCLdjf445xXz10bVVYraOsl5C10mB2lynEOtVs/Z+QNiK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowADXfRDDn3ZmYecdEg--.42420S2;
-	Sat, 22 Jun 2024 17:56:30 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: neal_liu@aspeedtech.com,
-	gregkh@linuxfoundation.org,
-	joel@jms.id.au,
-	andrew@codeconstruct.com.au
-Cc: linux-aspeed@lists.ozlabs.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1719050495; c=relaxed/simple;
+	bh=SngcoCWwa17YMlF9y7iUlKcCdVe2vTc0YyJJ4ug3gkI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KMqOKc9ta7CEjzumycV1CEC9+pAUSs2ti1HJPBkWQhOFAPY8H8Ul56xijMHvOdqDK9Y0CbuWVClEIUbLGv1hc1a9eqSRn2dZPMCfWTBG+ZlueJcvN75mp0I5tfsMXzTYHI1buzbQolqYhy4Ts/wmw9Cz455/LF6QJr7Onby2a+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5/gZdx9; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7066a4a611dso168312b3a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719050494; x=1719655294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XqMTUZuiEpOFDB1baLxpBZo9bkFoxkrSKRZCo1yWC2s=;
+        b=g5/gZdx9SN6qhecGh4WiOYKeRC9jRyCq7RsICtjOs2DGINeASaqfE3AVbidIFjye3x
+         JFthZbUkxt5nsT1DgKrpgXlEfn5N8pGicgRGWxru+qQbQtYpS1ftwnk8cn+XVELOTLw/
+         05MmvqRopj/dbtu2s6YRmauFrWRe5Lamn84lg+rIlOlmw1RjiqSGw3x0gS75pCPdkTla
+         dGIWv0hTyRvAR6xykZeAC5nuyYEQFPhqdYGKICYWxSQkJd2G4Ds2vCBOytrtlGgrw5T2
+         SKBjVEnSNGOozjbWxDx4xecEQ2I7Z5D6wX9SnClaDNqBsqr7hdhjEse7iu196Ug/2bxY
+         E+xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719050494; x=1719655294;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XqMTUZuiEpOFDB1baLxpBZo9bkFoxkrSKRZCo1yWC2s=;
+        b=BTcuZxCFla84+kygcPpuqtxWbZQxYy+/ufcLHzbIlFs04vkYQ7g2CEvc3tZ3zGVeK2
+         NH0JpQG2fx4Uys6pjO6IsB1gdF2hom6qKBvkzpy67bbdyIg8YnMQuypTXNXlowCBU+2U
+         gwqgM53xbjDD4yPEq2vTjl+a3n2LLbJvFNr2EnB6VpqNeRGvcuZY6UZzPDdi03a5c7O7
+         2lnnD5dy6MS2uJsxTHKyFZYa67jagoEZM6tEPoTeZNHs0rRMifgNgHAcueXHacMbhMlA
+         ug4Vc48wXJIx9YqhKQlkSkefLYYnCQFgJ5C9d6BSYdhhMfYBGKwbJVnqpwmVPZzHzBU5
+         IZCw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9xFrflQ7b8QwS2a7iHQGTSWlVouZzBJdrARexwLEqpJY01ggVCVQRHgQl1obgL5T4gYo/nbm26FKDbFjYLlWPb9XqdUkBOSk7sKXp
+X-Gm-Message-State: AOJu0YwRQmLy8OcKBYvQV5TvUoJI4T6vqU72WaGwk50H9cvWbUYuzdux
+	RsACsRvxLlrSvyJlKPR3g/vP6hqjwJKte8QKDSa0FUMRUFHboI7q
+X-Google-Smtp-Source: AGHT+IG5+gqUJ0pcMtEkBAAeVC8MQVAyDbxFzNmRYBsf3upGPEwH2mux8H1fv5kZLq2BlXcL6pgK2Q==
+X-Received: by 2002:a05:6a00:1701:b0:706:6c38:31f3 with SMTP id d2e1a72fcca58-7066c3833b6mr516508b3a.8.1719050493620;
+        Sat, 22 Jun 2024 03:01:33 -0700 (PDT)
+Received: from localhost.localdomain ([2403:2c80:6::3057])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065129b9edsm2838593b3a.148.2024.06.22.03.01.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 03:01:33 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: david@redhat.com,
+	akpm@linux-foundation.org
+Cc: 21cnbao@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	fengwei.yin@intel.com,
+	ioworker0@gmail.com,
+	libang.li@antgroup.com,
 	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH] usb: gadget: aspeed_udc: validate endpoint index for ast udc
-Date: Sat, 22 Jun 2024 17:56:18 +0800
-Message-Id: <20240622095618.1890093-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	linux-mm@kvack.org,
+	maskray@google.com,
+	mhocko@suse.com,
+	minchan@kernel.org,
+	peterx@redhat.com,
+	ryan.roberts@arm.com,
+	shy828301@gmail.com,
+	sj@kernel.org,
+	songmuchun@bytedance.com,
+	wangkefeng.wang@huawei.com,
+	willy@infradead.org,
+	xiehuan09@gmail.com,
+	ziy@nvidia.com,
+	zokeefe@google.com
+Subject: Re: [PATCH v8 3/3] mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+Date: Sat, 22 Jun 2024 18:00:57 +0800
+Message-Id: <20240622100057.3352-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <e7c0aff1-b690-4926-9a34-4e32c9f3faaa@redhat.com>
+References: <e7c0aff1-b690-4926-9a34-4e32c9f3faaa@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,47 +102,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADXfRDDn3ZmYecdEg--.42420S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrur1rtFyrCw4kCr4rWw45ZFb_yoW3WFcE93
-	WUuF4fWr17W3yqqr1UZa4fCryj9a4ku3WkuFnFyryavFyUWa4xJ34UWFWkAa15uF47uF9x
-	A3yDK34ak34SgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4AFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r106r1rM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbHa0D
-	UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-We should verify the bound of the array to assure that host
-may not manipulate the index to point past endpoint array.
+Hi Andrew,
 
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/usb/gadget/udc/aspeed_udc.c | 2 ++
- 1 file changed, 2 insertions(+)
+I made some minor changes suggested by David[1]. Could you please fold the
+following changes into this patch?
 
-diff --git a/drivers/usb/gadget/udc/aspeed_udc.c b/drivers/usb/gadget/udc/aspeed_udc.c
-index 3916c8e2ba01..95060592c231 100644
---- a/drivers/usb/gadget/udc/aspeed_udc.c
-+++ b/drivers/usb/gadget/udc/aspeed_udc.c
-@@ -1009,6 +1009,8 @@ static void ast_udc_getstatus(struct ast_udc_dev *udc)
- 		break;
- 	case USB_RECIP_ENDPOINT:
- 		epnum = crq.wIndex & USB_ENDPOINT_NUMBER_MASK;
-+		if (epnum >= USB_MAX_ENDPOINTS)
-+			goto stall;
- 		status = udc->ep[epnum].stopped;
- 		break;
- 	default:
+[1] https://lore.kernel.org/linux-mm/e7c0aff1-b690-4926-9a34-4e32c9f3faaa@redhat.com/
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 4b2817bb2c7d..0cb52ae29259 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2693,21 +2693,11 @@ static bool __discard_anon_folio_pmd_locked(struct vm_area_struct *vma,
+ 					    unsigned long addr, pmd_t *pmdp,
+ 					    struct folio *folio)
+ {
+-	VM_WARN_ON_FOLIO(folio_test_swapbacked(folio), folio);
+-	VM_WARN_ON_FOLIO(!folio_test_anon(folio), folio);
+-
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	int ref_count, map_count;
+ 	pmd_t orig_pmd = *pmdp;
+ 	struct page *page;
+ 
+-	if (unlikely(!pmd_present(orig_pmd) || !pmd_trans_huge(orig_pmd)))
+-		return false;
+-
+-	page = pmd_page(orig_pmd);
+-	if (unlikely(page_folio(page) != folio))
+-		return false;
+-
+ 	if (folio_test_dirty(folio) || pmd_dirty(orig_pmd))
+ 		return false;
+ 
+diff --git a/mm/rmap.c b/mm/rmap.c
+index df1a43295c85..b358501fb7e8 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1678,9 +1678,8 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 
+ 			if (flags & TTU_SPLIT_HUGE_PMD) {
+ 				/*
+-				 * We temporarily have to drop the PTL and start
+-				 * once again from that now-PTE-mapped page
+-				 * table.
++				 * We temporarily have to drop the PTL and
++				 * restart so we can process the PTE-mapped THP.
+ 				 */
+ 				split_huge_pmd_locked(vma, pvmw.address,
+ 						      pvmw.pmd, false, folio);
 -- 
-2.25.1
 
+Thanks,
+Lance
 
