@@ -1,110 +1,129 @@
-Return-Path: <linux-kernel+bounces-225727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E6E5913477
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C1891347B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98E27B233E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:35:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A7D2B23178
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0656416F0EC;
-	Sat, 22 Jun 2024 14:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA3816F8F3;
+	Sat, 22 Jun 2024 14:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCkVMw47"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZWEn+u6"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FCA1E4AB
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 14:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4DF1E4AB;
+	Sat, 22 Jun 2024 14:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719066936; cv=none; b=tbTPDEEYtcX960+uMqPSoHuTCIPgnRkn/tvxkf3hY4JlD0nC/4fsODzNM9qbCxZ5MOD/o6jY9ZLX1pTHNRIcafkp25KwmiIH2T0JnuvlICviZFI7OftKx5EvTR7gkZugIi3VymsE2gbvrNHRGiP2FLcKbF2hJkoJ+8bR9BY324s=
+	t=1719066987; cv=none; b=Da8qE+WDkmLNTwaNvfAEHiv5DQW/r2Wrl2/9CeDkVWg+qegNN9yIyQm0DMYFRmRsMAYyx3uG/gEgOGnXWs9/ZmyGVrOV4p9CvCHdAEzijLwFN0K3Sa//3g3ABOgDE9PkZT5+yXV6eVwjHtbbRdkgi1Z+JiARkdreTK/EuJApOQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719066936; c=relaxed/simple;
-	bh=SU2CmCvOdGRXuXI/SBqJYgyewvCjz0seOX8DDW5DfAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YB5HGXEaIZ0eDuv9mxc5DL2XauUOIlELaa2AzIbUek+yrqDHe9n++F3pcFZXg7fMPKkLBWokYPamB6/zXZ+uOegwSw8EfzqHiUYzygZ10JTSaYphIqHaOWiqyngrA/VAgRr6ttl1XRZ9Keb7aIyrpO1NGAu/LRsJMrLKjQDmfoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pCkVMw47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37600C3277B;
-	Sat, 22 Jun 2024 14:35:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719066935;
-	bh=SU2CmCvOdGRXuXI/SBqJYgyewvCjz0seOX8DDW5DfAc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pCkVMw47BkFVjWeIhRYQKwrVuHyGUEezdRItByJEhS+8zwRabX4nGu+MMcO+aRdwb
-	 xqXSamlInhEAnq8viHIPrErUjZacCNxgYuKg8vOd6h/FCJ7IyKW132VeZMJCs7l9Jo
-	 hh2vopsVv5wtyMRd7jEh1IlwbSuOYC7QR4PMOEFNxRlIPZWvHpttVQ8k3x2rRrjXMb
-	 uC8OqbyObuTzgENMw8p0vOsQqS+uJ3DzXWJsbdcoDkU/43IBzlSYmQ1rUIhOzn67VH
-	 Iq8/gvAifTFrcYLHSA6N7OdvOqdLp4S5WCGAiSJSACHAkMOijXFCRoLU8PA1dtQEUZ
-	 TvsHyDKLuqBRA==
-Date: Sat, 22 Jun 2024 16:35:32 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V3 11/51] posix-cpu-timers: Handle SIGEV_NONE timers
- correctly in timer_set()
-Message-ID: <ZnbhNF59091n4Xwl@pavilion.home>
-References: <20240610163452.591699700@linutronix.de>
- <20240610164026.162380808@linutronix.de>
+	s=arc-20240116; t=1719066987; c=relaxed/simple;
+	bh=fFfsg+f4AU+eql/TtMeYZLXfrroZ/Pgt+D3BjAS+LAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j9pAMWdfYxQAPS8wo6R1RCc32izHH05a9bm3+99f9uwKTPXe/uyJ3E+z9GF6gqF9oriw35Eqld0m8lv4E4FZ7dtFh78WxF1nFBxXpESJZ0KJN4dnxBVMx1IlR4XUEHJF+dlL3BunNYIzW7yoh/kNe8FyUzAePTt5TXvzlNN4swM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WZWEn+u6; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ce0140416so240929e87.0;
+        Sat, 22 Jun 2024 07:36:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719066982; x=1719671782; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WNYrUl2YGsngqImjAyk/vT9l6tF/5D7wdDvB58mdJRs=;
+        b=WZWEn+u6CrCFS9Xfk3XqyJf8Jn+t2cNcxfzw8H6OJb4KFRneUBI1Nu8ysJnfrb5xUp
+         Uc9vKzOi/aDavjFT4frZadZmeC8Xmjj+7Ha4MeskaPbBROqcDhKHHvrvK2NbBLh0kORp
+         IYLkM42m+NhXGer8Jw5e1sKl+OrVns212chvybUcwRdD6Tlily8eXTugIqr8UVwz2QzB
+         K00qeE6VMClg+dzvu6/ID6ZotkHSp1wZ0WPJnFmqC+nzW4JU/p9K3Dm67SoCLuEibGCA
+         gvUHyRm1nxO+LpYP5YjdyCeeQdJCDRWDfgqZ4oRSdF+qgAgH/r5/1tawH6sHb+EEKpQP
+         YXjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719066982; x=1719671782;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WNYrUl2YGsngqImjAyk/vT9l6tF/5D7wdDvB58mdJRs=;
+        b=jUXqwVNOZiqZBDBNj3Z/xKitjVlJ3jge1Gp98qKXS6udW4EZVNK0saAH1MJqHUp6R0
+         zUrungdjeRlZ5F1RLNGtnKsYubjc/mfw8+NI+H43YphpkdXlkdfo07UAk9yRYfxWzkU9
+         yfZmCC/0J3k1LozinSqCxKhBk3kx3PUJd8qaH5TKehR05tEFzt10oktVprrVYBsa3eno
+         cnZkeda4OYaIwKWhHxmhDGs1zr4XavO6DqOc2REXi/vROdf09l0C10Rf4eg81yfSfi6X
+         wf3x/dkswColJamvVgC+Oo89XI38Dg3Zl4UbXr6xgK65uw2fHx9Xrl9OftqGOwOTa0da
+         qSSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVptDECskTG8W0i7NvXVO/Mmxa/n2iK7n23+6Sogir2yZI6hB7WV0P2FIFpcucIxJpKV8V581UWUxIOithVHEhDSGisrxxNOf5LUGiW+Hq2FUb0NLfvzWCruULAHFjPl+3tUnntqAzoA5r+QU3D2pPKStM81tM0B3n5/9onyBO9IAXBFP2t2aM+cmEITdP3T7nMMH9UTjlMCU4TeuNyzV3olv8=
+X-Gm-Message-State: AOJu0Ywu6XT/jbIeqjXHFRpTnDTBt+Q83W+EZW61sB54JoGDowhQ56Y2
+	lff3PsBqhBWwatMlWyUpWsVSSPDDUyJsjAML+ISlAKvZ8R/CulD1h2wyZg==
+X-Google-Smtp-Source: AGHT+IE/2Zw69mZ5Nmp2bq2yaB2+Cfu8PQ8xGCyORiNbD89YhAvnnSPpUdCwEvydqxU9tqFqOif9Jg==
+X-Received: by 2002:a19:2d18:0:b0:52c:dbc6:8eb0 with SMTP id 2adb3069b0e04-52ce061a287mr405838e87.21.1719066981895;
+        Sat, 22 Jun 2024 07:36:21 -0700 (PDT)
+Received: from [192.168.3.32] (d-zg2-226.globalnet.hr. [213.149.37.226])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638e90cbesm4711184f8f.58.2024.06.22.07.36.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Jun 2024 07:36:21 -0700 (PDT)
+Message-ID: <e3ad7b57-65dc-4262-b523-8bb81b60892b@gmail.com>
+Date: Sat, 22 Jun 2024 16:36:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240610164026.162380808@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] clk: qcom: gcc-ipq6018: update sdcc max clock
+ frequency
+To: Chukun Pan <amadeus@jmu.edu.cn>, Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240620150122.1406631-1-amadeus@jmu.edu.cn>
+ <20240620150122.1406631-2-amadeus@jmu.edu.cn>
+Content-Language: en-US
+From: Robert Marko <robimarko@gmail.com>
+In-Reply-To: <20240620150122.1406631-2-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Le Mon, Jun 10, 2024 at 06:42:18PM +0200, Thomas Gleixner a écrit :
-> Expired SIGEV_NONE oneshot timers must return 0 nsec for the expiry time in
-> timer_get(), but the posix CPU timer implementation returns 1 nsec.
-> 
-> Add the missing conditional.
-> 
-> This will be cleaned up in a follow up patch.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+
+On 20. 06. 2024. 17:01, Chukun Pan wrote:
+> The mmc controller of the IPQ6018 does not support HS400 mode.
+> So adjust the maximum clock frequency of sdcc to 200 MHz (HS200).
+>
+> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
 > ---
-> V2: Split out into new patch to make review simpler - Frederic
-> ---
->  kernel/time/posix-cpu-timers.c |   11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> --- a/kernel/time/posix-cpu-timers.c
-> +++ b/kernel/time/posix-cpu-timers.c
-> @@ -706,7 +706,16 @@ static int posix_cpu_timer_set(struct k_
->  				old_expires = exp - val;
->  				old->it_value = ns_to_timespec64(old_expires);
->  			} else {
-> -				old->it_value.tv_nsec = 1;
-> +				/*
-> +				 * A single shot SIGEV_NONE timer must return 0, when it is
-> +				 * expired! Timers which have a real signal delivery mode
-> +				 * must return a remaining time greater than 0 because the
-> +				 * signal has not yet been delivered.
-> +				 */
-> +				if (sigev_none)
+>   drivers/clk/qcom/gcc-ipq6018.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+> index 7e69de34c310..6c764e3e2665 100644
+> --- a/drivers/clk/qcom/gcc-ipq6018.c
+> +++ b/drivers/clk/qcom/gcc-ipq6018.c
+> @@ -1617,7 +1617,7 @@ static const struct freq_tbl ftbl_sdcc_apps_clk_src[] = {
+>   	F(96000000, P_GPLL2, 12, 0, 0),
+>   	F(177777778, P_GPLL0, 4.5, 0, 0),
+>   	F(192000000, P_GPLL2, 6, 0, 0),
+> -	F(384000000, P_GPLL2, 3, 0, 0),
+> +	F(200000000, P_GPLL0, 4, 0, 0),
 
-Does this patch build? The sigev_none variable doesn't seem to exist.
+Hi,
+Are you sure that 200MHz is even valid of a frequency, cause all IPQ SoC-s
+use 192MHz for the HS200 mode instead.
 
-Thanks.
+I would just drop the 384MHz frequency as datasheet clearly states that 
+HS400
+is not supported.
 
-> +					old->it_value.tv_nsec = 0;
-> +				else
-> +					old->it_value.tv_nsec = 1;
->  				old->it_value.tv_sec = 0;
->  			}
->  		}
-> 
+Regards,
+Robert
+
+>   	{ }
+>   };
+>   
 
