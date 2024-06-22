@@ -1,156 +1,121 @@
-Return-Path: <linux-kernel+bounces-225718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B0E913451
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:00:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B68913454
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA61FB236EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:00:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B185284CC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0D516F29F;
-	Sat, 22 Jun 2024 14:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE7416F859;
+	Sat, 22 Jun 2024 14:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M0t2dPWY"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LPN7o4Mx"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F2714C586
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 14:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A358016F292;
+	Sat, 22 Jun 2024 14:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719064835; cv=none; b=n7sxXDvkhHfGtji6bA9hYzaJx48YmF/+6rAK0R0X1qvYUb0gcRrIlzKaMt5AJdFg8AaSHV7VUk+yM3AATyCQ58C/YgnMWzlOngGopX1mM1M41upnlHXm6hkdtNH+h0U+AFD9EWWnqbSaGftGFvwUjaNcJZz96GDI+ry8A6bF2Hw=
+	t=1719064880; cv=none; b=Sp0M14xxn4NMdZ5+qXmP4+diX1wIxfFLwAj3XH8RTfoZ6UaYhYeEQ6NRrTAUvBcwFhF55wNx0MIy623NzdZI1g2ES/vJTGEddE0MT2py+xV9v9k/FRRsFk7zc8JjuhHYVTwqtYudqPIOwHxZ8SA8QDRrcRC/XCP7CDsbo4v6pig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719064835; c=relaxed/simple;
-	bh=fs6lZuo2LUc1dax5XxIA4Tuxi1wzIBvcoBGSs24+ExE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ljdHc3QWqzG+lkFspYs8KwRab1ZHRI2ez6scGeVAnDZkPQJTb07SuJIRRVGMBpij0LKqug7FJiRrHlT1G3xURjf5yk5EYPT6uESDywl5PVLdJ/aoOX6hoRKMLjNmZkyAJAcqhKgqhritF6wKDz0GkK0FP6s/p7VjUpWWa0x89xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M0t2dPWY; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: torvalds@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719064830;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=5u24kxgSySrZQXwxrbt603z/pcXZVEqocR9DEgAawuc=;
-	b=M0t2dPWYtgK2mgJU7uhtotSGzpTYNTxfa4vJW428fdsIDouoNqhs98A33dgRyAwOOiDZ8G
-	pqJuWXKRhSecMi57Fc0N7xnoG6VsfdS4yZ8jifN5chygrRVMCaQR+rD7ikK6qyWD1kkmHT
-	vpwT5GcAasmG91mV8mW03xqTaL4jIdw=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-fsdevel@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Sat, 22 Jun 2024 10:00:27 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.10-rc5
-Message-ID: <nbed7rrwexwonrtxvv6zmlxrvheicxxx6vlzcq4hzcxhrtm7ps@s5nkcab6f3cp>
+	s=arc-20240116; t=1719064880; c=relaxed/simple;
+	bh=lJwt/8xJprkQId/LAKYz6hb4Vb5UyZkvn01mDU5U7W0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UrVQ3gsOvN4xHYIolTkK/VrgrT1+QKhmPNB24G4ZWEMaH4P+Wrb4oB1KmL3+JoQEXTfzG+LKEhBeWQNi8ezHxfzC8BugR/xvcaRm/Ar6V00XxFA8Zh8LdDwC0d1v7mi+IwkGgWgxAo/XDlqH+SEcDlZLdD8XUeb2dXvxHebfWJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LPN7o4Mx; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7241b2fe79so24053466b.1;
+        Sat, 22 Jun 2024 07:01:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719064877; x=1719669677; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lzSErGL7EG0GwxTTihW2ZGVx7A57o+5iWBzaLRdIdFs=;
+        b=LPN7o4MxEZv9iHsioWoVrg+dN9UnAprlixmMtPEC+p7pWK5qjsz1RDt7eA+bEoIAIW
+         /oEh5/OfcXwQ6po5IhV9o88ladR2x+X9Znnp4/VqopxScklV02kAa/JFnLDr0i947LRf
+         xFabquue8dCfOqpvt/QJM0JoUoGVdBPhG+N8uAAuQ0GBepISXcSNbrqPBhzWHtAV2H9z
+         M7Hj/OZC3GIJfcjHOGoG+6sHrVCZRH65OKAITqbIHbSentVdPyJyVXg7eFunT8OPHZvv
+         L/b5YBFkCFOfYPNf18vLplQ84fFR6yDeo0wt7CD9dQsm4Ce92M8/yh/RTalNHU1wE7/S
+         44qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719064877; x=1719669677;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lzSErGL7EG0GwxTTihW2ZGVx7A57o+5iWBzaLRdIdFs=;
+        b=FvS8biKw5Lqgv72aAE9J2uQXr0+/7Gpmr27eDxN1mT8MRfWjkFrpIj/Tkuy7kzK0NH
+         /ma6CdaJCaIbU/1qVj7onOX8K7wgQYLnfaaJ1qqOMBy0jyQfZCHleQDA3hWPmQ6zlhOk
+         HhBcxe8rstHY1Jm34ioLvGCvA7947eN07eTxIlKzp/3WPl/MT3jVh8hYEUQNYY5sZEHs
+         Wjp/sScGg9Nts0CxGPWqIydJnfggVwOyCUqdDJEGUnEvnCFjkpkU+zsCLf8vkYA15Gr2
+         OI2LzNmA4FNsuBmPSrBduKNOw7j9I449nKS5+hvpLxBf9c2OOPIp122+NTO0tLzDfx5y
+         kXFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5HFp3iJUMVXdV+X9dN8x+Y9R/CRJ3lc2BRD/3DdLleggjQLmZGPmB4TvrbTGNp6aG80YhvEO7RC7yzX0U6/B3NoEbpNUPt0Pfe9fXpc0sd/zE4t5JJEvX5T+MObOrmeegEuwtbUPJaA==
+X-Gm-Message-State: AOJu0YwqCYPOHPE8JcpMV4nBWSGptINroSX9FlrJdK89F+3c30ETLxHl
+	XkTbXg/oDPpYOVTam7gJJRwZ2HC7mDMTwySMVBw64I/z21N/f0CE
+X-Google-Smtp-Source: AGHT+IGSzgQci76PPWu3XEOEhCJsUeaxFcspKllKriEC/thW65d45nZKtOz6piqObtlVIYUCIsxQYw==
+X-Received: by 2002:a17:906:d013:b0:a6f:4e1f:e60b with SMTP id a640c23a62f3a-a7242c48e6cmr27180066b.36.1719064876807;
+        Sat, 22 Jun 2024 07:01:16 -0700 (PDT)
+Received: from toolbox.. ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf549166sm198715166b.132.2024.06.22.07.01.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 07:01:16 -0700 (PDT)
+From: Christian Hewitt <christianshewitt@gmail.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Christian Hewitt <christianshewitt@gmail.com>,
+	Emanuel Strobel <emanuel.strobel@yahoo.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 1/3] dt-bindings: add dream vendor prefix
+Date: Sat, 22 Jun 2024 14:01:10 +0000
+Message-Id: <20240622140112.2609534-1-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Hi Linus, fresh batch of fixes for you,
+Add a vendor prefix for Dream Property GmbH
 
-Cheers,
-Kent
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+Changes from v1:
+- No changes
 
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index fbf47f0bacf1..a6cb1eb8e5e0 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -394,6 +394,8 @@ patternProperties:
+     description: DPTechnics
+   "^dragino,.*":
+     description: Dragino Technology Co., Limited
++  "^dream,.*":
++    description: Dream Property GmbH
+   "^ds,.*":
+     description: DaSheng, Inc.
+   "^dserve,.*":
+-- 
+2.34.1
 
-are available in the Git repository at:
-
-  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-06-22
-
-for you to fetch changes up to bd4da0462ea7bf26b2a5df5528ec20c550f7ec41:
-
-  bcachefs: Move the ei_flags setting to after initialization (2024-06-21 10:17:07 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.10-rc5
-
-Lots of (mostly boring) fixes for syzbot bugs and rare(r) CI bugs.
-
-The LRU_TIME_BITS fix was slightly more involved; we only have 48 bits
-for the LRU position (we would prefer 64), so wraparound is possible for
-the cached data LRUs on a filesystem that has done sufficient
-(petabytes) reads; this is now handled.
-
-One notable user reported bugfix, where we were forgetting to correctly
-set the bucket data type, which should have been BCH_DATA_need_gc_gens
-instead of BCH_DATA_free; this was causing us to go emergency read-only
-on a filesystem that had seen heavy enough use to see bucket gen
-wraparoud.
-
-We're now starting to fix simple (safe) errors without requiring user
-intervention - i.e. a small incremental step towards full self healing.
-This is currently limited to just certain allocation information
-counters, and the error is still logged in the superblock; see that
-patch for more information. ("bcachefs: Fix safe errors by default").
-
-----------------------------------------------------------------
-Kent Overstreet (20):
-      bcachefs: Fix initialization order for srcu barrier
-      bcachefs: Fix array-index-out-of-bounds
-      bcachefs: Fix a locking bug in the do_discard_fast() path
-      bcachefs: Fix shift overflow in read_one_super()
-      bcachefs: Fix btree ID bitmasks
-      bcachefs: Check for invalid btree IDs
-      bcachefs: Fix early init error path in journal code
-      bcachefs: delete_dead_snapshots() doesn't need to go RW
-      bcachefs: Guard against overflowing LRU_TIME_BITS
-      bcachefs: Handle cached data LRU wraparound
-      bcachefs: Fix bch2_sb_downgrade_update()
-      bcachefs: set_worker_desc() for delete_dead_snapshots
-      bcachefs: Fix bch2_trans_put()
-      bcachefs: Fix safe errors by default
-      closures: Change BUG_ON() to WARN_ON()
-      bcachefs: Fix missing alloc_data_type_set()
-      bcachefs: Replace bare EEXIST with private error codes
-      bcachefs: Fix I_NEW warning in race path in bch2_inode_insert()
-      bcachefs: Use bch2_print_string_as_lines for long err
-      bcachefs: Fix a UAF after write_super()
-
-Youling Tang (2):
-      bcachefs: fix alignment of VMA for memory mapped files on THP
-      bcachefs: Move the ei_flags setting to after initialization
-
- fs/bcachefs/alloc_background.c |  76 ++++--
- fs/bcachefs/alloc_background.h |   8 +-
- fs/bcachefs/bcachefs.h         |   5 +
- fs/bcachefs/bcachefs_format.h  |  13 +-
- fs/bcachefs/bkey.c             |   2 +-
- fs/bcachefs/bkey_methods.c     |   6 +-
- fs/bcachefs/bkey_methods.h     |   3 +-
- fs/bcachefs/btree_iter.c       |  11 +-
- fs/bcachefs/btree_types.h      |  16 +-
- fs/bcachefs/errcode.h          |   3 +
- fs/bcachefs/error.c            |  19 +-
- fs/bcachefs/error.h            |   7 -
- fs/bcachefs/fs-ioctl.c         |   2 +-
- fs/bcachefs/fs.c               |  21 +-
- fs/bcachefs/journal.c          |   3 +
- fs/bcachefs/journal_io.c       |  13 +-
- fs/bcachefs/lru.h              |   3 -
- fs/bcachefs/opts.h             |   2 +-
- fs/bcachefs/recovery.c         |  12 +-
- fs/bcachefs/sb-downgrade.c     |   2 +-
- fs/bcachefs/sb-errors_format.h | 559 +++++++++++++++++++++--------------------
- fs/bcachefs/snapshot.c         |   9 +-
- fs/bcachefs/str_hash.h         |   2 +-
- fs/bcachefs/super-io.c         |   7 +-
- fs/bcachefs/super.c            |  13 +-
- lib/closure.c                  |  10 +-
- 26 files changed, 472 insertions(+), 355 deletions(-)
 
