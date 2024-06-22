@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-225703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2D5913411
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:03:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47425913414
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF687B2295D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:03:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA54D283F53
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E298916EC0A;
-	Sat, 22 Jun 2024 13:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F8016EC10;
+	Sat, 22 Jun 2024 13:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rICmA/7h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAleG/5A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2801414D6F9;
-	Sat, 22 Jun 2024 13:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09F514D6F9;
+	Sat, 22 Jun 2024 13:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719061416; cv=none; b=hbxKCzg6QrCXiPvB3RO+vLLMVRexodiL+N2s7QRfL4EAoZlMFmfaatXtNkK+RvM3sCwBhsMAXU7AY5J4CMDFK0ewyp4qZhM7iuBV0rDagwXjvzAjw1+xRAV2fdPna5qPDGVcIWzS/2/udDqz+6DNRT5OgPktWbqbhreCRXAUD2g=
+	t=1719061512; cv=none; b=awq6v/LU8IEgRqpMOr7r2dMUnO+NH/8rA4fXaGr8XuF9d6bPa/yOMta9/g7jEjtpToUffhoZe3z4qwDA0/rLDDwv53o3keaOMIp8QPbzZyy2XoS/AHpCBoMqPUf08M+FJP+IIWFZ5lKgITL+1B/tlvc6u4yywlZNlWAdwr1graY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719061416; c=relaxed/simple;
-	bh=UrxnrK5wRWLLAqbFuJQdybESu+fL2JUBL/OQiQsMn1A=;
+	s=arc-20240116; t=1719061512; c=relaxed/simple;
+	bh=8pC44r9Oj1dhrw5UE75tXX29ELdK1m8cQNkcWGEG6R4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hXFgS1B8qLNN6nEVmGgrNHto/Qf/C8zLG8avn42IMtKnppwAk9SJJw44CoR6UcjYwHV0s+4pA+7Fe6BhGCjro9MZsIFY92LxrrcwRfaNucBIa223/nWvfIhAVQaKCb0kxhplbEiRtUDGHqLTTFgfWLEuEDvztPcpQiksKkjTX4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rICmA/7h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B16BBC3277B;
-	Sat, 22 Jun 2024 13:03:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=s++sDH9w/M8+kBsEe3G01btrAnNJlfRnOQNuY5vFCVr6Y98T5Osqwu6RF0slHZ/549yWyGdpeb5VYMePBGl/Kl7VxjD5Dn5lNKOk6vFHBIg0yZpWaSU5FxWFuaxJb8BbbixLqECDzbXzezOfrnjgKS2kAHBb2/il+fwY8mOyA78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAleG/5A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0A45C3277B;
+	Sat, 22 Jun 2024 13:05:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719061415;
-	bh=UrxnrK5wRWLLAqbFuJQdybESu+fL2JUBL/OQiQsMn1A=;
+	s=k20201202; t=1719061512;
+	bh=8pC44r9Oj1dhrw5UE75tXX29ELdK1m8cQNkcWGEG6R4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rICmA/7hK70cX0IM8LZFNqXzboC014+YqVAuaOumofoi5yYT73G7QM/sPccdVDXRC
-	 Ds/JWgeRnBygStUgniH4iZAEy82fp3Hlq4a0dNFCrhTSd56vOua4AXaTQad9KMfz0I
-	 uP9KFkg8gS8/8L4KgN+1KIXLam4+bHx9vIFTemOaQC3KIRjJo9wcqKLGrzz7Emn6G5
-	 SqI4KtrZmSMe1aVqyjbgitUy/CTLYQJO9Q2LAGszmeZhCkB9ppCrqXK8JEjEs1QeOh
-	 D90xD3WapBblbNM03i3Lk7mQ/ue7KOZNZw7X9T+O8X5rtL1P6oJSo92LFKpzSBmv6t
-	 wMZRI4tt+7+DA==
-Date: Sat, 22 Jun 2024 14:03:29 +0100
+	b=KAleG/5Acfo1bhnjlfm8PNQXxHcfwPSE0D4d742XuC1jCrt/9miUA+z2/pMtSsG/E
+	 KipNZaAgEyzzpmkQLtyzFymbQ7Ui4rMOjijk/+MH8nuslc8XEvKfU6VfFUVRzoyvRH
+	 6mg9UL2bQfneheUeprchOqJFgwfjwrhZdWM8bVOxKKGxVZFVTAgyj7n1GkzxU0/Qx7
+	 8/JxEhySiNK8hstGEhwWjOrr43xKmj++Ddv2Sr5w89mMwkEslH96EUGZU2h6KRjLC4
+	 XwSDhvs955rq3ekRC2IF9+E1AnyDtnntymPDaTfVFOpKTDcXngBZIWhVdBBFF8iHKI
+	 vshdVZSq4BC8Q==
+Date: Sat, 22 Jun 2024 14:05:06 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Christian Hewitt <christianshewitt@gmail.com>
 Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
@@ -51,11 +51,10 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
 	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	alsa-devel@alsa-project.org
-Subject: Re: [PATCH 2/2] ASoC: Add support for ti,pcm5242 to the pcm512x
- driver
-Message-ID: <57f0036c-4412-48fa-a6f9-3fa721717be9@sirena.org.uk>
+Subject: Re: [PATCH 1/2] dt-bindings: sound: add ti,pcm5424 to pcm512x
+Message-ID: <92bb82cf-47c3-4216-9a54-466ad7de43ce@sirena.org.uk>
 References: <20240622124603.2606770-1-christianshewitt@gmail.com>
- <20240622124603.2606770-3-christianshewitt@gmail.com>
+ <20240622124603.2606770-2-christianshewitt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,45 +62,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ns7W6Wuqxln5UvNz"
+	protocol="application/pgp-signature"; boundary="qd5lMr36o2A9Y9hn"
 Content-Disposition: inline
-In-Reply-To: <20240622124603.2606770-3-christianshewitt@gmail.com>
+In-Reply-To: <20240622124603.2606770-2-christianshewitt@gmail.com>
 X-Cookie: No stopping or standing.
 
 
---Ns7W6Wuqxln5UvNz
+--qd5lMr36o2A9Y9hn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 22, 2024 at 12:46:03PM +0000, Christian Hewitt wrote:
-> Add a compatible string to enable support for the ti,pcm5242 DAC chip
-> in the pcm512x driver.
+On Sat, Jun 22, 2024 at 12:46:02PM +0000, Christian Hewitt wrote:
+> Add ti,pcm5424 to the list of pcm512x compatible chips
 >=20
 > Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 > ---
->  sound/soc/codecs/pcm512x-i2c.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  Documentation/devicetree/bindings/sound/pcm512x.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-The device appears to have SPI support too like the other devices in the
-family, why not add the ID for SPI as well:
+Ideally this would also be converted to YAML but for such a trivial
+addition I don't think this should be a blocker.
 
-   https://www.ti.com/product/PCM5242
-
---Ns7W6Wuqxln5UvNz
+--qd5lMr36o2A9Y9hn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ2y6EACgkQJNaLcl1U
-h9BmaAf/Wf4dlhJjpl3fS3/Wwz1IA7U7HfafHCnGFTG5WaABcOG2qOrxjfPC42iR
-KUeRAaU4lqzPSWjayl/eVXWAB6v+x7qKiZuAcQ4vP7g5odGfmIKt+syT5RN4P+xP
-R/EC9NkzmlgH0nb23+NJXnuI+sekheoJvxEt2dkbOsDQivW4IMWwzmiOfTzwLCux
-3zOVaKR+MzriPl0P06oDNsiDycmByd/S2q/bbAbcdrdacAoURmI7mY+F2Q5lVGOL
-07n+SC66baBDVYndWfWS28+50cenwUOAwm1+am3xFTIiNa5U7Zr3ShBj+S67sDzV
-ijKbKj9dvuc7CO9qB3dyJcvkOi9s0Q==
-=lfJ9
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ2zAIACgkQJNaLcl1U
+h9BEqgf+O3MTXzJeES2cciAQyyKWA0LbO6xd++EtqKFeu+JSeIyP3Js+ZxUJrCDS
+wQEiJs9qsB0m2AsaG2UI5rfVRfwakK9QG2VyIwTrNA1j/B4XFaKlv8WJO78wac6M
+bgq+W9roe7jLIgjUNylPySe6uresKIJD0XacIkexmVC1Lod5Twku9HXf8KqIBaRg
+0dTbK+QNjXJDJS69rWAc3acULRaYBnJ52B8xkW1ixXUBqnP8V2aMpcQ7Clm7ZI/N
+fJTFptfQ1P2xVKYW73UkkVOE8gFHsgw7l56GyHPMlooWZ9xtzNvvT3B3LfuAtoMD
+kasjjkyVU+b9LOuyt114z7zRBLbTzA==
+=o1cf
 -----END PGP SIGNATURE-----
 
---Ns7W6Wuqxln5UvNz--
+--qd5lMr36o2A9Y9hn--
 
