@@ -1,103 +1,140 @@
-Return-Path: <linux-kernel+bounces-225621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1B49132FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:18:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B48A913302
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3A728420B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26501F22A09
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A0F14D45E;
-	Sat, 22 Jun 2024 10:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D3014EC44;
+	Sat, 22 Jun 2024 10:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BbGyknvb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pDXnJ9Jv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="nLBuVgLd"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201BA13D614
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 10:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A633D79DF;
+	Sat, 22 Jun 2024 10:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719051476; cv=none; b=cVga5EaPPwxr3UXIP8SVU2P63kyyYNWMO+9Bl70pAxCJnr072z8nJoHVlb2fVOP1DKQFeOgFA5RffhdUe5uHUB6DOCQa9PHzcIBOJH7FJG39XDOfTacHogSlrLhf+H+v8gD/Jg3cGvzMfo2UhXH2r2iT978u9XqBFxCNUNg38TU=
+	t=1719052187; cv=none; b=Felq0bPcH6oM0QVM4jLMOcbbNzIOGN+KWw7dT+Gcn1+8MZ4NLCx2UrHmB/wGHz4F/d8dI7SsfzbBpvegN/fhM/15zuUp4hdQfwdHH+pBIgBi/o3OsOnE5D+i0i+u+6/MrqyEZ1V8IlC/deZB4kUbU1bYOxpN2Y+mXduPHCy3F4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719051476; c=relaxed/simple;
-	bh=ENt6ZNPVg6/LybX0Pk6zZTLzCGyzbxAPfrToun8Dwoo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pwlxSrVjiT9BjRHOQyfQArIUAqG33bWAPJEn4GzxcWODS7dOE1aTJ+z420wr1e4drb/IZKciYaoHTnk+BBogHO8zDs4zT9kxRwuHyTKotUFcmkPCXHTctWK5iy5Dz5j5stfOJtEOr1MGQaApamwZWjGdho9lhij4n6FX7IcAt6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BbGyknvb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pDXnJ9Jv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719051472;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ssaN1tkzzEsL2Y+r8IH9q6uYww1OTiPt1J+oMIZPEqU=;
-	b=BbGyknvbWY5nRDmD1yDUqzMZel/tVHPDLzo61iPh00f01UQJmg12XDJrfhJRrKlpFEEzpg
-	0Y1vbkbUpuhwJpjRE/pD7h9nq9kBvBlA2XSJiMLoW+rYWwOJa7UR73krDT4kPZrCUBolGq
-	EKqxpsdryUoJL2eLf/rSfl+1WzqfeqYu3XpSLVfH/EnYUxT3/1rOSYE8uJ1ej/sjdWU20Z
-	avAcvSoeJUfVLajzgcFxrHGveVDWv7BGLsXNqoxozPTlapskQQbcx5/wITqbW6nM/gjzLm
-	a9OSKucpzLThZ/ODbHWPSwjCHz5bEWFuOgtTxDveB22VkPX6BYlMJZ3z4Z5yOA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719051472;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ssaN1tkzzEsL2Y+r8IH9q6uYww1OTiPt1J+oMIZPEqU=;
-	b=pDXnJ9JvrXG/zYuyrRKc5naGA1rFYIGcCTDXRlIG7Lu1OS0JOCy9yebIRpLE3IKhMw4JR0
-	xIYwsfXcWd9RCfAw==
-To: Huacai Chen <chenhuacai@gmail.com>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, Xuefeng Li <lixuefeng@loongson.cn>, Jiaxun
- Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH V2] irqchip/loongson-eiointc: Use early_cpu_to_node()
- instead of cpu_to_node()
-In-Reply-To: <CAAhV-H5TNnf+EMEtKmXk+Q9KXSZpW+9vd-7qqXDifsKfny+v=g@mail.gmail.com>
-References: <20240620020625.3851354-1-chenhuacai@loongson.cn>
- <87msnem3i1.ffs@tglx>
- <CAAhV-H5TNnf+EMEtKmXk+Q9KXSZpW+9vd-7qqXDifsKfny+v=g@mail.gmail.com>
-Date: Sat, 22 Jun 2024 12:17:51 +0200
-Message-ID: <87pls9z3g0.ffs@tglx>
+	s=arc-20240116; t=1719052187; c=relaxed/simple;
+	bh=EbhJrZl4vfVX69Ed6tMYXe+MvUXi6WxJaYR8+kCdLp0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Y3XnFGVnNvBAYCGnp625iYphtM6hVVwzacY6++q/XQyy7VjWcuJOQRJmctNtttWeLL29M2cL12RdcWtSy2U7PUj/iBuHz5zwLjKxePMEIGwvE9v/Zbyli7h/Dld5DuRDBmvRs8sEkvLwRopwss25NVdO5K/qi4MRYsH3tnIjGKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=nLBuVgLd; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1719052181;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gAs4OzU1Oz3fZkEyE0fXcGDcqifaH35w5B5v23oDbGw=;
+	b=nLBuVgLdi1Ma3AsC4BcduWrQtZljtVvLRLy8P++PL4vrCvYI8UjuY1RWa1GQEQUYAss95u
+	ZhOlYTGJL8HfYiXljF3nuWBQhZXfcw60f48BGapi1QZ1eZnQVwQ7Z7NG5tBGYdPdNEEMDi
+	vf45ho21uqRa1x6iiIU5HK0qfJKGsT+YzEjZUhSLXR7eeufJ6saJjzserH6ceUmcMOmi6R
+	heTdohQ4ujLYbMNd9ySFlM9XgOJgb9j8eaZow2P5XcKZ4XbABY2Qku9+KTFWgnBxsZn8bM
+	tlmA2OK7w48oxzYmXFfp1fzheQXxkSryBkQwf3IG2ms7svnYumxZQIfTJZMqdg==
+Date: Sat, 22 Jun 2024 12:29:33 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Daniel Golle
+ <daniel@makrotopia.org>, Aurelien Jarno <aurelien@aurel32.net>, Olivia
+ Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Sebastian Reichel
+ <sebastian.reichel@collabora.com>, Anand Moon <linux.amoon@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>, Ard
+ Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
+In-Reply-To: <ead26406-dd3b-491c-b6ab-11002a2db11a@kernel.org>
+References: <cover.1718921174.git.daniel@makrotopia.org>
+ <57a7fb13451f066ddc8d1d9339d8f6c1e1946bf1.1718921174.git.daniel@makrotopia.org>
+ <f8e6b1b9-f8ff-42df-b1ef-bcc439c2e913@kernel.org>
+ <173ce1663186ab8282356748abcac3f4@manjaro.org>
+ <ead26406-dd3b-491c-b6ab-11002a2db11a@kernel.org>
+Message-ID: <07fba45d99e9eabf9bcca71b86651074@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Huacai!
+Hello Uwe,
 
-On Sat, Jun 22 2024 at 10:49, Huacai Chen wrote:
-> On Sat, Jun 22, 2024 at 4:42=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
-de> wrote:
->>
->> On Thu, Jun 20 2024 at 10:06, Huacai Chen wrote:
->> > When we use "nr_cpus=3Dn" to hard limit the CPU number, cpu_to_node() =
-is
->> > not usable because it can only applied on "possible" CPUs. On the other
->> > hand, early_cpu_to_node() can be always used instead.
-> cpu_to_node() depends on per-cpu area, and per-cpu area is only usable
-> for "possible" CPUs.
+On 2024-06-22 00:16, Uwe Kleine-König wrote:
+> On 6/21/24 20:13, Dragan Simic wrote:
+>> On 2024-06-21 11:57, Krzysztof Kozlowski wrote:
+>>> On 21/06/2024 03:25, Daniel Golle wrote:
+>>>> From: Aurelien Jarno <aurelien@aurel32.net>
+>> 
+>> [snip]
+>> 
+>>>> +    pm_runtime_set_autosuspend_delay(dev, 
+>>>> RK_RNG_AUTOSUSPEND_DELAY);
+>>>> +    pm_runtime_use_autosuspend(dev);
+>>>> +    pm_runtime_enable(dev);
+>>>> +
+>>>> +    ret = devm_hwrng_register(dev, &rk_rng->rng);
+>>>> +    if (ret)
+>>>> +        return dev_err_probe(&pdev->dev, ret, "Failed to register 
+>>>> Rockchip hwrng\n");
+>>>> +
+>>>> +    dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
+>>> 
+>>> Drop, driver should be silent on success.
+>> 
+>> I respectfully disagree.  Many drivers print a single line upon
+>> successful probing, which I find very useful.  In this particular
+>> case, it's even more useful, because some people may be concerned
+>> about the use of hardware TRNGs, so we should actually make sure
+>> to announce it.
+> 
+> I agree to Krzysztof here. From the POV of a driver author, your own
+> driver is very important and while you write it, it really interests
+> *you* if the driver is successfully probed. However from a system
+> perspective these are annoying: There are easily >50 devices[1] on a
+> system, if all of these print a message in probe, you have little 
+> chance
+> to see the relevant messages. Even if every driver author thinks their
+> work is a special snow flake that is worth announcing, in practice 
+> users
+> only care about your driver if there is a problem. Additionally each
+> message takes time and so delays the boot process. Additionally each
+> message takes place in the printk ring buffer and so edges out earlier
+> messages that might be more important.
 
-When nr_cpus=3Dn is on the command line then what needs to access
-something for CPUs which are not possible to come ever online?
+Well, I don't find those messages annoying, for the drivers I've had
+nothing to do with.  Also, in my experience, 99.9% of users don't care
+about the kernel messages at all, be it everything hunky-dory, or be
+it something really wrong somewhere.
 
-That does not make sense because it's exactly the same situation when
-you compile a kernel with NR_CPU=3D8 and boot it on a system with 16
-CPUs. Then early_cpu_to_node() does not give you anything either.
-
-So what's the technical problem you are trying to solve?
-
-Thanks,
-
-        tglx
+> So +1 for dropping the dev_info() or at least using dev_debug() for it.
+> 
+> Best regards
+> Uwe
+> 
+> [1] On my laptop if have:
+> 
+> 	$ find /sys/devices -name driver | wc -l
+> 	87
+> 
+>     On a Raspberrypi it yields 66.
 
