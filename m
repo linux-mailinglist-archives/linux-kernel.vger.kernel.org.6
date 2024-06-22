@@ -1,86 +1,103 @@
-Return-Path: <linux-kernel+bounces-225608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3D29132D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:10:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC81C9132D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97F6A1F22C3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:10:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44FDB223BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697CE14C583;
-	Sat, 22 Jun 2024 09:10:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128B114D282;
+	Sat, 22 Jun 2024 09:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5Qb3/jX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0D71422B6
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 09:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4954F1422B6;
+	Sat, 22 Jun 2024 09:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719047405; cv=none; b=k4z7ILOMLPxcCv/MOkm8EO4PV3b3ZmcGkzjj0Y9eqQYWfQ4hq1Uf2AH033l3Q0aKQRUk0H14AmdtySoX3Hqf3LtQNfNgP6TLYzkoSTJ4Vz/dPcZfOoiM9JuyuyGx7yfxl/ZEYcOTFzzZRY+H4czlpsZ8rS+QsdhK/+j+6WHdyZ4=
+	t=1719047636; cv=none; b=kmQEGXkPAZ2VnGSwOafdDFQFJIuQIsymu4dpoACoHf37KxE11nIdHM5cOW5aTsfIAbvWlTNqrb4G+QPWjA8pLQOIIYowTT+4TvEvWfA75VJpITvbXNxIA6QC/c+4CC1Sw9L9QUQyOQjiWHpped12k88ydddNX+OxRZyZmKx7wXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719047405; c=relaxed/simple;
-	bh=Wh3zmu5z2djoOGBNUwRpnLoZmQn+ag6XmedmK9KIfpI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XEhfUiqPTJ6MEKfMY8Vz0pOMb27R/9diU6qND4MDnAfXRANxThd+Dwd+QVI7PLYSBbZsRNAJEvEfsUrhLpJWCVUyAl+2bW9ousmEnMfkFv2X1acWmhw9wtqW3mT2RdiBL60hNp4Lzl5oMyjzp32ynRXQoa+BlkTFWy5BZTvuN90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-375da994725so31428355ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 02:10:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719047403; x=1719652203;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c5G90YyfFpGjQDgbkrENOgmrpaj9OnL8ok6Nvs/hKDI=;
-        b=kTorHCPIKmG0LotMkYEMH1qWWPsMGyhjeRFrYLk8EtBodn9k4XaKZs8+OQUiyaEeXh
-         0T8qeOMrhketHUvZnmV0gRCVDImQrIXym9VkL86+uNYf0MKsUwkW87CZu2FkFqZM3xNc
-         u6wUXnqMEHCuyrOhEjKeQ1ySXutp80NhJESLdjFGf3nvjn5UBgS23QNFnYyMkJPZOJK+
-         wTR6D4FYq5bfLJaCUSecFeeuZOexst91MVJ8gPM7+nCPQq+lVi4YDrYMGON+/xFJHUDE
-         iPrxBgx3VFA9o/2qAFKfOZ32VohK+i8zkVW3ojmLq4Gajt2jok/mPkoSjIzqP0auO1sy
-         9z/g==
-X-Forwarded-Encrypted: i=1; AJvYcCW2o5zL+8qCG4NXj2yygTWBiytzpMet7KYf2rNyok03Ss4WbPeRMiEDDzt0WO8TwjSTzSUeYpqeLkhUA4qa+XEEXLT5BNhShj1OTl0V
-X-Gm-Message-State: AOJu0Yzba97dbch0deVL6WmBai/XyPJipsjVS9qkCzKYoSdWo26h/OgG
-	m/1FHWpsHODbhs8VT4PfLScmUtUK/n4SGcqWPh1JnaAjr2YT8FItCYbLI7fkcZ5A2u5lCXgYwbB
-	BvU8s1Meoi1kmRRZxlGsMXwBY0/XU5YRTZ9Pj32g9eI4tAxEiGfCb47w=
-X-Google-Smtp-Source: AGHT+IFGYSi+fHSaiTEYZoWx7vxskYG+0R1CskD6z1hwNT5X625ZmRdKelkUrLE2N/ueJBf6kJuj5NdM0UW1/loAI746qGwUFtJK
+	s=arc-20240116; t=1719047636; c=relaxed/simple;
+	bh=SZd7ny3EirRYRxhj56AZwQV6SXfI4sHhKeyspS8X6zQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XJResyRU6qFHffRzsNcDkczu6Oi4ILx0WLCQajpoKWU24u03zN/pV3+EkJTCxWdcxu1aj/ohvRkXgJlhR8dffeWq1BbzD5cJx1XwrLgeC84UZM/Hd4s3lpX8TS4G+gobDXJvQXSBZs8l6UBoz9y5aplFTc9hIfSYw39gJI8cIZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o5Qb3/jX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F28C32781;
+	Sat, 22 Jun 2024 09:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719047635;
+	bh=SZd7ny3EirRYRxhj56AZwQV6SXfI4sHhKeyspS8X6zQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=o5Qb3/jXa9vGgu5KgPKMF07mi6u4KmUFCkkCN6HiJC2BWapl1BV8EZDKyddUD+FNz
+	 bvfpib++YJUs7csg+LQkkOQDcXr+XondzzV6gwz3dLdx1RZOLT9AGGV3l1fSRxJTyN
+	 qiVu6nG1LtMB4i0nIau7jKC0TV7Nu/3wVGNnmsMUgt2m8bUhYS+E3P3yhtBQiBsN8+
+	 YP5OqWOvrTCSX63XxJ7MsQ+KvPRH9fVSg9ck43DUgU7dGg78w8nzwGLga5pd3jZHx5
+	 9p5WS3iS9eTvHYwOba3cg/DBE2RK5pmPr4RkNt90bub0/fv9sF2JZ0izr+Rr5ZFYr3
+	 pDPT8XxOTR6Ug==
+Date: Sat, 22 Jun 2024 11:13:52 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Grygorii Tertychnyi <grembeter@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Andi Shyti <andi.shyti@kernel.org>
+Subject: [GIT PULL] i2c-host-fixes for v6.10-rc5
+Message-ID: <z26bzagsktppxbftswcocv66a5xmx6kbxn3ui27qq2iie6z2mo@r22mkxmxwfu5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0c:b0:374:a2db:d6b0 with SMTP id
- e9e14a558f8ab-3761d6b8850mr6564685ab.2.1719047402755; Sat, 22 Jun 2024
- 02:10:02 -0700 (PDT)
-Date: Sat, 22 Jun 2024 02:10:02 -0700
-In-Reply-To: <20240622082433.1865-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cb2a2f061b76e9da@google.com>
-Subject: Re: [syzbot] [bluetooth?] general protection fault in l2cap_sock_recv_cb
-From: syzbot <syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+Hi Wolfram,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Sorry for the late pull request. I wanted to allow a few days for
+testing this branch, which has resulted in a Saturday morning
+submission.
 
-Reported-and-tested-by: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com
+Thanks,
+Andi
 
-Tested on:
+The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
 
-commit:         cc8ed4d0 Merge tag 'drm-fixes-2024-06-01' of https://g..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=160a0aea980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47d282ddffae809f
-dashboard link: https://syzkaller.appspot.com/bug?extid=b7f6f8c9303466e16c8a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1190d4d6980000
+  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
 
-Note: testing is done by a robot and is best-effort only.
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.10-rc5
+
+for you to fetch changes up to 5a72477273066b5b357801ab2d315ef14949d402:
+
+  i2c: ocores: set IACK bit after core is enabled (2024-06-21 01:17:43 +0200)
+
+----------------------------------------------------------------
+This pull request fixes the paths of the dt-schema to their
+complete locations for the ChromeOS EC tunnel driver and the
+Atmel at91sam drivers.
+
+Additionally, the OpenCores driver receives a fix for an issue
+that dates back to version 2.6.18. Specifically, the interrupts
+need to be acknowledged (clearing all pending interrupts) after
+enabling the core.
+
+----------------------------------------------------------------
+Grygorii Tertychnyi (1):
+      i2c: ocores: set IACK bit after core is enabled
+
+Krzysztof Kozlowski (2):
+      dt-bindings: i2c: atmel,at91sam: correct path to i2c-controller schema
+      dt-bindings: i2c: google,cros-ec-i2c-tunnel: correct path to i2c-controller schema
+
+ Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml         | 2 +-
+ Documentation/devicetree/bindings/i2c/google,cros-ec-i2c-tunnel.yaml | 2 +-
+ drivers/i2c/busses/i2c-ocores.c                                      | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
