@@ -1,92 +1,116 @@
-Return-Path: <linux-kernel+bounces-225492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A658913139
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 02:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A013D91313C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 03:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5161F2360D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:59:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49C161F23E77
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 01:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838DA441D;
-	Sat, 22 Jun 2024 00:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098014A06;
+	Sat, 22 Jun 2024 01:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cOq92MGl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkDGJsgz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC5D1FA5
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 00:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45190652;
+	Sat, 22 Jun 2024 01:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719017981; cv=none; b=c5lysBUTMX7hv8FaDcG2o/bYOSJZuMoTnZ2Sv0vbHi4e5WDlseSrtQHtjtyUNbkWXKOcKfjxVlvDdXFouDcCM1KH7lDOriUBGoQ9PtE+YuBMJJFKOCQLCWbGrwYENw5OjLr9TfG6CywslSIl4rCpOTFYqTwb6S3dn0Nw4i3csQU=
+	t=1719018088; cv=none; b=fmA73rxOoLeQWCcZZI9iU5SpXKka44wXVIA9CncSbPYEHs/JJzv2X7aZcoG94K7o6SU4o3ysccLHvJaxgc+rpfWm0jgMFriLgwvK8x0S1zygVekHT9uHlCbiNEnHrHC8tr7Zfy+UWZ82v/Vk89x5M1y8TiM5m5D9ekHAI29Eg8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719017981; c=relaxed/simple;
-	bh=l6E+/pOFYoPz0/65BUpxauVRh7+RaH5Xm9C9eF+VW2I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Hb/aVygLWvyUDfmKtnULDhsTlbFvM5EvtoXNHIUl0I/4O22eupa71H4mpSgSo+wN23cWDqodoPHwxxmgJQ+A8CdFRed2ib4op4Ky+osBzHwH4ajgv+v7rJ2sqA3mqKV226y8Zn6nEKwrmwEtCQZVkIV2XThiSshFniA5ydhOWNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cOq92MGl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC5D3C3277B;
-	Sat, 22 Jun 2024 00:59:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719017981;
-	bh=l6E+/pOFYoPz0/65BUpxauVRh7+RaH5Xm9C9eF+VW2I=;
+	s=arc-20240116; t=1719018088; c=relaxed/simple;
+	bh=11CUG9L/N6it3dxAYIeTEEPvihpXZm9lMnBasoZMrwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZwsC2r4qJp7cA1TXkfM9VJlPQjFJuoPVzmx+Tq1X4SvBoHFRERNGUHNYpG5LXZHxm286YiJjesm9Ccs3y97CUeTNiQREhIHgu3fa+jnrki/tvzAfmdzDX+caCulIMkHssHiHBxAHrl3+5yyoxOmNgHUnERcmav4ROs46ILAzn/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkDGJsgz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5C8C2BBFC;
+	Sat, 22 Jun 2024 01:01:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719018087;
+	bh=11CUG9L/N6it3dxAYIeTEEPvihpXZm9lMnBasoZMrwc=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cOq92MGlyu8ofUwJuq3p0k9a1CQ9ZHqycqJ41yF0KLkHNM/aPVxEILaBIc9abxNfO
-	 OByVRBpGAGCZiN2Lin6Iz8uQEx+5a3K0Diwx8XsCt9JEM/CuTsvIUomageXp/JpB4l
-	 DSSgJf3ZxFmZO9QnbuN5xyFEjVxCMfEzFgrGYZG0=
-Date: Fri, 21 Jun 2024 17:59:40 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, vbabka@suse.cz,
- hannes@cmpxchg.org, anna-maria@linutronix.de, tglx@linutronix.de
-Subject: Re: [PATCH] mm/vmstat: Fix -Wenum-enum-conversion warning in
- vmstat.h
-Message-Id: <20240621175940.dd080730047a3f5f5a190ea0@linux-foundation.org>
-In-Reply-To: <ZnXC5Xa4R0Mp7FCB@casper.infradead.org>
-References: <20240621111604.25330-1-shivamurthy.shastri@linutronix.de>
-	<ZnXC5Xa4R0Mp7FCB@casper.infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=XkDGJsgzt4Yz/XcgF3c+cq432157LFDE5AEN6MPlqrO6b2isW/9I7/xQAiPCejueR
+	 CiGHQKzGJpsyQmbFbKo5QgnAcwW7rROLNmLlNgUfTad+tHpn6AjBte8KyL637JYise
+	 c/p1eFYmGKIKIAcYHr131YrGuniOfMYjB8wEsumNsijNdkEf9TBOr9zLdH8NzGaPLV
+	 WfXhHKdk1B1Q6TkZ57srrcl5MX5prDFGOC21ej48+ZMrgIIAur6z4/bFmvdLPcx2V7
+	 oTnnIvAJWpZbaEunXs0nOwZMQaF3awY9tmU0wXy0K7xRlbo9cwPdEQBFS9SJs+AXL5
+	 yd4ziuVWJY+lg==
+Date: Fri, 21 Jun 2024 18:01:26 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Aaron Conole <aconole@redhat.com>
+Cc: netdev@vger.kernel.org, dev@openvswitch.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B
+ Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+ <shuah@kernel.org>, Stefano Brivio <sbrivio@redhat.com>, =?UTF-8?B?QWRy?=
+ =?UTF-8?B?acOhbg==?= Moreno <amorenoz@redhat.com>, Simon Horman
+ <horms@kernel.org>
+Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
+ the internal ovs script.
+Message-ID: <20240621180126.3c40d245@kernel.org>
+In-Reply-To: <20240620125601.15755-1-aconole@redhat.com>
+References: <20240620125601.15755-1-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri, 21 Jun 2024 19:13:57 +0100 Matthew Wilcox <willy@infradead.org> wrote:
+On Thu, 20 Jun 2024 08:55:54 -0400 Aaron Conole wrote:
+> This series enhances the ovs-dpctl utility to provide support for set()
+> and tunnel() flow specifiers, better ipv6 handling support, and the
+> ability to add tunnel vports, and LWT interfaces.  Finally, it modifies
+> the pmtu.sh script to call the ovs-dpctl.py utility rather than the
+> typical OVS userspace utilities.
 
-> On Fri, Jun 21, 2024 at 01:16:04PM +0200, Shivamurthy Shastri wrote:
-> > A W=1 build with -Wenum-enum-conversion enabled, results in the
-> > following build warning due to an arithmetic operation between different
-> > enumeration types 'enum node_stat_item' and 'enum lru_list':
-> 
-> OK, but why do we want -Wenum-enum-conversion enabled?  The code looks
-> perfectly fine before, and now it looks ugly.  What bugs does this
-> warning catch?
-> 
-> >  static inline const char *lru_list_name(enum lru_list lru)
-> >  {
-> > -	return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-> > +	return node_stat_name(NR_LRU_BASE + (enum node_stat_item)lru) + 3; // skip "nr_"
-> >  }
-> 
-> and honestly, I'd convert it to an int instead of enum node_stat_item.
-> Because it is not a node_stat_item, and it wouldn't make sense to
-> add two node_stat_items together.  Just like it doesn't make sense to
-> add two pointers together (but it does make sense to add an integer to a
-> pointer).
+Thanks for the work! 
 
-Yeah, I suppose so.  The calling code iterates across enums with an
-int, imaginatively called `i'.
+Looks like the series no longer applies because of other changes
+to the kernel config. Before it stopped applying we got some runs,
+here's what I see:
 
-Then again, it seems right that a function called lru_list_name() takes
-an enum lru_list.
+https://netdev-3.bots.linux.dev/vmksft-net/results/648440/3-pmtu-sh/stdout
 
+# Cannot find device "ovs_br0"
+# TEST: IPv4, OVS vxlan4: PMTU exceptions                             [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv4, OVS vxlan4: PMTU exceptions - nexthop objects           [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv6, OVS vxlan4: PMTU exceptions                             [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv6, OVS vxlan4: PMTU exceptions - nexthop objects           [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv4, OVS vxlan6: PMTU exceptions                             [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv4, OVS vxlan6: PMTU exceptions - nexthop objects           [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv6, OVS vxlan6: PMTU exceptions                             [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv6, OVS vxlan6: PMTU exceptions - nexthop objects           [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv4, OVS geneve4: PMTU exceptions                            [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv4, OVS geneve4: PMTU exceptions - nexthop objects          [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv6, OVS geneve4: PMTU exceptions                            [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv6, OVS geneve4: PMTU exceptions - nexthop objects          [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv4, OVS geneve6: PMTU exceptions                            [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv4, OVS geneve6: PMTU exceptions - nexthop objects          [FAIL]
+# Cannot find device "ovs_br0"
+# TEST: IPv6, OVS geneve6: PMTU exceptions                            [FAIL]
+# Cannot find device "ovs_br0"
 
+Any idea why? Looks like kernel config did include OVS, perhaps we need
+explicit modprobe now? I don't see any more details in the logs.
 
