@@ -1,55 +1,67 @@
-Return-Path: <linux-kernel+bounces-225797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D58D91356C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:42:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD87191356E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1A11C20D51
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:42:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D601F226FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4D5219E4;
-	Sat, 22 Jun 2024 17:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD7721373;
+	Sat, 22 Jun 2024 17:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOtV/Hd1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RYVH1pld"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F4B182D2;
-	Sat, 22 Jun 2024 17:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D751381AA;
+	Sat, 22 Jun 2024 17:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719078114; cv=none; b=u3rSIGWrInyf2jKATvHgh3+tjpZNTKaNQkU0bxIWQcymomwLhTg3BTQ1PFd8mbwzJzdVGlJegn1irzigGdTKmMU767M25q0GrRe4SYOLCU9ZK32FGs4Yizen0p4CgPluIawZGTmxQkxnZeTSwyoNEc5JIpPlieEkaSDD0lHDpQ4=
+	t=1719078127; cv=none; b=tG+3o13/wjezA/C0NJ0o5TeausC5vpujE0EW8ilkhF6zfBuLiHnvLd7DiaOWNQjY+J7yZMvMw7MbG8x6a6g1vmd0J0URP8dokTbNeVoVnzpRIK7Afrre8G3YGX8k7efYIPQ12hNPZnU2XMu5OXwq6NZsmwN5ikYUpU3DAAC4CQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719078114; c=relaxed/simple;
-	bh=RZ5LAEmzBnNGgd3UpEVbjbDwc57F7VOPS9Upg/UngfY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=V696rBYEQ7Dx96eyLqSSF4rFQsbBu/oJKEpLdG3YEz29Rdm91FAJDNb9Okcggb29w1CHYPk9sxp2q5v/EebO6eQrdXhzhbpX6WUaNJRMrhA4+LdcwN2bRuiby8wEugcdCZIQwdHCYtKsdAZZ0Kf4ayjAMs7eLujx2le0XPkVtUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOtV/Hd1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B92DFC3277B;
-	Sat, 22 Jun 2024 17:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719078114;
-	bh=RZ5LAEmzBnNGgd3UpEVbjbDwc57F7VOPS9Upg/UngfY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=qOtV/Hd1R8oXoaExmi9nXBT9oevGv/U96wHKUIsbpA7OWkXF+/7GeQFrdTCp6Vm6S
-	 gsOKqfSdU3lUzPl0ix2KdAXrQjxslZYPsqw6R0gpJpsJTrTucTPdLUVlg7gxhCG4F2
-	 0vlVDq+VVHAVI79V2FxHOeFKuNx1kFsfPScEmWCDk8RFwUpeeUzfsV3ZIsRTQq37XS
-	 LNE6G9zCLgUvua9loghitU3HGjc6ia9RUJnfpuG2b0Ay2lSp2mjlvMRWsZW7/NF0fK
-	 NXFOgCm03Jw18EFd3lbK2st+caKmZJjsto1e7Mj4k/pjceGD3OTu69u9s6jHGHnfuF
-	 eY++yOGg74bpA==
-Date: Sat, 22 Jun 2024 12:41:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>, lpieralisi@kernel.org,
-	kw@linux.com, bhelgaas@google.com, robh@kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_mrana@quicinc.com
-Subject: Re: [PATCH v1] PCI: qcom: Avoid DBI and ATU register space mirror to
- BAR/MMIO region
-Message-ID: <20240622174152.GA1432494@bhelgaas>
+	s=arc-20240116; t=1719078127; c=relaxed/simple;
+	bh=wza8kKhlLzI4l62hN1aOx/UN5TokwhHIOXAK7bG0YJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rNRCrMNg1Bvk7AiMk8Okkfp0qNz03EfrHgBUp/jOcVVIo8ztVhZSHbYvodWn+aeE54vkIHHo1P2FDwnAyTLpGt0DdL6cQ8NPs8jpFP0zBj20rU4IrPTntqqkWHoUvBYar8EGMSMMqPOyDna+Pe24kvNfSYHyN1PMksO10YOeTPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RYVH1pld; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=w5rwYa7bI68oLnkoYbazba1jipftrm7TeicnDw0Zws8=; b=RYVH1pldyhqC5cJIpFRMib/IKx
+	0a0Navc+8oGu/NcUrNmMVRDhCMDQMk8g64AhzlgmziYjKH5Qz4FHScUlRTuaIo1SzY2KDQ2OGcP27
+	MNNPE5gv7h1p8Hg2qUURub2dzU+J/zLwLMeRwN8zqxC6kiYhlGZD64SeuHpyFRDm3Dew=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sL4kN-000k5J-B6; Sat, 22 Jun 2024 19:41:55 +0200
+Date: Sat, 22 Jun 2024 19:41:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH net-next v8 09/13] net: phy: mediatek: Add token ring
+ access helper functions in mtk-phy-lib
+Message-ID: <2c0ce908-55a5-4194-ac7b-68828ed10399@lunn.ch>
+References: <20240621122045.30732-1-SkyLake.Huang@mediatek.com>
+ <20240621122045.30732-10-SkyLake.Huang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,97 +70,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240622035444.GA2922@thinkpad>
+In-Reply-To: <20240621122045.30732-10-SkyLake.Huang@mediatek.com>
 
-On Sat, Jun 22, 2024 at 09:24:44AM +0530, Manivannan Sadhasivam wrote:
-> On Thu, Jun 20, 2024 at 02:34:05PM -0700, Prudhvi Yarlagadda wrote:
-> > PARF hardware block which is a wrapper on top of DWC PCIe controller
-> > mirrors the DBI and ATU register space. It uses PARF_SLV_ADDR_SPACE_SIZE
-> > register to get the size of the memory block to be mirrored and uses
-> > PARF_DBI_BASE_ADDR, PARF_ATU_BASE_ADDR registers to determine the base
-> > address of DBI and ATU space inside the memory block that is being
-> > mirrored.
+On Fri, Jun 21, 2024 at 08:20:41PM +0800, Sky Huang wrote:
+> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
 > 
-> This PARF_SLV_ADDR_SPACE register is a mystery to me. I tried getting to the
-> bottom of it, but nobody could explain it to me clearly. Looks like you know
-> more about it...
-> 
-> From your description, it seems like this register specifies the size of the
-> mirroring region (ATU + DBI), but the response from your colleague indicates
-> something different [1].
-> 
-> [1] https://lore.kernel.org/linux-pci/f42559f5-9d4c-4667-bf0e-7abfd9983c36@quicinc.com/
-> 
-> > When a memory region which is located above the SLV_ADDR_SPACE_SIZE
-> > boundary is used for BAR region then there could be an overlap of DBI and
-> > ATU address space that is getting mirrored and the BAR region. This
-> > results in DBI and ATU address space contents getting updated when a PCIe
-> > function driver tries updating the BAR/MMIO memory region. Reference
-> > memory map of the PCIe memory region with DBI and ATU address space
-> > overlapping BAR region is as below.
-> > 
-> > 			|---------------|
-> > 			|		|
-> > 			|		|
-> > 	-------	--------|---------------|
-> > 	   |	   |	|---------------|
-> > 	   |	   |	|	DBI	|
-> > 	   |	   |	|---------------|---->DBI_BASE_ADDR
-> > 	   |	   |	|		|
-> > 	   |	   |	|		|
-> > 	   |	PCIe	|		|---->2*SLV_ADDR_SPACE_SIZE
-> > 	   |	BAR/MMIO|---------------|
-> > 	   |	Region	|	ATU	|
-> > 	   |	   |	|---------------|---->ATU_BASE_ADDR
-> > 	   |	   |	|		|
-> > 	PCIe	   |	|---------------|
-> > 	Memory	   |	|	DBI	|
-> > 	Region	   |	|---------------|---->DBI_BASE_ADDR
-> > 	   |	   |	|		|
-> > 	   |	--------|		|
-> > 	   |		|		|---->SLV_ADDR_SPACE_SIZE
-> > 	   |		|---------------|
-> > 	   |		|	ATU	|
-> > 	   |		|---------------|---->ATU_BASE_ADDR
-> > 	   |		|		|
-> > 	   |		|---------------|
-> > 	   |		|	DBI	|
-> > 	   |		|---------------|---->DBI_BASE_ADDR
-> > 	   |		|		|
-> > 	   |		|		|
-> > 	----------------|---------------|
-> > 			|		|
-> > 			|		|
-> > 			|		|
-> > 			|---------------|
-> > 
-> > Currently memory region beyond the SLV_ADDR_SPACE_SIZE boundary is
-> > not used for BAR region which is why the above mentioned issue is
-> > not encountered. This issue is discovered as part of internal
-> > testing when we tried moving the BAR region beyond the
-> > SLV_ADDR_SPACE_SIZE boundary. Hence we are trying to fix this.
-> 
-> I don't quite understand this. PoR value of SLV_ADDR_SPACE_SIZE is
-> 16MB and most of the platforms have the size of whole PCIe region
-> defined in DT as 512MB (registers + I/O + MEM). So the range is
-> already crossing the SLV_ADDR_SPACE_SIZE boundary.
-> 
-> Ironically, the patch I pointed out above changes the value of this
-> register as 128MB, and the PCIe region size of that platform is also
-> 128MB. The author of that patch pointed out that if the
-> SLV_ADDR_SPACE_SIZE is set to 256MB, then they are seeing
-> enumeration failures. If we go by your description of that register,
-> the SLV_ADDR_SPACE_SIZE of 256MB should be > PCIe region size of
-> 128MB. So they should not see any issues, right?
-> 
-> > As PARF hardware block mirrors DBI and ATU register space after
-> > every PARF_SLV_ADDR_SPACE_SIZE (default 0x1000000) boundary
-> > multiple, write U64_MAX to PARF_SLV_ADDR_SPACE_SIZE register to
-> > avoid mirroring DBI and ATU to BAR/MMIO region.
-> 
-> Looks like you are trying to avoid this mirroring on a whole. First
-> of all, what is the reasoning behind this mirroring?
+> This patch adda TR(token ring) manipulations and add correct
 
-This sounds like what we usually call "aliasing" that happens when
-some upper address bits are ignored.
+s/adda/adds
+
+plus "adds the correct macro names for"
+
+> macro name for those magic numbers. TR is a way to access
+> proprietary register on page 52b5. Use these helper functions
+
+registers
+
+> +/* ch_addr = 0x2, node_addr = 0xd, data_addr = 0x8 */
+> +/* clear this bit if wanna select from AFE */
+> +/* Regsigdet_sel_1000 */
+> +#define EEE1000_SELECT_SIGNEL_DETECTION_FROM_DFE	BIT(4)
+
+Should that be SIGNAL?
+
+	Andrew
 
