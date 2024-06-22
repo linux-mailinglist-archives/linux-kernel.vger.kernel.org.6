@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-225858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C9B91362B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:53:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC9A91362D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DF4CB23D06
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5F21C21857
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FC97442F;
-	Sat, 22 Jun 2024 21:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6351876EEA;
+	Sat, 22 Jun 2024 21:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NZyeIAfJ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TaE8Wyam"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054D35EE80;
-	Sat, 22 Jun 2024 21:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332575EE80;
+	Sat, 22 Jun 2024 21:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719093223; cv=none; b=rJWOkBB7kofJyNlsgICI4HDHMOlQx5Mi4MICSuk/wB0KwHdjTtY9ULP8h8sdUc9yeHESVqVW5RbSoaFkXmjqjvhmKL1FIyqwie+NPfxyNzSkO3ULCPXPLYdkaEv71cR5ssfQQ5DBQaitfWQ9A08HduIUySXacmtQIeAGGQG8dwM=
+	t=1719093262; cv=none; b=k2Xy/pmizPX1rmlB1se9dvL3U9JYT2nHKY6zmIMobpSmuzGzvhAG/qi/DZDeOKE+9qMBMdsYOXyEduBIyc0FEQv/Tqf8voH2CMQwwpY5SUoM5wFctn6UgqlFkFPZAIpn+CtZ0I0f7hekOvisOsMjYabIm7qkdCrA5Lj4TirwiN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719093223; c=relaxed/simple;
-	bh=31I/XL260ic/76jnIjXbuW84xaRzL5GwSm7lPDALlcM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bTwtTPUao3zdPtxL6LaOM8P62zUzOqUAHImkiX+T5wgViIvaZGCo5MXY9uRBw1e5Z0e0j1xo28KfplsTkK/zCd1ok89PKpSA7+Yc+ZRDIhvVafvf8JhXc0rZcu+Lf6gTzDhafFFTigtFC75/AaYuZF+1tZHBdxxI2dNYFouuRp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NZyeIAfJ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=s6zUmfJfOm69la/U36J/TC8NRjaqkn0V+dXnPUEy87k=; b=NZyeIAfJcUuHIz/qAgRplGItFq
-	M3iSxBvLKRuu/ogNKEAbiShRwHhtnZS/TXN4gZCdzGuDGEPZoRZCFgHZEAS4ehcukXqaWaa/spSEX
-	b4A/E83LJGrSeBCsYcpqgjAI4n7y6Qil8j4EeuSTm1zRegy9851gSnr/NCcEl8I75WVGGGU3+Rru5
-	+g30PGSRk3o1qEgvqBJjOjQValo7Br0KddO15/VOTye0hgskSbhntXpAkNBt7BI4xFCpoYvL6K8OH
-	E99qGwRKPTMiakMwYyjABPIIg5WrvGdNoyePtrSaDli4pZ9KOMcIjBVx9hV5f4toS5xUdIYMMWcil
-	ivwqvPpw==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sL8fy-0000000CrKS-3owu;
-	Sat, 22 Jun 2024 21:53:39 +0000
-Message-ID: <e5c58296-dc05-4df2-966b-2e5b1cdf0e4e@infradead.org>
-Date: Sat, 22 Jun 2024 14:53:36 -0700
+	s=arc-20240116; t=1719093262; c=relaxed/simple;
+	bh=XdLgw78vP983A+TrIdqPxl7VoHeX0riB0ZOsS3TwwGs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GeKl5ey2w3ORsO0YiurXuCNQPRmsA97G168aQZMXHOLe0zQtlkKxVZNuBLbvN972XDmM6cn9IZ4JITamYgdtO0kLGkASME+E0TzkEykA0nppVNNoBOYzwkP9IOy3RiZXuW+ktUYdirpbQejl1jhfLU3+hQFjdKivv0wiWEhm4XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TaE8Wyam; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec4eefbaf1so17879961fa.1;
+        Sat, 22 Jun 2024 14:54:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719093259; x=1719698059; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=psmXmpnFkPmw8m7RnDe0q4FMekfuWqvHUm1UB3CLbCg=;
+        b=TaE8WyamUvpxuRgU/sc2/v6i+C0YHxNupWZ0UA5wF40lOP3D8Vl7QvoBLtfLy/jpm7
+         4NVi+RTszUu8AUbzkmGzew/u92Afv/9SbTGx/kpwAdd+qAqVY13sg5XDAM3LSBvtfTrQ
+         gHlSiu+7J8NnekHxzmtjGW1Zcjwfc1yg05Z22Mw6Yldw8lwmBWR3/XrT9MtweYP0uV40
+         s9YDrLC1ZKyMWsygygXlM30/Lp97wScIc33iJ+d/YMtba2+0s64HEh/wy03waU13om+W
+         wcv557ryco7+chQkVP33BkidhFLbiQdMs54ES/XW/S1Ebe6uX7bnEM0BEGGP9jCrKWSe
+         VXqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719093259; x=1719698059;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=psmXmpnFkPmw8m7RnDe0q4FMekfuWqvHUm1UB3CLbCg=;
+        b=bpbgjlHktLU9kMNLEaGkUQBQowaQ2vtPvuXiSPm+JTzfExzobXXP3sJz3TicPvLgOQ
+         w5G1fFFEkCDXnpNLQxpUumKmLn3PSv3MLTyaYo2m4Vn9kYdDh6RVCallYnCj6WpDQwtx
+         BwpujR5OjrDemrwVxF8OBwaxEMkW6zd0S7gOZkY6DfHsXE6yAW8uycXIS67sB35N3unv
+         8I05iG6Jht6RaXAJU79iTADJlzC1Ol9/VoJDLD6+idzlhxKkUHXw3TpUvfvNcxPdVHxU
+         E3pISNlNiBxXkfp5Y9WwQwf0+mzNfx5JxIwXgbBZESwP+kakculFe7kWA9tTuRsH6RaQ
+         OlHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUDCsWpbWG+MTOEWSQ38qIBXJLCnI6ZN71djw4oVvWhva92jbuYeU5MPAaIbwam+bz+eVFNyggDiFxN1CX42iWQL0E0N4FnAwlKD7Hl66AAFeTm9gX8nn/+qhSdAn18YgoSdJouFsBLQU3Z9Q=
+X-Gm-Message-State: AOJu0YzPwYxRgTbWO5oQ5dYQJP384owRlbbgMY4/ul202lulosYMOviG
+	WKJhwZ5+uLmY5E+FMMmpUrvFsbd1GdDKRjDMQVVcTCsDL7VgXQw=
+X-Google-Smtp-Source: AGHT+IEkOv7yLf6PDm6Vje2xrzSTTbJGzsmhV1y3d5JhLXiHTmWHaXhFLL6OuSN92I/QDJCY3Gz80g==
+X-Received: by 2002:a2e:8191:0:b0:2ec:557b:f8a0 with SMTP id 38308e7fff4ca-2ec5b3d4abfmr3710991fa.38.1719093258554;
+        Sat, 22 Jun 2024 14:54:18 -0700 (PDT)
+Received: from U4.lan ([2a02:810b:f40:4600:108d:ce41:c0b8:26cd])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3056301bsm2796288a12.89.2024.06.22.14.54.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 14:54:18 -0700 (PDT)
+From: Alex Bee <knaerzche@gmail.com>
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-kernel@vger.kernel.org
+Cc: Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH v2] wifi: brcmfmac: of: Support interrupts-extended
+Date: Sat, 22 Jun 2024 23:54:16 +0200
+Message-ID: <20240622215416.659208-1-knaerzche@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: Extend and refactor index of further kernel docs
-To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, bilbao@vt.edu
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <fdf68be7-875a-421d-8bc3-034a21990679@gmail.com>
- <87ikyvccwc.fsf@meer.lwn.net>
- <2acd884f-2f04-4d39-b559-aac99f9ae35e@gmail.com>
- <53bd3bbf-0410-425e-84e7-1d34cac60412@infradead.org>
- <e6bf0675-f542-482d-a861-000772b1d10e@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <e6bf0675-f542-482d-a861-000772b1d10e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+The currently existing of_property_present check for interrupts does not
+cover all ways interrupts can be defined in a device tree, e.g.
+"interrupts-extended".
 
+In order to support all current and future ways that can be done, drop that
+check and call of_irq_parse_one to figure out if an interrupt is defined
+and irq_create_of_mapping for the actual mapping and let it be handled by
+the interrupt subsystem.
 
-On 6/22/24 12:43 PM, Carlos Bilbao wrote:
-> Hello folks,
-> 
-> On 6/12/24 17:17, Randy Dunlap wrote:
-> 
->>
->> On 6/1/24 8:03 AM, Carlos Bilbao wrote:
->>> Extend the Index of Further Kernel Documentation by adding entries for the
->>> Rust for Linux website, the Linux Foundation's YouTube channel, and notes
->>> on the second edition of Billimoria's kernel programming book. Also,
->>> perform some refactoring: format the text to 75 characters per line and
->>> sort per-section content in chronological order of publication.
->>>
->>> Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
->>> ---
->>>  Documentation/process/kernel-docs.rst | 68 +++++++++++++++++----------
->>>  1 file changed, 44 insertions(+), 24 deletions(-)
->>>
->>> diff --git a/Documentation/process/kernel-docs.rst
->>> b/Documentation/process/kernel-docs.rst
->> The 2 lines above should be on one line, but fixing that doesn't fix everything.
->> 'patch' still says that it's a malformed patch.
->>
->> Carlos, please check Documentation/process/email-clients.rst section on
->> Thunderbird, especially for line length and line wrap.
->>
->> I'm still looking...
-> 
-> 
-> I followed the instructions for Thunderbird but atm I'm tired of trying to
-> make it work. I'll just go back to using 'git send-email' for patches. I'm
-> resending this patch like that.
-> 
+Signed-off-by: Alex Bee <knaerzche@gmail.com>
+---
+Link to v1:
+https://lore.kernel.org/all/20240621225558.280462-1-knaerzche@gmail.com/
 
-Good plan. :)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> 
->>
->>> index 8660493b91d0..6f3e290abd22 100644
->>> --- a/Documentation/process/kernel-docs.rst
->>> +++ b/Documentation/process/kernel-docs.rst
->>> @@ -3,27 +3,27 @@
->>>  Index of Further Kernel Documentation
->>>  =====================================
-> 
-> Thanks,
-> Carlos
-
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+index e406e11481a6..fe4f65756105 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+@@ -70,6 +70,7 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
+ {
+ 	struct brcmfmac_sdio_pd *sdio = &settings->bus.sdio;
+ 	struct device_node *root, *np = dev->of_node;
++	struct of_phandle_args oirq;
+ 	const char *prop;
+ 	int irq;
+ 	int err;
+@@ -129,10 +130,10 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
+ 		sdio->drive_strength = val;
+ 
+ 	/* make sure there are interrupts defined in the node */
+-	if (!of_property_present(np, "interrupts"))
++	if (of_irq_parse_one(np, 0, &oirq))
+ 		return;
+ 
+-	irq = irq_of_parse_and_map(np, 0);
++	irq = irq_create_of_mapping(&oirq);
+ 	if (!irq) {
+ 		brcmf_err("interrupt could not be mapped\n");
+ 		return;
 -- 
-~Randy
+2.45.2
+
 
