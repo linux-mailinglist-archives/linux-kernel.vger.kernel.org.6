@@ -1,74 +1,52 @@
-Return-Path: <linux-kernel+bounces-225890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5869136EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 01:27:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BACB9136FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 01:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACB1EB21AD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375051F23896
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6419E12B16E;
-	Sat, 22 Jun 2024 23:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+xVE3pH"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAD412D762;
+	Sat, 22 Jun 2024 23:48:47 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D713684A24;
-	Sat, 22 Jun 2024 23:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F1712B145
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 23:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719098763; cv=none; b=KgYQ6242uqJo9deFKppxrqO38so0dmhEkYrHub9FzXKbKXYYADroJX4J3aUDoOYxa7l++9Kiv0FflkMYlolUaUyTtwTx/UNGLPRUsx5ywyEPciff6I61gKAcstBgb+qSqkdow9LZAWxm/YdD4UhvJ3kI2Oqkx84uJqWLWSFPyvs=
+	t=1719100126; cv=none; b=PDMxvkG9zV72Xjfj7dZEDOAopcMuYzBkm5AnQPn/FDIsdfBzNlvoX+yR2ZSj/PxuFI5rdJDhjCd9z4XPyRHbE5he+RnpspoXx7B1lpVk33FaJz73NMkwHP59CLB7CBIB21lyBGsIlBBKBnOddb1mXPSJ3lj5kY55UCJgKvv++Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719098763; c=relaxed/simple;
-	bh=3ByRKPZCxRzOwxwLlWyit3OOc6nnUrkfnIT8Zo6676A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VxbLB4ES0iw8g95jJxXJ4H/QWJ/ytiUq0aCwIdPDW3JtFrmWLMu3/eeOr83fZa97wvr531l8COkIqpFHclPVqcVSCsMEiQ7EDhVo9EwcYRM2TGQNFkCR5my8FTISc9M7N1sagShcTCghUTijiG/wzmIEL4R6jlH4uSZ0kBcM4Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+xVE3pH; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-36226e98370so1916760f8f.3;
-        Sat, 22 Jun 2024 16:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719098760; x=1719703560; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9HxxfvJUbEcWAuUqzp/z3HeawFFFv82S2A3aKWCvEsY=;
-        b=O+xVE3pHpMTcjuTYrrxs2pwtWs5tRRch3fl5l39j7Pyr7gnxO4lcPl4d1UaLbpoihr
-         60kZXVFsbIRIZgzxWbUZsB1ev1ZbbStvkdvB31Oi2er53gQSL4Emu3wunwjtdcFDGxWp
-         PWMeROs1w0vgkC/ul9FaUefVbPYYqIgWYZu/erHlsj47quGrfFjrQ5kS2E7LZeoWhOf/
-         Wsl6vXE9ctRGnhqs/WBajljGtFVwow5gdsP0usVHUxOy+axmVycVSPrq9g8kDJdWfswc
-         xk7Y1QU9uTSHEPI29+pTR7QjtIyxQwmURbTsM4n88EhLnAc4e/2/tunEmymuwjdVAf9d
-         lP2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719098760; x=1719703560;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9HxxfvJUbEcWAuUqzp/z3HeawFFFv82S2A3aKWCvEsY=;
-        b=Pw071lcD8fWJESmCqntzTe5g4gwlRoQf9q9TAzvc4Y9J2wbw1/dvUntmU9CwEe8AhY
-         FcJSRc7YOwdLUOzPzG3bft+/c5CbcoNcYz/1Dx87g3F9uh9NVAxauc6LYooPEthKM6aU
-         uYcs7dsSuzedYtGnS6of+RflLGvgGOe/b2Ch5MtwDhT+dU3XmaEYTMhyK7SVMutpHeTQ
-         VWvlngs8oBspuZZ19/78qeyDzDZ1gMQVOMq5nEdTSAs6B9WiXbkabtqlhfx7ecl/vRKJ
-         dZ9LPUh1Gmnyh6PlLTf4v/KkXYnSmWnuwP3FTn7opQTKLflHMAHV+WBfPNUCq+fdl/Eh
-         bD7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUjpqPrVcQxJiXzcu3PjXj0x/8ZxdQlj0tYgo9EQkCPZ7r/c9v7yIGehGOhSRTfRTrk8ojZ+Er7mWZND9oAYAD15bTCAB7KV98UC4NMb55fbGYiVooad8jCqS8J78HpfUL6U5iHOnRc6A==
-X-Gm-Message-State: AOJu0YwxkR61UxUUJ3gjLYwZ3PiM6OeNQ+H8LK7ek33XtIynYQLwzM6k
-	nhyugvnsR4EI5NgxiS4oz46ke/eDv67E4yhI3Qq7fumqWZfogLgm
-X-Google-Smtp-Source: AGHT+IF+eQztVkaYxVTPniLTiN0Q2Wuwvs1PNUhkt+p/MWOEuEvm4JylLlMlCQKx4FGcg1T83BFCHA==
-X-Received: by 2002:a05:6000:2c2:b0:366:eb45:6d55 with SMTP id ffacd0b85a97d-366eb456ecemr217579f8f.49.1719098760243;
-        Sat, 22 Jun 2024 16:26:00 -0700 (PDT)
-Received: from [192.168.1.90] (20014C4E18129200DEAEE2020304A5A2.dsl.pool.telekom.hu. [2001:4c4e:1812:9200:deae:e202:304:a5a2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d2190desm120301875e9.48.2024.06.22.16.25.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 16:25:59 -0700 (PDT)
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-Date: Sun, 23 Jun 2024 01:25:54 +0200
-Subject: [PATCH 4/4] drm/msm/dsi: Add phy configuration for MSM8937
+	s=arc-20240116; t=1719100126; c=relaxed/simple;
+	bh=m3nqbwFmxC7Sdo+IHnK+iwQesH4KewnXiM7V15nf970=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=s4M0NJjQc+Qge7yqh5MRldH+dOZoJTnwEWNmkKWqrKDg6eMhZht3+v+Q6ZE3qCTyMyP7B/sqJR2YpzfMLu1DOO1Lh9bxc5YL1h6ZdP2HjL67/MD2haRV7Cyv5z6iTMtTpSV0Mi91/gu8BB7f9QPTvFnnBFd10frEReIripZ1bCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1sLATD-0002ce-5F; Sun, 23 Jun 2024 01:48:35 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1sLATC-004Hkb-Gp; Sun, 23 Jun 2024 01:48:34 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1sLATC-000IWx-34;
+	Sun, 23 Jun 2024 01:48:34 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Subject: [PATCH v2 0/3] usb: gadget: uvc: allocate requests based on frame
+ interval length and buffersize
+Date: Sun, 23 Jun 2024 01:48:28 +0200
+Message-Id: <20240403-uvc_request_length_by_interval-v2-0-12690f7a2eff@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,94 +54,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240623-dsi-v1-4-4ab560eb5bd9@gmail.com>
-References: <20240623-dsi-v1-0-4ab560eb5bd9@gmail.com>
-In-Reply-To: <20240623-dsi-v1-0-4ab560eb5bd9@gmail.com>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krishna Manikandan <quic_mkrishn@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>, 
- Daniil Titov <daniilt971@gmail.com>
-X-Mailer: b4 0.14.0
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMxid2YC/42OTQ6DIBhEr9KwLg2C1dpV79EYgvApJAQtf9EY7
+ 17qCbp8k8mb2VEAbyCg52VHHrIJZnYF6PWCpBZuAmxUYUQJrUlNGE5Zcg+fBCFyC26Kmg8bNy6
+ Cz8Ji0cKo7o9WdQ1DRTKIAHjwwkldNC5ZW8LFw2jWc/XdF9YmxNlv54lc/dK/93KFCe5q1si6r
+ RrK2GsppRT97Mx6U4D64zi+42RfduYAAAA=
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Daniel Scally <dan.scally@ideasonboard.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Avichal Rakesh <arakesh@google.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1367;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=m3nqbwFmxC7Sdo+IHnK+iwQesH4KewnXiM7V15nf970=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmd2LOtxKs5J/GlQj+sLuSzvSeP9/uRy1Iau0UA
+ m+htolwfYuJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZndizgAKCRC/aVhE+XH0
+ q9zxD/4ivwgzq2L1KHYwlp03H/3g/WNdaIqHnPOv8uMVo4A2IrU8eZMeFSLUlzLkoZozBXEB8wY
+ ub6TcDLybYBt79DBWRYiWQIlRdCtT87JhUzETedwKgcWwUGu1/4uKaIGJwj/HRyz8j5YMyW15mM
+ vmjhIlM8UpXZO8aUEdpndlTjS0asY78RFJNFuY8NO0e91GaKMe21Jo9/J4fpR9jpyLd8FgPDBJt
+ 1bpKUYyynT5Lf48Yh8qMyZPx8jUYgVvoZw177zF6sedCdphXDOanLwwIwWc+Cegpo17xbs4VQi3
+ BJ3W0+whdW+HIkEBEKD4qKtFJOsAEXNxzjl65Oi1l+Xb8M5kgfRazlIXKbE8GYKOtXY9eE9EYOI
+ ehGZal5IUbWZAS1XK4Al+TF9PNe7SDNC0QtrHC2KYv6zXyaGy/ckQYjfD2arRvXY+mBQsTRr7pK
+ OBQ5Rhm0O/URsyrx8JMLXJIboEKO7ESeE4QTkNGtl/hJk1mhpsDzWzdKtKoSgOA8KElgL3KarHm
+ /jZT0sd7vT074n6X00Db9wuOUAnDWra5pBKEYteuXGna/E6VolUe+ZeeKZuPg4KD1oe18EDhgt8
+ 8XgtIGrYrJn0EpppTSAgnu8Xo4cSQByqttprFLvp/FdH6DSvZ9h02FdSbRRZ9z1iMn8L/njaj6/
+ 9FYmaHKbyai0EOg==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Daniil Titov <daniilt971@gmail.com>
+This patch series is improving the size calculation and allocation of
+the uvc requests. Using the selected frame duration of the stream it is
+possible to calculate the number of requests based on the interval
+length.
 
-Add phy configuration for 28nm dsi phy found on MSM8937 SoC. Only
-difference from existing msm8916 configuration is number of phy
-and io_start addresses.
+This is an preperation to precalculate the request length based
+on the actual per frame size for compressed formats.
 
-Signed-off-by: Daniil Titov <daniilt971@gmail.com>
-Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 ---
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.c      |  2 ++
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.h      |  1 +
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c | 18 ++++++++++++++++++
- 3 files changed, 21 insertions(+)
+Changes in v2:
+- added header size into calculation of request size
+- Link to v1: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v1-0-9436c4716233@pengutronix.de
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-index 24a347fe2998..dd58bc0a49eb 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-@@ -545,6 +545,8 @@ static const struct of_device_id dsi_phy_dt_match[] = {
- 	  .data = &dsi_phy_28nm_lp_cfgs },
- 	{ .compatible = "qcom,dsi-phy-28nm-8226",
- 	  .data = &dsi_phy_28nm_8226_cfgs },
-+	{ .compatible = "qcom,dsi-phy-28nm-8937",
-+	  .data = &dsi_phy_28nm_8937_cfgs },
- #endif
- #ifdef CONFIG_DRM_MSM_DSI_20NM_PHY
- 	{ .compatible = "qcom,dsi-phy-20nm",
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-index 5a5dc3faa971..a9b4eb2c0e8c 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-@@ -47,6 +47,7 @@ extern const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_cfgs;
- extern const struct msm_dsi_phy_cfg dsi_phy_28nm_hpm_famb_cfgs;
- extern const struct msm_dsi_phy_cfg dsi_phy_28nm_lp_cfgs;
- extern const struct msm_dsi_phy_cfg dsi_phy_28nm_8226_cfgs;
-+extern const struct msm_dsi_phy_cfg dsi_phy_28nm_8937_cfgs;
- extern const struct msm_dsi_phy_cfg dsi_phy_28nm_8960_cfgs;
- extern const struct msm_dsi_phy_cfg dsi_phy_20nm_cfgs;
- extern const struct msm_dsi_phy_cfg dsi_phy_14nm_cfgs;
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-index ceec7bb87bf1..3afc8b1c9bdf 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
-@@ -917,3 +917,21 @@ const struct msm_dsi_phy_cfg dsi_phy_28nm_8226_cfgs = {
- 	.num_dsi_phy = 1,
- 	.quirks = DSI_PHY_28NM_QUIRK_PHY_8226,
- };
-+
-+const struct msm_dsi_phy_cfg dsi_phy_28nm_8937_cfgs = {
-+	.has_phy_regulator = true,
-+	.regulator_data = dsi_phy_28nm_regulators,
-+	.num_regulators = ARRAY_SIZE(dsi_phy_28nm_regulators),
-+	.ops = {
-+		.enable = dsi_28nm_phy_enable,
-+		.disable = dsi_28nm_phy_disable,
-+		.pll_init = dsi_pll_28nm_init,
-+		.save_pll_state = dsi_28nm_pll_save_state,
-+		.restore_pll_state = dsi_28nm_pll_restore_state,
-+	},
-+	.min_pll_rate = VCO_MIN_RATE,
-+	.max_pll_rate = VCO_MAX_RATE,
-+	.io_start = { 0x1a94400, 0x1a96400 },
-+	.num_dsi_phy = 2,
-+	.quirks = DSI_PHY_28NM_QUIRK_PHY_LP,
-+};
+---
+Michael Grzeschik (3):
+      usb: gadget: function: uvc: set req_size once when the vb2 queue is calculated
+      usb: gadget: uvc: add g_parm and s_parm for frame interval
+      usb: gadget: uvc: set req_size and n_requests based on the frame interval
 
+ drivers/usb/gadget/function/uvc.h       |  1 +
+ drivers/usb/gadget/function/uvc_queue.c | 32 +++++++++++++++-----
+ drivers/usb/gadget/function/uvc_v4l2.c  | 52 +++++++++++++++++++++++++++++++++
+ drivers/usb/gadget/function/uvc_video.c | 17 ++---------
+ 4 files changed, 81 insertions(+), 21 deletions(-)
+---
+base-commit: 819984a0dd3606b7c46fe156cd56a0dc0d604788
+change-id: 20240403-uvc_request_length_by_interval-a7efd587d963
+
+Best regards,
 -- 
-2.45.2
+Michael Grzeschik <m.grzeschik@pengutronix.de>
 
 
