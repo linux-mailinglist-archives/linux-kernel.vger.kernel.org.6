@@ -1,61 +1,64 @@
-Return-Path: <linux-kernel+bounces-225628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C98D913311
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D30913313
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1BA284739
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81907284C1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1BF14F9DA;
-	Sat, 22 Jun 2024 10:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCBD14F121;
+	Sat, 22 Jun 2024 10:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoZ62Aqj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CP3KR/OU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1438818;
-	Sat, 22 Jun 2024 10:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBE9818;
+	Sat, 22 Jun 2024 10:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719053483; cv=none; b=kJxKqH32Pbg7lR7zb9TOZkyg4Yv+KE454hw5SyaO9hQWQ4zNK2T0F3I+djT2BZ7AWwgALRq3NhaxEFNWkFhNTAVnGIr2wLCGVCoLGQUVcx1+lq6AB+9fFGpHwt7FYsYlEeuftQX8aibPtbWbXVPiIqFC4p5gaFzftoOMwZ9BDyQ=
+	t=1719053579; cv=none; b=kHF04h/2JqpCJU4ItlU2WJIq8nAPO1wkorfzPtP1WPIG7TxpmvDogxV0rmQb2nnqwFxU6t5+Zl9HLTSljA6BkCi1K2jb32GuNVEnf2mdpHw19Qr6aJ6ahqWD8zvH8WI7T9FG4ExgZhulIHoXDiBGp2tt7sK9oQ4AhqdJxSUv6J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719053483; c=relaxed/simple;
-	bh=960cXuebD/jrt7Pj4lCaavm+XD/B5zGQeG1Brjir1sM=;
+	s=arc-20240116; t=1719053579; c=relaxed/simple;
+	bh=Aby3/xgh3G3AwLRO3U9OesgT3ykhTtfb684/BtS9wxI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PYMaHTy1kMMZz5/SJcjr8Z69S8nT2gN0nF0fu/osXrZGn7zoeETD+65GyeR1j3veYS91wvPjvL7P2ge7o+ixMBX1qDtCESqQHZ07IMK4AF5hOnHvutXx0F82Lp45dWSG1YaGUH3WyipzZq+kqhXuN0++SFNCf3K8S1rPQzQKG90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CoZ62Aqj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D96AC32789;
-	Sat, 22 Jun 2024 10:51:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Re8wt/UgekbKngffHun6MrMBOL4FjuumtQ4ijhxrNqfaCQcUGSK+hLJqLTgJSEdbZ84hTxkBSc+qYzWPTrWSg6wLHgpDKQkdyGU4wcsaWyCWp8MClF7zzFg9BFRBJj8Y/OscjPC8UQpwfaQtoDCuTake6sAxXUuj66vqm5m8FYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CP3KR/OU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE06C3277B;
+	Sat, 22 Jun 2024 10:52:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719053482;
-	bh=960cXuebD/jrt7Pj4lCaavm+XD/B5zGQeG1Brjir1sM=;
+	s=k20201202; t=1719053579;
+	bh=Aby3/xgh3G3AwLRO3U9OesgT3ykhTtfb684/BtS9wxI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CoZ62AqjvDX+KS4eXWJpXm0HTGnoXUg9yrukho6H31cjTAj+/OBuM82G3tlFk+sjH
-	 Fq08ysJmvB6v5tlP/dpf1H5xT/cnsU6vd7m/7oPavBbHOT8D/gyrHPxGw4ExKbWpde
-	 4Huz0jK97JWh4/LJU4tWXUdx+hJGzj94uE/E5o8RSXGVK4NKtY6YAMIf0lKvgQ/5Lk
-	 zbbI5pCZvGdkvZv+5rmOc26lmGLU20eGVx4TiWMVGL4JwmGn7SHkyaVrzuTv/FG6cJ
-	 dEuh6kPW/qZ+37fzT4A2xS5j8XOwzVu3eyMd2p+xKjjc8e9N9UwsPxdr+TVj0WuZ5k
-	 vP6RYM3AZowPg==
-Date: Sat, 22 Jun 2024 11:51:18 +0100
+	b=CP3KR/OUqB92LQjCAZxOkDifteoHeAhP7Kinfl8vi7l8eUJk8Ov8PzAAR7EBiphM0
+	 juLNyPMnJvyKSQHJ9PjW4UPWxrMP4fjl6L831PiCtsxsgzOS6IB9rS8rTEz3m0HRXM
+	 xZa/uvv6zbaZUDMqGjthQkUw52kECLyfSbvn3zz/NeGWkFQcD+4Fm6/NABcylwKnV/
+	 lEcoyPo8qT1OOaD1wtpgh8/0qPpzswQnILlIdMor0kBYuFHGRMfKPN+tOvXJntwi6C
+	 IwEWD3vNkIE/hMzkcwngglpxT4jmpyolKo/Io+qvkLmpAYL9jJRr3DTxTFgorS7DKw
+	 tlFhrWukxEN1g==
+Date: Sat, 22 Jun 2024 11:52:53 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Yasin Lee <yasin.lee.x@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, yasin.lee.x@outlook.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] dt-bindings: iio: proximity: Add TYHX HX9023S
-Message-ID: <20240622-superjet-dusk-cfd19f899cc2@spud>
-References: <20240621-add-tyhx-hx9023s-sensor-driver-v6-0-65196a9020f1@gmail.com>
- <20240621-add-tyhx-hx9023s-sensor-driver-v6-2-65196a9020f1@gmail.com>
- <d35f5eba-abb4-4924-89d6-0beb878a0bf7@kernel.org>
- <385a7a64-fc76-4655-bc7f-d89d00b053d5@gmail.com>
+	Heiko Stuebner <heiko@sntech.de>, Chris Zhong <zyw@rock-chips.com>,
+	Zhang Qing <zhangqing@rock-chips.com>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Furkan Kardame <f.kardame@manjaro.org>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	kernel@collabora.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: mfd: rk817: Fixup clocks and
+ reference dai-common
+Message-ID: <20240622-exquisite-absently-e35b2cf335e3@spud>
+References: <20240622-rk809-fixes-v2-0-c0db420d3639@collabora.com>
+ <20240622-rk809-fixes-v2-1-c0db420d3639@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,128 +66,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gUJhbPKbgezA3PSV"
+	protocol="application/pgp-signature"; boundary="dAUJD4FRJ6nYYvth"
 Content-Disposition: inline
-In-Reply-To: <385a7a64-fc76-4655-bc7f-d89d00b053d5@gmail.com>
+In-Reply-To: <20240622-rk809-fixes-v2-1-c0db420d3639@collabora.com>
 
 
---gUJhbPKbgezA3PSV
+--dAUJD4FRJ6nYYvth
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 22, 2024 at 01:56:42PM +0800, Yasin Lee wrote:
+On Sat, Jun 22, 2024 at 12:57:18AM +0300, Cristian Ciocaltea wrote:
+> Ensure 'clocks' property does not allow more than one item and add the
+> missing reference to dai-common schema.
 >=20
-> On 2024/6/21 18:12, Krzysztof Kozlowski wrote:
+> While at it, move 'clocks*' and '#sound-dai-cells' properties to keep
+> the list ordered alphabetically.
 >=20
-> Hi ,Krzysztof
-> Thank you for your reply. I have some questions inline.
+> Additionally, drop all useless/redundant descriptions.
 >=20
-> Best regards,
-> Yasin
->=20
-> > On 21/06/2024 09:40, Yasin Lee wrote:
-> > > A capacitive proximity sensor
-> > >=20
-> > > Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
-> > > ---
-> > >   .../bindings/iio/proximity/tyhx,hx9023s.yaml       | 115 ++++++++++=
-+++++++++++
-> > >   1 file changed, 115 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9=
-023s.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.ya=
-ml
-> > > new file mode 100644
-> > > index 000000000000..beca70ce7609
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.ya=
-ml
-> > > @@ -0,0 +1,115 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: TYHX HX9023S capacitive proximity sensor
-> > > +
-> > > +maintainers:
-> > > +  - Yasin Lee <yasin.lee.x@gmail.com>
-> > > +
-> > > +description: |
-> > > +  TYHX HX9023S proximity sensor. Datasheet can be found here:
-> > > +    http://www.tianyihexin.com/ueditor/php/upload/file/20240614/1718=
-336303992081.pdf
-> > > +
-> > > +allOf:
-> > > +  - $ref: /schemas/iio/iio.yaml#
-> > Which part of iio.yaml binding do you use here? I cannot find anything,
-> > so this looks wrong.=09
-> >=20
->=20
-> I will remove this reference.
->=20
->=20
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: tyhx,hx9023s
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  interrupts:
-> > > +    description:
-> > > +      Generated by device to announce preceding read request has fin=
-ished
-> > > +      and data is available or that a close/far proximity event has =
-happened.
-> > > +    maxItems: 1
-> > > +
-> > > +  vdd-supply: true
-> > > +
-> > > +  "#address-cells":
-> > > +    const: 1
-> > > +
-> > > +  "#size-cells":
-> > > +    const: 0
-> > > +
-> > > +patternProperties:
-> > > +  "^channel@[0-4]$":
-> > > +    $ref: /schemas/iio/adc/adc.yaml
-> > > +    type: object
-> > > +
-> > > +    properties:
-> > > +      reg:
-> > > +        minimum: 0
-> > > +        maximum: 4
-> > > +        description: The channel number.
-> > > +
-> > > +      input-channel:
-> > Isn't this duplicating single-channel property?
-> >=20
-> > Where is this property defined (which common schema)?
-> >=20
-> |input-channel| is indeed intended for single-ended configuration, but I
-> couldn't find a definition
->=20
-> or reference for |single-channel| anywhere. If possible, should I rename
-> |input-channel| to |single-channel|?
+> Fixes: 6c38ca03406e ("dt-bindings: mfd: rk808: Convert bindings to yaml")
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
-Single-channel is new, it should be the next branch of the iio tree and
-in linux-next.
+I'd argue that these should not all be the same commit, but w/e.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---gUJhbPKbgezA3PSV
+--dAUJD4FRJ6nYYvth
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnaspgAKCRB4tDGHoIJi
-0g9LAQDKw1UTXpFxh99pjDFg2oRBTymO7dw01m0Q/7sF+L+UHAEA71aE+1JxlQ5a
-JjHRsQRT9Iv7LFLWklVexkyzhm1JHQE=
-=szw6
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnatBQAKCRB4tDGHoIJi
+0neAAQDWAkLuiwFC1w0jc6OAX2oc8m2ifAVd8Z+rai077JX7TQD7BJlOUtK+SpJm
+40x6H7TsC/mgAc3SI1EV6y2+Ie91VAM=
+=JKbI
 -----END PGP SIGNATURE-----
 
---gUJhbPKbgezA3PSV--
+--dAUJD4FRJ6nYYvth--
 
