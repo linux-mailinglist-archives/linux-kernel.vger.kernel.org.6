@@ -1,100 +1,223 @@
-Return-Path: <linux-kernel+bounces-225799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C92F913570
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45320913572
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03D641F2258B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B471F2292D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC7F21373;
-	Sat, 22 Jun 2024 17:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DAF2555B;
+	Sat, 22 Jun 2024 17:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="K9bBFnDX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="StZ/oa39"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D54B2F34;
-	Sat, 22 Jun 2024 17:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19EF2F34
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 17:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719078380; cv=none; b=duw0+gg6fO80z4rLfBTVjJuzceCrkrEBMSB7SkmcPTLXSEsqaSyxyBgz5kRCyw7I+yl8/f3+757hbtuqtlBFESYyaoLEc/oZSqFi1f9VNxobwk6Z58mw+SoZvILkJaHttzK7mCx6M8EsPH7m5ZDDXPpBJk5iSdRfxSeTSMFoFX0=
+	t=1719078398; cv=none; b=R8L4W9b61HDR+5+FjYC5HmGruzrvrhpa4OlsK5Wmd8Zzyyw/M0NlqfCdB9Xo/6Mw8w6+T8e6sk6UxMebA2rUlaxAB+nm4UHl7rmglNQpSwyA1+uE8cbPJJF9s5aYUlNTapqDGPtstmKc4sTUmpYhcqoh9OvsIhXI7cPJrCKgzqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719078380; c=relaxed/simple;
-	bh=f2OxD6XvjLv7pbvaMrqEE0xE2vjjwW9IXNlM9ijNyyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZNQKQwlNMzNg86HJlR97hNxZkEHmsr2rzm0sz1yK1yMaFEr5JMSFqMeRKpAIaNxCFJ2u68XbfZB0wNNDkSJd/V2WzjWd1rFcETnXvJ0waETjt2xlDZPxh9qDY+b675El7GTNZ9JpccKCWNZNmgGKU1mlCSFDIZlMnTumeSkJQDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=K9bBFnDX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=OcgMK+5YJcdqMyiYP8fkeg/M5NHnhiFXPSXYcM43Mq4=; b=K9bBFnDXh7iz3AI37g7bBLc//t
-	o2tA0mm4p2wQdTuMpABmoHHCqLV0/q0pwQj4utVv03lAzNzFaj2bIgw28nMpoJ8PKLacO9FBMLGBm
-	iAOPND1nAt4HmpHtCW5Mj0e1mqxGDOrM7wsaniT13LSWzvL4HpplAOiKrtpNCTGgF9bU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sL4oR-000k6g-IV; Sat, 22 Jun 2024 19:46:07 +0200
-Date: Sat, 22 Jun 2024 19:46:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v8 10/13] net: phy: mediatek: Extend 1G TX/RX
- link pulse time
-Message-ID: <931dec9e-e1c3-496c-9242-e5b24595a409@lunn.ch>
-References: <20240621122045.30732-1-SkyLake.Huang@mediatek.com>
- <20240621122045.30732-11-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1719078398; c=relaxed/simple;
+	bh=ekhHjZGhXdeNIsMt8tpHymzvBivuhu0B3tH1TSZw+ZI=;
+	h=From:To:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=B9Ge/R08FBAPWxBRdhkJVSLbNmBTGZOKXCH6oXg54DhuwsvQnoAdlN2VT02sLfB/0uzJ9rzzRNhrZrRAqFGyciD2g8UYBHV9i234AINqiSrtUpngfrJExJKry/wHy5WyDFwa1rlOYx2Z3cq7fXgPKfWfDTluYFSX/CQ47VtpQzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=StZ/oa39; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bc335e49aso3662899e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 10:46:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1719078395; x=1719683195; darn=vger.kernel.org;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=met7HOceFIJ+s5+OHx3mmP+8CvKxJ1g+k6/98h8WqtE=;
+        b=StZ/oa39JbumFd5zNFzyr5xYQDj+9VXohQGDT/rsURAtv9qqlBV/OsyUURZ/WJjDn7
+         r7ywUdFEQTlsJ9WVqd1JwwP81vYnbDAwmgP+OrNZ9u9usvtsRGaIrc2kIN9xiKe1MeCK
+         s+45Qmr0YHbeYBif74gKcn1+Mjvx3xfECBPuM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719078395; x=1719683195;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=met7HOceFIJ+s5+OHx3mmP+8CvKxJ1g+k6/98h8WqtE=;
+        b=pKUy+D1+4DhcFfa4Fwbtc+teJVF7w7NlQJPksFwXpKaFIsCxFpvH2DwTMgK0uUmOPM
+         w03znKpEbOfq5cPhAkPv0FIq40053e+otapoUZk/rhcuLr2/YaNYFoJ5gYUcSuEFNFXv
+         C29WhiXQyCUZuwXwvG/g7rO+gd6IT+jeVLGkWzhfPdIVd4lL9OWJxSTSPc4btUulXczi
+         nbmrD5LW/rf3hPb5V65GbMPkY/6dZ3S9bGCWn4OjmbRQmp3KzVa/wPIiXsSMiziINGLq
+         TUTuSVSNLej4bg3MojaXtJwfOWnCgYdOYG90o59DiGS5Uvo4ZOQh5a+lwb5PdOl0T+2V
+         jP6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUacNvgaiYnx5LrPYSDSnroq6ZNJ2nHc2Ex+yyJiLmFipA4NL4U9umLIJ8TJrkfVXoy+lP/MPWXOp4n5w0TAvMkSPD96O+cy8KWMs3L
+X-Gm-Message-State: AOJu0Yz1+xq1Yabom36dipUGLDruSVcf0D8dJOjDUc4j/188DhHGeJCD
+	YwbrdbzNixraaZMpCRqgsq87KD3SFvq1TW9PGZ8ERJlIDKxVVAmS9B/c28nimw==
+X-Google-Smtp-Source: AGHT+IHU7ls6tZ3Dztsea2AlO3bcPtjTHjlk8hX6E6cW0l77B99mCrUaJ+ocJfnFzxMEkiMLmucvEw==
+X-Received: by 2002:a05:6512:5d3:b0:52c:d13e:3785 with SMTP id 2adb3069b0e04-52ce183adcbmr211376e87.30.1719078394992;
+        Sat, 22 Jun 2024 10:46:34 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf5492d2sm217258866b.107.2024.06.22.10.46.28
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Jun 2024 10:46:28 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Alex Bee <knaerzche@gmail.com>, Kalle Valo <kvalo@kernel.org>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>
+Date: Sat, 22 Jun 2024 19:46:28 +0200
+Message-ID: <190410e7d38.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <f81489b4-ed60-43df-826a-1f9593802be8@gmail.com>
+References: <20240621225558.280462-1-knaerzche@gmail.com>
+ <190402b87a8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <19040354ba8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <f81489b4-ed60-43df-826a-1f9593802be8@gmail.com>
+User-Agent: AquaMail/1.51.3 (build: 105103473)
+Subject: Re: [PATCH] wifi: brcmfmac: of: Support interrupts-extended
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621122045.30732-11-SkyLake.Huang@mediatek.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000001a03de061b7e2106"
 
-On Fri, Jun 21, 2024 at 08:20:42PM +0800, Sky Huang wrote:
-> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
-> 
-> We observe that some 10G devices' (mostly Marvell's chips inside) 1G
-> training time violates specification, which may last 2230ms and affect
-> later TX/RX link pulse time. This will invalidate MediaTek series
-> gigabit Ethernet PHYs' hardware auto downshift mechanism.
-> 
-> Without this patch, if someone is trying to use "4-wire" cable to
-> connect above devices, MediaTek' gigabit Ethernet PHYs may fail
-> to downshift to 100Mbps. (If partner 10G devices' downshift mechanism
-> stops at 1G)
-> 
-> This patch extends our 1G TX/RX link pulse time so that we can still
-> link up with those 10G devices.
-> 
-> Tested device:
-> - Netgear GS110EMX's 10G port (Marvell 88X3340P)
-> - QNAP QSW-M408-4C
-> 
-> Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
+--0000000000001a03de061b7e2106
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+On June 22, 2024 4:07:40 PM Alex Bee <knaerzche@gmail.com> wrote:
 
-    Andrew
+> Am 22.06.24 um 15:49 schrieb Arend Van Spriel:
+>> On June 22, 2024 3:38:32 PM Arend Van Spriel
+>> <arend.vanspriel@broadcom.com> wrote:
+>>
+>>> On June 22, 2024 12:56:02 AM Alex Bee <knaerzche@gmail.com> wrote:
+>>>
+>>>> This "new" version of defining external interrupts is around for a very
+>>>> long time now and supported and preferred by irq_of_parse_and_map
+>>>> respectively of_irq_parse_one.
+>>>>
+>>>> Support it in brcmfmac as well by checking if either "interrupts" or
+>>>> "interrupts-extended" property exists as indication if
+>>>> irq_of_parse_and_map
+>>>> should be called.
+>>>
+>>> All very interesting, but why should we add code for something that
+>>> is not
+>>> specified in the bindings documentation?
+>>>
+>>> NAK (for now). Feel free to update the bindings document.
+> Sure, if you insist on it, I can update the bindings document. So far not
+> many (no) users did that, as it is clearly specified as an alternative in
+> devicetree/bindings/interrupt-controller/interrupts.txt (sure, it's not yet
+> converted to yaml yet).
+
+Right. So in my opinion that should be handled by the interrupt subsystem. 
+Hence I dived into irq_of_parse_and_map(). I would suggest to open code that:
+
+/* make sure there are interrupts defined in the node */
+- if (!of_property_present(np, "interrupts"))
++ if (of_irq_parse_one(...))
+  return;
+
+irq = irq_create_of_mapping(...);
+
+> Which is a much nicer form, imho.
+> And by the way for instance
+> arch/arm/boot/dts/qcom/qcom-apq8026-lg-lenok.dts already uses it that way
+> and the interrupt will currently not picked up (at least not by this
+> driver).
+
+I expected the "nicer" argument would be thrown in at some point. Esthetics 
+are never a technical argument, but let's not debate that ;-) Hopefully you 
+can agree with my suggestion.
+
+Regards,
+Arend
+
+
+
+--0000000000001a03de061b7e2106
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
+Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
+HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
+KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
+Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
+dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
+OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
+MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
+BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
+ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
+zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
+sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
+BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
+N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
+p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
+YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCiqISGCF6ZWx+vpaQ0
+6coEpxyNzp31WFJZmzO1DvherDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA2MjIxNzQ2MzVaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAEK400To+aVmVJI42YFYPr+9ACj44SX3jLFXh
+ZSYScTacLR4BHMZXKNUAjLckFoq6PeIZJFO5vg3xtDNVYWhRDpVdNHY69fYNdxBt4GcysqCihtWs
+Efp3j7lN82yaMr36Xdks6KsP9uA7QWEdoIQ7tEmb5hmeOoCHvJSW99BQQ09CR2aK2z/645igjEq8
+LWNJpY/NomeCNjse4PYN7k/p7YBcQ2mlWtXYZL5RoImLou9AqIGwZmHnOdaxho5wan4IiMq8j3sa
+s+uL+Mh01NzwbWEcWzChuiLNAfn9xBwsRWAiDQ8dFjpLmQP/oHw7sBzWL4jO7BxrPN5m0PS4nkzO
+AQ==
+--0000000000001a03de061b7e2106--
 
