@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-225630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8172913315
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:55:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45542913317
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 150E01C2132B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:55:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE012285680
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AE814F106;
-	Sat, 22 Jun 2024 10:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEF914F121;
+	Sat, 22 Jun 2024 10:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVPLaRtE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="il2DHusE"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142474A20;
-	Sat, 22 Jun 2024 10:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BB14A20
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 10:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719053702; cv=none; b=UvVzsbMOR8Bt5lgz/ZQZZ4fjCr/DWUj74Us6I0O3Q008kgyHktXlEOBFhGpd8a973O7/rEUO5FfB1CeG9EB8d5n5N8ZddT8jU+qUxfQ/ZJriednTpkKE6/WIAQnGmK8P5RkGoOi//O8kkj9j3buykkRaozfqutlsI17NN53NvrE=
+	t=1719053765; cv=none; b=TPc1iQ54KBaT+Zwe1dK0l2R5tyfpxl3gWBfcaU9dMe7IZIYugRv+1tqHv4y6FGUARC4j2bc5c/Zwj+jzHEloXC+0FtXkaZb4R6LPnniXD5SS0VqDaxo5sQFC4Hu0UiRFDg7NfDDe6se6zFXmR0xay2M3dNZUqAQRRp2MZ4BQOeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719053702; c=relaxed/simple;
-	bh=ghRmvrEvOiSialvO++pAQ6nMBlo3rUttQzCbac/3M9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y8ZBYHT/WPqmhGtRFvBgtkIlJiN92wxI1ve2M0PSypBMO63GCWLd3HaZoLIGQws9Ss4EJYEFOpEGJnPSFtf6AzjS42aENqvxwGg+nc5c7CopS+zIJr6bfHSR/t8H1lyCo4D5Msv3CuhJqhGVME9e9XOmOjQ2Z2vj5J2nNdO7VZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVPLaRtE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6992BC3277B;
-	Sat, 22 Jun 2024 10:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719053701;
-	bh=ghRmvrEvOiSialvO++pAQ6nMBlo3rUttQzCbac/3M9E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jVPLaRtEMB2WxiNMXNI0hN0UYthBTuasNsnxhuzzbCSs5FEynmOS6P+J2f3uvYU6x
-	 CfrTSa3OzL6712Gl/ArCkvIAsyjKVj8PwI3EHJoHtmIfYKR9KpxQ6qhvm6TtlxnW/N
-	 WJOgmLqLv3vD4NiCxAXXzl/8YjbWvxdGOJtCB2GwbUSwDicDSx0qJ0I+yoWcSiHaK7
-	 eJ9XovAzVq4AzhLTLD2S80/ErkaNT7fAmzVkWpPVnl0+QN4wxB4cPeP8wKXhwuL+1R
-	 2MB14/ClFVmfWi1ZBoiT8rnwLyyDwG1K5JT1HFIBb6GTAWoVnVVVUAO4eRp06F9IIY
-	 aMR9GwiJbvdcg==
-Date: Sat, 22 Jun 2024 11:54:56 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Chris Zhong <zyw@rock-chips.com>,
-	Zhang Qing <zhangqing@rock-chips.com>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Furkan Kardame <f.kardame@manjaro.org>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	kernel@collabora.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] dt-bindings: mfd: rk817: Merge support for RK809
-Message-ID: <20240622-error-ignition-48cc0708d466@spud>
-References: <20240622-rk809-fixes-v2-0-c0db420d3639@collabora.com>
- <20240622-rk809-fixes-v2-2-c0db420d3639@collabora.com>
+	s=arc-20240116; t=1719053765; c=relaxed/simple;
+	bh=1Y9HPEMcJ1iknaJTXV/+AMvmBjcveTDRVuINDy+1WDc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hwbE97WqEmRLvuNrT+xh3acxpR7DbLQzUpyGQyGGj+NXNDCMgSJ8niLm2C0StrjbDXiEIor4TcvP45l0AdWMhgjjNI6QdKDZYnVaVGcn8VBZy9fRPhbXfinvayhov8TgybjRF29v/Y/bDqsP0rgWAa/U/pK0NOai9YMEZLRsfF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=il2DHusE; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-362b32fbb3bso1950750f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:56:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719053762; x=1719658562; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XzETEzkS1Fm2zJRno4hPag8+EngUbtNwZKOXH+RkQms=;
+        b=il2DHusER/+bt3n31gb/fGh8ChcTzBq0d7vRbeoQRTh6U+yPGdBnW/lMXaDcoBhNyO
+         Oo0dgipooj7iWPixMAIqWi41w1Clv0JnHB+pyXdIXF1wpHJ5DjdteISUetomZ+EzJw3W
+         /H16Mubcx9GAu03lp9B9PyE/xlhdehSR5oMDyHEKkHCQe89V3qkOvuc5Mz9Aweduf9g1
+         x7uoyBThOP2Pwe2b9WV/gXkTC1juWD3uX+z3STnnqge6wYLg2NOaVEK4xerRZnNyBAiX
+         HkUgIUnWb4xvO0L2t+QmaZ7T3G/0UOd8swXBMK0wfagZU3wuEIx74wFUhRDOdfr/HyvH
+         34nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719053762; x=1719658562;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XzETEzkS1Fm2zJRno4hPag8+EngUbtNwZKOXH+RkQms=;
+        b=jQwfsb4jpdTH6V787hHx8/pWC8cftCSgyFx+mJjsS7Yr4mr4SrvDsaKlZjyl3/h3cz
+         66o/O7OQ/9PWzLzM/XoNm5ufFNQhShfHLhqeH2s9cQ67nqxf1fmau0nA1b2AfRMCq4/m
+         piFFD8NV52n7r4Pmu9Wb93SF+XVla1Uv3ENHtBgAmVj6ZARBuLbVNwlH3AuUhZG94AOr
+         y2+hLK7almAsGYgi6ASYOEaXk3XtoPhH4vJxrz4T180JKNYX82SVk75o+e7Y/yAhXp3h
+         I7mzaUv7kUy664GQ/84UUMgC1bXOlyEGi1W50bgaa6iQmT6focU5/CClzDm2XD02fhD8
+         J9WA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0DVB9rNnd2OsTOlarIJRNUA1jqjMTIjOzDCP8sd7yapokYOFtCgDGrHq5pc5377q75Yu4vn7YCJE1Hr/R1Xou4NspT5CspSmdv/i2
+X-Gm-Message-State: AOJu0YxjP7BcbgyDfr0my4CYXzhfKOBoXv2TTRcBQrSIOy1lQ6d5L6cy
+	mbQsB+ZGzDkpIRHpIhTJd9xeZTxj2ByQ9NkIpOxrbAU25CG6Wa6L3J9MubJMa4I=
+X-Google-Smtp-Source: AGHT+IHnwj2xpZgweRvve1ZfwhHIVzDJ4mKsbzab2gI+BouwZgRbYq1HCA8LZtyuc1svC3odngOtOg==
+X-Received: by 2002:adf:db4c:0:b0:362:8e0a:337a with SMTP id ffacd0b85a97d-366e7a5692bmr183107f8f.53.1719053762291;
+        Sat, 22 Jun 2024 03:56:02 -0700 (PDT)
+Received: from [172.20.10.4] (82-132-215-235.dab.02.net. [82.132.215.235])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f6ac2sm4205701f8f.76.2024.06.22.03.55.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 03:56:00 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Marco Felsch <m.felsch@pengutronix.de>, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org
+In-Reply-To: <20240619-nvmem-cell-sysfs-perm-v1-1-e5b7882fdfa8@weissschuh.net>
+References: <20240619-nvmem-cell-sysfs-perm-v1-1-e5b7882fdfa8@weissschuh.net>
+Subject: Re: [PATCH] nvmem: core: limit cell sysfs permissions to main
+ attribute ones
+Message-Id: <171905375974.245384.16472026896696063319.b4-ty@linaro.org>
+Date: Sat, 22 Jun 2024 11:55:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="H/Lq+AIgICuNFnwA"
-Content-Disposition: inline
-In-Reply-To: <20240622-rk809-fixes-v2-2-c0db420d3639@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.2
 
 
---H/Lq+AIgICuNFnwA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 19 Jun 2024 20:09:00 +0200, Thomas Weißschuh wrote:
+> The cell sysfs attribute should not provide more access to the nvmem
+> data than the main attribute itself.
+> For example if nvme_config::root_only was set, the cell attribute
+> would still provide read access to everybody.
+> 
+> Mask out permissions not available on the main attribute.
+> 
+> [...]
 
-On Sat, Jun 22, 2024 at 12:57:19AM +0300, Cristian Ciocaltea wrote:
-> The Rockchip RK809 PMIC is compatible with RK817 and provides the same
-> capabilities, except for the battery charger manager.
->=20
-> There are also minor regulator related differences: BOOST and OTG_SWITCH
-> are specific to RK817, while DCDC_REG5, SWITCH_REG1 and SWITCH_REG2 are
-> provided RK809.
->=20
-> The current binding for RK809 doesn't document the audio codec
-> properties, although it has been already in use by several boards:
-> rk3566-quartz64-b, k3566-roc-pc, rk3568-evb1-v10, rk3568-lubancat-2,
-> rk3568-odroid-m1, rk3568-rock-3a.
->=20
-> Therefore dtbs_check fails for all of them:
->=20
->   DTC_CHK arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dtb
->   rk3568-rock-3a.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parent=
-s', 'assigned-clocks', 'clock-names', 'clocks', 'codec' do not match any of=
- the regexes: 'pinctrl-[0-9]+'
->     from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yam=
-l#
->=20
+Applied, thanks!
 
-> Additionally, the example in rockchip,rk809 binding is not able to
-> actually test the schema since it uses a wrong compatible
-> 'rockchip,rk808' instead of the expected 'rockchip,rk809'.
+[1/1] nvmem: core: limit cell sysfs permissions to main attribute ones
+      commit: 4eeb1d829b54d16ee5bbe9188e6013d424c6e859
 
-lol
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
->=20
-> Instead of duplicating even more content, merge the RK809 support into
-> the more inclusive RK817 schema and drop the now obsolete rockchip,rk809
-> related file.
->=20
-> Fixes: 6c38ca03406e ("dt-bindings: mfd: rk808: Convert bindings to yaml")
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
---H/Lq+AIgICuNFnwA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnatgAAKCRB4tDGHoIJi
-0qCLAP9g1jex2+EZ8w+nDXCv9TyqgSCBxRQjgB2Yk52nfJqShwD/dH6EOwuSEix/
-r9MXBGao3Vjytvfs79mzQZB3FFSXawA=
-=uadC
------END PGP SIGNATURE-----
-
---H/Lq+AIgICuNFnwA--
 
