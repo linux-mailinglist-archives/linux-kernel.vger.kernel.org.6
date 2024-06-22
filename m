@@ -1,109 +1,103 @@
-Return-Path: <linux-kernel+bounces-225620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AB69132FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:14:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB1B49132FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409EF284112
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:14:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3A728420B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2118E14D45E;
-	Sat, 22 Jun 2024 10:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A0F14D45E;
+	Sat, 22 Jun 2024 10:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TRKchq1I"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BbGyknvb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pDXnJ9Jv"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC56D14B078
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 10:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201BA13D614
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 10:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719051275; cv=none; b=sR0Rju/Wl2nV8lMhbNuvkrNpR5UXzhNMOlgd+HtlawLT9c3eAoP0BfMYu9wrXBrUm8M0/zRStVft8Id8KJr/C0/l0myA9GlIb6jSqKtCAugCxRwPffLJ5ErIZdVnFqrg72vACraEM3ATw+cLvdfptakhoTDKJK/DW9dKs5A/Rqc=
+	t=1719051476; cv=none; b=cVga5EaPPwxr3UXIP8SVU2P63kyyYNWMO+9Bl70pAxCJnr072z8nJoHVlb2fVOP1DKQFeOgFA5RffhdUe5uHUB6DOCQa9PHzcIBOJH7FJG39XDOfTacHogSlrLhf+H+v8gD/Jg3cGvzMfo2UhXH2r2iT978u9XqBFxCNUNg38TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719051275; c=relaxed/simple;
-	bh=TrpnPDWlENMgK+QM3Bpkpvqow1x66qbusPsLwsIgpdU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=n0tCU7yvj4pzgMfhQrvoC6iwXi892zIUkeUB1Bqh3yb7zEKHTqt2G633QcrZ3kPMtD8GAuND1UN48ZBZbobszTnLnOswDC4GuwUG+xPP60IlKCovseRq46KCaubuNwk3J7f0ktzX2E4ZRMgrRXP2rZQcdNQUDKheJsbbRizp8w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TRKchq1I; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42138eadf64so24439415e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:14:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719051272; x=1719656072; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7LOGZewqxDMGMbF7UZoIa28jx2OtGU7FNX/jJsQDTBA=;
-        b=TRKchq1IyH5aS7n3QRGuQkadRN0sqjKmPIuh5pEkMjb5wBaF4rbVkXySAIbXe92+Ge
-         Kiuvi4ALwaUOlm8IwFsfiCqC8UxeWQFscykqT2VVxTey5IpaDG5bqJM2Zktv6CqO5E65
-         ZNinLRlt+23dZ5uvBWyPYbUE5iY+ch5U4tax6KJ31suKjJJ654KVCGFbsLUOslD3Q+aV
-         SkQh1sLxN/1lX7KQyaezliNbOObdD9NxO6Rl+c9JMgZewg2WRypueRepRw0oD/piTMRz
-         GjIm4JAL7EDJxE9nZt2kS6+yF0Hxfgv2tt5C1xMs/hF2nmf4KjRspzEx5JyE09Y2frYY
-         cUqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719051272; x=1719656072;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7LOGZewqxDMGMbF7UZoIa28jx2OtGU7FNX/jJsQDTBA=;
-        b=smIuus35uPMIHGQHZL1BaGIMHtQtakMVIUUc8mlNiL3Up/KRpolFj27STikwzKMKJl
-         EjXZI6PS1tX02zzelSVpwrVlakKdlBq2EzIAOCP/bUD5m9+JCm062TjZiGU4df2+mlR+
-         xZsAnWA/UaiL3xDDemIqXRTq4xK6P10b5jP1DP27aUaWgW8iTv28Of291jrgX9bbDCws
-         2Q3jX6AdHBNDCnhWWpLbTtyL2DZMThfZCgWrE97rlgEizsPRebVzm1QPt53ZxrjpTWvf
-         KGcRUJuMmWm3ZuO+0Fc1I9/lNNy+poxBPJzMdYMCoUwAeEN4jDsLNHVkMPcSE0pgHQjK
-         XviQ==
-X-Gm-Message-State: AOJu0YzU33wLMpNx7/+SXq8NyLdVcI6TwncAiyp4K5J3lDOzuIzIjWIB
-	ELbeE2g4tv0dJPz5r5Dc5YVGsNLGOy8XRt7FmHilyhHGh/dfPTwtdXTpEN9VfPU=
-X-Google-Smtp-Source: AGHT+IG0BPBJiTNWPcmSLfddECphdGj8leb6Xt9X9nc4MOdu/1ICSnVyniIgidXPWDCxYo7oIfCQyA==
-X-Received: by 2002:a05:600c:2252:b0:424:798a:f7f6 with SMTP id 5b1f17b1804b1-424798afe74mr82525105e9.8.1719051271977;
-        Sat, 22 Jun 2024 03:14:31 -0700 (PDT)
-Received: from [172.20.10.4] (82-132-215-235.dab.02.net. [82.132.215.235])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248482f1c4sm44662305e9.10.2024.06.22.03.14.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 03:14:30 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Jiri Prchal <jiri.prchal@aksignal.cz>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: linux-kernel@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-In-Reply-To: <20240620-nvmem-compat-name-v1-0-700e17ba3d8f@weissschuh.net>
-References: <20240620-nvmem-compat-name-v1-0-700e17ba3d8f@weissschuh.net>
-Subject: Re: (subset) [PATCH 0/5] nvmem: core: one fix and several cleanups
- for sysfs code
-Message-Id: <171905126866.193679.14095365395671907555.b4-ty@linaro.org>
-Date: Sat, 22 Jun 2024 11:14:28 +0100
+	s=arc-20240116; t=1719051476; c=relaxed/simple;
+	bh=ENt6ZNPVg6/LybX0Pk6zZTLzCGyzbxAPfrToun8Dwoo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pwlxSrVjiT9BjRHOQyfQArIUAqG33bWAPJEn4GzxcWODS7dOE1aTJ+z420wr1e4drb/IZKciYaoHTnk+BBogHO8zDs4zT9kxRwuHyTKotUFcmkPCXHTctWK5iy5Dz5j5stfOJtEOr1MGQaApamwZWjGdho9lhij4n6FX7IcAt6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BbGyknvb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pDXnJ9Jv; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719051472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ssaN1tkzzEsL2Y+r8IH9q6uYww1OTiPt1J+oMIZPEqU=;
+	b=BbGyknvbWY5nRDmD1yDUqzMZel/tVHPDLzo61iPh00f01UQJmg12XDJrfhJRrKlpFEEzpg
+	0Y1vbkbUpuhwJpjRE/pD7h9nq9kBvBlA2XSJiMLoW+rYWwOJa7UR73krDT4kPZrCUBolGq
+	EKqxpsdryUoJL2eLf/rSfl+1WzqfeqYu3XpSLVfH/EnYUxT3/1rOSYE8uJ1ej/sjdWU20Z
+	avAcvSoeJUfVLajzgcFxrHGveVDWv7BGLsXNqoxozPTlapskQQbcx5/wITqbW6nM/gjzLm
+	a9OSKucpzLThZ/ODbHWPSwjCHz5bEWFuOgtTxDveB22VkPX6BYlMJZ3z4Z5yOA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719051472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ssaN1tkzzEsL2Y+r8IH9q6uYww1OTiPt1J+oMIZPEqU=;
+	b=pDXnJ9JvrXG/zYuyrRKc5naGA1rFYIGcCTDXRlIG7Lu1OS0JOCy9yebIRpLE3IKhMw4JR0
+	xIYwsfXcWd9RCfAw==
+To: Huacai Chen <chenhuacai@gmail.com>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Xuefeng Li <lixuefeng@loongson.cn>, Jiaxun
+ Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH V2] irqchip/loongson-eiointc: Use early_cpu_to_node()
+ instead of cpu_to_node()
+In-Reply-To: <CAAhV-H5TNnf+EMEtKmXk+Q9KXSZpW+9vd-7qqXDifsKfny+v=g@mail.gmail.com>
+References: <20240620020625.3851354-1-chenhuacai@loongson.cn>
+ <87msnem3i1.ffs@tglx>
+ <CAAhV-H5TNnf+EMEtKmXk+Q9KXSZpW+9vd-7qqXDifsKfny+v=g@mail.gmail.com>
+Date: Sat, 22 Jun 2024 12:17:51 +0200
+Message-ID: <87pls9z3g0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.2
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Huacai!
 
-On Thu, 20 Jun 2024 18:00:32 +0200, Thomas Weißschuh wrote:
-> Patch 1 is a bugfix.
-> All other patches are small cleanups.
-> 
-> Hint about another nvmem bugfix at [0].
-> 
-> [0] https://lore.kernel.org/lkml/20240619-nvmem-cell-sysfs-perm-v1-1-e5b7882fdfa8@weissschuh.net/
-> 
-> [...]
+On Sat, Jun 22 2024 at 10:49, Huacai Chen wrote:
+> On Sat, Jun 22, 2024 at 4:42=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
+de> wrote:
+>>
+>> On Thu, Jun 20 2024 at 10:06, Huacai Chen wrote:
+>> > When we use "nr_cpus=3Dn" to hard limit the CPU number, cpu_to_node() =
+is
+>> > not usable because it can only applied on "possible" CPUs. On the other
+>> > hand, early_cpu_to_node() can be always used instead.
+> cpu_to_node() depends on per-cpu area, and per-cpu area is only usable
+> for "possible" CPUs.
 
-Applied, thanks!
+When nr_cpus=3Dn is on the command line then what needs to access
+something for CPUs which are not possible to come ever online?
 
-[1/5] nvmem: core: only change name to fram for current attribute
-      commit: 92e57866c8eeefd00ee0c05232b5134e11a66298
+That does not make sense because it's exactly the same situation when
+you compile a kernel with NR_CPU=3D8 and boot it on a system with 16
+CPUs. Then early_cpu_to_node() does not give you anything either.
 
-Best regards,
--- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+So what's the technical problem you are trying to solve?
 
+Thanks,
+
+        tglx
 
