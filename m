@@ -1,172 +1,259 @@
-Return-Path: <linux-kernel+bounces-225680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3729133A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:01:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A03D9133A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DECE11C211D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:01:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 321DB284562
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E67155A4E;
-	Sat, 22 Jun 2024 12:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6BA155CB0;
+	Sat, 22 Jun 2024 12:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWaCrU20"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BAePYSVP"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1135A14B955;
-	Sat, 22 Jun 2024 12:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0A9155353;
+	Sat, 22 Jun 2024 12:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719057696; cv=none; b=HjRwwDyNMV/xLVKWWZHxpY9xA0XW2k9OfJ8VncvT+5FLQ4iVhQfJL1l9ha4EJOtH0eyku+oL0b8m6ZLL3lhtXMpKCpMVFm6c0QUB+aTXn9Dcqt7LJR/v7Hp/IvMMYmJetqPpMCzKXcGJX8YQOgcIRAMWqQqk3MkqNPw4bKUsyOY=
+	t=1719057725; cv=none; b=ctm11n3MBU4z+3vGEPM4930HhbXY5IBI0Mc48jc/HU2H7ZZoh855mOrMoQR2+my1QpMwY6mmPWOqkoJvEd3qVoh5ZqqHYxxfoNsi8OyUriQetrKEbTSMdfmwhtEiK56NYRFOErVhUpNjdNOs8AW8csyudWMDDlQiOYju3n8X5Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719057696; c=relaxed/simple;
-	bh=4IxETGVg4/bc2jI5lLzgI9phYpsgH2CfHaJhgcXMNNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=agtkYSQ2fxrIUFd+Lmeg+eTYzDG+yc86A3BXRSD59xAUPAzjUdZIz/FwGhFaC9GRU+0uyBa0ka5NTNSaNt5+0m+73CBnQ1FpEWdo7vSjr3Ju4CnoYYyqGiCHnVAHkZx5Cjox2xRTcVrH+3WOb2bqV9YF5zRxkO1/c75YYvBCXc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWaCrU20; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52FC5C3277B;
-	Sat, 22 Jun 2024 12:01:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719057695;
-	bh=4IxETGVg4/bc2jI5lLzgI9phYpsgH2CfHaJhgcXMNNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CWaCrU20NmFrhv6fqL/qkygH4JAUO+yFKNXsfDcsn8YVtQwHKMpnzvSgUL42gzMw8
-	 b9/0E3260B7BoLTOVfteBcG5GSp/r9EyCKp2jGjTJR3PsV6z72mAAZwDiLHVyTXSck
-	 roeyXDyEv3JSguVA/7Y5gs4GEijb0XRfhT7m+egXGEfPh3MTf1/M11Hq7du9vowcfM
-	 3PcNurM9jRoV9lTnqr8IaKHpBieoaCcodDWTk4KHjE6pLF6C2bBshrpWMlTcncfITL
-	 D7nq/FipswdGKwtnj/EbcoF36LV7GN1u9w9Lpo+sCNBOjqGwa+NaKeZYZwx28oFt3J
-	 9TnNnYdNoaZYw==
-Date: Sat, 22 Jun 2024 13:01:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
-	greentime.hu@sifive.com, vincent.chen@sifive.com,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
-Message-ID: <20240622-stride-unworn-6e3270a326e5@spud>
-References: <20240605-atrium-neuron-c2512b34d3da@spud>
- <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
- <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr>
- <20240621-viewless-mural-f5992a247992@wendy>
- <edcd3957-0720-4ab4-bdda-58752304a53a@ghiti.fr>
- <20240621-9bf9365533a2f8f97cbf1f5e@orel>
- <20240621-glutton-platonic-2ec41021b81b@spud>
- <20240621-a56e848050ebbf1f7394e51f@orel>
- <20240621-surging-flounder-58a653747e1d@spud>
- <20240621-8422c24612ae40600f349f7c@orel>
+	s=arc-20240116; t=1719057725; c=relaxed/simple;
+	bh=pKm7aBnB4eQyN2yxIeRksOuD82htf6dmCnmcX+fqIbs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NHT/2R6VQDMA2D5MjxR8T6IbBxsNPAIfk1E7kfaGF3URL8thG4PkaQY1imORGyvsfo39GjY2DknrOdistaGyMT1QLpNHk9ZjWarsCM6A6N/gF9NxTBN8UdwTLHLsOmZSCJhisECOmD8dC8Li1qFTziXGpqIWr4x2W1LSyfy6ggg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BAePYSVP; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f4c7b022f8so25017715ad.1;
+        Sat, 22 Jun 2024 05:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719057723; x=1719662523; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7BUAtZoN7iWs7Su2BECN/OwNZupudGage3ZVXNwoGn0=;
+        b=BAePYSVP3ecJ3uJcvfrSWgXCG+csDh1tBb3RhPEG7r9jWZxygk5m0FKBDGWUcUS4f8
+         592DJku1UYle3tnhtpAPaCneXAsmKaCfpSRL3GjylWScLGRvtwxFZsDm1HRbYJDkI6QE
+         tmosQk/7ezGqCb9QftWjNMeQ1WTbaXUPvrNxWwQ+H7+EYU/U0o46R/8xgayhp8TiPz6C
+         4Rb4tsfUnxeYPnJKOiHBCkdRy4PA/oRYB59iZqNnlZBYCoiRZ+8gzNJjiA3XHtN4kcwH
+         CHaVI34g843ffe7vuPvajZ8QdTZ7YOQKO1RUNSTFJk4PmkPuLHt1VLSmiqzmT9VMZV07
+         PPkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719057723; x=1719662523;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7BUAtZoN7iWs7Su2BECN/OwNZupudGage3ZVXNwoGn0=;
+        b=QJzAgwWd5SiKrH36CU/yBQdfXDNgPBfxav7F86VCJ9dIFhh3YLLUvlA2ejObdwEXck
+         neeqHznPudzXL4qe2w40C09Fh07opEEthrdGEfsKsoNE1mxLGTgSIsV4Ngbh5hMf37vg
+         BJ8Rs5AEMwLtNOcPCGzIbK5QQ4+qQ20ftjWUUYmryUKUtWIlk5tb6pEygcMHlV47ssLQ
+         /bCEtbGn3zzhFkE6b2RbDUxUULqjQ2Z7QZUmhz76+oL4kYEq3YQ6WX1BuKBn2JbcfKt+
+         fQtmwV2rIBOM2oH5AQHP8O9bn43lG5bxRgE4uzj+ODMIcQgvq4WDtSTldofP7naoA3/W
+         YZXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJNj9Wf0+jHW0KiAy+caT29Thi3YAK0fATNNdxkCgIPLbhQZhcbA8efUaRhJP24tlh+kdgIHnwdCijRmVr8EBhZmogLyf8+lwmIsRBmmWNxewfAUCKUQLY7CriLpnxu0LF6uP/hSUSSlCRqo0Mnr7+mgo4Bu+8OyWIJQupxAM0HYi9ITowkBN+dg+3wQPEkLEJ6GjbxnIWA+SV0IxpCDPP
+X-Gm-Message-State: AOJu0YzSnHAbvM32MKRUxRlAPBZVXdJHJggEqpmJM5Np5KWGaNNznexH
+	djQPZv2NOa2XdPgAaiffHbmW7o1VJNc49EZsRjcI/mg3JOMHWuyZ
+X-Google-Smtp-Source: AGHT+IFHL0Zt01i2MdAdOvx3XYxPHff1JpAd7jFwiKPOD/dtP5oKNpEh0R8HvXZcSw645QE3uh0qdg==
+X-Received: by 2002:a17:902:e742:b0:1f9:fca9:742d with SMTP id d9443c01a7336-1f9fca977e3mr36663935ad.37.1719057722908;
+        Sat, 22 Jun 2024 05:02:02 -0700 (PDT)
+Received: from [192.168.50.95] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f0374sm29596165ad.22.2024.06.22.05.01.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Jun 2024 05:02:02 -0700 (PDT)
+Message-ID: <e2f9da4e-919d-4a98-919d-167726ef6bc7@gmail.com>
+Date: Sat, 22 Jun 2024 21:01:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZMOCsO9fyo4yCpOo"
-Content-Disposition: inline
-In-Reply-To: <20240621-8422c24612ae40600f349f7c@orel>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] tracing/net_sched: NULL pointer dereference in
+ perf_trace_qdisc_reset()
+From: Yunseong Kim <yskelg@gmail.com>
+To: Taehee Yoo <ap420073@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Pedro Tammela <pctammela@mojatatu.com>,
+ netdev@vger.kernel.org, stable@vger.kernel.org,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Takashi Iwai <tiwai@suse.de>, "David S. Miller" <davem@davemloft.net>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Jamal Hadi Salim
+ <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Austin Kim <austindh.kim@gmail.com>,
+ shjy180909@gmail.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, ppbuk5246@gmail.com,
+ Yeoreum Yun <yeoreum.yun@arm.com>, virtualization@lists.linux.dev
+References: <20240622045701.8152-2-yskelg@gmail.com>
+ <CAMArcTVgpAq8dC_u8eFE=asMWriWjNfYsmo6KVFi=tpHebdmCA@mail.gmail.com>
+ <80f28cfb-f287-419b-a448-b5967bc778ae@gmail.com>
+Content-Language: en-US
+In-Reply-To: <80f28cfb-f287-419b-a448-b5967bc778ae@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
---ZMOCsO9fyo4yCpOo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 6/22/24 3:12 오후, Yunseong Kim wrote:
+> Hi Taehee,
+> 
+> On 6/22/24 2:50 오후, Taehee Yoo wrote:
+>> On Sat, Jun 22, 2024 at 1:58 PM <yskelg@gmail.com> wrote:
+>>>
+>>> From: Yunseong Kim <yskelg@gmail.com>
+>>>
+>>
+>> Hi Yunseong,
+>> Thanks a lot for this work!
+> 
+> Thank you Taehee for reviewing our patch. It's greatly appreciated.
+> 
+>>> During qdisc initialization, qdisc was being set to noop_queue.
+>>> In veth_init_queue, the initial tx_num was reduced back to one,
+>>> causing the qdisc reset to be called with noop, which led to the kernel panic.
+>>>
+>>> I've attached the GitHub gist link that C converted syz-execprogram
+>>> source code and 3 log of reproduced vmcore-dmesg.
+>>>
+>>>  https://gist.github.com/yskelg/cc64562873ce249cdd0d5a358b77d740
+>>>
+>>> Yeoreum and I use two fuzzing tool simultaneously.
+>>>
+>>> One process with syz-executor : https://github.com/google/syzkaller
+>>>
+>>>  $ ./syz-execprog -executor=./syz-executor -repeat=1 -sandbox=setuid \
+>>>     -enable=none -collide=false log1
+>>>
+>>> The other process with perf fuzzer:
+>>>  https://github.com/deater/perf_event_tests/tree/master/fuzzer
+>>>
+>>>  $ perf_event_tests/fuzzer/perf_fuzzer
+>>>
+>>> I think this will happen on the kernel version.
+>>>
+>>>  Linux kernel version +v6.7.10, +v6.8, +v6.9 and it could happen in v6.10.
+>>>
+>>> This occurred from 51270d573a8d. I think this patch is absolutely
+>>> necessary. Previously, It was showing not intended string value of name.
+> 
+> 
+>> I found a simple reproducer, please use the below command to test this patch.
+>>
+>> echo 1 > /sys/kernel/debug/tracing/events/enable
+>> ip link add veth0 type veth peer name veth1
 
-On Fri, Jun 21, 2024 at 05:08:01PM +0200, Andrew Jones wrote:
-> On Fri, Jun 21, 2024 at 03:58:18PM GMT, Conor Dooley wrote:
-> > On Fri, Jun 21, 2024 at 04:52:09PM +0200, Andrew Jones wrote:
-> > > On Fri, Jun 21, 2024 at 03:04:47PM GMT, Conor Dooley wrote:
-> > > > On Fri, Jun 21, 2024 at 03:15:10PM +0200, Andrew Jones wrote:
-> > > > > On Fri, Jun 21, 2024 at 02:42:15PM GMT, Alexandre Ghiti wrote:
-> >=20
-> > > > > I understand the concern; old SBI implementations will leave svad=
-u in the
-> > > > > DT but not actually enable it. Then, since svade may not be in th=
-e DT if
-> > > > > the platform doesn't support it or it was left out on purpose, Li=
-nux will
-> > > > > only see svadu and get unexpected exceptions. This is something w=
-e could
-> > > > > force easily with QEMU and an SBI implementation which doesn't do=
- anything
-> > > > > for svadu. I hope vendors of real platforms, which typically prov=
-ide their
-> > > > > own firmware and DTs, would get this right, though, especially si=
-nce Linux
-> > > > > should fail fast in their testing when they get it wrong.
-> > > >=20
-> > > > I'll admit, I wasn't really thinking here about something like QEMU=
- that
-> > > > puts extensions into the dtb before their exact meanings are decided
-> > > > upon. I almost only ever think about "real" systems, and in those c=
-ases
-> > > > I would expect that if you can update the representation of the har=
-dware
-> > > > provided to (or by the firmware to Linux) with new properties, then=
- updating
-> > > > the firmware itself should be possible.
-> > > >=20
-> > > > Does QEMU have the this exact problem at the moment? I know it puts
-> > > > Svadu in the max cpu, but does it enable the behaviour by default, =
-even
-> > > > without the SBI implementation asking for it?
-> > >=20
-> > > Yes, because QEMU has done hardware A/D updating since it first start=
-ed
-> > > supporting riscv, which means it did svadu when neither svadu nor sva=
-de
-> > > were in the DT. The "fix" for that was to ensure we have svadu and !s=
-vade
-> > > by default, which means we've perfectly realized Alexandre's concern.=
-=2E.
-> > > We should be able to change the named cpu types that don't support sv=
-adu
-> > > to only have svade in their DTs, since that would actually be fixing =
-those
-> > > cpu types, but we'll need to discuss how to proceed with the generic =
-cpu
-> > > types like 'max'.
-> >=20
-> > Correct me please, since I think I am misunderstanding: At the moment
-> > QEMU does A/D updating whether or not the SBI implantation asks for it,
-> > with the max CPU. The SBI implementation doesn't understand Svadu and
-> > won't strip it. The kernel will get a DT with Svadu in it, but Svadu wi=
-ll
-> > be enabled, so it is not a problem.
->=20
-> Oh, of course you're right! I managed to reverse things some odd number of
-> times (more than once!) in my head and ended up backwards...
+After applying our patch, I didn't find any message or kernel panic errors.
 
-I mean, I've been really confused about this whole thing the entire
-time, so ye..
+ # echo 1 > /sys/kernel/debug/tracing/events/qdisc/qdisc_reset/enable
+ # ip link add veth0 type veth peer name veth1
+ Error: Unknown device type.
 
-Speaking of QEMU, what happens if I try to turn on svade and svadu in
-QEMU? It looks like there's some handling of it that does things
-conditionally based !svade && svade, but I couldn't tell if it would do
-what we are describing in this thread.
+However, without our patch applied, I tested Tahee's command line on the
+upstream 6.10.0-rc3 kernel using the qdisc_reset event and the ip command.
 
---ZMOCsO9fyo4yCpOo
-Content-Type: application/pgp-signature; name="signature.asc"
+ $ echo 1 > /sys/kernel/debug/tracing/events/qdisc/qdisc_reset/enable
 
------BEGIN PGP SIGNATURE-----
+ $ ip link add veth0 type veth peer name veth1
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZna9GgAKCRB4tDGHoIJi
-0h3EAQCEzS530QLTXXBLPksl2mQ8sX+WkbvTcdwou3zq2avSrgEA6hNFxVSOme2f
-3YECDPsNJ8996blTH6mu6XZ5ht3fRAg=
-=pKba
------END PGP SIGNATURE-----
+This make always kernel panic.
 
---ZMOCsO9fyo4yCpOo--
+Linux version: 6.10.0-rc3
+
+[    0.000000] Linux version 6.10.0-rc3-00164-g44ef20baed8e-dirty
+(paran@fedora) (gcc (GCC) 14.1.1 20240522 (Red Hat 14.1.1-4), GNU ld
+version 2.41-34.fc40) #20 SMP PREEMPT Sat Jun 15 16:51:25 KST 2024
+
+Kernel panic message:
+
+[  615.236484] Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+[  615.237250] Dumping ftrace buffer:
+[  615.237679]    (ftrace buffer empty)
+[  615.238097] Modules linked in: veth crct10dif_ce virtio_gpu
+virtio_dma_buf drm_shmem_helper drm_kms_helper zynqmp_fpga xilinx_can
+xilinx_spi xilinx_selectmap xilinx_core xilinx_pr_decoupler versal_fpga
+uvcvideo uvc videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videodev
+videobuf2_common mc usbnet deflate zstd ubifs ubi rcar_canfd rcar_can
+omap_mailbox ntb_msi_test ntb_hw_epf lattice_sysconfig_spi
+lattice_sysconfig ice40_spi gpio_xilinx dwmac_altr_socfpga mdio_regmap
+stmmac_platform stmmac pcs_xpcs dfl_fme_region dfl_fme_mgr dfl_fme_br
+dfl_afu dfl fpga_region fpga_bridge can can_dev br_netfilter bridge stp
+llc atl1c ath11k_pci mhi ath11k_ahb ath11k qmi_helpers ath10k_sdio
+ath10k_pci ath10k_core ath mac80211 libarc4 cfg80211 drm fuse backlight ipv6
+Jun 22 02:36:5[3   6k152.62-4sm98k4-0k]v  kCePUr:n e1l :P IUDn:a b4le6
+8t oC ohmma: nidpl eN oketr nteali nptaedg i6n.g1 0re.0q-urecs3t- 0at0
+1v6i4r-tgu4a4le fa2d0dbraeeds0se-dir tyd f#f2f08
+  615.252376] Hardware name: linux,dummy-virt (DT)
+[  615.253220] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS
+BTYPE=--)
+[  615.254433] pc : strnlen+0x6c/0xe0
+[  615.255096] lr : trace_event_get_offsets_qdisc_reset+0x94/0x3d0
+[  615.256088] sp : ffff800080b269a0
+[  615.256615] x29: ffff800080b269a0 x28: ffffc070f3f98500 x27:
+0000000000000001
+[  615.257831] x26: 0000000000000010 x25: ffffc070f3f98540 x24:
+ffffc070f619cf60
+[  615.259020] x23: 0000000000000128 x22: 0000000000000138 x21:
+dfff800000000000
+[  615.260241] x20: ffffc070f631ad00 x19: 0000000000000128 x18:
+ffffc070f448b800
+[  615.261454] x17: 0000000000000000 x16: 0000000000000001 x15:
+ffffc070f4ba2a90
+[  615.262635] x14: ffff700010164d73 x13: 1ffff80e1e8d5eb3 x12:
+1ffff00010164d72
+[  615.263877] x11: ffff700010164d72 x10: dfff800000000000 x9 :
+ffffc070e85d6184
+[  615.265047] x8 : ffffc070e4402070 x7 : 000000000000f1f1 x6 :
+000000001504a6d3
+[  615.266336] x5 : ffff28ca21122140 x4 : ffffc070f5043ea8 x3 :
+0000000000000000
+[  615.267528] x2 : 0000000000000025 x1 : 0000000000000000 x0 :
+0000000000000000
+[  615.268747] Call trace:
+[  615.269180]  strnlen+0x6c/0xe0
+[  615.269767]  trace_event_get_offsets_qdisc_reset+0x94/0x3d0
+[  615.270716]  trace_event_raw_event_qdisc_reset+0xe8/0x4e8
+[  615.271667]  __traceiter_qdisc_reset+0xa0/0x140
+[  615.272499]  qdisc_reset+0x554/0x848
+[  615.273134]  netif_set_real_num_tx_queues+0x360/0x9a8
+[  615.274050]  veth_init_queues+0x110/0x220 [veth]
+[  615.275110]  veth_newlink+0x538/0xa50 [veth]
+[  615.276172]  __rtnl_newlink+0x11e4/0x1bc8
+[  615.276944]  rtnl_newlink+0xac/0x120
+[  615.277657]  rtnetlink_rcv_msg+0x4e4/0x1370
+[  615.278409]  netlink_rcv_skb+0x25c/0x4f0
+[  615.279122]  rtnetlink_rcv+0x48/0x70
+[  615.279769]  netlink_unicast+0x5a8/0x7b8
+[  615.280462]  netlink_sendmsg+0xa70/0x1190
+
+> The perf event is activated by perf_fuzzer, and it's indeed a similar
+> environment with veth.
+> 
+>> In my machine, the splat looks like:
+>>
+>> BUG: kernel NULL pointer dereference, address: 0000000000000130
+>> #PF: supervisor read access in kernel mode
+
+>> Thanks a lot!
+>> Taehee Yoo
+> 
+> I think this bug might cause inconvenience for developers working on net
+> devices driver in a virtual machine when they use tracing.
+> 
+> I'm appreciate your effort in reproducing it.
+> 
+> Warm Regards,
+> Yunseong Kim
+I believe our patch can prevent panics in all stable kernels released
+after +v6.7.10.
+
+Warm Regards,
+Yunseong Kim
 
