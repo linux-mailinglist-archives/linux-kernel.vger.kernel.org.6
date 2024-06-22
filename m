@@ -1,128 +1,85 @@
-Return-Path: <linux-kernel+bounces-225656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 289C8913357
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:24:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6EF91335B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B2B1C21155
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:24:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9019DB2147D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF8B152789;
-	Sat, 22 Jun 2024 11:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D5815442C;
+	Sat, 22 Jun 2024 11:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCEt83Cl"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lD5dOve+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61CB14D2B3
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5590D14A0AD;
+	Sat, 22 Jun 2024 11:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719055455; cv=none; b=JOYCBiU+qAR+WpKARB0sMkG8X/ly65fRJYnRZMf+Wh6ehEyVm4gCFROkWOPnifpW3DnyHDeOdohJhr7b+V4UGytGknWCKZHXJoAels98jDLRFjmOmZwknx8d1tB/JPtXwPIGtVSKzyJX7VznM60r4bTyaviHEpK+G/jCYQkeCtk=
+	t=1719055536; cv=none; b=IctOnz6h7jjir9Ooes2JjXxrwya7vzyxhjM7RXNqIPrIM9B/BF03rOZ2plJHSJn/VPUcfBnRQ5QfaHja/6pm/ovx6DNc1etIw8tqDPnf7S0yQcXD2JCmAsRNvy1zQWfYBdJtVVUzprImmWQGFvWiTL6JXoOGOfphfGKsnkJOoZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719055455; c=relaxed/simple;
-	bh=XczZR1S8ZzwxLPnjy3oktjL68CvtruQEAnv/yw/vx1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t+Zra0KYtCw//PA184CsrgUNcS1qbfLrvjL46yCdcnPCOu6jxQ9zyGsih2qr7XTcr3GjAiwk7PGQTfcOGjCxDdbfUCihb8+zrfoIUJtpGKVnJdWfjddwee2q44oqlrc8r/rgoEWXveXtBRzjZ56ak2iK0WyeYBhhG7faFT+zQGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCEt83Cl; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6f0e153eddso350986266b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:24:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719055452; x=1719660252; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=83J6bYCjzPDrL4GISkhSjjehJb5GWsoBmA7ZxJY3FUc=;
-        b=CCEt83Clu5pG5BOgPOldSb53EqTObcNNusnLip4rQjyKiUtThNi5zDCCV2WwVS7Ez8
-         V/3gDZJvcXgvUkEL1Baii4S+EMDGxxdmiWhFPe7Aybq9Tu6Citd3bVwa2MZgcRHXlJnm
-         Plbg7v4py/Dgl2igDnNGssrBMq0maIWhELi1rbT4pvXwoDxZ6Nrq85MuMkDUjKlhiPB/
-         V24wsRaEZao0McLWiTC2/Z9CWtl1wJC6hRTHGp3aFsIFdGNrxbsZXrs2zOy/jRW7pCCi
-         7Tl4n+F58vGBz4RfYyuDvqqd1AYOvfARX7jNLtrc1jmAsum3W61dv0pLKc9aRAidjPRV
-         BkmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719055452; x=1719660252;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=83J6bYCjzPDrL4GISkhSjjehJb5GWsoBmA7ZxJY3FUc=;
-        b=ZB9epBZB/gzlEyIcQor0z7q3VjlnH1U3If+nUXbbifaYBavnj+XXjifMO9zqPpOvVl
-         aP30pS/J3mawu2WWwMnYGQ8KsJaLDkFsiX1eWeAXBO+IULBRCRjNFm+z3vnK5Ko83SaQ
-         vnYnyaFZW3UH8FMGK1iIEnsAtFAyfagiMjB5jjx7vjuj1E5Dy4ZDPwjAnpuLrRS8kHoJ
-         Y4ilSZVXVCWK/UmXV+giw1+6YDhSt3aMzz+GsQqTzmxb5R9IdDpkvorZWaSVhs5ryR2H
-         xbkT9W1ltT9Unef2oJULhdrf2r+xittCJfKvZxyKtkXUdyoSCdzQtyL7e4axPIX27HT8
-         /OSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCj/JIyyPNz9wDdN+dcmXYjKLJaLduRkLt5PpRjrme2/WnvQxhOciD+7iVpSVSFLcZu6hzLE3VZFQcwyCVmgT1bmTdHCfJnxyInQYW
-X-Gm-Message-State: AOJu0YzYfObR09gazA1+JeVKuJwLZuVo5mhJomGo5QR9m+t7gTYX1uIz
-	tRCVTlU8LKTYUsrjFPUjeJYFbT7n338Ka3hy5PboPDLGhdbT9CK0C2nG811s6joWB6wiix8UX72
-	505YAnLTRvcE6regtVL8fT2LekyeOMRFMF7M=
-X-Google-Smtp-Source: AGHT+IE/sh7/DstBLL1Mzt0UJOMiXW/wEaf/vpKw+eRSACu0bNwFz/0qtVahwNV3rhK2Rs6oypIxybf80gb8Kv/TpQQ=
-X-Received: by 2002:a17:907:118a:b0:a6f:7d7e:ab0e with SMTP id
- a640c23a62f3a-a715f94a6a8mr46634166b.27.1719055451338; Sat, 22 Jun 2024
- 04:24:11 -0700 (PDT)
+	s=arc-20240116; t=1719055536; c=relaxed/simple;
+	bh=GPT/1XPLpKB4VBYT5uBKjq0mIBQxVbyimoECNzXCIoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MnMJ3or0+m2U0rK+Bf1TJEQvAt/Bm4N4/0LqXxHeNNOyQwnX5fExY/R/FY7lFCpYWhjBQ7BcNtuH+xUf0xGHHj/RGG0n5EIk+cBeWX3ZzXepQDa7hbyrU2jcVgdVC83AyjE7JCDl/ny8brict+nnWC0qFnfyyrhHHZKFyhkhLEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lD5dOve+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68CD9C3277B;
+	Sat, 22 Jun 2024 11:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719055535;
+	bh=GPT/1XPLpKB4VBYT5uBKjq0mIBQxVbyimoECNzXCIoU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lD5dOve+oE0ytmDKM58eSpn8ka1uH3p36wgKghcYko9h5ZEI4YIo2rIzd8QQtvZ9L
+	 HDEl83z2Id8E8QFGFIdJ/FrW1lt8E0OKdSBucTASK64ilhET/UXDmsmbWdNv/nAHL8
+	 wO9rH/7b6EFB9wKRrM51oKmM8bOR7xfNj8+fFVuCn48zNtvdT9cUhsdbSZEd7QR9qC
+	 QsQBu7ikt2yV0tfGLNH9gMEF5OmktyznFK09BRbBI0Ucb/px75F+Am4AEi+zFetDaA
+	 kYK1i4APg3yU+UmCiVr1EtzV0m868Y/GVEt3dmVAKBtgr1xoxmCe0Tk8zwBZvW8RWr
+	 erw+wDg2pvNDw==
+Date: Sat, 22 Jun 2024 13:25:29 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Yihang Li <liyihang9@huawei.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	john.g.garry@oracle.com, yanaijie@huawei.com,
+	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linuxarm@huawei.com, chenxiang66@hisilicon.com,
+	prime.zeng@huawei.com
+Subject: Re: [bug report] scsi: SATA devices missing after FLR is triggered
+ during HBA suspended
+Message-ID: <Zna0qRpV3V6aVLZD@ryzen.lan>
+References: <20240618132900.2731301-1-liyihang9@huawei.com>
+ <0c5e14eb-5560-48cb-9086-6ad9c3970427@kernel.org>
+ <f27d6fa7-3088-0e60-043e-e71232066b12@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620020625.3851354-1-chenhuacai@loongson.cn>
- <87msnem3i1.ffs@tglx> <CAAhV-H5TNnf+EMEtKmXk+Q9KXSZpW+9vd-7qqXDifsKfny+v=g@mail.gmail.com>
- <87pls9z3g0.ffs@tglx>
-In-Reply-To: <87pls9z3g0.ffs@tglx>
-From: Huacai Chen <chenhuacai@gmail.com>
-Date: Sat, 22 Jun 2024 19:23:59 +0800
-Message-ID: <CAAhV-H7noyrYJzyVML8y1gHPiB6qZzXy7j5L_AqjxwLZW2J06A@mail.gmail.com>
-Subject: Re: [PATCH V2] irqchip/loongson-eiointc: Use early_cpu_to_node()
- instead of cpu_to_node()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Xuefeng Li <lixuefeng@loongson.cn>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f27d6fa7-3088-0e60-043e-e71232066b12@huawei.com>
 
-Hi, Thomas,
+Hello Yihang,
 
-On Sat, Jun 22, 2024 at 6:17=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> Huacai!
->
-> On Sat, Jun 22 2024 at 10:49, Huacai Chen wrote:
-> > On Sat, Jun 22, 2024 at 4:42=E2=80=AFAM Thomas Gleixner <tglx@linutroni=
-x.de> wrote:
-> >>
-> >> On Thu, Jun 20 2024 at 10:06, Huacai Chen wrote:
-> >> > When we use "nr_cpus=3Dn" to hard limit the CPU number, cpu_to_node(=
-) is
-> >> > not usable because it can only applied on "possible" CPUs. On the ot=
-her
-> >> > hand, early_cpu_to_node() can be always used instead.
-> > cpu_to_node() depends on per-cpu area, and per-cpu area is only usable
-> > for "possible" CPUs.
->
-> When nr_cpus=3Dn is on the command line then what needs to access
-> something for CPUs which are not possible to come ever online?
->
-> That does not make sense because it's exactly the same situation when
-> you compile a kernel with NR_CPU=3D8 and boot it on a system with 16
-> CPUs. Then early_cpu_to_node() does not give you anything either.
->
-> So what's the technical problem you are trying to solve?
-Frankly, there are some drawbacks on our hardware. On a dual-bridge
-machine, there are two eiointc instances. Even if nr_cpus limits the
-"possible" CPUs, we still hope the eiointc driver can initialize
-correctly, otherwise the machine cannot boot.
+On Sat, Jun 22, 2024 at 11:31:29AM +0800, Yihang Li wrote:
+> 
+> The issue 1:
+> a. Suspend all disks on controller B.
+> b. Suspend controller B.
+> c. Trigger the PCI FLR on controller B through sysfs.
+> d. The SATA disks connected to controller B is disabled by libata layer.
 
-Huacai
+While I'm currently not planning on debugging this myself,
+I'm quite sure that you would facilitate debugging by actually
+providing the exact commands used in steps a-d.
 
->
-> Thanks,
->
->         tglx
+
+Kind regards,
+Niklas
 
