@@ -1,373 +1,145 @@
-Return-Path: <linux-kernel+bounces-225529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9D19131CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 05:43:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF229131CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 05:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19DEE1C21A71
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 03:43:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71327B21545
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 03:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A1C8F6C;
-	Sat, 22 Jun 2024 03:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457BDA936;
+	Sat, 22 Jun 2024 03:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="limB+3Vs"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="sWyDLZ7V"
+Received: from out203-205-221-235.mail.qq.com (out203-205-221-235.mail.qq.com [203.205.221.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F248BF7
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F7C818;
+	Sat, 22 Jun 2024 03:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719027787; cv=none; b=Rar/56Eo17vi45vL/saqEVzY79VN946n8sckRbpT6q+5xnEZ2Ax4u/Y+abl1aGw/IW0Lu/SuIu+G+WXoSwCLXCW473uEiVs0IIx+3X8CudxWm8hBGW7BRLTZkP1tQxeiwKVSrlCpohlNqrPPkbHCjzvPOPEWwxr3xrzmFAfrcSw=
+	t=1719028070; cv=none; b=GHqhsHGD6Va7p9HVI+yyUMCAQQzHgfo5fvGAIXUyzzegHFoThAggL+hfPr7BgF0BS06FGXpOjSSq/pJ6OBurR8HPsG/jvGyF8ISdrqWwahaGfwQDCJ3Bv7ZF1mrzd8UeGNChEWqsSEkQ/sh7c/MSw+VkNWpSuR9hu6npUKfVF/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719027787; c=relaxed/simple;
-	bh=md+d5eOFEp72HoBlscvVP6VpQ3p1DCTxYW852JpK+2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eH1QPz8DVC0kbglOXFOCyqu2XA+bD1clpFXRJ3cjJjrMc1n2Jo2IkL169BCJ5O4lwNL+XqnaBiToVaQiyOMgRDaJtsoib0kCVlJ0UWQrZKbyeHO0sO2NQ2CKZvVfVoV/oWfHJg2DKfASwo59xlMqmGSVH/Xt0kwpfapqs264LeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=limB+3Vs; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f862f7c7edso21102805ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719027784; x=1719632584; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=h/9AP8f9oWnlydulW7IOn40tz3CggsdR+C3pRKzSoM0=;
-        b=limB+3VsiXtN1+7DMjer8ZZ+Jz8ioSaqv717hz3g9cXSag7iE41voJPkILKgFpPUgF
-         ADDoizPlFprMf2kgtUs+Sq6iQZ+viDJKa5HEshbTxLRtvBVP1P4PxM3jl+3CYNVE0JGJ
-         6aF1UWnZWMoXKMeEF8VUsEbspN+26gECBFOSUfbP8IKUPudaG4ewxSBysThv0Sy06q8a
-         ZEi2Yfdx2b+53gcEqi64cTnK8tzPOn8NLutbefhTbx9SkDuscZdlgNSCRyxmPxtSAfmv
-         nYmZKPBekR46csdaCqLXLXZGIo+URJLv7y6PwxCkdPG4lEQNZul/FtX9NqaOBW27odrq
-         paMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719027784; x=1719632584;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h/9AP8f9oWnlydulW7IOn40tz3CggsdR+C3pRKzSoM0=;
-        b=U+iKYajfEqqdmVxVaXTxv2osmzviaJqOh3IonipBHfTodQPtWUQV/oK76W9LfDvV99
-         sSpGHTh6y3K63506a4Nkzv+48JriREMIKl5a74f6Y1jlYkGS9qTL+Sf4hzw/IeXKpdzD
-         zJMLTeB1JrbpcIyHmi4BeZvPBO18OIqzorHcwKdFFWZtDEXpjX6n/xHT7/YaGkRa6Ffi
-         q58mY3JeR5VOUKSZJf/ASZ0EYQLuhnALQVOKwucobEI/Mbr9zanqGlWgtzRspFipCsJ+
-         8mHsz7MHUrYhC99Ow9VHoEhDBqOgULCT1Jg9r+PKLscRL5HGf4OCitQp9dgvKpJg3zws
-         LIEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEssWxrtK7b4DjNe8qQ4uXhcO/+Hi+C9L5AMMQp+F190+3XpQYikzz8Fi99v63o1PgEYD1pMUY3Unnr7YXDDtH8qdgL2yO7XcZfxrN
-X-Gm-Message-State: AOJu0Yw1DvjHDHo10JP36f/E6Sx2wQr7B30uTNxWYiGE6lcgmB8s/qx8
-	rD4Exz2jpR+Eo7PCsQoHAKMlN/kweK/GQ2pcVZhcWtBTv698ifhCOvpsDW3lSsjhBWaROz7WZRh
-	A
-X-Google-Smtp-Source: AGHT+IFnH3cx78e2DnhyAAhYdYmgHcrINAoIi2vO4P6W4liQvBS+Wi4yLniRtuSQUuVrAUzG0K7r+g==
-X-Received: by 2002:a17:903:32c9:b0:1f9:bece:4a3c with SMTP id d9443c01a7336-1f9bece54bfmr100442475ad.2.1719027784380;
-        Fri, 21 Jun 2024 20:43:04 -0700 (PDT)
-Received: from ghost ([2601:647:5700:6860:42ed:862d:aca2:ce0a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d5bf2sm21643515ad.189.2024.06.21.20.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 20:43:03 -0700 (PDT)
-Date: Fri, 21 Jun 2024 20:43:01 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Ard Biesheuvel <ardb@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH] riscv: enable HAVE_ARCH_STACKLEAK
-Message-ID: <ZnZIRafvq7J1B2t6@ghost>
-References: <20240617123029.723-1-jszhang@kernel.org>
- <ZnX6YtFGfXd0ixwR@ghost>
- <ZnYenFigMU4Lxa0K@xhacker>
+	s=arc-20240116; t=1719028070; c=relaxed/simple;
+	bh=1YdC8dVZUivWYaOUyLpVfDeqC5jH5OshBQiWogc3Y5g=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=e4knDOjvPbzd+qCPyuhcQgCEKBDhgdvsutEg6E64evBwcMVEezexydOYU9vRCfxJY1BX2zHJmlJp9PXwtcf6JP4LIUhHOD3q048OZXVtcubWHMC7oN6nX7SNVjfDz66bXPwvYfYeXZoiAgwQA9ifjwj9GtmxLb9G9V1hSW3KxEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=sWyDLZ7V; arc=none smtp.client-ip=203.205.221.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1719028065; bh=SmsKJlT7qHcBcmMM13UpP7tIzHjJn0vqilRM5lHVSew=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=sWyDLZ7VJzsps3prOdBGuBPJMMvyEJcIn3OMfQXk7Ur20f5ECfaZet7wo7GCY9yiT
+	 rA5RInkGW2QLAJqUqidfGr/axdy6w7HZj/YLYQLqw+nU3kuRxDVbUFN6hcXZHnq0JK
+	 GzW08S19RvpkBn3VAYtNymcjb5jc13xAaobRBY4g=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id B980FCB0; Sat, 22 Jun 2024 11:46:24 +0800
+X-QQ-mid: xmsmtpt1719027984th7y16c0x
+Message-ID: <tencent_832C796CAC95F0E9A2EC6ECF00798E6DCC0A@qq.com>
+X-QQ-XMAILINFO: OQhZ3T0tjf0agQgox6Fok8XUQ6fQNANJoNTfVVFP+VpXnFj57Lg82G4ZCzuNvQ
+	 3TLtGs25uvwxsnLaDcC1UQmzcs6XWHRE56lr9htAhatasdefOhsqCWqBJiTOvCtisqdNfANZBnTF
+	 kIPoaMsGGyqPb4/QmjsNCsviTckNnaqjdNLHe8Uagjj/qYbN+IkcJUhwjfgm3qax34xjcykWalUe
+	 zMPA1n4SwihWi+ffOW+tmewHGgT8z0hdLosRTLbWE8qaaYEhU97y26pjSG+neUmzWx4D1OfheuqU
+	 26eAPbxcK00Mc21mX59bMuCSOew2DOLp7Dh3ERSPI9MXQPOKTDtKDwF2DapABR0ygo8K5nGA6zDr
+	 clKWLC1KjvOz30MQPTe2uM4SRXUKFVlALsFsTDKgCMiWCri4vD4BDB3qoMXSAGBGY3Pd2SOJO7zv
+	 gcxSTIbo5HvqGmwjY0yfRCCgQLqGhUkvwoU7RPLdQDtRaGRgr2HSuIIofJDFkfj1z83v3I1nOpkN
+	 VtbgLsig5nlGW1STm63v6xPpi56Bhe9Dj7JQzOGcxihmSb+ii6rWPT+Ka6z0KRDn2vD/qwfZvqeX
+	 qczc+JnP7KBZlmfdIsPvSKG/sdCSFUZKTjPlA4e3eOKnHwJYrRybjwmNNZLi7e79pL4fzKjDzAx/
+	 pIZtd+TabnHzOUUQCYk2CDlUvUSWBTF7Ua0Q4h5SOnaS+ewJ7//EJbA6XAT0SuDXYvNGJDIzQVis
+	 Ec+n8XL5Y5sDNinn52YMrtFHZ//aVY30eISQ0LKh0SVjQ/gZxZpvf/jqsh9rUsjljLaHFW/EQ+EV
+	 +sHeV1i9971OkOdSl0ea9/W6xpVh3Rs1cox8Pl61AKjJvfNol4bkyYUosD5CGZuzcYmHqWnqx6Y8
+	 JXVYz5NPJ8axcHRh+eIZ1nUVsyb8hXV6YC8B752Vn/7YBKCJG7t06mWsxM/EKUJh6MubBibe16PL
+	 MeYi8e2LU=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: luiz.dentz@gmail.com
+Cc: eadavis@qq.com,
+	johan.hedberg@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	marcel@holtmann.org,
+	syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] bluetooth/l2cap: sync sock recv cb and release
+Date: Sat, 22 Jun 2024 11:46:23 +0800
+X-OQ-MSGID: <20240622034622.2728558-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CABBYNZLu-wAu6cdyDVim=bP+0Ld-P=YvENO=fa6r=rdY4UqukQ@mail.gmail.com>
+References: <CABBYNZLu-wAu6cdyDVim=bP+0Ld-P=YvENO=fa6r=rdY4UqukQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnYenFigMU4Lxa0K@xhacker>
 
-On Sat, Jun 22, 2024 at 08:45:16AM +0800, Jisheng Zhang wrote:
-> On Fri, Jun 21, 2024 at 03:10:42PM -0700, Charlie Jenkins wrote:
-> > On Mon, Jun 17, 2024 at 08:30:29PM +0800, Jisheng Zhang wrote:
-> > > Add support for the stackleak feature. Whenever the kernel returns to user
-> > > space the kernel stack is filled with a poison value.
-> > > 
-> > > At the same time, disables the plugin in EFI stub code because EFI stub
-> > > is out of scope for the protection.
-> > > 
-> > > Tested on qemu and milkv duo:
-> > > / # echo STACKLEAK_ERASING > /sys/kernel/debug/provoke-crash/DIRECT
-> > > [   38.675575] lkdtm: Performing direct entry STACKLEAK_ERASING
-> > > [   38.678448] lkdtm: stackleak stack usage:
-> > > [   38.678448]   high offset: 288 bytes
-> > > [   38.678448]   current:     496 bytes
-> > > [   38.678448]   lowest:      1328 bytes
-> > > [   38.678448]   tracked:     1328 bytes
-> > > [   38.678448]   untracked:   448 bytes
-> > > [   38.678448]   poisoned:    14312 bytes
-> > > [   38.678448]   low offset:  8 bytes
-> > > [   38.689887] lkdtm: OK: the rest of the thread stack is properly erased
-> > > 
-> > > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> > > ---
-> > >  arch/riscv/Kconfig                    | 1 +
-> > >  arch/riscv/kernel/entry.S             | 4 ++++
-> > >  drivers/firmware/efi/libstub/Makefile | 3 ++-
-> > >  3 files changed, 7 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > > index 0525ee2d63c7..9cbfdffec96c 100644
-> > > --- a/arch/riscv/Kconfig
-> > > +++ b/arch/riscv/Kconfig
-> > > @@ -118,6 +118,7 @@ config RISCV
-> > >  	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
-> > >  	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
-> > >  	select HAVE_ARCH_SECCOMP_FILTER
-> > > +	select HAVE_ARCH_STACKLEAK
-> > 
-> > When this is selected, stackleak.h include
-> > arch/riscv/include/asm/thread_info.h without sizes.h and I hit:
-> > 
-> > ./arch/riscv/include/asm/thread_info.h:30:33: error: ‘SZ_4K’ undeclared here (not in a function)
-> >    30 | #define OVERFLOW_STACK_SIZE     SZ_4K
-> >       |                                 ^~~~~
-> > 
-> > Adding "#include <linux/sizes.h>" to thread_info.h resolves the issue.
-> > I am testing this based on 6.10-rc4. Did you encounter this?
+Hi Luiz Augusto von Dentz,
+
+On Thu, 20 Jun 2024 12:53:19 -0400, Luiz Augusto von Dentz wrote:
+> >         release_sock(sk);
+> > +       l2cap_chan_unlock(chan);
+> > +       l2cap_chan_put(chan);
+> >
+> >         return err;
+> >  }
+> > --
+> > 2.43.0
 > 
-> I didn't meet this kind of compiler error when testing. Mind
-> to share your .config file? It looks strange.
+> Looks like this was never really tested properly:
+> 
+> ============================================
+> WARNING: possible recursive locking detected
+> 6.10.0-rc3-g4029dba6b6f1 #6823 Not tainted
+> --------------------------------------------
+> kworker/u5:0/35 is trying to acquire lock:
+> ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
+> l2cap_sock_recv_cb+0x44/0x1e0
+> 
+> but task is already holding lock:
+> ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
+> l2cap_get_chan_by_scid+0xaf/0xd0
+> 
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+> 
+>        CPU0
+>        ----
+>   lock(&chan->lock#2/1);
+>   lock(&chan->lock#2/1);
+> 
+>  *** DEADLOCK ***
+> 
+>  May be due to missing lock nesting notation
+> 
+> 3 locks held by kworker/u5:0/35:
+>  #0: ffff888002b8a940 ((wq_completion)hci0#2){+.+.}-{0:0}, at:
+> process_one_work+0x750/0x930
+>  #1: ffff888002c67dd0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0},
+> at: process_one_work+0x44e/0x930
+>  #2: ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
+> l2cap_get_chan_by_scid+0xaf/0xd0
+> 
+> l2cap_sock_recv_cb is assumed to be called with the chan_lock held so
+> perhaps we can just do:
+> 
+>        sk = chan->data;
+>        if (!sk)
+>                return -ENXIO;
 
-The .config exceeds the mailing list character limit, but here is the
-defconfig created with savedefconfig. It is just defconfig +
-CONFIG_GCC_PLUGIN_STACKLEAK with modules removed. 
+If the release occurs after this judgment, the same problem will still occur. 
+Recv and release must be synchronized using locks, which can be solved by
+adding new lock.
 
-CONFIG_SYSVIPC=y
-CONFIG_POSIX_MQUEUE=y
-CONFIG_NO_HZ_IDLE=y
-CONFIG_HIGH_RES_TIMERS=y
-CONFIG_BPF_SYSCALL=y
-CONFIG_IKCONFIG=y
-CONFIG_IKCONFIG_PROC=y
-CONFIG_CGROUPS=y
-CONFIG_MEMCG=y
-CONFIG_CGROUP_SCHED=y
-CONFIG_CFS_BANDWIDTH=y
-CONFIG_RT_GROUP_SCHED=y
-CONFIG_CGROUP_PIDS=y
-CONFIG_CGROUP_FREEZER=y
-CONFIG_CGROUP_HUGETLB=y
-CONFIG_CPUSETS=y
-CONFIG_CGROUP_DEVICE=y
-CONFIG_CGROUP_CPUACCT=y
-CONFIG_CGROUP_PERF=y
-CONFIG_CGROUP_BPF=y
-CONFIG_NAMESPACES=y
-CONFIG_USER_NS=y
-CONFIG_CHECKPOINT_RESTORE=y
-CONFIG_BLK_DEV_INITRD=y
-CONFIG_EXPERT=y
-# CONFIG_SYSFS_SYSCALL is not set
-CONFIG_PROFILING=y
-CONFIG_ARCH_MICROCHIP=y
-CONFIG_ARCH_RENESAS=y
-CONFIG_ARCH_SIFIVE=y
-CONFIG_ARCH_SOPHGO=y
-CONFIG_SOC_STARFIVE=y
-CONFIG_ARCH_SUNXI=y
-CONFIG_ARCH_THEAD=y
-CONFIG_ARCH_VIRT=y
-CONFIG_ARCH_CANAAN=y
-CONFIG_SMP=y
-CONFIG_CPU_FREQ=y
-CONFIG_CPU_FREQ_STAT=y
-CONFIG_CPU_FREQ_GOV_USERSPACE=y
-CONFIG_CPU_FREQ_GOV_ONDEMAND=y
-CONFIG_CPUFREQ_DT=y
-CONFIG_VIRTUALIZATION=y
-CONFIG_ACPI=y
-CONFIG_JUMP_LABEL=y
-CONFIG_MODULES=y
-CONFIG_MODULE_UNLOAD=y
-CONFIG_SPARSEMEM_MANUAL=y
-CONFIG_NET=y
-CONFIG_PACKET=y
-CONFIG_IP_MULTICAST=y
-CONFIG_IP_ADVANCED_ROUTER=y
-CONFIG_IP_PNP=y
-CONFIG_IP_PNP_DHCP=y
-CONFIG_IP_PNP_BOOTP=y
-CONFIG_IP_PNP_RARP=y
-CONFIG_NETFILTER=y
-CONFIG_NET_SCHED=y
-CONFIG_NETLINK_DIAG=y
-CONFIG_NET_L3_MASTER_DEV=y
-CONFIG_CGROUP_NET_PRIO=y
-CONFIG_CGROUP_NET_CLASSID=y
-CONFIG_NET_9P=y
-CONFIG_NET_9P_VIRTIO=y
-CONFIG_PCI=y
-CONFIG_PCIEPORTBUS=y
-CONFIG_PCI_HOST_GENERIC=y
-CONFIG_PCIE_XILINX=y
-CONFIG_PCIE_FU740=y
-CONFIG_DEVTMPFS=y
-CONFIG_DEVTMPFS_MOUNT=y
-CONFIG_MTD=y
-CONFIG_MTD_BLOCK=y
-CONFIG_MTD_CFI=y
-CONFIG_MTD_CFI_ADV_OPTIONS=y
-CONFIG_MTD_SPI_NOR=y
-CONFIG_BLK_DEV_LOOP=y
-CONFIG_VIRTIO_BLK=y
-CONFIG_BLK_DEV_SD=y
-CONFIG_BLK_DEV_SR=y
-CONFIG_SCSI_VIRTIO=y
-CONFIG_ATA=y
-CONFIG_SATA_AHCI=y
-CONFIG_SATA_AHCI_PLATFORM=y
-CONFIG_MD=y
-CONFIG_NETDEVICES=y
-CONFIG_VIRTIO_NET=y
-CONFIG_MACB=y
-CONFIG_E1000E=y
-CONFIG_R8169=y
-CONFIG_RAVB=y
-CONFIG_MICREL_PHY=y
-CONFIG_MICROSEMI_PHY=y
-CONFIG_INPUT_MOUSEDEV=y
-CONFIG_SERIAL_8250=y
-CONFIG_SERIAL_8250_CONSOLE=y
-CONFIG_SERIAL_8250_DW=y
-CONFIG_SERIAL_OF_PLATFORM=y
-CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
-CONFIG_SERIAL_SH_SCI=y
-CONFIG_VIRTIO_CONSOLE=y
-CONFIG_HW_RANDOM=y
-CONFIG_HW_RANDOM_VIRTIO=y
-CONFIG_SPI=y
-CONFIG_SPI_SIFIVE=y
-CONFIG_SPI_SUN6I=y
-# CONFIG_PTP_1588_CLOCK is not set
-CONFIG_GPIO_SIFIVE=y
-CONFIG_CPU_THERMAL=y
-CONFIG_RZG2L_THERMAL=y
-CONFIG_WATCHDOG=y
-CONFIG_SUNXI_WATCHDOG=y
-CONFIG_RENESAS_RZG2LWDT=y
-CONFIG_REGULATOR=y
-CONFIG_REGULATOR_FIXED_VOLTAGE=y
-CONFIG_REGULATOR_GPIO=y
-CONFIG_FB=y
-CONFIG_FRAMEBUFFER_CONSOLE=y
-CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
-CONFIG_SOUND=y
-CONFIG_SND=y
-CONFIG_SND_SOC=y
-CONFIG_USB=y
-CONFIG_USB_OTG=y
-CONFIG_USB_XHCI_HCD=y
-CONFIG_USB_XHCI_PLATFORM=y
-CONFIG_USB_EHCI_HCD=y
-CONFIG_USB_EHCI_HCD_PLATFORM=y
-CONFIG_USB_OHCI_HCD=y
-CONFIG_USB_OHCI_HCD_PLATFORM=y
-CONFIG_USB_STORAGE=y
-CONFIG_USB_UAS=y
-CONFIG_USB_GADGET=y
-CONFIG_MMC=y
-CONFIG_MMC_SDHCI=y
-CONFIG_MMC_SDHCI_PLTFM=y
-CONFIG_MMC_SDHCI_OF_DWCMSHC=y
-CONFIG_MMC_SDHCI_CADENCE=y
-CONFIG_MMC_SPI=y
-CONFIG_MMC_SDHI=y
-CONFIG_MMC_DW=y
-CONFIG_MMC_DW_STARFIVE=y
-CONFIG_MMC_SUNXI=y
-CONFIG_RTC_CLASS=y
-CONFIG_RTC_DRV_SUN6I=y
-CONFIG_DMADEVICES=y
-CONFIG_DW_AXI_DMAC=y
-CONFIG_SYNC_FILE=y
-CONFIG_VIRTIO_PCI=y
-CONFIG_VIRTIO_BALLOON=y
-CONFIG_VIRTIO_INPUT=y
-CONFIG_VIRTIO_MMIO=y
-CONFIG_CLK_SOPHGO_CV1800=y
-# CONFIG_CLK_STARFIVE_JH7100_AUDIO is not set
-# CONFIG_CLK_STARFIVE_JH7110_AON is not set
-# CONFIG_CLK_STARFIVE_JH7110_STG is not set
-# CONFIG_CLK_STARFIVE_JH7110_ISP is not set
-# CONFIG_CLK_STARFIVE_JH7110_VOUT is not set
-# CONFIG_SUN8I_DE2_CCU is not set
-CONFIG_RENESAS_OSTM=y
-CONFIG_MAILBOX=y
-CONFIG_PCC=y
-CONFIG_SUN50I_IOMMU=y
-CONFIG_RPMSG_CHAR=y
-CONFIG_RPMSG_CTRL=y
-CONFIG_RPMSG_VIRTIO=y
-CONFIG_EXTCON=y
-CONFIG_IIO=y
-CONFIG_PHY_RCAR_GEN3_USB2=y
-CONFIG_LIBNVDIMM=y
-CONFIG_NVMEM_SUNXI_SID=y
-CONFIG_EXT4_FS=y
-CONFIG_EXT4_FS_POSIX_ACL=y
-CONFIG_EXT4_FS_SECURITY=y
-CONFIG_AUTOFS_FS=y
-CONFIG_ISO9660_FS=y
-CONFIG_JOLIET=y
-CONFIG_ZISOFS=y
-CONFIG_MSDOS_FS=y
-CONFIG_VFAT_FS=y
-CONFIG_TMPFS=y
-CONFIG_TMPFS_POSIX_ACL=y
-CONFIG_HUGETLBFS=y
-# CONFIG_EFIVAR_FS is not set
-CONFIG_NFS_FS=y
-CONFIG_NFS_V4=y
-CONFIG_NFS_V4_1=y
-CONFIG_NFS_V4_2=y
-CONFIG_ROOT_NFS=y
-CONFIG_9P_FS=y
-CONFIG_NLS_CODEPAGE_437=y
-CONFIG_SECURITY=y
-CONFIG_SECURITY_SELINUX=y
-CONFIG_SECURITY_APPARMOR=y
-CONFIG_DEFAULT_SECURITY_DAC=y
-CONFIG_GCC_PLUGIN_STACKLEAK=y
-CONFIG_CRYPTO_USER_API_HASH=y
-CONFIG_CRYPTO_DEV_VIRTIO=y
-CONFIG_PRINTK_TIME=y
-CONFIG_DEBUG_FS=y
-CONFIG_DEBUG_PAGEALLOC=y
-CONFIG_SCHED_STACK_END_CHECK=y
-CONFIG_DEBUG_VM=y
-CONFIG_DEBUG_VM_PGFLAGS=y
-CONFIG_DEBUG_MEMORY_INIT=y
-CONFIG_DEBUG_PER_CPU_MAPS=y
-CONFIG_SOFTLOCKUP_DETECTOR=y
-CONFIG_WQ_WATCHDOG=y
-CONFIG_DEBUG_TIMEKEEPING=y
-CONFIG_DEBUG_RT_MUTEXES=y
-CONFIG_DEBUG_SPINLOCK=y
-CONFIG_DEBUG_MUTEXES=y
-CONFIG_DEBUG_RWSEMS=y
-CONFIG_DEBUG_ATOMIC_SLEEP=y
-CONFIG_DEBUG_LIST=y
-CONFIG_DEBUG_PLIST=y
-CONFIG_DEBUG_SG=y
-# CONFIG_RCU_TRACE is not set
-CONFIG_RCU_EQS_DEBUG=y
-# CONFIG_FTRACE is not set
-# CONFIG_RUNTIME_TESTING_MENU is not set
-CONFIG_MEMTEST=y
+Please use the new patch https://syzkaller.appspot.com/text?tag=Patch&x=15d2c48e980000, I have tested in 
+https://syzkaller.appspot.com/bug?extid=b7f6f8c9303466e16c8a
+
+--
+Edward
 
 
