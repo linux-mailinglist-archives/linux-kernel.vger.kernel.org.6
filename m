@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-225577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D03913279
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:13:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22D291327A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6FC21C214A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 07:12:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1982CB233DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 07:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1027F14B09C;
-	Sat, 22 Jun 2024 07:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA58214B97A;
+	Sat, 22 Jun 2024 07:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CnIiZqOo"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3eOmEXE"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85099537F8
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 07:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEA914B950
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 07:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719040372; cv=none; b=m8oJclktEbwqVXcIv7Buq3QhHP6Lo/56iXEMxUekJWhXmrFQ9UOptwm3N/L3qw7x3QL+AVSUS8C/GuXyy6LPQqezkFM2LQhUuT8+60QVDszsXwwtUIPRP3Qi1/HNgX/YEEWJGq+FJtc0kLMOXL8jVey+oQL8Kj4iwmTsBNNzgk8=
+	t=1719040376; cv=none; b=DZQjuxTRxqzJq8YAirKnD/JeCbEmjoyQfhz7l26+HnOph0SY96BqZE8Kj/pkSoacJH5T8us+DG+FSGgTXrfK5y+H9DRdv2a5wcIewllxASvgPs/1/aoPep2VcdOE07NhZvKX/7CzKP17sof+UMrLLnfbGcTpOfXBTe/iKZYENjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719040372; c=relaxed/simple;
-	bh=PXZ1/I7drMg3J8m/ongSyWOeO1r0BPSt7+MqHWZhTFs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uZ0rNv1Lt7Tez9MsTHMXunNBZB5i1K1BVOY0lcI5PAooj71klLuq/az9WABlAcymAFBN0y7uTOQByti9js5XDHAcqql7d928g6r7Zz7z4VnLFwYBLY5LIP4E5E45Mffa67UjMWJhwtBrvnNdahNZN4T9b9ZGusu90YIUQZRB5vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CnIiZqOo; arc=none smtp.client-ip=209.85.210.169
+	s=arc-20240116; t=1719040376; c=relaxed/simple;
+	bh=RRMuxeCo2Nrrw0Ob7OnSglRBJa0tTcRIk9e7wXmqw0g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=S9i9CrHFJVNgEobf3TcmkM22r57osh31gQPvnJMPejQKNu/t3y9FyANmhKgs8Ymi1Ivy8jsbwfpRyeawsS+pCQCyvxLtRUmoBB9KbmCRVG2LTtIo88Zx45FE8dCmVpwWZNNJ6JelDyL8INfERLwL53VBvF3tjQASAaMCNrWVMA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3eOmEXE; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-706680d3a25so183181b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 00:12:50 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f9fb3ca81bso6802925ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 00:12:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719040370; x=1719645170; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d8HR0DqEi7zX7vGvgqKrYQwsQFcGgu15/hjj2NoPd9g=;
-        b=CnIiZqOooSzfDgGT9MwZs7cQ7zZTQH8qn2hGTR5fOE/elk0oV4rCY6Bn37oh+va1Bu
-         LvFs0dkxTMi+JQ0y7UXwjgCTT1AvjTXomtjDTdaFmdafehJLxvAfgFHaGmK8uuVbt56S
-         Yge50WYhNEQrT8PG5G74LMDz85TNvceC4dQ3OG0HIeJdgJCt8pEpPam9NqyJpxC56J2B
-         I58dfD7W6+BOjQoBotZQuEwu4zOLk78wZQwm7CYq6qQe+VK1uToYss7aqo83Fb8OVTAg
-         mnInvAYDrPlRiikCFGcz1D4zjIwDfESehE1QLeo2aX99GYXv37ut0uqaZi4R1cG3yUCc
-         vOXg==
+        d=gmail.com; s=20230601; t=1719040374; x=1719645174; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8riNiWPXJqBzm2BvXgRSJ73ikaCBhCcjPOKGJpl9B7g=;
+        b=A3eOmEXEADn1+YzZX42IOPUrqEg+rY6uQdTjH7mRHb4hkGKs1sWDzN+cW3gdQ2rgZ/
+         KooRpF62yEOgHGEfhZZofn4xfPoGMRAj5k2Ixf3C6EsrcYqqrzigyxn4eKrZDD9UVawe
+         W5AKx27bvG28c+QAMG4qYDIcR8J2tZPB8yKUxNnxD7PVM6LTtgHwSPPA8fjij+0sq9pe
+         Lqla+JbrmYsdMG3MEDj0CorTjTwhNjs8MV+aETdbNBpR90fTYyHbMZAqa3cUTI003TMh
+         uVlAjgNs+///k/R9WEdBC/lnX8mzKihytMrbtYHr1eZgDZORbzz0t/Nj6jmmxbzpNRiH
+         9w8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719040370; x=1719645170;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d8HR0DqEi7zX7vGvgqKrYQwsQFcGgu15/hjj2NoPd9g=;
-        b=i0glp0XVVvS1Wgy75/PRTPpKsNMjT6v4ybK6+WYVm9R7dJD5DJSRwfdD62M4iDMNFX
-         sfIUPdKYUv0Tz5jk92EKSTtQ7NwvfiofP0KNN6MgmYuFRQ6HLd1zepuz9cDHMge796/w
-         QGLCr5ELbGjO91mgaJLuI8FEc1zStYK0Ox/DdeTQCCcK5/aCv1quuXT17o2wML3VcqTN
-         OrQDMiDk/wWQsxufOdFCQZQ9Op4r7x6kWtrf8Q5Wco5VP6c5mu6c6HjsioR1L3HW9EGq
-         BScG1S3S/ftQr7c6nRs1vIR3nHdVdQWMBnn319Sf6fh80le0GzMyZq0SAYSwBLVAFQdV
-         /88A==
-X-Forwarded-Encrypted: i=1; AJvYcCWcgOHCmz8AVn7FQg6zQONMdU3VJ1HtHVcO87S9Nd88GTTevKfy4x1c5x+02ue0pWwCmjyCQo2fPkXx94qxZTcLr4zvUTzV7n4NAJNu
-X-Gm-Message-State: AOJu0YwyWnJ6U1B+1bhvhffJnTkKMrOyOUgyN1R2ZG9NNfv0SAqxYPzO
-	nX6CMuTkf5k7ZpPlks3mwL3lrdPL+WP9u/JahJmSfH77PxOYd+6z
-X-Google-Smtp-Source: AGHT+IF1u6ubMn2pcvOHPDbkjU2urbwzXDhE7/EqEhfPEZ/lg2jmxJwYvWEgEydCf7IhCTZNqZk1sw==
-X-Received: by 2002:a05:6a21:3288:b0:1b4:efbb:d1d3 with SMTP id adf61e73a8af0-1bcbb6dfba5mr12237708637.51.1719040369582;
-        Sat, 22 Jun 2024 00:12:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719040374; x=1719645174;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8riNiWPXJqBzm2BvXgRSJ73ikaCBhCcjPOKGJpl9B7g=;
+        b=eyPQ34lnpya1z5af0SGB8M51Mw8HG6xFbSRbg4Fw/XIB/IHrWx5RKDsg0AlUQglRku
+         dFT94ggzAvB0asNrmc894Lro9m+kP/n2QtRX1NLkqxlgRfaYcZ+lF26DbP1P6QlYiTZT
+         zoAYFZShP7aaPzG+Q4mG5t45RqcT/oRfSnLgJwFGcAzBKjeu579YNCHqxo40y+dAexS9
+         POzcKcR3yKaGZSJ0Yt8LPn3Cr9vE9VQjKAWgDJeARBBa9swYEVHmOaCnWfDB+3y+ju8M
+         wtXfxRLGaLcJjcJJeBBYdJT7+KhR5+afTddSQBsA1hUk9bz+ERfv8kZbbQ9YeZuNbBb0
+         zO0w==
+X-Forwarded-Encrypted: i=1; AJvYcCV9zFoJ2AtH7pWgb60y4dHEmpUB+xfndb5tztaspQHxg7ZIfJxoZC37yDCv+2Ohfa4ggyg+Z073gNSEKq1PZMWZaaw9php/xJiE/9Gm
+X-Gm-Message-State: AOJu0YyfWB2EflNXVNPltBZY77n/8FxhCgrR9HhUI1ngsObgTRq0I/YN
+	ak0/y8jyj19JMN+23XkMx2LSYs67LRd96ZFhObHq6lV1KqXLza4N
+X-Google-Smtp-Source: AGHT+IHNJJepHyfC0lV8t456DGXOVM20KUS+z/LohhJkRB6veFSYruBi4ECW7C7qwhTJ2T4k+KcjJA==
+X-Received: by 2002:a17:903:22c3:b0:1f9:edf6:d7a5 with SMTP id d9443c01a7336-1f9edf6d941mr45144125ad.1.1719040374237;
+        Sat, 22 Jun 2024 00:12:54 -0700 (PDT)
 Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbb3f1esm24831895ad.265.2024.06.22.00.12.45
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbb3f1esm24831895ad.265.2024.06.22.00.12.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 00:12:49 -0700 (PDT)
+        Sat, 22 Jun 2024 00:12:53 -0700 (PDT)
 From: Barry Song <21cnbao@gmail.com>
 To: akpm@linux-foundation.org,
 	chrisl@kernel.org,
@@ -76,10 +78,12 @@ Cc: david@redhat.com,
 	linux-kernel@vger.kernel.org,
 	v-songbaohua@oppo.com,
 	ying.huang@intel.com
-Subject: [PATCH v2 0/1] tools/mm: Introduce a tool to assess swap entry allocation for thp_swapout
-Date: Sat, 22 Jun 2024 19:12:30 +1200
-Message-Id: <20240622071231.576056-1-21cnbao@gmail.com>
+Subject: [PATCH v2 1/1] tools/mm: Introduce a tool to assess swap entry allocation for thp_swapout
+Date: Sat, 22 Jun 2024 19:12:31 +1200
+Message-Id: <20240622071231.576056-2-21cnbao@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240622071231.576056-1-21cnbao@gmail.com>
+References: <20240622071231.576056-1-21cnbao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,312 +94,298 @@ Content-Transfer-Encoding: 8bit
 
 From: Barry Song <v-songbaohua@oppo.com>
 
--v2:
- * add swap-in which can either be aligned or not aligned, by "-a";
-   Ying;
- * move the program to tools/mm; Ryan;
- * try to simulate the scenarios swap is full. Chris;
+Both Ryan and Chris have been utilizing the small test program to aid
+in debugging and identifying issues with swap entry allocation. While
+a real or intricate workload might be more suitable for assessing the
+correctness and effectiveness of the swap allocation policy, a small
+test program presents a simpler means of understanding the problem and
+initially verifying the improvements being made.
 
--v1:
- https://lore.kernel.org/linux-mm/20240620002648.75204-1-21cnbao@gmail.com/
+Let's endeavor to integrate it into tools/mm. Although it presently
+only accommodates 64KB and 4KB, I'm optimistic that we can expand
+its capabilities to support multiple sizes and simulate more
+complex systems in the future as required.
 
-I tested Ryan's RFC patchset[1] and Chris's v3[2] using this v2 tool:
-[1] https://lore.kernel.org/linux-mm/20240618232648.4090299-1-ryan.roberts@arm.com/ 
-[2] https://lore.kernel.org/linux-mm/20240614-swap-allocator-v2-0-2a513b4a7f2f@kernel.org/
+Basically, we have
+1. Use MADV_PAGEPUT for rapid swap-out, putting the swap allocation code
+under high exercise in a short time.
+2. Use MADV_DONTNEED to simulate the behavior of libc and Java heap in
+freeing memory, as well as for munmap, app exits, or OOM killer scenarios.
+This ensures new mTHP is always generated, released or swapped out, similar
+to the behavior on a PC or Android phone where many applications are
+frequently started and terminated.
+3. Swap in with or without the "-a" option to observe how fragments
+due to swap-in and the incoming swap-in of large folios will impact
+swap-out fallback.
 
-Obviously, we're rarely hitting 100% even in the worst case without "-a" and with
-"-s," which is good news!
-If swapin is aligned w/ "-a" and w/o "-s", both Chris's and Ryan's patches show
-a low fallback ratio though Chris's has the numbers above 0% but Ryan's are 0%
-(value A).
+Due to 2, we ensure a certain proportion of mTHP. Similarly, because
+of 3, we maintain a certain proportion of small folios, as we don't
+support large folios swap-in, meaning any swap-in will immediately
+result in small folios. Therefore, with both 2 and 3, we automatically
+achieve a system containing both mTHP and small folios. Additionally,
+1 provides the ability to continuously swap them out.
 
-The bad news is that unaligned swapin can significantly increase the fallback ratio,
-reaching up to 85% for Ryan's patch and 95% for Chris's patchset without "-s." Both
-approaches approach 100% without "-a" and with "-s" (value B).
+We can also use "-s" to add a dedicated small folios memory area.
 
-I believe real workloads should yield a value between A and B. Without "-a," and
-lacking large folios swap-in, this tool randomly swaps in small folios without
-considering spatial locality, which is a factor present in real workloads. This
-typically results in values higher than A and lower than B.
-
-Based on the below results, I believe that:
-1. We truly require large folio swap-in to achieve comparable results with
-aligned swap-in(based on the result w/o and w/ "-a")
-2. We need a method to prevent small folios from scattering indiscriminately
-(based on the result "-a -s")
-
-*
-*  Test results on Ryan's patchset:
-*
-
-1. w/ -a
-./thp_swap_allocator_test -a
-Iteration 1: swpout inc: 224, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 2: swpout inc: 231, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 3: swpout inc: 227, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 4: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%
-...
-Iteration 100: swpout inc: 228, swpout fallback inc: 0, Fallback percentage: 0.00%
-
-2. w/o -a
-./thp_swap_allocator_test
-
-Iteration 1: swpout inc: 208, swpout fallback inc: 25, Fallback percentage: 10.73%
-Iteration 2: swpout inc: 118, swpout fallback inc: 114, Fallback percentage: 49.14%
-Iteration 3: swpout inc: 63, swpout fallback inc: 163, Fallback percentage: 72.12%
-Iteration 4: swpout inc: 45, swpout fallback inc: 178, Fallback percentage: 79.82%
-Iteration 5: swpout inc: 42, swpout fallback inc: 184, Fallback percentage: 81.42%
-Iteration 6: swpout inc: 31, swpout fallback inc: 193, Fallback percentage: 86.16%
-Iteration 7: swpout inc: 27, swpout fallback inc: 201, Fallback percentage: 88.16%
-Iteration 8: swpout inc: 30, swpout fallback inc: 198, Fallback percentage: 86.84%
-Iteration 9: swpout inc: 32, swpout fallback inc: 194, Fallback percentage: 85.84%
-...
-Iteration 91: swpout inc: 26, swpout fallback inc: 194, Fallback percentage: 88.18%
-Iteration 92: swpout inc: 35, swpout fallback inc: 196, Fallback percentage: 84.85%
-Iteration 93: swpout inc: 33, swpout fallback inc: 191, Fallback percentage: 85.27%
-Iteration 94: swpout inc: 26, swpout fallback inc: 193, Fallback percentage: 88.13%
-Iteration 95: swpout inc: 39, swpout fallback inc: 189, Fallback percentage: 82.89%
-Iteration 96: swpout inc: 28, swpout fallback inc: 196, Fallback percentage: 87.50%
-Iteration 97: swpout inc: 25, swpout fallback inc: 194, Fallback percentage: 88.58%
-Iteration 98: swpout inc: 31, swpout fallback inc: 196, Fallback percentage: 86.34%
-Iteration 99: swpout inc: 32, swpout fallback inc: 202, Fallback percentage: 86.32%
-Iteration 100: swpout inc: 33, swpout fallback inc: 195, Fallback percentage: 85.53%
-
-3. w/ -a and -s
-./thp_swap_allocator_test -a -s
-Iteration 1: swpout inc: 224, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 2: swpout inc: 218, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 4: swpout inc: 220, swpout fallback inc: 6, Fallback percentage: 2.65%
-Iteration 5: swpout inc: 206, swpout fallback inc: 16, Fallback percentage: 7.21%
-Iteration 6: swpout inc: 233, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 7: swpout inc: 224, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 8: swpout inc: 228, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 9: swpout inc: 217, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 10: swpout inc: 224, swpout fallback inc: 3, Fallback percentage: 1.32%
-Iteration 11: swpout inc: 211, swpout fallback inc: 12, Fallback percentage: 5.38%
-Iteration 12: swpout inc: 200, swpout fallback inc: 32, Fallback percentage: 13.79%
-Iteration 13: swpout inc: 189, swpout fallback inc: 29, Fallback percentage: 13.30%
-Iteration 14: swpout inc: 195, swpout fallback inc: 31, Fallback percentage: 13.72%
-Iteration 15: swpout inc: 198, swpout fallback inc: 27, Fallback percentage: 12.00%
-Iteration 16: swpout inc: 201, swpout fallback inc: 17, Fallback percentage: 7.80%
-Iteration 17: swpout inc: 206, swpout fallback inc: 6, Fallback percentage: 2.83%
-Iteration 18: swpout inc: 220, swpout fallback inc: 14, Fallback percentage: 5.98%
-Iteration 19: swpout inc: 181, swpout fallback inc: 45, Fallback percentage: 19.91%
-Iteration 20: swpout inc: 223, swpout fallback inc: 8, Fallback percentage: 3.46%
-Iteration 21: swpout inc: 214, swpout fallback inc: 14, Fallback percentage: 6.14%
-Iteration 22: swpout inc: 195, swpout fallback inc: 31, Fallback percentage: 13.72%
-Iteration 23: swpout inc: 223, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 24: swpout inc: 233, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 25: swpout inc: 214, swpout fallback inc: 1, Fallback percentage: 0.47%
-Iteration 26: swpout inc: 229, swpout fallback inc: 1, Fallback percentage: 0.43%
-Iteration 27: swpout inc: 214, swpout fallback inc: 5, Fallback percentage: 2.28%
-Iteration 28: swpout inc: 211, swpout fallback inc: 15, Fallback percentage: 6.64%
-Iteration 29: swpout inc: 188, swpout fallback inc: 40, Fallback percentage: 17.54%
-Iteration 30: swpout inc: 207, swpout fallback inc: 18, Fallback percentage: 8.00%
-Iteration 31: swpout inc: 215, swpout fallback inc: 10, Fallback percentage: 4.44%
-Iteration 32: swpout inc: 202, swpout fallback inc: 22, Fallback percentage: 9.82%
-Iteration 33: swpout inc: 223, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 34: swpout inc: 218, swpout fallback inc: 10, Fallback percentage: 4.39%
-Iteration 35: swpout inc: 203, swpout fallback inc: 30, Fallback percentage: 12.88%
-Iteration 36: swpout inc: 214, swpout fallback inc: 14, Fallback percentage: 6.14%
-Iteration 37: swpout inc: 211, swpout fallback inc: 14, Fallback percentage: 6.22%
-Iteration 38: swpout inc: 193, swpout fallback inc: 28, Fallback percentage: 12.67%
-Iteration 39: swpout inc: 210, swpout fallback inc: 20, Fallback percentage: 8.70%
-Iteration 40: swpout inc: 223, swpout fallback inc: 5, Fallback percentage: 2.19%
-Iteration 41: swpout inc: 224, swpout fallback inc: 7, Fallback percentage: 3.03%
-Iteration 42: swpout inc: 200, swpout fallback inc: 23, Fallback percentage: 10.31%
-Iteration 43: swpout inc: 217, swpout fallback inc: 5, Fallback percentage: 2.25%
-Iteration 44: swpout inc: 206, swpout fallback inc: 18, Fallback percentage: 8.04%
-Iteration 45: swpout inc: 210, swpout fallback inc: 11, Fallback percentage: 4.98%
-Iteration 46: swpout inc: 204, swpout fallback inc: 19, Fallback percentage: 8.52%
-Iteration 47: swpout inc: 228, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 48: swpout inc: 219, swpout fallback inc: 2, Fallback percentage: 0.90%
-Iteration 49: swpout inc: 212, swpout fallback inc: 6, Fallback percentage: 2.75%
-Iteration 50: swpout inc: 207, swpout fallback inc: 15, Fallback percentage: 6.76%
-Iteration 51: swpout inc: 190, swpout fallback inc: 36, Fallback percentage: 15.93%
-Iteration 52: swpout inc: 212, swpout fallback inc: 17, Fallback percentage: 7.42%
-Iteration 53: swpout inc: 179, swpout fallback inc: 43, Fallback percentage: 19.37%
-Iteration 54: swpout inc: 225, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 55: swpout inc: 224, swpout fallback inc: 2, Fallback percentage: 0.88%
-Iteration 56: swpout inc: 220, swpout fallback inc: 8, Fallback percentage: 3.51%
-Iteration 57: swpout inc: 203, swpout fallback inc: 25, Fallback percentage: 10.96%
-Iteration 58: swpout inc: 213, swpout fallback inc: 6, Fallback percentage: 2.74%
-Iteration 59: swpout inc: 207, swpout fallback inc: 18, Fallback percentage: 8.00%
-Iteration 60: swpout inc: 216, swpout fallback inc: 14, Fallback percentage: 6.09%
-Iteration 61: swpout inc: 183, swpout fallback inc: 34, Fallback percentage: 15.67%
-Iteration 62: swpout inc: 184, swpout fallback inc: 39, Fallback percentage: 17.49%
-Iteration 63: swpout inc: 184, swpout fallback inc: 39, Fallback percentage: 17.49%
-Iteration 64: swpout inc: 210, swpout fallback inc: 15, Fallback percentage: 6.67%
-Iteration 65: swpout inc: 178, swpout fallback inc: 48, Fallback percentage: 21.24%
-Iteration 66: swpout inc: 188, swpout fallback inc: 30, Fallback percentage: 13.76%
-Iteration 67: swpout inc: 193, swpout fallback inc: 29, Fallback percentage: 13.06%
-Iteration 68: swpout inc: 202, swpout fallback inc: 22, Fallback percentage: 9.82%
-Iteration 69: swpout inc: 213, swpout fallback inc: 5, Fallback percentage: 2.29%
-Iteration 70: swpout inc: 204, swpout fallback inc: 15, Fallback percentage: 6.85%
-Iteration 71: swpout inc: 180, swpout fallback inc: 45, Fallback percentage: 20.00%
-Iteration 72: swpout inc: 210, swpout fallback inc: 21, Fallback percentage: 9.09%
-Iteration 73: swpout inc: 216, swpout fallback inc: 7, Fallback percentage: 3.14%
-Iteration 74: swpout inc: 209, swpout fallback inc: 19, Fallback percentage: 8.33%
-Iteration 75: swpout inc: 222, swpout fallback inc: 7, Fallback percentage: 3.06%
-Iteration 76: swpout inc: 212, swpout fallback inc: 14, Fallback percentage: 6.19%
-Iteration 77: swpout inc: 188, swpout fallback inc: 41, Fallback percentage: 17.90%
-Iteration 78: swpout inc: 198, swpout fallback inc: 17, Fallback percentage: 7.91%
-Iteration 79: swpout inc: 209, swpout fallback inc: 16, Fallback percentage: 7.11%
-Iteration 80: swpout inc: 182, swpout fallback inc: 41, Fallback percentage: 18.39%
-Iteration 81: swpout inc: 217, swpout fallback inc: 1, Fallback percentage: 0.46%
-Iteration 82: swpout inc: 225, swpout fallback inc: 3, Fallback percentage: 1.32%
-Iteration 83: swpout inc: 222, swpout fallback inc: 8, Fallback percentage: 3.48%
-Iteration 84: swpout inc: 201, swpout fallback inc: 21, Fallback percentage: 9.46%
-Iteration 85: swpout inc: 211, swpout fallback inc: 3, Fallback percentage: 1.40%
-Iteration 86: swpout inc: 209, swpout fallback inc: 14, Fallback percentage: 6.28%
-Iteration 87: swpout inc: 181, swpout fallback inc: 42, Fallback percentage: 18.83%
-Iteration 88: swpout inc: 223, swpout fallback inc: 4, Fallback percentage: 1.76%
-Iteration 89: swpout inc: 214, swpout fallback inc: 14, Fallback percentage: 6.14%
-Iteration 90: swpout inc: 192, swpout fallback inc: 33, Fallback percentage: 14.67%
-Iteration 91: swpout inc: 184, swpout fallback inc: 31, Fallback percentage: 14.42%
-Iteration 92: swpout inc: 201, swpout fallback inc: 32, Fallback percentage: 13.73%
-Iteration 93: swpout inc: 181, swpout fallback inc: 40, Fallback percentage: 18.10%
-Iteration 94: swpout inc: 211, swpout fallback inc: 14, Fallback percentage: 6.22%
-Iteration 95: swpout inc: 198, swpout fallback inc: 25, Fallback percentage: 11.21%
-Iteration 96: swpout inc: 205, swpout fallback inc: 22, Fallback percentage: 9.69%
-Iteration 97: swpout inc: 218, swpout fallback inc: 12, Fallback percentage: 5.22%
-Iteration 98: swpout inc: 203, swpout fallback inc: 25, Fallback percentage: 10.96%
-Iteration 99: swpout inc: 218, swpout fallback inc: 12, Fallback percentage: 5.22%
-Iteration 100: swpout inc: 195, swpout fallback inc: 34, Fallback percentage: 14.85%
-
-4. w/o -a and w/ -s
-thp_swap_allocator_test  -s
-Iteration 1: swpout inc: 173, swpout fallback inc: 60, Fallback percentage: 25.75%
-Iteration 2: swpout inc: 85, swpout fallback inc: 147, Fallback percentage: 63.36%
-Iteration 3: swpout inc: 39, swpout fallback inc: 195, Fallback percentage: 83.33%
-Iteration 4: swpout inc: 13, swpout fallback inc: 220, Fallback percentage: 94.42%
-Iteration 5: swpout inc: 10, swpout fallback inc: 215, Fallback percentage: 95.56%
-Iteration 6: swpout inc: 9, swpout fallback inc: 219, Fallback percentage: 96.05%
-Iteration 7: swpout inc: 6, swpout fallback inc: 217, Fallback percentage: 97.31%
-Iteration 8: swpout inc: 6, swpout fallback inc: 215, Fallback percentage: 97.29%
-Iteration 9: swpout inc: 0, swpout fallback inc: 225, Fallback percentage: 100.00%
-Iteration 10: swpout inc: 1, swpout fallback inc: 229, Fallback percentage: 99.57%
-Iteration 11: swpout inc: 2, swpout fallback inc: 216, Fallback percentage: 99.08%
-Iteration 12: swpout inc: 2, swpout fallback inc: 229, Fallback percentage: 99.13%
-Iteration 13: swpout inc: 4, swpout fallback inc: 211, Fallback percentage: 98.14%
-Iteration 14: swpout inc: 1, swpout fallback inc: 221, Fallback percentage: 99.55%
-Iteration 15: swpout inc: 2, swpout fallback inc: 223, Fallback percentage: 99.11%
-Iteration 16: swpout inc: 3, swpout fallback inc: 224, Fallback percentage: 98.68%
-Iteration 17: swpout inc: 2, swpout fallback inc: 231, Fallback percentage: 99.14%
-...
-
-*
-*  Test results on Chris's v3 patchset:
-*
-1. w/ -a
-./thp_swap_allocator_test -a
-Iteration 1: swpout inc: 224, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 2: swpout inc: 231, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 3: swpout inc: 227, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 4: swpout inc: 217, swpout fallback inc: 5, Fallback percentage: 2.25%
-Iteration 5: swpout inc: 215, swpout fallback inc: 12, Fallback percentage: 5.29%
-Iteration 6: swpout inc: 213, swpout fallback inc: 14, Fallback percentage: 6.17%
-Iteration 7: swpout inc: 207, swpout fallback inc: 15, Fallback percentage: 6.76%
-Iteration 8: swpout inc: 193, swpout fallback inc: 33, Fallback percentage: 14.60%
-Iteration 9: swpout inc: 214, swpout fallback inc: 13, Fallback percentage: 5.73%
-Iteration 10: swpout inc: 199, swpout fallback inc: 25, Fallback percentage: 11.16%
-Iteration 11: swpout inc: 208, swpout fallback inc: 14, Fallback percentage: 6.31%
-Iteration 12: swpout inc: 203, swpout fallback inc: 31, Fallback percentage: 13.25%
-Iteration 13: swpout inc: 192, swpout fallback inc: 25, Fallback percentage: 11.52%
-Iteration 14: swpout inc: 193, swpout fallback inc: 36, Fallback percentage: 15.72%
-Iteration 15: swpout inc: 188, swpout fallback inc: 33, Fallback percentage: 14.93%
-...
-
-It seems Chris's approach can be negatively affected even by aligned swapin,
-having a low fallback ratio but not 0% while Ryan's patchset hasn't this
-issue.
-
-2. w/o -a
-./thp_swap_allocator_test
-Iteration 1: swpout inc: 209, swpout fallback inc: 24, Fallback percentage: 10.30%
-Iteration 2: swpout inc: 100, swpout fallback inc: 132, Fallback percentage: 56.90%
-Iteration 3: swpout inc: 43, swpout fallback inc: 183, Fallback percentage: 80.97%
-Iteration 4: swpout inc: 30, swpout fallback inc: 193, Fallback percentage: 86.55%
-Iteration 5: swpout inc: 21, swpout fallback inc: 205, Fallback percentage: 90.71%
-Iteration 6: swpout inc: 10, swpout fallback inc: 214, Fallback percentage: 95.54%
-Iteration 7: swpout inc: 16, swpout fallback inc: 212, Fallback percentage: 92.98%
-Iteration 8: swpout inc: 9, swpout fallback inc: 219, Fallback percentage: 96.05%
-Iteration 9: swpout inc: 6, swpout fallback inc: 220, Fallback percentage: 97.35%
-Iteration 10: swpout inc: 7, swpout fallback inc: 221, Fallback percentage: 96.93%
-Iteration 11: swpout inc: 7, swpout fallback inc: 222, Fallback percentage: 96.94%
-Iteration 12: swpout inc: 8, swpout fallback inc: 212, Fallback percentage: 96.36%
-..
-
-Ryan's fallback ratio(around 85%) seems to be a little better while both are much
-worse than "-a".
-
-3. w/ -a and -s
-./thp_swap_allocator_test -a -s
-Iteration 1: swpout inc: 224, swpout fallback inc: 0, Fallback percentage: 0.00%
-Iteration 2: swpout inc: 213, swpout fallback inc: 5, Fallback percentage: 2.29%
-Iteration 3: swpout inc: 215, swpout fallback inc: 7, Fallback percentage: 3.15%
-Iteration 4: swpout inc: 210, swpout fallback inc: 16, Fallback percentage: 7.08%
-Iteration 5: swpout inc: 212, swpout fallback inc: 10, Fallback percentage: 4.50%
-Iteration 6: swpout inc: 215, swpout fallback inc: 18, Fallback percentage: 7.73%
-Iteration 7: swpout inc: 181, swpout fallback inc: 43, Fallback percentage: 19.20%
-Iteration 8: swpout inc: 173, swpout fallback inc: 55, Fallback percentage: 24.12%
-Iteration 9: swpout inc: 163, swpout fallback inc: 54, Fallback percentage: 24.88%
-Iteration 10: swpout inc: 168, swpout fallback inc: 59, Fallback percentage: 25.99%
-Iteration 11: swpout inc: 154, swpout fallback inc: 69, Fallback percentage: 30.94%
-Iteration 12: swpout inc: 166, swpout fallback inc: 66, Fallback percentage: 28.45%
-Iteration 13: swpout inc: 165, swpout fallback inc: 53, Fallback percentage: 24.31%
-Iteration 14: swpout inc: 158, swpout fallback inc: 68, Fallback percentage: 30.09%
-Iteration 15: swpout inc: 168, swpout fallback inc: 57, Fallback percentage: 25.33%
-Iteration 16: swpout inc: 165, swpout fallback inc: 53, Fallback percentage: 24.31%
-Iteration 17: swpout inc: 163, swpout fallback inc: 49, Fallback percentage: 23.11%
-Iteration 18: swpout inc: 172, swpout fallback inc: 62, Fallback percentage: 26.50%
-Iteration 19: swpout inc: 183, swpout fallback inc: 43, Fallback percentage: 19.03%
-Iteration 20: swpout inc: 158, swpout fallback inc: 73, Fallback percentage: 31.60%
-Iteration 21: swpout inc: 147, swpout fallback inc: 81, Fallback percentage: 35.53%
-Iteration 22: swpout inc: 140, swpout fallback inc: 86, Fallback percentage: 38.05%
-Iteration 23: swpout inc: 144, swpout fallback inc: 79, Fallback percentage: 35.43%
-Iteration 24: swpout inc: 132, swpout fallback inc: 101, Fallback percentage: 43.35%
-Iteration 25: swpout inc: 133, swpout fallback inc: 82, Fallback percentage: 38.14%
-Iteration 26: swpout inc: 152, swpout fallback inc: 78, Fallback percentage: 33.91%
-Iteration 27: swpout inc: 138, swpout fallback inc: 81, Fallback percentage: 36.99%
-Iteration 28: swpout inc: 152, swpout fallback inc: 74, Fallback percentage: 32.74%
-Iteration 29: swpout inc: 153, swpout fallback inc: 75, Fallback percentage: 32.89%
-Iteration 30: swpout inc: 151, swpout fallback inc: 74, Fallback percentage: 32.89%
-...
-
-Chris's approach appears to be more susceptible to negative effects from
-small folios.
-
-4. w/o -a and w/ -s
-./thp_swap_allocator_test -s
-Iteration 1: swpout inc: 183, swpout fallback inc: 50, Fallback percentage: 21.46%
-Iteration 2: swpout inc: 75, swpout fallback inc: 157, Fallback percentage: 67.67%
-Iteration 3: swpout inc: 33, swpout fallback inc: 201, Fallback percentage: 85.90%
-Iteration 4: swpout inc: 11, swpout fallback inc: 222, Fallback percentage: 95.28%
-Iteration 5: swpout inc: 10, swpout fallback inc: 215, Fallback percentage: 95.56%
-Iteration 6: swpout inc: 7, swpout fallback inc: 221, Fallback percentage: 96.93%
-Iteration 7: swpout inc: 2, swpout fallback inc: 221, Fallback percentage: 99.10%
-Iteration 8: swpout inc: 4, swpout fallback inc: 217, Fallback percentage: 98.19%
-Iteration 9: swpout inc: 0, swpout fallback inc: 225, Fallback percentage: 100.00%
-Iteration 10: swpout inc: 3, swpout fallback inc: 227, Fallback percentage: 98.70%
-Iteration 11: swpout inc: 1, swpout fallback inc: 217, Fallback percentage: 99.54%
-Iteration 12: swpout inc: 2, swpout fallback inc: 229, Fallback percentage: 99.13%
-Iteration 13: swpout inc: 1, swpout fallback inc: 214, Fallback percentage: 99.53%
-Iteration 14: swpout inc: 2, swpout fallback inc: 220, Fallback percentage: 99.10%
-Iteration 15: swpout inc: 1, swpout fallback inc: 224, Fallback percentage: 99.56%
-Iteration 16: swpout inc: 3, swpout fallback inc: 224, Fallback percentage: 98.68%
-...
-
-Barry Song (1):
-  tools/mm: Introduce a tool to assess swap entry allocation for
-    thp_swapout
-
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+---
  tools/mm/Makefile                  |   2 +-
  tools/mm/thp_swap_allocator_test.c | 233 +++++++++++++++++++++++++++++
  2 files changed, 234 insertions(+), 1 deletion(-)
  create mode 100644 tools/mm/thp_swap_allocator_test.c
 
+diff --git a/tools/mm/Makefile b/tools/mm/Makefile
+index 7bb03606b9ea..15791c1c5b28 100644
+--- a/tools/mm/Makefile
++++ b/tools/mm/Makefile
+@@ -3,7 +3,7 @@
+ #
+ include ../scripts/Makefile.include
+ 
+-BUILD_TARGETS=page-types slabinfo page_owner_sort
++BUILD_TARGETS=page-types slabinfo page_owner_sort thp_swap_allocator_test
+ INSTALL_TARGETS = $(BUILD_TARGETS) thpmaps
+ 
+ LIB_DIR = ../lib/api
+diff --git a/tools/mm/thp_swap_allocator_test.c b/tools/mm/thp_swap_allocator_test.c
+new file mode 100644
+index 000000000000..a363bdde55f0
+--- /dev/null
++++ b/tools/mm/thp_swap_allocator_test.c
+@@ -0,0 +1,233 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * thp_swap_allocator_test
++ *
++ * The purpose of this test program is helping check if THP swpout
++ * can correctly get swap slots to swap out as a whole instead of
++ * being split. It randomly releases swap entries through madvise
++ * DONTNEED and swapin/out on two memory areas: a memory area for
++ * 64KB THP and the other area for small folios. The second memory
++ * can be enabled by "-s".
++ * Before running the program, we need to setup a zRAM or similar
++ * swap device by:
++ *  echo lzo > /sys/block/zram0/comp_algorithm
++ *  echo 64M > /sys/block/zram0/disksize
++ *  echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
++ *  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled
++ *  mkswap /dev/zram0
++ *  swapon /dev/zram0
++ * The expected result should be 0% anon swpout fallback ratio w/ or
++ * w/o "-s".
++ *
++ * Author(s): Barry Song <v-songbaohua@oppo.com>
++ */
++
++#define _GNU_SOURCE
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <string.h>
++#include <sys/mman.h>
++#include <errno.h>
++#include <time.h>
++
++#define MEMSIZE_MTHP (60 * 1024 * 1024)
++#define MEMSIZE_SMALLFOLIO (4 * 1024 * 1024)
++#define ALIGNMENT_MTHP (64 * 1024)
++#define ALIGNMENT_SMALLFOLIO (4 * 1024)
++#define TOTAL_DONTNEED_MTHP (16 * 1024 * 1024)
++#define TOTAL_DONTNEED_SMALLFOLIO (1 * 1024 * 1024)
++#define MTHP_FOLIO_SIZE (64 * 1024)
++
++#define SWPOUT_PATH \
++	"/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout"
++#define SWPOUT_FALLBACK_PATH \
++	"/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_fallback"
++
++static void *aligned_alloc_mem(size_t size, size_t alignment)
++{
++	void *mem = NULL;
++
++	if (posix_memalign(&mem, alignment, size) != 0) {
++		perror("posix_memalign");
++		return NULL;
++	}
++	return mem;
++}
++
++/*
++ * This emulates the behavior of native libc and Java heap,
++ * as well as process exit and munmap. It helps generate mTHP
++ * and ensures that iterations can proceed with mTHP, as we
++ * currently don't support large folios swap-in.
++ */
++static void random_madvise_dontneed(void *mem, size_t mem_size,
++		size_t align_size, size_t total_dontneed_size)
++{
++	size_t num_pages = total_dontneed_size / align_size;
++	size_t i;
++	size_t offset;
++	void *addr;
++
++	for (i = 0; i < num_pages; ++i) {
++		offset = (rand() % (mem_size / align_size)) * align_size;
++		addr = (char *)mem + offset;
++		if (madvise(addr, align_size, MADV_DONTNEED) != 0)
++			perror("madvise dontneed");
++
++		memset(addr, 0x11, align_size);
++	}
++}
++
++static void random_swapin(void *mem, size_t mem_size,
++		size_t align_size, size_t total_swapin_size)
++{
++	size_t num_pages = total_swapin_size / align_size;
++	size_t i;
++	size_t offset;
++	void *addr;
++
++	for (i = 0; i < num_pages; ++i) {
++		offset = (rand() % (mem_size / align_size)) * align_size;
++		addr = (char *)mem + offset;
++		memset(addr, 0x11, align_size);
++	}
++}
++
++static unsigned long read_stat(const char *path)
++{
++	FILE *file;
++	unsigned long value;
++
++	file = fopen(path, "r");
++	if (!file) {
++		perror("fopen");
++		return 0;
++	}
++
++	if (fscanf(file, "%lu", &value) != 1) {
++		perror("fscanf");
++		fclose(file);
++		return 0;
++	}
++
++	fclose(file);
++	return value;
++}
++
++int main(int argc, char *argv[])
++{
++	int use_small_folio = 0, aligned_swapin = 0;
++	void *mem1 = NULL, *mem2 = NULL;
++	int i;
++
++	for (i = 1; i < argc; ++i) {
++		if (strcmp(argv[i], "-s") == 0)
++			use_small_folio = 1;
++		else if (strcmp(argv[i], "-a") == 0)
++			aligned_swapin = 1;
++	}
++
++	mem1 = aligned_alloc_mem(MEMSIZE_MTHP, ALIGNMENT_MTHP);
++	if (mem1 == NULL) {
++		fprintf(stderr, "Failed to allocate large folios memory\n");
++		return EXIT_FAILURE;
++	}
++
++	if (madvise(mem1, MEMSIZE_MTHP, MADV_HUGEPAGE) != 0) {
++		perror("madvise hugepage for mem1");
++		free(mem1);
++		return EXIT_FAILURE;
++	}
++
++	if (use_small_folio) {
++		mem2 = aligned_alloc_mem(MEMSIZE_SMALLFOLIO, ALIGNMENT_MTHP);
++		if (mem2 == NULL) {
++			fprintf(stderr, "Failed to allocate small folios memory\n");
++			free(mem1);
++			return EXIT_FAILURE;
++		}
++
++		if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_NOHUGEPAGE) != 0) {
++			perror("madvise nohugepage for mem2");
++			free(mem1);
++			free(mem2);
++			return EXIT_FAILURE;
++		}
++	}
++
++	/* warm-up phase to occupy the swapfile */
++	memset(mem1, 0x11, MEMSIZE_MTHP);
++	madvise(mem1, MEMSIZE_MTHP, MADV_PAGEOUT);
++	if (use_small_folio) {
++		memset(mem2, 0x11, MEMSIZE_SMALLFOLIO);
++		madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_PAGEOUT);
++	}
++
++	/* iterations with newly created mTHP, swap-in, and swap-out */
++	for (i = 0; i < 100; ++i) {
++		unsigned long initial_swpout;
++		unsigned long initial_swpout_fallback;
++		unsigned long final_swpout;
++		unsigned long final_swpout_fallback;
++		unsigned long swpout_inc;
++		unsigned long swpout_fallback_inc;
++		double fallback_percentage;
++
++		initial_swpout = read_stat(SWPOUT_PATH);
++		initial_swpout_fallback = read_stat(SWPOUT_FALLBACK_PATH);
++
++		/*
++		 * The following setup creates a 1:1 ratio of mTHP to small folios
++		 * since large folio swap-in isn't supported yet. Once we support
++		 * mTHP swap-in, we'll likely need to reduce MEMSIZE_MTHP and
++		 * increase MEMSIZE_SMALLFOLIO to maintain the ratio.
++		 */
++		random_swapin(mem1, MEMSIZE_MTHP,
++				aligned_swapin ? ALIGNMENT_MTHP : ALIGNMENT_SMALLFOLIO,
++				TOTAL_DONTNEED_MTHP);
++		random_madvise_dontneed(mem1, MEMSIZE_MTHP, ALIGNMENT_MTHP,
++				TOTAL_DONTNEED_MTHP);
++
++		if (use_small_folio) {
++			random_swapin(mem2, MEMSIZE_SMALLFOLIO,
++					ALIGNMENT_SMALLFOLIO,
++					TOTAL_DONTNEED_SMALLFOLIO);
++		}
++
++		if (madvise(mem1, MEMSIZE_MTHP, MADV_PAGEOUT) != 0) {
++			perror("madvise pageout for mem1");
++			free(mem1);
++			if (mem2 != NULL)
++				free(mem2);
++			return EXIT_FAILURE;
++		}
++
++		if (use_small_folio) {
++			if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_PAGEOUT) != 0) {
++				perror("madvise pageout for mem2");
++				free(mem1);
++				free(mem2);
++				return EXIT_FAILURE;
++			}
++		}
++
++		final_swpout = read_stat(SWPOUT_PATH);
++		final_swpout_fallback = read_stat(SWPOUT_FALLBACK_PATH);
++
++		swpout_inc = final_swpout - initial_swpout;
++		swpout_fallback_inc = final_swpout_fallback - initial_swpout_fallback;
++
++		fallback_percentage = (double)swpout_fallback_inc /
++			(swpout_fallback_inc + swpout_inc) * 100;
++
++		printf("Iteration %d: swpout inc: %lu, swpout fallback inc: %lu, Fallback percentage: %.2f%%\n",
++				i + 1, swpout_inc, swpout_fallback_inc, fallback_percentage);
++	}
++
++	free(mem1);
++	if (mem2 != NULL)
++		free(mem2);
++
++	return EXIT_SUCCESS;
++}
 -- 
 2.34.1
 
