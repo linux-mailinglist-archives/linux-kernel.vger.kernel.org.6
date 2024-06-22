@@ -1,190 +1,107 @@
-Return-Path: <linux-kernel+bounces-225702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C493791340F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:01:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2D5913411
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8F4C1C2139E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:01:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF687B2295D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E92916EBF3;
-	Sat, 22 Jun 2024 13:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E298916EC0A;
+	Sat, 22 Jun 2024 13:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWjgqTvh"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rICmA/7h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DCDB67D;
-	Sat, 22 Jun 2024 13:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2801414D6F9;
+	Sat, 22 Jun 2024 13:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719061283; cv=none; b=AdqQvJUGZLuAdRurgpZa+mU1v2ZXDsb8m43BW/exl0xrR2jadQjtyNjFm5LLAfvfc4bcVpl9iSkRBUszCFOdHlbAlnPujN+V745DojRxww8i/0ynkOMlb93MA4AfHUvzx0/AehrHMHg4CVofyi9MphNkCIpZ5STl4hefQjpQtG8=
+	t=1719061416; cv=none; b=hbxKCzg6QrCXiPvB3RO+vLLMVRexodiL+N2s7QRfL4EAoZlMFmfaatXtNkK+RvM3sCwBhsMAXU7AY5J4CMDFK0ewyp4qZhM7iuBV0rDagwXjvzAjw1+xRAV2fdPna5qPDGVcIWzS/2/udDqz+6DNRT5OgPktWbqbhreCRXAUD2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719061283; c=relaxed/simple;
-	bh=ol+zGZiWM1DKuT5zahghz+wU4aJwG4tjLHjAz8moIsM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oCTjmcyhT1bruBr3S5UUF/1KZLhrtVIAmsAP6k0B/PPPzHck3Wo9JfLP0a1huj708nruPztI7ksCzRvn+uzf0DKRtQlanJsjD+VDD8trrxbEWO69tpm/97Vn6+g1SNwYbxCN39buOIPamM7+VoYZ/5LVtQM4mDz89KYiMA2niRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWjgqTvh; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a63359aaacaso427293866b.1;
-        Sat, 22 Jun 2024 06:01:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719061280; x=1719666080; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=71HCn4pM6lNH1TSuaduFc92zwHDPMLbUYJs68bSQmlY=;
-        b=QWjgqTvhUcTgApdIAU7E/mBUIAE8SpP2a+GNOjJr0NWUc/wldBbMCuN8ukE4XdCYKg
-         I1ZOj1o2ikOzpwzaQzqxF8iUUFx3mlHKLF79kIlOPCLu/kshsVza4FNTkhDwdeD8L3Mn
-         +TeaFZ4H0jHIJshKbNGTx9zlOlZmqapMA7BMjm3z48DABZwQAzxxwQzTNtrlcdUJBHV2
-         UwExl/lsdJy736pdezUpiL0/QK3+cnxBjPa0Udlp8xsZuqv272meg8C20nJyXE8pBic6
-         acIpU49kb437816KbvrB3xFKYZCYLeDjEd/z7D2Up/JyzNS5yjXvnD40Kyu8L0vtIJg7
-         28bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719061280; x=1719666080;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=71HCn4pM6lNH1TSuaduFc92zwHDPMLbUYJs68bSQmlY=;
-        b=GkUq7NdINrNXC6+BnZlM4Aw4VEpSYD5d7GH4kipusOVaSIXE22YS3TWYOcVmKAnHFn
-         aUBz4TEcLIz0wRZ7bFLcyV/tuBVkMlCn5Jziiq60kl4PTZFzGT4aCqRNqbvx9py+cnXr
-         MzCJwO2gnEtgy8lbBiuH+nqO6qhY6PaAGlaYVzLl9KlwkE65Zrh52m7pOvolKFa+epoM
-         WZWj19fCj9ulgQKiCgIWetOzPrWqaZN3/oVEmgbLwUC1ujH/AazzIf8zTLCAwCW1jLG3
-         57V/Aowpu3Z0AHJXN5pfM7qaoH5wCHSEkM9sTAlYZEZ7g6QJe7zm6H6dl/UemwMfBGcc
-         vLHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRlTnv9HjWnPtujLyEc1jtWDMEhg+b8VYTfNhJCPfACTJ8grW5ahvKUs9omX1YER0ziXMiWYvFabLu7Bujk4LC72ZjSBg4rznyiK+gcVcKDLvOtocb7Iq3BkNRsARwxWaTPZWoe48=
-X-Gm-Message-State: AOJu0YwG3xR0Z61w3pPiBBfroPjmI0/LkMPXy2tSXH9ElVByN8pSdqys
-	RLw4u4GG5gX2fpvUzd89IC9n/6PkfZOXELeoFk2qPtUHiFA7pGJO
-X-Google-Smtp-Source: AGHT+IGzCCmzYTaJI/Ajs079t6qeRBMAuK4TtFbQkCzQk/kxTFSgjkEOw+iHy0pz6A0nPfLdksSbmQ==
-X-Received: by 2002:a17:907:104a:b0:a6f:13fe:75d1 with SMTP id a640c23a62f3a-a6fab7cf96dmr655611666b.64.1719061279681;
-        Sat, 22 Jun 2024 06:01:19 -0700 (PDT)
-Received: from [127.0.1.1] (31-179-0-202.dynamic.chello.pl. [31.179.0.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf560526sm193940766b.152.2024.06.22.06.01.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 06:01:19 -0700 (PDT)
-From: Roman Storozhenko <romeusmeister@gmail.com>
-Date: Sat, 22 Jun 2024 15:01:07 +0200
-Subject: [PATCH v2] cpupower: Make help command available for custom
- install dir
+	s=arc-20240116; t=1719061416; c=relaxed/simple;
+	bh=UrxnrK5wRWLLAqbFuJQdybESu+fL2JUBL/OQiQsMn1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hXFgS1B8qLNN6nEVmGgrNHto/Qf/C8zLG8avn42IMtKnppwAk9SJJw44CoR6UcjYwHV0s+4pA+7Fe6BhGCjro9MZsIFY92LxrrcwRfaNucBIa223/nWvfIhAVQaKCb0kxhplbEiRtUDGHqLTTFgfWLEuEDvztPcpQiksKkjTX4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rICmA/7h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B16BBC3277B;
+	Sat, 22 Jun 2024 13:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719061415;
+	bh=UrxnrK5wRWLLAqbFuJQdybESu+fL2JUBL/OQiQsMn1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rICmA/7hK70cX0IM8LZFNqXzboC014+YqVAuaOumofoi5yYT73G7QM/sPccdVDXRC
+	 Ds/JWgeRnBygStUgniH4iZAEy82fp3Hlq4a0dNFCrhTSd56vOua4AXaTQad9KMfz0I
+	 uP9KFkg8gS8/8L4KgN+1KIXLam4+bHx9vIFTemOaQC3KIRjJo9wcqKLGrzz7Emn6G5
+	 SqI4KtrZmSMe1aVqyjbgitUy/CTLYQJO9Q2LAGszmeZhCkB9ppCrqXK8JEjEs1QeOh
+	 D90xD3WapBblbNM03i3Lk7mQ/ue7KOZNZw7X9T+O8X5rtL1P6oJSo92LFKpzSBmv6t
+	 wMZRI4tt+7+DA==
+Date: Sat, 22 Jun 2024 14:03:29 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christian Hewitt <christianshewitt@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org
+Subject: Re: [PATCH 2/2] ASoC: Add support for ti,pcm5242 to the pcm512x
+ driver
+Message-ID: <57f0036c-4412-48fa-a6f9-3fa721717be9@sirena.org.uk>
+References: <20240622124603.2606770-1-christianshewitt@gmail.com>
+ <20240622124603.2606770-3-christianshewitt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240622-fix-help-issue-v2-1-6c19e28a4ec1@gmail.com>
-X-B4-Tracking: v=1; b=H4sIABLLdmYC/13MQQ6CMBCF4auQWTumrbVYVt7DsKAwwiRASatEQ
- 3p3K3Hl8p/M+zaIFJgiVMUGgVaO7Occ6lBAOzRzT8hdblBCaWGkxTu/cKBxQY7xSXguT60Wzhm
- tSsijJVD+2MFbnXvg+PDhvfur/F5/lJL/1CpRYmmFsfbSaUPu2k8Nj8fWT1CnlD7Ap4KMrAAAA
- A==
-To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Roman Storozhenko <romeusmeister@gmail.com>
-X-Mailer: b4 0.14.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Ns7W6Wuqxln5UvNz"
+Content-Disposition: inline
+In-Reply-To: <20240622124603.2606770-3-christianshewitt@gmail.com>
+X-Cookie: No stopping or standing.
 
-When the 'cpupower' utility installed in the custom dir, it fails to
-render appropriate help info for a particular subcommand:
-$ LD_LIBRARY_PATH=lib64/ bin/cpupower help monitor
-with error message like 'No manual entry for cpupower-monitor.1'
-The issue is that under the hood it calls 'exec' function with
-the following args: 'man cpupower-monitor.1'. In turn, 'man' search
-path is defined in '/etc/manpath.config'. Of course it contains only
-standard system man paths.
-Make subcommands help available for a user by setting up 'MANPATH'
-environment variable to the custom installation man pages dir. That
-variable value will be prepended to the man pages standard search paths
-as described in 'SEARCH PATH' section of MANPATH(5).
 
-Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
----
-Changes in v2:
-- Fixed spelling errors
-- Simplified man pages search approach by the 'MANPATH' variable usage
-- Link to v1: https://lore.kernel.org/r/20240621-fix-help-issue-v1-1-7906998d46eb@gmail.com
----
- tools/power/cpupower/utils/cpupower.c | 41 ++++++++++++++++++++++++++++++-----
- 1 file changed, 35 insertions(+), 6 deletions(-)
+--Ns7W6Wuqxln5UvNz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/power/cpupower/utils/cpupower.c b/tools/power/cpupower/utils/cpupower.c
-index 9ec973165af1..1b1b79c572ad 100644
---- a/tools/power/cpupower/utils/cpupower.c
-+++ b/tools/power/cpupower/utils/cpupower.c
-@@ -12,6 +12,8 @@
- #include <unistd.h>
- #include <errno.h>
- #include <sched.h>
-+#include <libgen.h>
-+#include <limits.h>
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <sys/utsname.h>
-@@ -80,14 +82,17 @@ static void print_help(void)
- 
- static int print_man_page(const char *subpage)
- {
--	int len;
--	char *page;
-+	char *page, *man_path, *exec_dir;
-+	char exec_path[PATH_MAX];
-+	int subpage_len;
- 
--	len = 10; /* enough for "cpupower-" */
--	if (subpage != NULL)
--		len += strlen(subpage);
-+	if (!subpage)
-+		return -EINVAL;
- 
--	page = malloc(len);
-+	subpage_len = 10; /* enough for "cpupower-" */
-+	subpage_len += strlen(subpage);
-+
-+	page = malloc(subpage_len);
- 	if (!page)
- 		return -ENOMEM;
- 
-@@ -97,6 +102,30 @@ static int print_man_page(const char *subpage)
- 		strcat(page, subpage);
- 	}
- 
-+	/* Get current process image name full path */
-+	if (readlink("/proc/self/exe", exec_path, PATH_MAX) > 0) {
-+		exec_dir = strdup(exec_path);
-+		if (!exec_dir) {
-+			free(page);
-+			free(man_path);
-+			return -ENOMEM;
-+		}
-+
-+		/* Prepend standard search path for man pages with relative path
-+		 * to custom install man directory
-+		 */
-+		if (asprintf(&man_path, "%s/../man:", dirname(exec_dir)) > 0) {
-+			setenv("MANPATH", man_path, 1);
-+			free(exec_dir);
-+			free(man_path);
-+		} else {
-+			free(page);
-+			free(exec_dir);
-+			free(man_path);
-+			return -ENOMEM;
-+		}
-+	}
-+
- 	execlp("man", "man", page, NULL);
- 
- 	/* should not be reached */
+On Sat, Jun 22, 2024 at 12:46:03PM +0000, Christian Hewitt wrote:
+> Add a compatible string to enable support for the ti,pcm5242 DAC chip
+> in the pcm512x driver.
+>=20
+> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+> ---
+>  sound/soc/codecs/pcm512x-i2c.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
----
-base-commit: 2102cb0d050d34d50b9642a3a50861787527e922
-change-id: 20240619-fix-help-issue-573c40bb6427
+The device appears to have SPI support too like the other devices in the
+family, why not add the ID for SPI as well:
 
-Best regards,
--- 
-Roman Storozhenko <romeusmeister@gmail.com>
+   https://www.ti.com/product/PCM5242
 
+--Ns7W6Wuqxln5UvNz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ2y6EACgkQJNaLcl1U
+h9BmaAf/Wf4dlhJjpl3fS3/Wwz1IA7U7HfafHCnGFTG5WaABcOG2qOrxjfPC42iR
+KUeRAaU4lqzPSWjayl/eVXWAB6v+x7qKiZuAcQ4vP7g5odGfmIKt+syT5RN4P+xP
+R/EC9NkzmlgH0nb23+NJXnuI+sekheoJvxEt2dkbOsDQivW4IMWwzmiOfTzwLCux
+3zOVaKR+MzriPl0P06oDNsiDycmByd/S2q/bbAbcdrdacAoURmI7mY+F2Q5lVGOL
+07n+SC66baBDVYndWfWS28+50cenwUOAwm1+am3xFTIiNa5U7Zr3ShBj+S67sDzV
+ijKbKj9dvuc7CO9qB3dyJcvkOi9s0Q==
+=lfJ9
+-----END PGP SIGNATURE-----
+
+--Ns7W6Wuqxln5UvNz--
 
