@@ -1,58 +1,62 @@
-Return-Path: <linux-kernel+bounces-225672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC63E913389
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:49:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C53E191338D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B511C211B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:49:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8113E28417C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28A9156227;
-	Sat, 22 Jun 2024 11:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1583F15532C;
+	Sat, 22 Jun 2024 11:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOua7w1r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1xlnzHc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22418155A4E;
-	Sat, 22 Jun 2024 11:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501AD155393;
+	Sat, 22 Jun 2024 11:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719056937; cv=none; b=PnF9qXrbDJH0dPFLJcGf3j1YBiAAtqIx3g8BL5nik1Ztzd4d3kkmTm2+NTOo3WOwvXdkia85wdILbBgKXuWEQX6I1PPLtBtgTtcW4Dr9NkMcgNPToaPMb68X4r2ef+u8APIxzs0XOmlUTplkm7QMJdK68Wlf9B3AoJrhBDqnvsQ=
+	t=1719056968; cv=none; b=eH+8vUJL3EOORDOkxz1CvG2SQ4ZmrihHRZpJ82L6bRREYNDKCwDWKgQW4pgsnbw0WzyFf7TF3iYFqZ0JdVBvVLFUT8zgF71/psm2z4CbvnbswF07/uOLlcwuLy52k52oZece1BSU8/xMhOL27zNbDn6X5V0LRPNkt+zQpKwRfhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719056937; c=relaxed/simple;
-	bh=ycYR6RgvC3MBo4/lPj6Mic3f9+6aISTwD7s1PJyIcIQ=;
+	s=arc-20240116; t=1719056968; c=relaxed/simple;
+	bh=5FvrPBRa4r7Xhj4sScdhLXMGxs84cfjsBRSmrxV/JDI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bOybyetXnR4Pv9EWOd9L5SxU1cqIHP5JF7cFhrpIbizJiaH2/RoxMZTcynwYqCD1AwQbtV+OCbTCKV8iNxdnnTbYfi6yexjZevtnWVkBfWuYBdo4a6x5LoxzZ34kfMHc2ANhBhdoBpwaF6Snumipz45p4t1OxOduP8HpeQbWA3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOua7w1r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2BAFC4AF07;
-	Sat, 22 Jun 2024 11:48:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FqcRyCtffi1iz6Jvt9l/JytA2cd1rZ5JImGFk9mPUPj2dZpr+t45izYTaZVYjYdo8MyAH9WLTcRV3B4sJhIieUjpz/mBO7OP8v8UBj/Hy3sOi45noJiLbIJnEl9cdLT95Lkb7YiyrMEj4y8Rp84wMgr83X4qJWmftv0ZEcuGYSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1xlnzHc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF31C3277B;
+	Sat, 22 Jun 2024 11:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719056936;
-	bh=ycYR6RgvC3MBo4/lPj6Mic3f9+6aISTwD7s1PJyIcIQ=;
+	s=k20201202; t=1719056967;
+	bh=5FvrPBRa4r7Xhj4sScdhLXMGxs84cfjsBRSmrxV/JDI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cOua7w1rGbD4pNxk2rr4aTjZ4Iazzkai0LNh2cgtOa6iKBKSfe0IEp9nKQuHP0P44
-	 vtHfYV1m/Q7CVs2zGEY9HpL58ltLYyebnwmzLuK49dit+MpP/XWJSg1ubZ3zzCedBv
-	 NXaOQUQeQdzmTUzdcAvW0d58LOXdh0a7TcSmztXWhb9L75HxXMCLc2qinO8KDHT41a
-	 sLceQRYbIMLcsyEReUU0HgSD8a15mqk5heCmdFXNIWOAPfZR+73IOr7QXLxi6QvsU0
-	 9DFnCdRRwAgBLn2PMqjYBESfOApjibeFt8QS+Z/Ha06QblrOxkX1Zr2nNlDrMnYA8X
-	 9bZXfLB6EgCbw==
-Date: Sat, 22 Jun 2024 12:48:52 +0100
+	b=i1xlnzHcBorcrSe8NYjeojRjUoGvYaTcITiA1fWksaWWne7c7puQHarf7KOiZ/BYg
+	 Oe2XtJMjcexJt7dXrZ/4aoWftVYiphi6pd5cqWogfJM8Fb05ncYiE0cf8W59gktZyx
+	 GeOcYGSED50jZmZ9KGsEIaQseX9tgMTx64gLjHBJwpShy8DI0AJKdkKBCm047/ZWUu
+	 E9YFfnyLsXs+bIArk33lDRikOXVLb5o+An2uFKs3IRDiiTTv1W440YsG0yOE3+7TZs
+	 9oY8Al8xC6S4ta3vFBvJm6Qr+9QN7o2peqsYj4shukazbR9dEgcCHf8lgMmvi9trBH
+	 kIHWCtj9B5KTw==
+Date: Sat, 22 Jun 2024 12:49:22 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+To: Bryan Brattlof <bb@ti.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, Lee Jones <lee@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Walle <michael@walle.cc>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: nvmem: sfp: add child node unique-id
-Message-ID: <20240622-tux-jelly-b71418bfb210@spud>
-References: <20240621165637.2283864-1-Frank.Li@nxp.com>
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Vibhore Vardhan <vibhore@ti.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/5] dt-bindings: mfd: syscon: add TI's opp table
+ compatible
+Message-ID: <20240622-aching-disagree-520469bd0f82@spud>
+References: <20240621-ti-opp-updates-v3-0-d857be6dac8b@ti.com>
+ <20240621-ti-opp-updates-v3-3-d857be6dac8b@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,79 +64,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nlKWlZIIeVfxKBNc"
+	protocol="application/pgp-signature"; boundary="yY56wFrcEn6KxQwM"
 Content-Disposition: inline
-In-Reply-To: <20240621165637.2283864-1-Frank.Li@nxp.com>
+In-Reply-To: <20240621-ti-opp-updates-v3-3-d857be6dac8b@ti.com>
 
 
---nlKWlZIIeVfxKBNc
+--yY56wFrcEn6KxQwM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 12:56:37PM -0400, Frank Li wrote:
-> Add child node unique-id to fix below CHECK_DTBS warning.
-> efuse@1e80000: Unevaluated properties are not allowed ('unique-id@1c' was=
- unexpected)
-
-That's not sufficient justification. Why is this even needed? What can't
-it be determined from a compatible etc? Just because it slipped into a
-dts doesn't mean you get to avoid the usual requirements for justifying
-new properties.
-
-Thanks,
-Conor.
-
+On Fri, Jun 21, 2024 at 11:39:39AM -0500, Bryan Brattlof wrote:
+> The JTAG_USER_ID_USERCODE efuse address, which is located inside the
+> WKUP_CTRL_MMR0 range holds information to identify the speed grades of
+> various components on TI's K3 SoCs. Add a compatible to allow the
+> cpufreq driver to obtain the data to limit the maximum frequency for the
+> CPUs under Linux control.
 >=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/nvmem/fsl,layerscape-sfp.yaml      | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/nvmem/fsl,layerscape-sfp.y=
-aml b/Documentation/devicetree/bindings/nvmem/fsl,layerscape-sfp.yaml
-> index 70fb2ad251037..8c0bdaab711a7 100644
-> --- a/Documentation/devicetree/bindings/nvmem/fsl,layerscape-sfp.yaml
-> +++ b/Documentation/devicetree/bindings/nvmem/fsl,layerscape-sfp.yaml
-> @@ -42,6 +42,23 @@ properties:
->        The regulator for the TA_PROG_SFP pin. It will be enabled for prog=
-ramming
->        and disabled for reading.
-> =20
-> +patternProperties:
-> +  '^unique-id@[0-9a-f]*$':
-> +    type: object
-> +    description:
-> +      Chip unique id.
-> +
-> +    properties:
-> +      reg:
-> +        description:
-> +          Byte offset where the unique id is stored
-> +        maxItems: 1
-> +
-> +    required:
-> +      - reg
-> +
-> +    additionalProperties: false
-> +
->  required:
->    - compatible
->    - reg
-> --=20
-> 2.34.1
->=20
+> Signed-off-by: Bryan Brattlof <bb@ti.com>
 
---nlKWlZIIeVfxKBNc
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--yY56wFrcEn6KxQwM
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZna6JAAKCRB4tDGHoIJi
-0s7IAP9R3xEkVEPGfGoOEMr7n0RGOe6Yivcz12l5u1R86e/AugEAqdenStzGWNQH
-jaislPaIQUR/rfvJGkVEDuU8mDI7/Q4=
-=s6aX
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZna6QgAKCRB4tDGHoIJi
+0usCAP48lDl4CXm1S7KHclJJ2t8snW26tEOktdOaiBnAVXrJmgD+PwN6eIweSsyT
+7c/0rpx6zufblNGqsRV6bYuLfvIC+gE=
+=+Fyt
 -----END PGP SIGNATURE-----
 
---nlKWlZIIeVfxKBNc--
+--yY56wFrcEn6KxQwM--
 
