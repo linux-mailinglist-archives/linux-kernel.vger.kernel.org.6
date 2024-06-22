@@ -1,207 +1,117 @@
-Return-Path: <linux-kernel+bounces-225825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F459135C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:06:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D609135CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601EA283678
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6478D1F229B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AC33FBA7;
-	Sat, 22 Jun 2024 19:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A23045014;
+	Sat, 22 Jun 2024 19:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="fkZ6bI9I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OnBs5KqO"
-Received: from wfout6-smtp.messagingengine.com (wfout6-smtp.messagingengine.com [64.147.123.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="idOUMRHg"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5CD1863E;
-	Sat, 22 Jun 2024 19:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81411863E;
+	Sat, 22 Jun 2024 19:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719083212; cv=none; b=Bkau6AqZvMhuIVKrxFvYYUDJtZcIXioEEUzb1IDz6fu2UlcN3TqRINiXrlBx2P5RnS1qqibplCoBou0PmXxKFWoFgVrPcmYFIxAPVCvdD1FuBvgMiLydfW2xxXJDu6SsenFw03htXoD21LpxEL/DJxJUbaUEkouO3HP/CmNA3Pk=
+	t=1719083472; cv=none; b=Jf7ghcTRCvClm+DeWB+69glk2kgwks8/R7XAsgPdQDcqgATJ0oAQW3QsSiObh2iZTufYKuDaSJl190dIMdOvuUnSxIxkh1Tf3Ox6Ngxs6riKShjspu8XQsy9cLu8BbZXkZzItWq7YbI+gotINVJqWrrzhQdLa1SSECDlw/LliJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719083212; c=relaxed/simple;
-	bh=r4NAfeztUwL/BJd+0mcWpNeVg5Ang9ARryrTpzHPa+k=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=M1aRaNiCNnzryjjX6Su/ELoEzCfPXQxjda5J/EaA/khjoI8M/Q0NDcjABZA7ekBmXIr5GdTuzkTzqJ/6WIrZteIely5x79N/9fnXfE4A9QfDryz0hAWZy0Kj77qZHC6qjNwgX53cHk3vAMTb2Q8RaCFPxxnqjBiu1OXNDCpxECQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=fkZ6bI9I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OnBs5KqO; arc=none smtp.client-ip=64.147.123.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.west.internal (Postfix) with ESMTP id 99BE91C000B8;
-	Sat, 22 Jun 2024 15:06:48 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Sat, 22 Jun 2024 15:06:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1719083208;
-	 x=1719169608; bh=3iSvzQUPYRn852sXVZfCY1CE4cmCTtU2TMLXcCOvQbM=; b=
-	fkZ6bI9IpohMYDUUkPo3p/kyXC18E0xZqreS1hFTYErYS57Csgq2OAB4k3PN8piG
-	TvP494JDC2rMYMybTge9rQpEFf7ezMu7W32jAp1PAtl0eTps0+xz0aypcazmP8OZ
-	GTTdyThRz3wH0xhFIaHtqic57f4eGqg3zl1LbXgjwsiRUmnClCYZJi4N23SHgOVP
-	X0Shlg7fCzu1pXuM1Wi1tMkZp+y8swoM8/kn7O1y8O1v2N9omChAuwrih2R+ImON
-	L9mqmkmFTR61a/vx+l3CQ7b5s1mHxWJo5s2hH0B6vCDKJV7I5By5DVHep8iLtUVx
-	0D407COsDaU5XRZ8ml2ZDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719083208; x=
-	1719169608; bh=3iSvzQUPYRn852sXVZfCY1CE4cmCTtU2TMLXcCOvQbM=; b=O
-	nBs5KqO40qPEbgiIf/1hS2JxxYj0f0hh7prVVuTVyUo33qFK+CukkYVRlPA3ABmk
-	Fdxhqk/jOrJaQj2lB+OGpFdWKjQS6JcXW/8ut9F0fBE6F/h+qNcINwuni7Laavqs
-	oc5EhJkd+hglfCBfDhDTYuINaQe2q3C9rSI92NyHwA8Oj27sOpAJXa/CiCAH214R
-	F2Dlxe4091EFOQsQW8G7bP55rRl54OJhRiLVh3F/6ImwJ8hrN/2SLRyMfs1F9000
-	iC77Cr00LIeH/nd77Vlcdw1prqbZyYv7jP/Oez2zEbqPaCLI/KEwYPcKt36mPXqD
-	MHEgEy5VmYo7SvlYTPGkg==
-X-ME-Sender: <xms:xyB3ZuvTNkecoMW9OJVOmvTVG8kXV-ip7wd9tHjuKMjB_g8qqp8Z7w>
-    <xme:xyB3Zjd5VwOkyaGw9ycMAbAf6BNwPDJNaj_M-5SYMBpK8FODw9ran9XhUeh3pMNor
-    C6n8UyqfrfJU1zsXLw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefiedgudefiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    lfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtg
-    homheqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefh
-    jeeugeevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:xyB3ZpxeOmsoIJZxnG5tIsSY_fpdPp2Wjru72Vwz57-ijtujXw8ifg>
-    <xmx:xyB3ZpPcjd0ebMx-BJsybglASWzBGOANtVLtU5ZLp1pZ0oc2R788Mg>
-    <xmx:xyB3Zu_AWtf5edbIQ8XOC4ziAUuG2YIpPKqJPIlnXzQWalyDPGv_kw>
-    <xmx:xyB3ZhV8Ndp7pu4WIUa79TymhUpwO-Xg_jicB4uKL3M0llkg4uksHg>
-    <xmx:yCB3ZhZIb4xe4TVgrocpb694OnJyzEAQlHLpVN4uHm5ZQkfJ_DGlwdou>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 957A636A0074; Sat, 22 Jun 2024 15:06:47 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1719083472; c=relaxed/simple;
+	bh=bNKqvfJcCxUliXk6egw86vUhi6IGdTyXYpgstC1ig48=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=jIfEyOGxmTe+2Ak8l922+HlsnwP0PZGX8GoOsVJgNfHQekhdoVFrISrI9cPAZMxhXqC3oTklYe2P97e4orOVUH5x5FFiDqMGTGeHGPH1t4IyTOrfCotCmtPr62pqukjAOnaVjCBvXynyCsOZrK3IGBE1Rxpt7QQ+1NCD03kHEog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=idOUMRHg; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <5eed908d-3943-4a4d-b0ec-c7acdae63c5e@app.fastmail.com>
-In-Reply-To: <6ca74ccf-b93e-4d77-8609-a12a96c15f38@kernel.org>
-References: <20240618-boston-syscon-v3-0-c47c06647a26@flygoat.com>
- <20240618-boston-syscon-v3-7-c47c06647a26@flygoat.com>
- <6d3fbd07-72a0-43fd-a1e5-c39e3a833bc1@kernel.org>
- <51557e31-0a59-4278-a8c1-25cf66fa3c3f@app.fastmail.com>
- <808f27bf-9dc7-407a-86ff-0a8fae79531c@kernel.org>
- <856ff7b0-774d-4120-8bd8-01270f5c14b4@app.fastmail.com>
- <6ca74ccf-b93e-4d77-8609-a12a96c15f38@kernel.org>
-Date: Sat, 22 Jun 2024 20:06:24 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v3 7/8] dt-bindings: mfd: Add img,boston-platform-regs
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1719083460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tsjjMssJVG+oE9sGmhyMnAuMsLYA+R/eJrkwoODbgVM=;
+	b=idOUMRHgDMpzEsj+i3s89C5EXijlVePhRa+bpbkscQNve3CaiAVRAquR5LhFjvWmhGX+6z
+	irhFMpwC7zk58vCbGxXZMKq4Fvj0g55tJK2ejOgGHS5NlNN0ChmgsYhhjV3wbFq6Ne7bR2
+	UL7h+0z7qTcaQJNwG8ndMIYCnJjanxHwaWmfnvoiG8b/tcyzrOvJCveyR1osDmeR1Pf2jq
+	qcMWJfHwLXVHzJjhqIZUNeSAHXY6SHUeSOFAtXEQ1wkEFQp+8mBaj20wET9FHEq6PKmntC
+	XEr4C5IztY+yDK2mrLwkOw1EPaSKIN5T816EVmMuaO7lWsUmcYTrvGwgpezlSQ==
+Date: Sat, 22 Jun 2024 21:10:52 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Daniel Golle <daniel@makrotopia.org>, Aurelien Jarno
+ <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko
+ Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>, Sebastian Reichel
+ <sebastian.reichel@collabora.com>, Anand Moon <linux.amoon@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>, Ard
+ Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
+In-Reply-To: <303bc9df-c887-41d0-8613-0fa2898ab48e@kernel.org>
+References: <cover.1718921174.git.daniel@makrotopia.org>
+ <57a7fb13451f066ddc8d1d9339d8f6c1e1946bf1.1718921174.git.daniel@makrotopia.org>
+ <f8e6b1b9-f8ff-42df-b1ef-bcc439c2e913@kernel.org>
+ <173ce1663186ab8282356748abcac3f4@manjaro.org>
+ <303bc9df-c887-41d0-8613-0fa2898ab48e@kernel.org>
+Message-ID: <b1adbe2604561e0958bd5084fe679eea@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
+Hello Krzysztof,
 
+On 2024-06-22 20:05, Krzysztof Kozlowski wrote:
+> On 21/06/2024 20:13, Dragan Simic wrote:
+>> On 2024-06-21 11:57, Krzysztof Kozlowski wrote:
+>>> On 21/06/2024 03:25, Daniel Golle wrote:
+>>>> From: Aurelien Jarno <aurelien@aurel32.net>
+>> 
+>> [snip]
+>> 
+>>>> +	pm_runtime_set_autosuspend_delay(dev, RK_RNG_AUTOSUSPEND_DELAY);
+>>>> +	pm_runtime_use_autosuspend(dev);
+>>>> +	pm_runtime_enable(dev);
+>>>> +
+>>>> +	ret = devm_hwrng_register(dev, &rk_rng->rng);
+>>>> +	if (ret)
+>>>> +		return dev_err_probe(&pdev->dev, ret, "Failed to register 
+>>>> Rockchip
+>>>> hwrng\n");
+>>>> +
+>>>> +	dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
+>>> 
+>>> Drop, driver should be silent on success.
+>> 
+>> I respectfully disagree.  Many drivers print a single line upon
+>> successful probing, which I find very useful.  In this particular
+> 
+> No, it's duplicating existing interfaces and polluting log 
+> unnecessarily
+> without any useful information.
 
-=E5=9C=A82024=E5=B9=B46=E6=9C=8822=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
-=8D=887:12=EF=BC=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
-> On 21/06/2024 17:51, Jiaxun Yang wrote:
->>=20
->>=20
->> =E5=9C=A82024=E5=B9=B46=E6=9C=8820=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=
-=E5=8D=887:40=EF=BC=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
->> [...]
->>>>
->>>> Hi Krzysztof,
->>>>
->>>> I believe U-Boot's implementation is correct. As per simple-mfd bin=
-ding:
->>>>
->>>> ```
->>>> simple-mfd" - this signifies that the operating system should
->>>>   consider all subnodes of the MFD device as separate devices akin =
-to how
->>>>   "simple-bus" indicates when to see subnodes as children for a sim=
-ple
->>>>   memory-mapped bus.
->>>> ```
->>>>
->>>> This reads to me as "if you want sub nodes to be populated as devic=
-es
->>>> you need this."
->>>>
->>>> In our case there are "clock" and "reset" node sub nodes which shou=
-ld be
->>>> probed as regular device, so it's true for us.
->>>
->>> No, you already got comment from Rob.
->>>
->>> Your children depend on parent to provide IO address, so this is not
->>> simple-mfd. Rule for simple-mfd is that children do not rely on pare=
-nt
->>> at all.
->>>
->> Hi Krzysztof,
->>=20
->> Sorry but can I ask for clarification on "depend on parent to provide=
- IO
->> address", do you mind explaining it a little bit? Does it mean childr=
-en
->> should get regmap node from a phandle property, not the parent node? =
-Or there
->> should be a reg property for child node to tell register offset etc?
->>=20
->> There are way too much usage that children "depends" on parents someh=
-ow
->> in tree, so I want to confirm my understanding.
->
->
-> Your driver relies on parent IO address to be provided - what's more to
-> explain here? If parent does not provide syscon, does the child work?
-> No. Therefore it is not suited for simple-mfd.
->
-I can name too much "simple-mfd" devices that depending on parent to get
-it's syscon, in fact it's true for almost all "simple-mfd" users now.
+Would you, please, clarify what existing interfaces are you
+referring to?
 
-I greped RISC-V's DTS, and all two users have child nodes depends on par=
-ent
-node to get "IO address". For "canaan,k210-sysctl" it's both "canaan,k21=
-0-clk"
-and "canaan,k210-rst", for "starfive,jh7110-sys-syscon" that's "starfive=
-,jh7110-pll".
-
-If that's something prohibited, then we may need a generic driver in ker=
-nel to
-catch all those syscon devices lost eligibility to "simple-mfd" to get t=
-heir childs
-populated.
-
-We also need to think about how to handle "syscon-reboot-mode" and "sysc=
-on-reboot".
-"syscon-reboot-mode" is explicitly relying on parent IO address, for "sy=
-scon-reboot"
-the ability of not relying on parent node (regmap property) is deprecate=
-d as well.
-
-I think we need to make those rules explicit, I'm happy to write a docum=
-ent or update
-Devicetree specification about that, but I need to make it crystal clear=
- to myself first.
-
-Thanks
-[...]
->
-> Best regards,
-> Krzysztof
-
---=20
-- Jiaxun
+>> case, it's even more useful, because some people may be concerned
+>> about the use of hardware TRNGs, so we should actually make sure
+>> to announce it.
 
