@@ -1,148 +1,251 @@
-Return-Path: <linux-kernel+bounces-225660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C420B913360
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:32:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FFB3913365
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 923DEB218B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:32:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE6D31F222F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F6414D6E1;
-	Sat, 22 Jun 2024 11:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D958153567;
+	Sat, 22 Jun 2024 11:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ptY6yhoD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XufdKnxw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cBFeQClW"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234BE33F6;
-	Sat, 22 Jun 2024 11:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D9D14A098
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719055956; cv=none; b=LNA+0kFVsX0io+btbg/cyYfP7voID1c8DSmowa1w3MKyv8vOY3sdYeBxwI+uHxe70BuBNmgt8TiGjAJjSsbMFzgmjb603unhWsm0MxSQofkj6htQP8Mt7ub1m2gFj02JGYGqSXzmYj4O9aFDnmpgYbfLYKaX7nU0T7SN427zsRk=
+	t=1719056189; cv=none; b=VAam4az4P1g72k+uuTajU1LRUZnmTV9Xjg9khRus0spogp3GzsOEuz98AcIaMAD8l+Eaz8JnZnrwTxW1cjuLrhflZQ00zFQw3owwHGw4Ayty0xdNltd653i9MZqPcExzCXzOnI4HzZekO1/+/7W6e0FqbwRkOE+CZYtQ0IRdp/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719055956; c=relaxed/simple;
-	bh=8egAx2LUEkdu2B67LKI0vCze+VdfizJkL4L2Afkq7Cg=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Ez7z1MVQoplsiPJ+j6ymUeAqL/gRqq3HhrZZXiK4rjqRhabH03GMuUamJ1Xe7ft+HuDFVwWssYa+Tob0lbMWnfTSKMJfBh5Y3WHNe3YXcgbtk3uH4zLkqHo36qPBqv1wg3y1s7V5gVxYt2nbQpLBSA0vgQ7lyz1j+lzVZUTzZZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ptY6yhoD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XufdKnxw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 22 Jun 2024 11:32:30 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719055951;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=bFCbK+vt1OFZmN1X5xe/2xoSttwFIlzcIYFQz94K8jE=;
-	b=ptY6yhoDH1zJQKVWgJv9kF0H6OaGIodwJ1MBXPu5Prscjsjq5z/tTt70u8ctuyYAZGpRXe
-	AoMqJMQ7r8/hmFIsPHIouALBWSLBL15uNMY02VvRRr6HbQaULEbuYZq5I063KTjVgchMlM
-	P6i+cpSRXld70/eNNMLIQ9h+ST0aABVkklSjDcGfj9FfgOHi1z1GQO49qPiOexSaZYGPya
-	YHt7Zv3ND8ci4Oks8fS2C5vuWurgeEcyM5RSKR32E85IwTYTT10TxaAoPE9OEGmGZICrRx
-	/z73oen4hLVuT0nknBgyia6e/Q9AZlqeHcK6Rsv+M/7TOK4PhclbFd3/uMxB7w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719055951;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=bFCbK+vt1OFZmN1X5xe/2xoSttwFIlzcIYFQz94K8jE=;
-	b=XufdKnxw1UD81DgoNOgqT8rVfZyHtZKc27+1mcaxF0MPE/VRB/hhpIW3nqEyZ4hAGPbCkE
-	rOnSMiL94G9K8zAg==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sev] x86/sev: Move the instrumentation exclusion bits too
-Cc: kernel test robot <lkp@intel.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1719056189; c=relaxed/simple;
+	bh=81y3Gyaqc3BsCgwPUlZBXpmTw9S1Gal8MlEkY91/YwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=chWDunh7ZEDkbi6Z/CvwmOltsiQGu5LFSBG/DiDp0/nl1l+oF8dqqBO4fF6NTPc+El1xDRA0fkPCmKlMEi3rfhdLKTQWdcYjm8y1iBKUi93utUJaVO6WwevWIUqX9iuiYtCQtRwAcakkkZ4iZchJDJJczYyZrUn9BdboqyWktzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cBFeQClW; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d280e2d5dso2473992a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:36:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719056185; x=1719660985; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=u6wfr0S9+fsOlMf3RkRBuzql0gOh9CqWkH+b8NMxbmM=;
+        b=cBFeQClWIjfehCFNszFqHemtDAANVSctbZ8wS88iwZTZNwTHXQQFgoAnDTtbpIRKyn
+         qCHj/RQLWAJphGv51C3H/yQyUkyn25/19CEVQ1+IB1Iames7GN5uu3QMQYniROkVHWKJ
+         d27G53cw2Ws6ip5OPs8CCFrZUAkwxu4ZINCFVcJxpAjg+IgTIXGV993gFmPntvRusJb2
+         AdresvFlPHYEQ7K7bsyzXYnnEK8znwR/g564RIjRGY1n4Mr7kY/WDV4FpewwFwxmt1d2
+         iAm6lUyEMWb0WOpRDESrROlJOlQcJMvanDJ6YuUSWZ6meSX6tYMY2/mBgMCQn0lUyUju
+         JmnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719056185; x=1719660985;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u6wfr0S9+fsOlMf3RkRBuzql0gOh9CqWkH+b8NMxbmM=;
+        b=JSbfurnSSX5i21yj6nFRq9abAT34ZI1LuQrWY8ttJHKov4ssZLqblf4P7Vm5FLWCDv
+         r2hK936wExYD0REzKJLt9x2GNsBX92NQzWKPxsNXQNjh2HuR1TpJI2QyUvB1j4Phz7it
+         KdWK993aoFrX0fy4iYiUd0FDRqxSB3RXVNIVxHPPDXDg61ZjjGnqtfmpxGRzMarqbcm4
+         //x/PlKVVI3z7/W9xlVrOoMWJ8W6QwGa3EUQqECPEhWphek7OAXcom8RwJZRhrp3WeI1
+         VxYiORvdJxRjhLRT0ei3VIt/s4CsopcZZLZJQPI9abg+Nk3MqUEC++1eCcWEYfRDr9mN
+         lIXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSZDLs2wogaevekLCJVfh5PAyNolVJtkhJfSMTpki9a2/tSQsdZaCI/QXb32rZdGUzuDup9klumQKkepARBSJbglkiK/OwsCXPbtxA
+X-Gm-Message-State: AOJu0Yw4Ez7Ee7fpx37fprev0K/092LUMD+AmU/252p9DUOhDZrfwNdC
+	8FDeJRVq8abXr4Ry3XlsF02D7QCJhh2Ss9a9osVVsDKqaYBpzXlactxL5cyAnbg=
+X-Google-Smtp-Source: AGHT+IGiyxyJo9S45AX2gFdLrwEPplMh594cnMlpnEEDnPdXzZGClOfjS3xMNoFgxGj0WVyeWcI7/g==
+X-Received: by 2002:a50:cd99:0:b0:57d:59c:8e03 with SMTP id 4fb4d7f45d1cf-57d07e66c94mr5933483a12.7.1719056184801;
+        Sat, 22 Jun 2024 04:36:24 -0700 (PDT)
+Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30466608sm2264555a12.49.2024.06.22.04.36.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Jun 2024 04:36:24 -0700 (PDT)
+Message-ID: <2f10d70a-aed6-4687-8e12-4d649f6a2a5e@linaro.org>
+Date: Sat, 22 Jun 2024 13:36:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171905595099.10875.18214578727695488234.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/msm/adreno: Add A306A support
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+ 20240618164303.66615-1-robdclark@gmail.com
+References: <20240620-a306a-v2-1-0d388e1deebf@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240620-a306a-v2-1-0d388e1deebf@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/sev branch of tip:
+On 20.06.2024 11:52 PM, Barnabás Czémán wrote:
+> From: Otto Pflüger <otto.pflueger@abscue.de>
+> 
+> Add support for Adreno 306A GPU what is found in MSM8917 SoC.
+> This GPU marketing name is Adreno 308.
+> 
+> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+> [use internal name of the GPU, reword the commit message]
+> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+> ---
+> Changes in v2:
+> - Rebase on https://patchwork.freedesktop.org/series/127393/
+> - Link to v1: https://lore.kernel.org/r/20240528-a306a-v1-1-03a66dacd8c7@gmail.com
+> ---
+>  drivers/gpu/drm/msm/adreno/a3xx_catalog.c | 11 +++++++++++
+>  drivers/gpu/drm/msm/adreno/a3xx_gpu.c     | 14 +++++++++++---
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  6 ++++++
+>  3 files changed, 28 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a3xx_catalog.c b/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
+> index 0de8465b6cf0..61aeac5054a2 100644
+> --- a/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
+> +++ b/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
+> @@ -41,6 +41,17 @@ static const struct adreno_info a3xx_gpus[] = {
+>  		.gmem  = SZ_128K,
+>  		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+>  		.init  = a3xx_gpu_init,
+> +	}, {
+> +		.chip_ids = ADRENO_CHIP_IDS(0x03000620),
+> +		.family = ADRENO_3XX,
+> +		.revn  = 308,
 
-Commit-ID:     a7e7185ccd2acc4360e2cde688027cd1ecf10d93
-Gitweb:        https://git.kernel.org/tip/a7e7185ccd2acc4360e2cde688027cd1ecf10d93
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Sat, 22 Jun 2024 11:31:02 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Sat, 22 Jun 2024 13:20:35 +02:00
+Double space
 
-x86/sev: Move the instrumentation exclusion bits too
+> +		.fw = {
+> +			[ADRENO_FW_PM4] = "a300_pm4.fw",
+> +			[ADRENO_FW_PFP] = "a300_pfp.fw",
+> +		},
+> +		.gmem  = SZ_128K,
+> +		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+> +		.init  = a3xx_gpu_init,
+>  	}, {
+>  		.chip_ids = ADRENO_CHIP_IDS(
+>  			0x03020000,
+> diff --git a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+> index 5273dc849838..b46ff49f47cf 100644
+> --- a/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a3xx_gpu.c
+> @@ -145,6 +145,10 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
+>  		gpu_write(gpu, REG_A3XX_VBIF_ROUND_ROBIN_QOS_ARB, 0x0003);
+>  		gpu_write(gpu, REG_A3XX_VBIF_OUT_RD_LIM_CONF0, 0x0000000a);
+>  		gpu_write(gpu, REG_A3XX_VBIF_OUT_WR_LIM_CONF0, 0x0000000a);
+> +	} else if (adreno_is_a306a(adreno_gpu)) {
+> +		gpu_write(gpu, REG_A3XX_VBIF_ROUND_ROBIN_QOS_ARB, 0x0003);
+> +		gpu_write(gpu, REG_A3XX_VBIF_OUT_RD_LIM_CONF0, 0x00000010);
+> +		gpu_write(gpu, REG_A3XX_VBIF_OUT_WR_LIM_CONF0, 0x00000010);
+>  	} else if (adreno_is_a320(adreno_gpu)) {
+>  		/* Set up 16 deep read/write request queues: */
+>  		gpu_write(gpu, REG_A3XX_VBIF_IN_RD_LIM_CONF0, 0x10101010);
+> @@ -237,7 +241,9 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
+>  	gpu_write(gpu, REG_A3XX_UCHE_CACHE_MODE_CONTROL_REG, 0x00000001);
+>  
+>  	/* Enable Clock gating: */
+> -	if (adreno_is_a305b(adreno_gpu) || adreno_is_a306(adreno_gpu))
+> +	if (adreno_is_a305b(adreno_gpu) ||
+> +	    adreno_is_a306(adreno_gpu) ||
+> +	    adreno_is_a306a(adreno_gpu))
+>  		gpu_write(gpu, REG_A3XX_RBBM_CLOCK_CTL, 0xaaaaaaaa);
+>  	else if (adreno_is_a320(adreno_gpu))
+>  		gpu_write(gpu, REG_A3XX_RBBM_CLOCK_CTL, 0xbfffffff);
+> @@ -334,8 +340,10 @@ static int a3xx_hw_init(struct msm_gpu *gpu)
+>  		gpu_write(gpu, REG_A3XX_CP_PFP_UCODE_DATA, ptr[i]);
+>  
+>  	/* CP ROQ queue sizes (bytes) - RB:16, ST:16, IB1:32, IB2:64 */
+> -	if (adreno_is_a305(adreno_gpu) || adreno_is_a306(adreno_gpu) ||
+> -			adreno_is_a320(adreno_gpu)) {
+> +	if (adreno_is_a305(adreno_gpu) ||
+> +	    adreno_is_a306(adreno_gpu) ||
+> +	    adreno_is_a306a(adreno_gpu) ||
+> +	    adreno_is_a320(adreno_gpu)) {
+>  		gpu_write(gpu, REG_AXXX_CP_QUEUE_THRESHOLDS,
+>  				AXXX_CP_QUEUE_THRESHOLDS_CSQ_IB1_START(2) |
+>  				AXXX_CP_QUEUE_THRESHOLDS_CSQ_IB2_START(6) |
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> index b8ee9320a315..3b361a077688 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> @@ -292,6 +292,12 @@ static inline bool adreno_is_a306(const struct adreno_gpu *gpu)
+>  	return adreno_is_revn(gpu, 307);
+>  }
+>  
+> +static inline bool adreno_is_a306a(const struct adreno_gpu *gpu)
+> +{
+> +	/* a306a marketing name is a308 */
 
-Commit in fixes moved the sev*.c compilation units to coco/ - the guest
-confidential computing location - where they belong but forgot the
-instrumentation exclusion build directives.
+"marketing name is a308" could use a (), but it's me being picky..
 
-Move them too.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Fixes: 06685975c209 ("x86/sev: Move SEV compilation units")
-Closes: https://lore.kernel.org/oe-kbuild-all/202406220748.hG3qlmDx-lkp@intel.com
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/coco/sev/Makefile | 8 ++++++++
- arch/x86/kernel/Makefile   | 4 ----
- 2 files changed, 8 insertions(+), 4 deletions(-)
+> +	return adreno_is_revn(gpu, 308);
+> +}
+> +
+>  static inline bool adreno_is_a320(const struct adreno_gpu *gpu)
+>  {
+>  	return adreno_is_revn(gpu, 320);
+> 
+> ---
+> base-commit: b992b79ca8bc336fa8e2c80990b5af80ed8f36fd
+> change-id: 20240528-a306a-48e173724d6c
+> prerequisite-message-id: <20240618164303.66615-1-robdclark@gmail.com>
+> prerequisite-patch-id: b26cd6e5aa23ea623fec94f938a06d1e3359de55
+> prerequisite-patch-id: 301e8fe4c2687a4606ee7debce95a5ada732e27f
+> prerequisite-patch-id: 24a5654d9b52079c010b0594d8599d84af1659c7
+> prerequisite-patch-id: b09a3d28d04b7ebe968e05835ebf8397c27f8d7d
+> prerequisite-patch-id: a74556e25862c22f0ec543b8a7c7d92cb2e55099
 
-diff --git a/arch/x86/coco/sev/Makefile b/arch/x86/coco/sev/Makefile
-index b89ba3f..5f72e92 100644
---- a/arch/x86/coco/sev/Makefile
-+++ b/arch/x86/coco/sev/Makefile
-@@ -1,3 +1,11 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- obj-y += core.o
-+
-+ifdef CONFIG_FUNCTION_TRACER
-+CFLAGS_REMOVE_core.o = -pg
-+endif
-+
-+KASAN_SANITIZE_core.o	:= n
-+KMSAN_SANITIZE_core.o	:= n
-+KCOV_INSTRUMENT_core.o	:= n
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index b22ceb9..a847180 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -17,7 +17,6 @@ CFLAGS_REMOVE_ftrace.o = -pg
- CFLAGS_REMOVE_early_printk.o = -pg
- CFLAGS_REMOVE_head64.o = -pg
- CFLAGS_REMOVE_head32.o = -pg
--CFLAGS_REMOVE_sev.o = -pg
- CFLAGS_REMOVE_rethook.o = -pg
- endif
- 
-@@ -26,19 +25,16 @@ KASAN_SANITIZE_dumpstack.o				:= n
- KASAN_SANITIZE_dumpstack_$(BITS).o			:= n
- KASAN_SANITIZE_stacktrace.o				:= n
- KASAN_SANITIZE_paravirt.o				:= n
--KASAN_SANITIZE_sev.o					:= n
- 
- # With some compiler versions the generated code results in boot hangs, caused
- # by several compilation units. To be safe, disable all instrumentation.
- KCSAN_SANITIZE := n
- KMSAN_SANITIZE_head$(BITS).o				:= n
- KMSAN_SANITIZE_nmi.o					:= n
--KMSAN_SANITIZE_sev.o					:= n
- 
- # If instrumentation of the following files is enabled, boot hangs during
- # first second.
- KCOV_INSTRUMENT_head$(BITS).o				:= n
--KCOV_INSTRUMENT_sev.o					:= n
- 
- CFLAGS_irq.o := -I $(src)/../include/asm/trace
- 
+b4 is amazing
+
+Konrad
 
