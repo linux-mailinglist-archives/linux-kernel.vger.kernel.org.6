@@ -1,119 +1,143 @@
-Return-Path: <linux-kernel+bounces-225596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9190B9132B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:14:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F76A9132B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B0528475C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:14:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 997B51C214A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8127B14C591;
-	Sat, 22 Jun 2024 08:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDCD14D299;
+	Sat, 22 Jun 2024 08:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="dwaTHKAq"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cSD18QR0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98110149E01
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 08:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D8679FE;
+	Sat, 22 Jun 2024 08:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719044080; cv=none; b=jWp+41jL13hRlfatu5gQSsddUq5KZHhtbhxFILU7SihMT8ZEex/NlzP1Cp2oMlaio9gF14Uf4ToYMwqIO/jYOM7d+UVmrphxUAm+5Hq6Xy7pN2hyWk/RJsr1rBhPwpRENIpbvRz9B/4WfmMN3j7i8u4wzQE98QaNFz2Q6xdVsZ0=
+	t=1719044324; cv=none; b=mlq4Hp2BjVeQv6f+8ggt86FceG8+0WsLf40Kxl+qOyprNLmNYLBtjOOxLnbwyRUx4mSmYIPVrG6p4pxkXPSyPmvEfDRu75xHNMM639bWhC/nPMaZyYGOklQC6Y1cQh1z1voYrQhkKAQ5duc94aOPcbimT4Y8YoRv/7B+LGtEZmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719044080; c=relaxed/simple;
-	bh=0vN4VqSqY2yIO4rqQrhMgscL4uynIoX5uJ8p8GrAF64=;
+	s=arc-20240116; t=1719044324; c=relaxed/simple;
+	bh=pKv2Hji6vCGl1/fWTDRVVwNmWO5EdcUhPV/D5Gro1VA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCjobbVPFQW81kcMSrZh8pAWkSY+eWa/CnLMVP78bXay8552V/pAl6kELMZSqOceRzI0wvkYRVBTwFr3CI+YH/KqFMqCWjdYZsinZesV550TD7CdkkimJmuryYzHduyIlLrQAG3rMmbT5fTLjubnimF7pmP23V7ryofvv/KvoLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=dwaTHKAq; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=2TM0
-	2Ogtd16G4f/QZ+sgVy6161D7/cZ0UnFhZrs1Pb0=; b=dwaTHKAqa9w5I3cBdqO3
-	WbJ+hSLufNjrZWsqvihRWhOiqWKvEPmSb2zbiMwhJG3VSqPfDUUCpXT9RchEQHeu
-	VbABZXuTnOzIHAlrEMHIsu5KWRm7GwNUFKSbV+5TIzkZN3torvuDJg/40KlPsaZM
-	dzFjLaf1Y6oEHwcgpbMfsFZQE9dRW0fAkJQLKU/8t49bc9LQgil4vDgApE8ob/t4
-	mL9HNy4by42yf1HhcB4tPogwk6djjUYLzkfCNhzFgRNkReXcNvhcvNvjaAA4zd1h
-	RWUt2bXR7pXOjfjqM0vQZ8RBuk0PXwypJ/Rq7eVZMNQEmRuyaQoDNA6uFSMp6DQq
-	sQ==
-Received: (qmail 1599843 invoked from network); 22 Jun 2024 10:14:27 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Jun 2024 10:14:27 +0200
-X-UD-Smtp-Session: l3s3148p1@i6r5InYbaOpehh9j
-Date: Sat, 22 Jun 2024 10:14:27 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@kernel.org>, 
-	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] docs: i2c: summary: update and use inclusive
- wording
-Message-ID: <2tbpptvm7725cuk4vfz4wnnouuo3mj67zkyakdu4txu45tpgpw@htwfymahrthh>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-kernel@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>, 
-	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-i2c@vger.kernel.org
-References: <20240621073015.5443-1-wsa+renesas@sang-engineering.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iRJe7atjUuWOlSXINISINtoOtKTOmGdiXRKezBwRjsbNeKObBqOtUxvF4RbvqQ/3kM8Fba9f8LOyU+idAWiTq6HSQDD/3hfWNzSnDRy0qBCKWX8rB1YGr2/vegoOS3DNnGhTnIM3tRxChMPZ8CcmR1kFeDZY2rwL4kcoGUhzRhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cSD18QR0; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719044322; x=1750580322;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pKv2Hji6vCGl1/fWTDRVVwNmWO5EdcUhPV/D5Gro1VA=;
+  b=cSD18QR03AB+nGiwDoZv1Ekwrvt5a2NBz+oSLbHBol8vYM8vBhyI3pOW
+   f52KTNBVT3fJmW47CbGeSaag945kVcd8WGNvIbyINZ8wUcXLCGyJONOmg
+   eFqWZD8BlvDY/sD9uoagvOFy8sUkm0oFuEr55Dgq5Jp+4RN7RM188s6IY
+   +WgXM8EvIN2gbE367FDnr9XeYJsNCwXDye7GjxyXSlP/hgEkzWxZpkTyj
+   ps/vwbxEUPsDyICyiE5gpZVjFS6COFbrQxn+qFTz8Qs31W2N6zpkTSA7N
+   N9DZKNWAbXnjlq3rYufhA3LAO/kH1UXW/7ywpXhUMCucZjFxI6xXntn5P
+   w==;
+X-CSE-ConnectionGUID: s/oow2L4Qv+xt9BTm2odfQ==
+X-CSE-MsgGUID: PBynriEVSOin9vdEzQoABQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11110"; a="16314756"
+X-IronPort-AV: E=Sophos;i="6.08,257,1712646000"; 
+   d="scan'208";a="16314756"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2024 01:18:42 -0700
+X-CSE-ConnectionGUID: SAMQt/BMQvyOuM1Rmm6xsw==
+X-CSE-MsgGUID: JpDBx54CTtGaRKZSNuzE8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,257,1712646000"; 
+   d="scan'208";a="74023802"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 22 Jun 2024 01:18:38 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sKvxE-0009RU-1n;
+	Sat, 22 Jun 2024 08:18:36 +0000
+Date: Sat, 22 Jun 2024 16:17:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mark Brown <broonie@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Jiri Kosina <jikos@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Kui-Feng Lee <thinker.li@gmail.com>,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	linux-input@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+Message-ID: <202406221655.xSqDIUk6-lkp@intel.com>
+References: <ZnB9X1Jj6c04ufC0@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qwxgszlq6ponbw54"
-Content-Disposition: inline
-In-Reply-To: <20240621073015.5443-1-wsa+renesas@sang-engineering.com>
-
-
---qwxgszlq6ponbw54
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZnB9X1Jj6c04ufC0@sirena.org.uk>
 
-On Fri, Jun 21, 2024 at 09:30:07AM GMT, Wolfram Sang wrote:
-> The main motivation for this series is patch 4: switching to
-> "controller/master" when defining the I2C terminology. This sets the
-> base for further improvements to inclusive language within the Linux
-> Kernel. The other patches are improvements found on the way.
->=20
-> Changes since v3:
-> * reword "Synonyms" paragraph in patch 6 to be more clear
->=20
->=20
-> Wolfram Sang (6):
->   docs: i2c: summary: start sentences consistently.
->   docs: i2c: summary: update I2C specification link
->   docs: i2c: summary: update speed mode description
->   docs: i2c: summary: document use of inclusive language
->   docs: i2c: summary: document 'local' and 'remote' targets
->   docs: i2c: summary: be clearer with 'controller/target' and
->     'adapter/client' pairs
->=20
+Hi Mark,
 
-Applied to for-current, thanks!
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on hid/for-next]
+[cannot apply to linus/master v6.10-rc4 next-20240621]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mark-Brown/linux-next-build-failure-after-merge-of-the-bpf-next-tree/20240618-022240
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+patch link:    https://lore.kernel.org/r/ZnB9X1Jj6c04ufC0%40sirena.org.uk
+patch subject: linux-next: build failure after merge of the bpf-next tree
+config: x86_64-randconfig-r122-20240622 (https://download.01.org/0day-ci/archive/20240622/202406221655.xSqDIUk6-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240622/202406221655.xSqDIUk6-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406221655.xSqDIUk6-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/hid/bpf/hid_bpf_struct_ops.c:280:9: error: incompatible function pointer types initializing 'int (*)(void *)' with an expression of type 'int (void *, struct bpf_link *)' [-Wincompatible-function-pointer-types]
+     280 |         .reg = hid_bpf_reg,
+         |                ^~~~~~~~~~~
+>> drivers/hid/bpf/hid_bpf_struct_ops.c:281:11: error: incompatible function pointer types initializing 'void (*)(void *)' with an expression of type 'void (void *, struct bpf_link *)' [-Wincompatible-function-pointer-types]
+     281 |         .unreg = hid_bpf_unreg,
+         |                  ^~~~~~~~~~~~~
+   2 errors generated.
 
 
---qwxgszlq6ponbw54
-Content-Type: application/pgp-signature; name="signature.asc"
+vim +280 drivers/hid/bpf/hid_bpf_struct_ops.c
 
------BEGIN PGP SIGNATURE-----
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  274  
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  275  static struct bpf_struct_ops bpf_hid_bpf_ops = {
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  276  	.verifier_ops = &hid_bpf_verifier_ops,
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  277  	.init = hid_bpf_ops_init,
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  278  	.check_member = hid_bpf_ops_check_member,
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  279  	.init_member = hid_bpf_ops_init_member,
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08 @280  	.reg = hid_bpf_reg,
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08 @281  	.unreg = hid_bpf_unreg,
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  282  	.name = "hid_bpf_ops",
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  283  	.cfi_stubs = &__bpf_hid_bpf_ops,
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  284  	.owner = THIS_MODULE,
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  285  };
+ebc0d8093e8c97 Benjamin Tissoires 2024-06-08  286  
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ2h94ACgkQFA3kzBSg
-Kbai8RAAposR/qv0aJkXFIkqzPojSPnVq3TTwOly20E/T3t/YmBsa8Hz216F9SOT
-3MAvGVu55LS519WYHD0rJ4eh0olJ8krUtw8WwFnBL5UupbELjCSUn9KtWXd0azUt
-DW4stM1fWnKTPhAmiACdC3ilKV5vMi7fKF2LGurO/RhPkVonQmV8l1fc3l9GRnXw
-1Z3fVCHYZO5llBUs/zGqm9Pj6471FkkztGl0W50Jj4h/17+BbgjV5Ojp4KvhGArk
-gL82lMK2daaMB8uNYKqZEvFqX5lYitmwjYfxmfmmIdKd07vPFpa77g7TXHqLCQmV
-0J6pPwJGPoGiH1sb3Liwh0PkdaH3JeBKxMEZRmUbFXxsm6CUtLX9Ie1MCh4Z+rnN
-1Xx8rhJGZ2+TxRESkBuFOEy8taTvmVCs6CGxs6dc9ua8NZPaU5sAn6Zo6LX+J7qD
-SUADsMC8UnW6k9T7tempAqSuBX1N8Qg6I01/uaq1BM/dJCvyJlI+AlhyzAu+e2JI
-qnyUxPkDGTvtDgwbSEEuL/3XfyXRwc698kIfYfRjFl8+dfnbGKxKVug573LPrT/O
-mB/AUWDu9L2gRUedSM44Ea0ipFtIrO8cauvMmOkAOV68Nt+UDTolF6zdx6024c//
-bTC97G3wauaGmdf7M9zAqLx4l6tMKya+S/pRq0BhJx5mQ3g8AJY=
-=h4Ke
------END PGP SIGNATURE-----
-
---qwxgszlq6ponbw54--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
