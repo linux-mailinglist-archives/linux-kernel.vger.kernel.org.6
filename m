@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-225806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4CA913586
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E70E913589
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A46280ED0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:04:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4585E28143A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476713BBF0;
-	Sat, 22 Jun 2024 18:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672B2374C3;
+	Sat, 22 Jun 2024 18:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R41chvNt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJBqLmR5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A7A381AA;
-	Sat, 22 Jun 2024 18:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FA417C69;
+	Sat, 22 Jun 2024 18:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719079456; cv=none; b=eukuW0WQsxJxPe4+hDrmfO1oTSN8MAPxbxeaPfx8j8q++7yIc/4cjo2w1T3Z9SOeWryKn3pAbrabL9cl+QSWVC8sNZaWgIg7OVIpyUG+WzFbNuJdHn5x8CQDBVcZhTixdByZTRjRdLgl7SX83XdXa74rWFtDhEkqX+13qENJWgE=
+	t=1719079515; cv=none; b=Jhc1M1b5Lbf38VO0MutdEsfaF9NRQRzabj/ZN8dACzu93/9Jz1B03P1XZbYUjMIUfXytMxxyqZQWeSSfHD5MJpb7tZ1vQy3nZIvPtfHsxo6Y9Ly/uhb8mgp1mLt6M+NrcQc8ihePmTn0FkrnpDuAJR4TObD+qFFb/z0UeceZ5M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719079456; c=relaxed/simple;
-	bh=QoGfE8cQ3Ncm2RINmc7UjozNPcoaLETzKNCmZeMz/zU=;
+	s=arc-20240116; t=1719079515; c=relaxed/simple;
+	bh=iyK99zPeByjWCIY3e/7A9JMYZk1aGCnYk4YbiH21Jc8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kl10zXi+3lVCs9qbVrJoeYMIo2i8pV42zklJd0VQn29aXPG+mvxslLXOjCIioFvgWi7DjrkYubh6fz6dVmaAL2CB4+wnEfkA2rCBRAbpwnf4G8IMAyypOLyQweDsr6nfC0wdD6U52MW7cMwKQ5wxZFR2l4GE5hDRWOTFyYu19dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R41chvNt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ECD8C32786;
-	Sat, 22 Jun 2024 18:04:10 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ck4qYqze9QeUK8aJerfin2itmE2aM8qCm3n1T1xzZVGsBQl6JCVTPBYxKQGToNifhiFS072O5GiGjYzpzxRG0NFzUAOzZAsFa1e/0QwYo4YvYdHRdKC29hZsRFYsPB5MI6m//cmS6PehrhMlZVcIFw213BDXs1kqpXW1z+jZkfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJBqLmR5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BC8EC32786;
+	Sat, 22 Jun 2024 18:05:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719079455;
-	bh=QoGfE8cQ3Ncm2RINmc7UjozNPcoaLETzKNCmZeMz/zU=;
+	s=k20201202; t=1719079515;
+	bh=iyK99zPeByjWCIY3e/7A9JMYZk1aGCnYk4YbiH21Jc8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R41chvNtSZL18SM7BcTw+6ViMHnJ9VQeuge4yBLhR0aCJ0c1KXGvybG9HiEIMMp7U
-	 mqnXQG82RQu/WumMHhpjss783uWoaZojdazFpDVr3imUxf1Cef2ee8x3jQXS7gMAfJ
-	 DL8oUlrePZycWT0eQnyXReI70CxOhkOkBuj9ePwUHi/Dhq/J03zW2pOp7GXI4UEds1
-	 lIU2rXKBCKwfyTBhC+d/GnZPtxfMZ34NfEBMXzOCiMJ9xXIIL6rfr4UliEob4UKqRl
-	 IxWqBbpcBPO1uLoXvMuw25CCrHFIlmbrhZkW4r0rxB5foqcjUNFjt2aDWgw2cEIUYZ
-	 OGqn/7DX+3uRw==
-Message-ID: <3541cd63-882b-4b91-871a-7d0385e12957@kernel.org>
-Date: Sat, 22 Jun 2024 20:04:06 +0200
+	b=QJBqLmR5SLGOD5qyZyj5wf4r1YcEE5W6sCkRUbaVJJn2sJX3DEJuN55lLuG+rEv4V
+	 MjqZe9ZNkgSSLdA2sLXnejdK4mcDgLC0WG1jb0gV6Jzxt0gUqFs6Z9qAXLVrGNSX8p
+	 J2JL+OtsaaPL+i0UCnvB/E74u6BlGVDzZ5H/bxrfhqottqjD+InM4zMLI5RIjfCD2b
+	 GjHuE6HtA5hb3M6ED5yZ8rVMCFDGyKxzCSILXTAMtKxO+IJ1XsRaGmlOLKB8x2uxI8
+	 wd8V/zHX/Ig7gHXmj6C/Bra/rCSrY+qtSoZ7HksfpLpTVDP0Tq+k+rbm+WJrABll1b
+	 rj9cAJut9SAiQ==
+Message-ID: <303bc9df-c887-41d0-8613-0fa2898ab48e@kernel.org>
+Date: Sat, 22 Jun 2024 20:05:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] dt-bindings: iio: proximity: Add TYHX HX9023S
-To: Yasin Lee <yasin.lee.x@gmail.com>, Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, yasin.lee.x@outlook.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-References: <20240621-add-tyhx-hx9023s-sensor-driver-v6-0-65196a9020f1@gmail.com>
- <20240621-add-tyhx-hx9023s-sensor-driver-v6-2-65196a9020f1@gmail.com>
- <d35f5eba-abb4-4924-89d6-0beb878a0bf7@kernel.org>
- <385a7a64-fc76-4655-bc7f-d89d00b053d5@gmail.com>
- <20240622-superjet-dusk-cfd19f899cc2@spud>
- <26db1f7b-bde9-43a5-8c9b-4323ccfc59cf@gmail.com>
+Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Daniel Golle <daniel@makrotopia.org>,
+ Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Anand Moon <linux.amoon@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1718921174.git.daniel@makrotopia.org>
+ <57a7fb13451f066ddc8d1d9339d8f6c1e1946bf1.1718921174.git.daniel@makrotopia.org>
+ <f8e6b1b9-f8ff-42df-b1ef-bcc439c2e913@kernel.org>
+ <173ce1663186ab8282356748abcac3f4@manjaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,113 +113,41 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <26db1f7b-bde9-43a5-8c9b-4323ccfc59cf@gmail.com>
+In-Reply-To: <173ce1663186ab8282356748abcac3f4@manjaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 22/06/2024 14:35, Yasin Lee wrote:
+On 21/06/2024 20:13, Dragan Simic wrote:
+> Hello Krzysztof,
 > 
-> On 2024/6/22 18:51, Conor Dooley wrote:
->> On Sat, Jun 22, 2024 at 01:56:42PM +0800, Yasin Lee wrote:
->>> On 2024/6/21 18:12, Krzysztof Kozlowski wrote:
->>>
->>> Hi ,Krzysztof
->>> Thank you for your reply. I have some questions inline.
->>>
->>> Best regards,
->>> Yasin
->>>
->>>> On 21/06/2024 09:40, Yasin Lee wrote:
->>>>> A capacitive proximity sensor
->>>>>
->>>>> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
->>>>> ---
->>>>>    .../bindings/iio/proximity/tyhx,hx9023s.yaml       | 115 +++++++++++++++++++++
->>>>>    1 file changed, 115 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
->>>>> new file mode 100644
->>>>> index 000000000000..beca70ce7609
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
->>>>> @@ -0,0 +1,115 @@
->>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>> +%YAML 1.2
->>>>> +---
->>>>> +$id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
->>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>> +
->>>>> +title: TYHX HX9023S capacitive proximity sensor
->>>>> +
->>>>> +maintainers:
->>>>> +  - Yasin Lee <yasin.lee.x@gmail.com>
->>>>> +
->>>>> +description: |
->>>>> +  TYHX HX9023S proximity sensor. Datasheet can be found here:
->>>>> +    http://www.tianyihexin.com/ueditor/php/upload/file/20240614/1718336303992081.pdf
->>>>> +
->>>>> +allOf:
->>>>> +  - $ref: /schemas/iio/iio.yaml#
->>>> Which part of iio.yaml binding do you use here? I cannot find anything,
->>>> so this looks wrong.	
->>>>
->>> I will remove this reference.
->>>
->>>
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    const: tyhx,hx9023s
->>>>> +
->>>>> +  reg:
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  interrupts:
->>>>> +    description:
->>>>> +      Generated by device to announce preceding read request has finished
->>>>> +      and data is available or that a close/far proximity event has happened.
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  vdd-supply: true
->>>>> +
->>>>> +  "#address-cells":
->>>>> +    const: 1
->>>>> +
->>>>> +  "#size-cells":
->>>>> +    const: 0
->>>>> +
->>>>> +patternProperties:
->>>>> +  "^channel@[0-4]$":
->>>>> +    $ref: /schemas/iio/adc/adc.yaml
->>>>> +    type: object
->>>>> +
->>>>> +    properties:
->>>>> +      reg:
->>>>> +        minimum: 0
->>>>> +        maximum: 4
->>>>> +        description: The channel number.
->>>>> +
->>>>> +      input-channel:
->>>> Isn't this duplicating single-channel property?
->>>>
->>>> Where is this property defined (which common schema)?
->>>>
->>> |input-channel| is indeed intended for single-ended configuration, but I
->>> couldn't find a definition
->>>
->>> or reference for |single-channel| anywhere. If possible, should I rename
->>> |input-channel| to |single-channel|?
->> Single-channel is new, it should be the next branch of the iio tree and
->> in linux-next.
+> On 2024-06-21 11:57, Krzysztof Kozlowski wrote:
+>> On 21/06/2024 03:25, Daniel Golle wrote:
+>>> From: Aurelien Jarno <aurelien@aurel32.net>
 > 
-> Hi Conor，
+> [snip]
 > 
-> Thank you for informing me. I plan to temporarily add a prefix to this 
-> attribute to distinguish it and update it in the future. Is this the 
-> correct approach?
+>>> +	pm_runtime_set_autosuspend_delay(dev, RK_RNG_AUTOSUSPEND_DELAY);
+>>> +	pm_runtime_use_autosuspend(dev);
+>>> +	pm_runtime_enable(dev);
+>>> +
+>>> +	ret = devm_hwrng_register(dev, &rk_rng->rng);
+>>> +	if (ret)
+>>> +		return dev_err_probe(&pdev->dev, ret, "Failed to register Rockchip 
+>>> hwrng\n");
+>>> +
+>>> +	dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
+>>
+>> Drop, driver should be silent on success.
+> 
+> I respectfully disagree.  Many drivers print a single line upon
+> successful probing, which I find very useful.  In this particular
 
-No, because there is no need. You are supposed to work on maintainer
-tree (linux-next works usually as well).
+No, it's duplicating existing interfaces and polluting log unnecessarily
+without any useful information.
+
+> case, it's even more useful, because some people may be concerned
+> about the use of hardware TRNGs, so we should actually make sure
+> to announce it.
 
 Best regards,
 Krzysztof
