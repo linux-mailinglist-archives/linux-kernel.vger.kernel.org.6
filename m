@@ -1,159 +1,411 @@
-Return-Path: <linux-kernel+bounces-225696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 406769133F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:28:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2EB9133F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:33:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6556E1C20BD0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:28:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDBB1B2313F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686D116DEAC;
-	Sat, 22 Jun 2024 12:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA0D16C445;
+	Sat, 22 Jun 2024 12:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="q7bqYF4y"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kSJdQl9m"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22B114C586;
-	Sat, 22 Jun 2024 12:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD9814B97A;
+	Sat, 22 Jun 2024 12:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719059297; cv=none; b=NWTyRMilF0vDntknkXdlEQSNaI4uYJEoZiIY2DvoyBlZ0f3giaTUNJLFsgY3SEPxsVRAAJ2idj5Va5lz8ZtcBRSXtt6EppvW/Wo1vEb38JAacqosfm5Kp9/Btr6+IKyN8ByYU1jdXQklVJ5dmFKnTgi6dAC2Lv+huqMxRv+46UY=
+	t=1719059577; cv=none; b=HCADDEORsR9XJEjQ8WyTp+FIBVKffz8Q4M8ClMUXpEC27WdFHADjtgRZZgtJNJCp3Y+xfK63etCcmOGiSZVdk9eygOEgJVrTgT8PU7scgxTBIwBwE1DE0P+lVA8zAVLoB8vUxm2c0571YXHBSujIb75WFTKZpvZk1rOjmUNqLyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719059297; c=relaxed/simple;
-	bh=JCw0SeShyq5JuY+nLwC3mKit0gG9UnY3JT535OxbXbo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JgRx3wcBfk7Yf7AvR6ef8jWfO3ZMAwDgnQhLgC4cZiHpdH21oDVEQt70TGLxYSiyDfr3AG2LS17SMKZoaIwERGYbTSF9+pXoFhuu8GkQ4y/Q21sfYGYm0ETufNw7guRXntFhnDbI01flUSDIUokDiJ1NSwqPt3N9qflF3lUHGh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=q7bqYF4y reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id ec57d1a1ba72cd01; Sat, 22 Jun 2024 14:28:07 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id C8C176A7379;
-	Sat, 22 Jun 2024 14:28:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1719059287;
-	bh=JCw0SeShyq5JuY+nLwC3mKit0gG9UnY3JT535OxbXbo=;
-	h=From:To:Cc:Subject:Date;
-	b=q7bqYF4yHXFXd7bujkorWNo99xWgbn7Ykh9cJuIzGTvUuhatvCW9ppy+94+/ue7WT
-	 //tGyTCsoYNuql9AhVVRYpBtIvaoUqFFVjaj0fAVhTyCWK59w1Gls0Cj1N4RVYIuJd
-	 cFiiqyRketdxLuc8QZ8hmBoAo8eR6OyJsT0AUAHGGZpz1iDZ3sYlC7Nhyp92/lm+lI
-	 m2mlMrQHXB4cOpbrli644/RwkeCtLha+bFpk4KqDFv8XEXDQ0MkAZ9K6w5vvu1/0EA
-	 PKr4cBmajloOFwDNvcTf7hKr3nvhMmfxvzudHfupGVP5SpPjx2j9ARX5hRulYG0Pk6
-	 srO+OlhRHwMIw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>,
- Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
- Steev Klimaszewski <steev@kali.org>, Johan Hovold <johan+linaro@kernel.org>
-Subject:
- [PATCH v1] thermal: gov_step_wise: Go straight to instance->lower when
- mitigation is over
-Date: Sat, 22 Jun 2024 14:26:33 +0200
-Message-ID: <12464461.O9o76ZdvQC@rjwysocki.net>
+	s=arc-20240116; t=1719059577; c=relaxed/simple;
+	bh=b+g1h9MM0LWD8LDAqbwFyLrltUsvhl2z0kFLEq4bsCY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fol4D/4ayryMqWJGy4+Bz40eTVeQp1VpHh6cvt3LyJbSa3/q5Jn1TuEQMoX5Cvb49rhbHkQPvos7Dn/1jcJ6ylkv0sG0ey9oKP/nxzeTSdsyeZlbw99BTlfga55tdrPZ/8FqxTzjajFKXloW6n9JOYCbdK15BSXQZ6ZnaYKB+lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kSJdQl9m; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f13dddf7eso345566866b.0;
+        Sat, 22 Jun 2024 05:32:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719059574; x=1719664374; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c8a8DntYYAapSniZV29BtMK5NTcACmVvyapG6qtk/kE=;
+        b=kSJdQl9m29rhTj/E1UQg8orH2WV/IJFmiB24QeaDYAlF+HITcX8APYxYM5/7oRNnOp
+         c8ARPq5YCRYXsP1vN+8uAj66sIBiTGTyoZZGNlMySSGy7Yc2Z7bqwr0nZxEr7feC6bWt
+         7J5pDeHE7NZad4oRPQoqG0tGT9E9ukZKJ08c4+GGkcGn/QuUk+SgzBFqhyWA4Bsq08An
+         jSBUDDU1NhXW0Q/XENihdGnfapejqhy+gASpaNaMq7OV2LEV/NOPQ1BHmqnkiHN1v3he
+         ZchO1WMHl90f1OQlBkdM58iVe/rXfFxvvuGN0+pO2xjpmLwjiFzQd1dHnrzrsJdn+2aw
+         7OEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719059574; x=1719664374;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c8a8DntYYAapSniZV29BtMK5NTcACmVvyapG6qtk/kE=;
+        b=QsxqhMBhZxh+PngPBCZRUgg0qJMYh7LEOlW6Wn7fiR/aj8C1a6fZKrj3OXKXn162Co
+         cRfm8+B3A7aL52qA3mWsaXd7yNMIzm/1mc01CFLURBYEw/OWnQN9UJqLQIXY+Pnw6LtJ
+         PQiWmfXP6jsEIiMX5aIC1vg52OdU+KGHLajdMJT6j2gQ9CK2zwv1SGybIq71/DAQunfp
+         6sGWcECvVLDhmWoVQS1CdI1gAYX1WR+3/Xl33GJF1PiRN/yRCC6NLG9OXZAOzAwdUnu9
+         avrJ4XXSkqOM2KJT5XB+Z/0Mmw0sFF4fhDAOi4swWhKEcMKeV+MyOMEcCiu3ECa4i/kt
+         mFwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSBt5TmIr8tmhxCeDWa4o5uriYjlHgI0BW9un8kscPbrZK54wgMhAEIW9qu4B13sLQfDhULblWcSDvDnY/BYeCjEd8lajlIijP6Jfs+MPf5Bv6UVg8DM42pTpU99AEC9G6q7bouaIu
+X-Gm-Message-State: AOJu0Yy6XSQxoM2gPRR/hIRdUsZZOjmKZOe/Wwj6iwfV7JJ5+orA6iwE
+	MB4QJHkTyZon7YkyDwrCIBo5ql3bdMO6KusrWguYBtdEt+X5a4qs
+X-Google-Smtp-Source: AGHT+IEOxg0QEzBFScKsxUr+qIJq52lwiHXS8MmL0PifZR7RVigLtyaWNWhDIco9wtMyUUNYj/8Z4w==
+X-Received: by 2002:a17:907:a642:b0:a6f:e336:389b with SMTP id a640c23a62f3a-a7242c39008mr25330766b.18.1719059573609;
+        Sat, 22 Jun 2024 05:32:53 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:57bf:cecc:afec:b13d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf429a64sm192427266b.26.2024.06.22.05.32.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 05:32:53 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Sat, 22 Jun 2024 14:32:51 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
+	mazziesaccount@gmail.com, ak@it-klinger.de,
+	petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
+	linus.walleij@linaro.org, semen.protsenko@linaro.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Adam Rizkalla <ajarizzo@gmail.com>
+Subject: Re: [PATCH v8 3/3] iio: pressure: bmp280: Add triggered buffer
+ support
+Message-ID: <20240622123251.GB123707@vamoiridPC>
+References: <20240617230540.32325-1-vassilisamir@gmail.com>
+ <20240617230540.32325-4-vassilisamir@gmail.com>
+ <20240622104039.6bb4033b@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfeefiedgheefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeelpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegr
- rhhmrdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=9 Fuz1=9 Fuz2=9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240622104039.6bb4033b@jic23-huawei>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Sat, Jun 22, 2024 at 10:40:39AM +0100, Jonathan Cameron wrote:
+> On Tue, 18 Jun 2024 01:05:40 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > BMP2xx, BME280, BMP3xx, and BMP5xx use continuous buffers for their
+> > temperature, pressure and humidity readings. This facilitates the
+> > use of burst/bulk reads in order to acquire data faster. The
+> > approach is different from the one used in oneshot captures.
+> > 
+> > BMP085 & BMP1xx devices use a completely different measurement
+> > process that is well defined and is used in their buffer_handler().
+> > 
+> > Suggested-by: Angel Iglesias <ang.iglesiasg@gmail.com>
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > Link: https://lore.kernel.org/r/20240512230524.53990-6-vassilisamir@gmail.com
+> > ---
+> The sign extend in buffered path doesn't make much sense as we should be
+> advertising the correct bit depth for the channel and making that a userspace
+> problem.
+> 
+> I'd failed to notice you are doing endian conversions just to check
+> the skipped values. Ideally we'd leave the channels little endian
+> and include that in the channel spec.
+> 
+> Hmm. I guess this works and if we have to do the endian conversion
+> anyway isn't too bad.  It does provide slightly wrong information
+> to userspace though.
+> 
+> So even with this in place I think these channels should be real_bits 24.
+> 
 
-Commit b6846826982b ("thermal: gov_step_wise: Restore passive polling
-management") attempted to fix a Step-Wise thermal governor issue
-introduced by commit 042a3d80f118 ("thermal: core: Move passive polling
-management to the core"), which caused the governor to leave cooling
-devices in high states, by partially revering that commit.
+Well, I totally get your point. Actually, I think that it makes much more
+sense, to check the skipped values in userspace. These are information that
+come from the datasheet, and I think that if it is important to someone to
+check those values, they can do it. The point is to get the data to
+userspace as soon as possible and then it is on the hands of user to do
+what they want with that. So I agree that the implementation can be
+simplified a lot.
 
-However, this turns out to be insufficient on some systems due to
-interactions between the governor code restored by commit b6846826982b
-and the passive polling management in the thermal core.
+As for the real_bits 24, I kind of get what you mean. I will fix this as
+well. I will wait for Adam's comment on the first patch as well, and
+then I will send a v9.
 
-For this reason, revert commit b6846826982b and make the governor set
-the target cooling device state to the "lower" one as soon as the zone
-temperature falls below the threshold of the trip point corresponding
-to the given thermal instance, which means that thermal mitigation is
-not necessary any more.
+> 
+> 
+> > +static irqreturn_t bmp580_buffer_handler(int irq, void *p)
+> > +{
+> > +	struct iio_poll_func *pf = p;
+> > +	struct iio_dev *indio_dev = pf->indio_dev;
+> > +	struct bmp280_data *data = iio_priv(indio_dev);
+> > +	s32 adc_temp, adc_press;
+> > +	int ret;
+> > +
+> > +	guard(mutex)(&data->lock);
+> > +
+> > +	/* Burst read data registers */
+> > +	ret = regmap_bulk_read(data->regmap, BMP580_REG_TEMP_XLSB,
+> > +			       data->buf, BMP280_BURST_READ_BYTES);
+> > +	if (ret) {
+> > +		dev_err(data->dev, "failed to burst read sensor data\n");
+> > +		goto out;
+> > +	}
+> > +
+> > +	/* Temperature calculations */
+> > +	adc_temp = get_unaligned_le24(&data->buf[0]);
+> > +	if (adc_temp == BMP580_TEMP_SKIPPED) {
+> > +		dev_err(data->dev, "reading temperature skipped\n");
+> > +		goto out;
+> > +	}
+> > +
+> > +	data->sensor_data[1] = sign_extend32(adc_temp, 23);
+> 
+> the channel type should indicate that it's a 24 bit value. Not our
+> problem to sign extend.  Leave that to userspace.
+> 
 
-Before this change the "lower" cooling device state would be reached in
-steps through the passive polling mechanism which was questionable for
-three reasons: (1) cooling device were kept in high states when that was
-not necessary (and it could adversely impact performance), (2) it only
-worked for thermal zones with nonzero passive_delay_jiffies value, and
-(3) passive polling belongs to the core and should not be hijacked by
-governors for their internal purposes.
-
-Fixes: b6846826982b ("thermal: gov_step_wise: Restore passive polling management")
-Closes: https://lore.kernel.org/linux-pm/6759ce9f-281d-4fcd-bb4c-b784a1cc5f6e@oldschoolsolutions.biz
-Reported-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/gov_step_wise.c |   23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
-
-Index: linux-pm/drivers/thermal/gov_step_wise.c
-===================================================================
---- linux-pm.orig/drivers/thermal/gov_step_wise.c
-+++ linux-pm/drivers/thermal/gov_step_wise.c
-@@ -55,7 +55,11 @@ static unsigned long get_target_state(st
- 		if (cur_state <= instance->lower)
- 			return THERMAL_NO_TARGET;
- 
--		return clamp(cur_state - 1, instance->lower, instance->upper);
-+		/*
-+		 * If 'throttle' is false, no mitigation is necessary, so
-+		 * request the lower state for this instance.
-+		 */
-+		return instance->lower;
- 	}
- 
- 	return instance->target;
-@@ -93,23 +97,6 @@ static void thermal_zone_trip_update(str
- 		if (instance->initialized && old_target == instance->target)
- 			continue;
- 
--		if (trip->type == THERMAL_TRIP_PASSIVE) {
--			/*
--			 * If the target state for this thermal instance
--			 * changes from THERMAL_NO_TARGET to something else,
--			 * ensure that the zone temperature will be updated
--			 * (assuming enabled passive cooling) until it becomes
--			 * THERMAL_NO_TARGET again, or the cooling device may
--			 * not be reset to its initial state.
--			 */
--			if (old_target == THERMAL_NO_TARGET &&
--			    instance->target != THERMAL_NO_TARGET)
--				tz->passive++;
--			else if (old_target != THERMAL_NO_TARGET &&
--				 instance->target == THERMAL_NO_TARGET)
--				tz->passive--;
--		}
--
- 		instance->initialized = true;
- 
- 		mutex_lock(&instance->cdev->lock);
+Ok, I understand.
 
 
-
+> > +
+> > +	/* Pressure calculations */
+> > +	adc_press = get_unaligned_le24(&data->buf[3]);
+> > +	if (adc_press == BMP380_PRESS_SKIPPED) {
+> > +		dev_err(data->dev, "reading pressure skipped\n");
+> > +		goto out;
+> > +	}
+> > +
+> > +	data->sensor_data[0] = adc_press;
+> > +
+> > +	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
+> > +					   iio_get_time_ns(indio_dev));
+> > +
+> > +out:
+> > +	iio_trigger_notify_done(indio_dev->trig);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> >  static const int bmp580_oversampling_avail[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
+> >  static const u8 bmp580_chip_ids[] = { BMP580_CHIP_ID, BMP580_CHIP_ID_ALT };
+> >  static const int bmp580_temp_coeffs[] = { 1000, 16 };
+> > @@ -1929,6 +2204,7 @@ const struct bmp280_chip_info bmp580_chip_info = {
+> >  	.start_up_time = 2000,
+> >  	.channels = bmp380_channels,
+> >  	.num_channels = ARRAY_SIZE(bmp380_channels),
+> > +	.avail_scan_masks = bmp280_avail_scan_masks,
+> >  
+> >  	.oversampling_temp_avail = bmp580_oversampling_avail,
+> >  	.num_oversampling_temp_avail = ARRAY_SIZE(bmp580_oversampling_avail),
+> > @@ -1955,6 +2231,8 @@ const struct bmp280_chip_info bmp580_chip_info = {
+> >  	.read_temp = bmp580_read_temp,
+> >  	.read_press = bmp580_read_press,
+> >  	.preinit = bmp580_preinit,
+> > +
+> > +	.buffer_handler = bmp580_buffer_handler,
+> >  };
+> >  EXPORT_SYMBOL_NS(bmp580_chip_info, IIO_BMP280);
+> >  
+> > @@ -2133,7 +2411,7 @@ static int bmp180_read_press_adc(struct bmp280_data *data, u32 *adc_press)
+> >  		return ret;
+> >  
+> >  	ret = regmap_bulk_read(data->regmap, BMP180_REG_OUT_MSB,
+> > -			       data->buf, sizeof(data->buf));
+> > +			       data->buf, BMP280_NUM_PRESS_BYTES);
+> >  	if (ret) {
+> >  		dev_err(data->dev, "failed to read pressure\n");
+> >  		return ret;
+> > @@ -2204,6 +2482,36 @@ static int bmp180_chip_config(struct bmp280_data *data)
+> >  	return 0;
+> >  }
+> >  
+> > +static irqreturn_t bmp180_buffer_handler(int irq, void *p)
+> > +{
+> > +	struct iio_poll_func *pf = p;
+> > +	struct iio_dev *indio_dev = pf->indio_dev;
+> > +	struct bmp280_data *data = iio_priv(indio_dev);
+> > +	int ret, chan_value;
+> > +
+> > +	guard(mutex)(&data->lock);
+> > +
+> > +	ret = bmp180_read_temp(data, &chan_value);
+> > +	if (ret)
+> > +		goto out;
+> > +
+> > +	data->sensor_data[1] = chan_value;
+> > +
+> > +	ret = bmp180_read_press(data, &chan_value);
+> > +	if (ret)
+> > +		goto out;
+> > +
+> > +	data->sensor_data[0] = chan_value;
+> > +
+> > +	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
+> > +					   iio_get_time_ns(indio_dev));
+> > +
+> > +out:
+> > +	iio_trigger_notify_done(indio_dev->trig);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> >  static const int bmp180_oversampling_temp_avail[] = { 1 };
+> >  static const int bmp180_oversampling_press_avail[] = { 1, 2, 4, 8 };
+> >  static const u8 bmp180_chip_ids[] = { BMP180_CHIP_ID };
+> > @@ -2218,6 +2526,7 @@ const struct bmp280_chip_info bmp180_chip_info = {
+> >  	.start_up_time = 2000,
+> >  	.channels = bmp280_channels,
+> >  	.num_channels = ARRAY_SIZE(bmp280_channels),
+> > +	.avail_scan_masks = bmp280_avail_scan_masks,
+> >  
+> >  	.oversampling_temp_avail = bmp180_oversampling_temp_avail,
+> >  	.num_oversampling_temp_avail =
+> > @@ -2238,6 +2547,8 @@ const struct bmp280_chip_info bmp180_chip_info = {
+> >  	.read_temp = bmp180_read_temp,
+> >  	.read_press = bmp180_read_press,
+> >  	.read_calib = bmp180_read_calib,
+> > +
+> > +	.buffer_handler = bmp180_buffer_handler,
+> >  };
+> >  EXPORT_SYMBOL_NS(bmp180_chip_info, IIO_BMP280);
+> >  
+> > @@ -2283,6 +2594,30 @@ static int bmp085_fetch_eoc_irq(struct device *dev,
+> >  	return 0;
+> >  }
+> >  
+> > +static int bmp280_buffer_preenable(struct iio_dev *indio_dev)
+> > +{
+> > +	struct bmp280_data *data = iio_priv(indio_dev);
+> > +
+> > +	pm_runtime_get_sync(data->dev);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int bmp280_buffer_postdisable(struct iio_dev *indio_dev)
+> > +{
+> > +	struct bmp280_data *data = iio_priv(indio_dev);
+> > +
+> > +	pm_runtime_mark_last_busy(data->dev);
+> > +	pm_runtime_put_autosuspend(data->dev);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct iio_buffer_setup_ops bmp280_buffer_setup_ops = {
+> > +	.preenable = bmp280_buffer_preenable,
+> > +	.postdisable = bmp280_buffer_postdisable,
+> > +};
+> > +
+> >  static void bmp280_pm_disable(void *data)
+> >  {
+> >  	struct device *dev = data;
+> > @@ -2329,6 +2664,7 @@ int bmp280_common_probe(struct device *dev,
+> >  	/* Apply initial values from chip info structure */
+> >  	indio_dev->channels = chip_info->channels;
+> >  	indio_dev->num_channels = chip_info->num_channels;
+> > +	indio_dev->available_scan_masks = chip_info->avail_scan_masks;
+> >  	data->oversampling_press = chip_info->oversampling_press_default;
+> >  	data->oversampling_humid = chip_info->oversampling_humid_default;
+> >  	data->oversampling_temp = chip_info->oversampling_temp_default;
+> > @@ -2414,6 +2750,14 @@ int bmp280_common_probe(struct device *dev,
+> >  					     "failed to read calibration coefficients\n");
+> >  	}
+> >  
+> > +	ret = devm_iio_triggered_buffer_setup(data->dev, indio_dev,
+> > +					      iio_pollfunc_store_time,
+> > +					      data->chip_info->buffer_handler,
+> > +					      &bmp280_buffer_setup_ops);
+> > +	if (ret)
+> > +		return dev_err_probe(data->dev, ret,
+> > +				     "iio triggered buffer setup failed\n");
+> > +
+> >  	/*
+> >  	 * Attempt to grab an optional EOC IRQ - only the BMP085 has this
+> >  	 * however as it happens, the BMP085 shares the chip ID of BMP180
+> > diff --git a/drivers/iio/pressure/bmp280-spi.c b/drivers/iio/pressure/bmp280-spi.c
+> > index 62b4e58104cf..e5abee15950e 100644
+> > --- a/drivers/iio/pressure/bmp280-spi.c
+> > +++ b/drivers/iio/pressure/bmp280-spi.c
+> > @@ -40,14 +40,10 @@ static int bmp380_regmap_spi_read(void *context, const void *reg,
+> >  				  size_t reg_size, void *val, size_t val_size)
+> >  {
+> >  	struct spi_device *spi = to_spi_device(context);
+> > -	u8 rx_buf[4];
+> > +	u8 rx_buf[BME280_BURST_READ_BYTES + 1];
+> >  	ssize_t status;
+> >  
+> > -	/*
+> > -	 * Maximum number of consecutive bytes read for a temperature or
+> > -	 * pressure measurement is 3.
+> > -	 */
+> > -	if (val_size > 3)
+> > +	if (val_size > BME280_BURST_READ_BYTES)
+> >  		return -EINVAL;
+> >  
+> >  	/*
+> > diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
+> > index a3d2cd722760..756c644354c2 100644
+> > --- a/drivers/iio/pressure/bmp280.h
+> > +++ b/drivers/iio/pressure/bmp280.h
+> > @@ -304,6 +304,16 @@
+> >  #define BMP280_PRESS_SKIPPED		0x80000
+> >  #define BMP280_HUMIDITY_SKIPPED		0x8000
+> >  
+> > +/* Number of bytes for each value */
+> > +#define BMP280_NUM_PRESS_BYTES		3
+> > +#define BMP280_NUM_TEMP_BYTES		3
+> > +#define BME280_NUM_HUMIDITY_BYTES	2
+> > +#define BMP280_BURST_READ_BYTES		(BMP280_NUM_PRESS_BYTES + \
+> > +					 BMP280_NUM_TEMP_BYTES)
+> > +#define BME280_BURST_READ_BYTES		(BMP280_NUM_PRESS_BYTES + \
+> > +					 BMP280_NUM_TEMP_BYTES + \
+> > +					 BME280_NUM_HUMIDITY_BYTES)
+> > +
+> >  /* Core exported structs */
+> >  
+> >  static const char *const bmp280_supply_names[] = {
+> > @@ -397,13 +407,19 @@ struct bmp280_data {
+> >  	 */
+> >  	int sampling_freq;
+> >  
+> > +	/*
+> > +	 * Data to push to userspace triggered buffer. Up to 3 channels and
+> > +	 * s64 timestamp, aligned.
+> > +	 */
+> > +	s32 sensor_data[6] __aligned(8);
+> > +
+> >  	/*
+> >  	 * DMA (thus cache coherency maintenance) may require the
+> >  	 * transfer buffers to live in their own cache lines.
+> >  	 */
+> >  	union {
+> >  		/* Sensor data buffer */
+> > -		u8 buf[3];
+> > +		u8 buf[BME280_BURST_READ_BYTES];
+> >  		/* Calibration data buffers */
+> >  		__le16 bmp280_cal_buf[BMP280_CONTIGUOUS_CALIB_REGS / 2];
+> >  		__be16 bmp180_cal_buf[BMP180_REG_CALIB_COUNT / 2];
+> > @@ -425,6 +441,7 @@ struct bmp280_chip_info {
+> >  	const struct iio_chan_spec *channels;
+> >  	int num_channels;
+> >  	unsigned int start_up_time;
+> > +	const unsigned long *avail_scan_masks;
+> >  
+> >  	const int *oversampling_temp_avail;
+> >  	int num_oversampling_temp_avail;
+> > @@ -459,6 +476,8 @@ struct bmp280_chip_info {
+> >  	int (*read_humid)(struct bmp280_data *data, u32 *adc_humidity);
+> >  	int (*read_calib)(struct bmp280_data *data);
+> >  	int (*preinit)(struct bmp280_data *data);
+> > +
+> > +	irqreturn_t (*buffer_handler)(int irq, void *p);
+> >  };
+> >  
+> >  /* Chip infos for each variant */
+> 
 
