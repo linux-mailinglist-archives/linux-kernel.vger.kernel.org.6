@@ -1,224 +1,110 @@
-Return-Path: <linux-kernel+bounces-225676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4B1913399
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:58:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799D891339C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A06284461
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:58:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B051F22FCC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73241553B1;
-	Sat, 22 Jun 2024 11:57:55 +0000 (UTC)
-Received: from smtprelay01.ispgateway.de (smtprelay01.ispgateway.de [80.67.18.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A95152782;
+	Sat, 22 Jun 2024 12:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXDWWtzi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B2814C591;
-	Sat, 22 Jun 2024 11:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.67.18.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329FF14D290;
+	Sat, 22 Jun 2024 12:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719057475; cv=none; b=Rtc7zUCmiMKIKKrQkqXzyzkDUEm2NqkoGgtjI54Ore7E0hra2AaSJ5+ZNGTBqsXOxwdmi/oHCfg3S5sNtPCTkcibgpW0jv4ovPuG4vB+ePai3Y0JeuZ450vieutnatp75p+SO7Jc2XklR1fvIonurSdsXFFhqGZ3ooqJkNxi4bo=
+	t=1719057605; cv=none; b=kav+J8Lyr9vzNeYUBwrWevyYavBTA+HMGBPkh/xUM5hvUJkmKRcr1uUBL0ByiOA6i61/xhqoZuah6REgcgChFxd6rwe8sCOFAqO/E4zIC6+gzwRxfrPZEd4oly2U6sHP3eY26gJLDNLlFWXeABP9CSW7B7ETEKuQg5nDBPJ8s2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719057475; c=relaxed/simple;
-	bh=4nNz2jv+VOICXuXw2R1uGsao3nWrsCy0ZjQNa4eOHH0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZOrnFbti2DBaOVcbTgrLbp/8xqK4QWxhl8oOyTth0UpeAoq60e50hgJ5WI6LbV9QQYWdNQ4EsBkbd/jqKG3uq6n2RfH/GEOYM5zUJk9OApJXB1zvR6TB/FDqMXLPFziWNhZh3BMp4bKmaQgwgVMhYz871sxmbBL3QvO/rcSA63M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; arc=none smtp.client-ip=80.67.18.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
-Received: from [92.206.190.41] (helo=framework.lan)
-	by smtprelay01.ispgateway.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <git@apitzsch.eu>)
-	id 1sKzKz-000000005fV-1pf2;
-	Sat, 22 Jun 2024 13:55:21 +0200
-Message-ID: <86f8110e8edc24d0df035b77a1aa68422e48bde1.camel@apitzsch.eu>
-Subject: Re: [PATCH v4 2/3] leds: sy7802: Add support for Silergy SY7802
- flash LED controller
-From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Bjorn
- Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,  Trilok Soni
- <quic_tsoni@quicinc.com>, Kees Cook <kees@kernel.org>,
- linux-leds@vger.kernel.org,  devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-hardening@vger.kernel.org,
- linux-arm-msm@vger.kernel.org,  ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org
-Date: Sat, 22 Jun 2024 13:55:25 +0200
-In-Reply-To: <20240621102656.GK1318296@google.com>
-References: <20240616-sy7802-v4-0-789994180e05@apitzsch.eu>
-	 <20240616-sy7802-v4-2-789994180e05@apitzsch.eu>
-	 <20240621102656.GK1318296@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1719057605; c=relaxed/simple;
+	bh=pyfgeu1JnckemJikNKhvTErMfifG8MGL945+/jEU6Xc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ar/567xrKrxm3S2Bti1GyCyqB0VLkv0Te3uL6Wh3eHHp9HhyYQBw1saC9cVzhCNqXgufqUimVcsCRpHjLxDnA66PgsKllMOBGsFmLs4L4tFAPocsCdNk2DO/iPvJXzsyTFDhvpBCvBqdHtWmo0AYrToqIV4MK1t1Bz8y61OsCuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXDWWtzi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10E6C3277B;
+	Sat, 22 Jun 2024 12:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719057604;
+	bh=pyfgeu1JnckemJikNKhvTErMfifG8MGL945+/jEU6Xc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=YXDWWtzijQKAtZqCPg3hKl9q4wBXlYnOactGIvuq0VDMApyosX2s3zlaL2ZbGJN6a
+	 lsDFB6RdfUMeN/V0DtTsvFjvCAhGQwgjoQVQWjZ2DzG/N14kyT6F021aGYmwbPCuah
+	 Qz3GMhIYYE9jxaus/YPvINRb1Z8OUT2P5L4EIoCR+nZpYVyHFURKpWziTGN8tZSzZv
+	 ITQOtOh6CvswsEbhGoqNzAzMacvXx88fL9ie/sR4D3gUxTQH+B/1tD1aLTyMvB9UPF
+	 p31ED7CC4fiXN5OGIARlBqfR3bqQGTsJHHoCmYeinVwwOjDpHP6nDIqNLThVnRJezQ
+	 jVno89mGiMbsA==
+From: Roger Quadros <rogerq@kernel.org>
+Subject: [PATCH 0/2] arm: dts: ti: k3-am62-lp-sk: Add NAND controller and
+ overlay
+Date: Sat, 22 Jun 2024 14:59:55 +0300
+Message-Id: <20240622-am62lp-sk-nand-v1-0-caee496eaf42@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Df-Sender: YW5kcmVAYXBpdHpzY2guZXU=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALu8dmYC/x3MwQpAQBCA4VfRnE2tiQmvIodlBxOWdktK3t3m+
+ B3+/4EoQSVCmz0Q5NKoh08o8gzGxfpZUF0ykKHSMBHanWk7Ma7orXco7CrT1BMXPECKziCT3v+
+ w69/3AzIdixpgAAAA
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: srk@ti.com, praneeth@ti.com, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Roger Quadros <rogerq@kernel.org>, Nitin Yadav <n-yadav@ti.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=861; i=rogerq@kernel.org;
+ h=from:subject:message-id; bh=pyfgeu1JnckemJikNKhvTErMfifG8MGL945+/jEU6Xc=;
+ b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBmdrzBFrOPWhYLW766E7OaJD71Rxm0uol8ZkQ9B
+ z0Lc7sQMvuJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZna8wQAKCRDSWmvTvnYw
+ k7CAD/wJVnDzl6D62yI4jmXXpjEde1Bq9MCsdd+kvjQqThQnDlnWk3h9v4oH2VyhWXSbwIluVgR
+ K22lVdXzGYnlNiZ0S890oxIIaf4/d+ZutN8AU0eiEviUoHGxuUE9YSS+iugmcUjglL1A0R8tL6Q
+ +FM25JiwovH7HKfsK/7hWmT++bfKTAGLpi1Hdrme2Uhef5tIviww1OclJZljfWWHxJlqhjMnESf
+ Z2sjg00ShDRLJVQ51zdG2l2m1ZmZqWmBfYi7E9Y2pXORNPJebphHTh+JRGFcOo4+Cd9b8MkeVOa
+ ePMtgCLQYZ2gOYlxb9pcF145v7D9pwj2xxHIBj0Eg5E3WPU/giV8S/tupYEmbheX8uO0im8galR
+ lUURK2IlX+sSXGgrFUC2GYgHdAHOj6EbmXF9vALwFG31yTsUhNxeLsif/vtFJpvXEsaeUYanBBP
+ m2LcocIaiSI8wlfAViXTUuIs6F506Em3fxkNczJ8yWW0DxG2hZJ/ywuRQ7p3DIcBCb1Qo8TcuL4
+ w/muEULKiSRseMVW70thCeKwK2bEFUbNhgMfhVowOYJCKrnGa8Hda8wL8519leQpsz3lXoXn/Ty
+ LyHuOicjer77F6ZOdNycWTwfGvL8xTj9HFFEVc8W/qwiwZDY/qqmAQ8+owLAT8KDE4zFZmRYyUJ
+ YS7qlNIOSon7O4g==
+X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
+ fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
 
-Hello Lee,
+Hi,
 
-Am Freitag, dem 21.06.2024 um 11:26 +0100 schrieb Lee Jones:
-> On Sun, 16 Jun 2024, Andr=C3=A9 Apitzsch via B4 Relay wrote:
->=20
-> > From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> >=20
-> > The SY7802 is a current-regulated charge pump which can regulate
-> > two
-> > current levels for Flash and Torch modes.
-> >=20
-> > It is a high-current synchronous boost converter with 2-channel
-> > high
-> > side current sources. Each channel is able to deliver 900mA
-> > current.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> > ---
-> > =C2=A0drivers/leds/flash/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 11 +
-> > =C2=A0drivers/leds/flash/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
-=C2=A0 1 +
-> > =C2=A0drivers/leds/flash/leds-sy7802.c | 542
-> > +++++++++++++++++++++++++++++++++++++++
-> > =C2=A03 files changed, 554 insertions(+)
->=20
-> Generally very nice.
->=20
-> Just a couple of teensy nits to fix then add my and resubmit please.
->=20
-> Acked-by: Lee Jones <lee@kernel.org>
->=20
-> > [...]
-> > diff --git a/drivers/leds/flash/leds-sy7802.c
-> > b/drivers/leds/flash/leds-sy7802.c
-> > new file mode 100644
-> > index 000000000000..c4bea55a62d0
-> > --- /dev/null
-> > +++ b/drivers/leds/flash/leds-sy7802.c
-> > @@ -0,0 +1,542 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + * Silergy SY7802 flash LED driver with I2C interface
->=20
-> "an I2C interface"
->=20
-> Or
->=20
-> "I2C interfaces"
->=20
-> > + * Copyright 2024 Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> > + */
-> > +
-> > +#include <linux/gpio/consumer.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/led-class-flash.h>
-> > +#include <linux/module.h>
-> > +#include <linux/mutex.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/regulator/consumer.h>
-> > +
-> > +#define SY7802_MAX_LEDS 2
-> > +#define SY7802_LED_JOINT 2
-> > +
-> > +#define SY7802_REG_ENABLE		0x10
-> > +#define SY7802_REG_TORCH_BRIGHTNESS	0xa0
-> > +#define SY7802_REG_FLASH_BRIGHTNESS	0xb0
-> > +#define SY7802_REG_FLASH_DURATION	0xc0
-> > +#define SY7802_REG_FLAGS		0xd0
-> > +#define SY7802_REG_CONFIG_1		0xe0
-> > +#define SY7802_REG_CONFIG_2		0xf0
-> > +#define SY7802_REG_VIN_MONITOR		0x80
-> > +#define SY7802_REG_LAST_FLASH		0x81
-> > +#define SY7802_REG_VLED_MONITOR		0x30
-> > +#define SY7802_REG_ADC_DELAY		0x31
-> > +#define SY7802_REG_DEV_ID		0xff
-> > +
-> > +#define SY7802_MODE_OFF		0
-> > +#define SY7802_MODE_TORCH	2
-> > +#define SY7802_MODE_FLASH	3
-> > +#define SY7802_MODE_MASK	GENMASK(1, 0)
-> > +
-> > +#define SY7802_LEDS_SHIFT	3
-> > +#define SY7802_LEDS_MASK(_id)	(BIT(_id) << SY7802_LEDS_SHIFT)
-> > +#define SY7802_LEDS_MASK_ALL	(SY7802_LEDS_MASK(0) |
-> > SY7802_LEDS_MASK(1))
-> > +
-> > +#define SY7802_TORCH_CURRENT_SHIFT	3
-> > +#define SY7802_TORCH_CURRENT_MASK(_id) \
-> > +	(GENMASK(2, 0) << (SY7802_TORCH_CURRENT_SHIFT * (_id)))
-> > +#define SY7802_TORCH_CURRENT_MASK_ALL \
-> > +	(SY7802_TORCH_CURRENT_MASK(0) |
-> > SY7802_TORCH_CURRENT_MASK(1))
-> > +
-> > +#define SY7802_FLASH_CURRENT_SHIFT	4
-> > +#define SY7802_FLASH_CURRENT_MASK(_id) \
-> > +	(GENMASK(3, 0) << (SY7802_FLASH_CURRENT_SHIFT * (_id)))
-> > +#define SY7802_FLASH_CURRENT_MASK_ALL \
-> > +	(SY7802_FLASH_CURRENT_MASK(0) |
-> > SY7802_FLASH_CURRENT_MASK(1))
-> > +
-> > +#define SY7802_TIMEOUT_DEFAULT_US	512000U
-> > +#define SY7802_TIMEOUT_MIN_US		32000U
-> > +#define SY7802_TIMEOUT_MAX_US		1024000U
-> > +#define SY7802_TIMEOUT_STEPSIZE_US	32000U
-> > +
-> > +#define SY7802_TORCH_BRIGHTNESS_MAX 8
-> > +
-> > +#define SY7802_FLASH_BRIGHTNESS_DEFAULT	14
-> > +#define SY7802_FLASH_BRIGHTNESS_MIN	0
-> > +#define SY7802_FLASH_BRIGHTNESS_MAX	15
-> > +#define SY7802_FLASH_BRIGHTNESS_STEP	1
-> > +
-> > +#define SY7802_FLAG_TIMEOUT			BIT(0)
-> > +#define SY7802_FLAG_THERMAL_SHUTDOWN		BIT(1)
-> > +#define SY7802_FLAG_LED_FAULT			BIT(2)
-> > +#define SY7802_FLAG_TX1_INTERRUPT		BIT(3)
-> > +#define SY7802_FLAG_TX2_INTERRUPT		BIT(4)
-> > +#define SY7802_FLAG_LED_THERMAL_FAULT		BIT(5)
-> > +#define SY7802_FLAG_FLASH_INPUT_VOLTAGE_LOW	BIT(6)
-> > +#define SY7802_FLAG_INPUT_VOLTAGE_LOW		BIT(7)
-> > +
-> > +#define SY7802_CHIP_ID	0x51
-> > +
-> > +static const struct reg_default sy7802_regmap_defs[] =3D {
-> > +	{ SY7802_REG_ENABLE, SY7802_LEDS_MASK_ALL },
-> > +	{ SY7802_REG_TORCH_BRIGHTNESS, 0x92 },
-> > +	{ SY7802_REG_FLASH_BRIGHTNESS,
-> > SY7802_FLASH_BRIGHTNESS_DEFAULT |
-> > +		SY7802_FLASH_BRIGHTNESS_DEFAULT <<
-> > SY7802_FLASH_CURRENT_SHIFT },
-> > +	{ SY7802_REG_FLASH_DURATION, 0x6f },
-> > +	{ SY7802_REG_FLAGS, 0x0 },
-> > +	{ SY7802_REG_CONFIG_1, 0x68 },
-> > +	{ SY7802_REG_CONFIG_2, 0xf0 },
->=20
-> Not your fault, but this interface is frustrating since we have no
-> idea
-> what these register values mean.=C2=A0 IMHO, they should be defined and
-> ORed
-> together in some human readable way.
->=20
-> I say that it's not your fault because I see that this is the most
-> common usage.
->=20
+This series adds GPMC and ELM controller nodes to AM62 SoC.
+It also adds NAND overlay file for AM62-LP-SK EVM.
 
-I don't know how to interpret some bits of the default values. I don't
-have the documentation and changing the bits and observing the behavior
-of the device also didn't help.
+Signed-off-by: Roger Quadros <rogerq@kernel.org>
+---
+Nitin Yadav (1):
+      arm: dts: ti: k3-am62: Add GPMC and ELM nodes
 
-Should I remove the entries from sy7802_regmap_defs, which have values
-that we don't fully understand?
+Roger Quadros (1):
+      arm64: dts: ti: am62-lp-sk: Add overlay for NAND expansion card
 
-Regards,
-Andr=C3=A9
+ arch/arm64/boot/dts/ti/Makefile                |   1 +
+ arch/arm64/boot/dts/ti/k3-am62-lp-sk-nand.dtso | 116 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts       |   4 +
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi       |  29 +++++++
+ arch/arm64/boot/dts/ti/k3-am62.dtsi            |   2 +
+ 5 files changed, 152 insertions(+)
+---
+base-commit: 4031a2866a9f0f5c585cfee65b3fb5ab17c95276
+change-id: 20240622-am62lp-sk-nand-e6d5098f616b
+
+Best regards,
+-- 
+Roger Quadros <rogerq@kernel.org>
+
 
