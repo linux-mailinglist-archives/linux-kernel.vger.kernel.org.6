@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-225491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90646913138
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 02:59:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16828913140
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 03:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54439282DD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:59:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50B12837D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 01:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CB323A0;
-	Sat, 22 Jun 2024 00:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E2C4404;
+	Sat, 22 Jun 2024 01:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e6p6yNc+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ne02Yyz4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABEEA5F;
-	Sat, 22 Jun 2024 00:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD84184D
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 01:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719017957; cv=none; b=Q/HTJaJ5AmNp3AMNc03BhS4ahc0XBCnha7BPtBCkVzMT/lCY6t4Gu22Vch9Ze/IGdYhrto44h6fbspMIBMTui58HltXQLZ0oqwXhf/CsaAHt8MsxPTGyFlNyK7s1ethbgxCjVkFuR+wW51E0nOKKcHsTKvtbF3b88tsJDplLEYc=
+	t=1719018270; cv=none; b=Cmrr+FpdlQ+uoAD1IIiVUFqfFcDYP7dQfVdoJXtzphVoxzaHkoILNCqBgBhNzr1AaVOnknu2EwjDzcrPySXteBR27WtUbleh6amaJg76AcvJIe9KKdTpv0T6x6OwKo+mMGWy/S8J6JZf2rq+Ca4A0SjfnDmaw8vEbhpswH+hcmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719017957; c=relaxed/simple;
-	bh=FQ1S0HDz0vGglXBuV05rXrXWvmAMYzorAlIge6VS7nE=;
+	s=arc-20240116; t=1719018270; c=relaxed/simple;
+	bh=JWw48IU2jpmb4o2/RbQzk4Uqpd13GCQUiOW0AOFWF+s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=enx6BJjFAUqP+EyfpmwpGkR925YuibQ5EwvmsJpJ06jSrwEPmPSFkZqUofdhZ0rVOnUXLfx7HwwVOOqMa7Jx2ls/gL8Xf5po7xSlYMff4FyD2raJndJ5/I5seb9UvrmlYyBwgLAmCKT/Eoj3jzJqnFyQIgyCiW2/Dt3auBAh4cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e6p6yNc+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B7ECC2BBFC;
-	Sat, 22 Jun 2024 00:59:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9QF8/ljqX85Lx0kqZ1iXH6g9kGgr74vXqJ77s2uHGeNsDIq9yVZhRXVewMqZ+IyD1xralsDvXIaOdkezZ+WnzFRXzR1YXGGxaxqkHGn3joTS+TELYkIQSSfogjgsj9y7G1UkJhH3cATpPcDtAcbGvPUeDFjJlFqcjJMS0IuJvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ne02Yyz4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 169A5C2BBFC;
+	Sat, 22 Jun 2024 01:04:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719017956;
-	bh=FQ1S0HDz0vGglXBuV05rXrXWvmAMYzorAlIge6VS7nE=;
+	s=k20201202; t=1719018270;
+	bh=JWw48IU2jpmb4o2/RbQzk4Uqpd13GCQUiOW0AOFWF+s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e6p6yNc+6wYkOLheeXy5wx7XnlxNGY6XrTs3XFzZ11RSX/pOWaja5pXoi0pwvnqjl
-	 UBZ8Mti2dRn44UvUN6IbKwjKVl1EcdcrZRIuJDmF2uNbEIuJDCX7F8fKxqlFULHNuZ
-	 /VjBZb/gaKMZ2mANPL8NOLQXVIJ8Pxdz4s7jIez7FPVEvWfwUhpEFmkOQLqIYjRr0H
-	 UnFYkPw7qd8nh52b6hpwuBKAK2yEfdipX9QQowu0nn7sdgcXaGiAY2NUF5POlnpZtA
-	 aurDTD+pwSv7PEszXP8OVMbz+B7nPd1ZzGOCn62M4/B18FeivW2GqgNCg6l22lRy+i
-	 xn0moK+0q3hmw==
-Date: Sat, 22 Jun 2024 08:45:16 +0800
+	b=ne02Yyz4Z2nvz+f9l3zlP3eianjm65KKdJYkH97EmKAMwH+ULqhTC1i0fPZLc2DvF
+	 moUrtKUdAB71jTwCszdMT6TGpdzxDmWv6+8QXqkvyqUUT8pjevgDpHzlqLcKBM3lE9
+	 VWun6ZLcbSftlrcb6Wsc7FDEsFlBVDERrew8NgySyYowKQ1zxHbzCMNfQ/vXKneniC
+	 UTHqExFGOD5LeUI7Y+Zlqb1nx9OxOgC/fFR8257qj6Z7ZmB4y5dT+6ia+oTXnsUd0e
+	 6nM9GnE0OtTmxKK7Ru44I/TXL0HecKNTHJErFSUFvuUZwIvzVWaUkTv+cbfS+vUEjq
+	 q/sVz20FEmjOg==
+Date: Sat, 22 Jun 2024 08:50:30 +0800
 From: Jisheng Zhang <jszhang@kernel.org>
 To: Charlie Jenkins <charlie@rivosinc.com>
 Cc: Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Ard Biesheuvel <ardb@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Samuel Holland <samuel.holland@sifive.com>,
 	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH] riscv: enable HAVE_ARCH_STACKLEAK
-Message-ID: <ZnYenFigMU4Lxa0K@xhacker>
-References: <20240617123029.723-1-jszhang@kernel.org>
- <ZnX6YtFGfXd0ixwR@ghost>
+	Anton Blanchard <antonb@tenstorrent.com>,
+	Cyril Bur <cyrilbur@tenstorrent.com>
+Subject: Re: [PATCH 1/6] riscv: Improve exception and system call latency
+Message-ID: <ZnYf1pGhmETeR8xT@xhacker>
+References: <20240616170553.2832-1-jszhang@kernel.org>
+ <20240616170553.2832-2-jszhang@kernel.org>
+ <ZnYXoSDCeQK0Lcz8@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,95 +63,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnX6YtFGfXd0ixwR@ghost>
+In-Reply-To: <ZnYXoSDCeQK0Lcz8@ghost>
 
-On Fri, Jun 21, 2024 at 03:10:42PM -0700, Charlie Jenkins wrote:
-> On Mon, Jun 17, 2024 at 08:30:29PM +0800, Jisheng Zhang wrote:
-> > Add support for the stackleak feature. Whenever the kernel returns to user
-> > space the kernel stack is filled with a poison value.
+On Fri, Jun 21, 2024 at 05:15:29PM -0700, Charlie Jenkins wrote:
+> On Mon, Jun 17, 2024 at 01:05:48AM +0800, Jisheng Zhang wrote:
+> > From: Anton Blanchard <antonb@tenstorrent.com>
 > > 
-> > At the same time, disables the plugin in EFI stub code because EFI stub
-> > is out of scope for the protection.
+> > Many CPUs implement return address branch prediction as a stack. The
+> > RISCV architecture refers to this as a return address stack (RAS). If
+> > this gets corrupted then the CPU will mispredict at least one but
+> > potentally many function returns.
 > > 
-> > Tested on qemu and milkv duo:
-> > / # echo STACKLEAK_ERASING > /sys/kernel/debug/provoke-crash/DIRECT
-> > [   38.675575] lkdtm: Performing direct entry STACKLEAK_ERASING
-> > [   38.678448] lkdtm: stackleak stack usage:
-> > [   38.678448]   high offset: 288 bytes
-> > [   38.678448]   current:     496 bytes
-> > [   38.678448]   lowest:      1328 bytes
-> > [   38.678448]   tracked:     1328 bytes
-> > [   38.678448]   untracked:   448 bytes
-> > [   38.678448]   poisoned:    14312 bytes
-> > [   38.678448]   low offset:  8 bytes
-> > [   38.689887] lkdtm: OK: the rest of the thread stack is properly erased
+> > There are two issues with the current RISCV exception code:
 > > 
-> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> > - We are using the alternate link stack (x5/t0) for the indirect branch
+> >   which makes the hardware think this is a function return. This will
+> >   corrupt the RAS.
+> > 
+> > - We modify the return address of handle_exception to point to
+> >   ret_from_exception. This will also corrupt the RAS.
+> > 
+> > Testing the null system call latency before and after the patch:
+> > 
+> > Visionfive2 (StarFive JH7110 / U74)
+> > baseline: 189.87 ns
+> > patched:  176.76 ns
+> > 
+> > Lichee pi 4a (T-Head TH1520 / C910)
+> > baseline: 666.58 ns
+> > patched:  636.90 ns
+> > 
+> > Just over 7% on the U74 and just over 4% on the C910.
+> > 
+> > Signed-off-by: Anton Blanchard <antonb@tenstorrent.com>
+> > Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
+> 
+> Do you need to sign this off since you're sending this Jisheng?
+
+will do in newer version. Thanks for reminding.
+
+I'm sending out this for reference since we touched the same
+asm source code.
+> 
 > > ---
-> >  arch/riscv/Kconfig                    | 1 +
-> >  arch/riscv/kernel/entry.S             | 4 ++++
-> >  drivers/firmware/efi/libstub/Makefile | 3 ++-
-> >  3 files changed, 7 insertions(+), 1 deletion(-)
+> >  arch/riscv/kernel/entry.S      | 17 ++++++++++-------
+> >  arch/riscv/kernel/stacktrace.c |  4 ++--
+> >  2 files changed, 12 insertions(+), 9 deletions(-)
 > > 
-> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > index 0525ee2d63c7..9cbfdffec96c 100644
-> > --- a/arch/riscv/Kconfig
-> > +++ b/arch/riscv/Kconfig
-> > @@ -118,6 +118,7 @@ config RISCV
-> >  	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
-> >  	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
-> >  	select HAVE_ARCH_SECCOMP_FILTER
-> > +	select HAVE_ARCH_STACKLEAK
-> 
-> When this is selected, stackleak.h include
-> arch/riscv/include/asm/thread_info.h without sizes.h and I hit:
-> 
-> ./arch/riscv/include/asm/thread_info.h:30:33: error: ‘SZ_4K’ undeclared here (not in a function)
->    30 | #define OVERFLOW_STACK_SIZE     SZ_4K
->       |                                 ^~~~~
-> 
-> Adding "#include <linux/sizes.h>" to thread_info.h resolves the issue.
-> I am testing this based on 6.10-rc4. Did you encounter this?
-
-I didn't meet this kind of compiler error when testing. Mind
-to share your .config file? It looks strange.
-
-> 
-> - Charlie
-> 
-> >  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
-> >  	select HAVE_ARCH_TRACEHOOK
-> >  	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
 > > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> > index 68a24cf9481a..80ff55a26d13 100644
+> > index 68a24cf9481a..c933460ed3e9 100644
 > > --- a/arch/riscv/kernel/entry.S
 > > +++ b/arch/riscv/kernel/entry.S
-> > @@ -130,6 +130,10 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
+> > @@ -88,7 +88,6 @@ SYM_CODE_START(handle_exception)
+> >  	call riscv_v_context_nesting_start
 > >  #endif
-> >  	bnez s0, 1f
+> >  	move a0, sp /* pt_regs */
+> > -	la ra, ret_from_exception
 > >  
-> > +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> > +	call	stackleak_erase_on_task_stack
-> > +#endif
+> >  	/*
+> >  	 * MSB of cause differentiates between
+> > @@ -97,7 +96,8 @@ SYM_CODE_START(handle_exception)
+> >  	bge s4, zero, 1f
+> >  
+> >  	/* Handle interrupts */
+> > -	tail do_irq
+> > +	call do_irq
+> > +	j ret_from_exception
+> >  1:
+> >  	/* Handle other exceptions */
+> >  	slli t0, s4, RISCV_LGPTR
+> > @@ -105,11 +105,14 @@ SYM_CODE_START(handle_exception)
+> >  	la t2, excp_vect_table_end
+> >  	add t0, t1, t0
+> >  	/* Check if exception code lies within bounds */
+> > -	bgeu t0, t2, 1f
+> > -	REG_L t0, 0(t0)
+> > -	jr t0
+> > -1:
+> > -	tail do_trap_unknown
+> > +	bgeu t0, t2, 3f
+> > +	REG_L t1, 0(t0)
+> > +2:	jalr t1
+> > +	j ret_from_exception
+> > +3:
 > > +
-> >  	/* Save unwound kernel stack pointer in thread_info */
-> >  	addi s0, sp, PT_SIZE_ON_STACK
-> >  	REG_S s0, TASK_TI_KERNEL_SP(tp)
-> > diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> > index 06f0428a723c..3a9521c57641 100644
-> > --- a/drivers/firmware/efi/libstub/Makefile
-> > +++ b/drivers/firmware/efi/libstub/Makefile
-> > @@ -28,7 +28,8 @@ cflags-$(CONFIG_ARM)		+= -DEFI_HAVE_STRLEN -DEFI_HAVE_STRNLEN \
-> >  				   -DEFI_HAVE_MEMCHR -DEFI_HAVE_STRRCHR \
-> >  				   -DEFI_HAVE_STRCMP -fno-builtin -fpic \
-> >  				   $(call cc-option,-mno-single-pic-base)
-> > -cflags-$(CONFIG_RISCV)		+= -fpic -DNO_ALTERNATIVE -mno-relax
-> > +cflags-$(CONFIG_RISCV)		+= -fpic -DNO_ALTERNATIVE -mno-relax \
-> > +				   $(DISABLE_STACKLEAK_PLUGIN)
-> >  cflags-$(CONFIG_LOONGARCH)	+= -fpie
+> 
+> The whitespace is odd here, but nonetheless:
+> 
+> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+> 
+> > +	la t1, do_trap_unknown
+> > +	j 2b
+> >  SYM_CODE_END(handle_exception)
+> >  ASM_NOKPROBE(handle_exception)
 > >  
-> >  cflags-$(CONFIG_EFI_PARAMS_FROM_FDT)	+= -I$(srctree)/scripts/dtc/libfdt
+> > diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
+> > index 528ec7cc9a62..5eb3d135b717 100644
+> > --- a/arch/riscv/kernel/stacktrace.c
+> > +++ b/arch/riscv/kernel/stacktrace.c
+> > @@ -16,7 +16,7 @@
+> >  
+> >  #ifdef CONFIG_FRAME_POINTER
+> >  
+> > -extern asmlinkage void ret_from_exception(void);
+> > +extern asmlinkage void handle_exception(void);
+> >  
+> >  static inline int fp_is_valid(unsigned long fp, unsigned long sp)
+> >  {
+> > @@ -70,7 +70,7 @@ void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
+> >  			fp = frame->fp;
+> >  			pc = ftrace_graph_ret_addr(current, NULL, frame->ra,
+> >  						   &frame->ra);
+> > -			if (pc == (unsigned long)ret_from_exception) {
+> > +			if (pc == (unsigned long)handle_exception) {
+> >  				if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+> >  					break;
+> >  
 > > -- 
 > > 2.43.0
 > > 
