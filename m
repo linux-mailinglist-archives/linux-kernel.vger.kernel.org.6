@@ -1,78 +1,105 @@
-Return-Path: <linux-kernel+bounces-225745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90ED9134C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:21:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E199134D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779F82847BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:21:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F06D1F21E9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47FA170822;
-	Sat, 22 Jun 2024 15:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E972170821;
+	Sat, 22 Jun 2024 15:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5HdS9RC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TiC6xX/q"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E64316FF4A;
-	Sat, 22 Jun 2024 15:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2161CB660;
+	Sat, 22 Jun 2024 15:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719069672; cv=none; b=lN9N6COG4YDqZyaC0FnaGRT5b8ZJUkVUOEETMY+Svrau0/o6gtLEuVri9WZIIkJIV2mElcTdAA1BA12GoVF22Lm9XojkmywGACSvddi4daPyn9hoOPz5Ezay/fOhJlh/SzAVUIWY+iP+VLzWeK4ZIMehorlRmKsVr91uIWLaQMw=
+	t=1719069908; cv=none; b=sc2ELyi3pAekSNnKltqDLwgok5N6gc+aLrlrwtgrdBqO8Wijy5m7/o97Z0GfFOgmd6vrNtLc/tmaFtGfPBVteLmm2jNA39MbWwpbZog3P2EKZiGWh5f+vDZfeoJrNgCz9/V3sdEpBYrl5apqgNu6vz5j6LgKfw6fkJw8WtOmcCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719069672; c=relaxed/simple;
-	bh=ig4B8urytXNJAD4nlBpdcNFAnbL+q4t3qP1BQdXlWG0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LSIeyEV2FdSoSFYIoCbkwfG0BKBJ9/OTH5889aJBEdCvifcRTiDW8vK6i/pvZeYmb9OZ+zpS9SBG8crzZsd0yciwBpOhAjKQ+uMuVm4GziicFlnJw/jPXMdD0CV557C5hF9fpJc88noENmVOlXQqWZYmFeoF/a/yCfttd68PohI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5HdS9RC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0BC54C3277B;
-	Sat, 22 Jun 2024 15:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719069672;
-	bh=ig4B8urytXNJAD4nlBpdcNFAnbL+q4t3qP1BQdXlWG0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=N5HdS9RC9axy8t+gvymsbcmRH+HuFFFL9Cuid/fH0NpcIOpud7fTTjlYXRceCp3KM
-	 B2L56YietEDZXYSNAwjVSXRExbUfQ7e7z94pp/vG51SSZsYY/Dt7i294lMIFQpyJiY
-	 DJM5I5f1ChMvlqmFFwyoXY/NjsPJlcF8n2qWdLUEm9tkLAKjvlf1pchbn5/uLWGwNp
-	 921J7iI+lDEbHEQnNfDQIGQXuGcbv1yvXY5MfKeN/T4hW28AW8NYvwv7wvKnQWluTk
-	 JiBg3ORDO8lEoNUJMIyuXgSkmPyec/CQdGcZJO3ofSL0cahXcomPCauZtEiJWd7vO1
-	 X0TGuBpioz22Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F3E32E7C4C8;
-	Sat, 22 Jun 2024 15:21:11 +0000 (UTC)
-Subject: Re: [GIT PULL] LoongArch fixes for v6.10-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240622073206.1578052-1-chenhuacai@loongson.cn>
-References: <20240622073206.1578052-1-chenhuacai@loongson.cn>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240622073206.1578052-1-chenhuacai@loongson.cn>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.10-2
-X-PR-Tracked-Commit-Id: d0a1c07739e1b7f74683fe061545669156d102f2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d4ba3313e84dfcdeb92a13434a2d02aad5e973e1
-Message-Id: <171906967199.9703.9586579152126681197.pr-tracker-bot@kernel.org>
-Date: Sat, 22 Jun 2024 15:21:11 +0000
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Huacai Chen <chenhuacai@loongson.cn>
+	s=arc-20240116; t=1719069908; c=relaxed/simple;
+	bh=fUdDu2yoZ6+wNUWrwToAORtf2lLzJ28mpOYZoq94kRY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=neLcfQLlBrx37q32apQ6HXbXKBk2fHXrYeu0vykpGM8RdwmkX060/cedeODZY2VJJPKsOJMRTPTkqRFALgIn99fBHpwkeLdFtJt0vSsQSCklffwBkx6cTIlwMEzI0bweTXE5WVChnkMZERXWoh8654UdvxoXvVdJSdrFgK6I7j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TiC6xX/q; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719069870; x=1719674670; i=markus.elfring@web.de;
+	bh=WECqVRv0TZb8C3EeVUwSaylaWepEfohQXMBJFu7n5+E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=TiC6xX/qTiwXM7MccOqGzXJiM8o/dpIoCuaAGXGIu0lL3Z2+vQpe3lZNIgE2X7kS
+	 thJmUMEfvw1L2Brpg0vdQTpRABf137nKUrUTIWpAfhnCsgdIDftlMZZmWOJq1cQpy
+	 pNndir5cSc/kwWMvXonAnP9E9evOd4aV43k46dyNYeajDWrulZOTcHRPjTZtrkuAn
+	 AySA9dV5A2ClcTF+y9T4r6vChAFOpepBsiHdp0TJfOO2CknUodTj9OgM+O80n8Hai
+	 HHt3QZpVEil/Ho102vR/h+rf9qp7czrhCSRg1YVPXRr4siKGiOBkvcJE0zppEcaNh
+	 ++pne4RzU+7MgZjIkw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M6091-1sIZtd2lpL-00DHjP; Sat, 22
+ Jun 2024 17:24:30 +0200
+Message-ID: <bb23a7b0-dce6-4359-995a-2c12cf30cfff@web.de>
+Date: Sat, 22 Jun 2024 17:24:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Ma Ke <make24@iscas.ac.cn>, linux-aspeed@lists.ozlabs.org,
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Joel Stanley <joel@jms.id.au>, Neal Liu <neal_liu@aspeedtech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240622095618.1890093-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] usb: gadget: aspeed_udc: validate endpoint index for ast
+ udc
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240622095618.1890093-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:yIDH9MnOrIf0xCjyLzgV99kn2dkVnUILL8Ig2mwCXjJ1DMn9JRf
+ hwtJM/HMYJDzvWmRpWzeOVbgEWfOmdeqpLtVm6dy+WImF6+hxuh41iczAODFZj+4EjHeylD
+ RWJTXrMJlJBKN5/aXx+aHfGF1vixbncCTvj6umHs2Vf0oeLQkx7xdhUDyhs9scmvZz+rlIc
+ KrfidPgw7I1m/gpW/02/Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BtDLJqtpZP4=;YBAa051E6UtkLYeabXtx0bDWGu/
+ O3XQy4Cw5LGx+hpgnHBQF7I1hj0zHDYrqkcxs0vfCcNBZ7MWjhJDV4XzO9n2OSExZMaCegZUX
+ vEaznDvYvvI4Q6kIunFKmKtqeedik/tYOq1iyfwndJz0UB9YkQbpNQkg6SZW8rQ/uhX9V+fsU
+ 0Oj9GMYfVFceTioDSTBp5MPOcXQGkSc+FFKsQsAvRSr9+OXiQpZgOFlZnZNFAvMvsYvMc6Lik
+ KkTndu3bUBGdu1XsHLV7L1t8NlxoAZn5/666WLlY459CHusNOwHSf18g2hHo+sbSN9OoG5jjw
+ X9kcDRBXaEJUCdONvGS/rQQpp5x8c+MP7JBEH6wkIhBRd7CytNABNLyUMKPURBPcRWztrY2AE
+ PHWbs3SqMnpm2WFqOgjfoyTGWZ427jhDnJRzgZANAkD2Vv6oksEp0dgeYP8GOJ5dnyJnUluhw
+ 3XaKyDVr7pfVxNcBcEcH6Umm1ypb22Mk5FZSfdT1MDgyJ55MNXHPMHHZNq0onLkY53unuZP/1
+ kU68XdYcktGMkNnebqcZBQzhe1ZR4yJztjIPCmhGj2l/ttozoYQ11kBiHZbmmTXIAFTlG8Enh
+ EzxzstMLsev/GzqPD1idi9+8P5gGvwoPTkStZ5j5a6NsIefh/fA5OL9PLiZuAK5e0sZlpMFHi
+ kYlqQLs6SP0cOZh46dqHIPv2XP+bLl3u6e+l0MN0lofv5o7lWtXgjbFo+uwKCbnSNKIgGQNeL
+ w+x9kUlgGE885pW5DbqiSdSJufJZfWP9pKdjggWsQ91JBcumc1hs0bnRzd1P+hJ/1D6rS3Jd8
+ 5GmvR0yOUG+rLGwqv83NIZxwadLxHplV9kJP2OiEhni9g=
 
-The pull request you sent on Sat, 22 Jun 2024 15:32:06 +0800:
+> We should verify the bound of the array to assure that host
+> may not manipulate the index to point past endpoint array.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.10-2
+* Can an imperative wording be more desirable for such a change descriptio=
+n?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n94
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d4ba3313e84dfcdeb92a13434a2d02aad5e973e1
+* Will any tags (like =E2=80=9CFixes=E2=80=9D) become relevant here?
 
-Thank you!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Regards,
+Markus
 
