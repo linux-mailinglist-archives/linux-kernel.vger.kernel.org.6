@@ -1,136 +1,154 @@
-Return-Path: <linux-kernel+bounces-225519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC689131B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 04:55:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E2D29131BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 05:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543DB1C21B74
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 02:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591F328690A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 03:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDFE8494;
-	Sat, 22 Jun 2024 02:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5291758E;
+	Sat, 22 Jun 2024 03:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="AGN9EyJZ"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TC6Z4utj"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A34A5F
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 02:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3940615E8B
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719024933; cv=none; b=gQBObjHoHhPDfF4BnzWsYVZQ5wp2uiBGII0dUTc8KCjIddNUHwYyiqLFNV7Tli/4XU/kFPgTMrlYeb3+Vn5f5F5a55lLUQ6HWfgnrmqprm8aWwCde1KNuim9sTbJIHnomWkuDrl6oTYNbia0dVJp2TR0+wQ+moZk6yKYbyolYFU=
+	t=1719025395; cv=none; b=Qd29kV/iqV9dd7SAvOW5wtpoTeztdNqz/a5xbmnqOxOTSSuMBxbu6ofXK1NzHajae4DBorJJmU4rx1mtQhFzUscTUTXYQo42OIujceUmtvlS4Kr1NJ5Ra1E0S8Ha7vtTloLX7ozYp4eYnEqVNFdzAApNXZ+dVbXyxVEjRmwO+XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719024933; c=relaxed/simple;
-	bh=cFm3oU+O3ftwhE1/YyR//xmiv64Jhxl0bY53bUEjhkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ii2TZvF25LLuUJiDrN7UByJw/OyI8mz+IiomGpLPbxiug6rY6psTw+1a2TUS7ZZq0awNTKokd3GaatsD9PGvZ8JR+f7mRb0+K1YfNJct0wave1rRUcjjHpTtFaAlPMBscoz9Mmc6FOi7vGD/kkGGwD1VjWoiNdF/Ewa5N/FNsq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=AGN9EyJZ; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c7cd2f077fso450511a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 19:55:31 -0700 (PDT)
+	s=arc-20240116; t=1719025395; c=relaxed/simple;
+	bh=EHYQtmjxsgdG8M8GNOiN5E9bImvjxps5ecgF0RFLFl4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FYvPQq4DxUzu4KkFuSSP5QHG2lY6Eg6mDNKspNxKt7OvTn1uJvSqWC180R51i1KzE2Ro32fCBQknwYJyvXuk/azO9PQr6a1NV0DUnJQFgqgw2YHokhv8GaeDLQvME5JpWMIr3Kq40ZBzDaXBZtjcoqc7JsfYVlSeBPyvq3Ma78w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TC6Z4utj; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70667943931so179905b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:03:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1719024931; x=1719629731; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwP5SXjNhIZlkDmJOYjqFnuGdCe4xjq6ghxO1lquneU=;
-        b=AGN9EyJZ6zI8ePpVhW9aZVfYfCyf3297kIp7c8rqg77s4Fej2BDXdAhtuOrHWMwtGJ
-         0wwoSzS6zQytMdjGeNzDHUvaZLWrbBFSu/giWvL3Yu5dDYA71NG1tQOals1g2VBWE2Ld
-         XlBvMrKNsjTTO04egQFy3sr/cUJZP+DqSut1BqMTUFLDdb9QU1xcXg/GBwAH5b7o4sLv
-         /tTIpksicDQMXa0nqN8Eu6A2gWUOGZfP5GVpmHdabs9UxlNSk9agOpZA6B0dZHnLnNec
-         J7pxcn1EnZpnSPPxc9r0VKsxhjd3v28d0xS775Gthp3pVGLug6WNKmuEGjM43fifdTfr
-         OKoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719024931; x=1719629731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719025393; x=1719630193; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LwP5SXjNhIZlkDmJOYjqFnuGdCe4xjq6ghxO1lquneU=;
-        b=OXPvr2AIZtNpYI3z9/RVQ0KSW/Y1g1TqJwOzTZ1WLYt8/QBBcvM68cHqw9ugmNbWgi
-         KbhRqVYlnreG4QpJapaZTatAxAmI5LquCxn7OXvHWK9buQ8xDtP/UrVX/u/K+1Wtyfub
-         vkK8HChnQhO/8MDmrjJtxI73kLzwXiyZSIfd7MHRLHI6r0wk4TY44oR/eRY2HXZqotIp
-         4f3PMwHnS52sXLLAuDCykKjQazlGoh17QDHztg825hcGvaKtDA3uGF48MevF/9TKbBe0
-         goO944aj0HDL0rRM4ur0KcpxKq7c5eMvW40G027EktdVpBAgCaK52mKXrOy6mgoBrkOF
-         HNXg==
-X-Gm-Message-State: AOJu0YxgduMj1DEpk6iFaWk+/dsjq0OUZToQBb8HH0ZEwrlcsdSS4QE2
-	ceQlgP8TBjfNJ/k5YSR6Alhs73f2AbbqYP+emyDdrO0R4poUMksGltSUaQEAUPyFFfOM8Gy937q
-	d
-X-Google-Smtp-Source: AGHT+IF47sfgPxYe0Bek1fqI/+hwfyhqIs29uq1xyzUPKjbau4Bd/kc73W0dBrGxpSbBSzfQHQBEkw==
-X-Received: by 2002:a05:6a20:9483:b0:1b5:6b5e:c100 with SMTP id adf61e73a8af0-1bcea5f5f95mr539893637.5.1719024931149;
-        Fri, 21 Jun 2024 19:55:31 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.166.71])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819dd0cf7sm2325325a91.48.2024.06.21.19.55.29
+        bh=65NmH14GHPU7cpQuxZpTQNNeNlAoovyzm058ERg2Xuw=;
+        b=TC6Z4utjklXhQIP42q0z8krwY8EicTGuzfTYe9mWz98WS9ZLdobFX86dI3NJ3ywcot
+         jvJ6DL2/JDlpSxt9v6onsFdL0k/s5AHySvrh0i7RILodLoRqu6ycHWEXSuwiGP1PCfZX
+         UjdzLWl7IzNVELWcFj0qrG1Bt9tausG9UH6jUwR7CfRU6vMBFGVXAz3PpnSPEM74NoA/
+         QLxxL5JvgRR/6lLlEUHwGqF5IY37l1am72E3bfW0fP7/q6MLu6HBtyo53szR7LKZKwIj
+         lr/a84TVagUXS7ubf1sg95VBZrqIF+562blDBBfRreIUTLrEFZH4eEP+hz8Q5GLCUyPe
+         yelA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719025393; x=1719630193;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=65NmH14GHPU7cpQuxZpTQNNeNlAoovyzm058ERg2Xuw=;
+        b=iXE8HyFsgSyU6NEilK9ZerIQbsBhb37vB3Mbz1kRatIr3gOOS9QPp7yGOkFKv4TxIi
+         lyOet3KZ6yaUHYuk0yf7CA+KMvh1XWv0qX50mMzqg8b95Aq32KHws2Lj7/gmYfNQFem5
+         F2513gq49kqryPdgnI39WcS3fqW1nuJQXywa/QddYOkf+dfLq1iPVWP/M9zECL4AcjJD
+         u8ydl1Nnw+DMeAAHw4NTI99BAb7Wi5tvGTN7nsyZzYGWCQeYp18+wPuCZwP2USc49rF7
+         1YDCT+TbzM8hk9AE/PXlHufq4e9ibL+l8CEoVzHmZd5M+koFVjIVpjxfcOJqVbl6+l/q
+         vKJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPbOTHrygzmV5Kt7dsxfdkTxjR+AUhR1y3VFOGvjPSMbqGC0cbRZiU+6N0adj/qq4kr++r/Nx3WFH8qBsz9yzqThLHPhhdYsYB7JkT
+X-Gm-Message-State: AOJu0YxrwLhnH0UXJlBytGJU5c4VBCYCQ+bufg0OPo4/6ld+8dkdCk12
+	1Y4LyeGnpHX4WVPR0v/h5rkC6GJoo5bZV2f/Du6vT+nCgTWfgGIS
+X-Google-Smtp-Source: AGHT+IHc/r6is/zY8phKNX+2LLsnBPGxaCP+UtI2f3FTXM0auYwzn5mRA7w5/PdKcGYLfzRjgrr4IA==
+X-Received: by 2002:a05:6a00:1d1c:b0:706:31d9:9c9d with SMTP id d2e1a72fcca58-70631d99de7mr10747841b3a.7.1719025393317;
+        Fri, 21 Jun 2024 20:03:13 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70651254c67sm2196086b3a.97.2024.06.21.20.03.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 19:55:30 -0700 (PDT)
-Date: Fri, 21 Jun 2024 19:55:28 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [RESEND PATCH v2] kbuild: buildtar: Add explicit 32-bit arm
- support
-Message-ID: <ZnY9IEt571DwqtTJ@mozart.vkv.me>
-References: <ZhmKzqxHXaSZmXee@mozart.vkv.me>
- <6bc61e82eaae9e614cbd50a322322173f593c90c.1718936424.git.calvin@wbinvd.org>
- <20240621145514.GA3770753@thelio-3990X>
+        Fri, 21 Jun 2024 20:03:12 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org
+Cc: baolin.wang@linux.alibaba.com,
+	chrisl@kernel.org,
+	david@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mhocko@suse.com,
+	ryan.roberts@arm.com,
+	shy828301@gmail.com,
+	surenb@google.com,
+	v-songbaohua@oppo.com,
+	willy@infradead.org,
+	ying.huang@intel.com,
+	yosryahmed@google.com,
+	yuanshuai@oppo.com,
+	yuzhao@google.com
+Subject: Re: [PATCH v2 1/3] mm: extend rmap flags arguments for folio_add_new_anon_rmap
+Date: Sat, 22 Jun 2024 15:02:56 +1200
+Message-Id: <20240622030256.43775-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240617231137.80726-2-21cnbao@gmail.com>
+References: <20240617231137.80726-2-21cnbao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240621145514.GA3770753@thelio-3990X>
+Content-Transfer-Encoding: 8bit
 
-On Friday 06/21 at 07:55 -0700, Nathan Chancellor wrote:
-> Hi Calvin,
-> 
-> On Thu, Jun 20, 2024 at 07:25:59PM -0700, Calvin Owens wrote:
-> > Implement buildtar for 32-bit arm, so the zImage (or xipimage) appears
-> > at boot/vmlinuz-$foo, rather than at boot/vmlinux-kbuild-$foo, matching
-> > the structure of the tar-pkg on arm64 and other architectures.
-> > 
-> > Link: https://lore.kernel.org/all/ZhmKzqxHXaSZmXee@mozart.vkv.me/
-> > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
-> > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> > ---
-> >  scripts/package/buildtar | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/scripts/package/buildtar b/scripts/package/buildtar
-> > index eb67787f8673..23d7ff675396 100755
-> > --- a/scripts/package/buildtar
-> > +++ b/scripts/package/buildtar
-> > @@ -104,6 +104,9 @@ case "${ARCH}" in
-> >  				cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}";;
-> >  		esac
-> >  		;;
-> > +	arm)
-> > +		[ -f "${KBUILD_IMAGE}" ] && cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
-> > +		;;
-> >  	*)
-> >  		cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
-> >  		;;
-> > -- 
-> > 2.39.2
-> > 
-> 
-> Is this change necessary after commit 2b1ab1405068 ("kbuild: buildtar:
-> remove warning for the default case")? Without the '[ -f ... ] &&' part
-> of the expression, which was removed for other cases in
-> commit c3f7bed8fa14 ("kbuild: buildtar: add comments about inconsistent
-> package generation"), it appears to be the same thing.
+>
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> In the case of a swap-in, a new anonymous folio is not necessarily
+> exclusive. This patch updates the rmap flags to allow a new anonymous
+> folio to be treated as either exclusive or non-exclusive. To maintain
+> the existing behavior, we always use EXCLUSIVE as the default setting.
+>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> Tested-by: Shuai Yuan <yuanshuai@oppo.com>
+> ---
 
-Oops. Sorry for the noise.
+Hi Andrew,
 
-Thanks,
-Calvin
+Could you please help squash the following change (a documentation
+enhancement suggested by David) into this patch?
 
-> Cheers,
-> Nathan
+From: Barry Song <v-songbaohua@oppo.com>
+Date: Sat, 22 Jun 2024 14:51:38 +1200
+Subject: [PATCH] mm: enhence doc for extend rmap flags arguments for
+ folio_add_new_anon_rmap
+
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+---
+ mm/rmap.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/mm/rmap.c b/mm/rmap.c
+index df1a43295c85..9a8d9c848168 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1394,7 +1394,9 @@ void folio_add_anon_rmap_pmd(struct folio *folio, struct page *page,
+  *
+  * Like folio_add_anon_rmap_*() but must only be called on *new* folios.
+  * This means the inc-and-test can be bypassed.
+- * The folio does not have to be locked.
++ * The folio doesn't necessarily need to be locked while it's exclusive
++ * unless two threads map it concurrently. However, the folio must be
++ * locked if it's shared.
+  *
+  * If the folio is pmd-mappable, it is accounted as a THP.
+  */
+@@ -1406,6 +1408,7 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
+ 	int nr_pmdmapped = 0;
+ 
+ 	VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
++	VM_WARN_ON_FOLIO(!exclusive && !folio_test_locked(folio), folio);
+ 	VM_BUG_ON_VMA(address < vma->vm_start ||
+ 			address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
+ 	__folio_set_swapbacked(folio);
+-- 
+2.34.1
 
