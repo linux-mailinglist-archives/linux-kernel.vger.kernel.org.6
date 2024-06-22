@@ -1,161 +1,204 @@
-Return-Path: <linux-kernel+bounces-225714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FB0913442
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:47:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15963913444
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE2A1284738
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:47:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66D19B23F86
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEFB16F292;
-	Sat, 22 Jun 2024 13:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E7216F29C;
+	Sat, 22 Jun 2024 13:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTY7OC1C"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Wj/g1ufS"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8651E14D6EE;
-	Sat, 22 Jun 2024 13:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF3114C585
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 13:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719064064; cv=none; b=De8r4bqfQxy8MoE7zr/+8w8aySIRaYY5zlyEvwt0FP8a4WKYxLqNid64Bucarl6tl4HHN9hIrvScHaHbVY9AmH5ZDj94foQnbyjib+YQzSB+AZ3R69r3OUrLu00jOyNW3VmBBMfUurTsZKc/0Wsl5CkOHdOnilCqJBdm4DDqzmw=
+	t=1719064158; cv=none; b=irSWnP7YSW9Q7Dw4l2jCA6b9lU0y4kFyQO4c9xYqZpd677gEspEQcygWOq43FtgAayP7MB7INPuU0H84Dk5KrpCNiFntxfZugIgvMKAArGtqySTQiaj1O8pU7NAYjIxTCbd9pBHiJJSGOf3r+GjOxfWUj7bcuLmiKCkBYKkQY5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719064064; c=relaxed/simple;
-	bh=s58+WXTPKUxQQp7M6mqTfc8CNEirwEPL/XeRNbil2Zk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EGVgwUmUdOoTDQusKK4HDdImDHjlUou3g7ZnBPIMOgNpbzZS7uvd0af3vOm/kgxPHbENF2F/qHAVcB8W0hb0ekWBCwp7ylFR5soWFfLI/G21O19O44ya7oUtBcSn3gyZjr0gdkM0Ye8c0G1KhvfPG0zAdr/ixtpvXJyyfj99qDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DTY7OC1C; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7eec09cc7f6so115872939f.0;
-        Sat, 22 Jun 2024 06:47:42 -0700 (PDT)
+	s=arc-20240116; t=1719064158; c=relaxed/simple;
+	bh=8kSL1jRtVIXiHQ+O1TvQhZNYZN+ebBGN+ENQ/GGIVGU=;
+	h=From:To:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=LnRkckdBvPOfWv6j8bh/3h+CdBvsKv/rKab6v0N7mlhWlDolSHf0uQsqUXOZ5lgQauy9wZnWvlcOFGQuo0uevnLyGvoi4w0XoPBrgHQVsOL319hW/pm8vOHrmbwyH5iPGObQ3MJg4UVKpiFkoM3ax2vgep9Ixh+6k4zElBNLEi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Wj/g1ufS; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d044aa5beso3200221a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 06:49:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719064061; x=1719668861; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ohspEI3o4kejsF4uHtq93ZO3T1O8uAizbgOfutjyYx0=;
-        b=DTY7OC1C+EYJZ5SVB2fa5G3Z9Fbg96OErzp1JbhzSrsB8RmHwOWCGrsMZ62wGf9LB7
-         Z+TVmrxchr55wSXdlJ4sYbDVW4jeoT95K1KIc8RiZG9mkmu6vOW6VXwA8A7kV5YF4yVo
-         Fe6Av1Y+W1wThms1o0NK0zfb/7vcXA8T3iyIGNErkkdqspd6+YSuQrF06SuxBC12f+jI
-         Zqt9+L1t8waS5rkJo94Z5aL8fsKJcSGp0sdomnWwwfMw0exlqEKtUFQZyeyyzqiNDvA9
-         WjFopEHSQyVmU5X4QahbW2IK8H71Rq09hFz132j7BtRUY+kXKM8cfFcwI9H0NxhAhBUS
-         l8jg==
+        d=broadcom.com; s=google; t=1719064155; x=1719668955; darn=vger.kernel.org;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VZ5C+jIoMqzR0VM8UcfKTtaCfqBCwvVSNtQMDjf4J00=;
+        b=Wj/g1ufSRHOKX3kVDecEwuyLCOwW6J6y1Sgiaevq2sq/Gow+IfZ05j6H34dlYMBusf
+         cH+c4jOJ5Jp+FH+m2JGntcQ7vDMGytVOsIMtazk5N/bflI7bOBzck3n/HIsucZ95EeMl
+         +PneBBgwaidM4eOrINM/GOtqDNwdSVEbBipTI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719064061; x=1719668861;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ohspEI3o4kejsF4uHtq93ZO3T1O8uAizbgOfutjyYx0=;
-        b=rl3UGmWB1rfYHraz3EeqxyFbThar+M0alwCHH5900Bu/HuFydlSdkQqwU3h2tKfQsr
-         sJLjTXmtRK6QrtEXVRNT219O01++nWxuh3hvGERAEQrIzx5F+kqjdz3C9fnAtnpLgWSA
-         13MSEANhZvNR4IJ5qXUHbBh8Y+roKNDOg/dQkrrI2A7ta4TdPqJazDYoQybQStJ6ZEit
-         FlAj3PiTHjbP7y90VHgTGBVtSUg/IKinoOxvtOiq/H19nIzxO5zRywIg3p0GiCpLwTFD
-         wUJZ5kD0PtCI7UY8WLZ+LXiJgemITUk+MQu09klgeCI13gnQnNzyPoN94uCTWxEV81dZ
-         flJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhvLt0vS4t8oyw8igfknuYaGbW7bey5NZobVt1WJ/T3HyndcNq/M+8htmQ7vfjMkJNREd2Q1GJ0sXAYpIdStTyMkRP74CaKaWGnRh+U0w7OUZIjII9vzdPSqoUIKn7U7r6OM8TTtlRPD1tvNSyf1NlbYA9mLeIVuqE/iIIbR8h+Mf7R7RXCVjlYXbuLvE0
-X-Gm-Message-State: AOJu0YyJSl8l6KhAhas1Gcd20M9f6nV1lMa2ct9opjHAbXEnhLVfWl5C
-	iaxMHi4TgxPYzBGzQmAd2dftl2AkP60JmDxZ1yH9vl6t8FbDKnqz
-X-Google-Smtp-Source: AGHT+IH4uWoLEo6kKHTWJi/1CLEGx6QFTJt0e4D+3Pjq7hTY4ZPl7W5p1qFvi7fKwiHIqfl3kIcMFQ==
-X-Received: by 2002:a05:6602:6d83:b0:7eb:b025:648d with SMTP id ca18e2360f4ac-7f3a13eb9camr99502539f.10.1719064061444;
-        Sat, 22 Jun 2024 06:47:41 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70651085a5bsm3088880b3a.44.2024.06.22.06.47.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 06:47:40 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sat, 22 Jun 2024 06:47:39 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Kees Cook <kees@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, David Gow <davidgow@google.com>,
-	Vitor Massaru Iha <vitor@massaru.org>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Rae Moar <rmoar@google.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] kunit: test: Add vm_mmap() allocation resource
- manager
-Message-ID: <d32df98c-fd3c-466b-bc8f-47cec1c7bebf@roeck-us.net>
-References: <20240612195412.make.760-kees@kernel.org>
- <20240612195921.2685842-1-kees@kernel.org>
+        d=1e100.net; s=20230601; t=1719064155; x=1719668955;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VZ5C+jIoMqzR0VM8UcfKTtaCfqBCwvVSNtQMDjf4J00=;
+        b=wHaEPov7OxBeY12eM4ljibuTstyLJn5DhHn9+yMUXg9Dv8VYhRCj/hSO9J5HRTHhx9
+         qwHyyKODnqf1LMyBsKv6CZJqtqmQBHQFp1bYQoCN+KJ0mW0QTs02GRMeq5fDAy3V0s32
+         rzYlxQtiWhu96q0do+Hd9BbSkFK0yFP5hzJNNagYWdmGC480Ybj/0mJA/KPXWiF7zCfC
+         WmJCw8czm7ub/3V5Zuf9kGtPgFMlHZ7RW1fUNWXtFfiKdosALcIxd3lmq4FTy19gtWNA
+         xJYumcX+QIMPgiBpM2csRH389vRdxUkPdxUrcjI4v5zJIK/C8ftStKeQZlJ+CzIIFogk
+         U4HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxMou8zL6eU4DcW6o4XC/Nk1scFyCktzy5js7VXj0uW+nl/LucsdsjMtynwQB0o+wzH5Japtd6eb0ljkdEhOJnh/FLTe9Uso0eYhio
+X-Gm-Message-State: AOJu0Yzc01wO51uhn8kJIg7dULXFzJSHPIx9RKkzTAnORcbKJFnOgVb1
+	UcnsHyGShUTM7sakeEXtiOYJcWng2TBv/AnYyhao4SCDePKrcdIl9X+gSknLgA==
+X-Google-Smtp-Source: AGHT+IGPCqk+WzkG0ojgGfSFW7HVqKNO3doKNlzqIBIpYOUMZqnBPia1VgzFi0LJe0NCVfVaDek6DQ==
+X-Received: by 2002:a50:d79b:0:b0:57c:dbf6:931f with SMTP id 4fb4d7f45d1cf-57d4bd56bc0mr86578a12.5.1719064154826;
+        Sat, 22 Jun 2024 06:49:14 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303d7cdesm2370630a12.7.2024.06.22.06.49.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Jun 2024 06:49:12 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Alex Bee <knaerzche@gmail.com>, Kalle Valo <kvalo@kernel.org>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>
+Date: Sat, 22 Jun 2024 15:49:13 +0200
+Message-ID: <19040354ba8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <190402b87a8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+References: <20240621225558.280462-1-knaerzche@gmail.com>
+ <190402b87a8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+User-Agent: AquaMail/1.51.3 (build: 105103473)
+Subject: Re: [PATCH] wifi: brcmfmac: of: Support interrupts-extended
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612195921.2685842-1-kees@kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000528702061b7ad0e5"
 
-Hi,
+--000000000000528702061b7ad0e5
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 12:59:18PM -0700, Kees Cook wrote:
-> For tests that need to allocate using vm_mmap() (e.g. usercopy and
-> execve), provide the interface to have the allocation tracked by KUnit
-> itself. This requires bringing up a placeholder userspace mm.
-> 
-> This combines my earlier attempt at this with Mark Rutland's version[1].
-> 
-> Normally alloc_mm() and arch_pick_mmap_layout() aren't exported for
-> modules, so export these only for KUnit testing.
-> 
-> Link: https://lore.kernel.org/lkml/20230321122514.1743889-2-mark.rutland@arm.com/ [1]
+On June 22, 2024 3:38:32 PM Arend Van Spriel <arend.vanspriel@broadcom.com> 
+wrote:
 
-FWIW, not sure I understand what the above link has to do with this patch.
+> On June 22, 2024 12:56:02 AM Alex Bee <knaerzche@gmail.com> wrote:
+>
+>> This "new" version of defining external interrupts is around for a very
+>> long time now and supported and preferred by irq_of_parse_and_map
+>> respectively of_irq_parse_one.
+>>
+>> Support it in brcmfmac as well by checking if either "interrupts" or
+>> "interrupts-extended" property exists as indication if irq_of_parse_and_map
+>> should be called.
+>
+> All very interesting, but why should we add code for something that is not
+> specified in the bindings documentation?
+>
+> NAK (for now). Feel free to update the bindings document.
 
-> Co-developed-by: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Reviewed-by: David Gow <davidgow@google.com>
-> Signed-off-by: Kees Cook <kees@kernel.org>
+So looked up the interrupts-extended definition:
 
-This patch results in a build failure for nommu_kc705_defconfig if kunit tests
-are also enabled.
+The "interrupts-extended" property is a special form; useful when a node needs
+to reference multiple interrupt parents or a different interrupt parent than
+the inherited one. Each entry in this property contains both the parent phandle
+and the interrupt specifier.
 
-ERROR: modpost: vmlinux: local symbol 'arch_pick_mmap_layout' was exported
+Given that brcmfmac device will only have one interrupt item defined there 
+is no need to use it. If someone can give a good argument to support it 
+please chime in.
 
-If CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT=n, CONFIG_MMU=n, and
-CONFIG_KUNIT=y, arch_pick_mmap_layout is exported. However, if
-CONFIG_MMU=n, it is declared as static inline function.
+Regards,
+Arend
 
-Guenter
 
----
-bisect log:
 
-# bad: [b992b79ca8bc336fa8e2c80990b5af80ed8f36fd] Add linux-next specific files for 20240620
-# good: [6ba59ff4227927d3a8530fc2973b80e94b54d58f] Linux 6.10-rc4
-git bisect start 'HEAD' 'v6.10-rc4'
-# good: [c02e717c5a89654b244fec58bb5cda32770966b5] Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git
-git bisect good c02e717c5a89654b244fec58bb5cda32770966b5
-# good: [29e7d78253b7ebf4b76fcf6d95e227d0b0c57dc0] Merge branch 'msm-next' of https://gitlab.freedesktop.org/drm/msm.git
-git bisect good 29e7d78253b7ebf4b76fcf6d95e227d0b0c57dc0
-# good: [bf8fd0d956bfcbf4fd6ff063366374c4bf87d806] Merge branch 'non-rcu/next' of git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
-git bisect good bf8fd0d956bfcbf4fd6ff063366374c4bf87d806
-# good: [1110f16317b1e0742521eaef5613eb1eb17f55ca] Merge branch 'icc-next' of git://git.kernel.org/pub/scm/linux/kernel/git/djakov/icc.git
-git bisect good 1110f16317b1e0742521eaef5613eb1eb17f55ca
-# good: [63f3716198e5644713748d83e6a6df3b4a6a3b10] Merge branch 'gpio/for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
-git bisect good 63f3716198e5644713748d83e6a6df3b4a6a3b10
-# bad: [91b48d9adafddb242264ba19c0bae6e23f71b18a] Merge branch 'kunit' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
-git bisect bad 91b48d9adafddb242264ba19c0bae6e23f71b18a
-# good: [9b401f4a7170125365160c9af267a41ff6b39001] pinctrl: ti: ti-iodelay: fix possible memory leak when pinctrl_enable() fails
-git bisect good 9b401f4a7170125365160c9af267a41ff6b39001
-# good: [1963f932d368f18185466979cc0bc89414d798e7] Merge branch 'pwm/for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git
-git bisect good 1963f932d368f18185466979cc0bc89414d798e7
-# good: [f91869accbe23a2bb08712b7262fa61eab716d42] selftests/resctrl: Simplify bandwidth report type handling
-git bisect good f91869accbe23a2bb08712b7262fa61eab716d42
-# good: [cbf284291604e818424f45dbdf6a8a705b5480ad] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
-git bisect good cbf284291604e818424f45dbdf6a8a705b5480ad
-# good: [a5217468214c228b89da37291de604cd756914ab] kunit: add missing MODULE_DESCRIPTION() macros to core modules
-git bisect good a5217468214c228b89da37291de604cd756914ab
-# bad: [51104c19d8570eb23208e08eac0e9ae09ced1c15] kunit: test: Add vm_mmap() allocation resource manager
-git bisect bad 51104c19d8570eb23208e08eac0e9ae09ced1c15
-# good: [425ae3ab5a1fa744a00680f059cf1accaaaecb28] list: test: add the missing MODULE_DESCRIPTION() macro
-git bisect good 425ae3ab5a1fa744a00680f059cf1accaaaecb28
-# first bad commit: [51104c19d8570eb23208e08eac0e9ae09ced1c15] kunit: test: Add vm_mmap() allocation resource manager
+
+--000000000000528702061b7ad0e5
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
+Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
+HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
+KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
+Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
+dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
+OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
+MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
+BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
+ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
+zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
+sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
+BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
+N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
+p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
+YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBBq3OCm5fdgDacEIPU
+vVemTSrOwrT9vm+LYXLbIZawDTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA2MjIxMzQ5MTVaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAgbhfA4VDpfvD0V0a6SyDj1ZXcmDaWVGV+Q1p
+jRO9ukQHOrCSQ4+WvbZU7/22Jb6cOgu4Z+a6PGaZniSPr+2QbsaGdo6L12tKuvcRdS3/QiyYbQHD
+SdyZcJgLBR4VmppP4d8FnlQv3uB5dpzKcLHxO+VzpSR7R3r/dUJooUxnMktbZB+6M8Yz6od/GCwr
+QD3ezEA3jaru/SyhwtkQBMLzsZwmrtKslL6xEXrgNW/CzpjNbc28fVZ9n17qCJoZ5bwdoV5Et3x5
+R/i2kkANrcz56oY0SwWrGLvXHT21i8Dsspf5ysSCpnrICk2u4qCYRzyrRDEsauIojlhYf8tGMFX0
+Pw==
+--000000000000528702061b7ad0e5--
 
