@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-225743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984F69134BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:16:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6149134C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547D6283971
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:16:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F5D1C2226E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF8616F91A;
-	Sat, 22 Jun 2024 15:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF6A16F91A;
+	Sat, 22 Jun 2024 15:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pGW0Kp8Q"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHKFBZn8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618EB43156;
-	Sat, 22 Jun 2024 15:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0956B660;
+	Sat, 22 Jun 2024 15:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719069359; cv=none; b=C8APLuhQXE1EXOZWy+pYw4GhrnmUP7w7CIg7bfYJl9wookZUHTq9tCNhuGJTtOMdElObCmw9qa0wY2vMvKvUcLh0IEd540RlBG0iSdhjjgIehI3VomvH7cAd+HN31c0Bp6a9NTFLUBdC99iO8swdh1L9HLCuobaA2oSNq6q/xNk=
+	t=1719069669; cv=none; b=rs9qqQbPywoiagKimIOUmDFTq6IaHN4lZHdhiPJ075mL8L+URIbaSIDYR66b18nuixZH0trv1ctz8MfxCr2/lbuau1WKedfd83UhwTR/ZeOeqlxz0kZTgEJk2xqW2O1hBmkZc+KuEB8utc6P40H8bO43HXlGzGSnKdWPtJB84Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719069359; c=relaxed/simple;
-	bh=fKO6cKhLDetMCWuOqjJT5MrxvFKMPuKR9jg4oHo9kQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KQ5H2WkZY98+Ihj/+7Va1SORsMAs8f4IXU7iIbG9i0jqAgUOYZnr+NPJaYD37/L5na0vbnnJSIK8zPzVehX1S304/Tlvc67PCv9T6FNDQFRh3qYRl64/U+yO1kcJfO2WENUJnNnMS0J+RbED98Do0GAmBxN7weX0emjzdh55Ngg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pGW0Kp8Q; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=u/8MZvNVjE3HGccbfJVlLB0/ThMviFL2sbZ039sccRc=; b=pGW0Kp8QKF70FDXhq6o6d/UdIZ
-	ny3FJn78zlj0lviZOCPglkjj+nDeWzsJbnpLIKgweD4ecV0khNo2oSc3KuSw/Pqo8OShSIbIGZYcd
-	n1pZ5MCIHm9dDzP2uqg0kegjBG68PKQkPlhZnZoDYtkQSLIzd88nVYhXcZHdhctnZ0OvKjFUkj2oI
-	DWy5HdHcwcAQeQgxg0/eMQgJWnAz+Do9Z+ptN4iP6QIKjjMdONEMyguCMFL2+RNPZi1JogNBdyNW4
-	J6JnW3LbIaO/UvMRTWawu+H1iusbi9Fsq4BLxeKLT1E0DbqnTNqAGazJKUlmmcOBT+WwNc/LgWfS0
-	SZ4LN4Cg==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sL2Sz-0000000CJTH-3kI8;
-	Sat, 22 Jun 2024 15:15:49 +0000
-Message-ID: <ef3688fd-d1a5-4045-baa3-1d51c24045c9@infradead.org>
-Date: Sat, 22 Jun 2024 08:15:48 -0700
+	s=arc-20240116; t=1719069669; c=relaxed/simple;
+	bh=reXOg+ZVcl2rfHZSYk6CqaM1Qr5wpQ8KZkToPZt3TKw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Lty0ogcFQ2YdtMI3afFRJnJY2lz9nQidcFxvFM17ClnzE5ymiL9ojWUAy6hLZOAhZID8lSyIiBSCqLWicZ208ika1J1qeldgBAUySggcqyP9LE1jgj8A6/pOfPGmU+/E9eNoz8wAu/E2XTBo2J6uKPZIoGAoGVGE1sFXK+85V8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHKFBZn8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A1BC7C4AF07;
+	Sat, 22 Jun 2024 15:21:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719069669;
+	bh=reXOg+ZVcl2rfHZSYk6CqaM1Qr5wpQ8KZkToPZt3TKw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=MHKFBZn8vnQiGDJkjAcYrVTuggVNq+jK83k14FN/CWzkw0Bkra7r27WreB3WOZpFp
+	 W70wP87NbfvTToL7E0oG/hsuT/RNNp3JleCEojceruWHYb2ocu28aOyUwtmC6FwiNJ
+	 M7AOK842aVwZkgUb8VmrYQ8aDog8HKN0oAsFiOW/qAJbntHO/sEeEUfr50oQz48aAz
+	 NHzOm4mSjdo8IjX5i1am0yWqBRS4XJ19zmg8U2HHrUELgZ7JIr2Pb30dr3pErQEmT8
+	 kMzCjrd9sjz7eCI5epOS+ZqRGsafrwMiGmmMuOZGWk0ZLoGFLhaHDyED2ugZjWnvej
+	 B703/SntJZENw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9853FC43619;
+	Sat, 22 Jun 2024 15:21:09 +0000 (UTC)
+Subject: Re: [GIT PULL] KVM fixes for Linux 6.10-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240622064128.135621-1-pbonzini@redhat.com>
+References: <20240622064128.135621-1-pbonzini@redhat.com>
+X-PR-Tracked-List-Id: <kvm.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240622064128.135621-1-pbonzini@redhat.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+X-PR-Tracked-Commit-Id: e159d63e6940a2a16bb73616d8c528e93b84a6bb
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: fe37fe2a5e98f96ffc0b938a05ec73ab84bf3587
+Message-Id: <171906966961.9703.8310033795492598234.pr-tracker-bot@kernel.org>
+Date: Sat, 22 Jun 2024 15:21:09 +0000
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Documentation: best practices for using Link
- trailers
-To: Kees Cook <kees@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, ksummit@lists.linux.dev
-References: <20240619-docs-patch-msgid-link-v2-0-72dd272bfe37@linuxfoundation.org>
- <20240619-docs-patch-msgid-link-v2-2-72dd272bfe37@linuxfoundation.org>
- <87v821d2kp.fsf@mail.lhotse>
- <0BD32B85-22CF-45DF-A70E-FFE8E24469A4@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <0BD32B85-22CF-45DF-A70E-FFE8E24469A4@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+The pull request you sent on Sat, 22 Jun 2024 02:41:28 -0400:
 
+> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
-On 6/22/24 7:40 AM, Kees Cook wrote:
->> I see some existing usage of the above style, but equally there's lots
->> of examples of footnote-style links without the Link: tag, eg:
-> I moved from that to using Link: because checkpatch would complain about my long (URL) lines unless it had a Link tag :P
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/fe37fe2a5e98f96ffc0b938a05ec73ab84bf3587
 
-We know that checkpatch isn't perfect. It's safe to ignore such complaints.
+Thank you!
 
 -- 
-~Randy
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
