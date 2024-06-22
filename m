@@ -1,197 +1,141 @@
-Return-Path: <linux-kernel+bounces-225730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57900913481
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:41:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A901891348E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E1762836DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:41:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3558E2840EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AFF16F905;
-	Sat, 22 Jun 2024 14:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AE016F91B;
+	Sat, 22 Jun 2024 14:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uEgBHuIo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y5cgCzM3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB80A16C445;
-	Sat, 22 Jun 2024 14:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2581416F919;
+	Sat, 22 Jun 2024 14:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719067257; cv=none; b=EeWItNg4n6lEdI3nEs+G3lSX2mGTWrpR/hXN/LdXIl2fBtwRGemITyndJcfa1nfxozjis17QgU+EDwOQimpFFBrysr1iaSwjQd1FklUy+FIzsU6OGtoJAWU+TiOdYDv7TKO9kdA25bav1P3DPiqwFpuMwDvLihz8hG1Er+GmP8E=
+	t=1719068323; cv=none; b=BtBrP5jeuJhchjIgfbswktXgGiqgtFzVzJ4Q5rxizhh9HOewE/qXByfmngOqy0pZbBtcZpsqlOdP7ikS/Y777gmKnPy5Kf3SNM7XF9YwV7WgbTD1fO94kycreTOVPhOrKxcZWSHD3eQ+0Ba4uPUdtxApZE5+xY4LnJSBCPTFj58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719067257; c=relaxed/simple;
-	bh=vq98sH94Pp5ZZZ4Zj0kRxD4MHCwJr9PTtWONlriLyKE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=TLvqXlp4RmmO40KFHDJitKq6p13dIU+Q4deRhZvYnq4tLAqu5PnHZeim+EFu+WG78AXU/XP9WEDZ/DhdUvP3aN+/3qHI4skWr8i/N0kESDCTvM8xn0rObdQmoF49s87yihozovJ+dwEMZvalBdpNqcB3bchjS3Wyo84yCogVuZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uEgBHuIo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27076C3277B;
-	Sat, 22 Jun 2024 14:40:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719067257;
-	bh=vq98sH94Pp5ZZZ4Zj0kRxD4MHCwJr9PTtWONlriLyKE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=uEgBHuIoBlARcmUd+XkQlKOaZQqKHE3hDqpua3dl29rr+fz+LT17/eciyj+DxJZiF
-	 SlgfTD+p7orMh/ZVTdNTlonfW/L11f6tU7OGdQZdb0+49i/vC38/+brc74AUGWMurS
-	 0Ea2UOQ4zBT0ZF+EG7srr+cUldAIPcGMEETCy2hda51lipGX4j7p5ObO7vllQU5OyK
-	 +1KuwDNsoS28XAoz8VVnKEYkKey3EhujL4CY+Q2/k7V3EZIQYp2sFmXZ80ir+2rNRr
-	 quCKbh35cOuwArM0Igiz/6ZwhHhpT6XNT3QfEeVnYD0pYKSXxqs6TaGR2yS4UBnNJU
-	 lGbnEjUXnTBJg==
-Date: Sat, 22 Jun 2024 07:40:55 -0700
-From: Kees Cook <kees@kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-CC: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- ksummit@lists.linux.dev
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_2/2=5D_Documentation=3A_be?=
- =?US-ASCII?Q?st_practices_for_using_Link_trailers?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <87v821d2kp.fsf@mail.lhotse>
-References: <20240619-docs-patch-msgid-link-v2-0-72dd272bfe37@linuxfoundation.org> <20240619-docs-patch-msgid-link-v2-2-72dd272bfe37@linuxfoundation.org> <87v821d2kp.fsf@mail.lhotse>
-Message-ID: <0BD32B85-22CF-45DF-A70E-FFE8E24469A4@kernel.org>
+	s=arc-20240116; t=1719068323; c=relaxed/simple;
+	bh=RAJamOHQFLD7T/Afj2Bx+Jy9uD0NgfQeuqeD1ZE59Yw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7ZrDoQ+yJDd0SERNu0KztOUJYNbIhQNf1pokWfaOsCiRSdY9hENDpyI9s3qhZ3oqVPdpVLEeQWOfR0jpFDyBrCNRL5sVYBt79rxbV4x6x9I4gUQ8TidbUchfQnkr36PF7/dXBQYvbFiAzYX5H6MSueQCC9+wI33fBnp2ejYY4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y5cgCzM3; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719068321; x=1750604321;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RAJamOHQFLD7T/Afj2Bx+Jy9uD0NgfQeuqeD1ZE59Yw=;
+  b=Y5cgCzM3bGNlDCu1xLkbBocYXEBNYcDIXClaO7BKfuIeyegoM3MkhRBQ
+   k5qG/WSwqwNz7b64s7E+0AdBeEnVMtTdoE06ICsG5L42LMEVZj1ClD+Q4
+   GUgNbxXOUlGNSbL8StFZPzSUzGHqczohqh8hU8gUxraif06e/XrWArEuk
+   OTIaIxjxzqgQ5GlHDkIQgNN9usmZhtGtnu87vvuMOCKhLHTf7Iw101SIc
+   E2LQ2VAen4ghMTI81iAi/SJ7xGoQHMJjIrns09LLLm0kkxm8CAD8b1Lz2
+   1uQIYp7DOhkie3oG0pzqQGp9K/YT2+J2Y6y2brYR+Lyr7Nnx4kgW2L1XQ
+   A==;
+X-CSE-ConnectionGUID: i1kUiCnHTTu+5BJ2Hxv+xQ==
+X-CSE-MsgGUID: re0g1MlwQzix1X3J4LYE2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11111"; a="33551795"
+X-IronPort-AV: E=Sophos;i="6.08,257,1712646000"; 
+   d="scan'208";a="33551795"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2024 07:58:40 -0700
+X-CSE-ConnectionGUID: XEd85cBTTHyGNmXt/9McUQ==
+X-CSE-MsgGUID: TGxm2aztSDCjYMPl9S45lw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,257,1712646000"; 
+   d="scan'208";a="80376137"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa001.jf.intel.com with ESMTP; 22 Jun 2024 07:58:39 -0700
+Date: Sat, 22 Jun 2024 22:51:54 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, Moritz Fischer <mdf@kernel.org>,
+	Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>, linux-fpga@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] fpga: socfpga: use 'time_left' variable with
+ wait_for_completion*()
+Message-ID: <ZnblCkmLCnID3jXB@yilunxu-OptiPlex-7050>
+References: <20240620115022.24409-1-wsa+renesas@sang-engineering.com>
+ <20240620115022.24409-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620115022.24409-2-wsa+renesas@sang-engineering.com>
 
+On Thu, Jun 20, 2024 at 01:50:21PM +0200, Wolfram Sang wrote:
 
+Still for the shortlog, How about:
 
-On June 21, 2024 9:27:34 PM PDT, Michael Ellerman <mpe@ellerman=2Eid=2Eau>=
- wrote:
->Konstantin Ryabitsev <konstantin@linuxfoundation=2Eorg> writes:
->> Based on multiple conversations, most recently on the ksummit mailing
->> list [1], add some best practices for using the Link trailer, such as:
->>
->> - how to use markdown-like bracketed numbers in the commit message to
->> indicate the corresponding link
->> - when to use lore=2Ekernel=2Eorg vs patch=2Emsgid=2Elink domains
->>
->> Cc: ksummit@lists=2Elinux=2Edev
->> Link: https://lore=2Ekernel=2Eorg/20240617-arboreal-industrious-hedgeho=
-g-5b84ae@meerkat # [1]
->> Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation=2Eorg>
->> ---
->>  Documentation/process/maintainer-tip=2Erst | 30 ++++++++++++++++++++++=
---------
->>  1 file changed, 22 insertions(+), 8 deletions(-)
->>
->> diff --git a/Documentation/process/maintainer-tip=2Erst b/Documentation=
-/process/maintainer-tip=2Erst
->> index 64739968afa6=2E=2Eba312345d030 100644
->> --- a/Documentation/process/maintainer-tip=2Erst
->> +++ b/Documentation/process/maintainer-tip=2Erst
->> @@ -372,17 +372,31 @@ following tag ordering scheme:
->> =20
->>   - Link: ``https://link/to/information``
->> =20
->> -   For referring to an email on LKML or other kernel mailing lists,
->> -   please use the lore=2Ekernel=2Eorg redirector URL::
->> +   For referring to an email posted to the kernel mailing lists, pleas=
-e
->> +   use the lore=2Ekernel=2Eorg redirector URL::
->> =20
->> -     https://lore=2Ekernel=2Eorg/r/email-message@id
->> +     Link: https://lore=2Ekernel=2Eorg/email-message-id@here
->> =20
->> -   The kernel=2Eorg redirector is considered a stable URL, unlike othe=
-r email
->> -   archives=2E
->> +   This URL should be used when referring to relevant mailing list
->> +   topics, related patch sets, or other notable discussion threads=2E
->> +   A convenient way to associate ``Link:`` trailers with the commit
->> +   message is to use markdown-like bracketed notation, for example::
->> =20
->> -   Maintainers will add a Link tag referencing the email of the patch
->> -   submission when they apply a patch to the tip tree=2E This tag is u=
-seful
->> -   for later reference and is also used for commit notifications=2E
->> +     A similar approach was attempted before as part of a different
->> +     effort [1], but the initial implementation caused too many
->> +     regressions [2], so it was backed out and reimplemented=2E
->> +
->> +     Link: https://lore=2Ekernel=2Eorg/some-msgid@here # [1]
->> +     Link: https://bugzilla=2Eexample=2Eorg/bug/12345  # [2]
->
->Does it actually make sense to use the Link: prefix here? These sort of
->links are part of the prose, they're not something a script can download
->and make any sense of=2E
->
->I see some existing usage of the above style, but equally there's lots
->of examples of footnote-style links without the Link: tag, eg:
+  Rename the 'timeout' variable as 'time_left'
 
-I moved from that to using Link: because checkpatch would complain about m=
-y long (URL) lines unless it had a Link tag :P
+Thanks,
+Yilun
 
->commit 40b561e501768ef24673d0e1d731a7b9b1bc6709
->Merge: d9f843fbd45e 31611cc8faa0
->Author: Arnd Bergmann <arnd@arndb=2Ede>
->Date:   Mon Apr 29 22:29:44 2024 +0200
->
->    Merge tag 'tee-ts-for-v6=2E10' of https://git=2Elinaro=2Eorg/people/j=
-ens=2Ewiklander/linux-tee into soc/drivers
->
->    TEE driver for Trusted Services
->
->    This introduces a TEE driver for Trusted Services [1]=2E
->
->    Trusted Services is a TrustedFirmware=2Eorg project that provides a
->    framework for developing and deploying device Root of Trust services =
-in
->    FF-A [2] Secure Partitions=2E The project hosts the reference
->    implementation of Arm Platform Security Architecture [3] for Arm
->    A-profile devices=2E
->
->    =2E=2E=2E
->
->    [1] https://www=2Etrustedfirmware=2Eorg/projects/trusted-services/
->    [2] https://developer=2Earm=2Ecom/documentation/den0077/
->    [3] https://www=2Earm=2Ecom/architecture/security-features/platform-s=
-ecurity
->
->
->The above style is standard markdown style for reference links (or as
->standard as markdown gets)=2E
-
-It's a good point=2E If we're formalizing this, why not literally use mark=
-down instead? (I guess the answer is that out-of-line links/footnotes isn't=
- standardized=2E)
-
-Playing devil's advocate, outside of the kernel, these are the two most co=
-mmon styles I've seen:
-
-Foo[1]
-=2E=2E=2E
-[1]: https://=2E=2E=2E=2E
-
-and
-
-Bar[^1]
-=2E=2E=2E
-[^1] https://=2E=2E=2E
-
-Personally, I only want to have a single official way to do this, and don'=
-t care much what it is=2E I have a minor preference for what you've describ=
-ed:
-
-Baz[1]
-=2E=2E=2E
-[1] https://=2E=2E=2E
-
--Kees
-
---=20
-Kees Cook
+> There is a confusing pattern in the kernel to use a variable named
+> 'timeout' to store the result of
+> wait_for_completion_interruptible_timeout() causing patterns like:
+> 
+>         timeout = wait_for_completion_interruptible_timeout(...)
+>         if (!timeout) return -ETIMEDOUT;
+> 
+> with all kinds of permutations. Use 'time_left' as a variable to make
+> the code self explaining.
+> 
+> Fix to the proper variable type 'long' while here.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Change since v1:
+> * use reverse-xmas-tree for variable init
+> * keep chars/line limits in commit message
+> 
+>  drivers/fpga/socfpga.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/fpga/socfpga.c b/drivers/fpga/socfpga.c
+> index 723ea0ad3f09..f772b754aa76 100644
+> --- a/drivers/fpga/socfpga.c
+> +++ b/drivers/fpga/socfpga.c
+> @@ -301,16 +301,17 @@ static irqreturn_t socfpga_fpga_isr(int irq, void *dev_id)
+>  
+>  static int socfpga_fpga_wait_for_config_done(struct socfpga_fpga_priv *priv)
+>  {
+> -	int timeout, ret = 0;
+> +	long time_left;
+> +	int ret = 0;
+>  
+>  	socfpga_fpga_disable_irqs(priv);
+>  	init_completion(&priv->status_complete);
+>  	socfpga_fpga_enable_irqs(priv, SOCFPGA_FPGMGR_MON_CONF_DONE);
+>  
+> -	timeout = wait_for_completion_interruptible_timeout(
+> +	time_left = wait_for_completion_interruptible_timeout(
+>  						&priv->status_complete,
+>  						msecs_to_jiffies(10));
+> -	if (timeout == 0)
+> +	if (time_left == 0)
+>  		ret = -ETIMEDOUT;
+>  
+>  	socfpga_fpga_disable_irqs(priv);
+> -- 
+> 2.43.0
+> 
+> 
 
