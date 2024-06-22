@@ -1,103 +1,125 @@
-Return-Path: <linux-kernel+bounces-225704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47425913414
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:05:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE795913417
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA54D283F53
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:05:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9D11C203A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F8016EC10;
-	Sat, 22 Jun 2024 13:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F5016EC18;
+	Sat, 22 Jun 2024 13:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAleG/5A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NStbkK5y"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09F514D6F9;
-	Sat, 22 Jun 2024 13:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB73D14D6F9;
+	Sat, 22 Jun 2024 13:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719061512; cv=none; b=awq6v/LU8IEgRqpMOr7r2dMUnO+NH/8rA4fXaGr8XuF9d6bPa/yOMta9/g7jEjtpToUffhoZe3z4qwDA0/rLDDwv53o3keaOMIp8QPbzZyy2XoS/AHpCBoMqPUf08M+FJP+IIWFZ5lKgITL+1B/tlvc6u4yywlZNlWAdwr1graY=
+	t=1719061565; cv=none; b=AY0dNqwBIn3iXW5uEpcacCMXBnOFOQmWBGvHiBOEyjmV4Cf2ocnMyOPEpAkYFXu6B7Li/Ov+MwCVr92895rT0vUUBStgryqwbJMJigPHJnCtoljOQFu+2gSXIvxojP5mR51bpyoPsXRt4gJ9pDYXPDI5+7pkFs61vKCfrH4oRkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719061512; c=relaxed/simple;
-	bh=8pC44r9Oj1dhrw5UE75tXX29ELdK1m8cQNkcWGEG6R4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s++sDH9w/M8+kBsEe3G01btrAnNJlfRnOQNuY5vFCVr6Y98T5Osqwu6RF0slHZ/549yWyGdpeb5VYMePBGl/Kl7VxjD5Dn5lNKOk6vFHBIg0yZpWaSU5FxWFuaxJb8BbbixLqECDzbXzezOfrnjgKS2kAHBb2/il+fwY8mOyA78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAleG/5A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0A45C3277B;
-	Sat, 22 Jun 2024 13:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719061512;
-	bh=8pC44r9Oj1dhrw5UE75tXX29ELdK1m8cQNkcWGEG6R4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KAleG/5Acfo1bhnjlfm8PNQXxHcfwPSE0D4d742XuC1jCrt/9miUA+z2/pMtSsG/E
-	 KipNZaAgEyzzpmkQLtyzFymbQ7Ui4rMOjijk/+MH8nuslc8XEvKfU6VfFUVRzoyvRH
-	 6mg9UL2bQfneheUeprchOqJFgwfjwrhZdWM8bVOxKKGxVZFVTAgyj7n1GkzxU0/Qx7
-	 8/JxEhySiNK8hstGEhwWjOrr43xKmj++Ddv2Sr5w89mMwkEslH96EUGZU2h6KRjLC4
-	 XwSDhvs955rq3ekRC2IF9+E1AnyDtnntymPDaTfVFOpKTDcXngBZIWhVdBBFF8iHKI
-	 vshdVZSq4BC8Q==
-Date: Sat, 22 Jun 2024 14:05:06 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christian Hewitt <christianshewitt@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org
-Subject: Re: [PATCH 1/2] dt-bindings: sound: add ti,pcm5424 to pcm512x
-Message-ID: <92bb82cf-47c3-4216-9a54-466ad7de43ce@sirena.org.uk>
-References: <20240622124603.2606770-1-christianshewitt@gmail.com>
- <20240622124603.2606770-2-christianshewitt@gmail.com>
+	s=arc-20240116; t=1719061565; c=relaxed/simple;
+	bh=fZzXD+VBy/TnjHfeespdwqsqQcRvbT0wXeFDsY6VBSE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=TmWX0HZF+tUQyEzOGxCLBAMZMkIjs+fzyTlqgrkx88JZcLzN12G9Z6VrZ9MXGSCa9seLDkYMwF/AdYpWeeJ+3HVTjK9Bd40fZXIQb9Ekj48rrY4nFqvEh6htHLil/Qffxfqk0B+b9MAeq6hIybEKsEksnTts8XBU2LFx3Tn/k7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NStbkK5y; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-362bc731810so2549067f8f.1;
+        Sat, 22 Jun 2024 06:06:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719061562; x=1719666362; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZrytYasAxCaCe6tWDwhrVic7gXvGWpWw0egqVhOW2rc=;
+        b=NStbkK5ytGeESek+B8s2HdJ+5ucrCND7HS65W/UogtM0r5f8IzdeDlyPq4fXExcza/
+         GMN5uass+RuhCTpmUmvO82L2GJuhOU054F7h9RXSWOUaAeFwS8FX1Kg4mrnAw+5T9QP3
+         lBTHQvNdXd54RRNQ9tylBtcUjr+FXNpYDy1grS3XmV7oz4eOZydu//2GpVO68U3WDjQO
+         dv+v+DCQZUM8NJgewJQLHmCwt2+VmXEizFvoJjIMxFwoxhm7VsVn49l7QbebmB2UR4No
+         Ol83hhttypMcuT0+QTIURIpEdb89WbMxmhO4JlRvl+yll4Of2zDy7imTgaKdZGVUI2b0
+         glkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719061562; x=1719666362;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZrytYasAxCaCe6tWDwhrVic7gXvGWpWw0egqVhOW2rc=;
+        b=fCPRPZDdXBrxx/yHIbEBG+KaIUfoKqMwfEZamSVTowaNr5xNZOMKMB3NQy+9nmc9Q3
+         8egqsnT9QAZvGy4dGooWjITruZQxHNS5hHFPsNpBmxeqozTs+F9wStlqmrLFG6SiCQjy
+         KaBiXwzFgtBs1IDspItqrd6TEvr6DBTWVMiqcRmJvPwfB/m5QWZ1Cpm80KKvoNxFZgJ6
+         ZkekYFdWtzmb/CCqGV5zrg+Bp+kqolioJhFAMGgw5KtgPA+M0otYNXersg5Lys1EhdWv
+         W+Jms2ncBV2oOIzHLGM9CLgSzH1EYEmrakeSbWwg3mJpOfjAscGCUNoP9+7uddJXMbqR
+         Rycw==
+X-Forwarded-Encrypted: i=1; AJvYcCXC0A/67qOO+U/9oagNcVKKSeGqFhLkR0dhEWIyBTsYzYWbfvq7XzTO+uKYDLNV1fWO5B3zpDJn+GW4uQfJ6vV5alVXKcMhqoxZSihAbMzaUP5J8zARi9okDfvgjigh58ulsyrETMeREaZ8DjWw45Fxkyjk/YpexwJ9i0WM45OCGZ9kq6J2
+X-Gm-Message-State: AOJu0YxfjK/tmS1eAd1TzEe2MMVpseZLhv2r2L+ovDvQLWadlD846KHU
+	7z2iJWBptKd3oDqq5xbm5WHiPoD3q6MAyf9duRlXS+ecfSvNVDWJ
+X-Google-Smtp-Source: AGHT+IGexro+lYSB8P9rFaqT/pj2wNDLwJM8cIt6lN/oXLdliRgMk3yRPZse8PG+bDDqHUZ0S41s6g==
+X-Received: by 2002:adf:e6d2:0:b0:362:8dad:c6a4 with SMTP id ffacd0b85a97d-36319990496mr9020616f8f.57.1719061562130;
+        Sat, 22 Jun 2024 06:06:02 -0700 (PDT)
+Received: from smtpclient.apple ([167.99.200.149])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366383f6722sm4494637f8f.24.2024.06.22.06.05.59
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Jun 2024 06:06:01 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qd5lMr36o2A9Y9hn"
-Content-Disposition: inline
-In-Reply-To: <20240622124603.2606770-2-christianshewitt@gmail.com>
-X-Cookie: No stopping or standing.
-
-
---qd5lMr36o2A9Y9hn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH 2/2] ASoC: Add support for ti,pcm5242 to the pcm512x
+ driver
+From: Christian Hewitt <christianshewitt@gmail.com>
+In-Reply-To: <57f0036c-4412-48fa-a6f9-3fa721717be9@sirena.org.uk>
+Date: Sat, 22 Jun 2024 17:05:47 +0400
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Shenghao Ding <shenghao-ding@ti.com>,
+ Kevin Lu <kevin-lu@ti.com>,
+ Baojun Xu <baojun.xu@ti.com>,
+ Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ alsa-devel@alsa-project.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <CE6B5FD2-790B-431F-BC69-4429CE26802A@gmail.com>
+References: <20240622124603.2606770-1-christianshewitt@gmail.com>
+ <20240622124603.2606770-3-christianshewitt@gmail.com>
+ <57f0036c-4412-48fa-a6f9-3fa721717be9@sirena.org.uk>
+To: Mark Brown <broonie@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On Sat, Jun 22, 2024 at 12:46:02PM +0000, Christian Hewitt wrote:
-> Add ti,pcm5424 to the list of pcm512x compatible chips
+> On 22 Jun 2024, at 5:03=E2=80=AFPM, Mark Brown <broonie@kernel.org> =
+wrote:
 >=20
-> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> ---
->  Documentation/devicetree/bindings/sound/pcm512x.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Sat, Jun 22, 2024 at 12:46:03PM +0000, Christian Hewitt wrote:
+>> Add a compatible string to enable support for the ti,pcm5242 DAC chip
+>> in the pcm512x driver.
+>>=20
+>> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+>> ---
+>> sound/soc/codecs/pcm512x-i2c.c | 2 ++
+>> 1 file changed, 2 insertions(+)
+>=20
+> The device appears to have SPI support too like the other devices in =
+the
+> family, why not add the ID for SPI as well:
+>=20
+>   https://www.ti.com/product/PCM5242
 
-Ideally this would also be converted to YAML but for such a trivial
-addition I don't think this should be a blocker.
+Okay, will do. I need to send v2 anyway as I fat-fingered the chip
+number in the bindings patch subject/description :(
 
---qd5lMr36o2A9Y9hn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ2zAIACgkQJNaLcl1U
-h9BEqgf+O3MTXzJeES2cciAQyyKWA0LbO6xd++EtqKFeu+JSeIyP3Js+ZxUJrCDS
-wQEiJs9qsB0m2AsaG2UI5rfVRfwakK9QG2VyIwTrNA1j/B4XFaKlv8WJO78wac6M
-bgq+W9roe7jLIgjUNylPySe6uresKIJD0XacIkexmVC1Lod5Twku9HXf8KqIBaRg
-0dTbK+QNjXJDJS69rWAc3acULRaYBnJ52B8xkW1ixXUBqnP8V2aMpcQ7Clm7ZI/N
-fJTFptfQ1P2xVKYW73UkkVOE8gFHsgw7l56GyHPMlooWZ9xtzNvvT3B3LfuAtoMD
-kasjjkyVU+b9LOuyt114z7zRBLbTzA==
-=o1cf
------END PGP SIGNATURE-----
-
---qd5lMr36o2A9Y9hn--
+Christian=
 
