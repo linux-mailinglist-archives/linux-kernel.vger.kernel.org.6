@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-225826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D609135CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:11:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDEF9135CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6478D1F229B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:11:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E173B23312
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A23045014;
-	Sat, 22 Jun 2024 19:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B759E495CC;
+	Sat, 22 Jun 2024 19:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="idOUMRHg"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="25zCCAoi"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81411863E;
-	Sat, 22 Jun 2024 19:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0D926AF0;
+	Sat, 22 Jun 2024 19:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719083472; cv=none; b=Jf7ghcTRCvClm+DeWB+69glk2kgwks8/R7XAsgPdQDcqgATJ0oAQW3QsSiObh2iZTufYKuDaSJl190dIMdOvuUnSxIxkh1Tf3Ox6Ngxs6riKShjspu8XQsy9cLu8BbZXkZzItWq7YbI+gotINVJqWrrzhQdLa1SSECDlw/LliJA=
+	t=1719083558; cv=none; b=M4Eo0uw9VM/ZU8bYfSISrU5mRMMcFJKGPD7OL1bpfbpwDJ2AJa5asXD+tDe6TGmpoeHKgUVRsZlN/2HeEGqARS8ZvbeRS71M4eeuN7eAxyEEWTXcLItQWM2k1Ck+/AKbfCaNbPyP4G5aammtV5AR1TkLghyiU1LdXS8nid5JZ7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719083472; c=relaxed/simple;
-	bh=bNKqvfJcCxUliXk6egw86vUhi6IGdTyXYpgstC1ig48=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=jIfEyOGxmTe+2Ak8l922+HlsnwP0PZGX8GoOsVJgNfHQekhdoVFrISrI9cPAZMxhXqC3oTklYe2P97e4orOVUH5x5FFiDqMGTGeHGPH1t4IyTOrfCotCmtPr62pqukjAOnaVjCBvXynyCsOZrK3IGBE1Rxpt7QQ+1NCD03kHEog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=idOUMRHg; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1719083558; c=relaxed/simple;
+	bh=vh2JKpWH7dyPXeXv/cvX+1DJemvZtcmkvOgLcFIOik8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Smrdj8UeQRS41TNxAdVz8UxD6RiveLMctbTkusZr5cx76VYoHMZWzgTp4h9lBO9YJSzzPz4Z8KmXI33AMrj8Dhgws9J/JMHhcp99LVqaPpX8ufzPke4ox+Y2rFn0hV3cSUAvzWJG1YP/bYN/7IA04tR4ZcdIdwInsw8iyeeNKWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=25zCCAoi; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=9M2T5n/TTpRlSib4sQ6QSIHATO0zpnGPeFOWZW/omFM=; b=25
+	zCCAoitrNvc6EPlxrZOj2ZOMRBY49RdgsSyN/lvJfblfW4DKbNmTqeS3Pf8SuXSft02p2F5EtU2vJ
+	XyfzxaF21C9jxl/CQnkX8dcwwzVc2dWNDaEdKZKnZTkEMo7/cirlJv5f/srrnbJBT6l1fY9H+KxQm
+	9TiLgCMjHlixoqw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sL69v-000kN9-9E; Sat, 22 Jun 2024 21:12:23 +0200
+Date: Sat, 22 Jun 2024 21:12:23 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kamil =?iso-8859-1?Q?Hor=E1k_=282N=29?= <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 4/4] net: phy: bcm-phy-lib: Implement BroadR-Reach
+ link modes
+Message-ID: <5a77ba27-1a0e-4f29-bf94-04effb37eefb@lunn.ch>
+References: <20240621112633.2802655-1-kamilh@axis.com>
+ <20240621112633.2802655-5-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1719083460;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tsjjMssJVG+oE9sGmhyMnAuMsLYA+R/eJrkwoODbgVM=;
-	b=idOUMRHgDMpzEsj+i3s89C5EXijlVePhRa+bpbkscQNve3CaiAVRAquR5LhFjvWmhGX+6z
-	irhFMpwC7zk58vCbGxXZMKq4Fvj0g55tJK2ejOgGHS5NlNN0ChmgsYhhjV3wbFq6Ne7bR2
-	UL7h+0z7qTcaQJNwG8ndMIYCnJjanxHwaWmfnvoiG8b/tcyzrOvJCveyR1osDmeR1Pf2jq
-	qcMWJfHwLXVHzJjhqIZUNeSAHXY6SHUeSOFAtXEQ1wkEFQp+8mBaj20wET9FHEq6PKmntC
-	XEr4C5IztY+yDK2mrLwkOw1EPaSKIN5T816EVmMuaO7lWsUmcYTrvGwgpezlSQ==
-Date: Sat, 22 Jun 2024 21:10:52 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Daniel Golle <daniel@makrotopia.org>, Aurelien Jarno
- <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko
- Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>, Sebastian Reichel
- <sebastian.reichel@collabora.com>, Anand Moon <linux.amoon@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>, Ard
- Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
-In-Reply-To: <303bc9df-c887-41d0-8613-0fa2898ab48e@kernel.org>
-References: <cover.1718921174.git.daniel@makrotopia.org>
- <57a7fb13451f066ddc8d1d9339d8f6c1e1946bf1.1718921174.git.daniel@makrotopia.org>
- <f8e6b1b9-f8ff-42df-b1ef-bcc439c2e913@kernel.org>
- <173ce1663186ab8282356748abcac3f4@manjaro.org>
- <303bc9df-c887-41d0-8613-0fa2898ab48e@kernel.org>
-Message-ID: <b1adbe2604561e0958bd5084fe679eea@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240621112633.2802655-5-kamilh@axis.com>
 
-Hello Krzysztof,
+On Fri, Jun 21, 2024 at 01:26:33PM +0200, Kamil Horák (2N) wrote:
+> Implement single-pair BroadR-Reach modes on bcm5481x PHY by Broadcom.
+> Create set of functions alternative to IEEE 802.3 to handle
+> configuration of these modes on compatible Broadcom PHYs.
 
-On 2024-06-22 20:05, Krzysztof Kozlowski wrote:
-> On 21/06/2024 20:13, Dragan Simic wrote:
->> On 2024-06-21 11:57, Krzysztof Kozlowski wrote:
->>> On 21/06/2024 03:25, Daniel Golle wrote:
->>>> From: Aurelien Jarno <aurelien@aurel32.net>
->> 
->> [snip]
->> 
->>>> +	pm_runtime_set_autosuspend_delay(dev, RK_RNG_AUTOSUSPEND_DELAY);
->>>> +	pm_runtime_use_autosuspend(dev);
->>>> +	pm_runtime_enable(dev);
->>>> +
->>>> +	ret = devm_hwrng_register(dev, &rk_rng->rng);
->>>> +	if (ret)
->>>> +		return dev_err_probe(&pdev->dev, ret, "Failed to register 
->>>> Rockchip
->>>> hwrng\n");
->>>> +
->>>> +	dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
->>> 
->>> Drop, driver should be silent on success.
->> 
->> I respectfully disagree.  Many drivers print a single line upon
->> successful probing, which I find very useful.  In this particular
-> 
-> No, it's duplicating existing interfaces and polluting log 
-> unnecessarily
-> without any useful information.
+What i've not seen anywhere is a link between BroadR-Reach and LRE.
+Maybe you could explain the relationship here in the commit message?
+And maybe also how LDS fits in.
 
-Would you, please, clarify what existing interfaces are you
-referring to?
+> +int bcm_setup_master_slave(struct phy_device *phydev)
 
->> case, it's even more useful, because some people may be concerned
->> about the use of hardware TRNGs, so we should actually make sure
->> to announce it.
+This is missing the lre in the name.
+
+> +static int bcm54811_read_abilities(struct phy_device *phydev)
+> +{
+> +	int i, val, err;
+> +	u8 brr_mode;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(bcm54811_linkmodes); i++)
+> +		linkmode_clear_bit(bcm54811_linkmodes[i], phydev->supported);
+
+I think that needs a comment since it is not clear what is going on
+here. What set these bits in supported?
+
+> +
+> +	err = bcm5481x_get_brrmode(phydev, &brr_mode);
+> +	if (err)
+> +		return err;
+> +
+> +	if (brr_mode) {
+
+I would expect the DT property to be here somewhere. If the DT
+property is present, set phydev->supported to only the BRR modes,
+otherwise set it to the standard baseT modes. That should then allow
+the core to do most of the validation. This is based on my
+understanding the coupling hardware makes the two modes mutually
+exclusive?
+
+> +	/* With BCM54811, BroadR-Reach implies no autoneg */
+> +	if (brr)
+> +		phydev->autoneg = 0;
+
+So long as phydev->supported does not indicate autoneg, this should
+not happen.
+
+	Andrew
 
