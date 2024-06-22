@@ -1,150 +1,131 @@
-Return-Path: <linux-kernel+bounces-225841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F5E913601
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 22:14:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F72913605
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 22:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FF46B24EB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:14:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DED81F225A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985FC5E093;
-	Sat, 22 Jun 2024 20:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="NsnbNgyp"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75255FB9C;
+	Sat, 22 Jun 2024 20:26:45 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1416738FA3;
-	Sat, 22 Jun 2024 20:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400EB2D052;
+	Sat, 22 Jun 2024 20:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719087266; cv=none; b=RhYFqfRO+OnC32Fp3wAgw415m1XGr98sdELlXDFGHpyF1Rm/wT5WMEsd33nhKmM/6IvS+YO321JWwyRTyLfm2ZXLN6AcoNtyFQQeL8mn3t7obL8Gg4QdV0AMwjng/5k7vry97B1JpK/avyvOblz1AC6Tgr7kkuHFXoAWJUWt9sw=
+	t=1719088005; cv=none; b=sEGgXsVzB5II1N/raez0Lq34mYGqLCe9iSbVLX562pMh66DUGzP8J+/7SscCHkn9h5UU5MQUobZ3ndHt0sbhcDjDsntA5kgCgEr1Vd9t+jBUEquxZq9TbWp5uB/Am/cmcxmqMpftY1RcdoJvBI/10AP6ZdVbGsOWgWT6htsMQXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719087266; c=relaxed/simple;
-	bh=tncH4LCqx7HSAnOYjxTSN/luXNO/LDb1Im3VW+uUmYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NljbxzhFROqyL89ppsY/UQbQOpKq8NF4efJExz3WaAFlXqkqDLWzwrert1wOpTJSCttK/H0edOQZYRyG1NXXakR8jYdlRln1JsDwXDW70NdnQ8wvJVYGsfGImMv45QQovSByUqvQfIrohCMlrH2/IZ6hHW9fpkmCemMxFuPKs7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=NsnbNgyp; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=iFliWZ3VVlpnHPHNOUml3WsBWXE3aFdRx+TsZn6swl0=; b=NsnbNgypwoHqCo0r
-	kAcc/Jw/Gp7qblF/o0AaAiGf9olyN2shF1a0C1u0ZJOwWp3KbRtamawqsv7lvuBfLLCinFOzPTrnm
-	qo0NTXcbuxuzh8Ae4fINaS6G/ijbG4MZbOxOsOZo4PKU61bGzegPLCKnsmwvLm3pVpNbehBy8dg0i
-	cjS+KINBiF8uX597k5StLJoq9qOdbK+cyZ8wTWxNz0ydzBZSuroO9+9bpd03Hq4L/8HY8SYBZ1s5e
-	Uvt3rAe5yBWhSxiRawsCDgAQEYA1m1/kNyC9VyuAiLUaHpTyzA9xDHaBZmKXsMPPXwKto1aqrQBbE
-	FB10n7AKL8Sv9mShMg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sL77n-007nbi-2B;
-	Sat, 22 Jun 2024 20:14:15 +0000
-Date: Sat, 22 Jun 2024 20:14:15 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Alexander Zubkov <green@qrator.net>, pabeni@redhat.com
-Cc: linux-kernel@vger.kernel.org, linux-newbie@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH] Fix misspelling of "accept*"
-Message-ID: <Zncwl4DAwTQL0YDl@gallifrey>
-References: <20240622164013.24488-2-green@qrator.net>
+	s=arc-20240116; t=1719088005; c=relaxed/simple;
+	bh=ao+837YjdmlP6HZftP9TxacWBYhLQoAsFjco+i0cLQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CiUxr9BpVa58vD+VUR3kbODVZqzFpKyN3o7qsOBYoJT5V2ENxISXb/LczE4okEg2oWj9wAxhBEvURqrqNOAwnX3tnajzzgYnkV7JA7HIS6oSd4HenkpFhAllDlxAKtoHwefuctH5jzS9rPAQX3MzL9/dZoAipF211GJ9gY+/OkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875a87.versanet.de ([83.135.90.135] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sL7JC-0007Ef-VY; Sat, 22 Jun 2024 22:26:03 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@kernel.org>,
+ Dragan Simic <dsimic@manjaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Daniel Golle <daniel@makrotopia.org>, Aurelien Jarno <aurelien@aurel32.net>,
+ Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Anand Moon <linux.amoon@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
+Date: Sat, 22 Jun 2024 22:26:01 +0200
+Message-ID: <3660160.WbyNdk4fJJ@diego>
+In-Reply-To: <07fba45d99e9eabf9bcca71b86651074@manjaro.org>
+References:
+ <cover.1718921174.git.daniel@makrotopia.org>
+ <ead26406-dd3b-491c-b6ab-11002a2db11a@kernel.org>
+ <07fba45d99e9eabf9bcca71b86651074@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240622164013.24488-2-green@qrator.net>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 20:12:10 up 45 days,  7:26,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-* Alexander Zubkov (green@qrator.net) wrote:
-> Several files have "accept*" misspelled as "accpet*" in the comments.
-> Fix all such occurrences.
-> 
-> Signed-off-by: Alexander Zubkov <green@qrator.net>
+Am Samstag, 22. Juni 2024, 12:29:33 CEST schrieb Dragan Simic:
+> Hello Uwe,
+>=20
+> On 2024-06-22 00:16, Uwe Kleine-K=F6nig wrote:
+> > On 6/21/24 20:13, Dragan Simic wrote:
+> >> On 2024-06-21 11:57, Krzysztof Kozlowski wrote:
+> >>> On 21/06/2024 03:25, Daniel Golle wrote:
+> >>>> From: Aurelien Jarno <aurelien@aurel32.net>
+> >>=20
+> >> [snip]
+> >>=20
+> >>>> +    pm_runtime_set_autosuspend_delay(dev,=20
+> >>>> RK_RNG_AUTOSUSPEND_DELAY);
+> >>>> +    pm_runtime_use_autosuspend(dev);
+> >>>> +    pm_runtime_enable(dev);
+> >>>> +
+> >>>> +    ret =3D devm_hwrng_register(dev, &rk_rng->rng);
+> >>>> +    if (ret)
+> >>>> +        return dev_err_probe(&pdev->dev, ret, "Failed to register=20
+> >>>> Rockchip hwrng\n");
+> >>>> +
+> >>>> +    dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
+> >>>=20
+> >>> Drop, driver should be silent on success.
+> >>=20
+> >> I respectfully disagree.  Many drivers print a single line upon
+> >> successful probing, which I find very useful.  In this particular
+> >> case, it's even more useful, because some people may be concerned
+> >> about the use of hardware TRNGs, so we should actually make sure
+> >> to announce it.
+> >=20
+> > I agree to Krzysztof here. From the POV of a driver author, your own
+> > driver is very important and while you write it, it really interests
+> > *you* if the driver is successfully probed. However from a system
+> > perspective these are annoying: There are easily >50 devices[1] on a
+> > system, if all of these print a message in probe, you have little=20
+> > chance
+> > to see the relevant messages. Even if every driver author thinks their
+> > work is a special snow flake that is worth announcing, in practice=20
+> > users
+> > only care about your driver if there is a problem. Additionally each
+> > message takes time and so delays the boot process. Additionally each
+> > message takes place in the printk ring buffer and so edges out earlier
+> > messages that might be more important.
+>=20
+> Well, I don't find those messages annoying, for the drivers I've had
+> nothing to do with.  Also, in my experience, 99.9% of users don't care
+> about the kernel messages at all, be it everything hunky-dory, or be
+> it something really wrong somewhere.
+>=20
+> > So +1 for dropping the dev_info() or at least using dev_debug() for it.
 
-Reviewed-by: Dr. David Alan Gilbert <linux@treblig.org>
+Just for 2ct ... I'm also in the don't print too much camp ;-) .
+When parsing kernel logs to see where things fail, messages just
+telling me about sucesses make things more difficult.
 
-hmm, should probably cc in some maintainers, I guess networking.
-(added netdev and Paolo)
+So really this message should be dropped or at least as Uwe suggests
+made a dev_dbg.
 
-Dave
 
-> ---
->  drivers/infiniband/hw/irdma/cm.c                              | 2 +-
->  drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c | 4 ++--
->  drivers/net/ethernet/natsemi/ns83820.c                        | 2 +-
->  include/uapi/linux/udp.h                                      | 2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/irdma/cm.c b/drivers/infiniband/hw/irdma/cm.c
-> index 36bb7e5ce..ce8d821bd 100644
-> --- a/drivers/infiniband/hw/irdma/cm.c
-> +++ b/drivers/infiniband/hw/irdma/cm.c
-> @@ -3631,7 +3631,7 @@ void irdma_free_lsmm_rsrc(struct irdma_qp *iwqp)
->  /**
->   * irdma_accept - registered call for connection to be accepted
->   * @cm_id: cm information for passive connection
-> - * @conn_param: accpet parameters
-> + * @conn_param: accept parameters
->   */
->  int irdma_accept(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
->  {
-> diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
-> index 455a54708..96fd31d75 100644
-> --- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
-> +++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
-> @@ -342,8 +342,8 @@ static struct sk_buff *copy_gl_to_skb_pkt(const struct pkt_gl *gl,
->  {
->  	struct sk_buff *skb;
->  
-> -	/* Allocate space for cpl_pass_accpet_req which will be synthesized by
-> -	 * driver. Once driver synthesizes cpl_pass_accpet_req the skb will go
-> +	/* Allocate space for cpl_pass_accept_req which will be synthesized by
-> +	 * driver. Once driver synthesizes cpl_pass_accept_req the skb will go
->  	 * through the regular cpl_pass_accept_req processing in TOM.
->  	 */
->  	skb = alloc_skb(gl->tot_len + sizeof(struct cpl_pass_accept_req)
-> diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/ethernet/natsemi/ns83820.c
-> index 998586872..bea969dfa 100644
-> --- a/drivers/net/ethernet/natsemi/ns83820.c
-> +++ b/drivers/net/ethernet/natsemi/ns83820.c
-> @@ -2090,7 +2090,7 @@ static int ns83820_init_one(struct pci_dev *pci_dev,
->  	 */
->  	/* Ramit : 1024 DMA is not a good idea, it ends up banging
->  	 * some DELL and COMPAQ SMP systems
-> -	 * Turn on ALP, only we are accpeting Jumbo Packets */
-> +	 * Turn on ALP, only we are accepting Jumbo Packets */
->  	writel(RXCFG_AEP | RXCFG_ARP | RXCFG_AIRL | RXCFG_RX_FD
->  		| RXCFG_STRIPCRC
->  		//| RXCFG_ALP
-> diff --git a/include/uapi/linux/udp.h b/include/uapi/linux/udp.h
-> index 1a0fe8b15..d85d671de 100644
-> --- a/include/uapi/linux/udp.h
-> +++ b/include/uapi/linux/udp.h
-> @@ -31,7 +31,7 @@ struct udphdr {
->  #define UDP_CORK	1	/* Never send partially complete segments */
->  #define UDP_ENCAP	100	/* Set the socket to accept encapsulated packets */
->  #define UDP_NO_CHECK6_TX 101	/* Disable sending checksum for UDP6X */
-> -#define UDP_NO_CHECK6_RX 102	/* Disable accpeting checksum for UDP6 */
-> +#define UDP_NO_CHECK6_RX 102	/* Disable accepting checksum for UDP6 */
->  #define UDP_SEGMENT	103	/* Set GSO segmentation size */
->  #define UDP_GRO		104	/* This socket can receive UDP GRO packets */
->  
-> -- 
-> 2.45.2
-> 
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Heiko
+
+
 
