@@ -1,192 +1,217 @@
-Return-Path: <linux-kernel+bounces-225591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094A591329D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:47:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6229132A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26292B22300
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 07:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4444C284210
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 07:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781BA14B976;
-	Sat, 22 Jun 2024 07:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD2D14C587;
+	Sat, 22 Jun 2024 07:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yef4gcAj"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="Ro/i8Mik"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED284436
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 07:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64F24436;
+	Sat, 22 Jun 2024 07:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719042447; cv=none; b=Zkt+jOjxyXJT1uB/mAZQ6mK31U9zAGtHj18AWadTiAZ1UDlO+qXXAo3a9ZCVNXfEq+2zhqJMQVqQwDBY44Rm0lmn/kHCqFfXztt0+xMCSM+A0vZhPLF38Suo3yyF0NtEBBSP1spK9CHCvmuqV/fKS3j47aOoU6XHYBAXMc1TILE=
+	t=1719042870; cv=none; b=Ep9p/jEjzeh/whhk3ibeca+sitV1cKTYAtzvD37A2BTRM7S0aSS/FD7gnp9LX6ErNkIv6L2pU+w5pth+cNoag4zXA9S5xva9wZkgZeVMPXXcavvVc1NNdbqV8d55MvlBroOFWcVGlNMRNRwZ/X5I+5Oaa/ij3sW+EgrYHQgg1xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719042447; c=relaxed/simple;
-	bh=0xjQbaF0wGZrQmhafej0Nl0GkwJTdHTb6T+wAHqySYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/t6O4b71aCpH7Oil3KbedXG5nhn8dcQqpu3GkkaNmj6s/k9NeWtdKGwKihRe8PGSLXGnDyzGbJNREZC8HCodduUu7FPrtbtjqrX/lAcGypm5M7baZXwuRfqT3tFibr5i4XVB98IWwT79AOh+Q9+O33OlxMY+eqjliGEMXTIZN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yef4gcAj; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6fd4d1c173so156435366b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 00:47:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719042441; x=1719647241; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=egkT34FStinIi5BkZ/h/jEaWV4yUSynJFOp+kYLOY+4=;
-        b=yef4gcAjr+tpoMwzseddIwdo4n8vgWJfiGdxsfIUJ6wABweleo5fQuX6UDP2pzhaAF
-         MDaw6OELoTlSZN46Ecyetz7LxGA6dlWpith3HGRbgDhdfYKg9JSwWMoy2/nY+fCIBSuK
-         zr+5sF6e6dkZLRPUaSRknGe8rrmXyNDH/B2rJdTjop4/uvq1Xdx5lPyanfDRyjBAYxED
-         oWUu+lxpgVybzWgbJ19CIu9sc9Ag+GxM86QVOGqmgdZIEe2nhrJ0E0vrqDs1vCQg63TQ
-         W0OUuJV7x4/awCzypBQ1lWiGc6r0WfMeTzSzGBu9zMKStngxaW394vtNhRGm8aqPE/gn
-         ehVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719042441; x=1719647241;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=egkT34FStinIi5BkZ/h/jEaWV4yUSynJFOp+kYLOY+4=;
-        b=avOPmeH3IKPAbELnJPuBTi9hbk+QyQAzh5E0ULgo8K5yhxRQI2It0BR/bhHp9MwL1J
-         E/UMVVfrHDSgs59auZIeLtM29keU5B8cXQxnjweN9iqw70oEGpKSWpydZ5dkwjUdHh1Q
-         yFLBZ0w8QxX/pKkMIDmJlFCaSU3kEvKzPf6wBe6Xrc6KesilcPmOFJOUekFEUp53pESG
-         Un8+LN3xj81clEBH7gsYgSQNYA0YgKax19eg9dn/R0xRGD+H9UPHo+44fhLNHmtzpEbK
-         WWkPQ40kT85O9DU/TmZAZPOyOHaBi9fkNus6pv8abnxku5us39hRYR0bacKNULKfYvkq
-         zgww==
-X-Forwarded-Encrypted: i=1; AJvYcCWAjxw4jkktUOa6luJhDqmHGiNjwo4Q6HCYny4umlN+LVA1n3GvtsyXXylvxkbnxFj5O5VW56kmJeM20pLlAnWAyZxbySwSkTEDmgbe
-X-Gm-Message-State: AOJu0YzT7viS4Jkw7uIZjiWE7OtoKH/NmxBwbqLOCm2qyEAeuMOKm0Is
-	ovhd+6hQrrH2R8LCRtcLyZcrCFv2WZZ7fyFj1HQ/GLi+u8ZXJdCDO6jhkxIlM00=
-X-Google-Smtp-Source: AGHT+IFQZalXzWXKTfpK1rpPFKZCzbe6vcliQxlkxyj23v7dOhbR1lWTpg5u2CBCr97Ku5zNvey0Ww==
-X-Received: by 2002:a17:907:da3:b0:a6f:6f11:2f11 with SMTP id a640c23a62f3a-a6fab7d6dc8mr702812866b.77.1719042441184;
-        Sat, 22 Jun 2024 00:47:21 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf560956sm163855866b.181.2024.06.22.00.47.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 00:47:20 -0700 (PDT)
-Date: Sat, 22 Jun 2024 09:47:18 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de
-Subject: Re: [PATCH RFC 1/3] reset: replace boolean parameters with flags
- parameter
-Message-ID: <o3rf7gprs7mrldglqg7e4scibumdno36iuvtlr3c43sofjcb2t@w3d7jsjyddxe>
-References: <20240621-reset-get-deasserted-v1-0-94ee76fb7b7d@pengutronix.de>
- <20240621-reset-get-deasserted-v1-1-94ee76fb7b7d@pengutronix.de>
+	s=arc-20240116; t=1719042870; c=relaxed/simple;
+	bh=qpQGmj4rBCIweNf7PCZQQ/27qUTjNmjhX7qcZ18Hrj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qytg/Pr1y8g9f0LsLuljwQIKk179Z8nfPWpOtFn6+/9D9QhDQJeBr2VDw66Lwp87XeKaFWXinxohl0NH3bigUt+F6CfeRusM3ZjEAqeUXrJj8NmfV1kFd8nK20kO/b3Z9Yrx3zVGcYNEGiPT/CndvnPL1R8mRZff95ZDleOZ7x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=Ro/i8Mik; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1719042854; x=1719647654; i=deller@gmx.de;
+	bh=K1RBLojDabEhnbj0us/zxlBeoNaITVfFIU0Qe0YFMx8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Ro/i8Mik95o4vc1p6evD2vZGVh4BjOkMd+PMpvlG7S+bT1xzkb4uSnwvF9tYPx3b
+	 DPZsfrVsDjQ53Guz3Y3vBOylfwzDxkjSVSr28hNVAvbKnYvIEmRx5kf77KPdxqlaE
+	 N4/bxfsZlnmeYuXNorJIrRYfW8CKDZZ5p6F+S7NuFFAdhF1EOod9+sjkwEsE8Dgth
+	 MKcjNbsvbNi1j2wmQZo28LxFxIxvT7ku6ovowFuEnZW9gMTPTSt2c6oVlUh00x9Af
+	 reP3vzTEpJXB8xTu4Q1JpjwdK0PuYsRlFQA9mcvFHVbjJH8nnlSIlHanwXf3LnyBf
+	 sUQne6+uLs1n4jYgpQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.133]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MlNpH-1smbsZ1cwH-00ffvD; Sat, 22
+ Jun 2024 09:54:14 +0200
+Message-ID: <e3639dd9-0a94-41a0-b9d2-93fc1c7b610e@gmx.de>
+Date: Sat, 22 Jun 2024 09:54:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f7ya6rdc5z2khkfi"
-Content-Disposition: inline
-In-Reply-To: <20240621-reset-get-deasserted-v1-1-94ee76fb7b7d@pengutronix.de>
-
-
---f7ya6rdc5z2khkfi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tty: vt: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240621-md-i386-drivers-video-console-v1-1-e533652b7ebb@quicinc.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20240621-md-i386-drivers-video-console-v1-1-e533652b7ebb@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ZgeHwQZeM2qB/3xMG/pvhOJpWqFsZQjLJhG2Bz364/V30+M937C
+ 49sDWXEdWryFyvIqjdVL3sqRHvKuI4az5BqV0wjR7LJCNrp3aD0F/ZLPOiijVFAdciJiJQF
+ CPQJ1wQYoG3GFk1QEUgvdkfCvm9szrNX1WJS7M0rJY57bejWLPvSgZnjdmSTP8KQ81WAtQp
+ 3nA4fdUlI7X11I0MTcv+g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:AW2mNykeSow=;3n1zN481VMjh7+6wUWBt9KM3pYF
+ 2LorQ8W/iwXASvWy9GgThda2uBZwmZx7WQtzNCym/4MIazd1DfcMQ/l+cG1MQCuQYAVrdFJxq
+ kUvzP85ULx/L+gnI0dRD6WMToDE7nmTiZ9HWBnegQBjE5YJtdaLinGgpXDut29V+/RND4pJyw
+ IV0dm2PfBEsx7TeEFMNKmpHGZyaMItvUgcL8NvLDehY0/bBsfgNCrxO15BgxipUC9wuBXIvba
+ q9PE52KxegZkKKCmX8pHd0yiT4kLPHjjLo2ZMUPOCUb2NjIMpIbd5z/74oStfOT2l/sLn1UcZ
+ OjlHtGXB9lvSvtqTGGFDK2TC8V2TcAiRTSZlUxlbuDQprfDImaLDGlgsdlpEKXsQ0PBUeRN1b
+ gtLNLTHAGdkBvfkm0DZTtdBob5pUGwo+qXL5FmqhlxyWboSwdE0oUIbLwE1MH3w2NUPAM0dfc
+ 7zpF9SJ7P5JFz9GBJmCIPq5QL+sGp2njUpuYLdGNOheTDg4SQyF7YPjuwxxzpwAE048wISwla
+ fyL5b4ZDCB1Kgiu+tO+b9fPMVUnV1hoWgj7mH+5je+Bs9EJSWDOHP6ssu1pyXZe85stVxJhBL
+ ZM3OU6QxSwbA92nyhzSIae7RhYAlnYuohycIA0p1u2Gts+L4vDDLxvOdsrfxJe2gzxXSNZLp3
+ t2XuQ7nGY7R3V9Dvr7Gxt1iTAbs1INAvzhPBUUgYx6/dJouM+SSDkU/Y+YIbJh+wAM7pk8eCi
+ b6AoD3TbWRlaE9/EwCj1hcmeW7kLag3w67pgP5whEB9EQeHmcvBZ5d/s/P8umoXkapTZX97mW
+ tbPkJZLvLiQoh6qFE75r/vmH2WsMb8akeewOW00CPXCiw=
 
-Hello Philipp,
+On 6/22/24 08:07, Jeff Johnson wrote:
+> With ARCH=3Di386, make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/console/=
+mdacon.o
+>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
+>
+> This includes three other files which, although they did not produce a
+> warning with the i386 allmodconfig configuration, may cause this
+> warning with other configurations.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-I like the idea in general. Just a detail concern down below.
+Patch title adjusted to:
+  video: console: add missing MODULE_DESCRIPTION() macros
 
-On Fri, Jun 21, 2024 at 04:45:02PM +0200, Philipp Zabel wrote:
-> @@ -999,8 +1001,9 @@ static struct reset_controller_dev *__reset_find_rcd=
-ev(const struct of_phandle_a
-> =20
->  struct reset_control *
->  __of_reset_control_get(struct device_node *node, const char *id, int ind=
-ex,
-> -		       bool shared, bool optional, bool acquired)
-> +		       enum reset_control_flags flags)
->  {
-> +	bool optional =3D flags & RESET_CONTROL_FLAGS_BIT_OPTIONAL;
->  	bool gpio_fallback =3D false;
->  	struct reset_control *rstc;
->  	struct reset_controller_dev *rcdev;
-> @@ -1065,7 +1068,7 @@ __of_reset_control_get(struct device_node *node, co=
-nst char *id, int index,
->  	}
-> =20
->  	/* reset_list_mutex also protects the rcdev's reset_control list */
-> -	rstc =3D __reset_control_get_internal(rcdev, rstc_id, shared, acquired);
-> +	rstc =3D __reset_control_get_internal(rcdev, rstc_id, flags);
+and applied to the fbdev git tree.
 
-If RESET_CONTROL_FLAGS_BIT_OPTIONAL was passed to
-__of_reset_control_get(), you're forwarding it to
-__reset_control_get_internal(). But the latter doesn't do anything with
-that flag. I wonder if the API would be still less prone to error if
-you'd filter out RESET_CONTROL_FLAGS_BIT_OPTIONAL before passing to
-__reset_control_get_internal() and in __reset_control_get_internal() add
-a check for unsupported flags.
+Thanks,
+Helge
 
->  out_unlock:
->  	mutex_unlock(&reset_list_mutex);
-> @@ -1096,8 +1099,9 @@ __reset_controller_by_name(const char *name)
-> =20
->  static struct reset_control *
->  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
-> -				bool shared, bool optional, bool acquired)
-> +				enum reset_control_flags flags)
->  {
-> +	bool optional =3D flags & RESET_CONTROL_FLAGS_BIT_OPTIONAL;
->  	const struct reset_control_lookup *lookup;
->  	struct reset_controller_dev *rcdev;
->  	const char *dev_id =3D dev_name(dev);
-> [...]
-> @@ -1422,7 +1423,7 @@ EXPORT_SYMBOL_GPL(of_reset_control_array_get);
->   * Returns pointer to allocated reset_control on success or error on fai=
-lure
->   */
->  struct reset_control *
-> -devm_reset_control_array_get(struct device *dev, bool shared, bool optio=
-nal)
-> +devm_reset_control_array_get(struct device *dev, enum reset_control_flag=
-s flags)
->  {
->  	struct reset_control **ptr, *rstc;
-> =20
-> @@ -1431,7 +1432,7 @@ devm_reset_control_array_get(struct device *dev, bo=
-ol shared, bool optional)
->  	if (!ptr)
->  		return ERR_PTR(-ENOMEM);
-> =20
-> -	rstc =3D of_reset_control_array_get(dev->of_node, shared, optional, tru=
-e);
-> +	rstc =3D of_reset_control_array_get(dev->of_node, flags);
+> ---
+>   drivers/video/console/mdacon.c      | 1 +
+>   drivers/video/console/newport_con.c | 1 +
+>   drivers/video/console/sticon.c      | 1 +
+>   drivers/video/console/vgacon.c      | 1 +
+>   4 files changed, 4 insertions(+)
+>
+> diff --git a/drivers/video/console/mdacon.c b/drivers/video/console/mdac=
+on.c
+> index c0e1f4554a44..d52cd99cd18b 100644
+> --- a/drivers/video/console/mdacon.c
+> +++ b/drivers/video/console/mdacon.c
+> @@ -561,5 +561,6 @@ static void __exit mda_console_exit(void)
+>   module_init(mda_console_init);
+>   module_exit(mda_console_exit);
+>
+> +MODULE_DESCRIPTION("MDA based console driver");
+>   MODULE_LICENSE("GPL");
+>
+> diff --git a/drivers/video/console/newport_con.c b/drivers/video/console=
+/newport_con.c
+> index a51cfc1d560e..242415366074 100644
+> --- a/drivers/video/console/newport_con.c
+> +++ b/drivers/video/console/newport_con.c
+> @@ -744,4 +744,5 @@ static struct gio_driver newport_driver =3D {
+>   };
+>   module_driver(newport_driver, gio_register_driver, gio_unregister_driv=
+er);
+>
+> +MODULE_DESCRIPTION("SGI Newport console driver");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/video/console/sticon.c b/drivers/video/console/stic=
+on.c
+> index 4c7b4959a1aa..f1f3ee8e5e8a 100644
+> --- a/drivers/video/console/sticon.c
+> +++ b/drivers/video/console/sticon.c
+> @@ -391,4 +391,5 @@ static int __init sticonsole_init(void)
+>   }
+>
+>   module_init(sticonsole_init);
+> +MODULE_DESCRIPTION("HP STI console driver");
+>   MODULE_LICENSE("GPL");
+> diff --git a/drivers/video/console/vgacon.c b/drivers/video/console/vgac=
+on.c
+> index 7597f04b0dc7..37bd18730fe0 100644
+> --- a/drivers/video/console/vgacon.c
+> +++ b/drivers/video/console/vgacon.c
+> @@ -1222,4 +1222,5 @@ void vgacon_register_screen(struct screen_info *si=
+)
+>   	vga_si =3D si;
+>   }
+>
+> +MODULE_DESCRIPTION("VGA based console driver");
+>   MODULE_LICENSE("GPL");
+>
+> ---
+> base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+> change-id: 20240621-md-i386-drivers-video-console-ae292c09bb67
+>
 
-Is it an error if the new devm_reset_control_array_get() is called
-without RESET_CONTROL_FLAGS_BIT_ACQUIRED in flags?
-
->  	if (IS_ERR_OR_NULL(rstc)) {
->  		devres_free(ptr);
->  		return rstc;
-
-Best regards
-Uwe
-
---f7ya6rdc5z2khkfi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZ2gYQACgkQj4D7WH0S
-/k7q9gf8CKxq7UNCjz/HiKIaXZg0GftqRGoXijvAokcVLRdSmsrGZTJIhJRoSmfW
-tQaopw0SpYEodXErtsEf7s0COPGrO1OLB3BJVkLIJXyi6B4ok1jUP6KsYsXu/wdH
-6heS+kTeHGMYrPF5Wo4+/45MF0jNUV8zJW3AzaYm5rSgm9F8/nLyt3/fEMPjFQf/
-6uy6pjCj2M6WKrcuNw7Hzs+4o9O/Vm+YPzXyJ5qeaczx3LSztYsMyQ3cR/pGGkDt
-Ol+RsYFohzVaK66ezkZgpKMkxz4NeN/JeKtNCPVAPmH4TIm5Eu8p/9PYtZjzUdWQ
-QQj1YlYvMG4vaiyfeGEHyrrWGxBkHg==
-=IiSn
------END PGP SIGNATURE-----
-
---f7ya6rdc5z2khkfi--
 
