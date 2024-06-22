@@ -1,74 +1,160 @@
-Return-Path: <linux-kernel+bounces-225490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546CA91312E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 02:34:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90646913138
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 02:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 858D11C219DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:34:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54439282DD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BA023A0;
-	Sat, 22 Jun 2024 00:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CB323A0;
+	Sat, 22 Jun 2024 00:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXAQUwSX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e6p6yNc+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573567FB;
-	Sat, 22 Jun 2024 00:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABEEA5F;
+	Sat, 22 Jun 2024 00:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719016439; cv=none; b=X6QRh2Q91Pfkw9N+IzV8hWuRgTTP4+VuaD9flCx64kO6R6a5yO+B2tBIA5wgugHZbOGAxQany/qQ8BBnJVtxpFgCGO3bszVK8Aa4KWf1YKOitpWoO+tEjJfy/acjkvgUimQImBgw5XtouOg1K5DHXTqkcsXhQbB26YTSECtNP2s=
+	t=1719017957; cv=none; b=Q/HTJaJ5AmNp3AMNc03BhS4ahc0XBCnha7BPtBCkVzMT/lCY6t4Gu22Vch9Ze/IGdYhrto44h6fbspMIBMTui58HltXQLZ0oqwXhf/CsaAHt8MsxPTGyFlNyK7s1ethbgxCjVkFuR+wW51E0nOKKcHsTKvtbF3b88tsJDplLEYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719016439; c=relaxed/simple;
-	bh=1UQ/3HLxAuk0p5S3ALFUJTzXk6WXfVAQ8KIlf3/bj10=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fOAHPD4S/NnOgHBwQXUoHZMpb1sAbAqSUXlZ4Tv/xyGNJodEoRPppLKE29hPoKs+A49QzmAdlXvLhYIMTfDTWigc4S8qgGjl8HijK0JF5GjJqMZZ/Pnj59WrTS38y7laGjmO7VSF9jKfXErsuUJimpfxB8jKvg058EJ+icwHGMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXAQUwSX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4A52C2BBFC;
-	Sat, 22 Jun 2024 00:33:58 +0000 (UTC)
+	s=arc-20240116; t=1719017957; c=relaxed/simple;
+	bh=FQ1S0HDz0vGglXBuV05rXrXWvmAMYzorAlIge6VS7nE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=enx6BJjFAUqP+EyfpmwpGkR925YuibQ5EwvmsJpJ06jSrwEPmPSFkZqUofdhZ0rVOnUXLfx7HwwVOOqMa7Jx2ls/gL8Xf5po7xSlYMff4FyD2raJndJ5/I5seb9UvrmlYyBwgLAmCKT/Eoj3jzJqnFyQIgyCiW2/Dt3auBAh4cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e6p6yNc+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B7ECC2BBFC;
+	Sat, 22 Jun 2024 00:59:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719016439;
-	bh=1UQ/3HLxAuk0p5S3ALFUJTzXk6WXfVAQ8KIlf3/bj10=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BXAQUwSXQ69T5EHhtqnHIdm2XbMatQIr41bySNQqSE83yp6G5lcbMO/tjr121hKh1
-	 VCtQZ1V9PxMo4IAvkvqnTyuTv9l0fgh7U8ypBdsW7nlabWeNnOW7rztnQYCqpkfRtK
-	 G/npx/9tLV3/QlXwidZD4jDAz211XUoiB1RFsh07Fx1aQ+JlZYhsY1rbUzoSc83KSb
-	 5aygPIw4dqAJLiZ5pVnllAT82ZiBaBQq7Fc2J2Hh3x7DqkM7UXjD4MDLSkbpXonLVn
-	 uPUbGhd8oNcNcxL4NPTY45zbk6iRxdSmnMbjG0EdpCUxxe1NmWNrsO1V7TkL2EGR5w
-	 LcU8V38rbYulg==
-Date: Fri, 21 Jun 2024 17:33:57 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>, Xuan
- Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?UTF-8?B?UMOpcmV6?=
- <eperezma@redhat.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- virtualization@lists.linux.dev, netdev@vger.kernel.org, Jiri Pirko
- <jiri@resnulli.us>
-Subject: Re: [PATCH net-next] net: virtio: unify code to init stats
-Message-ID: <20240621173357.0f383e1e@kernel.org>
-In-Reply-To: <fb91a4ec2224c36adda854314940304d708d59ef.1718869408.git.mst@redhat.com>
-References: <fb91a4ec2224c36adda854314940304d708d59ef.1718869408.git.mst@redhat.com>
+	s=k20201202; t=1719017956;
+	bh=FQ1S0HDz0vGglXBuV05rXrXWvmAMYzorAlIge6VS7nE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e6p6yNc+6wYkOLheeXy5wx7XnlxNGY6XrTs3XFzZ11RSX/pOWaja5pXoi0pwvnqjl
+	 UBZ8Mti2dRn44UvUN6IbKwjKVl1EcdcrZRIuJDmF2uNbEIuJDCX7F8fKxqlFULHNuZ
+	 /VjBZb/gaKMZ2mANPL8NOLQXVIJ8Pxdz4s7jIez7FPVEvWfwUhpEFmkOQLqIYjRr0H
+	 UnFYkPw7qd8nh52b6hpwuBKAK2yEfdipX9QQowu0nn7sdgcXaGiAY2NUF5POlnpZtA
+	 aurDTD+pwSv7PEszXP8OVMbz+B7nPd1ZzGOCn62M4/B18FeivW2GqgNCg6l22lRy+i
+	 xn0moK+0q3hmw==
+Date: Sat, 22 Jun 2024 08:45:16 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Ard Biesheuvel <ardb@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH] riscv: enable HAVE_ARCH_STACKLEAK
+Message-ID: <ZnYenFigMU4Lxa0K@xhacker>
+References: <20240617123029.723-1-jszhang@kernel.org>
+ <ZnX6YtFGfXd0ixwR@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZnX6YtFGfXd0ixwR@ghost>
 
-On Thu, 20 Jun 2024 03:44:53 -0400 Michael S. Tsirkin wrote:
-> Moving initialization of stats structure into
-> __free_old_xmit reduces the code size slightly.
-> It also makes it clearer that this function shouldn't
-> be called multiple times on the same stats struct.
+On Fri, Jun 21, 2024 at 03:10:42PM -0700, Charlie Jenkins wrote:
+> On Mon, Jun 17, 2024 at 08:30:29PM +0800, Jisheng Zhang wrote:
+> > Add support for the stackleak feature. Whenever the kernel returns to user
+> > space the kernel stack is filled with a poison value.
+> > 
+> > At the same time, disables the plugin in EFI stub code because EFI stub
+> > is out of scope for the protection.
+> > 
+> > Tested on qemu and milkv duo:
+> > / # echo STACKLEAK_ERASING > /sys/kernel/debug/provoke-crash/DIRECT
+> > [   38.675575] lkdtm: Performing direct entry STACKLEAK_ERASING
+> > [   38.678448] lkdtm: stackleak stack usage:
+> > [   38.678448]   high offset: 288 bytes
+> > [   38.678448]   current:     496 bytes
+> > [   38.678448]   lowest:      1328 bytes
+> > [   38.678448]   tracked:     1328 bytes
+> > [   38.678448]   untracked:   448 bytes
+> > [   38.678448]   poisoned:    14312 bytes
+> > [   38.678448]   low offset:  8 bytes
+> > [   38.689887] lkdtm: OK: the rest of the thread stack is properly erased
+> > 
+> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> > ---
+> >  arch/riscv/Kconfig                    | 1 +
+> >  arch/riscv/kernel/entry.S             | 4 ++++
+> >  drivers/firmware/efi/libstub/Makefile | 3 ++-
+> >  3 files changed, 7 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index 0525ee2d63c7..9cbfdffec96c 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -118,6 +118,7 @@ config RISCV
+> >  	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+> >  	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
+> >  	select HAVE_ARCH_SECCOMP_FILTER
+> > +	select HAVE_ARCH_STACKLEAK
 > 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> When this is selected, stackleak.h include
+> arch/riscv/include/asm/thread_info.h without sizes.h and I hit:
+> 
+> ./arch/riscv/include/asm/thread_info.h:30:33: error: ‘SZ_4K’ undeclared here (not in a function)
+>    30 | #define OVERFLOW_STACK_SIZE     SZ_4K
+>       |                                 ^~~~~
+> 
+> Adding "#include <linux/sizes.h>" to thread_info.h resolves the issue.
+> I am testing this based on 6.10-rc4. Did you encounter this?
 
-Hm, doesn't apply?
+I didn't meet this kind of compiler error when testing. Mind
+to share your .config file? It looks strange.
+
+> 
+> - Charlie
+> 
+> >  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+> >  	select HAVE_ARCH_TRACEHOOK
+> >  	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
+> > diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> > index 68a24cf9481a..80ff55a26d13 100644
+> > --- a/arch/riscv/kernel/entry.S
+> > +++ b/arch/riscv/kernel/entry.S
+> > @@ -130,6 +130,10 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
+> >  #endif
+> >  	bnez s0, 1f
+> >  
+> > +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+> > +	call	stackleak_erase_on_task_stack
+> > +#endif
+> > +
+> >  	/* Save unwound kernel stack pointer in thread_info */
+> >  	addi s0, sp, PT_SIZE_ON_STACK
+> >  	REG_S s0, TASK_TI_KERNEL_SP(tp)
+> > diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> > index 06f0428a723c..3a9521c57641 100644
+> > --- a/drivers/firmware/efi/libstub/Makefile
+> > +++ b/drivers/firmware/efi/libstub/Makefile
+> > @@ -28,7 +28,8 @@ cflags-$(CONFIG_ARM)		+= -DEFI_HAVE_STRLEN -DEFI_HAVE_STRNLEN \
+> >  				   -DEFI_HAVE_MEMCHR -DEFI_HAVE_STRRCHR \
+> >  				   -DEFI_HAVE_STRCMP -fno-builtin -fpic \
+> >  				   $(call cc-option,-mno-single-pic-base)
+> > -cflags-$(CONFIG_RISCV)		+= -fpic -DNO_ALTERNATIVE -mno-relax
+> > +cflags-$(CONFIG_RISCV)		+= -fpic -DNO_ALTERNATIVE -mno-relax \
+> > +				   $(DISABLE_STACKLEAK_PLUGIN)
+> >  cflags-$(CONFIG_LOONGARCH)	+= -fpie
+> >  
+> >  cflags-$(CONFIG_EFI_PARAMS_FROM_FDT)	+= -I$(srctree)/scripts/dtc/libfdt
+> > -- 
+> > 2.43.0
+> > 
+> > 
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
