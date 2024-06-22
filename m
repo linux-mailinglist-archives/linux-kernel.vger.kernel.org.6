@@ -1,65 +1,71 @@
-Return-Path: <linux-kernel+bounces-225570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9F8913265
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:41:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A1591326A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253E01F23337
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 06:41:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C29EB2845F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 06:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B427814B06E;
-	Sat, 22 Jun 2024 06:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396C314BF90;
+	Sat, 22 Jun 2024 06:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aiCE5CAA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="lGD9ocsg"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11DF2913
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 06:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8563A8BFD;
+	Sat, 22 Jun 2024 06:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719038497; cv=none; b=cTF4diL/sutGXYqr9bfcJYSj5q5Gio9lFgEymko4bRF/S58/Jtras7PpDDxmMzMNDPUgiR2BMtlZW3kk9TJI4Hw1yooSQ1pwji/e+0ypdJQCDbQOYutu9ZIgNsuiUUOgX8xJ6pyRjrZxxioBehc9luQn+nfSRHejl+PTcWt7PPs=
+	t=1719038700; cv=none; b=FJp6n+gJHJPN3xnRfLv/c2lRj91of3flkOinbTmMsrIWPdx1dHX8fD0lero1hKQUyl3xtdUdpgBIK9Xhn6kA/SuG9WdQDeAkshfBERMh9dCvZmZLS2QaF76f9sNXG3f7+4wi2WBOOwXffObZJBSNvB46nRpq4RYFbsDzxX6NBp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719038497; c=relaxed/simple;
-	bh=YsgUZq0JgKZpe8Fb1tTYZ526tvi63AW7OiJlEjt9lkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AUa97T5gx5vEhEPXzDU6+8RQGPTJkaaIU+GLA8RkW96zP/dwXFNU7Y++w97aazMMaFYyhMsGL39GVwmsFQ0FTmfstAEKH005pm09t6dglQCfgY6GxJQXL6b6Z4T28AgBmaagJgIJ1ddljVu6iHD4Zh+8kKLgYCMRc47d0rn6v5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aiCE5CAA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719038493;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9fjp/oT9DTpssKYT+E0cu4ifOyOy9kksnkNQv449Pmc=;
-	b=aiCE5CAAguXoDhCefVqA0DpHi8EM/JybDWtwPS/cS6q+TuN0KJdni20J3VNblcTl3sqNla
-	m01TiF7eZwE2vuJftwtX8ZkaE6DvvOzdoHWdA0ucCrRCQYUzVSaAkcBlsOnZuXxuZ44Zyu
-	EU+N8gO4QBsIori6ROFtxTeB43f6RgU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-353-Ux9tN9auNk-PplXP28EUyw-1; Sat,
- 22 Jun 2024 02:41:31 -0400
-X-MC-Unique: Ux9tN9auNk-PplXP28EUyw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FE521956083;
-	Sat, 22 Jun 2024 06:41:30 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AB2F21956089;
-	Sat, 22 Jun 2024 06:41:29 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 6.10-rc5
-Date: Sat, 22 Jun 2024 02:41:28 -0400
-Message-ID: <20240622064128.135621-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1719038700; c=relaxed/simple;
+	bh=SFChX3GTwkwBVUpYdO1Ksg8dix0lX5QntXiRx4WtliU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pEu4Oom5V9dO/xVel1kAacwQBlj8os+y5djmZGvZd5BQjVXV4j8U0nS0d6k8eue5CvZcAicH2CNStqx74mfv7NAlcgwvHaxLoWiR1zslCqIYLjqdabwQCE+rhg2vOuRSXSny3l7VIblIWLuFd4Odc+0BvN1NV85AS6HslTfwx8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=lGD9ocsg; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45M6hN6V026151;
+	Fri, 21 Jun 2024 23:44:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=H36+9mtcn7BgRXSx/MLaYd2
+	UCHM/mMFc4cP5kfF2A9U=; b=lGD9ocsg1JTp1skzeaipST+3tE37ekUgBMNuiCs
+	wFqp6b5j4kGzX6vSq81EJyvNClMGF2qAKEK3xrOneBlY7Rv52v6260X8XctPISe5
+	NliOTdpn8keNAjsvfNbWkNASxDshccnohK4qk3pomE1FFavv+VQLyOzcki8UixIE
+	cKUKY3Rqy9VqAIVZ/jBh97qjyWsyE1u/nKdd9cYHSYdJAytKXpyUAvl+BtrY4t8m
+	UngBAMO/LZibQSddvVLDGWVNko/MpP8LJ5f/jh5VunCbvYYADiorno8H8Y/VmlpI
+	s17hOC7TbNN8KEBB72jtSPbAwqTWXHzt9jSvWcgDFCttdew==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ywh0ph43h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 23:44:45 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 21 Jun 2024 23:44:44 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 21 Jun 2024 23:44:44 -0700
+Received: from localhost.localdomain (unknown [10.28.36.166])
+	by maili.marvell.com (Postfix) with ESMTP id 02D653F7097;
+	Fri, 21 Jun 2024 23:44:39 -0700 (PDT)
+From: Suman Ghosh <sumang@marvell.com>
+To: <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
+        <hkelam@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
+        <kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lcherian@marvell.com>,
+        <jerinj@marvell.com>
+CC: Ratheesh Kannoth <rkannoth@marvell.com>, Suman Ghosh <sumang@marvell.com>
+Subject: [net PATCH] octeontx2-pf: Fix coverity and klockwork issues in octeon PF driver
+Date: Sat, 22 Jun 2024 12:14:37 +0530
+Message-ID: <20240622064437.2919946-1-sumang@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,121 +73,172 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain
+X-Proofpoint-GUID: ssUuIVpFg99Ytz50vYPmZ5ih4l3gyqMG
+X-Proofpoint-ORIG-GUID: ssUuIVpFg99Ytz50vYPmZ5ih4l3gyqMG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-22_04,2024-06-21_01,2024-05-17_01
 
-Linus,
+From: Ratheesh Kannoth <rkannoth@marvell.com>
 
-The following changes since commit db574f2f96d0c9a245a9e787e3d9ec288fb2b445:
+Fix unintended sign extension and klockwork issues. These are not real
+issue but for sanity checks.
 
-  KVM: x86/mmu: Don't save mmu_invalidate_seq after checking private attr (2024-06-05 06:45:06 -0400)
+Signed-off-by: Ratheesh Kannoth <rkannoth@marvell.com>
+Signed-off-by: Suman Ghosh <sumang@marvell.com>
+---
+ .../marvell/octeontx2/nic/otx2_common.c       | 10 ++--
+ .../ethernet/marvell/octeontx2/nic/otx2_reg.h | 55 ++++++++++---------
+ .../marvell/octeontx2/nic/otx2_txrx.c         |  2 +-
+ .../net/ethernet/marvell/octeontx2/nic/qos.c  |  3 +-
+ 4 files changed, 35 insertions(+), 35 deletions(-)
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-
-for you to fetch changes up to e159d63e6940a2a16bb73616d8c528e93b84a6bb:
-
-  Merge tag 'kvm-riscv-fixes-6.10-2' of https://github.com/kvm-riscv/linux into HEAD (2024-06-21 12:48:44 -0400)
-
-----------------------------------------------------------------
-ARM:
-
-* Fix dangling references to a redistributor region if the vgic was
-  prematurely destroyed.
-
-* Properly mark FFA buffers as released, ensuring that both parties
-  can make forward progress.
-
-x86:
-
-* Allow getting/setting MSRs for SEV-ES guests, if they're using the pre-6.9
-  KVM_SEV_ES_INIT API.
-
-* Always sync pending posted interrupts to the IRR prior to IOAPIC
-  route updates, so that EOIs are intercepted properly if the old routing
-  table requested that.
-
-Generic:
-
-* Avoid __fls(0)
-
-* Fix reference leak on hwpoisoned page
-
-* Fix a race in kvm_vcpu_on_spin() by ensuring loads and stores are atomic.
-
-* Fix bug in __kvm_handle_hva_range() where KVM calls a function pointer
-  that was intended to be a marker only (nothing bad happens but kind of
-  a mine and also technically undefined behavior)
-
-* Do not bother accounting allocations that are small and freed before
-  getting back to userspace.
-
-Selftests:
-
-* Fix compilation for RISC-V.
-
-* Fix a "shift too big" goof in the KVM_SEV_INIT2 selftest.
-
-* Compute the max mappable gfn for KVM selftests on x86 using GuestMaxPhyAddr
-  from KVM's supported CPUID (if it's available).
-
-----------------------------------------------------------------
-Alexey Dobriyan (1):
-      kvm: do not account temporary allocations to kmem
-
-Andrew Jones (1):
-      KVM: selftests: Fix RISC-V compilation
-
-Babu Moger (1):
-      KVM: Stop processing *all* memslots when "null" mmu_notifier handler is found
-
-Bibo Mao (1):
-      KVM: Discard zero mask with function kvm_dirty_ring_reset
-
-Breno Leitao (1):
-      KVM: Fix a data race on last_boosted_vcpu in kvm_vcpu_on_spin()
-
-Colin Ian King (1):
-      KVM: selftests: Fix shift of 32 bit unsigned int more than 32 bits
-
-Marc Zyngier (1):
-      KVM: arm64: Disassociate vcpus from redistributor region on teardown
-
-Michael Roth (1):
-      KVM: SEV-ES: Fix svm_get_msr()/svm_set_msr() for KVM_SEV_ES_INIT guests
-
-Paolo Bonzini (4):
-      virt: guest_memfd: fix reference leak on hwpoisoned page
-      Merge tag 'kvmarm-fixes-6.10-2' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
-      Merge tag 'kvm-x86-fixes-6.10-rcN' of https://github.com/kvm-x86/linux into HEAD
-      Merge tag 'kvm-riscv-fixes-6.10-2' of https://github.com/kvm-riscv/linux into HEAD
-
-Sean Christopherson (2):
-      KVM: x86: Always sync PIR to IRR prior to scanning I/O APIC routes
-      MAINTAINERS: Drop Wanpeng Li as a Reviewer for KVM Paravirt support
-
-Tao Su (1):
-      KVM: selftests: x86: Prioritize getting max_gfn from GuestPhysBits
-
-Vincent Donnefort (1):
-      KVM: arm64: FFA: Release hyp rx buffer
-
- MAINTAINERS                                           |  1 -
- arch/arm64/kvm/hyp/nvhe/ffa.c                         | 12 ++++++++++++
- arch/arm64/kvm/vgic/vgic-init.c                       |  2 +-
- arch/arm64/kvm/vgic/vgic-mmio-v3.c                    | 15 +++++++++++++--
- arch/arm64/kvm/vgic/vgic.h                            |  2 +-
- arch/x86/kvm/svm/svm.c                                |  4 ++--
- arch/x86/kvm/x86.c                                    |  9 ++++-----
- .../testing/selftests/kvm/include/x86_64/processor.h  |  1 +
- tools/testing/selftests/kvm/lib/riscv/ucall.c         |  1 +
- tools/testing/selftests/kvm/lib/x86_64/processor.c    | 15 +++++++++++++--
- tools/testing/selftests/kvm/riscv/ebreak_test.c       |  1 +
- tools/testing/selftests/kvm/riscv/sbi_pmu_test.c      |  1 +
- tools/testing/selftests/kvm/x86_64/sev_init2_tests.c  |  4 ++--
- virt/kvm/dirty_ring.c                                 |  3 +++
- virt/kvm/guest_memfd.c                                |  5 +++--
- virt/kvm/kvm_main.c                                   | 19 ++++++++++---------
- 16 files changed, 68 insertions(+), 27 deletions(-)
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+index a85ac039d779..87d5776e3b88 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+@@ -648,14 +648,14 @@ int otx2_txschq_config(struct otx2_nic *pfvf, int lvl, int prio, bool txschq_for
+ 	} else if (lvl == NIX_TXSCH_LVL_TL4) {
+ 		parent = schq_list[NIX_TXSCH_LVL_TL3][prio];
+ 		req->reg[0] = NIX_AF_TL4X_PARENT(schq);
+-		req->regval[0] = parent << 16;
++		req->regval[0] = (u64)parent << 16;
+ 		req->num_regs++;
+ 		req->reg[1] = NIX_AF_TL4X_SCHEDULE(schq);
+ 		req->regval[1] = dwrr_val;
+ 	} else if (lvl == NIX_TXSCH_LVL_TL3) {
+ 		parent = schq_list[NIX_TXSCH_LVL_TL2][prio];
+ 		req->reg[0] = NIX_AF_TL3X_PARENT(schq);
+-		req->regval[0] = parent << 16;
++		req->regval[0] = (u64)parent << 16;
+ 		req->num_regs++;
+ 		req->reg[1] = NIX_AF_TL3X_SCHEDULE(schq);
+ 		req->regval[1] = dwrr_val;
+@@ -670,11 +670,11 @@ int otx2_txschq_config(struct otx2_nic *pfvf, int lvl, int prio, bool txschq_for
+ 	} else if (lvl == NIX_TXSCH_LVL_TL2) {
+ 		parent = schq_list[NIX_TXSCH_LVL_TL1][prio];
+ 		req->reg[0] = NIX_AF_TL2X_PARENT(schq);
+-		req->regval[0] = parent << 16;
++		req->regval[0] = (u64)parent << 16;
+ 
+ 		req->num_regs++;
+ 		req->reg[1] = NIX_AF_TL2X_SCHEDULE(schq);
+-		req->regval[1] = TXSCH_TL1_DFLT_RR_PRIO << 24 | dwrr_val;
++		req->regval[1] = (u64)hw->txschq_aggr_lvl_rr_prio << 24 | dwrr_val;
+ 
+ 		if (lvl == hw->txschq_link_cfg_lvl) {
+ 			req->num_regs++;
+@@ -698,7 +698,7 @@ int otx2_txschq_config(struct otx2_nic *pfvf, int lvl, int prio, bool txschq_for
+ 
+ 		req->num_regs++;
+ 		req->reg[1] = NIX_AF_TL1X_TOPOLOGY(schq);
+-		req->regval[1] = (TXSCH_TL1_DFLT_RR_PRIO << 1);
++		req->regval[1] = hw->txschq_aggr_lvl_rr_prio << 1;
+ 
+ 		req->num_regs++;
+ 		req->reg[2] = NIX_AF_TL1X_CIR(schq);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
+index 45a32e4b49d1..e3aee6e36215 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
+@@ -139,33 +139,34 @@
+ #define	NIX_LF_CINTX_ENA_W1C(a)		(NIX_LFBASE | 0xD50 | (a) << 12)
+ 
+ /* NIX AF transmit scheduler registers */
+-#define NIX_AF_SMQX_CFG(a)		(0x700 | (a) << 16)
+-#define NIX_AF_TL1X_SCHEDULE(a)		(0xC00 | (a) << 16)
+-#define NIX_AF_TL1X_CIR(a)		(0xC20 | (a) << 16)
+-#define NIX_AF_TL1X_TOPOLOGY(a)		(0xC80 | (a) << 16)
+-#define NIX_AF_TL2X_PARENT(a)		(0xE88 | (a) << 16)
+-#define NIX_AF_TL2X_SCHEDULE(a)		(0xE00 | (a) << 16)
+-#define NIX_AF_TL2X_TOPOLOGY(a)		(0xE80 | (a) << 16)
+-#define NIX_AF_TL2X_CIR(a)              (0xE20 | (a) << 16)
+-#define NIX_AF_TL2X_PIR(a)              (0xE30 | (a) << 16)
+-#define NIX_AF_TL3X_PARENT(a)		(0x1088 | (a) << 16)
+-#define NIX_AF_TL3X_SCHEDULE(a)		(0x1000 | (a) << 16)
+-#define NIX_AF_TL3X_SHAPE(a)		(0x1010 | (a) << 16)
+-#define NIX_AF_TL3X_CIR(a)		(0x1020 | (a) << 16)
+-#define NIX_AF_TL3X_PIR(a)		(0x1030 | (a) << 16)
+-#define NIX_AF_TL3X_TOPOLOGY(a)		(0x1080 | (a) << 16)
+-#define NIX_AF_TL4X_PARENT(a)		(0x1288 | (a) << 16)
+-#define NIX_AF_TL4X_SCHEDULE(a)		(0x1200 | (a) << 16)
+-#define NIX_AF_TL4X_SHAPE(a)		(0x1210 | (a) << 16)
+-#define NIX_AF_TL4X_CIR(a)		(0x1220 | (a) << 16)
+-#define NIX_AF_TL4X_PIR(a)		(0x1230 | (a) << 16)
+-#define NIX_AF_TL4X_TOPOLOGY(a)		(0x1280 | (a) << 16)
+-#define NIX_AF_MDQX_SCHEDULE(a)		(0x1400 | (a) << 16)
+-#define NIX_AF_MDQX_SHAPE(a)		(0x1410 | (a) << 16)
+-#define NIX_AF_MDQX_CIR(a)		(0x1420 | (a) << 16)
+-#define NIX_AF_MDQX_PIR(a)		(0x1430 | (a) << 16)
+-#define NIX_AF_MDQX_PARENT(a)		(0x1480 | (a) << 16)
+-#define NIX_AF_TL3_TL2X_LINKX_CFG(a, b)	(0x1700 | (a) << 16 | (b) << 3)
++#define NIX_AF_SMQX_CFG(a)		(0x700 | (u64)(a) << 16)
++#define NIX_AF_TL4X_SDP_LINK_CFG(a)	(0xB10 | (u64)(a) << 16)
++#define NIX_AF_TL1X_SCHEDULE(a)		(0xC00 | (u64)(a) << 16)
++#define NIX_AF_TL1X_CIR(a)		(0xC20 | (u64)(a) << 16)
++#define NIX_AF_TL1X_TOPOLOGY(a)		(0xC80 | (u64)(a) << 16)
++#define NIX_AF_TL2X_PARENT(a)		(0xE88 | (u64)(a) << 16)
++#define NIX_AF_TL2X_SCHEDULE(a)		(0xE00 | (u64)(a) << 16)
++#define NIX_AF_TL2X_TOPOLOGY(a)		(0xE80 | (u64)(a) << 16)
++#define NIX_AF_TL2X_CIR(a)		(0xE20 | (u64)(a) << 16)
++#define NIX_AF_TL2X_PIR(a)		(0xE30 | (u64)(a) << 16)
++#define NIX_AF_TL3X_PARENT(a)		(0x1088 | (u64)(a) << 16)
++#define NIX_AF_TL3X_SCHEDULE(a)		(0x1000 | (u64)(a) << 16)
++#define NIX_AF_TL3X_SHAPE(a)		(0x1010 | (u64)(a) << 16)
++#define NIX_AF_TL3X_CIR(a)		(0x1020 | (u64)(a) << 16)
++#define NIX_AF_TL3X_PIR(a)		(0x1030 | (u64)(a) << 16)
++#define NIX_AF_TL3X_TOPOLOGY(a)		(0x1080 | (u64)(a) << 16)
++#define NIX_AF_TL4X_PARENT(a)		(0x1288 | (u64)(a) << 16)
++#define NIX_AF_TL4X_SCHEDULE(a)		(0x1200 | (u64)(a) << 16)
++#define NIX_AF_TL4X_SHAPE(a)		(0x1210 | (u64)(a) << 16)
++#define NIX_AF_TL4X_CIR(a)		(0x1220 | (u64)(a) << 16)
++#define NIX_AF_TL4X_PIR(a)		(0x1230 | (u64)(a) << 16)
++#define NIX_AF_TL4X_TOPOLOGY(a)		(0x1280 | (u64)(a) << 16)
++#define NIX_AF_MDQX_SCHEDULE(a)		(0x1400 | (u64)(a) << 16)
++#define NIX_AF_MDQX_SHAPE(a)		(0x1410 | (u64)(a) << 16)
++#define NIX_AF_MDQX_CIR(a)		(0x1420 | (u64)(a) << 16)
++#define NIX_AF_MDQX_PIR(a)		(0x1430 | (u64)(a) << 16)
++#define NIX_AF_MDQX_PARENT(a)		(0x1480 | (u64)(a) << 16)
++#define NIX_AF_TL3_TL2X_LINKX_CFG(a, b)	(0x1700 | (u64)(a) << 16 | (b) << 3)
+ 
+ /* LMT LF registers */
+ #define LMT_LFBASE			BIT_ULL(RVU_FUNC_BLKADDR_SHIFT)
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
+index 929b4eac25d9..3eb85949677a 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
+@@ -513,7 +513,7 @@ static int otx2_tx_napi_handler(struct otx2_nic *pfvf,
+ 
+ static void otx2_adjust_adaptive_coalese(struct otx2_nic *pfvf, struct otx2_cq_poll *cq_poll)
+ {
+-	struct dim_sample dim_sample;
++	struct dim_sample dim_sample = { 0 };
+ 	u64 rx_frames, rx_bytes;
+ 	u64 tx_frames, tx_bytes;
+ 
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/qos.c b/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
+index edac008099c0..0f844c14485a 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
+@@ -153,7 +153,6 @@ static void __otx2_qos_txschq_cfg(struct otx2_nic *pfvf,
+ 		num_regs++;
+ 
+ 		otx2_config_sched_shaping(pfvf, node, cfg, &num_regs);
+-
+ 	} else if (level == NIX_TXSCH_LVL_TL4) {
+ 		otx2_config_sched_shaping(pfvf, node, cfg, &num_regs);
+ 	} else if (level == NIX_TXSCH_LVL_TL3) {
+@@ -176,7 +175,7 @@ static void __otx2_qos_txschq_cfg(struct otx2_nic *pfvf,
+ 		/* check if node is root */
+ 		if (node->qid == OTX2_QOS_QID_INNER && !node->parent) {
+ 			cfg->reg[num_regs] = NIX_AF_TL2X_SCHEDULE(node->schq);
+-			cfg->regval[num_regs] =  TXSCH_TL1_DFLT_RR_PRIO << 24 |
++			cfg->regval[num_regs] =  (u64)hw->txschq_aggr_lvl_rr_prio << 24 |
+ 						 mtu_to_dwrr_weight(pfvf,
+ 								    pfvf->tx_max_pktlen);
+ 			num_regs++;
+-- 
+2.25.1
 
 
