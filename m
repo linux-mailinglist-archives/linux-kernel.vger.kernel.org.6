@@ -1,142 +1,196 @@
-Return-Path: <linux-kernel+bounces-225650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179A8913344
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:12:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7518D91332C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E5E4B23C2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:12:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02ED71F231B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB0416EBE1;
-	Sat, 22 Jun 2024 11:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE987152503;
+	Sat, 22 Jun 2024 11:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OCoWci0e"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LP/LBE3R"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB01F2119
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DE214B942
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719054626; cv=none; b=dUOHWh2Hyk/4w+3LEQqiEo2Jwyh8sP0Wqg5wYZ0BlL9Lg2o3vhUwpFbWnCKGzG3ejkUFTVGAx/0voGHJu40NyoUoAuqDomt5bSifxScblyJTF5ZlU7kMNir5S7v6m9C5Uo89jLgmtgLID7WX7us7oAMQocfbTX0ljQFjCukR4c8=
+	t=1719054570; cv=none; b=I1a8e0iHLZdt4TwrQnCvbxMXKpbW4N7tz3uWwyAmveMuf0Ov3AIE81/6BvXrt5ggUDBzd3ODWAve8AmraiuiLPilJUF1bM+s23VWOn0yoaMR1pWb6cyogw8NZDwJ2qmyBtaqH8sm1IRIbmJjffu+VZ+2BJ+6ir/KcNlCZOvoWlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719054626; c=relaxed/simple;
-	bh=6rENcTSmGmEXSupvbVaeL5sPbPyfN+nJ31qoig5Cj/M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u5JBnBHOHuIl8ToCUSKUYBn76dyIDpCQ8xF3qzaKdTqRFKq/6aL5DH8qR7fsB9PDvGWQjq3gk+O5waDZhjZ3KbiAHEb/20RUaluwYnY2LyvtQFxLjCBIsXQkNZERxRgLza54hN0Kw7hguLOOhpVPTh43jRuvzwNosB6VyQj5or4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OCoWci0e; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45MB9a1R028067;
-	Sat, 22 Jun 2024 06:09:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719054576;
-	bh=gMgcDFL8G0Ohc9Yh3qncz4RpaAMQ1qLRcafb0CPf0DI=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=OCoWci0eRd16V6a4VyTfBUsCBLpeQQ9fnh/Fxy5BCAU0QeIdpmfp779SXlomrr6I3
-	 yte+oDZHbxxjMIJmajPtywJOfHXqQALFISLwpp6MAe9GbUsJCbBAs9lUuUWu1TYR9v
-	 QF5LqBT3JDqnaBuJcW/3MD1iyAC5i8F9CyyeCY/I=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45MB9afq000396
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 22 Jun 2024 06:09:36 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 22
- Jun 2024 06:09:36 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 22 Jun 2024 06:09:36 -0500
-Received: from localhost (uda0496377.dhcp.ti.com [172.24.227.31])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45MB9ZIL023153;
-	Sat, 22 Jun 2024 06:09:36 -0500
-From: Aradhya Bhatia <a-bhatia1@ti.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Tomi Valkeinen
-	<tomi.valkeinen@ideasonboard.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman
-	<jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
-        Thomas Zimmermann
-	<tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter
-	<daniel@ffwll.ch>
-CC: DRI Development List <dri-devel@lists.freedesktop.org>,
-        Linux Kernel List
-	<linux-kernel@vger.kernel.org>,
-        Dominik Haller <d.haller@phytec.de>, Sam
- Ravnborg <sam@ravnborg.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Kieran
- Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Nishanth Menon
-	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Praneeth Bajjuri
-	<praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-        Devarsh Thakkar
-	<devarsht@ti.com>,
-        Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra
-	<j-luthra@ti.com>,
-        Aradhya Bhatia <a-bhatia1@ti.com>
-Subject: [PATCH v4 04/11] drm/bridge: cdns-dsi: Fix the link and phy init order
-Date: Sat, 22 Jun 2024 16:39:22 +0530
-Message-ID: <20240622110929.3115714-5-a-bhatia1@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240622110929.3115714-1-a-bhatia1@ti.com>
-References: <20240622110929.3115714-1-a-bhatia1@ti.com>
+	s=arc-20240116; t=1719054570; c=relaxed/simple;
+	bh=lfF9InuMlIs46IAKThHeoaqSIjaqpjrF0mNn0upr/EI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TYeMIHyjKXzANY8sidK9gFIIsSGVv2H3WNfNg+7bpceiuuJly3ulzN4PRWEXhLx1uyjmRhlaslBP9pIuZaCg82st31qdN35iee4cwmmEqtK0EJ6OCTH1ydR3hdXXNWOrZMpQfA+wSkYnmjOtTFAFok3MENPu6ay7qQJ2tUDATJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LP/LBE3R; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6e43dad8ecso471631966b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:09:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719054566; x=1719659366; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UxTd0A5ih62U/2vVAXq1cOqm/KoxaID5Hveyi9+8Qjo=;
+        b=LP/LBE3R5a6SHeuK4HNtjaXJtDjjShgoIbMLt4dxsZ1a7LMu00UbiTwxC4pDf3t2pD
+         tIPckKF32Gs7eDaAkt7rvPKpe1A87G4P7BbTf2UM8smGPDkLSwrvUuza/NIaFj4MaoUE
+         bo+5R+sTV6kN3Gk9g02RTAfZXD4HwSMREoWVBL/T7qW4Sbxk4QU4SxzQGc8XeuIue1aL
+         0NTLVGjbpuJNOf6N3nQxx+IWVV3tVwh8rHjOZxNPSTnJUQp5e6GCmW+fdPfDrqu84+CX
+         TU+HjuMeXGRta3IyppXQEbZ502EB1aFZ6aM6NXQj27Lm8ZdRIN86/LxuZs2nSIi98eCB
+         CTrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719054566; x=1719659366;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UxTd0A5ih62U/2vVAXq1cOqm/KoxaID5Hveyi9+8Qjo=;
+        b=nZyTwc82sZ+1NFmGESRjV3tOQjBogc6l9aQLDs1YuHQjbNS0MhFO3a2/0zsxZKgte5
+         WjAtcNka5JOUUedl0durlykLdM2aUFeCMd+Sfg9vkH1vNl3kjewNE8PcgRiN0EP6DyZj
+         Kwfk4xIumCPF93fKwHagcvy8JWoTr77N16rA3soCEElW8afNbUL3a2z7qi0H4n5SJCV0
+         LUKBjQZmro3RaSdBJ1sO/bXneKydXjbiDyAXKwt3ek6sF4lj9gdx03QUBl74gX9JW9Je
+         0hshItR8yDR00pc15XWJ1VDsgRXR8LtujdlHETxEegGouuGETnuwmriNlH+A1ezysrWG
+         4P5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX6FclYOnF9wPHiCqTQtKjLEQLYfHpnmCcEwxR5gvo3QjMKkLpJ8NQiknSRkN4SKUkS+61+nuIzdpOAzAepE1IhhUkH1m9WOD+7/YXd
+X-Gm-Message-State: AOJu0Yx9LSmQxmnsebMlpvj5zhc/JdXy5tmFCbQWMxCG9CsrUAX9iwnc
+	blp/W+hXg9tFJ8Js7FeluEiGIyeUvvKcOeGixAsV2v2rDUx5FNsHSar015bYSmU=
+X-Google-Smtp-Source: AGHT+IHcwXTf6PVedll4+dpa6qYQ6zvsrzeqSxOX0XmLY3MOwZma/dXdW+fkzbZGeLqn+ghehhzmFw==
+X-Received: by 2002:a17:907:d30a:b0:a6f:b6c3:fb2e with SMTP id a640c23a62f3a-a701b749c41mr89424066b.0.1719054566171;
+        Sat, 22 Jun 2024 04:09:26 -0700 (PDT)
+Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a70eb8792b2sm42005166b.184.2024.06.22.04.09.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Jun 2024 04:09:25 -0700 (PDT)
+Message-ID: <e344335f-be60-4568-97be-728257684310@linaro.org>
+Date: Sat, 22 Jun 2024 13:09:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 3/4] arm64: dts: qcom: add base AIM300 dtsi
+To: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dmitry.baryshkov@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Fenglin Wu <quic_fenglinw@quicinc.com>
+References: <20240618072202.2516025-1-quic_tengfan@quicinc.com>
+ <20240618072202.2516025-4-quic_tengfan@quicinc.com>
+ <7eb1c459-90d2-4b49-a226-0ced8216cee6@linaro.org>
+ <04517096-38a0-465f-86f7-7e8c7de702a2@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <04517096-38a0-465f-86f7-7e8c7de702a2@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The order of init of DSI link and DSI phy is wrong. The DSI link needs
-to be configured before the DSI phy is getting configured. Otherwise,
-the D-Phy is unable to lock in on the incoming PLL Reference clock[0].
+On 20.06.2024 2:46 AM, Tengfei Fan wrote:
+> 
+> 
+> On 6/19/2024 3:06 AM, Konrad Dybcio wrote:
+>>
+>>
+>> On 6/18/24 09:22, Tengfei Fan wrote:
+>>> AIM300 Series is a highly optimized family of modules designed to
+>>> support AIoT applications. It integrates QCS8550 SoC, UFS and PMIC
+>>> chip etc.
+>>> Here is a diagram of AIM300 SoM:
+>>>            +----------------------------------------+
+>>>            |AIM300 SoM                              |
+>>>            |                                        |
+>>>            |                           +-----+      |
+>>>            |                      |--->| UFS |      |
+>>>            |                      |    +-----+      |
+>>>            |                      |                 |
+>>>            |                      |                 |
+>>>       3.7v |  +-----------------+ |    +---------+  |
+>>>    ---------->|       PMIC      |----->| QCS8550 |  |
+>>>            |  +-----------------+      +---------+  |
+>>>            |                      |                 |
+>>>            |                      |                 |
+>>>            |                      |    +-----+      |
+>>>            |                      |--->| ... |      |
+>>>            |                           +-----+      |
+>>>            |                                        |
+>>>            +----------------------------------------+
+>>>
+>>> Co-developed-by: Fenglin Wu <quic_fenglinw@quicinc.com>
+>>> Signed-off-by: Fenglin Wu <quic_fenglinw@quicinc.com>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>>> ---
+>>
+>> [...]
+>>
+>>> +&ufs_mem_hc {
+>>> +    reset-gpios = <&tlmm 210 GPIO_ACTIVE_LOW>;
+>>> +    vcc-supply = <&vreg_l17b_2p5>;
+>>> +    vcc-max-microamp = <1300000>;
+>>> +    vccq-supply = <&vreg_l1g_1p2>;
+>>> +    vccq-max-microamp = <1200000>;
+>>> +    vdd-hba-supply = <&vreg_l3g_1p2>;
+>>
+>> These regulators should generally have:
+>>
+>> regulator-allow-set-load;
+>> regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>>                             RPMH_REGULATOR_MODE_HPM>;
+>>
+>> although the current setup you have never lets them exit HPM
+>>
+>> Konrad
+> 
+> I understand your point is that these settings need to be added to allthe child regulator nodes of regulators-0, regulators-1, regulators-2, regulators-3, regulators-4 and regulators-5. Is that correct?
 
-Fix the order of inits.
+No, I only meant the three references in the UFS node (l17b, l1g, l3g),
+although I suppose such properties should be there by default on all
+regulators in order to save power.. but most boards don't do that (yet),
+as nobody wants to waste their time with potentially one more thing to
+debug
 
-[0]: See section 12.6.5.7.3 "Start-up Procedure" in J721E SoC TRM
-     TRM Link: http://www.ti.com/lit/pdf/spruil1
-
-Fixes: fced5a364dee ("drm/bridge: cdns: Convert to phy framework")
-Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
----
- drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index d89c32bae2b9..03a5af52ec0b 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -778,8 +778,8 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
- 
- 	WARN_ON_ONCE(cdns_dsi_check_conf(dsi, mode, &dsi_cfg, false));
- 
--	cdns_dsi_hs_init(dsi);
- 	cdns_dsi_init_link(dsi);
-+	cdns_dsi_hs_init(dsi);
- 
- 	writel(HBP_LEN(dsi_cfg.hbp) | HSA_LEN(dsi_cfg.hsa),
- 	       dsi->regs + VID_HSIZE1);
--- 
-2.34.1
-
+Konrad
 
