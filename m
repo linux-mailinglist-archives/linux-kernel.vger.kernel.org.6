@@ -1,128 +1,169 @@
-Return-Path: <linux-kernel+bounces-225712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954FD91343C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:46:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CAB891343F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5039428495F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:46:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 902221C20C00
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9A616F297;
-	Sat, 22 Jun 2024 13:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDD116F29F;
+	Sat, 22 Jun 2024 13:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LAhhFSoA"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ikEo3zAR"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3461E485;
-	Sat, 22 Jun 2024 13:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DE114D6EE;
+	Sat, 22 Jun 2024 13:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719063978; cv=none; b=Rl40Rbgaob90r2xqoiSuZywFyUqNjfKiyi7+KykKLyPt5QOzISt/PdToMNVaWS+JywO35mRMYn2QCnFfiWuioP2PunEfNwq5pQ3aHajRU1GSomjmLwudkOd6pkE+7+efhc7e8WyhasI555/l0IIumwUhIwwk7Zp1Lp6gr73qSSE=
+	t=1719064046; cv=none; b=FG3uF7/UBORvQCYIiQ6VRLsV9pQTCldPOuRUONLM8Lm5OnpDey88hSFrPJCyY4vEB5BB5D9sdCfMdPURvQPKrTc4kq19OjG4hBJPqQmGylpQ4CC7Gb9qxVkKtZwWa7apF3aseDOIt/X5/Hb33ngXIr1GVzeJj+SVJR6UYq0jYhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719063978; c=relaxed/simple;
-	bh=+d6ry8ShdrEqtbS1+VTAkmYE/FDL5yTFgm29o1to6Ho=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=bDUHFCTzviEno0M+zGIjz/J4MnqXtPZQVZwCS1+zyzG1dHnaIY30cks68NPk6a5RYlmZJ2C5mMkS9JDYKxqARAQsK0QMev2k4JJtgmHYUG+7KmP9i/HeDsW/zLZEzjFD8763ktb3RCfy3meewNrObMHTkM7xtA66PysxGmX5mi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LAhhFSoA; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719063918; x=1719668718; i=markus.elfring@web.de;
-	bh=J0A+T/BFJA2HV503DIR76VhyTM9gtllwzv0/WiNxCb0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LAhhFSoAdr4Vqw5gHhPQ1h+wDIFhrMyGctnriQebCIkhnvhIF9JxdZHaA5c7c44a
-	 HSsbw7XoB3rH/fa+dl0+Hn19P2GZQ+DttbYfRUZDPkibi6HoeU118VIXvkn3CiKZJ
-	 GGRy5cUvDT/y2E6ishzvUlEp3CHlRxH6d1pbWXhmYou5Osihy7M00f4jc1IPg1U/W
-	 sWWQHwg3F/IkhCrJOqLna2t0hM+w7il/Jg1J83QpOMseCNal5BPL1p1cXlvQIpEOE
-	 vIFtvSHPn/UjoLpr83DlfqncLs+l3C//wywgu/sSJheqzfRGl8FfADyADFfkkdAfa
-	 g0pl6fU3urolrZ6EXg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MYLig-1rpcOS0mRe-00OXUh; Sat, 22
- Jun 2024 15:45:18 +0200
-Message-ID: <e1e51582-7ecb-40af-aae1-498993d0f935@web.de>
-Date: Sat, 22 Jun 2024 15:45:15 +0200
+	s=arc-20240116; t=1719064046; c=relaxed/simple;
+	bh=aYz1ndkOaTKnkrgbvyIOa27eGl/WVWdVOEBR6M52qOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P2y+H87xZMyKAZZV8ppX3K/EJmoz7QDzGzbBbQalAisNMqWrXwA1wGBRMo9OmuzRQ+xqX36yQI8CgkJfRi7gUgcvqzILvx6eLX+OAlKDfa9Xx1JNCi1SnYn/oVKCe7f1Rcv1E0/pFva3IxswEjM8mcV+xZZ2+lV1ee2ZyuxhLFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ikEo3zAR; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdb9526e2so976222e87.0;
+        Sat, 22 Jun 2024 06:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719064043; x=1719668843; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qzDOBWm1Bza76au5EMycUxKs7sf6PRvFgQtnTRvoO68=;
+        b=ikEo3zARimxyubyhIcj+6SNwwy0E9c6EYtohtYI8A89Dnhn2Gx8FsuNFjhBTn0OYUC
+         Gh7l+MTymSwJHEibI8pRnQJ40/fJb3twQ/ic+pDQEjOxkOSTGLda8pqMjRvUkjbeUnUj
+         UpzgXeWOUXTHYqKCFVgnArb58K5f4R1XR6vqYeeGvJdmaHAgqUAKKPtnf9xIcAqlt+Hp
+         ZANrkNhYimWwKQzSog0wxkU2nbD5/oDH145xLhyJuuoi9U3YTCxqaFL7q2KqHdceC/Ow
+         itr+P5c+VVZqJQz7koDhyZPljY6zHcaOsIjaofZ9DbbceMTzrSxZ0sTqn93KD01XBI0E
+         t8gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719064043; x=1719668843;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qzDOBWm1Bza76au5EMycUxKs7sf6PRvFgQtnTRvoO68=;
+        b=KkLJkwiGuVCEX/Wah7Q4DgzjeHFhdvM8FZioN4h5yB9NAROgRNUCX5CN2YxKuW8Va+
+         gwaQE0xxwHvADXTcdcQTi5GhbADmhqSLDJm5deLUEsjyBJKdkdtXUIgeFda+egVnxA17
+         2xpaDVhzxdbu8OvJwlE7zr+cmDgLfPgxLfgluU4v8EWKiUwJlW2mDT7/7JN+pSydhAB6
+         Lz5/iu4jU5qMvY8wZmrWT6Kr+YKPB8YjzI9VJqXy4uou5JNL50wVjSPNxytg/SoNMdSZ
+         fF/M8NXU4LxumLB8Asu0rkrHpstJ0OO8EOktICqpTVNVfndGAQXk88PbQjcPgIKAM61Q
+         bpOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNuxsaZnrnu9bfaf3zr426yBnM3uhvsSDC/zbzlubywJ0TEH+zvoYmRqptN5LyNAzQ2WWR4KuPjRLgnV5Y/aMWJZiA6KTpDtupYvAUOz0e4cw82KSSqB4R19XWREFOhZIBOHXngNv81Ror/HNPkHs/DQzLsLJUVwAYkCRB3p2GCGvj6UaFCPMbIulnI8SW9jV0febV/GTHpawCU+Uk82j+oaqMOw==
+X-Gm-Message-State: AOJu0Ywf9Xca4CamY8VLIWYQUMCfJzNzWV3aqzJAycnhhEcMoIA1Kmst
+	81oWLLnbgV77uMDJpzG0YaFxfeQInAi1k2UdQOy+fk2mVIDy+YCiOomzhIzPnRZuClLycevzIok
+	FsDu75+EE83dh9Kgrw37XvsfFuUo=
+X-Google-Smtp-Source: AGHT+IH2lCl3T4pcjIHWIZp3BqoW9t0WI6X26FHKqKGqVsndzfblFuk7xQwvtcuSKJOI80Q9Xta6H8JLozf1v3p6aso=
+X-Received: by 2002:a05:6512:32b5:b0:52c:80e6:60c7 with SMTP id
+ 2adb3069b0e04-52cdf3317bamr337302e87.13.1719064042778; Sat, 22 Jun 2024
+ 06:47:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Chen Ridong <chenridong@huawei.com>, cgroups@vger.kernel.org,
- bpf@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
- Tejun Heo <tj@kernel.org>, Waiman Long <longman@redhat.com>,
- Zefan Li <lizefan.x@bytedance.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240622113814.120907-1-chenridong@huawei.com>
-Subject: Re: [PATCH -next] cgroup: fix uaf when proc_cpuset_show
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240622113814.120907-1-chenridong@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240621-b4-sc7180-camss-v1-0-14937929f30e@gmail.com>
+ <20240621-b4-sc7180-camss-v1-3-14937929f30e@gmail.com> <cd9b5612-1160-4284-be7f-4efbcbbbe346@linaro.org>
+ <b9deca88-8e1a-4017-a0fc-6a77672d684d@linaro.org>
+In-Reply-To: <b9deca88-8e1a-4017-a0fc-6a77672d684d@linaro.org>
+From: george chan <gchan9527@gmail.com>
+Date: Sat, 22 Jun 2024 21:47:09 +0800
+Message-ID: <CADgMGSunjhnjv5+KpRskL+F22zz+E60dJPkzCdfTVTcEM+HRpw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] media: qcom: camss: csiphy-3ph: Add Gen2 v1.2.2
+ two-phase MIPI CSI-2 DPHY init
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Evn4r8gxlYLcw+BcF1xPz9OY5TfNrVkhSkt5PjYb/Q1TnVVyvYs
- hAM5bBJPLuYOM+NKPcD0mdUKdyAbrd79mAwd/0sVmu79bRRXD4E0vVU0y8RhsNGD6P29i6L
- zlhZkT+CHdrTF9g5ANO08uyVVTCZT/gcfa9KAPJNrGMdCq35hCKmKjrujQh2Ed1WTYqzPrO
- iPbhkoTzybfd3WlXjM7aA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:L8Mh94X4KOQ=;aHCWYiF+0dkk06gAbdwSQQmdUVc
- fYwtpJmHdVQdJTlTpazyiKdMgiZjrn1XxwOuYhL+pQY/kVBU5SZ5jbcAg3ctO78Cv5+FVzfhq
- S7UXmDONeyvBfJFrXIEjI8v/0d+v/18zGLHdu2Z5uwGN6wj3kwRXr36N/ouFUbO++XA+Cri6f
- hd+PLdTI5LrvO5gkIFYvE2wT31Bcr794p0tclWSMJfyZsvag7TCzODxRH7jorlW9GDXOlXvGM
- ysE7YLAp0rywXy+oMC6+58Fvhj+jU9kE6wDVQ+cs2RNSA1J48Gto6PJoxRIvtqiHZ3og4DGwj
- tG4gEaccvDMzYyBUKVAGY/akSmBV0Si3YmvF0jJi9Txi8nAIyUUFce5PTL4BpKIfCm5CaOjOx
- KUDvch/TL2yENbReRWVhU2fzbLgFVF9dNlUMQPadoXqq+NprwkPcsaq6bWeWEp5TDw/+PEAZA
- lZcE6itsdd72m8FVGGN0HBc1JwBMf6r0ROVrtvZBD2UAX1t9UHA9n6BsE5KoKo8WLyInTnHh3
- vyGBppc9QdgiAtg83UBpV4nHx09ld9BaLEgSp1h3M2klHsNmTtrJ1Fr5wNpdWBagVN4nhpTWt
- pVp5KbGXL64moV8GbFcKJj4OC+uGP2sgtY4I4Reaa3kzNe7i7wGCuHZjk1dPEuqgjSsodBExG
- Mvgy3QHQMKZSJ8CqNaNhMKh2V+zvglBVE0hI10rKzWX3luVJJgeho0w095aAHtCu0megB3ZzU
- deDK+1Ax30KxMtLoxEAaiv1OmE8veRM3W4MVLrrcwIYZQTHEiHnWg2JgGcCEjY1U+dmIoRQSZ
- fHg9H7B5LJRrwwxmKu+73uSMfqTuc2ci3EtGwQ8A5uG8M=
 
-> We found a refcount UAF bug as follows:
+resend with plain text
+
+On Sat, Jun 22, 2024 at 7:20=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro=
+.org> wrote:
 >
-> BUG: KASAN: use-after-free in cgroup_path_ns+0x112/0x150
-=E2=80=A6
+> On 21.06.2024 1:25 PM, Bryan O'Donoghue wrote:
+> > On 21/06/2024 10:40, George Chan via B4 Relay wrote:
+> >> From: George Chan <gchan9527@gmail.com>
+> >>
+> >> Add a PHY configuration sequence for the sc7180 which uses a Qualcomm
+> >> Gen 2 version 1.2.2 CSI-2 PHY.
+> >>
+> >> The PHY can be configured as two phase or three phase in C-PHY or D-PH=
+Y
+> >> mode. This configuration supports two-phase D-PHY mode.
+> >>
+> >> Signed-off-by: George Chan <gchan9527@gmail.com>
+> >> ---
+> >>   .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     | 120 +++++++++++=
+++++++++++
+> >>   1 file changed, 120 insertions(+)
+> >>
+> >> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c =
+b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> >> index df7e93a5a4f6..181bb7f7c300 100644
+> >> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> >> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> >> @@ -348,6 +348,121 @@ csiphy_reg_t lane_regs_sm8250[5][20] =3D {
+> >>       },
+> >>   };
+> >>   +/* GEN2 1.2.2 2PH */
+> >
+> > This is the init sequence for 1_2_1 not 1_2_2
 
-How do you think about to use a summary phrase like =E2=80=9CAvoid use-aft=
-er-free
-in proc_cpuset_show()=E2=80=9D?
+Yes, undesirable copy-n-paste result.
 
-
-> This is also reported by: https://syzkaller.appspot.com/bug?extid=3D9b1f=
-f7be974a403aa4cd
-
-Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D) accordingly?
-
-
-=E2=80=A6
-> +++ b/kernel/cgroup/cpuset.c
-=E2=80=A6
-> @@ -5052,9 +5053,28 @@ int proc_cpuset_show(struct seq_file *m, struct p=
-id_namespace *ns,
->  		goto out;
+> >
+> > https://review.lineageos.org/c/LineageOS/android_kernel_xiaomi_sm8250/+=
+/311931/10/techpack/camera/drivers/cam_sensor_module/cam_csiphy/include/cam=
+_csiphy_1_2_1_hwreg.h
+> >
+> > https://review.lineageos.org/c/LineageOS/android_kernel_xiaomi_sm8250/+=
+/311931/10/techpack/camera/drivers/cam_sensor_module/cam_csiphy/include/cam=
+_csiphy_1_2_2_hwreg.h
 >
->  	css =3D task_get_css(tsk, cpuset_cgrp_id);
-> +	rcu_read_lock();
-=E2=80=A6
-> +	rcu_read_unlock();
->  	retval =3D cgroup_path_ns(css->cgroup, buf, PATH_MAX,
->  				current->nsproxy->cgroup_ns);
-=E2=80=A6
+> FWIW 1.2.2 seems to be the desired one: [1]
+>
+> Konrad
+>
+> [1] https://git.codelinaro.org/clo/la/kernel/msm-4.14/-/blob/UC.UM.1.0.r1=
+-02500-sa8155.0/arch/arm64/boot/dts/qcom/atoll-camera.dtsi#L22
 
-Would you become interested to apply a statement like =E2=80=9Cguard(rcu_r=
-ead_lock)();=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/cleanup.h#=
-L133
+Here is the log from sm7125 joyeuse phone, not sure if it helps or not.
+[  204.034767] qcom-camss acb3000.camss: CSIPHY 3PH HW Version =3D 0x010000=
+00
+
+I carefully looked into this csiphy_2ph_v1_2_2_reg of various trees,
+and concluded below version:
+(1)atoll, sdm845[1]
+(2)surya[2], sa8155, factory-trogdor-13443.B-chromeos-5.4[3]
+
+I was tempted to use (1)atoll one but it looked like (2) is newer. Is
+it worthy to create CAMSS_7125 specially for SM7125. Please give me
+some advice about it.
 
 Regards,
-Markus
+George
+
+[1] https://github.com/LineageOS/android_kernel_xiaomi_sm6250/blob/lineage-=
+21/drivers/media/platform/msm/camera/cam_sensor_module/cam_csiphy/include/c=
+am_csiphy_1_2_2_hwreg.h
+[2] https://github.com/LineageOS/android_kernel_xiaomi_surya/blob/lineage-2=
+1/drivers/media/platform/msm/camera/cam_sensor_module/cam_csiphy/include/ca=
+m_csiphy_1_2_2_hwreg.h
+[3] https://chromium.googlesource.com/chromiumos/third_party/kernel/+/refs/=
+heads/factory-trogdor-13443.B-chromeos-5.4/drivers/media/platform/camx/cam_=
+sensor_module/cam_csiphy/include/cam_csiphy_1_2_2_hwreg.h
 
