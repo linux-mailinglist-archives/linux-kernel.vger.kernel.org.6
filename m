@@ -1,146 +1,163 @@
-Return-Path: <linux-kernel+bounces-225655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB65913355
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:23:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3F6913359
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE0761F2318C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:23:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840521F23195
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C7215359B;
-	Sat, 22 Jun 2024 11:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED6615442A;
+	Sat, 22 Jun 2024 11:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2p/2zlI"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="G7cpXO/n"
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01olkn2058.outbound.protection.outlook.com [40.92.99.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9853014D2B3
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719055413; cv=none; b=FP+AUS1H0uuj8oThJ28vKRUqZscazhX/2Ao9IHNoNLEe5tkJIGPSQccq6kPBG381fbDp2NvCUjVNFs+mF0AgTCOsaWJvXG4GJQNbQRzyI/C5rv4JbZMixi09H+2ICVqe+Q3awOfJmsP4f7PUN5nIBjs2x/eXXxDbz2yDFi4wDJ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719055413; c=relaxed/simple;
-	bh=s8IcRfDXQj8f4kTCAOTtkNej/CuRn/sZJe1kkX5GCWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MU1Za49Fx21FnHaUEUzaOWv2OAtjROEIKoAxq/q2MrFs99iJQ/NTbolEwWxhGGkoKt1UW1H2bB+IkI8w+fyWm/eUxyK6yf+m7hGTJBIlRT0NBpIEkqOvNnu+uOYJzdtHAZVVOYcEelG23ZPzyhGEZSN3SM4kPtjod9pPpzVcll8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j2p/2zlI; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6fe118805dso46867166b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:23:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719055410; x=1719660210; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=v7v8etS9lc99/NCTpKj/r0Kcu15d2+tzcAbXByqh6yU=;
-        b=j2p/2zlI7fw/6R3RYdDQGWezho0/ahqytxSqmxl1cEIwZTsrv7HpQrIRFAdM4xWcTa
-         DzDOlU6MfC12qQUJtKeM1JBOvemn3g2P/r85wtInh6tw8N3DJsJDzODjyrwd+7QCuCPT
-         tazw9LarU47LqgChYt/iUnmD0nJXEMFqS0TqZ34AXdCq1UVVuHFOv2ehxD33VqvtHJJU
-         NlHCKQm0Bjcah85xB51xz+s0K7M9/o3dGiFtBwXpsou0zQhyLCFAMsSLNZ4UAteXlOUf
-         0XCSJ3Nba4kWiPYI/twm9D8aUs53LW+/1KHLg2qiPfYF0HaFadm7E/5OoXEwcsMTWfN1
-         Q1Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719055410; x=1719660210;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v7v8etS9lc99/NCTpKj/r0Kcu15d2+tzcAbXByqh6yU=;
-        b=L1wxJhcbrXnE/l4zx8CVN5kNDNaAarBvKooRxBJHpKA/gipoCMeeWrEvcl/RN1O+NB
-         EbhehG+b7pH5M6OU3h53f3i2UllhzREhGedu7OJ1kFk4gvCDBNMBvy3y3vUsVVK+JZ3F
-         BMHB4e/lCFQtwYf1+XJdy7A+zjMN3LTqUGfnFYIbsgxPLo7WcIUTv7qtRV2dFLo0g+df
-         WWR7rlTNmxJYnr4QcS9+rfok/5mm2ipugb1bnRJvLvT6u4Y7A870kwVxn89kyw1J4WnR
-         J/n59yIg5j40zKbS6R9UfNt7ZDlpYyEF09tuO4R7HD0NddZrJc6T/5w7Tpxmv9VY0ZXZ
-         xijg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4uou9FT4lc96mhQRHdOWPBx7o0qQUp4xps0NyJIK/F5hJMRm0p8L3lEa8sPq2pejVvvR4+SKvLIsedhjQ347kxNt2VOk7tmkFWT8O
-X-Gm-Message-State: AOJu0Yzc7JuXq5nL64fCW5VHs4cgJNCx0E3Tt/TR6NSQHMp0A50E9AWX
-	dqWhT3cmxmXMWqVLpU4ykGaZFpVnKtC7uJj++9X4n7BMiUuMuIa1gcOV0Zv1UxM=
-X-Google-Smtp-Source: AGHT+IEaoEAn8s4dir0EPAEpXEjAqmTi0SuzROmlVCniI2u8CE3A38eP7o8hGM5gEEfcIY0BHPKDcg==
-X-Received: by 2002:a17:907:1606:b0:a6f:b19d:90ac with SMTP id a640c23a62f3a-a6fb19d9667mr734379866b.69.1719055409489;
-        Sat, 22 Jun 2024 04:23:29 -0700 (PDT)
-Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7242aa3c00sm11177366b.225.2024.06.22.04.23.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jun 2024 04:23:29 -0700 (PDT)
-Message-ID: <a9144943-317e-4727-b96b-532b5d56ceb1@linaro.org>
-Date: Sat, 22 Jun 2024 13:23:27 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459DF4C8A;
+	Sat, 22 Jun 2024 11:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.99.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719055468; cv=fail; b=gyRH5hTL7K8oc2r7ZQ9i6Xg5Ypo+jpKpmQ9KhuR/8Dexrpbrzt3gV4YEo+Yr6Q/s1Fin3DC7w75IV/Rgb4+5FcYcBLx7k8Qydad4v9bbd7k34AGS0MIwtSLuDf7gtNZ7mhUlpyuPoXGzyU8e6y6hH9Ydz5JfleuPlj1s2pwjgFs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719055468; c=relaxed/simple;
+	bh=4lkQBpma7R/nXahZdpJ9N05R5HwCZucBxi4LWhi6il8=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ZsfXordEUcQHklPIPlc0fh488z6NxdMDtOG3qcacV0rMJgoIS87vp/qownykc7EgME5Fg/Om/OtJ/+yphhWJTORJw6m/izpxJGRIaOhyhzMI0+lwwXDjX8NYUwCCngGFZpFrDAezEpgGAH5l8+TBmA75rPaCWtiGwme9+2uucf0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=G7cpXO/n; arc=fail smtp.client-ip=40.92.99.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SNtgPP6sDotfjJ8fLOuy2dnEc1lBdJgqCCOs2/zKKrREe21PVQwQdMuLttlKRG8x/V2jB2IMAq8/qZ5YgUP/nnYoU4vDSUYzF8tmdBgboR8FX0+07/DqFAVzSC43EEneu/rTt7C32BHlix2etf3jvUV/Sp8hQPsgCZG7Z8vrlXweqPetyc6Fx9ezSvAxzHh7cJgbc2JLbmJJNqY1XR6v5MAqt+aPAqvnKJBgTl5WxFSTjUK4hXEMOdVQ+zPzfBh8u7yMHk/e+lqm+lwsTuzg1OOddP5X+84H5f7KyEo9fOMySDKk6ad/kqfyc0Y3FZHl7VLBiqPOaf/7AESwPs2gig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+1Ou3XU/r2FCL/064EuYVlzcKrl8jpJs3XlGf4f1DTg=;
+ b=ixpKD2IdEDGXcv9ozCaiaMM6h6rNKNcwDHXiCjfj7Y4SzwbQLlqin+oBQmwhhwxtj6oCoOGrF2pdl55J9m0raVvP01Gcp5nrvXtay9/oQn/C128ticzD+rYpy82Ghd7nLnobWYAFfr6a4iDETCpbwRnrMnT/nfMXO6kLw0/38Q4SSS0npwN1UuT0lmXR/hb/2No8A5Svro4n/fto97Unyd9CLfCWwMx9i+RfpxvCuIw9srprICGSVPyHfqvYpa8sd6/fEkVrzG0Lv2WRlGKs5J4WofLvghVA4myRK+43onbacZonx+GcQ8DINJKHcwdDKA0KD2L8ym1+F2W/DDEvxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+1Ou3XU/r2FCL/064EuYVlzcKrl8jpJs3XlGf4f1DTg=;
+ b=G7cpXO/nagEk79AqmbUVhEnT0OBIaToHf+pjwRcpDHRbW70+AL+Aq+w8i0GinGKAZWIQM+0TBd5QV2p2gyTh+sUzXrbHb07m6ksrnzSkkHq5TgbQU9giFZsYfnA9AkRTqEiyMn5IC/jN2ZfVe6NBht9LwK0MgN/tfNub/DtsdayVgZ5PepZjor0WCF6T4vI3AoI6r3jvTywTavADh2s1bi2dpD/7pejkGb0+cKH8zwKPSOpROlXCxcwwVKgnvn4y2E5MguHU3dad4j1NjPEpRU2OKa2X4Inpk1KBcCFwQmVwUTPUfEhx/wfRUSAd4Z2fH5+1HVI6tiHsZomjgyngbw==
+Received: from TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:23e::10)
+ by TYWP286MB2732.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:24f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Sat, 22 Jun
+ 2024 11:24:22 +0000
+Received: from TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::85b8:3d49:3d3e:2b3]) by TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::85b8:3d49:3d3e:2b3%5]) with mapi id 15.20.7698.020; Sat, 22 Jun 2024
+ 11:24:22 +0000
+From: Shengyu Qu <wiagn233@outlook.com>
+To: nbd@nbd.name,
+	sean.wang@mediatek.com,
+	Mark-MC.Lee@mediatek.com,
+	lorenzo@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: Shengyu Qu <wiagn233@outlook.com>,
+	Elad Yifee <eladwf@gmail.com>
+Subject: [PATCH RFC v1] net: ethernet: mtk_ppe: Change PPE entries number to 32K
+Date: Sat, 22 Jun 2024 19:23:35 +0800
+Message-ID:
+ <TY3P286MB2611CC17BC0A189DB15620EA98CA2@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [jqsQlCcneTcWQQbAMU0D17XP0S32gX8/]
+X-ClientProxiedBy: SGAP274CA0001.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::13)
+ To TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:23e::10)
+X-Microsoft-Original-Message-ID: <20240622112335.11582-1-wiagn233@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] clk: qcom: dispcc-sm8650: Update the GDSC wait_val
- fields and flags
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240621-topic-sm8650-upstream-fix-dispcc-v1-0-7b297dd9fcc1@linaro.org>
- <20240621-topic-sm8650-upstream-fix-dispcc-v1-5-7b297dd9fcc1@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240621-topic-sm8650-upstream-fix-dispcc-v1-5-7b297dd9fcc1@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY3P286MB2611:EE_|TYWP286MB2732:EE_
+X-MS-Office365-Filtering-Correlation-Id: c5a09f81-49d5-4107-4061-08dc92addd31
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199025|3412199022|440099025|1710799023;
+X-Microsoft-Antispam-Message-Info:
+	z2ZidqDgfbnMKDg9rVByfWA5bR4EJN5BDQ3xliZCdhP2WdkZHfhWVHoRK8eDkcKgunrQgBmBXuymuC1DXtto7dwzoxYAzls5G2YTf1uG7PEAGq6ZZtHjDaBsV0MshJSdPGOK8XHZNDF/WLa/Hen4UV7oqfpqTpA1SYF6Fgug6IzM/uhkNztxP310pgTrXvOZgPQ/ZRKhvE6q9b9lA72GSW4ImPY8hVpBONmfapMqG7THA34Z5yrPxs1kqkfJrgAxosCdNgZ26fTuDSuz0gzUCpbKjmKXjeTEP+FadNS1NUlJs7krNESrovRpan0keDdRcGaOswyQE/fztux2rTpZ0rjMvUl4kiRpYPintuMvNKH6pmCyzNDKzSydrg35NO86oXOZzcU+roZVuiM5yiEQJMsIRZaRAb3oriakKq8GliBRWNavoFAmkipXTIddFJVDKMBV/FceAVXNxAt0H3/zPmI9j1aLPVACrzHTcEoeLUvmHn70BTV8sftkDeDvjpcfDpFJ8NDwbG47RwG1y8VXPI+K9/DAwiAJ8hC15eKlyK4I/8BujXnIBu4du+N3/w4RvIg7zGTpXF2/Ax9OUBzczgBSbzgeDsRX5nHfKAZUmIg=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HLthdH5EwZLSqYFRJmeLW8r76+hpZSAz31VNU39ZlC0FbGJQpPApYjOaIhC5?=
+ =?us-ascii?Q?NzCUrFDzlal3C1aZGgp4LnpgxK0syeWz9pLU2V+5kjns2lXhPjDeY+Tth/5X?=
+ =?us-ascii?Q?bmi9Y7CrmMlDnyhicSk0pyiM4UZ4j2MNnkgQzBZSdoOvTwtmawHCwxNFlvCz?=
+ =?us-ascii?Q?hMqwiO5cG/u1MdfOrvqCmrpV1lUPwef62oezZtE5ITWmy+VatlknC/jnY0ML?=
+ =?us-ascii?Q?AwHTPPT8M8ptKQHClCaEcCmg+It10f7Xqfx9tCuF9/5t9D38qDSALnNVRiHG?=
+ =?us-ascii?Q?oLkFgEWztogqDXeV5ISqa6BjJbtd/gvXaFBFTTr5QDW5ROPGhx/pwZXl8EWe?=
+ =?us-ascii?Q?efT6C7kUrlV/5jy9YPtHIqhfRoenCEeDDoTQ/2bqNYVti2XNyeGHdqyh6U8q?=
+ =?us-ascii?Q?3DcWkzGKdlVFIqdyGlJgexgGjtKSoJPgSflhFv3KXumWHslTuE7yABT3FJ1D?=
+ =?us-ascii?Q?I6zJ0rvyJgrK/pNkWNp1SzGCilfJUoZT2foySP59FIoCupjowu9X3kR2K+EF?=
+ =?us-ascii?Q?4rSSrLabsWTVibVi4ephuH5JT3W07nUesZZCOF+2agAgi9LPwl0yudWmEWGw?=
+ =?us-ascii?Q?uvVsB9sxp4bq8iZvYUa1gN0eBwVALm0wKJUqSkKGvn0dCNZUDeg5WbAdtzTk?=
+ =?us-ascii?Q?PQN016Ffvi0k/9iHsYiguILmEoAiYoxb+f7IWHAxAEnBbowuA6ZMjzlFLa3h?=
+ =?us-ascii?Q?kRmIHM/+kA/dMh1BnhJ7jcb8ItsLsoJW3ulGANbJ1xReRlvpgU3E1pHDRreq?=
+ =?us-ascii?Q?oDGydtQr/ubO3TamDyxUFLYqNUu9s/G++pT4BGf2PGAYA+xTIiRND+aIwH+W?=
+ =?us-ascii?Q?rfeujsVKWdFrOoagU9U+b+ad4F6h34txe1M9zyT9rxs/n2ZpakZb+PH+Vjnl?=
+ =?us-ascii?Q?gyZkTWShuETxAHOA+FY30+2laP7+t5o0MMdiDsx0S7RcFTnUg2vYeNfwgLlq?=
+ =?us-ascii?Q?7oWpcBIN3ksMHxJfUXn4kgFrKdVwhz6JVNTXG0/iUoGzlFdTDnw2INIPMqkT?=
+ =?us-ascii?Q?Lc+DehzLkc8T9rkEUcjvIyp5MhMm8CRxJHNI+g9BSqje3lepCWmaiCeoHsIk?=
+ =?us-ascii?Q?WWoN6ol1az9ps7GN0mV0Ss2Fs8FLQMshJOlejn+I2nJ8jaoAQsmNEndXNV4B?=
+ =?us-ascii?Q?A9qPKTRjhzfibq7i0N1vNlSaYekWZO9mR+r0iq+K1wvgo4iArgzLkCq6eGC6?=
+ =?us-ascii?Q?xjfEeEg1FyzNkVbtqA0DORmwUZQAhdcae7W46tUzV24ukOISwwpTeBDNfeM?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5a09f81-49d5-4107-4061-08dc92addd31
+X-MS-Exchange-CrossTenant-AuthSource: TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jun 2024 11:24:22.1290
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWP286MB2732
 
-On 21.06.2024 4:01 PM, Neil Armstrong wrote:
-> Update the GDSC wait_val fields and flags as per the default hardware values.
-> Add the missing POLL_CFG_GDSCR flag.
-> 
-> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
+MT7981,7986 and 7988 all supports 32768 PPE entries, but only set to
+8192 entries in driver. So incrase max entries to 12768 instead.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Elad Yifee <eladwf@gmail.com>
+Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
+---
+This patch is set to RFC because I cannot find any documentation for
+earlier devices like MT7621 that describes their max entries, and need
+more information or testing to find out whether this patch would work on
+those devices.
+---
+ drivers/net/ethernet/mediatek/mtk_ppe.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Bump: part of this patch is a broader problem that should have a
-more generic solution: [1]
+diff --git a/drivers/net/ethernet/mediatek/mtk_ppe.h b/drivers/net/ethernet/mediatek/mtk_ppe.h
+index 691806bca372..6db85d897fa9 100644
+--- a/drivers/net/ethernet/mediatek/mtk_ppe.h
++++ b/drivers/net/ethernet/mediatek/mtk_ppe.h
+@@ -8,7 +8,7 @@
+ #include <linux/bitfield.h>
+ #include <linux/rhashtable.h>
+ 
+-#define MTK_PPE_ENTRIES_SHIFT		3
++#define MTK_PPE_ENTRIES_SHIFT		5
+ #define MTK_PPE_ENTRIES			(1024 << MTK_PPE_ENTRIES_SHIFT)
+ #define MTK_PPE_HASH_MASK		(MTK_PPE_ENTRIES - 1)
+ #define MTK_PPE_WAIT_TIMEOUT_US		1000000
+-- 
+2.34.1
 
-Konrad
-
-[1] https://lore.kernel.org/linux-arm-msm/514cd1cb-4fb2-489d-bc4b-d332fd4d381e@linaro.org/
 
