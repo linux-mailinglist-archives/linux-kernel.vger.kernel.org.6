@@ -1,207 +1,123 @@
-Return-Path: <linux-kernel+bounces-225667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F07913377
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:46:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1623291337D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9B02840E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:46:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 516381C211CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DC7154C03;
-	Sat, 22 Jun 2024 11:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF95914D6F1;
+	Sat, 22 Jun 2024 11:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ezOxR5VG"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pEPv2xTn"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE72F28F4
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE3128F4
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719056777; cv=none; b=dbsTr/stg9gW2zYkSVeAB+GAHXckZd9DfyrcfQCfKUb6FxcTpOhvd1C5S81Wll+zimBrYvzlMLy2GdveVUEI1jPdfAvk1S/10WPJ6eIkQhDfQlOgbvc+chIYyOQw374M7mwWg4kHkQ/Ljq9gAqKmWtvtcVRG1C1+xFJGD9wNKQE=
+	t=1719056790; cv=none; b=Fa6vLkXUUyzKzWnp0sOY5yQxffJh4Wk3riEp/pUAHHzZJz0PUKaJP4gn8TzN4D845grF4/VDbwn0UAyj5hm52IHWjvD9z8KzWFynHOTZgduuT8hiaeYS8raOzLIF07M3DrdgKRi+v/cUVG3H1tKHzTlNKHJ4s9zqvNchiyliCFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719056777; c=relaxed/simple;
-	bh=+66agaYiiFnc9wda50Lfas0i4FmApAa6AwkKsCf/3+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k892Yl1Pin12bofOJANkJhGE2VBD2V+EuXFGU12ChSiMHQuPofb2FOqhky3hqcOkeyrKVl3l38D/jJScCOI77SUBDyVhWTxdOBPVjg6jZod/IILTqnM61BtQCzmE5HLV6G6aU+gC7qcz8iPCLeXikLTA6az3GQYA4JPpJ6q4cfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ezOxR5VG; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1719056790; c=relaxed/simple;
+	bh=gx4hwvTb8LTWlFqgqnsjT0ORete6hOvb6C5SPh3Q1fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ip8rNf6EGgCiIFzYHE5bn2vH/WVFi4qq7/R1dBpU5XYvesbJODSfr/uqJmNiN3wa+mMjHk6aWszGXbd8uM8Kbl1W5Z755Ob/BZr91NvVGX7lJdMLRu3QwQ7czt0soQPyRu5FClu8lkp9scRhsrE4B27fuq8t1VcE4jUJ8B3T/Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pEPv2xTn; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a72420e84feso13306266b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:46:15 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52cdf4bc083so419068e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:46:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719056774; x=1719661574; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ex0tM6LxW25V2+wIZSeOGMpb5a0XLFOxkY4gbLUAZJ4=;
-        b=ezOxR5VGsKHZZ9635CGMveXRb0NTtDFNfNq5/BEdMUIGhJouI8h5jKpXrH7Oj/KO1I
-         pYYUEUTUAiLUq0qzFf8gzZNz9Vu9yJbOEEmVMIWMzAO899xhLyV/hXnaLYZislMW2EDo
-         15pF69GoWn7hq8rQ2ETDFw0w0/sDtX+yOVU5GVXE0F3ff2DxXJPiUp5tzsiXCZGezrZA
-         IMdKWEDBAzbF+W9QThgXNALvgiRO5WKYxCEec9JHPXtM8Xn4hTvH51AhRsJyuXE2ObLL
-         860GizdMVJ6uiBUEHyWqE8ciN6DqUvKLE8sbFLGu8pCWEnQC4kE2GOJV4Iv9AaJhJrno
-         03ag==
+        d=linaro.org; s=google; t=1719056787; x=1719661587; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5GoKr5LpL8zxiF4e6rxCxrhmJRtxBtTG1Kl19ZojU+k=;
+        b=pEPv2xTnecTjSCRL079862O9Qae9fy9aaplvsgJe6jYHThmswAty50AL+TzWB7UT0v
+         H3f85C4+KkhgCxHlnKV0/RbtOkIBWTpSsaIdhvTdlchs0XEH7kPMCAeta+U9MJ+oA8ZP
+         OQlVghMbJr/okPER0OTWskO4lauyR8i9fsCMd8ARXDQTBxRIwA5k40U70Bz5bOZ8nLvO
+         ZiLrH2JV2XrYGEDpueihGoAETyJEfUX/mLv5jI7tgsXoyzlNjjgT6X9DQHWX9wytRGCa
+         SM4pQUYOJdTfi8lEJcz9hfw3dG7SKBrommpnp3UnDvECF+5fKAxIoOrWxvildbORbq2d
+         JrPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719056774; x=1719661574;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1719056787; x=1719661587;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ex0tM6LxW25V2+wIZSeOGMpb5a0XLFOxkY4gbLUAZJ4=;
-        b=R5J1IbdB0c0R/CwaHDD1CPeqB13qVHDrLIxu2Nzq2c8V3w9IBH6P/g3uExvxREFVlM
-         +aJIhk5VGomGpB8iQmI0025tq5/OOcFBG5KzOhRFCbsQ4A3AUynVn3udHT7tyPU/C/zr
-         bQb4IwcojYNiO8OgpRr8D2ouUkWFtjqzbiHJEDYJJetcKmfChsuuvWgMTUrROuFjl6VX
-         yaSfNkb5zYDBT0AD5uXLMl6pdB577rA5QQ682u08UEIGGRLvY48T8ugu6DBrzeq8HfVT
-         QlCBOQXL21jLGQjO9o0EbqY8RW4gaPYm9tb9sj7BOQ8cFxjZnsJWqnakCGtywyoH5oUS
-         X/SA==
-X-Forwarded-Encrypted: i=1; AJvYcCXA3tLsmac7PgdG+RiQFvE6Ed35UDMa/OA92rygvhCSozcyOpcHwYk6o2v3PNe+zdlUJ6hECEDZIQ/1aQpuOAQFQeIe10LMeqjG5pXR
-X-Gm-Message-State: AOJu0YyAY3mYVZxfxg04XhVRbl1zEvji0v0c+2hOSYT7zfduCasOy+Qw
-	P+hPyaU/Egne7kE6DdXVLWanAZmX9Uq+P6VJtv9WTZXCoU33MWEbtwvwZrHMhTA=
-X-Google-Smtp-Source: AGHT+IG13RlR/h9teGk653CmpQ7usaf+YKjqH/yhLCC1Ebtglmw6+ywyyHzoCVz9ij/kluyQEMFntQ==
-X-Received: by 2002:a17:907:969e:b0:a72:42df:cd27 with SMTP id a640c23a62f3a-a7242dfcd78mr21027566b.71.1719056774060;
-        Sat, 22 Jun 2024 04:46:14 -0700 (PDT)
-Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf56073bsm185617566b.169.2024.06.22.04.46.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jun 2024 04:46:13 -0700 (PDT)
-Message-ID: <6e7e7b44-3c06-42ce-9d9b-9dcc83387657@linaro.org>
-Date: Sat, 22 Jun 2024 13:46:10 +0200
+        bh=5GoKr5LpL8zxiF4e6rxCxrhmJRtxBtTG1Kl19ZojU+k=;
+        b=OV6zdod61Q+6lHDk2mfso9VO7ebU/zgh5h3inmgqGDdd+uXAlsgWHgdZtG3iotme9i
+         MChiL1XblpO+W7vb3YAUcRir7+cld+euvSB8sRYWHrGuMg+Zj7Qlj2MDFhCkn/aEIVzB
+         8tmxxydt/vVcW+iUpB4326ze3KYbhiVUInPP19Zxwq4evUyfTyYY0KFR0Jla5ZwaUzg3
+         dCNuQehU63h7QDYyiRzx2PXBBe8UhugZnIiZlgIQ+dotvJf4p5I2IeIBgZgU3urTOMFr
+         u9HERm4lXxshbEucdsMLY5YoyeunhmHtVool+7MnA3GiWPkrcwk9o+s/mBqBBh0Jis/7
+         UkOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXs3wkpLLN7jPb9fWLZjJ+KlH/kBw+MXFAFXE9nmuv81rYSNvuBSExGiAd0a0cimT3+o53jsFEI/fIleVYwfpQXrOysteJk88RuasG0
+X-Gm-Message-State: AOJu0YzuaMZtmzDrA8z6TCZ2XdtEE0QJOrq+KHeqfy7yIT3ZtSlYXaQ6
+	K5RLjYOk87KF2tTqc8AICrlpujFKzbq4tjOXcNOOW68xw3RgV9PCO6wSWX6xZmw=
+X-Google-Smtp-Source: AGHT+IH3hl6/PlsSyEWBouIFziPH6NwxAF7HPfEv0Hgg9JU/r6Jt/4V5LhdGmq3eAU8V3lfRrusSAw==
+X-Received: by 2002:a19:8c17:0:b0:52c:dd7d:3fd4 with SMTP id 2adb3069b0e04-52ce061afadmr190528e87.25.1719056786599;
+        Sat, 22 Jun 2024 04:46:26 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ce05e8512sm39826e87.254.2024.06.22.04.46.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 04:46:26 -0700 (PDT)
+Date: Sat, 22 Jun 2024 14:46:24 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	quic_jesszhan@quicinc.com, dan.carpenter@linaro.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] drm/msm/dpu: drop validity checks for
+ clear_pending_flush() ctl op
+Message-ID: <3bbazi5xqwe3dvxyb42ghlzanwba5gvhhltnaqgl3tebzbzaxc@cqezq3xx2pzj>
+References: <20240620201731.3694593-1-quic_abhinavk@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] ARM: dts: qcom: msm8226: Add CPU frequency scaling
- support
-To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
- <20240619-msm8226-cpufreq-v1-5-85143f5291d1@lucaweiss.eu>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240619-msm8226-cpufreq-v1-5-85143f5291d1@lucaweiss.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620201731.3694593-1-quic_abhinavk@quicinc.com>
 
-On 19.06.2024 11:02 PM, Luca Weiss wrote:
-> Add a node for the a7pll with its frequencies. With this we can use the
-> apcs-kpss-global driver for the apcs node and use the apcs to scale the
-> CPU frequency according to the opp-table.
+On Thu, Jun 20, 2024 at 01:17:30PM GMT, Abhinav Kumar wrote:
+> clear_pending_flush() ctl op is always assigned irrespective of the DPU
+> hardware revision. Hence there is no needed to check whether the op has
+> been assigned before calling it.
 > 
-> At the same time unfortunately we need to provide the gcc node xo_board
-> instead of the XO via rpmcc since otherwise we'll have a circular
-> dependency between apcs, gcc and the rpm.
+> Drop the checks across the driver for clear_pending_flush() and also
+> update its documentation that it is always expected to be assigned.
+> 
+> changes in v2:
+> 	- instead of adding more validity checks just drop the one for clear_pending_flush
+> 	- update the documentation for clear_pending_flush() ctl op
+> 	- update the commit text reflecting these changes
+> 
+> changes in v3:
+> 	- simplify the documentation of clear_pending_flush
+> 
+> Fixes: d7d0e73f7de3 ("drm/msm/dpu: introduce the dpu_encoder_phys_* for writeback")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/464fbd84-0d1c-43c3-a40b-31656ac06456@moroto.mountain/T/
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c         | 3 +--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c | 3 +--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h          | 3 ++-
+>  3 files changed, 4 insertions(+), 5 deletions(-)
+> 
 
-Hm.. thinking of a solution to that, should we maybe split the mux/clk
-part of APCS into a subnode and bind the clk device to that?
-
-Dmitry, Bjorn, thoughts?
-
-[...]
-> +
-> +		opp-600000000 {
-
-Can't find this one in the random msm-3.10 I have
-
-> +			opp-hz = /bits/ 64 <600000000>;
-> +		};
-> +
-> +		opp-787200000 {
-> +			opp-hz = /bits/ 64 <787200000>;
-> +		};
-> +
-> +		/* Higher CPU frequencies need speedbin support */
-
-1190400 kHz seems to also be a supported-across-the-board one.. unless the
-watch edition shuffled things around with a newer tree
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
-> +	};
-> +
->  	pmu {
->  		compatible = "arm,cortex-a7-pmu";
->  		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4) |
-> @@ -231,9 +262,75 @@ intc: interrupt-controller@f9000000 {
->  			#interrupt-cells = <3>;
->  		};
->  
-> -		apcs: syscon@f9011000 {
-> -			compatible = "syscon";
-> +		apcs: mailbox@f9011000 {
-> +			compatible = "qcom,msm8226-apcs-kpss-global",
-> +				     "qcom,msm8916-apcs-kpss-global", "syscon";
->  			reg = <0xf9011000 0x1000>;
-> +			#mbox-cells = <1>;
-> +			clocks = <&a7pll>, <&gcc GPLL0_VOTE>;
-> +			clock-names = "pll", "aux";
-> +			#clock-cells = <0>;
-> +		};
-> +
-> +		a7pll: clock@f9016000 {
-> +			compatible = "qcom,msm8226-a7pll";
-> +			reg = <0xf9016000 0x40>;
-> +			#clock-cells = <0>;
-> +			clocks = <&xo_board>;
-> +			clock-names = "xo";
-> +			operating-points-v2 = <&a7pll_opp_table>;
-> +
-> +			a7pll_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-768000000 {
-> +					opp-hz = /bits/ 64 <768000000>;
-> +				};
-
-Looks like scaling this PLL should also scale some voltage domains:
-CPR (fed by pm8226_s2) and MX
-
-Perhaps hook up MX to this one for now and add CPR to the CPU nodes( & OPP table)
-after that is brought up
-
-Konrad
+-- 
+With best wishes
+Dmitry
 
