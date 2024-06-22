@@ -1,210 +1,221 @@
-Return-Path: <linux-kernel+bounces-225805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6578F913583
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:04:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4CA913586
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F32CFB21C37
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:04:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A46280ED0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1408729CFE;
-	Sat, 22 Jun 2024 18:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476713BBF0;
+	Sat, 22 Jun 2024 18:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="a6Rnzcar"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R41chvNt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E4D376E4
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 18:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A7A381AA;
+	Sat, 22 Jun 2024 18:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719079454; cv=none; b=dy+z3i7RtPHExgo7tGfHmU3PCFx3X9U6Oa2CGhffdEEmfz/EF8tBInxYtxFxkMHueVegdv0yqs6O3FTgSy7rAXo7tfNvEclPExqtlgy2QX5QM8VOftCwBBT1leQKR/3m9izzTywXwqPUtu0qH5TgCZsX1x8URNrDN36hzcND0oM=
+	t=1719079456; cv=none; b=eukuW0WQsxJxPe4+hDrmfO1oTSN8MAPxbxeaPfx8j8q++7yIc/4cjo2w1T3Z9SOeWryKn3pAbrabL9cl+QSWVC8sNZaWgIg7OVIpyUG+WzFbNuJdHn5x8CQDBVcZhTixdByZTRjRdLgl7SX83XdXa74rWFtDhEkqX+13qENJWgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719079454; c=relaxed/simple;
-	bh=uA6nP3zEheU4SmiDm9dlto0Jyss6DiFWNREamUjsUaI=;
+	s=arc-20240116; t=1719079456; c=relaxed/simple;
+	bh=QoGfE8cQ3Ncm2RINmc7UjozNPcoaLETzKNCmZeMz/zU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PnfL5lQZ+pMafdUnMTZ9Ysc/b0xvu1mivjg4jDMQW+aK0jTWDOQIU0o+3iW4I1chrxnMCPuT7w1r8d1WGih0sLdImgWaH502MESaEB43o2GdkZ+C7XkcPhlNSfcnzKNIs2sx1gdpHOvdN3TZmmK69zQQsf005M/yB4ryCADViuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=a6Rnzcar; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: dmitry.torokhov@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719079449;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PieRDxt8sae1r1qWViM3cVK60T5YSH347BUB6yM6sk8=;
-	b=a6RnzcarK8AEn6uN0SzTV/x5Jpos5RWALU+ORdgKsbhsVWu1fTFJ76eD5h7Vp/HyBIqYi5
-	64dVVHzN1W5JIDaOkY7x4WPMNoXrkFNTrnvSKUQ1kVZGFUjjtLV90Huoq8X1Qu+x4RX/GC
-	dcwcf5Kv52y/5ShwSv2k5ep/MtgYqQU=
-X-Envelope-To: andriy.shevchenko@linux.intel.com
-X-Envelope-To: linux-acpi@vger.kernel.org
-X-Envelope-To: dri-devel@lists.freedesktop.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: djrscally@gmail.com
-X-Envelope-To: heikki.krogerus@linux.intel.com
-X-Envelope-To: sakari.ailus@linux.intel.com
-X-Envelope-To: gregkh@linuxfoundation.org
-X-Envelope-To: rafael@kernel.org
-X-Envelope-To: dmitry.baryshkov@linaro.org
-Message-ID: <7b5305b6-78b0-4add-9e70-271159cfad95@linux.dev>
-Date: Sun, 23 Jun 2024 02:04:00 +0800
+	 In-Reply-To:Content-Type; b=Kl10zXi+3lVCs9qbVrJoeYMIo2i8pV42zklJd0VQn29aXPG+mvxslLXOjCIioFvgWi7DjrkYubh6fz6dVmaAL2CB4+wnEfkA2rCBRAbpwnf4G8IMAyypOLyQweDsr6nfC0wdD6U52MW7cMwKQ5wxZFR2l4GE5hDRWOTFyYu19dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R41chvNt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ECD8C32786;
+	Sat, 22 Jun 2024 18:04:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719079455;
+	bh=QoGfE8cQ3Ncm2RINmc7UjozNPcoaLETzKNCmZeMz/zU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R41chvNtSZL18SM7BcTw+6ViMHnJ9VQeuge4yBLhR0aCJ0c1KXGvybG9HiEIMMp7U
+	 mqnXQG82RQu/WumMHhpjss783uWoaZojdazFpDVr3imUxf1Cef2ee8x3jQXS7gMAfJ
+	 DL8oUlrePZycWT0eQnyXReI70CxOhkOkBuj9ePwUHi/Dhq/J03zW2pOp7GXI4UEds1
+	 lIU2rXKBCKwfyTBhC+d/GnZPtxfMZ34NfEBMXzOCiMJ9xXIIL6rfr4UliEob4UKqRl
+	 IxWqBbpcBPO1uLoXvMuw25CCrHFIlmbrhZkW4r0rxB5foqcjUNFjt2aDWgw2cEIUYZ
+	 OGqn/7DX+3uRw==
+Message-ID: <3541cd63-882b-4b91-871a-7d0385e12957@kernel.org>
+Date: Sat, 22 Jun 2024 20:04:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3] software node: Implement device_get_match_data fwnode
- callback
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-acpi@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20240427203650.582989-1-sui.jingfeng@linux.dev>
- <ZnXbaubPVAUdDIu0@google.com>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <ZnXbaubPVAUdDIu0@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] dt-bindings: iio: proximity: Add TYHX HX9023S
+To: Yasin Lee <yasin.lee.x@gmail.com>, Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, yasin.lee.x@outlook.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20240621-add-tyhx-hx9023s-sensor-driver-v6-0-65196a9020f1@gmail.com>
+ <20240621-add-tyhx-hx9023s-sensor-driver-v6-2-65196a9020f1@gmail.com>
+ <d35f5eba-abb4-4924-89d6-0beb878a0bf7@kernel.org>
+ <385a7a64-fc76-4655-bc7f-d89d00b053d5@gmail.com>
+ <20240622-superjet-dusk-cfd19f899cc2@spud>
+ <26db1f7b-bde9-43a5-8c9b-4323ccfc59cf@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <26db1f7b-bde9-43a5-8c9b-4323ccfc59cf@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
-
-On 6/22/24 03:58, Dmitry Torokhov wrote:
-> Hi Sui,
+On 22/06/2024 14:35, Yasin Lee wrote:
 > 
-> On Sun, Apr 28, 2024 at 04:36:50AM +0800, Sui Jingfeng wrote:
->> Because the software node backend of the fwnode API framework lacks an
->> implementation for the .device_get_match_data function callback. This
->> makes it difficult to use(and/or test) a few drivers that originates
->> from DT world on the non-DT platform.
->>
->> Implement the .device_get_match_data fwnode callback, which helps to keep
->> the three backends of the fwnode API aligned as much as possible. This is
->> also a fundamental step to make a few drivers OF-independent truely
->> possible.
->>
->> Device drivers or platform setup codes are expected to provide a software
->> node string property, named as "compatible". At this moment, the value of
->> this string property is being used to match against the compatible entries
->> in the of_device_id table. It can be extended in the future though.
+> On 2024/6/22 18:51, Conor Dooley wrote:
+>> On Sat, Jun 22, 2024 at 01:56:42PM +0800, Yasin Lee wrote:
+>>> On 2024/6/21 18:12, Krzysztof Kozlowski wrote:
+>>>
+>>> Hi ,Krzysztof
+>>> Thank you for your reply. I have some questions inline.
+>>>
+>>> Best regards,
+>>> Yasin
+>>>
+>>>> On 21/06/2024 09:40, Yasin Lee wrote:
+>>>>> A capacitive proximity sensor
+>>>>>
+>>>>> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+>>>>> ---
+>>>>>    .../bindings/iio/proximity/tyhx,hx9023s.yaml       | 115 +++++++++++++++++++++
+>>>>>    1 file changed, 115 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+>>>>> new file mode 100644
+>>>>> index 000000000000..beca70ce7609
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+>>>>> @@ -0,0 +1,115 @@
+>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>>> +%YAML 1.2
+>>>>> +---
+>>>>> +$id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
+>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>> +
+>>>>> +title: TYHX HX9023S capacitive proximity sensor
+>>>>> +
+>>>>> +maintainers:
+>>>>> +  - Yasin Lee <yasin.lee.x@gmail.com>
+>>>>> +
+>>>>> +description: |
+>>>>> +  TYHX HX9023S proximity sensor. Datasheet can be found here:
+>>>>> +    http://www.tianyihexin.com/ueditor/php/upload/file/20240614/1718336303992081.pdf
+>>>>> +
+>>>>> +allOf:
+>>>>> +  - $ref: /schemas/iio/iio.yaml#
+>>>> Which part of iio.yaml binding do you use here? I cannot find anything,
+>>>> so this looks wrong.	
+>>>>
+>>> I will remove this reference.
+>>>
+>>>
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    const: tyhx,hx9023s
+>>>>> +
+>>>>> +  reg:
+>>>>> +    maxItems: 1
+>>>>> +
+>>>>> +  interrupts:
+>>>>> +    description:
+>>>>> +      Generated by device to announce preceding read request has finished
+>>>>> +      and data is available or that a close/far proximity event has happened.
+>>>>> +    maxItems: 1
+>>>>> +
+>>>>> +  vdd-supply: true
+>>>>> +
+>>>>> +  "#address-cells":
+>>>>> +    const: 1
+>>>>> +
+>>>>> +  "#size-cells":
+>>>>> +    const: 0
+>>>>> +
+>>>>> +patternProperties:
+>>>>> +  "^channel@[0-4]$":
+>>>>> +    $ref: /schemas/iio/adc/adc.yaml
+>>>>> +    type: object
+>>>>> +
+>>>>> +    properties:
+>>>>> +      reg:
+>>>>> +        minimum: 0
+>>>>> +        maximum: 4
+>>>>> +        description: The channel number.
+>>>>> +
+>>>>> +      input-channel:
+>>>> Isn't this duplicating single-channel property?
+>>>>
+>>>> Where is this property defined (which common schema)?
+>>>>
+>>> |input-channel| is indeed intended for single-ended configuration, but I
+>>> couldn't find a definition
+>>>
+>>> or reference for |single-channel| anywhere. If possible, should I rename
+>>> |input-channel| to |single-channel|?
+>> Single-channel is new, it should be the next branch of the iio tree and
+>> in linux-next.
 > 
-> I am sorry, but this is not really correct. 
-
-I fine if the maintainers of fwnode API want to reject this, but got
-rejected is not really equals to "not correct".
-
-Software nodes are used to
-> augment missing or incomplete parameters, but are never primary objects
-> in the matching process. Sometimes "compatible" property is used with
-> software nodes, but it does not participate in the matching process. > There are several ways for various buses to match a device and a driver,
-> but none of them operate on software nodes. 
-
-It's not participate in the matching process in the *past*, but what
-we present is something *new*. I fine if you adhere to *old* and/or
-*subsystem-dependent* approach, but there really no need to persuade
-other people to follow your "old" idea.
-
-Consider for example how
-> devices on SPI bus are matched (see
-> drivers/spi/spi.c::spi_match_device()):
-
-
-This only make the driver be able to probed in a non-DT way, but
-it doesn't tell how does the *additional device properties* can
-be get. This is the key point.
-
-
-> 1. OF/device tree based match. It *requires* the device to have
-> dev->of_node which is coming from a DTB. It does not work on software
-> nodes. In case of match the match data should come from of_device_id
-> entry.
+> Hi Conor，
 > 
-> 2. ACPI-based match. The match is done based either on OF-compatible
-> data (which includes "compatible" property) in _DSD (if driver supports
-> OF-based matching), or based on HID/CID data. In the latter case the
-> match data is coming from acpi_device_id entry.
-> 
-> 3. Name-based match, typically used for board-instantiated devices. In
-> this case match is done by comparing device name under which it was
-> instantiated against names listed in the drivers id_table. The match
-> data is coming from spi_device_id entry.
+> Thank you for informing me. I plan to temporarily add a prefix to this 
+> attribute to distinguish it and update it in the future. Is this the 
+> correct approach?
 
-The statements here sound right, but it's useless. Because the problems
-isn't solved yet, nor does you words point out a practical approach.
+No, because there is no need. You are supposed to work on maintainer
+tree (linux-next works usually as well).
 
-> Similar matching processes are implemented for i2c and platform buses,
-> as well as others.
-> 
-> Your patch is effectively hijacks the #3 matching process and
-> substitutes the bus-specific match data (from
-> spi_device_id/i2c_device_id/etc) with OF data. This is not expected and
+Best regards,
+Krzysztof
 
-Please stop *contaminating* other people's patch, if you have better
-idea you can posting it. My patch open a new door, and there do have
-programmer in requesting(need) this in the past.
-
-
-> while we may want this in a long term (so we can eventually remove these
-> bus-specific device ids and only have ACPI/OF ones) I do not think we
-> are ready for this yet. At the very least this needs to be very clearly
-> documented.
-
-This is your *personal* wants, if you want to remove something,
-just do it. Keep quiet if you are not ready. Exposing your concerns
-doesn't help to solve any problems.
-
-Or, if you want it to be clear, you can contribute to Documentation/
-gpu/todo.rst. Other peoples help you to become clear there, thanks.
-
-Please note that we are talking about the completeness of the fwnode
-APIs, what's you say above has nothing to do the device fwnode APIs.
-Hence, is not revelant to my patch, again is out of scope.
-
->>
->> Fixes: ffb42e64561e ("drm/tiny/repaper: Make driver OF-independent")
->> Fixes: 5703d6ae9573 ("drm/tiny/st7735r: Make driver OF-independent")
-> 
-> As other people mentioned this patch does not fix the aforementioned
-> commits because they are not broken. 
-
-You still not really understand what other people does, I'm not saying
-it broken. I'm talking about the completeness.
-
-In case of non-OF match (which
-> includes the case where you use software nodes) the match data is coming
-> from matching spi_device_id entry in the driver.
-
-
-We don't care about much how it is probed now, rather, after the driver
-probed by a non-OF way, how does the additional devices properties
-can be get?
-
-
-Say:
-
-1) "device_property_read_u32(dev, "rotation", &rotation);" and
-2) "!device_property_read_string(dev, "pervasive,thermal-zone", 
-&thermal_zone))"
-
-
-For those spi/i2c/platform devices, what we argues are that
-those drivers really should just depend on "OF" before we have
-a reliable fwnode API backend to redirect to.
-
-Where the additional device_property_read_xxxx() calls redirect to?
-
-What if users want to invoke more device_property_read_xxxx() function?
 
