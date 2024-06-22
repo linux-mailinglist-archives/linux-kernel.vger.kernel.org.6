@@ -1,201 +1,255 @@
-Return-Path: <linux-kernel+bounces-225633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F2991331D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:00:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 626EE91331A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F322C1F23223
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:00:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E6C1F22C01
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C5C1509A5;
-	Sat, 22 Jun 2024 11:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371DE153828;
+	Sat, 22 Jun 2024 11:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="laPrQx36"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="C/BAqEmG"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA131E871;
-	Sat, 22 Jun 2024 11:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C198F5D
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719054040; cv=none; b=Bwd1EFOzDXo5KQzO+QmcZ/w22P+8PJsiuCskWg1rjDymRMXkPXksGCG1miozhxxaMP5JpVOLmqT6c2//Sib0ywTJZigJOc2IyIkzuvI1Oydoc2s2QD64NnHOzc92rGSZbv5GtneTXAstkC4abV2gGpwsxKKfWuJjx/zpV4OaO1I=
+	t=1719054002; cv=none; b=tuBXgM2LgfN/mdftnS7v7hhyd06d/ZZ7Up/wOMFjs9msuUJKWFQrM8t7AOAJ0WKGbLLr8FTPJlapQ31wnPlBGr1ed0hF+rHWQwQHoKNApWnSqIbu/q36cFzi/ySARmNTxPwtV0SbnwUPMmFo+o2UADLMRnNGEWeuOqhvgfKmeT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719054040; c=relaxed/simple;
-	bh=jZKMMHb1Scf+LoA5wMQap4Hh2SvydY9wTa+sLKebS1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t9a433ECgg7e8gAlbISI8V9KxoIEX6vk+ysMZxInYRX1Zn18NFqSEflrF0l+fgDL/DHqSE1x0/zJff3MiXHsR1hSYBGSqwPcM+i85OUEhIoNdjdUwEDmT1gRhgWePjnINDLSL89oNgtVfgzUYOrSwG46XwMvSQBI2DGCftKCaGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=laPrQx36; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1719054029;
-	bh=jZKMMHb1Scf+LoA5wMQap4Hh2SvydY9wTa+sLKebS1Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=laPrQx36mxewqlSzNXdvqDIS29piPKgu9336MrbdIgNT3WC5NA0Ro9IxsDcNlLi+t
-	 P8WlXAIWI/x2Ns7ydjjjK8xZuiQFT62TB997/iP50gl2OGi3nNPJREndIzqzd1ZRpG
-	 7y7wx8028ms1cyGDyraw3wKfWcAHy34wrTs/AmPc=
-Received: from stargazer.. (unknown [113.200.174.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 9093F67186;
-	Sat, 22 Jun 2024 07:00:25 -0400 (EDT)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Xi Ruoyao <xry111@xry111.site>,
-	Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alejandro Colomar <alx@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] vfs: Add AT_EMPTY_PATH_NOCHECK as unchecked AT_EMPTY_PATH
-Date: Sat, 22 Jun 2024 18:56:08 +0800
-Message-ID: <20240622105621.7922-1-xry111@xry111.site>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719054002; c=relaxed/simple;
+	bh=+nDCZ5yQGR9h65Gus4RSigAufQy4A+XW0ieNWhk4wnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LPhJPscCeu+zQQdfoM+t437X4+De9B5hNCKG4isRi1/IcSVimldTbudF8vC0ASurpjX0iMsREqHSBFnGSOvNEZCvtjcIrkSLCoDS7DaV+RVeVGw4INp+eH8oW7YnBDSgo9RczzgnY3kAkPj3Q1px6nr2fYsCzlmnxjswDvZckQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=C/BAqEmG; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b9794dad09so1328081eaf.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 04:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1719053999; x=1719658799; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4mcwLqq2Uhvawnpj5cLwDZBAvEsDH2/BtMKiSt5zVk8=;
+        b=C/BAqEmGzYvYkcRs9W6wMIjo5Wzya8XICByu/7W1hIf5LlfMQEsCv6CprLeAAlNLb8
+         APBWY35BC2wiuF8vKFCmYQZsQ8bWlkbP5CH05CLf1hkzg4nhpTufsp2m4g5tSnT6PBdF
+         Hvq1tZZbHOFjbJ8LlZ/iGoO7gizViMYyAx+L4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719053999; x=1719658799;
+        h=in-reply-to:autocrypt:from:references:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4mcwLqq2Uhvawnpj5cLwDZBAvEsDH2/BtMKiSt5zVk8=;
+        b=kb23IcESwQBMTFShS9ORz6OwZ1X6vZM8fh2y33wGmxBYivhwTDlcS+anpROZ7CV8k5
+         Wv7ewP+7GdxuV7mmXkAhQ0ds2/GvTiuk17ETctaNHSSfoOCV2m0ddF9ElPBLsi3I4z6y
+         U4UvkrsSf6jxw0s7qYvcxX0T8zkdH5AUjH1rU9SQR2Dh2IQ4sACs5n5uqhCmEum4GA9y
+         yMyaGGMhJXgdj7zw8W1dUHotLmZGhB4RqIFaa2e52wN25n/79B0mWwHtFIZDE0uc5Go4
+         h3Aq/F24VBuNM7xH71mSnsmVph3VVat+2zVAk3b9fJDhWBxe3zZmVZzMEPz/g8LCHq+z
+         UXLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOd6eIfM24lRhmCF/l+HV2h2qhMNQUaSHNJIv6X8EdmUh3HXBl6rGcyl07Cr0nskTWGi1xf1rJxnzI0WLpoDyBjudt9mUDS6ctq1/Y
+X-Gm-Message-State: AOJu0YyxXIYfJP0qVUOyK7nIla9ZxWB5jI72RIb7E6+dEA5gMnfJQXmq
+	jvGiLyuCP148le3b95WBqM7o8TwHZAeBK9XUJilHH6w7DKGQuseUQVcj+snRFA==
+X-Google-Smtp-Source: AGHT+IFlSC2MJvkl4Vz8QutdLImFMvZsqCc+UmG2gTJi99j3w+jOwiqMjCYhnNaPuJwHUAS385aiEA==
+X-Received: by 2002:a05:6358:7594:b0:1a1:f9fa:bb7a with SMTP id e5c5f4694b2df-1a238a002e0mr54284755d.16.1719053999552;
+        Sat, 22 Jun 2024 03:59:59 -0700 (PDT)
+Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716b4a7319bsm2471943a12.50.2024.06.22.03.59.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Jun 2024 03:59:56 -0700 (PDT)
+Message-ID: <d6642584-3842-4b04-acd6-ef86b3ea8820@broadcom.com>
+Date: Sat, 22 Jun 2024 12:59:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] net: wireless: brcmfmac: Add support for AP6275P
+To: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>,
+ Jacobe Zang <jacobe.zang@wesion.com>, kvalo@kernel.org, duoming@zju.edu.cn,
+ bhelgaas@google.com, minipli@grsecurity.net, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+ nick@khadas.com, efectn@protonmail.com, jagan@edgeble.ai,
+ dsimic@manjaro.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240620020015.4021696-1-jacobe.zang@wesion.com>
+ <20240620020015.4021696-4-jacobe.zang@wesion.com>
+ <fro2xcwsnvbxmpszny6g2p36z4zwoq4kegmpvww4twxir5piez@a3c2nbwitmab>
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <fro2xcwsnvbxmpszny6g2p36z4zwoq4kegmpvww4twxir5piez@a3c2nbwitmab>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000000407ec061b7873b4"
+
+--0000000000000407ec061b7873b4
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-It's cheap to check if the path is empty in the userspace, but expensive
-to check if a userspace string is empty from the kernel.  So using statx
-and AT_EMPTY_PATH to implement fstat is slower than a "native" fstat
-call.  But for arch/loongarch fstat does not exist so we have to use
-statx, and on all 32-bit architectures we must use statx after 2037.
-And seccomp also cannot audit AT_EMPTY_PATH properly because it cannot
-check if path is empty.
 
-To resolve these issues, add a relaxed version of AT_EMPTY_PATH: it does
-not check if the path is empty, but just assumes the path is empty and
-then behaves like AT_EMPTY_PATH.
 
-Link: https://sourceware.org/pipermail/libc-alpha/2023-September/151364.html
-Link: https://lore.kernel.org/loongarch/599df4a3-47a4-49be-9c81-8e21ea1f988a@xen0n.name/
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Alejandro Colomar <alx@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Xuerui Wang <kernel@xen0n.name>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Icenowy Zheng <uwu@icenowy.me>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-trace-kernel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: loongarch@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Xi Ruoyao <xry111@xry111.site>
----
- fs/namei.c                 | 8 +++++++-
- fs/stat.c                  | 4 +++-
- include/linux/namei.h      | 4 ++++
- include/trace/misc/fs.h    | 1 +
- include/uapi/linux/fcntl.h | 3 +++
- 5 files changed, 18 insertions(+), 2 deletions(-)
+On 6/22/2024 2:22 AM, Ondřej Jirman wrote:
+> On Thu, Jun 20, 2024 at 10:00:15AM GMT, Jacobe Zang wrote:
+>> This module features BCM43752A2 chipset. The firmware requires
+>> randomness seeding, so enabled it.
+> 
+> Any reason to strip info about origin of the patch, my SoB and
+> present this work as your own?
+> 
+> Original patch here https://megous.com/git/linux/commit/?h=ap6275p-6.10&id=1a99573bc8ed412e60e1969c0b29d53a0e5782e0
+> 
+> regards,
+> 	o.
+> 
+>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 37fb0a8aa09a..0c44a7ea5961 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -147,7 +147,13 @@ getname_flags(const char __user *filename, int flags, int *empty)
- 	kname = (char *)result->iname;
- 	result->name = kname;
- 
--	len = strncpy_from_user(kname, filename, EMBEDDED_NAME_MAX);
-+	if (!(flags & LOOKUP_EMPTY_NOCHECK))
-+		len = strncpy_from_user(kname, filename, EMBEDDED_NAME_MAX);
-+	else {
-+		len = 0;
-+		kname[0] = '\0';
-+	}
-+
- 	if (unlikely(len < 0)) {
- 		__putname(result);
- 		return ERR_PTR(len);
-diff --git a/fs/stat.c b/fs/stat.c
-index 70bd3e888cfa..53944d3287cd 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -210,6 +210,8 @@ int getname_statx_lookup_flags(int flags)
- 		lookup_flags |= LOOKUP_AUTOMOUNT;
- 	if (flags & AT_EMPTY_PATH)
- 		lookup_flags |= LOOKUP_EMPTY;
-+	if (flags & AT_EMPTY_PATH_NOCHECK)
-+		lookup_flags |= LOOKUP_EMPTY | LOOKUP_EMPTY_NOCHECK;
- 
- 	return lookup_flags;
- }
-@@ -237,7 +239,7 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
- 	int error;
- 
- 	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT | AT_EMPTY_PATH |
--		      AT_STATX_SYNC_TYPE))
-+		      AT_STATX_SYNC_TYPE | AT_EMPTY_PATH_NOCHECK))
- 		return -EINVAL;
- 
- retry:
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index 967aa9ea9f96..def6a8a1b531 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -45,9 +45,13 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
- #define LOOKUP_IN_ROOT		0x100000 /* Treat dirfd as fs root. */
- #define LOOKUP_CACHED		0x200000 /* Only do cached lookup */
- #define LOOKUP_LINKAT_EMPTY	0x400000 /* Linkat request with empty path. */
-+
- /* LOOKUP_* flags which do scope-related checks based on the dirfd. */
- #define LOOKUP_IS_SCOPED (LOOKUP_BENEATH | LOOKUP_IN_ROOT)
- 
-+/* If this is set, LOOKUP_EMPTY must be set as well. */
-+#define LOOKUP_EMPTY_NOCHECK	0x800000 /* Consider path empty. */
-+
- extern int path_pts(struct path *path);
- 
- extern int user_path_at_empty(int, const char __user *, unsigned, struct path *, int *empty);
-diff --git a/include/trace/misc/fs.h b/include/trace/misc/fs.h
-index 738b97f22f36..24aec7ed6b0b 100644
---- a/include/trace/misc/fs.h
-+++ b/include/trace/misc/fs.h
-@@ -119,4 +119,5 @@
- 		{ LOOKUP_NO_XDEV,	"NO_XDEV" }, \
- 		{ LOOKUP_BENEATH,	"BENEATH" }, \
- 		{ LOOKUP_IN_ROOT,	"IN_ROOT" }, \
-+		{ LOOKUP_EMPTY_NOCHECK,	"EMPTY_NOCHECK" }, \
- 		{ LOOKUP_CACHED,	"CACHED" })
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index c0bcc185fa48..aa2f68d80820 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -113,6 +113,9 @@
- #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
- 
- #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
-+#define AT_EMPTY_PATH_NOCHECK	0x10000	/* Like AT_EMPTY_PATH, but the path
-+                                           is not checked and it's just
-+                                           assumed to be empty */
- 
- /* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits... */
- #define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
--- 
-2.45.2
+I sincerely hope this is just a rookie mistake so please carefully read 
+the URL below:
 
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+
+Hope it helps.
+
+Regards,
+Arend
+
+>> ---
+>>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c      | 5 ++++-
+>>   .../net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h    | 2 ++
+>>   2 files changed, 6 insertions(+), 1 deletion(-)
+
+--0000000000000407ec061b7873b4
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
+Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
+HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
+KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
+Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
+dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
+OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
+MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
+BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
+ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
+zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
+sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
+BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
+N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
+p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
+YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDJopMepm28r/V/lUkm
+ES7EuhUOMcKAzGCzSK0ugwAxXzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA2MjIxMDU5NTlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAxtedXUvSakc4dv+aJ64tsIjZwNdxB/wzMPC6
+YGRc6Br+NYWxXsD/JoBgVPZQasIGhy0gt6Pl/7rwICGW5dx+msdupq9PmslZUSZVi/XhDPQTsXYb
+FbB1SvuWfNBMp2l3h8itDGzVyzAQCttZNW6V9yGk5YKKq2H7A9OQqZUbgZadkzddo/C1YfMX0Uvo
+nreDbYEOa5WGm36tQEDGa7nNR7QpPXvsj9VSbQ9h4hXuEhWf0WhhEQwFKusCkBXVHUNOIUO85iCN
+damtvKAm2GzFrd0vZPl9PDySmwtrlQwHUPg/+cLa7wTyEBIUT/Bt0Sbg4ct28o44GTshRplMug97
+yg==
+--0000000000000407ec061b7873b4--
 
