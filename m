@@ -1,136 +1,115 @@
-Return-Path: <linux-kernel+bounces-225626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DA791330B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:47:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF61A91330E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1012828BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:47:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F02F61C20F43
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B173714D432;
-	Sat, 22 Jun 2024 10:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A2F14D712;
+	Sat, 22 Jun 2024 10:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bIBJixxF"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jnXqZfj8"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D6B818
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 10:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63993818
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 10:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719053234; cv=none; b=OG2YYtn1PiedyCqCNCGhaO4DbaihWiKDS7Ihk9FFqF3dHozCyllkVQ0ucyDEi8Ilz0UGD6Ztm2t+3IZul8fmy9Wf1IWkhJzsH2peBsJTlyShIKBGYXcK3ekoj9y1mtq1dzckq6Q2ajtTSDiuitPp7daDMvdGvSCi+ozyshtj02A=
+	t=1719053370; cv=none; b=MZkKaAM5sDVO+1TUv5sPuzEpm3bkDsXTVs4coai9vFiCtRxNGzBc/lghn+aFFKHQk/fzsRTEfZDf0b+SrNiAMMEQ/nDe+OYNty/8GRlFa/jjD1PCFjSImqiiUAPRotEMr8IA5kDRyIGy5H221oSDzUROdiwS8FNjUSJlZ5/Vpr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719053234; c=relaxed/simple;
-	bh=/csiwm84ObWwf+jKb/NjNWgFEOnJJFiWOMgSdEFLohg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cCE1OGrzNFbSQMNMNJIbb6Ed/ebC1TnE630x+lbW0GsVa29KnxPluhOhZLlaQISkHvjPDR9RvMW5S8edQhI0ZZhchbZHTb/dPK5KBzykXp7DOF0e5JQlrnMDH0BU76LNgYoDJ9kq0v68tJydWvMUpNO0FnB9VO0DWDg8BuL202U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bIBJixxF; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1719053370; c=relaxed/simple;
+	bh=UD+lAkouumB3PIrq8tN6oOxpBGGY1WuW8r0CHKDC0+M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tiyQfoCT3FjYDbj9fbf9uCHkkc/6PWfzYrKy/TUp+dbMVYXrhiqRplccJgs2PbVFTsM+70JTMLRCxxVA9+wcStajrmGq/qT3ktVBUl/eMwRf/EWwW4eq0C8Cxv9AX1H+3m/h3VTs0Zz4RPnUEigFJBwS9kBlwXZzuS0btiOjWwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jnXqZfj8; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-421d32fda86so31949655e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:47:11 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-361785bfa71so2211276f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 03:49:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719053230; x=1719658030; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yIkgsmSuwLuYmoWZWqX/68bZk5aVVz1tB5jeLe6Fcns=;
-        b=bIBJixxFC9YWRaqJPdtqICx73A5zM4L5fzg1j9nURFzRyRKYTCRV/7q/F+CVwDQsTh
-         5tJKnh9L2eKmoj/WkYOSvy+DAAPZZRyPqktrJysuxdPvUoalmpUO8obG7+Xzd7RaIilu
-         n11AIYNNU0kCYZ4yUUuUXBRdiPG74NYL5fRY9WXFGgj2SS1fJmT91IeVvNGrvz9B0B45
-         jB/uKtpzjpZRf8IZlFjrvyHd34tQM9VUpoV2zUR0oMzHcYeqJx/lpEmCitCBLm3DO8Lm
-         PQTYETbNLUrxeqEvSgtLABQXXQCsyeYrZIr3zJ6vjBVJaVN2b5KApVX9jiXwfMZbeNHd
-         0edg==
+        d=linaro.org; s=google; t=1719053367; x=1719658167; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JlHWnVqKixYfxgTxJ7LtzKU7/K1qY6Dr90ft4beeGYk=;
+        b=jnXqZfj84wmmx94s9jJO7oAeAiheRFa1ZxL6kdtZzeacmRrFUZeBOgMG7Y97O5gDRj
+         mOZWcGiQMby4JbAo9MiQqovIqADr3E2X1xE8Mpl+8RGwnkOmEeDgwq/JwwnePDcB3vz7
+         Trd8htrq/lAC3NPquwYFUTJOkrAXqW+MwOZ2IBBqMZPLpZP6Ohz9efNirzWWLhQQJkNP
+         73h9eEQxScoOoYQp3uEEatsVa5lCEX84fBsJIfOyV+vijikPoPZ2Bs0HXl//i/Fd2SiU
+         NPp1w9+qR2O6s/M7tK+bxD+InVb2eyeMfhoy3WEoPC4D7TQ4/tyk6maAbGZQqlqtnKFm
+         BV1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719053230; x=1719658030;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yIkgsmSuwLuYmoWZWqX/68bZk5aVVz1tB5jeLe6Fcns=;
-        b=F0OlLGpWoT8fMkoIT6E6RALji/mgZ3G6rb/RKDlBI8t1bu/zjYUNenUYho8t3N2QYC
-         NyTKfDPYKVREhaWRcZ1OiVOwMb94vPuEAArjZTBuEONNtIbxr8vxivvtzQSo/iTgBfNr
-         tAaL6ct/zXEEgKncEmeVw1OHWHhWpfgiF9Ytvu0tSR6ujzIpjXQoeqk4T4Fob0x1qJ5P
-         GY8fqQ/Hp8UU8gwnYInRWp/aNwOBzhJeQLFvi7n8YunTiNNMD899P2geQLlL1mws8vwc
-         ZXEC+H91jLQTFv9ZVWYH/YXCo0g2iTLneEw2KFv09oGxhp8OJ7tkUz4Gh5chQo6iFhNl
-         QbTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgTdvEeHPu8hJrE4x64kKPva1huzSShOk0ziJdAMmbP655IbF0JbUaQYiTRtbdIj/y/AuBWA/+Wkug3HQHXDS2aRXasCKmgm6GY7gS
-X-Gm-Message-State: AOJu0YzjQGKp8B2E7xwI6m/KPXXWrC00ACXxzNgXQcz4+Pqeik1/hzLi
-	Vf8w8FlEFd5/Haxpg9Bwb8Jdwb3AnKHOzUAOp0eQ429dLt8M1FPl1AUI2HBaQck=
-X-Google-Smtp-Source: AGHT+IHn1InNC33kwCui1Dlcfdf6RZqGMfE03lhPXvz5XVM3Qwts2wYYQ19CitvzIAzjozJVJenXMg==
-X-Received: by 2002:a05:600c:3592:b0:422:7ad4:be7c with SMTP id 5b1f17b1804b1-4247529bd90mr97119795e9.34.1719053230383;
-        Sat, 22 Jun 2024 03:47:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719053367; x=1719658167;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JlHWnVqKixYfxgTxJ7LtzKU7/K1qY6Dr90ft4beeGYk=;
+        b=uppnZ9yGyXIbNh19EraZKcq8AP4Y1iXv9LsEDblld8n2mAkOkQMpWJGRn+yjgV8nPb
+         qgHmPArzHMtHoKmqrLUGBYjCFt5zCxLW5C6fRgEHLFBvzkLujQBIKPkSAw/baJjvXWMM
+         Mh++rS6UAZ1M4lpog//aDPEgiCW8iAj6rwrDHQEwh7LGPo/6d3Gk8+HYWBAqJUxs+JHz
+         j7IF7VKQJLLnFTm4fXsv9t6+jz0ycNVfXNkqMh5Y8Lmq4WDzWMf0myTDpl2HrmtI2aQf
+         FeVFubkzX3VduUiLKWpZ8szTF4FZPEL7gHWk2sKX/+CDPNJKtjdIyllyVkGEj/HkLayA
+         4+vg==
+X-Gm-Message-State: AOJu0YzqaaxjUp1urWQwcyvzwKZO2Fd8uqnmiAoGYwNva7K7MgqwTnre
+	2LlKGp1Ix+wuNIi23HeyhhaYDvboxp+Db1jjKRxBCuY475VE8bENaUkHVe/2hec=
+X-Google-Smtp-Source: AGHT+IEaeZe/ovN769uftIo/IvGq9huS4i8XzLmG5th/x9oaDRrhvRLAOXGDe+ujRML8hLbqv2v8CQ==
+X-Received: by 2002:a05:6000:dca:b0:362:93f9:cb81 with SMTP id ffacd0b85a97d-366e7a4790amr209872f8f.55.1719053366584;
+        Sat, 22 Jun 2024 03:49:26 -0700 (PDT)
 Received: from [172.20.10.4] (82-132-215-235.dab.02.net. [82.132.215.235])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-424817a9667sm59158655e9.15.2024.06.22.03.47.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jun 2024 03:47:09 -0700 (PDT)
-Message-ID: <7b97ef5b-a3e1-4c02-a013-2bd1c97a0e65@linaro.org>
-Date: Sat, 22 Jun 2024 11:47:07 +0100
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638d9c16esm4127934f8f.57.2024.06.22.03.49.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 03:49:25 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Jiri Prchal <jiri.prchal@aksignal.cz>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: linux-kernel@vger.kernel.org, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+In-Reply-To: <20240620-nvmem-compat-name-v1-0-700e17ba3d8f@weissschuh.net>
+References: <20240620-nvmem-compat-name-v1-0-700e17ba3d8f@weissschuh.net>
+Subject: Re: (subset) [PATCH 0/5] nvmem: core: one fix and several cleanups
+ for sysfs code
+Message-Id: <171905336506.244973.16113259707012674277.b4-ty@linaro.org>
+Date: Sat, 22 Jun 2024 11:49:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] nvmem: kconfig: set i.MX OCOTP default y
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, shawnguo@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- aisheng.dong@nxp.com, Peng Fan <peng.fan@nxp.com>
-References: <20240603070007.2413599-1-peng.fan@oss.nxp.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20240603070007.2413599-1-peng.fan@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.12.2
 
 
-
-On 03/06/2024 08:00, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Thu, 20 Jun 2024 18:00:32 +0200, Thomas Weißschuh wrote:
+> Patch 1 is a bugfix.
+> All other patches are small cleanups.
 > 
-> If ARCH_MXC is selected, set NVMEM_IMX_OCOTP[*] default y which will make
-> nfs rootfs work since i.MX network driver needs read mac address from
-> fuse.
+> Hint about another nvmem bugfix at [0].
 > 
-Given that ARCH_MXC is y is defconfig and making these drivers as 
-default y will increase the arm64 defconfig kernel size.
-
---srini
-
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->   drivers/nvmem/Kconfig | 3 +++
->   1 file changed, 3 insertions(+)
+> [0] https://lore.kernel.org/lkml/20240619-nvmem-cell-sysfs-perm-v1-1-e5b7882fdfa8@weissschuh.net/
 > 
-> diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-> index 283134498fbc..7e92e855eb50 100644
-> --- a/drivers/nvmem/Kconfig
-> +++ b/drivers/nvmem/Kconfig
-> @@ -76,6 +76,7 @@ config NVMEM_IMX_OCOTP
->   	tristate "i.MX 6/7/8 On-Chip OTP Controller support"
->   	depends on ARCH_MXC || COMPILE_TEST
->   	depends on HAS_IOMEM
-> +	default y if ARCH_MXC
->   	help
->   	  This is a driver for the On-Chip OTP Controller (OCOTP) available on
->   	  i.MX6 SoCs, providing access to 4 Kbits of one-time programmable
-> @@ -89,6 +90,7 @@ config NVMEM_IMX_OCOTP_ELE
->   	depends on ARCH_MXC || COMPILE_TEST
->   	depends on HAS_IOMEM
->   	depends on OF
-> +	default y if ARCH_MXC
->   	help
->   	  This is a driver for the On-Chip OTP Controller (OCOTP)
->   	  available on i.MX SoCs which has ELE.
-> @@ -97,6 +99,7 @@ config NVMEM_IMX_OCOTP_SCU
->   	tristate "i.MX8 SCU On-Chip OTP Controller support"
->   	depends on IMX_SCU
->   	depends on HAVE_ARM_SMCCC
-> +	default y if ARCH_MXC
->   	help
->   	  This is a driver for the SCU On-Chip OTP Controller (OCOTP)
->   	  available on i.MX8 SoCs.
+> [...]
+
+Applied, thanks!
+
+[2/5] nvmem: core: mark bin_attr_nvmem_eeprom_compat as const
+      commit: 178a9aea2c5db8328757fdea66922bda0236e95c
+[3/5] nvmem: core: add single sysfs group
+      commit: 80026ea9fdc22bbc8bfa9b41f54baba314bacc55
+[4/5] nvmem: core: remove global nvmem_cells_group
+      commit: e76590d9faf8c058df9faf0b6513f055beb84b57
+[5/5] nvmem: core: drop unnecessary range checks in sysfs callbacks
+      commit: 050e51c214c5bbe5ffd9e7f5927ccdcd2da18fe3
+
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
 
