@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-225585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E999591328D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:21:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC52913277
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256721C2173F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 07:21:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 197C328505A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 07:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E5B14B972;
-	Sat, 22 Jun 2024 07:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BC914B959;
+	Sat, 22 Jun 2024 07:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Y09ult06"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XkPfbkA9"
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DCC2B2CC;
-	Sat, 22 Jun 2024 07:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DAE63B9;
+	Sat, 22 Jun 2024 07:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719040902; cv=none; b=lsmFR8q2HGpNw6zdIWsOCbKxTBi4vrBFtvzSRit7ScN8igHkIch6Ic4wFF0p0QwD0koETmpQZ7In+B0WWpNzUOub5LGlzNVPReAvRKQM2zVZWGmIZRWanpmFWc0SRQtJLC4EqHFP9/fYKa8KzvGXOfK2doS7wjL+0CpC2jJfc94=
+	t=1719039966; cv=none; b=FYmTBoadoEQ2jeoAgFL4VIbuewsjuWZFCDllSS4+xNNqybxy/Q1G6Y80J8mJBOw9jGklrW6N6W7EZK9JoYMjtI0GMwuhWejxYSkRBya8W8fpTxS9R5PaErj+S3kwrkmJEIDiEJ9koSmxQAlMYJ/qrHBGMMbAC5GKtwQaZ5kQkeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719040902; c=relaxed/simple;
-	bh=BRgmF1SuWGxaSlfe9UasHg3POB9fYog1Hz1JNFO0V7s=;
-	h=Date:From:To:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r/wc5rg9qOwCcuOp0YmE67pYhJ38Fgrw+M8fugfBi4/spSaySaPeUV8IsAL1vVYR9r7yNVTAFcscLn6qUELnnLALpb9ATuRz9x+Ne1VVq7T7Ns79588S8wv4ak5FAAVW1VeeQ1Y04kyCqREIyTntJkmBZ47tNCyQmZJxlVJIYHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=Y09ult06; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:To:From:Date:Sender:
-	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0b04sSHMbcUZr86ZF4qTwtY++eMAXQb1yCBpSHbrK+k=; b=Y09ult06y0LucRVOeMjzyooo+G
-	DHp6/RaN/0A2yQi4DrNCpnCwDO1jPi1m06pJOeLa1dIC0sWFjGIntkThC4KQkcquwMzV3mS1DMBpL
-	FDy3x3LrYQnGPvsAHXPigubmezaijWRZ6eaKE3sdMnx28s4DwSt1v++zXlGeoXnDuSENdNNBOeqKE
-	lSDcuvSHEJabE6bEA7f6g30E+xkC+bx1uw3W4YK2vvtmdyKaZVCjpvu6QcCaH8l51UstNvIGUBlPa
-	2pSCAlUlhZtHAbA2jth+0PO7SY8uM+wv4gNLsXK68f2bO0YbztR9mGp9ZMBTMrvJJGx5BKmjGpRqD
-	OLvxz6vw==;
-Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
-	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <andreas@kemnade.info>)
-	id 1sKuau-003Qf9-2d;
-	Sat, 22 Jun 2024 08:51:30 +0200
-Date: Sat, 22 Jun 2024 08:51:28 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, o.rempel@pengutronix.de, andreas@kemnade.info,
- u.kleine-koenig@pengutronix.de, hdegoede@redhat.com,
- oliver.graute@kococonnector.com, ye.xingchen@zte.com.cn,
- p.puschmann@pironex.com, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- andy.shevchenko@gmail.com, felix@kaechele.ca
-Subject: Re: [PATCH v3 0/2] Input: add ft5426
-Message-ID: <20240622085128.38a6feb1@aktux>
-In-Reply-To: <20240501204758.758537-1-andreas@kemnade.info>
-References: <20240501204758.758537-1-andreas@kemnade.info>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719039966; c=relaxed/simple;
+	bh=rdE3Xv4awGL1VlTda67UdSQaD/vWAZRX4zP4ZOsIxWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hkQiolS7XVGS3vtrQ/uNQkeG/KHALdfvU7Jl0BAqVgG2ay4fa3ZZTfAUwD6rH14Ya+BLmlAFIFqlftgBcnp2mUa90Q0G/Ik8oGNGVbeW5yX+NM0XLFn4cMElqK0vN8xDk/6pTRk1cIezheWHY1hHISw2bCRjRw2jY0NK92VNrjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XkPfbkA9; arc=none smtp.client-ip=80.12.242.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id KuntsjGzHYBZjKuntsnU74; Sat, 22 Jun 2024 09:04:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719039893;
+	bh=9p/NvGXVIGq454IUR23iNKa5i9tD08IILOdEfz3Z4AU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=XkPfbkA9aeMYWcYhQlyS9XeZoaldD6fFpSCqfAT12JA4ExRNEQjELwrIqalCO3NBx
+	 0pzGE0OhGispf+eM1N62jxwvjw9FXFXe9QvZNg/VesL0fKvfnVFkZfyTDo4JzxulHb
+	 /sKEps7UgU6wVdlornsmeKSELNS/Q0s1CcOEB6cb6J7iubfQidZgVBDjGbZTzwmTaE
+	 ZOUPbZE+OJ9uyinMzfCF5PvJRoYFGHBdyg7/HC5UF1cV9Zbbt3D7JXda1BCmeIKr9q
+	 lCU8E6ilh6UYSd+flBuHvadyUr2HmyG58S3OoEkJua0aYFHOTMA5js/dEpvECTsrK5
+	 xmlUVa6V0RaCQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 22 Jun 2024 09:04:53 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linus.walleij@linaro.org,
+	sre@kernel.org,
+	jic23@kernel.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/3] power: supply: ab8500: Improve code related to iio_read_channel_processed() and fix a bug
+Date: Sat, 22 Jun 2024 09:04:23 +0200
+Message-ID: <cover.1719037737.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-ping
+This series is inspired by a patch submitted at [1].
 
-On Wed,  1 May 2024 22:47:56 +0200
-Andreas Kemnade <andreas@kemnade.info> wrote:
+While looking if the same pattern was relevant elsewhere, I ended in
+ab8500_charger.c.
 
-> Changes in v3:
-> - reorder compatible also in driver
-> 
-> Changes in v2:
-> - reorder compatible
-> 
-> Andreas Kemnade (2):
->   dt-bindings: input: touchscreen: edt-ft5x06: Add ft5426
->   Input: edt-ft5x06 - add ft5426
-> 
->  .../devicetree/bindings/input/touchscreen/edt-ft5x06.yaml        | 1 +
->  drivers/input/touchscreen/edt-ft5x06.c                           | 1 +
->  2 files changed, 2 insertions(+)
-> 
+Patch 1 fixes what looks to me as a regression introduced by
+97ab78bac5d0.
+
+Patch 2 is the initial goal of this series. That is to change some
+iio_read_channel_processed() + multiplication by a single, cleaner,
+iio_read_channel_processed_scale().
+
+Patch 3 is a cosmetic change spotted while at it.
+
+
+Honestly, I don't have a strong opinion if patch 2 helps in any way
+(explanation or confirmation would be appreciated for my own
+knowledge), but at least patch 1 deserves a look and seems value to me.
+
+CJ
+
+[1]: https://lore.kernel.org/all/20240620212005.821805-1-sean.anderson@linux.dev/
+
+Christophe JAILLET (3):
+  power: supply: ab8500: Fix error handling when calling
+    iio_read_channel_processed()
+  power: supply: ab8500: Use iio_read_channel_processed_scale()
+  power: supply: ab8500: Clean some error messages
+
+ drivers/power/supply/ab8500_charger.c | 52 ++++++++++++++++-----------
+ 1 file changed, 32 insertions(+), 20 deletions(-)
+
+-- 
+2.45.2
 
 
