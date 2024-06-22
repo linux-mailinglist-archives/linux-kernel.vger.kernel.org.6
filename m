@@ -1,124 +1,159 @@
-Return-Path: <linux-kernel+bounces-225695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B919133E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:20:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406769133F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B8301C20B3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:20:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6556E1C20BD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABED616A936;
-	Sat, 22 Jun 2024 12:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686D116DEAC;
+	Sat, 22 Jun 2024 12:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GcLodyVd"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="q7bqYF4y"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCFB15697B
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 12:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22B114C586;
+	Sat, 22 Jun 2024 12:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719058796; cv=none; b=ACWFkXnFKKABARU05viTIHt9QHBnJvSH2td70IknP5IaD2efoAu2Rja/LBb5qvD4zLN1KXUuyOPGkXogw00732egQ9NA2ec+AizXG8lQSQKD81VlGCzWZwLxLDP/MYi02VZ9inW3KcZRcoIV9DusvTikN6MikgwUZcIfnpBR9B8=
+	t=1719059297; cv=none; b=NWTyRMilF0vDntknkXdlEQSNaI4uYJEoZiIY2DvoyBlZ0f3giaTUNJLFsgY3SEPxsVRAAJ2idj5Va5lz8ZtcBRSXtt6EppvW/Wo1vEb38JAacqosfm5Kp9/Btr6+IKyN8ByYU1jdXQklVJ5dmFKnTgi6dAC2Lv+huqMxRv+46UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719058796; c=relaxed/simple;
-	bh=gVXvoVnWKq9b23KJIwpwq2PnXPvHVuOgLADjnKrQOmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gJJMTLnRfUlqbMIs3akyvn9uXDJ7wSQFbwzAUR1b47Dvb7Yo/f+a5JtnKwPWxUjhCNIsS6ymjqHuAFhO6ZdJon470v5ZeIfyJtC7zExIPPll3UjFtXX230Mslja3BdwCJvfmhoF7sWW7RFoORjUIKEF9/KQBKEQ8+vt0+DWRuy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GcLodyVd; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec4eefbaf1so14547961fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 05:19:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719058793; x=1719663593; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qGqWQ0KXhW8OxiX+0ZFBPoio2XcyXoe1CvzjPWFjYb0=;
-        b=GcLodyVddW1/BFtz0HALQlmU+mKbIOgGp03DXTMbPGIz0M79yKh+sJ8ZrHDTgfru+d
-         bWSqYZUCpLk1MJRjcAGfEOwBADLEAaTAtXitDbAp5huHMGN9F7p9pn0hwqhKcoIYKBXj
-         BpA9kUG9Wo+tw2F/6qdNIO79Is1gZEQMJqVLYARJAgUbwJKI0dPEihH+fc0yhJx+VqAe
-         xIo2nQGBeOZSnAyMwOQ2WOomgRuLAA5iNqPYnlGChfG4G2yZa5HBmO2084Wc+hKaTw3i
-         qq/PTN93gupJxnJwXz3Bk3/KqwR1r+bzLAlAMCfTZ2EC0gN8hVIYQD1suO4z5kADC2kA
-         f0xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719058793; x=1719663593;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qGqWQ0KXhW8OxiX+0ZFBPoio2XcyXoe1CvzjPWFjYb0=;
-        b=ZvmfQ9itwKBPFigSvQ8fILlPRR9+wVyQVi52/x1ugcDPx7SBgqeCAN9SajzfkapL4R
-         xIWh+wfYHyGdttxW+rNJPdSdUgXgRxdNsIAV2Hrj4EcdVOgZiCt3XCFKvvi+pLwJqcWf
-         YKhSnXWIwA0TBG7VXklj6yZ2v66fZgvP5fKfaagH+TQDGrrOoT0EOzORMgxzjAJVvfkk
-         o7ged3IKvPBgDtAww8kkqyeMVN3ot7BjNcQclAFXRc4zNAJtdj/Je/R51ns6pzvYFUUt
-         depVDmAt0UGw+lDOZjfkmIyHdyQToby51EjKj1ieetw9XosPzZuJSgepjJbk1LmVCkyH
-         HF5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXzNMzDjmKZTA1+Lpb8irAFQKv+H5t4+jmCNrL20DUL6SZuw/9PeV79CA7YIpXMz7ZIPmkX80OlTDiv9aTbaBi4oh/VGzrI3EqD8SH+
-X-Gm-Message-State: AOJu0YxDcrutwHWCpb6PI8rPfBduBXH1TopG2u8GHradjxiVQk+6X1YX
-	wKrD7UKBZtpPgpgEAJVs7bp87+1UzN3HbYJQ22t/rZAZ6RfYu8L5iycmiAkXQaE=
-X-Google-Smtp-Source: AGHT+IHD7TVzn6lmksj2n2QOTdKYM7mv+05xXtSaYsPY+qudR+FFoQvVW+IFqzCgNUZ52V+LWCZBaQ==
-X-Received: by 2002:a2e:884e:0:b0:2ec:59d8:a7e9 with SMTP id 38308e7fff4ca-2ec59d8aa7emr1428491fa.52.1719058793396;
-        Sat, 22 Jun 2024 05:19:53 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d75823asm4510371fa.90.2024.06.22.05.19.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 05:19:52 -0700 (PDT)
-Date: Sat, 22 Jun 2024 15:19:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Aradhya Bhatia <a-bhatia1@ti.com>, Jan Kiszka <jan.kiszka@siemens.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drm/bridge: tc358767: Add format negotiation
- hooks for DPI/DSI to (e)DP
-Message-ID: <wqg5nxg6muyoljbmsemipzv74ziwmt55qtzmcbexpqxsqzqpno@o2uhl2jrljft>
-References: <20231108-tc358767-v2-0-25c5f70a2159@ideasonboard.com>
- <20231108-tc358767-v2-1-25c5f70a2159@ideasonboard.com>
+	s=arc-20240116; t=1719059297; c=relaxed/simple;
+	bh=JCw0SeShyq5JuY+nLwC3mKit0gG9UnY3JT535OxbXbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JgRx3wcBfk7Yf7AvR6ef8jWfO3ZMAwDgnQhLgC4cZiHpdH21oDVEQt70TGLxYSiyDfr3AG2LS17SMKZoaIwERGYbTSF9+pXoFhuu8GkQ4y/Q21sfYGYm0ETufNw7guRXntFhnDbI01flUSDIUokDiJ1NSwqPt3N9qflF3lUHGh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=q7bqYF4y reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id ec57d1a1ba72cd01; Sat, 22 Jun 2024 14:28:07 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id C8C176A7379;
+	Sat, 22 Jun 2024 14:28:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1719059287;
+	bh=JCw0SeShyq5JuY+nLwC3mKit0gG9UnY3JT535OxbXbo=;
+	h=From:To:Cc:Subject:Date;
+	b=q7bqYF4yHXFXd7bujkorWNo99xWgbn7Ykh9cJuIzGTvUuhatvCW9ppy+94+/ue7WT
+	 //tGyTCsoYNuql9AhVVRYpBtIvaoUqFFVjaj0fAVhTyCWK59w1Gls0Cj1N4RVYIuJd
+	 cFiiqyRketdxLuc8QZ8hmBoAo8eR6OyJsT0AUAHGGZpz1iDZ3sYlC7Nhyp92/lm+lI
+	 m2mlMrQHXB4cOpbrli644/RwkeCtLha+bFpk4KqDFv8XEXDQ0MkAZ9K6w5vvu1/0EA
+	 PKr4cBmajloOFwDNvcTf7hKr3nvhMmfxvzudHfupGVP5SpPjx2j9ARX5hRulYG0Pk6
+	 srO+OlhRHwMIw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>,
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+ Steev Klimaszewski <steev@kali.org>, Johan Hovold <johan+linaro@kernel.org>
+Subject:
+ [PATCH v1] thermal: gov_step_wise: Go straight to instance->lower when
+ mitigation is over
+Date: Sat, 22 Jun 2024 14:26:33 +0200
+Message-ID: <12464461.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231108-tc358767-v2-1-25c5f70a2159@ideasonboard.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfeefiedgheefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeelpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegr
+ rhhmrdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=9 Fuz1=9 Fuz2=9
 
-On Wed, Nov 08, 2023 at 01:27:22PM GMT, Tomi Valkeinen wrote:
-> From: Aradhya Bhatia <a-bhatia1@ti.com>
-> 
-> With new connector model, tc358767 will not create the connector, when
-> DRM_BRIDGE_ATTACH_NO_CONNECTOR is set and display-controller driver will
-> rely on format negotiation to setup the encoder format.
-> 
-> Add the missing bus format negotiation hooks in the
-> drm_bridge_funcs to complete DRM_BRIDGE_ATTACH_NO_CONNECTOR support.
-> 
-> Output format, for DPI/DSI to DP, is selected to
-> MEDIA_BUS_FMT_RGB888_1X24 as default, keeping in mind what the older
-> model used to support.
-> 
-> Reported-by: Jan Kiszka <jan.kiszka@siemens.com>
-> Closes: https://lore.kernel.org/all/24282420-b4dd-45b3-bb1c-fc37fe4a8205@siemens.com/
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
->  drivers/gpu/drm/bridge/tc358767.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+Commit b6846826982b ("thermal: gov_step_wise: Restore passive polling
+management") attempted to fix a Step-Wise thermal governor issue
+introduced by commit 042a3d80f118 ("thermal: core: Move passive polling
+management to the core"), which caused the governor to leave cooling
+devices in high states, by partially revering that commit.
+
+However, this turns out to be insufficient on some systems due to
+interactions between the governor code restored by commit b6846826982b
+and the passive polling management in the thermal core.
+
+For this reason, revert commit b6846826982b and make the governor set
+the target cooling device state to the "lower" one as soon as the zone
+temperature falls below the threshold of the trip point corresponding
+to the given thermal instance, which means that thermal mitigation is
+not necessary any more.
+
+Before this change the "lower" cooling device state would be reached in
+steps through the passive polling mechanism which was questionable for
+three reasons: (1) cooling device were kept in high states when that was
+not necessary (and it could adversely impact performance), (2) it only
+worked for thermal zones with nonzero passive_delay_jiffies value, and
+(3) passive polling belongs to the core and should not be hijacked by
+governors for their internal purposes.
+
+Fixes: b6846826982b ("thermal: gov_step_wise: Restore passive polling management")
+Closes: https://lore.kernel.org/linux-pm/6759ce9f-281d-4fcd-bb4c-b784a1cc5f6e@oldschoolsolutions.biz
+Reported-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/gov_step_wise.c |   23 +++++------------------
+ 1 file changed, 5 insertions(+), 18 deletions(-)
+
+Index: linux-pm/drivers/thermal/gov_step_wise.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/gov_step_wise.c
++++ linux-pm/drivers/thermal/gov_step_wise.c
+@@ -55,7 +55,11 @@ static unsigned long get_target_state(st
+ 		if (cur_state <= instance->lower)
+ 			return THERMAL_NO_TARGET;
+ 
+-		return clamp(cur_state - 1, instance->lower, instance->upper);
++		/*
++		 * If 'throttle' is false, no mitigation is necessary, so
++		 * request the lower state for this instance.
++		 */
++		return instance->lower;
+ 	}
+ 
+ 	return instance->target;
+@@ -93,23 +97,6 @@ static void thermal_zone_trip_update(str
+ 		if (instance->initialized && old_target == instance->target)
+ 			continue;
+ 
+-		if (trip->type == THERMAL_TRIP_PASSIVE) {
+-			/*
+-			 * If the target state for this thermal instance
+-			 * changes from THERMAL_NO_TARGET to something else,
+-			 * ensure that the zone temperature will be updated
+-			 * (assuming enabled passive cooling) until it becomes
+-			 * THERMAL_NO_TARGET again, or the cooling device may
+-			 * not be reset to its initial state.
+-			 */
+-			if (old_target == THERMAL_NO_TARGET &&
+-			    instance->target != THERMAL_NO_TARGET)
+-				tz->passive++;
+-			else if (old_target != THERMAL_NO_TARGET &&
+-				 instance->target == THERMAL_NO_TARGET)
+-				tz->passive--;
+-		}
+-
+ 		instance->initialized = true;
+ 
+ 		mutex_lock(&instance->cdev->lock);
 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-
--- 
-With best wishes
-Dmitry
 
