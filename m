@@ -1,108 +1,172 @@
-Return-Path: <linux-kernel+bounces-225610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBCA9132DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:14:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE9E99132DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 357FF1F22C3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:14:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11EC1C21421
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5523014D430;
-	Sat, 22 Jun 2024 09:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE7414D430;
+	Sat, 22 Jun 2024 09:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6o4K8ZJ"
-Received: from mail-lf1-f68.google.com (mail-lf1-f68.google.com [209.85.167.68])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6NaVLXc"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A26C14B078;
-	Sat, 22 Jun 2024 09:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD832904;
+	Sat, 22 Jun 2024 09:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719047648; cv=none; b=SLl6xs5a2FofvpCG0npQASTvMukNZe9i4+699UI4YAogAnskrKtOy6Q+eTOtA8ro8If33mD3aWQQNE/MlCrtDEf8e730eJajk5TqL5tmHY0somYtY1Wmt583sDMFFSGDJ1oO0Dw+9GXCEoT2ZaLLCh6DTqcoFcHbDUtmx7LlHt0=
+	t=1719047732; cv=none; b=M9MAG8GB99Sazg6e8MmSzTRgZs2VHmt3bM9y0yOrFmwDk9/FDy255NkfGPhCG7l/uB2oYXgrGcus5YB3RYFJobYF4RhfwMJB/Qy44bAELfxA0ExLYD5zwAurlyyDCyQhPXwCCs5BK+U5Mq4etbCGCq8baNcp6Dq1BiAomswn66s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719047648; c=relaxed/simple;
-	bh=RRqQl8uo5OtW4jawNXSK5YjGDnMPsH/r+7OC+raT/cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=J7mJCN8QlerVDAZ33a3Ri6EYwyz3RUPGXdTYwEhdGIOPV4Y538uWja9hkYMxyc95gQNANhAQiRnt9Mby119YHtvmjnvMKPJCn3evx7/LYcyW15wyc7LM7jOhSjjlfge8DxGHuZDeoZACbi6kvK+Xqg6dBl5u9OpqumqI/8IRClY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6o4K8ZJ; arc=none smtp.client-ip=209.85.167.68
+	s=arc-20240116; t=1719047732; c=relaxed/simple;
+	bh=QGmovqxe/ZZvpyV8EpE1WhgzuX8/X+ep9bNe33O6b7k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mSXjtOlvq9C3zbP8hXLcdIO/tQJo3+j3MtpoXqmX1PO1K1xjW9OON9jLsYuS1jaQ1E33ZEmGvf1slOIo42uxdfsqiqNbgCMjj5xsCanXInMLGQtoXDPpUjoMuBcshn+Sz8W1RIV7GMeG2kxYGOfM9ERx+YFOoxU10lN+ody28Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B6NaVLXc; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f68.google.com with SMTP id 2adb3069b0e04-5295eb47b48so3454490e87.1;
-        Sat, 22 Jun 2024 02:14:06 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fa07e4f44eso4714005ad.2;
+        Sat, 22 Jun 2024 02:15:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719047645; x=1719652445; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RRqQl8uo5OtW4jawNXSK5YjGDnMPsH/r+7OC+raT/cg=;
-        b=d6o4K8ZJu57LdjhY/tAj8wrNDbsFRKE/o8NquaDh3AOvJvQor8b045q4LCyV/OGAAW
-         Z18hUTcnTdW3+if/mftaG1N+AG1qLsHq48fhqmw4h/NaA0/NTrJMqUVzUxDXIVrizsE0
-         /s7QV8RtUftXFf983jGatUzWeidGkYnuNYRA13w2G5shSZwdUnszo0Cd9z6RRB+a7lSQ
-         cGPejdAcXk5YKS3T5xpriSv/2gAI0y+RI1/JiZr2EFyy8qxp2WvnR6w1NPAI0C0Bnx9F
-         DzlU+gaM2bQh0ndE1DNRgNlmv3b3qftL0KvdF7kMtbfW6rfWuvzZ+BV1OGojPpd9Chjo
-         Kbeg==
+        d=gmail.com; s=20230601; t=1719047730; x=1719652530; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=E+Wro17/2T3M6H3Hb7/cNYPT10OFFiTg+saReZEKGL8=;
+        b=B6NaVLXcWO+TNJ8InKGSth5xkCIM8kkUw6DrZJdpPVd479dLkQrkI5G8AEsRLG4G6V
+         61LUMs6tJjYPgE5NZYJ+yYiwSz4tP4Ug0Hhj8lGx2Qu4MJXEZmRh6Y1ZHaK/sjn4BrVy
+         PL+WIdvswJHkLzNx2FlHblw9lOZK9KuUtrBEhtPw/RUYUYcZ9kefNIQTEtHY4lkapkR9
+         wfo10+3/ZdAo69Kki0YfhGvgMkuWdSw7dm55/bhban6giqFdpZF8b3WDZroG1cnU3ICb
+         J9QzyKL8hY3TEW9gv13cRCthSF8V8KNuFpsf+ijTchDjlcDQI8sQArVkeu9KVWbXTNHQ
+         y77w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719047645; x=1719652445;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RRqQl8uo5OtW4jawNXSK5YjGDnMPsH/r+7OC+raT/cg=;
-        b=MYILWqXGOpn2Wrtm5E4Ww1wk5zp7ca/pv5fkpf7W5IqIQH2HJi8uTc5/+qV7RcsF3F
-         PwF2mNpsaBmB/n9eI8c+Ezp1B+J2s2EjzHbegovbahs+AGErdS30GEvEDZpBo17FbO8Q
-         rH9cTFrH6+jg/Nwjs8wT/nSnA+yEl/wQ/bnWwVyDS5SwynkctkILXMeIoneYWXxArWId
-         /pkASytAKTck+AFY2N4z4Ylk4AEV4+FVysU3QvrB4xEgDbvUGB9zYsOUO+/zk+87d8Si
-         Yiki7dYhGPL/+XvLl+zzLaRExd9nok4Sjuy0mS05XAOdqW5QhRqPsp9qzlNZ6BZUcLpv
-         YfKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVePJC/cpH0lJbd6SEOLitXOgmlucDLn4cbXIoAEvCADrEFJX6LHGLKgFTb8ZhxtVqkZ4Bh5ngjpf1aXWsxfTvv4ljvcx3ZRveL21YJmO4NSyoCcwoWOlsUe+2yBqcIHDIgUOMECmSR/136qp9VdcES/JlKqc/twcmop7fzVHCZk2Eh6w==
-X-Gm-Message-State: AOJu0YzUyDdiRx9h57193y7HuQ+hAtHq7sfiU+NpCni/nNWGHkF+0zSN
-	DZSw/Zithvid3M336d52NeohnryUMKaqJqUL68Di3lk3EQrnenil
-X-Google-Smtp-Source: AGHT+IHJGOCTYSjWGWICe1a7Ey23OXHw285FjRTgowpE0FVV64ic6M/3PuuUaM6lyNhVILMGR8S5RQ==
-X-Received: by 2002:ac2:46d4:0:b0:52b:8c88:2d6b with SMTP id 2adb3069b0e04-52ce061077fmr39891e87.11.1719047644689;
-        Sat, 22 Jun 2024 02:14:04 -0700 (PDT)
-Received: from comp ([95.165.92.141])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd76516f3sm409314e87.151.2024.06.22.02.14.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 02:14:04 -0700 (PDT)
-Date: Sat, 22 Jun 2024 12:14:03 +0300
-From: Alexey Lukyanchuk <skifwebdevelop@gmail.com>
-To: minda.chen@starfivetech.com
-Cc: aou@eecs.berkeley.edu, bhelgaas@google.com, conor@kernel.org,
- daire.mcnamara@microchip.com, devicetree@vger.kernel.org,
- emil.renner.berthing@canonical.com, kevin.xie@starfivetech.com,
- krzysztof.kozlowski+dt@linaro.org, kw@linux.com,
- leyfoon.tan@starfivetech.com, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
- lpieralisi@kernel.org, mason.huo@starfivetech.com, p.zabel@pengutronix.de,
- palmer@dabbelt.com, paul.walmsley@sifive.com, robh+dt@kernel.org,
- tglx@linutronix.de
-Subject: Re: [PATCH v16 00/22] Refactoring Microchip PCIe driver and add
- StarFive PCIe
-Message-ID: <20240622121403.7effa777@comp>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
-In-Reply-To: <20240328091835.14797-1-minda.chen@starfivetech.com>
+        d=1e100.net; s=20230601; t=1719047730; x=1719652530;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E+Wro17/2T3M6H3Hb7/cNYPT10OFFiTg+saReZEKGL8=;
+        b=b6k5ApM/rrkKO5REE9Tym7oMdNJG6wmmRIGKI8p4hnPdJk5JX8PsKI2Dbeg6g7/W8l
+         CWMxZkeB4geoAA22BRZE3TbMTm+sv0lcKvTcoo/Q+Wa1pddElBo/uUgkgQZjMIeirVx9
+         ifhQsJ4Bg2qNkhG3J1Ev1BqGsZ0gZOtA/lTDqJudxDyCnKYNWioAAwLFUZ4+FOU4ULfw
+         5MJqDzPaMSEymuE4GypFOgvhivB3eDHhQx1EYf7gUSFSq+Nr91bYmM2bIZWhPQ7oi/V9
+         tXPh+LkBFVbjqYtBe4lU4/EstAPMlFm07R/gpdHaP7rWkB5X10+jKxmXOnq0SIC8nvzq
+         f3Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlB8xTYDOcuaClDZ3euTyw5sGZZKgOGTiKO/gUJlG1DNiaq43nAcooUNjX6gDTWIzzNoXyGFHNhsw7ga5mx5AzY2MKhM/NvcFoDecTYudIvCMLGhD2eNx0OyNy6GMIC+/2hkh7ET3PqpJrimh+QE7N2uzKp/XSBcvrSHxxynla7XXZVQ==
+X-Gm-Message-State: AOJu0YznxKFSbxse/UBRB1amY2SpGqJUDqjy9+TTGkMc8aEbuffSH5QC
+	s30t3umVNcxB95m+kSmU6alNmT7jTY7JxpghtmiRpvz3ZLUELydf
+X-Google-Smtp-Source: AGHT+IFCAGCzvCfBKH6kQY85vrf8JsQcixQ15Dk3MpSL0kWK12ZJS4GFjOJTc01K7wzCRuSgudiSZg==
+X-Received: by 2002:a17:903:191:b0:1f9:ccd0:2abb with SMTP id d9443c01a7336-1f9ccd02d58mr85004575ad.58.1719047730306;
+        Sat, 22 Jun 2024 02:15:30 -0700 (PDT)
+Received: from [172.19.1.51] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb9bffdasm26812535ad.237.2024.06.22.02.15.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Jun 2024 02:15:29 -0700 (PDT)
+Message-ID: <3c4e0d8f-8d1e-4667-87c3-f070f3649a2c@gmail.com>
+Date: Sat, 22 Jun 2024 17:15:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+From: Shan-Chun Hung <shanchun1218@gmail.com>
+Subject: Re: [PATCH 2/2] mmc: sdhci-of-ma35d1: Add Novoton MA35D1 SDHCI driver
+To: Philipp Zabel <p.zabel@pengutronix.de>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ adrian.hunter@intel.com, pbrobinson@gmail.com, serghox@gmail.com,
+ mcgrof@kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ forbidden405@outlook.com, tmaimon77@gmail.com, andy.shevchenko@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com
+References: <20240619054641.277062-1-shanchun1218@gmail.com>
+ <20240619054641.277062-3-shanchun1218@gmail.com>
+ <bd0e85f42ef74f6f927020cbee6879351d1c3e9e.camel@pengutronix.de>
+Content-Language: en-US
+In-Reply-To: <bd0e85f42ef74f6f927020cbee6879351d1c3e9e.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello Minda Chen.
+Dear Philipp,
 
-I applied your PCIE series patches to v6.10-rc3 and v6.9.0, works like
-a charm - thank you!
+Thanks for your review.
 
-So Tested-by: Alexey Lukyanchuk to all series.
+On 2024/6/21 下午 07:45, Philipp Zabel wrote:
+> On Mi, 2024-06-19 at 13:46 +0800, Shan-Chun Hung wrote:
+>> This adds the SDHCI driver for the MA35 series SoC. It is based upon the
+>> SDHCI interface, but requires some extra initialization.
+>>
+>> Signed-off-by: schung<schung@nuvoton.com>
+>> ---
+>>   drivers/mmc/host/Kconfig           |  13 ++
+>>   drivers/mmc/host/Makefile          |   1 +
+>>   drivers/mmc/host/sdhci-of-ma35d1.c | 297 +++++++++++++++++++++++++++++
+>>   3 files changed, 311 insertions(+)
+>>   create mode 100644 drivers/mmc/host/sdhci-of-ma35d1.c
+>>
+> [...]
+>> diff --git a/drivers/mmc/host/sdhci-of-ma35d1.c b/drivers/mmc/host/sdhci-of-ma35d1.c
+>> new file mode 100644
+>> index 000000000000..7714a5ab463d
+>> --- /dev/null
+>> +++ b/drivers/mmc/host/sdhci-of-ma35d1.c
+>> @@ -0,0 +1,297 @@
+> [...]
+>> +static int ma35_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct sdhci_pltfm_host *pltfm_host;
+>> +	struct sdhci_host *host;
+>> +	struct ma35_priv *priv;
+>> +	int err;
+>> +	u32 extra, ctl;
+>> +
+>> +	host = sdhci_pltfm_init(pdev, &sdhci_ma35_pdata,
+>> +				sizeof(struct ma35_priv));
+>> +	if (IS_ERR(host))
+>> +		return PTR_ERR(host);
+>> +
+>> +	/*
+>> +	 * extra adma table cnt for cross 128M boundary handling.
+>> +	 */
+>> +	extra = DIV_ROUND_UP_ULL(dma_get_required_mask(&pdev->dev), SZ_128M);
+>> +	if (extra > SDHCI_MAX_SEGS)
+>> +		extra = SDHCI_MAX_SEGS;
+>> +	host->adma_table_cnt += extra;
+>> +	pltfm_host = sdhci_priv(host);
+>> +	priv = sdhci_pltfm_priv(pltfm_host);
+>> +
+>> +	if (dev->of_node) {
+>> +		pltfm_host->clk = devm_clk_get(&pdev->dev, NULL);
+>> +		if (IS_ERR(pltfm_host->clk)) {
+>> +			err = PTR_ERR(pltfm_host->clk);
+>> +			dev_err(&pdev->dev, "failed to get clk: %d\n", err);
+>> +			goto free_pltfm;
+>> +		}
+>> +		err = clk_prepare_enable(pltfm_host->clk);
+>> +		if (err)
+>> +			goto free_pltfm;
+>> +	}
+>> +
+>> +	err = mmc_of_parse(host->mmc);
+>> +	if (err)
+>> +		goto err_clk;
+>> +
+>> +	priv->rst = devm_reset_control_get(&pdev->dev, NULL);
+> Please use devm_reset_control_get_exclusive() instead.
+>
+> regards
+> Philipp
+OK, I will fix it.
 
-Hovewere i had to fix some minor issues, you can view the results here:
+Best Regards
 
-https://github.com/skif-web/linux-starfive-vs2-mainline/tree/strafive-visionfive2-pcie-2
+Shan-Chun
 
-Hope it helps.
-
-Hopefully to see this series being eventually applied soon.
 
