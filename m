@@ -1,153 +1,188 @@
-Return-Path: <linux-kernel+bounces-225708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70700913425
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:13:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A14ED913432
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23FC81F22542
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:13:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD1DAB230FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4983F16F8F9;
-	Sat, 22 Jun 2024 13:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A4816F282;
+	Sat, 22 Jun 2024 13:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gn8ed99h"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S4MrMTb5"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6B516F835;
-	Sat, 22 Jun 2024 13:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7FB1581F0
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 13:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719061979; cv=none; b=fz0IKBg1vw0KqM5RKB6rm7IMcYrn7FSZhFzOkuuHuLVw8/Iul/Gd6dXzji/efFW+zQyjFwuI/WGpsSGK+8102r8HxSVcOaxt2TTYSW611gfNY0E2kBYenNAK7gDvufhFHYkUGR3NmsNZDEx5GtGhR+mGdP7fh6pnKDgYUspfxBs=
+	t=1719063519; cv=none; b=ViyD1UEY1FugbDGyDErdgAtWI3fTGfOcvCoOt4ljn583U0zVPr/UvWQmcDwhe4lEeIl5HMEpLnAYFLq5XyO+hudBApjj4g/ivDZoESe+a/WAkWZ0xEMMMJFqvoOu3+jOz8pHf95PaVTF+Rfd9qD4ikPXVjEJdXs5CuEudwffvLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719061979; c=relaxed/simple;
-	bh=NOkj/f8lAc7kTz5X7jDGaKXy+Z6EDvf0UOG45AeiUzs=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ACZPR19a9KZFTN/sxgOi6TX7viqpLIF+9OzNYZQdi3w48kL40A4xYbgxQqJKMnRjhcKiKPCCNlpY8LicwEYwBkuMtOecK42C3dFN3DBYwv61Fej8wESWLKyLuMluDg6Nymb9Z4ETovcKq3Gy8r1NREtTmqwVP6ncfwoA3CA4jrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gn8ed99h; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6f13dddf7eso347889966b.0;
-        Sat, 22 Jun 2024 06:12:57 -0700 (PDT)
+	s=arc-20240116; t=1719063519; c=relaxed/simple;
+	bh=/g5YLP580DZB8ZmRH2LlgshHuA5wYFvn8RZ80cWbBXo=;
+	h=From:To:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=TLeRC9n0ULfl7vJme7IPw4Jq2+9z1aVp9XbII2RPoBbqejjNNPiLImEKyu8MXTCMZj/Norz5jgWhFBoDtoTg4l5oslPbW+jZ36vQx1IryyhMCsB5JN0wivcm3Zr5sLa3pQ9CP3U2dhzROpodQKgAbOZ0+EcxPm3YalDeFUwIbE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S4MrMTb5; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a62ef52e837so347296766b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 06:38:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719061976; x=1719666776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1KIghhhap73u1S2Fgyv5RhQSmZlNkggPnJ4NqRaVR4E=;
-        b=gn8ed99hK3f7hP4UgaYN2eyiJeWBOuim/KDTbdkj67O1/FKwK4KrDCf1e9sNWPYEAO
-         9/FalHXA8u4oCQ4O14DYsJmAUsdS0NSvLqf91597w8v5tBT2BjJuSdjyA+ueUftt0GKk
-         LymgXCYnjlYmTBr2CT1oGV+jDopwAasyQe7TqEi6LXSAIr+kT7ObQ5OcxIjoGxKBqtpj
-         pqSVEbT8RrGoDM0ZIxnQ3j/0WEn3QlnzvCKG2OKFshnaBIQLM0+fhpmcbH+dNMFUFCUU
-         sgtY0y4L5U3iKLTF5DOgTyGHqDAWKOvHDLlpNco2yCurT0lyCDCDInd30YInsAJ3TvY2
-         ZlZw==
+        d=broadcom.com; s=google; t=1719063516; x=1719668316; darn=vger.kernel.org;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mQCzMAgXDVFPOU21j8Bf377IHRWwPh9eLOXypbsfPdI=;
+        b=S4MrMTb5CjQhCcnciMM2UYY1slzGrC7iBZsF9GL6RmGm7H02vWzMbGpX7U9I0xmq8r
+         YmYkj/vHyB1ZQyQaj9s44NuaMvwwqwa0DeDSCZ7Su59hdrviyZZZ1zGxCSbaSWHbuFGT
+         QUStEpSjr5S0hxLCFXeZoVZvGr0LEqRW78cDI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719061976; x=1719666776;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1KIghhhap73u1S2Fgyv5RhQSmZlNkggPnJ4NqRaVR4E=;
-        b=C3lswE+0M1lTN2BJFpw4bQElrkUHts/qv6+1btgyGupONB6Z2ujaQOxpL7w/u/8JPo
-         GYhKAGoIorAeTKL3NzWZ50eM5X3yM3zpLuFutV0tQhufBX2CuuYjE88ybDiPMfEEjkr5
-         EbeUvhqKvkRYrfKSi0yjxbcgQwsjvMT0ejkjB/YzVNCg94ygzKEhgjrP+OlHDkPecy0Q
-         rttYUooiBmN83/ff9DAkadLBLPdRfLDi1qrAStpe/vCZ/eBFaZeVJD8vCBSotK9VGxNV
-         BEIw17r/Gf61IUMn2fZqLRTb+mYzyX6qeGZyUpHN1t2umz7LOqIJtkg1mw7IlfBh7se1
-         CQ0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVR4mqZYNQLIWIVStbUeAvfwek6bvRyrgDz9rgPLKmh0MfN2F5bItrx33J7xAXLEzjWpIg6RXx8bhLBNEbWW0jMCT/U1Q19Hp+mDSofVlabzfRiHl+uAhSLPRxROg+GCSML8dwGf+1k19WtazEI3m4noLou3ewv86eOcyo3QEQcc64Vm0VT
-X-Gm-Message-State: AOJu0YyEtbEXxKuNlxtmaewo6S2vOJQdVpt6Qmw200jxaXe1k1hfj0EG
-	n1BQTga6iPpK98sKX6CDA5KPq1RCc2eFFF0Id5Cx1hTIcVNsolzA
-X-Google-Smtp-Source: AGHT+IH5qt1PObEvU6yvifso7ZxFmIBxYQ215NYI9UltdYVsYxH03ugtpQPpYu3t5Veq/1dFONMdDA==
-X-Received: by 2002:a17:906:7f05:b0:a6e:4693:1f6e with SMTP id a640c23a62f3a-a7242c39be2mr24427066b.29.1719061976155;
-        Sat, 22 Jun 2024 06:12:56 -0700 (PDT)
-Received: from toolbox.. ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf42a724sm197708166b.16.2024.06.22.06.12.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 06:12:55 -0700 (PDT)
-From: Christian Hewitt <christianshewitt@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org
-Subject: [PATCH v2 2/2] ASoC: Add support for ti,pcm5242 to the pcm512x driver
-Date: Sat, 22 Jun 2024 13:12:45 +0000
-Message-Id: <20240622131245.2607533-3-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240622131245.2607533-1-christianshewitt@gmail.com>
-References: <20240622131245.2607533-1-christianshewitt@gmail.com>
+        d=1e100.net; s=20230601; t=1719063516; x=1719668316;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mQCzMAgXDVFPOU21j8Bf377IHRWwPh9eLOXypbsfPdI=;
+        b=KTJ40+dvb1YT66Q7Am+6OB9VGAGrjroMdkGfgojN+wJvs0Qc71/QdF7EZ5WqDvXvqQ
+         PBWOquf00oaaluIR69Ckqx3V5ZJDIi/TGlROq9rOYql0ST3ToEyRvfqo1TB6WgDiah0i
+         1BIQ34+IxHzkNahzbU6VHDHGXVikelFPKBjxVLnPNZocAZ8VephUNzqDpg4URrlSYgBq
+         HCHZiX/0gIgTkfvjmLxV0kwgNL26rqQQ2gQ9gh/O3bMy+wzAfrlAhStf6tM4dTgZfoEt
+         SzbDUFHJYnLu2oI2VRWbHt9g7pGukdQHVso6wClm+4x2x+ANC8/oFts/MXFNmcu7M2Vl
+         bz4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWlG/dl0OzdrrAU3XqwEkIAdEy8jy0S1fvIiopXrOeY+vV1VbRBnvrwd3NsRQ4T27jdmH8/kgTE3hRbXVXPMvXNIE7eglsFRyMiqppn
+X-Gm-Message-State: AOJu0Yy0nnp0xyKlXvD8zLRL94Yz/97Wq5294IWJWpLjTdKln/mVrbWe
+	aoqTQeidsDLCVYDBM0NJTQu5IU9x5Eee5S4ltEMLfi8zKlvQD8c8ew8GB42MjA==
+X-Google-Smtp-Source: AGHT+IFkEDbNq7rb5j1cQBep5Fj57wNYjX+ARW4d3/fNOuXUI3ulnpOYiMcLmefjigRbTlKNmBvWTg==
+X-Received: by 2002:a17:907:b19:b0:a6f:4b5b:4ba7 with SMTP id a640c23a62f3a-a7242d2a239mr27628166b.67.1719063515848;
+        Sat, 22 Jun 2024 06:38:35 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fdb669e1csm106852066b.211.2024.06.22.06.38.32
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 22 Jun 2024 06:38:32 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Alex Bee <knaerzche@gmail.com>, Kalle Valo <kvalo@kernel.org>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <linux-kernel@vger.kernel.org>
+Date: Sat, 22 Jun 2024 15:38:33 +0200
+Message-ID: <190402b87a8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <20240621225558.280462-1-knaerzche@gmail.com>
+References: <20240621225558.280462-1-knaerzche@gmail.com>
+User-Agent: AquaMail/1.51.3 (build: 105103473)
+Subject: Re: [PATCH] wifi: brcmfmac: of: Support interrupts-extended
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000003cac60061b7aaac9"
+
+--0000000000003cac60061b7aaac9
+Content-Type: text/plain; format=flowed; charset="us-ascii"
 Content-Transfer-Encoding: 8bit
 
-Add a compatible string to enable support for the ti,pcm5242 DAC chip
-in the pcm512x driver.
+On June 22, 2024 12:56:02 AM Alex Bee <knaerzche@gmail.com> wrote:
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
----
-Changes since v1:
-- add pcm5242 to SPI too as suggested by Mark Brown
+> This "new" version of defining external interrupts is around for a very
+> long time now and supported and preferred by irq_of_parse_and_map
+> respectively of_irq_parse_one.
+>
+> Support it in brcmfmac as well by checking if either "interrupts" or
+> "interrupts-extended" property exists as indication if irq_of_parse_and_map
+> should be called.
 
- sound/soc/codecs/pcm512x-i2c.c | 2 ++
- sound/soc/codecs/pcm512x-spi.c | 2 ++
- 2 files changed, 4 insertions(+)
+All very interesting, but why should we add code for something that is not 
+specified in the bindings documentation?
 
-diff --git a/sound/soc/codecs/pcm512x-i2c.c b/sound/soc/codecs/pcm512x-i2c.c
-index 4be476a280e1..92bcf5179779 100644
---- a/sound/soc/codecs/pcm512x-i2c.c
-+++ b/sound/soc/codecs/pcm512x-i2c.c
-@@ -39,6 +39,7 @@ static const struct i2c_device_id pcm512x_i2c_id[] = {
- 	{ "pcm5122", },
- 	{ "pcm5141", },
- 	{ "pcm5142", },
-+	{ "pcm5242", },
- 	{ "tas5754", },
- 	{ "tas5756", },
- 	{ }
-@@ -51,6 +52,7 @@ static const struct of_device_id pcm512x_of_match[] = {
- 	{ .compatible = "ti,pcm5122", },
- 	{ .compatible = "ti,pcm5141", },
- 	{ .compatible = "ti,pcm5142", },
-+	{ .compatible = "ti,pcm5242", },
- 	{ .compatible = "ti,tas5754", },
- 	{ .compatible = "ti,tas5756", },
- 	{ }
-diff --git a/sound/soc/codecs/pcm512x-spi.c b/sound/soc/codecs/pcm512x-spi.c
-index 4d29e7196380..6629b862f47d 100644
---- a/sound/soc/codecs/pcm512x-spi.c
-+++ b/sound/soc/codecs/pcm512x-spi.c
-@@ -36,6 +36,7 @@ static const struct spi_device_id pcm512x_spi_id[] = {
- 	{ "pcm5122", },
- 	{ "pcm5141", },
- 	{ "pcm5142", },
-+	{ "pcm5242", },
- 	{ },
- };
- MODULE_DEVICE_TABLE(spi, pcm512x_spi_id);
-@@ -45,6 +46,7 @@ static const struct of_device_id pcm512x_of_match[] = {
- 	{ .compatible = "ti,pcm5122", },
- 	{ .compatible = "ti,pcm5141", },
- 	{ .compatible = "ti,pcm5142", },
-+	{ .compatible = "ti,pcm5242", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, pcm512x_of_match);
--- 
-2.34.1
+NAK (for now). Feel free to update the bindings document.
 
+Regards,
+Arend
+
+
+
+--0000000000003cac60061b7aaac9
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIQdwYJKoZIhvcNAQcCoIIQaDCCEGQCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg3OMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
+MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
+rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
+aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
+e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
+cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
+MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
+KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
+/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
+TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
+YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
+CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
+BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
+jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
+9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
+/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
+jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
+AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
+dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
+MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
+IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
+XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
+J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
+nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVYwggQ+oAMCAQICDE79bW6SMzVJMuOi1zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMTQzMjNaFw0yNTA5MTAxMTQzMjNaMIGV
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEFyZW5kIFZhbiBTcHJpZWwxKzApBgkqhkiG
+9w0BCQEWHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IB
+DwAwggEKAoIBAQDxOB8Yu89pZLsG9Ic8ZY3uGibuv+NRsij+E70OMJQIwugrByyNq5xgH0BI22vJ
+LT7VKCB6YJC88ewEFfYi3EKW/sn6RL16ImUM40beDmQ12WBquJRoxVNyoByNalmTOBNYR95ZQZJw
+1nrzaoJtK0XIsv0dNCUcLlAc+jHkngD+I0ptVuWoMO1BcJexqJf5iX2M1CdC8PXTh9g4FIQnG2mc
+2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
+Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
+HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
+KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
+Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
+dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
+OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
+MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
+BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
+ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
+zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
+sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
+BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
+N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
+p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
+YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCB61uv3nd/WdKvGrMdM
+Jb37lrb2HbdpuXKUFaD2MqKMkDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA2MjIxMzM4MzZaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEA5Nz7qqOOVRLIFerf0gCgpUrgw+uqTGJx19El
+5iipfyQHjHTvAsKOlR3Z7kUwcAfSXHw01vqge77CP141NwX7cvMKK92TXSid9tNq5C+X9kil4445
+QmO5q4SHqAqRNDUNaE43wlW+H8RDm843ATDMWK5ujunDfhRA+NU8i5aZy4UY1gusIio9eyihyKpl
+XvFyXkRPcPrID04hV+a9oIIccr0yoiBTqhDkiZwAPnxOlO7osHJ4UC0uVs56ZbD7PnRQx/iqdQRj
++/LeiLQa1l9n76Orci8MS+xyfMx+eHCFPg+zuhU1BwO/+OZ3QM+RFKRjMnT/1acU0q+BSpsMJRwc
+CA==
+--0000000000003cac60061b7aaac9--
 
