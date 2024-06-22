@@ -1,103 +1,108 @@
-Return-Path: <linux-kernel+bounces-225609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC81C9132D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:14:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBCA9132DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44FDB223BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:14:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 357FF1F22C3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128B114D282;
-	Sat, 22 Jun 2024 09:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5523014D430;
+	Sat, 22 Jun 2024 09:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5Qb3/jX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6o4K8ZJ"
+Received: from mail-lf1-f68.google.com (mail-lf1-f68.google.com [209.85.167.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4954F1422B6;
-	Sat, 22 Jun 2024 09:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A26C14B078;
+	Sat, 22 Jun 2024 09:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719047636; cv=none; b=kmQEGXkPAZ2VnGSwOafdDFQFJIuQIsymu4dpoACoHf37KxE11nIdHM5cOW5aTsfIAbvWlTNqrb4G+QPWjA8pLQOIIYowTT+4TvEvWfA75VJpITvbXNxIA6QC/c+4CC1Sw9L9QUQyOQjiWHpped12k88ydddNX+OxRZyZmKx7wXY=
+	t=1719047648; cv=none; b=SLl6xs5a2FofvpCG0npQASTvMukNZe9i4+699UI4YAogAnskrKtOy6Q+eTOtA8ro8If33mD3aWQQNE/MlCrtDEf8e730eJajk5TqL5tmHY0somYtY1Wmt583sDMFFSGDJ1oO0Dw+9GXCEoT2ZaLLCh6DTqcoFcHbDUtmx7LlHt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719047636; c=relaxed/simple;
-	bh=SZd7ny3EirRYRxhj56AZwQV6SXfI4sHhKeyspS8X6zQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XJResyRU6qFHffRzsNcDkczu6Oi4ILx0WLCQajpoKWU24u03zN/pV3+EkJTCxWdcxu1aj/ohvRkXgJlhR8dffeWq1BbzD5cJx1XwrLgeC84UZM/Hd4s3lpX8TS4G+gobDXJvQXSBZs8l6UBoz9y5aplFTc9hIfSYw39gJI8cIZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o5Qb3/jX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69F28C32781;
-	Sat, 22 Jun 2024 09:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719047635;
-	bh=SZd7ny3EirRYRxhj56AZwQV6SXfI4sHhKeyspS8X6zQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=o5Qb3/jXa9vGgu5KgPKMF07mi6u4KmUFCkkCN6HiJC2BWapl1BV8EZDKyddUD+FNz
-	 bvfpib++YJUs7csg+LQkkOQDcXr+XondzzV6gwz3dLdx1RZOLT9AGGV3l1fSRxJTyN
-	 qiVu6nG1LtMB4i0nIau7jKC0TV7Nu/3wVGNnmsMUgt2m8bUhYS+E3P3yhtBQiBsN8+
-	 YP5OqWOvrTCSX63XxJ7MsQ+KvPRH9fVSg9ck43DUgU7dGg78w8nzwGLga5pd3jZHx5
-	 9p5WS3iS9eTvHYwOba3cg/DBE2RK5pmPr4RkNt90bub0/fv9sF2JZ0izr+Rr5ZFYr3
-	 pDPT8XxOTR6Ug==
-Date: Sat, 22 Jun 2024 11:13:52 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa@kernel.org>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Grygorii Tertychnyi <grembeter@gmail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host-fixes for v6.10-rc5
-Message-ID: <z26bzagsktppxbftswcocv66a5xmx6kbxn3ui27qq2iie6z2mo@r22mkxmxwfu5>
+	s=arc-20240116; t=1719047648; c=relaxed/simple;
+	bh=RRqQl8uo5OtW4jawNXSK5YjGDnMPsH/r+7OC+raT/cg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type; b=J7mJCN8QlerVDAZ33a3Ri6EYwyz3RUPGXdTYwEhdGIOPV4Y538uWja9hkYMxyc95gQNANhAQiRnt9Mby119YHtvmjnvMKPJCn3evx7/LYcyW15wyc7LM7jOhSjjlfge8DxGHuZDeoZACbi6kvK+Xqg6dBl5u9OpqumqI/8IRClY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6o4K8ZJ; arc=none smtp.client-ip=209.85.167.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f68.google.com with SMTP id 2adb3069b0e04-5295eb47b48so3454490e87.1;
+        Sat, 22 Jun 2024 02:14:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719047645; x=1719652445; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RRqQl8uo5OtW4jawNXSK5YjGDnMPsH/r+7OC+raT/cg=;
+        b=d6o4K8ZJu57LdjhY/tAj8wrNDbsFRKE/o8NquaDh3AOvJvQor8b045q4LCyV/OGAAW
+         Z18hUTcnTdW3+if/mftaG1N+AG1qLsHq48fhqmw4h/NaA0/NTrJMqUVzUxDXIVrizsE0
+         /s7QV8RtUftXFf983jGatUzWeidGkYnuNYRA13w2G5shSZwdUnszo0Cd9z6RRB+a7lSQ
+         cGPejdAcXk5YKS3T5xpriSv/2gAI0y+RI1/JiZr2EFyy8qxp2WvnR6w1NPAI0C0Bnx9F
+         DzlU+gaM2bQh0ndE1DNRgNlmv3b3qftL0KvdF7kMtbfW6rfWuvzZ+BV1OGojPpd9Chjo
+         Kbeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719047645; x=1719652445;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RRqQl8uo5OtW4jawNXSK5YjGDnMPsH/r+7OC+raT/cg=;
+        b=MYILWqXGOpn2Wrtm5E4Ww1wk5zp7ca/pv5fkpf7W5IqIQH2HJi8uTc5/+qV7RcsF3F
+         PwF2mNpsaBmB/n9eI8c+Ezp1B+J2s2EjzHbegovbahs+AGErdS30GEvEDZpBo17FbO8Q
+         rH9cTFrH6+jg/Nwjs8wT/nSnA+yEl/wQ/bnWwVyDS5SwynkctkILXMeIoneYWXxArWId
+         /pkASytAKTck+AFY2N4z4Ylk4AEV4+FVysU3QvrB4xEgDbvUGB9zYsOUO+/zk+87d8Si
+         Yiki7dYhGPL/+XvLl+zzLaRExd9nok4Sjuy0mS05XAOdqW5QhRqPsp9qzlNZ6BZUcLpv
+         YfKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVePJC/cpH0lJbd6SEOLitXOgmlucDLn4cbXIoAEvCADrEFJX6LHGLKgFTb8ZhxtVqkZ4Bh5ngjpf1aXWsxfTvv4ljvcx3ZRveL21YJmO4NSyoCcwoWOlsUe+2yBqcIHDIgUOMECmSR/136qp9VdcES/JlKqc/twcmop7fzVHCZk2Eh6w==
+X-Gm-Message-State: AOJu0YzUyDdiRx9h57193y7HuQ+hAtHq7sfiU+NpCni/nNWGHkF+0zSN
+	DZSw/Zithvid3M336d52NeohnryUMKaqJqUL68Di3lk3EQrnenil
+X-Google-Smtp-Source: AGHT+IHJGOCTYSjWGWICe1a7Ey23OXHw285FjRTgowpE0FVV64ic6M/3PuuUaM6lyNhVILMGR8S5RQ==
+X-Received: by 2002:ac2:46d4:0:b0:52b:8c88:2d6b with SMTP id 2adb3069b0e04-52ce061077fmr39891e87.11.1719047644689;
+        Sat, 22 Jun 2024 02:14:04 -0700 (PDT)
+Received: from comp ([95.165.92.141])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd76516f3sm409314e87.151.2024.06.22.02.14.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 02:14:04 -0700 (PDT)
+Date: Sat, 22 Jun 2024 12:14:03 +0300
+From: Alexey Lukyanchuk <skifwebdevelop@gmail.com>
+To: minda.chen@starfivetech.com
+Cc: aou@eecs.berkeley.edu, bhelgaas@google.com, conor@kernel.org,
+ daire.mcnamara@microchip.com, devicetree@vger.kernel.org,
+ emil.renner.berthing@canonical.com, kevin.xie@starfivetech.com,
+ krzysztof.kozlowski+dt@linaro.org, kw@linux.com,
+ leyfoon.tan@starfivetech.com, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
+ lpieralisi@kernel.org, mason.huo@starfivetech.com, p.zabel@pengutronix.de,
+ palmer@dabbelt.com, paul.walmsley@sifive.com, robh+dt@kernel.org,
+ tglx@linutronix.de
+Subject: Re: [PATCH v16 00/22] Refactoring Microchip PCIe driver and add
+ StarFive PCIe
+Message-ID: <20240622121403.7effa777@comp>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+In-Reply-To: <20240328091835.14797-1-minda.chen@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Wolfram,
+Hello Minda Chen.
 
-Sorry for the late pull request. I wanted to allow a few days for
-testing this branch, which has resulted in a Saturday morning
-submission.
+I applied your PCIE series patches to v6.10-rc3 and v6.9.0, works like
+a charm - thank you!
 
-Thanks,
-Andi
+So Tested-by: Alexey Lukyanchuk to all series.
 
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
+Hovewere i had to fix some minor issues, you can view the results here:
 
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+https://github.com/skif-web/linux-starfive-vs2-mainline/tree/strafive-visionfive2-pcie-2
 
-are available in the Git repository at:
+Hope it helps.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.10-rc5
-
-for you to fetch changes up to 5a72477273066b5b357801ab2d315ef14949d402:
-
-  i2c: ocores: set IACK bit after core is enabled (2024-06-21 01:17:43 +0200)
-
-----------------------------------------------------------------
-This pull request fixes the paths of the dt-schema to their
-complete locations for the ChromeOS EC tunnel driver and the
-Atmel at91sam drivers.
-
-Additionally, the OpenCores driver receives a fix for an issue
-that dates back to version 2.6.18. Specifically, the interrupts
-need to be acknowledged (clearing all pending interrupts) after
-enabling the core.
-
-----------------------------------------------------------------
-Grygorii Tertychnyi (1):
-      i2c: ocores: set IACK bit after core is enabled
-
-Krzysztof Kozlowski (2):
-      dt-bindings: i2c: atmel,at91sam: correct path to i2c-controller schema
-      dt-bindings: i2c: google,cros-ec-i2c-tunnel: correct path to i2c-controller schema
-
- Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml         | 2 +-
- Documentation/devicetree/bindings/i2c/google,cros-ec-i2c-tunnel.yaml | 2 +-
- drivers/i2c/busses/i2c-ocores.c                                      | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Hopefully to see this series being eventually applied soon.
 
