@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-225879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB0791369F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 00:33:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DAF29136A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 00:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00121F22433
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 22:33:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E591F1F2249A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 22:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3556770F1;
-	Sat, 22 Jun 2024 22:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F5C7F48E;
+	Sat, 22 Jun 2024 22:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YI0w9F/4"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EyC1qKLs"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3A94206C
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 22:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9805FB9B
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 22:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719095628; cv=none; b=DNJivuR8z76e1Hh+9Wmk/FNuvpkXCO5T4dAUb84UZtP5NDxlm43dQxbWwOaUO2KQm3EoDFeg8jz+jeXPsmx9CAoSe43YJBs3PCcNW+S2YEhmUjOfVgZsxesXqcJQQAHwgvCYN3XKpy3Au6GFYI3vv6vkYiv6RcgkJZPNHxDSWjU=
+	t=1719095630; cv=none; b=Kzr/zWjC+fDUrLlA+y8ak4qyyzBpv07aSI1z5lHXKMsORoMPGYcHVHCcwu6KTegHFL6uYXgtJYYUaW5dPCZidpSYWOWd6x0D7oaGtpJcLVeLfeuiVhjQ5LcR5G4qqLdeoZZvV7Cyc41yyS4I+wOteNsIjmq85J38JDtNmHdjNYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719095628; c=relaxed/simple;
-	bh=5tyr8IBa1XwvEjvQMi3KDeyuY+EG410ppTE3ZhlCP70=;
+	s=arc-20240116; t=1719095630; c=relaxed/simple;
+	bh=QFHlACcGn7OqUVZY8YEAHPlNKeeUxY0F5pOJFUjj+S0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdo6N2gVc/Dqq0z+lxot0AAaNDPHXxxVBUXSjQosjREDMou71N7U1gS4fN/pBe+O3Cvx9WPcqAV2qshwDQyJS+9vaUzNUFVJmtKjsH9nXH6PrYcUZrU58nRVlb4WZN65wHl++y9cHw/XEMCVVRB/DHVVcHTojAEDGLgTzJaWevI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YI0w9F/4; arc=none smtp.client-ip=217.70.183.193
+	 Content-Type:Content-Disposition:In-Reply-To; b=ou0B03nxZVHWHDqO8f8bRHHkPR2dpWje48lCDlUSX4rC2f0CQ6rbAQScUBk/jr9c+WghTfz7eOTH6m5O7Itgoy9Td+bLo+lzd4Vo2S+M7OVlFkcMCfn/l9qG0QmP1o/8gm0nRvS+uttIeVSEm72ST22zy/EagKL4R67FWZZEUKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EyC1qKLs; arc=none smtp.client-ip=217.70.183.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D2C82240004;
-	Sat, 22 Jun 2024 22:33:37 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C5A2BFF805;
+	Sat, 22 Jun 2024 22:33:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719095619;
+	t=1719095627;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LU2ICDL4fp4IsPfmkBKqQ0+h5x4H4+vh585u8iwlvKQ=;
-	b=YI0w9F/4+gsDXJxti2JhDcfgtEYK23ABTaOePkV+6My8LiUYPCcF1NopzoKL407rOdX3Qc
-	8bL+aEbUhnUnB/OFB5gaGcxwwFRDZ4i/yu3dBlOFlzmgqfDnPtgdr3/XHhEkXmzOLcLcQq
-	3v/Fane+HIJ/pVN8wHHWBDHlCfbevmOori/P+Nthm5fK4ijHp+f8Ey3IabvoTsqWkP6jnG
-	zDewbhMwG2fgLOgFTQbnsGzY8ig11OK9OP3jWKSXxOoNTy/KhOQY+/3Vz4eD5xcjL6RLUz
-	6H5b4+dtcnYu5Lo96dy6DPGG7DXCr+U/mzir6Y6vS5ev6vXvlOaVF6soZg9K1g==
-Date: Sun, 23 Jun 2024 00:33:37 +0200
+	bh=Np0HAdoh8EZv8Bq/6GLeT6pSPf91A6nHL3cv9CEp+04=;
+	b=EyC1qKLsRooRDsCc7cZWjDHJk5YCZHERbx2gBaEtJXyPYnxuQ+kvG1QzOo+N0gy6KFn9m/
+	9dTHPEI2CzmGmcq/YyoipSD6y0LXNVOSPsJqJgmzVezwuhT9FCOAyvziA7iAGHuYWPj4Ja
+	oryyWD//xLa0KNnGo97fvstUrLYdXctiq1dUQoMod7BhrDmAgJ+WXfLu69dqZaA1xeoXaH
+	Dj84+I/fc/Yh3C3uTFPITu5uuqPdNlK2QhktCuZM+3ztbg5U5Ly/RqP7fiXdXDVxiW2em1
+	kbm6OBIGkNRvj3WGMDenA1E6u3rZpXSLj74QDZqt+8bPaqQaJcAPjBJzQq924w==
+Date: Sun, 23 Jun 2024 00:33:46 +0200
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Jeremy Kerr <jk@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
-	Billy Tsai <billy_tsai@aspeedtech.com>,
-	Aniket <aniketmaurya@google.com>
-Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i3c: dw: Fix IBI intr programming
-Message-ID: <171909557751.2164405.7866528644975058275.b4-ty@bootlin.com>
-References: <CAMmmMt2guEx1jajb2NC0iBnMGpkd2vaSiXg_BqgZhwrA=FARLQ@mail.gmail.com>
- <20240607072030.2618428-1-aniketmaurya@google.com>
+To: miquel.raynal@bootlin.com, Frank Li <Frank.Li@nxp.com>
+Cc: conor.culhane@silvaco.com, imx@lists.linux.dev,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 2/2] i3c: master: svc: resend target address
+ when get NACK
+Message-ID: <171909557749.2164405.8135288010118106502.b4-ty@bootlin.com>
+References: <20240603151527.52235-1-Frank.Li@nxp.com>
+ <20240603151527.52235-2-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,23 +61,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240607072030.2618428-1-aniketmaurya@google.com>
+In-Reply-To: <20240603151527.52235-2-Frank.Li@nxp.com>
 X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Fri, 07 Jun 2024 07:20:30 +0000, Aniket wrote:
-> IBI_SIR_REQ_REJECT register is not present if the IP has
-> IC_HAS_IBI_DATA = 1 set. So don't rely on doing read-
-> modify-write op on this register.
-> Instead maintain a variable to store the sir reject mask
-> and use it to set IBI_SIR_REQ_REJECT.
+On Mon, 03 Jun 2024 11:15:27 -0400, Frank Li wrote:
+> According to I3C Spec 1.1.1, 11-Jun-2021, section: 5.1.2.2.3:
 > 
+> If the Controller chooses to start an I3C Message with an I3C Dynamic
+> Address, then special provisions shall be made because that same I3C Target
+> may be initiating an IBI or a Controller Role Request. So, one of three
+> things may happen: (skip 1, 2)
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] i3c: dw: Fix IBI intr programming
-      https://git.kernel.org/abelloni/c/76fb85b86b40
+[2/2] i3c: master: svc: resend target address when get NACK
+      https://git.kernel.org/abelloni/c/2d15862dfba6
 
 Best regards,
 
