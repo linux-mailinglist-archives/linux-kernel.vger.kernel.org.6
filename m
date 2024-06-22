@@ -1,75 +1,62 @@
-Return-Path: <linux-kernel+bounces-225732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B1391348C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:58:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6213F9134A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 689D22840AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:58:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 865FE1C2108C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA8D16F8FB;
-	Sat, 22 Jun 2024 14:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10D716F906;
+	Sat, 22 Jun 2024 15:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuWqQqG5"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZZZruuU8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2095B16F299;
-	Sat, 22 Jun 2024 14:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B73416F0FD
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 15:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719068316; cv=none; b=Phwy0P60xLmsFLLwQrVI8Xaju4sXeBMcdmUzfI0/HNd6qRrp0p8wpiL3saqaSt7WmXL+2zz7Xc/VMj204PQ41bdQoYyhaHqSld78gjUjJsKSea660oO0tBxIbtYyWojKFqs6ZLoFWCvYG1fsTvOjvwWpI5CvRuC4uhw1Em4ZtKA=
+	t=1719068745; cv=none; b=T9ZmD/I7ibZ4hAVVBTRCG4kcQfz9bV2maNqM7l7M/jRzeej/XQGhaMZ3q1aihdSDddl29sVCpiSwo+PJTDIHHLEFut7ZdRNO9ErURpY8Tdc2ftPM2kRSRol1YKBuniLkOwnLYy8pD6bZ6BZ6KOop4sq9GhwwPtn5sMvDEO4GMsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719068316; c=relaxed/simple;
-	bh=MQoKloZEpoKquI1arZ549tKGjKUMWJxM2hFahY1T8MQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AUOrLsq5yrzUz6nQA7DdFiu7DP336nn2hK8CB8aS1Zom3RFn2UNdxGlmLD/uOWj+8xtfX1A623x8iXkjfjDyYO+/b4EHYH1U6u8iUzF+LMLcJTT4+al3kDbh3GSWykiMHUxaDoEys+dMQQZDy7RnjCvKPQQ8y9hyVfyTS6sT6VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cuWqQqG5; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7066c9741b7so210313b3a.1;
-        Sat, 22 Jun 2024 07:58:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719068314; x=1719673114; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=7AgK+NRrJzSdnlqO628yfSFZnHrjqGjFCisQ7jDYWCc=;
-        b=cuWqQqG53S55Vz/4WBM+H5uGS396N0wRUBe4S9n56ZTPSRKQCEiYh1CEPqEv+DVr+m
-         LgQkjCGiygpXJyHzXBvsMk9Veom80vxWluuLZgHTXveB+TUCnn9Q0t0hkZlrbJ6HJSmf
-         KCpdog/0kzMFqSMu9T6pfHp0jCbCFMmr2IdOG60mB+W1AIwa6IAQRowCQ6FGswa2JKLb
-         DKzFcTpoteEECR+Q6OcMS+RPuCAfvfomEX4t2WgqbhdfDBTOqbWYGZ6zkVbwXyB1jjS7
-         6MnAS/OCmk/loFGXcX/5wcxk+80MiNOluEWBx1UUXp256GLNLDxVN2+lHf9IZq9q9apa
-         jO1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719068314; x=1719673114;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7AgK+NRrJzSdnlqO628yfSFZnHrjqGjFCisQ7jDYWCc=;
-        b=hrxAhwJKdBN6bPC84LO4vK3DBS9XCUASS+nlk+P6x4/6T9jJJInlQyU/dAX/VUwQCK
-         Yxzvvysh3kibP54mjuoNC5YXvInjbr4aO7enHOqHfW1JVkYjJuKk2anufW6sfd3MEi+R
-         mm1wsfZbyTQRd2PoKPgSoWsApTUNZf52/IR+tV7HYFxYgXjrs2IUD8PX7g8TejRyNsWA
-         QUXsWGIicztXX0BQU4PckVilh5Ik2XmpjKfBuuDOctBzel1IuPh9F6T5sT0Ba1VavVWa
-         Bn/thnoha7By+275sGe0mY1Yjp5y+u2+1vEtba2RyCa1CL36vWsvMKPUGwIRSPshP/H0
-         79oA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkMkz4afuwq7f6TNPt7hNZCi0pzceJfYDdkMxm4pOt5eNR1JVIx/doS8dKecbODnZxoHhA5928gSn7S+Izz8fqrScS6d599USG9MH6pT+IzimDj3SpJpLqhJV+fFThrM0TMgC6Dwbsew/SwlnOgWVqzYzUht71+JKj8Ff0Jd8u1lOe
-X-Gm-Message-State: AOJu0YzlXZkDT6h4h8AFQ+RbgNbbiIsJNxUrxlopDHVBn9ZL/j+KiHO1
-	yw0zMTFfcAyVvmSt2i4pAXtEz45cCv1e+IJvvZEnsXTUBQ5m0jaa
-X-Google-Smtp-Source: AGHT+IGF2n1dVpiBWBJ2Nwnir/oVdjRpuBbP8g5U6FCGd0rTNvV2FQSnPTF61qFjieLTt51XrpVNeA==
-X-Received: by 2002:a05:6a21:6d96:b0:1b5:2fbb:2d84 with SMTP id adf61e73a8af0-1bcf7ee908fmr49833637.28.1719068314173;
-        Sat, 22 Jun 2024 07:58:34 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70651194b21sm3184619b3a.68.2024.06.22.07.58.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jun 2024 07:58:33 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <614d86a1-72c4-489b-94f9-fbe553c25f28@roeck-us.net>
-Date: Sat, 22 Jun 2024 07:58:31 -0700
+	s=arc-20240116; t=1719068745; c=relaxed/simple;
+	bh=3enL4wUGDAZMVURNyY16KWwZTBvTG7m3spx6le4opy0=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=BoGoUD+oQcdMIGoYBImX0sJz0A/Jcv4bypmhgt5q2D/bMXoeFxpf5DxxaS+4luD+6UpO+8XdUsDYTFRE0EgojkMMYmE3SdLGjt6GpQvzYU4CW83LS2uvTDw+p6pHu+k8eWMrK75seUSHu2jlPXYAfc5nbQmO0W/PewOjz/ZTtgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZZZruuU8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719068742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/+8g60G0lhv/qw202X53m0GXz11BlNrxUr8prXXV21U=;
+	b=ZZZruuU8A+rO50c9Fu3Cl7mTaPKFy7NFZs8P3cU9ggKas+JYQUH7zL0rwt7sX/6nV6n5Vv
+	xVozQGHLJftwkcTACodPeK1MjndurvFrE8O6rZ7iCmHBLa3Q4hF5uRZ56j285bGrx/iY2y
+	objnPRvRoQGGkb+o5FVnpZzqPYK2vBc=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-595-4wE2YACQOGekFk3m841teQ-1; Sat,
+ 22 Jun 2024 11:05:36 -0400
+X-MC-Unique: 4wE2YACQOGekFk3m841teQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A688819560B3;
+	Sat, 22 Jun 2024 15:05:34 +0000 (UTC)
+Received: from [10.22.32.34] (unknown [10.22.32.34])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D75D83000218;
+	Sat, 22 Jun 2024 15:05:32 +0000 (UTC)
+Content-Type: multipart/mixed; boundary="------------mFciyHh21cUdSkSuEk1hN0X0"
+Message-ID: <19648b9c-6df7-45cd-a5ae-624a3e4d860f@redhat.com>
+Date: Sat, 22 Jun 2024 11:05:31 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,136 +64,220 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review [parisc64/C3700 boot
- failures]
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org, Oleg Nesterov <oleg@redhat.com>,
- linux-parisc@vger.kernel.org, Helge Deller <deller@gmx.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-References: <20240619125556.491243678@linuxfoundation.org>
+Subject: Re: [PATCH -next] cgroup: fix uaf when proc_cpuset_show
+To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
+ lizefan.x@bytedance.com, hannes@cmpxchg.org
+Cc: bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240622113814.120907-1-chenridong@huawei.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240619125556.491243678@linuxfoundation.org>
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240622113814.120907-1-chenridong@huawei.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+
+This is a multi-part message in MIME format.
+--------------mFciyHh21cUdSkSuEk1hN0X0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-[ Copying parisc maintainers - maybe they can test on real hardware ]
 
-On 6/19/24 05:54, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.95 release.
-> There are 217 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
-> Anything received after that time might be too late.
-> 
-...
-> Oleg Nesterov <oleg@redhat.com>
->      zap_pid_ns_processes: clear TIF_NOTIFY_SIGNAL along with TIF_SIGPENDING
-> 
+On 6/22/24 07:38, Chen Ridong wrote:
+> We found a refcount UAF bug as follows:
+>
+> BUG: KASAN: use-after-free in cgroup_path_ns+0x112/0x150
+> Read of size 8 at addr ffff8882a4b242b8 by task atop/19903
+>
+> CPU: 27 PID: 19903 Comm: atop Kdump: loaded Tainted: GF
+> Call Trace:
+>   dump_stack+0x7d/0xa7
+>   print_address_description.constprop.0+0x19/0x170
+>   ? cgroup_path_ns+0x112/0x150
+>   __kasan_report.cold+0x6c/0x84
+>   ? print_unreferenced+0x390/0x3b0
+>   ? cgroup_path_ns+0x112/0x150
+>   kasan_report+0x3a/0x50
+>   cgroup_path_ns+0x112/0x150
+>   proc_cpuset_show+0x164/0x530
+>   proc_single_show+0x10f/0x1c0
+>   seq_read_iter+0x405/0x1020
+>   ? aa_path_link+0x2e0/0x2e0
+>   seq_read+0x324/0x500
+>   ? seq_read_iter+0x1020/0x1020
+>   ? common_file_perm+0x2a1/0x4a0
+>   ? fsnotify_unmount_inodes+0x380/0x380
+>   ? bpf_lsm_file_permission_wrapper+0xa/0x30
+>   ? security_file_permission+0x53/0x460
+>   vfs_read+0x122/0x420
+>   ksys_read+0xed/0x1c0
+>   ? __ia32_sys_pwrite64+0x1e0/0x1e0
+>   ? __audit_syscall_exit+0x741/0xa70
+>   do_syscall_64+0x33/0x40
+>   entry_SYSCALL_64_after_hwframe+0x67/0xcc
+>
+> This is also reported by: https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
+>
+> This can be reproduced by the following methods:
+> 1.add an mdelay(1000) before acquiring the cgroup_lock In the
+>   cgroup_path_ns function.
+> 2.$cat /proc/<pid>/cpuset   repeatly.
+> 3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
+> $umount /sys/fs/cgroup/cpuset/   repeatly.
+>
+> The race that cause this bug can be shown as below:
+>
+> (umount)		|	(cat /proc/<pid>/cpuset)
+> css_release		|	proc_cpuset_show
+> css_release_work_fn	|	css = task_get_css(tsk, cpuset_cgrp_id);
+> css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
+> cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
+> rebind_subsystems	|
+> cgroup_free_root 	|
+> 			|	// cgrp was freed, UAF
+> 			|	cgroup_path_ns_locked(cgrp,..);
+>
+> When the cpuset is initialized, the root node top_cpuset.css.cgrp
+> will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation will
+> allocate cgroup_root, and top_cpuset.css.cgrp will point to the allocated
+> &cgroup_root.cgrp. When the umount operation is executed,
+> top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
+>
+> The problem is that when rebinding to cgrp_dfl_root, there are cases
+> where the cgroup_root allocated by setting up the root for cgroup v1
+> is cached. This could lead to a Use-After-Free (UAF) if it is
+> subsequently freed. The descendant cgroups of cgroup v1 can only be
+> freed after the css is released. However, the css of the root will never
+> be released, yet the cgroup_root should be freed when it is unmounted.
+> This means that obtaining a reference to the css of the root does
+> not guarantee that css.cgrp->root will not be freed.
+>
+> To solve this issue, we have added a cgroup reference count in
+> the proc_cpuset_show function to ensure that css.cgrp->root will not
+> be freed prematurely. This is a temporary solution. Let's see if anyone
+> has a better solution.
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/cgroup/cpuset.c | 20 ++++++++++++++++++++
+>   1 file changed, 20 insertions(+)
+>
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index c12b9fdb22a4..782eaf807173 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -5045,6 +5045,7 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
+>   	char *buf;
+>   	struct cgroup_subsys_state *css;
+>   	int retval;
+> +	struct cgroup *root_cgroup = NULL;
+>   
+>   	retval = -ENOMEM;
+>   	buf = kmalloc(PATH_MAX, GFP_KERNEL);
+> @@ -5052,9 +5053,28 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
+>   		goto out;
+>   
+>   	css = task_get_css(tsk, cpuset_cgrp_id);
+> +	rcu_read_lock();
+> +	/*
+> +	 * When the cpuset subsystem is mounted on the legacy hierarchy,
+> +	 * the top_cpuset.css->cgroup does not hold a reference count of
+> +	 * cgroup_root.cgroup. This makes accessing css->cgroup very
+> +	 * dangerous because when the cpuset subsystem is remounted to the
+> +	 * default hierarchy, the cgroup_root.cgroup that css->cgroup points
+> +	 * to will be released, leading to a UAF issue. To avoid this problem,
+> +	 * get the reference count of top_cpuset.css->cgroup first.
+> +	 *
+> +	 * This is ugly!!
+> +	 */
+> +	if (css == &top_cpuset.css) {
+> +		cgroup_get(css->cgroup);
+> +		root_cgroup = css->cgroup;
+> +	}
+> +	rcu_read_unlock();
+>   	retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
+>   				current->nsproxy->cgroup_ns);
+>   	css_put(css);
+> +	if (root_cgroup)
+> +		cgroup_put(root_cgroup);
+>   	if (retval == -E2BIG)
+>   		retval = -ENAMETOOLONG;
+>   	if (retval < 0)
 
-I can not explain it, but this patch causes all my parisc64 (C3700)
-boot tests to crash. There are lots of memory corruption BUGs such as
+Thanks for reporting this UAF bug. Could you try the attached patch to 
+see if it can fix the issue?
 
-[    0.000000] =============================================================================
-[    0.000000] BUG kmalloc-96 (Not tainted): Padding overwritten. 0x0000000043411dd0-0x0000000043411f5f @offset=3536
+Cheers,
+Longman
 
-ultimately followed by
+--------------mFciyHh21cUdSkSuEk1hN0X0
+Content-Type: text/x-patch; charset=UTF-8;
+ name="0001-cgroup-cpuset-Prevent-UAF-in-proc_cpuset_show.patch"
+Content-Disposition: attachment;
+ filename="0001-cgroup-cpuset-Prevent-UAF-in-proc_cpuset_show.patch"
+Content-Transfer-Encoding: base64
 
-[    0.462562] Unaligned handler failed, ret = -14
-...
-[    0.469160]  IAOQ[0]: idr_alloc_cyclic+0x48/0x118
-[    0.469372]  IAOQ[1]: idr_alloc_cyclic+0x54/0x118
-[    0.469548]  RP(r2): __kernfs_new_node.constprop.0+0x160/0x420
-[    0.469782] Backtrace:
-[    0.469928]  [<00000000404af108>] __kernfs_new_node.constprop.0+0x160/0x420
-[    0.470285]  [<00000000404b0cac>] kernfs_new_node+0xbc/0x118
-[    0.470523]  [<00000000404b158c>] kernfs_create_empty_dir+0x54/0xf0
-[    0.470756]  [<00000000404b665c>] sysfs_create_mount_point+0x4c/0xb0
-[    0.470996]  [<00000000401181cc>] cgroup_init+0x5b4/0x738
-[    0.471213]  [<0000000040102220>] start_kernel+0x1238/0x1308
-[    0.471429]  [<0000000040107c90>] start_parisc+0x188/0x1d0
-...
-[    0.474956] Kernel panic - not syncing: Attempted to kill the idle task!
-SeaBIOS wants SYSTEM RESET.
+RnJvbSAxMTAzNmQwMjdjYzFmM2RkMGE2MDQ1Nzk0ZmI4NzcxMWM4NDBmNDI2IE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBXYWltYW4gTG9uZyA8bG9uZ21hbkByZWRoYXQuY29t
+PgpEYXRlOiBTYXQsIDIyIEp1biAyMDI0IDEwOjI1OjE1IC0wNDAwClN1YmplY3Q6IFtQQVRD
+SF0gY2dyb3VwL2NwdXNldDogUHJldmVudCBVQUYgaW4gcHJvY19jcHVzZXRfc2hvdygpCgpB
+biBVQUYgY2FuIGhhcHBlbiB3aGVuIC9wcm9jL2NwdXNldCBpcyByZWFkIGFzIHJlcG9ydGVk
+IGluIFsxXS4KCldoZW4gdGhlIGNwdXNldCBpcyBpbml0aWFsaXplZCwgdGhlIHJvb3Qgbm9k
+ZSB0b3BfY3B1c2V0LmNzcy5jZ3JwCndpbGwgcG9pbnQgdG8gJmNncnBfZGZsX3Jvb3QuY2dy
+cC4gSW4gY2dyb3VwIHYxLCB0aGUgbW91bnQgb3BlcmF0aW9uIHdpbGwKYWxsb2NhdGUgY2dy
+b3VwX3Jvb3QsIGFuZCB0b3BfY3B1c2V0LmNzcy5jZ3JwIHdpbGwgcG9pbnQgdG8gdGhlIGFs
+bG9jYXRlZAomY2dyb3VwX3Jvb3QuY2dycC4gV2hlbiB0aGUgdW1vdW50IG9wZXJhdGlvbiBp
+cyBleGVjdXRlZCwKdG9wX2NwdXNldC5jc3MuY2dycCB3aWxsIGJlIHJlYm91bmQgdG8gJmNn
+cnBfZGZsX3Jvb3QuY2dycC4KClRoZSBwcm9ibGVtIGlzIHRoYXQgd2hlbiByZWJpbmRpbmcg
+dG8gY2dycF9kZmxfcm9vdCwgdGhlcmUgYXJlIGNhc2VzCndoZXJlIHRoZSBjZ3JvdXBfcm9v
+dCBhbGxvY2F0ZWQgYnkgc2V0dGluZyB1cCB0aGUgcm9vdCBmb3IgY2dyb3VwIHYxCmlzIGNh
+Y2hlZC4gVGhpcyBjb3VsZCBsZWFkIHRvIGEgVXNlLUFmdGVyLUZyZWUgKFVBRikgaWYgaXQg
+aXMKc3Vic2VxdWVudGx5IGZyZWVkLiBUaGUgZGVzY2VuZGFudCBjZ3JvdXBzIG9mIGNncm91
+cCB2MSBjYW4gb25seSBiZQpmcmVlZCBhZnRlciB0aGUgY3NzIGlzIHJlbGVhc2VkLiBIb3dl
+dmVyLCB0aGUgY3NzIG9mIHRoZSByb290IHdpbGwgbmV2ZXIKYmUgcmVsZWFzZWQsIHlldCB0
+aGUgY2dyb3VwX3Jvb3Qgc2hvdWxkIGJlIGZyZWVkIHdoZW4gaXQgaXMgdW5tb3VudGVkLgpU
+aGlzIG1lYW5zIHRoYXQgb2J0YWluaW5nIGEgcmVmZXJlbmNlIHRvIHRoZSBjc3Mgb2YgdGhl
+IHJvb3QgZG9lcwpub3QgZ3VhcmFudGVlIHRoYXQgY3NzLmNncnAtPnJvb3Qgd2lsbCBub3Qg
+YmUgZnJlZWQuCgpGaXggdGhpcyBwcm9ibGVtIGJ5IHRha2luZyBhIHJlZmVyZW5jZSB0byB0
+aGUgdjEgY2dyb3VwIHJvb3QgaW4KY3B1c2V0X2JpbmQoKSBhbmQgcmVsZWFzZSBpdCBpbiB0
+aGUgbmV4dCBjcHVzZXRfYmluZCgpIGNhbGwuIFRoZQp0b3BfY3B1c2V0IHdpbGwgYWx3YXlz
+IGJlIGJvdW5kIHRvIGVpdGhlciBjZ3JwX2RmbF9yb290IG9yIHRoZQphbGxvY2F0ZWQgdjEg
+Y2dyb3VwIHJvb3QuIFNvIHRvcF9jcHVzZXQgd2lsbCBhbHdheXMgYmUgcmVtb3VudGVkIGJh
+Y2sKdG8gY2dycF9kZmxfcm9vdCB3aGVuZXZlciBhIHYxIGNwdXNldCBtb3VudCBpcyByZWxl
+YXNlZC4KCkFjY2VzcyB0byBjc3MtPmNncm91cCBpbiBwcm9jX2NwdXNldF9zaG93KCkgaXMg
+bm93IHByb3RlY3RlZCB1bmRlcgp0aGUgY3B1c2V0X211dGV4IHRvIG1ha2Ugc3VyZSB0aGF0
+IGFuIFVBRiBhY2Nlc3MgdG8gY3NzLT5jZ3JvdXAgaXMKbm90IHBvc3NpYmxlLgoKWzFdIGh0
+dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL2J1Zz9leHRpZD05YjFmZjdiZTk3NGE0MDNh
+YTRjZAoKUmVwb3J0ZWQtYnk6IENoZW4gUmlkb25nIDxjaGVucmlkb25nQGh1YXdlaS5jb20+
+CkNsb3NlczogaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20vYnVnP2V4dGlkPTliMWZm
+N2JlOTc0YTQwM2FhNGNkClNpZ25lZC1vZmYtYnk6IFdhaW1hbiBMb25nIDxsb25nbWFuQHJl
+ZGhhdC5jb20+Ci0tLQoga2VybmVsL2Nncm91cC9jcHVzZXQuYyB8IDE3ICsrKysrKysrKysr
+KysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBh
+L2tlcm5lbC9jZ3JvdXAvY3B1c2V0LmMgYi9rZXJuZWwvY2dyb3VwL2NwdXNldC5jCmluZGV4
+IGMxMmI5ZmRiMjJhNC4uODE1NWFkOWZmOTI3IDEwMDY0NAotLS0gYS9rZXJuZWwvY2dyb3Vw
+L2NwdXNldC5jCisrKyBiL2tlcm5lbC9jZ3JvdXAvY3B1c2V0LmMKQEAgLTQxNDMsOSArNDE0
+MywyMCBAQCBzdGF0aWMgdm9pZCBjcHVzZXRfY3NzX2ZyZWUoc3RydWN0IGNncm91cF9zdWJz
+eXNfc3RhdGUgKmNzcykKIAlmcmVlX2NwdXNldChjcyk7CiB9CiAKKy8qCisgKiBXaXRoIGEg
+Y2dyb3VwIHYxIG1vdW50LCByb290X2Nzcy5jZ3JvdXAgY2FuIGJlIGZyZWVkLiBXZSBuZWVk
+IHRvIHRha2UgYQorICogcmVmZXJlbmNlIHRvIGl0IHRvIGF2b2lkIFVBRiBhcyBwcm9jX2Nw
+dXNldF9zaG93KCkgbWF5IGFjY2VzcyB0aGUgY29udGVudAorICogb2YgdGhpcyBjZ3JvdXAu
+CisgKi8KIHN0YXRpYyB2b2lkIGNwdXNldF9iaW5kKHN0cnVjdCBjZ3JvdXBfc3Vic3lzX3N0
+YXRlICpyb290X2NzcykKIHsKKwlzdGF0aWMgc3RydWN0IGNncm91cCAqdjFfY2dyb3VwX3Jv
+b3Q7CisKIAltdXRleF9sb2NrKCZjcHVzZXRfbXV0ZXgpOworCWlmICh2MV9jZ3JvdXBfcm9v
+dCkgeworCQljZ3JvdXBfcHV0KHYxX2Nncm91cF9yb290KTsKKwkJdjFfY2dyb3VwX3Jvb3Qg
+PSBOVUxMOworCX0KIAlzcGluX2xvY2tfaXJxKCZjYWxsYmFja19sb2NrKTsKIAogCWlmIChp
+c19pbl92Ml9tb2RlKCkpIHsKQEAgLTQxNTksNiArNDE3MCwxMCBAQCBzdGF0aWMgdm9pZCBj
+cHVzZXRfYmluZChzdHJ1Y3QgY2dyb3VwX3N1YnN5c19zdGF0ZSAqcm9vdF9jc3MpCiAJfQog
+CiAJc3Bpbl91bmxvY2tfaXJxKCZjYWxsYmFja19sb2NrKTsKKwlpZiAoIWNncm91cF9zdWJz
+eXNfb25fZGZsKGNwdXNldF9jZ3JwX3N1YnN5cykpIHsKKwkJdjFfY2dyb3VwX3Jvb3QgPSBy
+b290X2Nzcy0+Y2dyb3VwOworCQljZ3JvdXBfZ2V0KHYxX2Nncm91cF9yb290KTsKKwl9CiAJ
+bXV0ZXhfdW5sb2NrKCZjcHVzZXRfbXV0ZXgpOwogfQogCkBAIC01MDUxLDEwICs1MDY2LDEy
+IEBAIGludCBwcm9jX2NwdXNldF9zaG93KHN0cnVjdCBzZXFfZmlsZSAqbSwgc3RydWN0IHBp
+ZF9uYW1lc3BhY2UgKm5zLAogCWlmICghYnVmKQogCQlnb3RvIG91dDsKIAorCW11dGV4X2xv
+Y2soJmNwdXNldF9tdXRleCk7CiAJY3NzID0gdGFza19nZXRfY3NzKHRzaywgY3B1c2V0X2Nn
+cnBfaWQpOwogCXJldHZhbCA9IGNncm91cF9wYXRoX25zKGNzcy0+Y2dyb3VwLCBidWYsIFBB
+VEhfTUFYLAogCQkJCWN1cnJlbnQtPm5zcHJveHktPmNncm91cF9ucyk7CiAJY3NzX3B1dChj
+c3MpOworCW11dGV4X3VubG9jaygmY3B1c2V0X211dGV4KTsKIAlpZiAocmV0dmFsID09IC1F
+MkJJRykKIAkJcmV0dmFsID0gLUVOQU1FVE9PTE9ORzsKIAlpZiAocmV0dmFsIDwgMCkKLS0g
+CjIuMzkuMwoK
 
-This is with qemu v9.0.1.
-
-Reverting this patch fixes the problem (I tried several times to be sure
-since I don't see the connection). I don't see the problem in any other
-branch. Bisect log is attached for reference.
-
-Guenter
-
----
-# bad: [a6398e37309000e35cedb5cc328a0f8d00d7d7b9] Linux 6.1.95
-# good: [eb44d83053d66372327e69145e8d2fa7400a4991] Linux 6.1.94
-git bisect start 'HEAD' 'v6.1.94'
-# good: [f17443d52d805c9a7fab5e67a4e8b973626fe1cd] cachefiles: resend an open request if the read request's object is closed
-git bisect good f17443d52d805c9a7fab5e67a4e8b973626fe1cd
-# good: [cc09e1d3519feab823685f4297853d468f44549d] iio: imu: inv_icm42600: delete unneeded update watermark call
-git bisect good cc09e1d3519feab823685f4297853d468f44549d
-# good: [b7b6bc60edb2132a569899bcd9ca099a0556c6ee] intel_th: pci: Add Granite Rapids SOC support
-git bisect good b7b6bc60edb2132a569899bcd9ca099a0556c6ee
-# good: [35e395373ecd14b64da7d54f565927a9368dcf20] mptcp: pm: update add_addr counters after connect
-git bisect good 35e395373ecd14b64da7d54f565927a9368dcf20
-# good: [29d35f0b53d4bd82ebc37c500a8dd73da61318ff] serial: 8250_dw: fall back to poll if there's no interrupt
-git bisect good 29d35f0b53d4bd82ebc37c500a8dd73da61318ff
-# good: [ea25a4c0de5700928c7fd0aa789eee39a457ba95] misc: microchip: pci1xxxx: Fix a memory leak in the error handling of gp_aux_bus_probe()
-git bisect good ea25a4c0de5700928c7fd0aa789eee39a457ba95
-# good: [e44999ec0b49dca9a9a2090c5432d893ea4f8d20] i2c: designware: Fix the functionality flags of the slave-only interface
-git bisect good e44999ec0b49dca9a9a2090c5432d893ea4f8d20
-# bad: [edd2754a62bee8d97b4808a15de024f66a1ddccf] zap_pid_ns_processes: clear TIF_NOTIFY_SIGNAL along with TIF_SIGPENDING
-git bisect bad edd2754a62bee8d97b4808a15de024f66a1ddccf
-# first bad commit: [edd2754a62bee8d97b4808a15de024f66a1ddccf] zap_pid_ns_processes: clear TIF_NOTIFY_SIGNAL along with TIF_SIGPENDING
+--------------mFciyHh21cUdSkSuEk1hN0X0--
 
 
