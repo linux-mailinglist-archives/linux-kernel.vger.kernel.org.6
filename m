@@ -1,259 +1,172 @@
-Return-Path: <linux-kernel+bounces-225679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931539133A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:01:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3729133A2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B85D71C2122A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:01:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DECE11C211D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D9A157460;
-	Sat, 22 Jun 2024 12:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E67155A4E;
+	Sat, 22 Jun 2024 12:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o14xjEdE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWaCrU20"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABED156C68;
-	Sat, 22 Jun 2024 12:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1135A14B955;
+	Sat, 22 Jun 2024 12:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719057611; cv=none; b=o2GplrioOmFQktt3QQj3fclk8neViUDxyooW2ujqsUNzrdxB0ytjIS173LVtCqyBdrga0ync3bcTif5eVubWiswPm0Scui23gRZtlA/k3EFWCbKpzVQoUBTLcfL2udLfe7ypdwTaqUoKM1m3MJFUdHekJvPjfwm0xAKZ3RYbTSU=
+	t=1719057696; cv=none; b=HjRwwDyNMV/xLVKWWZHxpY9xA0XW2k9OfJ8VncvT+5FLQ4iVhQfJL1l9ha4EJOtH0eyku+oL0b8m6ZLL3lhtXMpKCpMVFm6c0QUB+aTXn9Dcqt7LJR/v7Hp/IvMMYmJetqPpMCzKXcGJX8YQOgcIRAMWqQqk3MkqNPw4bKUsyOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719057611; c=relaxed/simple;
-	bh=JWp4XCMBV/yJu3FwXjF6Ms5cXcMWqBCQeLRvCkyCHPY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cg1fNtupXls9zcmcPOyqFFZlMwG5ynE4gkf1eL9gP1BbpK0cAUBbqD8HWwisz3/xVcCsSGdI8NflDVgO1ZA46pTAPuU2dPFmtQdAezOy7POdA8B+sGkd831W5cdpVEKMUYfZtlKg44GKUYLVCCIUJH5IMOOEy0HVUT2PwJr5t1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o14xjEdE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51289C4AF0A;
-	Sat, 22 Jun 2024 12:00:08 +0000 (UTC)
+	s=arc-20240116; t=1719057696; c=relaxed/simple;
+	bh=4IxETGVg4/bc2jI5lLzgI9phYpsgH2CfHaJhgcXMNNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=agtkYSQ2fxrIUFd+Lmeg+eTYzDG+yc86A3BXRSD59xAUPAzjUdZIz/FwGhFaC9GRU+0uyBa0ka5NTNSaNt5+0m+73CBnQ1FpEWdo7vSjr3Ju4CnoYYyqGiCHnVAHkZx5Cjox2xRTcVrH+3WOb2bqV9YF5zRxkO1/c75YYvBCXc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWaCrU20; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52FC5C3277B;
+	Sat, 22 Jun 2024 12:01:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719057610;
-	bh=JWp4XCMBV/yJu3FwXjF6Ms5cXcMWqBCQeLRvCkyCHPY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=o14xjEdEW4X+0CXlTqA9VSZQHx/gL3dXZFi7zYXMazRrtxnc5BBkz1mXX/Um67Flg
-	 FwcXI6Ffzvln4SXzh18bpfmdUpzNt0lTeqN75QOmS0Q4BZiKpPhcfj8bO/BaMseeC3
-	 FHJWXApb/p2f179hi0eHEE0nhjBRezpKnpAfxqjB040ahhcsbr3EceGQNzjK0sljR6
-	 aH9psajefaRae2w3iMEfK67Xrgz4jUrqCiMcD8i6kIXOBnxjgdsGCnZLoImVMwFSt8
-	 N7wNQZY+a1jEDtaDf46Easaypdkw3Bad4UC7Jz5Y5Wbk+xminUq2+y/cwBBKEZEPsV
-	 vQ4By6NOPV+1Q==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Sat, 22 Jun 2024 14:59:57 +0300
-Subject: [PATCH 2/2] arm64: dts: ti: am62-lp-sk: Add overlay for NAND
- expansion card
+	s=k20201202; t=1719057695;
+	bh=4IxETGVg4/bc2jI5lLzgI9phYpsgH2CfHaJhgcXMNNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CWaCrU20NmFrhv6fqL/qkygH4JAUO+yFKNXsfDcsn8YVtQwHKMpnzvSgUL42gzMw8
+	 b9/0E3260B7BoLTOVfteBcG5GSp/r9EyCKp2jGjTJR3PsV6z72mAAZwDiLHVyTXSck
+	 roeyXDyEv3JSguVA/7Y5gs4GEijb0XRfhT7m+egXGEfPh3MTf1/M11Hq7du9vowcfM
+	 3PcNurM9jRoV9lTnqr8IaKHpBieoaCcodDWTk4KHjE6pLF6C2bBshrpWMlTcncfITL
+	 D7nq/FipswdGKwtnj/EbcoF36LV7GN1u9w9Lpo+sCNBOjqGwa+NaKeZYZwx28oFt3J
+	 9TnNnYdNoaZYw==
+Date: Sat, 22 Jun 2024 13:01:30 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+	greentime.hu@sifive.com, vincent.chen@sifive.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+Message-ID: <20240622-stride-unworn-6e3270a326e5@spud>
+References: <20240605-atrium-neuron-c2512b34d3da@spud>
+ <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
+ <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr>
+ <20240621-viewless-mural-f5992a247992@wendy>
+ <edcd3957-0720-4ab4-bdda-58752304a53a@ghiti.fr>
+ <20240621-9bf9365533a2f8f97cbf1f5e@orel>
+ <20240621-glutton-platonic-2ec41021b81b@spud>
+ <20240621-a56e848050ebbf1f7394e51f@orel>
+ <20240621-surging-flounder-58a653747e1d@spud>
+ <20240621-8422c24612ae40600f349f7c@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240622-am62lp-sk-nand-v1-2-caee496eaf42@kernel.org>
-References: <20240622-am62lp-sk-nand-v1-0-caee496eaf42@kernel.org>
-In-Reply-To: <20240622-am62lp-sk-nand-v1-0-caee496eaf42@kernel.org>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: srk@ti.com, praneeth@ti.com, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5667; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=JWp4XCMBV/yJu3FwXjF6Ms5cXcMWqBCQeLRvCkyCHPY=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBmdrzB2Gb6CdM6xYVngR8jD0ePOYt4LAtWiRAlT
- mYqqZvP40iJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZna8wQAKCRDSWmvTvnYw
- k8M7D/0V9FYfsnfV/971bhLpHoB9SMOqIxx/u5PlqkOIsDn3wur00+tGFB3BNJ0zvTmeEgpsXa0
- iOuRQhCPNeKJjHMSAS+nOnqdVfD6IXDWp/6N86NijymyAX0YIDHYuLiysImCReoX6pe8WLt9w+4
- Z90azT5Vms+JBk7SAWXDwsafHqQOs6kj1PVdlc2pzVGiQKjr8FKSet8G47ABcFkH18SdOVctQxP
- WzuTTuEix4KllAd0WGCej733NG9xR7ywHmcTrXttpEIIowxjzFL2gwer9skapHa/S//54yl8W+G
- wgmI1Hn8qE4CqSBUeYsb6fIuoKcUj1bEqgdn7AGytGEvkIGnkap91Mqb011fPU0oPVlqJ8FTVpt
- 1lO0t/G96KLBcJZdnn7SQmaqV2FarujuV08sA5L3SK1W/6fttczxASCPuZktsyc+Qr09+0zjpA5
- UmkCSQokDuC6w7e7e0dBp/I/K9dkgpimh7Pw4yI+l1p8GccFcX1f1wAxDLYb2vWT8Q0qNoqG1MK
- b8mFfur7Yg0FGFpfJauUjlH/ws17mOvuCBnEOy7DxblcCoUQPUM9zhPYv7kaU1BkwSfMl0/oTk9
- /ACnaEVnt4jwuU3Wso8P+H4Gtm1254eY/R9mn2xOKE39FuY5oh0RjKZzL7F+5EnC3ybt8EA0Alc
- tknuVXC9JU50uiw==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZMOCsO9fyo4yCpOo"
+Content-Disposition: inline
+In-Reply-To: <20240621-8422c24612ae40600f349f7c@orel>
 
-The NAND expansion card (PROC143E1) connects over the User/MCU/PRU
-Expansion port on the am62-lp-sk EVM.
 
-The following pins are shared between McASP1 and GPMC-NAND so
-both cannot work simultaneously.
+--ZMOCsO9fyo4yCpOo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Pin name	McASP1 function		GPMC function
-========	===============		=============
-J17		MCASP1_AXR0		GPMC0_WEN
-P21		MCASP1_AFSX		GPMC0_WAIT0
-K17		MCASP1_ACLKX		GPMC0_BE0N_CLE
-K20		MCASP1_AXR2		GPMC0_ADVN_ALE
+On Fri, Jun 21, 2024 at 05:08:01PM +0200, Andrew Jones wrote:
+> On Fri, Jun 21, 2024 at 03:58:18PM GMT, Conor Dooley wrote:
+> > On Fri, Jun 21, 2024 at 04:52:09PM +0200, Andrew Jones wrote:
+> > > On Fri, Jun 21, 2024 at 03:04:47PM GMT, Conor Dooley wrote:
+> > > > On Fri, Jun 21, 2024 at 03:15:10PM +0200, Andrew Jones wrote:
+> > > > > On Fri, Jun 21, 2024 at 02:42:15PM GMT, Alexandre Ghiti wrote:
+> >=20
+> > > > > I understand the concern; old SBI implementations will leave svad=
+u in the
+> > > > > DT but not actually enable it. Then, since svade may not be in th=
+e DT if
+> > > > > the platform doesn't support it or it was left out on purpose, Li=
+nux will
+> > > > > only see svadu and get unexpected exceptions. This is something w=
+e could
+> > > > > force easily with QEMU and an SBI implementation which doesn't do=
+ anything
+> > > > > for svadu. I hope vendors of real platforms, which typically prov=
+ide their
+> > > > > own firmware and DTs, would get this right, though, especially si=
+nce Linux
+> > > > > should fail fast in their testing when they get it wrong.
+> > > >=20
+> > > > I'll admit, I wasn't really thinking here about something like QEMU=
+ that
+> > > > puts extensions into the dtb before their exact meanings are decided
+> > > > upon. I almost only ever think about "real" systems, and in those c=
+ases
+> > > > I would expect that if you can update the representation of the har=
+dware
+> > > > provided to (or by the firmware to Linux) with new properties, then=
+ updating
+> > > > the firmware itself should be possible.
+> > > >=20
+> > > > Does QEMU have the this exact problem at the moment? I know it puts
+> > > > Svadu in the max cpu, but does it enable the behaviour by default, =
+even
+> > > > without the SBI implementation asking for it?
+> > >=20
+> > > Yes, because QEMU has done hardware A/D updating since it first start=
+ed
+> > > supporting riscv, which means it did svadu when neither svadu nor sva=
+de
+> > > were in the DT. The "fix" for that was to ensure we have svadu and !s=
+vade
+> > > by default, which means we've perfectly realized Alexandre's concern.=
+=2E.
+> > > We should be able to change the named cpu types that don't support sv=
+adu
+> > > to only have svade in their DTs, since that would actually be fixing =
+those
+> > > cpu types, but we'll need to discuss how to proceed with the generic =
+cpu
+> > > types like 'max'.
+> >=20
+> > Correct me please, since I think I am misunderstanding: At the moment
+> > QEMU does A/D updating whether or not the SBI implantation asks for it,
+> > with the max CPU. The SBI implementation doesn't understand Svadu and
+> > won't strip it. The kernel will get a DT with Svadu in it, but Svadu wi=
+ll
+> > be enabled, so it is not a problem.
+>=20
+> Oh, of course you're right! I managed to reverse things some odd number of
+> times (more than once!) in my head and ended up backwards...
 
-The factory default sets the pins for McASP1 use. (i.e.
-Resistor Array RA1 installed, RA4 not installed).
+I mean, I've been really confused about this whole thing the entire
+time, so ye..
 
-For NAND use, RA1 has to be removed and RA4 must be
-installed.
+Speaking of QEMU, what happens if I try to turn on svade and svadu in
+QEMU? It looks like there's some handling of it that does things
+conditionally based !svade && svade, but I couldn't tell if it would do
+what we are describing in this thread.
 
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
----
- arch/arm64/boot/dts/ti/Makefile                |   1 +
- arch/arm64/boot/dts/ti/k3-am62-lp-sk-nand.dtso | 116 +++++++++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts       |   4 +
- 3 files changed, 121 insertions(+)
+--ZMOCsO9fyo4yCpOo
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index 1e6fcd1ff7ba..7fcbf14ae439 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -25,6 +25,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-wifi-yavia.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am625-phyboard-lyra-1-4-ghz-opp.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am62x-phyboard-lyra-gpio-fan.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am62-lp-sk.dtb
-+dtb-$(CONFIG_ARCH_K3) += k3-am62-lp-sk-nand.dtbo
- 
- # Boards with AM62Ax SoC
- dtb-$(CONFIG_ARCH_K3) += k3-am62a7-sk.dtb
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-lp-sk-nand.dtso b/arch/arm64/boot/dts/ti/k3-am62-lp-sk-nand.dtso
-new file mode 100644
-index 000000000000..173ac60723b6
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am62-lp-sk-nand.dtso
-@@ -0,0 +1,116 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "k3-pinctrl.h"
-+
-+&mcasp1 {
-+	status = "disabled";
-+};
-+
-+&main_pmx0 {
-+	gpmc0_pins_default: gpmc0-pins-default {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x003c, PIN_INPUT, 0) /* (K19) GPMC0_AD0 */
-+			AM62X_IOPAD(0x0040, PIN_INPUT, 0) /* (L19) GPMC0_AD1 */
-+			AM62X_IOPAD(0x0044, PIN_INPUT, 0) /* (L20) GPMC0_AD2 */
-+			AM62X_IOPAD(0x0048, PIN_INPUT, 0) /* (L21) GPMC0_AD3 */
-+			AM62X_IOPAD(0x004c, PIN_INPUT, 0) /* (M21) GPMC0_AD4 */
-+			AM62X_IOPAD(0x0050, PIN_INPUT, 0) /* (L17) GPMC0_AD5 */
-+			AM62X_IOPAD(0x0054, PIN_INPUT, 0) /* (L18) GPMC0_AD6 */
-+			AM62X_IOPAD(0x0058, PIN_INPUT, 0) /* (M20) GPMC0_AD7 */
-+			AM62X_IOPAD(0x0098, PIN_INPUT, 0) /* (P21) GPMC0_WAIT0 */
-+			AM62X_IOPAD(0x00a8, PIN_OUTPUT, 0) /* (J18) GPMC0_CSn0 */
-+			AM62X_IOPAD(0x0084, PIN_OUTPUT, 0) /* (K20) GPMC0_ADVn_ALE */
-+			AM62X_IOPAD(0x0088, PIN_OUTPUT, 0) /* (K21) GPMC0_OEn_REn */
-+			AM62X_IOPAD(0x008c, PIN_OUTPUT, 0) /* (J17) GPMC0_WEn */
-+			AM62X_IOPAD(0x0090, PIN_OUTPUT, 0) /* (K17) GPMC0_BE0n_CLE */
-+			AM62X_IOPAD(0x00a0, PIN_OUTPUT, 0) /* (J20) GPMC0_WPn */
-+		>;
-+	};
-+};
-+
-+&elm0 {
-+	status = "okay";
-+};
-+
-+&gpmc0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&gpmc0_pins_default>;
-+	#address-cells = <2>;
-+	#size-cells = <1>;
-+
-+	nand@0,0 {
-+		compatible = "ti,am64-nand";
-+		reg = <0 0 64>;		/* device IO registers */
-+		interrupt-parent = <&gpmc0>;
-+		interrupts = <0 IRQ_TYPE_NONE>, /* fifoevent */
-+			     <1 IRQ_TYPE_NONE>;	/* termcount */
-+		rb-gpios = <&gpmc0 0 GPIO_ACTIVE_HIGH>;	/* gpmc_wait0 */
-+		ti,nand-xfer-type = "prefetch-polled";
-+		ti,nand-ecc-opt = "bch8";	/* BCH8: Bootrom limitation */
-+		ti,elm-id = <&elm0>;
-+		nand-bus-width = <8>;
-+		gpmc,device-width = <1>;
-+		gpmc,sync-clk-ps = <0>;
-+		gpmc,cs-on-ns = <0>;
-+		gpmc,cs-rd-off-ns = <40>;
-+		gpmc,cs-wr-off-ns = <40>;
-+		gpmc,adv-on-ns = <0>;
-+		gpmc,adv-rd-off-ns = <25>;
-+		gpmc,adv-wr-off-ns = <25>;
-+		gpmc,we-on-ns = <0>;
-+		gpmc,we-off-ns = <20>;
-+		gpmc,oe-on-ns = <3>;
-+		gpmc,oe-off-ns = <30>;
-+		gpmc,access-ns = <30>;
-+		gpmc,rd-cycle-ns = <40>;
-+		gpmc,wr-cycle-ns = <40>;
-+		gpmc,bus-turnaround-ns = <0>;
-+		gpmc,cycle2cycle-delay-ns = <0>;
-+		gpmc,clk-activation-ns = <0>;
-+		gpmc,wr-access-ns = <40>;
-+		gpmc,wr-data-mux-bus-ns = <0>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "NAND.tiboot3";
-+				reg = <0x00000000 0x00200000>;	/* 2M */
-+			};
-+			partition@200000 {
-+				label = "NAND.tispl";
-+				reg = <0x00200000 0x00200000>;	/* 2M */
-+			};
-+			partition@400000 {
-+				label = "NAND.tiboot3.backup";	/* 2M */
-+				reg = <0x00400000 0x00200000>;	/* BootROM looks at 4M */
-+			};
-+			partition@600000 {
-+				label = "NAND.u-boot";
-+				reg = <0x00600000 0x00400000>;	/* 4M */
-+			};
-+			partition@a00000 {
-+				label = "NAND.u-boot-env";
-+				reg = <0x00a00000 0x00040000>;	/* 256K */
-+			};
-+			partition@a40000 {
-+				label = "NAND.u-boot-env.backup";
-+				reg = <0x00a40000 0x00040000>;	/* 256K */
-+			};
-+			partition@a80000 {
-+				label = "NAND.file-system";
-+				reg = <0x00a80000 0x3f580000>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
-index 9a17bd3e59c9..8e9fc00a6b3c 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
-@@ -228,3 +228,7 @@ ldo4_reg: ldo4 {
- &tlv320aic3106 {
- 	DVDD-supply = <&buck2_reg>;
- };
-+
-+&gpmc0 {
-+	ranges = <0 0 0x00 0x51000000 0x01000000>; /* CS0 space. Min partition = 16MB */
-+};
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.34.1
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZna9GgAKCRB4tDGHoIJi
+0h3EAQCEzS530QLTXXBLPksl2mQ8sX+WkbvTcdwou3zq2avSrgEA6hNFxVSOme2f
+3YECDPsNJ8996blTH6mu6XZ5ht3fRAg=
+=pKba
+-----END PGP SIGNATURE-----
 
+--ZMOCsO9fyo4yCpOo--
 
