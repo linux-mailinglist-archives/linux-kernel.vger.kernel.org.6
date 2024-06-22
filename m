@@ -1,395 +1,105 @@
-Return-Path: <linux-kernel+bounces-225773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32C691353B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:50:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F12913541
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD6CEB23051
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:50:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD58CB225EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A52171AF;
-	Sat, 22 Jun 2024 16:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332D914294;
+	Sat, 22 Jun 2024 16:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pUp3pbwb"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HynXeE9z"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE6DD30B
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 16:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D7FD524;
+	Sat, 22 Jun 2024 16:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719074986; cv=none; b=bOYIG1UeYLwJmnKhXu9p/Sux2vUz27xTd5Wgh0mWYmQTq5baqLx5bNyeR2ECNgJJFkdOhmn+DguG9GHVh2f92Q/l/xqN3w/e+0DvQSgqJk3K9URyyB1lHPYpA+4k4xNhTWSOSDeQC0QrOFde2wGMti/xSi4PL9SOmiA4w4mUAtQ=
+	t=1719075537; cv=none; b=IFCjo4brLZuwe4bJUxiJrCie7CEeOu8cx4J7aNHxMavnt0qZwLXJVp5YAN4xRiNWpGvz5bnSOoFBh9jc6pF8x5VfoIjkH2AiPfelVpY5ddg5lVDLvnCy4jVIMQFZ20P9C/Qzwm+8F73dLeC4r5n7WISwEElj3VPokLmxMlDDVGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719074986; c=relaxed/simple;
-	bh=RSHRfB7yFv744+oXoN0fW/gI1EQ2qQj7XY9p4L9Iaxw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BioOkGnKOpcnZuJj7sUvr3BNHccYN1E4PZDq0WUED21SQ7UqR3lxm548fBb4HvoYoITU7eibXATtc8A8Kw07dtEs3bpqWduDMPE7OJngpNSuMlA+/VzW4jWS4NS9NFfIliArL7CIAkMAWHvSNxTPjgF6ELtHsO70KNolpqHMDzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pUp3pbwb; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-366e70d0330so187762f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 09:49:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719074983; x=1719679783; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hP6Lz1CO+lqIq0GdN2MgiAFkI30RBlWJtTtLyJkZjNQ=;
-        b=pUp3pbwblCmf9qT6jVvxk5FqNp1RO8HHnSgGwv8ysqaa+BaPzYGcmZ+CzlZ5cI0GbD
-         Ryd3hP0rtL85xqEzhW5DscQnkcN5bLt8AVyXV/tSxVaUJ2+2KiLjx0xDjp5yVt5WIblB
-         BsVvzv90EkA7qVlaKmUlhW5h6oF54ZQZSyZ2uIBEWTe1XMV69r1uvUFC1C6reBxE/gJt
-         CZQ1+bdgvjAMUmQ5SCur8q6qVsZno8+07f+800NETYWW2qRU2SCmwuhhJQqcRh7Ml6ZB
-         m7clVHT5m+JEB5rNMGdLfGCXDxy8G9MQ4h4LzWKM+O290hXE5+GBl2yM3GqTuCeeCmzA
-         iBAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719074983; x=1719679783;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hP6Lz1CO+lqIq0GdN2MgiAFkI30RBlWJtTtLyJkZjNQ=;
-        b=kQqFMAP6NT1kN6ouzCA/WMJNnXhiQzgh6CGsddWCVu7DuPauykYSwtg2HGyAUSKBj9
-         AMYj7PCwiyEbl/T9s0Y9Ke3yxyA9ioafzsP4Emb+mm4jOjDoFdHUYcGE98ufKHUl84fb
-         ujZ2VeV4Q3A2lKarqqZqhWb+I/SxNIUgWRcrFWDLXvnKI9jM6qZ17OcdQ3EDUUuW4NaU
-         cbFZtQE7X+CnmRwzKYPk5CXMpW++USG3rCxJwrsp8mxEKjRyh+YD72rpsZoKvGv8lRFF
-         Jaipu33vA24A7RX0lNcXtAMpTw9/tycsDXeZW+EDLKx64Fa7qiD2QZ07ANUr2k3XHEqB
-         oQvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUm0WrezaIUfk0bALHx/5WunGKXEgiNMqjDWSZ54+UHGNipyynIUg9VoypvAZjqKae+V+k+OkzbZOR74r+PUTj9RhvsqqmEY+LFd/9l
-X-Gm-Message-State: AOJu0YzQhAJiKq8C/3H12v7F4bEDTHvIOZBqyOJkJgPi/XspVgzPbkw1
-	zyq5ktbm3NGPw5UNmOuQDpAuj+xE/qyKNTxhsQ1xX9lyq1eXtNkw3G8CF/W2M70=
-X-Google-Smtp-Source: AGHT+IGccMTr/lofoSoxWYBoScxI/x/3Kmy2XcyNhCuKbH7ba4SIoTP5Xe7Q5/t6y8S3fuQF7TV0Gg==
-X-Received: by 2002:a5d:6950:0:b0:366:e683:c2d with SMTP id ffacd0b85a97d-366e9652974mr124545f8f.57.1719074982845;
-        Sat, 22 Jun 2024 09:49:42 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8b27sm5030730f8f.104.2024.06.22.09.49.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 09:49:41 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Sat, 22 Jun 2024 17:49:31 +0100
-Subject: [PATCH v2 v4 2/2] pinctrl: qcom: Introduce SM4250 LPI pinctrl
- driver
+	s=arc-20240116; t=1719075537; c=relaxed/simple;
+	bh=LzuEAz5ACZZ3Z9HVdqDIC9jT2azVEnV3YngE0bu/gbE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ojbC1sNvJHQSxRxDjqaUuohhXsQbB8SC+GCr+Rgttlqjl3uINNdk5QHVI/xX0QN7vcpNwio3woEHnEwvAk+x6YVcpbBnwHgbGXaqw7t4kAXqp64c2NHfoaRTjd9o1cS3BWiyGgFiCtOLElpItbYNwIgIW0eqTNGE4dEXPHqH1i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HynXeE9z; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719075502; x=1719680302; i=markus.elfring@web.de;
+	bh=TcDyN6ebGmrRSeGodLD7ggmlinGRC7WoNwqGNQbVxCI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HynXeE9zwyLTMwT3LvzNAqIBXOMeplJ7ZEygRxBvTDjFG32U8fPaMbm7Xywln3/t
+	 7PhhIgySwJ7tg93G5tIHvX/pnhW0aF+gzIuxyt4sLR59KJ7Bx5abEIV3iGVWIHAI+
+	 QqpUEm857O+H4Xt3oQ06oFPddSyNwkBo5v4x0Ky+deTpgRxAM7b/CrLAr2LFo4PT8
+	 Ej+w3ejH7eQ+rszoFzxw+ZnOoSkQ6t36ZGg3yNStWUqCaxizScye8Y68PnIwQIN56
+	 293Auh+CVxGu910cK4fxn1hb7628a25n9gt/t8hzyIKUJ+tE7x1WvCbK3le8qizft
+	 l8IkkASiskUA+VsdhQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5UgI-1sRNVE0Rli-00vfMm; Sat, 22
+ Jun 2024 18:58:22 +0200
+Message-ID: <d929faec-a9a0-4076-b67f-31a083c71eaf@web.de>
+Date: Sat, 22 Jun 2024 18:58:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240612-sm4250-lpi-v4-2-a0342e47e21b@linaro.org>
-References: <20240612-sm4250-lpi-v4-0-a0342e47e21b@linaro.org>
-In-Reply-To: <20240612-sm4250-lpi-v4-0-a0342e47e21b@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- alexey.klimov@linaro.org, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11218;
- i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
- bh=RSHRfB7yFv744+oXoN0fW/gI1EQ2qQj7XY9p4L9Iaxw=;
- b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmdwCiMRgF+6apKhx+UM9qSix2XtHZ8N5Vo+Zsd
- 2m9IrX4wGqJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZncAogAKCRB6of1ZxzRV
- N133CACGt9US/9bvFnRPbWcd/TNNuyH5EEGhxkVjLqzwffk67Quyis9yMBex0euyU+eTcR3xQwD
- wY/My+k35Ae6xeeTTrLR/3mx+Flx0UAA8+AdphE3uv9Z8NcSeD5T0RA2Nhe3xq8gNiRSPLVWsds
- iGoTZElyEfHgE4r/e6T7b2XjnXRFNsSCVKQ18G1C35P4HR9phyiNdyRwd0UrnRCEnABJnoVSW+P
- I/XvEpowwLCpZRQz75KozpADMMj+27XoD/oIJzN5b3+CSbkEJvNIzr3naJ1thNgjhP6IGBqtFRp
- hsLV20NLukyRuaHqwf2QBKLCYEtT4H6I2Ihm8mkkIKtZg1lz
-X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
- fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
+User-Agent: Mozilla Thunderbird
+To: Huai-Yuan Liu <qq810974084@gmail.com>, linux-hippi@sunsite.dk,
+ netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jes Sorensen <jes@trained-monkey.org>, Paolo Abeni <pabeni@redhat.com>,
+ Sunil Kovvuri Goutham <sgoutham@marvell.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jia-Ju Bai <baijiaju1990@gmail.com>
+References: <20240622063227.456107-1-qq810974084@gmail.com>
+Subject: Re: [PATCH V3] hippi: fix possible buffer overflow caused by bad DMA
+ value in rr_start_xmit()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240622063227.456107-1-qq810974084@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Yy3/QPWZOkPJsFXP2RMxyU9jhXTMPneS8qs+SA9CLZnPk0mJsGA
+ I4nyeoQ4z8sSkP7ZVwdybwkKpQAxo7cfjLa1rNTskGVCIZDka8h2XoKJFrPKU+CnEJ1+6gw
+ q57bx7ZUpqaZWNHy42lL+V+hUjrRpb7JSwrRaPhVqscKAo+mv4+5HE/QuDrfGNxOtt8jUT+
+ lKU1GtDv+i18d44so8OhA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Uhl6KWuMk94=;1Z7xWg8hA+IBBAfoKhZKesB9XQ1
+ dcNVJRMdNWpzBVxujF5AlJmgAoOjZtes5HpSgkgLY+qKJvIHa/RnAiy1qKI631Mw4/Sn83z4l
+ icDVIEZVEaQoRPoVSrIv9jQnBwTb7LioedbGjVv45BsA1PdJ2rJ/JU1Rge+33eV0cAaNv1/Qu
+ fb1ImM+1mDmutizbEjgurhpnt48l8J5pr3bMrEU2aKWQaTZI7GQopjE9HhqthOLRgZaTSoQP1
+ mlCp6IUHqrm7FwBuS1eP4ErziruBR6XgzKY5nP45kzbQwxNPUf6GAQIGJy2JdHMAUBxGstRAi
+ PzaReWRj49s4U5DapdZPI/Ec76+GisS9sWGAgRGLEgxMD27BFmctOXJMSIZg+QfK3Zw9l9s3B
+ QU3vfcQr7gYf8y5e02jy116NXJLiLYn6LeI2wQTYBhG6XgHPpwwHAWFTVJ8E5GHA5Bc4UHpBd
+ WPtlOF6iXkbgp0g80WRovrybAzc3knOll5qmAX6ZXqgju9bGHMdiFxF58DssiMXwyzUOeEv4g
+ ZGlt/ZD/f5pMGBuduKHw9TCxB9jkXToEXvvyE9CsLg2TX4EFRQpx1K26AVXcZqQFtqn10PiUB
+ li8Ya63EpaFZ0jDl0eXHWUtgDA6Ma5rdfaTI5O9xjKkM9qvkpGleTLTxBbcLnFiQQ7pBy/MGD
+ +zQ14QaiCT60lEAu8IOugDIGYgkAm8vGvkjxEdanPF8mkuilPun76kUeQqEk5yi6prUib3Cmp
+ j7GBxtGLpICacOMcZLkBZHRDNTR5djE36B0nMUGl/hG/A2h1sIR5VFLJSEbWd9CVPKWuUGK5w
+ g1lRhKY2m5NryRgnFrRoL+Qd8ivxnfWumvasy2GpN5Jns=
 
-Add support for the pin controller block on SM4250 Low Power Island.
+> =E2=80=A6. Becausetxctrl->pi is assigned to =E2=80=A6
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/pinctrl/qcom/Kconfig                    |   9 +
- drivers/pinctrl/qcom/Makefile                   |   1 +
- drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c | 236 ++++++++++++++++++++++++
- 3 files changed, 246 insertions(+)
+     Word separation?
 
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index 24619e80b2cc..dd9bbe8f3e11 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -68,6 +68,15 @@ config PINCTRL_SC7280_LPASS_LPI
- 	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
- 	  (Low Power Island) found on the Qualcomm Technologies Inc SC7280 platform.
- 
-+config PINCTRL_SM4250_LPASS_LPI
-+	tristate "Qualcomm Technologies Inc SM4250 LPASS LPI pin controller driver"
-+	depends on ARM64 || COMPILE_TEST
-+	depends on PINCTRL_LPASS_LPI
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
-+	  (Low Power Island) found on the Qualcomm Technologies Inc SM4250 platform.
-+
- config PINCTRL_SM6115_LPASS_LPI
- 	tristate "Qualcomm Technologies Inc SM6115 LPASS LPI pin controller driver"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index e2e76071d268..eb04297b6388 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_PINCTRL_SDM845) += pinctrl-sdm845.o
- obj-$(CONFIG_PINCTRL_SDX55) += pinctrl-sdx55.o
- obj-$(CONFIG_PINCTRL_SDX65) += pinctrl-sdx65.o
- obj-$(CONFIG_PINCTRL_SDX75) += pinctrl-sdx75.o
-+obj-$(CONFIG_PINCTRL_SM4250_LPASS_LPI) += pinctrl-sm4250-lpass-lpi.o
- obj-$(CONFIG_PINCTRL_SM4450) += pinctrl-sm4450.o
- obj-$(CONFIG_PINCTRL_SM6115) += pinctrl-sm6115.o
- obj-$(CONFIG_PINCTRL_SM6115_LPASS_LPI) += pinctrl-sm6115-lpass-lpi.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c
-new file mode 100644
-index 000000000000..2d2c636a3e20
---- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c
-@@ -0,0 +1,236 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2020, 2023 Linaro Ltd.
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+#include "pinctrl-lpass-lpi.h"
-+
-+enum lpass_lpi_functions {
-+	LPI_MUX_dmic01_clk,
-+	LPI_MUX_dmic01_data,
-+	LPI_MUX_dmic23_clk,
-+	LPI_MUX_dmic23_data,
-+	LPI_MUX_dmic4_clk,
-+	LPI_MUX_dmic4_data,
-+	LPI_MUX_ext_mclk0_a,
-+	LPI_MUX_ext_mclk0_b,
-+	LPI_MUX_ext_mclk1_a,
-+	LPI_MUX_ext_mclk1_b,
-+	LPI_MUX_ext_mclk1_c,
-+	LPI_MUX_i2s1_clk,
-+	LPI_MUX_i2s1_data,
-+	LPI_MUX_i2s1_ws,
-+	LPI_MUX_i2s2_clk,
-+	LPI_MUX_i2s2_data,
-+	LPI_MUX_i2s2_ws,
-+	LPI_MUX_i2s3_clk,
-+	LPI_MUX_i2s3_data,
-+	LPI_MUX_i2s3_ws,
-+	LPI_MUX_qup_io_00,
-+	LPI_MUX_qup_io_01,
-+	LPI_MUX_qup_io_05,
-+	LPI_MUX_qup_io_10,
-+	LPI_MUX_qup_io_11,
-+	LPI_MUX_qup_io_25,
-+	LPI_MUX_qup_io_21,
-+	LPI_MUX_qup_io_26,
-+	LPI_MUX_qup_io_31,
-+	LPI_MUX_qup_io_36,
-+	LPI_MUX_qua_mi2s_data,
-+	LPI_MUX_qua_mi2s_sclk,
-+	LPI_MUX_qua_mi2s_ws,
-+	LPI_MUX_slim_clk,
-+	LPI_MUX_slim_data,
-+	LPI_MUX_sync_out,
-+	LPI_MUX_swr_rx_clk,
-+	LPI_MUX_swr_rx_data,
-+	LPI_MUX_swr_tx_clk,
-+	LPI_MUX_swr_tx_data,
-+	LPI_MUX_swr_wsa_clk,
-+	LPI_MUX_swr_wsa_data,
-+	LPI_MUX_gpio,
-+	LPI_MUX__,
-+};
-+
-+static const struct pinctrl_pin_desc sm4250_lpi_pins[] = {
-+	PINCTRL_PIN(0, "gpio0"),
-+	PINCTRL_PIN(1, "gpio1"),
-+	PINCTRL_PIN(2, "gpio2"),
-+	PINCTRL_PIN(3, "gpio3"),
-+	PINCTRL_PIN(4, "gpio4"),
-+	PINCTRL_PIN(5, "gpio5"),
-+	PINCTRL_PIN(6, "gpio6"),
-+	PINCTRL_PIN(7, "gpio7"),
-+	PINCTRL_PIN(8, "gpio8"),
-+	PINCTRL_PIN(9, "gpio9"),
-+	PINCTRL_PIN(10, "gpio10"),
-+	PINCTRL_PIN(11, "gpio11"),
-+	PINCTRL_PIN(12, "gpio12"),
-+	PINCTRL_PIN(13, "gpio13"),
-+	PINCTRL_PIN(14, "gpio14"),
-+	PINCTRL_PIN(15, "gpio15"),
-+	PINCTRL_PIN(16, "gpio16"),
-+	PINCTRL_PIN(17, "gpio17"),
-+	PINCTRL_PIN(18, "gpio18"),
-+	PINCTRL_PIN(19, "gpio19"),
-+	PINCTRL_PIN(20, "gpio20"),
-+	PINCTRL_PIN(21, "gpio21"),
-+	PINCTRL_PIN(22, "gpio22"),
-+	PINCTRL_PIN(23, "gpio23"),
-+	PINCTRL_PIN(24, "gpio24"),
-+	PINCTRL_PIN(25, "gpio25"),
-+	PINCTRL_PIN(26, "gpio26"),
-+};
-+
-+static const char * const dmic01_clk_groups[] = { "gpio6" };
-+static const char * const dmic01_data_groups[] = { "gpio7" };
-+static const char * const dmic23_clk_groups[] = { "gpio8" };
-+static const char * const dmic23_data_groups[] = { "gpio9" };
-+static const char * const dmic4_clk_groups[] = { "gpio10" };
-+static const char * const dmic4_data_groups[] = { "gpio11" };
-+static const char * const ext_mclk0_a_groups[] = { "gpio13" };
-+static const char * const ext_mclk0_b_groups[] = { "gpio5" };
-+static const char * const ext_mclk1_a_groups[] = { "gpio18" };
-+static const char * const ext_mclk1_b_groups[] = { "gpio9" };
-+static const char * const ext_mclk1_c_groups[] = { "gpio17" };
-+static const char * const slim_clk_groups[] = { "gpio14" };
-+static const char * const slim_data_groups[] = { "gpio15" };
-+static const char * const i2s1_clk_groups[] = { "gpio6" };
-+static const char * const i2s1_data_groups[] = { "gpio8", "gpio9" };
-+static const char * const i2s1_ws_groups[] = { "gpio7" };
-+static const char * const i2s2_clk_groups[] = { "gpio10" };
-+static const char * const i2s2_data_groups[] = { "gpio12", "gpio13" };
-+static const char * const i2s2_ws_groups[] = { "gpio11" };
-+static const char * const i2s3_clk_groups[] = { "gpio14" };
-+static const char * const i2s3_data_groups[] = { "gpio16", "gpio17" };
-+static const char * const i2s3_ws_groups[] = { "gpio15" };
-+static const char * const qup_io_00_groups[] = { "gpio19" };
-+static const char * const qup_io_01_groups[] = { "gpio21" };
-+static const char * const qup_io_05_groups[] = { "gpio23" };
-+static const char * const qup_io_10_groups[] = { "gpio20" };
-+static const char * const qup_io_11_groups[] = { "gpio22" };
-+static const char * const qup_io_25_groups[] = { "gpio23" };
-+static const char * const qup_io_21_groups[] = { "gpio25" };
-+static const char * const qup_io_26_groups[] = { "gpio25" };
-+static const char * const qup_io_31_groups[] = { "gpio26" };
-+static const char * const qup_io_36_groups[] = { "gpio26" };
-+static const char * const qua_mi2s_data_groups[] = { "gpio2", "gpio3", "gpio4", "gpio5" };
-+static const char * const qua_mi2s_sclk_groups[] = { "gpio0" };
-+static const char * const qua_mi2s_ws_groups[] = { "gpio1" };
-+static const char * const sync_out_groups[] = { "gpio19", "gpio20", "gpio21", "gpio22",
-+						"gpio23", "gpio24", "gpio25", "gpio26"};
-+static const char * const swr_rx_clk_groups[] = { "gpio3" };
-+static const char * const swr_rx_data_groups[] = { "gpio4", "gpio5" };
-+static const char * const swr_tx_clk_groups[] = { "gpio0" };
-+static const char * const swr_tx_data_groups[] = { "gpio1", "gpio2" };
-+static const char * const swr_wsa_clk_groups[] = { "gpio10" };
-+static const char * const swr_wsa_data_groups[] = { "gpio11" };
-+
-+
-+static const struct lpi_pingroup sm4250_groups[] = {
-+	LPI_PINGROUP(0, 0, swr_tx_clk, qua_mi2s_sclk, _, _),
-+	LPI_PINGROUP(1, 2, swr_tx_data, qua_mi2s_ws, _, _),
-+	LPI_PINGROUP(2, 4, swr_tx_data, qua_mi2s_data, _, _),
-+	LPI_PINGROUP(3, 8, swr_rx_clk, qua_mi2s_data, _, _),
-+	LPI_PINGROUP(4, 10, swr_rx_data, qua_mi2s_data, _, _),
-+	LPI_PINGROUP(5, 12, swr_rx_data, ext_mclk0_b, qua_mi2s_data, _),
-+	LPI_PINGROUP(6, LPI_NO_SLEW, dmic01_clk, i2s1_clk, _, _),
-+	LPI_PINGROUP(7, LPI_NO_SLEW, dmic01_data, i2s1_ws, _, _),
-+	LPI_PINGROUP(8, LPI_NO_SLEW, dmic23_clk, i2s1_data, _, _),
-+	LPI_PINGROUP(9, LPI_NO_SLEW, dmic23_data, i2s1_data, ext_mclk1_b, _),
-+	LPI_PINGROUP(10, 16, i2s2_clk, swr_wsa_clk, dmic4_clk, _),
-+	LPI_PINGROUP(11, 18, i2s2_ws, swr_wsa_data, dmic4_data, _),
-+	LPI_PINGROUP(12, LPI_NO_SLEW, dmic23_clk, i2s2_data, _, _),
-+	LPI_PINGROUP(13, LPI_NO_SLEW, dmic23_data, i2s2_data, ext_mclk0_a, _),
-+	LPI_PINGROUP(14, LPI_NO_SLEW, i2s3_clk, slim_clk, _, _),
-+	LPI_PINGROUP(15, LPI_NO_SLEW, i2s3_ws, slim_data, _, _),
-+	LPI_PINGROUP(16, LPI_NO_SLEW, i2s3_data, _, _, _),
-+	LPI_PINGROUP(17, LPI_NO_SLEW, i2s3_data, ext_mclk1_c, _, _),
-+	LPI_PINGROUP(18, 20, ext_mclk1_a, swr_rx_data, _, _),
-+	LPI_PINGROUP(19, LPI_NO_SLEW, qup_io_00, sync_out, _, _),
-+	LPI_PINGROUP(20, LPI_NO_SLEW, qup_io_10, sync_out, _, _),
-+	LPI_PINGROUP(21, LPI_NO_SLEW, qup_io_01, sync_out, _, _),
-+	LPI_PINGROUP(22, LPI_NO_SLEW, qup_io_11, sync_out, _, _),
-+	LPI_PINGROUP(23, LPI_NO_SLEW, qup_io_25, qup_io_05, sync_out, _),
-+	LPI_PINGROUP(25, LPI_NO_SLEW, qup_io_26, qup_io_21, sync_out, _),
-+	LPI_PINGROUP(26, LPI_NO_SLEW, qup_io_36, qup_io_31, sync_out, _),
-+};
-+
-+static const struct lpi_function sm4250_functions[] = {
-+	LPI_FUNCTION(dmic01_clk),
-+	LPI_FUNCTION(dmic01_data),
-+	LPI_FUNCTION(dmic23_clk),
-+	LPI_FUNCTION(dmic23_data),
-+	LPI_FUNCTION(dmic4_clk),
-+	LPI_FUNCTION(dmic4_data),
-+	LPI_FUNCTION(ext_mclk0_a),
-+	LPI_FUNCTION(ext_mclk0_b),
-+	LPI_FUNCTION(ext_mclk1_a),
-+	LPI_FUNCTION(ext_mclk1_b),
-+	LPI_FUNCTION(ext_mclk1_c),
-+	LPI_FUNCTION(i2s1_clk),
-+	LPI_FUNCTION(i2s1_data),
-+	LPI_FUNCTION(i2s1_ws),
-+	LPI_FUNCTION(i2s2_clk),
-+	LPI_FUNCTION(i2s2_data),
-+	LPI_FUNCTION(i2s2_ws),
-+	LPI_FUNCTION(i2s3_clk),
-+	LPI_FUNCTION(i2s3_data),
-+	LPI_FUNCTION(i2s3_ws),
-+	LPI_FUNCTION(qup_io_00),
-+	LPI_FUNCTION(qup_io_01),
-+	LPI_FUNCTION(qup_io_05),
-+	LPI_FUNCTION(qup_io_10),
-+	LPI_FUNCTION(qup_io_11),
-+	LPI_FUNCTION(qup_io_25),
-+	LPI_FUNCTION(qup_io_21),
-+	LPI_FUNCTION(qup_io_26),
-+	LPI_FUNCTION(qup_io_31),
-+	LPI_FUNCTION(qup_io_36),
-+	LPI_FUNCTION(qua_mi2s_data),
-+	LPI_FUNCTION(qua_mi2s_sclk),
-+	LPI_FUNCTION(qua_mi2s_ws),
-+	LPI_FUNCTION(slim_clk),
-+	LPI_FUNCTION(slim_data),
-+	LPI_FUNCTION(sync_out),
-+	LPI_FUNCTION(swr_rx_clk),
-+	LPI_FUNCTION(swr_rx_data),
-+	LPI_FUNCTION(swr_tx_clk),
-+	LPI_FUNCTION(swr_tx_data),
-+	LPI_FUNCTION(swr_wsa_clk),
-+	LPI_FUNCTION(swr_wsa_data),
-+};
-+
-+static const struct lpi_pinctrl_variant_data sm4250_lpi_data = {
-+	.pins = sm4250_lpi_pins,
-+	.npins = ARRAY_SIZE(sm4250_lpi_pins),
-+	.groups = sm4250_groups,
-+	.ngroups = ARRAY_SIZE(sm4250_groups),
-+	.functions = sm4250_functions,
-+	.nfunctions = ARRAY_SIZE(sm4250_functions),
-+};
-+
-+static const struct of_device_id lpi_pinctrl_of_match[] = {
-+	{ .compatible = "qcom,sm4250-lpass-lpi-pinctrl", .data = &sm4250_lpi_data },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
-+
-+static struct platform_driver lpi_pinctrl_driver = {
-+	.driver = {
-+		.name = "qcom-sm4250-lpass-lpi-pinctrl",
-+		.of_match_table = lpi_pinctrl_of_match,
-+	},
-+	.probe = lpi_pinctrl_probe,
-+	.remove_new = lpi_pinctrl_remove,
-+};
-+
-+module_platform_driver(lpi_pinctrl_driver);
-+MODULE_DESCRIPTION("QTI SM4250 LPI GPIO pin control driver");
-+MODULE_AUTHOR("Srinivas Kandagatla <srinivas.kandagatla@linaro.org>");
-+MODULE_LICENSE("GPL");
 
--- 
-2.25.1
+> To address this issue, the index should be checked.
 
+Can an imperative wording be more desirable for such a change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n94
+
+Regards,
+Markus
 
