@@ -1,68 +1,243 @@
-Return-Path: <linux-kernel+bounces-225855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0511913620
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:23:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7BA913623
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB9C51C214D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:23:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E2F11C21677
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6325BACF;
-	Sat, 22 Jun 2024 21:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B509762E8;
+	Sat, 22 Jun 2024 21:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i8Tic4gF"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nH0pb/u0"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F9C3BBF6
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 21:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1BF3BBF6;
+	Sat, 22 Jun 2024 21:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719091416; cv=none; b=QW2LiHFZq/Fhk3QpdV6QZLicsidfBxSrfm7enxo4tDEtCHzYtquomzsdf24GY1bKpCwg/Rk7NFpLfjgo/ZH8twqTBsg65Nj6PVBtP+UPWSabrds1R1HmjGpkVPk+rmbm7MRptCYzmH2UklPG4LLSPvNrNCnl6+rf+rztCEsUR44=
+	t=1719091543; cv=none; b=U+g0IlNqUGbpEBClhan0zxMe0DoXrRD/nCMR6jM40ANBWF6Ul6FRqu+vzeAsqBwMJq64C/9pG1LoBzPFQ/c3Qq//AajrKGrgYs3T0G5ycIFoPiCGRjSJcxUVjXTt+nJtY74/S1vw/OFcZ2FzhDmzvA8gWn2+yUXeE68DJ/GJ0Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719091416; c=relaxed/simple;
-	bh=UFV+r/FdDgjmW/Bs3itLM9/eqc9N3lhVHlLcntS/llo=;
+	s=arc-20240116; t=1719091543; c=relaxed/simple;
+	bh=h6FMOtSKkGDhdf9lYD/GY9k7wwwJrwD6Z6EaCUubBkQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cMoN8TOb4hfhD87AF6fhU88LTx6X4WY/JnPYCNHbX3vabYE0uPNOMYLgF3AYTGYzT1lNTt7RW6jGP5EwqlQA0XyvgyKZIcoMp9gZez2AXsbfjULdhF43qXX71rEYCifJNIm4u9EadIUZ2//5fZn5ijRpG8Ck7rU5o75osB6f47w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i8Tic4gF; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: syzbot+ad60312dc46671a69480@syzkaller.appspotmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719091411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UFV+r/FdDgjmW/Bs3itLM9/eqc9N3lhVHlLcntS/llo=;
-	b=i8Tic4gFZr4ge9c/KmD1Kbu85leejf0lLwal5ZVUvlqH28ZmNFyU0a4vlv44rWA9Z63bGt
-	wg+JavM/Ua+kWQD2wEBaa/EA6oiC/WeV+nQdQ/N8d+JAQ3WsRzjkem9VfLJM+KVU77K7tk
-	TOCmiVDbN8DCmy75ohyjbQX6pU+Jmkc=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Sat, 22 Jun 2024 17:23:26 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+ad60312dc46671a69480@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_ioctl_fsck_online
-Message-ID: <dqc3qdllll7xcvsc3k7fpwumigi5dg77zxzdd6aq7hg3vshpe6@clcu2hyaz2n3>
-References: <0000000000009fb1e2061b802aea@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+zQOmh3FUwi9I7ZPYT5rekRNWCM5vLqNEPz6PoNdfBPlhKmgKfB+LzzqiweqxRv2p9Stui9yBYPowTQ8ttdpHV7LrrYmwsZiAbPH/8VEe3dvEci8i6oW4WbqGsujFlMNchQfq0NCDwi7Ew7NjMzZVQmos/KcS+MhlQlR8u2jiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nH0pb/u0; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cdf2c7454so1025503e87.1;
+        Sat, 22 Jun 2024 14:25:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719091539; x=1719696339; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C6Zft8pLJviHYqr+MieCC3DJ6BjX9zML7gsqsO3c1RM=;
+        b=nH0pb/u0Z27Eu4SrPky06f8tQehFB4YWLceaWz/T6qk+OL1BXthZ6kG2+5M1KjjauB
+         6lV9+orFjC323xOqM68dpPgOQCfSKoocqfOXoFxFsHRequbGRpvkB+kpd+U8gB1meXbq
+         6Yuw1ZuIhpbSSEnoukuPqQsLXvK4Q6IInXxqeozRGFQGfIGuA+4nCN6Rhv3AGGJKT5bb
+         s3QIYGWQeED3NXErnKw2OB47ZdZKPqZHmxpkS1leQCAZ/gpwyFqpllSR6JaI5FxwEHZx
+         0ufg4o/fGF5Wc4bU6owWIB5e/YARIoW2jkIOFRboV9GGaYmPD0IaIBIFtT1gA/+huQSd
+         NM5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719091539; x=1719696339;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C6Zft8pLJviHYqr+MieCC3DJ6BjX9zML7gsqsO3c1RM=;
+        b=FRcpuWC3oI65DQtndsSj1mBsEM6XK0pFza99i/wsszTeO8hFfGFrTONsUKmg7J9dX/
+         8/Eyh2tyfyjoQwPXODUoCAU9vSZGDn+i4nqG/fDjqJVnyQ1r5+UpwgXdx+v1DsKqDTVQ
+         6LcOwi0ANi+EwnmHZh7zGNrqEmm/SKlw4Nq/KenMOqOmMmjhKlm3gK+HLoLzGuMSfbS4
+         poDHy3nboh1ZkxPv++RsdsqPRBTEqko7EjG67ged6prPXfj66uxIhyDxcKVf8TAJD/nu
+         IkRht2NyUrxUlYdTx2osjpzcbBy9KrXr8A03M7lvSiaUgq9Pr1a/KVTTcjFYRLSHNaez
+         DoLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRj9B31YNStEShTGOrot7XVJR9lxLqhtwpcnKyrKjLvGWcoCByQ5bdAy6PbNEU5j10UN6h2ZctGmvkgVPkwXMl2ubBG+NQzSZBVtImjSfUbKYXQ/xLK+flc+N5KNtEplI10CjmojMZs9yMuKbvXjTiyF+mwwMgwU8Q1zHYTd0qzjeqHrtpbjUAaYuB8/hQHyimujm4O5KraPznCPaTFvRH3nLh9mHQhwqh8hQ=
+X-Gm-Message-State: AOJu0YxfeezzlSuB82eYYXCUno1KKvzi3JU0qNrnwtGQiJCO/pEIhZM8
+	jqSod8rie0yo2DA+WHk3ehB+cfENAD6c/EiDzPTCOz4CWl8SdZ1m
+X-Google-Smtp-Source: AGHT+IECbzq+U/SVXHnSyj2ETUHoANLCckvXgZJp4glNyBnnGOCtTtYX8Bcu6dTMGuZxqkbN/WljYg==
+X-Received: by 2002:ac2:434d:0:b0:52c:d590:6ca7 with SMTP id 2adb3069b0e04-52ce18329b0mr513553e87.19.1719091538609;
+        Sat, 22 Jun 2024 14:25:38 -0700 (PDT)
+Received: from f (cst-prg-87-23.cust.vodafone.cz. [46.135.87.23])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7247895dddsm22840866b.108.2024.06.22.14.25.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 14:25:37 -0700 (PDT)
+Date: Sat, 22 Jun 2024 23:25:27 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Alejandro Colomar <alx@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Icenowy Zheng <uwu@icenowy.me>, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: [PATCH] vfs: Add AT_EMPTY_PATH_NOCHECK as unchecked AT_EMPTY_PATH
+Message-ID: <kslf3yc7wnwhxzv5cejaqf52bdr6yxqaqphtjl7d4iaph23y6v@ssyq7vrdwx56>
+References: <20240622105621.7922-1-xry111@xry111.site>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0000000000009fb1e2061b802aea@google.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240622105621.7922-1-xry111@xry111.site>
 
-#syz fix: bcachefs: Fix freeing of error pointers
++cc Linus
+
+On Sat, Jun 22, 2024 at 06:56:08PM +0800, Xi Ruoyao wrote:
+> It's cheap to check if the path is empty in the userspace, but expensive
+> to check if a userspace string is empty from the kernel.  So using statx
+> and AT_EMPTY_PATH to implement fstat is slower than a "native" fstat
+> call.  But for arch/loongarch fstat does not exist so we have to use
+> statx, and on all 32-bit architectures we must use statx after 2037.
+> And seccomp also cannot audit AT_EMPTY_PATH properly because it cannot
+> check if path is empty.
+> 
+> To resolve these issues, add a relaxed version of AT_EMPTY_PATH: it does
+> not check if the path is empty, but just assumes the path is empty and
+> then behaves like AT_EMPTY_PATH.
+> 
+> Link: https://sourceware.org/pipermail/libc-alpha/2023-September/151364.html
+> Link: https://lore.kernel.org/loongarch/599df4a3-47a4-49be-9c81-8e21ea1f988a@xen0n.name/
+
+imo the thing to do is to add fstat for your arch and add fstatx for
+everyone.
+
+My argument for fstatx specifically is that Rust uses statx instead of
+fstat and is growing in popularity.
+
+To sum up the problem: stat and statx met with "" + AT_EMPTY_PATH have
+more work to do than fstat and its hypotethical statx counterpart:
+- buf alloc/free for the path
+- userspace access (very painful on x86_64 + SMAP)
+- lockref acquire/release
+
+(and other things concerning lookup itself which I'm going to ignore
+here)
+
+Your patch avoids the peek at userspace, but the other overhead remains.
+In particular the lockref cycle, apart from adding work single-threaded,
+adds avoidable serialization against other threads issuing stat(x) on
+the same file. iow your patch still leaves performance on the table and
+I don't think it is necessary.
+
+If the flag is the way to go (I don't see why though), I would suggest
+something like AT_NO_PATH and requring NULL as the path argument (or
+some other predefined "there is nothing here" constant).
+
+I wanted to type up a proposal for fstatx (+ patch) some time ago, but
+some refactoring was needed to make it happen and put it on the back
+burner.
+
+Perhaps you would be willing to pick it up, assuming the vfs folk are
+oke with it.
+
+Regardless of what happens with statx or this patch you should probably
+add fstat anyway.
+
+If there are any other perf-sensitive syscalls which don't have their
+fd-only variants they should be plugged to, but I can't think of
+anything.
+
+> ---
+>  fs/namei.c                 | 8 +++++++-
+>  fs/stat.c                  | 4 +++-
+>  include/linux/namei.h      | 4 ++++
+>  include/trace/misc/fs.h    | 1 +
+>  include/uapi/linux/fcntl.h | 3 +++
+>  5 files changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 37fb0a8aa09a..0c44a7ea5961 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -147,7 +147,13 @@ getname_flags(const char __user *filename, int flags, int *empty)
+>  	kname = (char *)result->iname;
+>  	result->name = kname;
+>  
+> -	len = strncpy_from_user(kname, filename, EMBEDDED_NAME_MAX);
+> +	if (!(flags & LOOKUP_EMPTY_NOCHECK))
+> +		len = strncpy_from_user(kname, filename, EMBEDDED_NAME_MAX);
+> +	else {
+> +		len = 0;
+> +		kname[0] = '\0';
+> +	}
+> +
+>  	if (unlikely(len < 0)) {
+>  		__putname(result);
+>  		return ERR_PTR(len);
+> diff --git a/fs/stat.c b/fs/stat.c
+> index 70bd3e888cfa..53944d3287cd 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -210,6 +210,8 @@ int getname_statx_lookup_flags(int flags)
+>  		lookup_flags |= LOOKUP_AUTOMOUNT;
+>  	if (flags & AT_EMPTY_PATH)
+>  		lookup_flags |= LOOKUP_EMPTY;
+> +	if (flags & AT_EMPTY_PATH_NOCHECK)
+> +		lookup_flags |= LOOKUP_EMPTY | LOOKUP_EMPTY_NOCHECK;
+>  
+>  	return lookup_flags;
+>  }
+> @@ -237,7 +239,7 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
+>  	int error;
+>  
+>  	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT | AT_EMPTY_PATH |
+> -		      AT_STATX_SYNC_TYPE))
+> +		      AT_STATX_SYNC_TYPE | AT_EMPTY_PATH_NOCHECK))
+>  		return -EINVAL;
+>  
+>  retry:
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 967aa9ea9f96..def6a8a1b531 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -45,9 +45,13 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+>  #define LOOKUP_IN_ROOT		0x100000 /* Treat dirfd as fs root. */
+>  #define LOOKUP_CACHED		0x200000 /* Only do cached lookup */
+>  #define LOOKUP_LINKAT_EMPTY	0x400000 /* Linkat request with empty path. */
+> +
+>  /* LOOKUP_* flags which do scope-related checks based on the dirfd. */
+>  #define LOOKUP_IS_SCOPED (LOOKUP_BENEATH | LOOKUP_IN_ROOT)
+>  
+> +/* If this is set, LOOKUP_EMPTY must be set as well. */
+> +#define LOOKUP_EMPTY_NOCHECK	0x800000 /* Consider path empty. */
+> +
+>  extern int path_pts(struct path *path);
+>  
+>  extern int user_path_at_empty(int, const char __user *, unsigned, struct path *, int *empty);
+> diff --git a/include/trace/misc/fs.h b/include/trace/misc/fs.h
+> index 738b97f22f36..24aec7ed6b0b 100644
+> --- a/include/trace/misc/fs.h
+> +++ b/include/trace/misc/fs.h
+> @@ -119,4 +119,5 @@
+>  		{ LOOKUP_NO_XDEV,	"NO_XDEV" }, \
+>  		{ LOOKUP_BENEATH,	"BENEATH" }, \
+>  		{ LOOKUP_IN_ROOT,	"IN_ROOT" }, \
+> +		{ LOOKUP_EMPTY_NOCHECK,	"EMPTY_NOCHECK" }, \
+>  		{ LOOKUP_CACHED,	"CACHED" })
+> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> index c0bcc185fa48..aa2f68d80820 100644
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -113,6 +113,9 @@
+>  #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
+>  
+>  #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
+> +#define AT_EMPTY_PATH_NOCHECK	0x10000	/* Like AT_EMPTY_PATH, but the path
+> +                                           is not checked and it's just
+> +                                           assumed to be empty */
+>  
+>  /* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits... */
+>  #define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
+> -- 
+> 2.45.2
+> 
 
