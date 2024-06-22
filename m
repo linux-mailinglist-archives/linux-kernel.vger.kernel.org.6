@@ -1,131 +1,167 @@
-Return-Path: <linux-kernel+bounces-225568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81CB913262
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:32:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E64C5913264
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F43428530E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 06:32:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA841F23337
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 06:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E5314B07E;
-	Sat, 22 Jun 2024 06:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11DE14B078;
+	Sat, 22 Jun 2024 06:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCymJnQr"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="o+3AZQO8"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290394404;
-	Sat, 22 Jun 2024 06:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4009B2913;
+	Sat, 22 Jun 2024 06:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719037959; cv=none; b=D8WXYCdZSOQPg3iBqVzBB8kTFoUEYGD9QDgsXvXMKr8eFGQ7npqJtKf/jkHLEAGi74C2go+R2P5ALkiGUf4dcOS0crFs8Y2ldnPPbXlNMPXYkCV3ojLteCxzvsTNq72UN79pyRBlaaJU5FadQmvHD2Scfz6D4QeS3gvbj18E8QI=
+	t=1719038219; cv=none; b=OiNLOSPhZo4YI1ejbR7YFs7c8Wh9VFydP9S5X07h8a1QBe+l9spfoJLwMgvOEJAoCjbubM9oniITjyvGlUUX1QaKbYY8FAO+jOmof1SzZp4qR25UpqxCVwWtaQmHla1azszfDkhaSJ9sLwJDi0LdWYrhFHw7KihP+pYszDQ3hw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719037959; c=relaxed/simple;
-	bh=WhhOjISMX6FaMTZ2rpNPX0Ax73MYVU1F2jgo3t9NhwA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J8Xryssp4A41U6h/Qb9mzpqsti/a2H/jxTLnCUh3WyIZdEN0D+hEXhQ7XIYGcdVIGJkS2ga/ZBccZVMjUOiYwXvdfc+H4eGdaVPE65ee8/XK+Xj7SrDuAt+qThX9/yNC1gdrOtMNrH6cDN6HuQHHbKLA5ITJDc0QvRNsuRJW0SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BCymJnQr; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-1f44b5b9de6so21729065ad.3;
-        Fri, 21 Jun 2024 23:32:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719037957; x=1719642757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wEQGfHR4HYL/Iimx2BXnVEllHb07wSwW3ytxUBhGSM0=;
-        b=BCymJnQrg11zYTPAGQkR+GpB7fodwXc4EpcHQjwKOUtW+1qBwuy5Aqx7oXTM59/7rU
-         vLd7kO0oregyl8X5dOipGVH92j+U9TqmUrEYiJfy6POHCi89YOdkjZRv7NLWgTVzUm24
-         OyDMdTGUxXYoISzQPSAnf2vAqr102kZybjrEq4DiJGgHvrJRexB8JO6mlxHusFu0q+9C
-         npXC9t7RWI8BOckNeaMNoirA/Zi2m+H4PznwWhI6BsB6/sNAaRU3u+q0Jpst1CeM3Y9/
-         lkFT0G+Odok257zo3xFZHCvgn12htcZOiAo4gubHK+34roCwIfUs8yeJrkt0mX9wSIdl
-         nSlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719037957; x=1719642757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wEQGfHR4HYL/Iimx2BXnVEllHb07wSwW3ytxUBhGSM0=;
-        b=xU3NOyP5oAlvS633a8Exxm9zN/E13X5fs9XmymcOTeSygKOjawr0xbC8pIo46QqG1I
-         snrIK0h0qQLWyQIF/KjJ98aRTiCKYcGZ/185kSegJYeMUXiOwuGwh0wBZLThVzfKX1m/
-         OCV/fRYQ11vBMH0HQcrezvRc6MV7M6VE5VI+uBq+R7G0rCbiMOFNWWjy/MATTLpb1NQe
-         OfOTnIZFG+npBk7q3EwW1eIXaP5orC7MiseQucx9JuMtKG3KsOxrcSQ0r78eljHtmP4y
-         M1V0fB276YG4jlCCQ8n/C6iwiWw+fABWWtrgl9369dDvbFjY/2Djy358YXyEF3dDe2Af
-         H47Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXF0X7xcXLWB7IlkoUvaN7l1S5IlSpTO9gXg7so/YSCVqQ9m3xODsUwjC64g+Wu7AMqJnSgImcBkzMx2iuOQk47SIsLKex+PztF9WExVw+tXIojc/l8pDD4cnfIBMcVAEOuu4MO
-X-Gm-Message-State: AOJu0Yy4uwqlmw+/IzHdz0D0d2f7YSEof9aFVQs/qXV3bPlKm7E6zMWB
-	utljjQ7Wu2Iw+DVF+1GUmieQOHeraNtEYFYgupQQGmvkKuveAJ20
-X-Google-Smtp-Source: AGHT+IFcm99hDFPgJkVVz14D7/+Vz2Ow06iag6fcS3AghgArZs5gm6LbKjJ4/JgYQ3WTs2yWFOYDvA==
-X-Received: by 2002:a17:903:1c3:b0:1f7:2d45:2f1 with SMTP id d9443c01a7336-1fa158de5bcmr2068335ad.15.1719037957242;
-        Fri, 21 Jun 2024 23:32:37 -0700 (PDT)
-Received: from lhy-a01-ubuntu22.. ([106.39.42.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d5a87sm24068085ad.203.2024.06.21.23.32.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 23:32:36 -0700 (PDT)
-From: Huai-Yuan Liu <qq810974084@gmail.com>
-To: jes@trained-monkey.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: linux-hippi@sunsite.dk,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Huai-Yuan Liu <qq810974084@gmail.com>
-Subject: [PATCH V3] hippi: fix possible buffer overflow caused by bad DMA value in rr_start_xmit()
-Date: Sat, 22 Jun 2024 14:32:27 +0800
-Message-Id: <20240622063227.456107-1-qq810974084@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719038219; c=relaxed/simple;
+	bh=En0xQ3RKF8jSBoMVs3ZQhUwsz+l78Ptp4jBZjcOlVTI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lZzelEtRyGGLRY4/Ut/akWgZtLG4QE0zRCDCYjSukD5FTDbQ8PIqw5cOC+HeqDLkMge+cFMtVA+kZ3XMLFLswE2yNYv5QTiWkCgcHV4n4yskO+c5MWAvr5fku0V81WnBdpdVee/iJkleA1b7DUDswci5ArW32Ff06zcmtCNNaKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=o+3AZQO8; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45M6apPV096204;
+	Sat, 22 Jun 2024 01:36:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719038211;
+	bh=hdNZUlhSUuH1uog2xu4MNTo3MrR9ECsiWjQqU/6nbbo=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=o+3AZQO80mRi4+9c2mZ2laC9XPQclxFYCvZTyX8yYTFT19Ruwwz5NfyRdDIYM3Wjz
+	 7hPMm0H8pwMZqei+Ra5+bcPMzIRY6Z/DQZUh1m7+b+DbP/CcOvVxofANl6tCwxsL5K
+	 x0ai4glSJTllqZGAGAxo1XZo7lTuv2cGEI3qllHM=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45M6ap5m005066
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 22 Jun 2024 01:36:51 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 22
+ Jun 2024 01:36:51 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 22 Jun 2024 01:36:51 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45M6alVJ027842;
+	Sat, 22 Jun 2024 01:36:48 -0500
+Message-ID: <cfab6475-9224-44a6-b140-59f6ec243ab1@ti.com>
+Date: Sat, 22 Jun 2024 12:06:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-j722s-evm: Enable analog audio
+ support
+To: Jayesh Choudhary <j-choudhary@ti.com>, <linux-kernel@vger.kernel.org>,
+        <nm@ti.com>, <robh@kernel.org>, <j-luthra@ti.com>, <u-kumar1@ti.com>
+CC: <kristo@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+References: <20240612051246.41117-1-j-choudhary@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20240612051246.41117-1-j-choudhary@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The value rrpriv->info->tx_ctrl is stored in DMA memory, and it is
-assigned to txctrl, so txctrl->pi can be modified at any time by malicious
-hardware. Becausetxctrl->pi is assigned to index, buffer overflow may
-occur when the code "rrpriv->tx_skbuff[index]" is executed.
 
-To address this issue, the index should be checked.
 
-Fixes: f33a7251c825 ("hippi: switch from 'pci_' to 'dma_' API")
-Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
----
-V2:
-* In patch V2, we remove the first condition in if statement and use
-  netdev_err() instead of printk().
-  Thanks Paolo Abeni for helpful advice.
-V3:
-* In patch V3, we stop the queue before return BUSY.
-  Thanks to Jakub Kicinski for his advice.
----
- drivers/net/hippi/rrunner.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+On 12/06/24 10:42, Jayesh Choudhary wrote:
+[...]
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> index bf3c246d13d1..426ae3e8a839 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+> @@ -105,6 +105,16 @@ vdd_sd_dv: regulator-TLV71033 {
+>  			 <3300000 0x1>;
+>  	};
+>  
+> +	vcc_3v3_aud: regulator-vcc3v3 {
+> +		/* Output of LM5140 */
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_3v3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +	};
+> +
+>  	vsys_io_1v8: regulator-vsys-io-1v8 {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "vsys_io_1v8";
+> @@ -122,6 +132,35 @@ vsys_io_1v2: regulator-vsys-io-1v2 {
+>  		regulator-always-on;
+>  		regulator-boot-on;
+>  	};
+> +
+> +	codec_audio: sound {
+> +		compatible = "simple-audio-card";
+> +		simple-audio-card,name = "J722S-EVM";
+> +		simple-audio-card,widgets =
+> +			"Headphone",	"Headphone Jack",
+> +			"Line",		"Line In",
+> +			"Microphone",	"Microphone Jack";
+> +		simple-audio-card,routing =
+> +			"Headphone Jack",	"HPLOUT",
+> +			"Headphone Jack",	"HPROUT",
+> +			"LINE1L",		"Line In",
+> +			"LINE1R",		"Line In",
+> +			"MIC3R",		"Microphone Jack",
+> +			"Microphone Jack",	"Mic Bias";
+> +		simple-audio-card,format = "dsp_b";
+> +		simple-audio-card,bitclock-master = <&sound_master>;
+> +		simple-audio-card,frame-master = <&sound_master>;
+> +		simple-audio-card,bitclock-inversion;
+> +
+> +		simple-audio-card,cpu {
+> +			sound-dai = <&mcasp1>;
+> +		};
+> +
+> +		sound_master: simple-audio-card,codec {
+> +			sound-dai = <&tlv320aic3106>;
+> +			clocks = <&audio_refclk1>;
+> +		};
+> +	};
+>  };
+>  
+>  &main_pmx0 {
 
-diff --git a/drivers/net/hippi/rrunner.c b/drivers/net/hippi/rrunner.c
-index aa8f828a0ae7..f4da342dd5cc 100644
---- a/drivers/net/hippi/rrunner.c
-+++ b/drivers/net/hippi/rrunner.c
-@@ -1440,6 +1440,12 @@ static netdev_tx_t rr_start_xmit(struct sk_buff *skb,
- 	txctrl = &rrpriv->info->tx_ctrl;
- 
- 	index = txctrl->pi;
-+	if (index >= TX_RING_ENTRIES) {
-+		netdev_err(dev, "invalid index value %02x\n", index);
-+		netif_stop_queue(dev);
-+		spin_unlock_irqrestore(&rrpriv->lock, flags);
-+		return NETDEV_TX_BUSY;
-+	}
- 
- 	rrpriv->tx_skbuff[index] = skb;
- 	set_rraddr(&rrpriv->tx_ring[index].addr,
+[...]
+
+> +&main_conf {
+> +	audio_refclk1: clock@82e4 {
+> +		compatible = "ti,am62-audio-refclk";
+> +		reg = <0x82e4 0x4>;
+> +		clocks = <&k3_clks 157 18>;
+> +		assigned-clocks = <&k3_clks 157 18>;
+> +		assigned-clock-parents = <&k3_clks 157 33>;
+> +		#clock-cells = <0>;
+> +	};
+
+
+Shouldn't this be in a SoC level dtsi? If the clock selection is based
+on board design, the only move the assigned-clocks* to board file and
+keep the rest in SoC level files.
+
+
+> +};
+
 -- 
-2.34.1
-
+Regards
+Vignesh
 
