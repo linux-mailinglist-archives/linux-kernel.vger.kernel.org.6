@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-225606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4859132D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:04:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F10C9132D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B96C1F226A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 903DB1C2139E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 09:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2C414B946;
-	Sat, 22 Jun 2024 09:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDZj0YEq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C43D14D281;
+	Sat, 22 Jun 2024 09:07:57 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD0B748E
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 09:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DA01422B6;
+	Sat, 22 Jun 2024 09:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719047082; cv=none; b=qf1yGutpoWoj4TEQeZ+eULhOZA4s/HbB/tPL8r7uQ1UgIOEvf1uvQAzCbUNc+5Qf1VJcVBa6SjYxdmpW+Dq3957TpYu7u1X8wOX037sX9fUUyKi52WIGoo5zcrrnHC+XAiSL/a3B0fkx/tUiLDNYzKo+ya+khh9o0e0GDrbQHuk=
+	t=1719047277; cv=none; b=ma+TLklA4R3HMLD9dST5bLwLWncx1td//8tq46XwHL0sCF+t89g+M3pSIeWjdo3QLp9J5yf8+EZWh9+7f2GpXP5b5pMdu+fKxh70vPgj0JMFXhGMAzyDzIEFNSVzPDGwsMyXxFjELyRlpxMioTCUiH4btt51r5pWaIgMKfhbNrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719047082; c=relaxed/simple;
-	bh=UU7JsnSaz9dFPja35kRkTIpRcpxJ89GB0bKn+zNzzZY=;
+	s=arc-20240116; t=1719047277; c=relaxed/simple;
+	bh=+FuvJtsP9SJ6aiyTqiZW9XCzUF9EjlW9UdyiooZxPBc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SwImgtpuxJKkSMjr708u9KCZw6h6b8jJKZ5t+dNSgjBEhkIkXz7lgeMqpTKcVGFgsr/dcqCMshMB2UGvWrdqxWvevW8+5POf/R2ubP9GdTxpRap9JB5OCrm4PLMpCVnsDUv4TwqOI2/30jaJVm0BgF52urdiH4RWWcphvsNbfm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDZj0YEq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24DBDC32781;
-	Sat, 22 Jun 2024 09:04:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719047081;
-	bh=UU7JsnSaz9dFPja35kRkTIpRcpxJ89GB0bKn+zNzzZY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FDZj0YEq3aW2aAOWLF8l5c3G6edqjT01VAnR9uhEu7j3cy2Hi/8g5iLioRTj+oQ4Y
-	 S9c6nJ7jdooGHpESYJnoYQo75on6Ojru6lquxx7tY0AMUd93tN5aPNYaAUN+o1MzH/
-	 UgMzg2jfAB6GFnnyTFm7xyIjQrpfYoHe9x6L1WzYdZer4sDLroHcdklwCSl4cpXooC
-	 MAOsCvF5DfY3ZWifVUOX7WS1hyNdQBBazt1ObbStyMHTjvVBaahztgqHc0pBzMTbkk
-	 n0cjFtzyJdmLFxT181/w4FRjg1KX4bUlmCKJIdOg35lTK2XDZ9nlOnASRox/dAmLrk
-	 +5L0Cw5hCUqMg==
-Date: Sat, 22 Jun 2024 11:04:38 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V3 09/51] posix-cpu-timers: Handle interval timers
- correctly in timer_get()
-Message-ID: <ZnaTplDOun-QPCH8@pavilion.home>
-References: <20240610163452.591699700@linutronix.de>
- <20240610164026.036097741@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=csy+tfqH5vsQ7N1YR8izhB5cfPExg0KIzLQIoy/B2u0pZIcjlrkscMWfrg5JzWt9E/VESMJl8Szf8ngaZZtoHuOkfTc31JUCI3UA401ZQ5Sso/ZKFaYhP3JGMwLq+sJ8/BOh+dyqHc/XrR6RYoCkPVCv0pr0XM1FAk6OsyS+qn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id AAD223000ACA9;
+	Sat, 22 Jun 2024 11:07:44 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 80E4153DB7; Sat, 22 Jun 2024 11:07:44 +0200 (CEST)
+Date: Sat, 22 Jun 2024 11:07:44 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Vitor Soares <ivitro@gmail.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Vitor Soares <vitor.soares@toradex.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] tpm_tis_spi: add missing attpm20p SPI device ID entry
+Message-ID: <ZnaUYICRxvSG-sTX@wunner.de>
+References: <20240621095045.1536920-1-ivitro@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240610164026.036097741@linutronix.de>
+In-Reply-To: <20240621095045.1536920-1-ivitro@gmail.com>
 
-Le Mon, Jun 10, 2024 at 06:42:16PM +0200, Thomas Gleixner a écrit :
-> timer_gettime() must return the remaining time to the next expiry of a
-> timer or 0 if the timer is not armed and no signal pending, but posix CPU
-> timers fail to forward a timer which is already expired.
-> 
-> Add the required logic to address that.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+[removing stable@vger.kernel.org from cc -- they're only interested
+in your patch once it's in Linus' tree]
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+On Fri, Jun 21, 2024 at 10:50:45AM +0100, Vitor Soares wrote:
+> "atmel,attpm20p" DT compatible is missing its SPI device ID entry, not
+> allowing module autoloading and leading to the following message:
+> 
+>   "SPI driver tpm_tis_spi has no spi_device_id for atmel,attpm20p"
+[...]
+> Fix this by adding the corresponding "attpm20p" spi_device_id entry.
+> 
+> Fixes: 3c45308c44ed ("tpm_tis_spi: Add compatible string atmel,attpm20p")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+
+Reviewed-by: Lukas Wunner <lukas@wunner.de>
+
+The old problem that spi modules aren't auto-loaded based on
+MODULE_DEVICE_TABLE(of, ...), but only on MODULE_DEVICE_TABLE(spi, ...):
+
+https://lore.kernel.org/all/20170811081429.GA9957@wunner.de/
+
+Completely forgot that this is still a problem after all these years. :(
+
+Thanks,
+
+Lukas
 
