@@ -1,211 +1,107 @@
-Return-Path: <linux-kernel+bounces-225698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219B59133F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:36:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5130C9133FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 14:46:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4607283984
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889B01C213BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 12:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A46116E877;
-	Sat, 22 Jun 2024 12:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6990816EBF9;
+	Sat, 22 Jun 2024 12:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtQ90NQf"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScVxsZKh"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0255014B97A;
-	Sat, 22 Jun 2024 12:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2F51CA9C;
+	Sat, 22 Jun 2024 12:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719059754; cv=none; b=Ic3s5QEfjYI2f/WwmVCR0bGtf+3x5OXUkupqCAE+L0KkP6dROTikzWH9QXr11F2ljQeUC6Hh1R1CPAe5021B4IhIGINSPw07acwUI5cekI7RdIBdHwZuJBm5MgZM1eSSTodclycAOjbEZjdr/AN27vGUJxo8CC/iQgQMSyBXH0c=
+	t=1719060371; cv=none; b=dxXnrs+7OJ7Z0zdBb3r4TZJCEbs0ONbzItKfcfqtnVAQo61kGkYdH+o6saFZ5DwCsVfLTQr6VDcF78Mnz0c8OQZRl4nWzMrRUnFYbM/B5Tq8SWYdKqfl5wMsKl3OZZppTwki4SjUMqCA/u53OZrVm4q8xIknehLrPDyqUWpWuOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719059754; c=relaxed/simple;
-	bh=UoCLhhSoEs7Xsh66F990Erh/cs3xganzhl/LZol97io=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uf63cFJx0Zfqo994gg7m8pCPC8ZQWkN9YFfzNNJ5CRvV+/m3k45S0Azd1LNBTDtBupjgF5ChrKswO3Vy5NpqMAledCtepVSK9IxrsJrg/P4855iYM7Jw6wCuHbILoBO+lAnqdPWMLXj3q6KyXULarKMY7GnlF/EfeaJTp3R8mgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KtQ90NQf; arc=none smtp.client-ip=209.85.215.181
+	s=arc-20240116; t=1719060371; c=relaxed/simple;
+	bh=j5hoJYoMKSeN68PQ+0IMQBerfpAUDkUHtQ+qPa7GUp8=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=nw2UuY6g5k1ep+nt/5Y5l5zvdqPR4D++BijCguzvruSbJsjn7ONHdu/xvSXZfoMtqR1T+O8eUVNsY6MhISeblEl1cNX0pNP+PvnyqN8BmqHWhEEfU4oOuPtwQvYHbynjhM0PNHiLqpHKRHr2RXxJPCcHWDpitGBJ2sAGySFhI9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScVxsZKh; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-70df213542bso2073239a12.3;
-        Sat, 22 Jun 2024 05:35:52 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d280e2d5dso2517312a12.1;
+        Sat, 22 Jun 2024 05:46:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719059752; x=1719664552; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c1xc+TtnYIYIMppoIZtFnZo/BDI1KVIzOo/Vvnsq9yw=;
-        b=KtQ90NQfv5xCXmzYACgfQ06EZ1bYDqsgJLd7/o8Xnch0ENPyV8eSVOEfoAb9HzcRxU
-         t6GZ+wT3q9RvqsSE/LNb966a7Lkh6S3ZnuK/x+rbApdqvwXJViOx6BCHuh6mAzGNuZpO
-         cwMCY6jro0O3RijCJdK45hIMgjtTJACK8GRd9io+o2AyKGn51IaiFWYSwmsXcXnCHtBT
-         J+vTKvtfu8N/n/1+VQEqgV2jm3qW/Yw4FeAQzEjHZ/EoLzsqpAKJwDnNWP4m5jCH7QFI
-         1mYkOhKcSZerY3eiKft8557gesRp4tLQmF6P2C5Q+gDj5LLFM+/+tpCr3y4LFKT562nh
-         0GZA==
+        d=gmail.com; s=20230601; t=1719060368; x=1719665168; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uHeugCYvp8fzC+q2GNZHm0YL0KES8S+qA5+Z5NcvAl0=;
+        b=ScVxsZKhfii1YNOI/Q156uVqmOm8rya6w0jwcF/w+rl5OCM2WOuiif/FaMXRARdkPv
+         fCypuixccg8c2rSmJTsK3lapXM3NxvHSI71ubN6ZElMM19NyVqE9HF98VRIvpsnkXl9L
+         c4yzNdnrrV0lStS4Fe23oaNPeQGph5cVj+bCd0ceUZS63uGf3zPg/LS/qJXuJKu4+Ied
+         7G4CAmwzBylNnPmewPO4fJgpkVaDn27ccIvYshoJxhkJIVWD0XRc2u4h3yrELf27XsD8
+         OWCr2OhH61AxKCjopNeOc+yrLVgruVHb4bQmkaB4lMT4FL71MzKCjEy9BgnkbnhuIzJq
+         sA5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719059752; x=1719664552;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c1xc+TtnYIYIMppoIZtFnZo/BDI1KVIzOo/Vvnsq9yw=;
-        b=SyllPrQFjgr45Pxj7cz7lX8JNKRN1CWpUZh3MDUvGFEd6MEn+Y7dNwZ6dVLB4mSAeV
-         TRM+JRmHRF8pG5WTySjRn6Dp/yMhbt3zhO2wHGHXK2eCNtyB46L9HR8bPgxszomuzXLN
-         WvPs4pBfmkN7bDvx6BlFwW4p6WXGuL/bqJVw7uIR/hwUPVw1V1pvQ3bOspDZNQEiYXuZ
-         UM8TCf/racKjsmdCJCuLCmaQKYmsPxjucLUe5Cp4XKgzsbyt5mv/2sPWlCcrvlqEEslB
-         z45fD39W0fzzEaYe21cyRT8eVNrUmGdnjV/74dPBDrMD8S04as5LLjgUJ/0VEcLoqOfF
-         DMJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUITsDpfdI5ZUFowU07ygDLu9GikVlMJkS08zUBOraafKpHK17R5iwESaJCD559zHliP4cCHY6XbFS+HNqtdibz9CBOiFCW8hr0wCy6Rr9xwwnrH42ac1SwXEvh4pewyUsukNHhFSFdAXc3mBF9E9Z/FIIzYNBYhDo/elnoxMr9XW8cmA==
-X-Gm-Message-State: AOJu0Yynn2CUCKS8ipm+edTqWsu+Z303bJZngtfqJknnY442YFrwlIYd
-	awLt5GKAfWT7dgOpwon3zN12f9JBByRk4Jjg9Nu30Hk22qEH1SG/
-X-Google-Smtp-Source: AGHT+IGLBRP+PAayAeSE/5IwGuRJFMtD8w0U3b/DjMbel8NOE8coq2EuYXpkzwEEH3fzSn/GB/ZkMg==
-X-Received: by 2002:a05:6a21:1a1:b0:1b6:dae0:5531 with SMTP id adf61e73a8af0-1bcbb5c9c1bmr13189827637.46.1719059752043;
-        Sat, 22 Jun 2024 05:35:52 -0700 (PDT)
-Received: from [100.90.230.39] ([45.32.86.188])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb31f669sm30300055ad.63.2024.06.22.05.35.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jun 2024 05:35:51 -0700 (PDT)
-Message-ID: <26db1f7b-bde9-43a5-8c9b-4323ccfc59cf@gmail.com>
-Date: Sat, 22 Jun 2024 20:35:41 +0800
+        d=1e100.net; s=20230601; t=1719060368; x=1719665168;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uHeugCYvp8fzC+q2GNZHm0YL0KES8S+qA5+Z5NcvAl0=;
+        b=KdQZM9E3ES91cu0BX+hhfjkmR6OO0Z6OVYgyf7HJH3s4usUsQ0Re9gvsT8jjKAkDxp
+         hXqvxACBLOXsCSjZSo6VEeDm5dPXgbzGssww7FP4TV9FC3Dubr79YM3UmwN+DE76SRUM
+         ieS+CZbx8MBzgNuYdriLlopU2YyCZwxIL/9/GptJPsZu+F9Nwtz1+FtXWjp6liTMFqbe
+         3oWiYmR81BZuwJQ7w1PPMlKBTv8sgJFI+wAILEzCpq+krnfR73II9xI6bZO6nJu/bISG
+         yKvQeMCid+DeKSaIqKAjhPusLZLZlhuHTTGsW4++IIDaflstma42987hF6uMsHR4Pyv1
+         qMuA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6t5vsL12ZFD+RJeV/PP5Fm1ZjoVvbeieltaDu1m3kUK641Z7zKPAVQQ6WhElQOLsbFldCf9N4Af5HhQRC+RGkskxTMbTk3BDZeUOEyNBvOQs3ZNoZG0BeZDxvW5k17q5TvJNB68evi4FqVo6oTCEH5LztungMiYQi77p8fySCOIRfZxd+
+X-Gm-Message-State: AOJu0YzOB5dSq8n1htDHzzrJ9g2N9oKYY7z7E8GZtWz63WPYffc1cegM
+	NGZX8si7OpYEaKCUO75K80fDbExgELqscpmRu2+0pTVMfj4vxH50
+X-Google-Smtp-Source: AGHT+IHhU0OmigKaPH5wvUVtPVqpNMfKaC2dTNLFNkgOjpiCVtyhuqi+ngksHV8C90I/5T0QQAt0Wg==
+X-Received: by 2002:a50:9f66:0:b0:575:954:7ef with SMTP id 4fb4d7f45d1cf-57d4bd56636mr9334a12.3.1719060367739;
+        Sat, 22 Jun 2024 05:46:07 -0700 (PDT)
+Received: from toolbox.. ([87.200.95.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d31f33086sm2122853a12.61.2024.06.22.05.46.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 05:46:07 -0700 (PDT)
+From: Christian Hewitt <christianshewitt@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org
+Subject: [PATCH 0/2] ASoC: add compatible for ti,pcm5242
+Date: Sat, 22 Jun 2024 12:46:01 +0000
+Message-Id: <20240622124603.2606770-1-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] dt-bindings: iio: proximity: Add TYHX HX9023S
-To: Conor Dooley <conor@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, yasin.lee.x@outlook.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-References: <20240621-add-tyhx-hx9023s-sensor-driver-v6-0-65196a9020f1@gmail.com>
- <20240621-add-tyhx-hx9023s-sensor-driver-v6-2-65196a9020f1@gmail.com>
- <d35f5eba-abb4-4924-89d6-0beb878a0bf7@kernel.org>
- <385a7a64-fc76-4655-bc7f-d89d00b053d5@gmail.com>
- <20240622-superjet-dusk-cfd19f899cc2@spud>
-Content-Language: en-US
-From: Yasin Lee <yasin.lee.x@gmail.com>
-In-Reply-To: <20240622-superjet-dusk-cfd19f899cc2@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Update bindings and add a driver compatible for the pcm5242
+chip used on the Odroid HiFi-Shield2 i2c mezzanine board.
 
-On 2024/6/22 18:51, Conor Dooley wrote:
-> On Sat, Jun 22, 2024 at 01:56:42PM +0800, Yasin Lee wrote:
->> On 2024/6/21 18:12, Krzysztof Kozlowski wrote:
->>
->> Hi ,Krzysztof
->> Thank you for your reply. I have some questions inline.
->>
->> Best regards,
->> Yasin
->>
->>> On 21/06/2024 09:40, Yasin Lee wrote:
->>>> A capacitive proximity sensor
->>>>
->>>> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
->>>> ---
->>>>    .../bindings/iio/proximity/tyhx,hx9023s.yaml       | 115 +++++++++++++++++++++
->>>>    1 file changed, 115 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
->>>> new file mode 100644
->>>> index 000000000000..beca70ce7609
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
->>>> @@ -0,0 +1,115 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: TYHX HX9023S capacitive proximity sensor
->>>> +
->>>> +maintainers:
->>>> +  - Yasin Lee <yasin.lee.x@gmail.com>
->>>> +
->>>> +description: |
->>>> +  TYHX HX9023S proximity sensor. Datasheet can be found here:
->>>> +    http://www.tianyihexin.com/ueditor/php/upload/file/20240614/1718336303992081.pdf
->>>> +
->>>> +allOf:
->>>> +  - $ref: /schemas/iio/iio.yaml#
->>> Which part of iio.yaml binding do you use here? I cannot find anything,
->>> so this looks wrong.	
->>>
->> I will remove this reference.
->>
->>
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: tyhx,hx9023s
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  interrupts:
->>>> +    description:
->>>> +      Generated by device to announce preceding read request has finished
->>>> +      and data is available or that a close/far proximity event has happened.
->>>> +    maxItems: 1
->>>> +
->>>> +  vdd-supply: true
->>>> +
->>>> +  "#address-cells":
->>>> +    const: 1
->>>> +
->>>> +  "#size-cells":
->>>> +    const: 0
->>>> +
->>>> +patternProperties:
->>>> +  "^channel@[0-4]$":
->>>> +    $ref: /schemas/iio/adc/adc.yaml
->>>> +    type: object
->>>> +
->>>> +    properties:
->>>> +      reg:
->>>> +        minimum: 0
->>>> +        maximum: 4
->>>> +        description: The channel number.
->>>> +
->>>> +      input-channel:
->>> Isn't this duplicating single-channel property?
->>>
->>> Where is this property defined (which common schema)?
->>>
->> |input-channel| is indeed intended for single-ended configuration, but I
->> couldn't find a definition
->>
->> or reference for |single-channel| anywhere. If possible, should I rename
->> |input-channel| to |single-channel|?
-> Single-channel is new, it should be the next branch of the iio tree and
-> in linux-next.
+Christian Hewitt (2):
+  dt-bindings: sound: add ti,pcm5424 to pcm512x
+  ASoC: Add support for ti,pcm5242 to the pcm512x driver
 
-Hi Conor，
+ Documentation/devicetree/bindings/sound/pcm512x.txt | 2 +-
+ sound/soc/codecs/pcm512x-i2c.c                      | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-Thank you for informing me. I plan to temporarily add a prefix to this 
-attribute to distinguish it and update it in the future. Is this the 
-correct approach?
-
--       single-channel:
-
-+      tyhx,single-channel:
-         $ref: /schemas/types.yaml#/definitions/uint32
-         minimum: 0
-         maximum: 4
-         description:
-           Specify the input pin used in single-ended configuration.
-
-
-Best regards，
-
-Yasin
+-- 
+2.34.1
 
 
