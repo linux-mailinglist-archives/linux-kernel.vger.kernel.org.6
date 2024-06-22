@@ -1,84 +1,64 @@
-Return-Path: <linux-kernel+bounces-225486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3F991311F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 02:15:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2815F913124
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 02:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E362829F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:15:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1D651F22620
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 00:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF27EC4;
-	Sat, 22 Jun 2024 00:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A821C32;
+	Sat, 22 Jun 2024 00:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="eNM4Ie+Q"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="dh+pZiJO"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4233385
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 00:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752027E2;
+	Sat, 22 Jun 2024 00:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719015338; cv=none; b=m0kxso5onvJ8CH5/1gPRnJ/hrrj6wtcLJvexydqiMTGzX4SdVeUaIsKr2q+B/oL8vihgyFXoBTruc6t/W1PN3sZz1OQmnM+goIEsASfjn5cOEI8hpBQjPVR1K3omBSpKx5pMx3JNe79KBJfn0BAkWA19zvglCy9BT3JLTDJLUdc=
+	t=1719015763; cv=none; b=O4NbfSWG0fpnmu+QGnw9T5roos3YJEUULCYOLXAlfd3FOlMLe7j9GKH6cQRW07ukt0zzZCyTqOd4w4VWu4DHepdbWdPrXyG7JJBoeaQdWPc0uD4pJ6IDfQRjc5fl8rxye6TmdqgEhhtlyp9yEA5MV3ndHLFTNC+Fah2M+C7Vi4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719015338; c=relaxed/simple;
-	bh=42Gk9ltosHEs3RAIIv2aCgBgUVzrXuTeoBaW5r4lUTQ=;
+	s=arc-20240116; t=1719015763; c=relaxed/simple;
+	bh=En/fn5XzRu8qqC+N8HlyBSRi6I96WhnRYtmMy55Q0T4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dbWhOwjqhX8pV5DiAaL/knk26Nk9GD59t/Ql8hifx0ThayaI+JKBbL4EM+2pDh01npcO3s0MC1Cus90BJiarLCWy2NAbBIAGx2CXm778X7910DseKrCWCRPo9E1GN+IMT944RWbPqucJl9UlwYIQ8gOfOFFRKT+8BODJqr0xsRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=eNM4Ie+Q; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b51409093aso8813016d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 17:15:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719015334; x=1719620134; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fZHfc77+AsBI7ZIvrtDn0Ug3Hq+I59HmK7jqskjzb04=;
-        b=eNM4Ie+QL7myth39FV7xGExc0VY6/f8raLWHCvEw2UJWV0eZMTF8PnOwdQm6ahT2x/
-         QPrF6UEo7RGmw503+UnmBc/PFyomGKf8o3ny+csTQd0yDPAY0e4ufy8wW4I+1jME+Kzn
-         eSL0wrLuimGiIyIAr5tHeYBBFtZXLYcqoIrPH84kA5nGpaCDh3f/K6h0o3Jip8UYKxy7
-         qQpoTBqQmv2m1662c8TowS+dUdpViAHPEKRBNm8zpwLo15A8GSHCo9C59ZfSqmpoj3R3
-         zLN/UL28oZKN7PCXC156ShB1luSGXHT3PTexzZ7Pdlt5KEwogRBHrZZsPXp6qYJc+Xsn
-         ANig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719015334; x=1719620134;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fZHfc77+AsBI7ZIvrtDn0Ug3Hq+I59HmK7jqskjzb04=;
-        b=Pg4Xokm2qwLN1la1zzUYKQPryfNC0Jg6Z93v4FB4xKZ0TJOJyNR9I22A2lHIsqZU7E
-         9KAlLRbtBmrAysNyegckpgM9MGpLsxDp08f8wRn0a2BDHjsKZPwWyj/GYagZtDaaEI2Y
-         CEFi3yy1wga605UWSecg+o44RjGVJUcekWLIaF/E624H3KDEedy8wd53JWOZBIKQ4E/x
-         vZt6cLPq7g+QMr+bsrj2LbaHUOwppGYjQ7yguDa4flTcKptVcfo9aiGKsFi+DkHeAb08
-         hvtdYFd11S8fNRdf2MBcW4Hc91GMi6+9Efi4RYS6jfDX+lLS360Wi7Z9h6OMxEs0ZC3G
-         zTqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUKJ+GP4NDMyRRh4lix4JMzVJgG+YxXv0npSb+3NzW3yw0VGZq2RAvPykrYtb4xAhBcAAjrCIDLN/ZBntyyfTLkyT3IQtS3FS3kJtV
-X-Gm-Message-State: AOJu0Yz7PKut5SgFsjRpP/Imvx/P4eoiSemZ25/OVPo4f+hayFvjcdfn
-	dsHyPke/4fO+7YyLDgfOdQo0d3cEYkUftwjgNcjJcHLRnmOy5sBE9Ib+IvzFxoA=
-X-Google-Smtp-Source: AGHT+IEtfCy5irRgq406mdhqbxVK6tZ1eMVhw9yVZQWpU9YbH61bgxHPSLSuJD0F7ka6qLXmDGQySQ==
-X-Received: by 2002:ad4:4dce:0:b0:6b4:fbec:952f with SMTP id 6a1803df08f44-6b501e45db7mr110916156d6.25.1719015334476;
-        Fri, 21 Jun 2024 17:15:34 -0700 (PDT)
-Received: from ghost ([50.236.12.33])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ed181fcsm13145516d6.39.2024.06.21.17.15.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 17:15:34 -0700 (PDT)
-Date: Fri, 21 Jun 2024 17:15:29 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Anton Blanchard <antonb@tenstorrent.com>,
-	Cyril Bur <cyrilbur@tenstorrent.com>
-Subject: Re: [PATCH 1/6] riscv: Improve exception and system call latency
-Message-ID: <ZnYXoSDCeQK0Lcz8@ghost>
-References: <20240616170553.2832-1-jszhang@kernel.org>
- <20240616170553.2832-2-jszhang@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e6faQhxoUxwZnTctjM7aLON42s9NVnngkeAzxAjwmaITR5YQocHjjxPvosAUVGtzjSiE78QrVCV5FVqM7LhOJOVlIRKvUlKk3zG0oO/FLvDShCNUkxAlorDmPi6fqMNLNa/9yErtLpnioz5sgWUcUnmHkbeJrvL1ejjgTkxGJrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=dh+pZiJO; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1719015750; bh=En/fn5XzRu8qqC+N8HlyBSRi6I96WhnRYtmMy55Q0T4=;
+	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+	b=dh+pZiJO6J7C8WZbaASR9rKURRAU4kMsRx64Pqih9eBS3je8rfX9h5xQpntWM83l8
+	 vSt8w9EDKNDaTotaldRde6toHwH0uhmJ6Jw/VcmX1EuNHQ/ZNYrMGXPqYx6/CZo62P
+	 HQTynxBU87v7Rb3vOj+hBnFmQU2KaSQow7lj1bTU=
+Date: Sat, 22 Jun 2024 02:22:29 +0200
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: Jacobe Zang <jacobe.zang@wesion.com>
+Cc: arend.vanspriel@broadcom.com, kvalo@kernel.org, duoming@zju.edu.cn, 
+	bhelgaas@google.com, minipli@grsecurity.net, linux-wireless@vger.kernel.org, 
+	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, nick@khadas.com, 
+	efectn@protonmail.com, jagan@edgeble.ai, dsimic@manjaro.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] net: wireless: brcmfmac: Add support for AP6275P
+Message-ID: <fro2xcwsnvbxmpszny6g2p36z4zwoq4kegmpvww4twxir5piez@a3c2nbwitmab>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
+	Jacobe Zang <jacobe.zang@wesion.com>, arend.vanspriel@broadcom.com, kvalo@kernel.org, 
+	duoming@zju.edu.cn, bhelgaas@google.com, minipli@grsecurity.net, 
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, 
+	nick@khadas.com, efectn@protonmail.com, jagan@edgeble.ai, dsimic@manjaro.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <20240620020015.4021696-1-jacobe.zang@wesion.com>
+ <20240620020015.4021696-4-jacobe.zang@wesion.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,122 +67,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240616170553.2832-2-jszhang@kernel.org>
+In-Reply-To: <20240620020015.4021696-4-jacobe.zang@wesion.com>
 
-On Mon, Jun 17, 2024 at 01:05:48AM +0800, Jisheng Zhang wrote:
-> From: Anton Blanchard <antonb@tenstorrent.com>
-> 
-> Many CPUs implement return address branch prediction as a stack. The
-> RISCV architecture refers to this as a return address stack (RAS). If
-> this gets corrupted then the CPU will mispredict at least one but
-> potentally many function returns.
-> 
-> There are two issues with the current RISCV exception code:
-> 
-> - We are using the alternate link stack (x5/t0) for the indirect branch
->   which makes the hardware think this is a function return. This will
->   corrupt the RAS.
-> 
-> - We modify the return address of handle_exception to point to
->   ret_from_exception. This will also corrupt the RAS.
-> 
-> Testing the null system call latency before and after the patch:
-> 
-> Visionfive2 (StarFive JH7110 / U74)
-> baseline: 189.87 ns
-> patched:  176.76 ns
-> 
-> Lichee pi 4a (T-Head TH1520 / C910)
-> baseline: 666.58 ns
-> patched:  636.90 ns
-> 
-> Just over 7% on the U74 and just over 4% on the C910.
-> 
-> Signed-off-by: Anton Blanchard <antonb@tenstorrent.com>
-> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
+On Thu, Jun 20, 2024 at 10:00:15AM GMT, Jacobe Zang wrote:
+> This module features BCM43752A2 chipset. The firmware requires
+> randomness seeding, so enabled it.
 
-Do you need to sign this off since you're sending this Jisheng?
+Any reason to strip info about origin of the patch, my SoB and
+present this work as your own?
 
+Original patch here https://megous.com/git/linux/commit/?h=ap6275p-6.10&id=1a99573bc8ed412e60e1969c0b29d53a0e5782e0
+
+regards,
+	o.
+
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
 > ---
->  arch/riscv/kernel/entry.S      | 17 ++++++++++-------
->  arch/riscv/kernel/stacktrace.c |  4 ++--
->  2 files changed, 12 insertions(+), 9 deletions(-)
+>  drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c      | 5 ++++-
+>  .../net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h    | 2 ++
+>  2 files changed, 6 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index 68a24cf9481a..c933460ed3e9 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -88,7 +88,6 @@ SYM_CODE_START(handle_exception)
->  	call riscv_v_context_nesting_start
->  #endif
->  	move a0, sp /* pt_regs */
-> -	la ra, ret_from_exception
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+> index f241e1757d7e3..add317731126c 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
+> @@ -71,6 +71,7 @@ BRCMF_FW_CLM_DEF(4377B3, "brcmfmac4377b3-pcie");
+>  BRCMF_FW_CLM_DEF(4378B1, "brcmfmac4378b1-pcie");
+>  BRCMF_FW_CLM_DEF(4378B3, "brcmfmac4378b3-pcie");
+>  BRCMF_FW_CLM_DEF(4387C2, "brcmfmac4387c2-pcie");
+> +BRCMF_FW_CLM_DEF(43752, "brcmfmac43752-pcie");
 >  
->  	/*
->  	 * MSB of cause differentiates between
-> @@ -97,7 +96,8 @@ SYM_CODE_START(handle_exception)
->  	bge s4, zero, 1f
+>  /* firmware config files */
+>  MODULE_FIRMWARE(BRCMF_FW_DEFAULT_PATH "brcmfmac*-pcie.txt");
+> @@ -105,6 +106,7 @@ static const struct brcmf_firmware_mapping brcmf_pcie_fwnames[] = {
+>  	BRCMF_FW_ENTRY(BRCM_CC_43664_CHIP_ID, 0xFFFFFFF0, 4366C),
+>  	BRCMF_FW_ENTRY(BRCM_CC_43666_CHIP_ID, 0xFFFFFFF0, 4366C),
+>  	BRCMF_FW_ENTRY(BRCM_CC_4371_CHIP_ID, 0xFFFFFFFF, 4371),
+> +	BRCMF_FW_ENTRY(BRCM_CC_43752_CHIP_ID, 0xFFFFFFFF, 43752),
+>  	BRCMF_FW_ENTRY(BRCM_CC_4377_CHIP_ID, 0xFFFFFFFF, 4377B3), /* revision ID 4 */
+>  	BRCMF_FW_ENTRY(BRCM_CC_4378_CHIP_ID, 0x0000000F, 4378B1), /* revision ID 3 */
+>  	BRCMF_FW_ENTRY(BRCM_CC_4378_CHIP_ID, 0xFFFFFFE0, 4378B3), /* revision ID 5 */
+> @@ -1721,7 +1723,7 @@ static int brcmf_pcie_download_fw_nvram(struct brcmf_pciedev_info *devinfo,
+>  		memcpy_toio(devinfo->tcm + address, nvram, nvram_len);
+>  		brcmf_fw_nvram_free(nvram);
 >  
->  	/* Handle interrupts */
-> -	tail do_irq
-> +	call do_irq
-> +	j ret_from_exception
->  1:
->  	/* Handle other exceptions */
->  	slli t0, s4, RISCV_LGPTR
-> @@ -105,11 +105,14 @@ SYM_CODE_START(handle_exception)
->  	la t2, excp_vect_table_end
->  	add t0, t1, t0
->  	/* Check if exception code lies within bounds */
-> -	bgeu t0, t2, 1f
-> -	REG_L t0, 0(t0)
-> -	jr t0
-> -1:
-> -	tail do_trap_unknown
-> +	bgeu t0, t2, 3f
-> +	REG_L t1, 0(t0)
-> +2:	jalr t1
-> +	j ret_from_exception
-> +3:
-> +
-
-The whitespace is odd here, but nonetheless:
-
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-
-> +	la t1, do_trap_unknown
-> +	j 2b
->  SYM_CODE_END(handle_exception)
->  ASM_NOKPROBE(handle_exception)
->  
-> diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
-> index 528ec7cc9a62..5eb3d135b717 100644
-> --- a/arch/riscv/kernel/stacktrace.c
-> +++ b/arch/riscv/kernel/stacktrace.c
-> @@ -16,7 +16,7 @@
->  
->  #ifdef CONFIG_FRAME_POINTER
->  
-> -extern asmlinkage void ret_from_exception(void);
-> +extern asmlinkage void handle_exception(void);
->  
->  static inline int fp_is_valid(unsigned long fp, unsigned long sp)
->  {
-> @@ -70,7 +70,7 @@ void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
->  			fp = frame->fp;
->  			pc = ftrace_graph_ret_addr(current, NULL, frame->ra,
->  						   &frame->ra);
-> -			if (pc == (unsigned long)ret_from_exception) {
-> +			if (pc == (unsigned long)handle_exception) {
->  				if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
->  					break;
->  
+> -		if (devinfo->otp.valid) {
+> +		if (devinfo->otp.valid || devinfo->ci->chip == BRCM_CC_43752_CHIP_ID) {
+>  			size_t rand_len = BRCMF_RANDOM_SEED_LENGTH;
+>  			struct brcmf_random_seed_footer footer = {
+>  				.length = cpu_to_le32(rand_len),
+> @@ -2710,6 +2712,7 @@ static const struct pci_device_id brcmf_pcie_devid_table[] = {
+>  	BRCMF_PCIE_DEVICE(BRCM_PCIE_4366_5G_DEVICE_ID, BCA),
+>  	BRCMF_PCIE_DEVICE(BRCM_PCIE_4371_DEVICE_ID, WCC),
+>  	BRCMF_PCIE_DEVICE(BRCM_PCIE_43596_DEVICE_ID, CYW),
+> +	BRCMF_PCIE_DEVICE(BRCM_PCIE_43752_DEVICE_ID, WCC),
+>  	BRCMF_PCIE_DEVICE(BRCM_PCIE_4377_DEVICE_ID, WCC),
+>  	BRCMF_PCIE_DEVICE(BRCM_PCIE_4378_DEVICE_ID, WCC),
+>  	BRCMF_PCIE_DEVICE(BRCM_PCIE_4387_DEVICE_ID, WCC),
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
+> index 44684bf1b9acc..c1e22c589d85e 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
+> +++ b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
+> @@ -52,6 +52,7 @@
+>  #define BRCM_CC_43664_CHIP_ID		43664
+>  #define BRCM_CC_43666_CHIP_ID		43666
+>  #define BRCM_CC_4371_CHIP_ID		0x4371
+> +#define BRCM_CC_43752_CHIP_ID		43752
+>  #define BRCM_CC_4377_CHIP_ID		0x4377
+>  #define BRCM_CC_4378_CHIP_ID		0x4378
+>  #define BRCM_CC_4387_CHIP_ID		0x4387
+> @@ -94,6 +95,7 @@
+>  #define BRCM_PCIE_4366_5G_DEVICE_ID	0x43c5
+>  #define BRCM_PCIE_4371_DEVICE_ID	0x440d
+>  #define BRCM_PCIE_43596_DEVICE_ID	0x4415
+> +#define BRCM_PCIE_43752_DEVICE_ID	0x449d
+>  #define BRCM_PCIE_4377_DEVICE_ID	0x4488
+>  #define BRCM_PCIE_4378_DEVICE_ID	0x4425
+>  #define BRCM_PCIE_4387_DEVICE_ID	0x4433
 > -- 
-> 2.43.0
+> 2.34.1
 > 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
