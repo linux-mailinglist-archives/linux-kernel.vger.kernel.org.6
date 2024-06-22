@@ -1,110 +1,207 @@
-Return-Path: <linux-kernel+bounces-225824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20A69135C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F459135C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E39C61C21089
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:00:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 601EA283678
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9A83F9ED;
-	Sat, 22 Jun 2024 19:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AC33FBA7;
+	Sat, 22 Jun 2024 19:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="NeK3mTs1"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="fkZ6bI9I";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OnBs5KqO"
+Received: from wfout6-smtp.messagingengine.com (wfout6-smtp.messagingengine.com [64.147.123.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF54717BD9;
-	Sat, 22 Jun 2024 19:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5CD1863E;
+	Sat, 22 Jun 2024 19:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719082831; cv=none; b=d5RaHMI2N2tU+XYNB0PvnYFkKzf0eb0iLPI0Mp4dajBOV/IssimzOTwK+q9avdSr/aX4qC/dCXIGT6aOj6prIok1CIhaqGeHHTZwwJNPuJuwYp6N0LrutSKMRNWDUOMEEuzAed2czkh9INCkoG0pb8bECpPhTqNx8QgixKZbGJE=
+	t=1719083212; cv=none; b=Bkau6AqZvMhuIVKrxFvYYUDJtZcIXioEEUzb1IDz6fu2UlcN3TqRINiXrlBx2P5RnS1qqibplCoBou0PmXxKFWoFgVrPcmYFIxAPVCvdD1FuBvgMiLydfW2xxXJDu6SsenFw03htXoD21LpxEL/DJxJUbaUEkouO3HP/CmNA3Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719082831; c=relaxed/simple;
-	bh=Jzv0/Wz5JQ9TZ///bIDGcWuO9vF0bg91xvMB0LraRAc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BfedcXCibDnRvEpzv4brTEnEkqHDiYvF7bZHr6KoNFRNeZHL2+3v975zEEg2/mizigWBgEqAACH8lUIOJfKmHissJeF1CgOTDHCq5QiCF5MLmv0Bz4afd4hnpn9UbwS1eTWx4+NilfwpH9RctItXXR1KSlHYBCK2eH9zZYDAQlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=NeK3mTs1; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f47f07acd3so25696315ad.0;
-        Sat, 22 Jun 2024 12:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1719082829; x=1719687629; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jzv0/Wz5JQ9TZ///bIDGcWuO9vF0bg91xvMB0LraRAc=;
-        b=NeK3mTs1aI1uSoorvafseeb5tZ5ztU2TUWBjMw1mx5WSZsFRrsJ016CKnGSvJwxLtT
-         2oNlUHzctg3WMaM93YWgJ+oT8twWCWWJhq6Sz3R/tDaKrHmwzHXz+Bgtc/XpgpY68hZ4
-         /hGaGGqA+O/v775nubq3Q0VoimO6ry/eqMjadJ0jBoaYJdFpbYkalTrQA4AWftwghSP5
-         aG5sYlYkyvh30EMtXTxAYf13k3EItWSDwP7SOWs275RiRRo/3bnLQRUChSeIzmDGLNvm
-         0vW6uRB70+TughjTIea25cFNKNb+cTAV6XY9VtWepuBdNDrHpoHkCUWOWPpOenRoPzeC
-         tQEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719082829; x=1719687629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jzv0/Wz5JQ9TZ///bIDGcWuO9vF0bg91xvMB0LraRAc=;
-        b=tCUg2LpZoij4ilQ1IPFRRU7DVC6bHFsiCWncNFFJHe3EDwiJkvrONy2Hl2Y9Y3eie+
-         MKE8HpF5RDJzv+g2CMRXK2dwYBx/7o6OwYUQRov+DYaXReZU0S3I5Hiy3Xysq3QkgokF
-         k9AX35qdJoF3d/snzNwbvf0m8isXtm52UCGg4svmwIrnTzfntNd5ltuBwSl3v4Cq7ibl
-         kftq3zvRI18DM4TtmT6tF9EPAQiQCUJfQ7mzOP2Y8IIq5FJ9OwcOp/TzlIsO0nNj2u4F
-         pBajdAqQec/5zWuWGxLPC/m6h/pGmRAIVRdnWmxTxS9i/Eg9ZVudKVMTfArixPCH924Y
-         Mn6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUwmXLaOjhmUbRdBoY7A0CHETruZSbMF5vRAqkQpIqa491FFnd0pNhKHVAtP5VAi58JMjlCaFDIMJXZ7h+G+jkGAIdz8hA/kpzCw/HFg6DOz6H/gn3jWx9sOcu/rD2lZPVbP1HCA8IH
-X-Gm-Message-State: AOJu0Ywh8SZVLaJ3oDlbv3LIJKgbDjK3CJCbzWHHk0eNy8v5cdVRrZWJ
-	3a3H38Sg1ni7y9ddtYOge3/tpFbFz901AbJRvdroGzbL8xCfRdDw1HmwAun39DEjhm+6rGLExiM
-	BucZuUMZkPE164lPG6GgaOBraVbFdFA==
-X-Google-Smtp-Source: AGHT+IFuSCy9jhe6LZG/UOLv7mToAkkSDK8bSG1QPp68NQt/k8OjtuXhSEhsjcloI7rLySiidT7m5XouBTLO9thR1jE=
-X-Received: by 2002:a17:903:1cf:b0:1fa:feb:c835 with SMTP id
- d9443c01a7336-1fa1d3de5c7mr14078745ad.7.1719082828933; Sat, 22 Jun 2024
- 12:00:28 -0700 (PDT)
+	s=arc-20240116; t=1719083212; c=relaxed/simple;
+	bh=r4NAfeztUwL/BJd+0mcWpNeVg5Ang9ARryrTpzHPa+k=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=M1aRaNiCNnzryjjX6Su/ELoEzCfPXQxjda5J/EaA/khjoI8M/Q0NDcjABZA7ekBmXIr5GdTuzkTzqJ/6WIrZteIely5x79N/9fnXfE4A9QfDryz0hAWZy0Kj77qZHC6qjNwgX53cHk3vAMTb2Q8RaCFPxxnqjBiu1OXNDCpxECQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=fkZ6bI9I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OnBs5KqO; arc=none smtp.client-ip=64.147.123.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.west.internal (Postfix) with ESMTP id 99BE91C000B8;
+	Sat, 22 Jun 2024 15:06:48 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Sat, 22 Jun 2024 15:06:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1719083208;
+	 x=1719169608; bh=3iSvzQUPYRn852sXVZfCY1CE4cmCTtU2TMLXcCOvQbM=; b=
+	fkZ6bI9IpohMYDUUkPo3p/kyXC18E0xZqreS1hFTYErYS57Csgq2OAB4k3PN8piG
+	TvP494JDC2rMYMybTge9rQpEFf7ezMu7W32jAp1PAtl0eTps0+xz0aypcazmP8OZ
+	GTTdyThRz3wH0xhFIaHtqic57f4eGqg3zl1LbXgjwsiRUmnClCYZJi4N23SHgOVP
+	X0Shlg7fCzu1pXuM1Wi1tMkZp+y8swoM8/kn7O1y8O1v2N9omChAuwrih2R+ImON
+	L9mqmkmFTR61a/vx+l3CQ7b5s1mHxWJo5s2hH0B6vCDKJV7I5By5DVHep8iLtUVx
+	0D407COsDaU5XRZ8ml2ZDg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719083208; x=
+	1719169608; bh=3iSvzQUPYRn852sXVZfCY1CE4cmCTtU2TMLXcCOvQbM=; b=O
+	nBs5KqO40qPEbgiIf/1hS2JxxYj0f0hh7prVVuTVyUo33qFK+CukkYVRlPA3ABmk
+	Fdxhqk/jOrJaQj2lB+OGpFdWKjQS6JcXW/8ut9F0fBE6F/h+qNcINwuni7Laavqs
+	oc5EhJkd+hglfCBfDhDTYuINaQe2q3C9rSI92NyHwA8Oj27sOpAJXa/CiCAH214R
+	F2Dlxe4091EFOQsQW8G7bP55rRl54OJhRiLVh3F/6ImwJ8hrN/2SLRyMfs1F9000
+	iC77Cr00LIeH/nd77Vlcdw1prqbZyYv7jP/Oez2zEbqPaCLI/KEwYPcKt36mPXqD
+	MHEgEy5VmYo7SvlYTPGkg==
+X-ME-Sender: <xms:xyB3ZuvTNkecoMW9OJVOmvTVG8kXV-ip7wd9tHjuKMjB_g8qqp8Z7w>
+    <xme:xyB3Zjd5VwOkyaGw9ycMAbAf6BNwPDJNaj_M-5SYMBpK8FODw9ran9XhUeh3pMNor
+    C6n8UyqfrfJU1zsXLw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefiedgudefiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
+    lfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtg
+    homheqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefh
+    jeeugeevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:xyB3ZpxeOmsoIJZxnG5tIsSY_fpdPp2Wjru72Vwz57-ijtujXw8ifg>
+    <xmx:xyB3ZpPcjd0ebMx-BJsybglASWzBGOANtVLtU5ZLp1pZ0oc2R788Mg>
+    <xmx:xyB3Zu_AWtf5edbIQ8XOC4ziAUuG2YIpPKqJPIlnXzQWalyDPGv_kw>
+    <xmx:xyB3ZhV8Ndp7pu4WIUa79TymhUpwO-Xg_jicB4uKL3M0llkg4uksHg>
+    <xmx:yCB3ZhZIb4xe4TVgrocpb694OnJyzEAQlHLpVN4uHm5ZQkfJ_DGlwdou>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 957A636A0074; Sat, 22 Jun 2024 15:06:47 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507131522.3546113-1-clabbe@baylibre.com> <20240507131522.3546113-2-clabbe@baylibre.com>
- <A4B2BDF4-263F-4879-A0C3-399D8A1BF3FE@aparcar.org>
-In-Reply-To: <A4B2BDF4-263F-4879-A0C3-399D8A1BF3FE@aparcar.org>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sat, 22 Jun 2024 21:00:17 +0200
-Message-ID: <CAFBinCBwCCKUS1k0Qb0GttucF3_Nn6CJUTe090RV5AD4CDM-NQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1 v7] usb: serial: add support for CH348
-To: Paul Spooren <mail@aparcar.org>, johan@kernel.org
-Cc: Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org, 
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, david@ixit.cz
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <5eed908d-3943-4a4d-b0ec-c7acdae63c5e@app.fastmail.com>
+In-Reply-To: <6ca74ccf-b93e-4d77-8609-a12a96c15f38@kernel.org>
+References: <20240618-boston-syscon-v3-0-c47c06647a26@flygoat.com>
+ <20240618-boston-syscon-v3-7-c47c06647a26@flygoat.com>
+ <6d3fbd07-72a0-43fd-a1e5-c39e3a833bc1@kernel.org>
+ <51557e31-0a59-4278-a8c1-25cf66fa3c3f@app.fastmail.com>
+ <808f27bf-9dc7-407a-86ff-0a8fae79531c@kernel.org>
+ <856ff7b0-774d-4120-8bd8-01270f5c14b4@app.fastmail.com>
+ <6ca74ccf-b93e-4d77-8609-a12a96c15f38@kernel.org>
+Date: Sat, 22 Jun 2024 20:06:24 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Lee Jones" <lee@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v3 7/8] dt-bindings: mfd: Add img,boston-platform-regs
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul, Hi Johan,
-
-On Wed, Jun 19, 2024 at 3:35=E2=80=AFPM Paul Spooren <mail@aparcar.org> wro=
-te:
-> > On 7. May 2024, at 15:15, Corentin Labbe <clabbe@baylibre.com> wrote:
-> >
-> > The CH348 is an USB octo port serial adapter.
-> > The device multiplexes all 8 ports in the same pair of Bulk endpoints.
-> > Since there is no public datasheet, unfortunately it remains some magic=
- values
-> >
-> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> Tested-by: Paul Spooren <mail@aparcar.org <mailto:mail@aparcar.org>>
-Thanks Paul!
-Johan, is the Tested-by something that you can fix up while applying?
-
-Speaking of applying this patch, it would be great to have it queued
-for Linux 6.11.
-If you have any questions or review comments then please let Corentin
-and me know.
 
 
-Best regards,
-Martin
+=E5=9C=A82024=E5=B9=B46=E6=9C=8822=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
+=8D=887:12=EF=BC=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
+> On 21/06/2024 17:51, Jiaxun Yang wrote:
+>>=20
+>>=20
+>> =E5=9C=A82024=E5=B9=B46=E6=9C=8820=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=
+=E5=8D=887:40=EF=BC=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
+>> [...]
+>>>>
+>>>> Hi Krzysztof,
+>>>>
+>>>> I believe U-Boot's implementation is correct. As per simple-mfd bin=
+ding:
+>>>>
+>>>> ```
+>>>> simple-mfd" - this signifies that the operating system should
+>>>>   consider all subnodes of the MFD device as separate devices akin =
+to how
+>>>>   "simple-bus" indicates when to see subnodes as children for a sim=
+ple
+>>>>   memory-mapped bus.
+>>>> ```
+>>>>
+>>>> This reads to me as "if you want sub nodes to be populated as devic=
+es
+>>>> you need this."
+>>>>
+>>>> In our case there are "clock" and "reset" node sub nodes which shou=
+ld be
+>>>> probed as regular device, so it's true for us.
+>>>
+>>> No, you already got comment from Rob.
+>>>
+>>> Your children depend on parent to provide IO address, so this is not
+>>> simple-mfd. Rule for simple-mfd is that children do not rely on pare=
+nt
+>>> at all.
+>>>
+>> Hi Krzysztof,
+>>=20
+>> Sorry but can I ask for clarification on "depend on parent to provide=
+ IO
+>> address", do you mind explaining it a little bit? Does it mean childr=
+en
+>> should get regmap node from a phandle property, not the parent node? =
+Or there
+>> should be a reg property for child node to tell register offset etc?
+>>=20
+>> There are way too much usage that children "depends" on parents someh=
+ow
+>> in tree, so I want to confirm my understanding.
+>
+>
+> Your driver relies on parent IO address to be provided - what's more to
+> explain here? If parent does not provide syscon, does the child work?
+> No. Therefore it is not suited for simple-mfd.
+>
+I can name too much "simple-mfd" devices that depending on parent to get
+it's syscon, in fact it's true for almost all "simple-mfd" users now.
+
+I greped RISC-V's DTS, and all two users have child nodes depends on par=
+ent
+node to get "IO address". For "canaan,k210-sysctl" it's both "canaan,k21=
+0-clk"
+and "canaan,k210-rst", for "starfive,jh7110-sys-syscon" that's "starfive=
+,jh7110-pll".
+
+If that's something prohibited, then we may need a generic driver in ker=
+nel to
+catch all those syscon devices lost eligibility to "simple-mfd" to get t=
+heir childs
+populated.
+
+We also need to think about how to handle "syscon-reboot-mode" and "sysc=
+on-reboot".
+"syscon-reboot-mode" is explicitly relying on parent IO address, for "sy=
+scon-reboot"
+the ability of not relying on parent node (regmap property) is deprecate=
+d as well.
+
+I think we need to make those rules explicit, I'm happy to write a docum=
+ent or update
+Devicetree specification about that, but I need to make it crystal clear=
+ to myself first.
+
+Thanks
+[...]
+>
+> Best regards,
+> Krzysztof
+
+--=20
+- Jiaxun
 
