@@ -1,136 +1,91 @@
-Return-Path: <linux-kernel+bounces-225764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BCC91350C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:24:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE9891350F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4431F22D40
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:24:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5097E1C20CD9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEA5170822;
-	Sat, 22 Jun 2024 16:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2135170820;
+	Sat, 22 Jun 2024 16:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FH1ddIgZ"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XCOFRe2A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0528825632;
-	Sat, 22 Jun 2024 16:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3638016F82A
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 16:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719073454; cv=none; b=lR8DLhM0sLaZZ7JcZfR1GG4GMoVG9Vf8Gk4fQY8Kjv9IlBOkLo/OqIhjSVGDBg6bQr+D1334L18CTjCcKrfvZ+uCEJ9bW06Xm6QgzjmjdnLWJ9xM4pVG+eCoiyUUKC9EWSRJk/fr9DrCHhDPbFkpLL6+Ky6IUPjoq5KPhBan+Sg=
+	t=1719073657; cv=none; b=ZLkRfN5asc/YJsmllGQw+XwRJvp6ldks28BHl9fJ4PxC9nQMxzzdH0MPMwC0Hj/b+jEzWMSUOtxS1nFAX/BWxG0CNdL+HetvVWWbJFKIhBMdF83nUCt4dSfPjaMZxKwccM9ZUwGsn6z5mOoF2Ior92Du03+I0cted4PZUSVjczM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719073454; c=relaxed/simple;
-	bh=Z8i8kg5ruIzaQvF9ui/N+qkFWHcVNLwOjp79GXf966Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pvJq0JOqP3y2uL6UwTkqYCZcd25rXo5pCZDc1Kzt1LGmYBBl1W64dnJ5oyca/OUyjyUv/fJ8GfVAwo7/39IpZ/sdrVbj9o3HEUbbhdAlPyzi0roqqzpbRmie5Csl+GPX3H5DtoqBEI+oSdecE3GiJ7NXerypu0Z0vTYUDowESrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FH1ddIgZ; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4W600r2Qzwz6CmR07;
-	Sat, 22 Jun 2024 16:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1719073448; x=1721665449; bh=UJYdrMEBRW4r/lhwmdGKzFlw
-	KbiqAIgd3f13bjcWoaQ=; b=FH1ddIgZJpwB1bvqKj8JS8eSHNwwf8OSbKi7+1Zh
-	9jcGV/HC3zNlqLy4vaEW3ooGNDUz6hmIrHklq9B+p0msaVXGcXuE/DnUlbnKvmEL
-	wUIGRIq9j8Wt5fWn615LG3ToZBzJ3K4lrrNPq2ZuKT3bTmpWv7MWfUjvJSonkune
-	cpFx5GJbDgvv+/spVRB/3RIqkroSvoF32eBhhpr50N1Am2GLY2MIjvK9RyVPCzPz
-	FrB3kLIKyBUQevUX45TbVIMMutYcoB0F8PripCd1L/rrdSgbh3Ii3VgY6mZjDndv
-	deB44Nc15+UJ5/M8SrOqZsH4BZEwbIq6NP/gtzQ495nGEA==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 9xpbyM_n4SVR; Sat, 22 Jun 2024 16:24:08 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4W600k1Pvxz6CmQyM;
-	Sat, 22 Jun 2024 16:24:05 +0000 (UTC)
-Message-ID: <8778d191-436d-46cd-a17e-a7d264c32793@acm.org>
-Date: Sat, 22 Jun 2024 09:24:03 -0700
+	s=arc-20240116; t=1719073657; c=relaxed/simple;
+	bh=e2IaS8At5FpY8lmuwQ6MAQ9s2wzZ0gyMj8scn+IVTEI=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=T+mcaKdtp3tqz++k33ygLCtvxSqr4E8/rh72i3wZGOW/Dk4wdne1sYBub0VkTligJWpe11wq1M310AKXHCGXTIR7ARDRT7nBWZjdi4VQMRjfXDKJIZwRNKJ8dAEFcRxFdFE/GfL/X+JLxNXhkoZKHGB2GrPQBl5XK8uFFQUonKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XCOFRe2A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21E1EC3277B;
+	Sat, 22 Jun 2024 16:27:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719073656;
+	bh=e2IaS8At5FpY8lmuwQ6MAQ9s2wzZ0gyMj8scn+IVTEI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XCOFRe2A6gkQKnoyb50tI8NGboRW4iMe+Ua22I/WG+QkG6QlfprubhuJpmVkjjGOd
+	 V3ocpWu2qfUwtQizF6QLnLwZD2HHEmuXNDD+XQrfAZ1SmFYabwyjL2AfxAXKyZncYi
+	 NdkI4sLdqkIoOfttek3ljSf1rvga41iQSfKWqUHx6YUU8EeugkNf9ZZ4t8L9IrOD+m
+	 RLHE4UQykvT7MwmMPOVC4OG5vRp98WQDLpNI4tPy3hZ05YN26KGy+r769NswNwQ5C1
+	 GgS4bSe3HGeBjawKQJbUWACJrKnbKlUMjuwFCZ/P8TEYiFvPI8FgbRsnj+Ebqs444b
+	 IBkNLIAg6d9WQ==
+Message-ID: <f91a2271e0971d201278b80773b6a6b4.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regulator fixes for v6.10-rc4
+Date: Sat, 22 Jun 2024 17:27:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] SCSI fixes for 6.10-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- linux-scsi <linux-scsi@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>
-References: <317d2de5fdb5e27f8f493e0e0ad23640a41b6acf.camel@HansenPartnership.com>
- <CAHk-=whEQRH6eS=_JwanytAKERuWO1JQdzRb4YiLK4omzL2J-Q@mail.gmail.com>
- <yq15xu1oo3e.fsf@ca-mkp.ca.oracle.com>
- <CAHk-=wgLGuYSgbS90MMudryOOjuWYeXaXGeGJRg9SVy1GmLKcQ@mail.gmail.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <CAHk-=wgLGuYSgbS90MMudryOOjuWYeXaXGeGJRg9SVy1GmLKcQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 6/21/24 6:56 PM, Linus Torvalds wrote:
-> But I also know that pretty much *EVERY* time the SCSI layer has
-> decided to start looking at some new piece of data, it turns out that
-> "Oh, look, all those devices have only ever been tested with operating
-> systems that did *NOT* look at that mode page or other thing, and
-> surprise surprise - not being tested means that it's buggy".
+The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
 
-We got the message and we will do what we can to prevent future
-regressions for USB devices.
+  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
 
-As has been mentioned earlier, there is evidence in
-sd_read_write_protect_flag() that SCSI devices may misbehave when
-querying a mode page. However, I was not familiar with that code and
-hence was not aware of the comments in that code. According to the git
-history, these comments were added before 2005, that is before I started
-reading the linux-scsi mailing list.
+are available in the Git repository at:
 
-> My argument is that things should be opt-in.
-> 
-> If it wasn't needed for the previous 30 years go SCSI history, it sure
-> as heck didn't suddenly become necessary today.
-> 
-> So you literally NEVER DO THIS unless the system admin has explicitly
-> enabled it.
-> 
-> That's what opt-in means.
-> 
-> And honestly, then the Android people can decide to opt in. Not random
-> other victims.
- >> What's the advantage of just enabling random new features that have no
-> real use case today?
-> 
-> Put another way: why wasn't this an explicit opt-in from the get-go?
-> And why can't we make that be the rule going forward for the *NEXT*
-> time somebody introduces some random new mode page?
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.10-rc4
 
-The new mode page has been introduced last year in SBC-5. UFS devices 
-have a mix of SLC and TLC NAND internally and the new mode page allows
-device vendors to reduce write amplification. This is important to UFS
-device vendors.
+for you to fetch changes up to 0057222c45140830a7bf55e92fb67f84a2814f67:
 
-I think that the new mode page is useful for all storage devices that
-have a mix of slow and fast storage internally and hence that it is also
-useful for some enterprise storage devices. This is why the new mode
-page is read by default. But as has been mentioned above, we have
-learned our lesson and will be much more careful in the future when
-adding code that modifies the access pattern of the sd driver for USB
-storage devices.
+  regulator: axp20x: AXP717: fix LDO supply rails and off-by-ones (2024-06-12 21:30:43 +0100)
 
-Thanks,
+----------------------------------------------------------------
+regulator: Fixes for v6.10
 
-Bart.
+A few driver specific fixes for incorrect device descriptions, plus a
+fix for a missing symbol export which causes build failures for some
+newly added drivers in other trees.
+
+----------------------------------------------------------------
+Andre Przywara (1):
+      regulator: axp20x: AXP717: fix LDO supply rails and off-by-ones
+
+Biju Das (1):
+      regulator: core: Fix modpost error "regulator_get_regmap" undefined
+
+Kalle Niemi (1):
+      regulator: bd71815: fix ramp values
+
+Thomas Richard (1):
+      regulator: tps6594-regulator: Fix the number of irqs for TPS65224 and TPS6594
+
+ drivers/regulator/axp20x-regulator.c  | 33 +++++++++++++++++++--------------
+ drivers/regulator/bd71815-regulator.c |  2 +-
+ drivers/regulator/core.c              |  1 +
+ drivers/regulator/tps6594-regulator.c | 12 ++++--------
+ 4 files changed, 25 insertions(+), 23 deletions(-)
 
