@@ -1,97 +1,136 @@
-Return-Path: <linux-kernel+bounces-225763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EE991350A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:22:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06BCC91350C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49922844A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4431F22D40
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED6516FF4D;
-	Sat, 22 Jun 2024 16:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEA5170822;
+	Sat, 22 Jun 2024 16:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLQgUTGG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FH1ddIgZ"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA9716C445;
-	Sat, 22 Jun 2024 16:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0528825632;
+	Sat, 22 Jun 2024 16:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719073345; cv=none; b=sbiQhcGTNaMRGqH8g0RIwAi6rRs8/VXb4Sa1vFBV38dPo7l/tj5mfPAQXtuA0Yh9YlL5MNp9QTpb9ASGRshJJ0BTDqQD+q7PAnjjy+ArtMr6IbXiD8lMf+GIm4jsb3RT7TtqDguypGuw2UWp9y2fGQ5crZPHeqgHq7VONQ2030M=
+	t=1719073454; cv=none; b=lR8DLhM0sLaZZ7JcZfR1GG4GMoVG9Vf8Gk4fQY8Kjv9IlBOkLo/OqIhjSVGDBg6bQr+D1334L18CTjCcKrfvZ+uCEJ9bW06Xm6QgzjmjdnLWJ9xM4pVG+eCoiyUUKC9EWSRJk/fr9DrCHhDPbFkpLL6+Ky6IUPjoq5KPhBan+Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719073345; c=relaxed/simple;
-	bh=v734lrashmmLcmU8CA5SsjdAs6vVjhSTF1u5U4dc/6M=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=uNRSncZPEXDIYqpbBPjfiUQ2Z3ulAf+FmjXj0sDAStDZv2rp7DEFu/yIwj7Ov2OCZYriKX1hxaH393DGBlokkItB8q/somCWHqEOb6gJdu/4g9mX7qO1tSIrFy1iWP44YkoC9IK6CJRbeAO9iwHC5l8g428ekHIFhgdANoyMLiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLQgUTGG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F9F3C3277B;
-	Sat, 22 Jun 2024 16:22:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719073344;
-	bh=v734lrashmmLcmU8CA5SsjdAs6vVjhSTF1u5U4dc/6M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZLQgUTGGEjWzkPXs8+8MN7pE7WjCbMtoTX7gHy8+3qXvps8CmKj1zrpvO+iSXgK8a
-	 N6gnUJe2hgyiC9x0aLxgMdItFyg3oFVIFs+b2Zxwcd41B+t5WjfA9zU/jiyWXXv6Qo
-	 SVuWjrXE0VgcoszfjcC06XtqRMr6H5PaE8Ib4g7GymPk7rC0xidxgrSX5AtS+yzBol
-	 e1OLVupad1tQVP9BWWsO+n0JO5sFqj2jmuYgjbm9QpfSZblr6BZNpMkbua2It15y07
-	 hlgCYMXb3QzEu8rtmB3bmq5AbI97Jk6imNvrH3fnLzzDvoddKKqfQpHkI0QqQUN7xr
-	 ftltkDHbR3zkA==
-Message-ID: <fcab2f718f086fd6e070a6ed65a28900.broonie@kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] SPI fixes for v6.10-rc4
-Date: Sat, 22 Jun 2024 17:22:12 +0100
+	s=arc-20240116; t=1719073454; c=relaxed/simple;
+	bh=Z8i8kg5ruIzaQvF9ui/N+qkFWHcVNLwOjp79GXf966Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pvJq0JOqP3y2uL6UwTkqYCZcd25rXo5pCZDc1Kzt1LGmYBBl1W64dnJ5oyca/OUyjyUv/fJ8GfVAwo7/39IpZ/sdrVbj9o3HEUbbhdAlPyzi0roqqzpbRmie5Csl+GPX3H5DtoqBEI+oSdecE3GiJ7NXerypu0Z0vTYUDowESrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FH1ddIgZ; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4W600r2Qzwz6CmR07;
+	Sat, 22 Jun 2024 16:24:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1719073448; x=1721665449; bh=UJYdrMEBRW4r/lhwmdGKzFlw
+	KbiqAIgd3f13bjcWoaQ=; b=FH1ddIgZJpwB1bvqKj8JS8eSHNwwf8OSbKi7+1Zh
+	9jcGV/HC3zNlqLy4vaEW3ooGNDUz6hmIrHklq9B+p0msaVXGcXuE/DnUlbnKvmEL
+	wUIGRIq9j8Wt5fWn615LG3ToZBzJ3K4lrrNPq2ZuKT3bTmpWv7MWfUjvJSonkune
+	cpFx5GJbDgvv+/spVRB/3RIqkroSvoF32eBhhpr50N1Am2GLY2MIjvK9RyVPCzPz
+	FrB3kLIKyBUQevUX45TbVIMMutYcoB0F8PripCd1L/rrdSgbh3Ii3VgY6mZjDndv
+	deB44Nc15+UJ5/M8SrOqZsH4BZEwbIq6NP/gtzQ495nGEA==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 9xpbyM_n4SVR; Sat, 22 Jun 2024 16:24:08 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4W600k1Pvxz6CmQyM;
+	Sat, 22 Jun 2024 16:24:05 +0000 (UTC)
+Message-ID: <8778d191-436d-46cd-a17e-a7d264c32793@acm.org>
+Date: Sat, 22 Jun 2024 09:24:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] SCSI fixes for 6.10-rc4
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linux-scsi <linux-scsi@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+References: <317d2de5fdb5e27f8f493e0e0ad23640a41b6acf.camel@HansenPartnership.com>
+ <CAHk-=whEQRH6eS=_JwanytAKERuWO1JQdzRb4YiLK4omzL2J-Q@mail.gmail.com>
+ <yq15xu1oo3e.fsf@ca-mkp.ca.oracle.com>
+ <CAHk-=wgLGuYSgbS90MMudryOOjuWYeXaXGeGJRg9SVy1GmLKcQ@mail.gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <CAHk-=wgLGuYSgbS90MMudryOOjuWYeXaXGeGJRg9SVy1GmLKcQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
+On 6/21/24 6:56 PM, Linus Torvalds wrote:
+> But I also know that pretty much *EVERY* time the SCSI layer has
+> decided to start looking at some new piece of data, it turns out that
+> "Oh, look, all those devices have only ever been tested with operating
+> systems that did *NOT* look at that mode page or other thing, and
+> surprise surprise - not being tested means that it's buggy".
 
-  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
+We got the message and we will do what we can to prevent future
+regressions for USB devices.
 
-are available in the Git repository at:
+As has been mentioned earlier, there is evidence in
+sd_read_write_protect_flag() that SCSI devices may misbehave when
+querying a mode page. However, I was not familiar with that code and
+hence was not aware of the comments in that code. According to the git
+history, these comments were added before 2005, that is before I started
+reading the linux-scsi mailing list.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.10-rc4
+> My argument is that things should be opt-in.
+> 
+> If it wasn't needed for the previous 30 years go SCSI history, it sure
+> as heck didn't suddenly become necessary today.
+> 
+> So you literally NEVER DO THIS unless the system admin has explicitly
+> enabled it.
+> 
+> That's what opt-in means.
+> 
+> And honestly, then the Android people can decide to opt in. Not random
+> other victims.
+ >> What's the advantage of just enabling random new features that have no
+> real use case today?
+> 
+> Put another way: why wasn't this an explicit opt-in from the get-go?
+> And why can't we make that be the rule going forward for the *NEXT*
+> time somebody introduces some random new mode page?
 
-for you to fetch changes up to df75470b317b46affbe1f5f8f006b34175be9789:
+The new mode page has been introduced last year in SBC-5. UFS devices 
+have a mix of SLC and TLC NAND internally and the new mode page allows
+device vendors to reduce write amplification. This is important to UFS
+device vendors.
 
-  spi: spi-imx: imx51: revert burst length calculation back to bits_per_word (2024-06-19 14:07:13 +0100)
+I think that the new mode page is useful for all storage devices that
+have a mix of slow and fast storage internally and hence that it is also
+useful for some enterprise storage devices. This is why the new mode
+page is read by default. But as has been mentioned above, we have
+learned our lesson and will be much more careful in the future when
+adding code that modifies the access pattern of the sd driver for USB
+storage devices.
 
-----------------------------------------------------------------
-spi: Fixes for v6.10
+Thanks,
 
-A number of fixes that have built up for SPI, a bunch of driver specific
-ones including an unfortunate revert of an optimisation for the i.MX
-driver which was causing issues with some configurations, plus a couple
-of core fixes for the rarely used octal mode and for a bad interaction
-between multi-CS support and target mode.
-
-----------------------------------------------------------------
-Amit Kumar Mahapatra (1):
-      spi: Fix SPI slave probe failure
-
-Charles Keepax (2):
-      spi: cs42l43: Correct SPI root clock speed
-      spi: cs42l43: Drop cs35l56 SPI speed down to 11MHz
-
-Marc Kleine-Budde (1):
-      spi: spi-imx: imx51: revert burst length calculation back to bits_per_word
-
-Patrice Chotard (3):
-      spi: stm32: qspi: Fix dual flash mode sanity test in stm32_qspi_setup()
-      spi: stm32: qspi: Clamp stm32_qspi_get_mode() output to CCR_BUSWIDTH_4
-      spi: Fix OCTAL mode support
-
- drivers/spi/spi-cs42l43.c    |  6 +++---
- drivers/spi/spi-imx.c        | 14 ++------------
- drivers/spi/spi-stm32-qspi.c | 12 +++++-------
- drivers/spi/spi.c            | 16 ++++++++++------
- include/linux/spi/spi.h      |  5 +++--
- 5 files changed, 23 insertions(+), 30 deletions(-)
+Bart.
 
