@@ -1,105 +1,87 @@
-Return-Path: <linux-kernel+bounces-225775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F12913541
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:59:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA19913542
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 19:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD58CB225EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:59:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4FD1F228BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 17:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332D914294;
-	Sat, 22 Jun 2024 16:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5897C1755B;
+	Sat, 22 Jun 2024 17:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HynXeE9z"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HcmHBB/O"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D7FD524;
-	Sat, 22 Jun 2024 16:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A035BA39
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 17:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719075537; cv=none; b=IFCjo4brLZuwe4bJUxiJrCie7CEeOu8cx4J7aNHxMavnt0qZwLXJVp5YAN4xRiNWpGvz5bnSOoFBh9jc6pF8x5VfoIjkH2AiPfelVpY5ddg5lVDLvnCy4jVIMQFZ20P9C/Qzwm+8F73dLeC4r5n7WISwEElj3VPokLmxMlDDVGk=
+	t=1719075925; cv=none; b=RE418F+/sw1L8HEpALwz45hz05o9zUOJ+hl0ZxhbOkBlBowt8ZElUE8Q3xmhXNk2HYObKWgpIGzVboBuRV+SqSNQgCMUvkxNNDAjAcBNFYPWz9VCh2nPbCNRT8eK+dcJ2wF7IXtyJzlfh65m/I71BkFw/Q3KuCU6r0sGRvHsK4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719075537; c=relaxed/simple;
-	bh=LzuEAz5ACZZ3Z9HVdqDIC9jT2azVEnV3YngE0bu/gbE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ojbC1sNvJHQSxRxDjqaUuohhXsQbB8SC+GCr+Rgttlqjl3uINNdk5QHVI/xX0QN7vcpNwio3woEHnEwvAk+x6YVcpbBnwHgbGXaqw7t4kAXqp64c2NHfoaRTjd9o1cS3BWiyGgFiCtOLElpItbYNwIgIW0eqTNGE4dEXPHqH1i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HynXeE9z; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719075502; x=1719680302; i=markus.elfring@web.de;
-	bh=TcDyN6ebGmrRSeGodLD7ggmlinGRC7WoNwqGNQbVxCI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HynXeE9zwyLTMwT3LvzNAqIBXOMeplJ7ZEygRxBvTDjFG32U8fPaMbm7Xywln3/t
-	 7PhhIgySwJ7tg93G5tIHvX/pnhW0aF+gzIuxyt4sLR59KJ7Bx5abEIV3iGVWIHAI+
-	 QqpUEm857O+H4Xt3oQ06oFPddSyNwkBo5v4x0Ky+deTpgRxAM7b/CrLAr2LFo4PT8
-	 Ej+w3ejH7eQ+rszoFzxw+ZnOoSkQ6t36ZGg3yNStWUqCaxizScye8Y68PnIwQIN56
-	 293Auh+CVxGu910cK4fxn1hb7628a25n9gt/t8hzyIKUJ+tE7x1WvCbK3le8qizft
-	 l8IkkASiskUA+VsdhQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5UgI-1sRNVE0Rli-00vfMm; Sat, 22
- Jun 2024 18:58:22 +0200
-Message-ID: <d929faec-a9a0-4076-b67f-31a083c71eaf@web.de>
-Date: Sat, 22 Jun 2024 18:58:20 +0200
+	s=arc-20240116; t=1719075925; c=relaxed/simple;
+	bh=dLTdRMsHypGHOmYS2h9jl/mZNl8Zk2CDSWaZWF2Vva0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FayKJd5OZc5p7wMQh0mA+PmsWIjRU/sfXh2fhJH0obnv/99pykRDGQLXq/aUsVPGK7vR+S4EiNhqixVyBrb0OOQdD8mqeTtd4j4WPHcIG04Dxw9HLOJOY9uXGtQiz0WYreXjaa0G/sT4pzgg+sY40mvE3W3EKJHZryHVdi2B040=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HcmHBB/O; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=UTD2xftu2z4JZcOB2nVc3UtOsaUvmH9Ox+gvHCg/8tg=; b=HcmHBB/OWsj2Y2o0OOwcEhEaPM
+	Ig/Ymu5vverQTnY0DPSFlBSXIDBGf1/9GI/N0qdAmcoKcf3FsFXZjzdGEjm3ABsjOj4SABBcb8Xib
+	2x7UF2Q4PYEbH+8dkoRDjzqclWxtHE5+JGX+fWz4vC8pfrrSSTx0b2jzinGwAHm+CFsc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sL4Ag-000jsY-DF; Sat, 22 Jun 2024 19:05:02 +0200
+Date: Sat, 22 Jun 2024 19:05:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Liu Wei <liuwei09@cestc.cn>
+Cc: prarit@redhat.com, catalin.marinas@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	will@kernel.org
+Subject: Re: [PATCH V3] ACPI: Add acpi=nospcr to disable ACPI SPCR as default
+ console on arm64
+Message-ID: <f706cb73-4219-47fb-a075-e591502be7c2@lunn.ch>
+References: <20240530015332.7305-1-liuwei09@cestc.cn>
+ <20240622093521.71770-1-liuwei09@cestc.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Huai-Yuan Liu <qq810974084@gmail.com>, linux-hippi@sunsite.dk,
- netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Jes Sorensen <jes@trained-monkey.org>, Paolo Abeni <pabeni@redhat.com>,
- Sunil Kovvuri Goutham <sgoutham@marvell.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jia-Ju Bai <baijiaju1990@gmail.com>
-References: <20240622063227.456107-1-qq810974084@gmail.com>
-Subject: Re: [PATCH V3] hippi: fix possible buffer overflow caused by bad DMA
- value in rr_start_xmit()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240622063227.456107-1-qq810974084@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Yy3/QPWZOkPJsFXP2RMxyU9jhXTMPneS8qs+SA9CLZnPk0mJsGA
- I4nyeoQ4z8sSkP7ZVwdybwkKpQAxo7cfjLa1rNTskGVCIZDka8h2XoKJFrPKU+CnEJ1+6gw
- q57bx7ZUpqaZWNHy42lL+V+hUjrRpb7JSwrRaPhVqscKAo+mv4+5HE/QuDrfGNxOtt8jUT+
- lKU1GtDv+i18d44so8OhA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Uhl6KWuMk94=;1Z7xWg8hA+IBBAfoKhZKesB9XQ1
- dcNVJRMdNWpzBVxujF5AlJmgAoOjZtes5HpSgkgLY+qKJvIHa/RnAiy1qKI631Mw4/Sn83z4l
- icDVIEZVEaQoRPoVSrIv9jQnBwTb7LioedbGjVv45BsA1PdJ2rJ/JU1Rge+33eV0cAaNv1/Qu
- fb1ImM+1mDmutizbEjgurhpnt48l8J5pr3bMrEU2aKWQaTZI7GQopjE9HhqthOLRgZaTSoQP1
- mlCp6IUHqrm7FwBuS1eP4ErziruBR6XgzKY5nP45kzbQwxNPUf6GAQIGJy2JdHMAUBxGstRAi
- PzaReWRj49s4U5DapdZPI/Ec76+GisS9sWGAgRGLEgxMD27BFmctOXJMSIZg+QfK3Zw9l9s3B
- QU3vfcQr7gYf8y5e02jy116NXJLiLYn6LeI2wQTYBhG6XgHPpwwHAWFTVJ8E5GHA5Bc4UHpBd
- WPtlOF6iXkbgp0g80WRovrybAzc3knOll5qmAX6ZXqgju9bGHMdiFxF58DssiMXwyzUOeEv4g
- ZGlt/ZD/f5pMGBuduKHw9TCxB9jkXToEXvvyE9CsLg2TX4EFRQpx1K26AVXcZqQFtqn10PiUB
- li8Ya63EpaFZ0jDl0eXHWUtgDA6Ma5rdfaTI5O9xjKkM9qvkpGleTLTxBbcLnFiQQ7pBy/MGD
- +zQ14QaiCT60lEAu8IOugDIGYgkAm8vGvkjxEdanPF8mkuilPun76kUeQqEk5yi6prUib3Cmp
- j7GBxtGLpICacOMcZLkBZHRDNTR5djE36B0nMUGl/hG/A2h1sIR5VFLJSEbWd9CVPKWuUGK5w
- g1lRhKY2m5NryRgnFrRoL+Qd8ivxnfWumvasy2GpN5Jns=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240622093521.71770-1-liuwei09@cestc.cn>
 
-> =E2=80=A6. Becausetxctrl->pi is assigned to =E2=80=A6
+On Sat, Jun 22, 2024 at 05:35:21PM +0800, Liu Wei wrote:
+> For varying privacy and security reasons, sometimes we would like to
+> completely silence the serial console, and only enable it when needed.
+> 
+> But there are many existing systems that depend on this console,
+> so add acpi=nospcr for this situation.
 
-     Word separation?
+Maybe it is just me, but i see nospcr and my brain expands it to "no
+speaker". Adding to that, your commit message says "completely
+silence"...
 
+> +			nospcr -- disable ACPI SPCR as default console on ARM64
+> +			For ARM64, ONLY "acpi=off", "acpi=on", "acpi=force" or
+> +			"acpi=nospcr" are available
+> +			For RISCV64, ONLY "acpi=off", "acpi=on" or "acpi=force"
+> +			are available
 
-> To address this issue, the index should be checked.
+How about putting the word 'serial' in here somewhere, just to give
+users an additional clue you are not talking about a speaker, CTRL-G
+etc.
 
-Can an imperative wording be more desirable for such a change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n94
-
-Regards,
-Markus
+	Andrew
 
