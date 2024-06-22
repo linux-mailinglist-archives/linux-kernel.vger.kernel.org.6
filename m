@@ -1,118 +1,85 @@
-Return-Path: <linux-kernel+bounces-225545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193959131F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 06:40:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8019131F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 06:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C858C2867BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 04:40:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 011F61F22B2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 04:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1326F513;
-	Sat, 22 Jun 2024 04:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CA783CDC;
+	Sat, 22 Jun 2024 04:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B9kPLP8e"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BuOj0PaY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EB95E093;
-	Sat, 22 Jun 2024 04:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0811C83A07;
+	Sat, 22 Jun 2024 04:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719031223; cv=none; b=an57czI7JtQ+53TmmYWTa8Pst9K4APrtEpY8boPoim5RJu8HlGT/oedmLNYlJgxsDnIzNYKEP8WLM7Rd4HPXQ0dVLkGmAw/jmqGa3L1jpXZYJ/JOX05af7oiNh6vxcWCXaIbDxYaJL1ZnSkj9S740Ix1+CHUTd7W/x26Te84LOM=
+	t=1719031942; cv=none; b=StMoXY1qx1IL36gKdusvAfxosB1Qm8mUNIkyfLHCHlDQVGUTz82J3dAJl+dmAwj7+SayUQt9QyOC1TODkjOqm7CWnkyvBfzr8ZJRhNoyQpd7zW8zQk0U2hpfUVnc6viwCxRcadxYnrLUm6PKVC6RZ8qXJ/vA956DbWmnFZzbrO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719031223; c=relaxed/simple;
-	bh=35lPIAcl+pcqfcof5ywz9pzbSIwwh/OcPd7wfAdsxkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iahLxrhKyyFoh+JLfCYbvUoDDr7pB97ap4Yod3O8+KhkEXln3DoJCCleuDf8VGp59jb89OM6Fp/3jRVngghAe+JnQtQjyK++StNEidSt+zyNBLiZokoN96+u6P7LggOxAWDhiovBMnUaKO2kZAQlXlXYewfQhy7IxlV+XPXHjLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B9kPLP8e; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7066463c841so336983b3a.1;
-        Fri, 21 Jun 2024 21:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719031221; x=1719636021; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cukKdkt4tFd+Q1wgdPSxE43mgLW9ldcQfOcQcI9wtyc=;
-        b=B9kPLP8e+WE6GHIFSiHb4RkQuvEZ3uYkx0AZtRDp60R7jdMA62xPBBBBCI6orZurnK
-         +53agDpA0CrGFIedZ4USW1QTc5LoteME5eVbSnSFoHaMDcDWZday8p3iwNM07LXIrJ2E
-         3whsvpqqqLGjVnRki3RLywH34dXOj6Lzt6TJz+XNwXrSbphGPkpzbB5M6BSgLTriC3xZ
-         KtYoT/yLYDsswokb78o7Xt2GKZvwRS3ti5DY9e7lg9xMSymAU2mQd7j6wRrExwuHRz9Z
-         YLNswFIDFytZ9DjCOJlVVGBYRl5hGItkOY77ddOWTHNnbyN5Zmk5M2F0F94M3EWQqT4k
-         hY6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719031221; x=1719636021;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cukKdkt4tFd+Q1wgdPSxE43mgLW9ldcQfOcQcI9wtyc=;
-        b=kFZHQwznAdsr/BJ5+/cDilqBoJq9jx9BSXP2xAbyvTvkdGqJYQeQVjApFaqRPt39/I
-         r3htycWBSzqF2KXzc+xqmD6GYWgxnHuYmisxhbuPqfXmb7HxG74kp3unY/KVuvHs3tfr
-         C2Y1Ypjh9Uxu3+8NDWvVPYKlKCM+j1BdX3e4J+xK3dF+5ePaHxkXGtomC52r65yJWE6k
-         kPkaWZqx5xbfBGLV0m9kcurno0aQ6l14wTrxcJUJvQtQoEeaGRSInQlcrCEyvtzSIiA7
-         WTuAqJ70S+X47anDltdmOTm0MqwjZcYWtsCoOWOTgxj1Jv5GoqZQdCqITnqGjkAPzGQ/
-         zPOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWB0fpZ08/NI5nncu2a4N0/c3d5hoeCqyH4d4G5nm3DFeiDyELL33hD1b1a3n2vULEeLr6OhtmKwGiTVAuvvaW9e2wW470TAzwh8tyNZ80/YXNwWRVzvspHU4trVPjK7RH5itDejfR7atABjVgpIEJjxoCy2aHaKy9q77WJIIf7cqi84orEhqPo
-X-Gm-Message-State: AOJu0YziaiZC78tMj4GgrDu7ktNUVnbFybFVS2X8VfcJuO+AQ2VQq6Fv
-	tHzy2jDcxxlShc47AHAAJ8GQ6btvyUHFOmpILhaXy4+BJoArCA0Y
-X-Google-Smtp-Source: AGHT+IEOkOmeZGXSMZ71jSHndSpMWPeuFbLksWoSe5WdzNoeJi3Oa4TP58fPUoCbu/PdHGBN+IADNQ==
-X-Received: by 2002:a62:6586:0:b0:706:29f3:1f03 with SMTP id d2e1a72fcca58-7064484f37cmr5938980b3a.20.1719031220892;
-        Fri, 21 Jun 2024 21:40:20 -0700 (PDT)
-Received: from [192.168.50.95] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065e2c103bsm1235052b3a.92.2024.06.21.21.40.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 21:40:20 -0700 (PDT)
-Message-ID: <d1889c3d-b910-4599-a666-ea9e1510e6cc@gmail.com>
-Date: Sat, 22 Jun 2024 13:40:14 +0900
+	s=arc-20240116; t=1719031942; c=relaxed/simple;
+	bh=HbVrmtfT+SdnNmVPJNal83B7uUqIYjZq+xdTpW2DmYU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OqXi+4TgSvxSzlpwJN/x1ID9JmUi3AWzEq4SxLQul69VkPPgCWhJk6ZqDKPquHjx+hLLRSeQO/DmljAg2Yy+F5YNA+kU3XSHUj6AzP2W0uIMVEiCflsGwSd+mhXsZlZXoBjFwEaC08HicQF9+Z3uIGRIxzy+9bI/uDt2hCER6uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BuOj0PaY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D55DC32781;
+	Sat, 22 Jun 2024 04:52:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719031941;
+	bh=HbVrmtfT+SdnNmVPJNal83B7uUqIYjZq+xdTpW2DmYU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BuOj0PaYWb+3doJ9rDY3tLFvqXr0k0to4Ff8jv2a21ApuJsg9r904+Ic0TigjfXst
+	 TTWq9vdJnkQdQ/cIDHUdKwNhMasnYCBeB/2Fv/6iVtXDRqQKWHldBhCphSTAgY3L65
+	 NHrva3C5QME0H40iYwVAm7Tgsi8T83YoSsqpECM9jMwHA34tiMNK/kaVdKjldmqkQ+
+	 XbK7qOT5y64eXNlJ+4y/HzfXl52nKw+Cn1FasLIP5QN7tts9/5Ir3DL7++MK6ckBNQ
+	 fzXwYqCQ5xD0v6Cqpbt963VxsQW5tB59pkbewuJn1qz6zRR+Sh/0A2JhM/Oyjhx0lG
+	 uJDWKCbn0BeAQ==
+From: William Breathitt Gray <wbg@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: William Breathitt Gray <wbg@kernel.org>,
+	Judith Mendez <jm@ti.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] counter: ti-eqep: enable clock at probe
+Date: Sat, 22 Jun 2024 13:52:03 +0900
+Message-ID: <171903185635.2727617.17899562703045384773.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240621-ti-eqep-enable-clock-v2-1-edd3421b54d4@baylibre.com>
+References: <20240621-ti-eqep-enable-clock-v2-1-edd3421b54d4@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] net/sched: Fixes: 51270d573a8d NULL ptr deref in
- perf_trace_qdisc_reset()
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Pedro Tammela <pctammela@mojatatu.com>, netdev@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Takashi Iwai <tiwai@suse.de>, "David S. Miller" <davem@davemloft.net>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jamal Hadi Salim
- <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Taehee Yoo <ap420073@gmail.com>,
- Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- ppbuk5246@gmail.com, Yeoreum Yun <yeoreum.yun@arm.com>
-References: <20240621162552.5078-4-yskelg@gmail.com>
- <20240621170546.0588eec5@kernel.org>
-Content-Language: en-US
-From: Yunseong Kim <yskelg@gmail.com>
-In-Reply-To: <20240621170546.0588eec5@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=524; i=wbg@kernel.org; h=from:subject:message-id; bh=hSP1C6Hpr+B++EMexFKtcb4+ZjFuW2uVh0qiaRvN/OE=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDGllERGef8MYF5spGW5/tTX1fF2N6iXrXRxveEWuvyuc3 sqX3JDYUcrCIMbFICumyNJrfvbug0uqGj9ezN8GM4eVCWQIAxenAEzkrB/D/4SSKb43VP6FVLix M0dr/6+UWJK2evrk+InnmytzglT4tjL8FZCPN7z8caH+9qIMzhd7nh9rjLJ3Oz9XbcIZ4Qvas2X +cQEA
+X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
 Content-Transfer-Encoding: 8bit
 
-Hi Jakub,
 
-On 6/22/24 9:05 오전, Jakub Kicinski wrote:
-> On Sat, 22 Jun 2024 01:25:54 +0900 yskelg@gmail.com wrote:
->> Subject: [PATCH net v2] net/sched: Fixes: 51270d573a8d NULL ptr deref in perf_trace_qdisc_reset()
+On Fri, 21 Jun 2024 17:22:40 -0500, David Lechner wrote:
+> The TI eQEP clock is both a functional and interface clock. Since it is
+> required for the device to function, we should be enabling it at probe.
 > 
-> the Fixes tag goes before your signoff, rather than as title.
-> try
+> Up to now, we've just been lucky that the clock was enabled by something
+> else on the system already.
 > 
->   git log --grep=Fixes
+> 
+> [...]
 
-Oh, I'm sorry. I completely misunderstood. Thank you for kindly explaining!
+Applied, thanks!
 
-I'll take your advice and send the next version of the patch!
+[1/1] counter: ti-eqep: enable clock at probe
+      commit: 0cf81c73e4c6a4861128a8f27861176ec312af4e
 
-Warm Regards,
-Yunseong Kim
+Best regards,
+-- 
+William Breathitt Gray <wbg@kernel.org>
 
