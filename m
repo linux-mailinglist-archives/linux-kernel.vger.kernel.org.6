@@ -1,110 +1,113 @@
-Return-Path: <linux-kernel+bounces-225819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C6549135AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:39:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 571779135B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 578FA2835A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:39:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B18E2841B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94233CF74;
-	Sat, 22 Jun 2024 18:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB22A3D551;
+	Sat, 22 Jun 2024 18:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zVCU7IF8"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JIR44fpz"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9E83BBF5
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 18:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D59F374CB;
+	Sat, 22 Jun 2024 18:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719081532; cv=none; b=iao7Vru/vsdK9HP/nQ9P2r/lOkSYqQmXDN+sGu2oxzf7arXgdsJlXXRGu1CEQr/oeLl2mnvnnhWFosur9o0zvYW9LkkGt46EBIk+XgDLeov8rHoOfHYTWWYDrDN71DRc57h0mPmhFsPnm5yAgTFvdpFRe/Y3BUzGIxFWIiCym1I=
+	t=1719081852; cv=none; b=aTVVRshq7X7ziEkRB5la5c5VPlnGHIbUcsGJGETVdY0EiAwFRtv+431z3TRX6WHseGmkRnjIz7gWAIB98XtWndK5ngWpZiGqZ2z5NkKrDVGbJOvkxhISVoqg+1iBumK9/o4bsc5q/SE9mpZ25Z5gItSvcLsYKA0G4Vw1ZDgoYN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719081532; c=relaxed/simple;
-	bh=eKSY7iA1dK6kJuYssYwbw6aV5AwOfW5tqa3WM0e9Pow=;
+	s=arc-20240116; t=1719081852; c=relaxed/simple;
+	bh=GaqX2mqFW19Q4chlPp9rj1RxKUEKyoOt8XkbUUw+HYI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSEh8+aiBDc7bBMSJxKFrWTLPEZkIpgfHhglugE6Rni6y5wOexkTpBs2/gwQ/4QkNnSw2bVIldeJc7ZI4GN35g0LBf2MqAKz6Jvw3kcMn3YAjLyzNoGc0VezXfk/dWnq/oJWzdLPx7D1zCWFkm9VRh0cbbcT4Xcc4sTuJnDQiL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zVCU7IF8; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so36043761fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 11:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719081529; x=1719686329; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XsJSKrhXwcm2yba7E5HX5qGoubHmUX2L5c9+i3qWphk=;
-        b=zVCU7IF8a/bVMmcYezFcX7bIaxrOeb8sPETyqZFfBn41HHu77rK08WlgsKVEcOSOBZ
-         g9ODixoXZFbkhA++N9KOsTzsoQaCytfq4sSyAD/CP/rUV3MzCRbN2880s/wGJD0CIomN
-         +mbTPtn4liyREUlh8nzRjfz/6niwCxmzUP0xpr1dZS4zudjn1NrSC8fXFzzHIotyUKAi
-         olgSY9Jsq810PvEnopXbitAirJhxYuImKkWXphkX7lW3ocDA9g2AK6ZligvXTqGWxvdL
-         V4jUmk1X9B+hYlUIcPPEJs3zAWptq2KIaZfMN+YcQQFChZUUHei2Fgfwgwuj/70IwuXQ
-         KRAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719081529; x=1719686329;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XsJSKrhXwcm2yba7E5HX5qGoubHmUX2L5c9+i3qWphk=;
-        b=ZW4UrsXKLGSVJb6Do8Og+YbnjdXWVCCq9aMerAGZf7q5rYf6UX87eL60nHoumCD3hh
-         G+Lk8ka3LmfQTzySjQGDJLdIJb0qVZAVMAyyKk31Z+w+GFfmHRwi4acPM1zf21oMNKgM
-         EDvPWAuOC3eNBSqNXn1+Gs1gcZaNy00c3EnB7WD48iGOnIDd4mR+0HuG4zU0AG17QRu2
-         jD0LTw4NXt5JNXPtzUSc0fzIdgL6FAjswGx0cso73P0d79FqEqillXPrqYT0Nlj5GPwL
-         r1EwyXtf0f7fCaewTch05m1VqxqS7uu1NPqzimikSaBubcg5nGrvlhJvozlm1kX5xB7E
-         buxA==
-X-Forwarded-Encrypted: i=1; AJvYcCURowTBszzbGnzEV8cXtM4QvAQQbeuRZn6E5H8IX74kSb0XhdLN2nKwvyh2JEMPee9XlsTqPo+hFFYsOuLylZCEQvVuSg3ZbXozGcJR
-X-Gm-Message-State: AOJu0YzstAXVDvP6C1ylzyWhAHAmJ8e8DAJGqrgv9swHmXLgZFSrRraZ
-	qHgkSJrP7GHIQ3k6El6Tf2AkuIvQ1dd4gVjFoJoCcWqN/Wi6f0wHcgiSrypRSWM=
-X-Google-Smtp-Source: AGHT+IGqcGI11MWIfY68szD5ztVc1o4rd7pFp2twsqj4FUSE4E3dSVNIKwV1+jMYc1r2GKjj/rspgg==
-X-Received: by 2002:a2e:9ed7:0:b0:2ec:5922:920d with SMTP id 38308e7fff4ca-2ec5b36c1c9mr2988801fa.51.1719081528501;
-        Sat, 22 Jun 2024 11:38:48 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d758224sm5073161fa.96.2024.06.22.11.38.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 11:38:48 -0700 (PDT)
-Date: Sat, 22 Jun 2024 21:38:46 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, alexey.klimov@linaro.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 v4 2/2] pinctrl: qcom: Introduce SM4250 LPI pinctrl
- driver
-Message-ID: <mzltplcf2p6aadrxorazl7xyir23rdhxpbenvldbtlc45bqovq@sze2jt2o4x3n>
-References: <20240612-sm4250-lpi-v4-0-a0342e47e21b@linaro.org>
- <20240612-sm4250-lpi-v4-2-a0342e47e21b@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HECO7q68AwveMPImqQc5DcDaAP2JsXgP/3nayxdxQ+nXXI0yNrg9nKzKUoy1DQEk5d9sOIAMh9bnUEg3l+6uylDcxcDq13wR+WjkHpCWRiId6sUGDDVQDF0t4C0sA1lGdYAyYElF/9nZ3FEKmICsNfGNTPOKDUQadhZ64815fOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JIR44fpz; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=jhVi5FhYxIXR2rmc25MlvFKVYwMuXU0X/Zyy9lMWHUU=; b=JI
+	R44fpz2T28QDsR5nmwzTYlUl6J2uYDzGFRDuocYBXVeixZVIBc/3CUK3umZVluhPA7meTYHQe+0nJ
+	PtuWiF6FvcB0LjWdK+LLLc5G3FktqefCwsZ12/zW1uwHFxhgXJTMZKxZ+BSPoByh4odIA25+TEAFd
+	4VBMN+JJpmaTBnE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sL5iT-000kJX-95; Sat, 22 Jun 2024 20:44:01 +0200
+Date: Sat, 22 Jun 2024 20:44:01 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kamil =?iso-8859-1?Q?Hor=E1k_=282N=29?= <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v9 3/4] dt-bindings: ethernet-phy: add optional brr-mode
+ flag
+Message-ID: <b35cd9c1-6778-4ca7-9961-f7e98a60d20b@lunn.ch>
+References: <20240621112633.2802655-1-kamilh@axis.com>
+ <20240621112633.2802655-4-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240612-sm4250-lpi-v4-2-a0342e47e21b@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240621112633.2802655-4-kamilh@axis.com>
 
-On Sat, Jun 22, 2024 at 05:49:31PM GMT, Srinivas Kandagatla wrote:
-> Add support for the pin controller block on SM4250 Low Power Island.
+On Fri, Jun 21, 2024 at 01:26:32PM +0200, Kamil Horák (2N) wrote:
+> There is a group of PHY chips supporting BroadR-Reach link modes in
+> a manner allowing for more or less identical register usage as standard
+> Clause 22 PHY.
+> These chips support standard Ethernet link modes as well, however, the
+> circuitry is mutually exclusive and cannot be auto-detected.
+> The link modes in question are 100Base-T1 as defined in IEEE802.3bw,
+> based on Broadcom's 1BR-100 link mode, and newly defined 10Base-T1BRR
+> (1BR-10 in Broadcom documents).
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Add optional brr-mode flag to switch the PHY to BroadR-Reach mode.
+> 
+> Signed-off-by: Kamil Horák (2N) <kamilh@axis.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 > ---
->  drivers/pinctrl/qcom/Kconfig                    |   9 +
->  drivers/pinctrl/qcom/Makefile                   |   1 +
->  drivers/pinctrl/qcom/pinctrl-sm4250-lpass-lpi.c | 236 ++++++++++++++++++++++++
->  3 files changed, 246 insertions(+)
+>  Documentation/devicetree/bindings/net/ethernet-phy.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> index 8fb2a6ee7e5b..0353ef98f2e1 100644
+> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> @@ -93,6 +93,13 @@ properties:
+>        the turn around line low at end of the control phase of the
+>        MDIO transaction.
+>  
+> +  brr-mode:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Request the PHY to operate in BroadR-Reach mode. This means the
+> +      PHY will use the BroadR-Reach protocol to communicate with the other
+> +      end of the link, including LDS auto-negotiation if applicable.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+DT is supposed to describe hardware, not configuration. So i would
+have a different description. Say that the coupling to the cable is
+that for BroadR-Reach, not standard base-T.
 
+The driver can then imply it needs to configure the hardware to
+BroadR-Reach.
 
--- 
-With best wishes
-Dmitry
+	Andrew
 
