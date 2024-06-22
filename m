@@ -1,94 +1,224 @@
-Return-Path: <linux-kernel+bounces-225675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC37E913393
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:51:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4B1913399
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28E2128421F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A06284461
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 11:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD3F155314;
-	Sat, 22 Jun 2024 11:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="CLfKWaAU"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73241553B1;
+	Sat, 22 Jun 2024 11:57:55 +0000 (UTC)
+Received: from smtprelay01.ispgateway.de (smtprelay01.ispgateway.de [80.67.18.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B8B14C591;
-	Sat, 22 Jun 2024 11:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B2814C591;
+	Sat, 22 Jun 2024 11:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.67.18.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719057083; cv=none; b=gROoAAQDFGpFFfHdsSTxhPt732WtoievXNhao/moQTYnyhOTimLodCMNb8kDArE6wHtz3z+uZwczqF3pbW3FeIo9XrK4CSS1w5+Jbn93ALonyLDReHX6b9NDhH5VbHNcUgOoonwx8M81grepJX4rQSIbeyRKIynGT8g/B5hNPGc=
+	t=1719057475; cv=none; b=Rtc7zUCmiMKIKKrQkqXzyzkDUEm2NqkoGgtjI54Ore7E0hra2AaSJ5+ZNGTBqsXOxwdmi/oHCfg3S5sNtPCTkcibgpW0jv4ovPuG4vB+ePai3Y0JeuZ450vieutnatp75p+SO7Jc2XklR1fvIonurSdsXFFhqGZ3ooqJkNxi4bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719057083; c=relaxed/simple;
-	bh=dYwe/2HOqdVUREi/y8BiuImELO+D/e6Aq1ECbDTwTp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IEo2vbRZDaEelORjjfaIjuvMcIp3pBpxi88ADa+qZ7ntIL1INp6iFvi/aMUkJGcxgkP2gOZnObT8otfsGqdwGe/ikz0zd8Fp61qz/EFvCkNcdeVjyfpaxH6GLEamoJYTfbwPHWDFc+k5AXQAV7pRcW9Ac8NLQ7KNcIMXt1yNafA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=CLfKWaAU; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1719057070;
-	bh=dYwe/2HOqdVUREi/y8BiuImELO+D/e6Aq1ECbDTwTp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CLfKWaAU03aMQwZf2fl9fqu6CSza4jxeb8fYBqrvgCKFzmzk1PYhSDuqB5sQnz72S
-	 WJnson11oQfMkr6jkDSXh9aJcHI998ZnDnRglttmxR9iA4szb3d8sMhfoXQwi3edVU
-	 LGbACZC7sIu4c8GgiexsubBb07OM1WUjX2xN0sYM=
-Date: Sat, 22 Jun 2024 13:51:08 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Jiri Prchal <jiri.prchal@aksignal.cz>, linux-kernel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/5] nvmem: core: one fix and several cleanups
- for sysfs code
-Message-ID: <a9d4e4d7-3aa3-4d08-a90e-2c5cfe907aff@t-8ch.de>
-References: <20240620-nvmem-compat-name-v1-0-700e17ba3d8f@weissschuh.net>
- <171905336506.244973.16113259707012674277.b4-ty@linaro.org>
+	s=arc-20240116; t=1719057475; c=relaxed/simple;
+	bh=4nNz2jv+VOICXuXw2R1uGsao3nWrsCy0ZjQNa4eOHH0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZOrnFbti2DBaOVcbTgrLbp/8xqK4QWxhl8oOyTth0UpeAoq60e50hgJ5WI6LbV9QQYWdNQ4EsBkbd/jqKG3uq6n2RfH/GEOYM5zUJk9OApJXB1zvR6TB/FDqMXLPFziWNhZh3BMp4bKmaQgwgVMhYz871sxmbBL3QvO/rcSA63M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; arc=none smtp.client-ip=80.67.18.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+Received: from [92.206.190.41] (helo=framework.lan)
+	by smtprelay01.ispgateway.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <git@apitzsch.eu>)
+	id 1sKzKz-000000005fV-1pf2;
+	Sat, 22 Jun 2024 13:55:21 +0200
+Message-ID: <86f8110e8edc24d0df035b77a1aa68422e48bde1.camel@apitzsch.eu>
+Subject: Re: [PATCH v4 2/3] leds: sy7802: Add support for Silergy SY7802
+ flash LED controller
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Bjorn
+ Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,  Trilok Soni
+ <quic_tsoni@quicinc.com>, Kees Cook <kees@kernel.org>,
+ linux-leds@vger.kernel.org,  devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-hardening@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org,  ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org
+Date: Sat, 22 Jun 2024 13:55:25 +0200
+In-Reply-To: <20240621102656.GK1318296@google.com>
+References: <20240616-sy7802-v4-0-789994180e05@apitzsch.eu>
+	 <20240616-sy7802-v4-2-789994180e05@apitzsch.eu>
+	 <20240621102656.GK1318296@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <171905336506.244973.16113259707012674277.b4-ty@linaro.org>
+X-Df-Sender: YW5kcmVAYXBpdHpzY2guZXU=
 
-On 2024-06-22 11:49:25+0000, Srinivas Kandagatla wrote:
-> On Thu, 20 Jun 2024 18:00:32 +0200, Thomas Weißschuh wrote:
-> > Patch 1 is a bugfix.
-> > All other patches are small cleanups.
-> > 
-> > Hint about another nvmem bugfix at [0].
-> > 
-> > [0] https://lore.kernel.org/lkml/20240619-nvmem-cell-sysfs-perm-v1-1-e5b7882fdfa8@weissschuh.net/
-> > 
+Hello Lee,
+
+Am Freitag, dem 21.06.2024 um 11:26 +0100 schrieb Lee Jones:
+> On Sun, 16 Jun 2024, Andr=C3=A9 Apitzsch via B4 Relay wrote:
+>=20
+> > From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> >=20
+> > The SY7802 is a current-regulated charge pump which can regulate
+> > two
+> > current levels for Flash and Torch modes.
+> >=20
+> > It is a high-current synchronous boost converter with 2-channel
+> > high
+> > side current sources. Each channel is able to deliver 900mA
+> > current.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > ---
+> > =C2=A0drivers/leds/flash/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 11 +
+> > =C2=A0drivers/leds/flash/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+=C2=A0 1 +
+> > =C2=A0drivers/leds/flash/leds-sy7802.c | 542
+> > +++++++++++++++++++++++++++++++++++++++
+> > =C2=A03 files changed, 554 insertions(+)
+>=20
+> Generally very nice.
+>=20
+> Just a couple of teensy nits to fix then add my and resubmit please.
+>=20
+> Acked-by: Lee Jones <lee@kernel.org>
+>=20
 > > [...]
-> 
-> Applied, thanks!
+> > diff --git a/drivers/leds/flash/leds-sy7802.c
+> > b/drivers/leds/flash/leds-sy7802.c
+> > new file mode 100644
+> > index 000000000000..c4bea55a62d0
+> > --- /dev/null
+> > +++ b/drivers/leds/flash/leds-sy7802.c
+> > @@ -0,0 +1,542 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * Silergy SY7802 flash LED driver with I2C interface
+>=20
+> "an I2C interface"
+>=20
+> Or
+>=20
+> "I2C interfaces"
+>=20
+> > + * Copyright 2024 Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > + */
+> > +
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/led-class-flash.h>
+> > +#include <linux/module.h>
+> > +#include <linux/mutex.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/regulator/consumer.h>
+> > +
+> > +#define SY7802_MAX_LEDS 2
+> > +#define SY7802_LED_JOINT 2
+> > +
+> > +#define SY7802_REG_ENABLE		0x10
+> > +#define SY7802_REG_TORCH_BRIGHTNESS	0xa0
+> > +#define SY7802_REG_FLASH_BRIGHTNESS	0xb0
+> > +#define SY7802_REG_FLASH_DURATION	0xc0
+> > +#define SY7802_REG_FLAGS		0xd0
+> > +#define SY7802_REG_CONFIG_1		0xe0
+> > +#define SY7802_REG_CONFIG_2		0xf0
+> > +#define SY7802_REG_VIN_MONITOR		0x80
+> > +#define SY7802_REG_LAST_FLASH		0x81
+> > +#define SY7802_REG_VLED_MONITOR		0x30
+> > +#define SY7802_REG_ADC_DELAY		0x31
+> > +#define SY7802_REG_DEV_ID		0xff
+> > +
+> > +#define SY7802_MODE_OFF		0
+> > +#define SY7802_MODE_TORCH	2
+> > +#define SY7802_MODE_FLASH	3
+> > +#define SY7802_MODE_MASK	GENMASK(1, 0)
+> > +
+> > +#define SY7802_LEDS_SHIFT	3
+> > +#define SY7802_LEDS_MASK(_id)	(BIT(_id) << SY7802_LEDS_SHIFT)
+> > +#define SY7802_LEDS_MASK_ALL	(SY7802_LEDS_MASK(0) |
+> > SY7802_LEDS_MASK(1))
+> > +
+> > +#define SY7802_TORCH_CURRENT_SHIFT	3
+> > +#define SY7802_TORCH_CURRENT_MASK(_id) \
+> > +	(GENMASK(2, 0) << (SY7802_TORCH_CURRENT_SHIFT * (_id)))
+> > +#define SY7802_TORCH_CURRENT_MASK_ALL \
+> > +	(SY7802_TORCH_CURRENT_MASK(0) |
+> > SY7802_TORCH_CURRENT_MASK(1))
+> > +
+> > +#define SY7802_FLASH_CURRENT_SHIFT	4
+> > +#define SY7802_FLASH_CURRENT_MASK(_id) \
+> > +	(GENMASK(3, 0) << (SY7802_FLASH_CURRENT_SHIFT * (_id)))
+> > +#define SY7802_FLASH_CURRENT_MASK_ALL \
+> > +	(SY7802_FLASH_CURRENT_MASK(0) |
+> > SY7802_FLASH_CURRENT_MASK(1))
+> > +
+> > +#define SY7802_TIMEOUT_DEFAULT_US	512000U
+> > +#define SY7802_TIMEOUT_MIN_US		32000U
+> > +#define SY7802_TIMEOUT_MAX_US		1024000U
+> > +#define SY7802_TIMEOUT_STEPSIZE_US	32000U
+> > +
+> > +#define SY7802_TORCH_BRIGHTNESS_MAX 8
+> > +
+> > +#define SY7802_FLASH_BRIGHTNESS_DEFAULT	14
+> > +#define SY7802_FLASH_BRIGHTNESS_MIN	0
+> > +#define SY7802_FLASH_BRIGHTNESS_MAX	15
+> > +#define SY7802_FLASH_BRIGHTNESS_STEP	1
+> > +
+> > +#define SY7802_FLAG_TIMEOUT			BIT(0)
+> > +#define SY7802_FLAG_THERMAL_SHUTDOWN		BIT(1)
+> > +#define SY7802_FLAG_LED_FAULT			BIT(2)
+> > +#define SY7802_FLAG_TX1_INTERRUPT		BIT(3)
+> > +#define SY7802_FLAG_TX2_INTERRUPT		BIT(4)
+> > +#define SY7802_FLAG_LED_THERMAL_FAULT		BIT(5)
+> > +#define SY7802_FLAG_FLASH_INPUT_VOLTAGE_LOW	BIT(6)
+> > +#define SY7802_FLAG_INPUT_VOLTAGE_LOW		BIT(7)
+> > +
+> > +#define SY7802_CHIP_ID	0x51
+> > +
+> > +static const struct reg_default sy7802_regmap_defs[] =3D {
+> > +	{ SY7802_REG_ENABLE, SY7802_LEDS_MASK_ALL },
+> > +	{ SY7802_REG_TORCH_BRIGHTNESS, 0x92 },
+> > +	{ SY7802_REG_FLASH_BRIGHTNESS,
+> > SY7802_FLASH_BRIGHTNESS_DEFAULT |
+> > +		SY7802_FLASH_BRIGHTNESS_DEFAULT <<
+> > SY7802_FLASH_CURRENT_SHIFT },
+> > +	{ SY7802_REG_FLASH_DURATION, 0x6f },
+> > +	{ SY7802_REG_FLAGS, 0x0 },
+> > +	{ SY7802_REG_CONFIG_1, 0x68 },
+> > +	{ SY7802_REG_CONFIG_2, 0xf0 },
+>=20
+> Not your fault, but this interface is frustrating since we have no
+> idea
+> what these register values mean.=C2=A0 IMHO, they should be defined and
+> ORed
+> together in some human readable way.
+>=20
+> I say that it's not your fault because I see that this is the most
+> common usage.
+>=20
 
-Thanks!
+I don't know how to interpret some bits of the default values. I don't
+have the documentation and changing the bits and observing the behavior
+of the device also didn't help.
 
-> [2/5] nvmem: core: mark bin_attr_nvmem_eeprom_compat as const
->       commit: 178a9aea2c5db8328757fdea66922bda0236e95c
+Should I remove the entries from sy7802_regmap_defs, which have values
+that we don't fully understand?
 
-Please note that patch 2 has a dependency on patch 1.
-In the current state this will probably lead to build errors in
-linux-next, as nvmem-fixes is not part of linux-next.
-
-I should have mentioned that.
-
-In theory patch 2 could even be squashed into patch 1, as it really is
-mostly an extension of it.
-
-> [3/5] nvmem: core: add single sysfs group
->       commit: 80026ea9fdc22bbc8bfa9b41f54baba314bacc55
-> [4/5] nvmem: core: remove global nvmem_cells_group
->       commit: e76590d9faf8c058df9faf0b6513f055beb84b57
-> [5/5] nvmem: core: drop unnecessary range checks in sysfs callbacks
->       commit: 050e51c214c5bbe5ffd9e7f5927ccdcd2da18fe3
+Regards,
+Andr=C3=A9
 
