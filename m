@@ -1,244 +1,132 @@
-Return-Path: <linux-kernel+bounces-225572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A1591326A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:45:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0783913268
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:45:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C29EB2845F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 06:45:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 294271C2178B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 06:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396C314BF90;
-	Sat, 22 Jun 2024 06:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24BE14B088;
+	Sat, 22 Jun 2024 06:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="lGD9ocsg"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TlqdmYZE"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8563A8BFD;
-	Sat, 22 Jun 2024 06:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE748BFD;
+	Sat, 22 Jun 2024 06:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719038700; cv=none; b=FJp6n+gJHJPN3xnRfLv/c2lRj91of3flkOinbTmMsrIWPdx1dHX8fD0lero1hKQUyl3xtdUdpgBIK9Xhn6kA/SuG9WdQDeAkshfBERMh9dCvZmZLS2QaF76f9sNXG3f7+4wi2WBOOwXffObZJBSNvB46nRpq4RYFbsDzxX6NBp8=
+	t=1719038693; cv=none; b=XuimOQvT4WvSqcqZZnrNlwuAm81CypGvOMvdlE9NVJjStZdk/XxOi0gbAjdwYM4s1vaqM2XJEyu4Vyj75ACCdsy+hjYw/vHzaqxXOy/FPeQCT/cSW5b3YSNv4Mr558Ay6Jgus0XXuzwDPOW6MPEyHT7OVMUX4ilzY+sfS4oKbI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719038700; c=relaxed/simple;
-	bh=SFChX3GTwkwBVUpYdO1Ksg8dix0lX5QntXiRx4WtliU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pEu4Oom5V9dO/xVel1kAacwQBlj8os+y5djmZGvZd5BQjVXV4j8U0nS0d6k8eue5CvZcAicH2CNStqx74mfv7NAlcgwvHaxLoWiR1zslCqIYLjqdabwQCE+rhg2vOuRSXSny3l7VIblIWLuFd4Odc+0BvN1NV85AS6HslTfwx8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=lGD9ocsg; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45M6hN6V026151;
-	Fri, 21 Jun 2024 23:44:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=H36+9mtcn7BgRXSx/MLaYd2
-	UCHM/mMFc4cP5kfF2A9U=; b=lGD9ocsg1JTp1skzeaipST+3tE37ekUgBMNuiCs
-	wFqp6b5j4kGzX6vSq81EJyvNClMGF2qAKEK3xrOneBlY7Rv52v6260X8XctPISe5
-	NliOTdpn8keNAjsvfNbWkNASxDshccnohK4qk3pomE1FFavv+VQLyOzcki8UixIE
-	cKUKY3Rqy9VqAIVZ/jBh97qjyWsyE1u/nKdd9cYHSYdJAytKXpyUAvl+BtrY4t8m
-	UngBAMO/LZibQSddvVLDGWVNko/MpP8LJ5f/jh5VunCbvYYADiorno8H8Y/VmlpI
-	s17hOC7TbNN8KEBB72jtSPbAwqTWXHzt9jSvWcgDFCttdew==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ywh0ph43h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 23:44:45 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 21 Jun 2024 23:44:44 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 21 Jun 2024 23:44:44 -0700
-Received: from localhost.localdomain (unknown [10.28.36.166])
-	by maili.marvell.com (Postfix) with ESMTP id 02D653F7097;
-	Fri, 21 Jun 2024 23:44:39 -0700 (PDT)
-From: Suman Ghosh <sumang@marvell.com>
-To: <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
-        <hkelam@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lcherian@marvell.com>,
-        <jerinj@marvell.com>
-CC: Ratheesh Kannoth <rkannoth@marvell.com>, Suman Ghosh <sumang@marvell.com>
-Subject: [net PATCH] octeontx2-pf: Fix coverity and klockwork issues in octeon PF driver
-Date: Sat, 22 Jun 2024 12:14:37 +0530
-Message-ID: <20240622064437.2919946-1-sumang@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719038693; c=relaxed/simple;
+	bh=UQb8Z+ujaHhhsuuhpwTwvPOB79Pihy/x2wORD1fIK6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gxp+OZGrJBwwglt1l3WRH674dqzKygFIFOHficifHrcP+GyV+uKItbQvIh8eIayT+XW0XR4Os3Sg4bLO01eOihCkyLqkFIOqqF4DcnzNAWX2jrsTLKQqjaCBuv0+dp6UpZ8J2U60X2OTYh6BPm+iv6D6IJupkSnhR96knlq9f50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TlqdmYZE; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45M6iixB122438;
+	Sat, 22 Jun 2024 01:44:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719038684;
+	bh=spi4GdNW9JTa5ptQraKQLzKCk03Loxxcxp8dMLIrZNY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=TlqdmYZELih3Jw4nYUqKZiT9NRELaqTORRtOogiEfUsELJG+t7Px+FY7fWjegT/83
+	 Weyiowdgs8C+eR12zY5sdQ44b0rfz/IbhUnuBA8oPuJTfIyCaZEs67OiQFFreY429J
+	 rlZedS0YhachLmkNT5BLmfg2FiVW0YKhuAXQ0zI8=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45M6iioF110193
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 22 Jun 2024 01:44:44 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 22
+ Jun 2024 01:44:44 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 22 Jun 2024 01:44:44 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45M6ieNS065637;
+	Sat, 22 Jun 2024 01:44:41 -0500
+Message-ID: <6b13bb6a-4378-4764-9a60-d25ee2914176@ti.com>
+Date: Sat, 22 Jun 2024 12:14:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: ssUuIVpFg99Ytz50vYPmZ5ih4l3gyqMG
-X-Proofpoint-ORIG-GUID: ssUuIVpFg99Ytz50vYPmZ5ih4l3gyqMG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-22_04,2024-06-21_01,2024-05-17_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: ti: k3-j784s4-evm: Enable analog audio
+ support
+To: Jayesh Choudhary <j-choudhary@ti.com>, <linux-kernel@vger.kernel.org>,
+        <nm@ti.com>, <j-luthra@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20240619095253.290552-1-j-choudhary@ti.com>
+ <20240619095253.290552-4-j-choudhary@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20240619095253.290552-4-j-choudhary@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Ratheesh Kannoth <rkannoth@marvell.com>
 
-Fix unintended sign extension and klockwork issues. These are not real
-issue but for sanity checks.
 
-Signed-off-by: Ratheesh Kannoth <rkannoth@marvell.com>
-Signed-off-by: Suman Ghosh <sumang@marvell.com>
----
- .../marvell/octeontx2/nic/otx2_common.c       | 10 ++--
- .../ethernet/marvell/octeontx2/nic/otx2_reg.h | 55 ++++++++++---------
- .../marvell/octeontx2/nic/otx2_txrx.c         |  2 +-
- .../net/ethernet/marvell/octeontx2/nic/qos.c  |  3 +-
- 4 files changed, 35 insertions(+), 35 deletions(-)
+On 19/06/24 15:22, Jayesh Choudhary wrote:
+> &wkup_pmx2 {
+> @@ -881,6 +917,14 @@ exp1: gpio@20 {
+>  				  "PCIE0_4L_RC_RSTZ", "PCIE0_4L_EP_RST_EN", "PCIE1_4L_PRSNT#",
+>  				  "PCIE0_4L_PRSNT#", "CDCI1_OE1/OE4", "CDCI1_OE2/OE3",
+>  				  "AUDIO_MUX_SEL", "EXP_MUX2", "EXP_MUX3", "GESI_EXP_PHY_RSTZ";
+> +
+> +		p12-hog {
+> +			/* P12 - AUDIO_MUX_SEL */
+> +			gpio-hog;
+> +			gpios = <12 GPIO_ACTIVE_HIGH>;
+> +			output-low;
+> +			line-name = "AUDIO_MUX_SEL";
+> +		};
+>  	};
+>  
+>  	exp2: gpio@22 {
+> @@ -896,6 +940,22 @@ exp2: gpio@22 {
+>  				  "CANUART_MUX1_SEL1", "ENET1_EXP_PWRDN", "ENET1_EXP_RESETZ",
+>  				  "ENET1_I2CMUX_SEL", "ENET1_EXP_SPARE2", "ENET2_EXP_RESETZ",
+>  				  "USER_INPUT1", "USER_LED1", "USER_LED2";
+> +
+> +		p13-hog {
+> +			/* P13 - CANUART_MUX_SEL0 */
+> +			gpio-hog;
+> +			gpios = <13 GPIO_ACTIVE_HIGH>;
+> +			output-high;
+> +			line-name = "CANUART_MUX_SEL0";
+> +		};
+> +
+> +		p15-hog {
+> +			/* P15 - CANUART_MUX1_SEL1 */
+> +			gpio-hog;
+> +			gpios = <15 GPIO_ACTIVE_HIGH>;
+> +			output-high;
+> +			line-name = "CANUART_MUX1_SEL1";
+> +		};
+>  	};
+>  };
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-index a85ac039d779..87d5776e3b88 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-@@ -648,14 +648,14 @@ int otx2_txschq_config(struct otx2_nic *pfvf, int lvl, int prio, bool txschq_for
- 	} else if (lvl == NIX_TXSCH_LVL_TL4) {
- 		parent = schq_list[NIX_TXSCH_LVL_TL3][prio];
- 		req->reg[0] = NIX_AF_TL4X_PARENT(schq);
--		req->regval[0] = parent << 16;
-+		req->regval[0] = (u64)parent << 16;
- 		req->num_regs++;
- 		req->reg[1] = NIX_AF_TL4X_SCHEDULE(schq);
- 		req->regval[1] = dwrr_val;
- 	} else if (lvl == NIX_TXSCH_LVL_TL3) {
- 		parent = schq_list[NIX_TXSCH_LVL_TL2][prio];
- 		req->reg[0] = NIX_AF_TL3X_PARENT(schq);
--		req->regval[0] = parent << 16;
-+		req->regval[0] = (u64)parent << 16;
- 		req->num_regs++;
- 		req->reg[1] = NIX_AF_TL3X_SCHEDULE(schq);
- 		req->regval[1] = dwrr_val;
-@@ -670,11 +670,11 @@ int otx2_txschq_config(struct otx2_nic *pfvf, int lvl, int prio, bool txschq_for
- 	} else if (lvl == NIX_TXSCH_LVL_TL2) {
- 		parent = schq_list[NIX_TXSCH_LVL_TL1][prio];
- 		req->reg[0] = NIX_AF_TL2X_PARENT(schq);
--		req->regval[0] = parent << 16;
-+		req->regval[0] = (u64)parent << 16;
- 
- 		req->num_regs++;
- 		req->reg[1] = NIX_AF_TL2X_SCHEDULE(schq);
--		req->regval[1] = TXSCH_TL1_DFLT_RR_PRIO << 24 | dwrr_val;
-+		req->regval[1] = (u64)hw->txschq_aggr_lvl_rr_prio << 24 | dwrr_val;
- 
- 		if (lvl == hw->txschq_link_cfg_lvl) {
- 			req->num_regs++;
-@@ -698,7 +698,7 @@ int otx2_txschq_config(struct otx2_nic *pfvf, int lvl, int prio, bool txschq_for
- 
- 		req->num_regs++;
- 		req->reg[1] = NIX_AF_TL1X_TOPOLOGY(schq);
--		req->regval[1] = (TXSCH_TL1_DFLT_RR_PRIO << 1);
-+		req->regval[1] = hw->txschq_aggr_lvl_rr_prio << 1;
- 
- 		req->num_regs++;
- 		req->reg[2] = NIX_AF_TL1X_CIR(schq);
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
-index 45a32e4b49d1..e3aee6e36215 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_reg.h
-@@ -139,33 +139,34 @@
- #define	NIX_LF_CINTX_ENA_W1C(a)		(NIX_LFBASE | 0xD50 | (a) << 12)
- 
- /* NIX AF transmit scheduler registers */
--#define NIX_AF_SMQX_CFG(a)		(0x700 | (a) << 16)
--#define NIX_AF_TL1X_SCHEDULE(a)		(0xC00 | (a) << 16)
--#define NIX_AF_TL1X_CIR(a)		(0xC20 | (a) << 16)
--#define NIX_AF_TL1X_TOPOLOGY(a)		(0xC80 | (a) << 16)
--#define NIX_AF_TL2X_PARENT(a)		(0xE88 | (a) << 16)
--#define NIX_AF_TL2X_SCHEDULE(a)		(0xE00 | (a) << 16)
--#define NIX_AF_TL2X_TOPOLOGY(a)		(0xE80 | (a) << 16)
--#define NIX_AF_TL2X_CIR(a)              (0xE20 | (a) << 16)
--#define NIX_AF_TL2X_PIR(a)              (0xE30 | (a) << 16)
--#define NIX_AF_TL3X_PARENT(a)		(0x1088 | (a) << 16)
--#define NIX_AF_TL3X_SCHEDULE(a)		(0x1000 | (a) << 16)
--#define NIX_AF_TL3X_SHAPE(a)		(0x1010 | (a) << 16)
--#define NIX_AF_TL3X_CIR(a)		(0x1020 | (a) << 16)
--#define NIX_AF_TL3X_PIR(a)		(0x1030 | (a) << 16)
--#define NIX_AF_TL3X_TOPOLOGY(a)		(0x1080 | (a) << 16)
--#define NIX_AF_TL4X_PARENT(a)		(0x1288 | (a) << 16)
--#define NIX_AF_TL4X_SCHEDULE(a)		(0x1200 | (a) << 16)
--#define NIX_AF_TL4X_SHAPE(a)		(0x1210 | (a) << 16)
--#define NIX_AF_TL4X_CIR(a)		(0x1220 | (a) << 16)
--#define NIX_AF_TL4X_PIR(a)		(0x1230 | (a) << 16)
--#define NIX_AF_TL4X_TOPOLOGY(a)		(0x1280 | (a) << 16)
--#define NIX_AF_MDQX_SCHEDULE(a)		(0x1400 | (a) << 16)
--#define NIX_AF_MDQX_SHAPE(a)		(0x1410 | (a) << 16)
--#define NIX_AF_MDQX_CIR(a)		(0x1420 | (a) << 16)
--#define NIX_AF_MDQX_PIR(a)		(0x1430 | (a) << 16)
--#define NIX_AF_MDQX_PARENT(a)		(0x1480 | (a) << 16)
--#define NIX_AF_TL3_TL2X_LINKX_CFG(a, b)	(0x1700 | (a) << 16 | (b) << 3)
-+#define NIX_AF_SMQX_CFG(a)		(0x700 | (u64)(a) << 16)
-+#define NIX_AF_TL4X_SDP_LINK_CFG(a)	(0xB10 | (u64)(a) << 16)
-+#define NIX_AF_TL1X_SCHEDULE(a)		(0xC00 | (u64)(a) << 16)
-+#define NIX_AF_TL1X_CIR(a)		(0xC20 | (u64)(a) << 16)
-+#define NIX_AF_TL1X_TOPOLOGY(a)		(0xC80 | (u64)(a) << 16)
-+#define NIX_AF_TL2X_PARENT(a)		(0xE88 | (u64)(a) << 16)
-+#define NIX_AF_TL2X_SCHEDULE(a)		(0xE00 | (u64)(a) << 16)
-+#define NIX_AF_TL2X_TOPOLOGY(a)		(0xE80 | (u64)(a) << 16)
-+#define NIX_AF_TL2X_CIR(a)		(0xE20 | (u64)(a) << 16)
-+#define NIX_AF_TL2X_PIR(a)		(0xE30 | (u64)(a) << 16)
-+#define NIX_AF_TL3X_PARENT(a)		(0x1088 | (u64)(a) << 16)
-+#define NIX_AF_TL3X_SCHEDULE(a)		(0x1000 | (u64)(a) << 16)
-+#define NIX_AF_TL3X_SHAPE(a)		(0x1010 | (u64)(a) << 16)
-+#define NIX_AF_TL3X_CIR(a)		(0x1020 | (u64)(a) << 16)
-+#define NIX_AF_TL3X_PIR(a)		(0x1030 | (u64)(a) << 16)
-+#define NIX_AF_TL3X_TOPOLOGY(a)		(0x1080 | (u64)(a) << 16)
-+#define NIX_AF_TL4X_PARENT(a)		(0x1288 | (u64)(a) << 16)
-+#define NIX_AF_TL4X_SCHEDULE(a)		(0x1200 | (u64)(a) << 16)
-+#define NIX_AF_TL4X_SHAPE(a)		(0x1210 | (u64)(a) << 16)
-+#define NIX_AF_TL4X_CIR(a)		(0x1220 | (u64)(a) << 16)
-+#define NIX_AF_TL4X_PIR(a)		(0x1230 | (u64)(a) << 16)
-+#define NIX_AF_TL4X_TOPOLOGY(a)		(0x1280 | (u64)(a) << 16)
-+#define NIX_AF_MDQX_SCHEDULE(a)		(0x1400 | (u64)(a) << 16)
-+#define NIX_AF_MDQX_SHAPE(a)		(0x1410 | (u64)(a) << 16)
-+#define NIX_AF_MDQX_CIR(a)		(0x1420 | (u64)(a) << 16)
-+#define NIX_AF_MDQX_PIR(a)		(0x1430 | (u64)(a) << 16)
-+#define NIX_AF_MDQX_PARENT(a)		(0x1480 | (u64)(a) << 16)
-+#define NIX_AF_TL3_TL2X_LINKX_CFG(a, b)	(0x1700 | (u64)(a) << 16 | (b) << 3)
- 
- /* LMT LF registers */
- #define LMT_LFBASE			BIT_ULL(RVU_FUNC_BLKADDR_SHIFT)
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
-index 929b4eac25d9..3eb85949677a 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_txrx.c
-@@ -513,7 +513,7 @@ static int otx2_tx_napi_handler(struct otx2_nic *pfvf,
- 
- static void otx2_adjust_adaptive_coalese(struct otx2_nic *pfvf, struct otx2_cq_poll *cq_poll)
- {
--	struct dim_sample dim_sample;
-+	struct dim_sample dim_sample = { 0 };
- 	u64 rx_frames, rx_bytes;
- 	u64 tx_frames, tx_bytes;
- 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/qos.c b/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
-index edac008099c0..0f844c14485a 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
-@@ -153,7 +153,6 @@ static void __otx2_qos_txschq_cfg(struct otx2_nic *pfvf,
- 		num_regs++;
- 
- 		otx2_config_sched_shaping(pfvf, node, cfg, &num_regs);
--
- 	} else if (level == NIX_TXSCH_LVL_TL4) {
- 		otx2_config_sched_shaping(pfvf, node, cfg, &num_regs);
- 	} else if (level == NIX_TXSCH_LVL_TL3) {
-@@ -176,7 +175,7 @@ static void __otx2_qos_txschq_cfg(struct otx2_nic *pfvf,
- 		/* check if node is root */
- 		if (node->qid == OTX2_QOS_QID_INNER && !node->parent) {
- 			cfg->reg[num_regs] = NIX_AF_TL2X_SCHEDULE(node->schq);
--			cfg->regval[num_regs] =  TXSCH_TL1_DFLT_RR_PRIO << 24 |
-+			cfg->regval[num_regs] =  (u64)hw->txschq_aggr_lvl_rr_prio << 24 |
- 						 mtu_to_dwrr_weight(pfvf,
- 								    pfvf->tx_max_pktlen);
- 			num_regs++;
+
+Does this break CAN instances already enabled in the dts? If you
+consider making this a overlay as defaults seem to be set for CAN
+
 -- 
-2.25.1
-
+Regards
+Vignesh
 
