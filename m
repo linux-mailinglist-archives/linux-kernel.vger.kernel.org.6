@@ -1,141 +1,136 @@
-Return-Path: <linux-kernel+bounces-225845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1119191360B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 22:45:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9820091360C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 22:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64D4281F34
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:45:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503111C2142C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 20:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305DA6AFAE;
-	Sat, 22 Jun 2024 20:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642B76A342;
+	Sat, 22 Jun 2024 20:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="yut8vwcx"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HztTWQKe"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7733D381AA;
-	Sat, 22 Jun 2024 20:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6B24085D;
+	Sat, 22 Jun 2024 20:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719089131; cv=none; b=If1Hem8KRMOUGVYTdwLWlwfoYW/g13dDGWybJqgbWiJ8+Wm3Ia23+6VnJuyjxkZiE7uYBvj3kp3cofdzE7RVy10s7NDoigWlRgZMcM9+A1E9X6vihUF+iHwdBOnmSa5He79v1Ph4phhrKG2JDtCBcIudyetGHijjnQslG7H8uvY=
+	t=1719089387; cv=none; b=T7kGpv5PPTW0Cc6AlXV3T0KJPAOCpg0LrA9rUqvLhkq6ZLA8kQKlhht2UbE8895+somgzW8lQbjBL1wf0zJ8/X7sfFUyRIX0MVlAVikRzeUUezPJfDteROuNEKQTM2nkFT9TR42mkrxEV45Zuz/PJF5WwlsLJHvnfa4o+Z7/vIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719089131; c=relaxed/simple;
-	bh=f361aP1H2fhPiV6ZzXRV4IlCRWpJ16KLdJmM2TAa/xg=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=dd/t6FTfYVmH1v6G9lijH4Bny100XCKXR4u7kdb+FRqfMGBLY6gMcBBGT3ASVZt4OlXAGl4JgWR1aVyWxVa7G+XlIRm8AtpwUHBRCxf/z26mNQhUdOFBcck0GzRLbbLonBm9mNJ7tjt0d8VvvzXmuIUdXXuESGmD0sWYSILpwNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=yut8vwcx; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1719089387; c=relaxed/simple;
+	bh=XCPQDSanrClXe4Ydbv8I86HtOLXdoVO8uisB2yorP2s=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=e6gl0f8W0BJDnH97fAbDlLsQ/swpO8DzJmCQLgI6Ab4G58Z9TfEFd3yuTUpZr973Ek9MyHSzTcuSO21AIsJQlMA4QNBL/DK3CSz3CYq5PCMSEeMghRWNqrkVCZdUyaBh1ub5kdNmsoqSC4lNvbvWKnAKdEzQQPPA3bsSJ49GEP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HztTWQKe; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4230366ad7bso34685305e9.1;
+        Sat, 22 Jun 2024 13:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719089384; x=1719694184; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5nenZtZWRVZKM32sd/mbHx9Zj+PdS5ZrYPf3efuB4i8=;
+        b=HztTWQKea1Bre6JMXUf9Sdfgkvwq5hFxcyl6nv/kYCFDaiZsahvU2S81xM/GZzlIeP
+         tMiAukp7y39HOL8Z+W+ZNo2kFk5VV1WsvjZHG/DlK0y1VMQVCeKqy/oc6amHS4JKVveH
+         bH06IOuhVS6+c5XREGdN/OZqlQOOcV5XSOc8JP7fwBQqsVNAiufOOJRStK4gsjW9gR5W
+         qPKyiovxdD0poaG4FLQ6AxSzKBY/ViiRLO7quh2Sd2l75XVo7FdBrlbiYkiZhhsxsp3C
+         PWsdK6KCc7UpOSNlHFNrNKM3eHYWxGle3urKt73e71W9QN8PmbZOQupUmbnJhZiVWIsG
+         cTCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719089384; x=1719694184;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5nenZtZWRVZKM32sd/mbHx9Zj+PdS5ZrYPf3efuB4i8=;
+        b=czXpfiI51mYBmlMwhpk5ACzGvwpJb5fr6LStm4WhHTI6oui0FO9EuSdjKbTdDGFaBJ
+         /RRKQf/Mc6qOwMIlk0dsMJkujvzvgm2sB8dnsWPYXjN5JCoN1oIWLkVu6ZSC9916OmTh
+         547Z5EbTJZyq1EPvYwO3u/XLqCrFWc2StOXpLV8E2fORPNerdWRH0OBSb3HE+vYDwT3B
+         mHH0zKFfI9/Se98PjvF5vcWo5AyVwPLDV3RGZA90l8ECSLQzQ41BueqH/tyVx5rJklEx
+         hoi4uCZZB06YK7XUOV+KU2SG9YM8pgh9bA7HoUx6T58R79uik73otVYXLq8pfCj8kRGu
+         DZAw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1tX/GLCgny1U/SPOBbfFcfIgNAWE3+P5yW2grPn+N45QurNNtmyxn8F+XKh0HIHVU/Vk5zgTrVpbXuOVSBrTAPLAoJ+ku+3tY2Ls=
+X-Gm-Message-State: AOJu0YwAwti0hHjUWJqs9cO5aogOO2qChSyTneq0k90rtx7UKU+KkGNn
+	8x2RcY7gW2dDs4HrdKIFwJNcTpJ+fMZE2oxtJ01aPt+TyU03i6lBxbDTJw==
+X-Google-Smtp-Source: AGHT+IGEySX3tG5ZTc1seh3tJS0OrJIdkergANTn58BuRv8a8eenQ0HP8h3RkP64xMra6G5ptWKv8A==
+X-Received: by 2002:a05:600c:304c:b0:421:cbb8:8457 with SMTP id 5b1f17b1804b1-4248cc271a2mr6492455e9.16.1719089383850;
+        Sat, 22 Jun 2024 13:49:43 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-43-156.xnet.hr. [88.207.43.156])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817b53f2sm83516535e9.25.2024.06.22.13.49.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Jun 2024 13:49:43 -0700 (PDT)
+Message-ID: <59b40ebe-c824-457d-8b24-0bbca69d472b@gmail.com>
+Date: Sat, 22 Jun 2024 22:49:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1719089125;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZAx6xJEcAp2BzU+6jCZ3gQ0T/OrV48S/ARN8pl1rVcw=;
-	b=yut8vwcxjmeGy4YmsZGRxYcx0knvQfa1RRPq0L8Y2dElH+KmWFRYK+BC8x9fQp5Dji4FRj
-	Rg+/zD5pw1CSr7whGYO4CIuiY/52drtn8tpCZwZVJUYYRFaLggpDMs+NiiNq8EDXW5kHQQ
-	6+dEGFaVR8d95EdSohBI2qhlglNr0eeO/m5uas95//jDed91uFLFXxdgWASR2nxcdilWFt
-	/EYmo1mcWO2M4wF+a/9ubAUq3MudExsN+bhjEgYXuFwbw4o0/OfTLSZ4pzaxC4/ueysE4X
-	IONlh7c2olGV0pHdtZA0ZkrmwGQ7ZkuI1JQcUfmCmXu2W1ofoDs+m7umToCZ+g==
-Date: Sat, 22 Jun 2024 22:45:22 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Daniel Golle <daniel@makrotopia.org>, Aurelien
- Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, Herbert
- Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, Sebastian Reichel
- <sebastian.reichel@collabora.com>, Anand Moon <linux.amoon@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>, Ard
- Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
-In-Reply-To: <3660160.WbyNdk4fJJ@diego>
-References: <cover.1718921174.git.daniel@makrotopia.org>
- <ead26406-dd3b-491c-b6ab-11002a2db11a@kernel.org>
- <07fba45d99e9eabf9bcca71b86651074@manjaro.org> <3660160.WbyNdk4fJJ@diego>
-Message-ID: <b0164e0d05d9e445a844ffdfca7a82d5@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: =?UTF-8?Q?=5BPROBLEM=5D=5BWARNING=5D_fs/btrfs/ref-verify=2Ec=3A500?=
+ =?UTF-8?B?OjE2OiBlcnJvcjog4oCYcmV04oCZIG1heSBiZSB1c2VkIHVuaW5pdGlhbGl6ZWQg?=
+ =?UTF-8?Q?in_this_function_=5B-Werror=3Dmaybe-uninitialized=5D?=
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hello Heiko,
+Hi all,
 
-On 2024-06-22 22:26, Heiko Stübner wrote:
-> Am Samstag, 22. Juni 2024, 12:29:33 CEST schrieb Dragan Simic:
->> On 2024-06-22 00:16, Uwe Kleine-König wrote:
->> > On 6/21/24 20:13, Dragan Simic wrote:
->> >> On 2024-06-21 11:57, Krzysztof Kozlowski wrote:
->> >>> On 21/06/2024 03:25, Daniel Golle wrote:
->> >>>> From: Aurelien Jarno <aurelien@aurel32.net>
->> >>
->> >> [snip]
->> >>
->> >>>> +    pm_runtime_set_autosuspend_delay(dev,
->> >>>> RK_RNG_AUTOSUSPEND_DELAY);
->> >>>> +    pm_runtime_use_autosuspend(dev);
->> >>>> +    pm_runtime_enable(dev);
->> >>>> +
->> >>>> +    ret = devm_hwrng_register(dev, &rk_rng->rng);
->> >>>> +    if (ret)
->> >>>> +        return dev_err_probe(&pdev->dev, ret, "Failed to register
->> >>>> Rockchip hwrng\n");
->> >>>> +
->> >>>> +    dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
->> >>>
->> >>> Drop, driver should be silent on success.
->> >>
->> >> I respectfully disagree.  Many drivers print a single line upon
->> >> successful probing, which I find very useful.  In this particular
->> >> case, it's even more useful, because some people may be concerned
->> >> about the use of hardware TRNGs, so we should actually make sure
->> >> to announce it.
->> >
->> > I agree to Krzysztof here. From the POV of a driver author, your own
->> > driver is very important and while you write it, it really interests
->> > *you* if the driver is successfully probed. However from a system
->> > perspective these are annoying: There are easily >50 devices[1] on a
->> > system, if all of these print a message in probe, you have little
->> > chance
->> > to see the relevant messages. Even if every driver author thinks their
->> > work is a special snow flake that is worth announcing, in practice
->> > users
->> > only care about your driver if there is a problem. Additionally each
->> > message takes time and so delays the boot process. Additionally each
->> > message takes place in the printk ring buffer and so edges out earlier
->> > messages that might be more important.
->> 
->> Well, I don't find those messages annoying, for the drivers I've had
->> nothing to do with.  Also, in my experience, 99.9% of users don't care
->> about the kernel messages at all, be it everything hunky-dory, or be
->> it something really wrong somewhere.
->> 
->> > So +1 for dropping the dev_info() or at least using dev_debug() for it.
-> 
-> Just for 2ct ... I'm also in the don't print too much camp ;-) .
-> When parsing kernel logs to see where things fail, messages just
-> telling me about sucesses make things more difficult.
-> 
-> So really this message should be dropped or at least as Uwe suggests
-> made a dev_dbg.
+Testing various configs with vanilla torvalds kernel I came to this error:
 
-As a note, "dmesg --level=err,warn", for example, is rather useful
-when it comes to filtering the kernel messages to see only those that
-are signs of a trouble.
+linux_torvalds$ cat > ~/linux/rand/failed-configs/k-KCONFIG_SEED=0xEE80059C/err-msg
+linux_torvalds$ time nice make -j 36 bindeb-pkg |& tee ../err-6.10-rc4-randconf-01.log; date
+  GEN     debian
+dpkg-buildpackage --build=binary --no-pre-clean --unsigned-changes -R'make -f debian/rules' -j1 -a$(cat debian/arch)
+dpkg-buildpackage: info: source package linux-upstream
+dpkg-buildpackage: info: source version 6.10.0-rc4-00283-g563a50672d8a-13
+dpkg-buildpackage: info: source distribution jammy
+dpkg-buildpackage: info: source changed by marvin <marvin@defiant>
+dpkg-architecture: warning: specified GNU system type i686-linux-gnu does not match CC system type x86_64-linux-gnu, try setting a correct CC environment variable
+ dpkg-source --before-build .
+dpkg-buildpackage: info: host architecture i386
+ make -f debian/rules binary
+#
+# No change to .config
+#
+  CALL    scripts/checksyscalls.sh
+  UPD     init/utsversion-tmp.h
+  CC      init/version.o
+  AR      init/built-in.a
+  CHK     kernel/kheaders_data.tar.xz
+  CC [M]  fs/btrfs/ref-verify.o
+fs/btrfs/ref-verify.c: In function ‘process_extent_item.isra’:
+fs/btrfs/ref-verify.c:500:16: error: ‘ret’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  500 |         return ret;
+      |                ^~~
+cc1: all warnings being treated as errors
+make[7]: *** [scripts/Makefile.build:244: fs/btrfs/ref-verify.o] Error 1
+make[6]: *** [scripts/Makefile.build:485: fs/btrfs] Error 2
+make[5]: *** [scripts/Makefile.build:485: fs] Error 2
+make[4]: *** [Makefile:1934: .] Error 2
+make[3]: *** [debian/rules:74: build-arch] Error 2
+dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
+make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
+make[1]: *** [/home/marvin/linux/kernel/linux_torvalds/Makefile:1555: bindeb-pkg] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
+
+real	0m15.723s
+user	0m22.371s
+sys	0m6.100s
+Sat Jun 22 22:34:28 CEST 2024
+linux_torvalds$ 
+
+Best regards,
+Mirsad Todorovac
 
