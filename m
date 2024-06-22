@@ -1,170 +1,128 @@
-Return-Path: <linux-kernel+bounces-225710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F16913437
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:43:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 954FD91343C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 15:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7E3C1C20DBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5039428495F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 13:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631C916F26D;
-	Sat, 22 Jun 2024 13:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9A616F297;
+	Sat, 22 Jun 2024 13:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hb8qfco1"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LAhhFSoA"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678C582492
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 13:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3461E485;
+	Sat, 22 Jun 2024 13:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719063831; cv=none; b=A9iHBUbbVNH9faIWhiwKCyxEPGe3zrfoVqLhcs0ETAmI9TaionvjJfh55ySPN9Gd3gI++CZ23EJgCuCtWjV/0z5AIAmZnsmtqbgq/68ZzF7jcUxxMYQ7TM71llv9EsbgdSkZuJj3kydBLu0V+bUSdQBSSNgIzChpWi4eR9NOhNQ=
+	t=1719063978; cv=none; b=Rl40Rbgaob90r2xqoiSuZywFyUqNjfKiyi7+KykKLyPt5QOzISt/PdToMNVaWS+JywO35mRMYn2QCnFfiWuioP2PunEfNwq5pQ3aHajRU1GSomjmLwudkOd6pkE+7+efhc7e8WyhasI555/l0IIumwUhIwwk7Zp1Lp6gr73qSSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719063831; c=relaxed/simple;
-	bh=Ss3hbPRbsgSXVijcPTiNw7QzpshL51MWDUghPWwv7Rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s8jRO6Q5KwMUoNuWAJNuuLqVHrMY45aD0AhrBbunx+bRJq2JZ3Bbw5Hhqq7BO1LTUbl98C5mKYWxAhz96fTFUJrQ2q4wFWsd+8qSow9WC8envqDxZn0lI8KG9SuhJF/9+2J3WViZANNNoRJ/JfVu7EYluQdo9+i/ahgnC+1vLcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hb8qfco1; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: lizhi.xu@windriver.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719063826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LRZAmMqJKIn14niIRNgriXgIOVU0yHmhEJpzSzRShXs=;
-	b=hb8qfco15DblCSmmQUCBBB+K8xww3gNNF5672JpQrukqK9uxgvIKru6zO6xgOZzxWGvS8S
-	/DsLMB4n7KI/pmQxIMzeynF8+djDYZ7bVOJK4PW2OPcP8VchQcr+X9Ax8nin4BNveibSKu
-	Y3QNbUd2z/v14eVB9U6Q+VQi7n3CsbU=
-X-Envelope-To: syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Sat, 22 Jun 2024 09:43:41 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com, 
-	bfoster@redhat.com, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: fix deadlock in bch2_gc_mark_key
-Message-ID: <zlg74w7gvxf4pyoudahzjswbxa3sadaoqhrv6ntoqngz6w5krx@egt6tjqbmwa4>
-References: <000000000000c43781061b5fbdcd@google.com>
- <20240621093423.1874314-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1719063978; c=relaxed/simple;
+	bh=+d6ry8ShdrEqtbS1+VTAkmYE/FDL5yTFgm29o1to6Ho=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=bDUHFCTzviEno0M+zGIjz/J4MnqXtPZQVZwCS1+zyzG1dHnaIY30cks68NPk6a5RYlmZJ2C5mMkS9JDYKxqARAQsK0QMev2k4JJtgmHYUG+7KmP9i/HeDsW/zLZEzjFD8763ktb3RCfy3meewNrObMHTkM7xtA66PysxGmX5mi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LAhhFSoA; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719063918; x=1719668718; i=markus.elfring@web.de;
+	bh=J0A+T/BFJA2HV503DIR76VhyTM9gtllwzv0/WiNxCb0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=LAhhFSoAdr4Vqw5gHhPQ1h+wDIFhrMyGctnriQebCIkhnvhIF9JxdZHaA5c7c44a
+	 HSsbw7XoB3rH/fa+dl0+Hn19P2GZQ+DttbYfRUZDPkibi6HoeU118VIXvkn3CiKZJ
+	 GGRy5cUvDT/y2E6ishzvUlEp3CHlRxH6d1pbWXhmYou5Osihy7M00f4jc1IPg1U/W
+	 sWWQHwg3F/IkhCrJOqLna2t0hM+w7il/Jg1J83QpOMseCNal5BPL1p1cXlvQIpEOE
+	 vIFtvSHPn/UjoLpr83DlfqncLs+l3C//wywgu/sSJheqzfRGl8FfADyADFfkkdAfa
+	 g0pl6fU3urolrZ6EXg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MYLig-1rpcOS0mRe-00OXUh; Sat, 22
+ Jun 2024 15:45:18 +0200
+Message-ID: <e1e51582-7ecb-40af-aae1-498993d0f935@web.de>
+Date: Sat, 22 Jun 2024 15:45:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621093423.1874314-1-lizhi.xu@windriver.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+To: Chen Ridong <chenridong@huawei.com>, cgroups@vger.kernel.org,
+ bpf@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+ Tejun Heo <tj@kernel.org>, Waiman Long <longman@redhat.com>,
+ Zefan Li <lizefan.x@bytedance.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240622113814.120907-1-chenridong@huawei.com>
+Subject: Re: [PATCH -next] cgroup: fix uaf when proc_cpuset_show
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240622113814.120907-1-chenridong@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Evn4r8gxlYLcw+BcF1xPz9OY5TfNrVkhSkt5PjYb/Q1TnVVyvYs
+ hAM5bBJPLuYOM+NKPcD0mdUKdyAbrd79mAwd/0sVmu79bRRXD4E0vVU0y8RhsNGD6P29i6L
+ zlhZkT+CHdrTF9g5ANO08uyVVTCZT/gcfa9KAPJNrGMdCq35hCKmKjrujQh2Ed1WTYqzPrO
+ iPbhkoTzybfd3WlXjM7aA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:L8Mh94X4KOQ=;aHCWYiF+0dkk06gAbdwSQQmdUVc
+ fYwtpJmHdVQdJTlTpazyiKdMgiZjrn1XxwOuYhL+pQY/kVBU5SZ5jbcAg3ctO78Cv5+FVzfhq
+ S7UXmDONeyvBfJFrXIEjI8v/0d+v/18zGLHdu2Z5uwGN6wj3kwRXr36N/ouFUbO++XA+Cri6f
+ hd+PLdTI5LrvO5gkIFYvE2wT31Bcr794p0tclWSMJfyZsvag7TCzODxRH7jorlW9GDXOlXvGM
+ ysE7YLAp0rywXy+oMC6+58Fvhj+jU9kE6wDVQ+cs2RNSA1J48Gto6PJoxRIvtqiHZ3og4DGwj
+ tG4gEaccvDMzYyBUKVAGY/akSmBV0Si3YmvF0jJi9Txi8nAIyUUFce5PTL4BpKIfCm5CaOjOx
+ KUDvch/TL2yENbReRWVhU2fzbLgFVF9dNlUMQPadoXqq+NprwkPcsaq6bWeWEp5TDw/+PEAZA
+ lZcE6itsdd72m8FVGGN0HBc1JwBMf6r0ROVrtvZBD2UAX1t9UHA9n6BsE5KoKo8WLyInTnHh3
+ vyGBppc9QdgiAtg83UBpV4nHx09ld9BaLEgSp1h3M2klHsNmTtrJ1Fr5wNpdWBagVN4nhpTWt
+ pVp5KbGXL64moV8GbFcKJj4OC+uGP2sgtY4I4Reaa3kzNe7i7wGCuHZjk1dPEuqgjSsodBExG
+ Mvgy3QHQMKZSJ8CqNaNhMKh2V+zvglBVE0hI10rKzWX3luVJJgeho0w095aAHtCu0megB3ZzU
+ deDK+1Ax30KxMtLoxEAaiv1OmE8veRM3W4MVLrrcwIYZQTHEiHnWg2JgGcCEjY1U+dmIoRQSZ
+ fHg9H7B5LJRrwwxmKu+73uSMfqTuc2ci3EtGwQ8A5uG8M=
 
-On Fri, Jun 21, 2024 at 05:34:23PM +0800, Lizhi Xu wrote:
-> [Syz reported]
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #1 (&c->btree_root_lock){+.+.}-{3:3}:
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
->        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
->        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
->        bch2_btree_roots_to_journal_entries+0xbb/0x980 fs/bcachefs/btree_update_interior.c:2633
->        bch2_fs_mark_clean+0x2cc/0x6d0 fs/bcachefs/sb-clean.c:376
->        bch2_fs_read_only+0x1101/0x1210 fs/bcachefs/super.c:381
->        __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:615
->        generic_shutdown_super+0x136/0x2d0 fs/super.c:642
->        bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2037
->        deactivate_locked_super+0xc4/0x130 fs/super.c:473
->        cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
->        task_work_run+0x24f/0x310 kernel/task_work.c:180
->        ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
->        ptrace_report_syscall include/linux/ptrace.h:415 [inline]
->        ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
->        syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
->        syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
->        __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
->        syscall_exit_to_user_mode+0x273/0x370 kernel/entry/common.c:218
->        do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
->        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> -> #0 (&c->sb_lock){+.+.}-{3:3}:
->        check_prev_add kernel/locking/lockdep.c:3134 [inline]
->        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
->        validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
->        __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
->        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
->        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
->        bch2_gc_mark_key+0xc66/0x1010 fs/bcachefs/btree_gc.c:600
->        bch2_gc_btree fs/bcachefs/btree_gc.c:648 [inline]
->        bch2_gc_btrees fs/bcachefs/btree_gc.c:697 [inline]
->        bch2_check_allocations+0x3e06/0xcca0 fs/bcachefs/btree_gc.c:1224
->        bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:182
->        bch2_run_recovery_passes+0x19e/0x820 fs/bcachefs/recovery_passes.c:225
->        bch2_fs_recovery+0x2370/0x3720 fs/bcachefs/recovery.c:807
->        bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1035
->        bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2127
->        bch2_mount+0x6b0/0x13a0 fs/bcachefs/fs.c:1919
->        legacy_get_tree+0xee/0x190 fs/fs_context.c:662
->        vfs_get_tree+0x90/0x2a0 fs/super.c:1780
->        do_new_mount+0x2be/0xb40 fs/namespace.c:3352
->        do_mount fs/namespace.c:3692 [inline]
->        __do_sys_mount fs/namespace.c:3898 [inline]
->        __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
->        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> other info that might help us debug this:
-> 
->  Possible unsafe locking scenario:
-> 
->        CPU0                    CPU1
->        ----                    ----
->   lock(&c->btree_root_lock);
->                                lock(&c->sb_lock);
->                                lock(&c->btree_root_lock);
->   lock(&c->sb_lock);
-> 
-> [Analysis]
-> bch2_btree_roots_to_journal_entries() does not need to hold sb_lock, so
-> we can remove sb_lock to avoid deadlock.
-> 
-> Reported-by: syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=050e797ad21ccc3f5d1a
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
->  fs/bcachefs/sb-clean.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-> index 47f10ab57f40..7a75615ba745 100644
-> --- a/fs/bcachefs/sb-clean.c
-> +++ b/fs/bcachefs/sb-clean.c
-> @@ -373,6 +373,7 @@ void bch2_fs_mark_clean(struct bch_fs *c)
->  
->  	entry = sb_clean->start;
->  	bch2_journal_super_entries_add_common(c, &entry, 0);
-> +	mutex_unlock(&c->sb_lock);
->  	entry = bch2_btree_roots_to_journal_entries(c, entry, 0);
->  	BUG_ON((void *) entry > vstruct_end(&sb_clean->field));
->  
-> @@ -383,6 +384,7 @@ void bch2_fs_mark_clean(struct bch_fs *c)
->  	 * this should be in the write path, and we should be validating every
->  	 * superblock section:
->  	 */
-> +	mutex_lock(&c->sb_lock);
->  	ret = bch2_sb_clean_validate_late(c, sb_clean, WRITE);
->  	if (ret) {
->  		bch_err(c, "error writing marking filesystem clean: validate error");
+> We found a refcount UAF bug as follows:
+>
+> BUG: KASAN: use-after-free in cgroup_path_ns+0x112/0x150
+=E2=80=A6
 
-that's not the right fix, you can't just arbitrarily drop and retake
-locks like that
+How do you think about to use a summary phrase like =E2=80=9CAvoid use-aft=
+er-free
+in proc_cpuset_show()=E2=80=9D?
+
+
+> This is also reported by: https://syzkaller.appspot.com/bug?extid=3D9b1f=
+f7be974a403aa4cd
+
+Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D) accordingly?
+
+
+=E2=80=A6
+> +++ b/kernel/cgroup/cpuset.c
+=E2=80=A6
+> @@ -5052,9 +5053,28 @@ int proc_cpuset_show(struct seq_file *m, struct p=
+id_namespace *ns,
+>  		goto out;
+>
+>  	css =3D task_get_css(tsk, cpuset_cgrp_id);
+> +	rcu_read_lock();
+=E2=80=A6
+> +	rcu_read_unlock();
+>  	retval =3D cgroup_path_ns(css->cgroup, buf, PATH_MAX,
+>  				current->nsproxy->cgroup_ns);
+=E2=80=A6
+
+Would you become interested to apply a statement like =E2=80=9Cguard(rcu_r=
+ead_lock)();=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/cleanup.h#=
+L133
+
+Regards,
+Markus
 
