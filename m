@@ -1,257 +1,113 @@
-Return-Path: <linux-kernel+bounces-225563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38C6913249
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:17:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE08C91324D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E4CC1C219C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 06:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8796284135
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 06:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A554D14B089;
-	Sat, 22 Jun 2024 06:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB40D14B07D;
+	Sat, 22 Jun 2024 06:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="ViU7PpRI"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yYphDpyM"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E452913;
-	Sat, 22 Jun 2024 06:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7C1433A4;
+	Sat, 22 Jun 2024 06:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719037066; cv=none; b=cM1rT7kgGcdGYyFUMbqKKgO3i/Y6YSFm4NIXPnAe3ugGlsbpeHzkWAhOllfMDrNJTNjLxHK1Zb04BPq+K+V5r/EWQAvPUIp0K4AEZrGt6n8RiSHlr/GlWPRPB5XmKSYFcAQgq+95LvGA2WMiCGCo5ZipgnoFJxCK2sBNRCm/NgI=
+	t=1719037090; cv=none; b=uz8iKXFQYbIR+KL/SsZHHBIf5wvel3I4AR+DkOmS89QNQiicfLeS8xUfTAxe+h1V3U6V4TM4+MVZs6eqHQu5eZ0by8vMFr3gj1xgpeSkIQVIywrZkWOE3NOa4lxqBizco/INFUJ3rlW2O6s509nb5tDLDd7atY1AmylkpA1Szjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719037066; c=relaxed/simple;
-	bh=R6aB0QB/KPdZ4KXqAUTCSN/RohzvcGk6roLvMZY3Mzg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HZwjX4gNCtyjlruDBqPO2OwlchNXmJfUhFrYFBxMOkwXCYp1u2CnjAZ0SRNuANs65CtQlgZch9PL0x3iB3rjxRqpztt3TK57lG2IAajcX9iYVorMz+y59jrop8ouMl7x6MfvmfTg5eoc00zjRFOdntzzW7fglQX/NKhgzg54dGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=ViU7PpRI; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45M4wLGt026779;
-	Fri, 21 Jun 2024 23:17:33 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=fK3EZrZY7j+4dYnQBQans+h
-	BP4VS0Of2ctNwGdLtIrU=; b=ViU7PpRIVvyzkMcLM8WGNTTZvcMLsgRk9LL3Maa
-	TrIuvQWZAXbzs4leeWO7QqFL0NLQnUB1hHGUbg+Nhtb0eKMjoEI0Y854azA42vd0
-	CdDJ/FRu0dx8IFLpKZ22GBk8k9DgPD96rVUPKChZMggaE7wDERZFCJCa77x9x3Oq
-	z6ycsbIecFXdtv2QA6AVg7JDkZv4fL5rJnUJYCkxELNh2O359NCIKxKVQtxCvaQs
-	3GZ1LdFveR25ZBeABMneW8u1Zqr1MrRI+eeBpk6W0lwRY9xj2VkmwBvH0QJNHwIM
-	5mahSIsahH2ZtZ07Zv9+9ZG1gCJ0N5e/ZGxAaLug509QUbA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ywh0ph30e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 23:17:33 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 21 Jun 2024 23:17:32 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 21 Jun 2024 23:17:32 -0700
-Received: from localhost.localdomain (unknown [10.28.36.166])
-	by maili.marvell.com (Postfix) with ESMTP id 7734E3F7040;
-	Fri, 21 Jun 2024 23:17:28 -0700 (PDT)
-From: Suman Ghosh <sumang@marvell.com>
-To: <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
-        <hkelam@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lcherian@marvell.com>,
-        <jerinj@marvell.com>
-CC: Suman Ghosh <sumang@marvell.com>
-Subject: [net PATCH] octeontx2-af: Fix klockwork issues in AF driver
-Date: Sat, 22 Jun 2024 11:47:25 +0530
-Message-ID: <20240622061725.3579906-1-sumang@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719037090; c=relaxed/simple;
+	bh=tHiFydCYBgOcvHTV0ti5D0aX1AGYBtM8vFL0PBIZups=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N8m7VOG7FBFZqnfHblJH1ZQZx2cUi1e59DJQ+hAMloqp3r1al3+8OVG3wZ3U6IctaU/OKoNSxBfY/uyfQll87Z+l6JgPkHHqtIC8gM8TKU6jdRNFHBBpjQe+VTgg3AqsOYKk6EFw69Z/IbPCBlkHew4QYaTHFjDmXTdUqCKTwd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yYphDpyM; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45M6HoFs093442;
+	Sat, 22 Jun 2024 01:17:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719037070;
+	bh=qUzUPLdrT8LFfrcP6qmCVJcDz2Dz21GTWgwCpXvJCYY=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=yYphDpyMDOc3+pG8a36g8CjeH/aybg05vBRwotYi+Ul7fnT/jTTjO7vfdew7gEpzk
+	 ttgr04tmLj7Qj3uJDMGYFflIHjEy+ms9PNBvsD+BqTPDATbNGcd2+Q/ibvP8crhRO6
+	 kdELHckXWHSLqUNlC5Vp+cAnX/MN03ae61EwBqQk=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45M6HowU000773
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 22 Jun 2024 01:17:50 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 22
+ Jun 2024 01:17:49 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 22 Jun 2024 01:17:49 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45M6HkxF002316;
+	Sat, 22 Jun 2024 01:17:46 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: <nm@ti.com>, Udit Kumar <u-kumar1@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <kristo@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Dasnavis Sabiya <sabiya.d@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-main: Add node for EHRPWMs
+Date: Sat, 22 Jun 2024 11:47:43 +0530
+Message-ID: <171898028150.2272421.3470042778112808935.b4-ty@ti.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240603112938.2188510-1-u-kumar1@ti.com>
+References: <20240603112938.2188510-1-u-kumar1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: gc-0M3HJ3Ls2Me7W0Nc0WXOz5JJlNOOD
-X-Proofpoint-ORIG-GUID: gc-0M3HJ3Ls2Me7W0Nc0WXOz5JJlNOOD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-22_03,2024-06-21_01,2024-05-17_01
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-This patch fixes multiple minor klockwork issues in octeontx2 AF driver.
-Most of the changes are related to variable initializations and null
-checks. These are not the real issues.
+Hi Udit Kumar,
 
-Signed-off-by: Suman Ghosh <sumang@marvell.com>
----
- drivers/net/ethernet/marvell/octeontx2/af/cgx.c       |  9 ++++++++-
- .../net/ethernet/marvell/octeontx2/af/mcs_rvu_if.c    |  6 ++++--
- drivers/net/ethernet/marvell/octeontx2/af/ptp.c       | 11 ++++++++++-
- drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c   |  2 +-
- .../net/ethernet/marvell/octeontx2/af/rvu_debugfs.c   |  8 +++++++-
- drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c   |  2 +-
- drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c   |  1 +
- 7 files changed, 32 insertions(+), 7 deletions(-)
+On Mon, 03 Jun 2024 16:59:38 +0530, Udit Kumar wrote:
+> Add dts nodes for 6 EHRPWM instances on SoC.
+> 
+> 
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
-index 27935c54b91b..af42a6d23e53 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
-@@ -465,6 +465,13 @@ u64 cgx_lmac_addr_get(u8 cgx_id, u8 lmac_id)
- 	u64 cfg;
- 	int id;
- 
-+	if (!cgx_dev)
-+		return 0;
-+
-+	lmac = lmac_pdata(lmac_id, cgx_dev);
-+	if (!lmac)
-+		return 0;
-+
- 	mac_ops = cgx_dev->mac_ops;
- 
- 	id = get_sequence_id_of_lmac(cgx_dev, lmac_id);
-@@ -1648,7 +1655,7 @@ unsigned long cgx_get_lmac_bmap(void *cgxd)
- static int cgx_lmac_init(struct cgx *cgx)
- {
- 	struct lmac *lmac;
--	u64 lmac_list;
-+	u64 lmac_list = 0;
- 	int i, err;
- 
- 	/* lmac_list specifies which lmacs are enabled
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/mcs_rvu_if.c b/drivers/net/ethernet/marvell/octeontx2/af/mcs_rvu_if.c
-index d39d86e694cc..de4482dee86a 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/mcs_rvu_if.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/mcs_rvu_if.c
-@@ -681,7 +681,7 @@ int rvu_mbox_handler_mcs_alloc_resources(struct rvu *rvu,
- 	u16 pcifunc = req->hdr.pcifunc;
- 	struct mcs_rsrc_map *map;
- 	struct mcs *mcs;
--	int rsrc_id, i;
-+	int rsrc_id = -EINVAL, i;
- 
- 	if (req->mcs_id >= rvu->mcs_blk_cnt)
- 		return MCS_AF_ERR_INVALID_MCSID;
-@@ -742,6 +742,8 @@ int rvu_mbox_handler_mcs_alloc_resources(struct rvu *rvu,
- 			rsp->rsrc_cnt++;
- 		}
- 		break;
-+	default:
-+		goto exit;
- 	}
- 
- 	rsp->rsrc_type = req->rsrc_type;
-@@ -854,7 +856,7 @@ int rvu_mbox_handler_mcs_ctrl_pkt_rule_write(struct rvu *rvu,
- static void rvu_mcs_set_lmac_bmap(struct rvu *rvu)
- {
- 	struct mcs *mcs = mcs_get_pdata(0);
--	unsigned long lmac_bmap;
-+	unsigned long lmac_bmap = 0;
- 	int cgx, lmac, port;
- 
- 	for (port = 0; port < mcs->hw->lmac_cnt; port++) {
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/ptp.c b/drivers/net/ethernet/marvell/octeontx2/af/ptp.c
-index bcc96eed2481..0be5d22d213b 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/ptp.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/ptp.c
-@@ -517,6 +517,7 @@ static int ptp_pps_on(struct ptp *ptp, int on, u64 period)
- static int ptp_probe(struct pci_dev *pdev,
- 		     const struct pci_device_id *ent)
- {
-+	void __iomem * const *base;
- 	struct ptp *ptp;
- 	int err;
- 
-@@ -536,7 +537,15 @@ static int ptp_probe(struct pci_dev *pdev,
- 	if (err)
- 		goto error_free;
- 
--	ptp->reg_base = pcim_iomap_table(pdev)[PCI_PTP_BAR_NO];
-+	base = pcim_iomap_table(pdev);
-+	if (!base)
-+		goto error_free;
-+
-+	ptp->reg_base = base[PCI_PTP_BAR_NO];
-+	if (!ptp->reg_base) {
-+		err = -ENODEV;
-+		goto error_free;
-+	}
- 
- 	pci_set_drvdata(pdev, ptp);
- 	if (!first_ptp_block)
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
-index f047185f38e0..a1a919fcda47 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
-@@ -43,7 +43,7 @@ static irqreturn_t cpt_af_flt_intr_handler(int vec, void *ptr)
- 	struct rvu *rvu = block->rvu;
- 	int blkaddr = block->addr;
- 	u64 reg, val;
--	int i, eng;
-+	int i, eng = 0;
- 	u8 grp;
- 
- 	reg = rvu_read64(rvu, blkaddr, CPT_AF_FLTX_INT(vec));
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-index 881d704644fb..3056c39046bb 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
-@@ -519,12 +519,16 @@ RVU_DEBUG_SEQ_FOPS(mcs_rx_secy_stats, mcs_rx_secy_stats_display, NULL);
- static void rvu_dbg_mcs_init(struct rvu *rvu)
- {
- 	struct mcs *mcs;
--	char dname[10];
-+	char *dname = NULL;
- 	int i;
- 
- 	if (!rvu->mcs_blk_cnt)
- 		return;
- 
-+	dname = kmalloc_array(rvu->mcs_blk_cnt, sizeof(char), GFP_KERNEL);
-+	if (!dname)
-+		return;
-+
- 	rvu->rvu_dbg.mcs_root = debugfs_create_dir("mcs", rvu->rvu_dbg.root);
- 
- 	for (i = 0; i < rvu->mcs_blk_cnt; i++) {
-@@ -568,6 +572,8 @@ static void rvu_dbg_mcs_init(struct rvu *rvu)
- 		debugfs_create_file("port", 0600, rvu->rvu_dbg.mcs_tx, mcs,
- 				    &rvu_dbg_mcs_tx_port_stats_fops);
- 	}
-+
-+	kfree(dname);
- }
- 
- #define LMT_MAPTBL_ENTRY_SIZE 16
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-index 00af8888e329..0c59295eaf9d 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-@@ -5375,7 +5375,7 @@ static void nix_inline_ipsec_cfg(struct rvu *rvu, struct nix_inline_ipsec_cfg *r
- 				 int blkaddr)
- {
- 	u8 cpt_idx, cpt_blkaddr;
--	u64 val;
-+	u64 val = 0;
- 
- 	cpt_idx = (blkaddr == BLKADDR_NIX0) ? 0 : 1;
- 	if (req->enable) {
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-index 97722ce8c4cb..a69438921a8e 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-@@ -1765,6 +1765,7 @@ static void npc_load_kpu_profile(struct rvu *rvu)
- 				rvu->kpu_prfl_addr = NULL;
- 			} else {
- 				kfree(rvu->kpu_fwdata);
-+				rvu->kpu_fwdata = NULL;
- 			}
- 			rvu->kpu_fwdata = NULL;
- 			rvu->kpu_fwdata_sz = 0;
--- 
-2.25.1
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
+
+[1/1] arm64: dts: ti: k3-j784s4-main: Add node for EHRPWMs
+      commit: f53f477bfcb8aa7490b3bd3030e3bef1b95dbdce
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
 
