@@ -1,115 +1,215 @@
-Return-Path: <linux-kernel+bounces-225761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34936913502
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C4D913508
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 18:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1F611F229C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:13:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 638091F22DAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 16:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16C5170820;
-	Sat, 22 Jun 2024 16:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D1616FF4B;
+	Sat, 22 Jun 2024 16:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnFiIvtD"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QhdxPuce"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D193D82492;
-	Sat, 22 Jun 2024 16:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1412216C445;
+	Sat, 22 Jun 2024 16:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719072809; cv=none; b=YtCSoaK7FHLfxZedq61Is6A+VJLsXReVG4f3oDPfJXka+RzFATy9Swj293CInkZgN+U+qSLOqo+/uO5L6lie8mp5qUx7jlBKkQsYUcVyKDXn+H8QgkxBrR0XkvV3fIeMCSfZZ40zdueivBOgNbsiHyxecmMfARjCRqJ+WK01kKQ=
+	t=1719073158; cv=none; b=dOD+K4zNhW9D0NsLoqI3YcihpTd1lcbc491lL1LLc+rNbigEoMdy1bJmlsQqrdxsPEdoHKNHrnfCji+dRXjn6OFayuA2FFkN37a9IVrc+TmfVKFLlY/tBnmSdvaWsj4WyoTRyHudQqGPr+81PupnuCbOs7gus0ak5K4kbCNRXY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719072809; c=relaxed/simple;
-	bh=WEPGh2g/eR7cqZD7kIrQgVnoclyRVeCV0igVlLbbYUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dny72tWAaSqqZ8zTOAViLoeiitw70VyfnHWEXbSSrQTp78FtYdNqg2ikKkJktrAKAIjWVIw+MyYJxf+RHtDJia/Y33KhxAaCoEkMB6NreUPjbLzGIrezzXwDwHNmWmiBSoPRcggXQNVYMqeb0yzyjr9s9FsiiE89dzaFt1TUwNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PnFiIvtD; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7066c9741fbso353155b3a.2;
-        Sat, 22 Jun 2024 09:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719072807; x=1719677607; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YfQgHJ9GHbuY/xBljEs+qzKYxxicnPA7xLZUoCwp3KU=;
-        b=PnFiIvtDdoPLnhoSjZRzPl5/c4qOiN8ydKzZsLr4NMILyXT8SF2fnDSOwe6Voyxjjz
-         rxN4QrGuuIHMaAAceouHv6/O24rvbLTB3E0KpZrAqHk5mtGGzS+p+rAXF6s06uyBJFZR
-         sgOZ/nomaXmTnO+mUeq1jAuNRLaIt1nBqlsJuZVpBzi+mzv8IYDiakQLeXGzrbYa60Js
-         e2uKELToRIPkf3cbwTRlKt+LWeLVdy6c3zLjevyISQ7/iw8dCPxRzjYjNIgqAULcJivN
-         rc+C6BpQmKoG9jsdU1EmAEXdowt/nBazccNSUkkMuNl90v780Kwe93ovtGipOZQcQvGr
-         ShqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719072807; x=1719677607;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YfQgHJ9GHbuY/xBljEs+qzKYxxicnPA7xLZUoCwp3KU=;
-        b=sTv7x2E1kc2nKhJrdhtdciNezEwGvh5X+mBlvl3qAeCN633XrnhHG3CsEIMD7r52h/
-         Ih0xwtLV34T5FSrdKQN7R5S3oWoN6ZdsGG2Efbi/y8Kh2OaCgB1XPQaMhNM1v+e/K17G
-         s+86O8g4F3WRx2sd2qEgw0wfb0W5QHApB3+BIaFoW3K6dwysOR9bx6Lmvdx4JeG9jPFa
-         wSzro3D0oqUb0+xTGszItFQtQLy4VKrAWA51NjpEiJ2EjHGhhnrQ6lzACiz2j7agI6+j
-         8+7iG/pg1XJSXyyp8GSisfIRerRviolpYawNxCIRkWlxnBKsQn6kfodMHvoPU2U6d87R
-         vheg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3y1Xb4KwqM1uJMVoqxDQmJAMYPA+xHRVwpSZ+03S2Hj6JwF4p00PtYzDKfhFAWFiHcWftdHMnZyXZWiX4EGvvW7FiiB9/d/x7E0gRmR+7JjWsH4Sh+g3/ZA5fIMYHv21fCEP/mg==
-X-Gm-Message-State: AOJu0Yx/FM+xANbMPQSawmqPeVBA2V1MkCxpyuYB6iFSQOgIOnvUi6Kz
-	S/Ha+ZQrvCA1ytmjFU0z50N88VdgqLMX1fcq+OUsi1gXBxf8CQXN
-X-Google-Smtp-Source: AGHT+IE8B4FaBx/XtPGumeAi8GNlm74hQSGkUmcpTZ/rZCmKAZG0B8TeUkJQVX7/3a6xGquhb22Tzg==
-X-Received: by 2002:a05:6a20:8ca1:b0:1b6:7a70:d46a with SMTP id adf61e73a8af0-1bcf7e7514dmr244180637.18.1719072806973;
-        Sat, 22 Jun 2024 09:13:26 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065107b62bsm3369411b3a.16.2024.06.22.09.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 09:13:26 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Sat, 22 Jun 2024 06:13:24 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Xavier <xavier_qy@163.com>
-Cc: longman@redhat.com, mkoutny@suse.com, lizefan.x@bytedance.com,
-	hannes@cmpxchg.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org
-Subject: Re: [PATCH-cpuset v6 0/2] Add Union-Find and use it to optimize
- cpuset
-Message-ID: <Znb4JBpJoGZ3LS1W@slm.duckdns.org>
-References: <ZnXsUnAi7VnX0tZJ@slm.duckdns.org>
- <20240622071424.215778-1-xavier_qy@163.com>
+	s=arc-20240116; t=1719073158; c=relaxed/simple;
+	bh=R1fJAxEmEa9+Ogxf/UQa4lVvbvX8kI5YG4jOsFb1HgY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P9wyXTvgQQiBpDqOEDoxrKMRzXLGp3rvlglzkCdawAm+v50GROML+y0Onb5qo6u/OxhjUs4SANL9CBdwUBjgOUPdQ8NZ4Z+9O+TohhJz1V/XviZrqrDBM6Zpvt5Dw1Q6IJlNRsijXGFyBFXZsJvbS8+ghvy/5yYFoqsqO0OMs/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QhdxPuce; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45MGJ4Y2061387;
+	Sat, 22 Jun 2024 11:19:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719073144;
+	bh=C4RoinTQTtmRn4rV2KwDh6NL62drf5wIG8VbXAUiIrs=;
+	h=From:To:CC:Subject:Date;
+	b=QhdxPuce6CkqLZkLH4MmWW+ybITatONSC13UXT6O6H3swWDOvRBA61845JgNI59Kh
+	 C+oi6o0HvCGZNQyfYP3IW9lZWNjJ7B8kF//sDIcsN5dIHY9JomPCxADoa9vavzKnTr
+	 1XwkHnGz64XKQ8CxySEOaxnwFzxAGaxChW11pHyo=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45MGJ4JR001208
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 22 Jun 2024 11:19:04 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 22
+ Jun 2024 11:19:03 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 22 Jun 2024 11:19:03 -0500
+Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.18])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45MGJ0M1029138;
+	Sat, 22 Jun 2024 11:19:00 -0500
+From: Udit Kumar <u-kumar1@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <m-chawdhry@ti.com>, Sinthu Raja <sinthu.raja@ti.com>,
+        Udit Kumar
+	<u-kumar1@ti.com>
+Subject: [PATCH v4] arm64: dts: ti: k3-am68-sk-som: Add support for OSPI flash
+Date: Sat, 22 Jun 2024 21:48:35 +0530
+Message-ID: <20240622161835.3610348-1-u-kumar1@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240622071424.215778-1-xavier_qy@163.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello, Xavier.
+From: Sinthu Raja <sinthu.raja@ti.com>
 
-On Sat, Jun 22, 2024 at 03:14:22PM +0800, Xavier wrote:
-> To Tejun,
-> Since union_find operation does not require contiguous physical memory, I
-> have replaced the previous allocation method with vzalloc.
+AM68 SK has an OSPI NOR flash on its SOM connected to OSPI0 instance.
+Enable support for the same. Also, describe the OSPI flash partition
+information through the device tree, according to the offsets in the
+bootloader.
 
-Oh, that's not what I meant. Sorry about not being clearer. What I was
-trying to say was that requiring consecutive allocation whether kzalloc or
-vzalloc is unlikely to work for kernel data structures. The reason why I
-mentioned vmalloc was because it's easy to end up in sizes that require
-vmalloc with consecutive allocations and vmallocs are rather expensive and
-not that great - ie. having to use vmalloc may negate the benefits of better
-algorithm in most cases.
+Signed-off-by: Sinthu Raja <sinthu.raja@ti.com>
+Signed-off-by: Udit Kumar <u-kumar1@ti.com>
+---
+Bootlogs
+https://gist.github.com/uditkumarti/3a131e3c78f121cf8c2f703d307c02df#file-gistfile1-txt
+line 1451
 
-Skimming the code, there's nothing requiring consecutive allocations. Is
-there a reason why this can't follow the usual convention that kernel data
-structures follow (e.g. list, rbtree) where allocation is left to the users?
+Changes in v4:
+  a. Added bootph properties
+  b. INT pin is not used by flash drivers, so dropping this
+  c. reverting partition 0 offset to 512KB, due to DFU boot failure
+     seen on other K3 SOC with 1MB offset.
 
-Thanks.
+Changes in v3:
+  a. Fix the make dtbs_check error related to ospi pinctrl
+  b. Increase the partition 0 size to 1MB and update the following
+   partitions start address accordingly.
 
+Changes in v2:
+  a. remove pin E20, which is not connected.
+
+v3: https://lore.kernel.org/all/20240226095231.35684-1-sinthu.raja@ti.com/
+v2: https://lore.kernel.org/linux-arm-kernel/20240219075932.6458-1-sinthu.raja@ti.com/
+v1: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20240206092334.30307-1-sinthu.raja@ti.com/ 
+ arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi | 81 ++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi b/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi
+index 2ebb7daa822f..5c66e0ec6e82 100644
+--- a/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi
+@@ -131,6 +131,25 @@ rtos_ipc_memory_region: ipc-memories@a8000000 {
+ 	};
+ };
+ 
++&wkup_pmx0 {
++	mcu_fss0_ospi0_pins_default: mcu-fss0-ospi0-pins {
++		bootph-all;
++		pinctrl-single,pins = <
++			J721S2_WKUP_IOPAD(0x000, PIN_OUTPUT, 0) /* (D19) MCU_OSPI0_CLK */
++			J721S2_WKUP_IOPAD(0x02c, PIN_OUTPUT, 0) /* (F15) MCU_OSPI0_CSn0 */
++			J721S2_WKUP_IOPAD(0x00c, PIN_INPUT, 0) /* (C19) MCU_OSPI0_D0 */
++			J721S2_WKUP_IOPAD(0x010, PIN_INPUT, 0) /* (F16) MCU_OSPI0_D1 */
++			J721S2_WKUP_IOPAD(0x014, PIN_INPUT, 0) /* (G15) MCU_OSPI0_D2 */
++			J721S2_WKUP_IOPAD(0x018, PIN_INPUT, 0) /* (F18) MCU_OSPI0_D3 */
++			J721S2_WKUP_IOPAD(0x01c, PIN_INPUT, 0) /* (E19) MCU_OSPI0_D4 */
++			J721S2_WKUP_IOPAD(0x020, PIN_INPUT, 0) /* (G19) MCU_OSPI0_D5 */
++			J721S2_WKUP_IOPAD(0x024, PIN_INPUT, 0) /* (F19) MCU_OSPI0_D6 */
++			J721S2_WKUP_IOPAD(0x028, PIN_INPUT, 0) /* (F20) MCU_OSPI0_D7 */
++			J721S2_WKUP_IOPAD(0x008, PIN_INPUT, 0) /* (E18) MCU_OSPI0_DQS */
++		>;
++	};
++};
++
+ &wkup_pmx2 {
+ 	wkup_i2c0_pins_default: wkup-i2c0-default-pins {
+ 		pinctrl-single,pins = <
+@@ -153,6 +172,68 @@ eeprom@51 {
+ 	};
+ };
+ 
++&ospi0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&mcu_fss0_ospi0_pins_default>;
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0x0>;
++		spi-tx-bus-width = <8>;
++		spi-rx-bus-width = <8>;
++		spi-max-frequency = <25000000>;
++		cdns,tshsl-ns = <60>;
++		cdns,tsd2d-ns = <60>;
++		cdns,tchsh-ns = <60>;
++		cdns,tslch-ns = <60>;
++		cdns,read-delay = <4>;
++
++		partitions {
++			bootph-all;
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "ospi.tiboot3";
++				reg = <0x0 0x80000>;
++			};
++
++			partition@80000 {
++				label = "ospi.tispl";
++				reg = <0x80000 0x200000>;
++			};
++
++			partition@280000 {
++				label = "ospi.u-boot";
++				reg = <0x280000 0x400000>;
++			};
++
++			partition@680000 {
++				label = "ospi.env";
++				reg = <0x680000 0x40000>;
++			};
++
++			partition@740000 {
++				label = "ospi.env.backup";
++				reg = <0x740000 0x40000>;
++			};
++
++			partition@800000 {
++				label = "ospi.rootfs";
++				reg = <0x800000 0x37c0000>;
++			};
++
++			partition@3fc0000 {
++				bootph-pre-ram;
++				label = "ospi.phypattern";
++				reg = <0x3fc0000 0x40000>;
++			};
++		};
++	};
++};
++
+ &mailbox0_cluster0 {
+ 	status = "okay";
+ 	interrupts = <436>;
 -- 
-tejun
+2.34.1
+
 
