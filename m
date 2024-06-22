@@ -1,81 +1,78 @@
-Return-Path: <linux-kernel+bounces-225849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762BB913617
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:04:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F04A9913619
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 200B3283477
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:03:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C81E1F22EF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 21:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539FE6F076;
-	Sat, 22 Jun 2024 21:03:51 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337536F085;
+	Sat, 22 Jun 2024 21:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbFqCAj9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED63C40847;
-	Sat, 22 Jun 2024 21:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E4153E31;
+	Sat, 22 Jun 2024 21:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719090230; cv=none; b=F+Dz4b1+bmQ3N7410PxWhsqQMhd8QUN/PzBnib/9IgpaBXBNxF9Btl16N8ZNrCN2zKXdnMcG7PFDjGDL4mruRl/MynlyPQnBaAFzww1Es4Rt43Mbu/PNA8hLPjd0qU10S/zIxc2ZmxvgtHPRAplMTouGnagI4LImY6CuH/PI/as=
+	t=1719090305; cv=none; b=sRVdCjn8ySgyCfiIsvXDci1wUh2Cgv/PNWEDP40RjB9ldv4yxrGC18jBNVkszSFVS6boXhNjwlVAMQU2wNo6FuMSJeFF2xjP2Mhmy7xmOogxqKvvZP3tgEWPfHWOs0+StsACafjVSi3es7N04RSYuQ9ycYhmlN5NvLwb7W5R4qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719090230; c=relaxed/simple;
-	bh=dlE2miFt5xef8WDzJ055d86Kazksl3tA5Z0SNaM9GlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XMxCj/NVZ/K/LZcLvD4pCebBZC5aUbLZbz25jIQrcQtI6nTQsLrkFerBtloDVIlSlApZHhZEZLtp07l/I1780c4GCWttdf4pCMMXNq2UP4gpG0YEn6d978elVhx4h+bX4pkLKJHeVebWRlloKTDoboFyK9S01ZAsO70SQHNJoos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sL7tS-000000005kt-28az;
-	Sat, 22 Jun 2024 21:03:30 +0000
-Date: Sat, 22 Jun 2024 22:03:24 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Sky Huang <SkyLake.Huang@mediatek.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v8 06/13] net: phy: mediatek: Hook LED helper
- functions in mtk-ge.c
-Message-ID: <Znc8HI6noTr7myYP@makrotopia.org>
-References: <20240621122045.30732-1-SkyLake.Huang@mediatek.com>
- <20240621122045.30732-7-SkyLake.Huang@mediatek.com>
- <e1ed191f-7c70-4c34-ad1f-40aaae18582b@lunn.ch>
+	s=arc-20240116; t=1719090305; c=relaxed/simple;
+	bh=waJiqTDH2GTFmh8ACvxm1o+nIZUh1nu4O/KRBPAP29E=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DFQSQ6O4riRA9vnSURbxmLA1GkMdkHbwtg36c4kqNW1vvXjd4WImndtY8vIXVwg3bOGvIq4vJd8/pXBzv+vEZ7J9LfnFtp/Z0HQC9WITTHOROmgLEvHXsrpvB02p2fSQ4p5ZUH5Oll4rJDKEL1az5RAr2E+XAcZ10MkgD5BikQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbFqCAj9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4194AC32781;
+	Sat, 22 Jun 2024 21:05:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719090305;
+	bh=waJiqTDH2GTFmh8ACvxm1o+nIZUh1nu4O/KRBPAP29E=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=KbFqCAj99B1qe3U7o6d0farFm+ICd2Otj4hMlLOtb+111jgAtOO6UXr/HDp9CS39V
+	 8j0R5RWEKFqjcrJfTctmelFu9KRXK4KUVoYpcv+VWvCk1ZInHUe23Qbn+5ThKiXyhJ
+	 H0du7oLMcDyu0PN3hWWRRn7TGkJymi7hw2SBnoXNL9lY1HFYkOTLLOfZtw8uuFsEU+
+	 mKBZvdUp3GVb0Vn11VqGatShmtDHLy7WVUUz60MkvW3nY+cA/DcLOgVI5TS8jFDA8D
+	 ivK5h6vdsZH7o+rBsO4FlbGvbnnb++WPTn8EDIqpma45fXCs3PRwSfU9jGiOs6XSo3
+	 UG6UHqxV98TKQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2BD5DCF3B82;
+	Sat, 22 Jun 2024 21:05:05 +0000 (UTC)
+Subject: Re: [GIT PULL] NFSD fixes for v6.10-rc
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Znb+ELqzU3lqTUK+@tissot.1015granger.net>
+References: <Znb+ELqzU3lqTUK+@tissot.1015granger.net>
+X-PR-Tracked-List-Id: <linux-nfs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Znb+ELqzU3lqTUK+@tissot.1015granger.net>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.10-2
+X-PR-Tracked-Commit-Id: da2c8fef130ec7197e2f91c7ed70a8c5bede4bea
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c2fc946223f565d99322e942cdc46396d3c7d60b
+Message-Id: <171909030516.414.15249663544529779426.pr-tracker-bot@kernel.org>
+Date: Sat, 22 Jun 2024 21:05:05 +0000
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e1ed191f-7c70-4c34-ad1f-40aaae18582b@lunn.ch>
 
-On Sat, Jun 22, 2024 at 07:29:45PM +0200, Andrew Lunn wrote:
-> > [...]
-> > +	if (index > 1)
-> > +		return -EINVAL;
-> > +
-> 
-> It looks like this test could be moved into the common code. It seems
-> like all variants have a single LED.
+The pull request you sent on Sat, 22 Jun 2024 12:38:40 -0400:
 
-Exactly two LEDs, which is what index > 1 checks for, but yes, it
-should be moved to common code.
+> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.10-2
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c2fc946223f565d99322e942cdc46396d3c7d60b
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
