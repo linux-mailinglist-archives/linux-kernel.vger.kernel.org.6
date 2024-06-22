@@ -1,130 +1,198 @@
-Return-Path: <linux-kernel+bounces-225512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA9691319D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 04:25:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E609131A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 04:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9B621F22C13
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 02:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 880661C21B4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 02:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8B88BF7;
-	Sat, 22 Jun 2024 02:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7191C79FE;
+	Sat, 22 Jun 2024 02:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LsWurPlR"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cUeiQ/NN"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352912119;
-	Sat, 22 Jun 2024 02:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E04338F
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 02:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719023118; cv=none; b=i7hk2rkBPA/J4hYu7cEOKevRe/xpiriE7hEvRTsmtBZx5uZC7RNlfC5vQbnFevmWfixKEBDKdmHJAugRmoCilOEPvx4gnKwSVke3flSfA7z8LzEN/poDYToJJIbVydI2OoRmkVjVAI8S97DQzqSBZhMcTMMOl9Y6ld3BL/Lohok=
+	t=1719023723; cv=none; b=PCV8+vfOmSFP1J8utXzx6s3NgY7/16zuBuFPVgKTueaOJlt4Xb/Gc2ehwqBss3vZjdfecedxJmffHCC/MM39HCzDJgEBXkQ/vfRzdaZNoqDKyDuiVFO/KidWVoAWUVbgpTWX2tvRklnAzdL1zIO0tVAOocbKlBAGkHPCSAb6iwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719023118; c=relaxed/simple;
-	bh=GcsQc9ikcH+AJbdBZArT/RxNy3TLtgnk1xbAAfnItBg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TY5Jb0L19Z5qKbzUO/ITweSCI/2vfcDCt6eZ47ZMqj2wKe4BwCoofm89vrGM2KP8hsNNBl+UcF1IXVL8qqypQdc8dCzs9rBdP19fj3JKi2P3Gl1xgIeGtoWnXwP4/tpm9sbO8vkNUJGJ2CLGTO54cJMjKXo6qm4H920efccRKmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LsWurPlR; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f7b785a01so293006066b.1;
-        Fri, 21 Jun 2024 19:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719023115; x=1719627915; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CoLoLenO2hn+yBjuCLcTOSia4khLZOUwCxfFgSKuOrc=;
-        b=LsWurPlR3TL9k97cHcdF/WDLxpQkbwtKTL5qHKPBriW6khQ9oPGa9PmTCMXr+phbyV
-         r3Tq0ECAft0jTeE/Rlwdw1Hx3Z5CjFj3T1yugeWtWAOvEwr3TX6IwYd+hDLsirvsrZR8
-         BPc5vkeIRjCuAS16zAGS1puwgtv8q7KUg/nGMJynJR6nY8AvY/BCfKESBUZQm+wjLHUZ
-         K8bgGqB5SwofkbdmN1WglISQwbNdMm860PFbj1C03TMkEFoUGYhunRXoLYzbl3rKI6sn
-         oA2qi1aiOAw2RqTy2vtCj9FvUmBo6qFA44GtJjnS0+vb4+RQrWZcp6icmrkL2DZiStmO
-         pAqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719023115; x=1719627915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CoLoLenO2hn+yBjuCLcTOSia4khLZOUwCxfFgSKuOrc=;
-        b=YN/sBa4xCba839BREVBfpROBqlSioIkSsQEb3+PIAHYmJ8gil73eNvmQ0HXvx5uXeu
-         sOnYtNew847s7OeUCp2RMCbuZp505j0SPNotnS7MSzKSgb1aK+zCDdb5XwcKwrEy+f9M
-         9btQk2uUkZnnqTAGZOZptVygz0XzZbyDYzsi/vMTJ4p1zXlGu078gsExBr7sYwjSi8oi
-         VMEpUj1Pxv+fCL+DfZTkgzUlL09x83NGODrHFECon968ZFoccinYSMCYRVmvDIGIoG3a
-         u6YiGycw+PQUVT6j4IrrXg9reAr1kOjhtzX/knsqadYH4OhU34YcZi/j4el+hEwJx5s5
-         z1fA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWmKsLozlhh2DC1+MxI1CCF0vsOTaKx7jTa2RwTsvXObhHoVlo9St8KRE57g5LZI6iyV3OoUXyi03O/U9TUoLtjC+DhLmiQYGVw7FU4xoYREgFQvzZzMb5UpzprQ6t7sGbXZWs
-X-Gm-Message-State: AOJu0Yxj338rCjg/2HODUtmtQup+e5R1IHtMUIsHENc12NXX4/OPzh/D
-	rseD7K3mz/3nrHqBmdpxLdhHPjdUpawaLiwfMBraW+go+p2CNcjhuzp6XNE6C1etU5DjRnwlcNw
-	T1HXeB8G9Ep+sA0uc7vyzMQPeSDSdZOSVIBvxlg==
-X-Google-Smtp-Source: AGHT+IGqzP7BZpP7VUAnHz9SkGuXTFi3N5BNWqoIKPnVV15CHSzOWqVEK6BFwL2z9M5eh6vtIgyJmGbibXlXL5xBKlE=
-X-Received: by 2002:a17:906:cb1:b0:a6f:f7c:5c7a with SMTP id
- a640c23a62f3a-a6fab7cd635mr495493666b.67.1719023114713; Fri, 21 Jun 2024
- 19:25:14 -0700 (PDT)
+	s=arc-20240116; t=1719023723; c=relaxed/simple;
+	bh=G+yjtXLrPdCvH02NNGK4pofgbsXzHsDy+OMXxT6/MkY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m9jhKI7PH461b0JYC2Qka/0swNLGxXkXQVGvnN+mflG3kIC2oJn/Hvl2Z0fOP7nljghuc8uYn0j2iAn9U/irb5bu0rknhpzGccl5d9nJicjNrFGLdCV7G7liaUSLnyf1B5neMF+lKmI3Glb5TdKWun68IGANRMf2sKsN+k1J818=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cUeiQ/NN; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45M2XnuI076761;
+	Fri, 21 Jun 2024 21:33:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719023629;
+	bh=ua1/jswJj1wB4YXYWHi6SELeuhLKvwjWh5Mdn3JiCTc=;
+	h=From:To:CC:Subject:Date;
+	b=cUeiQ/NN2OxPuQv/x7pl0IFBUH3ANfXaE98hkZSiHwM/aZ+HqzM85DCzqUg2A3/1R
+	 eQixO2yGaGXwXjA1ojp+N3q3R/1PBZz8lrLBNOQGDthrpuUC5ekEAI2ffJGhkKvB3b
+	 sl5PSU23rLZoOg1cNM2l/dhA9Ssbx9+i2+YidMYs=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45M2Xnkn010611
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 21 Jun 2024 21:33:49 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
+ Jun 2024 21:33:48 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 21 Jun 2024 21:33:48 -0500
+Received: from LT5CG31242FY.dhcp.ti.com ([10.250.66.24])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45M2XdGd099847;
+	Fri, 21 Jun 2024 21:33:39 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <broonie@kernel.org>
+CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
+        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
+        <13916275206@139.com>, <zhourui@huaqin.com>,
+        <alsa-devel@alsa-project.org>, <i-salazar@ti.com>,
+        <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
+        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
+        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <yuhsuan@google.com>,
+        <henry.lo@ti.com>, <tiwai@suse.de>, <baojun.xu@ti.com>, <soyer@irl.hu>,
+        <Baojun.Xu@fpt.com>, <judyhsiao@google.com>, <navada@ti.com>,
+        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
+        <savyasanchi.shukla@netradyne.com>, <flaviopr@microsoft.com>,
+        <jesse-ji@ti.com>, <darren.ye@mediatek.com>,
+        Shenghao Ding
+	<shenghao-ding@ti.com>
+Subject: [PATCH v2] ASoc: tas2781: Add name_prefix as the prefix name of firmwares and kcontrol to support corresponding TAS2563/TAS2781s
+Date: Sat, 22 Jun 2024 10:33:33 +0800
+Message-ID: <20240622023335.595-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612070106.2060334-1-chenhuacai@loongson.cn> <87y16ym966.ffs@tglx>
-In-Reply-To: <87y16ym966.ffs@tglx>
-From: Huacai Chen <chenhuacai@gmail.com>
-Date: Sat, 22 Jun 2024 10:25:02 +0800
-Message-ID: <CAAhV-H7w+iHwXXzxVHzer7MiAVgU7v3DFuoWuKm5UWkUQoqeQA@mail.gmail.com>
-Subject: Re: [PATCH] irqchip/loongson-liointc: Set different ISRs for
- different cores
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Xuefeng Li <lixuefeng@loongson.cn>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org, 
-	Tianli Xiong <xiongtianli@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi, Thomas,
+Add name_prefix as the prefix name of firmwares and
+kcontrol to support corresponding TAS2563/TAS2781s.
+name_prefix is not mandatory.
 
-On Sat, Jun 22, 2024 at 2:40=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Wed, Jun 12 2024 at 15:01, Huacai Chen wrote:
-> > In the liointc hardware, there are different ISRs for different cores.
->
-> I have no idea what ISR means in that context. Can you please spell it
-> out with proper words so that people not familiar with the details can
-> understand it?
-ISR means "Interrupt Status Register" here, I will improve the wording.
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
->
-> > We always use core#0's ISR before but has no problem, it is because the
-> > interrupts are routed to core#0 by default. If we change the routing,
-> > we should set correct ISRs for different cores.
->
-> We do nothing. The code does.
->
-> See https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#ch=
-angelog
-Let me try my best...
+---
+v2:
+ - Add name_prefix as name prefix of calibration data file.
+v1:
+ - Changed the copyright year to 2024 in tas2781-comlib.c.
+ - Correct the filename in the header comments of tas2781-comlib.c,
+   remove the wrong file name.
+ - Add name_prefix as name of firmwares and kcontrol.
+---
+ include/sound/tas2781.h           |  1 +
+ sound/soc/codecs/tas2781-comlib.c | 13 +++++++++----
+ sound/soc/codecs/tas2781-i2c.c    | 20 ++++++++++++++++----
+ 3 files changed, 26 insertions(+), 8 deletions(-)
 
->
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Tianli Xiong <xiongtianli@loongson.cn>
-> > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
->
-> This Signed-off-by chain is wrong. If Tianli is the author then this
-> needs a From: Tianli in the changelog. If you developed it together then
-> this lacks a Co-developed-by tag.
-Yes, here we lack a Co-developed-by, thanks.
+diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
+index 99ca3e401fd1..cd8ce522b78e 100644
+--- a/include/sound/tas2781.h
++++ b/include/sound/tas2781.h
+@@ -108,6 +108,7 @@ struct tasdevice_priv {
+ 	unsigned char coef_binaryname[64];
+ 	unsigned char rca_binaryname[64];
+ 	unsigned char dev_name[32];
++	const char *name_prefix;
+ 	unsigned char ndev;
+ 	unsigned int magic_num;
+ 	unsigned int chip_id;
+diff --git a/sound/soc/codecs/tas2781-comlib.c b/sound/soc/codecs/tas2781-comlib.c
+index 3aa81514dad7..6db1a260da82 100644
+--- a/sound/soc/codecs/tas2781-comlib.c
++++ b/sound/soc/codecs/tas2781-comlib.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
+ //
+-// tas2781-lib.c -- TAS2781 Common functions for HDA and ASoC Audio drivers
++// TAS2781 Common functions for HDA and ASoC Audio drivers
+ //
+-// Copyright 2023 Texas Instruments, Inc.
++// Copyright 2023 - 2024 Texas Instruments, Inc.
+ //
+ // Author: Shenghao Ding <shenghao-ding@ti.com>
+ 
+@@ -277,8 +277,13 @@ int tascodec_init(struct tasdevice_priv *tas_priv, void *codec,
+ 	 */
+ 	mutex_lock(&tas_priv->codec_lock);
+ 
+-	scnprintf(tas_priv->rca_binaryname, 64, "%sRCA%d.bin",
+-		tas_priv->dev_name, tas_priv->ndev);
++	if (tas_priv->name_prefix)
++		scnprintf(tas_priv->rca_binaryname, 64, "%s-%sRCA%d.bin",
++			tas_priv->name_prefix, tas_priv->dev_name,
++			tas_priv->ndev);
++	else
++		scnprintf(tas_priv->rca_binaryname, 64, "%sRCA%d.bin",
++			tas_priv->dev_name, tas_priv->ndev);
+ 	crc8_populate_msb(tas_priv->crc8_lkp_tbl, TASDEVICE_CRC8_POLYNOMIAL);
+ 	tas_priv->codec = codec;
+ 	ret = request_firmware_nowait(module, FW_ACTION_UEVENT,
+diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
+index c64d458e524e..cc765d45c6b5 100644
+--- a/sound/soc/codecs/tas2781-i2c.c
++++ b/sound/soc/codecs/tas2781-i2c.c
+@@ -394,8 +394,12 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 	 * failing to load DSP firmware is NOT an error.
+ 	 */
+ 	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
+-	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
+-		tas_priv->dev_name);
++	if (tas_priv->name_prefix)
++		scnprintf(tas_priv->rca_binaryname, 64, "%s-%s_coef.bin",
++			tas_priv->name_prefix, tas_priv->dev_name);
++	else
++		scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
++			tas_priv->dev_name);
+ 	ret = tasdevice_dsp_parser(tas_priv);
+ 	if (ret) {
+ 		dev_err(tas_priv->dev, "dspfw load %s error\n",
+@@ -418,8 +422,15 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 	 * calibrated data inside algo.
+ 	 */
+ 	for (i = 0; i < tas_priv->ndev; i++) {
+-		scnprintf(tas_priv->cal_binaryname[i], 64, "%s_cal_0x%02x.bin",
+-			tas_priv->dev_name, tas_priv->tasdevice[i].dev_addr);
++		if (tas_priv->name_prefix)
++			scnprintf(tas_priv->cal_binaryname[i], 64,
++				"%s-%s_cal_0x%02x.bin", tas_priv->name_prefix,
++				tas_priv->dev_name,
++				tas_priv->tasdevice[i].dev_addr);
++		else
++			scnprintf(tas_priv->cal_binaryname[i], 64,
++				"%s_cal_0x%02x.bin", tas_priv->dev_name,
++				tas_priv->tasdevice[i].dev_addr);
+ 		ret = tas2781_load_calibration(tas_priv,
+ 			tas_priv->cal_binaryname[i], i);
+ 		if (ret != 0)
+@@ -579,6 +590,7 @@ static int tasdevice_codec_probe(struct snd_soc_component *codec)
+ {
+ 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
+ 
++	tas_priv->name_prefix = codec->name_prefix;
+ 	return tascodec_init(tas_priv, codec, THIS_MODULE, tasdevice_fw_ready);
+ }
+ 
+-- 
+2.34.1
 
-Huacai
-
->
-> See Documentation/process/
->
-> Thanks,
->
->         tglx
 
