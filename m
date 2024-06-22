@@ -1,164 +1,149 @@
-Return-Path: <linux-kernel+bounces-225603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF2C9132C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:32:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974999132CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 10:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8236C1C211D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C4AA1F23210
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 08:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C530014B081;
-	Sat, 22 Jun 2024 08:32:35 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D4279DF
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 08:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B96E14BF90;
+	Sat, 22 Jun 2024 08:42:28 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A489179DF
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 08:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719045155; cv=none; b=WNVHGEL17v8QCT/I6Q/BHI8uECziM8E2X56Py9k9SUWh3FJxSEq3zybjFu2Zbm4jrXrtyYn1mi7bya7aqKANER+PSwGD+smhV8jDBWOZPM+IDWlByVLFKgKjs4YohmORVIsyxjyrm846evwFE7hnb6n4//xINyBQBh+vHPOABP0=
+	t=1719045748; cv=none; b=A9wBRnZs/whsFNuZ7vWI5uf5Z4MXreze6Kqu1tit8GIveT/uQfDxTHvaQvlNzAyyo3QdyEpOTAztPfLu66LSeOHAPSOayIJDNiCZcHHH/FvSCLVuQcRWSPErreLtBzKxiQBlvwqXQjoGAtw6TqcwdJzCoVhenC4G91WSHShcMTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719045155; c=relaxed/simple;
-	bh=l4G+y3W1HAUP0xuNm02/3LhS83OfGS+f6WLDhkzhB9s=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6hxWeQCInBgNRh3q11+115itJXwfdKtDNRTsp6rUzwfIvxuFoOV2dI0loKwJMzUug+GoqXYBfTLXjAq5dyeH+EzRuxAk44HbU04M5V1FpDBxq96SuLQVBELzPF7DpJ+3VJ6rMn+03g4WIqJtjQeXnrYapNpOqSFcQAlf01Iua0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: iACEVgktQF23Wn481t7kcw==
-X-CSE-MsgGUID: 3JUVXteEQ6m2j2jHTeQ3Wg==
-X-IronPort-AV: E=Sophos;i="6.08,257,1712592000"; 
-   d="scan'208";a="88840608"
-Date: Sat, 22 Jun 2024 16:31:14 +0800
-From: Lingyue <lingyue@xiaomi.com>
-To: Mark Rutland <mark.rutland@arm.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <dianders@chromium.org>,
-	<swboyd@chromium.org>, <frederic@kernel.org>, <james.morse@arm.com>,
-	<scott@os.amperecomputing.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <huangshaobo3@xiaomi.com>,
-	<huangjun7@xiaomi.com>
-Subject: Re: [PATCH] arm64: smp: do not allocate CPU IDs to invalid CPU nodes
-Message-ID: <ZnaL0q4MbxSdJhAK@xiaomi.com>
-References: <20240621075045.249798-1-lingyue@xiaomi.com>
- <ZnVR9sdoqfayKNrI@J2N7QTR9R3>
+	s=arc-20240116; t=1719045748; c=relaxed/simple;
+	bh=lkQC8OcPoiLAIJ+F1lzmdNT/KUX9yKgXj09Imij5Al4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XQ8HMyNztIVhjD9Zu7ntj+Xt7Z+/Jw5cEXAc90bRZvcXJ9OJph3/lYBAu6c7uY4G4jDogTnOxdQDA3xC1Gp7y18EWQXlN6BvbbjmZmutHJlczs0QyDz+58JG2u8Z+oMxYiDXf3WmwjJMhoizB5EaviyWUXsAwX0T9rhGT319LzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-37613924eefso33306165ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 01:42:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719045746; x=1719650546;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uF0RKDefBz9SqKwI3Yr8wFRbu9Rfp6DlJ4mlHJgIqEc=;
+        b=digaCguy7RN+izPePl9RjlmqULXnXfLoAXcCLak1vz5ZKo2rrK9oBUbAUqfiLX4QN2
+         GpET6fn7psPaayQZgpbkVZvtF7dnj+LlGaodMXkvm82wZrFAA7vtf7G5QM83WVw6MOxo
+         AUtepAJ34meXXsmqiKwOVywjlCRiho36OFvdf29eRuSREQM2KOFBZpZpSy6DD0fR0Qjs
+         WgPoSMQlXkeYd3w1aJVoseUc9lkZt6794o7IV16Nn8pk8KmEoLqMkcd1K7cNUTQIZPfI
+         ZLceygnsXEkH4xMnPPwWNLn9R74Fun4Ma0rdeTT8j3d1rXbD1faXK7jcWYNMAMalQ/vR
+         Tsag==
+X-Forwarded-Encrypted: i=1; AJvYcCVtPOKpE55/xx29Uj7IEb/kMnqK+QyLi74qDIgPtZOy53te5eokUQoWZVpEw/avi4cQknWr3U+aolOQSEShp/7pUQXifdc2ya+i+/75
+X-Gm-Message-State: AOJu0YynEX5qgQvxzbzeJVPwOShywI62gRKbjo8XNK7AhUmlNld7jlFV
+	27KFD+RCeIl+Z9S4HxJpN8lHgB3tp0gZFdsT/bnUlvbcZJpJ6Zx7oyGWIpIzUFPwSE9BOUwM5Q7
+	uEVlwo2sSd12/je1rfvwNtk+RAuwDc+oqiZCSbUSIay94fOoadv3gx8c=
+X-Google-Smtp-Source: AGHT+IH2fVqz4iZ5igDL6DuNXr3G6oPS8fgfunnAOi4vWXd7Zm5WVmDZVT9gCo4LHPz38RvpyRtmj7UVJ9HHoGXMiBCyKqxNzdwO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZnVR9sdoqfayKNrI@J2N7QTR9R3>
-X-ClientProxiedBy: BJ-MBX01.mioffice.cn (10.237.8.121) To BJ-MBX13.mioffice.cn
- (10.237.8.133)
+X-Received: by 2002:a05:6e02:1c4d:b0:375:cab8:f175 with SMTP id
+ e9e14a558f8ab-3761d69f09bmr8318055ab.2.1719045745873; Sat, 22 Jun 2024
+ 01:42:25 -0700 (PDT)
+Date: Sat, 22 Jun 2024 01:42:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000925b0061b7687a2@google.com>
+Subject: [syzbot] [io-uring?] KCSAN: data-race in io_submit_sqes /
+ io_uring_poll (8)
+From: syzbot <syzbot+6a4002279343ac44c448@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jun 21, 2024 at 11:12:06AM +0100, Mark Rutland wrote:
-> On Fri, Jun 21, 2024 at 03:50:45PM +0800, Lingyue wrote:
-> > Many modules, such as arch topology, rely on num_possible_cpus() to
-> > allocate memory and then access the allocated space using CPU IDs.
-> > These modules assume that there are no gaps in cpu_possible_mask.
-> 
-> Is there any documented requirement that cpu_possible_mask has no gaps?
-> 
-> It looks like other architectures can have gaps in their
-> cpu_possible_mask, there's no documented requiremetns AFAICT, and there
-> are a bunch of commits handling cpu_possible_mask having gaps, e.g.
-> 
->   bc75e99983df1efd ("rcu: Correctly handle sparse possible cpus")
->   3da43104d3187184 ("ARC: Adjust cpuinfo for non-continuous cpu ids")
->   72917235fd5f0863 ("tracing: Fix for non-continuous cpu ids")
-> 
-> ... so I don't think that the topology code should assume that there are
-> no gaps in cpu_possible_mask.
->
-Yes, I also don't find any documented requirement about it.
+Hello,
 
-> > However, in of_parse_and_init_cpus(), CPU IDs are still allocated
-> > for invalid CPU nodes, leading to gaps in cpu_possible_mask and
-> > resulting in out-of-bounds memory access. So it is crucial to avoid
-> > allocating CPU IDs to invalid CPU nodes.
-> 
-> AFAICT the topology code could use 'nr_cpu_ids' instead of
-> 'nr_possible_cpus()', like the tracing commit above, or it could use a
-> per-cpu allocation to avoid this.
->
-In this case, of course we can modify the arch topology code to solve the problem.
-However, I propose that if we can ensure there are no gaps in the cpu_possible_mask,
-we can solve such misuse issues once and for all, without having to dig and fix other
-potential similar problems one by one.
+syzbot found the following issue on:
 
-> > This issue can be reproduced easily on QEMU with KASAN enabled, by
-> > modifing reg property of a CPU node to 0xFFFFFFFF
-> > 
-> > [    0.197756] BUG: KASAN: slab-out-of-bounds in topology_normalize_cpu_scale.part.0+0x2cc/0x34c
-> > [    0.199518] Read of size 4 at addr ffff000007ebe924 by task swapper/0/1
-> > [    0.200087]
-> > [    0.200739] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.10.0-rc4 #3
-> > [    0.201647] Hardware name: linux,dummy-virt (DT)
-> > [    0.203067] Call trace:
-> > [    0.203404]  dump_backtrace+0x90/0xe8
-> > [    0.203974]  show_stack+0x18/0x24
-> > [    0.204424]  dump_stack_lvl+0x78/0x90
-> > [    0.205090]  print_report+0x114/0x5cc
-> > [    0.205908]  kasan_report+0xa4/0xf0
-> > [    0.206488]  __asan_report_load4_noabort+0x20/0x2c
-> > [    0.207427]  topology_normalize_cpu_scale.part.0+0x2cc/0x34c
-> > [    0.208275]  init_cpu_topology+0x254/0x430
-> > [    0.209518]  smp_prepare_cpus+0x20/0x25c
-> > [    0.210824]  kernel_init_freeable+0x1dc/0x4fc
-> > [    0.212047]  kernel_init+0x24/0x1ec
-> > [    0.213143]  ret_from_fork+0x10/0x20
-> > 
-> > Signed-off-by: Lingyue <lingyue@xiaomi.com>
-> > ---
-> >  arch/arm64/kernel/smp.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> > index 31c8b3094dd7..5b4178145920 100644
-> > --- a/arch/arm64/kernel/smp.c
-> > +++ b/arch/arm64/kernel/smp.c
-> > @@ -638,12 +638,12 @@ static void __init of_parse_and_init_cpus(void)
-> >  		u64 hwid = of_get_cpu_hwid(dn, 0);
-> >  
-> >  		if (hwid & ~MPIDR_HWID_BITMASK)
-> > -			goto next;
-> > +			continue;
-> >  
-> >  		if (is_mpidr_duplicate(cpu_count, hwid)) {
-> >  			pr_err("%pOF: duplicate cpu reg properties in the DT\n",
-> >  				dn);
-> > -			goto next;
-> > +			continue;
-> >  		}
-> >  
-> >  		/*
-> > @@ -656,7 +656,7 @@ static void __init of_parse_and_init_cpus(void)
-> >  			if (bootcpu_valid) {
-> >  				pr_err("%pOF: duplicate boot cpu reg property in DT\n",
-> >  					dn);
-> > -				goto next;
-> > +				continue;
-> >  			}
-> >  
-> 
-> People get very upset when CPU numbering changes, so I'd prefer to avoid
-> this if possible.
-> 
-> Mark.
-> 
-This modification will only affect CPU ID allocation if there are invalid or
-duplicate CPU nodes in device tree. IMO, it is not a typical use case, but
-please let me know if there are any other use case.
+HEAD commit:    66cc544fd75c Merge tag 'dmaengine-fix-6.10' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=128ed3da980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=704451bc2941bcb0
+dashboard link: https://syzkaller.appspot.com/bug?extid=6a4002279343ac44c448
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Many thanks for your response.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Lingyue.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4b6f7aacd04c/disk-66cc544f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/083bb1b69afe/vmlinux-66cc544f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/05a661578a53/bzImage-66cc544f.xz
 
-> >  			bootcpu_valid = true;
-> > -- 
-> > 2.34.1
-> > 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6a4002279343ac44c448@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in io_submit_sqes / io_uring_poll
+
+read-write to 0xffff888107b41870 of 4 bytes by task 4848 on cpu 1:
+ io_get_sqe io_uring/io_uring.c:2276 [inline]
+ io_submit_sqes+0x23f/0x1080 io_uring/io_uring.c:2327
+ __do_sys_io_uring_enter io_uring/io_uring.c:3245 [inline]
+ __se_sys_io_uring_enter+0x1c6/0x15a0 io_uring/io_uring.c:3182
+ __x64_sys_io_uring_enter+0x78/0x90 io_uring/io_uring.c:3182
+ x64_sys_call+0x25ab/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+read to 0xffff888107b41870 of 4 bytes by task 4847 on cpu 0:
+ io_sqring_full io_uring/io_uring.h:285 [inline]
+ io_uring_poll+0xcf/0x190 io_uring/io_uring.c:2739
+ vfs_poll include/linux/poll.h:84 [inline]
+ __io_arm_poll_handler+0x229/0xf30 io_uring/poll.c:622
+ io_arm_poll_handler+0x411/0x5d0 io_uring/poll.c:756
+ io_queue_async+0x89/0x320 io_uring/io_uring.c:1943
+ io_queue_sqe io_uring/io_uring.c:1972 [inline]
+ io_req_task_submit+0xb3/0xc0 io_uring/io_uring.c:1385
+ io_handle_tw_list+0x1b9/0x200 io_uring/io_uring.c:1083
+ tctx_task_work_run+0x6c/0x1b0 io_uring/io_uring.c:1155
+ tctx_task_work+0x40/0x80 io_uring/io_uring.c:1173
+ task_work_run+0x13a/0x1a0 kernel/task_work.c:180
+ get_signal+0xeee/0x1080 kernel/signal.c:2681
+ arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
+ do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x000003b7 -> 0x000003d5
+
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
