@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-226335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E51913D2F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:22:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12DF2913D30
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F6E1F231E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:22:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A731C216B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1785C18410F;
-	Sun, 23 Jun 2024 17:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6B218412A;
+	Sun, 23 Jun 2024 17:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3SjiZTY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsnbygFk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD771836F5;
-	Sun, 23 Jun 2024 17:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAEF18411B;
+	Sun, 23 Jun 2024 17:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719163311; cv=none; b=afFGelDfXk4RoErgHxNukWUGAwncjCE4LAhW5mEtdox5V4W1CXbJXk/h6crZ5EY9z+dTLxVD+H9ufQA9u5O89tDfWIvJApauaeDFpndU8S5oyrG7eJM5MClwnt3v2S47diejU9PickEVsBIfVZaUfTXn+aF10jgfg2gyO7YGSJ0=
+	t=1719163313; cv=none; b=pAO6oUjOWOLMqaEgfJmCNhjK2o4XJnA6Zb+1WmSOx9GZ21fbRgoYTfTpXBZhuZBSeZdyjSCbIC+9SzsnfUiPn/689wQr61raVe3/sbQc2L5+6XjLx3xQJEVne6sQC3IBS5ri2DGTOkSXg3Kpx0KsXfbtNrO8YiCp4xl6K6QHudM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719163311; c=relaxed/simple;
-	bh=Forj5XhRH3uV4vJJQYS/LVUyREwgZsaM1YGmaz5sfQg=;
+	s=arc-20240116; t=1719163313; c=relaxed/simple;
+	bh=p0KUc6h2/ow17wD5avXezjtwzpeQ+9BtZXkrRp+Lbfw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jpQOove2i/PtoM0qW86HSUxs634p7gSk+EO2cMeczqTvGb3Z0PcwWmigBy9wr6jGuwWo0pWl/6xvjZRtcms7kU7DcN5wKYO+iYng0SduFBKmlf/NwhF8Dw6Kf6ojvM1yUBJ2bU7XbITercZiSLYnceqrsDLT5shrBSyiaowfguA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3SjiZTY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D533C2BD10;
-	Sun, 23 Jun 2024 17:21:49 +0000 (UTC)
+	 MIME-Version:Content-Type; b=DABgHdpHrbuF2bKpjgmtqD34yjyYsCYEFGVUXVPZ3TsEO/2Yx3rOiFTqQ1ZOxuAfellGjYAMLjwLl4P6Sjv7nedBFiNzZ6swZT/d+brrkX23mLsxFavmx9r6ywZL8VlrF3dYT+wb8ejAqMn3yL9WgzuJ3KCK0Xz/Uu+QV2RpPXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsnbygFk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C260C4AF0A;
+	Sun, 23 Jun 2024 17:21:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719163310;
-	bh=Forj5XhRH3uV4vJJQYS/LVUyREwgZsaM1YGmaz5sfQg=;
+	s=k20201202; t=1719163312;
+	bh=p0KUc6h2/ow17wD5avXezjtwzpeQ+9BtZXkrRp+Lbfw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=p3SjiZTY9vSSQhiRynn+3++nSIt9JrU5+9sbXsi5hbOH9iQ/P33zsCa5XXQy4D9NQ
-	 remTyo5SzzDimPpXgp0GdgDfYrWhfGf66ChjPI4IZoWf363cNtgpy/VPG1jFBTQYB+
-	 zszRnG0e8vxs1FI3oq0Sr2+yWU4UDWyubH1ODmfFOmmlLZl+jX/nvSoiT5fTFzIn5D
-	 kYngjln+Kh09QTyl1D8qcSufi/i9op8+lXAIH/7BktrQ+lwloo4TGL9cwaihcCIEiA
-	 ieIl6TMVjg7xK0t6AuQSdLZ/4taaGLxGqt9GGqZEdmHvyVKLViMQTzB0a08IZHtS8w
-	 gRdadcJiuUGDw==
+	b=RsnbygFkkiekf02I+3kkQCiQD60H0sdujZHBcTbc3I2jPYdy7Hq6ROC4BFCEmcNQ4
+	 /b/PVkH7YS+bUWjOuFF5XizMs/s4vKkAnIe2sekaL1WNevyaYPV93tBdu0Zrg1zXlw
+	 WRiL4Ne6XXI1peq92wkLb/XKcpakj//Z4KrDUqu+3UxHHQjaBR1BohMz2xLEBJX/qi
+	 zesSlQB5RJ6qxBGrkGYuOsddhBsqZc6Zj7WnZH40tWo/UBdrn/zfVvOo6az+OUZbcS
+	 JJM7/1lg89ybOfjC67WVSy8h6OUdhQ28SDIlDw2e8l8Yn7sJOkwCuA1Twk8POteDqA
+	 9gcafFCpQdoWQ==
 From: Mark Brown <broonie@kernel.org>
-To: srinivas.kandagatla@linaro.org
-Cc: perex@perex.cz, lgirdwood@gmail.com, alsa-devel@alsa-project.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- krzk+dt@kernel.org
-In-Reply-To: <20240606104922.114229-1-srinivas.kandagatla@linaro.org>
-References: <20240606104922.114229-1-srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v3 0/4] ASoC: qcom: display port changes
-Message-Id: <171916330923.350242.338813871607705802.b4-ty@kernel.org>
-Date: Sun, 23 Jun 2024 18:21:49 +0100
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Andrejs Cainikovs <andrejs.cainikovs@gmail.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Andrejs Cainikovs <andrejs.cainikovs@toradex.com>
+In-Reply-To: <20240613084652.13113-1-andrejs.cainikovs@gmail.com>
+References: <20240613084652.13113-1-andrejs.cainikovs@gmail.com>
+Subject: Re: [PATCH v2 0/3] ASoC: nau8822: add MCLK support
+Message-Id: <171916331110.350242.11572228488455429379.b4-ty@kernel.org>
+Date: Sun, 23 Jun 2024 18:21:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,15 +61,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Thu, 06 Jun 2024 11:49:18 +0100, srinivas.kandagatla@linaro.org wrote:
-> This patchset adds support for.
-> 	1. parse Display Port module tokens from ASoC topology
-> 	2. add support to DP/HDMI Jack events.
-> 	3. fixes a typo in function name in sm8250
+On Thu, 13 Jun 2024 10:46:49 +0200, Andrejs Cainikovs wrote:
+> This change adds local MCLK handling, which would cover a case when a
+> reference audio clock is present in a system, but is not allowed to be
+> changed, see [1].
 > 
-> Verified these patches on X13s along with changes to tplg in
-> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/tree/topic/x13s-dp?ref_type=heads
-> and ucm changes from https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/topic/x13s-dp
+> [1]: https://lore.kernel.org/all/ZfBdxrzX3EnPuGOn@ediswmail9.ad.cirrus.com/
+> 
+> v1:
+>   - https://lore.kernel.org/all/20240409121719.337709-1-andrejs.cainikovs@gmail.com/
 > 
 > [...]
 
@@ -78,14 +79,12 @@ Applied to
 
 Thanks!
 
-[1/4] ASoC: qcom: q6dsp: parse Display port tokens
-      commit: 6d620e50bb055e072c8c50cf95cd397fc24378c2
-[2/4] ASoC: qcom: common: add Display port Jack function
-      commit: 735db4ea16caaebf8e4884ec0c2e419c96391ac8
-[3/4] ASoC: qcom: sc8280xp: add Display port Jack
-      commit: 7e815bb9abd16f99c987987242a9fe13dfa0f052
-[4/4] ASoC: qcom: x1e80100: Add USB DisplayPort plug support
-      commit: 24790a3cd1bdc083f9989f2fdb223f6494ebc99c
+[1/3] ASoC: nau8822: move nau8822_set_dai_sysclk()
+      commit: 9292013bd3738bd00ee78bf1705620a9881031b5
+[2/3] ASoC: nau8822: set NAU8822_REFIMP_80K only once
+      commit: 9c3b21cc8528d52321c66236c3b794300c78d9e6
+[3/3] ASoC: nau8822: add MCLK support
+      commit: 2604faa7b71291b0ccd17f8d6009f3ff6dae287b
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
