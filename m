@@ -1,230 +1,115 @@
-Return-Path: <linux-kernel+bounces-226035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E95E91394D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:36:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1823913959
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C27551C20C9B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:36:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B721F2195D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDFA7E116;
-	Sun, 23 Jun 2024 09:36:26 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B9F82C67;
+	Sun, 23 Jun 2024 09:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="S/bjxUlO"
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6181DDD6
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 09:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B282CA7;
+	Sun, 23 Jun 2024 09:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719135386; cv=none; b=NVGyX3DdA8JY4lD23X6UINptQFYe74EkZMqR13gUAYXaMvETAs+X5bH22QfY8podM0Lb9p2XmLP9UaV5R9wX/nGSaH6b35dtauzWqThTwoPDEC8q6dJXgON/gnLhxLic74xqJ/1svpNH1gD14553Ua2JP4hxf072D+c7IDCHRq8=
+	t=1719136037; cv=none; b=mLS/5m6pMmTh2MvvaXA7byjQhDKReHlwyVLWvXzsqpxtLWb7jgPoneK4sizHZKyWU7u1POvcuAUvAmU8M2MJsAlc3Xs2QoEOqz3TNA5qChMt5qQRhsH1r4MBn+SucRdGiI8UiLKbBZGkMI27wvdVE1sVgKDhkos1SqNXqlcD+C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719135386; c=relaxed/simple;
-	bh=GDIuO3zgeL7Kl5+WuVPVtaND6Qt/YJy91wrUY8RBGIg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Sfy425PoIIuuZ2VLTatJHt8PKWpbipleib86GSjB9RAkRRQRXGFGStL7n4EmJ1PJwYtrsV55mpXymhGmsyV35Jmr7Nq1tlw0a1bkSF7rTVw1e4o4V6Jl5MNNi4InLlCCnWeFoXdwbIHwNXqirJy7KTRPTYdtM6Fcv1GH81Ezdrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-36db3bbf931so38752765ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 02:36:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719135384; x=1719740184;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NG1N8DyUmAHaYDrPPVdDaQoJNaPIoWzGqw/9+ysBFKE=;
-        b=nfM/K38NMaPfOLCiLZRLnqGwjU1wjEa4fs4gUVqLJXI2QHANbrKJwOX/vKHscOmrqv
-         pDbrLWfHDlRSo7/eb9R9HaGiFOXcCs0Y36pC/1LB/Yvrw7/fR1Srt7RSv+FCiNCHZ47Y
-         zN0Y8ied9GARK3kJ9beEJza9YsHJzHa6YYHGT27EC60gAtdJ92WyMvHxXHwnt3cJWPb7
-         LB6zgh+ce3vGE82p2DpfOHOER3RVWRSj8noHnxJBjk4UNfwxY1Hy19+ku7unhg18ZrBM
-         4cbOgMGS1OuzdJ3gC3niYNtuT+H6jtWIytKRIrmYcR4FzZ7sv9/A/ccqB+z9trcdhuJV
-         NXHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbgTn/ZD5eSQYmCZcrsmm1y+XixG+/byTWH0wsNps6vODqo2w4FERcfNhwz2unQYaE9Yb8vZaP5JHDkfwBREjSb5LSO5i62yEDQBpc
-X-Gm-Message-State: AOJu0Yxvqy2nxqxc4+MlrsTrf1+6mMen9vqktUzYLUOB0G5ToneRNbtU
-	EKVeJUTzrN1xkPWbz15r2nov7rwHJmpdEdvsC6Zedu22SzBjkXIKTZolQ2E1cdELoqco7GnC3gP
-	iB6SoaKpWSDv7/5kc2YDp0blrfmeCuFyVQcqRMNQgdv3Ju7yDypY9Afw=
-X-Google-Smtp-Source: AGHT+IFaQDUeiIT8h4iwC3zXY0mqgOwPCVIekKrLrDxlj2j0GMhy5IG1+eVpAUt8lSuZd5adyMlELI3bVpg8q6wjKd0ZM7IlScgh
+	s=arc-20240116; t=1719136037; c=relaxed/simple;
+	bh=IoaeKT8XpnnlbWlzxCWTjF0duh7pAxL12B/Wwz0WEYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=heUw4Vs4mzGZ0TwOliiag+UtgH26Wm93thrkKU7kkwX8T3mSoND53WVxkL695bdxhr+K90Jriur34G+YjFN7YjxPhWD8p4Z7vaq+h4LnwcvXCgBA+2MH9DQaano3dzzVlZii8B0wP7e3vWdt44j4uyB+30cE8IrE6kvcXBS8mHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=S/bjxUlO; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Reply-To
+	:Cc:Content-ID:Content-Description;
+	bh=3CsmWJkTCw2jya7yKPckZb+JwnRAGwemKYs+ww4s8j8=; b=S/bjxUlO9I8ybdU5ALqZwHdTFq
+	67j1QPwyYKmfNx6/72eTci7oHSYYA2moxwevv+faRy5PI7jIYipdoetqWT8ep0R9prWiwVXl+01Jn
+	7xQ4R7f17pmI8e2Key+nixdyPshM/oWS+C0zvEu1SPukzQXrFXIaWDqUxNvhnMqlQtpoyx7wI2/K1
+	QbKLRfsNBw8uRuFgGDfhdLEAbIcvpZKQlzoNFDNDVwysvfI+VE/ovki11LFjLfjKO2ygVDxF1jeKg
+	OPhrSVenBYPre2t7MzIHSxkXiCawabOVUyUadukZGu21D7JOHtRCWMptN/SjAYOHR03hkISd5mUkr
+	tn36iRWg==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	(Exim 4.94.2)
+	(envelope-from <ukleinek@debian.org>)
+	id 1sLJnr-00HNav-0c; Sun, 23 Jun 2024 09:46:31 +0000
+Message-ID: <395f8ebe-1392-4d8f-b91f-c9a8f5f48afe@debian.org>
+Date: Sun, 23 Jun 2024 11:46:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54b:0:b0:375:a50d:7f2d with SMTP id
- e9e14a558f8ab-3763f5c9fc5mr2100025ab.1.1719135383768; Sun, 23 Jun 2024
- 02:36:23 -0700 (PDT)
-Date: Sun, 23 Jun 2024 02:36:23 -0700
-In-Reply-To: <000000000000f07c2606165ff63a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dee3cc061b8b6538@google.com>
-Subject: Re: [syzbot] [hfs?] possible deadlock in hfs_extend_file (3)
-From: syzbot <syzbot+2a62f58f1a4951a549bb@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, jack@suse.cz, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] hwrng: add Rockchip SoC hwrng driver
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Daniel Golle <daniel@makrotopia.org>, Aurelien Jarno <aurelien@aurel32.net>,
+ Olivia Mackall <olivia@selenic.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Dragan Simic <dsimic@manjaro.org>,
+ Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1719106472.git.daniel@makrotopia.org>
+ <240db6e0ab07e8e2a86da99b0fc085eabaf9f0cc.1719106472.git.daniel@makrotopia.org>
+ <612bd49c-c44a-41f2-89e9-c96e62e52a0a@kernel.org>
+Content-Language: en-US, de-DE
+From: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>
+In-Reply-To: <612bd49c-c44a-41f2-89e9-c96e62e52a0a@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Debian-User: ukleinek
 
-syzbot has found a reproducer for the following issue on:
+Hello Krzysztof,
 
-HEAD commit:    563a50672d8a Merge tag 'xfs-6.10-fixes-4' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ca148e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=12f98862a3c0c799
-dashboard link: https://syzkaller.appspot.com/bug?extid=2a62f58f1a4951a549bb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1287d83e980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cb8151980000
+On 6/23/24 09:00, Krzysztof Kozlowski wrote:
+> On 23/06/2024 05:33, Daniel Golle wrote:
+>> +
+>> +	pm_runtime_set_autosuspend_delay(dev, RK_RNG_AUTOSUSPEND_DELAY);
+>> +	pm_runtime_use_autosuspend(dev);
+>> +	devm_pm_runtime_enable(dev);
+>> +
+>> +	ret = devm_hwrng_register(dev, &rk_rng->rng);
+>> +	if (ret)
+>> +		return dev_err_probe(&pdev->dev, ret, "Failed to register Rockchip hwrng\n");
+>> +
+>> +	dev_dbg(&pdev->dev, "Registered Rockchip hwrng\n");
+> 
+> Drop, it is not useful at all. Srsly, we had already long enough talk,
+ > [...]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8f92c1547793/disk-563a5067.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/21bb27a22e67/vmlinux-563a5067.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/168847d060c0/bzImage-563a5067.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/048c1910668d/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/097a7c874267/mount_1.gz
+And in this long talk using dev_dbg() was one of the suggestions for a 
+compromise. For me this is ok.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2a62f58f1a4951a549bb@syzkaller.appspotmail.com
+> There is no single benefit of such debug statement. sysfs already
+> provides you this information. Simple entry/exit  is provided by
+> tracing. You duplicate existing interfaces without any benefit, because
+> this prints nothing more.
 
-loop0: detected capacity change from 0 to 64
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc4-syzkaller-00283-g563a50672d8a #0 Not tainted
-------------------------------------------------------
-syz-executor283/5110 is trying to acquire lock:
-ffff88805ee675f8 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
+There might be a (small) value if you want to know when during boot the 
+device becomes available. So having a dev_dbg() that can be enabled 
+dynamically (assuming DYNAMIC_DEBUG=y) and isn't in the way otherwise 
+might be justified. IMHO a dev_dbg is lightweight enough that *I* won't 
+continue the discussion.
 
-but task is already holding lock:
-ffff88802992a0b0 (&tree->tree_lock/1){+.+.}-{3:3}, at: hfs_find_init+0x16e/0x1f0
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&tree->tree_lock/1){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       hfs_find_init+0x16e/0x1f0
-       hfs_ext_read_extent fs/hfs/extent.c:200 [inline]
-       hfs_extend_file+0x31b/0x1450 fs/hfs/extent.c:401
-       hfs_bmap_reserve+0xd9/0x400 fs/hfs/btree.c:234
-       hfs_cat_create+0x1e0/0x970 fs/hfs/catalog.c:104
-       hfs_create+0x66/0xe0 fs/hfs/dir.c:202
-       lookup_open fs/namei.c:3505 [inline]
-       open_last_lookups fs/namei.c:3574 [inline]
-       path_openat+0x1425/0x3280 fs/namei.c:3804
-       do_filp_open+0x235/0x490 fs/namei.c:3834
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
-       do_sys_open fs/open.c:1420 [inline]
-       __do_sys_openat fs/open.c:1436 [inline]
-       __se_sys_openat fs/open.c:1431 [inline]
-       __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
-       hfs_bmap_reserve+0xd9/0x400 fs/hfs/btree.c:234
-       __hfs_ext_write_extent+0x22e/0x4f0 fs/hfs/extent.c:121
-       __hfs_ext_cache_extent+0x6a/0x990 fs/hfs/extent.c:174
-       hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
-       hfs_extend_file+0x344/0x1450 fs/hfs/extent.c:401
-       hfs_get_block+0x3e4/0xb60 fs/hfs/extent.c:353
-       __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2128
-       __block_write_begin fs/buffer.c:2177 [inline]
-       block_write_begin+0x9b/0x1e0 fs/buffer.c:2236
-       cont_write_begin+0x645/0x890 fs/buffer.c:2590
-       hfs_write_begin+0x8a/0xd0 fs/hfs/inode.c:53
-       generic_perform_write+0x322/0x640 mm/filemap.c:4015
-       generic_file_write_iter+0xaf/0x310 mm/filemap.c:4136
-       new_sync_write fs/read_write.c:497 [inline]
-       vfs_write+0xa72/0xc90 fs/read_write.c:590
-       ksys_write+0x1a0/0x2c0 fs/read_write.c:643
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&tree->tree_lock/1);
-                               lock(&HFS_I(tree->inode)->extents_lock);
-                               lock(&tree->tree_lock/1);
-  lock(&HFS_I(tree->inode)->extents_lock);
-
- *** DEADLOCK ***
-
-4 locks held by syz-executor283/5110:
- #0: ffff888029a14420 (sb_writers#9){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2854 [inline]
- #0: ffff888029a14420 (sb_writers#9){.+.+}-{0:0}, at: vfs_write+0x227/0xc90 fs/read_write.c:586
- #1: ffff8880784d0fa8 (&sb->s_type->i_mutex_key#14){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
- #1: ffff8880784d0fa8 (&sb->s_type->i_mutex_key#14){+.+.}-{3:3}, at: generic_file_write_iter+0x83/0x310 mm/filemap.c:4133
- #2: ffff8880784d0df8 (&HFS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
- #3: ffff88802992a0b0 (&tree->tree_lock/1){+.+.}-{3:3}, at: hfs_find_init+0x16e/0x1f0
-
-stack backtrace:
-CPU: 1 PID: 5110 Comm: syz-executor283 Not tainted 6.10.0-rc4-syzkaller-00283-g563a50672d8a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
- hfs_bmap_reserve+0xd9/0x400 fs/hfs/btree.c:234
- __hfs_ext_write_extent+0x22e/0x4f0 fs/hfs/extent.c:121
- __hfs_ext_cache_extent+0x6a/0x990 fs/hfs/extent.c:174
- hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
- hfs_extend_file+0x344/0x1450 fs/hfs/extent.c:401
- hfs_get_block+0x3e4/0xb60 fs/hfs/extent.c:353
- __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2128
- __block_write_begin fs/buffer.c:2177 [inline]
- block_write_begin+0x9b/0x1e0 fs/buffer.c:2236
- cont_write_begin+0x645/0x890 fs/buffer.c:2590
- hfs_write_begin+0x8a/0xd0 fs/hfs/inode.c:53
- generic_perform_write+0x322/0x640 mm/filemap.c:4015
- generic_file_write_iter+0xaf/0x310 mm/filemap.c:4136
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe0c6fea2e9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffefba1b208 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fe0c6fea2e9
-RDX: 000000000000fea7 RSI: 0000000020000000 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 00000000200005c0 R09: 00007ffefba1b240
-R10: 0000000000000280 R11: 0000000000000246 R12: 00007ffefba1b22c
-R13: 000000000000000b R14: 431bde82d7b634db R15: 00007ffefba1b260
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Best regards
+Uwe
 
