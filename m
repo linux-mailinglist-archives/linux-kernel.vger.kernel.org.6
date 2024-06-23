@@ -1,213 +1,156 @@
-Return-Path: <linux-kernel+bounces-226238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B90913BF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:12:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A79913BFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01791C21A31
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:12:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56291F227B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B20181D07;
-	Sun, 23 Jun 2024 15:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888A2183063;
+	Sun, 23 Jun 2024 15:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SM8RZV7L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fsZ3bkzI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yKPmPj1J"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD190146D43;
-	Sun, 23 Jun 2024 15:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35EC148847;
+	Sun, 23 Jun 2024 15:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719155517; cv=none; b=lWtu5JKBJSCqEqvYyuhTs7vV2VXRK1f/t8I7uN6XOQ6riXM9AWUwSKChf5vvy7YZmbL/kvRgwBlvkHg+DB05xZdOHOA4D35icawNPt1VR2+V48lH3p5uwHFmCf4sYVVNFKJd9h5BIFz/PiXLQJoY4xVPfiXwLESBR3SFzkj4D/I=
+	t=1719155595; cv=none; b=cED6mtrWnJBJ2RCYCJrIRyKriMEH7iu/UcPFy3XLYkzqYr7sMi7Sojf0wg7YszyWCf9fI8hAa1U0QABhYYoIhTOQcPt5dXyZ/1LmuBhnnfp04ydIRUZPFt9ZxU8W95LevUILh3NimOjZbzNWiqH29AzX1zY9GucrFI4QCdq00rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719155517; c=relaxed/simple;
-	bh=vxBw92hdsdjcJ6MIC4h3wkF8DlA3K4aQX5p8h7JW5wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YWOkxIwpEZo3IYuhzKVAdOcCzqjhh05K48xjjw0dmgu362rWm0Kq89q4YlKKHqIHFnsYlMKO73r22wohuwzDJtlDT0zZr2W8src6sVe4zg8Ub/9Uu2Hyhd8DnpE5M08BoTTwxOysyU5yyYBh0EOu/pu/w3mvzcue8ZwrS7p5KgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SM8RZV7L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4035C2BD10;
-	Sun, 23 Jun 2024 15:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719155517;
-	bh=vxBw92hdsdjcJ6MIC4h3wkF8DlA3K4aQX5p8h7JW5wg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SM8RZV7LC4myoJWnqgrixRsjAZg+EemdVy/Oe2CCjtVEYim61SbwTKwILfuGEmboR
-	 Y0R6D4mOpJKQzQ/zR7bP1Ncab4dslJjYRIOnJmfdWKaXaCf2Ws2cPnOBPo23UHQAcK
-	 RVanFuFZ/iwRdul9Uy3WQqmuyUYxkfx98glpMHvDM2wMrTWOOGi2jt6RPikLMz5wi5
-	 gw8Q5iJp1fDnJEcBoe75J78kmP5hvtvUpSubpSnZobMAtdIW0iWegHfsGrLeFRnJDP
-	 J85/b80OQ79q2cKCnx6POQl/sYdT4G0h1oV+jTwMiV3XAGgMKFHuKUFXcortltbREK
-	 2YiLsu0m1v3Kw==
-Date: Sun, 23 Jun 2024 16:11:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH 7/8] iio: add sd modulator generic iio backend
-Message-ID: <20240623161150.358f95bf@jic23-huawei>
-In-Reply-To: <20240618160836.945242-8-olivier.moysan@foss.st.com>
-References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
-	<20240618160836.945242-8-olivier.moysan@foss.st.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719155595; c=relaxed/simple;
+	bh=vWw7+c6oWqBm+iDhw7A59n4dUbviPf9IG6wJGeOBWMA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=dPH5IVQZRgkqee+xf3+WmfXHYmZq+cruSkCEpttiqtriwoV4ewXaQlLaryjJHeqLT8Gj8xUkdgeobNcfmaI6ybsE90XSaLKkyDyNIT1pJVI9K6k0Pa37E55Bv0ysknTh3Rs9ztOoDLRBF23bIdbW2IwwRFoqswK3UH+m335JsXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fsZ3bkzI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yKPmPj1J; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 23 Jun 2024 15:13:10 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719155591;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/H+po3c7F5CM8aXqjsBE5Bx59LYkOWF7Y5U+YBWcDHY=;
+	b=fsZ3bkzI1HBZHyloseDYN1YVWZ1Qlh/B5He0nbYeNfMHzBeSIUVBnnolu4LLFLvMeBnOps
+	t3Ki8a6XTxeeZfxaVVPO8Txj4TtzKu0V2l3B5lwj+xJIXSQF88Sr7LtEKHbKwTY6nANHCA
+	gtyHSDINGA2FWatm/9rGCCSznJS3i8cidFb3PB1NN/l/9yHYYSRqv/gBpCqsp3cyDrZiJX
+	G62PYo1thOm8/tIP/NxortG9bzwBzn4vacXXfkAkH2u9dK7qnVPFwz+lfic2pmWDPIbxs0
+	7Cr2d7FmxwejqkTT5zAV/zUwpohaaaFKpB7xPIVK7/N5l9x5UZglqfmZdpkvtA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719155591;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/H+po3c7F5CM8aXqjsBE5Bx59LYkOWF7Y5U+YBWcDHY=;
+	b=yKPmPj1J+dxjl0fhzxE1okXrLT5oiO05WUPPtfGZAhRx+joQ07WdnKVXY+TGOh8l1AM8im
+	bUh4+v6RLWiI0rCg==
+From: "tip-bot2 for Huacai Chen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/loongson-eiointc: Use early_cpu_to_node()
+ instead of cpu_to_node()
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>,
+ stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+ maz@kernel.org
+In-Reply-To: <20240623034113.1808727-1-chenhuacai@loongson.cn>
+References: <20240623034113.1808727-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Message-ID: <171915559061.10875.15340919971108942475.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Tue, 18 Jun 2024 18:08:33 +0200
-Olivier Moysan <olivier.moysan@foss.st.com> wrote:
+The following commit has been merged into the irq/urgent branch of tip:
 
-> Add a generic driver to support sigma delta modulators.
-> Typically, this device is a hardware connected to an IIO device
-> in charge of the conversion. The device is exposed as an IIO backend
-> device. This backend device and the associated conversion device
-> can be seen as an aggregate device from IIO framework.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+Commit-ID:     2d64eaeeeda5659d52da1af79d237269ba3c2d2c
+Gitweb:        https://git.kernel.org/tip/2d64eaeeeda5659d52da1af79d237269ba3c2d2c
+Author:        Huacai Chen <chenhuacai@loongson.cn>
+AuthorDate:    Sun, 23 Jun 2024 11:41:13 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 23 Jun 2024 17:09:26 +02:00
 
-Trivial comments inline.
+irqchip/loongson-eiointc: Use early_cpu_to_node() instead of cpu_to_node()
 
-> diff --git a/drivers/iio/adc/sd_adc_backend.c b/drivers/iio/adc/sd_adc_backend.c
-> new file mode 100644
-> index 000000000000..556a49dc537b
-> --- /dev/null
-> +++ b/drivers/iio/adc/sd_adc_backend.c
-> @@ -0,0 +1,110 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Generic sigma delta modulator IIO backend
-> + *
-> + * Copyright (C) 2024, STMicroelectronics - All Rights Reserved
-> + */
-> +
-> +#include <linux/iio/backend.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
-> +
-> +struct iio_sd_backend_priv {
-> +	struct regulator *vref;
-> +	int vref_mv;
-> +};
-> +
-> +static int sd_backend_enable(struct iio_backend *backend)
-> +{
-> +	struct iio_sd_backend_priv *priv = iio_backend_get_priv(backend);
-> +
-> +	return regulator_enable(priv->vref);
-> +};
-> +
-> +static void sd_backend_disable(struct iio_backend *backend)
-> +{
-> +	struct iio_sd_backend_priv *priv = iio_backend_get_priv(backend);
-> +
-> +	regulator_disable(priv->vref);
-> +};
-> +
-> +static int sd_backend_read(struct iio_backend *backend, int *val, int *val2, long mask)
-Nothing to do with this patch as such:
+Multi-bridge machines required that all eiointc controllers in the system
+are initialized, otherwise the system does not boot.
 
-One day I'm going to bit the bullet and fix that naming.
-Long long ago when the Earth was young it actually was a bitmap which
-I miscalled a mask - it only had one bit ever set, which was a dumb
-bit of API.  It's not been true for a long time.
-Anyhow, one more instances isn't too much of a problem I guess.
+The initialization happens on the boot CPU during early boot and relies on
+cpu_to_node() for identifying the individual nodes.
 
-> +{
-> +	struct iio_sd_backend_priv *priv = iio_backend_get_priv(backend);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*val = priv->vref_mv;
+That works when the number of possible CPUs is large enough, but with a
+command line limit, e.g. "nr_cpus=$N" for kdump, but fails when the CPUs
+of the secondary nodes are not covered.
 
-This doesn't really feel right as what are we calling to?  Using it to pass the
-reference voltage doesn't make sense under normal handling of these.  So at very
-least needs a comment.
+During early ACPI enumeration all CPU to node mappings are recorded up to
+CONFIG_NR_CPUS. These are accessible via early_cpu_to_node() even in the
+case that "nr_cpus=N" truncates the number of possible CPUs and only
+provides the possible CPUs via cpu_to_node() translation.
 
+Change the node lookup in the driver to use early_cpu_to_node() so that
+even with a limitation on the number of possible CPUs all eointc instances
+are initialized.
 
-> +		*val2 = 0;
-No need to set val2.
-> +		return IIO_VAL_INT;
-> +
-> +	case IIO_CHAN_INFO_OFFSET:
-> +		*val = 0;
-> +		*val2 = 0;
-> +		return IIO_VAL_INT;
-Normally we just don't provide this but I guess you are requiring all of these?
-Long term that won't scale, so you need your caller to handle a suitable
-error return, -EINVAL will work to say not supported.
+This can't obviously cure the case where CONFIG_NR_CPUS is too small.
 
-> +	}
-> +
-> +	return -EINVAL;
-> +};
-> +
-> +static const struct iio_backend_ops sd_backend_ops = {
-> +	.enable = sd_backend_enable,
-> +	.disable = sd_backend_disable,
-> +	.read_raw = sd_backend_read,
-> +};
-> +
-> +static int iio_sd_backend_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct regulator *vref;
-> +	struct iio_sd_backend_priv *priv;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	vref = devm_regulator_get_optional(dev, "vref");
+[ tglx: Massaged changelog ]
 
-New devm_regulator_get_enable_read_voltage() slightly simplifies this
-and means you don't need to keep vref around.
+Fixes: 64cc451e45e1 ("irqchip/loongson-eiointc: Fix incorrect use of acpi_get_vec_parent")
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20240623034113.1808727-1-chenhuacai@loongson.cn
+---
+ drivers/irqchip/irq-loongson-eiointc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> +	if (IS_ERR(vref)) {
-> +		if (PTR_ERR(vref) != -ENODEV)
-> +			return dev_err_probe(dev, PTR_ERR(vref), "Failed to get vref\n");
-> +	} else {
-> +		ret = regulator_get_voltage(vref);
-You haven't turned it on so it's not guaranteed to give you a useful
-answer.
-
-Use the enable_read_voltage variant and that will handle this for you.
-
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		priv->vref = vref;
-> +		priv->vref_mv = ret / 1000;
-> +	}
-> +
-> +	ret = devm_iio_backend_register(&pdev->dev, &sd_backend_ops, priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-return devm_iio_....
-
-> +};
-> +
-> +static const struct of_device_id sd_backend_of_match[] = {
-> +	{ .compatible = "sd-backend" },
-> +	{ .compatible = "ads1201" },
-
-Conor pointed out ti,ads1201
-At least I assume ti?
-
-> +	{ }
-> +};
-
+diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
+index c7ddebf..b1f2080 100644
+--- a/drivers/irqchip/irq-loongson-eiointc.c
++++ b/drivers/irqchip/irq-loongson-eiointc.c
+@@ -15,6 +15,7 @@
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/kernel.h>
+ #include <linux/syscore_ops.h>
++#include <asm/numa.h>
+ 
+ #define EIOINTC_REG_NODEMAP	0x14a0
+ #define EIOINTC_REG_IPMAP	0x14c0
+@@ -339,7 +340,7 @@ static int __init pch_msi_parse_madt(union acpi_subtable_headers *header,
+ 	int node;
+ 
+ 	if (cpu_has_flatmode)
+-		node = cpu_to_node(eiointc_priv[nr_pics - 1]->node * CORES_PER_EIO_NODE);
++		node = early_cpu_to_node(eiointc_priv[nr_pics - 1]->node * CORES_PER_EIO_NODE);
+ 	else
+ 		node = eiointc_priv[nr_pics - 1]->node;
+ 
+@@ -431,7 +432,7 @@ int __init eiointc_acpi_init(struct irq_domain *parent,
+ 		goto out_free_handle;
+ 
+ 	if (cpu_has_flatmode)
+-		node = cpu_to_node(acpi_eiointc->node * CORES_PER_EIO_NODE);
++		node = early_cpu_to_node(acpi_eiointc->node * CORES_PER_EIO_NODE);
+ 	else
+ 		node = acpi_eiointc->node;
+ 	acpi_set_vec_parent(node, priv->eiointc_domain, pch_group);
 
