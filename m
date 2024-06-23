@@ -1,117 +1,277 @@
-Return-Path: <linux-kernel+bounces-226221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F24913BB3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:21:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC951913BB6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F77281ABB
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:20:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 363F9B2115E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E166918132C;
-	Sun, 23 Jun 2024 14:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FD8181BB3;
+	Sun, 23 Jun 2024 14:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EmJ0eceb"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="RQq8ZIZl"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DF11CD25
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1352F24
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719152453; cv=none; b=bDiJGANfYk5cG6FBW9r1F2DOwUBEeEVFw0ygWSIokVaMJ8VEweKT117Kqg3/fwe2IchOzoRFNLjtHrTgqEcDyW6FYPA+FGyXuuexnHWad46EjlrL+hjtwH5adkWUp1uhD8PXAiqkQ1gV0op/Roc1gY3u0kb/tI3TtvMkQDT5VdM=
+	t=1719152839; cv=none; b=PG8FS8+nvBpnWAz5d/55eTt3rH0sApzdvqkIXoEaKCWyWCMOhxG0I2xp95u/lzdXK4Q1cxEcNKQFZNMifL2t8aHUD5b/0mK7OGrQZkWFGNvB+VXsDNltyEfR+PJpAoF7xNzH4uDzElTiZphltbpJiba92t/zqI6U9pW6WZMHtYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719152453; c=relaxed/simple;
-	bh=ex5J8+Ae4iKsctF67hjjsap2kCyEmeUnBRJV9qGdnPU=;
+	s=arc-20240116; t=1719152839; c=relaxed/simple;
+	bh=ZZ44urR2FHiAsQK8bUberKk/p5/hSJmGjtcyA6AU7go=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DD8aUF66NMljprK44IB9Ixe8dn32/HlPVT877M1sPllh2PIXcwaZHwdd8oq+/oJG4DCeNIvQ0qhSLUHKNyT98izpk+nfUavPJupmGx4rKtBNnamBFyVZrMSXLBZM3N/+NWEgY1rKQFTGM2kN+wnoIxEbwErpzMt96+C9rhWv7VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EmJ0eceb; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: ardb@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719152446;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x+bDjx0y+iP8Abxe/MnYhrrwchlPmdfzSW+YmImXYM8=;
-	b=EmJ0eceb+4SR/sfCaTjF5gjhjGE87dlsEX4jKGfRq46lSlOErZVX300SafdPleR1el+/SP
-	MRZkfF5Dk+C9KDpsR6/WIs8bvsgNulcn4GDZry2Cf/lYbhALXf4w5sJPanCYAPpbouHE82
-	5E+8IiJ18XqS0xUo1vsXbq6Rgi44H9c=
-X-Envelope-To: yuzenghui@huawei.com
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: catalin.marinas@arm.com
-X-Envelope-To: will@kernel.org
-X-Envelope-To: wanghaibin.wang@huawei.com
-X-Envelope-To: zenghui.yu@linux.dev
-Message-ID: <19f05d6a-7b96-472a-919d-56292596e8bb@linux.dev>
-Date: Sun, 23 Jun 2024 22:20:29 +0800
+	 In-Reply-To:Content-Type; b=YQmCmMRztwCGmh+VMD9RpFdCVRxBsdmChUlDq5tUqsDkF6dRegTLf/32TYtfeh6GsMQrFYy0PGlSvyl1Aoyat92yxEMfNoN53SNKPhKEvzSB70TrwIo5BsegBYaugIKeEp4rPBcV9/002SnRfygpVgpgTI6HMuBxsF7xoAOzmjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=RQq8ZIZl; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42108856c33so26345315e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 07:27:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1719152835; x=1719757635; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wUGNzKbqoRHYmtgg5tuG5fdtSZ4xQ9aNzIV2q90r3Iw=;
+        b=RQq8ZIZlvjNwk1gDWteW8w9D/9eWblZfpQqIh+U0ALRriWDpM+FcPiSJwFIP3zMmPL
+         fckLZbai/3bN7uU3g9rB6Xm+cRKUh0YpmmHel7YYLy0MUAHoIR/Dt3ySpn3zFE4ZVVBv
+         0aactjsuQbX4YCL4iANgpheyB4U67FZZRRnNdpKo/6kz61YSIjGWfMS0F5gz3cnFmEVo
+         CoOAJbx4LGtOZPxF9976cywqVLuKU3+LGcCt/0wPsGohc+Nj0wQLaOmgKRi2ekMBNvCE
+         uHBg4roF8sAzT8cUCptxL52umO0Vl7jTDdwEMgaodTe5+vpLt+e3R9yMovUzjQUlIsn/
+         NriQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719152835; x=1719757635;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wUGNzKbqoRHYmtgg5tuG5fdtSZ4xQ9aNzIV2q90r3Iw=;
+        b=WSIQGDRCWtNMoFbryet3iC5HIveB9nibgE+W42xh9RCFAuV5ycqCWAsztloFk+nuAP
+         Jd4Cp/qRTQUxZZXxWARMiKgLkOx3s/5yJODQGgunRDvD0a3Ur8caECGhEO4vMo6IqOtm
+         4Z6hZyCzQzuEEfptfHgVZBSzdzevYBOyvhz9/5pblSHcM5ggQl8svK816uzKaddzXA3X
+         JuX5yaZFFTl6V9bRyFZbVh17Kd+DpklfaQYJr1Di79FtMaiedwqpRkfZVAeSePGrhPm8
+         l6Y1rx4EB+wnzXYut+xW/Nsxn3fbEW0eb1I4PzGb8XS+OEPnFguTv6YAWk+1lER6UvLb
+         +4Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCULGcch0toRTC5RG3rFZKT48Jn98Bu6lxNEp2G4luV+4liUr21UmlSTmBxmH67hgEvta8Rlo7Jsqfnh1ExPxIxOxT1DAgiTlegH9kNZ
+X-Gm-Message-State: AOJu0YwqAslReAbU3v0ZBncjOmBnAFfRxSJghgl6UvHsZEtV5WEnDT8T
+	gpMSC18CtbjB7amBQMagn+eu7o7ignQ3/vV1afGAy0RanTB1z0h1GKGzobMwmhE=
+X-Google-Smtp-Source: AGHT+IFp7T3fUP126w4AWrA15yogPBJdGyb+8rFa+dr5eP9h4GYZKkyUybOllD6Y2CfQXQKkURxY3A==
+X-Received: by 2002:a05:6000:1a54:b0:362:b906:11f2 with SMTP id ffacd0b85a97d-366e3337f42mr2451380f8f.34.1719152835017;
+        Sun, 23 Jun 2024 07:27:15 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0be9fasm142958035e9.16.2024.06.23.07.27.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Jun 2024 07:27:14 -0700 (PDT)
+Message-ID: <8a4c36d5-3ed7-429f-9cde-d90f0029b16a@tuxon.dev>
+Date: Sun, 23 Jun 2024 17:27:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] arm64: Clear the initial ID map correctly before
- remapping
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Zenghui Yu <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
- wanghaibin.wang@huawei.com
-References: <20240621092809.162-1-yuzenghui@huawei.com>
- <CAMj1kXEH0ohn57DUrCu6S-AJW=B9CyrpMwyabpjBpD9tD4VV=A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v7 1/4] net: macb: queue tie-off or disable
+ during WOL suspend
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zenghui Yu <zenghui.yu@linux.dev>
-In-Reply-To: <CAMj1kXEH0ohn57DUrCu6S-AJW=B9CyrpMwyabpjBpD9tD4VV=A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Vineeth Karumanchi <vineeth.karumanchi@amd.com>,
+ nicolas.ferre@microchip.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ linux@armlinux.org.uk, vadim.fedorenko@linux.dev, andrew@lunn.ch
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, git@amd.com
+References: <20240621045735.3031357-1-vineeth.karumanchi@amd.com>
+ <20240621045735.3031357-2-vineeth.karumanchi@amd.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240621045735.3031357-2-vineeth.karumanchi@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 2024/6/21 17:52, Ard Biesheuvel wrote:
-> On Fri, 21 Jun 2024 at 11:28, Zenghui Yu <yuzenghui@huawei.com> wrote:
-> >
-> > In the attempt to clear and recreate the initial ID map for LPA2, we
-> > wrongly use 'start - end' as the map size and make the memset() almost a
-> > nop.
-> >
-> > Fix it by passing the correct map size.
-> >
-> > Fixes: 9684ec186f8f ("arm64: Enable LPA2 at boot if supported by the system")
-> > Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
-> > ---
-> >
-> > Found by code inspection (don't have the appropriate HW to test it).
-> >
+
+
+On 21.06.2024 07:57, Vineeth Karumanchi wrote:
+> When GEM is used as a wake device, it is not mandatory for the RX DMA
+> to be active. The RX engine in IP only needs to receive and identify
+> a wake packet through an interrupt. The wake packet is of no further
+> significance; hence, it is not required to be copied into memory.
+> By disabling RX DMA during suspend, we can avoid unnecessary DMA
+> processing of any incoming traffic.
 > 
-> Good catch!
+> During suspend, perform either of the below operations:
 > 
-> Even though memset() takes an unsigned size_t, the zeroing path in
-> arm64's memset.S does a signed compare on the provided size, and will
-> zero at most 63 bytes if the size has the sign bit set. So in the end,
-> it does not clear anything.
-
-Yup! It took me a while to figure out why memset() with a VERY large
-size doesn't corrupt the memory. ;-)
-
-> Note that in this particular case, that
-> doesn't actually matter - the memory is reused immediately to create
-> another copy of the ID map, and any unused regions containing garbage
-> will just be ignored.
-
-Agreed. I can fold it into the commit message if Will/Catalin ask for a
-respin. And it looks like an alternate "fix" would be just removing the
-memset().
-
-> Nonetheless,
+> - tie-off/dummy descriptor: Disable unused queues by connecting
+>   them to a looped descriptor chain without free slots.
 > 
-> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+> - queue disable: The newer IP version allows disabling individual queues.
+> 
+> Co-developed-by: Harini Katakam <harini.katakam@amd.com>
+> Signed-off-by: Harini Katakam <harini.katakam@amd.com>
+> Signed-off-by: Vineeth Karumanchi <vineeth.karumanchi@amd.com>
 
-Thanks!
+Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Tested-by: Claudiu Beznea <claudiu.beznea@tuxon.dev> # on SAMA7G5
 
-Zenghui
+> ---
+>  drivers/net/ethernet/cadence/macb.h      |  7 +++
+>  drivers/net/ethernet/cadence/macb_main.c | 60 ++++++++++++++++++++++--
+>  2 files changed, 64 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
+> index aa5700ac9c00..50cd35ef21ad 100644
+> --- a/drivers/net/ethernet/cadence/macb.h
+> +++ b/drivers/net/ethernet/cadence/macb.h
+> @@ -645,6 +645,10 @@
+>  #define GEM_T2OFST_OFFSET			0 /* offset value */
+>  #define GEM_T2OFST_SIZE				7
+>  
+> +/* Bitfields in queue pointer registers */
+> +#define MACB_QUEUE_DISABLE_OFFSET		0 /* disable queue */
+> +#define MACB_QUEUE_DISABLE_SIZE			1
+> +
+>  /* Offset for screener type 2 compare values (T2CMPOFST).
+>   * Note the offset is applied after the specified point,
+>   * e.g. GEM_T2COMPOFST_ETYPE denotes the EtherType field, so an offset
+> @@ -733,6 +737,7 @@
+>  #define MACB_CAPS_NEEDS_RSTONUBR		0x00000100
+>  #define MACB_CAPS_MIIONRGMII			0x00000200
+>  #define MACB_CAPS_NEED_TSUCLK			0x00000400
+> +#define MACB_CAPS_QUEUE_DISABLE			0x00000800
+>  #define MACB_CAPS_PCS				0x01000000
+>  #define MACB_CAPS_HIGH_SPEED			0x02000000
+>  #define MACB_CAPS_CLK_HW_CHG			0x04000000
+> @@ -1254,6 +1259,8 @@ struct macb {
+>  	u32	(*macb_reg_readl)(struct macb *bp, int offset);
+>  	void	(*macb_reg_writel)(struct macb *bp, int offset, u32 value);
+>  
+> +	struct macb_dma_desc	*rx_ring_tieoff;
+> +	dma_addr_t		rx_ring_tieoff_dma;
+>  	size_t			rx_buffer_size;
+>  
+>  	unsigned int		rx_ring_size;
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index 241ce9a2fa99..9fc8c5a82bf8 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -2477,6 +2477,12 @@ static void macb_free_consistent(struct macb *bp)
+>  	unsigned int q;
+>  	int size;
+>  
+> +	if (bp->rx_ring_tieoff) {
+> +		dma_free_coherent(&bp->pdev->dev, macb_dma_desc_get_size(bp),
+> +				  bp->rx_ring_tieoff, bp->rx_ring_tieoff_dma);
+> +		bp->rx_ring_tieoff = NULL;
+> +	}
+> +
+>  	bp->macbgem_ops.mog_free_rx_buffers(bp);
+>  
+>  	for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
+> @@ -2568,6 +2574,16 @@ static int macb_alloc_consistent(struct macb *bp)
+>  	if (bp->macbgem_ops.mog_alloc_rx_buffers(bp))
+>  		goto out_err;
+>  
+> +	/* Required for tie off descriptor for PM cases */
+> +	if (!(bp->caps & MACB_CAPS_QUEUE_DISABLE)) {
+> +		bp->rx_ring_tieoff = dma_alloc_coherent(&bp->pdev->dev,
+> +							macb_dma_desc_get_size(bp),
+> +							&bp->rx_ring_tieoff_dma,
+> +							GFP_KERNEL);
+> +		if (!bp->rx_ring_tieoff)
+> +			goto out_err;
+> +	}
+> +
+>  	return 0;
+>  
+>  out_err:
+> @@ -2575,6 +2591,19 @@ static int macb_alloc_consistent(struct macb *bp)
+>  	return -ENOMEM;
+>  }
+>  
+> +static void macb_init_tieoff(struct macb *bp)
+> +{
+> +	struct macb_dma_desc *desc = bp->rx_ring_tieoff;
+> +
+> +	if (bp->caps & MACB_CAPS_QUEUE_DISABLE)
+> +		return;
+> +	/* Setup a wrapping descriptor with no free slots
+> +	 * (WRAP and USED) to tie off/disable unused RX queues.
+> +	 */
+> +	macb_set_addr(bp, desc, MACB_BIT(RX_WRAP) | MACB_BIT(RX_USED));
+> +	desc->ctrl = 0;
+> +}
+> +
+>  static void gem_init_rings(struct macb *bp)
+>  {
+>  	struct macb_queue *queue;
+> @@ -2598,6 +2627,7 @@ static void gem_init_rings(struct macb *bp)
+>  		gem_rx_refill(queue);
+>  	}
+>  
+> +	macb_init_tieoff(bp);
+>  }
+>  
+>  static void macb_init_rings(struct macb *bp)
+> @@ -2615,6 +2645,8 @@ static void macb_init_rings(struct macb *bp)
+>  	bp->queues[0].tx_head = 0;
+>  	bp->queues[0].tx_tail = 0;
+>  	desc->ctrl |= MACB_BIT(TX_WRAP);
+> +
+> +	macb_init_tieoff(bp);
+>  }
+>  
+>  static void macb_reset_hw(struct macb *bp)
+> @@ -5215,6 +5247,7 @@ static int __maybe_unused macb_suspend(struct device *dev)
+>  	unsigned long flags;
+>  	unsigned int q;
+>  	int err;
+> +	u32 tmp;
+>  
+>  	if (!device_may_wakeup(&bp->dev->dev))
+>  		phy_exit(bp->sgmii_phy);
+> @@ -5224,17 +5257,38 @@ static int __maybe_unused macb_suspend(struct device *dev)
+>  
+>  	if (bp->wol & MACB_WOL_ENABLED) {
+>  		spin_lock_irqsave(&bp->lock, flags);
+> -		/* Flush all status bits */
+> -		macb_writel(bp, TSR, -1);
+> -		macb_writel(bp, RSR, -1);
+> +
+> +		/* Disable Tx and Rx engines before  disabling the queues,
+> +		 * this is mandatory as per the IP spec sheet
+> +		 */
+> +		tmp = macb_readl(bp, NCR);
+> +		macb_writel(bp, NCR, tmp & ~(MACB_BIT(TE) | MACB_BIT(RE)));
+>  		for (q = 0, queue = bp->queues; q < bp->num_queues;
+>  		     ++q, ++queue) {
+> +			/* Disable RX queues */
+> +			if (bp->caps & MACB_CAPS_QUEUE_DISABLE) {
+> +				queue_writel(queue, RBQP, MACB_BIT(QUEUE_DISABLE));
+> +			} else {
+> +				/* Tie off RX queues */
+> +				queue_writel(queue, RBQP,
+> +					     lower_32_bits(bp->rx_ring_tieoff_dma));
+> +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+> +				queue_writel(queue, RBQPH,
+> +					     upper_32_bits(bp->rx_ring_tieoff_dma));
+> +#endif
+> +			}
+>  			/* Disable all interrupts */
+>  			queue_writel(queue, IDR, -1);
+>  			queue_readl(queue, ISR);
+>  			if (bp->caps & MACB_CAPS_ISR_CLEAR_ON_WRITE)
+>  				queue_writel(queue, ISR, -1);
+>  		}
+> +		/* Enable Receive engine */
+> +		macb_writel(bp, NCR, tmp | MACB_BIT(RE));
+> +		/* Flush all status bits */
+> +		macb_writel(bp, TSR, -1);
+> +		macb_writel(bp, RSR, -1);
+> +
+>  		/* Change interrupt handler and
+>  		 * Enable WoL IRQ on queue 0
+>  		 */
 
