@@ -1,216 +1,171 @@
-Return-Path: <linux-kernel+bounces-226131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC038913AA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:46:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC6B913AAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE5B1F21671
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:46:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B43D1C20BDD
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0C018132D;
-	Sun, 23 Jun 2024 12:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1E6181333;
+	Sun, 23 Jun 2024 12:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8wYZ04B"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOsCOiij"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548B01C294;
-	Sun, 23 Jun 2024 12:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9228E12FF7B;
+	Sun, 23 Jun 2024 12:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719146772; cv=none; b=hsOVjwmJRHr1mp5vdGoVf2+2ArAz0Sf88VKi+lvefwaeHgHgoUMgpwcNGI5QMmWZziLgFmm0xnD0IUjqFZmUP6VCOt9oyTz+k/OwymFayhHINn75wCmXOJk+MjjjFdGcJs6Q1scUM3lzMUWeKvt0W9vr1R0A/o9cAOqwBt9XoaA=
+	t=1719146805; cv=none; b=IykSKBtfyzKrGlcXdy7SaM5X67omW7hKlc4y6niSLPm9+vdMPGTqRWXbUO5GrKEf6uxfRHzI9M7R0W9NO0fuPYM1FM22idSB4zH3wVR4wJbFjHvD/6XxbALyyer+qwoZYQjp4mhVuk2CVZw72Qyb3o7JtSyxAbZsX53WxTHDv+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719146772; c=relaxed/simple;
-	bh=+JfN/0iCiQDLYYc6xdFvjYXq+QVjc9/5RVUMzbECoAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lBAtTFjofHH2/rCm/SZTQuoGRp5ows3BPPx4AD4+iYgDpsKmRwjQAuPBa3LtqjV3IwWmfvv1pDbHDspdojFfkW62gK6Kf7dTWlw2RVFa7VJPUJqIGu+8CcVe7LctLGMGwIcADLR2aCZoc6RMMxqG9wK6gjJGtL3RRJkMS4cfqZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8wYZ04B; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6f98178ceb3so2033174a34.0;
-        Sun, 23 Jun 2024 05:46:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719146770; x=1719751570; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QJNAeilBksHHe+cfHTJcl7ZQDvy9diRDI1WmGo+xzJE=;
-        b=J8wYZ04BTnmCTyDIx257/Ug0wboSP6Oza82wmpdN50M5I2qS8KQzwkYFbAa914j/w6
-         FRR6Qk34Hou8ey8UU/OEpA3ljuwTKKORovQUMRDhZaiEjUbp497uA2e2Ohv2W9nZRdLu
-         7UV08kR8PW5sT3LoNjonUUS22UgJgvXE9tJxyTlk5wWo2MNMp4GD7UGvZpMGeuqYmMtu
-         SLNCcgqezt6u2PedXP+bFkcQjAAifvG4yJ7x+9Cm/HFoGrKXNIO8rJzWxHpkRoIBnQAG
-         S+vtRlqjS1yWorONnjXJ+rWu1Iq7WoM2JGFFLHZ3dcu7uVozsp2dHu0+IiK/lwMIlEPn
-         ubjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719146770; x=1719751570;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QJNAeilBksHHe+cfHTJcl7ZQDvy9diRDI1WmGo+xzJE=;
-        b=HrjVtwQAeOsaAIK84m78K1if64gQtYiXqE4X0NVaeX+zUHb5FKUm6lTGwjwl3DDCsv
-         Dt2RelAs+/qB0FpCeF7jgHdmONySmjchYRiZyH2GZL8qPJPu3uQlSewE6PnCTibA41QI
-         D9J2wcQDGonYkIxYr1aMxF8zIWlkPpRbP3hGytb9K1MMsMhGV3bucdnqyNT8XIEjnEFM
-         RYEfEzFyoLFIInapqjpl5p6YuwBl83ZyDIZ8kpqrRWo21rfhN15yBEau/35isgtlIg7o
-         V3BLObUWiCgobg5+9R+tVyEZWxb7KBmuROaO4ldbl2hmDygQeWh1//plNOuRmbXixjet
-         9Uew==
-X-Forwarded-Encrypted: i=1; AJvYcCWsguRtvy1rYbcpt8RiEoihJMtaok6+ceQxlHyvLrcD5Kd+7nSStfoGDyIT60O7XNGRmkPvUYWjDNwx+y9XDQtLhnrkHC/R4jdiSiM/J83wT2Eq5oDmI8f1PhOOGUim3ktKh1V4DjUu1A==
-X-Gm-Message-State: AOJu0YxlsU9nNBoBczBZxNOeM+tSm5lq1fCJbGB+EraSAZyIr1PznxSr
-	keNusjJUgHNS+1Al5PB0jbAdaXAhcf0fdTEWeIemARIqynd4sl0K
-X-Google-Smtp-Source: AGHT+IFV1crtHngw/vnqMq/uGtF0d5wmm4DRllelLbe0vVK9LapMVELIZY+oVe+w5y3CFZirsDVxjw==
-X-Received: by 2002:a05:6871:3a21:b0:25d:fd3:5039 with SMTP id 586e51a60fabf-25d0fd38867mr1171820fac.39.1719146770285;
-        Sun, 23 Jun 2024 05:46:10 -0700 (PDT)
-Received: from shresth-aspirea71576g.abesec.ac.in ([117.55.241.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065107ae68sm4419391b3a.27.2024.06.23.05.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 05:46:09 -0700 (PDT)
-From: Shresth Prasad <shresthprasad7@gmail.com>
-To: vkoul@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	Shresth Prasad <shresthprasad7@gmail.com>
-Subject: [PATCH] dt-bindings: dma: mv-xor-v2: Convert to dtschema
-Date: Sun, 23 Jun 2024 18:15:08 +0530
-Message-ID: <20240623124507.27297-2-shresthprasad7@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719146805; c=relaxed/simple;
+	bh=DMWLHkxTqyALf1Cf5us9V7DYOoKrsleUvYt76jR37S8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qNSC5FcqrPQJmzvxeC/OD/CnLhjPzASFZRrF9n4gq0KW5XrYDM4b8nMNMj+JzT5S7Xbsw54iDYcjdljLkKm/Hjit+jtamiKvgd1pjcKF9S97C6x4JMRk0+7bEBiDx6YnnIeNeAspaOGlOZtDmEA9jO55bUl6ARFklL+VKneJn3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOsCOiij; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99CEEC2BD10;
+	Sun, 23 Jun 2024 12:46:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719146805;
+	bh=DMWLHkxTqyALf1Cf5us9V7DYOoKrsleUvYt76jR37S8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hOsCOiijC/Bfah6vEP8gUJOn42wkVkRG6+HoIk6o+V16ziLEN7l9d9IYXRIOD8NmH
+	 wjIFRHPrpa99uP1Req6ANCqTndWGWhrfklLMgbZ+V/UNd/idWiPDQwKNs5TkQo5MmD
+	 +9yIkV/WfYZuIQqxf/LzGncvby36sINuUUg3yvPenEmzVea6XMrnLnDVBQhLPsz9aw
+	 /H5+u2IOG1RooeI7yos8bzVrbm3ZxkZiJxwQ9hDvhfH1YpEcp1ue7OeNLndiM4xiP3
+	 6ajhttY1LhX35Sm/gk91KA52r017BktQ3IKrtHTO/IXSMxzseckwtRN7tozuFWzjcv
+	 gCbRpR9Adorzg==
+Date: Sun, 23 Jun 2024 13:46:33 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+Cc: <linux-iio@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Cosmin Tanislav <cosmin.tanislav@analog.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Andy
+ Shevchenko" <andriy.shevchenko@linux.intel.com>, Nuno Sa
+ <nuno.sa@analog.com>, Maksim Kiselev <bigunclemax@gmail.com>, Marcelo
+ Schmitt <marcelo.schmitt@analog.com>, Marius Cristea
+ <marius.cristea@microchip.com>, Mike Looijmans <mike.looijmans@topic.nl>,
+ Okan Sahin <okan.sahin@analog.com>, Ivan Mikhaylov <fr0st61te@gmail.com>,
+ Marcus Folkesson <marcus.folkesson@gmail.com>, Liam Beguin
+ <liambeguin@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] Documentation: ABI: added filter mode doc in
+ sysfs-bus-iio
+Message-ID: <20240623134633.15f793be@jic23-huawei>
+In-Reply-To: <20240619122301.22737-2-ramona.nechita@analog.com>
+References: <20240619122301.22737-1-ramona.nechita@analog.com>
+	<20240619122301.22737-2-ramona.nechita@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Convert txt bindings of Marvell XOR v2 engines to dtschema to allow
-for validation.
+On Wed, 19 Jun 2024 15:22:43 +0300
+Ramona Alexandra Nechita <ramona.nechita@analog.com> wrote:
 
-Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
----
-Tested against `marvell/armada-7040-db.dtb`, `marvell/armada-7040-mochabin.dtb`
-and `marvell/armada-8080-db.dtb`
+> The filter mode / filter type property is used for ad4130
+> and ad7779 drivers, therefore the ABI doc file for ad4130
+> was removed, merging both of them in the sysfs-bus-iio
+> 
+> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-iio       |  7 +++
+>  .../ABI/testing/sysfs-bus-iio-adc-ad4130      | 46 -------------------
+>  2 files changed, 7 insertions(+), 46 deletions(-)
+>  delete mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> index 2e6d5ebfd3c7..c808ec9c4a81 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-iio
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> @@ -2225,6 +2225,13 @@ Description:
+>  		An example format is 16-bytes, 2-digits-per-byte, HEX-string
+>  		representing the sensor unique ID number.
+>  
+> +What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_filter_mode_available
+> +KernelVersion:	6.1
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Reading returns a list with the possible filter modes.
+Even though it is not generalized an a given device might not provide each option, we still
+need to let those writing userspace software know what they might get.
+So Include the options, but skip the frequency specific details etc.
 
- .../bindings/dma/marvell,xor-v2.yaml          | 69 +++++++++++++++++++
- .../devicetree/bindings/dma/mv-xor-v2.txt     | 28 --------
- 2 files changed, 69 insertions(+), 28 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
- delete mode 100644 Documentation/devicetree/bindings/dma/mv-xor-v2.txt
+For things like the pf ones, just say + device specific post filter X
 
-diff --git a/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml b/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
-new file mode 100644
-index 000000000000..3d7481c1917e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/marvell,xor-v2.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Marvell XOR v2 engines
-+
-+maintainers:
-+  - Vinod Koul <vkoul@kernel.org>
-+
-+properties:
-+  compatible:
-+    contains:
-+      enum:
-+        - marvell,armada-7k-xor
-+        - marvell,xor-v2
-+
-+  reg:
-+    items:
-+      - description: DMA registers location and length
-+      - description: global registers location and length
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: core
-+      - const: reg
-+
-+  msi-parent:
-+    description:
-+      Phandle to the MSI-capable interrupt controller used for
-+      interrupts.
-+    maxItems: 1
-+
-+  dma-coherent: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - msi-parent
-+  - dma-coherent
-+
-+if:
-+  required:
-+    - clocks
-+  properties:
-+    clocks:
-+      minItems: 2
-+      maxItems: 2
-+then:
-+  required:
-+    - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    xor0@6a0000 {
-+        compatible = "marvell,armada-7k-xor", "marvell,xor-v2";
-+        reg = <0x6a0000 0x1000>, <0x6b0000 0x1000>;
-+        clocks = <&ap_clk 0>, <&ap_clk 1>;
-+        clock-names = "core", "reg";
-+        msi-parent = <&gic_v2m0>;
-+        dma-coherent;
-+    };
-diff --git a/Documentation/devicetree/bindings/dma/mv-xor-v2.txt b/Documentation/devicetree/bindings/dma/mv-xor-v2.txt
-deleted file mode 100644
-index 9c38bbe7e6d7..000000000000
---- a/Documentation/devicetree/bindings/dma/mv-xor-v2.txt
-+++ /dev/null
-@@ -1,28 +0,0 @@
--* Marvell XOR v2 engines
--
--Required properties:
--- compatible: one of the following values:
--    "marvell,armada-7k-xor"
--    "marvell,xor-v2"
--- reg: Should contain registers location and length (two sets)
--    the first set is the DMA registers
--    the second set is the global registers
--- msi-parent: Phandle to the MSI-capable interrupt controller used for
--  interrupts.
--
--Optional properties:
--- clocks: Optional reference to the clocks used by the XOR engine.
--- clock-names: mandatory if there is a second clock, in this case the
--   name must be "core" for the first clock and "reg" for the second
--   one
--
--
--Example:
--
--	xor0@400000 {
--		compatible = "marvell,xor-v2";
--		reg = <0x400000 0x1000>,
--		      <0x410000 0x1000>;
--		msi-parent = <&gic_v2m0>;
--		dma-coherent;
--	};
--- 
-2.45.2
+If the details are necessary we do allow a device specific entry in the main
+docs.  I think there are a few existing ones though not sure they've
+made it to the top level doc rather than one of the device type specific ones.
+
+
+
+> +
+>  What:		/sys/.../events/in_proximity_thresh_either_runningperiod
+>  KernelVersion:	6.6
+>  Contact:	linux-iio@vger.kernel.org
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130 b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
+> deleted file mode 100644
+> index f24ed6687e90..000000000000
+> --- a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
+> +++ /dev/null
+> @@ -1,46 +0,0 @@
+> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_filter_mode_available
+> -KernelVersion:  6.2
+> -Contact:	linux-iio@vger.kernel.org
+> -Description:
+> -		Reading returns a list with the possible filter modes.
+> -
+> -		  * "sinc4"       - Sinc 4. Excellent noise performance. Long
+> -                    1st conversion time. No natural 50/60Hz rejection.
+> -
+> -		  * "sinc4+sinc1" - Sinc4 + averaging by 8. Low 1st conversion
+> -		    time.
+> -
+> -		  * "sinc3"	      - Sinc3. Moderate 1st conversion time.
+> -		    Good noise performance.
+> -
+> -		  * "sinc3+rej60" - Sinc3 + 60Hz rejection. At a sampling
+> -		    frequency of 50Hz, achieves simultaneous 50Hz and 60Hz
+> -		    rejection.
+> -
+> -		  * "sinc3+sinc1" - Sinc3 + averaging by 8. Low 1st conversion
+> -		    time. Best used with a sampling frequency of at least
+> -		    216.19Hz.
+> -
+> -		  * "sinc3+pf1"   - Sinc3 + Post Filter 1. 53dB rejection @
+> -		    50Hz, 58dB rejection @ 60Hz.
+> -
+> -		  * "sinc3+pf2"   - Sinc3 + Post Filter 2. 70dB rejection @
+> -		    50Hz, 70dB rejection @ 60Hz.
+> -
+> -		  * "sinc3+pf3"   - Sinc3 + Post Filter 3. 99dB rejection @
+> -		    50Hz, 103dB rejection @ 60Hz.
+> -
+> -		  * "sinc3+pf4"   - Sinc3 + Post Filter 4. 103dB rejection @
+> -		    50Hz, 109dB rejection @ 60Hz.
+> -
+> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY-voltageZ_filter_mode
+> -KernelVersion:  6.2
+> -Contact:	linux-iio@vger.kernel.org
+> -Description:
+> -		Set the filter mode of the differential channel. When the filter
+> -		mode changes, the in_voltageY-voltageZ_sampling_frequency and
+> -		in_voltageY-voltageZ_sampling_frequency_available attributes
+> -		might also change to accommodate the new filter mode.
+> -		If the current sampling frequency is out of range for the new
+> -		filter mode, the sampling frequency will be changed to the
+> -		closest valid one.
 
 
