@@ -1,112 +1,328 @@
-Return-Path: <linux-kernel+bounces-225976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A3F19138A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:15:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B959138A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F7D281DB9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:15:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF224B2146D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B7A12EBE9;
-	Sun, 23 Jun 2024 07:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3DE3BBF6;
+	Sun, 23 Jun 2024 07:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mmXKlxnI"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/W89Niq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21D17E0F1
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 07:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6645B16419;
+	Sun, 23 Jun 2024 07:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719126861; cv=none; b=BMwjF5b5DiMzyCm4+gjGSbXHh2B+Mce2RyC7ydV5MhmMiZsoN30Ov1cU1chp9hrGdLog0NSn4sfMO+KnTTDgRKNABFAk/+e4ge65+HDpS4DmKSS9Ay8CKipbRsxFIROVDq0RI3C6blJwMVPgMlWMx3xuQssuEA4RL5EVtehmYbI=
+	t=1719126962; cv=none; b=WjbKv4kxdMBfEtFjZ4adTfvECIYExnFQswtflTij7LhCxpcrbWfHuVFK/IuxQ/p+Im/ANy7Z8ij7l5EIU64kFDBBi+1kppuwGUDRu2U1AhnzbENKqSl+l/2WtdaR0GuOTcA7IDwF5qdKBvbLu/RjnvcUYNmj+ZkUwnCp948GyCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719126861; c=relaxed/simple;
-	bh=r1GyaNDuH0dnQOBTRqLdjX/f+vi1DRab71LLw2YZwc4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z9CfRxm15XQAgIdmogEDrTfaWOXSKKkvcvuOKEg7GuJD7ZaLokZBzOj4/eCeLzCrmoqN9ZqY0fqeZcKY8TfaFGuvolwvYu7tncSjGu5TyIU+D9uWwTy/boYlr3tqK2L20Pg5UpMkU2ihPPhbn4eho3BJ+tW1fEjhYmzRox7KQ5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mmXKlxnI; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so36386541fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 00:14:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719126858; x=1719731658; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ao5ztXjHb4LHR9szDgOZeLEhmApDaFHqwxcIBuJSShc=;
-        b=mmXKlxnIWBqpSTQ9wlBnkt+DjE8ztMPduPRSwjl/WAoZB+6m7sfUIJd3IyT3Iv470X
-         b1VR6UiD19AkCru7JYmiynquRk8N7VB8ezsynFexkYu1l2jZGm0xblVIKAcF1imx6eDR
-         B7Z2KJB8FsApgrOaHqKO0Zwa051S7xN9JwO8ZRKlK/+BYvZ/CpALOSp2gwzj0h5ziZOW
-         MTDJbeUuJwevasfaUctoy0fhrG3NGkl0sXyzKVcYO4ljviMhxz6YPh5fqaiFYawLthcg
-         2NNBZ1r0PihDP66FkGqj6iOfslMlriPCewl2PPApHlNDhhKMgr+6UfIj6BH3ONDxv7oS
-         4UWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719126858; x=1719731658;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ao5ztXjHb4LHR9szDgOZeLEhmApDaFHqwxcIBuJSShc=;
-        b=aDJ15dWoYhzDn7jvRrYZJSUoWESQyt38ZH0+1Lb7z7vXUE8JVsvjdI8n/RLjyH0iHj
-         U7aT75ouYsZ7ETgZLeo33dYuUKgzWQ4O6JeC+pwjG5i58sSk74PKHAKcZQHo6yoS1t9w
-         M9Kuq6lqnKQ7rnC+Nq+VkIEWfL5ejbs8qNpGzhpoQcmuLSS8tHcqh+UL46NL52tx7WmP
-         iNLflgx8loyL0Kfo6jYmgiz/reXZQ0vERKAPe7kaWPRy8EOt8Jin5umekYn/KAK0VD8e
-         zuxK0RvfkfpqYRecRyGh31NCDhdk/wJ+0JJD9eNuYNsfhNcpO6NrZbJci1+m+/1BahRw
-         vNiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnFJ7dMRoxq8Sjy4LC5mPlYpqvdPqII9cMsr19znzVKxyUkrJrVAg1vmqtku2se7QbpljzZveTYOmUjdmYHU76RfvEIrbQsGRcBroU
-X-Gm-Message-State: AOJu0YzMfX1VA2/aesmDRWQB7WKf9l7Th3vvHBtsk80L2tQBYjf8PY/G
-	flvWzm/+tBF986x1fCdtv0K2X9ENCWa7Yz4pn3jCff0rxZE3UpwR/XheTPB8jDo=
-X-Google-Smtp-Source: AGHT+IGMrZ7Ab2hTrpfNCjoKkdN8iqLOosYDf5URywhJ9jd+sUequOrm6k6sz1yM2oRGbSPu4UNvIQ==
-X-Received: by 2002:a2e:9dd8:0:b0:2ec:4aac:8fd4 with SMTP id 38308e7fff4ca-2ec5930fde5mr14912791fa.1.1719126858199;
-        Sun, 23 Jun 2024 00:14:18 -0700 (PDT)
-Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec5b031208sm1886861fa.26.2024.06.23.00.14.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 00:14:17 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dpu: guard ctl irq callback register/unregister
-Date: Sun, 23 Jun 2024 10:14:11 +0300
-Message-Id: <171912674292.840248.16492908228445159189.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240509-ctl_irq-v1-1-9433f2da9dc7@gmail.com>
-References: <20240509-ctl_irq-v1-1-9433f2da9dc7@gmail.com>
+	s=arc-20240116; t=1719126962; c=relaxed/simple;
+	bh=kvi33n7OkM2//Cwxig7e4n0YCswTp6CpYoaVzl3d164=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ETHCqMimzmZ/sO6MeP0bAef/bpsd39QmJsZQQ1tMKu0sn62yzn5VG+uAgoLEJw+GY+dBDNz5yipBU6nKaN/d6y1zsn2umBZZRw0+pfDMQcYx1oMgde54klXnXaiGwL9blyuZp/Wnxv9imhjI1yP7ZwHxY5Iyiv0xh45NM22+R3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/W89Niq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F240C2BD10;
+	Sun, 23 Jun 2024 07:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719126961;
+	bh=kvi33n7OkM2//Cwxig7e4n0YCswTp6CpYoaVzl3d164=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q/W89NiqGUqdL2Cz6lds2CxXPuIPAVqDQ1S/BT4RUkBFKppETr7SSOAABkozBcoXx
+	 Ay43fJxp/TrWu49CEokBlHLnakGwTkig4Ltr8dJ9fIIsKSOVaL2yd4EYFUAzwO7/JA
+	 3//5IuN6DtYQNFFTbeh5FoignQ3sVUj3bRpL8/bIjj0wjqcP0v8Iquy+bL9sZ6u93G
+	 dd1KXX5fIL3yJhpFoqpcSBVlJMFCnDoqoD4FBtshke+nfKIuWRqUbD0jw2WqLIU2iV
+	 aGecwUhSiPL3wRCWT9r3e0Qa5QsG2wsKpJVZM6HwLKAlAb1g2m2DE6j+CHoAUgyFXj
+	 8LizBFlB4v3Mg==
+Message-ID: <c05da1a1-5d22-449e-874f-80028e2b88ec@kernel.org>
+Date: Sun, 23 Jun 2024 09:15:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] mips: dts: realtek: Add RTL9302C board
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ tsbogend@alpha.franken.de, daniel.lezcano@linaro.org, paulburton@kernel.org,
+ peterz@infradead.org, mail@birger-koblitz.de, bert@biot.com,
+ john@phrozen.org, sander@svanheule.net
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com
+References: <20240621042737.674128-1-chris.packham@alliedtelesis.co.nz>
+ <20240621042737.674128-7-chris.packham@alliedtelesis.co.nz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240621042737.674128-7-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Thu, 09 May 2024 19:52:04 +0200, Barnabás Czémán wrote:
-> CTLs on older qualcomm SOCs like msm8953 and msm8996 has not got interrupts,
-> so better to skip CTL irq callback register/unregister
-> make dpu_ctl_cfg be able to define without intr_start.
+On 21/06/2024 06:27, Chris Packham wrote:
+> Add support for the RTL930x SoC and the RTL9302C reference board.
 > 
+> The RTL930x family of SoCs are Realtek switches with an embedded MIPS
+> core (800MHz 34Kc). Most of the peripherals are similar to the RTL838x
+> SoC and can make use of many existing drivers.
 > 
+> Add in full DSA switch support is still a work in progress.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>  arch/mips/boot/dts/realtek/Makefile     |  1 +
+>  arch/mips/boot/dts/realtek/RTL9302C.dts | 74 +++++++++++++++++++++++
+>  arch/mips/boot/dts/realtek/rtl930x.dtsi | 78 +++++++++++++++++++++++++
+>  3 files changed, 153 insertions(+)
+>  create mode 100644 arch/mips/boot/dts/realtek/RTL9302C.dts
+>  create mode 100644 arch/mips/boot/dts/realtek/rtl930x.dtsi
+> 
+> diff --git a/arch/mips/boot/dts/realtek/Makefile b/arch/mips/boot/dts/realtek/Makefile
+> index fba4e93187a6..54dc2d280cd5 100644
+> --- a/arch/mips/boot/dts/realtek/Makefile
+> +++ b/arch/mips/boot/dts/realtek/Makefile
+> @@ -1,2 +1,3 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  dtb-y	+= cisco_sg220-26.dtb
+> +dtb-y	+= RTL9302C.dtb
+> diff --git a/arch/mips/boot/dts/realtek/RTL9302C.dts b/arch/mips/boot/dts/realtek/RTL9302C.dts
+> new file mode 100644
+> index 000000000000..d921067d5006
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/realtek/RTL9302C.dts
+> @@ -0,0 +1,74 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/dts-v1/;
+> +
+> +#include "rtl930x.dtsi"
+> +
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/thermal/thermal.h>
+> +
+> +/ {
+> +	compatible = "realtek,RTL9302C", "realtek,rtl930x-soc";
 
-Applied, thanks!
+Really, this wasn't ever tested.
 
-[1/1] drm/msm/dpu: guard ctl irq callback register/unregister
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/29cd76c6f897
+> +	model = "RTL9302C Development Board";
+> +
+> +	memory@0 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x8000000>;
+> +	};
+> +
+> +	chosen {
+> +		bootargs = "earlycon";
+
+Drop. earlycon is debugging tool, not a wide-mainline usage configuration.
+
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	status = "okay";
+> +};
+> +
+> +&spi0 {
+> +	status = "okay";
+> +	flash@0 {
+> +		compatible = "jedec,spi-nor";
+> +		reg = <0>;
+> +		spi-max-frequency = <10000000>;
+> +
+> +		partitions {
+> +			compatible = "fixed-partitions";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			partition@0 {
+> +				label = "u-boot";
+> +				reg = <0x0 0xe0000>;
+> +				read-only;
+> +			};
+> +			partition@e0000 {
+> +				label = "u-boot-env";
+> +				reg = <0xe0000 0x10000>;
+> +			};
+> +			partition@f0000 {
+> +				label = "u-boot-env2";
+> +				reg = <0xf0000 0x10000>;
+> +				read-only;
+> +			};
+> +			partition@100000 {
+> +				label = "jffs";
+> +				reg = <0x100000 0x100000>;
+> +			};
+> +			partition@200000 {
+> +				label = "jffs2";
+> +				reg = <0x200000 0x100000>;
+> +			};
+> +			partition@300000 {
+> +				label = "runtime";
+> +				reg = <0x300000 0xe80000>;
+> +			};
+> +			partition@1180000 {
+> +				label = "runtime2";
+> +				reg = <0x1180000 0xe80000>;
+> +			};
+> +		};
+> +	};
+> +};
+> diff --git a/arch/mips/boot/dts/realtek/rtl930x.dtsi b/arch/mips/boot/dts/realtek/rtl930x.dtsi
+> new file mode 100644
+> index 000000000000..5e088c90d2ee
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/realtek/rtl930x.dtsi
+> @@ -0,0 +1,78 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
+> +
+> +#include "rtl83xx.dtsi"
+> +
+> +/ {
+> +	compatible = "realtek,rtl930x-soc";
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu@0 {
+> +			compatible = "mips,mips34Kc";
+> +			reg = <0>;
+> +			clocks = <&baseclk 0>;
+> +			clock-names = "cpu";
+> +		};
+> +	};
+> +
+> +	baseclk: baseclk {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <800000000>;
+> +	};
+> +
+> +	lx_clk: lx_clk {
+
+No underscors in node names.
+
+Use recommended clock names, see:
+Documentation/devicetree/bindings/clock/fixed-clock.yaml
+
+
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency  = <175000000>;
+> +	};
+> +};
+> +
+> +&soc {
+> +	intc: interrupt-controller@3000 {
+> +		compatible = "realtek,rtl9300-intc", "realtek,rtl-intc";
+> +		reg = <0x3000 0x18>, <0x3018 0x18>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +
+> +		interrupt-parent = <&cpuintc>;
+> +		interrupts = <2>, <3>, <4>, <5>, <6>, <7>;
+> +	};
+> +
+> +	spi0: spi@1200 {
+> +		compatible = "realtek,rtl8380-spi";
+> +		reg = <0x1200 0x100>;
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+> +
+> +	timer0: timer@3200 {
+> +		compatible = "realtek,rtl930x-timer", "realtek,otto-timer";
+> +		reg = <0x3200 0x10>, <0x3210 0x10>, <0x3220 0x10>,
+> +		    <0x3230 0x10>, <0x3240 0x10>;
+> +
+> +		interrupt-parent = <&intc>;
+> +		interrupts = <7 4>, <8 4>, <9 4>, <10 4>, <11 4>;
+
+Are you open-coding IRQ flags?
+
+> +		clocks = <&lx_clk>;
+> +	};
+> +};
+> +
+> +&uart0 {
+> +	/delete-property/ clock-frequency;
+> +	clocks = <&lx_clk>;
+> +
+> +	interrupt-parent = <&intc>;
+> +	interrupts = <30 1>;
+
+Are you open-coding IRQ flags?
+
+
+> +};
+> +
+> +&uart1 {
+> +	/delete-property/ clock-frequency;
+> +	clocks = <&lx_clk>;
+> +
+> +	interrupt-parent = <&intc>;
+> +	interrupts = <31 0>;
+
+Are you open-coding IRQ flags?
+
+> +};
+> +
 
 Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Krzysztof
+
 
