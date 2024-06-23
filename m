@@ -1,123 +1,143 @@
-Return-Path: <linux-kernel+bounces-226393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D242A913DB1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:20:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB13913DB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8E62831E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:20:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F098E1F22097
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF87185E7B;
-	Sun, 23 Jun 2024 19:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BFC18412C;
+	Sun, 23 Jun 2024 19:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PBE7PXyR"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JxSBq6vE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530B01849F6;
-	Sun, 23 Jun 2024 19:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C5539851
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 19:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719170397; cv=none; b=Vz3CK3nhffwL5HrveOJiT18i7YFnIQRtf9j7HVgS9MjeikwIuTHosCHRv6mdaiwMIUy/IhXFvqojK1W4hN/d9UJr535Va6c2jOYxfT5VHC7GxvXZIfa3ukGV+nuJlXFHsCUQbVYhoz9jMonM4LZTSI+TOWLFC0IcIsjns+2bNZE=
+	t=1719170836; cv=none; b=Dvp42mKUn7r2JHIL4xmJQJNt+w7Hi6NQ4x5Gek0vQAm8dmrBHMK2Fx1REhWB6H6iVboXsV8a+Q2/2gdqesWxaYLcGrG4BSlUsQW1hvYT4pNZlIs+UEmh9r4BczDFFq9IKM6nf2VBRzo51PM+zdrW+sFGyegQoy5B6Hm3Wjj0LS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719170397; c=relaxed/simple;
-	bh=xa2KLdq7W6RVjQg6+y9BC11X3FDbzdTyZBQ4OiqCKvg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rWNR6cuhUITJSE5d7/S6TsnWSl1nf7hm2QEdPM8IwrboFOaMc7xfKKD3yc6gBoFnl6UrHSCtojGAMAbzsw7VA1YkdckL4QZtdSYM7nO6OwwrL29TgSYSJnPTcNkiJPSFxo9/ZVC8zq6bxfvS2cf8ykEI/YUO8e+AgPTg4xpYmO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PBE7PXyR; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57d10354955so3930190a12.1;
-        Sun, 23 Jun 2024 12:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719170395; x=1719775195; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TU8jQiuoTxoPN82zxmj2fSUzOkEC0jhTRueQItJpgyQ=;
-        b=PBE7PXyRi0VRM/B3qhLgcG9IVwDcfnDWff+B+7aFbFt0OMr8BR1J0xXYA5XmXBkZKh
-         2FDUbCxSI9AzA2j6FyPQCdv2ih7uy0/tKD61Y9ecsCi+nx7pmYDHnctB4FzoroFytzOb
-         NgbJLbwdCPV+xtAMwil9ddXrTMUp6VjL8dbhOCznSMWxThX9uNTxmGTKoSbRTePzzvgt
-         gylFuMZPc5UW37o3sNoi6SUW1TJekAsX8iQl7v2aQeAgMhnRX8Y/0O3FUotCCBF5d5HJ
-         me909VmAhQxI/ONXodZCHnxQ20DCZNbG0rILY2GOEMU/jpxPwRVrzb+YU2Jpl8919Yo+
-         xZvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719170395; x=1719775195;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TU8jQiuoTxoPN82zxmj2fSUzOkEC0jhTRueQItJpgyQ=;
-        b=JDvZRnbHp3A+yw3gqUanOsC4m8QD1IRep0HF962fAhkTrMnntBmLAzxg+jhtTyUS8M
-         al9gPCEQhUiM5pkkbxWhcOCqa1en8WZJbWANnGR7mz3fg+up3F805C8GfXSO88vDuqRz
-         ei/UKnm2/IWueuOm0ZWVZ+tTjlbKO9CJfbvLv+/u663gw2XFNZj62uEGjtgsk/g7wX92
-         CjT3u/14qHMC8gsAzHSJi2DHQoYVooRNfetGvPus64o/oKLLce4Lz5O2Ccu3LRTLAfPH
-         GyyGl3tNC6oDZJ6kW3GKaWGxA5o5GXrRFF/+foa8dlnXb/etAFvmwzYZVnOL+MEUykQ0
-         S/HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrYPLgduUmr6ik01OIz0kM8S9ReltyGZF/vuJeLHXu8TWIKOrH8s/Gd9AqnfVqC/fisgbszZ3HvSsTyb3lO5xumEQoq12SqBjumkXo3q96JkMRRMIQ3+iGEEdZJ9uIeUB6G9o6EQ0=
-X-Gm-Message-State: AOJu0Yw/xUPTYqTOrpfSfKKZ3XedqLO9tDAjGLgbjZ2oY9qFpqyD6Trc
-	LMSElNd0CXALFZArlzWSDZckeKCDgntUcu6k7mpGu5XyAvWKAsaVXMBlEA==
-X-Google-Smtp-Source: AGHT+IEMj3QReGXW2XCosud9QQe++cQSZMwGjwTD1Bb7BQ39HC1Di8QIpikkv+2SVm6o9K9/M2LFFg==
-X-Received: by 2002:a17:906:720e:b0:a6f:ac90:754d with SMTP id a640c23a62f3a-a7242c9ca1cmr183888566b.29.1719170394486;
-        Sun, 23 Jun 2024 12:19:54 -0700 (PDT)
-Received: from [127.0.1.1] (31-179-0-202.dynamic.chello.pl. [31.179.0.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7255b56e48sm22075166b.176.2024.06.23.12.19.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 12:19:53 -0700 (PDT)
-From: Roman Storozhenko <romeusmeister@gmail.com>
-Date: Sun, 23 Jun 2024 21:19:44 +0200
-Subject: [PATCH 4/4] cpupower: Add 'help' target to the 'debug/i386'
- subproject makefile
+	s=arc-20240116; t=1719170836; c=relaxed/simple;
+	bh=ERYHZ97S+lmOX7oNyXwq0MNbVQnJ7iDkrBT/LticVHo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PAD2tEjqMDJyfzn1BRlTPaon/HVmWP7+4mG7Tc8XuILzHjlVhTc5HxKRhRgmrm7rnr1bHyCqs6GtHTpzvNudMbUiaTZbiR89yHXXnPLiuonSB9qmVPIkdIcaN2Pczr/iItzXNwC1bcumDrU5+IHYuyh8uKcYH4NzSmp51AAhF64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JxSBq6vE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719170833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7xKAWxytZSpfy+XyE1OWrhlcpej+DupFvRDHHykccng=;
+	b=JxSBq6vEbV9w8i++1cWe9lhsjW9StnNPr6uqFLU93+7fnPNgabY3yFKV0qjn8/XHpgGYi9
+	/kd/wJRJ9CvIP29lMMCCuifkZ/FbovSmWXKZBQUe5RVI4VL5OL2LFj/7ovn+SRbeyaijmN
+	zjZbfQ6jN+IieuzwBO2RNjWE9C0BFpc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-31-cry_T-VbM62-nJpTY-n75Q-1; Sun,
+ 23 Jun 2024 15:27:08 -0400
+X-MC-Unique: cry_T-VbM62-nJpTY-n75Q-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3AADC195608C;
+	Sun, 23 Jun 2024 19:27:06 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.9.58])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1259419560AA;
+	Sun, 23 Jun 2024 19:27:01 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org,  dev@openvswitch.org,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org,  Pravin B
+ Shelar <pshelar@ovn.org>,  "David S. Miller" <davem@davemloft.net>,  Eric
+ Dumazet <edumazet@google.com>,  Paolo Abeni <pabeni@redhat.com>,  Shuah
+ Khan <shuah@kernel.org>,  Stefano Brivio <sbrivio@redhat.com>,
+  =?utf-8?Q?Adri=C3=A1n?=
+ Moreno <amorenoz@redhat.com>,  Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
+ the internal ovs script.
+In-Reply-To: <20240621180126.3c40d245@kernel.org> (Jakub Kicinski's message of
+	"Fri, 21 Jun 2024 18:01:26 -0700")
+References: <20240620125601.15755-1-aconole@redhat.com>
+	<20240621180126.3c40d245@kernel.org>
+Date: Sun, 23 Jun 2024 15:26:59 -0400
+Message-ID: <f7ttthjh33w.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240623-make_help_rest-v1-4-4bd3fd51064b@gmail.com>
-References: <20240623-make_help_rest-v1-0-4bd3fd51064b@gmail.com>
-In-Reply-To: <20240623-make_help_rest-v1-0-4bd3fd51064b@gmail.com>
-To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Roman Storozhenko <romeusmeister@gmail.com>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Add 'help' target, describing all user-available targets, to the
-'debug/i386' subproject makefile.
+Jakub Kicinski <kuba@kernel.org> writes:
 
-Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
----
- tools/power/cpupower/debug/i386/Makefile | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> On Thu, 20 Jun 2024 08:55:54 -0400 Aaron Conole wrote:
+>> This series enhances the ovs-dpctl utility to provide support for set()
+>> and tunnel() flow specifiers, better ipv6 handling support, and the
+>> ability to add tunnel vports, and LWT interfaces.  Finally, it modifies
+>> the pmtu.sh script to call the ovs-dpctl.py utility rather than the
+>> typical OVS userspace utilities.
+>
+> Thanks for the work! 
+>
+> Looks like the series no longer applies because of other changes
+> to the kernel config. Before it stopped applying we got some runs,
+> here's what I see:
+>
+> https://netdev-3.bots.linux.dev/vmksft-net/results/648440/3-pmtu-sh/stdout
+>
+> # Cannot find device "ovs_br0"
+> # TEST: IPv4, OVS vxlan4: PMTU exceptions                             [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv4, OVS vxlan4: PMTU exceptions - nexthop objects           [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv6, OVS vxlan4: PMTU exceptions                             [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv6, OVS vxlan4: PMTU exceptions - nexthop objects           [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv4, OVS vxlan6: PMTU exceptions                             [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv4, OVS vxlan6: PMTU exceptions - nexthop objects           [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv6, OVS vxlan6: PMTU exceptions                             [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv6, OVS vxlan6: PMTU exceptions - nexthop objects           [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv4, OVS geneve4: PMTU exceptions                            [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv4, OVS geneve4: PMTU exceptions - nexthop objects          [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv6, OVS geneve4: PMTU exceptions                            [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv6, OVS geneve4: PMTU exceptions - nexthop objects          [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv4, OVS geneve6: PMTU exceptions                            [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv4, OVS geneve6: PMTU exceptions - nexthop objects          [FAIL]
+> # Cannot find device "ovs_br0"
+> # TEST: IPv6, OVS geneve6: PMTU exceptions                            [FAIL]
+> # Cannot find device "ovs_br0"
+>
+> Any idea why? Looks like kernel config did include OVS, perhaps we need
+> explicit modprobe now? I don't see any more details in the logs.
 
-diff --git a/tools/power/cpupower/debug/i386/Makefile b/tools/power/cpupower/debug/i386/Makefile
-index b3f771039b17..361265170986 100644
---- a/tools/power/cpupower/debug/i386/Makefile
-+++ b/tools/power/cpupower/debug/i386/Makefile
-@@ -39,4 +39,16 @@ install:
- 	$(INSTALL) $(OUTPUT)dump_psb $(DESTDIR)${bindir}
- 	$(INSTALL) $(OUTPUT)intel_gsic $(DESTDIR)${bindir}
- 
-+help:
-+	@echo  'Build targets:'
-+	@echo  '  all		  - Default target. Could be omitted. Put build artifacts'
-+	@echo  '                    to "O" cmdline option dir (default: current dir)'
-+	@echo  '  install	  - Install previously built project files from the output'
-+	@echo  '                    dir defined by "O" cmdline option (default: current dir)'
-+	@echo  '                    to the install dir  defined by "DESTDIR" cmdline'
-+	@echo  ''
-+	@echo  'Clean targets:'
-+	@echo  '  clean		  - Clean build artifacts from the dir defined by "O" cmdline'
-+	@echo  '                    option (default: current dir)'
-+
- .PHONY: all default clean install
+Strange.  I expected that the module should have automatically been
+loaded when attempting to communicate with the OVS genetlink family
+type.  At least, that is how it had been working previously.
 
--- 
-2.34.1
+I'll spend some time looking into it and resubmit a rebased version.
+Thanks, Jakub!
 
 
