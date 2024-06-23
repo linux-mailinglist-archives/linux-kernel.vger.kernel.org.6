@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-225972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29806913898
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:14:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 546DB91389A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E8828205C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:14:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 883151C22062
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12C03AC1F;
-	Sun, 23 Jun 2024 07:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38357E116;
+	Sun, 23 Jun 2024 07:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z/4KQ8go"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HCHYRZOn"
 Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB9B27453
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 07:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768B94CDF9
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 07:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719126858; cv=none; b=HXNijFccFP7PUiu1Uff/Z7khXPqYvENLD5U9wzp4y93ocTmIzzsb+Nd39jeDwrdjzzhg2w+W3OdcDcLiuoSGKuUBSajz7pGudqevMaBnYY7wXtUKJXlHJiRX7PQabPItPzEYxROEQkwzDhk4/Bb/HlzjRncWWtL9XH6sgEuTlms=
+	t=1719126859; cv=none; b=oDV5N/8MNV+eUqKn2QN+x480mpdmSbZCxIbORZZW9IUb8c/hdQA15RFElnXyQ/l8nqzXbZU3IQYgUTAZcXaxRv5h+7CwQfHakTAtPKjc5i7SsB5bIjNQeimI64sjkQ4/Ve+jeA1qu9gQnC0TVHPw8z2Th0NNBAS2JePRE96NAiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719126858; c=relaxed/simple;
-	bh=BSN1FG/8g8BXDXDTjedq40cJnFrBuREudY/tMYsjNb8=;
+	s=arc-20240116; t=1719126859; c=relaxed/simple;
+	bh=faINjmwVgkbeg09kmf54YuPPiXG/1hQ0/O9qVuo97To=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SUuccLXhbFrDQa024q/O0PxDpwhpTng/SJ82Cpl3neckkN8OuJl5f/nS/k+n+ojlDLvcl5hcKdictger04bpCziirhSoWLSF8jwLuWUTzO4qs0HWhHHH38JjDX1E8UoExXY7AC63Ewv/sBIRb+mA2EvlYIJeRNyTJxJZEMUxjek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z/4KQ8go; arc=none smtp.client-ip=209.85.208.170
+	 MIME-Version:Content-Type; b=EE03MI92XbCRRbIz6ETcIoO1Z1gcN8VtTEbkk7iRgcY3elxYNyoCaa8NCdjYTFtBWsU/6gsbWFhCFHPMtKW1DHUq31mUxExaMll4Q2EFQmj7eagk/3bB0+HsPECXQ9wz9qYtX48E8ZmxOwD8nshqVkHymt6JbITILFYYWlKa9Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HCHYRZOn; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso47396921fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 00:14:16 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec5779b423so7398791fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 00:14:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719126854; x=1719731654; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719126856; x=1719731656; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Bv3RmqBzxRumknsNv7kNaxp5ef1fpM+tuKvMs4Mga4c=;
-        b=Z/4KQ8goXEm93IxufypX+H12V1AjAuNyrbAZyLxwtZWfH1d0AbLQgZ68jGID4VboWE
-         MTUBZrQ/gry97W/8CmQUTv7VL9HHCR9CD8KfewwqHEHs4czRSMVy7VRwQNp+ejf52ASn
-         ukN4VyoV/cYLdYc6F9mnYZy9TOwK2ejbgCgBvZPwWdqzdV2LzcjnWwK7L5PYcdW6cOdn
-         6YE4AsiYRLPx1Z7G0bqH3XUZRVTSm4OMvsq8pUW/5HreYGDnQ5bOLZ2fQci9U8tn8fDv
-         ILCI4L7I/eP5okwgJq8xC5UhbHOMgXOl131JYkpl4I3Ix0+iICa5fS7JdLsUbeztFXtO
-         R0bA==
+        bh=kFJAq35jeUfYu0Q755yYYR78x5vyrjKi2e0M/c+GQ0Q=;
+        b=HCHYRZOnDHmDH6qNMz07ksZssjYRgo3ndsga7EMe3FpBm2egm34JBpLY/OJZBSn5M2
+         90oc/nzDCM6p3cBYk4rNaOUy6duY1ut2E9cGiV5fV3nWZj96+ZdUQ52g/1GOsNz3Cybo
+         sA3rw6L2BMONKmEfkX7v5T0QqQfajdbp1StPFsZwT4eYjw0cFqfDAHv5k129DfJoyxvG
+         IkS/+yXei+B0epiko1ErVhHW3kegw+ghQolkIAmxq6r16gU+DWh8b08Z541lq59vIiq3
+         Xs2ZydWNIXRrEvZNQ/rNGd9Hw7oF3B/7o9AFsnnrjgIvKYZuX2mGIXgbJu/Xk0TvuSXR
+         y5LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719126854; x=1719731654;
+        d=1e100.net; s=20230601; t=1719126856; x=1719731656;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Bv3RmqBzxRumknsNv7kNaxp5ef1fpM+tuKvMs4Mga4c=;
-        b=wOfu3uK49gfyNGF5arF5LmusIfaBNMscCq+0VfdgvuNxIm8Fud4n1XdoIs/5Dn/kcz
-         OqlBwgBm8ej75cFjn7ddhL1rsgaxkKbOBFMhgjBgsL6D9+ZQQ9QVPWCiVy9e9a8LS2Aq
-         5yMjBHxd03DkvNCk54KijhN9znOqr7uWSQ74PWiaKyx6v0RXUlmlbTxKa71NrjXSYdpC
-         ezULPfyGxWq1eXgJQI02ceE9zCrGJRqBcx/VNB3Ct5tyUw9GW0l8aYU7lvVI4uvVRwrp
-         YasQZG7rkfP4St7F07SzloI7L/UPDaHuqC435sTQysvP8/v6MzoKJ6tjrHM8omNBpmuu
-         sZbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUN212SqgqU8E4/PlbYABah+xeDJ0QkZ5sQD5sPcnnMLH3yLGpMXpkO2RCv7kr+EwWeUtTqnDcmWN23fiONjYFIWZ/c/JipKrwvb/12
-X-Gm-Message-State: AOJu0YwRC/3OvviLJf8FTRAKJGEmSTQZoRdpmTmsGrdN4AekfXggOHLu
-	kPytp9DdNZ0YnPTeZ39xbmzYwmyYgBk2wv7qZljWL2ftibop74Wz14Zrb6blukw=
-X-Google-Smtp-Source: AGHT+IHVCwjM8471lU/ehMDgW/YT4M/SicFwOJ1D/s5IwFxGRJ9Q7jeIscRmJofRYLPSnsakpvTTBw==
-X-Received: by 2002:a2e:86cf:0:b0:2ec:5a6e:7771 with SMTP id 38308e7fff4ca-2ec5b31d1b6mr11292671fa.37.1719126854458;
-        Sun, 23 Jun 2024 00:14:14 -0700 (PDT)
+        bh=kFJAq35jeUfYu0Q755yYYR78x5vyrjKi2e0M/c+GQ0Q=;
+        b=T/E2j0YpPU3yYa0fvIE80YOjwq5XCflV0FAb0pSuLwJqIiGsWc5RELaAe/hj17LPIK
+         UG1LNgHxIgW3gR7a1JKRJaQBEuO5pDyNR77EvNpb/EYcsJ8QkQXReSluKjXv7wwBE9zt
+         jlGatXJBGkNbHWwzVaNkPCEJHDcK2hHGXw3j1d4CqO3m5qkGkli9w3GI3Q+e81t6s/iV
+         +l8Svzb+gri4oMUG1enG1HU8PgtHKshuFWbblh6I1hSKgiwpzuX0kaYdjkraPmuZ9QTw
+         javp9/3s1qBNs1pUvzKFexdVxBvq6abONZyWHLijcyLRXGY0Rh6UkgupLAQozMezV97G
+         d9Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPD2A6P8XBJzKtcc5y0bm37t89Kx/Gg1CW4ZCc13+GEAXrritDRSvm5T0u8UUzME1+n5eg8+ioFli7RhQKRF6Q2lsg4/HeWa6LcUAM
+X-Gm-Message-State: AOJu0Yx8nfUewbkoj6SIMF+E9CAnR3kcF9Jg+010Yj2QHNaRjFQGsf+p
+	ZTxkYdMHbdJQMGpLkt7MgGK+0Oq/kyyNLAKRvouqRidFCJtAYBQr2VZjeEJaRtM=
+X-Google-Smtp-Source: AGHT+IEMbjEmaH7+DYR5ilu78Zy766qs3toD5t35p6uDn52e2juXI3EJ3jd+a3h4Ght7Hbsge4I2ag==
+X-Received: by 2002:a2e:9f10:0:b0:2eb:fc08:5d83 with SMTP id 38308e7fff4ca-2ec59389fffmr13590671fa.44.1719126855720;
+        Sun, 23 Jun 2024 00:14:15 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec5b031208sm1886861fa.26.2024.06.23.00.14.13
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec5b031208sm1886861fa.26.2024.06.23.00.14.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 00:14:13 -0700 (PDT)
+        Sun, 23 Jun 2024 00:14:15 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Rob Clark <robdclark@gmail.com>,
+To: Rob Clark <robdclark@gmail.com>,
 	Abhinav Kumar <quic_abhinavk@quicinc.com>,
 	Sean Paul <sean@poorly.run>,
 	Marijn Suijten <marijn.suijten@somainline.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Jun Nie <jun.nie@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
 	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/9] drm/msm: make use of the HDMI connector infrastructure
-Date: Sun, 23 Jun 2024 10:14:06 +0300
-Message-Id: <171912674295.840248.12157846241927511158.b4-ty@linaro.org>
+	linux-kernel@vger.kernel.org,
+	Jonathan Marek <jonathan@marek.ca>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v6 0/6] Add DSC support to DSI video panel
+Date: Sun, 23 Jun 2024 10:14:08 +0300
+Message-Id: <171912674298.840248.15697903647146535027.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240607-bridge-hdmi-connector-v5-0-ab384e6021af@linaro.org>
-References: <20240607-bridge-hdmi-connector-v5-0-ab384e6021af@linaro.org>
+In-Reply-To: <20240530-msm-drm-dsc-dsi-video-upstream-4-v6-0-2ab1d334c657@linaro.org>
+References: <20240530-msm-drm-dsc-dsi-video-upstream-4-v6-0-2ab1d334c657@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,32 +98,32 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 07 Jun 2024 16:22:57 +0300, Dmitry Baryshkov wrote:
-> This patchset sits on top Maxime's HDMI connector patchset ([1]).
+On Thu, 30 May 2024 13:56:44 +0800, Jun Nie wrote:
+> This is follow up update to Jonathan's patch set.
 > 
-> Currently this is an RFC exploring the interface between HDMI bridges
-> and HDMI connector code. This has been lightly verified on the Qualcomm
-> DB820c, which has native HDMI output. If this approach is considered to
-> be acceptable, I'll finish MSM HDMI bridge conversion (reworking the
-> Audio Infoframe code). Other bridges can follow the same approach (we
-> have lt9611 / lt9611uxc / adv7511 on Qualcomm hardware).
+> Changes vs V5:
+> - Add hardware version check for compression bit change in cfg2 register
+> 
+> Changes vs V4:
+> - Polish width calculation with helper function
+> - Split cfg2 compression bit into another patch
 > 
 > [...]
 
 Applied, thanks!
 
-[4/9] drm/msm/hdmi: switch to atomic bridge callbacks
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/4fd10fa0b573
-[6/9] drm/msm/hdmi: make use of the drm_connector_hdmi framework
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/aaa38235b5fe
-[7/9] drm/msm/hdmi: get rid of hdmi_mode
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/97d6442e8f9e
-[8/9] drm/msm/hdmi: update HDMI_GEN_PKT_CTRL_GENERIC0_UPDATE definition
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/917921a20294
-[9/9] drm/msm/hdmi: also send the SPD and HDMI Vendor Specific InfoFrames
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/bf28d52a20b1
-
-Per discussion on the mailing list, 5/9 is deferred.
+[1/6] drm/msm/dpu: fix video mode DSC for DSI
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/f9ce482d7dc0
+[2/6] drm/msm/dpu: adjust data width for widen bus case
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/17236bc0ee0a
+[3/6] drm/msm/dpu: enable compression bit in cfg2 for DSC
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/063557239c26
+[4/6] drm/msm/dsi: set video mode widebus enable bit when widebus is enabled
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/007870b8eaf5
+[5/6] drm/msm/dsi: set VIDEO_COMPRESSION_MODE_CTRL_WC
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/9ecd0ddd223b
+[6/6] drm/msm/dsi: add a comment to explain pkt_per_line encoding
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/294b38100595
 
 Best regards,
 -- 
