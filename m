@@ -1,122 +1,244 @@
-Return-Path: <linux-kernel+bounces-226233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D77913BDD
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:55:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 332CB913BE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95CABB21BD7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:55:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5607B1C20EEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CAD181CFB;
-	Sun, 23 Jun 2024 14:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C7E181322;
+	Sun, 23 Jun 2024 15:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AbSUuxGx"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZ8Zhmwi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCB52904
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2295B20E6;
+	Sun, 23 Jun 2024 15:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719154501; cv=none; b=bw3iAcJy2ZZM8gEWdc1kVqUVRdSoHsTRwAhVDcSpRUNPk9WcRmS90+Hx61luD/rxSdkh/9YVilkS7CoRa49ApbU1RLIvBYFv7ZtYCaX/uSh9HbF9yFnPPbCUG4jr+jihjmcHhvg/9p/jsgg2mUp0FWltIWYh5Gme3zWX8FJGR28=
+	t=1719154879; cv=none; b=qFeQdBPtX0ls6hVmPH8WOb0kk4s3EQvqZiaGS7qYvVWT1NWjTRBxkTZjCwutuNeQNvKrAkLjaYY/xrht0+ni42TfDbYBHBqtEFUskb/jfzhxOsakFx1+nr0MO2vLhMVFraeKn/NgutUW3SmDZQYAX4HvSZ/dHC+3oarKkIA/Xiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719154501; c=relaxed/simple;
-	bh=WHJyLpXJsvXpBkB3XYopVJ4ntyGCuMv9iGmRnnNXZp8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DGIHT0w6K7hwLoHpCSDIzVayUFEc1FUDa8+yBzJoFza+FQITdARfwh92VZk93usU2ZxHGT4hDJhmEIiwfqQOl7EOI5jVKuM+XF+Ir55cK8trg7LURr4vnblcRKwXLVDQGqDMGB8p0I/HLvdThWdzJ0PtZXmFS+oeNaUPStBcRdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AbSUuxGx; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-36226e98370so2110283f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 07:54:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719154497; x=1719759297; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qal8+/NVQ4EaUsktF5ubea5e2SmhtWYohY8n2jnwsTs=;
-        b=AbSUuxGxzPQ5vBH8ZSxqd8zR7LVOh6L5KTUUIKiJo5gr9o0HPtr+p2OfhPgE/KptjM
-         rYdc2IwdCxUDYKyEpQCk3qYoCGIYeurWs3iPI4j+LEyn0UsT3fl3YZREJCHKa40YUXoD
-         fY+T7vXym5gj1LgXHYg+jR6A684mlJ3UiwrNHXTYvXIGeE5biilj1WdVRBpWIQggm3VD
-         KTHUBIpfN9we+qxFu1MOVT6K1acsvUGXxk6WBrfENnzgaeNrTlIP61aJZychWSWdUyyO
-         cEFGEcDDMlX2pIIH6CywquZvMtU2APIvwwrRr3tU7kYCfHWGQQ2jnu3JE3fULrxyyHsk
-         BQzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719154497; x=1719759297;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qal8+/NVQ4EaUsktF5ubea5e2SmhtWYohY8n2jnwsTs=;
-        b=XLyAqmCb9I8F64ItrloYcwJVZAPK95BukMxLuQ56mIfplKMMhUGgywmiiDccezlH7J
-         TRRsz6RZChG3+Hc4IMy/qIQRy6bkftMobaRcdCooGLKW8EHYOGU1CFmADeEJR0FoVouM
-         BQK4ufJEF7iC2Zuv1upkXOcVzsB/v3rukm9Uh6oiwhRey7N6o2wUloJeuBgVu/K1GmeS
-         qkjpJIkKvTRLOCMsdH1euZE1dXw2QgWnWPeo6ukfE2GL5GfgAZiLbxzhfp1XKZssxWlK
-         Dby5xj6itCZdS+bjWuvWGTz/P8+CM4cGX+8owh+/UYwVwU4Ol5TtwNCFwglSSspHg8Pe
-         8LNA==
-X-Gm-Message-State: AOJu0YzOlmfcGRpqLhuoHUZSA7ELTloDq8fnv47qDyYD230na7DWbggv
-	I5FnHhUkbhMzHEgxC6FC7b/GS83/3dTNV8KlN3H6lB2+ckZAtd4hpD0HwZls4EI=
-X-Google-Smtp-Source: AGHT+IENANslWkRWKxF1ggDUKEOlpEjTlLLg7IZN3Seke0zlOE5s0EvXnCKHFi7kpDs0Y60GuNlCuw==
-X-Received: by 2002:a5d:6d8c:0:b0:366:eef4:ce99 with SMTP id ffacd0b85a97d-366eef4cf70mr816268f8f.45.1719154497388;
-        Sun, 23 Jun 2024 07:54:57 -0700 (PDT)
-Received: from [10.100.51.161] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8f50sm7478559f8f.109.2024.06.23.07.54.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Jun 2024 07:54:57 -0700 (PDT)
-Message-ID: <a16b5720-ad2d-44af-a231-e7aa172ccf0e@suse.com>
-Date: Sun, 23 Jun 2024 16:54:56 +0200
+	s=arc-20240116; t=1719154879; c=relaxed/simple;
+	bh=pLL5EMg6eoF8fo4wvsJ8liZlmjZcP3+0z3EaGf28jIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HExg7pHm3TQlojuDegDENI46R1etCbzEBfBRDqDZ1m+qnrDttbl/11G9RrychvSiSsmDGwHPXbqQx4ia9gjnQtZ7BhlNxr4MZvofOKyrBx4FFhfTXQJBTthXPM0ZPlzxN+Lt58O8MbDcwfom/fubH4tIGTAfeHCM3Xo3bYzxsMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZ8Zhmwi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D699C2BD10;
+	Sun, 23 Jun 2024 15:01:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719154878;
+	bh=pLL5EMg6eoF8fo4wvsJ8liZlmjZcP3+0z3EaGf28jIo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oZ8Zhmwi++sv43JIaLV3EeEl6tMSMVE08IJQfwF6QpLLYs6I/4wbFsrsOXX5dcEEB
+	 XeiTJyJHikVUmlEBINZAFZGwqtpkVL2jTMDlSOooQ/uwCu4hoRcVM7JGy4pg/A/ct0
+	 GL4jsvEtLVRY39ou7VzKS5i5eYfxt6nEBWxbciUr6S8lnlnDNnsIdVxjfOFjdiZS1S
+	 D9ZE9/YPS/GIttRocC9evp+dqnEB1CE0zWwnqbDDnzQ34aPUyUtKo3Rm+THXS3miKA
+	 E+eQmYJEmJJH9F3bELBzlD9KX5ZQp7En6tDmjZanwFN57mZtsrCDdAt0nAGsjZofGQ
+	 jSpdPi6fm+qkQ==
+Date: Sun, 23 Jun 2024 16:01:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, <linux-iio@vger.kernel.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/8] iio: adc: stm32-dfsdm: adopt generic channels
+ bindings
+Message-ID: <20240623160111.3a675e0b@jic23-huawei>
+In-Reply-To: <20240618160836.945242-7-olivier.moysan@foss.st.com>
+References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
+	<20240618160836.945242-7-olivier.moysan@foss.st.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ring-buffer: Limit time with disabled interrupts in
- rb_check_pages()
-Content-Language: en-US
-To: Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20240621150956.24814-1-petr.pavlu@suse.com>
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240621150956.24814-1-petr.pavlu@suse.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 6/21/24 17:09, Petr Pavlu wrote:
-> Function rb_check_pages() validates the integrity of a specified per-CPU
-> tracing ring buffer. It does so by walking the underlying linked
-> list and checking its next and prev links.
-> 
-> To guarantee that the list doesn't get modified during the check,
-> a caller typically needs to take cpu_buffer->reader_lock. This prevents
-> the check from running concurrently with a potential reader which can
-> make the list temporarily inconsistent when swapping its old reader page
-> into the buffer.
-> 
-> A problem is that the time when interrupts are disabled is
-> non-deterministic, dependent on the ring buffer size. This particularly
-> affects PREEMPT_RT because the reader_lock is a raw spinlock which
-> doesn't become sleepable on PREEMPT_RT kernels.
-> 
-> Modify the check so it still tries to walk the whole list but gives up
-> the reader_lock between checking individual pages.
+On Tue, 18 Jun 2024 18:08:32 +0200
+Olivier Moysan <olivier.moysan@foss.st.com> wrote:
 
-Sorry, I'm afraid this patch is actually buggy. It considers only the
-case when rb_check_pages() is called by ring_buffer_resize() and the
-ring-buffer list is potentially modified by a reader swapping its page
-into the buffer from rb_get_reader_page(). However, I suspect the
-opposite can happen, rb_check_pages() called by a completing reader from
-ring_buffer_read_finish() and rb_remove_pages()/rb_insert_pages()
-concurrently modifying the ring-buffer pages. This needs to be handled
-as well.
+> Move to generic channels binding to ease new backend framework adoption
+> and prepare the convergence with MDF IP support on STM32MP2 SoC family.
+> 
+> Legacy binding:
+> DFSDM is an IIO channel consumer.
+> SD modulator is an IIO channels provider.
+> The channel phandles are provided in DT through io-channels property
+> and channel indexes through st,adc-channels property.
+> 
+> New binding:
+> DFSDM is an IIO channel provider.
+> The channel indexes are given by reg property in channel child node.
+> 
+> This new binding is intended to be used with SD modulator IIO backends.
+> It does not support SD modulator legacy IIO devices.
+> The st,adc-channels property presence is used to discriminate
+> between legacy and backend bindings.
+> 
+> The support of the DFSDM legacy channels and SD modulator IIO devices
+> is kept for backward compatibility.
+> 
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+Hi Oliver
 
-I'm at a conference next week, I'll have a closer look afterwards.
+A few minor things inline.
 
--- 
-Petr
+Jonathan
+
+> ---
+>  drivers/iio/adc/stm32-dfsdm-adc.c | 208 ++++++++++++++++++++++++------
+>  1 file changed, 171 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
+> index 9a47d2c87f05..69b4764d7cba 100644
+> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
+> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+> @@ -666,6 +666,64 @@ static int stm32_dfsdm_channel_parse_of(struct stm32_dfsdm *dfsdm,
+>  	return 0;
+>  }
+>  
+> +static int stm32_dfsdm_generic_channel_parse_of(struct stm32_dfsdm *dfsdm,
+> +						struct iio_dev *indio_dev,
+> +						struct iio_chan_spec *ch,
+> +						struct fwnode_handle *node)
+> +{
+> +	struct stm32_dfsdm_channel *df_ch;
+> +	const char *of_str;
+> +	int ret, val;
+> +
+> +	ret = fwnode_property_read_u32(node, "reg", &ch->channel);
+> +	if (ret < 0) {
+> +		dev_err(&indio_dev->dev, "Missing channel index %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (ch->channel >= dfsdm->num_chs) {
+> +		dev_err(&indio_dev->dev, " Error bad channel number %d (max = %d)\n",
+> +			ch->channel, dfsdm->num_chs);
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = fwnode_property_read_string(node, "label", &ch->datasheet_name);
+> +	if (ret < 0) {
+> +		dev_err(&indio_dev->dev,
+> +			" Error parsing 'label' for idx %d\n", ch->channel);
+> +		return ret;
+> +	}
+> +
+> +	df_ch =  &dfsdm->ch_list[ch->channel];
+> +	df_ch->id = ch->channel;
+> +
+> +	ret = fwnode_property_read_string(node, "st,adc-channel-types", &of_str);
+> +	if (!ret) {
+> +		val = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_type);
+> +		if (val < 0)
+> +			return val;
+> +	} else {
+> +		val = 0;
+
+Sometimes better to set a default, then override if if the property is read
+successfully.
+	df_ch->type = 0;
+	if (!fwnode_property_read_string()) {
+		int val = ...
+
+		df_ch->type = val;
+	}
+	
+etc
+	
+> +	}
+> +	df_ch->type = val;
+> +
+> +	ret = fwnode_property_read_string(node, "st,adc-channel-clk-src", &of_str);
+> +	if (!ret) {
+> +		val = stm32_dfsdm_str2val(of_str, stm32_dfsdm_chan_src);
+> +		if (val < 0)
+> +			return val;
+> +	} else {
+> +		val = 0;
+> +	}
+> +	df_ch->src = val;
+> +
+> +	ret = fwnode_property_read_u32(node, "st,adc-alt-channel", &df_ch->alt_si);
+> +	if (ret != -EINVAL)
+> +		df_ch->alt_si = 0;
+
+I'm confused. If it does == EINVAL we just silently carry on with alt_si sort
+of undefined. I guess 0?
+
+> +
+> +	return 0;
+> +}
+> +
+
+...
+
+> +static int stm32_dfsdm_chan_init(struct iio_dev *indio_dev, struct iio_chan_spec *channels)
+> +{
+> +	int num_ch = indio_dev->num_channels;
+> +	int chan_idx = 0, ret = 0;
+> +
+> +	for (chan_idx = 0; chan_idx < num_ch; chan_idx++) {
+> +		channels[chan_idx].scan_index = chan_idx;
+> +		ret = stm32_dfsdm_adc_chan_init_one(indio_dev, &channels[chan_idx], NULL);
+> +		if (ret < 0) {
+> +			dev_err(&indio_dev->dev, "Channels init failed\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return ret;
+return 0;    I don't think it's ever positive and can't get here with it negative.
+
+> +}
+> +
+> +static int stm32_dfsdm_generic_chan_init(struct iio_dev *indio_dev, struct iio_chan_spec *channels)
+> +{
+> +	struct fwnode_handle *child;
+> +	int chan_idx = 0, ret;
+> +
+> +	device_for_each_child_node(&indio_dev->dev, child) {
+
+device_for_each_child_node_scoped() and direct returns should tidy this up a tiny bit.
+
+
+> +		/* Skip DAI node in DFSDM audio nodes */
+> +		if (fwnode_property_present(child, "compatible"))
+> +			continue;
+> +
+> +		channels[chan_idx].scan_index = chan_idx;
+> +		ret = stm32_dfsdm_adc_chan_init_one(indio_dev, &channels[chan_idx], child);
+> +		if (ret < 0) {
+> +			dev_err(&indio_dev->dev, "Channels init failed\n");
+> +			goto err;
+
+This is consistent with existing code, but would be nice to make extensive
+use of dev_err_probe() in this driver and this is a gone place for that.
+			return dev_err_probe(indio_dev->dev, ret, "...);
+
+
+> +		}
+> +
+> +		chan_idx++;
+> +	}
+> +	return chan_idx;
+> +
+> +err:
+> +	fwnode_handle_put(child);
+> +
+> +	return ret;
+>  }
+>  
+
 
