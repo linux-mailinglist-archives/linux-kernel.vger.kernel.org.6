@@ -1,92 +1,117 @@
-Return-Path: <linux-kernel+bounces-226220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 295BB913BB1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:16:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F24913BB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D4CB1C20358
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F77281ABB
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CCA181BA4;
-	Sun, 23 Jun 2024 14:16:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E166918132C;
+	Sun, 23 Jun 2024 14:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EmJ0eceb"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B0412FB09
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DF11CD25
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719152164; cv=none; b=Qoj0gbCA6v9/sbfjS35lTQMm0KtVdpmYidXV4fYdTiczOle8ByAo6a6KgrJ5qlgdVtkOqF63q1Lk/oICa8DHp49VR/L/eAZF4aMr87M8wKtP3amNBGxpLYzfzap+4oGLkd16sRf92w/XEjZm3XrPk+d9EBnLvMdckTZ1M7ks7jg=
+	t=1719152453; cv=none; b=bDiJGANfYk5cG6FBW9r1F2DOwUBEeEVFw0ygWSIokVaMJ8VEweKT117Kqg3/fwe2IchOzoRFNLjtHrTgqEcDyW6FYPA+FGyXuuexnHWad46EjlrL+hjtwH5adkWUp1uhD8PXAiqkQ1gV0op/Roc1gY3u0kb/tI3TtvMkQDT5VdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719152164; c=relaxed/simple;
-	bh=E2raSBiLlF6ZZrYJtu9CjAs3g1IwzOHuG0mhMVvUaew=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WBc/n6N9+cYXR8hJj/ATqNwXsU9RXUS4y0GiQm9HjTk09RxS1opIS4RbjxM13rpp3ZXWpyuL8hxKc1runX40V0Xlbesvya6iCjX2KFMnES2OFtW9djWB5EkKi0dPuezzS6dEDtsrifP7mgqUXa1cOKdLHtYg4rR24N+COZIS9zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-37625537d64so47273835ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 07:16:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719152162; x=1719756962;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pel9CcDiejXovINpVpgIZJc7ZERUxuUiUUus/5uKjgk=;
-        b=XO7ar7AEtL8gRcKqpMA6zcYSwQeE9U0++19fz8uZK1Kka5wcoLSqUTewQW9TIB0jRx
-         U6IFn2Ny7kp9Dldtek/gzOZJsGDW9A3UkBUFStqPF2X162Hkby9I2qOo1XC6dRXqb8YS
-         NoGvFyxiLfSSrw6ONbfOSSTRR7gQSXTdC+Gaw9yzjtdKoRF8yz8oP5JcqpR1kg0SZPj9
-         xpxWLihdytS6QSfYK0JscfSVQbGV7tDbBwx7ucBdL75NjRyxQfXrEyill5j9nrGOcYRM
-         gdmkb/zUhfL0qdG4FpVbUmek+vPpUwtZTpknbNbUCWUHskNrnlcY5ryKYDFYqtPHxx0B
-         jN0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU2XScdgQYokIRle37x6s/EKUt8qfmUSky2aivJ5AFFXwtLONVzO61krsaAEVaKdiMZE0iuZRr/O1KFjS2oahJJY7wpctNRj13IeGcE
-X-Gm-Message-State: AOJu0YwMv4BVj6A0zfMmphYkLVZ5JgB0TloIyy34qJmutf1WypEjD6dX
-	WN5LWMFkR5yrW4l49XN/iMZ4XaQPUQxZLAkyYyvapWIJyTYrYtfHbKQKRfKdBY1J+0uStKzKNYf
-	cPwL/llvfrnyQ+mkxqEF7rDKkyVPJlt/lK0BOnFD1Yr0/8FYI+JEB5jg=
-X-Google-Smtp-Source: AGHT+IG8/bc0B1SxFcwIatsKxz3UzZ1OnvzxsTMhPSaXbMhL1/kzVyN1dXRGtpl7ExZxqsd3Cvg0TY9w7hNgt9TxoMo1UwOaBFU4
+	s=arc-20240116; t=1719152453; c=relaxed/simple;
+	bh=ex5J8+Ae4iKsctF67hjjsap2kCyEmeUnBRJV9qGdnPU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DD8aUF66NMljprK44IB9Ixe8dn32/HlPVT877M1sPllh2PIXcwaZHwdd8oq+/oJG4DCeNIvQ0qhSLUHKNyT98izpk+nfUavPJupmGx4rKtBNnamBFyVZrMSXLBZM3N/+NWEgY1rKQFTGM2kN+wnoIxEbwErpzMt96+C9rhWv7VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EmJ0eceb; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: ardb@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719152446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x+bDjx0y+iP8Abxe/MnYhrrwchlPmdfzSW+YmImXYM8=;
+	b=EmJ0eceb+4SR/sfCaTjF5gjhjGE87dlsEX4jKGfRq46lSlOErZVX300SafdPleR1el+/SP
+	MRZkfF5Dk+C9KDpsR6/WIs8bvsgNulcn4GDZry2Cf/lYbhALXf4w5sJPanCYAPpbouHE82
+	5E+8IiJ18XqS0xUo1vsXbq6Rgi44H9c=
+X-Envelope-To: yuzenghui@huawei.com
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: will@kernel.org
+X-Envelope-To: wanghaibin.wang@huawei.com
+X-Envelope-To: zenghui.yu@linux.dev
+Message-ID: <19f05d6a-7b96-472a-919d-56292596e8bb@linux.dev>
+Date: Sun, 23 Jun 2024 22:20:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c9:b0:376:44f6:a998 with SMTP id
- e9e14a558f8ab-37644f6ab3fmr1174805ab.5.1719152162439; Sun, 23 Jun 2024
- 07:16:02 -0700 (PDT)
-Date: Sun, 23 Jun 2024 07:16:02 -0700
-In-Reply-To: <0000000000006d96200611de3986@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f51641061b8f4d2c@google.com>
-Subject: Re: [syzbot] [media?] INFO: task hung in cec_claim_log_addrs
-From: syzbot <syzbot+116b65a23bc791ae49a6@syzkaller.appspotmail.com>
-To: bryan.odonoghue@linaro.org, eadavis@qq.com, hdanton@sina.com, 
-	hverkuil-cisco@xs4all.nl, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, mchehab@kernel.org, ribalda@chromium.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] arm64: Clear the initial ID map correctly before
+ remapping
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Zenghui Yu <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ wanghaibin.wang@huawei.com
+References: <20240621092809.162-1-yuzenghui@huawei.com>
+ <CAMj1kXEH0ohn57DUrCu6S-AJW=B9CyrpMwyabpjBpD9tD4VV=A@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zenghui Yu <zenghui.yu@linux.dev>
+In-Reply-To: <CAMj1kXEH0ohn57DUrCu6S-AJW=B9CyrpMwyabpjBpD9tD4VV=A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-syzbot suspects this issue was fixed by commit:
+On 2024/6/21 17:52, Ard Biesheuvel wrote:
+> On Fri, 21 Jun 2024 at 11:28, Zenghui Yu <yuzenghui@huawei.com> wrote:
+> >
+> > In the attempt to clear and recreate the initial ID map for LPA2, we
+> > wrongly use 'start - end' as the map size and make the memset() almost a
+> > nop.
+> >
+> > Fix it by passing the correct map size.
+> >
+> > Fixes: 9684ec186f8f ("arm64: Enable LPA2 at boot if supported by the system")
+> > Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+> > ---
+> >
+> > Found by code inspection (don't have the appropriate HW to test it).
+> >
+> 
+> Good catch!
+> 
+> Even though memset() takes an unsigned size_t, the zeroing path in
+> arm64's memset.S does a signed compare on the provided size, and will
+> zero at most 63 bytes if the size has the sign bit set. So in the end,
+> it does not clear anything.
 
-commit 2998b976300d087db739f044a105c88573f031d4
-Author: Ricardo Ribalda <ribalda@chromium.org>
-Date:   Mon Apr 29 15:04:52 2024 +0000
+Yup! It took me a while to figure out why memset() with a VERY large
+size doesn't corrupt the memory. ;-)
 
-    media: common: saa7146: Use min macro
+> Note that in this particular case, that
+> doesn't actually matter - the memory is reused immediately to create
+> another copy of the ID map, and any unused regions containing garbage
+> will just be ignored.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17ba1dda980000
-start commit:   45ec2f5f6ed3 Merge tag 'mtd/fixes-for-6.8-rc7' of git://gi..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fad652894fc96962
-dashboard link: https://syzkaller.appspot.com/bug?extid=116b65a23bc791ae49a6
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11b2f122180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11fd704c180000
+Agreed. I can fold it into the commit message if Will/Catalin ask for a
+respin. And it looks like an alternate "fix" would be just removing the
+memset().
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> Nonetheless,
+> 
+> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
 
-#syz fix: media: common: saa7146: Use min macro
+Thanks!
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Zenghui
 
