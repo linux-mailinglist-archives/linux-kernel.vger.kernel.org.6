@@ -1,95 +1,119 @@
-Return-Path: <linux-kernel+bounces-226005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E145D9138FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:17:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A68913901
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F5B0B21556
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15C6C1C209DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7A1339B1;
-	Sun, 23 Jun 2024 08:17:05 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66525A10B;
+	Sun, 23 Jun 2024 08:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XcmiDVd1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAD72030B;
-	Sun, 23 Jun 2024 08:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B95515E83
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 08:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719130624; cv=none; b=JkUpE8crz3HxbmG2LnH32fY3jGQptLe0x6HkA313FbfPhlRpSNSMX7XUJIygec31Wj2dDCU8gvVhC6Xm2+QkMAK4+2qTRlsYHEZIHX97FtlUX3/iEeMAqD7jfcXzYVqjgMKRb1zjbGnb4R0AYUc3vEMbBjXlp4WghlGA08FK3Og=
+	t=1719131015; cv=none; b=XXyIZgjS/qFrwbKwUYsT5TLxLJmwRV9ZhHZ0f1OkzPE6KdDYe87+lO8lf3pmnLZk4RBcm1whUnbVaBGg/g2rkNG9GX5XBsNtfWu8ZGNRCEqUTjZR2qFkS7UyZ5AN+J/zqymGvLMKP61FKQ03YhOUf/9SL0Em0AatW7gzzAJyepA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719130624; c=relaxed/simple;
-	bh=f9uKGh9XaoDO7/wNKoqyEKZNvkDja4CrhL5Z9VskeM4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rwASWgTZ+MaZb5XUvJ4eiIkNI8SxAVKwWbJHvEi0CpkAOqLEvx3O+eOnw8dwVbETtM0xxqFdHlzAC5ghJxxn9r3ko3xN/pkMQDmFF4pgKUwXhhF0vw2uoY2gd8IIiRRBQwp7lDYzSUYp97XqtV8oL1WJywpUB0HCxcqlzUJ18Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowABHTpru2XdmbDz5EQ--.47109S2;
-	Sun, 23 Jun 2024 16:16:55 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: lars@metafoo.de,
-	vkoul@kernel.org
-Cc: dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH] dmaengine: axi-dmac: Add check for dma_set_max_seg_size
-Date: Sun, 23 Jun 2024 16:16:44 +0800
-Message-Id: <20240623081644.2089695-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719131015; c=relaxed/simple;
+	bh=g7HLKh3I64pTchYEP21ACw0QOLWjCkA/UGIbpYIH2OE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=O9/RL6lhL2NEy/vp5QkodxGcNMS59r86YpONQimscfOXik472ncYll1JSU9YUIHLGPYcNSwzAXdaM3er+CIh0XyScXab0EoEZ91Os1LiHNKSQ/zNRUN9Zxm34IXcqdog5uGdY9g7IprbZlsaBOlQzlHsE0r29MpExcWANcMPUj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XcmiDVd1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 41A4640E0219;
+	Sun, 23 Jun 2024 08:23:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id rtIfKzB4RjS9; Sun, 23 Jun 2024 08:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719131000; bh=die/TGwHezGHQuB0ovtlhjiYCTuSD6YwCsOCgLJVN7s=;
+	h=Date:From:To:Cc:Subject:From;
+	b=XcmiDVd1tHeI5USc8QFt1nOyeCQRAYOdRLDheNmV8vc7ysxOmGEhsnQpWL2AfBUHG
+	 fhPXiKoJupKWVGT170kBMjmvxmHsK2/VAIXxP9qnrMuFflu1un4BppVPqk4BTcrI1S
+	 Vk9iLOKt/35M5HSwGABUNcUL2OtlPfeYiUBx7yOnoz/X0hj4FdHbSBtU7ImMjiDg7p
+	 zX3pPDvYP/zfxUCiT0pnCVjVEU3dLRMZ+YuMBz8wtgPEo3rWdG10+Rw4cnINY25DMH
+	 fLe5AtRquRN7JDc8FBHDoQSeS5AeI0LvpVxm1nearta+l+VN359+zQb3KIH8omH4Cg
+	 1QyzMmLlavpNv+lisR7XTG+Y/XGEvytT012OynciCZn1YwxTDKNqwbhPAAphVxSHJI
+	 Yk+PkJKJ/BRAEQG7nDgImYxZs9sU3wBfVmx2AmF3zPG+fEFo/InogyWZsnmHDYm4ot
+	 sfOt/x2n+k+01GRgnYPwipCoklAAUbWSVJ7VIElpMOh8yffnJdM9VXmClFe5UDP7o6
+	 ojQv5wCHo7zzDSWn7obIJZB7RtRr86iepkjte/blNKSmfs+1M+8eZFfc+lcP9+KFhi
+	 ldIU8BU5QNw57C7Vk3ALDELBhbZOMVOprviFuKJiQL09TQzmmrcyi8SQhVEj4edz6a
+	 OwHW54r7bxtf38rQK3r6GNok=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9481740E0187;
+	Sun, 23 Jun 2024 08:23:17 +0000 (UTC)
+Date: Sun, 23 Jun 2024 10:23:10 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/urgent for v6.10-rc5
+Message-ID: <20240623082310.GAZnfbbi9ZV1nEpkpE@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABHTpru2XdmbDz5EQ--.47109S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4rKw47WrWrtw4kCF1rJFb_yoW3uwcEkr
-	17uryfXr1qgw4xKwn8Kr1avrZFvryDZr4jqFn7K34Syr1UGFn8K39rZFZ5XF45ZayxGFW0
-	krnrXrWrtF4fXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4kFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r106r1rM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_
-	Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU5sqWUU
-	UUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-To avoid possible failure of the dma_set_max_seg_size(), we should
-better check the return value of the dma_set_max_seg_size().
+Hi Linus,
 
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+please pull two x86 urgent fixes for v6.10-rc5.
+
+Thx.
+
 ---
- drivers/dma/dma-axi-dmac.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/dma-axi-dmac.c b/drivers/dma/dma-axi-dmac.c
-index bdb752f11869..93543c2f1bd7 100644
---- a/drivers/dma/dma-axi-dmac.c
-+++ b/drivers/dma/dma-axi-dmac.c
-@@ -1051,7 +1051,9 @@ static int axi_dmac_probe(struct platform_device *pdev)
- 
- 	INIT_LIST_HEAD(&dmac->chan.active_descs);
- 
--	dma_set_max_seg_size(&pdev->dev, UINT_MAX);
-+	ret = dma_set_max_seg_size(&pdev->dev, UINT_MAX);
-+	if (ret)
-+		return ret;
- 
- 	dma_dev = &dmac->dma_dev;
- 	dma_cap_set(DMA_SLAVE, dma_dev->cap_mask);
+The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
+
+  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.10_rc5
+
+for you to fetch changes up to 739c9765793e5794578a64aab293c58607f1826a:
+
+  x86/resctrl: Don't try to free nonexistent RMIDs (2024-06-19 11:39:09 +0200)
+
+----------------------------------------------------------------
+- An ARM-relevant fix to not free default RMIDs of a resource control group
+
+- A randconfig build fix for the VMware virtual GPU driver
+
+----------------------------------------------------------------
+Alexey Makhalov (1):
+      drm/vmwgfx: Fix missing HYPERVISOR_GUEST dependency
+
+Dave Martin (1):
+      x86/resctrl: Don't try to free nonexistent RMIDs
+
+ arch/x86/kernel/cpu/resctrl/monitor.c | 3 ++-
+ drivers/gpu/drm/vmwgfx/Kconfig        | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+
 -- 
-2.25.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
