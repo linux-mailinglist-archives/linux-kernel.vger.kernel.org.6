@@ -1,172 +1,111 @@
-Return-Path: <linux-kernel+bounces-226346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC7C913D53
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:37:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23071913D55
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E66842815FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:37:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F381F21213
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACE91836CD;
-	Sun, 23 Jun 2024 17:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4EA1836C4;
+	Sun, 23 Jun 2024 17:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hMLcIRhk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="mHvI5iQK"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09DB12E1D1;
-	Sun, 23 Jun 2024 17:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981BF181CED
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 17:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719164256; cv=none; b=B1yS7zpi1CF5b3s4jmf4+q+zfRRWK8jwNPi/G6cC7QmSTHj52KNimWxf7NE2sfdDHXKZQ7zZEGsJtlmDBErJcePg6857pRzZ/TVu4IN1gj0qH7X567SUupm0/EYy4XGxTll8+fckWsY4I1G01Vlo5x1GGUEd7/CffSQgbaqbk7A=
+	t=1719164391; cv=none; b=SP1wjpifIh8L4XQCIRXDNfWhIp/PzVvBAsrRQPjQLkCrmNj+k4njSwm/CAbZbNR1K6eRjNAZz6ip7u7ASjkk3UVo4tTf9nSX5AoCcXkL9rcf075RgrAUsgj6jph3MtEl8+NyhLwLvBrlKudQqSRy1kg/jstzWz/i7/Kc8ykZDK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719164256; c=relaxed/simple;
-	bh=bo9uvaaFnXc+tCMfmbwdbh2bn+j3ATzw17j+sKCiMLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nZ9pGexl9DR79jgF7iQLYMBaJwFGArs3zrrpxICkewRtMbNKAaLNmf1yG6NZvmvxXECst/4AeiBNAGNhY8rc5yJRt0M8ZzbD8+HjrKW/1b3ir42sOegSzC0kfpfiq/H4vfDe7JJ1XwhUZpnW8iTnZeYKjzkfo0Hq4dx/zgztD00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hMLcIRhk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NHaOt7020225;
-	Sun, 23 Jun 2024 17:37:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	s=arc-20240116; t=1719164391; c=relaxed/simple;
+	bh=J9TMkV4ZdM0Epwm9IEsv8V+QNbxwRffk7WxHdUlTbAQ=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RpB0rE+zwUjr9RK7Iixy+EMtS7vACny2+jvenzJG8L38cMUyfK2ijwvjAxAqPXfCogbrYdu8Q7i2Z0gZ3dhcWdySCMl1jfxpmpfbFeKiFNk8++gxe0kcfoBuRivi4JBHmYZEdYz8H2GTvpFcX+pBmiqro+OYC+xVM+GixUX3jMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=mHvI5iQK; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NHBVjM026625;
+	Sun, 23 Jun 2024 19:38:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lptZYnLIBcaVZNNSk19VTKLhsmYiOW77XYcabzVIT0g=; b=hMLcIRhk76Dc75ZB
-	arkqop7k7Oz40f0AuWg4R8CGq6TYdIw1lYAGBQDDqe5NfwgaIyP6hVawXehymo/k
-	o4RJfeUxdeAws3XDmAxZkB8jesuVgOXOLcD+2w4i21Ljo8LZW0vkNfSriMAE1Q+W
-	nLi4yobxoosQ5LOvvmJTcWLAftSBFaWoIWhfL7ybAfgo9EM3Mfiskzo3C6st9NMN
-	qP7F4KXvcNCtr/AOGgLMEweDb4RMbghcUqGfXrZKSVKXyWctdS8GPACwyj2mLT8K
-	Unci0ahIlNdHWAanWRHHKS5IVjOnhcUfjSYX31Ug9FsFxlAtiT83QIcqZV9lnhrM
-	zGJtsg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywkyn24qt-1
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	8psInQVn9Me0332vc4g9dy61RVy3/pavE8OpH2L34BE=; b=mHvI5iQKUNHIm5+i
+	PQ2PwoTrEpayZrTYyD9XtOMMDXTi4zXQNyw5fU8XeJn0XL4hnP/6TUEZzQ5w4O9V
+	774FD4oscz/d1IrEn8aBc00zmosa5BRuGq0OuYKSGO+7lwHDzgKtE1HnCLscM//T
+	LuKsUYixgwmM01Zd6vd5D+GNvb29d9B+p/T0NStyCLoAb3cXIr4wdDLrFzIcXcL/
+	ZOApvk7Lp+e6oSSK3L8T0TznTEiHMoJUQPFVgBnist+8D3sATpdaYPYkEGS/hMqA
+	klVb6cTC9KfTCCDVfffq9F+NAMIPgMqk91mfUWv1p2lRTmXtwSDHolWTGwedA4Jq
+	12wJ2Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ywnxx3spn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 17:37:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45NHbT3l018201
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 17:37:29 GMT
-Received: from [10.48.244.142] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 23 Jun
- 2024 10:37:28 -0700
-Message-ID: <650386f8-16c4-4988-b05c-1e4fc1c9167a@quicinc.com>
-Date: Sun, 23 Jun 2024 10:37:28 -0700
+	Sun, 23 Jun 2024 19:38:58 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A11A04002D;
+	Sun, 23 Jun 2024 19:38:50 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 46C932207A7;
+	Sun, 23 Jun 2024 19:38:14 +0200 (CEST)
+Received: from [192.168.8.15] (10.252.20.50) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Sun, 23 Jun
+ 2024 19:38:13 +0200
+Message-ID: <2ee5ec54d3aff6e37ec1245eeb019d52e6a3d63f.camel@foss.st.com>
+Subject: Re: [PATCH v3 7/8] ARM: stm32: allow build irq-stm32mp-exti driver
+ as module
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Russell King
+	<linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>
+Date: Sun, 23 Jun 2024 19:38:11 +0200
+In-Reply-To: <87le2va7t5.ffs@tglx>
+References: <20240620083115.204362-1-antonio.borneo@foss.st.com>
+	 <20240620083115.204362-8-antonio.borneo@foss.st.com> <87le2va7t5.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] agp: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: David Airlie <airlied@redhat.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240603-md-agp-v1-1-9a1582114ced@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240603-md-agp-v1-1-9a1582114ced@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UT4MwkskjHyCR2Qwl9yJzbFfUnyIf2hz
-X-Proofpoint-GUID: UT4MwkskjHyCR2Qwl9yJzbFfUnyIf2hz
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-23_09,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- mlxscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- mlxlogscore=999 spamscore=0 clxscore=1015 suspectscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406230142
 
-On 6/3/2024 9:55 AM, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/amd64-agp.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/intel-agp.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/intel-gtt.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/sis-agp.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/via-agp.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/char/agp/amd64-agp.c | 1 +
->  drivers/char/agp/intel-agp.c | 1 +
->  drivers/char/agp/intel-gtt.c | 1 +
->  drivers/char/agp/sis-agp.c   | 1 +
->  drivers/char/agp/via-agp.c   | 1 +
->  5 files changed, 5 insertions(+)
-> 
-> diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
-> index ce8651436609..8e41731d3642 100644
-> --- a/drivers/char/agp/amd64-agp.c
-> +++ b/drivers/char/agp/amd64-agp.c
-> @@ -802,4 +802,5 @@ module_exit(agp_amd64_cleanup);
->  
->  MODULE_AUTHOR("Dave Jones, Andi Kleen");
->  module_param(agp_try_unsupported, bool, 0);
-> +MODULE_DESCRIPTION("GART driver for the AMD Opteron/Athlon64 on-CPU northbridge");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/char/agp/intel-agp.c b/drivers/char/agp/intel-agp.c
-> index c518b3a9db04..2c55264a031e 100644
-> --- a/drivers/char/agp/intel-agp.c
-> +++ b/drivers/char/agp/intel-agp.c
-> @@ -920,4 +920,5 @@ module_init(agp_intel_init);
->  module_exit(agp_intel_cleanup);
->  
->  MODULE_AUTHOR("Dave Jones, Various @Intel");
-> +MODULE_DESCRIPTION("Intel AGPGART routines");
->  MODULE_LICENSE("GPL and additional rights");
-> diff --git a/drivers/char/agp/intel-gtt.c b/drivers/char/agp/intel-gtt.c
-> index bf6716ff863b..e54649027407 100644
-> --- a/drivers/char/agp/intel-gtt.c
-> +++ b/drivers/char/agp/intel-gtt.c
-> @@ -1461,4 +1461,5 @@ void intel_gmch_remove(void)
->  EXPORT_SYMBOL(intel_gmch_remove);
->  
->  MODULE_AUTHOR("Dave Jones, Various @Intel");
-> +MODULE_DESCRIPTION("Intel GTT (Graphics Translation Table) routines");
->  MODULE_LICENSE("GPL and additional rights");
-> diff --git a/drivers/char/agp/sis-agp.c b/drivers/char/agp/sis-agp.c
-> index 484bb101c53b..a0deb97cedb0 100644
-> --- a/drivers/char/agp/sis-agp.c
-> +++ b/drivers/char/agp/sis-agp.c
-> @@ -433,4 +433,5 @@ module_param(agp_sis_force_delay, bool, 0);
->  MODULE_PARM_DESC(agp_sis_force_delay,"forces sis delay hack");
->  module_param(agp_sis_agp_spec, int, 0);
->  MODULE_PARM_DESC(agp_sis_agp_spec,"0=force sis init, 1=force generic agp3 init, default: autodetect");
-> +MODULE_DESCRIPTION("SiS AGPGART routines");
->  MODULE_LICENSE("GPL and additional rights");
-> diff --git a/drivers/char/agp/via-agp.c b/drivers/char/agp/via-agp.c
-> index bc5140af2dcb..8b19a5d1a09b 100644
-> --- a/drivers/char/agp/via-agp.c
-> +++ b/drivers/char/agp/via-agp.c
-> @@ -575,5 +575,6 @@ static void __exit agp_via_cleanup(void)
->  module_init(agp_via_init);
->  module_exit(agp_via_cleanup);
->  
-> +MODULE_DESCRIPTION("VIA AGPGART routines");
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Dave Jones");
-> 
-> ---
-> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-> change-id: 20240603-md-agp-68a9e38017af
-> 
+On Sun, 2024-06-23 at 19:27 +0200, Thomas Gleixner wrote:
+> On Thu, Jun 20 2024 at 10:31, Antonio Borneo wrote:
+>=20
+> > Drop auto-selecting the driver, so it can be built either as a
+> > module or built-in.
+>=20
+> How is the driver selected then? Has this to be done manually now?
+>=20
+> If so, doesn't that break things when starting from an empty config?
 
-Following up to see if anything else is needed from me.
-Hoping to see this in linux-next :)
+In patch 6/8 it is already selected through:
 
-/jeff
++	depends on (ARCH_STM32 && !ARM_SINGLE_ARMV7M) || COMPILE_TEST
++	default y
+
+Regards,
+Antonio
 
