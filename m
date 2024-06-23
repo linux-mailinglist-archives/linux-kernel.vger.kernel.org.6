@@ -1,171 +1,113 @@
-Return-Path: <linux-kernel+bounces-226132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC6B913AAC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:46:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A7B913AAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B43D1C20BDD
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:46:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06FA71F21933
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1E6181333;
-	Sun, 23 Jun 2024 12:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A1018132D;
+	Sun, 23 Jun 2024 12:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOsCOiij"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h7CSl/lt"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9228E12FF7B;
-	Sun, 23 Jun 2024 12:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D305084D11;
+	Sun, 23 Jun 2024 12:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719146805; cv=none; b=IykSKBtfyzKrGlcXdy7SaM5X67omW7hKlc4y6niSLPm9+vdMPGTqRWXbUO5GrKEf6uxfRHzI9M7R0W9NO0fuPYM1FM22idSB4zH3wVR4wJbFjHvD/6XxbALyyer+qwoZYQjp4mhVuk2CVZw72Qyb3o7JtSyxAbZsX53WxTHDv+M=
+	t=1719147190; cv=none; b=O2oJtADA8eiD9YOF/B2Q69ZAzIs/vwpcjYf5u9eKFolFWSgYfc7DTjhHSIUpiMsAhWMDgug5cRvkyVB8BQNwPNQGjk8KmuXvOQW6Wqe39iz2eskDCNUuoHTfD3YWVuSXSFu0QxRUysGgDF8jdDYYRRhv2zb1FRZHsM9iKS86nRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719146805; c=relaxed/simple;
-	bh=DMWLHkxTqyALf1Cf5us9V7DYOoKrsleUvYt76jR37S8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qNSC5FcqrPQJmzvxeC/OD/CnLhjPzASFZRrF9n4gq0KW5XrYDM4b8nMNMj+JzT5S7Xbsw54iDYcjdljLkKm/Hjit+jtamiKvgd1pjcKF9S97C6x4JMRk0+7bEBiDx6YnnIeNeAspaOGlOZtDmEA9jO55bUl6ARFklL+VKneJn3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOsCOiij; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99CEEC2BD10;
-	Sun, 23 Jun 2024 12:46:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719146805;
-	bh=DMWLHkxTqyALf1Cf5us9V7DYOoKrsleUvYt76jR37S8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hOsCOiijC/Bfah6vEP8gUJOn42wkVkRG6+HoIk6o+V16ziLEN7l9d9IYXRIOD8NmH
-	 wjIFRHPrpa99uP1Req6ANCqTndWGWhrfklLMgbZ+V/UNd/idWiPDQwKNs5TkQo5MmD
-	 +9yIkV/WfYZuIQqxf/LzGncvby36sINuUUg3yvPenEmzVea6XMrnLnDVBQhLPsz9aw
-	 /H5+u2IOG1RooeI7yos8bzVrbm3ZxkZiJxwQ9hDvhfH1YpEcp1ue7OeNLndiM4xiP3
-	 6ajhttY1LhX35Sm/gk91KA52r017BktQ3IKrtHTO/IXSMxzseckwtRN7tozuFWzjcv
-	 gCbRpR9Adorzg==
-Date: Sun, 23 Jun 2024 13:46:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-Cc: <linux-iio@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Cosmin Tanislav <cosmin.tanislav@analog.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Andy
- Shevchenko" <andriy.shevchenko@linux.intel.com>, Nuno Sa
- <nuno.sa@analog.com>, Maksim Kiselev <bigunclemax@gmail.com>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Marius Cristea
- <marius.cristea@microchip.com>, Mike Looijmans <mike.looijmans@topic.nl>,
- Okan Sahin <okan.sahin@analog.com>, Ivan Mikhaylov <fr0st61te@gmail.com>,
- Marcus Folkesson <marcus.folkesson@gmail.com>, Liam Beguin
- <liambeguin@gmail.com>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] Documentation: ABI: added filter mode doc in
- sysfs-bus-iio
-Message-ID: <20240623134633.15f793be@jic23-huawei>
-In-Reply-To: <20240619122301.22737-2-ramona.nechita@analog.com>
-References: <20240619122301.22737-1-ramona.nechita@analog.com>
-	<20240619122301.22737-2-ramona.nechita@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719147190; c=relaxed/simple;
+	bh=tg52MDDLlN/QzSd5br71obyGWmskQ0gXtkdQIAlXheE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=HV3uQgVOHjyaz6tQQr2U5F8FMdcGFpUIxGLPgeVBCu1gs1c+u/V9yT1QcypjpBMj6ahysdMBN8EbXmZxtcG0MYS7c6BY1uMiN2RCQH9hx/rntJRtvSpPWtW3RRxsT9vOTZfb3x1qIDruk8U3wZqu4AYGSJlWkjyJZbd9PYy5Erg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=h7CSl/lt; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719147167; x=1719751967; i=markus.elfring@web.de;
+	bh=+e+KUzTHhhBB5U7l/lkuGhQUSnwTILvvurkTRpR4Wj4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=h7CSl/lt4mctAPDSeosmwl6Skrsb3OvDu3TfM24qvEBcTk/9gzSt7/lh6xjoB0GH
+	 cs10UCpedyc6ByYejHlCSO5SHr0VDdkJLKSfPB5PE2eSO81HbO/5+B4hZbQ+5t+rF
+	 D1i6cIg0MzBWRS9EsEHbxEyKYfcY30ndW/1dxS1z6HBZaOSulun19mv1Iy6cOjVbJ
+	 0DFuM3sOyjUKXD6ArJ3VJG8A98y8/Anl05vy1lA7DD3NnTdxkU3Xu5941ip5l9FU+
+	 ZVKbosbDa4/f3FacHlcoWfBZPHnQvPxdqd3HuVe/uyH22O1KTgphIqtPWbjjgYCqn
+	 AUtQ3dz6Dfttn9mbtw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MeUXg-1svnvG3kOK-00mLLV; Sun, 23
+ Jun 2024 14:52:46 +0200
+Message-ID: <1bce6bf8-0010-4233-bbdd-4b33fde90c10@web.de>
+Date: Sun, 23 Jun 2024 14:52:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: Ma Ke <make24@iscas.ac.cn>, linux-fpga@vger.kernel.org,
+ Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+ Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240623074019.2083481-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] fpga: dfl: fix potential memory leak in
+ vfio_intx_enable()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240623074019.2083481-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nJ9nL0iMXGQKoCo2kyKm2HzyM2UwCaAcKDxlRIYJNU1F4CEAKpY
+ 1XNrl02U76cGnvfRvsgICbKLoOhTAQsLFau2cSHOjPZWAxGBUiYvis7O9/vCB6G6motK2+S
+ gsREbuy9QFaVRLtQ636icIzPLLyl9LDCFxIknzzSa1e/6bMaQ26J9YhTvceqdrbkDXwMlRv
+ oM+2EwTzImsWDcRp835mg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0FkaZsv/e3Y=;Csa9H2nAi380G/rRZAO4aYD7VvG
+ XfUajr18iHQZZtgM7Gmh7NkpuIy1lCAhXBck48jEt/7k5E6kCcZLZ7JHenVSHBOWAwRKBlFow
+ HPamh13rkikLuV2w0KdEytDxdXGH00vmr/xPmDgzsjoWvjQRZQQs8tqp9Dsmio8XSG5lNoL0r
+ frMan746qHgY/h/vQ1UySCBukvaV4viFLadcZEod9tLBve33mwJ+m4xIu91z+jkJBIqjyueQJ
+ v+E24ZEwIjE//nBldd5I7JUGmu+ACv1RUlqzdcyiTjs9qQfuSpFoGBuWIt6m0YUu8umyxkNtU
+ YWXDa4QNAdDvVkCNG2Vlim89cTTcvV82GIE5hebzLp2o41rBNVfzGHT0ciPe7qSmRzUKZKxJT
+ oO4nxEfDe4mOUjfLksSrA6bE5xKWshSUYIKSzD/Bs90V1/6Wr2ZNvT33Ro3BEPwCOrGMoQfYa
+ a3qHe45vnWdDJaivlxs8DtGsOBurGxF9mtweSxa713Xu9UYaWmM3UX9It5848DBZaCK/fMjaB
+ pPm9V+JfG5r8tJCoEOLphh1aKzZ7VM1MLKft966ZnxmOkJbHM49TXgGK4oPiepQwN6n5FU4MK
+ nu1rcUhT4bI7HAlkxEA/+/3M8rctUUrvakaBQhjQILx9y/85jipZV3dVWjzj9Ywnl63Wc+b77
+ IpCn7JSkJ3SP/OmTWvcq9cxWkIUKVZsCh3Xno2teZoZgI8s27cGMaoyf6HMBa6aeFCP4slpM3
+ FlPBxETk6ayETrGLML06x3nBBX3nWvS0GzCkDNFQiskgcrUx45wIrTFxXkSFm6JGC1wBaPaev
+ l04JkzNyNdgty8s5juXrXQrfkBm7v0W7G3oYMGjmtve50=
 
-On Wed, 19 Jun 2024 15:22:43 +0300
-Ramona Alexandra Nechita <ramona.nechita@analog.com> wrote:
+> We should free 'feature->irq_ctx[idx].name' to avoid 'name'
+> memory leak when request_irq() failed.
 
-> The filter mode / filter type property is used for ad4130
-> and ad7779 drivers, therefore the ABI doc file for ad4130
-> was removed, merging both of them in the sysfs-bus-iio
-> 
-> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
-> ---
->  Documentation/ABI/testing/sysfs-bus-iio       |  7 +++
->  .../ABI/testing/sysfs-bus-iio-adc-ad4130      | 46 -------------------
->  2 files changed, 7 insertions(+), 46 deletions(-)
->  delete mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> index 2e6d5ebfd3c7..c808ec9c4a81 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-iio
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> @@ -2225,6 +2225,13 @@ Description:
->  		An example format is 16-bytes, 2-digits-per-byte, HEX-string
->  		representing the sensor unique ID number.
->  
-> +What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_filter_mode_available
-> +KernelVersion:	6.1
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Reading returns a list with the possible filter modes.
-Even though it is not generalized an a given device might not provide each option, we still
-need to let those writing userspace software know what they might get.
-So Include the options, but skip the frequency specific details etc.
+1. Please choose an imperative wording for an improved change description.
+   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n94
 
-For things like the pf ones, just say + device specific post filter X
+2. Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
+=9CCc=E2=80=9D) accordingly?
 
-If the details are necessary we do allow a device specific entry in the main
-docs.  I think there are a few existing ones though not sure they've
-made it to the top level doc rather than one of the device type specific ones.
+3. How do you think about to use a summary phrase like =E2=80=9CAvoid memo=
+ry leak
+   in do_set_irq_trigger()=E2=80=9D?
+
+4. Under which circumstances will development interests grow for increasin=
+g
+   the application of scope-based resource management?
+   https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/cleanup=
+.h#L8
 
 
-
-> +
->  What:		/sys/.../events/in_proximity_thresh_either_runningperiod
->  KernelVersion:	6.6
->  Contact:	linux-iio@vger.kernel.org
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130 b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
-> deleted file mode 100644
-> index f24ed6687e90..000000000000
-> --- a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
-> +++ /dev/null
-> @@ -1,46 +0,0 @@
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_filter_mode_available
-> -KernelVersion:  6.2
-> -Contact:	linux-iio@vger.kernel.org
-> -Description:
-> -		Reading returns a list with the possible filter modes.
-> -
-> -		  * "sinc4"       - Sinc 4. Excellent noise performance. Long
-> -                    1st conversion time. No natural 50/60Hz rejection.
-> -
-> -		  * "sinc4+sinc1" - Sinc4 + averaging by 8. Low 1st conversion
-> -		    time.
-> -
-> -		  * "sinc3"	      - Sinc3. Moderate 1st conversion time.
-> -		    Good noise performance.
-> -
-> -		  * "sinc3+rej60" - Sinc3 + 60Hz rejection. At a sampling
-> -		    frequency of 50Hz, achieves simultaneous 50Hz and 60Hz
-> -		    rejection.
-> -
-> -		  * "sinc3+sinc1" - Sinc3 + averaging by 8. Low 1st conversion
-> -		    time. Best used with a sampling frequency of at least
-> -		    216.19Hz.
-> -
-> -		  * "sinc3+pf1"   - Sinc3 + Post Filter 1. 53dB rejection @
-> -		    50Hz, 58dB rejection @ 60Hz.
-> -
-> -		  * "sinc3+pf2"   - Sinc3 + Post Filter 2. 70dB rejection @
-> -		    50Hz, 70dB rejection @ 60Hz.
-> -
-> -		  * "sinc3+pf3"   - Sinc3 + Post Filter 3. 99dB rejection @
-> -		    50Hz, 103dB rejection @ 60Hz.
-> -
-> -		  * "sinc3+pf4"   - Sinc3 + Post Filter 4. 103dB rejection @
-> -		    50Hz, 109dB rejection @ 60Hz.
-> -
-> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY-voltageZ_filter_mode
-> -KernelVersion:  6.2
-> -Contact:	linux-iio@vger.kernel.org
-> -Description:
-> -		Set the filter mode of the differential channel. When the filter
-> -		mode changes, the in_voltageY-voltageZ_sampling_frequency and
-> -		in_voltageY-voltageZ_sampling_frequency_available attributes
-> -		might also change to accommodate the new filter mode.
-> -		If the current sampling frequency is out of range for the new
-> -		filter mode, the sampling frequency will be changed to the
-> -		closest valid one.
-
+Regards,
+Markus
 
