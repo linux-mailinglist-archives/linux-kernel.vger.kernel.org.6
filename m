@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-226281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2541D913C67
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:31:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B291913C66
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2701F22808
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56DA228325D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0818A1836E4;
-	Sun, 23 Jun 2024 15:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EBF181B90;
+	Sun, 23 Jun 2024 15:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="01/BOlzS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ws9TaSpU"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CibfU1H0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LdS6f3Jf"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983AF183062;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98450183063;
 	Sun, 23 Jun 2024 15:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719156635; cv=none; b=SWKjmBjvbrgDaXRxBW1cGkhVVTumdwIooloLfY03OjOQxLKnFhqknRi1sUCspgSVnaApLoZO6F9v5KjAplWUhEjMkTC3qsCDgLp7zIMXu7XBmPXm9RKa6f0vgm7DvFI8fx0hhwzVdq6dHUyCoqKaTSgM2BQ1RTRfIRl5cv6GAww=
+	t=1719156635; cv=none; b=ALlT6oraUKLrNjQgyvAYgFRnrGsz1Bzh+sj3GN862L/mCh6tGaMnheUiuXBY6iuI6Quvgsw0mxEFN+GMZo0SHlGj3iXoTur04wfyyuw62e0oOSR3CJhyY4PTJKrdV7aaqz5dngldqAT4qHEd2ERy9ICIQ7GytNGRcLJEew8S6bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719156635; c=relaxed/simple;
-	bh=cPWnJKlEq/y8yHdBQ02QH1AV+xGWcIzxChjkDYqWhGk=;
+	bh=06J0XButcTFwg9boZJLD8o6CIWK5rrPcdc0IxZRsHvk=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=SL92+bJEfDpX+YUp/Tczd8yGyiq2xqozrsV1vTl3p0OhOyBeur00ae9s1vxftQ0ErGRaGJA4pmhPxheUL0H3kaxjNwJBAwBe7pMwUyRQVdAtWOyhcMNcsFSyvUGXeWdhsjng2rribMOzcvCh5ZPK67l7zv24YDuvKE6q0zLGpfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=01/BOlzS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ws9TaSpU; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=oFoWmIOQIh+fK/4YihZb3gKmT7OJg66VhX7jlodOFFWw8ntbrOTdDewK4N8a+gTcwXtiosikiAYPM+esiihviYxBU2W4ql3thWytkYw2PD41e4GtbDe7Vf1b+RqGKbzJyW65asBw+gb0WgG1ZUbwSpYO374UY+Prb+rpoKYLfsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CibfU1H0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LdS6f3Jf; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Sun, 23 Jun 2024 15:30:29 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719156629;
+	s=2020; t=1719156630;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aXTVerW/QvKm3OULcbwiBYVU4Gr8sYpFSVNaynawIT4=;
-	b=01/BOlzSbRUQ0rVs+MQPZMzzZIrUbV8rjVzQjdcHk9dDC+E6iL5UN/C3p+PlkiAfEHdMsJ
-	YOGOp19yqxYfahO72SWy9wVwDVVrQmSA5RXslpcQ5mbWVU4qIEZ4ExccKI8M/g0fq1gfWN
-	2jAFgyV12QJnXHiqFB/d01+2H7YC3FR7ydlS9YjC4iYVB9v9scKHxiNsS7WwV73gSRKn4O
-	DuJH3MKkM97rR+Yux+781VgxmllTSDiQ6Le+VgeQLqR/CCO50EWSX8vZsgiTGgcU+7TNC9
-	UV3Zr/PfmXIKiIJriq5cfiYCEXVuP4NIVLDPYkgM3MeB+ylWjrUQDKN23UU+9A==
+	bh=drTKFvo2zzFTkjI/M806bhYKKreeVDwfJ4TqHcuKHcA=;
+	b=CibfU1H01Aqu49A1u9tS21Jcf3kQ6roHZgOxqeOYSLEPuwJE7nmXMQc1NX3I/55ArluKKY
+	ga2CvMvyh6ywAPbeLgUzUoCzD/zjI6GMPdIyL4ElonHxS1jdh/3AzEdJ0ihRpbGZPvHJTu
+	1nmApGOyG+IHZ+DaI/teIUwQFNHRHQu19avTk6vtrlIIz6/0dfe/0vUkJgrtnEXFAd/70I
+	ewPOCCOIAqyCLoUA6fZTk02lHI8W5ZXHs5cAilGzyRbDAfSEM4HETOHGtrIVEhOr9UhHpD
+	Kdyz1f+tHazJ//MtOpI94AspW9LfJcE24Otr7pK+ZZKpG2Upb7qf0T9Xl9Xu7Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719156629;
+	s=2020e; t=1719156630;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aXTVerW/QvKm3OULcbwiBYVU4Gr8sYpFSVNaynawIT4=;
-	b=ws9TaSpUFo3VzAx/T8slXUOUBxhHsY5gEE3CxV29TVXMBivMbD0ZuFTRyTGja7Yjxaleqm
-	q0W1g0C+23lWMaAA==
-From: "tip-bot2 for Jeff Johnson" <tip-bot2@linutronix.de>
+	bh=drTKFvo2zzFTkjI/M806bhYKKreeVDwfJ4TqHcuKHcA=;
+	b=LdS6f3JfktshVxpxb31rT15Ygm7CYkTmKwpdMeEgzheodJriyyGi6hHq34CELVXX6Tc8l1
+	jwgKz6mIXh8yeTDw==
+From: "tip-bot2 for Lad Prabhakar" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip: Add missing MODULE_DESCRIPTION() macros
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Thomas Gleixner <tglx@linutronix.de>, Andrew Lunn <andrew@lunn.ch>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240608-md-drivers-irqchip-v1-1-dd02c3229277@quicinc.com>
-References: <20240608-md-drivers-irqchip-v1-1-dd02c3229277@quicinc.com>
+Subject: [tip: irq/core] irqchip/renesas-rzg2l: Reorder function calls in
+ rzg2l_irqc_irq_disable()
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240606194813.676823-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240606194813.676823-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171915662949.10875.14795836348233091091.tip-bot2@tip-bot2>
+Message-ID: <171915662969.10875.494491471556789291.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,68 +84,41 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the irq/core branch of tip:
 
-Commit-ID:     b1c387506d2738b655f0806d3ee3e6fc94ecb910
-Gitweb:        https://git.kernel.org/tip/b1c387506d2738b655f0806d3ee3e6fc94ecb910
-Author:        Jeff Johnson <quic_jjohnson@quicinc.com>
-AuthorDate:    Sat, 08 Jun 2024 09:14:37 -07:00
+Commit-ID:     492eee82574b163fbb3f099c74ce3b4322d0af28
+Gitweb:        https://git.kernel.org/tip/492eee82574b163fbb3f099c74ce3b4322d0af28
+Author:        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+AuthorDate:    Thu, 06 Jun 2024 20:48:13 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Sun, 23 Jun 2024 17:23:08 +02:00
 
-irqchip: Add missing MODULE_DESCRIPTION() macros
+irqchip/renesas-rzg2l: Reorder function calls in rzg2l_irqc_irq_disable()
 
-On x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-ts4800.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-meson-gpio.o
+The order of function calls in the disable operation should be the reverse
+of that in the enable operation. Thus, reorder the function calls to first
+disable the parent IRQ chip before disabling the TINT IRQ.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-files which have a MODULE_LICENSE().  This includes a 3rd file,
-irq-mvebu-pic.c, which did not produce a warning with the x86
-allmodconfig, but which may cause this warning with other kernel
-configurations.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Link: https://lore.kernel.org/r/20240608-md-drivers-irqchip-v1-1-dd02c3229277@quicinc.com
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com> # on RZ/G3S
+Link: https://lore.kernel.org/r/20240606194813.676823-1-prabhakar.mahadev-lad.rj@bp.renesas.com
 
 ---
- drivers/irqchip/irq-meson-gpio.c | 1 +
- drivers/irqchip/irq-mvebu-pic.c  | 1 +
- drivers/irqchip/irq-ts4800.c     | 1 +
- 3 files changed, 3 insertions(+)
+ drivers/irqchip/irq-renesas-rzg2l.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpio.c
-index 9a17919..27e30ce 100644
---- a/drivers/irqchip/irq-meson-gpio.c
-+++ b/drivers/irqchip/irq-meson-gpio.c
-@@ -608,5 +608,6 @@ IRQCHIP_MATCH("amlogic,meson-gpio-intc", meson_gpio_irq_of_init)
- IRQCHIP_PLATFORM_DRIVER_END(meson_gpio_intc)
+diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+index 861a0e5..693ff28 100644
+--- a/drivers/irqchip/irq-renesas-rzg2l.c
++++ b/drivers/irqchip/irq-renesas-rzg2l.c
+@@ -271,8 +271,8 @@ static void rzg2l_tint_irq_endisable(struct irq_data *d, bool enable)
  
- MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_DESCRIPTION("Meson GPIO Interrupt Multiplexer driver");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:meson-gpio-intc");
-diff --git a/drivers/irqchip/irq-mvebu-pic.c b/drivers/irqchip/irq-mvebu-pic.c
-index d17d9c0..08b0cc8 100644
---- a/drivers/irqchip/irq-mvebu-pic.c
-+++ b/drivers/irqchip/irq-mvebu-pic.c
-@@ -193,6 +193,7 @@ module_platform_driver(mvebu_pic_driver);
+ static void rzg2l_irqc_irq_disable(struct irq_data *d)
+ {
+-	rzg2l_tint_irq_endisable(d, false);
+ 	irq_chip_disable_parent(d);
++	rzg2l_tint_irq_endisable(d, false);
+ }
  
- MODULE_AUTHOR("Yehuda Yitschak <yehuday@marvell.com>");
- MODULE_AUTHOR("Thomas Petazzoni <thomas.petazzoni@free-electrons.com>");
-+MODULE_DESCRIPTION("Marvell Armada 7K/8K PIC driver");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:mvebu_pic");
- 
-diff --git a/drivers/irqchip/irq-ts4800.c b/drivers/irqchip/irq-ts4800.c
-index 57f610d..b5dddb3 100644
---- a/drivers/irqchip/irq-ts4800.c
-+++ b/drivers/irqchip/irq-ts4800.c
-@@ -163,5 +163,6 @@ static struct platform_driver ts4800_ic_driver = {
- module_platform_driver(ts4800_ic_driver);
- 
- MODULE_AUTHOR("Damien Riegel <damien.riegel@savoirfairelinux.com>");
-+MODULE_DESCRIPTION("Multiplexed-IRQs driver for TS-4800's FPGA");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:ts4800_irqc");
+ static void rzg2l_irqc_irq_enable(struct irq_data *d)
 
