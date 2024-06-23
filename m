@@ -1,182 +1,135 @@
-Return-Path: <linux-kernel+bounces-226300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D406913CA5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:11:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41526913CB6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039DA282FF6
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E16A21F22832
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8079C1822F4;
-	Sun, 23 Jun 2024 16:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8774718307F;
+	Sun, 23 Jun 2024 16:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PxxwxAvK"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bvT+Orc4"
+Received: from msa.smtpout.orange.fr (out-65.smtpout.orange.fr [193.252.22.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9112C1822DA
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 16:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A7A18306F;
+	Sun, 23 Jun 2024 16:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719159076; cv=none; b=s8ViIRkRqDgBZwY1owHTtp/F9aXAjfL2pI+4f0gQaTGIEUlSJy1+pXqF5mTxZKUSbWt0RJc6o1x8hyhRIciqi8YiSJAK8A5NMZ5247vESOXpe72QUSH8IeAEnA7M/zieS7vLQViove4qn3pVzkjF3J50c0y0V6VNUhwns9mcP6U=
+	t=1719159635; cv=none; b=WoPuEKz4wVt+YMSK2h5O7qOLbW7jfW8vZv+sfW53ZI+nvPlOi4quWRZzlMTeX+kXIx2eSrsZqufLTCExyJeun/9jW8ctEvsM8pXK3wBWyLtbDTLnmB9jy/dTmZef+gYQGtvIvUKVYGEVJcijeYyzUG7qQwLC6NZJyVcYww2GABs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719159076; c=relaxed/simple;
-	bh=XDN9qPuDqsIqYC3L+6yyyIkXLatPhRpNnIuQKbdFK1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M27MPHmmHx2MWXkd/GGhX4BWk0+aodkWZH+YqPyPeQ+as+mJ3BVFqk6qRs30dfxPzD+DQrTETaHrst/hc2vOYMKJibfkq7ebe6puAeixM5zRZqQs26itGZKmOLheF9F0LMaPqt1FydJf9UGfX31VCzGk5WRm1nczfg1jYYOOWSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PxxwxAvK; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-361785bfa71so2681969f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 09:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719159072; x=1719763872; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+mnX9lajA6LQdkj02vpQbrHaMbxgtcIsPUD8ZpDqg20=;
-        b=PxxwxAvK9+ywZaO+7duUZyHi9UA6VSHx1iU19Kba4WTSL0tHbj6PGXXovu/6Is/asL
-         NkvyY6lWQK/2MN/DmvvfxqnKKR5Ap9tyciFVP1SieaP1ZcmOAGs8IegOmDRKITqGb5XU
-         baHYBnILLcomDcOkJ0acDamPI9dVNsc94jtP1K/iz/B4L00tBr7NZ0SgFmjlBHo164rE
-         xWNe7AOdxt/2+eKh1RF9pDA1VkBy5bC41ONMX/6TLLNmKE8R/BU8v00mmHIPVN5yoEwu
-         dtcYYrd4nh6NasZVSpjXbqGmQlAImC7S+YUf3Jg+tLdlSA4Qdoi374AyGJ3DPZwLTrG3
-         +qyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719159072; x=1719763872;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+mnX9lajA6LQdkj02vpQbrHaMbxgtcIsPUD8ZpDqg20=;
-        b=qTka4uJSfvmZDyycwjhhgGYdjMyW2XeSOgskWyzvP7rtyvqoVzVBaVCCOGQSnYX9m+
-         dQCMvNE+PtmGYoXJFEma/9TVujI4tSKqO0v4nVuXqU2FyPnffHxw3EYztMdzt9CA1WXe
-         mGulHsIJC0R8AtsegJv4ZucM8OfJepFFcwHuny3Pr3lcnahFO9JeFX+40Wr5rJQLnS+O
-         DgP8zbUsfKyxqDxVXvKHZGbol9hhEUpVi4ceWCv4x74Z/yLeyL6rfW4oEBpQd4+XIIZf
-         xfzhqw+0W4kpKJcreNd0rZF/8SL/s1/jaImfn7b/gq4dvHF+UT5dgQiuj4iANVUMgdLz
-         frDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU523rmQazvEcAtLzcbZAdOkH9oocM6qpAni9OFUiO2mcls37jwvQrZE6vW1OHlFiHms6wuvUPdGaDdJC5Qe/u7XtcDvhHxuj7Uon3H
-X-Gm-Message-State: AOJu0Yy0msmUOUgH6jzFJKNc+o5Fab8freU0HgOsQkJuOP1+hP0gWm2G
-	67sRnWL8BH6+lKQrQ9V/q4vF25j+bRbUqATu7hRid2QlnwpnuDRyoit8saT6PO0=
-X-Google-Smtp-Source: AGHT+IH84BwJtBZR5doFAF9s3WnMAqR5VQO/WGB1Y0yjGvdBBB7b0pz3z8LCuK7ijEVTXgRL2ZUXLQ==
-X-Received: by 2002:a5d:4ac9:0:b0:35f:1bb2:4354 with SMTP id ffacd0b85a97d-366e7a1065bmr1547613f8f.35.1719159071960;
-        Sun, 23 Jun 2024 09:11:11 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f9924sm7699556f8f.72.2024.06.23.09.11.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Jun 2024 09:11:11 -0700 (PDT)
-Message-ID: <7a64ddb3-40b0-4ea8-8749-8ce42a842920@linaro.org>
-Date: Sun, 23 Jun 2024 18:11:09 +0200
+	s=arc-20240116; t=1719159635; c=relaxed/simple;
+	bh=xn/bYX9nXV2+s7Y5CdExXZOsyPxwtWyQZbAE9riVZzA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d+VT04stH+aftlLYgs+YKSlx0ZWITB+kLcENOgz1S6FqczKNH+/12CUdTsJu97/OTQz7HJgB420RPz4hEWQkE5na1mTNFNbn2fajUbAFz1jc5d3mjMYuV9L3jt7H2Ecps3jPfd+sZWeOafkortmFCpe/YcXRmLZemkFSmy/Dy/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bvT+Orc4; arc=none smtp.client-ip=193.252.22.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id LPoWsaLbz6H4sLPoWsNZPd; Sun, 23 Jun 2024 18:11:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719159098;
+	bh=kaFvdfIOWtupjnAleAY1qcroO+ccHQ2tdJGDcVUeyB0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=bvT+Orc4k44jsLDJdXNh9di3qYYz2iZG95kO6AFtXPVRP0jgZbnTB6le6kqgh8K0T
+	 mhSgBTM48vToFcXd22PzCMYvqcSONs3n+VjLbjBAVfAXfClWLn+/dhx1GeVC2T86YA
+	 E3hZZPlwiqdhdLaafvnlA8yXIwty7+dWFH9EcAKz1ICQaubHZeWb2VqpoMKFe4Eoir
+	 UBeT9UrUo+nk35l3AwxWnmImdtvgno63xaj5gL9UXgXt5JjFMlCPUcbGG5I/ZVShgo
+	 mWyGCojLFSKmdme3D14LrdT6Mqv8Z8zj5Us4wuVXiuSt+1kNkcS+QC7wnp8ZzFnebV
+	 ux/yAlzkbgZpg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 23 Jun 2024 18:11:38 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Nishanth Menon <nm@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] soc: ti: knav_qmss: Constify struct knav_range_ops
+Date: Sun, 23 Jun 2024 18:11:31 +0200
+Message-ID: <a8b4b428f97fc584f38bf45100aa9da241aeb935.1719159074.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: display/msm/gpu: constrain reg/reg-names
- per variant
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240623120026.44198-1-krzysztof.kozlowski@linaro.org>
- <20240623120026.44198-3-krzysztof.kozlowski@linaro.org>
- <20240623-mule-plank-b63d0e3f3819@spud>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240623-mule-plank-b63d0e3f3819@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/06/2024 16:13, Conor Dooley wrote:
-> On Sun, Jun 23, 2024 at 02:00:26PM +0200, Krzysztof Kozlowski wrote:
->> MMIO address space is known per each variant of Adreno GPU, so we can
->> constrain the reg/reg-names entries for each variant.  There is no DTS
->> for A619, so that part is not accurate but could be corrected later.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>  .../devicetree/bindings/display/msm/gpu.yaml  | 87 +++++++++++++++++--
->>  1 file changed, 79 insertions(+), 8 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Documentation/devicetree/bindings/display/msm/gpu.yaml
->> index baea1946c65d..e83f13123fc9 100644
->> --- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
->> +++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
->> @@ -130,6 +130,22 @@ required:
->>  additionalProperties: false
->>  
->>  allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            pattern: '^qcom,adreno-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]$'
-> 
-> Does the regex "^qcom,adreno-[0-9a-f]{8}$" not work in dt-schema, rather
-> than this repeat-a-number-of-times-I-cannot-grok that's happening here?
-> (I know you probably just copied this from above in the file...)
+'struct knav_range_ops' is not modified in these drivers.
 
-I copied to be consistent, but let me simplify original code and use it
-also here.
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-Best regards,
-Krzysztof
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   7498	   1193	      0	   8691	   21f3	drivers/soc/ti/knav_qmss_acc.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   7566	   1145	      0	   8711	   2207	drivers/soc/ti/knav_qmss_acc.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/soc/ti/knav_qmss.h       | 2 +-
+ drivers/soc/ti/knav_qmss_acc.c   | 2 +-
+ drivers/soc/ti/knav_qmss_queue.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/soc/ti/knav_qmss.h b/drivers/soc/ti/knav_qmss.h
+index a01eda720bf6..9325e8ce2e25 100644
+--- a/drivers/soc/ti/knav_qmss.h
++++ b/drivers/soc/ti/knav_qmss.h
+@@ -333,7 +333,7 @@ struct knav_range_info {
+ 	void				*queue_base_inst;
+ 	unsigned			flags;
+ 	struct list_head		list;
+-	struct knav_range_ops		*ops;
++	const struct knav_range_ops	*ops;
+ 	struct knav_acc_info		acc_info;
+ 	struct knav_acc_channel	*acc;
+ 	unsigned			num_irqs;
+diff --git a/drivers/soc/ti/knav_qmss_acc.c b/drivers/soc/ti/knav_qmss_acc.c
+index 3d388646ed43..269b4e75ae40 100644
+--- a/drivers/soc/ti/knav_qmss_acc.c
++++ b/drivers/soc/ti/knav_qmss_acc.c
+@@ -450,7 +450,7 @@ static int knav_acc_free_range(struct knav_range_info *range)
+ 	return 0;
+ }
+ 
+-static struct knav_range_ops knav_acc_range_ops = {
++static const struct knav_range_ops knav_acc_range_ops = {
+ 	.set_notify	= knav_acc_set_notify,
+ 	.init_queue	= knav_acc_init_queue,
+ 	.open_queue	= knav_acc_open_queue,
+diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+index 06fb5505c22c..f2055a76f84c 100644
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -411,7 +411,7 @@ static int knav_gp_close_queue(struct knav_range_info *range,
+ 	return 0;
+ }
+ 
+-static struct knav_range_ops knav_gp_range_ops = {
++static const struct knav_range_ops knav_gp_range_ops = {
+ 	.set_notify	= knav_gp_set_notify,
+ 	.open_queue	= knav_gp_open_queue,
+ 	.close_queue	= knav_gp_close_queue,
+-- 
+2.45.2
 
 
