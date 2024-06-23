@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-226012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AE391390F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:50:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 408C091391B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FF2628222B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:50:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D114A1F22105
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384376EB7C;
-	Sun, 23 Jun 2024 08:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79517D3E8;
+	Sun, 23 Jun 2024 08:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zo8V5acx"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="EPVuytmQ"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2543DF9E9;
-	Sun, 23 Jun 2024 08:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BB059B71
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 08:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719132587; cv=none; b=V0LOQzys8tYt9lCid542FTyekoVWhCx/csT76BlVPjsfz6M1Bm0OFbNdy3fqYQm66bKWOQzUPmMBxsIbm9RyQ6UpjBPwVzbCyDuHsWdFrJKT6uBn5tAfKSwbheCReRnTJGTGWQB9fx1yYvc5+iLNPNYyQXsCr9RjMtR6iv4zNoA=
+	t=1719133164; cv=none; b=ooAaCXwD07r7kSeVm45FwtTi5fb/sUCVwePu226NEPSexuZEhNqUg5xg2l7qHPsPTd8hkIl2F4SYwPcBwTxX93ykKhDJBlxmEcJgki5UPtFWyyIiu6BrItBfXnPrTo/1Rjii+Eh6gf+X+II/0hLtBkfiSxlG5Y1Zy66fkQ/vJfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719132587; c=relaxed/simple;
-	bh=syI/SxmIrlCPRAaFRApCeRw0mtBptNJgzqt/9yPHroc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pZq3wz91hWt1bTsDeZ85T06E49RN2QqKc/Zpksyq3iftM4GQpMZvK5SQ0GM0W4TwLQ04KAygtcIkkxN6oxOWq++jMA+Udq6t5lLUW1dcTslo4dVczQIWgUp9l1nLxFXFVJ/VnOx09/ghekTbBXbuRdhJQU8PHtbHj1VnbUVmRbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zo8V5acx; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d4430b8591so1860004b6e.2;
-        Sun, 23 Jun 2024 01:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719132585; x=1719737385; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eyjIdb9pPb8rVdEIkJ3vL91vHjhqANnfZwHii49nCls=;
-        b=Zo8V5acxJrrErrxg0lxZIYI0nMxsmcnZAr2ngA1Y5DK9hxK8tle3BGEeuXiifQhL/n
-         /Phk4IfNcVWzl0/FVxlgC6cYw1Z+ZW/uPxA9B3dQcUhzl+13tFJ6Wtq/BYmJxVk5oG3t
-         oG/f2psDsuBCsedMCED5WGyBysXQE264YKbjWwKXdr4VK+Af2HfpNpVC6FxSk+g5lqTr
-         25YitZk2Vn5FcFz8HnBnfyCmC9iBQmd3v8MgihGzI1wpqGekKHzNdOca8guh5jpBNdnA
-         OGbMEEKuVkgfJk+jUdYFVYwGADe34yb4mii6NQ1Aiym5+jVearongnm61nQRgypkK8c1
-         mDEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719132585; x=1719737385;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eyjIdb9pPb8rVdEIkJ3vL91vHjhqANnfZwHii49nCls=;
-        b=W0R9/4zvNz/4tXVi34b6J1ZevLsXRzWWUSYZMVL3xnCb3RrgzraQCQ8f04RHbspt+y
-         7klsn7NUmp5dwXp0kX30UlsS2J3QOzejfHexjcGZpdzDhpVQb6IlDAO1SVDZ9PbDG86w
-         W9QujfVpYOZx0Vl22V5kAj18oggW0K3fMXjG6Nj0OJ/mkk3nyoRks+cfXMvJVgq4cbN1
-         FUTOgYtgdhodRSVyZMThFQGE3ES4AQOuJpgGJiTyE83TK72ssu5Y2Q08xy94I13oEDCL
-         eSS2LUoIO3HT/1pbSsk+41jo8PNpjzER0snKrlKEqZZw/3b9DYM4p+9CACjsj5gm8fUr
-         /Twg==
-X-Forwarded-Encrypted: i=1; AJvYcCVa4zBOJKV/K40ZsqiZM5ipgIpoYlnzGAvJIr4t55HYMWqxpDBiXns5p0Bh1CE2+2wpEMHRiS0DOLfH/Lb4em7p00ooN3EapOrEPseN7P0tlBo/uto6O9aoQOjIpx+YuRWfRmgB
-X-Gm-Message-State: AOJu0Yw2notBi4i9hnCgpYjC18+AAp8+gYMcMlzfHgTEGMNhk9OOEVFf
-	rW4ajpnLAf/BML1a/lvhW3QPLsHUwJAtBaBj+TIoC1QupxX2mKi1vtTG4mM2
-X-Google-Smtp-Source: AGHT+IFLCSM3lJV3vst1b0HO/MHiokHxaSRdzsulVqKK+K6oVSy+x1mzeSS/qSPqLMUDQEtfjCufGA==
-X-Received: by 2002:a05:6808:1928:b0:3d2:1d91:68ca with SMTP id 5614622812f47-3d543b7c678mr2349098b6e.36.1719132585027;
-        Sun, 23 Jun 2024 01:49:45 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512900absm4299432b3a.147.2024.06.23.01.49.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 01:49:44 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: johannes@sipsolutions.net
-Cc: linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] wifi: cfg80211: Fix out-of-bounds in cfg80211_wext_siwscan
-Date: Sun, 23 Jun 2024 17:49:39 +0900
-Message-Id: <20240623084939.6889-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719133164; c=relaxed/simple;
+	bh=zB2lHe/cxmaq3sEJTX39vzQps5Xljraxg3sewiB+Xv4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AxeaFU+kyMnU3hmnglIh7gYeTwAioadJboblSaOKfkrAXG5jaLILCDz6S+KbcMoZtwF/gaKI8LQT3nmwYYRFvDSWxokQ2L2hNXlx2S3oFIqRQPREsLTuKdJTy1iOQhhqDXH2VsvuLBQAEd6UCZoe3UtPJxaYqWO5KQNUG37adUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=EPVuytmQ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1719132689;
+	bh=zB2lHe/cxmaq3sEJTX39vzQps5Xljraxg3sewiB+Xv4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=EPVuytmQawb4QbbtMpIwLUtd1BUdP0idrchVzD9gAehNsFqyCWCq8p6jeuAIf5LtI
+	 Oszh/kVYFO031J5jQHlU7hRtfepvzrlfcyYKeAjIHSmyH5XmMEaP13KcN6EFyA7g3/
+	 BeKkxckBNBpat78/zwLluNhRRrzCP9bRB2OsX34g=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v2 0/3] drm: backlight quirk infrastructure and lower
+ minimum for Framework AMD 13
+Date: Sun, 23 Jun 2024 10:51:26 +0200
+Message-Id: <20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAA7id2YC/43NQQ6CMBCF4auQrh3TVkBg5T0MiwIDnSAFO4Aaw
+ t2tnMDl/xbf2wSjJ2RRRJvwuBLT6ELoUyRqa1yHQE1ooaWOZaokmKHppgUGclCZun9QZ2d4LuR
+ 7yGKp2ybD6yU1IgCTx5beB34vQ1viefSf42tVv/UvdlWggp3kWZ6YpNLm9kJi5tou9uxwFuW+7
+ 184PZHbyQAAAA==
+To: Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>, 
+ Hans de Goede <hdegoede@redhat.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719132688; l=2496;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=zB2lHe/cxmaq3sEJTX39vzQps5Xljraxg3sewiB+Xv4=;
+ b=0x05OrASCwGcIIhqmTXoV+ChUICWHrXM8Z9UIIYNcCruuieBg6vTjCBfs6mo2eNPXUpI5W4k5
+ Oemc98k/a8gCFqs5lAvZneIj1AHRCPlDTahSWgqSjSbzKCuwz0HJqaY
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-In the process of searching for matching hardware channels, wreq and 
-wreq->num_channels are checked to see if they are NULL. However, 
-if the value of wreq->num_channels is greater than IW_MAX_FREQUENCIES,
-an out-of-bounds vulnerability occurs.
+The value of "min_input_signal" returned from ATIF on a Framework AMD 13
+is "12". This leads to a fairly bright minimum display backlight.
 
-Therefore, you must also add code to check whether the value of 
-wreq->num_channels is within the range.
+Add a generic quirk infrastructure for backlight configuration to
+override the settings provided by the firmware.
+Also add amdgpu as a user of that infrastructure and a quirk for the
+Framework 13 matte panel.
+Most likely this will also work for the glossy panel, but I can't test
+that.
 
-Reguards.
+One solution would be a fixed firmware version, but given that the
+problem exists since the release of the hardware, it has been known for
+a month that the hardware can go lower and there was no acknowledgment
+from Framework in any way, I'd like to explore this alternative
+way forward.
 
-Signed-by-off: Jeongjun Park <aha310510@gmail.com>
+Notes:
+
+* Should the quirk infrastructure be part of drm_edid.c?
+* The current allocation of struct drm_edid in amdgpu is bad.
+  But it is done the same way in other parts of amdgpu.
+  I do have patches migrating amdgpu to proper usage of struct drm_edid [0]
+
+Mario:
+
+I intentionally left out the consideration of the firmware version.
+The quirk will stay correct even if the firmware starts reporting
+correct values.
+If there are strong opinions it would be easy to add, though.
+
+Based on amdgpu/drm-next.
+
+[0] https://lore.kernel.org/lkml/20240616-amdgpu-edid-bios-v1-1-2874f212b365@weissschuh.net/
+
 ---
- net/wireless/scan.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Changes in v2:
+- Introduce proper drm backlight quirk infrastructure
+- Quirk by EDID and DMI instead of only DMI
+- Limit quirk to only single Framework 13 matte panel
+- Link to v1: https://lore.kernel.org/r/20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net
 
-diff --git a/net/wireless/scan.c b/net/wireless/scan.c
-index 0222ede0feb6..f253dee041d1 100644
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@ -3460,6 +3460,10 @@ int cfg80211_wext_siwscan(struct net_device *dev,
- 			if (wreq && wreq->num_channels) {
- 				int k;
- 				int wiphy_freq = wiphy->bands[band]->channels[j].center_freq;
-+
-+				if (wreq->num_channels > IW_MAX_FREQUENCIES)
-+					wreq->num_channels = IW_MAX_FREQUENCIES;
-+
- 				for (k = 0; k < wreq->num_channels; k++) {
- 					struct iw_freq *freq =
- 						&wreq->channel_list[k];
+---
+Thomas Weißschuh (3):
+      drm: Add panel backlight quirks
+      drm: panel-backlight-quirks: Add Framework 13 matte panel
+      drm/amd/display: Add support backlight quirks
+
+ Documentation/gpu/drm-kms-helpers.rst             |  3 +
+ drivers/gpu/drm/Kconfig                           |  4 ++
+ drivers/gpu/drm/Makefile                          |  1 +
+ drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 28 +++++++++
+ drivers/gpu/drm/drm_panel_backlight_quirks.c      | 76 +++++++++++++++++++++++
+ include/drm/drm_utils.h                           | 11 ++++
+ 7 files changed, 124 insertions(+)
+---
+base-commit: 1ecef5589320fd56af599b624d59c355d162ac7b
+change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
+
+Best regards,
 -- 
-2.34.1
+Thomas Weißschuh <linux@weissschuh.net>
+
 
