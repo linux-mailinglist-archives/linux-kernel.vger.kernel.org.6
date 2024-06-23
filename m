@@ -1,65 +1,61 @@
-Return-Path: <linux-kernel+bounces-226333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 006FE913D2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:21:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABE1913D2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31B681C203B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE29F1F232B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5851836C3;
-	Sun, 23 Jun 2024 17:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E93183093;
+	Sun, 23 Jun 2024 17:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oq29rr7T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUDRwJn+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D253C38;
-	Sun, 23 Jun 2024 17:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE51836E2;
+	Sun, 23 Jun 2024 17:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719163305; cv=none; b=DI5gll7Y7F9btiAsYG2dTWiHdg7XDECJ1sPXr2ZZL8h1ZJMougPiD6MbKmioL8Z/YmNhLxz7G6N0mwNv/Lph5rHk4guqFTmvdFyKzfGNtZEFSBx2NgGz/Mf/I3AZLwcq85o9acgkFq2XMbvASPSXnVbx/9hfKVZTcXLmT9YwGqg=
+	t=1719163309; cv=none; b=UqUlWQlL0v3XQ2bTbZGQ+Gj69k2H5h488dFgublIVoJunvDEePbngyQHAkbMOWiY1yWDp43Gs82eih/bFmL6HZoOy3gYd8Wo10N6lWvbfyUjDuEIyBN/uIQgaZQtW6blSFS59H/tkjFPfpJBPjKjHTpsQUvIle5fU3fr9MbCwaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719163305; c=relaxed/simple;
-	bh=lCnpI6MGZ7tqlfHmo6/4lQWWdf2FV5VM4Utg4pbRtes=;
+	s=arc-20240116; t=1719163309; c=relaxed/simple;
+	bh=hqHsU/ytros7zlMhVXXRaDb8uWaZIiY2BwlJTdGlQi0=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=R9BB7UdOzwdIe1jsOA4g/PM7IRMKrYY1C0hnOrzz4/xmwFCOrMZMnQnzygpF2pr4v2q1A6Gnix55qK3eXkl2SKcYXTOIccm1ql9D6arDqJsKHmFzXqTbs9CQTsm5cSlWKQKdtiO/Q5WlJ0s8qxi5NI3gH5Py5gKiTeiigro8Spg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oq29rr7T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D0B4C2BD10;
-	Sun, 23 Jun 2024 17:21:41 +0000 (UTC)
+	 MIME-Version:Content-Type; b=lzgQ7rUtAtt9U4nL1XdPvs9flwFcAl1pL9dB7QGs9LddAKdBZ5Ia7gV5wPXtqhZIWxmcKQPye4+oJvT3VXGLtAYOhtSOLKzsf3I4kuLgHJp5qNMTRDEx+RJYZmZV6OShX3G/grQ5c80Gvif3icdGjuyQVq0PAp+SuWkmPoPLlYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUDRwJn+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84CB9C32786;
+	Sun, 23 Jun 2024 17:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719163304;
-	bh=lCnpI6MGZ7tqlfHmo6/4lQWWdf2FV5VM4Utg4pbRtes=;
+	s=k20201202; t=1719163309;
+	bh=hqHsU/ytros7zlMhVXXRaDb8uWaZIiY2BwlJTdGlQi0=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Oq29rr7TfplWGhY9I1T+8UTDsjBlfbhLmKJ7zUn3d0nl0sFWwQ9rm1i32rXS88P50
-	 pDH5bAODX1/zGOYQrfMwGHNqB4PMZWM1iUciFte8Lr1rYB9Nr9AwcyzWHDtzg8o3aF
-	 oD5CSz1kOWjWXCA/kODq3SNggZYLkHpEafY3EnU+QoxsJmp2n8LV+kMzPwefc7KULw
-	 WCX8+Mh2E0AnpmTMkrHtY8e07kUvbjrWtbpviTfXD4hCjFQbKBIIPHqWYT6Fj4z3ZA
-	 KUGjfSv4qOiHVchYVQJH+LSPo9t9AaSPetUaj2qZLA4HgABFyYx8qbR6yTBsvPDXcW
-	 HZAixc2ES1KLg==
+	b=RUDRwJn+ir7NGPEFmk3ra3S/+A1uMRkOSuavbEo0zJkzbZxXb1VAHprHB27Si7t51
+	 L4R971MZWLsJJ6iUBzx2GujCIHLVjstNoboNvuaIGUzWBdZtFhWkRDPvVBhDk1EyGW
+	 nf/FJXkq9+00ewfzo09PuoNRTRWkYOKx1T93cer79rlvuBkJyiKaUDrfgWgXDEZEcD
+	 MLnW0NZNgGfEFS+s5npUEDR4oIMI3CA37tR0SBZfWi/b35wifp8x6MsbP2uLQyxXA2
+	 H99H8s8RvcQEvf3MQ6C/jP0qF5yY5V8Z81JP8SPsZn0sTEi01hWcEwCmXFwaIlYlDl
+	 h62TZT4NUxfLQ==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, 
- Cezary Rojewski <cezary.rojewski@intel.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
- Bard Liao <yung-chuan.liao@linux.intel.com>, 
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org
-In-Reply-To: <20240617-n-asoc-const-auto-selectable-formats-v1-0-8004f346ee38@linaro.org>
-References: <20240617-n-asoc-const-auto-selectable-formats-v1-0-8004f346ee38@linaro.org>
-Subject: Re: (subset) [PATCH 0/6] ASoC: Few constifications (mostly
- arguments)
-Message-Id: <171916330129.350242.13312693360705760410.b4-ty@kernel.org>
-Date: Sun, 23 Jun 2024 18:21:41 +0100
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Ricard Wanderlof <ricardw@axis.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Ricard Wanderlof <ricard.wanderlof@axis.com>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@axis.com
+In-Reply-To: <20240607-tlv320adc3xxx-micbias-gpo-v3-0-59dbec8b98f4@axis.com>
+References: <20240607-tlv320adc3xxx-micbias-gpo-v3-0-59dbec8b98f4@axis.com>
+Subject: Re: [PATCH v3 0/2] tlv320adc3xxx: Allow MICBIAS pins to be used as
+ GPOs
+Message-Id: <171916330513.350242.3221156381590082355.b4-ty@kernel.org>
+Date: Sun, 23 Jun 2024 18:21:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,13 +66,19 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Mon, 17 Jun 2024 15:03:18 +0200, Krzysztof Kozlowski wrote:
-> Make few pointers in ASoC functions as pointers to const, so the code is
-> clearer to read, a bit safer and allows further constifications (e.g.
-> placing some data as rodata).
+On Fri, 07 Jun 2024 17:22:03 +0200, Ricard Wanderlof wrote:
+> In some cases, depending on system design, the MICBIAS pins on the
+> chip are not needed as such, but a couple of extra GPIO pins would be
+> useful. This patch allows the MICBIAS pins to be configured in the
+> device tree as general purpose output pins, controlled via the GPIO
+> framework.
 > 
-> Best regards,
-> Krzysztof
+> Owing to their originally intended purpose there are some limitations:
+> when the MICBIAS pins are deactivated, they will float, so will likely
+> need a pulldown in many applications. When activated, they will
+> assume the voltage specified by the micbias1-vg and micbias2-vg
+> properties, respectively, meaning that the resulting output voltage
+> will be 2.0 V, 2.5 V or AVDD .
 > 
 > [...]
 
@@ -86,16 +88,10 @@ Applied to
 
 Thanks!
 
-[1/6] ASoC: Constify of_phandle_args in snd_soc_dai_driver
-      commit: 2fbafecb0f05818e25f6c926c6f9ad9ef597429c
-[2/6] ASoC: Constify of_phandle_args in snd_soc_dai_link_component
-      commit: 020b37d06f97de289940805bc821190d5858eda0
-[3/6] ASoC: Constify passed data to core function
-      commit: f3ac3da7e4d0957b3402fb31a4ca480e739e086f
-[4/6] ASoC: Constify DAI passed to get_channel_map
-      commit: 785d64c4941221044940ab199e6625af17296470
-[5/6] ASoC: Constify return of snd_soc_dai_get_pcm_stream()
-      commit: de267e7a6ea8e6fa29af2287adfc9fc9d87e6dc9
+[1/2] ASoC: dt-bindings: tlv320adc3xxx: Add MICBIAS-as-GPO properties
+      commit: 4e617f0cb2dd9675a3b2707c10d89f0f5303ad1e
+[2/2] tlv320adc3xxx: Add support for using MICBIAS pins as GPO
+      commit: 6c01001414ce477311d872c40e23dfec4866d608
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
