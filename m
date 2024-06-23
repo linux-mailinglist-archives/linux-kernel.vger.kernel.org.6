@@ -1,143 +1,178 @@
-Return-Path: <linux-kernel+bounces-226487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B98F913F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:16:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F68913F0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FAFE1F211D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:16:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E373281673
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6176E185E79;
-	Sun, 23 Jun 2024 23:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A417186E30;
+	Sun, 23 Jun 2024 23:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZ6ybpng"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hoJ9m5DJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IM8gAc0L"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD85175AD;
-	Sun, 23 Jun 2024 23:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BA3185E65;
+	Sun, 23 Jun 2024 23:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719184577; cv=none; b=m/Fvb9BkUc89ZBWd1UpqyUm7Cg5tDFgkt6Ttsw9Cx76CzrGLSs5fZlxD5tLr1nRogG90Bm8Px6YNhJECozv2dR/m9Q6ymbCpyR5JfLHi53vqrgYpZN5BjenlAKpDhMhX+vrslYnCBccePZjgQwVOF2tVICvyk9+a+aVPqjG/nIY=
+	t=1719184579; cv=none; b=qeInKMx6zi1Ve0DDpVOodOh4ysLCymrQJglJlhzlxlKa9B9u58tyMojKd7D/MReaGRlhMzcrW1mz1CuIvWrsBQVvPWfcYjaD0oRJoDXGr2Z+17iGYcX0odzsp+cDtsAanw+1XZ2xKH0xs4Da3AWhPaSfjDUBO3kz2ztWR9/34MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719184577; c=relaxed/simple;
-	bh=SJ35TR0aVMthObi4Tq8IVJJfUp0GdCYPLfsDJ44pKu4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gYNa1qXSfceqQUZkWU03Lz3grAky5BhAhDDG0A6T49vaZUNWQAIQFyaQ6dHGLu9485M11a47mD7pnFHsPNdXYziNQ1cZfSNLj0wcDDyDST/EfIzCmXkKC31cyqIs1kyqtr4YVpGEZBUQVOxG4E4BiTXVfreECdj7oXrwbPOR3MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZ6ybpng; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cc671f170so4088887e87.1;
-        Sun, 23 Jun 2024 16:16:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719184574; x=1719789374; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SJ35TR0aVMthObi4Tq8IVJJfUp0GdCYPLfsDJ44pKu4=;
-        b=CZ6ybpngznQ/XFIS3ezsdKUp0+dfL5v7pMMwA/Ur9Ps3ztGjTs9N3xwIjN1Bw8Hq1/
-         6QtWuyVCnv0aqViN1dHgLZ6GJJL4eH9aL4P1KICvOFKBNpV8N/tYDgqbOwi8t3pq43Ut
-         fBEDjRTeUwVSuFIES1imSwlrIXBiAGBjOo6yf404wMN33oQ/QYSJHKAzql4COGUyjONe
-         48rONmj6vMwNmeITJX0JOyXwdU3nwUsGbTZIbJMMQNxPlv+hmHCyQqTpgMPLUqEF9wdQ
-         HPMZOZcYwWE6hnj14bATI5i7sYoz9K70W8zt3kkbLAnvWh9CIWUegYBTQPWdbjNVGGSs
-         fd+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719184574; x=1719789374;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SJ35TR0aVMthObi4Tq8IVJJfUp0GdCYPLfsDJ44pKu4=;
-        b=BIdOuiQv1lT1QA6Zvb7Lj7nEQFPCoaEIa5BnGe4O9s8mIZSwWJq/NZjCv2t3iH1h04
-         ifgDsyVgEoXWPbNZFHK9vkNlw9nw1xJCi/W8tVcbvHUia+QHLxFX/fNCFeOog8tPTOxo
-         aPeiM+YHYwyLY30AKH8qBemiiI9qXK36858L2DxOVHNOfFVQ44oJY5q/Yl3gC2o+cBjy
-         TXd0Pt30ZDyFKJpbq/AaNbbUdno0DNsHL5+04EQfnn+80qqOIm7F4bD3u0AiPnpzU7sM
-         j3PMfsEvM9GnKUGf29/X/6+gA8feCTJweWs86tssSFgCy8CZ7MoZyCSi5QJXyfy7WBM5
-         TTvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUcx+H6sXs0BLWZO9AJMySTS0Cu4uPvMoSsYn6hN3tWsiQMeQ5frIBuiYanuNqQQBNzyB0bxpWaQGjeUfKXdBN7Zz4KEczVmn4bUYC6bBE6Utl+VbuM5lC1YSUTJkE7LRCpDIaDwvzAghqGtIJ/ZHHDq3l7m01PXCR+boJHVdRCiC5WJV/lnVACg3HLsZXafhEyxMFxgTpf9U/DTrQN3eGuILVIUA==
-X-Gm-Message-State: AOJu0YxIKZkfiDhN391jmayTxs0RLVCPHsG+iKO7dZsuZ9UHkbz/K9Q1
-	6JFHn2uQAEoB+ExM501UvzJHX8IPRbofk1+yOXPb5sgu6o5yHIwD/8FJMf7X7SACL4Qc6fRbDPQ
-	Mi5EqOM3EDJGKevax+ZZ8UbbnGfg=
-X-Google-Smtp-Source: AGHT+IEkFCsbNLUYqCPBDMMGovH2SszWnW6MECsXIbIlwNX/5XBMF+1TVFDhjaeIlLIA8sbbFeFBvXetlHRDhAvcCZs=
-X-Received: by 2002:a19:7702:0:b0:52c:ad70:6feb with SMTP id
- 2adb3069b0e04-52cdf355114mr1085376e87.20.1719184573846; Sun, 23 Jun 2024
- 16:16:13 -0700 (PDT)
+	s=arc-20240116; t=1719184579; c=relaxed/simple;
+	bh=klSscLWgORU9qCXLsS9wOM+PZEcgTp0Av7+cnFnQyio=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kywqXS407lp8aRwGCGqSThIukb8UCXcddKRi7p/3gVkYGWzrWBxiOvHqd8Mj2tJJWdhZsF2g6z4/ReqlVjswcVQvWalf+idu3Vv81expPLEngax3vazw9ahaJtM6qkcq/r8oo2Ev6vQAcTqN1CX/Sd69ZHreH6CF+CQ2mvNuh/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hoJ9m5DJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IM8gAc0L; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719184575;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Awfxb6K8YyyiKriFuf6T4876/ylOHxEjEiYm6TdruTc=;
+	b=hoJ9m5DJ7CxadEFUBc8Yw75bhjjtIBXWTyZwXsKl3M5gg++/2sD4zfI880ytdCq8HzIMPH
+	ggTH5f3dfYmWW+yfQuKgXEbQXGJR7t/wVl6Jc6AAYrwomrB8nnnckjZKRu2MVOsyZ4R28T
+	AHOqtwKc53O1dti5K4KQ5jos815JM5z+gLC/LuA/OxxoYwSbiuiZwt+yfD3jezgI6Durtr
+	5JTon4K4GJxEJm6n3ZpicI95PbhQUPRfI6Cnvn9MU5L7pYCGCQhFkXvav+hQM01Jhwql2n
+	xXzqJYcdiui9xfZDyoIAWqHy9cEFBGMRZ5JzWEWoZHSeb5kwDJm+G70r1xQ77A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719184575;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Awfxb6K8YyyiKriFuf6T4876/ylOHxEjEiYm6TdruTc=;
+	b=IM8gAc0LXIokS5JU7NKxUScCyhyj4TWpOD9X5OJsotej6pOmvtVwVLl55Zq5uuVOvuMEnx
+	QiSecQhayyiYIhBA==
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe
+ <axboe@kernel.dk>, brauner@kernel.org, viro@zeniv.linux.org.uk, Bernd
+ Schubert <bernd.schubert@fastmail.fm>, linux-mm@kvack.org, Josef Bacik
+ <josef@toxicpanda.com>
+Subject: Re: [PATCH 3/5] fs: sys_ringbuffer
+In-Reply-To: <odohwdryb2yhzi5kzvlwv65kazbhzqyps6fzr2wukksdewukmr@gono7fdsth5d>
+References: <20240603003306.2030491-1-kent.overstreet@linux.dev>
+ <20240603003306.2030491-4-kent.overstreet@linux.dev> <87frt39ujz.ffs@tglx>
+ <odohwdryb2yhzi5kzvlwv65kazbhzqyps6fzr2wukksdewukmr@gono7fdsth5d>
+Date: Mon, 24 Jun 2024 01:16:15 +0200
+Message-ID: <87a5jb9rnk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621-b4-sc7180-camss-v1-0-14937929f30e@gmail.com>
- <20240621-b4-sc7180-camss-v1-3-14937929f30e@gmail.com> <cd9b5612-1160-4284-be7f-4efbcbbbe346@linaro.org>
- <b9deca88-8e1a-4017-a0fc-6a77672d684d@linaro.org> <CADgMGSs7owyvvvRTr4YvCdmMiJV86CjD5YLsJiBZZONDhfFisQ@mail.gmail.com>
- <ef218f06-283a-4e7b-bafd-382c47248106@linaro.org> <CADgMGSuaKKNgkVjcWA__fJkmeHYXgE47YfObHddp4e-gTH3NEw@mail.gmail.com>
- <f0c3e0f5-e5a3-49e1-8b9c-57fc7af5d71a@linaro.org>
-In-Reply-To: <f0c3e0f5-e5a3-49e1-8b9c-57fc7af5d71a@linaro.org>
-From: george chan <gchan9527@gmail.com>
-Date: Mon, 24 Jun 2024 07:16:01 +0800
-Message-ID: <CADgMGSsu4FEPHydWu1mj2BaJjt1=7Ws514ig0YH0TbToFhk-0Q@mail.gmail.com>
-Subject: Re: [PATCH 3/6] media: qcom: camss: csiphy-3ph: Add Gen2 v1.2.2
- two-phase MIPI CSI-2 DPHY init
-To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Jun 24, 2024 at 6:13=E2=80=AFAM Bryan O'Donoghue
-<bryan.odonoghue@linaro.org> wrote:
+Kent!
+
+On Sun, Jun 23 2024 at 18:21, Kent Overstreet wrote:
+> On Mon, Jun 24, 2024 at 12:13:36AM +0200, Thomas Gleixner wrote:
+>> > +	/*
+>> > +	 * We use u32s because this type is shared between the kernel and
+>> > +	 * userspace - ulong/size_t won't work here, we might be 32bit userland
+>> > +	 * and 64 bit kernel, and u64 would be preferable (reduced probability
+>> > +	 * of ABA) but not all architectures can atomically read/write to a u64;
+>> > +	 * we need to avoid torn reads/writes.
+>> 
+>> union rbmagic {
+>> 	u64	__val64;
+>>         struct {
+>>                 // TOOTIRED: Add big/little endian voodoo
+>> 	        u32	__val32;
+>>                 u32	__unused;
+>>         };
+>> };
+>> 
+>> Plus a bunch of accessors which depend on BITS_PER_LONG, no?
 >
-> On 23/06/2024 22:37, george chan wrote:
-> > User-space tool can't tell so I made some guesses.
-
-Sorry for misleading, actually i mean user-space too can't tell the
-difference. As all 3 kinds of init sequences are working, I can't get
-a strong conclusion of "correct" init sequence between atoll's and
-trodger's.
-
-> So how are you testing ?
+> Not sure I follow?
 >
-> Libcamera on your target rootfs ?
+> I know biendian machines exist, but I've never heard of both big and
+> little endian being used at the same time. Nor why we'd care about
+> BITS_PER_LONG? This just uses fixed size integer types.
 
-Yes, a similar test was carried out early days with the "wrong" v1.2.1
-init sequence, on pmOS qcam installed into xiaomi redmi note 9 pro
-(sm7125). It showed nice output. And I was excited so I took a video
-recording too:
-https://www.youtube.com/watch?v=3DU_do11pSf1s
+Read your comment above. Ideally you want to use u64, right?
 
-After your indication, I replaced the v1.2.1 init sequence with
-atoll's and trodger's and carried some simple test with below cmd and
-both are outputting files.
+The problem is that you can't do this unconditionally because of 32-bit
+systems which do not support 64-bit atomics.
 
-media-ctl --reset
-media-ctl -V '"msm_csid0":0[fmt:SRGGB10/2592x1944 field:none]'
-media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/2592x1944 field:none]'
-media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
-v4l2-ctl -d /dev/v4l-subdev4 -c test_pattern=3D0
-v4l2-ctl -d /dev/v4l-subdev5 -c test_pattern=3D0
-v4l2-ctl -d /dev/v4l-subdev6 -c test_pattern=3D0
-v4l2-ctl -d /dev/v4l-subdev19 -c test_pattern=3D$1
+So a binary which is compiled for 32-bit might unconditionally want the
+32-bit accessors. Ditto for 32-bit kernels.
 
-media-ctl -V '"s5k5e9 13-002d":0[fmt:SRGGB10/2592x1944 field:none]'
-media-ctl -V '"msm_csiphy2":0[fmt:SRGGB10/2592x1944 field:none]'
-media-ctl -l '"msm_csiphy2":1->"msm_csid0":0[1]'
-yavta -B capture-mplane --capture=3D3 -n 3 -f SRGGB10P -s 2592x1944 /dev/vi=
-deo0 -F
+The 64bit kernel where it runs on wants to utilize u64, right?
 
-As you can see the cmos named s5k5e9. and this time simply do yavta
-dump, no pmOS qcam test.
+That's fortunately a unidirectional problem as 64-bit user space cannot
+run on a 32-bit kernel ever.
 
-Since this test is carried out in sm7125 SOC, in theory, it is better
-to test with sc7180 (less likely form-factor available in the market)
-so I will send out v2 with trogdor init sequence for other dev have
-sc7180 board to have a test.
+struct ringbuffer_ctrl {
+       union rbmagic	head;
+...
+};
 
-Stay tuned.
+#ifdef __BITS_PER_LONG == 64
+static __always_inline u64 read_head(struct ringbuffer_ctrl *rb)
+{
+        return rb->head.__val64;
+}
+
+static __always_inline void write_head(struct ringbuffer_ctrl *rb, u64 val)
+{
+        rb->head.__val64 = val;
+}
+#else
+static __always_inline u64 read_head(struct ringbuffer_ctrl *rb)
+{
+        return rb->head.__val32;
+}
+
+static __always_inline void write_head(struct ringbuffer_ctrl *rb, u64 val)
+{
+        rb->head.__val32 = (u32)val;
+}
+#endif
+
+A 64-bit kernel uses u64 while a 32-bit kernel uses u32. Same for user
+space.
+
+The ABA concern for 32-bit does not go away, but for 64-bit userspace
+you get what you want, no?
+
+Now why do you have to care about endianess?
+
+union rbmagic {
+	u64	__val64;
+	struct {
+		u32	__val32;
+		u32	__unused;
+	};
+};
+
+works only correctly for LE. But it does not work for BE because BE
+obviously requires the u32 members to be in reverse order:
+
+union rbmagic {
+	u64	__val64;
+	struct {
+		u32	__unused;
+		u32	__val32;
+	};
+};
+
+That's a compile time decision. You can't run a BE binary on a LE kernel
+or the other way around.
+
+So they have to agree on the endianess, but BE has the reverse byte
+order. That's why you need to have another #ifdef there.
+
+Thanks,
+
+        tglx
 
