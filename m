@@ -1,142 +1,200 @@
-Return-Path: <linux-kernel+bounces-226272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9954A913C51
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:26:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 402CB913C52
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540CC288707
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:26:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D79AB22F02
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839831822C0;
-	Sun, 23 Jun 2024 15:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i7grALWB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D203181D05
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 15:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C40181D15;
+	Sun, 23 Jun 2024 15:27:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726DE149E06;
+	Sun, 23 Jun 2024 15:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719156405; cv=none; b=kGOtBaG8dZHvOjGrHekxQZRUx3zWH7TlmRyaKV2Dlz5qffdHswhV5EcM6DjWBCrZMlbECK5LaGsqsstnj5nsREzNacuBHdDa3uAzbGpoTOwLq0KHkvvdsixXsaRtveRJGAwgNcDW+DAjXmtStwJEF10WxERylZ9IJiOLqMFEzco=
+	t=1719156420; cv=none; b=XdyAxlmq2pX9vgjrSFjKZl+wmI5zAjIS1/VBH5u0XSH0hXBb3EKniR/N0Y0DYl16OtFV3eAJYLbeesvejTtoN3v5TaopfsnhI+4PkFDEt9dFupdelW+a4ltDK2m+vr+iZJ9U7IhRM9tobIvs9ziqMHK8EcTjvcRjkbrWLd/6aYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719156405; c=relaxed/simple;
-	bh=ooh7IaQj+cWRnQdaw8/1O4YXQwna4SUhIk+dL5M7/JU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qBJV8f4jT2IzKVZwfBDqpL0Hwj9sB0ZW+gKcxvj2y2k7uHSDRn/z7790MV0KzgJZDGVArovtrTjXmvW305J87KEaeTIh9tk5mbdaA4As6iSpwgZIwgkdjw+oa+PEdweSJXH1sd37/9dBz9Xq3ruj22aA4WpcZj69lFHMJDANAAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i7grALWB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719156403;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pFXK8G1SadQvGVrWX2KcQ+fiVJ5r+OsD2zAk1SpxTqU=;
-	b=i7grALWBBNd5WFPJXUzlrFzwvqD3yrhfG9mBkZ1C82ZSlzp0+iYHMJHoLQuZBXcivn1J14
-	yMsUUC8i3z76gd/MAFijp3JHUuapexcriBbu+t3R9+6RsiEFQDYZMCkLiziZR5BUw+3dPU
-	ta5i5+TOPVxyLLkXocFBs+hpwk6ds6Y=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-696-ybspF7UtN4GzgdlBejjRAg-1; Sun, 23 Jun 2024 11:26:41 -0400
-X-MC-Unique: ybspF7UtN4GzgdlBejjRAg-1
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5ba819595deso743564eaf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 08:26:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719156401; x=1719761201;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pFXK8G1SadQvGVrWX2KcQ+fiVJ5r+OsD2zAk1SpxTqU=;
-        b=JRA//XqlN3H2MUvJIB+dxQW9Ybt6AA7hnggZHApZrHttdsQxM2XMcTtCWUBmsbNJkM
-         MtcUhvEk6uNGa2zgtmeF8xotbn1YmjxzR2MbcaVHQYevF904TD+1R7SLhazG07rDEd7/
-         xez42IQzrRjfqSlX4KHHBmJasbRR086LWiv2UD1OJMDX352icWuVtWUbQSetCFbNjXI1
-         BnCbOrjTmeq3xrEF3aK+7BO6AckpCKhLf3zWzqBMXGTxjBNvfAJ1gjmiG2l622v4IJl/
-         /TbvIWHXAhPRk3Ctg1JKRKNvndfEwgqvvZLBHtbWeUj5gv8kQpC1tkMU9AULzLVM/iSy
-         PdtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgP6pTKVYyOdEU7MepD0pSml4B2TQ0kIpVBYaxdVOwhiIt3hLP1cKlpOzInS8VAXA7SfTKHd8/Kk3/iLUJWKh7pqGrq1q49R0Hj+El
-X-Gm-Message-State: AOJu0Yzi9JR8QsYXchtiF6bsEHrX03VJDq0yDyqg3KxidH556vo2cNp/
-	U/bjjT52InqddOS2TbKUhFc6QsMkFDUoBL1/ldZ/7Fwq4SrCiv0sPnMrI8Q+74svcPLAb6GkSAX
-	dIRO5g2TYtS2Y3FbdDsbdkLlgeu4Ci0KAfd2lMTuvB7kNJddVkzayHlKDoFyMVA==
-X-Received: by 2002:a05:6808:2392:b0:3d5:4326:3601 with SMTP id 5614622812f47-3d54326392bmr4078227b6e.1.1719156400679;
-        Sun, 23 Jun 2024 08:26:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwMz32C8X8OkYsczYb+AeCSDZLUo60k21JarMrjxnPjcSuR/TnvND69SCP53Zz/0qBqCliHQ==
-X-Received: by 2002:a05:6808:2392:b0:3d5:4326:3601 with SMTP id 5614622812f47-3d54326392bmr4078192b6e.1.1719156400151;
-        Sun, 23 Jun 2024 08:26:40 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444c2b6b048sm32901281cf.38.2024.06.23.08.26.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 08:26:39 -0700 (PDT)
-Date: Sun, 23 Jun 2024 11:26:37 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Audra Mitchell <audra@redhat.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, aarcange@redhat.com,
-	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shuah@kernel.org,
-	linux-kselftest@vger.kernel.org, raquini@redhat.com
-Subject: Re: [PATCH v2 1/3] Fix userfaultfd_api to return EINVAL as expected
-Message-ID: <Zng-rfCPvSaGvL7p@x1n>
-References: <20240621181224.3881179-1-audra@redhat.com>
- <20240621180330.6993d5fd0bda4da230e45f0d@linux-foundation.org>
+	s=arc-20240116; t=1719156420; c=relaxed/simple;
+	bh=x5Ahe6u/PLVDIcy5ljmDMPszO0GBhjHEnvRgD5+FYmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BNS9toymJiuTpWfpz1VWIIHoCRegTERVPgc/8J95gZvd/NLdb1nwPw53rRyXgrqJc8VZwSRMSWfeCdFuS548nEQMxMHCRHQKA2gLmWKDqq05aUJgZPIka+PlHvT7/PsScAzH6LmZFgMGoWJ5IOi0q5mBSowyzyidqDlez7+i0v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48645DA7;
+	Sun, 23 Jun 2024 08:27:21 -0700 (PDT)
+Received: from [10.163.46.232] (unknown [10.163.46.232])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 633E53F766;
+	Sun, 23 Jun 2024 08:26:52 -0700 (PDT)
+Message-ID: <adc971c5-f2a7-4f2d-97d8-40ed0cfe03c0@arm.com>
+Date: Sun, 23 Jun 2024 20:56:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240621180330.6993d5fd0bda4da230e45f0d@linux-foundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/3] tools/perf: Fix the string match for
+ "/tmp/perf-$PID.map" files in dso__load
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, acme@kernel.org,
+ jolsa@kernel.org, adrian.hunter@intel.com, irogers@google.com,
+ namhyung@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com, maddy@linux.ibm.com,
+ kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com
+References: <20240618140354.5765-1-atrajeev@linux.vnet.ibm.com>
+Content-Language: en-US
+From: Chaitanya S Prakash <ChaitanyaS.Prakash@arm.com>
+In-Reply-To: <20240618140354.5765-1-atrajeev@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 21, 2024 at 06:03:30PM -0700, Andrew Morton wrote:
-> On Fri, 21 Jun 2024 14:12:22 -0400 Audra Mitchell <audra@redhat.com> wrote:
-> 
-> > Currently if we request a feature that is not set in the Kernel
-> > config we fail silently and return all the available features. However,
-> > the man page indicates we should return an EINVAL.
-> > 
-> > We need to fix this issue since we can end up with a Kernel warning
-> > should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
-> > a kernel with the config not set with this feature.
-> > 
-> >  [  200.812896] WARNING: CPU: 91 PID: 13634 at mm/memory.c:1660 zap_pte_range+0x43d/0x660
-> >  [  200.820738] Modules linked in:
-> >  [  200.869387] CPU: 91 PID: 13634 Comm: userfaultfd Kdump: loaded Not tainted 6.9.0-rc5+ #8
-> >  [  200.877477] Hardware name: Dell Inc. PowerEdge R6525/0N7YGH, BIOS 2.7.3 03/30/2022
-> >  [  200.885052] RIP: 0010:zap_pte_range+0x43d/0x660
-> > 
-> > Fixes: e06f1e1dd499 ("userfaultfd: wp: enabled write protection in userfaultfd API")
-> 
-> A userspace-triggerable WARN is bad.  I added cc:stable to this.
 
-Andrew,
+On 6/18/24 19:33, Athira Rajeev wrote:
+> Perf test for perf probe of function from different CU fails
+> as below:
+>
+> 	./perf test -vv "test perf probe of function from different CU"
+> 	116: test perf probe of function from different CU:
+> 	--- start ---
+> 	test child forked, pid 2679
+> 	Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Msa7iy89bx/testfile
+> 	  Error: Failed to add events.
+> 	--- Cleaning up ---
+> 	"foo" does not hit any event.
+> 	  Error: Failed to delete events.
+> 	---- end(-1) ----
+> 	116: test perf probe of function from different CU                   : FAILED!
+>
+> The test does below to probe function "foo" :
+>
+> 	# gcc -g -Og -flto -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.c
+> 	-o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+> 	# gcc -g -Og -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.c
+> 	-o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+> 	# gcc -g -Og -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+> 	/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+> 	/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+>
+> 	# ./perf probe -x /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile foo
+> 	Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+> 	   Error: Failed to add events.
+>
+> Perf probe fails to find symbol foo in the executable placed in
+> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7
+>
+> Simple reproduce:
+>
+>   # mktemp -d /tmp/perf-checkXXXXXXXXXX
+>     /tmp/perf-checkcWpuLRQI8j
+>
+>   # gcc -g -o test test.c
+>   # cp test /tmp/perf-checkcWpuLRQI8j/
+>   # nm /tmp/perf-checkcWpuLRQI8j/test | grep foo
+>     00000000100006bc T foo
+>
+>   # ./perf probe -x /tmp/perf-checkcWpuLRQI8j/test foo
+>     Failed to find symbol foo in /tmp/perf-checkcWpuLRQI8j/test
+>        Error: Failed to add events.
+>
+> But it works with any files like /tmp/perf/test. Only for
+> patterns with "/tmp/perf-", this fails.
+>
+> Further debugging, commit 80d496be89ed ("perf report: Add support
+> for profiling JIT generated code") added support for profiling JIT
+> generated code. This patch handles dso's of form
+> "/tmp/perf-$PID.map" .
+>
+> The check used "if (strncmp(self->name, "/tmp/perf-", 10) == 0)"
+> to match "/tmp/perf-$PID.map". With this commit, any dso in
+> /tmp/perf- folder will be considered separately for processing
+> (not only JIT created map files ). Fix this by changing the
+> string pattern to check for "/tmp/perf-%d.map". Add a helper
+> function is_perf_pid_map_name to do this check.
+>
+> With the fix,
+> 	# ./perf test "test perf probe of function from different CU"
+> 	117: test perf probe of function from different CU                   : Ok
+>
+> Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
+> ---
+> Changelog:
+> v2 -> v3:
+> Addressed review comment from Adrian and James.
+> Added perf_pid_map_tid to save the tid and modified
+> is_perf_pid_map_name to use this internally.
+>
+> v1 -> v2:
+> Addressed review comments from Adrian.
+> Added helper function is_perf_pid_map_name to check
+> dso name of form "/tmp/perf-%d.map". Used sscanf
+> instead of regex comparison.
+>
+>   tools/perf/util/dso.c    | 12 ++++++++++++
+>   tools/perf/util/dso.h    |  4 ++++
+>   tools/perf/util/symbol.c |  3 ++-
+>   3 files changed, 18 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+> index dde706b71da7..2340c4f6d0c2 100644
+> --- a/tools/perf/util/dso.c
+> +++ b/tools/perf/util/dso.c
+> @@ -1652,3 +1652,15 @@ int dso__strerror_load(struct dso *dso, char *buf, size_t buflen)
+>   	scnprintf(buf, buflen, "%s", dso_load__error_str[idx]);
+>   	return 0;
+>   }
+> +
+> +bool perf_pid_map_tid(const char *dso_name, int *tid)
+> +{
+> +	return sscanf(dso_name, "/tmp/perf-%d.map", tid) == 1;
+> +}
+> +
+> +bool is_perf_pid_map_name(const char *dso_name)
+> +{
+> +	int tid;
+> +
+> +	return perf_pid_map_tid(dso_name, &tid);
+> +}
+> diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+> index df2c98402af3..d72f3b8c37f6 100644
+> --- a/tools/perf/util/dso.h
+> +++ b/tools/perf/util/dso.h
+> @@ -809,4 +809,8 @@ void reset_fd_limit(void);
+>   u64 dso__find_global_type(struct dso *dso, u64 addr);
+>   u64 dso__findnew_global_type(struct dso *dso, u64 addr, u64 offset);
+>   
+> +/* Check if dso name is of format "/tmp/perf-%d.map" */
+> +bool perf_pid_map_tid(const char *dso_name, int *tid);
+> +bool is_perf_pid_map_name(const char *dso_name);
+> +
+>   #endif /* __PERF_DSO */
+> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+> index 9e5940b5bc59..aee0a4cfb383 100644
+> --- a/tools/perf/util/symbol.c
+> +++ b/tools/perf/util/symbol.c
+> @@ -1799,7 +1799,8 @@ int dso__load(struct dso *dso, struct map *map)
+>   	const char *map_path = dso__long_name(dso);
+>   
+>   	mutex_lock(dso__lock(dso));
+> -	perfmap = strncmp(dso__name(dso), "/tmp/perf-", 10) == 0;
+> +	perfmap = is_perf_pid_map_name(map_path);
+> +
+>   	if (perfmap) {
+>   		if (dso__nsinfo(dso) &&
+>   		    (dso__find_perf_map(newmapname, sizeof(newmapname),
 
-Note that this change may fix a WARN, but it may also start to break
-userspace which might be worse if it happens, IMHO.  I forgot to mention
-that here, but only mentioned that in v1, and from that POV not copying
-stable seems the right thing.
+Reviewed-by: Chaitanya S Prakash<chaitanyas.prakash@arm.com>
 
-https://lore.kernel.org/all/ZjuIEH8TW2tWcqXQ@x1n/
+I will drop my fix for the same.
+https://lore.kernel.org/all/20240601125946.1741414-10-ChaitanyaS.Prakash@arm.com/
 
-        In summary: I think we can stick with Fixes on e06f1e1dd499, but we
-        don't copy stable.  The major reason we don't copy stable here is
-        not only about complexity of such backport, but also that there can
-        be apps trying to pass in unsupported bits (even if the kernel
-        didn't support it) but keep using MISSING mode only, then we
-        shouldn't fail them easily after a stable upgrade.  Just smells
-        dangerous to backport.
-
-I'm not sure what's the best solution for this.  A sweet spot might be that
-we start to fix it in new kernels only but not stable ones.
-
-Thanks,
-
--- 
-Peter Xu
+The rest of my series can be reviewed as a string function tidy up.
 
 
