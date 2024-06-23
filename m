@@ -1,113 +1,111 @@
-Return-Path: <linux-kernel+bounces-226313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDC5913CE7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:52:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65AFC913CEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B5761C20A6D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:52:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF870B20EE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88405183081;
-	Sun, 23 Jun 2024 16:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB49818307C;
+	Sun, 23 Jun 2024 16:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MokcOLV7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="FZKSQqAt"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1038BFA;
-	Sun, 23 Jun 2024 16:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C3F1822D4;
+	Sun, 23 Jun 2024 16:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719161545; cv=none; b=Ip/LrY7U5MFD+gL7f3eK7BhFAKbqiN/XAcSg68wlg7Y8ZdqpkDkYVxoXTerWqsiPYe2pRtbS2o4YNFIxr7H/aE80wpC6lfKeoVeU0i0NzHUliME7aNWJGwW7sbZgeEJ3Oq54irnoB2kNf6h/hZ+My9bE7ZPcQ/A7kKd8Q92Wwtk=
+	t=1719161634; cv=none; b=mSmrs0t5yD8XGq9CtnlpWxuQGwUPClXbnhJAKk3dM83kOToXC2SiAqbANgFF/iXMhLnkelTfByxG6jriPqyZjqZ0NSvDJdByk9x57Ib4gkGme5dFy9z2mmO7bHiZhrbRYcqv8WOK2IzSfPhkI4f/BOAZsVazxe4G3qW67ebxNw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719161545; c=relaxed/simple;
-	bh=w3rWc4cJp3prvIAFS9iJKV4UQoSn7/pOlOMHaiefaAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WpAkxsywrPbvzDzlaB7PptptjTKbr4QUTgKB3QBVm+eY7AvSHbIjd0BNlw74AzXw4hYRGH7f1EOidTphcdILdMXs7aojzOwE9VNybqccEUZXMaRk7hjjZnmVdAEiUNXrWY2+7k3iXPDM1DhPbckA6LTI0MZuXeFzKDFt16JA6yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MokcOLV7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA50AC2BD10;
-	Sun, 23 Jun 2024 16:52:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719161545;
-	bh=w3rWc4cJp3prvIAFS9iJKV4UQoSn7/pOlOMHaiefaAY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MokcOLV7qwP2dwx2+1oEOCymfbSejs20W+ZX5sMbFcGViO/GyKqQcpEiPYubmwIc1
-	 ad846XLYn9i6s7H3BT+l2VEAzvgINUHQz9rntDlMBJrW3MaR0qRN+sriSuPzvOJhC/
-	 6/WkRBvcOwA0dfmr70g1mQGszTwONFq5aE01fofAzg0r6WjC5rK/aUxsmTKBqvgMNt
-	 eiVM+P+k2RKy1J4rOeqgsQ7FKTmn7veFw2+5B5BjREONSocVNjPqOZOlMoblkeMhZ1
-	 NnV9+BTOkhqbVHE6UcX6PNG0NWb0dgF6xr1391u0AXlZtH71seIlx/LwpzL51UC7JY
-	 TT0TqIMDh3yyw==
-Date: Sun, 23 Jun 2024 17:52:16 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Mudit Sharma
- <muditsharma.info@gmail.com>, lars@metafoo.de, krzk+dt@kernel.org,
- conor+dt@kernel.org, robh@kernel.org, ivan.orlov0322@gmail.com,
- javier.carrasco.cruz@gmail.com, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, "Haikola, Heikki"
- <Heikki.Haikola@fi.rohmeurope.com>, "Mutanen, Mikko"
- <Mikko.Mutanen@fi.rohmeurope.com>
-Subject: Re: [PATCH v4 2/2] iio: light: ROHM BH1745 colour sensor
-Message-ID: <20240623175216.6bb09390@jic23-huawei>
-In-Reply-To: <6e5d6734-eae0-49fd-a1ed-beda00e37209@gmail.com>
-References: <20240606162948.83903-1-muditsharma.info@gmail.com>
-	<20240606162948.83903-2-muditsharma.info@gmail.com>
-	<20240608172227.17996c75@jic23-huawei>
-	<CANhJrGM9czj0RL3OLCgRHEKc2QOjG9P0AZTrZxvYUk65TCpHRg@mail.gmail.com>
-	<20240611181407.00003f61@Huawei.com>
-	<c9c0d585-617d-4181-afa2-c5743848f5c9@gmail.com>
-	<20240615192348.182eb1b8@jic23-huawei>
-	<6e5d6734-eae0-49fd-a1ed-beda00e37209@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719161634; c=relaxed/simple;
+	bh=v+rKXPoMM+NgIN5MI2bPlzCVilLhrvQk7A8JsfCUxZc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UOVA7O6g0tnvbrGqS8LJyplr7rSnBPKRPbmxEwXzANgQ1CD4EwK5UyKvvR5P4iXp0mZtRBgbEmGmei66GByi0PYkroAiuWzRG2/CgWBqNVzL6FTd8O/hsanPDJHJYl75iErR0a6pPXtnIkfNbJHs64ZBuQ86/kWT3HlLbhj29eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=FZKSQqAt; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=E+CzwN+RZpYMqJ6tzL5pN6ap4pbapH0mHUpTrrmE0+Y=; t=1719161630; x=1719766430; 
+	b=FZKSQqAtUJmjoHBcKYKG9hjc0KA+azRdFZQRIgOO7kGndyITHS4WfdF8jCR7Q0eWRc5RydCnX5c
+	uax+dcicp6Ioz0/wrHU5aR7runAYZUMLa/8/Y2HoxFtkVph3szXO19JX1iRty3f0kBdzqrATj9Uwc
+	rkWJOk526t4ylJXSsESAP2w8sJMzn1lHVyYL7AhUwMt2VpDP460D/HhY+OuDYGMM/eASfOqNk2uAI
+	fdZYn1v9vWJAq10y5QLYC/kO/ypkAOQcTLmMdXBWl7pbA9VVA/KtnJGHnWNQaIOBUeIH8dD+FcEtj
+	vsGgX8r4fDzPub6Rne7mAs/eEWR6XSdJF8ew==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sLQTC-00000001U07-1pfq; Sun, 23 Jun 2024 18:53:38 +0200
+Received: from dynamic-077-191-125-192.77.191.pool.telefonica.de ([77.191.125.192] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sLQTC-00000000YxX-2uiW; Sun, 23 Jun 2024 18:53:38 +0200
+Message-ID: <9449319ebbcd59719614ee786f1abe18256d0331.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH] sparc/build: Make all compiler flags also
+ clang-compatible
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: koachan@protonmail.com, "David S. Miller" <davem@davemloft.net>, Andreas
+ Larsson <andreas@gaisler.com>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Date: Sun, 23 Jun 2024 18:53:37 +0200
+In-Reply-To: <20240620-sparc-cflags-v1-1-bba7d0ff7d42@protonmail.com>
+References: <20240620-sparc-cflags-v1-1-bba7d0ff7d42@protonmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
+Hi Koakuma,
 
-> > Gut feeling is normally people are actually cranking scaling of light
-> > channels up and down together as hopefully they are approximately balanced
-> > for 'white' giving similar scales on all sensors (by filters or fixed gains)  
-> 
-> I appreciate your insight on how people usually use these devices :) 
-> It's very valuable to me.
+On Thu, 2024-06-20 at 22:56 +0700, Koakuma via B4 Relay wrote:
+> - More trivial is to change `-mv8plus` -> `-mcpu=3Dv9`.
+>   This should be safe too since the kernel seems to require a V9
+>   processor to run anyway, so I'm changing the flag to one that is
+>   portable between GCC and clang.
 
-Pah, never trust me on this stuff.  I've not been on the 'ground' with
-real sensor for a long time and even then my use cases were far from typical.
+I just looked up what the exact difference between V8plus and 32-bit
+V9 is and it turns out it's not exactly the same [1].
 
-These days I just play with big toys (though having just helped moved them
-between buildings this week I can say that they are at least real and not all
-in the cloud).
+V8plus does not use VIS instructions and also has a different ELF machine
+type, namely EM_SPARC32PLUS instead of EM_SPARCV9 if I understand correctly=
+.
 
-> 
-> > and people would only need to care if they were trying to measure a weak
-> > blue signal in a red world. If we have a case that doesn't work well
-> > for that sort of global scaling (I can sort of see that as a possible
-> > problem due to the transition states not being possible) then we
-> > should make sure that one works!  
-> 
-> Yes. I think some users will eventually hit to a scale transition which 
-> will be NACKed by the driver. Also, I don't think this problem will be 
-> specific to the BU27034 sensor, but in some form this will be possible 
-> for many gain-time-scale type devices. I just don't have a good generic 
-> solution in my mind right now.
-> 
-> Oh, besides, it seems raining stopped. Time to turn off my computer and 
-> go out to the yard :)
+So, we should make sure that the above change will not affect the ELF machi=
+ne
+type.
 
-Wise!
+Adrian
 
+> [1] https://stackoverflow.com/questions/23506538/what-is-em-sparc32plus-f=
+or
 
-> 
-> Yours,
-> 	-- Matti
-> 
-
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
