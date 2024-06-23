@@ -1,131 +1,102 @@
-Return-Path: <linux-kernel+bounces-226001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57F09138F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F959138F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DF241F21A03
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:09:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F9911F21A27
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BF86EB7C;
-	Sun, 23 Jun 2024 08:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZoHaplOR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82B25EE97;
+	Sun, 23 Jun 2024 08:10:42 +0000 (UTC)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C131C6EB55;
-	Sun, 23 Jun 2024 08:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61B449633
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 08:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719130184; cv=none; b=kSjN2EzoZBWZAJm6813evcebUIBqml9mJFNiw19ibUW4BmI9lmoefpPg4zaGDpa5hJKKHxQ6nwnA8foyI6oW8GCta6PcgtlOF5r9OsWJb2/7dz8DOGa7c7rARe/EZHmU1C7NcX16rSA06OmuviTnfFfZ/b7aMBhMggBBR0ocg+4=
+	t=1719130242; cv=none; b=SubaCGUgUfDKWPowvJeHdWUl6xJMobkMIPPinLizQGc1taQtpZfLz1uuW7kk746B0+78Ln/4hvcRW97UTVlcD5lwKQug5uCkD6ddZB9XHy9dLc+oKruW81NDuW8HXDP4yUOAOXHf0jaxmMnP/qwq3hx4GcpGv78X39Fa4/aP2sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719130184; c=relaxed/simple;
-	bh=8G5ZgzbV0vjNrCMg3A32EmuZwZksI7exlwTcjhzWUZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HAwrO8RCCw7Rki5z2oZLSo0by2lSF9zMRgwppl9UWbx9Sr6N0D95XSlC5LMXRsnK8TlFFVfZtn42MF2afl+K4grqTTi0eRrF/6CgD4opNFXjNOVLr7ZogjgWQsZmWEjth28KMa1nB/sJ6/08VddWTB7/zc1Q5coiqOJFStIzwiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZoHaplOR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5CDC2BD10;
-	Sun, 23 Jun 2024 08:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719130184;
-	bh=8G5ZgzbV0vjNrCMg3A32EmuZwZksI7exlwTcjhzWUZ8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZoHaplORax60W+WkzsW2UPl643GGKfxk6QD4+9qTRurtj9WidUWjh+oFeSoq8aI72
-	 e429PDQOkI+pdi5aeYpYuf5HM6omm/lEkmFoBPU8j5w3fToUz8O7Y8o1tinyTZ4kU+
-	 GCLNaP++pS9mcu3cbdlheitGgKKQOpOi8tCOziE8hgGiqF6OHHpggTbjlfpHjrdZpW
-	 HC70oSEUw/omaVh0MDNn/CA6FIdX4ZR9/2y9IwMTOVICvROcRRerx5nJouBYZW3soB
-	 6HqHUmTICLnZW+PhP9VIXdljE7l7wALd4NLAeRzJqIisvaDQ+hZqBSDPmm0qAYIB29
-	 cb4WQMTs++GhQ==
-Message-ID: <59459f7a-846c-4988-a0f0-a64be217dbee@kernel.org>
-Date: Sun, 23 Jun 2024 10:09:35 +0200
+	s=arc-20240116; t=1719130242; c=relaxed/simple;
+	bh=kCK6IPv5OPzpGgedxrm6dWcFY/D5ctUj9i6OlvCN9xc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hRoAkPJ3PhqdfAzd0GoChxr2nJHU3nZR/QvyOhonGYM3N0056knlhtyog4bgQwPCYeyY0jk2FU6+ZEnFWQXUN+fvN1v4pVCvpnW2yBfaXJL6f3COIbxqUOC6VpYLXAlWk6eaEVnrIF4hmgK+/oVkpuyU8evFcSATZvKcjYw3uP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-79776e3e351so266907485a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 01:10:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719130240; x=1719735040;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WXvH3gyii/Xm7CIZXdZvEhVRkZXsV+/DxyPTAPTr/9I=;
+        b=ndSaGdHI0t2Gy4mrO6moMAGqexfeOaQvsvz8qxN/5ITqWdBVShKy680U3qkdQqOxwf
+         rOu1MMIqf7/wYN13IHYT9PruqO/Iab36POH4hXoL7i5+FiQbXIm3VZM6XeeSqAKZbdSX
+         I30mBwGIoynbf+ICCz2mDbuYOmpPzYRhXKtUY7JmBA13m6XgFk4sMlRzlL3qnapiy9pq
+         dRqZZULy02vQmNWaiG3qXHZkPqblYrY2enI+mmIDVHLu3p0DmYrkQcA4eAi3aEtkyBhi
+         JCZzZ8er0ahYqfYXitaam6F4oO3O+BtWsDv2Ob5Xtbv7TZFByx95IaQ4kgPguO/fXhq5
+         zAzA==
+X-Gm-Message-State: AOJu0YzNW1bHNdYiWFOA/dw8woJZq9rwF7+yiuX1OgXA4G9MSkuayumC
+	cFLKxURcJmwOugbwccf3h2OadTkK2EOM5ckhb1sNowPl778mehz1
+X-Google-Smtp-Source: AGHT+IH70lxho+dqQEWs7Khearrpx8fKhjx9wsOsLX2mF59q6/HE5jP2ruZyz0+FkLHwZJTP82t/6Q==
+X-Received: by 2002:a05:620a:31a5:b0:795:4e89:53b2 with SMTP id af79cd13be357-79be0dc262amr236489985a.70.1719130239654;
+        Sun, 23 Jun 2024 01:10:39 -0700 (PDT)
+Received: from localhost (c-76-136-75-40.hsd1.il.comcast.net. [76.136.75.40])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce8c4e83sm217904385a.57.2024.06.23.01.10.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 01:10:39 -0700 (PDT)
+From: David Vernet <void@manifault.com>
+To: tj@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [PATCH] sched_ext: Make scx_bpf_cpuperf_set() @cpu arg signed
+Date: Sun, 23 Jun 2024 03:10:36 -0500
+Message-ID: <20240623081036.51867-1-void@manifault.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] dt-bindings: msm: dsi-phy-28nm: Document msm8937
- compatible
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Krishna Manikandan <quic_mkrishn@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240623-dsi-v1-0-4ab560eb5bd9@gmail.com>
- <20240623-dsi-v1-3-4ab560eb5bd9@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240623-dsi-v1-3-4ab560eb5bd9@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 23/06/2024 01:25, Barnabás Czémán wrote:
-> The MSM8937 SoC uses a slightly different 28nm dsi phy. Add a new
-> compatible for it.
-> 
-> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
-> ---
+The scx_bpf_cpuperf_set() kfunc allows a BPF program to set the relative
+performance target of a specified CPU. Commit d86adb4fc065 ("sched_ext: Add
+cpuperf support") defined the @cpu argument to be unsigned. Let's update it
+to be signed to match the norm for the rest of ext.c and the kernel.
 
+Note that the kfunc declaration of scx_bpf_cpuperf_set() in the
+common.bpf.h header in tools/sched_ext already listed the cpu as signed, so
+this also fixes the build for tools/sched_ext and the sched_ext selftests
+due to kfunc declarations now being emitted in vmlinux.h based on BTF (thus
+causing the compiler to error due to observing conflicting types).
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: d86adb4fc065 ("sched_ext: Add cpuperf support")
+Signed-off-by: David Vernet <void@manifault.com>
+---
+ kernel/sched/ext.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 28f7a4266fde..8e8b44f2c74a 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5893,7 +5893,7 @@ __bpf_kfunc u32 scx_bpf_cpuperf_cur(s32 cpu)
+  * use. Consult hardware and cpufreq documentation for more information. The
+  * current performance level can be monitored using scx_bpf_cpuperf_cur().
+  */
+-__bpf_kfunc void scx_bpf_cpuperf_set(u32 cpu, u32 perf)
++__bpf_kfunc void scx_bpf_cpuperf_set(s32 cpu, u32 perf)
+ {
+ 	if (unlikely(perf > SCX_CPUPERF_ONE)) {
+ 		scx_ops_error("Invalid cpuperf target %u for CPU %d", perf, cpu);
+-- 
+2.45.2
 
 
