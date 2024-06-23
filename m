@@ -1,183 +1,163 @@
-Return-Path: <linux-kernel+bounces-225998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE14F9138E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:05:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C5A9138E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5386281600
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:05:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF28BB213EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6A36F085;
-	Sun, 23 Jun 2024 08:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946EC5F87D;
+	Sun, 23 Jun 2024 08:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Orp1t91x"
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tr5j8XDo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CDE17C7C;
-	Sun, 23 Jun 2024 08:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE541175AD;
+	Sun, 23 Jun 2024 08:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719129902; cv=none; b=GulOU+tva4SLnBVPsbDAE29lPvjzvorQah3x0Ts1vKvcFnEs1P2vZtzNR4juxt1keZ8Pn74q6ff/TQjpvJp28SOpqLo4SIduA4QZmulcPhW4i2WXwzTorPglqvEz61aleTUyGnxlt8yZYYTPACf6fdc/Ip3OTYt3fYMs92ry/JQ=
+	t=1719129986; cv=none; b=Hr3gT793oNmhPx8tyC7N+Lv5rtmXU9wNATW8B9nKsmwtLrgndNODs/whN9c3yE3VI1QbXwml0SV8DveIN7tGob11xlNw0J5KvD2ILMcRxJ0dawfvFTAZaTCljafJkCwDDuXIKwfO7JLcO7ifi7XUD/eYQjXrTSgtdI33RzH7BIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719129902; c=relaxed/simple;
-	bh=L+fBNEeK6lDWZjdsWdDStuilRXSXt+4gjCSKof+Ck14=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kRxtel2WHYnIhlDi9jdZjrKC29Jy72pduADLwYufj6ynynjnXUbYPMhhsFDz1dqpK3/yHFpjytHXyzgjzOglrEHdKGQPkyD8WW1zeStSL56VwcaoNOblgGNW4uRYqFHokHFpiWTnbDMZmKw6L3uFQ1I8v00eaoRAXNqiwlcXfas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Orp1t91x; arc=none smtp.client-ip=193.252.23.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id LIDRshykYqHypLIDRsPqzn; Sun, 23 Jun 2024 10:04:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719129890;
-	bh=iSV7OMQHyo5A+TPl27ELYTFtKHhEE1HTiDYIXwhqgZY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Orp1t91xeBDFmihYa8h5KObI0070Jlfu2IeYnVhCvZ+XoumsjKWG3Sou9P3enz2jH
-	 xL973V89/xBGmUwbMAeVm8DgZFq23vhXDoZ1dEV/rbsC+eX0C6kvejB3GxhiS47ZX5
-	 yko6epdo40nV+/wwXmQhPtuftRiFyT+yY0CisZEhfamXTAll26gV64OLAWcStmXEdR
-	 UajfaSzkoB8oDIRWjSaW7d9GzzB/5tQ8Hrs7w+nnCCBQjaB7Z5fH04Clzg64zduT1E
-	 CYRt3zeNZtxZTqkG53Pk8X+k10P/rGENhDkjcrwv9xiCr/q55Tel3m/JbonmWxx5wq
-	 FBNcSa5aciv0g==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 23 Jun 2024 10:04:50 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: linus.walleij@linaro.org,
-	Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v2 2/2] power: supply: samsung-sdi-battery: Constify struct power_supply_maintenance_charge_table
-Date: Sun, 23 Jun 2024 10:04:45 +0200
-Message-ID: <6caafd0ac2556a40405273b1a4badc508ea8e9b0.1719125040.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
-References: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1719129986; c=relaxed/simple;
+	bh=UOYqyx8Z7pHMjU/0127+Y6My6nfe2PgdCm0DtuH/jjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dQqxGVrV5FwmB/skD9iMKeN+Gb5Ipp8OhpM6TdHJYH9FmlQHeS7E2uw80A8xIP86+X3d0hjn/qNH5SE3xsnyMc0L3T+stJ446X6I/GM0f4i3Oory6GzFoxp3GRLyXu3I2Um72AdFV6BUFtp1p+9aKn+rOVYXFVzXV85XvF1TExk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tr5j8XDo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9E0BC2BD10;
+	Sun, 23 Jun 2024 08:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719129986;
+	bh=UOYqyx8Z7pHMjU/0127+Y6My6nfe2PgdCm0DtuH/jjg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tr5j8XDohxOG5RXvP6Caeff5Yt3CHlSXjcnea0kieSlkNElyxe7gLZjR7RXdEdZWr
+	 tsLPOdME0pvN/jWgUHo5/RoV/n0b1jOHAQR7tD1xgzlM16BX+/1ePHcwM9/i47Nz9I
+	 FNsLsbeeO3wc13Fptob+FrftGsXaAD+N2W7MDkB3wEQeZzz/n+f8jTk8G/3aPsweOc
+	 YS0OK7LgtxHmgI0Aol/PviVwxd2VjLaMjiHjZC3DxiF55eiZ1vxbMsjbo/o0PMM0yf
+	 +pZStQnIuRajMqI7IdMO/qF9zR4nKz4/nwX9oforgDgSWIMPFJcGYbNbrIKJkQIr5J
+	 FCfn8c9ohOOvw==
+Date: Sun, 23 Jun 2024 10:06:22 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.10-rc5
+Message-ID: <ZnfXfkZfI5iNZqBW@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CcDWrlTMmm+xypyo"
+Content-Disposition: inline
 
-'struct power_supply_maintenance_charge_table' is not modified in this
-driver.
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+--CcDWrlTMmm+xypyo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In order to do it, some code also needs to be adjusted to this new const
-qualifier.
+Linus,
 
-On a x86_64, with allmodconfig:
-Before:
-======
-$ size drivers/power/supply/samsung-sdi-battery.o
-   text	   data	    bss	    dec	    hex	filename
-   4055	   4584	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-battery.o
+the doc updates not only fix outdated information but also set the base
+for new terminology which we want to apply soon to avoid dependencies.
 
-After:
-=====
-$ size drivers/power/supply/samsung-sdi-battery.o
-   text	   data	    bss	    dec	    hex	filename
-   4087	   4552	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-battery.o
+Please pull.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
+   Wolfram
 
-Changes in v2
-  - Add Linus Walleij <linus.walleij@linaro.org> in Cc  [Sebastian Reichel]
-  - Also update ab8500_chargalg.c  [Sebastian Reichel, kernel test robot]
 
-v1: https://lore.kernel.org/all/02c6ad69a3ace192c9d609b7336a681a8fc7ba94.1717253900.git.christophe.jaillet@wanadoo.fr/
----
- drivers/power/supply/ab8500_chargalg.c     | 2 +-
- drivers/power/supply/power_supply_core.c   | 2 +-
- drivers/power/supply/samsung-sdi-battery.c | 2 +-
- include/linux/power_supply.h               | 6 +++---
- 4 files changed, 6 insertions(+), 6 deletions(-)
+The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
 
-diff --git a/drivers/power/supply/ab8500_chargalg.c b/drivers/power/supply/ab8500_chargalg.c
-index 55ab7a28056e..854491ad3ecd 100644
---- a/drivers/power/supply/ab8500_chargalg.c
-+++ b/drivers/power/supply/ab8500_chargalg.c
-@@ -1225,8 +1225,8 @@ static bool ab8500_chargalg_time_to_restart(struct ab8500_chargalg *di)
-  */
- static void ab8500_chargalg_algorithm(struct ab8500_chargalg *di)
- {
-+	const struct power_supply_maintenance_charge_table *mt;
- 	struct power_supply_battery_info *bi = di->bm->bi;
--	struct power_supply_maintenance_charge_table *mt;
- 	int charger_status;
- 	int ret;
- 
-diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-index 022d0e4bf621..8f6025acd10a 100644
---- a/drivers/power/supply/power_supply_core.c
-+++ b/drivers/power/supply/power_supply_core.c
-@@ -1072,7 +1072,7 @@ int power_supply_vbat2ri(struct power_supply_battery_info *info,
- }
- EXPORT_SYMBOL_GPL(power_supply_vbat2ri);
- 
--struct power_supply_maintenance_charge_table *
-+const struct power_supply_maintenance_charge_table *
- power_supply_get_maintenance_charging_setting(struct power_supply_battery_info *info,
- 					      int index)
- {
-diff --git a/drivers/power/supply/samsung-sdi-battery.c b/drivers/power/supply/samsung-sdi-battery.c
-index 725fbe09379e..b63fd2758c2f 100644
---- a/drivers/power/supply/samsung-sdi-battery.c
-+++ b/drivers/power/supply/samsung-sdi-battery.c
-@@ -613,7 +613,7 @@ static struct power_supply_battery_ocv_table samsung_ocv_cap_eb585157lu[] = {
- 	{ .ocv = 3300000, .capacity = 0},
- };
- 
--static struct power_supply_maintenance_charge_table samsung_maint_charge_table[] = {
-+static const struct power_supply_maintenance_charge_table samsung_maint_charge_table[] = {
- 	{
- 		/* Maintenance charging phase A, 60 hours */
- 		.charge_current_max_ua = 600000,
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index 5061eeecf62e..72dc7e45c90c 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -736,7 +736,7 @@ struct power_supply_battery_info {
- 	int overvoltage_limit_uv;
- 	int constant_charge_current_max_ua;
- 	int constant_charge_voltage_max_uv;
--	struct power_supply_maintenance_charge_table *maintenance_charge;
-+	const struct power_supply_maintenance_charge_table *maintenance_charge;
- 	int maintenance_charge_size;
- 	int alert_low_temp_charge_current_ua;
- 	int alert_low_temp_charge_voltage_uv;
-@@ -810,7 +810,7 @@ power_supply_temp2resist_simple(struct power_supply_resistance_temp_table *table
- 				int table_len, int temp);
- extern int power_supply_vbat2ri(struct power_supply_battery_info *info,
- 				int vbat_uv, bool charging);
--extern struct power_supply_maintenance_charge_table *
-+extern const struct power_supply_maintenance_charge_table *
- power_supply_get_maintenance_charging_setting(struct power_supply_battery_info *info, int index);
- extern bool power_supply_battery_bti_in_range(struct power_supply_battery_info *info,
- 					      int resistance);
-@@ -824,7 +824,7 @@ extern int power_supply_set_battery_charged(struct power_supply *psy);
- static inline bool
- power_supply_supports_maintenance_charging(struct power_supply_battery_info *info)
- {
--	struct power_supply_maintenance_charge_table *mt;
-+	const struct power_supply_maintenance_charge_table *mt;
- 
- 	mt = power_supply_get_maintenance_charging_setting(info, 0);
- 
--- 
-2.45.2
+  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.10-rc5
+
+for you to fetch changes up to 2c50f892caadc94ff216d42accd8222e172b5144:
+
+  Merge tag 'i2c-host-fixes-6.10-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-06-23 02:13:27 +0200)
+
+----------------------------------------------------------------
+The core gains placeholders for recently added functions when CONFIG_I2C
+is not defined as well documentation fixes to start using inclusive
+terminology. The drivers get paths in DT bindings fixed as well as
+proper interrupt handling for the ocores driver.
+
+----------------------------------------------------------------
+Grygorii Tertychnyi (1):
+      i2c: ocores: set IACK bit after core is enabled
+
+Krzysztof Kozlowski (2):
+      dt-bindings: i2c: atmel,at91sam: correct path to i2c-controller schema
+      dt-bindings: i2c: google,cros-ec-i2c-tunnel: correct path to i2c-controller schema
+
+Sakari Ailus (1):
+      i2c: Add nop fwnode operations
+
+Wolfram Sang (7):
+      docs: i2c: summary: start sentences consistently.
+      docs: i2c: summary: update I2C specification link
+      docs: i2c: summary: update speed mode description
+      docs: i2c: summary: document use of inclusive language
+      docs: i2c: summary: document 'local' and 'remote' targets
+      docs: i2c: summary: be clearer with 'controller/target' and 'adapter/client' pairs
+      Merge tag 'i2c-host-fixes-6.10-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Conor Dooley (2):
+      (Rev.) dt-bindings: i2c: google,cros-ec-i2c-tunnel: correct path to i2c-controller schema
+      (Rev.) dt-bindings: i2c: atmel,at91sam: correct path to i2c-controller schema
+
+Easwar Hariharan (6):
+      (Rev.) docs: i2c: summary: be clearer with 'controller/target' and 'adapter/client' pairs
+      (Rev.) docs: i2c: summary: document 'local' and 'remote' targets
+      (Rev.) docs: i2c: summary: document use of inclusive language
+      (Rev.) docs: i2c: summary: update speed mode description
+      (Rev.) docs: i2c: summary: update I2C specification link
+      (Rev.) docs: i2c: summary: start sentences consistently.
+
+ .../devicetree/bindings/i2c/atmel,at91sam-i2c.yaml |  2 +-
+ .../bindings/i2c/google,cros-ec-i2c-tunnel.yaml    |  2 +-
+ Documentation/i2c/i2c_bus.svg                      | 15 ++--
+ Documentation/i2c/summary.rst                      | 79 ++++++++++++++--------
+ drivers/i2c/busses/i2c-ocores.c                    |  2 +-
+ include/linux/i2c.h                                | 24 ++++++-
+ 6 files changed, 83 insertions(+), 41 deletions(-)
+
+--CcDWrlTMmm+xypyo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ3134ACgkQFA3kzBSg
+KbYPbw/9Ey6o45ZFS8G8SFCEn3CUSst8se3v1UE/Cn5mw2gAehELOqLn/f98AFAS
+2j05gkoD28TEglszRCIaWBSISSW2XM1xVDQ6I0szmSBJyJ/43ajy536wc4gVAENo
+BWGT8SxYCp6BM/x//hEx+sw3Ok1FKOTPb/pOZvcawXmmVXQbEA4fMPzHdRKSvFy4
+abY5UMwYT8z34BqfBzWWq/oOgvZTRvgeFpzvJGDlAHaEs7LOeqeWF0LwoRiHQ3Q+
+Mx03zbyy+r4fFKAY8UWUXWxVM/aBRVxhMp3CLfyRmq7tt7R4aru/v0P0GTawLtUU
+FFKBEDkjiBaXISMsoCORhX/3rkvqVJItGuX2m8jHIUpHwvSPn4zjjTB0yRcn84yE
+5MA0dQ8vngoP344EcBvN9zvAuTs0yzuv8mb7cVqSr4vf9ynkIwWEHkrI0M6U/Jti
+WD3/WXGPwv24xAkyNQKlmcM5EH19VZwKhwr3oTyUuh6t4af6PeTCUwM/614vAbaU
+hKs3GZ+DyhPCHXX75dqWvjkA/yv/ay2E/MhnWDWMICU15tKN78CizXbEUM1vaieR
+tB3BY359gdMBCxPnU1OVDkXj2MdQN4bPPNSSbTuHl4x/5dBZZHdDx84VNSKzEhf1
+tmn8Qwob2VolyPH+qvZNTWrDzJpP8AJfkKGWz6HTVGW35JEgG8w=
+=umm3
+-----END PGP SIGNATURE-----
+
+--CcDWrlTMmm+xypyo--
 
