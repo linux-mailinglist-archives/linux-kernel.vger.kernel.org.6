@@ -1,119 +1,162 @@
-Return-Path: <linux-kernel+bounces-226057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7323913994
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:34:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BF0913996
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A2A1C213B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:34:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BFBD1C20977
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EF912E1D2;
-	Sun, 23 Jun 2024 10:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9827712DDB8;
+	Sun, 23 Jun 2024 10:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9LOCJSr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4aRN9jK"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7A33EA69;
-	Sun, 23 Jun 2024 10:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A30512DD8E;
+	Sun, 23 Jun 2024 10:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719138850; cv=none; b=U3Tn7Sl7kjx8mn+mzeInPmqYFTHyJxHphOEXxM/r+SQoRdJrxvhIKqeuC2DVK1Edbd2MYF9Jn7CCtgtE+PpRojXAeaQW5uH/JiXCKyRqJHNtdUGtQVO+LjtPpCeC1rE/i5KWoHAuys52rL9lHUXaO9ZE53ChzVZox4JC+MIIAeQ=
+	t=1719138920; cv=none; b=u7eNZeqFQ8c8OiEfSATXEBFpOaoubwpN4SbDCab4hs6WRZkEZBKcSFNr4EHcHxvuN6wP6n7BZBNAXleP/LStwLxf0C9cqAv0bFbIaf7ujJjJiOAq+iYi53Fha7HhL/eijDvd/rIYxgQsVcNcgdWuhn6lG/pudsS4ZgEAnxN8nxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719138850; c=relaxed/simple;
-	bh=WMDfPBqv8mCqyLWf4aN45hzN/sTkaqumDzdg1ZFXJhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WYfvGaxwafRbw4TXjLMxCzq5z11lLTk0A66Zjue250wrkwwgWU7e2tH/xzBoB9nz5aBhzOwDzSsJlujvXJDH+MA433gtjMj5iYuACMDhY80Y1f65ILeuXlk0IdvxAH9XTN742+JKRJtP38n6Rv7gOIkqS2b8LYu9veRjJ995SLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9LOCJSr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7208FC2BD10;
-	Sun, 23 Jun 2024 10:34:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719138849;
-	bh=WMDfPBqv8mCqyLWf4aN45hzN/sTkaqumDzdg1ZFXJhI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=B9LOCJSrdS9WbCc2qReyLJXgIezc9p3zujoEjhIsm9a4z/MUbQG+4GJxC+ngwJ+8p
-	 fi8xzxsdm1Mc1QcRy6VeyIx1giM30gAE8V/yRrnYCO9Qf0I4pIdybeWoWLKyl61Ru2
-	 4Qh4aAYRiSn7loy5ZW/9kM8Avux3U3LuE2+VVLJxEnUD6f8syDpePcw9Dn0FFVvU1o
-	 2jn3RY82T/fVwHJz4e8vOXig4i+C2KrDK92AjgjzI33RrF91nRQgEmHLdRmxldw7j5
-	 tow8+XDmAhxRXB3UzG+g/YMzCeBuJ6NDFw9VWQ1+lXNTVFtMa8nxE43++EEtUemwZO
-	 BplUhPPgn7ctA==
-Date: Sun, 23 Jun 2024 11:34:00 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Ramona Gradinariu <ramona.gradinariu@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, "Michael Hennerich" <Michael.Hennerich@analog.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Jun Yan
- <jerrysteve1101@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Mehdi Djait
- <mehdi.djait.k@gmail.com>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] docs: iio: add documentation for adxl380 driver
-Message-ID: <20240623113400.5dcc1d0d@jic23-huawei>
-In-Reply-To: <20240621101756.27218-3-antoniu.miclaus@analog.com>
-References: <20240621101756.27218-1-antoniu.miclaus@analog.com>
-	<20240621101756.27218-3-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719138920; c=relaxed/simple;
+	bh=FxJFq2Zu0xdJEBU+ACbCyheOIBxfVpNwZGkLyj9+2qA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ak6FkG+9lveghXasj+swx96uSW9RQPQsnCTWmiEZOpRoSPiq4bYj9LbVIpHJGn+ytL7wtWLuK5ZcribrBAhxmz+bF0IZfTzllIVQV0L6l0an/T9ipVkpX8pQ8NljY1ol/2QT7dsQHpTFLRxSK9JVioRfu2ehiEuKgjLYr/Kp4ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4aRN9jK; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-421f4d1c057so29313805e9.3;
+        Sun, 23 Jun 2024 03:35:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719138917; x=1719743717; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RDlSa6zikaW9BcixltoR0hCmj2l7mTdd8TF9b5/qKaY=;
+        b=Z4aRN9jKCzr6s1oYRBiZ+CwNoYOoU1BXAhoEFP6ZkQ3Gp8LTS+xoQetsjJUFmIY7T0
+         UZ++jaurrq6+2XqyhQW7zdkRg4/yJA1cjq35hk3ReMk/q0aOaypF/vPM3ToRS889yOvW
+         n5NMDPDoECPCx9ren/iutJw6PuaXUUlU+a+DcPXslfoixt9z7/EXr3+SQH1KfAwgr8rq
+         C6dtp7tom7c1vugf2XkQx59uMwXSZ7TPrUEiYRFHH+FKF8W2TrCS5l1A/MUM5mWJWGjs
+         O7zS7IjIzs5ErGT8SR4DwE2vQW9QtFLt9383eP4JU1fRti4Z6qoo94GMuIAJihm4DljC
+         cQWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719138917; x=1719743717;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RDlSa6zikaW9BcixltoR0hCmj2l7mTdd8TF9b5/qKaY=;
+        b=E0oskPX35EG4F6wF+D9iWYGaEQ4UrtHyBKPLvVAob093goVOyEOC6PpXJK2DUqUTXJ
+         YI9qfoEB/VXs0EbOHo2ttdkL7R+Fl9fJ95NSzPd2ibpR4EZ+ZlZi182pjctG9IfNL0as
+         afFxIh/YbX/EiaOhQEKFshYy1ABL3WkLP6SxpA7DBA+wmxW9OkkgkycnWsHeQfLTXORb
+         9Q6sZXujzqXnzvqWRSY8b/jKTJfw9zoRIfJQZkB7pFDagOuZMzMJKdTiQWedyBOaMuOz
+         DLg5ZufKzNdDAK/kK4tbUtsXPORKsnl2Fd6Yy0IaN7lFUrbO4mrJK9L3JB/bSS90q/9m
+         CT1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUcDn2cadvryEkZUt5Xfi8xePhosErSDct5wqvvO2oUsccCVivki+2dQ2zoYM6i2n7cfnEUQPz4XzkzkFb9nm3xIpnGeFxHferqq4F4
+X-Gm-Message-State: AOJu0YzhwvY3pLraZ3k/cp/fAowxHBNDlghBMPWBPYJzkMQCM46Ry7Ga
+	oLcsrtbfcNoC3aYMQxyR5nlD7lSaiXODf3A6zGBczJFAoWGsS24m
+X-Google-Smtp-Source: AGHT+IEtNHcmbv7bOpkQl0Yk9zopa9sGSiM7q6O2LsF3za6ZlKck7Q8fH0abfO+3JFGEMoAky8bZmA==
+X-Received: by 2002:a05:600c:28b:b0:421:7e88:821 with SMTP id 5b1f17b1804b1-4248b9cfab2mr22346775e9.32.1719138917411;
+        Sun, 23 Jun 2024 03:35:17 -0700 (PDT)
+Received: from [127.0.1.1] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817aa340sm94789735e9.19.2024.06.23.03.35.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 03:35:17 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Date: Sun, 23 Jun 2024 12:35:11 +0200
+Subject: [PATCH] usb: typec: ucsi: glink: use
+ device_for_each_child_node_scoped()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240623-ucsi_glink-scoped-v1-1-f0fdcfec69bb@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAF/6d2YC/x3MQQqAIBBA0avErBPSoqirRIQ4Yw2FhkMRRHdPW
+ r7F/w8IJSaBoXgg0cXCMWTosgC32rCQYswGU5mmak2tTic8LzuHTYmLB6Ey2OjOu956rCF3RyL
+ P9/8cp/f9AHQciZljAAAA
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719138916; l=2145;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=FxJFq2Zu0xdJEBU+ACbCyheOIBxfVpNwZGkLyj9+2qA=;
+ b=hljqv3P3CBVnJBFBidEb5lVJ9MXZkFW+wdMEE1JdNkPeto1e/9jCMEvwNvQnjThjliNzo47NK
+ Qq4jZqtbbGqCX/wElrofL5zzssYNpuwPASavvEVPk6WDSqZEa2NrWxN
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Fri, 21 Jun 2024 13:17:05 +0300
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+Use the scoped variant of `device_for_each_child_node()` to
+automatically handle early exits.
 
-> Add documentation for adxl380 driver which describes the driver
-> device files and shows how the user may use the ABI for various
-> scenarios (configuration, measurement, etc.).
-> 
-> Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+This prevents memory leaks if new error paths are introduced,
+as no explicit refcount decrement via `fwnode_handle_put()` is needed.
 
-Looks good. Only comment is to make sure you run a docs build test.
-We had one similar hexdump case blow up a few weeks back.
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+This patch is a follow-up to the recently introduced commit c68942624e25
+("usb: typec: ucsi: glink: fix child node release in probe function")
+to account for a safer approach to iterating over child nodes.
+---
+ drivers/usb/typec/ucsi/ucsi_glink.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-If you already have, just stick a note under the --- in the next version.
-Everyone hates building the docs because it's slow so I know I sometimes
-forget to do so and suspect others do as well!
+diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
+index 2fa973afe4e6..d41c9caa84e0 100644
+--- a/drivers/usb/typec/ucsi/ucsi_glink.c
++++ b/drivers/usb/typec/ucsi/ucsi_glink.c
+@@ -333,7 +333,6 @@ static int pmic_glink_ucsi_probe(struct auxiliary_device *adev,
+ 	struct pmic_glink_ucsi *ucsi;
+ 	struct device *dev = &adev->dev;
+ 	const struct of_device_id *match;
+-	struct fwnode_handle *fwnode;
+ 	int ret;
+ 
+ 	ucsi = devm_kzalloc(dev, sizeof(*ucsi), GFP_KERNEL);
+@@ -365,14 +364,13 @@ static int pmic_glink_ucsi_probe(struct auxiliary_device *adev,
+ 
+ 	ucsi_set_drvdata(ucsi->ucsi, ucsi);
+ 
+-	device_for_each_child_node(dev, fwnode) {
++	device_for_each_child_node_scoped(dev, fwnode) {
+ 		struct gpio_desc *desc;
+ 		u32 port;
+ 
+ 		ret = fwnode_property_read_u32(fwnode, "reg", &port);
+ 		if (ret < 0) {
+ 			dev_err(dev, "missing reg property of %pOFn\n", fwnode);
+-			fwnode_handle_put(fwnode);
+ 			return ret;
+ 		}
+ 
+@@ -387,11 +385,10 @@ static int pmic_glink_ucsi_probe(struct auxiliary_device *adev,
+ 		if (!desc)
+ 			continue;
+ 
+-		if (IS_ERR(desc)) {
+-			fwnode_handle_put(fwnode);
++		if (IS_ERR(desc))
+ 			return dev_err_probe(dev, PTR_ERR(desc),
+ 					     "unable to acquire orientation gpio\n");
+-		}
++
+ 		ucsi->port_orientation[port] = desc;
+ 	}
+ 
 
-> +Obtain buffered data:
-> +
-> +.. code-block:: bash
-We recently got bitten by a processing issue for one of these hex dumps and changed it
-to unformatted text.  Make sure you do an HTML docs build for this and check there
-are no similar warnings (honestly I never really understood what was going wrong with the
-parser).
+---
+base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+change-id: 20240623-ucsi_glink-scoped-2d417fc9afd3
 
-If you do need unformatted text
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Obtain buffered data::
-
-plus the indent works. 
-
-> +
-> +        root:/sys/bus/iio/devices/iio:device0> hexdump -C /dev/iio\:device0
-> +        ...
-> +        002bc300  f7 e7 00 a8 fb c5 24 80  f7 e7 01 04 fb d6 24 80  |......$.......$.|
-
-> +        002bc310  f7 f9 00 ab fb dc 24 80  f7 c3 00 b8 fb e2 24 80  |......$.......$.|
-> +        002bc320  f7 fb 00 bb fb d1 24 80  f7 b1 00 5f fb d1 24 80  |......$...._..$.|
-> +        002bc330  f7 c4 00 c6 fb a6 24 80  f7 a6 00 68 fb f1 24 80  |......$....h..$.|
-> +        002bc340  f7 b8 00 a3 fb e7 24 80  f7 9a 00 b1 fb af 24 80  |......$.......$.|
-> +        002bc350  f7 b1 00 67 fb ee 24 80  f7 96 00 be fb 92 24 80  |...g..$.......$.|
-> +        002bc360  f7 ab 00 7a fc 1b 24 80  f7 b6 00 ae fb 76 24 80  |...z..$......v$.|
-> +        002bc370  f7 ce 00 a3 fc 02 24 80  f7 c0 00 be fb 8b 24 80  |......$.......$.|
-> +        002bc380  f7 c3 00 93 fb d0 24 80  f7 ce 00 d8 fb c8 24 80  |......$.......$.|
-> +        002bc390  f7 bd 00 c0 fb 82 24 80  f8 00 00 e8 fb db 24 80  |......$.......$.|
-> +        002bc3a0  f7 d8 00 d3 fb b4 24 80  f8 0b 00 e5 fb c3 24 80  |......$.......$.|
-> +        002bc3b0  f7 eb 00 c8 fb 92 24 80  f7 e7 00 ea fb cb 24 80  |......$.......$.|
-> +        002bc3c0  f7 fd 00 cb fb 94 24 80  f7 e3 00 f2 fb b8 24 80  |......$.......$.|
-> +        ...
 
