@@ -1,54 +1,47 @@
-Return-Path: <linux-kernel+bounces-226133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A7B913AAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:53:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E05913AB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06FA71F21933
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB402281A30
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A1018132D;
-	Sun, 23 Jun 2024 12:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61A618133E;
+	Sun, 23 Jun 2024 12:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h7CSl/lt"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1VrMHeG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D305084D11;
-	Sun, 23 Jun 2024 12:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC93D181312;
+	Sun, 23 Jun 2024 12:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719147190; cv=none; b=O2oJtADA8eiD9YOF/B2Q69ZAzIs/vwpcjYf5u9eKFolFWSgYfc7DTjhHSIUpiMsAhWMDgug5cRvkyVB8BQNwPNQGjk8KmuXvOQW6Wqe39iz2eskDCNUuoHTfD3YWVuSXSFu0QxRUysGgDF8jdDYYRRhv2zb1FRZHsM9iKS86nRA=
+	t=1719147204; cv=none; b=umn/bxthtdKhS2msErvcYlrwh0y5W8w4HYcfEBbBAUhlVkNjdRQsHdHM5LuX9loycyT30mFG/HbyhfQG1WkbJ6TrvYjHS14US55HCuvLm55JntM+t7H6kM+IVw1vzhmh+iLoNMoviSsmGU9oJ0eKs5ezT/Pr6VidqzDejYwopUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719147190; c=relaxed/simple;
-	bh=tg52MDDLlN/QzSd5br71obyGWmskQ0gXtkdQIAlXheE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=HV3uQgVOHjyaz6tQQr2U5F8FMdcGFpUIxGLPgeVBCu1gs1c+u/V9yT1QcypjpBMj6ahysdMBN8EbXmZxtcG0MYS7c6BY1uMiN2RCQH9hx/rntJRtvSpPWtW3RRxsT9vOTZfb3x1qIDruk8U3wZqu4AYGSJlWkjyJZbd9PYy5Erg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=h7CSl/lt; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719147167; x=1719751967; i=markus.elfring@web.de;
-	bh=+e+KUzTHhhBB5U7l/lkuGhQUSnwTILvvurkTRpR4Wj4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=h7CSl/lt4mctAPDSeosmwl6Skrsb3OvDu3TfM24qvEBcTk/9gzSt7/lh6xjoB0GH
-	 cs10UCpedyc6ByYejHlCSO5SHr0VDdkJLKSfPB5PE2eSO81HbO/5+B4hZbQ+5t+rF
-	 D1i6cIg0MzBWRS9EsEHbxEyKYfcY30ndW/1dxS1z6HBZaOSulun19mv1Iy6cOjVbJ
-	 0DFuM3sOyjUKXD6ArJ3VJG8A98y8/Anl05vy1lA7DD3NnTdxkU3Xu5941ip5l9FU+
-	 ZVKbosbDa4/f3FacHlcoWfBZPHnQvPxdqd3HuVe/uyH22O1KTgphIqtPWbjjgYCqn
-	 AUtQ3dz6Dfttn9mbtw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MeUXg-1svnvG3kOK-00mLLV; Sun, 23
- Jun 2024 14:52:46 +0200
-Message-ID: <1bce6bf8-0010-4233-bbdd-4b33fde90c10@web.de>
-Date: Sun, 23 Jun 2024 14:52:44 +0200
+	s=arc-20240116; t=1719147204; c=relaxed/simple;
+	bh=7psjLZBIi/OMT9tAC6CXxcU0ylmhMM6sdzBr7izDH8s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QKfDyqL4QLBseTSvPbRBu8uQhZjSYuwpJps3WvdERfvWKPMzYn2ifW7fFmFvzLnhHhPFb3N5Zy2gx71FU3Z3wWrLq+iBFSsNvKKiPR4YlLJlMYfY9SzTvDbnO1O3F80YHqNIflXM82cG5FbEAyst6YXgpP2l2vK7/5mpeNgkwW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1VrMHeG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92274C2BD10;
+	Sun, 23 Jun 2024 12:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719147204;
+	bh=7psjLZBIi/OMT9tAC6CXxcU0ylmhMM6sdzBr7izDH8s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=o1VrMHeGHRgVHtPYbdbKtWUGf9IiM+NMUVW/GNZOsZ/BV+G4cqCqwHsgMGL9GXalj
+	 1liCyXdXwYfFFs2iT6zEgkFJMo2BnOirTSU4OLo1zKAkXFwbkuHxkKnyuouOhPifJ3
+	 yqYqgwbwG8ZYLx/SpT/od/HaEEXiXhqjNP3TmF02oJNqM60vNu0rBqMKsEBhXJ3/7v
+	 gXZhz1tIRnXhplHPJVjDicdocj5rYpbWotPvjhX2ftiEpNT5qmUQCjDLSCulupEORA
+	 xxBC+fKn3bgMNJC/dNKorjQ6U1JaVovGN7Cz0Jvf0ekA+zDVu/IEpHIVJBTr0mtkFA
+	 BMBVIssFuw+4Q==
+Message-ID: <7d69e98d-a870-4200-8f22-2a16fcf02794@kernel.org>
+Date: Sun, 23 Jun 2024 14:53:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,58 +49,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, linux-fpga@vger.kernel.org,
- Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
- Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240623074019.2083481-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] fpga: dfl: fix potential memory leak in
- vfio_intx_enable()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240623074019.2083481-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: freedreno <freedreno@lists.freedesktop.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ Rob Clark <robdclark@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio
+ <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
+ <20240623110753.141400-4-quic_akhilpo@quicinc.com>
+ <a458a3a7-2b6d-4032-949c-b2c021d339e8@kernel.org>
+ <20240623122856.kqf4x6mft74hzk7y@hu-akhilpo-hyd.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240623122856.kqf4x6mft74hzk7y@hu-akhilpo-hyd.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nJ9nL0iMXGQKoCo2kyKm2HzyM2UwCaAcKDxlRIYJNU1F4CEAKpY
- 1XNrl02U76cGnvfRvsgICbKLoOhTAQsLFau2cSHOjPZWAxGBUiYvis7O9/vCB6G6motK2+S
- gsREbuy9QFaVRLtQ636icIzPLLyl9LDCFxIknzzSa1e/6bMaQ26J9YhTvceqdrbkDXwMlRv
- oM+2EwTzImsWDcRp835mg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0FkaZsv/e3Y=;Csa9H2nAi380G/rRZAO4aYD7VvG
- XfUajr18iHQZZtgM7Gmh7NkpuIy1lCAhXBck48jEt/7k5E6kCcZLZ7JHenVSHBOWAwRKBlFow
- HPamh13rkikLuV2w0KdEytDxdXGH00vmr/xPmDgzsjoWvjQRZQQs8tqp9Dsmio8XSG5lNoL0r
- frMan746qHgY/h/vQ1UySCBukvaV4viFLadcZEod9tLBve33mwJ+m4xIu91z+jkJBIqjyueQJ
- v+E24ZEwIjE//nBldd5I7JUGmu+ACv1RUlqzdcyiTjs9qQfuSpFoGBuWIt6m0YUu8umyxkNtU
- YWXDa4QNAdDvVkCNG2Vlim89cTTcvV82GIE5hebzLp2o41rBNVfzGHT0ciPe7qSmRzUKZKxJT
- oO4nxEfDe4mOUjfLksSrA6bE5xKWshSUYIKSzD/Bs90V1/6Wr2ZNvT33Ro3BEPwCOrGMoQfYa
- a3qHe45vnWdDJaivlxs8DtGsOBurGxF9mtweSxa713Xu9UYaWmM3UX9It5848DBZaCK/fMjaB
- pPm9V+JfG5r8tJCoEOLphh1aKzZ7VM1MLKft966ZnxmOkJbHM49TXgGK4oPiepQwN6n5FU4MK
- nu1rcUhT4bI7HAlkxEA/+/3M8rctUUrvakaBQhjQILx9y/85jipZV3dVWjzj9Ywnl63Wc+b77
- IpCn7JSkJ3SP/OmTWvcq9cxWkIUKVZsCh3Xno2teZoZgI8s27cGMaoyf6HMBa6aeFCP4slpM3
- FlPBxETk6ayETrGLML06x3nBBX3nWvS0GzCkDNFQiskgcrUx45wIrTFxXkSFm6JGC1wBaPaev
- l04JkzNyNdgty8s5juXrXQrfkBm7v0W7G3oYMGjmtve50=
+Content-Transfer-Encoding: 7bit
 
-> We should free 'feature->irq_ctx[idx].name' to avoid 'name'
-> memory leak when request_irq() failed.
+On 23/06/2024 14:28, Akhil P Oommen wrote:
+> On Sun, Jun 23, 2024 at 01:17:16PM +0200, Krzysztof Kozlowski wrote:
+>> On 23/06/2024 13:06, Akhil P Oommen wrote:
+>>> Add the necessary dt nodes for gpu support in X1E80100.
+>>>
+>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>> ---
+>>> +		gmu: gmu@3d6a000 {
+>>> +			compatible = "qcom,adreno-gmu-x185.1", "qcom,adreno-gmu";
+>>> +			reg = <0x0 0x03d50000 0x0 0x10000>,
+>>> +			      <0x0 0x03d6a000 0x0 0x35000>,
+>>> +			      <0x0 0x0b280000 0x0 0x10000>;
+>>> +			reg-names =  "rscc", "gmu", "gmu_pdc";
+>>
+>> Really, please start testing your patches. Your internal instructions
+>> tells you to do that, so please follow it carefully. Don't use the
+>> community as the tool, because you do not want to run checks and
+>> investigate results.
+> 
+> This was obviously tested before (and retested now) and everything works. I am
+> confused about what you meant. Could you please elaborate a bit? The device
+> and the compilation/test setup is new for me, so I am wondering if I
+> made any silly mistake!
 
-1. Please choose an imperative wording for an improved change description.
-   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n94
+Eh, your DTS is not correct, but this could not be pointed out by tests,
+because the binding does not work. :(
 
-2. Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
-=9CCc=E2=80=9D) accordingly?
+I'll fix up the binding and then please test on top of my patch (see
+your internal guideline about necessary tests before sending any binding
+or DTS patch).
 
-3. How do you think about to use a summary phrase like =E2=80=9CAvoid memo=
-ry leak
-   in do_set_irq_trigger()=E2=80=9D?
+Best regards,
+Krzysztof
 
-4. Under which circumstances will development interests grow for increasin=
-g
-   the application of scope-based resource management?
-   https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/cleanup=
-.h#L8
-
-
-Regards,
-Markus
 
