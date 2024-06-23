@@ -1,145 +1,140 @@
-Return-Path: <linux-kernel+bounces-225970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F083913882
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:13:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF15913890
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C01401F224EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:13:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81F9F281E8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540E13FBA7;
-	Sun, 23 Jun 2024 07:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897C44D10A;
+	Sun, 23 Jun 2024 07:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE1KynkP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dJyVZN+J"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A64527453;
-	Sun, 23 Jun 2024 07:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E774F6EB7C
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 07:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719126802; cv=none; b=t9oHM3NffARsAX3rgaRXvs8oXmvRfRZCGB2Z+nzX4JjeWwcmhN9qS1ekuh81dYNO9th+SJ0S5DhtQqGu4sOjt+HpH8Fsfs2JliFFVn1wQV/IrYk42QX21WEGf+12AM+CDnMs9/8ygVna8H2wBuI2df/v9sK3JCfd7m8BtYTEzQA=
+	t=1719126856; cv=none; b=qGCXSOhgj+jl50jdd9mKmHCKf+ENihQncUuv8Q5w2ltGt/2h2TWiLWrgNElYOjxHMTCJx8iuxI0i+t1nTUbkuaBl9Ek4dcSpyRpNhWC+/Yk4lsBIhKZ7NEXKIOVwUe4HqEBZ0X1VUAG5v3Emel1TU4xg15Y1toG6s3X9EHEuCoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719126802; c=relaxed/simple;
-	bh=5F1//u0tDWRt1d1SAO22qPQDJHCAnmLcpWF+bCIBLrE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pql5mUubS5dGJukdUnl0ZU4qtV1GYDYe0UbQeNdyGvIa8MPi6NrmJqlTRUpfJv3+vxcNQyxzyAIjOwSJsMzig6SsUi8jpBP0tM/y/7r3hnFIHMRmWnbh0AUPhT1NFUZPOb3alEUZq/6HJAnccl2CC45X/uf+ggk/1fJ1rfiyaIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE1KynkP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8641C2BD10;
-	Sun, 23 Jun 2024 07:13:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719126802;
-	bh=5F1//u0tDWRt1d1SAO22qPQDJHCAnmLcpWF+bCIBLrE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OE1KynkPUfGDikNCnGYaijstv52dMQrAoptjMCudtwOVe6eFj+fm5Pj+/o1mU8r7E
-	 iBivAoBnIP+gVQBHCof7sqxa53rn1BV4o2V2CAwPx9LtR7/8DZuHkGXywHgORdtcFz
-	 hGmODzHdSVLJAM5Ud2FJR1yyOQhjugT/gH3oLIIAsF/iw2oZanc/1NhhCu/rj7HIq/
-	 Ox4L2+Oao5lFHqI8hkQMmoeF2TKwOrkaniGflhIzc586DFNnYiSuD3ocNLksCUC7nM
-	 GuGFDaabtliNdmtcW4UdBFhAuyz/2ZSVHy/+Xm5uBNUV2oBN0wsL+xsCmX8GHIIzZ0
-	 uCrk6MwflwMDg==
-Message-ID: <0a5badd9-28b4-48b4-95e3-409ea808e090@kernel.org>
-Date: Sun, 23 Jun 2024 09:13:13 +0200
+	s=arc-20240116; t=1719126856; c=relaxed/simple;
+	bh=ScNvpn6q8Btg9GUETewQRHhi5kSZsX/tFN9YxCs/Erc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nVqzjCyAqMcsAJCpPT230ViMsyJoNixVuD2CFr3nH9e1hq+CU0rJg8TG896jcYaw38QezpkC8kbX8pqKRCAhD71AIV04Mt+HpsDYVJ0XaZE9LIkzsr7wXQQ/KTDfI0kV+pM8mmbUx8F1j5O1FMlsL9S8U8ZxFcZLVluR8Rn3al8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dJyVZN+J; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so37196531fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 00:14:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719126853; x=1719731653; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NdK+Z57kLe+iVSXD6oAbe65mu24X+W08m/s2wPEPRiY=;
+        b=dJyVZN+JRGf20oXp08xdfG3HiA/RsT99nCo1SdogdEorSOvy/EWmhZ6TFHk36dnfwT
+         1rHWr9ClbyrPLVfqPWwPqY2AGhRTk8AkwaguVhv2dghzpr+Oenz8fSXu4PEHJ1chAHAH
+         RHtz4d39bMs+IcShMhWimOo/ckVdFq7Nh1DExB9h2wrOGPDS/MZk6bVvBK+rEwQb7Dz/
+         u8em779APPyXbclF3ZBMDw5yTdMZyMqjdOKFafpNhDb2TdzVhv+hI12w393RNCH9eMie
+         hWo5qwlTUaPg+0QbsWVHrMcbEPlO51IhmeeGSQ8qjUcdQ9xeLJ/lPrdgEsjFufxnyGZX
+         S9gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719126853; x=1719731653;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NdK+Z57kLe+iVSXD6oAbe65mu24X+W08m/s2wPEPRiY=;
+        b=ISNEX+IhWxNWbuwPvajiYfNFpMdS6OwggwK+csMKvuSamK4ZIIqYJAOGvuUb1xn/UW
+         srxbAMk5CFnJZwd2eap96g091Zom0tlx7wce0yHH2Eb15tTV31r2Pcf6q7ZDZMg+Kpgb
+         iFokIHBrqPzy16zySnuC9rn5tKfRsjBbq7u2yMmrkRV0Lp/1K/QZDAtoqah7G5xu6cT4
+         qEo6v4wdPTIIt0xAcleett7Go3pisuiRLPFNOJ0Ozxhc3uwy2ATwqa+SCGDKa0NTG5jj
+         wDI1bqpk2d84lixgq1BALrAMCN3U5MXugpxN0wQNN7rW2dYUZYwKyVYPYnXfMZaHOw8J
+         hm3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVyVVBjn/jxzGuYRlJuVm4YCFx3AihDav88zfztf8xtVp12WICi6b3k+UbRZSSv5CJy/BZTGJ3QJFOhf2GZuVApfCiRw6H1lVHRPXUg
+X-Gm-Message-State: AOJu0YyEPrBG5K47x/7VtMnYH5E4zdTSA29LoOMmHsnBGjKFCviqtwWz
+	SMi2jacrLcWm4dY1sI/xwWfv3wq2479tgLRBQtES8hHuIpr7un9GyZVN721dh/c=
+X-Google-Smtp-Source: AGHT+IEKqxbvtWfQPSdbxyZOKoTKzOfta9UYAGWkjh4gPijepxo+y2Odys4DRzztDMFEyCfQKNkPDQ==
+X-Received: by 2002:a05:651c:152:b0:2ec:5603:41a with SMTP id 38308e7fff4ca-2ec5b36b266mr7424131fa.2.1719126852954;
+        Sun, 23 Jun 2024 00:14:12 -0700 (PDT)
+Received: from umbar.unikie.fi ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec5b031208sm1886861fa.26.2024.06.23.00.14.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 00:14:12 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: robdclark@gmail.com,
+	quic_abhinavk@quicinc.com,
+	sean@poorly.run,
+	marijn.suijten@somainline.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	quic_rmccann@quicinc.com,
+	konrad.dybcio@linaro.org,
+	neil.armstrong@linaro.org,
+	jonathan@marek.ca,
+	swboyd@chromium.org,
+	quic_khsieh@quicinc.com,
+	quic_jesszhan@quicinc.com,
+	Danila Tikhonov <danila@jiaxyga.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Add MDSS and DPU support for QCOM SM7150 SoC
+Date: Sun, 23 Jun 2024 10:14:04 +0300
+Message-Id: <171912674297.840248.14141240302342567945.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240614215855.82093-1-danila@jiaxyga.com>
+References: <20240614215855.82093-1-danila@jiaxyga.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] clocksource: realtek: Add timer driver for rtl-otto
- platforms
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, daniel.lezcano@linaro.org, paulburton@kernel.org,
- peterz@infradead.org, mail@birger-koblitz.de, bert@biot.com,
- john@phrozen.org, sander@svanheule.net
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com,
- Markus Stockhausen <markus.stockhausen@gmx.de>
-References: <20240621042737.674128-1-chris.packham@alliedtelesis.co.nz>
- <20240621042737.674128-5-chris.packham@alliedtelesis.co.nz>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240621042737.674128-5-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 21/06/2024 06:27, Chris Packham wrote:
-> The timer/counter block on the Realtek SoCs provides up to 5 timers. It
-> also includes a watchdog timer but this isn't being used currently (it
-> will be added as a separate wdt driver).
+
+On Sat, 15 Jun 2024 00:58:51 +0300, Danila Tikhonov wrote:
+> This series adds MDSS and DPU support for SM7150.
 > 
-> One timer will be used per CPU as a local clock event generator. An
-> additional timer will be used as an overal stable clocksource.
+> Changes in v3:
+> - Swap DPU and MDSS patches (Krzysztof)
+> - Add an explanation of the abbreviation DPU in patch 1 (Krzysztof)
+> - Switch qseed3_1_4 on qseed3_2_4 in patch 2 (Dmitry)
+> - Drop LM_4 and LM_5 in patch 2 (Dmitry)
+> - Add Krzysztof's R-b tag to patch 1 and patch 3
+> - Add Dmitry's R-b tag to patch 4
+> - Link to v2:
+> https://lore.kernel.org/all/20240612184336.11794-1-danila@jiaxyga.com/
 > 
-> Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
-> Signed-off-by: Sander Vanheule <sander@svanheule.net>
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> [...]
 
-...
+Applied, thanks!
 
-> +	pr_err("timer registration failed\n");
-> +	for_each_possible_cpu(cpu_rollback) {
-> +		if (cpu_rollback == cpu)
-> +			break;
-> +		to = per_cpu_ptr(&rttm_to, cpu_rollback);
-> +		timer_of_cleanup(to);
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +TIMER_OF_DECLARE(otto_timer, "realtek,otto-timer", rttm_probe);
-
-Undocumented compatible.
+[1/4] dt-bindings: display/msm: Add SM7150 DPU
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/64e2f4cb27e7
+[2/4] drm/msm/dpu: Add SM7150 support
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/75079df919ef
+[3/4] dt-bindings: display/msm: Add SM7150 MDSS
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/726eded12dd7
+[4/4] drm/msm: mdss: Add SM7150 support
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/0f4786881281
 
 Best regards,
-Krzysztof
-
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
