@@ -1,122 +1,129 @@
-Return-Path: <linux-kernel+bounces-225947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953E1913809
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:52:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19961913811
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494552821FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 05:52:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67F4281E8C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 05:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989EB1CF8F;
-	Sun, 23 Jun 2024 05:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49BA17C7C;
+	Sun, 23 Jun 2024 05:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="avMDEYy+"
-Received: from msa.smtpout.orange.fr (msa-209.smtpout.orange.fr [193.252.23.209])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wjjK8Hst"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D587FD;
-	Sun, 23 Jun 2024 05:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98943F9E9
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 05:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719121918; cv=none; b=WWnHywJKBLEc23HKA1r4JR8JOWZzP6wffkoynEecNdTrOznbBrHny6vzM/taXwK6wTGj0J+iUfCiNhcOjd9g9MBee7I1fFA4BqcwhSfE4gnk2/55YIx1CBGfv1v45dn4FeJYDKUUis5WLrdAImSF+HcpTGjAlBFVr/QYgJRNwKk=
+	t=1719122367; cv=none; b=IGwjhNRb366dBwrdh5Kk2MYFxok57g3ZiZs6pZAHePMxW1INU0NVxgzwSfSFaQgN1lT5fDImGbYGQem8YaNNrmUnRFVFcssMGV3hqoCo7yWWM+lVodqFb4z8yxRVRrkreJl9FbMZKZX9gtsIoCsdWI6knTcynjrhlhJwsvPkO4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719121918; c=relaxed/simple;
-	bh=Cd2SyuRK9YrNE+mv9R88nDo2JxhCzCsvUFL6HwzkUHg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YMPl9mkoCjUYMogS7g+ISA4vrZZu1kxNb5i3IsfqK2yyx9ofFbaZz1oxokaKBb7GKBMDWj+GkVFIStN63H8fmuBVDtc92BR3n9alTs/+FMVN6XZpmLou1esnGuFB6IrZYJkWHiQoI/5ZIXqt90cIBp1SZ4WpyoLP59PD4NDue1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=avMDEYy+; arc=none smtp.client-ip=193.252.23.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id LG7csGen4jiKDLG7csmuih; Sun, 23 Jun 2024 07:50:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719121845;
-	bh=1RAR2hjJePdFBRujGabmMIXRMO+LOncR48fid7AVn+0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=avMDEYy+qFQyLB9kez5bH7ffN4XGNH4YwZMHZN8n4EB91X7D+73x+uP7OCYXReKJC
-	 SaX5l4MiVpdvvVROtWr+eksb9P/xAAWvQeVR4QZKsP6p3uYxlphbUkkNEpCXknI9r0
-	 YCw8V/Do1I/viuP3G4oDNO2tUD6ZZ0CQvs69n25ZTDyb36+oHL4kKmyuavWgYwOdDx
-	 9p+C0X+/A9IOeCQ3pBl+CHL5HQwfxnw4hIXdFwCApH9Zw1h0nJxcyu6HAMJEEGdzRU
-	 NYax7iLhzqYkxtpUhqwtop0p1Og45wDjMVqRGVxEM9EzQjtLL5YPUmowps8Wj4oOWd
-	 SZV0WVORC5InQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 23 Jun 2024 07:50:45 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Paul Cercueil <paul@crapouillou.net>,
-	Sebastian Reichel <sre@kernel.org>,
-	Artur Rojek <contact@artur-rojek.eu>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-mips@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH] power: supply: ingenic: Fix some error handling paths in ingenic_battery_get_property()
-Date: Sun, 23 Jun 2024 07:50:32 +0200
-Message-ID: <51e49c18574003db1e20c9299061a5ecd1661a3c.1719121781.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719122367; c=relaxed/simple;
+	bh=YjxfZqe0EZANRqjml3+wYXxJUqgsw3jOPlTubWLT1AM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oKnbpLewRbyaD+vPcyPgY8tu2GwSRRewrDKkEtbQimFpj4AU2jp3MEKtNfH85U95YyGmHH3Eg8JlzBw21H+lr2yoiZh2RPiZTAVDPufrWfA31KT+0v2FcQf1fxq9Zcx4QVXQ6PfAQZW44O66L9PK7+RiMck5IMF+whzz8A9XzZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wjjK8Hst; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec52fbb50bso12803821fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 22:59:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719122364; x=1719727164; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uV6ZdsyWs/0K8RTllxKQAwLax2534ZjABCMu7Optue0=;
+        b=wjjK8HsthXgxVtnhgAO1JK+6cOBifSFYmV+zi6uXfudHKd28C8BQGwqurqX9EX5jb+
+         K3Ri3mdm1Wmchq7kbraTt5NAGTuH5rTTXTD+/mD+aGkJ1clThXon+DIB5x1SWOW4WlaI
+         pMJ2QRLLDN1rsQGDBOHSHFDiaX0ag836manWVi9TpwHna+G+7rKxchu6t4SGEFP/SkbW
+         PA7z3XcgA6eAtQaGlk6d6diRAdEoyMvm6J/y8TQ85oL/xecyJ59pjhJUhbP2XoallK8J
+         fOVLAoPTcNgO2UKj215tw5q7kxwLkNoZEcNN7Stn7OMpNbwaOAgzIk56qv64EsnC1Fiv
+         xmqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719122364; x=1719727164;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uV6ZdsyWs/0K8RTllxKQAwLax2534ZjABCMu7Optue0=;
+        b=HlW72UCrRDD6RVbG9/TP6d62n8rNwLXqSe8Zh3Wcu4o0F1WYpUyQD3x5XqNgPP1Yxl
+         EpZjdSfUawJ2XVJXEWlnO6O+JubKur4BYnOGRgPW/aDrz8MP+yjjf9XbkmmKCm+RE+Nw
+         RG6JEqTg2/UwrToWO9XLj/BrxGHg1BdJ74u8LhaWXavd3t/5Q7hXNLWR8tPfQ7YqsBiE
+         ILE+0APS1tLRtl8qRiGPtwsHTPQrFzx4eKTW7rtQ/NvTsJ/9O/GEPS4NwkgXRJsdcPey
+         3Z8qsX5SrcJb50ZwEbspElx4wbqCBCXJspDoDO4o2gXANBuA8UiV+9/epzrZPirSoofl
+         7ACg==
+X-Forwarded-Encrypted: i=1; AJvYcCWK1H34gVjaciicrQAa+YBPdnd1vDTHhBxGNtUSsLjT2+UsC/aSBvQmRgHLMyo2FtZ0YgsJj41C4HbD4SaU7Y+deLZU3mFoeWZiadAb
+X-Gm-Message-State: AOJu0Yz7YeXa8LkgNpQeteZK8ewstn/56xNolbck+ZsVXXTRwFCZ6RsH
+	G+WXp/EUKqHJay81R7gD1WI9y/Li+GEzEFy0ZihF/FA4QtQyd3rJo57AhFBynQw=
+X-Google-Smtp-Source: AGHT+IGcHezaqPv4f6l+aRS6cpymyT8QWqnho+MGi0nRzclFQouvXc2Vz5OXXDqk0xU0di91OghoDA==
+X-Received: by 2002:a2e:9f05:0:b0:2ec:fa4:e310 with SMTP id 38308e7fff4ca-2ec5b3d48ccmr7355091fa.34.1719122363747;
+        Sat, 22 Jun 2024 22:59:23 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d60130csm6301061fa.13.2024.06.22.22.59.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Jun 2024 22:59:23 -0700 (PDT)
+Date: Sun, 23 Jun 2024 08:59:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Daniil Titov <daniilt971@gmail.com>
+Subject: Re: [PATCH 2/4] drm/msm/mdp5: Add MDP5 configuration for MSM8937
+Message-ID: <hzslz54iq5sjmfhcbuj3my7cbjsu73acxeelih3jekr6rznz44@qie4c4w5lt2d>
+References: <20240623-dsi-v1-0-4ab560eb5bd9@gmail.com>
+ <20240623-dsi-v1-2-4ab560eb5bd9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240623-dsi-v1-2-4ab560eb5bd9@gmail.com>
 
-If iio_read_channel_processed() fails, 'val->intval' is not updated, but it
-is still *1000 just after. So, in case of error, the *1000 accumulate and
-'val->intval' becomes erroneous.
+On Sun, Jun 23, 2024 at 01:25:52AM GMT, Barnabás Czémán wrote:
+> From: Daniil Titov <daniilt971@gmail.com>
+> 
+> Add the mdp5_cfg_hw entry for MDP5 version v1.14 found on msm8937.
+> 
+> Signed-off-by: Daniil Titov <daniilt971@gmail.com>
+> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c | 89 ++++++++++++++++++++++++++++++++
+>  1 file changed, 89 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
+> index c5179e4c393c..6413c0d3e237 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
+> @@ -1011,6 +1011,94 @@ static const struct mdp5_cfg_hw msm8917_config = {
+>  	.max_clk = 320000000,
+>  };
+>  
+> +static const struct mdp5_cfg_hw msm8937_config = {
+> +	.name = "msm8937",
+> +	.mdp = {
+> +		.count = 1,
+> +		.caps = MDP_CAP_CDM |
+> +			MDP_CAP_SRC_SPLIT,
 
-So instead of rescaling the value after the fact, use the dedicated scaling
-API. This way the result is updated only when needed. In case of error, the
-previous value is kept, unmodified.
+Could you please point out the SRC_SPLIT reference?
 
-This should also reduce any inaccuracies resulting from the scaling.
+Other than that LGTM
 
-Finally, this is also slightly more efficient as it saves a function call
-and a multiplication.
-
-Fixes: fb24ccfbe1e0 ("power: supply: add Ingenic JZ47xx battery driver.")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/power/supply/ingenic-battery.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/power/supply/ingenic-battery.c b/drivers/power/supply/ingenic-battery.c
-index 2e7fdfde47ec..0a40f425c277 100644
---- a/drivers/power/supply/ingenic-battery.c
-+++ b/drivers/power/supply/ingenic-battery.c
-@@ -31,8 +31,9 @@ static int ingenic_battery_get_property(struct power_supply *psy,
- 
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_HEALTH:
--		ret = iio_read_channel_processed(bat->channel, &val->intval);
--		val->intval *= 1000;
-+		ret = iio_read_channel_processed_scale(bat->channel,
-+						       &val->intval,
-+						       1000);
- 		if (val->intval < info->voltage_min_design_uv)
- 			val->intval = POWER_SUPPLY_HEALTH_DEAD;
- 		else if (val->intval > info->voltage_max_design_uv)
-@@ -41,8 +42,9 @@ static int ingenic_battery_get_property(struct power_supply *psy,
- 			val->intval = POWER_SUPPLY_HEALTH_GOOD;
- 		return ret;
- 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
--		ret = iio_read_channel_processed(bat->channel, &val->intval);
--		val->intval *= 1000;
-+		ret = iio_read_channel_processed_scale(bat->channel,
-+						       &val->intval,
-+						       1000);
- 		return ret;
- 	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
- 		val->intval = info->voltage_min_design_uv;
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
