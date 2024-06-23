@@ -1,160 +1,269 @@
-Return-Path: <linux-kernel+bounces-226319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89D3913CFB
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:08:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFCF913CFE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CFFFB20E36
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:08:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11FD1C22062
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2DE18308F;
-	Sun, 23 Jun 2024 17:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0757D183098;
+	Sun, 23 Jun 2024 17:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ko/Xgd1+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KCauEOHD"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2FC8F5B;
-	Sun, 23 Jun 2024 17:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98A08F5B;
+	Sun, 23 Jun 2024 17:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719162489; cv=none; b=JY31W580aXTmW4y4i7JtJ42CjwNtp0uoavheVYz7qpw9HO3cz659wvxRO0zljP5/ayzOHanrLzVZl+5U3Xz7cdxDnBAAHECuFYZDmOzdXRBhlGzym8TVDi6KCTtDCgEvVGoISXe/BR5Ap/aYL5BbvX4sRfCeHxd95x3t/Yt2Yvw=
+	t=1719162589; cv=none; b=NcqxUqCvB2GwwmEzYxkE4nOT7MJnJH9Gq7n8kobl0Bb8Z2H5zCOVlqWsElRuTcFWu7gkl5Qx0LynDCvHqaCDiGRbkKKrd7tpfX4NEgJXtio9ZkIs9x1GaUy2xKvmbukj1/FFJkOMGuhb/sFf91ZRCSK7Dkhy0EUKOYWyI+N5PJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719162489; c=relaxed/simple;
-	bh=O64q/2QrlOK51NlMxYf1EIbVDMzus2wZpPQLOTEYW9g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qThynngrzXZNxM8uxC8OyxVOSCoOrt6XYZuw16yjJeKevOsLEBp33R7UWesVjxU/jzDXXtEZSum8Xpf/4lws035lQ48G8HjOL7aJ4+Ie/qkaT/CwCT7JrpPwaSJZsVfE8Kjx3gYAv56bDHAC75YVAdnIA67XLa/0kabqEknWf7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ko/Xgd1+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 584B0C4AF0D;
-	Sun, 23 Jun 2024 17:08:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719162489;
-	bh=O64q/2QrlOK51NlMxYf1EIbVDMzus2wZpPQLOTEYW9g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ko/Xgd1+l2fiV5rq4r09a4Dkk9F6qo8JCMRAq0MUjdKJRPNa0OQzGbMb1mHz4h9F8
-	 9ffKTf/Au6njmky/2JceHhV0vSPKQjO0+dMt36RgIYJqtNT9UZ8jyCqoFUQjaxe1Ut
-	 +qDozt2EtOKXlwoESicyoJWJFrZ7Nt2DmKlnbyytXV7YRXA6tJCANsnRahMyPfUlFq
-	 7SDZI1AVuiLGdcP4TpX4yB6EPP7G6CNMAfRmEDoHXXEvzWdfweqdJcLO645/CsRpx6
-	 SwapBd4DoKEm9wphuAOBjb8Ga18XuvrjcK0o/1NdZbjKe0qazH/u4BCLzTBsPsr02H
-	 IEIKOUwLb/A8Q==
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6fe617966fso115193566b.1;
-        Sun, 23 Jun 2024 10:08:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVx/+NW9hMeC+bZ7OgXURPIU8RQ6w2F3BuPAPHlmzBpVcrAUbI4B2s4UYV/xXFjtoyKrXGs5sYl9BgSskVuvCV7QegrxWCCrgFJKlfZI3yWUglyYSCXcdRW4U3KBWqyC5QGL+UF+416NQ==
-X-Gm-Message-State: AOJu0YwN50VdGObYK3QBjSAmSOr0T8G4gFeRLDEpEfL3RRmKlrOZO0hU
-	3bLmfHni2AODvuZaZIP+OTQpLb/7cO+C2oUdTI0zNcbfsYtN0+TXu+8L/i3Kr8I6+HFcdn4j36U
-	feAMzataIqX7AIXd2HdisSC6Veyk=
-X-Google-Smtp-Source: AGHT+IHqh5ECCo6rxNTnv13OnXMEvfR0HrFz5MxeNxK4Xo02Q+cUP1gdI3z8FF4DzmwkiDXEFxF1vKM9WwQcQqIkPjU=
-X-Received: by 2002:a17:906:c014:b0:a6f:11c9:f349 with SMTP id
- a640c23a62f3a-a7245b6484cmr159368566b.23.1719162487792; Sun, 23 Jun 2024
- 10:08:07 -0700 (PDT)
+	s=arc-20240116; t=1719162589; c=relaxed/simple;
+	bh=tQkkahnYieXy88Qh4CeUGjNNp7ssw8YuvBevUMbs1jM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gduCwKwXFzHIxo5ZQj7L95bSE8uSX3L4fSyRshZBQgSsWWqqDrPO+LIf/4Ha09Z4UwDxwjX9ycM23aopgNjDOrJ+ROMPnwsjVA/iHqXSyazdKHVXJd7tPqf1OEWf+hb44DDQFrt8GrNTUsT+3YNzzFoX2pKqreR3GmCb0nFBA14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KCauEOHD; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7f3b36cc47bso2202939f.0;
+        Sun, 23 Jun 2024 10:09:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719162586; x=1719767386; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6jFqQ9m9baI0PMnMyszCHoX3PO27F3E3H83bwUdNQUg=;
+        b=KCauEOHDDePYZB8213TQ+eTHXvl+7PNq3dkJr6CsEyyIJeJktzoyo6QqbJj7SqKciK
+         DctoxgqDpt3H+7tNDrMFfOySDKEbijYV1JjyireYOBIDQMyJimegXkvXeIhzeVnkbhBU
+         Ok/mm6DXWpi6LRZO/WyswkzYJn/IhvOXdUrIxZQZW99/jP+2CLBL3Zs9afqWxdCcJw1N
+         RuC22TEdPc8woGAxcGZlKj5EYzYWaRnUxOxRqVFwOCEmS3lZClRLCjzc2D+0GgzSbqKW
+         Z5Hcu+jYS0u67tS0QkBCDxK3NhuP2daW2hKORyzHHLK5UbPyU+EmnPbKdGyKnoO4lBtr
+         mAtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719162586; x=1719767386;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6jFqQ9m9baI0PMnMyszCHoX3PO27F3E3H83bwUdNQUg=;
+        b=jlv6RVHKdIJAMN8PkwBuzEPfKclUKUjo9B+BLlU3ilouza1UW7Hb2SyOAGrvPBDW23
+         DTZVUZQ0RTqN9gyplgn7s/pUWOu3+Ph9bo/MlQwb077Ass5iz/sTkU4eoI1G+fYrE7D+
+         oDwUcRACEJCuR7Txjo2aVHC/49XnbbT7eg3Mywl7G9j0xpwwEJmfayt/Onjo+AGGG2jq
+         gCDoDowGLoFKklqFjn52XL02uB9H7IkMecUb31NYqhw9qGqZRgt2NLaiFuNNyeCR2SHj
+         mGhDvKDxOuoAfx9mQguBAhX2tXvok3u42Rn5bZYfg8q97FTuhfrmCFfkYuBmo8EzXd+p
+         IPvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeeP8tq40vzacYl3MqVUU81Qk0hTkKdgId0i4/hViFyULAe7kp6y/lrIPuqmsR09xdslSktT7jjPFkwN+0Xt6MDz2qQUMJZJKR9ep1aFpOXeU/iDCfKn+AAM2ufjMyqprolbVt
+X-Gm-Message-State: AOJu0Yy9/hXwiF1yBJtozmYfGv3ydYpnusBTeuY1zspWQhylsZco3b0V
+	Phc/OErpgRAFmeu88Mww0RG95HRVI7Kl4g0blOe3lFErcj3vWhI/qWYPpQ==
+X-Google-Smtp-Source: AGHT+IEyqlDrKAjXC7OKyz6JG7m/0yE9wGhkb0TPQKZzzavCexRQvIYnrIbTnuIVyT4Fgu6dniZY8w==
+X-Received: by 2002:a05:6602:6419:b0:7eb:b36f:b4e2 with SMTP id ca18e2360f4ac-7f3a74be868mr271263839f.10.1719162586012;
+        Sun, 23 Jun 2024 10:09:46 -0700 (PDT)
+Received: from aford-System-Version.lan ([2601:447:d002:5be:7f0e:d47:475:ab36])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9d41612dbsm1480959173.4.2024.06.23.10.09.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 10:09:45 -0700 (PDT)
+From: Adam Ford <aford173@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: woods.technical@gmail.com,
+	aford@beaconembedded.com,
+	Adam Ford <aford173@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Adam Ford <aford@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: net: davinci_emac: Convert to yaml version from txt
+Date: Sun, 23 Jun 2024 12:09:33 -0500
+Message-ID: <20240623170933.63864-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq.com>
- <20240410-unwoven-march-299a9499f5f4@spud> <20240619-hammock-drum-04bfc16a8ef6@spud>
-In-Reply-To: <20240619-hammock-drum-04bfc16a8ef6@spud>
-From: Guo Ren <guoren@kernel.org>
-Date: Mon, 24 Jun 2024 01:07:55 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTRYpDLij1aQoftz6ZqEgXDrfhNA39KiFVrwm7qc4WH6Fg@mail.gmail.com>
-Message-ID: <CAJF2gTRYpDLij1aQoftz6ZqEgXDrfhNA39KiFVrwm7qc4WH6Fg@mail.gmail.com>
-Subject: Re: (subset) [PATCH RESEND v8 0/6] riscv: add initial support for
- Canaan Kendryte K230
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-riscv@lists.infradead.org, Yangyu Chen <cyy@cyyself.name>, 
-	Conor Dooley <conor.dooley@microchip.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 19, 2024 at 6:45=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Wed, Apr 10, 2024 at 11:30:25AM +0100, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> >
-> > On Mon, 08 Apr 2024 00:26:58 +0800, Yangyu Chen wrote:
-> > > K230 is an ideal chip for RISC-V Vector 1.0 evaluation now. Add initi=
-al
-> > > support for it to allow more people to participate in building driver=
-s
-> > > to mainline for it.
-> > >
-> > > This kernel has been tested upon factory SDK [1] with
-> > > k230_evb_only_linux_defconfig and patched mainline opensbi [2] to ski=
-p
-> > > locked pmp and successfully booted to busybox on initrd with this log=
- [3].
-> > >
-> > > [...]
-> >
-> > Applied to riscv-dt-for-next, thanks!
-> >
-> > [1/6] dt-bindings: riscv: Add T-HEAD C908 compatible
-> >       https://git.kernel.org/conor/c/64cbc46bb854
-> > [2/6] dt-bindings: add Canaan K230 boards compatible strings
-> >       https://git.kernel.org/conor/c/b065da13ea9c
-> > [3/6] dt-bindings: timer: Add Canaan K230 CLINT
-> >       https://git.kernel.org/conor/c/b3ae796d0a4f
-> > [4/6] dt-bindings: interrupt-controller: Add Canaan K230 PLIC
-> >       https://git.kernel.org/conor/c/db54fda11b13
-> > [5/6] riscv: dts: add initial canmv-k230 and k230-evb dts
-> >       https://git.kernel.org/conor/c/5db2c4dc413e
->
-> After some discussion on the k1 thread
-> (https://lore.kernel.org/all/ZnEOU7D00J8Jzy-1@xhacker/, https://lore.kern=
-el.org/all/ZnA6pZLkI2StP8Hh@xhacker/)
-> I am going to drop this series. It's not very useful in the current
-> state and there's not really been any interest from people in getting
-> the platform to a more complete state. Jisheng made some good points in
-> the k1 thread about the missing clock controller stuff, and I think I'm
-> going to make having basic things like clocks and where applicable
-> resets and pinctrl the minimum requirement for the platforms I'm looking
-> after.
-Here is the k230 clock driver based on Linux-6.6:
-https://github.com/ruyisdk/linux-xuantie-kernel/commit/196242fd9b9b4a191dab=
-0c7c3c5bf851ed857d8d
+The davinci_emac is used by several devices which are still maintained,
+but to make some improvements, it's necessary to convert from txt to yaml.
 
-pinctrl:
-https://github.com/ruyisdk/linux-xuantie-kernel/commit/baf26b6622c9de2ff64a=
-6ed58eeeb98c8b2c828b
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-No reset driver.
+diff --git a/Documentation/devicetree/bindings/net/davinci_emac.txt b/Documentation/devicetree/bindings/net/davinci_emac.txt
+deleted file mode 100644
+index 5e3579e72e2d..000000000000
+--- a/Documentation/devicetree/bindings/net/davinci_emac.txt
++++ /dev/null
+@@ -1,44 +0,0 @@
+-* Texas Instruments Davinci EMAC
+-
+-This file provides information, what the device node
+-for the davinci_emac interface contains.
+-
+-Required properties:
+-- compatible: "ti,davinci-dm6467-emac", "ti,am3517-emac" or
+-  "ti,dm816-emac"
+-- reg: Offset and length of the register set for the device
+-- ti,davinci-ctrl-reg-offset: offset to control register
+-- ti,davinci-ctrl-mod-reg-offset: offset to control module register
+-- ti,davinci-ctrl-ram-offset: offset to control module ram
+-- ti,davinci-ctrl-ram-size: size of control module ram
+-- interrupts: interrupt mapping for the davinci emac interrupts sources:
+-              4 sources: <Receive Threshold Interrupt
+-			  Receive Interrupt
+-			  Transmit Interrupt
+-			  Miscellaneous Interrupt>
+-
+-Optional properties:
+-- phy-handle: See ethernet.txt file in the same directory.
+-              If absent, davinci_emac driver defaults to 100/FULL.
+-- ti,davinci-rmii-en: 1 byte, 1 means use RMII
+-- ti,davinci-no-bd-ram: boolean, does EMAC have BD RAM?
+-
+-The MAC address will be determined using the optional properties
+-defined in ethernet.txt.
+-
+-Example (enbw_cmc board):
+-	eth0: emac@1e20000 {
+-		compatible = "ti,davinci-dm6467-emac";
+-		reg = <0x220000 0x4000>;
+-		ti,davinci-ctrl-reg-offset = <0x3000>;
+-		ti,davinci-ctrl-mod-reg-offset = <0x2000>;
+-		ti,davinci-ctrl-ram-offset = <0>;
+-		ti,davinci-ctrl-ram-size = <0x2000>;
+-		local-mac-address = [ 00 00 00 00 00 00 ];
+-		interrupts = <33
+-				34
+-				35
+-				36
+-				>;
+-		interrupt-parent = <&intc>;
+-	};
+diff --git a/Documentation/devicetree/bindings/net/davinci_emac.yaml b/Documentation/devicetree/bindings/net/davinci_emac.yaml
+new file mode 100644
+index 000000000000..4c2640aef8a1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/davinci_emac.yaml
+@@ -0,0 +1,111 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/davinci_emac.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments Davici EMAC
++
++maintainers:
++  - Adam Ford <aford@gmail.com>
++
++description:
++  Ethernet based on the Programmable Real-Time Unit and Industrial
++  Communication Subsystem.
++
++allOf:
++  - $ref: ethernet-controller.yaml#
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - ti,davinci-dm6467-emac # da850
++          - ti,dm816-emac
++          - ti,am3517-emac
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    minItems: 4
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: ick
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  local-mac-address: true
++  mac-address: true
++
++  syscon:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: a phandle to the global system controller on
++      to enable/disable interrupts
++
++  ti,davinci-ctrl-reg-offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Offset to control register
++
++  ti,davinci-ctrl-mod-reg-offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Offset to control module register
++
++  ti,davinci-ctrl-ram-offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Offset to control module ram
++
++  ti,davinci-ctrl-ram-size:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description:
++      Size of control module ram
++
++  ti,davinci-rmii-en:
++    $ref: /schemas/types.yaml#/definitions/uint8
++    description:
++      RMII enable means use RMII
++
++  ti,davinci-no-bd-ram:
++    type: boolean
++    description:
++      Enable if EMAC have BD RAM
++
++additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - ti,davinci-ctrl-reg-offset
++  - ti,davinci-ctrl-mod-reg-offset
++  - ti,davinci-ctrl-ram-offset
++  - ti,davinci-ctrl-ram-size
++
++examples:
++  - |
++    eth0: ethernet@220000 {
++      compatible = "ti,davinci-dm6467-emac";
++      reg = <0x220000 0x4000>;
++      ti,davinci-ctrl-reg-offset = <0x3000>;
++      ti,davinci-ctrl-mod-reg-offset = <0x2000>;
++      ti,davinci-ctrl-ram-offset = <0>;
++      ti,davinci-ctrl-ram-size = <0x2000>;
++      local-mac-address = [ 00 00 00 00 00 00 ];
++      interrupts = <33>, <34>, <35>,<36>;
++      clocks = <&psc1 5>;
++      power-domains = <&psc1 5>;
++      status = "disabled";
++    };
++
+-- 
+2.43.0
 
-Most of the k230 drivers are under Linux-5.10, and we are porting them
-into the newest version of Linux, which takes time.
-
-So, if the clock & punctual drivers mentioned above could satisfy the
-minimum requirements for the platforms, we will update the version of
-this series as a supplement.
-
-Is that okay?
-
->
-> I've thrown these patches into my tree:
-> https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=3D=
-k230-basic
->
-> I do have one of these boards, but I'm fairly limited at the moment betwe=
-en
-> the various linux-related and work demands on my time, so it's pretty
-> unlikely that I'll do anything with it myself.
->
-> Thanks,
-> Conor.
-
-
-
---=20
-Best Regards
- Guo Ren
 
