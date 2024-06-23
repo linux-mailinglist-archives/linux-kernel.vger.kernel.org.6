@@ -1,129 +1,181 @@
-Return-Path: <linux-kernel+bounces-226003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEED59138F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:11:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F8169138F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 830B91F21A13
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:11:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC33C282451
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB517441E;
-	Sun, 23 Jun 2024 08:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE517604D;
+	Sun, 23 Jun 2024 08:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UMF/434e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x2GEyvIU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rB/AELsI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A5249633;
-	Sun, 23 Jun 2024 08:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BED10A0C;
+	Sun, 23 Jun 2024 08:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719130285; cv=none; b=rAeWxVqX/01JsyyT9oQxbwrYUUxWLLYTRRbcslQjLJAUdHrTnqzkNAoanmH5t6ixzagAnYBCaAqiLEYN9I3ENRWCQ6gj7AZWQosIBzm9r7QTIgCScci2m01piOYW6CBqMtwkcOPnu3mKE1qC0a5+uowrSRyAFPrHeXsz1MwOB/8=
+	t=1719130501; cv=none; b=T2eXzu3Uuap1MAVpPH1Jkyi8RXgLw+JAKi4AC3G447QMaut+fGWLVFqTOq6lENeeATWM8kqQoEd7f6c7MfXef6kdzsJdT1gAuE+D4OJTN5YHcTCnyxmsdoN/xJpH0M2xw5qUbtpwgIK9U63mMPIRgrJulMMuzI3PB7X8g+LLOvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719130285; c=relaxed/simple;
-	bh=CMYRryZFEx+lHsmaSAwggmsgSfJxW0d5r/9nGe0X6/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WzSDjtQsjdDw0Gd52L/9RRRbYzFRLB3XQkwnFsOw/z1iATG92+D87K9FRpFtCywWuSzEEk0zX/Ns4+KaaHfDjVSq1x9YX+NJkk/9lTlBLHaSeHoVRJP563IdRQqvw/a1EjvXEjW5wwjHYWwPl/q7D3J/iMk46g2sOxR58g0h7Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UMF/434e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2519C2BD10;
-	Sun, 23 Jun 2024 08:11:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719130285;
-	bh=CMYRryZFEx+lHsmaSAwggmsgSfJxW0d5r/9nGe0X6/c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UMF/434eoJ3N8G40EchpP4JF047+QtLeySAi4Rpw0y2D0flMIOjhoABeatgrucadi
-	 G0L6ZNXqbwqU2CO1c4XHaVW7kJiF3gN4f44I0yxgsmup8BW0lG+F7JBkAXNht0K5nU
-	 J2/No/MfSJExlbO69dSsY8i4xSisyl1nrMehyfckHjAvojGYyVAuJynT8h5jHgGyIq
-	 X2MvwFSgWhr5wlfcJ3rYrEBh7kQ4i8VGYdo7e6jTt+cyxDqE0ac/7Q7jjaWUcA8wuq
-	 /d0U3JMSYPfppXhIGAyUSLwZLbPpAcf4jld/qgVgLHy+fbyrgDlv8v9627VP8KcAfU
-	 jz+QztvzZaumQ==
-Message-ID: <c2cd4e38-edc4-46f3-bbeb-0a761104fce9@kernel.org>
-Date: Sun, 23 Jun 2024 10:11:19 +0200
+	s=arc-20240116; t=1719130501; c=relaxed/simple;
+	bh=UiiF/SQvjM3wSxNwq6sidqKXgAho7/A4yBOnz0Slotk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ESKvuXEMyLdbG5O2NPEYuAu5ME40BdUmOkhEl5uIkQTStyrl7fcpgsVgj65quTdzxHajlhVOCgs2NobY0QyGL1Q5ScXOx5oBhIROIajaClEDSoe7PY1bLZZtR6i2khALmDXwfBzlltR4OXptc1Z9Hhx8dxmA1pX3Uya6QLIyJNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x2GEyvIU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rB/AELsI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719130496;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oo8NTmvHXHfIffMG5bHyk+c4Z7Aq7L+9Znqy4meJ6j0=;
+	b=x2GEyvIUAr47gJ+8zeyKkCcQgPXBU9mM5Z/Pq+r++HvKShhdntcYWcqfdQ95ijKgevt+6Z
+	0c0CTZZipLxKrabHR0ALX4GOP1ciwz5FrqtK3+3UBce+EfLgVx2iYTyf7Spk2TdJ+t8a9t
+	+7qklXNp9BGCGNgMoA9A1Nqa+iihjJxmWu6tWe8ZIEA48C6IZYNg11lf0wibQYKDYMsB8y
+	yWtFXbThYQfOJAThszQA93s4SGDrN7+zOgizKkQvWD+GJr8Bxb0+548Zjsx948PuYEfgTO
+	zDbv5xnoSZNq9lyA50XI/5ldLZZugIeyC5u64mgmzY+kAzdUFybyoPjh2qlBfA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719130496;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oo8NTmvHXHfIffMG5bHyk+c4Z7Aq7L+9Znqy4meJ6j0=;
+	b=rB/AELsIY7hQ5jGNyS4kpDhT+9rmnyfexN3C6g7Kt62fGmmiRA9SqkP0SmriaVflyuCJdU
+	AaO7dwMm5GWAFsCw==
+To: Chris Mason <clm@meta.com>, Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+ joshdon@google.com, brho@google.com, pjt@google.com, derkling@google.com,
+ haoluo@google.com, dvernet@meta.com, dschatzberg@meta.com,
+ dskarlat@cs.cmu.edu, riel@surriel.com, changwoo@igalia.com,
+ himadrics@inria.fr, memxor@gmail.com, andrea.righi@canonical.com,
+ joel@joelfernandes.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+In-Reply-To: <364ed9fa-e614-4994-8dd3-48b1d8887712@meta.com>
+References: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
+ <87ed8sps71.ffs@tglx>
+ <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
+ <87bk3wpnzv.ffs@tglx>
+ <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
+ <878qz0pcir.ffs@tglx> <ZnSEeO8MHIQRJyt1@slm.duckdns.org>
+ <87r0cqo9p0.ffs@tglx> <364ed9fa-e614-4994-8dd3-48b1d8887712@meta.com>
+Date: Sun, 23 Jun 2024 10:14:55 +0200
+Message-ID: <878qywyt1c.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: net: fman: remove ptp-timer from
- required list
-To: Frank Li <Frank.Li@nxp.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Madalin Bucur <madalin.bucur@nxp.com>,
- "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20240621170000.2289596-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240621170000.2289596-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 21/06/2024 19:00, Frank Li wrote:
-> IEEE1588(ptp) is optional feature for network. Remove it from required
-> list to fix below CHECK_DTBS warning.
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: ethernet@f0000: 'ptp-timer' is a required property
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  Documentation/devicetree/bindings/net/fsl,fman-dtsec.yaml | 1 -
+Chris!
 
+On Fri, Jun 21 2024 at 17:14, Chris Mason wrote:
+> On 6/21/24 6:46 AM, Thomas Gleixner wrote:
+> I'll be honest, the only clear and consistent communication we've gotten
+> about sched_ext was "no, please go away".  You certainly did engage with
+> face to face discussions, but at the end of the day/week/month the
+> overall message didn't change.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The only time _I_ really told you "go away" was at OSPM 2023 when you
+approached everyone in the worst possible way. I surely did not even say
+"please" back then.
 
-Best regards,
-Krzysztof
+The message people (not only me) perceived was:
 
+  "The scheduler sucks, sched_ext solves the problems, saves us millions
+   and Google is happy to work with us [after dropping upstream scheduler
+   development a decade ago and leaving the opens for others to mop up]."
+
+followed by:
+
+  "You should take it, as it will bring in fresh people to work on the
+   scheduler due to the lower entry barrier [because kernel hacking sucks].
+   This will result in great new ideas which will be contributed back to
+   the scheduler proper."
+
+That was a really brilliant marketing stunt and I told you so very bluntly.
+
+It was presumably not your intention, but that's the problem of
+communication between people. Though I haven't seen an useful attempt to
+cure that.
+
+After that clash, the room got into a lively technical discussion about the
+real underlying problem, i.e. that a big part of scheduling issues comes
+from the fact, that there is not enough information about the requirements
+and properties of an application available. Even you agreed with that, if I
+remember correctly.
+
+sched_ext does not solve that problem. It just works around it by putting
+the requirements and properties of an application into the BPF scheduler
+and the user space portion of it. That works well in a controlled
+environment like yours, but it does not even remotely help to solve the
+underlying general problems. You acknowlegded that and told: But we don't
+have it today, though sched_ext is ready and will help with that.
+
+The concern that sched_ext will reduce the incentive to work on the
+scheduler proper is not completely unfounded and I've yet to see the
+slightest evidence which proves the contrary.
+
+Don't tell me that this is impossible because sched_ext is not yet
+upstream. It's used in production successfully as you said, so there
+clearly must be something to learn from which could be shared at least in
+form of data. OSPM24 would have been a great place for that especially as
+the requirements and properties discussion was continued there with a plan.
+
+At all other occasions, I sat down with people and discussed at a technical
+level, but also clearly asked to resolve the social rift which all of this
+created.
+
+I thereby surely said several times: "I wish it would just go away and stay
+out of tree", but that's a very different message, no?
+
+Quite some of the questions and concerns I voiced, which got also voiced by
+others on the list, have not been sorted out until today. Just to name a
+few from the top of my head:
+
+    - How is this supposed to work with different applications requiring
+      different sched_ext schedulers?
+
+    - How are distros/users supposed to handle this especially when
+      applications start to come with their own optimized schedulers?
+
+    - What's the documented rule for dealing with bugs and regressions on a
+      system where sched_ext is active?
+
+"We'll work it out in tree" is not an answer to that. Ignoring it and let
+the rest of the world deal with the fallout is not a really good answer
+either.
+
+I'm not saying that this is all your and the sched_ext peoples fault, the
+other side was not always constructive either. Neither did it help that I
+had to drop the ball.
+
+For me, Linus telling that he will merge it no matter what, was a wakeup
+call to all involved parties. One side reached out with a clear message to
+sort this out amicably and not making the situation worse.
+
+> At any rate, I think sched_ext has a good path forward, and I know we'll
+> keep working together however we can.
+
+Carefully avoiding the perception trap, may I politely ask what this is
+supposed to tell me?
+
+Thanks,
+
+	tglx
 
