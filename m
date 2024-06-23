@@ -1,161 +1,136 @@
-Return-Path: <linux-kernel+bounces-225959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F372F91385C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:49:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8622B91385E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31BE01C218FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 06:49:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C5971C219D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 06:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DDD5F87D;
-	Sun, 23 Jun 2024 06:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9322339AC9;
+	Sun, 23 Jun 2024 06:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jlG2rOmz"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DtSMziIr"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C551A54757;
-	Sun, 23 Jun 2024 06:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741C22D02E;
+	Sun, 23 Jun 2024 06:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719125361; cv=none; b=u9WR8egu1qAcef03lfOL7xYIT+lz6UcC5RGjFkeQ5f0hRsxNfb4+YxKxoR/zEz2xu8oOMRT6S2hC4++9TUXJSRvFiGkZBKF7HbTpHN9Kg4Q/VvZLack1E3FCgQSMXyN1Vge9SLZSS8UepH7S7eAIc9aGa45yPSkjHzB4vygsBQk=
+	t=1719125372; cv=none; b=el1FrevtqEGEWykARGecgIFIBr2QsRpAXusnjkbAJA1N/ZMi/PpwJVq9yuiM7dcNs5Z2U7iOzeyQAMxnaNw0fK/J9netKw4u+K4396hVhTbRIvXrdyE36VZ8QWt9MVp1+Yw66lexQhf0Uv343m1AifZfDTV2gOQy08WMEyfm3pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719125361; c=relaxed/simple;
-	bh=IXmQzLRedxpOTo64sXr8+ql9PlWZ+cIk6tAGQLlJ1fU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RltJZ26y5OyjjovQegON3psEETYPnIC1BkVx9/357ag/XsiGxJ+ruLymOg0Odfh1RYb6hEGCCYpohjXwZxpUZrFu1TVE5FlycOKOBTsW2fGS4Cm9stkZ8p1oXlgglrtcCZ+Xnpsw6SRNfAJDgvnGR/5G2lhml4dfphMeeqR/e/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jlG2rOmz; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45N60PSb018731;
-	Sun, 23 Jun 2024 06:49:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=dEa42Smj0LjS2
-	H8hmolyYdKaDlyVIpYrh5mx6Giw1Hc=; b=jlG2rOmzOGaS2i1a9hy5p7wMQQQg5
-	QvDryCOJkEHw/Hib1JqphoO3EihS0Mg7eNVyjoT6PzXQxns5mUAPurs/rLEnNS1U
-	cfsvs3z535+8R9FvzW63NLTD5Tnp+WEDVr0Nhh1I0E16DENFke8lGvCBz+hZE3hv
-	OP7G+c0vrPSJ4ZouJ3M8cEUSH6yEFT8QVde2XULPjKv+eemeaJTnq3Z2DX9rkrd0
-	cVMmeRpz6q2pfgM2mspGjh24TmZOA9vX+NBvArBR6Q9/d0XzInkU6acKaECSH09w
-	LjxFplZykjab6f7odgqAGNpsHRLKhIgw1bEBeI7RBUHC1BGnuMV1MNSFg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yxe1b83bh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 06:49:09 +0000 (GMT)
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45N6n8to029531;
-	Sun, 23 Jun 2024 06:49:08 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yxe1b83bg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 06:49:08 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45N3FQXb032373;
-	Sun, 23 Jun 2024 06:49:07 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxbn2rnhu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 06:49:07 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45N6n2om55181690
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 23 Jun 2024 06:49:04 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5FC6320040;
-	Sun, 23 Jun 2024 06:49:02 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EAF622004B;
-	Sun, 23 Jun 2024 06:48:59 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.43.64.228])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 23 Jun 2024 06:48:59 +0000 (GMT)
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-        irogers@google.com, namhyung@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
-        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
-        disgoel@linux.vnet.ibm.com
-Subject: [PATCH V4 3/3] tools/perf: Fix parallel-perf python script to replace new python syntax ":=" usage
-Date: Sun, 23 Jun 2024 12:18:50 +0530
-Message-Id: <20240623064850.83720-3-atrajeev@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20240623064850.83720-1-atrajeev@linux.vnet.ibm.com>
-References: <20240623064850.83720-1-atrajeev@linux.vnet.ibm.com>
+	s=arc-20240116; t=1719125372; c=relaxed/simple;
+	bh=JvRxzBYRDawIpvCcMBhrTvBSbD+AqEcFp7PwIVlmaTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tAPruKzWQ7qHp/PFl6MqSXJ3sm+aToW4zTptBwXh5q92/AQFVYkj12LqvEf8NRUJ+FPXRQYVhQ+Hqlp+sVb8YbgboIDv4aFjcCE4S5EFo5qfYgKsE3hi0utZgd33Hk8InvwoLIT/n60cgtB7Eu/TeSPXRhuRLlQv3NZatAtzk9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DtSMziIr; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719125342; x=1719730142; i=markus.elfring@web.de;
+	bh=JvRxzBYRDawIpvCcMBhrTvBSbD+AqEcFp7PwIVlmaTw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=DtSMziIrcTieYDncqP28i16sF/5Cuy5/Nc0ShHV2cqDGwWo2Aqc72f7hOTP4fm6o
+	 yh6BXgT+mxbBGeFnUxmFwcN6br31gcEyDScs6CY+ZouP6ZDcl+HTr4IexdRmsWXq+
+	 YMXJlomocAlUvpry43Edujv6M8PB/fSjy2GmeFuXWQXvD+HMgajyPCgkSopmr9wJS
+	 Md3wFd67D34WcEe22P7LRK1/ZdryCrzncdCvw+Bf1TVDI26Bo6iAnmnM1KtgvhNVY
+	 SJdl7lZpW91ZL8LoKq40OqwQ+5ecSN6q/kB+QAhW5q6c9e8lXbFl01FXBSJkGxBHO
+	 wDI0SdCSY8lL8ojr8Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mr7am-1sfXEB3jjq-00d67X; Sun, 23
+ Jun 2024 08:49:01 +0200
+Message-ID: <6217cc19-9aa4-48e2-85ef-2bbe4c0d8189@web.de>
+Date: Sun, 23 Jun 2024 08:48:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: twvsYE8X1Dhu-0qvRZPJwKtNHaxS7hsO
-X-Proofpoint-ORIG-GUID: BY_V99SRTL2QsshccPAqmCjCR4S4CJ62
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-23_01,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- impostorscore=0 priorityscore=1501 adultscore=0 mlxscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406230047
+User-Agent: Mozilla Thunderbird
+Subject: Re: octeontx2-af: Fix klockwork issues in AF driver
+To: Suman Ghosh <sumang@marvell.com>, netdev@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Geethasowjanya Akula <gakula@marvell.com>,
+ Hariprasad Kelam <hkelam@marvell.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jerin Jacob <jerinj@marvell.com>, Linu Cherian <lcherian@marvell.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
+ Sunil Kovvuri Goutham <sgoutham@marvell.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
+References: <20240622061725.3579906-1-sumang@marvell.com>
+ <2cf888b6-f8ec-4632-befd-bf2678307a5b@web.de>
+ <SJ0PR18MB521611653D45DEDFC42704D9DBCB2@SJ0PR18MB5216.namprd18.prod.outlook.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <SJ0PR18MB521611653D45DEDFC42704D9DBCB2@SJ0PR18MB5216.namprd18.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iQaZqO1KqcJ/xdoFEnWHyfHc0LVN4tj7RI66tg+Yf54a9AYOYFa
+ so7wiwJM6TXdHmkNDWkqN/J2XKT8/l1DITdIvB2nJ40JXPREfb3FFImi3RWWKUxYkhIyFVA
+ Ay3RfDlAenAgbQ3wsu6K57rsGlaNPf1xi/N87dKl5xbloSMRKDSQYobsniCxU6ijxKt4I/p
+ 8iFPmk471IPCYkteLfMRA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bOTZs649C0A=;Njtk8EHk8XalUXD8LH36u1J1hPT
+ MiTTXPwkQzhSIcVvFNSETeepTNW+fTD9y/pJT2jvNNCMIyL1e3QLN6oxujsrdwjktViQcYXd9
+ RfRdT+ZFoNo+ikVOwO7057nkxIQymQBg6fS6ncL5d4R9j/40nuFd4146rTqX4o1m7+4Wxx4M+
+ bqLdEgshkhom2hdj5Xfnpxf+XLGpQwHXV/48E6xJ88vjxt9bQmo48WEjfE11qreFafWwFfxec
+ ZhQxMnow0EQz76GwKB/zBzTH5tm8mSJ60wqfESuaLLAp+gH1xUkCm7Vtq0rzuiWiPjvbv08Mr
+ OjSrb0eXDVINqHMMn4TVFSkPi19SA8pWQWGTQ1lfAVC7pbPQHUl6cBEbUSEXyllxoxYZ32YF4
+ aK9RR/JcN39N2xcMv3SOUH1J6Dy3KBDeQPHU0s1jiTCdOVip2I4LuFlEhsgsDCFosY9xyJzmH
+ 5OeiMsF4UwWx9khTLAylCJMfncaGFpMMcV+9CXK+OdjRPiulFVGiqdnW2Q2T3rMd5PBteovoF
+ p0X2Sw5rMwKnr3bmUS5cH+SdSE36r5L7EN5g9ms0y/LQlDOrKSoe7SKPFya2jvdmbSIfURUbU
+ SgiUNsWhDL16srX2MO8wwwv76MJjdg90u+4/zamAArjhTgGJA9FLgE8b89ab4SZ1GA2I6P5JT
+ tPZFYOX+CJNJuBg0GEDe4c4g4oc5Fno1kKAfVUrN53br+BZh7FGVyBfUQ1VYudS5+LI1B7Jha
+ zU/mJ1hQQHjgTKW4eHNRSG1zgq52j1EVPpgKZYyeaoTc5LZG0wsrOp1ZjNUp12SjBZTzrSnku
+ L+XarbpaebtXNRwPM3VOYsLGLShU73KYWE2unEJ7nga1Q=
 
-perf test "perf script tests" fails as below in systems
-with python 3.6
+> I guess that there is a need to split different change possibilities
+> into separate update steps.
+=E2=80=A6
+> This is the first time I have submitted for klockwork fixes.
+>
+> Since these are similar klockwork fixes based on variable declaration an=
+d NULL checks.
 
-	File "/home/athira/linux/tools/perf/tests/shell/../../scripts/python/parallel-perf.py", line 442
-	if line := p.stdout.readline():
-             ^
-	SyntaxError: invalid syntax
-	--- Cleaning up ---
-	---- end(-1) ----
-	92: perf script tests: FAILED!
+Did this source code analysis tool present items according to different
+development concerns (from selected categories)?
 
-This happens because ":=" is a new syntax that assigns values
-to variables as part of a larger expression. This is introduced
-from python 3.8 and hence fails in setup with python 3.6
-Address this by splitting the large expression and check the
-value in two steps:
-Previous line: if line := p.stdout.readline():
-Current change:
-	line = p.stdout.readline()
-	if line:
 
-With patch
+> I thought of combining the same.
 
-	./perf test "perf script tests"
-	 93: perf script tests:  Ok
+Would you like to take the known advice =E2=80=9CSolve only one problem pe=
+r patch=E2=80=9D
+better into account?
+Please take another look at further approaches for the presentation of
+similar =E2=80=9Cchange combinations=E2=80=9D.
 
-Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
-Changelog:
-v1 -> v2
-Added "Acked-by" from Adrian
 
- tools/perf/scripts/python/parallel-perf.py | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Do you suggest 2 separate patch one for variable declaration and one for=
+ NULL checks?
 
-diff --git a/tools/perf/scripts/python/parallel-perf.py b/tools/perf/scripts/python/parallel-perf.py
-index 21f32ec5ed46..be85fd7f6632 100755
---- a/tools/perf/scripts/python/parallel-perf.py
-+++ b/tools/perf/scripts/python/parallel-perf.py
-@@ -439,7 +439,8 @@ def ProcessCommandOutputLines(cmd, per_cpu, fn, *x):
- 	pat = re.compile(r"\s*\[[0-9]+\]")
- 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
- 	while True:
--		if line := p.stdout.readline():
-+		line = p.stdout.readline()
-+		if line:
- 			line = line.decode("utf-8")
- 			if pat.match(line):
- 				line = line.split()
--- 
-2.35.3
+Probably, yes.
 
+
+> Or do I need to submit patch per file?
+
+Maybe.
+
+You can dare to offer software updates for each concern category
+as patch series.
+You can adapt then also better for constraints according to the selection =
+of tags
+(like =E2=80=9CFixes=E2=80=9D and =E2=80=9CCc=E2=80=9D), can't you?
+
+Regards,
+Markus
 
