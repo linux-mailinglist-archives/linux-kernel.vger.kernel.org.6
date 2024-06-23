@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-226062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF719139B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:49:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4909A9139B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57D5E280E27
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C8F1F220D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEB712EBE3;
-	Sun, 23 Jun 2024 10:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AB512EBCC;
+	Sun, 23 Jun 2024 10:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0pURa1c"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeUGK35/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA7D944E;
-	Sun, 23 Jun 2024 10:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782DE376E5;
+	Sun, 23 Jun 2024 10:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719139747; cv=none; b=kQZrER/W5xLl9jWLt/HOW+8qjUGZg13fpAQ07w1eBRckfbNbiSIYBzFZ76wtUmaOUp5IPJsaDULiNyKXR7FYH3Bl7WaWtNTq+i0NB5/CfJawaRuo4kq9gKSFnhcZx4u6BZDsWjbrNvvHW/zumxp/Gc3PELvK/F8B9RP9pOOesnk=
+	t=1719139839; cv=none; b=aJdHTeRwvWhop/zzs87hEf3oZk9cswaUq9sgGhaP30thxjLNVZ3ZWh+hhP2O+WL304je7K0YCoegttjDjLFUSIk+y1hbT7BFP8yWQm1UU2gfQl1KeblyD/ldNxeXUwGEBz+URshALgqZznvqxeOCo20yhlhhbczwaF/JQrk4w3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719139747; c=relaxed/simple;
-	bh=X6fFwcZ2bciYxHGg1tV+do5pO+J0UpUU9qrl+KByrH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DUJBuKn3UT/U8bahqqhf1ZDjG5raXihPDukgNnSM5z5vW3Q7hhgTmP9BXttwZ9OtOibi9usQvmVBRNVbYOshT3g3gxOK4GApw0yui3eloHvZbY6tSYwm8Ccs0jmq8fo8IwcYZU3z7yBEF4vA1ecZLZY2v1KWyF15CHlQuz4fg3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0pURa1c; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-71816f36d4dso1118160a12.2;
-        Sun, 23 Jun 2024 03:49:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719139745; x=1719744545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5tOKBNF1K6kM4/l3Ir2w3oOEOvrznnr6BloYrKa9764=;
-        b=O0pURa1cOzyVKAtG9QML4oivBW49aGJ4dmSgRzH1Q/oeoUqivDPeCZcqEE0ijWqo8v
-         n3E5bsJeFNm9YQb1uqaTAr8E2J2YAtvYbkfN52jbS5pSrS5V2fUWcOsN4L0WmOgTeVP4
-         1pYXSg9niS37jDNtYn6rVEZavNQdg7mbF81rAufOlnkmh8z8lYyi6Fp2b5in8vk2uRC3
-         rsPwDBWDZJt7Le+X1tOm8URI+2cz3sseKPR5EZFHgMlhnZr92vLk4tNyEPkbUrzI+3LK
-         FguUA5iS/2H1FZKe6SNyBhiDVBRPA6soJbbfDeeltsxLtLvfBMNij+QIcZ/+vqBiwGJC
-         8J4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719139745; x=1719744545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5tOKBNF1K6kM4/l3Ir2w3oOEOvrznnr6BloYrKa9764=;
-        b=HwKL2mN7k0vMhIavzf8DiMeaSdoLrjyUCPXIfkBbo9mq3gYfHXl9Vy1Dk2BfOv+HPh
-         g6aKQnIQPIHYSXgb6GAVT9omGJ8AIIig/KnadkiAjLrV+G3Whmn6Cm4/YmGOan+f1eRU
-         cHgpfeTIwmgW5l9eji+gs/j10Z8MR+UB2WsRi9as2/mlK4uMlBME+zn6+xNMj2qRat6w
-         eObGuuKr0hQz1XYnUSNqWGnr15A/Yt5ysXWoy6wZhJIQBjH2C6LUV7b6Wv/KyxLTMZsK
-         sMUiztrCtLKWlv2PX7815Z9OtNaFHex+FaFBrZNNeSuqW9CIuQhWjlU5PTLop+G5AMsc
-         Rc1w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1zgJwBRONwUZ4uRkU518zawwJIJ+aVjKqmVe6yG9NlalMCAab9BQFGUgMIokHs+grGkDwAcAdvVAxopZ59xTbyQI5g12t0P7HQL5ZEuTTu3jN8BsrPKoX7KC8HQ9dUPllxuzL8CwpMnxmc0I/ThP+koabLj5Ds2f0bw7JDoLte6cfwQ+S+ZM=
-X-Gm-Message-State: AOJu0YzJkaGXMLkLxeKwcg5nJRfNVK5iAjl0d96jJJZPnjCJgEH/6MFB
-	rQTn65FjugQg9CIKn7LqNG8XSMQyozP5FucocrQI+9yuowMUCCFvVpnMgACBIekyz3RevKV3WKk
-	cIvDU2shNE05bNWJIm9xAAy0+T4U=
-X-Google-Smtp-Source: AGHT+IEYhaua3z+8fvVxYKOlzI0SeXlh1Mqqe1m7wg491bift0wbb0Sz1XkAToMjWcbemVJ9AJKorDfG72cQicJRWyw=
-X-Received: by 2002:a05:6a21:7882:b0:1b5:1feb:b3f9 with SMTP id
- adf61e73a8af0-1bcf7e32018mr2620120637.9.1719139745149; Sun, 23 Jun 2024
- 03:49:05 -0700 (PDT)
+	s=arc-20240116; t=1719139839; c=relaxed/simple;
+	bh=cmfbVSffDKX/hTp/1Fgv4j7OaTjSdDNqkQqngAJn0RM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IqmpxD9CvdBnm6TiIlA+L3yNo7mdUXrytMIwCWebYF5cWDHq73fhddA47ZBqe4DjszqxRiSt0CHOeaV7Myu05D3ubLUVizykz/06HRfTperyFAFvQrVbdarBgHzcb2iUktOCQy4hvBoyJ55oPLaYdnryzKZ0BS2aYmU5hZfQyrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeUGK35/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8EFFC2BD10;
+	Sun, 23 Jun 2024 10:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719139839;
+	bh=cmfbVSffDKX/hTp/1Fgv4j7OaTjSdDNqkQqngAJn0RM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=BeUGK35/mq1InBYDivPHdjdIHQJ2Yy3LR7a6J5B2nrkovYtypxUctWXrFJZmPhuBc
+	 8M9ZDLRCBQhcDLKpgH3b1hYZC2JCM9oq3czHWwwCITj7HoVTGcIseqzlajC3gQxlkL
+	 wupIZDK9XcEvGBWO9R5F30XAeVUplnCeiiLNktluFqlPXSmBG3soPmqDIcLk6MZK20
+	 /rRdpg2lRaoM2dJJUGdqjSK2Cz0XoLyOIu1kjj9lp766y3DBVGv0X/M0ioeNNXQa6A
+	 XVR6zEPioxba2ddc3QFyBb3JuFpbhjElHGMIZH6H3WkkEJiZQiosbdmmIsRCJDrdBI
+	 omo7y+tbuoUrg==
+From: Mark Brown <broonie@kernel.org>
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: alsa-devel@alsa-project.org, venkataprasad.potturu@amd.com, 
+ Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Syed Saba Kareem <Syed.SabaKareem@amd.com>, 
+ "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, 
+ open list <linux-kernel@vger.kernel.org>
+In-Reply-To: <20240617072844.871468-1-Vijendar.Mukunda@amd.com>
+References: <20240617072844.871468-1-Vijendar.Mukunda@amd.com>
+Subject: Re: (subset) [PATCH 1/8] ASoC: amd: acp: add a null check for
+ chip_pdev structure
+Message-Id: <171913983658.13532.277643449449161401.b4-ty@kernel.org>
+Date: Sun, 23 Jun 2024 11:50:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240623-dsi-v1-0-4ab560eb5bd9@gmail.com> <20240623-dsi-v1-2-4ab560eb5bd9@gmail.com>
- <hzslz54iq5sjmfhcbuj3my7cbjsu73acxeelih3jekr6rznz44@qie4c4w5lt2d>
-In-Reply-To: <hzslz54iq5sjmfhcbuj3my7cbjsu73acxeelih3jekr6rznz44@qie4c4w5lt2d>
-From: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
-Date: Sun, 23 Jun 2024 12:48:53 +0200
-Message-ID: <CAGsSOWUDbvUMW95Xnjrg4z7TJ9=tj7_KHyek3xTuzbDP2_VhHw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] drm/msm/mdp5: Add MDP5 configuration for MSM8937
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Daniil Titov <daniilt971@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-On Sun, Jun 23, 2024 at 7:59=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Sun, Jun 23, 2024 at 01:25:52AM GMT, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wr=
-ote:
-> > From: Daniil Titov <daniilt971@gmail.com>
-> >
-> > Add the mdp5_cfg_hw entry for MDP5 version v1.14 found on msm8937.
-> >
-> > Signed-off-by: Daniil Titov <daniilt971@gmail.com>
-> > Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
-> > ---
-> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c | 89 ++++++++++++++++++++++++=
-++++++++
-> >  1 file changed, 89 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c b/drivers/gpu/drm=
-/msm/disp/mdp5/mdp5_cfg.c
-> > index c5179e4c393c..6413c0d3e237 100644
-> > --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
-> > +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c
-> > @@ -1011,6 +1011,94 @@ static const struct mdp5_cfg_hw msm8917_config =
-=3D {
-> >       .max_clk =3D 320000000,
-> >  };
-> >
-> > +static const struct mdp5_cfg_hw msm8937_config =3D {
-> > +     .name =3D "msm8937",
-> > +     .mdp =3D {
-> > +             .count =3D 1,
-> > +             .caps =3D MDP_CAP_CDM |
-> > +                     MDP_CAP_SRC_SPLIT,
->
-> Could you please point out the SRC_SPLIT reference?
-Is this would be qcom,mdss-has-source-split in downstream, because if
-it is i think it is a mistake and it is wrong at msm8953 also.
->
-> Other than that LGTM
->
-> --
-> With best wishes
-> Dmitry
+On Mon, 17 Jun 2024 12:58:34 +0530, Vijendar Mukunda wrote:
+> When acp platform device creation is skipped, chip->chip_pdev value will
+> remain NULL. Add NULL check for chip->chip_pdev structure in
+> snd_acp_resume() function to avoid null pointer dereference.
+> 
+> 
+
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[4/8] ASoC: amd: acp: remove acp_i2s_probe function
+      commit: 75a08ec8c3a6aef914235c409a99046a3d29d1d4
+[5/8] ASoC: amd: acp: remove unused variables from acp_resource structure
+      commit: 50f1670145392398f4f2ffe9abe4599c86d11ec2
+[6/8] ASoC: amd: acp: modify conditional check for programming i2s mclk
+      commit: 5b162f60e7e051624e187e45b0fdc481c3573f17
+[7/8] ASoC: amd: acp: move i2s clock generation sequence
+      commit: d85695b01cbb2455a2f70528bb9e53f2463a39cf
+[8/8] ASoC: amd: acp: add pcm constraints for buffer size and period size
+      commit: 8978e1f7bc26655e0373c4a6b31e17fcdd497329
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
