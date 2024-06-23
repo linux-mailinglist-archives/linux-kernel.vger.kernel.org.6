@@ -1,200 +1,190 @@
-Return-Path: <linux-kernel+bounces-226273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 402CB913C52
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:27:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E557D913C56
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D79AB22F02
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:27:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76FE8282233
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C40181D15;
-	Sun, 23 Jun 2024 15:27:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726DE149E06;
-	Sun, 23 Jun 2024 15:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76990181D1C;
+	Sun, 23 Jun 2024 15:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ssrh0gMm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63F820E6;
+	Sun, 23 Jun 2024 15:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719156420; cv=none; b=XdyAxlmq2pX9vgjrSFjKZl+wmI5zAjIS1/VBH5u0XSH0hXBb3EKniR/N0Y0DYl16OtFV3eAJYLbeesvejTtoN3v5TaopfsnhI+4PkFDEt9dFupdelW+a4ltDK2m+vr+iZJ9U7IhRM9tobIvs9ziqMHK8EcTjvcRjkbrWLd/6aYE=
+	t=1719156516; cv=none; b=Dm+OqHEqeequqrLjtm/74ohwAaykNmR3SVfWsxmxipybdzl8mAMqrl2n8HCogLxb+RD1iKNoSzIVIVuJvckRUW1Pt7LfKSODggozx8tgj2lgOk5uPOzuc29QuaxfqcTnIXHZH2uUoe5B7XueRw2ExgKDjeyDCOFXGcbvbdOOp88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719156420; c=relaxed/simple;
-	bh=x5Ahe6u/PLVDIcy5ljmDMPszO0GBhjHEnvRgD5+FYmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BNS9toymJiuTpWfpz1VWIIHoCRegTERVPgc/8J95gZvd/NLdb1nwPw53rRyXgrqJc8VZwSRMSWfeCdFuS548nEQMxMHCRHQKA2gLmWKDqq05aUJgZPIka+PlHvT7/PsScAzH6LmZFgMGoWJ5IOi0q5mBSowyzyidqDlez7+i0v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48645DA7;
-	Sun, 23 Jun 2024 08:27:21 -0700 (PDT)
-Received: from [10.163.46.232] (unknown [10.163.46.232])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 633E53F766;
-	Sun, 23 Jun 2024 08:26:52 -0700 (PDT)
-Message-ID: <adc971c5-f2a7-4f2d-97d8-40ed0cfe03c0@arm.com>
-Date: Sun, 23 Jun 2024 20:56:41 +0530
+	s=arc-20240116; t=1719156516; c=relaxed/simple;
+	bh=juAAtNDoXkujZsCYp+htIv9eQw5xQOTNlXW2GleCTnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MxJhIj8kR092TZ4oZJvK9BeW9oV217OX6YFaa8RkAtRp/FgwSdDU+J4w7uCjeY1H70di6xXXCbfPkafnbwN4ESy8nAWsAG8fTSDP/8cVJYj81LVzvK6OoWraT0ZgCP84/MNy1iIrBorKQWfp3ZWxWukTIe5T3FL3hEPHMB9clNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ssrh0gMm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71FC7C2BD10;
+	Sun, 23 Jun 2024 15:28:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719156516;
+	bh=juAAtNDoXkujZsCYp+htIv9eQw5xQOTNlXW2GleCTnY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ssrh0gMmmwTzfwTdEihNbsE96GNNjPWOPGObkKNNZakIGeBYHQA0BGzqa88VPdIIh
+	 PBFGSSx3O68SMMVzu6cnRsBxhrQJbVIfZNu4uT3Fs236FCFqfX06pVXyf6mWQz24Dk
+	 bQkB/DGMiNKEY8ZKJ3Sxx8/cmkqVqGjMDAFN9RD38Zp4v0PjCoLCGawmt2SDtDz99F
+	 WCJ6fN+vBBfwhy4jXT90zFXcaMi82wWdRf/Ym97umoYtkS9MXWE2vsiSpRR3TKM9rA
+	 WxyW/2kH/6J+T625BUVgMN27aKPp4nA49cL8Hec23p+xFlnhuP6VcqypaB1N/O2B0p
+	 sh5uoRIJWAUfA==
+Date: Sun, 23 Jun 2024 16:28:27 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Beniamin Bia <beniamin.bia@analog.com>, Stefan Popa
+ <stefan.popa@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ devicetree@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ jstephan@baylibre.com, dlechner@baylibre.com
+Subject: Re: [PATCH 3/9] dt-bindings: iio: adc: adi,ad7606: improve
+ descriptions
+Message-ID: <20240623162827.45220840@jic23-huawei>
+In-Reply-To: <20240618-cleanup-ad7606-v1-3-f1854d5c779d@baylibre.com>
+References: <20240618-cleanup-ad7606-v1-0-f1854d5c779d@baylibre.com>
+	<20240618-cleanup-ad7606-v1-3-f1854d5c779d@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/3] tools/perf: Fix the string match for
- "/tmp/perf-$PID.map" files in dso__load
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, acme@kernel.org,
- jolsa@kernel.org, adrian.hunter@intel.com, irogers@google.com,
- namhyung@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com, maddy@linux.ibm.com,
- kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com
-References: <20240618140354.5765-1-atrajeev@linux.vnet.ibm.com>
-Content-Language: en-US
-From: Chaitanya S Prakash <ChaitanyaS.Prakash@arm.com>
-In-Reply-To: <20240618140354.5765-1-atrajeev@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, 18 Jun 2024 14:02:35 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-On 6/18/24 19:33, Athira Rajeev wrote:
-> Perf test for perf probe of function from different CU fails
-> as below:
->
-> 	./perf test -vv "test perf probe of function from different CU"
-> 	116: test perf probe of function from different CU:
-> 	--- start ---
-> 	test child forked, pid 2679
-> 	Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Msa7iy89bx/testfile
-> 	  Error: Failed to add events.
-> 	--- Cleaning up ---
-> 	"foo" does not hit any event.
-> 	  Error: Failed to delete events.
-> 	---- end(-1) ----
-> 	116: test perf probe of function from different CU                   : FAILED!
->
-> The test does below to probe function "foo" :
->
-> 	# gcc -g -Og -flto -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.c
-> 	-o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
-> 	# gcc -g -Og -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.c
-> 	-o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
-> 	# gcc -g -Og -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
-> 	/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
-> 	/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
->
-> 	# ./perf probe -x /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile foo
-> 	Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
-> 	   Error: Failed to add events.
->
-> Perf probe fails to find symbol foo in the executable placed in
-> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7
->
-> Simple reproduce:
->
->   # mktemp -d /tmp/perf-checkXXXXXXXXXX
->     /tmp/perf-checkcWpuLRQI8j
->
->   # gcc -g -o test test.c
->   # cp test /tmp/perf-checkcWpuLRQI8j/
->   # nm /tmp/perf-checkcWpuLRQI8j/test | grep foo
->     00000000100006bc T foo
->
->   # ./perf probe -x /tmp/perf-checkcWpuLRQI8j/test foo
->     Failed to find symbol foo in /tmp/perf-checkcWpuLRQI8j/test
->        Error: Failed to add events.
->
-> But it works with any files like /tmp/perf/test. Only for
-> patterns with "/tmp/perf-", this fails.
->
-> Further debugging, commit 80d496be89ed ("perf report: Add support
-> for profiling JIT generated code") added support for profiling JIT
-> generated code. This patch handles dso's of form
-> "/tmp/perf-$PID.map" .
->
-> The check used "if (strncmp(self->name, "/tmp/perf-", 10) == 0)"
-> to match "/tmp/perf-$PID.map". With this commit, any dso in
-> /tmp/perf- folder will be considered separately for processing
-> (not only JIT created map files ). Fix this by changing the
-> string pattern to check for "/tmp/perf-%d.map". Add a helper
-> function is_perf_pid_map_name to do this check.
->
-> With the fix,
-> 	# ./perf test "test perf probe of function from different CU"
-> 	117: test perf probe of function from different CU                   : Ok
->
-> Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
+> Reword a few descriptions, and normalize the text width to 80 characters.
+
+Don't rewrap text in a patch that does anything else as those real
+changes are hidden.
+
+Even if you are changing the text, minimise rewraps to those necessary
+to avoid lines getting too long and fix them up in a follow up patch
+that just rewraps.
+
+I think most of the changes are fine, but it's really hard to spot
+the real changes in here!
+
+>=20
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
 > ---
-> Changelog:
-> v2 -> v3:
-> Addressed review comment from Adrian and James.
-> Added perf_pid_map_tid to save the tid and modified
-> is_perf_pid_map_name to use this internally.
->
-> v1 -> v2:
-> Addressed review comments from Adrian.
-> Added helper function is_perf_pid_map_name to check
-> dso name of form "/tmp/perf-%d.map". Used sscanf
-> instead of regex comparison.
->
->   tools/perf/util/dso.c    | 12 ++++++++++++
->   tools/perf/util/dso.h    |  4 ++++
->   tools/perf/util/symbol.c |  3 ++-
->   3 files changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
-> index dde706b71da7..2340c4f6d0c2 100644
-> --- a/tools/perf/util/dso.c
-> +++ b/tools/perf/util/dso.c
-> @@ -1652,3 +1652,15 @@ int dso__strerror_load(struct dso *dso, char *buf, size_t buflen)
->   	scnprintf(buf, buflen, "%s", dso_load__error_str[idx]);
->   	return 0;
->   }
-> +
-> +bool perf_pid_map_tid(const char *dso_name, int *tid)
-> +{
-> +	return sscanf(dso_name, "/tmp/perf-%d.map", tid) == 1;
-> +}
-> +
-> +bool is_perf_pid_map_name(const char *dso_name)
-> +{
-> +	int tid;
-> +
-> +	return perf_pid_map_tid(dso_name, &tid);
-> +}
-> diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
-> index df2c98402af3..d72f3b8c37f6 100644
-> --- a/tools/perf/util/dso.h
-> +++ b/tools/perf/util/dso.h
-> @@ -809,4 +809,8 @@ void reset_fd_limit(void);
->   u64 dso__find_global_type(struct dso *dso, u64 addr);
->   u64 dso__findnew_global_type(struct dso *dso, u64 addr, u64 offset);
->   
-> +/* Check if dso name is of format "/tmp/perf-%d.map" */
-> +bool perf_pid_map_tid(const char *dso_name, int *tid);
-> +bool is_perf_pid_map_name(const char *dso_name);
-> +
->   #endif /* __PERF_DSO */
-> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-> index 9e5940b5bc59..aee0a4cfb383 100644
-> --- a/tools/perf/util/symbol.c
-> +++ b/tools/perf/util/symbol.c
-> @@ -1799,7 +1799,8 @@ int dso__load(struct dso *dso, struct map *map)
->   	const char *map_path = dso__long_name(dso);
->   
->   	mutex_lock(dso__lock(dso));
-> -	perfmap = strncmp(dso__name(dso), "/tmp/perf-", 10) == 0;
-> +	perfmap = is_perf_pid_map_name(map_path);
-> +
->   	if (perfmap) {
->   		if (dso__nsinfo(dso) &&
->   		    (dso__find_perf_map(newmapname, sizeof(newmapname),
+>  .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 61 ++++++++++++----=
+------
+>  1 file changed, 34 insertions(+), 27 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> index 00fdaed11cbd..80866940123c 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> @@ -36,64 +36,71 @@ properties:
+>    avcc-supply: true
+> =20
+>    interrupts:
+> +    description:
+> +      The BUSY pin falling edge indicates that the conversion is over, a=
+nd thus
+> +      new data is available.
+>      maxItems: 1
+> =20
+>    adi,conversion-start-gpios:
+>      description:
+> -      Must be the device tree identifier of the CONVST pin.
+> -      This logic input is used to initiate conversions on the analog
+> -      input channels. As the line is active high, it should be marked
+> -      GPIO_ACTIVE_HIGH.
+> +      Must be the device tree identifier of the CONVST pin(s). This logi=
+c input
 
-Reviewed-by: Chaitanya S Prakash<chaitanyas.prakash@arm.com>
+Why plural when it has maxitems 1?
 
-I will drop my fix for the same.
-https://lore.kernel.org/all/20240601125946.1741414-10-ChaitanyaS.Prakash@arm.com/
+> +      is used to initiate conversions on the analog input channels. As t=
+he line
+> +      is active high, it should be marked GPIO_ACTIVE_HIGH.
 
-The rest of my series can be reviewed as a string function tidy up.
+If you drop the plural change don't rewrap this in v2, it is unnecessary no=
+ise
+that takes away from the real improvements.
+>      maxItems: 1
+> =20
+>    reset-gpios:
+>      description:
+> -      Must be the device tree identifier of the RESET pin. If specified,
+> -      it will be asserted during driver probe. As the line is active hig=
+h,
+> -      it should be marked GPIO_ACTIVE_HIGH.
+> +      Must be the device tree identifier of the RESET pin. If specified,=
+ it will
+> +      be asserted during driver probe. On the AD7606x, as the line is ac=
+tive
+> +      high, it should be marked GPIO_ACTIVE_HIGH. On the AD7616, as the =
+line is
+> +      active low, it should be marked GPIO_ACTIVE_LOW.
+>      maxItems: 1
+
+
+> =20
+>    adi,range-gpios:
+>      description:
+> -      Must be the device tree identifier of the RANGE pin. The polarity =
+on
+> -      this pin determines the input range of the analog input channels. =
+If
+> -      this pin is tied to a logic high, the analog input range is =C2=B1=
+10V for
+> -      all channels. If this pin is tied to a logic low, the analog input=
+ range
+> +      Must be the device tree identifier of the RANGE pin. The state on =
+this
+> +      pin determines the input range of the analog input channels. If th=
+is pin
+> +      is tied to a logic high, the analog input range is =C2=B110V for a=
+ll channels.
+> +      On the AD760X, if this pin is tied to a logic low, the analog inpu=
+t range
+>        is =C2=B15V for all channels. As the line is active high, it shoul=
+d be marked
+> -      GPIO_ACTIVE_HIGH.
+> +      GPIO_ACTIVE_HIGH. On the AD7616, there are 2 pins, and if the 2 pi=
+ns are
+> +      tied to a logic high, software mode is enabled, otherwise one of t=
+he 3
+> +      possible range values is selected.
+
+With max items 1 how do we have 2?
+
+>      maxItems: 1
+> =20
+>    adi,oversampling-ratio-gpios:
+>      description:
+> -      Must be the device tree identifier of the over-sampling
+> -      mode pins. As the line is active high, it should be marked
+> -      GPIO_ACTIVE_HIGH.
+> +      Must be the device tree identifier of the over-sampling mode pins.=
+ As the
+> +      line is active high, it should be marked GPIO_ACTIVE_HIGH. On the =
+AD7606X
+> +      parts that support it, if all 3 pins are tied to a logic high, sof=
+tware
+> +      mode is enabled.
+>      maxItems: 3
+
 
 
