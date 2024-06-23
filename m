@@ -1,106 +1,104 @@
-Return-Path: <linux-kernel+bounces-226235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC53913BE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:02:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C217F913BEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C1B21C216B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:02:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E75B2831F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39645181B94;
-	Sun, 23 Jun 2024 15:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD82E181D08;
+	Sun, 23 Jun 2024 15:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUTDTxB0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="d62+5SzZ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F02E20E6;
-	Sun, 23 Jun 2024 15:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE9720E6;
+	Sun, 23 Jun 2024 15:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719154928; cv=none; b=QG3AyeibfUSqtJOH4sklGtpcOnWDmxJl1Eni8NSnCLDx0csbvlDQE39VfsPc4Bqywa3ShAK9idty4qQ7fZ8hunL1/qSATftcteaS0sUzqYvW4QK/1CAtXo5iOwWdx5j6mDBkOz7MtneI5tE0hrLfzKQ4FemK46SXaTvgeey2FVY=
+	t=1719154970; cv=none; b=pM8tYFEmvMXfCiCX78WkYylrBK3SJEZqUc0xL9PRlTmWRsQWZo6SA/+oUOpqQLrh30UZ+Sw6iSkAKl1nN5/HDvC0JpmFncy2qT1CbcVH5jO0GapTmeQOna8qc7zX9UKM6XCfnmhwQLzuUfpgHqAHyyytESsbPDyVM7oQoZx1VQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719154928; c=relaxed/simple;
-	bh=ISrxbHoDsgdg8jZ5QeZIYDTqqYNzfT5aOQ66p+EPqGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kckZO+7gJOFXkIZzz9JJVOJXif6d/jJYRCIxyclpf373Gtn3tK8IOHOAc4qUPmPYD+tfsCAUom1eB7e4tdHppem9RlMRBCe8i9iddMMdusumvGyF4GhE10lehFgHVrJ+/i7YLvTrCCU0Emnv34u4wCCJKSCK32vcLLnChqjQgWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUTDTxB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4865CC2BD10;
-	Sun, 23 Jun 2024 15:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719154928;
-	bh=ISrxbHoDsgdg8jZ5QeZIYDTqqYNzfT5aOQ66p+EPqGo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AUTDTxB066M0zP5PMnojHiP1J9VHW5O8wI8HefXUNgg6ViyiR7lynsdfZGq264K6U
-	 IW4Ea5yErWl4FfQyuG8vIAehENxpLg5icImCG8oxz/qLBjTQb4Bk6kpJANxvEJ5wYD
-	 PrjphOlKGgCzYIfmAOr+12xKh6tN5iTDr5+UcorXUOpyjdZwJ3AwiULMN4GHkAJqDb
-	 eUWjQBZsXWE03LxzzGgbyxGgKNRMqdXdlwAfGxljoGFPOlFJDE3iYqcLDS3uBRj4JN
-	 efREL+yQKPQTMEGlMmIqSlWt+v2fJnjLEdxB1bweeVrR9fdjtANEtfQWZVXgb08OJ2
-	 Qy6wWz68wH1GA==
-Date: Sun, 23 Jun 2024 16:01:57 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Fabrice Gasnier
- <fabrice.gasnier@foss.st.com>, <alsa-devel@alsa-project.org>,
- <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-stm32@st-md-mailman.stormreply.com>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/8] dt-bindings: iio: dfsdm: move to backend framework
-Message-ID: <20240623160157.2bed9ff9@jic23-huawei>
-In-Reply-To: <20240618160836.945242-5-olivier.moysan@foss.st.com>
-References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
-	<20240618160836.945242-5-olivier.moysan@foss.st.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719154970; c=relaxed/simple;
+	bh=pmraKMKuGHQsOuwkJdHHe7ZPHs24rglHuo8gj8xVWbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JnIpcTWwBbeqC6BFU/YOJsEKqo/o3/sCI2fKean3uhNCwEIFB0dQ2k5npWQXF7NuDmRahbl580WpM5PQZTh7yUny9WgntH0qA0db3yhqp5Kj2meMdNC0jIgpX9UvPx7SiOr182f5tGfzbZfLBO3gz1sm6ysRjYzhiGlF14YInbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=d62+5SzZ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=lAeNiNN7T2hP3j1rcbWFTsr6hZ4Ct1xVTB5elrFogu0=; b=d62+5SzZZhGQ0EO4TWRU14lMaj
+	bsfy0dl0rM/dFmE0iwO9Opswh8k5s9z7Jqd2x5l2OYfHO/UHdR2TViD+PyC955fd4ssnXwLx2GPVx
+	J0BNIWFxZZVRYc+/sgXK5zI6jhz3wk6WzkfxyIxfxrlm/LnYaiSnZ/1DLuEJN5oC2nxc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sLOjs-000mnd-Ez; Sun, 23 Jun 2024 17:02:44 +0200
+Date: Sun, 23 Jun 2024 17:02:44 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Omer Shpigelman <oshpigelman@habana.ai>
+Cc: Sunil Kovvuri Goutham <sgoutham@marvell.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"ogabbay@kernel.org" <ogabbay@kernel.org>,
+	Zvika Yehudai <zyehudai@habana.ai>
+Subject: Re: [PATCH 06/15] net: hbl_cn: debugfs support
+Message-ID: <b40391d5-66d2-44be-bc83-4ac3b7bcfe08@lunn.ch>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-7-oshpigelman@habana.ai>
+ <BY3PR18MB473757A4F450A2F5C115D5A9C6CF2@BY3PR18MB4737.namprd18.prod.outlook.com>
+ <ac16e551-b8d6-4ca7-9e3c-f2e8de613947@habana.ai>
+ <060ac3a6-bbac-400c-bfd9-cb1a32c653b4@lunn.ch>
+ <a1a3bafb-c64e-4960-a826-f49d4679d7a0@habana.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a1a3bafb-c64e-4960-a826-f49d4679d7a0@habana.ai>
 
-On Tue, 18 Jun 2024 18:08:30 +0200
-Olivier Moysan <olivier.moysan@foss.st.com> wrote:
+> > If there is no netdev, what is the point of putting it into loopback?
+> > How do you send packets which are to be looped back? How do you
+> > receive them to see if they were actually looped back?
+> > 
+> > 	Andrew
+> 
+> To run RDMA test in loopback.
 
-> Change the DFSDM binding to use the new IIO backend framework,
-> along with the adoption of IIO generic channels.
-> This binding change allows to add scaling support to the DFSDM.
-> 
-> Keep the legacy binding as deprecated for backward compatibility.
-> 
-> The io-backends property is supported only in generic IIO channel
-> binding.
-> 
-> - Channel description with the generic binding (Audio and Analog):
-> 
->   Properties supersed by generic properties:
-superseded
+What is special about your RDMA? Why do you need something which other
+vendors don't? Please solve this problem for all RDMA devices, not
+yours.
 
->     st,adc-channels: becomes "reg" property in channel node
->     st,adc-channel-names: becomes "label" property in channel node
->   Properties moved to channel child node:
->     st,adc-channel-types, st,adc-channel-clk-src, st,adc-alt-channel
-> 
-> - Analog binding:
-> 
->   DFSDM filter channel is configured as an IIO backend consumer.
->   Add io-backends property in channel child nodes.
-> 
->   DFSDM is no more configured as a channel consumer from SD modulator.
->   Use of io-channels in DFSDM node is deprecated.
-> 
-> - Audio binding:
-> 
->   DFSDM audio DAI is configured as a channel consumer from DFSDM filter.
->   No change compare to legacy.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+This all part of the same thing with respect to module
+parameters. Vendors would add module parameters for something. Other
+vendors would have the same concept, but give it a different name,
+different values. It was all poorly documented. You had to read the
+kernel sources to figure out what kernel module parameters do. Same
+goes for debugfs, driver values in /proc, /sysfs or /debugfs. So for
+years we have been pushing back on things like this.
+
+If you have something which is unique to your hardware, no other
+vendor is ever going to have the same, then you can make an argument
+for something driver specific in /debugfs. But RDMA loopback tests is
+clearly not specific to your driver. Extend the KAPI and tools to
+cover this, document the KAPI, write the man page, and let other
+vendors implement the little bit they need in their driver, so users
+have a uniform way of doing things over a rather of devices.
+
+You will get a lot of pushback on everything in /debugfs, so please
+review them all with this in mind.
+
+       Andrew
 
