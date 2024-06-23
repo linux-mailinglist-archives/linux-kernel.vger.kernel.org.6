@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-226010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F90591390A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:38:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646B191390B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D26B1F21FF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:38:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E7361F21B6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957AD629E4;
-	Sun, 23 Jun 2024 08:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1901A286;
+	Sun, 23 Jun 2024 08:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGVmZvIY"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="lMx5pl+T";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V1WPWUpg"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592495A10B
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 08:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2DE7D3E8
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 08:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719131927; cv=none; b=F4ydi9P2/WX+OifbqmjXnkuqETYDFQkynnSApLsjq7rTsuoX1AEBuh3XvQrubVOLSbvvHa67exQdBsJMobDKkqtaDVqA70Uzb8/a6zkZCwciUos5EPKyB7RG3SdhU6+2se8b0vlnGkzduaGh7/0a3dbh5F7OKw8SSl9xg2yKz4I=
+	t=1719131949; cv=none; b=D18EG6w2dpdoncjQAcSDJWwq5vKQIQ6SCq0bibUDnyjcrSip98r2dRnuIaBWEG6nrX1ZQwk7P30pCMjGOJ9sr8RgYKs1+GHG0E7WJVewCQ478fefCXxVJOUicWJ3g8GtGCLwnpnpPOFrrO4bJwft7Qe7ylAmr7dN3Ysk4ILCzuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719131927; c=relaxed/simple;
-	bh=QsvZBiKvcHvou+0boUCjjNJ+cHvFHTV8MhGq/+mhh5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZCM8O1BavoomOe0jxELueiJcTru+xXlkTN47Tr+kUgy28W3MqWjk+Z9nC5N6Hz8bR4EPOzY9FD1/ET7QGOqnmnGVN8/86wc5gXOefha1/xRWg6qiTeyMgx5eBkAmyEDEk65HikN51oY2N7AVOXtOm8DJpFGv5RHZHeMcrc76ZKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGVmZvIY; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7245453319so72740766b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 01:38:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719131924; x=1719736724; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QsvZBiKvcHvou+0boUCjjNJ+cHvFHTV8MhGq/+mhh5Q=;
-        b=HGVmZvIYzahDbfgB7zWTW/S/cvYtP5oDW9XmvrfVhHA/c0PN0ygWEuhwAWmUW3O92N
-         chtkjnEyg9Cv8bYcQSQlSKJrXTMhFmP3Y3GhPGJY1jgnMmz4umYbslCqvE0Wt28FiyHt
-         csXPIWbx2NyQelQChTDBxsS5RwhoxApqVtINlWddZjk0N9/SsX7a3FqX9iZU6NLIXaj8
-         G6v8E88oDP2H3fTuW9DdT9jR53Ncvjri/aTAq4BNchzC/U8Qee6TtyA2uoOCGUNDUlKN
-         fibpdxAOgI1OAPnJeIlTcPR+Ge1GOwvNp61v7o2MWYoMu/sTfJnGclsTT3B7VY77JMX2
-         VDXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719131924; x=1719736724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QsvZBiKvcHvou+0boUCjjNJ+cHvFHTV8MhGq/+mhh5Q=;
-        b=W1hq6i2GpvuEu9+lx9/zIQqkQfebevYwNmJCpCP1OOaCxWhh/7PgfZGnBvyhOqa0FU
-         SG7THWvvDkbZ9bWrsCJEyPSrqKd03RKSSaVNbOT2XMJCFTONCmwCE+Nu6Xho2UwMU5NG
-         CAOM+wxsKBmhbSVL53JQY/VxiRPGULNZ5jzDIgX9T14gwZUEul/btpZO1Ymo2UWFHW9V
-         AoU9KP7kNNuu08zh1HiKiGRGrLMZhsuWJiWjSTV7iNY1XXnWgSrXfuWzakCR+HLq2rqi
-         ICn141svbu4pf0Pr3DKD6u0Io0P7jal86f4pwhZQcgErX7kNamZD0IWZR3yL/YgV4swj
-         nVOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUspbaONj48F5sZwAclYJPcC//hZiaFFF88r5dG1aNiIxZt5+iy1HnYTCOtpMklwQKItXrL18/o/szBZrdqY6+k5ZHnM0m0Q+E+UCoV
-X-Gm-Message-State: AOJu0Yw5navgBPgZK7Kfn3a8CrIe/E8bcTBRctNHQxZm9iy1dR1wNrqk
-	KTfro8a0tsm90Ac6W2IeQ5Y9ZwktAYdH1Ovv0rtxJ4tq9VXPykDHNXz74ECXdAXPYZ4m9dIsTrQ
-	pL8NAm7zssNqiFpp8LlIN6xfrMOg=
-X-Google-Smtp-Source: AGHT+IEXX8VbYw8vknrUcUOe6Lx9SOjzX2TCFUsGPPaWCwb8IUPUwU+WThSU3Gavqk0Q3m73pv91V1u/yyYawwQJ7Ec=
-X-Received: by 2002:a17:906:3593:b0:a6f:b352:a74b with SMTP id
- a640c23a62f3a-a700e7334d5mr197419166b.38.1719131924431; Sun, 23 Jun 2024
- 01:38:44 -0700 (PDT)
+	s=arc-20240116; t=1719131949; c=relaxed/simple;
+	bh=0PWnUkTFu1BbmLPvXRMNGVxrKjxM8GMqwjzK8/CkveA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C3aSG0WTIk6iz+faUwGNRV7SmgP38kul5r418WVhQbkSfSTDwTZOarAF7RyHGNVT1IR+6UVIkKqFeNKWjrk0fHhTc2DEQ/tM3nznrepN7snFOPZv1DfNqwFUkBoggqIp0JEgKYahp/RevYRaXRgsLhZaUpiqQz6rCJ4ICvOvGIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=lMx5pl+T; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V1WPWUpg; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 48D67114012D;
+	Sun, 23 Jun 2024 04:39:05 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Sun, 23 Jun 2024 04:39:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm2; t=1719131945; x=1719218345; bh=11XHwVSKA4
+	haBzqqLDZYSMi2ESbRYlY9OIyv6jSHsgw=; b=lMx5pl+TloIz6v0NsK4F+8wNm8
+	nVsulufqK2SzAS9bk7Pc3tlL1mmmD2O3IUuz7z1UrvVw1Zn9bg8aOLqHZ2D4C+v8
+	DE2wlFq2dGOKIzx6xxVeq0P2K4vu8f2m9er+TccJhe49ozvLteZc/qYKCa7x1+xS
+	tDOCF9IAp3gCR1Hm7LZIiNY0a+/fMhuf9Qv/52QruHz6cN7fiBRGj+b0DLj/sq3o
+	37pBaZfoh87DC6pYRqyezBQiC5mjroloTU+viETToOYJUUVB27G+IQo3wJ8pgcx9
+	vD+nRzVjuIEEaH2Y/mzEZr3AmSlY97Z37gqvQqyZYdHB2+cEJ1YhtDjb2elw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719131945; x=1719218345; bh=11XHwVSKA4haBzqqLDZYSMi2ESbR
+	YlY9OIyv6jSHsgw=; b=V1WPWUpgMOUn8EMBLmtMqngXIiFakDYjoC4AukQnocUk
+	Lm1vnM4sq862BbeCZji1HhxPUjfojPbpuDmCiYHeoCrtTTeVONBrr+GsriiOk/ll
+	YNLb7gmuw2lZdg+k2NxHCM4iyYsyzHn/QyFddn8sX/30bF/bLbU3MEJ4/8L+DiYc
+	CrBG8E4YoN9Enxp8ODE0rTyeTFM75p5cB4zEmIvLRjZFMk28ag7FfmeaQrR+zrfw
+	tKjcXbM7nG6XFnKPVKqtk9ePTFbFw9jsP/vP0BUit1TidYlXmWYyEULnteFUTK/l
+	vn0hWy9NmZEOCfrxmgJ0krEkSduy8GrNi7QJ5go4Gg==
+X-ME-Sender: <xms:Kd93ZtMK_vjTzJ2lxJwTY3lt4IS2yYS7j0saHDTC0MgQ0265D3R5hw>
+    <xme:Kd93Zv9JXn7dmxT8w3HaIWxzT0feq5DKib-rVxQDmd6UJUdDsLhqTqG4R4d-dRKnp
+    0oM8dl-o3iAbbvshH0>
+X-ME-Received: <xmr:Kd93ZsTzFNXTBzvF-u6bzu05y2zmm3q54FqacsFfSLkb4RmkLvwarHerEUJscKr2a3vdVXL9wrvwTivCV7l3nxfsu3G8CcCijpKoD_LhdfEf>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefledgtdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
+    ertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
+    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeffvdeuleffve
+    ekudfhteejudffgefhtedtgfeutdfgvdfgueefudehveehveekkeenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrg
+    hkrghmohgttghhihdrjhhp
+X-ME-Proxy: <xmx:Kd93ZptOgYKt1X9CeGWqwHPaeT5tEU1mTyP9XxEpoeO_iRwVSOfNhQ>
+    <xmx:Kd93Zld-1dp-CSqhGjKJdLfezkTyTWzh8Ab2kYmdrR8SYYK8RAEOxQ>
+    <xmx:Kd93Zl2Rg2cg56uauA4DAAMspqFvs6r91C85dPsLSIny-e88VJ7v8Q>
+    <xmx:Kd93Zh8E-GFqxQb8IXUZgKfxDFyGdY71Y0v5FpxtvMiF_6QGPtCtDQ>
+    <xmx:Kd93ZmpfW9dwhtayRW92VXI5b_kECOPyLtXWXuboW1pQ-RHjiy2_BE1V>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 23 Jun 2024 04:39:04 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] firewire: core: undefine macros after use in tracepoints events
+Date: Sun, 23 Jun 2024 17:39:00 +0900
+Message-ID: <20240623083900.777897-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607105906.4192924-1-quic_faiyazm@quicinc.com>
- <CACmEs-4mntpn8SQVgx5Qv9W8cmWQ__=1ds_j=vXxcDp27=SXLA@mail.gmail.com> <066a05ca-e2e8-4cfe-8d33-60a665495cdf@quicinc.com>
-In-Reply-To: <066a05ca-e2e8-4cfe-8d33-60a665495cdf@quicinc.com>
-From: Dongmin Lee <ldmldm05@gmail.com>
-Date: Sun, 23 Jun 2024 17:38:33 +0900
-Message-ID: <CACmEs-6+GW=pmeWnyE4CZ8hk5PBA_9KOXj+MrkhZ2EcePdC0rg@mail.gmail.com>
-Subject: Re: [PATCH] kernel/reboot: enhance dmesg logging for system restart
-To: Faiyaz Mohammed <quic_faiyazm@quicinc.com>
-Cc: benjamin.bara@skidata.com, dmitry.osipenko@collabora.com, lee@kernel.org, 
-	daniel.lezcano@linaro.org, j.granados@samsung.com, 
-	linux-kernel@vger.kernel.org, dongmin.lee@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 19, 2024 at 8:09=E2=80=AFPM Faiyaz Mohammed
-<quic_faiyazm@quicinc.com> wrote:
-> Agreed in kernel view user's space reboot is intended but if system is
-> silently rebooting due to any user process(vendor specific user process
-> or even a OS specific user deamon) meeting any error condition then a
-> developer debugging the system need to know which user process is
-> issuing reboot system call to debug further, so in humble opinion it is
-> helpful for system debug perspective.
+Some macros are defined in tracepoints events. They should be back to
+undefined state after use.
 
-Your situation is where system call tracing is required. Tracing
-itself (via printing out kernel backtrace and/or comm and name) is
-actually not what system calls should support regardless of debugging
-level and/or kconfig option.
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ include/trace/events/firewire.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-As I mentioned in earlier mail, you might use gdb debugger for the
-purpose, or you might utilize SystemTap or eBPF to trace system calls
-(including reboot call), actually these are for you to do system call
-tracing rather than unnecessarily modifying system call's behavior.
+diff --git a/include/trace/events/firewire.h b/include/trace/events/firewire.h
+index 5ccc0d91b220..132f9329224d 100644
+--- a/include/trace/events/firewire.h
++++ b/include/trace/events/firewire.h
+@@ -366,6 +366,14 @@ TRACE_EVENT(bus_reset_handle,
+ 	)
+ );
+ 
++#undef PHY_PACKET_SELF_ID_GET_PHY_ID
++#undef PHY_PACKET_SELF_ID_GET_LINK_ACTIVE
++#undef PHY_PACKET_SELF_ID_GET_GAP_COUNT
++#undef PHY_PACKET_SELF_ID_GET_SCODE
++#undef PHY_PACKET_SELF_ID_GET_CONTENDER
++#undef PHY_PACKET_SELF_ID_GET_POWER_CLASS
++#undef PHY_PACKET_SELF_ID_GET_INITIATED_RESET
++
+ #undef QUADLET_SIZE
+ 
+ #endif // _FIREWIRE_TRACE_EVENT_H
+-- 
+2.43.0
 
-You might want to refer to: https://lwn.net/Articles/852112/
-
-Sincerely,
-Dongmin Lee
-https://ldmsys.net/
 
