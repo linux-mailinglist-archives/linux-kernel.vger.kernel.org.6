@@ -1,178 +1,135 @@
-Return-Path: <linux-kernel+bounces-226291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4438C913C81
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:43:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DB0913C89
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD5FB1F22B2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:43:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2BCC1F22699
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFCE1822E5;
-	Sun, 23 Jun 2024 15:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B721822DF;
+	Sun, 23 Jun 2024 15:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ig2qEl3L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgEFINGP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7977F1822C1;
-	Sun, 23 Jun 2024 15:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8F6138C;
+	Sun, 23 Jun 2024 15:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719157385; cv=none; b=sDeiA8yEtr1ERb8jh+30IfWNXXcKhuWy4HxXiAo1o5DTK7a+0fg4pjrNWgfDoC7J3qk6V0E0tCb2Zh4Y3FD9PqDdxbP/BxyeBOvIcP5V/HPk3uGzpxcFWZfw60UxCW5MwHBiEVaVBdvKUjiRvFbNFa1npove0MInvVkEuzsEFD0=
+	t=1719157554; cv=none; b=r2tT70iMMMLVfJh83WdB3afGdXvcG5a8eAq0XcD+azS5MPS+eccN35mnAHAFVNLZy+paVf19cdiSDAPkmcyiXrcLDU8x0OWur6hDC9vbKdakOB0k+AlhStKJ709j/jbAAMLOij2j3ulOAE2bTY1suLBxb3tR+SctUl3im234RPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719157385; c=relaxed/simple;
-	bh=lOo+ByMOxJv+uOcBMeubi7V3Rm4GnZ1uYp8z+JG4D7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ltnAK0ng+EdQ4iMmyxYl1RJvjsFBujwEyP3yfympcE7yfi1YuXIOrK6o4K7YIVx1QNWo0NbfR7lUq3wFzbseYWholSP3fr6WX3NNl4sT9rb4EMwLg5rPm3dFxwZPj9hVk8WVPegt4Q2cu3U7ebQhl1Wie5EhJhPJdWkZXvZPMis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ig2qEl3L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A56C6C2BD10;
-	Sun, 23 Jun 2024 15:43:01 +0000 (UTC)
+	s=arc-20240116; t=1719157554; c=relaxed/simple;
+	bh=uQe4Enk2M6hfxf4cAkez/EJZ6Q60mIRiKfh6LopyAV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=izFdqzZjhh7dT9rWy4AWJXCIgALQI28RqAu0CdmvyaXw+mFYYhRId+LnbWlyUVQUrnK5ppFjdg6OWRZ55IfutbQo+13Upsknt4/xLqipCr/Bid8QS9wRr/L/YW0bvm8n6xeXhaQOprV/7ZESlmWrxxHVYF2NY+V2E0cNAJB+FLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgEFINGP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59996C2BD10;
+	Sun, 23 Jun 2024 15:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719157385;
-	bh=lOo+ByMOxJv+uOcBMeubi7V3Rm4GnZ1uYp8z+JG4D7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ig2qEl3L4TVco7WlBwgMQUjId3RGZgfm6ZSQSHOUzIJt7J2AV7Kl9d399jRG/+/kk
-	 yMdLpjNVa+o4mc419wbWElR7rwCDvJ7Odk5KwyJgy+AYatwVFBCtVjSamnAmi4LMFN
-	 484fIdjkW+ZcWzV9AYNokqANEnZZjNRA2A/MfG37zTPPZunAVYCGVKw6ZVAe/mJDHG
-	 n0Dar0++YGiGAgaRGvenduDqIdQozpvXoQnbL/N/TLBDiG9WV79LnkqZ2Il8O+UqV9
-	 5Oeqnog/H75h1RByve23ecbkHVll3UcSUVnIP6kdJcX6RvSKWM+ts5ntO7bc+qra3d
-	 oUKygciaWfakQ==
-Date: Sun, 23 Jun 2024 16:42:59 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
-	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 08/16] riscv: add ISA parsing for Zca, Zcf, Zcd and Zcb
-Message-ID: <20240623-cornbread-preteen-4ec287aa165c@spud>
-References: <20240619113529.676940-1-cleger@rivosinc.com>
- <20240619113529.676940-9-cleger@rivosinc.com>
+	s=k20201202; t=1719157553;
+	bh=uQe4Enk2M6hfxf4cAkez/EJZ6Q60mIRiKfh6LopyAV0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YgEFINGPHd2RojkLuxivUjkSXxnykqnel7Sd81FKDjpEnmMQvg8GDWGwMl5nP7Ed/
+	 3AwtOnBoztc2LjUQSOWSwX3Ofp5y+Rdt67GfUgsBw+MZcEcqhjc5/Z0MnJDkJpkD91
+	 CcN9llIQxpSvF8UEL1kGqFH4OLLr76/5ONppIfY7A+rwDFNxOZBT8udbN+HMwKzerN
+	 u12agM0hsxF9QpuhCXEd/o4b4Wiu0P5vxJIlwBbi45G4rMlFPPQaGUxuhLUCZ2YiC0
+	 T/X+OezZse9zHoYLRr7ZOralYuqH6UJ1p+JaFMM5BDbEUFLaMY5ZDm5JIUDUMbOJ1H
+	 52TUICz74cAIw==
+Date: Sun, 23 Jun 2024 16:45:42 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Beniamin Bia <beniamin.bia@analog.com>, Stefan Popa
+ <stefan.popa@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ devicetree@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ jstephan@baylibre.com, dlechner@baylibre.com
+Subject: Re: [PATCH 8/9] iio: adc: ad7606: fix oversampling gpio array
+Message-ID: <20240623164542.53a9f2b1@jic23-huawei>
+In-Reply-To: <20240618-cleanup-ad7606-v1-8-f1854d5c779d@baylibre.com>
+References: <20240618-cleanup-ad7606-v1-0-f1854d5c779d@baylibre.com>
+	<20240618-cleanup-ad7606-v1-8-f1854d5c779d@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XCIoMUFlsNIN40u9"
-Content-Disposition: inline
-In-Reply-To: <20240619113529.676940-9-cleger@rivosinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Tue, 18 Jun 2024 14:02:40 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
+
+> gpiod_set_array_value was misused here: the implementation relied on the
+> assumption that an unsigned long was required for each gpio, while the
+> function expects a bit array stored in "as much unsigned long as needed
+> for storing one bit per GPIO", i.e it is using a bit field.
+> 
+> Fixes: d2a415c86c6b ("iio: adc: ad7606: Add support for AD7606B ADC")
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+Always drag fixes to the start of a series.  Probably doesn't matter
+in this case but we want it to be obvious there are no necessary precursors
+in this series for anyone backporting.
+
+What is the user visible outcome of this bug?  Superficially the numbers
+all end up the same I think even though the code is clearly working
+mostly by luck.  So might not warrant a fixes tag?
 
 
---XCIoMUFlsNIN40u9
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 19, 2024 at 01:35:18PM +0200, Cl=E9ment L=E9ger wrote:
-> The Zc* standard extension for code reduction introduces new extensions.
-> This patch adds support for Zca, Zcf, Zcd and Zcb. Zce, Zcmt and Zcmp
-> are left out of this patch since they are targeting microcontrollers/
-> embedded CPUs instead of application processors.
->=20
-> Signed-off-by: Cl=E9ment L=E9ger <cleger@rivosinc.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
->  arch/riscv/include/asm/hwcap.h |  4 +++
->  arch/riscv/kernel/cpufeature.c | 55 +++++++++++++++++++++++++++++++++-
->  2 files changed, 58 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwca=
-p.h
-> index 18859277843a..b12ae3f2141c 100644
-> --- a/arch/riscv/include/asm/hwcap.h
-> +++ b/arch/riscv/include/asm/hwcap.h
-> @@ -87,6 +87,10 @@
->  #define RISCV_ISA_EXT_ZVE64F		78
->  #define RISCV_ISA_EXT_ZVE64D		79
->  #define RISCV_ISA_EXT_ZIMOP		80
-> +#define RISCV_ISA_EXT_ZCA		81
-> +#define RISCV_ISA_EXT_ZCB		82
-> +#define RISCV_ISA_EXT_ZCD		83
-> +#define RISCV_ISA_EXT_ZCF		84
-> =20
->  #define RISCV_ISA_EXT_XLINUXENVCFG	127
-> =20
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
-e.c
-> index a3af976f36c9..aa631fe49b7c 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -111,6 +111,9 @@ static int riscv_ext_zicboz_validate(const struct ris=
-cv_isa_ext_data *data,
-> =20
->  #define __RISCV_ISA_EXT_DATA(_name, _id) _RISCV_ISA_EXT_DATA(_name, _id,=
- NULL, 0, NULL)
-> =20
-> +#define __RISCV_ISA_EXT_DATA_VALIDATE(_name, _id, _validate) \
-> +			_RISCV_ISA_EXT_DATA(_name, _id, NULL, 0, _validate)
-> +
->  /* Used to declare pure "lasso" extension (Zk for instance) */
->  #define __RISCV_ISA_EXT_BUNDLE(_name, _bundled_exts) \
->  	_RISCV_ISA_EXT_DATA(_name, RISCV_ISA_EXT_INVALID, _bundled_exts, \
-> @@ -122,6 +125,37 @@ static int riscv_ext_zicboz_validate(const struct ri=
-scv_isa_ext_data *data,
->  #define __RISCV_ISA_EXT_SUPERSET_VALIDATE(_name, _id, _sub_exts, _valida=
-te) \
->  	_RISCV_ISA_EXT_DATA(_name, _id, _sub_exts, ARRAY_SIZE(_sub_exts), _vali=
-date)
-> =20
-> +static int riscv_ext_zca_depends(const struct riscv_isa_ext_data *data,
+>  drivers/iio/adc/ad7606.c     | 4 ++--
+>  drivers/iio/adc/ad7606_spi.c | 5 +++--
+>  2 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index e3426287edf6..502344e019e0 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -235,9 +235,9 @@ static int ad7606_write_os_hw(struct iio_dev *indio_dev, int val)
+>  	struct ad7606_state *st = iio_priv(indio_dev);
+>  	DECLARE_BITMAP(values, 3);
+>  
+> -	values[0] = val;
+> +	values[0] = val & GENMASK(2, 0);
+>  
+> -	gpiod_set_array_value(ARRAY_SIZE(values), st->gpio_os->desc,
+> +	gpiod_set_array_value(st->gpio_os->ndescs, st->gpio_os->desc,
+>  			      st->gpio_os->info, values);
+>  
+>  	/* AD7616 requires a reset to update value */
+> diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+> index 263a778bcf25..287a0591533b 100644
+> --- a/drivers/iio/adc/ad7606_spi.c
+> +++ b/drivers/iio/adc/ad7606_spi.c
+> @@ -249,8 +249,9 @@ static int ad7616_sw_mode_config(struct iio_dev *indio_dev)
+>  static int ad7606B_sw_mode_config(struct iio_dev *indio_dev)
+>  {
+>  	struct ad7606_state *st = iio_priv(indio_dev);
+> -	unsigned long os[3] = {1};
+> +	DECLARE_BITMAP(os, 3);
+>  
+> +	bitmap_fill(os, 3);
+>  	/*
+>  	 * Software mode is enabled when all three oversampling
+>  	 * pins are set to high. If oversampling gpios are defined
+> @@ -258,7 +259,7 @@ static int ad7606B_sw_mode_config(struct iio_dev *indio_dev)
+>  	 * otherwise, they must be hardwired to VDD
+>  	 */
+>  	if (st->gpio_os) {
+> -		gpiod_set_array_value(ARRAY_SIZE(os),
+> +		gpiod_set_array_value(st->gpio_os->ndescs,
+>  				      st->gpio_os->desc, st->gpio_os->info, os);
+>  	}
+>  	/* OS of 128 and 256 are available only in software mode */
+> 
 
-It's super minor, but my OCD doesn't like this being called "depends"
-when the others are all called "validate".
-
-> +				 const unsigned long *isa_bitmap)
-> +{
-> +	if (__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA))
-> +		return 0;
-> +
-> +	return -EPROBE_DEFER;
-> +}
-> +static int riscv_ext_zcd_validate(const struct riscv_isa_ext_data *data,
-> +				  const unsigned long *isa_bitmap)
-> +{
-> +	if (__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) &&
-> +	    __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_d))
-> +		return 0;
-> +
-> +	return -EPROBE_DEFER;
-> +}
-> +
-> +static int riscv_ext_zcf_validate(const struct riscv_isa_ext_data *data,
-> +				  const unsigned long *isa_bitmap)
-> +{
-> +	if (IS_ENABLED(CONFIG_64BIT))
-> +		return -EINVAL;
-> +
-> +	if (__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) &&
-> +	    __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_f))
-> +		return 0;
-> +
-> +	return -EPROBE_DEFER;
-> +}
-
---XCIoMUFlsNIN40u9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnhCgwAKCRB4tDGHoIJi
-0ojNAP4zqID4s2fTIoOLI3MwCtAFLJWCKaU3UhLxLueoiVavOgD+I+moOCuXJqHu
-LFPQJbfCtkhdREIdkaCj+l4fuZIM5AI=
-=tBDW
------END PGP SIGNATURE-----
-
---XCIoMUFlsNIN40u9--
 
