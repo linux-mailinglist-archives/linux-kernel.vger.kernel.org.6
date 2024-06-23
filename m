@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-225975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55E191389F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3F19138A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A239E282110
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F7D281DB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B743112EBC2;
-	Sun, 23 Jun 2024 07:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B7A12EBE9;
+	Sun, 23 Jun 2024 07:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jdn5NePZ"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mmXKlxnI"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F56770EA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21D17E0F1
 	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 07:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719126861; cv=none; b=PuAxbt9GgGhvslFeeKK0W6dQxkaxDlNg8GHN7Au646KF6skh0My4yDt3f81S5MPK340JkSQawlg/OKSdw9xys/ZLs7G7RPhu6OReaf4w2S5JCgyVvJtDGekhY5SDAdcwr58pPGIWUEImkYSklqptoz9lbWA9CJT9RgQpbFPPrm4=
+	t=1719126861; cv=none; b=BMwjF5b5DiMzyCm4+gjGSbXHh2B+Mce2RyC7ydV5MhmMiZsoN30Ov1cU1chp9hrGdLog0NSn4sfMO+KnTTDgRKNABFAk/+e4ge65+HDpS4DmKSS9Ay8CKipbRsxFIROVDq0RI3C6blJwMVPgMlWMx3xuQssuEA4RL5EVtehmYbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719126861; c=relaxed/simple;
-	bh=L/kHiAECnxDo3RtlRAeo49B7J3QZDIm6s2oXAuRqGkM=;
+	bh=r1GyaNDuH0dnQOBTRqLdjX/f+vi1DRab71LLw2YZwc4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pCO43mg/Lp6Fosr7mFdxccMN4REJDdBp+t+tBTObrIRkZKMpPMe7UOupAB4LuLRGbR6HIPWnLBKZ2mvfzaHeZx/remwST15L1YqRkhUXtETNhpKvlOpRiaIV0dCs+b0NJ8h/mOJnj7W7O7/uz/Bjw5vhiRAVpYeSJ5WmPD6UyjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jdn5NePZ; arc=none smtp.client-ip=209.85.208.173
+	 MIME-Version:Content-Type; b=Z9CfRxm15XQAgIdmogEDrTfaWOXSKKkvcvuOKEg7GuJD7ZaLokZBzOj4/eCeLzCrmoqN9ZqY0fqeZcKY8TfaFGuvolwvYu7tncSjGu5TyIU+D9uWwTy/boYlr3tqK2L20Pg5UpMkU2ihPPhbn4eho3BJ+tW1fEjhYmzRox7KQ5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mmXKlxnI; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so36968681fa.3
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so36386541fa.2
         for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 00:14:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719126857; x=1719731657; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719126858; x=1719731658; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ioH4meZfE3J0aKheUaFtsWw5CxwMG+4ACECKaInyeus=;
-        b=jdn5NePZFulkXFxCVTZHDwP4xL8qmsnW0tjRe7KtZt99v8/fmkZ57DxNqD8VlQQqdn
-         dIgq0NaRw7HItdkFc+uywmmOxin2ZSuVA2XTGOSVTS/eCb/CvQw56KYj2QBLFyZ45Rmc
-         vwVZ2j/9OGRXA7Wue7bRjrW6RrRoXyXwVLGip1V9sgJl8MFybd6rf9TXec7tCnPjErRN
-         C7RnOkDpuHSzP/2s1LRSRJOJULDxoS7eenKsaeaGYDjD5mfAMs2k2VlTPDmmrWBSqr+D
-         J+i7phqlc2fwjfJeTJhdbTfM9ULHtLcdgsvUQz3dFpNdOdKAqizcTYM3RCAJ53f3RBB6
-         lT+w==
+        bh=ao5ztXjHb4LHR9szDgOZeLEhmApDaFHqwxcIBuJSShc=;
+        b=mmXKlxnIWBqpSTQ9wlBnkt+DjE8ztMPduPRSwjl/WAoZB+6m7sfUIJd3IyT3Iv470X
+         b1VR6UiD19AkCru7JYmiynquRk8N7VB8ezsynFexkYu1l2jZGm0xblVIKAcF1imx6eDR
+         B7Z2KJB8FsApgrOaHqKO0Zwa051S7xN9JwO8ZRKlK/+BYvZ/CpALOSp2gwzj0h5ziZOW
+         MTDJbeUuJwevasfaUctoy0fhrG3NGkl0sXyzKVcYO4ljviMhxz6YPh5fqaiFYawLthcg
+         2NNBZ1r0PihDP66FkGqj6iOfslMlriPCewl2PPApHlNDhhKMgr+6UfIj6BH3ONDxv7oS
+         4UWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719126857; x=1719731657;
+        d=1e100.net; s=20230601; t=1719126858; x=1719731658;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ioH4meZfE3J0aKheUaFtsWw5CxwMG+4ACECKaInyeus=;
-        b=dTG+/q6DMA6w0jq/g7dnyEd8qnESF9LKFvFAKv+qwYkGCDB+c3HSohaePTuYSHl9Vq
-         AVxsG2Vf0nrqgb/2Aknv9ww8zynuQ/kOYwqORSB1JifeK6JtXrS4ILxUW6kYtNzA9OIv
-         lOS+2cZtAJ5NTR98hGS5YgXKoKPGmZ89IFZWg47viZvOfOQEy0nA3Mo2nY8jtfPrqVZo
-         5M5Nx5tW9GtguSWRjQ96t2sfxTL13XTw52P6pvec3nIz74EP4RPkgNuj4qey7tCveO37
-         P2RtAly43DFxVkT9clPllQUsT4UiOTNDXRcu1BtdsbD20Gb+FvRkdwY9dOqnb+o9Qhmx
-         joog==
-X-Forwarded-Encrypted: i=1; AJvYcCX6dU98HpNgjmdY3WosbfNjz8sYRTI2u6P8JfBXt0OM3U2l1EsOs9oap1MJ0ySqHiS14f93l38wXDglp6rd3NqZcIqHm7yucALfmrgV
-X-Gm-Message-State: AOJu0YyGIHGWBw9TOW8jpV7MCjAORCKzVULb3TdQzfIEc4HJOUgZ1sU8
-	/BcBzbEGfFXORg0FxtnqkOZ+0B9xyAbJWgnVQf3qVRUw5xtAiNVjtCeQofqgGwA=
-X-Google-Smtp-Source: AGHT+IGMCFummccQ65js7i8Tyhq7c7d4P8AFkM0I/x+JPP2dWKhThzCfyL7cKG7s1TsbWGSSuOl3uA==
-X-Received: by 2002:a2e:9c90:0:b0:2ec:5518:9541 with SMTP id 38308e7fff4ca-2ec5b318018mr8720431fa.4.1719126857567;
-        Sun, 23 Jun 2024 00:14:17 -0700 (PDT)
+        bh=ao5ztXjHb4LHR9szDgOZeLEhmApDaFHqwxcIBuJSShc=;
+        b=aDJ15dWoYhzDn7jvRrYZJSUoWESQyt38ZH0+1Lb7z7vXUE8JVsvjdI8n/RLjyH0iHj
+         U7aT75ouYsZ7ETgZLeo33dYuUKgzWQ4O6JeC+pwjG5i58sSk74PKHAKcZQHo6yoS1t9w
+         M9Kuq6lqnKQ7rnC+Nq+VkIEWfL5ejbs8qNpGzhpoQcmuLSS8tHcqh+UL46NL52tx7WmP
+         iNLflgx8loyL0Kfo6jYmgiz/reXZQ0vERKAPe7kaWPRy8EOt8Jin5umekYn/KAK0VD8e
+         zuxK0RvfkfpqYRecRyGh31NCDhdk/wJ+0JJD9eNuYNsfhNcpO6NrZbJci1+m+/1BahRw
+         vNiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnFJ7dMRoxq8Sjy4LC5mPlYpqvdPqII9cMsr19znzVKxyUkrJrVAg1vmqtku2se7QbpljzZveTYOmUjdmYHU76RfvEIrbQsGRcBroU
+X-Gm-Message-State: AOJu0YzMfX1VA2/aesmDRWQB7WKf9l7Th3vvHBtsk80L2tQBYjf8PY/G
+	flvWzm/+tBF986x1fCdtv0K2X9ENCWa7Yz4pn3jCff0rxZE3UpwR/XheTPB8jDo=
+X-Google-Smtp-Source: AGHT+IGMrZ7Ab2hTrpfNCjoKkdN8iqLOosYDf5URywhJ9jd+sUequOrm6k6sz1yM2oRGbSPu4UNvIQ==
+X-Received: by 2002:a2e:9dd8:0:b0:2ec:4aac:8fd4 with SMTP id 38308e7fff4ca-2ec5930fde5mr14912791fa.1.1719126858199;
+        Sun, 23 Jun 2024 00:14:18 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec5b031208sm1886861fa.26.2024.06.23.00.14.16
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec5b031208sm1886861fa.26.2024.06.23.00.14.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 00:14:16 -0700 (PDT)
+        Sun, 23 Jun 2024 00:14:17 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: freedreno@lists.freedesktop.org,
-	Rob Clark <robdclark@gmail.com>,
+To: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
 	Sean Paul <sean@poorly.run>,
 	Marijn Suijten <marijn.suijten@somainline.org>,
 	David Airlie <airlied@gmail.com>,
 	Daniel Vetter <daniel@ffwll.ch>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: dri-devel@lists.freedesktop.org,
-	quic_jesszhan@quicinc.com,
-	dan.carpenter@linaro.org,
-	linux-arm-msm@vger.kernel.org,
+	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] drm/msm/dpu: drop validity checks for clear_pending_flush() ctl op
-Date: Sun, 23 Jun 2024 10:14:10 +0300
-Message-Id: <171912674296.840248.10530875454580478310.b4-ty@linaro.org>
+Subject: Re: [PATCH] drm/msm/dpu: guard ctl irq callback register/unregister
+Date: Sun, 23 Jun 2024 10:14:11 +0300
+Message-Id: <171912674292.840248.16492908228445159189.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240620201731.3694593-1-quic_abhinavk@quicinc.com>
-References: <20240620201731.3694593-1-quic_abhinavk@quicinc.com>
+In-Reply-To: <20240509-ctl_irq-v1-1-9433f2da9dc7@gmail.com>
+References: <20240509-ctl_irq-v1-1-9433f2da9dc7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,20 +94,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 20 Jun 2024 13:17:30 -0700, Abhinav Kumar wrote:
-> clear_pending_flush() ctl op is always assigned irrespective of the DPU
-> hardware revision. Hence there is no needed to check whether the op has
-> been assigned before calling it.
+On Thu, 09 May 2024 19:52:04 +0200, Barnabás Czémán wrote:
+> CTLs on older qualcomm SOCs like msm8953 and msm8996 has not got interrupts,
+> so better to skip CTL irq callback register/unregister
+> make dpu_ctl_cfg be able to define without intr_start.
 > 
-> Drop the checks across the driver for clear_pending_flush() and also
-> update its documentation that it is always expected to be assigned.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] drm/msm/dpu: drop validity checks for clear_pending_flush() ctl op
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/3d68e3dedd4b
+[1/1] drm/msm/dpu: guard ctl irq callback register/unregister
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/29cd76c6f897
 
 Best regards,
 -- 
