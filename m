@@ -1,147 +1,80 @@
-Return-Path: <linux-kernel+bounces-225944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2FF9137F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:41:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9499137F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A3BA1F225AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 05:41:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88590B2186B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 05:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDB126AF9;
-	Sun, 23 Jun 2024 05:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="bZMlifUd"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B3622079;
+	Sun, 23 Jun 2024 05:43:50 +0000 (UTC)
+Received: from smtp134-24.sina.com.cn (smtp134-24.sina.com.cn [180.149.134.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A6220E3;
-	Sun, 23 Jun 2024 05:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEF314A90
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 05:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719121297; cv=none; b=U7EslKkBl8Iv7BgsN5qD0BPmv4KSyPHxLKAX2Ck8tN46Q6yp81jsm+j16R74H8voGgnCHiPBi5hA4ltpPMaRRfuYdwVqfQR3OxAgyg/OnvVJs9SZdPpaO/mxprxhTQpGeqO7N+syM3/rbS/3nEFeD6YbwRTsujbtrohISQIP6nA=
+	t=1719121430; cv=none; b=VtCxP6g01LKKHvnlNucwML4TFPonYI1u+Pa4LvWOR7Y+Ek9Ny+WFhhHlvykZbxRTVmwqEhMOfzqAiP1n7LsCbybF3NdFYyskHP7fdud9xgsWy1OXyapTANINYyaDTuHomqxApk65YetSomSuTTvp/BYqYc4hjEnJpmw0Nf9lLA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719121297; c=relaxed/simple;
-	bh=kw2n74NFhG7fvcLMgNLgU7YKski/ADT3cGP7TRzxwjo=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=srT99wKPk91xPxepMhyq6iYGbsRzuMpzB3DUM+8SeY8aTN6OLUyIkv4VoplMLvP/Q5LTJUwZXio/1y8ITfNOSf7vvevOHGRYn9O4HobBPdA2NbrLMo6+dX5VsM5dnMP9XIxHOu3GefbSc+Ao4iouwk5RNEBQ6Q3tFBs+2UlRgiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=bZMlifUd; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1719121430; c=relaxed/simple;
+	bh=UzM2/d5PP8CeqWUPpeduSWxwrm1iz9s3Z+4fwh/KHe0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=N2Zdlb6I2QS9yClZyC1J/tDQeIueb4XqMnLXY0gDnZhQv+LWFlScc2wVShdRDgnycvr++EU5WrOOHiGt06iUoJXFD3qvB5l8b9ToAZ25HwHU9UfoLGFPfRGXxQ3BbAr4Jyt+CFMOQdSUO041GpfhXgX+h8vlWv7ong7z5HsxqmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.49.160])
+	by sina.com (10.185.250.21) with ESMTP
+	id 6677B5FD00004668; Sun, 23 Jun 2024 13:43:27 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9067893408642
+X-SMAIL-UIID: 32AC4F89003F4A1A9016C9DD20613314-20240623-134327-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: invalid-free in hci_req_sync_complete
+Date: Sun, 23 Jun 2024 13:43:14 +0800
+Message-Id: <20240623054314.1929-1-hdanton@sina.com>
+In-Reply-To: <00000000000033a6e8061b3c6d4a@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1719121291;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1hA4dCOLp0zx4KWYxG86LNj6SzPfCiUAfc/2NfNSI7k=;
-	b=bZMlifUds8UpGha6YTfwdj9vQC190I7o1RV82fY5Skw4kMEFmh/mtP6MrcJXK1S8Y1zquM
-	IOk8O3Z9h7TaaENQfH//dhVjci+kZj9+PMgcZSpGlFuzG1XQskmgPUHL6yvz/uQNid3Yfg
-	LuzY+iXeerazKvlIjCorkz2WGz4g2FsAKQIOyI1Sn5rkVp38F1IlF9+x3su2VL4mWP/H8i
-	PBEcJBiTT6US6wStHFLErWiXJ9KT8oNRZ98ODDJ7OPkwTepFStaekpU6UywFDBJpZz0aQw
-	1zHc2YCYD4G4mQ9XUgQjpS9rLmODGVRYd9APv3gtxklUsHztj9t3p76jEzbAmw==
-Date: Sun, 23 Jun 2024 07:41:28 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Krzysztof Kozlowski
- <krzk@kernel.org>, Daniel Golle <daniel@makrotopia.org>, Aurelien Jarno
- <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, Sebastian Reichel
- <sebastian.reichel@collabora.com>, Anand Moon <linux.amoon@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Martin Kaiser <martin@kaiser.cx>, Ard
- Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
-In-Reply-To: <6u4bgwemukkpjvregtvrhdarelvy4rf76n5dv5oiclbyh4q7gd@b776tut4a6ki>
-References: <cover.1718921174.git.daniel@makrotopia.org>
- <ead26406-dd3b-491c-b6ab-11002a2db11a@kernel.org>
- <07fba45d99e9eabf9bcca71b86651074@manjaro.org> <3660160.WbyNdk4fJJ@diego>
- <b0164e0d05d9e445a844ffdfca7a82d5@manjaro.org>
- <6u4bgwemukkpjvregtvrhdarelvy4rf76n5dv5oiclbyh4q7gd@b776tut4a6ki>
-Message-ID: <adcfb712619033fb2e55f25a512f375a@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hello Uwe,
+On Wed, 19 Jun 2024 04:23:24 -0700
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125874ea980000
 
-On 2024-06-23 02:20, Uwe Kleine-König wrote:
-> On Sat, Jun 22, 2024 at 10:45:22PM +0200, Dragan Simic wrote:
->> On 2024-06-22 22:26, Heiko Stübner wrote:
->> > Am Samstag, 22. Juni 2024, 12:29:33 CEST schrieb Dragan Simic:
->> > > On 2024-06-22 00:16, Uwe Kleine-König wrote:
->> > > > On 6/21/24 20:13, Dragan Simic wrote:
->> > > >> On 2024-06-21 11:57, Krzysztof Kozlowski wrote:
->> > > >>> On 21/06/2024 03:25, Daniel Golle wrote:
->> > > >>>> +    dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
->> > > >>>
->> > > >>> Drop, driver should be silent on success.
->> > > >>
->> > [...]
->> > So really this message should be dropped or at least as Uwe suggests
->> > made a dev_dbg.
->> 
->> As a note, "dmesg --level=err,warn", for example, is rather useful
->> when it comes to filtering the kernel messages to see only those that
->> are signs of a trouble.
-> 
-> IMHO it's a bit sad, that there is such a long thread about something 
-> so
-> trivial, but I want to make a few points:
-> 
->  - not all dmesg implementations support this:
-> 
-> 	root@machine:~ dmesg --level=err,warn
-> 	dmesg: unrecognized option '--level=err,warn'
-> 	BusyBox v1.36.1 () multi-call binary.
-> 
-> 	Usage: dmesg [-cr] [-n LEVEL] [-s SIZE]
-> 
-> 	Print or control the kernel ring buffer
-> 
-> 		-c              Clear ring buffer after printing
-> 		-n LEVEL        Set console logging level
-> 		-s SIZE         Buffer size
-> 		-r              Print raw message buffer
-> 
->  - Your argument that the output of this dev_info can easily be ignored
->    is a very weak reason to keep it.
-> 
->  - I personally consider it hard sometimes to accept feedback if I 
-> think
->    it's wrong and there is a good reason to do it the way I want it.
->    But there are now three people opposing your position, who brought
->    forward (IMHO) good reasons and even a constructive alternative was
->    presented. Please stay open minded while weighting the options.
->    The questions to ask here include:
-> 
->     - How many people care for this message? During every boot? Is it
->       maybe enough for these people to check in /sys if the device
->       probed successfully? Or maybe even the absence of an error 
-> message
->       is enough?
->     - How many people get this message and don't care about the
->       presented information? How many people are even annoyed by it?
->     - Is the delay and memory usage introduced by this message 
-> justified
->       then, even if it's small?
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  2ccbdf43d5e7
 
-I'm sorry if my responses caused any inconvenience.  I find most of your
-points totally valid, but there are a couple of them I could continue
-arguing about.  Though, as you also pointed out, my opinion has been
-already outvoted, so I'll remain silent.
+--- x/net/bluetooth/hci_request.c
++++ h/net/bluetooth/hci_request.c
+@@ -181,7 +181,6 @@ int __hci_req_sync(struct hci_dev *hdev,
+ 		break;
+ 	}
+ 
+-	kfree_skb(hdev->req_skb);
+ 	hdev->req_skb = NULL;
+ 	hdev->req_status = hdev->req_result = 0;
+ 
+--
 
