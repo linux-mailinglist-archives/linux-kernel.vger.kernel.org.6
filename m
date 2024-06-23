@@ -1,130 +1,183 @@
-Return-Path: <linux-kernel+bounces-225997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93CF99138DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:02:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE14F9138E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497EB1F2140D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5386281600
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D98F5FB9C;
-	Sun, 23 Jun 2024 08:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6A36F085;
+	Sun, 23 Jun 2024 08:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="Kuc4qm+R"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Orp1t91x"
+Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C58417C77;
-	Sun, 23 Jun 2024 08:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CDE17C7C;
+	Sun, 23 Jun 2024 08:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719129726; cv=none; b=hxp27fIreJAAiqlZaHHd5+4VPzTEmCPyw4U2PacmLd8XYhi7pwMsFvP4LnWjjTsABcuWicCwYCPN0V0j5S5iTFPpo4FEwdQFtcW5w2vp/M9kUA7kSZe8tt9QH91hUmpoF1nBxrZpfeBp4mjgKjH6oYjq8mSITHfAtqODkdevfkI=
+	t=1719129902; cv=none; b=GulOU+tva4SLnBVPsbDAE29lPvjzvorQah3x0Ts1vKvcFnEs1P2vZtzNR4juxt1keZ8Pn74q6ff/TQjpvJp28SOpqLo4SIduA4QZmulcPhW4i2WXwzTorPglqvEz61aleTUyGnxlt8yZYYTPACf6fdc/Ip3OTYt3fYMs92ry/JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719129726; c=relaxed/simple;
-	bh=hy2ki87r3CsdFd2uUj+s2wvNocOXNjMZAbPN3I53JH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TO6Azge1E8ltBil4n/QJVhuuIqlfOpPa/LIlvrTL0364ktaTOWiOliLrbRf6LXyXh7tt3Ff44aBfxF2Zlm+UCIt6pms7o/KnJYSzzg7zwUIbJJiM3wvVPpn1enh03QwqdcuhqPpBB7Svhk3FGMJWV/qi4RJDE2pDhQmquizmUl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=Kuc4qm+R; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1719129714; bh=hy2ki87r3CsdFd2uUj+s2wvNocOXNjMZAbPN3I53JH0=;
-	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-	b=Kuc4qm+RLkfMTLfmABd/NF5FdG4goJqKSizgr8Rh95Nv+/dZdA991kg8WfyO3gNc6
-	 +2ReQTYUQd0zLBsoIx2NnvRL+BYtOn83yOvQGtwEs+oThlrW18iyYiKwChHbrVGBv5
-	 3wT9N6tYQpJLkVOqIpvtliVhHaYF9QMqsSky42A0=
-Date: Sun, 23 Jun 2024 10:01:54 +0200
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: Jacobe Zang <jacobe.zang@wesion.com>
-Cc: "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>, 
-	"kvalo@kernel.org" <kvalo@kernel.org>, "duoming@zju.edu.cn" <duoming@zju.edu.cn>, 
-	"bhelgaas@google.com" <bhelgaas@google.com>, "minipli@grsecurity.net" <minipli@grsecurity.net>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>, 
-	"brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>, 
-	"efectn@protonmail.com" <efectn@protonmail.com>, "jagan@edgeble.ai" <jagan@edgeble.ai>, 
-	"dsimic@manjaro.org" <dsimic@manjaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 3/3] net: wireless: brcmfmac: Add support for AP6275P
-Message-ID: <ksxio3vzlz4rqcwvmtthskv6lqt33ejzjes557rwnkzex2oihk@52ueay5cwuub>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-	Jacobe Zang <jacobe.zang@wesion.com>, "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>, 
-	"kvalo@kernel.org" <kvalo@kernel.org>, "duoming@zju.edu.cn" <duoming@zju.edu.cn>, 
-	"bhelgaas@google.com" <bhelgaas@google.com>, "minipli@grsecurity.net" <minipli@grsecurity.net>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>, 
-	"brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>, 
-	"efectn@protonmail.com" <efectn@protonmail.com>, "jagan@edgeble.ai" <jagan@edgeble.ai>, 
-	"dsimic@manjaro.org" <dsimic@manjaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20240620020015.4021696-1-jacobe.zang@wesion.com>
- <20240620020015.4021696-4-jacobe.zang@wesion.com>
- <fro2xcwsnvbxmpszny6g2p36z4zwoq4kegmpvww4twxir5piez@a3c2nbwitmab>
- <TYZPR03MB700154AE39D44B8D166344BF80CB2@TYZPR03MB7001.apcprd03.prod.outlook.com>
+	s=arc-20240116; t=1719129902; c=relaxed/simple;
+	bh=L+fBNEeK6lDWZjdsWdDStuilRXSXt+4gjCSKof+Ck14=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kRxtel2WHYnIhlDi9jdZjrKC29Jy72pduADLwYufj6ynynjnXUbYPMhhsFDz1dqpK3/yHFpjytHXyzgjzOglrEHdKGQPkyD8WW1zeStSL56VwcaoNOblgGNW4uRYqFHokHFpiWTnbDMZmKw6L3uFQ1I8v00eaoRAXNqiwlcXfas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Orp1t91x; arc=none smtp.client-ip=193.252.23.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id LIDRshykYqHypLIDRsPqzn; Sun, 23 Jun 2024 10:04:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719129890;
+	bh=iSV7OMQHyo5A+TPl27ELYTFtKHhEE1HTiDYIXwhqgZY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Orp1t91xeBDFmihYa8h5KObI0070Jlfu2IeYnVhCvZ+XoumsjKWG3Sou9P3enz2jH
+	 xL973V89/xBGmUwbMAeVm8DgZFq23vhXDoZ1dEV/rbsC+eX0C6kvejB3GxhiS47ZX5
+	 yko6epdo40nV+/wwXmQhPtuftRiFyT+yY0CisZEhfamXTAll26gV64OLAWcStmXEdR
+	 UajfaSzkoB8oDIRWjSaW7d9GzzB/5tQ8Hrs7w+nnCCBQjaB7Z5fH04Clzg64zduT1E
+	 CYRt3zeNZtxZTqkG53Pk8X+k10P/rGENhDkjcrwv9xiCr/q55Tel3m/JbonmWxx5wq
+	 FBNcSa5aciv0g==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 23 Jun 2024 10:04:50 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linus.walleij@linaro.org,
+	Sebastian Reichel <sre@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v2 2/2] power: supply: samsung-sdi-battery: Constify struct power_supply_maintenance_charge_table
+Date: Sun, 23 Jun 2024 10:04:45 +0200
+Message-ID: <6caafd0ac2556a40405273b1a4badc508ea8e9b0.1719125040.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
+References: <d01818abd880bf435d1106a9a6cc11a7a8a3e661.1719125040.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TYZPR03MB700154AE39D44B8D166344BF80CB2@TYZPR03MB7001.apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Jacobe,
+'struct power_supply_maintenance_charge_table' is not modified in this
+driver.
 
-On Sun, Jun 23, 2024 at 02:21:39AM GMT, Jacobe Zang wrote:
-> > Any reason to strip info about origin of the patch, my SoB and
-> > present this work as your own?
-> 
-> Sincerely express my apology to Ondrej. It's really my mistake. After getting
-> your permission if I could submit the patches. I jsut think if the author and
-> submitter is not the same person is strange so I changed it. Next tiem I will
-> avoid this mistake. Apologize again.
-> 
-> 
-> > I sincerely hope this is just a rookie mistake so please carefully read
-> the URL below:
-> 
-> > https://www.kernel.org/doc/html/latest/process/submitting-patches.html
-> 
-> Thanks for the guidance Arend. After reading the document I realized what a stupid mistake I made.
-> 
-> BTW I have another question, except the SoB of the real author, should I also post the original link in commit message?
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-I suggest keeping at least this part:
+In order to do it, some code also needs to be adjusted to this new const
+qualifier.
 
-> Partially copied from https://lore.kernel.org/all/c7b331edd65b66521a6605177d654e55051568a3.camel@toradex.com/
-> 
-> (No Signed-off-by provided in the email. The code looks like some
-> data copied probably from a vendor driver and adapted for the upstream
-> one.)
+On a x86_64, with allmodconfig:
+Before:
+======
+$ size drivers/power/supply/samsung-sdi-battery.o
+   text	   data	    bss	    dec	    hex	filename
+   4055	   4584	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-battery.o
 
-I'm not the complete author of the patch either. I just figured out why
-just adding device/chip IDs was not enough compared to what Marcel Ziswiler
-tried and expanded the patch from his email, to make it work.
+After:
+=====
+$ size drivers/power/supply/samsung-sdi-battery.o
+   text	   data	    bss	    dec	    hex	filename
+   4087	   4552	      0	   8639	   21bf	drivers/power/supply/samsung-sdi-battery.o
 
-People using baords with AP6275P (eg. I did my debugging on QuartzPro64) will
-also be interested in how to get the firmware for AP6275P, and there are some
-hints for that in the above link, too. (FW filename that is in the patch for the
-driver doesn't match FW name as distributed by eg. SparkLAN, which makes it
-harder to find it just based on FW name from the code)
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
 
-Although it would be nice to have the firmware available in linux-firmware.
+Changes in v2
+  - Add Linus Walleij <linus.walleij@linaro.org> in Cc  [Sebastian Reichel]
+  - Also update ab8500_chargalg.c  [Sebastian Reichel, kernel test robot]
 
-Kind regards,
-	o.
+v1: https://lore.kernel.org/all/02c6ad69a3ace192c9d609b7336a681a8fc7ba94.1717253900.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/power/supply/ab8500_chargalg.c     | 2 +-
+ drivers/power/supply/power_supply_core.c   | 2 +-
+ drivers/power/supply/samsung-sdi-battery.c | 2 +-
+ include/linux/power_supply.h               | 6 +++---
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-> ---
-> Best Regards
-> Jacobe
+diff --git a/drivers/power/supply/ab8500_chargalg.c b/drivers/power/supply/ab8500_chargalg.c
+index 55ab7a28056e..854491ad3ecd 100644
+--- a/drivers/power/supply/ab8500_chargalg.c
++++ b/drivers/power/supply/ab8500_chargalg.c
+@@ -1225,8 +1225,8 @@ static bool ab8500_chargalg_time_to_restart(struct ab8500_chargalg *di)
+  */
+ static void ab8500_chargalg_algorithm(struct ab8500_chargalg *di)
+ {
++	const struct power_supply_maintenance_charge_table *mt;
+ 	struct power_supply_battery_info *bi = di->bm->bi;
+-	struct power_supply_maintenance_charge_table *mt;
+ 	int charger_status;
+ 	int ret;
+ 
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index 022d0e4bf621..8f6025acd10a 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -1072,7 +1072,7 @@ int power_supply_vbat2ri(struct power_supply_battery_info *info,
+ }
+ EXPORT_SYMBOL_GPL(power_supply_vbat2ri);
+ 
+-struct power_supply_maintenance_charge_table *
++const struct power_supply_maintenance_charge_table *
+ power_supply_get_maintenance_charging_setting(struct power_supply_battery_info *info,
+ 					      int index)
+ {
+diff --git a/drivers/power/supply/samsung-sdi-battery.c b/drivers/power/supply/samsung-sdi-battery.c
+index 725fbe09379e..b63fd2758c2f 100644
+--- a/drivers/power/supply/samsung-sdi-battery.c
++++ b/drivers/power/supply/samsung-sdi-battery.c
+@@ -613,7 +613,7 @@ static struct power_supply_battery_ocv_table samsung_ocv_cap_eb585157lu[] = {
+ 	{ .ocv = 3300000, .capacity = 0},
+ };
+ 
+-static struct power_supply_maintenance_charge_table samsung_maint_charge_table[] = {
++static const struct power_supply_maintenance_charge_table samsung_maint_charge_table[] = {
+ 	{
+ 		/* Maintenance charging phase A, 60 hours */
+ 		.charge_current_max_ua = 600000,
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index 5061eeecf62e..72dc7e45c90c 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -736,7 +736,7 @@ struct power_supply_battery_info {
+ 	int overvoltage_limit_uv;
+ 	int constant_charge_current_max_ua;
+ 	int constant_charge_voltage_max_uv;
+-	struct power_supply_maintenance_charge_table *maintenance_charge;
++	const struct power_supply_maintenance_charge_table *maintenance_charge;
+ 	int maintenance_charge_size;
+ 	int alert_low_temp_charge_current_ua;
+ 	int alert_low_temp_charge_voltage_uv;
+@@ -810,7 +810,7 @@ power_supply_temp2resist_simple(struct power_supply_resistance_temp_table *table
+ 				int table_len, int temp);
+ extern int power_supply_vbat2ri(struct power_supply_battery_info *info,
+ 				int vbat_uv, bool charging);
+-extern struct power_supply_maintenance_charge_table *
++extern const struct power_supply_maintenance_charge_table *
+ power_supply_get_maintenance_charging_setting(struct power_supply_battery_info *info, int index);
+ extern bool power_supply_battery_bti_in_range(struct power_supply_battery_info *info,
+ 					      int resistance);
+@@ -824,7 +824,7 @@ extern int power_supply_set_battery_charged(struct power_supply *psy);
+ static inline bool
+ power_supply_supports_maintenance_charging(struct power_supply_battery_info *info)
+ {
+-	struct power_supply_maintenance_charge_table *mt;
++	const struct power_supply_maintenance_charge_table *mt;
+ 
+ 	mt = power_supply_get_maintenance_charging_setting(info, 0);
+ 
+-- 
+2.45.2
+
 
