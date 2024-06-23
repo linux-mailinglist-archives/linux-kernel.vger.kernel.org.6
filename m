@@ -1,232 +1,134 @@
-Return-Path: <linux-kernel+bounces-226415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08581913E0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 22:28:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464DB913E12
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 22:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FA1E1C20E4F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:28:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E78291F21EDC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A175918413F;
-	Sun, 23 Jun 2024 20:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8074E1849F5;
+	Sun, 23 Jun 2024 20:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CK1XyLX4"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RBq4aT2y"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8C31CD25;
-	Sun, 23 Jun 2024 20:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DA11E869;
+	Sun, 23 Jun 2024 20:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719174517; cv=none; b=gcPA7k+JlbmqVMFDopILWZNFJip73xdc3pRKX09iO1d34uyERnSIih3SNKhNlMY+li78YplOxt0HrjGFAqtgGCRSJav+VZ4wESR9ZT5vkLRDg3o2OKPF2UvmFyXQKAvS3XV38O5cU4x7b8oCVECbSyMiur0Sa25c//sn8qnfqmw=
+	t=1719174644; cv=none; b=ZH8uxdZGSsYheKe+rc36FJ67FnGfHD4Zn2lJP+hNxZfmgha9V4KLBNSF0O6+eo8W01/l31OSIQ4IvSoUv4xzcUbUGcfupaURs71CFWuUlQB/IR5T+142JmMhDpQMQjF5tfI2qdVOEwNQdOm8Nm32jRofE/Uym9iQPWwykDcIOJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719174517; c=relaxed/simple;
-	bh=YFvfxvE76NNhMU8FqQudjgn6c9l+8BTuE2icP0o/XVw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pvOZJpIX1g/5xEPTqDV9bvwtw++1Piz6ruYYkuIAE2KaPjICWA48W/CDN9mnXqtr7ASjzhKZjiLCqV4CF9fimgUZwjzY2dwT1RHCM9BDH8lySeECCm2GcVPaNGlbIpN8lek9/Pr5atC44mySSe0HygQZMrJmdWAzKpJfjw86TrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CK1XyLX4; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1719174644; c=relaxed/simple;
+	bh=xjltCcRgmnJlrsLRISN+Zq/lwRG7lbNS3UTFK3I8rHw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=unJ8q7NxAhR8n3xA/t0t9izqQzXTeWyM5rNt/wOGuI7plpDJv13AGGTw8SDxzbNXa++eliowcsCf5LOaKrfyV8kG0LKPrDhKU5llyeerjpApRIHgy5w8Ppt5ELK1szS108ENnYque5btspfkNfL9dRfO7/NX3J4O2btHOfnfQBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RBq4aT2y; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so43108961fa.3;
-        Sun, 23 Jun 2024 13:28:35 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3632a6437d7so2094353f8f.0;
+        Sun, 23 Jun 2024 13:30:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719174514; x=1719779314; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N8CMu+bnwf8iQgK3whroeuHcNetbi7+WotVePUC3qdY=;
-        b=CK1XyLX49eimOG3IzhTSJbfsxZPutfPTaEXM4mJYKjWUxBz6bkRbuGWeAub+eGX5OX
-         bLNV/2F/k5LShBRmovfiwoppg7SDSbWwbj/YHX5heaelIdnNZAjy+TDDu3GMJ4rzUQIM
-         LipGPmHAQvqsEFAWm3FswKHB0LeBURVb+RO1EYTDAUavf0n0mMmE6X57bLpB9zxu/qOU
-         aPLow2u+XBwKcXNaBjyxb+6bnx8dYwQuQlT760KwPE9V263u12QKuo5aILQKAJDOoSQf
-         fymMbfkgEa42iYYJb2egAHgcURI560x2KegVF9AjY1++oTG5r7EvJ5K68mQeE7ypZV5g
-         oLqg==
+        d=gmail.com; s=20230601; t=1719174641; x=1719779441; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9uG1Tys1B/HQLY2Tx/XIV4+WZ4HCgTs0TOdWEHncJZM=;
+        b=RBq4aT2yVDpjLUCZEg2fjVmwPa22ZltgJzkLxOXChangNeN/mW+KhrXPrfN+4gda2P
+         B2NH3wnEcsA6oE5B80FkOrDuX7bqJgeDkR8S+KMIH4W3DogwxvMlaFcplQltqEU/Zk1X
+         cy5zLPuctQShxk7vUgb3GMZo8ivITAHZEQrjwNwbBckZ5evgA+R/wug5K0awuYltx2Fv
+         2UxzgNrWEaFPiq9b/e8Dnp8hAB/uveXYpvZHnJbwbeC4Ji72DleM3gC4hYSp6bHC5r2O
+         oBZYKRUnzB/zGc/zySJGVYaIEoP0qPK/lznilV3NYqihmc9e3Z1GkausFuacfSey/Suk
+         2VNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719174514; x=1719779314;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N8CMu+bnwf8iQgK3whroeuHcNetbi7+WotVePUC3qdY=;
-        b=rpnzzwr2BCv+q8GmV14yfX91FZfx5Px+Ntxbn9A3pEYkNdXXgMSzDthgCJn3E0thTs
-         Wb1DQyT8GfnsXiG250nC1q+Q6MAF7+A/145mL2gkkVhbg3nqaoxvKbkzjHf5PdgXMwc+
-         Qg/3UnpTzo+LEVKSsAZ4GYBfgTE7IbIrf9BrbMK99fdmfTpUN7jG0VIUZP/CfAwFpQC0
-         SZHmcK675qLLW9e1W1iCi0MZvu3XSNTSMttVPGMxakNEtxY8R4v87HfW+hri8Oq42/Ek
-         XdTJOKwWkWQqPsenxSqa6+PcXnTg1KnepCVLcR/COUIq1nYSHADy454PrDcRvDECaI+6
-         GvjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIyfVp6YPeJCgF1VrsnTI1N/utd088zJaO7k5TGlUsLWysWp37y9NRZ5PoTrtPCgAdBNLnokhBWtGmlro8RwqfM6eUJ+FnD+gueW9IUfM36Q==
-X-Gm-Message-State: AOJu0YwMS7IVVRr6hrT2HzdDwzHBqBcgS1YzgoK2Lx+0flB232JBxSxS
-	4fdaF5+70fi6KBmzzlucLxEpgPd6AKGFcI+PkLcz1hddZzpuAa6w0yG3pDNH+qF0y8rynoQ3+wT
-	CuxiupeZkXqpnBt1y14WvcPrEPA==
-X-Google-Smtp-Source: AGHT+IEX14JMbb/K/wn8L6aNGbNjffLqDc2fa0MiCQ1eDwU56MCzQF/hrmNNJwSWmYxu06HWhzLfXEIbqeNb9TqyThY=
-X-Received: by 2002:a2e:b0f3:0:b0:2ec:5785:ee94 with SMTP id
- 38308e7fff4ca-2ec579fefd8mr23125731fa.52.1719174513680; Sun, 23 Jun 2024
- 13:28:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719174641; x=1719779441;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9uG1Tys1B/HQLY2Tx/XIV4+WZ4HCgTs0TOdWEHncJZM=;
+        b=iYkuDUZ7pObbQqo/FehduYvkcP1xyN2ysHDw1J6dOz8wvEsrgrL9IOvfehaC/g8Z8r
+         dHR46gbNCXxwajJmCfhDcj1hVwJRDjye1MJ/9thaHe/v4z1wuGi7HY3oux7oS7v5sHUo
+         8/66ImbGZSR9gDmrRdOExCKim0M2LqekWB9twHFD1cqzl+wMglQggNPIVjGUrew+ysXb
+         AyHzLafJ1C3YxAO0uxVrh4+4MMX39LSUwgTe96TBfzI8Y5h27NFo3si3wkxXLKjgBBSV
+         7PIQruGYFyLe6DlOiOoM8DpUCEIlVt9ZyWSL7X0rmkusm4MXNU7yinttOh9tXvcVr3uw
+         auOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdSgl1GIWsOYvc9CYINvGgFyTq5CiAso5n/ND1cduRLTigr0Ck535+KAWDaJPgYYDHtZGCRGow+N4If6VL0ijSc4KIh71JvTn0yCDxYfIDmf0gMzyYVE64m8iTjeJezGgTmiLjKJl2UC4UkgkFHW62SEekSoHnqSvbpawNm1MSOB59eaWB
+X-Gm-Message-State: AOJu0YxpfRaXubknUiFYxdY12n/8ayIvhZ68/cuyHYhri974le8N8aPh
+	/HjzGEvZU4aC6dwSi1coWFmNj0Fh6++kXL/+id/kxV72Fp+lGENf
+X-Google-Smtp-Source: AGHT+IESzOtPGZ5GOePsvOUKETWkuSh9OYBBcl3AjTUBWVS89bQ5ueDZ98xvPPpfuDArDMrx3vPQug==
+X-Received: by 2002:a5d:60c9:0:b0:362:ff95:5697 with SMTP id ffacd0b85a97d-366e32f6e6emr2844708f8f.28.1719174641228;
+        Sun, 23 Jun 2024 13:30:41 -0700 (PDT)
+Received: from [192.168.1.130] (BC2492F3.dsl.pool.telekom.hu. [188.36.146.243])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366389b8ad2sm8088599f8f.33.2024.06.23.13.30.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 13:30:40 -0700 (PDT)
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
+Subject: [PATCH v2 0/4] MSM8937 MDP/DSI PHY enablement
+Date: Sun, 23 Jun 2024 22:30:35 +0200
+Message-Id: <20240623-dsi-v2-0-a0ca70fb4846@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240622171435.3725548-1-xin@zytor.com> <20240622171435.3725548-5-xin@zytor.com>
-In-Reply-To: <20240622171435.3725548-5-xin@zytor.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Sun, 23 Jun 2024 16:28:22 -0400
-Message-ID: <CAMzpN2hMP8c9PXy=0YV4Ln+u_1n1spJP2jaYXKzEABWLh0+hkQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] x86/cpufeatures: Use AWK to generate {REQUIRED|DISABLED}_MASK_BIT_SET
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, will@kernel.org, 
-	peterz@infradead.org, akpm@linux-foundation.org, acme@kernel.org, 
-	namhyung@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOuFeGYC/y2MQQ7CIBBFr9LMWgyMBasr72G6gDK2k9jSgGk0D
+ XcXicv389/bIVFkSnBtdoi0ceKwFMBDA8Nkl5EE+8KAEltp5Fn4xKLTipxDNLbzUJ5rpAe/a+X
+ eF544vUL81Oimfuvfx1P1NyWkaK3TRpLTzl9u42z5eRzCDH3O+QtAmLAHlgAAAA==
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krishna Manikandan <quic_mkrishn@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>, 
+ phone-devel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Daniil Titov <daniilt971@gmail.com>
+X-Mailer: b4 0.14.0
 
-On Sat, Jun 22, 2024 at 1:14=E2=80=AFPM Xin Li (Intel) <xin@zytor.com> wrot=
-e:
->
-> Generate macros {REQUIRED|DISABLED}_MASK_BIT_SET in the newly added AWK
-> script that generates the required and disabled feature mask header.
->
-> Suggested-by: Brian Gerst <brgerst@gmail.com>
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> ---
->  arch/x86/include/asm/cpufeature.h | 69 -------------------------------
->  arch/x86/tools/featuremasks.awk   | 12 +++++-
->  2 files changed, 11 insertions(+), 70 deletions(-)
->
-> diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpu=
-feature.h
-> index 8332f596ba3c..8161dfb3255c 100644
-> --- a/arch/x86/include/asm/cpufeature.h
-> +++ b/arch/x86/include/asm/cpufeature.h
-> @@ -55,75 +55,6 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
->  #define test_cpu_cap(c, bit)                                           \
->          arch_test_bit(bit, (unsigned long *)((c)->x86_capability))
->
-> -/*
-> - * There are 32 bits/features in each mask word.  The high bits
-> - * (selected with (bit>>5) give us the word number and the low 5
-> - * bits give us the bit/feature number inside the word.
-> - * (1UL<<((bit)&31) gives us a mask for the feature_bit so we can
-> - * see if it is set in the mask word.
-> - */
-> -#define CHECK_BIT_IN_MASK_WORD(maskname, word, bit)    \
-> -       (((bit)>>5)=3D=3D(word) && (1UL<<((bit)&31) & maskname##word ))
-> -
-> -/*
-> - * {REQUIRED,DISABLED}_MASK_CHECK below may seem duplicated with the
-> - * following BUILD_BUG_ON_ZERO() check but when NCAPINTS gets changed, a=
-ll
-> - * header macros which use NCAPINTS need to be changed. The duplicated m=
-acro
-> - * use causes the compiler to issue errors for all headers so that all u=
-sage
-> - * sites can be corrected.
-> - */
-> -#define REQUIRED_MASK_BIT_SET(feature_bit)             \
-> -        ( CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  0, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  1, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  2, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  3, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  4, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  5, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  6, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  7, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  8, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  9, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 10, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 11, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 12, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 13, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 14, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 15, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 19, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 20, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 21, feature_bit) ||    \
-> -          REQUIRED_MASK_CHECK                                    ||    \
-> -          BUILD_BUG_ON_ZERO(NCAPINTS !=3D 22))
-> -
-> -#define DISABLED_MASK_BIT_SET(feature_bit)                             \
-> -        ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  1, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  2, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  3, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  4, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  5, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  6, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  7, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  8, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  9, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 10, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 11, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 12, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 13, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 14, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 15, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 19, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 20, feature_bit) ||    \
-> -          CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 21, feature_bit) ||    \
-> -          DISABLED_MASK_CHECK                                    ||    \
-> -          BUILD_BUG_ON_ZERO(NCAPINTS !=3D 22))
-> -
->  #define cpu_has(c, bit)                                                 =
-       \
->         (__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :  \
->          test_cpu_cap(c, bit))
-> diff --git a/arch/x86/tools/featuremasks.awk b/arch/x86/tools/featuremask=
-s.awk
-> index 989b021e73d3..f6fe979a8fae 100755
-> --- a/arch/x86/tools/featuremasks.awk
-> +++ b/arch/x86/tools/featuremasks.awk
-> @@ -77,7 +77,17 @@ END {
->                         printf "#define %s_MASK%d\t0x%08x\n", s, i, masks=
-[i];
->                 }
->
-> -               printf "#define %s_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS =
-!=3D %d)\n\n", s, ncapints;
-> +               printf "\n#define %s_FEATURE(x)\t\t\t\t\\\n", s;
-> +               printf "\t((\t\t\t\t\t";
-> +               for (i =3D 0; i < ncapints; i++) {
-> +                       if (masks[i])
-> +                               printf "\t\\\n\t\t((x) >> 5) =3D=3D %2d ?=
- %s_MASK%d :", i, s, i;
-> +               }
-> +               printf " 0\t\\\n";
-> +               printf "\t) & (1 << ((x) & 31)))\n";
+This patch series adds support for the MDP and DSI PHY as found on the
+MSM8937 platform.
 
-The original macro had 1UL here.  I don't know if it is strictly
-necessary in this case since we're using 32-bit masks, but it would
-probably be safer.
+Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+---
+Changes in v2:
+- Remove MDP_CAP_SRC_SPLIT from mdp5_cfg
+- Link to v1: https://lore.kernel.org/r/20240623-dsi-v1-0-4ab560eb5bd9@gmail.com
 
-> +
-> +               printf "\n#define %s_MASK_BIT_SET(x)\t\t\t\\\n", s;
-> +               printf "\t(%s_FEATURE(x) || BUILD_BUG_ON_ZERO(NCAPINTS !=
-=3D %d))\n\n", s, ncapints;
+---
+Barnabás Czémán (2):
+      dt-bindings: display/msm: qcom, mdp5: Add msm8937 compatible
+      dt-bindings: msm: dsi-phy-28nm: Document msm8937 compatible
 
-Checking NCAPINTS isn't necessary anymore.  It was needed when these
-macros had to be manually updated, but now if cpufeatures.h changes
-this header will be regenerated.
+Daniil Titov (2):
+      drm/msm/mdp5: Add MDP5 configuration for MSM8937
+      drm/msm/dsi: Add phy configuration for MSM8937
 
->         }
->
->         printf "#endif /* _ASM_X86_FEATUREMASKS_H */\n";
-> --
-> 2.45.2
->
+ .../bindings/display/msm/dsi-phy-28nm.yaml         |  1 +
+ .../devicetree/bindings/display/msm/qcom,mdp5.yaml |  1 +
+ .../devicetree/bindings/display/msm/qcom,mdss.yaml |  1 +
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c           | 88 ++++++++++++++++++++++
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              |  2 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.h              |  1 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c         | 18 +++++
+ 7 files changed, 112 insertions(+)
+---
+base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+change-id: 20240607-dsi-851ebb226a8d
 
-Otherwise, it looks good.
+Best regards,
+-- 
+Barnabás Czémán <trabarni@gmail.com>
 
-
-Brian Gerst
 
