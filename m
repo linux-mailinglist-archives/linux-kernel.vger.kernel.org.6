@@ -1,182 +1,148 @@
-Return-Path: <linux-kernel+bounces-226137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97893913AC0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83304913AC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB15A1C20C24
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:09:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5FAE1C20C5A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7810A18133D;
-	Sun, 23 Jun 2024 13:09:11 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92ED8181339;
+	Sun, 23 Jun 2024 13:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLqhd2nb"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2637A145FE5;
-	Sun, 23 Jun 2024 13:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D84145FE5;
+	Sun, 23 Jun 2024 13:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719148151; cv=none; b=cnrm0Tfo5ssV7BQ6SVgbLJy9vHi3cagWMtP0HSoMI5wyMXYititWh+cABoct1nsi7GKElQcQsuENgJLbngb5Z0IztBcquB03zDdlfJRAQaQmpsK1dqnLSvQMmGrec9dgajeRspmiDc/EKpZmBR7dMgAQe3wsSxiByDgJ/CE8hT4=
+	t=1719148221; cv=none; b=hgvSoW6/KnhrjkFhq8iRCyzY7DIkkSq1/f2xgRXBirQWN3H9YJc+drJjajnYdsE29tkqYLmz0C2sBFzerK1B8fo8Do3p9pO4wuPXM0pd8AYzmWHPAi2irVD91zIvpofvT5kswgok90tlQ7TVkZPzqQcY+asXtjMfWKf6WniW4uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719148151; c=relaxed/simple;
-	bh=Glj3PVhq07s9ybEWPOZIinwXH1m+JqkijiqUrCCJCbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EOooGQuuBsJ9suhd8JFdl+OFD/d7DkLTi1fCD/nBXclOSabAY9h21AZZPMzI720NSjiqIE+fmHKIzu73KHIevMk6iUIXa6QT6wVOQ8QoU7lzuUSIc/R2Mptg1p0hkebzgNlPP8G3ZMAvI4/ehHaDDok/FRTpJE3Zqr+nB3s3Kok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sLMxY-0000000081f-4C5p;
-	Sun, 23 Jun 2024 13:08:45 +0000
-Date: Sun, 23 Jun 2024 14:08:35 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Aurelien Jarno <aurelien@aurel32.net>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Dragan Simic <dsimic@manjaro.org>, Martin Kaiser <martin@kaiser.cx>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: rng: Add Rockchip RNG bindings
-Message-ID: <ZngeUxK6r0qqBj28@makrotopia.org>
-References: <cover.1719106472.git.daniel@makrotopia.org>
- <b28ccedac0a51f8a437f7ceb5175e3b70696c8c2.1719106472.git.daniel@makrotopia.org>
- <a31bc0f2-4f82-4e15-95b8-c17dc46e7bf5@kernel.org>
+	s=arc-20240116; t=1719148221; c=relaxed/simple;
+	bh=6JYUsKtf8H17efiWyRLkJQ3nIZSzd+F1OIP2SWlNpA4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WErsLWXkETAQg94ORw86ivQxFlMU23SNBlCpguBGRl6QxDzoLyXd637/BTYr76tRzSFCiltDDu2nxtmM1OQsfrnfI/cy3U5lPqZwcJLM2JwYPYumjE5l67L0RxPmlrJl2367id3iyn0gnOu/dAnQTn08+J6+ZfNL9ISmVccBlQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MLqhd2nb; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a725282b926so16425466b.0;
+        Sun, 23 Jun 2024 06:10:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719148218; x=1719753018; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4NxXE05caueMt/ZkHF5FeOgGTppp1VBuaLqzInuGo1g=;
+        b=MLqhd2nbuZyXmt/gLzWESf9IJhahKMLkugYoA3tjzd27y78QVeGt3b4VQANMSDV4da
+         N7Txryggpr+ON6QpW37mHnExPenrthiDCZXJq46NOzKNCVrN5duTfyPZ8hviYOH5WzSc
+         IVM9fBJ2wKxhr8cCv5fKdYN4VV8N05yQinLWJAVwtBh98MrG5YHoWowg10IVE4aRMLqS
+         l0ZgCgqIDNGiTXOy7Si6XY3LAjdq2zvxpA3dbqyyTLD/uU2gQZBjh6m3renR/cDxpQ+t
+         6w+ByNZhQcVN5adXOY8OrQrZh9xoVp1uLYkFjs3Z6o4RZBLEenUSyXnKLrRrwuP2vz0E
+         1ugw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719148218; x=1719753018;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4NxXE05caueMt/ZkHF5FeOgGTppp1VBuaLqzInuGo1g=;
+        b=SoI0DKJuRSww1ws2nG5oeVh0E7ClOsXzNHkwIJ5a96gQnYoWnjBzeFb5G6xDT4tGO1
+         adzYBXodRDAG0nHEAKE7nMb1rZlU9zAcpOzjN16JaVrmpw2Ebw6t5KqXxbsQiheMv5V1
+         X8mN6qjDtfiuObqzSguinp8SGDR0ywh3NiSND9Yj58Nx49i1yVtnyp0R4YJf8ylf19EZ
+         A7XYRKuw97ai8b6m8lBymjTehpKJhAJW1xnXYFe1/NdNDi7dlJwJAX7QhQQnQHnFHsim
+         knnMKWSl+l+ITam6sLXQnf+ObCkYAK9JJInla6kUVnYflh0fPqXdYoyUP63vSsG8xwu6
+         EXHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWX2UIBDQzyttBMZ7qx+tU5lFIAYwFOH8hLZkOdh9FKi/wnR3YlQ/pBntHtcfyVuLUuQQba6h2pJD379dWMgp2+G9NGqgcsY+tRF++/lpoaSyR3ujnDdfD5J5LrmJP0HnvIlLq3NHI=
+X-Gm-Message-State: AOJu0Yzu0vBqL3rH496G2bFsamvHjYlcalzL0Qd6p7v7NqzGS+RdapsT
+	2rw0Sdr7Q89QyydnrDoubjMi55S9R+Nb7hmBA6PoorpqjSboyMnmTOJXgQ==
+X-Google-Smtp-Source: AGHT+IFkePlt/NZqqDVE+fn2755KJxhFwZdTIwCvmh69HKsLsKgyjz1K2Qzmd046qadk0zkAYUTbIw==
+X-Received: by 2002:a17:906:3ac9:b0:a6f:6960:5e18 with SMTP id a640c23a62f3a-a7245ccdd31mr129010366b.22.1719148218081;
+        Sun, 23 Jun 2024 06:10:18 -0700 (PDT)
+Received: from [127.0.1.1] (31-179-0-202.dynamic.chello.pl. [31.179.0.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7244cbce5bsm110241166b.79.2024.06.23.06.10.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 06:10:17 -0700 (PDT)
+From: Roman Storozhenko <romeusmeister@gmail.com>
+Date: Sun, 23 Jun 2024 15:10:10 +0200
+Subject: [PATCH] cpupower: fix lib default installation path
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a31bc0f2-4f82-4e15-95b8-c17dc46e7bf5@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240623-fix-lib-install-v1-1-bcbd03b78d87@gmail.com>
+X-B4-Tracking: v=1; b=H4sIALEeeGYC/x2MQQqAIBAAvxJ7bqHUCvpKdEh3qwWx0Igg/HvSc
+ WBmXkgchROM1QuRb0lyhAJtXYHbl7AxChUG1SjT9ErjKg96sSghXYv3qO1AzpGl1XRQqjNyUf7
+ jNOf8Aezczc1hAAAA
+To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Roman Storozhenko <romeusmeister@gmail.com>
+X-Mailer: b4 0.14.0
 
-Hi Krzysztof,
+Invocation the tool built with the default settings fails:
+$ cpupower
+cpupower: error while loading shared libraries: libcpupower.so.1: cannot
+open shared object file: No such file or directory
 
-thank you for your patiente and repeated review of this series.
+The issue is that Makefile puts the library to "/usr/lib64" dir for a 64
+bit machine. This is wrong. According to the "File hierarchy standard
+specification:
+https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
+https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.pdf
 
-On Sun, Jun 23, 2024 at 09:03:15AM +0200, Krzysztof Kozlowski wrote:
-> On 23/06/2024 05:32, Daniel Golle wrote:
-> > From: Aurelien Jarno <aurelien@aurel32.net>
-> > 
-> > Add the True Random Number Generator on the Rockchip RK3568 SoC.
-> > 
-> > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> 
-> My comments from v2, which I reminded at v3, were not addressed.
-> 
-> Respond to each of them and acknowledge that you are going to implement
-> the change.
+"/usr/lib<qual>" dirs are intended for alternative-format libraries
+(e.g., "/usr/lib32" for 32-bit libraries on a 64-bit machine (optional)).
 
-Your comments to v1which I'm aware of are:
-https://patchwork.kernel.org/comment/25087874/
+The utility is built for the current machine and doesn't change bit
+depth.
+Fix the issue by changing library destination dir to "/usr/lib".
 
-> > +++ b/Documentation/devicetree/bindings/rng/rockchip-rng.yaml
-> Filename matching compatible, so "rockchip,rk3568-rng.yaml"
+Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
+---
+ tools/power/cpupower/Makefile | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-I've changed the filename.
+diff --git a/tools/power/cpupower/Makefile b/tools/power/cpupower/Makefile
+index cd0225a312b4..6c02f401069e 100644
+--- a/tools/power/cpupower/Makefile
++++ b/tools/power/cpupower/Makefile
+@@ -67,6 +67,7 @@ LANGUAGES = 			de fr it cs pt ka
+ bindir ?=	/usr/bin
+ sbindir ?=	/usr/sbin
+ mandir ?=	/usr/man
++libdir ?=	/usr/lib
+ includedir ?=	/usr/include
+ localedir ?=	/usr/share/locale
+ docdir ?=       /usr/share/doc/packages/cpupower
+@@ -94,15 +95,6 @@ RANLIB = $(CROSS)ranlib
+ HOSTCC = gcc
+ MKDIR = mkdir
+ 
+-# 64bit library detection
+-include ../../scripts/Makefile.arch
+-
+-ifeq ($(IS_64_BIT), 1)
+-libdir ?=	/usr/lib64
+-else
+-libdir ?=	/usr/lib
+-endif
+-
+ # Now we set up the build system
+ #
+ 
 
-> > +title: Rockchip TRNG bindings
+---
+base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+change-id: 20240623-fix-lib-install-3b7dccdbdf45
 
-> Drop "bindings"
+Best regards,
+-- 
+Roman Storozhenko <romeusmeister@gmail.com>
 
-I've changed the title accordingly (now: "Rockchip TRNG" in v4).
-
-> > +description:
-> > +  This driver interface with the True Random Number Generator present in some
-> 
-> Drop "This driver interface" and make it a proper sentence. Bindings are
-> not about drivers.
-
-This has been addressed by Aurelien and further improved by me in v3.
-
-> > +  clocks:
-> > +    minItems: 2
-
-> Drop minItems.
-
-Aurelien did that in v2.
-
-> > +  clock-names:
-> > +    items:
-> > +      - const: clk
-> > +      - const: hclk
-> 
-> You need to explain what are these in clocks. Also you need better
-> names. A clock name "clk" is useless.
-
-Clocks now have meaningful names and descriptions.
-
-> > +  reset-names:
-> > +    items:
-> > +      - const: reset
-> 
-> Drop reset-names entirely, not useful.
-
-Aurelien did so in v2.
-
-Your comments to v2 which I'm aware of are:
-https://patchwork.kernel.org/comment/25111597/
-
-> > Add the RNG bindings for the RK3568 SoC from Rockchip
-
-> Use subject prefixes matching the subsystem (git log --oneline -- ...),
-> so it is rng, not RNG. Also, you are not adding all-Rockhip RNG but a
-> specific device.
-> 
-> Subject: drop second, redundant "bindings".
-
-I've changed 'RNG' into 'rng' in the subject and spelled it out in the
-commit message.
-
-> > +description: True Random Number Generator for some Rockchip SoCs
-> 
-> s/for some Rockchip SoCs/on Rokchip RK3568 SoC/
-
-I've adopted your suggestion in v3 and then fixed the typo in v4.
-
-> 
-> > +  clock-names:
-> > +    items:
-> > +      - const: trng_clk
-> > +      - const: trng_hclk
-
-> These are too vague names. Everything is a clk in clock-names, so no
-> need usually to add it as name suffix. Give them some descriptive names,
-> e.g. core and ahb.
-
-If changed the names to the suggested 'core' and 'ahb'.
-
-Before sending another round of patches, just to make sure we are on
-the same page, please confirm that what remains is
-Subject: dt-bindings: rng: Add Rockchip RNG bindings
-which not only should be 'rng' in small letters but also name the exact
-chip, eg.:
-Subject: dt-bindings: rng: add TRNG on the Rockchip RK3568 SoC
-
-If there are any other comments you made which I'm not aware of, please
-point me to them.
-
-
-Cheers
-
-
-Daniel
 
