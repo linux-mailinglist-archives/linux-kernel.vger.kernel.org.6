@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-225967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DE1913879
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:10:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA62291387C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB0DDB21957
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 094C71C20F0E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7C63D548;
-	Sun, 23 Jun 2024 07:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B3E3EA7B;
+	Sun, 23 Jun 2024 07:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHAUN/o9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5Q+vc6F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22F527453;
-	Sun, 23 Jun 2024 07:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8DC27453;
+	Sun, 23 Jun 2024 07:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719126645; cv=none; b=ASNMaDsN+Hq+1jrztPXmb7uVu+QvsfX1nm74ZiTccE/uLls4WafF09TpbUBG2n8UJA/Yjx+yV6WXkozJj5pq8Ot8quFaZVIU1qMWXUBJ/NjanJVR+gGwHzc0SRDVt2JddIRCOzhgpsHVJQE5FRxaFOoIZFRRNwur73y588RHiuk=
+	t=1719126744; cv=none; b=ohcuNF7EvFGLOBzbb2y/u+eQyoyG4+pck+0J3a5SB3o205PvvL9GJo067IVhPFMPz7k90DytMRvgaZ2U5BoB7JxkysFtqQH1xM72mgxTiSiwDBW6CM0rmw6DORGt8bN/eX3UDkU8NBfHfXStaTBGOs7ns5QzMDPbPW2d/2kS+JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719126645; c=relaxed/simple;
-	bh=FtNfR56Pj5/tidnoeH44U3Y6/IK9Voc/EmcuJYq/Wqw=;
+	s=arc-20240116; t=1719126744; c=relaxed/simple;
+	bh=Bp9qbvgUC/vEjBZbMUqq+ORKDzQCPuZRxMu8gALovNM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LkGHeYSYOqXvyl3dFw2BK2cp7DrI/MFxJ32wTmkotQXmq1te17XUQuoCBXg1b6hGfy/TuvNVdy3KtPv+PNBzy+LMPMSGDtn8Z5kGY0jqQHCe0K1r3j0p3+LscEMOoTfsI2O9M01dX/4MxFqqolq7j45AeXCC0pNDYghohckyhDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHAUN/o9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2374C2BD10;
-	Sun, 23 Jun 2024 07:10:40 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=i7LUrJGAQxvrTJXXebZV8omeVpH7peqKjoJGPzjYW/MkMLGg5wzwNu0GinNffaLnQecbv8e0FPf9k5PilGU28ameOO1//ghm1roiY1B/wqS6LiQZwtEUbBSrK2SbWcMwhgak06wQbwNJWIpLPvAxeu/njFYGkNahuLCTmjGExcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5Q+vc6F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6ECFC2BD10;
+	Sun, 23 Jun 2024 07:12:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719126644;
-	bh=FtNfR56Pj5/tidnoeH44U3Y6/IK9Voc/EmcuJYq/Wqw=;
+	s=k20201202; t=1719126744;
+	bh=Bp9qbvgUC/vEjBZbMUqq+ORKDzQCPuZRxMu8gALovNM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MHAUN/o91AHZW8P7vB3L+C/Hp1SONJqV3yVPwrFsSCWS2VduF1SwJ6VPURLh6b9/K
-	 YeVmMenYWXkdFw70vCRzZqusmh+cgZqXEQBNVmaUHwt4pOE1wrNy0Uy4Etog4Y87+5
-	 gazxEiKiyXbS51O5i3TYanM2VnZeM7PKqAZrfNyK2QkgFhA+jraI0MsZ2FhCrOf70K
-	 BWo+IkazDWLzRfupEMyvte4WzY7LsFue4BdjCHVYfXoF01OT58K3mz7G7C+gZU5D+7
-	 qRHgocI9gh8ptra+hXbT1HMKcV/22VVNP4wMJzJc6UiSHHdf7PsGC3gLRp/nWfWUvL
-	 C1wlpDPz1y0kQ==
-Message-ID: <647b4d99-1c1e-41fa-929d-ffd6cda6584d@kernel.org>
-Date: Sun, 23 Jun 2024 09:10:38 +0200
+	b=L5Q+vc6FnUbKe8RgEgISTHKK67P4rI80iAPd11PhHHRjJ+scqgaSEdyDFY1MDS/YA
+	 S6sKRxXsFBqKvgqts8ttm0zSq/tmh6/KYdO6Rf9pfZcBKOBFGuA3exaCJsdyXORvuR
+	 w1mazUPRsMyuC0uhV68VU0PFQeGboi5TiP8Jm2aOVVGw6ZM3Q9KqZQ7cUgDu9Sv98q
+	 JTqhHsLf3Dkz5+ZNRqZ5t3I8n/hlvvEd8HGIUfNGPEMGgs4Rpaps69qPIzIlyBpdFO
+	 Xqgja1RuZO7yLZ82jphQBxOAXwtSYvMFIooWxo8u/a5dVhI6p0QvABwaHB+jk579KT
+	 WLFA1+HoFD+/Q==
+Message-ID: <73e55bc3-2409-4309-9eaa-64be1e8ecf6f@kernel.org>
+Date: Sun, 23 Jun 2024 09:12:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: realtek,rt5659: Convert to dtschema
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240622153752.94644-1-animeshagarwal28@gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: mips: realtek: Add rtl930x-soc
+ compatible
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ tsbogend@alpha.franken.de, daniel.lezcano@linaro.org, paulburton@kernel.org,
+ peterz@infradead.org, mail@birger-koblitz.de, bert@biot.com,
+ john@phrozen.org, sander@svanheule.net
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com
+References: <20240621042737.674128-1-chris.packham@alliedtelesis.co.nz>
+ <20240621042737.674128-2-chris.packham@alliedtelesis.co.nz>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,135 +105,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240622153752.94644-1-animeshagarwal28@gmail.com>
+In-Reply-To: <20240621042737.674128-2-chris.packham@alliedtelesis.co.nz>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/06/2024 17:37, Animesh Agarwal wrote:
-> Convert the RT5659/RT5658 audio CODEC bindings to DT schema.
+On 21/06/2024 06:27, Chris Packham wrote:
+> Add the rtl930x-soc and RTL9302C board to the list of Realtek compatible
+> strings.
+
+No, you did not do this. You added fallback, without any rationale.
+
 > 
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>  Documentation/devicetree/bindings/mips/realtek-rtl.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mips/realtek-rtl.yaml b/Documentation/devicetree/bindings/mips/realtek-rtl.yaml
+> index f8ac309d2994..f59249a2cefe 100644
+> --- a/Documentation/devicetree/bindings/mips/realtek-rtl.yaml
+> +++ b/Documentation/devicetree/bindings/mips/realtek-rtl.yaml
+> @@ -19,6 +19,8 @@ properties:
+>        - items:
+>            - enum:
+>                - cisco,sg220-26
+> +              - realtek,RTL9302C
+>            - const: realtek,rtl8382-soc
+> +          - const: realtek,rtl930x-soc
 
-
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - realtek,rt5659
-> +      - realtek,rt5658
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: The I2C address of the device.
-
-Drop description, redundant.
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: The CODEC's interrupt output.
-
-Drop description, redundant.
-
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: phandle and clock specifier for codec MCLK.
-
-Drop description, redundant.
-
-> +
-> +  clock-names:
-> +    const: mclk
-> +
-> +  realtek,dmic1-data-pin:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum:
-> +      - 0 # dmic1 is not used
-> +      - 1 # using IN2N pin as dmic1 data pin
-> +      - 2 # using GPIO5 pin as dmic1 data pin
-> +      - 3 # using GPIO9 pin as dmic1 data pin
-> +      - 4 # using GPIO11 pin as dmic1 data pin
-> +    description: Specify which pin to be used as DMIC1 data pin.
-> +
-> +  realtek,dmic2-data-pin:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum:
-> +      - 0 # dmic1 is not used
-> +      - 1 # using IN2P pin as dmic1 data pin
-> +      - 2 # using GPIO6 pin as dmic1 data pin
-> +      - 3 # using GPIO10 pin as dmic1 data pin
-> +      - 4 # using GPIO12 pin as dmic1 data pin
-> +    description: Specify which pin to be used as DMIC2 data pin.
-
-default:
-
-> +
-> +  realtek,jd-src:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum:
-> +      - 0 # No JD is used
-> +      - 1 # using JD3 as JD source
-> +      - 2 # JD source for Intel HDA header
-> +    description: Specify which JD source be used.
-
-default:
-
-> +
-> +  realtek,ldo1-en-gpios:
-> +    maxItems: 1
-> +    description: The GPIO that controls the CODEC's LDO1_EN pin.
-
-It's enough:
-CODEC's LDO1_EN pin
-
-
-> +
-> +  realtek,reset-gpios:
-> +    maxItems: 1
-> +    description: The GPIO that controls the CODEC's RESET pin.
-> +
-> +  sound-name-prefix: true
-
-Drop
-
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +  port:
-> +    $ref: audio-graph-port.yaml#
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        codec@1b {
-> +            compatible = "realtek,rt5659";
-> +            reg = <0x1b>;
-> +            interrupt-parent = <&gpio>;
-> +            interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
-> +            realtek,ldo1-en-gpios =
-> +                <&gpio 3 GPIO_ACTIVE_HIGH>;
-
-This can be one line.
+Does not look right. First: Not tested. Second: does not really make
+sense and commit msg does not explain it to me. Also, no wildcards.
 
 Best regards,
 Krzysztof
