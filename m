@@ -1,59 +1,47 @@
-Return-Path: <linux-kernel+bounces-225964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A92913872
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:04:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D246913874
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEBD4283B39
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:04:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4FC4283BA2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8763D548;
-	Sun, 23 Jun 2024 07:03:53 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2859B3D0D0;
+	Sun, 23 Jun 2024 07:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RM4PkO+8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2762BB12;
-	Sun, 23 Jun 2024 07:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C9227453;
+	Sun, 23 Jun 2024 07:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719126233; cv=none; b=mAO5fdlFOu4KIwYxPhhNv1zwjjbkLceJkpb5aPq1019bkWoMUhy1VanuMMQs2UciY5xWa4pgjD5x61T7udjUsgQ1ABmh50rC0eNM8aUtu0hgpVClBHNLttQe/eLDFXp+xW+rmPQ6up79xWquqgiKYg9xvjKdcuVesI0HUZT1F1A=
+	t=1719126518; cv=none; b=Oc/fDrIM5RdjcykD4KmEphVXh6iQeTnSeZaQlEyBm/XOu0EPv0rpV/SPIB07FPPWmKYqNChdB11S8vuv1pRwwHGrMQNI0RtM9gbjvi09TxMORVANW9DU/ORF9RboezOWyUXd95WTH51MPRtvTIKztjAmHKKyCl+EB/HNriMm94g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719126233; c=relaxed/simple;
-	bh=/5BmjUa7LwamVshyhd8I9KJHh/+blm0Ja3Sr9jm7QWo=;
+	s=arc-20240116; t=1719126518; c=relaxed/simple;
+	bh=sxWC9NfFdX4cIViFqrOB5DHPMjVzWToQcWPQADncEsA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p31rSQnaXq62co+rvflfm7bB/0l9+yLHss0Y+cyRqGa7vY22c9pGoIYXtu12jArtXSW6bhb993pEpwMMsY2ZEP6ioVTct/UKYFzod9kWc6zcuKTZSn15T2qEp/uz7U1dQUkfAQeXUw0mF1C5EfN1g859aHeiCZgiV2yECwAldkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42479dece93so4893785e9.0;
-        Sun, 23 Jun 2024 00:03:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719126230; x=1719731030;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wv+nb63jc8RX+XM579eAzoR3ORtF5l0kMJ0jYedplWM=;
-        b=VB6IV84nS3cbN60gN1NQMYu+Gizwr4sg7m2QhdMOsKTYy190jnMTAL7/eVyFDJW1rx
-         ci0UfVSxkHxD/yp9UrW5C75vSl11QH/BVJwlupCTv1AR7WrvvSpTnuuif5GqXQubrUIp
-         0fadkCJn0fLd4yg/2RXhXF5XHAkGYl82QVjlmmIdvu8m2v4py1RXX8W01mVcpXNmIMtV
-         wuymMKeFQBDuUyM5UGGDmJtEXuP0Ktkwmfi2fHLYO319Fa9EpIPalv5yA9x7BNJc4YYB
-         8dLxX0feUOeVM6eto5zTtVOZmQKhzZ2Je2nTY0P4Gxe/mSBuEiUGsoZDLsJOsV4ibAgA
-         veGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlheAs45sZBr6ALCTUlEAvhW38oKdByritPxi2AwIzW+h/U8X4sw26cK+JapV+ixhdxvA9q9hNI6P5kJTndauP6n/CcM1gMl2jm62aj23HqkI/VTzS/8cA/LZGD6PzX+iCP5dYCmqfBU8=
-X-Gm-Message-State: AOJu0YwSFGcFZeQQ3UkMOjElTqBnw/G4J/gYpHMG6/yiX/5Bi1lW2kEp
-	PhutLNZfDT1C8idk7Uff8hR2L4ylpNKO9cy53CrSLvSNU7KoylwX
-X-Google-Smtp-Source: AGHT+IEFnKUhu/I1x5TTgU8A64wWsdGchv2Vq9HTIBSF0tK7sTEaqtJeSsf2sJNzJFpypmhL2ozVZw==
-X-Received: by 2002:a05:6000:2a7:b0:366:eb60:bd12 with SMTP id ffacd0b85a97d-366eb60beb4mr559833f8f.3.1719126229676;
-        Sun, 23 Jun 2024 00:03:49 -0700 (PDT)
-Received: from [10.50.4.180] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c7c79sm6575582f8f.96.2024.06.23.00.03.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Jun 2024 00:03:49 -0700 (PDT)
-Message-ID: <e1e35796-2d9e-41ac-a515-a39dc1866070@grimberg.me>
-Date: Sun, 23 Jun 2024 10:03:47 +0300
+	 In-Reply-To:Content-Type; b=DKId/uhfpMQj8viL6WvwKER0GNOXqioHHYj4o4zrF/pvUeGmW8ToAWADzZesqTmcfpPswlzQgrW+1QFv3TbIM/qZfuKm9JZ6ftxNFHTmGRzt9r7MSo+1ChoBPNrvIlhvkQQT34bRWRE0KK6yfULzMOQ4jyti8D4iNdJr/aE8ggY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RM4PkO+8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84EA4C2BD10;
+	Sun, 23 Jun 2024 07:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719126517;
+	bh=sxWC9NfFdX4cIViFqrOB5DHPMjVzWToQcWPQADncEsA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RM4PkO+82ssgoMbdBGSXiBQdATN5hQW+nQKUaQx9V45NOb5v3Cjujh3zmpxxvBjjz
+	 gpLD1fCTnzwzSX1aVg27zQocwV6OkWVBre2kormJpLwIfcPE25GkuRVSG4RU5Ca3ze
+	 l5RojES8UWjYUOsaczxXXt46jTZXZtQ14TPhxhuH9mg/tLOKnMGMbEjz3kqpTvUzUn
+	 Mph4tD2Uww9kPHeXZDXeJ9aP38Lu+d18hxijeqkVZZWQ/H3W4VqWuVk556w68a/oDn
+	 9GFYupsLcrZdXXd4fwNKtgv4lS/YWDgdbQKFG59QMAQ6vgN5x/WIZrKq/BGKWYu5fU
+	 Li1JAUQ2b4JRg==
+Message-ID: <268a722a-c2e8-42fe-9cae-104e3f082a0a@kernel.org>
+Date: Sun, 23 Jun 2024 09:08:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,56 +49,202 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] nvme-pci: limit queue count to housekeeping cpus
-To: Christoph Hellwig <hch@lst.de>, Daniel Wagner <dwagner@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Frederic Weisbecker <fweisbecker@suse.com>, Mel Gorman <mgorman@suse.de>,
- Hannes Reinecke <hare@suse.de>,
- Sridhar Balaraman <sbalaraman@parallelwireless.com>,
- "brookxu.cn" <brookxu.cn@gmail.com>, Ming Lei <ming.lei@redhat.com>,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-nvme@lists.infradead.org
-References: <20240621-isolcpus-io-queues-v1-0-8b169bf41083@suse.de>
- <20240621-isolcpus-io-queues-v1-2-8b169bf41083@suse.de>
- <20240622051420.GC11303@lst.de>
+Subject: Re: [PATCH] ASoC: dt-bindings: fsl,imx-audio-sgtl5000: Convert to
+ dtschema
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240622182200.245339-1-animeshagarwal28@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20240622051420.GC11303@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240622182200.245339-1-animeshagarwal28@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 22/06/2024 20:21, Animesh Agarwal wrote:
+> Convert the imx-audio-sgtl bindings to DT schema. Make bindings complete
+> by adding audio-cpu property.
+
+On what basis? Who needs or uses audio-cpu? Driver? DTS? Both? If only
+DTS, then is it needed? Maybe not?
+
+> 
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  .../sound/fsl,imx-audio-sgtl5000.yaml         | 108 ++++++++++++++++++
+>  .../bindings/sound/imx-audio-sgtl5000.txt     |  56 ---------
+>  2 files changed, 108 insertions(+), 56 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/sound/fsl,imx-audio-sgtl5000.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/imx-audio-sgtl5000.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/fsl,imx-audio-sgtl5000.yaml b/Documentation/devicetree/bindings/sound/fsl,imx-audio-sgtl5000.yaml
+> new file mode 100644
+> index 000000000000..906dcecb73b7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/fsl,imx-audio-sgtl5000.yaml
+> @@ -0,0 +1,108 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/fsl,imx-audio-sgtl5000.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale i.MX audio complex with SGTL5000 codec
+> +
+> +maintainers:
+> +  - Animesh Agarwal <animeshagarwal28@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - fsl,imx25-pdk-sgtl5000
+> +              - fsl,imx51-babbage-sgtl5000
+> +              - fsl,imx53-m53evk-sgtl5000
+> +              - tq,imx53-mba53-sgtl5000
+> +              - fsl,imx53-cpuvo-sgtl5000
+> +              - fsl,imx53-qsb-sgtl5000
+> +              - karo,tx53-audio-sgtl5000
+
+Keep list ordered alphabetically.
+
+> +              - fsl,imx53-voipac-sgtl5000
+> +              - fsl,imx6q-ba16-sgtl5000
+> +              - fsl,imx6q-ventana-sgtl5000
+> +              - fsl,imx-sgtl5000
+> +              - fsl,imx6-armadeus-sgtl5000
+> +              - fsl,imx6dl-nit6xlite-sgtl5000
+> +              - fsl,imx6q-nitrogen6_max-sgtl5000
+> +              - fsl,imx6q-nitrogen6_som2-sgtl5000
+> +              - fsl,imx6q-nitrogen6x-sgtl5000
+> +              - fsl,imx6-rex-sgtl5000
+> +              - fsl,imx6q-sabrelite-sgtl5000
+> +              - fsl,imx6-wandboard-sgtl5000
+
+None of these were in the old binding and commit msg mentions only
+audio-cpu. From where do you get these?
 
 
-On 22/06/2024 8:14, Christoph Hellwig wrote:
->> diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
->> index 9638b25fd521..43c039900ef6 100644
->> --- a/block/blk-mq-cpumap.c
->> +++ b/block/blk-mq-cpumap.c
->> @@ -11,10 +11,23 @@
->>   #include <linux/smp.h>
->>   #include <linux/cpu.h>
->>   #include <linux/group_cpus.h>
->> +#include <linux/sched/isolation.h>
->>   
->>   #include "blk.h"
->>   #include "blk-mq.h"
->>   
->> +unsigned int blk_mq_num_possible_queues(void)
->> +{
->> +	const struct cpumask *io_queue_mask;
->> +
->> +	io_queue_mask = housekeeping_cpumask(HK_TYPE_IO_QUEUE);
->> +	if (!cpumask_empty(io_queue_mask))
->> +		return cpumask_weight(io_queue_mask);
->> +
->> +	return num_possible_cpus();
->> +}
->> +EXPORT_SYMBOL_GPL(blk_mq_num_possible_queues);
-> This should be split into a separate patch.  And it could really use
-> a kerneldoc comment.
+> +          - const: fsl,imx-audio-sgtl5000
+> +      - const: fsl,imx-audio-sgtl5000
+> +
+> +  model:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: The user-visible name of this sound complex.
+> +
+> +  audio-cpu:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: The phandle of an CPU DAI controller
+> +
+> +  ssi-controller:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: The phandle of the i.MX SSI controller.
+> +
+> +  audio-codec:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: The phandle of the SGTL5000 audio codec.
+> +
+> +  audio-routing:
+> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> +    description: |
+> +      A list of the connections between audio components. Each entry is a pair
+> +      of strings, the first being the connection's sink, the second being the
+> +      connection's source. Valid names could be:
+> +
+> +      Power supplies:
+> +        * Mic Bias
+> +
+> +      SGTL5000 pins:
+> +        * MIC_IN
+> +        * LINE_IN
+> +        * HP_OUT
+> +        * LINE_OUT
+> +
+> +      Board connectors:
+> +        * Mic Jack
+> +        * Line In Jack
+> +        * Headphone Jack
+> +        * Line Out Jack
+> +        * Ext Spk
+> +
+> +  mux-int-port:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: The internal port of the i.MX audio muxer (AUDMUX).
+> +    enum: [1, 2]
 
-Agree.
+default:
 
-Other than that, looks good.
+> +
+> +  mux-ext-port:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: The external port of the i.MX audio muxer.
+> +    enum: [3, 4, 5, 6]
+
+defaukt:
+
+> +
+> +required:
+> +  - compatible
+> +  - model
+
+Several other properties were required. Why changing this? Please
+explain in commit msg all changes done to the binding comparing to pure
+conversion.
+
+
+Best regards,
+Krzysztof
+
 
