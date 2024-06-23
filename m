@@ -1,151 +1,193 @@
-Return-Path: <linux-kernel+bounces-225995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA719138D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:56:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B639138D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F24F21F21529
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:56:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55862B213A7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CDA5C5F3;
-	Sun, 23 Jun 2024 07:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E93C5A110;
+	Sun, 23 Jun 2024 07:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bc4qwU92"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="guPUoAxY"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FC61EB25;
-	Sun, 23 Jun 2024 07:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E4E1758E;
+	Sun, 23 Jun 2024 07:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719129354; cv=none; b=A1QCbxPtuXFpe3h4Eb3IrSGcSeiB/tAwlIamNSWlqvD0uDy77G/PJqoosNdtlVUcIgQXQyYwVo+11JEu7FM7RrhBZxhQmtwcNsMr4XEamZi6eIeWK5T6dsz1JiszGgOGpBb9SuAaiUbXMzNbxeePAFBJsP2A+t+XEMqgz3qPSPA=
+	t=1719129510; cv=none; b=H/qW9QWiz6ZMvN0+yu6b49YQb7FzWs/mxMoR9Zs5b19SLUVjSTtQVsAS2rTH9hpH/npJo08C/w4GnY/YVi+vB8gTjrCx6uoSrBi6D8ryDCoRAyztZ91NcT9JQJXd1rdZTxdRfo8L8yAJ2JF3lCPSZaRNvEn9YRKYH9BncGe+fRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719129354; c=relaxed/simple;
-	bh=rgqojQtganfsNyFa5sKdGm6qZZFIx5JMG901agYQJ3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HHKz0YavlfqXqrmSFkryPU2UATmHBmS6bdoUGGBXmo6EUYrGtM0Yj4EincN0ZeQInVLLaZXQmtb4JAv6ChNxLULtTv9Cpe5PV0ShD5eAz7m79JtH/FcMj7KM+I2HV7ueXTdEJtd44uWh33lZsqGxeQPhKnJwct0yJKndRHRMxMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bc4qwU92; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 502FBC32786;
-	Sun, 23 Jun 2024 07:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719129354;
-	bh=rgqojQtganfsNyFa5sKdGm6qZZFIx5JMG901agYQJ3Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Bc4qwU92Zb/N2WusRI/aj8UNKx2EGgS1JYl8M7ePpx4Hfl79eqAjK+NyeVW3pB5oN
-	 jdC/ivW4vJeKaWF8sk0u2WSer+tkovp7OIZrTa+3GeekSMDS2XFW4oVXMZZhWYISs6
-	 qUVGh6+ZV2j+S3zTJsFDd48mxfFWWmb2fgaWSF86B9LgiiebAxQMaqCyVXHjUxeLpc
-	 X3MRvuPbdgO4u0jU35S9LKyQcsLR/lOso62/6Xm5Rt/6X51zNARNtanceCHDP/5Vcy
-	 qoHfsElgjjkGwYb5GSLTJ2/UvLJLY2rlEJ92cZuLD9lXXukun5hf0pryNp37VIiY9q
-	 iHST5xIDk1F5Q==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57d05e0017aso3961484a12.1;
-        Sun, 23 Jun 2024 00:55:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWzX1E7Aa1qvAGTEspCzmR4oTqEK9ThUrYtJpCChHIKh2zdTu4g/dQWISXXhuT3eKzFcLioeThLnJLEv0iXV5IyBTYFf5UcbFTXNrmgtPIT4kpLP1g499JwBZn6pEa7XDvz
-X-Gm-Message-State: AOJu0Yw8EDsLtugUMW1yNliCQXU/mGy3bgPTKNv93GaDs+9N4gbq5Q1p
-	B2oEZdjQc5Uu+/5AQE7Gda0pxyeqpOfOvSTOmcxh1It3cKQOH6/xywiRCKposBzH1Ht4+KAy7rI
-	0IzuGqv6R4zG8808gKg4XQRxeZY8=
-X-Google-Smtp-Source: AGHT+IH+q68pgvGWid8lDdf6e6JaOfr/7TiTueM58nZbAb66L6ay5EsP+L8r6fjfH5a4bJV8RQ9epsJMUv2TD/h/QaQ=
-X-Received: by 2002:a50:9f8d:0:b0:57d:1627:93ed with SMTP id
- 4fb4d7f45d1cf-57d457a1540mr1638421a12.22.1719129352908; Sun, 23 Jun 2024
- 00:55:52 -0700 (PDT)
+	s=arc-20240116; t=1719129510; c=relaxed/simple;
+	bh=a6KNXhusZlGB9SXt+4RuMY0cEgs/mQtHIhf1RjFFZ2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5TCvHB4G07xuL9M3VVohTghkHt7nxRcXUdHKwnV8CvG8gdy9VRcREG0m9bQ/W0uchh+Oa8CGaJ3bYl4xoYvfZcyKIA9OcP6KCrjIBB1fGYEsK0fGWEqfN7n1G0rpySBNDteNIzBeA4wpI6rpXSnz6+V5qEjZS7jK4ecJy8ZvVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=guPUoAxY; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f480624d10so28199545ad.1;
+        Sun, 23 Jun 2024 00:58:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719129509; x=1719734309; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tzKNaXqjYLYXB0OpmzE6jKXefCOFO+eG6hhbZpLsjY8=;
+        b=guPUoAxY9aruD0i3m2Zw66a3QmLnq74NqGuBWZoogt84aiF1FXfKKauWVDwBvxLaCg
+         cacXtdTEb51WjkJURBSsehMzJtWMquBbsU8ws3j2/X7LYJJw8UK8Uv8vb7DBB+26vtqh
+         Wwj2CglBYYIMxG1ywYt1KfcqzNXJuQ0iGJ8pxO3P02Wpk9/7UTjLGPXQ5k9kGfkFMaSP
+         zu6Iz07v1XtWlctqBhK7ukSzT4Jsc5Pw5xlYbjRWs7mfyBLyB7gSZyvKQ4s71CphfHmG
+         NcZWcL4H5Q2MUXfwOrfvdO0zA8oEqxtDia68eQGK595uXxENuGF+VydA4dX41UWSx7vL
+         dhmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719129509; x=1719734309;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tzKNaXqjYLYXB0OpmzE6jKXefCOFO+eG6hhbZpLsjY8=;
+        b=KJCkxm9yXYTxlTzHCDNhLRL7fwZk4HOLvtpVTvhf4z0zozthZM4ugfSoDoLMvnLmL+
+         Y7G42anaaTJ+/mkhZA1borxnZ5cqQnj78oFkR/Znu8zsn7U87Tub4Uz/KG2xUjfNzGeB
+         Iq5RlRQZG5FbJhojUZU82jaC+V2oMnn3fYQBmAhVEB8lGE84MQnG6F/z27slsnrTZ9th
+         JvbOQNdFJ1tk/BrERtsozJokXE33i5KluiWKsNdYV4O8mw96oewLTDuwyK+QmEaCcqrt
+         3DoWASoS8i+SZmlPTg4O8QeFAYbJ3ufQLfapSklou28RtGucMIYDHOpctqwDaZYA8zFh
+         2WbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSz2vDVOskcE5fEoh64jaMmC/f+aIdgB2JUJRI+92XFZExpl05FDBHa7ZrXplgRNP2a0lRtY63bM3gJwa6NkLUw23ugRN949JX+9xqB4Md1W2FY14cNZi9xtprvzce04iKC6S9rrOeqQ==
+X-Gm-Message-State: AOJu0YxivwEZ9oJVjJ7Z8SfagY2UC/qTk5QXZkku2z1xh3nO3SAb0ZMS
+	eLqGYJItSN5DvxkOd8BDZoajfj+d2r6NhOJWjtNnj0NGlme50i4F
+X-Google-Smtp-Source: AGHT+IGEpWbbny726Q3htn6XKcMmi4++Fu3v9DNQtTRzF7a9NIY1QXUPMWFlEmnWJ72ew/+300ULFA==
+X-Received: by 2002:a17:902:f648:b0:1f9:cbe1:ae9 with SMTP id d9443c01a7336-1fa1d66823fmr31602725ad.44.1719129508450;
+        Sun, 23 Jun 2024 00:58:28 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:c8b4:4b16:721a:ce0f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f02f0sm41610825ad.7.2024.06.23.00.58.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 00:58:28 -0700 (PDT)
+Date: Sun, 23 Jun 2024 00:58:25 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-acpi@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v3] software node: Implement device_get_match_data fwnode
+ callback
+Message-ID: <ZnfVoQmCE-wJbIYU@google.com>
+References: <20240427203650.582989-1-sui.jingfeng@linux.dev>
+ <ZnXbaubPVAUdDIu0@google.com>
+ <7b5305b6-78b0-4add-9e70-271159cfad95@linux.dev>
+ <Zncl_O-NjMRZYGeA@google.com>
+ <ee4e8724-4a19-4814-9b7e-9eb6eb0ac6a3@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619080940.2690756-1-maobibo@loongson.cn> <20240619080940.2690756-3-maobibo@loongson.cn>
-In-Reply-To: <20240619080940.2690756-3-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 23 Jun 2024 15:55:42 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7YXHwfdy-DFAd6_qPXdqbBVUSHq0U8Hu1eEgdtN_b+OA@mail.gmail.com>
-Message-ID: <CAAhV-H7YXHwfdy-DFAd6_qPXdqbBVUSHq0U8Hu1eEgdtN_b+OA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] LoongArch: KVM: Select huge page only if secondary
- mmu supports it
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, 
-	Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee4e8724-4a19-4814-9b7e-9eb6eb0ac6a3@linux.dev>
 
-Hi, Bibo,
+On Sun, Jun 23, 2024 at 03:38:23PM +0800, Sui Jingfeng wrote:
+> Hi,
+> 
+> On 6/23/24 03:29, Dmitry Torokhov wrote:
+> > > In case of non-OF match (which
+> > > > includes the case where you use software nodes) the match data is coming
+> > > > from matching spi_device_id entry in the driver.
+> > > 
+> > > We don't care about much how it is probed now, rather, after the driver
+> > > probed by a non-OF way, how does the additional devices properties
+> > > can be get?
+> > > 
+> > > 
+> > > Say:
+> > > 
+> > > 1) "device_property_read_u32(dev, "rotation", &rotation);" and
+> > > 2) "!device_property_read_string(dev, "pervasive,thermal-zone",
+> > > &thermal_zone))"
+> > > 
+> > > 
+> > > For those spi/i2c/platform devices, what we argues are that
+> > > those drivers really should just depend on "OF" before we have
+> > > a reliable fwnode API backend to redirect to.
+> > They are working fine without such restriction now,
+> 
+> 
+> You still *NOT* answer where the additional devices properties[1][2]
+> can be acquire.
+> 
+> [1] device_property_read_u32(dev, "rotation", &rotation)
+> 
+> [2] device_property_read_string(dev, "pervasive,thermal-zone",
+> &thermal_zone))
+> 
+> 
+> > so I see absolutely no reason imposing this restriction.
+> 
+> The reason is rigorous.
+> 
+> You are acclaiming that works by hardcode or by ignoring the flaws
+> is fine, then all driver are working fine by *your* standard.
+> 
+> Your personal standard has nothing to do with this patch.
+> 
+> > > Where the additional device_property_read_xxxx() calls redirect to?
+> > > 
+> > > What if users want to invoke more device_property_read_xxxx() function?
+> > They are being directed to first the primary FW node instance, which may
+> > be either OF, ACPI, or SW node, and then, if property is not present
+> > there, to the secondary FW node, which can be either again.
+> 
+> 
+> What I'm asking is, on the non-OF and no-ACPI cases, where's those
+> device_property_read_xxx() calls can be directed to?
+> 
+> > At no point ->device_get_match_data() callback in involved in this
+> > process.
+> > 
+> 
+> The patch is written for people who need it, not for people who don't.
+> 
+> It will be involved if the device is associated with software node.
+> Its for fwnode API user to get a consistent experience, that is
+> to get a matching data without introduce extra/duplicated match
+> mechanism.
+> 
+> The patch is focus on fixing the undefined behavior, is discussing
+> the correct way to consolidate the fwnode API. Its not going to
+> discuss how does the those *old" and/or how does those non-fwnode
+> systems works.
+> 
+> Its NOT discussing how does the driver itself can be probed, a driver
+> can be probed multiple way and is another question. Being probed and
+> extract matching data can two different thing and is perfectly valid.
+> 
+> Your problem is that you are not fully understand what other people
+> does before you rush into the discussion. You are putting restrictions
+> onto other people, while leaving the problem itself there unsolved.
+> 
+> Its not a place to express your personal value or you personal status,
+> such as, you are "ready" or "not ready" for something. Or persuading
+> somebody should get used to what or teaching people to talks with a
+> whatever tone like a God.
+> 
+> None of those junk words are technical, I can not see constructive
+> ideas.
 
-On Wed, Jun 19, 2024 at 4:09=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> Currently page level selection about secondary mmu depends on memory
-> slot and page level about host mmu. There will be problem if page level
-> of secondary mmu is zero already. So page level selection should depend
-> on the following three conditions.
->  1. Memslot is aligned for huge page and vm is not migrating.
->  2. Page level of host mmu is huge page also.
->  3. Page level of secondary mmu is suituable for huge page, it cannot
-> be normal page since it is not supported to merge normal pages into
-> huge page now.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  arch/loongarch/include/asm/kvm_mmu.h |  2 +-
->  arch/loongarch/kvm/mmu.c             | 16 +++++++++++++---
->  2 files changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/loongarch/include/asm/kvm_mmu.h b/arch/loongarch/includ=
-e/asm/kvm_mmu.h
-> index 099bafc6f797..d06ae0e0dde5 100644
-> --- a/arch/loongarch/include/asm/kvm_mmu.h
-> +++ b/arch/loongarch/include/asm/kvm_mmu.h
-> @@ -55,7 +55,7 @@ static inline void kvm_set_pte(kvm_pte_t *ptep, kvm_pte=
-_t val)
->  static inline int kvm_pte_write(kvm_pte_t pte) { return pte & _PAGE_WRIT=
-E; }
->  static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & _PAGE_DIRT=
-Y; }
->  static inline int kvm_pte_young(kvm_pte_t pte) { return pte & _PAGE_ACCE=
-SSED; }
-> -static inline int kvm_pte_huge(kvm_pte_t pte) { return pte & _PAGE_HUGE;=
- }
-> +static inline int kvm_pte_huge(kvm_pte_t pte)  { return !!(pte & _PAGE_H=
-UGE); }
-Why do we need this change?
+Yes, indeed, it appears that further discussion is pointless at this
+point.
 
-Huacai
+Andy, Heikki, Greg, and others: FWIW this is a NAK from me.
 
->
->  static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
->  {
-> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
-> index 9e39d28fec35..c6351d13ca1b 100644
-> --- a/arch/loongarch/kvm/mmu.c
-> +++ b/arch/loongarch/kvm/mmu.c
-> @@ -858,10 +858,20 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsi=
-gned long gpa, bool write)
->
->         /* Disable dirty logging on HugePages */
->         level =3D 0;
-> -       if (!fault_supports_huge_mapping(memslot, hva, write)) {
-> -               level =3D 0;
-> -       } else {
-> +       if (fault_supports_huge_mapping(memslot, hva, write)) {
-> +               /* Check page level about host mmu*/
->                 level =3D host_pfn_mapping_level(kvm, gfn, memslot);
-> +               if (level =3D=3D 1) {
-> +                       /*
-> +                        * Check page level about secondary mmu
-> +                        * Disable hugepage if it is normal page on
-> +                        * secondary mmu already
-> +                        */
-> +                       ptep =3D kvm_populate_gpa(kvm, NULL, gpa, 0);
-> +                       if (ptep && !kvm_pte_huge(*ptep))
-> +                               level =3D 0;
-> +               }
-> +
->                 if (level =3D=3D 1) {
->                         gfn =3D gfn & ~(PTRS_PER_PTE - 1);
->                         pfn =3D pfn & ~(PTRS_PER_PTE - 1);
-> --
-> 2.39.3
->
+Thanks.
+
+-- 
+Dmitry
 
