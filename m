@@ -1,157 +1,132 @@
-Return-Path: <linux-kernel+bounces-226450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCB2913E80
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:24:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A21913E85
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5E01C20BB2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:24:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E03E6B21647
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EC818509E;
-	Sun, 23 Jun 2024 21:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69921850A0;
+	Sun, 23 Jun 2024 21:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="OEIoKafs"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qp0XTQhZ"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC981185084
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 21:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0D21836F5
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 21:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719177841; cv=none; b=fFUhiYW/JEjuBMIeNZdgLx6vbeQ72dB2oKMND25XowoPgoqoUO0qM0aurvPVjUkyxucl1Aa01/iHl3eKMUH/6D95x86TkyfYg1WHb4IwxCUOC18bWcZwbLLsd6Fh3LZUUUI8m3e2QWpBwEYcOhuWyMNU/N+bDmq7YyBPvj7yGTE=
+	t=1719177895; cv=none; b=rFXJo6ehj7ksXVvkmgTB5EAfSwBHaP10kU9TaaI8BhsVtZDzQw+2a5KieUrDdeuqQHBZ46kFs/x6mG/na/oH+LJlZQSTCyrna7NWtGOfJcOm7ACbZBQS0lz/UzTB9+EGyyGYOxMl2gaU0AWH4u1mAmkAJR1oc4hTlbkPlGlYBgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719177841; c=relaxed/simple;
-	bh=P5/LDY2lSChGXHtxsxQBRgjLva86IWbJ9vHnJ6Fa+O8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZYrOsEONSoX0zzPYQ23N8cTfbRBT2UN3vJvgYgtof4iIZRSS4dxg7kR0EqkiEsi2uLoW1qAPX1/ureP4PalY1FIGdIqpE9qH4ml7/Nl242tnUoh+HtJ78j3wa480p8UIQ62z1aOBjpT8dm6Kjc35svLUrJiEcjUaz68sMzNokvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=OEIoKafs; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A16B22C047F;
-	Mon, 24 Jun 2024 09:23:55 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1719177835;
-	bh=P5/LDY2lSChGXHtxsxQBRgjLva86IWbJ9vHnJ6Fa+O8=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=OEIoKafs19mMsZteaXnTGIptdgqy2YZsE60kRv3GBSnGuKF++Z1a4otTA+1ZKHbme
-	 lst6Z/regfyCmZJqbAQbbTd4sR8zI4AjA1VLObJCjyMGTKslgGXvfnlRJldLTbxG9s
-	 sWNqM7ZT0Wo+IZiDHnlhqIGA/2Ink8tAHXxchOVRqGQSIPuwii3xW6AgiyHa+UQqim
-	 T/XwRDX/V+v5sD8bs6htJG7YEJJmz/zNxC65NSdtaoeXbz3TyYo5cdptmCTfvWFxe/
-	 aG1YEzm0W80teIVqG5ogpRBpRBs219Egl4j1F2zrZRy0IuZ58ayb44tiUz2vuZMwLq
-	 cjgs2bKfPF9ig==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6678926b0001>; Mon, 24 Jun 2024 09:23:55 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Mon, 24 Jun 2024 09:23:55 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1497.48; Mon, 24 Jun 2024 09:23:55 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Mon, 24 Jun 2024 09:23:55 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Conor Dooley <conor@kernel.org>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "tsbogend@alpha.franken.de"
-	<tsbogend@alpha.franken.de>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "paulburton@kernel.org" <paulburton@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "mail@birger-koblitz.de"
-	<mail@birger-koblitz.de>, "bert@biot.com" <bert@biot.com>, "john@phrozen.org"
-	<john@phrozen.org>, "sander@svanheule.net" <sander@svanheule.net>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "kabel@kernel.org"
-	<kabel@kernel.org>, "ericwouds@gmail.com" <ericwouds@gmail.com>
-Subject: Re: [PATCH 2/6] dt-bindings: timer: Add schema for realtek,otto-timer
-Thread-Topic: [PATCH 2/6] dt-bindings: timer: Add schema for
- realtek,otto-timer
-Thread-Index: AQHaw5NdrllVI4VYYUmEuhwD4yFu7rHS6kyAgAIsrwA=
-Date: Sun, 23 Jun 2024 21:23:55 +0000
-Message-ID: <2ed9ba19-ef0b-481c-b17a-5499cc0664ed@alliedtelesis.co.nz>
-References: <20240621042737.674128-1-chris.packham@alliedtelesis.co.nz>
- <20240621042737.674128-3-chris.packham@alliedtelesis.co.nz>
- <20240622-dagger-willpower-8dc828553384@spud>
-In-Reply-To: <20240622-dagger-willpower-8dc828553384@spud>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AFAD0E1DA7A4244BA512F827143D8C9E@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719177895; c=relaxed/simple;
+	bh=AwoBBqR1ZRIfVRs1f9k+P8VRbae5Ab0Eycxpuoo3d84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3Oqh8on/1noqlYmwdq5PFn+ihcJ8ojB0RbtS1YttvEAkLl30p86LbpCfMqo0j3fdlF6AU4Tx2UuDMRrxH/EqPX6rQTY8m4WNIsx7Kr/Qrg0QLkh4hbtVCaZIUNRtA1RoiYuEqsFlgEqU5njOqv1jK/fJY/AGv/KxnU/1CrUh2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qp0XTQhZ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cdf2c7454so1933768e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:24:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719177891; x=1719782691; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mNAVEXZ6+S4MEQi8nN59EgiF6h3aVPXVSlq4NFoo3+o=;
+        b=Qp0XTQhZfd06XJxGcqYmGgxjq5Vnir7hPbsu2ymiewUKyW6FMdA3rC1WDVVYPWqVOS
+         5PFM2MfWjyUCf8zHCUJoioHSAwTNDQm3REPhWQGlvyZKFoVmAJzN6gtHl++VqzWeLh1/
+         CBk1HRfTKTc0M5hlPAGjn/VCAKaSqHQIzfjzCmEwSN/tyGirOZzcPHJoQtymM4Mhoa66
+         QY3FUdIjDPRHI67w3Phr0lfYbDaubx7iQznIdeBvdbGA345kXiTPblLIWkhHSKqrrB80
+         TZ1wd5LoZPHP0JnDhukUKxXlrJN3u7u5w5TgU7w2k235Bb6tRK3P1in4K/vD+rFeoriD
+         yMQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719177891; x=1719782691;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mNAVEXZ6+S4MEQi8nN59EgiF6h3aVPXVSlq4NFoo3+o=;
+        b=FzgJCq3yrig5i/ukjtEoYRJAtluPmDofrWru9MK7fF1aV3QjA/0FbMmrIaWuuYhASe
+         ZfMdzDG7jUu2Y873Jh8ORmBPpVjD2fYfLzxiLEkMXUniLun/Tc7uNN08fzRYHe9GQ3BD
+         2ZGqFRg3PrXxxMyjKhkga1XTJafmCYdKHCZVHCiZ9buc8P+bNqSiGnLsMNeKxm/Te69o
+         MRJzedPirlFKvvIJuZG0dTQGyqiYxJ2gEChS2N+EUGbGGQZdwutytq9RQ1mC9qtCwyPe
+         q2ZTIA+i1QLdlvFKNFXrA81KLNPS6xDJhfy7t9jXSsLdbyXCa16gz5l2SEDjawpdK9j+
+         eAsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKbV18wBUeiIY47bcOzHCQhRwCPrLo7LiZCO3bbfMzFwOPUoCBlaAVkpSPf+JPbyfhAbewdRSxMTJrI+yJBvG80HqC84ufl2IwQGzH
+X-Gm-Message-State: AOJu0Yw4aeO/8Wd6Q9qMMZBlkjrxCG5caDnRoUO6J5Am1wuBVBfQ6e1k
+	n8j6ezEhqPWgqhBUI2Wp5WL/0Ez0ZLUkZMmhYkf6ixhZIkD7G03pRALHUSyS4AI=
+X-Google-Smtp-Source: AGHT+IFel0DuKv+EHiHhhrq9a39fa8wCRHymYA2GhsqybiN7bXR56zuDqicVyW8ZZ/5C0YigGPyLQg==
+X-Received: by 2002:a05:6512:539:b0:52c:ab21:7c05 with SMTP id 2adb3069b0e04-52ce185d03emr1894980e87.67.1719177891517;
+        Sun, 23 Jun 2024 14:24:51 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63b4762sm847367e87.14.2024.06.23.14.24.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 14:24:51 -0700 (PDT)
+Date: Mon, 24 Jun 2024 00:24:49 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+	freedreno <freedreno@lists.freedesktop.org>, dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	Rob Clark <robdclark@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>, Sean Paul <sean@poorly.run>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/3] Support for Adreno X1-85 GPU
+Message-ID: <veyzue2rfwd3brs5ama3z5wp3zhoytnggohcidvak4xaxv54tb@hkh4dpk7fcj4>
+References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
+ <26abe6cd-e9da-4db9-9035-76edd5dda614@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6678926b a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=gEfo2CItAAAA:8 a=2MXqo-X63jkm6lQBtrsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TRDAMGBw1lysTYkqMS0v:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-SEG-SpamProfiler-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26abe6cd-e9da-4db9-9035-76edd5dda614@kernel.org>
 
-KHJlc2VuZCBhcyBwbGFpbiB0ZXh0KQ0KDQpPbiAyMy8wNi8yNCAwMDoxMSwgQ29ub3IgRG9vbGV5
-IHdyb3RlOg0KPiBPbiBGcmksIEp1biAyMSwgMjAyNCBhdCAwNDoyNzozM1BNICsxMjAwLCBDaHJp
-cyBQYWNraGFtIHdyb3RlOg0KPj4gQWRkIHRoZSBkZXZpY2V0cmVlIHNjaGVtYSBmb3IgdGhlIHJl
-YWx0ZWssb3R0by10aW1lciBwcmVzZW50IG9uIGEgbnVtYmVyDQo+PiBvZiBSZWFsdGVrIFNvQ3Mu
-DQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogQ2hyaXMgUGFja2hhbTxjaHJpcy5wYWNraGFtQGFsbGll
-ZHRlbGVzaXMuY28ubno+DQo+PiAtLS0NCj4+ICAgLi4uL2JpbmRpbmdzL3RpbWVyL3JlYWx0ZWss
-b3R0by10aW1lci55YW1sICAgIHwgNTQgKysrKysrKysrKysrKysrKysrKw0KPj4gICAxIGZpbGUg
-Y2hhbmdlZCwgNTQgaW5zZXJ0aW9ucygrKQ0KPj4gICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3RpbWVyL3JlYWx0ZWssb3R0by10aW1lci55YW1s
-DQo+Pg0KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy90
-aW1lci9yZWFsdGVrLG90dG8tdGltZXIueWFtbCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy90aW1lci9yZWFsdGVrLG90dG8tdGltZXIueWFtbA0KPj4gbmV3IGZpbGUgbW9kZSAx
-MDA2NDQNCj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uYjZlODVhYWRiYzk5DQo+PiAtLS0gL2Rldi9u
-dWxsDQo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdGltZXIvcmVh
-bHRlayxvdHRvLXRpbWVyLnlhbWwNCj4+IEBAIC0wLDAgKzEsNTQgQEANCj4+ICsjIFNQRFgtTGlj
-ZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMC1vbmx5IE9SIEJTRC0yLUNsYXVzZSkNCj4+ICslWUFN
-TCAxLjINCj4+ICstLS0NCj4+ICskaWQ6aHR0cDovL2RldmljZXRyZWUub3JnL3NjaGVtYXMvdGlt
-ZXIvcmVhbHRlayxvdHRvLXRpbWVyLnlhbWwjDQo+PiArJHNjaGVtYTpodHRwOi8vZGV2aWNldHJl
-ZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMNCj4+ICsNCj4+ICt0aXRsZTogUmVhbHRlayBP
-dHRvIFNvQ3MgVGltZXIvQ291bnRlcg0KPj4gKw0KPj4gK2Rlc2NyaXB0aW9uOg0KPj4gKyAgUmVh
-bHRlayBTb0NzIHN1cHBvcnQgYSBudW1iZXIgb2YgdGltZXJzL2NvdW50ZXJzLiBUaGVzZSBhcmUg
-dXNlZA0KPj4gKyAgYXMgYSBwZXIgQ1BVIGNsb2NrIGV2ZW50IGdlbmVyYXRvciBhbmQgYW4gb3Zl
-cmFsbCBDUFUgY2xvY2tzb3VyY2UuDQo+PiArDQo+PiArbWFpbnRhaW5lcnM6DQo+PiArICAtIENo
-cmlzIFBhY2toYW08Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KPj4gKw0KPj4g
-K3Byb3BlcnRpZXM6DQo+PiArICAkbm9kZW5hbWU6DQo+PiArICAgIHBhdHRlcm46ICJedGltZXJA
-WzAtOWEtZl0rJCINCj4+ICsNCj4+ICsgIGNvbXBhdGlibGU6DQo+PiArICAgIGl0ZW1zOg0KPj4g
-KyAgICAgIC0gZW51bToNCj4+ICsgICAgICAgICAgLSByZWFsdGVrLHJ0bDkzMHgtdGltZXINCg0K
-SSdsbCBjaGFuZ2UgdGhpcyB0byBydGw5MzAyDQoNCj4+ICsgICAgICAtIGNvbnN0OiByZWFsdGVr
-LG90dG8tdGltZXINCj4+ICsgIHJlZzoNCj4+ICsgICAgbWluSXRlbXM6IDUNCj4+ICsgICAgbWF4
-SXRlbXM6IDUNCj4gU2luY2UgbWluaXRlbXMgPT0gbWF4aXRlbXMsIGNhbiB5b3UganVzdCBtYWtl
-IHRoaXMgYSBsaXN0LCBhbmQgZGVmaW5lDQo+IHdoYXQgdGhleSBhbGwgYXJlPyBEaXR0byBpbnRl
-cnJ1cHRzLg0KDQpUaGlzIGlzIHdoZXJlIG1vcmUgY29uZGl0aW9ucyBtaWdodCBuZWVkIHRvIGJl
-IGFkZGVkLiBUaGUgcnRsOTMwMiBpcyBhIA0Kc2luZ2xlIGNvcmUgU29DLiBTbyB0ZWNobmljYWxs
-eSBpdCBvbmx5IG5lZWRzIDIgdGltZXJzICh0aGUgaGFyZHdhcmUgDQpzdGlsbCBoYXMgNSBidXQg
-MyB3b3VsZCBiZSB1bnVzZWQgYXQgdGhlIG1vbWVudCkuIFRoZSBydGw5MzEyIGlzIGEgZHVhbCAN
-CmNvcmUgU29DIHNvIG5lZWRzIDMgdGltZXJzIChJIHdvbid0IGJlIGxvb2tpbmcgYXQgdGhhdCBw
-bGF0Zm9ybSBmb3IgYSANCndoaWxlKS4gU28gSSB0aGluayBtYXliZSBtYXhJdGVtcyBzaG91bGQg
-c3RheSBhdCA1IGJ1dCBtaW5JdGVtcyBzaG91bGQgDQpiZSBzZXQgYmFzZWQgb24gdGhlIGNvbXBh
-dGlibGUuDQoNCj4gcmVnOg0KPiAgICBpdGVtczoNCj4gICAgICAtIGZvbw0KPiAgICAgIC0gYmFy
-DQo+ICAgICAgLSBiYXoNCj4NCj4gZXRjLg0KDQpJIGNhbiBkby4gQnV0IHRoZXknZCBhbGwgYmUg
-c29tZXRoaW5nIGxpa2UgY3B1Ti1ldmVudC4gVGhlIHdheSB0aGUgDQpkcml2ZXIgaXMgd3JpdHRl
-biBpdCBncmFicyBhIHRpbWVyIGZvciBlYWNoIENQVSBhbmQgdXNlcyB0aGUgbmV4dCBvbmUgDQpm
-b3IgYSBnbG9iYWwgdGltZXIuDQoNCj4+ICsNCj4+ICsgIGNsb2NrczoNCj4+ICsgICAgbWF4SXRl
-bXM6IDENCj4+ICsNCj4+ICsgIGludGVycnVwdHM6DQo+PiArICAgIG1pbkl0ZW1zOiA1DQo+PiAr
-ICAgIG1heEl0ZW1zOiA1DQo+PiArDQo+PiArcmVxdWlyZWQ6DQo+PiArICAtIGNvbXBhdGlibGUN
-Cj4+ICsgIC0gcmVnDQo+PiArICAtIGNsb2Nrcw0KPj4gKyAgLSBpbnRlcnJ1cHRzDQo+PiArDQo+
-PiArYWRkaXRpb25hbFByb3BlcnRpZXM6IGZhbHNlDQo+PiArDQo+PiArZXhhbXBsZXM6DQo+PiAr
-ICAtIHwNCj4+ICsgICAgdGltZXIwOiB0aW1lckAzMjAwIHsNCj4gVGhlIGxhYmVsIGhlcmUgaXNu
-J3QgbmVlZGVkIEZZSS4NCg0KV2lsbCByZW1vdmUuDQoNCj4+ICsgICAgICBjb21wYXRpYmxlID0g
-InJlYWx0ZWsscnRsOTMweC10aW1lciIsICJyZWFsdGVrLG90dG8tdGltZXIiOw0KPj4gKyAgICAg
-IHJlZyA9IDwweDMyMDAgMHgxMD4sIDwweDMyMTAgMHgxMD4sIDwweDMyMjAgMHgxMD4sDQo+PiAr
-ICAgICAgICAgICAgPDB4MzIzMCAweDEwPiwgPDB4MzI0MCAweDEwPjsNCj4+ICsNCj4+ICsgICAg
-ICBpbnRlcnJ1cHQtcGFyZW50ID0gPCZpbnRjPjsNCj4+ICsgICAgICBpbnRlcnJ1cHRzID0gPDcg
-ND4sIDw4IDQ+LCA8OSA0PiwgPDEwIDQ+LCA8MTEgND47DQpXaWxsIHN3aXRjaCB0byB1c2luZyBw
-cm9wZXIgSVJRIGZsYWdzLg0KPj4gKyAgICAgIGNsb2NrcyA9IDwmbHhfY2xrPjsNCj4+ICsgICAg
-fTsNCj4+IC0tIA0KPj4gMi40NS4yDQo+Pg==
+On Sun, Jun 23, 2024 at 01:11:48PM GMT, Krzysztof Kozlowski wrote:
+> On 23/06/2024 13:06, Akhil P Oommen wrote:
+> > This series adds support for the Adreno X1-85 GPU found in Qualcomm's
+> > compute series chipset, Snapdragon X1 Elite (x1e80100). In this new
+> > naming scheme for Adreno GPU, 'X' stands for compute series, '1' denotes
+> > 1st generation and '8' & '5' denotes the tier and the SKU which it
+> > belongs.
+> > 
+> > X1-85 has major focus on doubling core clock frequency and bandwidth
+> > throughput. It has a dedicated collapsible Graphics MX rail (gmxc) to
+> > power the memories and double the number of data channels to improve
+> > bandwidth to DDR.
+> > 
+> > Mesa has the necessary bits present already to support this GPU. We are
+> > able to bring up Gnome desktop by hardcoding "0xffff43050a01" as
+> > chipid. Also, verified glxgears and glmark2. We have plans to add the
+> > new chipid support to Mesa in next few weeks, but these patches can go in
+> > right away to get included in v6.11.
+> > 
+> > This series is rebased on top of v6.10-rc4. P3 cherry-picks cleanly on
+> > qcom/for-next.
+> > 
+> > P1 & P2 for Rob, P3 for Bjorn to pick up.
+> 
+> Which Rob?
+> 
+> Why bindings cannot go as usual way - via the subsystem?
+
+They can and should, via msm-next -> drm -> linus's
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
+-- 
+With best wishes
+Dmitry
 
