@@ -1,48 +1,70 @@
-Return-Path: <linux-kernel+bounces-225916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E772191376B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 04:42:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E3B913763
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 04:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83FE71F2256B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 02:42:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14E44283855
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 02:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FF0D268;
-	Sun, 23 Jun 2024 02:41:57 +0000 (UTC)
-Received: from out28-149.mail.aliyun.com (out28-149.mail.aliyun.com [115.124.28.149])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF20946C;
+	Sun, 23 Jun 2024 02:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ZyvpQkDD"
+Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE8BA23;
-	Sun, 23 Jun 2024 02:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EDB2F4A
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 02:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719110516; cv=none; b=bIHse9GuLkmIei3YkmCOmBtYoqkCXe/yyV/EK1+yVNUiSHL1NcW3bsF3Qlr+kASQ2Y5eOfCJe510QkSpAwvZ+kjkEpEtctZC14wIqWMs/FBcB7kf4yhPoXONR66SDWhB7wdClkJNcJp7yU5OWCTV4Pz1eSZi+1H/Bn6WaZntg8c=
+	t=1719110205; cv=none; b=qdVUiMaF3H99DaqCEvSRtJD6YYHiCwe4nlmlZ1shgHZWC5RBRtfVxLAYSawrg6uu7eXpu8ILhKqbtAlsGJZYnTyKMbKxzaahqVKjTcZvr6lq79cXRrTsXDp75LLMRXy6dEU+NxkWMHpnxXOLmKV0ZqbiZTph1dEPN5vd2YWqBuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719110516; c=relaxed/simple;
-	bh=HiI9F3L1Thv7663MMmZOO+rudF2uZH75oGW+XT7h+MA=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WnCkxUpsJCm7gsZKA2DUXIDQAt9SS7eyVIF8UTmRjTo41ta7c4en+dfWjql2SYpvpwj2HN1DIWIiikrZRo31NC72a/oubf529+SMYqy/mJ2hOLiGZfYFmzAhdm6ENWDFVB1VrG8Pzl2LL2/v5AvW01yOntuyAj/y/E0rZgLnDzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com; spf=pass smtp.mailfrom=ttyinfo.com; arc=none smtp.client-ip=115.124.28.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ttyinfo.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08635762|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.313904-0.00171844-0.684378;FP=0|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033068155186;MF=zhoushengqing@ttyinfo.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.Y7uvvUK_1719109571;
-Received: from tzl..(mailfrom:zhoushengqing@ttyinfo.com fp:SMTPD_---.Y7uvvUK_1719109571)
-          by smtp.aliyun-inc.com;
-          Sun, 23 Jun 2024 10:26:12 +0800
-From: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-To: bhelgaas@google.com,
-	zhoushengqing@ttyinfo.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH] PCI: Enable io space 1k granularity for intel cpu root port
-Date: Sun, 23 Jun 2024 02:26:11 +0000
-Message-Id: <20240623022611.41696-1-zhoushengqing@ttyinfo.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240622175205.GA1432837@bhelgaas>
-References: <20240622175205.GA1432837@bhelgaas>
+	s=arc-20240116; t=1719110205; c=relaxed/simple;
+	bh=6+W5s9z/1RC0oPC/W2Z8Qpqif1mAXzw52jIfrq64jXI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=FsX1WjKMrD8iedLVUhFrURiJOgA1ahy2edSJ+QXiObSTcAYwYlt7XZU0GN3JfUhwb9TPcDBHCDRENAVVe2uawefyujc3YHhh/o3WgDRl/PuwZRtY25MybfZZ5BsMNCshn9jiN4TYH/bEVNalU/Lp4FujKgLgXGxI1Grfwhrb8w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ZyvpQkDD; arc=none smtp.client-ip=203.205.221.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1719110199; bh=tfqcN0VRIVQ+F9FyFjz8WL2n+Jtl4i2MDfN6H1a6NzY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ZyvpQkDDNqqLgfAZ/U0tiEA/JEUeeL9iz+KKshz5vR89P9u6c3Vbdb9PMRhVUCGLN
+	 jm+8I02IjAXkNub21ww3IBATTOn50dXh2KPyzsVTUXW4ZBY38Cxdx04xqRze95jnxJ
+	 r18UOaQyguCNrorQlF5yp3jQYcpTYDOdywYD4H8M=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id 9260BE72; Sun, 23 Jun 2024 10:36:38 +0800
+X-QQ-mid: xmsmtpt1719110198t2308miyz
+Message-ID: <tencent_F6252CBAF6BB6C338E9E2C1BFF4B971B4308@qq.com>
+X-QQ-XMAILINFO: OOPJ7pYMv25t4c2XTOKW2m2lXysaJ4pQ3184RSh6nO32s30D9XA4e783Bud/NK
+	 dfb2w0ijqiJORDPC+xEd13+VcEF2bxF3n2fYZXgS+IosdW+BsM8IPjLFnJPWx4smbnzjT7+Q4TL4
+	 owfj9x8/4wF1EIO64PFfsFUolcTiv1oOS6/aMhBzcwpkTK1Umod5Ca0yjFVuvcCVDhZFjRCtu/Fb
+	 9cu13wvPMngZHB1Uln7DI9vkY1CWZF3cdF09qwE6sn43V8k7j+mBMvg6s6o+0aaTg2kgETGZwJnD
+	 SEJMaze48whk9aRdpVY+zBchekRmX1Z3xFnvz+TWI2gCzMYSuF5OMw5oTmgF7cdSembyjT2RSjrd
+	 6TDHcf40/AMjMVaSkhub98i/iECL0SHgZmmQDgOuTSu3QWLWhG18fwF+SOxhwrLLhpI3eQJnSgvX
+	 3zGNa2prppOA5mCVnb2DIoeS2HHXljdPOKTAqoxY1jQX4Fxp3sWP3sAFgKUw+/ozlka/MXhNe1sI
+	 XHZrp6pKWWkQUkQSTqjP8WWgIQ2lGz1hB9tk6XCJIqbdpFiA5W4mjWL0wnKmmlLAKv7Oo9kAC//u
+	 1leNZKCK1kojCfNMjAF9rhqsmaTvAElmjQHGdyxBpKgLyWyem+xuTrNKK/T57U7Zh1DK/TtQNhBF
+	 n+rq1SMnfBlmCouFdYhAtVndNlBkJ6XDknsoE2Ee8G6segPHpdY8at19mSkaySDN3YCx6om/JvQE
+	 QzEFDgBHaQmZu9tQbsj3d75TSMy8h3hHoXQ5OVZaTg/SIno/RsQknR2p7HT2laQisrkftPIS6ddp
+	 3YdIWPMT8HHhhs7/lE+D9UuQKbfzqenZMWnL3WMcCnLIwlG6Id74Qd6ZQVCJBlGjJ7STKVzT6/km
+	 T6/Tn46r2h24lt4ueSIlzF/wbT3LPShs3E82GNw8PkkWtu/dHLu71f0IB8S6QAvi3RKZ+7sYbJ
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: invalid-free in hci_req_sync_complete
+Date: Sun, 23 Jun 2024 10:36:38 +0800
+X-OQ-MSGID: <20240623023637.3394117-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <00000000000033a6e8061b3c6d4a@google.com>
+References: <00000000000033a6e8061b3c6d4a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,46 +73,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
->On Sat, Jun 22, 2024 at 11:06:18PM +0800, zhoushengqing@ttyinfo.com wrote:
->> >> This patch add 1k granularity for intel root port bridge.Intel latest
->>
->>
->>
->> >> server CPU support 1K granularity,And there is an BIOS setup item named
->>
->>
->>
->
->I don't know what your email agent is doing to add all these extra
->blank lines, but it makes it painful to read/reply:
->https://lore.kernel.org/all/2024062223061743562815@ttyinfo.com/
->
+please test db free in hci_req_sync_complete
 
-I'm sorry for the mistake I made in my email client settings.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 2ccbdf43d5e7
 
->> >Can you implement this as a quirk similar to quirk_p64h2_1k_io()?
->> >
->> >I don't want to clutter the generic code with device-specific
->> >things like this.
->>
->> I have attempted to implement this patch in quirks.c.But there
->> doesn't seem to be a suitable DECLARE_PCI_FIXUP* to do this.because
->> the patch is not targeting the device itself, It targets other P2P
->> devices with the same bus number.
->
->If I understand the patch correctly, if a [8086:09a2] device on a root
->bus has EN1K set, *every* bridge (every Root Port in this case because
->I assume this is a PCIe configuration) on the same bus supports 1K
->granularity?
->
->That seems like a really broken kind of encapsulation.  I'd be
->surprised if there were not a bit in each of those Root Ports that
->indicates this.
+diff --git a/net/bluetooth/hci_request.c b/net/bluetooth/hci_request.c
+index efea25eb56ce..60a8968bf854 100644
+--- a/net/bluetooth/hci_request.c
++++ b/net/bluetooth/hci_request.c
+@@ -106,7 +106,9 @@ void hci_req_sync_complete(struct hci_dev *hdev, u8 result, u16 opcode,
+ 		hdev->req_result = result;
+ 		hdev->req_status = HCI_REQ_DONE;
+ 		if (skb) {
+-			kfree_skb(hdev->req_skb);
++			printk("skb: %p, skb fc: %d, rskb: %p, rskb fc: %d, %s\n", skb, skb->fclone, hdev->req_skb, hdev->req_skb->fclone, __func__);
++			if (hdev->req_skb->fclone == SKB_FCLONE_CLONE)
++				kfree_skb(hdev->req_skb);
+ 			hdev->req_skb = skb_get(skb);
+ 		}
+ 		wake_up_interruptible(&hdev->req_wait_q);
 
-Your understanding is completely correct.intel ICX SPR RMR (even GNR) 
-CPU EDS Vol2(register) spec says "This bit when set, enables 1K granularity
-for I/O space decode in each of the virtual P2P bridges corresponding to 
-root ports,and DMI ports." it targets all P2P bridges within the same root bus,
-not the root port itself.The root ports configuration space doesn't have a 
-"EN1K" bit. 
 
