@@ -1,118 +1,105 @@
-Return-Path: <linux-kernel+bounces-226101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066E1913A2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:48:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0D4913A34
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79F7AB217EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:48:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86566280D76
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DB517F500;
-	Sun, 23 Jun 2024 11:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF31117FAAA;
+	Sun, 23 Jun 2024 11:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="hty961XI"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8192113AA39;
-	Sun, 23 Jun 2024 11:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IRT8AZsN"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E4E13D8B0;
+	Sun, 23 Jun 2024 11:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719143282; cv=none; b=t6g/e2SpM81ScRyI6t3GDs5JcTPDYHwsA3dBLMmLvshSOLUrjGUY/JNx4sjC+WxNUBmYsc6ihFg89DDtbZpxnH1G3tdxSiaYNaN/YRETwEL2YR91RD3oVumXrm9Zm6WSJuMK8b7LFdx/DucWeCTXSs701rB5iBGh9VZVcmMq3zw=
+	t=1719143819; cv=none; b=k0/bC33PpvuC4DMy5Me2oOVBbVAbP/0QAqrV0/odXnrnF3EYCV1+0XnlmNkLaJmUm60b5p4sYFNeSDAMqGSkQlrXZXgHfkD/hu2FxMjrs5ln/zMBuakgbyWfZ4W2Dy3/PxbOh9GmiZJTzmOo1Ku3//F2tSdRBY8uVBCwUUIee5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719143282; c=relaxed/simple;
-	bh=w+CDf5w2t977KxI8pwc/QoX7UorZ1kCyn3RckVK/bto=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=aINH7IBJFpy0awZ0JhVu17l4w5bNHwz5rYQ8/PKBrb5zHEeikL1Zvm+RTki/bfwO/dLUrYOI1KzcLStpxgafX21sGpnatUy2T7xm7UJdJ4zx9x73jtiRq5wTSXtjDAioauhflj0gLe1k/4O5TYeXrkg9tMRT2qh1I/yn3jQdf6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=hty961XI; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1719143819; c=relaxed/simple;
+	bh=5/zHGnLi6HtSuAHDMiRrXIcpjy+pX6Bnuzv5Wt4fcAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jyceU5XwSX1sE2T9cp7AzFaZPF4TOYtzANYqUPS1yD07QBTxTl8yN4fjBWl/AZwNw4QzJ03rAYmEuFL1tC9oAFN7EpfFZ3a6Eb3EJv4MwOL7u+T4PtR+aEVEqcDvyIN9ut07mGdKazPzzhYVo5nFx1BUkANbaWSi5EGbQuGScjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IRT8AZsN; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Oigqm
+	upiGhc0+bR7xGBbesPJ+Gm/pnkDnghE2ytQOPQ=; b=IRT8AZsNfjRu+rKE7ouv8
+	bWZUx0gt6dqGnBSGFLcgAqcukSaQYiABKFPSbtB7X5IIpwIbOEaHr+N/jLQwhw1y
+	+gNUfE9ONku8N6y9sqKiTEf1xpF41iIf38lxpVo3ryqtQtxHep+gzDx90NKwL42d
+	sajtXw6UupC8s04qlGlmzw=
+Received: from ProDesk.. (unknown [103.29.142.67])
+	by gzga-smtp-mta-g2-0 (Coremail) with SMTP id _____wDnL_AxDXhmbhirAA--.3562S2;
+	Sun, 23 Jun 2024 19:55:33 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: dsimic@manjaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	didi.debian@cknow.org,
+	Andy Yan <andyshrk@163.com>
+Subject: [PATCH v2] arm64: dts: rockchip: Fix the i2c address of es8316 on Cool Pi 4B
+Date: Sun, 23 Jun 2024 19:55:26 +0800
+Message-Id: <20240623115526.2154645-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1719143275;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yZOaYUoA97Ep2akKiluJXo61048Ck0byvoUwJNmlD6g=;
-	b=hty961XIXoBvEtYoWvvtAB6zK7d8snxmtmqhs4AqVp2gw3TC30vm8HF6cI0u2mXj4TJxJO
-	qvNAGUeGfecMkrperYCtVjAVDDwcqMhiH6CopcAefHqTn1Ff+YFz9DqP9sn5QsD7VpQocR
-	jMfRLNJOsjghVOPvfwH9WbBKW3dtgRDzKK4NV9Da/CjszS2c7TGGy+HtIS3mr7UgP00Br9
-	e3qGF+JjNR4FZ/7YpUswgtKRk8nyCJTPQQh78PtjYEnPLd9MjC1eDGPzJ4k+u8JTFyqMWP
-	0LBYR/vgWbO9fqNnOBYLeAjgmBR4wKXEhmG0TV1JwG7wnwURsrgLvxqBbsiGQg==
-Date: Sun, 23 Jun 2024 13:47:47 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Daniel Golle
- <daniel@makrotopia.org>, Aurelien Jarno <aurelien@aurel32.net>, Olivia
- Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Philipp
- Zabel <p.zabel@pengutronix.de>, Sebastian Reichel
- <sebastian.reichel@collabora.com>, Sascha Hauer <s.hauer@pengutronix.de>,
- Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
- linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] hwrng: add Rockchip SoC hwrng driver
-In-Reply-To: <395f8ebe-1392-4d8f-b91f-c9a8f5f48afe@debian.org>
-References: <cover.1719106472.git.daniel@makrotopia.org>
- <240db6e0ab07e8e2a86da99b0fc085eabaf9f0cc.1719106472.git.daniel@makrotopia.org>
- <612bd49c-c44a-41f2-89e9-c96e62e52a0a@kernel.org>
- <395f8ebe-1392-4d8f-b91f-c9a8f5f48afe@debian.org>
-Message-ID: <051d76a29de62b943b221cf0c7662ef1@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-CM-TRANSID:_____wDnL_AxDXhmbhirAA--.3562S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ary8JFy3GFyfXw4kCrWxWFg_yoW8XFW7pa
+	15ua9xJr1I9rWFgayqqanrXrsrCFs3tF4xCw17Gasayr47X34vqr17Xry3CFyjgF13Za1r
+	ur15Jr1DKa1DZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pMD73UUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hsHXmWXyjN4YAAAsD
 
-Hello Uwe,
+According to the hardware design, the i2c address of audio codec es8316
+on Cool Pi 4B is 0x10.
 
-On 2024-06-23 11:46, Uwe Kleine-König wrote:
-> On 6/23/24 09:00, Krzysztof Kozlowski wrote:
->> On 23/06/2024 05:33, Daniel Golle wrote:
->>> +
->>> +	pm_runtime_set_autosuspend_delay(dev, RK_RNG_AUTOSUSPEND_DELAY);
->>> +	pm_runtime_use_autosuspend(dev);
->>> +	devm_pm_runtime_enable(dev);
->>> +
->>> +	ret = devm_hwrng_register(dev, &rk_rng->rng);
->>> +	if (ret)
->>> +		return dev_err_probe(&pdev->dev, ret, "Failed to register Rockchip 
->>> hwrng\n");
->>> +
->>> +	dev_dbg(&pdev->dev, "Registered Rockchip hwrng\n");
->> 
->> Drop, it is not useful at all. Srsly, we had already long enough talk,
->> [...]
-> 
-> And in this long talk using dev_dbg() was one of the suggestions for a
-> compromise. For me this is ok.
-> 
->> There is no single benefit of such debug statement. sysfs already
->> provides you this information. Simple entry/exit  is provided by
->> tracing. You duplicate existing interfaces without any benefit, 
->> because
->> this prints nothing more.
-> 
-> There might be a (small) value if you want to know when during boot
-> the device becomes available. So having a dev_dbg() that can be
-> enabled dynamically (assuming DYNAMIC_DEBUG=y) and isn't in the way
-> otherwise might be justified. IMHO a dev_dbg is lightweight enough
-> that *I* won't continue the discussion.
+This fix the read/write error like bellow:
+es8316 7-0011: ASoC: error at soc_component_write_no_lock on es8316.7-0011 for register: [0x0000000c] -6
+es8316 7-0011: ASoC: error at soc_component_write_no_lock on es8316.7-0011 for register: [0x00000003] -6
+es8316 7-0011: ASoC: error at soc_component_read_no_lock on es8316.7-0011 for register: [0x00000016] -6
+es8316 7-0011: ASoC: error at soc_component_read_no_lock on es8316.7-0011 for register: [0x00000016] -6
 
-For anyone interested, below is an example that shows the usability
-of knowing when a device becomes available:
+Fixes: 3f5d336d64d6 ("arm64: dts: rockchip: Add support for rk3588s based board Cool Pi 4B")
+Signed-off-by: Andy Yan <andyshrk@163.com>
 
-https://gitlab.manjaro.org/manjaro-arm/packages/core/linux/-/issues/21
+---
+
+Changes in v2:
+- Also change the address after @ to 0x10
+
+ arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
+index 20a0a60acd16..b0259b0d5021 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
+@@ -300,9 +300,9 @@ &i2c7 {
+ 	pinctrl-0 = <&i2c7m0_xfer>;
+ 	status = "okay";
+ 
+-	es8316: audio-codec@11 {
++	es8316: audio-codec@10 {
+ 		compatible = "everest,es8316";
+-		reg = <0x11>;
++		reg = <0x10>;
+ 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
+ 		assigned-clock-rates = <12288000>;
+ 		clocks = <&cru I2S0_8CH_MCLKOUT>;
+-- 
+2.34.1
+
 
