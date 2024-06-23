@@ -1,129 +1,107 @@
-Return-Path: <linux-kernel+bounces-226360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB87913D6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:54:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB2E913D6C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13A141F21281
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:54:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DBCB1C2110F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34CA18410A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432E81836ED;
 	Sun, 23 Jun 2024 17:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ar73IYdA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PU3Wxznl"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D4A1822E0;
-	Sun, 23 Jun 2024 17:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C061822F5
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 17:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719165247; cv=none; b=XRj9WIFCK0xsroya27caEDvI9k/eI8fejTZrefqPRZzvbZ2DuYG20+JJLU8UBmA/ramGcckDgfkU+20nq9XI6uEKcdXjHPQ2p0TJiF4HaxepJUDRCKUy8UAt3fMF7xpofragxczTNj5+eI7h2pyZYdrUjbWTdmZ5aUqgc/tX5bI=
+	t=1719165246; cv=none; b=EwS+NcGW4JrgS1MMTQGLJ6s5YuHgRPAl2af2RIPPDjb5MCVYZAf/cCpogdfGIh1QcH9lgO4RpnO1tH81U9mgICPKNkZlLn6h3wRd+YRgrh4Mixg4d7Zv+i8K0uk46rTnl/l2kWHtG3uptZJsMGg3Q/tc+RcYnqrPBII9TGWadOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719165247; c=relaxed/simple;
-	bh=xCIjlLU+YakUc5fuLo9TO91SuDeY+pD0mnSf1NumfoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EdPwYelU/yHFH1vi0V7qZ7h8BmLtwtiZqmtsG1+REF71sTuDxxgvrI2TW5qw/QIi5DrkjDC4zLdDZeecusj+elhLailgPjnqburJ9OOoH0Y8QlaI8405Gw4WvDA/JX96QmkNBjlkkcCvrcEnkCkIdWw4eFT/xHZpkB2F/YIAqvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ar73IYdA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NDU2YE001012;
-	Sun, 23 Jun 2024 17:54:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5wuhg/3cemlHf/YP4akQ9wMReIiCa94w1mxM8h23bgU=; b=Ar73IYdAsn2oBGUT
-	mqh9Sy4mledIq4FxeHdfeolp93Ok6KSe/yq3QgSaUd4DSm8j9/17uwfeqfBBER6q
-	JZRTzwaKuoS4Thd+Tj3FEZ8uoAO3LFD5myR3JsuZ0AmYNYDKGOX2KfJFrLZMOo9C
-	VX/8wWlx/EiBruMz/V9Ms2xwKc6yX9MPX11WpeSmvOlxFFH9ZY9dbfKD8M7jWA2V
-	wCGPmNpNoiyIbkSU6Q8MY8Vgv8m6klNgiTfy6nCaK98suIW2Y57vm7kXugu73ae7
-	zYoUiigjQflpeZNCYhqDZ0KDk6y9tq5piZ87Fi/PNLu0NKLRO9QFx00Me9F/KYGS
-	wtxU3A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqce9yn4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 17:54:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45NHrxsf021637
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 17:53:59 GMT
-Received: from [10.48.244.142] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 23 Jun
- 2024 10:53:58 -0700
-Message-ID: <d3f5890b-db18-4e56-9768-db0382717baa@quicinc.com>
-Date: Sun, 23 Jun 2024 10:53:57 -0700
+	s=arc-20240116; t=1719165246; c=relaxed/simple;
+	bh=9DxX8i8QUC2u3KUw1rAinLr206VgomsM3i58xY857lE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fuUFcdlw1N8mqozdFXQ3gxWMU+Vv2+q5B8w8tv/MBJJZRkYSHD40S7fRH1/F7O4MIeUoq3GhR4URZe8WeaNPquaZi5I10DIZk5I0PI7L0U1hfmgzfubXKzBZ9LoLwhq+90LmC1CIt4WGbNNFLpTbjdlgcbyHBeIdZPDkRIZen+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PU3Wxznl; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-375af3538f2so15406805ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 10:54:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719165244; x=1719770044; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ol/brqLUSGHQQ/mBHwJxdgd6srh9Hoz6NAQYQiPMCNY=;
+        b=PU3Wxznlvh9MNzjtG/6LWOyo/G4VQ0W2dhYThBCiBk6ffFqWTcJLLvsstM4ZzGSHZP
+         dKwzc/slJ7BH2PJJ9U2dmYdQEQ4JSAxaaIxRqbNxmibhGGb/9C9JvsRNxZWvxgwUcXhA
+         4omfckgdDd6SVtHiTz1R6VY4hufxq7mJbIOIjocbWEywkEH3IzKa1cvClW7V53oHqJmG
+         YfmCWnDduUqbPlu9Otgul/PF+WDpoZ+4yps94iXVtbuy04TErBUqWHw36QXh+L8HtOrk
+         vdP3tyeQnwIMPZPQxDSw5DtQNCTAIuR2/tGKkSQ9TrsRvosa/4Nc590ANSn7WLOxU5Bz
+         //YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719165244; x=1719770044;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ol/brqLUSGHQQ/mBHwJxdgd6srh9Hoz6NAQYQiPMCNY=;
+        b=cFDoW0Alr7d4cwpLiCu7i9VfVAA01i9qWL+CB6J4IIkRaS164vxheyhIz95LTuoFrE
+         vcDvEHcGi7vonp3drfOLMmUlMIjzkKMs0rIqpjlKkFs+Qh1QXFsE89Ajn1PZ22YsKIx5
+         /iXySrNtN15aYxWeXrFxSoU66cfrLZGYt9wGT0omE0TvyDuqf/GuPATllzaAJk21Yviv
+         hQTGhOJcp8EhaH4HqMz6nmxsTdPTYyDM/AyVoK4NI4vEe+ZRbj8OG4mZ+Z7rcF+D++dS
+         j4HOMJPLos24CJVbnpuZ/GCwmx4mdFG7ue4kgEm4X3477bXHLcxMX1slHZXubGIQm+xP
+         Pp2g==
+X-Gm-Message-State: AOJu0YycovkGdLFSt4zuhOqCq8qc0NadQ0bAVD1p5I/QoxAKI3e0AELa
+	zrSw8nXW2AwmHkb82xtDa3HXnpnWFNigX9MQ6pG61SuM6kH7FqbE
+X-Google-Smtp-Source: AGHT+IEz5f6GwOBvm1xtFyYk56UOOVOTbBZh/j/4s9NnX4Zcn7Anlg2D7T+Ox9F0wb/Q+ZeaB/hXrQ==
+X-Received: by 2002:a05:6e02:12ec:b0:376:26f4:d050 with SMTP id e9e14a558f8ab-3763f5c00d6mr36436995ab.12.1719165244099;
+        Sun, 23 Jun 2024 10:54:04 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f2c8csm47874045ad.50.2024.06.23.10.54.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 10:54:03 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Sun, 23 Jun 2024 07:54:02 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] sched_ext: Make scx_bpf_cpuperf_set() @cpu arg signed
+Message-ID: <ZnhhOi9BdC6CNFeo@slm.duckdns.org>
+References: <20240623081036.51867-1-void@manifault.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hte: tegra-194: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding
-	<thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC: <timestamp@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240603-md-hte-tegra194-test-v1-1-83c959a0afdd@quicinc.com>
- <92059885-858c-4a07-9e2d-cda10c6c38bf@nvidia.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <92059885-858c-4a07-9e2d-cda10c6c38bf@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: GU-oAhvBn55s9n00FRVOmrXA_oXre9d1
-X-Proofpoint-ORIG-GUID: GU-oAhvBn55s9n00FRVOmrXA_oXre9d1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-23_09,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
- mlxscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0
- suspectscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406230143
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240623081036.51867-1-void@manifault.com>
 
-On 6/11/2024 9:24 AM, Dipen Patel wrote:
-> On 6/3/24 4:22 PM, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hte/hte-tegra194-test.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>  drivers/hte/hte-tegra194-test.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/hte/hte-tegra194-test.c b/drivers/hte/hte-tegra194-test.c
->> index 8ee038ccf601..df631b5100d2 100644
->> --- a/drivers/hte/hte-tegra194-test.c
->> +++ b/drivers/hte/hte-tegra194-test.c
->> @@ -235,4 +235,5 @@ static struct platform_driver tegra_hte_test_driver = {
->>  module_platform_driver(tegra_hte_test_driver);
->>  
->>  MODULE_AUTHOR("Dipen Patel <dipenp@nvidia.com>");
->> +MODULE_DESCRIPTION("NVIDIA Tegra HTE (Hardware Timestamping Engine) test driver");
->>  MODULE_LICENSE("GPL");
->>
->> ---
->> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
->> change-id: 20240603-md-hte-tegra194-test-668212d1420f
->>
-> Acked-by: Dipen Patel <dipenp@nvidia.com>
+On Sun, Jun 23, 2024 at 03:10:36AM -0500, David Vernet wrote:
+> The scx_bpf_cpuperf_set() kfunc allows a BPF program to set the relative
+> performance target of a specified CPU. Commit d86adb4fc065 ("sched_ext: Add
+> cpuperf support") defined the @cpu argument to be unsigned. Let's update it
+> to be signed to match the norm for the rest of ext.c and the kernel.
+> 
+> Note that the kfunc declaration of scx_bpf_cpuperf_set() in the
+> common.bpf.h header in tools/sched_ext already listed the cpu as signed, so
+> this also fixes the build for tools/sched_ext and the sched_ext selftests
+> due to kfunc declarations now being emitted in vmlinux.h based on BTF (thus
+> causing the compiler to error due to observing conflicting types).
+> 
+> Fixes: d86adb4fc065 ("sched_ext: Add cpuperf support")
+> Signed-off-by: David Vernet <void@manifault.com>
 
-Following up to see if anything else is needed from me.
-Hoping to see this in linux-next :)
+Applied to sched_ext/for-6.11.
 
-/jeff
+Thanks.
+
+-- 
+tejun
 
