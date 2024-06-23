@@ -1,207 +1,142 @@
-Return-Path: <linux-kernel+bounces-226271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C6D913C4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:26:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9954A913C51
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:26:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31006288472
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:26:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540CC288707
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF628181D16;
-	Sun, 23 Jun 2024 15:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839831822C0;
+	Sun, 23 Jun 2024 15:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ban/izBq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i7grALWB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AFF144317;
-	Sun, 23 Jun 2024 15:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D203181D05
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 15:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719156376; cv=none; b=qmQcPlR70QNnEwqXLab3DjCCAVuU/JQ/lQAeVspjoXK6KbPTln0QFu3pJpDb89PTkLn59eejFBP15KEPM0jciH1JkCD3sQDx1GMLazZgjkj+npCex+dMH78J3OS22fmsgmmYDvPr8VN+ciID7PxhKdmQ3EdiL4bOQ9qVizYpPGI=
+	t=1719156405; cv=none; b=kGOtBaG8dZHvOjGrHekxQZRUx3zWH7TlmRyaKV2Dlz5qffdHswhV5EcM6DjWBCrZMlbECK5LaGsqsstnj5nsREzNacuBHdDa3uAzbGpoTOwLq0KHkvvdsixXsaRtveRJGAwgNcDW+DAjXmtStwJEF10WxERylZ9IJiOLqMFEzco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719156376; c=relaxed/simple;
-	bh=DY6uM7OX57kgmjD4vL9DUxcQqMOpVRETNce3hEurQL0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=e/27yQawWcQSY7vYTHG8W7fC9f8MiDZpCcitGMCWw7TamsZfG/SJZrHpWK8cQb2D/wcNhUX4tT/4xsOobfPMHTeANvs+2nWu1UBN46Q4eAKTWhCsZm0X0aqwX4cU4yGKxaY7uSAK3VwSekqytUbjfZWq3IkDbRze3D+nDU2TOKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ban/izBq; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719156374; x=1750692374;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=DY6uM7OX57kgmjD4vL9DUxcQqMOpVRETNce3hEurQL0=;
-  b=ban/izBqU1WGlUVv5OKEDh3IUlLJUY6PeDYQCD1l/sLvkJdY6RUVN1oX
-   d9uwNgyfCRvmYtsxSb8ok2i3RF69zOff5GX3sUKukkSkH+Ierh04i5jTe
-   SE+TNU0DgOEUr72pYNOIv6J1Nt7+wPyEFPIihs8mng6dEz9X22gBFXNdh
-   n6KSg2+fYBiae75GxPwGzkUeLILjCneih1V+GruCjwLxFLlnJ/CZm1YPJ
-   MROkDyOuC4qZQFkiR9vOTwXmXhWmwFiqvj06QisoWj3coEcBXUErizV+U
-   QIogFMT990s3wQnwOjAdQyqzlxZqEJ9ZXFlBX7jT/W823NqWcYE1cgKRu
-   Q==;
-X-CSE-ConnectionGUID: 9hNzcwkySmGnoTkX1MS/Dw==
-X-CSE-MsgGUID: VNNNzUW/Snm/qAcdENwsSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="19905324"
-X-IronPort-AV: E=Sophos;i="6.08,260,1712646000"; 
-   d="scan'208";a="19905324"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 08:26:14 -0700
-X-CSE-ConnectionGUID: VkPUhKB7RnCb+xtzdVVDkQ==
-X-CSE-MsgGUID: PIsxdQ11TdirC6xbtvNH2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,260,1712646000"; 
-   d="scan'208";a="80588234"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.55])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 08:26:07 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Sun, 23 Jun 2024 18:26:03 +0300 (EEST)
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-cc: Bjorn Andersson <andersson@kernel.org>, 
-    Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-    Conor Dooley <conor+dt@kernel.org>, 
-    Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-    Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    Bjorn Helgaas <bhelgaas@google.com>, johan+linaro@kernel.org, 
-    bmasney@redhat.com, djakov@kernel.org, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-    devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    linux-pci@vger.kernel.org, vireshk@kernel.org, quic_vbadigan@quicinc.com, 
-    quic_skananth@quicinc.com, quic_nitegupt@quicinc.com, 
-    quic_parass@quicinc.com, krzysztof.kozlowski@linaro.org
-Subject: Re: [PATCH v14 3/4] PCI: Bring the PCIe speed to MBps logic to new
- pcie_link_speed_to_mbps()
-In-Reply-To: <3ed39bb0-f1bb-6973-21e5-aaa34db8013e@quicinc.com>
-Message-ID: <e501971f-e9e1-d87a-ca44-b2be61f79f3e@linux.intel.com>
-References: <20240609-opp_support-v14-0-801cff862b5a@quicinc.com> <20240609-opp_support-v14-3-801cff862b5a@quicinc.com> <c76624fa-1c07-1bb4-dff0-e35fe072f176@linux.intel.com> <3ed39bb0-f1bb-6973-21e5-aaa34db8013e@quicinc.com>
+	s=arc-20240116; t=1719156405; c=relaxed/simple;
+	bh=ooh7IaQj+cWRnQdaw8/1O4YXQwna4SUhIk+dL5M7/JU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qBJV8f4jT2IzKVZwfBDqpL0Hwj9sB0ZW+gKcxvj2y2k7uHSDRn/z7790MV0KzgJZDGVArovtrTjXmvW305J87KEaeTIh9tk5mbdaA4As6iSpwgZIwgkdjw+oa+PEdweSJXH1sd37/9dBz9Xq3ruj22aA4WpcZj69lFHMJDANAAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i7grALWB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719156403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pFXK8G1SadQvGVrWX2KcQ+fiVJ5r+OsD2zAk1SpxTqU=;
+	b=i7grALWBBNd5WFPJXUzlrFzwvqD3yrhfG9mBkZ1C82ZSlzp0+iYHMJHoLQuZBXcivn1J14
+	yMsUUC8i3z76gd/MAFijp3JHUuapexcriBbu+t3R9+6RsiEFQDYZMCkLiziZR5BUw+3dPU
+	ta5i5+TOPVxyLLkXocFBs+hpwk6ds6Y=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-696-ybspF7UtN4GzgdlBejjRAg-1; Sun, 23 Jun 2024 11:26:41 -0400
+X-MC-Unique: ybspF7UtN4GzgdlBejjRAg-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5ba819595deso743564eaf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 08:26:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719156401; x=1719761201;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pFXK8G1SadQvGVrWX2KcQ+fiVJ5r+OsD2zAk1SpxTqU=;
+        b=JRA//XqlN3H2MUvJIB+dxQW9Ybt6AA7hnggZHApZrHttdsQxM2XMcTtCWUBmsbNJkM
+         MtcUhvEk6uNGa2zgtmeF8xotbn1YmjxzR2MbcaVHQYevF904TD+1R7SLhazG07rDEd7/
+         xez42IQzrRjfqSlX4KHHBmJasbRR086LWiv2UD1OJMDX352icWuVtWUbQSetCFbNjXI1
+         BnCbOrjTmeq3xrEF3aK+7BO6AckpCKhLf3zWzqBMXGTxjBNvfAJ1gjmiG2l622v4IJl/
+         /TbvIWHXAhPRk3Ctg1JKRKNvndfEwgqvvZLBHtbWeUj5gv8kQpC1tkMU9AULzLVM/iSy
+         PdtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgP6pTKVYyOdEU7MepD0pSml4B2TQ0kIpVBYaxdVOwhiIt3hLP1cKlpOzInS8VAXA7SfTKHd8/Kk3/iLUJWKh7pqGrq1q49R0Hj+El
+X-Gm-Message-State: AOJu0Yzi9JR8QsYXchtiF6bsEHrX03VJDq0yDyqg3KxidH556vo2cNp/
+	U/bjjT52InqddOS2TbKUhFc6QsMkFDUoBL1/ldZ/7Fwq4SrCiv0sPnMrI8Q+74svcPLAb6GkSAX
+	dIRO5g2TYtS2Y3FbdDsbdkLlgeu4Ci0KAfd2lMTuvB7kNJddVkzayHlKDoFyMVA==
+X-Received: by 2002:a05:6808:2392:b0:3d5:4326:3601 with SMTP id 5614622812f47-3d54326392bmr4078227b6e.1.1719156400679;
+        Sun, 23 Jun 2024 08:26:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwMz32C8X8OkYsczYb+AeCSDZLUo60k21JarMrjxnPjcSuR/TnvND69SCP53Zz/0qBqCliHQ==
+X-Received: by 2002:a05:6808:2392:b0:3d5:4326:3601 with SMTP id 5614622812f47-3d54326392bmr4078192b6e.1.1719156400151;
+        Sun, 23 Jun 2024 08:26:40 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444c2b6b048sm32901281cf.38.2024.06.23.08.26.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 08:26:39 -0700 (PDT)
+Date: Sun, 23 Jun 2024 11:26:37 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Audra Mitchell <audra@redhat.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, aarcange@redhat.com,
+	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, raquini@redhat.com
+Subject: Re: [PATCH v2 1/3] Fix userfaultfd_api to return EINVAL as expected
+Message-ID: <Zng-rfCPvSaGvL7p@x1n>
+References: <20240621181224.3881179-1-audra@redhat.com>
+ <20240621180330.6993d5fd0bda4da230e45f0d@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-556282923-1719156363=:1423"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240621180330.6993d5fd0bda4da230e45f0d@linux-foundation.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Jun 21, 2024 at 06:03:30PM -0700, Andrew Morton wrote:
+> On Fri, 21 Jun 2024 14:12:22 -0400 Audra Mitchell <audra@redhat.com> wrote:
+> 
+> > Currently if we request a feature that is not set in the Kernel
+> > config we fail silently and return all the available features. However,
+> > the man page indicates we should return an EINVAL.
+> > 
+> > We need to fix this issue since we can end up with a Kernel warning
+> > should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
+> > a kernel with the config not set with this feature.
+> > 
+> >  [  200.812896] WARNING: CPU: 91 PID: 13634 at mm/memory.c:1660 zap_pte_range+0x43d/0x660
+> >  [  200.820738] Modules linked in:
+> >  [  200.869387] CPU: 91 PID: 13634 Comm: userfaultfd Kdump: loaded Not tainted 6.9.0-rc5+ #8
+> >  [  200.877477] Hardware name: Dell Inc. PowerEdge R6525/0N7YGH, BIOS 2.7.3 03/30/2022
+> >  [  200.885052] RIP: 0010:zap_pte_range+0x43d/0x660
+> > 
+> > Fixes: e06f1e1dd499 ("userfaultfd: wp: enabled write protection in userfaultfd API")
+> 
+> A userspace-triggerable WARN is bad.  I added cc:stable to this.
 
---8323328-556282923-1719156363=:1423
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Andrew,
 
-On Wed, 19 Jun 2024, Krishna Chaitanya Chundru wrote:
+Note that this change may fix a WARN, but it may also start to break
+userspace which might be worse if it happens, IMHO.  I forgot to mention
+that here, but only mentioned that in v1, and from that POV not copying
+stable seems the right thing.
 
->=20
->=20
-> On 6/14/2024 6:02 PM, Ilpo J=C3=A4rvinen wrote:
-> > On Sun, 9 Jun 2024, Krishna chaitanya chundru wrote:
-> >=20
-> > > Bring the switch case in pcie_link_speed_mbps() to new function to
-> > > the header file so that it can be used in other places like
-> > > in controller driver.
-> > >=20
-> > > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> > > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> > > ---
-> > >   drivers/pci/pci.c | 19 +------------------
-> > >   drivers/pci/pci.h | 22 ++++++++++++++++++++++
-> > >   2 files changed, 23 insertions(+), 18 deletions(-)
-> > >=20
-> > > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > > index d2c388761ba9..6e50fa89b913 100644
-> > > --- a/drivers/pci/pci.c
-> > > +++ b/drivers/pci/pci.c
-> > > @@ -6027,24 +6027,7 @@ int pcie_link_speed_mbps(struct pci_dev *pdev)
-> > >   =09if (err)
-> > >   =09=09return err;
-> > >   -=09switch (to_pcie_link_speed(lnksta)) {
-> > > -=09case PCIE_SPEED_2_5GT:
-> > > -=09=09return 2500;
-> > > -=09case PCIE_SPEED_5_0GT:
-> > > -=09=09return 5000;
-> > > -=09case PCIE_SPEED_8_0GT:
-> > > -=09=09return 8000;
-> > > -=09case PCIE_SPEED_16_0GT:
-> > > -=09=09return 16000;
-> > > -=09case PCIE_SPEED_32_0GT:
-> > > -=09=09return 32000;
-> > > -=09case PCIE_SPEED_64_0GT:
-> > > -=09=09return 64000;
-> > > -=09default:
-> > > -=09=09break;
-> > > -=09}
-> > > -
-> > > -=09return -EINVAL;
-> > > +=09return pcie_link_speed_to_mbps(to_pcie_link_speed(lnksta));
-> >=20
-> > pcie_link_speed_mbps() calls pcie_link_speed_to_mbps(), seems quite
-> > confusing to me. Perhaps renaming one to pcie_dev_speed_mbps() would he=
-lp
-> > against the almost identical naming.
-> >=20
-> > In general, I don't like moving that code into a header file, did you
-> > check how large footprint the new function is (when it's not inlined)?
-> >=20
-> if we remove this patch we see difference of 8, I think it should be fine=
-=2E
-> with change
-> aarch64-linux-gnu-size ../drivers/pci/pci.o
->    text    data     bss     dec     hex filename
->   41440    1334      64   42838    a756 ../kobj/drivers/pci/pci.o
-> without the change
-> text    data     bss     dec     hex filename
->   41432    1334      64   42830    a74e ../kobj/drivers/pci/pci.o
+https://lore.kernel.org/all/ZjuIEH8TW2tWcqXQ@x1n/
 
-Thanks for checking it out, seems the inline here was a non-problem.
+        In summary: I think we can stick with Fixes on e06f1e1dd499, but we
+        don't copy stable.  The major reason we don't copy stable here is
+        not only about complexity of such backport, but also that there can
+        be apps trying to pass in unsupported bits (even if the kernel
+        didn't support it) but keep using MISSING mode only, then we
+        shouldn't fail them easily after a stable upgrade.  Just smells
+        dangerous to backport.
 
---=20
- i.
+I'm not sure what's the best solution for this.  A sweet spot might be that
+we start to fix it in new kernels only but not stable ones.
 
-> > Unrelated to this patch, it would be nice if LNKSTA register read would
-> > not be needed at all here but since cur_bus_speed is what it is current=
-ly,
-> > it's just wishful thinking.
-> >=20
-> > >   }
-> > >   EXPORT_SYMBOL(pcie_link_speed_mbps);
-> > >   diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> > > index 1b021579f26a..391a5cd388bd 100644
-> > > --- a/drivers/pci/pci.h
-> > > +++ b/drivers/pci/pci.h
-> > > @@ -333,6 +333,28 @@ void pci_bus_put(struct pci_bus *bus);
-> > >   =09 (speed) =3D=3D PCIE_SPEED_2_5GT  ?  2500*8/10 : \
-> > >   =09 0)
-> > >   +static inline int pcie_link_speed_to_mbps(enum pci_bus_speed speed=
-)
-> > > +{
-> > > +=09switch (speed) {
-> > > +=09case PCIE_SPEED_2_5GT:
-> > > +=09=09return 2500;
-> > > +=09case PCIE_SPEED_5_0GT:
-> > > +=09=09return 5000;
-> > > +=09case PCIE_SPEED_8_0GT:
-> > > +=09=09return 8000;
-> > > +=09case PCIE_SPEED_16_0GT:
-> > > +=09=09return 16000;
-> > > +=09case PCIE_SPEED_32_0GT:
-> > > +=09=09return 32000;
-> > > +=09case PCIE_SPEED_64_0GT:
-> > > +=09=09return 64000;
-> > > +=09default:
-> > > +=09=09break;
-> > > +=09}
-> > > +
-> > > +=09return -EINVAL;
-> > > +}
-> >=20
-> >=20
-> >=20
->=20
---8323328-556282923-1719156363=:1423--
+Thanks,
+
+-- 
+Peter Xu
+
 
