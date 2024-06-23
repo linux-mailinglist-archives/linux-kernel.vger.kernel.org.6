@@ -1,236 +1,146 @@
-Return-Path: <linux-kernel+bounces-226382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A27913D92
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:11:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A958913D93
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B71E1C21118
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:11:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EACD8B214B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5193818411B;
-	Sun, 23 Jun 2024 18:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B6218410F;
+	Sun, 23 Jun 2024 18:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HQkRBm6L"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XUK5SBPm"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85A31836F6
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 18:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823511822E2
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 18:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719166257; cv=none; b=Olz7rz2HyFkicxz88PyTUO+2XUiD5p3sTAJqTEV118G4GJ2OvOOOf7szja91A/TWd/AfXhmURi5Lzmy49wzwtrKWQmzMsv4H0DkHptUjNSYmIGCc/bNMMGVDuxhNt7xBng4efsIbsbozaU09WODFbUcnfuWawzQBjUYESRzeHpw=
+	t=1719166479; cv=none; b=XSQMiNa2i92tOAalmUT/6IJGUkdPUcIUoG9WU6oXsYTMrGnnjS8frZgZVeAcs4cn2gnHcO+zt6v5cPJtZhm1Zo3fi4QUyZ8NfwZElbvdZtP9FN+I8Nq/IlLCg5qYegpdcS5U2F8aybRHYKPStOzZ6GbyVXj7+llsOepaqUU6obM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719166257; c=relaxed/simple;
-	bh=lY0l0WYogMfoy5BbJK+3eP1wxCrgeLm4u91Hrqx4EtM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=epbU9m/lnPr3G6yEDoSoZtusyMcIPQOKfmch4axkVMsIC+NUMza9F0JVoWMOgkj9H9NXryVPntrnJRlUVRng8USDxzsVGumJjY++1HBNsWqS+sgh7tk5X7l8ndaIRpbMEsgiMNLSK3oNGZUYxmkI5xfKy6Q08QJ8KA0xPu2PQLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HQkRBm6L; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70673c32118so477894b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 11:10:55 -0700 (PDT)
+	s=arc-20240116; t=1719166479; c=relaxed/simple;
+	bh=hrw2cWL1A7ev4AhwQWmduHTm6s1CxAkOpYTqIGX8hfs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kRPE1kNgMdyV/kl+lXyKPhX2ArcJC4TSpX4o8S3RBhXZ5NL8qw0KZklXcbexrhKEMZArxOcPECj9VpdZCXw9Pu7Nxc1tiGrIFZmYTyKIv2R/fBq9hq1yol1RvDADdkeCUQjc3xtwNtC/v3G+4GDTCr0UHCizpory2d61qfJHX3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XUK5SBPm; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebeefb9a6eso38554511fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 11:14:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1719166255; x=1719771055; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6emZNDdDNXwbZZoU2nhUKvOVMDxHErdeB+4INdwi5jY=;
-        b=HQkRBm6LnBO5lGwvoBqZEBMaTfAztQzc9zcnOZFABz6jF6DAs+kUkshkwA6T7p9koh
-         FH/FhnqJHRBDBNvBdVT4Wi8TejR/OkMoIgkfRjomzCCWnXCbQD9oAz2M8QJBXoxuGvQ+
-         Yp3AnlNVcuN3RB0aeNjXv5CRXTFfAuyqN+Fe0=
+        d=gmail.com; s=20230601; t=1719166475; x=1719771275; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jAmqARKrHui/NaUmZfz82SlsXm+I+AB9Qkw5ktB+JRw=;
+        b=XUK5SBPmZ2LICoxpsDSI4ynCs5tfKg0WbOUs7AzffYDrKwMkVAYPu6PrQG1//qV9zo
+         LNDCOzHpvCmbTlgvwMeRNRtsBLKPtbf71fUsfyVpBWJ/Hh0H6q0k4N4XemAznIgJ4zL+
+         vFzdA+FndEs4Dh+gyEkQhLxEVN2Wy6YcILFtuzQPmUVW4QTXh/a8Q1hPf1MA/7zFpjXu
+         6Np7jrJz9ZNAiOTsthDR9dPi/CUKBH/wv7ZPyE9UY0EavZ5E3o3N89IPSpQHglDQdFyQ
+         mF0qKtwhujTJTAon/JUKt4ullSswSLmhSg8axZtShiQSJvKqdSJLo+LPaZPqVbdImPub
+         w8oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719166255; x=1719771055;
-        h=in-reply-to:autocrypt:from:references:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6emZNDdDNXwbZZoU2nhUKvOVMDxHErdeB+4INdwi5jY=;
-        b=ObABTJ/LuOE9JzZAz2O3e8FP92lgjtyAMJwD5eK2vdsYiEYtjxe/QRvewRkWkYgWeh
-         64V4hBFKaFETPlSyTDN/E4VYNmxwEzz8VL7s7nmeF3qIbyGXEciJuqHuc++5kTZe9c4Y
-         s8K8RNTvYz7jMucOUfswuWZxiNINvUpSLdg6EOFphJ/8lacYMa0aX+1sWZgvmcJ0nrZB
-         MHMnLFFc6leWmmsaYP5gVhvBpJKMOunjS+Hssznll+RhMn+P4Q+H+GNn5QvdsBIXirXC
-         tqDPGRjrcBJ+c85wps1p7uHkDLjytyhSQXkW1ZrYFUlg2HOng2lptILfVsmBqFZuSu/v
-         14uA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDt+PaTsBxjSalRoUPArJEHJ9sXy/MVe3garJqzDgcS4Irm5tu1jYc2jm4pkWC/Zlpew02D8pLR0pVCVtMpTe/r6/bthpcEZ7WNz3Z
-X-Gm-Message-State: AOJu0YzuwszHdwY9POI0t4utdHgsxL1bZ5/Hj0kN3OX8Xz6L4PtOfC8E
-	dzNSx1ZS22Gck32DRhjEnxRk/vGfewKxP6P5inZghN0oCaPVqpjdxS/bAr18tw==
-X-Google-Smtp-Source: AGHT+IEPYVhbLpfR5lWxTrNQ9IUv0by8VXH6Alom5OK4Nandp5SGmVEj9nm7WrRwjzGZBjVIukquCg==
-X-Received: by 2002:aa7:8ecb:0:b0:706:57ce:f042 with SMTP id d2e1a72fcca58-7067455bfd2mr2002519b3a.7.1719166254809;
-        Sun, 23 Jun 2024 11:10:54 -0700 (PDT)
-Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-71bb261aa98sm1344433a12.29.2024.06.23.11.10.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Jun 2024 11:10:53 -0700 (PDT)
-Message-ID: <5baaffe4-058d-462f-abce-ecaeeeff9647@broadcom.com>
-Date: Sun, 23 Jun 2024 20:10:47 +0200
+        d=1e100.net; s=20230601; t=1719166475; x=1719771275;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jAmqARKrHui/NaUmZfz82SlsXm+I+AB9Qkw5ktB+JRw=;
+        b=PdsDLUzqgtPxpkj/Z5mOMMmgX97tD6CaiCLqGyki/52ybVMK4xApyGikkw8JwHZUI0
+         v0PLC3jRG1gfXtP4Gsv4HCSDmLMteI09SJcEEWPLwA5v9TotErZdZAuefMx/Yd8hxgK8
+         HqYRhJkiMDUniKmt5HxGo6/H0TSqlsXjbj57e7ShuRIPk8JflZ/SMKRE5sHEuHF/6vFZ
+         4W0T3HrBsFPsO8jvGzVT1LGgXQPjQTHSnD405AVXwzPRYC8VzlxSQjcT3/L4sZ+SPQaP
+         iYw0Ut5o1gGfHpuSXFDtoKOqcxkF69V63/lcss95/erHSoZ/aSh1c0MzmOa0advMJ09e
+         +jQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWy5zCrW2SQdPuvo6kOR+y2jYayCECpOqyrinFCptmJSVKEQl7abw39rsF8ZVDXZeP0nLRDxoM5tSIdYEqyQqMUONHOS2Z4AsRDnnp+
+X-Gm-Message-State: AOJu0YzKofP6z4D0G+BuTZFCTQCRwhzD7ehDmNqgVesUBUsWEoOsgPGq
+	Ykw1F6gcTvIxY47RC/cMcaZWbBeVqFgeN4YClr995IBSu+6MWQh6hdjQbuzMZJdVvqvsOHNZYqC
+	avRk1Bd56jVbEcwfH7MvJOzn7Th4=
+X-Google-Smtp-Source: AGHT+IFfyeGk4zOz61lEAAHkBgCnNzNpNQ5zKKohl4iOtOMwSULMnFWDfEm5WgxFRuCqdzcbSOjtLA7Gf6alclZRR0k=
+X-Received: by 2002:a2e:9b4b:0:b0:2ec:5921:bb21 with SMTP id
+ 38308e7fff4ca-2ec593bea06mr18882271fa.10.1719166475181; Sun, 23 Jun 2024
+ 11:14:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] wifi: brcmfmac: of: Support interrupts-extended
-To: Alex Bee <knaerzche@gmail.com>, Kalle Valo <kvalo@kernel.org>,
- linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org
-References: <20240622215416.659208-1-knaerzche@gmail.com>
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <20240622215416.659208-1-knaerzche@gmail.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000f4a4c6061b929587"
+References: <202406230912.F6XFIyA6-lkp@intel.com> <CAFULd4YVOwxQ4JDaOdscX_vtJsqJBJ5zhd0RtXXutW=Eqh29Qw@mail.gmail.com>
+ <CAHk-=wg1h4w_m=Op1U4JsyDjsvqG0Kw1EOVMQ+=5GX_XytdorQ@mail.gmail.com>
+ <CAFULd4YR-VkAOKiS5yxSUYi0YMzY1p=pkYe4dOkgFs+A=9AFFA@mail.gmail.com> <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
+In-Reply-To: <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Sun, 23 Jun 2024 20:14:29 +0200
+Message-ID: <CAFULd4b43=pTnAMKusJmGCeF1Bk-f6AyeOR8wGM8EieqhuH5WQ@mail.gmail.com>
+Subject: Re: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
+ requires more registers than available
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---000000000000f4a4c6061b929587
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Sun, Jun 23, 2024 at 7:49=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sun, 23 Jun 2024 at 13:43, Uros Bizjak <ubizjak@gmail.com> wrote:
+> >
+> > I disagree with the above.
+>
+> Your disagreement just doesn't matter.
+>
+> We don't introduce regressions and then blame others.
+>
+> There's a very clear rule in kernel development: things that break
+> other things ARE NOT FIXES.
+>
+> EVER.
+>
+> They get reverted, or the thing they broke gets fixed.
+>
+> This is not debatable, or something you can "disagree"' with. This is
+> how we work, and if you disagree with that, you had better get out of
+> kernel development.
 
-On 6/22/2024 11:54 PM, Alex Bee wrote:
-> The currently existing of_property_present check for interrupts does not
-> cover all ways interrupts can be defined in a device tree, e.g.
-> "interrupts-extended".
-> 
-> In order to support all current and future ways that can be done, drop that
-> check and call of_irq_parse_one to figure out if an interrupt is defined
-> and irq_create_of_mapping for the actual mapping and let it be handled by
-> the interrupt subsystem.
+I disagree with *I tried to shift the blame to others*! I take full
+responsibility for my patch, and I'm perfectly capable of fixing the
+breakage with an alternative approach.
 
-Thanks for the rework. Looks good.
+I'm OK with the revert, but it won't fix the underlying problem.
+Please see the definition of __arch_cmpxchg64_emu - it forces the
+address to %esi registers in the same way as __arch_try_cmpxchg64_emu.
+Effectively, the compiler allocates 5 input registers just for the
+instruction.
 
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Alex Bee <knaerzche@gmail.com>
-> ---
-> Link to v1:
-> https://lore.kernel.org/all/20240621225558.280462-1-knaerzche@gmail.com/
-> 
->   drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+The alternative is to implement atomic64_{and,or,xor} as an outline
+function, in the same way as e.g. arch_atomic64_add is implemented.
+This will avoid the call to __arch_try_cmpxchg64_emu, and the whole
+"instruction" will use just:
 
---000000000000f4a4c6061b929587
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+__alternative_atomic64(add, add_return,
+      ASM_OUTPUT2("+A" (i), "+c" (v)),
+      ASM_NO_INPUT_CLOBBER("memory"));
 
-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
-2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
-Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
-HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
-Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
-KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
-Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
-dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
-OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
-MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
-BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
-ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
-zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
-sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
-BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
-N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
-p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
-YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
-bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCHqqjRwax+OW+hOBiy
-VWPkfzvVOSwGfXBUcteiWxjAfDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
-BTEPFw0yNDA2MjMxODEwNTVaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
-AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
-BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAsHXL7mIUbMNDpnrDi7c4VaBE2dG24uCjSjbS
-P6xeWSCvBFFIxUHfpe/vTkTRcEXpSVsHA/7o31gfER/cvDXl1oDtj04GOgMeWOJMRlDExU38NAtX
-OUZYBG6XmO2thTZxDjC0UtxY145v42wjOZAoLra7r51FAyzsqt6auyJscsGtEVLXAyjIZPVTM0B8
-5TiYyjFOL20+qGIq12oTN0g5VMtQyXPR1AtMTZQA40Tm0KKJXhpTGTipYhWO+/cbe/WUA1Oe1TUA
-Iwr/ktCL94oDeTOWpjRilq/zEIRO2lQOZxQVO7XqCqj9ucQPSi11gjrLXc65Neh1vuVPOHZbbslo
-Ag==
---000000000000f4a4c6061b929587--
+> Now, from having looked a bit at this, I can point you to the
+> differences introduced by having to have the emulation fallback.
+
+Yes, I know this - I also (runtime!) tested the emulation, but with GCC onl=
+y.
+
+> And I would personally be ok with leaving Pentium etc entirely behind,
+> and getting rid of said fallback, but that's an entirely separate
+> thing that will require much more discussion.
+>
+> Some people still wanted to support old 486 clones not that long ago.
+
+This can be achieved by implementing atomic64_{and,or,xor} as an
+outline function.
+
+Uros.
 
