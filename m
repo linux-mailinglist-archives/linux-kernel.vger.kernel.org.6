@@ -1,54 +1,48 @@
-Return-Path: <linux-kernel+bounces-226386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5D8913D99
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:43:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3307A913DA0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7C21C21104
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B02B51F218EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1D2184118;
-	Sun, 23 Jun 2024 18:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C78B184111;
+	Sun, 23 Jun 2024 19:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VIEbXJE/"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (1024-bit key) header.d=ans.pl header.i=@ans.pl header.b="i4YLnqOv"
+Received: from smtp.emenem.pl (cmyk.emenem.pl [217.79.154.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BA314830D;
-	Sun, 23 Jun 2024 18:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250A714884C;
+	Sun, 23 Jun 2024 19:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.79.154.63
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719168226; cv=none; b=jkkrzRE/xSmxGiP6haAA1Clf0C5L+yRygw87LarbWHEbX4ss9pEWvE2A5cIUVWEfacN8Y6x0plAKQJ+cjjDFLrj+dJS3IaqaD3BRzVqz9W4ayeNPpyXUZTu2KvmtIOJ7p98ah4iLgfwTAqZfun1bnGr0bgYK8sAGp+Ovs870NnU=
+	t=1719169233; cv=none; b=YZYCcM2sxd9zUdptnlAWSx6T1lFzhQsoNH0SRSit9hdFf0+txOXUGeFsah4Igv3rXrS60aq4yfKHIiwo2iC6ZujHkD9ottD2so+P49n3euWKgL5GEC8q+ZZd7GQ85bEXIVsCpI7AFg13wXLehTc9gU42I2xDqlfxOS3x6wFlqWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719168226; c=relaxed/simple;
-	bh=w5hEXJLG4OPyvbd7nDQPT+h5KcrjcJGViT3NRwut84w=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=mihNJvWrVwrK43kvCYjGqPP8/PnGOvjDVsKGkBpRW7qj38HzxbRv6l/eqp9NPklyRNqABitI02fF6AgLZbPky4RvJHpC9Rl+bvTyVDLMoTo01Q8DSzlNXusgeM0mbrV59pJQjE8+ZZ5f64uzA/wTrA4RKSsBKfxPGJ97hmAZFdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VIEbXJE/; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719168170; x=1719772970; i=markus.elfring@web.de;
-	bh=1dcrNaQXji2yb2Bh82SWM2XJHeDXnEcOqfxNrj9m7pc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=VIEbXJE/wxAjUjt/ESseuUx0eQH5SvCYmT7KyG/Z2xjFSIK8Jht1WYOgY1nWHm+a
-	 cfrx98dpNdbrBt9L/7Mhd8nihJBYIp9iYezvSUt72nE2wLFJZLC4wY3f5MHZY9h0K
-	 61Khm5FQnHrwXCHwKE5bIvUii821v7lohV/9ETP/m1abEQrbj2K24qybYeGvtdqyb
-	 GIgtmVorR4oxDPU2kpTMkTngoiNQtaep9aHpFmZsNJqpcnBCKZ4viaXHfRmVm3X2m
-	 u/iVIVA6+irG64qODkA6Y7gAeVwMVe3FE/0R8RKRXzHMZohq4EocvyP5W1mWzs00F
-	 sgRjoMQ2m57pZSjCJw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MhFhe-1sqxRb3zNa-00p6YS; Sun, 23
- Jun 2024 20:42:50 +0200
-Message-ID: <43209c1a-7889-4dec-8385-2f3b15d6faa5@web.de>
-Date: Sun, 23 Jun 2024 20:42:36 +0200
+	s=arc-20240116; t=1719169233; c=relaxed/simple;
+	bh=qzc1rsDiN8j7iEnMzlh7jqK3ss+j7dWOOp7vhyRU7YY=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=SufqUtcgmGplruBJuj6mIuo/bczupl8PXIPPuw+7FMU9vyh/m8fkjHqC1CLuee4Unjp2qAFvtmKnhtjwmMkKwruSBokxMi7G+kHnCb+8k6i/916M8QZnEVtaY/z/g7Qf6rF2DsFNlWr8vvaxFVmHSZi8EEZmXOxQOTZVPmeVN9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ans.pl; spf=none smtp.mailfrom=ans.pl; dkim=pass (1024-bit key) header.d=ans.pl header.i=@ans.pl header.b=i4YLnqOv; arc=none smtp.client-ip=217.79.154.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ans.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ans.pl
+X-Virus-Scanned: amavisd-new at emenem.pl
+Received: from [192.168.1.10] (c-98-45-176-131.hsd1.ca.comcast.net [98.45.176.131])
+	(authenticated bits=0)
+	by cmyk.emenem.pl (8.17.1.9/8.17.1.9) with ESMTPSA id 45NIlfW5005236
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sun, 23 Jun 2024 20:47:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ans.pl; s=20190507;
+	t=1719168466; bh=blP9kTlShQLTEEvQ48fKrZcg3eT1y3M9qA5WwxT5rN4=;
+	h=Date:From:To:Cc:Subject;
+	b=i4YLnqOv6jMrMjpF5FKdSZmRcyUvkxVNDtrc6u8ant03qzut3cSXx/kL8V/SsRuED
+	 fdXc0JR9hOG3L/v/us8Drcv5gOFXoD/xKSWtHarq/VvAcsZXRubWXHZxsi2J2X8kdh
+	 gkYziZhyEEJYrX/ZGSlEUQbIPknOvDASrsq0U0t8=
+Message-ID: <a57e9a39-13ce-4e4d-a7a1-c591f6b4ac65@ans.pl>
+Date: Sun, 23 Jun 2024 11:47:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,85 +50,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Keith Zhao <keith.zhao@starfivetech.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Andrzej Hajda
- <andrzej.hajda@intel.com>, Andy Yan <andy.yan@rock-chips.com>,
- Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Jack Zhu <jack.zhu@starfivetech.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Robert Foss <rfoss@kernel.org>,
- Rob Herring <robh@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
- Shengyang Chen <shengyang.chen@starfivetech.com>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240521105817.3301-3-keith.zhao@starfivetech.com>
-Subject: Re: [PATCH v4 02/10] drm/bridge: add common api for inno hdmi
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240521105817.3301-3-keith.zhao@starfivetech.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Krzysztof_Ol=C4=99dzki?= <ole@ans.pl>
+To: Heiner Kallweit <hkallweit1@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: stable@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-hwmon@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Regression caused by "eeprom: at24: Probe for DDR3 thermal sensor in
+ the SPD case" - "sysfs: cannot create duplicate filename"
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8UtErLEWkjKse7Z0yUU8qtJl/YJlx/hZuvrqJ8fnPQwXh0Q92U2
- /j0FUKwVLLHrvRKbfPmiXs3VdXBtF9nZw8Sh8N2tkwGV+7BoF3sgkVA+KDBYBEz+505KFXl
- 5eOn5uMey4aq465MdaeSoof1/gSklk5KdExo/zqeWiMyUyyYHzF9YzTxMUADcTaC4Nes5aA
- NnZwRH+vKL8iMbBkZ54OA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vEmo676cbak=;0bvQHYhf/I3BY0oOfipEpU67Eo5
- xPtfdhaTrr8k89QH4O5X9GmTdcK8MMcac0ibniBNUiUCWPll7Ha5x6c6gT92N3Bd94fZ8f8Rj
- 0t9spvDIlQzNFjQcQ/D/xf0ZAkHE/Af26NSvwOagJH+lELXYjIgObuLJEkh3rwjsK+SPhK4O4
- UA0iICskL4KX32xcI38wZNZkROB+YpsgdyMwUkStyYgTVo4Mlb2b4VLDNZLqFvandmwEEEB3+
- pK7RkIh1NDwbLp8SpLVPbPkGYeeWqCUVaKsWcOJLRAKRGC14QC00cSazSbzKUjap6ykifVHis
- ySA+Pb64b49bVbSh5RBjDfdAn3QTKAAXyvebZT8nHxTq5A1RRVsrhE0VUd0lQKDzeV3xbkZ0O
- 8u+lvWsbGtmrWTQPhyDukYaE/fWZPAv44aI8722hu0mB6a0+0osOMIOqJlnBrjMlTm+uXeQKg
- +PktpEg9IaOq/0hylRcPDfsLSSI14+WZ0kpdPtmWldM/p+psHop0xJCT/L0uizF3nXqLYCRd7
- tk10V7MOm8RRoKpAAHE+K5yjlXq1HDcXCkgISh6gvCbR+3R5Q0dVlW84EIb5aaQBLpv/qhsC7
- 8vsiKq0C000/xOOonM8i8KALS0YA5gV0uWVsTtEaMeLWBQTFwRRJDPB3v+rIvWQxnSb7jRBJp
- 9Sm8q7UQx6WJ3cRTCVplmjQnk0LP8WxeF1bdAManBcZpkrqWt0PzqujhMpOToVfWMHy7DHY+b
- hUZR9KBGTTx66qfsHf5lWvl5xPthQAPNV7LPvLWt1RlgsydBG3IkionuTXcnLyZv9veSwlKym
- caQj2yv7EoZ4nQEc1T++XBb6NRaKc2sN/9hls27UoqrUA=
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Signed-off-by: keith <keith.zhao@starfivetech.com>
+Hi,
 
-Should the personal name be more unique
-(according to the Developer's Certificate of Origin)?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n438
+After upgrading kernel to Linux 6.6.34 on one of my systems, I noticed "sysfs: cannot create duplicate filename" and i2c registration errors in dmesg, please see below.
+
+This seems to be related to https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-6.6.y&id=4d5ace787273cb159bfdcf1c523df957938b3e42 - reverting the change fixes the problem.
+
+Note that jc42 devices are registered correctly and work with and without the change.
+
+# grep . /sys/devices/pci0000:00/0000:00:1f.3/i2c-12/12-*/name
+/sys/devices/pci0000:00/0000:00:1f.3/i2c-12/12-0018/name:jc42
+/sys/devices/pci0000:00/0000:00:1f.3/i2c-12/12-0019/name:jc42
+/sys/devices/pci0000:00/0000:00:1f.3/i2c-12/12-001a/name:jc42
+/sys/devices/pci0000:00/0000:00:1f.3/i2c-12/12-001b/name:jc42
+/sys/devices/pci0000:00/0000:00:1f.3/i2c-12/12-0050/name:spd
+/sys/devices/pci0000:00/0000:00:1f.3/i2c-12/12-0051/name:spd
+/sys/devices/pci0000:00/0000:00:1f.3/i2c-12/12-0052/name:spd
+/sys/devices/pci0000:00/0000:00:1f.3/i2c-12/12-0053/name:spd
+
+# sensors|grep -A4 jc42-i2c
+jc42-i2c-12-1b
+Adapter: SMBus I801 adapter at 3000
+temp1:        +33.2°C  (low  =  +0.0°C)
+                       (high = +91.0°C, hyst = +91.0°C)
+                       (crit = +95.0°C, hyst = +95.0°C)
+--
+jc42-i2c-12-19
+Adapter: SMBus I801 adapter at 3000
+temp1:        +33.5°C  (low  =  +0.0°C)
+                       (high = +91.0°C, hyst = +91.0°C)
+                       (crit = +95.0°C, hyst = +95.0°C)
+--
+jc42-i2c-12-1a
+Adapter: SMBus I801 adapter at 3000
+temp1:        +33.5°C  (low  =  +0.0°C)
+                       (high = +91.0°C, hyst = +91.0°C)
+                       (crit = +95.0°C, hyst = +95.0°C)
+--
+jc42-i2c-12-18
+Adapter: SMBus I801 adapter at 3000
+temp1:        +33.2°C  (low  =  +0.0°C)
+                       (high = +91.0°C, hyst = +91.0°C)
+                       (crit = +95.0°C, hyst = +95.0°C)
 
 
-=E2=80=A6
-> +++ b/drivers/gpu/drm/bridge/innosilicon/inno-hdmi.c
-> @@ -0,0 +1,587 @@
-=E2=80=A6
-> +static int inno_hdmi_i2c_xfer(struct i2c_adapter *adap,
-> +			      struct i2c_msg *msgs, int num)
-> +{
-=E2=80=A6
-> +	mutex_lock(&i2c->lock);
-> +
-> +	/* Clear the EDID interrupt flag and unmute the interrupt */
-=E2=80=A6
-> +	hdmi_writeb(hdmi, HDMI_INTERRUPT_MASK1, 0);
-> +
-> +	mutex_unlock(&i2c->lock);
-> +
-> +	return ret;
-> +}
-=E2=80=A6
+dmesg:
+[    0.000000] DMI: Dell Inc. PowerEdge T110 II/0PM2CW, BIOS 2.10.0 05/24/2018
+(...)
+[    7.681132] i2c_dev: i2c /dev entries driver
+[    7.687116] i2c i2c-12: 4/4 memory slots populated (from DMI)
+[    7.690623] at24 12-0050: 256 byte spd EEPROM, read-only
+[    7.691812] i2c i2c-12: Successfully instantiated SPD at 0x50
+[    7.698246] at24 12-0051: 256 byte spd EEPROM, read-only
+[    7.699465] i2c i2c-12: Successfully instantiated SPD at 0x51
+[    7.700043] i2c i2c-12: Failed to register i2c client jc42 at 0x19 (-16)
+[    7.700047] i2c i2c-12: Failed creating jc42 at 0x19
+[    7.705248] sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:1f.3/i2c-12/12-001a'
+[    7.711617]  <TASK>
+[    7.712612]  dump_stack_lvl+0x37/0x4a
+[    7.712612]  sysfs_warn_dup+0x55/0x61
+[    7.715616]  sysfs_create_dir_ns+0xa6/0xd2
+[    7.716620]  kobject_add_internal+0xc3/0x1c0
+[    7.716620]  kobject_add+0xba/0xe4
+[    7.719615]  ? device_add+0x53/0x726
+[    7.720611]  device_add+0x132/0x726
+[    7.720611]  i2c_new_client_device+0x1ee/0x246
+[    7.723616]  at24_probe+0x5f8/0x666
+[    7.724642]  ? __pfx_at24_read+0x10/0x10
+[    7.724642]  ? __pfx_at24_write+0x10/0x10
+[    7.724642]  ? __pfx___device_attach_driver+0x10/0x10
+[    7.727619]  i2c_device_probe+0x1b7/0x240
+[    7.728612]  really_probe+0x101/0x248
+[    7.728612]  __driver_probe_device+0xbb/0xed
+[    7.731620]  driver_probe_device+0x1a/0x72
+[    7.732621]  __device_attach_driver+0x82/0x96
+[    7.732621]  bus_for_each_drv+0xa6/0xd4
+[    7.732621]  __device_attach+0xa8/0x12a
+[    7.735619]  bus_probe_device+0x31/0x95
+[    7.736614]  device_add+0x265/0x726
+[    7.736614]  i2c_new_client_device+0x1ee/0x246
+[    7.739618]  i2c_register_spd+0x1a1/0x1ed
+[    7.740613]  i801_probe+0x589/0x603
+[    7.740613]  ? up_write+0x37/0x4d
+[    7.740613]  ? kernfs_add_one+0x104/0x126
+[    7.743618]  ? __raw_spin_unlock_irqrestore+0x14/0x29
+[    7.744612]  pci_device_probe+0xbe/0x12f
+[    7.744612]  really_probe+0x101/0x248
+[    7.744612]  __driver_probe_device+0xbb/0xed
+[    7.747618]  driver_probe_device+0x1a/0x72
+[    7.748612]  __driver_attach_async_helper+0x2d/0x42
+[    7.748612]  async_run_entry_fn+0x25/0xa0
+[    7.748612]  process_scheduled_works+0x193/0x291
+[    7.748612]  worker_thread+0x1c5/0x21f
+[    7.751619]  ? __pfx_worker_thread+0x10/0x10
+[    7.752611]  kthread+0xf6/0xfe
+[    7.752611]  ? __pfx_kthread+0x10/0x10
+[    7.752611]  ret_from_fork+0x23/0x35
+[    7.755621]  ? __pfx_kthread+0x10/0x10
+[    7.756613]  ret_from_fork_asm+0x1b/0x30
+[    7.756613]  </TASK>
+[    7.759637] i2c i2c-12: Failed to register i2c client jc42 at 0x1a (-17)
+[    7.760815] at24 12-0052: 256 byte spd EEPROM, read-only
+[    7.762047] i2c i2c-12: Successfully instantiated SPD at 0x52
+[    7.765252] i2c i2c-12: Failed to register i2c client jc42 at 0x1b (-16)
+[    7.766126] at24 12-0053: 256 byte spd EEPROM, read-only
+[    7.767584] i2c i2c-12: Successfully instantiated SPD at 0x53
 
-Would you become interested to apply a statement like =E2=80=9Cguard(mutex=
-)(&i2c->lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/mutex.h#L1=
-96
-
-Regards,
-Markus
+Thanks,
+ Krzysztof
 
