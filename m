@@ -1,208 +1,225 @@
-Return-Path: <linux-kernel+bounces-226443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECA0913E68
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:08:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E375F913E6A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3561F21107
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:08:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7415A28121A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCF1184127;
-	Sun, 23 Jun 2024 21:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4343F184127;
+	Sun, 23 Jun 2024 21:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AvI4Ldc6"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ESQBUZsr"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02274EB5C
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 21:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D844EB5C;
+	Sun, 23 Jun 2024 21:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719176880; cv=none; b=CqPTmOBArsq5/n/Ff/a83pPWDa9zEMPZBZBGFlcY1x+4J3U2GAn0es8iKmdSDMonLRWvoYQGjmXF6WTtMiEJScaJ4UZf41gishwmiT31g2WHBNt1b3EAhGnWk2hZIHvxOtj/rh8DKX1R+EKZX/VoMb4Kx2fLsxs7nfNbaif2hTc=
+	t=1719176962; cv=none; b=WW66bhMRC4DCxih3CLlV1qeYuTyW87aaoQMEmDZFlLveIi6N07LPi+3AOAXauk8rjd/vp61fBFLUCGPtOW9GI0XbF37UXePBuH1yeVHCz1FfCxOOWU312sP1R+YMwJGVjkNcpkq9bdo/9ZWuz+RGWq1cGxoWqYnmuep2eTlFD/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719176880; c=relaxed/simple;
-	bh=8rN7Eq/Elatf9F9ma/Po1Gm6he+RB/4o5q19VyFxU2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h3qwZsz0RvAZsZLf6yQJ5sJwpeI6d+d0hUYc/kavw1xjrSo2HCiZHfJO1UcJoXNR7by65ApniIfCaAY5ucW/f4w3hAElZZgS5jSt1OKGCyHOINAStLYrLtCvmVT4NH1fsNJphQYGewISY6GZp4DTOUBs3FlpqnLr1ZC/NKvLzbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AvI4Ldc6; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ec002caeb3so47317981fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:07:58 -0700 (PDT)
+	s=arc-20240116; t=1719176962; c=relaxed/simple;
+	bh=JUOWOJa2mEgHrtiKssXmPT3w1FNbH0T1/ltPYlsuKtE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eyeVJbbpSUTCrCy8g4L4L2dgGliglbOCUMTLKJU3U/iNwJATGV0tqCanf/trR1SzN3NSwuzdiJVwXPXxm1OYcKhm7vykykAMnP/kZQE9Qc5fIbxAm+oWwbimMMR+mMRkcBXd/t+IBqXIV3+NkNlwHvZyIYbgyyeLozFrmXeim10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ESQBUZsr; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f9d9b57b90so24091875ad.0;
+        Sun, 23 Jun 2024 14:09:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719176877; x=1719781677; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Bn3XVAl2b/VVj7+ANpPXLYR04bLlOpvbJszDOHEIUlk=;
-        b=AvI4Ldc6LRyS/kGzNb9wC07TFl1Fy0+CtNbZuxVs7EWybsbHNNucPkN4e7ItvyT2oR
-         kRc3WFlQWU9BC+qo1TTZOlh01IxAJ/CNYGLRo9eo6LKhtDCJIu7IXLHIUsjsAzv5xaG6
-         q+7D5JLn11WsnzxDYZ4qN96UxDxwhRBFJ3ZRdyuToDOK0+V0qXeXU6dG+Pmns6xprg/1
-         iyGd66JYFyQzIOIprleQSKTy7EN6sNg8jae468YNZ8CvugDKVWfw/xDHSLJsKTc8Oaun
-         W4RvB2T3PNklyFiS32O8GP5Lxshj1/66ICFFw3Ord4wuwmRE4V0uFy3rQlVoIHQZ6tKT
-         CLRA==
+        d=googlemail.com; s=20230601; t=1719176960; x=1719781760; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XQoPXw9214oDzH3HcPE6mnrAqPcu+BY9GVtRBF/pzow=;
+        b=ESQBUZsresG+ht6KEzmwH5f7y1osvW9WdIxvD0jNOy/jFQ4hee+tgvhHXkmMqe1y0V
+         LLCOp7+2zzRlkxLs5B/Dgf+7SUL4Ib1TUVfKPBtUXvY6MXwvpURDEthkZvpB4AklwZUa
+         a9KrKxc+69KcVVlh3KOrapXiZAWnHsv2ZDpo7CYiUmEyPYPYs9c65shyRzhnpl9aU87T
+         bjRl1E+oihknFCGsyZeaynEevPah71TQ1Kc3bqm6SJS0/SriIjnGCytpCnao0td1AwaJ
+         /7DXqnaWAqLLmckmMcPljc4Gk3kVkF1YyKhRXXlKWfv1Ifudseso5zZJaNVYqryg3cVg
+         a5aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719176877; x=1719781677;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bn3XVAl2b/VVj7+ANpPXLYR04bLlOpvbJszDOHEIUlk=;
-        b=tG9uqU/ShaTsdRgNH3ovXx2CYwcEFJY1dY3iwyYg8rDvrUK63m3tSOQ7iT8HBvZ07Q
-         /7ohGOMU+rfJd1i94MyB0pYTHG1huLijxbnjjVmHeXFGgmXPY0sIuPiO0AfhAQwA9Wmt
-         cHs1rL5b0Y0+nKNWQbTlM/21uINw/GeVzbcCW8NBrv1neuBcgGQsmTK0BmCmFuXvQaMj
-         7L4eJq5y6dcY5R/+i6Wm2lAI6kOc2RusBzEbi7E/eBuhotCSCcBrWJqtaE9IDPVKdiOA
-         wXGCNoOh8Uvm/DDMJqM049w10oOn2dgfmjSpG3IUMz6Asn5pmQiI/WHUUuNkAeE3iHj7
-         DRcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbAtQY9yRn3HyOBeSK4iI5hQYnEOfSZqTkGXF+rkOTZTr/r3tT6JUvImLpljXfZfBDs6fHa5RO+eqmOMEP7PP02QdefJm7PDi6wCCQ
-X-Gm-Message-State: AOJu0YzkTBk9HHe5xWJsNTtUoLAh8rXOvmjv2b0Ysc4v48xN1aMm7XwD
-	PZk6lhCmSFPCvrPCuHCfSKSSXBuJ3IG9rbSr4TM5i7yUz8pZxLpnrbZJiIC2sL8=
-X-Google-Smtp-Source: AGHT+IE/+Cm6kTTws7yRC5u/oOPZAuYzqObXzz8cbQUZVy042qI2SPItKJruChfcYCXw+MKeWMonTQ==
-X-Received: by 2002:a2e:97d8:0:b0:2eb:ef78:29c8 with SMTP id 38308e7fff4ca-2ec5797a37fmr21548801fa.14.1719176876831;
-        Sun, 23 Jun 2024 14:07:56 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d76f791sm8277271fa.118.2024.06.23.14.07.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 14:07:56 -0700 (PDT)
-Date: Mon, 24 Jun 2024 00:07:54 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Keith Zhao <keith.zhao@starfivetech.com>
-Cc: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org" <rfoss@kernel.org>, 
-	"Laurent.pinchart@ideasonboard.com" <Laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
-	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
-	"tzimmermann@suse.de" <tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"hjc@rock-chips.com" <hjc@rock-chips.com>, "heiko@sntech.de" <heiko@sntech.de>, 
-	"andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, Xingyu Wu <xingyu.wu@starfivetech.com>, 
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, Jack Zhu <jack.zhu@starfivetech.com>, 
-	Shengyang Chen <shengyang.chen@starfivetech.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 08/10] drm/vs: add vs drm master driver
-Message-ID: <uymjzpwsvlaoenftrc6y2colqpvtoniubuoncyslfychynom4i@3qvmcudgfrql>
-References: <20240521105817.3301-1-keith.zhao@starfivetech.com>
- <20240521105817.3301-9-keith.zhao@starfivetech.com>
- <mbkrlg67jtggoqwecu6emymw3hgqoyf5pe55ho2fthq6pgnds2@ml7mbssrdr2x>
- <NTZPR01MB1050CAD9457771A58217A58CEECB2@NTZPR01MB1050.CHNPR01.prod.partner.outlook.cn>
+        d=1e100.net; s=20230601; t=1719176960; x=1719781760;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XQoPXw9214oDzH3HcPE6mnrAqPcu+BY9GVtRBF/pzow=;
+        b=PUn7NRHfy74bmbc+us94v8eHYhf7Knsj6IVvGYZECGARlrkBTXHLcWZS5hBfRjyvkx
+         QcS9DywZ4aGxb+OWARSFrkB+XmLx9o/f7NaZXFC0VQgwa3zVDwg2mIjDTO9uOxyJ7GNO
+         CtbQApPeBlbPujT/5K/YftPAltOwhvqwKF3eoREspR4HGMBz7yf6J+CqXwOlhMnOh9Xc
+         i7DfbvvLo+45tIROUTJUn+NGVKzHrB7xFB7ln7qY3z1WgbSa2DzgTA5XJT/yXtfsnpDl
+         fK7gOJTy1pB3DXdFcWm6lcuby2hQuVtCYLRnx6h5sZH5NYz6xtjFCAJsIZ4K8kq7JTeF
+         HOSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVppLaZclRE0NPad0lwzFNJsGmUJrDgQR1k9H5b8K3HvlfoNOZ33rYKnJF7XaGWPGOPo0qT3JXa+JzpzwRK91lp8eF2bBJ8ItcqEptR
+X-Gm-Message-State: AOJu0Yyqn0g3o0k+8aLn9+Kze4CUAdbkHARGO6ujiCN9iuligToxT4kb
+	aMzCPjeuyR1QymR5O3p/Ht7L+tSzP1Ye4fwM4VAFxXuM8TdiXcGtrew+slSzY37GW/zvLzsTfo/
+	IhVP1c4Jq1DwOV7oUDThqvbNmKyo=
+X-Google-Smtp-Source: AGHT+IE8s6BajreEaFuCPHRn1ore5CgUZ1JlAxkrn4Mjw7Qr7ITHvhioA54RGTwslWybiZqYJykwBJZo2NFFwGMb0sE=
+X-Received: by 2002:a17:902:dac5:b0:1f6:9181:47ac with SMTP id
+ d9443c01a7336-1fa23bd1cf5mr47097765ad.1.1719176959895; Sun, 23 Jun 2024
+ 14:09:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <NTZPR01MB1050CAD9457771A58217A58CEECB2@NTZPR01MB1050.CHNPR01.prod.partner.outlook.cn>
+References: <20240622191504.38374-1-martin.blumenstingl@googlemail.com> <s6lapsx6dukr4ebknbbalbhi7232ivxl2apaqtardfi6f2ybbf@zvlhxlngbgx3>
+In-Reply-To: <s6lapsx6dukr4ebknbbalbhi7232ivxl2apaqtardfi6f2ybbf@zvlhxlngbgx3>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 23 Jun 2024 23:09:08 +0200
+Message-ID: <CAFBinCANKBcttSEhc_0-+D0G3fO0CV67R41y-C7xEwhAXtA+LA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] regulator: pwm-regulator: Make assumptions about
+ disabled PWM consistent
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	broonie@kernel.org, lgirdwood@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 23, 2024 at 07:16:57AM GMT, Keith Zhao wrote:
-> > On Tue, May 21, 2024 at 06:58:15PM +0800, keith wrote:
-> > > Add vs DRM master driver for JH7110 SoC ADD DMA GEM driver
-> > >
-> > > Signed-off-by: keith <keith.zhao@starfivetech.com>
-> > > ---
-> > >  drivers/gpu/drm/verisilicon/Makefile |   3 +-
-> > >  drivers/gpu/drm/verisilicon/vs_drv.c | 718
-> > > +++++++++++++++++++++++++++
-> > >  2 files changed, 720 insertions(+), 1 deletion(-)  create mode 100644
-> > > drivers/gpu/drm/verisilicon/vs_drv.c
-> > >
+Hello Uwe,
 
-> > BIT(DRM_COLOR_YCBCR_BT2020),
-> > > +		.zpos			= 0,
-> > 
-> > How are these zpos related to the zpos from drm_plane_state?
-> Zpos was added to drm_plane_state by calling drm_plane_create_zpos_property funs,
-> 
-> vs_plane_primary_create 
-> ------> drm_plane_create_zpos_property(......vs_plane_primary_info-> zpos )
+On Sun, Jun 23, 2024 at 11:32=E2=80=AFAM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@baylibre.com> wrote:
+>
+> Hello Martin,
+>
+> On Sat, Jun 22, 2024 at 09:15:04PM +0200, Martin Blumenstingl wrote:
+> > Generally it's not known how a disabled PWM behaves. However if the
+> > bootloader hands over a disabled PWM that drives a regulator and it's
+> > claimed the regulator is enabled, then the most likely assumption is
+> > that the PWM emits the inactive level. This is represented by duty_cycl=
+e
+> > =3D 0 even for .polarity =3D=3D PWM_POLARITY_INVERSED.
+>
+> I'd write: "This is represented by duty_cycle =3D 0 independent of the
+> polarity."
+That makes things easier - I'll apply this, thank you!
 
-Yes. But why do you need zpos here? Especially if it's set to 0.
+> > Change the implementation to always use duty_cycle =3D 0, regardless of
+> > the polarity. Also update the code so it keeps a copy of the pwm_state
+> > around. Both of these changes result in the fact that the logic from
+> > pwm_regulator_init_boot_on() is much less complex and can be simplified
+> > to a point where the whole function is not needed anymore.
+>
+> In my (German) ear the following sounds a bit nicer:
+>
+>         Both of these changes reduce the complexity of
+>         pwm_regulator_init_boot_on() to a point where the whole function
+>         is not needed anymore.
+Sounds fine to my (German) ear as well - thanks!
 
-> > 
-> > > +
-> > > +	drm_dev->mode_config.min_width = min_width;
-> > > +	drm_dev->mode_config.min_height = min_heigth;
-> > > +	drm_dev->mode_config.max_width = max_width;
-> > > +	drm_dev->mode_config.max_height = max_height;
-> > 
-> > I thought that I saw mode_config.min/max being initialized.
-> Yes the mode_config.min/max has been initialized，
-> This place is doing an update according to detail info.
+> > Suggested-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> > ---
+> > Changes from v1 [0] (which was sent by Uwe):
+> > - keep the struct pwm_state around to prevent a regression on Meson8b
+> >   Odroid-C1 boards where just calling pwm_enable() without adjusting
+> >   the duty_cycle to 0 would hang the board
+> > - I'm actively looking for input on the commit description and
+> >   suggestions whether/why Fixes tags should be applied
+>
+> Apart of the nitpicking above, I like the commit description.
+>
+> Regarding a Fixes tag: I'm unsure if without this patch, the
+> pwm-regulator driver is broken for your Odroid-C1 board. It's not,
+> right?
+> I think I wouldn't add a Fixes tag and just consider this patch a
+> cleanup then.
+My Odroid-C1 works fine with and without this patch.
+Only the patch that you found previously which you wanted to improve
+is required (and reverting it breaks boot).
 
-Then please drop previous initialisation. While looking at the code it's
-impossible to understand which one is correct.
+[...]
+> > -     ret =3D pwm_apply_might_sleep(drvdata->pwm, &pstate);
+> > -     if (ret) {
+> > -             dev_err(&rdev->dev, "Failed to configure PWM: %d\n", ret)=
+;
+> > +     ret =3D pwm_regulator_apply_state(rdev, &pstate);
+> > +     if (ret)
+> >               return ret;
+> > -     }
+>
+> If you drop the local variable pstate and just do
+>
+>         pwm_set_relative_duty_cycle(drvdata->pwm_state,
+>                                 drvdata->duty_cycle_table[selector].dutyc=
+ycle, 100);
+>
+> you might get a mismatch between actual configuration and
+> drvdata->pwm_state if pwm_regulator_apply_state() fails, but I think
+> that doesn't matter and simplifies the code a bit. (Drop the assignment
+> in pwm_regulator_apply_state() then.)
+If you're fine with this potential mismatch (I am - I just was unsure
+about potential side-effects) then you're right: this is an
+improvement!
+
+> >       drvdata->state =3D selector;
+> >
+> > @@ -115,17 +129,26 @@ static int pwm_regulator_list_voltage(struct regu=
+lator_dev *rdev,
+> >  static int pwm_regulator_enable(struct regulator_dev *dev)
+> >  {
+> >       struct pwm_regulator_data *drvdata =3D rdev_get_drvdata(dev);
+> > +     struct pwm_state pstate =3D drvdata->pwm_state;
+> >
+> >       gpiod_set_value_cansleep(drvdata->enb_gpio, 1);
+> >
+> > -     return pwm_enable(drvdata->pwm);
+> > +     pstate.enabled =3D true;
+> > +
+> > +     return pwm_regulator_apply_state(dev, &pstate);
+> >  }
+> >
+> >  static int pwm_regulator_disable(struct regulator_dev *dev)
+> >  {
+> >       struct pwm_regulator_data *drvdata =3D rdev_get_drvdata(dev);
+> > +     struct pwm_state pstate =3D drvdata->pwm_state;
+> > +     int ret;
+> > +
+> > +     pstate.enabled =3D false;
+> >
+> > -     pwm_disable(drvdata->pwm);
+> > +     ret =3D pwm_regulator_apply_state(dev, &pstate);
+> > +     if (ret)
+> > +             return ret;
+>
+> With that part I'm a bit unhappy. You don't know what the pwm does when
+> disabled (it might yield a 100% relative duty cycle). So the safe bet is
+> to use .enabled=3Dtrue, .duty_cycle=3D0 here.
+>
+> The only code that "knows" if it's safe to disable the PWM is the
+> lowlevel pwm driver.
+Here I don't know the regulator framework enough. Let's make two assumption=
+s:
+1. the optimization you suggest is implemented (I'm not against it,
+it's just different from what pwm_disable() does)
+2. regulator core does not expect the set voltage to change in a
+.disable() callback
+
+In that case disabling the PWM output is fine. Since we're now
+updating the cached pwm_state with duty_cycle =3D 0 the next time the
+regulator core calls the .enable() callback (without calling
+.set_voltage() between disabling and enabling) we end up enabling the
+PWM output with duty_cycle =3D 0 (and thus likely changing the voltage
+output).
+I see three options here:
+- my assumption about the regulator core is incorrect, then your
+optimization works just fine
+- we only write enabled =3D false to the cached pwm_state but not duty_cycl=
+e =3D 0
+- we drop the suggested optimization here (and maybe let PWM core handle th=
+is)
+
+What do you think?
 
 
-> > > +
-> > > +static struct component_match *vs_add_external_components(struct
-> > > +device *dev) {
-> > > +	struct component_match *match = NULL;
-> > > +	int i;
-> > > +
-> > > +	for (i = 0; i < ARRAY_SIZE(drm_sub_drivers); ++i) {
-> > > +		struct platform_driver *drv = drm_sub_drivers[i];
-> > > +		struct device *p = NULL, *d;
-> > > +
-> > > +		while ((d = platform_find_device_by_driver(p, &drv->driver))) {
-> > > +			put_device(p);
-> > > +
-> > > +			drm_of_component_match_add(dev, &match,
-> > component_compare_of,
-> > > +						   d->of_node);
-> > > +			p = d;
-> > > +		}
-> > > +		put_device(p);
-> > 
-> > What about just going through the graph connections instead and adding them?
-> 
-> The purpose of using components is to create encoder and connector to the drm subsystem by calling component_bind_all
-> 
-> graph connection needs to be based on whether there is a bridge at present. 
-> If the bridge has been added, it can be obtained through drm_of_get_bridge 
-> Create a connector based on the obtained bridge and then attach the connector to the encoder.
-> Then do drm_dev_register.
-> 
-> I don't know if my understanding is consistent with yours. Please help confirm it.
-> Thanks
-
-Your code is looping over the subdrivers, locating devices and then
-adding them as components. Can you instead use device nodes which are
-connected to your master via the OF graph? If I understand examples in
-your DT bindings correctly, this approach should work.
-
-> > > +static void __exit vs_drm_fini(void)
-> > > +{
-> > > +	platform_driver_unregister(&vs_drm_platform_driver);
-> > > +	platform_unregister_drivers(drm_sub_drivers,
-> > > +ARRAY_SIZE(drm_sub_drivers)); }
-> > > +
-> > > +late_initcall_sync(vs_drm_init);
-> > 
-> > Why _sync?
-> 
-> late_initcall_sync will make it success ,when do devm_drm_of_get_bridge.
-> Also it can use the " EPROBE_DEFER " to avoid it,
-
-Why do you need this? It's perfectly fine to have DRM devices probe
-assynchronously.
-
-> > 
-> > > +module_exit(vs_drm_fini);
-> > > +
-> > > +MODULE_DESCRIPTION("VeriSilicon DRM Driver");
-> > MODULE_LICENSE("GPL");
-> > > --
-> > > 2.27.0
-> > >
-
--- 
-With best wishes
-Dmitry
+Best regards,
+Martin
 
