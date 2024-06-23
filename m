@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-226075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1E99139E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:13:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F349139E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70D91F21B97
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8569D1C20B04
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE05B12F59B;
-	Sun, 23 Jun 2024 11:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121AB74BEC;
+	Sun, 23 Jun 2024 11:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nP//XyQu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zHasFf7t";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="adwvCE6Q"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1278A46B5;
-	Sun, 23 Jun 2024 11:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D1F63D
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 11:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719141212; cv=none; b=H7NELnIkkoA1rgeu7jgYwuPDg09UUbWJR50guxVi4EKFgttjYZGKJaD8DVs4FzqOL2PxO1EJbr7k49EsRlpYXddhkhe/pJpc/Shp9s496afbMC3YYD3M0jzOIkFxXHm+XeOUdodDc2oTPjiYj4qWk+zAx10HlyR3jOgeSSZG5VI=
+	t=1719141368; cv=none; b=NwiESUzHvPzF8gTNPjNH/ZWDPf6tjlr20utOLwzSG+MhLv1N4oaLYeSGpApzQBDrVA5iL5Vy/qaHSRWSN7fsegZUL/RGyZew/1EKJ4AbkobdnRGefyjvDgjKS+2mFdGCCHXkwWpyhh2dHxvVxKfg3ZWgbnXPA0sPV8amXCv8nCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719141212; c=relaxed/simple;
-	bh=pb/S6Tg5OwzW1hhoo2u/dWQWRmQFLrxvO+bT2mvdqB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GZmo3lb9yO3yiG/7lcoN21g8ijMZUVsqOalFTLXpQ4PZvq1H2y2cENqQRNQ0gkAY7HOtAqC1AiU9wG++t8IKGJWvBIaqIg946FxjmPaThdyX2t3POCro8ZGhyj21nHnuRCwvG2HBO0/jMbXGR/Pp2CqU0mmYA/67pw2HZ3tP3e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nP//XyQu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C0BC2BD10;
-	Sun, 23 Jun 2024 11:13:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719141211;
-	bh=pb/S6Tg5OwzW1hhoo2u/dWQWRmQFLrxvO+bT2mvdqB4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nP//XyQuuMFA10yJBwQFp2PwmjbWL1N1K4R+0xwI3okVJ6hoh9FNNvgKcCQQ0XALP
-	 VsHvbXC5SgQqHuoerFzB0PmIfTnWV2En6rVa3OiyQiWBrRpjXRUDNkspuTI+73LzTq
-	 hi64uNwjJU8ADlD1PaVpscWDVQWp3fEKH2IY5QxfcaoZYZC5gpBP0a0qEFrvfxNahl
-	 9M0IWjykBDSUVc3872nybGkuMNvpXNT46Jn1sIi9XIkEH/M5o9frinLKgwN7aVjPS0
-	 bELgWrJEQb6yoFA//xGc/UIDRzpzfSvSmjlXXfGIX7GRmJWhgQl+47Kla2YcA5Dx14
-	 XdEa4uQtjVmQg==
-Message-ID: <fc090682-6610-4dfd-896a-640366b5975b@kernel.org>
-Date: Sun, 23 Jun 2024 13:13:23 +0200
+	s=arc-20240116; t=1719141368; c=relaxed/simple;
+	bh=eQ9SkVzRA8uuQF0j+9HUIp55xGDAmONAhLnzCO+XxoE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EXSpY6ydDRJffFZwyzSzZCmisQ4kYjt1bEIAP9HT6i1uPmbigGxIKqV5Iw4EU2J94N61rU502+Iy0zvgtf5+GKtpvwsGRfLUVrZDZwH2rIWtZg4kf68AHsRcGONIbnqMLDlC8yGgL9sm+7+nPukOcSITAIyUVhqDygA4XB5nLMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zHasFf7t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=adwvCE6Q; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719141363;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SaUB9B93eRQsIY/06QomImy+ydUVyqmVioodX/NuWMA=;
+	b=zHasFf7tcZicHnkGYSE5yYTH5h0Uc/BkjeAOHmbmfYP3HTh8H4EH38fWLbLrgClayl/Upd
+	fKGq3AKhOnLYO9uj/B7bDMlZSxgz1OCrJWR0eOwkNhpRBWI5whg3ZPa76KoiT9aO2an0B1
+	S3B+oWuUFzMCd2527E2U5ql6GrMDkXYZM6p2QxjjCA03ZM/Ym6BHMVOJH5+DBoVlyVZ3rs
+	nIn7xlMCJYxVuH4+H9MPAdbl6txq1jwusk5YJb4JD/GmLVmAg7ZS9ED1u5I2Pqd3SiStDd
+	GLRUsbC7/BiTKIrMUDkkFhkWomLKa7B/hnatc81CHPbRmL6uMmB7oJLylWvc0g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719141363;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SaUB9B93eRQsIY/06QomImy+ydUVyqmVioodX/NuWMA=;
+	b=adwvCE6Q3PwNc6r7+zmjV+cvCgHZFlR5KfyjllpDImHXLgJ5c2EE7tAJJ6+KBihWFP6bNE
+	PpO2ioq6W56Xp7DA==
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, John Stultz <jstultz@google.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Stephen Boyd
+ <sboyd@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Oleg Nesterov
+ <oleg@redhat.com>
+Subject: [patch V3-2 11/51] posix-cpu-timers: Handle SIGEV_NONE timers
+ correctly in timer_set()
+In-Reply-To: <20240610164026.162380808@linutronix.de>
+References: <20240610163452.591699700@linutronix.de>
+ <20240610164026.162380808@linutronix.de>
+Date: Sun, 23 Jun 2024 13:16:02 +0200
+Message-ID: <87wmmfyknh.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: display/msm/gmu: Add Adreno X185 GMU
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
- freedreno <freedreno@lists.freedesktop.org>,
- dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- Rob Clark <robdclark@gmail.com>, Bjorn Andersson <andersson@kernel.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
- Sean Paul <sean@poorly.run>, Thomas Zimmermann <tzimmermann@suse.de>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
- <20240623110753.141400-2-quic_akhilpo@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240623110753.141400-2-quic_akhilpo@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 23/06/2024 13:06, Akhil P Oommen wrote:
-> Document Adreno X185 GMU in the dt-binding specification.
-> 
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> ---
-> 
->  Documentation/devicetree/bindings/display/msm/gmu.yaml | 4 ++++
+Expired SIGEV_NONE oneshot timers must return 0 nsec for the expiry time in
+timer_get(), but the posix CPU timer implementation returns 1 nsec.
 
+Add the missing conditional.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+This will be cleaned up in a follow up patch.
 
-Best regards,
-Krzysztof
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+V3-2: Fix the split up fallout - Frederic
+V2: Split out into new patch to make review simpler - Frederic
+---
+ kernel/time/posix-cpu-timers.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -623,6 +623,7 @@ static void cpu_timer_fire(struct k_itim
+ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ 			       struct itimerspec64 *new, struct itimerspec64 *old)
+ {
++	bool sigev_none = timer->it_sigev_notify == SIGEV_NONE;
+ 	clockid_t clkid = CPUCLOCK_WHICH(timer->it_clock);
+ 	u64 old_expires, new_expires, old_incr, val;
+ 	struct cpu_timer *ctmr = &timer->it.cpu;
+@@ -706,7 +707,16 @@ static int posix_cpu_timer_set(struct k_
+ 				old_expires = exp - val;
+ 				old->it_value = ns_to_timespec64(old_expires);
+ 			} else {
+-				old->it_value.tv_nsec = 1;
++				/*
++				 * A single shot SIGEV_NONE timer must return 0, when it is
++				 * expired! Timers which have a real signal delivery mode
++				 * must return a remaining time greater than 0 because the
++				 * signal has not yet been delivered.
++				 */
++				if (sigev_none)
++					old->it_value.tv_nsec = 0;
++				else
++					old->it_value.tv_nsec = 1;
+ 				old->it_value.tv_sec = 0;
+ 			}
+ 		}
 
