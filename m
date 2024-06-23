@@ -1,49 +1,84 @@
-Return-Path: <linux-kernel+bounces-226105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F084913A46
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:00:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF90B913A52
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917AC1F21A51
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:00:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A580B21576
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A03E718130C;
-	Sun, 23 Jun 2024 12:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66979180A8A;
+	Sun, 23 Jun 2024 12:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nh9z/1Ul"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKNkwzgp"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C135155C1A;
-	Sun, 23 Jun 2024 12:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679A755C1A;
+	Sun, 23 Jun 2024 12:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719144030; cv=none; b=ZKQc8iCAkW+2qOVdAAGdKc4zkUoTZiBwqVzXR4zQXSF7Gy0F/46DCi4D8BuKpjscLS+/MdRtH8LeEdLPDi05WAKgo+tpbxf0UWTOG5OE6qN5bFcUERgw8sqHBbbL6C1mqI35wys1VEc3qRrvTvnTsaQo8Zv74USUy0Ve8C5jkIw=
+	t=1719144225; cv=none; b=OE9hDQ3ou35EtINvZhAtUj/yP1/GkDRypZv4BcTPfYhsIJoSWTFBIS6VWKwJs1uBAgp33sNF9NQfFIQrHKq6bScEoHBLIeZoTT9mIItqwvgcpZ6czgs0HOEIRgYrJ8pVNvYUSF/NOrvraXoCm2uGYD/s2cpCU6z/8Gnun7VwbVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719144030; c=relaxed/simple;
-	bh=mAN44LwTX3XKIAEy4qNZFAmyTgjXBNzHHu7xGgTUnqk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=qB5vRGXkUjRknRdhyifxpVJXpgEC2q9Fvg5V9FfpljmlU7MFal0dzJO/OqugR5+1nGRSpKDkD99x7ZQFCdkSVrIAYuFbWAkUpSFVASApdBg++W8pvhAP6mDxD37WF1aMcG98LihjNT2gMrr/NP4uza2RaWEmGGDcU0AwNEhDtYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nh9z/1Ul; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 533B4C32782;
-	Sun, 23 Jun 2024 12:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719144030;
-	bh=mAN44LwTX3XKIAEy4qNZFAmyTgjXBNzHHu7xGgTUnqk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Nh9z/1UlpjX8JpDF34aLyT2iVr8v8V4BlO7GwBSzwCJa6017lGcMS/fi1GhgJlrts
-	 P4YzUxGBARbwYPYyR/O+vIm4CiGAD6Ya4rbPgChAZ0CJodUqYqcFYnyJ243tP1rs8n
-	 uqPhCXt+BXHUbeY9l9aqF5mFpSPXbavokzhv/8GKWcGx7SD6mwiQaVL6F3mdfLa0WI
-	 WyHw+uL+TH82dXwt/9VCsVYWFnygwCjZqIIst1HjhZwaujLvMfG4oBzKw6FySNeXRP
-	 7uYYwVlTeQ9IbTGSX4BjYENQRXR/10NZOv3vdxDNQ6pJc/JrH+W1eMWXUsXqquxVvg
-	 jsaeAl1mBGkQw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3AADBC54BB3;
-	Sun, 23 Jun 2024 12:00:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1719144225; c=relaxed/simple;
+	bh=1ejHMVfM/x1I9WH/AOfTOYsFcicOOrHVTNcQMO9V9T0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Swqlo3YQ/ugPNXUm8dla/adkQNL6WetRMwyvEtmgLSRJWlgr0eEBxRiQ+woBLyc3jvyQU6BUEMfLN7pqD8Cv+laByqykN198XGY/XCZFF36L4QkQUTGLZusp5VE8MXZUvUguvHJ1plwlZHFb2Njlfg2fWJ+Oy/ZZEqExEl2EhhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKNkwzgp; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f862f7c7edso26336325ad.3;
+        Sun, 23 Jun 2024 05:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719144224; x=1719749024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gnQ+CeHuZXlYO167FONNTk6/FjCBP/TpIYsSm5694xc=;
+        b=JKNkwzgpdIdCAaS6JM06lmq811pEaKo5nHU9sQe6HWhOrZXBdlSAOcVqNQk61j3IJo
+         WT0RJlbU6QT7qsq66Sx1/BNUPR6DLRY6nJOO0AFqQEG0ijZpZAfUoDmYUr9gnCqySnwY
+         6FZihtuPa49liYqmaHoeRe3K7LRm1czzEJ2TiyhHKsm0JWLtmTYCTFj64hEPCJ/1qz2U
+         uJNAJMhmUAfCl4sOW83adfUP0U4FElAKbcTejGHDLWrIuMhPXQKcq1Emg0IwbdS7vGo7
+         wnVh5jGG3EOvSbNQoqICgShCm/xd4g3Yqq3oGzWxgQZhY9ewVbMhjFrxmUOuw5Lm547X
+         clrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719144224; x=1719749024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gnQ+CeHuZXlYO167FONNTk6/FjCBP/TpIYsSm5694xc=;
+        b=p4AOJGvBn4hxxzreNgdhYZZ5bfIIequ67ETzSdsXBgIIUZjYlG1ZQ4b+mMi0mFPr3k
+         nadjg2YldvFnBvnJiy4bbpMcOLSywCfgJ1rP6TIqZ4ueF7T6ZecrYXHmKipLlt8trD85
+         IOKeoJoPqyE+ymakBWhMlhaHolR0+5CHsToqEtMwj5Zoo0bhG9YWdFDt7FacC7LLZdXC
+         BtrzesYZU0vb1tG7p+vY9i7GNCBsncCoIlIngcWa0gEwwhKtGvUnB5cFbw8qdpT+VWLH
+         C0P895prUCLSQHFWt2Tl9FlF53vMUXVyznqHJG/AMWk6k++8TMO4i62Ueh2NJL69tdLY
+         0juA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWGi/CQDw1O8LTLeNC7xOtL7qIsWhba033Jta65mkp/N7qPzTANQJr/QOGEpKpP74hlSWPnwb+gIsAiica7e/89njk1uBTXSvme4NVhghXi/npE4/DF7io/q6bZTOdIDhOArDyBOw2ww==
+X-Gm-Message-State: AOJu0YxVUCh1FcfkGeilfUy9zQcKywk5UnI+J8EDh51tj1xGUzMt27Wb
+	aTgsX6CLVA2lSWEBfRs+JKcZiVfU48x0c4zQjgWakrLRz3Cb2ruE6aCgVw==
+X-Google-Smtp-Source: AGHT+IEPb5xME3a9IS+fRFpSAE5BQuoZ6z9qef0vi9HrYc+oM9FrRBDiIFAhlEMXkvjwfyzWbKILkA==
+X-Received: by 2002:a17:902:f693:b0:1f9:a602:5e41 with SMTP id d9443c01a7336-1fa1d3b7218mr27947185ad.1.1719144223417;
+        Sun, 23 Jun 2024 05:03:43 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb7cf962sm44141545ad.231.2024.06.23.05.03.40
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 23 Jun 2024 05:03:42 -0700 (PDT)
+From: yskelg@gmail.com
+To: Harald Freudenberger <freude@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>
+Cc: shjy180909@gmail.com,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <yskelg@gmail.com>
+Subject: [PATCH] s390/zcrypt: optimize memory allocation in online_show()
+Date: Sun, 23 Jun 2024 21:01:49 +0900
+Message-ID: <20240623120147.35554-3-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,43 +86,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/1] dt-bindings: net: fman: remove ptp-timer from required
- list
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171914403023.11613.628899711265897409.git-patchwork-notify@kernel.org>
-Date: Sun, 23 Jun 2024 12:00:30 +0000
-References: <20240621170000.2289596-1-Frank.Li@nxp.com>
-In-Reply-To: <20240621170000.2289596-1-Frank.Li@nxp.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- richardcochran@gmail.com, madalin.bucur@nxp.com, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
 
-Hello:
+From: Yunseong Kim <yskelg@gmail.com>
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
+Previously, when setting the online state for a card, the code would
+allocate memory to store information about all attached queues,
+regardless of whether their online state actually changed.
+This patch improves efficiency by only allocating memory for the queues
+that are truly affected by the online state change.
 
-On Fri, 21 Jun 2024 13:00:00 -0400 you wrote:
-> IEEE1588(ptp) is optional feature for network. Remove it from required
-> list to fix below CHECK_DTBS warning.
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: ethernet@f0000: 'ptp-timer' is a required property
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  Documentation/devicetree/bindings/net/fsl,fman-dtsec.yaml | 1 -
->  1 file changed, 1 deletion(-)
+This allows for a more precise memory allocation (based on maxzqs) which
+can reduce memory usage.
 
-Here is the summary with links:
-  - [1/1] dt-bindings: net: fman: remove ptp-timer from required list
-    https://git.kernel.org/netdev/net/c/8a67cbd47bf4
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ drivers/s390/crypto/zcrypt_card.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-You are awesome, thank you!
+diff --git a/drivers/s390/crypto/zcrypt_card.c b/drivers/s390/crypto/zcrypt_card.c
+index 050462d95222..2c80be3f2a00 100644
+--- a/drivers/s390/crypto/zcrypt_card.c
++++ b/drivers/s390/crypto/zcrypt_card.c
+@@ -88,9 +88,10 @@ static ssize_t online_store(struct device *dev,
+ 	 * the zqueue objects, we make sure they exist after lock release.
+ 	 */
+ 	list_for_each_entry(zq, &zc->zqueues, list)
+-		maxzqs++;
++		if (!!zq->online != !!online)
++			maxzqs++;
+ 	if (maxzqs > 0)
+-		zq_uelist = kcalloc(maxzqs + 1, sizeof(*zq_uelist), GFP_ATOMIC);
++		zq_uelist = kcalloc(maxzqs, sizeof(*zq_uelist), GFP_ATOMIC);
+ 	list_for_each_entry(zq, &zc->zqueues, list)
+ 		if (zcrypt_queue_force_online(zq, online))
+ 			if (zq_uelist) {
+@@ -98,14 +99,11 @@ static ssize_t online_store(struct device *dev,
+ 				zq_uelist[i++] = zq;
+ 			}
+ 	spin_unlock(&zcrypt_list_lock);
+-	if (zq_uelist) {
+-		for (i = 0; zq_uelist[i]; i++) {
+-			zq = zq_uelist[i];
+-			ap_send_online_uevent(&zq->queue->ap_dev, online);
+-			zcrypt_queue_put(zq);
+-		}
+-		kfree(zq_uelist);
++	while (i--) {
++		ap_send_online_uevent(&zq->queue->ap_dev, online);
++		zcrypt_queue_put(zq_uelist[i]);
+ 	}
++	kfree(zq_uelist);
+ 
+ 	return count;
+ }
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.45.2
 
 
