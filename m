@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-226141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C8B913ACC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:17:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13815913ACA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01371F218BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:17:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A63501F218EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844B3181B8D;
-	Sun, 23 Jun 2024 13:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD95A12C559;
+	Sun, 23 Jun 2024 13:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MAsl0TKA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Yy+GtDhe"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SidFOBpL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7aqPHZF3"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C951E4BE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CE282C76;
 	Sun, 23 Jun 2024 13:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719148633; cv=none; b=EXPP9qYbiZggv0Pv3hI4BZHO/oAAUt9doqO1xg2WqLNHq7USXAY6399EPsyZ3sm40IzQ4SMpMaLH2LYdmrHMGNW/0rR3TlVzjj/BgjCcSNgwFqjCuI770bdANsvWpnc8RquNG+UsVH28pXbIB+esYqO0XQgzz527fWxgnlUEbco=
+	t=1719148633; cv=none; b=WlbX0+RF/3kvtI2HZ1k+DMzwwBtyuCwbUxoEF4BHqydxdUel2/gVB97sKe9oST0vvQu1wXuafO9ZNblmphEX2RWdZtSVV36opuh/SvQrHIDhvb1J97ycAERPfkyrmWsgLToxkLUJEIO5UbDjxQ7U0SguuG6QQhmopJwx2l8vlDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719148633; c=relaxed/simple;
-	bh=+LK6WIkVUAN1Z+EAC4BH+nzDcWCkxk/TMq3NzuRQkck=;
+	bh=jRxaH7gNHLSd0Im+gSSA2ue9ok1jSALwzBTK079Gn+Y=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LePKrpcuEdvPYP//9X3A7v4FZgsTtSmc8avzXZuOX1krHENxewatIQcziYJR35BqWoiHfGMzkGRHZ/qIuHd985+uW05OvfpZ8xiYcOh9IRmDkrxBkKfj4L6MOAYBHbcXHGPU19gDoiITIni8NdXJv8F9UZy6daxq5EOepHyD1kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MAsl0TKA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Yy+GtDhe; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=Nst0FmiKyssUgMuBY6cuWVdOWXE5tRpUT/R0o2MnftZCO27G5tArUU8UoNC0LSu1drB2+rvUM3nfbF3FBAr70plqxuKiDNn3x2oJNODkWp1xr3p8JSEi0aq2N8YXg+F2TGFg4Ga2bgLpjO4Og7nV8GlxPE0IaUBDuE1PytnjdHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SidFOBpL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7aqPHZF3; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Sun, 23 Jun 2024 13:17:09 -0000
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=H7WoVySaq9A3DyxvIh09LFRn8jyDz1VkILbYOlP6jt0=;
-	b=MAsl0TKA3/oUZFmOvqoHqkG9SBEugmtUw1a9LHSqdVPFH3zkKd+WidwGf0V3h2XBGgyRZE
-	tvdbRt6PxLyirgckzjO+0f9YZwHaSgkftpQfWqWp2mTWGuAIJbVgVGI1Swaaue8KwGEo53
-	WfA0ET/Xrw/OXGWZVYbVquIbGCLj6ZtGp0EYpyPR6f11YVrXgDYdd9jDQOMQm2m45za2RT
-	wFXw3bdzBttAFJe/wPFOHObnQP5bW9pOA/KqW9TdDhmZcAXwXUh2eSK9t9iqoMSTBYf0GP
-	9sOZm/rA3qI71neDQ+VyFZL0Xqy8qZuTJLnr2/4M9xcgR9EaQkxD3SOleu97sA==
+	bh=9JVkdWGEsbjGw42mspGzrWKTG95fvkmjYwv+QVV71mA=;
+	b=SidFOBpLm/aebzWFHxfLDXfKiDVprefbNsFbFsb3GR6GD8EyZcZqju6hYDI7CdAQ3RUijC
+	D9PAZnRHkLuzYwOPtvM/BB/+AlGfEF7buSEZK6M+xSl7r3auSzOcBfhG4QD4wYwp45BwTQ
+	K5ndlychursZ5t5UQUKqP7Kl2e4taaq5a4zjdV471wJbHI25vx7NxIiopqSKeNGqObzP9T
+	j0+JKfgfPPwYnxVPxVJGn/p6T60hx32dTgZJ3UylE6Iqoj/K66c3Z9+k5PAzS00vPKJQow
+	wcSt0WL1rJcN0aEF05uBdFXtjaH7jZtItnx64nU5sWcT7SnIHzSnZeXwXvRgYA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1719148629;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,28 +52,28 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=H7WoVySaq9A3DyxvIh09LFRn8jyDz1VkILbYOlP6jt0=;
-	b=Yy+GtDhewFR1oFxSr+6lfEdwhYG1qxvQQW91d+Du3ZLldQ7/eSblpriBHzRxbdYZwnHkXn
-	w6yZPa5zakSH+WBA==
+	bh=9JVkdWGEsbjGw42mspGzrWKTG95fvkmjYwv+QVV71mA=;
+	b=7aqPHZF3SMzjrAnLc3oGS13WVL3Wp7Kw67uZ/XkpclDO8KL4Ll8gYMspEuGvrN8j84M8PO
+	c/EWnX3apLE6rnAw==
 From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/msi] irqdomain: Fix formatting irq_find_matching_fwspec()
- kerneldoc comment
+Subject: [tip: irq/msi] irqchip/imx-mu-msi: Fix codingstyle in
+ imx_mu_msi_domains_init()
 Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
  Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
  Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240614102403.13610-2-shivamurthy.shastri@linutronix.de>
-References: <20240614102403.13610-2-shivamurthy.shastri@linutronix.de>
+In-Reply-To: <20240614102403.13610-3-shivamurthy.shastri@linutronix.de>
+References: <20240614102403.13610-3-shivamurthy.shastri@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171914862923.10875.165422280627822509.tip-bot2@tip-bot2>
+Message-ID: <171914862956.10875.17366434196355189525.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,39 +83,42 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the irq/msi branch of tip:
 
-Commit-ID:     6dca724d61a1d10f772dcd06948c30ceca027069
-Gitweb:        https://git.kernel.org/tip/6dca724d61a1d10f772dcd06948c30ceca027069
+Commit-ID:     12c94f694e53b1bf105c56af4b800a32f1b0b10a
+Gitweb:        https://git.kernel.org/tip/12c94f694e53b1bf105c56af4b800a32f1b0b10a
 Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
-AuthorDate:    Fri, 14 Jun 2024 12:23:40 +02:00
+AuthorDate:    Fri, 14 Jun 2024 12:23:41 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Sun, 23 Jun 2024 15:07:57 +02:00
 
-irqdomain: Fix formatting irq_find_matching_fwspec() kerneldoc comment
+irqchip/imx-mu-msi: Fix codingstyle in imx_mu_msi_domains_init()
 
-Modify the comment formatting in irq_find_matching_fwspec function to
-enhance code readability and maintain consistency.
+Fixes the coding style of irq_domain_create_linear() call within
+imx_mu_msi_domains_init() for better code readability.
 
 Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 Signed-off-by: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20240614102403.13610-2-shivamurthy.shastri@linutronix.de
+Link: https://lore.kernel.org/r/20240614102403.13610-3-shivamurthy.shastri@linutronix.de
 
 ---
- kernel/irq/irqdomain.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-imx-mu-msi.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index aadc889..8475b83 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -438,7 +438,8 @@ struct irq_domain *irq_find_matching_fwspec(struct irq_fwspec *fwspec,
- 	struct fwnode_handle *fwnode = fwspec->fwnode;
- 	int rc;
+diff --git a/drivers/irqchip/irq-imx-mu-msi.c b/drivers/irqchip/irq-imx-mu-msi.c
+index 90d41c1..1dceda0 100644
+--- a/drivers/irqchip/irq-imx-mu-msi.c
++++ b/drivers/irqchip/irq-imx-mu-msi.c
+@@ -222,10 +222,8 @@ static int imx_mu_msi_domains_init(struct imx_mu_msi *msi_data, struct device *d
+ 	struct irq_domain *parent;
  
--	/* We might want to match the legacy controller last since
-+	/*
-+	 * We might want to match the legacy controller last since
- 	 * it might potentially be set to match all interrupts in
- 	 * the absence of a device node. This isn't a problem so far
- 	 * yet though...
+ 	/* Initialize MSI domain parent */
+-	parent = irq_domain_create_linear(fwnodes,
+-					    IMX_MU_CHANS,
+-					    &imx_mu_msi_domain_ops,
+-					    msi_data);
++	parent = irq_domain_create_linear(fwnodes, IMX_MU_CHANS,
++					  &imx_mu_msi_domain_ops, msi_data);
+ 	if (!parent) {
+ 		dev_err(dev, "failed to create IRQ domain\n");
+ 		return -ENOMEM;
 
