@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-226408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FD7913DF9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 22:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7AB9913E00
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 22:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58D9281972
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727F1281C48
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E6318413F;
-	Sun, 23 Jun 2024 20:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151DA1849F4;
+	Sun, 23 Jun 2024 20:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZCw1rxvT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5QXfW4N+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="R1nSITcS"
+Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B55364A1
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 20:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF5C2942A;
+	Sun, 23 Jun 2024 20:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719173695; cv=none; b=i5i5mlSsea/agXFHHRh/mheLg7uybl1S3q9RS4WD013+z9P+58/O4gU/bxv6jKZaLL31cVbAAWZBeWoK18USD6wgarIw549mTwZ6ncvHqfPgXbCL+GhKC8NXiC9bmQkuigyvHonuvv6c87DzQy+FMi+u9Mp2MwQsUeOBB5A2EYY=
+	t=1719173887; cv=none; b=tn4wedXl3H1Zxk537XqiLUaLFSoc07H9KsS/W2u5JGL6rqg/wP9VPBDt1ehsFXXUCyj2+ILw7AJcX8BsI5u8n2tOaTaxJYUz524hhx7AyRt583Bp/pbX8FIAh0SnvD/cSTCTew70e42zPH57Tun8LYGn5VSAgu7YJAz+2z+8p/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719173695; c=relaxed/simple;
-	bh=ufcNYYAl64+y2wY1JCwO22hGdMgHakY6gmp+TxT3GP4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kP24xeAFjtNWd4RorCSIxHQdpwcBhgmQCZD/F+plC/jNAmoVm0Jf7CkxbJdhVpcUdVOr72vbyB230vt1tLCgBPUGxk1sIQkLbHmg7EeQ5iGodekAUfwi3nzBYds9034dQnDmvVCopRBnSiOXjS3D80oM9nJR5cENU9SUBoCmkyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZCw1rxvT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5QXfW4N+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719173691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KrIQQKdEMsIMapJpoUVOGPyFQNogkWNt13z5mBEumyw=;
-	b=ZCw1rxvTdPa3WQOv8NbvOVrKO2zYENwn78OMJxz2u0Mu8ABx19xFXpA80E9TxRQh7zNr+m
-	sYTZOjyU1GFSKt+GgR0QUc9UmdL+gEy46YTUgU8TGL6uPLLA8IzlNsvBCX4/6GRNPJ2wVP
-	DN45M1hW1CGDH9Fol+1IdwcfCpeu3sQtQ6BF+79vGk0UchaGN84Im2egQ8zQjtd/qb5D0m
-	vT1SclpEwYd0QZ0iLof7W0WkozeHarSl8LHX1WHgjJtA0FeKFC/VAvelfX3+LBre/5WiWp
-	o4wFDP/Ih8ZQPMalva/u2VmkKIkvTcwaGH678dFiY8yqwTGqCibsYDhkoSIVHA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719173691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KrIQQKdEMsIMapJpoUVOGPyFQNogkWNt13z5mBEumyw=;
-	b=5QXfW4N+7tXqdvaO0xlCE/I+T5ff1eBhFKQ/Wv5RvN8L8oaqVfBawylEakVVte+JTVjBev
-	QYsV3aX1NVTIhVBg==
-To: Michael Ellerman <mpe@ellerman.id.au>, "Nysal Jan K.A."
- <nysal@linux.ibm.com>
-Cc: Tyrel Datwyler <tyreld@linux.ibm.com>, Michal Suchanek
- <msuchanek@suse.de>, "Nysal Jan K.A" <nysal@linux.ibm.com>, Nicholas
- Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Peter Zijlstra
- <peterz@infradead.org>, Laurent Dufour <ldufour@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Skip offline cores when enabling SMT on PowerPC
-In-Reply-To: <875xudoz4d.fsf@mail.lhotse>
-References: <20240612185046.1826891-1-nysal@linux.ibm.com>
- <875xudoz4d.fsf@mail.lhotse>
-Date: Sun, 23 Jun 2024 22:14:51 +0200
-Message-ID: <87ikxza01w.ffs@tglx>
+	s=arc-20240116; t=1719173887; c=relaxed/simple;
+	bh=koTW1bjA1a9oAxMZpxUhrR3inpN0GPQlJzFSBe7Xi0w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F12ii5h/kJimL3WmB71Tck69pcyEMtVXdFW7bTqAJIaoqrteNqOq3uUyJfRk+4l/90nVFRS2JrkuHGtSa01LHJzohUN/Gaio/gd3txRzkot4JbJ0L1Zdu6zkQsZhleRvQu+TBmG3H6+2OFl7HtGgAg3KbZ/hHLl8FnGB9eXc6Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=R1nSITcS; arc=none smtp.client-ip=193.252.23.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id LTewsvUU7pvrRLTewsHEGZ; Sun, 23 Jun 2024 22:18:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719173882;
+	bh=vjKEKLJ4aTNVXrDQtXkP8NbnrYFTSZ12qcOr1kgquxA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=R1nSITcSwGpOJgtYU32P2hM5+8aV+JwIBCxmZkdhCwCK7CcguvpEZc/jS8K1MqOzq
+	 fhY17kvECGOPwInMkbLceSBrMcVsFQRos/SQOz92QMko63KQMgQjNdsg1P93lj+mWk
+	 ZVK2KU7Zo2Su/Lj3Vk4j5xOZcQW4lEWdKDOaBGz4+kpdgiT8aHYjc+DhsSuTkhGzXC
+	 B8cbNJx0Knh4d0HHVkT4Aie8HKC0KGOjPOVZOnzTyHy2OwShXjLOz0gWayjltEgB9v
+	 wOMRyR6CuRjHRgrPzC60GmwffMikN0k9oP2XoUjHNs37W1BMIaoy8g1Dwkdptqgf4P
+	 CT8XJlo+Pw/Hw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 23 Jun 2024 22:18:02 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-raid@vger.kernel.org
+Subject: [PATCH] md-cluster: Constify struct md_cluster_operations
+Date: Sun, 23 Jun 2024 22:17:54 +0200
+Message-ID: <3727f3ce9693cae4e62ae6778ea13971df805479.1719173852.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Michael!
+'struct md_cluster_operations' is not modified in this driver.
 
-On Thu, Jun 13 2024 at 21:34, Michael Ellerman wrote:
-> IIUIC the regression was in the ppc64_cpu userspace tool, which switched
-> to using the new kernel interface without taking into account the way it
-> behaves.
->
-> Or are you saying the kernel behaviour changed on x86 after the powerpc
-> HOTPLUG_SMT was added?
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-No. The mechanism was always this way. Only offline nodes have been
-skipped. x86 never checked for the core being online.
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  51941	   1442	     80	  53463	   d0d7	drivers/md/md-cluster.o
 
-> It's only x86 and powerpc right?
->
-> Having different behaviour on the only two arches that support the
-> interface does not seem like a good result.
->
->> What is the expected behaviour on x86 when enabling SMT and certain cores
->> are offline? 
->
-> AFAIK no one really touches SMT on x86 other than to turn it off for
-> security reasons.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  52133	   1246	     80	  53459	   d0d3	drivers/md/md-cluster.o
 
-Right. So changing it not to online a thread when the full core is
-offline should not really break stuff.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/md/md-cluster.c | 2 +-
+ drivers/md/md.c         | 4 ++--
+ drivers/md/md.h         | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-OTH, the mechanism to figure that out on x86 is definitely different and
-more complicated than on power because the sibling threads are not
-having consecutive CPU numbers.
+diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
+index eb9bbf12c8d8..c1ea214bfc91 100644
+--- a/drivers/md/md-cluster.c
++++ b/drivers/md/md-cluster.c
+@@ -1570,7 +1570,7 @@ static int gather_bitmaps(struct md_rdev *rdev)
+ 	return err;
+ }
+ 
+-static struct md_cluster_operations cluster_ops = {
++static const struct md_cluster_operations cluster_ops = {
+ 	.join   = join,
+ 	.leave  = leave,
+ 	.slot_number = slot_number,
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 69ea54aedd99..8221c9b641ab 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -85,7 +85,7 @@ static DEFINE_SPINLOCK(pers_lock);
+ 
+ static const struct kobj_type md_ktype;
+ 
+-struct md_cluster_operations *md_cluster_ops;
++const struct md_cluster_operations *md_cluster_ops;
+ EXPORT_SYMBOL(md_cluster_ops);
+ static struct module *md_cluster_mod;
+ 
+@@ -8539,7 +8539,7 @@ int unregister_md_personality(struct md_personality *p)
+ }
+ EXPORT_SYMBOL(unregister_md_personality);
+ 
+-int register_md_cluster_operations(struct md_cluster_operations *ops,
++int register_md_cluster_operations(const struct md_cluster_operations *ops,
+ 				   struct module *module)
+ {
+ 	int ret = 0;
+diff --git a/drivers/md/md.h b/drivers/md/md.h
+index c4d7ebf9587d..e394e5bd39fc 100644
+--- a/drivers/md/md.h
++++ b/drivers/md/md.h
+@@ -849,7 +849,7 @@ static inline void safe_put_page(struct page *p)
+ 
+ extern int register_md_personality(struct md_personality *p);
+ extern int unregister_md_personality(struct md_personality *p);
+-extern int register_md_cluster_operations(struct md_cluster_operations *ops,
++extern int register_md_cluster_operations(const struct md_cluster_operations *ops,
+ 		struct module *module);
+ extern int unregister_md_cluster_operations(void);
+ extern int md_setup_cluster(struct mddev *mddev, int nodes);
+@@ -931,7 +931,7 @@ static inline void rdev_dec_pending(struct md_rdev *rdev, struct mddev *mddev)
+ 	}
+ }
+ 
+-extern struct md_cluster_operations *md_cluster_ops;
++extern const struct md_cluster_operations *md_cluster_ops;
+ static inline int mddev_is_clustered(struct mddev *mddev)
+ {
+ 	return mddev->cluster_info && mddev->bitmap_info.nodes > 1;
+-- 
+2.45.2
 
-So I'm not sure whether it's worth to make this consistent and I
-definitely can live with the proposed patches.
-
-Thanks,
-
-        tglx
 
