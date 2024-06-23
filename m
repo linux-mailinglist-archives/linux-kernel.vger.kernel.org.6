@@ -1,104 +1,122 @@
-Return-Path: <linux-kernel+bounces-226064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6709139B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:50:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BBE9139B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FEE81C20922
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:50:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C4901F220D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC74376E5;
-	Sun, 23 Jun 2024 10:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D5A12EBC6;
+	Sun, 23 Jun 2024 11:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2S7qlu3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2yLDd/O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE35C12F382;
-	Sun, 23 Jun 2024 10:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4C82F25;
+	Sun, 23 Jun 2024 11:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719139842; cv=none; b=Io8aDaCpy6i5E9hPyk4C+5CG4LYLB5v26nLEw1WIoIQlSB8b7jGp3661pSBHb9/ljluU1QpIpOcEjHJVHQkmL/88Mbl+P4EoapYrJJBHluPDQ7bib5Vzy0sTXC5+pB1VB6v+L1VKrq7WTd0kme9gPX587rBbmSabdWvZOEZ/ir4=
+	t=1719140458; cv=none; b=nLnCUOYoJPsZXKnzmEKrDvuFBOzq/PJWe68wiTiQZOzF0YbY0aD7By5wfOlsCqyqL6zryidWk3p39VtBkU7OHLec/+ZhwLUsqiFrWXgzrtQwNJsQPQaykwGsQlEhcwthubE3sm8TwpL4CQo7zR4vZL7oQWxKdc9oQg8yITWfDbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719139842; c=relaxed/simple;
-	bh=grPOM/66C5Tp9I6T/5h0ot+1gowEnfIrnQhgoqZJR5I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FReRRzQBHjH2nO79yhVIWUDxNSmel0g7mwN8p/JSQNWvU+5H6ho5Mhmt1NRD09XHeqG5CkUx+aU5rfl3rJmq9mdQRCyAiRqVW4/N/M155CFwwHaHipLZvxnkIugNPmaoGDksSD7YU5Dv4a+sojb5OHe066MhgLoydyzQGo5ek/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2S7qlu3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78BE6C32782;
-	Sun, 23 Jun 2024 10:50:39 +0000 (UTC)
+	s=arc-20240116; t=1719140458; c=relaxed/simple;
+	bh=s9ktlOk5rgXLTV0qoIMyyFh2wcN/yDHTrOkU07p8qIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kxQmK4Fqez/9uO1OeLRmguO6IYKJV2gMRR2PgpNcyfY9znDTDrvUocksN7p88ZzEMDJafqREhG0iUxku93jQkFVpZynABLeg57ejUxdSKNj1Cozp1FU2xNu8HbbpNDd8t+JplorPv2nnQwMMXbgVaIEkcJVArJ92RYGPNSpsgSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2yLDd/O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90DADC2BD10;
+	Sun, 23 Jun 2024 11:00:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719139841;
-	bh=grPOM/66C5Tp9I6T/5h0ot+1gowEnfIrnQhgoqZJR5I=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=p2S7qlu3JCIJ8mqEmvlorFhX/y2waM/XGh1LFTg9gJmmzesDOjxMYmW4zt6t6264H
-	 evkOBYkljxOCiRs6SFJZJ+1tA0q+ZYSRxSgWIE0bX2u7j3DjPabfFGs9Gps+VYBPby
-	 rBGTS/kgWSCEce3ViLJSWc7RYLyDD2LOYCjvXhEfqoH+ZhRN3VROy1sD/FKrn94ghW
-	 h8G3PEJzxpnpLzzVuGBN0bu/f184pJ1ucVR/ipymZy2JntW5oO2jxFx3f9Nf0s/DAk
-	 1V7K6GWNPP0Re/FY/DyvFXI0T2iD/Z2T1TXO/dnsZHxsVSPHemAnMfqL1rqrRsBopO
-	 gT8DkCo5w8puQ==
-From: Mark Brown <broonie@kernel.org>
-To: Markus.Elfring@web.de, perex@perex.cz, tiwai@suse.com, 
- Hao Ge <hao.ge@linux.dev>
-Cc: shenghao-ding@ti.com, colin.i.king@gmail.com, gehao618@163.com, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Hao Ge <gehao@kylinos.cn>
-In-Reply-To: <20240617020954.17252-1-hao.ge@linux.dev>
-References: <82283abf-10b1-4095-a93f-112ba8aca483@web.de>
- <20240617020954.17252-1-hao.ge@linux.dev>
-Subject: Re: [PATCH v2] ASoc: PCM6240: Return directly after a failed
- devm_kzalloc() in pcmdevice_i2c_probe()
-Message-Id: <171913983921.13532.13655190308269903686.b4-ty@kernel.org>
-Date: Sun, 23 Jun 2024 11:50:39 +0100
+	s=k20201202; t=1719140458;
+	bh=s9ktlOk5rgXLTV0qoIMyyFh2wcN/yDHTrOkU07p8qIs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h2yLDd/ObKLK12CpZE+wCyc83k4+iC7iWie8ZvuVhUdnU7Fe16L7C8I3+Gp6s/1HL
+	 5il8b9FaQQ07DICugKEJM4samgCSFJQu+SzeFw5rk8lU6dQZzk+aMnED/F5EENV/Bs
+	 3PL9nqmizHh2VT1Mbm/Qg7tck49K88t0jJecEaInpgHzJ3L0n5ZHr4WlOJITe5jOsY
+	 t2UpAoHgPRAnuTZ3KbriSd7ZXGz1xPJfqddKzSALYc9iIKMW4rbqiiHfvGC4ALdkh+
+	 QI9Nxxnc4L11mGK2XGLcwckULHIaTJLj0R9zGOC7lQ3Q6w8fBuq83vyDAre2MzDraq
+	 +uXf3R1e9/+sw==
+Message-ID: <880ac2b8-c2d0-4d62-a723-5353588ce3ae@kernel.org>
+Date: Sun, 23 Jun 2024 13:00:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14-dev-d4707
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: arm: qcom: Add msm8916 based LG devices
+To: Nikita Travkin <nikita@trvn.ru>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20240623-msm8916-lg-initial-v1-0-6fbcf714d69b@trvn.ru>
+ <20240623-msm8916-lg-initial-v1-1-6fbcf714d69b@trvn.ru>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240623-msm8916-lg-initial-v1-1-6fbcf714d69b@trvn.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Jun 2024 10:09:54 +0800, Hao Ge wrote:
-> The value “-ENOMEM” was assigned to the local variable “ret”
-> in one if branch after a devm_kzalloc() call failed at the beginning.
-> This error code will trigger then a pcmdevice_remove() call with a passed
-> null pointer so that an undesirable dereference will be performed.
-> Thus return the appropriate error code directly.
+On 23/06/2024 11:26, Nikita Travkin wrote:
+> Add compatible values for the msm8916 based LG smartphones.
 > 
-> 
-> [...]
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 2 +
 
-Applied to
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoc: PCM6240: Return directly after a failed devm_kzalloc() in pcmdevice_i2c_probe()
-      commit: 3722873d49a1788d5420894d4f6f63e35f5c1f13
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Best regards,
+Krzysztof
 
 
