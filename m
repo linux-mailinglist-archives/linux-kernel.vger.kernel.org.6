@@ -1,61 +1,55 @@
-Return-Path: <linux-kernel+bounces-226334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABE1913D2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:22:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E51913D2F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE29F1F232B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F6E1F231E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E93183093;
-	Sun, 23 Jun 2024 17:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1785C18410F;
+	Sun, 23 Jun 2024 17:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUDRwJn+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3SjiZTY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE51836E2;
-	Sun, 23 Jun 2024 17:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD771836F5;
+	Sun, 23 Jun 2024 17:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719163309; cv=none; b=UqUlWQlL0v3XQ2bTbZGQ+Gj69k2H5h488dFgublIVoJunvDEePbngyQHAkbMOWiY1yWDp43Gs82eih/bFmL6HZoOy3gYd8Wo10N6lWvbfyUjDuEIyBN/uIQgaZQtW6blSFS59H/tkjFPfpJBPjKjHTpsQUvIle5fU3fr9MbCwaE=
+	t=1719163311; cv=none; b=afFGelDfXk4RoErgHxNukWUGAwncjCE4LAhW5mEtdox5V4W1CXbJXk/h6crZ5EY9z+dTLxVD+H9ufQA9u5O89tDfWIvJApauaeDFpndU8S5oyrG7eJM5MClwnt3v2S47diejU9PickEVsBIfVZaUfTXn+aF10jgfg2gyO7YGSJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719163309; c=relaxed/simple;
-	bh=hqHsU/ytros7zlMhVXXRaDb8uWaZIiY2BwlJTdGlQi0=;
+	s=arc-20240116; t=1719163311; c=relaxed/simple;
+	bh=Forj5XhRH3uV4vJJQYS/LVUyREwgZsaM1YGmaz5sfQg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lzgQ7rUtAtt9U4nL1XdPvs9flwFcAl1pL9dB7QGs9LddAKdBZ5Ia7gV5wPXtqhZIWxmcKQPye4+oJvT3VXGLtAYOhtSOLKzsf3I4kuLgHJp5qNMTRDEx+RJYZmZV6OShX3G/grQ5c80Gvif3icdGjuyQVq0PAp+SuWkmPoPLlYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUDRwJn+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84CB9C32786;
-	Sun, 23 Jun 2024 17:21:45 +0000 (UTC)
+	 MIME-Version:Content-Type; b=jpQOove2i/PtoM0qW86HSUxs634p7gSk+EO2cMeczqTvGb3Z0PcwWmigBy9wr6jGuwWo0pWl/6xvjZRtcms7kU7DcN5wKYO+iYng0SduFBKmlf/NwhF8Dw6Kf6ojvM1yUBJ2bU7XbITercZiSLYnceqrsDLT5shrBSyiaowfguA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3SjiZTY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D533C2BD10;
+	Sun, 23 Jun 2024 17:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719163309;
-	bh=hqHsU/ytros7zlMhVXXRaDb8uWaZIiY2BwlJTdGlQi0=;
+	s=k20201202; t=1719163310;
+	bh=Forj5XhRH3uV4vJJQYS/LVUyREwgZsaM1YGmaz5sfQg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RUDRwJn+ir7NGPEFmk3ra3S/+A1uMRkOSuavbEo0zJkzbZxXb1VAHprHB27Si7t51
-	 L4R971MZWLsJJ6iUBzx2GujCIHLVjstNoboNvuaIGUzWBdZtFhWkRDPvVBhDk1EyGW
-	 nf/FJXkq9+00ewfzo09PuoNRTRWkYOKx1T93cer79rlvuBkJyiKaUDrfgWgXDEZEcD
-	 MLnW0NZNgGfEFS+s5npUEDR4oIMI3CA37tR0SBZfWi/b35wifp8x6MsbP2uLQyxXA2
-	 H99H8s8RvcQEvf3MQ6C/jP0qF5yY5V8Z81JP8SPsZn0sTEi01hWcEwCmXFwaIlYlDl
-	 h62TZT4NUxfLQ==
+	b=p3SjiZTY9vSSQhiRynn+3++nSIt9JrU5+9sbXsi5hbOH9iQ/P33zsCa5XXQy4D9NQ
+	 remTyo5SzzDimPpXgp0GdgDfYrWhfGf66ChjPI4IZoWf363cNtgpy/VPG1jFBTQYB+
+	 zszRnG0e8vxs1FI3oq0Sr2+yWU4UDWyubH1ODmfFOmmlLZl+jX/nvSoiT5fTFzIn5D
+	 kYngjln+Kh09QTyl1D8qcSufi/i9op8+lXAIH/7BktrQ+lwloo4TGL9cwaihcCIEiA
+	 ieIl6TMVjg7xK0t6AuQSdLZ/4taaGLxGqt9GGqZEdmHvyVKLViMQTzB0a08IZHtS8w
+	 gRdadcJiuUGDw==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
- Baojun Xu <baojun.xu@ti.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Ricard Wanderlof <ricardw@axis.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Ricard Wanderlof <ricard.wanderlof@axis.com>
-Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@axis.com
-In-Reply-To: <20240607-tlv320adc3xxx-micbias-gpo-v3-0-59dbec8b98f4@axis.com>
-References: <20240607-tlv320adc3xxx-micbias-gpo-v3-0-59dbec8b98f4@axis.com>
-Subject: Re: [PATCH v3 0/2] tlv320adc3xxx: Allow MICBIAS pins to be used as
- GPOs
-Message-Id: <171916330513.350242.3221156381590082355.b4-ty@kernel.org>
-Date: Sun, 23 Jun 2024 18:21:45 +0100
+To: srinivas.kandagatla@linaro.org
+Cc: perex@perex.cz, lgirdwood@gmail.com, alsa-devel@alsa-project.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ krzk+dt@kernel.org
+In-Reply-To: <20240606104922.114229-1-srinivas.kandagatla@linaro.org>
+References: <20240606104922.114229-1-srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v3 0/4] ASoC: qcom: display port changes
+Message-Id: <171916330923.350242.338813871607705802.b4-ty@kernel.org>
+Date: Sun, 23 Jun 2024 18:21:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,19 +60,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Fri, 07 Jun 2024 17:22:03 +0200, Ricard Wanderlof wrote:
-> In some cases, depending on system design, the MICBIAS pins on the
-> chip are not needed as such, but a couple of extra GPIO pins would be
-> useful. This patch allows the MICBIAS pins to be configured in the
-> device tree as general purpose output pins, controlled via the GPIO
-> framework.
+On Thu, 06 Jun 2024 11:49:18 +0100, srinivas.kandagatla@linaro.org wrote:
+> This patchset adds support for.
+> 	1. parse Display Port module tokens from ASoC topology
+> 	2. add support to DP/HDMI Jack events.
+> 	3. fixes a typo in function name in sm8250
 > 
-> Owing to their originally intended purpose there are some limitations:
-> when the MICBIAS pins are deactivated, they will float, so will likely
-> need a pulldown in many applications. When activated, they will
-> assume the voltage specified by the micbias1-vg and micbias2-vg
-> properties, respectively, meaning that the resulting output voltage
-> will be 2.0 V, 2.5 V or AVDD .
+> Verified these patches on X13s along with changes to tplg in
+> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/tree/topic/x13s-dp?ref_type=heads
+> and ucm changes from https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/topic/x13s-dp
 > 
 > [...]
 
@@ -88,10 +78,14 @@ Applied to
 
 Thanks!
 
-[1/2] ASoC: dt-bindings: tlv320adc3xxx: Add MICBIAS-as-GPO properties
-      commit: 4e617f0cb2dd9675a3b2707c10d89f0f5303ad1e
-[2/2] tlv320adc3xxx: Add support for using MICBIAS pins as GPO
-      commit: 6c01001414ce477311d872c40e23dfec4866d608
+[1/4] ASoC: qcom: q6dsp: parse Display port tokens
+      commit: 6d620e50bb055e072c8c50cf95cd397fc24378c2
+[2/4] ASoC: qcom: common: add Display port Jack function
+      commit: 735db4ea16caaebf8e4884ec0c2e419c96391ac8
+[3/4] ASoC: qcom: sc8280xp: add Display port Jack
+      commit: 7e815bb9abd16f99c987987242a9fe13dfa0f052
+[4/4] ASoC: qcom: x1e80100: Add USB DisplayPort plug support
+      commit: 24790a3cd1bdc083f9989f2fdb223f6494ebc99c
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
