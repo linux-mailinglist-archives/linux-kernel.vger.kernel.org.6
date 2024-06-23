@@ -1,118 +1,207 @@
-Return-Path: <linux-kernel+bounces-225930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 241A99137A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 06:35:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D820A9137A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 06:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0EE71F21FDC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 04:35:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF9F28330F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 04:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E9D179B2;
-	Sun, 23 Jun 2024 04:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8121A28C;
+	Sun, 23 Jun 2024 04:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dQOnNuir"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R6lODbS3"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7857C38B;
-	Sun, 23 Jun 2024 04:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26A7D518;
+	Sun, 23 Jun 2024 04:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719117307; cv=none; b=ek5Tn5GD3PZuTcsVdZ1rvbBi11aprZ8kwTWVQzbQCnu/zVPaeEKOEQnUuo/GZ5/lE1IW6QR9oOH7FoCo1Wm1Q8YV2VIdWcnXTRbPN0deJQFJJ4XWsImEnDZQyrZZzslEmkje89lL3YQu9/o9F7+6PihKd62RFrIbEuWfUWYOT7Y=
+	t=1719117564; cv=none; b=q9Nt1LAB0dEOTrmb5mrLaHZU7jLrHXsEURw6Nu19vfxaWz4gclLkzVPBLl7lUsAvCaMw/D7xNpfj/bFKAJnXy/7e3o5tbDRSeQMj5FbltHrmHqrCPzs+WAuyJjGwTpS8TDr5R1G5mzgGUlc8fLgON/bNtauLK33mkqP2fK1t3Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719117307; c=relaxed/simple;
-	bh=x2/i2mDMDWuFx0aYELfA/M4ZaXwnc6/oI0MDKQHto3A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=PtbS7ArHyTzIYUMbVhpAKwhc0bLdHG45r9aNKYpTLMgCWLZi5ktu7+ukELIinup0LMQG0bagtfVAXWji2Ec1Innsg68ytrs0RP1HjpJSCobnayWNbVvKJmUIn0aIcQjdHiEmY1aS+CnEel04EyBZHL6bT/1UZg9gnKlA4wJMqJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dQOnNuir; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45N2Ue3P013657;
-	Sun, 23 Jun 2024 04:34:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=64E+NkOOnR1B+78MYqKrSn
-	noPyxZl9GmnOyi76daGq4=; b=dQOnNuirD71iD7baiOJ7THsd9k1dtBQl+YO85d
-	ViOJ7J4gZwGjaFNlGKBKI4xASvUmNAPg7QOTXRiQDJ3pzm+2fWzWfnNs+VeNogke
-	dN6RrgPzueN8Xeufm7FQkcQX7inWh9geVlKhtji92D1xkQI97gQcMmpl9SlASiGT
-	xJbDBdsfgN1wv3cqZNsZHEyuE4wNgvinI0F/RPefTQhLnq9MZYXVzYiipF5wEGUs
-	KzfYeq+uongSspeGktQiRxk4oHbBWyQcdxQvV9nurJTs4wqKNBhDJ+6JEvifolGW
-	8xI2g1cqXVaeBnT33eOo7DmJNp0wl3JripJ+hkr2lDtBdPwQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywq0719pa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 04:34:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45N4Ypdd030837
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 04:34:51 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 22 Jun
- 2024 21:34:50 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 22 Jun 2024 21:34:48 -0700
-Subject: [PATCH] arm: kprobes: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1719117564; c=relaxed/simple;
+	bh=EKy19ZjGn/aS+LlJEXMy4mVOfboYhqedqM97sjJR2xU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lcgQdHAt2Hc7XLYzBgj+EBsQpa8+qUeKD71y6mzFSJotl932rRsimkjFWZ/Ap5xxHGgKxUBlJsG228OQwVwLqk14joQ6uD1pW6KanjmCtAlacucrfRq+qPEzAG+p8XvLxLu1FnHrNZ8Q/WzfVi9h9S9nUjD6m+4NGRyqlYr9zcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R6lODbS3; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f9cc1d7379so662835ad.1;
+        Sat, 22 Jun 2024 21:39:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719117562; x=1719722362; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8PnQ01roy4700N+vwuQEr8zP1UPIft7myTscZi49+x8=;
+        b=R6lODbS3T39Ws+beurS7EirmOTPa4LSeR45JNrCxqiwlNuOiOM/AEpJuxZMJV+PBNy
+         QtqLf0IIjU5cny3qYmTBxhbHZh57VCwN/uETp9BqQGxyQwXm9vxEBAcjuxxnkLFWjZLX
+         vovliMhS8oWtSvKgkSbc5NZobYwhyAZjdvh7DIynLWLHQ1iemV7KHaqyNVceEwgCfxS+
+         BM3wQ0e24v0QJJbzhAl0NkQt1yvHu1pZLuQewWcI+vYk3mNFnO26qMEupl66HM8UpJuJ
+         mYT/oCy3z9G2tWiH907OVpkNhcDtXciUAyZ7jIquoLPJEYZO2qjoVC+vVG3RtukRDNY4
+         rApg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719117562; x=1719722362;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8PnQ01roy4700N+vwuQEr8zP1UPIft7myTscZi49+x8=;
+        b=Lmki24jdqvQcjIuVTua3nC6wileuAX5hh7mvM8OuC+rCe5rYBjyjuyFCj1a4poGKUK
+         keGKPKbo6LhGdZArTMFYfe4H7PIC9D3bcYgHQVURJ2KDQykn0/30Uy1lTaEpWPofzUQs
+         jmO6EBlOhAUNb3LMR4pOIDaDMPeWL7yBDDNuY0/bUpVF2VtuKPvRrgA2LoyuiOSnnrYd
+         RoHLnYYb0tcUfL0pHOnpbRwOwmC34wtpyyq0B4vhXHSR/yOTA6yrbcZ+V+v2DGytVu3D
+         E6VqWg/CQ2bfePMf+YHDcip3zPnwISQikdif1RtujABbjjpRtPGAQzmWC7JkHm/DiZtq
+         awWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXm7QVWZ8ieD/lLGc+nGVez6M01ZJMXVS++0nQM0qrYCZ8WFZFGlbxe5l2JzuOuYMtU6km0b1/MaLFy7zOoB8HooURvRjq9E2JTEDSyUhEsYFV1Q+0bcl9TrkVyCPtnCPf3UP8HPLnYbX9rEYVKAYCcGJ+AQ2S486A3zuLCViqo
+X-Gm-Message-State: AOJu0YwxyZh88QfYu1c91LnmYPyWvtrOor9Jro39Bl8wQBOZGr1AAwcQ
+	uCaV4Y/3rXz8QAJg7vjfi/2NIgeqP9y5f1Y52p7nZdZaVTK6HXiLgX6cLhzrPraeICLQZ1Oqu2Z
+	aqW5U4gdPeF50azeUHWwH0ONQNew=
+X-Google-Smtp-Source: AGHT+IEuu0QwsdejhKfPShJWJoz+ec41/6FyOZ32R9rp5sOVmGlXuGGSg68xJZLuEm99D/3jKPARtKqtkdMXQmY2yuY=
+X-Received: by 2002:a17:903:234a:b0:1f9:b35f:65dc with SMTP id
+ d9443c01a7336-1fa0d832226mr33410285ad.6.1719117561784; Sat, 22 Jun 2024
+ 21:39:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOeld2YC/y2NSw7CMAxEr1J5jaWQVPyugrpwUkMsaFrZgCpVv
- TuhYjGaeZs3CxirsMGlWUD5IyZjqbDfNZAylTuj9JXBO9+6g/c49Eg61KS8jUnHyIaPf4fWhaM
- 7n8inAFUyKd9k3g6uXeVIxhiVSso/7VPKe8aB7MUK6/oFhcbTjo8AAAA=
-To: Russell King <linux@armlinux.org.uk>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Oc94u13o8bpKUFBewIOZl0vcx75mtEkv
-X-Proofpoint-GUID: Oc94u13o8bpKUFBewIOZl0vcx75mtEkv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-22_19,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 phishscore=0
- mlxscore=0 spamscore=0 mlxlogscore=964 adultscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406230034
+References: <20240619054808.12861-1-ki.chiang65@gmail.com> <2024061903-shadow-pesky-1205@gregkh>
+In-Reply-To: <2024061903-shadow-pesky-1205@gregkh>
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+Date: Sun, 23 Jun 2024 12:39:10 +0800
+Message-ID: <CAHN5xi2qy666O_SBkGb2SadRyPFPaxsk5HFH01bgSZTy05R6Sw@mail.gmail.com>
+Subject: Re: [PATCH v2] xhci: Don't issue Reset Device command to Etron xHCI host
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes/test-kprobes.o
+Hi Greg,
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Greg KH <gregkh@linuxfoundation.org> =E6=96=BC 2024=E5=B9=B46=E6=9C=8819=E6=
+=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=882:15=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Wed, Jun 19, 2024 at 01:48:08PM +0800, Kuangyi Chiang wrote:
+> > Sometimes the hub driver does not recognize the USB device connected
+> > to the external USB2.0 hub when the system resumes from S4.
+> >
+> > This happens when the xHCI driver issue the Reset Device command to
+> > inform the Etron xHCI host that the USB device has been reset.
+> >
+> > Seems that the Etron xHCI host can not perform this command correctly,
+> > affecting the USB device.
+> >
+> > Instead, to avoid this, disabling slot ID and then enabling slot ID
+> > is a workable solution to replace the Reset Device command.
+> >
+> > An easy way to issue these commands in sequence is to call
+> > xhci_free_dev() and then xhci_alloc_dev().
+> >
+> > Applying this patch then the issue is gone.
+> >
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
+>
+> What commit id does this fix?
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- arch/arm/probes/kprobes/test-core.c | 1 +
- 1 file changed, 1 insertion(+)
+Fixes: 2a8f82c4ceaf ("USB: xhci: Notify the xHC when a device is reset.")
 
-diff --git a/arch/arm/probes/kprobes/test-core.c b/arch/arm/probes/kprobes/test-core.c
-index 171c7076b89f..6e9041a76b8b 100644
---- a/arch/arm/probes/kprobes/test-core.c
-+++ b/arch/arm/probes/kprobes/test-core.c
-@@ -1664,6 +1664,7 @@ static void __exit kprobe_test_exit(void)
- 
- module_init(run_all_tests)
- module_exit(kprobe_test_exit)
-+MODULE_DESCRIPTION("ARM kprobes test module");
- MODULE_LICENSE("GPL");
- 
- #else /* !MODULE */
+However, this patch is a workaround for Etron xHCI hosts, should I add this
+in the commit message?
 
----
-base-commit: 563a50672d8a86ec4b114a4a2f44d6e7ff855f5b
-change-id: 20240622-md-arm-arch-arm-probes-kprobes-34037098a2c3
+>
+> > ---
+> > Changes in v2:
+> > - Change commit log
+> > - Add a comment for the workaround
+> > - Revert "global xhci_free_dev()"
+> > - Remove XHCI_ETRON_HOST quirk bit
+> >
+> >  drivers/usb/host/xhci.c | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> > index 37eb37b0affa..c892750a89c5 100644
+> > --- a/drivers/usb/host/xhci.c
+> > +++ b/drivers/usb/host/xhci.c
+> > @@ -3682,6 +3682,8 @@ void xhci_free_device_endpoint_resources(struct x=
+hci_hcd *xhci,
+> >                               xhci->num_active_eps);
+> >  }
+> >
+> > +static void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev=
+);
+> > +
+> >  /*
+> >   * This submits a Reset Device Command, which will set the device stat=
+e to 0,
+> >   * set the device address to 0, and disable all the endpoints except t=
+he default
+> > @@ -3752,6 +3754,20 @@ static int xhci_discover_or_reset_device(struct =
+usb_hcd *hcd,
+> >                                               SLOT_STATE_DISABLED)
+> >               return 0;
+> >
+> > +     if (dev_is_pci(hcd->self.controller) &&
+> > +             to_pci_dev(hcd->self.controller)->vendor =3D=3D 0x1b6f) {
+>
+> Odd indentation :(
 
+Oops, one tab is missing, right? I will modify it.
+
+>
+> Also, that's a specific value, shouldn't it be in a #define somewhere?
+
+OK, I will add a #define near xhci_discover_or_reset_device() in the same f=
+ile.
+
+>
+> > +             /*
+> > +              * Disabling and then enabling device slot ID to inform x=
+HCI
+> > +              * host that the USB device has been reset.
+> > +              */
+> > +             xhci_free_dev(hcd, udev);
+> > +             ret =3D xhci_alloc_dev(hcd, udev);
+>
+> You are relying on the behavior of free/alloc here to disable/enable the
+> slot id, why not just do that instead?  What happens if the free/alloc
+> call stops doing that?  This feels very fragile to me.
+>
+
+These functions are helpers that can be used to enable/disable the slot id
+and allocate/free associated data structures, I think they should be
+called, right?
+
+Or you would like to call xhci_disable_slot() + xhci_alloc_dev(), as in com=
+mit
+651aaf36a7d7 ("usb: xhci: Handle USB transaction error on address command")=
+.
+
+If so, I will modify it and resend this patch.
+
+> > +             if (ret =3D=3D 1)
+> > +                     return 0;
+> > +             else
+> > +                     return -EINVAL;
+>
+> Why -EINVAL?  What value was wrong?
+
+I followed commit f0615c45ce5f ("USB: xHCI: change xhci_reset_device()
+to allocate new device") to return -EINVAL, I think it means running out of
+device slots.
+
+>
+> thanks,
+>
+> greg k-h
+
+Thanks,
+Kuangyi Chiang
 
