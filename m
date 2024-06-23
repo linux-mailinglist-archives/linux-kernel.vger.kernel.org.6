@@ -1,69 +1,75 @@
-Return-Path: <linux-kernel+bounces-226383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A958913D93
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:14:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A649913D95
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EACD8B214B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:14:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA02D1C20D2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B6218410F;
-	Sun, 23 Jun 2024 18:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6FD1836F6;
+	Sun, 23 Jun 2024 18:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XUK5SBPm"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IorWMYak"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823511822E2
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 18:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037A9181322
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 18:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719166479; cv=none; b=XSQMiNa2i92tOAalmUT/6IJGUkdPUcIUoG9WU6oXsYTMrGnnjS8frZgZVeAcs4cn2gnHcO+zt6v5cPJtZhm1Zo3fi4QUyZ8NfwZElbvdZtP9FN+I8Nq/IlLCg5qYegpdcS5U2F8aybRHYKPStOzZ6GbyVXj7+llsOepaqUU6obM=
+	t=1719167136; cv=none; b=tUckFnQgl+J8SLKIZPjNl5+RGofYcmjOeA0p69YM2C0i7VKU3PwJTRDoapLLRWQsSeBWWZT6t1RSxpSuudft/fGch5hrV27Xb8fFAnqL0Gsy2KPD1M5S/deeL9EJfJdGIqluIkoOLqcqc1i8DB80A4xc3uxzfAo8h64vO7SLeNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719166479; c=relaxed/simple;
-	bh=hrw2cWL1A7ev4AhwQWmduHTm6s1CxAkOpYTqIGX8hfs=;
+	s=arc-20240116; t=1719167136; c=relaxed/simple;
+	bh=as/miy1ciTXoov1k9v10YWH2KHSzwtS8c+tFIFA2eEY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kRPE1kNgMdyV/kl+lXyKPhX2ArcJC4TSpX4o8S3RBhXZ5NL8qw0KZklXcbexrhKEMZArxOcPECj9VpdZCXw9Pu7Nxc1tiGrIFZmYTyKIv2R/fBq9hq1yol1RvDADdkeCUQjc3xtwNtC/v3G+4GDTCr0UHCizpory2d61qfJHX3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XUK5SBPm; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebeefb9a6eso38554511fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 11:14:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=IZgvQMzQUM6Ap7C63TkDI2P+k7I5Tb2QucIvMk6479uNjRZ1wWu9NlECTKlnnTmOgnhtvUaPF/fGlrhyN5AfRi5gJUbBRP1x5KkVgdj2ANCqKaqq8HoTFxhF/akQew6Nk/bGfvy8Q/z6H8h2Y+C9WJuRk+QaM1Xg/6+Hoh4rnKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IorWMYak; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec4eefbaf1so23964571fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 11:25:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719166475; x=1719771275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jAmqARKrHui/NaUmZfz82SlsXm+I+AB9Qkw5ktB+JRw=;
-        b=XUK5SBPmZ2LICoxpsDSI4ynCs5tfKg0WbOUs7AzffYDrKwMkVAYPu6PrQG1//qV9zo
-         LNDCOzHpvCmbTlgvwMeRNRtsBLKPtbf71fUsfyVpBWJ/Hh0H6q0k4N4XemAznIgJ4zL+
-         vFzdA+FndEs4Dh+gyEkQhLxEVN2Wy6YcILFtuzQPmUVW4QTXh/a8Q1hPf1MA/7zFpjXu
-         6Np7jrJz9ZNAiOTsthDR9dPi/CUKBH/wv7ZPyE9UY0EavZ5E3o3N89IPSpQHglDQdFyQ
-         mF0qKtwhujTJTAon/JUKt4ullSswSLmhSg8axZtShiQSJvKqdSJLo+LPaZPqVbdImPub
-         w8oQ==
+        d=linux-foundation.org; s=google; t=1719167133; x=1719771933; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zPcDcr9W0nDXx9L0w2Y+uq4Fc6p+RIUkLyrf+Mc+Mfs=;
+        b=IorWMYak8+Y4n5aKwOe7+QwOlBxGxg1rYJJISgUtBfslih7JvuV/19OiECNm9/OHLh
+         MQYfePGCWgn59rO2zv1YEV8Kuvwp+WMYq70d0jJDibvD0StVTfjn1PUJXOSZWwjPg/+o
+         mcn65x477fcssbNFIT2V0ityAfymi4U0ezCIg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719166475; x=1719771275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jAmqARKrHui/NaUmZfz82SlsXm+I+AB9Qkw5ktB+JRw=;
-        b=PdsDLUzqgtPxpkj/Z5mOMMmgX97tD6CaiCLqGyki/52ybVMK4xApyGikkw8JwHZUI0
-         v0PLC3jRG1gfXtP4Gsv4HCSDmLMteI09SJcEEWPLwA5v9TotErZdZAuefMx/Yd8hxgK8
-         HqYRhJkiMDUniKmt5HxGo6/H0TSqlsXjbj57e7ShuRIPk8JflZ/SMKRE5sHEuHF/6vFZ
-         4W0T3HrBsFPsO8jvGzVT1LGgXQPjQTHSnD405AVXwzPRYC8VzlxSQjcT3/L4sZ+SPQaP
-         iYw0Ut5o1gGfHpuSXFDtoKOqcxkF69V63/lcss95/erHSoZ/aSh1c0MzmOa0advMJ09e
-         +jQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWy5zCrW2SQdPuvo6kOR+y2jYayCECpOqyrinFCptmJSVKEQl7abw39rsF8ZVDXZeP0nLRDxoM5tSIdYEqyQqMUONHOS2Z4AsRDnnp+
-X-Gm-Message-State: AOJu0YzKofP6z4D0G+BuTZFCTQCRwhzD7ehDmNqgVesUBUsWEoOsgPGq
-	Ykw1F6gcTvIxY47RC/cMcaZWbBeVqFgeN4YClr995IBSu+6MWQh6hdjQbuzMZJdVvqvsOHNZYqC
-	avRk1Bd56jVbEcwfH7MvJOzn7Th4=
-X-Google-Smtp-Source: AGHT+IFfyeGk4zOz61lEAAHkBgCnNzNpNQ5zKKohl4iOtOMwSULMnFWDfEm5WgxFRuCqdzcbSOjtLA7Gf6alclZRR0k=
-X-Received: by 2002:a2e:9b4b:0:b0:2ec:5921:bb21 with SMTP id
- 38308e7fff4ca-2ec593bea06mr18882271fa.10.1719166475181; Sun, 23 Jun 2024
- 11:14:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719167133; x=1719771933;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zPcDcr9W0nDXx9L0w2Y+uq4Fc6p+RIUkLyrf+Mc+Mfs=;
+        b=VNFN6UZsoUMv/Yva+vauJgANFu9lSfX1ayZravRf4RaOkUYbP6Ef3IruDUWDGJcgPy
+         GRLmbpSeT1udp4I14RLOJ1xSYt9m/CGvgxrB4dFpBAXqRLIUvLpvKJl/Kgcku/kG4ftU
+         dag68YrRuVdbCWrYciYUK8PxkrkVgD3bCMGKb8zRtVVd9daBbvJ1McFZnxCYehXCRCs+
+         74H+tUqeG75BK8xNMWeF6ZbsogMsbEcjZ5hzW5N7RhHT1vie4q6qMpFCw+Q21fnfDj6D
+         7AlY7hziK2UqK3yUD3r7E8rCbQYH/3tT29EapGUHVzsU1i1pk/ZxnjEJ7hvDOwi3LcyR
+         bjfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPDiR99bz3ySVp5pejNvv1mJUY1NawXjBPZlxYAL/iRNXvVxmSCYFBSFRf1h4eIP6ldo9ZhVNAeUtihQgm95DhJwbzlzTmxtpxJR5t
+X-Gm-Message-State: AOJu0YwoB2uD66w9hbL2paLvHjb9TYamfHcjY9TGr2yyQ4f87hhrjDvq
+	ALNvNTp7T3Wp/+mlcnvTkEhQ/FhtQlc8cOvPfb9iwV025kVTfVCBme+rqdlzkKrz18dpy5V9a5g
+	8h6UBog==
+X-Google-Smtp-Source: AGHT+IFYAma+D2QiBq/u/w+Zt9o5zoYMWC9XL6q6smULrqhLzcFTZ4Sc4dkdaGJ70WOh4WvHCWoD5A==
+X-Received: by 2002:a2e:9d88:0:b0:2ec:51fc:2f5a with SMTP id 38308e7fff4ca-2ec5b36b1eamr15479221fa.4.1719167133008;
+        Sun, 23 Jun 2024 11:25:33 -0700 (PDT)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3042d509sm3873019a12.43.2024.06.23.11.25.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Jun 2024 11:25:32 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a725282b926so35971366b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 11:25:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXBFfjWu/TGCjwPANYu6k9ogovalSJcZjmkn16C+jO71Dxhg1CsksanHjuKn59j0w39Tkrw8wOvY3+FgzJ8yFYmxg+or14Eiwtvk3wY
+X-Received: by 2002:a17:906:c0c7:b0:a6f:e3d1:8b2 with SMTP id
+ a640c23a62f3a-a7245c85a3emr178260866b.9.1719167131894; Sun, 23 Jun 2024
+ 11:25:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,75 +78,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <202406230912.F6XFIyA6-lkp@intel.com> <CAFULd4YVOwxQ4JDaOdscX_vtJsqJBJ5zhd0RtXXutW=Eqh29Qw@mail.gmail.com>
  <CAHk-=wg1h4w_m=Op1U4JsyDjsvqG0Kw1EOVMQ+=5GX_XytdorQ@mail.gmail.com>
- <CAFULd4YR-VkAOKiS5yxSUYi0YMzY1p=pkYe4dOkgFs+A=9AFFA@mail.gmail.com> <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
-In-Reply-To: <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Sun, 23 Jun 2024 20:14:29 +0200
-Message-ID: <CAFULd4b43=pTnAMKusJmGCeF1Bk-f6AyeOR8wGM8EieqhuH5WQ@mail.gmail.com>
+ <CAFULd4YR-VkAOKiS5yxSUYi0YMzY1p=pkYe4dOkgFs+A=9AFFA@mail.gmail.com>
+ <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com> <CAFULd4b43=pTnAMKusJmGCeF1Bk-f6AyeOR8wGM8EieqhuH5WQ@mail.gmail.com>
+In-Reply-To: <CAFULd4b43=pTnAMKusJmGCeF1Bk-f6AyeOR8wGM8EieqhuH5WQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 23 Jun 2024 14:25:15 -0400
+X-Gmail-Original-Message-ID: <CAHk-=wgHa_5u71j=Zx4DceTfjaeL2w1RCPPXbpEEL-xCw-J8ew@mail.gmail.com>
+Message-ID: <CAHk-=wgHa_5u71j=Zx4DceTfjaeL2w1RCPPXbpEEL-xCw-J8ew@mail.gmail.com>
 Subject: Re: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
  requires more registers than available
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Uros Bizjak <ubizjak@gmail.com>
 Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
 	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
 	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 23, 2024 at 7:49=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Sun, 23 Jun 2024 at 14:14, Uros Bizjak <ubizjak@gmail.com> wrote:
 >
-> On Sun, 23 Jun 2024 at 13:43, Uros Bizjak <ubizjak@gmail.com> wrote:
-> >
-> > I disagree with the above.
+> I disagree with *I tried to shift the blame to others*! I take full
+> responsibility for my patch, and I'm perfectly capable of fixing the
+> breakage with an alternative approach.
+
+Ah, good. This is something I'm a bit sensitive about, just because
+there's been so many arguments over it over the years, so now I go
+into "preemptive nuclear mode" when the regression issue comes up.
+
+Sorry.
+
+> I'm OK with the revert, but it won't fix the underlying problem.
+> Please see the definition of __arch_cmpxchg64_emu - it forces the
+> address to %esi registers in the same way as __arch_try_cmpxchg64_emu.
+> Effectively, the compiler allocates 5 input registers just for the
+> instruction.
+
+Oh, I entirely agree that this is a "random compiler implementation"
+issue, and then the code around it makes all the difference.
+
+> > Now, from having looked a bit at this, I can point you to the
+> > differences introduced by having to have the emulation fallback.
 >
-> Your disagreement just doesn't matter.
->
-> We don't introduce regressions and then blame others.
->
-> There's a very clear rule in kernel development: things that break
-> other things ARE NOT FIXES.
->
-> EVER.
->
-> They get reverted, or the thing they broke gets fixed.
->
-> This is not debatable, or something you can "disagree"' with. This is
-> how we work, and if you disagree with that, you had better get out of
-> kernel development.
+> Yes, I know this - I also (runtime!) tested the emulation, but with GCC only.
 
-I disagree with *I tried to shift the blame to others*! I take full
-responsibility for my patch, and I'm perfectly capable of fixing the
-breakage with an alternative approach.
+Yeah, crossed emails, I started out just doing the "let's see what the
+config difference is", and only after that realized that I had looked
+at the wrong code for cmpxchg (ie I had looked at the simpler native
+case).
 
-I'm OK with the revert, but it won't fix the underlying problem.
-Please see the definition of __arch_cmpxchg64_emu - it forces the
-address to %esi registers in the same way as __arch_try_cmpxchg64_emu.
-Effectively, the compiler allocates 5 input registers just for the
-instruction.
+> This can be achieved by implementing atomic64_{and,or,xor} as an
+> outline function.
 
-The alternative is to implement atomic64_{and,or,xor} as an outline
-function, in the same way as e.g. arch_atomic64_add is implemented.
-This will avoid the call to __arch_try_cmpxchg64_emu, and the whole
-"instruction" will use just:
+Yes, but then a lot of the whole point of commit 95ece48165c1 goes
+away, doesn't it?
 
-__alternative_atomic64(add, add_return,
-      ASM_OUTPUT2("+A" (i), "+c" (v)),
-      ASM_NO_INPUT_CLOBBER("memory"));
+Or were you suggesting the out-of-line code only for the emulation
+case? That would work.
 
-> Now, from having looked a bit at this, I can point you to the
-> differences introduced by having to have the emulation fallback.
-
-Yes, I know this - I also (runtime!) tested the emulation, but with GCC onl=
-y.
-
-> And I would personally be ok with leaving Pentium etc entirely behind,
-> and getting rid of said fallback, but that's an entirely separate
-> thing that will require much more discussion.
->
-> Some people still wanted to support old 486 clones not that long ago.
-
-This can be achieved by implementing atomic64_{and,or,xor} as an
-outline function.
-
-Uros.
+             Linus
 
