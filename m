@@ -1,325 +1,239 @@
-Return-Path: <linux-kernel+bounces-226069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1553D9139CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:09:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006059139BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 951D81F21967
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:09:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 222C21C20A73
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A75130A4D;
-	Sun, 23 Jun 2024 11:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CE312EBF2;
+	Sun, 23 Jun 2024 11:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SXkGspKZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aj7KS6CL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B949912E1D9;
-	Sun, 23 Jun 2024 11:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B450D2BCE3;
+	Sun, 23 Jun 2024 11:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719140938; cv=none; b=NcQdWfhQ0wUVvzvVKHcMuMYYAOniCGYL7ZNy8zibknmtWsVpSjlB8Qv6qRa3Fa6oWTqboXcIfTwDoKUPHwUBotXkmcUQtdNcw9VCOpCZsuNFeVGKe/aapfclGRjbPCsGT1p6jV3g1dJITd1YrJ+FT2BqEtkkWnc/78E1jggE9kg=
+	t=1719140876; cv=none; b=l3BMhOCSl44FIhXfkQyt1neFKgdHLLCOJm6t7EkLbCjSv4GgrwIqqOFGJO8tIxeCCX11ivzL6kDPBqyBhNbnWV05Lii40r2K+ChlIFbDYnWQCisxUgq9mR9VtmuFNtrHMrYNQYQHKeJA0HlH66yMc2wyWWNEiJz+74FzC8B6XCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719140938; c=relaxed/simple;
-	bh=AbaC89bfPcUUkEhNrK5lm0lZlVeyZjnqfuQgpCpwswI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AVlczF05//o1QyR2bqJuvgrWUL29HcYAvoNR1Wefu63LSnJWVtE6uvKCfETZoJ2i619iSbr+qhhT53buO6UnFHXMxbnW/oT0laezriyt73nR5oOX5MhbDoELnUl+hl4Xe/ywEPKaWEkrij9C0BawR/YyKVMjPdqWCp7rGc0BmAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SXkGspKZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45N9gkbb031988;
-	Sun, 23 Jun 2024 11:08:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o+YN04bh+dr6S0yRdy9Miu5498azv2QgyG8uOsC+FiY=; b=SXkGspKZH3G2Rtdz
-	TJcD/lHZbw2ZAJTDMgTtsvuChOPYes06ft8uFG/MCCYqRI4vvGCGz87LWtTL231D
-	j+TCm16+evQ0hJuzM5hL2cYgrnOtgd2HYFJofp5ZihkbWYu06uTJFLhMJSSi+7p6
-	KCL+UdNZmhYcxf5LbaQ7QqddKaLGt0WB7Xjj1/5U374ESQNxm7KrJUdlbWpWicEw
-	gD8v48+Liim1cATIjivuTIFdzZK9lH+GA5thZDaPilzX11p13Z9LvO514QpYIXWl
-	3W9yHEzhHb1N5eNt1M89PFYObreL5qmmy/AE420lyAypUXsNxiRM3XybZ8BuCCMB
-	0jBOXQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqw99jmf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 11:08:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45NB8p3L024541
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 11:08:51 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sun, 23 Jun 2024 04:08:47 -0700
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: freedreno <freedreno@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>
-CC: Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
-Date: Sun, 23 Jun 2024 16:36:30 +0530
-Message-ID: <20240623110753.141400-4-quic_akhilpo@quicinc.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
-References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
+	s=arc-20240116; t=1719140876; c=relaxed/simple;
+	bh=+M4chnujTGXjSxADVGgYQyDo0ZhysUpMH08sqJDaoIA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DP+B5Kpgv5UTCXQBfC8YQxVTv86BfWGQoKV6AYn8ejfGOZ+G8lgJs6P4YCdBnQrhy4KGQaMNUndsxfqCqAjdQkQT/9TTm4W2p4u06guzafnqW/g2E0vhlwqtpjVcee7xLi23NzHqzUN+9d/kbAJU8yNDX090DWYtcJHkHLkrP2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aj7KS6CL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B726DC2BD10;
+	Sun, 23 Jun 2024 11:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719140876;
+	bh=+M4chnujTGXjSxADVGgYQyDo0ZhysUpMH08sqJDaoIA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aj7KS6CLYgjKAVhpExivrjQ98PXJ8c4eFVrJQ0JRTTnW5AnN9PfbPjqYAp3I3szV8
+	 gLeuBUMMTNQqUMqdgM7r+DClmt02oGIWbfzOIE0TNzPYujhQfqHM63IriO142XKuLx
+	 79hf8O22EoKcJAonpkW7VD5ZTZ8GJ2lm+AJr27bpMG+GwnfBHTv5L3K7t4SClRR6wO
+	 A2kwqWdXl815dH/x5LGqz0aH15Nkgll4/ECCbywslTtKt9yH5eGYIXojqhlJA4HBFH
+	 PrgKNQzr0Oy8KIN4J6dJ2MoZm4+fsPHv5bNZGimj5a/YzLdSuS43+pFqKAskLOkCAd
+	 M4G6y6ZfBc43w==
+Message-ID: <6fcbd97b-4172-48a9-bcdb-3bdf35aba8f7@kernel.org>
+Date: Sun, 23 Jun 2024 13:07:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hzEi2wAtzLqFwCK6ZMpbi6HqhTRfNH1x
-X-Proofpoint-GUID: hzEi2wAtzLqFwCK6ZMpbi6HqhTRfNH1x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-23_04,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 clxscore=1015 impostorscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=999 phishscore=0 bulkscore=0
- adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406230087
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv5 6/9] ASoC: dt-bindings: fsl-asoc-card: add compatible
+ string for spdif
+To: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
+ Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+ linuxppc-dev@lists.ozlabs.org,
+ Philip-Dylan <philip-dylan.gleonec@savoirfairelinux.com>
+References: <20240620132511.4291-1-elinor.montmasson@savoirfairelinux.com>
+ <20240620132511.4291-7-elinor.montmasson@savoirfairelinux.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240620132511.4291-7-elinor.montmasson@savoirfairelinux.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add the necessary dt nodes for gpu support in X1E80100.
+On 20/06/2024 15:25, Elinor Montmasson wrote:
+> The S/PDIF audio card support was merged from imx-spdif into the
+> fsl-asoc-card driver, making it possible to use an S/PDIF with an ASRC.
+> Add the new compatible and update properties.
 
-Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
----
+Please use standard email subjects, so with the PATCH keyword in the
+title. `git format-patch -v5` helps here to create proper versioned
+patches. Another useful tool is b4.
 
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 195 +++++++++++++++++++++++++
- 1 file changed, 195 insertions(+)
+> 
+> Signed-off-by: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+> ---
+>  .../bindings/sound/fsl-asoc-card.yaml         | 30 ++++++++++++++++---
+>  1 file changed, 26 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml b/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml
+> index 9922664d5ccc..f2e28b32808e 100644
+> --- a/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml
+> +++ b/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml
+> @@ -33,6 +33,7 @@ properties:
+>        - items:
+>            - enum:
+>                - fsl,imx-sgtl5000
+> +              - fsl,imx-sabreauto-spdif
+>                - fsl,imx25-pdk-sgtl5000
+>                - fsl,imx53-cpuvo-sgtl5000
+>                - fsl,imx51-babbage-sgtl5000
+> @@ -54,6 +55,7 @@ properties:
+>                - fsl,imx6q-ventana-sgtl5000
+>                - fsl,imx6sl-evk-wm8962
+>                - fsl,imx6sx-sdb-mqs
+> +              - fsl,imx6sx-sdb-spdif
+>                - fsl,imx6sx-sdb-wm8962
+>                - fsl,imx7d-evk-wm8960
+>                - karo,tx53-audio-sgtl5000
+> @@ -65,6 +67,7 @@ properties:
+>                - fsl,imx-audio-sgtl5000
+>                - fsl,imx-audio-wm8960
+>                - fsl,imx-audio-wm8962
+> +              - fsl,imx-audio-spdif
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 5f90a0b3c016..3e887286bab4 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -6,6 +6,7 @@
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,x1e80100-dispcc.h>
- #include <dt-bindings/clock/qcom,x1e80100-gcc.h>
-+#include <dt-bindings/clock/qcom,x1e80100-gpucc.h>
- #include <dt-bindings/clock/qcom,x1e80100-tcsr.h>
- #include <dt-bindings/dma/qcom-gpi.h>
- #include <dt-bindings/interconnect/qcom,icc.h>
-@@ -2985,6 +2986,200 @@ tcsr: clock-controller@1fc0000 {
- 			#reset-cells = <1>;
- 		};
- 
-+		gpu: gpu@3d00000 {
-+			compatible = "qcom,adreno-43050c01", "qcom,adreno";
-+			reg = <0x0 0x03d00000 0x0 0x40000>,
-+			      <0x0 0x03d61000 0x0 0x800>,
-+			      <0x0 0x03d9e000 0x0 0x1000>;
-+
-+			reg-names = "kgsl_3d0_reg_memory",
-+				    "cx_dbgc",
-+				    "cx_mem";
-+
-+			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			iommus = <&adreno_smmu 0 0x0>,
-+				 <&adreno_smmu 1 0x0>;
-+
-+			operating-points-v2 = <&gpu_opp_table>;
-+
-+			qcom,gmu = <&gmu>;
-+			#cooling-cells = <2>;
-+
-+			interconnects = <&gem_noc MASTER_GFX3D 0 &mc_virt SLAVE_EBI1 0>;
-+			interconnect-names = "gfx-mem";
-+
-+			zap-shader {
-+				memory-region = <&gpu_microcode_mem>;
-+				firmware-name = "qcom/gen70500_zap.mbn";
-+			};
-+
-+			gpu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-1100000000 {
-+					opp-hz = /bits/ 64 <1100000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
-+					opp-peak-kBps = <16500000>;
-+				};
-+
-+				opp-1000000000 {
-+					opp-hz = /bits/ 64 <1000000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
-+					opp-peak-kBps = <14398438>;
-+				};
-+
-+				opp-925000000 {
-+					opp-hz = /bits/ 64 <925000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-+					opp-peak-kBps = <14398438>;
-+				};
-+
-+				opp-800000000 {
-+					opp-hz = /bits/ 64 <800000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-+					opp-peak-kBps = <12449219>;
-+				};
-+
-+				opp-744000000 {
-+					opp-hz = /bits/ 64 <744000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L2>;
-+					opp-peak-kBps = <10687500>;
-+				};
-+
-+				opp-687000000 {
-+					opp-hz = /bits/ 64 <687000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+					opp-peak-kBps = <8171875>;
-+				};
-+
-+				opp-550000000 {
-+					opp-hz = /bits/ 64 <550000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+					opp-peak-kBps = <6074219>;
-+				};
-+
-+				opp-390000000 {
-+					opp-hz = /bits/ 64 <390000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+					opp-peak-kBps = <3000000>;
-+				};
-+
-+				opp-300000000 {
-+					opp-hz = /bits/ 64 <300000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D1>;
-+					opp-peak-kBps = <2136719>;
-+				};
-+			};
-+		};
-+
-+		gmu: gmu@3d6a000 {
-+			compatible = "qcom,adreno-gmu-x185.1", "qcom,adreno-gmu";
-+			reg = <0x0 0x03d50000 0x0 0x10000>,
-+			      <0x0 0x03d6a000 0x0 0x35000>,
-+			      <0x0 0x0b280000 0x0 0x10000>;
-+			reg-names =  "rscc", "gmu", "gmu_pdc";
-+
-+			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hfi", "gmu";
-+
-+			clocks = <&gpucc GPU_CC_AHB_CLK>,
-+				 <&gpucc GPU_CC_CX_GMU_CLK>,
-+				 <&gpucc GPU_CC_CXO_CLK>,
-+				 <&gcc GCC_DDRSS_GPU_AXI_CLK>,
-+				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-+				 <&gpucc GPU_CC_HUB_CX_INT_CLK>,
-+				 <&gpucc GPU_CC_DEMET_CLK>;
-+			clock-names = "ahb",
-+				      "gmu",
-+				      "cxo",
-+				      "axi",
-+				      "memnoc",
-+				      "hub",
-+				      "demet";
-+
-+			power-domains = <&gpucc GPU_CX_GDSC>,
-+					<&gpucc GPU_GX_GDSC>;
-+			power-domain-names = "cx",
-+					     "gx";
-+
-+			iommus = <&adreno_smmu 5 0x0>;
-+
-+			qcom,qmp = <&aoss_qmp>;
-+
-+			operating-points-v2 = <&gmu_opp_table>;
-+
-+			gmu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-550000000 {
-+					opp-hz = /bits/ 64 <550000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+				};
-+
-+				opp-220000000 {
-+					opp-hz = /bits/ 64 <220000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+				};
-+			};
-+		};
-+
-+		gpucc: clock-controller@3d90000 {
-+			compatible = "qcom,x1e80100-gpucc";
-+			reg = <0 0x03d90000 0 0xa000>;
-+			clocks = <&bi_tcxo_div2>,
-+				 <&gcc GCC_GPU_GPLL0_CPH_CLK_SRC>,
-+				 <&gcc GCC_GPU_GPLL0_DIV_CPH_CLK_SRC>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		adreno_smmu: iommu@3da0000 {
-+			compatible = "qcom,x1e80100-smmu-500", "qcom,adreno-smmu",
-+				     "qcom,smmu-500", "arm,mmu-500";
-+			reg = <0x0 0x03da0000 0x0 0x40000>;
-+			#iommu-cells = <2>;
-+			#global-interrupts = <1>;
-+			interrupts = <GIC_SPI 673 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 678 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 679 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 680 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 681 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 682 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 684 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 685 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 686 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 687 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 688 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 574 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 575 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 576 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 577 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 660 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 662 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 665 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 666 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 667 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 669 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 670 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 700 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>,
-+				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-+				 <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>,
-+				 <&gpucc GPU_CC_AHB_CLK>;
-+			clock-names = "hlos",
-+				      "bus",
-+				      "iface",
-+				      "ahb";
-+			power-domains = <&gpucc GPU_CX_GDSC>;
-+			dma-coherent;
-+		};
-+
- 		gem_noc: interconnect@26400000 {
- 			compatible = "qcom,x1e80100-gem-noc";
- 			reg = <0 0x26400000 0 0x311200>;
--- 
-2.45.1
+This does not look right. It's quite generic, so now you allow any
+variant to be used with this fallback.
+
+Please do not grow more this list of all possible combinations and
+instead add specific lists. Otherwise, please explain why this is valid
+hardware:
+"fsl,imx7d-evk-wm8960", "fsl,imx-audio-spdif"
+
+
+>        - items:
+>            - enum:
+>                - fsl,imx-audio-ac97
+> @@ -81,6 +84,7 @@ properties:
+>                - fsl,imx-audio-wm8960
+>                - fsl,imx-audio-wm8962
+>                - fsl,imx-audio-wm8958
+> +              - fsl,imx-audio-spdif
+
+Fallbacks should not be used alone. Why this is needed? The compatible
+is already documented, so now you create duplicated binding.
+
+This is very confusing.
+
+>  
+>    model:
+>      $ref: /schemas/types.yaml#/definitions/string
+> @@ -93,8 +97,15 @@ properties:
+>        need to add ASRC support via DPCM.
+>  
+>    audio-codec:
+> -    $ref: /schemas/types.yaml#/definitions/phandle
+> -    description: The phandle of an audio codec
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: |
+> +      The phandle of an audio codec.
+> +      With "fsl,imx-audio-spdif", either SPDIF audio codec spdif_transmitter,
+> +      spdif_receiver or both.
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      maxItems: 1
+>  
+>    audio-cpu:
+>      $ref: /schemas/types.yaml#/definitions/phandle
+> @@ -150,8 +161,10 @@ properties:
+>      description: dai-link uses bit clock inversion.
+>  
+>    mclk-id:
+> -    $ref: /schemas/types.yaml#/definitions/uint32
+> -    description: main clock id, specific for each card configuration.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description: Main clock id for each codec, specific for each card configuration.
+> +    minItems: 1
+> +    maxItems: 2
+>  
+>    mux-int-port:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> @@ -195,3 +208,12 @@ examples:
+>               "AIN2L", "Line In Jack",
+>               "AIN2R", "Line In Jack";
+>      };
+> +
+> +  - |
+> +    sound-spdif-asrc {
+> +      compatible = "fsl,imx-audio-spdif";
+> +      model = "spdif-asrc-audio";
+> +      audio-cpu = <&spdif>;
+> +      audio-asrc = <&easrc>;
+> +      audio-codec = <&spdifdit>, <&spdifdir>;
+> +    };
+
+Do not introduce another indentation style. Look what is above.
+
+
+Best regards,
+Krzysztof
 
 
