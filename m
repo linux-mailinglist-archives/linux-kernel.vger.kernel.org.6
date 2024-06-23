@@ -1,89 +1,75 @@
-Return-Path: <linux-kernel+bounces-225996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B639138D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:58:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CF99138DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55862B213A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497EB1F2140D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E93C5A110;
-	Sun, 23 Jun 2024 07:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D98F5FB9C;
+	Sun, 23 Jun 2024 08:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="guPUoAxY"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="Kuc4qm+R"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E4E1758E;
-	Sun, 23 Jun 2024 07:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C58417C77;
+	Sun, 23 Jun 2024 08:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719129510; cv=none; b=H/qW9QWiz6ZMvN0+yu6b49YQb7FzWs/mxMoR9Zs5b19SLUVjSTtQVsAS2rTH9hpH/npJo08C/w4GnY/YVi+vB8gTjrCx6uoSrBi6D8ryDCoRAyztZ91NcT9JQJXd1rdZTxdRfo8L8yAJ2JF3lCPSZaRNvEn9YRKYH9BncGe+fRM=
+	t=1719129726; cv=none; b=hxp27fIreJAAiqlZaHHd5+4VPzTEmCPyw4U2PacmLd8XYhi7pwMsFvP4LnWjjTsABcuWicCwYCPN0V0j5S5iTFPpo4FEwdQFtcW5w2vp/M9kUA7kSZe8tt9QH91hUmpoF1nBxrZpfeBp4mjgKjH6oYjq8mSITHfAtqODkdevfkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719129510; c=relaxed/simple;
-	bh=a6KNXhusZlGB9SXt+4RuMY0cEgs/mQtHIhf1RjFFZ2w=;
+	s=arc-20240116; t=1719129726; c=relaxed/simple;
+	bh=hy2ki87r3CsdFd2uUj+s2wvNocOXNjMZAbPN3I53JH0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5TCvHB4G07xuL9M3VVohTghkHt7nxRcXUdHKwnV8CvG8gdy9VRcREG0m9bQ/W0uchh+Oa8CGaJ3bYl4xoYvfZcyKIA9OcP6KCrjIBB1fGYEsK0fGWEqfN7n1G0rpySBNDteNIzBeA4wpI6rpXSnz6+V5qEjZS7jK4ecJy8ZvVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=guPUoAxY; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f480624d10so28199545ad.1;
-        Sun, 23 Jun 2024 00:58:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719129509; x=1719734309; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tzKNaXqjYLYXB0OpmzE6jKXefCOFO+eG6hhbZpLsjY8=;
-        b=guPUoAxY9aruD0i3m2Zw66a3QmLnq74NqGuBWZoogt84aiF1FXfKKauWVDwBvxLaCg
-         cacXtdTEb51WjkJURBSsehMzJtWMquBbsU8ws3j2/X7LYJJw8UK8Uv8vb7DBB+26vtqh
-         Wwj2CglBYYIMxG1ywYt1KfcqzNXJuQ0iGJ8pxO3P02Wpk9/7UTjLGPXQ5k9kGfkFMaSP
-         zu6Iz07v1XtWlctqBhK7ukSzT4Jsc5Pw5xlYbjRWs7mfyBLyB7gSZyvKQ4s71CphfHmG
-         NcZWcL4H5Q2MUXfwOrfvdO0zA8oEqxtDia68eQGK595uXxENuGF+VydA4dX41UWSx7vL
-         dhmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719129509; x=1719734309;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tzKNaXqjYLYXB0OpmzE6jKXefCOFO+eG6hhbZpLsjY8=;
-        b=KJCkxm9yXYTxlTzHCDNhLRL7fwZk4HOLvtpVTvhf4z0zozthZM4ugfSoDoLMvnLmL+
-         Y7G42anaaTJ+/mkhZA1borxnZ5cqQnj78oFkR/Znu8zsn7U87Tub4Uz/KG2xUjfNzGeB
-         Iq5RlRQZG5FbJhojUZU82jaC+V2oMnn3fYQBmAhVEB8lGE84MQnG6F/z27slsnrTZ9th
-         JvbOQNdFJ1tk/BrERtsozJokXE33i5KluiWKsNdYV4O8mw96oewLTDuwyK+QmEaCcqrt
-         3DoWASoS8i+SZmlPTg4O8QeFAYbJ3ufQLfapSklou28RtGucMIYDHOpctqwDaZYA8zFh
-         2WbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSz2vDVOskcE5fEoh64jaMmC/f+aIdgB2JUJRI+92XFZExpl05FDBHa7ZrXplgRNP2a0lRtY63bM3gJwa6NkLUw23ugRN949JX+9xqB4Md1W2FY14cNZi9xtprvzce04iKC6S9rrOeqQ==
-X-Gm-Message-State: AOJu0YxivwEZ9oJVjJ7Z8SfagY2UC/qTk5QXZkku2z1xh3nO3SAb0ZMS
-	eLqGYJItSN5DvxkOd8BDZoajfj+d2r6NhOJWjtNnj0NGlme50i4F
-X-Google-Smtp-Source: AGHT+IGEpWbbny726Q3htn6XKcMmi4++Fu3v9DNQtTRzF7a9NIY1QXUPMWFlEmnWJ72ew/+300ULFA==
-X-Received: by 2002:a17:902:f648:b0:1f9:cbe1:ae9 with SMTP id d9443c01a7336-1fa1d66823fmr31602725ad.44.1719129508450;
-        Sun, 23 Jun 2024 00:58:28 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:c8b4:4b16:721a:ce0f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f02f0sm41610825ad.7.2024.06.23.00.58.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 00:58:28 -0700 (PDT)
-Date: Sun, 23 Jun 2024 00:58:25 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-acpi@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v3] software node: Implement device_get_match_data fwnode
- callback
-Message-ID: <ZnfVoQmCE-wJbIYU@google.com>
-References: <20240427203650.582989-1-sui.jingfeng@linux.dev>
- <ZnXbaubPVAUdDIu0@google.com>
- <7b5305b6-78b0-4add-9e70-271159cfad95@linux.dev>
- <Zncl_O-NjMRZYGeA@google.com>
- <ee4e8724-4a19-4814-9b7e-9eb6eb0ac6a3@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TO6Azge1E8ltBil4n/QJVhuuIqlfOpPa/LIlvrTL0364ktaTOWiOliLrbRf6LXyXh7tt3Ff44aBfxF2Zlm+UCIt6pms7o/KnJYSzzg7zwUIbJJiM3wvVPpn1enh03QwqdcuhqPpBB7Svhk3FGMJWV/qi4RJDE2pDhQmquizmUl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=Kuc4qm+R; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1719129714; bh=hy2ki87r3CsdFd2uUj+s2wvNocOXNjMZAbPN3I53JH0=;
+	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+	b=Kuc4qm+RLkfMTLfmABd/NF5FdG4goJqKSizgr8Rh95Nv+/dZdA991kg8WfyO3gNc6
+	 +2ReQTYUQd0zLBsoIx2NnvRL+BYtOn83yOvQGtwEs+oThlrW18iyYiKwChHbrVGBv5
+	 3wT9N6tYQpJLkVOqIpvtliVhHaYF9QMqsSky42A0=
+Date: Sun, 23 Jun 2024 10:01:54 +0200
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: Jacobe Zang <jacobe.zang@wesion.com>
+Cc: "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>, 
+	"kvalo@kernel.org" <kvalo@kernel.org>, "duoming@zju.edu.cn" <duoming@zju.edu.cn>, 
+	"bhelgaas@google.com" <bhelgaas@google.com>, "minipli@grsecurity.net" <minipli@grsecurity.net>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>, 
+	"brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>, 
+	"efectn@protonmail.com" <efectn@protonmail.com>, "jagan@edgeble.ai" <jagan@edgeble.ai>, 
+	"dsimic@manjaro.org" <dsimic@manjaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 3/3] net: wireless: brcmfmac: Add support for AP6275P
+Message-ID: <ksxio3vzlz4rqcwvmtthskv6lqt33ejzjes557rwnkzex2oihk@52ueay5cwuub>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
+	Jacobe Zang <jacobe.zang@wesion.com>, "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>, 
+	"kvalo@kernel.org" <kvalo@kernel.org>, "duoming@zju.edu.cn" <duoming@zju.edu.cn>, 
+	"bhelgaas@google.com" <bhelgaas@google.com>, "minipli@grsecurity.net" <minipli@grsecurity.net>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>, 
+	"brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>, 
+	"efectn@protonmail.com" <efectn@protonmail.com>, "jagan@edgeble.ai" <jagan@edgeble.ai>, 
+	"dsimic@manjaro.org" <dsimic@manjaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <20240620020015.4021696-1-jacobe.zang@wesion.com>
+ <20240620020015.4021696-4-jacobe.zang@wesion.com>
+ <fro2xcwsnvbxmpszny6g2p36z4zwoq4kegmpvww4twxir5piez@a3c2nbwitmab>
+ <TYZPR03MB700154AE39D44B8D166344BF80CB2@TYZPR03MB7001.apcprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,102 +78,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ee4e8724-4a19-4814-9b7e-9eb6eb0ac6a3@linux.dev>
+In-Reply-To: <TYZPR03MB700154AE39D44B8D166344BF80CB2@TYZPR03MB7001.apcprd03.prod.outlook.com>
 
-On Sun, Jun 23, 2024 at 03:38:23PM +0800, Sui Jingfeng wrote:
-> Hi,
-> 
-> On 6/23/24 03:29, Dmitry Torokhov wrote:
-> > > In case of non-OF match (which
-> > > > includes the case where you use software nodes) the match data is coming
-> > > > from matching spi_device_id entry in the driver.
-> > > 
-> > > We don't care about much how it is probed now, rather, after the driver
-> > > probed by a non-OF way, how does the additional devices properties
-> > > can be get?
-> > > 
-> > > 
-> > > Say:
-> > > 
-> > > 1) "device_property_read_u32(dev, "rotation", &rotation);" and
-> > > 2) "!device_property_read_string(dev, "pervasive,thermal-zone",
-> > > &thermal_zone))"
-> > > 
-> > > 
-> > > For those spi/i2c/platform devices, what we argues are that
-> > > those drivers really should just depend on "OF" before we have
-> > > a reliable fwnode API backend to redirect to.
-> > They are working fine without such restriction now,
-> 
-> 
-> You still *NOT* answer where the additional devices properties[1][2]
-> can be acquire.
-> 
-> [1] device_property_read_u32(dev, "rotation", &rotation)
-> 
-> [2] device_property_read_string(dev, "pervasive,thermal-zone",
-> &thermal_zone))
-> 
-> 
-> > so I see absolutely no reason imposing this restriction.
-> 
-> The reason is rigorous.
-> 
-> You are acclaiming that works by hardcode or by ignoring the flaws
-> is fine, then all driver are working fine by *your* standard.
-> 
-> Your personal standard has nothing to do with this patch.
-> 
-> > > Where the additional device_property_read_xxxx() calls redirect to?
-> > > 
-> > > What if users want to invoke more device_property_read_xxxx() function?
-> > They are being directed to first the primary FW node instance, which may
-> > be either OF, ACPI, or SW node, and then, if property is not present
-> > there, to the secondary FW node, which can be either again.
-> 
-> 
-> What I'm asking is, on the non-OF and no-ACPI cases, where's those
-> device_property_read_xxx() calls can be directed to?
-> 
-> > At no point ->device_get_match_data() callback in involved in this
-> > process.
-> > 
-> 
-> The patch is written for people who need it, not for people who don't.
-> 
-> It will be involved if the device is associated with software node.
-> Its for fwnode API user to get a consistent experience, that is
-> to get a matching data without introduce extra/duplicated match
-> mechanism.
-> 
-> The patch is focus on fixing the undefined behavior, is discussing
-> the correct way to consolidate the fwnode API. Its not going to
-> discuss how does the those *old" and/or how does those non-fwnode
-> systems works.
-> 
-> Its NOT discussing how does the driver itself can be probed, a driver
-> can be probed multiple way and is another question. Being probed and
-> extract matching data can two different thing and is perfectly valid.
-> 
-> Your problem is that you are not fully understand what other people
-> does before you rush into the discussion. You are putting restrictions
-> onto other people, while leaving the problem itself there unsolved.
-> 
-> Its not a place to express your personal value or you personal status,
-> such as, you are "ready" or "not ready" for something. Or persuading
-> somebody should get used to what or teaching people to talks with a
-> whatever tone like a God.
-> 
-> None of those junk words are technical, I can not see constructive
-> ideas.
+Hi Jacobe,
 
-Yes, indeed, it appears that further discussion is pointless at this
-point.
+On Sun, Jun 23, 2024 at 02:21:39AM GMT, Jacobe Zang wrote:
+> > Any reason to strip info about origin of the patch, my SoB and
+> > present this work as your own?
+> 
+> Sincerely express my apology to Ondrej. It's really my mistake. After getting
+> your permission if I could submit the patches. I jsut think if the author and
+> submitter is not the same person is strange so I changed it. Next tiem I will
+> avoid this mistake. Apologize again.
+> 
+> 
+> > I sincerely hope this is just a rookie mistake so please carefully read
+> the URL below:
+> 
+> > https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+> 
+> Thanks for the guidance Arend. After reading the document I realized what a stupid mistake I made.
+> 
+> BTW I have another question, except the SoB of the real author, should I also post the original link in commit message?
 
-Andy, Heikki, Greg, and others: FWIW this is a NAK from me.
+I suggest keeping at least this part:
 
-Thanks.
+> Partially copied from https://lore.kernel.org/all/c7b331edd65b66521a6605177d654e55051568a3.camel@toradex.com/
+> 
+> (No Signed-off-by provided in the email. The code looks like some
+> data copied probably from a vendor driver and adapted for the upstream
+> one.)
 
--- 
-Dmitry
+I'm not the complete author of the patch either. I just figured out why
+just adding device/chip IDs was not enough compared to what Marcel Ziswiler
+tried and expanded the patch from his email, to make it work.
+
+People using baords with AP6275P (eg. I did my debugging on QuartzPro64) will
+also be interested in how to get the firmware for AP6275P, and there are some
+hints for that in the above link, too. (FW filename that is in the patch for the
+driver doesn't match FW name as distributed by eg. SparkLAN, which makes it
+harder to find it just based on FW name from the code)
+
+Although it would be nice to have the firmware available in linux-firmware.
+
+Kind regards,
+	o.
+
+> ---
+> Best Regards
+> Jacobe
 
