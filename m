@@ -1,96 +1,150 @@
-Return-Path: <linux-kernel+bounces-226490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D09913F13
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:22:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D98A913F2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B1251C21045
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:22:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26CA4B216D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D632185E73;
-	Sun, 23 Jun 2024 23:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D82B1891B6;
+	Sun, 23 Jun 2024 23:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqOBLF9F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2kMbeVl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4BF175AD;
-	Sun, 23 Jun 2024 23:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F8D185E66;
+	Sun, 23 Jun 2024 23:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719184953; cv=none; b=Mm2WeuEb2AJ3s0bVOaYWp2ktU5TDsU21+fTdDIyWj72NV+VOeoPmn6VgK6jjV4URSOaCMaVv8sr2+9m6BQQHvibIFk3R9MtCvI4kanj/2edWsUlwBLiuM1tI7D9F8MGMULO4xW0oXyo1lsvzjREtP4vO2QRrY8BnzDdm61uYcn0=
+	t=1719184976; cv=none; b=e4bk/yFCJPMvk3BSyygRmgXk5RcW8Aa9TzlAAa9WTn3iNee/KQ/1jIEoqvk3Qm26YdT3D8ZXe1KsOLg1cbokiLG0qBume2C6whphzZqZkiZ/OLvMonSA92ZqDfsWzCH7pQOYxGUUqwWHKe04ABFx7pZSqBdTDhIMorwlrpIAsV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719184953; c=relaxed/simple;
-	bh=8G/sFbqTRFJ/E9GYSVMbhFESpaZYFbGrjSCDAA9gLpo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dFRhlHhnjJg5amGRaMSg3/gEPr4Z7Ud8XjHYFENav+FDx6DwQQUh9NvyxGD0s6/jeS2ay48SFXqepcCHoWzkqPXBY72kKolMKbkGAX6cVQxxtN/uSSV1DABcbvUuQs6bjFnHMic5G4KbZSGIqNHUb0CDPVJhZVGUMB7oLroSx9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UqOBLF9F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF988C32781;
-	Sun, 23 Jun 2024 23:22:32 +0000 (UTC)
+	s=arc-20240116; t=1719184976; c=relaxed/simple;
+	bh=DhTilDr3SIjitHMdJcG3ZDB6dsKcEVqpxMzh5u/CJu4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sQ5ePLCilvWFN558rjwk5Xo9RESg0PZ/7XotGl5VpsjjbhHHIMAl1GlTEnTo4egOISOy3wJlRrLQKwmN9wehG5/p6xja+HyWrGQh5Q0TIHEKEMPkwF09GYBfnsVJmtK05KUcEJaL4V25NDm0dSckFHWItYHsv7o6WIHdPcW8NA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K2kMbeVl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1458AC2BD10;
+	Sun, 23 Jun 2024 23:22:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719184952;
-	bh=8G/sFbqTRFJ/E9GYSVMbhFESpaZYFbGrjSCDAA9gLpo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UqOBLF9FtZPxgvHGQE6c75PTkiJwQUXam/2sCYxuF9MwmIvTofHBj2Iri+dnFnrCT
-	 iplpc9ST9y4KsQKfUo1spoqRrq9p4d3Fxy6JP5QAOQeCFw4gEmQ9LvaFlimjO4dwId
-	 J6HNuJNamKxlq4fSgGBczVLwbFV9XQcwetQCaAW0PFNcS4iuXeMOeQ1lBI5ld+w0TD
-	 ELkRqjkdxwbMfKl6wkMFlh+79bbUvBgDmd17DWiNudWWFtPcVOSKLaoOqV2hR32jSY
-	 bT3zaaXiOopmMNx18vLrdB7wHUPI2lQdu88UKCTu+5MfxY+Ha63huCYjFKqcSRfjxI
-	 5bTkhaSiA6YbQ==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-25c4d8ae511so1801031fac.2;
-        Sun, 23 Jun 2024 16:22:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWw79EJBWF47wK03IeWGT+YaSmoJpB76EEpJaDmj91Ue88awFEE7SYreuwkgBsSe7hWDS6DfYlibGJ/frnfBcrc+Rt8qi1U50i45ntXc0yVGBFrxYCB9zfZ1bEt7r6b9RBPXZZ1RhKoI3fmALCnmDpz8BIJDJ6uFq2BuiWllXAKYMnherOdCtvm9g==
-X-Gm-Message-State: AOJu0Yz6G1g0kDABM5VxTKuVYcZ1bSOUqZ3vau1lo64GNb5+l6bMapo6
-	q2rk1mOpjqdnHJIKa7ZJf07oilP6Yyvl5e3si1WvrRdiJgsTjrLup+1ZKAZNrGW3uWFdAiSoyA4
-	PXJdMNkFKOJ/ZfwhOMEYiYDAQJiE=
-X-Google-Smtp-Source: AGHT+IGrXiZyfj5eLcPnQoRl/qQQU4poQcHCOK3E7pS9en1m/44j6q0F4ete6LvMgW4VhiIvNLgXBGcdN2UUoUWWUfU=
-X-Received: by 2002:a05:6870:55c9:b0:24c:a8e6:34e7 with SMTP id
- 586e51a60fabf-25d06cd6cb8mr3663619fac.26.1719184952182; Sun, 23 Jun 2024
- 16:22:32 -0700 (PDT)
+	s=k20201202; t=1719184976;
+	bh=DhTilDr3SIjitHMdJcG3ZDB6dsKcEVqpxMzh5u/CJu4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=K2kMbeVl9tS7cTvAqEjn0Bnw9tAfvAS6mFioz1wjugzTPCvjYcwA/AQkA6Eu7bptJ
+	 /s2YvjlUUR7KWhL9bwYuLXGVrbhET4yCSFjmjDM2DV3zjYGzXfSsauBNf+OZCr81t0
+	 yYEZ4ThfQkK6qToB5a2GvwwdouKBYCIgrJmADZOzC7kQHmgbKc/Q5iURf3oVdXsbep
+	 mDls03pdGxrn2YJ23vcPDj+fP1xXdYVFjJ5SS1y1q4jxfBR18pNKZZhSnhxMZWSkud
+	 enXtEHBF1sTVl2HKT6iwkN39Ly9n8ToywTSUk43yaHhBHZHJ6IfeIh4PFFcHRxvLMp
+	 DaSNb693Hyzgw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08375C27C4F;
+	Sun, 23 Jun 2024 23:22:56 +0000 (UTC)
+From: George Chan via B4 Relay <devnull+gchan9527.gmail.com@kernel.org>
+Subject: [PATCH v2 0/8] Add sc7180 camss subsys support
+Date: Mon, 24 Jun 2024 07:22:39 +0800
+Message-Id: <20240624-b4-sc7180-camss-v2-0-0dfecdc50073@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c06ecbfde4cc106603285ed96febf3b887425286.1719160522.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <c06ecbfde4cc106603285ed96febf3b887425286.1719160522.git.christophe.jaillet@wanadoo.fr>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Mon, 24 Jun 2024 08:22:21 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9TrTeQh4Ee=NwdS_Nsjm9Wzswwpo5YOWKdbZNY1VRP7w@mail.gmail.com>
-Message-ID: <CAKYAXd9TrTeQh4Ee=NwdS_Nsjm9Wzswwpo5YOWKdbZNY1VRP7w@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: Constify struct ksmbd_transport_ops
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Steve French <sfrench@samba.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Tom Talpey <tom@talpey.com>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD+ueGYC/3WNQQ6CMBBFr0Jm7Zi2NGBdeQ/Doh0KTCJgOoZoS
+ O9uZe/yveS/v4PExFHgWu2Q4sbC61LAnCqgyS9jRO4Lg1HGqsZoDBaFWn1RSH4WQep7akKjvAs
+ WyuqZ4sDvo3jvCk8srzV9joNN/+z/1qZRobaubp1xQ63ibZw9P860ztDlnL9m9ZX1rgAAAA==
+To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ George Chan <gchan9527@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719184973; l=2579;
+ i=gchan9527@gmail.com; s=20240621; h=from:subject:message-id;
+ bh=DhTilDr3SIjitHMdJcG3ZDB6dsKcEVqpxMzh5u/CJu4=;
+ b=d0e0eTFGCBdEmAlzwkVaV5EVF3iIUoGTcFxwLBM3ga77ZM9sLJ18B2N32eUL7OrxxfMBIxttB
+ 2G+5mhvy5w6CdRKn6kN5+TczlinA+so5/9BV8PZNW2SV9nFHR6BPhbk
+X-Developer-Key: i=gchan9527@gmail.com; a=ed25519;
+ pk=Ac2fkTqgUBlj2sns9hRIWJTYhWHO1BsmHbdBb5UpUUY=
+X-Endpoint-Received: by B4 Relay for gchan9527@gmail.com/20240621 with
+ auth_id=176
+X-Original-From: George Chan <gchan9527@gmail.com>
+Reply-To: gchan9527@gmail.com
 
-2024=EB=85=84 6=EC=9B=94 24=EC=9D=BC (=EC=9B=94) =EC=98=A4=EC=A0=84 3:09, C=
-hristophe JAILLET
-<christophe.jaillet@wanadoo.fr>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> 'struct ksmbd_transport_ops' is not modified in these drivers.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
->
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> =3D=3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->   52184    2085     256   54525    d4fd fs/smb/server/transport_rdma.o
->
-> After:
-> =3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->   52260    2021     256   54537    d509 fs/smb/server/transport_rdma.o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Applied it to #ksmbd-for-next-next.
-Thanks for your patch!
+SM7125 is the SoC found in the Xiaomi Redmi Note 9 Pro(joyeuse) cellphone.
+This series adds support to bring up the CSIPHY, CSID, VFE/RDI interfaces.
+
+Since SM7125 is a low-speed variant of SC7180, SC7180 testers please
+take a look and have a test as well.
+
+sc7180 provides
+
+- 2 x VFE
+- 1 x VFE Lite
+- 2 x CSID
+- 1 x CSID Lite
+- 4 x CSI PHY
+
+The sc7180-camss binding should be comaptible with sdm845 yaml.
+I've copied a new yaml from sdm845-camss.yaml, strip all _src clk and
+put new maintainer information. If this is not desirable then i can add binding to
+existing sdm845 yaml instead.
+
+In addition, a bootable tree of sm7125/joyeuse is availble at:
+https://github.com/99degree/linux/tree/camss
+  
+
+Signed-off-by: George Chan <gchan9527@gmail.com>
+---
+Changes in v2:
+- Revised dt-binding as stated by krzk
+- Added dt-binding item power-domain-name as stated by Bryan
+- Combine patch #2 and #3 as stated by krzk and Bryan
+- Split eror-print log for clk name from patch #5 as suggested by Konrad
+- Reformat dt-node of camss as stated by krzk
+- Corrected phy init sequence for v1.2.2 as spot by Bryan
+- Added 3 more debug info for missing clk and low clk-rate issue.
+- Adding port info to ports sub-node
+- Adding required-opps node to dt
+- Link to v1: https://lore.kernel.org/r/20240621-b4-sc7180-camss-v1-0-14937929f30e@gmail.com
+
+---
+George Chan (8):
+      Add qcom,sc7180-camss
+      Add Gen2 v1.2.2 two-phase MIPI CSI-2 DPHY init
+      Add sc7180 support
+      Add sc7180 resources
+      Add debug log info to camss_enable_clocks function
+      Add debug log info to msm_csid_subdev_init function
+      Add debug log info to vfe block init and set clock rate
+      [RFT]Add support for sc7180 camss subsys
+
+ .../bindings/media/qcom,sc7180-camss.yaml          | 327 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sc7180.dtsi               | 135 +++++++++
+ drivers/media/platform/qcom/camss/camss-csid.c     |   4 +-
+ .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     | 135 +++++++++
+ drivers/media/platform/qcom/camss/camss-csiphy.c   |   1 +
+ drivers/media/platform/qcom/camss/camss-vfe.c      |  10 +-
+ drivers/media/platform/qcom/camss/camss-video.c    |   1 +
+ drivers/media/platform/qcom/camss/camss.c          | 218 +++++++++++++-
+ drivers/media/platform/qcom/camss/camss.h          |   1 +
+ 9 files changed, 828 insertions(+), 4 deletions(-)
+---
+base-commit: 2102cb0d050d34d50b9642a3a50861787527e922
+change-id: 20240621-b4-sc7180-camss-cddc6b60a9b4
+
+Best regards,
+-- 
+George Chan <gchan9527@gmail.com>
+
+
 
