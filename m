@@ -1,140 +1,116 @@
-Return-Path: <linux-kernel+bounces-226214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F514913B9A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:04:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDC3913B9B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B13681C20AC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:03:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD89281BF3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CD017FAC4;
-	Sun, 23 Jun 2024 14:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDED8148849;
+	Sun, 23 Jun 2024 14:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDnFeY4m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eDuRgUo1"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8202A3EA69;
-	Sun, 23 Jun 2024 14:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A724533EC
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719151432; cv=none; b=cOddlQvv1pALTk6JHw3/eLYwdcIISkhKcpHvHCOsZJT0OY6zLVzdoSANnQ///a/zjPYQs9m3csn0sIjK/9IzKvhAU1zfPAPosCvXMg4sKaSAmje3d6kNwAm+IkBJ1WGsTXVkjU3ckTOarbyA7Zjx+VsJzUeALS0aHNsP559aYOw=
+	t=1719151793; cv=none; b=qRT5urAWjTCbu94bwtmmwLSfrFFNHM7GzloLnKIJWLSJsxupxpzr9csQoD1ajFJdV5yGeuiL7pcbEFxbzqb6yf4UzombZetKY5EJUlQe4kK9kFYexooEI4NLqwfqoeAKGLw9TwZUZocPyyG+UojxL89b+x7w/FEwWm7vsko8ee8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719151432; c=relaxed/simple;
-	bh=5E7qZTaLrptgMLPeZ2Zh9CU15YieUVahqfywkjpS59Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LyJBGISKsatDcA6w+3t6SrEkZ1gXAR3nOd6Q/YdJSBimIVzwMuNi/FtGYYw470B0L7n2+tZQKTMx7ltxGJg6OR4oss0Y502cokqAzKOGf1W0cIRTfizQWOy9C1I0MalI50Y+48bKnhJuGwjswueJv6QUAAcOnoALuWBLJf/2Egs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDnFeY4m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B071C2BD10;
-	Sun, 23 Jun 2024 14:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719151432;
-	bh=5E7qZTaLrptgMLPeZ2Zh9CU15YieUVahqfywkjpS59Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IDnFeY4mEcrR1Q/FqMgrVcafIEjNh1XjCEjUHK4iRrbuYuNMk3/iXCNZDzSt3Ie52
-	 fmgYzYs43mVg4j4SFH43W+1ewyWgLhkX09LgtKHQAaoESVpGbZr2R8FnwHujqMiNV2
-	 3mJLFlqShnXIfKBEbZWHTVLuX8qjZz493oeAZqzxJLIZjzFUvopLhMuHtem7Do0eIg
-	 2cT7hvS3/U0kvHhAfbTn4GxxZ0gBt/8GpCNfMU6HCoBOZODZcoYBBNnajrZEehmglG
-	 OFPqqLwc1UtDJ/4w/bEC/+56qUZHWBNcGROUGHL1fN/mx2hm2cTfkoFAyCLKCij+1f
-	 rgCv60upawnwQ==
-Date: Sun, 23 Jun 2024 15:03:47 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Kim Seer Paller <kimseer.paller@analog.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, David Lechner <dlechner@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Subject: Re: [PATCH v4 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
-Message-ID: <20240623-juror-ground-9a44d66a002b@spud>
-References: <20240619064904.73832-1-kimseer.paller@analog.com>
- <20240619064904.73832-5-kimseer.paller@analog.com>
- <20240619-vanity-crowd-24d93dda47b8@spud>
- <20240623144339.6a5087cf@jic23-huawei>
+	s=arc-20240116; t=1719151793; c=relaxed/simple;
+	bh=hRYFdrXaupK+/KmNMOki3fiDptUSyDa5A3jwlmMpkHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sEQOFxNVc91vIavhBsLyiu8I+rxDwNSJ3TntY1B4WFpcrBDeIQbo/A+a2w4zi2ltprt+OyyPaGCuz9XFdub1SsToxFiyFm2pFicoQ0FjW/1p2YYAuHDWB0MhMh1poILQA/PVqNIISFSwLMiW6koQYLuEhky/uJfkG2ZbObsLGK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eDuRgUo1; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4248ff53f04so1567555e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 07:09:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719151790; x=1719756590; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R4DhKqGk83JLyXn8TYXcFLRFfovAmUW6dHWsArSysGw=;
+        b=eDuRgUo1j/Hl09rLiuc0p/y/izkiN6oMQtqagJR2lGxCFie6XqMh6xnW+zzaLWASbv
+         FElLVMazvQS6olICPKKjFoorFkmP/jfEMfY8P20hmSKdUDOZbDZUzZ961CCFhVCX/nZJ
+         pzgj7le9UD+75Giu7ECVM3lgepTuefU4Z0W46dGi6ErQYLwMFnxBqo9TMRwOtOAsq8mN
+         pjTDq4mN1PCbKgO48Cua+qqbSALIbBjEbP8HTHfII6eCqC4uQvdUT0BT++iEY3g52x0q
+         KJP1U/mBomV29rSXeXNTGD4/Dr5bggc54Dua2Vm8Gia06YM/FRUisAPp1lKgZB7dtajI
+         lJ7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719151790; x=1719756590;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R4DhKqGk83JLyXn8TYXcFLRFfovAmUW6dHWsArSysGw=;
+        b=iYjXET6DqVWe2tX7NIaTlzFjB/5IwVy7BzqdX519JE9jUKDnrRIZCGeZophQe/0WRm
+         wvNbQRxh6PL293NyhTWxXO12FVMd9L+QJHFNJN4gObeDukmLxGTeFTh2+J2gnbI5Q2iG
+         3EIslNd7tV7hKOiyq/SgRkltm2v6zGkDck6iOTbI/j5/7/u48YHfej376SarccdPi76r
+         +LZtAi2PCixAqJlD/zxEOkVctG4kxa7BIWIH/dXIadbpvNrnq5J/Q/JJjQlSCvw4Ythn
+         euNbaPgS68H8lfjuva3y0JaYxxrR0cFI0L0pDWJE47Yd1ReR45rYqAED0osxlAkb28sm
+         mUaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCwglzQIOdbSJGFaCbONkqdYV2a6QvevgcWntaqEXXnX3dj/JolHwNvByV2J0WpQQNDIyVWfn0M7idPNDnZYoZnolKOdMfuUwe1t0B
+X-Gm-Message-State: AOJu0YzcXhjZOopYFFj4mhzMsRITzbGOhS7EB1n2okcljA9g63NJ0mwX
+	HcizaFT8FXCkdWS4EpzDuNpBO5GzYpT8jaB1EeiduwuK0yi+nFDg87zVOg==
+X-Google-Smtp-Source: AGHT+IEy7Wvcf7Hxiuw7nBekBjdbuDrCPIaEU1/ZWko6ZvpdtJEOZ3R2ZX3lfqHKWKLltdoaj0Crpw==
+X-Received: by 2002:a05:600c:6d8e:b0:422:6765:271c with SMTP id 5b1f17b1804b1-4248b98035dmr21178225e9.20.1719151789781;
+        Sun, 23 Jun 2024 07:09:49 -0700 (PDT)
+Received: from fedora.. (d-zg2-102.globalnet.hr. [213.149.37.102])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4247d208b3dsm143809755e9.34.2024.06.23.07.09.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 07:09:49 -0700 (PDT)
+From: Robert Marko <robimarko@gmail.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Robert Marko <robimarko@gmail.com>
+Subject: [PATCH] regulator: userspace-consumer: quiet device deferral
+Date: Sun, 23 Jun 2024 16:09:35 +0200
+Message-ID: <20240623140947.1252376-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Gotob1j8o7zv8sSA"
-Content-Disposition: inline
-In-Reply-To: <20240623144339.6a5087cf@jic23-huawei>
+Content-Transfer-Encoding: 8bit
 
+Trying to use userspace-consumer when the required supplies have not yet
+been probed will throw an error message on deferral:
+reg-userspace-consumer output-led-power: Failed to get supplies: -517
 
---Gotob1j8o7zv8sSA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So, lets simply use dev_err_probe() instead of dev_err() to not print
+errors in case when driver probe is being deferred.
 
-On Sun, Jun 23, 2024 at 02:43:39PM +0100, Jonathan Cameron wrote:
-> On Wed, 19 Jun 2024 18:57:59 +0100
-> Conor Dooley <conor@kernel.org> wrote:
->=20
-> > On Wed, Jun 19, 2024 at 02:49:03PM +0800, Kim Seer Paller wrote:
-> > > +patternProperties:
-> > > +  "^channel@[0-4]$":
-> > > +    type: object
-> > > +    additionalProperties: false
-> > > +
-> > > +    properties:
-> > > +      reg:
-> > > +        description: The channel number representing the DAC output =
-channel.
-> > > +        maximum: 4
-> > > +
-> > > +      adi,toggle-mode:
-> > > +        description:
-> > > +          Set the channel as a toggle enabled channel. Toggle operat=
-ion enables
-> > > +          fast switching of a DAC output between two different DAC c=
-odes without
-> > > +          any SPI transaction.
-> > > +        type: boolean
-> > > +
-> > > +      adi,output-range-microamp:
-> > > +        description: Specify the channel output full scale range.
-> > > +        enum: [3125000, 6250000, 12500000, 25000000, 50000000, 10000=
-0000,
-> > > +               200000000, 300000000] =20
-> >=20
-> > IIO folks, is this sort of thing common/likely to exist on other DACs?
->=20
-> Fair point. It is probably time to conclude this is at least moderately c=
-ommon
-> and generalize it - which will need a dac.yaml similar to the one we have=
- for
-> ADCs in adc/adc.yaml.  That will need to make this a per channel node
-> property (same as the adc ones).
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ drivers/regulator/userspace-consumer.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Looks like it is already per channel node?
+diff --git a/drivers/regulator/userspace-consumer.c b/drivers/regulator/userspace-consumer.c
+index 86a626a4f610..6153d0295b6d 100644
+--- a/drivers/regulator/userspace-consumer.c
++++ b/drivers/regulator/userspace-consumer.c
+@@ -158,10 +158,8 @@ static int regulator_userspace_consumer_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_regulator_bulk_get_exclusive(&pdev->dev, drvdata->num_supplies,
+ 						drvdata->supplies);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Failed to get supplies: %d\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "Failed to get supplies\n");
+ 
+ 	platform_set_drvdata(pdev, drvdata);
+ 
+-- 
+2.45.2
 
-> I'd also expect it to always take 2 values. In many cases the first will =
-be 0
-> but that is fine.
-
-What would that first value represent?
-
---Gotob1j8o7zv8sSA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZngrQgAKCRB4tDGHoIJi
-0islAPwLPnSI4CgCbvi/mHWsJtsyLxHJAa83f5STXzTBI2G1JAD/YXx3AOBRSAqa
-jj+8CvnzWgNJVd9jsv4hhj2tqjbrrAM=
-=/iLh
------END PGP SIGNATURE-----
-
---Gotob1j8o7zv8sSA--
 
