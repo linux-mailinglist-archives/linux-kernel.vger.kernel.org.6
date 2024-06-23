@@ -1,105 +1,141 @@
-Return-Path: <linux-kernel+bounces-226103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0D4913A34
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:57:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D2B913A32
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86566280D76
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:57:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2207C280DC6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF31117FAAA;
-	Sun, 23 Jun 2024 11:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80C71802CF;
+	Sun, 23 Jun 2024 11:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IRT8AZsN"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E4E13D8B0;
-	Sun, 23 Jun 2024 11:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bok5LuwG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C63F13D8B0;
+	Sun, 23 Jun 2024 11:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719143819; cv=none; b=k0/bC33PpvuC4DMy5Me2oOVBbVAbP/0QAqrV0/odXnrnF3EYCV1+0XnlmNkLaJmUm60b5p4sYFNeSDAMqGSkQlrXZXgHfkD/hu2FxMjrs5ln/zMBuakgbyWfZ4W2Dy3/PxbOh9GmiZJTzmOo1Ku3//F2tSdRBY8uVBCwUUIee5M=
+	t=1719143791; cv=none; b=QxJpOjO1sxcGf8kLth87bRDRx08r42GL85T6TBSo05GwWUSYZpjuU9JM3pw5CN3ntguqcqVpmJ9hm5fRCo2uNJSyXwfth5mKei+4+m1rmRdugENbLVjx7kzHQ2L4NLRAJsfJANzt1OHYnjQOpRfOY3auLRt7MpAO3diUvBcYlUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719143819; c=relaxed/simple;
-	bh=5/zHGnLi6HtSuAHDMiRrXIcpjy+pX6Bnuzv5Wt4fcAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jyceU5XwSX1sE2T9cp7AzFaZPF4TOYtzANYqUPS1yD07QBTxTl8yN4fjBWl/AZwNw4QzJ03rAYmEuFL1tC9oAFN7EpfFZ3a6Eb3EJv4MwOL7u+T4PtR+aEVEqcDvyIN9ut07mGdKazPzzhYVo5nFx1BUkANbaWSi5EGbQuGScjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IRT8AZsN; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Oigqm
-	upiGhc0+bR7xGBbesPJ+Gm/pnkDnghE2ytQOPQ=; b=IRT8AZsNfjRu+rKE7ouv8
-	bWZUx0gt6dqGnBSGFLcgAqcukSaQYiABKFPSbtB7X5IIpwIbOEaHr+N/jLQwhw1y
-	+gNUfE9ONku8N6y9sqKiTEf1xpF41iIf38lxpVo3ryqtQtxHep+gzDx90NKwL42d
-	sajtXw6UupC8s04qlGlmzw=
-Received: from ProDesk.. (unknown [103.29.142.67])
-	by gzga-smtp-mta-g2-0 (Coremail) with SMTP id _____wDnL_AxDXhmbhirAA--.3562S2;
-	Sun, 23 Jun 2024 19:55:33 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: dsimic@manjaro.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	didi.debian@cknow.org,
-	Andy Yan <andyshrk@163.com>
-Subject: [PATCH v2] arm64: dts: rockchip: Fix the i2c address of es8316 on Cool Pi 4B
-Date: Sun, 23 Jun 2024 19:55:26 +0800
-Message-Id: <20240623115526.2154645-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719143791; c=relaxed/simple;
+	bh=uAE600xiIb96iQh6+8HJfPoX0sEcN+urA1yZyZSUwak=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I7qQXlTl86oVipiPoEMaFHo8/Ug4x9T5WCP+cP8Ey0DFlT0C4YFgymGhbYQvCv946lb8B0nzQ21DROdckJQRhl6mlOlAP9FEnrMk+4GYY7JlJec/6lDVyHVDzsKSTOXrwac/rbr38Cizxc0KPV4JA/pHFPl9FFy86vRja64iTlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bok5LuwG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D518C2BD10;
+	Sun, 23 Jun 2024 11:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719143790;
+	bh=uAE600xiIb96iQh6+8HJfPoX0sEcN+urA1yZyZSUwak=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Bok5LuwGFAuOhddobD0Tbr0GcIEaiE5Udl6xD7GL/9nvHYg0adQAMxTk3HzDGrfgQ
+	 dcr50SNN7gbxh5bXiwtb204S/dkqCVA+zvAmii6DrTxW2UhQtwe0ZseToBZ/1+oY4i
+	 yUUakUiu85WUSDRA2jgRbR7FIVPe6kLG1kAmgxf0bbPcj4VsXu1mUWILZbLIOPLLrV
+	 A2Dd33VvislCEH1vV6KS7qmhWgC2dHSvz1HeVTRULwY+l3O+nqNyR83mZpPdH1A3kR
+	 wBRgiRIlQSeBTAA61JHsH/jOUc4C7riWNIfVHx9VAgycpOfotQyW0sNfrjNM88ygKJ
+	 /2dgeDW/OLOWg==
+Date: Sun, 23 Jun 2024 12:56:21 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Yasin Lee <yasin.lee.x@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ yasin.lee.x@outlook.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] iio: proximity: Add driver support for TYHX's
+ HX9023S capacitive proximity sensor
+Message-ID: <20240623125621.07d1617c@jic23-huawei>
+In-Reply-To: <20240621-add-tyhx-hx9023s-sensor-driver-v6-3-65196a9020f1@gmail.com>
+References: <20240621-add-tyhx-hx9023s-sensor-driver-v6-0-65196a9020f1@gmail.com>
+	<20240621-add-tyhx-hx9023s-sensor-driver-v6-3-65196a9020f1@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnL_AxDXhmbhirAA--.3562S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ary8JFy3GFyfXw4kCrWxWFg_yoW8XFW7pa
-	15ua9xJr1I9rWFgayqqanrXrsrCFs3tF4xCw17Gasayr47X34vqr17Xry3CFyjgF13Za1r
-	ur15Jr1DKa1DZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pMD73UUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hsHXmWXyjN4YAAAsD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-According to the hardware design, the i2c address of audio codec es8316
-on Cool Pi 4B is 0x10.
+On Fri, 21 Jun 2024 15:40:51 +0800
+Yasin Lee <yasin.lee.x@gmail.com> wrote:
 
-This fix the read/write error like bellow:
-es8316 7-0011: ASoC: error at soc_component_write_no_lock on es8316.7-0011 for register: [0x0000000c] -6
-es8316 7-0011: ASoC: error at soc_component_write_no_lock on es8316.7-0011 for register: [0x00000003] -6
-es8316 7-0011: ASoC: error at soc_component_read_no_lock on es8316.7-0011 for register: [0x00000016] -6
-es8316 7-0011: ASoC: error at soc_component_read_no_lock on es8316.7-0011 for register: [0x00000016] -6
+> A SAR sensor from NanjingTianyihexin Electronics Ltd.
+> 
+> The device has the following entry points:
+> 
+> Usual frequency:
+> - sampling_frequency
+> 
+> Instant reading of current values for different sensors:
+> - in_proximity0_raw
+> - in_proximity1_raw
+> - in_proximity2_raw
+> - in_proximity3_raw
+> - in_proximity4_raw
+> and associated events in events/
+> 
+> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
 
-Fixes: 3f5d336d64d6 ("arm64: dts: rockchip: Add support for rk3588s based board Cool Pi 4B")
-Signed-off-by: Andy Yan <andyshrk@163.com>
+Hi Yasin,
 
----
+Some good reviews in already for this version, so I only took a quick look
+this time. It seems to be in a reasonable state now.
 
-Changes in v2:
-- Also change the address after @ to 0x10
+Jonathan
 
- arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> diff --git a/drivers/iio/proximity/hx9023s.c b/drivers/iio/proximity/hx9023s.c
+> new file mode 100644
+> index 000000000000..1d8cb9a05d8a
+> --- /dev/null
+> +++ b/drivers/iio/proximity/hx9023s.c
+>
+> +struct hx9023s_data {
+> +	struct iio_trigger *trig;
+> +	struct regmap *regmap;
+> +	unsigned long chan_prox_stat;
+> +	unsigned long chan_read;
+> +	unsigned long chan_event;
+> +	unsigned long ch_en_stat;
+> +	unsigned long chan_in_use;
+> +	unsigned int prox_state_reg;
+> +	bool trigger_enabled;
+> +
+> +	struct {
+> +		__le16 channels[HX9023S_CH_NUM];
+> +		s64 ts __aligned(8);
+> +	} buffer;
+> +
+> +	struct mutex mutex;
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-index 20a0a60acd16..b0259b0d5021 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-@@ -300,9 +300,9 @@ &i2c7 {
- 	pinctrl-0 = <&i2c7m0_xfer>;
- 	status = "okay";
- 
--	es8316: audio-codec@11 {
-+	es8316: audio-codec@10 {
- 		compatible = "everest,es8316";
--		reg = <0x11>;
-+		reg = <0x10>;
- 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
- 		assigned-clock-rates = <12288000>;
- 		clocks = <&cru I2S0_8CH_MCLKOUT>;
--- 
-2.34.1
+Add a comment explaining the data this mutex is protecting
+(that may be in this structure, or for example on the device)
+
+> +	struct hx9023s_ch_data ch_data[HX9023S_CH_NUM];
+> +};
+
+
+> +
+> +static int hx9023s_sample(struct hx9023s_data *data)
+> +{
+...
+> +
+> +	for (i = 0; i < HX9023S_CH_NUM; i++) {
+> +		value = get_unaligned_le16(&rx_buf[i * data_size + 1]);
+> +		value = sign_extend32(value, 15);
+> +		data->ch_data[i].lp = 0;
+> +		data->ch_data[i].diff = 0;
+> +		if (data->ch_data[i].sel_lp == true)
+> +			data->ch_data[i].lp = value;
+> +		if (data->ch_data[i].sel_diff == true)
+> 
+Run checkpatch.pl --strict and it will probably moan about these.
+if (data->ch_data[i].sel_diff) is the same thing so just use that.
 
 
