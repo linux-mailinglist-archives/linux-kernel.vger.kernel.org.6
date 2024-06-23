@@ -1,89 +1,238 @@
-Return-Path: <linux-kernel+bounces-225966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03057913877
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89DE1913879
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78039B22F03
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:09:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB0DDB21957
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B5A3A260;
-	Sun, 23 Jun 2024 07:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7C63D548;
+	Sun, 23 Jun 2024 07:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8wHxASL"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHAUN/o9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A5127453
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 07:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22F527453;
+	Sun, 23 Jun 2024 07:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719126574; cv=none; b=X7geyNr8m3zXyVuiECrA22RwEKrYXLIojQn/RHFhidvgjx7hjjd2H+qU5dILu6TtB/TzW7Pw9c3jGjhzvl9YQo9uo85JyQSxv2jqqW0vSCnoY0gvKe7GhC+YOmZmjte/Yqzi+rAtlUsahadd9szmZ1AlrLfkkKceki7WvAeVfKU=
+	t=1719126645; cv=none; b=ASNMaDsN+Hq+1jrztPXmb7uVu+QvsfX1nm74ZiTccE/uLls4WafF09TpbUBG2n8UJA/Yjx+yV6WXkozJj5pq8Ot8quFaZVIU1qMWXUBJ/NjanJVR+gGwHzc0SRDVt2JddIRCOzhgpsHVJQE5FRxaFOoIZFRRNwur73y588RHiuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719126574; c=relaxed/simple;
-	bh=WJ3KFmLc/k7FTG7+QwYn33RecWwMJZxpIPOouYLJc/E=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=ktjuEFGQe5tmIKjUUdWnKm8MAvYkrMNb4Lu09JV/oIjV6Q9X0CRcna+z8eP8x4mqo4nUr5XkcA+FF8ndsDHkUNnXSXc8KLqjwSGTcnYHlVEao7mIcK0Fjjm7oLn7N5Fo9SEFlYp8Vy8wMcFEsGPvrZhfbY1XSsjsnHqMKNr2fgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8wHxASL; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-25ca30072eeso1745712fac.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 00:09:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719126572; x=1719731372; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WJ3KFmLc/k7FTG7+QwYn33RecWwMJZxpIPOouYLJc/E=;
-        b=D8wHxASLy4goTkahZ8hfURlN3iAkaVNMNpTtBHCWnNyXVwy+xpIekg2PnY1APKGn7K
-         J5Ky7HD1gjN0Spqkmdhpukqw5JXKvaSJx3xGiM2injFIUyFW6pUlkPDEF0XDDw6YIEAR
-         ht6ewBg9pPC3WmOx1OmFN6OhG7a7Zu6vOwRD4CAX6xe7cg05efz/fWMxQpXDHlgfxTNV
-         73MRKi5n/qen8xF3jL1GjTMMN5ZAz0St7yystnFx3GXQevSI0Gpa/dppWd8be1h0deX+
-         7WHYeZ0ojzx73s/evbGqnBiLjpU55sK+46bhLcv+3Jk+jVs9IH7GjZyg4/TSvpoyGBgT
-         4Ciw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719126572; x=1719731372;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WJ3KFmLc/k7FTG7+QwYn33RecWwMJZxpIPOouYLJc/E=;
-        b=RKTxNpONh44VHsaGc+Dl0Gpk9V9yKjXOSfiYA3mbaeiR63cpCmtjRDDwyeoVw7+awa
-         LI6MPf8TIXXtyxAexDo/Jp3+1d1xY29nIXUBB8ebIhW7KCu8MALueKqXqcqzD7PJ1DmA
-         vnzZpx8+gBOhHz6MVjSLKSWAbZ8ZgwIWnminMAGBXwkJDFWnFCxRGFt6sx31opvChssp
-         8ulPkrbXZkyB1Fnlrr0H4GxjE0P9y80PIECGTcfFyx5Ph4peCUpDRdN6j0Nv5wL0a3uY
-         KPe+uAjih70LHeXSzDsBQYZM87ChArrZgQbsSRR8JxhsuhmwzRR9+PEoa7uE4JhlNlOt
-         Ii4Q==
-X-Gm-Message-State: AOJu0YwOkSVQMTx0MIBbdSO0MItbMD/8tjUW/HObUCLx2czr/TFCb0Kp
-	txArpVFPnsvTXx1uwEIOxH2whtm0XZ3y5Y/PnsB6aOgSqAiyfNHURf+qasB0fjYxa6FmYuDRDHe
-	i0OFVvypyJzNADcvD+3JYQoH5ORSVZw==
-X-Google-Smtp-Source: AGHT+IE2c9F8byrJg8400fkmrfx4VyKUZBa2GpK8/7gScb1D9DtwxoSI9AjHOzc3ELKmBMwd5aeg0k3ZYOmjoJ4nsl0=
-X-Received: by 2002:a05:6871:3a20:b0:24c:ac7e:8a5c with SMTP id
- 586e51a60fabf-25d0168fecamr1963689fac.21.1719126571980; Sun, 23 Jun 2024
- 00:09:31 -0700 (PDT)
+	s=arc-20240116; t=1719126645; c=relaxed/simple;
+	bh=FtNfR56Pj5/tidnoeH44U3Y6/IK9Voc/EmcuJYq/Wqw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LkGHeYSYOqXvyl3dFw2BK2cp7DrI/MFxJ32wTmkotQXmq1te17XUQuoCBXg1b6hGfy/TuvNVdy3KtPv+PNBzy+LMPMSGDtn8Z5kGY0jqQHCe0K1r3j0p3+LscEMOoTfsI2O9M01dX/4MxFqqolq7j45AeXCC0pNDYghohckyhDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHAUN/o9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2374C2BD10;
+	Sun, 23 Jun 2024 07:10:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719126644;
+	bh=FtNfR56Pj5/tidnoeH44U3Y6/IK9Voc/EmcuJYq/Wqw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MHAUN/o91AHZW8P7vB3L+C/Hp1SONJqV3yVPwrFsSCWS2VduF1SwJ6VPURLh6b9/K
+	 YeVmMenYWXkdFw70vCRzZqusmh+cgZqXEQBNVmaUHwt4pOE1wrNy0Uy4Etog4Y87+5
+	 gazxEiKiyXbS51O5i3TYanM2VnZeM7PKqAZrfNyK2QkgFhA+jraI0MsZ2FhCrOf70K
+	 BWo+IkazDWLzRfupEMyvte4WzY7LsFue4BdjCHVYfXoF01OT58K3mz7G7C+gZU5D+7
+	 qRHgocI9gh8ptra+hXbT1HMKcV/22VVNP4wMJzJc6UiSHHdf7PsGC3gLRp/nWfWUvL
+	 C1wlpDPz1y0kQ==
+Message-ID: <647b4d99-1c1e-41fa-929d-ffd6cda6584d@kernel.org>
+Date: Sun, 23 Jun 2024 09:10:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: jon usenet <usenetjon@gmail.com>
-Date: Sun, 23 Jun 2024 00:09:21 -0700
-Message-ID: <CANQ3q19acqJ5BpseEukYgSHiKiSx42974rHnU3wKJWr3_EV7_w@mail.gmail.com>
-Subject: some tips for the linux kernel/modules for kernel
-To: LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: dt-bindings: realtek,rt5659: Convert to dtschema
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240622153752.94644-1-animeshagarwal28@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240622153752.94644-1-animeshagarwal28@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-1. global data structures and functions (access the structures
-throughout the kernel)
-2. you can define a conditional with multiple statements that can be
-reiterated with functions (ie *p = _malloc() ? rSIZE(ret) >
-kern->page->size : rBLOCK(ret2) < counter++ <= kern->sys->etc.blah();
-3. one big global structure with all the sys structures
-4. loops that call functions and execute data based on a global
-structure (see 2)
+On 22/06/2024 17:37, Animesh Agarwal wrote:
+> Convert the RT5659/RT5658 audio CODEC bindings to DT schema.
+> 
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
 
-this is great for module programming btw
 
-have fun, also amd threadripper people, try make -j1000 (seriously, my
-i7 compiles the freebsd operating system in 2 minutes with make -j100
+> +
+> +allOf:
+> +  - $ref: dai-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - realtek,rt5659
+> +      - realtek,rt5658
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: The I2C address of the device.
+
+Drop description, redundant.
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description: The CODEC's interrupt output.
+
+Drop description, redundant.
+
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description: phandle and clock specifier for codec MCLK.
+
+Drop description, redundant.
+
+> +
+> +  clock-names:
+> +    const: mclk
+> +
+> +  realtek,dmic1-data-pin:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum:
+> +      - 0 # dmic1 is not used
+> +      - 1 # using IN2N pin as dmic1 data pin
+> +      - 2 # using GPIO5 pin as dmic1 data pin
+> +      - 3 # using GPIO9 pin as dmic1 data pin
+> +      - 4 # using GPIO11 pin as dmic1 data pin
+> +    description: Specify which pin to be used as DMIC1 data pin.
+> +
+> +  realtek,dmic2-data-pin:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum:
+> +      - 0 # dmic1 is not used
+> +      - 1 # using IN2P pin as dmic1 data pin
+> +      - 2 # using GPIO6 pin as dmic1 data pin
+> +      - 3 # using GPIO10 pin as dmic1 data pin
+> +      - 4 # using GPIO12 pin as dmic1 data pin
+> +    description: Specify which pin to be used as DMIC2 data pin.
+
+default:
+
+> +
+> +  realtek,jd-src:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum:
+> +      - 0 # No JD is used
+> +      - 1 # using JD3 as JD source
+> +      - 2 # JD source for Intel HDA header
+> +    description: Specify which JD source be used.
+
+default:
+
+> +
+> +  realtek,ldo1-en-gpios:
+> +    maxItems: 1
+> +    description: The GPIO that controls the CODEC's LDO1_EN pin.
+
+It's enough:
+CODEC's LDO1_EN pin
+
+
+> +
+> +  realtek,reset-gpios:
+> +    maxItems: 1
+> +    description: The GPIO that controls the CODEC's RESET pin.
+> +
+> +  sound-name-prefix: true
+
+Drop
+
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +  port:
+> +    $ref: audio-graph-port.yaml#
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        codec@1b {
+> +            compatible = "realtek,rt5659";
+> +            reg = <0x1b>;
+> +            interrupt-parent = <&gpio>;
+> +            interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
+> +            realtek,ldo1-en-gpios =
+> +                <&gpio 3 GPIO_ACTIVE_HIGH>;
+
+This can be one line.
+
+Best regards,
+Krzysztof
+
 
