@@ -1,190 +1,156 @@
-Return-Path: <linux-kernel+bounces-226274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E557D913C56
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C713913C59
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76FE8282233
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB1A283440
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76990181D1C;
-	Sun, 23 Jun 2024 15:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ssrh0gMm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7011822C3;
+	Sun, 23 Jun 2024 15:29:27 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63F820E6;
-	Sun, 23 Jun 2024 15:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74413146A7D
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 15:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719156516; cv=none; b=Dm+OqHEqeequqrLjtm/74ohwAaykNmR3SVfWsxmxipybdzl8mAMqrl2n8HCogLxb+RD1iKNoSzIVIVuJvckRUW1Pt7LfKSODggozx8tgj2lgOk5uPOzuc29QuaxfqcTnIXHZH2uUoe5B7XueRw2ExgKDjeyDCOFXGcbvbdOOp88=
+	t=1719156566; cv=none; b=mQY3TfE3TVu1qXzN00TunKC9xrZRsvkqy8uv7I3tmDWlbXiYL9CGrZ6yxs9hL2ELqwRSZZueZKZO+PYOg1V/rjI83YsdDR1ctJAF3JN8eGvcaD+LKneLXT5D/kMXJevLtJZv4en87RP2Np+kCuUerqtj7++ZYopFy0kdyf0NYak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719156516; c=relaxed/simple;
-	bh=juAAtNDoXkujZsCYp+htIv9eQw5xQOTNlXW2GleCTnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MxJhIj8kR092TZ4oZJvK9BeW9oV217OX6YFaa8RkAtRp/FgwSdDU+J4w7uCjeY1H70di6xXXCbfPkafnbwN4ESy8nAWsAG8fTSDP/8cVJYj81LVzvK6OoWraT0ZgCP84/MNy1iIrBorKQWfp3ZWxWukTIe5T3FL3hEPHMB9clNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ssrh0gMm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71FC7C2BD10;
-	Sun, 23 Jun 2024 15:28:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719156516;
-	bh=juAAtNDoXkujZsCYp+htIv9eQw5xQOTNlXW2GleCTnY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ssrh0gMmmwTzfwTdEihNbsE96GNNjPWOPGObkKNNZakIGeBYHQA0BGzqa88VPdIIh
-	 PBFGSSx3O68SMMVzu6cnRsBxhrQJbVIfZNu4uT3Fs236FCFqfX06pVXyf6mWQz24Dk
-	 bQkB/DGMiNKEY8ZKJ3Sxx8/cmkqVqGjMDAFN9RD38Zp4v0PjCoLCGawmt2SDtDz99F
-	 WCJ6fN+vBBfwhy4jXT90zFXcaMi82wWdRf/Ym97umoYtkS9MXWE2vsiSpRR3TKM9rA
-	 WxyW/2kH/6J+T625BUVgMN27aKPp4nA49cL8Hec23p+xFlnhuP6VcqypaB1N/O2B0p
-	 sh5uoRIJWAUfA==
-Date: Sun, 23 Jun 2024 16:28:27 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Beniamin Bia <beniamin.bia@analog.com>, Stefan Popa
- <stefan.popa@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
- devicetree@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- jstephan@baylibre.com, dlechner@baylibre.com
-Subject: Re: [PATCH 3/9] dt-bindings: iio: adc: adi,ad7606: improve
- descriptions
-Message-ID: <20240623162827.45220840@jic23-huawei>
-In-Reply-To: <20240618-cleanup-ad7606-v1-3-f1854d5c779d@baylibre.com>
-References: <20240618-cleanup-ad7606-v1-0-f1854d5c779d@baylibre.com>
-	<20240618-cleanup-ad7606-v1-3-f1854d5c779d@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719156566; c=relaxed/simple;
+	bh=5GzQNXCfF8EdbfC3H4E9VS+tvgTWS1crHKs96+wLw5I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ro0hnM4ptuPgCLMbcH2xYiAtmt9XCLGocKQu3wBX+UbR3EfVJi4HLk3jtC7jpyVdQTltqz5gxnsusNPu1ujB8YmcYJmF46v8gCpEtSIxk1mpE2Jx1laFuURIYyYtn+IcU67jE6Adq3h2K2Z1yh2HBX4rCSpBloiRVeaBDuYe6E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-37624b11960so34865255ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 08:29:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719156564; x=1719761364;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EP0r5vjIqTOj5wt9p5RxoVOv4/EypeRrWumP8Iu8xTU=;
+        b=LUhd38FFRHLKqvRy8QlkfGv91L7nOIl9UxwwJmOfeVEHJBs1jZ2f8YayGu/N4LnEcf
+         KkdxE7j06pU67sruED0kB4mqJ2B9YCQEhVesVCIlFzSDVO0q28HP0/osIn4dAtjv+nTr
+         /T3vLtfTU/Nw0l8yKP+pmYozY7qSZQXft+J6N2nwNBMPxneIKSNuyPJS3Ee4Oy36kmRW
+         JhCSyoxgQ+RVlPMUAxLe+ukuOF08H/sCXgA67BktPOP4S7U8Vc1hTvU4Uxe4LZjoXbjr
+         rQIdayoO2iA2o7nwOHBlgxWdfsTQXkhZMMd2H6yjH+lVYudq25azld+BB5KLHOlRG9Xy
+         /1Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCX6IuI4pARdZwb2BVD/d2N06NzgXt1+oLpR3umIXDo7dZroFa4mQg+6txYEN/OVfZvEvs/d8XpRUBAwyeLK7FPrWLtNtz3K9TbKIHca
+X-Gm-Message-State: AOJu0YxypPUofS/7/IGCdDR/4YshxhO9x6gKcy/sS/rZG/galNaqICEz
+	nVKH5z/RcxncNtvQ3OwAyvY/lPMCr+WJUN8negOQsBa9Lh1xJKW8qLezyw42BRHHh2jy1FYZHuM
+	p7/bzSYr1LBddGOymxFVndr19y6ZMnUBcF1R4R0TeMupd4dnXd5ERe/A=
+X-Google-Smtp-Source: AGHT+IFqnPdpAhkaCMlzEMZuVA/C2S6JDfh8pY3BlYKXaqSV5TpYTSaMd5hwBP7t8YgYtHTf5gVQGwAtwWvzgO6DJ3GECpny+vp9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a92:cd84:0:b0:36c:4b17:e05d with SMTP id
+ e9e14a558f8ab-3763e16d8a6mr3431835ab.4.1719156564589; Sun, 23 Jun 2024
+ 08:29:24 -0700 (PDT)
+Date: Sun, 23 Jun 2024 08:29:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000589156061b90544f@google.com>
+Subject: [syzbot] [can?] INFO: task hung in cangw_pernet_exit_batch (3)
+From: syzbot <syzbot+21ad8c05e3792b6ffd14@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, mkl@pengutronix.de, 
+	netdev@vger.kernel.org, pabeni@redhat.com, socketcan@hartkopp.net, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 18 Jun 2024 14:02:35 +0000
-Guillaume Stols <gstols@baylibre.com> wrote:
+Hello,
 
-> Reword a few descriptions, and normalize the text width to 80 characters.
+syzbot found the following issue on:
 
-Don't rewrap text in a patch that does anything else as those real
-changes are hidden.
+HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16dd1f2e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
+dashboard link: https://syzkaller.appspot.com/bug?extid=21ad8c05e3792b6ffd14
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Even if you are changing the text, minimise rewraps to those necessary
-to avoid lines getting too long and fix them up in a follow up patch
-that just rewraps.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I think most of the changes are fine, but it's really hard to spot
-the real changes in here!
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/27e64d7472ce/disk-2ccbdf43.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e1c494bb5c9c/vmlinux-2ccbdf43.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/752498985a5e/bzImage-2ccbdf43.xz
 
->=20
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 61 ++++++++++++----=
-------
->  1 file changed, 34 insertions(+), 27 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> index 00fdaed11cbd..80866940123c 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> @@ -36,64 +36,71 @@ properties:
->    avcc-supply: true
-> =20
->    interrupts:
-> +    description:
-> +      The BUSY pin falling edge indicates that the conversion is over, a=
-nd thus
-> +      new data is available.
->      maxItems: 1
-> =20
->    adi,conversion-start-gpios:
->      description:
-> -      Must be the device tree identifier of the CONVST pin.
-> -      This logic input is used to initiate conversions on the analog
-> -      input channels. As the line is active high, it should be marked
-> -      GPIO_ACTIVE_HIGH.
-> +      Must be the device tree identifier of the CONVST pin(s). This logi=
-c input
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+21ad8c05e3792b6ffd14@syzkaller.appspotmail.com
 
-Why plural when it has maxitems 1?
-
-> +      is used to initiate conversions on the analog input channels. As t=
-he line
-> +      is active high, it should be marked GPIO_ACTIVE_HIGH.
-
-If you drop the plural change don't rewrap this in v2, it is unnecessary no=
-ise
-that takes away from the real improvements.
->      maxItems: 1
-> =20
->    reset-gpios:
->      description:
-> -      Must be the device tree identifier of the RESET pin. If specified,
-> -      it will be asserted during driver probe. As the line is active hig=
-h,
-> -      it should be marked GPIO_ACTIVE_HIGH.
-> +      Must be the device tree identifier of the RESET pin. If specified,=
- it will
-> +      be asserted during driver probe. On the AD7606x, as the line is ac=
-tive
-> +      high, it should be marked GPIO_ACTIVE_HIGH. On the AD7616, as the =
-line is
-> +      active low, it should be marked GPIO_ACTIVE_LOW.
->      maxItems: 1
-
-
-> =20
->    adi,range-gpios:
->      description:
-> -      Must be the device tree identifier of the RANGE pin. The polarity =
-on
-> -      this pin determines the input range of the analog input channels. =
-If
-> -      this pin is tied to a logic high, the analog input range is =C2=B1=
-10V for
-> -      all channels. If this pin is tied to a logic low, the analog input=
- range
-> +      Must be the device tree identifier of the RANGE pin. The state on =
-this
-> +      pin determines the input range of the analog input channels. If th=
-is pin
-> +      is tied to a logic high, the analog input range is =C2=B110V for a=
-ll channels.
-> +      On the AD760X, if this pin is tied to a logic low, the analog inpu=
-t range
->        is =C2=B15V for all channels. As the line is active high, it shoul=
-d be marked
-> -      GPIO_ACTIVE_HIGH.
-> +      GPIO_ACTIVE_HIGH. On the AD7616, there are 2 pins, and if the 2 pi=
-ns are
-> +      tied to a logic high, software mode is enabled, otherwise one of t=
-he 3
-> +      possible range values is selected.
-
-With max items 1 how do we have 2?
-
->      maxItems: 1
-> =20
->    adi,oversampling-ratio-gpios:
->      description:
-> -      Must be the device tree identifier of the over-sampling
-> -      mode pins. As the line is active high, it should be marked
-> -      GPIO_ACTIVE_HIGH.
-> +      Must be the device tree identifier of the over-sampling mode pins.=
- As the
-> +      line is active high, it should be marked GPIO_ACTIVE_HIGH. On the =
-AD7606X
-> +      parts that support it, if all 3 pins are tied to a logic high, sof=
-tware
-> +      mode is enabled.
->      maxItems: 3
+INFO: task kworker/u8:1:12 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:1    state:D stack:18160 pid:12    tgid:12    ppid:2      flags:0x00004000
+Workqueue: netns cleanup_net
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ cangw_pernet_exit_batch+0x20/0x90 net/can/gw.c:1257
+ ops_exit_list net/core/net_namespace.c:178 [inline]
+ cleanup_net+0x89f/0xcc0 net/core/net_namespace.c:640
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task kworker/1:6:5181 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:6     state:D stack:20976 pid:5181  tgid:5181  ppid:2      flags:0x00004000
+Workqueue: events_power_efficient crda_timeout_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ crda_timeout_work+0x15/0x50 net/wireless/reg.c:540
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
