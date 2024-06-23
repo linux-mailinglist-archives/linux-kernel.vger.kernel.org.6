@@ -1,245 +1,144 @@
-Return-Path: <linux-kernel+bounces-226127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A4D1913A9A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:31:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D36A913A9F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 011962816D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:31:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90DB1281843
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACFF1474D8;
-	Sun, 23 Jun 2024 12:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0609181319;
+	Sun, 23 Jun 2024 12:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NmoG7G9O"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lS9PfT0o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA03D1E4BF;
-	Sun, 23 Jun 2024 12:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB6612C559;
+	Sun, 23 Jun 2024 12:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719145887; cv=none; b=RusUxGfHUpmojRyXpAPw0gZeqb8HhQ+u+oc8fvIpqrPEww/n4m00nyzT1RUhb7CuVeRZ8ASrKYMfpuuAc3lPUPWoY6Ys915U5MTqHscg12VLLJMoJ+MdOnV9rxvXs6c4PdoDvc9fzYyYQA4Ds/YY7bgRa7teBzwJ99unl0y5sWo=
+	t=1719146423; cv=none; b=rSOi2zkeANxqFU6B6Clz1kaf+ohcij2wIlWeMvb8HY0cpbFI9USSq1Fh4lnYhnmJtoJvP6ROjTCSbIudYbesRm5wcVElPDpu0VzJK+LA2OXoPn89gbAFZMr3lGm1LMSfN6Iwdzatqu0yDgQ/zpzvSECQT12kjTUrCTSuhM8q2dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719145887; c=relaxed/simple;
-	bh=r0wkyzTZhpIMU+cglNg0/ZQeLa0CuP58FC96ddTI5VE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Qrbs6qGGHppyubcI1PIPSIfkUdpwrntiFOex9JTeiwAdeEaYJNynw+IxtQt/j2ZvlAGU3iPvwdJhGUH1673oEsk1ENfkPHb81d+y1Qh9tw067dwghDVwUUvzvbLf1cvxYbAdyql35VlkXNDjlKTJwv9PZoK9DHyhlvptuqdybH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NmoG7G9O; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c7da220252so2777813a91.1;
-        Sun, 23 Jun 2024 05:31:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719145885; x=1719750685; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F5zHneiz9eEyXhA8mfGurOU9goOl3x4DytZed2dlBl0=;
-        b=NmoG7G9OVhjKG92AvrDwwMm/4h1j96h2UQONqsXdIthE4fTEeVxGg+6gCOfyaXcuDN
-         WjOwVWFB5oTciwfP9JqeBUMpl7WMDwEhst0hBkvtLswX20VtQTEYtJzT4gvD0SZ+pPRE
-         93F4KQFno8nujuCrs7nudG6zJ4dfpl1Y4oAfD0M1O/jkuLfw4iF2HHX1uCnXp8BcpddQ
-         4KpEqAEfyd2h9a/wmBkVFHBOfDEskMa/qAMUZcQllccqV+nmYF0ijlNe+HPTJVW6u2E2
-         EKCDO0ovWngATOYIxbtGQsWehLZeSvNeN8v0w6rKFt5/VAwr8yAECtSDCu4o9afXJ3kI
-         eA4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719145885; x=1719750685;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F5zHneiz9eEyXhA8mfGurOU9goOl3x4DytZed2dlBl0=;
-        b=OrktvsjLXq0M6Zmmno3pcnNbC5245i6AFossGPZdBGJc4DxWVMK1mgu6kvScMAuQeG
-         SwRbMKBJcpZSKfJ7uT87gSBAzL/3DZVnXEO1WGU40MkVex98fIrfQh8TRtGuSkG7PTOU
-         Vrh8EyDESEZyzDLJxkn6I9ZlMEOSrp3/R2HUVIjwd7ymnNJBJ00mRqwKXvSM2H3AGiT7
-         6KHExcrdE6qkr0StzDdWRYxQ2jqzChLWVaObxHp76CH8JJy2yeHdNx6Zt4BGmw0YLP/w
-         IAZlr83rGWGo5SBAU0uNLcdkRKeb93Aq93pmhNEdwt+JAmqe7u+0bgZPsB9oYSw+uIk5
-         hyQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXL0USMRpMyecNQE4nAJAG9EOnRL4IvN1TZtZJIRlxqkRHLPrylIgpUNl738iM0TKDffhhbSXXP3rGwPf/QourjxUz7iDwGvRLvnQlg
-X-Gm-Message-State: AOJu0YznwYwSrJWBelQiO9OPQaBx8f58zffJFu/QWex/YPWmNA0dvOaY
-	Wf0iK76IbjfbSx4vP5jmO597EpjStgsYz4wQfJV3nsXOqaBOYcUDA+v7Gw==
-X-Google-Smtp-Source: AGHT+IHoz/XfolL6UXgrTRUwi3dVi3PAjlSweTLO1Z9JpHgxTAwlWAarX6Rj9iUV2DVlf9aB/bmE8Q==
-X-Received: by 2002:a17:90b:1884:b0:2c2:f6a2:a5f7 with SMTP id 98e67ed59e1d1-2c86124708amr1326219a91.13.1719145884924;
-        Sun, 23 Jun 2024 05:31:24 -0700 (PDT)
-Received: from localhost.localdomain ([43.132.141.3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e4ff9846sm6907108a91.5.2024.06.23.05.31.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 05:31:24 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: chandan.babu@oracle.com,
-	djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alexjlzheng@tencent.com
-Subject: [PATCH] xfs: make xfs_log_iovec independent from xfs_log_vec and release it early
-Date: Sun, 23 Jun 2024 20:31:19 +0800
-Message-Id: <20240623123119.3562031-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1719146423; c=relaxed/simple;
+	bh=RdWVCJOCVMoiKYMrJxdGXBUQsWO1ntwkZTHi/vmoRyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D31O9N5w8JxKsqw/oSj3IWqJ9vL1bU+a7jmON1UHnSNXRDrgdG+TpCWcU14zOQ9DscrQeAPeMN8hkf/SoNlBMlo7rYvin1F9jjUXsmnzMy9k/gAYDUhvAU4bcEFEle1IgJHe9K8piOUjmqM51JulIhHOzK340zdVjVw4sUAZ6wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lS9PfT0o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09BD1C2BD10;
+	Sun, 23 Jun 2024 12:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719146422;
+	bh=RdWVCJOCVMoiKYMrJxdGXBUQsWO1ntwkZTHi/vmoRyA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lS9PfT0oAO2YZdDIIrIc4dY8+yNNmLhZN8ohDN4zep8FHwC5LMvB3I0ANXD53KC7U
+	 tjViCm1u9I6VLwJWU/Pqr2b/KkV7DiSOLxRiM0gmdG/uDQBQsPdY9AF+Ftb7SEZsJq
+	 63y97QhXyY/hkLLg63qj6fai0KG6fLvZx8IJ1eFWjBpn0N0cTzFF07VNiZQWR8tGjV
+	 6MG1LXnKkVOirLJ9p/ROydPcgONG0EaJ/WWf1bTUSnte/1EvwF96OykHWKq8pFvptx
+	 /ZE/bKsvFh7G5aeRJLifgtNkaxujxCP54m2fD5hxuTfOovHhLLFPS994iMfmCuLa4c
+	 OM+Av+rA86KIw==
+Message-ID: <248e8983-1b91-4fff-a941-74c6dc4fcbc1@kernel.org>
+Date: Sun, 23 Jun 2024 14:40:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: display/msm/gmu: Add Adreno X185 GMU
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+ freedreno <freedreno@lists.freedesktop.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ Rob Clark <robdclark@gmail.com>, Bjorn Andersson <andersson@kernel.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+ Sean Paul <sean@poorly.run>, Thomas Zimmermann <tzimmermann@suse.de>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
+ <20240623110753.141400-2-quic_akhilpo@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240623110753.141400-2-quic_akhilpo@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+On 23/06/2024 13:06, Akhil P Oommen wrote:
+> Document Adreno X185 GMU in the dt-binding specification.
+> 
+> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> ---
+> 
+>  Documentation/devicetree/bindings/display/msm/gmu.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/msm/gmu.yaml b/Documentation/devicetree/bindings/display/msm/gmu.yaml
+> index b3837368a260..9aa7151fd66f 100644
+> --- a/Documentation/devicetree/bindings/display/msm/gmu.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/gmu.yaml
+> @@ -23,6 +23,9 @@ properties:
+>        - items:
+>            - pattern: '^qcom,adreno-gmu-[67][0-9][0-9]\.[0-9]$'
+>            - const: qcom,adreno-gmu
+> +      - items:
+> +          - pattern: '^qcom,adreno-gmu-[x][1-9][0-9][0-9]\.[0-9]$'
 
-In the current implementation, in most cases, the memory of xfs_log_vec
-and xfs_log_iovec is allocated together. Therefore the life cycle of
-xfs_log_iovec has to remain the same as xfs_log_vec.
+'[x]' is odd. Should be just 'x'.
 
-But this is not necessary. When the content in xfs_log_iovec is written
-to iclog by xlog_write(), it no longer needs to exist in the memory. But
-xfs_log_vec is still useful, because after we flush the iclog into the
-disk log space, we need to find the corresponding xfs_log_item through
-the xfs_log_vec->lv_item field and add it to AIL.
 
-This patch separates the memory allocation of xfs_log_iovec from
-xfs_log_vec, and releases the memory of xfs_log_iovec in advance after
-the content in xfs_log_iovec is written to iclog.
-
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
- fs/xfs/xfs_log.c     |  2 ++
- fs/xfs/xfs_log.h     |  8 ++++++--
- fs/xfs/xfs_log_cil.c | 26 ++++++++++++++++----------
- 3 files changed, 24 insertions(+), 12 deletions(-)
-
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index 416c15494983..f7af9550c17b 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -2526,6 +2526,8 @@ xlog_write(
- 			xlog_write_full(lv, ticket, iclog, &log_offset,
- 					 &len, &record_cnt, &data_cnt);
- 		}
-+		if (lv->lv_flags & XFS_LOG_VEC_DYNAMIC)
-+			kvfree(lv->lv_iovecp);
- 	}
- 	ASSERT(len == 0);
- 
-diff --git a/fs/xfs/xfs_log.h b/fs/xfs/xfs_log.h
-index d69acf881153..f052c7fdb3e9 100644
---- a/fs/xfs/xfs_log.h
-+++ b/fs/xfs/xfs_log.h
-@@ -6,6 +6,8 @@
- #ifndef	__XFS_LOG_H__
- #define __XFS_LOG_H__
- 
-+#define XFS_LOG_VEC_DYNAMIC	(1 << 0)
-+
- struct xfs_cil_ctx;
- 
- struct xfs_log_vec {
-@@ -17,7 +19,8 @@ struct xfs_log_vec {
- 	char			*lv_buf;	/* formatted buffer */
- 	int			lv_bytes;	/* accounted space in buffer */
- 	int			lv_buf_len;	/* aligned size of buffer */
--	int			lv_size;	/* size of allocated lv */
-+	int			lv_size;	/* size of allocated iovec + buffer */
-+	int			lv_flags;	/* lv flags */
- };
- 
- #define XFS_LOG_VEC_ORDERED	(-1)
-@@ -40,6 +43,7 @@ static inline void
- xlog_finish_iovec(struct xfs_log_vec *lv, struct xfs_log_iovec *vec,
- 		int data_len)
- {
-+	struct xfs_log_iovec	*lvec = lv->lv_iovecp;
- 	struct xlog_op_header	*oph = vec->i_addr;
- 	int			len;
- 
-@@ -69,7 +73,7 @@ xlog_finish_iovec(struct xfs_log_vec *lv, struct xfs_log_iovec *vec,
- 	vec->i_len = len;
- 
- 	/* Catch buffer overruns */
--	ASSERT((void *)lv->lv_buf + lv->lv_bytes <= (void *)lv + lv->lv_size);
-+	ASSERT((void *)lv->lv_buf + lv->lv_bytes <= (void *)lvec + lv->lv_size);
- }
- 
- /*
-diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
-index f51cbc6405c1..3be9f86ce655 100644
---- a/fs/xfs/xfs_log_cil.c
-+++ b/fs/xfs/xfs_log_cil.c
-@@ -219,8 +219,7 @@ static inline int
- xlog_cil_iovec_space(
- 	uint	niovecs)
- {
--	return round_up((sizeof(struct xfs_log_vec) +
--					niovecs * sizeof(struct xfs_log_iovec)),
-+	return round_up(niovecs * sizeof(struct xfs_log_iovec),
- 			sizeof(uint64_t));
- }
- 
-@@ -279,6 +278,7 @@ xlog_cil_alloc_shadow_bufs(
- 
- 	list_for_each_entry(lip, &tp->t_items, li_trans) {
- 		struct xfs_log_vec *lv;
-+		struct xfs_log_iovec *lvec;
- 		int	niovecs = 0;
- 		int	nbytes = 0;
- 		int	buf_size;
-@@ -339,18 +339,23 @@ xlog_cil_alloc_shadow_bufs(
- 			 * the buffer, only the log vector header and the iovec
- 			 * storage.
- 			 */
--			kvfree(lip->li_lv_shadow);
--			lv = xlog_kvmalloc(buf_size);
--
--			memset(lv, 0, xlog_cil_iovec_space(niovecs));
-+			if (lip->li_lv_shadow) {
-+				kvfree(lip->li_lv_shadow->lv_iovecp);
-+				kvfree(lip->li_lv_shadow);
-+			}
-+			lv = xlog_kvmalloc(sizeof(struct xfs_log_vec));
-+			memset(lv, 0, sizeof(struct xfs_log_vec));
-+			lvec = xlog_kvmalloc(buf_size);
-+			memset(lvec, 0, xlog_cil_iovec_space(niovecs));
- 
-+			lv->lv_flags |= XFS_LOG_VEC_DYNAMIC;
- 			INIT_LIST_HEAD(&lv->lv_list);
- 			lv->lv_item = lip;
- 			lv->lv_size = buf_size;
- 			if (ordered)
- 				lv->lv_buf_len = XFS_LOG_VEC_ORDERED;
- 			else
--				lv->lv_iovecp = (struct xfs_log_iovec *)&lv[1];
-+				lv->lv_iovecp = lvec;
- 			lip->li_lv_shadow = lv;
- 		} else {
- 			/* same or smaller, optimise common overwrite case */
-@@ -366,9 +371,9 @@ xlog_cil_alloc_shadow_bufs(
- 		lv->lv_niovecs = niovecs;
- 
- 		/* The allocated data region lies beyond the iovec region */
--		lv->lv_buf = (char *)lv + xlog_cil_iovec_space(niovecs);
-+		lv->lv_buf = (char *)lv->lv_iovecp +
-+				xlog_cil_iovec_space(niovecs);
- 	}
--
- }
- 
- /*
-@@ -502,7 +507,7 @@ xlog_cil_insert_format_items(
- 			/* reset the lv buffer information for new formatting */
- 			lv->lv_buf_len = 0;
- 			lv->lv_bytes = 0;
--			lv->lv_buf = (char *)lv +
-+			lv->lv_buf = (char *)lv->lv_iovecp +
- 					xlog_cil_iovec_space(lv->lv_niovecs);
- 		} else {
- 			/* switch to shadow buffer! */
-@@ -1544,6 +1549,7 @@ xlog_cil_process_intents(
- 		set_bit(XFS_LI_WHITEOUT, &ilip->li_flags);
- 		trace_xfs_cil_whiteout_mark(ilip);
- 		len += ilip->li_lv->lv_bytes;
-+		kvfree(ilip->li_lv->lv_iovecp);
- 		kvfree(ilip->li_lv);
- 		ilip->li_lv = NULL;
- 
--- 
-2.39.3
+Best regards,
+Krzysztof
 
 
