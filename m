@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-226155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E20C913AF5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B86913AE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04EF51F21A35
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C911F211B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA34183064;
-	Sun, 23 Jun 2024 13:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301EC181B90;
+	Sun, 23 Jun 2024 13:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRlNJywl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HH/CJLvl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1FC1822FC;
-	Sun, 23 Jun 2024 13:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A31334CE5;
+	Sun, 23 Jun 2024 13:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719150255; cv=none; b=gep32/vsEYZmu6p5AfJVj4SZf/rXB8Hp5UboX8Ghg7YBfDJUwY8zFiAavzt+xCI2UwB4Knlnqo6m0lhyvPFkCS/N2xgsrgJNYUb5Qz5hCYTg51AODOnMTJ7VsKQH7pF5V5OAGAlJM2P6ILkJqIz1cNngejXWYPmkRXhE7Ty0KjE=
+	t=1719150229; cv=none; b=flHPA0J6OFo8p0IJIOeaIDmhFjZ5pHeOTvL664/fZ+CF7shYdc1f03adIsEX1JIBn9957jTP98VKiS4G80IrQpz6p3jRHKjGE3MlTs9fO0/ekBdFWf7LLkAizqxxecEaWJdhQKuq89jD92+sT7jQV11vvNG/ogvhDfsSAmwBRqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719150255; c=relaxed/simple;
-	bh=nOudGRl+mb68MsHONBxOVOD6JeJsjsiddcuRzbkffMQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u2zCSPjkdODKkFIJymon1zRtkUGrBupC9JbJqrEgLePk0YwYm1uNUjVnImQ3T6q2JXhc6C+QWefr8Gx88I1ynDzpzsufrwLgGgLqG6DTwZYNGNlm6fyrT677H+r3Q6SlCy8Gdmzzj17JsN6zfivrOLXZwUgNdon5k84D2OJzz+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZRlNJywl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91391C32781;
-	Sun, 23 Jun 2024 13:44:14 +0000 (UTC)
+	s=arc-20240116; t=1719150229; c=relaxed/simple;
+	bh=wtKWWKsccCRVH5NfxjqFIUvz4d0pGGPPjt66SY986co=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=um7tmXNCZzWm6MRci1Lvg99BLaN3lVwMuOnP6i3vgbjumiM7VZQnfld5Nl6nOLYQtt7rKnrFJza/5MLLLxEzvkrL6bvI67tlwb2m/n+SMObhOJMsn2k6KcN8/mwbozNHXKyjaie7anolHs5HyFXUoOYfh6xEBkGTArykqjEOmIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HH/CJLvl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 490B4C2BD10;
+	Sun, 23 Jun 2024 13:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719150255;
-	bh=nOudGRl+mb68MsHONBxOVOD6JeJsjsiddcuRzbkffMQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZRlNJywlNyc327ArgeUDmku5Lya5Cq4gTSJii0CU+DVyuJs8aUFtn+askG/bM3fzP
-	 HDcnQdM2XJXa9Sf8KwoHJPiI0Nt2O6fM1UNZWtItEHYrdbN79rjClicsBb8HbbEg/N
-	 eSu9THhvVuvVfJ8ncbztUpCVXhBJ51ntn7tHdUFaym9beETMvwEJflgrw8dALPInli
-	 rQHf6xloMThIpzQGovzk0nYEHoyl9Eyic8RDkW7Da79NYY1pWN++3SsxG2Z5OfHDrp
-	 8fOCirps57YouxpHuzui+gcjk0AfIe9RYD6OaS0IP+pWX/bXkNx4GtSeCYdGBuTvUb
-	 3vzmdM5gLzFAg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Zizhi Wo <wozizhi@huawei.com>,
-	Baokun Li <libaokun1@huawei.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Jia Zhu <zhujia.zj@bytedance.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	dhowells@redhat.com,
-	netfs@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.9 06/21] cachefiles: Set object to close if ondemand_id < 0 in copen
-Date: Sun, 23 Jun 2024 09:43:39 -0400
-Message-ID: <20240623134405.809025-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240623134405.809025-1-sashal@kernel.org>
-References: <20240623134405.809025-1-sashal@kernel.org>
+	s=k20201202; t=1719150229;
+	bh=wtKWWKsccCRVH5NfxjqFIUvz4d0pGGPPjt66SY986co=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HH/CJLvlCz8eC9aD3aHrHRJkUzS7BG2H+f9nu/LsrB+mH+mlC5dBbTnGftkl94cPp
+	 bpNEzCi1L2ng5hruZsdv7ubAQoNqNBmiYQduSrxGIWkbocneC7DVPWTPc+zhslWnWp
+	 pgqE+bUjhRRnStwqUMRZzwnAdV7UMu58X0iMEptVlhKZE8C0mIburRX0z37uU65C2p
+	 J3WM4DV8B7ePnjPgjxSyJ/d8K38/1MVMD4+cBTglKS8v4WK6ew2x/p12Zmn5ay1kW+
+	 NZWDSC9lBrcQZK+eXeQrvihDU3AjlK5vV4v8bxAE4XTHuhkkTNdfSMWUjepF8VlVym
+	 PBNdzQoAXSkeQ==
+Date: Sun, 23 Jun 2024 14:43:39 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Kim Seer Paller <kimseer.paller@analog.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, David Lechner <dlechner@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Michael Hennerich
+ <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <noname.nuno@gmail.com>
+Subject: Re: [PATCH v4 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
+Message-ID: <20240623144339.6a5087cf@jic23-huawei>
+In-Reply-To: <20240619-vanity-crowd-24d93dda47b8@spud>
+References: <20240619064904.73832-1-kimseer.paller@analog.com>
+	<20240619064904.73832-5-kimseer.paller@analog.com>
+	<20240619-vanity-crowd-24d93dda47b8@spud>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.9.6
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Zizhi Wo <wozizhi@huawei.com>
+On Wed, 19 Jun 2024 18:57:59 +0100
+Conor Dooley <conor@kernel.org> wrote:
 
-[ Upstream commit 4f8703fb3482f92edcfd31661857b16fec89c2c0 ]
+> On Wed, Jun 19, 2024 at 02:49:03PM +0800, Kim Seer Paller wrote:
+> > +patternProperties:
+> > +  "^channel@[0-4]$":
+> > +    type: object
+> > +    additionalProperties: false
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description: The channel number representing the DAC output channel.
+> > +        maximum: 4
+> > +
+> > +      adi,toggle-mode:
+> > +        description:
+> > +          Set the channel as a toggle enabled channel. Toggle operation enables
+> > +          fast switching of a DAC output between two different DAC codes without
+> > +          any SPI transaction.
+> > +        type: boolean
+> > +
+> > +      adi,output-range-microamp:
+> > +        description: Specify the channel output full scale range.
+> > +        enum: [3125000, 6250000, 12500000, 25000000, 50000000, 100000000,
+> > +               200000000, 300000000]  
+> 
+> IIO folks, is this sort of thing common/likely to exist on other DACs?
 
-If copen is maliciously called in the user mode, it may delete the request
-corresponding to the random id. And the request may have not been read yet.
-
-Note that when the object is set to reopen, the open request will be done
-with the still reopen state in above case. As a result, the request
-corresponding to this object is always skipped in select_req function, so
-the read request is never completed and blocks other process.
-
-Fix this issue by simply set object to close if its id < 0 in copen.
-
-Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
-Link: https://lore.kernel.org/r/20240522114308.2402121-11-libaokun@huaweicloud.com
-Acked-by: Jeff Layton <jlayton@kernel.org>
-Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/cachefiles/ondemand.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-index 6f815e7c50867..922cab1a314b2 100644
---- a/fs/cachefiles/ondemand.c
-+++ b/fs/cachefiles/ondemand.c
-@@ -182,6 +182,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
- 	xas_store(&xas, NULL);
- 	xa_unlock(&cache->reqs);
+Fair point. It is probably time to conclude this is at least moderately common
+and generalize it - which will need a dac.yaml similar to the one we have for
+ADCs in adc/adc.yaml.  That will need to make this a per channel node
+property (same as the adc ones).
  
-+	info = req->object->ondemand;
- 	/* fail OPEN request if copen format is invalid */
- 	ret = kstrtol(psize, 0, &size);
- 	if (ret) {
-@@ -201,7 +202,6 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
- 		goto out;
- 	}
- 
--	info = req->object->ondemand;
- 	spin_lock(&info->lock);
- 	/*
- 	 * The anonymous fd was closed before copen ? Fail the request.
-@@ -241,6 +241,11 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
- 	wake_up_all(&cache->daemon_pollwq);
- 
- out:
-+	spin_lock(&info->lock);
-+	/* Need to set object close to avoid reopen status continuing */
-+	if (info->ondemand_id == CACHEFILES_ONDEMAND_ID_CLOSED)
-+		cachefiles_ondemand_set_object_close(req->object);
-+	spin_unlock(&info->lock);
- 	complete(&req->done);
- 	return ret;
- }
--- 
-2.43.0
+I'd also expect it to always take 2 values. In many cases the first will be 0
+but that is fine.
+
+Jonathan
 
 
