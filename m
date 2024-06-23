@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-226073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B429139D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:11:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A069139DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B76C1C20AF4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:11:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C341F21999
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7CE12F385;
-	Sun, 23 Jun 2024 11:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6B512F592;
+	Sun, 23 Jun 2024 11:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxYfrQ6a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkHNb8cH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C90C46B5;
-	Sun, 23 Jun 2024 11:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D427946B5;
+	Sun, 23 Jun 2024 11:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719141058; cv=none; b=OTww2Ovha8EINoT/XevhRwUAW5Lx9cQNSr3d8j15vHt8napEy9hQknbH7uivEFlxKfJ5P1M6e8EdbPlpa8tt67/79uYUHfwPGKDPkc+/QfkhI3pr4ygVSwZnGI+wW7gqK2l0WgP1j1Noi/vIa8pvnbW5d5ES665LJGliOlducxA=
+	t=1719141117; cv=none; b=mJXK07CZjMEFH8youW9V3mmq3QuUwDGKVwQfjhtMzGY68mS/cpjgYmNJ6/d30n11ne/Vcnhtoi4j/7DYEsyX20B2xx7ZSRNcWpEV3CHP/kBuIHPl7POexiesKNbc8JNlsh2s8izUkrQp4NCfRrlKZhkfOFN5Lu9GhlYjBJ6bs2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719141058; c=relaxed/simple;
-	bh=5OKeTdayfOzgq6z3/8he9g3R7WgcX3TAzqL0zI/7dhY=;
+	s=arc-20240116; t=1719141117; c=relaxed/simple;
+	bh=qPHRh4yMZ/8cbJeSrJYArisc4wUo1J35/Y4h2m255rw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ijmQ5gOX19kb+VLY1AAqc6pNzxKxzdia9A3MZWyHFZ6y8SkrUi0j36LnpDx8qXJ+WEkhJCRO11HnnNIy4nhkTEr/CncYR+GZthzGyaqvSvsjlC1UNGySBe5ZYed49yHxTiswbLj2Aaq6+R5riDdGl3nDotgx7rCoJDad9OkEthM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxYfrQ6a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACE0C2BD10;
-	Sun, 23 Jun 2024 11:10:50 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Xb0JOXrQVPbxmUymqwSgmPXbjbEGpdaUrjRKoXeX7FsJUhmj/SxeZ4+uUtI3DxbNL4vIwRml6QewtJEGxjztAuchJje/ShAD8udo8cuiU3xw/fJ69QqotpUFiIC0ZGBs5bg4kiUQzZBmzZwzTVzzLxU9sHOpF2/awNGShdyXtoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkHNb8cH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 029DAC2BD10;
+	Sun, 23 Jun 2024 11:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719141058;
-	bh=5OKeTdayfOzgq6z3/8he9g3R7WgcX3TAzqL0zI/7dhY=;
+	s=k20201202; t=1719141117;
+	bh=qPHRh4yMZ/8cbJeSrJYArisc4wUo1J35/Y4h2m255rw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uxYfrQ6a9pNvtge508wbaoSbZyXmO2/l/THnxvtE4NjpjtIa8JFS6YcHHrHtezCy+
-	 aRPno+PRHWybpKtKquXxVSoOzPcsU1hlx31iE8vhlWklVNF5zAYihAbDpBr66yPCD0
-	 Bq19OVeAD6Pfmf6y9BN3SnFeAlsOMyiiyYAQTR91ks83a/0sKJYut5wPn3pAvDuPuK
-	 H5Bv3LUWJCF4KJwlTxNTRfaXOagncsBq/tqQksy/G8NWQli+oFMpjAwiR+SFCldz9i
-	 2duCjRvJuVriq4zXAsxfahxIwoU10vpIS/wuE8nKSJPJzGjew6GcrUrC7HeHb8dTJw
-	 cz8lZb3uPOv2Q==
-Message-ID: <2c32e077-48ef-4d08-99ce-9072a339740c@kernel.org>
-Date: Sun, 23 Jun 2024 13:10:48 +0200
+	b=DkHNb8cHjRXLxIe2qK2ZoIz91F8AbEayWx6OEU+flIl7vQP7oFp+fFnWqKfotDwZi
+	 dtbKJR4J0VwMAnyJxwQbx/OW9+IbCoWlNMZ9MVvlSvMSNMjTUkTCJjS8jcK6DS907P
+	 fBKnool6pOC7E1LZpSalexxFub0WbsC3bSWnuzBi6aUL8R3lrNHfXwere5OIU3XzMC
+	 4Tx93Cqmy/2wCn9x9PNO30xCzkTo7k7+5ZFl7dlOdqh3Ynfg2ifeW6i8DBV5ynuOd3
+	 tbBuxF2KaJpzYlF1k/mbcqRAomnmd7WGTtvjWS+xEfOzSG5CIS/EhQB9dbb8MOhe60
+	 arAzzJ1eSY7Qw==
+Message-ID: <26abe6cd-e9da-4db9-9035-76edd5dda614@kernel.org>
+Date: Sun, 23 Jun 2024 13:11:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,26 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv5 8/9] arm64: dts: imx8m: update spdif sound card node
- properties
-To: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
- linuxppc-dev@lists.ozlabs.org,
- Philip-Dylan <philip-dylan.gleonec@savoirfairelinux.com>
-References: <20240620132511.4291-1-elinor.montmasson@savoirfairelinux.com>
- <20240620132511.4291-9-elinor.montmasson@savoirfairelinux.com>
+Subject: Re: [PATCH v1 0/3] Support for Adreno X1-85 GPU
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+ freedreno <freedreno@lists.freedesktop.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ Rob Clark <robdclark@gmail.com>, Bjorn Andersson <andersson@kernel.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+ Sean Paul <sean@poorly.run>, Thomas Zimmermann <tzimmermann@suse.de>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -114,23 +111,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240620132511.4291-9-elinor.montmasson@savoirfairelinux.com>
+In-Reply-To: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/06/2024 15:25, Elinor Montmasson wrote:
-> Following merge of imx-spdif driver into fsl-asoc-card:
-> * update properties to match those used by fsl-asoc-card.
-> * S/PDIF in/out dummy codecs must now be declared explicitly, add and
->   use them.
+On 23/06/2024 13:06, Akhil P Oommen wrote:
+> This series adds support for the Adreno X1-85 GPU found in Qualcomm's
+> compute series chipset, Snapdragon X1 Elite (x1e80100). In this new
+> naming scheme for Adreno GPU, 'X' stands for compute series, '1' denotes
+> 1st generation and '8' & '5' denotes the tier and the SKU which it
+> belongs.
 > 
-> These modifications were tested only on an imx8mn-evk board.
+> X1-85 has major focus on doubling core clock frequency and bandwidth
+> throughput. It has a dedicated collapsible Graphics MX rail (gmxc) to
+> power the memories and double the number of data channels to improve
+> bandwidth to DDR.
+> 
+> Mesa has the necessary bits present already to support this GPU. We are
+> able to bring up Gnome desktop by hardcoding "0xffff43050a01" as
+> chipid. Also, verified glxgears and glmark2. We have plans to add the
+> new chipid support to Mesa in next few weeks, but these patches can go in
+> right away to get included in v6.11.
+> 
+> This series is rebased on top of v6.10-rc4. P3 cherry-picks cleanly on
+> qcom/for-next.
+> 
+> P1 & P2 for Rob, P3 for Bjorn to pick up.
 
-So new DTS will not work on old kernel... Can you at least explain why
-this is needed and what benefits this make? You change hardware
-description, so whatever you merged in drivers is not really relevant, I
-would say.
+Which Rob?
 
+Why bindings cannot go as usual way - via the subsystem?
 
 Best regards,
 Krzysztof
