@@ -1,315 +1,156 @@
-Return-Path: <linux-kernel+bounces-226311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FCA913CE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:50:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC29B913CE4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1DC31C206A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:50:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19878B20C2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9446E18306D;
-	Sun, 23 Jun 2024 16:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3B3183073;
+	Sun, 23 Jun 2024 16:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OOwTAkFi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gqu+qL/Z"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619B68BFA
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 16:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF46C181D14
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 16:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719161432; cv=none; b=nQpdWVlpnbGVdJpa/pvjyG4hm3u3pccLCmVwroOoNOPwd+14xcCj/CxqfjDYQc+8kvvWRWIYI/n3xIwZ3FlI4C3MhZMYApa6hjAoecE3HefsPSWcU4P2NEJf31NfFZVjz3WgUUkjeIsk+bD3FzIGZK+0MwJuMOa3K5cpjZDLn0U=
+	t=1719161518; cv=none; b=dmY0TOJ88hrrNLJbcOVoepjdWGrH+8KYfGRcOF8aiv3DE6XR7DlxsdvK9vrPITEGgIB+NPtGDN7NRQzUIbjhDOoyhmtJInMgpUIhF17mrWzQXJ6Np2sO7NwV/t78MYc7EPyKNDzWHR2dIOp2oxTVSzeYLbCcVMkq/5wq5CKfk7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719161432; c=relaxed/simple;
-	bh=oi6ALRMSMvwAeY9opIcwVIpjsCgGVymYtyCLFy5Uw98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KJkVtoj2B8cJdJsvDBcethFLohFXl1RrGx2+yoU0DqPfms9uRJ/6VUiwjuVymx8jZGcdLyVt31KCTXLNb0pb7LcXsBwKpjtGXERHTXlkVUoLVaX70NsShs6B5r+obGMcfb5ozEj6ZiXBnMHXq3/r8e+kQtZHzPoA8FuZCZmj7bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OOwTAkFi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719161429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DxqcSioCgPIduW+TMsWlb83DBVizb/BiswEHMKC3hM8=;
-	b=OOwTAkFi4okL9J0Qtv910W3/LFWpThe6EmUpllh9bgLRvnxxSN3U+pBERoKwKsEXfNZ9u2
-	n5OMKBk60ywUg9KIO/rEf7D61W/TVRedXYkLEP9trYZ7ArAWIHFJ/0fh0oVECxx9ph7xhY
-	D0l0VijPVW5z44HEQSfR6Hnc0ZAn/eE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-596-8idT6HTmPfOWnig4A9s0ug-1; Sun,
- 23 Jun 2024 12:50:27 -0400
-X-MC-Unique: 8idT6HTmPfOWnig4A9s0ug-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6BE261956089;
-	Sun, 23 Jun 2024 16:50:25 +0000 (UTC)
-Received: from [10.22.16.52] (unknown [10.22.16.52])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 81CC11956089;
-	Sun, 23 Jun 2024 16:50:23 +0000 (UTC)
-Message-ID: <68083a4d-9fd3-42a3-b6fd-d6d1f07cac74@redhat.com>
-Date: Sun, 23 Jun 2024 12:50:20 -0400
+	s=arc-20240116; t=1719161518; c=relaxed/simple;
+	bh=NZQyaZf7FOnKMjA4vLphHGmCC8OBy/rwt7kqfFcNkaY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qSH1PM9SWsxR+ZyuvLS4kV6SyA/MomySiHH54k92EkWEkbLAcyYQLFiZqiN3WBF3NEiof2flG/v76hhPqb7KUfZaEQP3Hi5lHYG+c381NM3zv8gJA5WVIYix9uEha2aZcK2IfAk6Xz+L3rdUQonQOjI1agH1encM4Fr/9NkJTjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gqu+qL/Z; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eaea28868dso46608211fa.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 09:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1719161515; x=1719766315; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JZK30fVnygMHCN0lsNw1v+SdKhqY12DdFDA/r56Sx/E=;
+        b=gqu+qL/ZNWXS7B3rbRsGaz3CHTpPWfBcS/BNBaNskJwkJIRUsyrXGkRDX+gzl1N0HD
+         8BAO4vOHWkZrirVQI6cxslHUEphnJ07yAP6Qpo6Tvl4nl4NzPrqWbL9Qc/hYXfP6kelN
+         GclcE45np3k2e1gFfvnv9hPTHMvgD6Jl6wcIA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719161515; x=1719766315;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JZK30fVnygMHCN0lsNw1v+SdKhqY12DdFDA/r56Sx/E=;
+        b=mN3FNWmiCbgHUNzDtXoCDl4elSmL1zaO//T9T2/gdthGF5jxVUM03sA3axLpF+Ff3E
+         BtV58fQPoSk7uqrNpXfTsS15JEkelms9/QN3pvTLYoCX3EMFPpKC9/rBrWTn1Bc0LvJt
+         dht4ibiQCKdLDBNABdfCwfKtPQYTeNvy7iO+Zucv4++r5uGtZvRf4r2Y/8iUJsUasE6V
+         tyToUm1uXZdeSKEKevg1fIyiavd/VVNpoteb1DvmKsk4OcndMf5lNu9CtERDC0Jcele7
+         u9ylNAHgwtHmQ4BH0JeoZXluK7oIrgFF1oIl3xqJRZwkK0zCOGkailXB4GfoYcSBDTvS
+         v98A==
+X-Forwarded-Encrypted: i=1; AJvYcCUREoIceeXmkzZwEfsgJ9oSELYYD6ivSUoRBJgaNIMhIkSVuqBhrOTY9TvlhuBmOq/st9C1N6VHkXh11Xr/14GnsgCYfaXSoxC90h9d
+X-Gm-Message-State: AOJu0YxkWPzL1PKf3uCGtoqXMlofcNt7pYpuUdOaydXpjRP3v6QGqzSa
+	Dg/n6mjU07pzuFhtYMHpZr5ncvueAbSX3A/Rdej/Rck/pQAF3IlnJDmQcA65o8ug6shaD7h6Nm9
+	aKfSdgg==
+X-Google-Smtp-Source: AGHT+IFZyF5Ct+mH5clqydm1+ox6o0ncx4wxlzyin3kUYGK9pMx3TsbrE8H8E+en7TZVn+Jo/pilPQ==
+X-Received: by 2002:a2e:7811:0:b0:2ec:55b5:ed44 with SMTP id 38308e7fff4ca-2ec5b2c4ebemr19105451fa.11.1719161514893;
+        Sun, 23 Jun 2024 09:51:54 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf428c72sm320913366b.36.2024.06.23.09.51.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Jun 2024 09:51:54 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111b0so1912234a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 09:51:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVw6AG+hF5+9usJLkAQBkA9TVEKDUtVv8UuQxa0T/k95auKTj6lvQyX3suDyrmMKIn+PibIPHlHHazMEXpxaPb753TSmKvQWQDVP65l
+X-Received: by 2002:aa7:da99:0:b0:57d:5d68:718 with SMTP id
+ 4fb4d7f45d1cf-57d5d6807b3mr89557a12.41.1719161513740; Sun, 23 Jun 2024
+ 09:51:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [cgroups?] KASAN: invalid-free in build_sched_domains
-To: syzbot <syzbot+05801a3641d9817ee5ec@syzkaller.appspotmail.com>,
- cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- lizefan.x@bytedance.com, syzkaller-bugs@googlegroups.com, tj@kernel.org
-References: <000000000000ba7521061b870df8@google.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <000000000000ba7521061b870df8@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20240620181736.1270455-1-yabinc@google.com> <CAKwvOd=ZKS9LbJExCp8vrV9kLDE_Ew+mRcFH5-sYRW_2=sBiig@mail.gmail.com>
+ <ZnVe5JBIBGoOrk5w@gondor.apana.org.au>
+In-Reply-To: <ZnVe5JBIBGoOrk5w@gondor.apana.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 23 Jun 2024 12:51:37 -0400
+X-Gmail-Original-Message-ID: <CAHk-=wgubtUrE=YcvHvRkUX7ii8QHPNCJ_0Gc+3tQOw+rL1DSg@mail.gmail.com>
+Message-ID: <CAHk-=wgubtUrE=YcvHvRkUX7ii8QHPNCJ_0Gc+3tQOw+rL1DSg@mail.gmail.com>
+Subject: Re: [PATCH] Fix initializing a static union variable
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Nick Desaulniers <ndesaulniers@google.com>, Yabin Cui <yabinc@google.com>, 
+	Steffen Klassert <steffen.klassert@secunet.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/23/24 00:25, syzbot wrote:
-> Hello,
+On Fri, 21 Jun 2024 at 07:07, Herbert Xu <herbert@gondor.apana.org.au> wrote:
 >
-> syzbot found the following issue on:
+> On Thu, Jun 20, 2024 at 12:31:46PM -0700, Nick Desaulniers wrote:
+> >
+> > Can you also please (find or) file a bug against clang about this? A
+> > compiler diagnostic would be very very helpful here, since `= {};` is
+> > such a common idiom.
 >
-> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13b21bca980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39
-> dashboard link: https://syzkaller.appspot.com/bug?extid=05801a3641d9817ee5ec
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: i386
->
-> Unfortunately, I don't have any reproducer for this issue yet.
+> This idiom is used throughout the kernel.  If we decide that it
+> isn't safe to use then we should change the kernel as a whole rather
+> than the one spot that happens to have been identified.
 
-It is hard to debug this problem without a reproducer. Anyway, I suspect 
-the likely cause of this bug is commit a1fd0b9d751f ("sched/fair: Allow 
-disabling sched_balance_newidle with sched_relax_domain_level").
+Again - the commit message and the whole discussion about the C23
+standard is actively misleading, as shown byu this whole thread.
 
-Regards,
-Longman
+The bug IS NOT ABOUT THE EMPTY INITIALIZER.
 
+The exact same problem happens with "{ 0 }" as happens with "{ }".
 
->
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/13cdb5bfbafa/vmlinux-2ccbdf43.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/7a14f5d07f81/bzImage-2ccbdf43.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+05801a3641d9817ee5ec@syzkaller.appspotmail.com
->
-> loop1: detected capacity change from 0 to 1024
-> hfsplus: unable to find HFS+ superblock
-> ==================================================================
-> BUG: KASAN: invalid-free in __sdt_free kernel/sched/topology.c:2302 [inline]
-> BUG: KASAN: invalid-free in __free_domain_allocs kernel/sched/topology.c:1498 [inline]
-> BUG: KASAN: invalid-free in build_sched_domains+0x14df/0x52e0 kernel/sched/topology.c:2535
-> Free of addr ffff88802b4a3f89 by task syz-executor.1/13033
->
-> CPU: 3 PID: 13033 Comm: syz-executor.1 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:88 [inline]
->   dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
->   print_address_description mm/kasan/report.c:377 [inline]
->   print_report+0xc3/0x620 mm/kasan/report.c:488
->   kasan_report_invalid_free+0xaa/0xd0 mm/kasan/report.c:563
->   poison_slab_object+0x15e/0x160 mm/kasan/common.c:223
->   __kasan_slab_free+0x32/0x50 mm/kasan/common.c:256
->   kasan_slab_free include/linux/kasan.h:184 [inline]
->   slab_free_hook mm/slub.c:2196 [inline]
->   slab_free mm/slub.c:4437 [inline]
->   kfree+0x12a/0x3b0 mm/slub.c:4558
->   __sdt_free kernel/sched/topology.c:2302 [inline]
->   __free_domain_allocs kernel/sched/topology.c:1498 [inline]
->   build_sched_domains+0x14df/0x52e0 kernel/sched/topology.c:2535
->   partition_sched_domains_locked+0x519/0x9e0 kernel/sched/topology.c:2747
->   partition_and_rebuild_sched_domains kernel/cgroup/cpuset.c:1181 [inline]
->   rebuild_sched_domains_locked+0xebb/0x2100 kernel/cgroup/cpuset.c:1246
->   update_relax_domain_level kernel/cgroup/cpuset.c:2952 [inline]
->   cpuset_write_s64+0x2ca/0x340 kernel/cgroup/cpuset.c:3560
->   cgroup_file_write+0x5ad/0x7d0 kernel/cgroup/cgroup.c:4113
->   kernfs_fop_write_iter+0x343/0x500 fs/kernfs/file.c:334
->   new_sync_write fs/read_write.c:497 [inline]
->   vfs_write+0x6b6/0x1140 fs/read_write.c:590
->   ksys_write+0x12f/0x260 fs/read_write.c:643
->   do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->   __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
->   do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
->   entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-> RIP: 0023:0xf7293579
-> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-> RSP: 002b:00000000f5e855ac EFLAGS: 00000292 ORIG_RAX: 0000000000000004
-> RAX: ffffffffffffffda RBX: 000000000000000e RCX: 0000000020000040
-> RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->   </TASK>
->
-> Allocated by task 13033:
->   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
->   __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:387
->   kmalloc_node_noprof include/linux/slab.h:677 [inline]
->   __sdt_alloc kernel/sched/topology.c:2251 [inline]
->   __visit_domain_allocation_hell kernel/sched/topology.c:1510 [inline]
->   build_sched_domains+0x37c/0x52e0 kernel/sched/topology.c:2401
->   partition_sched_domains_locked+0x519/0x9e0 kernel/sched/topology.c:2747
->   partition_and_rebuild_sched_domains kernel/cgroup/cpuset.c:1181 [inline]
->   rebuild_sched_domains_locked+0xebb/0x2100 kernel/cgroup/cpuset.c:1246
->   update_relax_domain_level kernel/cgroup/cpuset.c:2952 [inline]
->   cpuset_write_s64+0x2ca/0x340 kernel/cgroup/cpuset.c:3560
->   cgroup_file_write+0x5ad/0x7d0 kernel/cgroup/cgroup.c:4113
->   kernfs_fop_write_iter+0x343/0x500 fs/kernfs/file.c:334
->   new_sync_write fs/read_write.c:497 [inline]
->   vfs_write+0x6b6/0x1140 fs/read_write.c:590
->   ksys_write+0x12f/0x260 fs/read_write.c:643
->   do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->   __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
->   do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
->   entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->
-> The buggy address belongs to the object at ffff88802b4a3f80
->   which belongs to the cache kmalloc-16 of size 16
-> The buggy address is located 9 bytes inside of
->   16-byte region [ffff88802b4a3f80, ffff88802b4a3f90)
->
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2b4a3
-> anon flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-> page_type: 0xffffefff(slab)
-> raw: 00fff00000000000 ffff888015442640 0000000000000000 dead000000000001
-> raw: 0000000000000000 0000000080800080 00000001ffffefff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x252800(GFP_NOWAIT|__GFP_NORETRY|__GFP_COMP|__GFP_THISNODE), pid 5530, tgid 5530 (syz-executor.3), ts 162857508656, free_ts 162402453637
->   set_page_owner include/linux/page_owner.h:32 [inline]
->   post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1468
->   prep_new_page mm/page_alloc.c:1476 [inline]
->   get_page_from_freelist+0x136a/0x2e50 mm/page_alloc.c:3420
->   __alloc_pages_slowpath mm/page_alloc.c:4211 [inline]
->   __alloc_pages_noprof+0x6ad/0x2460 mm/page_alloc.c:4691
->   __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
->   alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
->   alloc_slab_page+0x56/0x110 mm/slub.c:2265
->   allocate_slab mm/slub.c:2428 [inline]
->   new_slab+0x84/0x260 mm/slub.c:2481
->   ___slab_alloc+0xdac/0x1870 mm/slub.c:3667
->   __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3757
->   __slab_alloc_node mm/slub.c:3810 [inline]
->   slab_alloc_node mm/slub.c:3989 [inline]
->   __do_kmalloc_node mm/slub.c:4121 [inline]
->   __kmalloc_node_noprof+0x36c/0x450 mm/slub.c:4129
->   kmalloc_node_noprof include/linux/slab.h:681 [inline]
->   kvmalloc_node_noprof+0x9d/0x1a0 mm/util.c:634
->   xt_jumpstack_alloc net/netfilter/x_tables.c:1355 [inline]
->   xt_replace_table+0x1c7/0x910 net/netfilter/x_tables.c:1394
->   __do_replace+0x1d9/0x9c0 net/ipv4/netfilter/arp_tables.c:912
->   compat_do_replace+0x3ca/0x500 net/ipv4/netfilter/ip_tables.c:1529
->   do_ip6t_set_ctl+0x686/0xc20 net/ipv6/netfilter/ip6_tables.c:1641
->   nf_setsockopt+0x8a/0xf0 net/netfilter/nf_sockopt.c:101
->   ipv6_setsockopt+0x133/0x1a0 net/ipv6/ipv6_sockglue.c:999
->   tcp_setsockopt+0xa4/0x100 net/ipv4/tcp.c:3765
-> page last free pid 7520 tgid 7520 stack trace:
->   reset_page_owner include/linux/page_owner.h:25 [inline]
->   free_pages_prepare mm/page_alloc.c:1088 [inline]
->   free_unref_page+0x64a/0xe40 mm/page_alloc.c:2583
->   qlink_free mm/kasan/quarantine.c:163 [inline]
->   qlist_free_all+0x4e/0x140 mm/kasan/quarantine.c:179
->   kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
->   __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:322
->   kasan_slab_alloc include/linux/kasan.h:201 [inline]
->   slab_post_alloc_hook mm/slub.c:3941 [inline]
->   slab_alloc_node mm/slub.c:4001 [inline]
->   kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4008
->   ptlock_alloc+0x1f/0x70 mm/memory.c:6444
->   ptlock_init include/linux/mm.h:2968 [inline]
->   pagetable_pte_ctor include/linux/mm.h:2991 [inline]
->   __pte_alloc_one_noprof include/asm-generic/pgalloc.h:73 [inline]
->   pte_alloc_one+0x74/0x370 arch/x86/mm/pgtable.c:33
->   __pte_alloc+0x6e/0x3a0 mm/memory.c:442
->   copy_pte_range mm/memory.c:1094 [inline]
->   copy_pmd_range mm/memory.c:1240 [inline]
->   copy_pud_range mm/memory.c:1277 [inline]
->   copy_p4d_range mm/memory.c:1301 [inline]
->   copy_page_range+0x2fea/0x5c10 mm/memory.c:1399
->   dup_mmap kernel/fork.c:751 [inline]
->   dup_mm kernel/fork.c:1688 [inline]
->   copy_mm+0x1416/0x2680 kernel/fork.c:1737
->   copy_process+0x3ea8/0x6f50 kernel/fork.c:2390
->   kernel_clone+0xfd/0x980 kernel/fork.c:2797
->   __do_compat_sys_ia32_clone+0xb7/0x100 arch/x86/kernel/sys_ia32.c:254
->   do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->   __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
->   do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
->   entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->
-> Memory state around the buggy address:
->   ffff88802b4a3e80: 00 06 fc fc 00 00 fc fc 00 00 fc fc 00 00 fc fc
->   ffff88802b4a3f00: 00 00 fc fc fa fb fc fc 00 07 fc fc 00 00 fc fc
->> ffff88802b4a3f80: 00 00 fc fc 00 00 fc fc fa fb fc fc 00 00 fc fc
->                        ^
->   ffff88802b4a4000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->   ffff88802b4a4080: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc 00 00
-> ==================================================================
-> ----------------
-> Code disassembly (best guess), 2 bytes skipped:
->     0:	10 06                	adc    %al,(%rsi)
->     2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
->     6:	10 07                	adc    %al,(%rdi)
->     8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
->     c:	10 08                	adc    %cl,(%rax)
->     e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
->    1e:	00 51 52             	add    %dl,0x52(%rcx)
->    21:	55                   	push   %rbp
->    22:	89 e5                	mov    %esp,%ebp
->    24:	0f 34                	sysenter
->    26:	cd 80                	int    $0x80
-> * 28:	5d                   	pop    %rbp <-- trapping instruction
->    29:	5a                   	pop    %rdx
->    2a:	59                   	pop    %rcx
->    2b:	c3                   	ret
->    2c:	90                   	nop
->    2d:	90                   	nop
->    2e:	90                   	nop
->    2f:	90                   	nop
->    30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
->    37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
+The bug is literally that some versions of clang seem to implement
+BBOTH of these as "initialize the first member of the union", which
+then means that if the first member isn't the largest member, the rest
+of the union is entirely undefined.
 
+And by "undefined" I don't mean in the "C standard sense". It may be
+that *too* in some versions of the C standards, but that's not really
+the issue any more.
+
+In the kernel, we do expect initializers that always initialize the
+whole variable fully.
+
+We have actively moved away from doing manual variable initialization
+because they've generated both worse code and sometimes triggered
+other problems. See for example 390001d648ff ("drm/i915/mtl: avoid
+stringop-overflow warning"), but also things like 75dc03453122 ("xfs:
+fix xfs_btree_query_range callers to initialize btree rec fully") or
+e3a69496a1cd ("media: Prefer designated initializers over memset for
+subdev pad ops")
+
+In other words, in the kernel we simply depend on initializers working
+reliably and fully. Partly because we've literally been told by
+compiler people that that is what we should do.
+
+So no, this is not about empty initializers. And this is not about
+some C standard verbiage.
+
+This is literally about "the linux kernel expects initializers to
+FULLY initialize variables". Padding, other union members, you name
+it.
+
+If clang doesn't do that, then clang is buggy as far as the kernel is
+concerned, and no amount of standards reading is relevant.
+
+And in particular, no amount of "but empty initializer" is relevant.
+
+I *hope* this is some unreleased clang version that has this bug.
+Because at least the clang version I have access to (clang 17.0.6)
+does not seem to exhibit this issue.
+
+              Linus
 
