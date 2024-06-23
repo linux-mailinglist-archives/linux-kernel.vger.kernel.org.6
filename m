@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-226318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C71913CF7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:06:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E89D3913CFB
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9421F228E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:06:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CFFFB20E36
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7F0183095;
-	Sun, 23 Jun 2024 17:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2DE18308F;
+	Sun, 23 Jun 2024 17:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bCUV2wVS"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ko/Xgd1+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0DA183068
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 17:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2FC8F5B;
+	Sun, 23 Jun 2024 17:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719162369; cv=none; b=k0SLhabqZuUb065K7HaGC2rvs84jgfOjHhFGnxRZZjfStqniD5/ZAANaWqPauq3Jb0ncXzzr1ggZtnSkoM1jIGVbG8K3XjfXj6wQ1MTjHjj+wq5TuFNn3ncwctD1OP2gVzhBJhKtqrm/anwdqWWjBNIxysT5/7ayODdFtLFVoIA=
+	t=1719162489; cv=none; b=JY31W580aXTmW4y4i7JtJ42CjwNtp0uoavheVYz7qpw9HO3cz659wvxRO0zljP5/ayzOHanrLzVZl+5U3Xz7cdxDnBAAHECuFYZDmOzdXRBhlGzym8TVDi6KCTtDCgEvVGoISXe/BR5Ap/aYL5BbvX4sRfCeHxd95x3t/Yt2Yvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719162369; c=relaxed/simple;
-	bh=45LdDu3bOcCKbhXgg4h83UgXbR3JletssymwhGumCDI=;
+	s=arc-20240116; t=1719162489; c=relaxed/simple;
+	bh=O64q/2QrlOK51NlMxYf1EIbVDMzus2wZpPQLOTEYW9g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B/w+6w5AKE2aWA9AL79syAt9KqcyMkAzJRiC5uHHGYegZthIXeW4+aw59q5Bzy4uTH7TQr+32y47lg7RVYDo81lqKNpcLTFQrJ6Y7qogC1XCFtC6mSIouTaKXj2FrZuYZbCMYtD4PGN1yYBrG15CkC/JPAkHBUzm8NBbRgzQleU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bCUV2wVS; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso38438921fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 10:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1719162365; x=1719767165; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=J2lcMIrHytzsqZNd1SmlAzfYjjTDrAQdmPKhyqoEJj8=;
-        b=bCUV2wVSSoqycZceeirILSUDtlbOvriZVEPs4XZnRjT0EG303lqlevlNMKMTIVw4ik
-         aCckcJ0hI76TliUTk5b/yuxNlV+F/l+LxFcZerQa4y8qp9D1V0Os/UZo3ncSFDqxTO6i
-         ITYda13gS91P3LGqU39ebmak24hnQn/gI9yRE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719162365; x=1719767165;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J2lcMIrHytzsqZNd1SmlAzfYjjTDrAQdmPKhyqoEJj8=;
-        b=Zv5vJ1YWCpfn0AWU15MvIHOUsCvhR+RMgLbBpOcfmISPYkw7YJmOjlg7Azh79MuSdU
-         +bUHT/uctLSm6+X5ylcumCK13gsQSZhhrABIyYDr/3RXj8+LToJphPg77D5m0NqLQXO2
-         HTiDLbGeyrBo/DA0fX5ZPHYi92IxFm79DCJBbEcdbezj5fGP6eMlAwi/Y2OMaoM/a29h
-         soeELl+3tjHpCMZ3z0XfD8C1Ly3nevjhxQj/awyILDhq8cPHKluYcjXWyvBhwO0+jdA+
-         B9hJPGczz24RHv8NsKnyH0aOs0culNR8LQx6uSFJuUavwzzcpD3NwchyArCIfHX8NoC3
-         Uqvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKDr9uYhnmab0XtPfsleqUXtqpS6VkJbG/7ThLvIKmKLglC0PFjQB1BS8jvxHF0SSI1RKInWumjss2gQXOL6l5OGTkAQGcnI1Np64s
-X-Gm-Message-State: AOJu0Yz0z+I7Efq1MsNe4DQqUzN5A+opg5nGj4PBFQTodZwCl7NkzbTf
-	45xshpnZawrTIwvv1qOhz/HuW0ikw5tkI33YkLB8Ag8JVXRDHVZYSqosEGeoaMG97q1VsP/FUtS
-	0OzGAjA==
-X-Google-Smtp-Source: AGHT+IFnTTUis3zXRC0cFLejrwXjctV54iT/lmYuYdyeLFyRLieU2FsXpoKhGplvdpm5mPPq2ybNww==
-X-Received: by 2002:ac2:5617:0:b0:52c:b606:2b2 with SMTP id 2adb3069b0e04-52ce0673b84mr1749356e87.46.1719162365096;
-        Sun, 23 Jun 2024 10:06:05 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63b4bf1sm762601e87.49.2024.06.23.10.06.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Jun 2024 10:06:03 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cfeso40620101fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 10:06:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVgGrnpITF7KhrJ5hQlmmeYKBg2Dzg5EP+aI6e414X2LfWu2Du8QY3xxXj5Tyd/bnfKR6hKDzPdkDZ8sWGU2amHolVQVCLh+jjtUrAI
-X-Received: by 2002:a2e:3101:0:b0:2ec:1cf1:b74c with SMTP id
- 38308e7fff4ca-2ec594cfe8fmr16692871fa.32.1719162363025; Sun, 23 Jun 2024
- 10:06:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=qThynngrzXZNxM8uxC8OyxVOSCoOrt6XYZuw16yjJeKevOsLEBp33R7UWesVjxU/jzDXXtEZSum8Xpf/4lws035lQ48G8HjOL7aJ4+Ie/qkaT/CwCT7JrpPwaSJZsVfE8Kjx3gYAv56bDHAC75YVAdnIA67XLa/0kabqEknWf7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ko/Xgd1+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 584B0C4AF0D;
+	Sun, 23 Jun 2024 17:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719162489;
+	bh=O64q/2QrlOK51NlMxYf1EIbVDMzus2wZpPQLOTEYW9g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ko/Xgd1+l2fiV5rq4r09a4Dkk9F6qo8JCMRAq0MUjdKJRPNa0OQzGbMb1mHz4h9F8
+	 9ffKTf/Au6njmky/2JceHhV0vSPKQjO0+dMt36RgIYJqtNT9UZ8jyCqoFUQjaxe1Ut
+	 +qDozt2EtOKXlwoESicyoJWJFrZ7Nt2DmKlnbyytXV7YRXA6tJCANsnRahMyPfUlFq
+	 7SDZI1AVuiLGdcP4TpX4yB6EPP7G6CNMAfRmEDoHXXEvzWdfweqdJcLO645/CsRpx6
+	 SwapBd4DoKEm9wphuAOBjb8Ga18XuvrjcK0o/1NdZbjKe0qazH/u4BCLzTBsPsr02H
+	 IEIKOUwLb/A8Q==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6fe617966fso115193566b.1;
+        Sun, 23 Jun 2024 10:08:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVx/+NW9hMeC+bZ7OgXURPIU8RQ6w2F3BuPAPHlmzBpVcrAUbI4B2s4UYV/xXFjtoyKrXGs5sYl9BgSskVuvCV7QegrxWCCrgFJKlfZI3yWUglyYSCXcdRW4U3KBWqyC5QGL+UF+416NQ==
+X-Gm-Message-State: AOJu0YwN50VdGObYK3QBjSAmSOr0T8G4gFeRLDEpEfL3RRmKlrOZO0hU
+	3bLmfHni2AODvuZaZIP+OTQpLb/7cO+C2oUdTI0zNcbfsYtN0+TXu+8L/i3Kr8I6+HFcdn4j36U
+	feAMzataIqX7AIXd2HdisSC6Veyk=
+X-Google-Smtp-Source: AGHT+IHqh5ECCo6rxNTnv13OnXMEvfR0HrFz5MxeNxK4Xo02Q+cUP1gdI3z8FF4DzmwkiDXEFxF1vKM9WwQcQqIkPjU=
+X-Received: by 2002:a17:906:c014:b0:a6f:11c9:f349 with SMTP id
+ a640c23a62f3a-a7245b6484cmr159368566b.23.1719162487792; Sun, 23 Jun 2024
+ 10:08:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620181736.1270455-1-yabinc@google.com> <CAKwvOd=ZKS9LbJExCp8vrV9kLDE_Ew+mRcFH5-sYRW_2=sBiig@mail.gmail.com>
- <ZnVe5JBIBGoOrk5w@gondor.apana.org.au> <CAHk-=wgubtUrE=YcvHvRkUX7ii8QHPNCJ_0Gc+3tQOw+rL1DSg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgubtUrE=YcvHvRkUX7ii8QHPNCJ_0Gc+3tQOw+rL1DSg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 23 Jun 2024 13:05:46 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wiBbJLWOJxoz7srMPtKcN7+9cEh79fzf8GKXTJyRdk=tw@mail.gmail.com>
-Message-ID: <CAHk-=wiBbJLWOJxoz7srMPtKcN7+9cEh79fzf8GKXTJyRdk=tw@mail.gmail.com>
-Subject: Re: [PATCH] Fix initializing a static union variable
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Nick Desaulniers <ndesaulniers@google.com>, Yabin Cui <yabinc@google.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq.com>
+ <20240410-unwoven-march-299a9499f5f4@spud> <20240619-hammock-drum-04bfc16a8ef6@spud>
+In-Reply-To: <20240619-hammock-drum-04bfc16a8ef6@spud>
+From: Guo Ren <guoren@kernel.org>
+Date: Mon, 24 Jun 2024 01:07:55 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRYpDLij1aQoftz6ZqEgXDrfhNA39KiFVrwm7qc4WH6Fg@mail.gmail.com>
+Message-ID: <CAJF2gTRYpDLij1aQoftz6ZqEgXDrfhNA39KiFVrwm7qc4WH6Fg@mail.gmail.com>
+Subject: Re: (subset) [PATCH RESEND v8 0/6] riscv: add initial support for
+ Canaan Kendryte K230
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-riscv@lists.infradead.org, Yangyu Chen <cyy@cyyself.name>, 
+	Conor Dooley <conor.dooley@microchip.com>, Damien Le Moal <dlemoal@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 23 Jun 2024 at 12:51, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Wed, Jun 19, 2024 at 6:45=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
 >
-> I *hope* this is some unreleased clang version that has this bug.
-> Because at least the clang version I have access to (clang 17.0.6)
-> does not seem to exhibit this issue.
+> On Wed, Apr 10, 2024 at 11:30:25AM +0100, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >
+> > On Mon, 08 Apr 2024 00:26:58 +0800, Yangyu Chen wrote:
+> > > K230 is an ideal chip for RISC-V Vector 1.0 evaluation now. Add initi=
+al
+> > > support for it to allow more people to participate in building driver=
+s
+> > > to mainline for it.
+> > >
+> > > This kernel has been tested upon factory SDK [1] with
+> > > k230_evb_only_linux_defconfig and patched mainline opensbi [2] to ski=
+p
+> > > locked pmp and successfully booted to busybox on initrd with this log=
+ [3].
+> > >
+> > > [...]
+> >
+> > Applied to riscv-dt-for-next, thanks!
+> >
+> > [1/6] dt-bindings: riscv: Add T-HEAD C908 compatible
+> >       https://git.kernel.org/conor/c/64cbc46bb854
+> > [2/6] dt-bindings: add Canaan K230 boards compatible strings
+> >       https://git.kernel.org/conor/c/b065da13ea9c
+> > [3/6] dt-bindings: timer: Add Canaan K230 CLINT
+> >       https://git.kernel.org/conor/c/b3ae796d0a4f
+> > [4/6] dt-bindings: interrupt-controller: Add Canaan K230 PLIC
+> >       https://git.kernel.org/conor/c/db54fda11b13
+> > [5/6] riscv: dts: add initial canmv-k230 and k230-evb dts
+> >       https://git.kernel.org/conor/c/5db2c4dc413e
+>
+> After some discussion on the k1 thread
+> (https://lore.kernel.org/all/ZnEOU7D00J8Jzy-1@xhacker/, https://lore.kern=
+el.org/all/ZnA6pZLkI2StP8Hh@xhacker/)
+> I am going to drop this series. It's not very useful in the current
+> state and there's not really been any interest from people in getting
+> the platform to a more complete state. Jisheng made some good points in
+> the k1 thread about the missing clock controller stuff, and I think I'm
+> going to make having basic things like clocks and where applicable
+> resets and pinctrl the minimum requirement for the platforms I'm looking
+> after.
+Here is the k230 clock driver based on Linux-6.6:
+https://github.com/ruyisdk/linux-xuantie-kernel/commit/196242fd9b9b4a191dab=
+0c7c3c5bf851ed857d8d
 
-Hmm. Strange. godbolt says that it happens with clang 17.0.1 (and
-earlier) with a plain -O2.
+pinctrl:
+https://github.com/ruyisdk/linux-xuantie-kernel/commit/baf26b6622c9de2ff64a=
+6ed58eeeb98c8b2c828b
 
-It just doesn't happen for me. Either this got fixed already and my
-17.0.6 has the fix, or there's some subtle flag that my test-case uses
-(some config file - I just use "-O2" for local testing like the
-godbolt page did).
+No reset driver.
 
-But clearly godbolt does  think this happens with released clang versions too.
+Most of the k230 drivers are under Linux-5.10, and we are porting them
+into the newest version of Linux, which takes time.
 
-            Linus
+So, if the clock & punctual drivers mentioned above could satisfy the
+minimum requirements for the platforms, we will update the version of
+this series as a supplement.
+
+Is that okay?
+
+>
+> I've thrown these patches into my tree:
+> https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=3D=
+k230-basic
+>
+> I do have one of these boards, but I'm fairly limited at the moment betwe=
+en
+> the various linux-related and work demands on my time, so it's pretty
+> unlikely that I'll do anything with it myself.
+>
+> Thanks,
+> Conor.
+
+
+
+--=20
+Best Regards
+ Guo Ren
 
