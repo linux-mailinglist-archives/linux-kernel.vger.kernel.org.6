@@ -1,127 +1,145 @@
-Return-Path: <linux-kernel+bounces-226331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A81913D25
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:20:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE0C913D29
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F41AB1C2167B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB8BD28351F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0B71836C3;
-	Sun, 23 Jun 2024 17:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1FE18309A;
+	Sun, 23 Jun 2024 17:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEXYZkcB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Y5E9or3D"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5ACE3C38;
-	Sun, 23 Jun 2024 17:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF643183092;
+	Sun, 23 Jun 2024 17:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719163244; cv=none; b=Eb15qccewJFxhMDzqE44ZE6jkU55B8voDPO/AO5iBM6JoJoGjizrTeQntgSiMvuXNrB/CBwJIc0cVOVQFSBzQf4+rbEJSpCwTL09yXooiUb2HgEcqSIC1B1+MaB2NULB+pw7E0xZxTZ/+A0BgOTY70D+p+XcYh4DoZrZmX5orbw=
+	t=1719163275; cv=none; b=e39v/rkmUkkOzR3oJpMd81lDu2OS1pY6LsxTxWUnsrTTD4uMd/vlFO0DBLCVYoCoTjUVGUPvPtTNoVg9v41p3rzPmOp1pnQURhU2nj9DCaA6Suq751BuEICa9Vk1gj4wRWjqkuiAdJ8z2PzovVVkm5KhnrMZZJ/O7xVUjIAN8Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719163244; c=relaxed/simple;
-	bh=KUOUtfCCNgKjqvSnv1mUVYz9cezEf0ZdtMMNdF+YRTM=;
+	s=arc-20240116; t=1719163275; c=relaxed/simple;
+	bh=84+5N4wriQMHf+onQg0cb7dDDC8UcClEfUjEqDHh+lM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MIbwdSHk/Z5aqaOce6wq/NdeYAgCce7CRKwDokO2n/NKvT4Lfo2vQy7uGbC8GIF6yCVOJE0PrrVeS6QKP+7h9Dls8VQpwuiLOLgFXCrG+OLOo7ppB1r0+eLXaWyKJKHQN2z9uJ6OCqhXzI4HSaBriGM6nsVxp72HFRKHB4ESnWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEXYZkcB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 256F4C2BD10;
-	Sun, 23 Jun 2024 17:20:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719163244;
-	bh=KUOUtfCCNgKjqvSnv1mUVYz9cezEf0ZdtMMNdF+YRTM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FEXYZkcBMbbBa8Dgj9xww3AWH8QdD7br+mrv8Z5uUwd5F+RlOeigbHp+gxIqkPhKS
-	 B21F8Lgw59JfMNcE5ZIgZQnpkLX/LMMSFtNnatsa05A0rXV1MyYIk1XRUlugjHizpu
-	 59vOaXWKyXlR3up8CHNAgTrCwairr/H+oSAkAGbWzknJBFq7ihYtLrQ2526n7LhJLX
-	 YXAHn5YS908mhsQslhuVe03WELzdtDRrHi8yh2tRbQnH72V+P26vh755xbIgcdUgul
-	 V6SLq+EpA3/Bb8cqnhkPhyBhsZiSRPaef9WKnPAv/M7eA3P2LhGM98Q9BymKexk9OP
-	 QHRYH/QuVUM+Q==
-Date: Sun, 23 Jun 2024 18:20:39 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH 0/3] spi: add devm_spi_optimize_message() helper
-Message-ID: <95eeae71-5270-4df2-acf4-a5308c2a8690@sirena.org.uk>
-References: <20240621-devm_spi_optimize_message-v1-0-3f9dcba6e95e@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eYZONt6dxrUsjr8b4ZIuRtMuqLXKtnJa1Hb/WfyxwEjdWqANLw3YwNUAd2tpwgoX4ZekP+iE/43bFTndcjjf+Lif74s8LevJYrGdjux7kqu6MC8WR0IvoNcsCyFRpHMBf2PeTcI3aVBPZ9FvQFhC/XGXtWMVP9wwJZ5JkUdBpl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Y5E9or3D; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NGtTK4022930;
+	Sun, 23 Jun 2024 17:21:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=Ljn5wjBgwbRJHQMUWyur/3GUNfs
+	gXa+6AncwQAz1SS4=; b=Y5E9or3DCwqSewSoRIexloRQYem3qgCYzfyyRqZiyZC
+	kIm0mFHcK2S5RPWnXbClkKb8eEuGgqJFY/8Nc5VONRwmtSE1QEYDnj9zXLgefLHK
+	owOyuc1nGzLSedz1YrXNXJQtxH1Y2gw5E58ewVMTOsm/vfcgqMSTYKzlxghfzvv7
+	Jn3hJJQuTllMkc0xTsFkPQCulDrsR6BbJrXHqmbKCsbhpGGDplsUYcltlTwj2pyI
+	m2PkAsV3TyCV+QY8RoaYVBJrERbCaXbZy90s6sMws/AIP827JfdVvoJnbp7xX2eg
+	duFXGEjNrvIKhRojxletoBmvIxKPGkZnhhohlV+w1YA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yxn2rg98p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Jun 2024 17:21:10 +0000 (GMT)
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45NHL9M6028168;
+	Sun, 23 Jun 2024 17:21:09 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yxn2rg98m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Jun 2024 17:21:09 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45NF0Wik000564;
+	Sun, 23 Jun 2024 17:21:09 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yxaemk49w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Jun 2024 17:21:09 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45NHL3ru55837164
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 23 Jun 2024 17:21:05 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 718F520040;
+	Sun, 23 Jun 2024 17:21:03 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EA57820049;
+	Sun, 23 Jun 2024 17:21:02 +0000 (GMT)
+Received: from osiris (unknown [9.171.89.14])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sun, 23 Jun 2024 17:21:02 +0000 (GMT)
+Date: Sun, 23 Jun 2024 19:21:01 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: yskelg@gmail.com
+Cc: Harald Freudenberger <freude@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, shjy180909@gmail.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390/raw3270: handle memory allocation failure in
+ 'raw3270_setup_console()'
+Message-ID: <20240623172101.5874-E-hca@linux.ibm.com>
+References: <20240623122447.35847-3-yskelg@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l89kX42SZQGjRE9O"
-Content-Disposition: inline
-In-Reply-To: <20240621-devm_spi_optimize_message-v1-0-3f9dcba6e95e@baylibre.com>
-X-Cookie: Here there be tygers.
-
-
---l89kX42SZQGjRE9O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240623122447.35847-3-yskelg@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: td_CFSUY4HSjjtYTYHaTaEbJdoP1RLXa
+X-Proofpoint-ORIG-GUID: UtxQCzbWABbFATz-IWZrSh9I3EPXWQ07
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-23_08,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0 malwarescore=0
+ adultscore=0 impostorscore=0 suspectscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=566 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406230136
 
-On Fri, Jun 21, 2024 at 03:51:29PM -0500, David Lechner wrote:
-> In the IIO subsystem, we are finding that it is common to call
-> spi_optimize_message() during driver probe since the SPI message
-> doesn't change for the lifetime of the driver. This patch adds a
-> devm_spi_optimize_message() helper to simplify this common pattern.
+On Sun, Jun 23, 2024 at 09:24:49PM +0900, yskelg@gmail.com wrote:
+> From: Yunseong Kim <yskelg@gmail.com>
+> 
+> This patch handle potential null pointer dereference in
+> 'raw3270_setup_device()', When 'raw3270_setup_console()' fails to
+> allocate memory for 'rp' or 'ascebc'.
+> 
+> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+> ---
+>  drivers/s390/char/raw3270.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/s390/char/raw3270.c b/drivers/s390/char/raw3270.c
+> index c57694be9bd3..4e81040eea81 100644
+> --- a/drivers/s390/char/raw3270.c
+> +++ b/drivers/s390/char/raw3270.c
+> @@ -812,7 +812,13 @@ struct raw3270 __init *raw3270_setup_console(void)
+>  		return ERR_CAST(cdev);
+>  
+>  	rp = kzalloc(sizeof(*rp), GFP_KERNEL | GFP_DMA);
+> +	if (!rp)
+> +		return ERR_PTR(-ENOMEM);
+>  	ascebc = kzalloc(256, GFP_KERNEL);
+> +	if (!ascebc) {
+> +		kfree(rp);
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+>  	rc = raw3270_setup_device(cdev, rp, ascebc);
+>  	if (rc)
+>  		return ERR_PTR(rc);
 
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
-
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-devm-optimize
-
-for you to fetch changes up to d4a0055fdc22381fa256e345095e88d134e354c5:
-
-  spi: add devm_spi_optimize_message() helper (2024-06-22 12:14:33 +0100)
-
-----------------------------------------------------------------
-spi: add devm_spi_optimize_message() helper
-
-Helper from David Lechner <dlechner@baylibre.com>:
-
-    In the IIO subsystem, we are finding that it is common to call
-    spi_optimize_message() during driver probe since the SPI message
-    doesn't change for the lifetime of the driver. This patch adds a
-    devm_spi_optimize_message() helper to simplify this common pattern.
-
-----------------------------------------------------------------
-David Lechner (2):
-      Documentation: devres: add missing SPI helpers
-      spi: add devm_spi_optimize_message() helper
-
- Documentation/driver-api/driver-model/devres.rst |  3 +++
- drivers/spi/spi.c                                | 27 ++++++++++++++++++++++++
- include/linux/spi/spi.h                          |  2 ++
- 3 files changed, 32 insertions(+)
-
---l89kX42SZQGjRE9O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ4WWYACgkQJNaLcl1U
-h9DfRQf9Gcmpc9JBXul+Q2yiIl3Kl5FyHHIt7plQmobk8GEOn5VGXmpgnoujaswk
-IveJkQDXAxRQ/G1/Nu4YhiUbLyqLpnj3pYaUo1zKfNoJNsGTm8Klhx0uoSlhBWYd
-f9WHo6tdlmpF7Qebaz0iCq4uUb1MsyTnnvhgoL2498gBl9YQxjGNVwMCrFro/8x2
-O/4qQefyaTiUn5eO2nXYrMIlWaPhhT3DjGKlkWyKAyZzCj0HO8R0uF2BNuIOfhz4
-QJmFTcQT5NNmd5RfQVlVIdmvdiRfpk7LR/W0723SwDW72a+GjNOkrTMGk9f5RIwn
-eoN1KzPdmAaU+WxzwkAIjmm+nLMMww==
-=yTLn
------END PGP SIGNATURE-----
-
---l89kX42SZQGjRE9O--
+This is kind of pointless since such allocations won't fail.. but
+anyway: please make allocation and error handling like it is already
+done in raw3270_create_device(); this will also prevent a memory leak
+of rp and ascebc in case raw3270_setup_device() fails.
 
