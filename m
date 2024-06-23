@@ -1,79 +1,96 @@
-Return-Path: <linux-kernel+bounces-226489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CE0913F10
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:17:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D09913F13
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23BC1F211B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:17:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B1251C21045
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFB8185E66;
-	Sun, 23 Jun 2024 23:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D632185E73;
+	Sun, 23 Jun 2024 23:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2bYLcXwe";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I8Aoueg5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqOBLF9F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477FC175AD;
-	Sun, 23 Jun 2024 23:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4BF175AD;
+	Sun, 23 Jun 2024 23:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719184664; cv=none; b=pI3hISnUREzjpub/TKMGAkiM88HdtE+WNYvuOe6TKCsQ7sk5bCPMf6LVPbZL8pYK9i5xRef0B4mQdjN3bJPfoBMuCTbVxr4zM73vtscC/o62P9mlAlZiJ7r9iTeVcVpka4CM2QvpA/WTHckLS6uOlEJvQUoSIbrD1I6Gv7fwGKc=
+	t=1719184953; cv=none; b=Mm2WeuEb2AJ3s0bVOaYWp2ktU5TDsU21+fTdDIyWj72NV+VOeoPmn6VgK6jjV4URSOaCMaVv8sr2+9m6BQQHvibIFk3R9MtCvI4kanj/2edWsUlwBLiuM1tI7D9F8MGMULO4xW0oXyo1lsvzjREtP4vO2QRrY8BnzDdm61uYcn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719184664; c=relaxed/simple;
-	bh=MAaXRs+2g7jJPebEaUqxCCPsFFfzzsr9X61/w4fiT3U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IbladWAvmPxqaeA/yPDpXIoAxrFjNipfvCQjL6amNfkwA/iIfD1p3lYihubUjpSxsgQUCofRYQpPECUJzbS2fPmWxOi9UiusPv+0mYzgSeogFqyrP5s4+XMUwjJZyUCVHgS2vhLsl59UMix0KSwyl0ZaTKSyGgNth2r8pk6iODI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2bYLcXwe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I8Aoueg5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719184661;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MAaXRs+2g7jJPebEaUqxCCPsFFfzzsr9X61/w4fiT3U=;
-	b=2bYLcXweNcbku5gmLG0xsERuO+nUZcSupK6N0btD4m2Hv2XtOKLc7Gx0AUN3KfFO8d1mo6
-	dDMfp25ee5kFOBtiMSnYoYA7NeG6bjVjIGimv0XJkaX4I9t3ugj3ugvWiSGXXbRT+2QoGQ
-	QFOzmSwxyrH9U0rekcX5/s+QOabDoN1SjxZXclIExk8p9uHhXTzOt2DWxBtcyg+8HUM38v
-	iEdlyWpo9frmoupZWCxSRXziyXAGKVnSMiswpC70OaacrUT1vicoL8x4h9cc/w0GTA6Q82
-	pmwN9rS1jeNvYWpCzqZV+W+O4/dFc0tD8cI8MwkjMjwf4G67n6YW4QcZZLtMmw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719184661;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MAaXRs+2g7jJPebEaUqxCCPsFFfzzsr9X61/w4fiT3U=;
-	b=I8Aoueg5qu9p5ks0JhzYxN/tV5Xd5xy1K33gASb1sRC75Xw8OVW3zAFsPPxcMqGCFrA+VL
-	BvLWBir+gZEQ1uBw==
-To: Mostafa Saleh <smostafa@google.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- kernel-team@android.com
-Subject: Re: [PATCH] PCI/MSI: Fix UAF in msi_capability_init
-In-Reply-To: <CAFgf54rFL0rF2KxGP883Vk8APnSgtNnXJYSO_oYsSqnEjf4-ig@mail.gmail.com>
-References: <20240429034112.140594-1-smostafa@google.com>
- <87zftbswwo.ffs@tglx> <ZjAuJV87RjOu7gSy@google.com>
- <CAFgf54rFL0rF2KxGP883Vk8APnSgtNnXJYSO_oYsSqnEjf4-ig@mail.gmail.com>
-Date: Mon, 24 Jun 2024 01:17:40 +0200
-Message-ID: <877cef9rl7.ffs@tglx>
+	s=arc-20240116; t=1719184953; c=relaxed/simple;
+	bh=8G/sFbqTRFJ/E9GYSVMbhFESpaZYFbGrjSCDAA9gLpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dFRhlHhnjJg5amGRaMSg3/gEPr4Z7Ud8XjHYFENav+FDx6DwQQUh9NvyxGD0s6/jeS2ay48SFXqepcCHoWzkqPXBY72kKolMKbkGAX6cVQxxtN/uSSV1DABcbvUuQs6bjFnHMic5G4KbZSGIqNHUb0CDPVJhZVGUMB7oLroSx9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UqOBLF9F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF988C32781;
+	Sun, 23 Jun 2024 23:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719184952;
+	bh=8G/sFbqTRFJ/E9GYSVMbhFESpaZYFbGrjSCDAA9gLpo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UqOBLF9FtZPxgvHGQE6c75PTkiJwQUXam/2sCYxuF9MwmIvTofHBj2Iri+dnFnrCT
+	 iplpc9ST9y4KsQKfUo1spoqRrq9p4d3Fxy6JP5QAOQeCFw4gEmQ9LvaFlimjO4dwId
+	 J6HNuJNamKxlq4fSgGBczVLwbFV9XQcwetQCaAW0PFNcS4iuXeMOeQ1lBI5ld+w0TD
+	 ELkRqjkdxwbMfKl6wkMFlh+79bbUvBgDmd17DWiNudWWFtPcVOSKLaoOqV2hR32jSY
+	 bT3zaaXiOopmMNx18vLrdB7wHUPI2lQdu88UKCTu+5MfxY+Ha63huCYjFKqcSRfjxI
+	 5bTkhaSiA6YbQ==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-25c4d8ae511so1801031fac.2;
+        Sun, 23 Jun 2024 16:22:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWw79EJBWF47wK03IeWGT+YaSmoJpB76EEpJaDmj91Ue88awFEE7SYreuwkgBsSe7hWDS6DfYlibGJ/frnfBcrc+Rt8qi1U50i45ntXc0yVGBFrxYCB9zfZ1bEt7r6b9RBPXZZ1RhKoI3fmALCnmDpz8BIJDJ6uFq2BuiWllXAKYMnherOdCtvm9g==
+X-Gm-Message-State: AOJu0Yz6G1g0kDABM5VxTKuVYcZ1bSOUqZ3vau1lo64GNb5+l6bMapo6
+	q2rk1mOpjqdnHJIKa7ZJf07oilP6Yyvl5e3si1WvrRdiJgsTjrLup+1ZKAZNrGW3uWFdAiSoyA4
+	PXJdMNkFKOJ/ZfwhOMEYiYDAQJiE=
+X-Google-Smtp-Source: AGHT+IGrXiZyfj5eLcPnQoRl/qQQU4poQcHCOK3E7pS9en1m/44j6q0F4ete6LvMgW4VhiIvNLgXBGcdN2UUoUWWUfU=
+X-Received: by 2002:a05:6870:55c9:b0:24c:a8e6:34e7 with SMTP id
+ 586e51a60fabf-25d06cd6cb8mr3663619fac.26.1719184952182; Sun, 23 Jun 2024
+ 16:22:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <c06ecbfde4cc106603285ed96febf3b887425286.1719160522.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <c06ecbfde4cc106603285ed96febf3b887425286.1719160522.git.christophe.jaillet@wanadoo.fr>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Mon, 24 Jun 2024 08:22:21 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9TrTeQh4Ee=NwdS_Nsjm9Wzswwpo5YOWKdbZNY1VRP7w@mail.gmail.com>
+Message-ID: <CAKYAXd9TrTeQh4Ee=NwdS_Nsjm9Wzswwpo5YOWKdbZNY1VRP7w@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: Constify struct ksmbd_transport_ops
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Steve French <sfrench@samba.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Tom Talpey <tom@talpey.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 22 2024 at 19:53, Mostafa Saleh wrote:
-> This has been here for a while without fixing, I will respin V2 with
-> your proposed changes,
-> please let me know if I should add any tag by you.
-
-Suggested-by is fine
+2024=EB=85=84 6=EC=9B=94 24=EC=9D=BC (=EC=9B=94) =EC=98=A4=EC=A0=84 3:09, C=
+hristophe JAILLET
+<christophe.jaillet@wanadoo.fr>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> 'struct ksmbd_transport_ops' is not modified in these drivers.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>   52184    2085     256   54525    d4fd fs/smb/server/transport_rdma.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>   52260    2021     256   54537    d509 fs/smb/server/transport_rdma.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Applied it to #ksmbd-for-next-next.
+Thanks for your patch!
 
