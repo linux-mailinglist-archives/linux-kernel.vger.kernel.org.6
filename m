@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-226140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13815913ACA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:17:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56041913ACE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A63501F218EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:17:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10D61281893
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD95A12C559;
-	Sun, 23 Jun 2024 13:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SidFOBpL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7aqPHZF3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F47181B83;
+	Sun, 23 Jun 2024 13:18:40 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CE282C76;
-	Sun, 23 Jun 2024 13:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB271E4BE;
+	Sun, 23 Jun 2024 13:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719148633; cv=none; b=WlbX0+RF/3kvtI2HZ1k+DMzwwBtyuCwbUxoEF4BHqydxdUel2/gVB97sKe9oST0vvQu1wXuafO9ZNblmphEX2RWdZtSVV36opuh/SvQrHIDhvb1J97ycAERPfkyrmWsgLToxkLUJEIO5UbDjxQ7U0SguuG6QQhmopJwx2l8vlDM=
+	t=1719148720; cv=none; b=RJLFOrUUMv1ZK8dJyksY6IbTs+JEn4RPcN45LJ9K8yil34usiph0+9FYPi+yfHX1qrzgOx6ZrS/O/r0x304CaC0BdxPxmQNtDjnLF8jDA4k5QFasIqNyTePZ3Fit+j5kWc9Et+FBFgWhzRDD3ABDxvaOsAnzcY95IhZ98EKSkG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719148633; c=relaxed/simple;
-	bh=jRxaH7gNHLSd0Im+gSSA2ue9ok1jSALwzBTK079Gn+Y=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Nst0FmiKyssUgMuBY6cuWVdOWXE5tRpUT/R0o2MnftZCO27G5tArUU8UoNC0LSu1drB2+rvUM3nfbF3FBAr70plqxuKiDNn3x2oJNODkWp1xr3p8JSEi0aq2N8YXg+F2TGFg4Ga2bgLpjO4Og7nV8GlxPE0IaUBDuE1PytnjdHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SidFOBpL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7aqPHZF3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 23 Jun 2024 13:17:09 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719148629;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9JVkdWGEsbjGw42mspGzrWKTG95fvkmjYwv+QVV71mA=;
-	b=SidFOBpLm/aebzWFHxfLDXfKiDVprefbNsFbFsb3GR6GD8EyZcZqju6hYDI7CdAQ3RUijC
-	D9PAZnRHkLuzYwOPtvM/BB/+AlGfEF7buSEZK6M+xSl7r3auSzOcBfhG4QD4wYwp45BwTQ
-	K5ndlychursZ5t5UQUKqP7Kl2e4taaq5a4zjdV471wJbHI25vx7NxIiopqSKeNGqObzP9T
-	j0+JKfgfPPwYnxVPxVJGn/p6T60hx32dTgZJ3UylE6Iqoj/K66c3Z9+k5PAzS00vPKJQow
-	wcSt0WL1rJcN0aEF05uBdFXtjaH7jZtItnx64nU5sWcT7SnIHzSnZeXwXvRgYA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719148629;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9JVkdWGEsbjGw42mspGzrWKTG95fvkmjYwv+QVV71mA=;
-	b=7aqPHZF3SMzjrAnLc3oGS13WVL3Wp7Kw67uZ/XkpclDO8KL4Ll8gYMspEuGvrN8j84M8PO
-	c/EWnX3apLE6rnAw==
-From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/msi] irqchip/imx-mu-msi: Fix codingstyle in
- imx_mu_msi_domains_init()
-Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
- Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240614102403.13610-3-shivamurthy.shastri@linutronix.de>
-References: <20240614102403.13610-3-shivamurthy.shastri@linutronix.de>
+	s=arc-20240116; t=1719148720; c=relaxed/simple;
+	bh=4FY6G+8SzqtEFWJuLER8XK0Ce7sJVZs656Kaozqut/s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VfJ2kewJRr6KdfcdPHiIl9za3dw/w4fTRC3s7I3LN+YbprX1K1sIdrwIxh0+Wd8NDM2wK3SUnnj77pnQ1UgCU/4ThmfvA8WSnrFNt8095dqYJCGc+2zTB/yd/f0y223fatddfFBDv4LiRVsL9gO+6l3v2mcCdQb74OW/LbIlwGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAAXHuaDIHhmz39UEg--.23115S2;
+	Sun, 23 Jun 2024 21:18:05 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mykolal@fb.com,
+	shuah@kernel.org,
+	make24@iscas.ac.cn
+Cc: bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/bpf: don't close(-1) in serial_test_fexit_stress()
+Date: Sun, 23 Jun 2024 21:17:53 +0800
+Message-Id: <20240623131753.2133829-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171914862956.10875.17366434196355189525.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAXHuaDIHhmz39UEg--.23115S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xry5tr4fKw1xJF4DZw1UWrg_yoW3KwbE93
+	97trn5AF4UZrn8tr48Kan8Crs5Ca1UJr4xuF1DXF13try5Xr45CFWvkFn5X3yrW39Ikay3
+	ZFsrZ3s7GF1j9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUba8FF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r106r1rM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
+	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
+	x4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUby8BUUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-The following commit has been merged into the irq/msi branch of tip:
+Guard close() with extra link_fd[i] >= 0 and fexit_fd[i] >= 0
+check to prevent close(-1).
 
-Commit-ID:     12c94f694e53b1bf105c56af4b800a32f1b0b10a
-Gitweb:        https://git.kernel.org/tip/12c94f694e53b1bf105c56af4b800a32f1b0b10a
-Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
-AuthorDate:    Fri, 14 Jun 2024 12:23:41 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sun, 23 Jun 2024 15:07:57 +02:00
-
-irqchip/imx-mu-msi: Fix codingstyle in imx_mu_msi_domains_init()
-
-Fixes the coding style of irq_domain_create_linear() call within
-imx_mu_msi_domains_init() for better code readability.
-
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Signed-off-by: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20240614102403.13610-3-shivamurthy.shastri@linutronix.de
-
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- drivers/irqchip/irq-imx-mu-msi.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ tools/testing/selftests/bpf/prog_tests/fexit_stress.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/irqchip/irq-imx-mu-msi.c b/drivers/irqchip/irq-imx-mu-msi.c
-index 90d41c1..1dceda0 100644
---- a/drivers/irqchip/irq-imx-mu-msi.c
-+++ b/drivers/irqchip/irq-imx-mu-msi.c
-@@ -222,10 +222,8 @@ static int imx_mu_msi_domains_init(struct imx_mu_msi *msi_data, struct device *d
- 	struct irq_domain *parent;
+diff --git a/tools/testing/selftests/bpf/prog_tests/fexit_stress.c b/tools/testing/selftests/bpf/prog_tests/fexit_stress.c
+index 596536def43d..94ff1d9fc9e4 100644
+--- a/tools/testing/selftests/bpf/prog_tests/fexit_stress.c
++++ b/tools/testing/selftests/bpf/prog_tests/fexit_stress.c
+@@ -50,9 +50,9 @@ void serial_test_fexit_stress(void)
  
- 	/* Initialize MSI domain parent */
--	parent = irq_domain_create_linear(fwnodes,
--					    IMX_MU_CHANS,
--					    &imx_mu_msi_domain_ops,
--					    msi_data);
-+	parent = irq_domain_create_linear(fwnodes, IMX_MU_CHANS,
-+					  &imx_mu_msi_domain_ops, msi_data);
- 	if (!parent) {
- 		dev_err(dev, "failed to create IRQ domain\n");
- 		return -ENOMEM;
+ out:
+ 	for (i = 0; i < bpf_max_tramp_links; i++) {
+-		if (link_fd[i])
++		if (link_fd[i] >= 0)
+ 			close(link_fd[i]);
+-		if (fexit_fd[i])
++		if (fexit_fd[i] >= 0)
+ 			close(fexit_fd[i]);
+ 	}
+ 	free(fd);
+-- 
+2.25.1
+
 
