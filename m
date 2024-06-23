@@ -1,182 +1,213 @@
-Return-Path: <linux-kernel+bounces-225896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40BCD91370B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 02:20:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F67191371A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 02:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8EE1C212F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 00:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB1611F22700
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 00:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD8E2F46;
-	Sun, 23 Jun 2024 00:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EB32F4A;
+	Sun, 23 Jun 2024 00:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DF08ZR3l"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KdO49J39"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3724E81F
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 00:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34B728EB;
+	Sun, 23 Jun 2024 00:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719102020; cv=none; b=Gx7/bE5wZ3s540T8aD2YsyPyYSOBRSr9A6GyysQFLXmWElXz8IfE6YRaE3BUA5xxK6j/NIiAjsGwVrdqcSrBFqNSFxQxKbxberHnbkBaYmg6AtSJblRvNBkmlsH3Xt7m2xiaGhgBBXqc+XY5cyPVIUyvgdMIovz/RfpmuRBwYNw=
+	t=1719103818; cv=none; b=dOOnteDNKUAhLAp7ltFuH5GfHotpclpshz71hx8khMcLZl10jZQZNUAF4nrIE+2dJ0SZLfwOwSqC1V6Tf7ju4WM8daz91KRAjQ/HjhSgHFvwuCLXUrCmv9fPCWG/jE+RRQrRS2oSDMnd4XfWboQXkkSYmSSWWwRWEV5kD4NZmpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719102020; c=relaxed/simple;
-	bh=46BSqqvy7Y6F7xIkfaws++IANCV/SaTAN+h9yATNqCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPRaQ7xeaFJAlKy5ns1TaG0risdPhAtVi+8ksnMRNgsEKpHFjjZHvhAnsHinEr272rSoEV2aBZ9dPOU1aT5axRbLAJ1c+waRsjfq7tPFiywHkbGiHpsa/GZ+am+i1M0VLXFVpE2K+JARTeRJ5a1G261dlIcwCMqgbPq0/msRkq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DF08ZR3l; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a724b9b34b0so3707866b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 17:20:17 -0700 (PDT)
+	s=arc-20240116; t=1719103818; c=relaxed/simple;
+	bh=WZD3oXNEQD6KnVSKu3IdpGaipLswzf6qmCl2awNBVL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KWMOdSfONts+iOPb1dBGBGXNmEmSaCvac/pemHB4+6mcQD+6CVtZLM5V9kaphdmZA5E/gnOlAfreBTVAJNW61V8vjOjm9kTtIBuXzW6B3/u/0AI1S3F4T9kwEi0eEOkRhU/B/O7VVuio02gz6mum/U5GJiH+HEDP1cD83GOt3ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KdO49J39; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5b53bb4bebaso1862016eaf.0;
+        Sat, 22 Jun 2024 17:50:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719102016; x=1719706816; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ONa3iSOONrUQZrCElWDntgf1TBX/gIFjmLuMwiVxBc=;
-        b=DF08ZR3lblp7FfWQRNa7T7PYA9tquywswatGc5RTLCRAAJsivoZpjNE/EwQAvLSYv7
-         mew54nQTLlWgFX8TSUsCtiYdiTeeB+mcDrIEroFdKzhiHdyYcYdq0pIr4zI9DeLp7tZi
-         rhdBlVf1KqqnMejzV4XWvOlcQawfVKAajFFwTw8REAuVIJ86MaDzeYiWXJhy4i7wVXx4
-         COihuZWCI74may8UtmJx/NYBQmYlbpivpdll3LimiC2ajEQxlhFouV0ud2/0SQqcjdbq
-         kNNZ9oBqNcEspj3ATCuq42c31Bm5FrtnbienM5hW0YvdgIiwLHl+Nh2bWCNEj78lVraC
-         4Ltg==
+        d=gmail.com; s=20230601; t=1719103816; x=1719708616; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=plQu2k+3AcRQXXZ9L/gcrksDp81HqnIUamR+O4Jb5js=;
+        b=KdO49J39+ajPdgKdJ9jNX0TUV38uYdBvHYgKYrkcU//Z7CKMCoxwkB9YT5zsmYnL3p
+         1GCF16CfR6TMDhmQu1GkckMIg15a8zbKE9BxU+q0P0fIWKar0GfJvkwJbaA/kdeuei6f
+         nHWL/X4gglvt4YusvdfvFFiBRhyG366L8zoQnGiDWGWiYh7TvCk3c5uD474qr3bhGyR/
+         6IwvmTF1uyZub+O40PMIrRJRFEnImg9WRTnOPTG6g6+v12edAtLQLMdQ/9T1I+Z9PmMR
+         j5B+rX0pZ2w7lVTCzU0MG99cj5Ut7EZsSveqOU2qmwD1s8ohEy2O9rb188CjUIIGyKre
+         5B/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719102016; x=1719706816;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8ONa3iSOONrUQZrCElWDntgf1TBX/gIFjmLuMwiVxBc=;
-        b=BBgFuGjJBtv7KRW+eC/08RDwwurRf4ZZMyqw/Kah1qLpkdr8AQoxyN1+7og/v/R7Ov
-         pq1H+kANWxfBNoGXkFfrFZ5SSTMCMw/L5Y8x5WaNSlTYFb9DdeQKGMdCUoiqQYAGIfbg
-         589DWYTM1YYOM4wkDvJMUYOoOZncSRnoKEYv6mgi+m1KTTLEV3A2uu2CM/Q0BoBgzCYM
-         iXaS1bSYAR8BvnNk8m3UCwR/bw6xIllqYmtatUGPk+YZhMJgQ6L0Wj6FfwpGNM59elna
-         o1GaO4GsgEWaHOl9DMUx8LB9PmqTGI5t335hryjzsJ6Mvf1/aNBaCeSuEUymzUlYWZRS
-         vmaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNcmrpkNfZye8ovEOOtXnsuE9n5p1sGsptB8AWg4F61melrNTphqqSiGV/Tgw1eagepMVcOIm4qimESSPmd4lLTqt7zoWqNxE5wKG7
-X-Gm-Message-State: AOJu0YyxI6zd20RgpyUEhR8k+4UPjfde4EIObJ/m8DGxz6XuBPkiyqZm
-	G5FQi4ypuxkqWqCGdBsWPLLmrylDfKfowyuYxmnyZ/IgLDQ/6wiRvffKYfAfRCo=
-X-Google-Smtp-Source: AGHT+IFkQnTmyYgj3ga+Jr84O+VsTZAb6uFS3rOryfDJPiSyoNjG8TnrDmOAhk+I37PmyQzqrzBbWw==
-X-Received: by 2002:a17:906:1d42:b0:a6f:1f40:600a with SMTP id a640c23a62f3a-a7245b938c3mr45943466b.30.1719102016036;
-        Sat, 22 Jun 2024 17:20:16 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf435941sm252779866b.18.2024.06.22.17.20.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 17:20:15 -0700 (PDT)
-Date: Sun, 23 Jun 2024 02:20:13 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Daniel Golle <daniel@makrotopia.org>, 
-	Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Anand Moon <linux.amoon@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] hwrng: add Rockchip SoC hwrng driver
-Message-ID: <6u4bgwemukkpjvregtvrhdarelvy4rf76n5dv5oiclbyh4q7gd@b776tut4a6ki>
-References: <cover.1718921174.git.daniel@makrotopia.org>
- <ead26406-dd3b-491c-b6ab-11002a2db11a@kernel.org>
- <07fba45d99e9eabf9bcca71b86651074@manjaro.org>
- <3660160.WbyNdk4fJJ@diego>
- <b0164e0d05d9e445a844ffdfca7a82d5@manjaro.org>
+        d=1e100.net; s=20230601; t=1719103816; x=1719708616;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=plQu2k+3AcRQXXZ9L/gcrksDp81HqnIUamR+O4Jb5js=;
+        b=VH/PoulE9ABnd2CoOjMrc6xctVOOdls6UJ9mxOUGEzt76icr2Ra1CSi9n2lBZw5YbX
+         tnI5M9qvc6Z2PtwiyDrtRS9eREskKodPyOoPVZCZ2wbHxp+74+Pj0UbtDkbcAjCbO/mx
+         EJ12qsbbzljnWlRrYDo11drQKdtFermwIB8IayNPkD6tCPN4j53zCuxQle4oC0N1yMDa
+         0+jZx8i+3XcCSyUMeZrl751UPNjc7xQdLJMMr7JAuBUJi31yAZ7QXcjmfSopnopOHIVG
+         2ghR2pg9vIM34KqD2KKQ3Xx8tAWrrEv6xgcuFBNHGdi13iLYoo7nC4WIrQLCy4aK9xnN
+         NlBw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3PjGQw7fEQhlZdudd7Cg8nCWoDLrZi1vZPza2hhsCRGzRnyYRRo9QdfvdoUQuN78PuBbuGEWpRBEeDFzg3Ku75Ik4sn6i7pkaP49WxpgYzFCRELprql3r4gBHd+5YOO4HdJJGwOab3YpsiBVWPrh4NubXa1PDR60Ns5ah4GcfU3vIvQ==
+X-Gm-Message-State: AOJu0YxGNrUMJ1UqGpPpG7staVJFEoSZqCV3oggAJccvr2uRmgm6aeMp
+	/6DwwZ1nRd3M56peMCuKb4jgnYde0qsCtgLWm0/qG7w9FkbLujkWZZh4/C2kMPk=
+X-Google-Smtp-Source: AGHT+IE6SplIWQi3JIjMjst1N12JyTJpXFKtMRkSPLMxy3BlUHUCG5ZkOfRgys5fxbhvd8OKC90NVw==
+X-Received: by 2002:a05:6359:7b12:b0:1a2:3952:470f with SMTP id e5c5f4694b2df-1a239524b13mr145160455d.11.1719103815645;
+        Sat, 22 Jun 2024 17:50:15 -0700 (PDT)
+Received: from [192.168.50.11] ([123.139.251.61])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e53e0760sm5953358a91.20.2024.06.22.17.50.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Jun 2024 17:50:15 -0700 (PDT)
+Message-ID: <bf328875-2ccf-4fcd-ad6f-685a1800f13c@gmail.com>
+Date: Sun, 23 Jun 2024 08:50:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dd3zswqm4oau246l"
-Content-Disposition: inline
-In-Reply-To: <b0164e0d05d9e445a844ffdfca7a82d5@manjaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] dt-bindings: iio: proximity: Add TYHX HX9023S
+To: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, yasin.lee.x@outlook.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20240621-add-tyhx-hx9023s-sensor-driver-v6-0-65196a9020f1@gmail.com>
+ <20240621-add-tyhx-hx9023s-sensor-driver-v6-2-65196a9020f1@gmail.com>
+ <d35f5eba-abb4-4924-89d6-0beb878a0bf7@kernel.org>
+ <385a7a64-fc76-4655-bc7f-d89d00b053d5@gmail.com>
+ <20240622-superjet-dusk-cfd19f899cc2@spud>
+ <26db1f7b-bde9-43a5-8c9b-4323ccfc59cf@gmail.com>
+ <3541cd63-882b-4b91-871a-7d0385e12957@kernel.org>
+Content-Language: en-US
+From: Yasin Lee <yasin.lee.x@gmail.com>
+In-Reply-To: <3541cd63-882b-4b91-871a-7d0385e12957@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---dd3zswqm4oau246l
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2024/6/23 02:04, Krzysztof Kozlowski wrote:
+> On 22/06/2024 14:35, Yasin Lee wrote:
+>> On 2024/6/22 18:51, Conor Dooley wrote:
+>>> On Sat, Jun 22, 2024 at 01:56:42PM +0800, Yasin Lee wrote:
+>>>> On 2024/6/21 18:12, Krzysztof Kozlowski wrote:
+>>>>
+>>>> Hi ,Krzysztof
+>>>> Thank you for your reply. I have some questions inline.
+>>>>
+>>>> Best regards,
+>>>> Yasin
+>>>>
+>>>>> On 21/06/2024 09:40, Yasin Lee wrote:
+>>>>>> A capacitive proximity sensor
+>>>>>>
+>>>>>> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+>>>>>> ---
+>>>>>>     .../bindings/iio/proximity/tyhx,hx9023s.yaml       | 115 +++++++++++++++++++++
+>>>>>>     1 file changed, 115 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..beca70ce7609
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/iio/proximity/tyhx,hx9023s.yaml
+>>>>>> @@ -0,0 +1,115 @@
+>>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>>>> +%YAML 1.2
+>>>>>> +---
+>>>>>> +$id: http://devicetree.org/schemas/iio/proximity/tyhx,hx9023s.yaml#
+>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>>> +
+>>>>>> +title: TYHX HX9023S capacitive proximity sensor
+>>>>>> +
+>>>>>> +maintainers:
+>>>>>> +  - Yasin Lee <yasin.lee.x@gmail.com>
+>>>>>> +
+>>>>>> +description: |
+>>>>>> +  TYHX HX9023S proximity sensor. Datasheet can be found here:
+>>>>>> +    http://www.tianyihexin.com/ueditor/php/upload/file/20240614/1718336303992081.pdf
+>>>>>> +
+>>>>>> +allOf:
+>>>>>> +  - $ref: /schemas/iio/iio.yaml#
+>>>>> Which part of iio.yaml binding do you use here? I cannot find anything,
+>>>>> so this looks wrong.	
+>>>>>
+>>>> I will remove this reference.
+>>>>
+>>>>
+>>>>>> +
+>>>>>> +properties:
+>>>>>> +  compatible:
+>>>>>> +    const: tyhx,hx9023s
+>>>>>> +
+>>>>>> +  reg:
+>>>>>> +    maxItems: 1
+>>>>>> +
+>>>>>> +  interrupts:
+>>>>>> +    description:
+>>>>>> +      Generated by device to announce preceding read request has finished
+>>>>>> +      and data is available or that a close/far proximity event has happened.
+>>>>>> +    maxItems: 1
+>>>>>> +
+>>>>>> +  vdd-supply: true
+>>>>>> +
+>>>>>> +  "#address-cells":
+>>>>>> +    const: 1
+>>>>>> +
+>>>>>> +  "#size-cells":
+>>>>>> +    const: 0
+>>>>>> +
+>>>>>> +patternProperties:
+>>>>>> +  "^channel@[0-4]$":
+>>>>>> +    $ref: /schemas/iio/adc/adc.yaml
+>>>>>> +    type: object
+>>>>>> +
+>>>>>> +    properties:
+>>>>>> +      reg:
+>>>>>> +        minimum: 0
+>>>>>> +        maximum: 4
+>>>>>> +        description: The channel number.
+>>>>>> +
+>>>>>> +      input-channel:
+>>>>> Isn't this duplicating single-channel property?
+>>>>>
+>>>>> Where is this property defined (which common schema)?
+>>>>>
+>>>> |input-channel| is indeed intended for single-ended configuration, but I
+>>>> couldn't find a definition
+>>>>
+>>>> or reference for |single-channel| anywhere. If possible, should I rename
+>>>> |input-channel| to |single-channel|?
+>>> Single-channel is new, it should be the next branch of the iio tree and
+>>> in linux-next.
+>> Hi Conor，
+>>
+>> Thank you for informing me. I plan to temporarily add a prefix to this
+>> attribute to distinguish it and update it in the future. Is this the
+>> correct approach?
+> No, because there is no need. You are supposed to work on maintainer
+> tree (linux-next works usually as well).
+>
+> Best regards,
+> Krzysztof
 
-Hello Dragan,
+Hi Krzysztof,
 
-On Sat, Jun 22, 2024 at 10:45:22PM +0200, Dragan Simic wrote:
-> On 2024-06-22 22:26, Heiko St=FCbner wrote:
-> > Am Samstag, 22. Juni 2024, 12:29:33 CEST schrieb Dragan Simic:
-> > > On 2024-06-22 00:16, Uwe Kleine-K=F6nig wrote:
-> > > > On 6/21/24 20:13, Dragan Simic wrote:
-> > > >> On 2024-06-21 11:57, Krzysztof Kozlowski wrote:
-> > > >>> On 21/06/2024 03:25, Daniel Golle wrote:
-> > > >>>> +    dev_info(&pdev->dev, "Registered Rockchip hwrng\n");
-> > > >>>
-> > > >>> Drop, driver should be silent on success.
-> > > >>
-> > [...]
-> > So really this message should be dropped or at least as Uwe suggests
-> > made a dev_dbg.
->=20
-> As a note, "dmesg --level=3Derr,warn", for example, is rather useful
-> when it comes to filtering the kernel messages to see only those that
-> are signs of a trouble.
+Understood, Thank you for the reply, I will reference single-channel 
+directly as I do with diff-channel.
 
-IMHO it's a bit sad, that there is such a long thread about something so
-trivial, but I want to make a few points:
+Best regards，
 
- - not all dmesg implementations support this:
+Yasin
 
-	root@machine:~ dmesg --level=3Derr,warn
-	dmesg: unrecognized option '--level=3Derr,warn'
-	BusyBox v1.36.1 () multi-call binary.
-
-	Usage: dmesg [-cr] [-n LEVEL] [-s SIZE]
-
-	Print or control the kernel ring buffer
-
-		-c              Clear ring buffer after printing
-		-n LEVEL        Set console logging level
-		-s SIZE         Buffer size
-		-r              Print raw message buffer
-
- - Your argument that the output of this dev_info can easily be ignored
-   is a very weak reason to keep it.
-
- - I personally consider it hard sometimes to accept feedback if I think
-   it's wrong and there is a good reason to do it the way I want it.
-   But there are now three people opposing your position, who brought
-   forward (IMHO) good reasons and even a constructive alternative was
-   presented. Please stay open minded while weighting the options.
-   The questions to ask here include:
-
-    - How many people care for this message? During every boot? Is it
-      maybe enough for these people to check in /sys if the device
-      probed successfully? Or maybe even the absence of an error message
-      is enough?
-    - How many people get this message and don't care about the
-      presented information? How many people are even annoyed by it?
-    - Is the delay and memory usage introduced by this message justified
-      then, even if it's small?
-
-Best regards
-Uwe
-
---dd3zswqm4oau246l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZ3ajoACgkQj4D7WH0S
-/k5WAAf+ITFdGqdN406tmIfhUkT/VVsswv7UZYQ19nee0y/e08Hckgmx/mEmS4ft
-tJsOL0GAgMDpyvbgz6smWIgOAzsdln+m73wuSjSe62fHLUgd68YA4ehtQ3EghbY4
-Ey7cYUhVnjJFpahWN+b4QS774FfeFRTtRUzdU9ENsV5pRenbmERcKnGOSQ15fwfE
-mpqgcAnKvcz43qhHjJpgaJ8p41IQQRWh3jAK3edrnLGjcAAIhynSWzwRdSOYR9QU
-aLL2hb1i8mFNkAr1q71hM+pqGrJZ6gQ0gAI/t1wP6/S0OG4WkYs4TpG0xjJq0TN+
-N8+bGnosWqTuh5Wt3I1924btUX+e4Q==
-=KN/a
------END PGP SIGNATURE-----
-
---dd3zswqm4oau246l--
 
