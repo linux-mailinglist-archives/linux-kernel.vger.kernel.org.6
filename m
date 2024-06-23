@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-226039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1823913959
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:47:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C06BB913962
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B721F2195D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1943E1F221F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B9F82C67;
-	Sun, 23 Jun 2024 09:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291EB82C76;
+	Sun, 23 Jun 2024 10:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="S/bjxUlO"
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W/qJ+nri"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B282CA7;
-	Sun, 23 Jun 2024 09:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891052CA7;
+	Sun, 23 Jun 2024 10:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719136037; cv=none; b=mLS/5m6pMmTh2MvvaXA7byjQhDKReHlwyVLWvXzsqpxtLWb7jgPoneK4sizHZKyWU7u1POvcuAUvAmU8M2MJsAlc3Xs2QoEOqz3TNA5qChMt5qQRhsH1r4MBn+SucRdGiI8UiLKbBZGkMI27wvdVE1sVgKDhkos1SqNXqlcD+C0=
+	t=1719137191; cv=none; b=PPViRILW1+v+zi6YXHPF1qfEGAaN7krgkXhWvQFy2FcfLpBn+D/gZBV8jIVkZ7QAs6iNGcipwY10KEcOcPrgBfgpGM0ySKgBtUiCD8/YIYMVXb+M3xA2lMPlY2vcd73d9CLdtcOPJ6b3wMD1E04NLh6kUgYULs8bbLVytPj9iAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719136037; c=relaxed/simple;
-	bh=IoaeKT8XpnnlbWlzxCWTjF0duh7pAxL12B/Wwz0WEYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=heUw4Vs4mzGZ0TwOliiag+UtgH26Wm93thrkKU7kkwX8T3mSoND53WVxkL695bdxhr+K90Jriur34G+YjFN7YjxPhWD8p4Z7vaq+h4LnwcvXCgBA+2MH9DQaano3dzzVlZii8B0wP7e3vWdt44j4uyB+30cE8IrE6kvcXBS8mHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=S/bjxUlO; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Reply-To
-	:Cc:Content-ID:Content-Description;
-	bh=3CsmWJkTCw2jya7yKPckZb+JwnRAGwemKYs+ww4s8j8=; b=S/bjxUlO9I8ybdU5ALqZwHdTFq
-	67j1QPwyYKmfNx6/72eTci7oHSYYA2moxwevv+faRy5PI7jIYipdoetqWT8ep0R9prWiwVXl+01Jn
-	7xQ4R7f17pmI8e2Key+nixdyPshM/oWS+C0zvEu1SPukzQXrFXIaWDqUxNvhnMqlQtpoyx7wI2/K1
-	QbKLRfsNBw8uRuFgGDfhdLEAbIcvpZKQlzoNFDNDVwysvfI+VE/ovki11LFjLfjKO2ygVDxF1jeKg
-	OPhrSVenBYPre2t7MzIHSxkXiCawabOVUyUadukZGu21D7JOHtRCWMptN/SjAYOHR03hkISd5mUkr
-	tn36iRWg==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	(Exim 4.94.2)
-	(envelope-from <ukleinek@debian.org>)
-	id 1sLJnr-00HNav-0c; Sun, 23 Jun 2024 09:46:31 +0000
-Message-ID: <395f8ebe-1392-4d8f-b91f-c9a8f5f48afe@debian.org>
-Date: Sun, 23 Jun 2024 11:46:25 +0200
+	s=arc-20240116; t=1719137191; c=relaxed/simple;
+	bh=E+6cl0ki8qlLXqRwIpyYg/tusmYMNU0CoFmFdvS5Aw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kHM5UKk9wrLpBA5hfSiifOmS5CuMyHmOJonNRrEpHYtEClj1cLEQm6ODB4dxViOXEDcgTz1dSW65KO2znUA6saeErcJKcdkrrhzSxVmZ3uFR7E7Odm8/kOPXu14VmGokNS3jiOhu2RNKnDaf4B4226pOUAg1W4JVdqwjkJZSK74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W/qJ+nri; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719137190; x=1750673190;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=E+6cl0ki8qlLXqRwIpyYg/tusmYMNU0CoFmFdvS5Aw8=;
+  b=W/qJ+nriwFA43RYzj8aJZAx9vOasyJyaHTxSL1hm/1Qgc0DQ5iDaWX7x
+   JxnPkmfFVrZqNsldQd3XzT1R8M645gRKYS4RjX5H7u6Sv046XNrV/ugrb
+   QFbfiFSTiVz4YBanoUaJIZ7yRYwPTjzUUhWOJsWdhvmsoNZlZTaaAoWHI
+   ZmAg9k5660LcDSz+969h/St6gi4WWA1sXkgMBOrB3DyOvdwKnHItThBnC
+   9mj1JtsdUDEn1nRSd2l1mABaG+7wsuOWtSTjZscKCJ+9VeeObqLwlvozL
+   SCxqDySimC3ihYhzBLvOd6uPG4yXj4zTWPl0jC4eO9KFZfhY5RwNnfn4f
+   g==;
+X-CSE-ConnectionGUID: fYkg943YS3i9i4m7W9Wheg==
+X-CSE-MsgGUID: wCPUikUlT9W91QZ0DL4UtA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11111"; a="15876407"
+X-IronPort-AV: E=Sophos;i="6.08,259,1712646000"; 
+   d="scan'208";a="15876407"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 03:06:29 -0700
+X-CSE-ConnectionGUID: K8cxUD+TQoac3luu2QNUAg==
+X-CSE-MsgGUID: eXRHbMY5RfWbSfin9nhklw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,259,1712646000"; 
+   d="scan'208";a="43461577"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 03:06:27 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 03C6511FA94;
+	Sun, 23 Jun 2024 13:06:24 +0300 (EEST)
+Date: Sun, 23 Jun 2024 10:06:23 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Wentong Wu <wentong.wu@intel.com>
+Cc: tomas.winkler@intel.com, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Jason Chen <jason.z.chen@intel.com>
+Subject: Re: [PATCH 1/6] mei: vsc: Enhance IVSC chipset reset toggling
+Message-ID: <Znfznzd6Mt55XsmN@kekkonen.localdomain>
+References: <20240623093056.4169438-1-wentong.wu@intel.com>
+ <20240623093056.4169438-2-wentong.wu@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] hwrng: add Rockchip SoC hwrng driver
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Daniel Golle <daniel@makrotopia.org>, Aurelien Jarno <aurelien@aurel32.net>,
- Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Dragan Simic <dsimic@manjaro.org>,
- Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
- linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.1719106472.git.daniel@makrotopia.org>
- <240db6e0ab07e8e2a86da99b0fc085eabaf9f0cc.1719106472.git.daniel@makrotopia.org>
- <612bd49c-c44a-41f2-89e9-c96e62e52a0a@kernel.org>
-Content-Language: en-US, de-DE
-From: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>
-In-Reply-To: <612bd49c-c44a-41f2-89e9-c96e62e52a0a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Debian-User: ukleinek
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240623093056.4169438-2-wentong.wu@intel.com>
 
-Hello Krzysztof,
+Hi Wentong,
 
-On 6/23/24 09:00, Krzysztof Kozlowski wrote:
-> On 23/06/2024 05:33, Daniel Golle wrote:
->> +
->> +	pm_runtime_set_autosuspend_delay(dev, RK_RNG_AUTOSUSPEND_DELAY);
->> +	pm_runtime_use_autosuspend(dev);
->> +	devm_pm_runtime_enable(dev);
->> +
->> +	ret = devm_hwrng_register(dev, &rk_rng->rng);
->> +	if (ret)
->> +		return dev_err_probe(&pdev->dev, ret, "Failed to register Rockchip hwrng\n");
->> +
->> +	dev_dbg(&pdev->dev, "Registered Rockchip hwrng\n");
+Thanks for the set.
+
+On Sun, Jun 23, 2024 at 05:30:51PM +0800, Wentong Wu wrote:
+> Implementing the hardware recommendation to toggle the chipset reset.
 > 
-> Drop, it is not useful at all. Srsly, we had already long enough talk,
- > [...]
+> Fixes: 566f5ca97680 ("mei: Add transport driver for IVSC device")
+> Cc: stable@vger.kernel.org # for 6.8+
+> Signed-off-by: Wentong Wu <wentong.wu@intel.com>
+> Tested-by: Jason Chen <jason.z.chen@intel.com>
+> ---
+>  drivers/misc/mei/vsc-tp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c
+> index e6a98dba8a73..dcab5174bf00 100644
+> --- a/drivers/misc/mei/vsc-tp.c
+> +++ b/drivers/misc/mei/vsc-tp.c
+> @@ -350,6 +350,8 @@ void vsc_tp_reset(struct vsc_tp *tp)
+>  	disable_irq(tp->spi->irq);
+>  
+>  	/* toggle reset pin */
+> +	gpiod_set_value_cansleep(tp->resetfw, 1);
+> +	msleep(VSC_TP_RESET_PIN_TOGGLE_INTERVAL_MS);
+>  	gpiod_set_value_cansleep(tp->resetfw, 0);
+>  	msleep(VSC_TP_RESET_PIN_TOGGLE_INTERVAL_MS);
+>  	gpiod_set_value_cansleep(tp->resetfw, 1);
 
-And in this long talk using dev_dbg() was one of the suggestions for a 
-compromise. For me this is ok.
+Looking at the patch, the driver appears to leave the reset signal enabled.
+As it currently works, also the polarity appears to be wrong.
 
-> There is no single benefit of such debug statement. sysfs already
-> provides you this information. Simple entry/exit  is provided by
-> tracing. You duplicate existing interfaces without any benefit, because
-> this prints nothing more.
+Could you addrss this, after this patch?
 
-There might be a (small) value if you want to know when during boot the 
-device becomes available. So having a dev_dbg() that can be enabled 
-dynamically (assuming DYNAMIC_DEBUG=y) and isn't in the way otherwise 
-might be justified. IMHO a dev_dbg is lightweight enough that *I* won't 
-continue the discussion.
+-- 
+Kind regards,
 
-Best regards
-Uwe
+Sakari Ailus
 
