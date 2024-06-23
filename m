@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-226374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B2B913D80
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:59:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F171913D82
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E086D1C21157
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:59:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD2B1F21307
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DAD186E5C;
-	Sun, 23 Jun 2024 17:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973D71849C7;
+	Sun, 23 Jun 2024 17:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AA9HTP83"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dL6OermB"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E978184130
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 17:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69950184139
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 17:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719165499; cv=none; b=fxkUdeO+GW2vbtHOUK2Kn6jiCi0STKk4fI37TrcyJ9aCrQygJZ2gLpZv75SgciYufr6oOwnmtjwBO+iLhTNBr6qf4LKRZ/nS468ietIRlGFpgiuhAI+y7nNxA/e/HFReXQOa/0Uf1f8BGfrbBJHkbFcGEbcjfNYS81uaoMWXnNg=
+	t=1719165508; cv=none; b=OU2t5B/RDVd8fgHXoH8WwWrpVnshV3Gk82LaWzSppYXOn3YJCQDJn/IdRYYwfXmyERmi2741SzEh6BTCs3Sg/3YmWk6w8kJglK54SaYfMDphpjygcrBGCaooCb25rrmB9I4oFgmkPue52IhOR71E6CMVZWzCQKzYvzQ4NCoK084=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719165499; c=relaxed/simple;
-	bh=qyGIc+oIfQgy5MKT2F+qVfi3DUjrNkAKWv5yBxbxNEY=;
+	s=arc-20240116; t=1719165508; c=relaxed/simple;
+	bh=c0a3Pr0ZOQG6hRnnht8gNUqkLt66dO4HBllllz7OIIU=;
 	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQSyUnAKSDbSPqT9XVZfOlT/oyWax7JHLpT11I+e396FOGa0lRpMU2kzFI+hGmmnlxN+fRTeWEYC4oPu+pS2k308pZxmCpZb51DcSZ/Dfwo8hN5ek4RKyeKMSEXLvI7ljOPJdj1RUMtjYwVPh0FdZFzzw1BfkVp8zu6rcTcfv20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AA9HTP83; arc=none smtp.client-ip=209.85.208.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZLbRgDzWjPipXyyIUmKo71N3OeWqhHZvPG1RvLF7J9H563ydYfbxVXAdRjtJTGrlq0nlOt5xMGtnM1J5+kKgqMks55GLRIXuAoc1F/NupZEpw5T7tK9V8krQk1Z4RYZKaDE2DTBxh8YbtNuZlS4oGwFI5DW8KwUT6RUNJkjK3FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dL6OermB; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d16069321so374240a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 10:58:18 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7250bad44dso819766b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 10:58:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719165497; x=1719770297; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719165505; x=1719770305; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0AO01oKOA3xCjs8tyAcfStxUCftobcQ/yCAcPc0dY2I=;
-        b=AA9HTP83wv8wOfTuKvE5irTYvvaPZyKKbqN2Rx3HkcV71N7JEqp227U/HV30wKjjRk
-         FzZpaEmz9MY9hjCcgLbUvr5KPCtoO6tIqOvDieaji6jsJCvHpM5HarUOTZcTB2YjP/Zl
-         9eNBMczz/X7F4a1PeJgAm3fBKcvIdGQ87eNuOvC8sMPzyDn7Lr54aFVxtYoTGzvaHQko
-         UUIYj2FOzmGEpuXDP+dMKZpS+981mNWcO6ZXnWlOBpEKCOsACilDkUsJ0vuVOfRr8tAQ
-         YC6/8gck0w3L0ywr9NFA16rB0wdGUTZs9/dAiq3c5SKVHa8KIF63hH1HwwKRMUIyPYYP
-         SnNA==
+        bh=axOwCCFkiHXRQoWrBYOvBy8/Yk0F9t8t/fQByhrED9E=;
+        b=dL6OermBy4PefneQ/L9T1NzsFZEKayldLyimgNhCcJuveEhjYYv6CtGthjmtU85W73
+         YZ8zhQ7ymUsk7/N0TLXaiXbwawfhuiQG7ITzrAFX50zJ3fV8tQcNRDkMUOcd3t0Vj7D2
+         f8T9YACzvPJuXuVOiZWtUOVBsr2ZyvUAvfRiUa8bmogNMlRrIZBGqAYVhry1DQj5hpRM
+         zmLXq3030kZi489dTSxP8Ykjev6w+R0SFVgJpk2vZzsn4mgR/Y4r45KpbBWeyVPI0bNp
+         tqoN7Vl5X090b8dM4nOJGPsSwn4y116a/pz/AYJKgiCL487HWUaWspf9cSHDijqKUFA1
+         7Wvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719165497; x=1719770297;
+        d=1e100.net; s=20230601; t=1719165505; x=1719770305;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0AO01oKOA3xCjs8tyAcfStxUCftobcQ/yCAcPc0dY2I=;
-        b=JDkrb3w68Nu6OQhHcIZ4gsDTCUwce87GNquHH2y+avnVtk4GH+xSniulBL5m9usjSB
-         SGN73vQhy64ZlaYb6qb9nJuK/Zjcvg5NEhr/Zdn9def1oKXpLjtJ+NJm36kR4fZuxg1N
-         nYkx/5icc2rUJ1EDApqS9qP8mLoTeVzWtk4Gc0TnRS/WzsxX0LpIIw1M+kQ39HwT8Ldi
-         F1Za0wZohM660up1t3xPhDPEkuaRJmfZ+whN868BrlArX1n+5Xlg13BtiGEMNXNZMOHz
-         sbbfkC7dKeQ5ZYjLv6dlrzj/rpWh9xK231xBtNnQr3/cJsBSS4hY92aYf+Y8fzWXb+/X
-         +SYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjeXY86lOl6m61P4F3V7XE/YvtWqnWbqaJcYIcnHR3aP5MBMHsqVK1T24z7yyrYfjAyrG10XIFy5A8RW0WzCjIwlQGLGUCCAOVW23v
-X-Gm-Message-State: AOJu0YwlArfaWC7Ck5I+RVoeb90preWGFPei9SnDMVHglPBeQU84n+qc
-	j06mud9Plsww/RMjKLyOoFjznLfkczLvG/0zBP8nIqEPAUW95ipj
-X-Google-Smtp-Source: AGHT+IFvvdMNsYHLTJeHDtdF6kgpyqtgEbCpVNVhVf/84J4lSYrjGv64FjYJ8nQzXE5Nhx9x1e2prA==
-X-Received: by 2002:a50:d61d:0:b0:57c:6d24:26e8 with SMTP id 4fb4d7f45d1cf-57d43b68d3dmr2167140a12.4.1719165496696;
-        Sun, 23 Jun 2024 10:58:16 -0700 (PDT)
+        bh=axOwCCFkiHXRQoWrBYOvBy8/Yk0F9t8t/fQByhrED9E=;
+        b=gaxvxXOISP5wCmR/a+DBcRKgaz1CbywOTbO9bNkB/chA7IlijVnzQP1MnRQTmEeFjw
+         bUuqeaI8o6bHCXbrkNmNQNZjnZMvLmdKaqy5j+L33eRvnvKUFNuauMsx/sctamCns5Tc
+         cEsyWJPu7wXm9CVv81zmFRSzEl+PSTkJKEjr6nNJGkQzBqmdv9Tbz5LjVTEESINNtRjb
+         XKEkzYNWYruxmmZ9Q1LMSqhFx+lsZoCotuQvMLSnxwVA8iwO/ioofV3fvv+vLUpJ/ji9
+         +ad6zDtqajNse6SA+xrpc+sR+AqWwy09IslC7H4IkSPkjNC03S4vEqfNM5qJIopl4uV/
+         hgag==
+X-Forwarded-Encrypted: i=1; AJvYcCW9reGkVenbn8xCcnR1Yzb1Mg0Gn458mIG9FSbHAdcmV1/xQQYsfq/xiPiilE1e/dVJqhqV+d89+mWvApRyMPA7XQeuxCq4O01HkekP
+X-Gm-Message-State: AOJu0Yxj3O9koSbSYPyksOXWT7FMSHZbTaI6mXzz9Le5vCbdqdxLb/h4
+	21EAZKF7RvkmyJkDd3rRGwKQzju/IlFI63sc5eRsQfKRX5k+S5bh
+X-Google-Smtp-Source: AGHT+IENE7Gapd83HNRZmNE/54dQQ4aIVciES6cnxcJVr6P3l8hZt++p9nvFw+N6HFqqAxkG9r34Qg==
+X-Received: by 2002:a17:906:258a:b0:a72:51d8:bf30 with SMTP id a640c23a62f3a-a7251d8c3d0mr59225166b.0.1719165505554;
+        Sun, 23 Jun 2024 10:58:25 -0700 (PDT)
 Received: from matrix-ESPRIMO-P710 (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3041208esm3743177a12.30.2024.06.23.10.58.16
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf549385sm325730566b.105.2024.06.23.10.58.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 10:58:16 -0700 (PDT)
-Date: Sun, 23 Jun 2024 19:58:15 +0200
+        Sun, 23 Jun 2024 10:58:25 -0700 (PDT)
+Date: Sun, 23 Jun 2024 19:58:23 +0200
 From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH 13/14] staging: rtl8723bs: Remove unused macros in rtw_io.h
-Message-ID: <91e79b32292ba567c2ec624e130350a40a7866b5.1719155208.git.philipp.g.hortmann@gmail.com>
+Subject: [PATCH 14/14] staging: rtl8723bs: Remove unused macro in
+ ioctl_cfg80211.c
+Message-ID: <0a33ebb3e11558f41dc847dcaa9733bfe1cf4ba6.1719155208.git.philipp.g.hortmann@gmail.com>
 References: <cover.1719155208.git.philipp.g.hortmann@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,88 +83,25 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1719155208.git.philipp.g.hortmann@gmail.com>
 
-Remove unused macros.
+Remove unused macro.
 
 Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 ---
- drivers/staging/rtl8723bs/include/rtw_io.h | 57 ----------------------
- 1 file changed, 57 deletions(-)
+ drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/include/rtw_io.h b/drivers/staging/rtl8723bs/include/rtw_io.h
-index e98083a07a66..be9741a056e5 100644
---- a/drivers/staging/rtl8723bs/include/rtw_io.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_io.h
-@@ -8,70 +8,13 @@
- #ifndef _RTW_IO_H_
- #define _RTW_IO_H_
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+index 82722897d6cc..2bd8b1447698 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+@@ -2588,7 +2588,6 @@ static int cfg80211_rtw_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
  
--#define NUM_IOREQ		8
--
--#define MAX_PROT_SZ	(64-16)
--
--#define _IOREADY			0
--#define _IO_WAIT_COMPLETE   1
--#define _IO_WAIT_RSP        2
--
--/*  IO COMMAND TYPE */
--#define _IOSZ_MASK_		(0x7F)
--#define _IO_WRITE_		BIT(7)
--#define _IO_FIXED_		BIT(8)
--#define _IO_BURST_		BIT(9)
--#define _IO_BYTE_		BIT(10)
--#define _IO_HW_			BIT(11)
--#define _IO_WORD_		BIT(12)
--#define _IO_SYNC_		BIT(13)
--#define _IO_CMDMASK_	(0x1F80)
--
--
- /*
- 	For prompt mode accessing, caller shall free io_req
- 	Otherwise, io_handler will free io_req
- */
+ static void rtw_cfg80211_init_ht_capab(struct ieee80211_sta_ht_cap *ht_cap, enum nl80211_band band)
+ {
+-#define MAX_BIT_RATE_40MHZ_MCS15	300	/* Mbps */
+ #define MAX_BIT_RATE_40MHZ_MCS7		150	/* Mbps */
  
--
--
--/*  IO STATUS TYPE */
--#define _IO_ERR_		BIT(2)
--#define _IO_SUCCESS_	BIT(1)
--#define _IO_DONE_		BIT(0)
--
--
--#define IO_RD32			(_IO_SYNC_ | _IO_WORD_)
--#define IO_RD16			(_IO_SYNC_ | _IO_HW_)
--#define IO_RD8			(_IO_SYNC_ | _IO_BYTE_)
--
--#define IO_RD32_ASYNC	(_IO_WORD_)
--#define IO_RD16_ASYNC	(_IO_HW_)
--#define IO_RD8_ASYNC	(_IO_BYTE_)
--
--#define IO_WR32			(_IO_WRITE_ | _IO_SYNC_ | _IO_WORD_)
--#define IO_WR16			(_IO_WRITE_ | _IO_SYNC_ | _IO_HW_)
--#define IO_WR8			(_IO_WRITE_ | _IO_SYNC_ | _IO_BYTE_)
--
--#define IO_WR32_ASYNC	(_IO_WRITE_ | _IO_WORD_)
--#define IO_WR16_ASYNC	(_IO_WRITE_ | _IO_HW_)
--#define IO_WR8_ASYNC	(_IO_WRITE_ | _IO_BYTE_)
--
--/*
--
--	Only Sync. burst accessing is provided.
--
--*/
--
--#define IO_WR_BURST(x)		(_IO_WRITE_ | _IO_SYNC_ | _IO_BURST_ | ((x) & _IOSZ_MASK_))
--#define IO_RD_BURST(x)		(_IO_SYNC_ | _IO_BURST_ | ((x) & _IOSZ_MASK_))
--
--
--
- /* below is for the intf_option bit defition... */
- 
--#define _INTF_ASYNC_	BIT(0)	/* support async io */
--
- struct intf_priv;
- struct intf_hdl;
- struct io_queue;
+ 	ht_cap->ht_supported = true;
 -- 
 2.45.2
 
