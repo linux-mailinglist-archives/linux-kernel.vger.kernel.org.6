@@ -1,226 +1,230 @@
-Return-Path: <linux-kernel+bounces-226034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1551E913949
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:34:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E95E91394D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB79C282F40
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:34:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C27551C20C9B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3617784A40;
-	Sun, 23 Jun 2024 09:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nvlk/TgM"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDFA7E116;
+	Sun, 23 Jun 2024 09:36:26 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9BF7D405;
-	Sun, 23 Jun 2024 09:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6181DDD6
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 09:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719135214; cv=none; b=rs9Crf7jcv0xhcZbozwRxkautisktSq024zPmyyqXq+DsUciarqiPd56OFlTHIwg4Olo+1j5UYXTFNQINtiPfiCHVat4kT38ZvBt+loQjr9zAmItmnE+fgP/ePoM1a1hj+GtpXk7LQFK68feuuMh2s6YORK+lqUYj/Jmozr3rX0=
+	t=1719135386; cv=none; b=NVGyX3DdA8JY4lD23X6UINptQFYe74EkZMqR13gUAYXaMvETAs+X5bH22QfY8podM0Lb9p2XmLP9UaV5R9wX/nGSaH6b35dtauzWqThTwoPDEC8q6dJXgON/gnLhxLic74xqJ/1svpNH1gD14553Ua2JP4hxf072D+c7IDCHRq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719135214; c=relaxed/simple;
-	bh=JdGQjQ8ugHuD7lfotcDPVss8wiDxrM/eB79Z6QArE3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kvtGPI4lQ/sMbTpmoEe5DB+lCw2eLSTDZHdpgEoHWXmqWoTskIlSKmtLoYI7g0aSCg/HQI8Kf+ITUWXLEQNvLyRStCn+qKfZn0a9si2tuOW7hYYYcv0XoMH3Pc5I+kgZU5esrFM9YppKTN5HrfaiUAd0/S2Dyc69GSiPhbBSHRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nvlk/TgM; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eaea28868dso43641301fa.3;
-        Sun, 23 Jun 2024 02:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719135210; x=1719740010; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AjZoaS2Am0A8j/9rhUaTOpBI3VQYzkae19fmYTVfhu4=;
-        b=Nvlk/TgMN120L24fIVIN2JwVg9B+QlbCMHJyaSJ2laoxL0gHKEpYW4zac1TJeCASmK
-         UoOBq0iTS845aeQRYf2NuSSo1Hb8+OjOAtdAmuZ+l1+7pw5ld2tTgqkGcE/F9LUW+tZC
-         cBUm6hldqlhC7KNUZb+RK7ZsaxDeHqiGG9t7SDqZHEDJvVFMYK5raMufJgoa2221tPQw
-         DtgMDILZO7uiS9dBqmJwY10Bxe7qdTUVMQCIR+Ta5Rv+Q49jykOxsyP//Bc80HP5w30h
-         Cl1hIrTNOM9wNZhlRkP1v6IqHOyxY//hlzqOCjh59IjBBA7llu2rhRFEsxACIdlHO5Yz
-         gc3w==
+	s=arc-20240116; t=1719135386; c=relaxed/simple;
+	bh=GDIuO3zgeL7Kl5+WuVPVtaND6Qt/YJy91wrUY8RBGIg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Sfy425PoIIuuZ2VLTatJHt8PKWpbipleib86GSjB9RAkRRQRXGFGStL7n4EmJ1PJwYtrsV55mpXymhGmsyV35Jmr7Nq1tlw0a1bkSF7rTVw1e4o4V6Jl5MNNi4InLlCCnWeFoXdwbIHwNXqirJy7KTRPTYdtM6Fcv1GH81Ezdrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-36db3bbf931so38752765ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 02:36:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719135210; x=1719740010;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1719135384; x=1719740184;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AjZoaS2Am0A8j/9rhUaTOpBI3VQYzkae19fmYTVfhu4=;
-        b=iwprEZyBAJ2xHZFsAVEzTDrK4KPAERH+VE5yA3UbF75e9DbpmzUnJkQY6roJYON3Io
-         +skYNmxRTL/46veNl8a/OfRsif1uOylEtvY6HSqBBljiZ9q8ASw8sX+Bscq5HRLSV63+
-         BsUObzfl9nH5CrKSGRdDfXql0T04DXBw9qyNu4hujuX00dMhK0LHAtd5oswqfPc3MwTh
-         X6CmATq3ln75sLbEkSl7kU3FZ2Ch7glQoAWjhASCfryNlQk5bf8vctc36rQxT5WiSmlO
-         BKaZZo+SOnp+Whbm2ZBVamsD/vEeBNXtV5K/8Z4T659QzQgLh9anqFuQ/aG6os0Ew0eL
-         eRrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMK1/eMmKlmMR2yHOpfjjhNdbxMpj3fLmXHt27e0n7hN0fci2cYOVlB5NaNeS19RADai4lDsHW++Xigyox0eGM+ep3oaEHgeB/mJ8qcGGViMLdTQCe3EVgBw6OtEdM/k2CCaMzRCSWFJ/EPO6446JWCOMvJRvWZtCdKP/MG00301ZaTqhn
-X-Gm-Message-State: AOJu0YyPG3Bt+FiZRlvscPX09veJLyifjK52oCi46AhSxO1NSNxo2+Wl
-	pAKIcF2GeXs5GmIYnu/mIOjPhG3BAYRvlFd0Xx3jk19eVghcYbI=
-X-Google-Smtp-Source: AGHT+IH6KUI2bioFkoMZdiCXVbMS6OWNo1xhcCBiJkbNjUI36kuWQR3a8SDuPSHNgleWUhg85nvxmA==
-X-Received: by 2002:a2e:3518:0:b0:2ec:57b4:1c6f with SMTP id 38308e7fff4ca-2ec5b31d1a2mr12159971fa.34.1719135210188;
-        Sun, 23 Jun 2024 02:33:30 -0700 (PDT)
-Received: from ?IPV6:2a02:810b:f40:4600:ffa8:3dda:1e1c:17ff? ([2a02:810b:f40:4600:ffa8:3dda:1e1c:17ff])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a724adc5dd4sm48127666b.129.2024.06.23.02.33.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Jun 2024 02:33:29 -0700 (PDT)
-Message-ID: <c7882f94-e2cb-4023-a53e-87ebc8fa3460@gmail.com>
-Date: Sun, 23 Jun 2024 11:33:28 +0200
+        bh=NG1N8DyUmAHaYDrPPVdDaQoJNaPIoWzGqw/9+ysBFKE=;
+        b=nfM/K38NMaPfOLCiLZRLnqGwjU1wjEa4fs4gUVqLJXI2QHANbrKJwOX/vKHscOmrqv
+         pDbrLWfHDlRSo7/eb9R9HaGiFOXcCs0Y36pC/1LB/Yvrw7/fR1Srt7RSv+FCiNCHZ47Y
+         zN0Y8ied9GARK3kJ9beEJza9YsHJzHa6YYHGT27EC60gAtdJ92WyMvHxXHwnt3cJWPb7
+         LB6zgh+ce3vGE82p2DpfOHOER3RVWRSj8noHnxJBjk4UNfwxY1Hy19+ku7unhg18ZrBM
+         4cbOgMGS1OuzdJ3gC3niYNtuT+H6jtWIytKRIrmYcR4FzZ7sv9/A/ccqB+z9trcdhuJV
+         NXHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbgTn/ZD5eSQYmCZcrsmm1y+XixG+/byTWH0wsNps6vODqo2w4FERcfNhwz2unQYaE9Yb8vZaP5JHDkfwBREjSb5LSO5i62yEDQBpc
+X-Gm-Message-State: AOJu0Yxvqy2nxqxc4+MlrsTrf1+6mMen9vqktUzYLUOB0G5ToneRNbtU
+	EKVeJUTzrN1xkPWbz15r2nov7rwHJmpdEdvsC6Zedu22SzBjkXIKTZolQ2E1cdELoqco7GnC3gP
+	iB6SoaKpWSDv7/5kc2YDp0blrfmeCuFyVQcqRMNQgdv3Ju7yDypY9Afw=
+X-Google-Smtp-Source: AGHT+IFaQDUeiIT8h4iwC3zXY0mqgOwPCVIekKrLrDxlj2j0GMhy5IG1+eVpAUt8lSuZd5adyMlELI3bVpg8q6wjKd0ZM7IlScgh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] media: rockchip: Introduce the rkvdec2 driver
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>,
- Andy Yan <andy.yan@rock-chips.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Jonas Karlman <jonas@kwiboo.se>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev
-References: <20240620142532.406564-1-detlev.casanova@collabora.com>
- <20240620142532.406564-3-detlev.casanova@collabora.com>
-Content-Language: en-US
-From: Alex Bee <knaerzche@gmail.com>
-In-Reply-To: <20240620142532.406564-3-detlev.casanova@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:c54b:0:b0:375:a50d:7f2d with SMTP id
+ e9e14a558f8ab-3763f5c9fc5mr2100025ab.1.1719135383768; Sun, 23 Jun 2024
+ 02:36:23 -0700 (PDT)
+Date: Sun, 23 Jun 2024 02:36:23 -0700
+In-Reply-To: <000000000000f07c2606165ff63a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000dee3cc061b8b6538@google.com>
+Subject: Re: [syzbot] [hfs?] possible deadlock in hfs_extend_file (3)
+From: syzbot <syzbot+2a62f58f1a4951a549bb@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, jack@suse.cz, jlayton@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Detlev,
+syzbot has found a reproducer for the following issue on:
 
-Am 20.06.24 um 16:19 schrieb Detlev Casanova:
-> This driver supports the second generation of the Rockchip Video
-> decoder, also known as vdpu34x.
-> It is currently only used on the RK3588(s) SoC.
->
-> There are 2 decoders on the RK3588 SoC that can work in pair to decode
-> 8K video at 30 FPS but currently, only using one core at a time is
-> supported.
->
-> Scheduling requests between the two cores will be implemented later.
->
-> The core supports H264, HEVC, VP9 and AVS2 decoding but this driver
-> currently only supports H264.
->
-> The driver is based on rkvdec and they may share some code in the
-> future.
-> The decision to make a different driver is mainly because rkvdec2 has
-> more features and can work with multiple cores.
->
-> The registers are mapped in a struct in RAM using bitfields. It is IO
-> copied to the HW when all values are configured.
-> The decision to use such a struct instead of writing buffers one by one
-> is based on the following reasons:
->   - Rockchip cores are known to misbehave when registers are not written
->     in address order,
->   - Those cores also need the software to write all registers, even if
->     they are written their default values or are not related to the task
->     (this core will not start decoding some H264 frames if some VP9
->     registers are not written to 0)
->   - In the future, to support multiple cores, the scheduler could be
->     optimized by storing the precomputed registers values and copy them
->     to the HW as soos as a core becomes available.
->
-> This makes the code more readable and may bring performance improvements
-> in future features.
->
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
->   drivers/staging/media/Kconfig                |    1 +
->   drivers/staging/media/Makefile               |    1 +
->   drivers/staging/media/rkvdec2/Kconfig        |   15 +
->   drivers/staging/media/rkvdec2/Makefile       |    3 +
->   drivers/staging/media/rkvdec2/TODO           |    9 +
->   drivers/staging/media/rkvdec2/rkvdec2-h264.c |  739 +++++++++++
->   drivers/staging/media/rkvdec2/rkvdec2-regs.h |  345 +++++
->   drivers/staging/media/rkvdec2/rkvdec2.c      | 1253 ++++++++++++++++++
->   drivers/staging/media/rkvdec2/rkvdec2.h      |  130 ++
->   9 files changed, 2496 insertions(+)
->   create mode 100644 drivers/staging/media/rkvdec2/Kconfig
->   create mode 100644 drivers/staging/media/rkvdec2/Makefile
->   create mode 100644 drivers/staging/media/rkvdec2/TODO
->   create mode 100644 drivers/staging/media/rkvdec2/rkvdec2-h264.c
->   create mode 100644 drivers/staging/media/rkvdec2/rkvdec2-regs.h
->   create mode 100644 drivers/staging/media/rkvdec2/rkvdec2.c
->   create mode 100644 drivers/staging/media/rkvdec2/rkvdec2.h
-...
-> +static inline void rkvdec2_memcpy_toio(void __iomem *dst, void *src, size_t len)
-> +{
-> +#ifdef CONFIG_ARM64
-> +	__iowrite32_copy(dst, src, len);
-> +#elif defined(CONFIG_ARM)
-I guess that can get an "#else" since memcpy_toio exists for all archs.
-> +	memcpy_toio(dst, src, len);
-> +#endif
-> +}
-> +
-...
-> +	/* Set timeout threshold */
-> +	if (pixels < RKVDEC2_1080P_PIXELS)
-> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_1080p;
-> +	else if (pixels < RKVDEC2_4K_PIXELS)
-> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_4K;
-> +	else if (pixels < RKVDEC2_8K_PIXELS)
-> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_8K;
-> +
+HEAD commit:    563a50672d8a Merge tag 'xfs-6.10-fixes-4' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11ca148e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=12f98862a3c0c799
+dashboard link: https://syzkaller.appspot.com/bug?extid=2a62f58f1a4951a549bb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1287d83e980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cb8151980000
 
-Did you test if it works with anything > 8K? If so, you propably want to 
-make the check above
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8f92c1547793/disk-563a5067.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/21bb27a22e67/vmlinux-563a5067.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/168847d060c0/bzImage-563a5067.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/048c1910668d/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/097a7c874267/mount_1.gz
 
-+	else
-+		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_8K;
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2a62f58f1a4951a549bb@syzkaller.appspotmail.com
 
-Otherwise the timeout may not be set/contain invalid values from any former stream.
+loop0: detected capacity change from 0 to 64
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc4-syzkaller-00283-g563a50672d8a #0 Not tainted
+------------------------------------------------------
+syz-executor283/5110 is trying to acquire lock:
+ffff88805ee675f8 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
 
-...
+but task is already holding lock:
+ffff88802992a0b0 (&tree->tree_lock/1){+.+.}-{3:3}, at: hfs_find_init+0x16e/0x1f0
 
-> +
-> +static const struct rkvdec2_coded_fmt_desc rkvdec2_coded_fmts[] = {
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_H264_SLICE,
-> +		.frmsize = {
-> +			.min_width = 16,
-> +			.max_width =  65520,
-> +			.step_width = 16,
-> +			.min_height = 16,
-> +			.max_height =  65520,
-> +			.step_height = 16,
-> +		},
-> +		.ctrls = &rkvdec2_h264_ctrls,
-> +		.ops = &rkvdec2_h264_fmt_ops,
-> +		.num_decoded_fmts = ARRAY_SIZE(rkvdec2_h264_decoded_fmts),
-> +		.decoded_fmts = rkvdec2_h264_decoded_fmts,
-> +		.subsystem_flags = VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
-> +	},
-> +};
-> +
-Note, that this is also given to userspace (VIDIOC_ENUM_FRAMESIZES) and 
-this is already incorrect in the old rkvdec driver (and hantro): From 
-userspace perspective we do not have a restriction in 
-step_width/step_width, as we are aligning any given width/height to HW 
-requirements in the driver - what we should give to userspace is 
-fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS; fsize->stepwise.min_height = 
-1; fsize->stepwise.min_width = 1; fsize->stepwise.max_height = 65520; 
-fsize->stepwise.max_width = 65520; I guess this new driver should be an 
-opportunity to fix that and distinguish between internal and external 
-frame size requirements and the .vidioc_enum_framesizes callback should 
-adapted accordingly. Regards, Alex
+which lock already depends on the new lock.
 
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&tree->tree_lock/1){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       hfs_find_init+0x16e/0x1f0
+       hfs_ext_read_extent fs/hfs/extent.c:200 [inline]
+       hfs_extend_file+0x31b/0x1450 fs/hfs/extent.c:401
+       hfs_bmap_reserve+0xd9/0x400 fs/hfs/btree.c:234
+       hfs_cat_create+0x1e0/0x970 fs/hfs/catalog.c:104
+       hfs_create+0x66/0xe0 fs/hfs/dir.c:202
+       lookup_open fs/namei.c:3505 [inline]
+       open_last_lookups fs/namei.c:3574 [inline]
+       path_openat+0x1425/0x3280 fs/namei.c:3804
+       do_filp_open+0x235/0x490 fs/namei.c:3834
+       do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+       do_sys_open fs/open.c:1420 [inline]
+       __do_sys_openat fs/open.c:1436 [inline]
+       __se_sys_openat fs/open.c:1431 [inline]
+       __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
+       hfs_bmap_reserve+0xd9/0x400 fs/hfs/btree.c:234
+       __hfs_ext_write_extent+0x22e/0x4f0 fs/hfs/extent.c:121
+       __hfs_ext_cache_extent+0x6a/0x990 fs/hfs/extent.c:174
+       hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
+       hfs_extend_file+0x344/0x1450 fs/hfs/extent.c:401
+       hfs_get_block+0x3e4/0xb60 fs/hfs/extent.c:353
+       __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2128
+       __block_write_begin fs/buffer.c:2177 [inline]
+       block_write_begin+0x9b/0x1e0 fs/buffer.c:2236
+       cont_write_begin+0x645/0x890 fs/buffer.c:2590
+       hfs_write_begin+0x8a/0xd0 fs/hfs/inode.c:53
+       generic_perform_write+0x322/0x640 mm/filemap.c:4015
+       generic_file_write_iter+0xaf/0x310 mm/filemap.c:4136
+       new_sync_write fs/read_write.c:497 [inline]
+       vfs_write+0xa72/0xc90 fs/read_write.c:590
+       ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&tree->tree_lock/1);
+                               lock(&HFS_I(tree->inode)->extents_lock);
+                               lock(&tree->tree_lock/1);
+  lock(&HFS_I(tree->inode)->extents_lock);
+
+ *** DEADLOCK ***
+
+4 locks held by syz-executor283/5110:
+ #0: ffff888029a14420 (sb_writers#9){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2854 [inline]
+ #0: ffff888029a14420 (sb_writers#9){.+.+}-{0:0}, at: vfs_write+0x227/0xc90 fs/read_write.c:586
+ #1: ffff8880784d0fa8 (&sb->s_type->i_mutex_key#14){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #1: ffff8880784d0fa8 (&sb->s_type->i_mutex_key#14){+.+.}-{3:3}, at: generic_file_write_iter+0x83/0x310 mm/filemap.c:4133
+ #2: ffff8880784d0df8 (&HFS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
+ #3: ffff88802992a0b0 (&tree->tree_lock/1){+.+.}-{3:3}, at: hfs_find_init+0x16e/0x1f0
+
+stack backtrace:
+CPU: 1 PID: 5110 Comm: syz-executor283 Not tainted 6.10.0-rc4-syzkaller-00283-g563a50672d8a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ hfs_extend_file+0xff/0x1450 fs/hfs/extent.c:397
+ hfs_bmap_reserve+0xd9/0x400 fs/hfs/btree.c:234
+ __hfs_ext_write_extent+0x22e/0x4f0 fs/hfs/extent.c:121
+ __hfs_ext_cache_extent+0x6a/0x990 fs/hfs/extent.c:174
+ hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
+ hfs_extend_file+0x344/0x1450 fs/hfs/extent.c:401
+ hfs_get_block+0x3e4/0xb60 fs/hfs/extent.c:353
+ __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2128
+ __block_write_begin fs/buffer.c:2177 [inline]
+ block_write_begin+0x9b/0x1e0 fs/buffer.c:2236
+ cont_write_begin+0x645/0x890 fs/buffer.c:2590
+ hfs_write_begin+0x8a/0xd0 fs/hfs/inode.c:53
+ generic_perform_write+0x322/0x640 mm/filemap.c:4015
+ generic_file_write_iter+0xaf/0x310 mm/filemap.c:4136
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe0c6fea2e9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffefba1b208 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fe0c6fea2e9
+RDX: 000000000000fea7 RSI: 0000000020000000 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 00000000200005c0 R09: 00007ffefba1b240
+R10: 0000000000000280 R11: 0000000000000246 R12: 00007ffefba1b22c
+R13: 000000000000000b R14: 431bde82d7b634db R15: 00007ffefba1b260
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
