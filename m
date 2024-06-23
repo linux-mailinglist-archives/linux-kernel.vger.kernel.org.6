@@ -1,116 +1,122 @@
-Return-Path: <linux-kernel+bounces-226122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A3A6913A87
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:24:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC960913A89
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504DC1F210CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782EE2809FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D7712E1DC;
-	Sun, 23 Jun 2024 12:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E40B149E1A;
+	Sun, 23 Jun 2024 12:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E5E+h4u1"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mcP5yXuR"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A0112E1CA
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 12:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4072612E1CA;
+	Sun, 23 Jun 2024 12:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719145432; cv=none; b=NRkTh/bnQCh6NcBw2ls5qVZFnxrgy12ljClid4eWQ3v1bqc7lVMHiPrV3FuLDSXiRFRgrEAb0hYev1Ze+r+57Km7EA8Ft2fMqjvLkF/p2LYUEj3APJw1D2cMmmc5QHpQrgo2I2jBX4DWNR4oDGQnVsieQDFwhudH9WsUS0VYt08=
+	t=1719145546; cv=none; b=oGrZtYWMpKDhpXJR5OrTSpuH4W1QXnMWOrQqnOKQiHGd6S3VdcqgjyYJbFzZFnBTJYlLCoDZr2l4WA2E0aDGw0z7k/4ZTsiSiS82Oxq4+nau2P+8jDx/kdr9dEqcNh405GqFHv70LLvveoOairnjM0ksEVKb3zV+8DsaNfMmBQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719145432; c=relaxed/simple;
-	bh=+3i2agRPOQdsbG9p0mP1wgp/7zig5/6KfMRBRB9YgoQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=cwapbynv2fxP5Yy6rjF1Ln9wTV9uCWKmMlQipB0cR6qTqQCFD+IU9BTcKfooOW6IfWIshMbVSbarLlxFcY7WRApg/1YM608cC9KJyFvpLYFnoGjP8MnluiAeMOyzZOV0cDvOkgWU9tcch1z5ONJOjoFRHwTAzocNpSfy5QX3/Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E5E+h4u1; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4217990f997so25377695e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 05:23:50 -0700 (PDT)
+	s=arc-20240116; t=1719145546; c=relaxed/simple;
+	bh=6SWsetOiitGrbfge/pUBVlgh7ezPRdo0jeJuVPOlqFc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SUqSdq83+aPefg8xK293cNC648Qr4s4G7blBEqEFlVlv33gVqU/2QNylNQN3aiXftj2uGilBZu/v66Lou3v/VhqthqWf5rWarsU1sCsT5D4FOhlRs90ASKYcpK5yrZ7WBrV9S4ONe6VpOyFgwjRQqLwLAMAPTcceaI3MMZErgoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mcP5yXuR; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70656b43fd4so1436249b3a.0;
+        Sun, 23 Jun 2024 05:25:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719145429; x=1719750229; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uSMp1oIN7G5KMuwIqxjaMjb37TFnDfxyBRpLl4YVWt8=;
-        b=E5E+h4u1Va8kTVXMUGIA4RDeNJWyJWawkFH+sTBFKZ+FVlnvKM8+t22hfeXyQQEn16
-         VO2YHz24dHCO9FwOkAgr5TEEmwZ7tzp7Uni14wsTAuGuJkR2k/yLLupuaX6zAOIjmcHs
-         WWALEkyVGkSNXfmBmTAo0p3g5Ib9xK24HzQItauOOR1FrnYm10R/WtQzSrjmNgaP05bM
-         17vCFARzfSAearbkuAvr1PDF6Tsqu4T8cWWgQ1stL0noXDtZOFmg9b/V8eG2rBWpPJWp
-         oCIRn96zqekDFBHW5ok2t2GCLnBORd9SDDA9fZxBEt2bbGBCOSnH3GolBb1QXIat/o31
-         Xvxw==
+        d=gmail.com; s=20230601; t=1719145544; x=1719750344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E+GctSM144YZO1XxdYkn83b1ZZ0Ac+eYihI2mIQW6N8=;
+        b=mcP5yXuR2QZney5q55alsbsPu3Yk8LMH1usksc3mnDWNpOtwLN/1uNkhgsd63PrC8j
+         MVk+Z0sEIZlxIMRjwje0JSWfQLXE5ZetKr49hRPgstz7dG1UYIpOpw8+p4M0qGulWT4H
+         GG5OKSklzBs4jLgyKMQeXL+XktctClwxqO5mqTSc0sEICGSxN9DxK+V2lRRPnwNuTRkK
+         tpQQb+e8tRHaQaX2wWXJBsNj7YYhFq+/YGmD5REZLijaQSHPPUUqQy83tYVrpMD8cXj2
+         n4cVSGvJ3QqHV2Eg6FUDhK1Fva3If4aANu8As9YlHakeJ28bTy7r78EQfIuGAfQapZpR
+         qCtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719145429; x=1719750229;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uSMp1oIN7G5KMuwIqxjaMjb37TFnDfxyBRpLl4YVWt8=;
-        b=EX66eMS38kvb7KM/jwgGd+9b8DbGOMTnTn7N19mWCRUwVxxTLd1ASBVqDVlSvuqhFt
-         ufhupFkbLB4RcOflZe2EnR9EEbyg604i4YBykCXyfNyOAuPXE4nZur7+DMNCc5qYzYdu
-         cNLLfOF14mKOSwkjGljHmgJn1TGDbWBTNzb53HuCEk9xhIxW7n4QpJZH7eNaaTvcT/ke
-         egEHl7obSQozgE9ebqNsNPgJVzGZJXarHJtL8FagzJGRGqtxDFQoCMDL7PvUY36jdXPb
-         K0MH7Gtl5lSEmak4D2pw7NeQMhjDLAc+OJA/0zhKIiNgsaGg6utSKMygMsV1rDcFglW6
-         QDbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQZ28Z6sETIYhMFETMA0uuRdWd8wM5xZWVcVb/UWIKIGZKqFGF2vwoi9baS9DMlFLra8gNx/RdDblvGNxdAgdDP/MkSG1vcWWoUIMV
-X-Gm-Message-State: AOJu0YyviuQRAC1Msjo1f/1DhhjvKcQc2dPva4Jx48d1f3eAd6saNfni
-	IbXnFs0ZgojtTMwWCESw9RB8S5YSaM/u2t3rM8kXLHmgFkjjOKYSTm3ZDamHfq8=
-X-Google-Smtp-Source: AGHT+IGB2X865c0lYFBdE1+56PwmMK6W+Egw7AqkKkYF4fhyfS0NEyJNq94ctIvbytl9wv5NDt8kTA==
-X-Received: by 2002:adf:edcb:0:b0:361:bd3f:f89b with SMTP id ffacd0b85a97d-366e4f00a89mr1936156f8f.50.1719145429436;
-        Sun, 23 Jun 2024 05:23:49 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f66bbsm7204864f8f.78.2024.06.23.05.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 05:23:48 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
- kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240618-gs101-usb-regulators-in-dt-v3-1-6a749207052e@linaro.org>
-References: <20240618-gs101-usb-regulators-in-dt-v3-1-6a749207052e@linaro.org>
-Subject: Re: [PATCH v3] arm64: dts: exynos: gs101-oriole: add placeholder
- regulators for USB phy
-Message-Id: <171914542792.47206.11134715783148912337.b4-ty@linaro.org>
-Date: Sun, 23 Jun 2024 14:23:47 +0200
+        d=1e100.net; s=20230601; t=1719145544; x=1719750344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E+GctSM144YZO1XxdYkn83b1ZZ0Ac+eYihI2mIQW6N8=;
+        b=G7wlCP52TUh23t+OqoFtJjPXOTYA0FTUseX8eWSFizthVzvTd1PdRVvVJ577YUCyCp
+         i9UCGHpQyP5tkNPJwDKqLb7Q07qQ4FWpKQ5pU6t3t1Af96DPz+v2L9AEsfrjquwILlgX
+         yYDhRXAhHruBic/TVU1u2f7kMXAUa/B/3xHRvLQLK5kOrRqp+6vJqpLL3jYAmPp4F3/l
+         yf9hye7WV42PwP8TZOUogDIWZix+2DJVCy/IGi/Ny42EeXMeeIFaZ+8NX4725Ezca92U
+         U/ry+eI3x5JQ/8TI05ZDlQAGE7YC6RUeuUsw3EBh8UubOvV9r9T6ccEYjTOuvO/WkS54
+         4t5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVbbhnN3yKV12VPkI+o8vB/I9bMdnGgr/FiW1niXD+WJD51i/97vC9VtOI8CEM8LWgF2eR7mqueT+P3gi2E+JNhchCb/IFNp5f+gXteLl1dABwG6Hmmj304epfs92SKks2m7G0+d1ALhQ==
+X-Gm-Message-State: AOJu0YwEeSw3kaAJY00jhJMoNPne4Iq5VBNG+YdXlfmmCR+fRFqJkyPJ
+	XwUY96WtCKnZkhi18VH0yHdwBlIL+CSVlLQ/dPSWDi5g/Swozz9pqaUdVg==
+X-Google-Smtp-Source: AGHT+IHtvRq3e8bRIIlMnrQsbWA+be3/o6kjcW/zmZ6gv1I3/0MLPIac3YniKUjHOaBqaGQanbG/KA==
+X-Received: by 2002:a05:6a20:f395:b0:1bc:ecc8:ca5d with SMTP id adf61e73a8af0-1bcf7e7861fmr1350756637.24.1719145544325;
+        Sun, 23 Jun 2024 05:25:44 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7193f4a110csm2358296a12.20.2024.06.23.05.25.41
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 23 Jun 2024 05:25:43 -0700 (PDT)
+From: yskelg@gmail.com
+To: Harald Freudenberger <freude@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>
+Cc: shjy180909@gmail.com,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <yskelg@gmail.com>
+Subject: [PATCH] s390/raw3270: handle memory allocation failure in 'raw3270_setup_console()'
+Date: Sun, 23 Jun 2024 21:24:49 +0900
+Message-ID: <20240623122447.35847-3-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
 
+From: Yunseong Kim <yskelg@gmail.com>
 
-On Tue, 18 Jun 2024 10:01:33 +0100, André Draszik wrote:
-> The USB phy requires various power supplies to work.
-> 
-> While we don't have a PMIC driver yet, the supplies should still be
-> added to the DT.
-> 
-> Add some placeholders, which will be replaced with the real ones once
-> we implement PMIC.
-> 
-> [...]
+This patch handle potential null pointer dereference in
+'raw3270_setup_device()', When 'raw3270_setup_console()' fails to
+allocate memory for 'rp' or 'ascebc'.
 
-Applied, thanks!
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ drivers/s390/char/raw3270.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-[1/1] arm64: dts: exynos: gs101-oriole: add placeholder regulators for USB phy
-      https://git.kernel.org/krzk/linux/c/2510bca4810801c98260e0975c13cf2306d28e96
-
-Best regards,
+diff --git a/drivers/s390/char/raw3270.c b/drivers/s390/char/raw3270.c
+index c57694be9bd3..4e81040eea81 100644
+--- a/drivers/s390/char/raw3270.c
++++ b/drivers/s390/char/raw3270.c
+@@ -812,7 +812,13 @@ struct raw3270 __init *raw3270_setup_console(void)
+ 		return ERR_CAST(cdev);
+ 
+ 	rp = kzalloc(sizeof(*rp), GFP_KERNEL | GFP_DMA);
++	if (!rp)
++		return ERR_PTR(-ENOMEM);
+ 	ascebc = kzalloc(256, GFP_KERNEL);
++	if (!ascebc) {
++		kfree(rp);
++		return ERR_PTR(-ENOMEM);
++	}
+ 	rc = raw3270_setup_device(cdev, rp, ascebc);
+ 	if (rc)
+ 		return ERR_PTR(rc);
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.45.2
 
 
