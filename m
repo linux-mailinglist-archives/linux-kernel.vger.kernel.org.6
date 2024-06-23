@@ -1,128 +1,183 @@
-Return-Path: <linux-kernel+bounces-226286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9462E913C75
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:38:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A625913C77
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B05DB2109A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C1FD1C212F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384291822C7;
-	Sun, 23 Jun 2024 15:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ifbG7ha1"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E21F1822D6;
+	Sun, 23 Jun 2024 15:39:26 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A071181D11;
-	Sun, 23 Jun 2024 15:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAB21DFD8
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 15:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719157085; cv=none; b=aoPFpfkzguvnYdFuMn9+zBK0M0dXMnBT0LzSZ482d2hRTEyQV1++DxwQm8r+OWA71Vymb739i8TlRVmcJjAvTsF4NoZKCSpzGu992IXIX0Dtp7ds0HCDFQHSY0Zg0F0VvbFSeotjHv5k40MAqyWhefDGPaWX7+OM0EoZfMo1B44=
+	t=1719157165; cv=none; b=em6I0VRLptSPhjal1GavtuEXDyBMaIdZiCvJf51NyZbWoD8Zzc66xm4a0bvBK/JUcxd+zHaNbnnO/ia50wrQVmGjRlHjwNxl2wg8wIkU2HDrG9rk09UuIU3KQ32jMB+/rTTfJGwsiJ0B3eI6VGEVomTlbslzIyMIhQAXhE3kyDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719157085; c=relaxed/simple;
-	bh=pW0d/0iGMut91lOKI+14xBivBIuJrjWiiPW/yo9+48Y=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=fFHFicr9EjrBZ/AChCIITUrKm4CouvU+00lV2pd1JwlsQ1/VEa9VzONZ6mFiF9bY98Pa0AD/ygefOu+pPE8KWL6Y+26jzyKspCcvIqnOu+NKqvVeHQc0k6JZy3qv8g/Ywz+oyGv7MWVdFJh7y7IJqWICDDutUPcqilXivQttzko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ifbG7ha1; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719157071; x=1719761871; i=markus.elfring@web.de;
-	bh=WAyCoSMDyDaZKySOfBoF+l2H+ZPK+IhLn/bhLxrM5IY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ifbG7ha1rrLAM2GGu7knRC6J2u30zmdTs1A/m3rqA+T0LS2z59+1X0/p8GJyfePc
-	 dQ3Sn+JKjZ0R+WUuPHbBHI5IyFtyOPb/JjyqrN4mRvAKIfGUe8T6c72UvlEi5yjdc
-	 l20y1EzqZ9Q6pT7AbP/WGL+y3dfyq5r/yTVSUrJ3wWcLZYxdtyesa8MdsEPkUOlD+
-	 wWIIei7A3MJ2KBHMw9+V9xbaDkXFh13R/6ERQF05UTJTYS7weGPtuHIGZNH20ihDU
-	 X6lfOYzxPAar9XDcLSfFnGBwYpSjRjMeU23RZoLeFQRI6mfpFRN5ZrM70LKj7bPF8
-	 +SYUQp9SB8cSWOI9uA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mm9VU-1slygB2aH2-00cTV7; Sun, 23
- Jun 2024 17:37:51 +0200
-Message-ID: <d5f715e6-9d8f-4f89-9bc7-60ef4163b54e@web.de>
-Date: Sun, 23 Jun 2024 17:37:49 +0200
+	s=arc-20240116; t=1719157165; c=relaxed/simple;
+	bh=9yvW496ZCme6R+fZtQRf/kUwwW4daBGCaWiUQoZh6F0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gz9s2uhtpA5oJD2+3rjnFeS61caa6Fy+ZQk0kx51gTfggRDGL5TZ0x10Ld/FrTfGYlSg8/LoO/xJwmchkDoVQxkyNqBLTdrEZNENqxBbAvwB8FJKh3v/WYH0QFc1tILHavPOPyqCWhNFuzh4dT3bMavLlMVIvHfMakeN43ffB68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7f3aaf60267so79862139f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 08:39:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719157163; x=1719761963;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8qX0mbmMVdwwRBSjq+pId2i9t9BOsQ2Jv1qsuM3/Mq0=;
+        b=GANxcwjiyTlVE+B3hJgdEHQB6gAiFr9NF6OKmT8O5Bu+/gWnlcyrMUtIyo8Cd2gZIR
+         tEmybBgSY+VtlgahCd4+4ZCDLTUrji3Ql6KW9Q2svU5P8CJ8ziCZE8NI1xjaqQYOxBPL
+         bxM4Jiikgw2eTjVPsNepdz5OcSsfsvJj2bPg5gb3ztlauL3FhgWLYd7ZWcxORQ2ORABy
+         c0r13/uzBrgPMoqSHfSxDDwhUD+1pkr9pjJcPtOUhRiEpEAfzzakM+ZOSpgGkuF9H+lf
+         kHKYsEfME6duWpnCu61Rz17S+SkOb0MFs9D/hjUx49sJstgwhU8oDUn77a1ebwTBYSr4
+         Hokg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyNlPvXMsUxBnRGGoruR/3BY/twh33nbz2Gu6mtwO7QfN1iWD5uiaG77c9ZD0tvGf9SSyf1uRa5S7utUkwqE7fIrfQGh6uNx70AYga
+X-Gm-Message-State: AOJu0YyogQxR/LzQI5puduCVCv3YWaim4+sr+ETtEQRmd0GxrIih65rD
+	xDDXnCr0OMm93LUWSTFdJ//fslHRLV8TWBlKL9U+sPLmKGFBv2e/uG2iuy9EA380fpMjgYiK5Ez
+	Xuzrp30bhACSlWv6HtpwEWFx0vCPBqGlRiMY++t9utjVnudkTCVotO4c=
+X-Google-Smtp-Source: AGHT+IFMhq+CUdJ2xePyAMUNdR+dlZhrqKJzPpu4IjU7l1KNu8636+sSjS03avDDykjemMlOxJCW1y+KGX00/zZ81FojbVxbtNCr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yunseong Kim <yskelg@gmail.com>, linux-s390@vger.kernel.org,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
- Harald Freudenberger <freude@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, MichelleJin <shjy180909@gmail.com>
-References: <20240623122447.35847-3-yskelg@gmail.com>
-Subject: Re: [PATCH] s390/raw3270: Handle memory allocation failures in
- raw3270_setup_console()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240623122447.35847-3-yskelg@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2UvpHqVo4MBiez3Ybw8oz6+kovO3yKY4chSMCSU4+OaPmKCAlMS
- z2liF2AwN2jswnY/C+f7QpekqMbeGJDzK1CHfsx/BTJE3tgGYUaL2wm4nqTVUndYyQSo7uw
- lGZ8Rgd2c15luwpXxMl0HLOynAty6XJN/hOGEu70j7r9vZeIXjhbDpP5TtZ58tTSMMRruZG
- XPQnOue2j2fcXiOZZgNKQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:e7J91SC4YI0=;40Sme5cSd3eUWnJK8CSstzK572Z
- lIDQQ6o9dXTPTqICw/Y4fQ5VGgqz3M5b4Tlfcsv5tGtUb/BElfbTPY2ouf5D0qxnlR54zy66U
- T6o7AOwHYy5Z8kHYU7oYY/hEh/O/XDzGmAl4L0pkLBPn8/VuocW3sfspmn0TBDDnoPABd9Dd0
- dcay3Y14Ey36c6ckkV6tlEyssSsIgVk5zLFIz7+vt8M8lBbWVa2KbN1BalCu8Y7exGuZ0E3yu
- 8/YdjVDPa1t+neg2eHjCz1BgLCNIP58/6JKXDsNcrxAYJkiJZ5pXjvn0QJnL8+3nssO+zxyQe
- HYsSU/7zWJZ5djlsTlSIOlY2YcagUHXUmcv2MtYv61b94jDpaqMQGnsshaURYSqOh2or/uZid
- IIx73AYbckQgVNkp8t1rM96qkVdr+wuQhWgb0aofhOI62afTiYQaI9t8k7KtdHxGahPaef8jP
- 1joQIcL5RU0ZrOmQqKbdWcfJpVz4y5GdmaIa7ln4uv6c8W5OtjFgzVRmAeQr3Me+1eJnsyf18
- 6ECGtff7Xzfrgic54UcRcRr0bprjkHAGJXL1Yob4yo7LTwmvzPyeAOFuNZMtC7uxjkKmX6WUf
- pIFDmJPsfMcfIH0e/X/qCxhZQDsOPd9p16dBb+sItsZ67uC2X9X8FcdASmkmljiuEatCXER40
- ++AkFBUYs6qv9dDpOqsxJDNpbOGYXxi3QCSO+IKCxZ9G19SyPtCs4Vfbshwhhiy7VSRTWmRWz
- ep9sAKdjM2T3zGzfPp4c8Cz8KQTdf7uy3rk5j9PfWO8QqtdBwXSbv/4sJO9UKcKq/boCmga6Z
- mI/iD9RDtPCaJMn42z6Swue+y4fPjPGzihFRM8LGrfFh8=
+X-Received: by 2002:a05:6638:8711:b0:4b7:c9b5:675c with SMTP id
+ 8926c6da1cb9f-4b9e7f27f5amr148607173.6.1719157163497; Sun, 23 Jun 2024
+ 08:39:23 -0700 (PDT)
+Date: Sun, 23 Jun 2024 08:39:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000b2e35061b9078aa@google.com>
+Subject: [syzbot] [btrfs?] WARNING in __btrfs_free_extent (2)
+From: syzbot <syzbot+fe3566bcb509ae7764ef@syzkaller.appspotmail.com>
+To: boris@bur.io, clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> This patch handle potential null pointer dereference in
-> 'raw3270_setup_device()', When 'raw3270_setup_console()' fails to
-> allocate memory for 'rp' or 'ascebc'.
+Hello,
 
-1. Can a wording approach (like the following) be a better change descript=
-ion?
+syzbot found the following issue on:
 
-   A null pointer is stored in a local variable after a call of
-   the function =E2=80=9Ckzalloc=E2=80=9D failed. This pointer was passed =
-to
-   a subsequent call of the function =E2=80=9Craw3270_setup_device=E2=80=
-=9D
-   where an undesirable dereference will be performed then.
-   Thus add corresponding return value checks.
+HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10aed446980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c79815c08cc14227
+dashboard link: https://syzkaller.appspot.com/bug?extid=fe3566bcb509ae7764ef
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10ebe941980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1374b3de980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/35e32e9073a7/disk-2ccbdf43.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6c6e34658d16/vmlinux-2ccbdf43.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4417e7ef76ed/bzImage-2ccbdf43.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b1cd2f1f0c7e/mount_0.gz
+
+The issue was bisected to:
+
+commit cecbb533b5fcec4ff77e786b7f94457f6cacd9e7
+Author: Boris Burkov <boris@bur.io>
+Date:   Wed Jun 28 18:00:15 2023 +0000
+
+    btrfs: record simple quota deltas in delayed refs
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a47be2980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17a47be2980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a47be2980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fe3566bcb509ae7764ef@syzkaller.appspotmail.com
+Fixes: cecbb533b5fc ("btrfs: record simple quota deltas in delayed refs")
+
+BTRFS: Transaction aborted (error -2)
+WARNING: CPU: 0 PID: 5085 at fs/btrfs/extent-tree.c:2984 do_free_extent_accounting fs/btrfs/extent-tree.c:2984 [inline]
+WARNING: CPU: 0 PID: 5085 at fs/btrfs/extent-tree.c:2984 __btrfs_free_extent+0x32d1/0x3a10 fs/btrfs/extent-tree.c:3358
+Modules linked in:
+CPU: 0 PID: 5085 Comm: syz-executor845 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:do_free_extent_accounting fs/btrfs/extent-tree.c:2984 [inline]
+RIP: 0010:__btrfs_free_extent+0x32d1/0x3a10 fs/btrfs/extent-tree.c:3358
+Code: e8 64 b0 b0 fd 90 0f 0b 90 90 e9 3c f3 ff ff e8 b5 81 ee fd 90 48 c7 c7 00 2e 0b 8c 44 8b 6c 24 18 44 89 ee e8 40 b0 b0 fd 90 <0f> 0b 90 90 4c 8b 24 24 e9 4f f3 ff ff e8 8d 81 ee fd 90 48 c7 c7
+RSP: 0018:ffffc9000352f220 EFLAGS: 00010246
+RAX: 7e1377ca92db5900 RBX: ffff888024e3c001 RCX: ffff88807c1f0000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc9000352f3f0 R08: ffffffff81585742 R09: fffffbfff1c39994
+R10: dffffc0000000000 R11: fffffbfff1c39994 R12: dffffc0000000000
+R13: 00000000fffffffe R14: 0000000000000000 R15: ffff888063a8b5c8
+FS:  000055556fa3c3c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005648b40a4798 CR3: 0000000023a7e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ run_delayed_tree_ref fs/btrfs/extent-tree.c:1736 [inline]
+ run_one_delayed_ref fs/btrfs/extent-tree.c:1762 [inline]
+ btrfs_run_delayed_refs_for_head fs/btrfs/extent-tree.c:2027 [inline]
+ __btrfs_run_delayed_refs+0x117c/0x4670 fs/btrfs/extent-tree.c:2097
+ btrfs_run_delayed_refs+0xe3/0x2c0 fs/btrfs/extent-tree.c:2209
+ btrfs_commit_transaction+0xf5d/0x3740 fs/btrfs/transaction.c:2400
+ sync_filesystem+0x1c8/0x230 fs/sync.c:66
+ generic_shutdown_super+0x72/0x2d0 fs/super.c:621
+ kill_anon_super+0x3b/0x70 fs/super.c:1226
+ btrfs_kill_super+0x41/0x50 fs/btrfs/super.c:2096
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
+ ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+ syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
+ syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+ syscall_exit_to_user_mode+0x273/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fda22d8de67
+Code: 08 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007fffaba15888 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007fda22d8de67
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fffaba15940
+RBP: 00007fffaba15940 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000206 R12: 00007fffaba16a00
+R13: 000055556fa3d700 R14: 431bde82d7b634db R15: 00007fffaba169a4
+ </TASK>
 
 
-2. Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D) according=
-ly?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-3. The allocated two memory areas are immediately overwritten by the calle=
-d function.
-   Can zero-initialisation be omitted by calling the function =E2=80=9Ckma=
-lloc=E2=80=9D instead?
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-4. Under which circumstances will development interests grow for increasin=
-g
-   the application of scope-based resource management?
-   https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/cleanup=
-.h#L8
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Regards,
-Markus
+If you want to undo deduplication, reply with:
+#syz undup
 
