@@ -1,344 +1,205 @@
-Return-Path: <linux-kernel+bounces-226315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3909913CEE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF15913CF1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A02E28105A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 672B6280E6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBED183081;
-	Sun, 23 Jun 2024 16:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8746A183087;
+	Sun, 23 Jun 2024 16:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TSuuzkQv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gVOkt6Pa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DAB18306F
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 16:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AA3181311;
+	Sun, 23 Jun 2024 16:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719161670; cv=none; b=BXHgHeKxEprhWn3YSoGImnKzi5/Lq4Nhc4flp/l2QWb+E87s8dsKkor3Vl//XVMb84sZTM78hJpLR+TxCZTOBKLxYxJNVY/V+ms/T4eDFhJFzbBU7fyo4W3CFTHgiIUHbWAlj/N+2MZHTE+nBmhaFEI5HVRDwPUOoltfArkzw4U=
+	t=1719161831; cv=none; b=CrAj5hIBWschlfb3vh/M3HiINe6kiMntMSn1Wze5+YAqW41dn2aDVMkFZ+my6om751S9I9FuJRSd2zw6FZB5XxjGRPaA1WbthzR0KHF5ck38tW1TYwNMOvEamG5KhaiQngB1CudchfpQ3tr0lP61wesFYLz62knDyR+FND6LJ1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719161670; c=relaxed/simple;
-	bh=bCA9kq3k4vf6tvkezFeYlSJSvia64y70xLlgB/lksgU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=gjkD9oX1EKDqtIvy3hXl/lrmVJllNLKv8WfHqisPvKTqXbkZp6h0eXEd4hZiegRuuZ/8lPDSAQ+aVf6Qs247s+fP7HwRJskYBaEpDw5qZGlKyGxB+fGkaAJOqku7oNHz/QBZtd9pjt5iSrRi/txMM++4jZ5GnkDyrLU3Ne9jhHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TSuuzkQv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719161666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cy24+2gSWFcG/3qShZra+4VPbiJp0htIQwLsETRkua0=;
-	b=TSuuzkQvcLV4UnyI3AQj2JZQeN5Vp2EkarwpxN47ZHTSpesy+mDKVfdh3lP6XTCPMYlhev
-	vFXPK4gno3BZpq46ipsnTTnoUDdw5Wrk3EFzaagAWI6XzZ/EWh9er/UDeGWWH6ScRlx0q2
-	IG5Z0dx5tFMQ3D5nJYMSO2BlFEIccgE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-XHguqilhO8CXG23LB375ig-1; Sun,
- 23 Jun 2024 12:54:22 -0400
-X-MC-Unique: XHguqilhO8CXG23LB375ig-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F396819560AB;
-	Sun, 23 Jun 2024 16:54:20 +0000 (UTC)
-Received: from [10.22.16.52] (unknown [10.22.16.52])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B14DA19560AE;
-	Sun, 23 Jun 2024 16:54:18 +0000 (UTC)
-Message-ID: <1bc10e71-54d2-4a13-934b-ee613b5a0f99@redhat.com>
-Date: Sun, 23 Jun 2024 12:54:17 -0400
+	s=arc-20240116; t=1719161831; c=relaxed/simple;
+	bh=cEfwR6KM+NHGdsn1m/dn+Ifk1vd9vLeAifgYiaCpLbc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rpo5J0TEpNzNjCvMTxPcMptJu8kD66juzfgga2axyjoeyDzm2fZKY7x1v7AVQoMAC5zQ/qNAx2qp+TSPPg+VuqUQPaf7zyYoApWsSXxs2O0HccoFVs5ZfrJsOSjvaqW68MjYLWlUW5+jOg0kzOQgP+jBOLfAtRiV/7VWhXMMasE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gVOkt6Pa; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719161829; x=1750697829;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=cEfwR6KM+NHGdsn1m/dn+Ifk1vd9vLeAifgYiaCpLbc=;
+  b=gVOkt6PahYs2uaN/uqXLE0gTf0BCgSMKDZdzWOj7gBYK2LHjLZCiZUnt
+   1IczwVaOywPW38VFumxI1LsfhSHdx3koABIV2ODCp7nk9xRFwzDuJ/PLw
+   X2V+YZJPjASaNUXXQnGaZICy79np71D8nqjeTU9+QzgiFyFU4NF/QxMyw
+   ffiItapZ4KZ7mloZUDS6qUBQ08cfluTg9IJfKkbavx7UVNYPh7h+EBR6S
+   0MrN2Fz80hlyPwTjH0HZxjAvDTBjSz8iSTo2iJjvBL+VsTq6DZOvMyWBz
+   s82ssD0nEjU2uFkQkw1MXzBbC36NK/zGOqAkT2jXoMrQZS+LbpjZUYYBH
+   w==;
+X-CSE-ConnectionGUID: dRkQ0aWvRvygGR5iIYol1A==
+X-CSE-MsgGUID: 8oWJkAElRG+zoMgtWDsB6g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="19036523"
+X-IronPort-AV: E=Sophos;i="6.08,260,1712646000"; 
+   d="scan'208";a="19036523"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 09:57:08 -0700
+X-CSE-ConnectionGUID: ZxrGOrwsT8qY8OCqt18+pg==
+X-CSE-MsgGUID: WO8QYSqyTN+tWjqPoAIu9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,260,1712646000"; 
+   d="scan'208";a="43185507"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.55])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 09:57:06 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Sun, 23 Jun 2024 19:57:01 +0300 (EEST)
+To: Luke Jones <luke@ljones.dev>
+cc: Devin Bayer <dev@doubly.so>, corentin.chary@gmail.com, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org
+Subject: Re: [PATCH v2] platform/x86: asus-wmi: support the disable camera
+ LED on F10 of Zenbook 2023
+In-Reply-To: <ab40d5d2-a14a-4cb2-b315-b4cb66654f9e@app.fastmail.com>
+Message-ID: <22352c0a-a853-b28d-a36a-09cc502acb8b@linux.intel.com>
+References: <20240621085745.233107-1-dev@doubly.so> <ab40d5d2-a14a-4cb2-b315-b4cb66654f9e@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [cgroups?] KASAN: invalid-free in build_sched_domains
-From: Waiman Long <longman@redhat.com>
-To: syzbot <syzbot+05801a3641d9817ee5ec@syzkaller.appspotmail.com>,
- cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- lizefan.x@bytedance.com, syzkaller-bugs@googlegroups.com, tj@kernel.org,
- Vitalii Bursov <vitaly@bursov.com>, Ingo Molnar <mingo@kernel.org>
-References: <000000000000ba7521061b870df8@google.com>
- <68083a4d-9fd3-42a3-b6fd-d6d1f07cac74@redhat.com>
-Content-Language: en-US
-In-Reply-To: <68083a4d-9fd3-42a3-b6fd-d6d1f07cac74@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=US-ASCII
 
-cc other relevant people.
+On Fri, 21 Jun 2024, Luke Jones wrote:
 
+> On Fri, 21 Jun 2024, at 8:57 PM, Devin Bayer wrote:
+> > Adds a sysfs entry for the LED on F10 above the crossed out camera icon on 2023 Zenbooks.
+> > 
+> > v2
+> > - Changed name from `platform::camera` to `asus::camera`
+> > - Separated patch from patchset
+> > 
+> > v1
+> > - https://lore.kernel.org/platform-driver-x86/20240620082223.20178-1-dev@doubly.so/
+> > 
+> > Signed-off-by: Devin Bayer <dev@doubly.so>
+> > ---
+> > drivers/platform/x86/asus-wmi.c            | 36 ++++++++++++++++++++++
+> > include/linux/platform_data/x86/asus-wmi.h |  2 ++
+> > 2 files changed, 38 insertions(+)
+> > 
+> > diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> > index 3f07bbf809ef..20b7ed6a27b5 100644
+> > --- a/drivers/platform/x86/asus-wmi.c
+> > +++ b/drivers/platform/x86/asus-wmi.c
+> > @@ -73,6 +73,7 @@ module_param(fnlock_default, bool, 0444);
+> > #define NOTIFY_LID_FLIP_ROG 0xbd
+> >  
+> > #define ASUS_WMI_FNLOCK_BIOS_DISABLED BIT(0)
+> > +#define ASUS_WMI_DEVID_CAMERA_LED 0x00060079
+> >  
+> > #define ASUS_MID_FAN_DESC "mid_fan"
+> > #define ASUS_GPU_FAN_DESC "gpu_fan"
+> > @@ -227,6 +228,7 @@ struct asus_wmi {
+> > struct led_classdev lightbar_led;
+> > int lightbar_led_wk;
+> > struct led_classdev micmute_led;
+> > + struct led_classdev camera_led;
+> > struct workqueue_struct *led_workqueue;
+> > struct work_struct tpd_led_work;
+> > struct work_struct wlan_led_work;
+> > @@ -1533,6 +1535,27 @@ static int micmute_led_set(struct led_classdev *led_cdev,
+> > return err < 0 ? err : 0;
+> > }
+> >  
+> > +static enum led_brightness camera_led_get(struct led_classdev *led_cdev)
+> > +{
+> > + struct asus_wmi *asus;
+> > + u32 result;
+> > +
+> > + asus = container_of(led_cdev, struct asus_wmi, camera_led);
+> > + asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_CAMERA_LED, &result);
+> > +
+> > + return result & ASUS_WMI_DSTS_BRIGHTNESS_MASK;
+> > +}
+> > +
+> > +static int camera_led_set(struct led_classdev *led_cdev,
+> > +    enum led_brightness brightness)
+> > +{
+> > + int state = brightness != LED_OFF;
+> > + int err;
+> > +
+> > + err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CAMERA_LED, state, NULL);
+> > + return err < 0 ? err : 0;
+> > +}
+> > +
+> > static void asus_wmi_led_exit(struct asus_wmi *asus)
+> > {
+> > led_classdev_unregister(&asus->kbd_led);
+> > @@ -1540,6 +1563,7 @@ static void asus_wmi_led_exit(struct asus_wmi *asus)
+> > led_classdev_unregister(&asus->wlan_led);
+> > led_classdev_unregister(&asus->lightbar_led);
+> > led_classdev_unregister(&asus->micmute_led);
+> > + led_classdev_unregister(&asus->camera_led);
+> >  
+> > if (asus->led_workqueue)
+> > destroy_workqueue(asus->led_workqueue);
+> > @@ -1631,6 +1655,18 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+> > goto error;
+> > }
+> >  
+> > + if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_CAMERA_LED)) {
+> > + asus->camera_led.name = "asus::camera";
+> > + asus->camera_led.max_brightness = 1;
+> > + asus->camera_led.brightness_get = camera_led_get;
+> > + asus->camera_led.brightness_set_blocking = camera_led_set;
+> > +
+> > + rv = led_classdev_register(&asus->platform_device->dev,
+> > + &asus->camera_led);
+> > + if (rv)
+> > + goto error;
+> > + }
+> > +
+> > error:
+> > if (rv)
+> > asus_wmi_led_exit(asus);
+> > diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> > index ab1c7deff118..fb0b00f7d292 100644
+> > --- a/include/linux/platform_data/x86/asus-wmi.h
+> > +++ b/include/linux/platform_data/x86/asus-wmi.h
+> > @@ -50,6 +50,8 @@
+> > #define ASUS_WMI_DEVID_LED5 0x00020015
+> > #define ASUS_WMI_DEVID_LED6 0x00020016
+> > #define ASUS_WMI_DEVID_MICMUTE_LED 0x00040017
+> > +#define ASUS_WMI_DEVID_CAMERA_LED_NEG 0x00060078
+> > +#define ASUS_WMI_DEVID_CAMERA_LED 0x00060079
+> >  
+> > /* Backlight and Brightness */
+> > #define ASUS_WMI_DEVID_ALS_ENABLE 0x00050001 /* Ambient Light Sensor */
+> > -- 
+> > 2.45.2
+> > 
+> 
+> If Hans and Ilpo have no other comments regarding the written C code:
+> 
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
 
-On 6/23/24 12:50, Waiman Long wrote:
-> On 6/23/24 00:25, syzbot wrote:
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of 
->> git://git.kernel.org..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=13b21bca980000
->> kernel config: 
->> https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39
->> dashboard link: 
->> https://syzkaller.appspot.com/bug?extid=05801a3641d9817ee5ec
->> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils 
->> for Debian) 2.40
->> userspace arch: i386
->>
->> Unfortunately, I don't have any reproducer for this issue yet.
->
-> It is hard to debug this problem without a reproducer. Anyway, I 
-> suspect the likely cause of this bug is commit a1fd0b9d751f 
-> ("sched/fair: Allow disabling sched_balance_newidle with 
-> sched_relax_domain_level").
->
-> Regards,
-> Longman
->
->
->>
->> Downloadable assets:
->> disk image (non-bootable): 
->> https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
->> vmlinux: 
->> https://storage.googleapis.com/syzbot-assets/13cdb5bfbafa/vmlinux-2ccbdf43.xz
->> kernel image: 
->> https://storage.googleapis.com/syzbot-assets/7a14f5d07f81/bzImage-2ccbdf43.xz
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the 
->> commit:
->> Reported-by: syzbot+05801a3641d9817ee5ec@syzkaller.appspotmail.com
->>
->> loop1: detected capacity change from 0 to 1024
->> hfsplus: unable to find HFS+ superblock
->> ==================================================================
->> BUG: KASAN: invalid-free in __sdt_free kernel/sched/topology.c:2302 
->> [inline]
->> BUG: KASAN: invalid-free in __free_domain_allocs 
->> kernel/sched/topology.c:1498 [inline]
->> BUG: KASAN: invalid-free in build_sched_domains+0x14df/0x52e0 
->> kernel/sched/topology.c:2535
->> Free of addr ffff88802b4a3f89 by task syz-executor.1/13033
->>
->> CPU: 3 PID: 13033 Comm: syz-executor.1 Not tainted 
->> 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
->> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
->> 1.16.2-debian-1.16.2-1 04/01/2014
->> Call Trace:
->>   <TASK>
->>   __dump_stack lib/dump_stack.c:88 [inline]
->>   dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
->>   print_address_description mm/kasan/report.c:377 [inline]
->>   print_report+0xc3/0x620 mm/kasan/report.c:488
->>   kasan_report_invalid_free+0xaa/0xd0 mm/kasan/report.c:563
->>   poison_slab_object+0x15e/0x160 mm/kasan/common.c:223
->>   __kasan_slab_free+0x32/0x50 mm/kasan/common.c:256
->>   kasan_slab_free include/linux/kasan.h:184 [inline]
->>   slab_free_hook mm/slub.c:2196 [inline]
->>   slab_free mm/slub.c:4437 [inline]
->>   kfree+0x12a/0x3b0 mm/slub.c:4558
->>   __sdt_free kernel/sched/topology.c:2302 [inline]
->>   __free_domain_allocs kernel/sched/topology.c:1498 [inline]
->>   build_sched_domains+0x14df/0x52e0 kernel/sched/topology.c:2535
->>   partition_sched_domains_locked+0x519/0x9e0 
->> kernel/sched/topology.c:2747
->>   partition_and_rebuild_sched_domains kernel/cgroup/cpuset.c:1181 
->> [inline]
->>   rebuild_sched_domains_locked+0xebb/0x2100 kernel/cgroup/cpuset.c:1246
->>   update_relax_domain_level kernel/cgroup/cpuset.c:2952 [inline]
->>   cpuset_write_s64+0x2ca/0x340 kernel/cgroup/cpuset.c:3560
->>   cgroup_file_write+0x5ad/0x7d0 kernel/cgroup/cgroup.c:4113
->>   kernfs_fop_write_iter+0x343/0x500 fs/kernfs/file.c:334
->>   new_sync_write fs/read_write.c:497 [inline]
->>   vfs_write+0x6b6/0x1140 fs/read_write.c:590
->>   ksys_write+0x12f/0x260 fs/read_write.c:643
->>   do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->>   __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
->>   do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
->>   entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->> RIP: 0023:0xf7293579
->> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 
->> 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 
->> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
->> RSP: 002b:00000000f5e855ac EFLAGS: 00000292 ORIG_RAX: 0000000000000004
->> RAX: ffffffffffffffda RBX: 000000000000000e RCX: 0000000020000040
->> RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000000000000000
->> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
->> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->>   </TASK>
->>
->> Allocated by task 13033:
->>   kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
->>   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->>   poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
->>   __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:387
->>   kmalloc_node_noprof include/linux/slab.h:677 [inline]
->>   __sdt_alloc kernel/sched/topology.c:2251 [inline]
->>   __visit_domain_allocation_hell kernel/sched/topology.c:1510 [inline]
->>   build_sched_domains+0x37c/0x52e0 kernel/sched/topology.c:2401
->>   partition_sched_domains_locked+0x519/0x9e0 
->> kernel/sched/topology.c:2747
->>   partition_and_rebuild_sched_domains kernel/cgroup/cpuset.c:1181 
->> [inline]
->>   rebuild_sched_domains_locked+0xebb/0x2100 kernel/cgroup/cpuset.c:1246
->>   update_relax_domain_level kernel/cgroup/cpuset.c:2952 [inline]
->>   cpuset_write_s64+0x2ca/0x340 kernel/cgroup/cpuset.c:3560
->>   cgroup_file_write+0x5ad/0x7d0 kernel/cgroup/cgroup.c:4113
->>   kernfs_fop_write_iter+0x343/0x500 fs/kernfs/file.c:334
->>   new_sync_write fs/read_write.c:497 [inline]
->>   vfs_write+0x6b6/0x1140 fs/read_write.c:590
->>   ksys_write+0x12f/0x260 fs/read_write.c:643
->>   do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->>   __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
->>   do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
->>   entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->>
->> The buggy address belongs to the object at ffff88802b4a3f80
->>   which belongs to the cache kmalloc-16 of size 16
->> The buggy address is located 9 bytes inside of
->>   16-byte region [ffff88802b4a3f80, ffff88802b4a3f90)
->>
->> The buggy address belongs to the physical page:
->> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 
->> pfn:0x2b4a3
->> anon flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
->> page_type: 0xffffefff(slab)
->> raw: 00fff00000000000 ffff888015442640 0000000000000000 dead000000000001
->> raw: 0000000000000000 0000000080800080 00000001ffffefff 0000000000000000
->> page dumped because: kasan: bad access detected
->> page_owner tracks the page as allocated
->> page last allocated via order 0, migratetype Unmovable, gfp_mask 
->> 0x252800(GFP_NOWAIT|__GFP_NORETRY|__GFP_COMP|__GFP_THISNODE), pid 
->> 5530, tgid 5530 (syz-executor.3), ts 162857508656, free_ts 162402453637
->>   set_page_owner include/linux/page_owner.h:32 [inline]
->>   post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1468
->>   prep_new_page mm/page_alloc.c:1476 [inline]
->>   get_page_from_freelist+0x136a/0x2e50 mm/page_alloc.c:3420
->>   __alloc_pages_slowpath mm/page_alloc.c:4211 [inline]
->>   __alloc_pages_noprof+0x6ad/0x2460 mm/page_alloc.c:4691
->>   __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
->>   alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
->>   alloc_slab_page+0x56/0x110 mm/slub.c:2265
->>   allocate_slab mm/slub.c:2428 [inline]
->>   new_slab+0x84/0x260 mm/slub.c:2481
->>   ___slab_alloc+0xdac/0x1870 mm/slub.c:3667
->>   __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3757
->>   __slab_alloc_node mm/slub.c:3810 [inline]
->>   slab_alloc_node mm/slub.c:3989 [inline]
->>   __do_kmalloc_node mm/slub.c:4121 [inline]
->>   __kmalloc_node_noprof+0x36c/0x450 mm/slub.c:4129
->>   kmalloc_node_noprof include/linux/slab.h:681 [inline]
->>   kvmalloc_node_noprof+0x9d/0x1a0 mm/util.c:634
->>   xt_jumpstack_alloc net/netfilter/x_tables.c:1355 [inline]
->>   xt_replace_table+0x1c7/0x910 net/netfilter/x_tables.c:1394
->>   __do_replace+0x1d9/0x9c0 net/ipv4/netfilter/arp_tables.c:912
->>   compat_do_replace+0x3ca/0x500 net/ipv4/netfilter/ip_tables.c:1529
->>   do_ip6t_set_ctl+0x686/0xc20 net/ipv6/netfilter/ip6_tables.c:1641
->>   nf_setsockopt+0x8a/0xf0 net/netfilter/nf_sockopt.c:101
->>   ipv6_setsockopt+0x133/0x1a0 net/ipv6/ipv6_sockglue.c:999
->>   tcp_setsockopt+0xa4/0x100 net/ipv4/tcp.c:3765
->> page last free pid 7520 tgid 7520 stack trace:
->>   reset_page_owner include/linux/page_owner.h:25 [inline]
->>   free_pages_prepare mm/page_alloc.c:1088 [inline]
->>   free_unref_page+0x64a/0xe40 mm/page_alloc.c:2583
->>   qlink_free mm/kasan/quarantine.c:163 [inline]
->>   qlist_free_all+0x4e/0x140 mm/kasan/quarantine.c:179
->>   kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
->>   __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:322
->>   kasan_slab_alloc include/linux/kasan.h:201 [inline]
->>   slab_post_alloc_hook mm/slub.c:3941 [inline]
->>   slab_alloc_node mm/slub.c:4001 [inline]
->>   kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4008
->>   ptlock_alloc+0x1f/0x70 mm/memory.c:6444
->>   ptlock_init include/linux/mm.h:2968 [inline]
->>   pagetable_pte_ctor include/linux/mm.h:2991 [inline]
->>   __pte_alloc_one_noprof include/asm-generic/pgalloc.h:73 [inline]
->>   pte_alloc_one+0x74/0x370 arch/x86/mm/pgtable.c:33
->>   __pte_alloc+0x6e/0x3a0 mm/memory.c:442
->>   copy_pte_range mm/memory.c:1094 [inline]
->>   copy_pmd_range mm/memory.c:1240 [inline]
->>   copy_pud_range mm/memory.c:1277 [inline]
->>   copy_p4d_range mm/memory.c:1301 [inline]
->>   copy_page_range+0x2fea/0x5c10 mm/memory.c:1399
->>   dup_mmap kernel/fork.c:751 [inline]
->>   dup_mm kernel/fork.c:1688 [inline]
->>   copy_mm+0x1416/0x2680 kernel/fork.c:1737
->>   copy_process+0x3ea8/0x6f50 kernel/fork.c:2390
->>   kernel_clone+0xfd/0x980 kernel/fork.c:2797
->>   __do_compat_sys_ia32_clone+0xb7/0x100 arch/x86/kernel/sys_ia32.c:254
->>   do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->>   __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
->>   do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
->>   entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->>
->> Memory state around the buggy address:
->>   ffff88802b4a3e80: 00 06 fc fc 00 00 fc fc 00 00 fc fc 00 00 fc fc
->>   ffff88802b4a3f00: 00 00 fc fc fa fb fc fc 00 07 fc fc 00 00 fc fc
->>> ffff88802b4a3f80: 00 00 fc fc 00 00 fc fc fa fb fc fc 00 00 fc fc
->>                        ^
->>   ffff88802b4a4000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->>   ffff88802b4a4080: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc 00 00
->> ==================================================================
->> ----------------
->> Code disassembly (best guess), 2 bytes skipped:
->>     0:    10 06                    adc    %al,(%rsi)
->>     2:    03 74 b4 01              add    0x1(%rsp,%rsi,4),%esi
->>     6:    10 07                    adc    %al,(%rdi)
->>     8:    03 74 b0 01              add    0x1(%rax,%rsi,4),%esi
->>     c:    10 08                    adc    %cl,(%rax)
->>     e:    03 74 d8 01              add    0x1(%rax,%rbx,8),%esi
->>    1e:    00 51 52                 add    %dl,0x52(%rcx)
->>    21:    55                       push   %rbp
->>    22:    89 e5                    mov    %esp,%ebp
->>    24:    0f 34                    sysenter
->>    26:    cd 80                    int    $0x80
->> * 28:    5d                       pop    %rbp <-- trapping instruction
->>    29:    5a                       pop    %rdx
->>    2a:    59                       pop    %rcx
->>    2b:    c3                       ret
->>    2c:    90                       nop
->>    2d:    90                       nop
->>    2e:    90                       nop
->>    2f:    90                       nop
->>    30:    8d b4 26 00 00 00 00     lea    0x0(%rsi,%riz,1),%esi
->>    37:    8d b4 26 00 00 00 00     lea    0x0(%rsi,%riz,1),%esi
->>
->>
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->>
->> If the report is already addressed, let syzbot know by replying with:
->> #syz fix: exact-commit-title
->>
->> If you want to overwrite report's subsystems, reply with:
->> #syz set subsystems: new-subsystem
->> (See the list of subsystem names on the web dashboard)
->>
->> If the report is a duplicate of another one, reply with:
->> #syz dup: exact-subject-of-another-report
->>
->> If you want to undo deduplication, reply with:
->> #syz undup
->>
+Luke,
+
+As I've seen you use S-o-b tag a few times like this, do you actually mean 
+Reviewed-by: tag which tells you've looked through the change and think 
+it's good/useful for the kernel?
+
+S-o-b relates to authorship of the code in the patch (and should be 
+there right from the submission, not added like this).
+
+-- 
+ i.
 
 
