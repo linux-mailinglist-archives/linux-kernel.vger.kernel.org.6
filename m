@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-226218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A141913BAA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:14:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B75913BAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E306A281B9E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:14:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93485B20C9B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA4D181312;
-	Sun, 23 Jun 2024 14:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5492F745E2;
+	Sun, 23 Jun 2024 14:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hq/IuCXp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuXadO7V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C287712EBC7;
-	Sun, 23 Jun 2024 14:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CC4145FE1;
+	Sun, 23 Jun 2024 14:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719152056; cv=none; b=eh2sK3q55p4fJ/dtiGfYyeNJiyP3qyIH1svi+ny/zhI46iyPD4Wm3VvebCMQ1CpK5JbK4KOha8eWZtVOg4ciq05H7CfsR3nW+dlheXfT7uQrezSB+Lo5eX/X9YUdu8g4t7VrB54YG6ZTp/DMAptqS/bLnPYJV2ut0XPo1/iixS4=
+	t=1719152071; cv=none; b=JduOd9FDaQmQMfmBhx2uefxP3PDy3WjL7O2/HaYn1QbIKg5nAf5GlFmSu80MxOpdafo6k678kAHU6yUgePrkMj/5XXU1MizAgjb1BsGeYOG3P4ncdHcSawU8NnCovmD7IG6fXe0T2KRalSUdngomJ+22XalPoZQF5WSd+tpSFjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719152056; c=relaxed/simple;
-	bh=WJBNwHQvEUGQpwl3kDlWJ2d83DTNW3enLMCdUvVtsy0=;
+	s=arc-20240116; t=1719152071; c=relaxed/simple;
+	bh=xjdka5JZvEFGgzarOm9cAQZioJh64tIoUo72je+5ot4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rn+1YFB0/xOvaHKsuOR11JATEs2CAl/yUQnFU0rbeF7OYYK1L7xbB1SN+iVvtjtTMgrH/7OWNgU6MGjJ7swaZ7hwkqcmfqZQVbefc3RC0UDl3HJ3D6RZeeZoBy+UE/srmY9m+hCS0xO8HM6SiusEWZh5MAogs4XKkFrsCiJXFBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hq/IuCXp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92C25C2BD10;
-	Sun, 23 Jun 2024 14:14:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=prJto1GbCIqRygqcHIZrym0fGEv1YzzY/KNnkOXp7byPj163BIc314W1CHIzQmk1+WF86KrU6Jbtt3fN7TlIApgp/W6qYjqdQqiLDarRHbMLyfCU5CBex9qZpETsLX0kfZL9+FLJ5LakXvz3UNeb6pmpc8kTjV1mKi3h2YtnGmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uuXadO7V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64689C2BD10;
+	Sun, 23 Jun 2024 14:14:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719152056;
-	bh=WJBNwHQvEUGQpwl3kDlWJ2d83DTNW3enLMCdUvVtsy0=;
+	s=k20201202; t=1719152071;
+	bh=xjdka5JZvEFGgzarOm9cAQZioJh64tIoUo72je+5ot4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hq/IuCXpW5wqZEJQpx//85tpCu+qsG96W0RCEcuRjzOI2nuXSki2VDBviMtQCHp89
-	 wcYAoGJ4PJqEcvokjN8kmrXZnNx9Bplp885EGKELtLgLcxbgbdGzkEJvgGSiMzvx26
-	 B5jYM84RNXEl6Ae0WiaJ8Du/bPUN8nZmZlt8HTko7XTA88CtzzzdggS2KGMM8E0cuH
-	 aX058iIkzLR8uSf/BGWrqXkfPZRnE05qiy3WKGbt+0kzP5wIfeJtPcS5IhOLzXllMt
-	 zPWTwAMbgkz/vxoOkZwGlUlUb6duXHLjoEGH0WpuQhVq4/wCZo3oNU30h1FJnou7sZ
-	 3c1WVA/lPzu8w==
-Date: Sun, 23 Jun 2024 15:14:10 +0100
+	b=uuXadO7VVLHCeIENQsM2AbK2+yTyF7axfkAhTw1lyaoBlyC2FL76eniJbuEo6xphC
+	 8cqnzR1x0dscspwAkeM+ZZ+VLDE50Z/+FCpzPYLvAghs5I/+ZtWBOvkUO/wM2Us2mq
+	 vvx+fPkfBKbg97yA2fTTwzJa7ZlWSjSeelDCzDVKGMMlnFT4YyFt+5EI7YY1JeIvNm
+	 g0780otXw7mA73ObVdxGISLI2APamFIH+FqP4cBDw1L+RB5/2o0fpX995azaPuILh+
+	 J58lgvTAVSqRGfiEGHFEccv8Brn1HPlB639mE4ZegYTIzWD6h/hzUIBaNm+vH39D3R
+	 Cj8gmmHE4AaRw==
+Date: Sun, 23 Jun 2024 15:14:25 +0100
 From: Conor Dooley <conor@kernel.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
@@ -57,11 +57,10 @@ Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
 	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
 	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: display/msm/gpu: define reg-names in
+Subject: Re: [PATCH 1/3] dt-bindings: display/msm/gpu: constrain clocks in
  top-level
-Message-ID: <20240623-flagship-pacifism-4fcc3c530617@spud>
+Message-ID: <20240623-visa-alkaline-7f851211c89e@spud>
 References: <20240623120026.44198-1-krzysztof.kozlowski@linaro.org>
- <20240623120026.44198-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,35 +68,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6NMFsyziRLC3bhgw"
+	protocol="application/pgp-signature"; boundary="W+Y0q6x2brSSN8+B"
 Content-Disposition: inline
-In-Reply-To: <20240623120026.44198-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240623120026.44198-1-krzysztof.kozlowski@linaro.org>
 
 
---6NMFsyziRLC3bhgw
+--W+Y0q6x2brSSN8+B
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 23, 2024 at 02:00:25PM +0200, Krzysztof Kozlowski wrote:
-> All devices should (and actually do) have same order of entries, if
-> possible.  That's the case for reg/reg-names, so define the reg-names in
-> top-level to enforce that.
+On Sun, Jun 23, 2024 at 02:00:24PM +0200, Krzysztof Kozlowski wrote:
+> We expect each schema with variable number of clocks, to have the widest
+> constrains in top-level "properties:".  This is more readable and also
+> makes binding stricter, if there is no "if:then:" block for given
+> variant.
 >=20
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---6NMFsyziRLC3bhgw
+--W+Y0q6x2brSSN8+B
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZngtsgAKCRB4tDGHoIJi
-0oB9AQC3CyqV6LDWFtHWKMhnFdgK2R1RztyQ5W6CooMH4EJ22AD/SRq7QsBl/kzK
-4ZfJERst4+knhGKAUDRIAbGJXljzPwM=
-=EHls
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZngtwQAKCRB4tDGHoIJi
+0lh+AQD/zfWFp+H2OLeAtvkMdmdDHaYkkqAlbOU1YQsaYrQrRwEA4JhzzfmNtS8K
+YeeeStRvNCLzuHfiWReqGTxHtxI85QA=
+=5T/Z
 -----END PGP SIGNATURE-----
 
---6NMFsyziRLC3bhgw--
+--W+Y0q6x2brSSN8+B--
 
