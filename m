@@ -1,76 +1,96 @@
-Return-Path: <linux-kernel+bounces-226459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5913913E9B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F9F9913E9F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91D66281034
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:45:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F31C2816A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520761849D5;
-	Sun, 23 Jun 2024 21:45:44 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADF61850A6;
+	Sun, 23 Jun 2024 21:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="So6F7SV6"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895F02F24
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 21:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470832F24;
+	Sun, 23 Jun 2024 21:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719179143; cv=none; b=qheqECHygRRAYOn/J1bkEnlPqTHNhTgz7tGaMzxY+Pd3nO6ad3z+j4StUt32Y1Kx+iiXEt91jojvCJvrH0eN9z/VOk95UYeXejvQwCiPxWaE9eesEqQrEHo7SF5mengBkUysMQ0Gc2VMilgcLzDIht3kLl2QCLJjMWgRIK13NHM=
+	t=1719179305; cv=none; b=PU/uWQWP9GQB6vmCWrF92g4x+1RDzUu70+9p0WKGS+dBf+jqxtutpjAvezBHNZs076+clqC5uFYaV0luIWUpcOztHN6Xe5tZuyX+UTBteb0XxUL4isCDw+jg07a73aBagV10hGId8pLXW3fraj6sBGnTiaEHixAa5///RMZtvqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719179143; c=relaxed/simple;
-	bh=XWOPTv8e6+ydYMwf1M8G7Z7eNV8IWZuS0lWTIBAz0zM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=I9EPa5tDlO18a15KrLuhGYoYCkMIlmiFyQID53p9egdfILxziFi8pnTj3lL+GBJ9Uj/IxJkePI8WCVkmt9mLCnJ7fJn/6remS2Nva8EBa0d9oxav7sWSKnik9mLCdCIeazIttsed0s9KNOECCB+e/aZgH+7KFmMd/rR6Kx+gVwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-37620c37ae8so43099385ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:45:42 -0700 (PDT)
+	s=arc-20240116; t=1719179305; c=relaxed/simple;
+	bh=FjeT/4uo+MFGapGGQFRzLPu+u5xPvDN2JhdqP0sRZeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iKtr7rgqBKOGzFTw3ailzKKsV6SCdZC57mjyrDALpAghSVqbBlAbsYXHaMYgv1GW/kUi4YUWT5uOsuRBiRMq9qw4+1KgSUYg3WDkAffD9V3QxdKoKyKrmSUYNJxLdJvY9kefWQUOZFX6nexbJn2ghkJ+so8advKp4g6qj9k17tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=So6F7SV6; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52caebc6137so3585936e87.0;
+        Sun, 23 Jun 2024 14:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719179302; x=1719784102; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FjeT/4uo+MFGapGGQFRzLPu+u5xPvDN2JhdqP0sRZeo=;
+        b=So6F7SV6LceXYeIT+K0RfvuwvboHUfYo99RzL+7AUqVue63H+9+Lj+hTwLqSiP76py
+         /nOqImnk230/3zlQWQBHdxPD/60WlKQD2Vx+43GwgZXuJk0hfVIeJAo2KzSlyhIskfSw
+         Z9G92SVTAPwqYf7Ck8nOptpNFeXW1Q4Il72WNx1j4JEbB+XZIr789f4F5VZ08OXQ0t/N
+         MPn3012SW5rS/dPeNxlIC6fallRxc+c5r0h+dhy9cz+UgC1x45CF8PEAI2sappyoIsxR
+         Q6EfUKJhVLBCqC9UMD9tOJyr6BqNvIowWVYYaWpWmeWTmnkCsv8qaPjL2dQwAG903LRE
+         SS/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719179141; x=1719783941;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XWOPTv8e6+ydYMwf1M8G7Z7eNV8IWZuS0lWTIBAz0zM=;
-        b=mwz0wgZ/73vkpzw1fNk6ZhsRaxDi5xARVcQzNg1YpMZkwWnHJvptRycecKGccilQiJ
-         c1eH2bTmS81zyYOZRrSp3vbx2EfNr+YEUIrnQBUnVBbLRh40YMkfTRFgTOkfQjHp7uNr
-         3s1Hlsnt1CEIvz1DLpHrbkWLPX3AS3ArxQhHVWpwT7vqxFDSjmL/3na33ubW8u1AHNQk
-         XG6hE1zTEkS3QBrx+E7yp5DyrCtYNTHFBJslZm31D+e9bskaNK11tRY18z4bogIejzRC
-         qp4uC8ToJrDmfiHYLkbrKYqi2gGwqNiaOHqvpxQZfZsxpBtwA+zKOpGfgNz5zmciv1SE
-         j41Q==
-X-Gm-Message-State: AOJu0YyqnRgZeqc+/1xt7Barjr27d3J6wYsNd5Jrwjo5AkOdWejNAlvr
-	aGlh13YDMibkYE4vnqMtqICIx0xTkFDmjVOEof7bY/J1YijssYwFF6Sqb+D+O2OpC6eyeLnfDTs
-	6vFx8yGofP72w4MwWMJkl3VKjm/Pp6KM21qoPsGAXtSrhxmpHL6887TA=
-X-Google-Smtp-Source: AGHT+IFVGhG8SGG8JG9OJfqE9mtzIIYPRx4OmL05vj5CFbjXDgPwmpFw9xsqTf3ZtZXyKnYbe3LFm0Wq9yPsz6OYzE8myyF969t7
+        d=1e100.net; s=20230601; t=1719179302; x=1719784102;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FjeT/4uo+MFGapGGQFRzLPu+u5xPvDN2JhdqP0sRZeo=;
+        b=JjOKyqJfBfQSQb8GMBpF+0th60a8CZM++aFnhyjnqN4847qz1pzMQ8VfVbppyQavEm
+         wQJMoYLbH+7UFLl9Lkj9uHn2d79VhLADGNZ8AKbadxvN98hh2IzROvpdq1150Ogm6lmu
+         pL2zFb23x85GjkGLlWWwlDrnGI8SJJGqFBeVKVlLF15lCG0bGQgSYyspkNoeGvGpLhIa
+         qBZqqcx2uxNREpxKZ7tpi2QJaoUSKqxDUIOQPOxNs9QDTsWC5BmT1a1zje0V+DMhumeg
+         xFQltMQpX4xr2LUnA4BLkm+h+rYCJRVrnKjXPvhR+/yyZHlY9bcQSXcTX1psKYQXrGSw
+         PODg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEIkUOUC4uyRlC+tVLuysKXunPdgZ2CJ4auOzddzgebO9SKfA6TmlJo2oR4Pgjucc36iR0LuQC/sF4KrYriFWXmUVIcGCB0sCEv7n+zPSdMJExccXClNY7VmCWbDMv5yqQnC3w42XZbrF0VbWlmPN7MG91lkX05Hl4dVpDsH1k1YKwUlC9FYYglqhyOvPpJF+OrFRgKqd5y8HAy+ObRHRmPiY9Zg==
+X-Gm-Message-State: AOJu0YxgS7of45obINR282vXe99brdOIw9+NkcAoMyzdluoccuOc8PAl
+	0cerDBztUv7O3eU6ga+laJpRP1tEyBGCi75t7rmNFoin1TJKBzsd/fKVENC1/mW4jRFv7/RzIa+
+	DnXz+8TZ3E8DvlJknhB+ek10lqOcibQ==
+X-Google-Smtp-Source: AGHT+IG2v51vvIgUNNJTJF1KPdnhSoN3nj5BJljBDTkt7B2Mh0IPSTaWFfVbtbghb5v+6nWKIQzNpI9gh8nC2rO/vvE=
+X-Received: by 2002:a05:6512:401a:b0:52c:8979:9627 with SMTP id
+ 2adb3069b0e04-52ce1832541mr2141404e87.3.1719179302284; Sun, 23 Jun 2024
+ 14:48:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2e:b0:376:11a3:a36b with SMTP id
- e9e14a558f8ab-3763f4a93a0mr3303995ab.0.1719179141748; Sun, 23 Jun 2024
- 14:45:41 -0700 (PDT)
-Date: Sun, 23 Jun 2024 14:45:41 -0700
-In-Reply-To: <000000000000747dd6061a974686@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000ca7ef061b95966d@google.com>
-Subject: Re: [syzbot] KMSAN: uninit-value in nci_rx_work
-From: syzbot <syzbot+3da70a0abd7f5765b6ea@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
+References: <20240621-b4-sc7180-camss-v1-0-14937929f30e@gmail.com>
+ <20240621-b4-sc7180-camss-v1-5-14937929f30e@gmail.com> <3660e37e-2716-4d9f-a9cf-b69568d4e77c@linaro.org>
+In-Reply-To: <3660e37e-2716-4d9f-a9cf-b69568d4e77c@linaro.org>
+From: george chan <gchan9527@gmail.com>
+Date: Mon, 24 Jun 2024 05:48:11 +0800
+Message-ID: <CADgMGSva0_DjYX0QVFL+i3YXmrPAuVa4gQVa-DNHCwg-UA3VNw@mail.gmail.com>
+Subject: Re: [PATCH 5/6] media: qcom: camss: Add sc7180 resources
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
-
-***
-
-Subject: KMSAN: uninit-value in nci_rx_work
-Author: jain.abhinav177@gmail.com
-
-#syz test
+On Sat, Jun 22, 2024 at 7:18=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro=
+.org> wrote:
+>
+> although I wasn't able to find
+> the matching clock rates
+The clk rate is in the camcc clk driver, isn't it? ;-)
 
