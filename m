@@ -1,168 +1,122 @@
-Return-Path: <linux-kernel+bounces-225946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C54913800
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 953E1913809
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 07:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01CA1283719
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 05:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494552821FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 05:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9A41C695;
-	Sun, 23 Jun 2024 05:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989EB1CF8F;
+	Sun, 23 Jun 2024 05:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gPVBR3ZU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="avMDEYy+"
+Received: from msa.smtpout.orange.fr (msa-209.smtpout.orange.fr [193.252.23.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE207FD;
-	Sun, 23 Jun 2024 05:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D587FD;
+	Sun, 23 Jun 2024 05:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719121527; cv=none; b=PuG2aPJmmM/by8+NOu73XyhOxRnZS5BiN3eYjAqTVrI4h4TpwFR34eICBdYJ+VlQ7GRApgCOCFOTRYAVXoNoy/INut9zBXaG58QI3FXGJDv3kh8G2rFScMhcMd7uQGabklIfV1YLODbS9jObJ94UspKhueYtoiRJyTK7BegjWnc=
+	t=1719121918; cv=none; b=WWnHywJKBLEc23HKA1r4JR8JOWZzP6wffkoynEecNdTrOznbBrHny6vzM/taXwK6wTGj0J+iUfCiNhcOjd9g9MBee7I1fFA4BqcwhSfE4gnk2/55YIx1CBGfv1v45dn4FeJYDKUUis5WLrdAImSF+HcpTGjAlBFVr/QYgJRNwKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719121527; c=relaxed/simple;
-	bh=Dsv+gvnAeJEM2c+WjU2T9ZUKpqGuD33nzFQBPE7WR3s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=UMTBbuOmuceabb0uo1r9R0ULEoSIE6T1ot4rldUJS+M0AW5PfWk9JUh9IeSb+LkUvsweIiBLCOUHNdivUs6xzGIwIZpG7ngCnE+EkhT+o3WO13+rAj01VmIw4upGHQJBpszyvOdfTvigHGl5DpXlNDCWvEsxpNtCLXmvjJ4FhYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gPVBR3ZU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45N4u8sW013316;
-	Sun, 23 Jun 2024 05:45:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Al3xT5HMJ512bAKdS0RGU8
-	tdONKW04l3wjQ6Jc5WzSE=; b=gPVBR3ZUXxOWzDyVPjF/YKEc3Dvand76qaLnYf
-	dQTyDvQZsm/SkfD81j0wYroZi0c09A6O4JbVVi7LfvMxBCBkT7A3vZ6oJuPf+ofR
-	dgEWEgc21y6tFAd1njPQVyLaBYpNCbQ5Pk+i/Zy6sX1dCuBt5kn+VTGsyAHXGzO3
-	boCLb1FecHOIExA78u8PMaOyUp2pzQfuzRUEN9JIWO6wzJNjidjyEZtk+Zxhh//Y
-	YrWxG7B4wW2RnMZpYaTO2c8SykNqtwmp+1zu4FJFmyJ68nGPHWqbtQvq4IxMEN8o
-	GCPeKMyMAypqMwFLxLRcHe5D7hDTdm6boeiyFpraD09s6V9g==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywpu11cnf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 05:45:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45N5j0LT009558
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 05:45:00 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 22 Jun
- 2024 22:44:59 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sat, 22 Jun 2024 22:44:55 -0700
-Subject: [PATCH v2] KVM: x86: add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1719121918; c=relaxed/simple;
+	bh=Cd2SyuRK9YrNE+mv9R88nDo2JxhCzCsvUFL6HwzkUHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YMPl9mkoCjUYMogS7g+ISA4vrZZu1kxNb5i3IsfqK2yyx9ofFbaZz1oxokaKBb7GKBMDWj+GkVFIStN63H8fmuBVDtc92BR3n9alTs/+FMVN6XZpmLou1esnGuFB6IrZYJkWHiQoI/5ZIXqt90cIBp1SZ4WpyoLP59PD4NDue1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=avMDEYy+; arc=none smtp.client-ip=193.252.23.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id LG7csGen4jiKDLG7csmuih; Sun, 23 Jun 2024 07:50:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719121845;
+	bh=1RAR2hjJePdFBRujGabmMIXRMO+LOncR48fid7AVn+0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=avMDEYy+qFQyLB9kez5bH7ffN4XGNH4YwZMHZN8n4EB91X7D+73x+uP7OCYXReKJC
+	 SaX5l4MiVpdvvVROtWr+eksb9P/xAAWvQeVR4QZKsP6p3uYxlphbUkkNEpCXknI9r0
+	 YCw8V/Do1I/viuP3G4oDNO2tUD6ZZ0CQvs69n25ZTDyb36+oHL4kKmyuavWgYwOdDx
+	 9p+C0X+/A9IOeCQ3pBl+CHL5HQwfxnw4hIXdFwCApH9Zw1h0nJxcyu6HAMJEEGdzRU
+	 NYax7iLhzqYkxtpUhqwtop0p1Og45wDjMVqRGVxEM9EzQjtLL5YPUmowps8Wj4oOWd
+	 SZV0WVORC5InQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 23 Jun 2024 07:50:45 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Paul Cercueil <paul@crapouillou.net>,
+	Sebastian Reichel <sre@kernel.org>,
+	Artur Rojek <contact@artur-rojek.eu>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	linux-mips@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] power: supply: ingenic: Fix some error handling paths in ingenic_battery_get_property()
+Date: Sun, 23 Jun 2024 07:50:32 +0200
+Message-ID: <51e49c18574003db1e20c9299061a5ecd1661a3c.1719121781.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240622-md-kvm-v2-1-29a60f7c48b1@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFe2d2YC/2WNwQ6DIBAFf8Vw7jZA1Zie+h+NB1ihblqwBSU2h
- n8veu1xknlvNhZNIBPZtdpYMIkiTb6APFUMR+UfBmgozCSXNW9kB26AZ3Jwaa3kGmvVaM6K/A7
- G0noc3fvCWkUDOiiP4z5/kV9WcCrOJuz6SHGewvfIJrGP/gpJgAAUumstt40Q8vZZCMnjGSfH+
- pzzD77Q2tW9AAAA
-To: Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini
-	<pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>,
-        "H. Peter Anvin"
-	<hpa@zytor.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jzzs4qQWZSnhSPoMVAu-13mhhTuHhGkz
-X-Proofpoint-ORIG-GUID: jzzs4qQWZSnhSPoMVAu-13mhhTuHhGkz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-22_19,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- clxscore=1011 malwarescore=0 lowpriorityscore=0 priorityscore=1501
- adultscore=0 phishscore=0 mlxlogscore=861 bulkscore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406230042
+Content-Transfer-Encoding: 8bit
 
-Fix the following allmodconfig 'make W=1' warnings when building for x86:
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm-intel.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm-amd.o
+If iio_read_channel_processed() fails, 'val->intval' is not updated, but it
+is still *1000 just after. So, in case of error, the *1000 accumulate and
+'val->intval' becomes erroneous.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+So instead of rescaling the value after the fact, use the dedicated scaling
+API. This way the result is updated only when needed. In case of error, the
+previous value is kept, unmodified.
+
+This should also reduce any inaccuracies resulting from the scaling.
+
+Finally, this is also slightly more efficient as it saves a function call
+and a multiplication.
+
+Fixes: fb24ccfbe1e0 ("power: supply: add Ingenic JZ47xx battery driver.")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Changes in v2:
-- Per Sean:
-  - updated SVM and VMX descriptions to add "support for"
-  - updated kvm_main description to use the term Hypervisor (in 2 places)
-- Link to v1: https://lore.kernel.org/r/20240528-md-kvm-v1-1-c1b86f0f5112@quicinc.com
----
- arch/x86/kvm/svm/svm.c | 1 +
- arch/x86/kvm/vmx/vmx.c | 1 +
- virt/kvm/kvm_main.c    | 3 ++-
- 3 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/power/supply/ingenic-battery.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index c8dc25886c16..e484a95ffbad 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -53,6 +53,7 @@
- #include "svm_onhyperv.h"
+diff --git a/drivers/power/supply/ingenic-battery.c b/drivers/power/supply/ingenic-battery.c
+index 2e7fdfde47ec..0a40f425c277 100644
+--- a/drivers/power/supply/ingenic-battery.c
++++ b/drivers/power/supply/ingenic-battery.c
+@@ -31,8 +31,9 @@ static int ingenic_battery_get_property(struct power_supply *psy,
  
- MODULE_AUTHOR("Qumranet");
-+MODULE_DESCRIPTION("KVM support for SVM (AMD-V) extensions");
- MODULE_LICENSE("GPL");
- 
- #ifdef MODULE
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 6051fad5945f..2ec2b7105056 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -74,6 +74,7 @@
- #include "posted_intr.h"
- 
- MODULE_AUTHOR("Qumranet");
-+MODULE_DESCRIPTION("KVM support for VMX (Intel VT-x) extensions");
- MODULE_LICENSE("GPL");
- 
- #ifdef MODULE
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 14841acb8b95..ffe4ba998225 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Kernel-based Virtual Machine driver for Linux
-+ * Kernel-based Virtual Machine (KVM) Hypervisor
-  *
-  * This module enables machines with Intel VT-x extensions to run virtual
-  * machines without emulation or binary translation.
-@@ -74,6 +74,7 @@
- #define ITOA_MAX_LEN 12
- 
- MODULE_AUTHOR("Qumranet");
-+MODULE_DESCRIPTION("Kernel-based Virtual Machine (KVM) Hypervisor");
- MODULE_LICENSE("GPL");
- 
- /* Architectures should define their poll value according to the halt latency */
-
----
-base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-change-id: 20240528-md-kvm-36f20bc4a5b0
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_HEALTH:
+-		ret = iio_read_channel_processed(bat->channel, &val->intval);
+-		val->intval *= 1000;
++		ret = iio_read_channel_processed_scale(bat->channel,
++						       &val->intval,
++						       1000);
+ 		if (val->intval < info->voltage_min_design_uv)
+ 			val->intval = POWER_SUPPLY_HEALTH_DEAD;
+ 		else if (val->intval > info->voltage_max_design_uv)
+@@ -41,8 +42,9 @@ static int ingenic_battery_get_property(struct power_supply *psy,
+ 			val->intval = POWER_SUPPLY_HEALTH_GOOD;
+ 		return ret;
+ 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+-		ret = iio_read_channel_processed(bat->channel, &val->intval);
+-		val->intval *= 1000;
++		ret = iio_read_channel_processed_scale(bat->channel,
++						       &val->intval,
++						       1000);
+ 		return ret;
+ 	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
+ 		val->intval = info->voltage_min_design_uv;
+-- 
+2.45.2
 
 
