@@ -1,116 +1,132 @@
-Return-Path: <linux-kernel+bounces-226125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10319913A91
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:27:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A38AB913A97
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424861C20C59
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3A471C20B22
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7314D181316;
-	Sun, 23 Jun 2024 12:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23764181321;
+	Sun, 23 Jun 2024 12:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nAK6wImj"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YLoVCq+M"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DF412E1DC
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 12:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99BA12E1DC;
+	Sun, 23 Jun 2024 12:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719145656; cv=none; b=hXQMK44CulyM8Zyxurnz3st6XXdTHxJE/Ot9S4Pa765d++aC6q5QKmXBWiCndg/jim1CwoqniQ6oC0vwcJL4qS1UnwAYLeHJOelR+NTlvWLkQNCuEqrONeljdmciQzAHSA1mn0WcRX+OLc6aFKSMEytRBZJNIGKygIUkN15MfmE=
+	t=1719145759; cv=none; b=FzHDSCaD4jIHdybQiOsONZKnefT0gSORdthfU1/O0h1afZqOdMvEVsgcK3sLIahLTgDAtbLtnT0v2OrlepGqQKPeCDiF+EsUht973eisXP1WN0RkfC+VRGFypVL79San3YC8k9UCqISD7vS/XxSCZDMO6Xmb2ZL3xR45Mze7cLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719145656; c=relaxed/simple;
-	bh=P7dsvTUA4YUh+7tSKWTu3UMljDWilWupQKsu8DRjBjQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VOZt31ZQy7MNWGJGexLJd/GxcQBHHXZsS1OIDEhwpciwJkQg3XXi/jnAyOSGlm94Z/Wx7vRGuNGqqnih/Wx4Ke5lvf1EmSl/kgwfUmDqzDWQhQowR1IWjh/kGQdKXrW0QR9EaoieFVLNtH5/OCsqctuPokGOm4KXANh2MIUdusE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nAK6wImj; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4217c7eb6b4so29481455e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 05:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719145652; x=1719750452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sM/HIbYS8IU3VydJrQc0pHA7cUkngnOqPHS+gHwqYus=;
-        b=nAK6wImjOIK9IdMsHh6licUSWyJqgNmXtC2YL0Ul0G0rqTXlRHY4WSq+TxumdqhUts
-         hMuNAIhbAa/H91UUXyejqB7qjMwm742VtdXvfEQ23L9m+2WG7zzoCq1pb0UNIokiisgI
-         Lc2J/Ds5J5y2k3JpTqQ5/UEX8muEGyFvAoAXv1/AGLYMvUZdd6x/IPMzLnmr3F4LGVLI
-         DrmIQnrXNSLpjMbj/2Y1O3gBTx3mXVPGjWGGsVbYZ+8XI0XIl5NW4VWB4eLSOdic7V+o
-         RqjQttvN1xxlhMkP9xEm9BNtUQovW202Cc7piOuw/woN5y8U/Ara+psVG6oaeAlR0yCC
-         Bs/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719145652; x=1719750452;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sM/HIbYS8IU3VydJrQc0pHA7cUkngnOqPHS+gHwqYus=;
-        b=sZ6a/eoEPQFLG7Q3unDedJBGD9K0DY1DmciSU7j4gPLZq+tfXPhFsXXpLY5LwJfFW6
-         N7daNP1Xls3bZaUQ6B4URioVQePmgcH2FJZy4ea18COHBzjLNUIc+ciGHeqk7WELoa6I
-         34lsxPiK1CxdCC2R3wEeRcbgzBjnaV5Zi+Z7hC44/cuYjMXGJ7Ykg33jsjwCcTgxf/3D
-         4BY6iTXmu5GHgPNqz4BmfsrFIcaKBiflI/gCk1ThRTl80xHtWUWyo2UbvnBOySiwubDb
-         2f+MYxSmTQPDfmzcKtOVkU+y88GCISlkQ70IwUNRLp5X/D8IPU0SllGYP66xGRYyG1rP
-         I18g==
-X-Forwarded-Encrypted: i=1; AJvYcCWp5uc2nNTqZFjs6ZNuTq+OZYEquGn2p+IpXqbnd4amwaOGSYfr55h8S5ft30iXy1jH/+EIRAs1ryp9/fpPFBVy47oukqiUsjyeQUWB
-X-Gm-Message-State: AOJu0YxRRn5RoGDUj1tqqHSVWW+CsFNLX58C91D7MeFDjtaG7c8ze6JU
-	LDskdx5hRFTWdwFvI8kYv3ES7lboNQGAcViXx6gN8npQvfg1FOqjVIeECIl0n4k=
-X-Google-Smtp-Source: AGHT+IGSFCiKSTdUQpUI36KRoPgkQA5kApUhvD9p2CA+eVUtYHXkRmT1BOI7eiFj2h0vugjSnQ9xrg==
-X-Received: by 2002:a05:600c:42c4:b0:422:123f:4b15 with SMTP id 5b1f17b1804b1-4248cc66c7bmr13320335e9.37.1719145652384;
-        Sun, 23 Jun 2024 05:27:32 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a99fbsm96996865e9.16.2024.06.23.05.27.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 05:27:31 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Carvalho Chehab <mchehab+huawei@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH 1/2] dt-bindings: soc: hisilicon: document hi3660-usb3-otg-bc
-Date: Sun, 23 Jun 2024 14:27:28 +0200
-Message-ID: <171914563307.48201.2100106894701016613.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240518204443.122586-1-krzysztof.kozlowski@linaro.org>
-References: <20240518204443.122586-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1719145759; c=relaxed/simple;
+	bh=cky/kSkaCeylvXef85j3RyeX3RYPaIwSjScPJhylWA4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fmWkhr+xEnL0nzmw0lUdtVbl+kCglKRVKWTam5fl5QsjL2MXh9oR0xhrapZgLnYJbTNfhdK+rOZ0Qp4nGLEKhGBleSVb7BOfk18kzlDRYW+oZbrBDFEb/Gvzkkax2iTD8T7PB9n7pjGQqn2Cbgk3A2eUke+Obpr8286miMTDVOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YLoVCq+M; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NCNQTY018008;
+	Sun, 23 Jun 2024 12:29:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=gcOBVNuicamzRrxkqh3J9eaD
+	ckZU8bubeR6mJxEkb8U=; b=YLoVCq+MToIZdDxGR133ksW0KGB1V3VPjpe4Ssf6
+	lXvCDL0dYMVmy3jpHfi10y/MKsey8zofgiZh0xEh+q2QAdqyzoOGQekQrJfZvFEG
+	7UqP6Snvn+AYC+XlJpO4eKVPOWMHZEtPou/8tcexCKfJiDYlLXeeETSV1U9bT6gF
+	5lIby9gitZIHNuEqTj+YWTj7/aIA564A3EdK3qwRSbHRyJ/dB4cjWlmueDODwD+N
+	cKXMQfMbxi+XFMZ3Do3rKIbFW5PeTdMfBFKomLzW50ituGGJRcNLr173xBlMVf7q
+	JUnzxWlJXBR+/B65n9YE982M4VvNS2sS4XUZXFDchLfULQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywkyn1v1p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Jun 2024 12:29:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45NCT4aB002310
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Jun 2024 12:29:04 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 23 Jun 2024 05:29:00 -0700
+Date: Sun, 23 Jun 2024 17:58:56 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: freedreno <freedreno@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
+Message-ID: <20240623122856.kqf4x6mft74hzk7y@hu-akhilpo-hyd.qualcomm.com>
+References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
+ <20240623110753.141400-4-quic_akhilpo@quicinc.com>
+ <a458a3a7-2b6d-4032-949c-b2c021d339e8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <a458a3a7-2b6d-4032-949c-b2c021d339e8@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UVPanTcHEq44dPrcdpGON_SISnjPdDus
+X-Proofpoint-GUID: UVPanTcHEq44dPrcdpGON_SISnjPdDus
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-23_04,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ mlxscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ mlxlogscore=999 spamscore=0 clxscore=1011 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406230099
 
-
-On Sat, 18 May 2024 22:44:42 +0200, Krzysztof Kozlowski wrote:
-> Add dedicated bindings for the Hisilicon Kirin 960 USB OTG Syscon,
-> to fully document the block and also fix dtbs_check warning:
+On Sun, Jun 23, 2024 at 01:17:16PM +0200, Krzysztof Kozlowski wrote:
+> On 23/06/2024 13:06, Akhil P Oommen wrote:
+> > Add the necessary dt nodes for gpu support in X1E80100.
+> > 
+> > Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> > ---
+> > +		gmu: gmu@3d6a000 {
+> > +			compatible = "qcom,adreno-gmu-x185.1", "qcom,adreno-gmu";
+> > +			reg = <0x0 0x03d50000 0x0 0x10000>,
+> > +			      <0x0 0x03d6a000 0x0 0x35000>,
+> > +			      <0x0 0x0b280000 0x0 0x10000>;
+> > +			reg-names =  "rscc", "gmu", "gmu_pdc";
 > 
->   hi3660-hikey960.dtb: usb3_otg_bc@ff200000: compatible: ['syscon', 'simple-mfd'] is too short
+> Really, please start testing your patches. Your internal instructions
+> tells you to do that, so please follow it carefully. Don't use the
+> community as the tool, because you do not want to run checks and
+> investigate results.
+
+This was obviously tested before (and retested now) and everything works. I am
+confused about what you meant. Could you please elaborate a bit? The device
+and the compilation/test setup is new for me, so I am wondering if I
+made any silly mistake!
+
+-Akhil.
+
 > 
+> NAK.
 > 
-
-One month waiting, so I'll take this one as well.
-
-Applied, thanks!
-
-[1/2] dt-bindings: soc: hisilicon: document hi3660-usb3-otg-bc
-      https://git.kernel.org/krzk/linux-dt/c/7613195d37d69ff92c9bc55599037615212ce19c
-[2/2] arm64: dts: hisilicon: hi3660: add dedicated hi3660-usb3-otg-bc compatible
-      https://git.kernel.org/krzk/linux-dt/c/bc9ec165d066af29661ece91f9cbf74e18ec0a5a
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Best regards,
+> Krzysztof
+> 
 
