@@ -1,154 +1,124 @@
-Return-Path: <linux-kernel+bounces-226216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899E6913BA0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:11:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BD2913BA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A18281BDC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:11:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9020281AA6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAF717FACE;
-	Sun, 23 Jun 2024 14:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C13145FE1;
+	Sun, 23 Jun 2024 14:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OEcQp3/y"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cek9IP7X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBE633EC;
-	Sun, 23 Jun 2024 14:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA694C6E;
+	Sun, 23 Jun 2024 14:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719151876; cv=none; b=XaGlHPtruTRNyXZrI7BEOmfB7t7CTFCcy1GjNrfuVghqnfctl5G5fjNITDDVtlYkP6G6iZtb9WPktLqnVkk3K6igF8BoC5cKG/TGj7dTizHK1xM3JSsBe2mqJb3z3I0XCbSf9jaXaPKQM1EIaWfTuFg6E1Ut5Ko50gA5skwXHOI=
+	t=1719152039; cv=none; b=AhzDv03KnTk/GELRJ3Fa6djTjlp+99FBa/S1I5KD5I3dL5NdiTrs59e4CCmUnJ4pC3QcudB0bp3hpnJ3yjowKHQJZHXN4ruiz4fHOPTh5/UQf9NpWZwxrvFIxVoH9C35rsaYSRrykarx2QBo1OiaznoAua4HzFqCOHkPgl5+dRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719151876; c=relaxed/simple;
-	bh=cKpRh1yRoAzuJrO72ZNoJ0qp4W306OEKYJGj3bZhoXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=cXIdO0MYsl/SpwcqLYhP5nf8A1EyQG4THNfG+h2NPMyZYjDJ3dL4gZSIAMQZe3AzsyDCc4OjDx3PNcGn37fOCCrjppLmvgIjOfBLTVcuNAMrldLptE4/+B2TdeLSIAJBH7SRU9mbSnx3kSX1M7Ff/6KRy4g1t9u49VzoXybZ1f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OEcQp3/y; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-25caf76158cso1973120fac.0;
-        Sun, 23 Jun 2024 07:11:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719151873; x=1719756673; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mydsSOgs1yRkpysFjrBR5qnlOOLUTfBZ21Jz7PUY9KI=;
-        b=OEcQp3/yMA8aOOs1AYdveM3ZV+gXUSHM1vZrLmyP6k87SWiHLglxiTaEs5tVo79YRJ
-         j97/p4uRpIBnX0ZVeUwGGkYF25Td0rnJ0wwDoMxW0kGY8KlAkWOYanZUgtVleVKcBiud
-         L1gHzvCEgJPX14fqUSwFZ7A0ytJneFVwqQwY2VBE1VJHOsgQKOhXnYPcL5EvWl9BCQqG
-         cPNKY1hoCmRIH63JBn8/rbUI+D54kCe4isoKQdx1LD1UG+/3H33kuXkhkHVCFH8cJB+H
-         XTxbNlpLd28ccO8sr/ebZ45s+FROa91L+IDz3CM6SCz0U//dpCif7QGf3UtCfsB9fE6/
-         McUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719151873; x=1719756673;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mydsSOgs1yRkpysFjrBR5qnlOOLUTfBZ21Jz7PUY9KI=;
-        b=kVodiMYCNeQiU3tFOIAelBHtiyc5FUW+cu+8Kd1oZKdjZqNwfACFaHymEEkUtttOoI
-         Ho014O/ZUAmR++T5tXTuJgqjHYGkF3FJaQSRiwu3/a9bZyXTcph+LTGAc+rLy7hl/piP
-         +Qo3gjVviUy2Pndf7XJ2ki2gFPyrCon6eR1jjARxJipumAxgMwzJ5C3S6G6t6Gtz2ncg
-         Wi7lj5MXxBv7RSjboWtgxCV2RvpoAdQ/EbtfyYbjywEXus3BYhF+QVpnT4tVMLIKGSVy
-         Vj3vzlYA9gIU5VgKLMr/Z+avRkukX41vYb+3hsvopbV+8f9wSNjmJZteh25XJf6oNCHZ
-         PkmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnHvpeTY27Hjq+ptI+ove/VaSWn0Q+uV/k3JSkJIUqZmfOXFFnVolMKd1cNMNH8OqLfMd5RvLIH0tfIIz6ZXq+cdDAxGhQOKgbiVbbosF6JJaQfKDc95poWLz7MVtVi7aqEhFzAVVtUKi172KqA8jiNHlVHYCCd16N+5orbKI643w1yEbMEA==
-X-Gm-Message-State: AOJu0YxxO5WizFL2YFkq9Yoj1fJaqju336mneZjvnDxYUnRp2s4xQLDr
-	XOP+0Z7CoCntb2JbPwPNwBUDKi30+1oZ9FCZRR41GnCua8TxXyuLELt6EqXXDxRjPyFtyBxgnuP
-	r5aCdUH2cwc3vOuo3BlmtBHioNNU=
-X-Google-Smtp-Source: AGHT+IFu3aSUk0WZAqXIaA214WhWGBp4bx8gFFfbGd9/AyNmFvmqYuPGQ3DfZ2eD+IxbM3Ci6RQ5K2LGLu7tVyFPy18=
-X-Received: by 2002:a05:6870:a714:b0:254:d05e:4cd5 with SMTP id
- 586e51a60fabf-25d06e3790cmr2478953fac.38.1719151873186; Sun, 23 Jun 2024
- 07:11:13 -0700 (PDT)
+	s=arc-20240116; t=1719152039; c=relaxed/simple;
+	bh=vBdi7Y+JsMuywpAhKODLZF5AlDKmn0t9bNsBl3+S104=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lb7oWKHdka5HjWPZ577zZ6r+q1dMvKk13J1mWJ7ArLPBHiqIHC4QIePC6YfFOXskCAP/ntPVIBY2DlSlRIBxJP7Z2lPzipL35B0E9xQazWBYQkHtylh1OCOaQtQcpxoEPn4JdT12XNIj4LKKqbFPvH5JmVZKxLQizw5m/AiN6i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cek9IP7X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 841CBC2BD10;
+	Sun, 23 Jun 2024 14:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719152039;
+	bh=vBdi7Y+JsMuywpAhKODLZF5AlDKmn0t9bNsBl3+S104=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cek9IP7Xgn1QM9wB01Y3Yr0SqV4RbNSgLWMkpE6D17axquFUkuIkd8uSSMNXRHCHt
+	 fqI87GccXTIvpidLR3Z3b3nYZHgOq1K72shetjWPlynD8slLSx/voTnuqh97/jjVu6
+	 hwVO2rQC4KvOUTpAGk701A6DovOF+MobIfR7oTqNbqvL6x+PJ7meDazOrZWGkxb0ZT
+	 LdBD1bQ90SQMAR9KmPrG5QFSe8ehzHVH1k+USDA7uR+6MtuFDu7W7l335mPFtvH+vD
+	 E+PcJo6XpTSu3Pyd3S+RrrTj8VsJnQwJNAebpsREl5D9sXEGRVeHczW8EUkbj+Mjin
+	 qyLQRVZX/WD1A==
+Date: Sun, 23 Jun 2024 15:13:53 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: display/msm/gpu: constrain
+ reg/reg-names per variant
+Message-ID: <20240623-mule-plank-b63d0e3f3819@spud>
+References: <20240623120026.44198-1-krzysztof.kozlowski@linaro.org>
+ <20240623120026.44198-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1719106472.git.daniel@makrotopia.org> <240db6e0ab07e8e2a86da99b0fc085eabaf9f0cc.1719106472.git.daniel@makrotopia.org>
- <612bd49c-c44a-41f2-89e9-c96e62e52a0a@kernel.org> <Znf8JeBA4mzVa0V1@aurel32.net>
-In-Reply-To: <Znf8JeBA4mzVa0V1@aurel32.net>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Sun, 23 Jun 2024 19:40:58 +0530
-Message-ID: <CANAwSgTt5MSRkpR9tiZuGRQjdisuKUzoeG6_+8MqLVqKp6pKQg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] hwrng: add Rockchip SoC hwrng driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Daniel Golle <daniel@makrotopia.org>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@debian.org>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Dragan Simic <dsimic@manjaro.org>, Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>, 
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EJYLbj7ym6Q16epL"
+Content-Disposition: inline
+In-Reply-To: <20240623120026.44198-3-krzysztof.kozlowski@linaro.org>
 
-Hi,
 
-On Sun, 23 Jun 2024 at 16:13, Aurelien Jarno <aurelien@aurel32.net> wrote:
->
-> Hi,
->
-> On 2024-06-23 09:00, Krzysztof Kozlowski wrote:
-> > On 23/06/2024 05:33, Daniel Golle wrote:
-> > > +
-> > > +   rk_rng->rng.name = dev_driver_string(dev);
-> > > +#ifndef CONFIG_PM
-> > > +   rk_rng->rng.init = rk_rng_init;
-> > > +   rk_rng->rng.cleanup = rk_rng_cleanup;
-> > > +#endif
-> > > +   rk_rng->rng.read = rk_rng_read;
-> > > +   rk_rng->rng.priv = (unsigned long) dev;
-> > > +   rk_rng->rng.quality = 900;
-> >
-> > I doubt in this value. Usually SoC vendors do not provide datasheet with
-> > any reliable and verifiable (so one which could be proven by 3rd party)
-> > information. Can you provide a source? (and vendor downstream tree does
-> > not really count)
->
-> As the original author of the patch, I am the one who have chosen the
-> value. I did it as explained in the commit message:
->
-> | The TRNG device does not seem to have a signal conditionner and the FIPS
-> | 140-2 test returns a lot of failures. They can be reduced by increasing
-> | RK_RNG_SAMPLE_CNT, in a tradeoff between quality and speed. This value
-> | has been adjusted to get ~90% of successes and the quality value has
-> | been set accordingly.
->
-> It is also explained, admittedly more briefly, above the
-> RK_RNG_SAMPLE_CNT #define, as the commit messages are not really
-> relevant anymore once the patches are accepted:
->
-> | * TRNG collects osc ring output bit every RK_RNG_SAMPLE_CNT time. The value is
-> | * a tradeoff between speed and quality and has been adjusted to get a quality
-> | * of ~900 (~90% of FIPS 140-2 successes).
-> | */
->
-> The decision to adjust RK_RNG_SAMPLE_CNT to reach ~90% of FIPS 140-2
-> successes was based on the quality chosen by most hw_random drivers
-> currently in the kernel sources. The FIPS 140-2 tests were performed
-> using rngtest from the rng-tools project.
->
-> All that said, I am not an expert in that domain, so feel free to point
-> to the documentation or provide the correct method to determine the
-> quality.
->
-> Regards
-> Aurelien
->
-> [1] https://git.kernel.org/pub/scm/utils/kernel/rng-tools/rng-tools.git/
+--EJYLbj7ym6Q16epL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is an old repository, the latest can be found below
-[1] https://github.com/nhorman/rng-tools
+On Sun, Jun 23, 2024 at 02:00:26PM +0200, Krzysztof Kozlowski wrote:
+> MMIO address space is known per each variant of Adreno GPU, so we can
+> constrain the reg/reg-names entries for each variant.  There is no DTS
+> for A619, so that part is not accurate but could be corrected later.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/display/msm/gpu.yaml  | 87 +++++++++++++++++--
+>  1 file changed, 79 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Doc=
+umentation/devicetree/bindings/display/msm/gpu.yaml
+> index baea1946c65d..e83f13123fc9 100644
+> --- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
+> @@ -130,6 +130,22 @@ required:
+>  additionalProperties: false
+> =20
+>  allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            pattern: '^qcom,adreno-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a=
+-f][0-9a-f][0-9a-f][0-9a-f]$'
 
-However, I could not find the support from ARM and ARM64 in the repository below
-because all the assembly is written for the X86 arch.
+Does the regex "^qcom,adreno-[0-9a-f]{8}$" not work in dt-schema, rather
+than this repeat-a-number-of-times-I-cannot-grok that's happening here?
+(I know you probably just copied this from above in the file...)
 
-Thanks
+--EJYLbj7ym6Q16epL
+Content-Type: application/pgp-signature; name="signature.asc"
 
--Anand
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZngtoQAKCRB4tDGHoIJi
+0vseAP45JYysyf/QkbBti8k51VjLu7arXjS3WiUYbjteE5D4pwEA0cj4u0rfZtAB
+y43jQ3wv5a6CjHyNWibOH5MhtfHEZwU=
+=JM/k
+-----END PGP SIGNATURE-----
+
+--EJYLbj7ym6Q16epL--
 
