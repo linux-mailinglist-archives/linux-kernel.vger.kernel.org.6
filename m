@@ -1,113 +1,157 @@
-Return-Path: <linux-kernel+bounces-226377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65DD913D85
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE35913D88
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE25A1C20F91
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B0761C20F88
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E578F1836F5;
-	Sun, 23 Jun 2024 18:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDAD184110;
+	Sun, 23 Jun 2024 18:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LDHEO5kM"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LOzMV2Ib"
+Received: from msa.smtpout.orange.fr (smtp-77.smtpout.orange.fr [80.12.242.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5083E2AD22
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 18:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7B52AD22;
+	Sun, 23 Jun 2024 18:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719166079; cv=none; b=CoTPdfWVcotCdSN652Mz+ATi4K9rMuksZEPQTxZxBJW1oEC/x47FqCcSpLPuGBKprz/XQR10SMtjShMFRsXBPcYt11s2qEP6hJCqEofCk6JuL5GRovemL4ydvpeFajJsXtafMd6v+P3v3Ii0zRdZNqlhL6bcu+Tsa0mycjIquDs=
+	t=1719166163; cv=none; b=mdQgJt21YgiZfXTnqZO+7uRFRjClNld30A9Fuh8gnDSOrilOnd5Kbdifc4GvLnRD6kNn+JxyBqpYbq+LsJjS6a/ljkj+9+t9+CKfrgM8dgLY1W5+F/FK8PGfdorGgjom1Opios1SJUDrAiY4aUmqtU8CY9ZOhoEOLzoPrgaH6wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719166079; c=relaxed/simple;
-	bh=gN5gx/2bgxPc7Ha4uj6zKWoJM3HzTcGze3wrKsRZO74=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UE1L+2Zc2gYpSAugZqb18r/Bi+f/rX6ICqYrtfBPtb1BXFIBcZjlgp3d2CTNBKKLuITl2rJL1zxpQHq8X3kgGZIVkcXyEGqI342sOq+evnlxo6wcyxsvmwJgaAfaa5jHy04Azj1GoGdgGdPa/va2vLeW7fVsY4JUGDsb6dM1Mnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LDHEO5kM; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a72585032f1so2013466b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 11:07:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1719166075; x=1719770875; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2q/oGp1Uj11i8ttCrYoX4CQ1yZ9C29tZG3LwII1sKnc=;
-        b=LDHEO5kMbXw9jZziqvkoj9OBR/z5m91IdNeYZASyTbm42lQqLPTb3NAU6eHp4prAln
-         DvLkZz5zd3QKXz9eUOryezP+Lw3uG5kh3tJcKvIF2OHlui+gHc/iZQ8WWVy+hcNvOwMP
-         2CqQlrAUbP0t1gALf32yiIknknu4vrjsjS8kA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719166075; x=1719770875;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2q/oGp1Uj11i8ttCrYoX4CQ1yZ9C29tZG3LwII1sKnc=;
-        b=cUNNFLd/2XmXS2xgaWgkImN7S0DGc7Dk8/TQWbhmEaC/wqw4kg93qXKBREEZhyWRYo
-         W0wgEkEW3O3Kqc5HUVVYxpHsnZpYD7AyrMjYju/Yw7fKKNsZasbqf6Cu+L1g7eL/3MC8
-         S1SOqqRecLhhODyItEzLiI28DPyO47EOmDezCDMT2ePw1o0TiuWubMRwcjHeOgZ5vUOZ
-         /VEVTcBS4Wo0Lj9yrHaibeF1Ie1x5/JawudAbOJMfKB85qXo19MubS4uAwWjc4w3gzsA
-         MzBPtM57u3hy/pPeplQYfuvH0FZbcT8GdQTbN7aV2TyFWJNyY1xAjq31O8T+4J1GiiKR
-         sZHg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8dMDzIKFJhP0tutMPkcPqcFfheK+WteRPM/KacJ4P4HgcGa0PSkhK2Mtqp2Vf8F+P96GP1LqGFV8fH9O0prOcWk1T9lkdGhZu5Xih
-X-Gm-Message-State: AOJu0YyCIj6Ef3GxaYGvOceo7fb2plHyh8wJWsD9zbsWA9V+eVNzasc5
-	/pjD2Vd4njyZ9EiLAsPs0uSMt3QORrTFeNNid2A8g4Vg+0vxIsleXYlKmEEm7C9ab23C95ZEzsC
-	jcvNhvQ==
-X-Google-Smtp-Source: AGHT+IEh+12QSMBQFZbwUrDD3mArevMZjbzqM4GJPF3dMC4MDAJ5PjmOQ+Jz2udj77P4B3WTtwMU9w==
-X-Received: by 2002:a17:906:eb09:b0:a6f:c886:b68b with SMTP id a640c23a62f3a-a715f9799e0mr177469566b.43.1719166075450;
-        Sun, 23 Jun 2024 11:07:55 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fe30e6a1esm211580566b.216.2024.06.23.11.07.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Jun 2024 11:07:54 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a72585032f1so2011566b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 11:07:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWjdiAR3l9f6H2w7GkSFztPf/Z2ge/b+OxBCi9tWrC3Lkqvd9jFC/qMbzt2OaKzaJz8YsiIkFluGnB0j3Kl0shkQWA0Z/SGQ2prLU8X
-X-Received: by 2002:a17:906:318e:b0:a6f:5adc:6533 with SMTP id
- a640c23a62f3a-a715f9795femr222604566b.46.1719166074441; Sun, 23 Jun 2024
- 11:07:54 -0700 (PDT)
+	s=arc-20240116; t=1719166163; c=relaxed/simple;
+	bh=J3vMmXnzQe6rhIKhDI1/B7ym+GQlPi5XIJq1ayivNTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F6T3cexrO39jfnQG1bPrIbz4/kYVOwqhU123427Rh0Em9mF9v1nBDJh+th/8/QPvNhetTV7itTwRki6ldDJ9u9NOXfPu86CvDHepzzIgMT+hArSnsKEuY+jo0WkKXB97TT0g9UYFbakshY/rp9cgvU/V3pFmOVaS1j3jZPaLEMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LOzMV2Ib; arc=none smtp.client-ip=80.12.242.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id LRdBslRkGqHypLRdCsRNHd; Sun, 23 Jun 2024 20:08:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719166082;
+	bh=zcGRcZWW7cYNaHFvJZxbefnI7dyccoMtktK8GbPAaWk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=LOzMV2Ib3hYVdxzXTxRS/vIMWOcazC6+fi/DkneBn489NlGZycGOzJqEyKLhkU5xb
+	 i8goEQEaHn0Cu7eSsaag/QdckMG25TsdAo5iUkQX0ghm1GiGYqaidXoUDeEH2VhLMG
+	 b86ou9M9RHWerz2CUr8QVUkhDKS/V7oteqUklsPqPaO0BrvvJ/qCvnyrNv3kqTYhf+
+	 j6tdSDAEN6n94c4ZGUYeyatz9Hf1ShXgDaHA3u9Nz11hzTd9ctfJnSrm3Dd9gNHJlM
+	 vcY42aEGZMUZxNZZoRBPsESbZuWS+5U+71nem5bQrG0+gRqHdzJUrSHdMUPiAt3eWs
+	 9ztcuhYyLnQeA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 23 Jun 2024 20:08:02 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <sfrench@samba.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-cifs@vger.kernel.org
+Subject: [PATCH] ksmbd: Constify struct ksmbd_transport_ops
+Date: Sun, 23 Jun 2024 20:07:58 +0200
+Message-ID: <c06ecbfde4cc106603285ed96febf3b887425286.1719160522.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202406230912.F6XFIyA6-lkp@intel.com> <CAFULd4YVOwxQ4JDaOdscX_vtJsqJBJ5zhd0RtXXutW=Eqh29Qw@mail.gmail.com>
- <CAHk-=wg1h4w_m=Op1U4JsyDjsvqG0Kw1EOVMQ+=5GX_XytdorQ@mail.gmail.com>
- <CAFULd4YR-VkAOKiS5yxSUYi0YMzY1p=pkYe4dOkgFs+A=9AFFA@mail.gmail.com> <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
-In-Reply-To: <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 23 Jun 2024 14:07:37 -0400
-X-Gmail-Original-Message-ID: <CAHk-=whPqqZVSeJiQsMvsAxtAmtR9iAuB4gg_1sUK2D-uBPpLw@mail.gmail.com>
-Message-ID: <CAHk-=whPqqZVSeJiQsMvsAxtAmtR9iAuB4gg_1sUK2D-uBPpLw@mail.gmail.com>
-Subject: Re: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
- requires more registers than available
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, 23 Jun 2024 at 13:48, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Now, from having looked a bit at this, I can point you to the
-> differences introduced by having to have the emulation fallback.
+'struct ksmbd_transport_ops' is not modified in these drivers.
 
-Ahh.
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-Itr does all the same things *and* it has
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  52184	   2085	    256	  54525	   d4fd	fs/smb/server/transport_rdma.o
 
-    "S" (_ptr)
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  52260	   2021	    256	  54537	   d509	fs/smb/server/transport_rdma.o
 
-as an added register pressure, because if we take the "call
-cmpxchg8b_emu", we need the address in a fixed place.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ fs/smb/server/connection.h     | 4 ++--
+ fs/smb/server/transport_rdma.c | 4 ++--
+ fs/smb/server/transport_tcp.c  | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-I don't see any immediately obvious workaround.
+diff --git a/fs/smb/server/connection.h b/fs/smb/server/connection.h
+index 0e04cf8b1d89..5c2845e47cf2 100644
+--- a/fs/smb/server/connection.h
++++ b/fs/smb/server/connection.h
+@@ -133,8 +133,8 @@ struct ksmbd_transport_ops {
+ };
+ 
+ struct ksmbd_transport {
+-	struct ksmbd_conn		*conn;
+-	struct ksmbd_transport_ops	*ops;
++	struct ksmbd_conn			*conn;
++	const struct ksmbd_transport_ops	*ops;
+ };
+ 
+ #define KSMBD_TCP_RECV_TIMEOUT	(7 * HZ)
+diff --git a/fs/smb/server/transport_rdma.c b/fs/smb/server/transport_rdma.c
+index 8faa25c6e129..cf4418f72772 100644
+--- a/fs/smb/server/transport_rdma.c
++++ b/fs/smb/server/transport_rdma.c
+@@ -164,7 +164,7 @@ enum {
+ 	SMB_DIRECT_MSG_DATA_TRANSFER
+ };
+ 
+-static struct ksmbd_transport_ops ksmbd_smb_direct_transport_ops;
++static const struct ksmbd_transport_ops ksmbd_smb_direct_transport_ops;
+ 
+ struct smb_direct_send_ctx {
+ 	struct list_head	msg_list;
+@@ -2292,7 +2292,7 @@ bool ksmbd_rdma_capable_netdev(struct net_device *netdev)
+ 	return rdma_capable;
+ }
+ 
+-static struct ksmbd_transport_ops ksmbd_smb_direct_transport_ops = {
++static const struct ksmbd_transport_ops ksmbd_smb_direct_transport_ops = {
+ 	.prepare	= smb_direct_prepare,
+ 	.disconnect	= smb_direct_disconnect,
+ 	.shutdown	= smb_direct_shutdown,
+diff --git a/fs/smb/server/transport_tcp.c b/fs/smb/server/transport_tcp.c
+index 6633fa78e9b9..a84788396daa 100644
+--- a/fs/smb/server/transport_tcp.c
++++ b/fs/smb/server/transport_tcp.c
+@@ -37,7 +37,7 @@ struct tcp_transport {
+ 	unsigned int			nr_iov;
+ };
+ 
+-static struct ksmbd_transport_ops ksmbd_tcp_transport_ops;
++static const struct ksmbd_transport_ops ksmbd_tcp_transport_ops;
+ 
+ static void tcp_stop_kthread(struct task_struct *kthread);
+ static struct interface *alloc_iface(char *ifname);
+@@ -649,7 +649,7 @@ int ksmbd_tcp_set_interfaces(char *ifc_list, int ifc_list_sz)
+ 	return 0;
+ }
+ 
+-static struct ksmbd_transport_ops ksmbd_tcp_transport_ops = {
++static const struct ksmbd_transport_ops ksmbd_tcp_transport_ops = {
+ 	.read		= ksmbd_tcp_read,
+ 	.writev		= ksmbd_tcp_writev,
+ 	.disconnect	= ksmbd_tcp_disconnect,
+-- 
+2.45.2
 
-              Linus
 
