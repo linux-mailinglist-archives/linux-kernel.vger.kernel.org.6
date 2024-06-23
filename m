@@ -1,204 +1,106 @@
-Return-Path: <linux-kernel+bounces-226170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D24913B22
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:49:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309B2913B29
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA8971C203AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C16B41F21468
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319E718E742;
-	Sun, 23 Jun 2024 13:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78CE18EFDC;
+	Sun, 23 Jun 2024 13:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dB6L9MQK"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6uybJK7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC714188CCD
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 13:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F170718EFC7;
+	Sun, 23 Jun 2024 13:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719150283; cv=none; b=SfiwDnb2LIe8UvsNT7ZyQKu1cc21dUZG6tCYl70r6Ur76J++21pOjAlWvxe9oIWI8Rz0naHVeWV0G/FMbnEkJQnwQYgFeGAHm5jKNlHg1tV8BtV7VZgB5XFvpUz5iWwzC91bzsCii2U2ZtX+2EiJZebYaFgs7+tNYHXFZyn45QE=
+	t=1719150293; cv=none; b=tMz6N3Z58An9KUFWGPVS0Kwn/ojNPRm8mvzE2YVMdS1DEPuCQdr8hcEuYk0hrEj5wmtDWwuCIUQsW4t4CkxJ0Y5rDl7KLz/B2z4+MvM2dt1myhBkruquFNJcnFcFhc/scWpnT+i2kiK7Emw3uOPaozl0y/XN1Cc6evLTaxc6hYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719150283; c=relaxed/simple;
-	bh=SyEF3mPeQlo+RKtM1lZCiiRHkvz/G6we80eXB2CMCmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MhWfIAKPCumGoePW4WOlB74/8HtVuRSriJVz49afkxiNLXK+iE7fjrXnupLwjhD5U2wyDB3D+pi6xSCryVMBIyW9+amRcb1ZwNOQ+lT4MKkcM8qFufLzkMTMVY3dhyBmBi+ZOnZtVZa8yMDlgOmrjRLe3MbyUsNPWbA/UTuqyHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dB6L9MQK; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f9aeb96b93so25180445ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 06:44:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719150280; x=1719755080; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Iy31pgzD/xfnAQ+ZZ5Vhlt8srfwkXvh9RHbo/cOv1WA=;
-        b=dB6L9MQKIZYW50dAlEfK1WW7/c14rz8/a2wjDDiQMgDZCTmg1Khgm6kJNViR5qWHaM
-         +wPxuMYUQvkTk/IS6y+naiM9VX3HiH3HApFeSOHsmXP+p+3YxdFAzln9DZT8fyWTbRJJ
-         fIU+EX0AGupj1xhM6jCH+eUiHpS/+SmLdVj7AkXoRpl0HVT9+HIXRr3Ddu8zmOsw1k3Y
-         t3+sYm/5+78pOPekZg44kelxiwUYWjxRjek/kEccMgMga4DrREUCESB9/hY+2zYZ0eb6
-         BG4qh2Rnf+749QgIPGYh5i6Z7l7wXkQORVndVYjTr92h9jDmc+M/s+sGklymmOe08qkM
-         98Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719150280; x=1719755080;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iy31pgzD/xfnAQ+ZZ5Vhlt8srfwkXvh9RHbo/cOv1WA=;
-        b=gp6DDOR6zUWebpDDFP+p8bv514x6JoK6NMzPQRqcNzX6IdYWtONyJbnspi9/c2NcUy
-         kWsBwxCXbPMDLVqA2TvsdmQdMb8w1b5BiGm17WRdrildxjHK/lhOsT1DrxeJSgycCOOO
-         m1OYvqNkbc2meHwWgPmQyXcTTrlLObnSZzy+hiwSN2zfTh1sGTceOGy/MYK7fQbmxEns
-         Un19UhJHnfXrpQOGtNnbHfqeifC0R+7IHJmmXubSO61df+pBdqLO+3QzB+0QYZw/gxMD
-         +9FuFcLbTGGM/6GF5HV4muiYcrG8zXa95psZ9WavQQIh3Ov1aVTr29z9bJ7/2HN0BcYd
-         W7Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKwfqYu0uv3WHatg6Q3RrivnJiEf3E7dAqnH2T0Hghj+FJsnFwNGbwGcaTcrt1bmnJ5RiZOodT/+R7BZeeTjqhbJGYR058p8MLFdG0
-X-Gm-Message-State: AOJu0YzZMPfFDOgzbgYYKdzo8OPZ+booD6AaimtN5FnrQj0Z2twdz1Va
-	mV0P44+279PJP6y+mPws6jiVC3V00J6dNDHBUFmzsqWK808kcM8Ka0dL8EdxlQ==
-X-Google-Smtp-Source: AGHT+IEWGBAaA+9n4CQ1cGOYm2S0J1RVuhAM689jKtTg+X6pdgHcJ0xuxY7rtOkT1rl0335/07l1sA==
-X-Received: by 2002:a17:902:6548:b0:1f7:167d:e291 with SMTP id d9443c01a7336-1fa23ef7e87mr23794255ad.47.1719150280014;
-        Sun, 23 Jun 2024 06:44:40 -0700 (PDT)
-Received: from thinkpad ([220.158.156.124])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f2690sm45736585ad.40.2024.06.23.06.44.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 06:44:39 -0700 (PDT)
-Date: Sun, 23 Jun 2024 19:14:30 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>,
-	Loic Poulain <loic.poulain@linaro.org>, ryazanov.s.a@gmail.com,
-	johannes@sipsolutions.net, netdev@vger.kernel.org,
-	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v2 1/2] bus: mhi: host: Import mux_id item
-Message-ID: <20240623134430.GD58184@thinkpad>
-References: <20240612093842.359805-1-slark_xiao@163.com>
- <20240612094609.GA58302@thinkpad>
- <87aecf24-cdbb-70d2-a3d1-8d1cacf18401@quicinc.com>
- <20240612145147.GB58302@thinkpad>
- <CAMZdPi-6GPWkj-wu4_mRucRBWXR03eYXu4vgbjtcns6mr0Yk9A@mail.gmail.com>
- <c275ee49-ac59-058c-7482-c8a92338e7a2@quicinc.com>
- <5055db15.37d8.19038cc602c.Coremail.slark_xiao@163.com>
+	s=arc-20240116; t=1719150293; c=relaxed/simple;
+	bh=EOP0IlNb/sPC/uwzDn2qLCQ8nM+BrFL0qAZeV9k+cko=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=j57fzevipRSrLUGkLlCSQvKE1vdcpWRCkdvfK1VbijRLlXj8iyDx2G2Bc5cG5+j0m0wCg5bT5GFdRm6NgC7quZBAYLkEHoNiTHJv5sf8ahpbIb0Uljhx8YCkxtshI1FWhF0Cbt9lOpPBeiLh1qEUWawuhialDdQXd+4+Ko7heo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6uybJK7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B968BC4AF07;
+	Sun, 23 Jun 2024 13:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719150292;
+	bh=EOP0IlNb/sPC/uwzDn2qLCQ8nM+BrFL0qAZeV9k+cko=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=T6uybJK7L/t83QE3O4gIQl+zUMurtcVidB57/DDhML0OttcEYcpOSKsvT+u5+fFX3
+	 ddhkqaXf9NpufzG+8L8Matu4SnODo8BaEgzwoGnWut5Oav+MukKPmvHBWIt5r9ux5n
+	 xY6kwWYUqZDbxDTO6hbt6iZ6t+uoYyH5xmjMfZGCxF8Ff7Cw0v6l5/JHcMPj+uUfAD
+	 6okd5TmO5KtaLtaq1C/aBH/CLgjWvcV/zeXzRvYLsuc2GCmthOxmqDFiUpZA02iKnu
+	 QzBJ/hEB+1TElxXCgloCJpNwjZXkxavb2UzEIXNNRbHLgps9V0tC9YrJoUSVKdIrjJ
+	 kCsdSyx5cuOzg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Sagi Grimberg <sagi@grimberg.me>,
+	Dan Aloni <dan.aloni@vastdata.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Sasha Levin <sashal@kernel.org>,
+	trondmy@kernel.org,
+	anna@kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 02/16] nfs: propagate readlink errors in nfs_symlink_filler
+Date: Sun, 23 Jun 2024 09:44:31 -0400
+Message-ID: <20240623134448.809470-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240623134448.809470-1-sashal@kernel.org>
+References: <20240623134448.809470-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.35
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5055db15.37d8.19038cc602c.Coremail.slark_xiao@163.com>
 
-On Fri, Jun 21, 2024 at 11:17:16AM +0800, Slark Xiao wrote:
-> 
-> At 2024-06-14 22:31:03, "Jeffrey Hugo" <quic_jhugo@quicinc.com> wrote:
-> >On 6/14/2024 4:17 AM, Loic Poulain wrote:
-> >> On Wed, 12 Jun 2024 at 16:51, Manivannan Sadhasivam
-> >> <manivannan.sadhasivam@linaro.org> wrote:
-> >>>
-> >>> On Wed, Jun 12, 2024 at 08:19:13AM -0600, Jeffrey Hugo wrote:
-> >>>> On 6/12/2024 3:46 AM, Manivannan Sadhasivam wrote:
-> >>>>> On Wed, Jun 12, 2024 at 05:38:42PM +0800, Slark Xiao wrote:
-> >>>>>
-> >>>>> Subject could be improved:
-> >>>>>
-> >>>>> bus: mhi: host: Add configurable mux_id for MBIM mode
-> >>>>>
-> >>>>>> For SDX72 MBIM mode, it starts data mux id from 112 instead of 0.
-> >>>>>> This would lead to device can't ping outside successfully.
-> >>>>>> Also MBIM side would report "bad packet session (112)".
-> >>>>>> So we add a default mux_id value for SDX72. And this value
-> >>>>>> would be transferred to wwan mbim side.
-> >>>>>>
-> >>>>>> Signed-off-by: Slark Xiao <slark_xiao@163.com>
-> >>>>>> ---
-> >>>>>>    drivers/bus/mhi/host/pci_generic.c | 3 +++
-> >>>>>>    include/linux/mhi.h                | 2 ++
-> >>>>>>    2 files changed, 5 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> >>>>>> index 0b483c7c76a1..9e9adf8320d2 100644
-> >>>>>> --- a/drivers/bus/mhi/host/pci_generic.c
-> >>>>>> +++ b/drivers/bus/mhi/host/pci_generic.c
-> >>>>>> @@ -53,6 +53,7 @@ struct mhi_pci_dev_info {
-> >>>>>>            unsigned int dma_data_width;
-> >>>>>>            unsigned int mru_default;
-> >>>>>>            bool sideband_wake;
-> >>>>>> + unsigned int mux_id;
-> >>>>>>    };
-> >>>>>>    #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
-> >>>>>> @@ -469,6 +470,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
-> >>>>>>            .dma_data_width = 32,
-> >>>>>>            .mru_default = 32768,
-> >>>>>>            .sideband_wake = false,
-> >>>>>> + .mux_id = 112,
-> >>>>>>    };
-> >>>>>>    static const struct mhi_channel_config mhi_mv3x_channels[] = {
-> >>>>>> @@ -1035,6 +1037,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> >>>>>>            mhi_cntrl->runtime_get = mhi_pci_runtime_get;
-> >>>>>>            mhi_cntrl->runtime_put = mhi_pci_runtime_put;
-> >>>>>>            mhi_cntrl->mru = info->mru_default;
-> >>>>>> + mhi_cntrl->link_id = info->mux_id;
-> >>>>>
-> >>>>> Again, 'link_id' is just a WWAN term. Use 'mux_id' here also.
-> >>>>
-> >>>> Does this really belong in MHI?  If this was DT, I don't think we would put
-> >>>> this value in DT, but rather have the driver (MBIM) detect the device and
-> >>>> code in the required value.
-> >>>>
-> >>>
-> >>> I believe this is a modem value rather than MHI. But I was OK with keeping it in
-> >>> MHI driver since we kind of keep modem specific config.
-> >>>
-> >>> But if WWAN can detect the device and apply the config, I'm all over it.
-> >> 
-> >> That would require at least some information from the MHI bus for the
-> >> MBIM driver
-> >> to make a decision, such as a generic device ID, or quirk flags...
-> >
-> >I don't see why.
-> >
-> >The "simple" way to do it would be to have the controller define a 
-> >different channel name, and then have the MBIM driver probe on that. 
-> >The MBIM driver could attach driver data saying that it needs to have a 
-> >specific mux_id.
-> >
-> >Or, with zero MHI/Controller changes, the MBIM driver could parse the 
-> >mhi_device struct, get to the struct device, for the underlying device, 
-> >and extract the PCIe Device ID and match that to a white list of known 
-> >devices that need this property.
-> >
-> >I guess if the controller could attach a private void * to the 
-> >mhi_device that is opaque to MHI, but allows MBIM to make a decision, 
-> >that would be ok.  Such a mechanism would be generic, and extensible to 
-> >other usecases of the same "class".
-> >
-> >-Jeff
-> 
-> Hi guys,
-> This patch mainly refer to the feature of mru setting between mhi and wwan side.
-> We ransfer this value to wwan side if we define it in mhi side, otherwise a default
-> value would be used in wwan side. Why don't we just align with that?
-> 
+From: Sagi Grimberg <sagi@grimberg.me>
 
-Well, the problem is that MRU has nothing to do with MHI. I initially thought
-that it could fit inside the controller config, but thinking more I agree with
-Jeff that this doesn't belong to MHI at all.
+[ Upstream commit 134d0b3f2440cdddd12fc3444c9c0f62331ce6fc ]
 
-At the same time, I also do not want to extract the PCI info from the client
-drivers since the underlying transport could change with MHI. So the best
-solution I can think of is exposing the modem name in 'mhi_controller_config' so
-that the client drivers can do a match.
+There is an inherent race where a symlink file may have been overriden
+(by a different client) between lookup and readlink, resulting in a
+spurious EIO error returned to userspace. Fix this by propagating back
+ESTALE errors such that the vfs will retry the lookup/get_link (similar
+to nfs4_file_open) at least once.
 
-Please try to implement that.
+Cc: Dan Aloni <dan.aloni@vastdata.com>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/nfs/symlink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Mani
-
+diff --git a/fs/nfs/symlink.c b/fs/nfs/symlink.c
+index 0e27a2e4e68b8..13818129d268f 100644
+--- a/fs/nfs/symlink.c
++++ b/fs/nfs/symlink.c
+@@ -41,7 +41,7 @@ static int nfs_symlink_filler(struct file *file, struct folio *folio)
+ error:
+ 	folio_set_error(folio);
+ 	folio_unlock(folio);
+-	return -EIO;
++	return error;
+ }
+ 
+ static const char *nfs_get_link(struct dentry *dentry,
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
+
 
