@@ -1,129 +1,152 @@
-Return-Path: <linux-kernel+bounces-225900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABE1913737
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 03:21:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B302291373A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 03:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C041C20DF4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 01:21:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E7E281F16
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 01:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D968B4C85;
-	Sun, 23 Jun 2024 01:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457D06FCB;
+	Sun, 23 Jun 2024 01:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EbJTqJW5"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="P/uiCNBi"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FD8393;
-	Sun, 23 Jun 2024 01:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E141653;
+	Sun, 23 Jun 2024 01:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719105691; cv=none; b=keJloX5e3XLWDWfA96132PIOj8hygK6wfO+18mln53KPiYUhmF+1ikFJP9hZHlYXbFiW1u/nGWhJmhhAXiJjk/ChrM0cKOluK9SF4ADcg9RvVR7Vad/UCcHbrvCII33ceI/4mvyIMvrEbrg8bPj5MjoWFCd2yzpwotWrOSY9hDs=
+	t=1719105740; cv=none; b=iDkRuvNqeJTbOV51Olk9z4mcXdblwLkp3UWu38YtUFm2MOGgHNCEB6KK4+Dvlk9Vvo3yjdgATKRPnmUP35tzS6ykogdUUW843YE1HlDJKLvQOJ0Lyrv8HfbExJpQ9VVQs3l6en1fH2RhIPr+sfppR3uHDMTVkol2FnfbNP/D4Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719105691; c=relaxed/simple;
-	bh=AkiIWMG9fW+6ErSvmJ5PeWILr9+0kVYmudr+D+e2akE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ovduBsQ3YkufTAW6UwwKzvylnkHVzaFxNVPUDT9dxy8mzGOpJV15A9iYARzgui2JTs2fqJVSiSZfTTDqms4ItfthOWunLPotQHKXkVsF0Y+R88ZDFn2eRDoxR7dg78/y4ggUxjFq8H2zdfLC8J4nk50H5gp25ofIjTK19V+JF+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EbJTqJW5; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A688A20002;
-	Sun, 23 Jun 2024 01:21:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719105679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bPaoqEeTpSx86CMKltblLZ3g74Ywhx8FS7aopirkn84=;
-	b=EbJTqJW57oSOIYUtca2OpA6QEtF7xPc7grSo0iy5ZUrH+B2/uawpTZJdxXVQGuZviTyiXU
-	0tpPf+10EPRZDi+0MfETrTnR6jV1utM8ACTbB5o49HvaRJbAq2JL2/byfr/TXqg3Q2PWdC
-	B4PLbio6lwU+NPLCQ56bdJUxE7dXK7HhgKvjdld5TG2ejnd9BZEO9lkeuHEbyA7OMuyaIJ
-	zzi39DjBvDUFg2MRG+UyxnWee2/qVp5ywgD9uyljj6NVlrfdBZS56a9KJC605Dzgr/6leZ
-	a87O3vIDbq/xHYN++6ip+AHWLG0Eswd4l7x3fofdpxUrokct7sB2rkoQsqqWbg==
-Date: Sun, 23 Jun 2024 03:21:06 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
- <atenart@kernel.org>
-Subject: Re: [PATCH net-next v13 05/13] net: ethtool: Allow passing a phy
- index for some commands
-Message-ID: <20240623032106.3e854124@fedora>
-In-Reply-To: <20240613182613.5a11fca5@kernel.org>
-References: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
-	<20240607071836.911403-6-maxime.chevallier@bootlin.com>
-	<20240613182613.5a11fca5@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1719105740; c=relaxed/simple;
+	bh=zJrCU0HMltCUz/Z9hg1i/O0kuqVa0crvZfJ+FwzyTvc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Nt/m7mS11VrgTGG4TTIWxETS4Ay9/SrpGhpPJt5wF0lvIW3BLrU/w+y35Wxg3YaCJsLLzxA/lOZ0VuGVwe4fpybg9i4mX+SMqQLcls7Bd9RKbHuxJJVW1vuW9KBuco4Kyn2fEXEPDs/2UcwQpn9WtIuLrT7qfM+QbJxMDPhOmKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=P/uiCNBi; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1719105736;
+	bh=zJrCU0HMltCUz/Z9hg1i/O0kuqVa0crvZfJ+FwzyTvc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=P/uiCNBi6YzryE+9xTnBKptRIEphr8teb84fMs4WQ28aBLNd97EZVVGWWyTxT90bz
+	 SNwu7ZkSZroOZ+S7q7QAs6xYsw35VevULWKC+1yDJ4NVhHr469iK+ygdME8GdrPzJT
+	 CAdrf0c0MiqmlvZ2cRvrL+CbDGFXwnbxwKFozgNw=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 05AC6677E3;
+	Sat, 22 Jun 2024 21:22:13 -0400 (EDT)
+Message-ID: <9d1512b57683a68a7176ae8221562657fb0231a3.camel@xry111.site>
+Subject: Re: [PATCH] vfs: Add AT_EMPTY_PATH_NOCHECK as unchecked
+ AT_EMPTY_PATH
+From: Xi Ruoyao <xry111@xry111.site>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner
+	 <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara
+	 <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+	 <mhiramat@kernel.org>, Alejandro Colomar <alx@kernel.org>, Arnd Bergmann
+	 <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang
+	 <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Icenowy Zheng
+	 <uwu@icenowy.me>, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Sun, 23 Jun 2024 09:22:12 +0800
+In-Reply-To: <CAGudoHFofUZ0Nb9UtV=Q3uQ0K+JnBHPrgLxNYuj7nSLF-=ue8g@mail.gmail.com>
+References: <20240622105621.7922-1-xry111@xry111.site>
+	 <kslf3yc7wnwhxzv5cejaqf52bdr6yxqaqphtjl7d4iaph23y6v@ssyq7vrdwx56>
+	 <CAHk-=wgj6h97Ro6oQcOq5YTG0JcKRLN0CtXgYCW_Ci6OSzL5NA@mail.gmail.com>
+	 <eeb7e9895aca92fa5a8d11d9f37b283428185278.camel@xry111.site>
+	 <CAGudoHFofUZ0Nb9UtV=Q3uQ0K+JnBHPrgLxNYuj7nSLF-=ue8g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hello Jakub, Andrew, Russell,
+On Sun, 2024-06-23 at 03:07 +0200, Mateusz Guzik wrote:
+> On Sun, Jun 23, 2024 at 2:59=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wr=
+ote:
+> >=20
+> > On Sat, 2024-06-22 at 15:41 -0700, Linus Torvalds wrote:
+> >=20
+> > > I do think that we should make AT_EMPTY_PATH with a NULL path
+> > > "JustWork(tm)", because the stupid "look if the pathname is empty" is
+> > > horrible.
+> > >=20
+> > > But moving that check into getname() is *NOT* the right answer,
+> > > because by the time you get to getname(), you have already lost.
+> >=20
+> > Oops.=C2=A0 I'll try to get around of getname() too...
+> >=20
+> > > So the short-cut in vfs_fstatat() to never get a pathname is
+> > > disgusting - people should have used 'fstat()' - but it's _important_
+> > > disgusting.
+> >=20
+> > The problem is we don't have fstat() for LoongArch, and it'll be
+> > unusable on all 32-bit arch after 2037.
+> >=20
+> > And Arnd hates the idea adding fstat() for LoongArch because there woul=
+d
+> > be one more 32-bit arch broken in 2037.
+> >=20
+> > Or should we just add something like "fstat_2037()"?
+> >=20
+>=20
+> In that case fstat is out of the question, but no problem.
+>=20
+> It was suggested to make AT_EMPTY_PATH + NULL pathname do the right
+> thing and have the syscalls short-circuit as needed.
+>=20
+> for statx it would look like this (except you are going to have
+> implement do_statx_by_fd):
+>=20
+> diff --git a/fs/stat.c b/fs/stat.c
+> index 16aa1f5ceec4..0afe72b320cc 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -710,6 +710,9 @@ SYSCALL_DEFINE5(statx,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct filename *name;
+>=20
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (flags =3D=3D AT_EMPTY_PATH && f=
+ilename =3D=3D NULL)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 return do_statx_by_fd(...);
+> +
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 name =3D getname_flags(filenam=
+e, getname_statx_lookup_flags(flags));
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D do_statx(dfd, name, fl=
+ags, mask, buffer);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 putname(name);
+>=20
+> and so on
+>=20
+> Personally I would prefer if fstatx was added instead, fwiw most
+> massaging in the area will be the same regardless.
 
-On Thu, 13 Jun 2024 18:26:13 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
+I do agree.  But if we do it *now* would it be "breaking the userspace"
+if some stupid program relies on fstatx() to return some error when the
+path is NULL?  The "stupid programs" may just exist in the wild...
 
-> On Fri,  7 Jun 2024 09:18:18 +0200 Maxime Chevallier wrote:
-> > +		if (tb[ETHTOOL_A_HEADER_PHY_INDEX]) {
-> > +			struct nlattr *phy_id;
-> > +
-> > +			phy_id = tb[ETHTOOL_A_HEADER_PHY_INDEX];
-> > +			phydev = phy_link_topo_get_phy(dev,
-> > +						       nla_get_u32(phy_id));  
-> 
-> Sorry for potentially repeating question (please put the answer in the
-> commit message) - are phys guaranteed not to disappear, even if the
-> netdev gets closed? this has no rtnl protection
+I remember recently we have to pretend pidfd is stupid to please some
+stupid programs...
 
-After scratching my head maybe a bit too hard and re-reading the
-replies from Andrew and Russell, I think there's indeed a problem. The
-SFP case as described by Russell, from my understanding, leads me to
-believe that the way PHY's are tracked by phy_link_topology is correct,
-but that doesn't mean that what I try do to in this exact patch is
-right.
+https://lore.kernel.org/all/20240521-girlanden-zehnfach-1bff7eb9218c@braune=
+r/
 
-After the phydev has been retrieved from the topology and stored in the
-req_info, nothing guarantees that the PHY won't vanish between the
-moment we get it here and the moment we use it in the ethnl command
-handling (SFP removal being a good example, and probably(?) the only
-problematic case).
-
-A solution would be, as Russell says, to make sure we get the PHY and
-do whatever we need to do with it with rtnl held. Fortunately that
-shouldn't require significant rework of individual netlink commands
-that use the phydev, as they already manipulate it while holding rtnl().
-
-So, I'll ditch this idea of storing the phydev pointer in
-the req_info, I'll just store the phy_index (if it was passed by user)
-and grab the phy whenever we need to.
-
-Let me know if you find some flaw in my analysis, and thanks for
-spotting this.
-
-Best regards,
-
-Maxime
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
