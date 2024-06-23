@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-226066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 006059139BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:08:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754669139D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 222C21C20A73
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:08:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E36B224F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CE312EBF2;
-	Sun, 23 Jun 2024 11:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328CD12EBC6;
+	Sun, 23 Jun 2024 11:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aj7KS6CL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNimWF2Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B450D2BCE3;
-	Sun, 23 Jun 2024 11:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FC12BCE3;
+	Sun, 23 Jun 2024 11:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719140876; cv=none; b=l3BMhOCSl44FIhXfkQyt1neFKgdHLLCOJm6t7EkLbCjSv4GgrwIqqOFGJO8tIxeCCX11ivzL6kDPBqyBhNbnWV05Lii40r2K+ChlIFbDYnWQCisxUgq9mR9VtmuFNtrHMrYNQYQHKeJA0HlH66yMc2wyWWNEiJz+74FzC8B6XCg=
+	t=1719140984; cv=none; b=oLHc8G7mcDOYKcWeYIA34HK4+FuTYmkMaEBbb2Q4jP73fBsDF8zNwGYOKJuSS73M7OQ2Aq4lPRBUa+L8XWeaMj1K28Vii8UwT3axjRs9csaPU7WuD2ZFpwtOqeugEctKzMT7OMpy2fOU12oLqnIAmhRJlk/NPEohQnNdWqaZUHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719140876; c=relaxed/simple;
-	bh=+M4chnujTGXjSxADVGgYQyDo0ZhysUpMH08sqJDaoIA=;
+	s=arc-20240116; t=1719140984; c=relaxed/simple;
+	bh=X1N5KktZMxFxNzUuXrv3gjBkIdpW53T6s/AuXDJL9Lc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DP+B5Kpgv5UTCXQBfC8YQxVTv86BfWGQoKV6AYn8ejfGOZ+G8lgJs6P4YCdBnQrhy4KGQaMNUndsxfqCqAjdQkQT/9TTm4W2p4u06guzafnqW/g2E0vhlwqtpjVcee7xLi23NzHqzUN+9d/kbAJU8yNDX090DWYtcJHkHLkrP2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aj7KS6CL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B726DC2BD10;
-	Sun, 23 Jun 2024 11:07:48 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=N3JdvtbHEYwIB7KhJF6KgkDjDJVMLGSIVprNYP3FUR1z59AZlY37NIKAM1+rW71Mwc2fnzf2RnJyGdmlkWiNBhyneatD8jxiXWAxVBI5y38fAQ3JXF2lgJwt/XmhTiagXYRLP+ivS4JcuNZOz1bJNYO1I+vdfu4t922E17UlU3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNimWF2Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 858FCC2BD10;
+	Sun, 23 Jun 2024 11:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719140876;
-	bh=+M4chnujTGXjSxADVGgYQyDo0ZhysUpMH08sqJDaoIA=;
+	s=k20201202; t=1719140984;
+	bh=X1N5KktZMxFxNzUuXrv3gjBkIdpW53T6s/AuXDJL9Lc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aj7KS6CLYgjKAVhpExivrjQ98PXJ8c4eFVrJQ0JRTTnW5AnN9PfbPjqYAp3I3szV8
-	 gLeuBUMMTNQqUMqdgM7r+DClmt02oGIWbfzOIE0TNzPYujhQfqHM63IriO142XKuLx
-	 79hf8O22EoKcJAonpkW7VD5ZTZ8GJ2lm+AJr27bpMG+GwnfBHTv5L3K7t4SClRR6wO
-	 A2kwqWdXl815dH/x5LGqz0aH15Nkgll4/ECCbywslTtKt9yH5eGYIXojqhlJA4HBFH
-	 PrgKNQzr0Oy8KIN4J6dJ2MoZm4+fsPHv5bNZGimj5a/YzLdSuS43+pFqKAskLOkCAd
-	 M4G6y6ZfBc43w==
-Message-ID: <6fcbd97b-4172-48a9-bcdb-3bdf35aba8f7@kernel.org>
-Date: Sun, 23 Jun 2024 13:07:46 +0200
+	b=tNimWF2Z2UyMXLPSz33qU80q5yWMjhwAtm5dOatydFTvpLKbkCi2bbTI51j3LLSY3
+	 m3QZAPzDYnIkhIiDCdL1JACpUHG7dho6JQSrBdamUJmxq59+JTkjgJzkEVD4GitpXK
+	 IqL0BaTo0TyEbC2FESE2Al6IyzzphzRAnjTLyJTbPTRlR2urNfO5kRRdO576AE/XEm
+	 DMLyZ7Z4sxrAlrRgRBIeNapaztIdI5YwYTKX7mkZ7PkdkLLftWopMGcYvpM2JfUdcs
+	 LlfXKvPH9J/k2Tar9jRS/QeiA80PUQJYSrrj/DhysFTuqDBeHjrelVDSrbB36iZ5/7
+	 2vo92aOvMZaeg==
+Message-ID: <17a0efe3-72fa-4d13-b3b0-90e6640308f3@kernel.org>
+Date: Sun, 23 Jun 2024 13:09:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv5 6/9] ASoC: dt-bindings: fsl-asoc-card: add compatible
- string for spdif
+Subject: Re: [PATCHv5 7/9] ASoC: dt-bindings: imx-audio-spdif: remove binding
 To: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -68,7 +67,7 @@ Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
  linuxppc-dev@lists.ozlabs.org,
  Philip-Dylan <philip-dylan.gleonec@savoirfairelinux.com>
 References: <20240620132511.4291-1-elinor.montmasson@savoirfairelinux.com>
- <20240620132511.4291-7-elinor.montmasson@savoirfairelinux.com>
+ <20240620132511.4291-8-elinor.montmasson@savoirfairelinux.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -114,124 +113,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240620132511.4291-7-elinor.montmasson@savoirfairelinux.com>
+In-Reply-To: <20240620132511.4291-8-elinor.montmasson@savoirfairelinux.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 20/06/2024 15:25, Elinor Montmasson wrote:
-> The S/PDIF audio card support was merged from imx-spdif into the
-> fsl-asoc-card driver, making it possible to use an S/PDIF with an ASRC.
-> Add the new compatible and update properties.
+> imx-audio-spdif was merged into the fsl-asoc-card driver, and therefore
+> removed.
 
-Please use standard email subjects, so with the PATCH keyword in the
-title. `git format-patch -v5` helps here to create proper versioned
-patches. Another useful tool is b4.
+So what happens with all existing users (e.g. DTS)? They become
+invalid/not supported?
 
-> 
-> Signed-off-by: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
-> ---
->  .../bindings/sound/fsl-asoc-card.yaml         | 30 ++++++++++++++++---
->  1 file changed, 26 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml b/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml
-> index 9922664d5ccc..f2e28b32808e 100644
-> --- a/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml
-> +++ b/Documentation/devicetree/bindings/sound/fsl-asoc-card.yaml
-> @@ -33,6 +33,7 @@ properties:
->        - items:
->            - enum:
->                - fsl,imx-sgtl5000
-> +              - fsl,imx-sabreauto-spdif
->                - fsl,imx25-pdk-sgtl5000
->                - fsl,imx53-cpuvo-sgtl5000
->                - fsl,imx51-babbage-sgtl5000
-> @@ -54,6 +55,7 @@ properties:
->                - fsl,imx6q-ventana-sgtl5000
->                - fsl,imx6sl-evk-wm8962
->                - fsl,imx6sx-sdb-mqs
-> +              - fsl,imx6sx-sdb-spdif
->                - fsl,imx6sx-sdb-wm8962
->                - fsl,imx7d-evk-wm8960
->                - karo,tx53-audio-sgtl5000
-> @@ -65,6 +67,7 @@ properties:
->                - fsl,imx-audio-sgtl5000
->                - fsl,imx-audio-wm8960
->                - fsl,imx-audio-wm8962
-> +              - fsl,imx-audio-spdif
-
-This does not look right. It's quite generic, so now you allow any
-variant to be used with this fallback.
-
-Please do not grow more this list of all possible combinations and
-instead add specific lists. Otherwise, please explain why this is valid
-hardware:
-"fsl,imx7d-evk-wm8960", "fsl,imx-audio-spdif"
-
-
->        - items:
->            - enum:
->                - fsl,imx-audio-ac97
-> @@ -81,6 +84,7 @@ properties:
->                - fsl,imx-audio-wm8960
->                - fsl,imx-audio-wm8962
->                - fsl,imx-audio-wm8958
-> +              - fsl,imx-audio-spdif
-
-Fallbacks should not be used alone. Why this is needed? The compatible
-is already documented, so now you create duplicated binding.
-
-This is very confusing.
-
->  
->    model:
->      $ref: /schemas/types.yaml#/definitions/string
-> @@ -93,8 +97,15 @@ properties:
->        need to add ASRC support via DPCM.
->  
->    audio-codec:
-> -    $ref: /schemas/types.yaml#/definitions/phandle
-> -    description: The phandle of an audio codec
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: |
-> +      The phandle of an audio codec.
-> +      With "fsl,imx-audio-spdif", either SPDIF audio codec spdif_transmitter,
-> +      spdif_receiver or both.
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      maxItems: 1
->  
->    audio-cpu:
->      $ref: /schemas/types.yaml#/definitions/phandle
-> @@ -150,8 +161,10 @@ properties:
->      description: dai-link uses bit clock inversion.
->  
->    mclk-id:
-> -    $ref: /schemas/types.yaml#/definitions/uint32
-> -    description: main clock id, specific for each card configuration.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: Main clock id for each codec, specific for each card configuration.
-> +    minItems: 1
-> +    maxItems: 2
->  
->    mux-int-port:
->      $ref: /schemas/types.yaml#/definitions/uint32
-> @@ -195,3 +208,12 @@ examples:
->               "AIN2L", "Line In Jack",
->               "AIN2R", "Line In Jack";
->      };
-> +
-> +  - |
-> +    sound-spdif-asrc {
-> +      compatible = "fsl,imx-audio-spdif";
-> +      model = "spdif-asrc-audio";
-> +      audio-cpu = <&spdif>;
-> +      audio-asrc = <&easrc>;
-> +      audio-codec = <&spdifdit>, <&spdifdir>;
-> +    };
-
-Do not introduce another indentation style. Look what is above.
-
+After quick look, I do not see backwards compatibility in the driver and
+above commit msg tells me nothing about ABI break.
 
 Best regards,
 Krzysztof
