@@ -1,210 +1,118 @@
-Return-Path: <linux-kernel+bounces-226024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48411913931
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:23:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4965591395C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97451B2151F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:23:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1354E282122
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADB578283;
-	Sun, 23 Jun 2024 09:23:24 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA9984D11;
+	Sun, 23 Jun 2024 09:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="AGt6TMDf"
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F275FEED
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 09:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE79D51C;
+	Sun, 23 Jun 2024 09:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.87.146.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719134604; cv=none; b=KcqK0GnPf0Yc2OzVBmp0wNmjAm8LyRONGlhDtMofGh7eyDGfaDTg/u9M9ZQd2otHbDYT61vdNALIeLFHE8swkvCrhIeZ5u7UKO4jTbFeoWFap0Jo5BjF+PNp4Czk6FWme3FhPg2SZM8nOD45z2N6UV00yyLm9iAo4MRH7oLxr64=
+	t=1719136353; cv=none; b=WuZwYmYiLS+JaCcynKnQ/TInXXruspNZ/FHcqGA6qd7Kj/LHm9sIa9/eCd2w91XZeT+8HkUg2MwBtv08UjeT7WOxmy3+hyQTvOKqYS+W+wVP7Ts8I2mKLk5nrZ0KzBR4LLUqQ2ClmqLIHLdKIZhNSQbJ2r8p5gF9YtvADP4Gu2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719134604; c=relaxed/simple;
-	bh=6Tx/HlywB1SZROCmm+0pFE4Myol6DCd3FR75Xg9V2ns=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HDnoqyCKI3wPxqmhm02TA7eIB0jwVNsDjKI1TEhaYGgDZKpLIm4NG2h8kynQMsW7+vGYroJ2VBk+Zcjrq5hhuOD50fLX7uKXWRmHv0vF62aMA/aESbzUkzOVstkULFe/wXQbQzLanoNbncRLi0ajtup4IF65B41bJrd65p5i8X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-375d8dbfc25so38393135ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 02:23:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719134602; x=1719739402;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VqY8MGu33Fr6hJ7x2qiUELtvBNFTzdQxcNfjn3wa3cI=;
-        b=v44n+tuJrudNxw6ShEjDgJJiOI4XKo9BUg4SwwH+zaEwpzPOcfdR3vJi86wtI/nmlb
-         MQQqJFUe1/OtnR81+EeU/kA8CyEq1QfQPYoBosfJhMyNSrGmizZg5mkpfeZnxeE4JnqV
-         aOWiyqK5doic8uy1u52wTyJRgCThHTF8UHvIF/AwmlaP/Nzeo/g6TSikKrUlMqJ1IWL0
-         Qk0zMYnDiphR7IgUa1nlzwY67myqkuGtxRbkp+5OIUGj/9a+0mITG04WqRv1gyXGw4Gb
-         DzpGs8Os+exmm1czx+N/cW/yX61fY4Tvb38pi0l4SibFFviSU8qcHpe5hAEpSb7xG9M3
-         92Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvtrzTZ+ZvhozT0XuSNuJMEMVzCT6ECh6YnU5LWejQY/xo4yfOMKNEd1TVhnQ6mWSaNp95qqCtx3KeyrMdaoGsfWbJLulWVhbW2o36
-X-Gm-Message-State: AOJu0YzNEO+aP5to3Y1j1ZybHwr74FrTmBBny66ZYK/rMUST7wI7B8xX
-	hKK1y1S9PQX1KAiECb/FdgawfbF/U1urg9oHVmBEGm9aO32yKpMuGu5YAt400V0PMHrSqEkRtC3
-	lBbAzSdr/cFrU220T1U2Zla2/4+qTKSdrij58450MqR2TJnk55IjQHW4=
-X-Google-Smtp-Source: AGHT+IGyv3MuGx17gA0syraHZyhZodWc6D7nU9m5tDT2e++xxRs+U8x6psQWUjapiNzBKV/9vlh1zU7cpHGMGM0SFHyEyv+PrUbE
+	s=arc-20240116; t=1719136353; c=relaxed/simple;
+	bh=DCMeJ2S7gcjR7PgTdzlp7X1hl7o4f2v+hOnmgo6w5qI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Gd3/b2aGIRA2XwQM529OejwY36TQm2atLsrwQExVAPzFHVC0eCuKlKUbjyCTG3sJq5cgFvjnSycbH4tisu33RNj8F1rzQHEtThT4xLs/eqaHqCNvgTi4QY9ZViP6XovNmICmtMEZBEUE7NOq1XcyhGHVj7zVGitSey62xEoOnEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=AGt6TMDf; arc=none smtp.client-ip=194.87.146.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id 4880540138;
+	Sun, 23 Jun 2024 14:27:06 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1719134828; bh=DCMeJ2S7gcjR7PgTdzlp7X1hl7o4f2v+hOnmgo6w5qI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=AGt6TMDfF/jaDkqxxIebL3DVjxhZrLiDX8ayYzj7U5pu0vAo/tT67RfqAjQr5zvcB
+	 lrQjQOpXP/4aA2Qh6DCWiZDYWXOOyGcOL342zYeHihAAFS6jd20UP9d72XmBN8jblR
+	 8m2i57Baxvrvito254Pp/khhIvxs6RXlzAxyE6NlrE0FVCuH1CDUj9x1mHh/7rx9Ir
+	 gyhqUnmbFltta8fxI3vrUM0idrVyzjIhsDBY3p/Ikgbomp5CdZxcx3hb3kRckQrFb9
+	 esAwsszjC+XySzUPr07mAiXZIBVgCHOk4T/C4xAy5w5ctl77HOgQZiFAb6eTfr/fu3
+	 LwFBlih5TvABQ==
+From: Nikita Travkin <nikita@trvn.ru>
+Subject: [PATCH 0/3] Introduce msm8916 based LG devices
+Date: Sun, 23 Jun 2024 14:26:29 +0500
+Message-Id: <20240623-msm8916-lg-initial-v1-0-6fbcf714d69b@trvn.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:158a:b0:376:4049:69e4 with SMTP id
- e9e14a558f8ab-37640496befmr1693185ab.5.1719134601902; Sun, 23 Jun 2024
- 02:23:21 -0700 (PDT)
-Date: Sun, 23 Jun 2024 02:23:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004492c2061b8b3796@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_bucket_alloc_freelist
-From: syzbot <syzbot+3d2944b5612507034fc4@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEXqd2YC/x3MQQqAIBBA0avErBtIE9GuEi3EJhsoC40IpLsnL
+ d/i/wKZElOGoSmQ6ObMR6wQbQN+dTEQ8lwNspOq01LgnndjhcYtIEe+2G1oZuV6a8n3XkINz0Q
+ LP/90nN73A6k0c6xkAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, Nikita Travkin <nikita@trvn.ru>, 
+ Cristian Cozzolino <cristian_ci@protonmail.com>, 
+ Anton Bambura <jenneron@postmarketos.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=943; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=DCMeJ2S7gcjR7PgTdzlp7X1hl7o4f2v+hOnmgo6w5qI=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBmd+pmhKxQAyePLX7ovF1MZ/AE/5LDr7FCkg5tO
+ 8uoxXfuSJuJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZnfqZgAKCRBDHOzuKBm/
+ dc9yD/0f3LMmlRKCfOZhLeYCm/ffaeVG/VDot6nZ2xL16sekVwacoQpmQM8dRHMnHcRqg2z5kKF
+ u229seKdNAsTL4yr760650QR57tvE9h0904VA2M+e2sxVE9+zkB6vUkMJ+ESSyMiZtjKMFjRlVy
+ zNEg7JpY9S1Owz+Ug/4FChMRpbTxBOkophqDGOFm5nliDMLafcdbBjY4ASGZMje3Bqn/jjV7MIX
+ n8VLI5bCI/7Nzceog1NYJk47FTU+CN7WyJ6XEfn9+ameMnVxK4uy8gLCVr8Lcp8mACSKBWG+a+d
+ tynhr1XQSYjai5qQS+Dvvurc+msjTYvTZXdcZ5O9htMWzgNGFElHPGhtLcnWzDXZxKxQTrSxEPd
+ BZKfy3IxBTEh+nmUjof1jMAny9Qk1Lh1Zs3gsHovOm6QwKDIu+Sg3aWCS2hpRcFl6PV5/pfYllJ
+ O2DKnYBeoxh1rF4it6bNRWBufhsYqAORFebgwbbHDphfXk8hAO3dLsNM/hOpze9x3SbVsklJHQs
+ glt9d/xVC8xhTN/7jeoaMkWn+y4Z1XV+JSYYgMAwDJ1+7MR+KSlwx35XFB0rP0bN8+MXcSQ7uMc
+ uPaDITZ7bPks/nKJCYrq809WNNiMtOAysGWnOwK9eM71hydyFmBDTsO9a1US5LD/llQak5VTx6E
+ o1WMRWQHcsJ/t7A==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 
-Hello,
+This series introduces two msm8916-based LG devices:
 
-syzbot found the following issue on:
+- LG Leon LTE (c50)
+- LG LG K10 (m216)
 
-HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b13146980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39
-dashboard link: https://syzkaller.appspot.com/bug?extid=3d2944b5612507034fc4
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+The devices only have basic support for now.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/13cdb5bfbafa/vmlinux-2ccbdf43.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7a14f5d07f81/bzImage-2ccbdf43.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3d2944b5612507034fc4@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/alloc_foreground.c:489!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 3 PID: 5534 Comm: syz-executor.2 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:bch2_bucket_alloc_freelist+0xec0/0x1090 fs/bcachefs/alloc_foreground.c:489
-Code: ff ff 48 8b bd 18 fe ff ff e8 7c ba 0a fe e9 19 f9 ff ff 48 8b bd 88 fe ff ff e8 db b9 0a fe e9 55 f9 ff ff e8 91 87 ad fd 90 <0f> 0b 4c 89 ef e8 c6 b9 0a fe e9 25 f8 ff ff 48 89 cf e8 e9 b9 0a
-RSP: 0018:ffffc90007fde1a0 EFLAGS: 00010246
-RAX: 0000000000040000 RBX: 0000000000000019 RCX: ffffc90002f22000
-RDX: 0000000000040000 RSI: ffffffff83e1083f RDI: 0000000000000007
-RBP: ffffc90007fde3d0 R08: ffff8880217ce120 R09: 0000000000000000
-R10: 0000000000000019 R11: 0000000000000001 R12: ffff8880217ce000
-R13: ffff8880217ce2f8 R14: ffff88802bb94042 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff88802c300000(0063) knlGS:00000000f5f32b40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000031c3b000 CR3: 0000000053c02000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_bucket_alloc_trans+0x706/0xb20 fs/bcachefs/alloc_foreground.c:649
- bch2_bucket_alloc_set_trans+0x466/0xd40 fs/bcachefs/alloc_foreground.c:810
- __open_bucket_add_buckets+0x991/0x12f0 fs/bcachefs/alloc_foreground.c:1058
- open_bucket_add_buckets+0x116/0x200 fs/bcachefs/alloc_foreground.c:1102
- bch2_alloc_sectors_start_trans+0xa41/0x1ba0 fs/bcachefs/alloc_foreground.c:1457
- __bch2_btree_node_alloc+0x718/0xdc0 fs/bcachefs/btree_update_interior.c:333
- bch2_btree_reserve_get+0x21d/0x330 fs/bcachefs/btree_update_interior.c:547
- bch2_btree_update_start+0x1235/0x1ed0 fs/bcachefs/btree_update_interior.c:1245
- bch2_btree_split_leaf+0xc9/0x770 fs/bcachefs/btree_update_interior.c:1851
- bch2_trans_commit_error+0x327/0xd00 fs/bcachefs/btree_trans_commit.c:918
- __bch2_trans_commit+0x383b/0x7a40 fs/bcachefs/btree_trans_commit.c:1138
- bch2_trans_commit fs/bcachefs/btree_update.h:170 [inline]
- bch2_logged_op_start+0x122/0x1b0 fs/bcachefs/logged_ops.c:83
- bch2_truncate+0x173/0x240 fs/bcachefs/io_misc.c:291
- bchfs_truncate+0x90c/0xd70 fs/bcachefs/fs-io.c:476
- bch2_setattr+0x1ab/0x250 fs/bcachefs/fs.c:918
- notify_change+0x742/0x11f0 fs/attr.c:497
- do_truncate+0x15c/0x220 fs/open.c:65
- handle_truncate fs/namei.c:3308 [inline]
- do_open fs/namei.c:3654 [inline]
- path_openat+0x2505/0x29f0 fs/namei.c:3807
- do_filp_open+0x1dc/0x430 fs/namei.c:3834
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1405
- do_sys_open fs/open.c:1420 [inline]
- __do_compat_sys_openat fs/open.c:1480 [inline]
- __se_compat_sys_openat fs/open.c:1478 [inline]
- __ia32_compat_sys_openat+0x16e/0x210 fs/open.c:1478
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf7340579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f5f325ac EFLAGS: 00000292 ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 00000000ffffff9c RCX: 0000000020000080
-RDX: 0000000000183341 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_bucket_alloc_freelist+0xec0/0x1090 fs/bcachefs/alloc_foreground.c:489
-Code: ff ff 48 8b bd 18 fe ff ff e8 7c ba 0a fe e9 19 f9 ff ff 48 8b bd 88 fe ff ff e8 db b9 0a fe e9 55 f9 ff ff e8 91 87 ad fd 90 <0f> 0b 4c 89 ef e8 c6 b9 0a fe e9 25 f8 ff ff 48 89 cf e8 e9 b9 0a
-RSP: 0018:ffffc90007fde1a0 EFLAGS: 00010246
-RAX: 0000000000040000 RBX: 0000000000000019 RCX: ffffc90002f22000
-RDX: 0000000000040000 RSI: ffffffff83e1083f RDI: 0000000000000007
-RBP: ffffc90007fde3d0 R08: ffff8880217ce120 R09: 0000000000000000
-R10: 0000000000000019 R11: 0000000000000001 R12: ffff8880217ce000
-R13: ffff8880217ce2f8 R14: ffff88802bb94042 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff88802c200000(0063) knlGS:00000000f5f32b40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000560e79cc7088 CR3: 0000000053c02000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-
-
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Anton Bambura (1):
+      arm64: dts: qcom: msm8916-lg-c50: add initial dts for LG Leon LTE
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Cristian Cozzolino (1):
+      arm64: dts: qcom: msm8916-lg-m216: Add initial device tree
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Nikita Travkin (1):
+      dt-bindings: arm: qcom: Add msm8916 based LG devices
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+ Documentation/devicetree/bindings/arm/qcom.yaml |   2 +
+ arch/arm64/boot/dts/qcom/Makefile               |   2 +
+ arch/arm64/boot/dts/qcom/msm8916-lg-c50.dts     | 140 +++++++++++++
+ arch/arm64/boot/dts/qcom/msm8916-lg-m216.dts    | 251 ++++++++++++++++++++++++
+ 4 files changed, 395 insertions(+)
+---
+base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+change-id: 20240621-msm8916-lg-initial-8d4a399ec3c2
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Best regards,
+-- 
+Nikita Travkin <nikita@trvn.ru>
 
-If you want to undo deduplication, reply with:
-#syz undup
 
