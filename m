@@ -1,267 +1,133 @@
-Return-Path: <linux-kernel+bounces-226104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0B52913A39
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 13:59:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64EE5913A49
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A217B21D5F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:59:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9860C1C20C61
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16FB146D48;
-	Sun, 23 Jun 2024 11:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6C7181B95;
+	Sun, 23 Jun 2024 12:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzfVtlRt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cryfDCVg"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F52C148301;
-	Sun, 23 Jun 2024 11:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D58E180A95
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 12:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719143948; cv=none; b=tQDr+eJxK8Xs5sqQHb1K5GOXQ4ryvLmQvy1ERDwnqHF582nxRrwFN/ajQ5uytem0TeGRyTj6kDV9g17XKFlyQUZRgdYowyA95WCBoof9J1PDOFsBDP/r5WDi8ZLHRQ3CTaJcDWPXtCYHONNhMk5xHYoG+dZqjwxoErf0PIrpkDk=
+	t=1719144032; cv=none; b=fGgh5Nj+zaHlTb4M1Kf3z2rCKmEAgyaVih151/NH3sTq4tqIa8FnML0G+Nz8IdHIMi7bKY8o+S2WJ9p6bFqRUbgwUeciQAiSvfJKtP6r8RFoEedvqv/BPqkl59V7K/OmmrVIoWje1LwT373bzBs0ip0z7BT1RCGmRO5FwhWwePA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719143948; c=relaxed/simple;
-	bh=1QXQ3tMvStRgTMmgy0k027ECKfLBSakAWmhgATXXEmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NgJhPqAeP6WwEmQ7p8yG8RyOGZRv0WdjwGdFtQBcjO4WwaDhV/qbYmzijNl+TI58SZK0bmnMbI98POFGD+zqqA8OZlhIejYEBAdaEvGv/1FodjACawYOkI2vibHlLSZEmR76IGFHGapREAKrDZuk8BSBORtkRGNB9nmBD75mm9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzfVtlRt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7C0FC2BD10;
-	Sun, 23 Jun 2024 11:59:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719143948;
-	bh=1QXQ3tMvStRgTMmgy0k027ECKfLBSakAWmhgATXXEmw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gzfVtlRt6ugbCI5tsFW83ZkCYyraPy2cl4ba2vdgTJc4PDTnfrGHxrgGpJA9iMsNK
-	 HhfeOW7qM9Z69MNzdW8hmPjsdZONGwwZqUPQ/MzZGV84HZc6dQfCMFo8eouK6wWwLE
-	 UTsO1Wbxzhs9oYQm5zZf2GEbOeBZ3kRg+CnW8s3rzNu3uVln1/4WCqMZfab+BUVBMu
-	 llwwnYF7+4X83hCLZ60Z7907qrqirxKja7COmuNT9AbB8dvHgeMQ2BSCz/el/m+5kL
-	 G1Cbsx/aBxL2fO7NNkBU24HZ1HtNecNRSKU5vdDco5y69y/+G1pTpOWQsGmSOqkb7b
-	 6KisDZo32UrQA==
-Date: Sun, 23 Jun 2024 12:59:01 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
- linux-iio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Michal
- Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] iio: xilinx-ams: Add labels
-Message-ID: <20240623125901.03f0fe6f@jic23-huawei>
-In-Reply-To: <20240620204842.817237-1-sean.anderson@linux.dev>
-References: <20240620204842.817237-1-sean.anderson@linux.dev>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719144032; c=relaxed/simple;
+	bh=MQKKDaIGCGbRLN1AzCvjvVCiUpvORFMPwHtaVwKOtaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qZp2I9OZMV0tk/y6E1qW62z7NmTpy1+y0CV8qY13NfIwlDeGxp9wLT4EoWsrQCliOJUZaPc4VPujbDpqxA/quzTT+/UykeGfshCZKpIChXm4ZXPo3TrTEi7JXUJw+9KBLBz3M3vbJe66wKkE8IYs/07pz3kvo15+tj41ZLB5cLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cryfDCVg; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42172ed3487so25412065e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 05:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719144029; x=1719748829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wq0GDSPoIp4+sLNJUnd9TkEoaORchJ/hKSadjq9Ps7M=;
+        b=cryfDCVgqCvZEUY0c+t7jEnyytH88L5XWsxgFbJfWN/k8P/G2AhX9oUVEcLdAI105c
+         Tt90mjbWsRN7DqTEolwunC2PFbtXmbuX4EHxgaMBv8OKGOziM/z7mKcRrlkX5/uz7bvf
+         Hx7l4ZhylyGJS16vzWXdZtmFL3eueuwo3bPkC7lBQmaqLXD3kXxPq5bSb9Ay3xkW0Bos
+         Jq8gXAaL/LXBhM4jVf3Z6gqXfh/EdAeyCUJuAi8S6AHUqepgiKr8UulUhVQ8wOMNtMG0
+         7XJQTkIov+8V3CMUJ0KQBOiHz1az365yFm5h+/4uEz4ouFRXeChL3ZuErX9NLgZ8m18m
+         WmMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719144029; x=1719748829;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wq0GDSPoIp4+sLNJUnd9TkEoaORchJ/hKSadjq9Ps7M=;
+        b=ZE8fYW8/hua2jvQguVs8POmz669BdWADWWrSbEv+oJ098F94yKLW342zWuRmF+7lFj
+         l+Mq2dGrGtuAVb0OBULEXXCzeJent+mXrxGdmm4N4+uGgIxacEpsD1XtmcAYkdJwsfLa
+         bJkXGJAi8yqirG+6dFmOQT2zvioKcnvoEU7ptSw2owiEz4aExzJdrXT+OCPoO14sgqYB
+         S6k3lkN7oD/h6LH1LqqgC9qBgWnDjiZDQy0HWoHQ+TPOc7vjD4ZOpJwzbLxKcV/9KCDu
+         DMdhSPB9Wnu6jWGP5MZcKhYGDOs/jmCywA1VOq8BF4bpy2N65nlGCp0z9P+yCYxBAiw9
+         84WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTyG6YnLlcF03LuY0l10hFQKe6wjqHhA1/zRcsOoiCSLBvIizTEFxD8QuRjcGVUuE6fdGqB1WWY+Z/7TCvieUyQyWCQwoYwoKwRRWv
+X-Gm-Message-State: AOJu0YzN7nNKkEU4jcWK8BBNP04KrDKg4wCD+PJWY6bwJwAFOKlHBU8t
+	BbB43gC/3CFY1Kl//rgu9FFzm43VQC74P05KNjM/TKFZ44WxmY083tIiw2nrIyo=
+X-Google-Smtp-Source: AGHT+IENFAK7IVpV/k8lzPMo9UahIiF1uHLMk0nrZAmjoYC0Fijkz3aInqbbeS6fxxaaR/xdi+aTqA==
+X-Received: by 2002:a05:600c:b44:b0:424:784c:b13b with SMTP id 5b1f17b1804b1-42489e3ac94mr22668335e9.13.1719144029481;
+        Sun, 23 Jun 2024 05:00:29 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248179d3basm105465515e9.4.2024.06.23.05.00.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 05:00:28 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/3] dt-bindings: display/msm/gpu: constrain clocks in top-level
+Date: Sun, 23 Jun 2024 14:00:24 +0200
+Message-ID: <20240623120026.44198-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 20 Jun 2024 16:48:42 -0400
-Sean Anderson <sean.anderson@linux.dev> wrote:
+We expect each schema with variable number of clocks, to have the widest
+constrains in top-level "properties:".  This is more readable and also
+makes binding stricter, if there is no "if:then:" block for given
+variant.
 
-> Label all the channels using names from the reference manual. Some of
-> the "control" channels are duplicates of other channels. The reference
-> manual describes it like:
-> 
-> > The AMS register set includes several measurement registers that are
-> > written to by the PS SYSMON unit using the single-channel mode
-> > (sequencer off). These voltage measurements are performed using the
-> > unipolar sampling circuit with a 0 to 3V range and do not have alarms
-> > or minimum/maximum registers.  
-> 
-> So I think these really are measuring the same voltages but in a
-> different location. In which case, sharing labels makes sense to me.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-Hi Sean,
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/display/msm/gpu.yaml | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-This LGTM, but I'd like some feedback from others more familiar with the
-driver and device before I apply it.  If everyone is too busy and
-I don't get any replies for a few weeks I may pick it up anyway.
-
-Feel free to poke me if I seem to have forgotten in say 2 weeks.
-
-
-Jonathan
-
-> ---
-> 
->  drivers/iio/adc/xilinx-ams.c | 107 +++++++++++++++++++----------------
->  1 file changed, 59 insertions(+), 48 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
-> index aa05f24931f9..f051358d6b50 100644
-> --- a/drivers/iio/adc/xilinx-ams.c
-> +++ b/drivers/iio/adc/xilinx-ams.c
-> @@ -222,7 +222,7 @@ enum ams_ps_pl_seq {
->  #define PL_SEQ(x)		(AMS_PS_SEQ_MAX + (x))
->  #define AMS_CTRL_SEQ_BASE	(AMS_PS_SEQ_MAX * 3)
->  
-> -#define AMS_CHAN_TEMP(_scan_index, _addr) { \
-> +#define AMS_CHAN_TEMP(_scan_index, _addr, _name) { \
->  	.type = IIO_TEMP, \
->  	.indexed = 1, \
->  	.address = (_addr), \
-> @@ -232,9 +232,10 @@ enum ams_ps_pl_seq {
->  	.event_spec = ams_temp_events, \
->  	.scan_index = _scan_index, \
->  	.num_event_specs = ARRAY_SIZE(ams_temp_events), \
-> +	.datasheet_name = _name, \
->  }
->  
-> -#define AMS_CHAN_VOLTAGE(_scan_index, _addr, _alarm) { \
-> +#define AMS_CHAN_VOLTAGE(_scan_index, _addr, _alarm, _name) { \
->  	.type = IIO_VOLTAGE, \
->  	.indexed = 1, \
->  	.address = (_addr), \
-> @@ -243,21 +244,24 @@ enum ams_ps_pl_seq {
->  	.event_spec = (_alarm) ? ams_voltage_events : NULL, \
->  	.scan_index = _scan_index, \
->  	.num_event_specs = (_alarm) ? ARRAY_SIZE(ams_voltage_events) : 0, \
-> +	.datasheet_name = _name, \
->  }
->  
-> -#define AMS_PS_CHAN_TEMP(_scan_index, _addr) \
-> -	AMS_CHAN_TEMP(PS_SEQ(_scan_index), _addr)
-> -#define AMS_PS_CHAN_VOLTAGE(_scan_index, _addr) \
-> -	AMS_CHAN_VOLTAGE(PS_SEQ(_scan_index), _addr, true)
-> +#define AMS_PS_CHAN_TEMP(_scan_index, _addr, _name) \
-> +	AMS_CHAN_TEMP(PS_SEQ(_scan_index), _addr, _name)
-> +#define AMS_PS_CHAN_VOLTAGE(_scan_index, _addr, _name) \
-> +	AMS_CHAN_VOLTAGE(PS_SEQ(_scan_index), _addr, true, _name)
->  
-> -#define AMS_PL_CHAN_TEMP(_scan_index, _addr) \
-> -	AMS_CHAN_TEMP(PL_SEQ(_scan_index), _addr)
-> -#define AMS_PL_CHAN_VOLTAGE(_scan_index, _addr, _alarm) \
-> -	AMS_CHAN_VOLTAGE(PL_SEQ(_scan_index), _addr, _alarm)
-> +#define AMS_PL_CHAN_TEMP(_scan_index, _addr, _name) \
-> +	AMS_CHAN_TEMP(PL_SEQ(_scan_index), _addr, _name)
-> +#define AMS_PL_CHAN_VOLTAGE(_scan_index, _addr, _alarm, _name) \
-> +	AMS_CHAN_VOLTAGE(PL_SEQ(_scan_index), _addr, _alarm, _name)
->  #define AMS_PL_AUX_CHAN_VOLTAGE(_auxno) \
-> -	AMS_CHAN_VOLTAGE(PL_SEQ(AMS_SEQ(_auxno)), AMS_REG_VAUX(_auxno), false)
-> -#define AMS_CTRL_CHAN_VOLTAGE(_scan_index, _addr) \
-> -	AMS_CHAN_VOLTAGE(PL_SEQ(AMS_SEQ(AMS_SEQ(_scan_index))), _addr, false)
-> +	AMS_CHAN_VOLTAGE(PL_SEQ(AMS_SEQ(_auxno)), AMS_REG_VAUX(_auxno), false, \
-> +			 "VAUX" #_auxno)
-> +#define AMS_CTRL_CHAN_VOLTAGE(_scan_index, _addr, _name) \
-> +	AMS_CHAN_VOLTAGE(PL_SEQ(AMS_SEQ(AMS_SEQ(_scan_index))), _addr, false, \
-> +			 _name)
->  
->  /**
->   * struct ams - This structure contains necessary state for xilinx-ams to operate
-> @@ -505,6 +509,12 @@ static int ams_init_device(struct ams *ams)
->  	return 0;
->  }
->  
-> +static int ams_read_label(struct iio_dev *indio_dev,
-> +			  struct iio_chan_spec const *chan, char *label)
-> +{
-> +	return sysfs_emit(label, "%s\n", chan->datasheet_name);
-> +}
-> +
->  static int ams_enable_single_channel(struct ams *ams, unsigned int offset)
->  {
->  	u8 channel_num;
-> @@ -1116,37 +1126,37 @@ static const struct iio_event_spec ams_voltage_events[] = {
->  };
->  
->  static const struct iio_chan_spec ams_ps_channels[] = {
-> -	AMS_PS_CHAN_TEMP(AMS_SEQ_TEMP, AMS_TEMP),
-> -	AMS_PS_CHAN_TEMP(AMS_SEQ_TEMP_REMOTE, AMS_TEMP_REMOTE),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY1, AMS_SUPPLY1),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY2, AMS_SUPPLY2),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY3, AMS_SUPPLY3),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY4, AMS_SUPPLY4),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY5, AMS_SUPPLY5),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY6, AMS_SUPPLY6),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY7, AMS_SUPPLY7),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY8, AMS_SUPPLY8),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY9, AMS_SUPPLY9),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY10, AMS_SUPPLY10),
-> -	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_VCCAMS, AMS_VCCAMS),
-> +	AMS_PS_CHAN_TEMP(AMS_SEQ_TEMP, AMS_TEMP, "Temp_LPD"),
-> +	AMS_PS_CHAN_TEMP(AMS_SEQ_TEMP_REMOTE, AMS_TEMP_REMOTE, "Temp_FPD"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY1, AMS_SUPPLY1, "VCC_PSINTLP"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY2, AMS_SUPPLY2, "VCC_PSINTFP"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY3, AMS_SUPPLY3, "VCC_PSAUX"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY4, AMS_SUPPLY4, "VCC_PSDDR"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY5, AMS_SUPPLY5, "VCC_PSIO3"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY6, AMS_SUPPLY6, "VCC_PSIO0"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY7, AMS_SUPPLY7, "VCC_PSIO1"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY8, AMS_SUPPLY8, "VCC_PSIO2"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY9, AMS_SUPPLY9, "PS_MGTRAVCC"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY10, AMS_SUPPLY10, "PS_MGTRAVTT"),
-> +	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_VCCAMS, AMS_VCCAMS, "VCC_PSADC"),
->  };
->  
->  static const struct iio_chan_spec ams_pl_channels[] = {
-> -	AMS_PL_CHAN_TEMP(AMS_SEQ_TEMP, AMS_TEMP),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY1, AMS_SUPPLY1, true),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY2, AMS_SUPPLY2, true),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VREFP, AMS_VREFP, false),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VREFN, AMS_VREFN, false),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY3, AMS_SUPPLY3, true),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY4, AMS_SUPPLY4, true),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY5, AMS_SUPPLY5, true),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY6, AMS_SUPPLY6, true),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VCCAMS, AMS_VCCAMS, true),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VP_VN, AMS_VP_VN, false),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY7, AMS_SUPPLY7, true),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY8, AMS_SUPPLY8, true),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY9, AMS_SUPPLY9, true),
-> -	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY10, AMS_SUPPLY10, true),
-> +	AMS_PL_CHAN_TEMP(AMS_SEQ_TEMP, AMS_TEMP, "Temp_PL"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY1, AMS_SUPPLY1, true, "VCCINT"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY2, AMS_SUPPLY2, true, "VCCAUX"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VREFP, AMS_VREFP, false, "VREFP"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VREFN, AMS_VREFN, false, "VREFN"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY3, AMS_SUPPLY3, true, "VCCBRAM"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY4, AMS_SUPPLY4, true, "VCC_PSINTLP"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY5, AMS_SUPPLY5, true, "VCC_PSINTFP"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY6, AMS_SUPPLY6, true, "VCC_PSAUX"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VCCAMS, AMS_VCCAMS, true, "VCCAMS"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VP_VN, AMS_VP_VN, false, "VP_VN"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY7, AMS_SUPPLY7, true, "VUser0"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY8, AMS_SUPPLY8, true, "VUser1"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY9, AMS_SUPPLY9, true, "VUser2"),
-> +	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY10, AMS_SUPPLY10, true, "VUser3"),
->  	AMS_PL_AUX_CHAN_VOLTAGE(0),
->  	AMS_PL_AUX_CHAN_VOLTAGE(1),
->  	AMS_PL_AUX_CHAN_VOLTAGE(2),
-> @@ -1166,13 +1176,13 @@ static const struct iio_chan_spec ams_pl_channels[] = {
->  };
->  
->  static const struct iio_chan_spec ams_ctrl_channels[] = {
-> -	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCC_PSPLL, AMS_VCC_PSPLL0),
-> -	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCC_PSBATT, AMS_VCC_PSPLL3),
-> -	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCINT, AMS_VCCINT),
-> -	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCBRAM, AMS_VCCBRAM),
-> -	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCAUX, AMS_VCCAUX),
-> -	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_PSDDRPLL, AMS_PSDDRPLL),
-> -	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_INTDDR, AMS_PSINTFPDDR),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCC_PSPLL, AMS_VCC_PSPLL0, "VCC_PSPLL"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCC_PSBATT, AMS_VCC_PSPLL3, "VCC_PSBATT"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCINT, AMS_VCCINT, "VCCINT"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCBRAM, AMS_VCCBRAM, "VCCBRAM"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCAUX, AMS_VCCAUX, "VCCAUX"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_PSDDRPLL, AMS_PSDDRPLL, "VCC_PSDDR_PLL"),
-> +	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_INTDDR, AMS_PSINTFPDDR, "VCC_PSINTFP_DDR"),
->  };
->  
->  static int ams_get_ext_chan(struct fwnode_handle *chan_node,
-> @@ -1336,6 +1346,7 @@ static int ams_parse_firmware(struct iio_dev *indio_dev)
->  }
->  
->  static const struct iio_info iio_ams_info = {
-> +	.read_label = ams_read_label,
->  	.read_raw = &ams_read_raw,
->  	.read_event_config = &ams_read_event_config,
->  	.write_event_config = &ams_write_event_config,
+diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Documentation/devicetree/bindings/display/msm/gpu.yaml
+index 40b5c6bd11f8..253e68d92779 100644
+--- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
++++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
+@@ -32,9 +32,13 @@ properties:
+           - pattern: '^amd,imageon-200\.[0-1]$'
+           - const: amd,imageon
+ 
+-  clocks: true
++  clocks:
++    minItems: 2
++    maxItems: 7
+ 
+-  clock-names: true
++  clock-names:
++    minItems: 2
++    maxItems: 7
+ 
+   reg:
+     minItems: 1
+-- 
+2.43.0
 
 
