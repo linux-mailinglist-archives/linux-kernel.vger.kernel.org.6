@@ -1,176 +1,125 @@
-Return-Path: <linux-kernel+bounces-225891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F4F9136F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 01:48:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 128D4913705
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 02:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7672A281209
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2024 23:48:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368C6283A61
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 00:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390BD12BF18;
-	Sat, 22 Jun 2024 23:48:46 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DB4ECC;
+	Sun, 23 Jun 2024 00:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZMw9EXEB"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DECC12AAE0
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2024 23:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8671AEDE
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 00:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719100125; cv=none; b=NJchMdG4XzbLurqnhCoboUz0b6HFXAzWX5xwm6otzv8EXRz8mImxS9lmFQbDGv13rM9TEUKNJfjDUpcCUpEoqjuVimlUztrXkHvdH+aPxFT0zZw+6z2nyayb35Up2X5HFQF6UQ9/za2xXFL+2lVzKZzmeNPnEOwOqay1Xh19wRs=
+	t=1719101717; cv=none; b=K1IRX8wn9u+YvAEKIxJhJZBdJihBfqCltHhnn+cSq0ScSeSyovoQvvfWmu9XGPH7Gpdw5e1CLx5sQMfwmf5CsaOFaCB6+059xoaNMaEdl4KCJezZOM8tcbbXTgLgv2O9Iblw+hov1jKLL0NWfUWiy5aeAATmKug8NkPBdTgNeQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719100125; c=relaxed/simple;
-	bh=G7Bdwm2LgSzcu8hKez+YkvaF4kB0cS8V8sK1sTJqTBo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Jn8g6b90hGZTcpjWio0kLMtjfDNC1VPU6/PoEr2dPKKAbqShNb1t9+EEDnc+vKI2Tt7AZZ8DgSSZDrE3CQs5qUhOEI33jEfHsRCvI5MRFONnpu2aEHe1ZYxpN1yA4prnpURr9bt5APHz2bfkKnwqW1j4t5ua2FZZh+JgEBcl0pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sLATD-0002cg-5F; Sun, 23 Jun 2024 01:48:35 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sLATC-004Hke-HQ; Sun, 23 Jun 2024 01:48:34 +0200
-Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
-	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sLATC-000IWx-37;
-	Sun, 23 Jun 2024 01:48:34 +0200
-From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Date: Sun, 23 Jun 2024 01:48:31 +0200
-Subject: [PATCH v2 3/3] usb: gadget: uvc: set req_size and n_requests based
- on the frame interval
+	s=arc-20240116; t=1719101717; c=relaxed/simple;
+	bh=cmWrLgGiS2ZLhPC3ntK0l4B8Ll+nJKE9+yx2u91LRfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L0xh8KCg3fr1xs9u1kJ/SwS3jQ/ieaXRHzLiWuNpdMX7bw+fz2twZE2s/rEn2+5hgDwjkyc/Iacp19El7p3om46xmk0FLOEZNyEW/CPZpVg5r9hkAEglL9HDAnj0zjLQIBOGsvS5SjpvyhJn6Qr793iXfTSPRHk03YwFM8j6qn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZMw9EXEB; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=zPu9
+	dFxZmhOF/UTcgUWkSXWBx3llklKXT0q3IZzL42w=; b=ZMw9EXEBkfkwlYgQ8ipD
+	MaMPAUCsgRH4wtTBp4EpNSLMk+WKiTAdRAcidQX5BYQdzh7JwFg1Iv1Kj/91pL57
+	WYfvKR7RRHgX0iQkJNLHBbcJuzJf5h6cvpmLC7E9bXa+vbONwWS8nJEb7sK6+7mT
+	xUxBvMmqiXVBWFsC6xjN3S+qBcTtzoDIxupNhvGEnjDkVAgcXMLng8XcsPJeONeL
+	dJHCxXjZH3z4m+/I7XSc0inShau6HGmPrjXjOdRLrSuhd9IbTZ6dqWbkKNE2wV1W
+	A93Pochgj9Gg3sz3VADxHoBMhg19d1ahd6fLyxpGuCcUzMy/faBrHfFOV8SVRfJe
+	sw==
+Received: (qmail 1777053 invoked from network); 23 Jun 2024 02:15:09 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Jun 2024 02:15:09 +0200
+X-UD-Smtp-Session: l3s3148p1@58mzjoMbmuNehh9j
+Date: Sun, 23 Jun 2024 02:15:06 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Wolfram Sang <wsa@kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Grygorii Tertychnyi <grembeter@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.10-rc5
+Message-ID: <c2x67wutymfrguefx5djbtfnrlds7c5oz2xod4xwuzflcw2ss5@cwrkuua7lztx>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@kernel.org>, 
+	linux-i2c <linux-i2c@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, 
+	Grygorii Tertychnyi <grembeter@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <z26bzagsktppxbftswcocv66a5xmx6kbxn3ui27qq2iie6z2mo@r22mkxmxwfu5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240403-uvc_request_length_by_interval-v2-3-12690f7a2eff@pengutronix.de>
-References: <20240403-uvc_request_length_by_interval-v2-0-12690f7a2eff@pengutronix.de>
-In-Reply-To: <20240403-uvc_request_length_by_interval-v2-0-12690f7a2eff@pengutronix.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Daniel Scally <dan.scally@ideasonboard.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Avichal Rakesh <arakesh@google.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michael Grzeschik <m.grzeschik@pengutronix.de>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3182;
- i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=G7Bdwm2LgSzcu8hKez+YkvaF4kB0cS8V8sK1sTJqTBo=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmd2LSvQDIFbhZh1nGSdlJ6iKp1YiKTCaR4Flr/
- XaLR/EK/lKJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZndi0gAKCRC/aVhE+XH0
- q9YFEADCdz7a9ExUObvtVWFP8ta1exn5yyW8RaWwyUPA0FbvgczUKbvDUSTkzLnSBXi1Sx/Vqgu
- WLmzqGVZCEzJfrbYKNSduz9Rz0MyM1Pp5hE2zVqdp/4H3mxbHXSmfmfweHymsY8jdj7zSdrNSJr
- y+j0/8Y7HU1bFyBlDzPtMDCSotGQ42VowD5JyFyxn/xvvTy2nXeJCBsaD0Ykyy5GqcLMfXIxbOR
- dcrcWVaow/cOumdeQ3orgODjhQd5kE1nCUlrOsE46HfK+TyCBdsiTYUvH7vlg+gthsjFrgNruJZ
- Z3WE53ZsZNkHy3oQTuiv5FzIaLqZs8bh91hX5Rhm9NIZ3vtbJGDjIgnmbSH8uavFDV1uucnZyzu
- GziduKL0c37gx7CY0h6uVOh2XGUoyosqtP0M2VbtEyAj7BOeuWjfTDduDsoDYEB4pn0h4zABvLv
- BNbh0kMg963Kazdl7eqQONd0fdHq/K7/N6mqFjtaPCA5M3FhZPXiNN/DScerhpFaTRchkbUqbdN
- utQd3mcf8d7SJqNmMi8vF3OS9yKIxuPjcFvbEefwf62dAKKJB23nMNQRD8Q18kLr1yOTajAhYDp
- FhIkw90X3Eb0JGL+Orgauu9xJeqwdbRtbcJjfxi6LMlWvWe5ZFFa9QN8zw3ZtAOfxBKjDDQmdF0
- VqDx5VgtNsypwxg==
-X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
- fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="slehwknibtnn2t6j"
+Content-Disposition: inline
+In-Reply-To: <z26bzagsktppxbftswcocv66a5xmx6kbxn3ui27qq2iie6z2mo@r22mkxmxwfu5>
 
-With the information of the interval frame length it is now possible to
-calculate the number of usb requests by the frame duration. Based on the
-request size and the imagesize we calculate the actual size per request.
-This has calculation has the benefit that the frame data is equally
-distributed over all allocated requests.
 
-We keep the current req_size calculation as a fallback, if the interval
-callbacks did not set the interval property.
+--slehwknibtnn2t6j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+On Sat, Jun 22, 2024 at 11:13:52AM GMT, Andi Shyti wrote:
+> Hi Wolfram,
+>=20
+> Sorry for the late pull request. I wanted to allow a few days for
+> testing this branch, which has resulted in a Saturday morning
+> submission.
+>=20
+> Thanks,
+> Andi
+>=20
+> The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d5=
+8f:
+>=20
+>   Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags=
+/i2c-host-fixes-6.10-rc5
+>=20
+> for you to fetch changes up to 5a72477273066b5b357801ab2d315ef14949d402:
+>=20
+>   i2c: ocores: set IACK bit after core is enabled (2024-06-21 01:17:43 +0=
+200)
 
----
-v1 -> v2: - add headersize per request into calculation
----
- drivers/usb/gadget/function/uvc_queue.c | 30 +++++++++++++++++++++++-------
- drivers/usb/gadget/function/uvc_video.c |  2 +-
- 2 files changed, 24 insertions(+), 8 deletions(-)
+Thanks, pulled!
 
-diff --git a/drivers/usb/gadget/function/uvc_queue.c b/drivers/usb/gadget/function/uvc_queue.c
-index ce51643fc4639..141e52e34c610 100644
---- a/drivers/usb/gadget/function/uvc_queue.c
-+++ b/drivers/usb/gadget/function/uvc_queue.c
-@@ -44,7 +44,7 @@ static int uvc_queue_setup(struct vb2_queue *vq,
- {
- 	struct uvc_video_queue *queue = vb2_get_drv_priv(vq);
- 	struct uvc_video *video = container_of(queue, struct uvc_video, queue);
--	unsigned int req_size;
-+	unsigned int req_size, max_req_size, header_size;
- 	unsigned int nreq;
- 
- 	if (*nbuffers > UVC_MAX_VIDEO_BUFFERS)
-@@ -54,15 +54,31 @@ static int uvc_queue_setup(struct vb2_queue *vq,
- 
- 	sizes[0] = video->imagesize;
- 
--	req_size = video->ep->maxpacket
-+	nreq = DIV_ROUND_UP(video->interval, video->ep->desc->bInterval * 1250);
-+
-+	header_size = nreq * UVCG_REQUEST_HEADER_LEN;
-+
-+	req_size = DIV_ROUND_UP(video->imagesize + header_size, nreq);
-+
-+	max_req_size = video->ep->maxpacket
- 		 * max_t(unsigned int, video->ep->maxburst, 1)
- 		 * (video->ep->mult);
- 
--	/* We divide by two, to increase the chance to run
--	 * into fewer requests for smaller framesizes.
--	 */
--	nreq = DIV_ROUND_UP(DIV_ROUND_UP(sizes[0], 2), req_size);
--	nreq = clamp(nreq, 4U, 64U);
-+	if (!req_size) {
-+		req_size = max_req_size;
-+
-+		/* We divide by two, to increase the chance to run
-+		 * into fewer requests for smaller framesizes.
-+		 */
-+		nreq = DIV_ROUND_UP(DIV_ROUND_UP(sizes[0], 2), req_size);
-+		nreq = clamp(nreq, 4U, 64U);
-+	} else if (req_size > max_req_size) {
-+		/* The prepared interval length and expected buffer size
-+		 * is not possible to stream with the currently configured
-+		 * isoc bandwidth
-+		 */
-+		return -EINVAL;
-+	}
- 
- 	video->req_size = req_size;
- 	video->uvc_num_requests = nreq;
-diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadget/function/uvc_video.c
-index 95bb64e16f3da..d197c46e93fb4 100644
---- a/drivers/usb/gadget/function/uvc_video.c
-+++ b/drivers/usb/gadget/function/uvc_video.c
-@@ -304,7 +304,7 @@ static int uvcg_video_usb_req_queue(struct uvc_video *video,
- 		 */
- 		if (list_empty(&video->req_free) || ureq->last_buf ||
- 			!(video->req_int_count %
--			DIV_ROUND_UP(video->uvc_num_requests, 4))) {
-+			clamp(DIV_ROUND_UP(video->uvc_num_requests, 4), 4U, 16U))) {
- 			video->req_int_count = 0;
- 			req->no_interrupt = 0;
- 		} else {
 
--- 
-2.39.2
+--slehwknibtnn2t6j
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ3aQUACgkQFA3kzBSg
+KbaVHw//XBwde8I/iJKLm+wqsb97f0t6S44b7ysYHN3vlW3xn7fGQrQIBpSX4iUS
+ON6ubK/n/43PzKmQUYVU03lGphF0yS9hLXMgZkEuPyl+jd8eD7hWWfvZtBDe4JRs
+eQpzEZw3M7z095Q0N3vPozjPbG9aKtl+hQ1eEiMfTqM2Gl3aTfXY5QODKJ3yBTWW
+iVo78vum9/r+AXfGzDT6TU6pFED6teOUzLne7OL0YRmQr1IVFY1N+Aht1aySHEJa
+Qxrv4eDvIx2eNgDXnj9u+8YTfEluVteisoIQ4WE4vY0sphkkSXg8cBINwb6VnjWW
+y5zxTr2vMTFRcMfEiDngISSL1arsnHiyaDY42krglJRPq2Bpc00Toz+DtqB5KBHx
+2mlQRPs41wKMwvPzzbEPdwSBsfeR8GT9EKybxk+X5VFFN/Cg9BfcgXtvzvcT4zDG
+7RfwGZlw4hqnWC8O5to6QwCbGknCdInwDGOUTeFq+FO6LszvqaFl9WABSQnD3njd
+HOcczU28dWzne/EzIYywV30U/AZDXCRBQwTr48UopyyuUQuWqJrXRX01UScLPtjX
+4sCVlxxlro6w/yJ/zRUMESkCc7/M7qtuu9fuy+NVF2TEoNqGA5dsrS8lFkmnbGq+
+6b7ZAPmZzX8vYmcKnJQIrMCCES0JpOkhsSOi+wfpEgMNX2Am08c=
+=bLO4
+-----END PGP SIGNATURE-----
+
+--slehwknibtnn2t6j--
 
