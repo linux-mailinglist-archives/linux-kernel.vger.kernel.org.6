@@ -1,109 +1,88 @@
-Return-Path: <linux-kernel+bounces-226453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA87913E8E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:34:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73C9913E8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BF701C21025
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D532281569
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3722B5A11D;
-	Sun, 23 Jun 2024 21:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U9yCtxVn"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA581849FB;
+	Sun, 23 Jun 2024 21:35:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D380512E63
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 21:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782C212E63
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 21:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719178436; cv=none; b=JQdywVIbpkq37qijD2Nk3puRC71geLqAJ/LnxKk6kZm54BJGBL++NOg9m5cVzAqBBqXDegmMJZJRGtKV/QOuRJg9zrbSYY3WGM/a1jGq6FTWDYQYxnz3Dw/k7c91ti/SPjE6CLjuRb7vSE8mLFut8+4nq33CswFZcVSujD8GIgo=
+	t=1719178505; cv=none; b=bTbQ3D41oiAk06ODsZYTPRIBMvdshU01jXlYlROpFWkrTOmBVWPKWNVThpRpkGOwyFnKqkw9KEWduQLqONa9YswHjUQouTlD0JG/SSoBtlTSJmn5d+JJEx3H7DPjM6KBTuOZ1CulTJahwcU02csGsG15CVuESiYvL8ADR71TqQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719178436; c=relaxed/simple;
-	bh=3YGXMdWLCMGu29Y2FQ9xs4fuR6a8LEYWBTkUigaGmeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+VyRY2kRbMVyX+GBgajumkoje41eV/2I9MvQRpYu0DWfOldj8hqZMxmlOq0DaD4d9yWCeIghhKfzIKKsLilZG1xeijX85u/kZXtxgQbFu7Gjv8UfDRSsBR3ZkxCiiY8h34G8vzHISzdcFfheitdfrNnjV2et114R6mRxM43rZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U9yCtxVn; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5295e488248so4183419e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:33:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719178433; x=1719783233; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wi22f/hqoDR5OnYjP9AudC72e1IdaNHxlqmDAvO8bUg=;
-        b=U9yCtxVngKAhb0ZzNz95I4NrDE4Bl9sQempgdmuEWdoHwg9Np2LprdsYiyvnLlu+SM
-         i6m+WBQRkbk4H1GgDu7UJuSFexiE7Aw3tEFu6YT+CIhgYuw+e36HIBv/cZGbZplTrabm
-         iQDvUyRXxhstGy/aY4YF/35OMBvpCqNV3MYfvTaTudf6/wwT1WvwH2fAMlVTOdD8/KbL
-         E/n+K0+LqgrBUcwWQw9seRa+n02SyWAyDbzga6AeI1R9u2cQfesdUUBCgaxvY5nbxg93
-         1UB+ZBL1UviWBJZrD7kLNiPApC2ZpXHoQrUoPlW77gRf/jsVxjKNx+jI5XZbkbAPCGcI
-         s1WQ==
+	s=arc-20240116; t=1719178505; c=relaxed/simple;
+	bh=Sw+TD4YyZoaMLMRdVzFbPoB0nEwbx30qseviAQXTbqY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YGW8AIhwvuo3AdPeR4fDC05+BXsLH/bTKn8DitOILEgC7M+vl51TRQZVg3KLGvbswOZMNMqPufQkJDVPUdNew9spuvGhBOqkO+LKIcH05GL/WdFNW6mnsfYQie50yJCk1DjpB3bHSaca2SibiDLUHe6gHq783ITXpgVl2s/F11c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7eb7cf84c6cso448763939f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:35:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719178433; x=1719783233;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wi22f/hqoDR5OnYjP9AudC72e1IdaNHxlqmDAvO8bUg=;
-        b=Pyko2Xr907WlY30iKFzHXeqhnuuI18DalW5Xhdj87b3ksIxqzWAOjml7d8uxGgDkhB
-         a6s66fQG8qklWLSImxXzPSOoO0oY+ZKMv1iEk/7cNMgvnalzze5SV5BwnOtxfoliGkKz
-         iyxtuvF3gNrwVpDN4RDY4lO4LJJ5uov7vBfsKmdcXh6DaRU/jXYJNIRAPP9Ht3SiUX4n
-         mQVVyiWSHdAURWz0TzTbf3OrBaDy6JGz3AAYFm7J12N8u89V3X8SozgBByTclyNhh2Pp
-         t7+jRRQP43cgu9CVDwW7gllyTrBNUhbA3MekfDh5Yvc+dsqiYxx/nTrNSeamugO0EH95
-         VwAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpqjNfnAuaf89Hi0bWjLzFvDXCiPpS88PfXsHolcGzrxJUweoy5Qf3xb0fP80xm69M1upobkKHrfiIo8AEAJ5oNyNAywJbXBZ5KGBn
-X-Gm-Message-State: AOJu0YyOeF8PB46R+Nln9hIvfvmh8R+DpkHydw1GtqcuXTOqNy6Y5o69
-	O9vfc2tambz7mnOOQ8Bga23FyXae96LJW6za7vUvkU4iGsxw7DLPolMrqTbECM4=
-X-Google-Smtp-Source: AGHT+IHDu+1XQ7zGrkcWkNtNb3JYw9Yz85SHVmkWLAFl8FdxQK3tb9C1BBWyth8Gh5+CWEycOLHI1g==
-X-Received: by 2002:a05:6512:138e:b0:52c:896c:c10f with SMTP id 2adb3069b0e04-52ce185ec71mr1915808e87.53.1719178433033;
-        Sun, 23 Jun 2024 14:33:53 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63b4100sm846863e87.36.2024.06.23.14.33.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 14:33:52 -0700 (PDT)
-Date: Mon, 24 Jun 2024 00:33:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: qcom: use generic node names for Adreno and
- QFPROM
-Message-ID: <p4gozpzctrcmdijtxalcwpcfhfzd5wcft4mau46tpik2kv6di6@v45l76uc4mnf>
-References: <20240623120707.45764-1-krzysztof.kozlowski@linaro.org>
+        d=1e100.net; s=20230601; t=1719178503; x=1719783303;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T8kOgzV2rObAvsB/l3xiHbVFH968lV1DaVZFHOSTDXs=;
+        b=R8eOaoJnersTkh0R/xmMlhHDtRZqpIHJje8BbeV2BRuguDVqkYet8FGCDN/F3zH3CC
+         vV/o5WmSnTQAsrLJcZAnwUZf0cQLsXQV7qazswFmsRMKYizUF2xklu0EAjiONSHIurMp
+         q//YeR+dlEir9AHU3RHXQ7WJ4oTo73G5NJae44F1RTyi08p6zXbs7/rB7C8p5HUuNyty
+         oK13UKgNa7BgFx0AnoAmKCS8+F1VJSYcdQ+ZG1xlHCckEG9ezuE7OTImfkc0PncLlVjw
+         KKuKs8PVICvEKyNsQ9E41pIUK1yPKgHwX3HfF/1LA9sQv3rwFE1lhS2OMtvDmI90qij8
+         ay5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUOtcIrr1PwfA/0HYz9zQo1gmaKsYmyxyQ2CScV/H4GVQUnVjHaOMv/hM4LuuBF0+3kx7QBYdei0DypjBVPf0yvCDxdvHNztm62eK1I
+X-Gm-Message-State: AOJu0YzgUSEC9JLsj0QpnTCgBdvOWWnEFB25L0WysOv0b75l6BQl7n+Y
+	/0ua0BeLSWSTmXAzrIB3lkxO2Rfoh2D/lA52Dl8ZIgyxVYkx4t2KEg4VsvrGwWgaVtAbF6wHEsZ
+	nUHEbqZoZxYuQWCnI7H2bZ5yICdC+H/X9SIdU2MYqk3120gV+Kkor3LE=
+X-Google-Smtp-Source: AGHT+IGJ+Ve0VSmOgbbOEpBDp3QjKEZQntdY2P7eAZkGNoth7HBddnTGdPLQtRt72mtgrIVRsiwGcffdX6TmtX1QseweatoVvLIj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240623120707.45764-1-krzysztof.kozlowski@linaro.org>
+X-Received: by 2002:a05:6638:379b:b0:4b9:ef59:1d1d with SMTP id
+ 8926c6da1cb9f-4b9efb7a60amr55087173.3.1719178503642; Sun, 23 Jun 2024
+ 14:35:03 -0700 (PDT)
+Date: Sun, 23 Jun 2024 14:35:03 -0700
+In-Reply-To: <dc1baa76-a404-4896-a1b8-affdb2cc4ac8@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000003f03e061b9570c0@google.com>
+Subject: Re: [syzbot] [net?] [nfc?] KMSAN: uninit-value in nci_rx_work (2)
+From: syzbot <syzbot+3da70a0abd7f5765b6ea@syzkaller.appspotmail.com>
+To: jain.abhinav177@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jun 23, 2024 at 02:07:07PM GMT, Krzysztof Kozlowski wrote:
-> Use recommended generic node names for the Adreno GPU and QFPROM fused
-> values device nodes.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 4 ++--
->  arch/arm/boot/dts/qcom/qcom-apq8084.dtsi | 2 +-
->  arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi | 2 +-
->  arch/arm/boot/dts/qcom/qcom-msm8226.dtsi | 4 ++--
->  arch/arm/boot/dts/qcom/qcom-msm8974.dtsi | 4 ++--
->  5 files changed, 8 insertions(+), 8 deletions(-)
-> 
+Hello,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+syzbot tried to test the proposed patch but the build/boot failed:
+
+failed to apply patch:
+checking file net/nfc/nci/core.c
+patch: **** unexpected end of file in patch
 
 
--- 
-With best wishes
-Dmitry
+
+Tested on:
+
+commit:         f2661062 Linux 6.10-rc5
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5d2cbf33633f507
+dashboard link: https://syzkaller.appspot.com/bug?extid=3da70a0abd7f5765b6ea
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=104e8a61980000
+
 
