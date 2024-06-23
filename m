@@ -1,111 +1,133 @@
-Return-Path: <linux-kernel+bounces-226347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23071913D55
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:39:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0E3913D56
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 19:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F381F21213
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D452814DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4EA1836C4;
-	Sun, 23 Jun 2024 17:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC551836CA;
+	Sun, 23 Jun 2024 17:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="mHvI5iQK"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AklQ98c5"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981BF181CED
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 17:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57371183063
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 17:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719164391; cv=none; b=SP1wjpifIh8L4XQCIRXDNfWhIp/PzVvBAsrRQPjQLkCrmNj+k4njSwm/CAbZbNR1K6eRjNAZz6ip7u7ASjkk3UVo4tTf9nSX5AoCcXkL9rcf075RgrAUsgj6jph3MtEl8+NyhLwLvBrlKudQqSRy1kg/jstzWz/i7/Kc8ykZDK0=
+	t=1719164580; cv=none; b=mGWBfLYs290jZAixMWBoWYz2PwpBL/g4F3zePVcURlCz7LPHEGDoAKZfQo9ELP4HFNO2ZCCNKM+o8mvB6JwFBoCWji1JOk9cpR0QvL2wS1S0tP8cSFW/bT7xViYy0Bocr/wM6xP3tT+PO5B9b/1VGU7jeZHxKvRdIM6h0quoYlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719164391; c=relaxed/simple;
-	bh=J9TMkV4ZdM0Epwm9IEsv8V+QNbxwRffk7WxHdUlTbAQ=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RpB0rE+zwUjr9RK7Iixy+EMtS7vACny2+jvenzJG8L38cMUyfK2ijwvjAxAqPXfCogbrYdu8Q7i2Z0gZ3dhcWdySCMl1jfxpmpfbFeKiFNk8++gxe0kcfoBuRivi4JBHmYZEdYz8H2GTvpFcX+pBmiqro+OYC+xVM+GixUX3jMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=mHvI5iQK; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NHBVjM026625;
-	Sun, 23 Jun 2024 19:38:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	8psInQVn9Me0332vc4g9dy61RVy3/pavE8OpH2L34BE=; b=mHvI5iQKUNHIm5+i
-	PQ2PwoTrEpayZrTYyD9XtOMMDXTi4zXQNyw5fU8XeJn0XL4hnP/6TUEZzQ5w4O9V
-	774FD4oscz/d1IrEn8aBc00zmosa5BRuGq0OuYKSGO+7lwHDzgKtE1HnCLscM//T
-	LuKsUYixgwmM01Zd6vd5D+GNvb29d9B+p/T0NStyCLoAb3cXIr4wdDLrFzIcXcL/
-	ZOApvk7Lp+e6oSSK3L8T0TznTEiHMoJUQPFVgBnist+8D3sATpdaYPYkEGS/hMqA
-	klVb6cTC9KfTCCDVfffq9F+NAMIPgMqk91mfUWv1p2lRTmXtwSDHolWTGwedA4Jq
-	12wJ2Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ywnxx3spn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 19:38:58 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A11A04002D;
-	Sun, 23 Jun 2024 19:38:50 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 46C932207A7;
-	Sun, 23 Jun 2024 19:38:14 +0200 (CEST)
-Received: from [192.168.8.15] (10.252.20.50) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Sun, 23 Jun
- 2024 19:38:13 +0200
-Message-ID: <2ee5ec54d3aff6e37ec1245eeb019d52e6a3d63f.camel@foss.st.com>
-Subject: Re: [PATCH v3 7/8] ARM: stm32: allow build irq-stm32mp-exti driver
- as module
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Russell King
-	<linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>
-Date: Sun, 23 Jun 2024 19:38:11 +0200
-In-Reply-To: <87le2va7t5.ffs@tglx>
-References: <20240620083115.204362-1-antonio.borneo@foss.st.com>
-	 <20240620083115.204362-8-antonio.borneo@foss.st.com> <87le2va7t5.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1719164580; c=relaxed/simple;
+	bh=oscGVzq/NKo+oTZZ1AvZihbrJjyPE1GySVqYQwm8a2Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y1Eu+ixjjQl2T2nf0FnPQncqdiZ0MI5zryaavilzbHzfU42JviOV5iCQR0H9Ooyt5CKe9hO6cFOSQMD0H4ouihnz5MI0dIwqykagSPp20B3CHWOUzsWqiH+IOOWdxhTU73s32SDmt6pHDlrnFe8uwvJ29P2hr3k0qZpy/lM3i/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AklQ98c5; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52caebc6137so3512857e87.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 10:42:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1719164576; x=1719769376; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=r5fJ88lZfkWH2C1vrrOnmXc3j9YkLX+Ta+d42tuBCSQ=;
+        b=AklQ98c5y5GpSHdzkbaILAXBawriQq9/QvitJ3a5mjQe/JDWEeIiH1RGV3LK+9EOwN
+         ueqkDJowaZrMvKhShS2gpUa6B9v9iVzdek3iC/Fh96V9JsdA11a42qo/W21d7pxFu8/M
+         DdWOcpqv+6vCx19jfHvoaiET4ztWWhkMGQ0yA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719164576; x=1719769376;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r5fJ88lZfkWH2C1vrrOnmXc3j9YkLX+Ta+d42tuBCSQ=;
+        b=LmU8MEM0apL5rf9TW8DA4rGuvw2MfsFHqHYtt4WnhbR3M3NZ0npGxpAGUkvSnMr237
+         WJdZkyC3JJ5Kp1ama2vjl0ExysNqH3oM/IuR161eLLRcs9lfD4o86zn3sVWvwruZ/8dl
+         hWYRIT9H4LQPfKX5VdGYRyy/m5DDXPhMXJ0DUQX0kbzKT1BXa6an09pYTzpTHTNL+G1J
+         muw59PDIFhVOOgP8/zc6MvRjFoUI8glj9OiUKs/BucHpgrMKoRZ+l3RjCY79dbX22rgj
+         zGMhHE4MAqG3uU0m6LusJxV2sdwh9RQNCnv+UcuznB28f6GfTSlhUIQSdQx2tapN+ZJM
+         cD/g==
+X-Forwarded-Encrypted: i=1; AJvYcCX8liqWOsM/linHoqoQIBC059Tqdlw7TKmVWfGm3JUcNenEL2oAHIJ6KPnb5rHq9XxU6wKWvshs43GlxLMC3VB2BmkhW5G+KwzzwozA
+X-Gm-Message-State: AOJu0YwhYPISsC5px7W0zmq+hacIj1yq/rHHNBzcKD4pgQ9ufqz5yf46
+	p0qKVgsK5cqjuej15538lc1Pmo/N40ANayKJFzlZ7lV66AovCYSc9UOXpNxIk7g7lXWeZoXzD9j
+	NEPGEAw==
+X-Google-Smtp-Source: AGHT+IEKJuFegftbiPbPZtftoonlhQcWNLsZ0aFxj7oVHwY4TEkSHD0YEFSxf6IoMBdVyKprdoCeLw==
+X-Received: by 2002:ac2:5e79:0:b0:52c:dc0b:42cf with SMTP id 2adb3069b0e04-52ce18324e0mr1288659e87.9.1719164576191;
+        Sun, 23 Jun 2024 10:42:56 -0700 (PDT)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a724ae806dbsm88072266b.41.2024.06.23.10.42.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Jun 2024 10:42:55 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57cd26347d3so3718937a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 10:42:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUtoLAvs3gnD1hUR8K+3Qkn7phAKPcyybydyVJihTSJjSeCNX2uuhdoYEqDvQLjdBdjzHlQeuPt+mtWBcBDHsQniz5PFuzyKM9EZqpb
+X-Received: by 2002:a50:99de:0:b0:579:cd46:cbfd with SMTP id
+ 4fb4d7f45d1cf-57d4bd804c1mr1559683a12.18.1719164574484; Sun, 23 Jun 2024
+ 10:42:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-23_09,2024-06-21_01,2024-05-17_01
+References: <202406230912.F6XFIyA6-lkp@intel.com> <CAFULd4YVOwxQ4JDaOdscX_vtJsqJBJ5zhd0RtXXutW=Eqh29Qw@mail.gmail.com>
+ <CAHk-=wg1h4w_m=Op1U4JsyDjsvqG0Kw1EOVMQ+=5GX_XytdorQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wg1h4w_m=Op1U4JsyDjsvqG0Kw1EOVMQ+=5GX_XytdorQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 23 Jun 2024 13:42:37 -0400
+X-Gmail-Original-Message-ID: <CAHk-=wiM5CNFsxnTnKxX+bGgA8E5r=sSD5iy2evcTDs0ARihHw@mail.gmail.com>
+Message-ID: <CAHk-=wiM5CNFsxnTnKxX+bGgA8E5r=sSD5iy2evcTDs0ARihHw@mail.gmail.com>
+Subject: Re: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
+ requires more registers than available
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 2024-06-23 at 19:27 +0200, Thomas Gleixner wrote:
-> On Thu, Jun 20 2024 at 10:31, Antonio Borneo wrote:
->=20
-> > Drop auto-selecting the driver, so it can be built either as a
-> > module or built-in.
->=20
-> How is the driver selected then? Has this to be done manually now?
->=20
-> If so, doesn't that break things when starting from an empty config?
+On Sun, 23 Jun 2024 at 11:42, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> For example, why does that 32-bit __arch_try_cmpxchg64() do this:
+>
+>         if (unlikely(!ret))                                             \
+>                 *(_oldp) = o.full;                                      \
+>
+> when I think it would be simpler and more straightforward to just do
+> that *(_oldp) = o.full unconditionally?
 
-In patch 6/8 it is already selected through:
+I can repro the clang issue, and no, removing the conditional doesn't fix it.
 
-+	depends on (ARCH_STM32 && !ARM_SINGLE_ARMV7M) || COMPILE_TEST
-+	default y
+A plain revert of
 
-Regards,
-Antonio
+   95ece48165c1 ("locking/atomic/x86: Rewrite x86_32
+arch_atomic64_{,fetch}_{and,or,xor}() functions")
+
+does fix it.
+
+The problem does *NOT* happen with a defconfig, so it's clearly
+triggered by some horror in that config:
+
+    https://download.01.org/0day-ci/archive/20240623/202406230912.F6XFIyA6-lkp@intel.com/config
+
+and a quick config bisection seems to imply that it might just be
+
+ X86_MINIMUM_CPU_FAMILY 6 -> 4
+
+from setting CONFIG_MGEODEGX1=y instead of M686.
+
+Hmm. While I'm not willing to leave x86-32 behind, I personally have
+thought for a couple of years that we should leave Pentium and earlier
+behind. We should just require cmpxchg64b support.
+
+It does look like the complication at least partly comes from the
+emulation alternative, but I didn't go look any closer.
+
+                Linus
 
