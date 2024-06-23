@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-226305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2787913CBF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:26:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16A6913CC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8C461C21BAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:26:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABD0E2830B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 16:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EA8183060;
-	Sun, 23 Jun 2024 16:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B774183070;
+	Sun, 23 Jun 2024 16:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhYxECAz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OAt4sdQU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3345627453;
-	Sun, 23 Jun 2024 16:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FC01822F5
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 16:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719159985; cv=none; b=MZ2+jBekR8JgQhYG9Swgk/pSIIWVapjvuZkpkiVPjhkBUrhbMGRyYSS8C/gimO0tIAqw22Z1NrzbZiY+WhpXLGLgis7JWPP07gA6czsHsif2rwiK+6EOleC4JUuF2+/Gd0W7r60DoFi0u7SyeAiZcJG01nbxoK0iscYgm3zzumU=
+	t=1719160118; cv=none; b=hX0Ooe4UoQy/s5VXYtrJ5yXXbnt844MQaYq4zrQZ+atPsZa4nS8OJ9fiSE6M1+kkUejd/MDcDQh+soUAzAQtn/dptB5c3/hr1MZpjH0JdJThDMgH67P7x63kKyaq5uo+2fOEivMGZZ0W/H93BIe6UVqafQ5Ggz8Shxdndl9mbP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719159985; c=relaxed/simple;
-	bh=q9WIgL8LdLkTd1T79DoVi1Pm+3puHs7bQUNI4ky/kNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DfYZ4jkfDVKwkWDtRaaMeYbalm3lDw+kO51HlVTkbzdcqFcX0fmVSnRbyGCSPAo2wryFTrfH/APYJSZXYuYw2ZVad++kdVUVbSdkabSa1HC65s3djt+a48uZkm+HLmRw0GUNtIIv+CXMZOtavxMlkHd3ol6IX0rrSSysHA+Zhrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhYxECAz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B43CC2BD10;
-	Sun, 23 Jun 2024 16:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719159984;
-	bh=q9WIgL8LdLkTd1T79DoVi1Pm+3puHs7bQUNI4ky/kNw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mhYxECAzj9D+XmT7o+C3dJps4MQ4/jd5l5QAM2i8pYjiTyT9wCZghBhLjfVm0ZkSC
-	 Ovhm84fVxf+ikMkT2G1gW+Qx4WdPg6f3ubD1L7LqqbVah78RDH79545tmH54bbJ7gA
-	 zhC0UKfJM38K21pczEwFvWtk3AXECII3leU76Fq5Cn/lkGgamxCoWA05EM6gW3cJVe
-	 hZS9oC+Et9G+vOhOWhf1SkKVrLXHjpHpsIFv25NcVMbdL+MN1PTVHxqtvLS6Z53E0x
-	 XrV+VvdDYPtrnCDsoeChtO1ga1/RMy4B4cOxuR2XAMBg0jzsc+VB7T2Srdwl7xuidj
-	 sk5QwYfgQDnZA==
-Date: Sun, 23 Jun 2024 17:26:15 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
- petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
- linus.walleij@linaro.org, semen.protsenko@linaro.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Adam Rizkalla
- <ajarizzo@gmail.com>
-Subject: Re: [PATCH v8 3/3] iio: pressure: bmp280: Add triggered buffer
- support
-Message-ID: <20240623172615.2123a9c0@jic23-huawei>
-In-Reply-To: <20240622140911.GA130946@vamoiridPC>
-References: <20240617230540.32325-1-vassilisamir@gmail.com>
-	<20240617230540.32325-4-vassilisamir@gmail.com>
-	<20240622104039.6bb4033b@jic23-huawei>
-	<20240622140911.GA130946@vamoiridPC>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719160118; c=relaxed/simple;
+	bh=j+G1rCF0ZlMASY55SFj/LvYvFeRAYxy7y8hu/Ng565E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EaM3qRa1jCLDka+fR0CVkgGIuk06acXdMX818ThhKl7btq0DJpr7MAldA2gpETfgVOJzW3NilD9nnbp3jKCLPzCKwF3kMuytbz2H+47WRBM3y+Q8peeNQwmrRtYMF8DuU5rGucrqbkU/wwvk/XV8+nwksW6XBP50x01EwSYcuoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OAt4sdQU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719160115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/gnaWRD8ylcnmm1NRbcxG/FfvDBQo2p7E7YoZdMGokg=;
+	b=OAt4sdQUBenMymG07mcfy8jGeN8S8Y4Ev9hJaN4iwGdMMZWiLN+Gl4LH5tJVMDmZErTwGj
+	MgYjxExNQdMtPXT6xRXNcBxKPKMPTLZu9MOb63y6RzkZEFj06ADOaaKNnTO2FS1t8HfxXZ
+	7BV7czKYYoePKlz/ibpKinUsTnLZGVo=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-354-N4HFNCRaMSSY4mqaRN6-hA-1; Sun,
+ 23 Jun 2024 12:28:27 -0400
+X-MC-Unique: N4HFNCRaMSSY4mqaRN6-hA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2994D195608B;
+	Sun, 23 Jun 2024 16:28:25 +0000 (UTC)
+Received: from [10.22.16.52] (unknown [10.22.16.52])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B3B1A1956087;
+	Sun, 23 Jun 2024 16:28:22 +0000 (UTC)
+Message-ID: <dc0b2650-4c0d-4f52-8c60-b9afbe728103@redhat.com>
+Date: Sun, 23 Jun 2024 12:28:21 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cgroup/cpuset: Prevent UAF in proc_cpuset_show()
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Chen Ridong <chenridong@huawei.com>, cgroups@vger.kernel.org,
+ bpf@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+ Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall
+ <julia.lawall@inria.fr>, Peter Zijlstra <peterz@infradead.org>
+References: <19648b9c-6df7-45cd-a5ae-624a3e4d860f@redhat.com>
+ <b8792fb5-9efe-4dfc-ab61-6fa55a4b0d51@web.de>
+ <2c70eff8-c79a-4c99-b8db-491ce25745a0@redhat.com>
+ <f40c4a72-0c6c-4846-a926-ba1eb2763697@web.de>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <f40c4a72-0c6c-4846-a926-ba1eb2763697@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Sat, 22 Jun 2024 16:09:11 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-> On Sat, Jun 22, 2024 at 10:40:39AM +0100, Jonathan Cameron wrote:
-> > On Tue, 18 Jun 2024 01:05:40 +0200
-> > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> >   
-> > > BMP2xx, BME280, BMP3xx, and BMP5xx use continuous buffers for their
-> > > temperature, pressure and humidity readings. This facilitates the
-> > > use of burst/bulk reads in order to acquire data faster. The
-> > > approach is different from the one used in oneshot captures.
-> > > 
-> > > BMP085 & BMP1xx devices use a completely different measurement
-> > > process that is well defined and is used in their buffer_handler().
-> > > 
-> > > Suggested-by: Angel Iglesias <ang.iglesiasg@gmail.com>
-> > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > > Link: https://lore.kernel.org/r/20240512230524.53990-6-vassilisamir@gmail.com
-> > > ---  
-> > The sign extend in buffered path doesn't make much sense as we should be
-> > advertising the correct bit depth for the channel and making that a userspace
-> > problem.
-> > 
-> > I'd failed to notice you are doing endian conversions just to check
-> > the skipped values. Ideally we'd leave the channels little endian
-> > and include that in the channel spec.
-> > 
-> > Hmm. I guess this works and if we have to do the endian conversion
-> > anyway isn't too bad.  It does provide slightly wrong information
-> > to userspace though.
-> > 
-> > So even with this in place I think these channels should be real_bits 24.
-> > 
-> > 
-> >   
-> > > +static irqreturn_t bmp580_buffer_handler(int irq, void *p)
-> > > +{
-> > > +	struct iio_poll_func *pf = p;
-> > > +	struct iio_dev *indio_dev = pf->indio_dev;
-> > > +	struct bmp280_data *data = iio_priv(indio_dev);
-> > > +	s32 adc_temp, adc_press;
-> > > +	int ret;
-> > > +
-> > > +	guard(mutex)(&data->lock);
-> > > +
-> > > +	/* Burst read data registers */
-> > > +	ret = regmap_bulk_read(data->regmap, BMP580_REG_TEMP_XLSB,
-> > > +			       data->buf, BMP280_BURST_READ_BYTES);  
-> 
-> With the bulk read here, we have 24 bits of temperature and 24 bits 
-> of pressure, so in total 6 bytes. The only way I can see to not do
-> the endian conversion is that I memcpy the first 3 bytes to the
-> data->sensor_data[1], and the last 3 bytes to the data->sensor_data[0].
-> 
-> If you can see any other better way please let me know, otherwise the
-> other solution is to use get_unaligned_24(). Still, we won't do the
-> skipping part.
+On 6/23/24 02:18, Markus Elfring wrote:
+>>> …
+>>>> +++ b/kernel/cgroup/cpuset.c
+>>> …
+>>>> @@ -5051,10 +5066,12 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
+>>>>        if (!buf)
+>>>>            goto out;
+>>>>
+>>>> +    mutex_lock(&cpuset_mutex);
+>>>>        css = task_get_css(tsk, cpuset_cgrp_id);
+>>>>        retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
+>>>>                    current->nsproxy->cgroup_ns);
+>>>>        css_put(css);
+>>>> +    mutex_unlock(&cpuset_mutex);
+>>> …
+>>>
+>>> Under which circumstances would you become interested to apply a statement
+>>> like “guard(mutex)(&cpuset_mutex);”?
+>>> https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/mutex.h#L196
+>> A mutex guard will be more appropriate if there is an error exit case that needs to be handled.
+> Lock guards can help to reduce and improve source code another bit,
+> can't they?
 
-If you return in cpu endian because it's convenient that is fine, but
-still set the number of realbits to 24 or whatever is appropriate.
+For simple lock critical section, there isn't too much difference in 
+term of readability between using lock guard and normal lock/unlock 
+call. If there are multiple exit points in the critical section, lock 
+guard can help to simplify the code. For those situations, I will 
+certain try to use lock guard.
 
-Or as you say memcpy the 3 bytes.  There is probably an arch out there
-in which that is much more efficient than the endian fun, but I
-can't be bothered to figure out how ;)
+Another reason that I go with normal lock/unlock is that none of the 
+cpuset_mutex lock/unlock sites in cpuset.c has used lock guard yet and 
+there is no good reason in introduce something different from other call 
+sites.
 
-Jonathan
+Cheers,
+Longman
+
+
 
