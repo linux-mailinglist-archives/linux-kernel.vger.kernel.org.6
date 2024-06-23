@@ -1,194 +1,96 @@
-Return-Path: <linux-kernel+bounces-225911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 520E9913752
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 04:22:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E772191376B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 04:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C960C1F22655
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 02:22:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83FE71F2256B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 02:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7505BA29;
-	Sun, 23 Jun 2024 02:21:48 +0000 (UTC)
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2116.outbound.protection.outlook.com [40.107.117.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FF0D268;
+	Sun, 23 Jun 2024 02:41:57 +0000 (UTC)
+Received: from out28-149.mail.aliyun.com (out28-149.mail.aliyun.com [115.124.28.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524042F5A;
-	Sun, 23 Jun 2024 02:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719109308; cv=fail; b=PzQJKFvSWlF3jM6bydZ/KPXb7ihS3xKw6rk3mziP96wbjtUIlBcG22XNwo6jVqPs8ITSbv4cHXoACrfstfyClYWHZVnYbLoFhf29S5Nj8SjKdhZAEWpCrV1AoFp8UvhX8JCv7OJvds3wL0teiAbGfS88An6DNpZsFto1ebjtMtQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719109308; c=relaxed/simple;
-	bh=a5CXsmIt6J/B60XAPDbiGAWk+Sz4cw/QF4BaSm+sNaw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fKaJMTfHlGIpPS+4fDxEBAYmkaHjkUu2/LkP/zOevKYbqj20ymUzD1+fEeOdYJLGli5yOvuSJhT70NmH/gi5K9KjGotw/NNEXMC8mc99MxZ6KH0IHHwSklkXF+J2gs0sYwoqSVFj8dWzthK8v3sOT+qZXJBR9YXbFbWgggS2Pjc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.117.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lUFzaB5/d2EmrMgXJOxwPVakQ7Xyzcy3oeFHQWpUmQTOgi++WYKZCuX/x+sV7bjOTwuBVfC4DM7aDk31C5SMCo+82xoq6uYbQJjMmPllz9zR9f4cQVhKh1uV2+Gs802sVdw6VbsGk5QmGCrhEb7ptLqVu5ZmtHdbtNvNfiVeju7+2S8+J+pUj7g7zjFYBlaybyJmDjLcxpPVgwisvSQBRde5e3TDhbQ2KkfJT3zdi9WkQg3UZ546Ub17lUHuzWGUNeqNKHny2V/S2rvXYlj39NHc1eWLNjhsHHJrnFnNmPRi66cNEzMrZlFuh1peedsjzaAvQK4kARtCNvM3kghBow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a5CXsmIt6J/B60XAPDbiGAWk+Sz4cw/QF4BaSm+sNaw=;
- b=edFQDRVjmo/Lj4c6JtWb8UOblFyLvqYXSQv5Ynn7jz630e34OLfB/98egafl4I7vubHrk3TCy1nYDyxVP/w0wVn9ed9p/OTduPn1DlUDjpDBK+1cL+z//L9bM1oA0aInkxQ+uEjC3Cwz8cr8eti2YXPkos1LGjrBnoauHSC4zAhpV/jpJMoVOhrj83fPjJBlUZyVGqebbWAQoMprbtS9QjAWo0mztZHnzKFX5StIGhWfBPXhlEKRZIE42t54qLmc4x/9uKgLiVFzkdvwPuKd/z1KzgIGKMnQbhYGFoSxowG6H7uWz0kplMLIAR7NleOCA5I+7XMVhQNJ8k9RlMOVvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
- dkim=pass header.d=wesion.com; arc=none
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
- by SEZPR03MB6959.apcprd03.prod.outlook.com (2603:1096:101:9e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.38; Sun, 23 Jun
- 2024 02:21:39 +0000
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0%6]) with mapi id 15.20.7698.024; Sun, 23 Jun 2024
- 02:21:39 +0000
-From: Jacobe Zang <jacobe.zang@wesion.com>
-To: =?iso-8859-2?Q?Ond=F8ej_Jirman?= <megi@xff.cz>
-CC: "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
-	"kvalo@kernel.org" <kvalo@kernel.org>, "duoming@zju.edu.cn"
-	<duoming@zju.edu.cn>, "bhelgaas@google.com" <bhelgaas@google.com>,
-	"minipli@grsecurity.net" <minipli@grsecurity.net>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
-	"brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>,
-	"efectn@protonmail.com" <efectn@protonmail.com>, "jagan@edgeble.ai"
-	<jagan@edgeble.ai>, "dsimic@manjaro.org" <dsimic@manjaro.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
-	<linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 3/3] net: wireless: brcmfmac: Add support for AP6275P
-Thread-Topic: [PATCH v1 3/3] net: wireless: brcmfmac: Add support for AP6275P
-Thread-Index: AQHawrWkSZjILdfElUC6XOD5DUOw1rHS7xyAgAGnXp8=
-Date: Sun, 23 Jun 2024 02:21:39 +0000
-Message-ID:
- <TYZPR03MB700154AE39D44B8D166344BF80CB2@TYZPR03MB7001.apcprd03.prod.outlook.com>
-References: <20240620020015.4021696-1-jacobe.zang@wesion.com>
- <20240620020015.4021696-4-jacobe.zang@wesion.com>
- <fro2xcwsnvbxmpszny6g2p36z4zwoq4kegmpvww4twxir5piez@a3c2nbwitmab>
-In-Reply-To: <fro2xcwsnvbxmpszny6g2p36z4zwoq4kegmpvww4twxir5piez@a3c2nbwitmab>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wesion.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB7001:EE_|SEZPR03MB6959:EE_
-x-ms-office365-filtering-correlation-id: 65198ea4-1916-4e53-b573-08dc932b3713
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230037|366013|376011|7416011|1800799021|38070700015;
-x-microsoft-antispam-message-info:
- =?iso-8859-2?Q?+P9aQxqiB8YckZNSbz7yk9eq6BZVbzGA/9m16anB9DH8nWWo5fj9zMWuGQ?=
- =?iso-8859-2?Q?Cnkz2/OkiGMXq2MKagNm7+F+Dwkq0uLKLnI/lTn2Sck+8MU8RZQTNN9EWn?=
- =?iso-8859-2?Q?4AeWh2LfnBbFJ6NEMn2HW5T17jsakpTtvYh6mDWnK+X8/NW15X2Et0Jcs7?=
- =?iso-8859-2?Q?FCHMDsSk4UynIUPzzjagQu60BmKdsr4uSJINuK9zHxr9SUQ+JQz7BxfXDp?=
- =?iso-8859-2?Q?/WGY4kIPsYrZNKK0Xa3/WzQq9Lb1Or5C0GjIHONP29RsmBWL/QlDuiWhom?=
- =?iso-8859-2?Q?2RBlhfVU0Hvw/6VeARQZ8XPqjaS93HU0A1FL+bxJukE0tDsuhEno6u6Sw9?=
- =?iso-8859-2?Q?GXe06iSBIKlnTFFjos6+bZyVR96BJqFoxAD4qrd+EPoL6PmJmhYXHE/pQ+?=
- =?iso-8859-2?Q?ZMVY+9bQnImBuFtQpb+CQ+R3hoPs6GR238V7xZhnpm35ZvHSFhmC/E8IZd?=
- =?iso-8859-2?Q?Q4NJwvlmfTXcFpGgZV/mRbcvSZcD9oPhcfyx210DI4rFjWy/Yudr/b3aIN?=
- =?iso-8859-2?Q?rD2PNdodMM7A3gv0IEjFKW7nLHYPROXkXY/SROEg2XDgOT7Lu5WP8Iv2lv?=
- =?iso-8859-2?Q?ZF00Eqnf6H9kJle6fknICv7Z3oVkHFHcFBAgg4blrjlPXMXtW1zoX5s/IY?=
- =?iso-8859-2?Q?ReGVM84VDM7FlXZzgocjtycQTdlxNYyuzSIyINcV2OCaodW76SlkPMXVky?=
- =?iso-8859-2?Q?tcIVmUo3RS5bi7nMDHpZ4l7Dhy4+B31h55JpKJJvMjCYgGQCix/HPgxAsy?=
- =?iso-8859-2?Q?E6Ul7iAjzrjxBNwp7gMqVYGMirwOB5m5FRpPs/upK2PSCqndgLM5zgkFAy?=
- =?iso-8859-2?Q?YEpms98nPQP3ZNRW7GYw/N8W3/e7oKXmKY0IUugk4wTl52t2WXL832f6G1?=
- =?iso-8859-2?Q?1iEqyhpjIaby0CLx729ZhS9AcCxf0rEeQxnO4zcmHejoVVKP9xxsMR4XbW?=
- =?iso-8859-2?Q?foUw9iPrwO9BFJsKdMRAMwkkzY/kLEuyfFkZVTUVsiSq3yCmYcga08kRI8?=
- =?iso-8859-2?Q?rwe9ip7FxFOOrLoBqQZbryVl9vpOA+/ChNKiya1u9mRXcA0u6FZQ2+prDk?=
- =?iso-8859-2?Q?gq+jG6Xfm2zCWv1lVD5dh5uQeZ7YbxPRK8GxHKjfZd25R7mnzsUZLLXMbt?=
- =?iso-8859-2?Q?Dpr76QQvDT14u9ICC5K8O22N6CEzrm/Nhyt40bIIf2GIJCzv8Z19jo+qMq?=
- =?iso-8859-2?Q?oQxRX+JRKUv4ItDteMnspVgDApc4dwnnmSlzoA1girtwz5PlgpwZnD64ob?=
- =?iso-8859-2?Q?yIUTKiKwWSWOb+vGM+RzPu/buO4pklZgO2gIi+89VammtYlWSgqpkUtyU4?=
- =?iso-8859-2?Q?NcGCGiPIhSRBUlLpVxm9uLJJ/m8i2OqDGrul18+83g7mE36SGS99fcZ3W1?=
- =?iso-8859-2?Q?XIGwdDdl4t?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(7416011)(1800799021)(38070700015);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?2T0GhOv8LpeAV1n0UJzP71hgaIM0WGN7qnP0MJcaqKPcbAP44FOarCGgyi?=
- =?iso-8859-2?Q?clHK1OHmNfQMFbs4UVv/+k05/1qcghDpOl6qNTgYdlxAkPGD4zQfuyeiTr?=
- =?iso-8859-2?Q?GnrUq4lyAjwngC8IJAmcYcRKN3Dto/zT2eCX1kMBTtJH6kf5SIXDEZQ/kC?=
- =?iso-8859-2?Q?wQdSL+j8a5MLvd+QvYPu/O1NRkdF2sZTHjuXtSc2lpxDLsHM1pWO61/E4w?=
- =?iso-8859-2?Q?Gs/f0YsKmT0yfOc8RZkU5C+bs3Gm8u7k9pdGs5DUoXjzfsc8qqumTtKBlw?=
- =?iso-8859-2?Q?nJKuFA58qSTws/jWMo2gi1Eb+0OKXfx0YIOgS9LIGMoG5chzgCjZHBkgt0?=
- =?iso-8859-2?Q?kyrCNMtM5niTIQnQCdTqKRZ+1fSyFYt/trmbtsDXHQXQjN+BR61w/Ek2ep?=
- =?iso-8859-2?Q?SV1ECEu5v66dzeolb34yq2xaqb/rjiF24Ny3INSH9UiAUlv4X2REHOeTEO?=
- =?iso-8859-2?Q?wbWjH4qvJfAEtbX+cGBdOAoQoCdqRs6qA03xv5XdWpzW4sSUoFBOMTGlJw?=
- =?iso-8859-2?Q?7MX40n7bD/1m6PabVmO50DkDHfkG+95/WQvdzp0lPg0Kk8DmIhQ9EcWNL/?=
- =?iso-8859-2?Q?KF7/74rsdrHIJLoq1Z3CO3pkxWiLvSHbj6KYrZSshJkCBOXtk28qcB9R5t?=
- =?iso-8859-2?Q?/p46BesAHUIPmecKXmREMKA+MhhPuqKpurKwH0Lr6KgLPhaB0ad0FuV0UE?=
- =?iso-8859-2?Q?5XONoBqIthyckTPLCJToocvg3WbrSbsoUzRebne/WmsQA30h/sJQF4V0Xe?=
- =?iso-8859-2?Q?Ig/ceIMCusq2fJueqXjLou0VDYqUAPO6qFyin8sACPdFZWnPi0kvR0fgZA?=
- =?iso-8859-2?Q?+ORkIfCCQIbpx8m33o+3KZQ0cuQ4+if4M8ienuSWpPF39rPKkXqx1Ol2HA?=
- =?iso-8859-2?Q?/LtN7OSNjds1fWFYUDvT8xYQUge+cSRU+7juxkuGj0tJmj6NIpurl29wkA?=
- =?iso-8859-2?Q?PQsl6lajuadQyJE0fhmC0onLtCx+8Utb/pUvXfhEnhcGgN8vMTPec3otCc?=
- =?iso-8859-2?Q?/ZIFY22EgPa07SP80EdBDWf0apbcE6ZElZ4pyZxtZ7uXB//YVDjmSIo32D?=
- =?iso-8859-2?Q?59fiTNR3xB8Ay0jmkR8iZquv5lC1tikeQKpiqKZ8mfV7lp8u1GTEcrQfWY?=
- =?iso-8859-2?Q?qk32pAG3rYFwJig7C9ynfBLGxtubVk/TM8qYvsiAJQCTFSJ0ryzoWHDRct?=
- =?iso-8859-2?Q?fkFQZoKhWUsrlRD6XlNTiRBNE21RPPLNNUmiQIgoGXF8Yp1Y3vGNc01tPu?=
- =?iso-8859-2?Q?lruo0JjRsKq7T5h3zjLh71zxwFoXJEQCdcULCk9/d023B8GkwgLzhnX3Ef?=
- =?iso-8859-2?Q?vFcysyYm/m38ZTWjxsnT4N74EU5Th3AmiyqCBvNo9xDblZeDUmlmAuNu+a?=
- =?iso-8859-2?Q?OyQ1IUzUnz+t+75De/RsjHruvdAecJNZ3pT4yPBI0yRioXpx4vyLattl/0?=
- =?iso-8859-2?Q?lLE1VvHc1EPgzSo2D63SShct/acijgs+riVud6KRzPWbiiNkD8qjEwtGtL?=
- =?iso-8859-2?Q?4LVzaCOi8M0bjlEwAjcW7hhziUveiR0zZXQPdEh1VjTg6qmoTM9gBzl6rV?=
- =?iso-8859-2?Q?Z0CE47gzT3c5lAomEsIywPGy8S6kt4/ifLlKYibdml8Q+7JwLg7zjntVyl?=
- =?iso-8859-2?Q?9GDcYjBsVFmHiK5gAVVDNUhWbQsZgFmH85?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE8BA23;
+	Sun, 23 Jun 2024 02:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.149
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719110516; cv=none; b=bIHse9GuLkmIei3YkmCOmBtYoqkCXe/yyV/EK1+yVNUiSHL1NcW3bsF3Qlr+kASQ2Y5eOfCJe510QkSpAwvZ+kjkEpEtctZC14wIqWMs/FBcB7kf4yhPoXONR66SDWhB7wdClkJNcJp7yU5OWCTV4Pz1eSZi+1H/Bn6WaZntg8c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719110516; c=relaxed/simple;
+	bh=HiI9F3L1Thv7663MMmZOO+rudF2uZH75oGW+XT7h+MA=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WnCkxUpsJCm7gsZKA2DUXIDQAt9SS7eyVIF8UTmRjTo41ta7c4en+dfWjql2SYpvpwj2HN1DIWIiikrZRo31NC72a/oubf529+SMYqy/mJ2hOLiGZfYFmzAhdm6ENWDFVB1VrG8Pzl2LL2/v5AvW01yOntuyAj/y/E0rZgLnDzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com; spf=pass smtp.mailfrom=ttyinfo.com; arc=none smtp.client-ip=115.124.28.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ttyinfo.com
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08635762|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.313904-0.00171844-0.684378;FP=0|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033068155186;MF=zhoushengqing@ttyinfo.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.Y7uvvUK_1719109571;
+Received: from tzl..(mailfrom:zhoushengqing@ttyinfo.com fp:SMTPD_---.Y7uvvUK_1719109571)
+          by smtp.aliyun-inc.com;
+          Sun, 23 Jun 2024 10:26:12 +0800
+From: Zhou Shengqing <zhoushengqing@ttyinfo.com>
+To: bhelgaas@google.com,
+	zhoushengqing@ttyinfo.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH] PCI: Enable io space 1k granularity for intel cpu root port
+Date: Sun, 23 Jun 2024 02:26:11 +0000
+Message-Id: <20240623022611.41696-1-zhoushengqing@ttyinfo.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240622175205.GA1432837@bhelgaas>
+References: <20240622175205.GA1432837@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: wesion.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65198ea4-1916-4e53-b573-08dc932b3713
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jun 2024 02:21:39.6253
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6dtdgPWT4WDK7WKKX/zEaRa+tAtZflqoHSM2RqoTxbjwXs7pVfVctWmtOkxXM88zaPxFMI23oJS1yMbZzAzBUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB6959
+Content-Transfer-Encoding: 8bit
 
-> Any reason to strip info about origin of the patch, my SoB and=0A=
-> present this work as your own?=0A=
-=0A=
-Sincerely express my apology to Ondrej. It's really my mistake. After getti=
-ng your permission if I could submit the patches. I jsut think if the autho=
-r and submitter is not the same person is strange so I changed it. Next tie=
-m I will avoid this mistake. Apologize again.=0A=
-=0A=
-=0A=
-> I sincerely hope this is just a rookie mistake so please carefully read=
-=0A=
-the URL below:=0A=
-=0A=
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html=0A=
-=0A=
-Thanks for the guidance Arend. After reading the document I realized what a=
- stupid mistake I made.=0A=
-=0A=
-BTW I have another question, except the SoB of the real author, should I al=
-so post the original link in commit message?=0A=
-=0A=
----=0A=
-Best Regards=0A=
-Jacobe=
+>On Sat, Jun 22, 2024 at 11:06:18PM +0800, zhoushengqing@ttyinfo.com wrote:
+>> >> This patch add 1k granularity for intel root port bridge.Intel latest
+>>
+>>
+>>
+>> >> server CPU support 1K granularity,And there is an BIOS setup item named
+>>
+>>
+>>
+>
+>I don't know what your email agent is doing to add all these extra
+>blank lines, but it makes it painful to read/reply:
+>https://lore.kernel.org/all/2024062223061743562815@ttyinfo.com/
+>
+
+I'm sorry for the mistake I made in my email client settings.
+
+>> >Can you implement this as a quirk similar to quirk_p64h2_1k_io()?
+>> >
+>> >I don't want to clutter the generic code with device-specific
+>> >things like this.
+>>
+>> I have attempted to implement this patch in quirks.c.But there
+>> doesn't seem to be a suitable DECLARE_PCI_FIXUP* to do this.because
+>> the patch is not targeting the device itself, It targets other P2P
+>> devices with the same bus number.
+>
+>If I understand the patch correctly, if a [8086:09a2] device on a root
+>bus has EN1K set, *every* bridge (every Root Port in this case because
+>I assume this is a PCIe configuration) on the same bus supports 1K
+>granularity?
+>
+>That seems like a really broken kind of encapsulation.  I'd be
+>surprised if there were not a bit in each of those Root Ports that
+>indicates this.
+
+Your understanding is completely correct.intel ICX SPR RMR (even GNR) 
+CPU EDS Vol2(register) spec says "This bit when set, enables 1K granularity
+for I/O space decode in each of the virtual P2P bridges corresponding to 
+root ports,and DMI ports." it targets all P2P bridges within the same root bus,
+not the root port itself.The root ports configuration space doesn't have a 
+"EN1K" bit. 
 
