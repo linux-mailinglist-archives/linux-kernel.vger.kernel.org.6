@@ -1,128 +1,245 @@
-Return-Path: <linux-kernel+bounces-226421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E3C913E2C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 22:40:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB9E6913E2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 22:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 511B51F21A8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:40:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446C8280FC9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E9A1849F0;
-	Sun, 23 Jun 2024 20:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F26184124;
+	Sun, 23 Jun 2024 20:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQrA+qtI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1SpNnXw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394891E869;
-	Sun, 23 Jun 2024 20:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A9A1DFF8
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 20:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719175211; cv=none; b=L07ytc66w65D1VRYCCXILhLS+TGzYfZV2M631OGajr0MAI3268D6TSthVL1L9tEkrvMP3wsreCR5kIF5mXSpnuU/P0Vdyw4HQofI+i4WwSt5NNYLmXvOsG7ed8OWcSNC76cMK86f6mnIrOKPczHyrNnpSNUnHUGemrRekK+pfHQ=
+	t=1719175558; cv=none; b=pwN8W5P8DiuL2sxbkRvIFJSmOrGwBTOUdbta4S89LuY2rldX38meBxoGjatsinaYk63jI+R/pvyjsZNpzEyr7H1CMk2z6v6El1khumlLZO7jUo6rY9gFgIPv+DlNSAIy8u3rJbZuhAoR2E/HBIARa1hRnSGCH32FW1u52RKJTPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719175211; c=relaxed/simple;
-	bh=tj/EudJXsZOT2efyTYXHY7WkzBrobh+sIFmq3i/Im6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3vsTjIvaIrc/Xa+6sDSKBcR1XlW+dj7duW0t5ZNU5+DC4eu5+CVlmnvpaGtaTLu9hi4IN6P+PKfl1GLdAyhgGVxJABLXdwxKRpwrw3E+mqW+TDM+jF/qo0K9ZCetYn4+lY2JNFQKXr8fM6fMEORoBZVoj0vSzevfRGSOnX5AsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQrA+qtI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0691C2BD10;
-	Sun, 23 Jun 2024 20:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719175209;
-	bh=tj/EudJXsZOT2efyTYXHY7WkzBrobh+sIFmq3i/Im6Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UQrA+qtIMxBAAwsnaggl+2jcNGdXPRXCavxFeYtsXEacUxTi3DSNWD0oBx3Li/YXY
-	 cCAj3YMIWrKdFFVDqFhdVAajXNjD/I/UkJS7E1IKb8mLcapqVVVnYqquWy/m030a6i
-	 PnhiGRlCje4E8pbha5SP7EMj/G7bajr0oIp1J9KsdVN71APP3yIIPpsQKzTvFCAJdw
-	 DCcLINRKXkwxcI7C4WcbGaUsOsI8DsX0i13uq+f7AkqxR9y35sqsi6Q15CPESFGsMJ
-	 d/nGJi+LyZK9SGdSxvfxEAiAsfudO5u9yLedLFlatIGTuHyIEfJfHjfmh1ExxLCe1p
-	 bnXK+9cVg3Qew==
-Date: Sun, 23 Jun 2024 15:40:06 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	freedreno <freedreno@lists.freedesktop.org>, dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	Rob Clark <robdclark@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
-Message-ID: <mmqji5hcfa6eegx2kdjkcy4hsoybtp25bgjsn2ol6dcdw2cgs5@fw3i3ufjkj3z>
-References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
- <20240623110753.141400-4-quic_akhilpo@quicinc.com>
- <a458a3a7-2b6d-4032-949c-b2c021d339e8@kernel.org>
- <20240623122856.kqf4x6mft74hzk7y@hu-akhilpo-hyd.qualcomm.com>
- <7d69e98d-a870-4200-8f22-2a16fcf02794@kernel.org>
- <20240623151630.bskqwqhp25mu3yuf@hu-akhilpo-hyd.qualcomm.com>
+	s=arc-20240116; t=1719175558; c=relaxed/simple;
+	bh=DPvRmvVmh2WgSV6K/Scm1uUzCJnRcqLxH5aT6E+qO74=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CxZDiKjurAYtEDoUmbe30b0Xfp4MS2+HCtnint1ex6wlYzqdlufe9HEZQk0JmH94I5/Nycdy2sa68Nw28Aa7r4NMjr5d4mHTv1E9aSCfZ3U/uTJMYNX0bqyLrT694uIiFOGXE3mRgGYnp6kUjDQRhvwtC2qIHrcM2bk4gSGZL2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1SpNnXw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719175554;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AmwdkZVL5pji4wXYmdoU+z7q/J2B7KB9OGbcUZv8AJU=;
+	b=D1SpNnXwtzq9e2VMrzuxm3SvKR6h1D2UqM3wDnxJkubbYyu/ZdXNQRHLkwYKxykzyPAN7T
+	H8rJlmcU4Ot/A4JaJ/eUX/awa8qAaucp9WVFeB1ACq3IaD5eF7c4cl+yzIs8fMOkcgJMYq
+	4Kz82bogQoqy6x1OW3mY6AYF/J/wf40=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-wl9rvSoCNPCrgih4Gu1Jrg-1; Sun,
+ 23 Jun 2024 16:45:52 -0400
+X-MC-Unique: wl9rvSoCNPCrgih4Gu1Jrg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 26E48195608B;
+	Sun, 23 Jun 2024 20:45:50 +0000 (UTC)
+Received: from llong.com (unknown [10.22.16.52])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AACD619560AE;
+	Sun, 23 Jun 2024 20:45:46 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeelb@google.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-doc@kvack.org,
+	Alex Kalenyuk <akalenyu@redhat.com>,
+	Peter Hunt <pehunt@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH] memcg: Add a new sysctl parameter for automatically setting memory.high
+Date: Sun, 23 Jun 2024 16:45:14 -0400
+Message-Id: <20240623204514.1032662-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240623151630.bskqwqhp25mu3yuf@hu-akhilpo-hyd.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Sun, Jun 23, 2024 at 08:46:30PM GMT, Akhil P Oommen wrote:
-> On Sun, Jun 23, 2024 at 02:53:17PM +0200, Krzysztof Kozlowski wrote:
-> > On 23/06/2024 14:28, Akhil P Oommen wrote:
-> > > On Sun, Jun 23, 2024 at 01:17:16PM +0200, Krzysztof Kozlowski wrote:
-> > >> On 23/06/2024 13:06, Akhil P Oommen wrote:
-> > >>> Add the necessary dt nodes for gpu support in X1E80100.
-> > >>>
-> > >>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> > >>> ---
-> > >>> +		gmu: gmu@3d6a000 {
-> > >>> +			compatible = "qcom,adreno-gmu-x185.1", "qcom,adreno-gmu";
-> > >>> +			reg = <0x0 0x03d50000 0x0 0x10000>,
-> > >>> +			      <0x0 0x03d6a000 0x0 0x35000>,
-> > >>> +			      <0x0 0x0b280000 0x0 0x10000>;
-> > >>> +			reg-names =  "rscc", "gmu", "gmu_pdc";
-> > >>
-> > >> Really, please start testing your patches. Your internal instructions
-> > >> tells you to do that, so please follow it carefully. Don't use the
-> > >> community as the tool, because you do not want to run checks and
-> > >> investigate results.
-> > > 
-> > > This was obviously tested before (and retested now) and everything works. I am
-> > > confused about what you meant. Could you please elaborate a bit? The device
-> > > and the compilation/test setup is new for me, so I am wondering if I
-> > > made any silly mistake!
-> > 
-> > Eh, your DTS is not correct, but this could not be pointed out by tests,
-> > because the binding does not work. :(
-> 
-> I reordered both "reg" and "reg-names" arrays based on the address.
+With memory cgroup v1, there is only a single "memory.limit_in_bytes"
+to be set to specify the maximum amount of memory that is allowed to
+be used. So a lot of memory cgroup using tools and applications allow
+users to specify a single memory limit. When they migrate to cgroup
+v2, they use the given memory limit to set memory.max and disregard
+memory.high for the time being.
 
-The @3d6a000 should match the first reg entry.
+Without properly setting memory.high, these user space applications
+cannot make use of the memory cgroup v2 ability to further reduce the
+chance of OOM kills by throttling and early memory reclaim.
 
-> Not sure if
-> that is what we are talking about here. Gpu driver uses platform_get_resource_byname()
-> to query mmio resources.
-> 
-> I will retest dt-bindings and dts checks after picking the patches you
-> just posted and report back. Is the schema supposed to enforce strict
-> order?
+This patch adds a new sysctl parameter "vm/memory_high_autoset_ratio"
+to enable setting "memory.high" automatically whenever "memory.max" is
+set as long as "memory.high" hasn't been explicitly set before. This
+will allow a system administrator or a middleware layer to greatly
+reduce the chance of memory cgroup OOM kills without worrying about
+how to properly set memory.high.
 
-In your second hunk in patch 1, you are defining the order of reg,
-reg-names, clocks, and clock-names. This creates an ABI between DTB and
-implementation where ordering is significant - regardless of Linux using
-platform_get_resource_byname().
+The new sysctl parameter will allow a range of 0-100. The default value
+of 0 will disable memory.high auto setting. For any non-zero value "n",
+the actual ratio used will be "n/(n+1)". A user cannot set a fraction
+less than 1/2.
 
-Regards,
-Bjorn
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ Documentation/admin-guide/sysctl/vm.rst | 10 ++++++
+ include/linux/memcontrol.h              |  3 ++
+ mm/memcontrol.c                         | 41 +++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+)
 
-> 
-> -Akhil.
-> > 
-> > I'll fix up the binding and then please test on top of my patch (see
-> > your internal guideline about necessary tests before sending any binding
-> > or DTS patch).
-> > 
-> > Best regards,
-> > Krzysztof
-> > 
+diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+index e86c968a7a0e..250ec39dd5af 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -46,6 +46,7 @@ Currently, these files are in /proc/sys/vm:
+ - mem_profiling         (only if CONFIG_MEM_ALLOC_PROFILING=y)
+ - memory_failure_early_kill
+ - memory_failure_recovery
++- memory_high_autoset_ratio
+ - min_free_kbytes
+ - min_slab_ratio
+ - min_unmapped_ratio
+@@ -479,6 +480,15 @@ Enable memory failure recovery (when supported by the platform)
+ 0: Always panic on a memory failure.
+ 
+ 
++memory_high_autoset_ratio
++=========================
++
++Specify a ratio by which memory.high should be set as a fraction of
++memory.max if it hasn't been explicitly set before.  It allows a range
++of 0-100.  The default value of 0 means auto setting will be disabled.
++For any non-zero value "n", the actual ratio used will be "n/(n+1)".
++
++
+ min_free_kbytes
+ ===============
+ 
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 030d34e9d117..6be161a6b922 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -221,6 +221,9 @@ struct mem_cgroup {
+ 	 */
+ 	bool oom_group;
+ 
++	/* %true if memory.high has been explicitly set */
++	bool memory_high_set;
++
+ 	/* protected by memcg_oom_lock */
+ 	bool		oom_lock;
+ 	int		under_oom;
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 71fe2a95b8bd..2cfb000bf543 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -48,6 +48,7 @@
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
+ #include <linux/spinlock.h>
++#include <linux/sysctl.h>
+ #include <linux/eventfd.h>
+ #include <linux/poll.h>
+ #include <linux/sort.h>
+@@ -6889,6 +6890,35 @@ static void mem_cgroup_attach(struct cgroup_taskset *tset)
+ }
+ #endif
+ 
++/*
++ * The memory.high autoset ratio specifies a ratio by which memory.high
++ * should be set as a fraction of memory.max if it hasn't been explicitly
++ * set before. The default value of 0 means auto setting will be disabled.
++ * For any non-zero value "n", the actual ratio is "n/(n+1)".
++ */
++static int sysctl_memory_high_autoset_ratio;
++
++#ifdef CONFIG_SYSCTL
++static struct ctl_table memcg_table[] = {
++	{
++		.procname	= "memory_high_autoset_ratio",
++		.data		= &sysctl_memory_high_autoset_ratio,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE_HUNDRED,
++	},
++};
++
++static inline void memcg_sysctl_init(void)
++{
++	register_sysctl_init("vm", memcg_table);
++}
++#else
++static void memcg_sysctl_init(void)	{ }
++#endif /* CONFIG_SYSCTL */
++
+ static int seq_puts_memcg_tunable(struct seq_file *m, unsigned long value)
+ {
+ 	if (value == PAGE_COUNTER_MAX)
+@@ -6982,6 +7012,7 @@ static ssize_t memory_high_write(struct kernfs_open_file *of,
+ 		return err;
+ 
+ 	page_counter_set_high(&memcg->memory, high);
++	memcg->memory_high_set = true;
+ 
+ 	for (;;) {
+ 		unsigned long nr_pages = page_counter_read(&memcg->memory);
+@@ -7023,6 +7054,7 @@ static ssize_t memory_max_write(struct kernfs_open_file *of,
+ 	unsigned int nr_reclaims = MAX_RECLAIM_RETRIES;
+ 	bool drained = false;
+ 	unsigned long max;
++	unsigned int high_ratio = sysctl_memory_high_autoset_ratio;
+ 	int err;
+ 
+ 	buf = strstrip(buf);
+@@ -7032,6 +7064,13 @@ static ssize_t memory_max_write(struct kernfs_open_file *of,
+ 
+ 	xchg(&memcg->memory.max, max);
+ 
++	if (high_ratio && !memcg->memory_high_set) {
++		/* Set memory.high as a fraction of memory.max */
++		unsigned long high = max * high_ratio / (high_ratio + 1);
++
++		page_counter_set_high(&memcg->memory, high);
++	}
++
+ 	for (;;) {
+ 		unsigned long nr_pages = page_counter_read(&memcg->memory);
+ 
+@@ -7977,6 +8016,8 @@ static int __init mem_cgroup_init(void)
+ 		soft_limit_tree.rb_tree_per_node[node] = rtpn;
+ 	}
+ 
++	memcg_sysctl_init();
++
+ 	return 0;
+ }
+ subsys_initcall(mem_cgroup_init);
+-- 
+2.39.3
+
 
