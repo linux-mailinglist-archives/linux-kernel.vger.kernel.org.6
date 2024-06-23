@@ -1,83 +1,82 @@
-Return-Path: <linux-kernel+bounces-226448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0AE913E78
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:21:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B443913E7D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F22E1C20DA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:21:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAA31B20DE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 21:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64EB10A0C;
-	Sun, 23 Jun 2024 21:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521E3181BA2;
+	Sun, 23 Jun 2024 21:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jf8bOY30"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zOpgVvrV"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A74FD530
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 21:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98B8D530
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 21:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719177695; cv=none; b=UC3Vgrp169E6AJid+0V3se8mkvoKTF+GQ2ayqjQjfqOHBM+0l9o0QNnTbrSPKBkWw9AKchbaaTPHxpKrakyF/ZnUCQhSW8IISznd66gXf9+6F9Pkr1okKl7fgfWOhnL7grDd65/iZCq4GBlqYMK1Jezm9H9hPj3WBBoQOeidJR4=
+	t=1719177827; cv=none; b=l4ufX/jyMfQznCMms3ePOrcZ/7pBBeYGSQidiKxkkVJRi+xlKqvf2kEPviuEAfNqbtPwRFwNKInXXQNll7Mz6IRvHA23sMZVipGyAOrqiM11GTIp5sA396zZwMQBfaQ+3UHQ6F0ttGDJLKVBDl4qPoFEoN6ZOiUWO6z+MzfFruk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719177695; c=relaxed/simple;
-	bh=2/0Ai3VWYgkMsZIDrMkNsDUJ9fWgIcxjw7FPSPtafh8=;
+	s=arc-20240116; t=1719177827; c=relaxed/simple;
+	bh=gOEoPA/SWeSkLXp92OjEE03U6ATjSbAL2GVCr38i/b0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rAJDNNSk6huhCdWKvpIe+MQeX4DlATLMp65YMo37Ysw9Qy5ebnjMTLN6agG4FuLvo0dg+MSrK43Is78sG9gVNgRcX+99cA0lfHNRWU7v3HH2mLxftiN1VpZkH99IQQ76+1l2zF/qVZjpRCQ8u+yp50d88rtmyKa/WdZltIjo1us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jf8bOY30; arc=none smtp.client-ip=209.85.208.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kv03Mf3lPueIkvB96Q52wdPLvNoe5TfXMPNSZ6sCFIpryNCXRkSM1fFT0YIUK7FhGoWHNFjzlP8MsDaH6D1AVAbpb7vR7Sv+Xuo/46lREjk6d0UnfFWGQ+Fm3+1VSaNkWr6XLBKss7UWLrEEmRlE1/CyjvKYHPE7k5zrr0UXTCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zOpgVvrV; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec5779b423so11853271fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:21:33 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cd8897c73so2384246e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 14:23:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719177692; x=1719782492; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719177824; x=1719782624; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SKYxTmfDZ36i0fXszGUOUg0SnwJqotpaI2MGCB2scg0=;
-        b=Jf8bOY30IVfBiNCMvgjorcZo1GE6kzqeMAE9P6knZBOdNcAsI4s3ze67+ebo38dpsf
-         wNczkOEVjB6cSx3DNjnNaRyH77nllWz7e0bpikGO5bW8LtnAYZ0iDGaAMMAw8cjk537z
-         JGElt6fX52uEW0tG6lObMPCEh2Sfp6ruiWdQum795azH3h34JST5AEfUrg40jIcjwS5D
-         zt0Hzat2eYR8AyNviyhmEM5rqbUHTdoZWPrM8sgci2wt5G5SrRv0OMRBMVYi1n0kiUdq
-         Sm0mrE9aLlCIBSIIlkfKRAv3SN9cL4+Pu4a0f/AvlkoaC3bDqXUQKfVzxxVONtK8aQW/
-         5++A==
+        bh=jVqPPOYq/l25Fj/g6B1LeAJoOYkFmgg6jrPDZkmyB8I=;
+        b=zOpgVvrVGVz0lgmEXA2UXDi+Yy0n0N3y9dY8+PI3mjEWcgxeHqRUfQyn0f0P71LiWq
+         rXPa4fEiygDRMyQjJZ+kRVjFzdNaxOkCf+rmxFM/x84Wtm11IFIUtN+7uNa0IPvsruuY
+         9xdIJOkdYp3uylYdh3eGsAVW1UflMEhyD4SFIsBfZhyhqY5AMjUwAhdW1iUVF+OTcvVV
+         JUKp4C3N3OY39RxBYP4vtQ25N9CMFVuwp8xXfVZPDPw+HwHIzAXMobQAZeCRY7aNvaUR
+         NeTBD/HUGDbp5v3ANEOOVpATOg8NC158rDsU/Q7V3yT3+cn1HxDHwEhL7KgKaSGzjS8P
+         X8jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719177692; x=1719782492;
+        d=1e100.net; s=20230601; t=1719177824; x=1719782624;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SKYxTmfDZ36i0fXszGUOUg0SnwJqotpaI2MGCB2scg0=;
-        b=kpUuUZlouWesTnBRByvMChcBMCiin76IC5mAEMzcmM6DzqyGyU/ClxAhPG2uiwvT4C
-         WSWNK8LiOLcQ8HDLXHM9olIqs7Z/mr3Btpui18lBjGhduX0qyKcNfh4vZRfhnpnmI1pA
-         H1op0Iz8/+IPDzZl2MS0TRlA0s/opjBwLyRViRX5/BrCVnuchk44FLemrWrx6ZXUDVC2
-         lZ9X4iUbwyV30hrB8qZNO/SpBovGdMXz8MRklMElalNegKnGmLhl/GFBiM2VR9eQXkgg
-         3vCGxNTAezbUEj1fFtI6jASb5sCsGa2MZBszL2cgL24GogYOXAJzyMn95Muw+DyLUbEo
-         vvLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWttmUdbSgWT3HvcPg+jspPDmRt8gav4wKx5JXrr84ykh7XEz2UNNhuDxDOJYKFnKGdds28DVOSrAD2J9GBEfwEmCXZf6lb4h3XmUlc
-X-Gm-Message-State: AOJu0YzY6GHxgm+whbPgZ8Tj28CACA+sVJG1+XBBFPAZFGFaxAbuCoAB
-	47mAbGkRNBdPttq8awNect598wO5KssCe6Y5BMMvn2euwaaEF+G78XFIiS/sZ2U=
-X-Google-Smtp-Source: AGHT+IFJe95/Vj8GJSb3Ykh02gYRcCNqfVu+HysVCr/bgJDIAgB5sIvgaWb6pLRmDGFwK6+FB2214w==
-X-Received: by 2002:a19:c514:0:b0:52c:8591:1f7b with SMTP id 2adb3069b0e04-52ce061b07dmr2425891e87.24.1719177692178;
-        Sun, 23 Jun 2024 14:21:32 -0700 (PDT)
+        bh=jVqPPOYq/l25Fj/g6B1LeAJoOYkFmgg6jrPDZkmyB8I=;
+        b=fUHGxhlANyTUzXjVI35i8Qb+uxQqoZFKiL0aZ37YBPOpwqttc5IWijvKqLw2PB1PlT
+         XCAl5Gb/ER1ADARFijp2amkNhMd1AXntq1MfoLbGcQX54ese8OC4UyUCr0cLrUXjzAjE
+         9CiZwa5Raz0Ph5wII85ElyP1+r5CyIZEDShJ2pjywwpGT+twA/JUa+QA7YnMUZ1sBW2M
+         kowOqYs9sqBlmdvatuprdAMO+9h4pvZOfyRDXgK84CIDct6E/khaEpTsDxGA4KgRMWyZ
+         39ayjiF/uYRxQp5Y1X5X0MxKiKDAv/S/beV0y100yFq01KDMF0ZkBW3FR1NX7Jzh2fUN
+         dLiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVzPwtRDc8nEp53L9VZ/2PGXvKY0wRM0+zDIWMqif95jYQdBf1sOkovgmN2PAcQalqYIoJe6WGCqixGCkUK27JrTllxJpllXmDpkho
+X-Gm-Message-State: AOJu0YweRw9s3QxKPjM+xTccKRYAVQTzAX72Rkub+vTaH1CC6K7p4L26
+	+yX4yR+vqKddTjBbg+5z7TTC6TrpYfh8Mf5kVcOto3tVSS41e5ZLiURQnzoYMW4=
+X-Google-Smtp-Source: AGHT+IFhS87TfxpvmZ1+wkQPSgcCq7a9bj2sbGnuntdnh8f2/UxXXs198UOXsp3whu7KPM/2ddEfLw==
+X-Received: by 2002:a05:6512:31d2:b0:52c:e3bd:c708 with SMTP id 2adb3069b0e04-52ce3bdc757mr1719307e87.10.1719177824001;
+        Sun, 23 Jun 2024 14:23:44 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdf5081f0sm478621e87.168.2024.06.23.14.21.31
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdec145f9sm494773e87.182.2024.06.23.14.23.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 14:21:31 -0700 (PDT)
-Date: Mon, 24 Jun 2024 00:21:30 +0300
+        Sun, 23 Jun 2024 14:23:43 -0700 (PDT)
+Date: Mon, 24 Jun 2024 00:23:42 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Akhil P Oommen <quic_akhilpo@quicinc.com>
 Cc: freedreno <freedreno@lists.freedesktop.org>, 
 	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, Rob Clark <robdclark@gmail.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] drm/msm/adreno: Add support for X185 GPU
-Message-ID: <6pfetzw2my2wf465wsgg5cqhmkuqooi6fipm3huntl5gwthgyd@qukafeyyftvx>
+	Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
+Message-ID: <ionw2k6rz5eokroilrluq2nvh7uap4oans62z66o7fydray7l5@a52bkrf2plkb>
 References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
- <20240623110753.141400-3-quic_akhilpo@quicinc.com>
+ <20240623110753.141400-4-quic_akhilpo@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,144 +85,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240623110753.141400-3-quic_akhilpo@quicinc.com>
+In-Reply-To: <20240623110753.141400-4-quic_akhilpo@quicinc.com>
 
-On Sun, Jun 23, 2024 at 04:36:29PM GMT, Akhil P Oommen wrote:
-> Add support in drm/msm driver for the Adreno X185 gpu found in
-> Snapdragon X1 Elite chipset.
+On Sun, Jun 23, 2024 at 04:36:30PM GMT, Akhil P Oommen wrote:
+> Add the necessary dt nodes for gpu support in X1E80100.
 > 
 > Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 > ---
 > 
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 19 +++++++++++++++----
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  6 ++----
->  drivers/gpu/drm/msm/adreno/adreno_device.c | 14 ++++++++++++++
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  5 +++++
->  4 files changed, 36 insertions(+), 8 deletions(-)
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 195 +++++++++++++++++++++++++
+>  1 file changed, 195 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> index 0e3dfd4c2bc8..168a4bddfaf2 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> @@ -830,8 +830,10 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu, unsigned int state)
->  	 */
->  	gmu_write(gmu, REG_A6XX_GMU_CM3_CFG, 0x4052);
->  
-> +	if (adreno_is_x185(adreno_gpu)) {
-> +		chipid = 0x7050001;
->  	/* NOTE: A730 may also fall in this if-condition with a future GMU fw update. */
-> -	if (adreno_is_a7xx(adreno_gpu) && !adreno_is_a730(adreno_gpu)) {
-> +	} else if (adreno_is_a7xx(adreno_gpu) && !adreno_is_a730(adreno_gpu)) {
->  		/* A7xx GPUs have obfuscated chip IDs. Use constant maj = 7 */
->  		chipid = FIELD_PREP(GENMASK(31, 24), 0x7);
->  
-> @@ -1329,9 +1331,18 @@ static int a6xx_gmu_rpmh_arc_votes_init(struct device *dev, u32 *votes,
->  	if (!pri_count)
->  		return -EINVAL;
->  
-> -	sec = cmd_db_read_aux_data("mx.lvl", &sec_count);
-> -	if (IS_ERR(sec))
-> -		return PTR_ERR(sec);
-> +	/*
-> +	 * Some targets have a separate gfx mxc rail. So try to read that first and then fall back
-> +	 * to regular mx rail if it is missing
-
-Can we use compatibles / flags to detect this?
-
-> +	 */
-> +	sec = cmd_db_read_aux_data("gmxc.lvl", &sec_count);
-> +	if (PTR_ERR_OR_ZERO(sec) == -EPROBE_DEFER) {
-> +		return -EPROBE_DEFER;
-> +	} else if (IS_ERR(sec)) {
-> +		sec = cmd_db_read_aux_data("mx.lvl", &sec_count);
-> +		if (IS_ERR(sec))
-> +			return PTR_ERR(sec);
-> +	}
-
-The following code might be slightly more idiomatic:
-
-	sec = cmd_db_read_aux_data("gmxc.lvl", &sec_count);
-	if (IS_ERR(sec) && sec != ERR_PTR(-EPROBE_DEFER))
-		sec = cmd_db_read_aux_data("mx.lvl", &sec_count);
-	if (IS_ERR(sec))
-		return PTR_ERR(sec);
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 5f90a0b3c016..3e887286bab4 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -6,6 +6,7 @@
+>  #include <dt-bindings/clock/qcom,rpmh.h>
+>  #include <dt-bindings/clock/qcom,x1e80100-dispcc.h>
+>  #include <dt-bindings/clock/qcom,x1e80100-gcc.h>
+> +#include <dt-bindings/clock/qcom,x1e80100-gpucc.h>
+>  #include <dt-bindings/clock/qcom,x1e80100-tcsr.h>
+>  #include <dt-bindings/dma/qcom-gpi.h>
+>  #include <dt-bindings/interconnect/qcom,icc.h>
 
 
->  
->  	sec_count >>= 1;
->  	if (!sec_count)
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index 973872ad0474..97837f7f2a40 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -1319,9 +1319,7 @@ static void a6xx_set_cp_protect(struct msm_gpu *gpu)
->  		count = ARRAY_SIZE(a660_protect);
->  		count_max = 48;
->  		BUILD_BUG_ON(ARRAY_SIZE(a660_protect) > 48);
-> -	} else if (adreno_is_a730(adreno_gpu) ||
-> -		   adreno_is_a740(adreno_gpu) ||
-> -		   adreno_is_a750(adreno_gpu)) {
-> +	} else if (adreno_is_a7xx(adreno_gpu)) {
->  		regs = a730_protect;
->  		count = ARRAY_SIZE(a730_protect);
->  		count_max = 48;
-> @@ -1891,7 +1889,7 @@ static int hw_init(struct msm_gpu *gpu)
->  	gpu_write(gpu, REG_A6XX_UCHE_CLIENT_PF, BIT(7) | 0x1);
->  
->  	/* Set weights for bicubic filtering */
-> -	if (adreno_is_a650_family(adreno_gpu)) {
-> +	if (adreno_is_a650_family(adreno_gpu) || adreno_is_x185(adreno_gpu)) {
->  		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_0, 0);
->  		gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_1,
->  			0x3fe05ff4);
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
-> index c3703a51287b..139c7d828749 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-> @@ -568,6 +568,20 @@ static const struct adreno_info gpulist[] = {
->  		.zapfw = "a740_zap.mdt",
->  		.hwcg = a740_hwcg,
->  		.address_space_size = SZ_16G,
-> +	}, {
-> +		.chip_ids = ADRENO_CHIP_IDS(0x43050c01), /* "C512v2" */
-> +		.family = ADRENO_7XX_GEN2,
-> +		.fw = {
-> +			[ADRENO_FW_SQE] = "gen70500_sqe.fw",
-> +			[ADRENO_FW_GMU] = "gen70500_gmu.bin",
-> +		},
-> +		.gmem = 3 * SZ_1M,
-> +		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
-> +		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
-> +			  ADRENO_QUIRK_HAS_HW_APRIV,
-> +		.init = a6xx_gpu_init,
-> +		.hwcg = a740_hwcg,
-> +		.address_space_size = SZ_16G,
+> +		gmu: gmu@3d6a000 {
+> +			compatible = "qcom,adreno-gmu-x185.1", "qcom,adreno-gmu";
+> +			reg = <0x0 0x03d50000 0x0 0x10000>,
+> +			      <0x0 0x03d6a000 0x0 0x35000>,
+> +			      <0x0 0x0b280000 0x0 0x10000>;
+> +			reg-names =  "rscc", "gmu", "gmu_pdc";
 
-Please rebase on top of https://lore.kernel.org/dri-devel/20240618164303.66615-1-robdclark@gmail.com/
+Ther @address should match the first resource defined for a device.
 
->  	}, {
->  		.chip_ids = ADRENO_CHIP_IDS(0x43051401), /* "C520v2" */
->  		.family = ADRENO_7XX_GEN3,
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> index 77526892eb8c..d9ea8e0f6ad5 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> @@ -448,6 +448,11 @@ static inline int adreno_is_a750(struct adreno_gpu *gpu)
->  	return gpu->info->chip_ids[0] == 0x43051401;
->  }
->  
-> +static inline int adreno_is_x185(struct adreno_gpu *gpu)
-> +{
-> +	return gpu->info->chip_ids[0] == 0x43050c01;
-> +}
 > +
->  static inline int adreno_is_a740_family(struct adreno_gpu *gpu)
->  {
->  	if (WARN_ON_ONCE(!gpu->info))
-> -- 
-> 2.45.1
-> 
-
 -- 
 With best wishes
 Dmitry
