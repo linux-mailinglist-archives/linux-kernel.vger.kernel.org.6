@@ -1,181 +1,193 @@
-Return-Path: <linux-kernel+bounces-226110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0DA913A55
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:04:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00E0913A58
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 14:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB911F2197D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:04:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84FE282303
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 12:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EFA181318;
-	Sun, 23 Jun 2024 12:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B58181308;
+	Sun, 23 Jun 2024 12:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFjOE7tY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QD4RnW7s"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580D9180A9B;
-	Sun, 23 Jun 2024 12:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1863146A68;
+	Sun, 23 Jun 2024 12:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719144227; cv=none; b=NeLj+Ji8wPU89yX9lGhhNB9py792V22maSHyBPZ5l2FVfrZ97cKEUIdixC2vpBA6nCmgPUIzcCcUos4vjf5XiDnwrUi2O3okT5hjQIXf64i074nBki4VOx3pN5/KVpNoJ+4g/kTO17wAnmxBOZ0+z1keShMKY4J9ti3MPeAuuos=
+	t=1719144313; cv=none; b=hbjTG8SrVnDgwIF6dddZV9G7vBGNLfb9BRxSwVmEZVJEkmohK74CCq06oi06TJhOvhFoKsIu4g3pDJVp1EEOwlv01d9nF3X2uC/4dQ+/02ssJ6IK1DZV6jsOIbwiXVukA388aX1XlI4W/EmvMT84eSnb2DpQ2e43GoRUC6N4L54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719144227; c=relaxed/simple;
-	bh=Ldz1GN6+3Z7G8+L6Q7Yh9h7HRyzDV64bj3F+rO77G7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GmsV7V28PzW42zuJDg+V1gvOXw9FkTT1Rt7Qy4okN6P6QiVPlXbsbUCSOH0Jandi8nuDjqnpeSo7pl1Z1JwgnLkx5rsWkR12JdWRgjzF0pfby2DYxh9Z5/mdMUMEVJOFbb32kdkaY215A5gF3MGSxf12xVX+MukogVaSJi4w4IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFjOE7tY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D09DC2BD10;
-	Sun, 23 Jun 2024 12:03:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719144226;
-	bh=Ldz1GN6+3Z7G8+L6Q7Yh9h7HRyzDV64bj3F+rO77G7A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SFjOE7tYSboRbmzbWgyT48Ah1/vEWsZ61y7RgQdabaMP/sUFH8lcpcfV6Ty1kg6G5
-	 LuaNtJrdpZTVgmao2HDLK0zGz5fRoJjySoVbzQtoiUcutHfEyxLdz4Yb0GoE2B379Q
-	 dN9GaKC+pcd/B6tRbe6VtlI89fXkmoGFYIUa6VgDN4xrSACazrSZ3Z34pn32VupmhD
-	 InImK/T0qbo6C8QGNtNWVlTxgIGp91v80XrZxq/cpfuw0pYI+OPAmawMe4Zkqdkm+Q
-	 s54W7zCF5mn15d1iovDv9t8JoIEbp7hhDcDT8Zaj/cw8OBViYm6AY7KSKQkPDle5Bj
-	 cPOy5Rj9HO+YQ==
-Date: Sun, 23 Jun 2024 13:03:39 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org, Lars-Peter Clausen
- <lars@metafoo.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] iio: Add iio_read_channel_label to inkern API
-Message-ID: <20240623130339.535b96ba@jic23-huawei>
-In-Reply-To: <20240620211310.820579-2-sean.anderson@linux.dev>
-References: <20240620211310.820579-1-sean.anderson@linux.dev>
-	<20240620211310.820579-2-sean.anderson@linux.dev>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719144313; c=relaxed/simple;
+	bh=x0eu6FzDbqlmTCln+0TmPTvoiebXfz9YLshcASu2zFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=coM2u2Yxf3xaCV0qySvaqMXOrh3RI4RTpR21prPlPp0FzSbwWstw+JQ97rUo0y7ZC+1bPBUhy0uN7310fRvw7BKUpDZtDT+XrHWbCSAxRNKu0YvotWUu+xRQJzs8fX5tJwcUFmxpQ4l6c8IGsNVp36EyPSlD1L0wAioMUhDr1I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QD4RnW7s; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso3829304a12.1;
+        Sun, 23 Jun 2024 05:05:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719144308; x=1719749108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v+9HDK5irEOHKoyqqTJ0d+J1J6qDyFAy5UodcdX0Ris=;
+        b=QD4RnW7s76nf8zOhFreyLrW9jGJ3xqD5xhIbMqOf98PuNpoMUz5RYM3y5XaaNeWMWd
+         6f6SsuaiJPPaLKVN3LTQtzN26bxmv4DhAO/dpmpUiEUyB5nPobOJft5TMt5Ev5xJiOCS
+         zuQ2yAPkW6rQrtDJfl7E8fChctRg1UhGeSTVG7+qUm4hAYnG3Y5oigpJxvvSF1kqmLvK
+         s+txDmVZhDrDey5n0WrqKB/YxSQ4e6pLVPECcpmvb1EDTrqbkzHYe/sC3sNgR7k0Nm0c
+         Fq/bJ1io5SuQbiIVryCS4YvcumhFwxzh+RRlpAOPKcLL8JXaKiUYWl8fjRwzH5l3BNcN
+         qqwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719144308; x=1719749108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v+9HDK5irEOHKoyqqTJ0d+J1J6qDyFAy5UodcdX0Ris=;
+        b=TRVdLEY/xfQQucf6vNGJcqRoU3pCyZkwPvWC68mCTa82faTEh4JoE0sDlG7maiMIHb
+         aeoYKlWPeancdiX8ik2XnAvrcFwZUqSezeis5NCy8sNSVzbuTIRWO4LSRxkomydlgWPk
+         BeB07LgK3VEY+lEqvoE/vvY9RN9pCU79HbhNoqakeC4fQLBvvbe7KWXjjDPhZTfS5CTn
+         1oeKulAQY2HbtFmOGBXKnzLcnJdXY2NYd2c63zWSZntLrUiXGtU0FKqfMb4ID5HfwXq8
+         uQ18erOoUUahnBQqa+cCW5XQDW1JCh1iCe0lYrjuiKe8WH9xqBAg0ecIGpkKFVAEGrOB
+         NUeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCiM3YYSmHOa9U/mbW9QWDX8zplKKwNxekCuyVk8hFKS1kIxJdwFug8Qy8MQun+0bZanAU8+2eWq2vTr3tYUwAT3Mltqi/eWtHolbmPl7HA9QrO256OdNMTJ4IgPAx7Fsf4qPVb030LJgx3Y8E27bEp0iXs0hAHO8d099VArEq+I9RXBt+hFy3voJOLSi1tuBh8muyH23wXt7e4LOVQ2EWtshYv6C1KkxULfU=
+X-Gm-Message-State: AOJu0YwgxKa4HzW/Ll4ls6GhMvrT1kGqqfC6OgoTg28X8ihhAZ1DdmAN
+	MnJPYk/hMFLC3labgHLQ+5cJVSv1YffIKCh+zJPzqDhZXA2HCMfj1b0ymw40nD5foTpHpmjr+Io
+	2XlJNrgPx+9+GXXCxGbu/6X3M7Og=
+X-Google-Smtp-Source: AGHT+IFnMUqp7z8qfKjLX2GW9CbGe8fI9/rJ6aZbm+NwS/Y0v7CD9JEwChA4DcxpDHqQwuxtifZ4PvJaigG3mMmzT9w=
+X-Received: by 2002:aa7:d393:0:b0:57d:5600:2c94 with SMTP id
+ 4fb4d7f45d1cf-57d56003448mr135481a12.0.1719144308088; Sun, 23 Jun 2024
+ 05:05:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240622105621.7922-1-xry111@xry111.site> <kslf3yc7wnwhxzv5cejaqf52bdr6yxqaqphtjl7d4iaph23y6v@ssyq7vrdwx56>
+ <CAHk-=wgj6h97Ro6oQcOq5YTG0JcKRLN0CtXgYCW_Ci6OSzL5NA@mail.gmail.com>
+ <eeb7e9895aca92fa5a8d11d9f37b283428185278.camel@xry111.site>
+ <CAGudoHFofUZ0Nb9UtV=Q3uQ0K+JnBHPrgLxNYuj7nSLF-=ue8g@mail.gmail.com> <9d1512b57683a68a7176ae8221562657fb0231a3.camel@xry111.site>
+In-Reply-To: <9d1512b57683a68a7176ae8221562657fb0231a3.camel@xry111.site>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sun, 23 Jun 2024 14:04:54 +0200
+Message-ID: <CAGudoHGsumzEukjQg=TxQgzjBcZ4a+TsdNVtFp4dpaSw6BzaSA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: Add AT_EMPTY_PATH_NOCHECK as unchecked AT_EMPTY_PATH
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alejandro Colomar <alx@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Icenowy Zheng <uwu@icenowy.me>, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 20 Jun 2024 17:13:08 -0400
-Sean Anderson <sean.anderson@linux.dev> wrote:
+On Sun, Jun 23, 2024 at 3:22=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+>
+> On Sun, 2024-06-23 at 03:07 +0200, Mateusz Guzik wrote:
+> > On Sun, Jun 23, 2024 at 2:59=E2=80=AFAM Xi Ruoyao <xry111@xry111.site> =
+wrote:
+> > >
+> > > On Sat, 2024-06-22 at 15:41 -0700, Linus Torvalds wrote:
+> > >
+> > > > I do think that we should make AT_EMPTY_PATH with a NULL path
+> > > > "JustWork(tm)", because the stupid "look if the pathname is empty" =
+is
+> > > > horrible.
+> > > >
+> > > > But moving that check into getname() is *NOT* the right answer,
+> > > > because by the time you get to getname(), you have already lost.
+> > >
+> > > Oops.  I'll try to get around of getname() too...
+> > >
+> > > > So the short-cut in vfs_fstatat() to never get a pathname is
+> > > > disgusting - people should have used 'fstat()' - but it's _importan=
+t_
+> > > > disgusting.
+> > >
+> > > The problem is we don't have fstat() for LoongArch, and it'll be
+> > > unusable on all 32-bit arch after 2037.
+> > >
+> > > And Arnd hates the idea adding fstat() for LoongArch because there wo=
+uld
+> > > be one more 32-bit arch broken in 2037.
+> > >
+> > > Or should we just add something like "fstat_2037()"?
+> > >
+> >
+> > In that case fstat is out of the question, but no problem.
+> >
+> > It was suggested to make AT_EMPTY_PATH + NULL pathname do the right
+> > thing and have the syscalls short-circuit as needed.
+> >
+> > for statx it would look like this (except you are going to have
+> > implement do_statx_by_fd):
+> >
+> > diff --git a/fs/stat.c b/fs/stat.c
+> > index 16aa1f5ceec4..0afe72b320cc 100644
+> > --- a/fs/stat.c
+> > +++ b/fs/stat.c
+> > @@ -710,6 +710,9 @@ SYSCALL_DEFINE5(statx,
+> >         int ret;
+> >         struct filename *name;
+> >
+> > +       if (flags =3D=3D AT_EMPTY_PATH && filename =3D=3D NULL)
+> > +               return do_statx_by_fd(...);
+> > +
+> >         name =3D getname_flags(filename, getname_statx_lookup_flags(fla=
+gs));
+> >         ret =3D do_statx(dfd, name, flags, mask, buffer);
+> >         putname(name);
+> >
+> > and so on
+> >
+> > Personally I would prefer if fstatx was added instead, fwiw most
+> > massaging in the area will be the same regardless.
+>
+> I do agree.  But if we do it *now* would it be "breaking the userspace"
+> if some stupid program relies on fstatx() to return some error when the
+> path is NULL?  The "stupid programs" may just exist in the wild...
+>
 
-> It can be convenient for other in-kernel drivers to reuse IIO channel
-> labels. Export the iio_read_channel_label function to allow this. The
-> signature is different depending on where we are calling it from, so
-> the meat is moved to do_iio_read_channel_label.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+You mean statx? fstatx would not accept a path to begin with.
 
-Seems like a useful addition to me. I'm not 100% what path this will
-take so if it goes via HWMON.
+Worry about some code breaking is why I suggested a dedicated flag
+(AT_NO_PATH) myself in case fstatx is a no-go.
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+I am not convinced messing with AT_* flags is justified to begin with.
+Any syscall which does not have a fd-only variant and is found to be
+routinely used with AT_EMPTY_PATH should get one instead.
 
-It may be messy and need an immutable branch however. I haven't
-checked for churn in this code yet.
+As far as I know that's only stat(due to a perf bug in glibc, now
+fixed) and increasingly statx.
 
+Suppose AT_EMPTY_PATH + NULL are to land and stat + statx get the
+treatment. What about all the other syscalls? Sorting all that out is
+quite a big of churn which is probably not worth it. But then there is
+a feature gap in that they EFAULT for this pair while the stat* ones
+don't and that's bound to raise confusion. Then one could add the
+check in the bowels of path lookup in similar way you do did to
+maintain the same behavior (but without per-syscall churn) and a big
+fat warning that anyone getting there often needs to get patched with
+short-circuiting the entire thing. So I think that's either a lot of
+churn or nasty additions.
 
-> ---
-> 
->  drivers/iio/iio_core.h          |  4 ++++
->  drivers/iio/industrialio-core.c | 23 ++++++++++++++---------
->  drivers/iio/inkern.c            |  6 ++++++
->  include/linux/iio/consumer.h    | 10 ++++++++++
->  4 files changed, 34 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/iio/iio_core.h b/drivers/iio/iio_core.h
-> index 1a38b1915e7a..b7d5f4f0fada 100644
-> --- a/drivers/iio/iio_core.h
-> +++ b/drivers/iio/iio_core.h
-> @@ -34,6 +34,10 @@ void iio_device_ioctl_handler_register(struct iio_dev *indio_dev,
->  				       struct iio_ioctl_handler *h);
->  void iio_device_ioctl_handler_unregister(struct iio_ioctl_handler *h);
->  
-> +ssize_t do_iio_read_channel_label(struct iio_dev *indio_dev,
-> +				  const struct iio_chan_spec *c,
-> +				  char *buf);
-> +
->  int __iio_add_chan_devattr(const char *postfix,
->  			   struct iio_chan_spec const *chan,
->  			   ssize_t (*func)(struct device *dev,
-> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> index 2f185b386949..0f6cda7ffe45 100644
-> --- a/drivers/iio/industrialio-core.c
-> +++ b/drivers/iio/industrialio-core.c
-> @@ -727,22 +727,27 @@ ssize_t iio_format_value(char *buf, unsigned int type, int size, int *vals)
->  }
->  EXPORT_SYMBOL_GPL(iio_format_value);
->  
-> -static ssize_t iio_read_channel_label(struct device *dev,
-> -				      struct device_attribute *attr,
-> -				      char *buf)
-> +ssize_t do_iio_read_channel_label(struct iio_dev *indio_dev,
-> +				  const struct iio_chan_spec *c,
-> +				  char *buf)
->  {
-> -	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> -	struct iio_dev_attr *this_attr = to_iio_dev_attr(attr);
-> -
->  	if (indio_dev->info->read_label)
-> -		return indio_dev->info->read_label(indio_dev, this_attr->c, buf);
-> +		return indio_dev->info->read_label(indio_dev, c, buf);
->  
-> -	if (this_attr->c->extend_name)
-> -		return sysfs_emit(buf, "%s\n", this_attr->c->extend_name);
-> +	if (c->extend_name)
-> +		return sysfs_emit(buf, "%s\n", c->extend_name);
->  
->  	return -EINVAL;
->  }
->  
-> +static ssize_t iio_read_channel_label(struct device *dev,
-> +				      struct device_attribute *attr,
-> +				      char *buf)
-> +{
-> +	return do_iio_read_channel_label(dev_to_iio_dev(dev),
-> +					 to_iio_dev_attr(attr)->c, buf);
-> +}
-> +
->  static ssize_t iio_read_channel_info(struct device *dev,
->  				     struct device_attribute *attr,
->  				     char *buf)
-> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> index 39cf26d69d17..9f484c94bc6e 100644
-> --- a/drivers/iio/inkern.c
-> +++ b/drivers/iio/inkern.c
-> @@ -1010,3 +1010,9 @@ ssize_t iio_write_channel_ext_info(struct iio_channel *chan, const char *attr,
->  			       chan->channel, buf, len);
->  }
->  EXPORT_SYMBOL_GPL(iio_write_channel_ext_info);
-> +
-> +ssize_t iio_read_channel_label(struct iio_channel *chan, char *buf)
-> +{
-> +	return do_iio_read_channel_label(chan->indio_dev, chan->channel, buf);
-> +}
-> +EXPORT_SYMBOL_GPL(iio_read_channel_label);
-> diff --git a/include/linux/iio/consumer.h b/include/linux/iio/consumer.h
-> index e9910b41d48e..333d1d8ccb37 100644
-> --- a/include/linux/iio/consumer.h
-> +++ b/include/linux/iio/consumer.h
-> @@ -441,4 +441,14 @@ ssize_t iio_read_channel_ext_info(struct iio_channel *chan,
->  ssize_t iio_write_channel_ext_info(struct iio_channel *chan, const char *attr,
->  				   const char *buf, size_t len);
->  
-> +/**
-> + * iio_read_channel_label() - read label for a given channel
-> + * @chan:		The channel being queried.
-> + * @buf:		Where to store the attribute value. Assumed to hold
-> + *			at least PAGE_SIZE bytes.
-> + *
-> + * Returns the number of bytes written to buf, or an error code.
-> + */
-> +ssize_t iio_read_channel_label(struct iio_channel *chan, char *buf);
-> +
->  #endif
+Regardless, as noted above, either making fstatx a thing or
+short-circuiting mostly the same patching has to be done for
+statx-related stuff.
 
+However, this is not my call to make.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
