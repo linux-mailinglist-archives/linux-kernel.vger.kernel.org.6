@@ -1,133 +1,143 @@
-Return-Path: <linux-kernel+bounces-226486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9BE913F06
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:05:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B98F913F0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C9BF281676
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:05:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FAFE1F211D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 23:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8CA185E5D;
-	Sun, 23 Jun 2024 23:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6176E185E79;
+	Sun, 23 Jun 2024 23:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AG0md7JG"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZ6ybpng"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387D44085D;
-	Sun, 23 Jun 2024 23:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD85175AD;
+	Sun, 23 Jun 2024 23:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719183943; cv=none; b=WdZNWPdQ4MStnzWykw/jC32Es8rYRllEj56ZTjcmwrsHiW7ROBQLwAE6IRrlkx0l65WLnbqFxOLsdLRgN0ATaPboAN6V0cDmimGip7PJLNp7WNZgupL8u5BP150LJLOCSt6/Gin1HjyPIDsQMv0BfymWCThaXtos5HSpPkIm98E=
+	t=1719184577; cv=none; b=m/Fvb9BkUc89ZBWd1UpqyUm7Cg5tDFgkt6Ttsw9Cx76CzrGLSs5fZlxD5tLr1nRogG90Bm8Px6YNhJECozv2dR/m9Q6ymbCpyR5JfLHi53vqrgYpZN5BjenlAKpDhMhX+vrslYnCBccePZjgQwVOF2tVICvyk9+a+aVPqjG/nIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719183943; c=relaxed/simple;
-	bh=pCtVGKa1bI22Im+i/apmqa3auKGBOwgSimRM87zkmRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Mx7D07xEoQhNs1Vder5WhH3gm7Ea3N//iC1sVrCKRMmY2Qj9NShf4hJMClYg2bnhx2n7luyPsfRyQ94PXWHGF2xe4zZ6HFLQ9xYkHz9vHi8+WHbvgZfrP/r5ktd51+e1nCYchAOf+OiqOQE4QjBpjex7HxQjpU/UXf8ThDl6JC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AG0md7JG; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1719184577; c=relaxed/simple;
+	bh=SJ35TR0aVMthObi4Tq8IVJJfUp0GdCYPLfsDJ44pKu4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gYNa1qXSfceqQUZkWU03Lz3grAky5BhAhDDG0A6T49vaZUNWQAIQFyaQ6dHGLu9485M11a47mD7pnFHsPNdXYziNQ1cZfSNLj0wcDDyDST/EfIzCmXkKC31cyqIs1kyqtr4YVpGEZBUQVOxG4E4BiTXVfreECdj7oXrwbPOR3MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZ6ybpng; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70685ab8fb1so220002b3a.2;
-        Sun, 23 Jun 2024 16:05:41 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cc671f170so4088887e87.1;
+        Sun, 23 Jun 2024 16:16:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719183941; x=1719788741; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LLg9SEFszAilsvw4KBn+fxL9F1S7W1/leMLlex75FfQ=;
-        b=AG0md7JG6MP2kjqDHpNOLJLTYxXm9B3WiXVMPoiWmNiptrqsE+W7kX4oeDX0OSXYSo
-         35IgDZk2osD7WO3ZH5h2VjxT92JKIEURGw/Xl9Sq5TE8EOeWR+iBIFDXpEuYMvgcTTOc
-         barEZ/r0coTvqowMDpYSaPBTOOe0+HtRfGqQnFNwYbAZB9t2d4FiMBIrltPpXQO3LdLY
-         N3TPCtHS/87MU1v3ShrfxikxGc71bvorRf99mxcouyFDyvIZh7b+EvgxCwwJdTbXaLzX
-         Cz9g+BhsZJCRC0ALiuwdZDi8KALinwW78n1nDm7jkKeU7t6mqiCdDWoB5UvTq/U8ljKN
-         Jerw==
+        d=gmail.com; s=20230601; t=1719184574; x=1719789374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SJ35TR0aVMthObi4Tq8IVJJfUp0GdCYPLfsDJ44pKu4=;
+        b=CZ6ybpngznQ/XFIS3ezsdKUp0+dfL5v7pMMwA/Ur9Ps3ztGjTs9N3xwIjN1Bw8Hq1/
+         6QtWuyVCnv0aqViN1dHgLZ6GJJL4eH9aL4P1KICvOFKBNpV8N/tYDgqbOwi8t3pq43Ut
+         fBEDjRTeUwVSuFIES1imSwlrIXBiAGBjOo6yf404wMN33oQ/QYSJHKAzql4COGUyjONe
+         48rONmj6vMwNmeITJX0JOyXwdU3nwUsGbTZIbJMMQNxPlv+hmHCyQqTpgMPLUqEF9wdQ
+         HPMZOZcYwWE6hnj14bATI5i7sYoz9K70W8zt3kkbLAnvWh9CIWUegYBTQPWdbjNVGGSs
+         fd+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719183941; x=1719788741;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LLg9SEFszAilsvw4KBn+fxL9F1S7W1/leMLlex75FfQ=;
-        b=AqxwCMe2pTwGLGaZ0EJQg4ARhTC48fyqiL9rI2xmRUvKMkosEvFVYOSg4GQN6GSkZT
-         SSB+fRJhCoK1Lr2hCuWgj73v0+EQ7eNkQFft5cUkWxNvI+8l2o/Ki3Lw1bnekQTp46/Q
-         Bm/fJX4VV26zjSAAJWv+kRVTq33O9WdVIe5CVusUZ/3baAcvB69Rb87dQRw6qoZzHyXl
-         ZNP77Do7D7KTaRZBXvMCg+U7LF3i9sHiwFKPEFLcna4AU3Ho7oKESuk3G4Z8htwq2LPI
-         3w3YAx9ZCHKiM2/Jcc7hf39wd8tSDFcattrWFVb3DJvXI743x++PoK/N5bs1zglalJPU
-         zZyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVnG2nt6Q5RZiS1einsV6xHZ7l9wFdIN1TUE2pxUkkDU6WHzgxpIFTbGHenHv76fIfEycKXw+CLxfqei+GbHQVgLWTo2JAQydWq3o=
-X-Gm-Message-State: AOJu0YxXPL7NpZeYexlUBjHL3MToGzdZydlVENZ8e6AVqUnLIrkbgpN+
-	YW4HWVhxMQ2FQUJnWLBUymafHxf6zScQpIfUkUrhLmQoHQhtrHFz
-X-Google-Smtp-Source: AGHT+IFP2KJxeb4P0ucxbun4gImZFHaGda9VWKdVvnkdQ2ZtC6B+Xg6ct7SBnG08gbK2gWlwhTIqAA==
-X-Received: by 2002:a05:6a21:789c:b0:1b6:3dfa:cc09 with SMTP id adf61e73a8af0-1bcf7efc84cmr3884384637.35.1719183941297;
-        Sun, 23 Jun 2024 16:05:41 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:c8b4:4b16:721a:ce0f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706513e98f6sm4923267b3a.162.2024.06.23.16.05.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 16:05:40 -0700 (PDT)
-Date: Sun, 23 Jun 2024 16:05:38 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v6.10-rc5
-Message-ID: <ZniqQuGkosZYqIYE@google.com>
+        d=1e100.net; s=20230601; t=1719184574; x=1719789374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SJ35TR0aVMthObi4Tq8IVJJfUp0GdCYPLfsDJ44pKu4=;
+        b=BIdOuiQv1lT1QA6Zvb7Lj7nEQFPCoaEIa5BnGe4O9s8mIZSwWJq/NZjCv2t3iH1h04
+         ifgDsyVgEoXWPbNZFHK9vkNlw9nw1xJCi/W8tVcbvHUia+QHLxFX/fNCFeOog8tPTOxo
+         aPeiM+YHYwyLY30AKH8qBemiiI9qXK36858L2DxOVHNOfFVQ44oJY5q/Yl3gC2o+cBjy
+         TXd0Pt30ZDyFKJpbq/AaNbbUdno0DNsHL5+04EQfnn+80qqOIm7F4bD3u0AiPnpzU7sM
+         j3PMfsEvM9GnKUGf29/X/6+gA8feCTJweWs86tssSFgCy8CZ7MoZyCSi5QJXyfy7WBM5
+         TTvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcx+H6sXs0BLWZO9AJMySTS0Cu4uPvMoSsYn6hN3tWsiQMeQ5frIBuiYanuNqQQBNzyB0bxpWaQGjeUfKXdBN7Zz4KEczVmn4bUYC6bBE6Utl+VbuM5lC1YSUTJkE7LRCpDIaDwvzAghqGtIJ/ZHHDq3l7m01PXCR+boJHVdRCiC5WJV/lnVACg3HLsZXafhEyxMFxgTpf9U/DTrQN3eGuILVIUA==
+X-Gm-Message-State: AOJu0YxIKZkfiDhN391jmayTxs0RLVCPHsG+iKO7dZsuZ9UHkbz/K9Q1
+	6JFHn2uQAEoB+ExM501UvzJHX8IPRbofk1+yOXPb5sgu6o5yHIwD/8FJMf7X7SACL4Qc6fRbDPQ
+	Mi5EqOM3EDJGKevax+ZZ8UbbnGfg=
+X-Google-Smtp-Source: AGHT+IEkFCsbNLUYqCPBDMMGovH2SszWnW6MECsXIbIlwNX/5XBMF+1TVFDhjaeIlLIA8sbbFeFBvXetlHRDhAvcCZs=
+X-Received: by 2002:a19:7702:0:b0:52c:ad70:6feb with SMTP id
+ 2adb3069b0e04-52cdf355114mr1085376e87.20.1719184573846; Sun, 23 Jun 2024
+ 16:16:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240621-b4-sc7180-camss-v1-0-14937929f30e@gmail.com>
+ <20240621-b4-sc7180-camss-v1-3-14937929f30e@gmail.com> <cd9b5612-1160-4284-be7f-4efbcbbbe346@linaro.org>
+ <b9deca88-8e1a-4017-a0fc-6a77672d684d@linaro.org> <CADgMGSs7owyvvvRTr4YvCdmMiJV86CjD5YLsJiBZZONDhfFisQ@mail.gmail.com>
+ <ef218f06-283a-4e7b-bafd-382c47248106@linaro.org> <CADgMGSuaKKNgkVjcWA__fJkmeHYXgE47YfObHddp4e-gTH3NEw@mail.gmail.com>
+ <f0c3e0f5-e5a3-49e1-8b9c-57fc7af5d71a@linaro.org>
+In-Reply-To: <f0c3e0f5-e5a3-49e1-8b9c-57fc7af5d71a@linaro.org>
+From: george chan <gchan9527@gmail.com>
+Date: Mon, 24 Jun 2024 07:16:01 +0800
+Message-ID: <CADgMGSsu4FEPHydWu1mj2BaJjt1=7Ws514ig0YH0TbToFhk-0Q@mail.gmail.com>
+Subject: Re: [PATCH 3/6] media: qcom: camss: csiphy-3ph: Add Gen2 v1.2.2
+ two-phase MIPI CSI-2 DPHY init
+To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Mon, Jun 24, 2024 at 6:13=E2=80=AFAM Bryan O'Donoghue
+<bryan.odonoghue@linaro.org> wrote:
+>
+> On 23/06/2024 22:37, george chan wrote:
+> > User-space tool can't tell so I made some guesses.
 
-Please pull from:
+Sorry for misleading, actually i mean user-space too can't tell the
+difference. As all 3 kinds of init sequences are working, I can't get
+a strong conclusion of "correct" init sequence between atoll's and
+trodger's.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.10-rc5
+> So how are you testing ?
+>
+> Libcamera on your target rootfs ?
 
-to receive updates for the input subsystem. You will get:
+Yes, a similar test was carried out early days with the "wrong" v1.2.1
+init sequence, on pmOS qcam installed into xiaomi redmi note 9 pro
+(sm7125). It showed nice output. And I was excited so I took a video
+recording too:
+https://www.youtube.com/watch?v=3DU_do11pSf1s
 
-- fixes for ili210x and elantech drivers
+After your indication, I replaced the v1.2.1 init sequence with
+atoll's and trodger's and carried some simple test with below cmd and
+both are outputting files.
 
-- new products IDs added to xpad controller driver
+media-ctl --reset
+media-ctl -V '"msm_csid0":0[fmt:SRGGB10/2592x1944 field:none]'
+media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/2592x1944 field:none]'
+media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+v4l2-ctl -d /dev/v4l-subdev4 -c test_pattern=3D0
+v4l2-ctl -d /dev/v4l-subdev5 -c test_pattern=3D0
+v4l2-ctl -d /dev/v4l-subdev6 -c test_pattern=3D0
+v4l2-ctl -d /dev/v4l-subdev19 -c test_pattern=3D$1
 
-- a tweak to i8042 driver to always keep keyboard in Ayaneo Kun
-  handheld in raw mode
+media-ctl -V '"s5k5e9 13-002d":0[fmt:SRGGB10/2592x1944 field:none]'
+media-ctl -V '"msm_csiphy2":0[fmt:SRGGB10/2592x1944 field:none]'
+media-ctl -l '"msm_csiphy2":1->"msm_csid0":0[1]'
+yavta -B capture-mplane --capture=3D3 -n 3 -f SRGGB10P -s 2592x1944 /dev/vi=
+deo0 -F
 
-- populated "id_table" in ads7846 touchscreen driver to make sure
-  non-OF instantiated devices can properly determine the model data.
+As you can see the cmos named s5k5e9. and this time simply do yavta
+dump, no pmOS qcam test.
 
-Changelog:
----------
+Since this test is carried out in sm7125 SOC, in theory, it is better
+to test with sc7180 (less likely form-factor available in the market)
+so I will send out v2 with trogdor init sequence for other dev have
+sc7180 board to have a test.
 
-Alexander Stein (1):
-      Input: ads7846 - use spi_device_id table
-
-John Keeping (1):
-      Input: ili210x - fix ili251x_read_touch_data() return value
-
-Jonathan Denose (1):
-      Input: elantech - fix touchpad state on resume for Lenovo N24
-
-Luke D. Jones (1):
-      Input: xpad - add support for ASUS ROG RAIKIRI PRO
-
-Tobias Jakobi (1):
-      Input: i8042 - add Ayaneo Kun to i8042 quirk table
-
-Diffstat:
---------
-
- drivers/input/joystick/xpad.c         |  1 +
- drivers/input/mouse/elantech.c        | 31 +++++++++++++++++++++++++++++++
- drivers/input/serio/i8042-acpipnpio.h | 18 ++++++++++++++++--
- drivers/input/touchscreen/ads7846.c   | 12 +++++++++++-
- drivers/input/touchscreen/ili210x.c   |  4 ++--
- 5 files changed, 61 insertions(+), 5 deletions(-)
-
-Thanks.
-
-
--- 
-Dmitry
+Stay tuned.
 
