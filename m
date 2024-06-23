@@ -1,130 +1,148 @@
-Return-Path: <linux-kernel+bounces-226294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B250913C90
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:50:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D818913C0B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 17:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C45411F21D8E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:50:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A62EB20FBD
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 15:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4641822E6;
-	Sun, 23 Jun 2024 15:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15998181D09;
+	Sun, 23 Jun 2024 15:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QCd1Vmfi"
-Received: from out.smtpout.orange.fr (out-11.smtpout.orange.fr [193.252.22.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hq3MRWsL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47BCF9F0;
-	Sun, 23 Jun 2024 15:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C13515E83;
+	Sun, 23 Jun 2024 15:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719157828; cv=none; b=TKsnAHxYh2nXo+CCbM8Nit9FXGH93Dc1VK1KskfwP2Su8XoQaoOP5JgoKJPFq5hyl+TJy8SxdoVKgvz7BH1zFOdszSJ5/Kay8iVXxxSJjILriVL1cNkraeO5uEO7v9JD7A26K+rfQfNQv1H6Mdfho493reK2G9Z3PcwPJIPfa/Q=
+	t=1719155808; cv=none; b=PdUzUcjyWohDO/xTewUztwLvtLjcSsbGJtqQHWilSixW189Kh6XNXXvHVDckDtD3p3PsXhLV+kiqarnCCmZTmQXVGDkDS9J0yT/powd5LSO3Hc+ahF8zmc1J3id6IiiTKYsjm+hQBBtCLlrr5uLuCv9DdNq8gR5Rkocs781qpD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719157828; c=relaxed/simple;
-	bh=VTtHoMRrh/CknLnrTiA6cISWe0B7QIazQmbA5Bs4n5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KzHjULzbzwBKM33nQCSa6m/YjLH6F6ptkUj/0r9bVNkQH1Ox4NQ6E6PMSfh/G7GIkJ95+pCBt9Z++8/Al8Tg04494wEE7eSRLXCPwwesFTatecy5jopJYfUhx09BmGWZAPHg6+iViTXNw51EnZgu0EWCDfHSZ3rWnHx6ZhxPpcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QCd1Vmfi; arc=none smtp.client-ip=193.252.22.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id LOvzs9RlN2GQtLOvzsbDUH; Sun, 23 Jun 2024 17:15:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719155719;
-	bh=6xc2xyXmsrpTItWg6IptTdpN90W19e46SCweNrwd4z4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=QCd1Vmfi7/8s3qsK8bcJq1V3dXy73L7NZiNWiMW2h/YlojSzlRfWprMCDw3ibhUk2
-	 W6vX3VEQsVlKfW1edVOsjY6V/EhNgQNszuWZH/BS9yyRwaR5+yQ93jQIHmSm/+j79y
-	 YOoAdA2eMSBy5sq7mRbob3AguiMoy95CsrbLvgDwD7u4z4DKAAaxq2diqhomNZoN+H
-	 eQ8JcyJ128zs2PY923RLqCPMgGbdeBEKLbcGAyV8G5PIc4fQuPgO7zgICNwhoFv+jv
-	 6muz8tudmTkaRTOLabI5bXCM2DXdgFRef7pHsEL4PUEvn7CllwapiA6mL99TA6Z+dZ
-	 N798nWjA/7hPw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 23 Jun 2024 17:15:19 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Cezary Rojewski <cezary.rojewski@intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org
-Subject: [PATCH] ASoC: Intel: sst: Constify struct intel_sst_ops
-Date: Sun, 23 Jun 2024 17:15:11 +0200
-Message-ID: <098acdf266b2f4a922d6a624e9032ec24a09093c.1719155688.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719155808; c=relaxed/simple;
+	bh=7NUmx/n9YzJ8b4yvKeKgvbJVu8t0tpzBTeSYqOoXmp0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eVB+lm9K8UO2o4pVCDR57Q65KFnklFNMDtTdDMEv172YNPnUwxdKsqYx6MuUBUg6Yc/dR8DT5FHcMq3KaCwzp6fqyI8/H5DAtv2v8/2Yd+XFSi2M4Pji0CgdQWAk1U+8vThvVCxhT+eENQoalKt1J2ux4cMkZmReVVjXaYu/48s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hq3MRWsL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NCra2G032082;
+	Sun, 23 Jun 2024 15:16:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=UQEPgx4q8Ps5aQqYl668p4Ii
+	oyWdh5cXGvkATol/Ua4=; b=hq3MRWsLLn5DybUKJgs8uKBzOK+MpQgDiTy7Mcii
+	9ihOo+YUuCndiCgqHCMeH0LfyAtUmvo/vsSmTge+Xr7JwxoYLajW3/geXyZhK7O/
+	lQQEuvkbwVg3PSMCUFVO1XeOu/aDk9V7bHmN6mZe7+3wouL377jOC7so4s9CSYBY
+	ORmNzJGYG8BFwTJ/+ZW9v2WVKz3sRrGAIdThtR6BvexF7lcDYMKfoF3VeaPanZVn
+	/SXJcY4ssC+TR5ZHxMpcCP+cbu9rnwFcg0tvc4bNrlx0yjI7muyCXdCaoUcd8eIY
+	Du4FxL9c9+jeE4vwV9JWLAZyclUfZmniCtkfp1wCtlQK8A==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywkyn20rd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Jun 2024 15:16:40 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45NFGcKQ023059
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Jun 2024 15:16:38 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 23 Jun 2024 08:16:34 -0700
+Date: Sun, 23 Jun 2024 20:46:30 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: freedreno <freedreno@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
+Message-ID: <20240623151630.bskqwqhp25mu3yuf@hu-akhilpo-hyd.qualcomm.com>
+References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
+ <20240623110753.141400-4-quic_akhilpo@quicinc.com>
+ <a458a3a7-2b6d-4032-949c-b2c021d339e8@kernel.org>
+ <20240623122856.kqf4x6mft74hzk7y@hu-akhilpo-hyd.qualcomm.com>
+ <7d69e98d-a870-4200-8f22-2a16fcf02794@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7d69e98d-a870-4200-8f22-2a16fcf02794@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VeifPqgPBpSGbWurgtZo3aWPTg6xaO9T
+X-Proofpoint-GUID: VeifPqgPBpSGbWurgtZo3aWPTg6xaO9T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-23_07,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ mlxscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ mlxlogscore=999 spamscore=0 clxscore=1015 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406230122
 
-'struct intel_sst_ops' is not modified in this driver.
+On Sun, Jun 23, 2024 at 02:53:17PM +0200, Krzysztof Kozlowski wrote:
+> On 23/06/2024 14:28, Akhil P Oommen wrote:
+> > On Sun, Jun 23, 2024 at 01:17:16PM +0200, Krzysztof Kozlowski wrote:
+> >> On 23/06/2024 13:06, Akhil P Oommen wrote:
+> >>> Add the necessary dt nodes for gpu support in X1E80100.
+> >>>
+> >>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> >>> ---
+> >>> +		gmu: gmu@3d6a000 {
+> >>> +			compatible = "qcom,adreno-gmu-x185.1", "qcom,adreno-gmu";
+> >>> +			reg = <0x0 0x03d50000 0x0 0x10000>,
+> >>> +			      <0x0 0x03d6a000 0x0 0x35000>,
+> >>> +			      <0x0 0x0b280000 0x0 0x10000>;
+> >>> +			reg-names =  "rscc", "gmu", "gmu_pdc";
+> >>
+> >> Really, please start testing your patches. Your internal instructions
+> >> tells you to do that, so please follow it carefully. Don't use the
+> >> community as the tool, because you do not want to run checks and
+> >> investigate results.
+> > 
+> > This was obviously tested before (and retested now) and everything works. I am
+> > confused about what you meant. Could you please elaborate a bit? The device
+> > and the compilation/test setup is new for me, so I am wondering if I
+> > made any silly mistake!
+> 
+> Eh, your DTS is not correct, but this could not be pointed out by tests,
+> because the binding does not work. :(
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+I reordered both "reg" and "reg-names" arrays based on the address. Not sure if
+that is what we are talking about here. Gpu driver uses platform_get_resource_byname()
+to query mmio resources.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  12250	   1000	    112	  13362	   3432	sound/soc/intel/atom/sst/sst.o
+I will retest dt-bindings and dts checks after picking the patches you
+just posted and report back. Is the schema supposed to enforce strict
+order?
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  12378	    888	    112	  13378	   3442	sound/soc/intel/atom/sst/sst.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- sound/soc/intel/atom/sst/sst.c | 2 +-
- sound/soc/intel/atom/sst/sst.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/intel/atom/sst/sst.c b/sound/soc/intel/atom/sst/sst.c
-index e0357d257c6c..ff03fde12151 100644
---- a/sound/soc/intel/atom/sst/sst.c
-+++ b/sound/soc/intel/atom/sst/sst.c
-@@ -158,7 +158,7 @@ static int sst_save_dsp_context_v2(struct intel_sst_drv *sst)
- }
- 
- 
--static struct intel_sst_ops mrfld_ops = {
-+static const struct intel_sst_ops mrfld_ops = {
- 	.interrupt = intel_sst_interrupt_mrfld,
- 	.irq_thread = intel_sst_irq_thread_mrfld,
- 	.clear_interrupt = intel_sst_clear_intr_mrfld,
-diff --git a/sound/soc/intel/atom/sst/sst.h b/sound/soc/intel/atom/sst/sst.h
-index 126903e126e4..e0db7434543c 100644
---- a/sound/soc/intel/atom/sst/sst.h
-+++ b/sound/soc/intel/atom/sst/sst.h
-@@ -391,7 +391,7 @@ struct intel_sst_drv {
- 	unsigned int		csr_value;
- 	void			*fw_in_mem;
- 	struct sst_sg_list	fw_sg_list, library_list;
--	struct intel_sst_ops	*ops;
-+	const struct intel_sst_ops	*ops;
- 	struct sst_info		info;
- 	struct pm_qos_request	*qos;
- 	unsigned int		use_dma;
--- 
-2.45.2
-
+-Akhil.
+> 
+> I'll fix up the binding and then please test on top of my patch (see
+> your internal guideline about necessary tests before sending any binding
+> or DTS patch).
+> 
+> Best regards,
+> Krzysztof
+> 
 
