@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-226376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C19913D84
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:02:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65DD913D85
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 20:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C5C4281065
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:02:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE25A1C20F91
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 18:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C971A1836F3;
-	Sun, 23 Jun 2024 18:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E578F1836F5;
+	Sun, 23 Jun 2024 18:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KBamNBIS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XzmG+F78"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LDHEO5kM"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9B42F4A;
-	Sun, 23 Jun 2024 18:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5083E2AD22
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 18:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719165716; cv=none; b=la6kCdUOgeI+VLdhUB8sRvghunPfR1Z7YLHy1gx0iWY+pRN0BDw9xWnQ7ZlQT21EaL4+Yn2hW8cAuQTUPlxjm2mp737323wirj5C5JAOGqtObFxOjCnb1FkC8P58DD3wMJHB1+eBvjjcTjjnu7145TjuWj4+JqqmHdLqCR8z+/w=
+	t=1719166079; cv=none; b=CoTPdfWVcotCdSN652Mz+ATi4K9rMuksZEPQTxZxBJW1oEC/x47FqCcSpLPuGBKprz/XQR10SMtjShMFRsXBPcYt11s2qEP6hJCqEofCk6JuL5GRovemL4ydvpeFajJsXtafMd6v+P3v3Ii0zRdZNqlhL6bcu+Tsa0mycjIquDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719165716; c=relaxed/simple;
-	bh=xzyx/9tbpTo1yU1GzaIuisCOfstbwfUJdaEt30D6G08=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=sZQKz7L5X7djdSZHFNgvpx+h/pYJjdDfwF/NFCwPnmP/n4OQ6+6Cta6B3JhqZxikNdJ1/pLG1eHfuT8wxE78ljlLsP1LKNIUACvT06EuV17OtwIFOZBp86WTrCIDZSPBcjwZk/7kUX0TE0W5TPWPVRu5Jatojau4L6Fb5dCY9Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KBamNBIS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XzmG+F78; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 23 Jun 2024 18:01:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719165713;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XlFslKpy6bAvldqG7vd+/Z/s8GzxkeiMuWP1KHn3rNM=;
-	b=KBamNBISulqXqOwuncHFaGrCgVaftxG3Vw7Fx6x89Z3gwWLtShV+AhhIcvRd3H7mxP4ZSo
-	Bz2RC0VhQVpC77GLvYrruGMUr9wAgFlNGzR93OKvRXL0JlHIiBuQkOZsQJC08FhQ6CVZI4
-	HicXiaK7EMJPUYMLLvsO7Z3ogM3z6PfDUBZTV5M9B6W9KmUyYEr5QwSXN+r4YhatTfxfD+
-	LSpBV/6fQOnMse5YNtMqr8XBuwN3jP2jn5zWS9nsWBRY3V1BLTK4QuK/v1Zz+mSn7+n/8r
-	YG6RWCscTv3BtKDvPiPIT0ykik6R7McMb0ojr6cvlSH+4WUlsQ+tGkqmpW6Krg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719165713;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XlFslKpy6bAvldqG7vd+/Z/s8GzxkeiMuWP1KHn3rNM=;
-	b=XzmG+F780xER9Npe6g2dxBm4tsHJjtznhkkNaAKBNNkB726iWfwttnOM+2UBl6sgni7B9z
-	BNzATND2yqfJV/DA==
-From: "tip-bot2 for Yang Li" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/core] timekeeping: Add missing kernel-doc function comments
-Cc: Abaci Robot <abaci@linux.alibaba.com>,
- Yang Li <yang.lee@linux.alibaba.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240607090656.104883-1-yang.lee@linux.alibaba.com>
-References: <20240607090656.104883-1-yang.lee@linux.alibaba.com>
+	s=arc-20240116; t=1719166079; c=relaxed/simple;
+	bh=gN5gx/2bgxPc7Ha4uj6zKWoJM3HzTcGze3wrKsRZO74=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UE1L+2Zc2gYpSAugZqb18r/Bi+f/rX6ICqYrtfBPtb1BXFIBcZjlgp3d2CTNBKKLuITl2rJL1zxpQHq8X3kgGZIVkcXyEGqI342sOq+evnlxo6wcyxsvmwJgaAfaa5jHy04Azj1GoGdgGdPa/va2vLeW7fVsY4JUGDsb6dM1Mnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LDHEO5kM; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a72585032f1so2013466b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 11:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1719166075; x=1719770875; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2q/oGp1Uj11i8ttCrYoX4CQ1yZ9C29tZG3LwII1sKnc=;
+        b=LDHEO5kMbXw9jZziqvkoj9OBR/z5m91IdNeYZASyTbm42lQqLPTb3NAU6eHp4prAln
+         DvLkZz5zd3QKXz9eUOryezP+Lw3uG5kh3tJcKvIF2OHlui+gHc/iZQ8WWVy+hcNvOwMP
+         2CqQlrAUbP0t1gALf32yiIknknu4vrjsjS8kA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719166075; x=1719770875;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2q/oGp1Uj11i8ttCrYoX4CQ1yZ9C29tZG3LwII1sKnc=;
+        b=cUNNFLd/2XmXS2xgaWgkImN7S0DGc7Dk8/TQWbhmEaC/wqw4kg93qXKBREEZhyWRYo
+         W0wgEkEW3O3Kqc5HUVVYxpHsnZpYD7AyrMjYju/Yw7fKKNsZasbqf6Cu+L1g7eL/3MC8
+         S1SOqqRecLhhODyItEzLiI28DPyO47EOmDezCDMT2ePw1o0TiuWubMRwcjHeOgZ5vUOZ
+         /VEVTcBS4Wo0Lj9yrHaibeF1Ie1x5/JawudAbOJMfKB85qXo19MubS4uAwWjc4w3gzsA
+         MzBPtM57u3hy/pPeplQYfuvH0FZbcT8GdQTbN7aV2TyFWJNyY1xAjq31O8T+4J1GiiKR
+         sZHg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8dMDzIKFJhP0tutMPkcPqcFfheK+WteRPM/KacJ4P4HgcGa0PSkhK2Mtqp2Vf8F+P96GP1LqGFV8fH9O0prOcWk1T9lkdGhZu5Xih
+X-Gm-Message-State: AOJu0YyCIj6Ef3GxaYGvOceo7fb2plHyh8wJWsD9zbsWA9V+eVNzasc5
+	/pjD2Vd4njyZ9EiLAsPs0uSMt3QORrTFeNNid2A8g4Vg+0vxIsleXYlKmEEm7C9ab23C95ZEzsC
+	jcvNhvQ==
+X-Google-Smtp-Source: AGHT+IEh+12QSMBQFZbwUrDD3mArevMZjbzqM4GJPF3dMC4MDAJ5PjmOQ+Jz2udj77P4B3WTtwMU9w==
+X-Received: by 2002:a17:906:eb09:b0:a6f:c886:b68b with SMTP id a640c23a62f3a-a715f9799e0mr177469566b.43.1719166075450;
+        Sun, 23 Jun 2024 11:07:55 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fe30e6a1esm211580566b.216.2024.06.23.11.07.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Jun 2024 11:07:54 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a72585032f1so2011566b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 11:07:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWjdiAR3l9f6H2w7GkSFztPf/Z2ge/b+OxBCi9tWrC3Lkqvd9jFC/qMbzt2OaKzaJz8YsiIkFluGnB0j3Kl0shkQWA0Z/SGQ2prLU8X
+X-Received: by 2002:a17:906:318e:b0:a6f:5adc:6533 with SMTP id
+ a640c23a62f3a-a715f9795femr222604566b.46.1719166074441; Sun, 23 Jun 2024
+ 11:07:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171916571257.10875.10575305766925394032.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <202406230912.F6XFIyA6-lkp@intel.com> <CAFULd4YVOwxQ4JDaOdscX_vtJsqJBJ5zhd0RtXXutW=Eqh29Qw@mail.gmail.com>
+ <CAHk-=wg1h4w_m=Op1U4JsyDjsvqG0Kw1EOVMQ+=5GX_XytdorQ@mail.gmail.com>
+ <CAFULd4YR-VkAOKiS5yxSUYi0YMzY1p=pkYe4dOkgFs+A=9AFFA@mail.gmail.com> <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
+In-Reply-To: <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 23 Jun 2024 14:07:37 -0400
+X-Gmail-Original-Message-ID: <CAHk-=whPqqZVSeJiQsMvsAxtAmtR9iAuB4gg_1sUK2D-uBPpLw@mail.gmail.com>
+Message-ID: <CAHk-=whPqqZVSeJiQsMvsAxtAmtR9iAuB4gg_1sUK2D-uBPpLw@mail.gmail.com>
+Subject: Re: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
+ requires more registers than available
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the timers/core branch of tip:
+On Sun, 23 Jun 2024 at 13:48, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Now, from having looked a bit at this, I can point you to the
+> differences introduced by having to have the emulation fallback.
 
-Commit-ID:     e1b6a78b58aa859c66a32cfaeb121df87631d4ed
-Gitweb:        https://git.kernel.org/tip/e1b6a78b58aa859c66a32cfaeb121df87631d4ed
-Author:        Yang Li <yang.lee@linux.alibaba.com>
-AuthorDate:    Fri, 07 Jun 2024 17:06:56 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sun, 23 Jun 2024 19:57:30 +02:00
+Ahh.
 
-timekeeping: Add missing kernel-doc function comments
+Itr does all the same things *and* it has
 
-Fixup the incomplete kernel-doc style comments for do_adjtimex() and
-hardpps() by documenting the function parameters.
+    "S" (_ptr)
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20240607090656.104883-1-yang.lee@linux.alibaba.com
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9301
----
- kernel/time/timekeeping.c | 3 +++
- 1 file changed, 3 insertions(+)
+as an added register pressure, because if we take the "call
+cmpxchg8b_emu", we need the address in a fixed place.
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index da984a3..2fa87dc 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2547,6 +2547,7 @@ EXPORT_SYMBOL_GPL(random_get_entropy_fallback);
- 
- /**
-  * do_adjtimex() - Accessor function to NTP __do_adjtimex function
-+ * @txc:	Pointer to kernel_timex structure containing NTP parameters
-  */
- int do_adjtimex(struct __kernel_timex *txc)
- {
-@@ -2615,6 +2616,8 @@ int do_adjtimex(struct __kernel_timex *txc)
- #ifdef CONFIG_NTP_PPS
- /**
-  * hardpps() - Accessor function to NTP __hardpps function
-+ * @phase_ts:	Pointer to timespec64 structure representing phase timestamp
-+ * @raw_ts:	Pointer to timespec64 structure representing raw timestamp
-  */
- void hardpps(const struct timespec64 *phase_ts, const struct timespec64 *raw_ts)
- {
+I don't see any immediately obvious workaround.
+
+              Linus
 
