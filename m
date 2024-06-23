@@ -1,163 +1,149 @@
-Return-Path: <linux-kernel+bounces-225999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C5A9138E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:06:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9050F9138EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 10:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF28BB213EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:06:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EB181F21B07
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 08:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946EC5F87D;
-	Sun, 23 Jun 2024 08:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1FC6EB55;
+	Sun, 23 Jun 2024 08:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tr5j8XDo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E7eRRjIx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE541175AD;
-	Sun, 23 Jun 2024 08:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D4749633;
+	Sun, 23 Jun 2024 08:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719129986; cv=none; b=Hr3gT793oNmhPx8tyC7N+Lv5rtmXU9wNATW8B9nKsmwtLrgndNODs/whN9c3yE3VI1QbXwml0SV8DveIN7tGob11xlNw0J5KvD2ILMcRxJ0dawfvFTAZaTCljafJkCwDDuXIKwfO7JLcO7ifi7XUD/eYQjXrTSgtdI33RzH7BIQ=
+	t=1719130116; cv=none; b=CjPpqGIh2MliPm28QmisqXqpYFnVnc1HrJGx1Py9OPV3OryumF8SJGILXn5Tp5A3kR5OEMv5so6qzLYMqSPizHrQhdvYjMsuQBxCBi9+llA6YvrI1NYwKCssAPqWplR/87Y7xK3VKYXno1ZNGdUuhceCQ7qXIU1+N1wqALVUuGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719129986; c=relaxed/simple;
-	bh=UOYqyx8Z7pHMjU/0127+Y6My6nfe2PgdCm0DtuH/jjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dQqxGVrV5FwmB/skD9iMKeN+Gb5Ipp8OhpM6TdHJYH9FmlQHeS7E2uw80A8xIP86+X3d0hjn/qNH5SE3xsnyMc0L3T+stJ446X6I/GM0f4i3Oory6GzFoxp3GRLyXu3I2Um72AdFV6BUFtp1p+9aKn+rOVYXFVzXV85XvF1TExk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tr5j8XDo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9E0BC2BD10;
-	Sun, 23 Jun 2024 08:06:25 +0000 (UTC)
+	s=arc-20240116; t=1719130116; c=relaxed/simple;
+	bh=+pLFZBPj//YztSi5TcONh3iuWLjMYcTw1nhqxWanKBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O+sBvBIhdSm1qHgmmsbfkqHWzVO3LIWfxdVQq5lmDrvBnL0dv9h4dnV2m6DOWcUblAbariDu2PQTYApBunpdApwUvELYIyPI3G1S5qql4G3shHAjd0t38EpRnEetqMWpawBKbdaGJLpHLR/TsmMLUXaBPoRj0XhXOGUNUdLE/J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E7eRRjIx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9DA1C2BD10;
+	Sun, 23 Jun 2024 08:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719129986;
-	bh=UOYqyx8Z7pHMjU/0127+Y6My6nfe2PgdCm0DtuH/jjg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tr5j8XDohxOG5RXvP6Caeff5Yt3CHlSXjcnea0kieSlkNElyxe7gLZjR7RXdEdZWr
-	 tsLPOdME0pvN/jWgUHo5/RoV/n0b1jOHAQR7tD1xgzlM16BX+/1ePHcwM9/i47Nz9I
-	 FNsLsbeeO3wc13Fptob+FrftGsXaAD+N2W7MDkB3wEQeZzz/n+f8jTk8G/3aPsweOc
-	 YS0OK7LgtxHmgI0Aol/PviVwxd2VjLaMjiHjZC3DxiF55eiZ1vxbMsjbo/o0PMM0yf
-	 +pZStQnIuRajMqI7IdMO/qF9zR4nKz4/nwX9oforgDgSWIMPFJcGYbNbrIKJkQIr5J
-	 FCfn8c9ohOOvw==
-Date: Sun, 23 Jun 2024 10:06:22 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.10-rc5
-Message-ID: <ZnfXfkZfI5iNZqBW@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=k20201202; t=1719130115;
+	bh=+pLFZBPj//YztSi5TcONh3iuWLjMYcTw1nhqxWanKBs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=E7eRRjIxkckqVPDNvXfDiCOmNFkRIyKC7Wm14jgZz+A9Kbo0Sy1uNafMXPhqmSM9V
+	 HPaVQVMP0w9cXGxTFdwhbOBu2gRyhywYU8JH/ck6YQ36lAJ1LI/Ct5ME575u+ammfZ
+	 gGYcxX3NZMRDuRIJT1A5VRAqdc3Z8yuGU/ZJzVM1KYH0C9ktQZTn/2+OTBY/YldVf6
+	 3gTtj0D0jRB5ufhkFbP8aRxifmLyiKzlRmPAvsuF8NgiGv0zPpIqrN0U20MSsmbbqR
+	 YdlaipJ13VLAlbPqsczbJxLYvLdiW8VIOx1SDTp0YOEr1+75ios4YFvKieVg/XqfIS
+	 2qJM9qdKZ2Jpw==
+Message-ID: <77987fdd-5cd5-4683-87af-18c5c31e1357@kernel.org>
+Date: Sun, 23 Jun 2024 10:08:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CcDWrlTMmm+xypyo"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: display/msm: qcom, mdp5: Add msm8937
+ compatible
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Krishna Manikandan <quic_mkrishn@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240623-dsi-v1-0-4ab560eb5bd9@gmail.com>
+ <20240623-dsi-v1-1-4ab560eb5bd9@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240623-dsi-v1-1-4ab560eb5bd9@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On 23/06/2024 01:25, Barnabás Czémán wrote:
+> Add the compatible for the MDP5 found on MSM8937.
+> 
+> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+> ---
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 
---CcDWrlTMmm+xypyo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---
 
-Linus,
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
 
-the doc updates not only fix outdated information but also set the base
-for new terminology which we want to apply soon to avoid dependencies.
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-Please pull.
-
-   Wolfram
-
-
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
-
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.10-rc5
-
-for you to fetch changes up to 2c50f892caadc94ff216d42accd8222e172b5144:
-
-  Merge tag 'i2c-host-fixes-6.10-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-06-23 02:13:27 +0200)
-
-----------------------------------------------------------------
-The core gains placeholders for recently added functions when CONFIG_I2C
-is not defined as well documentation fixes to start using inclusive
-terminology. The drivers get paths in DT bindings fixed as well as
-proper interrupt handling for the ocores driver.
-
-----------------------------------------------------------------
-Grygorii Tertychnyi (1):
-      i2c: ocores: set IACK bit after core is enabled
-
-Krzysztof Kozlowski (2):
-      dt-bindings: i2c: atmel,at91sam: correct path to i2c-controller schema
-      dt-bindings: i2c: google,cros-ec-i2c-tunnel: correct path to i2c-controller schema
-
-Sakari Ailus (1):
-      i2c: Add nop fwnode operations
-
-Wolfram Sang (7):
-      docs: i2c: summary: start sentences consistently.
-      docs: i2c: summary: update I2C specification link
-      docs: i2c: summary: update speed mode description
-      docs: i2c: summary: document use of inclusive language
-      docs: i2c: summary: document 'local' and 'remote' targets
-      docs: i2c: summary: be clearer with 'controller/target' and 'adapter/client' pairs
-      Merge tag 'i2c-host-fixes-6.10-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
 
 
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Conor Dooley (2):
-      (Rev.) dt-bindings: i2c: google,cros-ec-i2c-tunnel: correct path to i2c-controller schema
-      (Rev.) dt-bindings: i2c: atmel,at91sam: correct path to i2c-controller schema
+Best regards,
+Krzysztof
 
-Easwar Hariharan (6):
-      (Rev.) docs: i2c: summary: be clearer with 'controller/target' and 'adapter/client' pairs
-      (Rev.) docs: i2c: summary: document 'local' and 'remote' targets
-      (Rev.) docs: i2c: summary: document use of inclusive language
-      (Rev.) docs: i2c: summary: update speed mode description
-      (Rev.) docs: i2c: summary: update I2C specification link
-      (Rev.) docs: i2c: summary: start sentences consistently.
-
- .../devicetree/bindings/i2c/atmel,at91sam-i2c.yaml |  2 +-
- .../bindings/i2c/google,cros-ec-i2c-tunnel.yaml    |  2 +-
- Documentation/i2c/i2c_bus.svg                      | 15 ++--
- Documentation/i2c/summary.rst                      | 79 ++++++++++++++--------
- drivers/i2c/busses/i2c-ocores.c                    |  2 +-
- include/linux/i2c.h                                | 24 ++++++-
- 6 files changed, 83 insertions(+), 41 deletions(-)
-
---CcDWrlTMmm+xypyo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ3134ACgkQFA3kzBSg
-KbYPbw/9Ey6o45ZFS8G8SFCEn3CUSst8se3v1UE/Cn5mw2gAehELOqLn/f98AFAS
-2j05gkoD28TEglszRCIaWBSISSW2XM1xVDQ6I0szmSBJyJ/43ajy536wc4gVAENo
-BWGT8SxYCp6BM/x//hEx+sw3Ok1FKOTPb/pOZvcawXmmVXQbEA4fMPzHdRKSvFy4
-abY5UMwYT8z34BqfBzWWq/oOgvZTRvgeFpzvJGDlAHaEs7LOeqeWF0LwoRiHQ3Q+
-Mx03zbyy+r4fFKAY8UWUXWxVM/aBRVxhMp3CLfyRmq7tt7R4aru/v0P0GTawLtUU
-FFKBEDkjiBaXISMsoCORhX/3rkvqVJItGuX2m8jHIUpHwvSPn4zjjTB0yRcn84yE
-5MA0dQ8vngoP344EcBvN9zvAuTs0yzuv8mb7cVqSr4vf9ynkIwWEHkrI0M6U/Jti
-WD3/WXGPwv24xAkyNQKlmcM5EH19VZwKhwr3oTyUuh6t4af6PeTCUwM/614vAbaU
-hKs3GZ+DyhPCHXX75dqWvjkA/yv/ay2E/MhnWDWMICU15tKN78CizXbEUM1vaieR
-tB3BY359gdMBCxPnU1OVDkXj2MdQN4bPPNSSbTuHl4x/5dBZZHdDx84VNSKzEhf1
-tmn8Qwob2VolyPH+qvZNTWrDzJpP8AJfkKGWz6HTVGW35JEgG8w=
-=umm3
------END PGP SIGNATURE-----
-
---CcDWrlTMmm+xypyo--
 
