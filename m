@@ -1,92 +1,102 @@
-Return-Path: <linux-kernel+bounces-226020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46B5913927
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:10:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B99991392D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 11:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ADEAB211DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35BBC2818D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 09:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB4484D11;
-	Sun, 23 Jun 2024 09:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C961D78283;
+	Sun, 23 Jun 2024 09:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dS4T1Z/P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="DKAdnLAp"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F652D052;
-	Sun, 23 Jun 2024 09:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719133830; cv=none; b=QVf73D8soyMsRzFCvQciHIDbNfqz0MS0QC+oywvxYCjDv8Sq9/KtUEUjIwfhSw0HdOjwe78DIVQWlZBzDt6d4Mp/ni5O021/hFQOe+JDjIQEZrwKd93L653hUfnRTEiY9ADvj17oTN/AEJRb7rUT+9IgzLnMDWtQv3u0fSgxLNU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719133830; c=relaxed/simple;
-	bh=7SZK06ovOGekuRqAjxHVE88fBd89NCL3FaRR8dCne1U=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=R5oolLxGypm73AqU7wuE6hWFdf2sHbFxZUaQHCFuirdQ0mae3jxHh6Wg9MTvkpseT1o9sobIY5p0XOGHjM8jhF2CfkPXh8YidtS5fMPVNZXM86lPIapJHB4knSz/ub4joO3o/5X1ilQFbkdrCVGSTfmsYzZ/Pe90iz9Wl1BuVk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dS4T1Z/P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 09827C32786;
-	Sun, 23 Jun 2024 09:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719133830;
-	bh=7SZK06ovOGekuRqAjxHVE88fBd89NCL3FaRR8dCne1U=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=dS4T1Z/PwjVzy6e5T4+GfqsRn3diV0STopJXy1Nb9zogR+Q0+WUNFelDUuhZtrdIw
-	 Nklc34P0iw6mU1gYVshmvQdQYPMkVnuPs3FOQIU24/3fKyBDByQSLRhaBK7wjdA2sY
-	 9q/OvzmsCtmhFzlflA7Oolo4saw9p/goTnKF5Fef8oguiVzfGnLuXPHm6LXi6Ux0lj
-	 ysqYCLvsSy/Sd0zczaWFD/dlKp+Buz43Y2+aX/ihPHhqeqiCNcC4/hQDy++yRlSMn0
-	 b7omFEIRluVkK2g0u/RvkZEtGYgx++HGG8fH7jqnljUJ7L/GJuYTDMcAfiotvt4y8F
-	 cA4JNZKl0iukw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E7AA8CF3B81;
-	Sun, 23 Jun 2024 09:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5A3175AD;
+	Sun, 23 Jun 2024 09:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719134184; cv=pass; b=WFwNwEZHr8Ln3rJHnGHjZhoWT04n7YmAAtPDdBG3GVUFZd0WV+i2syR1QC/828VwILQ6dgVGZEXAi5xK+X023qzHYPV+Msj5XAd5ZFLSkpJBWGGNalixIL5zmrpPYDnKgYb67lE74i3xKOjF0AnnftNiW77a4wFjjboxSgNR/pw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719134184; c=relaxed/simple;
+	bh=nPWeMCedcgFftU/0HJc6LZ7eiTaosK3SBHfL8IAzQj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtCEBiQfvP2LQ8CFfQVn7q/2E2kE5logdM6PhK9bUlpLv71UoyR7Lewbpy0u19RG4ogzce430mgwoSX5fMsHfUuLvcIsQNNF9KYPI0J1WoZEDrb/+/LZWSNnVGGE6EYft3fsZpf2bcUdCDrtCINBCviBhObcrutp/Nj2UlzVWz8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=DKAdnLAp; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (80-248-247-191.cust.suomicom.net [80.248.247.191])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4W6QSd36DhzyQR;
+	Sun, 23 Jun 2024 12:16:17 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1719134178;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fAIHXA5S/hMdTusZVNRukEhyzBKoUa5BV7UEOEP9+fo=;
+	b=DKAdnLAp3O6+36mG0MnJ7wW2vchgLCsHReH5Jo5oCWnUtXtoZ/7rsaVI0or4wpaVDFm77l
+	SoPfOPgbYl2MbhTOdxTEZydrFyNuH8zbok2M1BCOhRUSxrNVCgLWZlJcJ8u1ZbK85/4rO/
+	ooXiO29o0lp0gyuqDhTmMfltmc/6CaQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1719134178;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fAIHXA5S/hMdTusZVNRukEhyzBKoUa5BV7UEOEP9+fo=;
+	b=h/01ZVvXki1zXGhEcprR6knUgigmVPUk8U+8KgTwK9sxP4T4lXVqGKEjXXxeRxuyb8bdMh
+	4fvXLv8yh54TJXM9VDJgf/tNOpr3JuctkrflIMBgZT/Uzf/k2hDwg4QeWDbJqT9cI18SjO
+	lQxJzQpxAAUYNw8j3FoppapKB5U8Wwg=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1719134178; a=rsa-sha256; cv=none;
+	b=MClumkULgxosIAnOBcCugRqtVwzL+jR9nVU9Yv1bep876ej2QeBW/UfXLx0p2eX39eTls/
+	gRLx7RewhSFvU1Dv05gwXre7TRKBMdq3IevSrDkCnguJ2cDEcRKsyqSFOAB4QEiesbly86
+	DdZAq3gioqdFq1WkvjgXlopBNchwqcQ=
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id CCA98634C94;
+	Sun, 23 Jun 2024 12:16:16 +0300 (EEST)
+Date: Sun, 23 Jun 2024 09:16:16 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: delete email for Anton Sviridenko
+Message-ID: <Znfn4F_jg7YAuX88@valkosipuli.retiisi.eu>
+References: <20240603100346.10678-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] netlink: specs: Fix pse-set command attributes
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171913382994.30896.14541719183636030634.git-patchwork-notify@kernel.org>
-Date: Sun, 23 Jun 2024 09:10:29 +0000
-References: <20240621130059.2147307-1-kory.maincent@bootlin.com>
-In-Reply-To: <20240621130059.2147307-1-kory.maincent@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: kuba@kernel.org, andrew@lunn.ch, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, o.rempel@pengutronix.de,
- thomas.petazzoni@bootlin.com, donald.hunter@gmail.com, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603100346.10678-2-wsa+renesas@sang-engineering.com>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Fri, 21 Jun 2024 15:00:59 +0200 you wrote:
-> Not all PSE attributes are used for the pse-set netlink command.
-> Select only the ones used by ethtool.
+On Mon, Jun 03, 2024 at 12:01:17PM +0200, Wolfram Sang wrote:
+> The email address bounced. I couldn't find a newer one in recent git history,
+> so update MAINTAINERS accordingly.
 > 
-> Fixes: f8586411e40e ("netlink: specs: Expand the pse netlink command with PoE interface")
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> ---
->  Documentation/netlink/specs/ethtool.yaml | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Here is the summary with links:
-  - [net] netlink: specs: Fix pse-set command attributes
-    https://git.kernel.org/netdev/net/c/42354e3c3150
+Thanks!
 
-You are awesome, thank you!
+Rewrapped the commit log while applying (was over 75 chars).
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Regards,
 
-
+Sakari Ailus
 
