@@ -1,95 +1,73 @@
-Return-Path: <linux-kernel+bounces-225907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A345E913747
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 04:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCE1913749
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 04:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D14831C21043
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 02:00:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E85531C20FC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2024 02:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE28F8BFA;
-	Sun, 23 Jun 2024 02:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAECBE49;
+	Sun, 23 Jun 2024 02:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8coIPjl"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V5MrwW/q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE933372;
-	Sun, 23 Jun 2024 02:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F953C38
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 02:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719108015; cv=none; b=YerHTkB+3BNYj+CuBMQzmw2fjnTakNDKwrGno92ciPtFPhYxf2glXBFB2yGftlJSW0guyNy5jk4g8ZP5OHscU2cinCQhd3gt6Egc+ewg9IBv2VjhHtorsuroTjyWxw4attTGy5VVH4gZ0hqlXNEbXCwukAPts2e/xJtj3/j0H2U=
+	t=1719108137; cv=none; b=kcvB1IRfez2o16n8Fro+qFH8aN2ma4cUDJbjbacarrCENovyB5eTV15a29Wmt+QzAOeM34DLk9vs7DvH3YI0Z0J6w5zlxSATd/UfL4bOeneaVieabzGlpFoz3EqlwpVUOpNEASiUCCSuaYhlXZCY4YIju0siB4nMeX8Vn9hlJyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719108015; c=relaxed/simple;
-	bh=eqz1nYUW2n1wPnD+OrSmxaH89giYF+r0uVidt7/uExM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P87kfeX3idYOcOPHahE56NTeV01v1NX6vcT06nD786rOvjFwZDLWGXWypAxw5HDmoXhkAeVQIUdEPqY0zKJWuhjdHGLfZREjj2Ck5mh9eXVbqh1mcRYU6z246RqOX4PyKnIGqpxMefg25az1PrnaWZ0XLi61TdrwFbW/zl5dcxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e8coIPjl; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3c9d70d93dbso2180638b6e.3;
-        Sat, 22 Jun 2024 19:00:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719108013; x=1719712813; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KVGgnXFuBXdUfPKL+5geh4O7aTo/c5rb9X3Ypx2XCbA=;
-        b=e8coIPjlMz9GLbS1Qpg93XnLcZJJJAORxyb1BCwWYlGIz4JJkqtfU6giCn5PMQe6uw
-         0I5l2ndB+z2O+Bbgw2ZprPvriZRvzoQy7NEKHU4Qhz0H+JYF2sxZ2F4shtyGR5/vg4lf
-         NNF+mAOtsvDw7ZOlXyuR9NcMC4ID1hYBUue9ozekrQOiKUFLMG9RlYyXAGrj6+bM2QJf
-         Q8UtAN6JmO978P8+TnPPsiB/8C7P8qXIw5XAWhSBRt0AWrU5fVwwDMeoenMFL6fT9+F9
-         iNB9hnKzRAzWKxnVSE5TfnlSnsRgA5f/hf3ZXpzoBZ79Z+pI6nF2sRqieKBXrjPT+nO1
-         vIqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719108013; x=1719712813;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KVGgnXFuBXdUfPKL+5geh4O7aTo/c5rb9X3Ypx2XCbA=;
-        b=Y+lHSHc0Niot8eTv/HPqq1Uav35vRg7a0ixLdCUxPVxBlnGKHuwSjMD9FRbVDk+UEd
-         CSbpU5a5mnjy4Aiv6742tVfRfCqWzJJTi9wmgXpnUKfVWUOlU39z7ke0GpBzriSb3rgB
-         BshK2q9ieelHXCAsdvBluMx1WcYmF/4UmCctCIVkS1nhoci/1RUBLWEiEwxtJqB34lIL
-         QpsL2valh12E+zmlke1pkQN7CFaDXYOC1WusyCIGGWar6K0OLwuwwd3Akzko9m1HB3Au
-         zXlbLlSszMVqf73b4KRwwZsxIhGnD3WtHa+LOToCoWugSyDVQrwwtacuHGzCOEH5dboa
-         5gLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXU0i48KflYhPAmQqL6Mn1LxpBNrF4cghIESi08q+6vBTAHy8L51ns5f3JOoimFE18UHg1IcmR0zFAtWXTQuCT5R9vuD68y+5z/OwDbJMnQ+rRepDLeVj7cdTuRGlbAOJj5
-X-Gm-Message-State: AOJu0Yws13A4arXxssXMPLAEdix6vhKgYs0dqTcjXsXckAB26+FHir8a
-	plvXU4JdBaVJQbGQ0g0iCGejRzPpVq6mPAXOT+pWaiSL7sF/hBXZ
-X-Google-Smtp-Source: AGHT+IGzqz6bzpwCOUAvh7s0zDmqCxafGtXwXCV7J66ZAG4Yj+vbnhVwsGYHiRZs+3+xWiBg/GqANw==
-X-Received: by 2002:a05:6808:f8e:b0:3d5:2bb7:867 with SMTP id 5614622812f47-3d54596af33mr1599564b6e.17.1719108012928;
-        Sat, 22 Jun 2024 19:00:12 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7066aeeaa5asm1652196b3a.29.2024.06.22.19.00.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jun 2024 19:00:12 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Sat, 22 Jun 2024 16:00:10 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-Message-ID: <ZneBqla93mBpGdH0@slm.duckdns.org>
-References: <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
- <871q4rpi2s.ffs@tglx>
- <CAHk-=wgN6DRks55fsqiJYE3uV=_QTgzdxOvh1ZZNgm_YooKdYA@mail.gmail.com>
- <87v822ocy2.ffs@tglx>
- <CAHk-=wiRgsFsrnTR8XShrS_-aYS--4DSrRPmaWtYJ55-fmjznA@mail.gmail.com>
+	s=arc-20240116; t=1719108137; c=relaxed/simple;
+	bh=yZHEElo6y2Fb3FJIa3A4lkk2Whbxb+o1CP5PTlOLARU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hM25LZqX3LlJx9dcZIxHitYD186GfTMPDW0sRzrBqQBNQroE3/vSoPA38QUW1/qYT+YUMhgQJCu4I9HKWJirE8rE5hDDBqzO0FYFd5z7Zs35O3mf7+N/PMVDAgVnS3GxYo/olfZkSnFA4HmaYwLkpKWHIj29iBDRf8SShNYQ8xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V5MrwW/q; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719108136; x=1750644136;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=yZHEElo6y2Fb3FJIa3A4lkk2Whbxb+o1CP5PTlOLARU=;
+  b=V5MrwW/qXvD/0gUKcng3jnXQZy1tBtqG7VkC+RF3eLZGM3RUkiwJzSM8
+   wjadaP87XC/ZT6keoTFf95PYS6LqBXKAG2ru+MMoQhTCTv9Pz+evhSSs+
+   DYnbX4csY1HGSqQqGa2rofv/T+Qvym0wiGmKuc9VAGJckN8KPJ6otiLUV
+   uG5knHJHC1BpRo0ZqbaUN52m3bPQ8gew0xgMSVTzTCladaQSNLuopsIQo
+   y5O+FIinduhtiPUIqf9JJYZtwpV31Szszd1XNGpBqTsZ0Y6JuAjzGYqc0
+   JxcG9FcPToSjNhoHdYUOgffmS3OtWeXPygGFXhCkZDd36p/Mt1lIaqzdR
+   Q==;
+X-CSE-ConnectionGUID: uZ2vZTLXQLKYTdRi4zu4Tw==
+X-CSE-MsgGUID: ttmNlxxUQ5u6jAjGqyESmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11111"; a="15938078"
+X-IronPort-AV: E=Sophos;i="6.08,259,1712646000"; 
+   d="scan'208";a="15938078"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2024 19:02:12 -0700
+X-CSE-ConnectionGUID: lKfGSFodTLWKliQlvnfR+Q==
+X-CSE-MsgGUID: 8AJ2sL7wQCKrQ5Xds/NU7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,259,1712646000"; 
+   d="scan'208";a="42921676"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 22 Jun 2024 19:02:10 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sLCYR-000A9g-27;
+	Sun, 23 Jun 2024 02:02:07 +0000
+Date: Sun, 23 Jun 2024 10:01:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
+ requires more registers than available
+Message-ID: <202406230912.F6XFIyA6-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,24 +76,149 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiRgsFsrnTR8XShrS_-aYS--4DSrRPmaWtYJ55-fmjznA@mail.gmail.com>
 
-Hello,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   5f583a3162ffd9f7999af76b8ab634ce2dac9f90
+commit: 95ece48165c136b96fae0f6144f55cbf8b24aeb9 locking/atomic/x86: Rewrite x86_32 arch_atomic64_{,fetch}_{and,or,xor}() functions
+date:   2 months ago
+config: i386-randconfig-061-20240623 (https://download.01.org/0day-ci/archive/20240623/202406230912.F6XFIyA6-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240623/202406230912.F6XFIyA6-lkp@intel.com/reproduce)
 
-On Fri, Jun 21, 2024 at 09:34:22AM -0700, Linus Torvalds wrote:
->  (b) the for_each_active_class() thing that I think would actually be
-> better off just being done explicitly in sched/core.c, but probably
-> only makes sense after integration
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406230912.F6XFIyA6-lkp@intel.com/
 
-Just posted a patchset to integrate sched_ext a bit better. I open coded
-for_balance_class_range() and moved for_each_active_class() and friends to
-kernel/sched/sched.h. If something else would look better, please let me
-know.
+All errors (new ones prefixed by >>):
 
-  http://lkml.kernel.org/r/20240623015057.3383223-1-tj@kernel.org
+   In file included from kernel/bpf/core.c:21:
+   In file included from include/linux/filter.h:8:
+   In file included from include/linux/atomic.h:7:
+   In file included from arch/x86/include/asm/atomic.h:8:
+   In file included from arch/x86/include/asm/cmpxchg.h:143:
+>> arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly requires more registers than available
+     149 |         return __arch_try_cmpxchg64_emu(ptr, oldp, new);
+         |                ^
+   arch/x86/include/asm/cmpxchg_32.h:131:15: note: expanded from macro '__arch_try_cmpxchg64_emu'
+     131 |         asm volatile(ALTERNATIVE(LOCK_PREFIX_HERE                       \
+         |                      ^
+   arch/x86/include/asm/alternative.h:218:2: note: expanded from macro 'ALTERNATIVE'
+     218 |         OLDINSTR(oldinstr, 1)                                           \
+         |         ^
+   arch/x86/include/asm/alternative.h:168:2: note: expanded from macro 'OLDINSTR'
+     168 |         "# ALT: oldnstr\n"                                              \
+         |         ^
+   In file included from kernel/bpf/core.c:21:
+   In file included from include/linux/filter.h:8:
+   In file included from include/linux/atomic.h:7:
+   In file included from arch/x86/include/asm/atomic.h:8:
+   In file included from arch/x86/include/asm/cmpxchg.h:143:
+>> arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly requires more registers than available
+   arch/x86/include/asm/cmpxchg_32.h:131:15: note: expanded from macro '__arch_try_cmpxchg64_emu'
+     131 |         asm volatile(ALTERNATIVE(LOCK_PREFIX_HERE                       \
+         |                      ^
+   arch/x86/include/asm/alternative.h:218:2: note: expanded from macro 'ALTERNATIVE'
+     218 |         OLDINSTR(oldinstr, 1)                                           \
+         |         ^
+   arch/x86/include/asm/alternative.h:168:2: note: expanded from macro 'OLDINSTR'
+     168 |         "# ALT: oldnstr\n"                                              \
+         |         ^
+   In file included from kernel/bpf/core.c:21:
+   In file included from include/linux/filter.h:8:
+   In file included from include/linux/atomic.h:7:
+   In file included from arch/x86/include/asm/atomic.h:8:
+   In file included from arch/x86/include/asm/cmpxchg.h:143:
+>> arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly requires more registers than available
+   arch/x86/include/asm/cmpxchg_32.h:131:15: note: expanded from macro '__arch_try_cmpxchg64_emu'
+     131 |         asm volatile(ALTERNATIVE(LOCK_PREFIX_HERE                       \
+         |                      ^
+   arch/x86/include/asm/alternative.h:218:2: note: expanded from macro 'ALTERNATIVE'
+     218 |         OLDINSTR(oldinstr, 1)                                           \
+         |         ^
+   arch/x86/include/asm/alternative.h:168:2: note: expanded from macro 'OLDINSTR'
+     168 |         "# ALT: oldnstr\n"                                              \
+         |         ^
+   In file included from kernel/bpf/core.c:21:
+   In file included from include/linux/filter.h:8:
+   In file included from include/linux/atomic.h:7:
+   In file included from arch/x86/include/asm/atomic.h:8:
+   In file included from arch/x86/include/asm/cmpxchg.h:143:
+>> arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly requires more registers than available
+   arch/x86/include/asm/cmpxchg_32.h:131:15: note: expanded from macro '__arch_try_cmpxchg64_emu'
+     131 |         asm volatile(ALTERNATIVE(LOCK_PREFIX_HERE                       \
+         |                      ^
+   arch/x86/include/asm/alternative.h:218:2: note: expanded from macro 'ALTERNATIVE'
+     218 |         OLDINSTR(oldinstr, 1)                                           \
+         |         ^
+   arch/x86/include/asm/alternative.h:168:2: note: expanded from macro 'OLDINSTR'
+     168 |         "# ALT: oldnstr\n"                                              \
+         |         ^
+   In file included from kernel/bpf/core.c:21:
+   In file included from include/linux/filter.h:8:
+   In file included from include/linux/atomic.h:7:
+   In file included from arch/x86/include/asm/atomic.h:8:
+   In file included from arch/x86/include/asm/cmpxchg.h:143:
+>> arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly requires more registers than available
+   arch/x86/include/asm/cmpxchg_32.h:131:15: note: expanded from macro '__arch_try_cmpxchg64_emu'
+     131 |         asm volatile(ALTERNATIVE(LOCK_PREFIX_HERE                       \
+         |                      ^
+   arch/x86/include/asm/alternative.h:218:2: note: expanded from macro 'ALTERNATIVE'
+     218 |         OLDINSTR(oldinstr, 1)                                           \
+         |         ^
+   arch/x86/include/asm/alternative.h:168:2: note: expanded from macro 'OLDINSTR'
+     168 |         "# ALT: oldnstr\n"                                              \
+         |         ^
+   In file included from kernel/bpf/core.c:21:
+   In file included from include/linux/filter.h:8:
+   In file included from include/linux/atomic.h:7:
+   In file included from arch/x86/include/asm/atomic.h:8:
+   In file included from arch/x86/include/asm/cmpxchg.h:143:
+>> arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly requires more registers than available
+   arch/x86/include/asm/cmpxchg_32.h:131:15: note: expanded from macro '__arch_try_cmpxchg64_emu'
+     131 |         asm volatile(ALTERNATIVE(LOCK_PREFIX_HERE                       \
+         |                      ^
+   arch/x86/include/asm/alternative.h:218:2: note: expanded from macro 'ALTERNATIVE'
+     218 |         OLDINSTR(oldinstr, 1)                                           \
+         |         ^
+   arch/x86/include/asm/alternative.h:168:2: note: expanded from macro 'OLDINSTR'
+     168 |         "# ALT: oldnstr\n"                                              \
+         |         ^
+   In file included from kernel/bpf/core.c:21:
+   In file included from include/linux/filter.h:8:
+   In file included from include/linux/atomic.h:7:
+   In file included from arch/x86/include/asm/atomic.h:8:
+   In file included from arch/x86/include/asm/cmpxchg.h:143:
+>> arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly requires more registers than available
+   arch/x86/include/asm/cmpxchg_32.h:131:15: note: expanded from macro '__arch_try_cmpxchg64_emu'
+     131 |         asm volatile(ALTERNATIVE(LOCK_PREFIX_HERE                       \
+         |                      ^
+   arch/x86/include/asm/alternative.h:218:2: note: expanded from macro 'ALTERNATIVE'
+     218 |         OLDINSTR(oldinstr, 1)                                           \
+         |         ^
+   arch/x86/include/asm/alternative.h:168:2: note: expanded from macro 'OLDINSTR'
+     168 |         "# ALT: oldnstr\n"                                              \
+         |         ^
+   7 errors generated.
 
-Thanks.
+
+vim +149 arch/x86/include/asm/cmpxchg_32.h
+
+aef95dac9ce4f2 Uros Bizjak 2024-04-08  146  
+aef95dac9ce4f2 Uros Bizjak 2024-04-08  147  static __always_inline bool arch_try_cmpxchg64(volatile u64 *ptr, u64 *oldp, u64 new)
+aef95dac9ce4f2 Uros Bizjak 2024-04-08  148  {
+aef95dac9ce4f2 Uros Bizjak 2024-04-08 @149  	return __arch_try_cmpxchg64_emu(ptr, oldp, new);
+aef95dac9ce4f2 Uros Bizjak 2024-04-08  150  }
+aef95dac9ce4f2 Uros Bizjak 2024-04-08  151  #define arch_try_cmpxchg64 arch_try_cmpxchg64
+aef95dac9ce4f2 Uros Bizjak 2024-04-08  152  
+
+:::::: The code at line 149 was first introduced by commit
+:::::: aef95dac9ce4f271cc43195ffc175114ed934cbe locking/atomic/x86: Introduce arch_try_cmpxchg64() for !CONFIG_X86_CMPXCHG64
+
+:::::: TO: Uros Bizjak <ubizjak@gmail.com>
+:::::: CC: Ingo Molnar <mingo@kernel.org>
 
 -- 
-tejun
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
