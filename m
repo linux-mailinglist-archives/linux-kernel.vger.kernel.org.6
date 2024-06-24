@@ -1,138 +1,147 @@
-Return-Path: <linux-kernel+bounces-227172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949B1914971
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:12:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE55E91496B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5781F24720
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:12:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D18281F7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D466313C693;
-	Mon, 24 Jun 2024 12:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FD913B7AE;
+	Mon, 24 Jun 2024 12:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EIqP6pjV"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwTcRMHm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A537513C3E4;
-	Mon, 24 Jun 2024 12:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F347413B58D;
+	Mon, 24 Jun 2024 12:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719231135; cv=none; b=l0yywB42awTSoWdYu4xfF7AlAAyi8n7yGk4fULq8iNNhQ19gBoKCjggShlJBMHUi8PVkNx8Nr5sf364KsJS350s89lDts04gYLUNAQhvss3fEsNCFE+hrMryevGCYl8qG6gEPXHDglbtLvAPUcGP/ldHIIdTaHi5LlzFthITWds=
+	t=1719231120; cv=none; b=J1POy5RL+3m0+wQrG3zNPuClzxEdxIQH58gjLI/n6I4c85JX+zA6bdcH/xS0eBb3Zn8erv51fWltDCseD+q35zWh/Nl/3ciDNRfs+JoFwMpPGykhzNZiPV9jmNkZF4vMuPOH7TrWIvZola65BASx9vqpmNrACJPnQS92LmDIFag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719231135; c=relaxed/simple;
-	bh=esPjEXrAGIEX05PKZeXpgoH/TmziWaZFoodL5j7MfXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=FzOgUQQkc4cPQ/Zz+Zzj+1tGk3LsnaFRJnGuf+1SSLh1v9ZB92PEgug5DH9VZ/HasMfMqLxUPUtchGlRiKefuoShJEegZ1LAozZixrSp/Y/TG9kg2Bp70CHxkua0j7QiF3EVG/qsEzbL0QRFn5e5xOIdI0Cx4EC/xSEC0Ik8ry0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EIqP6pjV; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719231098; x=1719835898; i=markus.elfring@web.de;
-	bh=r2AUt2mr4MkG1kpJMdkpMlA9nEI7djID7MVqxTdNCPA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=EIqP6pjVGm4ZjmVUkgMKnvmQvrIc1fCvVc0Nsn8YEDPN/CEYAPktGucJpDf4xV+N
-	 oX/gDExd1wc10yXixauEGAlXGMA7H+69S4DsPTn01pOK3plcHwfelU7ykIbkzdR++
-	 dvpMUab0xOwTRsEuFopFfVUXEtZj8CK9qm2RYId9aJAZD0us9Hhni8r8kbvMMouqa
-	 MIVu9ET2ZOsmQaBXH+iYDttay4EYvhSBmSmsTsXbBpLlsWeIwNEKbdl61frWr2d2d
-	 87kh8v+YBnbsD3DVxsZbjCUWJqYlrh0KgspbRUB56hq2qzc7O04bHFSFWJN8spBD6
-	 t9tsWG0SVsvufR4zAQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N1d3a-1sSMO93VAO-00vJrr; Mon, 24
- Jun 2024 14:11:37 +0200
-Message-ID: <db9c90e2-0e3d-451f-aaf1-bd5d0aba61be@web.de>
-Date: Mon, 24 Jun 2024 14:11:36 +0200
+	s=arc-20240116; t=1719231120; c=relaxed/simple;
+	bh=4Ot9tyWAtkoGaWuX0CtgzQSqJ/8GufECRvDvI/p6kFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ArZUClo3+GvraR+FIA/zUV/eAKOhl2/7F9Tvokml3HwbbYCiWKOhwQyAIqkV0Adcz4HnLlSuePjHOpEs4aBdfFQNCib3ygdNHyxXh4l/3a1X4ObvyHVkeTg0UkFRafSjKkyRMsCOrWZ5MAJLJZmGRpkeNFrEAwZQybzBzbizrAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwTcRMHm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7395AC2BBFC;
+	Mon, 24 Jun 2024 12:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719231119;
+	bh=4Ot9tyWAtkoGaWuX0CtgzQSqJ/8GufECRvDvI/p6kFE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dwTcRMHmDNowzrtF+b41zPBQKJ1E2Ai6fuks7di4uBrIo2bhbjFbsaAYKVsTmf5Bv
+	 k48hJuWaOLlmoaVeWsEuMb8Xbnk2WJgXnKqn9m0C7ZyR3dgYM1Jn+BFGuhgDyfWaMI
+	 bxLp66r6TBNv89+BWjv0u+6XLEUj6Za0mF1FJ8FkJ2gOlxSzL20Fg/fDSbROIc3YTc
+	 jklzhSeuc43dQDENgooKGiA4HaWzawbrSwqGLAME+cfgiX+FHeruN/tNTzxB8yVoQ9
+	 nSaQ6Ud1I1CnVoAm44KXnud641lqsZFTduxqBY1SreRw2GmVzSJ+17PL4ErSI3+uyc
+	 yDQE+H0P6b0bA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sLiYG-000000006Wl-1ZK9;
+	Mon, 24 Jun 2024 14:12:05 +0200
+Date: Mon, 24 Jun 2024 14:12:04 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v4 7/8] serial: qcom-geni: Fix suspend while active UART
+ xfer
+Message-ID: <ZnlilDj5UrvrVasv@hovoldconsulting.com>
+References: <20240610222515.3023730-1-dianders@chromium.org>
+ <20240610152420.v4.7.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net PATCH 1/7] octeontx2-af: Fix klockwork issue in cgx.c
-To: Suman Ghosh <sumang@marvell.com>, netdev@vger.kernel.org
-References: <20240624103638.2087821-1-sumang@marvell.com>
- <20240624103638.2087821-2-sumang@marvell.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jerin Jacob <jerinj@marvell.com>, Eric Dumazet <edumazet@google.com>,
- Geethasowjanya Akula <gakula@marvell.com>,
- Hariprasad Kelam <hkelam@marvell.com>, Linu Cherian <lcherian@marvell.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
- Sunil Goutham <sgoutham@marvell.com>
-In-Reply-To: <20240624103638.2087821-2-sumang@marvell.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xABguZK7h/LPkqzJSWw8/2FWThmR3bz1iljauqQrMVKBTeao0aG
- 8XOrQ4dgoLlOoFl0letbf/baU1eVYsmVTNxy1hRrJCdp74VA1ocAXd86kRbW9b9eFvwx9gB
- 3Ho/BywAN2zgzIJKdxBAYOyQI27DAJmzsk97AWE5DJYW4RgY4CMAtb1r50BgKW2Wrc1hsfh
- FTddl1FOARk1uw5po6SnQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DkpRjsyBh8M=;Q/eo9m0CjRVEGPbdtX7iHW84CUs
- isCUNpsIc55yYDoqPIPuHeTy1Bq1YMY6DhxEX/kRAIyAJGli+8wtqxLMQNKhJ8BbDRYzOqoQf
- wYQ7AH0WQcnerqUc+5qPNI4sXMh3KrbiPyHxrpwnxsANOdT2JyBYkbJ558D2NizMNMmGgiwZQ
- W901LVQt0b+Vud8zEUEohVdQ4geaFTylEdhaJNUf3qTovXuoVVCQxgSYI38NczsHG6f5viMMt
- ZGxhdGGcR8JbgX5rkys3IvwkLJpNlXNANHB5lsSW6N3WnzGc0aBZ5YflECh0J9SHJcbkViwgF
- tljsnwuxlCIDtZZ7A7PspHRW82KuQ2s1cNddo04rKhgQwKrRpPRbSxBs2XTp0oPfRpBlFHMlr
- 4wNNKUpYpRKhaw45xmEZJOp5l/bMQZF3SB/20n3dQ7lyfwjHxkfXjnHEIStt8puV09v1XJ3SV
- pom7+Fu4gNXJdB907D1XXMs3nCT6kM90ayF1tD3O2+QASy/EYIuyBoW8MluE21qSul9iFVFRf
- nrcrheRbgBuIddh1aPvsmHQ3G0qsyBFcBLtjcmbexSz8GInMWclMr/e94WEcIQmuqawyAT5p3
- xq3E79J10ImEv7gh5IH0kTp67x75DK8hFPMCAz76WgqruyoFoHjUEnxMQGJYlIHXCEpxdOFHb
- rqzOhCq76SOsDNRfGI1ZAyecuY4WkeLB4lCBBu+hwDsEbQh3QRSEGcoNIztWz8lClhDqMn/Xr
- hQU1NswjkS5E7AMbgZCnZnFuSkQ3xq4DcifzhA1bT8OmjuCMyCgYdOrjImFkW0Uv7gTJ1ODAg
- fH+Hbj2Marvusyna6K+N+FW09e+kzAB5ImqadOIBQO73Q=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610152420.v4.7.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
 
-> Fix minor klockwork issue in CGX. These are not real issues but sanity c=
-hecks.
+On Mon, Jun 10, 2024 at 03:24:25PM -0700, Douglas Anderson wrote:
+> On devices using Qualcomm's GENI UART it is possible to get the UART
+> stuck such that it no longer outputs data. Specifically, logging in
+> via an agetty on the debug serial port (which was _not_ used for
+> kernel console) and running:
+>   cat /var/log/messages
+> ...and then (via an SSH session) forcing a few suspend/resume cycles
+> causes the UART to stop transmitting.
 
-Please improve your change descriptions considerably.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n45
+An easier way to trigger this old bug is to just run a command like
+dmesg and hit ctrl-s in a serial console to stop tx. Interrupting the
+command or hitting ctrl-q to restart tx then triggers the soft lockup.
 
+> The root of the problems was with qcom_geni_serial_stop_tx_fifo()
+> which is called as part of the suspend process. Specific problems with
+> that function:
+> - When an in-progress "tx" command is cancelled it doesn't appear to
+>   fully drain the FIFO. That meant qcom_geni_serial_tx_empty()
+>   continued to report that the FIFO wasn't empty. The
+>   qcom_geni_serial_start_tx_fifo() function didn't re-enable
+>   interrupts in this case so the driver would never start transferring
+>   again.
+> - When the driver cancelled the current "tx" command but it forgot to
+>   zero out "tx_remaining". This confused logic elsewhere in the
+>   driver.
+> - From experimentation, it appears that cancelling the "tx" command
+>   could drop some of the queued up bytes.
+> 
+> While qcom_geni_serial_stop_tx_fifo() could be fixed to drain the FIFO
+> and shut things down properly, stop_tx() isn't supposed to be a slow
+> function. It is run with local interrupts off and is documented to
+> stop transmitting "as soon as possible". Change the function to just
+> stop new bytes from being queued. In order to make this work, change
+> qcom_geni_serial_start_tx_fifo() to remove some conditions. It's
+> always safe to enable the watermark interrupt and the IRQ handler will
+> disable it if it's not needed.
+> 
+> For system suspend the queue still needs to be drained. Failure to do
+> so means that the hardware won't provide new interrupts until a
+> "cancel" command is sent. Add draining logic (fixing the issues noted
+> above) at suspend time.
 
-=E2=80=A6
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
-> @@ -465,6 +465,13 @@ u64 cgx_lmac_addr_get(u8 cgx_id, u8 lmac_id)
->  	u64 cfg;
->  	int id;
->
-> +	if (!cgx_dev)
-> +		return 0;
-> +
-> +	lmac =3D lmac_pdata(lmac_id, cgx_dev);
-> +	if (!lmac)
-> +		return 0;
-> +
->  	mac_ops =3D cgx_dev->mac_ops;
->
->  	id =3D get_sequence_id_of_lmac(cgx_dev, lmac_id);
-> @@ -1648,7 +1655,7 @@ unsigned long cgx_get_lmac_bmap(void *cgxd)
->  static int cgx_lmac_init(struct cgx *cgx)
->  {
->  	struct lmac *lmac;
-> -	u64 lmac_list;
-> +	u64 lmac_list =3D 0;
->  	int i, err;
->
->  	/* lmac_list specifies which lmacs are enabled
+So I spent the better part of the weekend looking at this driver and
+this is one of the bits I worry about with your approach as relying on
+draining anything won't work with hardware flow control.
 
-Did you mix software development concern categories here?
+Cancelling commands can result stalled TX in a number of ways and
+there's still at least one that you don't handle. If you end up with
+data in in the FIFO, the watermark interrupt may never fire when you try
+to restart tx.
 
-Please reconsider your selection of change combinations once more.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n168
+I'm leaning towards fixing the immediate hard lockup regression
+separately and then we can address the older bugs and rework driver
+without having to rush things.
 
-Regards,
-Markus
+I've prepared a minimal three patch series which fixes most of the
+discussed issues (hard and soft lockup and garbage characters) and that
+should be backportable as well.
+
+Currently, the diffstat is just:
+
+	 drivers/tty/serial/qcom_geni_serial.c | 36 +++++++++++++++++++++++++-----------
+	 1 file changed, 25 insertions(+), 11 deletions(-)
+
+Fixing the hard lockup 6.10-rc1 regression is just a single line.
+
+Johan
 
