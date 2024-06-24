@@ -1,154 +1,103 @@
-Return-Path: <linux-kernel+bounces-227648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C7F9154FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E78B915502
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2B85280FCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:05:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3A73280F98
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCAF19EEBF;
-	Mon, 24 Jun 2024 17:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D10B19E83E;
+	Mon, 24 Jun 2024 17:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nzZD5H5b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R7rUUkMg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46B413E024;
-	Mon, 24 Jun 2024 17:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ED519E819
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719248733; cv=none; b=HwDRu37VEwnSCEenU2PVatO2rilVmB+gxNgyMW7T+5gCWBUKhdj8b0obePtHoS9cHyymkWKs50wbtG+uYUBB/MSltlv5TbwgQUGFKvlVEBS7RJLxXoFWSjIY6oXpAKuQvP+Krycl0+UTzkkMHGgUnyx+XuABRtNRLAbIFQsmGZE=
+	t=1719248741; cv=none; b=i9Gs9Z/Vyw0AQ9s9fmbmFwXpIwDM+bFD89Uzt9UV0b26X6fsxvs54n5CW9jv0anWIx++3oe3RDOEC+rYfkGPIU9uyd7C6HCMf6qInq5dOR7mMAdboA+hQhUncJlLuXA+c5MuAndgtGpB0Cnle7qPt+MQgJx8LbLhL3EefF6AN5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719248733; c=relaxed/simple;
-	bh=hluDMmNHYy/31BF0jtrB4YwFGOBufdjYalZYHdQHg6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JD1WzVOrSNwSIb7XTtUaEok2U4HqQbBGu3TjEXbeKD+YyLC62258RUgLLSlXhLhfKRyBOFcnodKmMxofYhwfcZOze8vho5RWHAam2g7AI1L9C4oaMk87Et1l+7Q2CezGx+oe6XQ4xHqHj6UnN88mIyRR4XI5bvNTrnMNUk/MhmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nzZD5H5b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 245ACC2BBFC;
-	Mon, 24 Jun 2024 17:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719248733;
-	bh=hluDMmNHYy/31BF0jtrB4YwFGOBufdjYalZYHdQHg6I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nzZD5H5bE9b1+6J4DTJZ2nVQNgmvcELEIZ9S36BDXLNgWP9nmp61OvsfgK4qwLNv/
-	 aRXeYfl9TVdrrtRBfVqHYdki2HFXD9OVRux+m10O7yAYQSTQe2nacQokh9mfYaf34E
-	 tBu4lfUllOlYBcIPCAkRjpRQkSsAgFrym+RCsIXsTgYoF/TWSNUCm/fLl3YZ/N5+K6
-	 Ssdd0k1ypEJ1P2tL/Qe/QwXJFxqZhNr4aOScZZl0M/7V71vMepusL4i3yqFU1UVDLa
-	 sAR1Gd5n8tNvsUqWXnKikr8Pp3Rh/zyMh8LhXSGzC+u/Hw6NDy5awjO/1qCebjv+x8
-	 qO8c9hfWm4WGA==
-Date: Mon, 24 Jun 2024 18:05:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>, andrew@lunn.ch,
-	f.fainelli@gmail.com, olteanv@gmail.com, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Landen Chao <Landen.Chao@mediatek.com>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Daniel Golle <daniel@makrotopia.org>
-Subject: Re: [PATCH] dt-bindings: net: dsa: mediatek,mt7530: Minor grammar
- fixes
-Message-ID: <20240624-erratic-monoxide-c32da937048d@spud>
-References: <20240624025812.1729229-1-chris.packham@alliedtelesis.co.nz>
- <704f4b95-2aed-4b76-87cb-83002698471c@arinc9.com>
- <20240624-radiance-untracked-29369921c468@spud>
- <68961d4f-10d8-4769-94d3-92ce709aa00a@arinc9.com>
+	s=arc-20240116; t=1719248741; c=relaxed/simple;
+	bh=0LBiPH3Y7aq/3vm3Rkxz0WXxU3vDkOw7NDED++iEpo4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mUA7SL8afSINXei9/LwnjHNwj/8S23u+S+cwyal3hROIRalsfGjSorfnMh7wMtHu2waChsVFv5fvC7oa7mIDJLbcLNqkUb8PN3JPfM0f3CINRxeTDxtsIKDTL7MHPrQ57uur5RqPKrHlJ/cL3krngb3IBTzwP0dzA42drCWmB1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R7rUUkMg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719248739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0LBiPH3Y7aq/3vm3Rkxz0WXxU3vDkOw7NDED++iEpo4=;
+	b=R7rUUkMg3e5MtN7IbNES7W/TJ364q6KheJKd8tokVHtqdfL0Yt4ZyoB1AmVfsoSjpcrC0d
+	reWmMV76x/+QvzHgbbC/JSnY/juCWDBo9Gt5uAhtWs09u16s4UY9486T7EYt0WhtSDoy++
+	+8f3PskouAH+0qf0FzzzOPp3SqI37Lw=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-88-j72fES3LPGiQGvOqEetYdg-1; Mon,
+ 24 Jun 2024 13:05:36 -0400
+X-MC-Unique: j72fES3LPGiQGvOqEetYdg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C5C61955EF2;
+	Mon, 24 Jun 2024 17:05:32 +0000 (UTC)
+Received: from [10.22.17.135] (unknown [10.22.17.135])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F193B1956048;
+	Mon, 24 Jun 2024 17:05:29 +0000 (UTC)
+Message-ID: <dc27e80f-8471-4b31-90f0-5105236bea8d@redhat.com>
+Date: Mon, 24 Jun 2024 13:05:29 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="v0BnrTxic9uZfq14"
-Content-Disposition: inline
-In-Reply-To: <68961d4f-10d8-4769-94d3-92ce709aa00a@arinc9.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memcg: Add a new sysctl parameter for automatically
+ setting memory.high
+To: Michal Hocko <mhocko@suse.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>,
+ Johannes Weiner <hannes@cmpxchg.org>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shakeel Butt <shakeel.butt@linux.dev>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-mm@kvack.org,
+ Alex Kalenyuk <akalenyu@redhat.com>, Peter Hunt <pehunt@redhat.com>,
+ linux-doc@vger.kernel.org
+References: <20240623204514.1032662-1-longman@redhat.com>
+ <77d4299e-e1ee-4471-9b53-90957daa984d@redhat.com>
+ <ZnmO8izZPwYfiaRz@castle.lan>
+ <d97e2e8f-0abc-49a7-bead-0501c1226040@redhat.com>
+ <Znmi8lfORdPoI061@tiehlicka>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <Znmi8lfORdPoI061@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
 
---v0BnrTxic9uZfq14
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 6/24/24 12:46, Michal Hocko wrote:
+> On Mon 24-06-24 12:33:27, Waiman Long wrote:
+>> I also trace back the OOM problem to commit 14aa8b2d5c2e ("mm/mglru: don't
+>> sync disk for each aging cycle") in the MGLRU code. So setting memory.high
+>> automatically is one way to avoid premature OOM. That is the motivation
+>> behind this patch.
+> Please report this.
 
-On Mon, Jun 24, 2024 at 07:59:48PM +0300, Ar=C4=B1n=C3=A7 =C3=9CNAL wrote:
-> On 24/06/2024 19.29, Conor Dooley wrote:
-> > On Mon, Jun 24, 2024 at 10:00:25AM +0300, Ar=C4=B1n=C3=A7 =C3=9CNAL wro=
-te:
-> > > On 24/06/2024 05.58, Chris Packham wrote:
-> > > > Update the mt7530 binding with some minor updates that make the doc=
-ument
-> > > > easier to read.
-> > > >=20
-> > > > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> > > > ---
-> > > >=20
-> > > > Notes:
-> > > >       I was referring to this dt binding and found a couple of plac=
-es where
-> > > >       the wording could be improved. I'm not exactly a techical wri=
-ter but
-> > > >       hopefully I've made things a bit better.
-> > > >=20
-> > > >    .../devicetree/bindings/net/dsa/mediatek,mt7530.yaml        | 6 =
-+++---
-> > > >    1 file changed, 3 insertions(+), 3 deletions(-)
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7=
-530.yaml b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-> > > > index 1c2444121e60..6c0abb020631 100644
-> > > > --- a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-> > > > +++ b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-> > > > @@ -22,16 +22,16 @@ description: |
-> > > >      The MT7988 SoC comes with a built-in switch similar to MT7531 =
-as well as four
-> > > >      Gigabit Ethernet PHYs. The switch registers are directly mappe=
-d into the SoC's
-> > > > -  memory map rather than using MDIO. The switch got an internally =
-connected 10G
-> > > > +  memory map rather than using MDIO. The switch has an internally =
-connected 10G
-> > > >      CPU port and 4 user ports connected to the built-in Gigabit Et=
-hernet PHYs.
-> > > > -  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs has go=
-t 10/100 PHYs
-> > > > +  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs have 1=
-0/100 PHYs
-> > >=20
-> > > MT7530 is singular, the sentence is correct as it is.
-> >=20
-> > Actually, the sentence is missing a definite article, so is not correct
-> > as-is.
->=20
-> The definite article is omitted for the sake of brevity. I don't believe
-> omitting the definite article renders the sentence incorrect.
+OK, will do.
 
-I figured if we were gonna nitpick wording, we should nitpick it
-properly :)
+Cheers,
+Longman
 
---v0BnrTxic9uZfq14
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnmnVgAKCRB4tDGHoIJi
-0taJAP9HVBBJpTuZ+D8xH36TsRm8Pn+cA8UNRO8+Z0hdJuy+hwD/VFYEu91AsBId
-VyK+YAk3vdfcKAyrqwo2gXLJb7SrywQ=
-=oTWe
------END PGP SIGNATURE-----
-
---v0BnrTxic9uZfq14--
 
