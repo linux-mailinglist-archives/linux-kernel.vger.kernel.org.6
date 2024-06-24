@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-226958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1148C914669
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:27:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2813C91466D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7D92811B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:27:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6ADE1F230B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7267D132120;
-	Mon, 24 Jun 2024 09:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9697B132111;
+	Mon, 24 Jun 2024 09:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCdV0sY7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Q6WXeD48"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9928E18E29;
-	Mon, 24 Jun 2024 09:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484097FBA4;
+	Mon, 24 Jun 2024 09:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719221218; cv=none; b=Ez3rsReI5sCD1Kv6hmVXfihsg7lvKfH1T0GwnELMNfLq+gpM+ME1XAk0s9WmmnWhzg0on60p/hlf8j/y0BpPn0V9J03bnSufoMJbxp4tJvP1HRcb77jDd8PRFbCEqCiW41cp+sfKPURn5IbVw5ChrDRo7SvpVNEmb7507lW2k+s=
+	t=1719221287; cv=none; b=ZTqD8QoJJIugO9Nt8N63GVLf3nYGwBl2UY+ip1qT09hjIYgrWoH7kFOW1BU3F/EaIMdrGdj5Xf22Ro+LsCBZ8XCdwx/2XOXkbe5A+C/DFV8iQwQJpt1MFKhsLjKnOP3ToACXzMtWomPfzG6qvvfgJl3iMRBsAgG2ZHJxqSJNSYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719221218; c=relaxed/simple;
-	bh=eaF1Ms4GXRyu67whAqmZKIEKby5/FfQsbLSCx8IYARM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LjGvLyJHRNvUzmDPUi9keUGYR17oho9j0XrJtnboiOEj0kAV307vMhFTc7StG4Kd1fRZWUk0eR5zI9aN7RueIS/n8CsDWRY7G2VQKs6gDPaKecU0na8cunwFCvuRlWMU5oOSIlF1RjDJ0U0dV5hhTKUH0LRY7EQJNAk4r7VB8vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCdV0sY7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D6DDC2BBFC;
-	Mon, 24 Jun 2024 09:26:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719221218;
-	bh=eaF1Ms4GXRyu67whAqmZKIEKby5/FfQsbLSCx8IYARM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rCdV0sY7CpwwdFer21Ar31wlr8IwX5w2GD+eXu4tJRq3tOnyZtCNclODT+hf7fvQO
-	 shFpwf79paeXyUQVE9MZZ/jmR2lo5ujSxYZKvB3BFepj3bduGbVxCTlSbFIlgZSj/b
-	 6kkXcVKWBC9//pgetPXLlIaU7QgX9LCfHilad9T0Cls7g80KaQ4GCORLmxQcdLlYvo
-	 BdpVaKWQA4HBmFBKiRz5Ad4R7YS0P+5V0n+wgk1ifu44GJh85C7tb8T+5y2IyDXTh5
-	 a8kmLw7wVKrsZdyDq1pM3EAnAAmIWBQg0mv7rFvD1xOnYX37qyZWdWDDc+GtQg1F0f
-	 Oh+9CG5rCujVQ==
-Message-ID: <c4e17f42-2ad2-4979-983b-5f1e2a0b1ed8@kernel.org>
-Date: Mon, 24 Jun 2024 11:26:50 +0200
+	s=arc-20240116; t=1719221287; c=relaxed/simple;
+	bh=DqctyptmWGn2arqo56CIqkooxnyFfmr39v3btcFTusM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=QgoS7EcQoiiHK0mPEWwAvVI4a8SEALNe9to1zhD9Kw2fCypgHhmHdkwlmVIJ+Q2E8smtyibUpU45duo4NfD0w9HLzVCTsFUZkZ3NG0jE4QFK24BZJFAnQJlvb+rELOSTOLhplEzBc2LfxkIjff+R7w4gQNJNTIjUtJRMxPSUNQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Q6WXeD48; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719221274; x=1719826074; i=markus.elfring@web.de;
+	bh=DqctyptmWGn2arqo56CIqkooxnyFfmr39v3btcFTusM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Q6WXeD48wMbTBj//PpI1iKofRevss9nPQ+dpXqcZen7tAVs3RGLVt4c7KQD5CLJl
+	 ayu+zB//TVX3iFXk8n0xoJSsvoTQzWVYyXt4JEp3pKd14lr0PigrKbmDtFigMYtXG
+	 5F8QZnBqOtvnx4IxFPs/jSPg6Nyp08OYY+VWO0Y8U0axyIt/fv0PfF4+NOBn8OpKW
+	 GfenQ6tyJUlcD1QwmTGxBe7e7bHi4mlcDqaE0LB3zT71WKrsXJWv+78PADD4IZ9GN
+	 lDq+aIEjZ6WUxm0JVo8cmhz6R3oxNJVkF2dY66tWTAXohxrcwd0gvPgyICdwBcgge
+	 iITbB9f4Vvm7dly8Lw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MCoku-1sCqIk1ngu-0039j1; Mon, 24
+ Jun 2024 11:27:54 +0200
+Message-ID: <e44297c0-f45a-4753-8316-c6b74190a440@web.de>
+Date: Mon, 24 Jun 2024 11:27:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,107 +56,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/2] dt-bindings: net: wireless: qcom,ath11k: describe
- the ath11k on QCA6390
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, ath11k@lists.infradead.org,
- linux-kernel@vger.kernel.org, ath12k@lists.infradead.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240605122106.23818-2-brgl@bgdev.pl>
- <171862259099.4124983.18069958656274980613.kvalo@kernel.org>
- <4c3d4437-4c24-4db3-855d-f2ba7d0c6f8a@kernel.org> <871q4mk8fw.fsf@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <871q4mk8fw.fsf@kernel.org>
+To: Chun-Yi Lee <jlee@suse.com>, linux-block@vger.kernel.org,
+ Justin Sanders <justin@coraid.com>
+Cc: Chun-Yi Lee <joeyli.kernel@gmail.com>, stable@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Jens Axboe <axboe@kernel.dk>,
+ Kirill Korotaev <dev@openvz.org>, Nicolai Stange <nstange@suse.com>,
+ Pavel Emelianov <xemul@openvz.org>
+References: <20240624064418.27043-1-jlee@suse.com>
+Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
+ places
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240624064418.27043-1-jlee@suse.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:A7HVH/51jI7CyBTnb+/gmFxsa+Kp2XpH4BFFMCXDZpjJmNrbCMt
+ 54xj4FESQnMqQfoFL5QulTH83uhZAojUyVtOGwAFkwF8QFFIuZCsaGu11B/B7rG5Q8hTRGI
+ 96Dy+DcEgL6DVhapO/v7OESoyPIMHqEDYjaQaV2/UJ4De9NM0ebs+adU+/L2vIL79HuEjUd
+ 5yGkUkkGLtZhndb6UM0Tw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JVPe30/mQqM=;jy8Yj98OKDfpnx3i6k5I7x5XSbL
+ ZROY+LWGPzuVbAiFCg7YA3GjoDH4m81ZIiOxYw3jU2uM0NyKFEU+oTYWsFP/cwe3AeN8xUo42
+ igMRJwTfsDGgv7RDoTVJpZeQmmK5mF4dqZLvIvehlPsmxfJR9JJl1EGm1D63S2T8fB5UKNstA
+ 50yLLvYnUVcdE82IKquPk4iW0gJQXFWs2pyNw0BjOAZDuCLHoxu7KIGaLgyibzjNaHvnfLJyu
+ +hW9jskFv2K/aaWU0Z/hrNfZgeyTpYns7++ewt8QVhuuxb/rNT6Rat5Dm5BT0OlpO5P1wIk41
+ XC9q0LC4lj9e5Qi01gaTit8vk9Q6yvkc7eaABkDaCE5uTa8k0UXuJP4lALxrQcJoaThqbL28r
+ O/E3TIGQTH+ZZuxS1Ubqxto77Sl2XDJEXyz6h+D5AvHui6mX/VY9BVa9IujvcHrMBjhpjJfjD
+ YDy8Rvho7Z9li+GpgaKtSJuwB10C9iEvQ/BNm+Iv52D/IM0ADy0x6jqbXPXwaxUhNOqbIwlZi
+ czvxLm1sVIC+BtYdpJue95R+1YPjUV1K+NAJa0N1+it6+vj9YczglOk05pGrav9yqHKVUHhmO
+ N0Zj6mx9yYRohNJmMor2ltMl/N+/TWr2Y7OECClZhnoWkmOoi1o+v2f2O8cRGFbmdwXHeTCiL
+ dHnMZ07EGqD9E0GuAJYeGf0YM5w3TzE7xyMpnFcH59fcma8Q34WAhC+jhwQHOVsL5dp/5jgla
+ nLCTo/O2SvXyXIBWhtQTNoluhk9OGr3nvHGG44h9OowsduEhvTiG515UWMlKB9jd2rKI5Rndl
+ 7zx18r3gVFeFYTlexNpUaaozije096+IMiZ6nFTjhDUCo=
 
-On 24/06/2024 11:15, Kalle Valo wrote:
-> Krzysztof Kozlowski <krzk@kernel.org> writes:
-> 
->> On 17/06/2024 13:09, Kalle Valo wrote:
->>> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>
->>>> Add a PCI compatible for the ATH11K module on QCA6390 and describe the
->>>> power inputs from the PMU that it consumes.
->>>>
->>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
->>>
->>> 2 patches applied to ath-next branch of ath.git, thanks.
->>
->> Hi Kalle,
->>
->> Are you sure your tree is properly fed to linux-next? I cannot find
->> these patches in linux-next and above repo is not listed in Next/Trees.
-> 
-> ath.git is not included in linux-next builds. To my knowledge wireless
-> and wireless-next trees are the only trees from the wireless subsystem
-> which are included, all driver trees are not. But Jeff and I are talking
-> about including ath.git to linux-next.
+Please reconsider the version identification in this patch subject once mo=
+re.
 
-Thanks for confirming. There is not much to "talk". Just send one email.
-There is no single issue stopping you from being in linux-next. The only
-work/caveat is when wireless-next cherry-picks your patches instead of
-git pull, but even then you can arrange with Stephen to opt-out from
-emails about duplicated commits.
 
-Of course this is not specific to Ath - as you said - all wireless
-sub-trees should be fixed. It's really odd that these are not in linux-next.
+=E2=80=A6
+> ---
+>
+> v2:
+> - Improve patch description
+=E2=80=A6
 
-Best regards,
-Krzysztof
+How many patch variations were discussed and reviewed in the meantime?
 
+Regards,
+Markus
 
