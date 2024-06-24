@@ -1,181 +1,330 @@
-Return-Path: <linux-kernel+bounces-226604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94189140D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:26:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 007CD9140D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C5A1C209F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:26:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35B1BB214D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485068827;
-	Mon, 24 Jun 2024 03:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YZdtnD5d"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8F58827;
+	Mon, 24 Jun 2024 03:25:25 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C244A31
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 03:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1DDE567;
+	Mon, 24 Jun 2024 03:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719199590; cv=none; b=UK15H2jMYZmQE45saa61a6Krx0ZnWSq5Kb9XIW6p/Y+A5CZ4HvPdjqaYmQ/N2oNSaqef7U0gDAnQXcYW1xukf/jzVrP6o6lka1pIkKDr4wwgIdKcoy+Ogwp91NKce0EsXF8E6yQaEFIQf09xuCm7lDauYI4Ohv7TYVyncFolGHA=
+	t=1719199524; cv=none; b=nLoez9kfJW6iaO/L2AKlyPqotm/5q5ISdUlaawlnFz0bd6cnLAUaAoJv6xEAe7vf/Wr/PO2NyRsxwZ7do+qZhkyCroHUJlQ+tT/iWjQRNzmyZN9rwuyzJ1HjqlTKDQkmTWSV8mZg5zZgd4CbSV/1VAe4QZjO7cy26Ij0ZlVE/S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719199590; c=relaxed/simple;
-	bh=PyoQpqViAEHgqPnLw+TUVRNveMRfL263zTX//qwEI10=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RUfYXHsxBzjJlagCIYXAsCbGxMxUhOrGMbH9CM0Utn0q8+Kb447Z6GjURgvRZJh4IutDakpl0iF9U+IGa9CTWvFhrxtP7VzeFY4SAxEPsWK7cl1uTKncC7gusrbe72Udbpquy+K0UFlP2lxO/6hw8ybm/kzI1Lusu2yUlD40p3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YZdtnD5d; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719199588; x=1750735588;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PyoQpqViAEHgqPnLw+TUVRNveMRfL263zTX//qwEI10=;
-  b=YZdtnD5dilSlWzR4bXOFLOLIizaIcIuw5wSVR7H+Q9lWg9CML+FOhqas
-   F01tgtM3+UiHjZs9ZEaXMx87+m0f5TgWrsj/KgXfqFltON/s5i2okZqAr
-   PivZ5Gr7TlXPa7sXMkcCzHOefry8zzuYJZTTXOYhHOnGQxbTM6gy1uYKJ
-   z6ouMo5soYwewT7ZxGxyxx3oWTfCDv+JAGzBcsHnxVfBtwqv4YzqA5WXI
-   zlWUk/YvGAc0Slp3NgPLX83nVlhzLJlsxNuoPbZoSFXPVY94hZysMR5vF
-   B1OzX38wc2vxRa27TcBqklAB3ynUe/0n0yIpv8qisp6QseNIhWFZ29cpG
-   g==;
-X-CSE-ConnectionGUID: M5JyCN8pQXOfJ28BqQHtRQ==
-X-CSE-MsgGUID: h9Cu0cGvQIClJxbdaOvC0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="16122009"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="16122009"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 20:26:28 -0700
-X-CSE-ConnectionGUID: /zXJPsuyQ5SqgAf1lGS76w==
-X-CSE-MsgGUID: ynEAYv6PT56N5Y35hagOmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="48114500"
-Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
-  by orviesa005.jf.intel.com with ESMTP; 23 Jun 2024 20:26:26 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Yi Liu <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 1/1] iommu/vt-d: Remove control over Execute-Requested requests
-Date: Mon, 24 Jun 2024 11:23:51 +0800
-Message-Id: <20240624032351.249858-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719199524; c=relaxed/simple;
+	bh=jb3bS6DrnYOQLupVBlBLo902qLSL4pSPAqbpX27JI30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H6rhLpbfZJCfBSgQ9spcuo01zwKTZgN7mlpxgnOhv9CsMuvG/7K/ZkzhYuT7qYwIlNyflxtjjAVHNErAaX9BIS+hOUuJ8lbHquu0vBmHh3KYXiz9eVeAASYrlVRgn1aTMMVWsFfqe/HjyWVmQ5MIL1XrZsDqYTi81hewq+nU7dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.12.218] (unknown [180.110.114.157])
+	by APP-05 (Coremail) with SMTP id zQCowACnr+f65nhmYYxzEg--.23125S2;
+	Mon, 24 Jun 2024 11:24:43 +0800 (CST)
+Message-ID: <8ee88532-0aad-4e57-8a91-e5d12cf86335@iscas.ac.cn>
+Date: Mon, 24 Jun 2024 11:24:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/2] riscv: selftests: Add a ptrace test to check a0
+ of restarted syscall
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, oleg@redhat.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, andy.chiu@sifive.com,
+ shuah@kernel.org
+References: <cover.1718693532.git.zhouquan@iscas.ac.cn>
+ <b5fbdd3417e925dbe5db4716e51ce49d21d27f2f.1718693532.git.zhouquan@iscas.ac.cn>
+ <ZnOaBeNnNpvrE5ss@ghost> <909f2c3d-9992-4515-996b-35a17725701b@iscas.ac.cn>
+ <ZnXgfQ/19eCRT33y@ghost>
+Content-Language: en-US
+From: Quan Zhou <zhouquan@iscas.ac.cn>
+In-Reply-To: <ZnXgfQ/19eCRT33y@ghost>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACnr+f65nhmYYxzEg--.23125S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtr13Xw4kCr1rKryUWF1rJFb_yoW3uw18pF
+	W8CFnrKF4kJF47tw4Iqr4avF1Fyw45Ary7G340gw1rAr4vyry3tr4Iqa4UJrsxA392gayI
+	vFWFv3y3C398ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkmb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4
+	vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JV
+	WxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkI
+	wI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU23C7UUUUU
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiBgwSBmZ42OQu+QAAsr
 
-The VT-d specification has removed architectural support of the requests
-with pasid with a value of 1 for Execute-Requested (ER). And the NXE bit
-in the pasid table entry and XD bit in the first-stage paging Entries are
-deprecated accordingly.
+On 2024/6/22 04:20, Charlie Jenkins wrote:
+> On Fri, Jun 21, 2024 at 02:29:07PM +0800, Quan Zhou wrote:
+>>
+>>
+>> On 2024/6/20 10:55, Charlie Jenkins wrote:
+>>> On Wed, Jun 19, 2024 at 10:01:47AM +0800, zhouquan@iscas.ac.cn wrote:
+>>>> From: Quan Zhou <zhouquan@iscas.ac.cn>
+>>>>
+>>>> This test creates two processes: a tracer and a tracee. The tracer actively
+>>>> sends a SIGUSR1 signal in user mode to interrupt the read syscall being
+>>>> executed by the tracee. We will reset a0/orig_a0 and then observe the value
+>>>> of a0 held by the restarted read syscall.
+>>>
+>>> I don't quite follow what the goal of this test is. With orig_a0 being
+>>> added to the previous patch for ptrace, a more constrained test could
+>>> ensure that this value is respected.
+>>>
+>>
+>> Sry, I may not have described the patch clearly enough. This patch provides
+>> a channel for modifying a0 in user-space ptrace via orig_a0. Here, I will
+>> try to outline the whole situation:
+>>
+>> 1、When the tracer calls ptrace to modify regs->a0, can the tracee's a0 be
+>> correctly modified?
+>>
+>> Through testing, if the user only modifies regs->a0, it doesn't work. Why?
+>>
+>> The execution flow of the tracee in the test program is as follows.Prior to
+>> this explanation:
+>>
+>> - PTRACE_SYSCALL can make the tracee block before and after executing
+>>    a syscall.
+>> - The tracer sends SIGUSR1 to interrupt read, and the kernel will
+>>    restart it.
+>> - Please note the point marked with (*), which I believe is the cause
+>>    of the issue.
+>>
+>> user     kernel
+>>      |
+>>      |
+>>      |
+>>       read
+>>          | +-> regs->orig_a0 = regs->a0; //(*1)
+>>          |                                       <=tracer:PTRACE_SYSCALL
+>>          | +-> syscall_enter_from_user_mode
+>>                +-> ptrace_report_syscall_entry
+>>                    +-> ptrace_stop
+>>          | //stopped
+>>          |                                       <= tracer:SIGUSR1
+>>          |
+>>          | //resume                              <= tracer:PTRACE_SYSCALL
+>>          | syscall_handler...
+>>          |
+>>          | +-> syscall_exit_to_user_mode
+>>                +-> syscall_exit_to_user_mode_prepare
+>>                    +-> ptrace_report_syscall_exit
+>>                        +-> ptrace_stop
+>>      | //stopped
+>>      |
+>>      | /* Change a0/orig_a0 here and observe the restarted syscall */
+>>      | regs->{a0/orig_a0} = fd_zero; //(*2)
+>>      | ptrace(PTRACE_SETREGSET, ...);
+>>          |                                      <= tracer:PTRACE_SYSCALL
+>>          | //restarting..., skip SIGUSR1
+>>          |
+>>          | +-> exit_to_user_mode_loop
+>>                +-> arch_do_signal_or_restart
+>>                    +-> /* Settings for syscall restart */
+>>                        regs->a0 = regs->orig_a0; //(*3)
+>>      | //stopped
+>>      | //and block before the syscall again, get current regs->a0
+>>      | *result = regs->a0;
+>>      |
+>>      | /* Now, Check regs->a0 of restarted syscall */
+>>      | EXPECT_NE(0x5, result); //for PTRACE_SETREGSSET a0, failed
+>>      | EXPECT_EQ(0x5, result); //for PTRACE_SETREGSSET orig_a0, succeed
+>>
+>> If I'm wrong, please let me know. 🙂
+>>
+>> 2、Actually, I discovered the issue while using the execve function.
+>> When I tried to modify the first parameter of execve in the tracer,
+>> I found it didn't work.
+>>
+>> As for why not use execve for testing, there are two reasons:
+>>
+>> 1) The root cause of this issue is that when a syscall is interrupted
+>> and then resumed, it restarts with orig_a0 instead of a0, so modifying
+>> a0 doesn't work. I want to focus the test on the "restarted syscall".
+>>
+>> 2) Compared to the current test scenario, execve is terminated by ptrace
+>> earlier, so I chose a later point. In fact, setting regs->a0 in the path
+>> between (*1) and (*3) is ineffective because it will eventually be
+>> overwritten by orig_a0, correct?
+> 
+> Thank you for the thorough explanation! I feel like a test case like the
+> following achieves the same goal but without needing the pipes and the
+> file. What do you think?
+> 
+>>From 5f13cdf8f7312b2b3cc98fbfbb3c95fcef62c0f0 Mon Sep 17 00:00:00 2001
+> From: Charlie Jenkins <charlie@rivosinc.com>
+> Date: Fri, 21 Jun 2024 12:58:29 -0700
+> Subject: [PATCH] riscv: selftests: Add a ptrace test to check a0 of restarted
+>   syscall
+> 
+> Add a riscv selftest that checks that a0 of syscalls are able to be
+> replaced. When entering a syscall, a0 contains the first argument to the
+> syscall and upon exiting, a0 contains the return value. To replace the
+> a0 argument instead of the a0 return value with ptrace after halting the
+> program with PTRACE_SYSCALL, orig_a0 must be used. This test checks that
+> orig_a0 allows a syscall argument to be modified, and that changing a0
+> does not change the syscall argument.
+> 
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+>   .../riscv/abi/ptrace_restart_syscall.c        | 123 ++++++++++++++++++
+>   1 file changed, 123 insertions(+)
+>   create mode 100644 tools/testing/selftests/riscv/abi/ptrace_restart_syscall.c
+> 
+> diff --git a/tools/testing/selftests/riscv/abi/ptrace_restart_syscall.c b/tools/testing/selftests/riscv/abi/ptrace_restart_syscall.c
+> new file mode 100644
+> index 000000000000..e74ae02c6850
+> --- /dev/null
+> +++ b/tools/testing/selftests/riscv/abi/ptrace_restart_syscall.c
+> @@ -0,0 +1,123 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <unistd.h>
+> +#include <fcntl.h>
+> +#include <signal.h>
+> +#include <errno.h>
+> +#include <sys/types.h>
+> +#include <sys/ptrace.h>
+> +#include <sys/stat.h>
+> +#include <sys/user.h>
+> +#include <sys/wait.h>
+> +#include <sys/uio.h>
+> +#include <linux/elf.h>
+> +#include <linux/unistd.h>
+> +#include <asm/ptrace.h>
+> +
+> +#include "../../kselftest_harness.h"
+> +
+> +#define DEFAULT_A0		0x6
+> +
+> +#define ORIG_A0_AFTER_MODIFIED  0x5
+> +#define MODIFY_A0               0x01
+> +#define MODIFY_ORIG_A0          0x02
+> +
+> +#define perr_and_exit(fmt, ...) do {			\
+> +	char buf[256];					\
+> +	snprintf(buf, sizeof(buf), "%s:%d: " fmt ": %m\n",	\
+> +			__func__, __LINE__, ##__VA_ARGS__);	\
+> +	perror(buf);						\
+> +	exit(-1);						\
+> +} while (0)
+> +
+> +static inline void resume_and_wait_tracee(pid_t pid, int flag)
+> +{
+> +	int status;
+> +
+> +	if (ptrace(flag, pid, 0, 0))
+> +		perr_and_exit("failed to resume the tracee %d\n", pid);
+> +
+> +	if (waitpid(pid, &status, 0) != pid)
+> +		perr_and_exit("failed to wait for the tracee %d\n", pid);
+> +}
+> +
+> +static void ptrace_restart_syscall(int opt, int *result)
+> +{
+> +	int status;
+> +	pid_t pid;
+> +
+> +	struct user_regs_struct regs;
+> +	struct iovec iov = {
+> +		.iov_base = &regs,
+> +		.iov_len = sizeof(regs),
+> +	};
+> +
+> +	pid = fork();
+> +	if (pid == 0) {
+> +		/* Mark oneself being traced */
+> +		long val = ptrace(PTRACE_TRACEME, 0, 0, 0);
+> +		if (val)
+> +			perr_and_exit("failed to request for tracer to trace me: %ld\n", val);
+> +
+> +		kill(getpid(), SIGSTOP);
+> +
+> +		/* Perform exit syscall that will be intercepted */
+> +		exit(DEFAULT_A0);
+> +	} else if (pid < 0) {
+> +		exit(1);
+> +	}
+> +
+> +	if (waitpid(pid, &status, 0) != pid)
+> +		perr_and_exit("failed to wait for the tracee %d\n", pid);
+> +
+> +	/* Stop at the entry point of the restarted syscall */
+> +	resume_and_wait_tracee(pid, PTRACE_SYSCALL);
+> +
+> +	/* Now, check regs.a0 of the restarted syscall */
+> +	if (ptrace(PTRACE_GETREGSET, pid, NT_PRSTATUS, &iov))
+> +		perr_and_exit("failed to get tracee registers\n");
+> +
+> +	/* Modify a0/orig_a0 for the restarted syscall */
+> +	switch (opt) {
+> +	case MODIFY_A0:
+> +		regs.a0 = ORIG_A0_AFTER_MODIFIED;
+> +		break;
+> +	case MODIFY_ORIG_A0:
+> +		regs.orig_a0 = ORIG_A0_AFTER_MODIFIED;
+> +		break;
+> +	}
+> +
+> +	if (ptrace(PTRACE_SETREGSET, pid, NT_PRSTATUS, &iov))
+> +		perr_and_exit("failed to set tracee registers\n");
+> +
+> +	/* Resume the tracee */
+> +	ptrace(PTRACE_CONT, pid, 0, 0);
+> +	if (waitpid(pid, &status, 0) != pid)
+> +		perr_and_exit("failed to wait for the tracee\n");
+> +
+> +	*result = WEXITSTATUS(status);
+> +}
+> +
+> +TEST(ptrace_modify_a0)
+> +{
+> +	int result;
+> +
+> +	ptrace_restart_syscall(MODIFY_A0, &result);
+> +
+> +	/* The tracer's modification of a0 cannot affect the restarted tracee */
+> +	EXPECT_EQ(DEFAULT_A0, result);
+> +}
+> +
+> +TEST(ptrace_modify_orig_a0)
+> +{
+> +	int result;
+> +
+> +	ptrace_restart_syscall(MODIFY_ORIG_A0, &result);
+> +
+> +	/* The tracer must modify orig_a0 to actually change the tracee's a0 */
+> +	EXPECT_EQ(ORIG_A0_AFTER_MODIFIED, result);
+> +}
+> +
+> +TEST_HARNESS_MAIN
 
-Remove the programming of these bits to make it consistent with the spec.
+Great, this test can reflect issues more concisely compared to the 
+previous one. I will update it in the next PATCH.
 
-Suggested-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel/iommu.h |  6 ++----
- drivers/iommu/intel/pasid.h | 10 ----------
- drivers/iommu/intel/iommu.c |  4 ++--
- drivers/iommu/intel/pasid.c |  1 -
- 4 files changed, 4 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-index eaf015b4353b..9a3b064126de 100644
---- a/drivers/iommu/intel/iommu.h
-+++ b/drivers/iommu/intel/iommu.h
-@@ -49,7 +49,6 @@
- #define DMA_FL_PTE_US		BIT_ULL(2)
- #define DMA_FL_PTE_ACCESS	BIT_ULL(5)
- #define DMA_FL_PTE_DIRTY	BIT_ULL(6)
--#define DMA_FL_PTE_XD		BIT_ULL(63)
- 
- #define DMA_SL_PTE_DIRTY_BIT	9
- #define DMA_SL_PTE_DIRTY	BIT_ULL(DMA_SL_PTE_DIRTY_BIT)
-@@ -831,11 +830,10 @@ static inline void dma_clear_pte(struct dma_pte *pte)
- static inline u64 dma_pte_addr(struct dma_pte *pte)
- {
- #ifdef CONFIG_64BIT
--	return pte->val & VTD_PAGE_MASK & (~DMA_FL_PTE_XD);
-+	return pte->val & VTD_PAGE_MASK;
- #else
- 	/* Must have a full atomic 64-bit read */
--	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) &
--			VTD_PAGE_MASK & (~DMA_FL_PTE_XD);
-+	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) & VTD_PAGE_MASK;
- #endif
- }
- 
-diff --git a/drivers/iommu/intel/pasid.h b/drivers/iommu/intel/pasid.h
-index da9978fef7ac..dde6d3ba5ae0 100644
---- a/drivers/iommu/intel/pasid.h
-+++ b/drivers/iommu/intel/pasid.h
-@@ -247,16 +247,6 @@ static inline void pasid_set_page_snoop(struct pasid_entry *pe, bool value)
- 	pasid_set_bits(&pe->val[1], 1 << 23, value << 23);
- }
- 
--/*
-- * Setup No Execute Enable bit (Bit 133) of a scalable mode PASID
-- * entry. It is required when XD bit of the first level page table
-- * entry is about to be set.
-- */
--static inline void pasid_set_nxe(struct pasid_entry *pe)
--{
--	pasid_set_bits(&pe->val[2], 1 << 5, 1 << 5);
--}
--
- /*
-  * Setup the Page Snoop (PGSNP) field (Bit 88) of a scalable mode
-  * PASID entry.
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 2e9811bf2a4e..0ea1f2183f93 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -854,7 +854,7 @@ static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
- 			domain_flush_cache(domain, tmp_page, VTD_PAGE_SIZE);
- 			pteval = ((uint64_t)virt_to_dma_pfn(tmp_page) << VTD_PAGE_SHIFT) | DMA_PTE_READ | DMA_PTE_WRITE;
- 			if (domain->use_first_level)
--				pteval |= DMA_FL_PTE_XD | DMA_FL_PTE_US | DMA_FL_PTE_ACCESS;
-+				pteval |= DMA_FL_PTE_US | DMA_FL_PTE_ACCESS;
- 
- 			tmp = 0ULL;
- 			if (!try_cmpxchg64(&pte->val, &tmp, pteval))
-@@ -1872,7 +1872,7 @@ __domain_mapping(struct dmar_domain *domain, unsigned long iov_pfn,
- 	attr = prot & (DMA_PTE_READ | DMA_PTE_WRITE | DMA_PTE_SNP);
- 	attr |= DMA_FL_PTE_PRESENT;
- 	if (domain->use_first_level) {
--		attr |= DMA_FL_PTE_XD | DMA_FL_PTE_US | DMA_FL_PTE_ACCESS;
-+		attr |= DMA_FL_PTE_US | DMA_FL_PTE_ACCESS;
- 		if (prot & DMA_PTE_WRITE)
- 			attr |= DMA_FL_PTE_DIRTY;
- 	}
-diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-index abce19e2ad6f..aabcdf756581 100644
---- a/drivers/iommu/intel/pasid.c
-+++ b/drivers/iommu/intel/pasid.c
-@@ -333,7 +333,6 @@ int intel_pasid_setup_first_level(struct intel_iommu *iommu,
- 	pasid_set_domain_id(pte, did);
- 	pasid_set_address_width(pte, iommu->agaw);
- 	pasid_set_page_snoop(pte, !!ecap_smpwc(iommu->ecap));
--	pasid_set_nxe(pte);
- 
- 	/* Setup Present and PASID Granular Transfer Type: */
- 	pasid_set_translation_type(pte, PASID_ENTRY_PGTT_FL_ONLY);
--- 
-2.34.1
+Thanks a lot!
 
 
