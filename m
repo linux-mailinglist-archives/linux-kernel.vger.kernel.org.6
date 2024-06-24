@@ -1,153 +1,122 @@
-Return-Path: <linux-kernel+bounces-226801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B09914413
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:59:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCBC914417
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3377B1F22B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A67B1F22AB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD217482C3;
-	Mon, 24 Jun 2024 07:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6BC47F5F;
+	Mon, 24 Jun 2024 08:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FdhBpVwO"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="P2XuNBF5"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F0948CFC
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C112556F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719215981; cv=none; b=JI/C1NdN8wjszRdKDudK9hz4JVWpOIgA+0DHGm6i123qFzrUXdaiZtoBMiOkrcg/f8guhyTpFzbUg59dqjwLoAVVxDqYlnb/a+Md9Vm2JL6yRXChDRnPu6DxM9S3I6jVH+52VWgP4accj5yWWH7ut7uVRfF3VUQeLrdd8iVKCIM=
+	t=1719216029; cv=none; b=QtXA1YiCYKPsFi1WqWj0o/V+f6uxt8bdr1LD9WIzIOYQu478QoQHAwxZkLLi/0u/lPppYTiZJM6jI5g1UgR8f8avo3oMzi+gLqaXGVV7n0Y4N+jmLA8ZQm5r/mLbJ/6q5zIajZw2oH5T8INAd5um9lygSZTqqOGiru9P6eL2B0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719215981; c=relaxed/simple;
-	bh=Cwr6U79YXw3VoE+eOF8owfYrVW8U4Cv4BeriCKZO+9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NZmFTrzCuaWDzjoKbjjzQVwNjCZTq8dvWGveGUqyqJhMohh+gT5Ue+JXcbDkkOfSppdzARRz14tFmnY8hzf/OYI0W4jozb1oikFmgjpvx6nEcL0PR41gUhLPr9v+qXkFEqKSAEa/WII2cyRf37C+aCLTvAOZGUgAAIiDIdflpL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FdhBpVwO; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5295eb47b48so4731034e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 00:59:38 -0700 (PDT)
+	s=arc-20240116; t=1719216029; c=relaxed/simple;
+	bh=H4cV+TL+ga3JG7w5DMWiKl6UEKwDzYRgGTVeNdl7UFk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=K/AyYDYMBJwhcnHf+5g6QXSX4Al63woi3RioZa8POJu8y6feRYxUsNKmX5B1T7Y3IomL5bib/4XMPd372gUShCf8iadJi0Vj79241N5vidvHVoCOUpL8N0+NkyDK0rjE2DByFtFjPc+6Ybpaz4JvbOcWTYIljG/tGDR17SV0lmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=P2XuNBF5; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f47f07aceaso31153235ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:00:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719215977; x=1719820777; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lDo6FigYFQGMZS3Mpraq4BokVAZg7iCXZo4sAcKEd/g=;
-        b=FdhBpVwOE7AFDiwQld9ijyZeiKeavN7RML/sjyhUHQQbU8/dpYDOvFSVWPqNVXSNJ3
-         etiARDdvI3831IlD+quj2+jZaLdJroCgFdxu1jIj56AV8mQs9KjzxKnDvxJuZYxrdWPm
-         vVXwpvkV+pSMAnzzCrN6XiGU2lGdbPyIQFpD/3ITETkQUJDXEwKJg+NnBssKxmEN3x8z
-         437xY+aEi9WA0ttXg2g/JkYCuti5k1xaiyIf7ye6ltTSU+60PD0KzqasJk9T2cR8J2Bb
-         HEc3rMCKV3n07Ez0ZRa0THpS+Hsp8hp7vSNCJspfg2M2O9LN5ap52z06LOGtkOJnwrjt
-         zYjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719215977; x=1719820777;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719216027; x=1719820827; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lDo6FigYFQGMZS3Mpraq4BokVAZg7iCXZo4sAcKEd/g=;
-        b=W5GKh+coCCrmt+UTLxXjxzlexc1v9gnMPHZepTNZOeogH1SZalwjnwuoiRh52Sm5GV
-         mTLAeb5rgeAm3ZRUQ9qZKIy8WZaYlxpY2Ne7k59MOrgT8Y+FNcBscRu+xMRWtCBYls6L
-         YylSV1GyY19pZjTNsLdrd/80BbJHz9UviQuzK5L+SqcgD/WoiQB0/svA81KVN8nTmRU8
-         EBqrxcIDu9Bjl/wTwrpJZY+xyQ+4AdwyZIaWOhADBlGCnQBlLixZBbPvAPmZoV4hoqKn
-         +y/EWSkOkuZQdU5QmpmOmnCT7grR47/q+50bIxfgCWCgr86vX8KQ/DthfpAAsFPxy6nW
-         CdAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWdsDkE5mtPQSB7dwFZM/Mtx82j+Li82VqOoyblIIgqqBtTWg0UsFFVrkB2q1kdPx6Tm3SVta+bUVmcpsJAcdrHQmD2hrXST7UiAXea
-X-Gm-Message-State: AOJu0YzjtRlgLaJS8G46rwOkVEyQb70O4IoU0GXEf4x8w+nY2Pi4PLph
-	DtdjJg3YopW/XTI63gGfXBBvdTG7IUkKKbdlRi/NurRO/L0DlYNmJpggE21uc7I=
-X-Google-Smtp-Source: AGHT+IHenuOkInITr6W0VLjG1A7f0qBzFfDGHfEiH9gMy4oUCngVCqpgbvTbaQobNROLVIHjJmUdEg==
-X-Received: by 2002:a05:6512:b23:b0:52c:e383:b0d1 with SMTP id 2adb3069b0e04-52ce383b18cmr3072773e87.53.1719215976959;
-        Mon, 24 Jun 2024 00:59:36 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdb4a7215sm787583e87.171.2024.06.24.00.59.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 00:59:36 -0700 (PDT)
-Date: Mon, 24 Jun 2024 10:59:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, 
-	Ekansh Gupta <quic_ekangupt@quicinc.com>, Oded Gabbay <ogabbay@kernel.org>, srinivas.kandagatla@linaro.org, 
-	linux-arm-msm@vger.kernel.org, gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, 
-	linux-kernel@vger.kernel.org, quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, 
-	Dave Airlie <airlied@gmail.com>
-Subject: Re: [PATCH v1] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
-Message-ID: <jhjbx32kxywnzzin6w3tzobpu5v3zxfak4vz4q5t36v6hrbvuo@uixf3imdiefl>
-References: <20240612064731.25651-1-quic_ekangupt@quicinc.com>
- <zbpia232dh4ojfsvhcqxrp6cwfygaalu5cycdrs47pqmnrisvk@dq24nww26gkm>
- <z6g5ool5vomkudiroyaxh532rhlfu5x4i3l5xoqrsho2sxv4im@v5ghemjkpc3v>
- <CAA8EJprgCJKOnZo7Q31KZV3SA3NqWxcMmoUxuqnVF+8cQW5ucg@mail.gmail.com>
- <6f59552d-d7a3-5e05-3465-e707c1b7eaf2@quicinc.com>
- <ZnWhwJtTXS32UI9H@phenom.ffwll.local>
- <fin5dnpf3jyo5mk4b7fktdutbds5lkpxwzojecxa4zh7gwfad2@rkryxqzt6maq>
+        bh=Aj79LYCAxF+p3+o6X9hA9GUorzi9x84bMVNK8ifZhGA=;
+        b=P2XuNBF5E2LPwub/2wIK4cVec6G2zN15m8pGtrKKsoHDi+PIqS/h0hNyfiCopT+FM0
+         M54Ircnsnu/A5nLkp2W56kwB5zTGC/OS7V6REel1GC2eGWVnPWvxFXcPpraLUdBFlYVP
+         15UYm8sKRCjdGu7YQ/OOA+Uvv8K/cjs/Wwl0+gGymRqZF+epo2R07LUd2JOYRtVE//vf
+         nivCcsc2JLysrsvlyJXY3EGTNV2VdycNFaQZDl9ekiUz8PtyAjFbNI7DV+/eaLxtEMad
+         bRb9MIK3PyFVVdLPPqMuGNIJrDQHjBnoHBBMopoor/NhODQ654X+yr24OGuK2FNggBew
+         Ai0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719216027; x=1719820827;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Aj79LYCAxF+p3+o6X9hA9GUorzi9x84bMVNK8ifZhGA=;
+        b=BLM3b0c/JrzOmX4QPBUl9AIFkT0LP2dY39j73tEt/vqrr/M4HPtn8bF2O36iXzsUJZ
+         myDXiBPXidT1Y/8pVVqoKDR9Zr90Epi0hbbCcuyaaGpb4VNe6lcYbsY+FQ1S+qlemhmv
+         cUzXXTNmLfVkQByWk4dos49LWUOyfcM/zKC8eKejJl/tfhDUkT7MFQ5QRdhNMVGKKcFK
+         ufg5TAnkZtaY1Nz3tO8BHjNU3W/TdhCZmuH6yaACeAwvnCBtj5mzcfNJekNttCi86mv4
+         54sVBuX+FFdVG6yJWaYaeUzJjhxTYz6WDcVbIl7hFRrpZo/ktxsgmzatKYlaRfXSoBvz
+         PUeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsvKzTrQ9jt0HgSYpASUmedPNRDvXEk78Miql44jqKmbsVlHXdcaMNAGtIjDcd9qrTOXPWE4Q8RiUm0s6I3DU9uFFVWcTaWDDPc4ae
+X-Gm-Message-State: AOJu0YwXTLPJwlpSSSgrh5W6lr3dqblSNusXXvNUGwdiYRquwWzkHpkA
+	eBH8r6j8R50w08w8p8/H+3VGnlkqLoI5rhlpleXglnqe9H9qW0p3q0TCbk5Lj4g=
+X-Google-Smtp-Source: AGHT+IFJ21CMsNzUTPURNgPxp9FYmyQG6EZosDqEMFoDyfvO2m935KC9udY01IUKgMqxBooKWzrcpg==
+X-Received: by 2002:a17:90a:3fc6:b0:2c7:da20:524b with SMTP id 98e67ed59e1d1-2c8504c7dbamr3257115a91.10.1719216027213;
+        Mon, 24 Jun 2024 01:00:27 -0700 (PDT)
+Received: from smtpclient.apple ([2604:3d08:8e80:cf0:98fc:e883:d2e0:acbf])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e55dcdf4sm8077639a91.34.2024.06.24.01.00.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2024 01:00:26 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fin5dnpf3jyo5mk4b7fktdutbds5lkpxwzojecxa4zh7gwfad2@rkryxqzt6maq>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] kcsan: Use min() to fix Coccinelle warning
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <CANpmjNMHPt7UvcZBDf-rbxP=Jm4+Ews+oYeT4b2D_nxWoN9a+g@mail.gmail.com>
+Date: Mon, 24 Jun 2024 01:00:15 -0700
+Cc: dvyukov@google.com,
+ kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A820FF35-B5A3-410A-BAF3-0446938CD951@toblux.com>
+References: <20240623220606.134718-2-thorsten.blum@toblux.com>
+ <CANpmjNMHPt7UvcZBDf-rbxP=Jm4+Ews+oYeT4b2D_nxWoN9a+g@mail.gmail.com>
+To: Marco Elver <elver@google.com>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On Sun, Jun 23, 2024 at 03:19:17PM GMT, Bjorn Andersson wrote:
-> On Fri, Jun 21, 2024 at 05:52:32PM GMT, Daniel Vetter wrote:
-> > On Fri, Jun 21, 2024 at 09:40:09AM -0600, Jeffrey Hugo wrote:
-> > > On 6/21/2024 5:19 AM, Dmitry Baryshkov wrote:
-> > > > On Fri, 21 Jun 2024 at 09:19, Bjorn Andersson <andersson@kernel.org> wrote:
-> > > > > 
-> > > > > On Wed, Jun 12, 2024 at 09:28:39PM GMT, Dmitry Baryshkov wrote:
-> > > > > > On Wed, Jun 12, 2024 at 12:17:28PM +0530, Ekansh Gupta wrote:
-> > > > > > > Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
-> > > > > > > to be added for PD notifications and other missing features. Adding
-> > > > > > > and maintaining new files from within fastrpc directory would be easy.
-> > > > > > > 
-> > > > > > > Example of feature that is being planned to be introduced in a new C
-> > > > > > > file:
-> > > > > > > https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
-> > > > > > > 
-> > > > > > > Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> > > > > > > ---
-> > > > > > >   MAINTAINERS                          |  2 +-
-> > > > > > >   drivers/misc/Kconfig                 | 13 +------------
-> > > > > > >   drivers/misc/Makefile                |  2 +-
-> > > > > > >   drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
-> > > > > > >   drivers/misc/fastrpc/Makefile        |  2 ++
-> > > > > > >   drivers/misc/{ => fastrpc}/fastrpc.c |  0
-> > > > > > >   6 files changed, 21 insertions(+), 14 deletions(-)
-> > > > > > >   create mode 100644 drivers/misc/fastrpc/Kconfig
-> > > > > > >   create mode 100644 drivers/misc/fastrpc/Makefile
-> > > > > > >   rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
-> > > > > > 
-> > > > > > Please consider whether it makes sense to move to drivers/accel instead
-> > > > > > (and possibly writing a better Kconfig entry, specifying that the driver
-> > > > > > is to be used to offload execution to the DSP).
-> > > > > > 
-> > > > > 
-> > > > > Wouldn't this come with the expectation of following the ABIs of
-> > > > > drivers/accel and thereby breaking userspace?
-> > > > 
-> > > > As I wrote earlier, that depends on the accel/ maintainers decision,
-> > > > whether it's acceptable to have non-DRM_ACCEL code underneath.
-> > > > But at least I'd try doing that on the grounds of keeping the code at
-> > > > the proper place in the drivers/ tree, raising awareness of the
-> > > > FastRPC, etc.
-> > > > For example current fastrpc driver bypasses dri-devel reviews, while
-> > > > if I remember correctly, at some point it was suggested that all
-> > > > dma-buf-handling drivers should also notify the dri-devel ML.
-> 
-> If the agreement is that dma-buf-handling drivers must get reviews from
-> dri-devel, then let's document that in MAINTAINERS and agree with the
-> maintainer.
+On 24. Jun 2024, at 00:02, Marco Elver <elver@google.com> wrote:
+> On Mon, 24 Jun 2024 at 00:08, Thorsten Blum <thorsten.blum@toblux.com> =
+wrote:
+>>=20
+>> Fixes the following Coccinelle/coccicheck warning reported by
+>> minmax.cocci:
+>>=20
+>>        WARNING opportunity for min()
+>>=20
+>> Use size_t instead of int for the result of min().
+>>=20
+>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+>=20
+> Reviewed-by: Marco Elver <elver@google.com>
+>=20
+> Thanks for polishing (but see below). Please compile-test with
+> CONFIG_KCSAN=3Dy if you haven't.
 
-Good idea.
+Yes, I compile-tested it with CONFIG_KCSAN=3Dy, but forgot to mention =
+it.
 
-> 
-> There's no need to move the driver for that.
+> While we're here polishing things this could be:
+>=20
+> const size_t read_len =3D min(count, sizeof(kbuf) - 1);
+>=20
+> ( +const, remove redundant () )
 
--- 
-With best wishes
-Dmitry
+Should I submit a v2 or are you adding this already?
+
+Thanks,
+Thorsten=
 
