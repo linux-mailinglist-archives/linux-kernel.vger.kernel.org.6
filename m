@@ -1,116 +1,165 @@
-Return-Path: <linux-kernel+bounces-227079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C1C914806
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:05:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70366914803
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B2B9B22C5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:05:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249A91F23D9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E84A137936;
-	Mon, 24 Jun 2024 11:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EF3137743;
+	Mon, 24 Jun 2024 11:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JibFOj/L"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zul6obyl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70C6136649
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AE2136663
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719227097; cv=none; b=Gak8gsx+caJBigTIXgNlM/AKl9vaDQbg2g0PmEFAU1gDhJrP9jZvoFIM5povME+pNNOYaPpUhgpvFkvGLSy8jzevX6pJRUhcqptaSlqZVFCLIdJtBOE3W2Iyv/UfDzTV3Dt+7ffURQMwoy7WoCvtaDq8C7tbYg3JOMOlq5GQNFg=
+	t=1719227096; cv=none; b=CKvoc5P7dqmCFJQ2pyMjyerFV1Z74y3HTvhRs4uwj6l0ekP+ldIWoE15XzBAFCGuFLLLGes5jYu8UcXfQzqqBxA7PjV/eAqvqbEF2JyoLoIyrMGw7345dHd33XEhGCckdL9sSPtDVKdJIxyz+d3j1y/Kdk2jrhwtN8DUS1WBkb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719227097; c=relaxed/simple;
-	bh=Ybu1fiG+TyEyq+dwsSQn71urH1cpmuRYgZa07osCrh0=;
+	s=arc-20240116; t=1719227096; c=relaxed/simple;
+	bh=ScPmTjF2579pHVSsz6jaMLkZu+Xg8dywXQLweA3pHi0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1V7C/fDxxXK4+82lRZBUM1xeMrPrb4M+3N2EyRKu6KxDGOOaUtOz+kiG9WEm5llSdB6JyYNYOUUXdK0L7G30qLuLsaSh7rfJYYuXDusqZmAeBRO29pThHg2MhMeAPjnmGB8LuHXPn5cpzd55hCOmMr3Sf5/Vr3LQ4+3Leb4/f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JibFOj/L; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec10324791so49963591fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:04:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719227094; x=1719831894; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JYoZj8gmX+2MOD2HSKn5qCjtY2YgKMlL370OvGOubpc=;
-        b=JibFOj/LDVCZv2S+oIGPxsF2V9L+QshbdzeiRjjDnz4okOUvHKJ2nL8TNq1AlqFs7P
-         HdSUjB+cXA6F+ijX65eBmKWs0Rcy3lCHYxNoeFzT3lhvXLtc3HRsdimghRRWTV4x06Co
-         FPH3a5oQkcAyhz2rhjbBL18W0nGcjmOVuC61pjodee3sk2DCh6YhN0bIm/urKcVRXWKh
-         vuDr7GC09KaJN80bF/92WX5dvVlt8X1oq0LO4i/taqZLL7AC/mxpIfiXZDNPClJb7yG+
-         nnWMPKPTNp4YPQOCKNV2Il0NQushG4b4tWspwrsIpCJFgxYph8ZvmtzEnK7NzeLKH8ml
-         kSRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719227094; x=1719831894;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JYoZj8gmX+2MOD2HSKn5qCjtY2YgKMlL370OvGOubpc=;
-        b=uQwJgA7g4wCJzZWCRk9rbvovL14RhKyiLhJL1+h/+K+u1Xu8vSjUbnJDuHGMmGq6+c
-         bba9+8q1D4/ussc20RCyoLDcRUTBAVhoBsJ3Og3J5OnybaU7nQvV3JS+jBK7jLNIXS2R
-         MSRJQPR46vxyUM6RqT3pPNA7uTH9gYczpUtXqPhA5ICt9jyvhf2MUj/pmEHBAUCMiIX7
-         nCoaoGwLQFFm+LvvRqJxjBvab5Dh+GgqjKw+hNwNMTZ8xlUEZrSgoIJD4HFh1ZCp2uQX
-         5VrczWXe/LVwjy6/kK9kEPpeNMcJntMSkgaTcwQkwABRVHq4diHYpThJlhKu547mSlGt
-         i86Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUDtsr2dZcOWdDewginK5ePFaqz2PdTsD4d1Z7gBMVTs6rszIjNUpOjbH1EZZF04OWL+WGP044UfPV/cPmDE2rH14e4CMw4GnFh5Aty
-X-Gm-Message-State: AOJu0Ywtk1qXui5a6Dg2+/RjiG7NSKVbGvKWrONrRFrG1eVVY56XqKBo
-	DZ9x4cCpIQtMo+ZViEfrU5ZPmfWyzGhUIiKt8Y/r4p0pri9yAglMP1vHDi+x/VM=
-X-Google-Smtp-Source: AGHT+IHAmz0r8altnY0a3NkkBlG1CahkQJGOD5f56GIJJWvP4Z2vt+jffZttlqaNpZyipTheXyJczg==
-X-Received: by 2002:a05:651c:2cc:b0:2ec:5b8f:c792 with SMTP id 38308e7fff4ca-2ec5b8fcc29mr22669201fa.43.1719227093672;
-        Mon, 24 Jun 2024 04:04:53 -0700 (PDT)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb9c1a93sm60022755ad.239.2024.06.24.04.04.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2024 04:04:53 -0700 (PDT)
-Date: Mon, 24 Jun 2024 19:04:49 +0800
-From: joeyli <jlee@suse.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-block@vger.kernel.org, Justin Sanders <justin@coraid.com>,
-	Chun-Yi Lee <joeyli.kernel@gmail.com>, stable@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jens Axboe <axboe@kernel.dk>, Kirill Korotaev <dev@openvz.org>,
-	Nicolai Stange <nstange@suse.com>,
-	Pavel Emelianov <xemul@openvz.org>
-Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
- places
-Message-ID: <20240624110449.GJ7611@linux-l9pv.suse>
-References: <20240624064418.27043-1-jlee@suse.com>
- <e44297c0-f45a-4753-8316-c6b74190a440@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FXz1/SFiEDMYzaiX7tLEYwhQm7J2aHXIa3NYX8aH/PHLsj4yhbEFhmYEzwGzq/Xtd/OlUbUxjSRPp6QRDgIp3QCcwl+mfrHuwcz3w2iPzZGmu04z23Bcm1jV5SIL49SQd3LpONWCgJ3CbAtOmYTiWmB5GNFFNz9yK3BT2kh4tH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zul6obyl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE06C2BBFC;
+	Mon, 24 Jun 2024 11:04:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719227096;
+	bh=ScPmTjF2579pHVSsz6jaMLkZu+Xg8dywXQLweA3pHi0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zul6obylsMOWoO/B+ZQbVaneKjPg4sr+UKZU+ALHnjqcJRxU4uHe2MfXD6qKN10R6
+	 X1E445HzYgkQyU40uLhoZsxyYkuotmEE3MMk5Z7L6ejyJkNWrOwFs3CjLskdoLryei
+	 CqBL5NzqTNVXtDZa+R97d+t7n3z3NkVCodt2/GMJl2jesEsMmU3mpZNN6Nu2G27cTh
+	 JihShgZ9NPQ1jP5LBnYOgimZjGy0PKwNfdu1gVvpxtNAH5wZdybBAGgSZ45qR3vG49
+	 ZhoVYvFZ5d846qaU6uP+Xk/Vi1PZ3veoLpkGjN6MHtTiFoA0cGpIzzmuVQXAGnZrWW
+	 6N7XlY5qXuxJw==
+Date: Mon, 24 Jun 2024 13:04:53 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>, Narasimhan V <Narasimhan.V@amd.com>
+Subject: Re: [PATCH 0/3] timer_migration: Fix a possible race and improvements
+Message-ID: <ZnlS1QcFgHvJGm7J@lothringen>
+References: <20240621-tmigr-fixes-v1-0-8c8a2d8e8d77@linutronix.de>
+ <ZnWOswTMML6ShzYO@localhost.localdomain>
+ <87zfrag1jh.fsf@somnus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e44297c0-f45a-4753-8316-c6b74190a440@web.de>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <87zfrag1jh.fsf@somnus>
 
-On Mon, Jun 24, 2024 at 11:27:53AM +0200, Markus Elfring wrote:
-> Please reconsider the version identification in this patch subject once more.
-> 
-> 
-> …
-> > ---
+On Mon, Jun 24, 2024 at 10:58:26AM +0200, Anna-Maria Behnsen wrote:
+> Frederic Weisbecker <frederic@kernel.org> writes:
+> > 0) Hierarchy has only 8 CPUs (single node for now with only CPU 0
+> >    as active.
 > >
-> > v2:
-> > - Improve patch description
-> …
+> >    
+> >                              [GRP1:0]
+> >                         migrator = TMIGR_NONE
+> >                         active   = NONE
+> >                         nextevt  = KTIME_MAX
+> >                                          \
+> >                  [GRP0:0]                  [GRP0:1]
+> >               migrator = 0              migrator = TMIGR_NONE
+> >               active   = 0              active   = NONE
+> >               nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
+> >                 /         \                    |
+> >               0          1 .. 7                8
+> >           active         idle                !online
+> >
+> > 1) CPU 8 is booting and creates a new node and a new top. For now it's
+> >    only connected to GRP0:1, not yet to GRP0:0. Also CPU 8 hasn't called
+> >    __tmigr_cpu_activate() on itself yet.
 > 
-> How many patch variations were discussed and reviewed in the meantime?
->
+> NIT: In step 1) CPU8 is not yet connected to GRP0:1 as the second while
+> loop is not yet finished, but nevertheless...
 
-Only v2. I sent v2 patch again because nobody response my code in patch.
-But I still want to grap comments for my code.
+Yes, I was in the second loop in my mind, but that didn't transcribe well :-)
 
-Thanks
-Joey Lee
+> 
+> >
+> >                              [GRP1:0]
+> >                         migrator = TMIGR_NONE
+> >                         active   = NONE
+> >                         nextevt  = KTIME_MAX
+> >                        /                  \
+> >                  [GRP0:0]                  [GRP0:1]
+> >               migrator = 0              migrator = TMIGR_NONE
+> >               active   = 0              active   = NONE
+> >               nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
+> >                 /         \                    |
+> >               0          1 .. 7                8
+> >           active         idle                active
+> >
+> > 2) CPU 8 connects GRP0:0 to GRP1:0 and observes while in
+> >    tmigr_connect_child_parent() that GRP0:0 is not TMIGR_NONE. So it
+> >    prepares to call tmigr_active_up() on it. It hasn't done it yet.
+> 
+> NIT: CPU8 keeps its state !online until step 5.
+
+Oops, copy paste hazards.
+
+> Holding the lock will not help as the state is not protected by the
+> lock.
+
+No but any access happening before an UNLOCK is guaranteed to be visible
+after the next LOCK. This makes sure that either:
+
+1) If the remote CPU going inactive has passed tmigr_update_events() with
+its unlock of group->lock then the onlining CPU will see the TMIGR_NONE
+
+or:
+
+1) If the onlining CPU locks before the remote CPU calls tmigr_update_events(),
+   then the subsequent LOCK on group->lock in tmigr_update_events() will acquire
+   the new parent link and propagate the up the inactive state.
+
+And yes there is an optimization case where we don't lock:
+
+		if (evt->ignore && !remote && group->parent)
+			return true;
+
+And that would fall through the cracks. So, forget about that lock idea.
+
+
+> +static void tmigr_setup_active_up(struct tmigr_group *group, struct tmigr_group *child)
+> +{
+> +	union tmigr_state curstate, childstate;
+> +	bool walk_done;
+> +
+> +	/*
+> +	 * FIXME: Memory barrier is required here as the child state
+> +	 * could have changed in the meantime
+> +	 */
+> +	curstate.state = atomic_read_acquire(&group->migr_state);
+> +
+> +	for (;;) {
+> +		childstate.state = atomic_read(&child->migr_state);
+> +		if (!childstate.active)
+> +			return;
+
+Ok there could have been a risk that we miss the remote CPU going active. But
+again thanks to the lock this makes sure that either we observe the childstate
+as active or the remote CPU sees the link and propagates its active state. And
+the unlocked optimization tmigr_update_events() still works because either it
+sees the new parent and proceeds or it sees an intermediate parent and the next
+ones will be locked.
+
+Phew!
+
+I'll do a deeper review this evening but it _looks_ ok.
+
+Thanks.
 
