@@ -1,114 +1,94 @@
-Return-Path: <linux-kernel+bounces-227509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E9091525B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:30:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B867915261
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD3001C20F53
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:30:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26EA9283FE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6777619D087;
-	Mon, 24 Jun 2024 15:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C77D19CCEB;
+	Mon, 24 Jun 2024 15:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/sPsdyw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oTDMZlN4"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDEB19CCFD;
-	Mon, 24 Jun 2024 15:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CF71EB48;
+	Mon, 24 Jun 2024 15:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242947; cv=none; b=nNq5aVJpAuhW36/xxWxEOMWe7w887CMAZySv8rlf/uvTjejqB3EEg6ieysRXxKQ2YKvOfWCEh7jXuMF4VdUvSHSzWYtcAe737MVGbfGM9dmHvdnBS1F2YFYJuSZZLBKNZgLtvizzxAj71iGO7JHki3zLgfaMvJZrodAENSOp0sM=
+	t=1719243041; cv=none; b=AbQSehuDUpWbH+9qqIGUudHbIo3FZfA2ibJBNj07xoixe8ukvOpDhJ8ykT+15FU4nsLBuzTHXFwh++wel/aePosqlM2VAq/EH8DJdvQXV9YqVSgln8FUpcS2dxo68gNMTqsxWkg717/wp27oocdSLalWcn1i1wl0xB4YeizzNJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242947; c=relaxed/simple;
-	bh=mDhyjVgs56aJ5xriQm7r9/x5TQOebX4CDwLO2N9ee4Y=;
+	s=arc-20240116; t=1719243041; c=relaxed/simple;
+	bh=HRhQJtabtRMNCUnl8RTGBTId6p/EedjvtfBS1qbdgPk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ITxriNjeG+fpcFMk4g7qortQ5aCYyLER0stazlhODr9xEPvvqJ5rBJskAPcUitP5HqS37RLiZT2xox4hcKM1x0eo4cD3PzzRuCDXlrJqqyuPq1PcR5A89eLGc++rRnGTmBJ6nC5MI+4t4jifXPG0FMZUL8YP+JEVZ3AP/02cmzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/sPsdyw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B2CC2BBFC;
-	Mon, 24 Jun 2024 15:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719242947;
-	bh=mDhyjVgs56aJ5xriQm7r9/x5TQOebX4CDwLO2N9ee4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f/sPsdyw8rC+jnFpgHCz6r0ktKKDUJ5yyPfzrpfPr6zaNTzsD0xemkvrmGj9uv6W8
-	 YohybZrMkR4yPFJX5UHHxSqHn0L9/f9b5R9FOYzz3qvXJ21X46mf5c4C3HHyR0+kqH
-	 74cROPNUPCrmaJix6QWOE0cvP/l7RW9rkRNSaw0h5i7TGMa8EvzbcMLkTJK9TPE8gR
-	 fkFYx7Qq7HqsCgXkJQAb4i8LNznjYGlPFUvivj902hIekw4rHoaOoJ+/1fnrCN3s+T
-	 v0bZZ/+3mxLODflpRdnjrXoKXf8dhQcP+aMfX9mQohwpdulvvynFkUUB7OH3NbkY20
-	 DRPr0H30supDg==
-Date: Mon, 24 Jun 2024 16:29:02 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Witold Sadowski <wsadowski@marvell.com>
-Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	pthombar@cadence.com
-Subject: Re: [PATCH v9 6/9] spi: cadence: Add Marvell xfer operation support
-Message-ID: <408b4046-12bc-40d0-aaf4-adced4033946@sirena.org.uk>
-References: <20240619141716.1785467-1-wsadowski@marvell.com>
- <20240619141716.1785467-7-wsadowski@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YDpmHWTCziXyV11xqzL8sJViOoNy7zlJmkkRU56VpddGzn8uL3/qavmMgNY7OBWno8ex6ddGIPvdYpe6YxZzFsn88c5mSpfWQgXhHdJEloiW8aWWAnkp4rEV4EZy/T8mqMuIjfbtrFGUlZ2Y3GPPTBJqNfFPNk1KkaRTA6UYcGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oTDMZlN4; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ibOseP3v+dBm3ryF8qHTc4kO0U1WTtO4bLBS/mcVu34=; b=oTDMZlN4SXslRY4K7g3pCQbGMD
+	qsQfoMhI7YcQdflI7frvY7DJgaYzXxOaWibqzG6uc5Tk0XaPw7hpthbydXCkPWid9i1LM6i3DM70O
+	tVGdEkKpNjmUaCi1AFIyvQ4gayZE3VzExPtj0+6X1+S+buOV8PjD7DNDqBnJIJwCt4y4cznv3XzUv
+	gppbQlBZQWKJ6N0xlzAklb69xw+NFgMTMq95gPTeXMVK0CYuC28uPkIX5+eW2IiPG/ttMySf9X1pl
+	56A4Yhnr4i2nBoObwCBbKkhSN6RJryWtvDqIGWTJvPuoJeYjyibwp0ybu94RNtpbC24EAo1bXsdaf
+	c1HBWJBQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sLleN-0000000ABa2-439g;
+	Mon, 24 Jun 2024 15:30:36 +0000
+Date: Mon, 24 Jun 2024 16:30:35 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>,
+	Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+	v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix netfs_page_mkwrite() to check folio->mapping
+ is valid
+Message-ID: <ZnmRGyuSZKtmJVhG@casper.infradead.org>
+References: <614257.1719228181@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DZMx+64Iaq6u+Ao/"
-Content-Disposition: inline
-In-Reply-To: <20240619141716.1785467-7-wsadowski@marvell.com>
-X-Cookie: Allow 6 to 8 weeks for delivery.
-
-
---DZMx+64Iaq6u+Ao/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <614257.1719228181@warthog.procyon.org.uk>
 
-On Wed, Jun 19, 2024 at 07:17:12AM -0700, Witold Sadowski wrote:
-
-> +		while (t->len) {
-> +
-> +			current_cycle_count = t->len > max_len ? max_len : t->len;
-
-cycle_count seems like a weird name?
-
-In general please try to avoid overusing the ternery operator, it
-doesn't help legibility.  Just write normal conditional statements, or
-in this case use max().
-
-> +				cdns_xspi->current_xfer_qword += current_cycle_count /
-> +								 MRVL_XFER_QWORD_BYTECOUNT;
-> +				if (current_cycle_count % MRVL_XFER_QWORD_BYTECOUNT)
-> +					cdns_xspi->current_xfer_qword++;
-> +
-> +				cdns_xspi->current_xfer_qword %= MRVL_XFER_QWORD_COUNT;
-> +			}
-> +			cs_change = t->cs_change;
-> +			t->len -= current_cycle_count;
-> +		}
+On Mon, Jun 24, 2024 at 12:23:01PM +0100, David Howells wrote:
+> @@ -508,6 +509,10 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_gr
+>  
+>  	if (folio_lock_killable(folio) < 0)
+>  		goto out;
+> +	if (folio->mapping != mapping) {
+> +		ret = VM_FAULT_NOPAGE | VM_FAULT_LOCKED;
+> +		goto out;
 > +	}
 
-This loop doesn't implement any of the delay stuff, ideally it either
-would or would reject transfers that request transfers.
+Have you tested this?  I'd expect it to throw some VM assertions.
 
---DZMx+64Iaq6u+Ao/
-Content-Type: application/pgp-signature; name="signature.asc"
+        ret = vmf->vma->vm_ops->page_mkwrite(vmf);
+        /* Restore original flags so that caller is not surprised */
+        vmf->flags = old_flags;
+        if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE)))
+                return ret;
+...
+                if (unlikely(!tmp || (tmp &
+                                      (VM_FAULT_ERROR | VM_FAULT_NOPAGE)))) {
+                        folio_put(folio);
+                        return tmp;
+                }
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ5kL0ACgkQJNaLcl1U
-h9ARnQf7B96HrXr7vrndu3rt8BCFbQ4SbyBbQXfq9GI0eZ4mUSnwuu76WjbYyjqE
-pYjsJaUFPMQe9Qv9aYh1cvvFbkH9Xn7qASaXMvtKJUY8ByQgF7+Q9PtuHkK5NJm4
-BLmhfOhCjBad6cBu0ft/AEy1lTOuzETFBi6pk2UXKYhHNCIzBdqa8/fEjb4ayrl5
-9jpr6M4YsRaPKGhngCOlr4izUoSEf6KdVUg7TVUZIWcoHG+9n9WPJPZXXFrxRV8G
-C98W2mJoS5PPak3yO5KnN2Cz9gi7tsxB4IjZ4vAdytKlctJaF+QoGl8k4O8WFw4G
-1bbvJwcp3olWJYy4x1Lu5b8qm1Jl+A==
-=2ZzG
------END PGP SIGNATURE-----
-
---DZMx+64Iaq6u+Ao/--
+So you locked the folio, then called folio_put() without unlocking it.
+Usually the VM complains noisily if you free a locked folio.
 
