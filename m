@@ -1,116 +1,142 @@
-Return-Path: <linux-kernel+bounces-227526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A61C9152B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:41:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78EA9152B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 267822817CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:41:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3CB3B20C0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042D419D062;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53DE319D881;
+	Mon, 24 Jun 2024 15:41:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F9719D077;
 	Mon, 24 Jun 2024 15:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpYXIQcm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444B219B3CE;
-	Mon, 24 Jun 2024 15:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719243706; cv=none; b=NhjYPnhUUqYDYqaXhm/JL23FRPOUeygKcaJLD9vpj9kYL1M9u5B+r9+sWh5rJfES159HGvsZPWURsmP8NtVG3Ea73visYRSGMsHt1i4hR7YDTGgIc7qGl+ljsEipvTmasTBwJhNJ5wcDYAGOVxTxCJCgVCeLUnWbWkgaKIEgulw=
+	t=1719243710; cv=none; b=eIv2j73BcB/zsLuGJ3xvS3Z1+cXDNkU26u6Z/PYZPDJhOVpEmyKQjHBU8KCJ9W0jXX0j95FElRXMtI18EQja6azrxFJTNPGBRJ5V6Flab0PDzhV1yIHNW94/QzdTHungAKSCTSY0E4SYuDx515QHtI7eRBAuFVTNq0J4nf4ffS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719243706; c=relaxed/simple;
-	bh=J1IgWE+3IlU9Yb1Tk9FND0iDyJTW4Nt9mwUhwpsMalU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=B69Fygvr3OXV6Wr2Zw//et8Tcm4k6YYWIWezywgkdFMAfsCCbE+sv0GF2T3BZ0P8pL/oa9uBDleOXpkIhUQAsjAmpLkTt7exNo3KEpIraOwKPEX41oXvBJ9kkxz6ACtLkJhj8dWmD6HemHqEd3o/3d4DtH++JVjh27hFMGhSokY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EpYXIQcm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 134CDC2BBFC;
-	Mon, 24 Jun 2024 15:41:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719243705;
-	bh=J1IgWE+3IlU9Yb1Tk9FND0iDyJTW4Nt9mwUhwpsMalU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=EpYXIQcmJYJoECi5q0yaOXKQnsLK5LhnEdJFI4SdUYw7kPD7yD+f+bDkkg7KKXPd+
-	 2i/lZL0sALcJk/RzotAJjbEtFxzRs+j/FGrlwHTNEUrSuxGQROdv8guZddqp8TymId
-	 U3b8RNwuFj1BwmxKd1Zisk6G71SiUAJ49zEXt7RS5mXuEcDL+of1WRtkg3ZJ7BvdQI
-	 dFsmAVpIiCmLZ8FsD7eqzl9KaugIAXTbKdHT9sm8H53NnX++ZD6CQ1lBIptfX+2H+Y
-	 S2thaEv92RLFUx50B8d8SN22+V3Mob6bqEwDbaG+fzsxBj7MqFrKvJzCdMbFqyaK8k
-	 ot0H3xaHkEAJQ==
-Date: Mon, 24 Jun 2024 16:41:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <seanpaul@chromium.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	s=arc-20240116; t=1719243710; c=relaxed/simple;
+	bh=3dz1GFXIvgH5i6DZjwGNKWeBzYGIWxh02+vy/2Ekez0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kpvdlEZdkdz7Qe71SRdi/2q+uVAcKAQ4qisRuHD8tTLkKsSNFjAIFTUhEbXh/3hvVmmKVqlBFTuGZ10NTaKcr31OXcrqLjW1Z2NzI6bnRvHEsQTvAfzBZT479tq2mN5+egFulauqiolx8qaAZf8+1Bf2pz5ky6ss2OIX1fudrzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A71DDA7;
+	Mon, 24 Jun 2024 08:42:12 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DD2D3F73B;
+	Mon, 24 Jun 2024 08:41:44 -0700 (PDT)
+Date: Mon, 24 Jun 2024 16:41:42 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
 	Bjorn Andersson <andersson@kernel.org>,
-	Connor Abbott <cwabbott0@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Rob Clark <robdclark@chromium.org>
-Subject: linux-next: manual merge of the drm-msm tree with the qcom tree
-Message-ID: <ZnmTtQyxH6hFGmO-@sirena.org.uk>
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	"Mark Rutland" <mark.rutland@arm.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+	Melody Olvera <quic_molvera@quicinc.com>,
+	Shivendra Pratap <quic_spratap@quicinc.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	<linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
+Message-ID: <ZnmTtmZB8epgbUTN@bogus>
+References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
+ <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
+ <20240619135143.kr2tx4ynxayc5v3a@bogus>
+ <20240619080933071-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <20240620162547309-0700.eberman@hu-eberman-lv.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tF+rPnmXMmmPiY27"
-Content-Disposition: inline
-
-
---tF+rPnmXMmmPiY27
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240620162547309-0700.eberman@hu-eberman-lv.qualcomm.com>
 
-Hi all,
+On Thu, Jun 20, 2024 at 04:37:09PM -0700, Elliot Berman wrote:
+> Hi Sudeep and Sebastian,
+> 
+> On Wed, Jun 19, 2024 at 08:28:06AM -0700, Elliot Berman wrote:
+> > On Wed, Jun 19, 2024 at 02:51:43PM +0100, Sudeep Holla wrote:
+> > > On Mon, Jun 17, 2024 at 10:18:09AM -0700, Elliot Berman wrote:
+> > > > SoC vendors have different types of resets and are controlled through
+> > > > various registers. For instance, Qualcomm chipsets can reboot to a
+> > > > "download mode" that allows a RAM dump to be collected. Another example
+> > > > is they also support writing a cookie that can be read by bootloader
+> > > > during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
+> > > > vendor reset types to be implemented without requiring drivers for every
+> > > > register/cookie.
+> > > > 
+> > > > Add support in PSCI to statically map reboot mode commands from
+> > > > userspace to a vendor reset and cookie value using the device tree.
+> > > > 
+> > > > A separate initcall is needed to parse the devicetree, instead of using
+> > > > psci_dt_init because mm isn't sufficiently set up to allocate memory.
+> > > > 
+> > > > Reboot mode framework is close but doesn't quite fit with the
+> > > > design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
+> > > > be solved but doesn't seem reasonable in sum:
+> > > >  1. reboot mode registers against the reboot_notifier_list, which is too
+> > > >     early to call SYSTEM_RESET2. PSCI would need to remember the reset
+> > > >     type from the reboot-mode framework callback and use it
+> > > >     psci_sys_reset.
+> > > >  2. reboot mode assumes only one cookie/parameter is described in the
+> > > >     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
+> > > >     cookie.
+> > > >  3. psci cpuidle driver already registers a driver against the
+> > > >     arm,psci-1.0 compatible. Refactoring would be needed to have both a
+> > > >     cpuidle and reboot-mode driver.
+> > > >
+> > > 
+> > > I need to think through it but when you first introduced the generic
+> > > Documentation/devicetree/bindings/power/reset/reboot-mode.yaml bindings
+> > > I also looked at drivers/power/reset/reboot-mode.c
+> > > 
+> > > I assumed this extension to that binding would reuse the same and
+> > > PSCI would just do reboot_mode_register(). I didn't expect to see these
+> > > changes. I might have missing something but since the bindings is still
+> > > quite generic with additional cells that act as additional cookie for
+> > > reboot call, I still think that should be possible.
+> > > 
+> > > What am I missing here then ?
+> > > 
+> > 
+> > Right, if that was only thing to "solve" to make it easy to use
+> > reboot-mode framework, I agree we should update reboot mode framework to
+> > work with the additional cells. There are a few other issues I mention
+> > above which, when combined, make me feel that PSCI is different enough
+> > from how reboot mode framework works that we shouldn't try to make PSCI
+> > work with the framework. Issues #1 and #2 are pretty easy to solve
+> > (whether they should be solved is different); I'm not sure a good
+> > approach to issue #3.
+> > 
+> 
+> Does the reasoning I mention in the commit text make sense why PSCI should
+> avoid using the reboot-mode.c framework?
 
-Today's linux-next merge of the drm-msm tree got a conflict in:
+Sorry, I completely missed to see that you had already answered those
+in your commit message. As mentioned earlier I haven't looked at the
+reboot mode framework completely yet, so I can't comment on it yet.
 
-  include/linux/firmware/qcom/qcom_scm.h
+I don't want to be blocker though if others are happy with this.
 
-between commits:
-
-  158ed777e330e ("firmware: qcom: scm: Add gpu_init_regs call")
-  178e19c0df1b1 ("firmware: qcom: scm: add support for SHM bridge operation=
-s")
-
-=66rom the qcom tree and commit:
-
-  90c3e2bc9ecbf ("firmware: qcom_scm: Add gpu_init_regs call")
-
-=66rom the drm-msm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc include/linux/firmware/qcom/qcom_scm.h
-index 9f14976399ab8,a221a643dc12a..0000000000000
---- a/include/linux/firmware/qcom/qcom_scm.h
-+++ b/include/linux/firmware/qcom/qcom_scm.h
-
---tF+rPnmXMmmPiY27
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ5k7QACgkQJNaLcl1U
-h9DtZgf+JWDavVOeEGi+W3qXnBC4EOr8J0+Gg1g/JMLxXDHBFNOBKSAGt3q+EKqH
-zqCTV9nCyAc7Nd4SNVB1L1aO4iWu6CKvETAHlou+Et0oKLV/IwB3hbArAoTcLMs3
-Tx/JP5lDMKFW8GPFD/Y/Sg4igRVbPOPWEYiY8IULxt8REJHHzyaN7Ry1hKhiSg5A
-zpzLi2lhCwb4b5fpK8Y0hAnsnimvTj7d84YxJzjMRoCsFhRRLcRIx6Zfzx7hU1i9
-nou9zDIIHOBPeXzsEYYETkmEguS9BNbdaafB2e1HAIg0jZnfI6r2h/jPybdw8W2x
-iulizHUxtdfdJ4hPEoy33USJZyoIEw==
-=JN2W
------END PGP SIGNATURE-----
-
---tF+rPnmXMmmPiY27--
+--
+Regards,
+Sudeep
 
