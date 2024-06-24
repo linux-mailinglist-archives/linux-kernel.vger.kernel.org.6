@@ -1,101 +1,187 @@
-Return-Path: <linux-kernel+bounces-227634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B739154CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:50:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4889154D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EC7C283898
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8061F24366
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E0D19E809;
-	Mon, 24 Jun 2024 16:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B775D19E837;
+	Mon, 24 Jun 2024 16:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kkl8d41X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="isfAjYoW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5511C1428F1;
-	Mon, 24 Jun 2024 16:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE952F24
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247790; cv=none; b=h+KARC7TxBa6Sw9Q2rWXpnj8wMoS5/TQZbt54CBV/DSksMPr04g/b78AwPYCpt3gF2I1oKpR/QmqGPrAZgVm0zV0LUCR4a7GJueNf02qdsBQssJkP9217aIg5JbbJY3CZGrByzh94gTRPT0tNXs5zeV0LqMySo3usiDV5vD4vrc=
+	t=1719248042; cv=none; b=Tk/NYYVMufRALU3cgyhA2g5dWBw05e6wyuLSzbHszCXaKYj5YQ9mjbWu5OEeuVUmLVXb3d1AHJupHOYnK0UaLmdgouP/YpZqzYxnxkG2GU3td937TFMRhKJI7oe7dRkWz7UdjnWj0k/67UZVMSaDMxl6GZDgNNDlBut2YDlEnOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247790; c=relaxed/simple;
-	bh=+Bra0RkgrfLsP5dCznByNggwiEedk6z502yzyiYly4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RfX9sCGhW5sL96znPBwyCrmiwZ/6tr//W0Q8QCqfh0YfJdFYW/SyJCEDRsWIApLDOnFsBdaj9JJIAyIe5Nz/rV7miZUl5vJ+nI/UUGA7JkphABVMaYAT7TD+PL/AaX4w21UOVDbG0ZZm7hzgZ9XPWYc5no4Y+QSsn5yd58ii5yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kkl8d41X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFBB4C32789;
-	Mon, 24 Jun 2024 16:49:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719247789;
-	bh=+Bra0RkgrfLsP5dCznByNggwiEedk6z502yzyiYly4w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Kkl8d41XOwb9BjhSgBGRLCQCfLDAuvg3Hm7CYMeIkzBdAjG2iBgyElxV2L1yM2Wnq
-	 Kb+kNk4vAq3PSuTpYYD/3167N53SPw8w9/DMSgFKotWWUVz2P0vBQD7qnf2/uEQ+ZL
-	 +Gi62HzRYlm5czV6AsqqaMZONPbhJPQB/NkgKnlXiwDwuyu+uz/ghMobcGFzfVmifh
-	 NoUIvxEbXLoChAnbhwkYh82L/hj/pzPT88Lx4cHafYT5MooH1haDbmA2U+bvhKcBw0
-	 9PXjebkliKQgNRUm32rNjDDBZDBCs6Z7qwspM9HcOn1LGiw2ToJwsq3znNXA2WV7FV
-	 HeGuOa3GyraBw==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52cd8897c73so3270263e87.2;
-        Mon, 24 Jun 2024 09:49:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWJvjF7l0Usexly4goPofcZ/WB8Chn6GiKJX+EUvfyQypuIZnwCW2YprOcAKd7Ob5NpGQhFcrxQmC3pP7GYzGSZedGQry9X2JPWrnmrEJznUd2tQg23YTgRQvTj56Y7Ld5od2Vw6843Jw==
-X-Gm-Message-State: AOJu0YxLQ3vHuExA1gT1E04X58x0EykFfQvsaOOdAUnEaws86yK6r8Q4
-	iB21bHvt2O0lctBruuOL7ZoM9JYmxVhgbsOVOmVGXrUpt8L5M+DSx5TDXTQCd8j2vLVj6jWqltD
-	CQ5YghhKomcIPjKD5o/SW2eqWXw==
-X-Google-Smtp-Source: AGHT+IG0pBeW8ebE64VNR8DbL8ZdFf3AuTbc+Rvh/5EBZWs+PPolPm48g7EKW1XADebn7CulWGPww1Kogwh3acIjYUs=
-X-Received: by 2002:a19:7518:0:b0:52c:da8c:fdf3 with SMTP id
- 2adb3069b0e04-52ce183503emr2724071e87.17.1719247788246; Mon, 24 Jun 2024
- 09:49:48 -0700 (PDT)
+	s=arc-20240116; t=1719248042; c=relaxed/simple;
+	bh=5bohiIQjuFlZ3MC0ytH3G+PZ787pPsJS6tdm3PoEEOI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ojY2zz5XOSnFuhow7DK1EaKIR1mt9zZKm+r5HvKD6co+lsRxcWeaPsFa1Z3YAbcXeBUs2ZylOKsyCaDw8X+3daE5wEVD9pUx6/PNuO3Xx8yFSY2gxp9qnlS3y42p1Tvc616unao2fmMsQO+xINbynPD5mi84tfE3b8G5UGOEtj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=isfAjYoW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719248040;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FnHUA8KFPQfgKOFjau5SADjiwWEi99JYmDlhSDmtX0c=;
+	b=isfAjYoWCnZ2tSRA/+KgOAgZA0YT68FFDLfxuTiIxeGO7WOjFjztCz/83JZ/0M11iSTJMY
+	OcxQohtkTO3HYYmYDK/WEf63PGBZfLpJdEvwi1EUnV0/NJin4ukQdEiNeofAQs2cV+F3Aq
+	dNzUT9SxLHaPtOoN5qHbQo28afV6Yw8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-638-fE7PfUYeN4qMpNTNcuGP-g-1; Mon,
+ 24 Jun 2024 12:53:58 -0400
+X-MC-Unique: fE7PfUYeN4qMpNTNcuGP-g-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F49019560A7;
+	Mon, 24 Jun 2024 16:53:52 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.9.58])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74E201955D83;
+	Mon, 24 Jun 2024 16:53:48 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org,  dev@openvswitch.org,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org,  Pravin B
+ Shelar <pshelar@ovn.org>,  "David S. Miller" <davem@davemloft.net>,  Eric
+ Dumazet <edumazet@google.com>,  Paolo Abeni <pabeni@redhat.com>,  Shuah
+ Khan <shuah@kernel.org>,  Stefano Brivio <sbrivio@redhat.com>,
+  =?utf-8?Q?Adri=C3=A1n?=
+ Moreno <amorenoz@redhat.com>,  Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
+ the internal ovs script.
+In-Reply-To: <f7ttthjh33w.fsf@redhat.com> (Aaron Conole's message of "Sun, 23
+	Jun 2024 15:26:59 -0400")
+References: <20240620125601.15755-1-aconole@redhat.com>
+	<20240621180126.3c40d245@kernel.org> <f7ttthjh33w.fsf@redhat.com>
+Date: Mon, 24 Jun 2024 12:53:45 -0400
+Message-ID: <f7tpls6gu3q.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531193115.3814887-1-robh@kernel.org> <CACPK8Xes5vp+3YpQ3L5ix=LaDv7oWtqGFVc8moQf4D+o3rnLjg@mail.gmail.com>
- <8dabf3d1-2d23-4adc-a804-2b7aa5fe16e9@kernel.org>
-In-Reply-To: <8dabf3d1-2d23-4adc-a804-2b7aa5fe16e9@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 24 Jun 2024 10:49:34 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+L6tKw+OzYVHSyou3eW5s7OChEbwqPe=qtQkRW=B+y-w@mail.gmail.com>
-Message-ID: <CAL_Jsq+L6tKw+OzYVHSyou3eW5s7OChEbwqPe=qtQkRW=B+y-w@mail.gmail.com>
-Subject: Re: [PATCH] arm: dts: aspeed: Use standard 'i2c' bus node name
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Sun, Jun 23, 2024 at 10:47=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 24/06/2024 03:55, Joel Stanley wrote:
-> > On Sat, 1 Jun 2024 at 05:01, Rob Herring (Arm) <robh@kernel.org> wrote:
-> >>
-> >> The standard node name for I2C buses is 'i2c'.
-> >
-> > Unfortunately this can't be merged, as it will break userspace. There
-> > is a lot of code out there that looks up devices based on the device
-> > tree node path:
-> >
-> > https://github.com/openbmc/phosphor-state-manager/blob/3c1351cc2b631788=
-76ef68f4107c9804d2e17dcc/meson.options#L140
->
-> Eh, thanks for sharing.
->
-> That's totally stupid user-space. The sysfs path to /sys/devices, or
-> some grep by compatible, would be fine, but iterating over firmware/DT
-> is just wrong.
+Aaron Conole <aconole@redhat.com> writes:
 
-Agreed, but Greg (and maybe it is actually documented somewhere) will
-tell you that /sys/devices or /sys/bus/ paths are not ABI. /sys/class
-is the ABI path.
+> Jakub Kicinski <kuba@kernel.org> writes:
+>
+>> On Thu, 20 Jun 2024 08:55:54 -0400 Aaron Conole wrote:
+>>> This series enhances the ovs-dpctl utility to provide support for set()
+>>> and tunnel() flow specifiers, better ipv6 handling support, and the
+>>> ability to add tunnel vports, and LWT interfaces.  Finally, it modifies
+>>> the pmtu.sh script to call the ovs-dpctl.py utility rather than the
+>>> typical OVS userspace utilities.
+>>
+>> Thanks for the work! 
+>>
+>> Looks like the series no longer applies because of other changes
+>> to the kernel config. Before it stopped applying we got some runs,
+>> here's what I see:
+>>
+>> https://netdev-3.bots.linux.dev/vmksft-net/results/648440/3-pmtu-sh/stdout
+>>
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv4, OVS vxlan4: PMTU exceptions                             [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv4, OVS vxlan4: PMTU exceptions - nexthop objects           [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv6, OVS vxlan4: PMTU exceptions                             [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv6, OVS vxlan4: PMTU exceptions - nexthop objects           [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv4, OVS vxlan6: PMTU exceptions                             [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv4, OVS vxlan6: PMTU exceptions - nexthop objects           [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv6, OVS vxlan6: PMTU exceptions                             [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv6, OVS vxlan6: PMTU exceptions - nexthop objects           [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv4, OVS geneve4: PMTU exceptions                            [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv4, OVS geneve4: PMTU exceptions - nexthop objects          [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv6, OVS geneve4: PMTU exceptions                            [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv6, OVS geneve4: PMTU exceptions - nexthop objects          [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv4, OVS geneve6: PMTU exceptions                            [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv4, OVS geneve6: PMTU exceptions - nexthop objects          [FAIL]
+>> # Cannot find device "ovs_br0"
+>> # TEST: IPv6, OVS geneve6: PMTU exceptions                            [FAIL]
+>> # Cannot find device "ovs_br0"
+>>
+>> Any idea why? Looks like kernel config did include OVS, perhaps we need
+>> explicit modprobe now? I don't see any more details in the logs.
+>
+> Strange.  I expected that the module should have automatically been
+> loaded when attempting to communicate with the OVS genetlink family
+> type.  At least, that is how it had been working previously.
+>
+> I'll spend some time looking into it and resubmit a rebased version.
+> Thanks, Jakub!
 
-Rob
+If the ovs module isn't available, then I see:
+
+#   ovs_bridge not supported
+# TEST: IPv4, OVS vxlan4: PMTU exceptions                             [SKIP]
+
+But if it is available, I haven't been able to reproduce such ovs_br0
+setup failure - things work.
+
+My branch is rebased on 568ebdaba6370c03360860f1524f646ddd5ca523
+
+Additionally, the "Cannot find device ..." text comes from an iproute2
+utility output.  The only place we actually interact with that is via
+the call at pmtu.sh:973:
+
+	run_cmd ip link set ovs_br0 up
+
+Maybe it is possible that the link isn't up (could some port memory
+allocation or message be delaying it?) yet in the virtual environment.
+To confirm, is it possible to run in the constrained environment, but
+put a 5s sleep or something?  I will add the following either as a
+separate patch (ie 7/8), or I can fold it into 6/7 (and drop Stefano's
+ACK waiting for another review):
+
+
+wait_for_if() {
+   if ip link show "$2" >/dev/null 2>&1; then return 0; fi
+
+   for d in `seq 1 30`; do
+      sleep 1
+      if ip link show "$2" >/dev/null 2>&1; then return 0; fi
+   done
+   return 1
+}
+
+....
+ 	setup_ovs_br_internal || setup_ovs_br_vswitchd || return $ksft_skip
++	wait_for_if "ovs_br0"
+ 	run_cmd ip link set ovs_br0 up
+....
+
+Does it make sense or does it seem like I am way off base?
+
 
