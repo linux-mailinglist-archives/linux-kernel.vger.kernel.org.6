@@ -1,112 +1,181 @@
-Return-Path: <linux-kernel+bounces-227671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29E9A915554
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:27:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4727D915558
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9EF41F243EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:27:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9AC41F245DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB8719D8AD;
-	Mon, 24 Jun 2024 17:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CD619EEC2;
+	Mon, 24 Jun 2024 17:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGyKtQ1P"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmdgNRmQ"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD415179AA;
-	Mon, 24 Jun 2024 17:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2733D7604D;
+	Mon, 24 Jun 2024 17:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719250013; cv=none; b=Ij+EuGZYeS4QP0Gvdfj472iqja/uxCI0XvrZfP/rWFLq/peEjOOcnZmUNu8zURmGAa9WX/7V8vRVAqYamB/riMRspMjeU8Dmbn2ziKqmKP3cGfY8wcqaL3tMVR45dU5Qu95VZkyXiNeaQvU1MG6CfZd4gdHC9noa8v9RdVwgYY0=
+	t=1719250047; cv=none; b=scue1CFX49MHeaZQvWeGthUA+YVlgeHXdXvfaHO5Qf9lR6K3UZR9rDS3oNMTLqn/TQRJlP1rBif/FkaOnYe6i7WwP0sQEru+Wz1Ldo6c24AMy8T5euslh2jLUrTYqRx8sN9bgPqk0ObTwwpIXiRs1nqzcAtvjRPvT8rFm1QSJO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719250013; c=relaxed/simple;
-	bh=tBTQ0v2IoMRb5rIRExjb9uXh2xJJ+R5x5qFbzWKLB8o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=nZb8WpM7uP6b4D/12MBHLqTIHHfiPFeDdOR+qP6RhdGwA2K2sUs1NHe7yanhsKJly3AtZ0zZHSFU+ziDAYFBVoviImWhSw+C8I5UN2cWK+n7MXxiHbH9D714BFMgRKgBBj8sg70cGuSSTdAoM11I9nYLOpjHRc9QyS/Dy/8Q8Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SGyKtQ1P; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1719250047; c=relaxed/simple;
+	bh=2rcPwoShgJdmSyVCPpy8glYPvtkJajNKVhG219tP3jQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bFNq5dDKF4vad9TdGrz5YShCMFLAtSLpWxTtBQYXn9L3lZtwd6pi2u2b0zm+fD/ezQ6nKzeaDS9VHoxxQ7QDAw/oWzifZqgkpZuhfhCnXBEhDuVzES5NC7PyQqbhIOZ40a1iGZmRnlW7RumBwlZgc5Mu55+CSJqeY9xoxxvWUDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmdgNRmQ; arc=none smtp.client-ip=209.85.219.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d280e2d5dso4479228a12.1;
-        Mon, 24 Jun 2024 10:26:51 -0700 (PDT)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b505f11973so39857516d6.1;
+        Mon, 24 Jun 2024 10:27:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719250010; x=1719854810; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719250045; x=1719854845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fMhCaw3FpByMJNvnQY01X2wp+sz/RDm+M0TSHAnlKH4=;
-        b=SGyKtQ1PiOwe5QwjvUWZOh6910HmUD0+3jOns6jXcVn3tHsRJXmBETyvRsodnWFcl3
-         UjCF8Hlyew1atRK81gdWPB9Zb4pTOc7PJeLaa8QM+zPltg64uDZnaKpgjJ44miAzEEFL
-         /CBZ7y2LNWNZLrDzLN6vNeFY1fZJEsmXA/HbSHhw7UaMT9pMj0WNIC9w22skmproMneD
-         B0vf8FVTgCPk8Dwryn6AFOLNprhONIcw0MmFVZxp1b1V83fawUMaM8WJ1NduF8c+KqM4
-         Hyg1hOc/wCimq8OGjQaRF4cjOSdkSacMOOBslQwgKmXpai/Df2waae3QbnVBn7PNcxww
-         l0Yw==
+        bh=yMdi8tUy/m0VYQvA5cPdOSnqaZAhOWgJFYMqqkliSqU=;
+        b=nmdgNRmQ1JqXak2MKBZ+AfxYsB45Dep6mS50eGSU8DQJJSXLBjUtNE2hEKXE0F0m3y
+         K+Ru9t2mWTO+rw0LoPItRbYtINNYMrp57nLSL7+9iR7ZIZ2U1mcfPEEsk1O+aiznawCV
+         SOKQi/a9DY3PbHAd1olph0dDReQazL0vVrg7dhSVDS2A+WQlfDQyB4nULrJIKreb0QEI
+         HX7xy6Ye2WgnPE7TgJL1URjDk+E4GUwur3qU/wiAKTD9lxUQX0GyP34FpDaq7QQwX3Lf
+         y+eFFSRcPfhDaxg08ky0EhT7vJrxUpl+YYMqxNLqRlH+WmD2B6WAJAUIyMQSYPNgXCBr
+         6/jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719250010; x=1719854810;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fMhCaw3FpByMJNvnQY01X2wp+sz/RDm+M0TSHAnlKH4=;
-        b=uLrZSYB5yXgF5At6XCYS5i21fE/JJCMacGgplV9INdtQw6l5Z1bTlxfCgyvbpolSD3
-         vREZBLQ3DHU5CnWCrmpEX2gBW8FvRZSZpyAky3807n32VHgJKFbLN9W2BpCTRg2fSrl0
-         Ci1knwq1MpmqvPIk2yY05JKwuKdIM1LhBKRDTY/jYabopH3fgeWBBvSTDTiqUsJNfqZh
-         zmTMa0h40KwuWlVp4tP4dbFq2ZIIiuSbjGUS6eXixcCvkD4aQblo2JgrmN4Eqy/JlrvW
-         usIVZ/8YpwNeaxMuOD8QxZ11phaErF6dUbMqTo/JLwU+rb8bZByD5PCR7wISPyGKBDFt
-         5BXw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1CJkpD0RnKV4ltt19MT8/hi2+QAK4MDT4u3gtuCyedRzj2PD6Wks5CznTtDq9Uvm1jqgOPthFd75iqTimPXDt6dP/21pSiIH/FPihWJWe9k9CcxH7uKCtv0Orj3jiOXCG12FNfE3p7g==
-X-Gm-Message-State: AOJu0YwB0tDO8B/BhzGZ5rQfjOcmq8NwGwmS0ByLMjFiUv09SQCFXa6p
-	cP4GXigDeJ2tX9eDByZcE5Qr9CxinlRaOUnsy0gaeag07pmYNb3B
-X-Google-Smtp-Source: AGHT+IEctqdpyD/6asugdeUtrjUcC7fGFEroCRUJjXXqW/q+2UnnPdeJVSdtfws/qsJO8AUPr+WWYg==
-X-Received: by 2002:a50:8e52:0:b0:57c:ff70:5429 with SMTP id 4fb4d7f45d1cf-57d4bd56495mr3207759a12.8.1719250009867;
-        Mon, 24 Jun 2024 10:26:49 -0700 (PDT)
-Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3048b923sm5064209a12.55.2024.06.24.10.26.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 10:26:49 -0700 (PDT)
-Message-ID: <9d0fabb0-70b0-4b4b-ac7c-389b1c7afe20@gmail.com>
-Date: Mon, 24 Jun 2024 19:26:48 +0200
+        d=1e100.net; s=20230601; t=1719250045; x=1719854845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yMdi8tUy/m0VYQvA5cPdOSnqaZAhOWgJFYMqqkliSqU=;
+        b=c6Y1VqUxSp1Y7A/KIquSm0nhJNpXi4gIquLx1yHn12tgn2hl3Rrc2i3l6sfEuNFWA1
+         JmTEyhCkAbFDaTfBW4D1nGBxu1w4kQKXN3nbU5OnLg+bNOGDoUdIV7qEGF5Rb+Xm2C6d
+         1DQfuXXE7Kx8N6e7uSMHjLVuqFnG7pnERJhbSkrtMuWagl6Q882PhatiCCOCOJx+NPXX
+         asvUSNfbQEXGEw/kQ9/Q2xpoavk3f6l1cSsGOtROHM9gDamVfc0JlmRuejDxW9d/kP3q
+         6+tr6bqjEYOLQuJ8XlhAIhYDLDt9v7LpMBbkWyafHdrRmpq5zg1BF3oZUrt+114lYixN
+         R/wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5GJuf+x0dP1+mXnfnuC3gELndsaAH/iXxgYeEm7iCv1fSwRKtzaSkIt6rqPiM/nZL+HhZDTucx6HXMqkfkMv6cN9BGIRydDFmW+8gfXZCm4lMmguzLINlzASzyYcLVyLbl99sBx/hUmFoCz8jTPM1tj/I/JkPEsJSeoPd/m+ZZ0xUivsOLcIlSGr91Op7cFrvqy1aaRtPSnxmX+reXxkG3z1PW9yS
+X-Gm-Message-State: AOJu0YyLnactMfVYM9A7vBPb3uNLhbU0fsKAGRZdVSHiEJm1m7Nh/N3A
+	hM11lMdyc+6CxdnCwJDpbLVgPemP+AJV8Cr37gmNHQpD8VjT+t2igcf1HQQ7ACzJDzqiJUK1y0K
+	8GIV44tcYpICG7l85I+s00XFEEjc=
+X-Google-Smtp-Source: AGHT+IFGHDsqhHq9XnFXeklHI5Ipm8OA/hVOwcHjiGnUcm/aw67ox19AqnUEdu/1vVvOeF0GAqvmx5+ew7vXn6HzvNQ=
+X-Received: by 2002:ad4:4ee7:0:b0:6b5:2aa3:3a7f with SMTP id
+ 6a1803df08f44-6b53223157dmr97187856d6.20.1719250045001; Mon, 24 Jun 2024
+ 10:27:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v1] ARM: dts: rockchip: rk3128: add #sound-dai-cells to hdmi
- node
-To: heiko@sntech.de
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240624153229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240624-request-demeanor-d66965d27935@spud>
+In-Reply-To: <20240624-request-demeanor-d66965d27935@spud>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 24 Jun 2024 18:26:58 +0100
+Message-ID: <CA+V-a8vJ_fCONw1wpsGB1qqd-FReqhLR1JhLgM4RneeC5=eShQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support
+To: Conor Dooley <conor@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-'#sound-dai-cells' is required to properly interpret
-the list of DAI specified in the 'sound-dai' property,
-so add them to the 'hdmi' node for 'rk3128.dtsi'.
+Hi Conor,
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- arch/arm/boot/dts/rockchip/rk3128.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Thank you for the review.
 
-diff --git a/arch/arm/boot/dts/rockchip/rk3128.dtsi b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-index 41feb121bd84..e956c9cdd02b 100644
---- a/arch/arm/boot/dts/rockchip/rk3128.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-@@ -566,6 +566,7 @@ hdmi: hdmi@20034000 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&hdmii2c_xfer &hdmi_hpd &hdmi_cec>;
- 		power-domains = <&power RK3128_PD_VIO>;
-+		#sound-dai-cells = <0>;
- 		status = "disabled";
+On Mon, Jun 24, 2024 at 5:39=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> On Mon, Jun 24, 2024 at 04:32:27PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to that
+> > of the R-Car Gen3, but it has some differences:
+> > - HS400 is not supported.
+> > - It supports the SD_IOVS bit to control the IO voltage level.
+> > - It supports fixed address mode.
+> >
+> > To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g05=
+7'
+> > compatible string is added.
+> >
+> > A 'vqmmc-regulator' object is introduced to handle the power enable (PW=
+EN)
+> > and voltage level switching for the SD/MMC.
+> >
+> > Additionally, the 'renesas,sdhi-use-internal-regulator' flag is introdu=
+ced
+> > to indicate that an internal regulator is used instead of a
+> > GPIO-controlled regulator. This flag will help configure the internal
+> > regulator and avoid special handling when GPIO is used for voltage
+> > regulation instead of the SD_(IOVS/PWEN) pins.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v2->v3
+> > - Renamed vqmmc-r9a09g057-regulator object to vqmmc-regulator
+> > - Added regulator-compatible property for vqmmc-regulator
+> > - Added 'renesas,sdhi-use-internal-regulator' property
+> >
+> > v1->v2
+> > - Moved vqmmc object in the if block
+> > - Updated commit message
+> > ---
+> >  .../devicetree/bindings/mmc/renesas,sdhi.yaml | 30 ++++++++++++++++++-
+> >  1 file changed, 29 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/=
+Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > index 3d0e61e59856..20769434a422 100644
+> > --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > @@ -18,6 +18,7 @@ properties:
+> >            - renesas,sdhi-r7s9210 # SH-Mobile AG5
+> >            - renesas,sdhi-r8a73a4 # R-Mobile APE6
+> >            - renesas,sdhi-r8a7740 # R-Mobile A1
+> > +          - renesas,sdhi-r9a09g057 # RZ/V2H(P)
+> >            - renesas,sdhi-sh73a0  # R-Mobile APE6
+> >        - items:
+> >            - enum:
+> > @@ -118,7 +119,9 @@ allOf:
+> >        properties:
+> >          compatible:
+> >            contains:
+> > -            const: renesas,rzg2l-sdhi
+> > +            enum:
+> > +              - renesas,sdhi-r9a09g057
+> > +              - renesas,rzg2l-sdhi
+> >      then:
+> >        properties:
+> >          clocks:
+> > @@ -204,6 +207,31 @@ allOf:
+> >          sectioned off to be run by a separate second clock source to a=
+llow
+> >          the main core clock to be turned off to save power.
+> >
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: renesas,sdhi-r9a09g057
+> > +    then:
+> > +      properties:
+>
+> Please define properties at the top level and constrain then per
+> compatible.
+>
+Ok, I'll move them to the top level.
 
- 		ports {
---
-2.39.2
-
+Cheers,
+Prabhakar
 
