@@ -1,243 +1,110 @@
-Return-Path: <linux-kernel+bounces-227596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48EE19153DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:31:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724FB9153DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96081F24D77
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A49D61C20873
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB8619DF77;
-	Mon, 24 Jun 2024 16:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F01B19DF7C;
+	Mon, 24 Jun 2024 16:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ud4YU6UC"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QeHWz0jJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447DA1B964
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49D11B964;
+	Mon, 24 Jun 2024 16:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246692; cv=none; b=B+r0f/ZcKpxcAXJtGNuz+QvU6pX6ftsXEcsfsnSxj4y19WAlQIUrEtQZrqc11U4h2guYpZ+FjWHWoL9oRyLy3zPuST/2LIgbequyQcRfDT3+/bQv123KsAGibEhqQG4LFQF4WGKJhqeITHWfZFtjs3yJgtuOGtFsavPOviJEl68=
+	t=1719246756; cv=none; b=UMoSsFAsVi1N4PcFk9ftwlDa3oJUwe7xKdnjka5XSd4X5r47Wz5TDoNP2dIKJHXqnO+V9sESB4bBmIjL8O4oFmVOzPIQ+YQtbPlp9EERnrstJ4U1gCrAYZ2RyDAhonewvyIYIX3kiDNwCz9wpNRGNyL4hdYT3IbFRW6AoFB0Qdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719246692; c=relaxed/simple;
-	bh=EaHwq9EeajeLVDchJCQ3z2v7Y4OECT3v3mf/IAV+mBM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VRpD1FkhfxKmXsc+CnYimyTl1icXIyxEI4xkPUbBiClDRGRVNstSKhdIc5hy66aqnVK/gfyAM/hXidNtqCqSkGK98MMJjiaOFKTUaD6xxkSzkJA8KptSyTpmsIAYO+o1qnsQ/iRCPWw/wklSX1wIt80nvo+eB80PxaVNLJzAMd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ud4YU6UC; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-443580f290dso1074601cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:31:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719246690; x=1719851490; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x4fofXsIYYcUkuRwyEj47LNTu/GpV5ONYOayCRpxVsE=;
-        b=Ud4YU6UCytV4Pxev1+uAx0tqELtzwK4tRkPjPj4wTKBZR67w/T1B7RWLye2gZCDYWz
-         XOCn4oIhKFqxypZVbLxVXuOiE6lbHOpVj/2nlGwZIUEs2lsN1Q1pCW9nPB1JS2Y/s3Nt
-         aVtHI7LOXA7dFIpbKDYLh2rvVAeEd2FUwpDSOvyysg6c2L095EuJsz6XUYoidtpd3dTd
-         NQ+/I2xIIeQgc22OTxfgvFb9Q+9cubJg5X/Z/LHdOaO32/SSqBXaJwnzfR8TRhh3JujR
-         ozDfPePoR6im+LT5567zI6GYNukbQJU7lZKFenYjLWdb0UjhnkrAbitE2nA8dkDjJwea
-         R9kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719246690; x=1719851490;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x4fofXsIYYcUkuRwyEj47LNTu/GpV5ONYOayCRpxVsE=;
-        b=uMrt4F//ExyHHfn9p+4RHS/UA+6gtJAUUmYA62Tji1FRn36zsKJHkQB3ZJP3aQB4bO
-         sxpdMaqUNTLVzSBg0uKKOKzxxj24GQpYcWDamC/HElGz36KAEyI71cBZbepX+EyhIHFy
-         v3+otGrfroaDY2vMMaMR3UMkcVxJqg1IYCnqk1v6IhD8jfL2Ga6kcilxJ+kMpkRAKRHG
-         7k05GP93wu5pEniEZssEps0ggyyYtElsaQzuF+qwInIrTKIaTtvn8J8uA+bVljOCNpl1
-         fxSC4uJSiD/hPR1VsnrO6dbzCf0em5RCJixzgi4olymRt3iSBjN8faCcxJs9qSkc2cRV
-         4E+A==
-X-Forwarded-Encrypted: i=1; AJvYcCX7bWfuCP9yj6O36sLqkM8JfkJSpCG5hQMYq+LjdS3CbuvmhNhdMV0FM3DEqykNNzd8Blo/UfWmMimw6vPUVDPsU0l3uDmcG0czoSHy
-X-Gm-Message-State: AOJu0YwqLyGZ57WXRnBnDTsez+7rgyV22u8uwUwW4dqiKAjyEuBIskHz
-	bbQ3KOxbGDsz/D965W5gRZNLGxZf3bRfqIcvwyNL1b570IU8hyqNYLTEDBxHA8+KsmMNFjtgJFZ
-	B2huy8PVut8eD5osXrsu/bHc85PNfTVXsw9pT
-X-Google-Smtp-Source: AGHT+IG1zecr1N057X6yYwZ08s24kL36wYtFxRzdL/X3h8Y/3cfMKPcsBorSUybV7L06JvCRqb1FevbPjxKkeKOWoKk=
-X-Received: by 2002:a05:622a:6fc7:b0:444:e366:3fda with SMTP id
- d75a77b69052e-444e36643aamr4050431cf.27.1719246690014; Mon, 24 Jun 2024
- 09:31:30 -0700 (PDT)
+	s=arc-20240116; t=1719246756; c=relaxed/simple;
+	bh=Zs+yCXN5WcSvobPFe4rm+ty55pAOM4OvdQ9RT2GCmqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aUkLa3wQ1vcW/kLO57RqOh8IkqLRznAk1Ua1KqmsS63G9Gm+prax7UGv/b0+SqrpXUxfrepfestxEMIARVDhkgWShfVa20B06uc8Z1o1A49qTZv0qYApv6/ZxbeU3+g29JireQzb0MhsMO+9CIO46q0DjzrltQuIG1tJmZ9TZc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QeHWz0jJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 304C7C2BBFC;
+	Mon, 24 Jun 2024 16:32:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719246756;
+	bh=Zs+yCXN5WcSvobPFe4rm+ty55pAOM4OvdQ9RT2GCmqM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QeHWz0jJDNjYdXWC93Nn9kNwj+fGOseVk6zL4/tcHaESQhf+Ro0tVDTUv4afRAouv
+	 ZXdz4lh1NkdIu7lUF5fd7kQ7Lj8SoNWCJUbkpDDZktCUXebFzix4kgasaBn4xpIP6c
+	 Gn7VJG65KEiufKuhovn1nvPO5j96E9FYIXZu62/0lAN9MAADO3jv3IEqi4V7lp1jao
+	 dfTaWdXAZMuVI7ZXS2zlpCugx4qW/k8MAtRDCGXMEKfzIpD/zZn26JIlEjh4KjlQDE
+	 50J2JO/bBMhxJwlixCq0BcBEjdqDdeanWVovihEUhgH/Kge6QLU+tO7uiir2AAVUq+
+	 xyYI10VqgI/LQ==
+Date: Mon, 24 Jun 2024 17:32:32 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Minda Chen <minda.chen@starfivetech.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>
+Subject: Re: [PATCH v2 1/1] riscv: dts: starfive: add PCIe dts configuration
+ for JH7110
+Message-ID: <20240624-abdominal-friction-7de13b1e2c72@spud>
+References: <20240621082231.92896-1-minda.chen@starfivetech.com>
+ <20240621082231.92896-2-minda.chen@starfivetech.com>
+ <20240622-festivity-salon-bbad348a12c8@spud>
+ <SHXPR01MB0863A47890F95A45559FD82DE6D42@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624141926.5250-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240624141926.5250-4-lvzhaoxiong@huaqin.corp-partner.google.com> <zvkl2wyqp3iem4ln4qkbhgvxafsfn5wkkmqwhufabm2gqs3eqw@vmqs3lx72ekk>
-In-Reply-To: <zvkl2wyqp3iem4ln4qkbhgvxafsfn5wkkmqwhufabm2gqs3eqw@vmqs3lx72ekk>
-From: Doug Anderson <dianders@google.com>
-Date: Mon, 24 Jun 2024 09:31:14 -0700
-Message-ID: <CAD=FV=V9tjY-g=w1Dwj+9oiTWfku8Bt48OUPJqYUqZaJrY8C1Q@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] drm/panel: panel-jadard-jd9365da-h3: use wrapped
- MIPI DCS functions
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>, dmitry.torokhov@gmail.com, 
-	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	jikos@kernel.org, benjamin.tissoires@redhat.co, hsinyi@google.com, 
-	jagan@edgeble.ai, neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wBQen4bwb2gJxhYV"
+Content-Disposition: inline
+In-Reply-To: <SHXPR01MB0863A47890F95A45559FD82DE6D42@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
+
+
+--wBQen4bwb2gJxhYV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Jun 24, 2024 at 01:18:07AM +0000, Minda Chen wrote:
+>=20
+>=20
+> >=20
+> > On Fri, Jun 21, 2024 at 04:22:31PM +0800, Minda Chen wrote:
+> > > Add PCIe dts configuraion for JH7110 SoC platform.
+> >=20
+> > I think the commit message should mention that the star64 doesn't have =
+a pci
+> > port exposed. If nothing else crops up, I'll edit it myself if that's o=
+kay?
+> >=20
+> > Thanks,
+> > Conor.
+> >=20
+> Okay. Thanks.=20
 
-On Mon, Jun 24, 2024 at 8:27=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Mon, Jun 24, 2024 at 10:19:24PM GMT, Zhaoxiong Lv wrote:
-> > Remove conditional code and always use mipi_dsi_dcs_*multi() wrappers t=
-o
-> > simplify driver's init/enable/exit code.
-> >
-> > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com=
->
-> > ---
-> >  .../gpu/drm/panel/panel-jadard-jd9365da-h3.c  | 793 +++++++++---------
-> >  1 file changed, 390 insertions(+), 403 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers=
-/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> > index a9c483a7b3fa..e836260338bf 100644
-> > --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> > +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
-> > @@ -19,17 +19,13 @@
-> >  #include <linux/of.h>
-> >  #include <linux/regulator/consumer.h>
-> >
-> > -#define JD9365DA_INIT_CMD_LEN                2
-> > -
-> > -struct jadard_init_cmd {
-> > -     u8 data[JD9365DA_INIT_CMD_LEN];
-> > -};
-> > +struct jadard;
-> >
-> >  struct jadard_panel_desc {
-> >       const struct drm_display_mode mode;
-> >       unsigned int lanes;
-> >       enum mipi_dsi_pixel_format format;
-> > -     const struct jadard_init_cmd *init_cmds;
-> > +     int (*init)(struct jadard *jadard);
-> >       u32 num_init_cmds;
-> >  };
-> >
-> > @@ -50,46 +46,33 @@ static inline struct jadard *panel_to_jadard(struct=
- drm_panel *panel)
-> >
-> >  static int jadard_enable(struct drm_panel *panel)
-> >  {
-> > -     struct device *dev =3D panel->dev;
-> >       struct jadard *jadard =3D panel_to_jadard(panel);
-> > -     struct mipi_dsi_device *dsi =3D jadard->dsi;
-> > -     int err;
-> > +     struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D jadard->dsi =
-};
-> >
-> >       msleep(120);
-> >
-> > -     err =3D mipi_dsi_dcs_exit_sleep_mode(dsi);
-> > -     if (err < 0)
-> > -             DRM_DEV_ERROR(dev, "failed to exit sleep mode ret =3D %d\=
-n", err);
-> > +     mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> >
-> > -     err =3D  mipi_dsi_dcs_set_display_on(dsi);
-> > -     if (err < 0)
-> > -             DRM_DEV_ERROR(dev, "failed to set display on ret =3D %d\n=
-", err);
-> > +     mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> >
-> > -     return 0;
-> > +     return dsi_ctx.accum_err;
-> >  }
-> >
-> >  static int jadard_disable(struct drm_panel *panel)
-> >  {
-> > -     struct device *dev =3D panel->dev;
-> >       struct jadard *jadard =3D panel_to_jadard(panel);
-> > -     int ret;
-> > +     struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D jadard->dsi =
-};
-> >
-> > -     ret =3D mipi_dsi_dcs_set_display_off(jadard->dsi);
-> > -     if (ret < 0)
-> > -             DRM_DEV_ERROR(dev, "failed to set display off: %d\n", ret=
-);
-> > +     mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-> >
-> > -     ret =3D mipi_dsi_dcs_enter_sleep_mode(jadard->dsi);
-> > -     if (ret < 0)
-> > -             DRM_DEV_ERROR(dev, "failed to enter sleep mode: %d\n", re=
-t);
-> > +     mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-> >
-> > -     return 0;
-> > +     return dsi_ctx.accum_err;
-> >  }
-> >
-> >  static int jadard_prepare(struct drm_panel *panel)
-> >  {
-> >       struct jadard *jadard =3D panel_to_jadard(panel);
-> > -     const struct jadard_panel_desc *desc =3D jadard->desc;
-> > -     unsigned int i;
-> >       int ret;
-> >
-> >       ret =3D regulator_enable(jadard->vccio);
-> > @@ -109,13 +92,9 @@ static int jadard_prepare(struct drm_panel *panel)
-> >       gpiod_set_value(jadard->reset, 1);
-> >       msleep(130);
-> >
-> > -     for (i =3D 0; i < desc->num_init_cmds; i++) {
-> > -             const struct jadard_init_cmd *cmd =3D &desc->init_cmds[i]=
-;
-> > -
-> > -             ret =3D mipi_dsi_dcs_write_buffer(dsi, cmd->data, JD9365D=
-A_INIT_CMD_LEN);
->
-> This function usesd mipi_dsi_dcs_write_buffer()...
->
-> > -             if (ret < 0)
-> > -                     return ret;
-> > -     }
-> > +     ret =3D jadard->desc->init(jadard);
-> > +     if (ret)
-> > +             return ret;
-> >
-> >       return 0;
->
-> [...]
->
-> > +static int radxa_display_8hd_ad002_init_cmds(struct jadard *jadard)
-> > +{
-> > +     struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D jadard->dsi =
-};
-> > +
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x00);
->
-> ... while your code uses mipi_dsi_dcs_write_seq_multi(), which
-> internally calls mipi_dsi_generic_write_multi(). These two function use
-> different packet types to send the payload. To be conservatite, please
-> use mipi_dsi_dcs_write_buffer_multi().
+I've queued this Emil, scream if you're not okay with it please...
 
-Are you certain about this? I see that mipi_dsi_dcs_write_seq_multi()
-is just a wrapper on mipi_dsi_dcs_write_buffer_multi(). Specifically,
-I see:
+--wBQen4bwb2gJxhYV
+Content-Type: application/pgp-signature; name="signature.asc"
 
-#define mipi_dsi_dcs_write_seq_multi(ctx, cmd, seq...)                  \
-  do {                                                            \
-    static const u8 d[] =3D { cmd, seq };                     \
-    mipi_dsi_dcs_write_buffer_multi(ctx, d, ARRAY_SIZE(d)); \
-  } while (0)
+-----BEGIN PGP SIGNATURE-----
 
-Certainly I could be confused...
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnmfoAAKCRB4tDGHoIJi
+0kDrAP9TQtHYnHFLdB9xD3m+he22q7sWAYb+Wz/hbJFoFZy/cAEAuTcNQMsmvwv8
+sNM6GY5H+5O1O5tVU3RsPu9VCxUTIAY=
+=H/lq
+-----END PGP SIGNATURE-----
 
--Doug
+--wBQen4bwb2gJxhYV--
 
