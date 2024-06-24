@@ -1,150 +1,144 @@
-Return-Path: <linux-kernel+bounces-226597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF92A9140BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:07:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D339140B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B7B2837AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:07:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE4328381B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFF96FD0;
-	Mon, 24 Jun 2024 03:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59546FD0;
+	Mon, 24 Jun 2024 02:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="T7NJI7NJ"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Dsy541Ir"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E81B4414
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 03:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970D9D517
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719198435; cv=none; b=eoWalDirT3ye20mTi/60lDXcsyM9mhL+vVG7wPmDK+DvCYSiIstSvBt24+x1NxqOTjU6vgUdKSG+ENrkDBZXsParTNwQHYv0vW3u91NSneS2xpxPA6QhWcXqFRipPQiIsPBUm0zRn3AqkipwwfLv2tZ++hqnuswzsbW4f2V1+Ms=
+	t=1719197901; cv=none; b=VBTIgs1wUxsynwZt82CcNwc4c6SWV8DXZpnTp7Cv+XM6OO0FgU2wIwLoWyiIQNNebvdjx0Z5/O8+h0oE01NB6a0In4Py92aeAPXd7haEaA2wBFbWeuD0h9Qp3Z+li79LQTXOiwKmvvAWXmIvzxbwX31B/ivM88NKLaBBaxXZ+ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719198435; c=relaxed/simple;
-	bh=MWfcOS/fpDZc5+yTzWXxZQbqNGuKZmdjH1+ri1Kjs6s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=f+3nC3BLw2PmX0co86cqAfJ5K0zvYIZ3ZS5XMcTidAkbOmJNwl+UT0p9tt2F2oEW6wHX0GMpFcvkNrN+7dvR9MPdj4Avsb6Zv7ynNC9aCqSm+QJxI7SCqV1x2yi9I4aCogpPOeaW6DJ3WAa9WwwmUd2TSYklaIbyG3TxWM3WblU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=T7NJI7NJ; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240624030702epoutp044171242b446292db37690febfca45490~b0ds9rXgV2213922139epoutp04Y
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 03:07:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240624030702epoutp044171242b446292db37690febfca45490~b0ds9rXgV2213922139epoutp04Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1719198422;
-	bh=tXE911zpJm5uEPgj6wYABxOu8GD/9MWdwpLAU0xwGas=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T7NJI7NJRtOgnLLuohLy3yd4rFsdTczvx/q+iLhqP8zHOglioNjAhOe4jiLwFrs0x
-	 8CSi4CS9HfNapP3gv0Ax5nPbFugD9++5cn3jAbYILWBCRtqMUvyjIdDkaRqDzvDRPG
-	 713K260a2AqXKsMXlr85tgliicNwoHPD0lNdKfmM=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240624030701epcas5p3b9dc38710641253dd382dfdbbfa10e6b~b0dsb8xDc1324413244epcas5p3-;
-	Mon, 24 Jun 2024 03:07:01 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4W6tD43k0rz4x9QB; Mon, 24 Jun
-	2024 03:07:00 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	DF.5D.11095.4D2E8766; Mon, 24 Jun 2024 12:07:00 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240624025406epcas5p4ce2b80c63d185cf9e02615365fb3d89d~b0SaEOHhv2162121621epcas5p40;
-	Mon, 24 Jun 2024 02:54:06 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240624025406epsmtrp25b85fb38f4ef9464665e0c856614d9c7~b0SaDjAxz0074600746epsmtrp2A;
-	Mon, 24 Jun 2024 02:54:06 +0000 (GMT)
-X-AuditID: b6c32a49-3c3ff70000012b57-5a-6678e2d4e357
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	69.45.18846.DCFD8766; Mon, 24 Jun 2024 11:54:06 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240624025405epsmtip1eec79575b6199f63d8774ff291c96165~b0SZP1v6F1024910249epsmtip1n;
-	Mon, 24 Jun 2024 02:54:05 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: asml.silence@gmail.com
-Cc: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v5] Subject: io_uring: releasing CPU resources when
- polling
-Date: Mon, 24 Jun 2024 10:54:00 +0800
-Message-Id: <20240624025400.2341405-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <c6b297ae-b1a9-4500-966e-9a0ea192d46b@gmail.com>
+	s=arc-20240116; t=1719197901; c=relaxed/simple;
+	bh=HZyeTSDoU90HYd90Rp+PLPJE+pmstpL+du0vTcZ7ASU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KDEyJpwc0iVFps0d6QvTv38ovO6xP29mmfwBFh5jNzVwd3zcXVQWrKiqCgVaUqIl2ktZVtNUw8vFvXSfwNNf0GI68I3TOLluxFILb2J/CDhxvatQePmjWrHY2wlONw6Q7xbviv4sGycHKNFygcnlMyVKomrtG1dcEFmW1HamiJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=Dsy541Ir; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5B07C2C044B;
+	Mon, 24 Jun 2024 14:58:16 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1719197896;
+	bh=b4PPIWnSntGbucOj7Qa3cqUKyDG1tJZ+G6Ih4WCPC9Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Dsy541IrOR2d7+JHSboOJseQcChjXtH3AMCiKMq/ThI06AZChRzDre90/ueGy6KEG
+	 nsOn7SRhoHvUxK93974Deux6kurnivArLz4klNMtvcLV4WPdr4u71BcDP2U/gOb7Aj
+	 rM8eM5tSI3XKwjZ/HlvlDgYO1GQhdqLIImm346mFCtbymD4i3h2RKOwMGZfrlV2keb
+	 ztf+57xL7DMaQPrpQg1Nvy35UGvbldS7RLsSewP5zVXr58G6D+tOBNdr4SIp7bur6s
+	 hB1dPqg6KXosTFLvORaImFOoA1fCvoo+ljQ3/Iqm7EtXVhVx2hEhUcf4YJWZWdjryq
+	 cOq312Bfe3BDQ==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6678e0c80000>; Mon, 24 Jun 2024 14:58:16 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 2856013ED63;
+	Mon, 24 Jun 2024 14:58:16 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 228A9280AE5; Mon, 24 Jun 2024 14:58:16 +1200 (NZST)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: andrew@lunn.ch,
+	f.fainelli@gmail.com,
+	olteanv@gmail.com
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	=?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+	Landen Chao <Landen.Chao@mediatek.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: [PATCH] dt-bindings: net: dsa: mediatek,mt7530: Minor grammar fixes
+Date: Mon, 24 Jun 2024 14:58:11 +1200
+Message-ID: <20240624025812.1729229-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdlhTQ/fKo4o0g21XJCzmrNrGaLH6bj+b
-	xbvWcywWv7rvMlpc3jWHzeLshA+sDmweO2fdZfe4fLbUo2/LKkaPz5vkAliism0yUhNTUosU
-	UvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgHYrKZQl5pQChQISi4uV
-	9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7IzOs6rFdxnrTg8
-	6Rx7A+NSli5GTg4JAROJu19/M3YxcnAICexmlNhS3cXIBWR+YpS4fmkrG5zzcEcfXMPjpfOY
-	IBI7GSUuHHzFDOH8YJRYd2gNK0gVm4CSxP4tH8DGighISfy+ywESZhbwlvj85C0TiC0sECqx
-	bn83I4jNIqAqcXLqOTCbV8Ba4l3rOjaIZfISN7v2M4PYnAK2Eu3H10HVCEqcnPmEBWKmvETz
-	1tlgN0gIXGKXuHuhgRmi2UXi+MkJUFcLS7w6voUdwpaS+PxuL9SCfInJ39czQtg1Eus2v4Oq
-	t5b4d2UPC8j9zAKaEut36UOEZSWmnlrHBLGXT6L39xMmiDivxI55MLaSxJIjK6BGSkj8nrCI
-	FcL2kPjxYy80RCcwSjyYs4B5AqPCLCT/zELyzyyE1QsYmVcxSqYWFOempxabFhjmpZbDozg5
-	P3cTIzgxannuYLz74IPeIUYmDsZDjBIczEoivNPry9KEeFMSK6tSi/Lji0pzUosPMZoCA3wi
-	s5Rocj4wNeeVxBuaWBqYmJmZmVgamxkqifO+bp2bIiSQnliSmp2aWpBaBNPHxMEp1cA074TA
-	vLr8K5sv6O/WnnmzJGgOxwyjzJAp3SYtl2tmHf4jc8vI/MnLpMgvXQK7VqXWhPE5/hY76jZl
-	786NbtfCk7+cy2rIm+hpsdfvr+OMWRfjO3JWZjAdYdFSy/xaonaazXez47UOg6bAh8Z6nMLp
-	t3g2/xA8KLf56I+v/O//F4j8eMioKsL7JTiqaPWOnpLD3frnbjJsWPkleO26z3FaMg8dzu7w
-	yvDokDdo2rQl4oriWlcj7sudJqF7lQykc/nWB92zT7lcXHr7UUxu7fJn/1R2P3ts0tP+jTtR
-	5p+jgHDu9EdyIQ9FFqoms2hwx5rk5VuEx3Ovv9fbG8Vbs+DZucfPao7nXqv1MorJzVJiKc5I
-	NNRiLipOBABWggFGFQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCLMWRmVeSWpSXmKPExsWy7bCSnO65+xVpBpczLOas2sZosfpuP5vF
-	u9ZzLBa/uu8yWlzeNYfN4uyED6wObB47Z91l97h8ttSjb8sqRo/Pm+QCWKK4bFJSczLLUov0
-	7RK4MjrOqxXcZ604POkcewPjUpYuRk4OCQETicdL5zF1MXJxCAlsZ5SYuOs6K0RCQmLHoz9Q
-	trDEyn/P2UFsIYFvjBJf/xmB2GwCShL7t3xg7GLk4BARkJL4fZcDJMws4C9x/9teJhBbWCBY
-	YuemqWCtLAKqEiennmMEsXkFrCXeta5jgxgvL3Gzaz8ziM0pYCvRfnwdI8QqG4ner6tZIeoF
-	JU7OfMICMV9eonnrbOYJjAKzkKRmIUktYGRaxSiaWlCcm56bXGCoV5yYW1yal66XnJ+7iREc
-	sFpBOxiXrf+rd4iRiYPxEKMEB7OSCO/0+rI0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzKOZ0p
-	QgLpiSWp2ampBalFMFkmDk6pBiaVKdefq13esiEh8sKBiv07Du/jEjZm2Ls5+pVxs6Sb+3//
-	1smFR65Ov8bCq3Nh60Wjl4YFDbo7RTaWq5rnHT1wPjCK63dYS63HpXzWViWpp38+Hvz3Vc1Q
-	WPrXdtnM139+iz+zkepgaWbavOBU4rHmnXvue9a060Wcv5426/qJYwsvzFizMf0Z35HpFjom
-	997XvTA5WJD55fadGlE7v9v8Hu/1pjA/fBCwNvD5yfUGbsUJZ+ec+9zIWsfAmOL/cXK6Lfc3
-	eRMr77vvE+4p8Xg80IjS6GTWXu524nVNeJpNgFul/EQPyyffRSbk7dIutlzpJai21LHdfJX/
-	rYWT9p/P3XPvT/v6/R9jX6883mOtxFKckWioxVxUnAgALyi+mMcCAAA=
-X-CMS-MailID: 20240624025406epcas5p4ce2b80c63d185cf9e02615365fb3d89d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240624025406epcas5p4ce2b80c63d185cf9e02615365fb3d89d
-References: <c6b297ae-b1a9-4500-966e-9a0ea192d46b@gmail.com>
-	<CGME20240624025406epcas5p4ce2b80c63d185cf9e02615365fb3d89d@epcas5p4.samsung.com>
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6678e0c8 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=Mc0CNVgLlbBwIVVfR90A:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On 6/19/24 16:22, Pavel Begunkov wrote:
->On 6/19/24 08:18, hexue wrote:
->
->> Test results:
->> set 8 poll queues, fio-3.35, Gen5 SSD, 8 CPU VM
->>
->> per CPU utilization:
->>      read(128k, QD64, 1Job)     53%   write(128k, QD64, 1Job)     45%
->>      randread(4k, QD64, 16Job)  70%   randwrite(4k, QD64, 16Job)  16%
->> performance reduction:
->>      read  0.92%     write  0.92%    randread  1.61%    randwrite  0%
->
->What are numbers for normal / non-IOPOLL runs?
+Update the mt7530 binding with some minor updates that make the document
+easier to read.
 
-for normal poll, per CPU utilization is 100%*8
-performance like this:
-				read			write			randread		randwrite
-normal poll		BW=10.9GiB/s    BW=6202MiB/s 	IOPS=1682k		IOPS=255k
-hybrid poll     BW=10.8GiB/s	BW=6145MiB/s	IOPS=1655k		IOPS=255k
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
 
---
-hexue
+Notes:
+    I was referring to this dt binding and found a couple of places where
+    the wording could be improved. I'm not exactly a techical writer but
+    hopefully I've made things a bit better.
+
+ .../devicetree/bindings/net/dsa/mediatek,mt7530.yaml        | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.ya=
+ml b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+index 1c2444121e60..6c0abb020631 100644
+--- a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+@@ -22,16 +22,16 @@ description: |
+=20
+   The MT7988 SoC comes with a built-in switch similar to MT7531 as well =
+as four
+   Gigabit Ethernet PHYs. The switch registers are directly mapped into t=
+he SoC's
+-  memory map rather than using MDIO. The switch got an internally connec=
+ted 10G
++  memory map rather than using MDIO. The switch has an internally connec=
+ted 10G
+   CPU port and 4 user ports connected to the built-in Gigabit Ethernet P=
+HYs.
+=20
+-  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs has got 10/1=
+00 PHYs
++  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs have 10/100 =
+PHYs
+   and the switch registers are directly mapped into SoC's memory map rat=
+her than
+   using MDIO. The DSA driver currently doesn't support MT7620 variants.
+=20
+   There is only the standalone version of MT7531.
+=20
+-  Port 5 on MT7530 has got various ways of configuration:
++  Port 5 on MT7530 supports various configurations:
+=20
+     - Port 5 can be used as a CPU port.
+=20
+--=20
+2.45.2
+
 
