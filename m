@@ -1,119 +1,133 @@
-Return-Path: <linux-kernel+bounces-226774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9796C91436F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:18:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA2F914371
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F87284EF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:18:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1F711F23F3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63F23A1DA;
-	Mon, 24 Jun 2024 07:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD0A39AC3;
+	Mon, 24 Jun 2024 07:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I3rsCYgT"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CJWskfdB"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E745F9D9;
-	Mon, 24 Jun 2024 07:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40197F9D9
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719213479; cv=none; b=k3kBptwSkFj1gIYhAEsn/G52m3BESmSNL8IlpRqFA0CHukl8fLwVWjyZVEGiqtliNHSClkpGjQ611LtCnYjjn9oLukCRvI2q+G2WOH7dygLwKOmvzc3aM8bRLUMaDBpb+YkFOV52fSmSa7IUimMJUZgaQJay6vLN1c8lrNnbzwU=
+	t=1719213520; cv=none; b=KzHvkyq8p/0ZKxAaJCBV6r+Bu6Tk8Y34kKAzXNKmUd8JnXsL2awvNHYP8hpCKJIYvuqYCpIxf1W8wpqsPScawt83ICJ4pYCJje/SJdu6ZMSs/aU/Ys5wdrT3zAZx3JsGK42iRRwhfJWs1XzrkynO74Bx6tnjrKmHHKiP6fbSJYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719213479; c=relaxed/simple;
-	bh=6oS5SW09U8iQI6kzm5UHdHG/LGzrzqRPipDYAs+0mRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pc1pdKJWuXIBArXiUgy0LPzOM7+mEJpeZkL/gCqlbqfPc2o/N9jqsA80Mw86xKdjUyiBgjl4nnLhGF0y6PYSwEK4H3K726e079B/n0c5w/xKpr2UhnJDbSmRhM38aqz0l4fUu3IoxHyskKgjjAXXjVyKKmI46meAwsoHTqQrjnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I3rsCYgT; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 40086FF80A;
-	Mon, 24 Jun 2024 07:17:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719213468;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=o8kSx2joD+PfTxvQH91rVyfBDjegpaIQB2A5DqXaBqI=;
-	b=I3rsCYgTACtO0hu4hIlg+9neNw7RITs6XGjwsQOGBCTS3KAQPsDmjtUdYVqImJM13KpsF/
-	RGJujrYd8CV8EQFaPWEND7tNJtpchOVleEiSKXTPX9Xucs90AB/UFXXHLy1O6VCHBnO3D1
-	YlQAcpB82prKFHk8pdq3jp5wcX2uioVIxv3sPVyyhVNPw6nnfLSlUWfE9qNvDFVHq/IqU4
-	w6B45XwkT1iPc6umNDNPZxute9ApB8ih68/OAbi24ZJ9NoOk27AmyV+hckg+delXcxMs6u
-	rQT/jIaaCulIx6LOWpu0BafIOEwwPBXZ6Uu3X25pIsY19LBgxpG61EbzRdiDFg==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH] spi: davinci: Unset POWERDOWN bit when releasing resources
-Date: Mon, 24 Jun 2024 09:17:45 +0200
-Message-ID: <20240624071745.17409-1-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1719213520; c=relaxed/simple;
+	bh=qV0oW4X9eVVmD+OylM95sSUjHs6EhAuZW6GY+ZdG40E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IySP9bCLHV7V1DlUCPnIzxlNtxKI8CTGx3QYz+rGQLJ2yTkkWIci0DnQzgfI46bhHMGAg1k9gQAr39Zi1Ayss+96o/CLYTrgHLC+zy4WlJ30cPQ9tlB3FlS8GRkbmEZ2FOl04QAW9yDA6ijuf+i/oii3xn0onPpMMZYMncpe77o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CJWskfdB; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57d0eca877cso4592998a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 00:18:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719213516; x=1719818316; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VVMa9A6daZ/dRP8VM8IurvG+X0g0NVTgiHoFw7o3XMY=;
+        b=CJWskfdBWuzlvsE+E0zrf4PNWgDMl7thQIqyFGaVhlpfv3qNTGG9lC9QEXIlQqCAU3
+         uHfXW5ODnnOqc9OCzJ+U6GOk98TU8dEBHrKcGPpdtxNZ7l5q56Pdodf+aOVqrVvvpojA
+         vm91HG8gQbJyXMUko3W8RSvg1oBTKlOyKUtbYZnbbn9U+eqAMno+1fSNnuYDBydUjJfm
+         ogGNbMsPXE5+hnYHt4RyfZ1PGpbBMw2qgysEP7TwbSwQn0QP4josM1XG/X7AuSwB4Kbu
+         fdGt/s82Y5odXcjF9PVHZsDHNaqq34YIoct0c6fo6aDRELtizUp1so/PDq5W3If1KvLo
+         F7Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719213516; x=1719818316;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VVMa9A6daZ/dRP8VM8IurvG+X0g0NVTgiHoFw7o3XMY=;
+        b=YEyvQ9pmLDb3q4OEgVe00e+spzY2uZFJZagZ9Bc42vx6PTxfL/m7oBmKSjCGAMx4lL
+         iJ/4KoAHIf8T9rS9XzgJbqOc/etBGzKOBydfhbIzP5tERUb4eGgqDT90aUlQ2l64yPU1
+         9DpSqN552CHMkgVPRURCHfdvDPvSxyJeeyR31xmsZeY/5I+BfYRdZDboM4RRmKxnmTUD
+         m5Qx0mjfSIQ4BmSDFODEnBu6BVmQ/VHTnjLl6f5qnmZycLr/ZsrfJ4QA54M3gDkPQD1F
+         skEt6wvJxqsgtHlNmgGiYUBPfKUXwolFYwOVxAfKrQNSpRdCPpEpFO0vtY9LIe5FpkoK
+         av/A==
+X-Forwarded-Encrypted: i=1; AJvYcCU5BKKwzDr+eormDJH9RNHf2qUgNTP5+RoSA0rnwtyhXKx4jrIJDXWVY8eT32qS7V2M///cFtcpyxkp1Ad6orcLWbJkj+eDHCG9yakN
+X-Gm-Message-State: AOJu0YzFmaFrnITBA6QZfUznil4qRXL5nZ1QT6WZUeGt9hRoxbUsME4K
+	iMEOZBHEOE2oH8SkRo7Z0kvPkUPv3PXrjlRBe5qGdM9DCmE8A9m1Nz6LM2gFCss=
+X-Google-Smtp-Source: AGHT+IFYuzkC5GcaR7ybJaQuKfvtiTIdzs6hbNIAng1NWd/STYMqVRnXwAQr3lPQRgqXQ/dOhA/qTg==
+X-Received: by 2002:a50:d503:0:b0:57d:3ea:3862 with SMTP id 4fb4d7f45d1cf-57d4bdbe7d0mr3049784a12.27.1719213516347;
+        Mon, 24 Jun 2024 00:18:36 -0700 (PDT)
+Received: from [192.168.1.172] ([93.5.22.158])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303da378sm4280811a12.18.2024.06.24.00.18.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 00:18:36 -0700 (PDT)
+Message-ID: <20fe8bd0-2760-4568-94eb-889b9cdd4339@baylibre.com>
+Date: Mon, 24 Jun 2024 09:18:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/15] dt-bindings: display: mediatek: dpi: add
+ power-domains property
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jitao Shi <jitao.shi@mediatek.com>, CK Hu <ck.hu@mediatek.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Fabien Parent <fparent@baylibre.com>
+References: <20231023-display-support-v4-0-ed82eb168fb1@baylibre.com>
+ <20231023-display-support-v4-6-ed82eb168fb1@baylibre.com>
+ <CAAOTY_-sk1aoXdG=Wq_fMAtCxqA=VC+GVOMURhaDadXnBqm_kQ@mail.gmail.com>
+Content-Language: en-US
+From: Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <CAAOTY_-sk1aoXdG=Wq_fMAtCxqA=VC+GVOMURhaDadXnBqm_kQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On the OMAPL138, the SPI reference clock is provided by the Power and
-Sleep Controller (PSC). The PSC's datasheet says that 'some peripherals
-have special programming requirements and additional recommended steps
-you must take before you can invoke the PSC module state transition'. I
-didn't find more details in documentation but it appears that PSC needs
-the SPI to clear the POWERDOWN bit before disabling the clock. Indeed,
-when this bit is set, the PSC gets stuck in transitions from enable to
-disable state.
 
-Clear the POWERDOWN bit when releasing driver's resources
 
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
----
-Hi,
+On 21/06/2024 17:10, Chun-Kuang Hu wrote:
+> Hi, Alexandre:
+> 
+> <amergnat@baylibre.com>  於 2024年5月23日 週四 下午8:49寫道：
+>> From: Fabien Parent<fparent@baylibre.com>
+>>
+>> DPI is part of the display / multimedia block in MediaTek SoCs, and
+>> always have a power-domain (at least in the upstream device-trees).
+>> Add the power-domains property to the binding documentation.
+> I've tired to apply this patch but has conflict. Please rebase this
+> patch onto latest mainline kernel.
+> Other binding patches in this series is applied to mediatek-drm-next [1].
+> 
+> [1]https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/log/?h=mediatek-drm-next
 
-I ran into this bug by enabling the 'cs-gpio' property. It causes the
-probe to fail at first with -EPROBE_DEFER because the gpio provider is
-not ready. So the clock gets disabled. In the clock controller's driver
-(drivers/clk/davinci/psc.c) the clock_disable() calls a
-regmap_read_poll_timeout() with an infinite timeout. This poll() polls
-a transition bit status that never goes down so we end stuck in the
-middle of the boot sequence.
+Hello Chun-Kuang,
 
- drivers/spi/spi-davinci.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+First, thank you for the review and merge.
+This serie has been rebased on top of Angelo's series [1] to
+use the OF graphs support.
+I have to rebase on the lastest Angelo's serie [2].
 
-diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
-index be3998104bfb..f7e8b5efa50e 100644
---- a/drivers/spi/spi-davinci.c
-+++ b/drivers/spi/spi-davinci.c
-@@ -984,6 +984,9 @@ static int davinci_spi_probe(struct platform_device *pdev)
- 	return ret;
- 
- free_dma:
-+	/* This bit needs to be cleared to disable dpsi->clk */
-+	clear_io_bits(dspi->base + SPIGCR1, SPIGCR1_POWERDOWN_MASK);
-+
- 	if (dspi->dma_rx) {
- 		dma_release_channel(dspi->dma_rx);
- 		dma_release_channel(dspi->dma_tx);
-@@ -1013,6 +1016,9 @@ static void davinci_spi_remove(struct platform_device *pdev)
- 
- 	spi_bitbang_stop(&dspi->bitbang);
- 
-+	/* This bit needs to be cleared to disable dpsi->clk */
-+	clear_io_bits(dspi->base + SPIGCR1, SPIGCR1_POWERDOWN_MASK);
-+
- 	if (dspi->dma_rx) {
- 		dma_release_channel(dspi->dma_rx);
- 		dma_release_channel(dspi->dma_tx);
+[1] https://lore.kernel.org/all/20240521075717.50330-1-angelogioacchino.delregno@collabora.com/
+[2] https://lore.kernel.org/all/20240618101726.110416-1-angelogioacchino.delregno@collabora.com/
+
 -- 
-2.45.0
-
+Regards,
+Alexandre
 
