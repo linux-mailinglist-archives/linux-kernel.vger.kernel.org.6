@@ -1,178 +1,130 @@
-Return-Path: <linux-kernel+bounces-227380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2358915034
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:42:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D2AF915060
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1981F23678
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC36428464A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB30219AD80;
-	Mon, 24 Jun 2024 14:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405D719B3C3;
+	Mon, 24 Jun 2024 14:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G0MuKjJB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="qslt2FLe"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5324619AD45
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6F319AD45
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719240130; cv=none; b=D8UD5yxLVYdeqXwdr8G/WroxQALUHIpOV64JVR8jdv5Hyc2mXpBePLUdJril0Y7deNKfpTq6ZB2flEdPtgzYDqIBFWknjRkxawltLViJZIRLtHU3vsy1ZzjMNQoLqhzM+W54A7lWQN+WYIJjyaxvpFimnNz/THN91rhRw6yZA+k=
+	t=1719240235; cv=none; b=quLkNkIyBHlGyWBxFb+dLSxBfscgA/rDhHoz7tDx5Ik8LHsw3IF5jhBRUzgMB2cNBPTuKvjOux3IicuSc6KqlOTEU8th4ckz44GJNdcJ3L1ChRO4K5jsQ+hQ41hZ2p1NDLL0luo70kJULPUZFjvw9FZEbXkeYLO3Yr7+ZXSqZPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719240130; c=relaxed/simple;
-	bh=/fNP9lHtI2TK5RrwMbpkvfnkfdvJsuINBBNwCdflfCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2jJxiJ2ArkWTRBkjmh7PChA/B0lz6vDbgTZkK/9N3o1ZF7IHeWYrlmTEkxCdBUn/QJMYH0jx6kNErQy4cFsl0puk7GzXISOYRDLqBDgbU8e8BKAxjOsizfQcDg95AePZhD6CuqvK8ynUHfEyk8irMPIDvn2A1+CNiGJmMb2GXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G0MuKjJB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719240126;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2YSFwvfLTs34coaqSsJLjio1esrhhUEBzaPezL3zICw=;
-	b=G0MuKjJBn7tWo5mE1ECkgoOR70T7wD1hYHAdXQllXFNJ0kfpe/8XaYpg3O5FYAJ6QD84je
-	rie5jjJsvW+upC0Kk81pRTAgu5YgGmsIRbTkSojFVIeX8X9HrORUQDalvkPz/a97fwYObM
-	yRwTogLJqf1HalSIQeUpzW/lherd9qM=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-302--HTnCnsTM36tIPxse5xnSA-1; Mon, 24 Jun 2024 10:42:04 -0400
-X-MC-Unique: -HTnCnsTM36tIPxse5xnSA-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b52c538d04so7192106d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:42:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719240124; x=1719844924;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2YSFwvfLTs34coaqSsJLjio1esrhhUEBzaPezL3zICw=;
-        b=QvATsNhT14rvwSCJ/gtiZHPXWBY46dN9e6Y8ynETeXX7k5pVebQLUJvE8RFlMOUnof
-         5NWhN/Md5F2KlhUoiKp/sTg8RdIEO9dcVIgXxF4qS9BJOD1p/S+WbwQtPJjnxvgWwjCw
-         T6dcNYG0PZB97ghcJJAScU/QztG3efbqN+3ABGbxL+080oZ+QkOnnEKKHO9gNtNzq0Vf
-         gEcaYp1CsuvsfD0pk2QyV6mQjqtF2DbG34fJ1LC7R0aFGS5wx4AxPSoYFwX2rsWDdDsI
-         1AejWyBOX6+AnfUXBdq75bXyeAEZGDVM2j5ewJQfeOM9f+4B2ZyJALlysw/PJWmILaZR
-         +OPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX//2OnJGUGA/OjRQ/+LkxzlQ4hTWmxcXvfTdtbTG1YrzmqGKua7oe2V6ZguGE9LWdfYlVUcRcAExeEsQ2erDgql1Wtqs/d0TkjcQLQ
-X-Gm-Message-State: AOJu0YxpnMpMlLu+78nrsnBuUfCRbq0WxzMFbciHAn76SFsKTkkybLTq
-	+6Tz9HGr9++xPESXtoDEqU/Z5IVrFvnvrx8WrNfCYpwyYPBmSX8YasVw5rrYizHvFidKPs1NeIf
-	fdL3M3lUK0lCn6sM5lLMuKnK7lwtWF3AAztyM1FdL8Ralc5zAzpPy8iEGe7G7dA==
-X-Received: by 2002:ac8:5753:0:b0:441:1de:8ab0 with SMTP id d75a77b69052e-444cf75fffbmr68513961cf.2.1719240124109;
-        Mon, 24 Jun 2024 07:42:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGggCmyM4O7AbDKTFNzE+M2A0XkOn8q4QKOyaCtAAJssRP1VcmWE+zk9J/aPMuu0F6mZDXJWw==
-X-Received: by 2002:ac8:5753:0:b0:441:1de:8ab0 with SMTP id d75a77b69052e-444cf75fffbmr68513631cf.2.1719240123513;
-        Mon, 24 Jun 2024 07:42:03 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444c2b3689csm42757861cf.20.2024.06.24.07.42.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 07:42:03 -0700 (PDT)
-Date: Mon, 24 Jun 2024 10:42:00 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Audra Mitchell <audra@redhat.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	aarcange@redhat.com, akpm@linux-foundation.org,
-	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shuah@kernel.org,
-	linux-kselftest@vger.kernel.org, raquini@redhat.com
-Subject: Re: [PATCH v2 3/3] Turn off test_uffdio_wp if
- CONFIG_PTE_MARKER_UFFD_WP is not configured.
-Message-ID: <ZnmFuAR7yNG_6zp6@x1n>
-References: <20240621181224.3881179-1-audra@redhat.com>
- <20240621181224.3881179-3-audra@redhat.com>
- <ZnXwT_vkyVbIJefN@x1n>
- <Znl6dfM_qbH3hIvH@fedora>
+	s=arc-20240116; t=1719240235; c=relaxed/simple;
+	bh=UDpU+sZqeqvUZpvFhIKYvpxfwqDGEwHLn0kUG34kq84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=czvyjQCHxHdxU6NJT2cRtevo1bvhf8a7oFA7vHbEw6zpJwpHUkm0JxFd3CNTosdBVe8eWtpRyEl4RUchGSEyXgGAX06Vmm0pzjs+KGb59q1ZFIdgTPicCyP4fRo5IlhhVInrU4DmMKy5hDM7nrUhdtvaOWiC1Qa6JuwvgFr8RrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=qslt2FLe; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ODT690017080;
+	Mon, 24 Jun 2024 16:43:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	FDQqDeGBhOzd+z+gYx2dRkj2fnt78H+rCdF+VFiaJcc=; b=qslt2FLeTkNuSTgG
+	FWEK3BzU3lE/f9wYZiDR+qbKV48FdFR6ubicgIUDwYKjV9LxAsP51JAPdGKXHkcU
+	W2hi8YgILi5iJTAhqrOuoU7hZ+Wps2HdRXJYQt3CwvPMXBCNE8VcF3mhGSGZolOL
+	mGi49Rbw1gNwC5KvDUCndpp93daBoJWZnM0e0M1BsqI/HZjDvjS6MmanVivr3w7k
+	tUwO1cL3iz9nc4zvixbC9hKng7AYlQEmxuEN2ArP089/3TwA1ZAq7ej0qoExVmV8
+	pmdi8uCSPTra5gbpjAwXli3yOYrd3PF+2oWCFU0J8ps9hXk02+RqmQM/Tnz9K8hB
+	dCdAFg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ywnxx7jux-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 16:43:03 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1FF3C40047;
+	Mon, 24 Jun 2024 16:42:58 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 280FB221E8B;
+	Mon, 24 Jun 2024 16:42:07 +0200 (CEST)
+Received: from [10.48.87.177] (10.48.87.177) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 24 Jun
+ 2024 16:42:06 +0200
+Message-ID: <c8b7d693-5008-49c4-883a-66e2f9a3c7b2@foss.st.com>
+Date: Mon, 24 Jun 2024 16:42:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Znl6dfM_qbH3hIvH@fedora>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/stm: ltdc: Remove unused function plane_to_ltdc
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+CC: <raphael.gallais-pou@foss.st.com>, <philippe.cornu@foss.st.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Abaci
+ Robot <abaci@linux.alibaba.com>
+References: <20240624024113.54850-1-jiapeng.chong@linux.alibaba.com>
+Content-Language: en-US
+From: Yannick FERTRE <yannick.fertre@foss.st.com>
+In-Reply-To: <20240624024113.54850-1-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_11,2024-06-24_01,2024-05-17_01
 
-On Mon, Jun 24, 2024 at 09:53:57AM -0400, Audra Mitchell wrote:
-> On Fri, Jun 21, 2024 at 05:27:43PM -0400, Peter Xu wrote:
-> > On Fri, Jun 21, 2024 at 02:12:24PM -0400, Audra Mitchell wrote:
-> > > If CONFIG_PTE_MARKER_UFFD_WP is disabled, then testing with test_uffdio_up
-> > 
-> > Here you're talking about pte markers, then..
-> > 
-> > > enables calling uffdio_regsiter with the flag UFFDIO_REGISTER_MODE_WP. The
-> > > kernel ensures in vma_can_userfault() that if CONFIG_PTE_MARKER_UFFD_WP
-> > > is disabled, only allow the VM_UFFD_WP on anonymous vmas.
-> > > 
-> > > Signed-off-by: Audra Mitchell <audra@redhat.com>
-> > > ---
-> > >  tools/testing/selftests/mm/uffd-stress.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > > 
-> > > diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
-> > > index b9b6d858eab8..2601c9dfadd6 100644
-> > > --- a/tools/testing/selftests/mm/uffd-stress.c
-> > > +++ b/tools/testing/selftests/mm/uffd-stress.c
-> > > @@ -419,6 +419,9 @@ static void parse_test_type_arg(const char *raw_type)
-> > >  	test_uffdio_wp = test_uffdio_wp &&
-> > >  		(features & UFFD_FEATURE_PAGEFAULT_FLAG_WP);
-> > >  
-> > > +	if (test_type != TEST_ANON && !(features & UFFD_FEATURE_WP_UNPOPULATED))
-> > > +		test_uffdio_wp = false;
-> > 
-> > ... here you're checking against wp_unpopulated.  I'm slightly confused.
-> > 
-> > Are you running this test over shmem/hugetlb when the WP feature isn't
-> > supported?
-> >
-> > I'm wondering whether you're looking for UFFD_FEATURE_WP_HUGETLBFS_SHMEM
-> > instead.
-> 
-> I can confirm, its all really confusing... So in userfaultfd_api, we disable
-> three features if CONFIG_PTE_MARKER_UFFD_WP is not enabled- including 
-> UFFD_FEATURE_WP_UNPOPULATED:
-> 
-> #ifndef CONFIG_PTE_MARKER_UFFD_WP
->         uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
->         uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
->         uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
-> #endif
-> 
-> If you run the userfaultfd selftests with the run_vmtests script we get
-> several failures stemming from trying to call uffdio_regsiter with the flag 
-> UFFDIO_REGISTER_MODE_WP. However, the kernel ensures in vma_can_userfault() 
-> that if CONFIG_PTE_MARKER_UFFD_WP is disabled, only allow the VM_UFFD_WP -
-> which is set when you pass the UFFDIO_REGISTER_MODE_WP flag - on 
-> anonymous vmas.
-> 
-> In parse_test_type_arg() I added the features check against 
-> UFFD_FEATURE_WP_UNPOPULATED as it seemed the most well know feature/flag. I'm 
-> more than happy to take any suggestions and adapt them if you have any! 
+Hi Jiapeng,
 
-There're documents for these features in the headers:
+Thanks for the patch.
 
-	 * UFFD_FEATURE_WP_HUGETLBFS_SHMEM indicates that userfaultfd
-	 * write-protection mode is supported on both shmem and hugetlbfs.
-	 *
-	 * UFFD_FEATURE_WP_UNPOPULATED indicates that userfaultfd
-	 * write-protection mode will always apply to unpopulated pages
-	 * (i.e. empty ptes).  This will be the default behavior for shmem
-	 * & hugetlbfs, so this flag only affects anonymous memory behavior
-	 * when userfault write-protection mode is registered.
+Acked-by: Yannick Fertre <yannick.fertre@foss.st.com>
 
-While in this context ("test_type != TEST_ANON") IIUC the accurate feature
-to check is UFFD_FEATURE_WP_HUGETLBFS_SHMEM.
+Best regards
 
-In most kernels they should behave the same indeed, but note that since
-UNPOPULATED was introduced later than shmem/hugetlb support, it means on
-some kernel the result of checking these two features will be different.
 
-Thanks,
-
--- 
-Peter Xu
-
+Le 24/06/2024 à 04:41, Jiapeng Chong a écrit :
+> The function are defined in the ltdc.c file, but not called
+> anywhere, so delete the unused function.
+>
+> drivers/gpu/drm/stm/ltdc.c:494:35: warning: unused function 'encoder_to_ltdc'.
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9403
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>   drivers/gpu/drm/stm/ltdc.c | 5 -----
+>   1 file changed, 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+> index 5576fdae4962..3f280155e25c 100644
+> --- a/drivers/gpu/drm/stm/ltdc.c
+> +++ b/drivers/gpu/drm/stm/ltdc.c
+> @@ -491,11 +491,6 @@ static inline struct ltdc_device *plane_to_ltdc(struct drm_plane *plane)
+>   	return (struct ltdc_device *)plane->dev->dev_private;
+>   }
+>   
+> -static inline struct ltdc_device *encoder_to_ltdc(struct drm_encoder *enc)
+> -{
+> -	return (struct ltdc_device *)enc->dev->dev_private;
+> -}
+> -
+>   static inline enum ltdc_pix_fmt to_ltdc_pixelformat(u32 drm_fmt)
+>   {
+>   	enum ltdc_pix_fmt pf;
 
