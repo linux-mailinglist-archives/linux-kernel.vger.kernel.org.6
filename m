@@ -1,100 +1,129 @@
-Return-Path: <linux-kernel+bounces-227141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880979148FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:42:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA809148FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426BA2845C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:42:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E48A1C21D2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF3A13B58A;
-	Mon, 24 Jun 2024 11:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89DC13C3C9;
+	Mon, 24 Jun 2024 11:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="NDUT33qo"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fpoWophZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F095125D6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF73A13A878
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719229319; cv=none; b=TIWHRfoMRyXDasKPpSulUgt7Fdjay9k7P/lz+2Eckt5J6wiL2VRMk5QES4Kr+Ovuct9BuadIQdtFVtK1fPX33880Lbu4ln5RmSF8qjeeOjHlsttLB7KaQskxy9ycp0n6d0M2YqcqRtrP9bY5LJjPig/VHxqJnyXG4QSJBlGiHDk=
+	t=1719229332; cv=none; b=W3vecxvnQeA8cSCjpaN5u8/VyTD1HhWZkZD7wANf6BMt+rU7NsriDGBGWLkbNJ7NZQr774Bdf7L0bpLqcKsmzfeCrZn9vqYOuSRfMAoxVphp3RiXJZapB511hgJVBDQU0N8VlX0SQgyC6e7Z/3Cc94jMDHIWh9Qm0riLyHv5ruk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719229319; c=relaxed/simple;
-	bh=AijBxoAfmMIAkX73H7vl3+78cSiJ+jq7pp7HVYLFovg=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Vmx0HqSHL0WXmgp9Ia0JXMyGIPiOtEH9GhX3qW59ykrD8xVq03dvlZ9QjRUFoVjD5HG04FjMvARcDWxlM4MjyqqoEU7ntZCGcoc9XuZzQvva49O5JJngmZswDQdz5/aqceYD5t9W8viJmavAlgeM0Md0TfAPQkPKeLNzdIvL2BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=NDUT33qo; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1719229301; x=1721821301;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=AijBxoAfmMIAkX73H7vl3+78cSiJ+jq7pp7HVYLFovg=;
-	b=NDUT33qo3EilyGayT3njKZnpW84oPETD3HZrFJoQLo41ts19bUoLinpqr12Qhrxt
-	Z7b8gHQV2JzI/X5NqMOJBIjzdz97iygTrkcsrafJDCKMtvdbqm+kWGVQltaILuWs
-	wymXOSCioZaw489NNs+A5h/X8iqpK2nbGBN6Q2ZfG2A=;
-X-AuditID: ac14000a-03251700000021bc-c4-66795b750406
-Received: from florix.phytec.de (Unknown_Domain [172.25.0.13])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 93.C2.08636.57B59766; Mon, 24 Jun 2024 13:41:41 +0200 (CEST)
-Received: from Berlix.phytec.de (172.25.0.12) by Florix.phytec.de
- (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 24 Jun
- 2024 13:41:41 +0200
-Received: from Berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4]) by
- berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4%4]) with mapi id 15.01.2507.006;
- Mon, 24 Jun 2024 13:41:41 +0200
-From: Leonard Anderweit <L.Anderweit@phytec.de>
-To: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-	"arnd@arndb.de" <arnd@arndb.de>
-CC: "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"upstream@phytec.de" <upstream@phytec.de>
-Subject: Question about [PATCH] [RFC] rtc: y2038: remove broken RTC_HCTOSYS
- workaround
-Thread-Topic: Question about [PATCH] [RFC] rtc: y2038: remove broken
- RTC_HCTOSYS workaround
-Thread-Index: AQHaxit7Na9swo4O+UmGER8BNQyYMw==
-Date: Mon, 24 Jun 2024 11:41:41 +0000
-Message-ID: <cf6ac9542f58a33b146ad7b0f5577e1dff3becab.camel@phytec.de>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0FEC28AE4A6F8B48B788FEA61D7C15EE@phytec.de>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719229332; c=relaxed/simple;
+	bh=iSbfWvXYta9oIC3pQiKk7SO/YQbwSadMdcOSZpo1Kr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lyn5PEr+rIrTBnUKhI4igHCkxZi7y+aGgUm3jLunXRFPShUZuXoAWgXmXOBXUeMYEkokUljAcs0hlgDTUv0ff2YbLMBYNdcqcYXEYRfOfj1tr+7iVYJjKkhhPnnFAHN7MBDUiWWv/bF//O3AXPBTCsdKCBY0Lfj0zfTA/1k3FIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fpoWophZ; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719229331; x=1750765331;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iSbfWvXYta9oIC3pQiKk7SO/YQbwSadMdcOSZpo1Kr8=;
+  b=fpoWophZzD557kel/SQmdqvBfFdmrAS5LyOZtzyWiaIkMd++BW8keyxu
+   jX+qOx1/MA7uGuBLykjVYaQbJHBxpN9AbBynHKHZn8ixoEl4xqfg9CSwN
+   xTfvU6NmHBgFo7S0+U65+pYLgAf7exgh8shzosWdUgQsS2pWKYHFQPnmv
+   MEnI1gI2GvSdnXlYW5APavpGQmePHRHEmxJZUVIRXOy7gmOUp6v1HT83k
+   32/7m4bYySCLscQvfRMzEdNe1R81PKRV/g53bRYL9U78AUnYjrYNpgajC
+   ztO5G6NC6khugyAU+VV5FkB2He0kXRGsqilfJbD4QLVawx6RHT/GaWaxo
+   g==;
+X-CSE-ConnectionGUID: BqEYhsqUS2yTjnjjd5BOOg==
+X-CSE-MsgGUID: lu1eTwBbQzu+HMlU81w+OQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="16019287"
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="16019287"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 04:42:09 -0700
+X-CSE-ConnectionGUID: RvWKRCd7T1GRBP10xmAVYA==
+X-CSE-MsgGUID: PNxehxMvTZiuSOfTM/2hSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="43713922"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 24 Jun 2024 04:42:07 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 414A51BD; Mon, 24 Jun 2024 14:42:04 +0300 (EEST)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv5 0/4] x86/tdx: Adjust TD settings on boot
+Date: Mon, 24 Jun 2024 14:41:45 +0300
+Message-ID: <20240624114149.377492-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42JZI8nAq1saXZlmcGu9rkX7u2XsFn8nHWO3
-	uLxrDpvFsdVX2BxYPH7/msToMW9NtcfnTXIBzFFcNimpOZllqUX6dglcGTNefWUruMNScXLb
-	YpYGxjMsXYycHBICJhKv7p1k7mLk4hASWMIkceLxRyYI5z6jxIHrf6CcDYwSS38tYwJpYRPQ
-	l1i54ikziC0ikCbxvHMmI0gRs8BKRomPU5axdzFycAgLREh0v7OCqImVOHflNRtIWERAT2Ld
-	QwOQMIuAqkTXmbfsIDavgJvEo/btbCA2o4CsxIYN58HGMwuIS2x69p0V4lIBiSV7IOISAqIS
-	Lx//g4rLS5y4NY0JZDyzgKbE+l36EK0WEtN3v2KDsBUlpnQ/hFolKHFy5hOWCYyis5BsmIXQ
-	PQtJ9ywk3bOQdC9gZF3FKJSbmZydWpSZrVeQUVmSmqyXkrqJERRRIgxcOxj75ngcYmTiYDzE
-	KMHBrCTCO72+LE2INyWxsiq1KD++qDQntfgQozQHi5I47+qO4FQhgfTEktTs1NSC1CKYLBMH
-	p1QDo366lernqzz7nb7a5We3yRZt6JupGxDstzFq9XyrcE5lp81d3At/M827sO2VjknvjiXe
-	amJxaowrJDcxldk/YWdkUX9Q/0qr7KJpSvCz5kObntxauPuU1s5vXMEzI7lnTlzl/W+NznHl
-	WQUcc7zEmLfUMZZG7+/qZrN4vmmH54znkiZMzld/KrEUZyQaajEXFScCAPQzlQmWAgAA
+Content-Transfer-Encoding: 8bit
 
-SGksDQoNCkkgZm91bmQgdGhpcyBwYXRjaCBbMV0gd2hpY2ggaXMgbmVjZXNzYXJ5IGZvciBhIHBy
-b2plY3QgSSdtIGN1cnJlbnRseQ0Kd29ya2luZyBvbi4gSSdtIHVzaW5nIHBoeWJvYXJkLXdlZ2Eg
-WzJdIHdpdGggYW4gYW0zMzUgQVJNIFNvQyB3aGljaCBJDQp3YW50IHRvIG1ha2UgeTIwMzggcHJv
-b2YuDQpJcyB0aGVyZSBhbnkgcmVhc29uIGl0IHdhcyBuZXZlciBhY2NlcHRlZD8NCg0KWzFdaHR0
-cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjIwOTA4MTE1MzM3LjE2MDQyNzctMS1hcm5kQGtl
-cm5lbC5vcmcvDQoNCg0KWzJdaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
-cm5lbC9naXQvc3RhYmxlL2xpbnV4LmdpdC90cmVlL2FyY2gvYXJtL2Jvb3QvZHRzL3RpL29tYXAv
-YW0zMzV4LXdlZ2EtcmRrLmR0cw0KDQpSZWdhcmRzDQpMZW9uYXJkDQo=
+The patchset adjusts a few TD settings on boot for the optimal functioning
+of the system:
+
+  - Disable EPT violation #VE on private memory if TD can control it
+
+    The newer TDX module allows the guest to control whether it wants to
+    see #VE on EPT violation on private memory. The Linux kernel does not
+    want such #VEs and needs to disable them.
+
+  - Enable virtualization of topology-related CPUID leafs X2APIC_APICID MSR;
+
+    The ENUM_TOPOLOGY feature allows the VMM to provide topology
+    information to the guest. Enabling the feature eliminates
+    topology-related #VEs: the TDX module virtualizes accesses to the
+    CPUID leafs and the MSR.
+
+    It allows TDX guest to run with non-trivial topology configuration.
+
+v5:
+ - Rebased to current tip tree;
+v4:
+ - Drop unnecessary enumeration;
+ - Drop TDG.SYS.RD wrapper;
+ - CC stable@ for SEPT disable patch;
+ - Update commit messages;
+v3:
+  - Update commit messages;
+  - Rework patches 3/4 and 4/4;
+v2:
+  - Rebased;
+  - Allow write to TDCS_TD_CTLS to fail;
+  - Adjust commit messages;
+
+Kirill A. Shutemov (4):
+  x86/tdx: Introduce wrappers to read and write TD metadata
+  x86/tdx: Rename tdx_parse_tdinfo() to tdx_setup()
+  x86/tdx: Dynamically disable SEPT violations from causing #VEs
+  x86/tdx: Enable CPU topology enumeration
+
+ arch/x86/coco/tdx/tdx.c           | 140 +++++++++++++++++++++++++-----
+ arch/x86/include/asm/shared/tdx.h |  13 ++-
+ 2 files changed, 130 insertions(+), 23 deletions(-)
+
+-- 
+2.43.0
+
 
