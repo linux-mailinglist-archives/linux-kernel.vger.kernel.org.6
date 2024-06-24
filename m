@@ -1,185 +1,153 @@
-Return-Path: <linux-kernel+bounces-227518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AB3691528A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:34:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F4A91529A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B552A286932
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:34:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A89B1F2106F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3529A19D089;
-	Mon, 24 Jun 2024 15:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E6519CCFB;
+	Mon, 24 Jun 2024 15:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pT3MAgxs"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EXFGOj0e"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B7419CD0B;
-	Mon, 24 Jun 2024 15:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC071EB48
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719243216; cv=none; b=nsHwDtf8up+2FiYlUs1wK/Ad5rajkavot+U8HQqZuerKr2ryk/OmyehMgkBWgk39wMr3wnhC/TBkuwXI/E8lPaKGRpo7Cv5kXOyK5J8hrhI/n9C0YYP0ThVJZLeEE5FkWkKK0YHGrPngVUoPPjteZK/Hbk3VTtRHc08Y57g3lrk=
+	t=1719243393; cv=none; b=YMeiMdJ1/Js+UTVPOQEfdP+2R/BGmV9CpsvpZ8doqkn9fRrdCiUNvoXRY4bWqGt6fqEZ2yryZjLUqEtL44F1vNZQaoaGP70Va3x69uN3iWmX7HQt55w+NF6ufXaJXAXs3ZL9f/+AaKbZsyRpc75t6oVAA8gqtqb7uwYXEcebjkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719243216; c=relaxed/simple;
-	bh=5ykkTM3tDcbuQoWGhaZLK27SIENhfMfemlid8CPn4Kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mRD0uA/z20ztWVxIk76eXwuwKxx8AKX5TzIPf+s1YfUTCOc3d1em7MEjChI/EnVb+QlbGVis/1LVM4FcDzW6N0ZYEQYRC+BE+kBswfbzp1AMTNDHSOfKDkNQ+ezaFTDbDvagppo1igPl3i1r4zNyEV1ZduGJ0CZiERL7d51bzm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pT3MAgxs; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OFWthF023432;
-	Mon, 24 Jun 2024 15:33:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
-	DwKF700X7v7NDl8u9rp3XuBAKSkCRL78vee6uDoYhZs=; b=pT3MAgxsueUWoawV
-	sWNaK4n24wRXLrEhgjGBi5zyCQ4vlV5ljyiV33kfo1X8/rFfHgBy1isr+DkjXgf/
-	69Si6DZxC7kKvRZj4eu97ebTlkqMhfZgHLQhsG/htZyUdwEdkT/IfKmU5rGTONcF
-	XWaFpkRIsgIw/vOKrQ/f5vC5LieQ56AOTe6SdJ7vLoIvIRClGXTuBXERU1FHerRU
-	GaFlMPtDPf8nJ6V2mmLrJTXSoJrx8rC2MZQXYnUPAM0H6r6QnAmKyUDTrzn7IcGB
-	2SRwF+fuzZ0rvIKNK+qCnPs7fMZ6MiuEdoXH3x6/oTmzNOMyGgmX8APw03V8hs95
-	rZW9lg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yybhar044-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 15:33:30 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45OFXTH8025268;
-	Mon, 24 Jun 2024 15:33:29 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yybhar042-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 15:33:29 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OFJwi9018103;
-	Mon, 24 Jun 2024 15:33:29 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yx8xu1ryy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 15:33:28 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45OFXN0U56033664
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Jun 2024 15:33:25 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F26752004E;
-	Mon, 24 Jun 2024 15:33:22 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C21E02004B;
-	Mon, 24 Jun 2024 15:33:22 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.152.224.66])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Jun 2024 15:33:22 +0000 (GMT)
-Date: Mon, 24 Jun 2024 17:33:21 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Christoph Schlameuss <schlameuss@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David
- Hildenbrand <david@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] s390/kvm: Reject memory region operations for ucontrol
- VMs
-Message-ID: <20240624173321.6b27b2a4@p-imbrenda>
-In-Reply-To: <20240624095902.29375-1-schlameuss@linux.ibm.com>
-References: <20240624095902.29375-1-schlameuss@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1719243393; c=relaxed/simple;
+	bh=IvzxzwoU9wgfno97OQYnGfsIOXaDQHq7IrJHTBf1rlk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F0k3BuGwh6PSsF5V7Y4BGSm1Wcn2eLQCNm6JnMHg0zR0QRnuv2e1oi/l7IZ0Z+69BhPro+6JYsc6iyysJBIedDJmJqG3MS+hkue3Srap2Hn4FsWLrV8454HVPmsdzW71isw7iZWjT9KJYbVWKprRna2OQEdZh/2/rlMwCd/mrLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EXFGOj0e; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719243392; x=1750779392;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=IvzxzwoU9wgfno97OQYnGfsIOXaDQHq7IrJHTBf1rlk=;
+  b=EXFGOj0e+GgESddxE2ZgHh2pgpRj13nS9LbXPWDNFluSCKdcvDve8ojI
+   rrIr5y4Qz42pbueVpCiNkJlgN8+/ZnX7aXFEooQeqjyKA/+TJ0A9HeAXA
+   LdzKPOdqDaJvId8avhoAqLsYmZGdk5KVibS/aXen3Ocoxv+g36kdcWMtA
+   5Ik7Jus3f3AcjIDsFmSfoFILlEIzVdzkU+tR2Ido4bz1GpIRs6fPqh3g2
+   jUfXv8wUAKzvORze2HTn1QopwtBHDfu6ygX3kOdozNd+HJVuPwhn5Jkxn
+   tC0Qt1Ch7os0om6K2ATC5cT3ND3ACjpOod/ZgkEeJwp+9lTHNNzL7ot/j
+   w==;
+X-CSE-ConnectionGUID: x3g15t+USw6AI33h5RSOug==
+X-CSE-MsgGUID: XllAsDU7RzCgPnWnb/9ghA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="16364067"
+X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
+   d="scan'208";a="16364067"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 08:36:31 -0700
+X-CSE-ConnectionGUID: O8JDtPZbS0iI3nh4th3Z/Q==
+X-CSE-MsgGUID: TDcpJABiRxG3Zs5kmQQWmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
+   d="scan'208";a="43147551"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 08:36:31 -0700
+Received: from [10.212.44.172] (kliang2-mobl1.ccr.corp.intel.com [10.212.44.172])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 46F6920B5703;
+	Mon, 24 Jun 2024 08:36:29 -0700 (PDT)
+Message-ID: <7774dffe-4e1c-4a86-826e-dbac8e82dc74@linux.intel.com>
+Date: Mon, 24 Jun 2024 11:36:28 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH 05/12] perf/x86: Add config_mask to represent
+ EVENTSEL bitmask
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com,
+ alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+ ak@linux.intel.com, eranian@google.com,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>
+References: <20240618151044.1318612-1-kan.liang@linux.intel.com>
+ <20240618151044.1318612-6-kan.liang@linux.intel.com>
+ <20240620074402.GS31592@noisy.programming.kicks-ass.net>
+ <4cce9f37-7698-418d-a9c5-4aa1dc01b719@linux.intel.com>
+ <ff25c37f-cb62-4687-adaa-596e8fc3a52a@linux.intel.com>
+ <20240624082809.GC31592@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240624082809.GC31592@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: erNYpFx8aIUkWEDaftjifnsw6_yIPEi8
-X-Proofpoint-ORIG-GUID: j5cn5q80zcd2a9G4n2SbR4IvPjNl5u8H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_12,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 bulkscore=0 mlxscore=0 spamscore=0 mlxlogscore=866
- adultscore=0 clxscore=1015 suspectscore=0 malwarescore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406240123
 
-On Mon, 24 Jun 2024 11:59:02 +0200
-Christoph Schlameuss <schlameuss@linux.ibm.com> wrote:
 
-> This change rejects the KVM_SET_USER_MEMORY_REGION and
-> KVM_SET_USER_MEMORY_REGION2 ioctls when called on a ucontrol VM.
-> This is neccessary since ucontrol VMs have kvm->arch.gmap set to 0 and
-> would thus result in a null pointer dereference further in.
-> Memory management needs to be performed in userspace and using the
-> ioctls KVM_S390_UCAS_MAP and KVM_S390_UCAS_UNMAP.
-> 
-> Also improve s390 specific documentation for KVM_SET_USER_MEMORY_REGION
-> and KVM_SET_USER_MEMORY_REGION2.
-> 
-> Signed-off-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
 
-Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+On 2024-06-24 4:28 a.m., Peter Zijlstra wrote:
+> On Fri, Jun 21, 2024 at 02:34:35PM -0400, Liang, Kan wrote:
+>>
+>>
+>> On 2024-06-20 12:16 p.m., Liang, Kan wrote:
+>>>
+>>>
+>>> On 2024-06-20 3:44 a.m., Peter Zijlstra wrote:
+>>>> On Tue, Jun 18, 2024 at 08:10:37AM -0700, kan.liang@linux.intel.com wrote:
+>>>>> From: Kan Liang <kan.liang@linux.intel.com>
+>>>>>
+>>>>> Different vendors may support different fields in EVENTSEL MSR, such as
+>>>>> Intel would introduce new fields umask2 and eq bits in EVENTSEL MSR
+>>>>> since Perfmon version 6. However, a fixed mask X86_RAW_EVENT_MASK is
+>>>>> used to filter the attr.config.
+>>>>>
+>>>>
+>>>>> @@ -1231,6 +1233,11 @@ static inline int x86_pmu_num_counters_fixed(struct pmu *pmu)
+>>>>>  	return hweight64(hybrid(pmu, fixed_cntr_mask64));
+>>>>>  }
+>>>>>  
+>>>>> +static inline u64 x86_pmu_get_event_config(struct perf_event *event)
+>>>>> +{
+>>>>> +	return event->attr.config & hybrid(event->pmu, config_mask);
+>>>>> +}
+>>>>
+>>>> Seriously, we're going to be having such major event encoding
+>>>> differences between cores on a single chip?
+>>>
+>>> For LNL, no. But ARL-H may have an event encoding differences.
+>>> I will double check.
+>>
+>> There are two generations of e-core on ARL-H. The event encoding is
+>> different.
+>>
+>> The new fields umask2 and eq bits are enumerated by CPUID.(EAX=23H,
+>> ECX=0H):EBX. They are supported by CPU 11 but not CPU 12.
+>>
+>> CPU 11:
+>>    0x00000023 0x00: eax=0x0000000f ebx=0x00000003 ecx=0x00000008
+>> edx=0x00000000
+>> CPU 12:
+>>    0x00000023 0x00: eax=0x0000000b ebx=0x00000000 ecx=0x00000006
+>> edx=0x00000000
+>>
+> 
+> *groan*...
+> 
+> So we're going to be having 3 PMUs on that thing I suppose. Oh well.
 
-> ---
->  Documentation/virt/kvm/api.rst | 12 ++++++++++++
->  arch/s390/kvm/kvm-s390.c       |  3 +++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index a71d91978d9e..eec8df1dde06 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -1403,6 +1403,12 @@ Instead, an abort (data abort if the cause of the page-table update
->  was a load or a store, instruction abort if it was an instruction
->  fetch) is injected in the guest.
->  
-> +S390:
-> +^^^^^
-> +
-> +Returns -EINVAL if the VM has the KVM_VM_S390_UCONTROL flag set.
-> +Returns -EINVAL if called on a protected VM.
-> +
->  4.36 KVM_SET_TSS_ADDR
->  ---------------------
->  
-> @@ -6273,6 +6279,12 @@ state.  At VM creation time, all memory is shared, i.e. the PRIVATE attribute
->  is '0' for all gfns.  Userspace can control whether memory is shared/private by
->  toggling KVM_MEMORY_ATTRIBUTE_PRIVATE via KVM_SET_MEMORY_ATTRIBUTES as needed.
->  
-> +S390:
-> +^^^^^
-> +
-> +Returns -EINVAL if the VM has the KVM_VM_S390_UCONTROL flag set.
-> +Returns -EINVAL if called on a protected VM.
-> +
->  4.141 KVM_SET_MEMORY_ATTRIBUTES
->  -------------------------------
->  
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index 82e9631cd9ef..854d0d1410be 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -5748,6 +5748,9 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
->  {
->  	gpa_t size;
->  
-> +	if (kvm_is_ucontrol(kvm))
-> +		return -EINVAL;
-> +
->  	/* When we are protected, we should not change the memory slots */
->  	if (kvm_s390_pv_get_handle(kvm))
->  		return -EINVAL;
-> 
-> base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+Yes, 3 PMUs. 1 PMU For p-core. The other 2 PMUs are for two different
+types of e-cores.
+
+Thanks,
+Kan
 
 
