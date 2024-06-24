@@ -1,161 +1,143 @@
-Return-Path: <linux-kernel+bounces-226776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44483914382
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:21:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A244914386
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B98A0B22C82
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:21:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 160FFB228AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A2D3BBF2;
-	Mon, 24 Jun 2024 07:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F5C3D0A9;
+	Mon, 24 Jun 2024 07:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kHG0UnOn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zrSkIsGv"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877CD381B1;
-	Mon, 24 Jun 2024 07:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C95C1F19A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719213703; cv=none; b=mm+xgWhOF0t+gCxfOcsoXyIDyQiw+QiAqlWobF6DTk0ZtZbvMtMufnBQtMPpEIc1zCOeqb4rzwuSjJGLCKr0HnDSL3cIxKo9eGW+JUiWOdg24J8zP1806hbjCyG3M7aaWVhzBKEtjQOQH4+iyCoq7jXWM7CfRFIxfBeBSA3Po4E=
+	t=1719213762; cv=none; b=YmFoOO2LtV3gUqMdkBZdMAd8xs0dE255psxKpAu8B82NBJPUBpZJdAnTX1c6jXrpjJngsAGKb/kAWQeUi4aN/NMVNbG8hau8dTROF79WFeJ287xf9Q2x3+5zIqH4EovHJ6e3f8dpfbe5zE2OtfjFpmbGBztZvXhkiNJE82Jyx44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719213703; c=relaxed/simple;
-	bh=pFg39WHvyuNoS/V8IG/f3JCgPbumbcLNExlI0I7fPtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MN/Nerbu0f7CyApT9h0vDpevTaYugYZRmlPtqUSwlOPLaw0wsw/pIE3raWXRN/jZcAtwVWFpC1/iQqdtSzPAynEOLv7AoVTJdQUkvoOh/at+bKb+5a94Ew9NmO2IGHCOs2hsR3AVGH8wmfWI7OaQbqjpZyZoImz8I1yXRhctWB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kHG0UnOn; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719213702; x=1750749702;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pFg39WHvyuNoS/V8IG/f3JCgPbumbcLNExlI0I7fPtQ=;
-  b=kHG0UnOny2/w7z9El+zuMVTXm3q53ToAA3iCSW4e2zFgwfdyCKwBi1s7
-   RKghyo6qdLb7XqsagcoOD/D/MKRFULAACEo8LZjOXWHX6r7rGCt2JBXDb
-   OE/Ds3GFaTRxSdezR6UKObhJ+unX5Vbodw0uulAOh8c23iNRSxEfqP6iv
-   JWBnt8NcEIRkHrzJuyK6z+xN56YyEkmMj2pnniUlZ51cHSViv4hE4UCBd
-   1x60i09Ed+Mpw7mis9Per7eeqr4JyBRvzcxWEQf7cYMYMBDFEZ4q0CLaZ
-   4e0RiwVZTRhm36kqMF44YT4i4lXoeP/8jdZKAiNymEaJ3cm5MYPvuCC8W
-   g==;
-X-CSE-ConnectionGUID: Cg3Npu3FQ46HueVnMe+NOA==
-X-CSE-MsgGUID: P+2VGZdgQCO+KNwOgrg25w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="33712958"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="33712958"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 00:21:41 -0700
-X-CSE-ConnectionGUID: F5nFQP3BSKiyvJ2t9Mej0Q==
-X-CSE-MsgGUID: BNcv3AStT0+HHHrP41+jHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="48158488"
-Received: from unknown (HELO tlindgre-MOBL1) ([10.245.247.58])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 00:21:36 -0700
-Date: Mon, 24 Jun 2024 10:21:32 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] serial: core: Add
- serial_base_match_and_update_preferred_console()
-Message-ID: <ZnkefKEyjuPLkJF8@tlindgre-MOBL1>
-References: <20240620124541.164931-1-tony.lindgren@linux.intel.com>
- <20240620124541.164931-5-tony.lindgren@linux.intel.com>
- <ZnV0B4wakVehASn4@pathway.suse.cz>
+	s=arc-20240116; t=1719213762; c=relaxed/simple;
+	bh=jZ8x/WkPGnEIjqc1+cqPSKViLKaJLvzVCLyIqHHVX5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sEc8QcgbmBDdXeHH5JMN6pBW1+4k5xADUbDY8xBi7QVZBeWKjSqK8PqxJekS4HHCBuGwgwd48KeKI/C0f0uZbECYoIAFRuo7s7PHgNijPQx+mVzWneyKa9pNTL1nvqUkjHmmaWmeuJ9QTG1/QfbOxJLKFPzCXdikckZ6+mFVbB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zrSkIsGv; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a72585032f1so48374466b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 00:22:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719213759; x=1719818559; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P49JDi1xXPAYpLbhrU13RiWekT68KiQTL8uhFa+r3Dc=;
+        b=zrSkIsGvgHhk5b6Unez81Ifk6PzTi5zIkEHCW9UaNdHLWyy21KY6jwuZG6c9G9SKmv
+         Natychqkyjv9UzlwDZzPU5A2jJXxfmvWzMZNHLrquQRQnZ8K4J3evnBjdGNcKeWx6//O
+         UCkXdqmn7KtidFccWISOvgVVClWHiv7EueB1LmMVF0DLKb0sbzGcDJnbWFYrU1skD50A
+         /J6ZEWleZk9swXNkvbQw7bhNnAtySn6aQ0XkxfnJAvqRH/ZT2GOxDCeVkwQ0CsIFIRv8
+         zjPwMV1AAP4kcXTBwONWHuh3tZNYnyux1MKydQbspRwPrmtePSpQO3V/zrjMa4wtJgJi
+         MgOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719213759; x=1719818559;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P49JDi1xXPAYpLbhrU13RiWekT68KiQTL8uhFa+r3Dc=;
+        b=s2ETiXgOaR2wslhLhwUGWuKIMbOuFShBhjIGIgQowAufIG4F0wNHc+Me12YfHBIaF9
+         lH0QVh1SQE9aoyDRJ5hVOwsPM0yYdisKphpcuJuy8ADlXkFk7vWbH1ltDi96kGhIK1rN
+         fTE9onC9TFP7PR/Wl0Snlm09Z4vJK9a36wmVuzAKIFQaC1wd0IBe5JOOScXVNATFKXPU
+         lYndZ5VE+XhfX4OxM/YG5rrinyNRAYGRRpAxozrFoqsEnAkwLBdpFvK1pBxEeNOekFlD
+         mD1gf/PUHwFJuLc4PZEHGGURkt1b/4FLtxVXihOepUzKf1rWT9BrXnZ/+trGKfSa9d49
+         A16Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWh4FSU7Fgv9s4X3cs57yNMjBFJO+qD9Xruo0hWyrrKJ7xDy6ZuyhS/3DgExbmb611abTy7mobORGwyDzKBYD5mA3xudSyBSpTwLqZ+
+X-Gm-Message-State: AOJu0Yx2XCuEn7WwHVgU0SolhW/FycbF9FgeA3OZoTSInkdjIKIKhLXU
+	Jf9tS0evyG/lOqcdxOqoQG6nxb01wsexorZL+a/UVd3qskubmXj0GkEw9nxDYpM=
+X-Google-Smtp-Source: AGHT+IEMa8s/IzqM0+yHmNkv5YbQAah63TcfDGwvHHxW+U4X+runaXjbqEZ9o5SWB9bNGeVYIuUvmA==
+X-Received: by 2002:a17:906:9c96:b0:a72:5598:f03d with SMTP id a640c23a62f3a-a725598f1dfmr116904766b.59.1719213759525;
+        Mon, 24 Jun 2024 00:22:39 -0700 (PDT)
+Received: from [192.168.1.172] ([93.5.22.158])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a710595adedsm238162166b.214.2024.06.24.00.22.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 00:22:39 -0700 (PDT)
+Message-ID: <cc50cb9e-cbae-43dc-8845-da11a6fb7074@baylibre.com>
+Date: Mon, 24 Jun 2024 09:22:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnV0B4wakVehASn4@pathway.suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 12/15] drm/mediatek: add MT8365 SoC support
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jitao Shi <jitao.shi@mediatek.com>, CK Hu <ck.hu@mediatek.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Fabien Parent <fparent@baylibre.com>
+References: <20231023-display-support-v4-0-ed82eb168fb1@baylibre.com>
+ <20231023-display-support-v4-12-ed82eb168fb1@baylibre.com>
+ <CAAOTY__ZLjuJHnGsVLvGkFK0WhJJ6r=miqewRHsPCJhqO=8qoA@mail.gmail.com>
+Content-Language: en-US
+From: Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <CAAOTY__ZLjuJHnGsVLvGkFK0WhJJ6r=miqewRHsPCJhqO=8qoA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 21, 2024 at 02:37:27PM +0200, Petr Mladek wrote:
-> On Thu 2024-06-20 15:45:29, Tony Lindgren wrote:
-> > Let's add serial_base_match_and_update_preferred_console() for consoles
-> > using DEVNAME:0.0 style naming.
-> > 
-> > The earlier approach to add it caused issues in the kernel command line
-> > ordering as we were calling __add_preferred_console() again for the
-> > deferred consoles.
-> > 
-> > Signed-off-by: Tony Lindgren <tony.lindgren@linux.intel.com>
-> 
-> Looks good and seems to work well:
-> 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
-> Tested-by: Petr Mladek <pmladek@suse.com>
 
-OK thanks for testing again.
 
-> See an idea below.
->
-> > --- a/drivers/tty/serial/serial_base_bus.c
-> > +++ b/drivers/tty/serial/serial_base_bus.c
-...
-> > +int serial_base_match_and_update_preferred_console(struct uart_driver *drv,
-> > +						   struct uart_port *port)
-> > +{
-> > +	const char *port_match __free(kfree) = NULL;
-> > +	int ret;
-> > +
-> > +	port_match = kasprintf(GFP_KERNEL, "%s:%d.%d", dev_name(port->dev),
-> > +			       port->ctrl_id, port->port_id);
-> > +	if (!port_match)
-> > +		return -ENOMEM;
+On 21/06/2024 17:24, Chun-Kuang Hu wrote:
+> Hi, Alexandre:
 > 
-> The name is going to be compared with:
-> 
-> struct console_cmdline
-> {
-> [...]
-> 	char	devname[32];			/* DEVNAME:0.0 style device name */
-> 
-> It looks like an overkill to allocate such a small buffer. It would
-> be perfectly fine to use a buffer on stack.
-> 
-> Well, we would need to define somewhere (likely in include/linux/console.h):
-> 
-> #define CONSOLE_DEVNAME_LEN 32
-> 
-> and then do
-> 
-> 	char port_match[CONSOLE_DEVNAME_LEN];
-> 	int len;
-> 
-> 	len = snprintf(port_match, ARRAY_SIZE(port_match), "%s:%d.%d",
-> 		       dev_name(port->dev), port->ctrl_id, port->port_id);
-> 	if (len >= ARRAY_SIZE(port_match)) {
-> 		pr_warn("Console devname does not fit into the buffer: "%s:%d.%d\n",
-> 			 dev_name(port->dev), port->ctrl_id, port->port_id);
-> 		return -ENOMEM;
-> 	}
-> 
-> The advantage is that it would warn when there are longer device names.
-> It would help to catch situations when CONSOLE_DEVNAME_LEN is not big enough.
+> <amergnat@baylibre.com>  於 2024年5月23日 週四 下午8:49寫道：
+>> From: Fabien Parent<fparent@baylibre.com>
+>>
+>> Add DRM support for MT8365 SoC.
+>>
+>> Signed-off-by: Fabien Parent<fparent@baylibre.com>
+>> Reviewed-by: AngeloGioacchino Del Regno<angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: Alexandre Mergnat<amergnat@baylibre.com>
+>> ---
+>>   drivers/gpu/drm/mediatek/mtk_drm_drv.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> index ce8f3cc6e853..e1c3281651ae 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> @@ -318,6 +318,10 @@ static const struct mtk_mmsys_driver_data mt8195_vdosys1_driver_data = {
+>>          .mmsys_dev_num = 2,
+>>   };
+>>
+>> +static const struct mtk_mmsys_driver_data mt8365_mmsys_driver_data = {
+>> +       .mmsys_dev_num = 1,
+> You do not describe the pipeline information here. I think display
+> function would not work.
 
-Good idea.
+Hi Chun-Kuang,
 
-> It might be done in a separate patch.
+I don't describe the pipeline information here because I do it
+in the DTS thanks to the OF graphs Angelo's serie [1].
+I've tested DSI and DPI display, they work correctly ;)
 
-Sounds good to me.
+[1] https://lore.kernel.org/all/20240618101726.110416-1-angelogioacchino.delregno@collabora.com/
 
+-- 
 Regards,
-
-Tony
+Alexandre
 
