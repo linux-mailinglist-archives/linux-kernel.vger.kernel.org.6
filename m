@@ -1,172 +1,122 @@
-Return-Path: <linux-kernel+bounces-226909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869B5914592
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:59:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C291A914597
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13614280EBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:59:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A931C226BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B4F12F5A6;
-	Mon, 24 Jun 2024 08:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D61A12F5A6;
+	Mon, 24 Jun 2024 08:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m11yaG0n"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="MzkgpNdA"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60110127E0F;
-	Mon, 24 Jun 2024 08:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96D112E1D4
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719219542; cv=none; b=b7npSDLEervaInblWRgVcAj1DkrNEiWf5UYhnJD0O/vJooUN6i0vA3TGxcvvF2NRHAc4xSpxRWsdnxTJqrBWcDCBwdptdrQOfdx7bYd2P2rRt8/VFIYIb3Jxs7lf7Ii2Q5hNRPzbGhcLgBm3WHgC41buC07lQJQ6eHm0ozArntk=
+	t=1719219565; cv=none; b=NpG9IEEE1fhabIejbyStmFWuMG3xypit6AX+dLfHU5jTtwns4Aif3ZRFu42xphHJ0icopc0mpx+BfmbsIHrhZAleOC6pYLMoYAkMlURDk8RXG2FJJYgqGgbAw7jRWMkYtiMHeNeTVtQOk+GaslRNJ+5Vs3O5coOhnLCXKG5Uv8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719219542; c=relaxed/simple;
-	bh=ZhfCAPfqgNYy4IYD6ThGSxHwosZDfswjwRJxbI1mGxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mD93EdrJ8l+igbB7RIW5oXwc5OcrxIZq5m2Jy0XdsQdpnnsKfmy6Vl+iBO8yUPkX4pE3FH+ry5Z8ouad+LAd8YfwalwxwC7yFsKqku9uQ9OWasK3ftPExqleyQSiEdL0K6qWlSn+K7obGkPYI70uo+TH26bFKj152CW6df1Ygqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m11yaG0n; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8ZNbe032231;
-	Mon, 24 Jun 2024 08:58:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tGJtOpqBIGwTpmqQINRRFGfIw6RK45oXzRRb9w2IWoI=; b=m11yaG0nDIuS5Krw
-	Bayzb5INXKll0yrr2GsQX3lY2jzaMm1n90OSi8vp8NRGwU6fVLV9BNEUzuYwS1ti
-	KejjfTlEiSX3B/O79Bft69+WyLaCc05yiQXjfAJeQT33BK3fJNCiR0bIXD2tDxJX
-	QDE/BJJ64ZqYtz3sUoeyPBrM45Qn+aN2rf1vydpyerZF+HxsjzIP5o5KIdzWrtOg
-	wWImQF5QiXDCOWJQumNSSRf3v6UkkJerIalIdphIOKgbFspH8qfc4gNe68i79z2A
-	vTcL5URMSmCarWm+laQ2SHiRqXHcYBKwdMXc/A4e9datDnP8XEruo6E16baeTLhY
-	Ec1FGg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv31xy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 08:58:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45O8wuKr006141
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 08:58:56 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
- 2024 01:58:51 -0700
-Message-ID: <2f238fe4-aa67-b311-7c76-a67359587268@quicinc.com>
-Date: Mon, 24 Jun 2024 14:28:48 +0530
+	s=arc-20240116; t=1719219565; c=relaxed/simple;
+	bh=hdsmDqmNgGZQgfRkYZ6dfoEvN0ahnTXGnc7hhzCQrmg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h9VPaHodaOp9chrPwp8Pq9vA10HsnQNSCvsunGWBin1STaviZtQP3Y9Stq7OP1J/QSQcIa3LTkSlxUQfBLEb21elqnHc7gQ8gj+o0YxIB5PveNegD/XZvjasGKl3ZsCP8c0qj9r+++qfacuAXY/F6tmZWd6kDrIhd9XhpBIPtPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=MzkgpNdA; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7955e1bf5f8so263680985a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:59:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1719219563; x=1719824363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hdsmDqmNgGZQgfRkYZ6dfoEvN0ahnTXGnc7hhzCQrmg=;
+        b=MzkgpNdA+GFVqSzcGBdQV5+67hLPJQv//dxUXjRiCZwxk0Pbb6cUCEqgy4VTTNiygg
+         HGPX4tQv3bEkRG4s0S7lzRevYKJJqlsUjgFUQ2kXYqGa3nS5FxwDcKzyO2P5IP7QiFyh
+         hAxtVFyl4A11u3NhIa++NuzEn86CRqcT9K1Fbofl6/XvmFKQPityb2U0NEOr3pqr1Nay
+         bbeRukitLOAAgtaHOMtkJahG1QwhzuzBY4FtUUqiv2yfhBr03ojzwz/GB1i7gzAdxtIN
+         Xng3ZSw3PsyDedFYdaWwYsn1ASWr/KLdTRIxDOytqaOxM8K8rLBdvIE3YJuQVWWhVj2P
+         dp0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719219563; x=1719824363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hdsmDqmNgGZQgfRkYZ6dfoEvN0ahnTXGnc7hhzCQrmg=;
+        b=RKIeJZHQ7xHNo0fjTzu0y+yPbCCPk+40pk1m1kDajvv74vYn+hneyXke/xHBaeKKKi
+         OyVnd+GIhu4QBezseA6bxDiLlVXyQgMl9+9RtoNh8gub3aTTZXGBVTe4+kzf2m/y527O
+         i75Dyqs/Xe/aS+ZauCz+EYSFdycUDZxI2Nt5SAHGxjk+R0kMfcjTXPYymfsGPqHH43N+
+         ykgRuID8GM4D0NFEEeIvaFol8+Q5OrSKrIC5CnJpioSqqGd42INRN7diysNEMpzi1a8o
+         HPMCPduhBrmc4mPRp81aXXqyxKIEMinTgDhVMxQf4lEvlGUWnbjR+7HRhoyQzt8Lerzp
+         242g==
+X-Forwarded-Encrypted: i=1; AJvYcCUMNnM+5ZEtyj3IvVhQNxOPFkW5IC8vFbOYgCNyxyDbFdd00myulDf7F3hwOsZ5bC+IbzZ+CbgZr+9Ox8M3crCoe2qfy/qIyj5Swy45
+X-Gm-Message-State: AOJu0Yxfv3vVdEO3QSw1e8Pki9GSIZIkPwth5uO4wI72lEdTsLFnbBst
+	vv661OzVWHozXqQTFx8NCw5uPjzf1UJqeiKnNtvBq+Pq56pVD4VCYLYNmAC4nl+MujQkSQ8XHZP
+	T9tlszWfYiocd3ObTkqtL0qdWwsA6mK2Pe77DQQ==
+X-Google-Smtp-Source: AGHT+IHJdukmHTX31XZGqN8Ya5O7xqbZeOSn9ad1olNhKCpFsHEHdPHP6m4H5tAF93YKuWVFl5Mnqdf3Ba8kIeeVBLc=
+X-Received: by 2002:a05:6214:4a45:b0:6b4:ff32:8287 with SMTP id
+ 6a1803df08f44-6b5409be0b9mr37950676d6.22.1719219562855; Mon, 24 Jun 2024
+ 01:59:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V2 2/3] soc: qcom: icc-bwmon: Allow for interrupts to be
- shared across instances
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <djakov@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <srinivas.kandagatla@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <quic_rgottimu@quicinc.com>,
-        <quic_kshivnan@quicinc.com>, <conor+dt@kernel.org>,
-        <abel.vesa@linaro.org>
-References: <20240618154306.279637-1-quic_sibis@quicinc.com>
- <20240618154306.279637-3-quic_sibis@quicinc.com>
- <d4f3rlk3jgqegxvto2b6vyemspommtsbs3ixqgan2rmknet3je@ohonicqa2iqy>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <d4f3rlk3jgqegxvto2b6vyemspommtsbs3ixqgan2rmknet3je@ohonicqa2iqy>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eqOtmyj0__tdEnBSUJFI07Tw83tklCfV
-X-Proofpoint-ORIG-GUID: eqOtmyj0__tdEnBSUJFI07Tw83tklCfV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_08,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406240071
+References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+ <20240620175657.358273-7-piotr.wojtaszczyk@timesys.com> <ZnkGcwd8M1QFfmxl@matsya>
+In-Reply-To: <ZnkGcwd8M1QFfmxl@matsya>
+From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Date: Mon, 24 Jun 2024 10:59:11 +0200
+Message-ID: <CAG+cZ06R5P1g+1Pk3gbQ6Yod0mBM41dFTgvnBWg61HZFUtmx-w@mail.gmail.com>
+Subject: Re: [Patch v4 06/10] dmaengine: Add dma router for pl08x in LPC32XX SoC
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, "J.M.B. Downing" <jonathan.downing@nautel.com>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Yangtao Li <frank.li@vivo.com>, Arnd Bergmann <arnd@arndb.de>, Li Zetao <lizetao1@huawei.com>, 
+	Chancel Liu <chancel.liu@nxp.com>, Michael Ellerman <mpe@ellerman.id.au>, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-sound@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, Markus Elfring <Markus.Elfring@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 24, 2024 at 7:39=E2=80=AFAM Vinod Koul <vkoul@kernel.org> wrote=
+:
+> Any reason why dmaengine parts cant be sent separately, why are they
+> clubbed together, I dont see any obvious dependencies...
 
+The I2S driver depends on the dmaengine parts
 
-On 6/19/24 00:25, Dmitry Baryshkov wrote:
-> On Tue, Jun 18, 2024 at 09:13:05PM GMT, Sibi Sankar wrote:
->> The multiple BWMONv4 instances available on the X1E80100 SoC use the
->> same interrupt number. Mark them are shared to allow for re-use across
->> instances. Handle the ensuing race introduced by relying on bwmon_disable
->> to disable the interrupt and coupled with explicit request/free irqs.
->>
->> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
->> ---
->>
->> v2:
->> * Use explicit request/free irq and add comments regarding the race
->>    introduced when adding the IRQF_SHARED flag. [Krzysztof/Dmitry]
->>
->>   drivers/soc/qcom/icc-bwmon.c | 14 +++++++++++---
->>   1 file changed, 11 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
->> index fb323b3364db..4a4e28b41509 100644
->> --- a/drivers/soc/qcom/icc-bwmon.c
->> +++ b/drivers/soc/qcom/icc-bwmon.c
->> @@ -781,9 +781,10 @@ static int bwmon_probe(struct platform_device *pdev)
->>   	bwmon->dev = dev;
->>   
->>   	bwmon_disable(bwmon);
->> -	ret = devm_request_threaded_irq(dev, bwmon->irq, bwmon_intr,
->> -					bwmon_intr_thread,
->> -					IRQF_ONESHOT, dev_name(dev), bwmon);
->> +
->> +	/* SoCs with multiple cpu-bwmon instances can end up using a shared interrupt line */
-> 
-> ... using devm_ here might result in the IRQ handler being executed
-> after bwmon_disable in bwmon_remove()
+> On 20-06-24, 19:56, Piotr Wojtaszczyk wrote:
+> > LPC32XX connects few of its peripherals to pl08x DMA thru a multiplexer=
+,
+> > this driver allows to route a signal request line thru the multiplexer =
+for
+> > given peripheral.
+>
+> What is the difference b/w this and lpc18xx driver, why not reuse that
+> one?
 
-Ack
+The lpc18xx used the same dma peripheral (pl08x) but the request signal
+multiplexer around pl08x is completely different - there are no common part=
+s.
 
-> 
->> +	ret = request_threaded_irq(bwmon->irq, bwmon_intr, bwmon_intr_thread,
->> +				   IRQF_ONESHOT | IRQF_SHARED, dev_name(dev), bwmon);
->>   	if (ret)
->>   		return dev_err_probe(dev, ret, "failed to request IRQ\n");
->>   
->> @@ -798,6 +799,13 @@ static void bwmon_remove(struct platform_device *pdev)
->>   	struct icc_bwmon *bwmon = platform_get_drvdata(pdev);
->>   
->>   	bwmon_disable(bwmon);
->> +
->> +	/*
->> +	 * Handle the race introduced, when dealing with multiple bwmon instances
->> +	 * using a shared interrupt line, by relying on bwmon_disable to disable
->> +	 * the interrupt and followed by an explicit free.
->> +	 */
-> 
-> This sounds more like a part of the commit message. The comment before
-> request_threaded_irq() should be enough.
-
-Ack
-
--Sibi
-
-> 
->> +	free_irq(bwmon->irq, bwmon);
->>   }
->>   
->>   static const struct icc_bwmon_data msm8998_bwmon_data = {
->> -- 
->> 2.34.1
->>
-> 
+--=20
+Piotr Wojtaszczyk
+Timesys
 
