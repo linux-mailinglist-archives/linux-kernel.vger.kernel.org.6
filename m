@@ -1,149 +1,181 @@
-Return-Path: <linux-kernel+bounces-227315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 510CD914F45
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:55:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41BA914F46
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3CCD1F216B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98A41C21F73
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538C8142623;
-	Mon, 24 Jun 2024 13:55:23 +0000 (UTC)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EBD1422D2;
+	Mon, 24 Jun 2024 13:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="DKVoMb6t"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEB113A894;
-	Mon, 24 Jun 2024 13:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFE71422C2;
+	Mon, 24 Jun 2024 13:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719237322; cv=none; b=CEavXy0Pw4sUbIoWMWlUEp3ZTo9UmtSV8p67ITmvkAIocDxawyur7dV8YMg4RND57zr01uux8JDVeUhi3eyGaJTrCgH83YKMwMoPsFy6pdNA2dLM1Cny6DcH8BrO9k9dULY6tTo2WFn0w5DyCW3wuKpDRKCIDpE+3JJorHgKwJc=
+	t=1719237360; cv=none; b=g/U2m871mf9aQrHumRznZbuXxVmc+80HG3K5F/0Ba96DOomPISf3zj035RqYJpRGAIHwGbLS81Hr/RfWbR2x2rRQoh5QoR3/fXwtD5CGVPbvQVf25MoGOPIhptCD3j0d+KEFnhfyaLnlSfrn2dzFVXHyo0ujVDQWh20fkpM8egg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719237322; c=relaxed/simple;
-	bh=BZFUuflI2rt5qDzRo1hJ9iNczov2fZ28ct7WuAUVQZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dNaMpIKRuJzEsnRz7yRWX3kKt4m+8zpI6EOi2vZb5vl4EntWjQhnmTRRaevV6UOoh6r5eHOAoLU4GBSehlW316TKKdSOhQ6n6Y7OhW0zMy2J2YKDa+L/jvwJ6iSQ1+yhZr9LAbaB2wpbjfTMEw7ozOKNUbuv1YW0vPF7k2O3F2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-63036fa87dbso34394657b3.1;
-        Mon, 24 Jun 2024 06:55:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719237319; x=1719842119;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=86JZrQvm++3Ut9SWrAYYU+OyHNvZFlbwr3DIXcudg9E=;
-        b=KDiFa/0G26eJTMFX124afEwx6x2LbdzzpqW4vJvVgT+TZgJ5x73ACPOsIdwsRjFL5l
-         Y6h2E5TVlmfiC/Bz3+Ls4upLrS3T4SznBdTv8whJbunNPjXvuzkhWy9I6aS4xsXAGJ2i
-         85u3XSjDAg1rynjg8rCKOxAe77d+I1J3uENxU0a27fgh0gby+2nnk7oXfX7FkXeLuH8g
-         2dv/l2AREhsZs3VUa7bZlNg3CI37sZKSLeIQ/qulPdz0chIg0Qac16LJPKslVHDHUCn2
-         TpHalJeMBubUs/1ig5M9CK3kvxi+xDMDZyEXhqO80Ya5flpNiLZW8AEu6JkagltWD7xp
-         MIdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzCnJ6wNV0bngXbsqESSi5Ahxsu8jmyWstRQxyos4K/TTIktR786TBkUnIIQjMpa3oBtzgaOWB63Qf1LbR9ktL86O0+8px37UdArI2km5XZKKO58det0ybyJGzFm6Xkl8ToKj2ec97BVMKX4sYb/uBbu5nlYPItoLaX+POxU8ukGhJ5iCjtnB42CYf7J+VkxmcD/sK4rrpy+7JryseS7EvMLlhl+B12A==
-X-Gm-Message-State: AOJu0YylOMuExREgIJ4BBPZxTPDanuSQZWVEtcIBUvwuEYV/PZJa2Eo0
-	z+RMVYsVCjxKOEItT6kIj+8DPu6gjlCBjlhveqZ/g6FzOk4UIQe5vf2L12ex
-X-Google-Smtp-Source: AGHT+IHZTjk2LJYgW/me3bBQBc74ptlMmaYYFi/pk94B8+07T3oyZmjgYSQf1dQzbA9uF/7BRBSAFA==
-X-Received: by 2002:a81:d809:0:b0:61b:153:8d98 with SMTP id 00721157ae682-6424c9eea51mr34621717b3.21.1719237319360;
-        Mon, 24 Jun 2024 06:55:19 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f12699541sm27799567b3.66.2024.06.24.06.55.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 06:55:18 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-63bce128c70so31207627b3.0;
-        Mon, 24 Jun 2024 06:55:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWr6D8PWeQu59XCJqHFykQ3SrKiCZNpH/pMzwQdxQkFVV98Q6SPCADELX/ImpG4x3lqQiQqLBInqZsXQU08t2tg9mlQq9bvIBUk9BS+lcmowQeKVqowkN0nrTi8+F6kY3HgNu9qdsabPwvWx8CL85sTnbStQhM8s4ChrkS3/lVjVEnDa5kEGdER4lmrINDzm6xtJVpskDtSvz+daZy0qIE4USZtneZG/Q==
-X-Received: by 2002:a81:8d4d:0:b0:631:399f:2e87 with SMTP id
- 00721157ae682-6424bf5370emr31660657b3.16.1719237318457; Mon, 24 Jun 2024
- 06:55:18 -0700 (PDT)
+	s=arc-20240116; t=1719237360; c=relaxed/simple;
+	bh=5v0Iecke+jsVGTj1OuAtgk56rqbYKIIUBABpMnVGYWQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s6uvJyLrfQ9Zzm2HsMNzoO2/obgKOvoYRtUgOPlF7fczhdl6pDRB/7k+uZDQQvvQ5WJvVBPHb82KFVWp/V59SelIIBnMpIgh/exWer1Y5E5cCBMYo/oVdYBVnKjv0zvY/GgBWub4fAUy6TzrejORf+WMNAEigSWwtz6Lv+8rhBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=DKVoMb6t; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 7818a4d0323111ef99dc3f8fac2c3230-20240624
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=aXkFnl1gbgMS/cNx7a1wFEypeYkF+yjqkt3QVTPW/A4=;
+	b=DKVoMb6tFT9PKxp3WtKBlPdu+3YCc2wVYx+jVjgkz8quwLJTgU9uBMA0qNIRaUKX7CYktkaW7LYyYhPaHEIYqAnJR6RcVSQ5RwjYoiBg0PrF75JRTd4HzxZOZQy1RPDx3Ow5yStWD70i15qBGBKnFs+IVvzKewIey95GCbYcu60=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:c5a760c6-4252-46fc-9de8-b354aade2cab,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:393d96e,CLOUDID:001d5f94-e2c0-40b0-a8fe-7c7e47299109,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 7818a4d0323111ef99dc3f8fac2c3230-20240624
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <jiaxin.yu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2084432780; Mon, 24 Jun 2024 21:55:52 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 24 Jun 2024 21:55:47 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 24 Jun 2024 21:55:47 +0800
+From: Jiaxin Yu <jiaxin.yu@mediatek.com>
+To: <broonie@kernel.org>, <angelogioacchino.delregno@collabora.com>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Jiaxin Yu <jiaxin.yu@mediatek.com>
+Subject: [PATCH RESEND,v2] ASoC: mediatek: mt6358: Add "Dmic Mode Switch" kcontrol for switch DMIC mode.
+Date: Mon, 24 Jun 2024 21:55:46 +0800
+Message-ID: <20240624135546.19275-1-jiaxin.yu@mediatek.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1716974502.git.geert+renesas@glider.be>
-In-Reply-To: <cover.1716974502.git.geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Jun 2024 15:55:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWQo6y+6Be1cu=3qRuQ5BDB6_8is0C6T0eVgvHkN+8fJA@mail.gmail.com>
-Message-ID: <CAMuHMdWQo6y+6Be1cu=3qRuQ5BDB6_8is0C6T0eVgvHkN+8fJA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] Add R-Car fuse support
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, devicetree@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--4.655100-8.000000
+X-TMASE-MatchedRID: gtvpwGSUn6ZUeA157rRKD2h77jTUbA6yoA9Le8XJpbovM0Gdq0fzqaJQ
+	wY2eSfAKzQCEFcQpqpiD1p+T3PkHc6o+znd4MHO5l1zsjZ1/6axDGFvBeB2nXEuCjz4ggdtwU7g
+	EPucszGcM1uAoS31c84on+M6nzz7EMtPBNyXS88a4jAucHcCqnX0tCKdnhB589yM15V5aWpj6C0
+	ePs7A07UngwKs5OejnuXgkVn0JDJE4akP/ZSUN3KtRKNFqtU0lysvSvATs2Zs4Wp3OuoY81CL+Y
+	Okaei+S6pCYQ5VLYGbfrVNSLotorpd/GKMggNgToydMlEjRcid9fBQSbWi4PMsNjEULX/uuMIFA
+	PLUElJzAvpLE+mvX8g==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.655100-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	20DB901DD7FBC1216EBBCC858B30E70948715DD87123211B1B3E9751DD044ABB2000:8
+X-MTK: N
 
-On Wed, May 29, 2024 at 11:29=E2=80=AFAM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> R-Car Gen3/Gen4 SoCs contain fuses indicating hardware support or
-> hardware parameters.  Unfortunately the various SoCs require different
-> mechanisms to read the state of the fuses:
->   - On R-Car Gen3, the fuse monitor registers are in the middle of the
->     Pin Function Controller (PFC) register block,
->   - On R-Car V3U and S4-8, the E-FUSE non-volatile memory is accessible
->     through a separate register block in the PFC,
->   - On R-Car V4H and V4M, the E-FUSE non-volatile memory is accessible
->     through the second register block of OTP_MEM.
->
-> This patch series adds support for all 3 variants.  It provides an
-> in-kernel API to read the fuses' states, as well as userspace access
-> through the nvmem subsystem and sysfs:
->   - R-Car Gen3:    /sys/bus/platform/devices/rcar_fuse/fuse/nvmem
->   - R-Car V3U/S4:  /sys/bus/platform/devices/e6078800.fuse/fuse/nvmem
->   - R-Car V4H/V4M: /sys/bus/platform/devices/e61be000.otp/fuse/nvmem
->
-> This has been tested on R-Car H3 ES2.0, M3-W and M3-W+, M3-N, V3M, V3H
-> and V3H2, D3, E3, V3U, S4-8 ES1.0 and ES1.2, V4H, and V4M.
->
-> For SoCs where E-FUSE is accessed through the PFC, it is not clear from
-> the documentation if any PFC module clock needs to be enabled for fuse
-> access.  According to experiments on R-Car S4-8, the module clock and
-> reset only impact the GPIO functionality of the PFC, not the pinmux or
-> fuse monitor functionalities.  So perhaps the clock/power-domains/resets
-> properties should be dropped from the DT bindings and DTS, as well as
-> the Runtime PM handling from the driver?
->
-> Changes compared to v1[1]:
->   - Drop RFC state and broaden audience,
->   - Fix typo in one-line summary,
->   - Add Reviewed-by.
->
-> Thanks for your comments!
->
-> [1] https://lore.kernel.org/r/cover.1714642390.git.geert+renesas@glider.b=
-e
->
-> Geert Uytterhoeven (8):
->   dt-bindings: fuse: Document R-Car E-FUSE / PFC
->   dt-bindings: fuse: Document R-Car E-FUSE / OTP_MEM
->   soc: renesas: Add R-Car fuse driver
->   pinctrl: renesas: Add R-Car Gen3 fuse support
->   arm64: dts: renesas: r8a779a0: Add E-FUSE node
->   arm64: dts: renesas: r8a779f0: Add E-FUSE node
->   arm64: dts: renesas: r8a779g0: Add OTP_MEM node
->   arm64: dts: renesas: r8a779h0: Add OTP_MEM node
+There are two hardware connection methods for DMICs on the MT6358. In cases
+where more than two DMICs are used, we need to time-multiplex these DMICs.
+Therefore, we need to dynamically switch the modes of these DMICs based on
+the actual usage scenarios.
 
-I plan to queue these in renesas-devel/pinctrl for v6.11.
+            ---- DMIC1
+AU_VIN0 ---
+            ---- DMIC2
 
-Gr{oetje,eeting}s,
+AU_VIN2 --- ----DMIC3
 
-                        Geert
+When we want to use DMIC1/2, configure it to one-wire mode. When we want to
+use DMIC1/3, configure it to two-wire mode.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Signed-off-by: Jiaxin Yu <jiaxin.yu@mediatek.com>
+---
+Changes in v2:
+  - fix potential mixter-text errors, only allowing the user to set it
+  to 0 or 1.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+ sound/soc/codecs/mt6358.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/mt6358.c b/sound/soc/codecs/mt6358.c
+index 0284e29c11d3..9247b90d1b99 100644
+--- a/sound/soc/codecs/mt6358.c
++++ b/sound/soc/codecs/mt6358.c
+@@ -96,7 +96,7 @@ struct mt6358_priv {
+ 
+ 	int wov_enabled;
+ 
+-	unsigned int dmic_one_wire_mode;
++	int dmic_one_wire_mode;
+ };
+ 
+ int mt6358_set_mtkaif_protocol(struct snd_soc_component *cmpnt,
+@@ -577,6 +577,39 @@ static int mt6358_put_wov(struct snd_kcontrol *kcontrol,
+ 	return 0;
+ }
+ 
++static int mt6358_dmic_mode_get(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_component *c = snd_soc_kcontrol_component(kcontrol);
++	struct mt6358_priv *priv = snd_soc_component_get_drvdata(c);
++
++	ucontrol->value.integer.value[0] = priv->dmic_one_wire_mode;
++	dev_dbg(priv->dev, "%s() dmic_mode = %d", __func__, priv->dmic_one_wire_mode);
++
++	return 0;
++}
++
++static int mt6358_dmic_mode_set(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_component *c = snd_soc_kcontrol_component(kcontrol);
++	struct mt6358_priv *priv = snd_soc_component_get_drvdata(c);
++	int enabled = ucontrol->value.integer.value[0];
++
++	if (enabled < 0 || enabled > 1)
++		return -EINVAL;
++
++	if (priv->dmic_one_wire_mode != enabled) {
++		priv->dmic_one_wire_mode = enabled;
++		dev_dbg(priv->dev, "%s() dmic_mode = %d", __func__, priv->dmic_one_wire_mode);
++
++		return 1;
++	}
++	dev_dbg(priv->dev, "%s() dmic_mode = %d", __func__, priv->dmic_one_wire_mode);
++
++	return 0;
++}
++
+ static const DECLARE_TLV_DB_SCALE(playback_tlv, -1000, 100, 0);
+ static const DECLARE_TLV_DB_SCALE(pga_tlv, 0, 600, 0);
+ 
+@@ -599,6 +632,9 @@ static const struct snd_kcontrol_new mt6358_snd_controls[] = {
+ 
+ 	SOC_SINGLE_BOOL_EXT("Wake-on-Voice Phase2 Switch", 0,
+ 			    mt6358_get_wov, mt6358_put_wov),
++
++	SOC_SINGLE_BOOL_EXT("Dmic Mode Switch", 0,
++			    mt6358_dmic_mode_get, mt6358_dmic_mode_set),
+ };
+ 
+ /* MUX */
+-- 
+2.25.1
+
 
