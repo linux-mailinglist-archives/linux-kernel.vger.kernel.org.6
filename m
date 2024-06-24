@@ -1,134 +1,110 @@
-Return-Path: <linux-kernel+bounces-227819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABCCE9156D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:58:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D247A9156D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 651791F24806
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:58:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7067AB23FC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB391A00EF;
-	Mon, 24 Jun 2024 18:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503B23A1B5;
+	Mon, 24 Jun 2024 18:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npM0qoJf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NEk2i8XH"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6CA2556F;
-	Mon, 24 Jun 2024 18:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA982556F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719255464; cv=none; b=hm8ggD+Dk7+N7r28HHzrs7l8YN2SyMkwS4GZkoqvROMCtbjgqA/Yh6z1F0oe8LqYP1lkcaGQF9vvoUMMXEwmZWvM8Fn+FR6fHeIvRMo7R3lOaPZdZb9ujTAqyuspvdidBTaPW3WQTvdhEKcsA49wmI8C/bOu2/88IOSpzyCsvOQ=
+	t=1719255505; cv=none; b=GB8L2lQEWIo9vQE+XwhuEDgeDo7LwNrON3KJLJtK5vYhMPr99tkvrbZNNYpxnSecW1V6q6iSw4LuCTx4xeWlOIczcTwT+ks4uvV0lvTVLQ5xn3xgoT5fulDM7+aNQvz5WZpgM7oYQBsjOFuXAj3f1UiU31iFSgYyWRwSa1S4RmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719255464; c=relaxed/simple;
-	bh=bScPPyvL6rRULJitXLwAlJhTDbnoWRaAjqNZdFafxMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=u26O+iO5XKhisNFz3AwVpBdpC0DfWW8gSixcyCMMi5qYuU2VeLYTLUDP6/b1UQl6Vk/FPBBjV/MKBqpL9DafqmgADfboyOdPXH/KBYER4ytuZrK35p506Ta/ECECoXDF6UDnk/QtYPXbRIllBGNlHIK5+0IkIi0qZ6YMSBQaDVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npM0qoJf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CA3DC32789;
-	Mon, 24 Jun 2024 18:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719255464;
-	bh=bScPPyvL6rRULJitXLwAlJhTDbnoWRaAjqNZdFafxMw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=npM0qoJflxXpPgr/nmYQvFRZWw18tqiyzzOLUBJtnSyF7H0JVUfSULG40dofd6xF9
-	 3Hsh5tNXhjr2QfEEAMSiV/IzMjhLNjpX4HZSCvk77FUDnCLBfIFw6yZoDWRNA+5Ukr
-	 yYnU7ZNrc5Sr/A7fJ3XVcclTZAcaRymvambeIVvl+kyvVgb8gT7f4CKoqrTsKOFZSO
-	 DV49N7vEyYvb1GQnWbaFQuwc3WbZ1Zjq+flMCki8vGb05r8zpuqB9oZdYYBKpBS3Ud
-	 6P/kQAYwRFns/CuyVmN7wJ3P3BM1W5kcViq6XrAYlmCok5fFVlotOWOT4Igr54fRGH
-	 7RDsZe25oTszg==
-Date: Mon, 24 Jun 2024 19:57:40 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jun 24
-Message-ID: <ZnnBpPp09R7sON-b@sirena.org.uk>
+	s=arc-20240116; t=1719255505; c=relaxed/simple;
+	bh=DfhT8mFcn1a2LnOPe6P8pC0Ip5/ghH5Ia7q534z27A4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fecu/kcQ18xoNJB0ugZnMZA1LvMcUc63bsJTgRLEnJlP9LNciG7E1bRHhK76dzSbxIDwgIVbq4L1A3ThMeMna6gGI2bKRZsopVcQNAkEEHDX5mxJF4wQowg1BTdGTRgBJLSFs3lmwnC4GC7xE2LJdB9uX9z4l0iG6HOEzOdkXnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NEk2i8XH; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ce674da85so1405377e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719255502; x=1719860302; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R6eHEi9SDkMR5e8OVKWA2OEJfqCnQ6uOrn8cT6wmAEU=;
+        b=NEk2i8XHqfDNSnDytQwUPYCdJPr8AgSs9Ko1gu0EGAveLSOlVumtUu82kiE+RcL7GG
+         m/CFXbr6/Aak14aU0FtcES7/aEfS9JitVENhQD0UmmACGAnAp25ApHG7+Os6fXADw11W
+         2YQZgUpyEdJXuvMt2oZpT08fEbUYqsm1AErh/iLiZyDGCUZJ/UeJvgA50OGoKAlCxUuY
+         iptylppEq3u5VgAxUNR9AMFpfkaGntOsoysS6gqOwcm9tAS85XHRx7Rit55sXf0jg2Mv
+         aQNuYQZXxlttqW4PDhTyPqIyDrQUkqRtLodFrgdCU7noRAbeOs03ZZ2xex/NY0M7QfX0
+         v6Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719255502; x=1719860302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R6eHEi9SDkMR5e8OVKWA2OEJfqCnQ6uOrn8cT6wmAEU=;
+        b=EiyofzdvYxyGJwBUfGLZph9WbiMQedR5xx8eOFCWV7UN0HRbRrgc+9P4vR8t1uFd6m
+         ZmV4TchV+icIlD9GC3GU3jB7gF/CThvok55+hQhjSxksDocFCUkOGYfyny47d58IpJbQ
+         jShkhklZXrPTNMmAUsUAFuJLJ/SlTcyuChgvFNe7A4Cw0ilroLxxQVmajeG6TPkiOREM
+         gygWKgQhvLRabBzq7vyH/polGLoeItBhyYCZnLCa2jSr+qk75nZcx7PMbU4whoah1P5u
+         vzmcl7gFZK6S1e8LNneEPKmGbBCsPRzJjpnji2kZaojF3F5521HIRyArCV1vI0/GBjjA
+         2VAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUw7kOYm/b8DglI8p62TMWv9QEGEf6va880IrPqX5dUHIWmWerb3SKVVNRrNGNc5ytP57+b65O3vXRUI3AaghbBTUoloBVCoIxXzpDc
+X-Gm-Message-State: AOJu0YxPw22YSsN5md+Tirag4ahfVL55Hl662JMzxZi/CrYZJRcymh1j
+	NE9j6zy9CH3hVpxsKgZuB3JUeiVr4H8g2GyziT39VAo3DwbqWj+JqWtfTWkEIsBKB0t60GIoXlI
+	FUCB3oCqMKITZ0CtyTVgHXZQR4h0WSsfiFxLz
+X-Google-Smtp-Source: AGHT+IHZyMdLsQ0W8EhH8qJWEWYjdB11FpXA4gznRxXggQHm6CWkxFasr+6EMUBtpjMO8i0fGNvQ63unX8iPSPC2YxI=
+X-Received: by 2002:a19:8c0a:0:b0:52c:842b:c276 with SMTP id
+ 2adb3069b0e04-52ce185d1c2mr3618157e87.53.1719255501855; Mon, 24 Jun 2024
+ 11:58:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FPoAcc1pD40vVTwI"
-Content-Disposition: inline
+References: <202406241651.963e3e78-oliver.sang@intel.com> <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
+ <Znm74wW3xARhR2qN@casper.infradead.org> <CAJD7tkbF9NwKa4q5J0xq1oG6EkTDLz8UcbekSfP+DYfoDSqRhQ@mail.gmail.com>
+ <ZnnBVBItTNWZE42u@casper.infradead.org>
+In-Reply-To: <ZnnBVBItTNWZE42u@casper.infradead.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 24 Jun 2024 11:57:45 -0700
+Message-ID: <CAJD7tkaC6d_RkhRhMpEeS1zTEtoQYw56J3LLdzD1aM9_qu-3BA@mail.gmail.com>
+Subject: Re: [linux-next:master] [mm] 0fa2857d23: WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
+To: Matthew Wilcox <willy@infradead.org>
+Cc: kernel test robot <oliver.sang@intel.com>, Usama Arif <usamaarif642@gmail.com>, 
+	oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Linux Memory Management List <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
+	David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 24, 2024 at 11:56=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
+g> wrote:
+>
+> On Mon, Jun 24, 2024 at 11:53:30AM -0700, Yosry Ahmed wrote:
+> > After a page is swapped out during reclaim, __remove_mapping() will
+> > call __delete_from_swap_cache() to replace the swap cache entry with a
+> > shadow entry (which is an xa_value).
+>
+> Special entries are disjoint from shadow entries.  Shadow entries have
+> the last two bits as 01 or 11 (are congruent to 1 or 3 modulo 4).
+> Special entries have values below 4096 which end in 10 (are congruent
+> to 2 modulo 4).
 
---FPoAcc1pD40vVTwI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You are implying that we would no longer have a shadow entry for such
+zero folios, because we will be storing a special entry instead.
+Right?
 
-Hi all,
-
-Changes since 20240621:
-
-The drm-msm tree gained a conflict with the qcom tree.
-
-The drm-msm-lumag tree gained a build failure, I use the version from
-20240621 instead.
-
-The tip tree gained a conflict with the pm tree.
-
-The driver-core tree gained a conflict with the reset tree.
-
-The driver-core tree gained a build failure for which I applied a patch.
-
-The tty tree gained a conflict with the printk tree.
-
-The counter-next tree gained a conflict with the counter-current tree.
-
-Non-merge commits (relative to Linus' tree): 7232
- 8069 files changed, 728210 insertions(+), 138737 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm
-and a native build of tools/perf.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 378 trees (counting Linus' and 106 trees of bug
-fix patches pending for the current merge release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---FPoAcc1pD40vVTwI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ5waQACgkQJNaLcl1U
-h9Av/wgAgMNgWW8V6MGsM7jHlQ4sHJeDNdpsY4hkpyw3mO05pVsu6wee7r5DjWjO
-DwAF+9yebpM3Wp7kTaKbwMsFABhCb7ixSC7L8e35Q61wwoSBpzqKTlkLQJHgDQl5
-wsYWWk39AHNnqfmjd1amfuGRamztF7wPCxBTdRiwqCDy9F8QaEyAgmDKoAriurtC
-WMSIN70Z88pqzZYktv79bkiFxg+6MDGnXGH6Avzwp/yvyqIAAMoXtTINRuV4YGxB
-T49ZfMzpaP1APcCOrEQPge9mFwsc17hW8PioetQX0/M72reLslcrxPu8v7e2r4gc
-0cVn94avbhQE8Qbw3H9MLYwIGVFMNA==
-=hhAB
------END PGP SIGNATURE-----
-
---FPoAcc1pD40vVTwI--
+This is the "fundamental" change I am talking about.
 
