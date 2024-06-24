@@ -1,265 +1,112 @@
-Return-Path: <linux-kernel+bounces-227546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3C7915307
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:59:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFEB91530C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7C01C22774
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:59:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 177C42833C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5385A19D886;
-	Mon, 24 Jun 2024 15:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC43F19D89E;
+	Mon, 24 Jun 2024 15:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wr45jnAD"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huP2xYUq"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A213313E024
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE68F14264C;
+	Mon, 24 Jun 2024 15:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719244740; cv=none; b=XryIFHoFIY28zrOAfv70VZ2WXFsa7KcyCE6PFgfkQyyRDrcCyOkFUA0BSRMzPM/7hJL/s95BNnjzXZT5qYp5kXRvzwR3GKpsuhl0GiU01DimONmUUTrR0zTt2ZSFfu3JjCi49XNBBIoKdTTHaI3smvUsaAp1a8j9d073UvGx2bs=
+	t=1719244762; cv=none; b=nBMaRqZDMJJ8vYjvFSlyZzklAff3Y1HPDi47lpHkLowsH6WGZIRUnJNhGPtEDjyIDC7/VdDUmUXO5zQscmkyBGerw8VfLHVABlSVJuOsP+eNxCcmNMdfgYm+bsumoFKmrhJj/XSZ712o5o6UNG/B57P6EmhwJJVAvNW3bSnnWSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719244740; c=relaxed/simple;
-	bh=HLaR3hs5WDGPxxb4tgisddGf0k6b0fYRqtZE5Exc8so=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a9le1RSnJQt2lQISQNcz1kpZysu+wu37Qio231afP5/c/pHzbXrHxO0fYZP2dCkMQPOnBoQ+CbKNQh3AZX2ZGhGI7tWdv5GxEVl2KE5mTpXUxBnjRhDU+y5cTukftjoA3BvCr1opWteIZevPEHT4i/uqSL2nYaxZgaAAYE8YF/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Wr45jnAD; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-25c9786835eso2336860fac.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:58:58 -0700 (PDT)
+	s=arc-20240116; t=1719244762; c=relaxed/simple;
+	bh=wHqGhAxbzz+SB1GV1W9aVociq3nQeFE6KGPAfFcLHog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pKWNZo4F3B9pnE9exT28rn+MpTenJTI0pNzK0qo1/TbpFNeBv+G0gmc+1eXZ1jNPhw+Y3CNXqbq1OJijz2Uo4XiTz66RMvlVN9kvRDFh1umTLkPbDVjIRBMyekoW4pvDIMLDYo0y2ln8tJl5Ld3RLkjQt1Z0oRREXvaK5S9rLtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=huP2xYUq; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f6a837e9a3so27104775ad.1;
+        Mon, 24 Jun 2024 08:59:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719244738; x=1719849538; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iepQcgESJWu6fglP8Amj/sOy24kSNXNSHSVbBlmACYI=;
-        b=Wr45jnADKs/SrVoYj1EdUPiyLwoMiVuwEiV8ld5KUXXrMQ6GPoXUtnPm6TdAd2J0En
-         W595R6QpqshfBnsIrAV92sJ8bkpLG9+XxqcKNatCrkNNbRHLHgj56XSo9SoXrwpS1tdM
-         9Kwh0IzkV7KQV+DZCyT4jM4CZyr24MgWKip2A=
+        d=gmail.com; s=20230601; t=1719244760; x=1719849560; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=maz/Xm+e+IKj76RV/P4WcFvHosnLou8zVyIOEviPv1o=;
+        b=huP2xYUqaxvWU05LkHnoBUHHzMFglUNWsIKZnfA7wuyJNmlN3XuLgC00nb1BJlBit8
+         uge3VcVcvxtaNO8WiZHNUuy5h/gyNLROmv3gmW7tbV0J5MVgP1Ru2jO3XwPmP8/qrB9w
+         XV9yQPPDQSBx4fn0wZ2awL9PGTnhgjgcuvz1gF/axj+jFFicsMdAbpVFOH2fE1d1zdeO
+         J6gojPfUe/10xe0GaR+ZHc4VjnvM80D4d5pSDjfeBbOyhniL/x8EcL1OIj5NA0ysIcxy
+         Hx2lL6vUHJ+SQ6JvzO8ONzPab94m0O290eBkY7uPs2C7juHYs0d859ag/CoadETYYfLV
+         W5KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719244738; x=1719849538;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iepQcgESJWu6fglP8Amj/sOy24kSNXNSHSVbBlmACYI=;
-        b=RxtnlCMkAnjewSWRdGvA7HaAntCpt+f2LVrAIXmuUAIF2bN8rgWvt9t+3XdxAiKRoo
-         yrknSt2mzW0AZfckzuoQq4/5xQSH6Kd+534IBEAFT7o8bgtXdhY6jwdDSFzTlOVQTFNc
-         8aFRWgNQ23UsA0uFJ9POs3SZWPCjveJfFGprni+M03ifq3g+b6GRPo7pXuVgH/2z0JNW
-         GuqqIBsOVlhxm1yfxhFeDPd8ghN5lMX3lZ9QeoH/n/VA+tzWmH1pbZWmjU37eaXpFTsj
-         19LBgfkzJuAAd/PWViy7CopOuOUEXRKyfbqaA1JXtBvq7CWv0otbeFDyVfHwAGA225Ke
-         psYw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6eApq2ruO7AuJ7Ke7GzlkVVfXDGeDpm3pDSwCaKcfyVtXqlAFh+Ks7fpw6qdC75wgQAWODJVV46vPDxDzJdtcDAW/cr/xp5dt7A9O
-X-Gm-Message-State: AOJu0YytX/nPRSdmzbQTUNOUh1mAxToOpKVYYvtmpRIdys41zeNRVmzP
-	pf8mkgGyYd+3Kz5MZqWZlrW00e3I9j/srDxkCJSedPf1/gb4VJbXF0Ouvr59TbnPDWfHLjJXKzl
-	mNGgdpZJX2qcEajmDxTKpAKLJ1fhFru9Fjd4+
-X-Google-Smtp-Source: AGHT+IEIyFPzR85NrmYtCNhaj5QOxe4OULcjrNN3pHSAFwPRzsRumq50hiGMtFKyh5aQ5z6TMgKo8aGXuIwQNaKLNEE=
-X-Received: by 2002:a05:6870:2108:b0:254:bd24:de85 with SMTP id
- 586e51a60fabf-25d06bd5436mr5767873fac.16.1719244737651; Mon, 24 Jun 2024
- 08:58:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719244760; x=1719849560;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=maz/Xm+e+IKj76RV/P4WcFvHosnLou8zVyIOEviPv1o=;
+        b=BkCkuEfgfLBxJgucfi4WJEA72eRO9Vg8g+S3TRogrhATgSO2M8VsDSyaMu1bkEYZhl
+         GORHXdeaFBgfCaGqtARs3TG/yRpitg5MpPMRUo/4UNVVRK91sjoBOjRI35to5fIFqYmk
+         3fhFL2EclJ9uRT1VmLHGdzGI/W8QpnTPKRMlZ4DnsNgiShK996ECVosDK9oPUK6hMjsR
+         UoWzjtbSxXaNQOFO9Ld+GYBt6CDKAryriLJcdSsQQKs2IEIZP005CgG0uIC5O3PYEbo4
+         eFlqncK37XV+BHGe51u2+/9gNY2tQVym57HC5SDjyETF8l44Y1PfbguTf4agI1Gxwnjr
+         CTbg==
+X-Forwarded-Encrypted: i=1; AJvYcCULHS9NGESSf6SgICQIlSc0hbLU6Btmp0M+2rG6Gq+vmo5mAmZhRgUpVdfW63w+5TpJUpfJj/5HPe+V/C3sqNQdYixsoDG5iBg8YFo=
+X-Gm-Message-State: AOJu0YzO5lYn7MGoQhnetKKTW3vAanAltJJ+LDkPHJgDA3CbdF3A3RX/
+	1ofUxGUR0OIOaNutNqjK9eiv8HR+eOAP/RtzleBfLLY2DumIiPNO23Xy9Q==
+X-Google-Smtp-Source: AGHT+IHaEyJIncqduh0SpuQU4JcllCrox2tR2Mm8H9P5ehzwoTcNYzOUeYP67VAPvF+Bq/SLwbbxPA==
+X-Received: by 2002:a17:902:e807:b0:1fa:2ae7:cc37 with SMTP id d9443c01a7336-1fa2ae7d4damr54000965ad.63.1719244759872;
+        Mon, 24 Jun 2024 08:59:19 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:eba1:6f76:e2d7:7858])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f1187sm64654825ad.56.2024.06.24.08.59.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 08:59:19 -0700 (PDT)
+Date: Mon, 24 Jun 2024 08:59:17 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [git pull] Input updates for v6.10-rc5
+Message-ID: <ZnmX1XeOzU1NfgrY@google.com>
+References: <ZniqQuGkosZYqIYE@google.com>
+ <CAHk-=wj730guvRzh4wo16Cq8tq1D1tyD8ub4CiBxV4Bk0Kq_-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zi0VLrvUWH6P1_or@wunner.de> <CA+Y6NJE8hA+wt+auW1wJBWA6EGMc6CGpmdExr3475E_Yys-Zdw@mail.gmail.com>
- <ZjsKPSgV39SF0gdX@wunner.de> <20240510052616.GC4162345@black.fi.intel.com>
- <CA+Y6NJF2Ex6Rwxw0a5V1aMY2OH4=MP5KTtat9x9Ge7y-JBdapw@mail.gmail.com>
- <20240511043832.GD4162345@black.fi.intel.com> <20240511054323.GE4162345@black.fi.intel.com>
- <CA+Y6NJF+sJs_zQEF7se5QVMBAhoXJR3Y7x0PHfnBQZyCBbbrQg@mail.gmail.com>
- <ZkUcihZR_ZUUEsZp@wunner.de> <20240516083017.GA1421138@black.fi.intel.com> <20240516100315.GC1421138@black.fi.intel.com>
-In-Reply-To: <20240516100315.GC1421138@black.fi.intel.com>
-From: Esther Shimanovich <eshimanovich@chromium.org>
-Date: Mon, 24 Jun 2024 11:58:46 -0400
-Message-ID: <CA+Y6NJH8vEHVtpVd7QB0UHZd=OSgX1F-QAwoHByLDjjJqpj7MA@mail.gmail.com>
-Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Lukas Wunner <lukas@wunner.de>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Rajat Jain <rajatja@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj730guvRzh4wo16Cq8tq1D1tyD8ub4CiBxV4Bk0Kq_-g@mail.gmail.com>
 
-On Thu, May 16, 2024 at 5:16=E2=80=AFAM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> I suggest trying on more devices just to be sure it covers all of them.
+On Mon, Jun 24, 2024 at 10:28:09AM -0400, Linus Torvalds wrote:
+> On Sun, 23 Jun 2024 at 19:05, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> >
+> > Please pull from:
+> >
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.10-rc5
+> >
+> > to receive updates for the input subsystem. You will get:
+> 
+> Nope. I get something entirely different. I think you tagged the wrong state.
 
-I tested Mika's on additional devices, Lenovo ThinkPad T490 (JHL6250),
-Dell Latitude 7400 (JHL6340), Lenovo Thinkpad Carbon X1 Gen 7
-(JHL6540) and the HP Elitebook 840 G6 (JHL7540) and the patch worked
-smoothly on all of those devices. It looks good to me! If you have any
-specific types of additional devices you'd want me to test this on,
-then let me know!
+Ugh, I was on a wrong branch ('next' for the next merge window) when I
+created the tag. I'll fix my script, but in the meantime should I:
 
+- blow away the bad tag and re-create under the same name as before
+  (input-for-v6.10-rc5) or
 
-On Wed, May 15, 2024 at 4:45=E2=80=AFPM Lukas Wunner <lukas@wunner.de> wrot=
-e:
->
-> Could you add this to the command line:
->
->   thunderbolt.dyndbg ignore_loglevel log_buf_len=3D10M
->
-> and this to your kernel config:
->
->   CONFIG_DYNAMIC_DEBUG=3Dy
->
-> You should see "... is associated with ..." messages in dmesg.
+- blow away the bad tag and use new name for the correct one (somthing
+  like input-for-v6.10-rc5-fixed)?
 
-I tried Lukas's patches again, after enabling the Thunderbolt driver
-in the config and also verbose messages, so that I can see
-"thunderbolt:" messages, but it still never reaches the
-tb_pci_notifier_call function. I don't see "associated with" in any of
-the logs. The config on the image I am testing does not have the
-thunderbolt driver enabled by default, so this patch wouldn't help my
-use case even if I did manage to get it to work. I did spend some time
-on this -- it seems like it would take more time to test this out. And
-I would like maybe an explanation on why it is worth it to look into
-this, before I continue. I appreciate your patience with this!
+I do not want to keep the bad tag to avoid confusion in the future.
 
-Things I tried:
--searching through all existing logs for "associated with" and nothing came=
- up.
--I tried adding my own logs into the added function and compiling.
--I did cherry pick Lukas's commits onto an earlier version of the
-kernel (5_15)--- I'm not sure if that could have affected anything.
--I tried littering pci.c with logs but none of them showed up after
-deployment. I'm not sure at which point the thunderbolt driver decides
-that PCI tunneling is occurring. That could be something to look into.
-- I wonder if I am running into some additional ChromeOS-related
-restrictions surrounding tunneling. This seems to be the likely case.
+Thanks.
 
-Also, this is what happens when I plug in an external thunderbolt
-device. Maybe there's a reason in the logs why the
-tb_pci_notifier_call function wasn't reached?:
-```
-2024-06-24T15:19:20.215183Z INFO kernel: [183837.056612] usb 1-5: new
-high-speed USB device number 10 using xhci_hcd
-2024-06-24T15:19:20.509844Z DEBUG kernel: [183837.349927] thunderbolt
-0000:07:00.0: control channel starting...
-2024-06-24T15:19:20.509867Z DEBUG kernel: [183837.349932] thunderbolt
-0000:07:00.0: starting TX ring 0
-2024-06-24T15:19:20.509870Z DEBUG kernel: [183837.349939] thunderbolt
-0000:07:00.0: enabling interrupt at register 0x38200 bit 0 (0x0 ->
-0x1)
-2024-06-24T15:19:20.509872Z DEBUG kernel: [183837.349942] thunderbolt
-0000:07:00.0: starting RX ring 0
-2024-06-24T15:19:20.509876Z DEBUG kernel: [183837.349948] thunderbolt
-0000:07:00.0: enabling interrupt at register 0x38200 bit 12 (0x1 ->
-0x1001)
-2024-06-24T15:19:21.879381Z DEBUG kernel: [183838.720640] thunderbolt
-0000:07:00.0: current switch config:
-2024-06-24T15:19:21.879389Z DEBUG kernel: [183838.720655] thunderbolt
-0000:07:00.0:  Thunderbolt 3 Switch: 8086:15ef (Revision: 6, TB
-Version: 16)
-2024-06-24T15:19:21.879396Z DEBUG kernel: [183838.720667] thunderbolt
-0000:07:00.0:   Max Port Number: 13
-2024-06-24T15:19:21.879402Z DEBUG kernel: [183838.720674] thunderbolt
-0000:07:00.0:   Config:
-2024-06-24T15:19:21.879407Z DEBUG kernel: [183838.720679] thunderbolt
-0000:07:00.0:    Upstream Port Number: 1 Depth: 1 Route String: 0x3
-Enabled: 1, PlugEventsDelay: 254ms
-2024-06-24T15:19:21.879414Z DEBUG kernel: [183838.720689] thunderbolt
-0000:07:00.0:    unknown1: 0x0 unknown4: 0x0
-2024-06-24T15:19:21.912146Z DEBUG kernel: [183838.753606] thunderbolt
-0000:07:00.0: 3: reading drom (length: 0x80)
-2024-06-24T15:19:22.511672Z DEBUG kernel: [183839.353220] thunderbolt
-0000:07:00.0: 3: DROM version: 1
-2024-06-24T15:19:22.517258Z DEBUG kernel: [183839.358696] thunderbolt
-0000:07:00.0: 3: uid: 0x175942e1c49f800
-
-[SOME VERSION OF THIS IS REPEATED FOR PORTS 1-13]
-2024-06-24T15:19:22.523134Z DEBUG kernel: [183839.365301] thunderbolt
-0000:07:00.0:  Port 1: 8086:15ef (Revision: 6, TB Version: 1, Type:
-Port (0x1))
-2024-06-24T15:19:22.523155Z DEBUG kernel: [183839.365304] thunderbolt
-0000:07:00.0:   Max hop id (in/out): 19/19
-2024-06-24T15:19:22.523158Z DEBUG kernel: [183839.365305] thunderbolt
-0000:07:00.0:   Max counters: 16
-2024-06-24T15:19:22.523159Z DEBUG kernel: [183839.365306] thunderbolt
-0000:07:00.0:   NFC Credits: 0x7800048
-2024-06-24T15:19:22.523160Z DEBUG kernel: [183839.365308] thunderbolt
-0000:07:00.0:   Credits (total/control): 120/2
-
-2024-06-24T15:19:22.531155Z INFO kernel: [183839.373585] thunderbolt
-0-3: new device found, vendor=3D0x175 device=3D0x87f
-2024-06-24T15:19:22.531156Z INFO kernel: [183839.373587] thunderbolt
-0-3: SAMSUNG ELECTRONICS CO.,LTD F32TU87x
-2024-06-24T15:19:22.535373Z DEBUG kernel: [183839.377053] thunderbolt
-0-3: GPIO lookup for consumer wp
-2024-06-24T15:19:22.535379Z DEBUG kernel: [183839.377056] thunderbolt
-0-3: using lookup tables for GPIO lookup
-2024-06-24T15:19:22.535381Z DEBUG kernel: [183839.377057] thunderbolt
-0-3: No GPIO consumer wp found
-2024-06-24T15:19:22.535383Z DEBUG kernel: [183839.377082] thunderbolt
-0-3: GPIO lookup for consumer wp
-2024-06-24T15:19:22.535389Z DEBUG kernel: [183839.377083] thunderbolt
-0-3: using lookup tables for GPIO lookup
-2024-06-24T15:19:22.535390Z DEBUG kernel: [183839.377084] thunderbolt
-0-3: No GPIO consumer wp found
-2024-06-24T15:19:22.538463Z INFO pciguard[782]: INFO pciguard:
-[udev_monitor.cc(94)] UdevEvent: thunderbolt add
-/sys/devices/pci0000:00/0000:00:1d.4/0000:05:00.0/0000:06:00.0/0000:07:00.0=
-/domain0/0-0/0-3
-2024-06-24T15:19:22.538474Z INFO pciguard[782]: INFO pciguard:
-[event_handler.cc(28)] CurrentState=3DNO_USER_LOGGED_IN,
-UserPermission=3D0, received event=3DNew-Thunderbolt-Dev
-
-[SOME VERSION OF THIS SECTION IS REPEATED 7 TIMES]
-2024-06-24T15:19:24.038230Z DEBUG kernel: [183840.880242] i915
-0000:00:02.0: HDMI infoframe: Dynamic Range and Mastering, version 1,
-length 26
-2024-06-24T15:19:24.038271Z DEBUG kernel: [183840.880256] i915
-0000:00:02.0: length: 26
-2024-06-24T15:19:24.038277Z DEBUG kernel: [183840.880261] i915
-0000:00:02.0: metadata type: 0
-2024-06-24T15:19:24.038282Z DEBUG kernel: [183840.880266] i915
-0000:00:02.0: eotf: 2
-2024-06-24T15:19:24.038286Z DEBUG kernel: [183840.880270] i915
-0000:00:02.0: x[0]: 35400
-2024-06-24T15:19:24.038290Z DEBUG kernel: [183840.880275] i915
-0000:00:02.0: y[0]: 14600
-2024-06-24T15:19:24.038294Z DEBUG kernel: [183840.880279] i915
-0000:00:02.0: x[1]: 8500
-2024-06-24T15:19:24.038327Z DEBUG kernel: [183840.880283] i915
-0000:00:02.0: y[1]: 39850
-2024-06-24T15:19:24.038334Z DEBUG kernel: [183840.880287] i915
-0000:00:02.0: x[2]: 6550
-2024-06-24T15:19:24.038338Z DEBUG kernel: [183840.880290] i915
-0000:00:02.0: y[2]: 2300
-2024-06-24T15:19:24.038342Z DEBUG kernel: [183840.880294] i915
-0000:00:02.0: white point x: 15635
-2024-06-24T15:19:24.038346Z DEBUG kernel: [183840.880298] i915
-0000:00:02.0: white point y: 16450
-2024-06-24T15:19:24.038350Z DEBUG kernel: [183840.880302] i915
-0000:00:02.0: max_display_mastering_luminance: 0
-2024-06-24T15:19:24.038354Z DEBUG kernel: [183840.880307] i915
-0000:00:02.0: min_display_mastering_luminance: 0
-2024-06-24T15:19:24.038358Z DEBUG kernel: [183840.880310] i915
-0000:00:02.0: max_cll: 0
-2024-06-24T15:19:24.038362Z DEBUG kernel: [183840.880314] i915
-0000:00:02.0: max_fall: 0
-
-
-2024-06-24T15:19:40.375221Z DEBUG kernel: [183857.217231] thunderbolt
-0000:07:00.0: stopping RX ring 0
-2024-06-24T15:19:40.375267Z DEBUG kernel: [183857.217254] thunderbolt
-0000:07:00.0: disabling interrupt at register 0x38200 bit 12 (0x1001
--> 0x1)
-2024-06-24T15:19:40.375275Z DEBUG kernel: [183857.217286] thunderbolt
-0000:07:00.0: stopping TX ring 0
-2024-06-24T15:19:40.375280Z DEBUG kernel: [183857.217298] thunderbolt
-0000:07:00.0: disabling interrupt at register 0x38200 bit 0 (0x1 ->
-0x0)
-2024-06-24T15:19:40.375323Z DEBUG kernel: [183857.217317] thunderbolt
-0000:07:00.0: control channel stopped
-```
-
-I could share other thunderbolt logs if that helps!
+-- 
+Dmitry
 
