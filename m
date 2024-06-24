@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-227693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E885915590
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A8091558F
 	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2EA1F246BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:40:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD8401F24584
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359B819F488;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3233419F487;
 	Mon, 24 Jun 2024 17:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPavk1N/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAoOntiP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF7319EEDD;
-	Mon, 24 Jun 2024 17:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF2919EEC7
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719250831; cv=none; b=dbShJF4l1QVIz6uqvaEKWRehT0U8eeQ8g8O6YSbYcRUXfn5ljQtt23DOk57uqD1+btmMFIBo5PIQZEmrDlaDMp0NfHo21OgH2uWU28ysLq737JmaydtSF77ExtNBBB9+A9d/DNv9H4oF/G1ebUHPIWqvw1wsYiAcFueTeU4fUwk=
+	t=1719250831; cv=none; b=WZECA5sUtAu9K26F0q24hjoR4HOVmbzYLNQ1oRbsay64Z1hV4cQrQTIzIio5YZ8tvVwpNLNuzf0nihnlaLeS5j/FehLeIWMv4t9UXxE3KHjqnbXVIrf/qYWsT4vCcvpqMWLVwZgRA0oOaa3VOAcSu0j6gwxX7eucAbOVJAqnxdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719250831; c=relaxed/simple;
-	bh=cVZguKETeKIYSegRsLSDsF+ocn6kUtTa2dnkN7qny8k=;
+	bh=y+3HBYbLlNGdn/StePP7MdTMbYY+NAYSYK1c+0uNZTc=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=CpQ8yTYt5ZcfvKOd7sw0wGi0JWdrgbpKG06m9sO4pCRAWG2394Yvgw0KfeE/HJsbgaCQwPpG/hwcPKnuBhbbnm/BjyYbDDNxygg2RfFr+2QCugtcUZNswn3w6zRyo19yBwdrKzXL5pRY0uOtAPcWamqgMDbTsvQKUtetlzSzI0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPavk1N/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 07D57C32789;
-	Mon, 24 Jun 2024 17:40:30 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Eh1vU40qb4Z8Ox0yCdgF5vxwWldyYttjN1gvB96oEmv8670HnGdbSQmR+8AU7i+Tj57AstGh0GVRZ/LLwZ3RLLfx54nRyxRSwFSaDAPOOtY+ngu5KIabaHANTTDjZpqhmDWp0WMA87A9VYfUWUPstH5bTVjlf313knO9lD9PE80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAoOntiP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1F5EAC4AF0B;
+	Mon, 24 Jun 2024 17:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1719250831;
-	bh=cVZguKETeKIYSegRsLSDsF+ocn6kUtTa2dnkN7qny8k=;
+	bh=y+3HBYbLlNGdn/StePP7MdTMbYY+NAYSYK1c+0uNZTc=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=CPavk1N/CfgB5i6aKmd98eXP58YRJCznv0VMuBaHiSlqNPERXtcr5gKjJ4jJcv+49
-	 y1e1lYJ7BmNcr/IKlKU0Yu6n/FFldPUegW/xd4bindRky6ec3uL2OxiSAbbuBg2/zo
-	 RssF/NSP7BFMPL6k6wA8yUuiQBTBtWemwyaMI8ObZtGZnB2geY/Q61aeR1h+stBjck
-	 km1+cva12wyZ8ShxfawpeOSeH9ZAHIVy2vJyDM4GUNRCcgNa2LkCNJiRqLeHvwiWgK
-	 0/ppXqXkVmUjJQURzK4hfNT01ZXDb2a2b2tmmQAlGSL/uScAIDd6V05lGmFk4SNlQ4
-	 Ww37vgtplBjyA==
+	b=jAoOntiPcsQXOh41dcTZrzJwHDLIccPkc442vDJm6/PQYfu/nXmMAN/CJxTBfZC5J
+	 7bQy/+pGcFzN+tH6IZlX/jnhYi/+bMtyJK/u+qG0DIJOdSvRphlqX+aB0Lk8BSl8Q9
+	 DP2T7F46I6GKkQ9P38868EtWy2ovPzia1l1gfWb+aExNDNw3JqdwCb6IT4aU8iMkTO
+	 hjgRXqsY4zyV/CpkJBpa/ZhrpQPMdJHCcZRch9z05lhaNc5smaOP5YRlJdAPX5BGyJ
+	 emxSkRK+bLzT2L9ctHJbYgzlk5jA12dZrqtH6OFJ/slQctABZdBKmYLft330iYWvQN
+	 lSzrpDG/Xr9+A==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D89D1C43612;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EF3AAC43613;
 	Mon, 24 Jun 2024 17:40:30 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,51 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: assign CURSEG_ALL_DATA_ATGC if blkaddr is
- valid
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to use mnt_{want,
+ drop}_write_file replace file_{start, end}_wrtie
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <171925083088.4247.5859176757737434245.git-patchwork-notify@kernel.org>
+ <171925083097.4247.3362095080701103412.git-patchwork-notify@kernel.org>
 Date: Mon, 24 Jun 2024 17:40:30 +0000
-References: <20240618022334.1576056-1-jaegeuk@kernel.org>
-In-Reply-To: <20240618022334.1576056-1-jaegeuk@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- stable@vger.kernel.org
+References: <1718271333-32179-1-git-send-email-zhiguo.niu@unisoc.com>
+In-Reply-To: <1718271333-32179-1-git-send-email-zhiguo.niu@unisoc.com>
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Cc: jaegeuk@kernel.org, chao@kernel.org, ke.wang@unisoc.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ Hao_hao.Wang@unisoc.com
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Tue, 18 Jun 2024 02:23:34 +0000 you wrote:
-> mkdir /mnt/test/comp
-> f2fs_io setflags compression /mnt/test/comp
-> dd if=/dev/zero of=/mnt/test/comp/testfile bs=16k count=1
-> truncate --size 13 /mnt/test/comp/testfile
+On Thu, 13 Jun 2024 17:35:33 +0800 you wrote:
+> mnt_{want,drop}_write_file is more suitable than
+> file_{start,end}_wrtie and also is consistent with
+> other ioctl operations.
 > 
-> In the above scenario, we can get a BUG_ON.
->  kernel BUG at fs/f2fs/segment.c:3589!
->  Call Trace:
->   do_write_page+0x78/0x390 [f2fs]
->   f2fs_outplace_write_data+0x62/0xb0 [f2fs]
->   f2fs_do_write_data_page+0x275/0x740 [f2fs]
->   f2fs_write_single_data_page+0x1dc/0x8f0 [f2fs]
->   f2fs_write_multi_pages+0x1e5/0xae0 [f2fs]
->   f2fs_write_cache_pages+0xab1/0xc60 [f2fs]
->   f2fs_write_data_pages+0x2d8/0x330 [f2fs]
->   do_writepages+0xcf/0x270
->   __writeback_single_inode+0x44/0x350
->   writeback_sb_inodes+0x242/0x530
->   __writeback_inodes_wb+0x54/0xf0
->   wb_writeback+0x192/0x310
->   wb_workfn+0x30d/0x400
-> 
-> [...]
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> ---
+>  fs/f2fs/file.c | 24 ++++++++++++++++--------
+>  1 file changed, 16 insertions(+), 8 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: assign CURSEG_ALL_DATA_ATGC if blkaddr is valid
-    https://git.kernel.org/jaegeuk/f2fs/c/8cb1f4080dd9
+  - [f2fs-dev] f2fs: fix to use mnt_{want, drop}_write_file replace file_{start, end}_wrtie
+    https://git.kernel.org/jaegeuk/f2fs/c/1efb7c8fd8bf
 
 You are awesome, thank you!
 -- 
