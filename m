@@ -1,515 +1,185 @@
-Return-Path: <linux-kernel+bounces-226549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0412291403B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:55:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE4D914030
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7712815CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7142D282BCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C0A46B5;
-	Mon, 24 Jun 2024 01:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112264400;
+	Mon, 24 Jun 2024 01:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="Crc2bhX1"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="HMszfwON"
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2060.outbound.protection.outlook.com [40.107.6.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F957FD;
-	Mon, 24 Jun 2024 01:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719194129; cv=none; b=ltrEhmJLktMsTOulgemzTXSiqQOG1q0Q2wrzkErV2bjL+5zIG3e5eNAzIZdrPuHlqGUVLrAgx3Iyxb4XF78lkBC/u016AZ2IEYlKJdVL7kMwKFp+nWYvi7bKH8tbI9Hoq28Hvu0WwAqdudiia2n3bQBYd/4zvi9Te3pLYyogljo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719194129; c=relaxed/simple;
-	bh=d8J1/c4Ecsgwo3/6MlhO2q5ewrlddl1e9QMNrWXaAr4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pdy8beguosGGRgGeQU+odfgfw2cP/qgqtqT754MaQeiaLaOJrozQ/+IEBY1E8CYOx/vp1fiKBhLiu7jQZjioZu3n24QCDTcQJRnyPWCqXweUL6dqLZvT7rodcjM4X5r8J+ZM7bEtvAW/cW/bB9T/NFNhqpPbzfJJtoVDqFTnlfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au; spf=pass smtp.mailfrom=gmail.com; dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b=Crc2bhX1; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-362bc731810so3350898f8f.1;
-        Sun, 23 Jun 2024 18:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google; t=1719194124; x=1719798924; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mv5F3gJNSVhzn+e6PbmhdJJ5gm0AtweUP0e5uStvQLY=;
-        b=Crc2bhX1t0WqEYuTf6cQqtU0Cw8Gxdmwj0vsh12c5fkRvSQuHEwVn4CQ1ub4kTHunj
-         4T0ydppFGih8Iruu0zLdpRtEbFBk3gBiIv62iQ1gO8BFJ0T6EupKZHIVaW4lq85G0epu
-         YIOmUNpjiQefF5k6eSxKaFovte4Gn3VrdtHoQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719194124; x=1719798924;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mv5F3gJNSVhzn+e6PbmhdJJ5gm0AtweUP0e5uStvQLY=;
-        b=BKVcC2dJNYh5a3kMu+Xe7YJDE9CUja3TnHgBmUMFqlP+tISHJB9ubFhxJKJBgix1gc
-         L0Vj/R02aCNGePK/SX7yvKGNEcpKZSHvF0Ehlf1STWpHPsylCEKDjWPoZGZzWxvnKUmd
-         LRx6bV9aSthDQtd7j7wyGNHrWr+APOQnb4OkYrSPwTLaI6Y6Cdj4+l64wynFb2w4/91n
-         JXlubnXmaV7CKxtiBm2+23IxCshOR/xEUTb04wGMJ3lQyG9WAd++FQT64xcFYiYpcFE4
-         S4Wc2dRF3wVzISLv+QfN+sVxLk1b4mvOtepuvjnou57CfmjInJFbOczHWkCdkO5JE8px
-         HYJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwTlf+epBk+PfHsbh09fmWCVoil4efqJ4Ol07b9kL4K5qP8VkkIzCXXzC8DSytZd1zORHuQjl1dR6aWu2USioPTeT50g4deJMkBaE6QkRjPBJisOY21Mg4Hdg5/BLC356LPhXMwXp64Q==
-X-Gm-Message-State: AOJu0YzjjOoI2Xpjw1HY2skjhOXanVTH5JzlICZsBSqmZCXqODZVzLmV
-	uzOa9m1cfJTFZ3JQKVTHYTWwBS8vZDnThkb1vxw4QMQXcsj/SMjmuJyl7+7/y91bQc49fiAJPUl
-	36FgbboCMlupujX7xKdCQkO/M2KW2RTDK
-X-Google-Smtp-Source: AGHT+IFNeXjFq3paeyUjIv8M9A14FXoR4HFW267SwtprEiB2S3khZdX4rFJrD0J0hkZKvSEM3C4i7DkSm+oR61KQ5uI=
-X-Received: by 2002:a05:6000:178f:b0:366:ee01:30d6 with SMTP id
- ffacd0b85a97d-366ee0134b8mr2099521f8f.49.1719194124017; Sun, 23 Jun 2024
- 18:55:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BB02F25
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719193652; cv=fail; b=jXEPk4j8ZfRa1/Q4p3iaNSLCn/Ge1ivqAXvL1GDFGtOerPNOJH+WggQwKKtuQHUfhBOcvDVpxoqDk9mGmFeOMrdjO9X9/w5eGUhUTBnOyd/rR/h+iY+Cbxcjy4FCS0UUPnw+rztpo1dsAFCHCDsnhRRyHnMnuBRrUbMyGrmI9Z0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719193652; c=relaxed/simple;
+	bh=LoMnpMzsCMhKWYqi2L4N3L9IO9rCknjHWElppIW1Sxk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Fg2iUaYx6WMYSj4q+x1NJYVPOCcLbshKQVu3VFRaJa16FIRiENpMBn4YUTu1IEp6S3lfRZ5WaCSMlvnk8Vj52g4xK2Ui2VCcly7yz60YsMKFL9T0vDKXel0IOOlnGxcQp+G9AJpmXhQM/f0etmKaEmMxFwqEzRwxbRxx/ouTYZE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=HMszfwON; arc=fail smtp.client-ip=40.107.6.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Rbu0kD4s4A4znpo6qVJDrvzBThKE1na1D08AxZ+pm1Nu5DSMiDvvq0MzQUx8Sb1/bPKX1Ynj5TKIWnr51aRjiQz/NZCGeB3hH1hz7Lp5dLcOO8Zs7MU+LG5nVkYUSx76eYFvA3yKjZmK+8a3/2qgxJPdgu07V90r5zBzDSVgt8vwf+JG+l6DmYlAacgG5by7Z8CtNZ68gp2SO8T3Xq5uOrbMTLx1jPlWnFmFR+YuyIXcuonii33Bu7GCKaRJpFdcGdn5mCra+sdt9t2f/M+6ASD1du1dkZCjdDYA4adJPFCDZEPb6ym2qZaDANh6HCA7L7sYTGSPJFlV0/xW+91WwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/m3kbDM0SftEBYlDMuh6fVq6HAP7p3lG4KKL9izN73E=;
+ b=QcqaaNmWd7/k+i4MGuzCfqQOw46Z2PXbwGqVpzUl2mZXuBb5EvbS7/M3DBnKX+mN9S8YXb5xb7bgVbrl4E2yRp5CRN6op9vgQyeD7mXbFRsyf8dJFbasqIx5KUN4OurFeHsTaCagOTJF98PYk1u50kDTcyPUSD3ql3Z8phKrupvSFKnOxVP656iJePEWkt9nFDdFDR4PTzNtK6X42GzU1WWwprPdyWIBPHxFsuvsrGx7ULj72r7fIkEBDH7j1ZqHS5CVg83RkXNnDPum+e+16DBXcGD5DUKsXycLxSkj5YtKsT9OM4JHeC62fqVO4la6uvkY8nBcqmrEGZZF6nXwjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/m3kbDM0SftEBYlDMuh6fVq6HAP7p3lG4KKL9izN73E=;
+ b=HMszfwONslGrE47Pzos13Qk0iYxE/UMXkMMYeAZruzJNM10g4MW/TDeyHUHEv9bbvrotZTqI/ioVmnmue6rhwp6+QLl7ELaNGOeJWQwyt/4iNpNljabYT7qLrMEk+xTdJQyANVJJFp9yAihCSzPNhHqXfpNZlB8wm2LYCAzEBhE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DU2PR04MB9100.eurprd04.prod.outlook.com (2603:10a6:10:2f3::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.28; Mon, 24 Jun
+ 2024 01:47:27 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 01:47:27 +0000
+From: Liu Ying <victor.liu@nxp.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com,
+	sam@ravnborg.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	victor.liu@nxp.com,
+	emil.l.velikov@gmail.com
+Subject: [PATCH RESEND] drm/panel: simple: Add missing display timing flags for KOE TX26D202VM0BWA
+Date: Mon, 24 Jun 2024 09:56:12 +0800
+Message-Id: <20240624015612.341983-1-victor.liu@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0116.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::20) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531193115.3814887-1-robh@kernel.org>
-In-Reply-To: <20240531193115.3814887-1-robh@kernel.org>
-From: Joel Stanley <joel@jms.id.au>
-Date: Mon, 24 Jun 2024 11:25:12 +0930
-Message-ID: <CACPK8Xes5vp+3YpQ3L5ix=LaDv7oWtqGFVc8moQf4D+o3rnLjg@mail.gmail.com>
-Subject: Re: [PATCH] arm: dts: aspeed: Use standard 'i2c' bus node name
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU2PR04MB9100:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9cdaf40b-4952-4ad7-96de-08dc93ef99be
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|376011|7416011|366013|1800799021|52116011|38350700011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WqzPUoRRbmABqi2alhAdsjs/7L9dKKH5DxU5Rlq5f12TGgW8/6ghJIXG4MZc?=
+ =?us-ascii?Q?H4dndLIVTmWF4nNMNfeEioImZdJHaybZHujerX38FYdgbLbFp19MbbUK0Mm7?=
+ =?us-ascii?Q?YodovW2B09iZ8Byt6P+Xt72KoJmylkeVxn1lckpz+dswXRqvQU5f+KR7xsHg?=
+ =?us-ascii?Q?4K4wgmCFABEzsSBotM5+HXP/RmmBOEs8aofuVtTszjA+II4dlXInvixctNDv?=
+ =?us-ascii?Q?AEmhElARlw4nfjIBkrNNiQvmoh08x7tdsW6mT0jsm4AkzYDf+CPZXLOe+zWl?=
+ =?us-ascii?Q?dihOIYIUHKYngo1I3RixrcWNGYzOueZpeGWfdH0LIxyoPKER+1qaO+rcnRLa?=
+ =?us-ascii?Q?1rSetMb0CEF3q+wotnEHa5aCFDi+cZ0Thw1VGlx5MhGCseqAGPmrclBO44X4?=
+ =?us-ascii?Q?Q33dbplBSyh0KWWWiNAbKFCmBeQORtrpAUqPqZN4KLHCrh+/eryH18tosWF4?=
+ =?us-ascii?Q?zRiM6kziCFCS5/wcToTcXtpTJgXe0BKfFWG7IB91nYlEDB4BAMa3AWYCdUo4?=
+ =?us-ascii?Q?LJKSRrJExaHGqAkzbfvWnsZal8+nhCTVERXq+soRDEUoJY+kURiH2vgDdm9P?=
+ =?us-ascii?Q?r1CujqOOf9Om6M40hytt1SsfaWwlkPwYevUXeRBRsJ7nXnXHMCOiJp8lSbNk?=
+ =?us-ascii?Q?bVGHhqgOzRuXJl5Y8a3/x0/lV03nK84XpWjmk2xbjG/sTP+x6kAJCwN/ABYg?=
+ =?us-ascii?Q?W1+GE5Zx+B8R9Srzokq1a1RcwYpR2jkyJyVe6uGuU/0/VonNSf4QW1nrUneF?=
+ =?us-ascii?Q?xvFoTKTaCS8NqScusk4LMHQpQ+I/0dAvh7zkPk5RIJ583dXuI9JLgyTbyLbw?=
+ =?us-ascii?Q?wckCHdFNbHOUIt3O2GH26/3okQzckJpXaieB/oqizS688FB2020GXNhhDpig?=
+ =?us-ascii?Q?hTF4GZKXCER+NmP8o9bp4wAxspyhnlDKE5gv4ZG8lz2s+/I8QDQ3ll3EGCRq?=
+ =?us-ascii?Q?e5oAtxTo5sHUAEo/jdsRne4brjN6PwLbB11DKobDJE4N4EtR4zvBLQ/olXBC?=
+ =?us-ascii?Q?bdLS4wE6cxYi6GY6Xg+oYPuLW+UwVO9pQEf5vRAVmcPHiugxyExB6f0tX9De?=
+ =?us-ascii?Q?YLEQ3VoCl29jXXeIbhDknOxldhicTs2x1FuyQRheNw4mZ0uyZnqovRph8B5N?=
+ =?us-ascii?Q?YaEtnMLQtCayHiiOZCFhdQ+aiUu1spzhrgU/jrGlZOR74Q8EUV+vhAg9uryM?=
+ =?us-ascii?Q?MyLeAnft1dc3KzB8k1kkZfjMWcOWZDZHc5BCHBM+wgiuvn1Tl0SYBV3vFVj5?=
+ =?us-ascii?Q?hI0QGjrLV2G9dxgl0CNW6nzY70OJpCC6GsRJKlWnQPiQMZF8ZF70JFrq9S+o?=
+ =?us-ascii?Q?wraVKoSLy54g6jEOenD60jDrcRJ2qKJzitw9qyZLX4DeCdtH+5HLHLqrxqrx?=
+ =?us-ascii?Q?Z2O1L5E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(7416011)(366013)(1800799021)(52116011)(38350700011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?jTlIvSEKGnfMg1cD+GwzczIg2/oRroxOMzbwy+Hx/IebOUcKf55j6v0JxwYT?=
+ =?us-ascii?Q?5f5/RghY/EmvYSkw2+qHQgW9we90G5aAyIwrJtPcsh+EUxxYOM1Cbi6eAece?=
+ =?us-ascii?Q?132kuigwOB5Jyr9L0C0Ya1SonMzHTGTYFXa0mXHpufCzoAOU0xhCyuxdr6ec?=
+ =?us-ascii?Q?pHzTda2JZuTEpV0Bo3SpFhjJIa4HtdbOb9dQj/3fUUnUhwkOgBLu6/YM4qSc?=
+ =?us-ascii?Q?4DzphBzn/yWLTZV6L9h/SVsUaPS2svWpOgHEoC8h+Hsa+Wk0S2awHKkclNIB?=
+ =?us-ascii?Q?O0u/BL0cBzjdAklOFDSE93WSvsk5Ts4qFyPak+YDKApj6EAbDDgzJLWTa3Hq?=
+ =?us-ascii?Q?et9UeLKLmSPVRwEM+2Jf0+9H+qYIvnaA4ioNujM3u4htWHeGT4DwB/BgzgXy?=
+ =?us-ascii?Q?mIjNAomdMOF3EEjrXUT1n5diByLDnZ0G5zwIhpaViwL7GtWOl/WMnhyAOcCP?=
+ =?us-ascii?Q?xae2vp3+U4x16/0uvRcXMr2YFqRNff+B/tDGB4UqLXT2kZ93MbqgByGIV6Rs?=
+ =?us-ascii?Q?hRdlA4tHY5kHfYuU5x9jnaidXA4YNbyT24E+FoNKCNcB5mzwGPiSSq1GvA0F?=
+ =?us-ascii?Q?kC3zNoWpIbq8q9RhVpJPJNeoxg0XE79wUg/HDta9FmJnmyLASfjNRXFsY3cV?=
+ =?us-ascii?Q?jBexWdXq6sfA1natXA2YOJSw+PVu8dpkbiMvhVntadY3LxmvblPEIj1tBmEY?=
+ =?us-ascii?Q?n5ycfmRpgHwFO2dYWK/+3om7+ID8dedCtJ3hwU9dj6qRhACXisZyMNbRd+Sw?=
+ =?us-ascii?Q?OgkTmWVo58k/fDvv/ACwWVxTjTABwCTcYG9myv4rhfTtCjhi0/R45oVcDKC3?=
+ =?us-ascii?Q?IpwfgpaFZ88UwzJ/wkAsodXPdrOHUD/+JtvAbDIClWibabXYliRzJOuQNpfj?=
+ =?us-ascii?Q?o5zI63dL89uf2Cc7DifWkerG49MJgAIAEVGJzXZi5hFpnnylgu3B/uY5uPPN?=
+ =?us-ascii?Q?Q1vkq9ajs2NZzUSyr08gx6nigBpvZFKT5nRVJFy3kVlXDh07AaaLtL5MdTlh?=
+ =?us-ascii?Q?KUJtAqyzpkrNeCl5asrKj4l1xhuwt5MOTPnBU2AbTRG7QjDu99RVc1BxmHgD?=
+ =?us-ascii?Q?Tg0a21JDk9Yg2ny4s8GxoDbThjtfwlpoRW92NoUdjg7/BhgJjELzVF5Bcwfs?=
+ =?us-ascii?Q?ovw+1EVE3/9JhKcV6t6exnsFmpHwONMPlrv48BvdggRM5MRiPaBSfRzoCGma?=
+ =?us-ascii?Q?26goXEPlpIz38NXNDrfh3XA0z2GnSBgPZ5QuM7ZNhocx+Nb9WjXPtu3ir54G?=
+ =?us-ascii?Q?PsteigZ5YIOih+dXecni4wlciqmIJR2fZmbvsludGP1N7uUVFOokIRXwLkyt?=
+ =?us-ascii?Q?KhZKlYU7RtPYth8QJL8I5U48j4FdaepmZkdCJAGh4t67m35iGdBYOHFdI+xw?=
+ =?us-ascii?Q?J/wHsQ5da5nSAmz4LbeyM91hl1dgtXASROERvKGOI8uQ0zLCQb46ZY2+kR5r?=
+ =?us-ascii?Q?ACy1qwQMXl1ElHHEYfh0mfo0cmFuW05eKMPcftu5xvCVSG8C1lm/mZbuDJm1?=
+ =?us-ascii?Q?VQxtFxpbV1CBVf5WJAo5HFkOveOn/UASrBQi0ZsQjdq7T7KbLlZdvQKZLcIC?=
+ =?us-ascii?Q?G9xdUOqddwder79SfdIQGYHJWfFgFud35Mjv/mzV?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cdaf40b-4952-4ad7-96de-08dc93ef99be
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 01:47:26.9747
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NYLiHzkx/dcKhUKIseuDz1iMefdbxsCA3wDgwjv9hg4HPPK6qfqQ+kx0vB8OuMp1+Q4L3qRTqDMfwjDgyroX6Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9100
 
-On Sat, 1 Jun 2024 at 05:01, Rob Herring (Arm) <robh@kernel.org> wrote:
->
-> The standard node name for I2C buses is 'i2c'.
+KOE TX26D202VM0BWA panel spec indicates the DE signal is active high in
+timing chart, so add DISPLAY_FLAGS_DE_HIGH flag in display timing flags.
+This aligns display_timing with panel_desc.
 
-Unfortunately this can't be merged, as it will break userspace. There
-is a lot of code out there that looks up devices based on the device
-tree node path:
+Fixes: 8a07052440c2 ("drm/panel: simple: Add support for KOE TX26D202VM0BWA panel")
+Signed-off-by: Liu Ying <victor.liu@nxp.com>
+---
+ drivers/gpu/drm/panel/panel-simple.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-https://github.com/openbmc/phosphor-state-manager/blob/3c1351cc2b63178876ef68f4107c9804d2e17dcc/meson.options#L140
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 20e3df1c59d4..7b70606e5760 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -2704,6 +2704,7 @@ static const struct display_timing koe_tx26d202vm0bwa_timing = {
+ 	.vfront_porch = { 3, 5, 10 },
+ 	.vback_porch = { 2, 5, 10 },
+ 	.vsync_len = { 5, 5, 5 },
++	.flags = DISPLAY_FLAGS_DE_HIGH,
+ };
+ 
+ static const struct panel_desc koe_tx26d202vm0bwa = {
+-- 
+2.34.1
 
-Cheers,
-
-Joel
-
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  arch/arm/boot/dts/aspeed/aspeed-g4.dtsi | 28 +++++++++++-----------
->  arch/arm/boot/dts/aspeed/aspeed-g5.dtsi | 28 +++++++++++-----------
->  arch/arm/boot/dts/aspeed/aspeed-g6.dtsi | 32 ++++++++++++-------------
->  3 files changed, 44 insertions(+), 44 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi
-> index 857cb26ed6d7..c669ec202085 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi
-> @@ -463,7 +463,7 @@ i2c_ic: interrupt-controller@0 {
->                 interrupt-controller;
->         };
->
-> -       i2c0: i2c-bus@40 {
-> +       i2c0: i2c@40 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -478,7 +478,7 @@ i2c0: i2c-bus@40 {
->                 /* Does not need pinctrl properties */
->         };
->
-> -       i2c1: i2c-bus@80 {
-> +       i2c1: i2c@80 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -493,7 +493,7 @@ i2c1: i2c-bus@80 {
->                 /* Does not need pinctrl properties */
->         };
->
-> -       i2c2: i2c-bus@c0 {
-> +       i2c2: i2c@c0 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -509,7 +509,7 @@ i2c2: i2c-bus@c0 {
->                 status = "disabled";
->         };
->
-> -       i2c3: i2c-bus@100 {
-> +       i2c3: i2c@100 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -525,7 +525,7 @@ i2c3: i2c-bus@100 {
->                 status = "disabled";
->         };
->
-> -       i2c4: i2c-bus@140 {
-> +       i2c4: i2c@140 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -541,7 +541,7 @@ i2c4: i2c-bus@140 {
->                 status = "disabled";
->         };
->
-> -       i2c5: i2c-bus@180 {
-> +       i2c5: i2c@180 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -557,7 +557,7 @@ i2c5: i2c-bus@180 {
->                 status = "disabled";
->         };
->
-> -       i2c6: i2c-bus@1c0 {
-> +       i2c6: i2c@1c0 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -573,7 +573,7 @@ i2c6: i2c-bus@1c0 {
->                 status = "disabled";
->         };
->
-> -       i2c7: i2c-bus@300 {
-> +       i2c7: i2c@300 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -589,7 +589,7 @@ i2c7: i2c-bus@300 {
->                 status = "disabled";
->         };
->
-> -       i2c8: i2c-bus@340 {
-> +       i2c8: i2c@340 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -605,7 +605,7 @@ i2c8: i2c-bus@340 {
->                 status = "disabled";
->         };
->
-> -       i2c9: i2c-bus@380 {
-> +       i2c9: i2c@380 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -621,7 +621,7 @@ i2c9: i2c-bus@380 {
->                 status = "disabled";
->         };
->
-> -       i2c10: i2c-bus@3c0 {
-> +       i2c10: i2c@3c0 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -637,7 +637,7 @@ i2c10: i2c-bus@3c0 {
->                 status = "disabled";
->         };
->
-> -       i2c11: i2c-bus@400 {
-> +       i2c11: i2c@400 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -653,7 +653,7 @@ i2c11: i2c-bus@400 {
->                 status = "disabled";
->         };
->
-> -       i2c12: i2c-bus@440 {
-> +       i2c12: i2c@440 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -669,7 +669,7 @@ i2c12: i2c-bus@440 {
->                 status = "disabled";
->         };
->
-> -       i2c13: i2c-bus@480 {
-> +       i2c13: i2c@480 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi
-> index e6f3cf3c721e..6e05cbcce49c 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi
-> @@ -592,7 +592,7 @@ i2c_ic: interrupt-controller@0 {
->                 interrupt-controller;
->         };
->
-> -       i2c0: i2c-bus@40 {
-> +       i2c0: i2c@40 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -607,7 +607,7 @@ i2c0: i2c-bus@40 {
->                 /* Does not need pinctrl properties */
->         };
->
-> -       i2c1: i2c-bus@80 {
-> +       i2c1: i2c@80 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -622,7 +622,7 @@ i2c1: i2c-bus@80 {
->                 /* Does not need pinctrl properties */
->         };
->
-> -       i2c2: i2c-bus@c0 {
-> +       i2c2: i2c@c0 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -638,7 +638,7 @@ i2c2: i2c-bus@c0 {
->                 status = "disabled";
->         };
->
-> -       i2c3: i2c-bus@100 {
-> +       i2c3: i2c@100 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -654,7 +654,7 @@ i2c3: i2c-bus@100 {
->                 status = "disabled";
->         };
->
-> -       i2c4: i2c-bus@140 {
-> +       i2c4: i2c@140 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -670,7 +670,7 @@ i2c4: i2c-bus@140 {
->                 status = "disabled";
->         };
->
-> -       i2c5: i2c-bus@180 {
-> +       i2c5: i2c@180 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -686,7 +686,7 @@ i2c5: i2c-bus@180 {
->                 status = "disabled";
->         };
->
-> -       i2c6: i2c-bus@1c0 {
-> +       i2c6: i2c@1c0 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -702,7 +702,7 @@ i2c6: i2c-bus@1c0 {
->                 status = "disabled";
->         };
->
-> -       i2c7: i2c-bus@300 {
-> +       i2c7: i2c@300 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -718,7 +718,7 @@ i2c7: i2c-bus@300 {
->                 status = "disabled";
->         };
->
-> -       i2c8: i2c-bus@340 {
-> +       i2c8: i2c@340 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -734,7 +734,7 @@ i2c8: i2c-bus@340 {
->                 status = "disabled";
->         };
->
-> -       i2c9: i2c-bus@380 {
-> +       i2c9: i2c@380 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -750,7 +750,7 @@ i2c9: i2c-bus@380 {
->                 status = "disabled";
->         };
->
-> -       i2c10: i2c-bus@3c0 {
-> +       i2c10: i2c@3c0 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -766,7 +766,7 @@ i2c10: i2c-bus@3c0 {
->                 status = "disabled";
->         };
->
-> -       i2c11: i2c-bus@400 {
-> +       i2c11: i2c@400 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -782,7 +782,7 @@ i2c11: i2c-bus@400 {
->                 status = "disabled";
->         };
->
-> -       i2c12: i2c-bus@440 {
-> +       i2c12: i2c@440 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> @@ -798,7 +798,7 @@ i2c12: i2c-bus@440 {
->                 status = "disabled";
->         };
->
-> -       i2c13: i2c-bus@480 {
-> +       i2c13: i2c@480 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-> index 7fb421153596..0c00882f111a 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-> @@ -905,7 +905,7 @@ udma: dma-controller@1e79e000 {
->  #include "aspeed-g6-pinctrl.dtsi"
->
->  &i2c {
-> -       i2c0: i2c-bus@80 {
-> +       i2c0: i2c@80 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x80 0x80>;
-> @@ -919,7 +919,7 @@ i2c0: i2c-bus@80 {
->                 status = "disabled";
->         };
->
-> -       i2c1: i2c-bus@100 {
-> +       i2c1: i2c@100 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x100 0x80>;
-> @@ -933,7 +933,7 @@ i2c1: i2c-bus@100 {
->                 status = "disabled";
->         };
->
-> -       i2c2: i2c-bus@180 {
-> +       i2c2: i2c@180 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x180 0x80>;
-> @@ -947,7 +947,7 @@ i2c2: i2c-bus@180 {
->                 status = "disabled";
->         };
->
-> -       i2c3: i2c-bus@200 {
-> +       i2c3: i2c@200 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x200 0x80>;
-> @@ -961,7 +961,7 @@ i2c3: i2c-bus@200 {
->                 status = "disabled";
->         };
->
-> -       i2c4: i2c-bus@280 {
-> +       i2c4: i2c@280 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x280 0x80>;
-> @@ -975,7 +975,7 @@ i2c4: i2c-bus@280 {
->                 status = "disabled";
->         };
->
-> -       i2c5: i2c-bus@300 {
-> +       i2c5: i2c@300 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x300 0x80>;
-> @@ -989,7 +989,7 @@ i2c5: i2c-bus@300 {
->                 status = "disabled";
->         };
->
-> -       i2c6: i2c-bus@380 {
-> +       i2c6: i2c@380 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x380 0x80>;
-> @@ -1003,7 +1003,7 @@ i2c6: i2c-bus@380 {
->                 status = "disabled";
->         };
->
-> -       i2c7: i2c-bus@400 {
-> +       i2c7: i2c@400 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x400 0x80>;
-> @@ -1017,7 +1017,7 @@ i2c7: i2c-bus@400 {
->                 status = "disabled";
->         };
->
-> -       i2c8: i2c-bus@480 {
-> +       i2c8: i2c@480 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x480 0x80>;
-> @@ -1031,7 +1031,7 @@ i2c8: i2c-bus@480 {
->                 status = "disabled";
->         };
->
-> -       i2c9: i2c-bus@500 {
-> +       i2c9: i2c@500 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x500 0x80>;
-> @@ -1045,7 +1045,7 @@ i2c9: i2c-bus@500 {
->                 status = "disabled";
->         };
->
-> -       i2c10: i2c-bus@580 {
-> +       i2c10: i2c@580 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x580 0x80>;
-> @@ -1059,7 +1059,7 @@ i2c10: i2c-bus@580 {
->                 status = "disabled";
->         };
->
-> -       i2c11: i2c-bus@600 {
-> +       i2c11: i2c@600 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x600 0x80>;
-> @@ -1073,7 +1073,7 @@ i2c11: i2c-bus@600 {
->                 status = "disabled";
->         };
->
-> -       i2c12: i2c-bus@680 {
-> +       i2c12: i2c@680 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x680 0x80>;
-> @@ -1087,7 +1087,7 @@ i2c12: i2c-bus@680 {
->                 status = "disabled";
->         };
->
-> -       i2c13: i2c-bus@700 {
-> +       i2c13: i2c@700 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x700 0x80>;
-> @@ -1101,7 +1101,7 @@ i2c13: i2c-bus@700 {
->                 status = "disabled";
->         };
->
-> -       i2c14: i2c-bus@780 {
-> +       i2c14: i2c@780 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x780 0x80>;
-> @@ -1115,7 +1115,7 @@ i2c14: i2c-bus@780 {
->                 status = "disabled";
->         };
->
-> -       i2c15: i2c-bus@800 {
-> +       i2c15: i2c@800 {
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 reg = <0x800 0x80>;
-> --
-> 2.43.0
->
 
