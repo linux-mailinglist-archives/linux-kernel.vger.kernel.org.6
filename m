@@ -1,129 +1,223 @@
-Return-Path: <linux-kernel+bounces-227555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31900915329
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:10:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B8E91532F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3BF28496C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:10:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5CC4B25259
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAD519D8B3;
-	Mon, 24 Jun 2024 16:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4230519DF5B;
+	Mon, 24 Jun 2024 16:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lFgXYdow"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOh+5xXe"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477D319D88F;
-	Mon, 24 Jun 2024 16:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38F619DF47;
+	Mon, 24 Jun 2024 16:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719245416; cv=none; b=JiLqTCmMD/gJ4eFivLpX7sHQV8rJRs9wCgqd4+X8stkLeVYLIyIyhHlPkr6rHAmWXwE89tjJEL5rNcvcPQPWxJYeU4R+fjA4sxTufVwf3vNBdPtpaYIRJ9G9nMBOfS9NQ1Lw1T6tL0m7O7zUXp6KO27Oth5m0dMEb9HpCy5H+IE=
+	t=1719245423; cv=none; b=MPr94NQa6jGvM8rDTd4DWoEK0CJKhg79F9VeuNi0h1kemvxUIW5FV9Eue9I4/TpNiiZx/IrwKVGsc+qzK3fhshCtqqBqpJPyfgPBpsDqp4H6gaY1oZMiVpmR009D+JJEVHjadEzVY1HZVg93ITQwcASECw6PDPtpSasVFQJYihA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719245416; c=relaxed/simple;
-	bh=4ltmvNmXduISOFju1Cj/6yrfb4j5yYxkGtsa0MRlYq8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=lzbfhhK6ZWJ78Wrq5f+ie3HCeNIabXSL73VCSxkaD7NHBGKHI/Oecymj/5+vfsaNFWchBwXoh5kIWWhZpZZ7OUfon72LXH3pL2HyJP5OpFleWDCYplK/M/7bu8vseZI9cVLbFPse5TegTvHZcXvML5b8y1t+PQN9SA9rEgmGZWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lFgXYdow; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8YwJa023758;
-	Mon, 24 Jun 2024 16:10:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=u9tROGslymKxtNVU+9GyZd
-	D8twmkqpbfDW7yWUEQuu4=; b=lFgXYdowhcY0+1kJL4jAXIh7GfAErMfFoE1GkX
-	XnnDnpSWOE86m63Wxjxs+pYrxFX4VtmEqpD8tZzT4PMzw250fTACiOaR5U+XoipY
-	PFw2CyHbCOLnCI9hh5aooLIp4QDoQKbHNtsputXH4xw/fdePrawDGk1LEqwdizrq
-	PR6FxXcylGDZbFmO4SHOuAlB60d6gVPwv16NWOrE72uvO2hcGvJT9XO2NOIkPT06
-	K7Czi6clvccLFkDhUo4mHwijvzrzy209pNp1h+Bv2t/7t7DC80HKpPw6+ldEVef1
-	+90N1h60g4KSsUtSZWdMII45m5/0WHkSi3OR2MfNwR9Wb8Rw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqshm3cf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 16:10:07 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45OGA6K6011895
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 16:10:06 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
- 2024 09:10:05 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 24 Jun 2024 09:09:48 -0700
-Subject: [PATCH v2] mailbox: mtk-cmdq: add missing MODULE_DESCRIPTION()
- macro
+	s=arc-20240116; t=1719245423; c=relaxed/simple;
+	bh=cl4MPGLdmcHEoORjY2x+DVBjrLjLbNFLHu4q6u73Y3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LrWfxAxM5pvwPVQiAsmbdmp905+zZHfAtLqXx+r+/HgbM7SdClaTWoZPewqkpXKhCMrsseGGFZirdLCae2BmbAQ7IQlpgAc/sE8wCvFQqjPvKfonEdOWVDLyShbOYTiwqgjRYmpkTZlg30kigm1YtWXdS4bTM3UnKD9fMuJ0b0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOh+5xXe; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f47f07aceaso35086975ad.0;
+        Mon, 24 Jun 2024 09:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719245421; x=1719850221; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ttX0yp76l2xnXq8JSAtn3cUDBQPLpo3WhU7vnTaPql0=;
+        b=IOh+5xXeep6GqTt8+Bf8TYFebJn6KOwkpQ3T2OmjG83wZWPWQ2FF/mQzg/d3c7W9LJ
+         GWuAWDhSSgV5vhF0yhB18c0aU1JzRtfM3aQg0tiSqgwxaLCsMD/Dbs3hBdh0yjOjawsR
+         WM5Z35zoThIRxLmBT1LjozK5OQinD2VcNnxN5JaIMQBjsROerBglbQXhCXylmzOrPoXN
+         cwZHTa0Nj6bMK77xQMTEdc0lopxRm+eQJ70yZKhnNSRQw+l+ChpeHFfTBFUN1GBx3AnX
+         WF1JVPAYvmf9UlYQwjg9WwWGSgSpTi56Hy8npx/k6AC+marrhPnCR3B45IhrcAmS8rT+
+         JKKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719245421; x=1719850221;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ttX0yp76l2xnXq8JSAtn3cUDBQPLpo3WhU7vnTaPql0=;
+        b=oZiQIcfd/D6OWM7PTvJ+VrLp68W3MbwtQpruTzS5wJ6HDF/INNVP0JV2eRPenPx1Xr
+         x+7jwN5DuAOKRqc5MdaGPDlLrdumgHHt0KbgENPOieOVE2gPRktXgLYhZ5xxyGuhAcPO
+         1wgvDTt6JpYiWOknp05KV8LuPQ2w86zALo5gIHctXxWqyXvq+OhEVRStsSCxLiLCcjRr
+         HYYo3xtoFfmP0QLzsHz28fW0VGIk4gDpNF0Wxq1ObvWKcl5E7Poh460Xttplweb+S169
+         yQxtINiqyP0TA8e1jTNnE/xmLS4sw9WOhLVNvcL6fH0MU0O4a8iyhdd+rjiNb4nN6CTo
+         h+mA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGa8y6sYcQYXvHz3u3Z1TrgPnQlROzBcHvhyvEGqfPdGKPcka4FQ21HWQu+E2ekegRUC6VeoiaofVOx1qs/C5vpPx6zIToZLtbF9q4KvPrDSQYiivLASWaTcIKQWGdklu9LtaZJ7UAaGWuNPf+/4ScbxR7GA1jeLVsnJGuNofghICpNs7hy3gf
+X-Gm-Message-State: AOJu0YynKu8mYJ5QmBVBpeke5cmPcdIiAc3qpPL4/H2K3gp4WcQ52E7C
+	Ocn14S0R2szQ/PrGBYxdlNsiAkT2C20YEz6p3cqSKGpUqahXMVQz
+X-Google-Smtp-Source: AGHT+IH/OtHRU1nurIROIfMExtRTyvwaJeKWPLDLQDTrv8mTAiL7uD5HR4vojTvfD+SDzijq49zP+w==
+X-Received: by 2002:a17:902:d4c7:b0:1fa:128c:4315 with SMTP id d9443c01a7336-1fa15937ac6mr57783425ad.44.1719245420780;
+        Mon, 24 Jun 2024 09:10:20 -0700 (PDT)
+Received: from [192.168.50.95] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9f6e36df3sm59690285ad.17.2024.06.24.09.10.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 09:10:20 -0700 (PDT)
+Message-ID: <2a28004a-161f-4cde-9d1c-7b779333e666@gmail.com>
+Date: Tue, 25 Jun 2024 01:10:14 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240624-md-drivers-mailbox-v2-1-e5a428d52224@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAEuaeWYC/32OQQ6DIBREr2JYl0bQkrar3qNxAZ9P/YlCC0psj
- HcveoAuXzJvZlaWMBImdq9WFjFTouALyFPFoNf+hZxsYSZr2daqvvLRchspY0x81DSYsPAGbCO
- cddAaxYr4juhoOUqfXWGjE3ITtYd+rxrIz0uR04Rxj/eUphC/x4UsdunvWhZccAV4scrdZKvt4
- zMTkIczhJF127b9ACDjWXrVAAAA
-To: Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger
-	<matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>,
-        "Jeff Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: zViXkquq1yXb_H-FG68IXmzoHqE1WmqC
-X-Proofpoint-GUID: zViXkquq1yXb_H-FG68IXmzoHqE1WmqC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_13,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- mlxscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406240129
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] tracing/net_sched: NULL pointer dereference in
+ perf_trace_qdisc_reset()
+To: Pedro Tammela <pctammela@mojatatu.com>
+Cc: netdev@vger.kernel.org, stable@vger.kernel.org,
+ Jakub Kicinski <kuba@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Takashi Iwai <tiwai@suse.de>, "David S. Miller" <davem@davemloft.net>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Jamal Hadi Salim
+ <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Taehee Yoo <ap420073@gmail.com>,
+ Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ ppbuk5246@gmail.com, Yeoreum Yun <yeoreum.yun@arm.com>
+References: <20240622045701.8152-2-yskelg@gmail.com>
+ <fa8e452b-ad37-482b-8d9b-bc8b4cad0ff9@mojatatu.com>
+ <d7b67e36-adee-4abc-b4c4-0548333ac90a@gmail.com>
+ <06d0ea61-47ee-4e54-9dfa-a711c5bc07d0@mojatatu.com>
+Content-Language: en-US
+From: Yunseong Kim <yskelg@gmail.com>
+In-Reply-To: <06d0ea61-47ee-4e54-9dfa-a711c5bc07d0@mojatatu.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mailbox/mtk-cmdq-mailbox.o
+Hi Pedro,
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+On 6/25/24 12:55 오전, Pedro Tammela wrote:
+> On 24/06/2024 12:43, Yunseong Kim wrote:
+>> Hi Pedro,
+>>
+>> On 6/25/24 12:12 오전, Pedro Tammela wrote:
+>>> On 22/06/2024 01:57, yskelg@gmail.com wrote:
+>>>> From: Yunseong Kim <yskelg@gmail.com>
+>>>>
+>>>> In the TRACE_EVENT(qdisc_reset) NULL dereference occurred from
+>>>>
+>>>>    qdisc->dev_queue->dev <NULL> ->name
+>>>>
+>>>> [ 5301.595872] KASAN: null-ptr-deref in range
+>>>> [0x0000000000000130-0x0000000000000137]
+>>>> [ 5301.595877] Mem abort info:
+>>>> [ 5301.595881]   ESR = 0x0000000096000006
+>>>> [ 5301.595885]   EC = 0x25: DABT (current EL), IL = 32 bits
+>>>> [ 5301.595889]   SET = 0, FnV = 0
+>>>> [ 5301.595893]   EA = 0, S1PTW = 0
+>>>> [ 5301.595896]   FSC = 0x06: level 2 translation fault
+>>>> [ 5301.595900] Data abort info:
+>>>> [ 5301.595903]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+>>>> [ 5301.595907]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>>>> [ 5301.595911]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>>>> [ 5301.595915] [dfff800000000026] address between user and kernel
+>>>> address ranges
+>>>> [ 5301.595971] Internal error: Oops: 0000000096000006 [#1] SMP
+>>>> Link:
+>>>> https://lore.kernel.org/lkml/20240229143432.273b4871@gandalf.local.home/t/
+>>>> Fixes: 51270d573a8d ("tracing/net_sched: Fix tracepoints that save
+>>>> qdisc_dev() as a string")
+>>>> Cc: netdev@vger.kernel.org
+>>>> Cc: stable@vger.kernel.org # +v6.7.10, +v6.8
+>>>> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+>>>> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+>>>> ---
+>>>>    include/trace/events/qdisc.h | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/include/trace/events/qdisc.h
+>>>> b/include/trace/events/qdisc.h
+>>>> index f1b5e816e7e5..170b51fbe47a 100644
+>>>> --- a/include/trace/events/qdisc.h
+>>>> +++ b/include/trace/events/qdisc.h
+>>>> @@ -81,7 +81,7 @@ TRACE_EVENT(qdisc_reset,
+>>>>        TP_ARGS(q),
+>>>>          TP_STRUCT__entry(
+>>>> -        __string(    dev,        qdisc_dev(q)->name    )
+>>>> +        __string(dev, qdisc_dev(q) ? qdisc_dev(q)->name :
+>>>> "noop_queue")
+>>>>            __string(    kind,        q->ops->id        )
+>>>>            __field(    u32,        parent            )
+>>>>            __field(    u32,        handle            )
+>>>
+>>> You missed the __assign_str portion (see below). Also let's just say
+>>> "(null)" as it's the correct device name. "noop_queue" could be
+>>> misleading.
+>>
+>> Thanks for the code review Pedro, I agree your advice.
+>>
+>>> diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
+>>> index 1f4258308b96..f54e0b4dbcf4 100644
+>>> --- a/include/trace/events/qdisc.h
+>>> +++ b/include/trace/events/qdisc.h
+>>> @@ -81,14 +81,14 @@ TRACE_EVENT(qdisc_reset,
+>>>          TP_ARGS(q),
+>>>
+>>>          TP_STRUCT__entry(
+>>> -               __string(       dev,           
+>>> qdisc_dev(q)->name      )
+>>> +               __string(       dev,            qdisc_dev(q) ?
+>>> qdisc_dev(q)->name : "(null)"    )
+>>>                  __string(       kind,          
+>>> q->ops->id              )
+>>>                  __field(        u32,           
+>>> parent                  )
+>>>                  __field(        u32,           
+>>> handle                  )
+>>>          ),
+>>
+>> It looks better to align the name with the current convention.
+>>
+>> Link:
+>> https://lore.kernel.org/linux-trace-kernel/20240222211442.634192653@goodmis.org/
+>>
+>>>          TP_fast_assign(
+>>> -               __assign_str(dev, qdisc_dev(q)->name);
+>>> +               __assign_str(dev, qdisc_dev(q) ? qdisc_dev(q)->name :
+>>> "(null)");
+>>>                  __assign_str(kind, q->ops->id);
+>>>                  __entry->parent = q->parent;
+>>>                  __entry->handle = q->handle;
+>>>
+>>>
+>>
+>> The second part you mentioned, Steve recently worked on it and changed
+>> it.
+>>
+>> Link:
+>> https://lore.kernel.org/linux-trace-kernel/20240516133454.681ba6a0@rorschach.local.home/
+> 
+> Oh!
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Changes in v2:
-- Updated description per AngeloGioacchino Del Regno and propaged the
-  Reviewed-by tag
-- Link to v1: https://lore.kernel.org/r/20240608-md-drivers-mailbox-v1-1-6ce5d6f924ad@quicinc.com
----
- drivers/mailbox/mtk-cmdq-mailbox.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for the double check, Pedro.
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 4aa394e91109..71eb78c3d6ce 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -790,4 +790,5 @@ static void __exit cmdq_drv_exit(void)
- subsys_initcall(cmdq_drv_init);
- module_exit(cmdq_drv_exit);
- 
-+MODULE_DESCRIPTION("Mediatek Command Queue(CMDQ) Mailbox driver");
- MODULE_LICENSE("GPL v2");
+>> If it hadn't, I don't think I would have been able to prevent the panic
+>> by just applying my patch.
+> 
+> But you must be careful with the backports.
+> 
+> In any case, perhaps send another patch to net-next updating the new
+> conventions there and use the 'old convention' for the bug fix?
 
----
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240608-md-drivers-mailbox-3cd31fdfc4b6
+Right, I agree, I'll send a patch for the next version.
 
+Warm regards,
+Yunseong Kim
 
