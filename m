@@ -1,234 +1,219 @@
-Return-Path: <linux-kernel+bounces-227500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF024915243
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:28:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6066591524C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6B61C22198
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:28:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6038B25909
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F38219D885;
-	Mon, 24 Jun 2024 15:27:21 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0626819B5B7;
+	Mon, 24 Jun 2024 15:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdJ5soiP"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C23819D087
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372D119E7F2
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242840; cv=none; b=dfVONcPV75HIDSLJAit+OURdobkkFTZ+wNzK2ZMEJBK+wp9jOcPZyJjD6c4KWI30sF6F62sDpU7uW9osLKGRx1t76QzGyeBpltoJO7rlIFWzTDyEFVeCDkx0L7rmvfrWRr9LY3X/sdq6fGWAccv99hBGgkC1lvCMVqVYgoV3VIE=
+	t=1719242868; cv=none; b=W1QcbtBPoiSX0zinBQA1H9d1V3Zs/j6hKcnGLjRCZRsS/yWk/QIyjz57kqMe1OeVW+7h2lRwm5GN5eTmtj3y3iVJi3ZYBxEHbAWR4QDnyFGf80naFw2E90ofsetaguY0CQL/A5xXRsaWZjMaRC9FgVCBvdN0Yc6ZWMtoEfMpmV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242840; c=relaxed/simple;
-	bh=tzhoTUjn/DIergVJmRXfSBnxf5kvQx64qSKgWfdacmM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kruqBvNk0jbweznqFPOEuyBIbDLx6YfDNJ0RQT+AnIUdpxRGrxDSoCLdk9/hKeRvZkltFCE8rOXGwlHtoBJGWqgBSzpygCM3VVdf/EycBhkOxfUZP6P+DnW4QbwX3zMu501hjKv6lPW47b1FzLSPVgsPRsf9bF4ySjlF61v7+QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-37492fe22cdso34907065ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:27:19 -0700 (PDT)
+	s=arc-20240116; t=1719242868; c=relaxed/simple;
+	bh=9DwZ8C3KCly4h/zRNT3BmacUbsxmOjyY16JcnZMRjm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NzPwVx1XRTrWr24bCSKRjRpqB4ZbVuA7EvQPsm3vyQNaGFM9LblQQmcp+YCZPhGGSwlfnYQfR4POQU+tJwGklLVIwEwofIL/GYRuBkb28B/t8X/THEIu8TcXlMdof5Mj9W88kyR4i3u9YMxrIlDMJDyN7maeYcYUr5oD4jvkjzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RdJ5soiP; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cdc4d221eso2789934e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:27:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719242864; x=1719847664; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zknmga5PBkgGw8TgH0HGAYjZwH1IzFooajhy3i9qJ1I=;
+        b=RdJ5soiPnkMutzNhPO+YI8iuYgNF+HWkcVXyef40fQ52NNTfSmv3q+VNbdhM6GPfhS
+         +zWzB3JFpRITm8ZpA23C/D0372+Fv8pPoiDg54WTpPDWRiLt8Pd1BNeAWmnSTPRfnYCP
+         zIbazzLHo55v64Oxqu3G+4lsIvthvtkNLVznbOU+J0PlCw5m4hjp9p1DwrEqUWlJsUrw
+         u4TQOI8A5SHeawv8h3O+4iIFZ9ArfsjJYUaHw4Qcq1ycrVqf5gnFHsMn8ypiW24VUTxy
+         bwlL6xFjL88HXS9v2ALIYS5EWT9PJUESUWvenopAwZWur0j/4E0KmFmXiDTY8afZNYnM
+         9caQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719242838; x=1719847638;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uv9QZyvFNQpJEReELh0/Si6IkTCCXel7hEP3gP0lOkQ=;
-        b=DodyTpykgju8q1doH1/z4JFESgoRfY6Pj87T1icC5FYWzeC5ASsPonN+I/i72Qdwcq
-         0ToGQKmjyEFu6DOPXfuKdktUUdy+7OT8jXQZuLkHY61UEYamEX8nQbYu5rKRvuDRmKVO
-         /t/11HaDSlvZ2YJX53HR1HnMHDF8ttjAvAfVXa2l8y9ba23HWsiB/4LMPH1zp2S8frXk
-         d5ajEgYamjTtF1oZm0SLsmdvpYq0v1JIUQnYhs9C88S0vyBDw/H8AZi52qwtIazy+h1i
-         87Jpz5aWvCq8KeCE0UB99F5SgGa4ruXDX3kezJ0rmdpb6qN42G/grT9CkcAH0mNIwUaI
-         ntVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUs0v8wLcBfYUYp3ZzcH2RLbeecQYJlptM8hrt22QRK+ohnkVnqCzRoAFKtPBMtngLeGB1mzGL8uDyUXsWRu9fYyw0ZeClDUiCxWel+
-X-Gm-Message-State: AOJu0YxVvn50/LbQppFNRURxuBbLtGtU6W3DVOclXLnDImG+kE+zw4t0
-	txDm0SmWCtcXja1ws7rx3KxNgq51GnlKV0fUPBFoEXiJ23Ry9mBtjU5WlEDP7AM6T8BvMojImwB
-	uZgV4FDvthPLiLf72og+ixNTVG/vBs/316ih5vDlUNF5IY6ISngO7XDI=
-X-Google-Smtp-Source: AGHT+IHEFj6JqrLDueAmnhIgvoBTRDCAK+g+ykmP/vctpJEyM0cQhmmCV5CRQCnajRFiwgRwjrYIAxdj3wGOMJKH4MaybYmYQQx1
+        d=1e100.net; s=20230601; t=1719242864; x=1719847664;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zknmga5PBkgGw8TgH0HGAYjZwH1IzFooajhy3i9qJ1I=;
+        b=vykGXIFY3GNg1tgOcKstiV/+eIbepRl6pnp47pQJ8kY1x9ZVLfDwzLwf6wufUk4hYp
+         yf40ZIOUl3Yk5LwdQgDT9RxiNY5d6O8vxBrKXl/iwDBGnmwZKuQ50cq6/5g/yOCVhcJi
+         rWV/7qW7OZewzMgKPelFIRI1laX15NEkME+4aE28ocer3X3fpju7z2BBWSfXbHDxEaA9
+         BHHcL/nRhvEl3nws31aW1sF6pF/KRhSyNYRVNxL6hKWOnQ+xfd7kK3gMoedznLE4131p
+         Ba8cpH5HZ48TJJMCB1yCXmYp94mhtsRVphFsPizw76BTkMCUvBwoqEhgh21GNLDLtlDj
+         /5IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJK0Gh/AeSZBJXZ8IlZ+jf7o6M/inFAz6jpHbdnDVyDlUkoyj/O8wy0KLffxP60bUNOP9ZMHMbYntho/sBSBxSXcL68XwHyPl5tZDe
+X-Gm-Message-State: AOJu0YyRUuJCpYK1xmfEkpdkzeGuwMCcmGDyJRoLdClqrIzhQKdGew/L
+	OV97ICNA650Fy5V7dsByC2JJ97qyKgXIDj/TSyIjnEedvfF5q3Hiq1elxz/VCxGKLE74Jgv6C7G
+	4Nqg=
+X-Google-Smtp-Source: AGHT+IHDKHZF641+eAwV/7qMCMAd3xlHkRDY+QbpVU6UAqq4KN7gdHrHBVq0n1HMXETpl9kIvQ0KeA==
+X-Received: by 2002:ac2:4882:0:b0:52c:e05f:f70c with SMTP id 2adb3069b0e04-52ce1835310mr2739405e87.26.1719242864274;
+        Mon, 24 Jun 2024 08:27:44 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdd9800a7sm710361e87.126.2024.06.24.08.27.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 08:27:43 -0700 (PDT)
+Date: Mon, 24 Jun 2024 18:27:41 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
+	benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, jagan@edgeble.ai, 
+	neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] drm/panel: panel-jadard-jd9365da-h3: use wrapped
+ MIPI DCS functions
+Message-ID: <zvkl2wyqp3iem4ln4qkbhgvxafsfn5wkkmqwhufabm2gqs3eqw@vmqs3lx72ekk>
+References: <20240624141926.5250-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240624141926.5250-4-lvzhaoxiong@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54a:0:b0:375:cfd0:393d with SMTP id
- e9e14a558f8ab-3763a2510c6mr5302435ab.2.1719242838497; Mon, 24 Jun 2024
- 08:27:18 -0700 (PDT)
-Date: Mon, 24 Jun 2024 08:27:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000abf2f0061ba46a1a@google.com>
-Subject: [syzbot] [lvs?] possible deadlock in start_sync_thread
-From: syzbot <syzbot+e929093395ec65f969c7@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-	horms@verge.net.au, ja@ssi.bg, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org, 
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
-	pablo@netfilter.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624141926.5250-4-lvzhaoxiong@huaqin.corp-partner.google.com>
 
-Hello,
+On Mon, Jun 24, 2024 at 10:19:24PM GMT, Zhaoxiong Lv wrote:
+> Remove conditional code and always use mipi_dsi_dcs_*multi() wrappers to
+> simplify driver's init/enable/exit code.
+> 
+> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+> ---
+>  .../gpu/drm/panel/panel-jadard-jd9365da-h3.c  | 793 +++++++++---------
+>  1 file changed, 390 insertions(+), 403 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
+> index a9c483a7b3fa..e836260338bf 100644
+> --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
+> +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
+> @@ -19,17 +19,13 @@
+>  #include <linux/of.h>
+>  #include <linux/regulator/consumer.h>
+>  
+> -#define JD9365DA_INIT_CMD_LEN		2
+> -
+> -struct jadard_init_cmd {
+> -	u8 data[JD9365DA_INIT_CMD_LEN];
+> -};
+> +struct jadard;
+>  
+>  struct jadard_panel_desc {
+>  	const struct drm_display_mode mode;
+>  	unsigned int lanes;
+>  	enum mipi_dsi_pixel_format format;
+> -	const struct jadard_init_cmd *init_cmds;
+> +	int (*init)(struct jadard *jadard);
+>  	u32 num_init_cmds;
+>  };
+>  
+> @@ -50,46 +46,33 @@ static inline struct jadard *panel_to_jadard(struct drm_panel *panel)
+>  
+>  static int jadard_enable(struct drm_panel *panel)
+>  {
+> -	struct device *dev = panel->dev;
+>  	struct jadard *jadard = panel_to_jadard(panel);
+> -	struct mipi_dsi_device *dsi = jadard->dsi;
+> -	int err;
+> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = jadard->dsi };
+>  
+>  	msleep(120);
+>  
+> -	err = mipi_dsi_dcs_exit_sleep_mode(dsi);
+> -	if (err < 0)
+> -		DRM_DEV_ERROR(dev, "failed to exit sleep mode ret = %d\n", err);
+> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+>  
+> -	err =  mipi_dsi_dcs_set_display_on(dsi);
+> -	if (err < 0)
+> -		DRM_DEV_ERROR(dev, "failed to set display on ret = %d\n", err);
+> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+>  
+> -	return 0;
+> +	return dsi_ctx.accum_err;
+>  }
+>  
+>  static int jadard_disable(struct drm_panel *panel)
+>  {
+> -	struct device *dev = panel->dev;
+>  	struct jadard *jadard = panel_to_jadard(panel);
+> -	int ret;
+> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = jadard->dsi };
+>  
+> -	ret = mipi_dsi_dcs_set_display_off(jadard->dsi);
+> -	if (ret < 0)
+> -		DRM_DEV_ERROR(dev, "failed to set display off: %d\n", ret);
+> +	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+>  
+> -	ret = mipi_dsi_dcs_enter_sleep_mode(jadard->dsi);
+> -	if (ret < 0)
+> -		DRM_DEV_ERROR(dev, "failed to enter sleep mode: %d\n", ret);
+> +	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+>  
+> -	return 0;
+> +	return dsi_ctx.accum_err;
+>  }
+>  
+>  static int jadard_prepare(struct drm_panel *panel)
+>  {
+>  	struct jadard *jadard = panel_to_jadard(panel);
+> -	const struct jadard_panel_desc *desc = jadard->desc;
+> -	unsigned int i;
+>  	int ret;
+>  
+>  	ret = regulator_enable(jadard->vccio);
+> @@ -109,13 +92,9 @@ static int jadard_prepare(struct drm_panel *panel)
+>  	gpiod_set_value(jadard->reset, 1);
+>  	msleep(130);
+>  
+> -	for (i = 0; i < desc->num_init_cmds; i++) {
+> -		const struct jadard_init_cmd *cmd = &desc->init_cmds[i];
+> -
+> -		ret = mipi_dsi_dcs_write_buffer(dsi, cmd->data, JD9365DA_INIT_CMD_LEN);
 
-syzbot found the following issue on:
+This function usesd mipi_dsi_dcs_write_buffer()...
 
-HEAD commit:    3226607302ca selftests: net: change shebang to bash in amt..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a2683e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
-dashboard link: https://syzkaller.appspot.com/bug?extid=e929093395ec65f969c7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> -		if (ret < 0)
+> -			return ret;
+> -	}
+> +	ret = jadard->desc->init(jadard);
+> +	if (ret)
+> +		return ret;
+>  
+>  	return 0;
 
-Unfortunately, I don't have any reproducer for this issue yet.
+[...]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/125c85863435/disk-32266073.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4477ecab2e1f/vmlinux-32266073.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/43e28f6ce879/bzImage-32266073.xz
+> +static int radxa_display_8hd_ad002_init_cmds(struct jadard *jadard)
+> +{
+> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = jadard->dsi };
+> +
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x00);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e929093395ec65f969c7@syzkaller.appspotmail.com
+... while your code uses mipi_dsi_dcs_write_seq_multi(), which
+internally calls mipi_dsi_generic_write_multi(). These two function use
+different packet types to send the payload. To be conservatite, please
+use mipi_dsi_dcs_write_buffer_multi().
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc4-syzkaller-00837-g3226607302ca #0 Not tainted
-------------------------------------------------------
-syz-executor.4/10811 is trying to acquire lock:
-ffffffff8f5e6f48 (rtnl_mutex){+.+.}-{3:3}, at: start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE1, 0x93);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE2, 0x65);
 
-but task is already holding lock:
-ffff88805ba95750 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3064
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       smc_switch_to_fallback+0x35/0xd00 net/smc/af_smc.c:902
-       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2779
-       sock_sendmsg_nosec net/socket.c:730 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:745
-       __sys_sendto+0x3a4/0x4f0 net/socket.c:2192
-       __do_sys_sendto net/socket.c:2204 [inline]
-       __se_sys_sendto net/socket.c:2200 [inline]
-       __x64_sys_sendto+0xde/0x100 net/socket.c:2200
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       lock_sock_nested+0x48/0x100 net/core/sock.c:3543
-       do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
-       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
-       __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
-       __do_sys_setsockopt net/socket.c:2344 [inline]
-       __se_sys_setsockopt net/socket.c:2341 [inline]
-       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (rtnl_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
-       do_ip_vs_set_ctl+0x442/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2732
-       nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
-       smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3072
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
-       __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
-       __do_sys_setsockopt net/socket.c:2344 [inline]
-       __se_sys_setsockopt net/socket.c:2341 [inline]
-       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&smc->clcsock_release_lock);
-                               lock(sk_lock-AF_INET);
-                               lock(&smc->clcsock_release_lock);
-  lock(rtnl_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.4/10811:
- #0: ffff88805ba95750 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3064
-
-stack backtrace:
-CPU: 0 PID: 10811 Comm: syz-executor.4 Not tainted 6.10.0-rc4-syzkaller-00837-g3226607302ca #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
- do_ip_vs_set_ctl+0x442/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2732
- nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
- smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3072
- do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
- __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
- __do_sys_setsockopt net/socket.c:2344 [inline]
- __se_sys_setsockopt net/socket.c:2341 [inline]
- __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f42d8a7d0a9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f42d98870c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007f42d8bb3f80 RCX: 00007f42d8a7d0a9
-RDX: 000000000000048b RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00007f42d8aec074 R08: 0000000000000018 R09: 0000000000000000
-R10: 0000000020000200 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f42d8bb3f80 R15: 00007ffde628d3a8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
