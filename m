@@ -1,55 +1,71 @@
-Return-Path: <linux-kernel+bounces-227078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70366914803
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:05:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B4FB91480F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249A91F23D9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:05:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E2AC1C22114
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EF3137743;
-	Mon, 24 Jun 2024 11:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E6413791B;
+	Mon, 24 Jun 2024 11:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zul6obyl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UjlAMUwh"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AE2136663
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8CF137753;
+	Mon, 24 Jun 2024 11:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719227096; cv=none; b=CKvoc5P7dqmCFJQ2pyMjyerFV1Z74y3HTvhRs4uwj6l0ekP+ldIWoE15XzBAFCGuFLLLGes5jYu8UcXfQzqqBxA7PjV/eAqvqbEF2JyoLoIyrMGw7345dHd33XEhGCckdL9sSPtDVKdJIxyz+d3j1y/Kdk2jrhwtN8DUS1WBkb4=
+	t=1719227307; cv=none; b=A3nmsVtYd/d3cVxhSdN2y8eKy1alKUWC4FNEYKGG52MiAeEWrpuC9AtSAXZLVVGab+7BKu38grxfzdGrO//E6BYhsnVh69RmldEhfcJBRcpepZfeUtta8YnXyeZVdRZvKpFK0cw53HyGM80wy4PKLGb1QOZEt19I7uGG3cbRhHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719227096; c=relaxed/simple;
-	bh=ScPmTjF2579pHVSsz6jaMLkZu+Xg8dywXQLweA3pHi0=;
+	s=arc-20240116; t=1719227307; c=relaxed/simple;
+	bh=Xa52x9ju8kZ0ATQQyiPw1QGg5UNV8SVxaBJmxKI3g6k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXz1/SFiEDMYzaiX7tLEYwhQm7J2aHXIa3NYX8aH/PHLsj4yhbEFhmYEzwGzq/Xtd/OlUbUxjSRPp6QRDgIp3QCcwl+mfrHuwcz3w2iPzZGmu04z23Bcm1jV5SIL49SQd3LpONWCgJ3CbAtOmYTiWmB5GNFFNz9yK3BT2kh4tH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zul6obyl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE06C2BBFC;
-	Mon, 24 Jun 2024 11:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719227096;
-	bh=ScPmTjF2579pHVSsz6jaMLkZu+Xg8dywXQLweA3pHi0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zul6obylsMOWoO/B+ZQbVaneKjPg4sr+UKZU+ALHnjqcJRxU4uHe2MfXD6qKN10R6
-	 X1E445HzYgkQyU40uLhoZsxyYkuotmEE3MMk5Z7L6ejyJkNWrOwFs3CjLskdoLryei
-	 CqBL5NzqTNVXtDZa+R97d+t7n3z3NkVCodt2/GMJl2jesEsMmU3mpZNN6Nu2G27cTh
-	 JihShgZ9NPQ1jP5LBnYOgimZjGy0PKwNfdu1gVvpxtNAH5wZdybBAGgSZ45qR3vG49
-	 ZhoVYvFZ5d846qaU6uP+Xk/Vi1PZ3veoLpkGjN6MHtTiFoA0cGpIzzmuVQXAGnZrWW
-	 6N7XlY5qXuxJw==
-Date: Mon, 24 Jun 2024 13:04:53 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>, Narasimhan V <Narasimhan.V@amd.com>
-Subject: Re: [PATCH 0/3] timer_migration: Fix a possible race and improvements
-Message-ID: <ZnlS1QcFgHvJGm7J@lothringen>
-References: <20240621-tmigr-fixes-v1-0-8c8a2d8e8d77@linutronix.de>
- <ZnWOswTMML6ShzYO@localhost.localdomain>
- <87zfrag1jh.fsf@somnus>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V9szSxfoBvx18hz8lXsbDJ+eLNNBdquYhAjqJoardUdtGqzhMQdQAvy8/IFOllU6kMhB5GzMXhccwSa8cAQ70Cvq8TGDiYaAwZW8aGqBJ8rY9JZfyTy9s7ZKFcL1eG1Ub59usoeZBLd5uiocxPG4ov2Wt9Ddd8mDnVz588fD6Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UjlAMUwh; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IgHBmS9mm72gkhi4cETlocuOHSRdb4UBX7HvQNJvhx4=; b=UjlAMUwhJ2VF5EjiKB+POt6thX
+	L16QAvno7ML/B02SZtfH/L0KDReRQX2ClibVR2kJBlEmVbgMWOEMfT9aQgvdkFNnIVDa6Osn5Mo1v
+	Qsp2aGMauN2DMK/R6UTLK1Zq6QvIm5ZwfDvWICCqBhF1IkWgnYFA5TM9/DsH2kg6w50hyFdolgiCY
+	HIMdfVZwucUyFwpsIWMiQ6ikBEk+ZltEsAx5jb//VhUKDQyhFyxVBBk5VPHqNNo/S3pGe5zR5KDas
+	KBIm0zgww71lxhzsSrUGI4cHlfixSMHflSWbh8knsJd7ZXxTo5W7WcAEI2IEH3buJ593a1m8ubn86
+	rc5UJSBw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sLhWk-00000008EDj-3etW;
+	Mon, 24 Jun 2024 11:06:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0E455300754; Mon, 24 Jun 2024 13:06:24 +0200 (CEST)
+Date: Mon, 24 Jun 2024 13:06:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 05/39] sched: Add sched_class->switching_to() and expose
+ check_class_changing/changed()
+Message-ID: <20240624110624.GJ31592@noisy.programming.kicks-ass.net>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240501151312.635565-6-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,108 +74,184 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87zfrag1jh.fsf@somnus>
+In-Reply-To: <20240501151312.635565-6-tj@kernel.org>
 
-On Mon, Jun 24, 2024 at 10:58:26AM +0200, Anna-Maria Behnsen wrote:
-> Frederic Weisbecker <frederic@kernel.org> writes:
-> > 0) Hierarchy has only 8 CPUs (single node for now with only CPU 0
-> >    as active.
-> >
-> >    
-> >                              [GRP1:0]
-> >                         migrator = TMIGR_NONE
-> >                         active   = NONE
-> >                         nextevt  = KTIME_MAX
-> >                                          \
-> >                  [GRP0:0]                  [GRP0:1]
-> >               migrator = 0              migrator = TMIGR_NONE
-> >               active   = 0              active   = NONE
-> >               nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-> >                 /         \                    |
-> >               0          1 .. 7                8
-> >           active         idle                !online
-> >
-> > 1) CPU 8 is booting and creates a new node and a new top. For now it's
-> >    only connected to GRP0:1, not yet to GRP0:0. Also CPU 8 hasn't called
-> >    __tmigr_cpu_activate() on itself yet.
+On Wed, May 01, 2024 at 05:09:40AM -1000, Tejun Heo wrote:
+> When a task switches to a new sched_class, the prev and new classes are
+> notified through ->switched_from() and ->switched_to(), respectively, after
+> the switching is done.
 > 
-> NIT: In step 1) CPU8 is not yet connected to GRP0:1 as the second while
-> loop is not yet finished, but nevertheless...
-
-Yes, I was in the second loop in my mind, but that didn't transcribe well :-)
-
+> A new BPF extensible sched_class will have callbacks that allow the BPF
+> scheduler to keep track of relevant task states (like priority and cpumask).
+> Those callbacks aren't called while a task is on a different sched_class.
+> When a task comes back, we wanna tell the BPF progs the up-to-date state
+> before the task gets enqueued, so we need a hook which is called before the
+> switching is committed.
 > 
-> >
-> >                              [GRP1:0]
-> >                         migrator = TMIGR_NONE
-> >                         active   = NONE
-> >                         nextevt  = KTIME_MAX
-> >                        /                  \
-> >                  [GRP0:0]                  [GRP0:1]
-> >               migrator = 0              migrator = TMIGR_NONE
-> >               active   = 0              active   = NONE
-> >               nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-> >                 /         \                    |
-> >               0          1 .. 7                8
-> >           active         idle                active
-> >
-> > 2) CPU 8 connects GRP0:0 to GRP1:0 and observes while in
-> >    tmigr_connect_child_parent() that GRP0:0 is not TMIGR_NONE. So it
-> >    prepares to call tmigr_active_up() on it. It hasn't done it yet.
+> This patch adds ->switching_to() which is called during sched_class switch
+> through check_class_changing() before the task is restored. Also, this patch
+> exposes check_class_changing/changed() in kernel/sched/sched.h. They will be
+> used by the new BPF extensible sched_class to implement implicit sched_class
+> switching which is used e.g. when falling back to CFS when the BPF scheduler
+> fails or unloads.
 > 
-> NIT: CPU8 keeps its state !online until step 5.
+> This is a prep patch and doesn't cause any behavior changes. The new
+> operation and exposed functions aren't used yet.
+> 
+> v2: Improve patch description w/ details on planned use.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reviewed-by: David Vernet <dvernet@meta.com>
+> Acked-by: Josh Don <joshdon@google.com>
+> Acked-by: Hao Luo <haoluo@google.com>
+> Acked-by: Barret Rhoden <brho@google.com>
 
-Oops, copy paste hazards.
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 8e23f19e8096..99e292368d11 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -2301,6 +2301,7 @@ struct sched_class {
+>  	 * cannot assume the switched_from/switched_to pair is serialized by
+>  	 * rq->lock. They are however serialized by p->pi_lock.
+>  	 */
+> +	void (*switching_to) (struct rq *this_rq, struct task_struct *task);
+>  	void (*switched_from)(struct rq *this_rq, struct task_struct *task);
+>  	void (*switched_to)  (struct rq *this_rq, struct task_struct *task);
+>  	void (*reweight_task)(struct rq *this_rq, struct task_struct *task,
 
-> Holding the lock will not help as the state is not protected by the
-> lock.
+So I *think* that I can handle all the current cases in
+sched_class::{en,de}queue_task() if we add {EN,DE}QUEUE_CLASS flags.
 
-No but any access happening before an UNLOCK is guaranteed to be visible
-after the next LOCK. This makes sure that either:
+Would that work for the BPF thing as well?
 
-1) If the remote CPU going inactive has passed tmigr_update_events() with
-its unlock of group->lock then the onlining CPU will see the TMIGR_NONE
+Something like the very much incomplete below... It would allow removing
+all these switch{ed,ing}_{to,from}() things entirely, instead of
+adding yet more.
 
-or:
-
-1) If the onlining CPU locks before the remote CPU calls tmigr_update_events(),
-   then the subsequent LOCK on group->lock in tmigr_update_events() will acquire
-   the new parent link and propagate the up the inactive state.
-
-And yes there is an optimization case where we don't lock:
-
-		if (evt->ignore && !remote && group->parent)
-			return true;
-
-And that would fall through the cracks. So, forget about that lock idea.
-
-
-> +static void tmigr_setup_active_up(struct tmigr_group *group, struct tmigr_group *child)
-> +{
-> +	union tmigr_state curstate, childstate;
-> +	bool walk_done;
-> +
-> +	/*
-> +	 * FIXME: Memory barrier is required here as the child state
-> +	 * could have changed in the meantime
-> +	 */
-> +	curstate.state = atomic_read_acquire(&group->migr_state);
-> +
-> +	for (;;) {
-> +		childstate.state = atomic_read(&child->migr_state);
-> +		if (!childstate.active)
-> +			return;
-
-Ok there could have been a risk that we miss the remote CPU going active. But
-again thanks to the lock this makes sure that either we observe the childstate
-as active or the remote CPU sees the link and propagates its active state. And
-the unlocked optimization tmigr_update_events() still works because either it
-sees the new parent and proceeds or it sees an intermediate parent and the next
-ones will be locked.
-
-Phew!
-
-I'll do a deeper review this evening but it _looks_ ok.
-
-Thanks.
+---
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 0935f9d4bb7b..da54c9f8f78d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6864,15 +6864,22 @@ int default_wake_function(wait_queue_entry_t *curr, unsigned mode, int wake_flag
+ }
+ EXPORT_SYMBOL(default_wake_function);
+ 
+-void __setscheduler_prio(struct task_struct *p, int prio)
++struct sched_class *__setscheduler_class(int prio)
+ {
++	struct sched_class *class;
++
+ 	if (dl_prio(prio))
+-		p->sched_class = &dl_sched_class;
++		class = &dl_sched_class;
+ 	else if (rt_prio(prio))
+-		p->sched_class = &rt_sched_class;
++		class = &rt_sched_class;
+ 	else
+-		p->sched_class = &fair_sched_class;
++		class = &fair_sched_class;
+ 
++	return class;
++}
++
++void __setscheduler_prio(struct task_struct *p, int prio)
++{
+ 	p->prio = prio;
+ }
+ 
+@@ -6919,7 +6926,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+ {
+ 	int prio, oldprio, queued, running, queue_flag =
+ 		DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
+-	const struct sched_class *prev_class;
++	const struct sched_class *prev_class, *class;
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 
+@@ -6977,6 +6984,10 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+ 		queue_flag &= ~DEQUEUE_MOVE;
+ 
+ 	prev_class = p->sched_class;
++	class = __setscheduler_class(prio);
++	if (prev_class != class)
++		queue_flags |= DEQUEUE_CLASS;
++
+ 	queued = task_on_rq_queued(p);
+ 	running = task_current(rq, p);
+ 	if (queued)
+@@ -7014,6 +7025,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+ 			p->rt.timeout = 0;
+ 	}
+ 
++	p->class = class;
+ 	__setscheduler_prio(p, prio);
+ 
+ 	if (queued)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 62fd8bc6fd08..a03995d81c75 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2251,6 +2251,7 @@ extern const u32		sched_prio_to_wmult[40];
+ #define DEQUEUE_MOVE		0x04 /* Matches ENQUEUE_MOVE */
+ #define DEQUEUE_NOCLOCK		0x08 /* Matches ENQUEUE_NOCLOCK */
+ #define DEQUEUE_MIGRATING	0x100 /* Matches ENQUEUE_MIGRATING */
++#define DEQUEUE_CLASS		0x200 /* Matches ENQUEUE_CLASS */
+ 
+ #define ENQUEUE_WAKEUP		0x01
+ #define ENQUEUE_RESTORE		0x02
+@@ -2266,6 +2267,7 @@ extern const u32		sched_prio_to_wmult[40];
+ #endif
+ #define ENQUEUE_INITIAL		0x80
+ #define ENQUEUE_MIGRATING	0x100
++#define ENQUEUE_CLASS		0x200
+ 
+ #define RETRY_TASK		((void *)-1UL)
+ 
+@@ -3603,6 +3605,7 @@ static inline int rt_effective_prio(struct task_struct *p, int prio)
+ 
+ extern int __sched_setscheduler(struct task_struct *p, const struct sched_attr *attr, bool user, bool pi);
+ extern int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx);
++extern struct sched_class *__setscheduler_class(int prio);
+ extern void __setscheduler_prio(struct task_struct *p, int prio);
+ extern void set_load_weight(struct task_struct *p, bool update_load);
+ extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
+diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+index ae1b42775ef9..dc104d996204 100644
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -612,7 +612,7 @@ int __sched_setscheduler(struct task_struct *p,
+ {
+ 	int oldpolicy = -1, policy = attr->sched_policy;
+ 	int retval, oldprio, newprio, queued, running;
+-	const struct sched_class *prev_class;
++	const struct sched_class *prev_class, *class;
+ 	struct balance_callback *head;
+ 	struct rq_flags rf;
+ 	int reset_on_fork;
+@@ -783,6 +783,12 @@ int __sched_setscheduler(struct task_struct *p,
+ 			queue_flags &= ~DEQUEUE_MOVE;
+ 	}
+ 
++	class = prev_class = p->sched_class;
++	if (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS))
++		class = __setscheduler_class(newprio);
++	if (prev_class != class)
++		queue_flags |= DEQUEUE_CLASS;
++
+ 	queued = task_on_rq_queued(p);
+ 	running = task_current(rq, p);
+ 	if (queued)
+@@ -790,10 +796,9 @@ int __sched_setscheduler(struct task_struct *p,
+ 	if (running)
+ 		put_prev_task(rq, p);
+ 
+-	prev_class = p->sched_class;
+-
+ 	if (!(attr->sched_flags & SCHED_FLAG_KEEP_PARAMS)) {
+ 		__setscheduler_params(p, attr);
++		p->class = class;
+ 		__setscheduler_prio(p, newprio);
+ 	}
+ 	__setscheduler_uclamp(p, attr);
 
