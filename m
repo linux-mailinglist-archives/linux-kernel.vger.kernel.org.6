@@ -1,99 +1,132 @@
-Return-Path: <linux-kernel+bounces-227894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3649157C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:19:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE949157C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CE121C23691
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:19:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A8A1C22241
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478171A072B;
-	Mon, 24 Jun 2024 20:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466EE1A01DA;
+	Mon, 24 Jun 2024 20:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="bh4tqL67"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giHbMji3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6511A01AD
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825291A0717;
+	Mon, 24 Jun 2024 20:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719260335; cv=none; b=ql8shsnodSInVZX5VxQXdMxpVvf+K/P+fhl6oyBJ1EQ5Wfm8F/dSnB3uCau3XwwD6cBDvb/WvcW6f/hf+E9FfBcsp+yimOP8bV61vmE+Ke8dWwQN5eiOU/xdPSKEmhv5bxqkOn/TQkA8ZBCtAzbWRfMHBpJ/YMxALe5yaiK5HnA=
+	t=1719260301; cv=none; b=TazONW3pyxI8Hm24dkYvpg49dFf6ThjzaE0CtMD7t1HnuYVHl01YHEHxGBvRCgVU/e0vNqd5gX81m8AvW+x/UxxJ2srirDp6xUWzN5eGqjKUaXrAQ6bVY4u3O2feNN5dK6BBGRn6Y44/SPjRvAHlx5KIYbk6YQjvH/SfqRW5oFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719260335; c=relaxed/simple;
-	bh=CYPMKzKXzPtEKhl5KLn1rsXOXuPsd77VL4h50H+aCL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bYO7GrYAPrEtU3JcLD47YSWaJRrKby0LNkeeSAKuJniztojAjYweuk6Bulho8HqHt3zOb7rGwKcZhvw9Jg+lD87oaEvSjtTeFnMwFR4kdHTI6KBrIspDEspIiEbNMCcHj7tspYUaUUK+WkKbzbv3ID73JaulEm3kpjc93uo11CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=bh4tqL67; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee6eso8307747a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:18:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719260332; x=1719865132; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CYPMKzKXzPtEKhl5KLn1rsXOXuPsd77VL4h50H+aCL0=;
-        b=bh4tqL67qwrLSvvomB0GYyaZRmfZ8C7/jtMJQbLXq+rTsGgIZuiWYFNpH++Al2dWQe
-         hbXXTwtmc/nJTyFciBIUyb/nFVP2i0yZv+cRV/AdaaBu5l+jIqgrzOhqtdqss228H7/9
-         i8h6A8Ur0MSfXq7LyHaH1OyNoZINRlrNnrD1blCrAB47CY7g8CVSdW+lyEBneNDoMjXe
-         W5zbLbwk2DQZz+HxdsIKlagFzxlicQN+NmlsCNiyY+6v5KtMiBtt3Enem/giGaJqHjpw
-         C+m8Ls3NamUo4rAwDvC3+9fqEAkj692/nhnSK8M6U0ZFwGzggR/PeALd2V1pYOe2ovRV
-         +0Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719260332; x=1719865132;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CYPMKzKXzPtEKhl5KLn1rsXOXuPsd77VL4h50H+aCL0=;
-        b=TkYd+hxloMuk+pNIoCF8/yI/rnt1CMkiyFt4hKaKLTGpMk+fe30rUF0Md6ywBjKIn7
-         2+4WDINRo/6VULyJPbgBZ7lFaHwbc0iHQFHzvhSvt2BR7ecAg8zP14+FUt9oqFJDPaFM
-         nGAjaJnA1fdydHx1RXg9rdD+tz2btZ5NjR4NnMGCFTr1E1UUiJsbapIwmX8HdOPdYkT0
-         oY0bzKvOsLOGIx4IOWjqMM1Xa1aleC55Phb9XAIBKzSLLB3W60uMPszZJvuV2pMWwIG5
-         1gWkP6TiNP7Y/4+N5wVNtEGWVNIHsGomUiXnQZJXKxP1O6OBdhA/I/l5b1HStgTiJyA+
-         3gdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVITVjwmFyFepi9gKUO9wuCbTy+GzvvTOCuJAdECL5V3thIGunH/+g8oGLJQQjX3lDZ0AkYPYJU6/KD5kPbf2XBu5PjcwRzB+JEFcPN
-X-Gm-Message-State: AOJu0Yy5Tzra+8Llx6zlPtY5+8SVCkHpc6bsncdC/XOwJ8uHyPGkDfFj
-	K0uo9O9EgMN5FZXvhDbKsSfUpaRUDDeAbtDYYo7A9zQhJLj1ND/uMXNMLlINQY8hTaQqTEDV9p4
-	c+CROv4KwXFdCmNSffhSF+tNIQ1S6guzfyPmaOQ==
-X-Google-Smtp-Source: AGHT+IHYKa/ycS20058DIxTuE4TPZj+Ne6GJbbNiJ5FbYcQC6EiSPJWgGfnJ/EyOzoXs+/hcdQEshUVAiI2Wx8GhYRs=
-X-Received: by 2002:a17:907:8b91:b0:a6f:6df5:a264 with SMTP id
- a640c23a62f3a-a70275ea47emr586904366b.1.1719260332160; Mon, 24 Jun 2024
- 13:18:52 -0700 (PDT)
+	s=arc-20240116; t=1719260301; c=relaxed/simple;
+	bh=DO3F18f5SP8f/MW8gwjfbWiSJPAYVs+z8iZoxQFISiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ptRyn/7301eDuGO/cwEqR5nkmDxLBYOrO5dCR4E9iY7Lyqe+RYGDhP/gcylnoeTieYE6WrF3BQer//WuML0+H/9m2F6ejH04BEUrtAFdxEi4X0KLHz9Cj73wGqjoewTzyPRO/RFqp4psAFZnMG0rmsfamx2mVqnBNpv38Vgf+Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giHbMji3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6997C2BBFC;
+	Mon, 24 Jun 2024 20:18:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719260301;
+	bh=DO3F18f5SP8f/MW8gwjfbWiSJPAYVs+z8iZoxQFISiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=giHbMji3CYwfeiqD8pY4mqugoWrrhHgw1f0I5G/R/+73iM4AbHSlk1xqzuYBgIxqU
+	 DDiTPV4F/GgmGykqWHjliMsgEoMhxKVrGp1wlEfpBcyUob91Fqm8WlRIh/hEqvVZf8
+	 uHMhux0uUfvAYo9lYpB3D+BZZ7K/1co85GPpwUREey7A7LgLO8MweyOZkzToBfkbsO
+	 OMyU8L8YQbK4z8LTYPQiMgq4DLyyWwiBS327C0G4eAESnjFxiTksHaqWQh5Kc8malm
+	 O//xzbkwjW0/OuqWNjA+TwTGHDrO4+Wk0s3ArKJVpprzyI0326JZ0LinY1LHO5Ro6+
+	 LiXA2mYAT0cFA==
+Date: Mon, 24 Jun 2024 13:18:19 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: Re: [PATCH v2] kbuild: rpm-pkg: fix build error with CONFIG_MODULES=n
+Message-ID: <20240624201819.GA783641@thelio-3990X>
+References: <20240618110850.3510697-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619113529.676940-1-cleger@rivosinc.com> <20240619113529.676940-15-cleger@rivosinc.com>
-In-Reply-To: <20240619113529.676940-15-cleger@rivosinc.com>
-From: Evan Green <evan@rivosinc.com>
-Date: Mon, 24 Jun 2024 13:18:16 -0700
-Message-ID: <CALs-HssLx_AZ_pBDECfVH7REoSkyz-=bECPYDeNZkfe59DdBGQ@mail.gmail.com>
-Subject: Re: [PATCH v7 14/16] riscv: hwprobe: export Zcmop ISA extension
-To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Anup Patel <anup@brainfault.org>, 
-	Shuah Khan <shuah@kernel.org>, Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618110850.3510697-1-masahiroy@kernel.org>
 
-On Wed, Jun 19, 2024 at 4:41=E2=80=AFAM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
-osinc.com> wrote:
->
-> Export Zcmop ISA extension through hwprobe.
->
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
+On Tue, Jun 18, 2024 at 08:08:43PM +0900, Masahiro Yamada wrote:
+> When CONFIG_MODULES is disabled, 'make (bin)rpm-pkg' fails:
+> 
+>   $ make allnoconfig binrpm-pkg
+>     [ snip ]
+>   error: File not found: .../linux/rpmbuild/BUILDROOT/kernel-6.10.0_rc3-1.i386/lib/modules/6.10.0-rc3/kernel
+>   error: File not found: .../linux/rpmbuild/BUILDROOT/kernel-6.10.0_rc3-1.i386/lib/modules/6.10.0-rc3/modules.order
+> 
+> Specify the directory path, /lib/modules/%{KERNELRELEASE}, instead of
+> individual files to make it work irrespective of CONFIG_MODULES.
+> 
+> However, doing so would cause new warnings:
+> 
+>   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.alias
+>   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.alias.bin
+>   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.builtin.alias.bin
+>   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.builtin.bin
+>   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.dep
+>   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.dep.bin
+>   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.devname
+>   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.softdep
+>   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.symbols
+>   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.symbols.bin
+> 
+> These files exist in /lib/modules/%{KERNELRELEASE} and are also explicitly
+> marked as %ghost.
+> 
+> Suppress depmod because depmod-generated files are not packaged.
+> 
+> Fixes: 615b3a3d2d41 ("kbuild: rpm-pkg: do not include depmod-generated files")
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-Reviewed-by: Evan Green <evan@rivosinc.com>
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
+> ---
+> 
+> Changes in v2:
+>   - Do not run depmod
+> 
+>  scripts/package/kernel.spec | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/scripts/package/kernel.spec b/scripts/package/kernel.spec
+> index e095eb1e290e..fffc8af8deb1 100644
+> --- a/scripts/package/kernel.spec
+> +++ b/scripts/package/kernel.spec
+> @@ -57,7 +57,8 @@ patch -p1 < %{SOURCE2}
+>  %install
+>  mkdir -p %{buildroot}/lib/modules/%{KERNELRELEASE}
+>  cp $(%{make} %{makeflags} -s image_name) %{buildroot}/lib/modules/%{KERNELRELEASE}/vmlinuz
+> -%{make} %{makeflags} INSTALL_MOD_PATH=%{buildroot} modules_install
+> +# DEPMOD=true makes depmod no-op. We do not package depmod-generated files.
+> +%{make} %{makeflags} INSTALL_MOD_PATH=%{buildroot} DEPMOD=true modules_install
+>  %{make} %{makeflags} INSTALL_HDR_PATH=%{buildroot}/usr headers_install
+>  cp System.map %{buildroot}/lib/modules/%{KERNELRELEASE}
+>  cp .config %{buildroot}/lib/modules/%{KERNELRELEASE}/config
+> @@ -70,10 +71,7 @@ ln -fns /usr/src/kernels/%{KERNELRELEASE} %{buildroot}/lib/modules/%{KERNELRELEA
+>  %endif
+>  
+>  {
+> -	for x in System.map config kernel modules.builtin \
+> -			modules.builtin.modinfo modules.order vmlinuz; do
+> -		echo "/lib/modules/%{KERNELRELEASE}/${x}"
+> -	done
+> +	echo "/lib/modules/%{KERNELRELEASE}"
+>  
+>  	for x in alias alias.bin builtin.alias.bin builtin.bin dep dep.bin \
+>  					devname softdep symbols symbols.bin; do
+> -- 
+> 2.43.0
+> 
 
