@@ -1,95 +1,94 @@
-Return-Path: <linux-kernel+bounces-226516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F16913F91
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:35:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F27913F9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A76412817D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 00:35:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D072B21701
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 00:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEC41C2E;
-	Mon, 24 Jun 2024 00:35:11 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4C620E6;
+	Mon, 24 Jun 2024 00:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="meGrzdiu"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4B2646;
-	Mon, 24 Jun 2024 00:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016E810E9;
+	Mon, 24 Jun 2024 00:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719189311; cv=none; b=cs1c3uIcjs/YTFwSt6mrOdh9nWA5VCeZU1PMBHo0TjKDC60MjmwLYh2uhYPDGKsn+6/CNQ2oUD2x4UqZrKOobIlbqtNXjxIYN/wrUz5SQbtlUlLomUc0Z8nLLIYTXXgnBd3fLE75TDpNjGfW02WrrVEsDEYHnevLLiJ3+hr5JMY=
+	t=1719190361; cv=none; b=e4d7tGeFCQvjkK7BFr3zBzv1LEvT8MOAXH1J3ojrui4sIfVR1XjhDvDEqS1NDCkD0u2xVx3oT1pBvVmUrXmaGVx17abVy9CTmydj8tXKaH8THCrMjYRpUMArjWyGhd0IIpS/2qr29WqsbgOt4jl2XhklkKPud+fbSl+fGVCGCzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719189311; c=relaxed/simple;
-	bh=3lSzublKdlhnIF8lHSe7BLk/CTyH+T1oOQ9ZcOTKUOs=;
-	h=Message-ID:Date:From:MIME-Version:To:CC:Subject:References:
-	 In-Reply-To:Content-Type; b=DjrXMqEkL8v7MHPOYpAcKOdEw7wz/1eSUNHCRZQJDYbGakdBRzbk27qfIYMS5TZn58kdZzfEbFD+Yiv9DWBD52A2n8mFbqUEGEhiPqC8CQuilqv/hzewXEVULzXYJ74c+bYRjn93bXu8cWoGua6oTpxDUiSoZ0wXY++47DEh550=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W6prd0wKlznX5W;
-	Mon, 24 Jun 2024 08:34:57 +0800 (CST)
-Received: from kwepemd500014.china.huawei.com (unknown [7.221.188.63])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9CBEC1400D6;
-	Mon, 24 Jun 2024 08:34:59 +0800 (CST)
-Received: from [10.67.121.2] (10.67.121.2) by kwepemd500014.china.huawei.com
- (7.221.188.63) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 24 Jun
- 2024 08:34:59 +0800
-Message-ID: <6678BF32.10609@hisilicon.com>
-Date: Mon, 24 Jun 2024 08:34:58 +0800
-From: Wei Xu <xuwei5@hisilicon.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
+	s=arc-20240116; t=1719190361; c=relaxed/simple;
+	bh=xFnTlCEXYNUtSI9aate1sM51RDE4KwtaTjPN+GQK0Qw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=REfrY+6Xe2iKwir2T+a5t3pt3Wcv0HuXVeefpsiKN1PGyZQxy9I2Urtu4J7IQbj/UM/RwSMGMmhJS0/E7G/uDKHh0ZYGsxjUz0NAHZOxvD8CTVQb9U2/Uq+GKLBSQdLfUbKHCfu7THRv1FUGQRwOhg0X4YNtinbZQ5YwsqcASr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=meGrzdiu; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [192.168.68.112] (ppp118-210-79-194.adl-adc-lon-bras32.tpg.internode.on.net [118.210.79.194])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8D5012009F;
+	Mon, 24 Jun 2024 08:52:34 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1719190357;
+	bh=NQqL7DsqxZzghaWKR/8rkG8Pl+N6DaWnsqVc3zJk2M0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=meGrzdiu/WAEEFAf5g1Gp251Pa8oZo7y56P+pBNGGYEQSlGxKyJJzf4Ft5MxIPlTL
+	 56x9n73PsCInkrlWhxqfVp80Zstmo8KnP5PhseWejB7r9NUrgWxP4wFLm9d5j7fFNm
+	 ZFIq+PeRz/h4T8C5QhdglMBfj6Hp9W2+on0+14vfcItCCLGOTIAHiPF1pA3JKfKmWW
+	 0bwI5xL0INEg+H+mV/YGGS3Em/HWBF/ZKylB9YkjHp5GJLWpxlt+INFsk8ttNzvbnt
+	 2XSdB1LCrcEC2+yLkX3bhU08x6JZ1TqMrdv+62TALyj+TmzAKNfvENO0vx/kiZWB0A
+	 P+qptu4/hC2XQ==
+Message-ID: <f31f59cc4381a41c57b94d10560ec2a7356f8868.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] usb: gadget: aspeed_udc: validate endpoint index for
+ ast udc
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Ma Ke <make24@iscas.ac.cn>, neal_liu@aspeedtech.com, 
+	gregkh@linuxfoundation.org, joel@jms.id.au
+Cc: linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Mon, 24 Jun 2024 10:22:34 +0930
+In-Reply-To: <20240622095618.1890093-1-make24@iscas.ac.cn>
+References: <20240622095618.1890093-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Carvalho Chehab <mchehab+huawei@kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH 1/2] dt-bindings: soc: hisilicon: document hi3660-usb3-otg-bc
-References: <20240518204443.122586-1-krzysztof.kozlowski@linaro.org> <171914563307.48201.2100106894701016613.b4-ty@linaro.org>
-In-Reply-To: <171914563307.48201.2100106894701016613.b4-ty@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd500014.china.huawei.com (7.221.188.63)
 
-Hi Krzysztof,
+On Sat, 2024-06-22 at 17:56 +0800, Ma Ke wrote:
+> We should verify the bound of the array to assure that host
+> may not manipulate the index to point past endpoint array.
+>=20
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/usb/gadget/udc/aspeed_udc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/usb/gadget/udc/aspeed_udc.c b/drivers/usb/gadget/udc=
+/aspeed_udc.c
+> index 3916c8e2ba01..95060592c231 100644
+> --- a/drivers/usb/gadget/udc/aspeed_udc.c
+> +++ b/drivers/usb/gadget/udc/aspeed_udc.c
+> @@ -1009,6 +1009,8 @@ static void ast_udc_getstatus(struct ast_udc_dev *u=
+dc)
+>  		break;
+>  	case USB_RECIP_ENDPOINT:
+>  		epnum =3D crq.wIndex & USB_ENDPOINT_NUMBER_MASK;
+> +		if (epnum >=3D USB_MAX_ENDPOINTS)
 
-On 2024/6/23 20:27, Krzysztof Kozlowski wrote:
-> 
-> On Sat, 18 May 2024 22:44:42 +0200, Krzysztof Kozlowski wrote:
->> Add dedicated bindings for the Hisilicon Kirin 960 USB OTG Syscon,
->> to fully document the block and also fix dtbs_check warning:
->>
->>   hi3660-hikey960.dtb: usb3_otg_bc@ff200000: compatible: ['syscon', 'simple-mfd'] is too short
->>
->>
-> 
-> One month waiting, so I'll take this one as well.
-> 
-> Applied, thanks!
+Shouldn't this be `epnum >=3D AST_UDC_NUM_ENDPOINTS`? Further,
+USB_MAX_ENDPOINTS doesn't appear to be defined here?
 
-Fine to me.
-Thanks!
+What steps did you take to test this patch?
 
-Best Regards,
-Wei
-
-> 
-> [1/2] dt-bindings: soc: hisilicon: document hi3660-usb3-otg-bc
->       https://git.kernel.org/krzk/linux-dt/c/7613195d37d69ff92c9bc55599037615212ce19c
-> [2/2] arm64: dts: hisilicon: hi3660: add dedicated hi3660-usb3-otg-bc compatible
->       https://git.kernel.org/krzk/linux-dt/c/bc9ec165d066af29661ece91f9cbf74e18ec0a5a
-> 
-> Best regards,
-> 
+Andrew
 
