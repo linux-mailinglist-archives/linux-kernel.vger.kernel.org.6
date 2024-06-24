@@ -1,111 +1,136 @@
-Return-Path: <linux-kernel+bounces-227746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42C591562B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:03:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC4D491562E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5934D1F21666
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:03:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7011F21661
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E1D19F482;
-	Mon, 24 Jun 2024 18:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5C219FA92;
+	Mon, 24 Jun 2024 18:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m09CcqNY"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IjhuXzNk"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEA4182B2;
-	Mon, 24 Jun 2024 18:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7969E182B2
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719252206; cv=none; b=RM+a//4BYsS0hpAu4g5vDtH5V/bBHJuIUhnlt9Ue/+EICKQ9YVjuSq6vYxwhnKd5Olk+wtAFFuJJzJ0l5qtL1z9SvcI+hgLNWcgYZahgR+AF6lM6Mw0H0DF1/E4O3bweu941wuxvq8OdVY66uFUDT3HN113Vq2xqurIgJtbjGTc=
+	t=1719252240; cv=none; b=mMjGSq/7hINWQ8aGoEQhpotkPKFO5w+U8qO8NkpJfdrexHb8gnjot8l2+JzwqonoU97Z7kt0T/gOhU+KrPlqGA/JyrBfTxM8mJhsIW3ToeRikdTgl06W2y1Wt7t8StKegjW9jLvM02adsXCym0RQ1f8MqARayvRETkh709s3YiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719252206; c=relaxed/simple;
-	bh=asm52OWDftS+lyFr+LMKyFJAkBcFCq2hCyMjZAWHKIg=;
+	s=arc-20240116; t=1719252240; c=relaxed/simple;
+	bh=WzGhfsAP4XzqaIdBWpKUm18+TeenjF6Blc7M4ECnYSk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V4lFtyFVNz4c7+RuRUOPl/GbR9rfH2iZe7EQuaKezcgpX1u4Za/4dEBy9AyzbjcCMz6D+lX4mNTyd86m5TgICc8C2TC3RrgT1g5c5+KsIP/yMRmwRQwj49UW7H2ytcjmm/4zaoxYChLiDmwAruhYr9s9eU7RyhKFDcdlIv9PHkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m09CcqNY; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4421cbba106so32618231cf.2;
-        Mon, 24 Jun 2024 11:03:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=uMZXo9o9nN2Nrob85eiIGzTCJXx/Oe/q2XWempJLcXrZ3l0Pet8PmMOqdpuEdKbtLisz8Z0sN2oU9f8/hfs3oDRyWTnGCoFxfo87uPq9RZl43FUuq+HcdZUrNsxxq1XjulcS8mu8fLUjAMXptuEffFXE4R39YhmfbXLaD4B1IPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IjhuXzNk; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-424997177bbso6325e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:03:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719252204; x=1719857004; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719252237; x=1719857037; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2pUaocMSsxJ5LjjEsnYP7jxj3QfqcMM8ZONVfrm8rtQ=;
-        b=m09CcqNYsjUyz7H9BFlAW5xpr/3s6M5D9s6CqoRhR24FnACIchqQqDr1rdo4S8Xo20
-         NnpOumunlOTalTlL9xNinR/A5/ckAUA7CkwKuBOpA1vU+vrLpXHFcoLCXyc6V7ufBfod
-         chKL+VQM+fRgt/R5pN/leM/s5L+ejFJlsqkZhsbJevXeL/bUVwrykuSLCXIWCny1odSG
-         yVDBWD5PDHjekg0hGYgNUggaIUrVKSaCn/8NisEsLlLW6riFcxMdpiHf1mGsc6jTOHV9
-         p9XOC6tbnuyg03iVdlwia/yIB+E/nLvIib6TbPe2tSbiBCaV2dpxsUhZ/DPpp1zZ5tQJ
-         WCvQ==
+        bh=FF029z/jflx/kP7IEmWTDP0ob8VJPp9a2/waRUF4Abs=;
+        b=IjhuXzNke5DP+Cu0dwInvzsJM/bZVeMJTHFWlXANeFjpYYPAg30WJSPB35lEYJjPyU
+         rPpTr5d7dkzulOXw7+Vzs7b0XUxt6it8E689w7ToFf0p/IvCgRuBKredYy/yqVbMIDrt
+         StnVxzcdqN/TuYZvZoNd5Lo57F+09mjV/Fp6gTaRPoxKc7/4/f4xsAXS5LaelZsi4ZC8
+         rFpjSiJ1fFaEY72ntsmFfI8e46J7rfkNOe27Imy8s0M6wQTSsepbcFZj9+Lh9q4qoNwu
+         8Q37Bl1Z7Rxy29CHeMpD0eF3yLhaDzAnjWW7ck8nJvTPRL7IdAgL3+q/0Kdmo/c7jYtu
+         zWig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719252204; x=1719857004;
+        d=1e100.net; s=20230601; t=1719252237; x=1719857037;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2pUaocMSsxJ5LjjEsnYP7jxj3QfqcMM8ZONVfrm8rtQ=;
-        b=TxjrL3w7twaJ8xAF1vjo464lSCsdcOvTQwCKGlBJKPNL//eaHsFkhEslqpqY2uANd6
-         0JMIjSgYRGqK7WwsU689HM46AM+R8r36uO+3cHoWMzhVcQR7gBK7xE0dmXBoi9v2uOwK
-         FsowZgLjT7bQAVFopSihzMNOVXTQQ9UZbf/OO97O0V2lYfqv+fNki9rt1JqsliDBIa1l
-         udkjKzBDoHWK3TgYWqJzltuO2HtC1CEiXG/ERA4haE26HJ0iUQoGKW+o1afuVbUjCgt2
-         0iZbRCCDXcrv5fc6rgwMhbv0jg8njOFSMuXEqmDHqlsFfC6ECjDx+A2q+WIdqBJw//NF
-         JwQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNb5L+b4+3u+3Y5T/YiipoisaVPHsVWY61uGHGHE6QNvDFnA4+kUGA7q6dASDBNGjnoSxg/bo8mlL9rimZZjoyG5/xx4NdTvvr+FMOhz+zLaxddOLrSXeedrI8CMX6HYOac4HDlvZ56A==
-X-Gm-Message-State: AOJu0Yx4iVohA3Ja9XVmF6ieJCPws07PBPVwwjb7nD6sHWeZIkARPpsw
-	khwT3P/Mlc5Vy3nX0kuiBMEkHYas1HoB9aq02CPlQSmDvPbigsnB5Sv5cEPU4EDjX7Hbf8l1J8A
-	71GbQ6BQjAT5NuiOTgtEPy3xeNpY=
-X-Google-Smtp-Source: AGHT+IFO8I58PN4h1470uYhz00UihsCRoEeapPW6BWGVinHzOdAIibcD2ehHGZtef6GQQE0Ko3zTuBjLkhxyvplJDvE=
-X-Received: by 2002:a05:622a:553:b0:441:57ec:61e4 with SMTP id
- d75a77b69052e-444d9388193mr65550061cf.47.1719252203930; Mon, 24 Jun 2024
- 11:03:23 -0700 (PDT)
+        bh=FF029z/jflx/kP7IEmWTDP0ob8VJPp9a2/waRUF4Abs=;
+        b=tSIFNSbQAjGxkE/RkdGR149ysCSidr60tR3m9SC4U42hlwDVacRT5ynYNiCHtrJwFN
+         8TdsqtsKZ5ixqhBEUq6x4oU6Dt+1KqtFP1lEYaJZa2QxL8Gw4sZ5uYQoB2BMeS1E+8Dk
+         8eyS0f3yS0cWmiDbmLWX+o07iRMoM16H4hkJXu/jCvFzG9FhwvyTe9GOUDR4Ct0YD7nN
+         T/vU8PRBkSeWoe59GRqtrRB9l/JXVXtWsGBCmjwVppqn5uysNLejueD7NrDfFtoe9vuP
+         X9AzOGGgIQr6LHMMHqPJxmgmZR3Txe9FeSYMA2v42xcIhYWFBwC6tuOccPeSZtbbgBdb
+         7TOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsEeATKjOssH9eizz/hIYnpjDuJ61JDKLtTsfSkDulYTsnN7dO+8cl42Mf+vvGww38+LhKwcUBEmp4hjDLCG9VfwSlvbp2M9PQMuF+
+X-Gm-Message-State: AOJu0YxgNQAoAcbpx3VVKQP2w8hAGvnBMzwBSPMSTZC6X1A/ON3BPFKB
+	aSXhavOb+ze42byONjXyzTd4KBnqbYqv3f5kUG+qZ6WLptjSYITnKklL+i7D2bl64OCikYU+MaW
+	Dru9OXTYbePPA/IqI3LGGQ1HFHVwGjMRrfMs=
+X-Google-Smtp-Source: AGHT+IHrfNrvNgINjPFhE00IuMHWGEQ90pK8W7zqvkgYI7i48VPmX8HyZ3EqYScnHj5vTszY2D2Ge/7ppzdCu9YCrBk=
+X-Received: by 2002:a05:600c:4e0d:b0:424:8b0c:156a with SMTP id
+ 5b1f17b1804b1-4249a1b913fmr129515e9.2.1719252236758; Mon, 24 Jun 2024
+ 11:03:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4449f7d4eead787308300e2d1d37b88c9d1446b2.1717308862.git.dsimic@manjaro.org>
- <ba9d41461f5d56947d7851473637722b@manjaro.org> <CABjd4YziNk1NJb6p+AxAVK0CR7igE3-6h-sN4MEWwyoW2qaKfw@mail.gmail.com>
-In-Reply-To: <CABjd4YziNk1NJb6p+AxAVK0CR7igE3-6h-sN4MEWwyoW2qaKfw@mail.gmail.com>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Mon, 24 Jun 2024 22:03:12 +0400
-Message-ID: <CABjd4YzWc6GPkDAbVGLaBCHBX26m97Mf1YVKriMVJYX8iy0LYQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: Delete the SoC variant dtsi for RK3399Pro
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240606172813.2755930-1-isaacmanjarres@google.com>
+In-Reply-To: <20240606172813.2755930-1-isaacmanjarres@google.com>
+From: John Stultz <jstultz@google.com>
+Date: Mon, 24 Jun 2024 11:03:43 -0700
+Message-ID: <CANDhNCqhJRLgvhAong-5zjsfwk2sL7pNbK0EqWsPcaA+AuzxDQ@mail.gmail.com>
+Subject: Re: [PATCH v5] fs: Improve eventpoll logging to stop indicting timerfd
+To: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+Cc: tglx@linutronix.de, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	saravanak@google.com, Manish Varma <varmam@google.com>, 
+	Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 24, 2024 at 9:59=E2=80=AFPM Alexey Charkov <alchark@gmail.com> =
-wrote:
+On Thu, Jun 6, 2024 at 10:28=E2=80=AFAM 'Isaac J. Manjarres' via kernel-tea=
+m
+<kernel-team@android.com> wrote:
 >
-> On Mon, Jun 24, 2024 at 9:55=E2=80=AFPM Dragan Simic <dsimic@manjaro.org>=
- wrote:
-> >
-> > Hello all,
-> >
-> > Just checking, are there any comments on this patch?  Is there somethin=
-g
-> > more I can do to have it accepted?
+> From: Manish Varma <varmam@google.com>
 >
-> Hi Dragan,
+> timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
+> it names them after the underlying file descriptor, and since all
+> timerfd file descriptors are named "[timerfd]" (which saves memory on
+> systems like desktops with potentially many timerfd instances), all
+> wakesources created as a result of using the eventpoll-on-timerfd idiom
+> are called... "[timerfd]".
 >
-> Heiko has already applied it quietly a couple of days ago [1], and
-> also merged the v5 thermal and OPP code that I rebased on top of this
-> patch of yours.
+> However, it becomes impossible to tell which "[timerfd]" wakesource is
+> affliated with which process and hence troubleshooting is difficult.
 
-Oops, that was about a different patch, sorry. But still thanks a lot
-to Heiko and Dragan :)
+Thanks for sending this out!
 
-Best regards,
-Alexey
+My apologies, as this is really meta-commentary (which I'm sure isn't
+what you're looking for), but as you've gotten limited feedback maybe
+it might help?
+
+While your explanation above is understandable, I feel like it might
+benefit from a more concrete example to show why this is problematic?
+It feels like the description gets into the weeds pretty quickly and
+makes it hard to understand the importance of the change.
+
+> This change addresses this problem by changing the way eventpoll
+> wakesources are named:
+>
+> 1) the top-level per-process eventpoll wakesource is now named
+> "epollN:P" (instead of just "eventpoll"), where N is a unique ID token,
+> and P is the PID of the creating process.
+> 2) individual per-underlying-file descriptor eventpoll wakesources are
+> now named "epollitemN:P.F", where N is a unique ID token and P is PID
+> of the creating process and F is the name of the underlying file
+> descriptor.
+
+Again the N:P.F mapping is clear, but maybe including a specific
+before and after example would help?
+
+Additionally, once you have this better named wakesource, can you
+provide a specific example to illustrate a bit on how this
+specifically helps the troubleshooting that was difficult before?
+
+thanks
+-john
 
