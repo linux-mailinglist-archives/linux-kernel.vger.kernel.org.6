@@ -1,132 +1,126 @@
-Return-Path: <linux-kernel+bounces-227892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE949157C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:18:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179F49157C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A8A1C22241
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1101F20F67
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466EE1A01DA;
-	Mon, 24 Jun 2024 20:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1681A072B;
+	Mon, 24 Jun 2024 20:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giHbMji3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ifJ4WqkA"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825291A0717;
-	Mon, 24 Jun 2024 20:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBF51CFBC;
+	Mon, 24 Jun 2024 20:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719260301; cv=none; b=TazONW3pyxI8Hm24dkYvpg49dFf6ThjzaE0CtMD7t1HnuYVHl01YHEHxGBvRCgVU/e0vNqd5gX81m8AvW+x/UxxJ2srirDp6xUWzN5eGqjKUaXrAQ6bVY4u3O2feNN5dK6BBGRn6Y44/SPjRvAHlx5KIYbk6YQjvH/SfqRW5oFg=
+	t=1719260314; cv=none; b=J5M8RiiJG+mJYD6CpNug0ie2CD1ycj66jhJVyPAT+86aZ+D4PPkh6ZBisVaktmq0QIeMbyQF4PhKIrUXSsO/eU9MAl9yZY0M75Zt8tDTtgklit/VKlMQ/DOjiplS+Mz8Dps6bWppAGy6iOIHUgA1FyU1FlkuWYvqF/ltedbgYW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719260301; c=relaxed/simple;
-	bh=DO3F18f5SP8f/MW8gwjfbWiSJPAYVs+z8iZoxQFISiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ptRyn/7301eDuGO/cwEqR5nkmDxLBYOrO5dCR4E9iY7Lyqe+RYGDhP/gcylnoeTieYE6WrF3BQer//WuML0+H/9m2F6ejH04BEUrtAFdxEi4X0KLHz9Cj73wGqjoewTzyPRO/RFqp4psAFZnMG0rmsfamx2mVqnBNpv38Vgf+Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giHbMji3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6997C2BBFC;
-	Mon, 24 Jun 2024 20:18:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719260301;
-	bh=DO3F18f5SP8f/MW8gwjfbWiSJPAYVs+z8iZoxQFISiI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=giHbMji3CYwfeiqD8pY4mqugoWrrhHgw1f0I5G/R/+73iM4AbHSlk1xqzuYBgIxqU
-	 DDiTPV4F/GgmGykqWHjliMsgEoMhxKVrGp1wlEfpBcyUob91Fqm8WlRIh/hEqvVZf8
-	 uHMhux0uUfvAYo9lYpB3D+BZZ7K/1co85GPpwUREey7A7LgLO8MweyOZkzToBfkbsO
-	 OMyU8L8YQbK4z8LTYPQiMgq4DLyyWwiBS327C0G4eAESnjFxiTksHaqWQh5Kc8malm
-	 O//xzbkwjW0/OuqWNjA+TwTGHDrO4+Wk0s3ArKJVpprzyI0326JZ0LinY1LHO5Ro6+
-	 LiXA2mYAT0cFA==
-Date: Mon, 24 Jun 2024 13:18:19 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH v2] kbuild: rpm-pkg: fix build error with CONFIG_MODULES=n
-Message-ID: <20240624201819.GA783641@thelio-3990X>
-References: <20240618110850.3510697-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1719260314; c=relaxed/simple;
+	bh=jAF20gD7kIYUViHBMXcExfj8B25lKFFEaqEeRRIJKmc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t8mv3sC5JNE4L3Ypt9uTYOV0wM9eMdE3vHmGQwxvJDp34dhEShO6067IqnmB0nNyKBOeDHZdBaYCe3cJIBg2zXFhE/Svx9sMNvACMZOj7WuH6Z/VAZRz7GHHdUU1L4DWVGpoOpon1Yd799LR2nYOXjVcYgNdheQilFqdv+UIQgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ifJ4WqkA; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id Lq8tsVsCWs2bgLq8tsSHG0; Mon, 24 Jun 2024 22:18:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1719260304;
+	bh=elAOlOG1WOr8pdRvT+PF6Vndcsz+yUNDpa4N3XRDGSw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ifJ4WqkAbLBGSWvEokziSvQHFJTuyUYl/RfhR/1tlyof7+bpgmvEoRQALwZQNtaEn
+	 ga/u/N2xFXPHx0IYqqC6E3XAA72bCLVsxYk9+kDwCOiJUDYjIoqweDdNS+fGhBL9wS
+	 0HsLTaOrs9xRyy3gLNIF52BViT1qdbJoy7I3/y4ZbAHQhPPJsAnLSJLq4/g/zgmsla
+	 Rx2jwVrPHyW2yy7201CyyB98m0BqJPPq6KlUw4V1BkLXsX34uOdAqAsTh3In7HNmGr
+	 IPHApck+2r0VajUHdKn+UdYXhIT0Aoi8B5yYS3sLmTBSil34Mx472NKw3t00kEEzR0
+	 gSBk/gLU7Qazw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 24 Jun 2024 22:18:24 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] PCI: ls-gen4: Constify struct mobiveil_rp_ops
+Date: Mon, 24 Jun 2024 22:18:20 +0200
+Message-ID: <189fd881cc8fd80220e74e91820e12cf3a5be114.1719260294.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618110850.3510697-1-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 18, 2024 at 08:08:43PM +0900, Masahiro Yamada wrote:
-> When CONFIG_MODULES is disabled, 'make (bin)rpm-pkg' fails:
-> 
->   $ make allnoconfig binrpm-pkg
->     [ snip ]
->   error: File not found: .../linux/rpmbuild/BUILDROOT/kernel-6.10.0_rc3-1.i386/lib/modules/6.10.0-rc3/kernel
->   error: File not found: .../linux/rpmbuild/BUILDROOT/kernel-6.10.0_rc3-1.i386/lib/modules/6.10.0-rc3/modules.order
-> 
-> Specify the directory path, /lib/modules/%{KERNELRELEASE}, instead of
-> individual files to make it work irrespective of CONFIG_MODULES.
-> 
-> However, doing so would cause new warnings:
-> 
->   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.alias
->   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.alias.bin
->   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.builtin.alias.bin
->   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.builtin.bin
->   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.dep
->   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.dep.bin
->   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.devname
->   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.softdep
->   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.symbols
->   warning: File listed twice: /lib/modules/6.10.0-rc3-dirty/modules.symbols.bin
-> 
-> These files exist in /lib/modules/%{KERNELRELEASE} and are also explicitly
-> marked as %ghost.
-> 
-> Suppress depmod because depmod-generated files are not packaged.
-> 
-> Fixes: 615b3a3d2d41 ("kbuild: rpm-pkg: do not include depmod-generated files")
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+'struct mobiveil_rp_ops' is not modified in this driver.
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-> ---
-> 
-> Changes in v2:
->   - Do not run depmod
-> 
->  scripts/package/kernel.spec | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/scripts/package/kernel.spec b/scripts/package/kernel.spec
-> index e095eb1e290e..fffc8af8deb1 100644
-> --- a/scripts/package/kernel.spec
-> +++ b/scripts/package/kernel.spec
-> @@ -57,7 +57,8 @@ patch -p1 < %{SOURCE2}
->  %install
->  mkdir -p %{buildroot}/lib/modules/%{KERNELRELEASE}
->  cp $(%{make} %{makeflags} -s image_name) %{buildroot}/lib/modules/%{KERNELRELEASE}/vmlinuz
-> -%{make} %{makeflags} INSTALL_MOD_PATH=%{buildroot} modules_install
-> +# DEPMOD=true makes depmod no-op. We do not package depmod-generated files.
-> +%{make} %{makeflags} INSTALL_MOD_PATH=%{buildroot} DEPMOD=true modules_install
->  %{make} %{makeflags} INSTALL_HDR_PATH=%{buildroot}/usr headers_install
->  cp System.map %{buildroot}/lib/modules/%{KERNELRELEASE}
->  cp .config %{buildroot}/lib/modules/%{KERNELRELEASE}/config
-> @@ -70,10 +71,7 @@ ln -fns /usr/src/kernels/%{KERNELRELEASE} %{buildroot}/lib/modules/%{KERNELRELEA
->  %endif
->  
->  {
-> -	for x in System.map config kernel modules.builtin \
-> -			modules.builtin.modinfo modules.order vmlinuz; do
-> -		echo "/lib/modules/%{KERNELRELEASE}/${x}"
-> -	done
-> +	echo "/lib/modules/%{KERNELRELEASE}"
->  
->  	for x in alias alias.bin builtin.alias.bin builtin.bin dep dep.bin \
->  					devname softdep symbols symbols.bin; do
-> -- 
-> 2.43.0
-> 
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   4446	    336	     32	   4814	   12ce	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   4454	    328	     32	   4814	   12ce	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c | 2 +-
+ drivers/pci/controller/mobiveil/pcie-mobiveil.h        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c b/drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
+index d7b7350f02dd..5af22bee913b 100644
+--- a/drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
++++ b/drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
+@@ -190,7 +190,7 @@ static void ls_g4_pcie_reset(struct work_struct *work)
+ 	ls_g4_pcie_enable_interrupt(pcie);
+ }
+ 
+-static struct mobiveil_rp_ops ls_g4_pcie_rp_ops = {
++static const struct mobiveil_rp_ops ls_g4_pcie_rp_ops = {
+ 	.interrupt_init = ls_g4_pcie_interrupt_init,
+ };
+ 
+diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
+index 6082b8afbc31..e63abb887ee3 100644
+--- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
++++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
+@@ -151,7 +151,7 @@ struct mobiveil_rp_ops {
+ struct mobiveil_root_port {
+ 	void __iomem *config_axi_slave_base;	/* endpoint config base */
+ 	struct resource *ob_io_res;
+-	struct mobiveil_rp_ops *ops;
++	const struct mobiveil_rp_ops *ops;
+ 	int irq;
+ 	raw_spinlock_t intx_mask_lock;
+ 	struct irq_domain *intx_domain;
+-- 
+2.45.2
+
 
