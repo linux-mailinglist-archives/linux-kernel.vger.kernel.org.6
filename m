@@ -1,237 +1,194 @@
-Return-Path: <linux-kernel+bounces-228048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23804915A1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:55:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD03F915A21
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436CF1C223E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBD111C223EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDCB1A255D;
-	Mon, 24 Jun 2024 22:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E385B1A2559;
+	Mon, 24 Jun 2024 22:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VsvwQWzD"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MmHifq85"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D6647A64;
-	Mon, 24 Jun 2024 22:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9288D47A64
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719269693; cv=none; b=Cui6woEafsaDUsxh0Oh6JTKOzVS9C+tkWIJCu48Jl1Oslobl5xSVgFZiwIfWLOymPL0K8vqw8zXJzLHl4cDQQJkBx6mXbn40X9OQIxFuDNT9uqXoEhfv5RNiqKkhVbdSreh7vQqjIBlONDxMPBD3pVuLSbatq0hLxLhzC4G0a6E=
+	t=1719269779; cv=none; b=AeTv+gwQjjGsIyP1RSSFTQVR+wsnlfOL+ec1QchqjoGNPduyP//ri7WK48ey+17yS9VaCbG8KrOYStWPWFBsC4E4PUvS+fSjkR1LUqBf0dW7uZqRZYMbvmTCUjs1VwGlulB5b5UBWLGLTgff4c1RTVpL2dmfZmm0wt3U3PuUWaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719269693; c=relaxed/simple;
-	bh=sElc2XuU2ff3on4aXynI8Tx39Edi1GwfSAQ4ACgrydk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ObbUTPC7q3PsNZPUsmbYShnsecgmFtfwb7Sq/PiD6yYazCDdE68GyMso4h4YRWtvpZCIslZNK8PcwTiYMOqtIigxnRYi3vN/3kJa1lvVOZUaF0RgV2AYUhDG++XN7AODEdUSzrjkXPr6GtJ5NH0Suu8QKvVyTQfHG1LCMh8VBv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VsvwQWzD; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-70089223245so2824988a34.2;
-        Mon, 24 Jun 2024 15:54:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719269690; x=1719874490; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RmrF0dTmcOIfg8IkJIqr7iTWstwct6FH7y6vme7yHSs=;
-        b=VsvwQWzD5MQHpWajYQDYvNn6PZizHmFcL3kYuokfsQDrM9JRKXuY4h9QEg7uHljJwH
-         9uxfNjk8FWwOH6+7H5QsEg2lxa+CUsyObkGNl10kvhr3zJ7SisYjRnriR9+DiDppVl9t
-         6vr9LsJ1Q1mC92nzYdIj8sbiEmcPGLw0j4gU9MkEaren/OmYqU0JH0JQpI8/fgCO/Kz8
-         Mk+kNwexJptIQuPbS8Y0mdjKH8QMscWQn+2+ayffW9VUQG+1xzXK6GY5o+X95GictAkd
-         jHb4vB3MDM6I+OK5S5ZkHADgUS2NPKwGohYMlSU7aN+IokL9SJ0FB2gUHIj2Gm55r2Us
-         qkhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719269690; x=1719874490;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RmrF0dTmcOIfg8IkJIqr7iTWstwct6FH7y6vme7yHSs=;
-        b=vytOKg//2Ae5NLEYuq1OXhgB1ovlYHkLkT9odTPQfmkfXm7VaJS5LqYcuW+HxuiIK0
-         OfaT7bWGhupT9FLS5ojzkdsv1c2QU8mTW6hJyOWUAxjhUoQ7cCoDNRExWhCz6JNUScBJ
-         tK2D0XBltuqHlqIy3Q1mdbjuTVcBVY49ZM1k5hgfJ2g7gCpOTl6vJ0MYaMewYxhyLvEN
-         IpjHTRTNqQs7qUejnyhTFH02wTot9dM2EquSt5PVX8Q50/6loYxy/2ToZvoXAtnY6r5o
-         XMJZlBACCmqoRMkluvzEchc1mjQd8F7Z3hUcF8M8+ix0D+vzfoCCU77ot8+PToc8bCyv
-         ap6A==
-X-Forwarded-Encrypted: i=1; AJvYcCU2tL7XMVT9dQ5Df44EIcGHgy0BaSbtcdx3OAnKoNRYRotP8YfMSYtX2jhfkcm/E8gu1TaOQo9aCkeTR42Wf50fLs1geB2cW2Lfk4wDUaOjHTjBXwokOzR+Xl6Wcv9Y9LXQwDBQXA==
-X-Gm-Message-State: AOJu0YzRn9pLYEOcw/0MFidb2UF2XjK9qWjZTP4AJ274lTZGqnLIeDvx
-	BXCl+rWNQqr0RG/2NwqCBnHZ4AWpzut152QJxWcufDuabDB7lZBj
-X-Google-Smtp-Source: AGHT+IF1LmdDz568NfaQSwCT7YStZy+hquXQ5WPIRwD8wqfSpoWD/xHua/MASQDacD79OmYmZMmJnQ==
-X-Received: by 2002:a9d:7b43:0:b0:6f9:62e9:9f93 with SMTP id 46e09a7af769-700b12a1d3emr6253705a34.35.1719269690460;
-        Mon, 24 Jun 2024 15:54:50 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce8c3775sm351009885a.59.2024.06.24.15.54.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 15:54:49 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id F3F1A120006B;
-	Mon, 24 Jun 2024 18:54:48 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 24 Jun 2024 18:54:49 -0400
-X-ME-Sender: <xms:OPl5ZmtK0iI6Fi6Fmj2yDiYNs5sfVi4xWofdYtVeq7HtMb6VrORxfw>
-    <xme:OPl5Zrft_270b-F7XNcrI-fVMbT7rFfKk1ffl6KgnJ6rriqQbUaKfubg0dofoAeVR
-    zIbZvMBOW5onjyFUw>
-X-ME-Received: <xmr:OPl5Zhz5ngCrP5c7fRAaswsMD2tD_YRI3Ne8Qp6a2iHaWvZoJekD_J7Yxk0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeegvddgudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpefhteffveeuhefhveefgfehvdejkeefuefgfeegvedtheegvdelueevvdeg
-    teffueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhlphgtrdgvvhgvnhhtshenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
-    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
-    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
-    rghmvg
-X-ME-Proxy: <xmx:OPl5ZhOlMkoJgkxgJIsdhuiePPWijGaeMtXqsXL78gbK33Hj0UxT0Q>
-    <xmx:OPl5Zm8fp_sewk5eULcag-LXjClikhGnzB3gmlQ_MV8lscpvQLlY2g>
-    <xmx:OPl5ZpW4oAlTlHShqh-g_gba_UeIawTK97MDGix8R_cak6yEqnWmJw>
-    <xmx:OPl5ZvcGPlEDTBm5JZkjPJ345taw5lW9bwjSC5GWPnP4aq-9mpQjdQ>
-    <xmx:OPl5ZgeuD_g7bwcthIgo-o5M_gsriF6XWingqBniSPEcjLatoOxMzm1n>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Jun 2024 18:54:48 -0400 (EDT)
-Date: Mon, 24 Jun 2024 15:54:14 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Leonardo Bras <leobras@redhat.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 0/4] Introduce QPW for per-cpu operations
-Message-ID: <Znn5FgqoCAUAfQhu@boqun-archlinux>
-References: <20240622035815.569665-1-leobras@redhat.com>
- <261612b9-e975-4c02-a493-7b83fa17c607@suse.cz>
+	s=arc-20240116; t=1719269779; c=relaxed/simple;
+	bh=IL1KYzHTIVTceKq0cQhntdI/5YpCcAQJ15WiMrnZmEA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PhvHxhw43iF6mjFSJ1wUtEPNhQTvCSfJSkBAGCRLejsqUX1xlkP//bULUqiCCINaPkig2S01K0f/RU+G2AoWsuRcckJC7BSKw8N0wwc/2Fd3USwug0YY4zkdM6pTIdVf0+1awi6tt6sGJ/1QijO6nNXXWxa9OvCJSSqIK7cuZtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MmHifq85; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OHVsIg001878;
+	Mon, 24 Jun 2024 22:55:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3E/g0gscuSG5pGPTNlXdT0z8AMhyDwzyCrtpE2W1+HI=; b=MmHifq85x2p9k6TO
+	Xa8EkKt7JJrNE3LsqrEvv/jTJ6TB8yBLBRxARji5On7zlfhH4O468ucDobMEPjJj
+	1/oeAaT/A4KNT1QE3uLOR7gbzlwqZoqQCZmowJzsx185HqS/uVaEss+rMid1j8pn
+	TDE4lj/E2LOGI6KLNRgtBk/MeioDZE9b4cTmuth0oujlBDIdKe0A9PrC9MAw2KBf
+	bgI3Raw2skhOmiHcJ1UBUKIowKqV83iSMDkPM61nTPncbUDYAdcSPYwSU9ShqlyF
+	3TSgedpo/I36yij2UnLJLHNye+k4NGA4s4onxauXV/7N0QF3Qs4bD4DPfHyitgVR
+	S2MxMA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaew6je-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 22:55:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45OMtwtx013076
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 22:55:58 GMT
+Received: from [10.110.106.13] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 15:55:57 -0700
+Message-ID: <30fa4e53-5a03-4030-2be5-f383a1c60077@quicinc.com>
+Date: Mon, 24 Jun 2024 15:55:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <261612b9-e975-4c02-a493-7b83fa17c607@suse.cz>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 2/2] drm/connector: automatically set immutable flag
+ for max_bpc property
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Dave Stevenson
+	<dave.stevenson@raspberrypi.com>,
+        "igt-dev@lists.freedesktop.org"
+	<igt-dev@lists.freedesktop.org>,
+        Petri Latvala <adrinael@adrinael.net>,
+        Kamil
+ Konieczny <kamil.konieczny@linux.intel.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?=
+	<ville.syrjala@linux.intel.com>,
+        Rob Clark <robdclark@gmail.com>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-0-8590d44912ce@linaro.org>
+ <20240623-drm-bridge-connector-fix-hdmi-reset-v2-2-8590d44912ce@linaro.org>
+ <99ff549c-f5c4-dc9c-42f3-396dc3d29d6b@quicinc.com>
+ <CAA8EJppcH-z275m6xDQaigsxmVhnfJkLVsq68GHLFoAq_p_2GA@mail.gmail.com>
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAA8EJppcH-z275m6xDQaigsxmVhnfJkLVsq68GHLFoAq_p_2GA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lyDjhoTlWdnbej9hMddkGvrd0JwJCu4R
+X-Proofpoint-GUID: lyDjhoTlWdnbej9hMddkGvrd0JwJCu4R
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_20,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406240184
 
-On Mon, Jun 24, 2024 at 09:31:51AM +0200, Vlastimil Babka wrote:
-> Hi,
+
+
+On 6/24/2024 3:46 PM, Dmitry Baryshkov wrote:
+> On Tue, 25 Jun 2024 at 01:39, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>
+>> + IGT dev
+>>
+>> On 6/22/2024 10:40 PM, Dmitry Baryshkov wrote:
+>>> With the introduction of the HDMI Connector framework the driver might
+>>> end up creating the max_bpc property with min = max = 8. IGT insists
+>>> that such properties carry the 'immutable' flag. Automatically set the
+>>> flag if the driver asks for the max_bpc property with min == max.
+>>>
+>>
+>> This change does not look right to me.
+>>
+>> I wonder why we need this check because DRM_MODE_PROP_IMMUTABLE means
+>> that as per the doc, userspace cannot change the property.
+>>
+>>            * DRM_MODE_PROP_IMMUTABLE
+>>            *     Set for properties whose values cannot be changed by
+>>            *     userspace. The kernel is allowed to update the value of
+>> these
+>>            *     properties. This is generally used to expose probe state to
+>>            *     userspace, e.g. the EDID, or the connector path property
+>> on DP
+>>            *     MST sinks. Kernel can update the value of an immutable
+>> property
+>>            *     by calling drm_object_property_set_value().
+>>            */
+>>
+>> Here we are allowing userspace to change max_bpc
+>>
+>>
+>> drm_atomic_connector_set_property()
+>> {
+>>          **********
+>>
+>>           } else if (property == connector->max_bpc_property) {
+>>                   state->max_requested_bpc = val;
+>>
+>>          **********
+>> }
+>>
+>> I believe you are referring to this IGT check right?
+>>
+>> https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/kms_properties.c#L428
 > 
-> you've included tglx, which is great, but there's also LOCKING PRIMITIVES
-> section in MAINTAINERS so I've added folks from there in my reply.
-
-Thanks!
-
-> Link to full series:
-> https://lore.kernel.org/all/20240622035815.569665-1-leobras@redhat.com/
+> Yes
+> 
+>>
+>> I think we should fix IGT in this case unless there is some reason we
+>> are missing. Because just because it has the same min and max does not
+>> mean its immutable by the doc of the IMMUTABLE flag.
+> 
+> Well, having the same min and max means that it is impossible to
+> change the property. So the property is immutable, but doesn't have
+> the flag.
 > 
 
-And apologies to Leonardo... I think this is a follow-up of:
+True, then does DRM_MODE_PROP_IMMUTABLE need a doc update too indicating 
+that even if the min and max is same, property will be interpreted as 
+immutable.
 
-	https://lpc.events/event/17/contributions/1484/
-
-and I did remember we had a quick chat after that which I suggested it's
-better to change to a different name, sorry that I never found time to
-write a proper rely to your previous seriese [1] as promised.
-
-[1]: https://lore.kernel.org/lkml/20230729083737.38699-2-leobras@redhat.com/
-
-> On 6/22/24 5:58 AM, Leonardo Bras wrote:
-> > The problem:
-> > Some places in the kernel implement a parallel programming strategy
-> > consisting on local_locks() for most of the work, and some rare remote
-> > operations are scheduled on target cpu. This keeps cache bouncing low since
-> > cacheline tends to be mostly local, and avoids the cost of locks in non-RT
-> > kernels, even though the very few remote operations will be expensive due
-> > to scheduling overhead.
-> > 
-> > On the other hand, for RT workloads this can represent a problem: getting
-> > an important workload scheduled out to deal with remote requests is
-> > sure to introduce unexpected deadline misses.
-> > 
-> > The idea:
-> > Currently with PREEMPT_RT=y, local_locks() become per-cpu spinlocks.
-> > In this case, instead of scheduling work on a remote cpu, it should
-> > be safe to grab that remote cpu's per-cpu spinlock and run the required
-> > work locally. Tha major cost, which is un/locking in every local function,
-> > already happens in PREEMPT_RT.
+>>
+>>
+>>> Fixes: aadb3e16b8f3 ("drm/connector: hdmi: Add output BPC to the connector state")
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>    drivers/gpu/drm/drm_connector.c | 7 ++++++-
+>>>    1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> I've also noticed this a while ago (likely in the context of rewriting SLUB
-> to use local_lock) and asked about it on IRC, and IIRC tglx wasn't fond of
-> the idea. But I forgot the details about why, so I'll let the the locking
-> experts reply...
-> 
-
-I think it's a good idea, especially the new name is less confusing ;-)
-So I wonder Thomas' thoughts as well.
-
-And I think a few (micro-)benchmark numbers will help.
-
-Regards,
-Boqun
-
-> > Also, there is no need to worry about extra cache bouncing:
-> > The cacheline invalidation already happens due to schedule_work_on().
-> > 
-> > This will avoid schedule_work_on(), and thus avoid scheduling-out an 
-> > RT workload. 
-> > 
-> > For patches 2, 3 & 4, I noticed just grabing the lock and executing
-> > the function locally is much faster than just scheduling it on a
-> > remote cpu.
-> > 
-> > Proposed solution:
-> > A new interface called Queue PerCPU Work (QPW), which should replace
-> > Work Queue in the above mentioned use case. 
-> > 
-> > If PREEMPT_RT=n, this interfaces just wraps the current 
-> > local_locks + WorkQueue behavior, so no expected change in runtime.
-> > 
-> > If PREEMPT_RT=y, queue_percpu_work_on(cpu,...) will lock that cpu's
-> > per-cpu structure and perform work on it locally. This is possible
-> > because on functions that can be used for performing remote work on
-> > remote per-cpu structures, the local_lock (which is already
-> > a this_cpu spinlock()), will be replaced by a qpw_spinlock(), which
-> > is able to get the per_cpu spinlock() for the cpu passed as parameter.
-> > 
-> > Patch 1 implements QPW interface, and patches 2, 3 & 4 replaces the
-> > current local_lock + WorkQueue interface by the QPW interface in
-> > swap, memcontrol & slub interface.
-> > 
-> > Please let me know what you think on that, and please suggest
-> > improvements.
-> > 
-> > Thanks a lot!
-> > Leo
-> > 
-> > Leonardo Bras (4):
-> >   Introducing qpw_lock() and per-cpu queue & flush work
-> >   swap: apply new queue_percpu_work_on() interface
-> >   memcontrol: apply new queue_percpu_work_on() interface
-> >   slub: apply new queue_percpu_work_on() interface
-> > 
-> >  include/linux/qpw.h | 88 +++++++++++++++++++++++++++++++++++++++++++++
-> >  mm/memcontrol.c     | 20 ++++++-----
-> >  mm/slub.c           | 26 ++++++++------
-> >  mm/swap.c           | 26 +++++++-------
-> >  4 files changed, 127 insertions(+), 33 deletions(-)
-> >  create mode 100644 include/linux/qpw.h
-> > 
-> > 
-> > base-commit: 50736169ecc8387247fe6a00932852ce7b057083
-> 
+> With best wishes
+> Dmitry
 
