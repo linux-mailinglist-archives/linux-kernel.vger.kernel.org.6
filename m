@@ -1,232 +1,269 @@
-Return-Path: <linux-kernel+bounces-227301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9AD4914EF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:43:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D175914EFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6710D1F20F4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:43:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8802E1C2110F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C693E13DDD5;
-	Mon, 24 Jun 2024 13:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8D313DDB5;
+	Mon, 24 Jun 2024 13:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="XzyWoDE9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Ji7jBq/4"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b="aSk3bRBf"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B13813DB88;
-	Mon, 24 Jun 2024 13:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DDD13DB88
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719236587; cv=none; b=qsphMfwonZHicIdJw4t44hvp3vAFmH1tD8j7HOplcmPbOHr0uG/cgOoWC8V3kbKTfmhjm3Rh6RXVTDIVrz6Lv2ZBwhKFWwCdozHbz+Z5e9unO12NPR795Zs+VmYXJXY89dmK78fLPfmEVlff5pEHeMlpaxKoV11UXtTntCsDD7g=
+	t=1719236657; cv=none; b=jBDR6AYpJySNXiciE9VSd45fl+69EQrsEKknAqN6ZE10jDi67GLlnZ81T7plVhed+0iVEIZnAiEU1u6C3ZvBqyXEwSYfYA5PI3x8lNGezt0D2jPB371RPkPPdnhoP6qWPHH8ZzWOw62g4tmI+x3p0pzz1sxYF4XTLw0M2rcg1xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719236587; c=relaxed/simple;
-	bh=I8476btsLqg4aJAeSSDebyL6wpge2aBm0eFLnaYE2hY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W7uNbPe36044OKHVfRlCcn4AyRNL5WJMyM0hEP/7VpI3m+uFmvdqgbr/yHK6YEWcg33gAB8mjaaMGT5oH4kH6JSo7B5+GVgJjlUyGb1PSQ3j+7x3MFEWnsW+AfG4NFunmjdRVc4/AdZ3eZMiS2LkSSc2vTuPm0fNt/YfIq46UeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=XzyWoDE9; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Ji7jBq/4 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1719236657; c=relaxed/simple;
+	bh=ELaIEG74MklaoJDNNoPT1A/8G8fipu+VAEIFwgAMT6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cpvls9M8AnqPrXF/dvdfIutDpH8Zl4f/Nmkpb992QD+Ej7niRh1sjYzxUadY3/3Mj2vU6InVjYPGXtAbt3vhClxbcP0ZUpy6s1tmKQBfrlD5V82iJOuL0ZvIPAHXgkl1Xhtlr5Z/UEeCCdyhpmfatDNajsetTiRuVv0xCNXVvT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk; spf=pass smtp.mailfrom=remote-tech.co.uk; dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b=aSk3bRBf; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=remote-tech.co.uk
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7194ce90afso203689266b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1719236584; x=1750772584;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2DPHEkgZ7R75Xt+0qmmV1YKtyxYw1BQWMR5WZofqK1Q=;
-  b=XzyWoDE90Zb95RWtxwgC29LgqlWvk4nAESZVuiogoPdCH5gaXhwrAPZM
-   PHYnXgab0a3x2c5jIpDzkVrSaKSUQkBYTnFbRnkyotp2ui7ax5m6T1J1U
-   m+rYvSJaiciC4BasmCyt+GXM1eerm3iP080J5QvdbxlTrzTbHTmLp7HG+
-   NraZFPQGvFM2OZEcyGoNqZMoHkpWUQ9v+nFQYd08+jVyKyuQfDVAwTy0B
-   hlK7LX8A8CD04NcIRjnvxsHaPIsHXx/eWGRPLFoaMr1hQz2iyk8vsEFLg
-   E9iwadPiTTaHTOMwn7DlbmLCUzMZbwgbQAJw1a1EFBaRZY+TC7cuD8BIN
-   A==;
-X-CSE-ConnectionGUID: wY/cFS7CQ56DOqf3NYz12Q==
-X-CSE-MsgGUID: H3t8Ipp5QT6b/JoFLHFnRw==
-X-IronPort-AV: E=Sophos;i="6.08,262,1712613600"; 
-   d="scan'208";a="37554370"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 24 Jun 2024 15:43:01 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8D72A16747D;
-	Mon, 24 Jun 2024 15:42:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1719236577;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=2DPHEkgZ7R75Xt+0qmmV1YKtyxYw1BQWMR5WZofqK1Q=;
-	b=Ji7jBq/41bMdkMDoOq/Z4Ac7GQYB6gz80EiXxEwzlvYJ+ZB6YOfkONVgIX3ZbO1cw/n84k
-	z/7DSb0eD622sgOnfIJ50oUz1pGJYGuMO3A4DUeEcev6UDSr7igANNBwzr7GANr+GbW7M1
-	BUEQRkq1+I+EpdoNJztrAkZswSmZkMWCeTH20AFCWwuok2lpsK1nY0rwKhMYQzx6VoCAgR
-	PRBjPWjLwJUMszK1kvizZUf90Np/h2RzpzAC4vh6tEN6GVjO5mU1c61CjE2RhUERdyO2xR
-	tr9VXaWKUctMTmIEoi0H4USgEFAqBYIDvq6lRC7WFfPsH2y905YXj702Mox2vQ==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v2] arm64: dts: ti: k3-am642-tqma64xxl-mbax4xxl: add PRU Ethernet support
-Date: Mon, 24 Jun 2024 15:42:35 +0200
-Message-ID: <20240624134235.202243-1-matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.45.2
+        d=remote-tech-co-uk.20230601.gappssmtp.com; s=20230601; t=1719236654; x=1719841454; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wCJM0JyjwJh46dft1tKOFmyjfIFKbxwXPC+ayLJnOKI=;
+        b=aSk3bRBfzYnNq+xSFc9npfY2DZTuSZN0PyNgEGejfz258JlZfExTB699ij4yZGdFzN
+         9JwIy3PiXLo7V4taVKaYpifI0MZdAXo/zYeDVMGtzD0GzHOLTDGqDFThHCiul1GOntWv
+         E3Uexe3cSisBYsiF8GDC3Y9IXakV1JzrOxT6ItDiN4MGUZPflmd2EjwQg99mvBNKjI0B
+         GIY8BnhFGwF08V91/2WC9eAQmxg7lHmzH5NaCaqA1XfUg7Q0I9QWHXSPeMUvJcP21DN5
+         70BBadWB3cKvxHMH7nd/CH1BLR+8l/aCTudjy9EjX+vc32tjAXRVHxTrFwNu2b6coJqD
+         wRbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719236654; x=1719841454;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wCJM0JyjwJh46dft1tKOFmyjfIFKbxwXPC+ayLJnOKI=;
+        b=oqSzopbGV/vPXzQcEu7V37vt/3JaHfzvDhevc74gaFMkKJiVeuzdtgaLCOajKdkFDe
+         k02kfaFg78rwOS2b/qQZ/9e7tDsE9swV2RWjWH+8nv8atnRh/JwbcCKvxbQ7/YuGtMNh
+         W88LUWNH94vc4SMeIj42qnGjhqr1S5GM4gktTSUsu7LigoOsKw2pe/1Jge2xM+vUVqnm
+         PlEkRcv7BTKoCNzI7L1xXbta4nhJlSeOElXiWNj3WBtdk6wVzg7fkVMUlTLXYU7m7z66
+         Ml5tTZqaPd+Nc26moDuekP/FBfvSY9EF9JFozmNg1D52TPq4d68ICHWn4X/Foq1qY7IH
+         k2DA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1CBVwEMQD6lP7yCRH3oLuXOPRkvBOhDIoUFoSm/yt3jvq7KOtb9JmpXi68AeCMVEqrr7l2FAn9DObYfMaiA1l9Vw6N3g8plc+RfMg
+X-Gm-Message-State: AOJu0YygpYcX6LnYO/g5kDIinUtf3W1o7GnC9dj5V4gWgU/fPajSTWVb
+	XBVmpdckVCuasan8B4ihXL16TJnMoJPQA8cTqm6XA/uV2r2AbI+n8UlsySt8becIM78+k9T+18j
+	PFWMLolPaw6OwXiVQZy29+bz7XNt4i69KZRm5pgFmGn+LS04QKaVYYBrGIvLicGATaTvVRImiR0
+	owmWCCmWuMAbIgZvN3QGelZuqQ54s=
+X-Google-Smtp-Source: AGHT+IHPJaWD1ujxrcdnkDisRugDbHGYl6lNKmXKtHZfVumDEr+NmD309KmEmdd2LlDRmGBPipI8lw==
+X-Received: by 2002:a17:906:28c7:b0:a6f:d5b:20c3 with SMTP id a640c23a62f3a-a716556d52bmr340008566b.74.1719236653935;
+        Mon, 24 Jun 2024 06:44:13 -0700 (PDT)
+Received: from admins-Air ([2a02:810d:aec0:2a54:f136:1973:486:27b7])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a724ebbc1a5sm155566266b.213.2024.06.24.06.44.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 06:44:13 -0700 (PDT)
+Date: Mon, 24 Jun 2024 15:44:07 +0200
+From: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+To: pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: Add LED1202 LED Controller
+Message-ID: <Znl4J6FRw9ygmIJX@admins-Air>
+References: <ZniNdGgKyUMV-hjq@admins-Air>
+ <7a080980-a247-4d17-88f7-19899379e1a1@kernel.org>
+ <ZnlvOuvMQmJFrfSX@admins-Air>
+ <2b01874f-26e9-41a1-84c0-9a2ed15cb630@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b01874f-26e9-41a1-84c0-9a2ed15cb630@kernel.org>
 
-Add PRU Ethernet controller and PHY nodes, as it was previously done for
-the AM64x EVM Device Trees.
-
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
-
-v2:
-- Dropped binding change patch
-- Moved prueth device node to DTS toplevel, matching the AM64x EVM
-- Update firmware filenames to match EVM
-
- .../dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts    | 98 +++++++++++++++++++
- 1 file changed, 98 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-index 1f4dc5ad1696a..204f5e48a9c63 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-@@ -24,6 +24,8 @@ / {
+On Mon, Jun 24, 2024 at 03:08:56PM +0200, Krzysztof Kozlowski wrote:
+> On 24/06/2024 15:06, Vicentiu Galanopulo wrote:
+> > On Mon, Jun 24, 2024 at 07:02:12AM +0200, Krzysztof Kozlowski wrote:
+> >> On 23/06/2024 23:02, Vicentiu Galanopulo wrote:
+> >>> The LED1202 is a 12-channel low quiescent current LED driver with:
+> >>>   * Supply range from 2.6 V to 5 V
+> >>>   * 20 mA current capability per channel
+> >>>   * 1.8 V compatible I2C control interface
+> >>>   * 8-bit analog dimming individual control
+> >>>   * 12-bit local PWM resolution
+> >>>   * 8 programmable patterns
+> >>>
+> >>> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+> >>> ---
+> >>>
+> >>> Changes in v2:
+> >>>   - renamed label to remove color from it
+> >>>   - add color property for each node
+> >>>   - add function and function-enumerator property for each node
+> >>
+> >> Fix your email setup, because your broken or non-existing threading
+> >> messes with review process. See:
+> >>
+> >> b4 diff '<ZniNdGgKyUMV-hjq@admins-Air>'
+> >> Grabbing thread from
+> >> lore.kernel.org/all/ZniNdGgKyUMV-hjq@admins-Air/t.mbox.gz
+> >> Checking for older revisions
+> >> Grabbing search results from lore.kernel.org
+> >>   Added from v1: 1 patches
+> >> ---
+> >> Analyzing 3 messages in the thread
+> >> Looking for additional code-review trailers on lore.kernel.org
+> >> Preparing fake-am for v1: dt-bindings: leds: Add LED1202 LED Controller
+> >> ERROR: v1 series incomplete; unable to create a fake-am range
+> >> ---
+> >> Could not create fake-am range for lower series v1
+> >>
+> >>
+> >>>
+> >>>  .../devicetree/bindings/leds/st,led1202.yml   | 162 ++++++++++++++++++
+> >>>  1 file changed, 162 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/leds/st,led1202.yml
+> >>
+> >> yaml, not yml
+> > ok, will change
+> >>
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/leds/st,led1202.yml b/Documentation/devicetree/bindings/leds/st,led1202.yml
+> >>> new file mode 100644
+> >>> index 000000000000..1484b09c8eeb
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/leds/st,led1202.yml
+> >>> @@ -0,0 +1,162 @@
+> >>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> >>> +%YAML 1.2
+> >>> +---
+> >>> +$id: http://devicetree.org/schemas/leds/st,led1202.yaml#
+> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>> +
+> >>> +title: ST LED1202 LED controllers
+> >>> +
+> >>> +maintainers:
+> >>> +  - Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+> >>> +
+> >>> +description:
+> >>> +  The LED1202 is a 12-channel low quiescent current LED controller
+> >>> +  programmable via I2C; The output current can be adjusted separately
+> >>> +  for each channel by 8-bit analog and 12-bit digital dimming control.
+> >>> +
+> >>> +  Datasheet available at
+> >>> +  https://www.st.com/en/power-management/led1202.html
+> >>> +
+> >>> +properties:
+> >>> +  compatible:
+> >>> +    enum:
+> >>> +      - st,led1202
+> >>> +
+> >>> +  reg:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  "#address-cells":
+> >>> +    const: 1
+> >>> +
+> >>> +  "#size-cells":
+> >>> +    const: 0
+> >>> +
+> >>> +patternProperties:
+> >>> +  "^led@[0-9a-f]+$":
+> >>> +    type: object
+> >>> +    $ref: common.yaml#
+> >>> +    unevaluatedProperties: false
+> >>> +
+> >>> +    properties:
+> >>> +      reg:
+> >>> +        minimum: 0
+> >>> +        maximum: 11
+> >>> +
+> >>> +    required:
+> >>> +      - reg
+> >>> +
+> >>> +additionalProperties: false
+> >>> +
+> >>> +examples:
+> >>> +  - |
+> >>> +    #include <dt-bindings/leds/common.h>
+> >>> +
+> >>> +    i2c {
+> >>> +        #address-cells = <1>;
+> >>> +        #size-cells = <0>;
+> >>> +
+> >>> +        led-controller@58 {
+> >>> +            compatible = "st,led1202";
+> >>> +            reg = <0x58>;
+> >>> +            address-cells = <1>;
+> >>> +            size-cells = <0>;
+> >>> +
+> >>> +            led@0 {
+> >>> +                reg = <0>;
+> >>> +                label = "led1";
+> >>> +                function = LED_FUNCTION_STATUS;
+> >>> +                color = <LED_COLOR_ID_RED>;
+> >>> +                function-enumerator = <1>;
+> >>> +                active = <1>;
+> >>
+> >> This did not improve. First, which binding defines this field?
+> >>
+> > it's a new field I added, but if you would like for me to use another
+> > please advise.
+> 
+> Look at the LED bindings. Anyway, you cannot sprinkle new properties to
+> some nodes without defining them in the bindings.
+>
+Ok, will do
  
- 	aliases {
- 		ethernet0 = &cpsw_port1;
-+		ethernet1 = &icssg1_emac0;
-+		ethernet2 = &icssg1_emac1;
- 		i2c1 = &mcu_i2c0;
- 		mmc1 = &sdhci1;
- 		serial0 = &mcu_uart0;
-@@ -71,6 +73,66 @@ led-1 {
- 		};
- 	};
- 
-+	icssg1_eth: icssg1-eth {
-+		compatible = "ti,am642-icssg-prueth";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pru_icssg1_rgmii1_pins>, <&pru_icssg1_rgmii2_pins>;
-+		interrupt-parent = <&icssg1_intc>;
-+		interrupts = <24 0 2>, <25 1 3>;
-+		interrupt-names = "tx_ts0", "tx_ts1";
-+		dmas = <&main_pktdma 0xc200 15>, /* egress slice 0 */
-+		       <&main_pktdma 0xc201 15>, /* egress slice 0 */
-+		       <&main_pktdma 0xc202 15>, /* egress slice 0 */
-+		       <&main_pktdma 0xc203 15>, /* egress slice 0 */
-+		       <&main_pktdma 0xc204 15>, /* egress slice 1 */
-+		       <&main_pktdma 0xc205 15>, /* egress slice 1 */
-+		       <&main_pktdma 0xc206 15>, /* egress slice 1 */
-+		       <&main_pktdma 0xc207 15>, /* egress slice 1 */
-+		       <&main_pktdma 0x4200 15>, /* ingress slice 0 */
-+		       <&main_pktdma 0x4201 15>; /* ingress slice 1 */
-+		dma-names = "tx0-0", "tx0-1", "tx0-2", "tx0-3",
-+			    "tx1-0", "tx1-1", "tx1-2", "tx1-3",
-+			    "rx0", "rx1";
-+		sram = <&oc_sram>;
-+		firmware-name = "ti-pruss/am64x-sr2-pru0-prueth-fw.elf",
-+				"ti-pruss/am64x-sr2-rtu0-prueth-fw.elf",
-+				"ti-pruss/am64x-sr2-txpru0-prueth-fw.elf",
-+				"ti-pruss/am64x-sr2-pru1-prueth-fw.elf",
-+				"ti-pruss/am64x-sr2-rtu1-prueth-fw.elf",
-+				"ti-pruss/am64x-sr2-txpru1-prueth-fw.elf";
-+		ti,prus = <&pru1_0>, <&rtu1_0>, <&tx_pru1_0>, <&pru1_1>, <&rtu1_1>, <&tx_pru1_1>;
-+		ti,pruss-gp-mux-sel = <2>,	/* MII mode */
-+				      <2>,
-+				      <2>,
-+				      <2>,	/* MII mode */
-+				      <2>,
-+				      <2>;
-+		ti,mii-g-rt = <&icssg1_mii_g_rt>;
-+		ti,mii-rt = <&icssg1_mii_rt>;
-+		ti,iep = <&icssg1_iep0>,  <&icssg1_iep1>;
-+
-+		ethernet-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			icssg1_emac0: port@0 {
-+				reg = <0>;
-+				phy-handle = <&icssg1_phy0c>;
-+				phy-mode = "rgmii-id";
-+				/* Filled in by bootloader */
-+				local-mac-address = [00 00 00 00 00 00];
-+			};
-+
-+			icssg1_emac1: port@1 {
-+				reg = <1>;
-+				phy-handle = <&icssg1_phy03>;
-+				phy-mode = "rgmii-id";
-+				/* Filled in by bootloader */
-+				local-mac-address = [00 00 00 00 00 00];
-+			};
-+		};
-+	};
-+
- 	fan0: pwm-fan {
- 		compatible = "pwm-fan";
- 		pinctrl-names = "default";
-@@ -154,6 +216,42 @@ &epwm5 {
- 	status = "okay";
- };
- 
-+&icssg1_mdio {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pru_icssg1_mdio_pins>;
-+	status = "okay";
-+
-+	/* phy-mode is fixed up to rgmii-rxid by prueth driver to account for
-+	 * the SoC integration, so the only rx-internal-delay and no
-+	 * tx-internal-delay is set for the PHYs.
-+	 */
-+
-+	icssg1_phy03: ethernet-phy@3 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0x3>;
-+		reset-gpios = <&main_gpio1 47 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <1000>;
-+		reset-deassert-us = <1000>;
-+		ti,rx-fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-+		ti,tx-fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-+		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
-+		ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
-+	};
-+
-+	icssg1_phy0c: ethernet-phy@c {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0xc>;
-+		reset-gpios = <&main_gpio1 51 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <1000>;
-+		reset-deassert-us = <1000>;
-+		ti,rx-fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-+		ti,tx-fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-+		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
-+		ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
-+	};
-+};
-+
-+
- &main_gpio0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&main_gpio0_digital_pins>,
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+> > Depending on this value, the enabled/disabled bit is set in the
+> > appropriate register, and the led appears with the label name in sysfs.
+> > Hope this extra info helps in helping me pick the appropiate binding. 
+> > 
+> >> Second this was never tested.
+> >>
+> > are you referring to the automated test done by the kernel test robot?
+> 
+> No, your testing. See writing-schema doc.
+> 
+Thanks for pointing this out, will look.
+> > 
+> >  
+> >> Third, where did you give me any chance to reply to your comment before
+> >> posting new version?
+> >>
+> > I think I have a wrong understanding of the process or mutt client is missconfigured
+> > or missued on my side.
+> 
+> Sending new version of patchset without allowing me to respond is not
+> "mutt misconfiguration".
+> 
+I'm insisting with this just to be sure that I'm not using mutt any other way than
+I should. I've configured threading, but I don't know how it shows on your end.
+So:
+I've sent v1 -> you said change color and function and asked about active ->
+I've send v2 with color and function *changed*, and contiuned the conversation in the
+ email thread about active.
 
+Expectation was that the active stuff was to be decided and then a v2 should
+have comed from me?
+
+If yes, this is the "process" part I was previously referring to, that I don't know.
+From my point of view, the outcome is the same, function and color needed to be changed anyway. 
+
+> Best regards,
+> Krzysztof
+> 
+
+Kind regards,
+Vicentiu
 
