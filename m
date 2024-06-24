@@ -1,95 +1,152 @@
-Return-Path: <linux-kernel+bounces-227836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5CC915717
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:24:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB5F91571A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 663D228609D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:24:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A7E5B20D6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F551A00FA;
-	Mon, 24 Jun 2024 19:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4281A00F7;
+	Mon, 24 Jun 2024 19:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Ehc26ce9"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cp4l7Pav"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F7319EECD;
-	Mon, 24 Jun 2024 19:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1373C3A1A8;
+	Mon, 24 Jun 2024 19:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719257038; cv=none; b=mrWY/SPZNXwe++jYujO9peceR3dHBd1RSYm9JGyHOezsN0GWvTR3VueZcq5BcKPZzCVCpEH9hhXeuqoWwLTfFW8Zn5IgcE2pvVtO6c4aQCcqUZbnB6TMjKIY2laKt/vewDojadYof/ky+ZMIuHQmUXHvZwlWdq3I+9G8UFstCX8=
+	t=1719257081; cv=none; b=Bftdi/MqQWosOO5a3BCEq+dtQmeLhVpvhh40xcs+giwPzCmGmXMrzAjyIlizF+Z7W3RtPc2d7Pxd3G61+FuQg2ynbh09HMagM3oYEP6xWKB/j5AMhGfNthjy++Fp117ik3zLoeaKBZpM6TrZwGbb7XKETCojUaaKgLXtwV/l86s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719257038; c=relaxed/simple;
-	bh=uS45FsoDnmGhqd1yyIKYROBb8wY/xZoRPYuHuZCNOd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PFrrFpgTkOLmRXOEVmG73qg6RaPU3//4IoBmuaw3INt9Sqagfy3UOQIf6iuzzzvv06tXvu2f6zbS41FwxSKS3F0hYp9/Hm4xBQZQKNrX7QDEfXw3JzBBSFg9yhm+PtYSo2Jy5LwbnjLunHG8LykBlFJiN/5x8GwASMfPKRr9He0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Ehc26ce9; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=LDPuana11XaeCfLjbxgCsmZdocdME4soGyTWYePyut4=; b=Ehc26ce9Z4UTlbakqaCm1XtxvI
-	a5JrE48XWCLfrJPMgg973CIAnV1/K3gMvsDEl+0DMqWNumSZfhlSjezkjYPY2N3DWeq9AMyTSJk90
-	WRlhY6w+TM161ur71zyTTtPsGqLQAV9UPXu+zkEK8Z8jrf3Lzbe08FfEUqz1HLcaR/Pg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sLpHy-000sZR-6X; Mon, 24 Jun 2024 21:23:42 +0200
-Date: Mon, 24 Jun 2024 21:23:42 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Danielle Ratson <danieller@nvidia.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
-	linux@armlinux.org.uk, sdf@google.com, kory.maincent@bootlin.com,
-	maxime.chevallier@bootlin.com, vladimir.oltean@nxp.com,
-	przemyslaw.kitszel@intel.com, ahmed.zaki@intel.com,
-	richardcochran@gmail.com, shayagr@amazon.com,
-	paul.greenwalt@intel.com, jiri@resnulli.us,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mlxsw@nvidia.com, idosch@nvidia.com, petrm@nvidia.com
-Subject: Re: [PATCH net-next v7 3/9] ethtool: Add an interface for flashing
- transceiver modules' firmware
-Message-ID: <f17b31a1-e2c3-4a7b-bdd1-53606627a16f@lunn.ch>
-References: <20240624175201.130522-1-danieller@nvidia.com>
- <20240624175201.130522-4-danieller@nvidia.com>
+	s=arc-20240116; t=1719257081; c=relaxed/simple;
+	bh=THHerX9VKK9eiYYoRM4Rium1mANrF3Sydv039s+f3XA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=chFgIV88ellmIeQEsiCbtV/fM7XvXoiZgjaQy5s49xClhD/gb1kBJ70hl0Yn/AUXpkyzGK3hKMp+R0PS8aNUZKSFzxr5wURuQ+Lu8mQJDusLnSCimkONN2KhtOYlfeX/KSmrjjvC8UQygHS9L7d2hfuuoPVXQ0PwMhhr5dBj5FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cp4l7Pav; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3E32C2BBFC;
+	Mon, 24 Jun 2024 19:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719257080;
+	bh=THHerX9VKK9eiYYoRM4Rium1mANrF3Sydv039s+f3XA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cp4l7PaviaEy6YJPLRoWd+76FRUoGC1HAlupSulljKPu14wZxdTYrJ+CLydYeftHg
+	 Oqnc/uKpENqHgGeLwOypGoM/m+/9zIWvAITTgGp2uQMeZkg2mWWaE+ayc6GUsevy/W
+	 sAhb41HSRaB2Pibt7aH4EA3KP1nwV1pkkIbz7/DKNaLxDv2S7BT1HBOcntqXsS+Mro
+	 Q0f+guqPApf7spEONbHsOd++m3Znsdu/YOQVi+bNKYgdQaCfH7Xow4m+PHLHM9R3Ff
+	 bm0j7chYYY/U07skWCIw43VrWEJliK//SB5Lzawwx0uVJfML3pzVtKlRkhgIMlix/G
+	 /ILrWfZrh2/Qw==
+Date: Mon, 24 Jun 2024 20:24:33 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Sean Anderson <sean.anderson@linux.dev>, Jean Delvare
+ <jdelvare@suse.com>, linux-iio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter
+ Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v2 2/2] hwmon: iio: Add labels from IIO channels
+Message-ID: <20240624202433.29564802@jic23-huawei>
+In-Reply-To: <ff43e01e-5a26-4b75-bfaa-ed3ad4395e7c@roeck-us.net>
+References: <20240624174601.1527244-1-sean.anderson@linux.dev>
+	<20240624174601.1527244-3-sean.anderson@linux.dev>
+	<ff43e01e-5a26-4b75-bfaa-ed3ad4395e7c@roeck-us.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624175201.130522-4-danieller@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 24, 2024 at 08:51:53PM +0300, Danielle Ratson wrote:
-> CMIS compliant modules such as QSFP-DD might be running a firmware that
-> can be updated in a vendor-neutral way by exchanging messages between
-> the host and the module as described in section 7.3.1 of revision 5.2 of
-> the CMIS standard.
-> 
-> Add a pair of new ethtool messages that allow:
-> 
-> * User space to trigger firmware update of transceiver modules
-> 
-> * The kernel to notify user space about the progress of the process
-> 
-> The user interface is designed to be asynchronous in order to avoid
-> RTNL being held for too long and to allow several modules to be
-> updated simultaneously. The interface is designed with CMIS compliant
-> modules in mind, but kept generic enough to accommodate future use
-> cases, if these arise.
-> 
-> Signed-off-by: Danielle Ratson <danieller@nvidia.com>
-> Reviewed-by: Petr Machata <petrm@nvidia.com>
+On Mon, 24 Jun 2024 11:47:39 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> On 6/24/24 10:46, Sean Anderson wrote:
+> > Add labels from IIO channels to our channels. This allows userspace to
+> > display more meaningful names instead of "in0" or "temp5".
+> > 
+> > Although lm-sensors gracefully handles errors when reading channel
+> > labels, the ABI says the label attribute
+> >   
+> >> Should only be created if the driver has hints about what this voltage
+> >> channel is being used for, and user-space doesn't.  
+> > 
+> > Therefore, we test to see if the channel has a label before
+> > creating the attribute.
+> >   
+> 
+> FWIW, complaining about an ABI really does not belong into a commit
+> message. Maybe you and lm-sensors don't care about error returns when
+> reading a label, but there are other userspace applications which may
+> expect drivers to follow the ABI. Last time I checked, the basic rule
+> was still "Don't break userspace", and that doesn't mean "it's ok to
+> violate / break an ABI as long as no one notices".
+> 
+> > Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> > ---
+> > 
+> > Changes in v2:
+> > - Check if the label exists before creating the attribute
+> > 
+> >   drivers/hwmon/iio_hwmon.c | 45 ++++++++++++++++++++++++++++++++++-----
+> >   1 file changed, 40 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
+> > index 4c8a80847891..5722cb9d81f9 100644
+> > --- a/drivers/hwmon/iio_hwmon.c
+> > +++ b/drivers/hwmon/iio_hwmon.c
+> > @@ -33,6 +33,17 @@ struct iio_hwmon_state {
+> >   	struct attribute **attrs;
+> >   };
+> >   
+> > +static ssize_t iio_hwmon_read_label(struct device *dev,
+> > +				  struct device_attribute *attr,
+> > +				  char *buf)
+> > +{
+> > +	struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
+> > +	struct iio_hwmon_state *state = dev_get_drvdata(dev);
+> > +	struct iio_channel *chan = &state->channels[sattr->index];
+> > +
+> > +	return iio_read_channel_label(chan, buf);
+> > +}
+> > +  
+> 
+> I personally find it a bit kludgy that an in-kernel API would do a
+> sysfs write like this and expect a page-aligned buffer as parameter,
+> but since Jonathan is fine with it:
 
-    Andrew
+That's a good point that I'd not picked up on and it probably makes sense
+to address that before it bites us on some other subsystem.
+
+It was more reasonable when the only path was to a light wrapper that went
+directly around the sysfs callback. Now we are wrapping these up for more
+general use we should avoid that restriction.
+
+Two approaches to that occur to me.
+1) Fix up read_label() everywhere to not use sysfs_emit and take a size
+   of the buffer to print into. There are only 11 implementations so
+   far so this should be straight forward.
+
+2) Add a bounce buffer so we emit into a suitable size for sysfs_emit()
+  then reprint from there into a buffer provided via this interface with
+  the appropriate size provided.  This one is clunky and given the relatively
+  few call sits I think fixing it via option 1 is the better route forwards.
+ 
+Jonathan
+
+
+> 
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> 
+> Jonathan, please apply through your tree.
+> 
+> Thanks,
+> Guenter
+> 
+
 
