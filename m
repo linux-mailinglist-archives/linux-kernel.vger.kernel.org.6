@@ -1,335 +1,335 @@
-Return-Path: <linux-kernel+bounces-227467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDDE9151B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:13:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876FA9151BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AAF32828EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:13:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7A4DB252DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AA713C3CD;
-	Mon, 24 Jun 2024 15:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C2B19D8BE;
+	Mon, 24 Jun 2024 15:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="ruIGpWZT"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nJYEWMV8";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="YzGBHQ2J"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B7219B3F9
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719241958; cv=none; b=sEJIHf5h7IckqVFjv0BFexvmqP/S8eFMzQ/vIElKyl29YDygGCVuxqZAOFOHjjlIf3dCK0nfsNnyKQ3qWjw8axip08FZF/RSGhurpvF70FlXZmxCt/l025HrGoUO2swXiUYJ3Kib7Aw8bWAK1Gkx9mIRQCMnFrzu4D/VKD4B7tE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719241958; c=relaxed/simple;
-	bh=ojuN/mc5k607ZrfKqTQBy1V/hHjJkk3A7P6CMg1iw/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GYHo0PdZZuZEj8LbmCO57mgO8f9BaklSv9wgcgaY5/ZjPxJSwD6byg7T9wUN+qbiMNk0+8s/CyT0fvqQft4spOhbJc4d+ahAnTvXLJZxKSPJ1t0g1xhgjewpmTDO+ON1IJR4FYcK+p7LJssVoslJZZjQmH3owqgOZuBllSJKdkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=ruIGpWZT; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fa0f143b85so13873745ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:12:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6428419B59A;
+	Mon, 24 Jun 2024 15:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719241987; cv=fail; b=ugMX5TLEq/SX8gJiYk1cMVwDmjsIKf4t9j+XJ1GCEHwN53r38opLpdcj2t3ioa5kfnDG+JUR+OAVdxCDOs1FTbi8cjI1C/Wwj9CEDquDOs6wO8uKZCEjqqnZm8TqX02jybWnSHB8r/8wRWs7u1x1BIis7njswFykvEPLwZptIcc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719241987; c=relaxed/simple;
+	bh=Y2lxvCpktQ/ZRnDS25CIug47SZLiBhBIUtC+0JpRPNg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PxTQZPGLYlBbJgLbs20byEnsYJc7wHzacQnTYS2+44XE48KsR0Lc7cZ13OW6wV2rvEt85dpjS7kOpvxVcL1uT0A++vgy2Sz1ns7dhv2UPcZBy6+6YrCBCe/LRAXAs0MiE0KzsJlvZTfobYAKWKkiqoHs08lUtGgC8k67a77WhBw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nJYEWMV8; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=YzGBHQ2J; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OEtO4W006272;
+	Mon, 24 Jun 2024 15:12:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=XtwurnpAak3s7iFyzME1/4zOhQ9rxuX+xtS4b1Per64=; b=
+	nJYEWMV8WobHvhrsJqN/fQPVc/BHvYAd9frewR4E3Ttjxx39spA+J/zbceg5p5DT
+	3DH6TEr+rWVFN8Nqzz8QMX+4i4IKYZ6zXCNHtaZC18JOQy/2K02MCbyT1zNyG2dw
+	gx9Iv1rqa7grAZGY/D6FxO/VXIbmuOdkER5vWofksdaUcdSuKXt+C2dsleNjSVJo
+	CJmDAxcyUW7UaMycsJvX+ikRfSeH0gWTs8bx9Qq52SCg2JHwHY/He4L3/V7o7ZEV
+	e629aNc0J4IdzcQVbUTYzUkY7UwJfCHNnCYBK8EPy48+QqgtXMtKwdkxB8aY5uP2
+	sLYiZerqWlnAo965qaLIRg==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ywq5stvk2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Jun 2024 15:12:56 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45OFBoRu017850;
+	Mon, 24 Jun 2024 15:12:55 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2047.outbound.protection.outlook.com [104.47.55.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3ywn262thh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Jun 2024 15:12:55 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k2gHzchn1h+Wjv/qYaABz3MyawF0KP+SQcMPXOkQyoodY7wPIJ0Yjy2KKXEm1NESoMeNw3d/NwoXd7jjmr+21hSaCflq9dDJJF2xs8UD8L8HAivRzyR5vnC+nvQ0kAywXNKE03hWFM+MM9Jadu0M9201tk5IMHe7eyBliMVJ86JLgSt0oQ83ovTHIfz6/dxwZxChMbYS4lBDH6jsHnoNw00Difq8oflNbXxQk5XHsfzz1AyAWp/1I6xOP/4Ccaax1tZxG5cpffKnj69yLAvjUheXADpzQLClx51mY8JqR+MoG+9SbSINKVg6ZG/IZYwxt1CNoXwOXWdQuVCb+GK7Ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XtwurnpAak3s7iFyzME1/4zOhQ9rxuX+xtS4b1Per64=;
+ b=nSzB/k+zyq2y97UM7dwejmySypMgoT72F+Px1s47E+x77v7UgDVZbVg3l4hLIqmy9sAu3KcdusSeciyuzwlwWjW1P2kigoHphGRFXz32nD60+sS29fdpk+O5/HKu4Oxa7X7Tc9aIz4ZiSB1dzfIzaRAB9WCxyATv58C9/zEq1QlltLnheX9A9vXJ0l1kOF2IfVvXF7Ud7vth8hmIGoYTplECs1f3ApfCyxJsOSVD2ibGt0kIajMc+B+JbdW9AXjYzhwnnvPw1slXU1iXbdlGMobClXD6ZMs5lLaO7l9h8oXasiILiizvm06bG5ewC//mYY5qMEMrInLk1DLWFwmvow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1719241955; x=1719846755; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=peW8Z3S28CwGFuIpazhrzFeDoTUsFpCtaaEIifjimFQ=;
-        b=ruIGpWZTbUm+8KSzrQeE+pRiaZg0+NDCAUrWbgxEyi+WIZBvTS5sdGdHDSB39BhakO
-         /A6NKHQ5bX9okHcya0y2K5UUrw4tERU3iefT9FODPuMl+7so6jkO7A882ZoaqTawoSMB
-         k2RzYO0uaZa1ooYu4MvKL7frDglzj8/dSLG6czeWI6PcclysgBDQfRr5yrsOK6ICc6mQ
-         o5L+Ef3xsG5Wg+4FzRUSZJYWJB71n45nfpXP6e/OVCJVYkdGeOtUll8P5Vh7ii2u7lCb
-         MjNG6TL/JsaAcucX8LZ1Dp0V3kUzr+vbHXPKjISuVTyTBQJktOVb+ALCb7Sle0Fs+MZw
-         /POg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719241955; x=1719846755;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=peW8Z3S28CwGFuIpazhrzFeDoTUsFpCtaaEIifjimFQ=;
-        b=TiHGcTGjxfZlaWgCzU3HMegZq8cQ7wJOXEzlwuwSIoMUglintCZTs26xhyaAPhMv+3
-         2mgtqF6MuPLXVu+EYtYIUcxlvYpmluLGOCvmUjAMGw+IKjIctkHtanUzsVW1VI7UIm4j
-         AUVmzl/iF29Lg8Ya08JB+4/hY4VYUUETn7dJSteenNCBT1sY+7jj2be73c/J5iHOqSa1
-         Q7Y5YWRBzCRzawqkZg3Xpgp/CeWZC/NJ1ff4ZkfDajqFQ3aMyDsPN5brPoAhh8zQS5FC
-         v4gDF+4BmHmCxsj6yd4cox9Hm3MVhNhzz1rokBC4B7j228rTLOBRxKpXfaUpa46EUQqA
-         WdzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6X5sJTlRpWYe6MW5bvPiQ9W8i+LHVUfx7tqixoOuNtM6SMBgc+d+xoS7mrGneCCc88jsI+NboZB7/ymSGazAev1sEKsExoDBPWsfU
-X-Gm-Message-State: AOJu0Yyb+YTgNQkzNOmwepaK67O+1v9GoqN+NEges79kkrtcwWfT6b/F
-	uKq+RDUaQn+vCZDqU/+2juBPGZOGxPtuDDJFmDk8dJp1b/sFTJ93Ed4lyLwDQQ==
-X-Google-Smtp-Source: AGHT+IEN/zBRCtieICYKZDxLphZvn5UQQKpSrMS/syCqKx2ld79T7HXLa1NJ87s4p+b/SOjvvRGY+Q==
-X-Received: by 2002:a17:902:cecc:b0:1f9:f3a0:629b with SMTP id d9443c01a7336-1fa23f1d33bmr46473115ad.54.1719241954864;
-        Mon, 24 Jun 2024 08:12:34 -0700 (PDT)
-Received: from ?IPV6:2804:14d:5c5e:44fb:8ef6:cdff:1677:b083? ([2804:14d:5c5e:44fb:8ef6:cdff:1677:b083])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f058bsm63929855ad.13.2024.06.24.08.12.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 08:12:34 -0700 (PDT)
-Message-ID: <fa8e452b-ad37-482b-8d9b-bc8b4cad0ff9@mojatatu.com>
-Date: Mon, 24 Jun 2024 12:12:26 -0300
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XtwurnpAak3s7iFyzME1/4zOhQ9rxuX+xtS4b1Per64=;
+ b=YzGBHQ2J5gJt8P/EKGphFo8hoUYIBYxwpG43yRPELNm/MSJFbkRS72cUR8EwUNBfsB3PDyjqKksneWb07qPB31VKcl6uB5ez+Wv3EmsVLhzw199LQRYisWs1KFhsN3BHNcKrEgS57Pa6zFdHSvGqyzn+pbsmGauJY8Ud7hToe9Q=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by DS0PR10MB7223.namprd10.prod.outlook.com (2603:10b6:8:de::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.26; Mon, 24 Jun
+ 2024 15:12:53 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 15:12:53 +0000
+Message-ID: <6940956e-e2fe-4767-a539-825a345a9236@oracle.com>
+Date: Mon, 24 Jun 2024 16:12:48 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/13] xfs: Unmap blocks according to forcealign
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+        martin.petersen@oracle.com
+References: <20240621100540.2976618-1-john.g.garry@oracle.com>
+ <20240621100540.2976618-11-john.g.garry@oracle.com>
+ <20240621191247.GO3058325@frogsfrogsfrogs>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240621191247.GO3058325@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P302CA0041.GBRP302.PROD.OUTLOOK.COM
+ (2603:10a6:600:317::19) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] tracing/net_sched: NULL pointer dereference in
- perf_trace_qdisc_reset()
-To: yskelg@gmail.com
-Cc: netdev@vger.kernel.org, stable@vger.kernel.org,
- Jakub Kicinski <kuba@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Takashi Iwai <tiwai@suse.de>, "David S. Miller" <davem@davemloft.net>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jamal Hadi Salim
- <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Taehee Yoo <ap420073@gmail.com>,
- Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- ppbuk5246@gmail.com, Yeoreum Yun <yeoreum.yun@arm.com>
-References: <20240622045701.8152-2-yskelg@gmail.com>
-Content-Language: en-US
-From: Pedro Tammela <pctammela@mojatatu.com>
-In-Reply-To: <20240622045701.8152-2-yskelg@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS0PR10MB7223:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ed5dfc6-4235-4fb6-6504-08dc94601e7b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|1800799021;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?ZUluODdoM0V2Qm9ySWNKeUFBQmZTZkIrSk5TMEtUR1RlOFRtU3hOemgxZnZ0?=
+ =?utf-8?B?Z2Uvd0JLMEJmMUpxME1qUGFBUCtVYmVDTWdKbEI5TVRRbDhaQ3lwZ3ZkcCtm?=
+ =?utf-8?B?NWk3QWYxbVlSbEs1UERXbGV3RHZ6VGxJV1ZIWC9xZGZhMW9iNERuUUorZWxD?=
+ =?utf-8?B?VGZNeGROazdnaWpNRDJhb0RrWDBMTE41SG5tNFhNcER6T3VvYzJiRityR3lJ?=
+ =?utf-8?B?RWxXY1RFSDRhUUdZYXBvZU8vUFByd0MzaEdlQTlXeXR1WVBBczhQZmljcEM5?=
+ =?utf-8?B?K0ozb1lsNjdNNU9WVWUzRS9SQ21DUzlETUtRb2RySjFmSUVmQlZmdXgrRlhu?=
+ =?utf-8?B?YndFNGFpN3RFUTRTR1ZMN1JKNmIvQkRNU01IM2RxdzNlcnB3YXNnWWw5ZW91?=
+ =?utf-8?B?ZG9yUEE2SVE1eTJVSEtIalZtOTNIZ3BPSWFGN0xIOEMrRGo4a0JGTUxkdzRl?=
+ =?utf-8?B?a1Z3Rm1xU01WTk8xN3A3MUpyditKMHR1SFhVSjJ0Wk8xZFYvZ0k1eDFEVGR1?=
+ =?utf-8?B?NjQ0cERtWEtHV2M1WC8vb1E0UHN6TytEYXlPZENsNEJBL1pON242S0s1Z1c5?=
+ =?utf-8?B?UFMvN24raTRoTTZ6RHRMSi94NUtrMHZWQStrelQ1WkZ4a1NqQTNKQkVmZ0Ft?=
+ =?utf-8?B?Q0RXckZKQ0RaUDNrajhXQkZaZElpWWpLVzRXZElDN3dwQzBtOFk3UXFEUW9V?=
+ =?utf-8?B?QU1taWlXdEFuUTFKdmNIQjVjOEg5VnpyRVV4eFBVZGhXWTJBcUhqd1dHdjBB?=
+ =?utf-8?B?TWh5MnhOVkwvazFZVVZ0M293WWJ1eUJERmQvL0IxbjJwandZSExuR3NTRC9j?=
+ =?utf-8?B?ZzA0SHhRREJBN0F5ZXRaOWZneS9jbkxINVZQTGtRZkNVb3Z5eGsreDl4eUhj?=
+ =?utf-8?B?N0wzSUlnSUVBV2dRZVh2QWt5ZmQ2VHlOTjlkb3VFOWtnKzhnRTFwa3BOellq?=
+ =?utf-8?B?RE9zNytQNFQ2Snk5UFdRZG1XQkFjbzU5RmsyR2JFRURBVHY5TTN5Z1lsOU1l?=
+ =?utf-8?B?bWw2S3Z6cFJNMERjbmtTbW0rbVJCY1EvTWc1YzM1RVA1V2tob0RqMDFLYmRv?=
+ =?utf-8?B?ZHhTZ3Y0OVlmUHliZzVpMTQ0V0hPYkdRRDRQUklnWVk3S2NyTnV4QTltT1ZB?=
+ =?utf-8?B?clAxWEZjM3FJclJvQ2pLd051dVlJKzZuZ0F4OXhLT1Q3cFI4eWZ5QnRaYkFC?=
+ =?utf-8?B?RWFwR0dDSjdMWUFhaWZ4b3RlclZJMUxxVFY2bnJkdmFubk1jZmtodUlxbGJw?=
+ =?utf-8?B?YXZFT1ZSUnlLdXRTRWxHODdad3R2Z1BzODFpaGZocjMvUTdVR3A4Z2ZSaFRB?=
+ =?utf-8?B?ZmdqVUtzbUc0Y1R0ZS9KZ2QrVlE3L01rSHE2ZkYzMmIwdjhlVEpHZEpTNi8z?=
+ =?utf-8?B?cWk3dlJtd01tOGVxTGx4OEtpMWpIQ1NmRVdDbXFCMmd2ZVZwcXAxRkFCcGQz?=
+ =?utf-8?B?aGlvK2V6VW5KL0F2NTJ5N0JnQSs2a1RyMlgwUGFHRlZDSEl3UjN3L2lrUVlq?=
+ =?utf-8?B?S0FXa1NXSzFJazdTOVRIVHRrcEtFRHE0VUFPbWUzNSsza0hwQ3MvcWt1RFJk?=
+ =?utf-8?B?SXhuNmZObjdPc2djbmprdXdXNVNaS3ZKZThvQXhuM3M4RWJPVW1xM054VzNG?=
+ =?utf-8?B?NmJEKzJYVG1HbTkram9pelVGN3RyZ0laRWFDTVUzNmlTb3RTdnpOajRmQWlq?=
+ =?utf-8?B?UTU4eVdvT01qNmZsY000amM0RTBtTlFTUDJKdjllUk5HamYzMWZKcWlnd0Nh?=
+ =?utf-8?Q?s5M6Nf94QLw1w+9xh19scLfJ6Lrewk/vXzeSZde?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?ZjJZckRscXlOVWc1V0RURXRacjdlaWtSNXZ5OHR5K2tqRUFhdE03SWMyWjVo?=
+ =?utf-8?B?MUQ5N0FpMDNpbDZXeStzQVlBbTJ1VCtOOTJLYkwrMTU2WHJyS3FQTDdjSkk5?=
+ =?utf-8?B?VlpmQTRQaU9yZEFDTkI5TGprbkhwa1h5b2c4NW9aYklZQ0xua0lzSWxlOTlG?=
+ =?utf-8?B?cjdGUmNGWlF3L2h1Unc5K1Zoc1h4dVFRbk9zMzJYUHMyVlR6b3kxVWpIRXpO?=
+ =?utf-8?B?ZVUrcVNHbnI4TzY1UVcwYWNFME0ydnkwYUdOMlZhSWtYckpxQ3lkTU0zL2FJ?=
+ =?utf-8?B?cVk0cjZTNXord0dvc01RTHFCSXNJcmsvRWdsdTN4UGlzME0rV3dGNzJFdC9Z?=
+ =?utf-8?B?SUZpL01ia2x3cmI4Nkt3eFA5bGc2aW1zSVA3czZuUjhKMXZKNjNSQnBRbHZI?=
+ =?utf-8?B?UlUxVlNmd3VHa2lBdm9xamVnSDg4RjNuYllMcU1oajlSNUJuU0g5QlhyeXl1?=
+ =?utf-8?B?VXRjaVpmMFlnUHZDUFJTdUxWRWNOS29SNEhtRTRDckZBOXYrQzQycW9PYTEw?=
+ =?utf-8?B?NnpDa0ZYNXprYXBXcFRjRE54T1pLSGZkeUgyK3Fvd1EyZHNHYXRwRExVVjd4?=
+ =?utf-8?B?QWlyVSs4a0hWODJrZWw2WFBkSm5VbnU5eDF4STVocTFFVitDZGVBcXoxRm11?=
+ =?utf-8?B?SmxYZGNzaFhGMGxxd0x4Wk5URGwrTW82NjFkYWdzSUZhMWFFYjdEWmNOWWRa?=
+ =?utf-8?B?WjNSY1paUmRpKzJLc0RjR2tkUFROaUFwaDlPd3o2eGFscEhGSEU5V01zdkV3?=
+ =?utf-8?B?V3hMZFRMZXBZeFNrMWljbVZKY3FPaHp5OVRoYm1wVkQ3UkhVQ09JdXpqZDFt?=
+ =?utf-8?B?M2NOaDZ5VkdjczJaNG5lcXFab25VMGRxSktZS2w0U0R0TG03S3ppSWdDS1dV?=
+ =?utf-8?B?REZHdlM2ZlYrSTlHSHlReTc1d2Z6QTY0WHRza0dqSzErRWd4RTZsczZyS3ZS?=
+ =?utf-8?B?Q3hURTJhQWxmRW5TNzFUVVBnSHZ3SXp5cWpKVnZHUkMvSWtsMlUxbTNRZkJT?=
+ =?utf-8?B?L3R2QlVyV1YrNXVraUtaN0M3ZGVGTUxGWWhwd0M2Z21KNVYydzByWk1ZaGZq?=
+ =?utf-8?B?RTlYTWcxNTFncWg2eWoyT29ldklCeForY1RWZEJucVNPTXJCZ2psbUgyL0V1?=
+ =?utf-8?B?UWxJUUlWaWRZSFJseVVVZTRVSjhrN3RzcG45OG9Bd3cvRzA4MzUwOGQ1L1Fx?=
+ =?utf-8?B?UUFhdmowMENVWWZKeXpNM3gzUW5NNWVLM2xwUmwvUEhmYjFGVnQrVk9PSSsr?=
+ =?utf-8?B?azZjR0FZeGFzL2tOSVloaDFqOVprbzRkWGFXd0xsTTR2MkJZbk5IZTQ1Qk9i?=
+ =?utf-8?B?WXZsbHNKRmM4WUdsb2lEcXZKNnk0Z3lYcHNVYUpNQ05CMDJWelNPd2ZHcWJs?=
+ =?utf-8?B?a1RHM21pR21BN1ZJd3kyZTVrNDBDRXhIbTBObjdSUkNJYlJRUWhpVDBEMGhQ?=
+ =?utf-8?B?QmpyTzBrKzlDZWhDRmFDVExVOEk5TU0vaXIrYU9rYm1TOEhsQzhJZ0tkMmVt?=
+ =?utf-8?B?RkpSckM5ZCtveEVmb0xibnN6UzVxVGwwcnFyQnY3ZEV6QzRuWE8xVHRPc3BW?=
+ =?utf-8?B?OC93YzRVT1dkR0pGT29wUU1oeFpRMXY3aTVPYzBFQk9HVjQ0ZmxPYlYrdUxS?=
+ =?utf-8?B?U2E4ZUM3MnR0TmhtcitaRmxxZmdKY0VvU1JYNXB4N3JrUElYak96ZkdTVkg1?=
+ =?utf-8?B?S29aejhYZjFOTC9wbS9pSHBlcE5WMFV6eUMyNUwwTW9oUmVFUm5QM0RROHc1?=
+ =?utf-8?B?Tkh1YTRSYWxid1hmTTZHMGtFcENhTnMvRSs1dEJyVTVvRGlNYjV4YzFhQmVL?=
+ =?utf-8?B?Mk1NcDFDWEFOd3ViOVA4elV0WnFyd0FmaEZhdFA0YzU0VllJY0g4Q01UbUZG?=
+ =?utf-8?B?RnJycHF4WkhHVmZDWXZTTmc1RHpCSnBtYXUzUTR3WE1hMVJMTlZERmhlekhE?=
+ =?utf-8?B?OWExaTJ2dUdCSkswMVdZbFZSS0kyTERuYkYybER3MmhreDNBOHBobFJtTkc4?=
+ =?utf-8?B?YTlIVXNXTEgwWm1HV2wvbitkQ1VLd3huWkh1UmExUjVEckJuU2ExeHZ6OUZs?=
+ =?utf-8?B?OTgyZjJmdldBWVk1TzZRWjNBakQ1MDAwQWg2eWFlZ0ZQKzNiK1Z3bmdjNG14?=
+ =?utf-8?Q?ZUOYxDvXhnA82ZBykEDQbjg2J?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	8yVJjheKIZ9PXFyvWeHDLx05UGGFoMqa0D0CzAocA4jgQRC6ji5Jx2awwINAVyn+fvnE2pX8bp5bb4uSROGaHH2eiWcStx07ks/y4FV0cT7szUTuicTfSgyj9JeyFsRlm9D/qe2aY+ebZGZw8IZrZrzbYW996lRCDQofB1pPJyB3qpeHcXjUJsFVGFKIJSER7os2aW4nTYM1oz/Uo+PzZO3wvYpUyOICajj0FobThpHhRPP8hN1jLzBVwq2ikAIA7eHG+qU8XjCG5KQQckDqp6rWfR+ebRPh0soHJmrXOtNdckrU7M+uC+LQmtFEaFmpAlC/akAVff21gymMfLP4Dz8r614tHmizlyjSIjVI4wyQIqCagnOwfEFhf3npXG9cuFLvRweg3wea1Va5vKXTpXINPeV3a8CWmKxWz3jcdPbf0omxpUYr0QTWRLb0kcJsK6Y1ktWC5Qp3DIEqbp4OH9F3AlR3UnICtN6nNqf9tD7aKu35XAA1XqJLPt73YjPTIfzxUNNLT3gPTjgi6bcjP+AzZniIfT0A2Ro3B2eGXi/v3IiWBJ10VdjkYeD/BIFlPryuq4hKMDYeQkB1ixU3KReQ9N910Qsy/6O1YLZ+dxE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ed5dfc6-4235-4fb6-6504-08dc94601e7b
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 15:12:53.1009
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F+N2Hwq/ueuFQgfdhUZHxKJITeoD12PKDaYCH62RDAclA8ZIQ125bB0Hwt+gS97wFgaGWndBlgdUs7NUWzYzDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7223
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_11,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 adultscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2406240121
+X-Proofpoint-GUID: KbGH-suu8B1WFK_2epo18SqS_hyvUSYN
+X-Proofpoint-ORIG-GUID: KbGH-suu8B1WFK_2epo18SqS_hyvUSYN
 
-On 22/06/2024 01:57, yskelg@gmail.com wrote:
-> From: Yunseong Kim <yskelg@gmail.com>
+On 21/06/2024 20:12, Darrick J. Wong wrote:
+> On Fri, Jun 21, 2024 at 10:05:37AM +0000, John Garry wrote:
+>> For when forcealign is enabled, blocks in an inode need to be unmapped
+>> according to extent alignment, like what is already done for rtvol.
+>>
+>> Signed-off-by: John Garry <john.g.garry@oracle.com>
+>> ---
+>>   fs/xfs/libxfs/xfs_bmap.c | 38 +++++++++++++++++++++++++++++++++-----
+>>   1 file changed, 33 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+>> index c9cf138e13c4..ebeb2969b289 100644
+>> --- a/fs/xfs/libxfs/xfs_bmap.c
+>> +++ b/fs/xfs/libxfs/xfs_bmap.c
+>> @@ -5380,6 +5380,25 @@ xfs_bmap_del_extent_real(
+>>   	return 0;
+>>   }
+>>   
+>> +static xfs_extlen_t
+>> +xfs_bunmapi_align(
+>> +	struct xfs_inode	*ip,
+>> +	xfs_fsblock_t		bno)
+>> +{
+>> +	struct xfs_mount	*mp = ip->i_mount;
+>> +	xfs_agblock_t		agbno;
+>> +
+>> +	if (xfs_inode_has_forcealign(ip)) {
+>> +		if (is_power_of_2(ip->i_extsize))
+>> +			return bno & (ip->i_extsize - 1);
+>> +
+>> +		agbno = XFS_FSB_TO_AGBNO(mp, bno);
+>> +		return do_div(agbno, ip->i_extsize);
 > 
-> In the TRACE_EVENT(qdisc_reset) NULL dereference occurred from
-> 
->   qdisc->dev_queue->dev <NULL> ->name
-> 
-> This situation simulated from bunch of veths and Bluetooth dis/reconnection.
-> 
-> During qdisc initialization, qdisc was being set to noop_queue.
-> In veth_init_queue, the initial tx_num was reduced back to one,
-> causing the qdisc reset to be called with noop, which led to the kernel panic.
-> 
-> I've attached the GitHub gist link that C converted syz-execprogram
-> source code and 3 log of reproduced vmcore-dmesg.
-> 
->   https://gist.github.com/yskelg/cc64562873ce249cdd0d5a358b77d740
-> 
-> Yeoreum and I use two fuzzing tool simultaneously.
-> 
-> One process with syz-executor : https://github.com/google/syzkaller
-> 
->   $ ./syz-execprog -executor=./syz-executor -repeat=1 -sandbox=setuid \
->      -enable=none -collide=false log1
-> 
-> The other process with perf fuzzer:
->   https://github.com/deater/perf_event_tests/tree/master/fuzzer
-> 
->   $ perf_event_tests/fuzzer/perf_fuzzer
-> 
-> I think this will happen on the kernel version.
-> 
->   Linux kernel version +v6.7.10, +v6.8, +v6.9 and it could happen in v6.10.
-> 
-> This occurred from 51270d573a8d. I think this patch is absolutely
-> necessary. Previously, It was showing not intended string value of name.
-> 
-> I've reproduced 3 time from my fedora 40 Debug Kernel with any other module
-> or patched.
-> 
->   version: 6.10.0-0.rc2.20240608gitdc772f8237f9.29.fc41.aarch64+debug
-> 
-> [ 5287.164555] veth0_vlan: left promiscuous mode
-> [ 5287.164929] veth1_macvtap: left promiscuous mode
-> [ 5287.164950] veth0_macvtap: left promiscuous mode
-> [ 5287.164983] veth1_vlan: left promiscuous mode
-> [ 5287.165008] veth0_vlan: left promiscuous mode
-> [ 5287.165450] veth1_macvtap: left promiscuous mode
-> [ 5287.165472] veth0_macvtap: left promiscuous mode
-> [ 5287.165502] veth1_vlan: left promiscuous mode
-> …
-> [ 5297.598240] bridge0: port 2(bridge_slave_1) entered blocking state
-> [ 5297.598262] bridge0: port 2(bridge_slave_1) entered forwarding state
-> [ 5297.598296] bridge0: port 1(bridge_slave_0) entered blocking state
-> [ 5297.598313] bridge0: port 1(bridge_slave_0) entered forwarding state
-> [ 5297.616090] 8021q: adding VLAN 0 to HW filter on device bond0
-> [ 5297.620405] bridge0: port 1(bridge_slave_0) entered disabled state
-> [ 5297.620730] bridge0: port 2(bridge_slave_1) entered disabled state
-> [ 5297.627247] 8021q: adding VLAN 0 to HW filter on device team0
-> [ 5297.629636] bridge0: port 1(bridge_slave_0) entered blocking state
-> …
-> [ 5298.002798] bridge_slave_0: left promiscuous mode
-> [ 5298.002869] bridge0: port 1(bridge_slave_0) entered disabled state
-> [ 5298.309444] bond0 (unregistering): (slave bond_slave_0): Releasing backup interface
-> [ 5298.315206] bond0 (unregistering): (slave bond_slave_1): Releasing backup interface
-> [ 5298.320207] bond0 (unregistering): Released all slaves
-> [ 5298.354296] hsr_slave_0: left promiscuous mode
-> [ 5298.360750] hsr_slave_1: left promiscuous mode
-> [ 5298.374889] veth1_macvtap: left promiscuous mode
-> [ 5298.374931] veth0_macvtap: left promiscuous mode
-> [ 5298.374988] veth1_vlan: left promiscuous mode
-> [ 5298.375024] veth0_vlan: left promiscuous mode
-> [ 5299.109741] team0 (unregistering): Port device team_slave_1 removed
-> [ 5299.185870] team0 (unregistering): Port device team_slave_0 removed
-> …
-> [ 5300.155443] Bluetooth: hci3: unexpected cc 0x0c03 length: 249 > 1
-> [ 5300.155724] Bluetooth: hci3: unexpected cc 0x1003 length: 249 > 9
-> [ 5300.155988] Bluetooth: hci3: unexpected cc 0x1001 length: 249 > 9
-> ….
-> [ 5301.075531] team0: Port device team_slave_1 added
-> [ 5301.085515] bridge0: port 1(bridge_slave_0) entered blocking state
-> [ 5301.085531] bridge0: port 1(bridge_slave_0) entered disabled state
-> [ 5301.085588] bridge_slave_0: entered allmulticast mode
-> [ 5301.085800] bridge_slave_0: entered promiscuous mode
-> [ 5301.095617] bridge0: port 1(bridge_slave_0) entered blocking state
-> [ 5301.095633] bridge0: port 1(bridge_slave_0) entered disabled state
-> …
-> [ 5301.149734] bond0: (slave bond_slave_0): Enslaving as an active interface with an up link
-> [ 5301.173234] bond0: (slave bond_slave_0): Enslaving as an active interface with an up link
-> [ 5301.180517] bond0: (slave bond_slave_1): Enslaving as an active interface with an up link
-> [ 5301.193481] hsr_slave_0: entered promiscuous mode
-> [ 5301.204425] hsr_slave_1: entered promiscuous mode
-> [ 5301.210172] debugfs: Directory 'hsr0' with parent 'hsr' already present!
-> [ 5301.210185] Cannot create hsr debugfs directory
-> [ 5301.224061] bond0: (slave bond_slave_1): Enslaving as an active interface with an up link
-> [ 5301.246901] bond0: (slave bond_slave_0): Enslaving as an active interface with an up link
-> [ 5301.255934] team0: Port device team_slave_0 added
-> [ 5301.256480] team0: Port device team_slave_1 added
-> [ 5301.256948] team0: Port device team_slave_0 added
-> …
-> [ 5301.435928] hsr_slave_0: entered promiscuous mode
-> [ 5301.446029] hsr_slave_1: entered promiscuous mode
-> [ 5301.455872] debugfs: Directory 'hsr0' with parent 'hsr' already present!
-> [ 5301.455884] Cannot create hsr debugfs directory
-> [ 5301.502664] hsr_slave_0: entered promiscuous mode
-> [ 5301.513675] hsr_slave_1: entered promiscuous mode
-> [ 5301.526155] debugfs: Directory 'hsr0' with parent 'hsr' already present!
-> [ 5301.526164] Cannot create hsr debugfs directory
-> [ 5301.563662] hsr_slave_0: entered promiscuous mode
-> [ 5301.576129] hsr_slave_1: entered promiscuous mode
-> [ 5301.580259] debugfs: Directory 'hsr0' with parent 'hsr' already present!
-> [ 5301.580270] Cannot create hsr debugfs directory
-> [ 5301.590269] 8021q: adding VLAN 0 to HW filter on device bond0
-> 
-> [ 5301.595872] KASAN: null-ptr-deref in range [0x0000000000000130-0x0000000000000137]
-> [ 5301.595877] Mem abort info:
-> [ 5301.595881]   ESR = 0x0000000096000006
-> [ 5301.595885]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [ 5301.595889]   SET = 0, FnV = 0
-> [ 5301.595893]   EA = 0, S1PTW = 0
-> [ 5301.595896]   FSC = 0x06: level 2 translation fault
-> [ 5301.595900] Data abort info:
-> [ 5301.595903]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-> [ 5301.595907]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [ 5301.595911]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [ 5301.595915] [dfff800000000026] address between user and kernel address ranges
-> [ 5301.595971] Internal error: Oops: 0000000096000006 [#1] SMP
-> …
-> [ 5301.596076] CPU: 2 PID: 102769 Comm:
-> syz-executor.3 Kdump: loaded Tainted:
->   G        W         -------  ---  6.10.0-0.rc2.20240608gitdc772f8237f9.29.fc41.aarch64+debug #1
-> [ 5301.596080] Hardware name: VMware, Inc. VMware20,1/VBSA,
->   BIOS VMW201.00V.21805430.BA64.2305221830 05/22/2023
-> [ 5301.596082] pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> [ 5301.596085] pc : strnlen+0x40/0x88
-> [ 5301.596114] lr : trace_event_get_offsets_qdisc_reset+0x6c/0x2b0
-> [ 5301.596124] sp : ffff8000beef6b40
-> [ 5301.596126] x29: ffff8000beef6b40 x28: dfff800000000000 x27: 0000000000000001
-> [ 5301.596131] x26: 6de1800082c62bd0 x25: 1ffff000110aa9e0 x24: ffff800088554f00
-> [ 5301.596136] x23: ffff800088554ec0 x22: 0000000000000130 x21: 0000000000000140
-> [ 5301.596140] x20: dfff800000000000 x19: ffff8000beef6c60 x18: ffff7000115106d8
-> [ 5301.596143] x17: ffff800121bad000 x16: ffff800080020000 x15: 0000000000000006
-> [ 5301.596147] x14: 0000000000000002 x13: ffff0001f3ed8d14 x12: ffff700017ddeda5
-> [ 5301.596151] x11: 1ffff00017ddeda4 x10: ffff700017ddeda4 x9 : ffff800082cc5eec
-> [ 5301.596155] x8 : 0000000000000004 x7 : 00000000f1f1f1f1 x6 : 00000000f2f2f200
-> [ 5301.596158] x5 : 00000000f3f3f3f3 x4 : ffff700017dded80 x3 : 00000000f204f1f1
-> [ 5301.596162] x2 : 0000000000000026 x1 : 0000000000000000 x0 : 0000000000000130
-> [ 5301.596166] Call trace:
-> [ 5301.596175]  strnlen+0x40/0x88
-> [ 5301.596179]  trace_event_get_offsets_qdisc_reset+0x6c/0x2b0
-> [ 5301.596182]  perf_trace_qdisc_reset+0xb0/0x538
-> [ 5301.596184]  __traceiter_qdisc_reset+0x68/0xc0
-> [ 5301.596188]  qdisc_reset+0x43c/0x5e8
-> [ 5301.596190]  netif_set_real_num_tx_queues+0x288/0x770
-> [ 5301.596194]  veth_init_queues+0xfc/0x130 [veth]
-> [ 5301.596198]  veth_newlink+0x45c/0x850 [veth]
-> [ 5301.596202]  rtnl_newlink_create+0x2c8/0x798
-> [ 5301.596205]  __rtnl_newlink+0x92c/0xb60
-> [ 5301.596208]  rtnl_newlink+0xd8/0x130
-> [ 5301.596211]  rtnetlink_rcv_msg+0x2e0/0x890
-> [ 5301.596214]  netlink_rcv_skb+0x1c4/0x380
-> [ 5301.596225]  rtnetlink_rcv+0x20/0x38
-> [ 5301.596227]  netlink_unicast+0x3c8/0x640
-> [ 5301.596231]  netlink_sendmsg+0x658/0xa60
-> [ 5301.596234]  __sock_sendmsg+0xd0/0x180
-> [ 5301.596243]  __sys_sendto+0x1c0/0x280
-> [ 5301.596246]  __arm64_sys_sendto+0xc8/0x150
-> [ 5301.596249]  invoke_syscall+0xdc/0x268
-> [ 5301.596256]  el0_svc_common.constprop.0+0x16c/0x240
-> [ 5301.596259]  do_el0_svc+0x48/0x68
-> [ 5301.596261]  el0_svc+0x50/0x188
-> [ 5301.596265]  el0t_64_sync_handler+0x120/0x130
-> [ 5301.596268]  el0t_64_sync+0x194/0x198
-> [ 5301.596272] Code: eb15001f 54000120 d343fc02 12000801 (38f46842)
-> [ 5301.596285] SMP: stopping secondary CPUs
-> [ 5301.597053] Starting crashdump kernel...
-> [ 5301.597057] Bye!
-> 
-> Yeoreum and I don't know if the patch we wrote will fix the underlying cause,
-> but we think that priority is to prevent kernel panic happening.
-> So, we're sending this patch.
-> 
-> Link: https://lore.kernel.org/lkml/20240229143432.273b4871@gandalf.local.home/t/
-> Fixes: 51270d573a8d ("tracing/net_sched: Fix tracepoints that save qdisc_dev() as a string")
-> Cc: netdev@vger.kernel.org
-> Cc: stable@vger.kernel.org # +v6.7.10, +v6.8
-> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
->   include/trace/events/qdisc.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
-> index f1b5e816e7e5..170b51fbe47a 100644
-> --- a/include/trace/events/qdisc.h
-> +++ b/include/trace/events/qdisc.h
-> @@ -81,7 +81,7 @@ TRACE_EVENT(qdisc_reset,
->   	TP_ARGS(q),
->   
->   	TP_STRUCT__entry(
-> -		__string(	dev,		qdisc_dev(q)->name	)
-> +		__string(dev, qdisc_dev(q) ? qdisc_dev(q)->name : "noop_queue")
->   		__string(	kind,		q->ops->id		)
->   		__field(	u32,		parent			)
->   		__field(	u32,		handle			)
+> Huh.  The inode verifier allows realtime forcealign files, but this code
+> will not handle that properly.  Either don't allow realtime files, or
+> make this handle them correctly:
 
-You missed the __assign_str portion (see below). Also let's just say 
-"(null)" as it's the correct device name. "noop_queue" could be misleading.
+ok, so XFS_FSB_TO_AGBNO() is not always suitable
 
-diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
-index 1f4258308b96..f54e0b4dbcf4 100644
---- a/include/trace/events/qdisc.h
-+++ b/include/trace/events/qdisc.h
-@@ -81,14 +81,14 @@ TRACE_EVENT(qdisc_reset,
-         TP_ARGS(q),
+> 
+> 	if (XFS_IS_REALTIME_INODE(ip)) {
+> 		if (xfs_inode_has_forcealign(ip))
+> 			return offset_in_block(bno, ip->i_extsize);
+> 		return xfs_rtb_to_rtxoff(ip->i_mount, bno);
+> 	} else if (xfs_inode_has_forcealign(ip)) {
+> 		xfs_agblock_t	agbno = XFS_FSB_TO_AGBNO(mp, bno);
+> 
+> 		return offset_in_block(agbno, ip->i_extsize);
+> 	}
+> 
+> 	return 1; /* or assert, or whatever */
+> 
+>> +	}
+>> +	ASSERT(XFS_IS_REALTIME_INODE(ip));
+>> +	return xfs_rtb_to_rtxoff(ip->i_mount, bno);
+>> +}
+>> +
+>>   /*
+>>    * Unmap (remove) blocks from a file.
+>>    * If nexts is nonzero then the number of extents to remove is limited to
+>> @@ -5402,6 +5421,7 @@ __xfs_bunmapi(
+>>   	struct xfs_bmbt_irec	got;		/* current extent record */
+>>   	struct xfs_ifork	*ifp;		/* inode fork pointer */
+>>   	int			isrt;		/* freeing in rt area */
+>> +	int			isforcealign;	/* freeing for inode with forcealign */
+>>   	int			logflags;	/* transaction logging flags */
+>>   	xfs_extlen_t		mod;		/* rt extent offset */
+>>   	struct xfs_mount	*mp = ip->i_mount;
+>> @@ -5439,6 +5459,8 @@ __xfs_bunmapi(
+>>   	}
+>>   	XFS_STATS_INC(mp, xs_blk_unmap);
+>>   	isrt = xfs_ifork_is_realtime(ip, whichfork);
+>> +	isforcealign = (whichfork != XFS_ATTR_FORK) &&
+>> +			xfs_inode_has_forcealign(ip);
+>>   	end = start + len;
+>>   
+>>   	if (!xfs_iext_lookup_extent_before(ip, ifp, &end, &icur, &got)) {
+>> @@ -5490,11 +5512,10 @@ __xfs_bunmapi(
+>>   		if (del.br_startoff + del.br_blockcount > end + 1)
+>>   			del.br_blockcount = end + 1 - del.br_startoff;
+>>   
+>> -		if (!isrt || (flags & XFS_BMAPI_REMAP))
+>> +		if ((!isrt && !isforcealign) || (flags & XFS_BMAPI_REMAP))
+>>   			goto delete;
+>>   
+>> -		mod = xfs_rtb_to_rtxoff(mp,
+>> -				del.br_startblock + del.br_blockcount);
+>> +		mod = xfs_bunmapi_align(ip, del.br_startblock + del.br_blockcount);
+>>   		if (mod) {
+>>   			/*
+>>   			 * Realtime extent not lined up at the end.
+> 
+> "Not aligned to allocation unit on the end." ?
 
-         TP_STRUCT__entry(
--               __string(       dev,            qdisc_dev(q)->name      )
-+               __string(       dev,            qdisc_dev(q) ? 
-qdisc_dev(q)->name : "(null)"    )
-                 __string(       kind,           q->ops->id              )
-                 __field(        u32,            parent                  )
-                 __field(        u32,            handle                  )
-         ),
+ok
 
-         TP_fast_assign(
--               __assign_str(dev, qdisc_dev(q)->name);
-+               __assign_str(dev, qdisc_dev(q) ? qdisc_dev(q)->name : 
-"(null)");
-                 __assign_str(kind, q->ops->id);
-                 __entry->parent = q->parent;
-                 __entry->handle = q->handle;
+> 
+>> @@ -5542,9 +5563,16 @@ __xfs_bunmapi(
+>>   			goto nodelete;
+>>   		}
+>>   
+>> -		mod = xfs_rtb_to_rtxoff(mp, del.br_startblock);
+>> +		mod = xfs_bunmapi_align(ip, del.br_startblock);
+>>   		if (mod) {
+>> -			xfs_extlen_t off = mp->m_sb.sb_rextsize - mod;
+>> +			xfs_extlen_t off;
+>> +
+>> +			if (isforcealign) {
+>> +				off = ip->i_extsize - mod;
+>> +			} else {
+>> +				ASSERT(isrt);
+>> +				off = mp->m_sb.sb_rextsize - mod;
+>> +			}
+>>   
+>>   			/*
+>>   			 * Realtime extent is lined up at the end but not
+> 
+> Same here -- now this code is handling more than just rt extents.
+> 
 
+ok
+
+Thanks!
 
 
