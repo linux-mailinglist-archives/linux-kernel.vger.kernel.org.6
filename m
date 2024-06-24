@@ -1,241 +1,150 @@
-Return-Path: <linux-kernel+bounces-226744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2969142F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:48:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F499142FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA54283629
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:48:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2880DB23320
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7825522338;
-	Mon, 24 Jun 2024 06:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C323B1A2;
+	Mon, 24 Jun 2024 06:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Twr/7glr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZVeAko3o"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10FE3EA72
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F0F3A8C0;
+	Mon, 24 Jun 2024 06:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719211687; cv=none; b=k3MJbeDj/53JN075nQMV2rT4VwScTnRdNyCvvOYGjOVBl3Qlq2KyWIYcnGSPe1W0oeSpTpj8XdtYnfIDCN0c8XD7rE5SoCqgVeenFWYr6jAHQ+DAGJhHwFRFCUYcFjAk1ynXo+Dv/BzLkEZUNOfHTe8ny1UBuQgYcb1I+NchnA4=
+	t=1719211844; cv=none; b=T9amP9FEhSS9MFX2rvTrE9ITd/OKJeAQy6H3BrUoRrv2ri2S2cDXZ1FJZB35vOVOY+3QU1oSsMzZSc9LQZWh/9u/bRFkBCj2sq6QWsoRxhkn6g9/i9X7p4ZODKyQlM4mxrWZhaK7QXkO6oMoXZXLKZukhfpbIV+eL53KCkwtBWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719211687; c=relaxed/simple;
-	bh=yZZjg8uFdYDutRQMgy5IN92qFDAN2zkgjfxxih2xAa8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bAIaDTvh/ka62cTUPrT225hbiTCrAieRCm/WnjtCYCMQNZKIY5izwy+nkeFDYLs4gJ3H/+BEL1SRgNb/77BF04TUbIG+t+thzW5DdYUtAxXSCZR1Y/wN02mUwmSUfyC/8OIaVssgM4JP5UWRoKnkmmE/da3NzgX6Z6mpsX+u8Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Twr/7glr; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719211686; x=1750747686;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yZZjg8uFdYDutRQMgy5IN92qFDAN2zkgjfxxih2xAa8=;
-  b=Twr/7glr771XApP+XpCyUIIQKhdGb04XSKtqiUN89HM0lX902hXb5YlA
-   0lgl+lLY2nP1Lu4+ZnjYMJyZyhlnRd8K9oMXZ20yMu40sa/CcIbHt8Kdi
-   pDlw5BNNCEQjqP/HW62EsFAe/hXs2of6vQC0OETK1YIvgMn/Pppxdqpsr
-   VCNZf3XbUSVHFPI3YTzP5/F31mGX1csRyIsLZRSMnCrqndTPVppXEUzsu
-   Zi6zJ5SswlJqnAypSE2vLde+etuHhnSzaFSlQl6I+9XVqz9vFOUAFqI+U
-   Uk9yk/nNAxIdFl1p2em9a7SoGC/iTld7CIqKngEBp4mbXubEMH5vjtV/k
-   g==;
-X-CSE-ConnectionGUID: sorIXhcTTnuF1M54Rv6m/A==
-X-CSE-MsgGUID: +SswS1BZRvKvbKG327FADA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="16290387"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="16290387"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 23:48:05 -0700
-X-CSE-ConnectionGUID: Fnj6vH9ZSfWPXe1G/HxLDQ==
-X-CSE-MsgGUID: 9sfe8N7wTLKnfUedH0JKCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="43643299"
-Received: from hongyuni-mobl.ccr.corp.intel.com (HELO [10.238.1.243]) ([10.238.1.243])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 23:48:03 -0700
-Message-ID: <62c71816-64a0-468e-8c90-d7059d040a1f@linux.intel.com>
-Date: Mon, 24 Jun 2024 14:47:47 +0800
+	s=arc-20240116; t=1719211844; c=relaxed/simple;
+	bh=g5iWYDyt2ZDeg7La5X0LZ/mlaI2yr9c1wbeisWn+Suw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IulVlm+iABDtADvbEB2zPKZ9iiCRKJvnB8jb9zi7FWWyHcDTrWrGpYeKJSs7zTb/u8qGnsX8uZb/lkRAmwxozfX+SFLjIlWhD1W1nhBfZ16HCO9j+RkAcvilIMkSPx+Qon5fQH3SYyAxyLcprREMjBZWKLF0+MYy1uo+W66AmU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZVeAko3o; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NNg425005923;
+	Mon, 24 Jun 2024 06:50:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=SGEFJta5dbZ7t5J3TYz5Grkh
+	njAOdAZafLPY0ATa1YM=; b=ZVeAko3oSiEa6MMu4vvisbc3KN0ncBP37TrB21Pn
+	UjaBtIwo2nEQs3f2/Fq2HhDhEWMyN9KxUyC5SdTU8atKUDKKVPuHhQbC4+IDLCsj
+	BQyeLYEy72AtikgDIvFdCH5J4BZQ49F7aXTiZ6FYW/5B85R8i3dwaaRfKuA94QD1
+	UBIK0tG78Ixi7n/XuRK6WWcLZbryKhfe7PoBGXfLjd08r8gmcmf5gVbEk9NvbkPU
+	GWVngEKxIpQ5jUA0g8Qzl3QR9OxPTsbynvF8qQ+ZUpDygH6eNlA6NmFAUdtvh8FL
+	HDk0eafPl5CNNHsU1fmwe2JVj/ggQlH0DY7GeX4BnFHsFg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnxgtty8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 06:50:34 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45O6oOU6008543
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 06:50:24 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 23 Jun 2024 23:50:17 -0700
+Date: Mon, 24 Jun 2024 12:20:13 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <abel.vesa@linaro.org>, <otto.pflueger@abscue.de>,
+        <quic_rohiagar@quicinc.com>, <luca@z3ntu.xyz>,
+        <quic_ipkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v2 0/7] Enable CPR for IPQ9574
+Message-ID: <ZnkXJWXI/mfP/vG+@hu-varada-blr.qualcomm.com>
+References: <20240624050254.2942959-1-quic_varada@quicinc.com>
+ <5xgjszacvtnjftygwvtonb4npspaceutnvnnniebxntii4tmud@xag2c6j2svqa>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] x86/fpu: Remove init_task FPU state dependencies, add
- debugging warning
-To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Andy Lutomirski <luto@amacapital.net>,
- Andrew Morton <akpm@linux-foundation.org>, Dave Hansen <dave@sr71.net>,
- Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
- "H . Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Oleg Nesterov <oleg@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Uros Bizjak <ubizjak@gmail.com>, kirill.shutemov@linux.intel.com
-References: <20240605083557.2051480-1-mingo@kernel.org>
- <20240605083557.2051480-4-mingo@kernel.org>
-Content-Language: en-US
-From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
-In-Reply-To: <20240605083557.2051480-4-mingo@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5xgjszacvtnjftygwvtonb4npspaceutnvnnniebxntii4tmud@xag2c6j2svqa>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: x1_WOr5dCkzGTj0Apzc_k9hYrVjG9NHb
+X-Proofpoint-ORIG-GUID: x1_WOr5dCkzGTj0Apzc_k9hYrVjG9NHb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_06,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ suspectscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 priorityscore=1501 mlxlogscore=929 impostorscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406240054
 
+On Mon, Jun 24, 2024 at 08:39:55AM +0300, Dmitry Baryshkov wrote:
+> On Mon, Jun 24, 2024 at 10:32:47AM GMT, Varadarajan Narayanan wrote:
+> > This series tries to enable CPR on IPQ9574, that implements
+> > CPRv4. Since [1] is older, faced few minor issues. Those are
+> > addressed in [2].
+> >
+> > dt_binding_check and dtbs_check passed.
+> >
+> > Depends:
+> > 	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
+> > 	[2] https://github.com/quic-varada/cpr/commits/konrad/
+>
+> Please include [2] into your patchset.
 
+Did not include them because Konrad has agreed to post them this week.
+And, I don't have an MSM8998 target to test those changes.
 
-On 2024/6/5 16:35, Ingo Molnar wrote:
-> init_task's FPU state initialization was a bit of a hack:
-> 
-> 		__x86_init_fpu_begin = .;
-> 		. = __x86_init_fpu_begin + 128*PAGE_SIZE;
-> 		__x86_init_fpu_end = .;
-> 
-> But the init task isn't supposed to be using the FPU in any case,
-> so remove the hack and add in some debug warnings.
-> 
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Fenghua Yu <fenghua.yu@intel.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Uros Bizjak <ubizjak@gmail.com>
-> Link: https://lore.kernel.org/r/ZgaNs1lC2Y+AnRG4@gmail.com
-> ---
->   arch/x86/include/asm/processor.h |  6 +++++-
->   arch/x86/kernel/fpu/core.c       | 12 +++++++++---
->   arch/x86/kernel/fpu/init.c       |  5 ++---
->   arch/x86/kernel/fpu/xstate.c     |  3 ---
->   arch/x86/kernel/vmlinux.lds.S    |  4 ----
->   5 files changed, 16 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> index 249c5fa20de4..ed8981866f4d 100644
-> --- a/arch/x86/include/asm/processor.h
-> +++ b/arch/x86/include/asm/processor.h
-> @@ -504,7 +504,11 @@ struct thread_struct {
->   #endif
->   };
->   
-> -#define x86_task_fpu(task) ((struct fpu *)((void *)task + sizeof(*task)))
-> +#ifdef CONFIG_X86_DEBUG_FPU
-> +extern struct fpu *x86_task_fpu(struct task_struct *task);
-> +#else
-> +# define x86_task_fpu(task) ((struct fpu *)((void *)task + sizeof(*task)))
-> +#endif
->   
->   /*
->    * X86 doesn't need any embedded-FPU-struct quirks:
-> diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-> index 0ccabcd3bf62..fdc3b227800d 100644
-> --- a/arch/x86/kernel/fpu/core.c
-> +++ b/arch/x86/kernel/fpu/core.c
-> @@ -51,6 +51,15 @@ static DEFINE_PER_CPU(bool, in_kernel_fpu);
->    */
->   DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
->   
-> +#ifdef CONFIG_X86_DEBUG_FPU
-> +struct fpu *x86_task_fpu(struct task_struct *task)
-> +{
-> +	WARN_ON_ONCE(task == &init_task);
-> +
-> +	return (void *)task + sizeof(*task);
-> +}
-> +#endif
-> +
->   /*
->    * Can we use the FPU in kernel mode with the
->    * whole "kernel_fpu_begin/end()" sequence?
-> @@ -591,10 +600,8 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
->   	 * This is safe because task_struct size is a multiple of cacheline size.
->   	 */
->   	struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
-> -	struct fpu *src_fpu = x86_task_fpu(current);
->   
->   	BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
-> -	BUG_ON(!src_fpu);
->   
->   	/* The new task's FPU state cannot be valid in the hardware. */
->   	dst_fpu->last_cpu = -1;
-> @@ -657,7 +664,6 @@ int fpu_clone(struct task_struct *dst, unsigned long clone_flags, bool minimal,
->   	if (update_fpu_shstk(dst, ssp))
->   		return 1;
->   
-> -	trace_x86_fpu_copy_src(src_fpu);
->   	trace_x86_fpu_copy_dst(dst_fpu);
->   
->   	return 0;
-> diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-> index 11aa31410df2..53580e59e5db 100644
-> --- a/arch/x86/kernel/fpu/init.c
-> +++ b/arch/x86/kernel/fpu/init.c
-> @@ -38,7 +38,7 @@ static void fpu__init_cpu_generic(void)
->   	/* Flush out any pending x87 state: */
->   #ifdef CONFIG_MATH_EMULATION
->   	if (!boot_cpu_has(X86_FEATURE_FPU))
-> -		fpstate_init_soft(&x86_task_fpu(current)->fpstate->regs.soft);
-> +		;
->   	else
->   #endif
->   		asm volatile ("fninit");
-> @@ -164,7 +164,7 @@ static void __init fpu__init_task_struct_size(void)
->   	 * Subtract off the static size of the register state.
->   	 * It potentially has a bunch of padding.
->   	 */
-> -	task_size -= sizeof(x86_task_fpu(current)->__fpstate.regs);
-> +	task_size -= sizeof(union fpregs_state);
->   
->   	/*
->   	 * Add back the dynamically-calculated register state
-> @@ -209,7 +209,6 @@ static void __init fpu__init_system_xstate_size_legacy(void)
->   	fpu_kernel_cfg.default_size = size;
->   	fpu_user_cfg.max_size = size;
->   	fpu_user_cfg.default_size = size;
-> -	fpstate_reset(x86_task_fpu(current));
->   }
->   
->   /*
-> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-> index 90b11671e943..1f37da22ddbe 100644
-> --- a/arch/x86/kernel/fpu/xstate.c
-> +++ b/arch/x86/kernel/fpu/xstate.c
-> @@ -844,9 +844,6 @@ void __init fpu__init_system_xstate(unsigned int legacy_size)
->   	if (err)
->   		goto out_disable;
->   
-> -	/* Reset the state for the current task */
-> -	fpstate_reset(x86_task_fpu(current));
-> -
->   	/*
->   	 * Update info used for ptrace frames; use standard-format size and no
->   	 * supervisor xstates:
-> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-> index 226244a894da..3509afc6a672 100644
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -170,10 +170,6 @@ SECTIONS
->   		/* equivalent to task_pt_regs(&init_task) */
->   		__top_init_kernel_stack = __end_init_stack - TOP_OF_KERNEL_STACK_PADDING - PTREGS_SIZE;
->   
-> -		__x86_init_fpu_begin = .;
-> -		. = __x86_init_fpu_begin + 128*PAGE_SIZE;
-> -		__x86_init_fpu_end = .;
-> -
->   #ifdef CONFIG_X86_32
->   		/* 32 bit has nosave before _edata */
->   		NOSAVE_DATA
+Thanks
+Varada
 
-Hi,
-
-we've hit x86/fpu related WARNING and NULL pointer issue during KVM/QEMU 
-VM booting with latest linux-next kernel, bisect results show it's 
-related to this commit, would you take a look?
-
-detailed description in https://bugzilla.kernel.org/show_bug.cgi?id=218980
+> >
+> > v2: Fix Signed-off-by order in 2 patches
+> >     Update constraints in qcom,cpr3.yaml
+> >     Add rbcpr_clk_src registration
+> >     Add Reviewed-by to one of the patches
+> >     Not adding Acked-by as the file has changed
+> >
+> > Varadarajan Narayanan (7):
+> >   dt-bindings: power: rpmpd: Add IPQ9574 power domains
+> >   dt-bindings: soc: qcom: cpr3: Add bindings for IPQ9574
+> >   pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+> >   dt-bindings: clock: Add CPR clock defines for IPQ9574
+> >   clk: qcom: gcc-ipq9574: Add CPR clock definition
+> >   soc: qcom: cpr3: Add IPQ9574 definitions
+> >   dts: arm64: qcom: ipq9574: Enable CPR
+> >
+> >  .../devicetree/bindings/power/qcom,rpmpd.yaml |   1 +
+> >  .../bindings/soc/qcom/qcom,cpr3.yaml          |  35 +++
+> >  arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 269 ++++++++++++++++--
+> >  drivers/clk/qcom/gcc-ipq9574.c                |  39 +++
+> >  drivers/pmdomain/qcom/cpr3.c                  | 137 +++++++++
+> >  drivers/pmdomain/qcom/rpmpd.c                 |  19 ++
+> >  include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   2 +
+> >  include/dt-bindings/power/qcom-rpmpd.h        |   3 +
+> >  8 files changed, 488 insertions(+), 17 deletions(-)
+> >
+> > --
+> > 2.34.1
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
