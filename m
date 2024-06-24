@@ -1,160 +1,164 @@
-Return-Path: <linux-kernel+bounces-226664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500449141E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:21:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4CB29141E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D40151F2348F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:21:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D541E1C221C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B675517BD5;
-	Mon, 24 Jun 2024 05:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD05617BCE;
+	Mon, 24 Jun 2024 05:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="YPVRZZfy"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dQlHzOQr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9C811713
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7619711CAF
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719206501; cv=none; b=T0Gkowv/Z/bTpoVgRmsvhN+gh7XqHI1Te5X7kw9THXoxkMDq2RlP/NDTmMQuq0QNTzyIqR0LL1ddsKfB/1/OtWFhxeaJpSPLSm5WfdM3xX4SoN6F8/ki0H8RYKcJiaqSZQspQ106xBkIWUDIbuUGyC7t+lpmFsQ5v7ssr1YnDj0=
+	t=1719206865; cv=none; b=Pundgm/ZnrEZLPX0eA9Gvm27dfQzJ0/f+ByRV8fKwwN0AX73iT/ivMYKGB7Mt8UPsDyKQ4TKv+gY/aCjsDyS97O6kdAfS7MqK6qaFvXpgGPuDkmpSuYfWzDp4bJDKOci9UwPRE3/wfF2VHaatpfWCA0lniYfbz9NamDzhOiJgWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719206501; c=relaxed/simple;
-	bh=OY5b1Ggd3joKj5pX4/idm+tD9G3lsLgLiaGEWIKtYz8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QVOLVkbBbVP06MsUUO2KdsCQHrQNBtbXexfiIHMxsoG2wGdYozR27mCHIyF3N72ba2NZNlhJoRvXc5cDVv+GqwM0bwdNJgsOLM/WfitpdZywZC6/O55alr0av+9P9PqWUbydGdjnVwk/hx5WmnTCd4pKp6lVyILhki6RTKMZ/mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=YPVRZZfy; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 137302C0A5C;
-	Mon, 24 Jun 2024 17:21:37 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1719206497;
-	bh=OY5b1Ggd3joKj5pX4/idm+tD9G3lsLgLiaGEWIKtYz8=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=YPVRZZfyU5Rx07BO6sGyiceubU5pqHmOjzEsHt3/aUpfkvOMmVCmbfQzNRD35wNGf
-	 mRlWaLzy72VktAu2YadYR4e3ea8YNhMBJh+h7XsE0j9SF9awSKMimGXTwhuQIA+D/O
-	 GAjgmLdSa4xHRN0NCCFf7L0vcxus7iYo11s6cvAAHJvyGHh3tlT++f8TpZKFRvI6ee
-	 7S2KQQozAUDhWy49Zgoptw3QA4+tN1e1EzOt5fyBLOlM5LNq2QXvaDZtVvW5GY6LlF
-	 hh2cJ/jbRRC2tlnsNtDNaj0RNmMgxhYQqoKFAdnqxWx1M/mfV5SB+TEYZIzoKYCGWH
-	 yMOCq3UNIKnDw==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B667902610000>; Mon, 24 Jun 2024 17:21:37 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Mon, 24 Jun 2024 17:21:36 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
- SMTP Server (TLS) id 15.0.1497.48; Mon, 24 Jun 2024 17:21:36 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Mon, 24 Jun 2024 17:21:36 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "tsbogend@alpha.franken.de"
-	<tsbogend@alpha.franken.de>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "paulburton@kernel.org" <paulburton@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "mail@birger-koblitz.de"
-	<mail@birger-koblitz.de>, "bert@biot.com" <bert@biot.com>, "john@phrozen.org"
-	<john@phrozen.org>, "sander@svanheule.net" <sander@svanheule.net>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "kabel@kernel.org"
-	<kabel@kernel.org>, "ericwouds@gmail.com" <ericwouds@gmail.com>
-Subject: Re: [PATCH v2 4/8] dt-bindings: timer: Add schema for
- realtek,otto-timer
-Thread-Topic: [PATCH v2 4/8] dt-bindings: timer: Add schema for
- realtek,otto-timer
-Thread-Index: AQHaxdUT70y18GNyjU2Cd/YSeK4JbLHVjweAgAAI6AA=
-Date: Mon, 24 Jun 2024 05:21:36 +0000
-Message-ID: <052a4bdb-88fe-4891-a69c-0d90c610d816@alliedtelesis.co.nz>
-References: <20240624012300.1713290-1-chris.packham@alliedtelesis.co.nz>
- <20240624012300.1713290-5-chris.packham@alliedtelesis.co.nz>
- <d65648d6-4e2b-4009-b0e0-7d1f9a926eb7@kernel.org>
-In-Reply-To: <d65648d6-4e2b-4009-b0e0-7d1f9a926eb7@kernel.org>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9386FAE2B7F22D438C9101F4D379748F@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719206865; c=relaxed/simple;
+	bh=EMBbbwpXQyzzTBSb3XSF6LyxrJxE19zkDQ9IoyXTsuc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R3CUcqfISUKgwrvakAuQuitY/+D1WQXUqH7wzJsKZXJZBIMPdvL1Df01RP2fgjRZjiPJxF+VBbomBSPzQUB58jqcQrSd+2Bv4qdOZHX4heSeaQQNl1oV5DCqTpOn3vZI3A40xrM+SrpxIcP/jJCSgcMYhagAkz3urEnp/x5vm3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dQlHzOQr; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719206863; x=1750742863;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EMBbbwpXQyzzTBSb3XSF6LyxrJxE19zkDQ9IoyXTsuc=;
+  b=dQlHzOQrClshl8klaKy+/jcHPi/knPksRi9C7TPinrXsNJlyY9Ep6Qlb
+   LK8Xji8hxehy2jo1pOZoKQ5EL2JefsucoGa7rkBzjTD8XVstkTKk02RIb
+   emdrJ2qsVOo+vfQJpob/r0ioVkgFf+wSTVFgY4BOhfcRiGyX0I/HXLRcF
+   Loyy9czEPq8A17XrhTvyLYYx5Xj1G+cfDTlGdoVjLtmGoLn9ush8y3bTF
+   pYwK8bFb56Yk1Uqzz5jH9bkeqiw+b3XPwAS0C6J61GV2GIlK+R2QEfJp3
+   FGOb+aDturlKdWJOPlho8OWtNiZvntxarnVpeyAKBUG7LXzXpr3uqhr2A
+   A==;
+X-CSE-ConnectionGUID: zXIjOV96RwSahZyswH0TXQ==
+X-CSE-MsgGUID: T2jckhl4SVqcAQWjxEkO9w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="16040076"
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="16040076"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 22:27:43 -0700
+X-CSE-ConnectionGUID: 5oOb+apCTJOB987AnT6oqw==
+X-CSE-MsgGUID: aJF5fRRgRXOmdGHy9t300A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="48133382"
+Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
+  by orviesa005.jf.intel.com with ESMTP; 23 Jun 2024 22:27:41 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Yi Liu <yi.l.liu@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/2] iommu/vt-d: Convert dmar_ats_supported() to return bool
+Date: Mon, 24 Jun 2024 13:25:00 +0800
+Message-Id: <20240624052501.253405-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=66790261 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=gEfo2CItAAAA:8 a=OqrPyMiAPZdSGt2y27EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22
-X-SEG-SpamProfiler-Score: 0
+Content-Transfer-Encoding: 8bit
 
-DQpPbiAyNC8wNi8yNCAxNjo0OSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gMjQv
-MDYvMjAyNCAwMzoyMiwgQ2hyaXMgUGFja2hhbSB3cm90ZToNCj4+IEFkZCB0aGUgZGV2aWNldHJl
-ZSBzY2hlbWEgZm9yIHRoZSByZWFsdGVrLG90dG8tdGltZXIgcHJlc2VudCBvbiBhIG51bWJlcg0K
-Pj4gb2YgUmVhbHRlayBTb0NzLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IENocmlzIFBhY2toYW0g
-PGNocmlzLnBhY2toYW1AYWxsaWVkdGVsZXNpcy5jby5uej4NCj4+IC0tLQ0KPj4NCj4+IE5vdGVz
-Og0KPj4gICAgICBDaGFuZ2VzIGluIHYyOg0KPj4gICAgICAtIFVzZSBzcGVjaWZpYyBjb21wYXRp
-YmxlDQo+IFdoZXJlPyBJIGRvIG5vdCBzZWUgY2hhbmdlcy4NCg0KSW4gdjEgaXQgd2FzIHJ0bDkz
-MHgtdGltZXIsIEkndmUgdXBkYXRlZCBpdCB0byBydGw5MzAyLXRpbWVyDQoNCj4+ICAgICAgLSBS
-ZW1vdmUgdW5uZWNlc3NhcnkgbGFiZWwNCj4+ICAgICAgLSBSZW1vdmUgdW51c2VkIGlycSBmbGFn
-cyAoaW50ZXJydXB0IGNvbnRyb2xsZXIgaXMgb25lLWNlbGwpDQo+PiAgICAgIC0gU2V0IG1pbkl0
-ZW1zIGZvciByZWcgYW5kIGludGVycnVwdHMgYmFzZWQgb24gY29tcGF0aWJsZQ0KPj4NCj4+ICAg
-Li4uL2JpbmRpbmdzL3RpbWVyL3JlYWx0ZWssb3R0by10aW1lci55YW1sICAgIHwgNjYgKysrKysr
-KysrKysrKysrKysrKw0KPj4gICAxIGZpbGUgY2hhbmdlZCwgNjYgaW5zZXJ0aW9ucygrKQ0KPj4g
-ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Rp
-bWVyL3JlYWx0ZWssb3R0by10aW1lci55YW1sDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy90aW1lci9yZWFsdGVrLG90dG8tdGltZXIueWFtbCBi
-L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy90aW1lci9yZWFsdGVrLG90dG8tdGlt
-ZXIueWFtbA0KPj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4+IGluZGV4IDAwMDAwMDAwMDAwMC4u
-MTNlYTdhYTk0NmZlDQo+PiAtLS0gL2Rldi9udWxsDQo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvdGltZXIvcmVhbHRlayxvdHRvLXRpbWVyLnlhbWwNCj4+IEBAIC0w
-LDAgKzEsNjYgQEANCj4+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMC1vbmx5
-IE9SIEJTRC0yLUNsYXVzZSkNCj4+ICslWUFNTCAxLjINCj4+ICstLS0NCj4+ICskaWQ6IGh0dHA6
-Ly9kZXZpY2V0cmVlLm9yZy9zY2hlbWFzL3RpbWVyL3JlYWx0ZWssb3R0by10aW1lci55YW1sIw0K
-Pj4gKyRzY2hlbWE6IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9tZXRhLXNjaGVtYXMvY29yZS55YW1s
-Iw0KPj4gKw0KPj4gK3RpdGxlOiBSZWFsdGVrIE90dG8gU29DcyBUaW1lci9Db3VudGVyDQo+PiAr
-DQo+PiArZGVzY3JpcHRpb246DQo+PiArICBSZWFsdGVrIFNvQ3Mgc3VwcG9ydCBhIG51bWJlciBv
-ZiB0aW1lcnMvY291bnRlcnMuIFRoZXNlIGFyZSB1c2VkDQo+PiArICBhcyBhIHBlciBDUFUgY2xv
-Y2sgZXZlbnQgZ2VuZXJhdG9yIGFuZCBhbiBvdmVyYWxsIENQVSBjbG9ja3NvdXJjZS4NCj4+ICsN
-Cj4+ICttYWludGFpbmVyczoNCj4+ICsgIC0gQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hhbUBh
-bGxpZWR0ZWxlc2lzLmNvLm56Pg0KPj4gKw0KPj4gK3Byb3BlcnRpZXM6DQo+PiArICAkbm9kZW5h
-bWU6DQo+PiArICAgIHBhdHRlcm46ICJedGltZXJAWzAtOWEtZl0rJCINCj4+ICsNCj4+ICsgIGNv
-bXBhdGlibGU6DQo+PiArICAgIGl0ZW1zOg0KPj4gKyAgICAgIC0gZW51bToNCj4+ICsgICAgICAg
-ICAgLSByZWFsdGVrLHJ0bDkzMDItdGltZXINCj4+ICsgICAgICAtIGNvbnN0OiByZWFsdGVrLG90
-dG8tdGltZXINCj4+ICsNCj4+ICsgIHJlZzoNCj4+ICsgICAgbWF4SXRlbXM6IDUNCj4gTm90aGlu
-ZyBpbXByb3ZlZC4NCj4NCj4+ICsNCj4+ICsgIGNsb2NrczoNCj4+ICsgICAgbWF4SXRlbXM6IDEN
-Cj4+ICsNCj4+ICsgIGludGVycnVwdHM6DQo+PiArICAgIG1heEl0ZW1zOiA1DQo+IE5vdGhpbmcg
-aW1wcm92ZWQuDQo+DQo+PiArDQo+PiArYWxsT2Y6DQo+PiArICAtIGlmOg0KPj4gKyAgICAgIHBy
-b3BlcnRpZXM6DQo+PiArICAgICAgICBjb21wYXRpYmxlOg0KPj4gKyAgICAgICAgICBjb250YWlu
-czoNCj4+ICsgICAgICAgICAgICBjb25zdDogcmVhbHRlayxydGw5MzAyLXRpbWVyDQo+PiArICAg
-IHRoZW46DQo+PiArICAgICAgcHJvcGVydGllczoNCj4+ICsgICAgICAgIHJlZzoNCj4+ICsgICAg
-ICAgICAgbWluSXRlbXM6IDINCj4+ICsgICAgICAgIGludGVycnVwdHM6DQo+PiArICAgICAgICAg
-IG1pbkl0ZW1zOiAyDQo+IE5vLCB0aGF0J3MganVzdCBpbmNvcnJlY3QuIFlvdSBkbyBub3QgaGF2
-ZSBtb3JlIHRoYW4gb25lIHZhcmlhbnQsIHNvIGl0DQo+IGlzIGp1c3QgMiBpdGVtcy4gT3IgNSBp
-dGVtcywgbm90IDItNS4NCg0KSSd2ZSBiZWVuIHRvbGQgaW4gdGhlIHBhc3QgdGhhdCB0aGUgZGV2
-aWNlLXRyZWUgc2hvdWxkIGRlc2NyaWJlIHRoZSANCmhhcmR3YXJlLiBXaGljaCBpbiB0aGlzIGNh
-c2UgaGFzIDUgdGltZXJzLiBCdXQgSSdtIGFsc28gdG9sZCB0byBnaXZlIA0KdGhlbSBuYW1lcyB3
-aGljaCBJIHN0cnVnZ2xlIHRvIGRvIGJlY2F1c2Ugc29tZSBvZiB0aGVtIGFyZW4ndCB1c2VkLg0K
-DQpTbyBkbyB5b3Ugd2FudCBzb21ldGhpbmcgbGlrZSB0aGlzOg0KDQpjbG9ja3M6DQogwqDCoMKg
-IGl0ZW1zOg0KIMKgwqDCoCDCoMKgwqAgLSBkZXNjcmlwdGlvbjogQ1BVMCBldmVudCBjbG9jaw0K
-IMKgwqDCoCDCoMKgwqAgLSBkZXNjcmlwdGlvbjogc3lzdGVtIGNsb2NrIHNvdXJjZQ0KIMKgwqDC
-oCDCoMKgwqAgLSBkZXNjcmlwdGlvbjogdW51c2VkDQogwqDCoMKgIMKgwqDCoCAtIGRlc2NyaXB0
-aW9uOiB1bnVzZWQNCiDCoMKgwqAgwqDCoMKgIC0gZGVzY3JpcHRpb246IHVudXNlZA0KDQppbnRl
-cnJ1cHRzOg0KIMKgwqDCoCBpdGVtczoNCiDCoMKgwqDCoMKgwqDCoCAtIGRlc2NyaXB0aW9uOiBD
-UFUwIGV2ZW50IGNsb2NrIGludGVycnVwdA0KIMKgwqDCoMKgwqDCoMKgIC0gZGVzY3JpcHRpb246
-IHN5c3RlbSBjbG9jayBzb3VyY2UgaW50ZXJydXB0DQogwqDCoMKgwqDCoMKgwqAgLSBkZXNjcmlw
-dGlvbjogdW51c2VkDQogwqDCoMKgwqDCoMKgwqAgLSBkZXNjcmlwdGlvbjogdW51c2VkDQogwqDC
-oMKgwqDCoMKgwqAgLSBkZXNjcmlwdGlvbjogdW51c2VkDQoNCj4NCj4NCj4gQmVzdCByZWdhcmRz
-LA0KPiBLcnp5c3p0b2YNCj4NCj4=
+dmar_ats_supported() returns an integer that is used as a boolean. Since
+it all it needs is to return true or false, change the return type from
+int to bool to make it a bit more readable and obvious.
+
+Cleanup this helper accordingly with no functional change intended.
+
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel/iommu.c | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 38cda454fc64..07e394dfccc1 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -3043,15 +3043,15 @@ static struct dmar_satc_unit *dmar_find_matched_satc_unit(struct pci_dev *dev)
+ 	return satcu;
+ }
+ 
+-static int dmar_ats_supported(struct pci_dev *dev, struct intel_iommu *iommu)
++static bool dmar_ats_supported(struct pci_dev *dev, struct intel_iommu *iommu)
+ {
+-	int i, ret = 1;
+-	struct pci_bus *bus;
+ 	struct pci_dev *bridge = NULL;
+-	struct device *tmp;
+-	struct acpi_dmar_atsr *atsr;
+ 	struct dmar_atsr_unit *atsru;
+ 	struct dmar_satc_unit *satcu;
++	struct acpi_dmar_atsr *atsr;
++	struct pci_bus *bus;
++	struct device *tmp;
++	int i;
+ 
+ 	dev = pci_physfn(dev);
+ 	satcu = dmar_find_matched_satc_unit(dev);
+@@ -3069,11 +3069,11 @@ static int dmar_ats_supported(struct pci_dev *dev, struct intel_iommu *iommu)
+ 		bridge = bus->self;
+ 		/* If it's an integrated device, allow ATS */
+ 		if (!bridge)
+-			return 1;
++			return true;
+ 		/* Connected via non-PCIe: no ATS */
+ 		if (!pci_is_pcie(bridge) ||
+ 		    pci_pcie_type(bridge) == PCI_EXP_TYPE_PCI_BRIDGE)
+-			return 0;
++			return false;
+ 		/* If we found the root port, look it up in the ATSR */
+ 		if (pci_pcie_type(bridge) == PCI_EXP_TYPE_ROOT_PORT)
+ 			break;
+@@ -3085,18 +3085,21 @@ static int dmar_ats_supported(struct pci_dev *dev, struct intel_iommu *iommu)
+ 		if (atsr->segment != pci_domain_nr(dev->bus))
+ 			continue;
+ 
+-		for_each_dev_scope(atsru->devices, atsru->devices_cnt, i, tmp)
+-			if (tmp == &bridge->dev)
+-				goto out;
++		for_each_dev_scope(atsru->devices, atsru->devices_cnt, i, tmp) {
++			if (tmp == &bridge->dev) {
++				rcu_read_unlock();
++				return true;
++			}
++		}
+ 
+-		if (atsru->include_all)
+-			goto out;
++		if (atsru->include_all) {
++			rcu_read_unlock();
++			return true;
++		}
+ 	}
+-	ret = 0;
+-out:
+ 	rcu_read_unlock();
+ 
+-	return ret;
++	return false;
+ }
+ 
+ int dmar_iommu_notify_scope_dev(struct dmar_pci_notify_info *info)
+-- 
+2.34.1
+
 
