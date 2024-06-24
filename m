@@ -1,150 +1,99 @@
-Return-Path: <linux-kernel+bounces-227891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE349157BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:18:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3649157C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 754441F21235
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CE121C23691
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDCE1A01DD;
-	Mon, 24 Jun 2024 20:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478171A072B;
+	Mon, 24 Jun 2024 20:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ei00rqAk"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="bh4tqL67"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C33C567D
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6511A01AD
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719260299; cv=none; b=npEsaNL+LbpcL30rGBDfaR6033Yq8DRXTQy4PwDSmody1mzDSNwBBJaF96AzgENK4to6GCvgCEb40AWfFv41bbGCgpoIAla4WeWNBk5V/sNhX/5SUdz4gvH5Me/cVj72/A1piJdNEKasLML2mBHsFkZpmZ6ZZ5JeVn9vdff8juM=
+	t=1719260335; cv=none; b=ql8shsnodSInVZX5VxQXdMxpVvf+K/P+fhl6oyBJ1EQ5Wfm8F/dSnB3uCau3XwwD6cBDvb/WvcW6f/hf+E9FfBcsp+yimOP8bV61vmE+Ke8dWwQN5eiOU/xdPSKEmhv5bxqkOn/TQkA8ZBCtAzbWRfMHBpJ/YMxALe5yaiK5HnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719260299; c=relaxed/simple;
-	bh=1HoRRBb0WPTrKBv38dDDSH+RHTgQc5/zb5ynIO/RJXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXl2c8vC7R+9dvP/34iChIGHMnwccwIBqyxtsjnER9p+AsOmE8IftHCt6W/lkpkBmFSvBSughZOJBq3GDewkSu/Oy9OSdHZYqyX2HH/K/4avTwf+3Lhr9/Px1U0Jp3vROpTLaGvnT29vFO2fvvHFIC2qS63yi3kHjTOjCa/j9yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ei00rqAk; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: yosryahmed@google.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719260295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VRd3PmTY5UDQojim7KON/1YaVpEPKqpnbeP6DbFTTdQ=;
-	b=Ei00rqAkiPH/30y5uW/S/EmogethEbiYnuAewFxlIUWu+NM8LqEEErboIcNNVu/1tXM4je
-	jkO/otYygv8cn2Q+/VpPUqEVU5OQMNvUqzZELT9/Sju0Yb1cn7V+b+B72Q1CGsL1+MoySO
-	bnxZwTpS+b5XslS41iLwlDohKacruX4=
-X-Envelope-To: hawk@kernel.org
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: cgroups@vger.kernel.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: lizefan.x@bytedance.com
-X-Envelope-To: longman@redhat.com
-X-Envelope-To: kernel-team@cloudflare.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Mon, 24 Jun 2024 13:18:10 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, 
-	cgroups@vger.kernel.org, hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
-	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] cgroup/rstat: Avoid thundering herd problem by kswapd
- across NUMA nodes
-Message-ID: <a45ggqu6jcve44y7ha6m6cr3pcjc3xgyomu4ml6jbsq3zv7tte@oeovgtwh6ytg>
-References: <171923011608.1500238.3591002573732683639.stgit@firesoul>
- <CAJD7tkbHNvQoPO=8Nubrd5an7_9kSWM=5Wh5H1ZV22WD=oFVMg@mail.gmail.com>
- <tl25itxuzvjxlzliqsvghaa3auzzze6ap26pjdxt6spvhf5oqz@fvc36ntdeg4r>
- <CAJD7tkaKDcG+W+C6Po=_j4HLOYN23rtVnM0jmC077_kkrrq9xA@mail.gmail.com>
- <exnxkjyaslel2jlvvwxlmebtav4m7fszn2qouiciwhuxpomhky@ljkycu67efbx>
- <CAJD7tkaJXNfWQtoURyf-YWS7WGPMGEc5qDmZrxhH2+RE-LeEEg@mail.gmail.com>
+	s=arc-20240116; t=1719260335; c=relaxed/simple;
+	bh=CYPMKzKXzPtEKhl5KLn1rsXOXuPsd77VL4h50H+aCL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bYO7GrYAPrEtU3JcLD47YSWaJRrKby0LNkeeSAKuJniztojAjYweuk6Bulho8HqHt3zOb7rGwKcZhvw9Jg+lD87oaEvSjtTeFnMwFR4kdHTI6KBrIspDEspIiEbNMCcHj7tspYUaUUK+WkKbzbv3ID73JaulEm3kpjc93uo11CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=bh4tqL67; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee6eso8307747a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:18:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719260332; x=1719865132; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CYPMKzKXzPtEKhl5KLn1rsXOXuPsd77VL4h50H+aCL0=;
+        b=bh4tqL67qwrLSvvomB0GYyaZRmfZ8C7/jtMJQbLXq+rTsGgIZuiWYFNpH++Al2dWQe
+         hbXXTwtmc/nJTyFciBIUyb/nFVP2i0yZv+cRV/AdaaBu5l+jIqgrzOhqtdqss228H7/9
+         i8h6A8Ur0MSfXq7LyHaH1OyNoZINRlrNnrD1blCrAB47CY7g8CVSdW+lyEBneNDoMjXe
+         W5zbLbwk2DQZz+HxdsIKlagFzxlicQN+NmlsCNiyY+6v5KtMiBtt3Enem/giGaJqHjpw
+         C+m8Ls3NamUo4rAwDvC3+9fqEAkj692/nhnSK8M6U0ZFwGzggR/PeALd2V1pYOe2ovRV
+         +0Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719260332; x=1719865132;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CYPMKzKXzPtEKhl5KLn1rsXOXuPsd77VL4h50H+aCL0=;
+        b=TkYd+hxloMuk+pNIoCF8/yI/rnt1CMkiyFt4hKaKLTGpMk+fe30rUF0Md6ywBjKIn7
+         2+4WDINRo/6VULyJPbgBZ7lFaHwbc0iHQFHzvhSvt2BR7ecAg8zP14+FUt9oqFJDPaFM
+         nGAjaJnA1fdydHx1RXg9rdD+tz2btZ5NjR4NnMGCFTr1E1UUiJsbapIwmX8HdOPdYkT0
+         oY0bzKvOsLOGIx4IOWjqMM1Xa1aleC55Phb9XAIBKzSLLB3W60uMPszZJvuV2pMWwIG5
+         1gWkP6TiNP7Y/4+N5wVNtEGWVNIHsGomUiXnQZJXKxP1O6OBdhA/I/l5b1HStgTiJyA+
+         3gdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVITVjwmFyFepi9gKUO9wuCbTy+GzvvTOCuJAdECL5V3thIGunH/+g8oGLJQQjX3lDZ0AkYPYJU6/KD5kPbf2XBu5PjcwRzB+JEFcPN
+X-Gm-Message-State: AOJu0Yy5Tzra+8Llx6zlPtY5+8SVCkHpc6bsncdC/XOwJ8uHyPGkDfFj
+	K0uo9O9EgMN5FZXvhDbKsSfUpaRUDDeAbtDYYo7A9zQhJLj1ND/uMXNMLlINQY8hTaQqTEDV9p4
+	c+CROv4KwXFdCmNSffhSF+tNIQ1S6guzfyPmaOQ==
+X-Google-Smtp-Source: AGHT+IHYKa/ycS20058DIxTuE4TPZj+Ne6GJbbNiJ5FbYcQC6EiSPJWgGfnJ/EyOzoXs+/hcdQEshUVAiI2Wx8GhYRs=
+X-Received: by 2002:a17:907:8b91:b0:a6f:6df5:a264 with SMTP id
+ a640c23a62f3a-a70275ea47emr586904366b.1.1719260332160; Mon, 24 Jun 2024
+ 13:18:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkaJXNfWQtoURyf-YWS7WGPMGEc5qDmZrxhH2+RE-LeEEg@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20240619113529.676940-1-cleger@rivosinc.com> <20240619113529.676940-15-cleger@rivosinc.com>
+In-Reply-To: <20240619113529.676940-15-cleger@rivosinc.com>
+From: Evan Green <evan@rivosinc.com>
+Date: Mon, 24 Jun 2024 13:18:16 -0700
+Message-ID: <CALs-HssLx_AZ_pBDECfVH7REoSkyz-=bECPYDeNZkfe59DdBGQ@mail.gmail.com>
+Subject: Re: [PATCH v7 14/16] riscv: hwprobe: export Zcmop ISA extension
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Anup Patel <anup@brainfault.org>, 
+	Shuah Khan <shuah@kernel.org>, Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 24, 2024 at 12:37:30PM GMT, Yosry Ahmed wrote:
-> On Mon, Jun 24, 2024 at 12:29 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > On Mon, Jun 24, 2024 at 10:40:48AM GMT, Yosry Ahmed wrote:
-> > > On Mon, Jun 24, 2024 at 10:32 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > > >
-> > > > On Mon, Jun 24, 2024 at 05:46:05AM GMT, Yosry Ahmed wrote:
-> > > > > On Mon, Jun 24, 2024 at 4:55 AM Jesper Dangaard Brouer <hawk@kernel.org> wrote:
-> > > > >
-> > > > [...]
-> > > > > I am assuming this supersedes your other patch titled "[PATCH RFC]
-> > > > > cgroup/rstat: avoid thundering herd problem on root cgrp", so I will
-> > > > > only respond here.
-> > > > >
-> > > > > I have two comments:
-> > > > > - There is no reason why this should be limited to the root cgroup. We
-> > > > > can keep track of the cgroup being flushed, and use
-> > > > > cgroup_is_descendant() to find out if the cgroup we want to flush is a
-> > > > > descendant of it. We can use a pointer and cmpxchg primitives instead
-> > > > > of the atomic here IIUC.
-> > > > >
-> > > > > - More importantly, I am not a fan of skipping the flush if there is
-> > > > > an ongoing one. For all we know, the ongoing flush could have just
-> > > > > started and the stats have not been flushed yet. This is another
-> > > > > example of non deterministic behavior that could be difficult to
-> > > > > debug.
-> > > >
-> > > > Even with the flush, there will almost always per-cpu updates which will
-> > > > be missed. This can not be fixed unless we block the stats updaters as
-> > > > well (which is not going to happen). So, we are already ok with this
-> > > > level of non-determinism. Why skipping flushing would be worse? One may
-> > > > argue 'time window is smaller' but this still does not cap the amount of
-> > > > updates. So, unless there is concrete data that this skipping flushing
-> > > > is detrimental to the users of stats, I don't see an issue in the
-> > > > presense of periodic flusher.
-> > >
-> > > As you mentioned, the updates that happen during the flush are
-> > > unavoidable anyway, and the window is small. On the other hand, we
-> > > should be able to maintain the current behavior that at least all the
-> > > stat updates that happened *before* the call to cgroup_rstat_flush()
-> > > are flushed after the call.
-> > >
-> > > The main concern here is that the stats read *after* an event occurs
-> > > should reflect the system state at that time. For example, a proactive
-> > > reclaimer reading the stats after writing to memory.reclaim should
-> > > observe the system state after the reclaim operation happened.
-> >
-> > What about the in-kernel users like kswapd? I don't see any before or
-> > after events for the in-kernel users.
-> 
-> The example I can think of off the top of my head is the cache trim
-> mode scenario I mentioned when discussing your patch (i.e. not
-> realizing that file memory had already been reclaimed).
+On Wed, Jun 19, 2024 at 4:41=E2=80=AFAM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
+osinc.com> wrote:
+>
+> Export Zcmop ISA extension through hwprobe.
+>
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
 
-Kswapd has some kind of cache trim failure mode where it decides to skip
-cache trim heuristic. Also for global reclaim there are couple more
-condition in play as well.
-
-> There is also
-> a heuristic in zswap that may writeback more (or less) pages that it
-> should to the swap device if the stats are significantly stale.
-> 
-
-Is this the ratio of MEMCG_ZSWAP_B and MEMCG_ZSWAPPED in
-zswap_shrinker_count()? There is already a target memcg flush in that
-function and I don't expect root memcg flush from there.
-
-> I did not take a closer look to find more examples, but I think we
-> need to respect this condition at least for userspace readers.
+Reviewed-by: Evan Green <evan@rivosinc.com>
 
