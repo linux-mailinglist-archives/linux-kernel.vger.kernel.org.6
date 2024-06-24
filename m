@@ -1,55 +1,79 @@
-Return-Path: <linux-kernel+bounces-227124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604D69148A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:29:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87DEB9148A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B5D1C22393
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:29:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC9D0B24A20
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C7C13A3E3;
-	Mon, 24 Jun 2024 11:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B7213A884;
+	Mon, 24 Jun 2024 11:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WhbIIPsv"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YHiOoroF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE2C13210F;
-	Mon, 24 Jun 2024 11:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8345137C2E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228547; cv=none; b=NYwUWvlDlZrvL8MnMcQOZMSNT+UDmRwtIQY3rRCOp5BmeNP2NQVJOgN9NL0ULNK64feaz3ETerdqSTf7ty0fT0Js6ugWG7bYZkTMbTtcgkT8guNtM3oFJqO92mRkhx7IIp5i2czEsq39ohWT1y58iFjWbUabfqyqVV/9TJeK6fY=
+	t=1719228549; cv=none; b=HxPtwTSeyHO4ryNMkXWuG0RRomLS5wRxUlXmCSiWTO4RsAX3njx6VE5ZFRqVwtxDisBOBFrOr49eFAXAV+JPGQ2rLDbbTOUID3SVzSMZZDHI0271onuvZ+or/Yxh7iDsMKId62ALWAh5Q369LCYN7AzZ4SNJ/NiD29+Rr11D5cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719228547; c=relaxed/simple;
-	bh=W+Od/xdu7fJvPbDjVdQXS0nEF6AudVWgglSNsQYl48E=;
+	s=arc-20240116; t=1719228549; c=relaxed/simple;
+	bh=1qAwwfNf4MnwCqHDzql7SkOV4rq42uupjeLt+HGb+dg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=emHj7M1OEnxzz8qshUM7sClErH9SP0eGUvpnZ0i1lFrBGxpejCBo64y+U2XOStOpeOb+CMYTO8lk+zdi0Y087ef7NpMszD0dNCxhpSE8Qa1KMDBeSzazCslyZGQOWgLnPmSNThcAID8Q5iHNO5ARD5TKl8EJUEOy61h5g6txuLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WhbIIPsv; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719228535; x=1719833335; i=markus.elfring@web.de;
-	bh=W+Od/xdu7fJvPbDjVdQXS0nEF6AudVWgglSNsQYl48E=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=WhbIIPsvyMMv3qLuzqEpCsXWNLd5MI0ScQSEiCrVQjZj/6vP4oxbqOqwsaULW1F4
-	 oVvXKLPtoxnz3auJSWfFOaQT2KORLn1fzUi9bNlSMqk7oOw/jWFixJzCxzrqlb1Kl
-	 Cr9olzyHR7GzwJ7BtbXgQ2kR4NQMAC3pRYte8dS8AsEtmyfQwoN6QkGSybEEUxbF6
-	 1tf2HhpZJVBPBpxTHV2TtwU865oMujVqYzdyWtQNiFq3eBM0SbgFvkCEUbvIcKfam
-	 tplSHPdMc/T0Kgs110ifAxUhz16i0MyzharVJa0/qFiE2zNHyZGbBAuWfezcnmDRa
-	 Zz8yYNW7IJedLZ2Wng==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3V26-1sMG6n1UVG-00BM6u; Mon, 24
- Jun 2024 13:28:55 +0200
-Message-ID: <8d076c38-f5d0-477b-9b9b-bceee3e2fec4@web.de>
-Date: Mon, 24 Jun 2024 13:28:54 +0200
+	 In-Reply-To:Content-Type; b=aUT1lSdIx+g9T8foy4MDY0pi2RS2dWhiFrcAsWUp+Vvq6GhLk95plHARk6lWMzHGoUAoV/7qpvZbDfUCn1JXf/CGGcJzMfZyH4zU0yI8sVng5ZFxebhK55cK+EkczbblnyOl4pHhvuQXKfqrjMK2A6UY5b2FlI0RkzjKbFBgs1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YHiOoroF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719228547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VuWSdEk3j+b8KhLAZNkf4+BDUGxUYnMohmbFl55GlhM=;
+	b=YHiOoroFy7KM3wOo1gNbJVVuqkyQaum6uPRWpER7TUx1ZAfubAqJntkgp87jU4evBzsFvr
+	GjWLX/Nd6119JaWXyCDl4I6mhz4F3cxZUpqeM2E9+XOCGWlLfJQctXEDzWmUOcE+/NuhlT
+	TiLYabrqHpKGsKYuOuVhpavBfafdOP0=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-564-V_uvi1LhNmSxD5irsWaB6g-1; Mon, 24 Jun 2024 07:29:05 -0400
+X-MC-Unique: V_uvi1LhNmSxD5irsWaB6g-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a724b61d37eso55399566b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:29:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719228544; x=1719833344;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VuWSdEk3j+b8KhLAZNkf4+BDUGxUYnMohmbFl55GlhM=;
+        b=u9weKE7/PLrISuwNBHhmr65Rv0K5qWvXyUXKvuM2WRqTGf4JnT4UDv4GeXP+qLto18
+         r9Yu5hgLIl5ivIwoHUVvx9HZLZE5X3zYvjZYSwr69+HVoZDo4sarq2KXxgZNC4AbwC0U
+         5h+q5y6DmzD/uLmaAKxKtN5f+QT97y8fijcaU4DOswn9YXpr4Vqt+LCH5RDSMuPMJBTw
+         vhSJTKTmN5Jtg/rGfdaS4zDE+ZSUcDZr4+BYQlFT7yiyN9lYpsWO7V7HU03kTIST0Z8J
+         yVrVrFFNfN5mc2wADWyeSSd6/evZ4BgVUiZsoMWQeQCdQtgnm/WgenqV2Q+JZu4Q5rRZ
+         UnLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAw5U9BV6MFYAF1ru0w76CCWaA+Ybf+GKTsQLTbJb8KLM8K8feoKestaqEN/ZesILTPXW5ep/l9d11T8dyKOK3ktuwmJ3y7R6rJqhq
+X-Gm-Message-State: AOJu0Yxu6IOc56vnGfxY3H/kw/TngV3NFfAnUNhGTvCP/lisdgDyOpJ9
+	c+PeKNrgX4CUGBW4EB9aJBsIEL0UbIDoBtI8u8azJ1RN0qDkPkJ2R250RxH5G1ctBDE/6nnMa1k
+	W4tb5Hp1OM37HfIR0zg3xjqwDaZBXVTS/367K4gIzY9j39HcDCA0pIQofegL7Sg==
+X-Received: by 2002:a50:a41b:0:b0:57d:17c3:a593 with SMTP id 4fb4d7f45d1cf-57d49dc1e73mr2687908a12.22.1719228544438;
+        Mon, 24 Jun 2024 04:29:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF/M9Q8OVoPb4oK46X+w0uQZLqriXcp9PtZcJDwxzPyLqCFia5SxA4gWcpD9ypWDrEgfW6z8Q==
+X-Received: by 2002:a50:a41b:0:b0:57d:17c3:a593 with SMTP id 4fb4d7f45d1cf-57d49dc1e73mr2687897a12.22.1719228544052;
+        Mon, 24 Jun 2024 04:29:04 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3040ea36sm4585206a12.21.2024.06.24.04.29.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 04:29:03 -0700 (PDT)
+Message-ID: <22147391-0084-4504-a899-4a529dab1af3@redhat.com>
+Date: Mon, 24 Jun 2024 13:29:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,62 +81,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
- places
-To: Chun-Yi Lee <jlee@suse.com>, linux-block@vger.kernel.org
-Cc: Chun-Yi Lee <joeyli.kernel@gmail.com>, stable@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Jens Axboe <axboe@kernel.dk>,
- Justin Sanders <justin@coraid.com>, Kirill Korotaev <dev@openvz.org>,
- Nicolai Stange <nstange@suse.com>, Pavel Emelianov <xemul@openvz.org>
-References: <20240624064418.27043-1-jlee@suse.com>
- <e44297c0-f45a-4753-8316-c6b74190a440@web.de>
- <20240624110449.GJ7611@linux-l9pv.suse>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240624110449.GJ7611@linux-l9pv.suse>
+Subject: Re: [PATCH 0/4] platform/x86: lg-laptop: Support 2024 models
+To: Armin Wolf <W_Armin@gmx.de>, matan@svgalib.org, agathe@boutmy.com
+Cc: ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240606233540.9774-1-W_Armin@gmx.de>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240606233540.9774-1-W_Armin@gmx.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HgMl98ZoBQNlDKB/XPSzWGvOEv0sndZjLM1zLv9laQtbhwF2ecC
- qlxYvUFiA/+esJhvnQ8lDPwdifKhIcN/eUIG27USNsOgzWHhfAUbgVFkBWds6w0M9zcrkmC
- gzooqU/tFCq7r992xylVa0Hz4HotSMKgGQNhYtu7XbRPOtKQ5fs0vMifYvuTCqf6QrfMJOv
- yeLLv5IRINmocNRxQdlCg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:F6TkXs+l3WI=;mDalcAG2+hF+DB8raCUqk5y8zSZ
- mZFbHtSIFrrP2kUCoEGi2sZMfPjySolKROsHmU6SdGs9oLLts1+q0D3RYKmbMsycValwVSkp3
- mM3O/DEyw2ffFETnXtP/G5QWC6kCt9OwQDiQ7v2WlZECtcLskY8bjZOI1eyiMreu7s1Us31Q4
- pzN4DbNUFt9FApfHfB3/JxZUfElfN5h5i9DbcuOU/cNjM/lyrO0Ku7WWzAuortuLUCmZLEAa/
- gaD23g3lt0tMP4XFOD7HVF0F9XRlFN25fe+hQ8R9lMcSFDKGGubmtupgf9qqlOaZOFdzncJ0Q
- POjeergBkV6fPcPXAZWb9ZZM1VRYrKwzgYarzZuU+O4sVA6mu+8pfFwChldLxVZU76svxKkoQ
- O+OL8Cr/F0Hgl+ZTrI8WT7Cy+zxkZyB5E6T8+D5PttX3CE7UwUkDr4bB2MlBc+Z48RLBV898T
- lztzBBiDqOHWv3tsgWLKH4y9EsLgLIi3WM8zDIwMc926bxLjvVg04UpNIedPndTjN2kh2cDzi
- i1L27Fat1n+TnltvtLjdABO9Vr7cFwkUfRxzdMttM4vyC4BLPMsJvpk6EnoOUceLU+ZNxJVWm
- O4XUJ3MPRHdBFrPCLnyx0/fpYP7pmGu1kqnYia53JndL0OEcRzu9sDwT88nt7p3e0II1HCVOX
- t7ReZ2/EBIe+m1tzKInSN3ow0I9wh7BcZMObiepzKr3r8gOq8jDnpavx8ep3Ivm3DJa994mJi
- gZfHlIoTYtQGIJm3HrV7EIzPWl/vdoZ0ruVOv38q8crJY80o8HLwfmkkE0qvLRJmYW6nKLAay
- t/1ILwptX6JC9vfE+ccjodDVTodApd2yCtSosZ4s9DD8A=
+Content-Transfer-Encoding: 7bit
 
->> Please reconsider the version identification in this patch subject once=
- more.
->>
->>
->> =E2=80=A6
->>> ---
->>>
->>> v2:
->>> - Improve patch description
->> =E2=80=A6
->>
->> How many patch variations were discussed and reviewed in the meantime?
->>
->
-> Only v2. I sent v2 patch again because nobody response my code in patch.
-> But I still want to grap comments for my code.
+Hi,
 
-How does such a feedback fit to my previous patch review?
-https://lore.kernel.org/r/e8331545-d261-44af-b500-93b90d77d8b7@web.de/
-https://lkml.org/lkml/2024/5/14/551
+On 6/7/24 1:35 AM, Armin Wolf wrote:
+> A user complained that the lg-laptop driver does not work on 2024
+> models like the LG Gram 16Z90S-G.AD7BF. The underlying reason turned
+> out to be that the ACPI methods used by this driver where not mapped
+> under \XINI, but instead under \_SB.XINI. Those ACPI methods are
+> associated with the LGEX0820 ACPI device, which was not used by this
+> driver until now.
+> 
+> The first three patches move the airplane mode hotkey handling out
+> of lg-laptop and into the wireless-hotkey driver. This necessary
+> because the airplane mode hotkey is handled by a different ACPI
+> device (LGEX0815).
+> 
+> The last patch finally fixes the underlying issue and uses the
+> LGEX0820 ACPI device to find theWMAB/WMBB ACPI methods.
+> 
+> The modified drivers where tested by the user which created the
+> bug report and appear to work without issues.
+> 
+> Armin Wolf (4):
+>   platform/x86: wireless-hotkey: Add support for LG Airplane Button
+>   platform/x86: lg-laptop: Remove LGEX0815 hotkey handling
+>   platform/x86: lg-laptop: Change ACPI device id
+>   platform/x86: lg-laptop: Use ACPI device handle when evaluating
+>     WMAB/WMBB
+
+Thank you for your patch-series, I've applied this series to my
+review-hans branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+I will include this patch in my next fixes pull-req to Linus
+for the current kernel development cycle.
 
 Regards,
-Markus
+
+Hans
+
 
