@@ -1,131 +1,134 @@
-Return-Path: <linux-kernel+bounces-227642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5A89154E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F8F9154E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E831AB239DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:58:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97755B24191
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0265919E802;
-	Mon, 24 Jun 2024 16:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9346819EEAF;
+	Mon, 24 Jun 2024 17:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIeb3cS9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="WaByuFDk"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482BB19DFB5
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E1019DF63;
+	Mon, 24 Jun 2024 17:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719248295; cv=none; b=RXTXJhbVvlBjpYxN9ImKLDpIzFiq3kIBPbQI8iIee/HRqZSfyGD5R5Su+kmCwmkztgsouTQa8psziLRJqkHTFpcL6u/vJCUJVkScFvByQdw9sg+/O8I/JPQYSeQABmnaFO+6b6/bAP3EncvQk992viXIYRgh3lfDFAUcfaWfoSs=
+	t=1719248407; cv=none; b=dv9Ea6cWfcFWOYRBtRQSVVlWHHQTtNqf2t0tIxnx34Bi3/abVw1Ur3fmJfDvViQjugN5F8vi9brXWlB1hj1SfXVm2XIZ5RAM26IkhqQMGDZqSDn6AM7hXTXjes7z8SZ1zcMrGHC7vhFiJM60krWhZLuzr+Mi6ELTZBsOpCqZvcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719248295; c=relaxed/simple;
-	bh=Eo2OdHJwmKn4XxlV9q5h82bJ2Wh5ZfYJQiLjLWtK/A0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JMiAj08BWekpus+zWmckGGC5KE6CUgmahbIQGyps96scQZyBdP9mTJrdKvTVdIyYz76RJkF6pNpCjt5vu78DUqXXw9B9XAnvJa4Z4ZK1rHna+npkqgUeHxzGiCbx56HmbFIpuvSJ/Wupwxy9Sl4G4kJpYGB2XVxo28DpPDB+hsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIeb3cS9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B0BC2BBFC
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719248294;
-	bh=Eo2OdHJwmKn4XxlV9q5h82bJ2Wh5ZfYJQiLjLWtK/A0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TIeb3cS94jx3/B0aDqfVKYQrxoba+stMRwDG9TxGjiFdYjrFvBIvW1sIhzn6rHXst
-	 e00wpE6K4x6Yx1KKoKzcjbgUzx7r1GCi3QreHGQeUojHHvnfe2eV0Cn3Rs031vlZRZ
-	 f2BTywM6ZyZuc8huDzpnoxz4yDB3YCKcmE6WgP8vLKNqVHtHi3/ud987ysh8Vt/A7Y
-	 V1Sc3Kq0GrMC9ugx342HpvOiLUdjVNUp0IYCsVkbbGgNaAXdhyN/kWPmUvocLHNAiA
-	 x3LGEAsVQd1ZZZkc6qjQitCjqVDWyuVGN2plF2vqQTlZ7ObHb6o+WYG1BGMOSF4ex1
-	 jCgbpj+HSloQg==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52cd80e55efso5292604e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:58:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX1W3y0Btj4kwL9vcGkS8x6crNiQufAPOiAXktwTGgCl3fFxDzpm5i+MI4ztUyVvDMfRqGdpfabLICw3JyD+3V8NdVWEKluDWDdi619
-X-Gm-Message-State: AOJu0YzHIoth4qAkIf8xwb5JzlF7tfQvy8zwdiVNhYHrPtZErjMKhrD0
-	EsAgrEerxeVRFlz5NaMIZtTqZRA0mAvYDllYCD9kiKoYSrtpPoo0s+BLb9OMCNSbRmuJUITFkWY
-	RG8oT1ZUPclt6QcCyT0G6McGmIQ==
-X-Google-Smtp-Source: AGHT+IGJAMcptfT+477ET+nX/lX4BOXE4aKuye+Ytt55rmmQ9D5LB2VwxuJB0kIKyF/eA6/cPMHGFcKL6J35ySb3CKw=
-X-Received: by 2002:a05:6512:745:b0:52c:8b69:e039 with SMTP id
- 2adb3069b0e04-52ce182bd0amr3586435e87.4.1719248293214; Mon, 24 Jun 2024
- 09:58:13 -0700 (PDT)
+	s=arc-20240116; t=1719248407; c=relaxed/simple;
+	bh=Hmoar99WJgIcAtnd+WAt/THVlxlRjSv4TgbbqULAsV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HWXnYSmvoogpErm20QM18qsaMOOdn5+H7rktnW267FUmZZo8vAHLc8hSIeIM6hC2SIsdZ06RtDO0cNOxi56pNcEKSzleSHAIufrlVY1/EBcmGAPhGfjzAXHmLiNJMY0cS1VITZgYbsZpFoeo1Dezi0FuJisfhLjWd+HDuCiooTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=WaByuFDk; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D95E0E0003;
+	Mon, 24 Jun 2024 16:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+	t=1719248397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yQ4G9gHer+vGikuMMCqTObACnz6EiIwEffwORvVea34=;
+	b=WaByuFDkkhlrEUniTJL8/4WDvdgswAlaHd8tSxvOr2wDMPKTIA40qJExeDYTH24tp9b/n3
+	1sZtfv/v29UJVa4jLCbqZr1t/fjSQ70b7XMeZfWua+cU3Ompcsk7wNfzuXu/awfKgYhLS3
+	R/Bvd/okJC8y63AbOWE9oMHYoODqFDxqkOoCgeg9T5xjFbKy8iqlXiRk8n+/Om1Fg+bt2X
+	FAhPcorxp3rV9QZdpdQki3zHm4sKjMvfNqlGAmjTMH8oKz1M5DptG/LR8ufUxPLilBMVaU
+	8Bm28divy2PghoSiFXl3tV7nT27G4ou/ZF8v++BWdOF39p7BEn+HZ3H3IHyFEQ==
+Message-ID: <68961d4f-10d8-4769-94d3-92ce709aa00a@arinc9.com>
+Date: Mon, 24 Jun 2024 19:59:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611155012.2286044-1-robh@kernel.org> <8c55de88-96ad-45a7-9be5-4f33f4266af2@arm.com>
- <8804f769-faa2-4d88-8196-8f1ed62d076c@arm.com>
-In-Reply-To: <8804f769-faa2-4d88-8196-8f1ed62d076c@arm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 24 Jun 2024 10:58:01 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLXL12cLtP=BBiMw3dn0ZqPWmc76ey8LziDdSDyhuGh-g@mail.gmail.com>
-Message-ID: <CAL_JsqLXL12cLtP=BBiMw3dn0ZqPWmc76ey8LziDdSDyhuGh-g@mail.gmail.com>
-Subject: Re: [PATCH] perf: arm_pmuv3: Avoid assigning fixed cycle counter with threshold
-To: James Clark <james.clark@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: net: dsa: mediatek,mt7530: Minor grammar
+ fixes
+To: Conor Dooley <conor@kernel.org>
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>, andrew@lunn.ch,
+ f.fainelli@gmail.com, olteanv@gmail.com, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Landen Chao <Landen.Chao@mediatek.com>, DENG Qingfang <dqfext@gmail.com>,
+ Sean Wang <sean.wang@mediatek.com>, Daniel Golle <daniel@makrotopia.org>
+References: <20240624025812.1729229-1-chris.packham@alliedtelesis.co.nz>
+ <704f4b95-2aed-4b76-87cb-83002698471c@arinc9.com>
+ <20240624-radiance-untracked-29369921c468@spud>
+Content-Language: en-US
+From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <20240624-radiance-untracked-29369921c468@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: arinc.unal@arinc9.com
 
-On Tue, Jun 18, 2024 at 10:30=E2=80=AFAM James Clark <james.clark@arm.com> =
-wrote:
->
->
->
-> On 11/06/2024 17:13, James Clark wrote:
-> >
-> >
-> > On 11/06/2024 16:50, Rob Herring (Arm) wrote:
-> >> If the user has requested a counting threshold for the CPU cycles even=
-t,
-> >> then the fixed cycle counter can't be assigned as it lacks threshold
-> >> support. Currently, the thresholds will work or not randomly depending
-> >> on which counter the event is assigned.
-> >>
-> >> While using thresholds for CPU cycles doesn't make much sense, it can =
-be
-> >> useful for testing purposes.
-> >>
-> >> Fixes: 816c26754447 ("arm64: perf: Add support for event counting thre=
-shold")
-> >> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> >> ---
-> >>  drivers/perf/arm_pmuv3.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-> >> index 23fa6c5da82c..2612be29ee23 100644
-> >> --- a/drivers/perf/arm_pmuv3.c
-> >> +++ b/drivers/perf/arm_pmuv3.c
-> >> @@ -939,9 +939,10 @@ static int armv8pmu_get_event_idx(struct pmu_hw_e=
-vents *cpuc,
-> >>      struct arm_pmu *cpu_pmu =3D to_arm_pmu(event->pmu);
-> >>      struct hw_perf_event *hwc =3D &event->hw;
-> >>      unsigned long evtype =3D hwc->config_base & ARMV8_PMU_EVTYPE_EVEN=
-T;
-> >> +    bool has_threshold =3D !!(hwc->config_base & ARMV8_PMU_EVTYPE_TH)=
-;
-> >
-> > I was going to say doesn't it need to be (ARMV8_PMU_EVTYPE_TH |
-> > ARMV8_PMU_EVTYPE_TC) for it to give the same results as the hardware.
-> > But then I saw we only enable it if TH !=3D 0, even if TC is set. And n=
-ow
-> > I'm wondering if I inadvertently disabled a useful combination of optio=
-ns.
-> >
-> > The Arm ARM says it's only completely disabled when both TC and TH are =
-0.
-> >
->
-> If it's easy it might be worth adding a helper function for
-> has_threshold() that's used in both places. That way if or when this
-> issue gets fixed up it doesn't break here.
+On 24/06/2024 19.29, Conor Dooley wrote:
+> On Mon, Jun 24, 2024 at 10:00:25AM +0300, Arınç ÜNAL wrote:
+>> On 24/06/2024 05.58, Chris Packham wrote:
+>>> Update the mt7530 binding with some minor updates that make the document
+>>> easier to read.
+>>>
+>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>>> ---
+>>>
+>>> Notes:
+>>>       I was referring to this dt binding and found a couple of places where
+>>>       the wording could be improved. I'm not exactly a techical writer but
+>>>       hopefully I've made things a bit better.
+>>>
+>>>    .../devicetree/bindings/net/dsa/mediatek,mt7530.yaml        | 6 +++---
+>>>    1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+>>> index 1c2444121e60..6c0abb020631 100644
+>>> --- a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+>>> +++ b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+>>> @@ -22,16 +22,16 @@ description: |
+>>>      The MT7988 SoC comes with a built-in switch similar to MT7531 as well as four
+>>>      Gigabit Ethernet PHYs. The switch registers are directly mapped into the SoC's
+>>> -  memory map rather than using MDIO. The switch got an internally connected 10G
+>>> +  memory map rather than using MDIO. The switch has an internally connected 10G
+>>>      CPU port and 4 user ports connected to the built-in Gigabit Ethernet PHYs.
+>>> -  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs has got 10/100 PHYs
+>>> +  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs have 10/100 PHYs
+>>
+>> MT7530 is singular, the sentence is correct as it is.
+> 
+> Actually, the sentence is missing a definite article, so is not correct
+> as-is.
 
-The other place being in armv8pmu_set_event_filter()? A helper doesn't
-help there because that looks at the attr value, not config_base.
+The definite article is omitted for the sake of brevity. I don't believe
+omitting the definite article renders the sentence incorrect.
 
-Rob
+> 
+>>
+>>>      and the switch registers are directly mapped into SoC's memory map rather than
+>>>      using MDIO. The DSA driver currently doesn't support MT7620 variants.
+>>>      There is only the standalone version of MT7531.
+>>> -  Port 5 on MT7530 has got various ways of configuration:
+>>> +  Port 5 on MT7530 supports various configurations:
+>>
+>> This is a rewrite, not a grammar fix.
+> 
+> In both cases "has got" is clumsy wording,
+
+We don't use "have/has" on the other side of the Atlantic often.
+
+Arınç
 
