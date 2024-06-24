@@ -1,134 +1,174 @@
-Return-Path: <linux-kernel+bounces-227643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F8F9154E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:00:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE799154EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97755B24191
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:00:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC18B1C22FFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9346819EEAF;
-	Mon, 24 Jun 2024 17:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AE419E824;
+	Mon, 24 Jun 2024 17:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="WaByuFDk"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQASADSP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E1019DF63;
-	Mon, 24 Jun 2024 17:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C7619AD75;
+	Mon, 24 Jun 2024 17:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719248407; cv=none; b=dv9Ea6cWfcFWOYRBtRQSVVlWHHQTtNqf2t0tIxnx34Bi3/abVw1Ur3fmJfDvViQjugN5F8vi9brXWlB1hj1SfXVm2XIZ5RAM26IkhqQMGDZqSDn6AM7hXTXjes7z8SZ1zcMrGHC7vhFiJM60krWhZLuzr+Mi6ELTZBsOpCqZvcM=
+	t=1719248430; cv=none; b=CumESBYPhCwJ3GV12IRJrkCTy/BRgINIeG20Z44wcgt4oFr5/D7BCQzzMmXsDny4ZgAeyxEeIT3VWduM/vhgid0vqQ2yMEl1gNwi0B3BUXtD1VJI0OvrYbS+SjzGLVt/o4SQ6NrcPJ1Ptd4Zy8Yxn/PduSShxirPro408w8WaRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719248407; c=relaxed/simple;
-	bh=Hmoar99WJgIcAtnd+WAt/THVlxlRjSv4TgbbqULAsV0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HWXnYSmvoogpErm20QM18qsaMOOdn5+H7rktnW267FUmZZo8vAHLc8hSIeIM6hC2SIsdZ06RtDO0cNOxi56pNcEKSzleSHAIufrlVY1/EBcmGAPhGfjzAXHmLiNJMY0cS1VITZgYbsZpFoeo1Dezi0FuJisfhLjWd+HDuCiooTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=WaByuFDk; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D95E0E0003;
-	Mon, 24 Jun 2024 16:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1719248397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yQ4G9gHer+vGikuMMCqTObACnz6EiIwEffwORvVea34=;
-	b=WaByuFDkkhlrEUniTJL8/4WDvdgswAlaHd8tSxvOr2wDMPKTIA40qJExeDYTH24tp9b/n3
-	1sZtfv/v29UJVa4jLCbqZr1t/fjSQ70b7XMeZfWua+cU3Ompcsk7wNfzuXu/awfKgYhLS3
-	R/Bvd/okJC8y63AbOWE9oMHYoODqFDxqkOoCgeg9T5xjFbKy8iqlXiRk8n+/Om1Fg+bt2X
-	FAhPcorxp3rV9QZdpdQki3zHm4sKjMvfNqlGAmjTMH8oKz1M5DptG/LR8ufUxPLilBMVaU
-	8Bm28divy2PghoSiFXl3tV7nT27G4ou/ZF8v++BWdOF39p7BEn+HZ3H3IHyFEQ==
-Message-ID: <68961d4f-10d8-4769-94d3-92ce709aa00a@arinc9.com>
-Date: Mon, 24 Jun 2024 19:59:48 +0300
+	s=arc-20240116; t=1719248430; c=relaxed/simple;
+	bh=EB2Vu1uZ3PbGJZtLzuNrFlJTZIHyzcLAaz9VPoAVtYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kkW36fPNFI4trL0sSKg4RS/dmgiD5qvpwtLW6GoGs5XUK8kY/Fk7Eh1wzGDFZOerFQqKnwyOPCquLO8bVnbY4V+PcwLH87GPfUnfLP/RUXNxfgRr1OnxNT9e0O6zOjS6kD4/9qWEgrvQ8oG99iJFYneEh9ljcDJlLmowa970yO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQASADSP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E84C2BBFC;
+	Mon, 24 Jun 2024 17:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719248430;
+	bh=EB2Vu1uZ3PbGJZtLzuNrFlJTZIHyzcLAaz9VPoAVtYI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YQASADSPlVYuf64HpQV4/aJlbDXT+VGeIu1zEjfmkLhcG+oDJODI4mf/RMcFqK98y
+	 71XgOd8KlGtZLNUXa0+OhkCe2bFoB4xOYLuZvXGRFsMoufHGN4qpt4yeOT3rDQHapv
+	 ZhYNX4/DlJxIAmShCio2BzNm7NHd0ZwsyL7BGKnvDO3h2pgA6tKxN+8kbjvHddExqp
+	 Lp2p98eU5b4zS7eCx969eGBdFgY4Rg9ZpwT+lzCpLH02LWDe6/PcF2ecQlRBz1o8nP
+	 DyYBc3h5B6KdVOII9h6ebF7PgQtIVrEwM0CBtWlUitzpQN0SakD02iiup+MShrcVPq
+	 bFHPzvxp9jvLQ==
+Date: Mon, 24 Jun 2024 18:00:24 +0100
+From: Conor Dooley <conor@kernel.org>
+To: "Paller, Kim Seer" <KimSeer.Paller@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Subject: Re: [PATCH v4 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
+Message-ID: <20240624-untracked-molasses-31e8769dddd3@spud>
+References: <20240619064904.73832-1-kimseer.paller@analog.com>
+ <20240619064904.73832-5-kimseer.paller@analog.com>
+ <20240619-vanity-crowd-24d93dda47b8@spud>
+ <20240623144339.6a5087cf@jic23-huawei>
+ <PH0PR03MB71419D55571B07479B4F4FB8F9D42@PH0PR03MB7141.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: net: dsa: mediatek,mt7530: Minor grammar
- fixes
-To: Conor Dooley <conor@kernel.org>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>, andrew@lunn.ch,
- f.fainelli@gmail.com, olteanv@gmail.com, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Landen Chao <Landen.Chao@mediatek.com>, DENG Qingfang <dqfext@gmail.com>,
- Sean Wang <sean.wang@mediatek.com>, Daniel Golle <daniel@makrotopia.org>
-References: <20240624025812.1729229-1-chris.packham@alliedtelesis.co.nz>
- <704f4b95-2aed-4b76-87cb-83002698471c@arinc9.com>
- <20240624-radiance-untracked-29369921c468@spud>
-Content-Language: en-US
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <20240624-radiance-untracked-29369921c468@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="BsG0Zvx10wXMJvsJ"
+Content-Disposition: inline
+In-Reply-To: <PH0PR03MB71419D55571B07479B4F4FB8F9D42@PH0PR03MB7141.namprd03.prod.outlook.com>
 
-On 24/06/2024 19.29, Conor Dooley wrote:
-> On Mon, Jun 24, 2024 at 10:00:25AM +0300, Arınç ÜNAL wrote:
->> On 24/06/2024 05.58, Chris Packham wrote:
->>> Update the mt7530 binding with some minor updates that make the document
->>> easier to read.
->>>
->>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->>> ---
->>>
->>> Notes:
->>>       I was referring to this dt binding and found a couple of places where
->>>       the wording could be improved. I'm not exactly a techical writer but
->>>       hopefully I've made things a bit better.
->>>
->>>    .../devicetree/bindings/net/dsa/mediatek,mt7530.yaml        | 6 +++---
->>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
->>> index 1c2444121e60..6c0abb020631 100644
->>> --- a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
->>> +++ b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
->>> @@ -22,16 +22,16 @@ description: |
->>>      The MT7988 SoC comes with a built-in switch similar to MT7531 as well as four
->>>      Gigabit Ethernet PHYs. The switch registers are directly mapped into the SoC's
->>> -  memory map rather than using MDIO. The switch got an internally connected 10G
->>> +  memory map rather than using MDIO. The switch has an internally connected 10G
->>>      CPU port and 4 user ports connected to the built-in Gigabit Ethernet PHYs.
->>> -  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs has got 10/100 PHYs
->>> +  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs have 10/100 PHYs
->>
->> MT7530 is singular, the sentence is correct as it is.
-> 
-> Actually, the sentence is missing a definite article, so is not correct
-> as-is.
 
-The definite article is omitted for the sake of brevity. I don't believe
-omitting the definite article renders the sentence incorrect.
+--BsG0Zvx10wXMJvsJ
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->>
->>>      and the switch registers are directly mapped into SoC's memory map rather than
->>>      using MDIO. The DSA driver currently doesn't support MT7620 variants.
->>>      There is only the standalone version of MT7531.
->>> -  Port 5 on MT7530 has got various ways of configuration:
->>> +  Port 5 on MT7530 supports various configurations:
->>
->> This is a rewrite, not a grammar fix.
-> 
-> In both cases "has got" is clumsy wording,
+On Mon, Jun 24, 2024 at 03:26:26PM +0000, Paller, Kim Seer wrote:
+>=20
+>=20
+> > -----Original Message-----
+> > From: Jonathan Cameron <jic23@kernel.org>
+> > Sent: Sunday, June 23, 2024 9:44 PM
+> > To: Conor Dooley <conor@kernel.org>
+> > Cc: Paller, Kim Seer <KimSeer.Paller@analog.com>; linux-
+> > kernel@vger.kernel.org; linux-iio@vger.kernel.org; devicetree@vger.kern=
+el.org;
+> > David Lechner <dlechner@baylibre.com>; Lars-Peter Clausen
+> > <lars@metafoo.de>; Liam Girdwood <lgirdwood@gmail.com>; Mark Brown
+> > <broonie@kernel.org>; Dimitri Fedrau <dima.fedrau@gmail.com>; Krzysztof
+> > Kozlowski <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>; Conor
+> > Dooley <conor+dt@kernel.org>; Hennerich, Michael
+> > <Michael.Hennerich@analog.com>; Nuno S=E1 <noname.nuno@gmail.com>
+> > Subject: Re: [PATCH v4 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
+> >=20
+> > [External]
+> >=20
+> > On Wed, 19 Jun 2024 18:57:59 +0100
+> > Conor Dooley <conor@kernel.org> wrote:
+> >=20
+> > > On Wed, Jun 19, 2024 at 02:49:03PM +0800, Kim Seer Paller wrote:
+> > > > +patternProperties:
+> > > > +  "^channel@[0-4]$":
+> > > > +    type: object
+> > > > +    additionalProperties: false
+> > > > +
+> > > > +    properties:
+> > > > +      reg:
+> > > > +        description: The channel number representing the DAC output
+> > channel.
+> > > > +        maximum: 4
+> > > > +
+> > > > +      adi,toggle-mode:
+> > > > +        description:
+> > > > +          Set the channel as a toggle enabled channel. Toggle oper=
+ation
+> > enables
+> > > > +          fast switching of a DAC output between two different DAC=
+ codes
+> > without
+> > > > +          any SPI transaction.
+> > > > +        type: boolean
+> > > > +
+> > > > +      adi,output-range-microamp:
+> > > > +        description: Specify the channel output full scale range.
+> > > > +        enum: [3125000, 6250000, 12500000, 25000000, 50000000,
+> > 100000000,
+> > > > +               200000000, 300000000]
+> > >
+> > > IIO folks, is this sort of thing common/likely to exist on other DACs?
+> >=20
+> > Fair point. It is probably time to conclude this is at least moderately=
+ common
+> > and generalize it - which will need a dac.yaml similar to the one we ha=
+ve for
+> > ADCs in adc/adc.yaml.  That will need to make this a per channel node p=
+roperty
+> > (same as the adc ones).
+>=20
+> Should I proceed with generalizing common DAC properties in this series a=
+nd does
 
-We don't use "have/has" on the other side of the Atlantic often.
+I think so, yes.
 
-Arınç
+> this mean somehow removing these common properties from existing DAC bind=
+ings?
+
+I think that that one is up to Jonathan.
+
+> > I'd also expect it to always take 2 values. In many cases the first wil=
+l be 0 but
+> > that is fine.
+> >=20
+> > Jonathan
+>=20
+
+--BsG0Zvx10wXMJvsJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnmmKAAKCRB4tDGHoIJi
+0rTAAQDRMrnRi4oNL/zjW/21PNfWpzyX3vPvb4XBtLhQ6CB3MAD9HwLwK7stijFd
+XKOBCouTp5hoYMUd6fTkOxiInssLlAI=
+=WSk1
+-----END PGP SIGNATURE-----
+
+--BsG0Zvx10wXMJvsJ--
 
