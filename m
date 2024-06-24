@@ -1,200 +1,172 @@
-Return-Path: <linux-kernel+bounces-227791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F46E915699
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 248AE91569B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47427283BD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE1DF283B5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63171A00CE;
-	Mon, 24 Jun 2024 18:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813DD1A01A7;
+	Mon, 24 Jun 2024 18:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DzvFp2CZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FP87Ue1g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70D21B950
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D6919EEDC;
+	Mon, 24 Jun 2024 18:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719254606; cv=none; b=TRETPO9xhHu0Z9dTfKNhpdokNfluxafBW3Gb15LceineEr2r27eU7ZCDR18u/aPkXDAn8o2jxVAEcTmczLIO/IhzUEVkQMROExKkLiX6IRqDXjPqxOM4VU1wyA/EuUtIyq3us+8AWOTF6Hs5rVFFSvedaEKNgSJqD0hadgq99lQ=
+	t=1719254639; cv=none; b=mpBC5emXFuY1gYeRHBEINJWXZuJ1sXyv1AIwuVUzXLgThPhiZK9EEk8dzW7l+rZCJ4topvC5E/QUkw+FVGhRGM0gHDuzPz83sWbfZozQHsp5U3A/EdSNvaqDbDFNUnsxvRA6hplYcw4BA0+gFpivQJkUeXbnRc2tbVxiLKeROVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719254606; c=relaxed/simple;
-	bh=zMw5tHVX9yIJF5GXcG/K1tztvC7MtHTjm6pz6b9YlzI=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=rmBt5jpgYQYO1XM0X0HCdQQJXWiIclSwdxLpk7s5LKMDtcj3Q19PJZDjLdk4XLvBcqj/pqsQlHhhs9/Aq78FCtnfM3YpWn0Rjw0h8CetOHh3tJo4x4mJYqplFDKyl2h2MOybEPHZgfIdCQbBE8w2Z4EbtFrgeAZebGkeOOxDHRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DzvFp2CZ; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719254604; x=1750790604;
-  h=date:from:to:cc:subject:message-id;
-  bh=zMw5tHVX9yIJF5GXcG/K1tztvC7MtHTjm6pz6b9YlzI=;
-  b=DzvFp2CZoJ3NqIKIrvUx4qSaYRwr0Qo+PnTwGn5t5Y+Mv3y8ICNiu5p4
-   ENca6F9sU0TPq2v/uzuiS/iFHpSVM2OZzEzyjyiH/knk8fRTy9qIZXCFq
-   saRAJowspxR4vct43MLqG7K0QW3nyJeQaa+vMabZdOUUJf1sOLSkdXrvK
-   LV/7FxvWJzlu5NtmIPtVdwcH5ffxR4ee5W+5JAolShgX9Odg/T42WMZk4
-   rNY6NkquPgtbCuK06ljHVR6ih0Qdo5bkpCB8PRjE8DP3shM8e90WjEFWg
-   wb4qSJm1VsrEdKDj6yLhyjWvbRgQHeOmjJa8XwKY2b3gSs+j1rtidiyad
-   w==;
-X-CSE-ConnectionGUID: oYdu1EvKRui8FKz+w3PmWg==
-X-CSE-MsgGUID: Bu5f7cflQw243BdmJrGAVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="16120498"
-X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="16120498"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 11:43:23 -0700
-X-CSE-ConnectionGUID: ACRfqAxkRbGpyODo9hG1eQ==
-X-CSE-MsgGUID: 0RnWafndQgq/PWgww1pmjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="43477530"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 24 Jun 2024 11:43:22 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sLoet-000Dd4-3A;
-	Mon, 24 Jun 2024 18:43:19 +0000
-Date: Tue, 25 Jun 2024 02:42:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:timers/core] BUILD SUCCESS
- e1b6a78b58aa859c66a32cfaeb121df87631d4ed
-Message-ID: <202406250223.e9QoKzK5-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1719254639; c=relaxed/simple;
+	bh=y09e6y3PeUQTPhabq8qHYrMiOnKZ9HBKHtMmPq9jIFI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fThiI7W7KPvib8Yz/k81dEjpLjYa7V3ao6pbrXcLIOT76zdAiI3Hk8p2xj91XdDAiQUDVr/AonOObrRKO60/Ub/EQYfP7uWhBx/wN7AnDAL22CxJlIP9ZmMrY5F1KwT6qn6XeoOpGpGIYRjbii0UMZX0+8y6HsI2ZBIuHeWDMls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FP87Ue1g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D6BC32789;
+	Mon, 24 Jun 2024 18:43:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719254639;
+	bh=y09e6y3PeUQTPhabq8qHYrMiOnKZ9HBKHtMmPq9jIFI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FP87Ue1g18Vqn8BDTPayHDVW/bKrfs54ZpNc/1IdN6pHQMD1Kmd5jMs6yqkayRtsE
+	 oslOGn83lqLU40CTB/7bi7+Yhjs7FOSS5GnCtJMSlZZAEt6RvgrPqc0A6twzo9bUz/
+	 b3jgkGdf7j7FpXD9E/mQVNCHt+8m1xSiH3/nADHKgMFa0NRjRnvDrqBCXE1P5ypo56
+	 GSrhTo+B9e3XGaktMmpFk21vVFRa5q2g6ICL4xLQEsFTefUC4jyAapCPr25uYvkca8
+	 c7wUKvnO6Gt8gMeI+25lMDhxmG04lu1qbMaqZaHByBzL0wkj2uiDhgcd4i+1YjtrSB
+	 TZtlYyK7AhCGQ==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-25ce35c52e7so414154fac.2;
+        Mon, 24 Jun 2024 11:43:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUzsWOhlW61fVeEJ5c8Gt/eRJmEM8/4yW6OpWUZcNMhStmjCuHC3xJ5NVbQ0jAFGsOI1O9eR0JK6hjzbB2CeGcJW8DnwvDEdJjxaopw
+X-Gm-Message-State: AOJu0YxsJ8ygXQEaYMnT8YRMwaMrhcngpEEN6zsiqZJFkDOISYtwlVM7
+	rK15q4qNkZ5X1MAblRrF+N4sCfRBstEzUZsCocRJbX2Kz5evroJJU0aVrQEqQFtqKu2ZKlZMOIN
+	P15Pahvd+5PsXlAYMQIx1jLGoX3o=
+X-Google-Smtp-Source: AGHT+IGTXjnfYP8viplDaPFq7kk2cs7jdpgsKnxMHLUQJseBZC6rbfldcwceT98hEEwqh9gl2GiZAfqQcpHTyfNr5hY=
+X-Received: by 2002:a4a:d24a:0:b0:5bb:815d:e2ab with SMTP id
+ 006d021491bc7-5c1e5ef0b32mr6931402eaf.1.1719254638638; Mon, 24 Jun 2024
+ 11:43:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <12464461.O9o76ZdvQC@rjwysocki.net>
+In-Reply-To: <12464461.O9o76ZdvQC@rjwysocki.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 24 Jun 2024 20:43:43 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hYw1xj7a4eGvm=m6xbP9ptSWLEPN7Da4-bxZ3-00GP4A@mail.gmail.com>
+Message-ID: <CAJZ5v0hYw1xj7a4eGvm=m6xbP9ptSWLEPN7Da4-bxZ3-00GP4A@mail.gmail.com>
+Subject: Re: [PATCH v1] thermal: gov_step_wise: Go straight to instance->lower
+ when mitigation is over
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>, Steev Klimaszewski <steev@kali.org>, 
+	Johan Hovold <johan+linaro@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
-branch HEAD: e1b6a78b58aa859c66a32cfaeb121df87631d4ed  timekeeping: Add missing kernel-doc function comments
+On Sat, Jun 22, 2024 at 2:28=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.ne=
+t> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Commit b6846826982b ("thermal: gov_step_wise: Restore passive polling
+> management") attempted to fix a Step-Wise thermal governor issue
+> introduced by commit 042a3d80f118 ("thermal: core: Move passive polling
+> management to the core"), which caused the governor to leave cooling
+> devices in high states, by partially revering that commit.
+>
+> However, this turns out to be insufficient on some systems due to
+> interactions between the governor code restored by commit b6846826982b
+> and the passive polling management in the thermal core.
+>
+> For this reason, revert commit b6846826982b and make the governor set
+> the target cooling device state to the "lower" one as soon as the zone
+> temperature falls below the threshold of the trip point corresponding
+> to the given thermal instance, which means that thermal mitigation is
+> not necessary any more.
+>
+> Before this change the "lower" cooling device state would be reached in
+> steps through the passive polling mechanism which was questionable for
+> three reasons: (1) cooling device were kept in high states when that was
+> not necessary (and it could adversely impact performance), (2) it only
+> worked for thermal zones with nonzero passive_delay_jiffies value, and
+> (3) passive polling belongs to the core and should not be hijacked by
+> governors for their internal purposes.
+>
+> Fixes: b6846826982b ("thermal: gov_step_wise: Restore passive polling man=
+agement")
+> Closes: https://lore.kernel.org/linux-pm/6759ce9f-281d-4fcd-bb4c-b784a1cc=
+5f6e@oldschoolsolutions.biz
+> Reported-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/thermal/gov_step_wise.c |   23 +++++------------------
+>  1 file changed, 5 insertions(+), 18 deletions(-)
+>
+> Index: linux-pm/drivers/thermal/gov_step_wise.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-pm.orig/drivers/thermal/gov_step_wise.c
+> +++ linux-pm/drivers/thermal/gov_step_wise.c
+> @@ -55,7 +55,11 @@ static unsigned long get_target_state(st
+>                 if (cur_state <=3D instance->lower)
+>                         return THERMAL_NO_TARGET;
+>
+> -               return clamp(cur_state - 1, instance->lower, instance->up=
+per);
+> +               /*
+> +                * If 'throttle' is false, no mitigation is necessary, so
+> +                * request the lower state for this instance.
+> +                */
+> +               return instance->lower;
+>         }
+>
+>         return instance->target;
+> @@ -93,23 +97,6 @@ static void thermal_zone_trip_update(str
+>                 if (instance->initialized && old_target =3D=3D instance->=
+target)
+>                         continue;
+>
+> -               if (trip->type =3D=3D THERMAL_TRIP_PASSIVE) {
+> -                       /*
+> -                        * If the target state for this thermal instance
+> -                        * changes from THERMAL_NO_TARGET to something el=
+se,
+> -                        * ensure that the zone temperature will be updat=
+ed
+> -                        * (assuming enabled passive cooling) until it be=
+comes
+> -                        * THERMAL_NO_TARGET again, or the cooling device=
+ may
+> -                        * not be reset to its initial state.
+> -                        */
+> -                       if (old_target =3D=3D THERMAL_NO_TARGET &&
+> -                           instance->target !=3D THERMAL_NO_TARGET)
+> -                               tz->passive++;
+> -                       else if (old_target !=3D THERMAL_NO_TARGET &&
+> -                                instance->target =3D=3D THERMAL_NO_TARGE=
+T)
+> -                               tz->passive--;
+> -               }
+> -
+>                 instance->initialized =3D true;
+>
+>                 mutex_lock(&instance->cdev->lock);
+>
 
-elapsed time: 1479m
+If there is no feedback, I'm going to assume that this is fine with everybo=
+dy.
 
-configs tested: 108
-configs skipped: 1
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                   randconfig-001-20240624   gcc-13.2.0
-arc                   randconfig-002-20240624   gcc-13.2.0
-arm                               allnoconfig   clang-19
-arm                   randconfig-001-20240624   clang-17
-arm                   randconfig-002-20240624   gcc-13.2.0
-arm                   randconfig-003-20240624   gcc-13.2.0
-arm                   randconfig-004-20240624   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                 randconfig-001-20240624   clang-19
-arm64                 randconfig-002-20240624   gcc-13.2.0
-arm64                 randconfig-003-20240624   gcc-13.2.0
-arm64                 randconfig-004-20240624   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                  randconfig-001-20240624   gcc-13.2.0
-csky                  randconfig-002-20240624   gcc-13.2.0
-hexagon                           allnoconfig   clang-19
-hexagon               randconfig-001-20240624   clang-19
-hexagon               randconfig-002-20240624   clang-19
-i386         buildonly-randconfig-001-20240624   gcc-8
-i386         buildonly-randconfig-002-20240624   gcc-13
-i386         buildonly-randconfig-003-20240624   clang-18
-i386         buildonly-randconfig-004-20240624   gcc-10
-i386         buildonly-randconfig-005-20240624   clang-18
-i386         buildonly-randconfig-006-20240624   clang-18
-i386                  randconfig-001-20240624   clang-18
-i386                  randconfig-002-20240624   clang-18
-i386                  randconfig-003-20240624   gcc-13
-i386                  randconfig-004-20240624   gcc-13
-i386                  randconfig-005-20240624   gcc-13
-i386                  randconfig-006-20240624   clang-18
-i386                  randconfig-011-20240624   clang-18
-i386                  randconfig-012-20240624   clang-18
-i386                  randconfig-013-20240624   gcc-9
-i386                  randconfig-014-20240624   clang-18
-i386                  randconfig-015-20240624   clang-18
-i386                  randconfig-016-20240624   gcc-9
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch             randconfig-001-20240624   gcc-13.2.0
-loongarch             randconfig-002-20240624   gcc-13.2.0
-m68k                              allnoconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                 randconfig-001-20240624   gcc-13.2.0
-nios2                 randconfig-002-20240624   gcc-13.2.0
-openrisc                          allnoconfig   gcc-13.2.0
-openrisc                            defconfig   gcc-13.2.0
-parisc                            allnoconfig   gcc-13.2.0
-parisc                              defconfig   gcc-13.2.0
-parisc                randconfig-001-20240624   gcc-13.2.0
-parisc                randconfig-002-20240624   gcc-13.2.0
-powerpc                           allnoconfig   gcc-13.2.0
-powerpc               randconfig-001-20240624   clang-19
-powerpc               randconfig-002-20240624   gcc-13.2.0
-powerpc               randconfig-003-20240624   clang-16
-powerpc64             randconfig-001-20240624   clang-17
-powerpc64             randconfig-002-20240624   clang-19
-powerpc64             randconfig-003-20240624   clang-19
-riscv                             allnoconfig   gcc-13.2.0
-riscv                               defconfig   clang-19
-riscv                 randconfig-001-20240624   clang-19
-riscv                 randconfig-002-20240624   gcc-13.2.0
-s390                              allnoconfig   clang-19
-s390                                defconfig   clang-19
-s390                  randconfig-001-20240624   clang-15
-s390                  randconfig-002-20240624   gcc-13.2.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                  defconfig   gcc-13.2.0
-sh                    randconfig-001-20240624   gcc-13.2.0
-sh                    randconfig-002-20240624   gcc-13.2.0
-sparc64                             defconfig   gcc-13.2.0
-sparc64               randconfig-001-20240624   gcc-13.2.0
-sparc64               randconfig-002-20240624   gcc-13.2.0
-um                                allnoconfig   clang-17
-um                                  defconfig   clang-19
-um                             i386_defconfig   gcc-13
-um                    randconfig-001-20240624   clang-19
-um                    randconfig-002-20240624   clang-19
-um                           x86_64_defconfig   clang-15
-x86_64       buildonly-randconfig-001-20240624   gcc-13
-x86_64       buildonly-randconfig-002-20240624   gcc-13
-x86_64       buildonly-randconfig-003-20240624   clang-18
-x86_64       buildonly-randconfig-004-20240624   clang-18
-x86_64       buildonly-randconfig-005-20240624   clang-18
-x86_64       buildonly-randconfig-006-20240624   clang-18
-x86_64                randconfig-001-20240624   clang-18
-x86_64                randconfig-002-20240624   clang-18
-x86_64                randconfig-003-20240624   clang-18
-x86_64                randconfig-004-20240624   clang-18
-x86_64                randconfig-005-20240624   gcc-11
-x86_64                randconfig-006-20240624   gcc-13
-x86_64                randconfig-011-20240624   clang-18
-x86_64                randconfig-012-20240624   gcc-8
-x86_64                randconfig-013-20240624   clang-18
-x86_64                randconfig-014-20240624   gcc-8
-x86_64                randconfig-015-20240624   gcc-13
-x86_64                randconfig-016-20240624   clang-18
-x86_64                randconfig-071-20240624   gcc-10
-x86_64                randconfig-072-20240624   gcc-10
-x86_64                randconfig-073-20240624   gcc-13
-x86_64                randconfig-074-20240624   gcc-13
-x86_64                randconfig-075-20240624   gcc-13
-x86_64                randconfig-076-20240624   gcc-8
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240624   gcc-13.2.0
-xtensa                randconfig-002-20240624   gcc-13.2.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks!
 
