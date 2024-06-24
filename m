@@ -1,263 +1,308 @@
-Return-Path: <linux-kernel+bounces-226544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF9191402E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:44:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316BE914035
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD581C2206C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:44:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D551C219E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18688EAC7;
-	Mon, 24 Jun 2024 01:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="g0nOOsq9"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2065.outbound.protection.outlook.com [40.107.94.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF41C2C6;
-	Mon, 24 Jun 2024 01:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719193430; cv=fail; b=HZ+BuipP2tHeGP3LFvIepFAO0BYvN9tbhTh2ZF1r53MjJBMY2t/J8HZVmEDtxe+mHgSTZS/ueIUINliKmzdk3QJjyjsWsjjEXCAv1jq1xEDKM4ilXWmfAt52AVY7eIJ9STLLhUfMh/XjIt+xyB8SnJ+9gDTOkqc17d3Z6kIqKBk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719193430; c=relaxed/simple;
-	bh=Q72BqOPsb9SS3tUSxrvmNW6Ag85m0YBEMyBuqXPhE+I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qxymoO0k2nnGnjTEFYsfTD0GTiILGBS02tBqtxQ7xbS6DKiCZpxWkVt8g4CDKVwb6z/umikvPibze7wzDdppPIEIsHRr6/eXwCg8S0ZmWTJbKaffBqFEKBjIKAtvqcw4IdsJBYoyPYjou9e4u5Q6hCglyRlNvhx1DIgdD1NNt0c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=g0nOOsq9; arc=fail smtp.client-ip=40.107.94.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IK8UejZxAsDVxyERLid3HJ/fcG46kbG//23eJ0TWiFB4rKy135XCQlHOBolyH+g3IO6jQXECA75iR/6iEvihelCNwu9KDYLfCNeOvdgQpcuZmAYKjyTgRI5WCbRlJ+nMIANVRNUIB7z/t2l87tcfyKsOrYYjCYy+w2zUL4m8e8FUEBE8mjKVt8ou6qMJFDZwGDA/R0NCQlrdQTVcqHGuoLloQuwKf+sUkGzJKwwht5HXELjJ+X4BIhSbqEwPYKKpHUbKQ0+R4ivL8XP7yfqYMoyLksY3e/N3jZnvA55wqD9kJdbXRxxpbgRHrB3E84YZgM4GoSqKdihOlNLHFMMHug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vbaNp7PX8ey1YwhpobrtkKNe8mUcIOgaCnmynQ15AlU=;
- b=PLrYWbxmXeFhuQvelBXitKDEPmVwgJK6DGLhXp14VYH4VtXyNNssT7IInR38f2nl+OB6jaxEnkgvagd06C+CFOuS+UBujQ/r3WpQYGXE5975OlAcsysYw/16EFZpPqVOhYobCbHXRuMYqUMTsFix5YuyfSeJG5WW/WzmhPzCBmK/s1uPVdqlNG1acrU6PhvaO9ihhUBWeH/MhNsYsCRWU/fYho7G07V93Qu+3SVZaOMTR78XCRQxLNAQsGH94iOv9B9E0M8BZvKxs45m2UsOAVa3qPVRQyAJUjCoN1Zpe2HY+Y9gGAGBdAm6z7xPPLPCiumO3MpcbxJsuSiAkZI2xQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vbaNp7PX8ey1YwhpobrtkKNe8mUcIOgaCnmynQ15AlU=;
- b=g0nOOsq9QiPO1E43aFK0r4supQb+1AlPuvXPr9Zo4tnhHCh1Tx3PSqWfGRwfXjGkHitKwNZ+euxqydWeJHTmDAeB+smiyoQFJ1+ToHbxZQi/vjQXNECMC7xHi9rvdPgmM7vgCZXgJe6CTCcY32Tr7kp3kcNj7JpfZ4pue6vNowCS8RRajQgyOAoCbz+ve8A6aUvPnxprdLQp1PXP6jvnuyJQmw1OBOp5FEd8GJ7CP4WgFAdPWLuJbtGZ+vxNTTfTArHY9B4Ysu7BWT4KLJFnluiP9qPNiMI3HR1gdI8mvfzpRUq7LZgQVVULq/XX4bUqArnc5N744po8GoZzzyq4JA==
-Received: from IA0PR12MB8374.namprd12.prod.outlook.com (2603:10b6:208:40e::7)
- by SJ0PR12MB7034.namprd12.prod.outlook.com (2603:10b6:a03:449::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Mon, 24 Jun
- 2024 01:43:44 +0000
-Received: from IA0PR12MB8374.namprd12.prod.outlook.com
- ([fe80::c28c:f5f4:7b8:e636]) by IA0PR12MB8374.namprd12.prod.outlook.com
- ([fe80::c28c:f5f4:7b8:e636%4]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
- 01:43:44 +0000
-From: Joseph Jang <jjang@nvidia.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC: "shuah@kernel.org" <shuah@kernel.org>, "avagin@google.com"
-	<avagin@google.com>, "amir73il@gmail.com" <amir73il@gmail.com>,
-	"brauner@kernel.org" <brauner@kernel.org>, Matt Ochs <mochs@nvidia.com>, Koba
- Ko <kobak@nvidia.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-rtc@vger.kernel.org"
-	<linux-rtc@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 1/2] selftest: rtc: Add to check rtc alarm status for
- alarm related test
-Thread-Topic: [PATCH 1/2] selftest: rtc: Add to check rtc alarm status for
- alarm related test
-Thread-Index: AQHarXsP3fmz/hMmlEegF586aQVuz7HRN3IAgAWgyoA=
-Date: Mon, 24 Jun 2024 01:43:43 +0000
-Message-ID: <c0db5bd6-8c6a-4017-911e-f3e01cd522ed@nvidia.com>
-References: <20240524013807.154338-1-jjang@nvidia.com>
- <20240524013807.154338-2-jjang@nvidia.com>
- <20240620193654d3cd1f05@mail.local>
-In-Reply-To: <20240620193654d3cd1f05@mail.local>
-Accept-Language: en-US, zh-TW
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-exchange-imapappendstamp: IA0PR12MB8374.namprd12.prod.outlook.com
- (15.20.7698.013)
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA0PR12MB8374:EE_|SJ0PR12MB7034:EE_
-x-ms-office365-filtering-correlation-id: 7ae8ab96-48e5-451e-d9cf-08dc93ef150c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|1800799021|366013|38070700015;
-x-microsoft-antispam-message-info:
- =?Windows-1252?Q?9k57Z+Z2w9vdret4hweM1A1SRvI+iAh+TyI8D6b6VfQU4KNr+mLUxNnU?=
- =?Windows-1252?Q?mnhVAf5BjJrft1XxoIkcEv80T8T6p/EqBWZS9iHBzvVfeyijof96YfFg?=
- =?Windows-1252?Q?jQ8r5nivZejiOx8HnagXqrJ1U1GY7gV2N2VWwYknF78ku9jPwqRxXTFo?=
- =?Windows-1252?Q?DGtxQbBTbaVkn6b7V/2GDSMvfE4CVGIqOxyZAAuSyox2xXciyeizpkua?=
- =?Windows-1252?Q?eK2rSEFvgvvBqJzWcK5wttUDC7IRavTDo3nJ4avYpXvU1yaKEuLo7ai3?=
- =?Windows-1252?Q?tXDEb0RxPsdO2EEs0OQPZPtHRuVH0dL3IBe96KnDI1XU7QdkXEdyTjxn?=
- =?Windows-1252?Q?xGb1Xpkf7eMmHsrO7/mNRi3R0a4/UytOmx/4XBfb1CWctnZAEXuq03vS?=
- =?Windows-1252?Q?wnFziw/b+JgDvPF5eow8vgUEMyqlRUphJiyn0Pya7x1S9RmPvl++4UjD?=
- =?Windows-1252?Q?G28W/cj3Hudob8vZNxU3Q74IrwIu+r2RE4gmc+uZKoTnku8rILf7Pv2I?=
- =?Windows-1252?Q?n/ajfWEEqMQNbHt/G4jclwIGB+6I83OSwEmpUHMlSw+x/6HYA+HxFwWm?=
- =?Windows-1252?Q?sQT+bBcWJWhYZykz6XZhT8mKa2yzeEskv8qNHf6DnsChls/TpUBj5ZVT?=
- =?Windows-1252?Q?AZPmwgyulgTi43duH6YYvB7crAmyFIydAoaPIB8HJcm/gSZsG2OwEUPu?=
- =?Windows-1252?Q?nQzfGBTkTAhmflgHIJ7/9DL1MMfAp38qESt1ntukBSj45n2kzvmC6kQ1?=
- =?Windows-1252?Q?4yLL6Vx95vp+cT5GfKJRZ3b488dihyJY+A5Uud+1hVcNSapAVYF6eFhy?=
- =?Windows-1252?Q?Am/m+j6EzJRmZ0yv3JZt2r5Sz+0+ISmjJWq6tf7JqhLeMWY9jdrkdwKE?=
- =?Windows-1252?Q?e7PDSe6zBgKatd8sZ71lV1deMNnFKst9hkyrH/2SR46SWEYkkABJkWIH?=
- =?Windows-1252?Q?wPAGgizGOATJ0EvYH5ND0Cty1REh7tBLEbzsIdd/ljNgykGyfVF8IsK3?=
- =?Windows-1252?Q?nJwClK5QhSH6ACueJOr2GI7pqLXqEh4rjfd2QpRwz9ttwrrgK5/dIWh0?=
- =?Windows-1252?Q?TJirNky852ynxzLQsslCRybVLj7B3WTp5IHheBG/mlu9Me/MzTo3Cpfx?=
- =?Windows-1252?Q?lBDoUuq6svgdGpSF8gqrfsfj2hdNHiZ2IdfFXufk9FoHCG5JjmkpkDny?=
- =?Windows-1252?Q?DfvTnyA2vaHJFSSdos568MVGqyW/mwLEaSRDZEbP1EywHXc983UlgO8B?=
- =?Windows-1252?Q?ktOE5yQLyJofpRu/Y4MumjPT2YDpZzjnUwXMl7aWiuixdIWjhtDRk6nV?=
- =?Windows-1252?Q?VET5vtiyo7JSFOvAEcwBfzcgDZCR06BDVhdJabclAUdG6fTMtDPBCZrJ?=
- =?Windows-1252?Q?ZatcvlQHJZhAG2Wt0xeKWCbSf5jl3/56B2MkBGoYpNcifYwmKOh75V4f?=
- =?Windows-1252?Q?a9TJT06rkqVewQi2uHIBtv2La/pFL4irv5DuVcFw6to=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8374.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(38070700015);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?Windows-1252?Q?UsK4rYsWx8o5L7SkdqFTxqvYtTYUiK2RmAhrG3k1PuJtZP1jBi3t11v6?=
- =?Windows-1252?Q?gs9fpSorf2cGhlEhGHe9N5kb3B2U5j3j9KbRvY7FqZKgnXc+3HIVlkde?=
- =?Windows-1252?Q?JGkyuVg23vlkVEcpNo5iAvUpQPKNpGAJeOf9Bke6OecyEAUEpOVX/MoX?=
- =?Windows-1252?Q?5gNdkUWLWFHUHudNBomhItWpSEWwik1qIksSka+EpWtFRtlTgQy/1ht6?=
- =?Windows-1252?Q?83PBSxqlRpT4+WYeRwh6TI6F34RqDKjkq1tfcIoGmtfMqTw8VqNXv0xu?=
- =?Windows-1252?Q?ArYSyy1hWzmlkjZlVAgmuIWr1+62Ssqw4hSHkG26wyvsA19fUYw3lroK?=
- =?Windows-1252?Q?FjNniS2IwfQmsWySChn7JdJyVqQ1a3BCy/MEaHsqX+jTG4SKZltoY4G2?=
- =?Windows-1252?Q?hk2UfbAO/GQoObu6IHfYTvbqubb6pR7RZMzFzC8K7lryJkRjw9hervPg?=
- =?Windows-1252?Q?yo901oAcVKlPRzdQ3wAwgvK6gwYLNJb0DyyMlzQnisw3QXIS4T63cG+K?=
- =?Windows-1252?Q?6mIJGXBnAXnAk2xH/QaVp6xxZtbz6C7OscHg7st6ADMVDwnz2CKN1m0h?=
- =?Windows-1252?Q?wu2YGdDjuKssbjVO/0GqrEUYTTEmgH6UDVfRjDwiZAlOHrESx8GpmrY3?=
- =?Windows-1252?Q?DuokjFRr29lM6xyBIY7Jo8OWeOBpJyS99WjF79h9eAnUPT13muB9PRQu?=
- =?Windows-1252?Q?JaVCZAMWzOQyVbjzlcHJkS6c/fz/XBpOJ4undBduEGGxqqEx8xjfnOgp?=
- =?Windows-1252?Q?pZPsEfdYl/ngo2GZxhC60d+75vq/+e2FaT8dhel2pxNz5JcDsjbA4NIa?=
- =?Windows-1252?Q?7b/iHo8ky2k+MGWD4OxcyDI5tHJ3p3wIYtnVBKVRpy6RBig8O/JWhvyO?=
- =?Windows-1252?Q?IYxpd0BZNBRaFwH+qHutO72gRsJIETr0HZlLe2TrSWT2y2/W6CBsXQj4?=
- =?Windows-1252?Q?FgpD99B51r+6aV6iJbn1ccnzjPuJHAOOXsg314IMIUuCOVeV06fOdmPR?=
- =?Windows-1252?Q?+Ipvx/4n9zv2IeDMSbIEA/tsNGYmOHo09yBlLAEDnpsoxB/zDzb1YukX?=
- =?Windows-1252?Q?YpqSV65+uXSdLusKbaYhHDPovJc5iynEVpZFLtItI/Fqk6rsWBaI57Ue?=
- =?Windows-1252?Q?SKjAscjRhbVyDRRjwXS69Zklgp/qMPK3ot1+xuBJzuZnEbufwDFOGmBB?=
- =?Windows-1252?Q?vme66GJ8/pu6ai32WxbOEi9aDdyZcXDmBgXkrBtElil6YXc0uwI4M3Z5?=
- =?Windows-1252?Q?g/DKiVamoc39ZYx4usjOrrluB+/kS2TTToRB9DQ57JV+EUEz1ewkziSn?=
- =?Windows-1252?Q?2Pyxmmx5YjKdFDG0qpv7LGsO9vTwqHmQaK/R0egPnia0rdXLjviMHzrk?=
- =?Windows-1252?Q?X/1ci+d/7sily4p65wZrHPzkmxDQCF28u0jDH3wB2iIjVAVoUT7v7YpM?=
- =?Windows-1252?Q?aLvpLazCwchMfYvdv4siuwdSFMgdHR0T+SM+uVb7t8foL/Netwa3hZWg?=
- =?Windows-1252?Q?hSR21GAaBbTPEcDxcVMPAb2fr5i0Afbkc4OLqlwtqRE9OA7xhsCETszm?=
- =?Windows-1252?Q?M4DN7XFLUpX8v6iMK7SA0Nl+7FBDeiWARcyV1yTFxPGvr0FDwWdZBZvj?=
- =?Windows-1252?Q?Bs6k/p0kevQu87zPwRycc1TFWqaLZLnpaV1bV6V6yDTnV5iXwKN+bxbt?=
- =?Windows-1252?Q?MWTE/34UzSY=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <FEBE7BCFC847644F81F94DFFED9BC98C@NVIDIA.onmicrosoft.com>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ABF4A33;
+	Mon, 24 Jun 2024 01:51:47 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF072F25;
+	Mon, 24 Jun 2024 01:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719193906; cv=none; b=MWqgyVZPWLpTHHXGy8wTK3K7Eijr+GYwWi2sk6rDT8ZUoI9TdoyzOCNOCZhumb1ENHSJeb72/jUOQTS0P1nPnGthPOzp+vgOiTsgZCvVV1gnmXlHTl/Yx/+XqfVxoQKfdMxVpfsCjTTdQKiD99pESkKCbAw5HbP7wTfSZLZteJQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719193906; c=relaxed/simple;
+	bh=PQ2IbqwcqM3pMAq6Bs5okC9IkAguM7k3PjD+tCo2r9A=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=NcMPq9iBiP3lJFpm6aydNliCLZ2QtY3Iyrd2E0kd82sXUCsx0rD0y4ozemHUfbIFr6fUI7BNOxeBvaIu25lRgx4f7Om6Ut4l6DLZy04fNhzAEdZmp1bU11yBvO7lzzjHtco6gN0MjDpCCay/eSGnL1quJTA1DmaJLqY8o0CU6FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxyOks0XhmN2QJAA--.24908S3;
+	Mon, 24 Jun 2024 09:51:40 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxJMUp0XhmGosuAA--.34956S3;
+	Mon, 24 Jun 2024 09:51:39 +0800 (CST)
+Subject: Re: [PATCH v3 1/4] LoongArch: KVM: Add HW Binary Translation
+ extension support
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240527074644.836699-1-maobibo@loongson.cn>
+ <20240527074644.836699-2-maobibo@loongson.cn>
+ <CAAhV-H6VpRzxAvVVifoXXHGK=46R4uO+Jp2aSbzsW-Gr0QPfHQ@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <fe5a1710-de61-79c0-5186-9717236207a8@loongson.cn>
+Date: Mon, 24 Jun 2024 09:51:37 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8374.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ae8ab96-48e5-451e-d9cf-08dc93ef150c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2024 01:43:43.9037
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Haer0qxZBamDiwKbIdX+X7MhZCixvIhWSsHi5ft7s10ak5FMXl7fzIMbGfBvKceNc+omdfThAhFt2MfBcJ1SIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7034
+In-Reply-To: <CAAhV-H6VpRzxAvVVifoXXHGK=46R4uO+Jp2aSbzsW-Gr0QPfHQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8CxJMUp0XhmGosuAA--.34956S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3JF4xXr15ZF1fKFyfKF1fXwc_yoW3XF48pF
+	97CFn5ua1rWFy7K3ZFqrn0grn0vrWkKr1IvFy7Kay5J3WqqryrJF4kKrZ8uFyUAw1FvF1S
+	vFyftw13uF48t3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AK
+	xVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
+	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jY38nU
+	UUUU=
 
-=0A=
-=0A=
-On 2024/6/21 3:36 AM, Alexandre Belloni wrote:=0A=
-> On 23/05/2024 18:38:06-0700, Joseph Jang wrote:=0A=
->> In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different=
-=0A=
->> ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will=
-=0A=
->> skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error=
-=0A=
->> code. This design may miss detecting real problems when the=0A=
->> efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET=
-=0A=
->> ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.=0A=
->>=0A=
->> In order to make rtctest more explicit and robust, we propose to use=0A=
->> RTC_PARAM_GET ioctl interface to check rtc alarm feature state before=0A=
->> running alarm related tests. If the kernel does not support RTC_PARAM_GE=
-T=0A=
->> ioctl interface, we will fallback to check the error number of=0A=
->> (RTC_ALM_SET/RTC_WKALM_SET) ioctl call for alarm feature detection.=0A=
->>=0A=
->> Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services=
-=0A=
->> as optional")=0A=
->>=0A=
->> Reviewed-by: Koba Ko <kobak@nvidia.com>=0A=
->> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>=0A=
->> Signed-off-by: Joseph Jang <jjang@nvidia.com>=0A=
->> ---=0A=
->>   tools/testing/selftests/rtc/Makefile  |  2 +-=0A=
->>   tools/testing/selftests/rtc/rtctest.c | 64 +++++++++++++++++++++++++++=
-=0A=
->>   2 files changed, 65 insertions(+), 1 deletion(-)=0A=
->>=0A=
->> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selfte=
-sts/rtc/Makefile=0A=
->> index 55198ecc04db..6e3a98fb24ba 100644=0A=
->> --- a/tools/testing/selftests/rtc/Makefile=0A=
->> +++ b/tools/testing/selftests/rtc/Makefile=0A=
->> @@ -1,5 +1,5 @@=0A=
->>   # SPDX-License-Identifier: GPL-2.0=0A=
->> -CFLAGS +=3D -O3 -Wl,-no-as-needed -Wall=0A=
->> +CFLAGS +=3D -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/=0A=
-> =0A=
-> Is this change actually needed?=0A=
-=0A=
-If we didn't include "-I../../../../usr/include/" in rtctest Makefile,=0A=
-we may encounter build errors like the following because rtctest default=0A=
-look at the header file from /usr/include/linux/rtc.h which miss the=0A=
-definition of struct rtc_param, RTC_PARAM_FEATURES and RTC_PARAM_GET.=0A=
-=0A=
-rtctest.c: In function =91get_rtc_alarm_state=92:=0A=
-rtctest.c:94:15: error: variable =91param=92 has initializer but incomplete=
-=0A=
-type=0A=
-    94 |        struct rtc_param param =3D { 0 };=0A=
-       |               ^~~~~~~~~=0A=
-rtctest.c:94:35: warning: excess elements in struct initializer=0A=
-    94 |        struct rtc_param param =3D { 0 };=0A=
-       |                                   ^=0A=
-rtctest.c:94:35: note: (near initialization for =91param=92)=0A=
-rtctest.c:94:25: error: storage size of =91param=92 isn=92t known=0A=
-    94 |        struct rtc_param param =3D { 0 };=0A=
-       |                         ^~~~~=0A=
-rtctest.c:98:22: error: =91RTC_PARAM_FEATURES=92 undeclared (first use in=
-=0A=
-this function)=0A=
-    98 |        param.param =3D RTC_PARAM_FEATURES;=0A=
-       |                      ^~~~~~~~~~~~~~~~~~=0A=
-rtctest.c:98:22: note: each undeclared identifier is reported only once=0A=
-for each function it appears in=0A=
-rtctest.c:100:23: error: =91RTC_PARAM_GET=92 undeclared (first use in this=
-=0A=
-function); did you mean =91RTC_ALM_SET=92?=0A=
-   100 |        rc =3D ioctl(fd, RTC_PARAM_GET, &param);=0A=
-       |                       ^~~~~~~~~~~~~=0A=
-       |                       RTC_ALM_SET=0A=
-=0A=
-After adding "-I../../../../usr/include/", the rtctest will look at =0A=
-linux kernel source header files from=0A=
-<Linux root directory>/usr/include/linux/rtc.h to find the definition of=0A=
-struct rtc_param, RTC_PARAM_FEATURES and RTC_PARAM_GET and fix the=0A=
-rtctest build errors.=0A=
-=0A=
-=0A=
-Thank you,=0A=
-Joseph.=0A=
-=0A=
-=0A=
+
+
+On 2024/6/23 下午6:11, Huacai Chen wrote:
+> Hi, Bibo,
+> 
+> On Mon, May 27, 2024 at 3:46 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> Loongson Binary Translation (LBT) is used to accelerate binary translation,
+>> which contains 4 scratch registers (scr0 to scr3), x86/ARM eflags (eflags)
+>> and x87 fpu stack pointer (ftop).
+>>
+>> Like FPU extension, here late enabling method is used for LBT. LBT context
+>> is saved/restored on vcpu context switch path.
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   arch/loongarch/include/asm/kvm_host.h |  8 ++++
+>>   arch/loongarch/include/asm/kvm_vcpu.h | 10 +++++
+>>   arch/loongarch/kvm/exit.c             |  9 ++++
+>>   arch/loongarch/kvm/vcpu.c             | 59 ++++++++++++++++++++++++++-
+>>   4 files changed, 85 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
+>> index 2eb2f7572023..88023ab59486 100644
+>> --- a/arch/loongarch/include/asm/kvm_host.h
+>> +++ b/arch/loongarch/include/asm/kvm_host.h
+>> @@ -133,6 +133,7 @@ enum emulation_result {
+>>   #define KVM_LARCH_LASX         (0x1 << 2)
+>>   #define KVM_LARCH_SWCSR_LATEST (0x1 << 3)
+>>   #define KVM_LARCH_HWCSR_USABLE (0x1 << 4)
+>> +#define KVM_LARCH_LBT          (0x1 << 5)
+>>
+>>   struct kvm_vcpu_arch {
+>>          /*
+>> @@ -166,6 +167,7 @@ struct kvm_vcpu_arch {
+>>
+>>          /* FPU state */
+>>          struct loongarch_fpu fpu FPU_ALIGN;
+>> +       struct loongarch_lbt lbt;
+>>
+>>          /* CSR state */
+>>          struct loongarch_csrs *csr;
+>> @@ -235,6 +237,12 @@ static inline bool kvm_guest_has_lasx(struct kvm_vcpu_arch *arch)
+>>          return arch->cpucfg[2] & CPUCFG2_LASX;
+>>   }
+>>
+>> +static inline bool kvm_guest_has_lbt(struct kvm_vcpu_arch *arch)
+>> +{
+>> +       return arch->cpucfg[2] & (CPUCFG2_X86BT | CPUCFG2_ARMBT
+>> +                                       | CPUCFG2_MIPSBT);
+>> +}
+>> +
+>>   /* Debug: dump vcpu state */
+>>   int kvm_arch_vcpu_dump_regs(struct kvm_vcpu *vcpu);
+>>
+>> diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
+>> index d7e51300a89f..ec46009be29b 100644
+>> --- a/arch/loongarch/include/asm/kvm_vcpu.h
+>> +++ b/arch/loongarch/include/asm/kvm_vcpu.h
+>> @@ -75,6 +75,16 @@ static inline void kvm_save_lasx(struct loongarch_fpu *fpu) { }
+>>   static inline void kvm_restore_lasx(struct loongarch_fpu *fpu) { }
+>>   #endif
+>>
+>> +#ifdef CONFIG_CPU_HAS_LBT
+>> +int kvm_own_lbt(struct kvm_vcpu *vcpu);
+>> +#else
+>> +static inline int kvm_own_lbt(struct kvm_vcpu *vcpu) { return -EINVAL; }
+>> +static inline void kvm_lose_lbt(struct kvm_vcpu *vcpu) { }
+>> +static inline void kvm_enable_lbt_fpu(struct kvm_vcpu *vcpu,
+>> +                                       unsigned long fcsr) { }
+>> +static inline void kvm_check_fcsr(struct kvm_vcpu *vcpu) { }
+>> +#endif
+> It is better to keep symmetry here. That means also declare
+> kvm_lose_lbt for CONFIG_CPU_HAS_LBT, and move the last two functions
+> to .c because they are static.
+Sure, will do in this way in next version.
+
+Regards
+Bibo Mao
+> 
+>> +
+>>   void kvm_init_timer(struct kvm_vcpu *vcpu, unsigned long hz);
+>>   void kvm_reset_timer(struct kvm_vcpu *vcpu);
+>>   void kvm_save_timer(struct kvm_vcpu *vcpu);
+>> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
+>> index e2abd97fb13f..e1bd81d27fd8 100644
+>> --- a/arch/loongarch/kvm/exit.c
+>> +++ b/arch/loongarch/kvm/exit.c
+>> @@ -835,6 +835,14 @@ static int kvm_handle_hypercall(struct kvm_vcpu *vcpu)
+>>          return ret;
+>>   }
+>>
+>> +static int kvm_handle_lbt_disabled(struct kvm_vcpu *vcpu)
+>> +{
+>> +       if (kvm_own_lbt(vcpu))
+>> +               kvm_queue_exception(vcpu, EXCCODE_INE, 0);
+>> +
+>> +       return RESUME_GUEST;
+>> +}
+>> +
+>>   /*
+>>    * LoongArch KVM callback handling for unimplemented guest exiting
+>>    */
+>> @@ -867,6 +875,7 @@ static exit_handle_fn kvm_fault_tables[EXCCODE_INT_START] = {
+>>          [EXCCODE_LASXDIS]               = kvm_handle_lasx_disabled,
+>>          [EXCCODE_GSPR]                  = kvm_handle_gspr,
+>>          [EXCCODE_HVC]                   = kvm_handle_hypercall,
+>> +       [EXCCODE_BTDIS]                 = kvm_handle_lbt_disabled,
+>>   };
+>>
+>>   int kvm_handle_fault(struct kvm_vcpu *vcpu, int fault)
+>> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+>> index 382796f1d3e6..8f80d1a2dcbb 100644
+>> --- a/arch/loongarch/kvm/vcpu.c
+>> +++ b/arch/loongarch/kvm/vcpu.c
+>> @@ -6,6 +6,7 @@
+>>   #include <linux/kvm_host.h>
+>>   #include <linux/entry-kvm.h>
+>>   #include <asm/fpu.h>
+>> +#include <asm/lbt.h>
+>>   #include <asm/loongarch.h>
+>>   #include <asm/setup.h>
+>>   #include <asm/time.h>
+>> @@ -952,12 +953,64 @@ int kvm_arch_vcpu_ioctl_set_fpu(struct kvm_vcpu *vcpu, struct kvm_fpu *fpu)
+>>          return 0;
+>>   }
+>>
+>> +#ifdef CONFIG_CPU_HAS_LBT
+>> +int kvm_own_lbt(struct kvm_vcpu *vcpu)
+>> +{
+>> +       if (!kvm_guest_has_lbt(&vcpu->arch))
+>> +               return -EINVAL;
+>> +
+>> +       preempt_disable();
+>> +       set_csr_euen(CSR_EUEN_LBTEN);
+>> +
+>> +       _restore_lbt(&vcpu->arch.lbt);
+>> +       vcpu->arch.aux_inuse |= KVM_LARCH_LBT;
+>> +       preempt_enable();
+>> +       return 0;
+>> +}
+>> +
+>> +static void kvm_lose_lbt(struct kvm_vcpu *vcpu)
+>> +{
+>> +       preempt_disable();
+>> +       if (vcpu->arch.aux_inuse & KVM_LARCH_LBT) {
+>> +               _save_lbt(&vcpu->arch.lbt);
+>> +               clear_csr_euen(CSR_EUEN_LBTEN);
+>> +               vcpu->arch.aux_inuse &= ~KVM_LARCH_LBT;
+>> +       }
+>> +       preempt_enable();
+>> +}
+>> +
+>> +static void kvm_enable_lbt_fpu(struct kvm_vcpu *vcpu, unsigned long fcsr)
+> It is better to rename it to kvm_own_lbt_tm().
+> 
+>> +{
+>> +       /*
+>> +        * if TM is enabled, top register save/restore will
+>> +        * cause lbt exception, here enable lbt in advance
+>> +        */
+>> +       if (fcsr & FPU_CSR_TM)
+>> +               kvm_own_lbt(vcpu);
+>> +}
+>> +
+>> +static void kvm_check_fcsr(struct kvm_vcpu *vcpu)
+>> +{
+>> +       unsigned long fcsr;
+>> +
+>> +       if (vcpu->arch.aux_inuse & KVM_LARCH_FPU)
+>> +               if (!(vcpu->arch.aux_inuse & KVM_LARCH_LBT)) {
+> The condition can be simplified " if (vcpu->arch.aux_inuse &
+> (KVM_LARCH_FPU|KVM_LARCH_LBT) == KVM_LARCH_FPU)"
+> 
+>> +                       fcsr = read_fcsr(LOONGARCH_FCSR0);
+>> +                       kvm_enable_lbt_fpu(vcpu, fcsr);
+>> +               }
+>> +}
+>> +#endif
+>> +
+>>   /* Enable FPU and restore context */
+>>   void kvm_own_fpu(struct kvm_vcpu *vcpu)
+>>   {
+>>          preempt_disable();
+>>
+>> -       /* Enable FPU */
+>> +       /*
+>> +        * Enable FPU for guest
+>> +        * We set FR and FRE according to guest context
+>> +        */
+>> +       kvm_enable_lbt_fpu(vcpu, vcpu->arch.fpu.fcsr);
+>>          set_csr_euen(CSR_EUEN_FPEN);
+>>
+>>          kvm_restore_fpu(&vcpu->arch.fpu);
+>> @@ -977,6 +1030,7 @@ int kvm_own_lsx(struct kvm_vcpu *vcpu)
+>>          preempt_disable();
+>>
+>>          /* Enable LSX for guest */
+>> +       kvm_enable_lbt_fpu(vcpu, vcpu->arch.fpu.fcsr);
+>>          set_csr_euen(CSR_EUEN_LSXEN | CSR_EUEN_FPEN);
+>>          switch (vcpu->arch.aux_inuse & KVM_LARCH_FPU) {
+>>          case KVM_LARCH_FPU:
+>> @@ -1011,6 +1065,7 @@ int kvm_own_lasx(struct kvm_vcpu *vcpu)
+>>
+>>          preempt_disable();
+>>
+>> +       kvm_enable_lbt_fpu(vcpu, vcpu->arch.fpu.fcsr);
+>>          set_csr_euen(CSR_EUEN_FPEN | CSR_EUEN_LSXEN | CSR_EUEN_LASXEN);
+>>          switch (vcpu->arch.aux_inuse & (KVM_LARCH_FPU | KVM_LARCH_LSX)) {
+>>          case KVM_LARCH_LSX:
+>> @@ -1042,6 +1097,7 @@ void kvm_lose_fpu(struct kvm_vcpu *vcpu)
+>>   {
+>>          preempt_disable();
+>>
+>> +       kvm_check_fcsr(vcpu);
+>>          if (vcpu->arch.aux_inuse & KVM_LARCH_LASX) {
+>>                  kvm_save_lasx(&vcpu->arch.fpu);
+>>                  vcpu->arch.aux_inuse &= ~(KVM_LARCH_LSX | KVM_LARCH_FPU | KVM_LARCH_LASX);
+>> @@ -1064,6 +1120,7 @@ void kvm_lose_fpu(struct kvm_vcpu *vcpu)
+>>                  /* Disable FPU */
+>>                  clear_csr_euen(CSR_EUEN_FPEN);
+>>          }
+>> +       kvm_lose_lbt(vcpu);
+>>
+>>          preempt_enable();
+>>   }
+>> --
+>> 2.39.3
+>>
+
 
