@@ -1,195 +1,282 @@
-Return-Path: <linux-kernel+bounces-227948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388C591586F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:05:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FB9915863
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9F4280E7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:05:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86730285038
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4C01A08A6;
-	Mon, 24 Jun 2024 21:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BA41A08CB;
+	Mon, 24 Jun 2024 20:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C7WKTJW9"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQLYbvOB"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C1AFBEF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 21:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2F245010;
+	Mon, 24 Jun 2024 20:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719263139; cv=none; b=p8PpjDmQlU/mjfY+7PCqCncujDRrSDB5ZSG7dtLzv+1COuBkWojbmfuBSR83YYhHSB6hixsJqkzyXfl1xm1ctUMm3FkBi4H9knzwtDgd9ZL6goFRTncLwJHLAgnx8NLpimgdah8Y1JigR18daRE71xNoqf5TJ7BX2FtcJQapeb0=
+	t=1719262685; cv=none; b=purKF5xwz2MjRnL4G5FDjGXjEjvhRioT7ic5Vbhl1Jt5zdAi+GRgJedav0cnOjCdFfootqzTvzMv12lx67FxpAu9uW2F5n80KxHlUbthKubnRWvF8S8GtJJ5nhZOdHuNVpFe350wDMUmvW1WPvHz5yryl2AxJSOv54NOquevT24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719263139; c=relaxed/simple;
-	bh=rc+uf24RV4wU1ZmPVkashso27WnRydS2+EKRJ3fw3uo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dehXwSCuWoaO0Jse10DHHOjGC9ibgBBadNKyIP18zC733DHf2mSZey2PO7/RLajSWr1MSO7mScqGcJFY6be6nzTAnrGjKpE0gqicEURGZItUpBtWtjRno1Ek5ZIlKgvon6z/MmQNyqbRgQZ32fRYxhbyI8ZBkZbDllX715A7EiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=C7WKTJW9; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3c9c36db8eeso2515695b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:05:37 -0700 (PDT)
+	s=arc-20240116; t=1719262685; c=relaxed/simple;
+	bh=zj50skJPvJRf7JfXy6CIJbCp6EetG/W94ej3/nQ3+BE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ky5Q/ThHMDKCNq5E1zOUxopM8HWEsxfjmGPT/lSJozwMumMknaz7ZJIdZhl7oiiZ91nl6ZdXrHrf0YLry9WZJrY70LGpIRBu8fGxgxnesB3kn2ums64LbQo4eDgcrKwvDPXzBCr8Z9xg/9E1Aa4acA0FjjECTuVQ9gAn2aPiNj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQLYbvOB; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7252bfe773so171848366b.1;
+        Mon, 24 Jun 2024 13:58:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719263137; x=1719867937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F26ETBZiZjhwFkvNSbxGcmTBqIZI6iLTpohts+kXXh4=;
-        b=C7WKTJW9cwI2vuH4sFmGpGcgqjNbXB8oErJ9r9JAOGXmgSrBEmtvsX16gxG8dFXf7i
-         eeKhCjbtBk7PUcgLuotiFtRzJTqEfxHj4Ym+2z5j42fGz7Y0ZydKIaWwqXMwbHWfj5Z1
-         d48rlbUzIyu9tvTzfxrYAiMj80oaeNsYN1tzA=
+        d=gmail.com; s=20230601; t=1719262682; x=1719867482; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Ohnk9BHFu/EJmzXal9cNmUB7ZWVcATXjjC+GZKOHz4=;
+        b=RQLYbvOBLnfZ6IoZbD0phB7Ewwz5/l0jizmYAj2Cb2zrKtAktqAx7BBqIa3zDA4h8a
+         0t7C+K9fLR62hTAgFgF2BZNQny8UUDPwqhQ8cUX3C2b3gEHdcTwtQMNZKeB7eECV+WQz
+         Grt/NvzS7UqVAfwX0/Tz/jyp25nWnkIMgsxS2QwUqSvnpTeVigxApxFD4CdYj/OcWkeM
+         y1fAJEjIWaxBydMR0+INwGv2AEE2YIe3Igtk1bYzM5I1CKs23Lg0Mnq0gUVob1JyAi/s
+         QEZ9xtj4a3JXUEPXi/I4poSkniwqI4MJBI8zYSjFvk/fyOOzvaiwNq2J7CuJjYl4z95g
+         gRrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719263137; x=1719867937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F26ETBZiZjhwFkvNSbxGcmTBqIZI6iLTpohts+kXXh4=;
-        b=iyB51zJD5L2UuBUYyb5REvZpvJMKgY2Lsuny3gi2EeAAUyfE5hoJNFuw0TbWuzmwey
-         mB4ZTytWf4HCb/besox/R5MitvKtuEdP+e/vKa4PwN9bukGg1wOsKRdWRwi9Wf3W10CS
-         bL6Y6XFoh/KdtkZCzvEM4kubmH3NK5a6JDIM3vLPRjEHRAD82J+WortZw1r6dTo+gIR8
-         c9lKVoLv5DP7SUQeaoSbxoi6Ja+wuLOnRfpNchhev/HDWlsQ5nyRNdfS8JQCjREbtAgc
-         SaQUhcSdr8A7dNk+//+rxMtt7yiI5krClTLT4LZ99jtlvc7GOO3+Hsj/e7r4Yitefx06
-         WWZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwhOTbA4yKIZZPFfypQydEfkdgXeU9I8JitNknT6O0L15oUE1ETsX/kTPsksy9AG97xQCdLVEQkms2b3lQVagLg1zXxlFJ4WgUW2Xb
-X-Gm-Message-State: AOJu0Yy36S5GPzP/jIZCLMz1wfjeQFEceLIAlqwJ+je7/EE8VULiG3qn
-	2Eke0lyf7Gh8EB5rxgfayhBUnFtc+7dcRtlPIyWBSXFUJtduGCkoRF+B0q+uPtB6nahhfwtJ48s
-	=
-X-Google-Smtp-Source: AGHT+IG6KjfKbgAYuA15ESR9dDKLs3G/F25VY27spn4z5331K3FCbsnvte0xklVf0D+6c2yGrXJHbw==
-X-Received: by 2002:a0c:f051:0:b0:6b2:c94d:a02f with SMTP id 6a1803df08f44-6b54099d279mr66175186d6.13.1719262727656;
-        Mon, 24 Jun 2024 13:58:47 -0700 (PDT)
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b52ac1028csm28965306d6.99.2024.06.24.13.58.46
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1719262682; x=1719867482;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Ohnk9BHFu/EJmzXal9cNmUB7ZWVcATXjjC+GZKOHz4=;
+        b=LDKeU6FD/43vsnX4UlfZKbRCD7+LJlQrZTKRMa4nVoyXg3VtkqfeytCySzVdwqSoGP
+         9BAkdjYXGtA27GkUY6OCA/tDa97cBDhrCu/rqmsC2IqmqyKqutmLPKw1vuRcslaUU7Uf
+         Vad0cCSgKt72nUE5yoCt8GAcHzwq4AROB450H92ukInauBbDfARpFFNCgYS21kYtViAT
+         vSOBEFE8+j9UuWxLZ/znrN6JycLrZOwXEu1+aENdbQV6nTc/v2qevW91Qk3rP7AwWAai
+         jFtYsbAIYOxZ21agWpC97P1VYXysRbLPNGyOOQ2b/i9K280W0pfhxvMmEPDmy20tYubn
+         yOpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzDMfC+R/o/SbS3axImmp+X5aISiSkyCo9yIet5mmult24u7A5sfAIQC7dlVKsGudyYKg9dZ3h8Vf/IvS6XJZ19nyAZA3CY46A2kxA0jPsVndB/C/Mnw6Ha50hL+icqINvZ6fnkwhWh0r76cuz2m2hmeu/LrtMDWFTfgYEwyzT2pmwTVg=
+X-Gm-Message-State: AOJu0Ywtl2UEbD0sLntXudi8wZeaMjqVOkp8Uo7926g2h8sxmBs35Lsn
+	60dhStqxgFb3cpdofaT8W/1+rxqypC+jesKLalvYMbJum1ThbKbM
+X-Google-Smtp-Source: AGHT+IEsxeZJ6VpPpIjo7zyVqgFT7luxLgOUgrUTPrJf7cWRQN/Fk/KldGVgaOD/hTUl/x66ksckfw==
+X-Received: by 2002:a17:906:7746:b0:a6f:3210:ac1d with SMTP id a640c23a62f3a-a7245df6125mr325802166b.63.1719262682115;
+        Mon, 24 Jun 2024 13:58:02 -0700 (PDT)
+Received: from ?IPV6:2a01:c23:c07d:2d00:ad78:a407:846a:969b? (dynamic-2a01-0c23-c07d-2d00-ad78-a407-846a-969b.c23.pool.telefonica.de. [2a01:c23:c07d:2d00:ad78:a407:846a:969b])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a6fe8c018fasm310522666b.21.2024.06.24.13.58.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 13:58:46 -0700 (PDT)
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44056f72257so27771cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:58:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVpsXrqqrHUfMlZ0MR4Er/dTFZxuY78JYIqdEZ2nJXRSDmq3+4Fc7Dvbm50gbuWY21uccmg4oh/hYZZZQLwZUFny6jmEvRGYLeDSeah
-X-Received: by 2002:a05:622a:283:b0:442:1bc4:8fb2 with SMTP id
- d75a77b69052e-444f2566f1fmr919771cf.20.1719262726353; Mon, 24 Jun 2024
- 13:58:46 -0700 (PDT)
+        Mon, 24 Jun 2024 13:58:01 -0700 (PDT)
+Message-ID: <797c8371-dff3-4112-9733-4d3119670dbf@gmail.com>
+Date: Mon, 24 Jun 2024 22:58:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610222515.3023730-1-dianders@chromium.org>
- <20240610152420.v4.7.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid> <ZnlilDj5UrvrVasv@hovoldconsulting.com>
-In-Reply-To: <ZnlilDj5UrvrVasv@hovoldconsulting.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 24 Jun 2024 13:58:34 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=U=C+Myrb4cpGyV-J=RHn39C2aF1WT_Xt5M2vczbZ-AbA@mail.gmail.com>
-Message-ID: <CAD=FV=U=C+Myrb4cpGyV-J=RHn39C2aF1WT_Xt5M2vczbZ-AbA@mail.gmail.com>
-Subject: Re: [PATCH v4 7/8] serial: qcom-geni: Fix suspend while active UART xfer
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Tony Lindgren <tony@atomide.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Johan Hovold <johan+linaro@kernel.org>, 
-	John Ogness <john.ogness@linutronix.de>, linux-arm-msm@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regression caused by "eeprom: at24: Probe for DDR3 thermal sensor
+ in the SPD case" - "sysfs: cannot create duplicate filename"
+To: Guenter Roeck <linux@roeck-us.net>, =?UTF-8?Q?Krzysztof_Ol=C4=99dzki?=
+ <ole@ans.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-hwmon@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <a57e9a39-13ce-4e4d-a7a1-c591f6b4ac65@ans.pl>
+ <0dfa2919-98eb-4433-acb4-aa1830787c9b@roeck-us.net>
+ <77c1b740-9e6d-40f7-83f0-9a949366f1c9@ans.pl>
+ <97c497ae-44f7-4cec-b7d9-f639e4597571@roeck-us.net>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <97c497ae-44f7-4cec-b7d9-f639e4597571@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 24.06.2024 16:54, Guenter Roeck wrote:
+> On 6/24/24 01:38, Krzysztof Olędzki wrote:
+>> On 23.06.2024 at 22:33, Guenter Roeck wrote:
+>>> On 6/23/24 11:47, Krzysztof Olędzki wrote:
+>>>> Hi,
+>>>>
+>>>> After upgrading kernel to Linux 6.6.34 on one of my systems, I noticed "sysfs: cannot create duplicate filename" and i2c registration errors in dmesg, please see below.
+>>>>
+>>>> This seems to be related to https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-6.6.y&id=4d5ace787273cb159bfdcf1c523df957938b3e42 - reverting the change fixes the problem.
+>>>>
+>>>> Note that jc42 devices are registered correctly and work with and without the change.
+>>>>
+>>>
+>>> My guess is that the devices are fist instantiated through the jc42
+>>> driver's _detect function and then again from the at24 driver.
+>>> The at24 driver should possibly call i2c_new_scanned_device() instead
+>>> of i2c_new_client_device() to only instantiate the device if it wasn't
+>>> already instantiated.
+>>
+>> i2c_new_scanned_device() also calls i2c_default_probe() at the end (unless
+>> different probe is provided) which seems risky given the comment that explains
+>> that it would use quick write for that address. However, maybe it is safe in this case?
+>> I wish we had a way to just tell "no probing is needed".
+>>
+> 
+> Sorry, I don't understand why it would be less risky to just probe the device
+> without such a test.
+> 
+>> We also know the exact address so no scanning is needed.
+>>
+>> Perhaps it would be better to just call i2c_check_addr_busy() in
+>> at24_probe_temp_sensor()?
+>>
+>> Something like this:
+>> --- a/drivers/misc/eeprom/at24.c    2024-06-24 09:16:11.251855130 +0200
+>> +++ b/drivers/misc/eeprom/at24.c    2024-06-24 09:27:01.158170725 +0200
+>> @@ -603,6 +603,10 @@
+>>         info.addr = 0x18 | (client->addr & 7);
+>>   +    /* The device may be already instantiated through the jc42 driver */
+>> +    if (i2c_check_addr_busy(client->adapter, info.addr))
+>> +        return;
+>> +
+>>       i2c_new_client_device(client->adapter, &info);
+>>   }
+>>
+>> Unfortunately, i2c_check_addr_busy is not exported and declared as static,
+> 
+> That is why I did not suggest that.
+> 
+>> I assume intentionally? Unless this can be changed, we are back to the original
+>> recommendation:
+>>
+>> --- a/drivers/misc/eeprom/at24.c    2024-06-24 09:16:11.251855130 +0200
+>> +++ b/drivers/misc/eeprom/at24.c    2024-06-24 10:25:39.142567472 +0200
+>> @@ -585,6 +585,7 @@
+>>   {
+>>       struct at24_data *at24 = i2c_get_clientdata(client);
+>>       struct i2c_board_info info = { .type = "jc42" };
+>> +    unsigned short addr_list[] = { 0, I2C_CLIENT_END };
+>>       int ret;
+>>       u8 val;
+>>   @@ -601,9 +602,10 @@
+>>       if (ret || !(val & BIT(7)))
+>>           return;
+>>   -    info.addr = 0x18 | (client->addr & 7);
+>> +    addr_list[0] = 0x18 | (client->addr & 7);
+>>   -    i2c_new_client_device(client->adapter, &info);
+>> +    /* The device may be already instantiated through the jc42 driver */
+>> +    i2c_new_scanned_device(client->adapter, &info, addr_list, NULL);
+>>   }
+>>     static int at24_probe(struct i2c_client *client)
+>>
+>> For now compile-tested only given the write-test concern above.
+>>
+> 
+> The device detect code in the i2c core does that same write-test that you
+> are concerned about.
+> 
+>> That said, I have some follow-up questions:
+>>
+>> 1. if the jc42 driver handles this already, I wonder what's the point of adding
+>> at24_probe_temp_sensor()? Is there a situation where it would not do it properly?
+>> Or do we expect to remove the probing functionally from jc42.c?
+>>
+> 
+> The jc42 driver is not auto-loaded. When suggesting to remove the "probing
+> functionally", I assume you mean to remove its detect function. That would only
+> work if SPD EEPROMs were only connected to I2C adapters calling i2c_register_spd(),
+> and if the systems with those adapters would support DMI.
+> 
+> In v6.9, i2c_register_spd() is only called from the i801 driver (Intel systems).
+> In v6.11, piix4 (AMD) will be added. Even after that, all non-Intel / non-AMD systems
+> would no longer be able to support jc42 compatible chips by just loading the jc42
+> driver. That would not be acceptable.
+> 
+>> 2. I don't understand why we are also getting the "Failed creating jc42" and
+>> "sysfs: cannot create duplicate filename" errors since i2c_new_client_device() calls
+>> i2c_check_addr_busy() on its own and should abort after the first error message?
+>>
+> 
+> The "Failed creating" message is from the i2c core's detect function which
+> is only called if a new i2c adapter is added. This is actually the case here,
+> since the call sequence of the backtrace includes i801_probe(). It looks like
+> i2c_detect() runs asynchronously and doesn't protect itself against having
+> devices added to a bus while it is running on that same bus. That is just
+> a guess, though - I have not tried to verify it.
+> 
 
-On Mon, Jun 24, 2024 at 5:12=E2=80=AFAM Johan Hovold <johan@kernel.org> wro=
-te:
->
-> On Mon, Jun 10, 2024 at 03:24:25PM -0700, Douglas Anderson wrote:
-> > On devices using Qualcomm's GENI UART it is possible to get the UART
-> > stuck such that it no longer outputs data. Specifically, logging in
-> > via an agetty on the debug serial port (which was _not_ used for
-> > kernel console) and running:
-> >   cat /var/log/messages
-> > ...and then (via an SSH session) forcing a few suspend/resume cycles
-> > causes the UART to stop transmitting.
->
-> An easier way to trigger this old bug is to just run a command like
-> dmesg and hit ctrl-s in a serial console to stop tx. Interrupting the
-> command or hitting ctrl-q to restart tx then triggers the soft lockup.
->
-> > The root of the problems was with qcom_geni_serial_stop_tx_fifo()
-> > which is called as part of the suspend process. Specific problems with
-> > that function:
-> > - When an in-progress "tx" command is cancelled it doesn't appear to
-> >   fully drain the FIFO. That meant qcom_geni_serial_tx_empty()
-> >   continued to report that the FIFO wasn't empty. The
-> >   qcom_geni_serial_start_tx_fifo() function didn't re-enable
-> >   interrupts in this case so the driver would never start transferring
-> >   again.
-> > - When the driver cancelled the current "tx" command but it forgot to
-> >   zero out "tx_remaining". This confused logic elsewhere in the
-> >   driver.
-> > - From experimentation, it appears that cancelling the "tx" command
-> >   could drop some of the queued up bytes.
-> >
-> > While qcom_geni_serial_stop_tx_fifo() could be fixed to drain the FIFO
-> > and shut things down properly, stop_tx() isn't supposed to be a slow
-> > function. It is run with local interrupts off and is documented to
-> > stop transmitting "as soon as possible". Change the function to just
-> > stop new bytes from being queued. In order to make this work, change
-> > qcom_geni_serial_start_tx_fifo() to remove some conditions. It's
-> > always safe to enable the watermark interrupt and the IRQ handler will
-> > disable it if it's not needed.
-> >
-> > For system suspend the queue still needs to be drained. Failure to do
-> > so means that the hardware won't provide new interrupts until a
-> > "cancel" command is sent. Add draining logic (fixing the issues noted
-> > above) at suspend time.
->
-> So I spent the better part of the weekend looking at this driver and
-> this is one of the bits I worry about with your approach as relying on
-> draining anything won't work with hardware flow control.
->
-> Cancelling commands can result stalled TX in a number of ways and
-> there's still at least one that you don't handle. If you end up with
-> data in in the FIFO, the watermark interrupt may never fire when you try
-> to restart tx.
+Too me the issue also looks like a race. According to the OP's logs:
+- jc42 at 0x18 is instantiated successfully
+- jc42 at 0x19 returns -EBUSY. This is what is expected if the device
+  has been instantiated otherwise already.
+- jc42 at 0x1a returns -EEXIST. Here two instantiations of the the same
+  device seem to collide.
+- jc42 at 0x1b returns -EBUSY, like at 0x19.
 
-Ah, that's a good call. Right now it doesn't really happen since
-people tend to hook up the debug UART without flow control lines (as
-far as I've seen), but it's good to make sure it works.
+So it looks like referenced change isn't wrong, but reveals an
+underlying issue with device instantiation races.
+I'll have a look how this could be fixed.
 
+> That does suggest, though, that even your suggested code above might not
+> completely fix the problem. It may be necessary to call i2c_lock_bus()
+> or similar from i2c_new_scanned_device() and i2c_detect(), but I don't know
+> if that is save, sufficient, or even possible.
+> 
+>> 3. (unrelated but found while looking at the code) The comment for
+>> delete_device_store() seems to be outdated as it mentions i2c_sysfs_new_device
+>> which does not exist any longer, as it was renamed in
+>> "i2c: core: Use DEVICE_ATTR_*() helper macros" back in 2019:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/i2c/i2c-core-base.c?id=54a19fd4a6402ef47fce5c3a5374c71f52373c40 -
+>>
+>> For the Greg's question if it is also in 6.9: I have not tested that kernel yet,
+>> but unless there have been some recent changes in the i2c code I would expect
+>> it should behave the same way. If required, I should be able to do this next week.
+>>
+> Agreed.
+> 
+> Guenter
+> 
 
-> I'm leaning towards fixing the immediate hard lockup regression
-> separately and then we can address the older bugs and rework driver
-> without having to rush things.
-
-Yeah, that's fair. I've responded to your patch with a
-counter-proposal to fix the hard lockup regression, but I agree that
-should take priority.
-
-
-> I've prepared a minimal three patch series which fixes most of the
-> discussed issues (hard and soft lockup and garbage characters) and that
-> should be backportable as well.
->
-> Currently, the diffstat is just:
->
->          drivers/tty/serial/qcom_geni_serial.c | 36 +++++++++++++++++++++=
-++++-----------
->          1 file changed, 25 insertions(+), 11 deletions(-)
-
-I'll respond more in dept to your patches, but I suspect that your
-patch series won't fix the issues that N=C3=ADcolas reported [1]. I also
-tested and your patch series doesn't fix the kdb issue talked about in
-my patch #8. Part of my reworking of stuff also changed the way that
-the console and the polling commands worked since they were pretty
-broken. Your series doesn't touch them.
-
-We'll probably need something in-between taking advantage of some of
-the stuff you figured out with "cancel" but also doing a bigger rework
-than you did.
-
-[1] https://lore.kernel.org/r/46f57349-1217-4594-85b2-84fa3a365c0c@notapian=
-o
 
