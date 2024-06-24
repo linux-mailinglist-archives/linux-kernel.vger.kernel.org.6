@@ -1,143 +1,314 @@
-Return-Path: <linux-kernel+bounces-227600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F133D9153EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:33:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5009153F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79FE1F240FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:33:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9291F21604
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8034619DF6F;
-	Mon, 24 Jun 2024 16:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188F519E7F6;
+	Mon, 24 Jun 2024 16:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P5dG3G1P"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BZ1FBJ+d"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A2519DF77
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6037F19DF93
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246821; cv=none; b=f6YfIaAm/xTJ+G4Faou9754jJyflTyNheagn9gfCeDPLxvCfs3bChRge8DwUxWum/orZksG1/NPwl1uO26JHavWekfRfQwmaqMsuLqYsyY8p/Ddyfq2JhkXtlukYPYGFaRQqPFdBfI7RCZJy39uBRlBx0m/BNAqz7eQPHPwQ97A=
+	t=1719246837; cv=none; b=pxkJZpPYmM277uFjLeQTJJe+2zRBAElvfNQ2t4WvXhy6g0SFSS1j2RGzROg/g5IGSt4mQWGUDUJHVOKuxZHAaklzoj6AMokvjjmoS1huoCVjhquuXEBm07Q0YL37T4tquy7PeOVRnRwRFzfyvpLWPK6CxQULJ4kkIqr9E1sfgPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719246821; c=relaxed/simple;
-	bh=4gqQAbOK79zS1uKAm/hj5eq4OIA6n71bJj1tEIJvkBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UOmtaWZ9A+gcHb4FcJsTdI4y67QAo/jBmsVS9HUcSOxuZFcXu2hUL3FP9QqHnBk81pihttdp7DZ2BxTiNdNS8AABOYn4yFQcDqgR5NoYftninn33XrxQopfhmxhvDRRrI2IVZpnT+B99BQmWnqvrJirexihnviL9Fpz5B3aTXwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P5dG3G1P; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719246819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dgN0dBgy6sR0oAWnnFjEXlGg9ErnyA+uGyeQrtdxBG8=;
-	b=P5dG3G1PG8LRV4t9ZxiMvqopEg8bmw191ao3j2Yd7WkCMqosXYtK0+MCVLrYtmQt2fb/P2
-	IkwFQnRUGoPWosMWYLzbQ9jojqbJV+v8KGEWkvVgXHNoB6PMWcmZpkbYEihkqUB+YO8U3l
-	XNI66ykQbxZfCIqXRwZ3xNU1yVjvurs=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-106-hyTBx4oRNMyFE2NshUZ6sw-1; Mon,
- 24 Jun 2024 12:33:34 -0400
-X-MC-Unique: hyTBx4oRNMyFE2NshUZ6sw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA53F1955E82;
-	Mon, 24 Jun 2024 16:33:31 +0000 (UTC)
-Received: from [10.22.17.135] (unknown [10.22.17.135])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DC0AB19560BF;
-	Mon, 24 Jun 2024 16:33:28 +0000 (UTC)
-Message-ID: <d97e2e8f-0abc-49a7-bead-0501c1226040@redhat.com>
-Date: Mon, 24 Jun 2024 12:33:27 -0400
+	s=arc-20240116; t=1719246837; c=relaxed/simple;
+	bh=ePLTU3MVmoYysngJOsWhUdOR/IkiiLLf0YE6F/whMG8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=B7/cLYqaI0kQZDyzTSW7IIApl+rG2tVFJMpswul9TBP9CbPQW57pk2m+0JfFHdzdYRVy4wQjpDK8+dS+tTvVgBnI//kEpEcrvlAl6nByIGr/8oS3w7ffXaoAiPtSGZkwLqJymFZ5wwJ25ldbr6s6vs+lBE1wQzszSIJJQ5L1jSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BZ1FBJ+d; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42189d3c7efso49933585e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:33:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719246833; x=1719851633; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wPB8AEXrk7JwEaJcT35joxIm2q6uTszDlsxeaOMhunQ=;
+        b=BZ1FBJ+diHtsu4FKfuuOAYgBEO2Z74kwQcW6bvP2YZU8K5ptRJ7Koi9jU2FJ7mDrIS
+         72IFxi5XSOKnxr8VzXr0UzoxU/qHvpQv9t+P7gjsjNs9bHkIqr8M8JcMKYgIjddY1/2y
+         XooiQfa1kTzEvUAu81pUWpUy5PJJkJxJFHWEikJWzWrcACmoV+cN2yR5ym8NQNOPzTTN
+         2+GF4TbKLUBUb+z31IKolvSFg6PZkfkLBzIF058bc+6LeJKKlsYrH0HqO2mAZ99uiAAC
+         8rcU3Nrv1r7/Pae6V1pEBapiWE/UE/INnBfMvC1LhdDgYjkDKHVO9crsM1mdYnHemM2s
+         ZycQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719246833; x=1719851633;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wPB8AEXrk7JwEaJcT35joxIm2q6uTszDlsxeaOMhunQ=;
+        b=euHCk4x3qzEJPhj6mW3TKdOeHyEl070KE0bXoEkSiNObjDYfZE/Dh0Sc320rJFKo52
+         Nh0IiG7K7p2FHhsmbsj4WW3KD2mPG8YwpRPKE65oHhkCngW0rIHFVBXvI85EwiEn0anb
+         Lysrc585yDT/bzNLcmvaRwpLPqhWn10dlqP/v05ulKx97b66rY7z9yXmOSQLRAfEZGvR
+         GR0F8l0TaJQWDn0k8K38xrEnh1Nt4UjRC+jhgQP2THEJPVSCCMWgD6jvyNqQakpMkWit
+         EkZ3aLVdv/+YEmGb0tf7CnFugBrtASpJylYSxT9jTafF22SwSXcn8AvvnZfUKgYrQ8yC
+         6Liw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/7xd3kiaMXHMpHOOCumV6H+fR9FMJNKru86TcTIGOoinR7y10bZ8bgtKDMPvk/+MK6HucnX0fFmArxHsW2AHrGpGmpKaLMHH1aBvP
+X-Gm-Message-State: AOJu0YzfzZ+qEZmyYi39QAjheGznsoosa4meA4SZgc4ogNsihQX4Gm+f
+	eBPSZtY1D/hQ1gFepKktiuzCX00sSSj/JI0RA0uDmrJ7bvRh5PSFLKKupAu5N8c=
+X-Google-Smtp-Source: AGHT+IH6aHHAbz234y/LW0+FZWOgpjse2wJCMDlHm5Bpni+PpOamfKNE1xxUNOAddUF+INn4Tv6ruw==
+X-Received: by 2002:a05:600c:354f:b0:424:798a:f803 with SMTP id 5b1f17b1804b1-4248cc586f7mr42319465e9.30.1719246833492;
+        Mon, 24 Jun 2024 09:33:53 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0c5179sm177636375e9.26.2024.06.24.09.33.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 09:33:52 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Mon, 24 Jun 2024 17:33:41 +0100
+Subject: [PATCH] arm64: dts: qcom: x1e80100-qcp: add audio support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memcg: Add a new sysctl parameter for automatically
- setting memory.high
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- Shakeel Butt <shakeel.butt@linux.dev>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-mm@kvack.org,
- Alex Kalenyuk <akalenyu@redhat.com>, Peter Hunt <pehunt@redhat.com>,
- linux-doc@vger.kernel.org
-References: <20240623204514.1032662-1-longman@redhat.com>
- <77d4299e-e1ee-4471-9b53-90957daa984d@redhat.com>
- <ZnmO8izZPwYfiaRz@castle.lan>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <ZnmO8izZPwYfiaRz@castle.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Message-Id: <20240624-qcp-audio-v1-1-323a6b5e1fe5@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAOSfeWYC/x2NQQ6CQAxFr0K6tglOihqvYlwMbZEunIGOGhLC3
+ R1Yvvz381Yo6qYF7s0Krj8rllOF86kBHmN6KZpUhtAGai+BcOYJ41csowgF4quQdjeofh+LYu8
+ x8bg/Zs5vHLJj0uWz75PrYMvRejy37Q9Lq67eewAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4810;
+ i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
+ bh=ePLTU3MVmoYysngJOsWhUdOR/IkiiLLf0YE6F/whMG8=;
+ b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmeZ/w0SYAwP1bn1baA4OosqYp1rsFUYRiDgylo
+ /pEOKZFvwaJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZnmf8AAKCRB6of1ZxzRV
+ N3ehB/4gGk4RmImocaqA2JjLsDWZT0MqnyPqT0cRzlL9rXXJ7kYZjhP9bY/HKzi1JFSuaLBFM4z
+ 8BKJgndZ9MUKf0wvkVOA5+B8+jzcwPt1HUv10ANE55KLRL755To/6SASUTTZ/Rkk3zRxJsmm3gA
+ ouaTk32WimG3jPD/5sssGAf60qiRdB6STOMes1gicrZEFOoHun/3OVzduH84B3bW2ODCmRR5urV
+ GZqvmfBm44A60/nYbi30SWsWgkNxCi8mQHe3oEXdoeYzAo/SAgZePwfhsgeHls7ifoZiKm73JqH
+ gmvkONPp3HwU2OEPmGlb26+oEBT3ng1ug1lHNx1Gh9jDOFSW
+X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
+ fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
 
-On 6/24/24 11:21, Roman Gushchin wrote:
-> On Sun, Jun 23, 2024 at 04:52:00PM -0400, Waiman Long wrote:
->> Correct some email addresses.
->>
->> On 6/23/24 16:45, Waiman Long wrote:
->>> With memory cgroup v1, there is only a single "memory.limit_in_bytes"
->>> to be set to specify the maximum amount of memory that is allowed to
->>> be used. So a lot of memory cgroup using tools and applications allow
->>> users to specify a single memory limit. When they migrate to cgroup
->>> v2, they use the given memory limit to set memory.max and disregard
->>> memory.high for the time being.
->>>
->>> Without properly setting memory.high, these user space applications
->>> cannot make use of the memory cgroup v2 ability to further reduce the
->>> chance of OOM kills by throttling and early memory reclaim.
->>>
->>> This patch adds a new sysctl parameter "vm/memory_high_autoset_ratio"
->>> to enable setting "memory.high" automatically whenever "memory.max" is
->>> set as long as "memory.high" hasn't been explicitly set before. This
->>> will allow a system administrator or a middleware layer to greatly
->>> reduce the chance of memory cgroup OOM kills without worrying about
->>> how to properly set memory.high.
->>>
->>> The new sysctl parameter will allow a range of 0-100. The default value
->>> of 0 will disable memory.high auto setting. For any non-zero value "n",
->>> the actual ratio used will be "n/(n+1)". A user cannot set a fraction
->>> less than 1/2.
-> Hi Waiman,
->
-> I'm not sure that setting memory.high is always a good idea (it comes
-> with a certain cost, e.g. can increase latency), but even if it is,
-> why systemd or similar userspace tools can't do this?
+Add audio support to QCP platform which includes 2 x Speakers
+Headset Mic and Headset support.
 
-We actually have a OOM problem with OpenShift which is based on 
-Kubernetes. AFAIK, the setting of memory.high is still in alpha for 
-Kubernetes. So a memory cgroup is set up just by setting memory.max at 
-the moment.
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 155 ++++++++++++++++++++++++++++++
+ 1 file changed, 155 insertions(+)
 
-I also trace back the OOM problem to commit 14aa8b2d5c2e ("mm/mglru: 
-don't sync disk for each aging cycle") in the MGLRU code. So setting 
-memory.high automatically is one way to avoid premature OOM. That is the 
-motivation behind this patch.
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
+index b045b7bac9e0..02d30c0ada80 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
+@@ -19,6 +19,32 @@ aliases {
+ 		serial0 = &uart21;
+ 	};
+ 
++	wcd938x: audio-codec {
++		compatible = "qcom,wcd9385-codec";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&wcd_default>;
++
++		qcom,micbias1-microvolt = <1800000>;
++		qcom,micbias2-microvolt = <1800000>;
++		qcom,micbias3-microvolt = <1800000>;
++		qcom,micbias4-microvolt = <1800000>;
++		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
++		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
++		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
++		qcom,rx-device = <&wcd_rx>;
++		qcom,tx-device = <&wcd_tx>;
++
++		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
++
++		vdd-buck-supply = <&vreg_l15b_1p8>;
++		vdd-rxtx-supply = <&vreg_l15b_1p8>;
++		vdd-io-supply = <&vreg_l15b_1p8>;
++		vdd-mic-bias-supply = <&vreg_bob1>;
++
++		#sound-dai-cells = <1>;
++	};
++
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+@@ -127,6 +153,66 @@ linux,cma {
+ 		};
+ 	};
+ 
++	sound {
++		compatible = "qcom,x1e80100-sndcard";
++		model = "X1E80100-QCP";
++		audio-routing = "SpkrLeft IN", "WSA WSA_SPK1 OUT",
++				"SpkrRight IN", "WSA WSA_SPK2 OUT",
++				"IN1_HPHL", "HPHL_OUT",
++				"IN2_HPHR", "HPHR_OUT",
++				"AMIC2", "MIC BIAS2",
++				"TX SWR_INPUT1", "ADC2_OUTPUT";
++
++		wcd-playback-dai-link {
++			link-name = "WCD Playback";
++
++			cpu {
++				sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
++			};
++
++			codec {
++				sound-dai = <&wcd938x 0>, <&swr1 0>, <&lpass_rxmacro 0>;
++			};
++
++			platform {
++				sound-dai = <&q6apm>;
++			};
++		};
++
++		wcd-capture-dai-link {
++			link-name = "WCD Capture";
++
++			cpu {
++				sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
++			};
++
++			codec {
++				sound-dai = <&wcd938x 1>, <&swr2 1>, <&lpass_txmacro 0>;
++			};
++
++			platform {
++				sound-dai = <&q6apm>;
++			};
++		};
++
++		wsa-dai-link {
++			link-name = "WSA Playback";
++
++			cpu {
++				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
++			};
++
++			codec {
++				sound-dai = <&left_spkr>, <&right_spkr>,
++					    <&swr0 0>, <&lpass_wsamacro 0>;
++			};
++
++			platform {
++				sound-dai = <&q6apm>;
++			};
++		};
++	};
++
+ 	vph_pwr: vph-pwr-regulator {
+ 		compatible = "regulator-fixed";
+ 
+@@ -520,6 +606,16 @@ vreg_l3j_0p8: ldo3 {
+ 	};
+ };
+ 
++&lpass_tlmm {
++	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
++		pins = "gpio12";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-disable;
++		output-low;
++	};
++};
++
+ &mdss {
+ 	status = "okay";
+ };
+@@ -638,6 +734,57 @@ &smb2360_2_eusb2_repeater {
+ 	vdd3-supply = <&vreg_l8b_3p0>;
+ };
+ 
++&swr0 {
++	status = "okay";
++
++	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
++	pinctrl-names = "default";
++
++	/* WSA8845, Left Speaker */
++	left_spkr: speaker@0,0 {
++		compatible = "sdw20217020400";
++		reg = <0 0>;
++		#sound-dai-cells = <0>;
++		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
++		sound-name-prefix = "SpkrLeft";
++		vdd-1p8-supply = <&vreg_l15b_1p8>;
++		vdd-io-supply = <&vreg_l12b_1p2>;
++	};
++
++	/* WSA8845, Right Speaker */
++	right_spkr: speaker@0,1 {
++		compatible = "sdw20217020400";
++		reg = <0 1>;
++		#sound-dai-cells = <0>;
++		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
++		sound-name-prefix = "SpkrRight";
++		vdd-1p8-supply = <&vreg_l15b_1p8>;
++		vdd-io-supply = <&vreg_l12b_1p2>;
++	};
++};
++
++&swr1 {
++	status = "okay";
++
++	/* WCD9385 RX */
++	wcd_rx: codec@0,4 {
++		compatible = "sdw20217010d00";
++		reg = <0 4>;
++		qcom,rx-port-mapping = <1 2 3 4 5>;
++	};
++};
++
++&swr2 {
++	status = "okay";
++
++	/* WCD9385 TX */
++	wcd_tx: codec@0,3 {
++		compatible = "sdw20217010d00";
++		reg = <0 3>;
++		qcom,tx-port-mapping = <2 2 3 4>;
++	};
++};
++
+ &tlmm {
+ 	gpio-reserved-ranges = <33 3>, /* Unused */
+ 			       <44 4>, /* SPI (TPM) */
+@@ -679,6 +826,14 @@ wake-n-pins {
+ 		       bias-pull-up;
+ 	       };
+ 	};
++
++	wcd_default: wcd-reset-n-active-state {
++		pins = "gpio191";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-disable;
++		output-low;
++	};
+ };
+ 
+ &uart21 {
 
->
-> I wonder what's special about your case if you do see a lot of OOMs
-> which can be avoided by setting memory.high? Do you have a bursty workload?
+---
+base-commit: 781025f172e19ca5682d7bfc5243e7aa74c4977f
+change-id: 20240624-qcp-audio-dd424c7d4e58
 
-In our case, the OOM kill can be triggered by writing a large data file 
-that exceeds memory.max to a NFS mounted filesystem as long as there is 
-enough free pages that the dirty_bytes/dirty_background_bytes mechanism 
-isn't triggered.
-
-Regards,
-Longman
-
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
 
