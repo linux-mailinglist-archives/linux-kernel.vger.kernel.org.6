@@ -1,151 +1,166 @@
-Return-Path: <linux-kernel+bounces-227111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D0591487A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:23:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24CF4914881
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8571E1C2209F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:23:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877FCB251F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E85813A3E3;
-	Mon, 24 Jun 2024 11:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECE313B5A6;
+	Mon, 24 Jun 2024 11:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfISkCRq"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MnvohnQh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C7E137758;
-	Mon, 24 Jun 2024 11:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36E913957E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228186; cv=none; b=SvvWCz+7SPECVYdgq8AoeNiip2VphNLiBIXo/3qOPxeGnQQwkPhA0uvFV4qq/5Ea/1SAD6C96ZqyBckNIbYtihVR9CJW6GKQ5yvvZ2LlAEVbkWqZJmm1WuVFE6Gu/wrYJcCBKFjvaJ32D7ts3NC6oHSGcsw6jbBQn+2U94EAsus=
+	t=1719228194; cv=none; b=qgW3cCe+oVCQL3f3Fj8xQjeMDwk/jCdQ5UVS2ND+3jbFJragkuLIGpLpumw+xCBtYWouMswqMkMpmNpUOYbFU7WlqktIuo8oZD1YPbZ8pi66KSnG8YVwH1FPZmMpleZ+oaxoVEy3Xu8FCPc+/x+oQ7Dgdw58LYUM9AqAjKQqOyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719228186; c=relaxed/simple;
-	bh=1wz1DO4+P9GXw81HrvYZRwiMbG8RW3ptYFK10YnWQYI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pX9Or4u1yrYi5esIy8u8yqB3SwLwG+raW0b0eE2Gdxxud2dHTtLHwCnsTADaG1TjCgppSpLUm/bCE42/wKElFcxeHQpCubkmtVj72NdZ9FJdkL8VQod9KowLTeA8VhvjXZDZm+2SmB5jSTbFDMmUfdUJCuIY4phkBtaX8CnRcy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfISkCRq; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cdf2c7454so2834479e87.1;
-        Mon, 24 Jun 2024 04:23:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719228183; x=1719832983; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GuZakqcQ8P7/8zUig3bLggNmER3pcdpTwZQ0sDBpoFc=;
-        b=XfISkCRq9mHxRrTkuJ1eEU8ytNFflYnYpPWmbW/a3X4rtwHo5wJxc8TUkqTlrtp94u
-         nZPJSeDe+E8VQiIhJygZm7f9kw0rUxQ2FZRX+OrtBw5ZJKgaCiWGWJII67XdBeD4Pd1R
-         Qu8akQIq5SRAE4HWkYzCHS5Yr+ooQRwqvUZ7tAbykzqhHy4WVtYK+ppo6QizzbxFvzYU
-         RIZIw8L+AkMWDro9ygZsOHCJbIS38RApFOlTsqZ4Qb98XD89F1mapqBS8skXpVgSZnEZ
-         A343fX+NaAPqhi9hBIFzWK0UH5dW8+lWSSoA4nTC/QkV4Mjp9B/E5hmF2LBr7Fu8Vu9a
-         dLgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719228183; x=1719832983;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GuZakqcQ8P7/8zUig3bLggNmER3pcdpTwZQ0sDBpoFc=;
-        b=Buf9aaQtx4UsAzJ4i35K1uWDthIIh2v31RRawMYnuifJTj3/H5apQsX4YptCIRXikY
-         Ty43I1a+hlKjpCoic3loFNcXZiYz+0r2WNCv6omVE8ty06dsRFrpPfD9v4ogA9mxtDk0
-         JYEDtVhjGm7WgDdiULYiPbDg1kvnaY18naxkEXGj4NrLRWoLrgHFiCTfH6jqgbtZs2Sw
-         7QkKjCfG476U6mVJzqczlqxNBh7QPcnaZH+ouM4RpxdB/bEP6EyJJ8OM7gmU9ySDw0r0
-         zUXPNi5p9jxjzFoviT9eKTP7QCONtoPvwPDnyoLAu6HrAABrvCwa6oqdKedPeEpl+NPx
-         ceyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEBZoyJGvGa8aTxPkcn5HwzZIONg09E6t+qgXKAuUYMY74yB8mGwZBKajZ+B41ivHTgZD4EdXit6UGxIbJToWnuKLkuSNfDC8O+sASXWGp1Ayjovif451upp9eNQSKcrPd
-X-Gm-Message-State: AOJu0Yz55vZr0aU+obsMaJB99iwS8mxjuIRQFbWeNfesN9T974l/eyYv
-	cRP+WY06xkCHrvdF+tdTEzCCvcQWpQrK1RMlUCh+6xhn/xvhjq2BQD9Pwg==
-X-Google-Smtp-Source: AGHT+IFFVh3a7Lk9TfHP/1hRO/050f5iXVyxCbY49eRmEy35wRdA+P/mkPt07Tee0w1T9Be/vxUe4Q==
-X-Received: by 2002:a05:6512:490:b0:52b:c195:5d9c with SMTP id 2adb3069b0e04-52ce185ce3dmr3369478e87.61.1719228182746;
-        Mon, 24 Jun 2024 04:23:02 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7251ace5besm125505566b.179.2024.06.24.04.23.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 04:23:02 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 24 Jun 2024 13:23:00 +0200
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v2] build-id: require program headers to be right after
- ELF header
-Message-ID: <ZnlXFF2sV-JNjGl2@krava>
-References: <0e13fa2e-2d1c-4dac-968e-b1a0c7a05229@p183>
- <20240621100752.ea87e0868591dd3f49bbd271@linux-foundation.org>
- <d58bc281-6ca7-467a-9a64-40fa214bd63e@p183>
+	s=arc-20240116; t=1719228194; c=relaxed/simple;
+	bh=pz7sF+ZNbJ8Bz1RRTeSeApuW5zYwcOlxnuYNSLjnGG8=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=Xr7nnPGt0lP8Ma9bKml4awzyzayjnH76tPsE5qDCbaPSbDD24qtEO3uhhIed0Jf8SxQ27OzQF+T43Nhdhd95qpGi3lshoYytPhDALZjsYVr/MMAy94Yz560I6YQCpZC44Huv+zAbJMt94Ed8BGV4/FBZgi31KqipwAghgdbbx+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MnvohnQh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719228191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LH3f+Un7sHJi2rr5Ob6HxSxGqRh20bSt/mtca6UvBrE=;
+	b=MnvohnQhdhxqg5A/XTh0H0XXqJO95GjA4tdHmGmqhXTUm1JU+sPuRaoyCxtxrA6WYwdPxz
+	dkPW2k/DEWbuoNiOrvXKlCeCRwCbyKMjuaFwCDiYBUhOqlOJ3/wAxJ2jyYOnsnZgo/+MZR
+	SF1z7bYX3SPcU8UYezo7tKd7JpLcvao=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-389-sVUMWg9KOmO8r1WqE1-FXA-1; Mon,
+ 24 Jun 2024 07:23:08 -0400
+X-MC-Unique: sVUMWg9KOmO8r1WqE1-FXA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 97142195608A;
+	Mon, 24 Jun 2024 11:23:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.111])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 240671955E75;
+	Mon, 24 Jun 2024 11:23:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+    Matthew Wilcox <willy@infradead.org>
+cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    netfs@lists.linux.dev, v9fs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: Fix netfs_page_mkwrite() to check folio->mapping is valid
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d58bc281-6ca7-467a-9a64-40fa214bd63e@p183>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <614256.1719228181.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 24 Jun 2024 12:23:01 +0100
+Message-ID: <614257.1719228181@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-ccing bpf list
+Fix netfs_page_mkwrite() to check that folio->mapping is valid once it has
+taken the folio lock (as filemap_page_mkwrite() does).  Without this,
+generic/247 occasionally oopses with something like the following:
 
-On Fri, Jun 21, 2024 at 09:39:33PM +0300, Alexey Dobriyan wrote:
-> Neither ELF spec not ELF loader require program header to be placed
-> right after ELF header, but build-id code very much assumes such placement:
-> 
-> See
-> 
-> 	find_get_page(vma->vm_file->f_mapping, 0);
-> 
-> line and checks against PAGE_SIZE. 
-> 
-> Returns errors for now until someone rewrites build-id parser
-> to be more inline with load_elf_binary().
-> 
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> ---
-> 
->  lib/buildid.c |   14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> --- a/lib/buildid.c
-> +++ b/lib/buildid.c
-> @@ -73,6 +73,13 @@ static int get_build_id_32(const void *page_addr, unsigned char *build_id,
->  	Elf32_Phdr *phdr;
->  	int i;
->  
-> +	/*
-> +	 * FIXME
+    BUG: kernel NULL pointer dereference, address: 0000000000000000
+    #PF: supervisor read access in kernel mode
+    #PF: error_code(0x0000) - not-present page
 
-nit, FIXME is usually on the same line as the rest of the comment,
-otherwise looks good
+    RIP: 0010:trace_event_raw_event_netfs_folio+0x61/0xc0
+    ...
+    Call Trace:
+     <TASK>
+     ? __die_body+0x1a/0x60
+     ? page_fault_oops+0x6e/0xa0
+     ? exc_page_fault+0xc2/0xe0
+     ? asm_exc_page_fault+0x22/0x30
+     ? trace_event_raw_event_netfs_folio+0x61/0xc0
+     trace_netfs_folio+0x39/0x40
+     netfs_page_mkwrite+0x14c/0x1d0
+     do_page_mkwrite+0x50/0x90
+     do_pte_missing+0x184/0x200
+     __handle_mm_fault+0x42d/0x500
+     handle_mm_fault+0x121/0x1f0
+     do_user_addr_fault+0x23e/0x3c0
+     exc_page_fault+0xc2/0xe0
+     asm_exc_page_fault+0x22/0x30
 
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+This is due to the invalidate_inode_pages2_range() issued at the end of th=
+e
+DIO write interfering with the mmap'd writes.
 
-thanks,
-jirka
+Fixes: 102a7e2c598c ("netfs: Allow buffered shared-writeable mmap through =
+netfs_page_mkwrite()")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: netfs@lists.linux.dev
+cc: v9fs@lists.linux.dev
+cc: linux-afs@lists.infradead.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-mm@kvack.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/buffered_write.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+index c36643c97cb5..6a6387b3aaff 100644
+--- a/fs/netfs/buffered_write.c
++++ b/fs/netfs/buffered_write.c
+@@ -497,6 +497,7 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, st=
+ruct netfs_group *netfs_gr
+ 	struct netfs_group *group;
+ 	struct folio *folio =3D page_folio(vmf->page);
+ 	struct file *file =3D vmf->vma->vm_file;
++	struct address_space *mapping =3D file->f_mapping;
+ 	struct inode *inode =3D file_inode(file);
+ 	struct netfs_inode *ictx =3D netfs_inode(inode);
+ 	vm_fault_t ret =3D VM_FAULT_RETRY;
+@@ -508,6 +509,10 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, s=
+truct netfs_group *netfs_gr
+ =
 
-> +	 * Neither ELF spec nor ELF loader require that program headers
-> +	 * start immediately after ELF header.
-> +	 */
-> +	if (ehdr->e_phoff != sizeof(Elf32_Ehdr))
-> +		return -EINVAL;
->  	/* only supports phdr that fits in one page */
->  	if (ehdr->e_phnum >
->  	    (PAGE_SIZE - sizeof(Elf32_Ehdr)) / sizeof(Elf32_Phdr))
-> @@ -98,6 +105,13 @@ static int get_build_id_64(const void *page_addr, unsigned char *build_id,
->  	Elf64_Phdr *phdr;
->  	int i;
->  
-> +	/*
-> +	 * FIXME
-> +	 * Neither ELF spec nor ELF loader require that program headers
-> +	 * start immediately after ELF header.
-> +	 */
-> +	if (ehdr->e_phoff != sizeof(Elf64_Ehdr))
-> +		return -EINVAL;
->  	/* only supports phdr that fits in one page */
->  	if (ehdr->e_phnum >
->  	    (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
+ 	if (folio_lock_killable(folio) < 0)
+ 		goto out;
++	if (folio->mapping !=3D mapping) {
++		ret =3D VM_FAULT_NOPAGE | VM_FAULT_LOCKED;
++		goto out;
++	}
+ =
+
+ 	if (folio_wait_writeback_killable(folio)) {
+ 		ret =3D VM_FAULT_LOCKED;
+@@ -523,7 +528,7 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, st=
+ruct netfs_group *netfs_gr
+ 	group =3D netfs_folio_group(folio);
+ 	if (group !=3D netfs_group && group !=3D NETFS_FOLIO_COPY_TO_CACHE) {
+ 		folio_unlock(folio);
+-		err =3D filemap_fdatawait_range(inode->i_mapping,
++		err =3D filemap_fdatawait_range(mapping,
+ 					      folio_pos(folio),
+ 					      folio_pos(folio) + folio_size(folio));
+ 		switch (err) {
+
 
