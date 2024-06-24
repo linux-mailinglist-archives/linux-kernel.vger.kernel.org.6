@@ -1,64 +1,74 @@
-Return-Path: <linux-kernel+bounces-226733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49369142D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:34:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5809142D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D3EAB241A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:34:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924231C22D60
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF25376F1;
-	Mon, 24 Jun 2024 06:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9539A3A8C0;
+	Mon, 24 Jun 2024 06:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="562J2h7w"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ezu47ZH2";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ezu47ZH2"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407553A8D2
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D38A3D96A;
+	Mon, 24 Jun 2024 06:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719210877; cv=none; b=ruj71pRCh+418qIkYY9eUP527mjFOofaTrQmCYIPAnN4vmZLeK57V6evfPa/7HrOOWKiJotjYDlbo6lT2XMhf6sKMY8bGqN9aIaXzurhG0BS0X3xXPHNMsBShuVpLedOhHDIEhRORUJPWgscHv1FDtisebmIIk6ZoJ1G5zga5pc=
+	t=1719210892; cv=none; b=pPeOReXPHfv5d/8lgURLAo+Cv+87is02ktgXdNswgFO4EBSrJoCeH7ntuSTFg68EjHqN/iyHaS+eU3+cuYINLfKNgWsG/gQW2N97HMOS1TiQmrEU14ULU1F7YiuRTRpuw7lad3Z+bXH9yFp2dIA1pz+tdc7336ZW3ns4izyPLiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719210877; c=relaxed/simple;
-	bh=SteysrwAHMMgc3MdIJ01b3nEIBxSaycWXBNfyu+17y4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rEEf7DK/qAoQLSKW5Xfynv+evvsKw9tGglA6NKinz9WXfEYTZie4OGut1RA0tV7gRwKzIbrQqkv3QPeYq4kPhtuPDS5rW8p/hrAOCmq9w+mjyiaNuNdzioeHbCuM0uqAL7EJRtLx0Dr3Cvm9FZ3i9l63sHAOKH4o38P9ZEsSRek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=562J2h7w; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O2RW1Z023858;
-	Mon, 24 Jun 2024 08:34:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	AYdNd57iAuRtoezAk2Hw4WaTeN0KxsUMdYBv57EkAXM=; b=562J2h7wZJ4LeIMR
-	C3h7xoriDTH5zmwWtUtz4m68927A0dbGLaR/B/WVz7gRjdDZlJpx+8CpMKlP7EVS
-	zBL/IRZRNWYyPz+WHHYWuUhIJNLHFTkGTy1+EfjhfE4lBRulGyf/FhRmWbT/8RJl
-	yv23aeErmZBg+a7Xtxq4hOFRyNgvPb1Vkp1G+B3vv7grer9n0tD8p8JsmZ0XXmqf
-	Cz3fQYHqBQUbFD363DmjUmbEuyqh7QTJXTovOJyUFL3BeQPGXyKUmXfJa44nzZP5
-	MM++5puibrzkYSkHawxmJztzKbT9/l1m9OykHs51AbeECS4DCRJV/ql9Nzu09uFb
-	Z96O5A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ywm1g5qbt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 08:34:21 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1C32440044;
-	Mon, 24 Jun 2024 08:34:16 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B07C82105AF;
-	Mon, 24 Jun 2024 08:33:59 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 24 Jun
- 2024 08:33:59 +0200
-Message-ID: <00f3fe1f-1778-4b7d-b905-8a7017cc68ac@foss.st.com>
-Date: Mon, 24 Jun 2024 08:33:58 +0200
+	s=arc-20240116; t=1719210892; c=relaxed/simple;
+	bh=5wWeGBPlm4+UHCYoNYSsMzwnp/gskQPkm5NlvO8iPyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m9MIWIYKhSf3EDpCDVhaERrDHPF/L9XTXKLNSCMMZlY785Oj+D2EkqzJtW2cISsLJOI8ITT88qDqqdHezIB0u+NNITzh6bXq+hj6jCjbQJaKMjmPEVDXDnhaYFgw4oAEnrfoyb3i6tfpKEhGss5udtPXtzA1EUHWqNKaYh+vBBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ezu47ZH2; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ezu47ZH2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2F825219DA;
+	Mon, 24 Jun 2024 06:34:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1719210889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z3WhiZXNQHgFwvVrbBEz4za7o2pwZgL3jItNx6ibiys=;
+	b=ezu47ZH2GWQetljxo8W9EMriwjsho4BU3PlWB+8aiEKMaWvQymGY7PDS3xFAtCHsDSbpt9
+	/jXBzP0ap3MzYlxK12qCi5OC0LxQGKTXa8AG91Y54l2XqwOBZAxFQM3ar3pQgUtSe1buEH
+	3hcjzbmA91gHsacEtnDOCUiwnl/zWfs=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=ezu47ZH2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1719210889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z3WhiZXNQHgFwvVrbBEz4za7o2pwZgL3jItNx6ibiys=;
+	b=ezu47ZH2GWQetljxo8W9EMriwjsho4BU3PlWB+8aiEKMaWvQymGY7PDS3xFAtCHsDSbpt9
+	/jXBzP0ap3MzYlxK12qCi5OC0LxQGKTXa8AG91Y54l2XqwOBZAxFQM3ar3pQgUtSe1buEH
+	3hcjzbmA91gHsacEtnDOCUiwnl/zWfs=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EC1DD13AA4;
+	Mon, 24 Jun 2024 06:34:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dGmJN4gTeWZnaQAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 24 Jun 2024 06:34:48 +0000
+Message-ID: <988f62b6-642d-404e-ae1e-1c9a428c1eb9@suse.com>
+Date: Mon, 24 Jun 2024 08:34:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,70 +76,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] reset: sti: allow building under COMPILE_TEST
-To: Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <kernel@pengutronix.de>
-References: <20240621-reset-compile-sti-v1-1-b7a66ce29911@pengutronix.de>
+Subject: Re: [PATCH] xen/manage: Constify struct shutdown_handler
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ xen-devel@lists.xenproject.org
+References: <ca1e75f66aed43191cf608de6593c7d6db9148f1.1719134768.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20240621-reset-compile-sti-v1-1-b7a66ce29911@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <ca1e75f66aed43191cf608de6593c7d6db9148f1.1719134768.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_06,2024-06-21_01,2024-05-17_01
+X-Rspamd-Queue-Id: 2F825219DA
+X-Spam-Score: -3.45
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.45 / 50.00];
+	BAYES_HAM(-2.95)[99.80%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MIXED_CHARSET(1.00)[subject];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[wanadoo.fr,kernel.org,epam.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.com:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.com:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-
-
-On 6/21/24 17:21, Philipp Zabel wrote:
-> The STIH407 reset driver can be compiled without ARCH_STI being
-> enabled. Allow it to be built under COMPILE_TEST.
+On 23.06.24 11:26, Christophe JAILLET wrote:
+> 'struct shutdown_handler' is not modified in this driver.
 > 
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
->  drivers/reset/Makefile    | 2 +-
->  drivers/reset/sti/Kconfig | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
 > 
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index fd8b49fa46fc..ff716f9afc84 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -2,7 +2,7 @@
->  obj-y += core.o
->  obj-y += hisilicon/
->  obj-y += starfive/
-> -obj-$(CONFIG_ARCH_STI) += sti/
-> +obj-y += sti/
->  obj-$(CONFIG_ARCH_TEGRA) += tegra/
->  obj-$(CONFIG_RESET_A10SR) += reset-a10sr.o
->  obj-$(CONFIG_RESET_ATH79) += reset-ath79.o
-> diff --git a/drivers/reset/sti/Kconfig b/drivers/reset/sti/Kconfig
-> index a2622e146b8b..0b599f7cf6ed 100644
-> --- a/drivers/reset/sti/Kconfig
-> +++ b/drivers/reset/sti/Kconfig
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -if ARCH_STI
-> +if ARCH_STI || COMPILE_TEST
->  
->  config STIH407_RESET
-> -	bool
-> +	bool "STIH407 Reset Driver" if COMPILE_TEST
->  
->  endif
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>     7043	    788	      8	   7839	   1e9f	drivers/xen/manage.o
 > 
-> ---
-> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-> change-id: 20240621-reset-compile-sti-ca6c2ddd0c63
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>     7164	    676	      8	   7848	   1ea8	drivers/xen/manage.o
 > 
-> Best regards,
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-Thanks
-Patrice
+
+Juergen
+
 
