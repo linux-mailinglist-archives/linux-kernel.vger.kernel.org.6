@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-227620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C31915493
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:44:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0797915495
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79A761C23208
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:44:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A3B41F24D7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95AF519E831;
-	Mon, 24 Jun 2024 16:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E40A19E82E;
+	Mon, 24 Jun 2024 16:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4IDlqn3"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LrPJ3p5X"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5820C19E7FD
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FBD19E813;
+	Mon, 24 Jun 2024 16:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247447; cv=none; b=JZjXR0Ozjwcv3Vo4lQAHLZGEXy6k6AavkZj0hrcY+fLMHGmSAX+r18HX/pRP5Z4XMhAzgdPyIDnVht2WbzWXZQ0q70lF7+wXI+K45rVHKMWxgI7unMYPDF27gsmwxZGhdk8Fr8b+EYtSK6zi1Z9D6mGB7grHRGXf/q1E3jDAeKI=
+	t=1719247449; cv=none; b=TZ553iU3l6er8Xau2r+T5F6ZtCwXD0iDkitDf3ebHL5nKbxRfX3OJ2mDICuVWaPfwv3dUbnUNzvWzevom6SzGYRDJLhqxAHWu4wxQSUg9dG07pWqsYUr8ixJ9aOhgpjJj3a7i0H7QiPeVCM2wttsu+QTTE/Nl1IA7esY+ZL7dKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247447; c=relaxed/simple;
-	bh=j/Zhl07/mGungCEQOMBPhb09WEiiiTeekEFTk2ivabw=;
+	s=arc-20240116; t=1719247449; c=relaxed/simple;
+	bh=Y2BB2weXpa+LoCNHgaMdua1IE8aKDXJvx8s/YfYa6MI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mmBOruLDQI/tmu//7omDfKgHdxt3DaduiGNpOwSTY9bjqSklQc5juxmrE7l8nyhx6zt+daw5LuWa1/LvhHgWAtFWxWCgTVkYRDHMhaMClSjc8q3O7S3cxp4E/lzDpHZfFUTrZ3G+kF0GebHff0jYSyLIvrQtR9tPH8KD+TPB9C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4IDlqn3; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:To:Cc; b=dV4o33kPq/DFLIqQ7Wk77a+g/X5bh+l0y9j1V3yhQpwvc4FdsSiiv2GNqbSmJLMbWuwzjY6btfIZye2ATDx/1yiG9VqBAsNJ1zYJqf0YJJtf+oF6XthfNsIIRCKODx7l6CT1v7waWdAjdZjc3o3iM7YXnUnlE5SnpKZw2WFS2PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LrPJ3p5X; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4217dbeb4caso38767065e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:44:06 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4248ea53493so11085795e9.3;
+        Mon, 24 Jun 2024 09:44:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719247445; x=1719852245; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719247446; x=1719852246; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8kHPT/Sbn+YowQq/I8VGD+WkhOqD5j84bm9SVl0pb1A=;
-        b=P4IDlqn3HCm/Xk8G0C9NoNnmWHGQSU91ViEV2f7hpKXmrRXnptqZaKQ0HcnCcb9bRB
-         W0OryiExioGmM8TY8fc8/mnsy07agwxVXSeHu9P9IIMWSuJQ65IsOuGFffXGso4+JlWJ
-         zcf3/rtdl5yAGD8cN3xsXQ1CRZe/t3T712hRn+9f15f6fgX2RszP6DFaZiEbMU/Uac4u
-         B2OZjxMRGU6Xo5pUORNs1XnQBrzOQ53XQSWoirZU0AcmlOPV6Jv0w7cHsCxdvr/t9Drp
-         vChoO0721Opyzp7S42bGJGULeeW/DJSXbo+Vj1uoz2k07HqN00KGfRtYabN0GZxTSVuG
-         FeCw==
+        bh=uw74zf66DQORFJn85kqFB7s36On7KUi5ywYxV+PBn+Q=;
+        b=LrPJ3p5Xgck3I8V55ZhMo9joe/r6VXI1n5qREcE9CKfW11fwACTNVwpWo8qTiFL9t+
+         l+kysnxc4EMuSeeDAI5L5OvRDI9CV+NgAyUoMK2LF/JQpPVSkjSnGjJMzIwtji5m16VW
+         b6p+RtkqmLomHg4S7A8WusAFrVNalE0qs86mQeS6lkcnJc/7NKxTXvZVyh88+c2RXQXH
+         qrPmLZG6JOLfSokGafovBfCdvx9LSCPKRfEj0T1tGJrO3E8Hkwu/pUjiP2kcVStocoox
+         rHusZvl6PvwPqHVrAsW++Az3WZUZ3oC7lg5yoIwzbwwav1S9oqSXAA/5PY8/Y4Annk55
+         BjPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719247445; x=1719852245;
+        d=1e100.net; s=20230601; t=1719247446; x=1719852246;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8kHPT/Sbn+YowQq/I8VGD+WkhOqD5j84bm9SVl0pb1A=;
-        b=wLOhdCd579AM+FgCqbDjZd8cUctN6168liuRtz2XOsENePYgPIsrZa5HODk/4o71wO
-         VOA5bJipElFGZ1DCuFlZN+DYIWRKFpuO0XfgQFey+On6WD7WwCAMhWV1gyER3BnjCDj0
-         ShqiX0NmxqpQ/ka5yOJW93ULzzsM+k1wagMbSILRw61D5djDnwTw9KTdpoyLLTUEjFsL
-         obuMEN/03nr3rQndqfD6dcgp8IcVXQZpLPrwHvMAzTUzfIRFVzcOSxBwFCA6jYPG94V2
-         v//j4fWI+lSjK8GSzsfTsuWeloqTM6m36actJYrtKFpz59S747vVVihRhSf+0TiCQ7Uf
-         N9ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ5ys5neRSY0+rXF4xcgO1VpS35sM8O2VDqJYLIU97tYsDoFX6QUVlOMuuP/MM0bwlJO2VrmspfnKlWI+2LZmwlh7HwBrqwMEoJJlI
-X-Gm-Message-State: AOJu0Yzi1wSLuOHrtKo8kzXMNlYSO7oBBtHG34Vy6UvDwmjGKbakDulR
-	1zuAAPZg8nJ3yEYVS0Ts+OFBGOa7X8ZpnlPiZ5/CrrfZ0nNinjdv
-X-Google-Smtp-Source: AGHT+IH+MF/1j+d+mvD3UvJmt7w30GJxIqwd74Gd3nbm7skLi+nadm6az73r+6Ot9QMhLZdiwI26aQ==
-X-Received: by 2002:a05:600c:450d:b0:421:7198:3d76 with SMTP id 5b1f17b1804b1-4248cc58b99mr34106605e9.28.1719247444697;
-        Mon, 24 Jun 2024 09:44:04 -0700 (PDT)
+        bh=uw74zf66DQORFJn85kqFB7s36On7KUi5ywYxV+PBn+Q=;
+        b=W310B0drnN8gyo9hQ36+Wo1s4zhhYHHJ+PxmFxe/tt8ZNkv72CjZpR/U4FjSdHyb+7
+         zpXdgJWqeOGryQ8J376mvffOn222v4HQA0n5AXnpH6NxnpYfvN7eyxpW6ktpqov/YRDZ
+         3DI1np3pfr+IsMXXWDImbXka04Vf7hC4r/xRFWjvmMNQWs+nloks4d+f5pY8H0mUFdQn
+         9uFcXIgy6DbTILzNfgYa8LFP7qx897hgU9BQK9rZnde1ZSUwlLsmOOWryz86Ei3l8mxb
+         DIlR+6f3YgZsEVGUVakC+0ncgHj0LjaWKOdKYBVQUA4eEiQUearHO/2wKy1c1iWBabA3
+         KEdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMVVLLPVOlyb60BxW5E2uZzZ8B1uu8c7nNVq8DUVo166UY/CMHVsiNfUZlj7DVigH+jbX+KNEEg3dxbcPfwRZJP0miAM7zbI9NP5LtmGLc/m11MFVnL1P+Rt4fEJQHLjgBKXeO
+X-Gm-Message-State: AOJu0YzJNGjAyXkrS8ls2f456kAeErnz3LH56a3/vkoQ0yr+DbnQwv05
+	zV5Gp37aJvtXkwhZWBfceKcmb8iHyYktoRYsnmrKplLbO3zD4g6O
+X-Google-Smtp-Source: AGHT+IFJgazm2qcBXOO1WWxGq23AutwedIYScGjsNMAPrLSl9grCFKoRB3d22V6hGWsVj6fq6F18nQ==
+X-Received: by 2002:a05:600c:6ca:b0:424:8dc4:ee43 with SMTP id 5b1f17b1804b1-4248dc4ef8cmr40224005e9.6.1719247446267;
+        Mon, 24 Jun 2024 09:44:06 -0700 (PDT)
 Received: from [127.0.1.1] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42484fc0aecsm126090365e9.12.2024.06.24.09.44.03
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42484fc0aecsm126090365e9.12.2024.06.24.09.44.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 09:44:04 -0700 (PDT)
+        Mon, 24 Jun 2024 09:44:05 -0700 (PDT)
 From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Mon, 24 Jun 2024 18:43:46 +0200
-Subject: [PATCH 1/3] drm/mediatek: ovl_adaptor: drop unused mtk_crtc.h
- header
+Date: Mon, 24 Jun 2024 18:43:47 +0200
+Subject: [PATCH 2/3] drm/mediatek: ovl_adaptor: add missing of_node_put()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240624-mtk_disp_ovl_adaptor_scoped-v1-1-9fa1e074d881@gmail.com>
+Message-Id: <20240624-mtk_disp_ovl_adaptor_scoped-v1-2-9fa1e074d881@gmail.com>
 References: <20240624-mtk_disp_ovl_adaptor_scoped-v1-0-9fa1e074d881@gmail.com>
 In-Reply-To: <20240624-mtk_disp_ovl_adaptor_scoped-v1-0-9fa1e074d881@gmail.com>
 To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
@@ -88,35 +87,44 @@ To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
  "Nancy.Lin" <nancy.lin@mediatek.com>
 Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
 X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719247441; l=718;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719247441; l=1042;
  i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=j/Zhl07/mGungCEQOMBPhb09WEiiiTeekEFTk2ivabw=;
- b=nsHPwkldRVFX0qaLEQCcbPwptfpdpZshqISZVJXbL07KghajM9UUXAa/ztlPZoq/H7lrAeLum
- wFs+M1/owgeDqHH9yoZFm/ngRVpRlYSYb9NOtW91UJ8iIKqf8x5MLG9
+ bh=Y2BB2weXpa+LoCNHgaMdua1IE8aKDXJvx8s/YfYa6MI=;
+ b=RAqXlU9Qx0xyXFz5ElRIdZf5wbyhqD1m5J/GrWFrXfBbUzgeeyRE+ciEsRkz6rmFpz1gue41A
+ vrubTA59EmVC63CZJ8zl+7GhwXzFo2s4l6d2Ty9wnfS3yvCWNVBinoH
 X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
  pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-None of the elements from that header is used in this file.
+Error paths that exit for_each_child_of_node() need to call
+of_node_put() to decerement the child refcount and avoid memory leaks.
 
+Add the missing of_node_put().
+
+Cc: stable@vger.kernel.org
+Fixes: 453c3364632a ("drm/mediatek: Add ovl_adaptor support for MT8195")
 Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
- drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-index 02dd7dcdfedb..1418992311c4 100644
+index 1418992311c4..3faf26a55e77 100644
 --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
 +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-@@ -17,7 +17,6 @@
- #include <linux/soc/mediatek/mtk-mmsys.h>
- #include <linux/soc/mediatek/mtk-mutex.h>
+@@ -522,8 +522,10 @@ static int ovl_adaptor_comp_init(struct device *dev, struct component_match **ma
+ 		}
  
--#include "mtk_crtc.h"
- #include "mtk_ddp_comp.h"
- #include "mtk_disp_drv.h"
- #include "mtk_drm_drv.h"
+ 		comp_pdev = of_find_device_by_node(node);
+-		if (!comp_pdev)
++		if (!comp_pdev) {
++			of_node_put(node);
+ 			return -EPROBE_DEFER;
++		}
+ 
+ 		priv->ovl_adaptor_comp[id] = &comp_pdev->dev;
+ 
 
 -- 
 2.40.1
