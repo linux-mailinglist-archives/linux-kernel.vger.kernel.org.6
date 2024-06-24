@@ -1,144 +1,326 @@
-Return-Path: <linux-kernel+bounces-228042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E279159F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:37:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D1A29159F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0A331C2242F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:37:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 226911F23404
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B096C1A254A;
-	Mon, 24 Jun 2024 22:37:26 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153D51A0B1D;
+	Mon, 24 Jun 2024 22:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CzCWSx3e"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6DC45C1C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD2E136678
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719268646; cv=none; b=SrWDS3wRay9P1XUpRcVM4XaO5zLWJa6UutCNitQgtifjPozAQ26ibw0XbFONI//E2vYjztSJ9GCJn7U3DiPAdHLqJ5+WdyiPBOD+GCrrybhYlXNnZ8vJ2zp7GFDlrZ8TW3xDgF9bDRf/eecyiFLp+AcQBbTWwiVNsXw3vaFhMFE=
+	t=1719268711; cv=none; b=Og8ZpHI3ZWbSAOL/BnmvxVGxpFJS6IyreLxcGaoaUvbav1OZJwodxv1MkPtDMlfrj+wA9CH8/9ULw4vE8NNUpA3MlsTlg5ncFIFmWuv/mtxWhudEoI/X3lnYtNBYCPHJgDwsxhAaZnkrPxeQvHmP3E3HOrkZ8WG+IVblgesH2lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719268646; c=relaxed/simple;
-	bh=JDkANpAzKfpwY21Y7NCdTNYTbCi8+eAWHQXouTPV7bA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qlwH5OkMTvMo+jbmBpBtfInlzb5JAELd9TvPSa5sTelUdkaBbYKidbA/O+Io/BcQdIqJXOBN/O2fD67xftelz9enKJVdm5UmdoiVXRH/fR3dPMiP5XTzbvrhz+v+RErBQ0fg4+rhf0WxmkIucUL2CsvCV8HDVpunio/l25mXV+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e94cac3c71so643526939f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:37:24 -0700 (PDT)
+	s=arc-20240116; t=1719268711; c=relaxed/simple;
+	bh=TWZEx3suLsxpdgGc3UYSLahjYdAYFMqvVrackbiut0w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o+DPNvDwnqy9oA9R8obMGbCmT+dzg93JK9laY+vhBqCKBVHFm2MFIpsDro3RvrNfZGYDNd5ovHTf17Wp9/GpXWqe1yBCgq2GkvJD243vrKdd400E/5JnPTfU5MaKnBmXlO+qXiJP6V7KM/XI5aPnQpeJekMxuB/2Kthz4jvYIN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CzCWSx3e; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52cd717ec07so3902458e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:38:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719268707; x=1719873507; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6E14l5/Oog/WEZeui3ScZrnHJQJut/dOq/zsnkk94VA=;
+        b=CzCWSx3eV1vqdwOUKzqUzTvFt9uxYR1+uQdf35g4uEww0PqZpXTxscMqoZEZvVZw2c
+         CLhe1lTLZe4UCvX7zZLfWzS524KRI5dOTRc1cts8g6l3bbHMcDBpR05cYAYWTRr0jOf6
+         kW6N/N/BOeyzWlUtvf6rhaTQeZiOvqI5wtFM2h8du60fsBOsHivmuQz66ooC2IR41qZq
+         1Tfhe/a7+a5kBFtYF9QMA1ybGE6/ZUjlnXWwGPZyzzMy4GhC+7Ymcbl+0B18zHR836dI
+         jmVmR56WQBXn5E1BKD65SBOvr/X7Q57j8Bt9UbJPvVV1oYmdtY5127hMpV7C68q9aUL0
+         NMXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719268644; x=1719873444;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vhr9yhJD+Sp+Sh7U/H6JRx2Ajx13ocgLIDyrtpn2EFg=;
-        b=Bon4su0pydorim+6mmEVaaDnazNgXfj1b7bOz410n+6fYlc/3zlVuLJs16ivjK3be5
-         C27PSORl06JB/nUcHrs3WZIHDSTxIWK9ULEFfbphyvh1/O5a+IoLjz+smeR7LYcGiUyj
-         onaj7ep75shN1fsvg7EAhqraYwShuev6gCog3G3u5/F1ydCp8p/W75bab7duqFb95W/J
-         mel3cEat7Edb3CoMjT1nijMziq2YSvVAq9lVW3PfefemzKI9wRn6rWd6nwPE4BpNG846
-         qRl56MVg2kxtAINc6cMZMhtZ4ViQZG23gVRKrj1j3W57eIOP65fc7bnvNBeTXhiPlUr7
-         dnPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwG2SeWYclbuCT8mmsqthXdCEURO24E1iD1O2opHwwF0YdunLhcHEYRIUr7C8GxKK1v4DZfNzkryA+7lfc41SAhGw/RjkQ1ZEcbOLj
-X-Gm-Message-State: AOJu0YxRqsWH4FfgH2d8NvZgj5CneVl9CfOsZBZ+ZZ50YOqvcVx/v5PG
-	DUh3Uv48PUb8/EteT0Sia6LTFhPnE4TLkjOuYlwPKkaxAgVsJxgYKJDmzj9/hq67KDASMgYs8HX
-	XRcPgKWV9d4oMwQi8xCex5MuhjaohnTByyvQMfZ4ru83JtT1ENsC1qfU=
-X-Google-Smtp-Source: AGHT+IFw5Hh+qqyrlBrJGjC5aFTYZw7im9QZBrBYbN8R0LtLxwwBcOTLmXpiv+k8uQ/iJRNRoH5aRMAwnZ+SsqP2GFkGPfDNc6A+
+        d=1e100.net; s=20230601; t=1719268707; x=1719873507;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6E14l5/Oog/WEZeui3ScZrnHJQJut/dOq/zsnkk94VA=;
+        b=oQqMLCI4hAzXUV1+zU78QxKwVRhIpH2hL2+vCTMHjPGNbrk90aU06L01qu0FT6zXVM
+         lM+dEwrFbrPvImWwEP8FtqBdlNfXY0sOAw8SKLB2NxEq2py1ChkeHSkFikkKJlk8TXJw
+         bWNTZpQjo1CvKtnON/8iXIe0JfNStv32NqPoh7XAUGcf56p+w7rVRFbUJy5ytJZRvSgC
+         0UsWHftJXPtCB1001WbQpmBNQGFTISvif3ygHvTVheOVzKmtF7t2ygmHHun+A4qVQVph
+         PPt2ebd6ey3C/s0KzxIa6Zb64THm4LPlVMCFojwLwBR8/kmIM3YCQmywa5EGzGSFtnAI
+         3Qhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUA5buryQUP9cZGqITo2LcJUESuIB/6zrptrTbDHj0iVGRiEbNufehkL5A2fh9WShxmRLDtNc2fbW5HebJREGlwv2/18ExfTsik8qJC
+X-Gm-Message-State: AOJu0Yy11tK7NZ08rYDqVHaWj/F70cDU7LdyXu24TDth0OoQcgeBLY1R
+	pel7mlMkcmRwyMi7lJKVVh3vsM7mjL5ePPiTSNm4viqJUPhF3xBOFB9kPokQH+Q=
+X-Google-Smtp-Source: AGHT+IE3JG2UAt8YxTInmDjLisSApSvSW7QhSIyrfGTIQgjS1Wgi8nCN+LpelYVb+7vx9iegu54PYA==
+X-Received: by 2002:ac2:4c41:0:b0:52c:db28:4d92 with SMTP id 2adb3069b0e04-52ce1832653mr4008349e87.11.1719268707060;
+        Mon, 24 Jun 2024 15:38:27 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ce407a2e3sm472243e87.76.2024.06.24.15.38.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 15:38:26 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 25 Jun 2024 01:38:25 +0300
+Subject: [PATCH v3] drm/msm/dpu: remove CRTC frame event callback
+ registration
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a1:b0:376:46d5:6583 with SMTP id
- e9e14a558f8ab-37646d56846mr5623545ab.5.1719268643971; Mon, 24 Jun 2024
- 15:37:23 -0700 (PDT)
-Date: Mon, 24 Jun 2024 15:37:23 -0700
-In-Reply-To: <0000000000009ce262061963e5e4@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cc372e061baa6cd6@google.com>
-Subject: Re: [syzbot] [hams?] WARNING: refcount bug in ax25_release (3)
-From: syzbot <syzbot+33841dc6aa3e1d86b78a@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, jreuter@yaina.de, 
-	kuba@kernel.org, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240625-dpu-no-crtc-register-v3-1-1b161df13776@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGD1eWYC/zXMQQ6CMBBA0auQrh1SCiXWlfcwLko7wERtybQSC
+ eHuNiYu3+L/XSRkwiQu1S4YV0oUQ0F7qoSbbZgQyBcLJVUne6XBL28IERxnB4wTpYwMvbZnlNo
+ ZOXhR0oVxpM9ve7sXjxxfkGdG+5+1jZRaKdlrU5dz1xgDDfgXZd7qwfKW5kdcr08KlmMdeRLH8
+ QUR80iWrQAAAA==
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9017;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=TWZEx3suLsxpdgGc3UYSLahjYdAYFMqvVrackbiut0w=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmefViYvVjRvfxggyy9ZbQYEkEp2AbQceUiiy9w
+ JaBqap1Zz2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnn1YgAKCRCLPIo+Aiko
+ 1T4BB/wLhhJG7VhStUuFNOaOt8P8fRsh/6kaap90zlNXsMWdy3X85wUNsW1SOTNXch77gD6Jezk
+ zo24oc1QCuZF1bzezHwnh2QOrvYJ3MCMAKNIf/seo+XXBvjEsmJXmA4jZfe2SICYlPARanp30zb
+ BClOIEMsiJcJfD5flVLB3HqheIb8d/YoXvZhfRHcc6wWubqmOV8EpSexBY8PeG1VWzCgdPf31wW
+ 3AiAOArrHG99hSALYt4QVMauYmJz9WwU8vZR4thP3tADZDvT+dGccRT41wZcB/dYMpkE41Az6ep
+ 4w/k5H8/YxTqUtS2jq06kdjKwHojsD1uYiqCt4p3KK1gWJjj
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-syzbot has found a reproducer for the following issue on:
+The frame event callback is always set to dpu_crtc_frame_event_cb() (or
+to NULL) and the data is always either the CRTC itself or NULL
+(correpondingly). Thus drop the event callback registration, call the
+dpu_crtc_frame_event_cb() directly and gate on the dpu_enc->crtc
+assigned using dpu_encoder_assign_crtc().
 
-HEAD commit:    568ebdaba637 MAINTAINERS: adjust file entry in FREESCALE Q..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=132d6dea980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
-dashboard link: https://syzkaller.appspot.com/bug?extid=33841dc6aa3e1d86b78a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=121324ae980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1607cdda980000
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v3:
+- Fixed documentation for dpu_crtc_frame_event_cb() to stop mentioning
+  registration. (Abhinav)
+- Link to v2: https://lore.kernel.org/dri-devel/20231005220659.2404199-1-dmitry.baryshkov@linaro.org/
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1d754ea220a6/disk-568ebdab.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/232f2545fca4/vmlinux-568ebdab.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6398bb41810d/bzImage-568ebdab.xz
+Changes in v2:
+- Rebased on top of linux-next
+- Link to v1: https://lore.kernel.org/dri-devel/20230102154748.951328-1-dmitry.baryshkov@linaro.org/
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 25 +++++++-----------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h    |  2 ++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 41 +++++------------------------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h | 10 -------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h   |  4 ---
+ 5 files changed, 18 insertions(+), 64 deletions(-)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+33841dc6aa3e1d86b78a@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-refcount_t: decrement hit 0; leaking memory.
-WARNING: CPU: 0 PID: 5091 at lib/refcount.c:31 refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:31
-Modules linked in:
-CPU: 0 PID: 5091 Comm: syz-executor127 Not tainted 6.10.0-rc4-syzkaller-00875-g568ebdaba637 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:31
-Code: b2 00 00 00 e8 37 51 e7 fc 5b 5d c3 cc cc cc cc e8 2b 51 e7 fc c6 05 d6 3f e9 0a 01 90 48 c7 c7 a0 97 1f 8c e8 67 81 a9 fc 90 <0f> 0b 90 90 eb d9 e8 0b 51 e7 fc c6 05 b3 3f e9 0a 01 90 48 c7 c7
-RSP: 0018:ffffc900033df9c8 EFLAGS: 00010246
-RAX: 9aea901d1711a200 RBX: ffff88807bf2c664 RCX: ffff8880287d9e00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000004 R08: ffffffff81585822 R09: fffffbfff1c39994
-R10: dffffc0000000000 R11: fffffbfff1c39994 R12: ffff88807bf2c620
-R13: 0000000000000000 R14: ffff88807bf2c664 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa556961110 CR3: 0000000075faa000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __refcount_dec include/linux/refcount.h:336 [inline]
- refcount_dec include/linux/refcount.h:351 [inline]
- ref_tracker_free+0x6af/0x7e0 lib/ref_tracker.c:236
- netdev_tracker_free include/linux/netdevice.h:4056 [inline]
- netdev_put include/linux/netdevice.h:4073 [inline]
- ax25_release+0x368/0x950 net/ax25/af_ax25.c:1069
- __sock_release net/socket.c:659 [inline]
- sock_close+0xbc/0x240 net/socket.c:1421
- __fput+0x406/0x8b0 fs/file_table.c:422
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0xa27/0x27e0 kernel/exit.c:874
- do_group_exit+0x207/0x2c0 kernel/exit.c:1023
- __do_sys_exit_group kernel/exit.c:1034 [inline]
- __se_sys_exit_group kernel/exit.c:1032 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa5568e5c49
-Code: Unable to access opcode bytes at 0x7fa5568e5c1f.
-RSP: 002b:00007ffc83eaf9b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa5568e5c49
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007fa5569602b0 R08: ffffffffffffffb8 R09: 0000000000000006
-R10: 00000000200003c0 R11: 0000000000000246 R12: 00007fa5569602b0
-R13: 0000000000000000 R14: 00007fa556960d00 R15: 00007fa5568b6e90
- </TASK>
-
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+index 9f2164782844..4c1be2f0555f 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -658,18 +658,18 @@ static void dpu_crtc_frame_event_work(struct kthread_work *work)
+ 	DPU_ATRACE_END("crtc_frame_event");
+ }
+ 
+-/*
+- * dpu_crtc_frame_event_cb - crtc frame event callback API. CRTC module
+- * registers this API to encoder for all frame event callbacks like
+- * frame_error, frame_done, idle_timeout, etc. Encoder may call different events
+- * from different context - IRQ, user thread, commit_thread, etc. Each event
+- * should be carefully reviewed and should be processed in proper task context
+- * to avoid schedulin delay or properly manage the irq context's bottom half
+- * processing.
++/**
++ * dpu_crtc_frame_event_cb - crtc frame event callback API
++ * @crtc: Pointer to crtc
++ * @event: Event to process
++ *
++ * Encoder may call this for different events from different context - IRQ,
++ * user thread, commit_thread, etc. Each event should be carefully reviewed and
++ * should be processed in proper task context to avoid schedulin delay or
++ * properly manage the irq context's bottom half processing.
+  */
+-static void dpu_crtc_frame_event_cb(void *data, u32 event)
++void dpu_crtc_frame_event_cb(struct drm_crtc *crtc, u32 event)
+ {
+-	struct drm_crtc *crtc = (struct drm_crtc *)data;
+ 	struct dpu_crtc *dpu_crtc;
+ 	struct msm_drm_private *priv;
+ 	struct dpu_crtc_frame_event *fevent;
+@@ -1091,9 +1091,6 @@ static void dpu_crtc_disable(struct drm_crtc *crtc,
+ 
+ 	dpu_core_perf_crtc_update(crtc, 0);
+ 
+-	drm_for_each_encoder_mask(encoder, crtc->dev, crtc->state->encoder_mask)
+-		dpu_encoder_register_frame_event_callback(encoder, NULL, NULL);
+-
+ 	memset(cstate->mixers, 0, sizeof(cstate->mixers));
+ 	cstate->num_mixers = 0;
+ 
+@@ -1132,8 +1129,6 @@ static void dpu_crtc_enable(struct drm_crtc *crtc,
+ 		 */
+ 		if (dpu_encoder_get_intf_mode(encoder) == INTF_MODE_VIDEO)
+ 			request_bandwidth = true;
+-		dpu_encoder_register_frame_event_callback(encoder,
+-				dpu_crtc_frame_event_cb, (void *)crtc);
+ 	}
+ 
+ 	if (request_bandwidth)
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
+index 539b68b1626a..b26d5fe40c72 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
+@@ -300,4 +300,6 @@ static inline enum dpu_crtc_client_type dpu_crtc_get_client_type(
+ 	return crtc && crtc->state ? RT_CLIENT : NRT_CLIENT;
+ }
+ 
++void dpu_crtc_frame_event_cb(struct drm_crtc *crtc, u32 event);
++
+ #endif /* _DPU_CRTC_H_ */
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index 708657598cce..4099e72820f9 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -151,8 +151,6 @@ enum dpu_enc_rc_states {
+  * @frame_busy_mask:		Bitmask tracking which phys_enc we are still
+  *				busy processing current command.
+  *				Bit0 = phys_encs[0] etc.
+- * @crtc_frame_event_cb:	callback handler for frame event
+- * @crtc_frame_event_cb_data:	callback handler private data
+  * @frame_done_timeout_ms:	frame done timeout in ms
+  * @frame_done_timeout_cnt:	atomic counter tracking the number of frame
+  * 				done timeouts
+@@ -192,8 +190,6 @@ struct dpu_encoder_virt {
+ 
+ 	struct mutex enc_lock;
+ 	DECLARE_BITMAP(frame_busy_mask, MAX_PHYS_ENCODERS_PER_VIRTUAL);
+-	void (*crtc_frame_event_cb)(void *, u32 event);
+-	void *crtc_frame_event_cb_data;
+ 
+ 	atomic_t frame_done_timeout_ms;
+ 	atomic_t frame_done_timeout_cnt;
+@@ -1456,28 +1452,6 @@ void dpu_encoder_toggle_vblank_for_crtc(struct drm_encoder *drm_enc,
+ 	}
+ }
+ 
+-void dpu_encoder_register_frame_event_callback(struct drm_encoder *drm_enc,
+-		void (*frame_event_cb)(void *, u32 event),
+-		void *frame_event_cb_data)
+-{
+-	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
+-	unsigned long lock_flags;
+-	bool enable;
+-
+-	enable = frame_event_cb ? true : false;
+-
+-	if (!drm_enc) {
+-		DPU_ERROR("invalid encoder\n");
+-		return;
+-	}
+-	trace_dpu_enc_frame_event_cb(DRMID(drm_enc), enable);
+-
+-	spin_lock_irqsave(&dpu_enc->enc_spinlock, lock_flags);
+-	dpu_enc->crtc_frame_event_cb = frame_event_cb;
+-	dpu_enc->crtc_frame_event_cb_data = frame_event_cb_data;
+-	spin_unlock_irqrestore(&dpu_enc->enc_spinlock, lock_flags);
+-}
+-
+ void dpu_encoder_frame_done_callback(
+ 		struct drm_encoder *drm_enc,
+ 		struct dpu_encoder_phys *ready_phys, u32 event)
+@@ -1517,15 +1491,12 @@ void dpu_encoder_frame_done_callback(
+ 			dpu_encoder_resource_control(drm_enc,
+ 					DPU_ENC_RC_EVENT_FRAME_DONE);
+ 
+-			if (dpu_enc->crtc_frame_event_cb)
+-				dpu_enc->crtc_frame_event_cb(
+-					dpu_enc->crtc_frame_event_cb_data,
+-					event);
++			if (dpu_enc->crtc)
++				dpu_crtc_frame_event_cb(dpu_enc->crtc, event);
+ 		}
+ 	} else {
+-		if (dpu_enc->crtc_frame_event_cb)
+-			dpu_enc->crtc_frame_event_cb(
+-				dpu_enc->crtc_frame_event_cb_data, event);
++		if (dpu_enc->crtc)
++			dpu_crtc_frame_event_cb(dpu_enc->crtc, event);
+ 	}
+ }
+ 
+@@ -2459,7 +2430,7 @@ static void dpu_encoder_frame_done_timeout(struct timer_list *t)
+ 		return;
+ 	}
+ 
+-	if (!dpu_enc->frame_busy_mask[0] || !dpu_enc->crtc_frame_event_cb) {
++	if (!dpu_enc->frame_busy_mask[0] || !dpu_enc->crtc) {
+ 		DRM_DEBUG_KMS("id:%u invalid timeout frame_busy_mask=%lu\n",
+ 			      DRMID(drm_enc), dpu_enc->frame_busy_mask[0]);
+ 		return;
+@@ -2475,7 +2446,7 @@ static void dpu_encoder_frame_done_timeout(struct timer_list *t)
+ 
+ 	event = DPU_ENCODER_FRAME_EVENT_ERROR;
+ 	trace_dpu_enc_frame_done_timeout(DRMID(drm_enc), event);
+-	dpu_enc->crtc_frame_event_cb(dpu_enc->crtc_frame_event_cb_data, event);
++	dpu_crtc_frame_event_cb(dpu_enc->crtc, event);
+ }
+ 
+ static const struct drm_encoder_helper_funcs dpu_encoder_helper_funcs = {
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
+index 76be77e30954..fab08e68b41b 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
+@@ -55,16 +55,6 @@ void dpu_encoder_assign_crtc(struct drm_encoder *encoder,
+ void dpu_encoder_toggle_vblank_for_crtc(struct drm_encoder *encoder,
+ 					struct drm_crtc *crtc, bool enable);
+ 
+-/**
+- * dpu_encoder_register_frame_event_callback - provide callback to encoder that
+- *	will be called after the request is complete, or other events.
+- * @encoder:	encoder pointer
+- * @cb:		callback pointer, provide NULL to deregister
+- * @data:	user data provided to callback
+- */
+-void dpu_encoder_register_frame_event_callback(struct drm_encoder *encoder,
+-		void (*cb)(void *, u32), void *data);
+-
+ /**
+  * dpu_encoder_prepare_for_kickoff - schedule double buffer flip of the ctl
+  *	path (i.e. ctl flush and start) at next appropriate time.
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h
+index 0fdd41162e4b..5307cbc2007c 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h
+@@ -354,10 +354,6 @@ DEFINE_EVENT(dpu_enc_id_enable_template, dpu_enc_vblank_cb,
+ 	TP_PROTO(uint32_t drm_id, bool enable),
+ 	TP_ARGS(drm_id, enable)
+ );
+-DEFINE_EVENT(dpu_enc_id_enable_template, dpu_enc_frame_event_cb,
+-	TP_PROTO(uint32_t drm_id, bool enable),
+-	TP_ARGS(drm_id, enable)
+-);
+ DEFINE_EVENT(dpu_enc_id_enable_template, dpu_enc_phys_cmd_connect_te,
+ 	TP_PROTO(uint32_t drm_id, bool enable),
+ 	TP_ARGS(drm_id, enable)
 
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+change-id: 20240625-dpu-no-crtc-register-65a8e05c90bd
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
