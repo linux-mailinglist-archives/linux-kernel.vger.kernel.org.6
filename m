@@ -1,127 +1,123 @@
-Return-Path: <linux-kernel+bounces-227848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371C891573C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:34:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6DC91573A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592601C22187
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:34:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4040F1F21784
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30B61A01C8;
-	Mon, 24 Jun 2024 19:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BF21A01C7;
+	Mon, 24 Jun 2024 19:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1gK6ZiG7"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lp8/TvQV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725D41A01B8
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 19:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7AF1A01A9;
+	Mon, 24 Jun 2024 19:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719257684; cv=none; b=JY81ZkW4v6mb0n5eS9zwom4jLqwvQJbVBW8vhLLBlSf+IAse13YqaQU4VNyjJqfMY6nlL742JYLP/zwcNRd1xRJs5pAGzTcd4o7A+3lhXBXmFaNXRVUX3ERf3/e5i95bYOtD70ozNV6RHBtM7nREvBFJnzQ1aatORLcnzZPY41o=
+	t=1719257672; cv=none; b=Gdegd4kKYVxIAM/4lQ2GjX2cXiCBA24Eu0cDTy/MLp/Q8qUMXUytkeukTLjTU2U7irM3+gGQwaVAfTzLRD8+cp/+Oi0Zg3YbpEjBSUS0T03labL2dZv2YfR91t85j0Y07Sv8GCaZXSuzH9+pxaLl7c2vGe3CIZZUCkd2TxOXS6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719257684; c=relaxed/simple;
-	bh=iRGtNnx1zZXQrR/w1GfqFSETXcoB/OmGwwh67RJ/kEk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T4pg/qC7jRE6eIorcaYlgQYC4idPUypybzEQagaA0MW7yrzy09QJCVZKaIekrFHYVxBj8UyF778C4boSHm8Dez6fMo/KKn/iuW7D/qPvYIu2EkKKqZXoy/gvgiHUUXQ8DhIh/1uX0zfPM6BHcJpq9ikGZBBYNhaLp9P4X1BGKkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1gK6ZiG7; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6fbe639a76so753092166b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719257681; x=1719862481; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LR/qyqNf4yNhGg/W9gnglK9t/IsY+KbgwrDYpXJIh6Q=;
-        b=1gK6ZiG7Hs+6XBsqiuOgqdtCmMh6uK20NcjFAPrYnyL2eaBPi2rASFo0iS0kjyPrBo
-         i7RM+IEijRDKq4ahAOhgU3gSX5TZqDSCbKsjmCrME0yKmHFotYBRFx2l5XmBJZ8AfYg0
-         v1iuMeq/DTKS/cNvlQjl49Q5KDUmmLn4xwBmOj4gLFFNvlKyrz5tRxdh5fKvHsqzB4o7
-         Cj5rYVUGfUQyAhyhfzJN17yOXia/uW0xhiRtXi4Vx4wgLNrN7iArGiadb4S4IL800Vom
-         +atrrRk+Gfocmn3dgy/Ldqysleo3vV1r0EU71O4VWgndcOrsxqORky2aR1KStu7Ali5u
-         qGyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719257681; x=1719862481;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LR/qyqNf4yNhGg/W9gnglK9t/IsY+KbgwrDYpXJIh6Q=;
-        b=Z0KTMASdxETLAazYGwNJM8VXnGF9Vmwm4rPZySQ3LijfKSmmuSoOTrM2LJtSOhpEFT
-         Lp8X/b5C7isIKqx8QZX974r0RLm7Xdd/CJciNyTQGDankp4ufdWNb7ZaXz/hw3pJZ+Ld
-         lAEP1C6lk7VPNbrEL6S1Zu//tHB1CNLr2xpPWbq9vCBJ2Hu4JePtZlp+IM4Dv0+oJZSZ
-         4EuZfpUuGMMa/LY6PEuvU5nZ+nnonLxBX7b4IIcsM/0+p4vxebj+ETBre9Yjrpdf+nBP
-         ip0tW6pkdz8VxxWVcWBFe/5pymi3vD7UGSxZdvGUdPNVi4qz9oTwsgRsuRV5D5Z//Q9K
-         nqrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ/QGWOgcI7QTzdIUZz3Uqphyu4+juug+xFr4VrlNp/tPaVTGkRkKi4ShP3WhXzpJh4nDQpo94DSFWubdX5K44AoYQy92e2v9vB+6C
-X-Gm-Message-State: AOJu0Yw8tvd9UlXcVLuvDZnHagwiQOrO17CNWIPT/vsYaelrxEh/bRx4
-	R1HUzDXU/7FEhcFtiHvB+KAVNS2/n8i218waB7MJf0yrH7OMtyoa5IvVP2lBYKgc/DuBh/0nSG/
-	L13pWKtRqO9nsc2Y0T71ZfHKKftwWwUSdKl9N
-X-Google-Smtp-Source: AGHT+IGBuCU23m+wrmkFzQkUCc4DL4NBFPm8xZ6GTjzrHf41bNowvPfktB6PfvqelK6j4q2T/3ufnLal/dwQaerFDnk=
-X-Received: by 2002:a17:907:cbc9:b0:a6f:b193:758e with SMTP id
- a640c23a62f3a-a70385e67dfmr488672466b.29.1719257680243; Mon, 24 Jun 2024
- 12:34:40 -0700 (PDT)
+	s=arc-20240116; t=1719257672; c=relaxed/simple;
+	bh=BoW+izWMrB0vUIgdczTG8eY31gFwP4//AAgzMGmL2dM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fzRu/+m6OQZoqybNwVBRVvlKGN1Kye9B8RG5bwTUycjlkexTdDiEvUj5y7I2pgBTK3Mr0DfeQCpe8vzF3Qus9zSxYY7j3RNxlon4tolrYa9lqDglRNVaVQy8tjocOX1zuPDaegUK3ccbXIkXzcknbP0qQ557exavROuGhkf+IkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lp8/TvQV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3A2C2BBFC;
+	Mon, 24 Jun 2024 19:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719257672;
+	bh=BoW+izWMrB0vUIgdczTG8eY31gFwP4//AAgzMGmL2dM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lp8/TvQVYFswu33lkx0ks1qmHin9SfvJe1OJt6aVDfBxiJNuzBjVuZFPAocNe2Kp2
+	 xl6aghAFbuwFuQKmECp3Xmai3FPZLHnTJHzss/36QxfOkIFf55zJXtabwaKanPOPh/
+	 Uz47iksDtHlIskOzDB2umFQ/EGOHLyGKqDeKufzeVhxAnsNz3fV/i3r/6VIyyxm1t0
+	 eVpNTmPaLCBlKqLB19kEmOwwSRQABWY7OuJCyi5I3eZIWV/Qbrjj2aGSYKpBh9KXig
+	 4eITZGGCY4Mj3SnAJE6G6NUvNhjELmIZbx9uA8lz4Ef1CdUgUv3DNj/k7EpfmTJIZu
+	 dqIS7gbbMISUw==
+Date: Mon, 24 Jun 2024 20:34:26 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>, Andreas Klinger <ak@it-klinger.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/10] iio: use devm_regulator_get_enable_read_voltage
+ round 2
+Message-ID: <20240624203426.1970ec62@jic23-huawei>
+In-Reply-To: <20240623111247.1c4a5e2a@jic23-huawei>
+References: <20240621-iio-regulator-refactor-round-2-v1-0-49e50cd0b99a@baylibre.com>
+	<20240623111247.1c4a5e2a@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202406241651.963e3e78-oliver.sang@intel.com> <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
- <Znm74wW3xARhR2qN@casper.infradead.org> <CAJD7tkbF9NwKa4q5J0xq1oG6EkTDLz8UcbekSfP+DYfoDSqRhQ@mail.gmail.com>
- <ZnnBVBItTNWZE42u@casper.infradead.org> <CAJD7tkaC6d_RkhRhMpEeS1zTEtoQYw56J3LLdzD1aM9_qu-3BA@mail.gmail.com>
- <ZnnId18scFvE_a6K@casper.infradead.org>
-In-Reply-To: <ZnnId18scFvE_a6K@casper.infradead.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 24 Jun 2024 12:34:04 -0700
-Message-ID: <CAJD7tkZZHxXR9cFE=ZHQOnYXakrhXg0+ScT2ExxihovSgDz7_g@mail.gmail.com>
-Subject: Re: [linux-next:master] [mm] 0fa2857d23: WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
-To: Matthew Wilcox <willy@infradead.org>
-Cc: kernel test robot <oliver.sang@intel.com>, Usama Arif <usamaarif642@gmail.com>, 
-	oe-lkp@lists.linux.dev, lkp@intel.com, 
-	Linux Memory Management List <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
-	David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 24, 2024 at 12:26=E2=80=AFPM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Mon, Jun 24, 2024 at 11:57:45AM -0700, Yosry Ahmed wrote:
-> > On Mon, Jun 24, 2024 at 11:56=E2=80=AFAM Matthew Wilcox <willy@infradea=
-d.org> wrote:
-> > >
-> > > On Mon, Jun 24, 2024 at 11:53:30AM -0700, Yosry Ahmed wrote:
-> > > > After a page is swapped out during reclaim, __remove_mapping() will
-> > > > call __delete_from_swap_cache() to replace the swap cache entry wit=
-h a
-> > > > shadow entry (which is an xa_value).
-> > >
-> > > Special entries are disjoint from shadow entries.  Shadow entries hav=
-e
-> > > the last two bits as 01 or 11 (are congruent to 1 or 3 modulo 4).
-> > > Special entries have values below 4096 which end in 10 (are congruent
-> > > to 2 modulo 4).
-> >
-> > You are implying that we would no longer have a shadow entry for such
-> > zero folios, because we will be storing a special entry instead.
-> > Right?
->
-> umm ... maybe I have a misunderstanding here.
->
-> I'm saying that there wouldn't be a _swap_ entry here because the folio
-> wouldn't be stored anywhere on the swap device.  But there could be a
-> _shadow_ entry.  Although if the page is full of zeroes, it was probably
-> never referenced and doesn't really need a shadow entry.
+On Sun, 23 Jun 2024 11:12:47 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Is it possible to have a shadow entry AND a special entry (e.g.
-XA_ZERO_ENTRY) at the same index? This is what would be required to
-maintain the current behavior (assuming we really need the shadow
-entries for such zeroed folios).
+> On Fri, 21 Jun 2024 17:11:47 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+> > This is the second round of patches making use of the new helper
+> > devm_regulator_get_enable_read_voltage() to simplify drivers.
+> > 
+> > All of the changes in this round should be fairly straight forward.
+> > And as a bonus, there are a few patches to get rid of driver .remove
+> > callbacks.  
+> 
+> LGTM.  Obviously only been on list for a short time though and
+> some of these have active maintainers so I won't pick them up just yet.
+
+I think most of the people I thought would review did super quick so 
+applied.
+
+Thanks,
+
+Jonathan
+
+> 
+> Jonathan
+> 
+> > 
+> > ---
+> > David Lechner (10):
+> >       iio: adc: aspeed_adc: use devm_regulator_get_enable_read_voltage()
+> >       iio: adc: hx711: use devm_regulator_get_enable_read_voltage()
+> >       iio: adc: hx711: remove hx711_remove()
+> >       iio: adc: hx711: use dev_err_probe()
+> >       iio: adc: ltc2309: use devm_regulator_get_enable_read_voltage()
+> >       iio: adc: max1363: use devm_regulator_get_enable_read_voltage()
+> >       iio: adc: ti-adc108s102: use devm_regulator_get_enable_read_voltage()
+> >       iio: adc: ti-ads8688: use devm_regulator_get_enable_read_voltage()
+> >       iio: adc: ti-ads8688: drop ads8688_remove()
+> >       iio: dac: ad3552r: use devm_regulator_get_enable_read_voltage()
+> > 
+> >  drivers/iio/adc/aspeed_adc.c    | 30 +++++-----------
+> >  drivers/iio/adc/hx711.c         | 78 ++++++++++-------------------------------
+> >  drivers/iio/adc/ltc2309.c       | 43 ++++-------------------
+> >  drivers/iio/adc/max1363.c       | 28 +++------------
+> >  drivers/iio/adc/ti-adc108s102.c | 28 ++-------------
+> >  drivers/iio/adc/ti-ads8688.c    | 59 ++++++-------------------------
+> >  drivers/iio/dac/ad3552r.c       | 28 +++------------
+> >  7 files changed, 53 insertions(+), 241 deletions(-)
+> > ---
+> > base-commit: 7db8a847f98caae68c70bdab9ba92d1af38e5656
+> > change-id: 20240621-iio-regulator-refactor-round-2-28a1e129a42d  
+> 
+> 
+
 
