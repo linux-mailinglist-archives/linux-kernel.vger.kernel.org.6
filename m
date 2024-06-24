@@ -1,322 +1,223 @@
-Return-Path: <linux-kernel+bounces-227489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F136C915222
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A354B915224
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6461F23DB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:23:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5D8A1C21E4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F5519B59A;
-	Mon, 24 Jun 2024 15:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C2819CCE8;
+	Mon, 24 Jun 2024 15:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aBAAH+9I"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2046.outbound.protection.outlook.com [40.107.236.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bjuWtSvn"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848541DFEA;
-	Mon, 24 Jun 2024 15:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242577; cv=fail; b=tYEaWsosyO2NtBSmsaxd29E4yVSR/oubAJLczGvMj8mj8L/bfR2cr35vzr3cH7F/Zo3n3b7auwQtKSorxHzos6W6ybuslSwf/WWqBbONxL7virr/KTood95Bg+wGxn9KbwoZwKeMspGflwJfeI09A7OwCvI1hn8DK1PPbDGJISI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242577; c=relaxed/simple;
-	bh=BTNlOLJkw9YgeD9z/5u1sPt8SexFBx3Sxh7kVEFuIHY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gFFommu8VxcK576MksMKBWqtHh0rAaZ621EgwCaCGsqJm36qt3ZYD9qFO0YcwpKq6FH/LAH/o4QBbFRbCf9WVKYLonxBt75JW0ElsuFI/Uoz3m2RMwQ/CkDwECQPu7sQD8T4eO2zr8junZvS86lvYFYy0J52mzMz11kSiIbHMpk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aBAAH+9I; arc=fail smtp.client-ip=40.107.236.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=APiMACboyJWXmZZSosMrzsmVbLhbcSWzVEzAQZS6suhOZg2WZ3PcRQGoXpb5uBc38qHpDvoIYSbKnAS8pttUcRejd0chSACZu6QY9B3W6TU378JPwFZkDmN4x7RrZ1vUK9aeRoCKQKmfMCrsJA/kLJ0KgDalrvWzZ5S59iN87vbitqhP2Umj8xvuFEHB5DmzeGdB0LDNGIP3I0VbIoR65XTcdQK3TIfeUxdQ6InfmEoa33GuILdxkwzeHUc2VNKzn7dBKEjMW578kDohb74Fy4rfTMsbilwVJuNBHHGG3id6gLJUdGb5oSNTKXLQMwjJLgqK4/n3qANrZZ8F+t+2fw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b6E1T8Brlrb973radwGIqgDogrOQPYO4IuAf/TvnIO0=;
- b=IBH1hYAedHk43yJNuHOFx/vuMgnb6JmQhEDL+568IVsstpr2hjfQwSQdJj6WfMsASE0FfmmKe+FmKEboDPa/KtX+bLEdP/Es+OPFRyldf37Koe31w9AOoU/vOz2X/LXikqmNuzzgIL3RJJU6T4wWBgYSkk3waqvrynVxUttpTCz25ODDaH8CHfvHiUhhSM9lj/U82xZeayBguJGIyPsLCEV23mritxJQogWdwaxM4spxyFBGM3EQ/CnxWIxpELP/yNitzjF4k/N/viuwmyqlhpTThhRp2R6fYE76S2c41khy6/8GyLhcqxEguqemsxiM2w7N79oiFaiep3/W2tPalQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b6E1T8Brlrb973radwGIqgDogrOQPYO4IuAf/TvnIO0=;
- b=aBAAH+9Iuo7xpO7XKvJ/90UShHgxqF2dMkAtQ3dnpwh6WaECMIzWS923jM10Ah+U8jzR9i17JqlgAJxcDljhDgfe5nxQUKWV9GW1y3c2niy8c//m2DqJ3o8cIcKtIE+JH7OZ9A1XP/62JXRMrPhqIh6Fcg3wpHoOvunbXhF4pCg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL3PR12MB6380.namprd12.prod.outlook.com (2603:10b6:208:38d::18)
- by BY5PR12MB4033.namprd12.prod.outlook.com (2603:10b6:a03:213::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Mon, 24 Jun
- 2024 15:22:50 +0000
-Received: from BL3PR12MB6380.namprd12.prod.outlook.com
- ([fe80::66cf:5409:24d1:532b]) by BL3PR12MB6380.namprd12.prod.outlook.com
- ([fe80::66cf:5409:24d1:532b%7]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
- 15:22:49 +0000
-Message-ID: <9f748365-06f5-44f9-865a-d076b110bb33@amd.com>
-Date: Mon, 24 Jun 2024 10:22:46 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/9] PCI/portdrv: Update portdrv with an atomic
- notifier for reporting AER internal errors
-Content-Language: en-US
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: dan.j.williams@intel.com, ira.weiny@intel.com, dave@stgolabs.net,
- dave.jiang@intel.com, alison.schofield@intel.com, ming4.li@intel.com,
- vishal.l.verma@intel.com, jim.harris@samsung.com,
- ilpo.jarvinen@linux.intel.com, ardb@kernel.org,
- sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yazen.Ghannam@amd.com, Robert.Richter@amd.com,
- Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-References: <20240617200411.1426554-1-terry.bowman@amd.com>
- <20240617200411.1426554-4-terry.bowman@amd.com>
- <20240620133027.000047e1@Huawei.com>
-From: Terry Bowman <Terry.Bowman@amd.com>
-In-Reply-To: <20240620133027.000047e1@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1PR05CA0016.namprd05.prod.outlook.com
- (2603:10b6:806:2d2::25) To BL3PR12MB6380.namprd12.prod.outlook.com
- (2603:10b6:208:38d::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5ED19B595;
+	Mon, 24 Jun 2024 15:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719242580; cv=none; b=BjJ4JEHqPjqgna8yYUatwUAFQB4I+Cddm2mFc3x6VWlc8OpHgEh1f5/za268rhYrjv1r9hs2dt+zunO0rC+SA5KmlMkx9Ey/c5O0Veh4vNFHqq296SD7PUDeCbptErDsBSavgmJLr3a2OvuzaAf+1Rb3M+TGTAXjfo6yZPadE34=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719242580; c=relaxed/simple;
+	bh=70ZgxnauQ8qjj062IrhRcJou3GMIDmv5u7umql5+AAU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QiJ9UXu8Jl/lTU8ZP4SkyW3Y7Rno7APO3h1del4MVWSKwKvjxOg5JXkmATjKkXaPqFoUSCqp88G0AVf9dRRcyMvk2oUnHvQm7XvSUQmbgAaQhhSdwrzkR12a/zh9N6Mo2YCPiMVYIsb05yu44NJVYezrq4uVgqnZPFWr5gBsfiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bjuWtSvn; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec50d4e47bso29677401fa.2;
+        Mon, 24 Jun 2024 08:22:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719242576; x=1719847376; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tXyhmAmmS/6Cy5Xtbgm9RQtLXYOO7vlUxcAJ9Q0MIKQ=;
+        b=bjuWtSvnY1ebb3mYgunoQGuGNRtjmnRNBrUTWaOKOY/KP0S0z8d23rr3fo2HdfmTdh
+         rLoQIMewqvnOt3M9FZNN5/fYBfSQ5moW3f/XVR/VamEPTECJw7nOeBkBt8hMeeJX4IfH
+         BELeS9fSTvtok4UgEFSV1Z8bofCUAUHveUoXP0wk/TvjJUeCyDWqkcif+rqb6VGa/cEB
+         JZi0JA26hlv+oSwm0YuzzuXwuDSyfDwBdCgraIyNuGXp5lYOXSDdJdyUh/sH5P9Ln2Hu
+         hiA80v/9MBCuigXzaxnhwmVUg0upOYEn4PlwU2WezxayRlAaWkiNHw4d9vmAU41zk1b8
+         vQOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719242576; x=1719847376;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tXyhmAmmS/6Cy5Xtbgm9RQtLXYOO7vlUxcAJ9Q0MIKQ=;
+        b=kscZBSS+z7t1OMJWAwbZWklBKW3qeksiRkoYq6N06ehCISTZAzhXCO9Y4vj6mupq5T
+         eax2Dg1zmZGsl++FoxJbvtdJAF38cjwlpMY+W+9oKIuZ1K6HbkImF7R2t339CtIfQI95
+         Pb5gfbjF8kwfqH+TuOsjQ7fGp0dOJhFxaFkdWeTGKmhuRLNS0+Cf0U5MS+qgg6d+/4Yz
+         Dswq7w5N5yp/z5gq+hu7rVPtODosRnojtP/ZYXMasevGlvE3nQoWZtjkQCzjKg3Fg9Oo
+         o0NvENXI9Ux0gMXBCyKO299jk+AcOD2VlpQsSRNlkGnZuGaDiCZTI058vPvUWmKrXgH5
+         qr2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWTiL0BwmWZwIlbic6Cd5/v6K/CZc6FTLgrfbgVAst4tGUUPkY60S4Fgh6WSdfJJZL6alm6CXxMALWzdISJFVvfV7cSWk6XNdGfjdVmX9sip9KrSRMME/eyDuhlVRIY1d3KvkrMkyVQ
+X-Gm-Message-State: AOJu0YzFepall6IVEo8pVTapK5OFpBcJ8Z6Hho+xl9TCyRFIrczJErSB
+	4PkUVEjLiTZgk0vD3ShhMZeeh/7lM1ARS/ywWewCkTya4KBUvxyZLtzHb70z
+X-Google-Smtp-Source: AGHT+IHhQUd8xX7sWURRCX5nkC6C31c6u8hLoHvN4uXiN08tv4aApkw9xwYLCzMqEIFCJtaZT83GcA==
+X-Received: by 2002:a2e:9d88:0:b0:2ea:7e50:6c94 with SMTP id 38308e7fff4ca-2ec5b27e7f9mr31577811fa.16.1719242575117;
+        Mon, 24 Jun 2024 08:22:55 -0700 (PDT)
+Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3042d10csm4880811a12.40.2024.06.24.08.22.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 08:22:54 -0700 (PDT)
+Message-ID: <1ef85cdcffefee6b6a68927816f3d26c074a5331.camel@gmail.com>
+Subject: Re: [PATCH 7/8] iio: add sd modulator generic iio backend
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Olivier MOYSAN <olivier.moysan@foss.st.com>, Jonathan Cameron
+	 <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood
+ <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Date: Mon, 24 Jun 2024 17:22:54 +0200
+In-Reply-To: <2dbd160b-135e-4882-9fd3-9d921742f49d@foss.st.com>
+References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
+	 <20240618160836.945242-8-olivier.moysan@foss.st.com>
+	 <20240623161150.358f95bf@jic23-huawei>
+	 <2dbd160b-135e-4882-9fd3-9d921742f49d@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR12MB6380:EE_|BY5PR12MB4033:EE_
-X-MS-Office365-Filtering-Correlation-Id: b1ccd1ae-2851-4652-8013-08dc946181cf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|7416011|1800799021;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TDNZMVJwczNOdjlOMnhVRmZ0MWMzRHp4bVYwMjBrMW1uOUpwZFh6WWVkKzFu?=
- =?utf-8?B?eVFLaHNaYmVSRTE4MWJ0TGtZLzlTMExwZlhkbkN4bjQ1VFJTUVQ3eFVYQjhj?=
- =?utf-8?B?U3RrSno2MjQ5TWdHQ095YXNmVmUxV0JmbGlsZ0Q0cUtNcW9aSmpQaTBwY2R1?=
- =?utf-8?B?a20wOVFMN2VEeGFockZRd0UrZ3pVM2hSTVcxV2pTSEpqY0YyOVFPekMrNnEz?=
- =?utf-8?B?VkNyVHNwYnFCenNjZjhPaUdEWHFOV2Y2bHpDVDZFUWh0OGRhdkVteHNIM0JD?=
- =?utf-8?B?aUQ0Qlo4bCs0RHdOczFQb0pxMUljODBHKzQrUDNxdjdOeEUyQ28xdVVFZFpx?=
- =?utf-8?B?WkFGN3k3STljMXpVY0xKb1BSL2RNRGpKRk1ldFVIQUNpN3MrVG9KYnBWK2FU?=
- =?utf-8?B?ejh0bm42enM2cGxHMmVqYURZL2JkSkVTZzM0eExhY3NXUit4NVJYNTYvbkNt?=
- =?utf-8?B?VWpWRHpYakREVERPazZOelg4RW5Ec04rVGIxcWN3K2Z4WWgxeWFqcjYrczB3?=
- =?utf-8?B?UCtiTkZaazdDbkJmTG92bzJXeFJZTjQ4cUUzK2JNdTVrTkdYSnVnS3BoUDM5?=
- =?utf-8?B?T0d2RVJiU1llMWpVREFYYUpCS1NPaHc2Um83Z0Fla05kU3lZMFJwUG85S2p4?=
- =?utf-8?B?OURsNWhrVE1UVGVpUDF2K2hTV2Q1NkxiMHZCMHdKSXJyUUFQenRScm9mSHhC?=
- =?utf-8?B?ZkUrNnlDdmQ5Zkt6MFRyNlg2Zk1KTllYNUpHSzZPTlNLYTQzdlVLSUJlOGhv?=
- =?utf-8?B?RCsrcXZORnJtSzNtS3Y3Y1huMU1ETXNTTmtzaDFZSkZHeEhITGw2UVE5bWtT?=
- =?utf-8?B?Rk9EaDZZSnBOYXU4WUo1ai8ybVd1eVMzaVM3UUN3VHlZRjBlNTRKUVZBS0VC?=
- =?utf-8?B?YVk4YklHMkxpVTc4OFFvZzY2bFp0aVA2S0NyOVVHbDJFT3RSQWN0TjZsSG1n?=
- =?utf-8?B?cXJNeXVMTmo3b1hkSXF1L0pIcXJkSHpEeml0ZGJzcWVjZkRhT0UxenhpOGZz?=
- =?utf-8?B?UFVyWWdCTzdrVzl6Y08xeGhlRGQ3cFBWSXFxSzZYY09takdWWUhYM2NvS3BR?=
- =?utf-8?B?VkxIWXZhcFlUSjRpVUFIOXF5RGRENTQwdTNmRTZzU3RUOHQvOWUzM0NiRFRw?=
- =?utf-8?B?Q1A1THFrcVE0WEJvS0hIbnkvS0pOU1U4MVJWTmtIN2NEMVRadm5HZG5XSlpv?=
- =?utf-8?B?THdJcjhuZFV6eW1ZWGtoM0E4RlBUWXduQlN2amMyWjRzMyswRjNKL3preWw4?=
- =?utf-8?B?eHY1R09rV2lWMmNzN2tlKytDL0c5RjR6OEVKeDVzRDk1eEFkdG15aVJsc0ox?=
- =?utf-8?B?bWdXNDVKaDhVVnBhREpzRDNUM3hHRzRjbFIxY21LZ2x6c2ZjNG9JZ0NoSExV?=
- =?utf-8?B?SzhobXZkSWM3c1lHNlpsQml5WWE1YVZYUzErcjQ2MVVlVzY4N3Z1N1BlbnNL?=
- =?utf-8?B?R2NjUllUMW4zWXFNcGlvL21ZTXkwZU1Rd3M1SDlNQU54QUN1LzFGNWhBSUgw?=
- =?utf-8?B?aTY2Q3NETVF1b0Q5cUJoMGV2b2VmRDFKQXNJbFRwSlJWYXZxZ2VjK3JyYWhq?=
- =?utf-8?B?UW9ja2p2K2wwNm10VlQycTR6R29wR05xd0czZ0lqdFl1LzlOMk16ZDFYZmRD?=
- =?utf-8?B?VXl1VTJIbGxkTFlMb3pORE5tNEFKSnplR1k3ek9MK1Z2NTBCTXpJZUxLeE51?=
- =?utf-8?B?cHFOeVBNa2hZSWlJQW04WjZxS0ZuSWg3aHI3WG5KNndPVUFDa3BISkNxdTE4?=
- =?utf-8?Q?G5GrmTHn3PXD4TZbXAXTZay8FEMJXHHIc5iytPK?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6380.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(7416011)(1800799021);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WC9QbVQ3TFM2Q1d1dFlmN2djM214ZTdlNG9JYTY4MEpDRUc1UWdmYVp3RjhC?=
- =?utf-8?B?Q29HdEF5VVNEVnFnZmVFaE5Ka0ppSTdRVjZGT1NLeHdhZ1ZMcUllek1BUHlr?=
- =?utf-8?B?WUNLR3V3YXRQYjkwM1MzTk12bXhWNitZdHRkaHdubURiK1M2UjB5cmVrUGRl?=
- =?utf-8?B?MU5KTXlzdk80UlN5anZPTzY1SnNrUmpoOVpLbGFaQlRZN3U1STZCNHdVaDYy?=
- =?utf-8?B?ZXY0dFhjNlVaUDNmT25RMnBIN3VUT1htL1ZOS3RwVEpWT2dQMEpCbGpQY2k2?=
- =?utf-8?B?OWNzZjA3RjQxdkI4clUzc2dQSytONHhkaHpuTUZIdGFqYVhJQ21sbm9MUnRU?=
- =?utf-8?B?dXVvS0NDYUhPNDBCSURJeEpjeUV5cm5WNUh4SEFLM1laZGJpRjJhck85Y3ZE?=
- =?utf-8?B?d2RjdmtNc2lyeDBOL01tMmQ5TVJqd1hvYWxnaFFnTWEyaHI2U0hKcjVsNnJj?=
- =?utf-8?B?bkx4RXVMWDBycUhLOC9UdEpFaG9YMFA2R2RqVnBxUHNTM2JIY1pwNWZ0ZHps?=
- =?utf-8?B?WWE5WS9yTlJrMXI4VTRwR2c0a1hxTmdid3dYTW9HNTY4NzVQdlhmUGI3TDZz?=
- =?utf-8?B?YytVSHlXclZLYTdCSm5FS1BvYXg4VnR3ME9yY3Y2NDJJWTRzU2JWYjFqT2Jh?=
- =?utf-8?B?Y1FGS2VNRExUc0xkbW51Sk9UeVF6QnV4U1JlL1RLNjVwbTdyN0s2UXdvU0ZP?=
- =?utf-8?B?eEJUSVdpNGhUR0lHUHFadFJCOUxNN0JEUTc4QXluRkU2dExRejQwd0FjODdC?=
- =?utf-8?B?elViaCtOYTZmWGhnR1Y5NENDd2JaOWo0QittR2lob3FjVGw1a3ZEdERnZFdM?=
- =?utf-8?B?cDJKZWFwQWtDdjBoZjg4OGwwVFp6MlhqcTZCRWFYVi9ONDJhNXJpaExYRGQx?=
- =?utf-8?B?L0JXSkJjYTloaE5QM1g0OWd4MEJWWXNVN1NUT1RaTW53dkY3R2JsdXNPeEFJ?=
- =?utf-8?B?dEN4ZGJQU3hmamhIZVFaUlQrdFhqOFlXdTN0bDRIR1JsRGl5MVpEZkw3MGNQ?=
- =?utf-8?B?MnRHTEZDckxCcDBHbnhUZTM4M3dLaGdHbzE2cmt2b1hwNkVLVG5RUnREZ0Zv?=
- =?utf-8?B?c1pDMEFMUEozK3FmMzhjcGFOenJiVG1OK1o2dVVYNUZ3aGZSaGYvL0plUjMv?=
- =?utf-8?B?eHNHTGE1VUtubTdHKytyS2x4dndFUVE5MXc0VGZ0MlcvMDRDd290a3d4TldO?=
- =?utf-8?B?WS9KQmMzWmlXcEtSTytFc1BTTkVXUEJNNFF6OE5nVzBydkdadFVueUo2NTdY?=
- =?utf-8?B?R3J2cDhkL04yNWdIZVBaSEtIYU5jd3F5eWt1UDVmYTNxTTN1QUIzc0NyMFpL?=
- =?utf-8?B?VnA3T3ZLb3ZvNmVGQ0RGOXZRejlGTjZOYldCVHJFZUFqMEZQRnhoaTI5bFlY?=
- =?utf-8?B?UG9OTmpRY2hwejhhT0RyWGNVd2lKazVtOTB0V3gvRDFRKzhjRCtrVExyZWR4?=
- =?utf-8?B?TFZ4dVlVNlc3RGxncHBwT3pYWWt2MCt6TTU2aDlqclh6eFZsVkd2cUtKREd2?=
- =?utf-8?B?YXAzejhBRzRIaVk3cjhBdWx0ditLa2NNa3Y2VW9UMFBDNEl6cC91ZVhzUXF5?=
- =?utf-8?B?dFpzTVVGYUtnN2MxbHh5T0wwRW9hR2tabTAvWjRiMWhmekplaUlOcFM3TC9t?=
- =?utf-8?B?dmZjeWNQM1NhRi9lNE1wUzFxY2UwVVR1V1ZWOS9aL0tIRXF6ZDNjN3JoWjMr?=
- =?utf-8?B?TE9maFpaVEFPZE9EUGZxNkNUeHRwU2ZaeEVGSURraDU5Z21Eam53NkVpT2Fx?=
- =?utf-8?B?V1lRcE1Xd1k1OXZWc2RQdTVqVWU0KzZjbUl3RFdKemlZYmhNUWV0aFVETDdV?=
- =?utf-8?B?d1RMSXF2endGWDlVbnBJa1IrRkFSelpISnNRcW15N0pRKzVhOCtvcERleEdV?=
- =?utf-8?B?emZpZEF1QnNUdzdkVE8zcFNEL0ZzMEdoNlFPNzZvc0tORUlQdTB0MHQyblZH?=
- =?utf-8?B?Z1AzZlBmenhzZEJJS2Z5aWJYMk5yT2dvL3BBeFlmbEpTdGhNYU40R1FqcW1p?=
- =?utf-8?B?SkIyKzJ5UHZpSUtxQjdGSDZyUTNYRmRmNmM4SjJvQk0za2RtcGsvdDNmemFP?=
- =?utf-8?B?VE9CSndEZjlzLzVjMnFxUFVrVUp5QkkxQzY0YlRySU8raXp2KzYyY0dsZ1ZF?=
- =?utf-8?Q?KmgzucY801X3mrfbSutnlXnXe?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1ccd1ae-2851-4652-8013-08dc946181cf
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6380.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 15:22:49.1902
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AjuFg6PCybshVUVUyt7mL6Imea07EkNAnrzVFCfgGK0W+IrRFstZUAQDvNCNj+9Wr79tzx4KIaDgqcRXiqktmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4033
 
-Hi Jonathan,
+Hi Olivier,
 
-I added responses inline below.
+On Mon, 2024-06-24 at 14:43 +0200, Olivier MOYSAN wrote:
+> Hi Jonathan,
+>=20
+> On 6/23/24 17:11, Jonathan Cameron wrote:
+> > On Tue, 18 Jun 2024 18:08:33 +0200
+> > Olivier Moysan <olivier.moysan@foss.st.com> wrote:
+> >=20
+> > > Add a generic driver to support sigma delta modulators.
+> > > Typically, this device is a hardware connected to an IIO device
+> > > in charge of the conversion. The device is exposed as an IIO backend
+> > > device. This backend device and the associated conversion device
+> > > can be seen as an aggregate device from IIO framework.
+> > >=20
+> > > Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> >=20
+> > Trivial comments inline.
+> >=20
+> > > diff --git a/drivers/iio/adc/sd_adc_backend.c
+> > > b/drivers/iio/adc/sd_adc_backend.c
+> > > new file mode 100644
+> > > index 000000000000..556a49dc537b
+> > > --- /dev/null
+> > > +++ b/drivers/iio/adc/sd_adc_backend.c
+> > > @@ -0,0 +1,110 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Generic sigma delta modulator IIO backend
+> > > + *
+> > > + * Copyright (C) 2024, STMicroelectronics - All Rights Reserved
+> > > + */
+> > > +
+> > > +#include <linux/iio/backend.h>
+> > > +#include <linux/iio/iio.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/mod_devicetable.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/regulator/consumer.h>
+> > > +
+> > > +struct iio_sd_backend_priv {
+> > > +	struct regulator *vref;
+> > > +	int vref_mv;
+> > > +};
+> > > +
+> > > +static int sd_backend_enable(struct iio_backend *backend)
+> > > +{
+> > > +	struct iio_sd_backend_priv *priv =3D iio_backend_get_priv(backend);
+> > > +
+> > > +	return regulator_enable(priv->vref);
+> > > +};
+> > > +
+> > > +static void sd_backend_disable(struct iio_backend *backend)
+> > > +{
+> > > +	struct iio_sd_backend_priv *priv =3D iio_backend_get_priv(backend);
+> > > +
+> > > +	regulator_disable(priv->vref);
+> > > +};
+> > > +
+> > > +static int sd_backend_read(struct iio_backend *backend, int *val, in=
+t *val2,
+> > > long mask)
+> > Nothing to do with this patch as such:
+> >=20
+> > One day I'm going to bit the bullet and fix that naming.
+> > Long long ago when the Earth was young it actually was a bitmap which
+> > I miscalled a mask - it only had one bit ever set, which was a dumb
+> > bit of API.=C2=A0 It's not been true for a long time.
+> > Anyhow, one more instances isn't too much of a problem I guess.
+> >=20
+>=20
+> I changed the callback .read_raw to .ext_info_get to take Nuno's comment=
+=20
+> about iio_backend_read_raw() API, into account.
+> So, I changed this function to
+> static int sd_backend_ext_info_get(struct iio_backend *back, uintptr_t=
+=20
+> private, const struct iio_chan_spec *chan, char *buf)
+> for v2 version.
+>=20
 
-On 6/20/24 07:30, Jonathan Cameron wrote:
-> On Mon, 17 Jun 2024 15:04:05 -0500
-> Terry Bowman <terry.bowman@amd.com> wrote:
-> 
->> PCIe port devices are bound to portdrv, the PCIe port bus driver. portdrv
->> does not implement an AER correctable handler (CE) but does implement the
->> AER uncorrectable error (UCE). The UCE handler is fairly straightforward
->> in that it only checks for frozen error state and returns the next step
->> for recovery accordingly.
->>
->> As a result, port devices relying on AER correctable internal errors (CIE)
->> and AER uncorrectable internal errors (UIE) will not be handled. Note,
->> the PCIe spec indicates AER CIE/UIE can be used to report implementation
->> specific errors.[1]
->>
->> CXL root ports, CXL downstream switch ports, and CXL upstream switch ports
->> are examples of devices using the AER CIE/UIE for implementation specific
->> purposes. These CXL ports use the AER interrupt and AER CIE/UIE status to
->> report CXL RAS errors.[2]
->>
->> Add an atomic notifier to portdrv's CE/UCE handlers. Use the atomic
->> notifier to report CIE/UIE errors to the registered functions. This will
->> require adding a CE handler and updating the existing UCE handler.
->>
->> For the UCE handler, the CXL spec states UIE errors should return need
->> reset: "The only method of recovering from an Uncorrectable Internal Error
->> is reset or hardware replacement."[1]
->>
->> [1] PCI6.0 - 6.2.10 Internal Errors
->> [2] CXL3.1 - 12.2.2 CXL Root Ports, Downstream Switch Ports, and
->>              Upstream Switch Ports
->>
->> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->> Cc: Bjorn Helgaas <bhelgaas@google.com>
->> Cc: linux-pci@vger.kernel.org
->> ---
->>  drivers/pci/pcie/portdrv.c | 32 ++++++++++++++++++++++++++++++++
->>  drivers/pci/pcie/portdrv.h |  2 ++
->>  2 files changed, 34 insertions(+)
->>
->> diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
->> index 14a4b89a3b83..86d80e0e9606 100644
->> --- a/drivers/pci/pcie/portdrv.c
->> +++ b/drivers/pci/pcie/portdrv.c
->> @@ -37,6 +37,9 @@ struct portdrv_service_data {
->>  	u32 service;
->>  };
->>  
->> +ATOMIC_NOTIFIER_HEAD(portdrv_aer_internal_err_chain);
->> +EXPORT_SYMBOL_GPL(portdrv_aer_internal_err_chain);
-> 
-> Perhaps these should be per instance of the portdrv?
-> I'd imagine we only want to register CXL ones on CXL ports etc
-> and it's annoying to have to check at runtime for relevance
-> of a particular notifier.
-> 
+Maybe I'm missing something but I think I did not explained myself very wel=
+l. What I
+had in mind was that since you're calling .read_raw() from IIO_CHAN_INFO_SC=
+ALE and
+IIO_CHAN_INFO_OFFSET, it could make sense to have more dedicated API's. Mea=
+ning:
 
-This could be made per-instance by moving to the PCI/device drvdata. This 
-would likely need a portdrv setup-init helper function to enable for a 
-particular PCI device.
+iio_backend_read_scale(...)
+iio_backend_read_offset(...)
 
->> +
->>  /**
->>   * release_pcie_device - free PCI Express port service device structure
->>   * @dev: Port service device to release
->> @@ -745,11 +748,39 @@ static void pcie_portdrv_shutdown(struct pci_dev *dev)
->>  static pci_ers_result_t pcie_portdrv_error_detected(struct pci_dev *dev,
->>  					pci_channel_state_t error)
->>  {
->> +	if (dev->aer_cap) {
->> +		u32 status;
->> +
->> +		pci_read_config_dword(dev, dev->aer_cap + PCI_ERR_UNCOR_STATUS,
->> +				      &status);
->> +
->> +		if (status & PCI_ERR_UNC_INTN) {
->> +			atomic_notifier_call_chain(&portdrv_aer_internal_err_chain,
->> +						   AER_FATAL, (void *)dev);
-> 
-> Don't think the cast is needed as always fine to implicitly cast to and from
-> void * in C.
-> 
+The iio_backend_read_raw() may make sense when frontends call
+iio_backend_extend_chan_spec() and have no idea what the backend may have a=
+dded to
+the channel. So, in those cases something like this could make sense:
 
-Ok.
+switch (mask)
+IIO_CHAN_INFO_RAW:
 
->> +			return PCI_ERS_RESULT_NEED_RESET;
->> +		}
->> +	}
->> +
->>  	if (error == pci_channel_io_frozen)
->>  		return PCI_ERS_RESULT_NEED_RESET;
->>  	return PCI_ERS_RESULT_CAN_RECOVER;
->>  }
->>  
->> +static void pcie_portdrv_cor_error_detected(struct pci_dev *dev)
->> +{
->> +	u32 status;
->> +
->> +	if (!dev->aer_cap)
->> +		return;
->> +
->> +	pci_read_config_dword(dev, dev->aer_cap + PCI_ERR_COR_STATUS,
->> +			      &status);
->> +
->> +	if (status & PCI_ERR_COR_INTERNAL)
->> +		atomic_notifier_call_chain(&portdrv_aer_internal_err_chain,
->> +					   AER_CORRECTABLE, (void *)dev);
-> 
-> No need for the cast.
-> 
+...
 
-Ok
+default:
+	return iio_backend_read_raw();
 
-Regards,
-Terry
+but like I said maybe this is me over-complicating and a simple
+iio_backend_read_raw() is sufficient. But I think I never mentioned somethi=
+ng like
+.read_raw -> .ext_info_get.
 
->> +}
->> +
->>  static pci_ers_result_t pcie_portdrv_slot_reset(struct pci_dev *dev)
->>  {
->>  	size_t off = offsetof(struct pcie_port_service_driver, slot_reset);
->> @@ -780,6 +811,7 @@ static const struct pci_device_id port_pci_ids[] = {
->>  
->>  static const struct pci_error_handlers pcie_portdrv_err_handler = {
->>  	.error_detected = pcie_portdrv_error_detected,
->> +	.cor_error_detected = pcie_portdrv_cor_error_detected,
->>  	.slot_reset = pcie_portdrv_slot_reset,
->>  	.mmio_enabled = pcie_portdrv_mmio_enabled,
->>  };
->> diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
->> index 12c89ea0313b..8a39197f0203 100644
->> --- a/drivers/pci/pcie/portdrv.h
->> +++ b/drivers/pci/pcie/portdrv.h
->> @@ -121,4 +121,6 @@ static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
->>  #endif /* !CONFIG_PCIE_PME */
->>  
->>  struct device *pcie_port_find_device(struct pci_dev *dev, u32 service);
->> +
->> +extern struct atomic_notifier_head portdrv_aer_internal_err_chain;
->>  #endif /* _PORTDRV_H_ */
-> 
+The other thing I mentioned was to instead of having:
+
+
+if (child) {
+	ch->info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |
+				 BIT(IIO_CHAN_INFO_SCALE) |
+				 BIT(IIO_CHAN_INFO_OFFSET);
+}
+
+You could use iio_backend_extend_chan_spec() and have the backend set the S=
+CALE and
+OFFSET bits for you as it seems these functionality depends on the backend.
+
+But none of the above were critical or things that I feel to strong about.
+
+Anyways, just wanted to give some clarification as it seems there were some
+misunderstandings (I think).
+
+- Nuno S=C3=A1
+
+> >=20
 
