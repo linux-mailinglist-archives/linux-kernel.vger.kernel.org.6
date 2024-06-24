@@ -1,112 +1,88 @@
-Return-Path: <linux-kernel+bounces-226519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD746913F9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:01:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80CF1913FA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E00A2817D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:01:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390681F212A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DE023C9;
-	Mon, 24 Jun 2024 01:01:19 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FD923C9;
+	Mon, 24 Jun 2024 01:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="RXWdII/z"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18FD645;
-	Mon, 24 Jun 2024 01:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334222107;
+	Mon, 24 Jun 2024 01:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719190879; cv=none; b=tok/R0P6/JcMv0quTI36RN+dL2OvJlz8qvejr+jDRPzlM0+4a5L9fO2cF46YIDACiAoEfIfgFvI0PeKUX/EEhX0CA9Q5MxG4TBuRIcpEccYBddXHEyBR6GLqYpWlUbHX36WssNPx+gfMqqJOL8+kdGTfpSbbhbFRjeY0uIjCPdU=
+	t=1719191125; cv=none; b=CKLRDQZ4Wx2+OYNGhc3bnsxkvPe4tgiKrnR0Miwqowlww5Fg1lVCuoHUrlidzijvUlYfuWZxDlTYYKI5XCZ7pd6cKZZTazjMHpGlV4/3R7XxPSAWowYp7b4vCIBQo1aDp+zPIrziQSv+K6++h5jl5VNi1NbkV2+mPLKIUl8cd18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719190879; c=relaxed/simple;
-	bh=NZ4wCvC/W5FMr7YNpKy6YrXE3KgBt1IJ7qMewUbc0E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dd8Vc7duETDyz4ShCgSxmCKwz9Oz533Xbm51C03YmOERIPycqdaLaP+e+xB/Vz+zNe8h46d4dBxUfY+qs2mtX7MARyeLAb1I5ssAXn/7s1whZTE/s1f9pFkfJIxwGnIMvxBD2V3uLzK2GTFVfIqhUNQvEarqHEc0eRp59SglOz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sLY4u-000000001bx-1r1U;
-	Mon, 24 Jun 2024 01:01:04 +0000
-Date: Mon, 24 Jun 2024 02:01:01 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Marek Vasut <marex@denx.de>
-Cc: netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>, kernel@dh-electronics.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [net-next,PATCH] net: phy: realtek: Add support for PHY LEDs on
- RTL8211F
-Message-ID: <ZnjFTSmF3MGX7OuY@makrotopia.org>
-References: <20240623234211.122475-1-marex@denx.de>
+	s=arc-20240116; t=1719191125; c=relaxed/simple;
+	bh=9E8DTzg+OwcBRU6TbLdG+sxmbaLnRszqiEzQCtNxO7o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=h/2Ibr4afYQJufJqMgGvKY37FjpeqdfAmw164aIJ4Wu2DbwkLA4hvRL5T65DBEEkGsE050RcewuXKV2vBh8qlq0vIHTG5uUocP13HKnHNDJNdmVJ/1PZA9H15iYoZdfaFAMW/fNTY64uNll/9eGBabebBAe9Qc85s1gQoz1PNf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=RXWdII/z; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [192.168.68.112] (ppp118-210-79-194.adl-adc-lon-bras32.tpg.internode.on.net [118.210.79.194])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E023A2009F;
+	Mon, 24 Jun 2024 09:05:19 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1719191121;
+	bh=9E8DTzg+OwcBRU6TbLdG+sxmbaLnRszqiEzQCtNxO7o=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=RXWdII/zWOenRm89XgtvdUf1jC335eY6OUP7rn0qevUrlEJI18g94jfeW+Cmqpubg
+	 mg7Hd5L4P49ld/EqsdLGeR1WJ5wkvC09TxlmLbIMeaOZK6uAlDp7PerOKY5Y0zxQnF
+	 dmR29ZXoygVlSU4eYywjpIeeqDXVw9luvszpluhuK0fFYwlUf+w5wWrbu553Su6A6j
+	 d94MDaPWExwcom0MZ+A1YDTHI7AZhAYsRQVBpXI3N7qMyJtqpw0LhougqElg/TMreT
+	 CmW+yQ8oREbMYokELVu4Pr82/Yp6iHbQhPaSbQT7Cy3U0OF44tCLPxQsrtUW5T9nRt
+	 UkXL+CTdMDvTQ==
+Message-ID: <25f3b4cf773f2757ec134b0e82f59a483eed28c5.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v3 1/2] dt-bindings: pinctrl: aspeed,ast2600-pinctrl:
+ add NCSI group
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Potin Lai <potin.lai.pt@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring
+ <robh+dt@kernel.org>,  Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Joel Stanley <joel@jms.id.au>,  linux-aspeed@lists.ozlabs.org,
+ openbmc@lists.ozlabs.org,  linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Patrick Williams <patrick@stwcx.xyz>, Cosmo
+ Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Date: Mon, 24 Jun 2024 10:35:19 +0930
+In-Reply-To: <CAGfYmwWp2dayGvySdYvU+nmtxZ-x3PPW_j69ZoBD4mxzPMQAzg@mail.gmail.com>
+References: <20240620084337.3525690-1-potin.lai.pt@gmail.com>
+	 <20240620084337.3525690-2-potin.lai.pt@gmail.com>
+	 <cb55efedaef63e4580c11415aa2e29606edcaf9f.camel@codeconstruct.com.au>
+	 <CAGfYmwWp2dayGvySdYvU+nmtxZ-x3PPW_j69ZoBD4mxzPMQAzg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240623234211.122475-1-marex@denx.de>
 
-On Mon, Jun 24, 2024 at 01:40:33AM +0200, Marek Vasut wrote:
-> Realtek RTL8211F Ethernet PHY supports 3 LED pins which are used to
-> indicate link status and activity. Add minimal LED controller driver
-> supporting the most common uses with the 'netdev' trigger.
-> 
-> Signed-off-by: Marek Vasut <marex@denx.de>
+On Fri, 2024-06-21 at 16:53 +0800, Potin Lai wrote:
+> On Fri, Jun 21, 2024 at 8:46=E2=80=AFAM Andrew Jeffery
+> <andrew@codeconstruct.com.au> wrote:
+>=20
+> > Can we also do this for RMII{1,2}RCLKO (and in the driver patch as
+> > well)?
+> >=20
+> The power of RMII{1,2} is 1.8v, which does not meet NCSI requirements.
 
-> [...]
-> +static int rtl8211f_led_hw_is_supported(struct phy_device *phydev, u8 index,
-> +					unsigned long rules)
-> +{
-> +	const unsigned long mask = BIT(TRIGGER_NETDEV_LINK_10) |
-> +				   BIT(TRIGGER_NETDEV_LINK_100) |
-> +				   BIT(TRIGGER_NETDEV_LINK_1000) |
-> +				   BIT(TRIGGER_NETDEV_RX) |
-> +				   BIT(TRIGGER_NETDEV_TX);
-> +
-> +	/* The RTL8211F PHY supports these LED settings on up to three LEDs:
-> +	 * - Link: Configurable subset of 10/100/1000 link rates
-> +	 * - Active: Blink on activity, RX or TX is not differentiated
-> +	 * The Active option has two modes, A and B:
-> +	 * - A: Link and Active indication at configurable, but matching,
-> +	 *      subset of 10/100/1000 link rates
-> +	 * - B: Link indication at configurable subset of 10/100/1000 link
-> +	 *      rates and Active indication always at all three 10+100+1000
-> +	 *      link rates.
-> +	 * This code currently uses mode B only.
-> +	 */
-> +
-> +	if (index >= RTL8211F_LED_COUNT)
-> +		return -EINVAL;
-> +
-> +	/* Filter out any other unsupported triggers. */
-> +	if (rules & ~mask)
-> +		return -EOPNOTSUPP;
+Ah, thanks for catching that.
 
-It looks like it is not possible to let the hardware indicate only either
-RX or TX, it will always have to go together.
-
-Please express this in this function accordingly, so fallback to
-software-driven trigger works as expected.
-
-Example:
-if (!(rules & BIT(TRIGGER_NETDEV_RX)) ^ !(rules & BIT(TRIGGER_NETDEV_TX)))
-	return -EOPNOTSUPP;
-
-> +
-> +	return 0;
-> +}
+Andrew
 
