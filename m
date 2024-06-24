@@ -1,56 +1,66 @@
-Return-Path: <linux-kernel+bounces-226755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B85E914328
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:06:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0560F91432A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E33283773
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:06:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCEC428306B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DD73C099;
-	Mon, 24 Jun 2024 07:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h7sqw2QW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0978B45007;
+	Mon, 24 Jun 2024 07:06:17 +0000 (UTC)
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E44376;
-	Mon, 24 Jun 2024 07:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49888446DB;
+	Mon, 24 Jun 2024 07:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719212756; cv=none; b=H77ib/vVDJeUB//NdLMqMeaW65u3rJNlyjWIFQwkuj1J4Aaq0Z21Jx8XFSl1sWJmRHqqVa5rwTpTIfu+4dHglGv6b83r8Lp4IM1h+kjyuT89Fxwe13eITsaMygEzA5UohRy2tLnIfw8jVlod8dk9fUn7wqrzl7DlIgvOlBrd95U=
+	t=1719212776; cv=none; b=PBEWropig7lWcWF2vt3gVbFL8efCMtQj9Llg7ZTWM3JoHXdbRtgqIj/zZRAcSMgs5BNCvkCT/VqTaPhaAf/hWrEam9ezfYF+ERu1dAQqzJXeC3F4P7p2Llha9LT4iObOcIomsLs5fxuKt76DqDstah+JTL5S4xCOJEUEWycrxXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719212756; c=relaxed/simple;
-	bh=afYDRNFVM8pcvIJP4tvmzkmT6QeFWMGtIsLSC0oDa1k=;
+	s=arc-20240116; t=1719212776; c=relaxed/simple;
+	bh=KhGXSucYwoWiR1+mqBByAa+zdtToNFao+9n7/Mw+UYs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dAAkQAon0olbwddR+Fc37pZY7noTogVKfoZBYWGPi8y69QidXDgUd0BlvqR7o2dmPsgrjST9PxRycVjL7nV13Rvrv+KlUoLB9cq4EpFwsTrxVr42QvWr9joXoj0SlRkqUrUx5fzdGjYIG7HQKuDERiRGseB5NdIE+n8jzOHA3T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h7sqw2QW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B821DC2BBFC;
-	Mon, 24 Jun 2024 07:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719212756;
-	bh=afYDRNFVM8pcvIJP4tvmzkmT6QeFWMGtIsLSC0oDa1k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h7sqw2QWEulxyaQ4IqxxFfF/rlrwaq6zfYShXcbuY5Av9xgQpjih/48A8cJFg80Bb
-	 jXvg+iHotIalCcB5/yxMEwcz9I8uFVjUF1lGxHe9ITsnTazF3BBU+herdvfRs6GFF5
-	 SbcFQ11FqvOSl4zHwtJUNCKkChyZI0oHrNeFptZs=
-Date: Mon, 24 Jun 2024 09:05:59 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chun-Yi Lee <joeyli.kernel@gmail.com>
-Cc: Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
-	Pavel Emelianov <xemul@openvz.org>,
-	Kirill Korotaev <dev@openvz.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Nicolai Stange <nstange@suse.com>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Chun-Yi Lee <jlee@suse.com>
-Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
- places
-Message-ID: <2024062448-crushable-custody-dc7e@gregkh>
-References: <20240624064418.27043-1-jlee@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SicXi+5bsEWQ+qEmR82x33WeVAGbk5MQ+xgDXnbdAR73YqaCPmlmEGpuAXT4MKLoEzI7m7B4lVr3lshn8wIK87uJaV1TJ5ZHry+I6awegmuvrYC+ydARsiMhEqtAdbwDVZDxw1/qRMC59NewdYVpr1wIYiIaV7sFFeyW6VLmvag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-71884eda768so1289217a12.1;
+        Mon, 24 Jun 2024 00:06:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719212774; x=1719817574;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dvz83/2OWNbKm6/R/fjxOmpYGFLYYORFYe6HwC9XMMY=;
+        b=CMp7HVJ7VE39k5OqeihSsZZpLgE+YLRbK3zNZ2PywY/Zyxh1f28pIOE6uuz5rSBLh4
+         GCfqtYlGbL5VCjWHShmAMahCPYq1+5RbdTp30BgsOQyX3pZ9j+kLXEIUJivsBYyIVU8j
+         1G22hYNTju/uL9KZ3X2ZSd0iCS1uYYJCX4TSk13K5pXD4cBDPQDSFJqCW/eCygf9goJ7
+         07RRrxIZ1lrsl4l5PslWjeWS5eY1Z7f4WoYx3QrkvdWRgEr0uXxUf4b2pJS7kD9hDN3w
+         QCcHQbcEsRxFPyIJ1iKJc70eLzwTmVZ2hDulds/6eCWUxYbSX63snuMylTD81wnbGFhl
+         MDJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsLTlBN64WUpT12HELauyN3Pp2J5u3u1WSCepmTpn7VeDi0NmhZhKShmvUv2hyPLPP9pko4eox/rtrVrSNBmlDDQsrAC1kaT7mca9C
+X-Gm-Message-State: AOJu0YwOElBOGXiRbwYGPl98DuE1Gm/NcJPrSDUTu+DJG0yKtE7+DCmE
+	B95xQ2bMTqPmkOBUSUQtOKySdaTIPvtIT+Mx4BWjA3XLp9GgANj1
+X-Google-Smtp-Source: AGHT+IHKQSmhGnrycFm4EAZiiH4ASSbm48wUkqfKbzMAy+W1ekJiYcFGPRK3+CJvJNGPSGSz/n83hg==
+X-Received: by 2002:a05:6a20:8c94:b0:1b4:772d:2885 with SMTP id adf61e73a8af0-1bcf7e32820mr2569111637.3.1719212774487;
+        Mon, 24 Jun 2024 00:06:14 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706622dbbcesm4129826b3a.120.2024.06.24.00.06.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 00:06:13 -0700 (PDT)
+Date: Mon, 24 Jun 2024 07:06:06 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Rachel Menge <rachelmenge@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com, longli@microsoft.com,
+	chrco@linux.microsoft.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Drivers: hv: Remove deprecated hv_fcopy declarations
+Message-ID: <Znka3knfBIYyqZY1@liuwe-devbox-debian-v2>
+References: <20240620225040.700563-1-rachelmenge@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,32 +69,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240624064418.27043-1-jlee@suse.com>
+In-Reply-To: <20240620225040.700563-1-rachelmenge@linux.microsoft.com>
 
-On Mon, Jun 24, 2024 at 02:44:18PM +0800, Chun-Yi Lee wrote:
-> For fixing CVE-2023-6270, f98364e92662 ("aoe: fix the potential
-> use-after-free problem in aoecmd_cfg_pkts") makes tx() calling dev_put()
-> instead of doing in aoecmd_cfg_pkts(). It avoids that the tx() runs
-> into use-after-free.
+On Thu, Jun 20, 2024 at 06:50:40PM -0400, Rachel Menge wrote:
+> There are lingering hv_fcopy declarations which do not have definitions.
+> The fcopy driver was removed in commit ec314f61e4fc ("Drivers: hv: Remove
+> fcopy driver").
 > 
-> Then Nicolai Stange found more places in aoe have potential use-after-free
-> problem with tx(). e.g. revalidate(), aoecmd_ata_rw(), resend(), probe()
-> and aoecmd_cfg_rsp(). Those functions also use aoenet_xmit() to push
-> packet to tx queue. So they should also use dev_hold() to increase the
-> refcnt of skb->dev.
+> Therefore, remove the hv_fcopy declarations which are no longer needed
+> or defined.
 > 
-> Link: https://nvd.nist.gov/vuln/detail/CVE-2023-6270
-> Fixes: f98364e92662 ("aoe: fix the potential use-after-free problem in aoecmd_cfg_pkts")
-> Reported-by: Nicolai Stange <nstange@suse.com>
-> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
-> ---
+> Fixes: ec314f61e4fc ("Drivers: hv: Remove fcopy driver")
+> Signed-off-by: Rachel Menge <rachelmenge@linux.microsoft.com>
 
-<formletter>
-
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
-
-</formletter>
+Applied to hyperv-fixes. Thanks.
 
