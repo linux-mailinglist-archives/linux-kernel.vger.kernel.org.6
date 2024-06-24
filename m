@@ -1,285 +1,230 @@
-Return-Path: <linux-kernel+bounces-227363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CEF91500E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:36:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3CCC915017
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B9491C21BB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690AF282052
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3D019AD72;
-	Mon, 24 Jun 2024 14:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864E219AD73;
+	Mon, 24 Jun 2024 14:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="D4Qg4kWO"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Gc/xZNre"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2048.outbound.protection.outlook.com [40.107.236.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0063719AA75
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719239808; cv=none; b=Lc5NdBD0rdLN4LhGv0sC+Fg8fGf4Wl4GdSfPGPurcJd2WPIUqCrL/iHXNCSNtVzGVe7ad/DxwHNcZJCcQrRXuRlJK0TigkGZW13enFHXwbs+jNcMWgcrKx3Cg21WHOz6dGQYGi/MUmVF+SuLEYm05ACLZwqCl+K0u6xIqWMQdiY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719239808; c=relaxed/simple;
-	bh=wggDE/bgRHa1L4mODGwspiGnIRUUi8LE6HqPBbnBW1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TwetPA111SK3RahFnVZOOSd7XcfQ40nouq/VG2KZFl7smK9Bf+881z/W7lmVElmq719krUm6PQ2iuIvqZHP91M3ve/8a1wgBx5g/rA8D+faWI7LxKDcCkACGRtQhFi9mMh/8+XyofApIge/1EiJO3okCMYi6VJtX/rsry+l61H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=D4Qg4kWO; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-25cb15eed97so2145305fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:36:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719239805; x=1719844605; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bv7pX3A7e0aATefTLSH8Hc9sIVLTEzJJ10hAyVPLd4s=;
-        b=D4Qg4kWOMTyXlMutlJzC7nJPcQ8Xchp+bLyQAo7/b4CoIgTwRh6xctArKTEpTMpFAd
-         So3i7k/sLXj7KMHdwCdkxmFZlEtL6gwpqsmh2dEVYX37Pr1H+TJcmLD/mfBDVpLzZ4qC
-         cRNZSkfnXrlKesXqYyuslEBwByN/gQFYxkty6aU1C0FBjdv06Re4kLda4tI6RWhgP7fT
-         3VqmzvZqBH4Wqrci+HYSNXA/a7dkxemWZKpUCwVnp9MFbnSmVkA2ORTj5MuwGLjMoINz
-         AAE1G1COvnoe25qhhMpMyO5nSTGUr7stPU6ip7DbHFAMaeM3HWtxvdmp8PNlJ8nXy7vT
-         ItOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719239805; x=1719844605;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bv7pX3A7e0aATefTLSH8Hc9sIVLTEzJJ10hAyVPLd4s=;
-        b=SNZ/bYFBRl4FiWGu+r/KUCwhUtbtNVbHJi7GJM6SzxQn1cOR+Gu7fQ2quCyJv+9WJc
-         T1igCcgJrEiGdB16rX0aM3HypP7NT0JP97kjIkg3FHd6KbpKb14cVlqoZYcBWtNWfBik
-         TZIRpQv5cTbPiAJwKJwLbrTUO9cjheK9ctn834bn8LJfn+fIM1XYaAQD/fLsdYLOeqDO
-         QvdzXKanne5vEDlzAAB8fe0artGr/JddvoCGvrHRlLW27Es0kkdtJpg+YksxqZ1FcPwq
-         MsWrLD9XJXWZyCQ/OwM5bW64SKnl3ohF76THf8pn7NaIp7U9eF9EfiQfOLUSYwFfth9A
-         Nv6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXT+XbzG2VM0IB2r97QtlsfvcyAt8E9JxotGdvxHF7umqpucFgX/zyHXuOHrYsWndtBaYGPx0i3QyElZjR0l9dkU/isi4Ar3qnRdjap
-X-Gm-Message-State: AOJu0Yx8Gf+ZmYtdueG/BU1mpsk+LHqp4arCpaedG5oRAE+jWt19rEs6
-	3F971OcNDQVeKLu6+o5vr00/Dl2PnZsZ4M1mWUZzefFEpcO9vFYg3/2rqjGkqtU=
-X-Google-Smtp-Source: AGHT+IHwuPQplsBX8FrXFbl4eyzFRD7RhUchQKz0/ngb6Hz3DMqC+czTWLIPmE8rnu0aE5J8JeEIEw==
-X-Received: by 2002:a05:6870:b4a4:b0:254:b6f0:21b6 with SMTP id 586e51a60fabf-25d06bb45d2mr4708448fac.10.1719239804925;
-        Mon, 24 Jun 2024 07:36:44 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25cd4941a11sm1895787fac.9.2024.06.24.07.36.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 07:36:44 -0700 (PDT)
-Message-ID: <204e6729-d5b0-4d44-85d5-e8de7541b689@baylibre.com>
-Date: Mon, 24 Jun 2024 09:36:43 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7FE19AD45
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719239852; cv=fail; b=jRoTyDwn8azRq/f8TqXrDOyYwZemMSHdy1ABbTtohHMc713oMHVKFBz0SU2RQrMfrnb2ChIpiUFa3BilDEf0BlhldWd02/d2X5BHsJAxEHzk+HZItRpX7x7gEz1c73pdkuUS65eyWjbbhHZezqe60Vpz0JGczeMo1Vr/3B1cOHI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719239852; c=relaxed/simple;
+	bh=T/HaAH6fK964BZEAqSwjkdzZPiuidvkBOAKP1nHDBhA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YfPyPEeexHesefKHLgz6dQ8bky8jvEWyrCL7GaN0DQwXEy9o2oLKR6zcv+6wXGoWNG/jl/hnGTNYPdzaBoTS0PB3xj5VAB9xzBe6+AUpXepPAL0H6VgPE9Ccjn2vYcKAEgGqDMuOR5hvnD8GfmFnEvKQmuccq2Kwhz4iUohSXv4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Gc/xZNre; arc=fail smtp.client-ip=40.107.236.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HmSV7XOv4oB8tKAAiBs3MJFSsMCY3lcJWsVGdWeJDkRf439/aFJyLsSpGW5pNttjo5/FjLHSOVs/+oMxJdHWyhkUQ2ZQgx+2Pg5875t/AKcWB+SpegEkci8ZAAcS5azFxI4H6fTLi3BKJ2BxT0NpEWPhoPNqj9QLLc4+IhMLHi7P74Gmq0VQvf/2ReNqVy9kAS0hKtgQpKttmThDBIBe7vq3j0is0r+qXq0GULTzgt8lOnuswzfrDWsNw9VPn1l6ZsJmca/r+ym6u/0HiDHG3++xuPjeF30gN0Nf70V5YKKGNWgVNn7UBeKzs6wQv2LX1t4C8ubk3KAXJyzkGFU1kA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KAMcH97WGfOYsAqNIzkvFgcCHo6Y9b9/1TXKo0NULWs=;
+ b=cPj6ihrBvh0m4ex9g9TAhm7PBf85MkvWmNSPO1o3iOhfMIiC96rpqfXuUSibZBMcJouQlSqimRWYPYanAiVkonltyNCyjNc2J2jMIGzC2uDuNICno1jhI4kTVqrcDz/Gu0LkTmUSLjugEJ50WIafKyi7DxG0b4UW6lW8Cxh1Dh1Z+OLsj7dSS3EK/hLNjjhXuwzkcO1Yt9EdknfcSKK8Vo7pOaATDLZdcwzMVamd9QOq0uF7rK5hO+lXsv0y9CNXXEjiwCHO80EQ4WXjBtswDwvmsgHeOlh7pmtXuQoRor6dvtwlCeMd9FOg85rCJ13mlv5Q1+qvSoa8Pn1zSHx5sA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KAMcH97WGfOYsAqNIzkvFgcCHo6Y9b9/1TXKo0NULWs=;
+ b=Gc/xZNreutiynfL4tlFjF/3r5DOWDJHiaPd5sQ31U5WME1zzyWfa+aJzG3SYLzfqA1worFzCc34CZpQxCZm6a/+JUR4h2GazusPP2Axv0wY6bDT8Lv3hJekVA7LMlHNKT+SCVgUeyzK2CgsDkN1RVJM1CIcDg8CK7dxmIC9TvVc=
+Received: from BL1PR13CA0359.namprd13.prod.outlook.com (2603:10b6:208:2c6::34)
+ by DM4PR12MB5939.namprd12.prod.outlook.com (2603:10b6:8:6a::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.26; Mon, 24 Jun
+ 2024 14:37:27 +0000
+Received: from BL02EPF0001A0FE.namprd03.prod.outlook.com
+ (2603:10b6:208:2c6:cafe::a0) by BL1PR13CA0359.outlook.office365.com
+ (2603:10b6:208:2c6::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.37 via Frontend
+ Transport; Mon, 24 Jun 2024 14:37:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF0001A0FE.mail.protection.outlook.com (10.167.242.105) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Mon, 24 Jun 2024 14:37:27 +0000
+Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Jun
+ 2024 09:37:26 -0500
+From: Tom Lendacky <thomas.lendacky@amd.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>
+Subject: [PATCH 0/7] Provide support for RMPREAD and a segmented RMP
+Date: Mon, 24 Jun 2024 09:37:04 -0500
+Message-ID: <cover.1719239831.git.thomas.lendacky@amd.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: iio: adc: add AD4695 and similar ADCs
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20240617-iio-adc-ad4695-v2-0-63ef6583f25d@baylibre.com>
- <20240617-iio-adc-ad4695-v2-2-63ef6583f25d@baylibre.com>
- <187da75c-9af3-42a9-b31e-be731aaf63d2@baylibre.com>
- <20240623173911.7ea5d518@jic23-huawei>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240623173911.7ea5d518@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FE:EE_|DM4PR12MB5939:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3bb47253-4de9-476f-0e14-08dc945b2b77
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|82310400023|36860700010|1800799021|376011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?y4z/8Ndpa6s5FL8nBvAlrpAelQnrlA6gtrqf5qsHB0rYv00crsWPqrQreEQh?=
+ =?us-ascii?Q?W5PsvHLQN88fUFVEDjJYkK7xYyw/wxSwMsYlloKzfnfakRcaOIPHBoCoQFWX?=
+ =?us-ascii?Q?FyJ6HGLOHvlJHk1BQ9Bo8+JRwqxFUMAHHYfETzuIZ/xBoiiFoEQN5KnZacvj?=
+ =?us-ascii?Q?Lo0zyU46QPI14Ocj3afngVFRHlGRh7NDiafddNV+Am5rfwOV0u7W/yKBkoYr?=
+ =?us-ascii?Q?vRTMgd3Cb0W5wsUR8LPNxusK31RL+r/8Hex2HDnCMm1kMSlkphrGrhmFinQC?=
+ =?us-ascii?Q?466xzWGbm+FaruBELo1ab+avWUJKv9wEI9gvLR28JUa1rBqtNqUun0eE/As2?=
+ =?us-ascii?Q?AEp4ndRiC1E1MLrT/+9OViFnzi+yMKsnLAuO4DeH2SzhGa9T6iR4DM4jBxD9?=
+ =?us-ascii?Q?cigE/S8FDbKiy8hcXpUtya4Xr0LMmr1JONgJ5BlWBnTnmJwYdJO0UqZMLzvP?=
+ =?us-ascii?Q?ezZbj4NgX47ExxVsdmlwBOaVMIjnascngp4xAkJ23WMZQLVoxDY9UYefoSaQ?=
+ =?us-ascii?Q?jwoXVirTGCo/9asLgN2t29hajYjrP+ljr+UB3Sa12q53nfvoRK2BjVP1po13?=
+ =?us-ascii?Q?/HQcigxZ3BJ5dgNpBDG70P7PXSCH1J/+7DXTnvgaFnoxscYMZPQ4eXEF3if5?=
+ =?us-ascii?Q?Z22tfx6h5LR/O03+D/FRk0eXMGY498NC6ngrNNgfBBA4WiyUex9ITiGQCIdX?=
+ =?us-ascii?Q?wMgGjc1bSH51XBc+tCHj2Vyp+Qx05yGRjKWFR2MsA5Si1qbymCfT6QQWZ/Bp?=
+ =?us-ascii?Q?Ej16iPscfoeVpBwBHB5UCaNsnCUy/u03Gw47RxQkFfffIl1mlXJKFiPh1kUb?=
+ =?us-ascii?Q?ZDCRLLz1M5hx1n2vvXlGhGZm20ACYVTV3zE3/SDFGcvoap/lzWwmehTLUyIU?=
+ =?us-ascii?Q?OTk/GRYA+gSv4ZboXZ2UlmD6B2qdb0c/c/fGn448S+CdUFLilLgFqXR2PlWs?=
+ =?us-ascii?Q?T0yBaVnbaNR5TP1DVZOn3Uy4iS8Y4DNWDuaATHWWg3d3CmFbLZ5pcd3wZSYf?=
+ =?us-ascii?Q?9TgFdkqHQExXFjy1oaG0KpRo6xsjMmAz0F08yEjJMWMB6NnudP0uqw+7+DGx?=
+ =?us-ascii?Q?2OH63mh0SOIQKSPqc6aAB3IHbUTDxJS/HQGRJ1Npw6BUdQtAGPqVMHy4nLQt?=
+ =?us-ascii?Q?FLKwGiPbNgN3j5PR4pGP7fsV04m4DPwjbIbOP9yAsRPWyUCr00MxjcddJMkA?=
+ =?us-ascii?Q?U0853rt6Npy1ELd3u2pGIElWE4yFxGYWFR/uHp0wWGExY8xfQOAtkp+DY9lW?=
+ =?us-ascii?Q?JuI2deRG5/BI7cODlW0ziSZ1GemomjXUINVAuGesDm10XoP5wOXBZ+XkNkhA?=
+ =?us-ascii?Q?hhOu4MNElwQtcBpivbgP6MdP3GD4wbwTCTKypAG5xCyagQ1BMVixznnF+Ckj?=
+ =?us-ascii?Q?2oBQV/k=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(82310400023)(36860700010)(1800799021)(376011);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 14:37:27.1300
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bb47253-4de9-476f-0e14-08dc945b2b77
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A0FE.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5939
 
-On 6/23/24 11:39 AM, Jonathan Cameron wrote:
-> On Tue, 18 Jun 2024 14:29:10 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
-> 
->> On 6/17/24 2:53 PM, David Lechner wrote:
->>> Add device tree bindings for AD4695 and similar ADCs.
->>>
->>> Signed-off-by: David Lechner <dlechner@baylibre.com>
->>> ---
->>>   
->> ...
->>
->>> +
->>> +  interrupts:
->>> +    minItems: 1
->>> +    items:
->>> +      - description:
->>> +          Signal coming from the BSY_ALT_GP0 or GP3 pin that indicates a busy
->>> +          condition.
->>> +      - description:
->>> +          Signal coming from the BSY_ALT_GP0 or GP2 pin that indicates an alert
->>> +          condition.
->>> +
->>> +  interrupt-names:
->>> +    minItems: 1
->>> +    items:
->>> +      - const: busy
->>> +      - const: alert
->>> +  
->>
->> Since the interrupt can come from two different pins, it seems like we would
->> need an extra property to specify this. Is there a standard way to do this?
->>
->> Otherwise I will add something like:
->>
->> adi,busy-on-gp3:
->>   $ref: /schemas/types.yaml#/definitions/flag
->>   description:
->>     When present, the busy interrupt is coming from the GP3 pin, otherwise
->>     the interrupt is coming from the BSY_ALT_GP0 pin.
->>    
->> adi,alert-on-gp2:
->>   $ref: /schemas/types.yaml#/definitions/flag
->>   description:
->>     When present, the alert interrupt is coming from the GP2 pin, otherwise
->>     the interrupt is coming from the BSY_ALT_GP0 pin.
-> Cut and paste?  Or it ends up on the same pin as the bsy? In which case that's
-> a single interrupt and it's up to software to decide how to use. I'll guess
-> it comes on GP1?
+This series adds SEV-SNP support for a new instruction to read an RMP
+entry and for a segmented RMP table.
 
-This is not a typo. The BSY_ALT_GP0 is a multi-purpose pin. The actual function
-of the pin isn't selected explicitly, but rather there is an order of priority
-(Table 25 in the datasheet).
+The RMPREAD instruction is used to return information related to an RMP
+entry in an architecturally defined format.
 
-Also, there are two packages the chip can come in, LFCSP and WLCSP. The former
-only has GP0 and not GP1/2/3.
+RMPREAD support is detected via CPUID 0x8000001f_EAX[21].
 
-My thinking was that if both interrupts are provided in the DT and neither
-adi,busy-on-gp3 or adi,alert-on-gp2 is given, then the driver would use
-a shared interrupt and only allow enabling one function alert or busy
-at a time.
+Initial RMP table support required the RMP to be contiguous in memory.
+RMP accesses from a NUMA node on which the RMP doesn't reside can take
+longer than accesses from a NUMA node on which the RMP resides. Segmented
+RMP support allows the RMP entries to be located on the node with the
+memory the RMP is covering, resulting in quicker RMP accesses. Each RMP
+segment covers a specific range of system memory.
+This series adds SEV-SNP support for a segmented RMP table. The current
+RMP table is required to be contiguous in memory. RMP accesses from a
+NUMA node on which the RMP doesn't reside can take longer than accesses
+from a NUMA node on which the RMP resides.
 
->>
-> 
-> More interrupt names.  We shouldn't restrict someone wiring all 4 if they want
-> to - we'll just use 2 that we choose in the driver.
-> 
-> interrupt-names
->   minItems: 1
->   items:
->     - const: busy-gp0
->     - const: busy-gp1
->     - const: alert-gp2
->     - cosnt: alert-gp1
+Segmented RMP support allows the RMP entries to be located on the node
+with the memory the RMP is covering, resulting in quicker RMP accesses.
+Each RMP segment covers a specific range of system memory.
 
-This would actually need to be:
+Segmented RMP support is detected and established via CPUID and MSRs.
 
-interrupt-names
-  minItems: 1
-  items:
-    - const: busy-gp0
-    - const: busy-gp3
-    - const: alert-gp0
-    - cosnt: alert-gp2
+CPUID:
+  - 0x8000001f_EAX[23]
+    - Indicates support for segmented RMP
 
-Or would it need to be this since there are two possible signals on the
-same pin rather than trying to mess with a shared interrupt?
-(Note: if both alert and busy are enabled at the same time on GP0, we
-will only get the alert signal and busy signal is masked).
+  - 0x80000025_EAX
+    - [5:0]   : Minimum supported RMP segment size
+    - [11:6]  : Maximum supported RMP segment size
 
-interrupt-names
-  minItems: 1
-  items:
-    - const: alert-busy-gp0
-    - const: busy-gp3
-    - cosnt: alert-gp2
+  - 0x80000025_EBX
+    - [9:0]   : Number of cacheable RMP segment definitions
+    - [10]    : Indicates if the number of cacheable RMP segments is
+                a hard limit
 
-> 
-> T   
->>
->>> +
->>> +patternProperties:
->>> +  "^channel@[0-9a-f]$":
->>> +    type: object
->>> +    $ref: adc.yaml
->>> +    unevaluatedProperties: false
->>> +    description:
->>> +      Describes each individual channel. In addition the properties defined
->>> +      below, bipolar from adc.yaml is also supported.
->>> +
->>> +    properties:
->>> +      reg:
->>> +        maximum: 15
->>> +
->>> +      diff-channels:
->>> +        description:
->>> +          Describes inputs used for differential channels. The first value must
->>> +          be an even numbered input and the second value must be the next
->>> +          consecutive odd numbered input.
->>> +        items:
->>> +          - minimum: 0
->>> +            maximum: 14
->>> +            multipleOf: 2
->>> +          - minimum: 1
->>> +            maximum: 15
->>> +            not:
->>> +              multipleOf: 2  
->>
->> After some more testing, it turns out that I misunderstood the datasheet and
->> this isn't actually fully differential, but rather pseudo-differential.
->>
->> So when pairing with the next pin, it is similar to pairing with the COM pin
->> where the negative input pin is connected to a constant voltage source.
-> 
-> Ok. I'm curious, how does it actually differ from a differential channel?
-> What was that test?  It doesn't cope with an actual differential pair and needs
-> a stable value on the negative?
+MSR:
+  - 0xc0010132 (RMP_BASE)
+    - Is identical to current RMP support
 
-In my initial testing, since I was only doing a direct read, I was using
-constant voltages. But when I started working on buffered reads, then I
-saw noisy data when using a fully differential (antiphase) signal.
+  - 0xc0010133 (RMP_END)
+    - Should be in reset state if segment RMP support is active
 
-This chip uses a multiplexer for channel so when an odd number pin is used
-as the positive input (paired with REFGND or COM), it goes through one
-multiplexer, but when an odd number pin is used as the negative input
-it goes through the other multiplexer - the same one as REFGND and COM.
+      For kernels that do not support segmented RMP, being in reset
+      state allows the kernel to disable SNP support if the non-segmented
+      RMP has not been allocated.
 
-And burred in the middle of a paragraph on page 34 of 110 of the datasheet
-is the only place in the entire datasheet where it actually says this is
-a pseudo differential chip.
+  - 0xc0010136 (RMP_CFG)
+    - [0]    : Indicates if segmented RMP is enabled
+    - [13:8] : Contains the programmed RMP segment size (expressed
+               as a power of 2)
 
-> 
->>
->>> +
->>> +      single-channel:
->>> +        minimum: 0
->>> +        maximum: 15
->>> +
->>> +      common-mode-channel:
->>> +        description:
->>> +          Describes the common mode channel for single channels. 0 is REFGND
->>> +          and 1 is COM. Macros are available for these values in
->>> +          dt-bindings/iio/adi,ad4695.h.
->>> +        minimum: 0
->>> +        maximum: 1
->>> +        default: 0  
->>
->> So I'm thinking the right thing to do here go back to using reg and the INx
->> number and only have common-mode-channel (no diff-channels or single-channel).
->>
->> common-mode-channel will need to be changed to allow INx numbers in addition
->> to COM and REFGND.
->>
->> This means that [PATCH v2 1/4] "dt-bindings: iio: adc: add common-mode-channel
->> dependency" would be wrong since we would be using common-mode-channel without
->> single-channel.
->>
->> It also means we will need an optional in1-supply: true for all odd numbered
->> inputs.
-> Ok. I'm not totally sure I see how this comes together but will wait for v3 rather
-> than trying to figure it out now.
-> 
-> Jonathan
-> 
-> 
+The RMP segment size in the RMP_CFG applies to all segments of the RMP.
 
-It should end up like other pseudo differential chips we have done recently.
-I've got it worked out, so you'll be seeing it soon enough anyway.
+When a segmented RMP is enabled, RMP_BASE points to the RMP bookkeeping
+area as it does today (16K in size). However, instead of RMP entries
+beginning immediately after the bookkeeping area, there is a 4K RMP
+segment table. Each entry in the table is 8-bytes in size:
+
+  - [19:0]  : Mapped size (in GB)
+              The mapped size can be less than the segment size
+    [51:20] : Segment physical address
+              This address is left shift 20-bits (or just masked when
+              read) to form the full physical address of the segment
+              (1MB alignment)
+
+The series is based off of and tested against the tip tree:
+  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+
+  aedd5b6d65f7 ("Merge branch into tip/master: 'x86/percpu'")
+
+---
+
+Tom Lendacky (7):
+  x86/sev: Prepare for using the RMPREAD instruction to access the RMP
+  x86/sev: Add support for the RMPREAD instruction
+  x86/sev: Require the RMPREAD instruction after Fam19h
+  x86/sev: Move the SNP probe routine out of the way
+  x86/sev: Map only the RMP table entries instead of the full RMP range
+  x86/sev: Treat the contiguous RMP table as a single RMP segment
+  x86/sev: Add full support for a segmented RMP table
+
+ arch/x86/include/asm/cpufeatures.h |   2 +
+ arch/x86/include/asm/msr-index.h   |   9 +-
+ arch/x86/kernel/cpu/amd.c          |   3 +-
+ arch/x86/virt/svm/sev.c            | 633 ++++++++++++++++++++++++-----
+ 4 files changed, 549 insertions(+), 98 deletions(-)
+
+-- 
+2.43.2
+
 
