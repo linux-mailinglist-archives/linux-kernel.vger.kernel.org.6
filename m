@@ -1,192 +1,175 @@
-Return-Path: <linux-kernel+bounces-226567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B4291406E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:22:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0DA914073
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6A0C2807BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:22:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2044B225FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5F34C96;
-	Mon, 24 Jun 2024 02:21:51 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90242D26D;
-	Mon, 24 Jun 2024 02:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5052524C;
+	Mon, 24 Jun 2024 02:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="osuUdAC8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692D12CA7;
+	Mon, 24 Jun 2024 02:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719195710; cv=none; b=tNBRjZSV0ku2WTcZpVMYZVgaMAu5iX3+7VVoltCVNu9G4JFdaqgn6gvxFZcs77CC3EmnPZw8vU6WmPvBZ+t12+x3Mou+JnEc37VeIhCRoNX6BzC9abAMKcOCA5aQtY9hNkoRD7ewyTB0J8tKH9W8uH+aTltfTPCPxlj4ySLdk+I=
+	t=1719195758; cv=none; b=hIfz+kMemOtofoOTyt2fiN+3ZilB56jKtMIDopIfoKFf7iqclqYJeim2Jh0vWMNePPQEmF4JMzeod+MtQw8LS6guZdKDXiNmhNLXur+b/xut1cnaA9nehiFRat6kZjlZSFjmEVs3qLLrlNLsRcavZPepoaZ7E/i30KY3qkVdKNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719195710; c=relaxed/simple;
-	bh=o2yuqQo2UjhBB4By8pQIsvFhK/mIbByD/vCWbZUSYjU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gUdFKXcj4U3m0l653hA3DRCmn4OxD9AVnZl5q4KVEmrWk/cfSvbMWMFEYlUmEnAlCFgAzdswpAT5D6oB7WLMMJB8yS6gFWsdMQUs0NFlkhMJlpqShVxMm+1ojdKg+zyhwXYLnbQ6iDrW2pfnE5rXA64AAiyrJrQXV7TPMmw8qpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8Cxe+o52HhmkWUJAA--.38170S3;
-	Mon, 24 Jun 2024 10:21:45 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Dxfcc22HhmvZIuAA--.46073S3;
-	Mon, 24 Jun 2024 10:21:44 +0800 (CST)
-Subject: Re: [PATCH v2 4/6] LoongArch: KVM: Add memory barrier before update
- pmd entry
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
- Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240619080940.2690756-1-maobibo@loongson.cn>
- <20240619080940.2690756-5-maobibo@loongson.cn>
- <CAAhV-H74raJ9eEWEHr=aN6LhVvNUyP6TLEDH006M6AnoE8tkPg@mail.gmail.com>
- <58d34b7d-eaad-8aa8-46c3-9212664431be@loongson.cn>
- <CAAhV-H6CzPAxwymk16NfjPGO=oi+iBZJYsdSMiyp2N2cDsw54g@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <379d63cc-375f-3e97-006c-edf7edb4b202@loongson.cn>
-Date: Mon, 24 Jun 2024 10:21:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1719195758; c=relaxed/simple;
+	bh=NJc/1wQz2cF5K+NH6UrIdglOJXmicz7pC1224fwouAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pqzT41B97lNsM1P0R78SwmqWjyCyO6xk9z0DI2ZHL8eNVxEP2FzeQ3Bvs6CABFPa8+Qp7FpSB7MYfeyuTXATCIKpfhix2KaUmQVGnkEn1tOU0oe8eDp0viFmw24zmdI+oTa3jXJYOvv67BodhBr4Ovz2bi4gKDxg0JieOhkJ/ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=osuUdAC8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O0QCIT026303;
+	Mon, 24 Jun 2024 02:22:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	D1e1Nh5HuZAf77NAKCyR2GIxqdMZWdjZ1pNGKL8eFJA=; b=osuUdAC8+l5kXIs7
+	eHNUszJ1rziC4kbsoN6cNnLjCx7yEhAXWUCBVFfnM84bYJuqTRlior/CPqTOCj9n
+	cCA0bT1qBR01cBps/HjU8TKhOFTqZK5eq74twRaMhunTsDdRMIb2kUr6WeuIolty
+	M4RfRbEjlN7njkjX2Vo9pgreJ4dzRvUCXxmAUW/fNzGnueDcWdvTG/jOqsW5IO3I
+	PGH8G/Q6sX3Z0r/PTQ09SbbqulmW96DWXiqHDfN6Er2WoeeP7qxGPY92k4MFerei
+	n7VMtqMkoAWaFBHE9/OlltLEUDTpLLV1mQyroRHPxmp1CtfUTTsQ2hRc8npamdgF
+	7L0m4g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnjrtk39-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 02:22:30 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45O2MThx004250
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 02:22:29 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 23 Jun
+ 2024 19:22:24 -0700
+Message-ID: <af2a373d-9627-4067-80d7-3029e6f0fa34@quicinc.com>
+Date: Mon, 24 Jun 2024 10:22:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H6CzPAxwymk16NfjPGO=oi+iBZJYsdSMiyp2N2cDsw54g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 3/4] arm64: dts: qcom: add base AIM300 dtsi
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <dmitry.baryshkov@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        Fenglin Wu
+	<quic_fenglinw@quicinc.com>
+References: <20240618072202.2516025-1-quic_tengfan@quicinc.com>
+ <20240618072202.2516025-4-quic_tengfan@quicinc.com>
+ <7eb1c459-90d2-4b49-a226-0ced8216cee6@linaro.org>
+ <04517096-38a0-465f-86f7-7e8c7de702a2@quicinc.com>
+ <e344335f-be60-4568-97be-728257684310@linaro.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <e344335f-be60-4568-97be-728257684310@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Dxfcc22HhmvZIuAA--.46073S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxXFyxKw1rZw18XFWDCw4xZrc_yoW5urW8pr
-	ZrAFZ2yFs5Jr9rKws2q3Wjvr10qrWkKF18XFyfWa48ArZIqw1ayr1UJrWakryUCryrCa18
-	Xa1DK3Zxu3WUA3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E
-	14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsG
-	vfC2KfnxnUUI43ZEXa7IU8vApUUUUUU==
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: q1wIdE8g6-It4Fy0a0w-_w33H5NAJT32
+X-Proofpoint-ORIG-GUID: q1wIdE8g6-It4Fy0a0w-_w33H5NAJT32
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_01,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=727
+ impostorscore=0 bulkscore=0 malwarescore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406240018
 
 
 
-On 2024/6/24 上午9:56, Huacai Chen wrote:
-> On Mon, Jun 24, 2024 at 9:37 AM maobibo <maobibo@loongson.cn> wrote:
+On 6/22/2024 7:09 PM, Konrad Dybcio wrote:
+> On 20.06.2024 2:46 AM, Tengfei Fan wrote:
 >>
 >>
->>
->> On 2024/6/23 下午6:18, Huacai Chen wrote:
->>> Hi, Bibo,
+>> On 6/19/2024 3:06 AM, Konrad Dybcio wrote:
 >>>
->>> On Wed, Jun 19, 2024 at 4:09 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>>>
->>>> When updating pmd entry such as allocating new pmd page or splitting
->>>> huge page into normal page, it is necessary to firstly update all pte
->>>> entries, and then update pmd entry.
->>>>
->>>> It is weak order with LoongArch system, there will be problem if other
->>>> vcpus sees pmd update firstly however pte is not updated. Here smp_wmb()
->>>> is added to assure this.
->>> Memory barriers should be in pairs in most cases. That means you may
->>> lose smp_rmb() in another place.
->> The idea adding smp_wmb() comes from function __split_huge_pmd_locked()
->> in file mm/huge_memory.c, and the explanation is reasonable.
->>
->>                   ...
->>                   set_ptes(mm, haddr, pte, entry, HPAGE_PMD_NR);
->>           }
->>           ...
->>           smp_wmb(); /* make pte visible before pmd */
->>           pmd_populate(mm, pmd, pgtable);
->>
->> It is strange that why smp_rmb() should be in pairs with smp_wmb(),
->> I never hear this rule -:(
-> https://docs.kernel.org/core-api/wrappers/memory-barriers.html
-> 
-> SMP BARRIER PAIRING
-> -------------------
-> 
-> When dealing with CPU-CPU interactions, certain types of memory barrier should
-> always be paired.  A lack of appropriate pairing is almost certainly an error.
-    CPU 1                 CPU 2
-         ===============       ===============
-         WRITE_ONCE(a, 1);
-         <write barrier>
-         WRITE_ONCE(b, 2);     x = READ_ONCE(b);
-                               <read barrier>
-                               y = READ_ONCE(a);
-
-With split_huge scenery to update pte/pmd entry, there is no strong 
-relationship between address ptex and pmd.
-CPU1
-      WRITE_ONCE(pte0, 1);
-      WRITE_ONCE(pte511, 1);
-      <write barrier>
-      WRITE_ONCE(pmd, 2);
-
-However with page table walk scenery, address ptep depends on the 
-contents of pmd, so it is not necessary to add smp_rmb().
-         ptep = pte_offset_map_lock(mm, pmd, address, &ptl);
-         if (!ptep)
-                 return no_page_table(vma, flags, address);
-         pte = ptep_get(ptep);
-         if (!pte_present(pte))
-
-It is just my option, or do you think where smp_rmb() barrier should be 
-added in page table reader path?
-
-Regards
-Bibo Mao
-> 
-> 
-> Huacai
-> 
->>
->> Regards
->> Bibo Mao
 >>>
->>> Huacai
->>>
+>>> On 6/18/24 09:22, Tengfei Fan wrote:
+>>>> AIM300 Series is a highly optimized family of modules designed to
+>>>> support AIoT applications. It integrates QCS8550 SoC, UFS and PMIC
+>>>> chip etc.
+>>>> Here is a diagram of AIM300 SoM:
+>>>>             +----------------------------------------+
+>>>>             |AIM300 SoM                              |
+>>>>             |                                        |
+>>>>             |                           +-----+      |
+>>>>             |                      |--->| UFS |      |
+>>>>             |                      |    +-----+      |
+>>>>             |                      |                 |
+>>>>             |                      |                 |
+>>>>        3.7v |  +-----------------+ |    +---------+  |
+>>>>     ---------->|       PMIC      |----->| QCS8550 |  |
+>>>>             |  +-----------------+      +---------+  |
+>>>>             |                      |                 |
+>>>>             |                      |                 |
+>>>>             |                      |    +-----+      |
+>>>>             |                      |--->| ... |      |
+>>>>             |                           +-----+      |
+>>>>             |                                        |
+>>>>             +----------------------------------------+
 >>>>
->>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>>>> Co-developed-by: Fenglin Wu <quic_fenglinw@quicinc.com>
+>>>> Signed-off-by: Fenglin Wu <quic_fenglinw@quicinc.com>
+>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
 >>>> ---
->>>>    arch/loongarch/kvm/mmu.c | 2 ++
->>>>    1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
->>>> index 1690828bd44b..7f04edfbe428 100644
->>>> --- a/arch/loongarch/kvm/mmu.c
->>>> +++ b/arch/loongarch/kvm/mmu.c
->>>> @@ -163,6 +163,7 @@ static kvm_pte_t *kvm_populate_gpa(struct kvm *kvm,
->>>>
->>>>                           child = kvm_mmu_memory_cache_alloc(cache);
->>>>                           _kvm_pte_init(child, ctx.invalid_ptes[ctx.level - 1]);
->>>> +                       smp_wmb(); /* make pte visible before pmd */
->>>>                           kvm_set_pte(entry, __pa(child));
->>>>                   } else if (kvm_pte_huge(*entry)) {
->>>>                           return entry;
->>>> @@ -746,6 +747,7 @@ static kvm_pte_t *kvm_split_huge(struct kvm_vcpu *vcpu, kvm_pte_t *ptep, gfn_t g
->>>>                   val += PAGE_SIZE;
->>>>           }
->>>>
->>>> +       smp_wmb();
->>>>           /* The later kvm_flush_tlb_gpa() will flush hugepage tlb */
->>>>           kvm_set_pte(ptep, __pa(child));
->>>>
->>>> --
->>>> 2.39.3
->>>>
+>>>
+>>> [...]
+>>>
+>>>> +&ufs_mem_hc {
+>>>> +    reset-gpios = <&tlmm 210 GPIO_ACTIVE_LOW>;
+>>>> +    vcc-supply = <&vreg_l17b_2p5>;
+>>>> +    vcc-max-microamp = <1300000>;
+>>>> +    vccq-supply = <&vreg_l1g_1p2>;
+>>>> +    vccq-max-microamp = <1200000>;
+>>>> +    vdd-hba-supply = <&vreg_l3g_1p2>;
+>>>
+>>> These regulators should generally have:
+>>>
+>>> regulator-allow-set-load;
+>>> regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>>>                              RPMH_REGULATOR_MODE_HPM>;
+>>>
+>>> although the current setup you have never lets them exit HPM
+>>>
+>>> Konrad
 >>
->>
+>> I understand your point is that these settings need to be added to allthe child regulator nodes of regulators-0, regulators-1, regulators-2, regulators-3, regulators-4 and regulators-5. Is that correct?
+> 
+> No, I only meant the three references in the UFS node (l17b, l1g, l3g),
+> although I suppose such properties should be there by default on all
+> regulators in order to save power.. but most boards don't do that (yet),
+> as nobody wants to waste their time with potentially one more thing to
+> debug
 
+Thank you for clarifying this. I will create a new patch to support 
+these since this patch series have already been applied.
+
+> 
+> Konrad
+
+-- 
+Thx and BRs,
+Tengfei Fan
 
