@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-226800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749BA91440E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:59:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B09914413
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 951FE1C2145E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:59:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3377B1F22B3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B786749622;
-	Mon, 24 Jun 2024 07:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD217482C3;
+	Mon, 24 Jun 2024 07:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m39zAjLS"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FdhBpVwO"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C041744C9B;
-	Mon, 24 Jun 2024 07:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F0948CFC
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719215961; cv=none; b=ObonzwCe94kHM2xu9CVnblVDw5/mbQQElUYYE7JfkWe7eJGbE0W2WTizVKeirjC4MieKSz6wsguYUYH1lYFZ0KukvJ5KVMii1/0/7qL4y7ltkX5fk6YYhFBFaqEokWoX7QnB3/ArnI2cZaed1tF9GsljMvBl4LOq2nIGeh0plnU=
+	t=1719215981; cv=none; b=JI/C1NdN8wjszRdKDudK9hz4JVWpOIgA+0DHGm6i123qFzrUXdaiZtoBMiOkrcg/f8guhyTpFzbUg59dqjwLoAVVxDqYlnb/a+Md9Vm2JL6yRXChDRnPu6DxM9S3I6jVH+52VWgP4accj5yWWH7ut7uVRfF3VUQeLrdd8iVKCIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719215961; c=relaxed/simple;
-	bh=QntOMA/EaWu3YyHYV9Nv3W9AgkqJjlizJ596FnHTCNs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=alOLewGd9iGRrnqDc2VSgXxM0JNRuEAehhllrWWUExLl5gWgHOII1pdf2O3ZxvOshtnBT2W51ttwrGQ93rsR2eTBMn1XTfD6z2DyBFU+QJ5c2YBlMlge9rQk7+aMUxgvz98zkuKqYTrO9nB4EZWrA8U4sABGOWb/Lhy4b/w7xFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m39zAjLS; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70673c32118so780467b3a.3;
-        Mon, 24 Jun 2024 00:59:19 -0700 (PDT)
+	s=arc-20240116; t=1719215981; c=relaxed/simple;
+	bh=Cwr6U79YXw3VoE+eOF8owfYrVW8U4Cv4BeriCKZO+9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZmFTrzCuaWDzjoKbjjzQVwNjCZTq8dvWGveGUqyqJhMohh+gT5Ue+JXcbDkkOfSppdzARRz14tFmnY8hzf/OYI0W4jozb1oikFmgjpvx6nEcL0PR41gUhLPr9v+qXkFEqKSAEa/WII2cyRf37C+aCLTvAOZGUgAAIiDIdflpL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FdhBpVwO; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5295eb47b48so4731034e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 00:59:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719215959; x=1719820759; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kzXc1XEvc7I6+EQc2welv6znEDHAmFhzo0VrZbtQ65k=;
-        b=m39zAjLS8D6WYT6MVTSOoBFVdnzR5W7Mnri9yb5zqP2XSS1ezsS5j3vh2cdKDcowrC
-         1lcuDIOF0dh1exg0mbjTk/ctBhQcvBbD3VAAUd+llZGAcSwYsvTs2o32XdMUDlZ1E7Cx
-         uCLq2TByFc7qZ8vx7A4tkVa7wixZliWV1/nY/etOWs55hojJ4PwJibWwZpjyOqIrjWrd
-         iPkpRjBNlj6E8GBXXHuaOwO9ImNkmuU1Q4QBoi54IRQyqfAJmHh9Hu/kQe2pMQa5ng85
-         kAZNDB4kprP7x6wXjGfsb5nFeAsmkGVeMcR0G9OHAfQB3tRqu921u/jA8iWAizJiz6CU
-         MfYQ==
+        d=linaro.org; s=google; t=1719215977; x=1719820777; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lDo6FigYFQGMZS3Mpraq4BokVAZg7iCXZo4sAcKEd/g=;
+        b=FdhBpVwOE7AFDiwQld9ijyZeiKeavN7RML/sjyhUHQQbU8/dpYDOvFSVWPqNVXSNJ3
+         etiARDdvI3831IlD+quj2+jZaLdJroCgFdxu1jIj56AV8mQs9KjzxKnDvxJuZYxrdWPm
+         vVXwpvkV+pSMAnzzCrN6XiGU2lGdbPyIQFpD/3ITETkQUJDXEwKJg+NnBssKxmEN3x8z
+         437xY+aEi9WA0ttXg2g/JkYCuti5k1xaiyIf7ye6ltTSU+60PD0KzqasJk9T2cR8J2Bb
+         HEc3rMCKV3n07Ez0ZRa0THpS+Hsp8hp7vSNCJspfg2M2O9LN5ap52z06LOGtkOJnwrjt
+         zYjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719215959; x=1719820759;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kzXc1XEvc7I6+EQc2welv6znEDHAmFhzo0VrZbtQ65k=;
-        b=ryq1L9iYv46zErFEWDROMSzvjaeVihCya5nnMCZsCK3Hj/sY2MkvH7Z1iMPnuoAc4s
-         dcXPRFfEofZXJI0W85dC4D4eAYMTLvmRlL5WYTBb3kr0GVqUlH1P24OjDKT8pDgwiXKP
-         WIdlgbTePIQu2eaxLkIZ+ozZQwp9CA0dwYW44gTSlVMtXILVjm14uHfCqTM1DryPRzBx
-         f5sjWHPTtLjMlicvcwc1ewbKSn7EndU/pQgpPbMW26aAEJhwsYtBCaRjHb4+T9mMtHGO
-         6//MRbYDG3wwNGv7G6q9TimKE76rE/tgDjq6EvDQP98uZNceX1+Ud8P9LznjGvi/R1b+
-         tteQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXE4+ezwwNMrjIZ3+I/CGTaufrFphRBtGa5Zjhhwdg3euRS6mE8HCobHC5vlpjqRYrxHWCNDD01Vz4YFKRV3ddi46bt5425DNhJZxIGk5wVMSIP2RGkPQn27sjbsG5r1JLt
-X-Gm-Message-State: AOJu0YwJz1eaBUULaKmjVY4uyxTLnGgxqws4iquDohn7aF23YUh9g7Zu
-	guW5IJXzlDab7R5FGOKt+gvMmu+GxGBvJ7lRr+15fOrfeqTBg0NgXK/gyA==
-X-Google-Smtp-Source: AGHT+IEir6yYTOYhpeuMaCrSh2h0bZVTgDMe4yTSTENkJ44ehqWjRYb9y7g9NK8KazdPzT3tww1Dsg==
-X-Received: by 2002:a05:6a00:2389:b0:705:972a:53f with SMTP id d2e1a72fcca58-706745bbd68mr4264360b3a.18.1719215958847;
-        Mon, 24 Jun 2024 00:59:18 -0700 (PDT)
-Received: from localhost.localdomain ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065107c446sm5588834b3a.37.2024.06.24.00.59.17
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 24 Jun 2024 00:59:18 -0700 (PDT)
-From: yskelg@gmail.com
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: MichelleJin <shjy180909@gmail.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <yskelg@gmail.com>
-Subject: [PATCH] tools/kvm_stat: update exit reasons for userspace
-Date: Mon, 24 Jun 2024 16:58:21 +0900
-Message-ID: <20240624075820.71583-2-yskelg@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1719215977; x=1719820777;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lDo6FigYFQGMZS3Mpraq4BokVAZg7iCXZo4sAcKEd/g=;
+        b=W5GKh+coCCrmt+UTLxXjxzlexc1v9gnMPHZepTNZOeogH1SZalwjnwuoiRh52Sm5GV
+         mTLAeb5rgeAm3ZRUQ9qZKIy8WZaYlxpY2Ne7k59MOrgT8Y+FNcBscRu+xMRWtCBYls6L
+         YylSV1GyY19pZjTNsLdrd/80BbJHz9UviQuzK5L+SqcgD/WoiQB0/svA81KVN8nTmRU8
+         EBqrxcIDu9Bjl/wTwrpJZY+xyQ+4AdwyZIaWOhADBlGCnQBlLixZBbPvAPmZoV4hoqKn
+         +y/EWSkOkuZQdU5QmpmOmnCT7grR47/q+50bIxfgCWCgr86vX8KQ/DthfpAAsFPxy6nW
+         CdAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdsDkE5mtPQSB7dwFZM/Mtx82j+Li82VqOoyblIIgqqBtTWg0UsFFVrkB2q1kdPx6Tm3SVta+bUVmcpsJAcdrHQmD2hrXST7UiAXea
+X-Gm-Message-State: AOJu0YzjtRlgLaJS8G46rwOkVEyQb70O4IoU0GXEf4x8w+nY2Pi4PLph
+	DtdjJg3YopW/XTI63gGfXBBvdTG7IUkKKbdlRi/NurRO/L0DlYNmJpggE21uc7I=
+X-Google-Smtp-Source: AGHT+IHenuOkInITr6W0VLjG1A7f0qBzFfDGHfEiH9gMy4oUCngVCqpgbvTbaQobNROLVIHjJmUdEg==
+X-Received: by 2002:a05:6512:b23:b0:52c:e383:b0d1 with SMTP id 2adb3069b0e04-52ce383b18cmr3072773e87.53.1719215976959;
+        Mon, 24 Jun 2024 00:59:36 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdb4a7215sm787583e87.171.2024.06.24.00.59.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 00:59:36 -0700 (PDT)
+Date: Mon, 24 Jun 2024 10:59:35 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+	Ekansh Gupta <quic_ekangupt@quicinc.com>, Oded Gabbay <ogabbay@kernel.org>, srinivas.kandagatla@linaro.org, 
+	linux-arm-msm@vger.kernel.org, gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, 
+	linux-kernel@vger.kernel.org, quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, 
+	Dave Airlie <airlied@gmail.com>
+Subject: Re: [PATCH v1] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
+Message-ID: <jhjbx32kxywnzzin6w3tzobpu5v3zxfak4vz4q5t36v6hrbvuo@uixf3imdiefl>
+References: <20240612064731.25651-1-quic_ekangupt@quicinc.com>
+ <zbpia232dh4ojfsvhcqxrp6cwfygaalu5cycdrs47pqmnrisvk@dq24nww26gkm>
+ <z6g5ool5vomkudiroyaxh532rhlfu5x4i3l5xoqrsho2sxv4im@v5ghemjkpc3v>
+ <CAA8EJprgCJKOnZo7Q31KZV3SA3NqWxcMmoUxuqnVF+8cQW5ucg@mail.gmail.com>
+ <6f59552d-d7a3-5e05-3465-e707c1b7eaf2@quicinc.com>
+ <ZnWhwJtTXS32UI9H@phenom.ffwll.local>
+ <fin5dnpf3jyo5mk4b7fktdutbds5lkpxwzojecxa4zh7gwfad2@rkryxqzt6maq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fin5dnpf3jyo5mk4b7fktdutbds5lkpxwzojecxa4zh7gwfad2@rkryxqzt6maq>
 
-From: Yunseong Kim <yskelg@gmail.com>
+On Sun, Jun 23, 2024 at 03:19:17PM GMT, Bjorn Andersson wrote:
+> On Fri, Jun 21, 2024 at 05:52:32PM GMT, Daniel Vetter wrote:
+> > On Fri, Jun 21, 2024 at 09:40:09AM -0600, Jeffrey Hugo wrote:
+> > > On 6/21/2024 5:19 AM, Dmitry Baryshkov wrote:
+> > > > On Fri, 21 Jun 2024 at 09:19, Bjorn Andersson <andersson@kernel.org> wrote:
+> > > > > 
+> > > > > On Wed, Jun 12, 2024 at 09:28:39PM GMT, Dmitry Baryshkov wrote:
+> > > > > > On Wed, Jun 12, 2024 at 12:17:28PM +0530, Ekansh Gupta wrote:
+> > > > > > > Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
+> > > > > > > to be added for PD notifications and other missing features. Adding
+> > > > > > > and maintaining new files from within fastrpc directory would be easy.
+> > > > > > > 
+> > > > > > > Example of feature that is being planned to be introduced in a new C
+> > > > > > > file:
+> > > > > > > https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
+> > > > > > > 
+> > > > > > > Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> > > > > > > ---
+> > > > > > >   MAINTAINERS                          |  2 +-
+> > > > > > >   drivers/misc/Kconfig                 | 13 +------------
+> > > > > > >   drivers/misc/Makefile                |  2 +-
+> > > > > > >   drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
+> > > > > > >   drivers/misc/fastrpc/Makefile        |  2 ++
+> > > > > > >   drivers/misc/{ => fastrpc}/fastrpc.c |  0
+> > > > > > >   6 files changed, 21 insertions(+), 14 deletions(-)
+> > > > > > >   create mode 100644 drivers/misc/fastrpc/Kconfig
+> > > > > > >   create mode 100644 drivers/misc/fastrpc/Makefile
+> > > > > > >   rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
+> > > > > > 
+> > > > > > Please consider whether it makes sense to move to drivers/accel instead
+> > > > > > (and possibly writing a better Kconfig entry, specifying that the driver
+> > > > > > is to be used to offload execution to the DSP).
+> > > > > > 
+> > > > > 
+> > > > > Wouldn't this come with the expectation of following the ABIs of
+> > > > > drivers/accel and thereby breaking userspace?
+> > > > 
+> > > > As I wrote earlier, that depends on the accel/ maintainers decision,
+> > > > whether it's acceptable to have non-DRM_ACCEL code underneath.
+> > > > But at least I'd try doing that on the grounds of keeping the code at
+> > > > the proper place in the drivers/ tree, raising awareness of the
+> > > > FastRPC, etc.
+> > > > For example current fastrpc driver bypasses dri-devel reviews, while
+> > > > if I remember correctly, at some point it was suggested that all
+> > > > dma-buf-handling drivers should also notify the dri-devel ML.
+> 
+> If the agreement is that dma-buf-handling drivers must get reviews from
+> dri-devel, then let's document that in MAINTAINERS and agree with the
+> maintainer.
 
-Update EXIT_REASONS from source, including 2 USERSPACE_EXIT_REASONS:
-'KVM_EXIT_LOONGARCH_IOCSR' and 'KVM_EXIT_MEMORY_FAULT'.
+Good idea.
 
-Link: https://lore.kernel.org/all/20231121225650.390246-3-namhyung@kernel.org/
-Link: https://lore.kernel.org/lkml/ZbVLbkngp4oq13qN@kernel.org/
-Signed-off-by: Yunseong Kim <yskelg@gmail.com>
----
- tools/kvm/kvm_stat/kvm_stat | 2 ++
- 1 file changed, 2 insertions(+)
+> 
+> There's no need to move the driver for that.
 
-diff --git a/tools/kvm/kvm_stat/kvm_stat b/tools/kvm/kvm_stat/kvm_stat
-index 15bf00e79e3f..eec6c00e3ff9 100755
---- a/tools/kvm/kvm_stat/kvm_stat
-+++ b/tools/kvm/kvm_stat/kvm_stat
-@@ -288,6 +288,8 @@ USERSPACE_EXIT_REASONS = {
-     'RISCV_SBI':        35,
-     'RISCV_CSR':        36,
-     'NOTIFY':           37,
-+    'LOONGARCH_IOCSR':  38,
-+    'MEMORY_FAULT':     39
- }
- 
- IOCTL_NUMBERS = {
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
