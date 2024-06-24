@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-227377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3586991502C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:40:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83D4915030
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1C5AB234D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:40:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D99AE1C21FD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EF419B3C6;
-	Mon, 24 Jun 2024 14:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F98019B5AA;
+	Mon, 24 Jun 2024 14:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cBLkRpjB"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kthgy1mr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A7019AD80
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EA819B3CE;
+	Mon, 24 Jun 2024 14:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719240019; cv=none; b=Dyxh6h6IHOPJNnarWdZa1oqHWcGXsshysBDOTINlVj5hA1kYwThZAQzqLVjmISsL2K9mAVsDQrnfTOSvESQbfuoNAxrPrxlbtZlIPI5LJVaDb9pqPxewtnpVsWR85M1ZiXWN1S2VFwQ8qoi8VFdhonV4XFPQY6/o0RQnN56YRjo=
+	t=1719240023; cv=none; b=mQI9JvlkF01xhj7a5KSTqvpk0ygb2LZbMKla7+acC8Vflq/EBlt3veBq8UTrUl1G5ACyX8Mo3XhazcFfMTBQSOH4OreBXtZgIviWLClv7ZXs8qsLNs6Y/YRtOUZIDj8maJgYz2iNvc+7rVwtjkktVFcPfA5yomCfanZeT9bSOnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719240019; c=relaxed/simple;
-	bh=3+VEMirkt2JimbX+cgEpMZSYxqIZTmLUAGJ3tL7aqRc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GJ9DCmJyY7OROwryuWGWbeLAxSbtR1RlVg6vf0LFktsSCRn/yq4oB3U8qhyv7ZEsRsInAne4OW9lOWs/+61skbZZaH2n0bP5Or3WxnixrBE2rUswbqlwvlaSnaPDwMfUElWheJ1wenq5KmiAMdKfFePG9tCgjxCPHzLFzBnd288=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cBLkRpjB; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-718c1f3e239so62350a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719240016; x=1719844816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TKy5X78Xc68Jjp/ITVwHyZUvV7q/2v9iXB0/cpHUtsM=;
-        b=cBLkRpjBjzJL9pK8ybzUiu8pJDFuaFThvl+/HmObM3WA8AqDx6c9zUpwL4gZGDTROL
-         N0oOpm8ufogeMajklFccJ20omMBY7flpr5mCufMo2hqRg2gtAt0+80Pe582S9Rv1liHv
-         gYCNBLDjBfPtBPbkxQ89UdEAK2mTmxm/OBQXxRAHCLZp75RLKxJX/XvvXTA5LBpKMVJv
-         MtNPvh+9N70oC+sPH57KEjCtzEyx1nKgwqaBcL6O0pJjhFdFCX2LTkNC6jUYiGYlnM7k
-         +Z4TF7/6W+G12SW6jn1fAgBTxFBv/z2k4S/E5uSKIcjsRJdUjUlKIUo9Ho4a/XEIn/P8
-         esug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719240016; x=1719844816;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TKy5X78Xc68Jjp/ITVwHyZUvV7q/2v9iXB0/cpHUtsM=;
-        b=xSScYjcZ/vyfXxstv6hmaicsVpuGVky42sKzPEhtnyAFvTde7X2Y8yIN2j48bTMC14
-         /tJhg4D1Ohoe7wOTD4fJeP7+j5rGcByiJlsqsPwMkl4vZ5xkb9CIeL9B7cKSK+oFtxZV
-         mnMWBuZpfkRQALmRCdw8ZGkEv2/vK/jeZnAnMvLf3JKXStqTXgwXNj1YFXM7s1bJNELt
-         l3nzi6JT/JtRReyl8cTd3AdaJHLIhDG0DlbY1WG/x0tKVS3Bu99CnLP6aXzKhgSAfuDE
-         OagXueH2cCn1bFLciJUk/pf+dXHJbOIUu4ADDI9ffjCPTqLElWsEQedmlK9OuDvl8F9p
-         htow==
-X-Forwarded-Encrypted: i=1; AJvYcCUSa1h8vZDDsej+YSNz9jUkTKadU3Xk3JJd/zwlvUUctO+nkyS3IPKEhKX4zcmBrWxqdv31PUWh2iqgfpMKNbusc8SWDrBpROesaGre
-X-Gm-Message-State: AOJu0YwnoUz3VWuG1zabcwOiWm6bacYVre56pGshlzdEE+2kWhL7ASYs
-	HYwnC8tMP24ADziy8Phs2Qf0XjQre0sIxAy33/KWfN81dYOmFS721R2MvJJAQf1RAkNUxoRpzbf
-	3
-X-Google-Smtp-Source: AGHT+IFMSPpdcpFf9R0ildYRClJVAwkyi4bsJ5OHhkX5J/qqK8Lr9fu97jELdRw9rLlQ6iA/jVH4rw==
-X-Received: by 2002:a05:6a00:48:b0:705:d50c:2564 with SMTP id d2e1a72fcca58-70667e6fcd6mr6262026b3a.3.1719240015146;
-        Mon, 24 Jun 2024 07:40:15 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512fed18sm6278729b3a.181.2024.06.24.07.40.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 07:40:14 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20240602-md-block-brd-v1-1-e71338e131b6@quicinc.com>
-References: <20240602-md-block-brd-v1-1-e71338e131b6@quicinc.com>
-Subject: Re: [PATCH] brd: add missing MODULE_DESCRIPTION() macro
-Message-Id: <171924001423.306345.14142856232917408187.b4-ty@kernel.dk>
-Date: Mon, 24 Jun 2024 08:40:14 -0600
+	s=arc-20240116; t=1719240023; c=relaxed/simple;
+	bh=LghOPF/jBzOKdRQhWCjLMPt9wHaq5KBkLu8Li8xh22Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QXCrdn40JjOH7KIFwjDHo8yRcPSMG86vmBYyNCbHzd8PICg/4gUwGRLumz+MxNgdubzJynwxY6ZdaC/UZgjx9vW0pqQUDT2E5w++fza4Nf64GoEWI6A8ceDt5MQNFyDsyoeAfZlFQ98sIQkOvxsKh3sZ6GzN0+c4y5WQT2iwkiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kthgy1mr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C9B3C2BBFC;
+	Mon, 24 Jun 2024 14:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719240022;
+	bh=LghOPF/jBzOKdRQhWCjLMPt9wHaq5KBkLu8Li8xh22Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Kthgy1mraYMHo8kgPH0n4nZR6eKlPkAHwYrXrCDtoyJ7FWDddIlZwy/7doXrfOqoR
+	 KiYt9yqzQYfK20z1ZHivh2fuGEtJMemdboUsRe6sTcJ9RH5dddOS7oxxeSC4kgni22
+	 no5d82UomUaGW5+PjLI9/BBEQE/Vzq05QpvkWOfBUUOKEWKetLllRjrH6aFm7OB1FK
+	 1Rp0WiZOuuzLdG86HCZxtiuhzS0tLysPFq85s9h1JgdjX5ys36dtQjXhWI+bzdr6Au
+	 XPdF06+uqR4sR0VTLdxC2tXKvpg74NkHF6zYcI9VgJJ3sCWXvLj07jny8TXz6xbp10
+	 W/4oUA87sAawA==
+Message-ID: <7466d857-5ed0-433b-bf3d-525b40939b78@kernel.org>
+Date: Mon, 24 Jun 2024 16:40:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: x1e80100: add soundwire
+ controller resets
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
+ <20240624-x1e-swr-reset-v2-3-8bc677fcfa64@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240624-x1e-swr-reset-v2-3-8bc677fcfa64@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
 
-
-On Sun, 02 Jun 2024 16:46:25 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> modpost: missing MODULE_DESCRIPTION() in drivers/block/brd.o
+On 24/06/2024 15:32, Srinivas Kandagatla wrote:
+> Soundwire controllers (WSA, WSA2, RX, TX) require reset lines to enable
+> switching clock control from hardware to software.
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> Add them along with the reset control providers.
 > 
+> Without this reset we might hit fifo under/over run when we try to write to
+> soundwire device registers.
 > 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Applied, thanks!
-
-[1/1] brd: add missing MODULE_DESCRIPTION() macro
-      commit: 876835b128976e2e9a7d18daab58b4cba7742787
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
--- 
-Jens Axboe
-
-
+Krzysztof
 
 
