@@ -1,145 +1,151 @@
-Return-Path: <linux-kernel+bounces-227110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD9D91487B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:23:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D0591487A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E25A6B24675
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8571E1C2209F
 	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCAF13A3E0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E85813A3E3;
 	Mon, 24 Jun 2024 11:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zu3kIjxz"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfISkCRq"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BECC137C2E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C7E137758;
+	Mon, 24 Jun 2024 11:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228186; cv=none; b=UvWIg0WvT5PlavfDsmE3HUQhZlfQvajHFUHT9NJm3qBGH6VbSUuyraFFi7RgcaCcBd3w+/AlVlRF7dQuGJMpQfO6ZK5lZArkmztFAqBeCko4/UQ4lAto6jwgRz6vBs4T/xXMdCX7Tuup8ALo6MadQCkQFbtU1eFl06wL4XA+oSg=
+	t=1719228186; cv=none; b=SvvWCz+7SPECVYdgq8AoeNiip2VphNLiBIXo/3qOPxeGnQQwkPhA0uvFV4qq/5Ea/1SAD6C96ZqyBckNIbYtihVR9CJW6GKQ5yvvZ2LlAEVbkWqZJmm1WuVFE6Gu/wrYJcCBKFjvaJ32D7ts3NC6oHSGcsw6jbBQn+2U94EAsus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719228186; c=relaxed/simple;
-	bh=S4Oa3Fi8IQljVdEYLI5O8zdfZsxp5YbWq8vVORk/zlM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jn3kn/i+eg36CD4vwIb4i+ZPIbqGsp8A8Cqrl3/+9wLZTMwFtcBChrzrpFnLYaAozY13pM4lkWlD/Xh5zfm0EF+POoq77vlWpxEeeYysXZwLLNuEygBrCWOiRBnzU/esOYMkzn98t1onoFxv7KrM3f+Gzq713nm+TgSB74FTU7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zu3kIjxz; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5c1a6daa04bso2205619eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:23:04 -0700 (PDT)
+	bh=1wz1DO4+P9GXw81HrvYZRwiMbG8RW3ptYFK10YnWQYI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pX9Or4u1yrYi5esIy8u8yqB3SwLwG+raW0b0eE2Gdxxud2dHTtLHwCnsTADaG1TjCgppSpLUm/bCE42/wKElFcxeHQpCubkmtVj72NdZ9FJdkL8VQod9KowLTeA8VhvjXZDZm+2SmB5jSTbFDMmUfdUJCuIY4phkBtaX8CnRcy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfISkCRq; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cdf2c7454so2834479e87.1;
+        Mon, 24 Jun 2024 04:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719228184; x=1719832984; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u30lLX5MsP/IKxn1NfwcAHsSmZJS+FIZz7/OFIlaO7I=;
-        b=Zu3kIjxzOftbaS3NAFWR008Jt3PeySACnJTg9Mo7KISu4z+38omBIFJvQyN++lv7cB
-         zU0dAVDZs14c8ST/sK65k9V3nxxHPyq3Avm16Upe1dQjbaYvj8xrF8ZrY2TFCnnWDJ+V
-         80Z9WBWkYVYcysLKNPrAistos06qhS5o6UZxaxOxKcKhJig5CTTgXwBEK0SSJCjqhbUM
-         WpprSZV0Nj1nhIK6sdCd/mdHnjekAtUazD6Zgfbof4AQwlf6cJ+nu9krgbZGJY024tJC
-         gbZgKtR2LdKjt1FglyrDKbvAxwApN0OG6Pq+WQu/gfmTErf4WW6MEv8+ASXQ9TvGUXYW
-         /vEQ==
+        d=gmail.com; s=20230601; t=1719228183; x=1719832983; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GuZakqcQ8P7/8zUig3bLggNmER3pcdpTwZQ0sDBpoFc=;
+        b=XfISkCRq9mHxRrTkuJ1eEU8ytNFflYnYpPWmbW/a3X4rtwHo5wJxc8TUkqTlrtp94u
+         nZPJSeDe+E8VQiIhJygZm7f9kw0rUxQ2FZRX+OrtBw5ZJKgaCiWGWJII67XdBeD4Pd1R
+         Qu8akQIq5SRAE4HWkYzCHS5Yr+ooQRwqvUZ7tAbykzqhHy4WVtYK+ppo6QizzbxFvzYU
+         RIZIw8L+AkMWDro9ygZsOHCJbIS38RApFOlTsqZ4Qb98XD89F1mapqBS8skXpVgSZnEZ
+         A343fX+NaAPqhi9hBIFzWK0UH5dW8+lWSSoA4nTC/QkV4Mjp9B/E5hmF2LBr7Fu8Vu9a
+         dLgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719228184; x=1719832984;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u30lLX5MsP/IKxn1NfwcAHsSmZJS+FIZz7/OFIlaO7I=;
-        b=XtarkKnVmFuMzoybFSN1zLvZMy+NRSwNgRVkCvDGb0yT4Tu6/6f5GlY8pBGjVjTDcp
-         5bZgGAWcTBxvuQ3484MAmytKvrRIV6pGeI3uiLe3YaLhpaw5/ZctmlyqYHr62L9dpbAU
-         0uBpqIyU8Brvy0BkJCOK/NbcRC0L8EdsmmYIkmBZ1i53WW+031XfviGnsdAE6cQFb6ga
-         88P7GzQut0r1V339tq4qnQQxqZmvC523HWySe2+IFaVSqG9oH6VzvCRQ0hvaAFYJXfYH
-         KJnHRzKSqMYWWGA3mXDabpeGY2Jb68cQq6+5HphuZwpKRGah13/3JZG7mCp7DQWu0DIo
-         utpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxWMV/fUz7ZXtKVOIgbVDAqimBnqff5CPKPXCzUXQaje57JTsCidqPXPQl1vd6b1KR/kVSS8tHqmLVcZ0IZ3Y8IQbO4MRPzSprSySL
-X-Gm-Message-State: AOJu0Yx8bWOFd2LHaNHnVp965EMzrb0aFY18IFP1s7xU0d4nCYDt6qw2
-	Zhh4ATaCdPnU2mcP1vnbIDzA0KFnwfV6z2RI1qLcmWexll3O/ybEhA7LCF0BdRWzMshsCTYy4Y8
-	pTR/DPCI3Fme4c1YqSI6u7FuvgXijFcsyXMTWCQ==
-X-Google-Smtp-Source: AGHT+IEMLOPKjw5oHjHxY0zCeeuDJx6nBikXHAv0mrWk60i33NBz4cPxYEwhe+RUgp41xs0jTLpfBU3mUf65mTiLoME=
-X-Received: by 2002:a4a:345d:0:b0:5bb:3ab6:94d8 with SMTP id
- 006d021491bc7-5c1eed472c1mr4618521eaf.6.1719228184148; Mon, 24 Jun 2024
- 04:23:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719228183; x=1719832983;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GuZakqcQ8P7/8zUig3bLggNmER3pcdpTwZQ0sDBpoFc=;
+        b=Buf9aaQtx4UsAzJ4i35K1uWDthIIh2v31RRawMYnuifJTj3/H5apQsX4YptCIRXikY
+         Ty43I1a+hlKjpCoic3loFNcXZiYz+0r2WNCv6omVE8ty06dsRFrpPfD9v4ogA9mxtDk0
+         JYEDtVhjGm7WgDdiULYiPbDg1kvnaY18naxkEXGj4NrLRWoLrgHFiCTfH6jqgbtZs2Sw
+         7QkKjCfG476U6mVJzqczlqxNBh7QPcnaZH+ouM4RpxdB/bEP6EyJJ8OM7gmU9ySDw0r0
+         zUXPNi5p9jxjzFoviT9eKTP7QCONtoPvwPDnyoLAu6HrAABrvCwa6oqdKedPeEpl+NPx
+         ceyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEBZoyJGvGa8aTxPkcn5HwzZIONg09E6t+qgXKAuUYMY74yB8mGwZBKajZ+B41ivHTgZD4EdXit6UGxIbJToWnuKLkuSNfDC8O+sASXWGp1Ayjovif451upp9eNQSKcrPd
+X-Gm-Message-State: AOJu0Yz55vZr0aU+obsMaJB99iwS8mxjuIRQFbWeNfesN9T974l/eyYv
+	cRP+WY06xkCHrvdF+tdTEzCCvcQWpQrK1RMlUCh+6xhn/xvhjq2BQD9Pwg==
+X-Google-Smtp-Source: AGHT+IFFVh3a7Lk9TfHP/1hRO/050f5iXVyxCbY49eRmEy35wRdA+P/mkPt07Tee0w1T9Be/vxUe4Q==
+X-Received: by 2002:a05:6512:490:b0:52b:c195:5d9c with SMTP id 2adb3069b0e04-52ce185ce3dmr3369478e87.61.1719228182746;
+        Mon, 24 Jun 2024 04:23:02 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7251ace5besm125505566b.179.2024.06.24.04.23.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 04:23:02 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 24 Jun 2024 13:23:00 +0200
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH v2] build-id: require program headers to be right after
+ ELF header
+Message-ID: <ZnlXFF2sV-JNjGl2@krava>
+References: <0e13fa2e-2d1c-4dac-968e-b1a0c7a05229@p183>
+ <20240621100752.ea87e0868591dd3f49bbd271@linux-foundation.org>
+ <d58bc281-6ca7-467a-9a64-40fa214bd63e@p183>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org> <20240617-usb-phy-gs101-v3-3-b66de9ae7424@linaro.org>
-In-Reply-To: <20240617-usb-phy-gs101-v3-3-b66de9ae7424@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 24 Jun 2024 12:22:53 +0100
-Message-ID: <CADrjBPod9w5L_SNFCa8+=kzasnf8g6MmGC6m9E+kF8spu37Z8w@mail.gmail.com>
-Subject: Re: [PATCH v3 3/6] phy: exynos5-usbdrd: convert core clocks to clk_bulk
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, kernel-team@android.com, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d58bc281-6ca7-467a-9a64-40fa214bd63e@p183>
 
-Hi Andr=C3=A9,
+ccing bpf list
 
-On Mon, 17 Jun 2024 at 17:45, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
->
-> Using the clk_bulk APIs, the clock handling for the core clocks becomes
-> much simpler. No need to check any flags whether or not certain clocks
-> exist or not. Further, we can drop the various handles to the
-> individual clocks in the driver data and instead simply treat them all
-> as one thing.
->
-> So far, this driver assumes that all platforms have a clock "ref". It
-> also assumes that the clocks "phy_pipe", "phy_utmi", and "itp" exist if
-> the platform data "has_common_clk_gate" is set to true. It then goes
-> and individually tries to acquire and enable and disable all the
-> individual clocks one by one. Rather than relying on these implicit
-> clocks and open-coding the clock handling, we can just explicitly spell
-> out the clock names in the different device data and use that
-> information to populate clk_bulk_data, allowing us to use the clk_bulk
-> APIs for managing the clocks.
->
-> As a side-effect, this change highlighted the fact that
-> exynos5_usbdrd_phy_power_on() forgot to check the result of the clock
-> enable calls. Using the clk_bulk APIs, the compiler now warns when
-> return values are not checked - therefore add the necessary check
-> instead of silently ignoring failures and continuing as if all is OK
-> when it isn't.
->
-> For consistency, also change a related dev_err() to dev_err_probe() in
-> exynos5_usbdrd_phy_clk_handle() to get consistent error message
-> formatting.
->
-> Finally, exynos5_usbdrd_phy_clk_handle() prints an error message in all
-> cases as necessary (except for -ENOMEM). There is no need to print
-> another message in its caller (the probe() function), and printing
-> errors during OOM conditions is usually discouraged. Drop the
-> duplicated message in exynos5_usbdrd_phy_probe().
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+On Fri, Jun 21, 2024 at 09:39:33PM +0300, Alexey Dobriyan wrote:
+> Neither ELF spec not ELF loader require program header to be placed
+> right after ELF header, but build-id code very much assumes such placement:
+> 
+> See
+> 
+> 	find_get_page(vma->vm_file->f_mapping, 0);
+> 
+> line and checks against PAGE_SIZE. 
+> 
+> Returns errors for now until someone rewrites build-id parser
+> to be more inline with load_elf_binary().
+> 
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 > ---
+> 
+>  lib/buildid.c |   14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> --- a/lib/buildid.c
+> +++ b/lib/buildid.c
+> @@ -73,6 +73,13 @@ static int get_build_id_32(const void *page_addr, unsigned char *build_id,
+>  	Elf32_Phdr *phdr;
+>  	int i;
+>  
+> +	/*
+> +	 * FIXME
 
-Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
-and
-Tested-by: Peter Griffin <peter.griffin@linaro.org>
+nit, FIXME is usually on the same line as the rest of the comment,
+otherwise looks good
 
-Tested using my Pixel 6 pro device. USB comes up and it is possible to
-use adb from the host computer to the phone.
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 
-regards,
+thanks,
+jirka
 
-Peter
 
-[..]
+> +	 * Neither ELF spec nor ELF loader require that program headers
+> +	 * start immediately after ELF header.
+> +	 */
+> +	if (ehdr->e_phoff != sizeof(Elf32_Ehdr))
+> +		return -EINVAL;
+>  	/* only supports phdr that fits in one page */
+>  	if (ehdr->e_phnum >
+>  	    (PAGE_SIZE - sizeof(Elf32_Ehdr)) / sizeof(Elf32_Phdr))
+> @@ -98,6 +105,13 @@ static int get_build_id_64(const void *page_addr, unsigned char *build_id,
+>  	Elf64_Phdr *phdr;
+>  	int i;
+>  
+> +	/*
+> +	 * FIXME
+> +	 * Neither ELF spec nor ELF loader require that program headers
+> +	 * start immediately after ELF header.
+> +	 */
+> +	if (ehdr->e_phoff != sizeof(Elf64_Ehdr))
+> +		return -EINVAL;
+>  	/* only supports phdr that fits in one page */
+>  	if (ehdr->e_phnum >
+>  	    (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
 
