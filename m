@@ -1,406 +1,159 @@
-Return-Path: <linux-kernel+bounces-227056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779FA9147B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:42:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 674679147BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A1A11C2100C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C9D1F232CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA44136E11;
-	Mon, 24 Jun 2024 10:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97436137759;
+	Mon, 24 Jun 2024 10:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvQNvhvg"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yQy5adox"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2054.outbound.protection.outlook.com [40.107.96.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484F61805E;
-	Mon, 24 Jun 2024 10:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719225744; cv=none; b=BXU4+krQcjWSYhCR+i0yfqMyKvyk9/uKve3bgxEwCRaFfM6JGt0GhysYczGzWA3lLt6YqvZk/4XXboPBTto2HrEZQ85p/Zausnslgtf2BvV+6Vru3+54nJUBulaEiUNa5YotdofO60G/hgNUdc/OWs0IHi32raIpz8D4owO88sE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719225744; c=relaxed/simple;
-	bh=Gh7BOTBH8+J+Icto8yZWEsyrOMo9Sl12DQUBr8k/Alg=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=RpAarJWQytJ0NRX4V0/cTwq2G87b7tVufQoqlVdst1dFvs/vaqr4v9X3tNzM0ErEFP/sxLCz4/8if0mOuix/6bSxgmmv6lEEBpEZ0kjDZenbmbuXNHQKAZcvaiCm4zXei7TCKkigYFDNDEPI4yVLNtSywN2b8kqeo34y6vbrPp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvQNvhvg; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3d227b1f4f0so2343900b6e.3;
-        Mon, 24 Jun 2024 03:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719225741; x=1719830541; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xI0iqXCuAQ7si61M7TcIkv9wUmBn+TtB6UUMqeHET2Y=;
-        b=CvQNvhvgqkQKx1CZCDpCxQor/pPew5mtiTBx1K5MT74/skpi9VFKpUiqjQi2F2NeT6
-         WKQ7BLWUc5VdE36dVSRRqtWqMoN31AyzHnBVhwDpHbRFrtPuMlrJKSAcfc+n6Ss6QLwf
-         9VEFqdoi1eoGO33NZTRP1iIXyxf27rq2rWO7weXPpKvJARcoE8Zka1u4UFTMuHTQuKo8
-         AWWRak/8WG4KT7qPiSQAVRE4cHMIAAR4dM8hlHRbvJC2qXL3RU5PTTOmUsxGs9zuIkJh
-         Iz97692EHSl2wirbCAjQfwaGbtsVWM91BxKJdCOAG2vMeGmjStZwqRt3IffELP/LRx6M
-         rcuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719225741; x=1719830541;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xI0iqXCuAQ7si61M7TcIkv9wUmBn+TtB6UUMqeHET2Y=;
-        b=FGBmsq7RDS+lIZFexHnnPfWD6Ws1y6GPFQKP8T9eUt69En5HuCxWCW+cxUisht3UCd
-         lZB4oeyI6OAyR1DzVVXG2d7PWC6+fYzPDyJtku+HONFZCD79bma4Beoki4IHJZNyuyKn
-         ZsCAmKLqntRpd0Pd9Jtme8v/v/yXt5PrH2NLtqEDvhzXnwQwgAd43qbZ+ICawla/H+f4
-         Inh+nixO1In4YiXKil7YjXbZLI4lm7gz59Zf5Elto3pRldDML4KywdBhvdCOyDKBsr9o
-         lN9IFtcs84uBONQNV9juTWD29oEE9cAUasEP7BlHrPjmZFnPEwWVeHdjYy/GxHcJ0M+N
-         RH8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVTd5jZqb+y6NqbzWQUicZi7Oipei55BnJ1U009TTByRiaW9bPtcgLSHliF7LDTBImJwVRqczfZuFMSWaiT8Ifqq5FS9lG1OztYp4haCuPdAYIzNKO83hn4wCGii4R/U8VoafhIqCoRXGmjp4o57iFx1V6Lb0/FvYNzI4me
-X-Gm-Message-State: AOJu0YxysslWY4K56L+rG1t1od9ZxF07jVp0d9WFJLlTgiiEZuwxBtq2
-	MrJmhck0umOoIbIdYaNWGVATjsVubz8bmxNNus6z7Xk1ZFX77iCt
-X-Google-Smtp-Source: AGHT+IEOUTo43GG1ukb6otTSAqSauuup8u6l7mGeTP0KVlA0gfhxPEO4nYUvGSf12Adtan4nmd3XCA==
-X-Received: by 2002:a05:6808:1484:b0:3d2:2577:89a2 with SMTP id 5614622812f47-3d545958327mr4680666b6e.2.1719225741059;
-        Mon, 24 Jun 2024 03:42:21 -0700 (PDT)
-Received: from localhost (56.148.86.34.bc.googleusercontent.com. [34.86.148.56])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444c2b845a7sm40916881cf.41.2024.06.24.03.42.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 03:42:20 -0700 (PDT)
-Date: Mon, 24 Jun 2024 06:42:20 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Chengen Du <chengen.du@canonical.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Jiri Pirko <jiri@resnulli.us>, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- kaber@trash.net, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-Message-ID: <66794d8c1d425_3637da294d8@willemb.c.googlers.com.notmuch>
-In-Reply-To: <CAPza5qfqoJeSe3=nEuMAhWygiu0+N3v2Qe1TPB1eywMEyfGLrw@mail.gmail.com>
-References: <20240617054514.127961-1-chengen.du@canonical.com>
- <ZnAdiDjI_unrELB8@nanopsycho.orion>
- <6670898e1ca78_21d16f2946f@willemb.c.googlers.com.notmuch>
- <ZnEmiIhs5K4ehcYH@nanopsycho.orion>
- <66715247c147c_23a4e7294a7@willemb.c.googlers.com.notmuch>
- <CAPza5qfQtPZ-UPF97CG+zEwoQunbzg8F8kX0Q1y5Fzt4Zoc=4w@mail.gmail.com>
- <6673dc0ee45dd_2a03042941e@willemb.c.googlers.com.notmuch>
- <CAPza5qfqoJeSe3=nEuMAhWygiu0+N3v2Qe1TPB1eywMEyfGLrw@mail.gmail.com>
-Subject: Re: [PATCH v8] af_packet: Handle outgoing VLAN packets without
- hardware offloading
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB80130485;
+	Mon, 24 Jun 2024 10:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719225770; cv=fail; b=ZO3ZwBsoe/qT37ePKKDI5gdbX69zMnmErbF0uyjIZQyzl9fnIqQ6tOh7M1B9QfIjMVvrCZw6MGSGpxJZWR6VTH30iP/8/f04QM4yh9eqWqtbxFL5BKZqMgDP/pTnqRCR7yQKGr6OhynWwLkVcOAx63903QhNNXJWDpGQBv1iHb4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719225770; c=relaxed/simple;
+	bh=ldSr8n/6t6+7cU1NLJhmTy/OZYzJJfGvKxRumQu/+l8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m1BHVPguXm/eWw7sZG7s48R7x2NBNnFLdgy9tRXxHo9rtBr7PaC7d9kUlLKe5B8XFNUekaQO1YSRnXxPAKTKvLvE6Rk9kePLWy/lovZoAw2GVFnKy2dVSbLAPqNmArRuHJiN1M+nsb5ozUBfmC71n96miKGs8DGqkzmzNRC8wOs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yQy5adox; arc=fail smtp.client-ip=40.107.96.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d0cvkydpU1ijgmkoCmCDpGN0xV0+tP96YDOjqwYopqVtu4WVS8ekudMCY6qQ6bYpH18d2RLouQd/m9LRVaObcdk/wC89qQBO7OFQc+/wnV5NBXoX6WAOl/1vZ/araZTmRhUcSbx0OszA/UNcYp3p7ugOx5wEPOL0SX9bo6zk9ItN3Asy/mMANIJlf78NhU4B4QEDzf3JGdpwlR/DS2ZggsVMdeh5X3KcjIZclCFYGFWocJMV7rCiS98cI4qGw4ue5LVlZ1efA/sWia7j7ArSVkSMZD47ff7ZhUzX03FwuHo9bpoUr8IH5m004OfxYPEFrkrkLJK7upzv/gZBz7YwwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hvso3/X6AUqqRquNnZnjSNR7EFPfVLWUVXjHPHcVjqM=;
+ b=O/+wgSKz+DiqBM1BZC+PJu7YdR0q5R7y2El8lKSLDBxFEph+GTImWMJ49xVclfqr+um8nsUVomZosdlkZY53LnkQDnb79FXiy8cTR86+vlhMa6vUUPFVIAokswqhPko7ex1gq5p898dLJ9wdEfBpvNE+RTnwvGNp62RUwxNKssJ8gSAb18c5U1b7jpwedwh06f6wKVsog96ptUC40UfofSKmHd6TYU04oby/SwWZpn2xEsAoK+8gBaqvCL0vQ2UglXTJnAQO8C/vDZfEJyLQ/HXty/Z4pOtZ8ruaTpc6WwGYgiv8oQ0QX91Jycn+Y7lZ0rLRWU7/JqGtx+q8lKglJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hvso3/X6AUqqRquNnZnjSNR7EFPfVLWUVXjHPHcVjqM=;
+ b=yQy5adox75RG93DT5STgKl+6opW8PaFiT9DlqSyzR7Vbut7PfLiCYFPj+iOCB5A9iA6KW2p1hyzpWk0LKjaeW7eYi+HcjUu2nM/ttfaO/WdiR5T/xJ7IxBwUjlPxjvyv4JWx8FTDvYOGCftErR4ZMWx98t+TIwTdWaRaHOUXFjo=
+Received: from MN2PR14CA0009.namprd14.prod.outlook.com (2603:10b6:208:23e::14)
+ by DM4PR12MB6591.namprd12.prod.outlook.com (2603:10b6:8:8e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Mon, 24 Jun
+ 2024 10:42:46 +0000
+Received: from BN3PEPF0000B076.namprd04.prod.outlook.com
+ (2603:10b6:208:23e:cafe::c4) by MN2PR14CA0009.outlook.office365.com
+ (2603:10b6:208:23e::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.38 via Frontend
+ Transport; Mon, 24 Jun 2024 10:42:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN3PEPF0000B076.mail.protection.outlook.com (10.167.243.121) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Mon, 24 Jun 2024 10:42:46 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Jun
+ 2024 05:42:45 -0500
+Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 24 Jun 2024 05:42:42 -0500
+From: Thippeswamy Havalige <thippesw@amd.com>
+To: <bhelgaas@google.com>, <kw@linux.com>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <lpieralisi@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
+	<linux-arm-kernel@lists.infradead.org>, <bharat.kumar.gogada@amd.com>,
+	Thippeswamy Havalige <thippesw@amd.com>
+Subject: [PATCH 0/2] Add support for Xilinx XDMA Soft IP as Root Port
+Date: Mon, 24 Jun 2024 16:12:37 +0530
+Message-ID: <20240624104239.132159-1-thippesw@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: thippesw@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B076:EE_|DM4PR12MB6591:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71005075-b579-4a56-6939-08dc943a627c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|7416011|36860700010|376011|82310400023|1800799021;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yfcaXr3dU6sQle25IAogKv45MqFdFKbWwZpeRl7paVAhzO75ltaJYp+Qt9ze?=
+ =?us-ascii?Q?U8hWCQnKA11IAkowh+PtSKTRIGUxrLQnXHqk00xunWkeSeXzkJLZTMy5LQcx?=
+ =?us-ascii?Q?YR7gd/l8FdxhSAa0ruHfH9ZDxfQB2cY2Mg3J/O9Q4W6ifrZdsQrN/Dsrkvr7?=
+ =?us-ascii?Q?a9k8fbo6jKPnsOUx1NX7PBfLM69obrFBLMSt954PpxlI/2f1KhSd6LbNi8Lw?=
+ =?us-ascii?Q?An74XqY/CAHz0FJWpLnXHlxO0tnN738mycZAkU9RDlbq5wg53FtRqUSyejNp?=
+ =?us-ascii?Q?qeeIHKWCN9EeMvDJ+AF0ZENU+CtpTYpjgFZCQN57tGvKVnRIYLe5nBtQhjdu?=
+ =?us-ascii?Q?WGt7aVm7UmcgA5BVBciH0UVWFaVo0JKgDbc3KV5lhFDNDQWkP856nYcGioxP?=
+ =?us-ascii?Q?ZOprqdGBFOM4pABfzqunSTW8XMRZt28lZ9KMIEjlv/ElRoxZJF6kdchaC/Fa?=
+ =?us-ascii?Q?F49Ac/qoW8EY8+f5lc5nvX7HoHU79qdGPjE9JKFwO1aIfGeGVvh3m5CzRr9v?=
+ =?us-ascii?Q?BVd8jIotGMqnoo5DBhf2R4D2MWqIzY3q1R7FrYsptQRcR2INvMSqTvGg9VUh?=
+ =?us-ascii?Q?aOi7bj+rk8baC7xXHHMNL6+q9qviPXpGehSiPUWGOOJi+c3GmehOHqakRxcK?=
+ =?us-ascii?Q?AcBrkdBrGo1iWLT3bW3XKsSc/pB1qImMVP/WnaYfxJNwpWn/8xy8m0O2lwvn?=
+ =?us-ascii?Q?F95YklVH/iDg79F2HDUEoY8/pBx3kJDOGCH+dmOI3Yppp8bgARSlrRGxuPQL?=
+ =?us-ascii?Q?M8aN/MT20AsGPpzNWssKuHCRazDFetq5H7/8oaBIz95LR5hIJmQDAixfZM3N?=
+ =?us-ascii?Q?b9LPQ1hP3WB7KwJnzyUw2d65Z5OS1RTfMasby9SzCFYKL+QBu9Pz1RDoYtBR?=
+ =?us-ascii?Q?xsTwuyKn13dyqXQoHrLSkiS+ysPTf5cCLmg23qkbVki4fgVBAfzL/AyMI9ZR?=
+ =?us-ascii?Q?98O81Cz3mp5FsIyPLT05shZN1IY+F4So17sqspGXckcQfvdvjODvTSW/eGBN?=
+ =?us-ascii?Q?fqVSflhHGtMRavkjPUPYdGxZyB/mIkWt9O4vU42yelZgYWJ+14XCYXEwx8wo?=
+ =?us-ascii?Q?VFSY34B81xUBUYompDeTzAjzbpsttglXRQnT53lrnKrlD67bomVNJSYnx76H?=
+ =?us-ascii?Q?ninNyAwFlQSJNUGTpUYG7GOEcIpNJz6nEhm/3gL9ggFfThA7ftMNGDdzKt39?=
+ =?us-ascii?Q?pHCd2oDdobuM0I5Mc+8KaAkfAw+HMWJK+/qB2m3reoXWLs9s1n7Yh70B78RF?=
+ =?us-ascii?Q?jTidF/l1IEz62LQkq+PoaOTHkEP5bHUn2qQp4p4c6VuYE+DBErtTG7ZTgs08?=
+ =?us-ascii?Q?flWDAY/sy5EP9R+9WXA8enCVOt0VBC4UYDfJdeM11Fs43HJQdj0yKhvNKElS?=
+ =?us-ascii?Q?lDkH4YzKHuVrIDEVkoJOi7Ghn2cgKTuV1JEV8YoV2+onG7LDZg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(7416011)(36860700010)(376011)(82310400023)(1800799021);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 10:42:46.0321
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71005075-b579-4a56-6939-08dc943a627c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B076.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6591
 
-Chengen Du wrote:
-> On Thu, Jun 20, 2024 at 3:36=E2=80=AFPM Willem de Bruijn
-> <willemdebruijn.kernel@gmail.com> wrote:
-> >
-> > Chengen Du wrote:
-> > > On Tue, Jun 18, 2024 at 5:24=E2=80=AFPM Willem de Bruijn
-> > > <willemdebruijn.kernel@gmail.com> wrote:
-> > > >
-> > > > Jiri Pirko wrote:
-> > > > > Mon, Jun 17, 2024 at 09:07:58PM CEST, willemdebruijn.kernel@gma=
-il.com wrote:
-> > > > > >Jiri Pirko wrote:
-> > > > > >> Mon, Jun 17, 2024 at 07:45:14AM CEST, chengen.du@canonical.c=
-om wrote:
-> > > > > >> >The issue initially stems from libpcap. The ethertype will =
-be overwritten
-> > > > > >> >as the VLAN TPID if the network interface lacks hardware VL=
-AN offloading.
-> > > > > >> >In the outbound packet path, if hardware VLAN offloading is=
- unavailable,
-> > > > > >> >the VLAN tag is inserted into the payload but then cleared =
-from the sk_buff
-> > > > > >> >struct. Consequently, this can lead to a false negative whe=
-n checking for
-> > > > > >> >the presence of a VLAN tag, causing the packet sniffing out=
-come to lack
-> > > > > >> >VLAN tag information (i.e., TCI-TPID). As a result, the pac=
-ket capturing
-> > > > > >> >tool may be unable to parse packets as expected.
-> > > > > >> >
-> > > > > >> >The TCI-TPID is missing because the prb_fill_vlan_info() fu=
-nction does not
-> > > > > >> >modify the tp_vlan_tci/tp_vlan_tpid values, as the informat=
-ion is in the
-> > > > > >> >payload and not in the sk_buff struct. The skb_vlan_tag_pre=
-sent() function
-> > > > > >> >only checks vlan_all in the sk_buff struct. In cooked mode,=
- the L2 header
-> > > > > >> >is stripped, preventing the packet capturing tool from dete=
-rmining the
-> > > > > >> >correct TCI-TPID value. Additionally, the protocol in SLL i=
-s incorrect,
-> > > > > >> >which means the packet capturing tool cannot parse the L3 h=
-eader correctly.
-> > > > > >> >
-> > > > > >> >Link: https://github.com/the-tcpdump-group/libpcap/issues/1=
-105
-> > > > > >> >Link: https://lore.kernel.org/netdev/20240520070348.26725-1=
--chengen.du@canonical.com/T/#u
-> > > > > >> >Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspace=
-")
-> > > > > >> >Cc: stable@vger.kernel.org
-> > > > > >> >Signed-off-by: Chengen Du <chengen.du@canonical.com>
-> > > > > >> >---
-> > > > > >> > net/packet/af_packet.c | 86 ++++++++++++++++++++++++++++++=
-+++++++++++-
-> > > > > >> > 1 file changed, 84 insertions(+), 2 deletions(-)
-> > > > > >> >
-> > > > > >> >diff --git a/net/packet/af_packet.c b/net/packet/af_packet.=
-c
-> > > > > >> >index ea3ebc160e25..84e8884a77e3 100644
-> > > > > >> >--- a/net/packet/af_packet.c
-> > > > > >> >+++ b/net/packet/af_packet.c
-> > > > > >> >@@ -538,6 +538,61 @@ static void *packet_current_frame(stru=
-ct packet_sock *po,
-> > > > > >> >  return packet_lookup_frame(po, rb, rb->head, status);
-> > > > > >> > }
-> > > > > >> >
-> > > > > >> >+static u16 vlan_get_tci(struct sk_buff *skb, struct net_de=
-vice *dev)
-> > > > > >> >+{
-> > > > > >> >+ struct vlan_hdr vhdr, *vh;
-> > > > > >> >+ u8 *skb_orig_data =3D skb->data;
-> > > > > >> >+ int skb_orig_len =3D skb->len;
-> > > > > >> >+ unsigned int header_len;
-> > > > > >> >+
-> > > > > >> >+ if (!dev)
-> > > > > >> >+         return 0;
-> > > > > >> >+
-> > > > > >> >+ /* In the SOCK_DGRAM scenario, skb data starts at the net=
-work
-> > > > > >> >+  * protocol, which is after the VLAN headers. The outer V=
-LAN
-> > > > > >> >+  * header is at the hard_header_len offset in non-variabl=
-e
-> > > > > >> >+  * length link layer headers. If it's a VLAN device, the
-> > > > > >> >+  * min_header_len should be used to exclude the VLAN head=
-er
-> > > > > >> >+  * size.
-> > > > > >> >+  */
-> > > > > >> >+ if (dev->min_header_len =3D=3D dev->hard_header_len)
-> > > > > >> >+         header_len =3D dev->hard_header_len;
-> > > > > >> >+ else if (is_vlan_dev(dev))
-> > > > > >> >+         header_len =3D dev->min_header_len;
-> > > > > >> >+ else
-> > > > > >> >+         return 0;
-> > > > > >> >+
-> > > > > >> >+ skb_push(skb, skb->data - skb_mac_header(skb));
-> > > > > >> >+ vh =3D skb_header_pointer(skb, header_len, sizeof(vhdr), =
-&vhdr);
-> > > > > >> >+ if (skb_orig_data !=3D skb->data) {
-> > > > > >> >+         skb->data =3D skb_orig_data;
-> > > > > >> >+         skb->len =3D skb_orig_len;
-> > > > > >> >+ }
-> > > > > >> >+ if (unlikely(!vh))
-> > > > > >> >+         return 0;
-> > > > > >> >+
-> > > > > >> >+ return ntohs(vh->h_vlan_TCI);
-> > > > > >> >+}
-> > > > > >> >+
-> > > > > >> >+static __be16 vlan_get_protocol_dgram(struct sk_buff *skb)=
+This series of patch add support for Xilinx QDMA Soft IP as Root Port.
 
-> > > > > >> >+{
-> > > > > >> >+ __be16 proto =3D skb->protocol;
-> > > > > >> >+
-> > > > > >> >+ if (unlikely(eth_type_vlan(proto))) {
-> > > > > >> >+         u8 *skb_orig_data =3D skb->data;
-> > > > > >> >+         int skb_orig_len =3D skb->len;
-> > > > > >> >+
-> > > > > >> >+         skb_push(skb, skb->data - skb_mac_header(skb));
-> > > > > >> >+         proto =3D __vlan_get_protocol(skb, proto, NULL);
-> > > > > >> >+         if (skb_orig_data !=3D skb->data) {
-> > > > > >> >+                 skb->data =3D skb_orig_data;
-> > > > > >> >+                 skb->len =3D skb_orig_len;
-> > > > > >> >+         }
-> > > > > >> >+ }
-> > > > > >> >+
-> > > > > >> >+ return proto;
-> > > > > >> >+}
-> > > > > >> >+
-> > > > > >> > static void prb_del_retire_blk_timer(struct tpacket_kbdq_c=
-ore *pkc)
-> > > > > >> > {
-> > > > > >> >  del_timer_sync(&pkc->retire_blk_timer);
-> > > > > >> >@@ -1007,10 +1062,16 @@ static void prb_clear_rxhash(struct=
- tpacket_kbdq_core *pkc,
-> > > > > >> > static void prb_fill_vlan_info(struct tpacket_kbdq_core *p=
-kc,
-> > > > > >> >                  struct tpacket3_hdr *ppd)
-> > > > > >> > {
-> > > > > >> >+ struct packet_sock *po =3D container_of(pkc, struct packe=
-t_sock, rx_ring.prb_bdqc);
-> > > > > >> >+
-> > > > > >> >  if (skb_vlan_tag_present(pkc->skb)) {
-> > > > > >> >          ppd->hv1.tp_vlan_tci =3D skb_vlan_tag_get(pkc->sk=
-b);
-> > > > > >> >          ppd->hv1.tp_vlan_tpid =3D ntohs(pkc->skb->vlan_pr=
-oto);
-> > > > > >> >          ppd->tp_status =3D TP_STATUS_VLAN_VALID | TP_STAT=
-US_VLAN_TPID_VALID;
-> > > > > >> >+ } else if (unlikely(po->sk.sk_type =3D=3D SOCK_DGRAM && e=
-th_type_vlan(pkc->skb->protocol))) {
-> > > > > >> >+         ppd->hv1.tp_vlan_tci =3D vlan_get_tci(pkc->skb, p=
-kc->skb->dev);
-> > > > > >> >+         ppd->hv1.tp_vlan_tpid =3D ntohs(pkc->skb->protoco=
-l);
-> > > > > >> >+         ppd->tp_status =3D TP_STATUS_VLAN_VALID | TP_STAT=
-US_VLAN_TPID_VALID;
-> > > > > >> >  } else {
-> > > > > >> >          ppd->hv1.tp_vlan_tci =3D 0;
-> > > > > >> >          ppd->hv1.tp_vlan_tpid =3D 0;
-> > > > > >> >@@ -2428,6 +2489,10 @@ static int tpacket_rcv(struct sk_buf=
-f *skb, struct net_device *dev,
-> > > > > >> >                  h.h2->tp_vlan_tci =3D skb_vlan_tag_get(sk=
-b);
-> > > > > >> >                  h.h2->tp_vlan_tpid =3D ntohs(skb->vlan_pr=
-oto);
-> > > > > >> >                  status |=3D TP_STATUS_VLAN_VALID | TP_STA=
-TUS_VLAN_TPID_VALID;
-> > > > > >> >+         } else if (unlikely(sk->sk_type =3D=3D SOCK_DGRAM=
- && eth_type_vlan(skb->protocol))) {
-> > > > > >> >+                 h.h2->tp_vlan_tci =3D vlan_get_tci(skb, s=
-kb->dev);
-> > > > > >> >+                 h.h2->tp_vlan_tpid =3D ntohs(skb->protoco=
-l);
-> > > > > >> >+                 status |=3D TP_STATUS_VLAN_VALID | TP_STA=
-TUS_VLAN_TPID_VALID;
-> > > > > >> >          } else {
-> > > > > >> >                  h.h2->tp_vlan_tci =3D 0;
-> > > > > >> >                  h.h2->tp_vlan_tpid =3D 0;
-> > > > > >> >@@ -2457,7 +2522,8 @@ static int tpacket_rcv(struct sk_buff=
- *skb, struct net_device *dev,
-> > > > > >> >  sll->sll_halen =3D dev_parse_header(skb, sll->sll_addr);
-> > > > > >> >  sll->sll_family =3D AF_PACKET;
-> > > > > >> >  sll->sll_hatype =3D dev->type;
-> > > > > >> >- sll->sll_protocol =3D skb->protocol;
-> > > > > >> >+ sll->sll_protocol =3D (sk->sk_type =3D=3D SOCK_DGRAM) ?
-> > > > > >> >+         vlan_get_protocol_dgram(skb) : skb->protocol;
-> > > > > >> >  sll->sll_pkttype =3D skb->pkt_type;
-> > > > > >> >  if (unlikely(packet_sock_flag(po, PACKET_SOCK_ORIGDEV)))
-> > > > > >> >          sll->sll_ifindex =3D orig_dev->ifindex;
-> > > > > >> >@@ -3482,7 +3548,8 @@ static int packet_recvmsg(struct sock=
-et *sock, struct msghdr *msg, size_t len,
-> > > > > >> >          /* Original length was stored in sockaddr_ll fiel=
-ds */
-> > > > > >> >          origlen =3D PACKET_SKB_CB(skb)->sa.origlen;
-> > > > > >> >          sll->sll_family =3D AF_PACKET;
-> > > > > >> >-         sll->sll_protocol =3D skb->protocol;
-> > > > > >> >+         sll->sll_protocol =3D (sock->type =3D=3D SOCK_DGR=
-AM) ?
-> > > > > >> >+                 vlan_get_protocol_dgram(skb) : skb->proto=
-col;
-> > > > > >> >  }
-> > > > > >> >
-> > > > > >> >  sock_recv_cmsgs(msg, sk, skb);
-> > > > > >> >@@ -3539,6 +3606,21 @@ static int packet_recvmsg(struct soc=
-ket *sock, struct msghdr *msg, size_t len,
-> > > > > >> >                  aux.tp_vlan_tci =3D skb_vlan_tag_get(skb)=
-;
-> > > > > >> >                  aux.tp_vlan_tpid =3D ntohs(skb->vlan_prot=
-o);
-> > > > > >> >                  aux.tp_status |=3D TP_STATUS_VLAN_VALID |=
- TP_STATUS_VLAN_TPID_VALID;
-> > > > > >> >+         } else if (unlikely(sock->type =3D=3D SOCK_DGRAM =
-&& eth_type_vlan(skb->protocol))) {
-> > > > > >>
-> > > > > >> I don't understand why this would be needed here. We spent q=
-uite a bit
-> > > > > >> of efford in the past to make sure vlan header is always str=
-ipped.
-> > > > > >> Could you fix that in tx path to fulfill the expectation?
-> > > > > >
-> > > > > >Doesn't that require NETIF_F_HW_VLAN_CTAG_TX?
-> > > > > >
-> > > > > >I also wondered whether we should just convert the skb for thi=
-s case
-> > > > > >with skb_vlan_untag, to avoid needing new PF_PACKET logic to h=
-andle
-> > > > > >unstripped tags in the packet socket code. But it seems equall=
-y
-> > > > > >complex.
-> > > > >
-> > > > > Correct. skb_vlan_untag() as a preparation of skb before this f=
-unction
-> > > > > is called is exactly what I was suggesting.
-> > > >
-> > > > It's not necessarily simpler, as that function expects skb->data =
-to
-> > > > point to the (outer) VLAN header.
-> > > >
-> > > > It will pull that one, but not any subsequent ones.
-> > > >
-> > > > SOCK_DGRAM expects skb->data to point to the network layer header=
-.
-> > > > And we only want to make this change for SOCK_DGRAM and if auxdat=
-a is
-> > > > requested.
-> > > >
-> > > > Not sure that it will be simpler. But worth a look at least.
-> > >
-> > > Thank you for your suggestion.
-> > >
-> > > I have analyzed the code and considered a feasible approach. We cou=
-ld
-> > > call skb_vlan_untag() in packet_rcv before pushing skb into
-> > > sk->sk_receive_queue.
-> >
-> > Only for SOCK_DGRAM.
-> >
-> > And there is some user risk, as they will see different packets on
-> > the same devices as before. A robust program should work for both
-> > vlan stripped and unstripped, and the unstripped case is already
-> > broken wrt sll_protocol returned, so I suppose this is acceptable.
-> >
-> > > We would also need to determine if auxdata is
-> > > required to maintain performance, which might cause the logic of
-> > > judging PACKET_SOCK_AUXDATA to be spread across both the packet_rcv=
-()
-> > > and packet_recvmsg() functions.
-> >
-> > You mean to only make the above change if SOCK_DGRAM and auxdata is
-> > requested?
-> =
+The Xilinx QDMA Soft IP support's 32 bit and 64bit BAR's.
+As Root Port it supports MSI and legacy interrupts.
 
-> Yes, we can constrain the performance overhead to specific scenarios th=
-is way.
-> =
+Thippeswamy Havalige (2):
+  dt-bindings: PCI: xilinx-xdma: Add schemas for Xilinx QDMA PCIe Root
+    Port Bridge
+  PCI: xilinx-xdma: Add Xilinx QDMA Root Port driver
 
-> >
-> > Btw, also tpacket_rcv, where auxdata is always returned.
-> >
-> > > The skb_vlan_untag() function handles VLANs in a more comprehensive=
+ .../devicetree/bindings/pci/xlnx,xdma-host.yaml    | 41 +++++++++++++++-
+ drivers/pci/controller/pcie-xilinx-dma-pl.c        | 56 ++++++++++++++++++++--
+ 2 files changed, 92 insertions(+), 5 deletions(-)
 
-> > > way, but it seems to have a greater performance impact compared to =
-our
-> > > current approach.
-> >
-> > I was afraid of that too. The skb_share_check is fine, as this also
-> > exists in packet_rcv, before we would call skb_vlan_untag.
-> >
-> > A bigger issue: this only pulls the outer tag. So we still need to
-> > handle the vlan stacking case correctly manually.
-> =
+-- 
+1.8.3.1
 
-> It seems we are on the same page. The need to manually handle VLAN
-> stacking is a significant concern. Since the code is in the critical
-> path, we must carefully manage the performance overhead. Given that
-> the current method is more efficient than calling skb_vlan_untag(), I
-> propose retaining the patch as is. Please let me know if there are any
-> other concerns.
-
-I agree.=
 
