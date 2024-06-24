@@ -1,185 +1,241 @@
-Return-Path: <linux-kernel+bounces-227629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6105F9154B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:48:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 116659154BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 840811C21757
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C8411F21438
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2041519DF42;
-	Mon, 24 Jun 2024 16:48:23 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06C119E7F6;
+	Mon, 24 Jun 2024 16:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2lxT5SVR"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF712F24
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA64B2F24
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247702; cv=none; b=a7mYZOJ78E4WPILSPNX8uGZtdhF6eVsADmGRhelaxEW828gUtZK4iNQ2KixFa8rit26XqqMyuy2efPYCbOfP8Q/QmITh9wgrhwe4ZTrkyOypXlINsr/uDFMopF7R121qfZub/RVnYZKofwQc4N9LUTNgG8YSDF0u7+nxSwv+Zpo=
+	t=1719247738; cv=none; b=Boo1FqSyr0f85cFWFaY7+Hi33V+1E5so4V50JKi2jff1QvEv+DPI0MiKhrlw3e4iQ9reXIcObWW6zdYnkp2/2DyFL6dvURf22vh3tdxnVUdPaBQlDhdooupEsUYANr1vhn9/iEZrC+ed2h8R4rm3qLC4/UN+D/yC3a07yzthUyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247702; c=relaxed/simple;
-	bh=6/puZW9ESulFXCcGFcPYU/1U0jBX+zaUUNxByq+TKrI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m9DoiyZErPPYLO0m7+Z9hC7UzlgJCvWLzJF9UT2KMLIqUos200zHWO80alqlfsgKkcVpZINH7lbq91ZxJxdWrFhe+QkZTfIfmI5Nrf8v/7TTLxTtTL+4x3SYu0q+kb8aQBgxjJ64+5o+kcZfG4oZGr5GlHRJYPAe5+ETIcGSiV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-37623e47362so60231965ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:48:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719247700; x=1719852500;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1719247738; c=relaxed/simple;
+	bh=bWVnoflNYa8G5Kxrq0nWQrfqsc684kD+NGBZ6hdM2IY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tVG785BBbhIc0dQ3B+nOjFM7xHtd6XXobyfTpl4yYvuyim7v+jp/nH8XPzrT0X0FTTqg9PNZaJlFP32gCzguXGvb7MJLWmlbqbZtMdgDlqpzd01vQk79V2lPPr7Xhh27e5KxrqVjncpyTq6WM11CsooQsvfO/xckkAkQh0MuGj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2lxT5SVR; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d215a594b9so2417828b6e.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:48:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719247736; x=1719852536; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5KGnMYgQ0FwW2GL2AlsrA1DGANOTOl6nsumMDrX6kzw=;
-        b=nZxw8o8tQ9vujvTLV9w9HA+KemV06Bs1lPIEOSSlSWOJKVTsCnsdO6saRNJLvXmBul
-         yUFM2NWpTuiPurvE40ZambImzwGvDZ/p1WX4woTUhqtJ/U/O9qWo1RmIO1zbnYKLEKQj
-         dnjal78YFDYMJtprphmczN5mAdgSgi40il8ynERLCAxnOEalA9dFX3pxJH56nTWBKTu2
-         nodF19vPAOI/s5ag5uzn82Qy5eY7k+glqixQYTAnxpBYa8rqDD1bSS7xrXC6Nxh/zNo/
-         Eo02A7FGJZbXP6B6J3e2jyTyo/ifuPTdYCxyRDpz3OVKPK037mkzwsoapZPNu7wgkrZA
-         D5rA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbpqADKNI5QLcTUUI3C/N/GqVmyV+wIwbntrNecD+NcwmB7YWoMpsyy7kmh7Vl/ExhUFfN0QuG9xxPgTUYMJpdDUTUzl/SVGnSSUIv
-X-Gm-Message-State: AOJu0Yy+4SP2YHDmyktPJiQTX3ZXHEhLp85sSAwTeZPUMctj0wGPGV2b
-	mqZHIEuHQBlUPq2ayqRTpdh2lci0md6geGg7QgMevmjsBg5Edrn1lMee3P+VjI0sXoqXPZ2DxRk
-	xi7YTWAURZGZcrP2Gf8FIQ5lrjfUTEbdqkvgPiKt0nnGBmPSChg8mRa4=
-X-Google-Smtp-Source: AGHT+IFMQVz2rzwuYfSXe976jQr7ccTKKPl3QhgieSQPHAni4XAzBRfCV/2pN9py+8U22ryjxc+djuKSoz/uBSx5TSjVY2/rt3Z9
+        bh=mxxkGiRjkerPamYFY/qxNBX6etGC2eZqvZGM5OE8a/o=;
+        b=2lxT5SVRXmqpVUVMDGWxP+ZTxX9GRIFysixr7FDp2KDiaE1jfW9nLqELFQkbfkwH+r
+         NsBVo11tBb8vX3RectVHjxzhR2D32pV0R6qO6CYER+1HT4TWRp/MEDn62Y3bJVTGJ9vc
+         Dq2gbpKx3RPvnviQk1dldj4Di/U00v2hvDhwettIDtI9pSLk8/ZT5g0AsTEqsIpIOQNH
+         ors/J5lvJMV2IhrSInOUcEVIWLZXzAp6AkanIw5qjBFBUs/TqPH5p5YPCi2hghAYGCDx
+         DEaRX8niM6oW5HFbIA9uCY1RlRMtil5jdvouxV6zU9NTQFhSj9QJdmkIREk4VjN1FzjM
+         nipg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719247736; x=1719852536;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mxxkGiRjkerPamYFY/qxNBX6etGC2eZqvZGM5OE8a/o=;
+        b=XPNuelZOVFUWL+PUJwG9foIML4fev1HhWC8Ui6xBBwjW9FlgTf8L2JVWCb82N4PBQK
+         7qbTNndGykLhwPrtIXgXmg7/OVoBBQzbyBN82/a1lEvitCU7VsLiPDz4Njm07CBjzhcm
+         DaygmZHZFz7QHonVuiuRvz5D681GjM6qogDQQxb+VxXFV9tnmJRoPk7e4CcM+EZMEFGw
+         VCNq0u5qaHPF2gtGa+Hpkz/GpaGQBEVUjN0bHkAJwpGe1Jo6fFaV7OpcBUMJytqdkGF9
+         m0ZYcU3H+ZugU1Yg1GYpwbN8nGrj4fZqppTrbBqr4A2O6XgK1lX+ofmhcdpe/azwpFPy
+         WMmg==
+X-Gm-Message-State: AOJu0YzAd48HatUV7Ck7MgOu/3S8SUAP5+I10CsoW+6TaoEcZ4heU/mm
+	rEA+kDjV/ZLkSjxcmaiP1B8QITa7kaBX9tpgw3gOD9qjSamnvnSJ6khv4fXsmGo=
+X-Google-Smtp-Source: AGHT+IHJTWIGqMNnLlw3Aibsovc33vkuDbNsrVUj73Yo3Le40YAQ1flHUPNAWQibOZNFS3MGry2obA==
+X-Received: by 2002:a05:6808:190f:b0:3d2:17cd:5601 with SMTP id 5614622812f47-3d543b129aamr7028160b6e.33.1719247735839;
+        Mon, 24 Jun 2024 09:48:55 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d54067c8c2sm999719b6e.27.2024.06.24.09.48.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 09:48:55 -0700 (PDT)
+Message-ID: <1cbb4395-cc9e-4e49-9188-c09aeefff956@baylibre.com>
+Date: Mon, 24 Jun 2024 11:48:54 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:138c:b0:374:70ae:e86e with SMTP id
- e9e14a558f8ab-3763b377a27mr7307435ab.6.1719247700175; Mon, 24 Jun 2024
- 09:48:20 -0700 (PDT)
-Date: Mon, 24 Jun 2024 09:48:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000733bf2061ba58c4d@google.com>
-Subject: [syzbot] [kernel?] INFO: rcu detected stall in sys_futex (7)
-From: syzbot <syzbot+b66b5182718939fec09b@syzkaller.appspotmail.com>
-To: andrealmeid@igalia.com, dave@stgolabs.net, dvhart@infradead.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, peterz@infradead.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    66cc544fd75c Merge tag 'dmaengine-fix-6.10' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16beff56980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f413acf5b1eb4093
-dashboard link: https://syzkaller.appspot.com/bug?extid=b66b5182718939fec09b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/47e71dc016ab/disk-66cc544f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a291e2654ce5/vmlinux-66cc544f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fcc76e4e2724/bzImage-66cc544f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b66b5182718939fec09b@syzkaller.appspotmail.com
-
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	(detected by 1, t=10502 jiffies, g=53573, q=135 ncpus=2)
-rcu: All QSes seen, last rcu_preempt kthread activity 10502 (4295010993-4295000491), jiffies_till_next_fqs=1, root ->qsmask 0x0
-rcu: rcu_preempt kthread starved for 10502 jiffies! g53573 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:27680 pid:17    tgid:17    ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6837
- schedule_timeout+0x136/0x2a0 kernel/time/timer.c:2581
- rcu_gp_fqs_loop+0x1eb/0xb00 kernel/rcu/tree.c:2000
- rcu_gp_kthread+0x271/0x380 kernel/rcu/tree.c:2202
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 1 PID: 10159 Comm: syz-executor.3 Not tainted 6.10.0-rc4-syzkaller-00164-g66cc544fd75c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:finish_task_switch.isra.0+0x220/0xcc0 kernel/sched/core.c:5282
-Code: a9 0a 00 00 44 8b 0d 37 1f 86 0e 45 85 c9 0f 85 c0 01 00 00 48 89 df e8 ae f8 ff ff e8 69 db 36 00 fb 65 48 8b 1d 40 89 a5 7e <48> 8d bb f8 15 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1
-RSP: 0018:ffffc9000360f810 EFLAGS: 00000206
-RAX: 0000000000527977 RBX: ffff888058c49e00 RCX: 1ffffffff1fc7f31
-RDX: 0000000000000000 RSI: ffffffff8b2caf60 RDI: ffffffff8b8ff400
-RBP: ffffc9000360f858 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff8fe43c17 R11: 0000000000000000 R12: ffff8880b933f938
-R13: ffff888058c4da00 R14: 0000000000000000 R15: ffff8880b933ebc0
-FS:  00005555718eb480(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd86d7b00c0 CR3: 0000000024a24000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- </IRQ>
- <TASK>
- context_switch kernel/sched/core.c:5411 [inline]
- __schedule+0xf1d/0x5d00 kernel/sched/core.c:6745
- preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7067
- irqentry_exit+0x36/0x90 kernel/entry/common.c:354
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:preempt_count_sub+0x63/0x160 kernel/sched/core.c:5909
-Code: 56 13 85 c9 75 1b 65 8b 05 b2 4e a6 7e 89 c2 81 e2 ff ff ff 7f 39 d3 7f 17 81 fb fe 00 00 00 76 71 f7 db 65 01 1d 95 4e a6 7e <5b> c3 cc cc cc cc 90 e8 f1 2d 22 03 85 c0 74 51 48 c7 c0 d4 6e e4
-RSP: 0018:ffffc9000360fad8 EFLAGS: 00000257
-RAX: 0000000000000001 RBX: 00000000ffffffff RCX: 0000000000000000
-RDX: 0000000000000001 RSI: ffffffff8b2caf60 RDI: 0000000000000001
-RBP: ffffed100b1893c0 R08: 0000000000000000 R09: 0000000000000001
-R10: ffffffff8fe43c17 R11: 0000000000000000 R12: ffff888058c49e2c
-R13: ffff888058c49e00 R14: ffffffff81815241 R15: dffffc0000000000
- __schedule_loop kernel/sched/core.c:6823 [inline]
- schedule+0xf1/0x350 kernel/sched/core.c:6837
- futex_wait_queue+0xfc/0x1f0 kernel/futex/waitwake.c:370
- __futex_wait+0x291/0x3c0 kernel/futex/waitwake.c:669
- futex_wait+0xe9/0x380 kernel/futex/waitwake.c:697
- do_futex+0x22b/0x350 kernel/futex/syscalls.c:102
- __do_sys_futex kernel/futex/syscalls.c:179 [inline]
- __se_sys_futex kernel/futex/syscalls.c:160 [inline]
- __x64_sys_futex+0x1e1/0x4c0 kernel/futex/syscalls.c:160
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd86d67d0a9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd5114c5a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: ffffffffffffffda RBX: 000000000009ad9c RCX: 00007fd86d67d0a9
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fd86d7b405c
-RBP: 000000000009adce R08: 00007fd86e428080 R09: 0000000c00000000
-R10: 00007ffd5114c690 R11: 0000000000000246 R12: 00007ffd5114c690
-R13: 00007fd86d7b405c R14: 0000000000000032 R15: 00007ffd5114c6b0
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
+To: "Paller, Kim Seer" <KimSeer.Paller@analog.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
+References: <20240619064904.73832-1-kimseer.paller@analog.com>
+ <20240619064904.73832-4-kimseer.paller@analog.com>
+ <20240619-left-usable-316cbe62468a@spud>
+ <PH0PR03MB7141FB5DFBCA46C727FA9605F9D42@PH0PR03MB7141.namprd03.prod.outlook.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <PH0PR03MB7141FB5DFBCA46C727FA9605F9D42@PH0PR03MB7141.namprd03.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>> +  adi,manual-span-operation-config:
+>>> +    description:
+>>> +      This property must mimic the MSPAN pin configurations. By tying the
+>> MSPAN
+>>> +      pins (MSP2, MSP1 and MSP0) to GND and/or VCC, any output range can
+>> be
+>>> +      hardware-configured with different mid-scale or zero-scale reset options.
+>>> +      The hardware configuration is latched during power on reset for proper
+>>> +      operation.
+>>> +        0 - MPS2=GND, MPS1=GND, MSP0=GND (+-10V, reset to 0V)
+>>> +        1 - MPS2=GND, MPS1=GND, MSP0=VCC (+-5V, reset to 0V)
+>>> +        2 - MPS2=GND, MPS1=VCC, MSP0=GND (+-2.5V, reset to 0V)
+>>> +        3 - MPS2=GND, MPS1=VCC, MSP0=VCC (0V to 10, reset to 0V)
+>>> +        4 - MPS2=VCC, MPS1=GND, MSP0=GND (0V to 10V, reset to 5V)
+>>> +        5 - MPS2=VCC, MPS1=GND, MSP0=VCC (0V to 5V, reset to 0V)
+>>> +        6 - MPS2=VCC, MPS1=VCC, MSP0=GND (0V to 5V, reset to 2.5V)
+>>> +        7 - MPS2=VCC, MPS1=VCC, MSP0=VCC (0V to 5V, reset to 0V, enables
+>> SoftSpan)
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    enum: [0, 1, 2, 3, 4, 5, 6, 7]
+>>
+>> Can you explain why this property is required, when below there's one that sets
+>> the ranges in microvolts? Isn't the only new information that this provides the
+>> reset values (in a few cases that it is not 0).
+>> What am I missing?
+> 
+> For specifying output range and reset options without relying on software initialization
+> routines, and also for enabling the softspan feature, I think this property seems essential.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+So in other words, this describes how the MSP pins are hardwired and
+the per-channel adi,output-range-microvolt is only permissible if
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+	 adi,manual-span-operation-config = <7>;
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+(or omitted since 7 is the default)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+because in that case each individual pin could have a different
+required range based on what is wire up to it?
 
-If you want to undo deduplication, reply with:
-#syz undup
+But if adi,manual-span-operation-config is anything other than 7,
+then adi,output-range-microvolt should be not allowed since all
+channels will have the same range because of the hard-wired pins.
+
+correct?
+
+The description could probably just be simplified to say that
+this describes how the 3 pins are hardwired and to see Table 4
+in the datasheet to understand the actual implications rather
+than reproducing that table here.
+
+But I do agree that we need both properties. I think we are
+just missing:
+
+- if:
+    properties:
+      adi,manual-span-operation-config:
+        const: 7
+  then:
+    patternProperties:
+      "^channel@[0-3]$":
+       adi,output-range-microvolt: false
+
+(not tested - may need two ifs, one with
+
+- if:
+    required:
+      - adi,manual-span-operation-config
+    properties:
+      adi,manual-span-operation-config:
+        const: 7
+
+and one with
+
+- if:
+    not:
+      required:
+        - adi,manual-span-operation-config
+
+to make it work properly)
+
+> 
+>>> +    default: 7
+>>> +
+>>> +  io-channels:
+>>> +    description:
+>>> +      ADC channel to monitor voltages and temperature at the MUXOUT pin.
+>>> +    maxItems: 1
+>>> +
+>>> +  '#address-cells':
+>>> +    const: 1
+>>> +
+>>> +  '#size-cells':
+>>> +    const: 0
+>>> +
+>>> +patternProperties:
+>>> +  "^channel@[0-3]$":
+>>> +    type: object
+>>> +    additionalProperties: false
+>>> +
+>>> +    properties:
+>>> +      reg:
+>>> +        description: The channel number representing the DAC output channel.
+>>> +        maximum: 3
+>>> +
+>>> +      adi,toggle-mode:
+>>> +        description:
+>>> +          Set the channel as a toggle enabled channel. Toggle operation enables
+>>> +          fast switching of a DAC output between two different DAC codes
+>> without
+>>> +          any SPI transaction.
+>>> +        type: boolean
+>>> +
+>>> +      adi,output-range-microvolt:
+>>> +        description: Specify the channel output full scale range.
+>>> +        oneOf:
+>>> +          - items:
+>>> +              - const: 0
+>>> +              - enum: [5000000, 10000000]
+>>> +          - items:
+>>> +              - const: -5000000
+>>> +              - const: 5000000
+>>> +          - items:
+>>> +              - const: -10000000
+>>> +              - const: 10000000
+>>> +          - items:
+>>> +              - const: -2500000
+>>> +              - const: 2500000
+>>> +
+>>> +    required:
+>>> +      - reg
+>>> +      - adi,output-range-microvolt
+
+And adi,output-range-microvolt should not be required. When SoftSpan
+is not available (because MSP != 0x7), then the range is determined
+by adi,manual-span-operation-config.
+
+And even when adi,manual-span-operation-config = <7>, there is still
+a default range, so adi,output-range-microvolt should still not be
+required in that case.
+
 
