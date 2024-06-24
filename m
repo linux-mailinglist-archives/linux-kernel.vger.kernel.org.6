@@ -1,157 +1,157 @@
-Return-Path: <linux-kernel+bounces-227311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38A4914F35
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:54:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE7C914F38
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68B081F22F73
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:54:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D6351C22CFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0532B141987;
-	Mon, 24 Jun 2024 13:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279AC1420A6;
+	Mon, 24 Jun 2024 13:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gl3KhjHb"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YovBMuOe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC8A1411E1
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46E8141987
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719237237; cv=none; b=adLeszjcIdqvuH/PzhQa3O4/CEAhjT+ZWAEXwtBegcE45Soiw7sLu6egYelfvbrT5oVAJCgY7H2nCCFRgwmV21ukKrrFxjGjx710rg5Wb6a8KHf/pr7Dx/HN0saNOafm9XX7NxUNZO6IHwjVBLM0l0fFwe7cRR1mPifrByM7a3M=
+	t=1719237256; cv=none; b=du8EQLexN8f2H0C8xF8jJHkfmhzzvRLbx6cJ2OMBXDSjfLBYyzcxIw1wctKVLrbpPdDn4Vz57TsICMkermxZgyavA1Lc5J909sSH5tDzfH+kfoBmfpBZ5GvhTBesWThRbcZMIJQxvjM4N9BnBuO7ottstw5h3M0OGppUqwsLbGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719237237; c=relaxed/simple;
-	bh=k2kNvre2Me0LAngo+HM9BUoQeYsmECvhu4GbqQWpJTU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lpfDsHbQmzonbH+KF8d4QV6c+5oEGsnq4plrLoGUIgccVGU5d4ptJqWK2cgoqHQ9dzd8bmH9sl/ujd4cbe5mZmtzSA1Whkl0ruzAOmrzUoM04uWjrHYY2nsPfUdhzYLvlpIBj+cexMGJjgYZoXtPDD6Vwl1+aI+hKF9Jl1KA/Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gl3KhjHb; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ec1ac1aed2so53104911fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:53:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719237234; x=1719842034; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5S10zLLSMGCffMYd/h+/RimKZkqJmO/jBCyUz/wexOY=;
-        b=Gl3KhjHbwZqtHAzZ4el7rCBtXTYlg47WVzN8kIIaHmESFqdySdfK1EWaGg+GQqIX0l
-         bcXET+QIC2dBTWH2rF6nvMfvq+qcnWBs58IzzXJ/00rUXkCKdPV4h01JR15L/1YYJX7w
-         geV5M27VpSwvDIPHNdzf0TE3ZLb69KR5IW08/xCJ/n/CAfhT5/pEsejkUmpO6kHWbK3w
-         Vuf9kZRQIZ/ggMAl2qieqGYWKf4Tm6SkBr4OpBQl/wVOPjDDWVwKaHIXMUj9f41pdnyd
-         gnypJWFRzTDPYOghfOg9oRrIIYsp/5JpCOa5Bppnc0PvbqlLHp29WTmH5uDBUM/vbttn
-         KKew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719237234; x=1719842034;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5S10zLLSMGCffMYd/h+/RimKZkqJmO/jBCyUz/wexOY=;
-        b=Ud2afuStMhYPbRyy0fZl8MnlZOR+PKsjgLXp4OoB6H7A0qUL7F6Lpy3z+54A0dlPiA
-         M7QX5nhj1nZFPbIvvDFSxLT4zxrd8TjcBKrzc9ovx+EjaPVA+EplnkRNL5KU+D+FOxc1
-         HN+M1oZprK67kkuVk6qQhoTUDAz//YmAH8pqIJrYR/8pHrKyhXwmIMo2MQwOPCFliqDk
-         7A22/0uYTUFvGzCM6Yx0tb3D/QCnBJGrHlcA0t2DzYoaOE/zxkM701pSRsWaVUyoswMM
-         en/NdSbG6RgTTkfKPhBU625ui/osxqTYNCXxxVxkeTt1MQXugMe8XUqUg3DBPFJKw6zW
-         A5RA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFKvCC2CqsJj4XyWHmqfw+1tVZ932YoJDUR3LowCchYjiQFAkqVNm+ryC2JHjd8bYIMxJPxFr09AvphWz55U9do8+Z7ufARGOFPwvN
-X-Gm-Message-State: AOJu0YxgnaDNgudueog81aeizrSkosRwuWt5sZZwADkRdOEWKgAv/DEF
-	MDRApxlcqJHeQ9B2K1Qjldlo+Xvvn7t3b4ak8e6MCd7zGC42/lqK1yuS1oRd3KU=
-X-Google-Smtp-Source: AGHT+IF7G8yRO1cSo8vqHH5UaeNqcbHw+S8TNtA0Ju96Wb3SODipWZSK3i2ngTmztbBS/byXZ+YJCA==
-X-Received: by 2002:a2e:9b55:0:b0:2ec:50dc:af8d with SMTP id 38308e7fff4ca-2ec5b29fc03mr26068691fa.12.1719237233248;
-        Mon, 24 Jun 2024 06:53:53 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:c03:9198:7df:6a16:3e8e:ed7b? ([2a00:f41:c03:9198:7df:6a16:3e8e:ed7b])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30534e35sm4701537a12.62.2024.06.24.06.53.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 06:53:52 -0700 (PDT)
-Message-ID: <5947559d-30dd-4da1-93cc-a15dc65cb77d@linaro.org>
-Date: Mon, 24 Jun 2024 15:53:48 +0200
+	s=arc-20240116; t=1719237256; c=relaxed/simple;
+	bh=O5+IgKLm1vEoEvrobEa1GxPlnjCw72AcGZptrcBydQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NJnsxJW6DOIKAOyfive9bUP/191Q/9f5m038vEwhoi0P5EjJVqtCB0Hhobi4LE0s1QcU6kVDUGwLHkXk5aUgGiwneIUNP/j/Qp2S9AJLndca4i14mydsv+OMvIi0uqsdy3OifT2VUACmwUX+4/Xxs45/z5cKObDfX/Br8ITxpKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YovBMuOe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719237253;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B77pEoc7buh1Ruqfn82dEw1pJ+gpFKLmMx1Y4IU5wno=;
+	b=YovBMuOepM9OeUbcfISFa36qa2u3hdatd31vwJrubZ1t+lxjvnlUhk6ztNclJgqm096617
+	GCT7R3zmxLZldrgzrxKA+AdSGtHLyVp2tbfT2tIljlXotXeq3rspb+96CahLk69E5gdg5/
+	HSWU9sZF1NPzttvKYxe4/bCj70PbI+U=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-286-QFm1hXAgNv-oKoLZs_M4Hw-1; Mon,
+ 24 Jun 2024 09:54:09 -0400
+X-MC-Unique: QFm1hXAgNv-oKoLZs_M4Hw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFFF5195609F;
+	Mon, 24 Jun 2024 13:54:02 +0000 (UTC)
+Received: from fedora (unknown [10.22.33.154])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C6813000219;
+	Mon, 24 Jun 2024 13:53:59 +0000 (UTC)
+Date: Mon, 24 Jun 2024 09:53:57 -0400
+From: Audra Mitchell <audra@redhat.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	aarcange@redhat.com, akpm@linux-foundation.org,
+	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, raquini@redhat.com
+Subject: Re: [PATCH v2 3/3] Turn off test_uffdio_wp if
+ CONFIG_PTE_MARKER_UFFD_WP is not configured.
+Message-ID: <Znl6dfM_qbH3hIvH@fedora>
+References: <20240621181224.3881179-1-audra@redhat.com>
+ <20240621181224.3881179-3-audra@redhat.com>
+ <ZnXwT_vkyVbIJefN@x1n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] drm/msm/adreno: Add support for X185 GPU
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
- freedreno <freedreno@lists.freedesktop.org>,
- dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- Rob Clark <robdclark@gmail.com>, Bjorn Andersson <andersson@kernel.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter
- <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>, Sean Paul <sean@poorly.run>,
- linux-kernel@vger.kernel.org
-References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
- <20240623110753.141400-3-quic_akhilpo@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240623110753.141400-3-quic_akhilpo@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnXwT_vkyVbIJefN@x1n>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-
-
-On 6/23/24 13:06, Akhil P Oommen wrote:
-> Add support in drm/msm driver for the Adreno X185 gpu found in
-> Snapdragon X1 Elite chipset.
+On Fri, Jun 21, 2024 at 05:27:43PM -0400, Peter Xu wrote:
+> On Fri, Jun 21, 2024 at 02:12:24PM -0400, Audra Mitchell wrote:
+> > If CONFIG_PTE_MARKER_UFFD_WP is disabled, then testing with test_uffdio_up
 > 
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> ---
+> Here you're talking about pte markers, then..
 > 
->   drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 19 +++++++++++++++----
->   drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  6 ++----
->   drivers/gpu/drm/msm/adreno/adreno_device.c | 14 ++++++++++++++
->   drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  5 +++++
->   4 files changed, 36 insertions(+), 8 deletions(-)
+> > enables calling uffdio_regsiter with the flag UFFDIO_REGISTER_MODE_WP. The
+> > kernel ensures in vma_can_userfault() that if CONFIG_PTE_MARKER_UFFD_WP
+> > is disabled, only allow the VM_UFFD_WP on anonymous vmas.
+> > 
+> > Signed-off-by: Audra Mitchell <audra@redhat.com>
+> > ---
+> >  tools/testing/selftests/mm/uffd-stress.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing/selftests/mm/uffd-stress.c
+> > index b9b6d858eab8..2601c9dfadd6 100644
+> > --- a/tools/testing/selftests/mm/uffd-stress.c
+> > +++ b/tools/testing/selftests/mm/uffd-stress.c
+> > @@ -419,6 +419,9 @@ static void parse_test_type_arg(const char *raw_type)
+> >  	test_uffdio_wp = test_uffdio_wp &&
+> >  		(features & UFFD_FEATURE_PAGEFAULT_FLAG_WP);
+> >  
+> > +	if (test_type != TEST_ANON && !(features & UFFD_FEATURE_WP_UNPOPULATED))
+> > +		test_uffdio_wp = false;
 > 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> index 0e3dfd4c2bc8..168a4bddfaf2 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> @@ -830,8 +830,10 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu, unsigned int state)
->   	 */
->   	gmu_write(gmu, REG_A6XX_GMU_CM3_CFG, 0x4052);
->   
-> +	if (adreno_is_x185(adreno_gpu)) {
-> +		chipid = 0x7050001;
+> ... here you're checking against wp_unpopulated.  I'm slightly confused.
+> 
+> Are you running this test over shmem/hugetlb when the WP feature isn't
+> supported?
+>
+> I'm wondering whether you're looking for UFFD_FEATURE_WP_HUGETLBFS_SHMEM
+> instead.
 
-What's wrong with using the logic below?
+I can confirm, its all really confusing... So in userfaultfd_api, we disable
+three features if CONFIG_PTE_MARKER_UFFD_WP is not enabled- including 
+UFFD_FEATURE_WP_UNPOPULATED:
 
->   	/* NOTE: A730 may also fall in this if-condition with a future GMU fw update. */
-> -	if (adreno_is_a7xx(adreno_gpu) && !adreno_is_a730(adreno_gpu)) {
-> +	} else if (adreno_is_a7xx(adreno_gpu) && !adreno_is_a730(adreno_gpu)) {
->   		/* A7xx GPUs have obfuscated chip IDs. Use constant maj = 7 */
->   		chipid = FIELD_PREP(GENMASK(31, 24), 0x7);
->   
-> @@ -1329,9 +1331,18 @@ static int a6xx_gmu_rpmh_arc_votes_init(struct device *dev, u32 *votes,
->   	if (!pri_count)
->   		return -EINVAL;
->   
-> -	sec = cmd_db_read_aux_data("mx.lvl", &sec_count);
-> -	if (IS_ERR(sec))
-> -		return PTR_ERR(sec);
-> +	/*
-> +	 * Some targets have a separate gfx mxc rail. So try to read that first and then fall back
-> +	 * to regular mx rail if it is missing
-> +	 */
-> +	sec = cmd_db_read_aux_data("gmxc.lvl", &sec_count);
-> +	if (PTR_ERR_OR_ZERO(sec) == -EPROBE_DEFER) {
-> +		return -EPROBE_DEFER;
-> +	} else if (IS_ERR(sec)) {
-> +		sec = cmd_db_read_aux_data("mx.lvl", &sec_count);
-> +		if (IS_ERR(sec))
-> +			return PTR_ERR(sec);
-> +	}
+#ifndef CONFIG_PTE_MARKER_UFFD_WP
+        uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
+        uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
+        uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
+#endif
 
-I assume GMXC would always be used if present, although please use the
-approach Dmitry suggested
+If you run the userfaultfd selftests with the run_vmtests script we get
+several failures stemming from trying to call uffdio_regsiter with the flag 
+UFFDIO_REGISTER_MODE_WP. However, the kernel ensures in vma_can_userfault() 
+that if CONFIG_PTE_MARKER_UFFD_WP is disabled, only allow the VM_UFFD_WP -
+which is set when you pass the UFFDIO_REGISTER_MODE_WP flag - on 
+anonymous vmas.
+
+In parse_test_type_arg() I added the features check against 
+UFFD_FEATURE_WP_UNPOPULATED as it seemed the most well know feature/flag. I'm 
+more than happy to take any suggestions and adapt them if you have any! 
+
+Thanks in advance and happy Monday!
+
+-- Audra
 
 
-The rest looks good!
+ 
+> Thanks,
+> 
+> > +
+> >  	close(uffd);
+> >  	uffd = -1;
+> >  }
+> > -- 
+> > 2.44.0
+> > 
+> 
+> -- 
+> Peter Xu
+> 
 
-Konrad
 
