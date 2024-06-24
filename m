@@ -1,155 +1,208 @@
-Return-Path: <linux-kernel+bounces-227513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526F9915271
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:32:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61413915279
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B90A1C213AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:32:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1865D281876
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67D819D061;
-	Mon, 24 Jun 2024 15:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B96C19CD07;
+	Mon, 24 Jun 2024 15:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VNJO/mQk"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aiyRn8Bg"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4641D13DDB8
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BED513D51A;
+	Mon, 24 Jun 2024 15:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719243143; cv=none; b=rFtltTv3aY8M6/JRN+w0q/1heySfyFHnkivb/By2+I84PDreD5Nn2nbxa8w1tf6Ol2oFm0mDKBBiXDKvkJ6scEcZJuT8O80AKN2b4jBEJ1YMxadq13gL9cwpQZZM01wDDG8pRxx/2HfNn5PX49PRQxf0uymNcvSTFqTuLtB9yME=
+	t=1719243183; cv=none; b=aYzNgPnBdbcdMMzyfODJ7aUADZ/VhigOH/fi+fvkD8UM6MnaJ6STI29rBXxhU/H9BErPF/vbeNdxOCTz4mUGb0zSQe8A5zYf4CgM8+yHfzjrRg01za29EPH4yVEApmv1KekB2Ud1a944UqrRjp5mm6WZtlZoyiH7Lxl5zNHAS+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719243143; c=relaxed/simple;
-	bh=WawAVsLJ2wrVp06E1yLAnPzm2a05JueYQ9ExxNigc3k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZWueveHI4nbVgyKlYlyhGx5L718hx2w9+Oj6cS2zxGAVPe47+3m3go3TRxlnNoh5Yg4a6QCpDyE7DUs8aJMJzk3ZTAZvpGtZueZZfMUQQ2qx6boZERG1UYLX98u6Hq1OZ9ZkIB8CVE0hVQnx84cu9q1SAnlWkpB0NvjhKUNBK+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VNJO/mQk; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c7d2380cb8so3818680a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:32:20 -0700 (PDT)
+	s=arc-20240116; t=1719243183; c=relaxed/simple;
+	bh=DZmNeV5KMbw0fJFkmSqqwSQCu3vdZLMdmAW23xCADuw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lZBsz+l8UMcWo6VLWVsk6IwLNsWpN03u4nVqrGBFV9dwmZVKQn8/4jY4ENRa/eK0JZ/6IXHk9w6VbVrrrN88N6gfLebdy/PUAQ3Ek1u6NUU/bu1BS5J9DgYKUDSSZBSKfVoPBREQSIVDqVyvJNm7fM2HlpHih2JTMb7T0r15Z+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aiyRn8Bg; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-421a1b834acso36633995e9.3;
+        Mon, 24 Jun 2024 08:33:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719243140; x=1719847940; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WawAVsLJ2wrVp06E1yLAnPzm2a05JueYQ9ExxNigc3k=;
-        b=VNJO/mQk+GxT8wD6aDQAXS8zflMK9Ro6iIcPDqtNmNju/Uve6L8KxkevvPePWzhIKh
-         Tw6zdF5TkfVl61LpzJNykotarPm3UBBUnbhjVrg7G9mLOvQLmerbGW5lBtqUTiQ5EAyI
-         Cx4geUZXKTYDAQUWcRdMZxaimKeNiGM2Pnoo+TwnDzDIyzuRp0aWLQfnyHli7sA+9kIT
-         GKlJGys/i1FtUoo5zSkW63wND6PNQiq1V7EJWxrPLkvfeDGvnxVfaCTdNoqFEBKAt95w
-         GubCAPj58lvBOJPkRb2SFuxzqnhfIqd3CJ/bKd5vk6vnPTFTTOvGFRK2CkJHetjdAUY7
-         ox3Q==
+        d=gmail.com; s=20230601; t=1719243180; x=1719847980; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6U//+RVgIeCqwJ3C0P4UhiQlBybFgyaT6cUeM3+sifM=;
+        b=aiyRn8Bgcf3XYMUUare4uqHTqsL/3J33NcMQgyPrr7T0Co75uHMvVMOJvtJZlq04Ks
+         AxlL8wrpTVZeuyCOc0R3NDoYWPbaucqFc8+0OrdPzQX0CaS+mRN0ez2581PLvgeUO23u
+         ssoJ98aTpOjPp8SOXOVowz2xjdanlhTzkDncBu+e6+bYN4zMSZfuutjMdXT3qh5QYK8E
+         SM6Yt2hqQEJqMRRI5TZjfsKbapJkqo1B8yGrbLe6QbjBYV7GZ2xWDFAXOo1IQZNHcooL
+         UoyTP29YLmOHZV376sE3u30xn0dXSO1W4FWODk4ZyPq7/Qdp6/z35WKISzGkZmRPkFis
+         Cv3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719243140; x=1719847940;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WawAVsLJ2wrVp06E1yLAnPzm2a05JueYQ9ExxNigc3k=;
-        b=nfaZP7DMT8lVPYRmWP4bMTJmEFhg0yvZior1788wOz5OdrzwuLM3UaI3JDwWdLAYMZ
-         rR69lAII4xSYijed8UB7MaEpysE3Njpwz9NVH/67s6tLti9QArwbNG90wfKXvfIK02qP
-         yDMhVHj5UoKpvAeNmzHAVzEH5yMCZXMKN0L8HBHwTUY5D8qi5GkP66MTG86x8wf/s97U
-         qxyJE+SzEi1YuGl5Kz8MLw6e0+KDx4ZayWNPwG8t2j5n7NTfv5GRCnCYBVNk7KxoNTOQ
-         ThCjtwmbjyoPYB3Cie4Zsc4ozfZ0KjJacBGvI2myKSAlXUW5wVCWygAMJycjFwwJKy4e
-         91zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcZ0fVtVzQs5+eD5ECtNqskOI5nf9q6vVgQ8RZXMofq+7Gn2bfUph73mAF9GDybV8SCx0dgEO/Go3yVjUSQvRPlgCK2DXN9m8KW3Nx
-X-Gm-Message-State: AOJu0Yya6HxWYHSz+GgqKYhgabZRvO1IEw9g1+GDoUcrwbIuDSgyi+Vq
-	W23A1Bz1x6/CiT7r2dvBwi2XB/tdaM5qnLHH3/WooXYXvsPYybPvAYwg/x4gsJAIasbHYsEFb1w
-	hMg==
-X-Google-Smtp-Source: AGHT+IEtazAEW7Z9YwGGcKXL++Dckd0kAEwC6pBQKn1v/nxqOqzOdwWoLb56caKLmrQdFmUesETPkh89cIs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:2ecc:b0:2c6:d13f:3f9e with SMTP id
- 98e67ed59e1d1-2c8489b9ed7mr123696a91.1.1719243139430; Mon, 24 Jun 2024
- 08:32:19 -0700 (PDT)
-Date: Mon, 24 Jun 2024 08:32:18 -0700
-In-Reply-To: <504fa0a7264d4762afda2f13c3525ce5@huawei.com>
+        d=1e100.net; s=20230601; t=1719243180; x=1719847980;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6U//+RVgIeCqwJ3C0P4UhiQlBybFgyaT6cUeM3+sifM=;
+        b=cESaVtgI6bAGSrxhgW8WVpRzULxJMutbVuGBZkWJ+7CLw2B228eVUubJNdB8DluOGM
+         v4eGGZ8ElSHfZgHd6/SFkH6KIONOm9Qn2vNEaSoF1/rLPxzp7jxvGx8MWaCf9nfO7xHh
+         bYCFlBFDPSTh/Xef0KOIkJ5sTBLM8kvYp2Ni2Qslwmte0lvmwuWYNFkakxREHOTVqe3L
+         u4vaAhimAK7Ih2gPrX6fVCsl8+eMn7K/P9rUN84A4EE8ieJyDNS1Gmxg2K9oRKOr5skG
+         VTnbnRhH1h7kmnhoe9+g3Anj6rAEo9SDEpIXHLFaqETYMbG45gSzitjkPifpLPXLmBJH
+         aVng==
+X-Forwarded-Encrypted: i=1; AJvYcCVQskUMXHFlFKm3rbyKqeALm/qfgy/MfNW8SiqDP0CWXA9JjQbGlYTIJGYFDRuxlczInia94DnQeRzj3XH50LBwfyq9zwZNV8fShh7Qqcm1ljfILZq+x2iKo6ua46NikcPptteDnuZPJgBh1WSVOEDaDH7kMIKRga15mjfc0glBiov9nG4IsMymaxA=
+X-Gm-Message-State: AOJu0Yy7Ds1XUv0yIvWH8VboB1koC5W/pzu5gyDokk2kb57AKiH3aKpG
+	WDNyi9B88WT0o/cIVKoh9LxbfWeoLuUlpCLbhjoCSh41t2GGKwM1
+X-Google-Smtp-Source: AGHT+IH9lAE3Ie72o1Yzk5aEFfBESLdttaf7f0TNeWYlZKqM2Ef+bfLUVu9ISy+M7sV+m2VuJmxGSg==
+X-Received: by 2002:a05:600c:49a5:b0:423:499:a1e6 with SMTP id 5b1f17b1804b1-4248cc585d7mr35037265e9.29.1719243180149;
+        Mon, 24 Jun 2024 08:33:00 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:c315:5cc8:bc92:639])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817b6121sm138294675e9.27.2024.06.24.08.32.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 08:32:59 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-mmc@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 0/3] Add SD/MMC support for Renesas RZ/V2H(P) SoC
+Date: Mon, 24 Jun 2024 16:32:26 +0100
+Message-Id: <20240624153229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20230916003118.2540661-1-seanjc@google.com> <504fa0a7264d4762afda2f13c3525ce5@huawei.com>
-Message-ID: <ZnmRgqD6FmXNNzzI@google.com>
-Subject: Re: [PATCH 00/26] KVM: vfio: Hide KVM internals from others
-From: Sean Christopherson <seanjc@google.com>
-To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Tony Krowiak <akrowiak@linux.ibm.com>, 
-	Halil Pasic <pasic@linux.ibm.com>, Jason Herne <jjherne@linux.ibm.com>, 
-	Harald Freudenberger <freude@linux.ibm.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	Andy Lutomirski <luto@kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
-	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, Anish Ghulati <aghulati@google.com>, 
-	Venkatesh Srinivas <venkateshs@chromium.org>, Andrew Thornton <andrewth@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024, Shameerali Kolothum Thodi wrote:
-> > This is a borderline RFC series to hide KVM's internals from the rest o=
-f
-> > the kernel, where "internals" means data structures, enums, #defines,
-> > APIs, etc. that are intended to be KVM-only, but are exposed everywhere
-> > due to kvm_host.h (and other headers) living in the global include path=
-s.
->
-> Hi Sean,
->=20
-> Just thought of checking with you on this series. Do you have plans to re=
-vive this
-> series?
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Yep!
+Hi All,
 
-> The reason I am asking is, on ARM64/KVM side we do have a requirement
-> to share the KVM VMID with SMMUV3. Please see the RFC I sent out earlier =
-this
-> year[1]. The series basically provides a way for KVM to pin a VMID and al=
-so
-> associates an iommufd ctx with a struct kvm * to retrieve that VMID.=20
->=20
-> As mentioned above, some of the patches in this series(especially 1-4 & 6=
-) that
-> does the VFIO cleanups and dropping CONFIG_KVM_VFIO looks very straightfo=
-rward
-> and useful. I am thinking of including those when I re-spin my RFC series=
-, if
-> that=E2=80=99s ok.
+This patch series aims to add SD/MMC support for Renesas RZ/V2H(P) SoC.
 
-Please don't include them, as the patch they build towards (patch 5) is bug=
-gy[*],
-and I am fairly certain that at least some of the patches will change signi=
-ficantly.
+Below is the sample usage of using internal regulator:
 
-I expect to re-start working on the series in ~2 weeks, and am planning on =
-actively
-pushing the series (i.e. not ignoring it for months on end).
+SoC DTSI node:
+sdhi1: mmc@15c10000 {
+        compatible = "renesas,sdhi-r9a09g057";
+        reg = <0x0 0x15c10000 0 0x10000>;
+        interrupts = <GIC_SPI 737 IRQ_TYPE_LEVEL_HIGH>,
+                        <GIC_SPI 738 IRQ_TYPE_LEVEL_HIGH>;
+        clocks = <&cpg CPG_MOD 167>,
+                        <&cpg CPG_MOD 169>,
+                        <&cpg CPG_MOD 168>,
+                        <&cpg CPG_MOD 170>;
+        clock-names = "core", "clkh", "cd", "aclk";
+        resets = <&cpg 168>;
+        power-domains = <&cpg>;
+        status = "disabled";
 
-[*] https://lore.kernel.org/all/ZWp_q1w01NCZi8KX@google.com
+        vqmmc_sdhi1: vqmmc-regulator {
+                regulator-compatible = "vqmmc-r9a09g057-regulator";
+                regulator-name = "sdhi1-vqmmc-regulator";
+                regulator-min-microvolt = <1800000>;
+                regulator-max-microvolt = <3300000>;
+                status = "disabled";
+        };
+};
 
-> Please let me know your thoughts.
->
-> [1]. https://lore.kernel.org/linux-iommu/20240209115824.GA2922446@myrica=
-=20
+* Example of SDHI1 while using internal regulator:
+** Board DTS:
+&sdhi1 {
+        pinctrl-0 = <&sdhi1_pins>;
+        pinctrl-1 = <&sdhi1_pins>;
+        pinctrl-names = "default", "state_uhs";
+        renesas,sdhi-use-internal-regulator;
+        vmmc-supply = <&reg_3p3v>;
+        vqmmc-supply = <&vqmmc_sdhi1>;
+        bus-width = <4>;
+        sd-uhs-sdr50;
+        sd-uhs-sdr104;
+        status = "okay";
+};
+
+&vqmmc_sdhi1 {
+	status = "okay";
+};
+
+
+* Example of SDHI1 while using GPIO regulator while internal regulator is present:
+** Board DTS:
+vccq_sdhi1: regulator-vccq-sdhi1 {
+        compatible = "regulator-gpio";
+        regulator-name = "SDHI1 VccQ";
+        regulator-min-microvolt = <1800000>;
+        regulator-max-microvolt = <3300000>;
+        gpios = <&pinctrl RZG2L_GPIO(10, 2) GPIO_ACTIVE_HIGH>;
+        gpios-states = <0>;
+        states = <3300000 0>, <1800000 1>;
+};
+
+&sdhi1 {
+        pinctrl-0 = <&sdhi1_pins>;
+        pinctrl-1 = <&sdhi1_pins>;
+        pinctrl-names = "default", "state_uhs";
+        vmmc-supply = <&reg_3p3v>;
+        vqmmc-supply = <&vccq_sdhi1>;
+        bus-width = <4>;
+        sd-uhs-sdr50;
+        sd-uhs-sdr104;
+        status = "okay";
+};
+
+v2->v3
+- Renamed vqmmc-r9a09g057-regulator object to vqmmc-regulator
+- Added regulator-compatible property for vqmmc-regulator
+- Added 'renesas,sdhi-use-internal-regulator' DT property
+- Included RB tags for patch 2/3
+- Moved regulator info to renesas_sdhi_of_data instead of quirks
+- Added support to configure the init state of regulator
+- Added function pointers to configure regulator
+- Added REGULATOR_CHANGE_VOLTAGE mask
+
+v1->v2
+- Dropped regulator core API changes
+- Updated DT binding
+- Now controlling PWEN bit via regultor api
+
+v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (3):
+  dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support
+  mmc: tmio: Use MMC core APIs to control the vqmmc regulator
+  mmc: renesas_sdhi: Add support for RZ/V2H(P) SoC
+
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml |  30 +++-
+ drivers/mmc/host/renesas_sdhi.h               |  13 ++
+ drivers/mmc/host/renesas_sdhi_core.c          |  93 +++++++++++
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 150 ++++++++++++++++++
+ drivers/mmc/host/tmio_mmc.h                   |   5 +
+ drivers/mmc/host/tmio_mmc_core.c              |   7 +-
+ 6 files changed, 293 insertions(+), 5 deletions(-)
+
+-- 
+2.34.1
+
 
