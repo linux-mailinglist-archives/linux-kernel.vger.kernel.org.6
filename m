@@ -1,144 +1,239 @@
-Return-Path: <linux-kernel+bounces-226590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D339140B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:58:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6D89140B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE4328381B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:58:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DE4F1C21D1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59546FD0;
-	Mon, 24 Jun 2024 02:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Dsy541Ir"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD738BE5;
+	Mon, 24 Jun 2024 02:59:23 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970D9D517
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E116FB0;
+	Mon, 24 Jun 2024 02:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719197901; cv=none; b=VBTIgs1wUxsynwZt82CcNwc4c6SWV8DXZpnTp7Cv+XM6OO0FgU2wIwLoWyiIQNNebvdjx0Z5/O8+h0oE01NB6a0In4Py92aeAPXd7haEaA2wBFbWeuD0h9Qp3Z+li79LQTXOiwKmvvAWXmIvzxbwX31B/ivM88NKLaBBaxXZ+ck=
+	t=1719197963; cv=none; b=Drs0jX+QIad94CvrBiU4vBifY2VkMnXQYMZQEXGfvfMuDMOuxDtDyOClfHH8txafmJRstIJqaX7FcZOchAOmH+yeceniS49qDq6IsB9y+WY+BekbxepJBXblO33EHggLEM0s6MQWBYOSdREe0navdP3zjtqk7RfrXyRJBx5uMzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719197901; c=relaxed/simple;
-	bh=HZyeTSDoU90HYd90Rp+PLPJE+pmstpL+du0vTcZ7ASU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KDEyJpwc0iVFps0d6QvTv38ovO6xP29mmfwBFh5jNzVwd3zcXVQWrKiqCgVaUqIl2ktZVtNUw8vFvXSfwNNf0GI68I3TOLluxFILb2J/CDhxvatQePmjWrHY2wlONw6Q7xbviv4sGycHKNFygcnlMyVKomrtG1dcEFmW1HamiJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=Dsy541Ir; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5B07C2C044B;
-	Mon, 24 Jun 2024 14:58:16 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1719197896;
-	bh=b4PPIWnSntGbucOj7Qa3cqUKyDG1tJZ+G6Ih4WCPC9Q=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Dsy541IrOR2d7+JHSboOJseQcChjXtH3AMCiKMq/ThI06AZChRzDre90/ueGy6KEG
-	 nsOn7SRhoHvUxK93974Deux6kurnivArLz4klNMtvcLV4WPdr4u71BcDP2U/gOb7Aj
-	 rM8eM5tSI3XKwjZ/HlvlDgYO1GQhdqLIImm346mFCtbymD4i3h2RKOwMGZfrlV2keb
-	 ztf+57xL7DMaQPrpQg1Nvy35UGvbldS7RLsSewP5zVXr58G6D+tOBNdr4SIp7bur6s
-	 hB1dPqg6KXosTFLvORaImFOoA1fCvoo+ljQ3/Iqm7EtXVhVx2hEhUcf4YJWZWdjryq
-	 cOq312Bfe3BDQ==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6678e0c80000>; Mon, 24 Jun 2024 14:58:16 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 2856013ED63;
-	Mon, 24 Jun 2024 14:58:16 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 228A9280AE5; Mon, 24 Jun 2024 14:58:16 +1200 (NZST)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: andrew@lunn.ch,
-	f.fainelli@gmail.com,
-	olteanv@gmail.com
-Cc: netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
-	Landen Chao <Landen.Chao@mediatek.com>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Daniel Golle <daniel@makrotopia.org>
-Subject: [PATCH] dt-bindings: net: dsa: mediatek,mt7530: Minor grammar fixes
-Date: Mon, 24 Jun 2024 14:58:11 +1200
-Message-ID: <20240624025812.1729229-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719197963; c=relaxed/simple;
+	bh=IRibUyIrLzpKWBF15o5JRcoeIovf2xlYNBijzj3HH7I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=J4SlkFU7AxT9qnD522PI3Bd2cecYeNNypHyrIcTG0A7REJ8aYkRntb9N7Ua9rG0vQa1rI/6X7tilpDcB5UcG4n70i8zoC1Oo+oACMm7ZOJ0T79QOtL0UeB3IbYt6WiSw7cjNWTXNkgqRvBPM7k/WUrJOyufSvF6ivaLls4GwNzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W6t1N5M5lzddQ2;
+	Mon, 24 Jun 2024 10:57:44 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8B887141112;
+	Mon, 24 Jun 2024 10:59:17 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Mon, 24 Jun
+ 2024 10:59:17 +0800
+Message-ID: <52f72d1d-602e-4dca-85a3-adade925b056@huawei.com>
+Date: Mon, 24 Jun 2024 10:59:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6678e0c8 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=Mc0CNVgLlbBwIVVfR90A:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] cgroup: fix uaf when proc_cpuset_show
+To: Waiman Long <longman@redhat.com>, <tj@kernel.org>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>
+CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240622113814.120907-1-chenridong@huawei.com>
+ <19648b9c-6df7-45cd-a5ae-624a3e4d860f@redhat.com>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <19648b9c-6df7-45cd-a5ae-624a3e4d860f@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-Update the mt7530 binding with some minor updates that make the document
-easier to read.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
+On 2024/6/22 23:05, Waiman Long wrote:
+>
+> On 6/22/24 07:38, Chen Ridong wrote:
+>> We found a refcount UAF bug as follows:
+>>
+>> BUG: KASAN: use-after-free in cgroup_path_ns+0x112/0x150
+>> Read of size 8 at addr ffff8882a4b242b8 by task atop/19903
+>>
+>> CPU: 27 PID: 19903 Comm: atop Kdump: loaded Tainted: GF
+>> Call Trace:
+>>   dump_stack+0x7d/0xa7
+>>   print_address_description.constprop.0+0x19/0x170
+>>   ? cgroup_path_ns+0x112/0x150
+>>   __kasan_report.cold+0x6c/0x84
+>>   ? print_unreferenced+0x390/0x3b0
+>>   ? cgroup_path_ns+0x112/0x150
+>>   kasan_report+0x3a/0x50
+>>   cgroup_path_ns+0x112/0x150
+>>   proc_cpuset_show+0x164/0x530
+>>   proc_single_show+0x10f/0x1c0
+>>   seq_read_iter+0x405/0x1020
+>>   ? aa_path_link+0x2e0/0x2e0
+>>   seq_read+0x324/0x500
+>>   ? seq_read_iter+0x1020/0x1020
+>>   ? common_file_perm+0x2a1/0x4a0
+>>   ? fsnotify_unmount_inodes+0x380/0x380
+>>   ? bpf_lsm_file_permission_wrapper+0xa/0x30
+>>   ? security_file_permission+0x53/0x460
+>>   vfs_read+0x122/0x420
+>>   ksys_read+0xed/0x1c0
+>>   ? __ia32_sys_pwrite64+0x1e0/0x1e0
+>>   ? __audit_syscall_exit+0x741/0xa70
+>>   do_syscall_64+0x33/0x40
+>>   entry_SYSCALL_64_after_hwframe+0x67/0xcc
+>>
+>> This is also reported by: 
+>> https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
+>>
+>> This can be reproduced by the following methods:
+>> 1.add an mdelay(1000) before acquiring the cgroup_lock In the
+>>   cgroup_path_ns function.
+>> 2.$cat /proc/<pid>/cpuset   repeatly.
+>> 3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
+>> $umount /sys/fs/cgroup/cpuset/   repeatly.
+>>
+>> The race that cause this bug can be shown as below:
+>>
+>> (umount)        |    (cat /proc/<pid>/cpuset)
+>> css_release        |    proc_cpuset_show
+>> css_release_work_fn    |    css = task_get_css(tsk, cpuset_cgrp_id);
+>> css_free_rwork_fn    |    cgroup_path_ns(css->cgroup, ...);
+>> cgroup_destroy_root    |    mutex_lock(&cgroup_mutex);
+>> rebind_subsystems    |
+>> cgroup_free_root     |
+>>             |    // cgrp was freed, UAF
+>>             |    cgroup_path_ns_locked(cgrp,..);
+>>
+>> When the cpuset is initialized, the root node top_cpuset.css.cgrp
+>> will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation 
+>> will
+>> allocate cgroup_root, and top_cpuset.css.cgrp will point to the 
+>> allocated
+>> &cgroup_root.cgrp. When the umount operation is executed,
+>> top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
+>>
+>> The problem is that when rebinding to cgrp_dfl_root, there are cases
+>> where the cgroup_root allocated by setting up the root for cgroup v1
+>> is cached. This could lead to a Use-After-Free (UAF) if it is
+>> subsequently freed. The descendant cgroups of cgroup v1 can only be
+>> freed after the css is released. However, the css of the root will never
+>> be released, yet the cgroup_root should be freed when it is unmounted.
+>> This means that obtaining a reference to the css of the root does
+>> not guarantee that css.cgrp->root will not be freed.
+>>
+>> To solve this issue, we have added a cgroup reference count in
+>> the proc_cpuset_show function to ensure that css.cgrp->root will not
+>> be freed prematurely. This is a temporary solution. Let's see if anyone
+>> has a better solution.
+>>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 20 ++++++++++++++++++++
+>>   1 file changed, 20 insertions(+)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index c12b9fdb22a4..782eaf807173 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -5045,6 +5045,7 @@ int proc_cpuset_show(struct seq_file *m, struct 
+>> pid_namespace *ns,
+>>       char *buf;
+>>       struct cgroup_subsys_state *css;
+>>       int retval;
+>> +    struct cgroup *root_cgroup = NULL;
+>>         retval = -ENOMEM;
+>>       buf = kmalloc(PATH_MAX, GFP_KERNEL);
+>> @@ -5052,9 +5053,28 @@ int proc_cpuset_show(struct seq_file *m, 
+>> struct pid_namespace *ns,
+>>           goto out;
+>>         css = task_get_css(tsk, cpuset_cgrp_id);
+>> +    rcu_read_lock();
+>> +    /*
+>> +     * When the cpuset subsystem is mounted on the legacy hierarchy,
+>> +     * the top_cpuset.css->cgroup does not hold a reference count of
+>> +     * cgroup_root.cgroup. This makes accessing css->cgroup very
+>> +     * dangerous because when the cpuset subsystem is remounted to the
+>> +     * default hierarchy, the cgroup_root.cgroup that css->cgroup 
+>> points
+>> +     * to will be released, leading to a UAF issue. To avoid this 
+>> problem,
+>> +     * get the reference count of top_cpuset.css->cgroup first.
+>> +     *
+>> +     * This is ugly!!
+>> +     */
+>> +    if (css == &top_cpuset.css) {
+>> +        cgroup_get(css->cgroup);
+>> +        root_cgroup = css->cgroup;
+>> +    }
+>> +    rcu_read_unlock();
+>>       retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
+>>                   current->nsproxy->cgroup_ns);
+>>       css_put(css);
+>> +    if (root_cgroup)
+>> +        cgroup_put(root_cgroup);
+>>       if (retval == -E2BIG)
+>>           retval = -ENAMETOOLONG;
+>>       if (retval < 0)
+>
+> Thanks for reporting this UAF bug. Could you try the attached patch to 
+> see if it can fix the issue?
+>
 
-Notes:
-    I was referring to this dt binding and found a couple of places where
-    the wording could be improved. I'm not exactly a techical writer but
-    hopefully I've made things a bit better.
++/*
++ * With a cgroup v1 mount, root_css.cgroup can be freed. We need to take a
++ * reference to it to avoid UAF as proc_cpuset_show() may access the 
+content
++ * of this cgroup.
++ */
+  static void cpuset_bind(struct cgroup_subsys_state *root_css)
+  {
++    static struct cgroup *v1_cgroup_root;
++
+      mutex_lock(&cpuset_mutex);
++    if (v1_cgroup_root) {
++        cgroup_put(v1_cgroup_root);
++        v1_cgroup_root = NULL;
++    }
+      spin_lock_irq(&callback_lock);
 
- .../devicetree/bindings/net/dsa/mediatek,mt7530.yaml        | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+      if (is_in_v2_mode()) {
+@@ -4159,6 +4170,10 @@ static void cpuset_bind(struct 
+cgroup_subsys_state *root_css)
+      }
 
-diff --git a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.ya=
-ml b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-index 1c2444121e60..6c0abb020631 100644
---- a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-+++ b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
-@@ -22,16 +22,16 @@ description: |
-=20
-   The MT7988 SoC comes with a built-in switch similar to MT7531 as well =
-as four
-   Gigabit Ethernet PHYs. The switch registers are directly mapped into t=
-he SoC's
--  memory map rather than using MDIO. The switch got an internally connec=
-ted 10G
-+  memory map rather than using MDIO. The switch has an internally connec=
-ted 10G
-   CPU port and 4 user ports connected to the built-in Gigabit Ethernet P=
-HYs.
-=20
--  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs has got 10/1=
-00 PHYs
-+  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs have 10/100 =
-PHYs
-   and the switch registers are directly mapped into SoC's memory map rat=
-her than
-   using MDIO. The DSA driver currently doesn't support MT7620 variants.
-=20
-   There is only the standalone version of MT7531.
-=20
--  Port 5 on MT7530 has got various ways of configuration:
-+  Port 5 on MT7530 supports various configurations:
-=20
-     - Port 5 can be used as a CPU port.
-=20
---=20
-2.45.2
+      spin_unlock_irq(&callback_lock);
++    if (!cgroup_subsys_on_dfl(cpuset_cgrp_subsys)) {
++        v1_cgroup_root = root_css->cgroup;
++        cgroup_get(v1_cgroup_root);
++    }
+      mutex_unlock(&cpuset_mutex);
+  }
+
+Thanks for your suggestion. If we take a reference at rebind(call 
+->bind()) function, cgroup_root allocated when setting up root for 
+cgroup v1 can never be released, because the reference count will never 
+be reduced to zero.
+
+We have already tried similar methods to fix this issue, however doing 
+so causes another issue as mentioned previously.
+
+
+Ridong
 
 
