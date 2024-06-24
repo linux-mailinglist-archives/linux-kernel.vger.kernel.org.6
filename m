@@ -1,171 +1,144 @@
-Return-Path: <linux-kernel+bounces-228056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3AE915A3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:07:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4620A915A40
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAE5C1F2323B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3DB01F22F6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA801A2576;
-	Mon, 24 Jun 2024 23:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F081A257B;
+	Mon, 24 Jun 2024 23:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RfkFoXIS"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="xViEqujr"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00374AECE;
-	Mon, 24 Jun 2024 23:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C973B4AECE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 23:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719270428; cv=none; b=bGfecSaVe8m8lttFQcd7dgUwgSxphVLBpX4AW0rvOk8QyDCXVB90xfQRrJ39RHxfOL0+Yuxvf2OaBYNUatXjiqNx6NREeLudlB14lCqALayNogmf1m9ospfEF6Pf/8lv+f7SYWPhBYV/oktPgzF852AuGz8NTg/De6KkYaKKojE=
+	t=1719270516; cv=none; b=ZYm7CkpTNu+bvq0tmPIIq/eCiHA1/+wn6/+RXh1NRVrGFRd1HvslYdP/b/wlMktF3eTqnUWHesApToNZFmJlQZFJJSgwQ8IKel0XY+9PAgUi77H2QVjoh0gvTm3t5Dtmc+84QOUPSL1R+h/Iq+uJ7Yl59TaWHCCB5IEblKap/Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719270428; c=relaxed/simple;
-	bh=6eyYkmcs7k8GYPUVFy86lVgqmNwARSx918cQHznJVfA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=tudh9FbWwYpyoEpDAdmTvMKSa5WCoolz0nvu+HRYljWZQswnnsvfUG3oro4hae0gLAygGA6Nk4g+OePhe6oBpJpi5MeY3HoTh97MQpiCj6h/Sn8BUA4iO/bOpouAQrh1Rt3X9HfnO/SHapKsShJz8Y3tzykxG1byRlGemQQtvv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RfkFoXIS; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OMTkol005462;
-	Mon, 24 Jun 2024 23:06:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:mime-version:content-transfer-encoding; s=pp1; bh=
-	knwQoSRgMqzSPvVmvwudpuSCHwgSUHeBaTEusfDPqEg=; b=RfkFoXIS3oImtfLp
-	co5CChwMtzPs4CbMWTDTaM6/BlSpynxV8pvhOxbnaHvqpuGI0VrErqWwQKVS6C5V
-	vlSDvsSI+tY26ApC7nGjLniqDt9QytbzNtga8PtvSB/TQc0lkMQ2wtzgKhxtQgNa
-	ITNqlUvfXdcUIcksM1DjkOQ+j33SO/jHlmL/S2wOJbtdfOvjObWLGu+++Jwdzsl8
-	tcW7yy8DeyYnVc68f5dASrtjtlYroY1Cq93qrdn/lBkNCAqJJh/hdRCiH0lrS3Qv
-	zw1xNiuAuHCKDMNu0zB+0Jx2vncpgErCALoZ0vNemyM/47M8k6rgjhTWXq8RyjDu
-	avc25w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyhmu02n4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 23:06:39 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45ON6dnX025896;
-	Mon, 24 Jun 2024 23:06:39 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyhmu02n0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 23:06:39 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OJdluF019533;
-	Mon, 24 Jun 2024 23:06:38 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9xpuc63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 23:06:38 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45ON6ZB43211906
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Jun 2024 23:06:38 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9B0A358065;
-	Mon, 24 Jun 2024 23:06:35 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C45455805D;
-	Mon, 24 Jun 2024 23:06:34 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.65.213])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Jun 2024 23:06:34 +0000 (GMT)
-Message-ID: <618bc57a3babe5ac85d0fea214d11de7ead89eea.camel@linux.ibm.com>
-Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from
- security_audit_rule
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore
- <paul@paul-moore.com>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, mic@digikod.net,
-        linux-integrity@vger.kernel.org
-Date: Mon, 24 Jun 2024 19:06:34 -0400
-In-Reply-To: <40c8ec3f-32fc-4bff-a50c-c1a868fcc776@schaufler-ca.com>
-References: <20231215221636.105680-1-casey@schaufler-ca.com>
-	 <20231215221636.105680-2-casey@schaufler-ca.com>
-	 <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
-	 <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
-	 <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
-	 <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com>
-	 <CAHC9VhRKmkAPgQRt0YXrF4hLXCp7RyCSkG0K9ZchJ6x4bKKhEw@mail.gmail.com>
-	 <aecad5ea129946dbf9cf5013331f9368ceb84326.camel@huaweicloud.com>
-	 <52bffc64dc7db2cc1912544514008eada1e058a7.camel@linux.ibm.com>
-	 <CAHC9VhS8mC0NC=-gbK_xBq2Ry6Be76ARZSg9Zm3y0bsocGEtTQ@mail.gmail.com>
-	 <40c8ec3f-32fc-4bff-a50c-c1a868fcc776@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
+	s=arc-20240116; t=1719270516; c=relaxed/simple;
+	bh=dQATCdxrA96O+8ZgphugN/R17ylASjnAa3pSnrwWVHo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Qx/HwdTFMuKjnVhACIj9JGNNHM2DZqkXloQnhS6NJ1CGA7bUMw6Su+rVszGLYIbJFz7QAUgXBzJ2a1yNvXQy6ani1htBRgjz88a8VwuDNrRnSIzgUUH+R19iFZcbMJXYME6M5eJjURUTGGvQTBx/k0vGJtuIspu6m8LRDUJEPxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=xViEqujr; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7245453319so327108066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:08:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719270512; x=1719875312; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3vXm6QRkb0yr07P0PtHmYlW8Uq78lbg7t+K4Kf09s4M=;
+        b=xViEqujrks14GxH7PBb7wfvHaCgDGz5CmcSGDF4yuOYA67T8hbvV0iU302p7DLNRob
+         RbJq0RP4ztNI9F20vexQZkCQmwX86gBwLm8wdAU9Y4MVSVC4FP8MkWnbXDrTRGZv9lER
+         +QISQRrjSpOqiGng8kA3tL+K27eoTEpzB3XOFs1pC8tBP7ynTaMkkEY+lD8hAdq5cbBz
+         tPqUb2z0kqa/nBbR6Fw+5iqDI/BtszQcjQUPqB6RyDbfSMrkN9zJZQ19IMoTgLqwFItA
+         3dvDNqATgvCEYBF8ERsiyYKpNh/wZlDSySAR1m+2Rfhu6PnATOZYnG1w7BJh5/1oZ/CU
+         3/GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719270512; x=1719875312;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3vXm6QRkb0yr07P0PtHmYlW8Uq78lbg7t+K4Kf09s4M=;
+        b=FFYASyYfSflO08W+oSnkANFdTJgxwCXaKCsoFdB2zkRC1I7UjCzoydTvcaeXwvovxK
+         BimSBMGbiKNkAkTkamCsfUfLJ8cRibE8W85f/QVfN5JEXvgey3Q0rMSKDNS9GdgqV4aO
+         JgpT+YQ2h/WvCM2NeLZuocruT6ppBh73gsETDYiFc1JZLcGzAqgiZDbe/LrskpxJYY/v
+         ukBz7l+y5p3mr88FWE0b7NHQQwQ9/yAMdhkAya1kmYwWuiIKLNpW8qaitOHfX5+3lt/f
+         wnfH7aLgVsYXE6FTDbHo3KUPsxvuDfvTGtcg/YNtde3yRNAanREqn5MRxXga2khaDYuK
+         DAQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUc4AasZ7xYZK9itB7fhIZTP+PE6l461pEM69cpDbshdAKBVWpeSHeSY0eFpelW6E2xhb9vSjSxLwsBws4CZbyfjRezpbOkbNnUK+ZU
+X-Gm-Message-State: AOJu0Yx0xq5nfKRXvJODD2OmEbUdOxeC6I/aLQoan7ozH5zuEEle9dBH
+	PsMhLrUEbNyvrwBzy0ld3sJdETomASP8uSZdvXFDp/mNAcZNAzxv3sukE5WVm9I=
+X-Google-Smtp-Source: AGHT+IFdsNqN/YFNCt3hSfJYwgXLMeE/bLv9dNIrwn7EImKp/cqYRBmS/BpwFMGkYG2d9mpEfSBWKg==
+X-Received: by 2002:a17:907:6b86:b0:a6e:f869:d718 with SMTP id a640c23a62f3a-a702760bfc3mr525301866b.21.1719270512013;
+        Mon, 24 Jun 2024 16:08:32 -0700 (PDT)
+Received: from smtpclient.apple (tmo-087-202.customers.d1-online.com. [80.187.87.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf54923fsm452807266b.104.2024.06.24.16.08.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2024 16:08:31 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: TezQC3vIllojA7G1Jb5EHMslJK8iK2vk
-X-Proofpoint-GUID: Oy7gxmtyvK-2ZqRlsE-XOWQ3LzNWu97r
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_20,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 adultscore=0 impostorscore=0 phishscore=0 spamscore=0
- clxscore=1015 mlxscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406240183
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] bpf, btf: Make if test explicit to fix Coccinelle error
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <faf99c63015c6a5f619d85bd45405b91a3498bf9.camel@gmail.com>
+Date: Mon, 24 Jun 2024 16:08:13 -0700
+Cc: martin.lau@linux.dev,
+ ast@kernel.org,
+ daniel@iogearbox.net,
+ andrii@kernel.org,
+ song@kernel.org,
+ john.fastabend@gmail.com,
+ kpsingh@kernel.org,
+ sdf@fomichev.me,
+ haoluo@google.com,
+ jolsa@kernel.org,
+ yonghong.song@linux.dev,
+ bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <99A36D9C-E171-452D-B0AB-AB0EE6C6410B@toblux.com>
+References: <20240624195426.176827-2-thorsten.blum@toblux.com>
+ <faf99c63015c6a5f619d85bd45405b91a3498bf9.camel@gmail.com>
+To: Eduard Zingerman <eddyz87@gmail.com>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On Mon, 2024-06-24 at 15:19 -0700, Casey Schaufler wrote:
-> On 6/24/2024 3:03 PM, Paul Moore wrote:
-> > On Mon, Jun 24, 2024 at 9:57 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > On Mon, 2024-06-24 at 10:45 +0200, Roberto Sassu wrote:
-> > > > My only comment would be that I would not call the new functions with
-> > > > the ima_ prefix, being those in security.c, which is LSM agnostic, but
-> > > > I would rather use a name that more resembles the differences, if any.
-> > > Commit 4af4662fa4a9 ("integrity: IMA policy") originally referred to these hooks
-> > > as security_filter_rule_XXXX, but commit b8867eedcf76 ("ima: Rename internal
-> > > filter rule functions") renamed the function to ima_filter_rule_XXX) to avoid
-> > > security namespace polution.
-> > > 
-> > > If these were regular security hooks, the hooks would be named:
-> > > filter_rule_init, filter_rule_free, filter_rule_match with the matching
-> > > "security" prefix functions. Audit and IMA would then register the hooks.
-> > > 
-> > > I agree these functions should probably be renamed again, probably to
-> > > security_ima_filter_rule_XXXX.
-> > It's funny, my mind saw that the patch was removing those preprocessor
-> > macros and was so happy it must have shut off, because we already have
-> > security_XXX functions for these :)
-> > 
-> > See security_audit_rule_init(), security_audit_rule_free(), and
-> > security_audit_rule_match().
-> > 
-> > Casey, do you want to respin this patch to use the existing LSM
-> > functions?
+On 24. Jun 2024, at 13:16, Eduard Zingerman <eddyz87@gmail.com> wrote:
+> On Mon, 2024-06-24 at 21:54 +0200, Thorsten Blum wrote:
+>> Explicitly test the iterator variable i > 0 to fix the following
+>> Coccinelle/coccicheck error reported by itnull.cocci:
+>> 
+>> ERROR: iterator variable bound on line 4688 cannot be NULL
+>> 
+>> Compile-tested only.
+>> 
+>> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+>> ---
+>> kernel/bpf/btf.c | 2 +-
+>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+>> index 821063660d9f..7720f8967814 100644
+>> --- a/kernel/bpf/btf.c
+>> +++ b/kernel/bpf/btf.c
+>> @@ -4687,7 +4687,7 @@ static void btf_datasec_show(const struct btf *btf,
+>>    __btf_name_by_offset(btf, t->name_off));
+>> for_each_vsi(i, t, vsi) {
+>> var = btf_type_by_id(btf, vsi->type);
+>> - if (i)
+>> + if (i > 0)
+>> btf_show(show, ",");
+>> btf_type_ops(var)->show(btf, var, vsi->type,
+>> data + vsi->offset, bits_offset, show);
 > 
-> If you want to use shared functions they shouldn't be security_audit_blah().
-> I like Mimi's suggestion. Rename security_audit_filter_rule_init() to
-> security_filter_rule_init() and use that in both places.
-
-The existing name is security_audit_rule_init().  Replacing '_audit_' with
-'_filter_' would definitely resolve the naming issue.  Each of the LSMs would
-need to be converted as well (e.g. smack_audit_rule_init,
-selinux_audit_rule_init, aa_audit_rule_init).
-
+> Could you please elaborate a bit?
+> Here is for_each_vsi is defined:
 > 
-> >   It looks like you should have Mimi's and Roberto's support
-> > in this.  Please submit this as a standalone patch as it really is a
-> > IMA/LSM cleanup.
-> > 
-> > Thanks all.
-> > 
+> #define for_each_vsi(i, datasec_type, member) \
+> for (i = 0, member = btf_type_var_secinfo(datasec_type); \
+>     i < btf_type_vlen(datasec_type); \
+>     i++, member++)
+> 
+> Here it sets 'i' to zero for the first iteration.
+> Why would the tool report that 'i' can't be zero?
 
+Coccinelle thinks i can't be a NULL pointer (not the number zero). It's
+essentially a false-positive warning, but since there are only 4 such
+warnings under kernel/, I thought it would be worthwhile to remove some
+of them by making the tests explicit.
 
