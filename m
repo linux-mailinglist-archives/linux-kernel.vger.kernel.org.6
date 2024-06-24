@@ -1,105 +1,160 @@
-Return-Path: <linux-kernel+bounces-228045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F8E9159F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:40:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 389749159FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A982E28149F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8C47282125
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A321A2541;
-	Mon, 24 Jun 2024 22:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1B11369AE;
+	Mon, 24 Jun 2024 22:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K/ajky1Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Leux423t"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE70045C1C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5203247A64
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719268851; cv=none; b=hMJ+hGqzA9A5YmLTOY9RN6Ev9gPSoWoJUQlc8tz6yX3QCiEu970aKXpzKjLSGtxrQtnqCStE0M8j0zor33lg1EsZVPsjke7PUSCorbOK210bm/YFmJlKS65RxuJM4g2jmo4U0fUylqT2QjwevKTvv0q86o+D2umfRMVF5H3rrts=
+	t=1719269194; cv=none; b=aDj+tsIOmF4rQ/9N85fqwc0J+6UJhBXDViCfX3l6eRyOToQRrc4wYOL6xr5dLWD63yb/n9MabtHlG630XQSxl6TwQiORQiDCpI2elkKbigcTwVHQpwPlBPu263HesE26xjYY1TDKYCmI/ivY5wEzLAplD7EchaRnDmh88UfqUew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719268851; c=relaxed/simple;
-	bh=gZ5KsvuOtYJvO4Wv7/pCCF+MwuC23XNnjC2DTewuZJk=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=sY/eT5w4sPOjhB0ZVdaCCtOC1hyimCs5EXCwl0EikOMemng/fzfZ1McERSPYd65x017/gtffdCx8xUrIohppHPxdNOOqM+6o/a4jHWgwEVwCECp+wUJofRWKC9zH55B0Zlo+TCK/C5Vzebag+ccREeam4OcuRUuXYu7893zlMas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K/ajky1Q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719268848;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uxl1z2W74gbsX4wZ/0gxAsnxfLwDVydXk+S+lJvdUno=;
-	b=K/ajky1QPNm/O8TsbhibNXTiyuQkZPWT2vOT0eVVTDLkt5fT82fMxFTb1yfkb38Ew03M+R
-	I/ctF0UNPeBROQ5X66fudF2+CGUMnBA3ZkzpKU3XjWz3WxWUmq6LCEm1i0U+3A4iYq932N
-	grtwfapTwRyN/IRCSKy1DPZMdaVaN/c=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-202-TVIlF1LsNRqMsUGuKySzHg-1; Mon,
- 24 Jun 2024 18:40:45 -0400
-X-MC-Unique: TVIlF1LsNRqMsUGuKySzHg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 07B2119560AF;
-	Mon, 24 Jun 2024 22:40:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.111])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 776231955D8D;
-	Mon, 24 Jun 2024 22:40:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <ZnmRGyuSZKtmJVhG@casper.infradead.org>
-References: <ZnmRGyuSZKtmJVhG@casper.infradead.org> <614257.1719228181@warthog.procyon.org.uk>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-mm@kvack.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix netfs_page_mkwrite() to check folio->mapping is valid
+	s=arc-20240116; t=1719269194; c=relaxed/simple;
+	bh=a9BjekUwMlFuwQl22+Ay1e0uJovQZQb8mhyMziOFm7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UDzqhRHH8oEOTyeTC0aRne6IIDXB2+nkCheWfy+XVEGY7y/Z8HWkvpUjH1iN3qJmyDuDCR7vqgZeHb0XixgXeyVvzK52Y4BcC7gsXFw0fysQUI21zSAgTr/spJm59O6eU7Ab9X48AD3M1vaGhST28fryzc8e2OpKahy3KGpmmZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Leux423t; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-643efaf0786so16812677b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719269191; x=1719873991; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=P3iBsbrlnas2q2TyHLGB/sfld3ZD6H8nDpiPUd64c3E=;
+        b=Leux423tVLy/Zr47DGEvWfsI5cNvZhL31DzB6LkrNsQA6eXAOKPOUfGY5I6UmvVVWQ
+         VYAj74g9151KqSPbsdFMSKz4E6zMtsLo7ZEgcdaEKnEzm5CK4b1+G8CRR11BTuwrx0+a
+         /rZs6NT9voOPLAkizJMwjopwmVW9zDu7Sn8djdLwcpXTuDLJ/mjASc7EoKJALbSDsGZJ
+         31PXT/8cj/BANdUccmhOOCmjcS+AggV53utGV8nCcSMhN/HhQX0zfmsODjvj9rlTBCKF
+         BDKIkR7Y7M+jE07bgcNN7XoG19/vFoawWLSNEc1J4xyV52oOaaQ/17lNFbgv23+q+YmY
+         3zCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719269191; x=1719873991;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P3iBsbrlnas2q2TyHLGB/sfld3ZD6H8nDpiPUd64c3E=;
+        b=czrtEmj2djW/lDmFTC5y49PDDlEWFpjYLhfLz0u5U5jVtP9lM7lh1PphRLyACkDN1b
+         idEf4MmSNEwYMPlGPsRPswGOm/7y/aTfqsf16lbnf/x9VWbJIA9ROMJdyeiCOR8KgRdl
+         twuCJgM9BjorV08nFcceZoi++HCMayIlB1gxszqURfeebKXIWTK1V217j/1pgrwzxAE5
+         kWR68qJgU2/jf161dalb4t9v/WVlsW8n3i1vyrXa/dyogNJGTZfF36uvL4H71ex1sjZY
+         L7GUQ9sHFcUtFPVCk9VG6dMkVYMlf5eKg/BBcac0adjJs6ga0L3Cmz4IdcF0kTfFhki3
+         eRIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQUzOCEUipRKtjmpurv6zG7QYpXw9nkFAhGVdebvnecoKUQ1tv6kxJNxhTJNiDMbejCwYkYKGJYLR94HN9T3s2O/SzxixjoEML0iTU
+X-Gm-Message-State: AOJu0Ywcxmmh7xHxK0i/XyzgxibvGOuk9G4Iku70/MnxmBcrSpERpdt2
+	JKmRydxd+bKY0E5kR9SVCO4+uizwxg5Rma3bZJ8X4395N2xaw0lOLbVX/2smMi104JDaQHqyLNN
+	8GPUvXl8FUzSMNx6H//It1gWKzhO3Svb0jV7Oig==
+X-Google-Smtp-Source: AGHT+IGVgskHg3Fgbb1vY5Iscqeb2BV+TYDIsO4ODyG6Xxfx+hkkFs5OeqExEjmUtkaDltt6W14EpykC4/QEwhiSl1w=
+X-Received: by 2002:a81:9c10:0:b0:62f:67b4:790c with SMTP id
+ 00721157ae682-6433f0e4b43mr50802097b3.14.1719269191259; Mon, 24 Jun 2024
+ 15:46:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <720578.1719268838.1@warthog.procyon.org.uk>
-Date: Mon, 24 Jun 2024 23:40:38 +0100
-Message-ID: <720579.1719268838@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-0-8590d44912ce@linaro.org>
+ <20240623-drm-bridge-connector-fix-hdmi-reset-v2-2-8590d44912ce@linaro.org> <99ff549c-f5c4-dc9c-42f3-396dc3d29d6b@quicinc.com>
+In-Reply-To: <99ff549c-f5c4-dc9c-42f3-396dc3d29d6b@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 25 Jun 2024 01:46:20 +0300
+Message-ID: <CAA8EJppcH-z275m6xDQaigsxmVhnfJkLVsq68GHLFoAq_p_2GA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] drm/connector: automatically set immutable flag
+ for max_bpc property
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	"igt-dev@lists.freedesktop.org" <igt-dev@lists.freedesktop.org>, Petri Latvala <adrinael@adrinael.net>, 
+	Kamil Konieczny <kamil.konieczny@linux.intel.com>, 
+	=?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
+	Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Tue, 25 Jun 2024 at 01:39, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>
+> + IGT dev
+>
+> On 6/22/2024 10:40 PM, Dmitry Baryshkov wrote:
+> > With the introduction of the HDMI Connector framework the driver might
+> > end up creating the max_bpc property with min = max = 8. IGT insists
+> > that such properties carry the 'immutable' flag. Automatically set the
+> > flag if the driver asks for the max_bpc property with min == max.
+> >
+>
+> This change does not look right to me.
+>
+> I wonder why we need this check because DRM_MODE_PROP_IMMUTABLE means
+> that as per the doc, userspace cannot change the property.
+>
+>           * DRM_MODE_PROP_IMMUTABLE
+>           *     Set for properties whose values cannot be changed by
+>           *     userspace. The kernel is allowed to update the value of
+> these
+>           *     properties. This is generally used to expose probe state to
+>           *     userspace, e.g. the EDID, or the connector path property
+> on DP
+>           *     MST sinks. Kernel can update the value of an immutable
+> property
+>           *     by calling drm_object_property_set_value().
+>           */
+>
+> Here we are allowing userspace to change max_bpc
+>
+>
+> drm_atomic_connector_set_property()
+> {
+>         **********
+>
+>          } else if (property == connector->max_bpc_property) {
+>                  state->max_requested_bpc = val;
+>
+>         **********
+> }
+>
+> I believe you are referring to this IGT check right?
+>
+> https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/kms_properties.c#L428
 
-> >  	if (folio_lock_killable(folio) < 0)
-> >  		goto out;
-> > +	if (folio->mapping != mapping) {
-> > +		ret = VM_FAULT_NOPAGE | VM_FAULT_LOCKED;
-> > +		goto out;
-> > +	}
-> 
-> Have you tested this?
+Yes
 
-I've tried to.  generic/247 can trigger it, but the race happens rarely.
+>
+> I think we should fix IGT in this case unless there is some reason we
+> are missing. Because just because it has the same min and max does not
+> mean its immutable by the doc of the IMMUTABLE flag.
 
-> I'd expect it to throw some VM assertions.
+Well, having the same min and max means that it is impossible to
+change the property. So the property is immutable, but doesn't have
+the flag.
 
-I didn't see any.
+>
+>
+> > Fixes: aadb3e16b8f3 ("drm/connector: hdmi: Add output BPC to the connector state")
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/gpu/drm/drm_connector.c | 7 ++++++-
+> >   1 file changed, 6 insertions(+), 1 deletion(-)
 
-I guess VM_FAULT_LOCKED is not universally handled by the caller and that I
-should unlock the folio myself instead.
-
-David
-
+With best wishes
+Dmitry
 
