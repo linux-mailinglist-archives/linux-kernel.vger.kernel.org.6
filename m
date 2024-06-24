@@ -1,238 +1,153 @@
-Return-Path: <linux-kernel+bounces-226935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8265B91460C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:17:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3296A91460E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51231C20944
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C90286CE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D800D130495;
-	Mon, 24 Jun 2024 09:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322A01304BF;
+	Mon, 24 Jun 2024 09:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GCu8uLdU"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="dQMmv2nS"
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEB418E29
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3116E18E29;
+	Mon, 24 Jun 2024 09:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719220659; cv=none; b=R9k4wLWjKjB3h9jHCVt2LxHz1jnNh02KoACeDcZei+FHD2QQ0A3Ohu/t+YtolXtC2eycLOjoitUs3T7G18MY+ibZb6cr1OR7VOjIgDh2e42DAk5d9gqLX8y7VB1TiSPwiLb0U6xxrLkE12KFeTBteVpN8Rluw97NFaJFkVk8G10=
+	t=1719220724; cv=none; b=bRY0x6KCovi4Oy1L7jW17dkuXGAWvOoHmAHU1nUdrlDVmJOERR6Uu0B7I7zuLBdbQJvahIQQE9+39Z8PLjV1BAe5Jdc0N0xBmCAQjVAd6gyVtm2EjRMMtt6r+GZsK8agT8dZz0EVnL0D4CS1oBtnHbdrZ3eV8xQgmwrQlzITk70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719220659; c=relaxed/simple;
-	bh=iNco4OU84ax6PELf0P/Ayp8vbmxbgQORq4Wz1bM7TLo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PfvAiO0xoSa0GOfdtfbxQCyUadUCSJSgIGsNcpShPytLVKjVIti+3ARRsdblT4/HbfJidK9K0UidVkrgY/E/tLugO3vZ7YwlG/Pzan0JuP6Sfvz/6Pj7Z/qikYwayY96haI8A7auxORbKedviN6GxDiijSD/gAgtlYPIh5TwZnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GCu8uLdU; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4217990f997so30312275e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:17:36 -0700 (PDT)
+	s=arc-20240116; t=1719220724; c=relaxed/simple;
+	bh=8z0Me58ofAkCeMYK+RbmJRN1l1eSvoaq0OwoETOXuEI=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=ZnG3uKj+9SbIjBAkqgVIA3u/5/TkvGMnzh+cWslOIcOXg8spGjrsbb17HY8cLCrYJQJ6c7+Cyo4ahVq4h6K/+kDlJ+oX6zgTbKm5dR00FiJLSJblcEcoxZwih0JLqJpzu5/IxJTRmWwuTHlx8gYMn+P8Hsm6uZyJOZF3rn/c3gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=dQMmv2nS; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id B63739C3240;
+	Mon, 24 Jun 2024 05:18:39 -0400 (EDT)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id HR5yBegFxqJ5; Mon, 24 Jun 2024 05:18:38 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 492A09C5B61;
+	Mon, 24 Jun 2024 05:18:38 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 492A09C5B61
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719220655; x=1719825455; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1RjMX4Sxy+yhlFOobpnk3vjTo/Bzp1q3rVeZqfWSaNI=;
-        b=GCu8uLdUFwRyDrV90Lfi2cCGHLTVqsE175qcrlYeXeGnnLl48v96ML9WEVvoVfdfxS
-         cwjDFPfk3E7t02n5TJ89YqFE0zsLnMg9smVPa5C2+eTBTOYsB2kkyelX0NAshJVc59jX
-         yPu4VX38hQb/Pdu/MspxNnA4gu1LJjWhVjej67nf75TESkSeByvNpxb3ae/LJST/Ykgn
-         UA8dPkQ8BVbZxAHu6w+2KxOFfZHMTR4lCn3Nby18g4uHADCgPawOY9hdKQ6jduxFtTk5
-         C/XnBeIsYGiC+eoFoZ7Mkk25T35pzVqKaCDg291VHvvcW7ssET/TSdjrDofLpKfsJmLG
-         qyFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719220655; x=1719825455;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1RjMX4Sxy+yhlFOobpnk3vjTo/Bzp1q3rVeZqfWSaNI=;
-        b=PVE6Qvm3RlTrWVzge4nm2ga19Wk4RYaXHa+AhrJ7+RVlHptTgEQzAAewQgM6LWBK73
-         Jdk1m6bZxSuYN8fNwXFqfav1t+RR4G+SMsE7BdyWdikBSTqoL9DHS1ncpnT48phhUNM1
-         CR5gSSlOrJo6oh8LZe2q4xaujqWhgl9SfJ2ctmdTMwIxvU+afk8LZbZO2Wx2elXymY81
-         ppBDEzwNS2MNZjx8DBlrfMq/x0XGwqq4tcu04LZ1w9imFUl4OMnid8DZ4CMPO7jYNfTU
-         VLeQrV5ltGn9jtAoWLjCpEl/a1dnB9P6pnmKWCVDqy/0UmUqrHfKXXVcp1Iuv8i5axH9
-         mPEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDlQL86IG+Zt4dVZ9GFcLNPSFi6/1ujc7YQTrvRengfpqBc56IxKkQpfQiPZ5jw3lSF6/mNu6dZbPwGfFXphG2waclHBLIGDTxewD/
-X-Gm-Message-State: AOJu0YymdnOlQIOhmdu62vU1V/TQ9KoHeUBjMibf+vTHi8Pv+HzzqxVa
-	c6OjjX0V6u78MzkAkzUA0dHtmFJPC+07XZB4meg1gKXc9ABxs+RfAJKsqZsgKZc=
-X-Google-Smtp-Source: AGHT+IHYUewn5hUFbxE8VqrCO8oFQ7eystcAYnrIuM5LjL1p71tVpIu4QEqNxCJfEOFEb8XQ45HPmw==
-X-Received: by 2002:a05:600c:12d5:b0:423:b627:e3a5 with SMTP id 5b1f17b1804b1-42489e677e5mr39275355e9.38.1719220655034;
-        Mon, 24 Jun 2024 02:17:35 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:cf01:774b:55fd:ab74? ([2a01:e0a:982:cbb0:cf01:774b:55fd:ab74])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817b5549sm132033535e9.23.2024.06.24.02.17.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 02:17:34 -0700 (PDT)
-Message-ID: <8ab7d216-4eb4-4bbb-8372-60ed527b7d4f@linaro.org>
-Date: Mon, 24 Jun 2024 11:17:33 +0200
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1719220718; bh=4JOrFwNYAzMjJc3yCOi7qIx5d2JoABbFOVFqt1WuodE=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=dQMmv2nSrtJBDMOLXfbnYdr0xEsQ+JPCN2ISsqaHfK0rFiK0iVxB7g3L69NRikKSF
+	 tFs9D3pn8s8IrJT0B8gBXrghZesBG0biCOcu54hq0wciU5P0mB0DqJzghiLCD4GHdP
+	 AMp+VJD/fXUB64TKqeZowTL1e2NWWAuHvxalaXKz4yMRxBqj6XRpaaeL019JzRMbrc
+	 Xt8NUIaDhSAFLqFQU9ufuJqullhXIzBF96BK6f0WwRh5+a+5XdxVEesD20tbVhIBld
+	 Lafq1lysngw69xaWD5/bUlPMWd5pYLunOPrmkZ7Vg8a9GBKgukkSz1IH2wvpn6Cm74
+	 c6Y3zVSYLCvIA==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id VquOXrQmnN-2; Mon, 24 Jun 2024 05:18:38 -0400 (EDT)
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [192.168.48.237])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id E46679C3240;
+	Mon, 24 Jun 2024 05:18:37 -0400 (EDT)
+Date: Mon, 24 Jun 2024 05:18:37 -0400 (EDT)
+From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, 
+	shengjiu wang <shengjiu.wang@gmail.com>, 
+	Xiubo Lee <Xiubo.Lee@gmail.com>, 
+	Nicolin Chen <nicoleotsuka@gmail.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	linux-sound <linux-sound@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, imx <imx@lists.linux.dev>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	alsa-devel <alsa-devel@alsa-project.org>, 
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
+	Philip-Dylan Gleonec <philip-dylan.gleonec@savoirfairelinux.com>
+Message-ID: <1048207382.1714780.1719220717882.JavaMail.zimbra@savoirfairelinux.com>
+In-Reply-To: <42b32958-89ee-43b6-96d1-f3e18c7d8955@kernel.org>
+References: <20240620132511.4291-1-elinor.montmasson@savoirfairelinux.com> <20240620132511.4291-8-elinor.montmasson@savoirfairelinux.com> <17a0efe3-72fa-4d13-b3b0-90e6640308f3@kernel.org> <1566099232.1714447.1719219107779.JavaMail.zimbra@savoirfairelinux.com> <42b32958-89ee-43b6-96d1-f3e18c7d8955@kernel.org>
+Subject: Re: [PATCHv5 7/9] ASoC: dt-bindings: imx-audio-spdif: remove
+ binding
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 8/8] drm: bridge: dw_hdmi: Use display_info is_hdmi and
- has_audio
-To: Jonas Karlman <jonas@kwiboo.se>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Robert Foss <rfoss@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240611155108.1436502-1-jonas@kwiboo.se>
- <20240611155108.1436502-9-jonas@kwiboo.se>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240611155108.1436502-9-jonas@kwiboo.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_4581 (ZimbraWebClient - GC112 (Linux)/8.8.15_GA_4581)
+Thread-Topic: ASoC: dt-bindings: imx-audio-spdif: remove binding
+Thread-Index: ewOgNpthlCv+G0hUX/mmtwgvLix7HA==
 
-On 11/06/2024 17:51, Jonas Karlman wrote:
-> drm_edid_connector_update() is being called from bridge connector ops
-> and from detect and get_modes ops for dw-hdmi connector.
+From: "Krzysztof Kozlowski" <krzk@kernel.org>
+Sent: Monday, 24 June, 2024 10:55:31
+> On 24/06/2024 10:51, Elinor Montmasson wrote:
+>> From: "Krzysztof Kozlowski" <krzk@kernel.org>
+>> Sent: Sunday, 23 June, 2024 13:09:33
+>>> On 20/06/2024 15:25, Elinor Montmasson wrote:
+>>>> imx-audio-spdif was merged into the fsl-asoc-card driver, and therefore
+>>>> removed.
+>>>
+>>> So what happens with all existing users (e.g. DTS)? They become
+>>> invalid/not supported?
+>> 
+>> 
+>> Next commits, 8/9 and 9/9, update all DTS files that currently use
+>> the "fsl,imx-audio-spdif" compatible.
 > 
-> Change to use is_hdmi and has_audio from display_info directly instead
-> of keeping our own state in sink_is_hdmi and sink_has_audio.
-> 
-> Also remove the old and unused edid struct member and related define.
-> 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> ---
->   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 32 ++++-------------------
->   1 file changed, 5 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index a9c39584d31b..e162c2786178 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -43,8 +43,6 @@
->   #define DDC_CI_ADDR		0x37
->   #define DDC_SEGMENT_ADDR	0x30
->   
-> -#define HDMI_EDID_LEN		512
-> -
->   /* DW-HDMI Controller >= 0x200a are at least compliant with SCDC version 1 */
->   #define SCDC_MIN_SOURCE_VERSION	0x1
->   
-> @@ -148,8 +146,6 @@ struct dw_hdmi {
->   
->   	int vic;
->   
-> -	u8 edid[HDMI_EDID_LEN];
-> -
->   	struct {
->   		const struct dw_hdmi_phy_ops *ops;
->   		const char *name;
-> @@ -159,8 +155,6 @@ struct dw_hdmi {
->   
->   	struct i2c_adapter *ddc;
->   	void __iomem *regs;
-> -	bool sink_is_hdmi;
-> -	bool sink_has_audio;
->   
->   	struct pinctrl *pinctrl;
->   	struct pinctrl_state *default_state;
-> @@ -2041,7 +2035,7 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
->   		HDMI_FC_INVIDCONF_IN_I_P_INTERLACED :
->   		HDMI_FC_INVIDCONF_IN_I_P_PROGRESSIVE;
->   
-> -	inv_val |= hdmi->sink_is_hdmi ?
-> +	inv_val |= display->is_hdmi ?
->   		HDMI_FC_INVIDCONF_DVI_MODEZ_HDMI_MODE :
->   		HDMI_FC_INVIDCONF_DVI_MODEZ_DVI_MODE;
->   
-> @@ -2275,7 +2269,7 @@ static int dw_hdmi_poweron(struct dw_hdmi *hdmi,
->   	if (hdmi->hdmi_data.enc_out_bus_format == MEDIA_BUS_FMT_FIXED)
->   		hdmi->hdmi_data.enc_out_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
->   
-> -	hdmi->hdmi_data.rgb_limited_range = hdmi->sink_is_hdmi &&
-> +	hdmi->hdmi_data.rgb_limited_range = display->is_hdmi &&
->   		drm_default_rgb_quant_range(mode) ==
->   		HDMI_QUANTIZATION_RANGE_LIMITED;
->   
-> @@ -2295,7 +2289,7 @@ static int dw_hdmi_poweron(struct dw_hdmi *hdmi,
->   	/* HDMI Initialization Step B.3 */
->   	dw_hdmi_enable_video_path(hdmi);
->   
-> -	if (hdmi->sink_has_audio) {
-> +	if (display->has_audio) {
->   		dev_dbg(hdmi->dev, "sink has audio support\n");
->   
->   		/* HDMI Initialization Step E - Configure audio */
-> @@ -2304,7 +2298,7 @@ static int dw_hdmi_poweron(struct dw_hdmi *hdmi,
->   	}
->   
->   	/* not for DVI mode */
-> -	if (hdmi->sink_is_hdmi) {
-> +	if (display->is_hdmi) {
->   		dev_dbg(hdmi->dev, "%s HDMI mode\n", __func__);
->   
->   		/* HDMI Initialization Step F - Configure AVI InfoFrame */
-> @@ -2418,29 +2412,13 @@ static const struct drm_edid *dw_hdmi_edid_read(struct dw_hdmi *hdmi,
->   						struct drm_connector *connector)
->   {
->   	const struct drm_edid *drm_edid;
-> -	const struct edid *edid;
->   
->   	if (!hdmi->ddc)
->   		return NULL;
->   
->   	drm_edid = drm_edid_read_ddc(connector, hdmi->ddc);
-> -	if (!drm_edid) {
-> +	if (!drm_edid)
->   		dev_dbg(hdmi->dev, "failed to get edid\n");
-> -		return NULL;
-> -	}
-> -
-> -	/*
-> -	 * FIXME: This should use connector->display_info.is_hdmi and
-> -	 * connector->display_info.has_audio from a path that has read the EDID
-> -	 * and called drm_edid_connector_update().
-> -	 */
-> -	edid = drm_edid_raw(drm_edid);
-> -
-> -	dev_dbg(hdmi->dev, "got edid: width[%d] x height[%d]\n",
-> -		edid->width_cm, edid->height_cm);
-> -
-> -	hdmi->sink_is_hdmi = drm_detect_hdmi_monitor(edid);
-> -	hdmi->sink_has_audio = drm_detect_monitor_audio(edid);
->   
->   	return drm_edid;
->   }
+> You mean in-tree. I mean all users, in- and out-of-tree. Other projects.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Oh you're right
+
+>> From the users point of view, currently configured spdif audio cards
+>> will behave just the same.
+>> 
+>> 
+>>> After quick look, I do not see backwards compatibility in the driver and
+>>> above commit msg tells me nothing about ABI break.
+>> 
+>> 
+>> For the next version I will state in this commit message the upcoming
+>> modifications to DTS
+>> and compatibility, why it will be done, and that support for existing DTS is not
+>> dropped.
+>> 
+>> Previous `imx-spdif` driver used the dummy codec instead of
+>> using declared spdif codecs. It was discussed in previous version of this
+>> contribution
+>> that using the dummy codec isn't good practice. So one to one backward
+>> compatibility
+>> isn't really possible.
+> 
+> Heh, that's not good. This is improvement, cleanup. While it is
+> important and useful, it should also not break existing users.
+
+
+Should I introduce then the use of the dummy codec in `fsl-asoc-card` to
+assure backward compatibility at least for a time ?
+With maybe warning messages in code to indicate that spdif codecs drivers
+should be declared and used in the future ?
+
+
+Best regards,
+Elinor Montmasson
 
