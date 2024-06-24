@@ -1,319 +1,241 @@
-Return-Path: <linux-kernel+bounces-227163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A3D914942
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:00:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7508C914952
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F6371C23734
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7522848C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE2713B783;
-	Mon, 24 Jun 2024 11:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0787F13A879;
+	Mon, 24 Jun 2024 12:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsQ3nAEs"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="I+c3XRou";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="mdeBpSI1"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A55132120;
-	Mon, 24 Jun 2024 11:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A249B2E636
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719230397; cv=none; b=K0AzzyyatuL7Q5VWbCbUvdzD1T3W83FvyD4arqJfjiK3lgNK7t7K0jtVQG12XENozsv8evL+wtzEX8kSehmiocPXLt+Y4xB00LgDNoubKwkzLJ2GUK0J5CinL+DNmWtAFjbz5JGH2s5Agu7T0jn3axHHJbrnrTq1hEpJRzNKbQ8=
+	t=1719230639; cv=none; b=FEieJ/vEE4h+gWsXUdGryfgB8FM4aIZOB4UPIu8eh3uvjXrWzaNeBrz3k0e5k7gjHW4RD5NHc1r8SaYUyn65+LPuOQ0mgSbZXX/BphHW7eiWJ6fwoV3UPJjLT1RLIgvIMrIwU8mvNXv5/1lOUI8qmieEaZO7o2VsxrbT55opwzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719230397; c=relaxed/simple;
-	bh=mrw/F4Ya6RFfXo3J5jULK+03oRfHGgdK5t/Zq4Kh1Sw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tweQxnUNciLCZ+TA1BNYYn2crN++rT/rL/5wseO8MPACo1CJTZhELUKZs3Te7khPGxYb5RxBhpscvJmoka9wnY7iVbhb8EaBvrIR9k5KiMZT5nQMi/48J0MaTzR1U3rfpDYQ89dWtoiJYTsSj7bjySh6kGhkWfIbFWZTcayp7Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EsQ3nAEs; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-70b2421471aso2935512a12.0;
-        Mon, 24 Jun 2024 04:59:55 -0700 (PDT)
+	s=arc-20240116; t=1719230639; c=relaxed/simple;
+	bh=/98lUCL9BYj2rfeI8lL+8IVU614vRP2zZLoiqRhuhsA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=geqKQ2Zkcl5pAGGwJRxlT+oyuZSmGd1hG9DwV53BppB/PIoY8TMWfwOVGP0N+rTm8apRjhQIw2Z24tQqqco+ENSrZKFXz6yueRPMp40+sm9OapKgvbUYDTCehKccT+nU0VrB1QwD5UpLrA0mTJg9vK4Jp6m0W7vgO7vum5aczno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=I+c3XRou; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=mdeBpSI1 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719230395; x=1719835195; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Iwu8kUHGKGcTymQuxe9Xnw/0GaQZONNbqIunVMZstL8=;
-        b=EsQ3nAEsfqLXckj9hw3+adU+Ng333QxyTjiBrEgHqxGiq2aKW24apdJW9XM5Hzwwf6
-         /ifTNCI2smZYF+GndV/3cXAKdgakX+KZKdL3UAVBQfcih4T07u4igR/Qx+kax2U5cPIN
-         BQjPia9oryfcvAbMU6b7rqAEjk8lJI9lxg4DtXk49hTwatMtKurl09NTqEHW14n5eNsF
-         KbvyRX3iZuUJinQOf7ZqvZQ6xVWRmjT38pt8KTebVTT7rWlE0yX3boyFbzFJnYzEUGRw
-         JehO9sj1pVFIoaIPISMWJY1UPK13oJfiL4Nd2IzWC/GPXL4v4SRBFNPsfu5UCNuHoKTa
-         SQbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719230395; x=1719835195;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Iwu8kUHGKGcTymQuxe9Xnw/0GaQZONNbqIunVMZstL8=;
-        b=LlrWFVwFjd5jW14AdEGdBr2N87xIeuPgQ7eqtHoDist4bZviQ64kscVtjyjqDlioYz
-         WBFysJL3y4sycWbxZm/XgJxfc5rv7XwFqw8cIl0Ke0CuEsGenvhm0eJ2u7DMyJfQzsJQ
-         5cKyf32F9aEgJYIHxP2ddytsg+4gXXANiuZEnj5qFshKgVv9jz/3hNjgcWpfyQjvsVTn
-         cXLzbz/18cXOtzn75u63JYX+cyJ+qDLg0TA4TyyY2/h9IY8px/4UMu7/2OERvC1HANy1
-         /GK8iVFg67epnLEQoz6lUVAtNbfQB0Ap3KRRE5pOhGoHHv16LuCcon5P3tB6fcloJjdI
-         +Rsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXPZVt2OYSCOXKYHcBLY7JHSXDlZqogSH6wijc35WXSz8Fb07AOQXL5RSnJ0LepCR/Cpu8EnSVhB/x8V+4GrGz8EmxnWESTay0g1QuhPoSUVAYId+rfdMdKpnruIytty5Z5m2JN
-X-Gm-Message-State: AOJu0Yyjss1+8HBom6xbwuAWaBM5Mex1rqQ9rmuOx2UrQM165C7gfC+z
-	klKok/9P1F+7ASHaN1G5gL/PAvQuaCQT07QK4c30pCMmBEDek8+PZdCoemyYn7jOmpsENGkSLYG
-	0ltaTB2igm8N3ocZ4VIhPpg1KOQA=
-X-Google-Smtp-Source: AGHT+IHB5YT5XqnR4lG46K5RH2swPEZn3XC4R+DJ+LKw1MjUenLgfADqv67Pq44U3Ej0iYW+3M14k/7z/ckqAY4N/XU=
-X-Received: by 2002:a17:90a:604e:b0:2bd:f1d5:8e3e with SMTP id
- 98e67ed59e1d1-2c86146c80emr2850938a91.35.1719230394874; Mon, 24 Jun 2024
- 04:59:54 -0700 (PDT)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1719230636; x=1750766636;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=L9SqzLwnyFw9O0cjx7JztMLALTgKK8TJgRcvzOsBlc4=;
+  b=I+c3XRoustcGgqj/h0hWro3wJ4iilJl3QXL7//SYiTqWMNGP/D9sCDFG
+   q6HbG+dpX+/6wO8vslUwmRsEcFtStrr6iPsVBWAtnemOxOxPOgiwCIFvf
+   tq7UBw3gEL2Ejbp1u9MyvtP0eVdUEnJn2q2wyKppFWHgpBnp/5YL+YEzq
+   C4/5xt+rSHWStVxk3yR+05tljiPD61BM+QUcLEJMLMqsmeVdQlUjagJry
+   eL8V2dO6vCMdp0P6aVkqFuAPm85kYG0h5SiY21atDGfIW6xfNdEkkgHh/
+   EFK3hL78lOhZcoNBYswuGhsdLAwlAsSFBwq+EyXWshHHaa7QOJXC8qHFf
+   Q==;
+X-CSE-ConnectionGUID: wQQx9fCJQuOjIKyWO8lLWg==
+X-CSE-MsgGUID: u8AO9FrxSwu0gfX69Lyb5w==
+X-IronPort-AV: E=Sophos;i="6.08,261,1712613600"; 
+   d="scan'208";a="37551712"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 24 Jun 2024 14:03:54 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8BF321613E2;
+	Mon, 24 Jun 2024 14:03:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1719230630;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=L9SqzLwnyFw9O0cjx7JztMLALTgKK8TJgRcvzOsBlc4=;
+	b=mdeBpSI1im/et4LdsYakQtiNV5Hmhe7AIWj3a8UOVyfwzq/CSYIVrShsm0THfmCaiLLMpg
+	bxg3emTDk1j0NzhXYbf8TbJebJwWgHbDvxsjVsbCLGXrtuuXDnrkB4PxTEEAc+HuIIAoPk
+	jITczRzAcaP50gID6yObJOi5dvEjm4LfvoBJ8yQhmvlpab7VZx8Z0FWKyCAJd5U6BYFJ3w
+	5SYA9P1ENOx/mpjY/I4R5Ror3okGbW/PgWv5uPs6iXaiPL9iNK9OGfUZdCbVVTlCVBSQiv
+	S7UbNtFLCPSV24V1DKkASssGaMvNE++FcuUFk9Y0i95S8th+Xu0ieHjg7OcgCw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/lcdif: switch to DRM_BRIDGE_ATTACH_NO_CONNECTOR
+Date: Mon, 24 Jun 2024 14:03:52 +0200
+Message-ID: <1984704.yKVeVyVuyW@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <CAA8EJppQtiDxZjLMk6VB0X_4VSuC8cNhPOMd8on2uQ3xo92vSg@mail.gmail.com>
+References: <20240624-mxc-lcdif-bridge-attach-v1-1-37e8c5d5d934@linaro.org> <859620673.0ifERbkFSE@steina-w> <CAA8EJppQtiDxZjLMk6VB0X_4VSuC8cNhPOMd8on2uQ3xo92vSg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240623170933.63864-1-aford173@gmail.com> <3f970d67-5f14-428e-b8ea-02c62e1b5f82@kernel.org>
-In-Reply-To: <3f970d67-5f14-428e-b8ea-02c62e1b5f82@kernel.org>
-From: Adam Ford <aford173@gmail.com>
-Date: Mon, 24 Jun 2024 06:59:43 -0500
-Message-ID: <CAHCN7xKTnbDec2uJu0vJMY-NMTDvhb=C_FPM+5QeDNBwwRgZeA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: net: davinci_emac: Convert to yaml version
- from txt
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, woods.technical@gmail.com, 
-	aford@beaconembedded.com, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Adam Ford <aford@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Jun 24, 2024 at 12:07=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 23/06/2024 19:09, Adam Ford wrote:
-> > The davinci_emac is used by several devices which are still maintained,
-> > but to make some improvements, it's necessary to convert from txt to ya=
-ml.
+Hi Dmitry,
+
+Am Montag, 24. Juni 2024, 13:49:03 CEST schrieb Dmitry Baryshkov:
+> On Mon, 24 Jun 2024 at 14:32, Alexander Stein
+> <alexander.stein@ew.tq-group.com> wrote:
 > >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > Hi,
 > >
-> > diff --git a/Documentation/devicetree/bindings/net/davinci_emac.txt b/D=
-ocumentation/devicetree/bindings/net/davinci_emac.txt
-> > deleted file mode 100644
-> > index 5e3579e72e2d..000000000000
-> > --- a/Documentation/devicetree/bindings/net/davinci_emac.txt
-> > +++ /dev/null
-> > @@ -1,44 +0,0 @@
-> > -* Texas Instruments Davinci EMAC
-> > -
-> > -This file provides information, what the device node
-> > -for the davinci_emac interface contains.
-> > -
-> > -Required properties:
-> > -- compatible: "ti,davinci-dm6467-emac", "ti,am3517-emac" or
-> > -  "ti,dm816-emac"
-> > -- reg: Offset and length of the register set for the device
-> > -- ti,davinci-ctrl-reg-offset: offset to control register
-> > -- ti,davinci-ctrl-mod-reg-offset: offset to control module register
-> > -- ti,davinci-ctrl-ram-offset: offset to control module ram
-> > -- ti,davinci-ctrl-ram-size: size of control module ram
-> > -- interrupts: interrupt mapping for the davinci emac interrupts source=
-s:
-> > -              4 sources: <Receive Threshold Interrupt
-> > -                       Receive Interrupt
-> > -                       Transmit Interrupt
-> > -                       Miscellaneous Interrupt>
-> > -
-> > -Optional properties:
-> > -- phy-handle: See ethernet.txt file in the same directory.
-> > -              If absent, davinci_emac driver defaults to 100/FULL.
-> > -- ti,davinci-rmii-en: 1 byte, 1 means use RMII
-> > -- ti,davinci-no-bd-ram: boolean, does EMAC have BD RAM?
-> > -
-> > -The MAC address will be determined using the optional properties
-> > -defined in ethernet.txt.
-> > -
-> > -Example (enbw_cmc board):
-> > -     eth0: emac@1e20000 {
-> > -             compatible =3D "ti,davinci-dm6467-emac";
-> > -             reg =3D <0x220000 0x4000>;
-> > -             ti,davinci-ctrl-reg-offset =3D <0x3000>;
-> > -             ti,davinci-ctrl-mod-reg-offset =3D <0x2000>;
-> > -             ti,davinci-ctrl-ram-offset =3D <0>;
-> > -             ti,davinci-ctrl-ram-size =3D <0x2000>;
-> > -             local-mac-address =3D [ 00 00 00 00 00 00 ];
-> > -             interrupts =3D <33
-> > -                             34
-> > -                             35
-> > -                             36
-> > -                             >;
-> > -             interrupt-parent =3D <&intc>;
-> > -     };
-> > diff --git a/Documentation/devicetree/bindings/net/davinci_emac.yaml b/=
-Documentation/devicetree/bindings/net/davinci_emac.yaml
-> > new file mode 100644
-> > index 000000000000..4c2640aef8a1
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/davinci_emac.yaml
->
-> Filename matching compatible format. Missing vendor prefix. Underscores
-> are not used in names or compatibles.
+> > Am Montag, 24. Juni 2024, 12:31:46 CEST schrieb Dmitry Baryshkov:
+> > > Existing in-kernel device trees use LCDIF with the dsim + adv7533, ds=
+im
+> > > + tc358762 or with ldb + panel_bridge. All these combinations support
+> > > using DRM_BRIDGE_ATTACH_NO_CONNECTOR for bridge attachment.
+> > >
+> > > Change lcdif driver to use this flag when attaching the bridge and
+> > > create drm_bridge_connector afterwards.
+> > >
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > > Note: compile-tested only.
+> >
+> > I gave it a try, but it doesn't work. Despite DSI output it also breaks
+> > HDMI output, where I at least some error messages:
+> > [drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@32c0=
+0000/hdmi@32fd8000 to encoder None-37: -22
+> > [drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@32c0=
+0000/display-bridge@32fc4000 to encoder None-37: -22
+> > imx-lcdif 32fc6000.display-controller: error -EINVAL: Failed to attach =
+bridge for endpoint0
+> > imx-lcdif 32fc6000.display-controller: error -EINVAL: Cannot connect br=
+idge
+> > imx-lcdif 32fc6000.display-controller: probe with driver imx-lcdif fail=
+ed with error -22
+>=20
+> Could you please try it with the following change:
+>=20
+> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> index 13bc570c5473..c87d3e55c00d 100644
+> --- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> @@ -94,6 +94,7 @@ static int imx8mp_dw_hdmi_probe(struct platform_device =
+*pdev)
+>         plat_data->phy_name =3D "SAMSUNG HDMI TX PHY";
+>         plat_data->priv_data =3D hdmi;
+>         plat_data->phy_force_vendor =3D true;
+> +       plat_data->output_port =3D 1;
+>=20
+>         hdmi->dw_hdmi =3D dw_hdmi_probe(pdev, plat_data);
+>         if (IS_ERR(hdmi->dw_hdmi))
 
-Thank you for the review.
+Okay, this does fix the HDMI probe errors. Nevertheless I get the errors:
+[   13.429313] [drm] Initialized imx-lcdif 1.0.0 for 32e80000.display-contr=
+oller on minor 1
+[   13.439116] imx-lcdif 32e80000.display-controller: [drm] Cannot find any=
+ crtc or sizes
+[   13.448168] imx-lcdif 32e80000.display-controller: [drm] Cannot find any=
+ crtc or sizes
+[   15.519737] [drm] Initialized imx-lcdif 1.0.0 for 32fc6000.display-contr=
+oller on minor 2
+[   15.675672] imx-lcdif 32fc6000.display-controller: [drm] Cannot find any=
+ crtc or sizes
 
-Would a proper name be ti,davinci-emac.yaml?
+just from the lcdif patch for both HDMI and DP.
 
->
->
-> > @@ -0,0 +1,111 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/net/davinci_emac.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Texas Instruments Davici EMAC
-> > +
-> > +maintainers:
-> > +  - Adam Ford <aford@gmail.com>
-> > +
-> > +description:
-> > +  Ethernet based on the Programmable Real-Time Unit and Industrial
-> > +  Communication Subsystem.
-> > +
-> > +allOf:
-> > +  - $ref: ethernet-controller.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
->
->
-> That's just enum, no need for items here.
->
-> > +      - enum:
-> > +          - ti,davinci-dm6467-emac # da850
-> > +          - ti,dm816-emac
-> > +          - ti,am3517-emac
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    minItems: 4
->
-> You need to list and describe the items.
->
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: ick
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +  resets:
-> > +    maxItems: 1
-> > +
-> > +  local-mac-address: true
->
-> Drop
->
-> > +  mac-address: true
->
-> Drop
->
-> You miss top-level $ref to appropriate schema.
->
-> > +
-> > +  syscon:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: a phandle to the global system controller on
-> > +      to enable/disable interrupts
->
-> Drop entire property. There was no such property in old binding and
-> nothing explains why it was added.
+Best regards,
+Alexander
 
-The am3517.dtsi emac node has a syscon, so I didn't want to break it.
-I'll take a look to see what the syscon node on the am3517 does.  I
-struggle with if statements in yaml, but if it's necessary for the
-am3517, can we keep it if I elaborate on it in the commit message?
->
-> > +
-> > +  ti,davinci-ctrl-reg-offset:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description:
-> > +      Offset to control register
-> > +
-> > +  ti,davinci-ctrl-mod-reg-offset:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description:
-> > +      Offset to control module register
-> > +
-> > +  ti,davinci-ctrl-ram-offset:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description:
-> > +      Offset to control module ram
-> > +
-> > +  ti,davinci-ctrl-ram-size:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description:
-> > +      Size of control module ram
-> > +
-> > +  ti,davinci-rmii-en:
-> > +    $ref: /schemas/types.yaml#/definitions/uint8
-> > +    description:
-> > +      RMII enable means use RMII
-> > +
-> > +  ti,davinci-no-bd-ram:
-> > +    type: boolean
-> > +    description:
-> > +      Enable if EMAC have BD RAM
-> > +
-> > +additionalProperties: false
->
-> Look at example-schema. This goes after required, although anyway should
-> be unevaluatedProperties after adding proper $ref.
->
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - clocks
-> > +  - ti,davinci-ctrl-reg-offset
-> > +  - ti,davinci-ctrl-mod-reg-offset
-> > +  - ti,davinci-ctrl-ram-offset
-> > +  - ti,davinci-ctrl-ram-size
-> > +
-> > +examples:
-> > +  - |
-> > +    eth0: ethernet@220000 {
->
-> Drop label.
->
-> > +      compatible =3D "ti,davinci-dm6467-emac";
-> > +      reg =3D <0x220000 0x4000>;
-> > +      ti,davinci-ctrl-reg-offset =3D <0x3000>;
-> > +      ti,davinci-ctrl-mod-reg-offset =3D <0x2000>;
-> > +      ti,davinci-ctrl-ram-offset =3D <0>;
-> > +      ti,davinci-ctrl-ram-size =3D <0x2000>;
-> > +      local-mac-address =3D [ 00 00 00 00 00 00 ];
-> > +      interrupts =3D <33>, <34>, <35>,<36>;
-> > +      clocks =3D <&psc1 5>;
-> > +      power-domains =3D <&psc1 5>;
-> > +      status =3D "disabled";
->
-> Drop. It cannot be disabled, otherwise what would be the point of this
-> example?
+>=20
+> >
+> > Best regards,
+> > Alexander
+> >
+> > > ---
+> > >  drivers/gpu/drm/mxsfb/lcdif_drv.c | 14 +++++++++++++-
+> > >  1 file changed, 13 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/mxsfb/lcdif_drv.c b/drivers/gpu/drm/mxsf=
+b/lcdif_drv.c
+> > > index 0f895b8a99d6..1d5508449995 100644
+> > > --- a/drivers/gpu/drm/mxsfb/lcdif_drv.c
+> > > +++ b/drivers/gpu/drm/mxsfb/lcdif_drv.c
+> > > @@ -16,6 +16,7 @@
+> > >
+> > >  #include <drm/drm_atomic_helper.h>
+> > >  #include <drm/drm_bridge.h>
+> > > +#include <drm/drm_bridge_connector.h>
+> > >  #include <drm/drm_drv.h>
+> > >  #include <drm/drm_encoder.h>
+> > >  #include <drm/drm_fbdev_dma.h>
+> > > @@ -48,6 +49,7 @@ static int lcdif_attach_bridge(struct lcdif_drm_pri=
+vate *lcdif)
+> > >  {
+> > >       struct device *dev =3D lcdif->drm->dev;
+> > >       struct device_node *ep;
+> > > +     struct drm_connector *connector;
+> > >       struct drm_bridge *bridge;
+> > >       int ret;
+> > >
+> > > @@ -96,13 +98,23 @@ static int lcdif_attach_bridge(struct lcdif_drm_p=
+rivate *lcdif)
+> > >                       return ret;
+> > >               }
+> > >
+> > > -             ret =3D drm_bridge_attach(encoder, bridge, NULL, 0);
+> > > +             ret =3D drm_bridge_attach(encoder, bridge, NULL, DRM_BR=
+IDGE_ATTACH_NO_CONNECTOR);
+> > >               if (ret) {
+> > >                       of_node_put(ep);
+> > >                       return dev_err_probe(dev, ret,
+> > >                                            "Failed to attach bridge f=
+or endpoint%u\n",
+> > >                                            of_ep.id);
+> > >               }
+> > > +
+> > > +             connector =3D drm_bridge_connector_init(lcdif->drm, enc=
+oder);
+> > > +             if (IS_ERR(connector)) {
+> > > +                     ret =3D PTR_ERR(connector);
+> > > +                     of_node_put(ep);
+> > > +
+> > > +                     return dev_err_probe(dev, ret,
+> > > +                                          "Failed to create bridge c=
+onnector for endpoint%u\n",
+> > > +                                          of_ep.id);
+> > > +             }
+> > >       }
+> > >
+> > >       return 0;
+> > >
+> > > ---
+> > > base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+> > > change-id: 20240624-mxc-lcdif-bridge-attach-60368807b2f9
+> > >
+> > > Best regards,
+> > >
+> >
+> >
+> > --
+> > TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+> > Amtsgericht M=FCnchen, HRB 105018
+> > Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+> > http://www.tq-group.com/
+> >
+> >
+>=20
+>=20
+>=20
 
-Sorry, I copy-pasted this from the da850.dtsi node.  I'll remove the
-label and the status line.
->
->
-> Best regards,
-> Krzysztof
->
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
