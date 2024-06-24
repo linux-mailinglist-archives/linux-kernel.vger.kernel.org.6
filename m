@@ -1,147 +1,276 @@
-Return-Path: <linux-kernel+bounces-227624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE09A91549F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBD49154A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA34286182
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:46:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33F66286675
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF72C19D8BB;
-	Mon, 24 Jun 2024 16:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FB619DFB5;
+	Mon, 24 Jun 2024 16:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3ogjcxXN"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="euxTCt6l"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2079.outbound.protection.outlook.com [40.107.96.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A422F24
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247554; cv=none; b=ny4IdlWRjC/sXwwIgTp7W69b0+T+aCErAsWdbikAkiG3xDrcIIrefU6ap/EuqJKhMbkiLsnQT9V34oVg0rKLi9+p7hXQZuBn45FvLeR8xTfQ5X6tjGUSIMUNFoitBa2p8jC/rRyOEKbMu3SwpJ8Nf1IdGB42yRdpr2V3mAzq2Pc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247554; c=relaxed/simple;
-	bh=7/UnMHPZIxjL9awIurtHTiLV/VlW7wM/jMEjkX1eNeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n2acR9EvoD/WAyy9CRy22U80Nl5+sBxnP9azZcN4upz1rG42rRkHqHlD2ZUOVoMKzoqSXsiqM9kAD1fwvi4GbPg19DUIncn05GEhTCoZ6FC9m53QhLd31ehLj+FTUK4IIKMJrQQ/aP0rlEBgcH9z6Kqw4FCN2PRY7bmI/FRCwws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3ogjcxXN; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4405dffca81so757101cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719247551; x=1719852351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x7+3fE/z2eqo4JMbpyr9vRiW9tYZPuPhGSl35o712FI=;
-        b=3ogjcxXN14bUGay6oho4/NorxroLuhgDnP5z5r1vDpuDz9WldrzX5thCSI7/tCqbkR
-         x2Wc1Xe8wJHCKKFxH31hAm38ePs7YyjWLVGc2iJYUFQTLUuvf96rn/57Rn2lj8doGAhz
-         Ps+/764tXkciiuKblDQGZubejmedD1muKUN6rbCzilFQky0T0P7h4wapkZDE1z6qi6tj
-         432RptRrP20IYC/POnlHzUkKTZhnwdM56BlPIDy4L/UaNyB4Z7iFD0KEeIQXW1UNeHif
-         3Io0PFpmkTTdoqIo8PWxWG509P2w1JoFXgMXvJZsgPc/JiF39/KeTOcKtM6pV6GUZazn
-         xwew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719247551; x=1719852351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x7+3fE/z2eqo4JMbpyr9vRiW9tYZPuPhGSl35o712FI=;
-        b=Rr8xddQqru0raUp7mHm+PY6RH8dfnM3ktwGcEieX/04oNiequAweLhHxfmXrpIusxs
-         ubTYP9ZVZ7/OvfZjuIkDRUvrM3gHv0z8N5PPEaJrEoERbHZO+QshWv3VPMCpHcWBpje6
-         V52izZYd+lMsotPKmmqotQxXv3/Ahp7S7fw+4aqdaiVBgPSJ/qJ/M3Qbd0XwYtkrsvqT
-         dDoJnFRyb9bntz2Q3afH5/raKgcRah/bBbr0VYqgEMhQTtrfqTMYBMdIahVDf+ZyUu6G
-         4zQNmYUJGBMF6vNDPd/hxiCm+tEdHeBFkSSaOrepMtaFAbOpIOKV+noH4gh9nHh82Z7e
-         kedA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+TP+ggZJwmp9Z7X6N+bPDLwQcyn/4PoUOuRzRP+/HfbC3PS8ZxTzwjBiZS2Gs3X9zHd++B5rVMMzgDKh4sx1JOOSdfM8NR/4tqnaL
-X-Gm-Message-State: AOJu0Ywz2YTBTXDgtpb8cU4L4sKcatyg1vHTNXqyBIVysA0nxio67MAd
-	6rslB0mPW4H7eHqVSunDteEU42MSSxZ/nNEjyEc0QwjQ3BwuyrG1TM764DWmO/MUnJH1YrsTZ9g
-	OWKDdoGM5JD8KCt/i11JbC5vvEETpgmai3+HD
-X-Google-Smtp-Source: AGHT+IFaxMpEm2LuOUeg0YWpZpls4eMoSSiEoi4Mw3USzXJofjJV3Rc5g2Eg/oubpc2kMeXq42i1kSjw/vsIL8qpsQs=
-X-Received: by 2002:ac8:5748:0:b0:444:cdc4:fef5 with SMTP id
- d75a77b69052e-444ce38fbebmr6032061cf.27.1719247551241; Mon, 24 Jun 2024
- 09:45:51 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEF82F24;
+	Mon, 24 Jun 2024 16:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719247570; cv=fail; b=gyBH4j7uqfVlCCEKNXRgmfoTRQmsFg5AJWvUXhS8xs1WO/iBN+deFNToPBBGmaWWG/T7wOSeN6y6EiEorO9W2mpGtDZKziXdMbjJLjZk6YMth2JUo2EH3ATd+qmQ8QCKLSIoT03Edg1vc7cnnFmP+tuVFgsfNzmMGj0/Q4Eoz1c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719247570; c=relaxed/simple;
+	bh=aQIwqFYYg5l2urOlBrsMadON72GWY51VO+JrzJRTWK4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ECcRyciyjAefu5mZmmLFP+SgPeZrVzMZPc/Sxbar2V/zxp1qmoz2CZOgSJo5w3+cKAgeViVHcPalQ0aTaMCuWJ2OPyZlf/Irwu0wjE3lkf4iWmAJDgoANWf7grVgUdfegTWBL5gp3p/pSHwUkRlMvTb/YPkld80KSl1+eBO4ArU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=euxTCt6l; arc=fail smtp.client-ip=40.107.96.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jPExMAAt0UUMyIxjcBlmONGWZFpYRHJsvNupU+ntzG9TezXgSd1vuUZhNMHzJg0sUoB00Rn8XRVKvi8quNbv+r5jPXOIYxsyv4xeuv76aIOgMlCUlAOHZNMCaHKaP8+XBcHQf4xmGckPQDAmjfS86z0i/IehNbURJG7GtfGD2PyuiaC0epwnSEMIvc3T7YkLLse6f4fuJnuZbZnHcOGvmua9QcAiU8XCqmwmwx14JcAHVxIaK8aKZ17itoriZKHJ1ACEVgd574UHmqSWVUKsrFHIUfIyKRlnO5iH0Hpgyk9fDNa4mQ9OM9JZ610w6fk3M/Wz9/Uail89d8bvXU0rpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ybkdyNblnIIXqfWPNTf9TncQ2FseTsErE8rt6WcvOgs=;
+ b=WxvIv6/vKw0D+4nyX0wkpnhGpe5rQ4l1RjPU8QyiHZrgl0nZcbFLhvmsSLyWrvZlAFWcU07ukiqEhyr2Aq6DIkAvysVJp5fxg+MI3AbtJDmVmq/WmzWedBN0fmx2PiudW0x/lNdJiX8uNTS9Ysx+pLsGu+Aym0jJoKMuiSFO9MdYomepAXWujbvF/0KQEWR9yUlknTa8+s/4SDjWVZ4VHsacOL4XJ0fF6867EPEkFA4vIREDYN0VZ989Nb0Q3+UrXwm0TbWpdvTyqTpf3L5LTvR5RXiEOKUGEcgSxZ3fKGBNlDoq0FO5eEeP/kgSoJUZohnV1q8uX63CRDfwj636ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ybkdyNblnIIXqfWPNTf9TncQ2FseTsErE8rt6WcvOgs=;
+ b=euxTCt6l0mcr8A7pGlZcYroEZ/hj+BQwjbnjOIVR5rdh+gdNI6H7aQuPnULXw871w1BypbCttvl3+bmYxDYdsrG1dj88Y00vyEN/ftEZM1ZuTRFda7pEm+l9LxI0EOWZ59u+7emu7ooJ/k42nai+Sos9/hPD8O1UalrBE/jxO6I=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB6380.namprd12.prod.outlook.com (2603:10b6:208:38d::18)
+ by LV3PR12MB9330.namprd12.prod.outlook.com (2603:10b6:408:217::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Mon, 24 Jun
+ 2024 16:46:04 +0000
+Received: from BL3PR12MB6380.namprd12.prod.outlook.com
+ ([fe80::66cf:5409:24d1:532b]) by BL3PR12MB6380.namprd12.prod.outlook.com
+ ([fe80::66cf:5409:24d1:532b%7]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 16:46:04 +0000
+Message-ID: <c5c1a814-0706-462e-81b2-f8ce814bbe9a@amd.com>
+Date: Mon, 24 Jun 2024 11:46:01 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 9/9] cxl/pci: Enable interrupts for CXL PCIe ports'
+ AER internal errors
+Content-Language: en-US
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: dan.j.williams@intel.com, ira.weiny@intel.com, dave@stgolabs.net,
+ dave.jiang@intel.com, alison.schofield@intel.com, ming4.li@intel.com,
+ vishal.l.verma@intel.com, jim.harris@samsung.com,
+ ilpo.jarvinen@linux.intel.com, ardb@kernel.org,
+ sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yazen.Ghannam@amd.com, Robert.Richter@amd.com
+References: <20240617200411.1426554-1-terry.bowman@amd.com>
+ <20240617200411.1426554-10-terry.bowman@amd.com>
+ <20240620141514.00007c6d@Huawei.com>
+From: Terry Bowman <Terry.Bowman@amd.com>
+In-Reply-To: <20240620141514.00007c6d@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0035.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:2d0::10) To BL3PR12MB6380.namprd12.prod.outlook.com
+ (2603:10b6:208:38d::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624141926.5250-1-lvzhaoxiong@huaqin.corp-partner.google.com> <20240624141926.5250-5-lvzhaoxiong@huaqin.corp-partner.google.com>
-In-Reply-To: <20240624141926.5250-5-lvzhaoxiong@huaqin.corp-partner.google.com>
-From: Doug Anderson <dianders@google.com>
-Date: Mon, 24 Jun 2024 09:45:39 -0700
-Message-ID: <CAD=FV=Wcn7GGhdOCS3BOZj2AX1N3SCG5psco-4X75yO83DkpRg@mail.gmail.com>
-Subject: Re: [PATCH v5 4/5] drm/panel: jd9365da: Support for kd101ne3-40ti
- MIPI-DSI panel
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
-	benjamin.tissoires@redhat.co, hsinyi@google.com, jagan@edgeble.ai, 
-	neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
-	dmitry.baryshkov@linaro.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB6380:EE_|LV3PR12MB9330:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e79cb3e-1e7d-416e-4b12-08dc946d22fd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|366013|7416011|376011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WHdEZVZ4M3FyaXdORU5taUl4b2pYUUZLOUgyM0FobFkrYVl5YVlYeGE2b1ZH?=
+ =?utf-8?B?bE01dWxSb3hGWVlidDFmRmZyUW9sM2tnR0lwcnp5TUN6SjQzQWJ4Q2FFUXdY?=
+ =?utf-8?B?ZnVCRFIvWGJZb3lvc1doL2VPeS9aWk9zOEQ4Q1NGOVN6NzRzMzUxSERmNkpn?=
+ =?utf-8?B?SjJCSFJCTkhUY1QvMG5JSjNrYUhsUUtZamNEd2lEVEZvUWpIRkVpNHVsWHkv?=
+ =?utf-8?B?SWsxekcxdnlMSGZKVkQxTDNEcmEzNHJ0akdOODJRaGkvWWx5dlkzR0QvTklF?=
+ =?utf-8?B?SVdqZWxPVFcrNHg2TThtQTFaaFlIUFpqeDNuUXNQQTVLRUs5UjRTZGVmZFB2?=
+ =?utf-8?B?THQ0M0diU01DTE1GeGE1SkY0VVRWU2UwaSs0TU5LaDlwaUhNV2w2a0Z1eTNW?=
+ =?utf-8?B?M2RLbiswcFdFN0MrVWE2RytIMW1OaVlqQWpaVEJpUW8vYmh6NExsOEp5S1ow?=
+ =?utf-8?B?UlE4QnB3TU5KQTRyN1hVbUZXSmRnTHc4YzBXM0FmVmxwcXRlQUtMSXlFMVgw?=
+ =?utf-8?B?ejJ5RnNzTjErY2xxQmlTeWM4K3ZBalgxWjFlRkcyMkJRNWpseTNCcm12T25U?=
+ =?utf-8?B?WktUTmhUWDJqVUlaOTVJT0NRYnY1aXlwR2k1ZVNtM3Z6Q3NiQUt4M2pMNEFn?=
+ =?utf-8?B?dFkwb2tKWHVFZlJDdEM2LytYOFBDUWprMnVPWUhhTGx0L3Bab1V1YmlxWGRP?=
+ =?utf-8?B?UXpaTVNmcHcxK2tlK2JVbGZCZmcwWW9JYUtrbVl3N3pBVzJuQTdkRWk3ZUMy?=
+ =?utf-8?B?Szc1UlcwNms0eDdKVjBUaGRlNis3ZVBhRWVkd2lwZi9PaHRkeDFvcU4wUi9t?=
+ =?utf-8?B?ZStqU3FvZmpRWjA4VmNxbGlPMDl1YVhkekNuZis3ZEN3SzU3eW1xUlVZazZi?=
+ =?utf-8?B?VlRDbWgrNFByY1BMTnpvcUZUWEJPM0d4UExsNzMwV2R2N3pFdHlJd1RrTXVy?=
+ =?utf-8?B?c1hOMzFQUy80bGM5ZDY3VzBFWDVvUEw1KzAyYVBaYkNLZkpWTjV0NC9wVEFn?=
+ =?utf-8?B?cnplK0FIQTRJMFlla2FzaXQxL0hGMHV6L1BQOEtYdGd0bXdBVGp4R2k4SDdu?=
+ =?utf-8?B?Mzk4TjlPV2YxVnlXbUEwR1A0bUs2aTNSZ2VROWVRS2poV2hSTlM1V1Q0U2sx?=
+ =?utf-8?B?eFFKVE4vTmZ3WnZKSXZPakF2dmlrMVlwT2Z6MWt0TFZIWFJMb2pXU0tyVHhI?=
+ =?utf-8?B?T3ZiNk9OL21WSDdQZkZRdmVSUnQveUY2QlZVMzBLTkdBWWU3aEVmUFdJdUNL?=
+ =?utf-8?B?Mmhvc29nQ3Qwek10b09QTFYvSncwVGZzVDdqc3M3ZXBwSStUN002Tm9GalNW?=
+ =?utf-8?B?aFJjKzFzUHFwK2FCVy9yKytwbllHWGt4S3l6R3o3UEY3SWFPanhMM1VkYWpM?=
+ =?utf-8?B?ZGJzN3N4M0NHQUZPaWZhUndZdUtSa1RWQW9XdG5MZHE1dEx2eks4RWprVWtm?=
+ =?utf-8?B?QlpPekdHWm93aUVPa2JrVFBkbjRkRE1ScU9yTE1hUE1TUGc1dU83aUhHZ2M0?=
+ =?utf-8?B?SW5zbjlUdndWRHNCREk0eVBrTE9Ody9KaDN3Tk1tV2xXYzFXbmxEQUJOWitU?=
+ =?utf-8?B?WDMyTHBCcUIrQnNHWFU4WVVyT096Q0FYV0RJeUc5Tmd2endPVnJmdWVyWGEx?=
+ =?utf-8?B?MFdGdDBybitJeXN2Wkh0NHA1VWVhc0llOUlEdVRuMmNyRUxwT3dNOWVlRTE1?=
+ =?utf-8?B?cElJL3ZEMzM0eXBRYVNzdURENlhyamZMT1Y1Y0QwcXdzTzZCcjlYK24zNkNy?=
+ =?utf-8?Q?qCsKiDnhDRfe0ADWjke1CBzw5cz3D82iRMVEq9G?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6380.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(7416011)(376011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MWdzOUM4QTh0QW9Ya1FUTlBxQko2K3hHUXRJY1dBcnZxZXdTWUNFL0Z5THND?=
+ =?utf-8?B?VWlmNEtTbnJqdXRsY0xmODN0WkxFQ1drbVlIRGRPSzNwYmFpRE0wdUdlTi9D?=
+ =?utf-8?B?ZVBsTnk2NDlzckZPQlVSTkJybnpFM1Jwc08xcDhLY3FtSXJQaVhYYXFuMm85?=
+ =?utf-8?B?WGVpcDRSNmwwM3J5ZlhhZ21NKytla3hJTGhXOGNvUjUzYW5DRDloZ2xpMkZi?=
+ =?utf-8?B?M0E3blNYYUhnME04UHYzSm92bXNXTHZLcXFTb0gyMW1lamxMQllYM1ZvSHZ2?=
+ =?utf-8?B?WEgyQ2p3blFYQlFRa3pQWFdmSDJBSnlvRWU5NGkzdmNTYllycHpka0JheVVW?=
+ =?utf-8?B?TmNMTEFDNGI4WVZNWm1XRU5aZkd2VjFwTndtdkFuM05kWjBvQ0xrcTFRTUxT?=
+ =?utf-8?B?ZW1id2pFaGVaM2pSMHlneFQ2NnRrbEVMcGhRcThrWU4yckRZUjVqNTUvcHVk?=
+ =?utf-8?B?SDRkb1BtZkptQXJLL0F3N3FPdnV1YnhnT1pxNXdDRVFyTDNtclZORzJZc3FJ?=
+ =?utf-8?B?NDNWRklzMmo2TDdkTXB6TXVQa1RoUnUyemFYWk52N3NXT20xK0tibzhGclJp?=
+ =?utf-8?B?OEJ1VmVXemVTVGxqMVdwTFBCY2VLcDZqemZEVWdXSkxmM2RCZWdkNnh3eEcr?=
+ =?utf-8?B?dERQSmkwM2djaVlqNmJKaTZyT1lvTW4vNk1UU2cxVDd0MXpnMlhKS2U3SkVz?=
+ =?utf-8?B?NXdZUGpQd2d4NWJuNlQyNGhJVEdIVzk2UFhRODBrRzZYOVU1SmtTb3lvcEtT?=
+ =?utf-8?B?aGxMS2RxQW12dmRlQnQ3SjE1N2RMbVh4ZVlNYnNXaUxvUXFoSHl1c0dOU1Rw?=
+ =?utf-8?B?NC9tcFN5OU9ybk9uVFZwNldzVWRsemhzZUNzMktiaWtFWkNTeUFuUitYMitQ?=
+ =?utf-8?B?RHhSVGJVMFU3SEVrUDBmelRUQjFwTXFLS3ZsVG1iZk05TVdCU1p2bTNpdkVB?=
+ =?utf-8?B?b0RjWFU3VldNRENJanVmOHJKMTJicENIQjV0dStrOGZaYnVZVk9iaXo1dzJI?=
+ =?utf-8?B?M25RZ1o3ZDJZQ3ZvempjdWZQZFQxOWpTWVJ4L1dhZnZCSG1sZkF1c1FoN2Q2?=
+ =?utf-8?B?YlB5QWtnS2FYa2hnUTNhZTF6MlFxMTdqa283ZXh3MkhEN0V2enNxaTFGNlF6?=
+ =?utf-8?B?K0FvQmVGU25HWTMwMTBaNFBOd2hrQW9JZFZKTzhGMUQ3eEEvMUFURU4wSU9F?=
+ =?utf-8?B?QVUyWUFZbDVsNlB2R2s1Y0JxWHIzSjNQQWVRL1ROREFleTFZVFlkOVEwRXl0?=
+ =?utf-8?B?dlFPRHUyaXBYODVzcE9nZEhleUpPNTRKVVpWSVVQL1hRa2t6VkZadzVIK2Rw?=
+ =?utf-8?B?bkNZQXZobW9PWmt4NUdHTy81d283dGNrSVJqQU5JQVhtdUV1aERrMXFudFhK?=
+ =?utf-8?B?Qk5vVUZ1RFdqNVJEL252VEVSb2I1a0ljajRhNnpNSDg4Qk1aR1JhRk1pN01k?=
+ =?utf-8?B?R0FwSTNvSzBRUzQ3Y3JobmUwN2tXMlo5ald0THduWitLSkw1WTV0UWZpeHE3?=
+ =?utf-8?B?RHNXQ2JTUUZKOEtWdFY3Wnlua1Bmbkw2ZXI4ZXc3ZGZvZVgyU1BvSlA0aVl6?=
+ =?utf-8?B?MjVLTkFCbU9VTC9pcDZWMXZ4ZExad3NhZFV3WUhhbWZ0bjQ3TXV6NVhobzRB?=
+ =?utf-8?B?L2FEMkVOajF3cEIyMDVYV0dZaHhod1JCWlJuaVZkcEpVR05DUzJmeHdLaE9T?=
+ =?utf-8?B?MGZ0N0d3OHE4ZGJOK1dCZnZxTGtkeGZjeTNsSldiWDdMVlpPT2x6ekpsM05v?=
+ =?utf-8?B?OG5ORzZ1NGJqR0s1VW5heHdjbm1GVCtiQTlLemtyY2lSUWh1WUI5M0FOSWlm?=
+ =?utf-8?B?ZXJOUGNYMC9hd1lYTDV6U1UzancxaytxYmJoeDVIbTh5MGJOenBkdHB1eDEr?=
+ =?utf-8?B?Rk5PbndvT1Q4Zy9idjRKQVJ4U3RFZ1RUa3Z4MkpiTTBwQjRJMXQxYlFieWVX?=
+ =?utf-8?B?VjZuVkZkRmFuR2E0NFFkR1k0eEpQVDZOTUdYZFZrZjBIMCtPWHVubVA1WC9C?=
+ =?utf-8?B?YnE0REZaRkQremQ5dkRDV2JiMnFUb0ZvcmZ4VXZkeWV3SWNWakxIYk92cXNw?=
+ =?utf-8?B?V08rbHN5WEhBVUxKTVBEM0ZmTzc0a1Vmb1BETEZySHh4T0x3SkJ6enlibFZN?=
+ =?utf-8?Q?hDjqHwqfItp8hh7WV5H5eD+2s?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e79cb3e-1e7d-416e-4b12-08dc946d22fd
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6380.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 16:46:04.0990
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HyhU0NeK6vlYVoBya++Ggy/iRMxvUAO80zDoMQB4/4n0/B3B7nR0Maz/TLZsbOeJexPIfyU8++9VWaBQ2oG95Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9330
 
-Hi,
+Hi Jonathan,
 
-On Mon, Jun 24, 2024 at 7:21=E2=80=AFAM Zhaoxiong Lv
-<lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
->
-> The K&d kd101ne3-40ti is a 10.1" WXGA TFT-LCD panel, use
-> jd9365da controller,which fits in nicely with the existing
-> panel-jadard-jd9365da-h3 driver.Hence,we add a new compatible
-> with panel specific config.
->
-> Although they have the same control IC, the two panels are different,
-> and the timing will be slightly different, so we added some variables
-> in struct jadard_panel_desc to control the timing.
->
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-> ---
-> Changes between V5 and V4:
-> -  1. Add a "_ms" suffix to the variables.
-> -  2. Use more "_multi" in the enable/disable function
-> -  3. Use mipi_dsi_dcs_write_seq_multi() in the init() function.
->
-> V4:https://lore.kernel.org/all/20240620080509.18504-4-lvzhaoxiong@huaqin.=
-corp-partner.google.com/
->
-> Changes between V4 and V3:
-> -  1. Use mipi_dsi_msleep.
-> -  2. Adjust the ".clock" assignment format.
-> -  3. Adjust "compatible" positions to keep the list sorted.
->
-> V3:https://lore.kernel.org/all/20240614145510.22965-4-lvzhaoxiong@huaqin.=
-corp-partner.google.com/
->
-> Changes between V3 and V2:
-> -  1. Give up creating a new driver and re-add K&d kd101ne3-40ti
-> -     configuration to the panel-jadard-jd9365da-h3.c driver.
->
-> V2:https://lore.kernel.org/all/20240601084528.22502-3-lvzhaoxiong@huaqin.=
-corp-partner.google.com/
->
-> Changes between V2 and V1:
-> -  1. Use the new mipi_dsi_dcs_write_seq_multi() function.
-> -  2. Modify Move mipi_dsi_dcs_set_display_off() and mipi_dsi_dcs_enter_s=
-leep_mode() to disable(),
-> -  and drop kingdisplay_panel_enter_sleep_mode().
-> -  3. If prepare fails, disable GPIO before regulators.
-> -  4. This function drm_connector_set_panel_orientation() is no longer us=
-ed. Delete it.
-> -  5. Drop ".shutdown =3D kingdisplay_panel_shutdown".
->
-> ---
->  .../gpu/drm/panel/panel-jadard-jd9365da-h3.c  | 277 ++++++++++++++++++
->  1 file changed, 277 insertions(+)
+I added responses inline below.
 
-It still seems weird to me that the other variants of the same panel
-don't need similar delays, but the code looks fine to me now:
+On 6/20/24 08:15, Jonathan Cameron wrote:
+> On Mon, 17 Jun 2024 15:04:11 -0500
+> Terry Bowman <terry.bowman@amd.com> wrote:
+> 
+>> CXL RAS errors are reported through AER interrupts using the AER status:
+>> correctbale internal errors (CIE) and AER uncorrectable internal errors
+> 
+> correctable
+> 
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Thanks.
+
+>> (UIE).[1] But, the AER CIE/UIE are disabled by default preventing
+>> notification of CXL RAS errors.[2]
+>>
+>> Enable CXL PCIe port RAS notification by unmasking the ports' AER CIE
+>> and UIE errors.
+>>
+>> [1] CXL3.1 - 12.2.2 CXL Root Ports, Downstream Switch Ports, and Upstream
+>>              Switch Ports
+>> [2] PCI6.0 - 7.8.4.3 Uncorrectable Error Mask Register (Offset 08h),
+>>              7.8.4.6 Correctable Error Mask Register (Offset 14h)
+>>
+>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> 
+> I'm not sure doing this from a driver other than the one handling the
+> errors makes sense.  It is doing a couple of RMW without any locking
+> or guarantees that the driver bound to the PCI port might care about
+> this changing.
+> 
+
+I think this could fit into the helper function mentioned in our earlier 
+discussion. When the portdrv's notifier enabler is called it could also
+enable the UIE/CIE.
+
+> I'd like more info on why we don't just turn this on in general
+> and hence avoid the need to control it from the 'wrong' place.
+> 
+> Jonathan
+> 
+
+I was trying to enable only where needed given the one case is not a 
+pattern, yet. At this point it is only for CXL RCH downstream port 
+and CXL VH ports (portdrv).
+
+Would you like for the UIE/CIE unmask added to the AER driver init ?
+
+> 
+> 
+>> ---
+>>  drivers/cxl/core/pci.c | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
+>> index e630eccb733d..73637d39df0a 100644
+>> --- a/drivers/cxl/core/pci.c
+>> +++ b/drivers/cxl/core/pci.c
+>> @@ -861,6 +861,12 @@ void cxl_setup_parent_uport(struct device *host, struct cxl_port *port)
+>>  	struct device *uport_dev = port->uport_dev;
+>>  
+>>  	cxl_port_map_regs(uport_dev, map, regs);
+>> +
+>> +	if (dev_is_pci(uport_dev)) {
+>> +		struct pci_dev *pdev = to_pci_dev(uport_dev);
+>> +
+>> +		pci_aer_unmask_internal_errors(pdev);
+> 
+> I'd skip the local variable for conciseness.
+> 
+>> +	}
+>>  }
+>>  EXPORT_SYMBOL_NS_GPL(cxl_setup_parent_uport, CXL);
+>>  
+>> @@ -878,6 +884,12 @@ void cxl_setup_parent_dport(struct device *host, struct cxl_dport *dport)
+>>  
+>>  	if (dport->rch)
+>>  		cxl_disable_rch_root_ints(dport);
+>> +
+>> +	if (dev_is_pci(dport_dev)) {
+>> +		struct pci_dev *pdev = to_pci_dev(dport_dev);
+>> +
+>> +		pci_aer_unmask_internal_errors(pdev);
+> 
+> likewise.
+> 
+
+Got it.
+
+Regards,
+Terry
+
+>> +	}
+>>  }
+>>  EXPORT_SYMBOL_NS_GPL(cxl_setup_parent_dport, CXL);
+>>  
+> 
 
