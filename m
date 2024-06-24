@@ -1,99 +1,132 @@
-Return-Path: <linux-kernel+bounces-227733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CFC9155FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:56:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE60915602
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB76CB22FB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:56:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69FEE28B4F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6E31A0703;
-	Mon, 24 Jun 2024 17:54:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BF11A00F0;
+	Mon, 24 Jun 2024 17:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+/IXTZX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2821A01B4
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5435B19FA6F;
+	Mon, 24 Jun 2024 17:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719251644; cv=none; b=O93Zs6u+nx3ak28VohjoBw+tO76OoWZGCmNhEY6T1zvZPkK7RJtYKYkT3d2xrEtBz8qypDVQCl0eb3WrWdkZ7rIS6hP5CvgjDL5s26eFSKBZ/xNOheteGSiFnJQXfwYwE0VxQOYJ6ZBWezgzdc99+TxWjk4P43y1ymwmL63Y8Ng=
+	t=1719251720; cv=none; b=EUVFRhEWKjgvA/zQ9c+AvwQlfx5FcgORP/QWJ52D9OUTKrEZxjEJCQSIrbZiuvO2xb3oAdmTslN6kns4zRcNVNX+Wa2Wv+/+MiRDuafqyItEd224jSIFm0bqYCaInu9guJtrWOGwzlZ2ab2ic4WFuX4p2/2hMul5Nfr70Kw126U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719251644; c=relaxed/simple;
-	bh=BFZTOS+6UUxcIsopT/PSSLG5gM/kaNsm7fOq8uT2SDs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=I1vy5Sy6LD+LiNhKifuUxJ986apKRtiCik7nljoPvKOqrRSxupyYK3NFLbfXKzzjf2w9uBrkllROjV2SWvCs/jpOaEvArUGEN+NyfvNTR4z4+5zQZ5JXe4jZVGM30clESDHT0Q+RraeKnhc9Xa2ZQTTxoGZrNUmBxqLp7Qf+7X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7ebe8016637so662401739f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:54:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719251642; x=1719856442;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GzCKyK0zAE0pyal4RPcwORnN1X/VtugtKH06mEuQykw=;
-        b=Rcp7B24LjKjMKiNja3lSyTexEcU+ucAXvWORJaoOufQNXJ/EGKpLfFcCSHP2Frvk7J
-         VGIgn6aHRZyTau0DJKqqlvybli9ITu/O1rtjpHOvRFXhFHkdCwmG91pc9CG86WyIceOp
-         E6ftWhXuqVnJh0JCwXXX0pfGmMjdRX7RHEN084A8fbcj6ZQZmwiChD39ZPbtNXEdgwb4
-         fKg6jDN6MdCrkHCdXiOEx/6eiJ2UqKakfsfYA8MNPppoO4kjljNovguNZM0PDh7ATPmk
-         rxS3cZExY36sLZo9ThqB277VhLmkHCRQNGknZ6So7Wl37v7IYzoyhmvkZPvTbKxKL4yf
-         iGNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAAH3sapBFLFoLN3KMTUjGB6IXff1AH6YBZwvA+oehviGjsjDk044S7AWzCiBRMT+TAEWdYgURL8qyKPCFhez/gzdILuiVN58Wi63l
-X-Gm-Message-State: AOJu0YzVxEUhML1J3Z+xLdgUn+xItVhDiK4xltTmm0Hhslahuq+Mhofk
-	CTCAl9VicVaQHlGc7p5q2Yr20eYS/Q1HHYh7CTZAQP6hC3JJSH/DU3M9jj6xfmd2/7M0ru5w08V
-	eAkRyRJN9oIb7lV8+EgRXRqQbTZ08yd96eblrMJmo6XRkYMtW3W6VpcQ=
-X-Google-Smtp-Source: AGHT+IFvlUCBRcqMRnAMMzQZCF1nxnRlu+ZLYSY5fQOEYrcnpFhzGgam/jc53s/GdBXuorTslpc96gfIFHBQgkljdpPr4HR2/pmn
+	s=arc-20240116; t=1719251720; c=relaxed/simple;
+	bh=Dsng+wl/JnpD45QyCVpIBvIgJ9Y7NDKt9V/oHYab9Co=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RQ2Up9TieW5FaW8xXZ//ew2uAZoEzFx3JhGwOew5nflwXtFl7g4RulHyRBddHaMM1MMZ7Lrm3zhnlzblUyk/ugXp1vz1waRf7tEX8YkhrGVj44tuUJogc2ghtYLAoMFauT8Mkx4bjzHpHwnaRXyx3KBmy7doYNhuMuCjmFtvjNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+/IXTZX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA936C2BBFC;
+	Mon, 24 Jun 2024 17:55:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719251719;
+	bh=Dsng+wl/JnpD45QyCVpIBvIgJ9Y7NDKt9V/oHYab9Co=;
+	h=Date:From:To:Cc:Subject:From;
+	b=c+/IXTZXQnIXX5XeyEK/y+kcEZ4jBpzwIcIVmDs2lam62zVSGEXa4f7dlZ7OEW/Tv
+	 cjGo/3Ytyl/Jexu425iXJ+I5OmYjiWOgUNyqzSexC9Aqg9cd/mqx2BDNMJqjOLlrqB
+	 Y0eY8cRiTpL2J1kfVvYN802pnNX/UrQcyQepKUN0CSOSySSeXnFYsh7VD4Y4WddnIz
+	 gLKYF403tuiRVpixsPjeg2tWzp6VYyNXEmesag6Oo0yNydSr9rQ5E+1dWtOl1wHRZr
+	 FM72R3ubEpG32NP/b4geV7OzcQPqNHvKKSVQtOj1K28C/AC3Z1M63Wc9sOhy5hkkEj
+	 NBO3oKjJomVcw==
+Date: Mon, 24 Jun 2024 18:55:15 +0100
+From: Mark Brown <broonie@kernel.org>
+To: William Breathitt Gray <wbg@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the counter-next tree with the
+ counter-current tree
+Message-ID: <ZnmzA0nM0Sn2Awkn@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d16:b0:376:4a18:a4ca with SMTP id
- e9e14a558f8ab-3764a18a6b5mr3045875ab.4.1719251642392; Mon, 24 Jun 2024
- 10:54:02 -0700 (PDT)
-Date: Mon, 24 Jun 2024 10:54:02 -0700
-In-Reply-To: <00000000000026100c060e143e5a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006cb461061ba67748@google.com>
-Subject: Re: [syzbot] [net?] [nfc?] INFO: task hung in nfc_targets_found
-From: syzbot <syzbot+2b131f51bb4af224ab40@syzkaller.appspotmail.com>
-To: James.Bottomley@HansenPartnership.com, airlied@gmail.com, daniel@ffwll.ch, 
-	davem@davemloft.net, deller@gmx.de, deller@kernel.org, dianders@chromium.org, 
-	dri-devel@lists.freedesktop.org, eadavis@qq.com, edumazet@google.com, 
-	gregkh@linuxfoundation.org, hdanton@sina.com, jernej.skrabec@gmail.com, 
-	krzk@kernel.org, krzysztof.kozlowski@linaro.org, kuba@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linux-sunxi@lists.linux.dev, mripard@kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, penguin-kernel@i-love.sakura.ne.jp, 
-	samuel@sholland.org, stern@rowland.harvard.edu, 
-	syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org, 
-	u.kleine-koenig@pengutronix.de, wens@csie.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="40OqtuILxyApl9cd"
+Content-Disposition: inline
 
-syzbot suspects this issue was fixed by commit:
 
-commit 487fa28fa8b60417642ac58e8beda6e2509d18f9
-Author: Helge Deller <deller@kernel.org>
-Date:   Sat Apr 27 17:43:51 2024 +0000
+--40OqtuILxyApl9cd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    parisc: Define sigset_t in parisc uapi header
+Hi all,
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17038a61980000
-start commit:   acc657692aed keys, dns: Fix size check of V1 server-list h..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5c882ebde8a5f3b4
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b131f51bb4af224ab40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103698bde80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1617e0fbe80000
+Today's linux-next merge of the counter-next tree got a conflict in:
 
-If the result looks correct, please mark the issue as fixed by replying with:
+  drivers/counter/ti-eqep.c
 
-#syz fix: parisc: Define sigset_t in parisc uapi header
+between commit:
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+  0cf81c73e4c6a ("counter: ti-eqep: enable clock at probe")
+
+=66rom the counter-current tree and commit:
+
+  1c30c6d024726 ("counter: ti-eqep: implement over/underflow events")
+
+=66rom the counter-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/counter/ti-eqep.c
+index 825ae22c3ebc7,9742ba9fc3072..0000000000000
+--- a/drivers/counter/ti-eqep.c
++++ b/drivers/counter/ti-eqep.c
+@@@ -6,8 -6,8 +6,9 @@@
+   */
+ =20
+  #include <linux/bitops.h>
+ +#include <linux/clk.h>
+  #include <linux/counter.h>
++ #include <linux/interrupt.h>
+  #include <linux/kernel.h>
+  #include <linux/mod_devicetable.h>
+  #include <linux/module.h>
+@@@ -377,8 -465,7 +466,8 @@@ static int ti_eqep_probe(struct platfor
+  	struct counter_device *counter;
+  	struct ti_eqep_cnt *priv;
+  	void __iomem *base;
+ +	struct clk *clk;
+- 	int err;
++ 	int err, irq;
+ =20
+  	counter =3D devm_counter_alloc(dev, sizeof(*priv));
+  	if (!counter)
+
+--40OqtuILxyApl9cd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ5swIACgkQJNaLcl1U
+h9AFVQgAgDJvCuLymRf+pSDaEA3ZixKP1r/fCMazx0wEx0iwce9qiKiW2yvGYRpq
+HiR3ZJCfbxzcyo6hF4iZoIyHW8Mz4wKUGrMTDSuceaMO1oWn50DSjj2kk3NeA7zY
+FTaI0UqJHVOiAkpiprgw9PgbYYaAzKFbFB6yRVdPTgacVnZMZET1jmOvJ46kicP6
+vOu0JhmkKrhtxGYwiVs8auZLcDIJkrUO77Fj4JBm4VOA5k1S9wSOeX1h8av6xKFz
+eF7jYbs9zwe66mnhIgOaBHQV+7hXhzbxUqRebm/eZ4pm3jcKr9jAWQrfY0SqP1EJ
+ExTWa6APtc9StQiXYoSlh478IT92zQ==
+=Y+J7
+-----END PGP SIGNATURE-----
+
+--40OqtuILxyApl9cd--
 
