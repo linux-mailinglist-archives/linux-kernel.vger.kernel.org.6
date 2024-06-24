@@ -1,93 +1,114 @@
-Return-Path: <linux-kernel+bounces-227062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6599147D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:47:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B2F9147D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1B17B23279
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:47:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0031F23ACF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214616EB55;
-	Mon, 24 Jun 2024 10:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98041369B6;
+	Mon, 24 Jun 2024 10:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3VUGTKEL"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmJm1IUF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F6F1805E;
-	Mon, 24 Jun 2024 10:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5D42F24
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719226021; cv=none; b=ntKPwa3ezIHQn8zClPMUCsM9yNzmFskysAN2Id7M8+WDass9+yAlXouOWg4R4sPv9AJIFDsGA4jqf/E/1crQkv7wA4NvCFXKjsDC0MEfqYa3H9E3/Y9jFW8c3PweJV0nOnOpue/zWgEuno1G+oIZ5KIUny3wDORJggWQJqZqkOM=
+	t=1719226083; cv=none; b=TgMzyyOBsDtqOBuRahSyrX+cmHMThcD9hA5izmJLAcU1N+P6lhsY72PZsjBwtL5f4TkG+3lc7OuWyRWRt7xLousO06EJSFSPXy/Q5QHPKLRw4D+BTbr3nB2cPlfPw3zAr7P54hK1OUq4OVThkUrS1/I4Fz5OKMIsvr3TgDAVWrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719226021; c=relaxed/simple;
-	bh=N7etgN4r7YuHpbryZAGdUzymvIiOw4YteMinJ/UaOK4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PvisfCE13yo2y+6R08rYD1lYj/HUmQfTCqg+H3MieY49RP57BXw0yHH7njWBWLV9zeh0zkLty/9bbwA31LYj6RMBbxa+HFFj36grptqWwZpZFrI5PyjYQ645hr32W40njYD/S2amnQCRIORzDkKAxHpLbicQTS7mUBvgY7rAdqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3VUGTKEL; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719226018;
-	bh=N7etgN4r7YuHpbryZAGdUzymvIiOw4YteMinJ/UaOK4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=3VUGTKELcesK7vW3Vfh9zckFAGkd1lPhlvMXAzyUaUP2SpDveHFMeXilidTM6mXux
-	 YlCDs1eIqQCfD3+Q9a8T0FB/n7ayVJ4Vf/j7JNmAXJ1M/1u27jWiFCrWGgy0iCfcPK
-	 TJotqDfSaL8F1zuzbf6T7iVgBj6EbC4CSQ7Q1w4mzLHjkRqcdSPW3ytbdPdaYNYQ8T
-	 gPvTlrbbqmsa/wpSbIt0VkgydO49vXCw9BQmEkl5zJCCRWNFOO1HLm6J9Nvwfqe187
-	 TaAyMu+na7LRWI3kXWMoMnrazYAaGLjugbgi6cAe5xBc4gJIHewb7jieqmhkiaP80o
-	 d+vsdCy46/nQQ==
-Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2D54C37804C6;
-	Mon, 24 Jun 2024 10:46:57 +0000 (UTC)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: krzk+dt@kernel.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
- conor+dt@kernel.org, matthias.bgg@gmail.com, jassisinghbrar@gmail.com, 
- garmin.chang@mediatek.com, houlong.wei@mediatek.com, 
- Jason-ch.Chen@mediatek.com, amergnat@baylibre.com, Elvis.Wang@mediatek.com, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-In-Reply-To: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
-References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: (subset) [PATCH 1/3] arm64: dts: mediatek: mt8188: Fix
- VPPSYS0/1 node name/compatibles
-Message-Id: <171922601711.121709.12074465182183603791.b4-ty@collabora.com>
-Date: Mon, 24 Jun 2024 12:46:57 +0200
+	s=arc-20240116; t=1719226083; c=relaxed/simple;
+	bh=rWdKqF1Gqp1ZPtQjpQ3fFUqL0rZ5CWJ8Ga+INNkw4lk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9IwHI6jovF/hzAbBq/wJV2N/ijokfLDUkTyFHM+7jzTMlCuthmbjX5SDN3+ofhQsaoP/9p83XrVjlTrNXTDxvNvGnyBrHh1JehBuznTWylAuIjaO/kfK+i1pzveO5Mx5CvokD7kv4mvA6qjmEOkw8vshiqYA05sAindh3iS1pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmJm1IUF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E78DC2BBFC;
+	Mon, 24 Jun 2024 10:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719226082;
+	bh=rWdKqF1Gqp1ZPtQjpQ3fFUqL0rZ5CWJ8Ga+INNkw4lk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VmJm1IUF1c0qpkjPKXkExTkn6PWQaL9ogpgMcu/NT1wThSBrHApZ5nhpdEWOIwV87
+	 6Q3Gl+BOT2v6Shnon67kIPI7KgXC3r54tzCn9Uvit5kIrTM7AjFGRVfdRCtpls4XQV
+	 zFqxqqhk4Im0axBXsJPzVWfZKhSntAR5je8yiFt5biRn+tcks7fuRLD8VGzwqwPIIS
+	 hg3Rc5uuv7k4nvl6B9NrT06bWLyzUQwKuJXVAJ0jnxUy4u6vcVMGteQejO+YE2cms6
+	 dWZXlvp5vWrjCPqigd8LaoFYpKCoJvEKGKqIbw209tUDNxXmT2y7ywTjW0bq5Z006O
+	 ZEKyqKqa7LPew==
+Date: Mon, 24 Jun 2024 11:47:58 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: linux-kernel@vger.kernel.org,
+	Gregor Herburger <gregor.herburger@tq-group.com>,
+	linux@ew.tq-group.com
+Subject: Re: [PATCH v2 4/5] mfd: tqmx86: make IRQ setup errors non-fatal
+Message-ID: <20240624104758.GP1318296@google.com>
+References: <cover.1718626665.git.matthias.schiffer@ew.tq-group.com>
+ <38a69a56697a80486067f7817d4d0ed3bdea4257.1718626665.git.matthias.schiffer@ew.tq-group.com>
+ <20240620163552.GQ3029315@google.com>
+ <b46e06b64ceb14c205f7c48871687bd283fce53d.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b46e06b64ceb14c205f7c48871687bd283fce53d.camel@ew.tq-group.com>
 
-On Wed, 19 Jun 2024 10:53:20 +0200, AngeloGioacchino Del Regno wrote:
-> Like VDOSYS0/1, the VPPSYS0 and VPPSYS1 are syscon nodes, as
-> described by the mediatek,mmsys binding: fix the node name to
-> be syscon@address and add "syscon" to the list of compatible
-> strings for both VPPSYS0 and VPPSYS1.
+On Mon, 24 Jun 2024, Matthias Schiffer wrote:
+
+> On Thu, 2024-06-20 at 17:35 +0100, Lee Jones wrote:
+> > 
+> > On Mon, 17 Jun 2024, Matthias Schiffer wrote:
+> > 
+> > > GPIO IRQ setup can fail either because an invalid IRQ was passed as a
+> > > parameter, or because the GPIO controller does not support interrupts.
+> > > Neither is severe enough to stop the whole probe; simply disable IRQ
+> > > support in the GPIO resource when setup fails.
+> > > 
+> > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> > > ---
+> > > 
+> > > v2: no changes (was patch 3/4)
+> > > 
+> > >  drivers/mfd/tqmx86.c | 7 ++++---
+> > >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+> > > index 5aa51ead00a28..7f9ccd83278dd 100644
+> > > --- a/drivers/mfd/tqmx86.c
+> > > +++ b/drivers/mfd/tqmx86.c
+> > > @@ -259,13 +259,14 @@ static int tqmx86_probe(struct platform_device *pdev)
+> > >  		err = tqmx86_setup_irq(dev, "GPIO", gpio_irq, io_base,
+> > >  				       TQMX86_REG_IO_EXT_INT_GPIO_SHIFT);
+> > >  		if (err)
+> > > -			return err;
+> > > +			gpio_irq = 0;
+> > > +	}
+> > >  
+> > > +	if (gpio_irq)
+> > 
+> > Stacking identical if()s one after another doesn't sound very efficient.
+> > 
+> > Why not put the contents of this one inside the one above?
 > 
+> The intention was to have the "else" branch be executed both when gpio_irq was reset to 0 in the
+> above error path, and when gpio_irq was 0 in the first place (so the above section running
+> tqmx86_setup_irq() hasn't even been executed).
 > 
+> I got a better idea now however - by initializing flags to 0 and only setting it together with the
+> IRQ in the success path, no (!gpio_irq) branch is needed here at all. Will change in v3.
 
-Applied to for-next, thanks!
+That sounds like a better approach, thanks.
 
-[1/3] arm64: dts: mediatek: mt8188: Fix VPPSYS0/1 node name/compatibles
-      commit: 013b7ab4080af0dccae16c6ea8a1e88ad530114c
-
-Cheers,
-Angelo
-
-
+-- 
+Lee Jones [李琼斯]
 
