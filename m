@@ -1,105 +1,118 @@
-Return-Path: <linux-kernel+bounces-226917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602B69145A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:01:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395449145AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BCFB1C22539
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:01:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7F5281748
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B2112FF73;
-	Mon, 24 Jun 2024 09:01:22 +0000 (UTC)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D60212EBCC;
+	Mon, 24 Jun 2024 09:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SjwyFFRr"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524A24962B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1DB1805E;
+	Mon, 24 Jun 2024 09:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719219681; cv=none; b=Zs98fp6vgrwVyIuBvlF8Z73BD+ygzJ8cETh6zF1jRtNiwqv/PEjGQOgx9QSQcgB51hzatvywKBlQk2wqZYVbsBwIwW3jlUeHJM/ntx8x/udDWhJp+PD2hxH8hGao6Qd5grrGrcGXDnkDHxuBfqtC21T92k30VxHaOZpVBrLWNQw=
+	t=1719219744; cv=none; b=oCvW+mb9Xh7ths5VU+jpYNQzqG4b6godZ6yHLYgo7fjSIdtqQWlKYwel6rDtVjiCr2KE3eauKVqshf/q08nXxhw3hTGLLMrbuAv0XrZMGG44t8RMeESbrfwf5jlGQ6M2/p9rJwyfJKGhQa7zuAx34S8gJiDiBGlnbRBTXWxY/Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719219681; c=relaxed/simple;
-	bh=N85Zfkwf/vmMiaaoycM7F7srdOzTSCvVXPXoryIVDvY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mk7Uqfj+m3WCll/uFZq/R9svyDACesrGIcYbIaHQsI9gIKpA2jWbf+5v8KCpOFVvUQnlPVlxALIIxXlUzemrztND8ZzqmDCmbK1DoCvD/KRFadtdyDbbxCniM9NZZHkPUgOEL5JfNtiNq8r4t1lvlypq61plu/vty8E+u+a6VeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7245453319so186946866b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:01:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719219679; x=1719824479;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qTswA08HnhEj5BYCk/nQOW7qmYt0/+MAtVSxpLYk8iI=;
-        b=GK+ZOEvWeCK3gyXlDv90kuX31dL5BX5q0EV7d0sEpQ/PhC4Soyw+iSwDv9oai+S64B
-         xOntYNTLB49MBcoOusRN8+DPsjR8lPtjhd2MikmGt6YyoyDGtN9sE8H6TR0yEoC7a3TN
-         QE1rT6BJQQXybrubOxhtLkyxHDArfK7gUYNkxnYeCvjzphD0rBMNRMGGMhLH+MbB3bMa
-         sHf542yVwvvsBVYatvypnuV/UyCTQsJAZY9pRt7B0lLFbKjUco7c9HPv15GRK1xVdwem
-         9MpsILM7rsUJ88AfLZiRuUZFHidgOFLZdFnxC0JZp7FnI8Cy5zYV62mib9TjSdb/sVE9
-         ONDQ==
-X-Gm-Message-State: AOJu0YyjYBwbGumOLgA8sfRzccZifYOjgJ46F72YrVsj/VYifYUs+t9v
-	dtlZJ3JhHFCm8LVJsp7ESXS5p1CWxKZICGeNkUYmrv/h63+bBFy2
-X-Google-Smtp-Source: AGHT+IH9oWw2uc3qoArWVYcT7Ir3k5o8z44K18sX+FeERfWc5/SldL77ucpLFPeRkwgR1xO4Iia8Kw==
-X-Received: by 2002:a17:907:a64b:b0:a72:5bbf:efc0 with SMTP id a640c23a62f3a-a725bbff13dmr83213866b.16.1719219678464;
-        Mon, 24 Jun 2024 02:01:18 -0700 (PDT)
-Received: from nuc.fritz.box (p200300f6f7415600fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f741:5600:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a724162f037sm225997666b.194.2024.06.24.02.01.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 02:01:18 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Johannes Thumshirn <jth@kernel.org>
-Subject: [PATCH 1/1] mcb: remove unused struct 'mcb_parse_priv'
-Date: Mon, 24 Jun 2024 11:01:04 +0200
-Message-ID: <20240624090104.12871-2-jth@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240624090104.12871-1-jth@kernel.org>
-References: <20240624090104.12871-1-jth@kernel.org>
+	s=arc-20240116; t=1719219744; c=relaxed/simple;
+	bh=qW14qvlfyzAV3hBFCCz0Zk9O5SJ94HMlDELFbn2mIfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C1hSaUcitvr2HqPu0ygBR3WmxNANfs4JaI3jQvebjfBfXcniVpJ7AE7druRuTffKxV32vxZcf2YUwCxhgtkhLaAsCaGIzPktt3mwPywSZLrqS8WUnUtN/mOiQKZZnVr9oqLYi0GL17myLgbQlZL3fqKzIlIeAWaQHH1fvoCSiGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SjwyFFRr; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LvYWZE6bAq7zPMbYQGr0sFU14B9itT+ZBDY02wHnCrE=; b=SjwyFFRrVC3GX+esFoo0G3i2OT
+	ul+/9O4Ngutck4qsRMkki737D5t1xKz7yBSq1ieD4BBM/08RjwPJoyo9XYEqKKY1FMsIEi8bu3Rzp
+	7omtixEa2zme5/FlxTVj8HoiRsTWF02+wmvVgIAOV5pI1RbWyJyl4h7T2jyQjNUt9e/erMhtfWdnO
+	O2OnGZY6ti20bkOEk8OCDyS2PbgU8q8+x1vvfoctUJqTUQlrID7vXAN9he4XgLSG312x7yVGWECgC
+	pkfqyBazNfE83bLa/wkJ6eDZgWxDodQd+Ym26QyUfrjZa8frWnSCFMaEqnzRmwh/RDVYxXepcBwEk
+	rLUYCB1Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sLfaR-00000008DBk-1UQy;
+	Mon, 24 Jun 2024 09:02:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F29F7300754; Mon, 24 Jun 2024 11:02:06 +0200 (CEST)
+Date: Mon, 24 Jun 2024 11:02:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
+	pjt@google.com, derkling@google.com, haoluo@google.com,
+	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
+	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
+	memxor@gmail.com, andrea.righi@canonical.com,
+	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH sched_ext/for-6.11] sched, sched_ext: Replace
+ scx_next_task_picked() with sched_class->switch_class()
+Message-ID: <20240624090206.GF31592@noisy.programming.kicks-ass.net>
+References: <87ed8sps71.ffs@tglx>
+ <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
+ <87bk3wpnzv.ffs@tglx>
+ <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
+ <878qz0pcir.ffs@tglx>
+ <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
+ <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
+ <ZnRptXC-ONl-PAyX@slm.duckdns.org>
+ <ZnSp5mVp3uhYganb@slm.duckdns.org>
+ <CAHk-=wjFPLqo7AXu8maAGEGnOy6reUg-F4zzFhVB0Kyu22h7pw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjFPLqo7AXu8maAGEGnOy6reUg-F4zzFhVB0Kyu22h7pw@mail.gmail.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Thu, Jun 20, 2024 at 03:42:48PM -0700, Linus Torvalds wrote:
+> Btw, indirect calls are now expensive enough that when you have only a
+> handful of choices, instead of a variable
+> 
+>         class->some_callback(some_arguments);
+> 
+> you might literally be better off with a macro that does
+> 
+>        #define call_sched_fn(class, name, arg...) switch (class) { \
+>         case &fair_name_class: fair_name_class.name(arg); break; \
+>         ... unroll them all here..
+> 
+> which then just generates a (very small) tree of if-statements.
+> 
+> Again, this is entirely too ugly to do unless people *really* care.
+> But for situations where you have a small handful of cases known at
+> compile-time, it's not out of the question, and it probably does
+> generate better code.
+> 
+> NOTE NOTE NOTE! This is a comp[letely independent aside, and has
+> nothing to do with sched_ext except for the very obvious indirect fact
+> that sched_ext would be one of the classes in this kind of code.
+> 
+> And yes, I suspect it is too ugly to actually do this.
 
-'mcb_parse_priv' has been unused since the initial
-commit 3764e82e5150 ("drivers: Introduce MEN Chameleon Bus").
+Very early on in the retpoline mess I briefly considered doing this, but
+I decided against doing the ugly until someone came with numbers bad
+enough to warrant them.
 
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-Signed-off-by: Johannes Thumshirn <jth@kernel.org>
----
- drivers/mcb/mcb-parse.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/mcb/mcb-parse.c b/drivers/mcb/mcb-parse.c
-index 1ae37e693de0..a5f8ab9a0910 100644
---- a/drivers/mcb/mcb-parse.c
-+++ b/drivers/mcb/mcb-parse.c
-@@ -8,11 +8,6 @@
- 
- #include "mcb-internal.h"
- 
--struct mcb_parse_priv {
--	phys_addr_t mapbase;
--	void __iomem *base;
--};
--
- #define for_each_chameleon_cell(dtype, p)	\
- 	for ((dtype) = get_next_dtype((p));	\
- 	     (dtype) != CHAMELEON_DTYPE_END;	\
--- 
-2.43.0
-
+We're now many years later and I'm very glad we never really *had* to go
+down that route.
 
