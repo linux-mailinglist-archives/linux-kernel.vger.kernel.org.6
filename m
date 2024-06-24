@@ -1,144 +1,128 @@
-Return-Path: <linux-kernel+bounces-227949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA43915874
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:10:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE90A915876
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4871F24AA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BCDB28242C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494B41A08CF;
-	Mon, 24 Jun 2024 21:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B9E1A08D6;
+	Mon, 24 Jun 2024 21:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5mMH+P+"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TJ/5s/1z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09259FBEF;
-	Mon, 24 Jun 2024 21:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3255A1A08BD;
+	Mon, 24 Jun 2024 21:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719263421; cv=none; b=FsGCrIWE25zr3wwePdZ/MVf41D6/4wJ/jU/qVbPuVNucIx99XezVlALN6Xq8JnY+S4LLzM6PyjhTmAcSrnpJufFTBaSwTXRgq3ysR+pbql3RgBjNbnE+Zd3BjcR4mJRUpyPTkg99z+sYyE0oi44B/gxdUdxLlCT7A9b8pYlcx/c=
+	t=1719263448; cv=none; b=Mf3TQfuieQt2x2onv7hKcodtxOnSr4XjIYscNRisBLGBMxOb4Ns31LejmTU2f61nyC2FR8P5wPEHrUzEs+7sKStAqXEysnmQMD0CLhaFTQWIYXYgPA3mMhIuOg+3XHwxBM68sB22ZwnkqqJ5FrEYQs/Cw5qUuNf4zwmWXsg9LOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719263421; c=relaxed/simple;
-	bh=zIXCk75aYHpcTxk2IWR/+FVXsSNkawGDCSBB195Y8Q0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YXN5qvOK4Aaw9Y7B9CvlNrKZjDLM4RJy80iFSvlKDbWUIG5m0z5lmtjxbkBXVp3yeBEyBPjzBVQwrijKURpMeOSq7k9K9JhWAwim5e8jzZ0eoNdRTNTL8z2P/rxDwZHZX6gmoUJRM4Gd9ii1wwHhSAlfNbtdourkcLurXJJHwEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5mMH+P+; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4217990f8baso42606925e9.2;
-        Mon, 24 Jun 2024 14:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719263418; x=1719868218; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7h4Mx2Vzzy1/ph7K1w6trMWSYerI+1F9zFKh72PTopU=;
-        b=C5mMH+P+nDgR3umbV0Lm2065/kvjkfhC5vmpWMNmqgFDFrRSKJQehtViAXc+MBMHXW
-         +CxdcNBTxrDuGng/nmbuVssT6h07EfCdteL3Afx92Dm1ExzxeIiafp+vJ4BdOrFRQTjb
-         dGVeJpcOmm68L5bRipKS0SKSISHJLMCPy3Q4/lWL4UCstFQFjGM0jL3ekzkGAVT3Wjnv
-         oeuoLoSnunVHhwUZikPglZeEWrCX0YwEVm6CluRo/OSUMewduzVYVmhGJuVKscRV4ETM
-         HuZ6Pwr2uFFZTkW7QSphoVWm01M6NX9aGXLae578GRHEaZZVO42LReJPzZ9LwX1Q63eV
-         OxhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719263418; x=1719868218;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7h4Mx2Vzzy1/ph7K1w6trMWSYerI+1F9zFKh72PTopU=;
-        b=ncqtz7UdN+zfboCK+OcxD5LiCDVKKk4NVruxq2ukUKrMpMSSPb5ZPaN1CiNsIu1CYX
-         ojMRjF8D7ndBSCO8dFSVY47UShhYHBZF0EaZ/JlFVfVcik8sILajtC1yJX0EeE5UTJya
-         qVA6qNFDYVc7MVrWDl+tyG1DnXU+QdPrZUyHdaWXf7wBEFDInfD7GS2zKnXGANdZzR1g
-         fgzCD7XNsLeuPB2zfd7z/j10b11Y0T0xW4EAkm1govc3rx6lF9T7ZkgToiPvktnOtXKP
-         GHjMYVyPb1+V9uIKZM/ERcjWDjv1Rn+pKCFLJgyddUsC/zYCmzGjIuVPqvzLaJmvvVWv
-         1LZA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0aYSMIODetbd1ViZj8CxVTywui36qgTLp6/NZUtXmJjvq+2PBB36hFBi0tDpI0qt02w4tI4rbGtwK/av1kd1OLSoHbW2HIPJIyQtdmdd1T8TVoO7yiBSOQYOOmaWoM9cxkzhI
-X-Gm-Message-State: AOJu0Yy5lYgcGMzmW+axRagfLpRMaWeo0b25imcQVtavv04Xh9AbsZ+U
-	atty+5mLWCs55Ad6HEZbX6jVlsVuVNCd6tKyZdqKty5aG7CBGlRMXwFMSVcX
-X-Google-Smtp-Source: AGHT+IFL2g9nbddRwxvFCZcjQygcMRWl9lESJW9Y7LWtGqJ2anOaUschGrkdt6Ny6ai/6teIVtnsCw==
-X-Received: by 2002:adf:fd87:0:b0:360:81d2:b06b with SMTP id ffacd0b85a97d-366e79fdfbcmr3360529f8f.18.1719263418139;
-        Mon, 24 Jun 2024 14:10:18 -0700 (PDT)
-Received: from [127.0.1.1] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638f86566sm11110573f8f.64.2024.06.24.14.10.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 14:10:17 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Mon, 24 Jun 2024 23:10:06 +0200
-Subject: [PATCH] usb: core: add missing of_node_put() in
- usb_of_has_devices_or_graph
+	s=arc-20240116; t=1719263448; c=relaxed/simple;
+	bh=DuS6br34n6qAiBt2gtjSzoa+FWQVOZ9B+N/524S9Hl8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QW+E0PabFd6V4q79XVIwT/8FN2p7uWsYVeueAFI7CpEopabyLeYRja9HxWxKZ0Zo1XRQVuUEt2awbQvXHuFEx+0CsET9n4Z3KPB29OGAXxPS/eTFua0iWY2DScUmxD4XK1euy3EI91UNcdGHBqeIOxdsygBn/QWf+dbF8+Vj8R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TJ/5s/1z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OI4Fmi001499;
+	Mon, 24 Jun 2024 21:10:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=CDNWPvVNd1T8V30fa/5upi07
+	cClHMU//O4rRdpI9NpA=; b=TJ/5s/1zf8rSjIJkyu9G+RQxa9B2pIOdsebRXrhm
+	KULVZoRUKefyvc+pHnrssaLZzKws8JfWzSGf+UFtPV77CKbxVLOTu/ZLG9MNbJ8W
+	QaC/5ACktK/GLMdiAbk99YitbsP3AsUtIL2Hi75CYfCIqCWM1KsXNqmvz5SGOvOp
+	UYK6Mf0TQmAFuzvndibzgjt+mgeVOTePLWSkLSv05vbhvhpnOd0gtwShDacolYzC
+	i1McOsaAl+tCwbqaRZzQPlW+jeti1xyuQMaYWKrBcjN7S/vHkLTdkIN5cWGKCDr5
+	WtRI0VpdCBxHqMUXoaJWi40YBjxOTsa/Ixvo3uI3iU4cqA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaew17n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 21:10:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45OLA90j029478
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 21:10:09 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 24 Jun 2024 14:10:09 -0700
+Date: Mon, 24 Jun 2024 14:10:09 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Andrew Halaney <ahalaney@redhat.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bartosz
+ Golaszewski <bartosz.golaszewski@linaro.org>,
+        kernel test robot
+	<lkp@intel.com>
+Subject: Re: [PATCH] firmware: qcom: tzmem: export devm_qcom_tzmem_pool_new()
+Message-ID: <20240624140949430-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240624190615.36282-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240624-usb_core_of_memleak-v1-1-af6821c1a584@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAK3geWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyMT3dLipPjk/KLU+Py0+NzU3JzUxGxdc0tDM0MzI+MkM6NUJaDOgqL
- UtMwKsKnRsbW1AJ+KZjllAAAA
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Stephen Boyd <swboyd@chromium.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719263416; l=1531;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=zIXCk75aYHpcTxk2IWR/+FVXsSNkawGDCSBB195Y8Q0=;
- b=+ByHjcUALzgzweObJ0Ak9OHgaplq8/LAdvC9xDCh1inm6nL1TSPfW/zbMcSEfGTcAuQwNZ/oI
- PGEVDaWv2upBwgyNRcBV6e447rk2NwklbZh7a14JEzGBzRbv9rWhR0b
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240624190615.36282-1-brgl@bgdev.pl>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 97ic5YB4RtufRKxLsJMVeRk_x5M-efFP
+X-Proofpoint-GUID: 97ic5YB4RtufRKxLsJMVeRk_x5M-efFP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_18,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406240169
 
-The for_each_child_of_node() macro requires an explicit call to
-of_node_put() on early exits to decrement the child refcount and avoid a
-memory leak.
-The child node is not required outsie the loop, and the resource must be
-released before the function returns.
+On Mon, Jun 24, 2024 at 09:06:14PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> EXPORT_SYMBOL_GPL() is missing for devm_qcom_tzmem_pool_new() which
+> causes build failures with randconfig. Add it and fix the issue.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406250127.8Pl2kqFp-lkp@intel.com
+> Fixes: 84f5a7b67b61 ("firmware: qcom: add a dedicated TrustZone buffer allocator")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add the missing of_node_put().
+Reviewed-by: Elliot Berman <quic_eberman@quicinc.com>
 
-Cc: stable@vger.kernel.org
-Fixes: 82e82130a78b ("usb: core: Set connect_type of ports based on DT node")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-This bug was found while doing some code analysis, and I could not test
-it with real hardware. Although the issue and it solution are
-straightforward, any validation beyond compilation and static analysis
-is always welcome.
----
- drivers/usb/core/of.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/core/of.c b/drivers/usb/core/of.c
-index f1a499ee482c..763e4122ed5b 100644
---- a/drivers/usb/core/of.c
-+++ b/drivers/usb/core/of.c
-@@ -84,9 +84,12 @@ static bool usb_of_has_devices_or_graph(const struct usb_device *hub)
- 	if (of_graph_is_present(np))
- 		return true;
- 
--	for_each_child_of_node(np, child)
--		if (of_property_present(child, "reg"))
-+	for_each_child_of_node(np, child) {
-+		if (of_property_present(child, "reg")) {
-+			of_node_put(child);
- 			return true;
-+		}
-+	}
- 
- 	return false;
- }
-
----
-base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
-change-id: 20240624-usb_core_of_memleak-79161623b62e
-
-Best regards,
--- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+> ---
+>  drivers/firmware/qcom/qcom_tzmem.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
+> index aab6376cade5..5d526753183d 100644
+> --- a/drivers/firmware/qcom/qcom_tzmem.c
+> +++ b/drivers/firmware/qcom/qcom_tzmem.c
+> @@ -324,6 +324,7 @@ devm_qcom_tzmem_pool_new(struct device *dev,
+>  
+>  	return pool;
+>  }
+> +EXPORT_SYMBOL_GPL(devm_qcom_tzmem_pool_new);
+>  
+>  static bool qcom_tzmem_try_grow_pool(struct qcom_tzmem_pool *pool,
+>  				     size_t requested, gfp_t gfp)
+> -- 
+> 2.43.0
+> 
 
