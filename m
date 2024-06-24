@@ -1,154 +1,168 @@
-Return-Path: <linux-kernel+bounces-227296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062E0914EE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:38:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD40914EE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376471C20B5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3012284AFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B351422CC;
-	Mon, 24 Jun 2024 13:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888EA13E3F3;
+	Mon, 24 Jun 2024 13:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYulIR3C"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFqTwqd4"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFB413DDB9;
-	Mon, 24 Jun 2024 13:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0D913C901;
+	Mon, 24 Jun 2024 13:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719236165; cv=none; b=gjrez31YtW4RNWqwGFNOjMsUSFHX+yc4PZor3aW8MuJaDU4SYyT+fmvI+ECMZpriV/Yg8cEPZJJlB6XjcYtJpVA4xYNCVzE7cBZRK4/ECXKpOYWgV4wxCFtwZTj4FebD6Z63TIHsgpS6zJEaYmdk0JGmV7K9D+4I2ojFKKJxIwY=
+	t=1719236190; cv=none; b=NucQgQr9+7l3qyCctOICzS0shIm30V+TtOLDMYaMMvJJZ5UghLpeY7MlmlwIX5Qh/ckJzvmtD43oDwA6i7yzXfnEq7AZVVewY4UDAkzzrCPYMUiOxHOqk1NynbBrT6eQCP0wZuQ2IiGGw6/LYVZ0lBmqHaqUlXWfcasTW8ujArQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719236165; c=relaxed/simple;
-	bh=VS5Dgx2c+JMCrFpzvT9D2DHqmYUf4GDiRSkPL1PFeWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ePLp0atv6sBjLjcJvIEMmFVfTiHHuXwDVhwAznQBay5Su5NBqklmRrEL/NoHd2TGkJPIYBcRj7RBCkXCYJU2rTxs0XZ2wAVs+lpckoMCqR0V8Z+1d/2THqOEBjh4+PXXnDIRvmh+kXVx4u+6ghRtCtHmQ3XRkh/7rgNdLHIKq1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kYulIR3C; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1719236190; c=relaxed/simple;
+	bh=JTAp4UDEJHPEUUuCOnG+SgNv3EYBtS5fA24Vtxjriqg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QWhPTUBs+rLMZ/GMyB3brFEw9iQ+MVFaYQF3DeClqZ9EdrtMtGKoT1MOi9JptTF29SRpGAUeySuYqGcmeiZUV/3V2u3tGKvwLkfWYNGST6AdEmpxYIlSjnsTe+2hs2Jky33oOnDRB4JNZsZJL9Qm4kI6sojDkY7NJfE/s2X2kso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dFqTwqd4; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f99fe4dc5aso32421605ad.0;
-        Mon, 24 Jun 2024 06:36:02 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec59193468so12915591fa.1;
+        Mon, 24 Jun 2024 06:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719236162; x=1719840962; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=vjsdlMbxyBtAfILJDgu7GW8Pfa7ZeXuMvswQHEkWaxA=;
-        b=kYulIR3CMV2BTvTp94Dn/3JM3/cfekm0hQYevIJH3LY23Yoj9BF+/g2ecwHPjZEFxG
-         IWGnFEkSrEnpkKk5OVW5izS/X/LBmjppyBKFEtITgZ7TZ8UTc1lhugryaZIvtklsKzx4
-         R7sbVM9N3QqyC8zu8bvLt0J39lTUPYq536x+3yZ6fb5dasQJTuP7O3QBiplwLm5Hp/rK
-         5SWkPY4CsCXN8KzgUW2QOnFBHg0DueWcx0peBN1+4TB5Mip74sBVPY7lfzaTOGK0ZYMD
-         o6GRPPW8EzBXoRSN4NQyCXhy6Mo09mYLQxiBap5/u5yFNYvlSURC9bW99QDnw262s00p
-         m/yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719236162; x=1719840962;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719236187; x=1719840987; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vjsdlMbxyBtAfILJDgu7GW8Pfa7ZeXuMvswQHEkWaxA=;
-        b=I9/3361Iz4YqrOaAz6EXyWeyHEwZSlxAqAdImOBhkOsVgxGFBvNp2/PUBIiSqRRnfj
-         ziDJCakkWZLpi9BuQiYjJuhzn6yeftr2NdGV1iAe3EZRyS6MWXFkUg5u7A1tW6TuPcN3
-         Xk8sJcT4k6DP5w/UJP1nHRO/xMENTGS88tx41Qick9KhaQsA2MbxydRI9X/cPYKHTeCF
-         STIhC4fCtA8hQxImFc68KCX62TsU+ZN36eBMTPUYKgjU8DERXw7jQjKgBlQHHvDGQlQP
-         oGDPItyz1iFH+BSP3zq69KlB2UYq0hz8H+4Q4rELf+EJjo0zpSN1HocAzDnvvW/mjy8Z
-         ftVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZh5qZNVPBsp0IbU+iU/iGX2lse6v9cFdo079pqmvJw12WSsU/WxhZBQ0V7z0UhQXTn5P++59LZ+XMEAXlMlF9Au2ljYb7lrD2Aia5IyvvOKKid3eUlMiG2/zc+vyYMA3a7O+rgDZxzsHkPcM6qzCS8nTJsEpn1qKVStgahtKWNJzO8ggo0/qTq3esacA7cPeMzj1m+qUP7dOqzVA=
-X-Gm-Message-State: AOJu0Yw0h2/4z2BdZPK+XVnjlUcJl/KVJFLidpEal9Ww2clcmIId1z7J
-	SMZYETac4oFKvythN8S31iibhsDZp29APUUWYnaQBYarzUqMTiFo
-X-Google-Smtp-Source: AGHT+IHELwqN0fmYpr2TNOIVJNKOgAmBFiPFeYets29ZC2Um1SsjtiDeCAu0HCiSCAVcqPraRv7lsA==
-X-Received: by 2002:a17:902:daca:b0:1f9:e0e5:cda0 with SMTP id d9443c01a7336-1fa24084525mr49373805ad.55.1719236162361;
-        Mon, 24 Jun 2024 06:36:02 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d5e63sm62292735ad.187.2024.06.24.06.36.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 06:36:01 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <709463b2-edac-416b-a6c2-c6428b61cbb8@roeck-us.net>
-Date: Mon, 24 Jun 2024 06:35:59 -0700
+        bh=NkZfvD4PLKsiwgfdlYx63vmiI9ZpjsrWjgZ3Pa3uCRM=;
+        b=dFqTwqd4jSKQNklK+FcenazlXRxCLiHvL+LFIFK8FNoFsVMYMnlttCRDcFPw0OiGZu
+         Svfo9R0IkNzFCRq1SXLdpNY5Mlg6hoQcMnUVn+DkXjtOu3yEcg+4oAqWMgdtDcu0Hi9e
+         GFLkZ90XOWP1Suc6943/P5wfpeHp8edHo9rCgw7yn4DT/PTUCwsPAz4brrAGw9hoCjPw
+         zm/FAnt5nR1YZ0DZxL6uqVXdlhfDd5t4ikyks19FnM4TveptQVyob9bQIVB8DrLQsTiA
+         tEjDcgkjgg2Ht2hsrqvnbMoiCU/SoavYo1juE79frbQkMior/inXkLpNDxo+GSCQmliI
+         A3UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719236187; x=1719840987;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NkZfvD4PLKsiwgfdlYx63vmiI9ZpjsrWjgZ3Pa3uCRM=;
+        b=bN2xNsWEvtMHDNLQftA4rukLGcKuccBAWYMLmDGl2r2xLw9wozqsl9QOL2NGrgVR/+
+         FGzdtN7nOUq/zZJXs80Pwqa+sZKf5rksgLGEa8xXtWTTBfbsBAgxxmtUKPhBuIzQh9nN
+         sB7305WI/OQqNtdbXyVet7BFhx3Soms9qt+fDUUlTQuT+AD7Jgo9udbsL2jzOgHWj5ye
+         ZGFcTUzndqSK8nWacrG9S8jviN7JkeIPPdo1KH9HyiAgV6j7/EE5KOPLJWXCiRE4+E+h
+         WX0liytNDKVrqllHSPc+/8GzhQ+VWONFBZnPtxqSkdA97cdsH99/gdMaSxzcTyJcqkb7
+         NUjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgfheLeLEzfRx6r29/M6CyPuBnRaXGo5881OzgFvA2tBPxjGFBrSAPe/zi0EMNigeyewOIRG5/DL3F2uEuKagfxuQ7GKT6Hd7qziyRsY0sUzhzQPBblOOX5lJ1fywL3zL78ktVJ7TQExUNv82g
+X-Gm-Message-State: AOJu0Yy7XXfkXo07d5ohWTC9XtXTTqNZJ7HB4OHQC4cD6Q4pYt/n3w5G
+	5xyUcM6KyXprh0OkgRfAsEr3LKTVMwXVI9qH8cl2nGHH2A7Axo7C/8BnEYQWtDXYdVz7uc4bJ1B
+	vlSK1uxcVv6p+q8ruJjFmtltilTo=
+X-Google-Smtp-Source: AGHT+IE5BhcwNkSy/BtWPFiSKhg8DTn5SsxUV8uT+6cD8wWYGnIALqe1+2Sy7766l3SzLQhiaN0ZMN7I4LwytBUgKqI=
+X-Received: by 2002:a2e:99cb:0:b0:2ec:4408:56ac with SMTP id
+ 38308e7fff4ca-2ec56c96be3mr13900391fa.17.1719236186875; Mon, 24 Jun 2024
+ 06:36:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression caused by "eeprom: at24: Probe for DDR3 thermal sensor
- in the SPD case" - "sysfs: cannot create duplicate filename"
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Krzysztof_Ol=C4=99dzki?= <ole@ans.pl>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, stable@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <a57e9a39-13ce-4e4d-a7a1-c591f6b4ac65@ans.pl>
- <2024062438-patriarch-spendable-96b9@gregkh>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <2024062438-patriarch-spendable-96b9@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <CABBYNZLu-wAu6cdyDVim=bP+0Ld-P=YvENO=fa6r=rdY4UqukQ@mail.gmail.com>
+ <tencent_832C796CAC95F0E9A2EC6ECF00798E6DCC0A@qq.com>
+In-Reply-To: <tencent_832C796CAC95F0E9A2EC6ECF00798E6DCC0A@qq.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 24 Jun 2024 09:36:14 -0400
+Message-ID: <CABBYNZ+_sEiu-4790zY7pH7-AOi7L2Da0AFeD8W+_bSjTrXENQ@mail.gmail.com>
+Subject: Re: [PATCH] bluetooth/l2cap: sync sock recv cb and release
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, marcel@holtmann.org, 
+	syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/23/24 22:43, Greg Kroah-Hartman wrote:
-> On Sun, Jun 23, 2024 at 11:47:39AM -0700, Krzysztof Olędzki wrote:
->> Hi,
->>
->> After upgrading kernel to Linux 6.6.34 on one of my systems, I noticed "sysfs: cannot create duplicate filename" and i2c registration errors in dmesg, please see below.
->>
->> This seems to be related to https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-6.6.y&id=4d5ace787273cb159bfdcf1c523df957938b3e42 - reverting the change fixes the problem.
-> 
-> So is this also an issue in 6.9?
-> 
+Hi Edward,
 
-I didn't verify, but I am quite sure that it is seen there as well.
+On Fri, Jun 21, 2024 at 11:46=E2=80=AFPM Edward Adam Davis <eadavis@qq.com>=
+ wrote:
+>
+> Hi Luiz Augusto von Dentz,
+>
+> On Thu, 20 Jun 2024 12:53:19 -0400, Luiz Augusto von Dentz wrote:
+> > >         release_sock(sk);
+> > > +       l2cap_chan_unlock(chan);
+> > > +       l2cap_chan_put(chan);
+> > >
+> > >         return err;
+> > >  }
+> > > --
+> > > 2.43.0
+> >
+> > Looks like this was never really tested properly:
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > WARNING: possible recursive locking detected
+> > 6.10.0-rc3-g4029dba6b6f1 #6823 Not tainted
+> > --------------------------------------------
+> > kworker/u5:0/35 is trying to acquire lock:
+> > ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
+> > l2cap_sock_recv_cb+0x44/0x1e0
+> >
+> > but task is already holding lock:
+> > ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
+> > l2cap_get_chan_by_scid+0xaf/0xd0
+> >
+> > other info that might help us debug this:
+> >  Possible unsafe locking scenario:
+> >
+> >        CPU0
+> >        ----
+> >   lock(&chan->lock#2/1);
+> >   lock(&chan->lock#2/1);
+> >
+> >  *** DEADLOCK ***
+> >
+> >  May be due to missing lock nesting notation
+> >
+> > 3 locks held by kworker/u5:0/35:
+> >  #0: ffff888002b8a940 ((wq_completion)hci0#2){+.+.}-{0:0}, at:
+> > process_one_work+0x750/0x930
+> >  #1: ffff888002c67dd0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0},
+> > at: process_one_work+0x44e/0x930
+> >  #2: ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
+> > l2cap_get_chan_by_scid+0xaf/0xd0
+> >
+> > l2cap_sock_recv_cb is assumed to be called with the chan_lock held so
+> > perhaps we can just do:
+> >
+> >        sk =3D chan->data;
+> >        if (!sk)
+> >                return -ENXIO;
+>
+> If the release occurs after this judgment, the same problem will still oc=
+cur.
+> Recv and release must be synchronized using locks, which can be solved by
+> adding new lock.
+>
+> Please use the new patch https://syzkaller.appspot.com/text?tag=3DPatch&x=
+=3D15d2c48e980000, I have tested in
+> https://syzkaller.appspot.com/bug?extid=3Db7f6f8c9303466e16c8a
 
-Guenter
+Hmm, why don't we just fix l2cap_conless_channel? Btw,
+l2cap_conless_channel is normally not used by any profiles thus why
+there isn't any CI covering it, on the other hand l2cap_data_channel
+is used by 99% of the profiles.
 
+> --
+> Edward
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
