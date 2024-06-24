@@ -1,140 +1,241 @@
-Return-Path: <linux-kernel+bounces-227560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83EE2915337
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:13:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6423915339
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04377B235B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:13:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14F191C22FE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE76119D8A5;
-	Mon, 24 Jun 2024 16:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E38D19D8B6;
+	Mon, 24 Jun 2024 16:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="BkmcATCy"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJLWckyJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA6512FF84
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D10F12FF84;
+	Mon, 24 Jun 2024 16:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719245574; cv=none; b=ciVNTtLAM4gO+eIV/m+YURxj6M5QWUI7RfDSqi5LCbflUCHOYMOmqmGCNCkyTlxX24hpXlsu5npDk4fWLnrCmEAfWUOgnouQGNzHnIhahoqQl62/Z5Sj5bEVoQXlzGbun+qKHEeAEE4nkPNDKcevpFuAhFVReKTdZajFdkGp2iU=
+	t=1719245630; cv=none; b=ceiMYsxSqgkAUtcEbWKLjX76BrVJblCgFleJASEQB6A7ZYVMr/WK4h/o7shD37oJp4EVC5luGKWMk57f+ye3H1W/ccM+U/cwXaBFm1c9LZlmCYKdxUhkBQ2ELN4wFGN2PSnNnF4Ha5zZawovIPuxhTNS+gtXH0qgY275ie7FjQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719245574; c=relaxed/simple;
-	bh=pG1yk7b6XhBcVzpKA4KQz9xCQgnJK5mEnEdrdNWSzC0=;
+	s=arc-20240116; t=1719245630; c=relaxed/simple;
+	bh=DgVVOPk1ZkKbKxb3mtBrBTehxOzldRGgUCcC7y0SrK4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Et4WyqiNIsQJB8CVA4krbHuFwVfqlIxK9mqvUZ6FhABK5Q8wGWclTXTKQ5vd5OK2ZCiUuVpKVSbLOb7K9PxU/7GdnPAiPOshhDyXyTGX2QIVDK9+Ca3QCyjfwRn70TUi+NRewwOSNljzGcwhMF0mKyYHrFskP2DWfalV/81HkXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=BkmcATCy; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b4f7541d7eso21438576d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:12:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1719245572; x=1719850372; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9KVh08w6ZHcJMoEyUgVFbZt4nC3NusyFRhTL7+nVKCM=;
-        b=BkmcATCyzTvpgISdaGGiGreQpjvOZrW079lDrrB5T6kErVFhm1fc7h0wtP9gmckBca
-         OibtIbpsU3a3awAxP3VVJWNITTGDW0sGYq/1UrLF5z+8E7K9b/ebHU55LeOQV0TVb0WE
-         w8dqidy8Wl4Zjsy5m4sV8d82+sw6jY0qkcfQq0upVaThv/B/n9WBS2CQOSzUxNdVepVO
-         x24grslKpcnM1Sef0pziAW7PND6XKlm/enPpLzgeZXuBNnS1psqLawFvyHYtgbqMleAP
-         bkjVTowjRi0R0EVeEO3gPPgFNK6rmasby9xw3WBspO4iMlfUCc6YCmQx4q72OEMibDX/
-         8XNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719245572; x=1719850372;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9KVh08w6ZHcJMoEyUgVFbZt4nC3NusyFRhTL7+nVKCM=;
-        b=faFRd7TtYDBv4dzynbh300/ZIuM0td7oysNVTPKDNgNb0aS5iUelMQ8PxG7Y/6KQZM
-         8Z1MIKzVIIsIXl9BdHkrJTfwIwrE+ZctaLTJFDXh+B0JE0UYdxn8/1KMLInUG12l4QHb
-         J+PVMkdrdmDD4Cg4TKGHY8SnMBE5gcAQC/vl8PbYmFpl/Co4u/srU/S/RjcQYNMVFd8u
-         yUezHZO5j3u4quUIqjHR+pNfW8Uu2Uv87n48CuadROE173cY13UeKijGLgW8D9nJ5dZq
-         3V+S4rt8TWVTJ37Y2F8eEGSjkhdDOnTC1clGl4SVfAYKsf6x7i2o1B036EknlAawW7Gr
-         d9JA==
-X-Forwarded-Encrypted: i=1; AJvYcCXx5QjqCVAWxeLNqOBbKTAZp0NhgYIKr8jDOWHrZQOLgsfKldB0Veeihu/WfgtCzU5Ou2LL/HnSEP+4nZoVb0xVdLjzrBNChvqzUchV
-X-Gm-Message-State: AOJu0YzJtsc5jkXrchBuaLAGnVP4WzdGfGWnifnSDxpbqfeN13brBilT
-	CIRYAfn56g/4o9FA0QtP7TwS8tzm45JJxCLL0i5rKTJ1m75oY69XBvb5MPbdeE8=
-X-Google-Smtp-Source: AGHT+IEtjMLppvm95Bhcr6Fo3t4bK3e43HafSl6y57NwQxCwuLvy186WvvSNAQulnuXL3iP6wdnezw==
-X-Received: by 2002:ad4:4f42:0:b0:6b5:51c2:9808 with SMTP id 6a1803df08f44-6b551c299e1mr33223666d6.26.1719245572248;
-        Mon, 24 Jun 2024 09:12:52 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ef5c330sm35415686d6.118.2024.06.24.09.12.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 09:12:51 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sLmJH-006FXA-6y;
-	Mon, 24 Jun 2024 13:12:51 -0300
-Date: Mon, 24 Jun 2024 13:12:51 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Vasant Hegde <vasant.hegde@amd.com>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>,
-	"Tian, Kevin" <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] iommu/vt-d: Fix missed device TLB cache tag
-Message-ID: <20240624161251.GS791043@ziepe.ca>
-References: <20240619015345.182773-1-baolu.lu@linux.intel.com>
- <20240619164620.GN791043@ziepe.ca>
- <1dfb467d-f25a-4270-8a36-a048f061e2aa@linux.intel.com>
- <BN9PR11MB5276F76798E61D231D861A2F8CC82@BN9PR11MB5276.namprd11.prod.outlook.com>
- <976d4054-6306-4325-a112-5cf69b0c6f34@linux.intel.com>
- <bdbb40da-faa5-4321-a58b-5fcffcbc818c@amd.com>
- <8c78f966-539c-4c81-92a6-32d32bb10e8b@linux.intel.com>
- <657c7e03-91ef-4765-be7c-1f57eb45e467@amd.com>
- <20240620140815.GO791043@ziepe.ca>
- <92033ab6-fb55-4206-9cb9-f81b5b6eede6@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lb8k9ZH1qQXz+wQM/TsTe/NbcywqSeNdC214W7+OUwrtYa+7sYHVbeDi3T1GiqiyT68vc6pS7Qtc3KtlKLygek8Xo07zE1FyPYdQAYro2ArfNsDjkQyoYCyLXMJklnMw3hmcLbm3UjZxqnAz0WqcO1CAd4qv5v/QRmOH+2Uo/58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJLWckyJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E518EC2BBFC;
+	Mon, 24 Jun 2024 16:13:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719245629;
+	bh=DgVVOPk1ZkKbKxb3mtBrBTehxOzldRGgUCcC7y0SrK4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fJLWckyJQvmvD9adz4fDH22WUxDxxW5rX2aLB9mnyJ00mtIOIocl5Z4dVPqPkKqcB
+	 yTD+WBJ9Bl5oU/eVHvQP/qiN5lM0zRT/cqY1W43/TrgydV3lcm6xowsD14pk0vcxwN
+	 uA9WXIICT4mYNiLJpaSKgtXFlW0DniqPU1acehpnupzkJ6UB7msyBunSneIQqu+oq/
+	 jJaRQn1tg9TsdJlVjtruiWiLR/JRmz3PvxBzeaB0vqctRF8BHUaNFVXYuZf+T0bYvY
+	 Am+yH4ATOc0Q5PowenOWyfBBvNUX0xR3Sj+jqVvkjrlj0/Kjh2m0y5FfkQOTiPXSFK
+	 cnR0F7LZaMACw==
+Date: Mon, 24 Jun 2024 17:13:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: "Paller, Kim Seer" <KimSeer.Paller@analog.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Subject: Re: [PATCH v4 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
+Message-ID: <20240624-handled-swimwear-94ed97b123cc@spud>
+References: <20240619064904.73832-1-kimseer.paller@analog.com>
+ <20240619064904.73832-4-kimseer.paller@analog.com>
+ <20240619-left-usable-316cbe62468a@spud>
+ <PH0PR03MB7141FB5DFBCA46C727FA9605F9D42@PH0PR03MB7141.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="w16K0kP6Co5gYb/H"
 Content-Disposition: inline
-In-Reply-To: <92033ab6-fb55-4206-9cb9-f81b5b6eede6@amd.com>
+In-Reply-To: <PH0PR03MB7141FB5DFBCA46C727FA9605F9D42@PH0PR03MB7141.namprd03.prod.outlook.com>
 
-On Mon, Jun 24, 2024 at 07:56:03PM +0530, Vasant Hegde wrote:
 
-> >> I remember of this discussion. May be we can provide API from IOMMU driver so
-> >> that individual driver can enable/disable ATS (like iommu_dev_enable_feature()).
-> > 
-> > But I have a feeling if we do that it should be done by re-attaching
-> > the domain.
-> 
-> Right. By default IOMMU will enable the ATS.. But if device driver decides to
-> disable it (say due to HW bug), then we have to re-attach domain (in AMD case we
-> have to update the DTE and flush the TLB).
+--w16K0kP6Co5gYb/H
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-SMMUv3 is the same, this is why I like doing it via the existing
-re-attach domain interface since it already composes nicely with the
-mechanisms the driver should have to update the DTE/etc.
+On Mon, Jun 24, 2024 at 03:13:56PM +0000, Paller, Kim Seer wrote:
+>=20
+>=20
+> > -----Original Message-----
+> > From: Conor Dooley <conor@kernel.org>
+> > Sent: Thursday, June 20, 2024 1:57 AM
+> > To: Paller, Kim Seer <KimSeer.Paller@analog.com>
+> > Cc: linux-kernel@vger.kernel.org; linux-iio@vger.kernel.org;
+> > devicetree@vger.kernel.org; Jonathan Cameron <jic23@kernel.org>; David
+> > Lechner <dlechner@baylibre.com>; Lars-Peter Clausen <lars@metafoo.de>;
+> > Liam Girdwood <lgirdwood@gmail.com>; Mark Brown <broonie@kernel.org>;
+> > Dimitri Fedrau <dima.fedrau@gmail.com>; Krzysztof Kozlowski
+> > <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>; Conor Dooley
+> > <conor+dt@kernel.org>; Hennerich, Michael
+> > <Michael.Hennerich@analog.com>; Nuno S=E1 <noname.nuno@gmail.com>
+> > Subject: Re: [PATCH v4 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
+> >=20
+> > [External]
+> >=20
+> > On Wed, Jun 19, 2024 at 02:49:02PM +0800, Kim Seer Paller wrote:
+> > > Add documentation for ltc2664.
+> > >
+> > > Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+> > > Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> > > Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> > > ---
+> > >  .../bindings/iio/dac/adi,ltc2664.yaml         | 167 ++++++++++++++++=
+++
+> > >  MAINTAINERS                                   |   8 +
+> > >  2 files changed, 175 insertions(+)
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> > > b/Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> > > new file mode 100644
+> > > index 000000000000..be37700e3b1f
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> > > @@ -0,0 +1,167 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/iio/dac/adi,ltc2664.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Analog Devices LTC2664 DAC
+> > > +
+> > > +maintainers:
+> > > +  - Michael Hennerich <michael.hennerich@analog.com>
+> > > +  - Kim Seer Paller <kimseer.paller@analog.com>
+> > > +
+> > > +description: |
+> > > +  Analog Devices LTC2664 4 channel, 12-/16-Bit, +-10V DAC
+> > > +
+> > > +https://www.analog.com/media/en/technical-documentation/data-sheets/2
+> > > +664fa.pdf
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - adi,ltc2664
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  spi-max-frequency:
+> > > +    maximum: 50000000
+> > > +
+> > > +  vcc-supply:
+> > > +    description: Analog Supply Voltage Input.
+> > > +
+> > > +  v-pos-supply:
+> > > +    description: Positive Supply Voltage Input.
+> > > +
+> > > +  v-neg-supply:
+> > > +    description: Negative Supply Voltage Input.
+> > > +
+> > > +  iovcc-supply:
+> > > +    description: Digital Input/Output Supply Voltage.
+> > > +
+> > > +  ref-supply:
+> > > +    description:
+> > > +      Reference Input/Output. The voltage at the REF pin sets the fu=
+ll-scale
+> > > +      range of all channels. If not provided the internal reference =
+is used and
+> > > +      also provided on the VREF pin.
+> > > +
+> > > +  reset-gpios:
+> > > +    description:
+> > > +      Active-low Asynchronous Clear Input. A logic low at this level=
+-triggered
+> > > +      input clears the part to the reset code and range determined b=
+y the
+> > > +      hardwired option chosen using the MSPAN pins. The control regi=
+sters are
+> > > +      cleared to zero.
+> > > +    maxItems: 1
+> > > +
+> > > +  adi,manual-span-operation-config:
+> > > +    description:
+> > > +      This property must mimic the MSPAN pin configurations. By tyin=
+g the
+> > MSPAN
+> > > +      pins (MSP2, MSP1 and MSP0) to GND and/or VCC, any output range=
+ can
+> > be
+> > > +      hardware-configured with different mid-scale or zero-scale res=
+et options.
+> > > +      The hardware configuration is latched during power on reset fo=
+r proper
+> > > +      operation.
+> > > +        0 - MPS2=3DGND, MPS1=3DGND, MSP0=3DGND (+-10V, reset to 0V)
+> > > +        1 - MPS2=3DGND, MPS1=3DGND, MSP0=3DVCC (+-5V, reset to 0V)
+> > > +        2 - MPS2=3DGND, MPS1=3DVCC, MSP0=3DGND (+-2.5V, reset to 0V)
+> > > +        3 - MPS2=3DGND, MPS1=3DVCC, MSP0=3DVCC (0V to 10, reset to 0=
+V)
+> > > +        4 - MPS2=3DVCC, MPS1=3DGND, MSP0=3DGND (0V to 10V, reset to =
+5V)
+> > > +        5 - MPS2=3DVCC, MPS1=3DGND, MSP0=3DVCC (0V to 5V, reset to 0=
+V)
+> > > +        6 - MPS2=3DVCC, MPS1=3DVCC, MSP0=3DGND (0V to 5V, reset to 2=
+=2E5V)
+> > > +        7 - MPS2=3DVCC, MPS1=3DVCC, MSP0=3DVCC (0V to 5V, reset to 0=
+V, enables
+> > SoftSpan)
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    enum: [0, 1, 2, 3, 4, 5, 6, 7]
+> >=20
+> > Can you explain why this property is required, when below there's one t=
+hat sets
+> > the ranges in microvolts? Isn't the only new information that this prov=
+ides the
+> > reset values (in a few cases that it is not 0).
+> > What am I missing?
+>=20
+> For specifying output range and reset options without relying on software=
+ initialization
+> routines, and also for enabling the softspan feature, I think this proper=
+ty seems essential.
 
-> > Having an additional input to domain attach "inhibit ats", as a flag
-> > would be all the support the driver would need to provide for the core
-> > code to manage this with some kind of global policy.
-> 
-> You mean for attach_dev() ?
+The portion of this information that is duplicated below I do not think
+should reappear in this property.
+Really the only additional information is the reset values being at 50%
+of the range and the SoftSpan
 
-Yes
- 
-> .. and what about PRI and PASID? Don't device driver needs similar interface ?
+--w16K0kP6Co5gYb/H
+Content-Type: application/pgp-signature; name="signature.asc"
 
-PRI is enabled by attaching a PRI capable domain
+-----BEGIN PGP SIGNATURE-----
 
-PASID should be assumed to be required if the device supports PASID.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnmbOAAKCRB4tDGHoIJi
+0mouAQDzsVsipg/3w2VG+hknkSbjckhNz5CqLEQ8NOBuG1kDCAEAv6ufhDKmdcyu
+7Vpu2g6CSOzzkHDSkLJwqM59OjpWRw8=
+=5rtG
+-----END PGP SIGNATURE-----
 
-Inhibiting PASID support would have to be done during domain
-allocation. Soon the dev will always be available there and we could
-do a policy like that via the dev structs? Not sure how much value
-there is..
-
-Jason
+--w16K0kP6Co5gYb/H--
 
