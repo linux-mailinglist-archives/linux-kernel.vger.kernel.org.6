@@ -1,150 +1,237 @@
-Return-Path: <linux-kernel+bounces-228047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9C6915A1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:51:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23804915A1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EA641C220E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436CF1C223E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C4D1A2556;
-	Mon, 24 Jun 2024 22:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDCB1A255D;
+	Mon, 24 Jun 2024 22:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qCm3Tj3B"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VsvwQWzD"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803B512EBD7
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D6647A64;
+	Mon, 24 Jun 2024 22:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719269469; cv=none; b=m+M9Q4YkZrXW5yQJW9CG6QT299ImoGkusIR0qEa8QJH+LAkocZ8+u9Oe/uXQgAEyDvdrWnWFYHGLrb30xGaFMJE7MKM00gqx/i/Jo1FG9xXYfsgfefDm8juew0rCSyDlqbW0Oa2Q+BsRXSsZeJQbg6E2PrjEYtJ5B0aQ1JuOfh8=
+	t=1719269693; cv=none; b=Cui6woEafsaDUsxh0Oh6JTKOzVS9C+tkWIJCu48Jl1Oslobl5xSVgFZiwIfWLOymPL0K8vqw8zXJzLHl4cDQQJkBx6mXbn40X9OQIxFuDNT9uqXoEhfv5RNiqKkhVbdSreh7vQqjIBlONDxMPBD3pVuLSbatq0hLxLhzC4G0a6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719269469; c=relaxed/simple;
-	bh=zvWzgsTq3P+0Mdgzi+iZmuD6UIRKkocR4ALPpJOB8bU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RU/K0vEfRCBpeRDB12hmxignXPfcxqT+XdFFUnZi8R+6oZfsZy+9Dgc13hY5KJMUQw8oHIWb3xn9D1EkUbkMhcMdcsF/uHWWVbr1EgCsCeMP6e9troHEhnfW5K/lmhmVoOI/aqtRSiK+mbvvHgF7aAjEbOsTsIt0QWy0UcNtjoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qCm3Tj3B; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3d518cdb252so2551674b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:51:07 -0700 (PDT)
+	s=arc-20240116; t=1719269693; c=relaxed/simple;
+	bh=sElc2XuU2ff3on4aXynI8Tx39Edi1GwfSAQ4ACgrydk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObbUTPC7q3PsNZPUsmbYShnsecgmFtfwb7Sq/PiD6yYazCDdE68GyMso4h4YRWtvpZCIslZNK8PcwTiYMOqtIigxnRYi3vN/3kJa1lvVOZUaF0RgV2AYUhDG++XN7AODEdUSzrjkXPr6GtJ5NH0Suu8QKvVyTQfHG1LCMh8VBv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VsvwQWzD; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-70089223245so2824988a34.2;
+        Mon, 24 Jun 2024 15:54:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719269466; x=1719874266; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QSMLalLoG8lPuYSLVxw52g/GhJCfhMgtmpMfHHuN7E4=;
-        b=qCm3Tj3BaQIsddSWC3pXyU8Akk3VoFis0Dt57fO97uAr9v9bcu06zCUy1lASRdQwP0
-         EOJBSmRqa97goiGW9My2U++ZWS2lewJJQHASbFAHWTE71Tji2BdIWLFLt3GFPtj5D/zs
-         Y26olSMUbt/kRU3sJeQmaUVUCELNxqFyzxXYkfy/4BExck78tad40fIvQgCrKnpUVl0K
-         uicrHYNVKxPTgkk60+lk+/wtqBtS/QR/tS9FHh8csGRkb2tMTINIK2nCFleDF3ZVQrUp
-         E07iKB3KYSKMxwwAxKTd636Ligk+QYSawKjqOuKt7KFxt5CZZoJ21bx0g7nJYBbD68Lg
-         9acw==
+        d=gmail.com; s=20230601; t=1719269690; x=1719874490; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmrF0dTmcOIfg8IkJIqr7iTWstwct6FH7y6vme7yHSs=;
+        b=VsvwQWzD5MQHpWajYQDYvNn6PZizHmFcL3kYuokfsQDrM9JRKXuY4h9QEg7uHljJwH
+         9uxfNjk8FWwOH6+7H5QsEg2lxa+CUsyObkGNl10kvhr3zJ7SisYjRnriR9+DiDppVl9t
+         6vr9LsJ1Q1mC92nzYdIj8sbiEmcPGLw0j4gU9MkEaren/OmYqU0JH0JQpI8/fgCO/Kz8
+         Mk+kNwexJptIQuPbS8Y0mdjKH8QMscWQn+2+ayffW9VUQG+1xzXK6GY5o+X95GictAkd
+         jHb4vB3MDM6I+OK5S5ZkHADgUS2NPKwGohYMlSU7aN+IokL9SJ0FB2gUHIj2Gm55r2Us
+         qkhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719269466; x=1719874266;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QSMLalLoG8lPuYSLVxw52g/GhJCfhMgtmpMfHHuN7E4=;
-        b=V/dejdM0FQovImO88iQjMcLsnSCTdz5YAkyiX584FRCMBuR91l54YN+yhXg64LT9IH
-         gB9SN3MPSWTiFsE+zppXBfJWMWvlGBaZNi+C5Rt6z/TdrQlC5YTEAb/AASHR0maO9Yze
-         rfWWC89Q/DT8/bWFKasHaPK08dtitl+idOlEcNscL4UE7LxRuf/Vlk7ocUEMzHAN+ExP
-         rE2khqRJir5Jazj6P1Nta83iytteLv+ZGY7JQBXTPDSUzt712RObMr096c24+8PL9Z3/
-         H1WtMMmGG9TUsSCwbxSfuE2kpDYrQ2kBDZMdrPPXSUr3aSpRuzoNDiAikD8YbAUA5ejc
-         LE6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXvj9Jaf0QO+P+wXBRKAa+IOMBbwDBSa9GsLVG+njz3y+0/GkeKRYdBhMPVB9FnmO3GEOdvczyZymtiPEnrX6RdcQHFK87xxgamrpsH
-X-Gm-Message-State: AOJu0YzybHRf4WJdpehIXF42uRsRxVpGTOeSK2B1M4UYYNVcKh2rWUWV
-	DKaALA7YrhlNjHF50b9WNsCR9nvaA4EdafSiagRwtSti2O9lhzUtuPcSWVOWH6o=
-X-Google-Smtp-Source: AGHT+IFEgKMQ0KzJb3GzFBxAKLmZWqCWQSiAPzPkM5FnZP8YbirfIfWJTrgLNLNXsuor9teoG1ivgQ==
-X-Received: by 2002:a05:6808:189c:b0:3d2:2780:1c8f with SMTP id 5614622812f47-3d54594f36fmr6962253b6e.4.1719269466564;
-        Mon, 24 Jun 2024 15:51:06 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d5344dde49sm1672731b6e.1.2024.06.24.15.51.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 15:51:06 -0700 (PDT)
-Message-ID: <04254d15-2f6e-435d-ba4c-8e2e87766b9b@baylibre.com>
-Date: Mon, 24 Jun 2024 17:51:05 -0500
+        d=1e100.net; s=20230601; t=1719269690; x=1719874490;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RmrF0dTmcOIfg8IkJIqr7iTWstwct6FH7y6vme7yHSs=;
+        b=vytOKg//2Ae5NLEYuq1OXhgB1ovlYHkLkT9odTPQfmkfXm7VaJS5LqYcuW+HxuiIK0
+         OfaT7bWGhupT9FLS5ojzkdsv1c2QU8mTW6hJyOWUAxjhUoQ7cCoDNRExWhCz6JNUScBJ
+         tK2D0XBltuqHlqIy3Q1mdbjuTVcBVY49ZM1k5hgfJ2g7gCpOTl6vJ0MYaMewYxhyLvEN
+         IpjHTRTNqQs7qUejnyhTFH02wTot9dM2EquSt5PVX8Q50/6loYxy/2ToZvoXAtnY6r5o
+         XMJZlBACCmqoRMkluvzEchc1mjQd8F7Z3hUcF8M8+ix0D+vzfoCCU77ot8+PToc8bCyv
+         ap6A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2tL7XMVT9dQ5Df44EIcGHgy0BaSbtcdx3OAnKoNRYRotP8YfMSYtX2jhfkcm/E8gu1TaOQo9aCkeTR42Wf50fLs1geB2cW2Lfk4wDUaOjHTjBXwokOzR+Xl6Wcv9Y9LXQwDBQXA==
+X-Gm-Message-State: AOJu0YzRn9pLYEOcw/0MFidb2UF2XjK9qWjZTP4AJ274lTZGqnLIeDvx
+	BXCl+rWNQqr0RG/2NwqCBnHZ4AWpzut152QJxWcufDuabDB7lZBj
+X-Google-Smtp-Source: AGHT+IF1LmdDz568NfaQSwCT7YStZy+hquXQ5WPIRwD8wqfSpoWD/xHua/MASQDacD79OmYmZMmJnQ==
+X-Received: by 2002:a9d:7b43:0:b0:6f9:62e9:9f93 with SMTP id 46e09a7af769-700b12a1d3emr6253705a34.35.1719269690460;
+        Mon, 24 Jun 2024 15:54:50 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce8c3775sm351009885a.59.2024.06.24.15.54.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 15:54:49 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id F3F1A120006B;
+	Mon, 24 Jun 2024 18:54:48 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 24 Jun 2024 18:54:49 -0400
+X-ME-Sender: <xms:OPl5ZmtK0iI6Fi6Fmj2yDiYNs5sfVi4xWofdYtVeq7HtMb6VrORxfw>
+    <xme:OPl5Zrft_270b-F7XNcrI-fVMbT7rFfKk1ffl6KgnJ6rriqQbUaKfubg0dofoAeVR
+    zIbZvMBOW5onjyFUw>
+X-ME-Received: <xmr:OPl5Zhz5ngCrP5c7fRAaswsMD2tD_YRI3Ne8Qp6a2iHaWvZoJekD_J7Yxk0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeegvddgudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpefhteffveeuhefhveefgfehvdejkeefuefgfeegvedtheegvdelueevvdeg
+    teffueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhlphgtrdgvvhgvnhhtshenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
+    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
+    rghmvg
+X-ME-Proxy: <xmx:OPl5ZhOlMkoJgkxgJIsdhuiePPWijGaeMtXqsXL78gbK33Hj0UxT0Q>
+    <xmx:OPl5Zm8fp_sewk5eULcag-LXjClikhGnzB3gmlQ_MV8lscpvQLlY2g>
+    <xmx:OPl5ZpW4oAlTlHShqh-g_gba_UeIawTK97MDGix8R_cak6yEqnWmJw>
+    <xmx:OPl5ZvcGPlEDTBm5JZkjPJ345taw5lW9bwjSC5GWPnP4aq-9mpQjdQ>
+    <xmx:OPl5ZgeuD_g7bwcthIgo-o5M_gsriF6XWingqBniSPEcjLatoOxMzm1n>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Jun 2024 18:54:48 -0400 (EDT)
+Date: Mon, 24 Jun 2024 15:54:14 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Leonardo Bras <leobras@redhat.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 0/4] Introduce QPW for per-cpu operations
+Message-ID: <Znn5FgqoCAUAfQhu@boqun-archlinux>
+References: <20240622035815.569665-1-leobras@redhat.com>
+ <261612b9-e975-4c02-a493-7b83fa17c607@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: frequency: add amlogic clock measure support
-To: Jerome Brunet <jbrunet@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-iio@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-References: <20240624173105.909554-1-jbrunet@baylibre.com>
- <20240624173105.909554-3-jbrunet@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240624173105.909554-3-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <261612b9-e975-4c02-a493-7b83fa17c607@suse.cz>
 
-On 6/24/24 12:31 PM, Jerome Brunet wrote:
-> Add support for the HW found in most Amlogic SoC dedicated to measure
-> system clocks.
+On Mon, Jun 24, 2024 at 09:31:51AM +0200, Vlastimil Babka wrote:
+> Hi,
+> 
+> you've included tglx, which is great, but there's also LOCKING PRIMITIVES
+> section in MAINTAINERS so I've added folks from there in my reply.
+
+Thanks!
+
+> Link to full series:
+> https://lore.kernel.org/all/20240622035815.569665-1-leobras@redhat.com/
 > 
 
+And apologies to Leonardo... I think this is a follow-up of:
 
+	https://lpc.events/event/17/contributions/1484/
 
-> +static int cmsr_read_raw(struct iio_dev *indio_dev,
-> +			 struct iio_chan_spec const *chan,
-> +			 int *val, int *val2, long mask)
-> +{
-> +	struct amlogic_cmsr *cm = iio_priv(indio_dev);
-> +
-> +	guard(mutex)(&cm->lock);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		*val = cmsr_measure_unlocked(cm, chan->channel);
+and I did remember we had a quick chat after that which I suggested it's
+better to change to a different name, sorry that I never found time to
+write a proper rely to your previous seriese [1] as promised.
 
-Is this actually returning an alternating voltage magnitutde?
-Most frequency drivers don't have a raw value, only frequency.
+[1]: https://lore.kernel.org/lkml/20230729083737.38699-2-leobras@redhat.com/
 
-> +		if (*val < 0)
-> +			return *val;
-> +		return IIO_VAL_INT;
-> +
-> +	case IIO_CHAN_INFO_PROCESSED: /* Result in Hz */
+> On 6/22/24 5:58 AM, Leonardo Bras wrote:
+> > The problem:
+> > Some places in the kernel implement a parallel programming strategy
+> > consisting on local_locks() for most of the work, and some rare remote
+> > operations are scheduled on target cpu. This keeps cache bouncing low since
+> > cacheline tends to be mostly local, and avoids the cost of locks in non-RT
+> > kernels, even though the very few remote operations will be expensive due
+> > to scheduling overhead.
+> > 
+> > On the other hand, for RT workloads this can represent a problem: getting
+> > an important workload scheduled out to deal with remote requests is
+> > sure to introduce unexpected deadline misses.
+> > 
+> > The idea:
+> > Currently with PREEMPT_RT=y, local_locks() become per-cpu spinlocks.
+> > In this case, instead of scheduling work on a remote cpu, it should
+> > be safe to grab that remote cpu's per-cpu spinlock and run the required
+> > work locally. Tha major cost, which is un/locking in every local function,
+> > already happens in PREEMPT_RT.
+> 
+> I've also noticed this a while ago (likely in the context of rewriting SLUB
+> to use local_lock) and asked about it on IRC, and IIRC tglx wasn't fond of
+> the idea. But I forgot the details about why, so I'll let the the locking
+> experts reply...
+> 
 
-Shouldn't this be IIO_CHAN_INFO_FREQUENCY?
+I think it's a good idea, especially the new name is less confusing ;-)
+So I wonder Thomas' thoughts as well.
 
-Processed is just (raw + offset) * scale which would be a voltage
-in this case since the channel type is IIO_ALTVOLTAGE.
+And I think a few (micro-)benchmark numbers will help.
 
-> +		*val = cmsr_measure_processed_unlocked(cm, chan->channel, val2);
-> +		if (*val < 0)
-> +			return *val;
-> +		return IIO_VAL_INT_64;
-> +
-> +	case IIO_CHAN_INFO_SCALE:
+Regards,
+Boqun
 
-What is this attribute being used for?
-
-(clearly not used to convert the raw value to millivolts :-) )
-
-Maybe IIO_CHAN_INFO_INT_TIME is the right one for this? Although
-so far, that has only been used with light sensors.
-
-> +		*val2 = cmsr_get_time_unlocked(cm);
-> +		*val = 1000000;
-> +		return IIO_VAL_FRACTIONAL;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
+> > Also, there is no need to worry about extra cache bouncing:
+> > The cacheline invalidation already happens due to schedule_work_on().
+> > 
+> > This will avoid schedule_work_on(), and thus avoid scheduling-out an 
+> > RT workload. 
+> > 
+> > For patches 2, 3 & 4, I noticed just grabing the lock and executing
+> > the function locally is much faster than just scheduling it on a
+> > remote cpu.
+> > 
+> > Proposed solution:
+> > A new interface called Queue PerCPU Work (QPW), which should replace
+> > Work Queue in the above mentioned use case. 
+> > 
+> > If PREEMPT_RT=n, this interfaces just wraps the current 
+> > local_locks + WorkQueue behavior, so no expected change in runtime.
+> > 
+> > If PREEMPT_RT=y, queue_percpu_work_on(cpu,...) will lock that cpu's
+> > per-cpu structure and perform work on it locally. This is possible
+> > because on functions that can be used for performing remote work on
+> > remote per-cpu structures, the local_lock (which is already
+> > a this_cpu spinlock()), will be replaced by a qpw_spinlock(), which
+> > is able to get the per_cpu spinlock() for the cpu passed as parameter.
+> > 
+> > Patch 1 implements QPW interface, and patches 2, 3 & 4 replaces the
+> > current local_lock + WorkQueue interface by the QPW interface in
+> > swap, memcontrol & slub interface.
+> > 
+> > Please let me know what you think on that, and please suggest
+> > improvements.
+> > 
+> > Thanks a lot!
+> > Leo
+> > 
+> > Leonardo Bras (4):
+> >   Introducing qpw_lock() and per-cpu queue & flush work
+> >   swap: apply new queue_percpu_work_on() interface
+> >   memcontrol: apply new queue_percpu_work_on() interface
+> >   slub: apply new queue_percpu_work_on() interface
+> > 
+> >  include/linux/qpw.h | 88 +++++++++++++++++++++++++++++++++++++++++++++
+> >  mm/memcontrol.c     | 20 ++++++-----
+> >  mm/slub.c           | 26 ++++++++------
+> >  mm/swap.c           | 26 +++++++-------
+> >  4 files changed, 127 insertions(+), 33 deletions(-)
+> >  create mode 100644 include/linux/qpw.h
+> > 
+> > 
+> > base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+> 
 
