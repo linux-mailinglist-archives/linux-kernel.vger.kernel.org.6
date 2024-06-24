@@ -1,172 +1,197 @@
-Return-Path: <linux-kernel+bounces-227792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248AE91569B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C136A9156A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE1DF283B5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D77283EB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813DD1A01A7;
-	Mon, 24 Jun 2024 18:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A783A1B5;
+	Mon, 24 Jun 2024 18:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FP87Ue1g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KH848sXj"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D6919EEDC;
-	Mon, 24 Jun 2024 18:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCFB107A0;
+	Mon, 24 Jun 2024 18:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719254639; cv=none; b=mpBC5emXFuY1gYeRHBEINJWXZuJ1sXyv1AIwuVUzXLgThPhiZK9EEk8dzW7l+rZCJ4topvC5E/QUkw+FVGhRGM0gHDuzPz83sWbfZozQHsp5U3A/EdSNvaqDbDFNUnsxvRA6hplYcw4BA0+gFpivQJkUeXbnRc2tbVxiLKeROVA=
+	t=1719254865; cv=none; b=RW1+IBv5uFvsqWYk30J9zNVyWtAWN48SrGCtlnN+D+1YgyhZ5TDB2cmbJoUrd+eik4eDmbf5yHrIKu325B7dzXmnUQQ2ludtFzkgaNJ2lgWzMJruhrkyaMLrSUlnXhM6jQ9J1vlmEZlalYCpKsSBGspwT4AXhd7OLy42tb+ZWlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719254639; c=relaxed/simple;
-	bh=y09e6y3PeUQTPhabq8qHYrMiOnKZ9HBKHtMmPq9jIFI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fThiI7W7KPvib8Yz/k81dEjpLjYa7V3ao6pbrXcLIOT76zdAiI3Hk8p2xj91XdDAiQUDVr/AonOObrRKO60/Ub/EQYfP7uWhBx/wN7AnDAL22CxJlIP9ZmMrY5F1KwT6qn6XeoOpGpGIYRjbii0UMZX0+8y6HsI2ZBIuHeWDMls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FP87Ue1g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D6BC32789;
-	Mon, 24 Jun 2024 18:43:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719254639;
-	bh=y09e6y3PeUQTPhabq8qHYrMiOnKZ9HBKHtMmPq9jIFI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FP87Ue1g18Vqn8BDTPayHDVW/bKrfs54ZpNc/1IdN6pHQMD1Kmd5jMs6yqkayRtsE
-	 oslOGn83lqLU40CTB/7bi7+Yhjs7FOSS5GnCtJMSlZZAEt6RvgrPqc0A6twzo9bUz/
-	 b3jgkGdf7j7FpXD9E/mQVNCHt+8m1xSiH3/nADHKgMFa0NRjRnvDrqBCXE1P5ypo56
-	 GSrhTo+B9e3XGaktMmpFk21vVFRa5q2g6ICL4xLQEsFTefUC4jyAapCPr25uYvkca8
-	 c7wUKvnO6Gt8gMeI+25lMDhxmG04lu1qbMaqZaHByBzL0wkj2uiDhgcd4i+1YjtrSB
-	 TZtlYyK7AhCGQ==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-25ce35c52e7so414154fac.2;
-        Mon, 24 Jun 2024 11:43:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUzsWOhlW61fVeEJ5c8Gt/eRJmEM8/4yW6OpWUZcNMhStmjCuHC3xJ5NVbQ0jAFGsOI1O9eR0JK6hjzbB2CeGcJW8DnwvDEdJjxaopw
-X-Gm-Message-State: AOJu0YxsJ8ygXQEaYMnT8YRMwaMrhcngpEEN6zsiqZJFkDOISYtwlVM7
-	rK15q4qNkZ5X1MAblRrF+N4sCfRBstEzUZsCocRJbX2Kz5evroJJU0aVrQEqQFtqKu2ZKlZMOIN
-	P15Pahvd+5PsXlAYMQIx1jLGoX3o=
-X-Google-Smtp-Source: AGHT+IGTXjnfYP8viplDaPFq7kk2cs7jdpgsKnxMHLUQJseBZC6rbfldcwceT98hEEwqh9gl2GiZAfqQcpHTyfNr5hY=
-X-Received: by 2002:a4a:d24a:0:b0:5bb:815d:e2ab with SMTP id
- 006d021491bc7-5c1e5ef0b32mr6931402eaf.1.1719254638638; Mon, 24 Jun 2024
- 11:43:58 -0700 (PDT)
+	s=arc-20240116; t=1719254865; c=relaxed/simple;
+	bh=iSRiFadtGmfW5DinBrHg7lzX64qYBLqS8iUI82vKX44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PCfm0zm1Wgc08c+o5fMI4dOVBP/RRyQkp5Nvw9wy9PYg95IAKD67VzGaWRn0feUTCJPmEXUpeo3MSrnFTODukwL+5cvbOqIeU4PoZg8HUyJFEWj6Ex3HmsDmCwHp7w8kB29T6tMmX/QfR/iZKxlOf743lGUm8v+GJPTnhtkp4Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KH848sXj; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b9706c84e5so2638900eaf.1;
+        Mon, 24 Jun 2024 11:47:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719254863; x=1719859663; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=SgFYgh/xElk+4fWUpR1t91Wn0xTw9rHNL06B0HuItYU=;
+        b=KH848sXjcdozfe0gAostAiZIF0J0LsUzK07auX4CGjCWFm/jkq1Kc80hnvxdOxRfwp
+         UGGYeE+MHFAaZM8Z3XzHGSXfbWwn54dXJuKAq6G2fg4sQLrC+qho/WKbPMuySpji9Wd/
+         4XxeL2Dp6ezdh8AShYjlnNfofyGqz2cmpxoxMQwwhzEpavL63Sqv5WJtGB3VhJCo4GAY
+         SvqqGk1Zw8rZiOXOZYtyBQcx3kp5DF5mLezc0E0qDaibYAP0BRTRDWZgnBpibPpnQDu3
+         sjG3wDMzMlrLBGv/KFavzyg1kWR7RyzRwHcoWy86cs02J4KKERUiJ6VsJav4u4bb4bGS
+         8ViA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719254863; x=1719859663;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SgFYgh/xElk+4fWUpR1t91Wn0xTw9rHNL06B0HuItYU=;
+        b=vcQO1pgKcYhJ14ZNPnOxl+XQLDZ2PvrUS7QyiDEFmTApuUk1h5APRYLvlnimziuuvU
+         AC6PzLCouBE0TvfoBpDWfUScp5wIYZxjowg0Hw3sR4L+BPoidt/c4bWa56fuoP4LitnD
+         0S/YCfFnwEyjshzYwJzWBKVK2AFjk9myHSCjxauKQoTjE1xIVqGhjdpwfEvd/8CpuT6V
+         Nu0MuvkkTSeHnGu/q+txXonfBt920Ul55l92P6tvAXABTMpxR5K2IskpigN5TAGHy4sH
+         NmzRvvjqgoAiW1+w93ESVDLEWm1zHxIS5FxwbQNYnrAdVBsgzvU0eqkEXctUIwm8NJ5b
+         9LAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmBUeelJQ8MZlwhfD4d7qLsUJPKG8seEvXYleM9TmyFBbvzedcDKh5skvqdX2zmylHKQ2BE7Wrf0n0CpnQcfsmCitdHF07e2Dfq/ANiF2HFPX5XOZ/wpLq7F2fmAvVVWVQnJFP8tI=
+X-Gm-Message-State: AOJu0Yy+dicSeKaydsk36MniPtNRcdG1NhV27C8VVe7PqnfB4p3AbKDD
+	Rbc1oH8Una4M5PN8z6ZNM8O1IfuMeUB6Ki4Xqt++6Y5WZuoWc7h+hjw9bw==
+X-Google-Smtp-Source: AGHT+IH3qGAzIZZqhyg+fbdWD7v0fLPcqvPul2GmQ7kiC7/GdvcJO7n1z86LFMIDJm7HkhUXeLG0Jw==
+X-Received: by 2002:a05:6358:808a:b0:1a1:c718:d2db with SMTP id e5c5f4694b2df-1a23c1c5c64mr725394855d.27.1719254862799;
+        Mon, 24 Jun 2024 11:47:42 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716baf4bedbsm5840324a12.76.2024.06.24.11.47.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 11:47:41 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <ff43e01e-5a26-4b75-bfaa-ed3ad4395e7c@roeck-us.net>
+Date: Mon, 24 Jun 2024 11:47:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12464461.O9o76ZdvQC@rjwysocki.net>
-In-Reply-To: <12464461.O9o76ZdvQC@rjwysocki.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 24 Jun 2024 20:43:43 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hYw1xj7a4eGvm=m6xbP9ptSWLEPN7Da4-bxZ3-00GP4A@mail.gmail.com>
-Message-ID: <CAJZ5v0hYw1xj7a4eGvm=m6xbP9ptSWLEPN7Da4-bxZ3-00GP4A@mail.gmail.com>
-Subject: Re: [PATCH v1] thermal: gov_step_wise: Go straight to instance->lower
- when mitigation is over
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>, Steev Klimaszewski <steev@kali.org>, 
-	Johan Hovold <johan+linaro@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] hwmon: iio: Add labels from IIO channels
+To: Sean Anderson <sean.anderson@linux.dev>,
+ Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+References: <20240624174601.1527244-1-sean.anderson@linux.dev>
+ <20240624174601.1527244-3-sean.anderson@linux.dev>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240624174601.1527244-3-sean.anderson@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jun 22, 2024 at 2:28=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.ne=
-t> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Commit b6846826982b ("thermal: gov_step_wise: Restore passive polling
-> management") attempted to fix a Step-Wise thermal governor issue
-> introduced by commit 042a3d80f118 ("thermal: core: Move passive polling
-> management to the core"), which caused the governor to leave cooling
-> devices in high states, by partially revering that commit.
->
-> However, this turns out to be insufficient on some systems due to
-> interactions between the governor code restored by commit b6846826982b
-> and the passive polling management in the thermal core.
->
-> For this reason, revert commit b6846826982b and make the governor set
-> the target cooling device state to the "lower" one as soon as the zone
-> temperature falls below the threshold of the trip point corresponding
-> to the given thermal instance, which means that thermal mitigation is
-> not necessary any more.
->
-> Before this change the "lower" cooling device state would be reached in
-> steps through the passive polling mechanism which was questionable for
-> three reasons: (1) cooling device were kept in high states when that was
-> not necessary (and it could adversely impact performance), (2) it only
-> worked for thermal zones with nonzero passive_delay_jiffies value, and
-> (3) passive polling belongs to the core and should not be hijacked by
-> governors for their internal purposes.
->
-> Fixes: b6846826982b ("thermal: gov_step_wise: Restore passive polling man=
-agement")
-> Closes: https://lore.kernel.org/linux-pm/6759ce9f-281d-4fcd-bb4c-b784a1cc=
-5f6e@oldschoolsolutions.biz
-> Reported-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 6/24/24 10:46, Sean Anderson wrote:
+> Add labels from IIO channels to our channels. This allows userspace to
+> display more meaningful names instead of "in0" or "temp5".
+> 
+> Although lm-sensors gracefully handles errors when reading channel
+> labels, the ABI says the label attribute
+> 
+>> Should only be created if the driver has hints about what this voltage
+>> channel is being used for, and user-space doesn't.
+> 
+> Therefore, we test to see if the channel has a label before
+> creating the attribute.
+> 
+
+FWIW, complaining about an ABI really does not belong into a commit
+message. Maybe you and lm-sensors don't care about error returns when
+reading a label, but there are other userspace applications which may
+expect drivers to follow the ABI. Last time I checked, the basic rule
+was still "Don't break userspace", and that doesn't mean "it's ok to
+violate / break an ABI as long as no one notices".
+
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 > ---
->  drivers/thermal/gov_step_wise.c |   23 +++++------------------
->  1 file changed, 5 insertions(+), 18 deletions(-)
->
-> Index: linux-pm/drivers/thermal/gov_step_wise.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-pm.orig/drivers/thermal/gov_step_wise.c
-> +++ linux-pm/drivers/thermal/gov_step_wise.c
-> @@ -55,7 +55,11 @@ static unsigned long get_target_state(st
->                 if (cur_state <=3D instance->lower)
->                         return THERMAL_NO_TARGET;
->
-> -               return clamp(cur_state - 1, instance->lower, instance->up=
-per);
-> +               /*
-> +                * If 'throttle' is false, no mitigation is necessary, so
-> +                * request the lower state for this instance.
-> +                */
-> +               return instance->lower;
->         }
->
->         return instance->target;
-> @@ -93,23 +97,6 @@ static void thermal_zone_trip_update(str
->                 if (instance->initialized && old_target =3D=3D instance->=
-target)
->                         continue;
->
-> -               if (trip->type =3D=3D THERMAL_TRIP_PASSIVE) {
-> -                       /*
-> -                        * If the target state for this thermal instance
-> -                        * changes from THERMAL_NO_TARGET to something el=
-se,
-> -                        * ensure that the zone temperature will be updat=
-ed
-> -                        * (assuming enabled passive cooling) until it be=
-comes
-> -                        * THERMAL_NO_TARGET again, or the cooling device=
- may
-> -                        * not be reset to its initial state.
-> -                        */
-> -                       if (old_target =3D=3D THERMAL_NO_TARGET &&
-> -                           instance->target !=3D THERMAL_NO_TARGET)
-> -                               tz->passive++;
-> -                       else if (old_target !=3D THERMAL_NO_TARGET &&
-> -                                instance->target =3D=3D THERMAL_NO_TARGE=
-T)
-> -                               tz->passive--;
-> -               }
-> -
->                 instance->initialized =3D true;
->
->                 mutex_lock(&instance->cdev->lock);
->
+> 
+> Changes in v2:
+> - Check if the label exists before creating the attribute
+> 
+>   drivers/hwmon/iio_hwmon.c | 45 ++++++++++++++++++++++++++++++++++-----
+>   1 file changed, 40 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
+> index 4c8a80847891..5722cb9d81f9 100644
+> --- a/drivers/hwmon/iio_hwmon.c
+> +++ b/drivers/hwmon/iio_hwmon.c
+> @@ -33,6 +33,17 @@ struct iio_hwmon_state {
+>   	struct attribute **attrs;
+>   };
+>   
+> +static ssize_t iio_hwmon_read_label(struct device *dev,
+> +				  struct device_attribute *attr,
+> +				  char *buf)
+> +{
+> +	struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
+> +	struct iio_hwmon_state *state = dev_get_drvdata(dev);
+> +	struct iio_channel *chan = &state->channels[sattr->index];
+> +
+> +	return iio_read_channel_label(chan, buf);
+> +}
+> +
 
-If there is no feedback, I'm going to assume that this is fine with everybo=
-dy.
+I personally find it a bit kludgy that an in-kernel API would do a
+sysfs write like this and expect a page-aligned buffer as parameter,
+but since Jonathan is fine with it:
 
-Thanks!
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+
+Jonathan, please apply through your tree.
+
+Thanks,
+Guenter
+
 
