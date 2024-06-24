@@ -1,70 +1,57 @@
-Return-Path: <linux-kernel+bounces-227798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FB79156AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:53:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD599156AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4422840C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:53:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE32B1C22010
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC70F19EED7;
-	Mon, 24 Jun 2024 18:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B4019FA9B;
+	Mon, 24 Jun 2024 18:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXtXonHv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpyChkak"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC1E1BC20;
-	Mon, 24 Jun 2024 18:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7225619DF76;
+	Mon, 24 Jun 2024 18:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719255200; cv=none; b=bZYnrvq/OSifWc+Q7V0y5ib43XvjeIoZDkUXQgTOm3hVu8UOcll1JW7lQb5DX4eTuFF6+BG84CFxBZFAqNSirmay8CKJRAsVpdQxb9Xwi17i6EUkePnN+Kx9ylpUHpfiDpO/4bFf3KHkGBkgCEtBNTh/8pRsNDENJ6weQTbL1fk=
+	t=1719255200; cv=none; b=ch5gfjOzUHEBMtFR+RBmMKJzfrKNLvBkFYJVovfauIeOkgqu0FiWRzg8y3BkKj66tYVCzMuBP3VR5zdxvOIC682Z+f1CFHyS32mN9LCQ/b0/lwNG86EVd3zFsNUtwKFJgnHuuZ9DNZKmdkYsD8ky1lnOtnMNRHnDc0gbrHdwwXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719255200; c=relaxed/simple;
-	bh=5SQ6k8ql2FtQ24ggunQpn42cMs/9ehVKj7ffUjrSWaY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MLg9oNn3B52jrj0ynaJOqin26VxBpxwm88RoxzDWwRcwCx0Ws6bNR6fTS+AQDSzDFJsQLaQejHPuG8/k3++qIQpkRxc+iYT7VR3GxKkSlwgBqCzgLUElSUXQcbcbQsEvwr2Xv3zT9DBOtuQtn701X0v/SULYElD74Kb6FUJGeYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXtXonHv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C84DEC2BBFC;
-	Mon, 24 Jun 2024 18:53:17 +0000 (UTC)
+	bh=3iuaNYlIUIrwAvKsdT038w1HZlSEJOm5YS4SlS+Qm0g=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Z2hF5W1NacXet42ZdrO56CNHGgZiy4acPSlaMAkMtx4MYZSiEgLIE5Xz0FFUHTFuuxh0feEFVWElKO9zaVwGtcqv2mPyGIgC9WQmeXxwsIU9KUOLnsEuCgentLU7k8mM3Q0JSuo+jgV8uYt8Y1oK6obmX1mPG4umARJlk+iGUdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpyChkak; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9134AC4AF0A;
+	Mon, 24 Jun 2024 18:53:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719255199;
-	bh=5SQ6k8ql2FtQ24ggunQpn42cMs/9ehVKj7ffUjrSWaY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VXtXonHvyo+lWD0+pd+wr848CsLJDdbee4dVtqEC+taFZleV+/ScGSS1Uh5KTQv5a
-	 QnFj79HuE41StMAO09LmxsiUmLstImWmWCDWn9q/8trkmxUYT8DvzromPaS2Qg6S+c
-	 yV+9dimLGjxNQQ9lyL5Leh41aBeHHK3yr2nSTCCobOdAmIQfQluJ2yGek/SeYlcNbS
-	 NwEYmE70UeDPIsdiuGmk/c3RnO+nRiAyMNO1/lHiMhtxOY+SkmgIYqN7gcT3Z1UQaq
-	 +sF+wjYNdfcq3fyuNJpJ+OypNUfBlIgqoSAUVIEwvBslVQ4xxkIFgnhj+a4ejS3oRM
-	 Svk9o0CE5wYNw==
+	s=k20201202; t=1719255200;
+	bh=3iuaNYlIUIrwAvKsdT038w1HZlSEJOm5YS4SlS+Qm0g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LpyChkakCvBDH9pShqIbfVywHANNmLrDMCawTl8TZ7xI6XyKjEkVwhvD1Ie97R4Nq
+	 4xkNwEND7ojRY/T8kqrrvZZmYP3y/8T2hyGeP6mCWOzZR4SxepdFLOb/8Sm7HILlbH
+	 WlGtHqjHOGUROuK5S+PSYGPOnLsyXw5iKu9asnkoKWMh63QM/G7zJN4qp0lr4TeBlh
+	 jYCWO+MlcY/hCwDVl6/JsCiJiCzY+fgISIgGUXuuUT23bzYEskNalQO0X2eIkrdNZX
+	 Bs8V3QBiF5Nq5fjbM994PiJ+hSyL6bv42IhiXg1nme56zli8HDeYIcWLF3OKaQuWwI
+	 uD5CKIjiVFe+g==
 From: SeongJae Park <sj@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: SeongJae Park <sj@kernel.org>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alex Shi <alexs@kernel.org>,
-	Avadhut Naik <avadhut.naik@amd.com>,
-	Bill Wendling <morbo@google.com>,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
-	Federico Vaga <federico.vaga@vaga.pv.it>,
-	Hu Haowen <2023002089@link.tyut.edu.cn>,
-	Justin Stitt <justinstitt@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	llvm@lists.linux.dev,
 	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] minor document fixups
-Date: Mon, 24 Jun 2024 11:53:05 -0700
-Message-Id: <20240624185312.94537-1-sj@kernel.org>
+Subject: [PATCH 1/7] Docs/process/index: Remove unaligned-memory-access from 'Other material'
+Date: Mon, 24 Jun 2024 11:53:06 -0700
+Message-Id: <20240624185312.94537-2-sj@kernel.org>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240624185312.94537-1-sj@kernel.org>
+References: <20240624185312.94537-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,50 +60,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series is for minor document fixups.  First five patches
-clean up and remove 'Other material' section of process/index in favor
-of 'staging/' and better place for docs on the section.  A patch for
-adding DAMON maintainer-profile reference on maintainers' handbook
-follows.  And then the last patch adds 'hkml' as one of available email
-tools on email-clients document.
+'unaligned-memory-access document' is linked on 'Other material' section
+of 'core-api/index', which is for unsorted documents.  But it is
+actually well organized under 'core-api/' directory, and linked on the
+'core-api/index'.  Remove it from 'Other material' section of
+'process/index' document.
 
-SeongJae Park (7):
-  Docs/process/index: Remove unaligned-memory-access from 'Other
-    material'
-  Docs/process/index: Remove riscv/patch-acceptance from 'Other
-    material' section
-  Docs: Move magic-number from process to staging
-  Docs: Move clang-format from process/ to dev-tools/
-  Docs/process/index: Remove unsorted docs section
-  Docs/maintainer/maintainer-entry-profile: add DAMON maintainer profile
-  Docs/process/email-clients: Document HacKerMaiL
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+ Documentation/process/index.rst | 1 -
+ 1 file changed, 1 deletion(-)
 
- .clang-format                                         |  2 +-
- Documentation/{process => dev-tools}/clang-format.rst |  0
- Documentation/dev-tools/index.rst                     |  1 +
- Documentation/maintainer/maintainer-entry-profile.rst |  1 +
- Documentation/process/4.Coding.rst                    |  2 +-
- Documentation/process/coding-style.rst                |  2 +-
- Documentation/process/email-clients.rst               |  9 +++++++++
- Documentation/process/index.rst                       | 11 -----------
- Documentation/staging/index.rst                       |  1 +
- Documentation/{process => staging}/magic-number.rst   |  0
- .../translations/it_IT/process/clang-format.rst       |  2 +-
- .../translations/it_IT/process/magic-number.rst       |  2 +-
- .../translations/sp_SP/process/coding-style.rst       |  2 +-
- .../translations/sp_SP/process/magic-number.rst       |  2 +-
- Documentation/translations/zh_CN/process/4.Coding.rst |  2 +-
- .../translations/zh_CN/process/coding-style.rst       |  2 +-
- .../translations/zh_CN/process/magic-number.rst       |  2 +-
- Documentation/translations/zh_TW/process/4.Coding.rst |  2 +-
- .../translations/zh_TW/process/coding-style.rst       |  2 +-
- .../translations/zh_TW/process/magic-number.rst       |  2 +-
- 20 files changed, 25 insertions(+), 24 deletions(-)
- rename Documentation/{process => dev-tools}/clang-format.rst (100%)
- rename Documentation/{process => staging}/magic-number.rst (100%)
-
-
-base-commit: 88407e61007a3d3ebb62fc65479cc58d891ef74e
+diff --git a/Documentation/process/index.rst b/Documentation/process/index.rst
+index de9cbb7bd7eb..f66f9cbd0300 100644
+--- a/Documentation/process/index.rst
++++ b/Documentation/process/index.rst
+@@ -116,7 +116,6 @@ lack of a better place.
+    magic-number
+    clang-format
+    ../arch/riscv/patch-acceptance
+-   ../core-api/unaligned-memory-access
+ 
+ .. only::  subproject and html
+ 
 -- 
 2.39.2
 
