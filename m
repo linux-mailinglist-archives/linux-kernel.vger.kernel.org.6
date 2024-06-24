@@ -1,52 +1,59 @@
-Return-Path: <linux-kernel+bounces-226773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2094914366
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9796C91436F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2BF2850A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:16:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F87284EF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC744085D;
-	Mon, 24 Jun 2024 07:15:31 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017F23D393;
-	Mon, 24 Jun 2024 07:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63F23A1DA;
+	Mon, 24 Jun 2024 07:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I3rsCYgT"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E745F9D9;
+	Mon, 24 Jun 2024 07:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719213331; cv=none; b=i6TGR1BRJeyRAKso3GuO5xaSZscJknjDkJNTQGF9Yil9D/0/DgvRs4OVJ17nLpbv+oNkVI379kArk5hF9CFeEJ3Ji1NDlKhiiA6shhj7SRBcl7WbyaVBVJ1dOxAdiwp8Z0Qtk8B42TrvNgw5Zoy1cFkWVXlKjffPG5MVw//hy7s=
+	t=1719213479; cv=none; b=k3kBptwSkFj1gIYhAEsn/G52m3BESmSNL8IlpRqFA0CHukl8fLwVWjyZVEGiqtliNHSClkpGjQ611LtCnYjjn9oLukCRvI2q+G2WOH7dygLwKOmvzc3aM8bRLUMaDBpb+YkFOV52fSmSa7IUimMJUZgaQJay6vLN1c8lrNnbzwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719213331; c=relaxed/simple;
-	bh=tMij1kigYbysiBVjoK1zx02otlNc/5BcBakZSzod/Sw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZwEDr14GrPtlFXRdpVda3Zki6af2tCVKi+MkF+oUassSJ9xGPX6zy19FzObHqgw6sQB1pqo79pZC082WgzuJ8wHRLNLdqwpWV1v30ezMZRh47XeHmqlIQL2O8RuyoK0UNs8ENQRqNgkG/Dn81rXPHkSUANEUmImQGC9tTiBoEzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8AxnOrSHHlmJnEJAA--.37961S3;
-	Mon, 24 Jun 2024 15:14:26 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxMMTPHHlmftsuAA--.9847S9;
-	Mon, 24 Jun 2024 15:14:25 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	Sean Christopherson <seanjc@google.com>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
+	s=arc-20240116; t=1719213479; c=relaxed/simple;
+	bh=6oS5SW09U8iQI6kzm5UHdHG/LGzrzqRPipDYAs+0mRM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pc1pdKJWuXIBArXiUgy0LPzOM7+mEJpeZkL/gCqlbqfPc2o/N9jqsA80Mw86xKdjUyiBgjl4nnLhGF0y6PYSwEK4H3K726e079B/n0c5w/xKpr2UhnJDbSmRhM38aqz0l4fUu3IoxHyskKgjjAXXjVyKKmI46meAwsoHTqQrjnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I3rsCYgT; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 40086FF80A;
+	Mon, 24 Jun 2024 07:17:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719213468;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=o8kSx2joD+PfTxvQH91rVyfBDjegpaIQB2A5DqXaBqI=;
+	b=I3rsCYgTACtO0hu4hIlg+9neNw7RITs6XGjwsQOGBCTS3KAQPsDmjtUdYVqImJM13KpsF/
+	RGJujrYd8CV8EQFaPWEND7tNJtpchOVleEiSKXTPX9Xucs90AB/UFXXHLy1O6VCHBnO3D1
+	YlQAcpB82prKFHk8pdq3jp5wcX2uioVIxv3sPVyyhVNPw6nnfLSlUWfE9qNvDFVHq/IqU4
+	w6B45XwkT1iPc6umNDNPZxute9ApB8ih68/OAbi24ZJ9NoOk27AmyV+hckg+delXcxMs6u
+	rQT/jIaaCulIx6LOWpu0BafIOEwwPBXZ6Uu3X25pIsY19LBgxpG61EbzRdiDFg==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	WANG Rui <wangrui@loongson.cn>
-Subject: [PATCH v3 7/7] LoongArch: KVM: Sync pending interrupt when getting ESTAT from user mode
-Date: Mon, 24 Jun 2024 15:14:22 +0800
-Message-Id: <20240624071422.3473789-8-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240624071422.3473789-1-maobibo@loongson.cn>
-References: <20240624071422.3473789-1-maobibo@loongson.cn>
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH] spi: davinci: Unset POWERDOWN bit when releasing resources
+Date: Mon, 24 Jun 2024 09:17:45 +0200
+Message-ID: <20240624071745.17409-1-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,53 +61,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8DxMMTPHHlmftsuAA--.9847S9
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Currently interrupt is posted and cleared with asynchronous mode, and it
-is saved in SW state vcpu::arch::irq_pending and vcpu::arch::irq_clear.
-When vcpu is ready to run, pending interrupt is written back to ESTAT
-CSR register from SW state vcpu::arch::irq_pending at guest entrance.
+On the OMAPL138, the SPI reference clock is provided by the Power and
+Sleep Controller (PSC). The PSC's datasheet says that 'some peripherals
+have special programming requirements and additional recommended steps
+you must take before you can invoke the PSC module state transition'. I
+didn't find more details in documentation but it appears that PSC needs
+the SPI to clear the POWERDOWN bit before disabling the clock. Indeed,
+when this bit is set, the PSC gets stuck in transitions from enable to
+disable state.
 
-During VM migration stage, vcpu is put into stopped state, however
-pending interrupt is not synced to ESTAT CSR register. So there will be
-interrupt lost when VCPU is migrated to other host machines.
+Clear the POWERDOWN bit when releasing driver's resources
 
-Here when ESTAT CSR register is read from VMM user mode, pending
-interrupt is synchronized to ESTAT also. So that vcpu can get correct
-pending interrupt.
-
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
 ---
- arch/loongarch/kvm/vcpu.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Hi,
 
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index b747bd8bc037..6b612b8390f7 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -371,6 +371,17 @@ static int _kvm_getcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 *val)
- 		return -EINVAL;
+I ran into this bug by enabling the 'cs-gpio' property. It causes the
+probe to fail at first with -EPROBE_DEFER because the gpio provider is
+not ready. So the clock gets disabled. In the clock controller's driver
+(drivers/clk/davinci/psc.c) the clock_disable() calls a
+regmap_read_poll_timeout() with an infinite timeout. This poll() polls
+a transition bit status that never goes down so we end stuck in the
+middle of the boot sequence.
+
+ drivers/spi/spi-davinci.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index be3998104bfb..f7e8b5efa50e 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -984,6 +984,9 @@ static int davinci_spi_probe(struct platform_device *pdev)
+ 	return ret;
  
- 	if (id == LOONGARCH_CSR_ESTAT) {
-+		preempt_disable();
-+		vcpu_load(vcpu);
-+		/*
-+		 * Sync pending interrupt into estat so that interrupt
-+		 * remains during migration stage
-+		 */
-+		kvm_deliver_intr(vcpu);
-+		vcpu->arch.aux_inuse &= ~KVM_LARCH_SWCSR_LATEST;
-+		vcpu_put(vcpu);
-+		preempt_enable();
+ free_dma:
++	/* This bit needs to be cleared to disable dpsi->clk */
++	clear_io_bits(dspi->base + SPIGCR1, SPIGCR1_POWERDOWN_MASK);
 +
- 		/* ESTAT IP0~IP7 get from GINTC */
- 		gintc = kvm_read_sw_gcsr(csr, LOONGARCH_CSR_GINTC) & 0xff;
- 		*val = kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT) | (gintc << 2);
+ 	if (dspi->dma_rx) {
+ 		dma_release_channel(dspi->dma_rx);
+ 		dma_release_channel(dspi->dma_tx);
+@@ -1013,6 +1016,9 @@ static void davinci_spi_remove(struct platform_device *pdev)
+ 
+ 	spi_bitbang_stop(&dspi->bitbang);
+ 
++	/* This bit needs to be cleared to disable dpsi->clk */
++	clear_io_bits(dspi->base + SPIGCR1, SPIGCR1_POWERDOWN_MASK);
++
+ 	if (dspi->dma_rx) {
+ 		dma_release_channel(dspi->dma_rx);
+ 		dma_release_channel(dspi->dma_tx);
 -- 
-2.39.3
+2.45.0
 
 
