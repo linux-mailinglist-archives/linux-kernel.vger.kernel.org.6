@@ -1,114 +1,197 @@
-Return-Path: <linux-kernel+bounces-228037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C008D9159E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:30:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C700E9159E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CE3DB20AC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:30:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA6061C221AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1CE1A2541;
-	Mon, 24 Jun 2024 22:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864591A01BD;
+	Mon, 24 Jun 2024 22:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeGCPk+n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uaOFpn2P"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C674A45C1C;
-	Mon, 24 Jun 2024 22:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F298845C1C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719268224; cv=none; b=g51kl5y9hji+GGpoafnJ1L4L5OIEoBNiCcGqti2jfdMagjNi/jZyVcrgpKOkdNjtbUre37WPTVgS6E5HGiQ3YVomzGXLquODe3RC+QoFSymAb8cqPMCcW0EqsBV3QtVDj5mL8C4OJ25m+g++cY5cXgOt4D9S+kVX0yIVa0x+dAw=
+	t=1719268310; cv=none; b=nw4mWWcoP/Kc5YwppEJV4EmlJ63To/eXWEHmhN/jJ+NrgGtH+iREE/ZYv1i0mVyoLk/9NKVJMLokbYld8RhZ9vJyrX2/mfmBaRpY2TxUgSbvEG1pqZE/CorlmEPqQsDIBlkfW4UnQdtKoDONX6e2klVbFFwSTZ1I4X+v2LXb6xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719268224; c=relaxed/simple;
-	bh=2arpIBMsaGBDFcWMlj/bcfBvS51IHtb8fwvNCwO1pLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ay1P4wTc4l9/ro3lg7W3xEr7KEf5pxynBVd0nGvHc8mVWzwNyfv8B4/fANnv5ivH9ytqm9AHOSQQDD7PuZ2HnTV/MQ0lxQaAN/BJmvipGm76Et3LS5pHSKVFSpK8kWVpDJvMNqewSpSVpNKRfAojC88KLSAFoYTb1X3LXpGFOmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeGCPk+n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9F85C2BBFC;
-	Mon, 24 Jun 2024 22:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719268224;
-	bh=2arpIBMsaGBDFcWMlj/bcfBvS51IHtb8fwvNCwO1pLI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AeGCPk+nxKe2Eopto8yw/oF7EqMFZvHj6ROeHju+povaRuDiNqp7QsISvqe0p/O51
-	 lbYgR/VjwF5cm/dDmr4CneG0k9tP98/RjX65Km38pAgOwSFuAGhiaeTDspPzaqxQZ0
-	 vSi8Xa2f/ICfMHYQPbJk9OaaHpfXAOCfKyUISYQ5azx5sZo4Owh8WePLKvg5HioWO1
-	 /G2FW/Erldp/NYcTdkpSP8KYpdb6EJBRlPnzUtFiSTBpBoPHD4yT+3P81Ox/qOukDm
-	 nn9e2o7yMJE7ofZJv7DZcoU9kfzH0PvCAcPeEq9/wA6czlQVsWsbx24z191JSqLY9O
-	 d9oogWl5UYoQA==
-Date: Mon, 24 Jun 2024 15:30:23 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Aaron Conole <aconole@redhat.com>
-Cc: netdev@vger.kernel.org, dev@openvswitch.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B
- Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
- <shuah@kernel.org>, Stefano Brivio <sbrivio@redhat.com>, =?UTF-8?B?QWRy?=
- =?UTF-8?B?acOhbg==?= Moreno <amorenoz@redhat.com>, Simon Horman
- <horms@kernel.org>
-Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
- the internal ovs script.
-Message-ID: <20240624153023.6fabd9f1@kernel.org>
-In-Reply-To: <f7tpls6gu3q.fsf@redhat.com>
-References: <20240620125601.15755-1-aconole@redhat.com>
-	<20240621180126.3c40d245@kernel.org>
-	<f7ttthjh33w.fsf@redhat.com>
-	<f7tpls6gu3q.fsf@redhat.com>
+	s=arc-20240116; t=1719268310; c=relaxed/simple;
+	bh=/wYeukcGYOYua/ccS0QL/OjPELVgVI7MwJbjQh5Xmw4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cHwmk07JpYs015qfj5erJ+X9n2en+984rSc4uGEx4gpis/nZKwtcKBcM9d4DCk5zgq/iAjFSLsNJ8gK780MSpDzCeMAtkaqgr7o6OSbkE5B2YCKvUvy4Dcd2SKvAzYCM1hWGzF9wwS6Wg+CQOw4aOHGZhILaiHk32dCU5bjYX/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uaOFpn2P; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-63174692a02so45243807b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:31:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719268308; x=1719873108; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qIO6L8ZwDHVir4TCZfhgf68ODGhPU8MUrulhinehcl0=;
+        b=uaOFpn2PLpAZ5ghAHEzNPjK8Ao+NzUx3C/c9m6MaMjPxXEL+ChQa6EjSlU6JhX1Ico
+         4wXICwOcMRzJt6CCrId+t099ve2DjY9AKVDiQS8jKL5sWQqQCzwNS5GzIaWQbm38l2nq
+         l3kfnRvn7gbeRNfd7zkN4pe/uXlT7of46pPexPtKjoeojLpSpZvDzhbtfK1lCHKyxRjc
+         nVKE9RyxlNkoKBjzwFw+5WDLhvgdS2b2Ej96Fuy6Wk7ZlvV2WDqAf1iue3uiQZI04Kp9
+         yCkZ1xsIKBMBcYkQStBnGM/LxgQZHpX4gvc0J0lLUjgX76zAVhKsvLKZTHATSGoGvqiJ
+         cJRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719268308; x=1719873108;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qIO6L8ZwDHVir4TCZfhgf68ODGhPU8MUrulhinehcl0=;
+        b=vU4JvtU8Dwc8NtacY7sYCeUQn8IbrFBNZKOt+q2D1tJIwxIL4HLEZS71rgwJCmKYqP
+         OGPoVkI1J8nSbEjXKGG9QcmlsoCNPKLdYDIyF51TUOEi8KK3UXB88J37oBuQcS9KgqN7
+         QvMz0uYXEW0lpMc/tDPqMlnaF76UxRzrhtG5yKHe8mm8rshc8HG8vfj+xnoZlC9Q9Am9
+         jBcceqWJ+FbIcTrsmJAWYUX7qTm/83vL3qXjUXAAWf4Pm7qDGI78gBY7pFF1AR6rbdWm
+         WYkD3wAAg1iCQqmQy+ZS2NPi6+MQTtrQ1see9j+DTkJG9rEAOZg47MASwHNiJ/g0BsvH
+         YESw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqZItKGRB1UhitdR74UHCaqXJCswFJ43yoOSmYWZRHu5Jq+wdfplFVpC2IMO9Z8Rumnyk5CIcLWVBpYBl6rjy31A2f8bTV6Q4t5h0f
+X-Gm-Message-State: AOJu0YwkKMYPMKfrO8WqMCDMx2lzY1GBifjK4SiJwPSD5NQB1Q04vesf
+	A/1jbEXc4aghxepIJJlP63Xgq9cno4eLnKUJA56UWKAaUNBT37iNoXtOMZ92YM+HlkR8IjyZoz9
+	3P9qdYsZbed5u9BRCzIwpQAlHMj9XDY4sdgb0FQ==
+X-Google-Smtp-Source: AGHT+IHxeTzr4PcR5ms4PmjBj1L6UTmm+uRxD7cBU4erUoCBxFr06g42k6Ip0LggYP5LsFyQTU9FM1W8fWsJyQZNlSc=
+X-Received: by 2002:a05:690c:6c0d:b0:643:9a13:fae2 with SMTP id
+ 00721157ae682-6439a13fd13mr77354467b3.28.1719268307956; Mon, 24 Jun 2024
+ 15:31:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-0-8590d44912ce@linaro.org>
+ <20240623-drm-bridge-connector-fix-hdmi-reset-v2-1-8590d44912ce@linaro.org> <45c25e4b-d64d-549f-6711-7b753d24e2f9@quicinc.com>
+In-Reply-To: <45c25e4b-d64d-549f-6711-7b753d24e2f9@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 25 Jun 2024 01:31:36 +0300
+Message-ID: <CAA8EJpr+fB4P=X_ufkggizqk5AW5P+HKsQO5FvjqXxg6x+m5vA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] drm/bridge-connector: reset the HDMI connector state
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Rob Clark <robdclark@gmail.com>, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 24 Jun 2024 12:53:45 -0400 Aaron Conole wrote:
-> Additionally, the "Cannot find device ..." text comes from an iproute2
-> utility output.  The only place we actually interact with that is via
-> the call at pmtu.sh:973:
-> 
-> 	run_cmd ip link set ovs_br0 up
-> 
-> Maybe it is possible that the link isn't up (could some port memory
-> allocation or message be delaying it?) yet in the virtual environment.
+On Tue, 25 Jun 2024 at 01:28, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>
+>
+>
+> On 6/22/2024 10:40 PM, Dmitry Baryshkov wrote:
+> > On HDMI connectors which use drm_bridge_connector and DRM_BRIDGE_OP_HDMI
+> > IGT chokes on the max_bpc property in several kms_properties tests due
+> > to the the drm_bridge_connector failing to reset HDMI-related
+> > properties.
+> >
+> > Call __drm_atomic_helper_connector_hdmi_reset() if there is a
+> > the drm_bridge_connector has bridge_hdmi.
+> >
+> > Note, the __drm_atomic_helper_connector_hdmi_reset() is moved to
+> > drm_atomic_state_helper.c because drm_bridge_connector.c can not depend
+> > on DRM_DISPLAY_HDMI_STATE_HELPER. At the same time it is impossible to
+> > call this function from HDMI bridges, there is is no function that
+> > corresponds to the drm_connector_funcs::reset().
+> >
+> > Fixes: 6b4468b0c6ba ("drm/bridge-connector: implement glue code for HDMI connector")
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/gpu/drm/display/drm_hdmi_state_helper.c | 21 ---------------------
+> >   drivers/gpu/drm/drm_atomic_state_helper.c       | 21 +++++++++++++++++++++
+> >   drivers/gpu/drm/drm_bridge_connector.c          | 13 ++++++++++++-
+> >   include/drm/display/drm_hdmi_state_helper.h     |  3 ---
+> >   include/drm/drm_atomic_state_helper.h           |  2 ++
+> >   5 files changed, 35 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> > index 2dab3ad8ce64..67f39857b0b4 100644
+> > --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> > +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> > @@ -8,27 +8,6 @@
+> >   #include <drm/display/drm_hdmi_helper.h>
+> >   #include <drm/display/drm_hdmi_state_helper.h>
+> >
+> > -/**
+> > - * __drm_atomic_helper_connector_hdmi_reset() - Initializes all HDMI @drm_connector_state resources
+> > - * @connector: DRM connector
+> > - * @new_conn_state: connector state to reset
+> > - *
+> > - * Initializes all HDMI resources from a @drm_connector_state without
+> > - * actually allocating it. This is useful for HDMI drivers, in
+> > - * combination with __drm_atomic_helper_connector_reset() or
+> > - * drm_atomic_helper_connector_reset().
+> > - */
+> > -void __drm_atomic_helper_connector_hdmi_reset(struct drm_connector *connector,
+> > -                                           struct drm_connector_state *new_conn_state)
+> > -{
+> > -     unsigned int max_bpc = connector->max_bpc;
+> > -
+> > -     new_conn_state->max_bpc = max_bpc;
+> > -     new_conn_state->max_requested_bpc = max_bpc;
+> > -     new_conn_state->hdmi.broadcast_rgb = DRM_HDMI_BROADCAST_RGB_AUTO;
+> > -}
+> > -EXPORT_SYMBOL(__drm_atomic_helper_connector_hdmi_reset);
+> > -
+> >   static const struct drm_display_mode *
+> >   connector_state_get_mode(const struct drm_connector_state *conn_state)
+> >   {
+> > diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
+> > index 519228eb1095..1518ada81b45 100644
+> > --- a/drivers/gpu/drm/drm_atomic_state_helper.c
+> > +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
+> > @@ -478,6 +478,27 @@ void drm_atomic_helper_connector_reset(struct drm_connector *connector)
+> >   }
+> >   EXPORT_SYMBOL(drm_atomic_helper_connector_reset);
+> >
+> > +/**
+> > + * __drm_atomic_helper_connector_hdmi_reset() - Initializes all HDMI @drm_connector_state resources
+> > + * @connector: DRM connector
+> > + * @new_conn_state: connector state to reset
+> > + *
+> > + * Initializes all HDMI resources from a @drm_connector_state without
+> > + * actually allocating it. This is useful for HDMI drivers, in
+> > + * combination with __drm_atomic_helper_connector_reset() or
+> > + * drm_atomic_helper_connector_reset().
+> > + */
+> > +void __drm_atomic_helper_connector_hdmi_reset(struct drm_connector *connector,
+> > +                                           struct drm_connector_state *new_conn_state)
+> > +{
+> > +     unsigned int max_bpc = connector->max_bpc;
+> > +
+> > +     new_conn_state->max_bpc = max_bpc;
+> > +     new_conn_state->max_requested_bpc = max_bpc;
+>
+> I understand this is just code propagation but do we need a max_bpc
+> local variable?
+>
+> We can just do
+>
+> new_conn_state->max_bpc = connector->max_bpc;
+> new_conn_state->max_requested_bpc = connector->max_bpc;
 
-Depends on how the creation is implemented, normally device creation
-over netlink is synchronous. Just to be sure have you tried to repro
-with vng:
+Possible implementation, but I was really just doing code move.
 
-https://github.com/linux-netdev/nipa/wiki/How-to-run-netdev-selftests-CI-style
+>
+> But apart from that nit, this LGTM.
+>
+> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
-? It could be the base OS difference, too, but that's harder to confirm.
 
-> To confirm, is it possible to run in the constrained environment, but
-> put a 5s sleep or something?  I will add the following either as a
-> separate patch (ie 7/8), or I can fold it into 6/7 (and drop Stefano's
-> ACK waiting for another review):
-> 
-> 
-> wait_for_if() {
->    if ip link show "$2" >/dev/null 2>&1; then return 0; fi
-> 
->    for d in `seq 1 30`; do
->       sleep 1
->       if ip link show "$2" >/dev/null 2>&1; then return 0; fi
->    done
->    return 1
-> }
-> 
-> ....
->  	setup_ovs_br_internal || setup_ovs_br_vswitchd || return $ksft_skip
-> +	wait_for_if "ovs_br0"
->  	run_cmd ip link set ovs_br0 up
-> ....
-> 
-> Does it make sense or does it seem like I am way off base?
 
-sleep 1 is a bit high (sleep does accept fractional numbers!)
-but otherwise worth trying, if you can't repro locally.
+-- 
+With best wishes
+Dmitry
 
