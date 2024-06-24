@@ -1,508 +1,264 @@
-Return-Path: <linux-kernel+bounces-227120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA503914897
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:25:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A1B691489B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EB67283E96
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:25:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CA0D1C2222A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0350413A25D;
-	Mon, 24 Jun 2024 11:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25713139590;
+	Mon, 24 Jun 2024 11:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqMzsZMO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4EvkGc6G"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2077.outbound.protection.outlook.com [40.107.95.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3BC13A256;
-	Mon, 24 Jun 2024 11:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228320; cv=none; b=oRwsTNCdS2B+G2uXARXBbGRhZSMA7q6TSHiIxM3w1p/sAuWMR3w3R06b56OmcaQN5hEsgtsvIELxXaK3NBGhJyyuumyLSM/tdxvfkDfJyor839RG+qdBO4vFyehu5mu80hFamxWttvEoU6CIO4GHAUVL0AjEENmZ2QFI94npzQg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719228320; c=relaxed/simple;
-	bh=Z2Camxsr76FjS6ZkYymoc61LxPcAH0m6ilcuZKrgeZs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BIBnrYQnH+AprhAH8TLaMvZNKTbLikfByftgCuI/fqeeOQioaGByYrzIDdTkOo57g0M177qUDm3M3Y6Iv+cuArcHxhNNHm+Cbq197/cjcFwkwaV4btqen91E7K1Yh60WbnC1Oi1HNG3uG/pdZSiTqb2ZnxdoDACfar7LuTV81KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqMzsZMO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A8C82C2BBFC;
-	Mon, 24 Jun 2024 11:25:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719228319;
-	bh=Z2Camxsr76FjS6ZkYymoc61LxPcAH0m6ilcuZKrgeZs=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=sqMzsZMOtwGu4b3fgMkozpinYGiyQ07gi9bS255FzMg29bDDvrgnSzWPwSog9gUIq
-	 bXLdvcXF2yw450E+edoTiwWDc9eZIcp1UK8VDRWg0AOjadkhcxamZQ2iZ/Nt1nznmO
-	 kXPgHSW6fcIZT/qD3sBH7x5GONHTnMJLUKM4brTWNjDpGJi9831iUHfYc36IlU3bSQ
-	 boTqQ6cC2MMhEx98KcjFb0/Dda1aaEr8f2bTSokUmRw53pW67EOuBQqZoWZ7dP/01G
-	 cQ2La9yD07h2p8shV+anIw5P6czCtK4p5YGZwO3oQDkh0msVL1sBhntw8AatudKe5j
-	 YxKlB46OEtU3w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95689C2BD05;
-	Mon, 24 Jun 2024 11:25:19 +0000 (UTC)
-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos_via_B4_Relay?= <devnull+gomba007.gmail.com@kernel.org>
-Date: Mon, 24 Jun 2024 13:25:13 +0200
-Subject: [PATCH v4] drivers: rtc: Add driver for SD2405AL.
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75481137C2E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719228438; cv=fail; b=hpLno//zXnyS5qiikevVRwVhJ4aM6qMRZjOQQ6mw3VDkdOYKfgvRa+CpcOpXsOaFe0Y+oj9HRcMfgyoRNUeEHsNCl5JID2NHev2cunfmIQaXHDAY9sS5UiP3cnbbkAeRNFPsLC+qvCFVYaPAVtCc8JsaeXboZTyF7sks/MGJzvg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719228438; c=relaxed/simple;
+	bh=h8MzAmjJn+AayjSZoR2jiJsxmnwn8kZqaBM79ZasU44=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hHRKv56dbf4F2f2pMo+3yMDOoM/vt4Zoeor42V8WE9fNtWuhxfWBbLxayS7apkrb01vY8BlQv6HG5rdWbCl8UZtWzYq1iyzVqf4knPUpciuztODxld8ZMdduG8RjJHQAZ2RTIxT+1spLMppKFwW7+xPvPgW26HZHyJQAOrjsfes=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4EvkGc6G; arc=fail smtp.client-ip=40.107.95.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fOfKJPCu68ElYKl5vVmHmKjDMpOpAw0lrd+cuaP/NLxI0Zi57NUTb4cqJkOHzFitO/L+/Mv8MRj6ljm4BSQmnkbxR90/9WpahjbD1yY+CMNNG9xcsbTufkdshDOSE3PYWcU5/qGTtbCbgCIkoCbV+VV5SIcMKfTAaJ51QTS30kMZ5P+5mIsPNt5BOz2O++5b2nwxUobMDanxatlJQBYFQYrWLd+CGEet33L5tKM13NQWvypLucDeOh6p4+JGqn7suz4OphXQhcQzhkJ6MGTQ3COzEBKsh10v28hbig9ivLxgH/P2qWjHFEp7g1sfhLb5dWP0LjZrTNTjxWMPYcXo0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MLwpjuFHUzXMCGynb7b3zf9hTAMe+KdSDoGtR4ndtfg=;
+ b=nJEhZyQngUoURYqLfipgUSQEKp9zB3dzf6kT7pthF5ND0eoEs1fc1c84RcTFGxtnPL5ysHRCw+WHjqfwv4lcpkCrReNZFxZjWLzab7YlykXjGf6FYEvi82q34JBabzlQmiRitsXgOJcBCsw1L7vSpF/775ayOgsJfwc9HmEh+ENF1oaIKGgNo1eBzkSy4Q+ApiRTxyJwbjDJdJKNSDUIo5NBVFTtPL71aMBm8AShtcoKdBritVopgCREcWgZmz5EIAtKDfIfFGzp7Oi4zPdVk/9OyxrzJ1RS5BLLF7SKYnlPYgBxwPPYnh0MowvzcSrk8lGR5rCIWlmXoVDwXZwlvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MLwpjuFHUzXMCGynb7b3zf9hTAMe+KdSDoGtR4ndtfg=;
+ b=4EvkGc6G5IigVtulYQWl2x4AJNVYm6L5WdWDjYaKmLJL4nrfvIO9QC/pnl28x/HlPMYjm/pH4+C2TmrrXypLr8zkXbKTZNj83MGq+usVnOBMyT3numlZleuxxG+RDKMXHfgws+31b/4RaIlha506nGq0Xc/XZISIOhJU3/xZf7c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
+ by PH7PR12MB6935.namprd12.prod.outlook.com (2603:10b6:510:1b9::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.26; Mon, 24 Jun
+ 2024 11:27:14 +0000
+Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
+ ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
+ ([fe80::7f35:efe7:5e82:5e30%7]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 11:27:14 +0000
+Message-ID: <560ed759-2409-4682-83f6-ed3866d484be@amd.com>
+Date: Mon, 24 Jun 2024 13:27:03 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] reset: zynqmp: allow building under COMPILE_TEST
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel@pengutronix.de
+References: <20240621-reset-compile-zynqmp-v1-1-ede43ab18101@pengutronix.de>
+Content-Language: en-US
+From: Michal Simek <michal.simek@amd.com>
+Autocrypt: addr=michal.simek@amd.com; keydata=
+ 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
+ 3i3l5DA=
+In-Reply-To: <20240621-reset-compile-zynqmp-v1-1-ede43ab18101@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1PR09CA0107.eurprd09.prod.outlook.com
+ (2603:10a6:803:78::30) To SJ2PR12MB8109.namprd12.prod.outlook.com
+ (2603:10b6:a03:4f5::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240624-rtc-sd2405al-v4-1-2b2bc759f98f@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAJhXeWYC/3XMyQrDIBSF4VcJrmtxiFq76nuULq5DEiFD0SAtI
- e9ek1UIdPkf+M6Cko/BJ3SvFhR9DilMY4n6UiHbwdh6HFxpxAiriSQKx9ni5EoI6DEQXSuulFX
- coULe0Tfhs989X6W7kOYpfvf3TLf1z1GmmGLBhVbUK7hJ+WgHCP3VTgPajjI7YKpPmBXMtfHAt
- HEMxBnzA2bkhHnBUjhhDKHQCHLE67r+AKHRVW0iAQAA
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
- csokas.bence@prolan.hu, 
- =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719228318; l=12741;
- i=gomba007@gmail.com; s=20230706; h=from:subject:message-id;
- bh=lY39a9Rg21EKsTFsds/Xw2qrf6x615sSPqU2Gawhd4M=;
- b=1xWi764vOKHbbG1ybUf012+J5Bll/xVtx/v531RAjqb68/TLYMhsk/Z+hFRFZ/HVYaxkd2ygX
- 2sOIX8XLv02DDB+6vi/4XwLpQfOSMz5Cd6uFVck9Qr54vSfFuwM5ev/
-X-Developer-Key: i=gomba007@gmail.com; a=ed25519;
- pk=iY9MjPCbud82ULS2PQJIq3QwjKyP/Sg730I6T2M8Y5U=
-X-Endpoint-Received: by B4 Relay for gomba007@gmail.com/20230706 with
- auth_id=60
-X-Original-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-Reply-To: gomba007@gmail.com
-
-From: Tóth János <gomba007@gmail.com>
-
-Add support for the DFRobot SD2405AL I2C RTC Module.
-
-Datasheet:
-	https://image.dfrobot.com/image/data/TOY0021/SD2405AL%20datasheet%20(Angelo%20v0.1).pdf
-
-Product:
-	https://www.dfrobot.com/product-1600.html
-
-To instantiate (assuming device is connected to I2C-1)
-as root:
-	echo sd2405al 0x32 > /sys/bus/i2c/devices/i2c-1/new_device
-as user:
-	echo 'sd2405al 0x32' | sudo tee /sys/class/i2c-adapter/i2c-1/new_device
-
-The driver is tested with:
-	+ hwclock
-	+ tools/testing/selftests/rtc/setdate
-	+ tools/testing/selftests/rtc/rtctest
-
-Signed-off-by: Tóth János <gomba007@gmail.com>
----
-Changes in v4:
-- Implement more comprehensive data validation.
-- Inline some temporary variables.
-- Link to v3: https://lore.kernel.org/r/20240620-rtc-sd2405al-v3-1-65d5bb01af50@gmail.com
-
-Changes in v3:
-- #define-s of registers are reworked.
-- Minor revisions based on the reviewer's suggestions.
-- Link to v2: https://lore.kernel.org/r/20240619-rtc-sd2405al-v2-1-39bea29bd2a5@gmail.com
-
-Changes in v2:
-- Refactored based on reviewer's suggestions.
-- I couldn't get the I2C IRQ to work on Raspberry Pi 4, so alarm is
-  skipped.
-- Link to v1: https://lore.kernel.org/r/20240607-rtc-sd2405al-v1-1-535971e7a866@gmail.com
----
- MAINTAINERS                |   6 +
- drivers/rtc/Kconfig        |  10 ++
- drivers/rtc/Makefile       |   1 +
- drivers/rtc/rtc-sd2405al.c | 319 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 336 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8754ac2c259d..c78587811433 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6337,6 +6337,12 @@ F:	include/net/devlink.h
- F:	include/uapi/linux/devlink.h
- F:	net/devlink/
- 
-+DFROBOT SD2405AL RTC DRIVER
-+M:	Tóth János <gomba007@gmail.com>
-+L:	linux-rtc@vger.kernel.org
-+S:	Maintained
-+F:	drivers/rtc/rtc-sd2405al.c
-+
- DH ELECTRONICS IMX6 DHCOM/DHCOR BOARD SUPPORT
- M:	Christoph Niedermaier <cniedermaier@dh-electronics.com>
- L:	kernel@dh-electronics.com
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 2a95b05982ad..15f1c0ba5759 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -743,6 +743,16 @@ config RTC_DRV_S5M
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rtc-s5m.
- 
-+config RTC_DRV_SD2405AL
-+	tristate "DFRobot SD2405AL"
-+	select REGMAP_I2C
-+	help
-+	  If you say yes here you will get support for the
-+	  DFRobot SD2405AL I2C RTC Module.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called rtc-sd2405al.
-+
- config RTC_DRV_SD3078
- 	tristate "ZXW Shenzhen whwave SD3078"
- 	select REGMAP_I2C
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index 3004e372f25f..3d19feba1e1c 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -162,6 +162,7 @@ obj-$(CONFIG_RTC_DRV_S3C)	+= rtc-s3c.o
- obj-$(CONFIG_RTC_DRV_S5M)	+= rtc-s5m.o
- obj-$(CONFIG_RTC_DRV_SA1100)	+= rtc-sa1100.o
- obj-$(CONFIG_RTC_DRV_SC27XX)	+= rtc-sc27xx.o
-+obj-$(CONFIG_RTC_DRV_SD2405AL)	+= rtc-sd2405al.o
- obj-$(CONFIG_RTC_DRV_SD3078)   += rtc-sd3078.o
- obj-$(CONFIG_RTC_DRV_SH)	+= rtc-sh.o
- obj-$(CONFIG_RTC_DRV_SNVS)	+= rtc-snvs.o
-diff --git a/drivers/rtc/rtc-sd2405al.c b/drivers/rtc/rtc-sd2405al.c
-new file mode 100644
-index 000000000000..5440cc1aed1d
---- /dev/null
-+++ b/drivers/rtc/rtc-sd2405al.c
-@@ -0,0 +1,319 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * RTC driver for the SD2405AL Real-Time Clock
-+ *
-+ * Datasheet:
-+ * https://image.dfrobot.com/image/data/TOY0021/SD2405AL%20datasheet%20(Angelo%20v0.1).pdf
-+ *
-+ * Copyright (C) 2024 Tóth János <gomba007@gmail.com>
-+ * Copyright (C) 2018 Zoro Li <long17.cool@163.com> (rtc-sd3078.c)
-+ * Copyright (C) 2005 James Chapman (rtc-ds1307.c)
-+ */
-+
-+#include <linux/bcd.h>
-+#include <linux/i2c.h>
-+#include <linux/regmap.h>
-+#include <linux/rtc.h>
-+
-+/* Real time clock registers */
-+#define SD2405AL_REG_T_SEC	0x00
-+#define SD2405AL_REG_T_MIN	0x01
-+#define SD2405AL_REG_T_HOUR	0x02
-+#	define SD2405AL_BIT_12H_PM	BIT(5)
-+#	define SD2405AL_BIT_24H		BIT(7)
-+#define SD2405AL_REG_T_WEEK	0x03
-+#define SD2405AL_REG_T_DAY	0x04
-+#define SD2405AL_REG_T_MON	0x05
-+#define SD2405AL_REG_T_YEAR	0x06
-+
-+#define SD2405AL_NUM_T_REGS	(SD2405AL_REG_T_YEAR - SD2405AL_REG_T_SEC + 1)
-+
-+/* Control registers */
-+#define SD2405AL_REG_CTR1	0x0F
-+#	define SD2405AL_BIT_WRTC2	BIT(2)
-+#	define SD2405AL_BIT_WRTC3	BIT(6)
-+#define SD2405AL_REG_CTR2	0x10
-+#	define SD2405AL_BIT_WRTC1	BIT(7)
-+#define SD2405AL_REG_CTR3	0x11
-+#define SD2405AL_REG_TTF	0x12
-+#define SD2405AL_REG_CNTDWN	0x13
-+
-+/* General RAM */
-+#define SD2405AL_REG_M_START	0x14
-+#define SD2405AL_REG_M_END	0x1F
-+
-+struct sd2405al {
-+	struct device		*dev;
-+	struct rtc_device	*rtc;
-+	struct regmap		*regmap;
-+};
-+
-+static int sd2405al_check_writable(struct sd2405al *sd2405al)
-+{
-+	u8 data[2] = { 0 };
-+	int ret;
-+
-+	ret = regmap_bulk_read(sd2405al->regmap, SD2405AL_REG_CTR1, data, 2);
-+	if (ret < 0) {
-+		dev_err(sd2405al->dev, "read failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return (data[0] & (SD2405AL_BIT_WRTC2 | SD2405AL_BIT_WRTC3)) != 0 &&
-+	       (data[1] & SD2405AL_BIT_WRTC1) != 0;
-+}
-+
-+static int sd2405al_setup(struct sd2405al *sd2405al)
-+{
-+	int ret;
-+
-+	/* order of writes is important */
-+	/*
-+	 * CTR2.WRTC1 = 1, device is writable
-+	 * CTR2.IM = 0, single event alarm
-+	 * CTR2.S{1,0} = 0, disable INT pin
-+	 * CTR2.FOBAT = 0, interrupt enabled during battery backup mode
-+	 * CTR2.INTDE = 0, countdown interrupt disabled
-+	 * CTR2.INTAE = 0, alarm interrupt disabled
-+	 * CTR2.INTFE = 0, frequency interrupt disabled
-+	 */
-+	ret = regmap_write(sd2405al->regmap, SD2405AL_REG_CTR2,
-+			   SD2405AL_BIT_WRTC1);
-+	if (ret < 0) {
-+		dev_err(sd2405al->dev, "write failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/*
-+	 * CTR2.WRTC3 = 1, device is writable
-+	 * CTR1.INTAF = 0, clear alarm interrupt flag
-+	 * CTR2.INTDF = 0, clear countdown interrupt flag
-+	 * CTR2.WRTC2 = 1, device is writable
-+	 */
-+	ret = regmap_write(sd2405al->regmap, SD2405AL_REG_CTR1,
-+			   SD2405AL_BIT_WRTC2 | SD2405AL_BIT_WRTC3);
-+	if (ret < 0) {
-+		dev_err(sd2405al->dev, "write failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/*
-+	 * CRT3.ARTS = 0, disable auto reset of interrupt flags
-+	 * CTR3.TDS{1,0} = 0, unused, since countdown interrupt is disabled
-+	 * CTR3.FS{3,2,1,0} = 0, unused since frequency interrupt is disabled
-+	 */
-+	ret = regmap_write(sd2405al->regmap, SD2405AL_REG_CTR3, 0);
-+	if (ret < 0) {
-+		dev_err(sd2405al->dev, "write failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = sd2405al_check_writable(sd2405al);
-+	if (ret == 0) {
-+		dev_err(sd2405al->dev, "device is not writable\n");
-+		return -EINVAL;
-+	} else if (ret < 0) {
-+		return ret;
-+	} else {
-+		dev_dbg(sd2405al->dev, "device is writable\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static int sd2405al_read_time(struct device *dev, struct rtc_time *time)
-+{
-+	u8 data[SD2405AL_NUM_T_REGS] = { 0 };
-+	struct sd2405al *sd2405al = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = regmap_bulk_read(sd2405al->regmap, SD2405AL_REG_T_SEC, data,
-+			       SD2405AL_NUM_T_REGS);
-+	if (ret < 0) {
-+		dev_err(sd2405al->dev, "read failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	if (data[SD2405AL_REG_T_SEC] & 0x80) {
-+		dev_err(sd2405al->dev, "invalid second\n");
-+		return -EINVAL;
-+	}
-+
-+	if (data[SD2405AL_REG_T_MIN] & 0x80) {
-+		dev_err(sd2405al->dev, "invalid minute\n");
-+		return -EINVAL;
-+	}
-+
-+	if (data[SD2405AL_REG_T_HOUR] & 0x40) {
-+		dev_err(sd2405al->dev, "invalid hour\n");
-+		return -EINVAL;
-+	}
-+
-+	if (data[SD2405AL_REG_T_WEEK] & 0xF8) {
-+		dev_err(sd2405al->dev, "invalid week\n");
-+		return -EINVAL;
-+	}
-+
-+	if (data[SD2405AL_REG_T_DAY] & 0xC0) {
-+		dev_err(sd2405al->dev, "invalid day\n");
-+		return -EINVAL;
-+	}
-+
-+	if (data[SD2405AL_REG_T_MON] & 0xE0) {
-+		dev_err(sd2405al->dev, "invalid month\n");
-+		return -EINVAL;
-+	}
-+
-+	time->tm_sec = bcd2bin(data[SD2405AL_REG_T_SEC] & 0x7F);
-+	time->tm_min = bcd2bin(data[SD2405AL_REG_T_MIN] & 0x7F);
-+
-+	if (data[SD2405AL_REG_T_HOUR] & SD2405AL_BIT_24H)
-+		time->tm_hour = bcd2bin(data[SD2405AL_REG_T_HOUR] & 0x3F);
-+	else
-+		if (data[SD2405AL_REG_T_HOUR] & SD2405AL_BIT_12H_PM)
-+			time->tm_hour = bcd2bin(data[SD2405AL_REG_T_HOUR]
-+						& 0x1F) + 12;
-+		else /* 12 hour mode, AM */
-+			time->tm_hour = bcd2bin(data[SD2405AL_REG_T_HOUR]
-+						& 0x1F);
-+
-+	time->tm_wday = data[SD2405AL_REG_T_WEEK] & 0x07;
-+	time->tm_mday = bcd2bin(data[SD2405AL_REG_T_DAY] & 0x3F);
-+	time->tm_mon = bcd2bin(data[SD2405AL_REG_T_MON] & 0x1F) - 1;
-+	time->tm_year = bcd2bin(data[SD2405AL_REG_T_YEAR]) + 100;
-+
-+	dev_dbg(sd2405al->dev, "read time: %d-%02d-%02d %02d:%02d:%02d\n",
-+			       time->tm_year, time->tm_mon, time->tm_mday,
-+			       time->tm_hour, time->tm_min, time->tm_sec);
-+
-+	return 0;
-+}
-+
-+static int sd2405al_set_time(struct device *dev, struct rtc_time *time)
-+{
-+	u8 data[SD2405AL_NUM_T_REGS];
-+	struct sd2405al *sd2405al = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = sd2405al_check_writable(sd2405al);
-+	if (ret == 0) {
-+		dev_err(sd2405al->dev, "device is not writable\n");
-+		return -EINVAL;
-+	} else if (ret < 0) {
-+		return ret;
-+	} else {
-+		dev_dbg(sd2405al->dev, "device is writable\n");
-+	}
-+
-+	data[SD2405AL_REG_T_SEC] = bin2bcd(time->tm_sec);
-+	data[SD2405AL_REG_T_MIN] = bin2bcd(time->tm_min);
-+	data[SD2405AL_REG_T_HOUR] = bin2bcd(time->tm_hour) | SD2405AL_BIT_24H;
-+	data[SD2405AL_REG_T_DAY] = bin2bcd(time->tm_mday);
-+	data[SD2405AL_REG_T_WEEK] = time->tm_wday & 0x07;
-+	data[SD2405AL_REG_T_MON] = bin2bcd(time->tm_mon) + 1;
-+	data[SD2405AL_REG_T_YEAR] = bin2bcd(time->tm_year - 100);
-+
-+	ret = regmap_bulk_write(sd2405al->regmap, SD2405AL_REG_T_SEC, data,
-+				SD2405AL_NUM_T_REGS);
-+	if (ret < 0) {
-+		dev_err(sd2405al->dev, "write failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	dev_dbg(sd2405al->dev, "set time: %d-%02d-%02d %02d:%02d:%02d\n",
-+			       time->tm_year, time->tm_mon, time->tm_mday,
-+			       time->tm_hour, time->tm_min, time->tm_sec);
-+
-+	return 0;
-+}
-+
-+static const struct rtc_class_ops sd2405al_rtc_ops = {
-+	.read_time = sd2405al_read_time,
-+	.set_time = sd2405al_set_time,
-+};
-+
-+static const struct regmap_config sd2405al_regmap_conf = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = SD2405AL_REG_M_END,
-+};
-+
-+static int sd2405al_probe(struct i2c_client *client)
-+{
-+	struct sd2405al *sd2405al;
-+	int func;
-+	int ret;
-+
-+	func = i2c_check_functionality(client->adapter, I2C_FUNC_I2C);
-+	if (!func) {
-+		dev_err(&client->dev, "invalid adapter\n");
-+		return -ENODEV;
-+	}
-+
-+	sd2405al = devm_kzalloc(&client->dev, sizeof(*sd2405al), GFP_KERNEL);
-+	if (!sd2405al) {
-+		dev_err(&client->dev, "unable to allocate memory\n");
-+		return -ENOMEM;
-+	}
-+
-+	sd2405al->dev = &client->dev;
-+
-+	sd2405al->regmap = devm_regmap_init_i2c(client, &sd2405al_regmap_conf);
-+	if (IS_ERR(sd2405al->regmap)) {
-+		dev_err(sd2405al->dev, "unable to allocate regmap\n");
-+		return PTR_ERR(sd2405al->regmap);
-+	}
-+
-+	ret = sd2405al_setup(sd2405al);
-+	if (ret < 0) {
-+		dev_err(sd2405al->dev, "unable to setup device\n");
-+		return ret;
-+	}
-+
-+	sd2405al->rtc = devm_rtc_allocate_device(&client->dev);
-+	if (IS_ERR(sd2405al->rtc)) {
-+		dev_err(sd2405al->dev, "unable to allocate device\n");
-+		return PTR_ERR(sd2405al->rtc);
-+	}
-+
-+	sd2405al->rtc->ops = &sd2405al_rtc_ops;
-+	sd2405al->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-+	sd2405al->rtc->range_max = RTC_TIMESTAMP_END_2099;
-+
-+	dev_set_drvdata(&client->dev, sd2405al);
-+
-+	ret = devm_rtc_register_device(sd2405al->rtc);
-+	if (ret < 0) {
-+		dev_err(sd2405al->dev, "unable to register device: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id sd2405al_id[] = {
-+	{ "sd2405al", 0 },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(i2c, sd2405al_id);
-+
-+static const __maybe_unused struct of_device_id sd2405al_of_match[] = {
-+	{ .compatible = "dfrobot,sd2405al" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, sd2405al_of_match);
-+
-+static struct i2c_driver sd2405al_driver = {
-+	.driver = {
-+		.name = "sd2405al",
-+		.of_match_table = of_match_ptr(sd2405al_of_match),
-+	},
-+	.probe = sd2405al_probe,
-+	.id_table = sd2405al_id,
-+};
-+
-+module_i2c_driver(sd2405al_driver);
-+
-+MODULE_AUTHOR("Tóth János");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("SD2405AL RTC driver");
-
----
-base-commit: c3f38fa61af77b49866b006939479069cd451173
-change-id: 20240607-rtc-sd2405al-a0947377c73d
-
-Best regards,
--- 
-Tóth János <gomba007@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|PH7PR12MB6935:EE_
+X-MS-Office365-Filtering-Correlation-Id: fbe4558e-e057-40fc-ed63-08dc9440989a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|1800799021|366013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TVh5OHFGYVg1ZDRUTE9XK3Voc0UxRHdXRTgwZTZjMUx2LzBBbnNpOU5QNng0?=
+ =?utf-8?B?c0R0R0JnQWJoeWlXTHFKaFNraTFIMmFHVDVQY0gxWEpLM3R2VW1ZcnV6dnpY?=
+ =?utf-8?B?RjdWb3FpSnp1cVF3Nk8xeHdlTUtaMjBWWnJhTUtqRUhxL1NubUFtdWZzUTVj?=
+ =?utf-8?B?a0d5bXdNdGxiMzlhME9tR0drZUp2dHE0VlFMUlRpTE1qRjd2NUdlVEp0T3c4?=
+ =?utf-8?B?MWM5VS9XUjRMWkoyL1VTZU5jWlpIcFVyMktjNzlsSHUwQ29DMTRQMFpPaUtI?=
+ =?utf-8?B?TWhTUFpYenlYQUUxcmM0Q0trTTRqQkx5UDJkM1NlUThCS3Ivc1VRWGxtRzVn?=
+ =?utf-8?B?V2VQR2hEL1VQVmV3aHNEUUprd0hXeEFVdVpHS1JZT3hZMVJZNFVWRVZmS3Iw?=
+ =?utf-8?B?MnpQWnc5SEpWaXdmOEdNTnh0cFUzcGlTVkxNTytmbUMzaktaczFCNUMzbEZv?=
+ =?utf-8?B?OGorUVZJNnpHVkpBcVlxLzMrOTBGWHVjQ0NKK2tINDZBL2FqbnJTV3JrUld6?=
+ =?utf-8?B?SXZVMC9QaGtrcUcyTE8zUUM1M2RLZDlJMXhBNDlFeVQxcFBZUlZuMnc4T3NN?=
+ =?utf-8?B?czdPWWNHWHVucDJ0T1lKMFRjSnU3eGlubkRyeGJ6MS9iYUxzRWFjMklOUjVK?=
+ =?utf-8?B?d2c2THBNQnprWG9ndkFMWFdCaFJnc3lOSHJnTkNNcU9PWUFJWjFwcG8raEFZ?=
+ =?utf-8?B?ZllPOFVDTW0vM3pCdi8rSGNYMFBCN1Y2bk9SYVRaS2xSRFozK1hLVGg5cjNj?=
+ =?utf-8?B?RjIxTE1EajcvMDhxZ0R3MmMrTExEZVN0bDNMSHJqdWdmZzJpWGdPSThTMmJ6?=
+ =?utf-8?B?d2xTY0JFMFphRWtZYlRrRUphdDFXYWxIa1VLTnJGZDBTaE5QYXQxN3JRNzlZ?=
+ =?utf-8?B?YXU0K0NJdXI0Yms0a0JoSUxuVW0rcE8rZGgxdzFsUUpyOGs2Vk5qUUVnTEFk?=
+ =?utf-8?B?YjdlVXMvMFYwYW9HSS9aK2Y2VnFjdnlmUStFcWcvZFlFWXFRT0VUSktPdHhJ?=
+ =?utf-8?B?cVYwNllLV2d2SHFxT0x3bkdDUzg4eXBiYUxmQm9kbkE5Wk96TjVUTUw3WFY5?=
+ =?utf-8?B?WlVvdnBZQlFKTk5LbUpXQUk3d24wZGNkME9PWFBGN2dYZ0gxMmpidjJzTTJY?=
+ =?utf-8?B?bDh2cWc5cUprYkd1c2xJVTZacmQ0c0lucHpvOXB1Tkd3b1V6NkNGUlcxR3U0?=
+ =?utf-8?B?RHBodWhDZTc2Q2pLN2tYbi9Vb2U0K0gwV1AzVzFUejFTMFdRUUxYcTVBSHVu?=
+ =?utf-8?B?QzAyampVTGJxZkcwRmNhZWlWN1NVTDR4aERFMWpiQnRSd1E4TGlTbFZid2xy?=
+ =?utf-8?B?TzdRK1dGcll2WXp6dFY4bVlnRkgvMVJSSkRaSjJnU1lpWE9JWGdXYVdRZ25Z?=
+ =?utf-8?B?aDVpNVpDU0p0dmhBYWJoZHpzRWVJQS9hTU53eEg1a1cyOVhpSnVOaVQ0L0gv?=
+ =?utf-8?B?QjEzYlFvT0RzaVVGOFR5WmZnclR4VzNWUHFpL3B2ZlY2L1Z3ZFgzUG5UQkx4?=
+ =?utf-8?B?cUp3TlhhTWxuUG1sMUhxVzNYWVU4Tm1Ua3Jpdk1IUGtkdEdMMnlJZWZIQ2l2?=
+ =?utf-8?B?K0RlVXFKWTkvN1NvUGNEQXZKWGdJaGRNcXRsYlBqYXpnMnYxZ1dHRlpyU0dW?=
+ =?utf-8?B?MGRxbllnMnVvTDE1bzF1T0VoSVVCOVNxT2lYUlVrTXpROFo3cExCUjNuWlRJ?=
+ =?utf-8?B?MnFjSG9SZWJtamtoaFNqZUtWTC9mTERwdVZOeklIVGlac2NpdnN4RVk0Si9w?=
+ =?utf-8?Q?i27/lIgG5tzL5bY9e/5JLNf7wuV+8Sz8UaTf6JN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(366013);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SUlBZGZvTXllUjdqaE5qSE9RdEo3YVBOOVExV2MyRGlaU2hVaW5lRXhXNFEy?=
+ =?utf-8?B?SzFOdW5ld2tIalUwazdWVEJGMUNRWW1WTEl0YUlwVzNNRUc1dVdseS9KcnVY?=
+ =?utf-8?B?Z2ZkUVpNcGh2NDV3RllKVDZnZVRid3FmWWk1YkpxVzAvQkxZREFDVTdWeG9u?=
+ =?utf-8?B?NmN2ZWxNa1ZqWHlBMDVlV3czcXBibEVtVXc1Z0dwVk9LZzlUbkJDTWxpR05j?=
+ =?utf-8?B?RXI4V2pIZmZCZ2ZodDFuWVU4R1JLZTBpRnJLcm5qeEF3aTBnVCtlYWFmdmFr?=
+ =?utf-8?B?Z3hpVTAybElmdStvbWo1eGNGVGhFY0xwWEk3M1RyOUdOeTU1aXBpcExYRndv?=
+ =?utf-8?B?Yk84MVByeHJYSkQzWVZEY3g0a25UTU00ckk0UjY2MVlrS0d4OWZCZ1NMTS9l?=
+ =?utf-8?B?NmZxdWZHSHJDamNvVmxvdjB5aDVPbC8rUytHU2J0ZXlPMUpiWDVySFFPbVdp?=
+ =?utf-8?B?OVhJYWZ5cHcvcTRkSnhSUmxIc0l6anlhVHhnZzJMNmZGa2tNSzYyanE3bmtU?=
+ =?utf-8?B?djY3MEx1SzViVk85ZlJZbGExWk1sN1M1MTBvaDFObjBPUUxLZlhoYVpjU01t?=
+ =?utf-8?B?d0tCeUlITEpDRzQ1SDhDY0ZRamxnVVpaVnZDWlRpQ1FqSGVVYmFSKzU4S0c5?=
+ =?utf-8?B?dWJWdHFua0M0dlFWamZldGtwZlFmQlI0QWNwT3pveG9Va3lkd3VUWW1qLzQr?=
+ =?utf-8?B?bFVEK1dLSHlWakpRNG15TU9FSUxnYnRhbVJaTm5yTlZYMWNIVlhXSmhVUDVI?=
+ =?utf-8?B?ZU5kZElVR0ZHNDNrZXk4MzUvSzZqZ2NrMHlvZWs3VHllaER4ck5UZVRkUkZF?=
+ =?utf-8?B?Z0VOUlBVQW83QlkrL0pqUTQycTZ5Vy9vM1NxdGViV29tL2YvbkV0MDJxZ3l2?=
+ =?utf-8?B?dk1hSjByTkRpRVpRNzNvaG51QTJJenIzaEliR2FESmp2QUhiRlVBSzQ1amk5?=
+ =?utf-8?B?QzBpMGVNdzdiS28rUjFQUDkyaXJLWGZhcXlHZEFCdmxBNkMrY2FoaVBPRTVr?=
+ =?utf-8?B?VkZGOFZuZFZ5dXJSRlVvZTZma2FIWDFHMlNFdHdoV3Yva25BeVVkSUYwMGlo?=
+ =?utf-8?B?WE5tKysyanNscEdzdERxdlgrZnUyWUFZcVpZcURLVW9XU2ZwRjhJbHZBWi8v?=
+ =?utf-8?B?MjJhcVFrYXRIYW03UUFlaEZOZmZCT2NBUENpdlhmYnJkalpsT3hWRTRXVUk1?=
+ =?utf-8?B?Q0k2Nm9YY3dzekg0bWpZVWxiUk5ubTZRVExWbkt0aXBmdXBlQUYwcFU2S25k?=
+ =?utf-8?B?dEd5NkxJTXI3YTd1TWxldkpOWDFLS1ZaY0l2cnJldTFueXdsUkU0Z3E4anNN?=
+ =?utf-8?B?M0pwSzY3ZHhILzJkcjBaaUV4OEdaMGU2WjE5ZmFlTTc0ajdXOFUzSjk2UkJ1?=
+ =?utf-8?B?L05lOUVhNjloUXVUckQ2eGhxVU5KanAycjBKV3MweFdPOTlsQlk2U3ovWVRZ?=
+ =?utf-8?B?bks2N3FkUFJVQnMyczN6bkE5dXFkZzRQbWpseGNJY0JxaktrL1JZQ2Z3Qysz?=
+ =?utf-8?B?Y2dwdVhncE1sWGZvN0tEMDI5a09EYUZEelFPSENlaG1idmVKMFpnQUhNV0ZF?=
+ =?utf-8?B?VUNUbFhNN2dPbkhWTitaYU8vUmw0U3Q5dDU4dEtJd01vdHJ3d2JTYVd3Sisx?=
+ =?utf-8?B?RmFwRGo1TkJ5Z1cvVnNKRmtFcVJzaWhPTG5qQ1ZrZVllYWxWM3BJcXovdHFU?=
+ =?utf-8?B?aHlrZnNLODV3VG9ZNTYxcE93T3F4LzB2am9IalBFTG9Qckk5cWRSbndGTnAr?=
+ =?utf-8?B?eDJZdk1XV2JXejFPWGEyMHlyS1g0WklwZ2xNb0R0YXo1NDM1dklTRzNpSHNB?=
+ =?utf-8?B?RUlET0NwSGlTd0ZQK3kyMUhpd1BERG11OFdLandIZldGeTdVZEZCZzdsZVVF?=
+ =?utf-8?B?azc1RXhCOG4rRy9YNVdlcWpWeStrWFRGemp3eTlXK0tuNHBwTXlTeUUwTThM?=
+ =?utf-8?B?Y3ZtVW5FQlNRRG9SdXBCSEMvd3NQRFRHVkZ0UzdicjEza21TdVgvYUxyV3lj?=
+ =?utf-8?B?R3J0dEI1T2NhUGdDdjlaSjg2Qzl2Snd5am1rbkg1UzhLd21EZTltN01vWmZC?=
+ =?utf-8?B?NVpuMXhNbnBDOUxjUUQxaTdheHRadERNTHVJeXhZU0tZODhvNmJuNURuWFYx?=
+ =?utf-8?Q?cqCFlQJNCo71BwuAZ0iqK3F6k?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbe4558e-e057-40fc-ed63-08dc9440989a
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 11:27:14.1583
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5d2W3lK52AYuyMD/bZRaoIyZY3ANiiWYC5TqAfp3gaU740BkAy0rKhGC8CrwzeNU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6935
 
 
+
+On 6/21/24 17:24, Philipp Zabel wrote:
+> The ZynqMP reset driver can be compiled without ARCH_ZYNQMP being
+> enabled. Allow it to be built under COMPILE_TEST.
+> 
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
+>   drivers/reset/Kconfig  | 6 ++++++
+>   drivers/reset/Makefile | 2 +-
+>   2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 7112f5932609..9b914f8818ef 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -328,6 +328,12 @@ config RESET_ZYNQ
+>   	help
+>   	  This enables the reset controller driver for Xilinx Zynq SoCs.
+>   
+> +config RESET_ZYNQMP
+> +	bool "ZYNQMP Reset Driver" if COMPILE_TEST
+> +	default ARCH_ZYNQMP
+> +	help
+> +	  This enables the reset controller driver for Xilinx ZynqMP SoCs.
+> +
+>   source "drivers/reset/starfive/Kconfig"
+>   source "drivers/reset/sti/Kconfig"
+>   source "drivers/reset/hisilicon/Kconfig"
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index fd8b49fa46fc..544ae3488e3f 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -41,4 +41,4 @@ obj-$(CONFIG_RESET_TN48M_CPLD) += reset-tn48m.o
+>   obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
+>   obj-$(CONFIG_RESET_UNIPHIER_GLUE) += reset-uniphier-glue.o
+>   obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
+> -obj-$(CONFIG_ARCH_ZYNQMP) += reset-zynqmp.o
+> +obj-$(CONFIG_RESET_ZYNQMP) += reset-zynqmp.o
+> 
+> ---
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+> change-id: 20240621-reset-compile-zynqmp-6e6bedc658af
+> 
+> Best regards,
+
+Make sense.
+Acked-by: Michal Simek <michal.simek@amd.com>
+
+Thanks,
+Michal
 
