@@ -1,71 +1,137 @@
-Return-Path: <linux-kernel+bounces-226826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB8791446A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:17:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 693AC914431
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D3C7B21CB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22753282F04
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D481D49644;
-	Mon, 24 Jun 2024 08:17:07 +0000 (UTC)
-Received: from out198-23.us.a.mail.aliyun.com (out198-23.us.a.mail.aliyun.com [47.90.198.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2134965C;
+	Mon, 24 Jun 2024 08:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PU88W3z1"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA59199B8;
-	Mon, 24 Jun 2024 08:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E221F93E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719217027; cv=none; b=GDlXUE8TOOz/KtXZaLTHHIFP0FxrDIVxYgAxiMOQeFeoE+xtLcwKWeOkLADHnN+Ho9By3BsjikoHFssc91UWa7q0zV4O7feN/X8OAJcdZiHzgaZ2J4II4aRrCf/5dtvcN3dCP1CgIR+kBXvQShsQB9GpStUl/+7WzjGUPUJVEGM=
+	t=1719216362; cv=none; b=bD/nSK4gyeXmlPtybmVx+xPu7wxtnsLEGntX3lVEl1YUNmLQQro1XXq7uC2VgpvirvtoRuDuTNf9QJ7XOtLlZQ4JhAS7QEDcX3+7Gh81wOMEzC+knGJLgQ4h8i7VZ2PdiwPjg1zPf1uD5425ULFLZYRKv9c5twtWWA8D6INWQ1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719217027; c=relaxed/simple;
-	bh=hXRRTlient8WSSpmiaWRN0a8Hjl5zz2ypgcPSM+y9Vs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bk625NpGbiL3+jpUTHsBry/KWiofKZd3QCZ7PhmcqcwhFovVZMZV1v5baKOcbuT11h1dKAPXrPDpamkzTYX1s+OvD+j3ELWosRTh7CKlmgXWiMFNfCc9xmVbtUn/8blcqr8AohFdZ/rHPs7ljVktuBzsMMGPY+sbo1jw69AyUS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com; spf=pass smtp.mailfrom=ttyinfo.com; arc=none smtp.client-ip=47.90.198.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ttyinfo.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.3104835|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.488855-0.0031871-0.507958;FP=0|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033070021176;MF=zhoushengqing@ttyinfo.com;NM=1;PH=DS;RN=6;RT=6;SR=0;TI=SMTPD_---.Y8jr4AK_1719216066;
-Received: from tzl..(mailfrom:zhoushengqing@ttyinfo.com fp:SMTPD_---.Y8jr4AK_1719216066)
-          by smtp.aliyun-inc.com;
-          Mon, 24 Jun 2024 16:01:06 +0800
-From: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	zhoushengqing@ttyinfo.com
-Subject: Re: Re: [PATCH] PCI: Enable io space 1k granularity for intel cpu root port
-Date: Mon, 24 Jun 2024 08:01:05 +0000
-Message-Id: <20240624080105.16960-1-zhoushengqing@ttyinfo.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240623022611.41696-1-zhoushengqing@ttyinfo.com>
-References: <20240623022611.41696-1-zhoushengqing@ttyinfo.com>
+	s=arc-20240116; t=1719216362; c=relaxed/simple;
+	bh=fROqvB+Ad/dr3e9qH35hLJWAl9z4Z2lzPyO6crozWGg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Uqt2gzKCEHUDr3LouWUyfUSWNJXrtIsUQE9GXTdTtHcuMglI72ULq3PKLQagx5YBRm4AB99AoipxJW6tJAXgAmFn0envPH6/HW2gzlcVVSEDoJRNGtSn83DnKjZAxdFi9H2FR4N2bphH10JbVdLcpnfLfSb8QvHba3hXGL+6enU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PU88W3z1; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3632a6437d7so2284610f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719216358; x=1719821158; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=odzDRTU41Zr89t9SLoKeOkPoH6J2FAkixD8virEXbx4=;
+        b=PU88W3z1uEX/C5c0DJ6MrdWLpB8Tw55Tj2WgGOA/2qG6lsb7M64lCFIJ20jZapsXX+
+         wSxbN25JXAl2B8wt9dD0l8yP3mtrbTLqiSVGSyWR3WkU9x4gWavV5X+HWGz7S/5iZbs0
+         OLmiPDsqis8jMJRcNWn9YZfDVGH8fv4w2lMyArIoEip7Mz1kbAIrw2klESEDPOXjTgcZ
+         V+dF8l1aBeLxRt/wWbU6TIEnUaAH94kh5SGxVI5kyY5uT4BJPG0tRtv8B1UINOqVBykD
+         n62d3LaZkAPVV/3ouSTgVB+Dh55JHJz6H2+2iGVzdHu/pKxKSy/ekTOo05cDl1VWpOo/
+         LiMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719216358; x=1719821158;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=odzDRTU41Zr89t9SLoKeOkPoH6J2FAkixD8virEXbx4=;
+        b=J12r+yRhaTBBNyKZvRRyQwGPb5h971Nt1mKf/6KYinKFMxiV1JqtfFl4ezzMtNKYfi
+         F+1vm7Es942WxCsHXjysAtdeeBWZW7HnX6Y24xQqaN24YgvSrao82ujPF1yTNtV/dO0Z
+         d8aF7YHSvkvU05P/ZR66rrNb5WdmTIhW0BES9cL0DCoxxRfqC8nEMRPSSVptlRInFkfo
+         m1UmL2w7nkrZoLnoBxa+mmSUcYUN4Tgz6x7XZgWIBDEHt9eJWh/elxeT6lYtxJn4XnJx
+         ll3Hb/L6AhNrFA1PvrfkOiN4j+TT+H6W3FcZG7+U2kZwhGNHqgL2HB6N7U1UnKPL8Ps+
+         Ldog==
+X-Forwarded-Encrypted: i=1; AJvYcCXe9SPW/9BRgTudEHwfBkAbdrFY8kNqwVsvBDxz4tpfr0Xr4E7Ugmoq5g5QotARgwMuu2eguxZXLbnaWu/s2mZEM/U23dtjidyEYm4N
+X-Gm-Message-State: AOJu0Yzu0iXzh+I2jwNEdnsbp+XRV3WBgQbjzlr1zXEZx9tkFGzseEpS
+	JaYVVaHDDumZWvbpWrAr6/mWhZ2cpcnGGShNuSmA7tq9cOlpbjcVT2VU4isFayI=
+X-Google-Smtp-Source: AGHT+IGVnrS9IFTkUf5iQxnTJvMhFKWWjlFoG1vmOIjQd2oqxf/RQpUp7yIejwA3PnMQ3A9mBW7nQQ==
+X-Received: by 2002:a05:6000:1a8c:b0:363:776:821b with SMTP id ffacd0b85a97d-366e31bc9f4mr5357152f8f.0.1719216357797;
+        Mon, 24 Jun 2024 01:05:57 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8b27sm9280284f8f.104.2024.06.24.01.05.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 01:05:57 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v2 0/3] clk: qcom: dispcc-sm8650: round of fixes
+Date: Mon, 24 Jun 2024 10:05:49 +0200
+Message-Id: <20240624-topic-sm8650-upstream-fix-dispcc-v2-0-ddaa13f3b207@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN0oeWYC/5WNQQ6CMBBFr0K6dkxbEKgr72FY1GmBSYQ2HSQaw
+ t2t3MDl+z95bxPsE3kW12ITya/EFOYM+lQIHO08eCCXWWipK1lrBUuIhMBTW18kvCIvydsJenq
+ DI46IYJUxlSxblLIUWROTz++RuHeZR+IlpM9RXNVv/UO+KpDQPLRpnDM9oro9abYpnEMaRLfv+
+ xelPG+g0QAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Taniya Das <quic_tdas@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1115;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=fROqvB+Ad/dr3e9qH35hLJWAl9z4Z2lzPyO6crozWGg=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmeSji622feuGnejMViAuO0ml63MAo/iS2It7g0EpP
+ J8dkTqaJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZnko4gAKCRB33NvayMhJ0W5HD/
+ 4i2AzY1GczoM93DAhbkb2LNUpHRWWU950qeHoXS20r2k+oRX2MO+gBw4WQEmbBJwHbaxBpKeSzzWcM
+ RglN9DpLFZ7S/Pk11+ljtxsfRmQWNEtzXH9kbCiX5szJ0g8MKViiWgFVb5Ss+yxRTVj8GGOgWXD7wi
+ YS14KP1KpHghPZNT1ee+o6jqavYVwwZsvfEEskzVmIBTciYW2AM5fBKcdaduAk3FXuKx4Ut4/rxJVY
+ Cf9czwg4eyfNLT/+01MMrRg4CMuIGXqWQ4SRDe6XAQXWVLqMGXD8RBeBP7BDnCt/kXKNEDzDLatYFc
+ ymIwMnCAXxZ+PPt0Xc6rrQmQmHu6FMrn5h15332qBcerWjnQZLRksCkuktVeafQ/INHiJOvnLR9CKj
+ HiGIPhUebYQFuqLiXkznHLo3VZwXC0IWaY8YkOe/QXC5yKEKGkI1tVAYtliaHOcz+0CVpfxFTHdKXY
+ cpk/waCtRhg7TjOEUwIXbDBem6H+YUdn8zDV4bo5cjLacSnd7i5Nx5B4podhpYorYAKx4WAXDd3hvb
+ xUjWUVMPyXN70xY3KQDJ/tHi/r+C16pjgLk3tNFIb5lq7ET5qGUUKVIhT8VuajcR/CH1IJIw57BW9N
+ Q+JtGNz/CAvekpMr5C1ZnDASeZIwLh1bpoKcThBe3FyrMXCY4s8Vh+yP60mw==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-> > That seems like a really broken kind of encapsulation.  I'd be
-> > surprised if there were not a bit in each of those Root Ports that
-> > indicates this.
+While trying to fix a crash when display is started late in the
+boot process, I ran on multiple issues with the DISPCC clock
+definitions that needed some fixups.
 
-> Your understanding is completely correct.intel ICX SPR RMR (even GNR) 
-> CPU EDS Vol2(register) spec says "This bit when set, enables 1K granularity
-> for I/O space decode in each of the virtual P2P bridges corresponding to 
-> root ports,and DMI ports." it targets all P2P bridges within the same root bus,
-> not the root port itself.The root ports configuration space doesn't have a 
-> "EN1K" bit. 
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Changes in v2:
+- Squashed patch 2 into patch 1
+- Dropped shared_ops to disp_cc_sleep_clk_src & disp_cc_xo_clk_src as Taniya recommends
+- Dropped patch 3
+- Removed  wait_val fields updates from GDSC, this requires a larger solution
+- Link to v1: https://lore.kernel.org/r/20240621-topic-sm8650-upstream-fix-dispcc-v1-0-7b297dd9fcc1@linaro.org
 
-For this reason, it doesn't seem feasible to implement this patch in 
-fixup.c or quirks.c.Would it be reasonable to implement this patch in the 
-pcibios_fixup_bus function in /x86/pci/common.c? I also think adding this patch
-in pci/probe.c is not a good idea.
+---
+Neil Armstrong (3):
+      clk: qcom: dispcc-sm8650: Park RCG's clk source at XO during disable
+      clk: qcom: dispcc-sm8650: add missing CLK_SET_RATE_PARENT flag
+      clk: qcom: dispcc-sm8650: Update the GDSC flags
+
+ drivers/clk/qcom/dispcc-sm8650.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+---
+base-commit: b992b79ca8bc336fa8e2c80990b5af80ed8f36fd
+change-id: 20240621-topic-sm8650-upstream-fix-dispcc-a1994038c003
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
+
 
