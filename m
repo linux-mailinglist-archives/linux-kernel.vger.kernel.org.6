@@ -1,101 +1,60 @@
-Return-Path: <linux-kernel+bounces-227945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43C091586A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:01:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D3C91586D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47C761F26C04
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC9B283675
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B45A1A08C7;
-	Mon, 24 Jun 2024 21:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F152C1A08C7;
+	Mon, 24 Jun 2024 21:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7FgOqGc"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UUR2uRlp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24568FBEF;
-	Mon, 24 Jun 2024 21:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B70FBEF;
+	Mon, 24 Jun 2024 21:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719262874; cv=none; b=MZ802hMHiN4fwaGKLITjQP4AXip279qEUkoALAHOm1JD/6sH8DSpvPXeu5hdIP70kXCOj4fi/3aFIahcF2NYmzqiAyN4ebEB76RRWKQKa4ii8r3UegiArXxhNer+cPUwn3gmiDdHjes6KrFCXCE6pUpBJrOl0ULhTJ3zY+jg45s=
+	t=1719262922; cv=none; b=fMq0+HxWqCbot/E2lY5OjL119ruuS1MqV0WQPucxqPL4EzlUtpNny1LI1OVvidFo7mvXc0CyM2kPTzO6k0RkvsmFWWAy/0j72EPfj8D8shWMdvFv4ej2Dmzl2XrBN5YXmtrS58/jJ0O4jo/gpH2xqDW3ot10pvuDCo+cdZm9iR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719262874; c=relaxed/simple;
-	bh=YvIsZSEKLKEUGIZFOgyBnHsquu0aId1WPfl7qNtp86k=;
+	s=arc-20240116; t=1719262922; c=relaxed/simple;
+	bh=rvvBVnTHEEzHKhjgXbOAJVsRmGU99H3KQBF7g04WdhE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BfP7wULgy8AwM3Pl2CHsnFDDwQvkjOvI9ontkfNkFuwOS+/eZQDr1z1jvKHpRlMsm9WtFHrVj9DitKiLvgzQY9JDXld35iZwDlE3DLgVGHah9x3pOUhuN99BXoUQG2zejgBxGK5vjtj25FPST8yQtyrOaluNcBbDexxQ7MpOGSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7FgOqGc; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fa244db0b2so14563645ad.3;
-        Mon, 24 Jun 2024 14:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719262872; x=1719867672; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rsrj1rTdRJbKWl2kT5e83ANXLHH3004GFG4NvofAvXs=;
-        b=X7FgOqGcRiC0YLok7+nAD7Bem1TgOMHq2ydF/ZkKxOc918OtrlbCjSkO3mcxMfrAKC
-         JdvNCzfgEMPyoRDWsOFMSnJg3CGgGStJ9qOFl4X46tHyfKib7w+c0LmdPzymRk18EdZU
-         TtAJES3klmN/8pjcU+4WqyL2nX4HTa1S86RGgtZFnouIOUCeN+aFj+h5OEhh4K7oOk9Y
-         igiKedI3H12gHycMqjxzLp25cLuw38fZ+/X8D7ymWOs1AseP1l0GOS1GWf1OdV1eM9iG
-         L3NwZ5yoSUQEfPNoAsC+Z9eZV1MVJPMo8fn8z26KHIJ86L1MdrhlWlwsdGHFTYB2QUz6
-         Fukg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719262872; x=1719867672;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rsrj1rTdRJbKWl2kT5e83ANXLHH3004GFG4NvofAvXs=;
-        b=X3gcOdr8AOkIREY+roJ8kb+oHJ9w8WI3z+sXKNVV4HHssTgAliaMGbLRsroxwim8/j
-         NTp8l+ARgNcKP9+PsE8k8n8zPxh8BnQ/7disMFtKwOTE8UwOw93+Xk6ysQ3S2g9vJVBA
-         nHQ/HM3ERhOr+irTeOWm3Z4snbUgr9Ug/hmI2rzP08GiMauPeVDb7Otr2eIjF4CZ7fXH
-         XTodtpqDRDcHBz/01VUdGUEk7EMm12cdfh1R+D3jbwAPAFqITwqVA4gWHy597nBtC/Q2
-         wjgplJu4qxuNFa8xki9uc/HyeNx7bJIAxdv+A22LDG2bJqkHbf9xUFZ2BSzytnXD0HKB
-         5eRg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Gv48oXZAI079zsZ5eM/kxXtGIZzbc4fDjDoVF2ITjmaB6aCJvIbO97fml1otILwBH+4PnfqWjOD27JQqeaFP7JrnDIrHg16ayD8iJJSgg7b9O9a6G48yAnL1SKJq7x6D
-X-Gm-Message-State: AOJu0Yyl5ip5wN2TEB6SM3LzIPmfTepy3mDgFGYX1+NoedxH4Zryq1Xi
-	oVBLn8bUa0xoi7AQN5fUF2T2/vgXNAFPqYV+nt688yCIIZQcsbT0
-X-Google-Smtp-Source: AGHT+IEpEkStMOhd7WwxP5wtmmwDIJhd/3Nj8gO4bbZUT8Pc8pVHGL0DfvOR9UPkiEvjumZPPuk4+Q==
-X-Received: by 2002:a17:902:d2cc:b0:1f7:1b97:e911 with SMTP id d9443c01a7336-1fa158d0cfamr88161435ad.2.1719262872229;
-        Mon, 24 Jun 2024 14:01:12 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c591bsm67031385ad.165.2024.06.24.14.01.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 14:01:11 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 24 Jun 2024 11:01:10 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
-	pjt@google.com, derkling@google.com, haoluo@google.com,
-	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
-	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
-	memxor@gmail.com, andrea.righi@canonical.com,
-	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH sched_ext/for-6.11] sched, sched_ext: Replace
- scx_next_task_picked() with sched_class->switch_class()
-Message-ID: <ZnnelpsfuVPK7rE2@slm.duckdns.org>
-References: <87ed8sps71.ffs@tglx>
- <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
- <87bk3wpnzv.ffs@tglx>
- <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
- <878qz0pcir.ffs@tglx>
- <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
- <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
- <ZnRptXC-ONl-PAyX@slm.duckdns.org>
- <ZnSp5mVp3uhYganb@slm.duckdns.org>
- <20240624085927.GE31592@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pmktUziFph1NFFBwqWRa3AUkcYkfVKIuUfja2SvBL2+etMWT0yConB3TalO+YlOgZ9nCrRwsOOVwFMDR8IwJ8yvypmp3v4uHzDThij2BOrX+JUd7UpCQ60pDl4FMrLqsYpcL4vQcT+bZoluuCzEMI583KxOCda/B7zLKxaEHJfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UUR2uRlp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36B6CC2BBFC;
+	Mon, 24 Jun 2024 21:02:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719262921;
+	bh=rvvBVnTHEEzHKhjgXbOAJVsRmGU99H3KQBF7g04WdhE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UUR2uRlp5ABwUnI5/d5ts7U/DGQ1OTmAph7cOSw6x38hFnbtjQR2RprASVmqSMQ47
+	 yj25++1QmiiMNbl0A/hHZ/39dhGWBJTuiSrbpw2f3zFFtl5+VAGmlLDxEFJBLnH3NC
+	 z8cve5iuY11kSH2gIkP5Uexx39FKeSjCKruIw066rm7liptb+Ex7CgfJnCEJ4dLolo
+	 p7nBrOzUOfuJy8Jye4tSitZPByQVV4fdpo8+TxkDAfk/tMo3j9Z4sLD3WVGDwn+kol
+	 RMT5/ol2XCNo9Q4Qx0xVmOvYSOyiU/U14OgEb4hHOE81pYgO2RhDVoHFoNjrDYl9Ym
+	 cLKf8giSYvjDA==
+Date: Mon, 24 Jun 2024 15:02:00 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, Kuldeep Singh <kuldeep.singh@nxp.com>
+Subject: Re: [PATCH v4 2/3] spi: dt-bindings: fsl-dspi: Convert to yaml format
+Message-ID: <171926291748.413012.792839544759127895.robh@kernel.org>
+References: <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
+ <20240624-ls_qspi-v4-2-3d1c6f5005bf@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,38 +63,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240624085927.GE31592@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240624-ls_qspi-v4-2-3d1c6f5005bf@nxp.com>
 
-Hello, Peter.
 
-On Mon, Jun 24, 2024 at 10:59:27AM +0200, Peter Zijlstra wrote:
-> > @@ -5907,7 +5907,10 @@ restart:
-> >  	for_each_active_class(class) {
-> >  		p = class->pick_next_task(rq);
-> >  		if (p) {
-> > -			scx_next_task_picked(rq, p, class);
-> > +			const struct sched_class *prev_class = prev->sched_class;
-> > +
-> > +			if (class != prev_class && prev_class->switch_class)
-> > +				prev_class->switch_class(rq, p);
+On Mon, 24 Jun 2024 14:55:28 -0400, Frank Li wrote:
+> Convert dt-binding spi-fsl-dspi.txt to yaml format.
+> Use part Vladimir Oltean's work at of
+> https://lore.kernel.org/linux-spi/20221111224651.577729-1-vladimir.oltean@nxp.com/
 > 
-> I would much rather see sched_class::pick_next_task() get an extra
-> argument so that the BPF thing can do what it needs in there and we can
-> avoid this extra code here.
+> Additional changes during convert:
+> - compatible string "fsl,ls1028a-dspi" can be followed by
+> fsl,ls1021a-v1.0-dspi.
+> - Change "dspi0@4002c000" to "spi@4002c000" in example.
+> - Reorder properties in example.
+> - Use GIC include in example.
+> - Deprecated fsl,spi-cs-sck-delay and fsl,spi-sck-cs-delay by use common SPI
+> property.
+> - Use compatible string 'jedec,spi-nor' in example.
+> - Split peripheral part to fsl,dspi-peripheral-props.yaml.
+> - Remove 'interrupts' and 'pinctrl' from required list.
+> - Update 'bus-num' description.
+> - Update 'spi-num-chipselects' description by add "cs-gpios don't count
+> against this number".
+> - Remove 'big-endian' description.
+> 
+> Co-developed-by: Kuldeep Singh <kuldeep.singh@nxp.com>
+> Signed-off-by: Kuldeep Singh <kuldeep.singh@nxp.com>
+> Co-developed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> 
+> ---
+> Change from v3 to v4
+> - Add Co-developed-by and Signed-off-by from Kuldeep and Vladimir
+> - Remove 'interrupts' and 'pinctrl' from required list
+> - Update 'bus-num' descripton.
+> - Update 'spi-num-chipselects' description by add "cs-gpios don't count
+> against this number".
+> - Remove 'big-endian' description.
+> ---
+>  .../bindings/spi/fsl,dspi-peripheral-props.yaml    |  30 ++++++
+>  .../devicetree/bindings/spi/fsl,dspi.yaml          | 103 +++++++++++++++++++++
+>  .../devicetree/bindings/spi/spi-fsl-dspi.txt       |  65 -------------
+>  .../bindings/spi/spi-peripheral-props.yaml         |   1 +
+>  MAINTAINERS                                        |   2 +-
+>  5 files changed, 135 insertions(+), 66 deletions(-)
+> 
 
-Hmm... but here, the previous class's ->pick_next_task() might not be called
-at all, so I'm not sure how that'd work. For context, sched_ext is using
-this to tell the BPF scheduler that it lost a CPU to a higher priority class
-(be that RT or CFS) os that the BPF scheduler can respond if necessary (e.g.
-punting tasks that were queued on that CPU somewhere else and so on).
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Imagine a case where a sched_ext task was running but then a RT task wakes
-up on the CPU. We'd enter the scheduling path, RT's pick_next_task() would
-return the new RT task to run. We now need to tell the BPF scheduler that we
-lost the CPU to the RT task but haven't called its pick_next_task() yet.
-
-Thanks.
-
--- 
-tejun
 
