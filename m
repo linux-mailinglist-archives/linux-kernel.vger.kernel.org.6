@@ -1,167 +1,147 @@
-Return-Path: <linux-kernel+bounces-227088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84AD914827
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1794B91482A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0505BB245F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:10:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A183CB248E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B9A13791F;
-	Mon, 24 Jun 2024 11:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EF4137914;
+	Mon, 24 Jun 2024 11:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ni+uYZhI"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2081.outbound.protection.outlook.com [40.107.244.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/SDMO1c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934D2442C;
-	Mon, 24 Jun 2024 11:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719227436; cv=fail; b=pjA+ZFLdroFO6RSiqnzalktvIHu3egnLa7QupTGlFdlpELt4BnypISqSL65BhXEczkz537/dvzuP06LXB2bLWGR9nrU+N10Cp6W3LI2Mr1OrWwMzYPv35CIV7xyGDbXw8p+q77/m21eEzGuMn7LJMJ322V9k+7NdTLT9Fp1dru8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719227436; c=relaxed/simple;
-	bh=kDCfSGsgfih1HQ4S2u8NgUPGpxCw+E/CyoYFnbj5/Vs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MhDJIhRwoR9L/HFmvQGGbU9O7+iRJWvzmt4uEpl39trlH7+pS5VJY2fUHqtT6fPKrTUNEBWROFAZ3w1OConeFKAt+naFzZujQ8woh76Cj6kNzlol6SNiDgh4G2KeCMIqmD3iT073dpXvg8FNI5bVVA4R2BJaJZnX9ps/FzJv5Bo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ni+uYZhI; arc=fail smtp.client-ip=40.107.244.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BNeP8rurn+V2/rYLC6pmw0QGTI230mL4CCPlrrcHUs43Q/5mJY82p4vL0OFiYRn9WQVIUsk+kEgdq0t81nZB6OB6FbJEgEk1lldugWWKLl/zEcPjS7EAY/YgRGnz6f1yvDNytsGFSXE/OI7x+I3AZTDh0x5V1fjjzT6UWR5SSa7OrpfiD/vUbQ/LPsVsxw9QgAZWzxsz/gnR9NPrlCg6WW8hp6HqqZEWDWdHd/f6RLGZl0EwV0SsxG+pn/uxzI1ZpH/GODptdkvto0xFLm14+bB8eNV8chuIVnXri+0SifImFHJFHCMSYTrv+c+hLA07yaiha+CPMrx6ImA6pEBKLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n59ZcMAy1XtJCrPYS2CTiY8oqK+OLtAY0n7AJDlB3g4=;
- b=XtF7oJxVQOs5Ij4DvRPlGk6BbowYoSIaYGAy247S6pljE/dR+eXI3nlzMDGezalUNFdhb0ljytsK8Q2AArUkS8TLyMKRbkkdXGOMbbY8ev7//kJTRaUX/ZemXecy1iq6CQ+Cv/qPILb9HJBKIQtWCw7xfrihUr6kH6yQ7GtSm0xCnZpWIJ2sTnZStZTp45/0TujUT3a545dINh3JbSmfPrdZ4/Q5PmTpxck+y3h7ZDxLDU8KjSG7Kri7/IsHYjPyzqXurk4Xx8agK+2sQtEH4+Ko6h56+0QtrV+BZ5q4El8cKhyL+CISMn0EbVSQo8UsgAjGoyeVvkzLWK5QblWT0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n59ZcMAy1XtJCrPYS2CTiY8oqK+OLtAY0n7AJDlB3g4=;
- b=Ni+uYZhI5U8WljqUSO7oShs31NL6/lAXvI+iiNRmjH8v18rkAKCVHVaJTGERn/Z2qbjtxFbZYXqIMPI7Ia+WbxAhSMUnV0SdrVd3SvT905NP1xkdqKyvlwTdNh2yurqHhWW+ykiMnwn3m4CXvsvOTPVvIj2D7HewQBByVDVSRjM=
-Received: from BY5PR04CA0028.namprd04.prod.outlook.com (2603:10b6:a03:1d0::38)
- by SA1PR12MB6727.namprd12.prod.outlook.com (2603:10b6:806:256::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Mon, 24 Jun
- 2024 11:10:32 +0000
-Received: from CO1PEPF000044F2.namprd05.prod.outlook.com
- (2603:10b6:a03:1d0:cafe::74) by BY5PR04CA0028.outlook.office365.com
- (2603:10b6:a03:1d0::38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.38 via Frontend
- Transport; Mon, 24 Jun 2024 11:10:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CO1PEPF000044F2.mail.protection.outlook.com (10.167.241.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Mon, 24 Jun 2024 11:10:31 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Jun
- 2024 06:10:30 -0500
-Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 24 Jun 2024 06:10:27 -0500
-From: Thippeswamy Havalige <thippesw@amd.com>
-To: <bhelgaas@google.com>, <kw@linux.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <lpieralisi@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bharat.kumar.gogada@amd.com>, "Thippeswamy
- Havalige" <thippesw@amd.com>
-Subject: [PATCH] dt-bindings: PCI: xilinx-cpm: Fix ranges property to avoid overlapping of bridge register and 32-bit BAR addresses
-Date: Mon, 24 Jun 2024 16:40:22 +0530
-Message-ID: <20240624111022.133780-1-thippesw@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46544136E2B;
+	Mon, 24 Jun 2024 11:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719227462; cv=none; b=eYsdSK3T4+tx6HfrSkUVHBRnwEHeCKRC4jC1Yrv6BvA1dSxPJ5WRKtXw9E2K4CprPpjvQmX3so89lucTjJ57VLr/5Wy6Cnsyl2S5AGN1STSe5XteZAYRZpviUYq8kAAAfzLYKx2kosCSrqL661itcP3n3sOek10ckVeu/cykfv0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719227462; c=relaxed/simple;
+	bh=L8qkm8VIL7qDZsSm7A7x9r2fH9DJN684WVn1N5PSwcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c/pzEY2T4hZ9RMGTb8sqGC4wOEkSO5w4cyhlMOPFtXSCePiSFpQgBJtLmgIgRw3OwVxDeDk0Vd4+uLcWAP6G6IvKSeOVZyPTp+glse4wL1IKqq6MHxGZEBKCdCfa303pngkIRl5RWvQjGdPWoxVOVr2SmW8sjjO1MEepMtw1/94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/SDMO1c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E5D2C32782;
+	Mon, 24 Jun 2024 11:11:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719227461;
+	bh=L8qkm8VIL7qDZsSm7A7x9r2fH9DJN684WVn1N5PSwcs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r/SDMO1ccZWCVvvZQ9T09NEeRNoNQZJ4iwAuambzy62k4HFjzjDodEjs9Z5bWH7wB
+	 995ALrGDfi7eE1qjqB29C9pLGgmn/+Ik0qHtemQrXnTbm0EGOp0yV0GqZnDWitd8Ie
+	 nHgjvrwvvWFJ4b8Exlp3fqonE1uGc1ZZ1F9sE5pl+ZHD4h9sC2H+esddOq7/jYC7by
+	 92QGMuMVDDxDi+JrZZiXuteduDUTjSXQFbC73Ze/z9jotT3OnujPvEq6JRcDgbHsye
+	 PnwVOjK4Rom5baVOH7jh1oFnKW4JaK1nWQLOJsTDOzM6May0oeicT89pPOxUZgXQb9
+	 tcnbi+MoTW8EQ==
+Date: Mon, 24 Jun 2024 12:10:57 +0100
+From: Lee Jones <lee@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mfd: Explain lack of child dependency in
+ simple-mfd
+Message-ID: <20240624111057.GR1318296@google.com>
+References: <20240616080659.8777-1-krzysztof.kozlowski@linaro.org>
+ <20240620171756.GY3029315@google.com>
+ <97b84ce1-3ed2-48a8-bed4-9a671b61cd6d@linaro.org>
+ <20240621111000.GN1318296@google.com>
+ <b078d8de-78f4-4125-8971-d76f354c7b30@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: thippesw@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F2:EE_|SA1PR12MB6727:EE_
-X-MS-Office365-Filtering-Correlation-Id: dcd1af35-5295-4922-cb5c-08dc943e433f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|82310400023|36860700010|376011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MPbWwqIBKt5yPrlknheAoxjqrJnC+yB2KdfDd+mLPDb0VkAqRXkTwQJwxTkp?=
- =?us-ascii?Q?Pf3kPmA1VeZKSMYUkDFL9VrV6XWXm53fSWFJms9c2DaINgCNT9bLcIszlQMN?=
- =?us-ascii?Q?ioAd92CjPRUn2Q/EB+2pxtgXFNIMuJFa8VETzeBeTgFj7WiIiP/qD4I4u8R+?=
- =?us-ascii?Q?2X8RRDONAS/EimA8JDsqyam+Cu8IpHvYV7I+dbRZfD+XaD8zCIR+B+krjSBm?=
- =?us-ascii?Q?QhaaAhcwhx6am85qVUMWVVQEtkkBoM2gyTKv2Yh/OefzyzoZjxrs5I61mBCN?=
- =?us-ascii?Q?ldefFxxPiEm522TwKBA+0CXJrKcw+f47x4JYqBYjz+TXoZxfPX5sswNrtdcf?=
- =?us-ascii?Q?Rtn6ZuX4SL6pewwKjSBln+vj+F0ga+8/POp7fy8xHQE/cYA2TWUubP22eP/v?=
- =?us-ascii?Q?S82HdTShf27utPMmE3EjFZGGMTSodniMmPe3KfY0/9P/4gd/M/Uf2yEBcCjC?=
- =?us-ascii?Q?mkeJkPw/Fi9QfA/GKkD2GEpw/2PjlUtLuzyD5yiagx7xoqknA6/PqNPKsZwy?=
- =?us-ascii?Q?adQupvyAB7tu1PLrN5NOqCorXxxBuVBQ+4PwMwBZcembgzNcG6agwGE0GPbe?=
- =?us-ascii?Q?uA7RGQ3+/Bf80quXfBhXxltMX8m7CM42NkyujNj5a47qLRrsws7LzPb7bppG?=
- =?us-ascii?Q?vRuzRhEtrJF0hOClHEZjK8T0geNhaFtzFoX3Q2t2Ex/f1JLwO4JmH827LwuT?=
- =?us-ascii?Q?zi1H9ZbY3R1tkcT5C8wC2NssInfmfA9hfkdxloHz0u8nqT/aI4n2WFFiGKKl?=
- =?us-ascii?Q?6cTHtXs+S66E14kErGi8cbEre6Q9rk6qw0kqEGMwOeNpdZ7ajXZaA5W2HF0L?=
- =?us-ascii?Q?Jd9NCZhlNCmA5ZkbD3fFH4JfACEZx9KH29g2D1I+45D6tqZVGNqFYAG4XgZp?=
- =?us-ascii?Q?DzmvltvUSeXC/BBmvOFyWpgcSX23oP1Q/88pdEygSuksgHmswvSylIAwmS3G?=
- =?us-ascii?Q?q1ZyJoHw7Geymg+81/whZ319sntHrY8BBFS9ry60pFh4qdPvLWx+Or2GYOVk?=
- =?us-ascii?Q?OJDzuE6Yj7xV9YIoomrbfn535r1uJPLhTq+6K5Iyir0N4DBrcPhCq6zW+l+8?=
- =?us-ascii?Q?2EgyBu6pJe2i74t6L3GhQEwOzTQmwvP06cqVuvdxoWG9RIFI6g0h+zb8w8Hw?=
- =?us-ascii?Q?SnQn8etqrKUPmDaWZ+BqJ+1F+cgk8BP1svYVyTIk+IXHB4g5dzifs81AwX5s?=
- =?us-ascii?Q?BrBk6PgIAKAIynV6biaxQllGvduyuQJaFhJ3MNK2cCW/lVAZh6sZYnPBNkLU?=
- =?us-ascii?Q?B8lUcZAzUXzCDD8pE4BsOquX3z5Gr7v476Ia0fC7kNQEi+35pvqlf3O9vg+O?=
- =?us-ascii?Q?5etmIWrlJaSxWpJJm9MO/CLPMrgc7nOS/KX/FuiJ/9MueJ3IsO4ixCiChLjb?=
- =?us-ascii?Q?szOanbOTsnT9uDoePP85QENgIIUM80xKh+cmO/OWHf/yAv6TRQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(82310400023)(36860700010)(376011);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 11:10:31.5342
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dcd1af35-5295-4922-cb5c-08dc943e433f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F2.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6727
+In-Reply-To: <b078d8de-78f4-4125-8971-d76f354c7b30@linaro.org>
 
-The current configuration had non-prefetchable memory overlapping with
-bridge registers by 64KB from base address. This patch fixes the 'ranges'
-property in the device tree by adjusting the non-prefetchable memory
-addresses beyond the 64KB mark to prevent conflicts. 
+On Sun, 23 Jun 2024, Krzysztof Kozlowski wrote:
 
-Signed-off-by: Thippeswamy Havalige <thippesw@amd.com>
----
- Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On 21/06/2024 13:10, Lee Jones wrote:
+> > On Thu, 20 Jun 2024, Krzysztof Kozlowski wrote:
+> > 
+> >> On 20/06/2024 19:17, Lee Jones wrote:
+> >>> On Sun, 16 Jun 2024, Krzysztof Kozlowski wrote:
+> >>>
+> >>>> Common mistake of usage of 'simple-mfd' compatible is a dependency of
+> >>>> children on resources acquired and managed by the parent, e.g. clocks.
+> >>>> Extend the simple-mfd documentation to cover this case.
+> >>>>
+> >>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>>> ---
+> >>>>  Documentation/devicetree/bindings/mfd/mfd.txt | 13 +++++++------
+> >>>>  1 file changed, 7 insertions(+), 6 deletions(-)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/mfd/mfd.txt b/Documentation/devicetree/bindings/mfd/mfd.txt
+> >>>> index 336c0495c8a3..98b4340b65f3 100644
+> >>>> --- a/Documentation/devicetree/bindings/mfd/mfd.txt
+> >>>> +++ b/Documentation/devicetree/bindings/mfd/mfd.txt
+> >>>> @@ -18,12 +18,13 @@ A typical MFD can be:
+> >>>>  Optional properties:
+> >>>>  
+> >>>>  - compatible : "simple-mfd" - this signifies that the operating system should
+> >>>> -  consider all subnodes of the MFD device as separate devices akin to how
+> >>>> -  "simple-bus" indicates when to see subnodes as children for a simple
+> >>>> -  memory-mapped bus. For more complex devices, when the nexus driver has to
+> >>>> -  probe registers to figure out what child devices exist etc, this should not
+> >>>> -  be used. In the latter case the child devices will be determined by the
+> >>>> -  operating system.
+> >>>> +  consider all subnodes of the MFD device as separate and independent devices
+> >>>> +  akin to how "simple-bus" indicates when to see subnodes as children for a
+> >>>> +  simple memory-mapped bus. "Independent devices" means that children do not
+> >>>
+> >>> I'm not against the change, but I think it can be phased better.
+> >>>
+> >>> Quoting the new part and going on to explain what you mean by it doesn't
+> >>> flow very well.  Are you able to massage it so it reads a little more
+> >>> nicely please?
+> >>
+> >> Does this feels better?
+> >>
+> >> compatible : "simple-mfd" - this signifies that the operating system
+> >> should consider all subnodes of the MFD device as separate and
+> >> independent devices, so not needing any resources to be provided by the
+> >> parent device. Similarly to how "simple-bus" indicates when to see
+> >> subnodes as children for a simple memory-mapped bus.
+> >>
+> >> For more complex devices, when the nexus driver has to probe registers
+> >> to figure out what child devices exist etc, this should not be used. In
+> >> the latter case the child devices will be determined by the operating
+> >> system.
+> > 
+> > Flows a lot better, yes.
+> 
+> Sure.
+> 
+> > 
+> > Submit it and please include the original author this time.
+> 
+> Everything is scripted, so you ask me for additional, manual steps just
+> to find the author and then Cc-them. I'll do it but it would be much
+> easier if the interested party added themself as reviewer or maintainer
+> of the binding.
 
-diff --git a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
-index 4770ce02fcc3..989fb0fa2577 100644
---- a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
-+++ b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
-@@ -92,7 +92,7 @@ examples:
-                                        <0 0 0 3 &pcie_intc_0 2>,
-                                        <0 0 0 4 &pcie_intc_0 3>;
-                        bus-range = <0x00 0xff>;
--                       ranges = <0x02000000 0x0 0xe0000000 0x0 0xe0000000 0x0 0x10000000>,
-+                       ranges = <0x02000000 0x0 0xe0010000 0x0 0xe0010000 0x0 0x10000000>,
-                                 <0x43000000 0x80 0x00000000 0x80 0x00000000 0x0 0x80000000>;
-                        msi-map = <0x0 &its_gic 0x0 0x10000>;
-                        reg = <0x0 0xfca10000 0x0 0x1000>,
+How you set-up your tooling is your business.  =;)
+
+Who to Cc is often situation dependent, some of the semantics you'd find
+hard to script.  `scripts/get_maintainer.pl` provides some helpful
+arguments (e.g. --git-min-percent 75) which seem to work a lot of the
+time.
+
+In this particular case, you're making heavy changes to a passage of text
+which someone has taken the time to craft.  Adding them to the
+conversation should be seen as a common courtesy.
+
 -- 
-2.25.1
-
+Lee Jones [李琼斯]
 
