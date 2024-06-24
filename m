@@ -1,136 +1,179 @@
-Return-Path: <linux-kernel+bounces-226832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67AD7914481
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:19:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1396C914488
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943411C21CD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:19:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F179281E56
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9BF4CB2B;
-	Mon, 24 Jun 2024 08:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69234D9F4;
+	Mon, 24 Jun 2024 08:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eyAGgcL3"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cxujiqvb"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BAF53370
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9AF49645;
+	Mon, 24 Jun 2024 08:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719217153; cv=none; b=VOgDlMgp769h/3IAj5hK6u5VC3kJ9GxalRhO0SHXGUZ/QC4uIfRgiqdcSe9/YeDvvlnz2HjBu+L6eWxewk+lYB54uJ3pwfbg/rfggL4GzZ2Y3WEYMm0y/0JQPBO3AoImIYzbFU4LXpyucXBjSE3zkn4duf8Y+WFyAbKsiaEuXDI=
+	t=1719217212; cv=none; b=asA2WTtPnwn1wiWhnULlHEbCbWcflnXL8Y4CcJL4Hhnh9AmAdIETGTnj1gqFPXxknFsm2ijqRFmyBXDXCvrW/mZBG/sh1VO52g0mB7Tgdu5kTepQocutRSkuC9VabqUD49554x274Bd34uvGzcSQYtJzjKci1II6Rx+Fmnxdb9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719217153; c=relaxed/simple;
-	bh=hrcbm/Drjw9ypN+HcZfxd5WVucStMi5y/7ez75gjaJM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QskfKaKPHa84XgH32V5VHpS+G7t8hswOhlJFymjIed6TrOk4XKKK66LjCTbe2Lp9DK74ozgY6hXkJoSKVh5Tc+ZPi/iad37b9L9tBXI8BK9DgVzyNt0yvZ8JQSkFJ7JuY0XY9/SRyadKBPNY0zEW/A56oHoHIsYcgM2+03IiROc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eyAGgcL3; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52cdebf9f53so1421111e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:19:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719217150; x=1719821950; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwPwL72m8s93kw/p7VxOEDDmYj0qJsAuA8dl81m3PQc=;
-        b=eyAGgcL3XkMNNMzbIdTO77oSFJndYkR1jhwj751TAxnHHQY0P4I8GDr6DWb+vXojF+
-         tAPdH+W50rezV2u79ZVrZAA2IMCZyxSoiDj/4nGWNAqrmRMvhkhz9lL1m9CpAjek0C4G
-         XRURr4UTrQycQZo1x8Jzcz8/x65tiIKmAfTwwqMZya39JDy9sgxugJ7DkeWzXojJRvCl
-         zXVW2Noq5aDcNv+iuGclzyOVksybTd/QaFY5w0KJgLZ1e42StNZ+F83VPvWZXzRMaqqX
-         HjjPP9QY5W8UeNPrFIXQVzxE3gc3x2bT1XlVU5VqDMOGZmtPttvvzyFCOK8ohrNDnd4S
-         rwEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719217150; x=1719821950;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jwPwL72m8s93kw/p7VxOEDDmYj0qJsAuA8dl81m3PQc=;
-        b=MeLPbLsk/filyZwDVhn/kVOyJg/0M2gyDwfbXO5pozczVz7FHuvodJCx9pRA1dyQ5b
-         WxLCnUwoiX/5SQ02bfndtD1PWG0hJmAvQJcXyj6GfazSb/eCOzOG3cFrPV+HcGNOgk9B
-         0hyeKrI140R+29uQht6Ycgrk6ldxqQLdqWAo1sdB7vr1Ov//YiOrBiV/SjRUmllcLuKa
-         Xl5GVEFwQTFCtVOWrnMg9mEQUYjMQ9q1VtlRCCjEROg/ck9kjIX3qLrB07sfjajqkQ8f
-         anUPxTZjm4tEhtlBcmhhgoox85orcpbQgAivjvCv0ngMgT6AoNZc2DW2aCfKIsI30TSh
-         Fxtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxlfk4rv49EIWarzt/2rNtXStz+ozVvBqvBxUMQ7+qjjgGXVp/oaWZtPwyhk0Ne48Mfbf1vfSSfqCoj0wobIDqKV+vPzZQVvasRX1B
-X-Gm-Message-State: AOJu0YyWaRd6icD0QCjoaCmKLdNhQ88jkuNeoluKL7VOzuvOw+bMbenz
-	sgq1rCCSjN9Nx6T3F5lkiyt50rxixSx4bBA7MfMltkm6V4UwDJK2lOqk2NBdzCM=
-X-Google-Smtp-Source: AGHT+IHpL6UH6p0b9w60yb/Nc8u8gfZQbm7Xx++lCO0XJ1GqYWCIG1rZ3OamjznZPFHcsOt+MHvVSQ==
-X-Received: by 2002:a05:6512:78f:b0:52b:bf8e:ffea with SMTP id 2adb3069b0e04-52ce064f62dmr2413777e87.40.1719217150488;
-        Mon, 24 Jun 2024 01:19:10 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63bcef1sm923572e87.72.2024.06.24.01.19.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 01:19:10 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 24 Jun 2024 11:19:09 +0300
-Subject: [PATCH] MAINTAINERS: CC dri-devel list on Qualcomm FastRPC patches
+	s=arc-20240116; t=1719217212; c=relaxed/simple;
+	bh=pq0cmcBY/X2RNBjl7vh86+Fi/2499fm8ZPDUFHIfztc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tn6tgIRmhvGMdUH8cgc8jacrL8kkwWObN/ESYqshQ2X6Oy4TbiM03fwoqEu5v3cRpbc17uh0ao4cKEC6Zctiym8gzDPLBtth6pzZbPPJRpwDXEan4KbSCkYmtBcV24yruG/FIMo9zqIzvHXY12SvG9xg6Va+kLdCcr8tsfb0a8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cxujiqvb; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5563FC0009;
+	Mon, 24 Jun 2024 08:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719217207;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vpj1bjYXlBzUfYOefDTjh4xiC9L+rWuuQmo0xQfNisQ=;
+	b=cxujiqvbjQcjSYkwhcOwJAczyZeKLHaVrwYHhoxhQTlS84njHLtQU7WqYt0TVoLRyIsj/L
+	7b9nOKN5UR7d/5EIQAZ7hEEcyhn0Cq+6hJ3IfkQniOqC7/JJyuIgqQamKLH2mhQ7NOQuh9
+	Bwd3PaIEVlv/8MPvj+C2QLY6hLlABB1P+K4ceJxNEy59dzQIB8t9FyVXIKmlA3YikrJZmh
+	MtHsGb/kZflAGcFqL0O13KM/Hnm0pJ5l2xFN212IJL1m373ToUZfXE1Xq7oNN1cRC82Djb
+	9KGd+YUl4ms/PHS4Zds9ogBeUkZsyvcmGDX34hHAE1a5rk4uYg2iAebmKSH0qw==
+Date: Mon, 24 Jun 2024 10:20:03 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Simon Horman <horms@kernel.org>, Sai Krishna Gajula
+ <saikrishnag@marvell.com>, Thomas Gleixner <tglx@linutronix.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Lee Jones <lee@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Saravana
+ Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, netdev@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Allan
+ Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 18/19] mfd: Add support for LAN966x PCI device
+Message-ID: <20240624102003.3b11a8cc@bootlin.com>
+In-Reply-To: <CAHp75VdeoNXRTmMoK-S6qecU1nOQWDZVONeHU+imFiwcTxe8xg@mail.gmail.com>
+References: <20240527161450.326615-1-herve.codina@bootlin.com>
+ <20240527161450.326615-19-herve.codina@bootlin.com>
+ <ZmDJi__Ilp7zd-yJ@surfacebook.localdomain>
+ <20240620175646.24455efb@bootlin.com>
+ <CAHp75VdDkv-dxWa60=OLfXAQ8T5CkFiKALbDHaVVKQOK3gJehA@mail.gmail.com>
+ <20240620184309.6d1a29a1@bootlin.com>
+ <20240620191923.3d62c128@bootlin.com>
+ <CAHp75VdeoNXRTmMoK-S6qecU1nOQWDZVONeHU+imFiwcTxe8xg@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240624-fastrpc-ml-v1-1-5dad89dce78f@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAPwreWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyMT3bTE4pKigmTd3BxdI5Nk8xTT5DTTVPMkJaCGgqLUtMwKsGHRsbW
- 1AHdoaQFcAAAA
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Amol Maheshwari <amahesh@qti.qualcomm.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1140;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=hrcbm/Drjw9ypN+HcZfxd5WVucStMi5y/7ez75gjaJM=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmeSv9zpf8H4BgKPlJxOg47IlU6qKet0Gdiy2mb
- lK54d+wY2SJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnkr/QAKCRCLPIo+Aiko
- 1dokB/9wFHH32XcKFs1rHJdH5p1yiMiZrguW0qbo3/I8qIMjE2YUjFNtbRxgC+rk2TUs6uP6WM6
- YEzuOuCRLhsffQOueT6cNgwHDNALL63lxA6n6sfbctfqzqNr5homT+myfqRZCGkPo1BBtGBPHKJ
- Pr0Pr5QbXvvEvbJXk4ePerGK3kvMg9RbIE05Hah/c8eYVny9s7Q2NvOfuBQhVF/d0Jl8SxM6xfa
- 5PZYnOPJPLEKZ/+O6+8y4U3QsK6aC6k0NzFUirbmtJKknqcmmLb5YiuSwbkpgMuhkwHcKwe4q3a
- l1w+2aJKlNAHjiDSOfSPwcluCidivsn5WvRA/Aa5MLxfp7GY
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-FastRPC is a way to offload method invocation to the DSPs on Qualcomm
-platforms. As the driver uses dma-bufs, add dri-devel mailing list to
-the MAINTAINERS's entry, so that DRM maintainers are notified about the
-uAPI changes. This follows the usual practice established by the "DMA
-BUFFER SHARING FRAMEWORK" entry in the file.
+On Fri, 21 Jun 2024 17:45:05 +0200
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Suggested-by: Bjorn Andersson <andersson@kernel.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+> On Thu, Jun 20, 2024 at 7:19 PM Herve Codina <herve.codina@bootlin.com> wrote:
+> > On Thu, 20 Jun 2024 18:43:09 +0200
+> > Herve Codina <herve.codina@bootlin.com> wrote:  
+> > > On Thu, 20 Jun 2024 18:07:16 +0200
+> > > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:  
+> > > > On Thu, Jun 20, 2024 at 5:56 PM Herve Codina <herve.codina@bootlin.com> wrote:  
+> > > > > On Wed, 5 Jun 2024 23:24:43 +0300
+> > > > > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:  
+> > > > > > Mon, May 27, 2024 at 06:14:45PM +0200, Herve Codina kirjoitti:  
+> 
+> ...
+> 
+> > > > > > > +   if (!dev->of_node) {
+> > > > > > > +           dev_err(dev, "Missing of_node for device\n");
+> > > > > > > +           return -EINVAL;
+> > > > > > > +   }  
+> > > > > >
+> > > > > > Why do you need this? The code you have in _create_intr_ctrl() will take care
+> > > > > > already for this case.  
+> > > > >
+> > > > > The code in _create_intr_ctrl checks for fwnode and not an of_node.
+> > > > >
+> > > > > The check here is to ensure that an of_node is available as it will be use
+> > > > > for DT overlay loading.  
+> > > >
+> > > > So, what exactly do you want to check? fwnode check covers this.
+> > > >  
+> > > > > I will keep the check here and use dev_of_node() instead of dev->of_node.  
+> > > >
+> > > > It needs to be well justified as from a coding point of view this is a
+> > > > duplication.  
+> >
+> > On DT based system, if a fwnode is set it is an of_node.
+> > On ACPI, if a fwnode is set is is an acpi_node.
+> >
+> > The core PCI, when it successfully creates the DT node for a device
+> > (CONFIG_PCI_DYNAMIC_OF_NODES) set the of_node of this device.
+> > So we can have a device with:
+> >  - fwnode from ACPI
+> >  - of_node from core PCI creation  
+> 
+> Does PCI device creation not set fwnode?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f45881e982d2..26d628c677a8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18621,6 +18621,7 @@ QUALCOMM FASTRPC DRIVER
- M:	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
- M:	Amol Maheshwari <amahesh@qti.qualcomm.com>
- L:	linux-arm-msm@vger.kernel.org
-+L:	dri-devel@lists.freedesktop.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
- F:	drivers/misc/fastrpc.c
+No and IMHO it is correct.
+This device has the fwnode that point to an ACPI node: The description used
+for device creation.
 
----
-base-commit: 2102cb0d050d34d50b9642a3a50861787527e922
-change-id: 20240624-fastrpc-ml-24c7d5cf5e7b
+The of_node set is created based on PCI known information.
+This of_node, at PCI level is not used to create the PCI device but is created
+based on an already existing PCI device.
 
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> > This driver needs the of_node to load the overlay.
+> > Even if the core PCI cannot create a DT node for the PCI device right
+> > now, I don't expect this LAN855x PCI driver updated when the core PCI
+> > is able to create this PCI device DT node.  
+> 
+> If it's really needed, I think the correct call here is is_of_node()
+> to show exactly why it's not a duplication. It also needs a comment on
+> top of this call.
 
+is_of_node() will not returns the expected result.
+It will return false as the fwnode->ops of the device is not related to 
+of_node ops but ACPI node ops :(
+
+What do you thing it I keep the of_node test using dev_of_node() and add the
+following comment:
+	--- 8< ---
+	/*
+	 * On ACPI system, fwnode can point to the ACPI node.
+	 * This driver needs an of_node to be used as the device-tree overlay
+	 * target. This of_node should be set by the PCI core if it succeeds in
+	 * creating it (CONFIG_PCI_DYNAMIC_OF_NODES feature).
+	 * Check here for the validity of the of_node.
+	 */
+	if (!dev_of_node(dev)) {
+		dev_err(dev, "Missing of_node for device\n");
+		return -EINVAL;
+	}
+	--- 8< ---
+
+Let me know if this can be ok.
+
+Hervé
 
