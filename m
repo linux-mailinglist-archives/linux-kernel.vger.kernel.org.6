@@ -1,307 +1,124 @@
-Return-Path: <linux-kernel+bounces-227995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA20915987
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:02:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF5D391598E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702B01C220A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:02:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ABE8B247C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A854A1A2C06;
-	Mon, 24 Jun 2024 22:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2B81A0708;
+	Mon, 24 Jun 2024 22:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="n+4jrgc9"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sin2uMQh"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8651A0B1D
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4B51A2FA0
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719266525; cv=none; b=E9smZtR1ZVAr72EMr1AnRSvh66YNFLdfQpURMzEMzOuvIFsrBNVqmnRh7hPJxdfJ7y3cuigxrba4LSWS7CzPlI/+gUp/7D5RivaxLOV0KdqyCgJyHNM8cpZyDMa9xB7SyTkjG3IRMxEmhJeQCw38GvkgHKFQhIPPcq5KG9YwU6g=
+	t=1719266534; cv=none; b=JhSvWl91F2ktLo5tRrB1kVNYgGA0pM/OsmbqfnXhdtetOeloJED0YBE5ARDemPc9k6+8/+d/1WKUbIGKuJhLpOzv29qJT2zwsRUTZ6xFG9Ik0+OsFPiIBMqrSLntGvLMw/aUDA4A3RvNr3Bo1oSjhTVEAdZHBX37YTK90nGzs/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719266525; c=relaxed/simple;
-	bh=u1KuGH1/HXyrW0AP/WJGsUdwrTDtNhlap/i+z4xBS/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RoKqo/rYvnn2CT9gDBlPIWs0JFdfG0LtudhMf02bwVOTowa/qh2UozStXdm1DdrDASTkjXgUTMF/cDQxxV8F4hrZuzTwLHhT4eF+RZ7TuVF0cAZrnIB5IFpLTcSFR4sEngl6hwBuZyC2TrFqOqps1ndOMgVweeRgMzJACz985jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=n+4jrgc9; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-25cba5eea69so2338905fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:02:03 -0700 (PDT)
+	s=arc-20240116; t=1719266534; c=relaxed/simple;
+	bh=xC5FF9l5eZ8bSM2CS/X7awXDo3lA0kREds7STHvAnvk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=AxcIeUgDhpN1AjKhmM3bZM9sMppUNCfUZI0+kaBXfy3ZHLQoZC3ymWFaGi78rzl0wJ/IwVEKBWflu+iRo87TWSutvcnBfxQUtexxFW2yZuu53qBuxmjrUsJ1aAPS/1NDiyg9A3ua7DPeJYkjZe5N/sS0wXGikR9FDEjoX3mBeaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dhavale.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sin2uMQh; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dhavale.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-63bf1d3fb2dso106631617b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:02:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719266523; x=1719871323; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RMe5t/odttELQKJJDIZN4VN+rE88QoR22ZwoVBWULiY=;
-        b=n+4jrgc9YigLoT4EtUFhX+b2cHZ+JgNLpC4imIiKS6JR8DRBUBY/2OvzMuYeD2Gy67
-         2YPOuzc6Zx18NzyGpOcZHlE9tFcCYM6lEK6OskYOGvbM3WIr/4aYxV9DbO1tBrXFB2E1
-         BnfGmqgXYXVyvD1QcsxVFSXDNZl6zGQAB9HIjHQgSm3MDmjaLADSsUoz6WE2w/3t1oM6
-         Ea3EwmeNkeHYeTuWH3VX7I+wDpGYZuRMaeY3p1Ft7/D7cbdkw/I0DYrBS/SMTpMmc+4N
-         izkBgSJ1yL315hybEWRabVoL5bCr9wmPd8hHpwhNRSzBHTZMDwlMin3JUhHGtmtmiEDV
-         /a0g==
+        d=google.com; s=20230601; t=1719266532; x=1719871332; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=s+EfJ0AoKGlj/+Y6NKu6RGkBJo/MER6SHrvQPfBXON4=;
+        b=Sin2uMQh3gG1Y1Spwxzi3YLSmk9Om8SFuYYoK99HNJ+Z2fWMydOWNKq1z/Zr3ujvfh
+         sdfzAinaI7qUSeKMi5TM+IrmokmLg3tSC6yqCYziyBcx3NDU9EM4yNZIfz5Z9+BTth19
+         C+BVDpErV1W8WltbliwHQ0KrCNr+XMFohcnqk9ygB/dLTmgnVSdFf9eWRWMQ1ZYXSkop
+         +J4sL74tdMUkSXzfxPvW+lCBv6IyRikxJaXcWtnwSemITwErW/tQXpGvbHBU9I3ZgLM7
+         mODBsmTVUYvOPbLXbWezTyBuoM/tDTkVB2xX/4piCYC66K/inueaEn7mY7zCewRmq9y7
+         FDUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719266523; x=1719871323;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RMe5t/odttELQKJJDIZN4VN+rE88QoR22ZwoVBWULiY=;
-        b=LVfJSEjrs2gA4XnP+6PCpsYeDqTxjTZU+DyO6hHRNdInO5XV8euct7LQxcIu5gQ+NS
-         68BWNoLQGBcBidtwR0z01fMbQVErtx+uHWcR8SeV4jGHT48Hh9W3zU5O2wnvr7Tq5DCk
-         CUaRjrrby++E+ZL7m+GqAfwjiHuNwlRtgTlM+Xm0Bd+E+VN9zmYke69uM1VvrdMS4NoD
-         JTto2kE5qRDqlBbIJn0c4JsbmdZZb9V2XukvKpXeJz8f0dcpgbioAAtO3KJs7NE5mHxL
-         TSCPkfUcKLQFpjAdk85Vq3ektet9uMTjMQlDBIFIzu92QPMphCsHtcudPks5DiojuxRm
-         xFCg==
-X-Forwarded-Encrypted: i=1; AJvYcCX25ZVbOqwwOmfhefh/pKz+JErOwB3BybkCdOOMwcicFXMMHxL0OQn0uE3eXhiRYMQbWWi1oFPhnUgMgDbAkFYQbiPJQ8Vp0qJYD4SM
-X-Gm-Message-State: AOJu0YzZS5JlkvW5WdValZnTAj5vc3dw9SUQkGHIIESnvuGWtiiAvyoV
-	ewNqujWRByj9aJIpxwoDmjHskPYY5vdpaSPmk6e9bD7AOPIwJSXeAKp2oh/UShA=
-X-Google-Smtp-Source: AGHT+IFtxg/rN1nfbz6EfZu2ga2NlXar9/u79gvG7cePiuiPCelYoq5/19pC2dyZMbAHB6bN0PGQow==
-X-Received: by 2002:a05:6870:fb9f:b0:23e:6d9a:8f45 with SMTP id 586e51a60fabf-25d017f709fmr6251371fac.48.1719266522599;
-        Mon, 24 Jun 2024 15:02:02 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25cd4941c9esm2116921fac.4.2024.06.24.15.02.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 15:02:02 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH v3 3/3] Documentation: iio: Document ad4695 driver
-Date: Mon, 24 Jun 2024 17:01:55 -0500
-Message-ID: <20240624-iio-adc-ad4695-v3-3-a22c302f06bf@baylibre.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240624-iio-adc-ad4695-v3-0-a22c302f06bf@baylibre.com>
-References: <20240624-iio-adc-ad4695-v3-0-a22c302f06bf@baylibre.com>
+        d=1e100.net; s=20230601; t=1719266532; x=1719871332;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s+EfJ0AoKGlj/+Y6NKu6RGkBJo/MER6SHrvQPfBXON4=;
+        b=RJHka54jhB3WsPprAJj5sh19eikVcI2BfTJzBLrkY2ZFpHyrx6QtIZtCfVzKgwQ4GD
+         YL8TXBUFnW7W0Ax5peqc1Nt5S4WmgO7HNe9UVG95iFmxpDSMbLxQ0xCU+iqMfsRKH8Df
+         SjM7lrQ2fL9qiT+yUEP7HnbSFvMrlLsE2gxVE9oFj+YrwwHEGthL9MMF3djsdnZLIqJD
+         Yhiqplw6OpMQt8M38q81vK/vg8HlbeGKsBvttQACdfiX8wvp4qSSVVn5x/s3Hr0TMFw5
+         nh8p9eTLy362StN7/0rgQb0VLFA2jhE7SreJIpX0gWl3GR4kh8nah9YErR5ftPT843lQ
+         qpcw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6I4dbEIH30+va96le+tRdIyVu2gphFr2OEGjBtiu/7i5KPXitWiRqQz0EieixDIJ6pd4JPVgibG+FK0ycPNrQVQjhyoLU2vfH9E5r
+X-Gm-Message-State: AOJu0Yz9MdPfgoR+DBdKAHstpm2OiY0ndPahmCxP16FnliS2/m+2693i
+	hGKDJ217+DZRsPLywKD333kRfFIhNiEq/8XEHRz/TaQW5r6dG7PL5aZbEAcpytBi0mMBzqkMCit
+	WjZTOIQ==
+X-Google-Smtp-Source: AGHT+IHLhxwyVv9nMVrC3Jwu4bpC9flEqE3SXuk9eeKuPJOpyr4XzP7jLnmABDJo9hUdNQV/1SKqydFBjFpL
+X-Received: from dhavale-desktop.mtv.corp.google.com ([2620:15c:211:201:307c:c43a:8b68:c64f])
+ (user=dhavale job=sendgmr) by 2002:a05:6902:1241:b0:dff:3ec0:71c1 with SMTP
+ id 3f1490d57ef6-e0303fbf483mr103883276.8.1719266531828; Mon, 24 Jun 2024
+ 15:02:11 -0700 (PDT)
+Date: Mon, 24 Jun 2024 15:02:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.12.4
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+Message-ID: <20240624220206.3373197-1-dhavale@google.com>
+Subject: [PATCH v1] erofs: fix possible memory leak in z_erofs_gbuf_exit()
+From: Sandeep Dhavale <dhavale@google.com>
+To: linux-erofs@lists.ozlabs.org, Gao Xiang <xiang@kernel.org>, 
+	Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>, 
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
+	Chunhai Guo <guochunhai@vivo.com>
+Cc: hsiangkao@linux.alibaba.com, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The Analog Devices Inc. AD4695 (and similar chips) are complex ADCs that
-will benefit from a detailed driver documentation.
+Because we incorrectly reused of variable `i` in `z_erofs_gbuf_exit()`
+for inner loop, we may exit early from outer loop resulting in memory
+leak. Fix this by using separate variable for iterating through inner loop.
 
-This documents the current features supported by the driver.
+Fixes: f36f3010f676 ("erofs: rename per-CPU buffers to global buffer pool and make it configurable")
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Sandeep Dhavale <dhavale@google.com>
 ---
+ fs/erofs/zutil.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-v2 changes:
-* Rework DT examples for DT bindings changes
-
-v2 changes:
-* Rework DT examples for DT bindings changes
-* Fix wrong MAINTAINERS update
----
- Documentation/iio/ad4695.rst | 155 +++++++++++++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst  |   1 +
- MAINTAINERS                  |   1 +
- 3 files changed, 157 insertions(+)
-
-diff --git a/Documentation/iio/ad4695.rst b/Documentation/iio/ad4695.rst
-new file mode 100644
-index 000000000000..a33e573d61d6
---- /dev/null
-+++ b/Documentation/iio/ad4695.rst
-@@ -0,0 +1,155 @@
-+.. SPDX-License-Identifier: GPL-2.0-only
-+
-+=============
-+AD4695 driver
-+=============
-+
-+ADC driver for Analog Devices Inc. AD4695 and similar devices. The module name
-+is ``ad4695``.
-+
-+
-+Supported devices
-+=================
-+
-+The following chips are supported by this driver:
-+
-+* `AD4695 <https://www.analog.com/AD4695>`_
-+* `AD4696 <https://www.analog.com/AD4696>`_
-+* `AD4697 <https://www.analog.com/AD4697>`_
-+* `AD4698 <https://www.analog.com/AD4698>`_
-+
-+
-+Supported features
-+==================
-+
-+SPI wiring modes
-+----------------
-+
-+The driver currently supports the following SPI wiring configuration:
-+
-+4-wire mode
-+^^^^^^^^^^^
-+
-+In this mode, CNV and CS are tied together and there is a single SDO line.
-+
-+.. code-block::
-+
-+    +-------------+         +-------------+
-+    |          CS |<-+------| CS          |
-+    |         CNV |<-+      |             |
-+    |     ADC     |         |     HOST    |
-+    |             |         |             |
-+    |         SDI |<--------| SDO         |
-+    |         SDO |-------->| SDI         |
-+    |        SCLK |<--------| SCLK        |
-+    +-------------+         +-------------+
-+
-+To use this mode, in the device tree, omit the ``cnv-gpios`` and
-+``spi-rx-bus-width`` properties.
-+
-+Channel configuration
-+---------------------
-+
-+Since the chip supports multiple ways to configure each channel, this must be
-+described in the device tree based on what is actually wired up to the inputs.
-+
-+There are three typical configurations:
-+
-+An ``INx`` pin is used as the positive input with the ``REFGND``, ``COM`` or
-+the next ``INx`` pin as the negative input.
-+
-+Pairing with REFGND
-+^^^^^^^^^^^^^^^^^^^
-+
-+Each ``INx`` pin can be used as a pseudo-differential input in conjunction with
-+the ``REFGND`` pin. The device tree will look like this:
-+
-+.. code-block::
-+
-+    channel@0 {
-+        reg = <0>; /* IN0 */
-+    };
-+
-+If no other channel properties are needed (e.g. ``adi,no-high-z``), the channel
-+node can be omitted entirely.
-+
-+This will appear on the IIO bus as the ``voltage0`` channel. The processed value
-+(*raw × scale*) will be the voltage present on the ``IN0`` pin relative to
-+``REFGND``. (Offset is always 0 when pairing with ``REFGND``.)
-+
-+Pairing with COM
-+^^^^^^^^^^^^^^^^
-+
-+Each ``INx`` pin can be used as a pseudo-differential input in conjunction with
-+the ``COM`` pin. The device tree will look like this:
-+
-+.. code-block::
-+
-+    com-supply = <&vref_div_2>;
-+
-+    channel@1 {
-+        reg = <1>; /* IN1 */
-+        common-mode-channel = <AD4695_COMMON_MODE_COM>;
-+        bipolar;
-+    };
-+
-+This will appear on the IIO bus as the ``voltage1`` channel. The processed value
-+(*(raw + offset) × scale*) will be the voltage measured on the ``IN1`` pin
-+relative to ``REFGND``. (The offset is determined by the ``com-supply`` voltage.)
-+
-+The macro comes from:
-+
-+.. code-block::
-+
-+    #include <dt-bindings/iio/adi,ad4695.h>
-+
-+Pairing two INx pins
-+^^^^^^^^^^^^^^^^^^^^
-+
-+An even-numbered ``INx`` pin and the following odd-numbered ``INx`` pin can be
-+used as a pseudo-differential input. The device tree for using ``IN2`` as the
-+positive input and ``IN3`` as the negative input will look like this:
-+
-+.. code-block::
-+
-+    in3-supply = <&vref_div_2>;
-+
-+    channel@2 {
-+        reg = <2>; /* IN2 */
-+        common-mode-channel = <3>; /* IN3 */
-+        bipolar;
-+    };
-+
-+This will appear on the IIO bus as the ``voltage2`` channel. The processed value
-+(*(raw + offset) × scale*) will be the voltage measured on the ``IN1`` pin
-+relative to ``REFGND``. (Offset is determined by the ``in3-supply`` voltage.)
-+
-+VCC supply
-+----------
-+
-+The chip supports being powered by an external LDO via the ``VCC`` input or an
-+internal LDO via the ``LDO_IN`` input. The driver looks at the device tree to
-+determine which is being used. If ``ldo-supply`` is present, then the internal
-+LDO is used. If ``vcc-supply`` is present, then the external LDO is used and
-+the internal LDO is disabled.
-+
-+Reference voltage
-+-----------------
-+
-+The chip supports an external reference voltage via the ``REF`` input or an
-+internal buffered reference voltage via the ``REFIN`` input. The driver looks
-+at the device tree to determine which is being used. If ``ref-supply`` is
-+present, then the external reference voltage is used and the internal buffer is
-+disabled. If ``refin-supply`` is present, then the internal buffered reference
-+voltage is used.
-+
-+Unimplemented features
-+----------------------
-+
-+- Additional wiring modes
-+- Buffered reads
-+- Threshold events
-+- Oversampling
-+- Gain/offset calibration
-+- GPIO support
-+- CRC support
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 4c13bfa2865c..df69a76bf583 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -17,6 +17,7 @@ Industrial I/O Kernel Drivers
- .. toctree::
-    :maxdepth: 1
+diff --git a/fs/erofs/zutil.c b/fs/erofs/zutil.c
+index 036024bce9f7..b80f612867c2 100644
+--- a/fs/erofs/zutil.c
++++ b/fs/erofs/zutil.c
+@@ -148,7 +148,7 @@ int __init z_erofs_gbuf_init(void)
  
-+   ad4695
-    ad7944
-    adis16475
-    adis16480
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c52c4b0e69a8..9b6eaccb34f2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1216,6 +1216,7 @@ L:	linux-iio@vger.kernel.org
- S:	Supported
- W:	https://ez.analog.com/linux-software-drivers
- F:	Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
-+F:	Documentation/iio/ad4695.rst
- F:	drivers/iio/adc/ad4695.c
- F:	include/dt-bindings/iio/adi,ad4695.h
+ void z_erofs_gbuf_exit(void)
+ {
+-	int i;
++	int i, j;
  
-
+ 	for (i = 0; i < z_erofs_gbuf_count + (!!z_erofs_rsvbuf); ++i) {
+ 		struct z_erofs_gbuf *gbuf = &z_erofs_gbufpool[i];
+@@ -161,9 +161,9 @@ void z_erofs_gbuf_exit(void)
+ 		if (!gbuf->pages)
+ 			continue;
+ 
+-		for (i = 0; i < gbuf->nrpages; ++i)
+-			if (gbuf->pages[i])
+-				put_page(gbuf->pages[i]);
++		for (j = 0; j < gbuf->nrpages; ++j)
++			if (gbuf->pages[j])
++				put_page(gbuf->pages[j]);
+ 		kfree(gbuf->pages);
+ 		gbuf->pages = NULL;
+ 	}
 -- 
-2.45.2
+2.45.2.741.gdbec12cfda-goog
 
 
