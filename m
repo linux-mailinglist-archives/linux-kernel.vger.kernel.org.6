@@ -1,122 +1,136 @@
-Return-Path: <linux-kernel+bounces-226910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C291A914597
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:59:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1071991459F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A931C226BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:59:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7B41F21B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D61A12F5A6;
-	Mon, 24 Jun 2024 08:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4887130A49;
+	Mon, 24 Jun 2024 08:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="MzkgpNdA"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lS+z8JCP"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96D112E1D4
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191F912F592;
+	Mon, 24 Jun 2024 08:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719219565; cv=none; b=NpG9IEEE1fhabIejbyStmFWuMG3xypit6AX+dLfHU5jTtwns4Aif3ZRFu42xphHJ0icopc0mpx+BfmbsIHrhZAleOC6pYLMoYAkMlURDk8RXG2FJJYgqGgbAw7jRWMkYtiMHeNeTVtQOk+GaslRNJ+5Vs3O5coOhnLCXKG5Uv8Y=
+	t=1719219594; cv=none; b=YZqKNXEkijQT4R9sN0sIgUalv5MHvTc1m7jSoStcCYHKwkI+KSbzuG2vuBcWP2JPakUZZ/mdCmNDrgA9HsV+VpiuWLDnpEvRJBp7Ic+IQQInXQMnCVxYCJmjL35Y1g/8qzLhXn1SIoJDZvo8+hxYuWEMPsdzAhOUQ1EZEoRqefI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719219565; c=relaxed/simple;
-	bh=hdsmDqmNgGZQgfRkYZ6dfoEvN0ahnTXGnc7hhzCQrmg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h9VPaHodaOp9chrPwp8Pq9vA10HsnQNSCvsunGWBin1STaviZtQP3Y9Stq7OP1J/QSQcIa3LTkSlxUQfBLEb21elqnHc7gQ8gj+o0YxIB5PveNegD/XZvjasGKl3ZsCP8c0qj9r+++qfacuAXY/F6tmZWd6kDrIhd9XhpBIPtPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=MzkgpNdA; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7955e1bf5f8so263680985a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:59:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1719219563; x=1719824363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hdsmDqmNgGZQgfRkYZ6dfoEvN0ahnTXGnc7hhzCQrmg=;
-        b=MzkgpNdA+GFVqSzcGBdQV5+67hLPJQv//dxUXjRiCZwxk0Pbb6cUCEqgy4VTTNiygg
-         HGPX4tQv3bEkRG4s0S7lzRevYKJJqlsUjgFUQ2kXYqGa3nS5FxwDcKzyO2P5IP7QiFyh
-         hAxtVFyl4A11u3NhIa++NuzEn86CRqcT9K1Fbofl6/XvmFKQPityb2U0NEOr3pqr1Nay
-         bbeRukitLOAAgtaHOMtkJahG1QwhzuzBY4FtUUqiv2yfhBr03ojzwz/GB1i7gzAdxtIN
-         Xng3ZSw3PsyDedFYdaWwYsn1ASWr/KLdTRIxDOytqaOxM8K8rLBdvIE3YJuQVWWhVj2P
-         dp0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719219563; x=1719824363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hdsmDqmNgGZQgfRkYZ6dfoEvN0ahnTXGnc7hhzCQrmg=;
-        b=RKIeJZHQ7xHNo0fjTzu0y+yPbCCPk+40pk1m1kDajvv74vYn+hneyXke/xHBaeKKKi
-         OyVnd+GIhu4QBezseA6bxDiLlVXyQgMl9+9RtoNh8gub3aTTZXGBVTe4+kzf2m/y527O
-         i75Dyqs/Xe/aS+ZauCz+EYSFdycUDZxI2Nt5SAHGxjk+R0kMfcjTXPYymfsGPqHH43N+
-         ykgRuID8GM4D0NFEEeIvaFol8+Q5OrSKrIC5CnJpioSqqGd42INRN7diysNEMpzi1a8o
-         HPMCPduhBrmc4mPRp81aXXqyxKIEMinTgDhVMxQf4lEvlGUWnbjR+7HRhoyQzt8Lerzp
-         242g==
-X-Forwarded-Encrypted: i=1; AJvYcCUMNnM+5ZEtyj3IvVhQNxOPFkW5IC8vFbOYgCNyxyDbFdd00myulDf7F3hwOsZ5bC+IbzZ+CbgZr+9Ox8M3crCoe2qfy/qIyj5Swy45
-X-Gm-Message-State: AOJu0Yxfv3vVdEO3QSw1e8Pki9GSIZIkPwth5uO4wI72lEdTsLFnbBst
-	vv661OzVWHozXqQTFx8NCw5uPjzf1UJqeiKnNtvBq+Pq56pVD4VCYLYNmAC4nl+MujQkSQ8XHZP
-	T9tlszWfYiocd3ObTkqtL0qdWwsA6mK2Pe77DQQ==
-X-Google-Smtp-Source: AGHT+IHJdukmHTX31XZGqN8Ya5O7xqbZeOSn9ad1olNhKCpFsHEHdPHP6m4H5tAF93YKuWVFl5Mnqdf3Ba8kIeeVBLc=
-X-Received: by 2002:a05:6214:4a45:b0:6b4:ff32:8287 with SMTP id
- 6a1803df08f44-6b5409be0b9mr37950676d6.22.1719219562855; Mon, 24 Jun 2024
- 01:59:22 -0700 (PDT)
+	s=arc-20240116; t=1719219594; c=relaxed/simple;
+	bh=zR+Z1N+EZ3isj1g1/KFSQCRwz+fPYr8+TiZFjyyt76k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNWRH9hzjLHq7HF9sSYVNggQ8B43Dmjf/cezQoyA/DGmr/H4ePLy+xUR1+rB5NFNdr3kbML1Vub1t8XkFI5a/qfmykv24x66DQBlzjXWUIr+R6qkxwJrNu4UwaSCbW9Ou6Hr7IrsV8J2A88yDRppnE5Qyl/KqED9nB7sfLnhkEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lS+z8JCP; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fx6negkJ0UbrXTy7OETKcusDrtopdIdMIjgaGFy4Iws=; b=lS+z8JCPY3+ZfEIXWjvAJi3wNH
+	hEgmex6QDlLqryUIXIJqtbl0KnXJNNa35UuR9fLYcR8Jt1kbl//FW8oBsRlXfkDQLcsf2NYYgBn+b
+	8NT3+jDpGTtXDqZJeUO999PF64owBlFmUPno2Y1h55qRcy9NCakjNJer4RSiptcsTI3fdx5S9s01y
+	FPI9ODf4H3Pd8ItVHJv48Xo5yqVtx33bCPo+lxeGX4nIAKpQbAb7/novU09vfXsj4/fb7Li+iqC78
+	fi4sqmZbHoalz2jNx6EziIWwcnlKPfMuc2f4YG8gKi+rO0tuRJ+I2aGy/FX1u8c1q38c1+xXlIqFf
+	I4+0F2Ng==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sLfXs-00000008D9q-0Uo7;
+	Mon, 24 Jun 2024 08:59:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id ACD20300754; Mon, 24 Jun 2024 10:59:27 +0200 (CEST)
+Date: Mon, 24 Jun 2024 10:59:27 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
+	pjt@google.com, derkling@google.com, haoluo@google.com,
+	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
+	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
+	memxor@gmail.com, andrea.righi@canonical.com,
+	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH sched_ext/for-6.11] sched, sched_ext: Replace
+ scx_next_task_picked() with sched_class->switch_class()
+Message-ID: <20240624085927.GE31592@noisy.programming.kicks-ass.net>
+References: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
+ <87ed8sps71.ffs@tglx>
+ <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
+ <87bk3wpnzv.ffs@tglx>
+ <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
+ <878qz0pcir.ffs@tglx>
+ <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
+ <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
+ <ZnRptXC-ONl-PAyX@slm.duckdns.org>
+ <ZnSp5mVp3uhYganb@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
- <20240620175657.358273-7-piotr.wojtaszczyk@timesys.com> <ZnkGcwd8M1QFfmxl@matsya>
-In-Reply-To: <ZnkGcwd8M1QFfmxl@matsya>
-From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Date: Mon, 24 Jun 2024 10:59:11 +0200
-Message-ID: <CAG+cZ06R5P1g+1Pk3gbQ6Yod0mBM41dFTgvnBWg61HZFUtmx-w@mail.gmail.com>
-Subject: Re: [Patch v4 06/10] dmaengine: Add dma router for pl08x in LPC32XX SoC
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, "J.M.B. Downing" <jonathan.downing@nautel.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Yangtao Li <frank.li@vivo.com>, Arnd Bergmann <arnd@arndb.de>, Li Zetao <lizetao1@huawei.com>, 
-	Chancel Liu <chancel.liu@nxp.com>, Michael Ellerman <mpe@ellerman.id.au>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-sound@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, Markus Elfring <Markus.Elfring@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnSp5mVp3uhYganb@slm.duckdns.org>
 
-On Mon, Jun 24, 2024 at 7:39=E2=80=AFAM Vinod Koul <vkoul@kernel.org> wrote=
-:
-> Any reason why dmaengine parts cant be sent separately, why are they
-> clubbed together, I dont see any obvious dependencies...
+On Thu, Jun 20, 2024 at 12:15:02PM -1000, Tejun Heo wrote:
+> scx_next_task_picked() is used by sched_ext to notify the BPF scheduler when
+> a CPU is taken away by a task dispatched from a higher priority sched_class
+> so that the BPF scheduler can, e.g., punt the task[s] which was running or
+> were waiting for the CPU to other CPUs.
+> 
+> Replace the sched_ext specific hook scx_next_task_picked() with a new
+> sched_class operation switch_class().
+> 
+> The changes are straightforward and the code looks better afterwards.
+> However, when !CONFIG_SCHED_CLASS_EXT, this just ends up adding an unused
+> hook which is unlikely to be useful to other sched_classes. We can #ifdef
+> the op with CONFIG_SCHED_CLASS_EXT but then I'm not sure the code
+> necessarily looks better afterwards.
+> 
+> Please let me know the preference. If adding #ifdef's is preferable, that's
+> okay too.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  kernel/sched/core.c  |    5 ++++-
+>  kernel/sched/ext.c   |   20 ++++++++++----------
+>  kernel/sched/ext.h   |    4 ----
+>  kernel/sched/sched.h |    2 ++
+>  4 files changed, 16 insertions(+), 15 deletions(-)
+> 
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -5907,7 +5907,10 @@ restart:
+>  	for_each_active_class(class) {
+>  		p = class->pick_next_task(rq);
+>  		if (p) {
+> -			scx_next_task_picked(rq, p, class);
+> +			const struct sched_class *prev_class = prev->sched_class;
+> +
+> +			if (class != prev_class && prev_class->switch_class)
+> +				prev_class->switch_class(rq, p);
+>  			return p;
+>  		}
+>  	}
 
-The I2S driver depends on the dmaengine parts
-
-> On 20-06-24, 19:56, Piotr Wojtaszczyk wrote:
-> > LPC32XX connects few of its peripherals to pl08x DMA thru a multiplexer=
-,
-> > this driver allows to route a signal request line thru the multiplexer =
-for
-> > given peripheral.
->
-> What is the difference b/w this and lpc18xx driver, why not reuse that
-> one?
-
-The lpc18xx used the same dma peripheral (pl08x) but the request signal
-multiplexer around pl08x is completely different - there are no common part=
-s.
-
---=20
-Piotr Wojtaszczyk
-Timesys
+I would much rather see sched_class::pick_next_task() get an extra
+argument so that the BPF thing can do what it needs in there and we can
+avoid this extra code here.
 
