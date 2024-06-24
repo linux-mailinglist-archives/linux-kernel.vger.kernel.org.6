@@ -1,80 +1,151 @@
-Return-Path: <linux-kernel+bounces-228093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B516915AC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:55:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A09915ACA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458AA1C21197
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DE29282118
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9E81A2C31;
-	Mon, 24 Jun 2024 23:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DF81A2C27;
+	Mon, 24 Jun 2024 23:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Hzzi/f/m"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDoRlTwi"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A438838F9A;
-	Mon, 24 Jun 2024 23:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F4E38F9A;
+	Mon, 24 Jun 2024 23:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719273334; cv=none; b=lsRnnFtLF6/0ERyTWB2s7625aoa+8YjFhXoqND+j2880bnzFyJV0GoxHbLOtHTI9Be+xz9ATMe1P1/RZvheL8KNZpAHC1paATsAzIPce3Y+22M7eHUCyuRV1RCn5KfNTMvXQT/w3MQT+C6vr5lAVHM0wQoiicCOvpKqfe/jAq7M=
+	t=1719273546; cv=none; b=YoODOU5H5LheRuFYeWmXayxx42vm8ZgClEwAV7OT25yg2PxPSdXfEVZY8e7mh78ey+cBh2kpBW/ffCmxc4svBypJ4Ug13lU714ftAaXNHtVOkz58eza2ubMQ4NHjFrS3kp0EWS5F4Qp3VIBU3WWCQkWIjEmeeI0ik/1hbQone/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719273334; c=relaxed/simple;
-	bh=LM1Doa73WH2U5GZd0XjIfitH1ryNkqLvgCDsiw2vTHE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lRGbkA2/i7NMSv8/2IvmZcu0V6VzlUnpZTr359b3PMpBEFIb/PNHAFgU4EeGi3pOxXQrbguvtqsmWxCxHa9ETq0NlEkwoNu5rtL9nrfV3N0h+wgvY2BOJhtuGFcayUWrCmyfcvsIFF+fjzDzv2kbVww3IUcuz18b+UeD8kLsuiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Hzzi/f/m; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from [192.168.68.112] (ppp118-210-79-194.adl-adc-lon-bras32.tpg.internode.on.net [118.210.79.194])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 5774020009;
-	Tue, 25 Jun 2024 07:55:26 +0800 (AWST)
+	s=arc-20240116; t=1719273546; c=relaxed/simple;
+	bh=yf0TuOKYWLXbXTkdUahnzlNtME3QpThZc1YBYXYX5nM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P/XeSIDm9+IqT7tomRhcua3lqbrPFvv1klSQg9X8UkmvbfajolGprls54Rj0AKwmdStIhliISO60ojLeT8QiAMNrHHutOpPElsJ6FvTqtJRCADeRGJk2PsGmoC1v3sJWS2U/45AzIn1Fy9Hnd1TDGVeio/hbDzd51+mtR7M9Z5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDoRlTwi; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70699b6afddso31269b3a.1;
+        Mon, 24 Jun 2024 16:59:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1719273328;
-	bh=LM1Doa73WH2U5GZd0XjIfitH1ryNkqLvgCDsiw2vTHE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=Hzzi/f/mEXrNfUseAUuK3uJNbCFk1jPN4G5K+/b1ByhbFtLgWrdIqX56+oPlOK04c
-	 eLFLQWAHYNOAT7nXQ/sovVxWV9T6eqp1pC6kVGPnKCIqAaRfz41SIrD0J/eA2dF+KO
-	 1BswyJu2QIA2ZqYmIUoG8bSN/tCf5vmBapc3BaqhUCkqscXf5/TIqt5BoPizgnlnSd
-	 De2Aug2lRZHaIPAEhZ5P7q6GLebTDND68ieLv0pDNLxtHCUgkYDKtaNPF/VGDS0PqB
-	 48qviuDObLOP+4FSUAx1crCDpF9zHcyDKavCif+xquHeoT6u+FrdRvCCXRXRUK8hW7
-	 l8H0HfmVbA4pA==
-Message-ID: <acf7873c4bd9ce1352d54fc479d5d387338929e9.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v2] usb: gadget: aspeed_udc: validate endpoint index for
- ast udc
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Ma Ke <make24@iscas.ac.cn>, neal_liu@aspeedtech.com, 
-	gregkh@linuxfoundation.org, joel@jms.id.au
-Cc: linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 25 Jun 2024 09:25:24 +0930
-In-Reply-To: <20240624015314.2249128-1-make24@iscas.ac.cn>
-References: <20240624015314.2249128-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=gmail.com; s=20230601; t=1719273544; x=1719878344; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dmgfdC7zQabcYbLKBYbYqzfAC0NAOR9Eyj2mz5NydgM=;
+        b=dDoRlTwiiFRn8UlRGHGEXmfCOmuPYkk9lw0wkfSSbGb9JfDy0OoudhaB6XBN98NTD+
+         nsAu2RsHUjVBN9JvojseP3SysKzU3gShsgxaV+yvVBMCnJBRonOxqw9Kqag3oubFDkDc
+         G+E8JLXtQiHIDsoWHh3QTXgSEmPZuke4V06FCHm6COrq37vhuHgyjQtN9ib2KNGUEwY0
+         o3V5AnUoRNE9puBmOerNhEAyidiTiMD3VVNLiXVurYveBQkySeR/VDqsUxi24v4zqO6e
+         mvVglvRi7OslCtCRcMlHLuRLjC4O3jmVsPuxoeHd26uB4RWeSaqHU9EXrkCsyL7PWHz5
+         +86w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719273544; x=1719878344;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dmgfdC7zQabcYbLKBYbYqzfAC0NAOR9Eyj2mz5NydgM=;
+        b=Fvk+phq6QDM0b56qCt/sAd6WeP3zX0wv7lo+Tjh9I+cA7R+D9NDb95/IBz3qAkozdO
+         hEH75IUR9YSy8s5g4Yi+KqT7DFCQ0lx4/hfGLHRc50PcCFWi4dHUenxOHGWng0qiptw5
+         cWBe3Ej1+dCVNH3NRv7Ob8/Z7k7RFPClQvPFJZiJKmuID4OuTwYWDe+H/29gqvao+k9c
+         qzFZV4dp81Q6s2nBQP3Wap9ViNRaqYDuDhlO5983KbJ24ojlaXYj4fDT/4tYNUNuW36Z
+         ataNGCNwFg+h9jRtsBsTekFJWVafXkMuciCMKl3tT7z39PGfQLjZOHi4Mix7C37y+Ec7
+         eAJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzbnOQ7AMVeAhQ5mxWFq4dFPFe0b6Eg7W3u0M9+R/f5dlspVG8bGoaobFZLiHrDlYuRZA1Ew6+iRua9YKAUy/zmZTj7ZpkfMw3f/2N9VR7G2I0ew+Ber5E5MuZGlQa6DbT
+X-Gm-Message-State: AOJu0YxiZsXSWgZJbPzYMVIeLBjv+W/PaaJUjdD29n79PtK4fDmRN3FW
+	W03QZql2ln13d0PWV+H9KOQozqHBEJYHRsdkYPWqjL5CAWdXyMOL
+X-Google-Smtp-Source: AGHT+IEH533jJAHEVcfwhe7W0iYdHPHiDnyk5qw78599iuTw2cpRI/xUkJAFSWxEXKuZdZlACqnm5A==
+X-Received: by 2002:a05:6a20:b91e:b0:1bc:f2f7:cf73 with SMTP id adf61e73a8af0-1bcf464560amr4899248637.55.1719273544137;
+        Mon, 24 Jun 2024 16:59:04 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065107b62bsm7011138b3a.16.2024.06.24.16.59.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 16:59:03 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 24 Jun 2024 13:59:02 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 04/39] sched: Add sched_class->reweight_task()
+Message-ID: <ZnoIRnCZaN_oHQ6N@slm.duckdns.org>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240501151312.635565-5-tj@kernel.org>
+ <20240624102331.GI31592@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624102331.GI31592@noisy.programming.kicks-ass.net>
 
-On Mon, 2024-06-24 at 09:53 +0800, Ma Ke wrote:
-> We should verify the bound of the array to assure that host
-> may not manipulate the index to point past endpoint array.
->=20
-> Found by static analysis.
->=20
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Hello, Peter.
 
-Probably best to do a v3 with a changelog as Greg's email suggests (and
-for the v3 changelog entry, mention that you added the changelog).
+On Mon, Jun 24, 2024 at 12:23:31PM +0200, Peter Zijlstra wrote:
+> This reminds me, I think we have a bug here...
+> 
+>   https://lkml.kernel.org/r/20240422094157.GA34453@noisy.programming.kicks-ass.net
+> 
+> I *think* we want something like the below, hmm?
+> 
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 0935f9d4bb7b..32a40d85c0b1 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1328,15 +1328,15 @@ int tg_nop(struct task_group *tg, void *data)
+>  void set_load_weight(struct task_struct *p, bool update_load)
+>  {
+>  	int prio = p->static_prio - MAX_RT_PRIO;
+> -	struct load_weight *load = &p->se.load;
+> +	unsigned long weight;
+> +	u32 inv_weight;
+>  
+> -	/*
+> -	 * SCHED_IDLE tasks get minimal weight:
+> -	 */
+>  	if (task_has_idle_policy(p)) {
+> -		load->weight = scale_load(WEIGHT_IDLEPRIO);
+> -		load->inv_weight = WMULT_IDLEPRIO;
+> -		return;
+> +		weight = scale_load(WEIGHT_IDLEPRIO);
+> +		inv_weight = WMULT_IDLEPRIO;
+> +	} else {
+> +		weight = scale_load(sched_prio_to_weight[prio]);
+> +		inv_weight = sched_prio_to_wmult[prio];
 
-Acked-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+Hmmm... sorry but I'm a bit confused again. Isn't the code doing the same
+thing before and after?
 
+Before, if @p is SCHED_IDLE, @p->se.load is set to idle values and the
+function returns. If @update_load && fair, calls reweight_task(). Otherwise,
+update @p->se.load is updated according to @prio. After the patch, @weight
+and @inv_weight calcuations are moved to set_load_weight() but it ends up
+with the same result for all three cases.
+
+Were you trying to say that if the idle policy were to implement
+->reweight_task(), it wouldn't be called?
+
+Thanks.
+
+-- 
+tejun
 
