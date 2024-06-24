@@ -1,180 +1,149 @@
-Return-Path: <linux-kernel+bounces-227584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AD191539A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:25:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D9991539E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CFEE286C7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:25:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92BE1C203AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5AC19DFB8;
-	Mon, 24 Jun 2024 16:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AD119E7C2;
+	Mon, 24 Jun 2024 16:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IfNlybxC"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZiCDFoQQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1823C3BBEA;
-	Mon, 24 Jun 2024 16:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BE919D8BE;
+	Mon, 24 Jun 2024 16:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246240; cv=none; b=pAPaLg8A6SaIoGgHl8QJYj9F13Q1T+Rd+Igeqq30KUDClfwnPHIDbT/nnJwVk2ELwqAccwx3m7noFWssqvl84nfbYALRgZXKvk2cPu/0C/eBVEu18m5MJIdizKdnmRijX09eM9Flx2SBVyuqoeq4HuSxtq/vSd5f7O5dy/vCNd8=
+	t=1719246294; cv=none; b=bSFWkP0CaCPKCZjdnn4ispNUVJTT9yLasdf+LvWee1gxEHlhjgre+Kvs+Wk9zT9wnaRy5YQFdzTSJUeQhRnhsA7sFvsbR6NCnTsArAVepPgd/6Vjbu19kxLZGeDwdAGDeo8E0kqgbZSE07QdlEZUni2tCtnlESZGKQbDuFLlC7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719246240; c=relaxed/simple;
-	bh=+eBIeVrIJD++n/NSAuh6WeP3yslrINZ6lCOQeUUBoFk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nSu9V+lalmuO/EmxzfnnGKUZeRTAco70taAkhVKpDHR4UmNx2r64H5aXuIrKiOoc/WkbStCCNPncd6kVEt3cjmLbzwyNZxQojDfAc2isnOVzomqt1SLqEHBx94Y00fXpZY7aYEQSjHIPFqlQPfJrPwAIol+xHhDNTXn7nq2D1yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IfNlybxC; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7066f68e22cso1303337b3a.2;
-        Mon, 24 Jun 2024 09:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719246238; x=1719851038; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ybx5MVtGZCgmx+dK4yMNsCUvY5sltUR+PwrGVhhEgM=;
-        b=IfNlybxC0YDJ5LWs4CHsFuO7bGV2f1WYSFr+x1nWcyUWXvI7LgAGleSxtsvN5vTPZH
-         AtM4eyc7O2vu8D5GXcmGNjCatNBxGzuZnJQjbTH5OhABP9oNzJTrdfMDmF5LH1fLTUit
-         4X5q3S7IUtfe7CiiqOkyMTmZSpc/I8Qn9iHMF62gGJUMTKY6hNYKRE13DlE46teSLAEp
-         z+WAiygy1XK3trZ9cQplggnIj5FPgqTENWKUaAR6IEUrd3lGI8mehQgaPw9xajsgLNot
-         y28NPtBdRl1uGEaYbACdYU/EyKZfQ2GA4RqqlteNMDqXpigx9Udf7WJ9X6/LnYQKRzIS
-         jgvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719246238; x=1719851038;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ybx5MVtGZCgmx+dK4yMNsCUvY5sltUR+PwrGVhhEgM=;
-        b=E5QNaxQ7lehH56oJFdXVnpjxYoPWNynTszfByrTbfIVTXGRuC3aSNx5ypi8gRjlyH6
-         qZ1Y+6Zp+6hu8dEpxU6zrMFV81DPWi+T0Ql31Gdkrxb7zP58hpj5M2PH/xD9Xvih18vq
-         s/UPgvPJ/D66CMq5KniiDBE4eWJl1s3nCEq5fHdEUN+SBHhz4H4+0wwbci8xY3tpmSK+
-         RhPuar2ndEFJszfo7a/QxEGv+uqbi2rG5TOQKjaVSYyZdkniUWQkvp4mFO9DEMG35agV
-         kkYC5a+yL2eiJ18niEJCRbEF8NY/7cW7a80Xi9/Uew+bbd1yBPU83OCZyU11Hl9OEuLe
-         EddA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxfpNmwieS6NyaNvZzOoYKuiEC3gz87+neU0U81z+4HzNN+mZRpBS0EGDwttSlpg7Kub//BYw2RTElvkpmhU2fLFI3dqhjV2najL/YRo3K54nTzplQNznHgNWKo/5x+W/fNOl96+OP+hKZs1/4r7IXV2ppQJP/hIsAFK7v4/WLh0Fn6ZM=
-X-Gm-Message-State: AOJu0Yz8WHu1vOpAaiwnFmU8lAeVu1bxrvCLCWYNxXhi2vU68R+OvhBR
-	2DgLe12orpvphifpsk3u6dGaJaPO45LXeR5ynKrahyIlhwd/CPgW
-X-Google-Smtp-Source: AGHT+IFX94My+LC6fNixecp3qCmDOgpw+PEJqo1lUdHYT1eKEYptlfQ10u0p3FSBrcbqQ7KjfYJL/A==
-X-Received: by 2002:a05:6a00:2d9:b0:705:e5da:8290 with SMTP id d2e1a72fcca58-70670fd5feamr5565778b3a.24.1719246238164;
-        Mon, 24 Jun 2024 09:23:58 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70672f89fc0sm3505903b3a.85.2024.06.24.09.23.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 09:23:57 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <f91aee3c-9a24-4f4b-aa03-1707283512a0@roeck-us.net>
-Date: Mon, 24 Jun 2024 09:23:55 -0700
+	s=arc-20240116; t=1719246294; c=relaxed/simple;
+	bh=wM1PLXDti0AmfzBXeR8CNL+SeLrBWDa8hBsTl6a356M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbC9geIYUkeddDi9omvqLE8SeRQv2Anr2l327/Al++L86G0ETVDKMlyoTB2hRkhL3cr4JhDJPHCQcasT0LrD7kDDGEkVLFz0Eu0fDxuanCtKb6n1zs7hXOvzIQMXj9NKGBIHxB7RD6IVrIktfxOf+i3kwMnEhaGT+z4ueNXssbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZiCDFoQQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39421C32782;
+	Mon, 24 Jun 2024 16:24:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719246293;
+	bh=wM1PLXDti0AmfzBXeR8CNL+SeLrBWDa8hBsTl6a356M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZiCDFoQQ3fDx4zKxFDo4HlJJEa9HR8T8jT9qeuT0LBCDOp7aUzWKPTdybfc5p1/F8
+	 pPqTFpm4uL/vLYebKQTBpPeQt9/XdJGezBQTcZQLu1RqDlkowqavkZh+7OEkz+yFP0
+	 P5VueDIG/P71oGrXN2YG4cjAcYfVkzbdpyeSNnruYDDGOJ/HDohChF0IJdChvSSB3I
+	 VcVzAg2KeWNlEWVXCgNzJMX1dsJcz750fX5bMW3KaSnVSiButdrwLESmVKgxT8rIwr
+	 +/Mei1FVDzXQwQWho10G3i0aLIq5MGS1eJHmyn54m69biDGYKMZW1aSupTvmkCqysM
+	 RPUYTx2nZCfcQ==
+Date: Mon, 24 Jun 2024 17:24:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Bao Cheng Su <baocheng.su@siemens.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>
+Subject: Re: [PATCH 3/4] dt-bindings: soc: ti: am645-system-controller: add
+ child nodes used by main domain
+Message-ID: <20240624-hula-fever-74499b22784d@spud>
+References: <cover.1719210050.git.jan.kiszka@siemens.com>
+ <52848094062ea55b0063e6fc37f27e6ed5035aa8.1719210050.git.jan.kiszka@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression caused by "eeprom: at24: Probe for DDR3 thermal sensor
- in the SPD case" - "sysfs: cannot create duplicate filename"
-From: Guenter Roeck <linux@roeck-us.net>
-To: =?UTF-8?Q?Krzysztof_Ol=C4=99dzki?= <ole@ans.pl>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-hwmon@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <a57e9a39-13ce-4e4d-a7a1-c591f6b4ac65@ans.pl>
- <0dfa2919-98eb-4433-acb4-aa1830787c9b@roeck-us.net>
- <77c1b740-9e6d-40f7-83f0-9a949366f1c9@ans.pl>
- <97c497ae-44f7-4cec-b7d9-f639e4597571@roeck-us.net>
-Content-Language: en-US
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <97c497ae-44f7-4cec-b7d9-f639e4597571@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ahEv3udmetJmBawl"
+Content-Disposition: inline
+In-Reply-To: <52848094062ea55b0063e6fc37f27e6ed5035aa8.1719210050.git.jan.kiszka@siemens.com>
 
-On 6/24/24 07:54, Guenter Roeck wrote:
-[ ... ]
 
->> That said, I have some follow-up questions:
->>
->> 1. if the jc42 driver handles this already, I wonder what's the point of adding
->> at24_probe_temp_sensor()? Is there a situation where it would not do it properly?
->> Or do we expect to remove the probing functionally from jc42.c?
->>
-> 
-> The jc42 driver is not auto-loaded. When suggesting to remove the "probing
-> functionally", I assume you mean to remove its detect function. That would only
-> work if SPD EEPROMs were only connected to I2C adapters calling i2c_register_spd(),
-> and if the systems with those adapters would support DMI.
-> 
-> In v6.9, i2c_register_spd() is only called from the i801 driver (Intel systems).
-> In v6.11, piix4 (AMD) will be added. Even after that, all non-Intel / non-AMD systems
-> would no longer be able to support jc42 compatible chips by just loading the jc42
-> driver. That would not be acceptable.
-> 
+--ahEv3udmetJmBawl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There is another reason to not remove the detect function, one that I just found in
-my system when I tried to reproduce the problem: While SPD data is supposed to identify
-if a DIMM supports a temperature sensor, this is not always the case. The DIMMs
-in one of my systems (F4-3200C14-16GTZSW) do support temperature sensors, but the
-respective bit in the SPD data is not set. From raw SPD data:
+On Mon, Jun 24, 2024 at 08:20:49AM +0200, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>=20
+> Expand bindings to cover both the MCU and the main usage of the AM654
+> system controller.
+>=20
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>  .../soc/ti/ti,am654-system-controller.yaml    | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,am654-system-con=
+troller.yaml b/Documentation/devicetree/bindings/soc/ti/ti,am654-system-con=
+troller.yaml
+> index e79803e586ca..0eec807f38df 100644
+> --- a/Documentation/devicetree/bindings/soc/ti/ti,am654-system-controller=
+=2Eyaml
+> +++ b/Documentation/devicetree/bindings/soc/ti/ti,am654-system-controller=
+=2Eyaml
+> @@ -34,6 +34,35 @@ patternProperties:
+>      type: object
+>      $ref: /schemas/phy/ti,phy-gmii-sel.yaml#
+> =20
+> +  "^mux-controller$":
+> +    type: object
+> +    description:
+> +      This is the SERDES lane control mux.
 
-000000 23 10 0c 02 85 21 00 08 00 40 00 03 09 03 00 00
-                                                  ^^
-Bit 7 is supposed to be set but isn't.
+Where is this object described?
 
-This means that the thermal sensors on the DIMMs in my system would not be instantiated
-without detect function and require manual instantiation.
+> +
+> +  "^clock@[0-9a-f]+$":
+> +    type: object
+> +    $ref: /schemas/mfd/syscon.yaml#
+> +    properties:
+> +      compatible:
+> +        items:
+> +          - const: ti,am654-serdes-ctrl
+> +          - const: syscon
+> +
+> +  "^dss-oldi-io-ctrl@[0-9a-f]+$":
+> +    type: object
+> +    $ref: /schemas/mfd/syscon.yaml#
+> +    properties:
+> +      compatible:
+> +        items:
+> +          - const: ti,am654-dss-oldi-io-ctrl
+> +          - const: syscon
+> +
+> +  "^clock-controller@[0-9a-f]+$":
+> +    type: object
+> +    $ref: /schemas/clock/ti,am654-ehrpwm-tbclk.yaml#
+> +    description:
+> +      Clock provider for TI EHRPWM nodes.
+> +
+>  required:
+>    - compatible
+>    - reg
+> --=20
+> 2.43.0
+>=20
 
-Guenter
+--ahEv3udmetJmBawl
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnmd0QAKCRB4tDGHoIJi
+0j3YAQDs+1riKZsxwG5tXCyvlJ9JB7R1pYOYsnx6qqkugXpkjQEAxkbTJwMuMV4t
++CaTrRobr4M7OcTAMYQMgBdJct9/Uw4=
+=07Mo
+-----END PGP SIGNATURE-----
+
+--ahEv3udmetJmBawl--
 
