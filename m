@@ -1,409 +1,172 @@
-Return-Path: <linux-kernel+bounces-226908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEED91458D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:58:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 869B5914592
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6190A285773
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:58:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13614280EBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB651304B0;
-	Mon, 24 Jun 2024 08:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B4F12F5A6;
+	Mon, 24 Jun 2024 08:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QiDNyL3W";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Nh7+hyf0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m11yaG0n"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F71412E1D1
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60110127E0F;
+	Mon, 24 Jun 2024 08:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719219510; cv=none; b=KV5ExxeOcqBlavQt38GUpt49uLO7RB+Z9OWqcWcSmh4gLTz9JH+XvFbU9IIaimLxHpl36293nKfzWAf/ywvi+ZvI8hXEbOjyYHZlWs36302ZD8odkr8DeZZSJ9ErXiVzVVr23aRzcyq/Ci9T7MGTGLiEqSu86XKHLDnbetkhgCE=
+	t=1719219542; cv=none; b=b7npSDLEervaInblWRgVcAj1DkrNEiWf5UYhnJD0O/vJooUN6i0vA3TGxcvvF2NRHAc4xSpxRWsdnxTJqrBWcDCBwdptdrQOfdx7bYd2P2rRt8/VFIYIb3Jxs7lf7Ii2Q5hNRPzbGhcLgBm3WHgC41buC07lQJQ6eHm0ozArntk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719219510; c=relaxed/simple;
-	bh=KLlbfw0gZgGUHMKq2SqKVutSjW8x+XA7iioeGFNgOAI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GWSSuQmthiDliZelA8GO+wnDhHcMemswSmJe77ZcmOdnnX7HO92MRHkOe1iNDKaBMeeY4IOZETdY75L69ksjENW9kvOrdcLxK7f4zCu44U+4fD9pYKAPOOXBYcNXA2Ic/SHjG3cBqmGVyP0NlWmcVSE8tmQ+Vwmto4ru19w3SnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QiDNyL3W; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Nh7+hyf0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719219506;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZlBkmccLp9D27RGSKMxounU0J8b/aSUDm3j0Eg001K4=;
-	b=QiDNyL3WwOQA3ThSUhGz4SUCQ2fLukrCd+hjKaUKgqfoTAnyu6uJWJK49yqMSasZQo4FWE
-	UaKTDAWKrDeQrK7EaLL86QD6sGd/2KzGqh1lDYr8fVy8PvMmu3WKxZ2dGVSdXfqUF5N0AW
-	ek9R9h8Li2W3iXhBSxZDCKi4aEIa/9PCSf7ZWJYLoZDP4umTsGV0Jlby8uVFRGdqADC6MQ
-	ytix0yJREEfIAQahaJdvbpMSAtr1pthfsuMgxbuYAGDR2qrSTVt1jRgS168fspHk4475dB
-	NshMRhNzzU4OuC5pPSvhzUjSzQTgqe8rgj+a44ZiXG1D+NGE90EzTQIX5AVlEg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719219506;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZlBkmccLp9D27RGSKMxounU0J8b/aSUDm3j0Eg001K4=;
-	b=Nh7+hyf01Si3GRtcCaXQWbvo7xAMWZ1YSGWz6tteETCfJs2izDse+xexkStSDqm2oBP5NO
-	o00FTxyXur39aRBQ==
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- Borislav Petkov <bp@alien8.de>, Narasimhan V <Narasimhan.V@amd.com>
-Subject: Re: [PATCH 0/3] timer_migration: Fix a possible race and improvements
-In-Reply-To: <ZnWOswTMML6ShzYO@localhost.localdomain>
-References: <20240621-tmigr-fixes-v1-0-8c8a2d8e8d77@linutronix.de>
- <ZnWOswTMML6ShzYO@localhost.localdomain>
-Date: Mon, 24 Jun 2024 10:58:26 +0200
-Message-ID: <87zfrag1jh.fsf@somnus>
+	s=arc-20240116; t=1719219542; c=relaxed/simple;
+	bh=ZhfCAPfqgNYy4IYD6ThGSxHwosZDfswjwRJxbI1mGxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mD93EdrJ8l+igbB7RIW5oXwc5OcrxIZq5m2Jy0XdsQdpnnsKfmy6Vl+iBO8yUPkX4pE3FH+ry5Z8ouad+LAd8YfwalwxwC7yFsKqku9uQ9OWasK3ftPExqleyQSiEdL0K6qWlSn+K7obGkPYI70uo+TH26bFKj152CW6df1Ygqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m11yaG0n; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8ZNbe032231;
+	Mon, 24 Jun 2024 08:58:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tGJtOpqBIGwTpmqQINRRFGfIw6RK45oXzRRb9w2IWoI=; b=m11yaG0nDIuS5Krw
+	Bayzb5INXKll0yrr2GsQX3lY2jzaMm1n90OSi8vp8NRGwU6fVLV9BNEUzuYwS1ti
+	KejjfTlEiSX3B/O79Bft69+WyLaCc05yiQXjfAJeQT33BK3fJNCiR0bIXD2tDxJX
+	QDE/BJJ64ZqYtz3sUoeyPBrM45Qn+aN2rf1vydpyerZF+HxsjzIP5o5KIdzWrtOg
+	wWImQF5QiXDCOWJQumNSSRf3v6UkkJerIalIdphIOKgbFspH8qfc4gNe68i79z2A
+	vTcL5URMSmCarWm+laQ2SHiRqXHcYBKwdMXc/A4e9datDnP8XEruo6E16baeTLhY
+	Ec1FGg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv31xy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 08:58:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45O8wuKr006141
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 08:58:56 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 01:58:51 -0700
+Message-ID: <2f238fe4-aa67-b311-7c76-a67359587268@quicinc.com>
+Date: Mon, 24 Jun 2024 14:28:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V2 2/3] soc: qcom: icc-bwmon: Allow for interrupts to be
+ shared across instances
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <djakov@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <srinivas.kandagatla@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <quic_rgottimu@quicinc.com>,
+        <quic_kshivnan@quicinc.com>, <conor+dt@kernel.org>,
+        <abel.vesa@linaro.org>
+References: <20240618154306.279637-1-quic_sibis@quicinc.com>
+ <20240618154306.279637-3-quic_sibis@quicinc.com>
+ <d4f3rlk3jgqegxvto2b6vyemspommtsbs3ixqgan2rmknet3je@ohonicqa2iqy>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <d4f3rlk3jgqegxvto2b6vyemspommtsbs3ixqgan2rmknet3je@ohonicqa2iqy>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eqOtmyj0__tdEnBSUJFI07Tw83tklCfV
+X-Proofpoint-ORIG-GUID: eqOtmyj0__tdEnBSUJFI07Tw83tklCfV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_08,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406240071
 
-Frederic Weisbecker <frederic@kernel.org> writes:
 
-> Le Fri, Jun 21, 2024 at 11:37:05AM +0200, Anna-Maria Behnsen a =C3=A9crit=
- :
->> Borislav reported a warning in timer migration deactive path
->>=20
->>   https://lore.kernel.org/r/20240612090347.GBZmlkc5PwlVpOG6vT@fat_crate.=
-local
->>=20
->> Sadly it doesn't reproduce directly. But with the change of timing (by
->> adding a trace prinkt before the warning), it is possible to trigger the
->> warning reliable at least in my test setup. The problem here is a racy
->> check agains group->parent pointer. This is also used in other places in
->> the code and fixing this racy usage is adressed by the first patch.
->>=20
->> While working with the code, I saw two things which could be improved
->> (tracing and update of per cpu group wakeup value). This improvements are
->> adressed by the other two patches.
->>=20
->> Patches are available here:
->>=20
->>   https://git.kernel.org/pub/scm/linux/kernel/git/anna-maria/linux-devel=
-.git timers/misc
->>=20
->> Cc: Frederic Weisbecker <frederic@kernel.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: linux-kernel@vger.kernel.org
->>=20
->> Thanks,
->>=20
->> Anna-Maria
->>=20
+
+On 6/19/24 00:25, Dmitry Baryshkov wrote:
+> On Tue, Jun 18, 2024 at 09:13:05PM GMT, Sibi Sankar wrote:
+>> The multiple BWMONv4 instances available on the X1E80100 SoC use the
+>> same interrupt number. Mark them are shared to allow for re-use across
+>> instances. Handle the ensuing race introduced by relying on bwmon_disable
+>> to disable the interrupt and coupled with explicit request/free irqs.
+>>
+>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 >> ---
->
-> This made me stare at the group creation again and I might have found
-> something. Does the following race look plausible to you?
+>>
+>> v2:
+>> * Use explicit request/free irq and add comments regarding the race
+>>    introduced when adding the IRQF_SHARED flag. [Krzysztof/Dmitry]
+>>
+>>   drivers/soc/qcom/icc-bwmon.c | 14 +++++++++++---
+>>   1 file changed, 11 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
+>> index fb323b3364db..4a4e28b41509 100644
+>> --- a/drivers/soc/qcom/icc-bwmon.c
+>> +++ b/drivers/soc/qcom/icc-bwmon.c
+>> @@ -781,9 +781,10 @@ static int bwmon_probe(struct platform_device *pdev)
+>>   	bwmon->dev = dev;
+>>   
+>>   	bwmon_disable(bwmon);
+>> -	ret = devm_request_threaded_irq(dev, bwmon->irq, bwmon_intr,
+>> -					bwmon_intr_thread,
+>> -					IRQF_ONESHOT, dev_name(dev), bwmon);
+>> +
+>> +	/* SoCs with multiple cpu-bwmon instances can end up using a shared interrupt line */
+> 
+> ... using devm_ here might result in the IRQ handler being executed
+> after bwmon_disable in bwmon_remove()
 
-Yes...
+Ack
 
->
->                   [GRP0:0]
->                migrator =3D 0
->                active   =3D 0
->                nextevt  =3D KTIME_MAX
->                /         \
->               0         1 .. 7
->           active         idle
->
-> 0) Hierarchy has only 8 CPUs (single node for now with only CPU 0
->    as active.
->
->=20=20=20=20
->                              [GRP1:0]
->                         migrator =3D TMIGR_NONE
->                         active   =3D NONE
->                         nextevt  =3D KTIME_MAX
->                                          \
->                  [GRP0:0]                  [GRP0:1]
->               migrator =3D 0              migrator =3D TMIGR_NONE
->               active   =3D 0              active   =3D NONE
->               nextevt  =3D KTIME_MAX      nextevt  =3D KTIME_MAX
->                 /         \                    |
->               0          1 .. 7                8
->           active         idle                !online
->
-> 1) CPU 8 is booting and creates a new node and a new top. For now it's
->    only connected to GRP0:1, not yet to GRP0:0. Also CPU 8 hasn't called
->    __tmigr_cpu_activate() on itself yet.
+> 
+>> +	ret = request_threaded_irq(bwmon->irq, bwmon_intr, bwmon_intr_thread,
+>> +				   IRQF_ONESHOT | IRQF_SHARED, dev_name(dev), bwmon);
+>>   	if (ret)
+>>   		return dev_err_probe(dev, ret, "failed to request IRQ\n");
+>>   
+>> @@ -798,6 +799,13 @@ static void bwmon_remove(struct platform_device *pdev)
+>>   	struct icc_bwmon *bwmon = platform_get_drvdata(pdev);
+>>   
+>>   	bwmon_disable(bwmon);
+>> +
+>> +	/*
+>> +	 * Handle the race introduced, when dealing with multiple bwmon instances
+>> +	 * using a shared interrupt line, by relying on bwmon_disable to disable
+>> +	 * the interrupt and followed by an explicit free.
+>> +	 */
+> 
+> This sounds more like a part of the commit message. The comment before
+> request_threaded_irq() should be enough.
 
-NIT: In step 1) CPU8 is not yet connected to GRP0:1 as the second while
-loop is not yet finished, but nevertheless...
+Ack
 
->
->                              [GRP1:0]
->                         migrator =3D TMIGR_NONE
->                         active   =3D NONE
->                         nextevt  =3D KTIME_MAX
->                        /                  \
->                  [GRP0:0]                  [GRP0:1]
->               migrator =3D 0              migrator =3D TMIGR_NONE
->               active   =3D 0              active   =3D NONE
->               nextevt  =3D KTIME_MAX      nextevt  =3D KTIME_MAX
->                 /         \                    |
->               0          1 .. 7                8
->           active         idle                active
->
-> 2) CPU 8 connects GRP0:0 to GRP1:0 and observes while in
->    tmigr_connect_child_parent() that GRP0:0 is not TMIGR_NONE. So it
->    prepares to call tmigr_active_up() on it. It hasn't done it yet.
+-Sibi
 
-NIT: CPU8 keeps its state !online until step 5.
-
->
->
->                              [GRP1:0]
->                         migrator =3D TMIGR_NONE
->                         active   =3D NONE
->                         nextevt  =3D KTIME_MAX
->                        /                  \
->                  [GRP0:0]                  [GRP0:1]
->               migrator =3D TMIGR_NONE        migrator =3D TMIGR_NONE
->               active   =3D NONE              active   =3D NONE
->               nextevt  =3D KTIME_MAX         nextevt  =3D KTIME_MAX
->                 /         \                    |
->               0          1 .. 7                8
->             idle         idle                active
->
-> 3) CPU 0 goes idle. Since GRP0:0->parent has been updated by CPU 8 with
->    GRP0:0->lock held, CPU 0 observes GRP1:0 after calling tmigr_update_ev=
-ents()
->    and it propagates the change to the top (no change there and no wakeup
->    programmed since there is no timer).
->
->
->                              [GRP1:0]
->                         migrator =3D GRP0:0
->                         active   =3D GRP0:0
->                         nextevt  =3D KTIME_MAX
->                        /                  \
->                  [GRP0:0]                  [GRP0:1]
->               migrator =3D TMIGR_NONE       migrator =3D TMIGR_NONE
->               active   =3D NONE             active   =3D NONE
->               nextevt  =3D KTIME_MAX        nextevt  =3D KTIME_MAX
->                 /         \                    |
->               0          1 .. 7                8
->             idle         idle                active
->
-> 4) Now CPU 8 finally calls tmigr_active_up() to GRP0:0
-
-... oh no. Here it starts to go mad. Good catch!
-
->
->                              [GRP1:0]
->                         migrator =3D GRP0:0
->                         active   =3D GRP0:0, GRP0:1
->                         nextevt  =3D KTIME_MAX
->                        /                  \
->                  [GRP0:0]                  [GRP0:1]
->               migrator =3D TMIGR_NONE       migrator =3D 8
->               active   =3D NONE             active   =3D 8
->               nextevt  =3D KTIME_MAX        nextevt  =3D KTIME_MAX
->                 /         \                    |
->               0          1 .. 7                8
->             idle         idle                active
->
-> 5) And out of tmigr_cpu_online() CPU 8 calls tmigr_active_up() on itself
->
->                              [GRP1:0]
->                         migrator =3D GRP0:0
->                         active   =3D GRP0:0
->                         nextevt  =3D T8
->                        /                  \
->                  [GRP0:0]                  [GRP0:1]
->               migrator =3D TMIGR_NONE         migrator =3D TMIGR_NONE
->               active   =3D NONE               active   =3D NONE
->               nextevt  =3D KTIME_MAX          nextevt  =3D T8
->                 /         \                    |
->               0          1 .. 7                8
->             idle         idle                  idle
->
-> 5) CPU 8 goes idle with a timer T8 and relies on GRP0:0 as the migrator.
->    But it's not really active, so T8 gets ignored.
->
->
-> And if that race looks plausible, does the following fix look good?
-
-Holding the lock will not help as the state is not protected by the
-lock. Step 4) would nevertheless happen. To properly fix this, we need a
-memory barrier. I added a comment back then in tmigr_active_up() why the
-barrier is not required there but without having this corner case in
-mind. Or am I wrong?
-
-To solve it, we could
-
-a) add a memory barrier also in tmigr_active_up() and read the
-   childstate there always (similar to tmigr_inactive_up()).
-
-b) create a separate tmigr_setup_active_up() function with this memory
-   barrier and with reading the childstate there after the memory
-   barrier.
-
-I would propose to go with b) to do not impact active_up().
-
-I dropped the walk_hierarchy information for tmigr_setup_active_up() and
-also do not set the group event ignore bit. This shouldn't be required,
-as this active update could only happen between the new top level and
-the formerly top level group. And the event ignore bit on the top level
-isn't taken into account.
-
-This is not tested yet, but it could look like the following. When it
-makes sense to you and if I didn't miss something else - I would start
-testing and functionality verification ;)
-
----8<----
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -623,12 +623,37 @@ static u64 tmigr_next_groupevt_expires(s
- 		return evt->nextevt.expires;
- }
-=20
-+static bool __tmigr_active_up(struct tmigr_group *group, bool *walk_done, =
-union tmigr_state *curstate, u8 childmask)
-+{
-+	union tmigr_state newstate;
-+
-+	newstate =3D *curstate;
-+	*walk_done =3D true;
-+
-+	if (newstate.migrator =3D=3D TMIGR_NONE) {
-+		newstate.migrator =3D childmask;
-+
-+		/* Changes need to be propagated */
-+		*walk_done =3D false;
-+	}
-+
-+	newstate.active |=3D childmask;
-+	newstate.seq++;
-+
-+	if (atomic_try_cmpxchg(&group->migr_state, &curstate->state, newstate.sta=
-te)) {
-+		trace_tmigr_group_set_cpu_active(group, newstate, childmask);
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static bool tmigr_active_up(struct tmigr_group *group,
- 			    struct tmigr_group *child,
- 			    void *ptr)
- {
--	union tmigr_state curstate, newstate;
- 	struct tmigr_walk *data =3D ptr;
-+	union tmigr_state curstate;
- 	bool walk_done;
- 	u8 childmask;
-=20
-@@ -640,23 +665,10 @@ static bool tmigr_active_up(struct tmigr
- 	 */
- 	curstate.state =3D atomic_read(&group->migr_state);
-=20
--	do {
--		newstate =3D curstate;
--		walk_done =3D true;
--
--		if (newstate.migrator =3D=3D TMIGR_NONE) {
--			newstate.migrator =3D childmask;
--
--			/* Changes need to be propagated */
--			walk_done =3D false;
--		}
--
--		newstate.active |=3D childmask;
--		newstate.seq++;
--
--	} while (!atomic_try_cmpxchg(&group->migr_state, &curstate.state, newstat=
-e.state));
--
--	trace_tmigr_group_set_cpu_active(group, newstate, childmask);
-+	for(;;) {
-+		if (__tmigr_active_up(group, &walk_done, &curstate, childmask))
-+		    break;
-+	}
-=20
- 	if (walk_done =3D=3D false)
- 		data->childmask =3D group->childmask;
-@@ -1436,6 +1448,35 @@ u64 tmigr_quick_check(u64 nextevt)
- 	return KTIME_MAX;
- }
-=20
-+static void tmigr_setup_active_up(struct tmigr_group *group, struct tmigr_=
-group *child)
-+{
-+	union tmigr_state curstate, childstate;
-+	bool walk_done;
-+
-+	/*
-+	 * FIXME: Memory barrier is required here as the child state
-+	 * could have changed in the meantime
-+	 */
-+	curstate.state =3D atomic_read_acquire(&group->migr_state);
-+
-+	for (;;) {
-+		childstate.state =3D atomic_read(&child->migr_state);
-+		if (!childstate.active)
-+			return;
-+
-+		if (__tmigr_active_up(group, &walk_done, &curstate, child->childmask))
-+			break;
-+
-+		/*
-+		 * The memory barrier is paired with the cmpxchg() in
-+		 * tmigr_inactive_up() to make sure the updates of child and group
-+		 * states are ordered. It is required only when the
-+		 * try_cmpxchg() in __tmigr_active_up() fails.
-+		 */
-+		smp_mb__after_atomic();
-+	}
-+}
-+
- static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
- 			     int node)
- {
-@@ -1510,8 +1551,6 @@ static struct tmigr_group *tmigr_get_gro
- static void tmigr_connect_child_parent(struct tmigr_group *child,
- 				       struct tmigr_group *parent)
- {
--	union tmigr_state childstate;
--
- 	raw_spin_lock_irq(&child->lock);
- 	raw_spin_lock_nested(&parent->lock, SINGLE_DEPTH_NESTING);
-=20
-@@ -1539,21 +1578,7 @@ static void tmigr_connect_child_parent(s
- 	 *   executed with the formerly top level group (child) and the newly
- 	 *   created group (parent).
- 	 */
--	childstate.state =3D atomic_read(&child->migr_state);
--	if (childstate.migrator !=3D TMIGR_NONE) {
--		struct tmigr_walk data;
--
--		data.childmask =3D child->childmask;
--
--		/*
--		 * There is only one new level per time (which is protected by
--		 * tmigr_mutex). When connecting the child and the parent and
--		 * set the child active when the parent is inactive, the parent
--		 * needs to be the uppermost level. Otherwise there went
--		 * something wrong!
--		 */
--		WARN_ON(!tmigr_active_up(parent, child, &data) && parent->parent);
--	}
-+	tmigr_setup_active_up(parent, child);
- }
-=20
- static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
+> 
+>> +	free_irq(bwmon->irq, bwmon);
+>>   }
+>>   
+>>   static const struct icc_bwmon_data msm8998_bwmon_data = {
+>> -- 
+>> 2.34.1
+>>
+> 
 
