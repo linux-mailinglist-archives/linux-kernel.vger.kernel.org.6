@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-227285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC849914EC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:35:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E7B914EC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39E1CB244A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A28841F230B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE8514533E;
-	Mon, 24 Jun 2024 13:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9W3mh5/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766B7142E6F;
-	Mon, 24 Jun 2024 13:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81817143739;
+	Mon, 24 Jun 2024 13:32:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C92713A86A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719235901; cv=none; b=kc0XJEj42g4nxhSijNVSyf9AqPacZX1Atg9qIrz6Ss4fzMYv6pl1DPuevaAvpraGSJcBC9fhBRlKXXrhma7CUq1WMvrM6Sb50fTNlsPuXxt7Y/rdKJztyffjOwbgaYShLZtt3Mx7jAvW+caBGJErttYdUN8NkgwcBunCJssDnro=
+	t=1719235938; cv=none; b=X8LCJ5KSNObR9OP4xh8cSCsESU3uR13xVUmKv+ThWzWV+LtT02id6EUpGrmCvvxxMYasm8iuuYHJhguiRytHOZqUn+WJgMottINHifqBlg/cfm2zeJsIIr3WMNItlPEudnzQB3ccOwwUFC3x9SyLVQTipAfU/m3aizQeU4Oxk68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719235901; c=relaxed/simple;
-	bh=JT50kJAxXSVLOVDE7qwzG8MW4VwAdei3qjuQkLBLq2I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cYb3GdySmHFVX1gDyZWDhSI9yNqs2Hc3fnXRmFE/0FXV4LTn/1eTOMUZECjX4y6QJI/k/X3UgVZxnfy0HFY7g/jtctGQ26ii+988/60MkJNbPOFtL/NXPIWmJ2uIjMkPb5yfPJBsYzIrZ2nT4AjgxDX0ZDE2xKG70fJ7Gp7iDLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9W3mh5/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17AD9C4AF0A;
-	Mon, 24 Jun 2024 13:31:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719235901;
-	bh=JT50kJAxXSVLOVDE7qwzG8MW4VwAdei3qjuQkLBLq2I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=O9W3mh5/6j2/ymSepi34zTH0gKwchWbRSK39XTO5jYJpvAqt17dzFu2a0AZDXz6rx
-	 cebHPWIUdsF/+GDvyoN9OE61NuAfeMVjPcG+4IxKZKMBreUUd9+3crkQpvxaLuFcvl
-	 2ySztRlAr8kGuuXrWrIvmiXinBsG1gYcn+mdwyYTEP/Mo1TZn6Fdja7d5uLRflzWPK
-	 +HhYkEeltBypGo+/LZoNdtwmIVN8H3E/Bv3udMJcfkfOzGsf8xik5hxqbR9DL4NJXO
-	 sbLk//HCOjm4VU8dq7YB5hIPR3M/5OmLzg/FR+Tz1lbIRl5j06auNFdBobQDZIvPAT
-	 ymvQ+XQDw/xpw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sLjnP-000000001wY-0gzi;
-	Mon, 24 Jun 2024 15:31:47 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH 3/3] serial: qcom-geni: fix garbage output after buffer flush
-Date: Mon, 24 Jun 2024 15:31:35 +0200
-Message-ID: <20240624133135.7445-4-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20240624133135.7445-1-johan+linaro@kernel.org>
-References: <20240624133135.7445-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1719235938; c=relaxed/simple;
+	bh=zrkwHiNIQ2L8lyXpvA3rc8HPF5KTBzpD1FEkTtXmBz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QbQRRX7SupWKVzwnSlCS7tOq2DSujylP6p96aOzB2q8ByebWUIx0J+fi1z2rYD6yTiHcZDkZxxxbyKG5h9HATgE2AucIXYNKtZTvX4im1UrHm5k5XHRXP8PG6kdZHVQlwpnPuWCsCosPqJOx9RB6ogBN8X8iEjlz7vzC27URcEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21F5FDA7;
+	Mon, 24 Jun 2024 06:32:40 -0700 (PDT)
+Received: from [10.57.74.124] (unknown [10.57.74.124])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 211473F6A8;
+	Mon, 24 Jun 2024 06:32:13 -0700 (PDT)
+Message-ID: <c4c44f66-fb9c-4d71-ac35-f3fef75832bd@arm.com>
+Date: Mon, 24 Jun 2024 14:32:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/iova: Bettering utilizing cpu_rcaches in no-strict
+ mode
+To: "zhangzekun (A)" <zhangzekun11@huawei.com>, joro@8bytes.org,
+ will@kernel.org, john.g.garry@oracle.com
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240624083952.52612-1-zhangzekun11@huawei.com>
+ <5149c162-cf38-4aa4-9e96-27c6897cad36@arm.com>
+ <0322849d-dc1f-4e1c-a47a-463f3c301bdc@huawei.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <0322849d-dc1f-4e1c-a47a-463f3c301bdc@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The Qualcomm GENI serial driver does not handle buffer flushing and
-outputs garbage (or NUL) characters for the remainder of any active TX
-command after the write buffer has been cleared.
+On 2024-06-24 2:13 pm, zhangzekun (A) wrote:
+> 
+> 在 2024/6/24 18:56, Robin Murphy 写道:
+>> On 2024-06-24 9:39 am, Zhang Zekun wrote:
+>>> Currently, when iommu working in no-strict mode, fq_flush_timeout()
+>>> will always try to free iovas on one cpu. Freeing the iovas from all
+>>> cpus on one cpu is not cache-friendly to iova_rcache, because it will
+>>> first filling up the cpu_rcache and then pushing iovas to the depot,
+>>> iovas in the depot will finally goto the underlying rbtree if the
+>>> depot_size is greater than num_online_cpus().
+>>
+>> That is the design intent - if the excess magazines sit in the depot 
+>> long enough to be reclaimed then other CPUs didn't want them either. 
+>> We're trying to minimise the amount of unused cached IOVAs sitting 
+>> around wasting memory, since IOVA memory consumption has proven to be 
+>> quite significant on large systems.
+> 
+> Hi, Robin,
+> 
+> It does waste some memory after this change, but since we have been 
+> freeing iova on each cpu in strict-mode for years, I think this change 
+> seems reasonable to make the iova free logic identical to strict-mode.
+> This patch try to make the speed of allcating and freeing iova roughly 
+> same by better utilizing the iova_rcache, or we will more likely enter 
+> the slowpath. The save of memory consumption is actually at the cost of 
+> performance, I am not sure if we need such a optimization for no-strict 
+> mode which is mainly used for performance consideration.
+> 
+>>
+>> As alluded to in the original cover letter, 100ms for IOVA_DEPOT_DELAY 
+>> was just my arbitrary value of "long enough" to keep the initial 
+>> implementation straightforward - I do expect that certain workloads 
+>> might benefit from tuning it differently, but without proof of what 
+>> they are and what they want, there's little justification for 
+>> introducing extra complexity and potential user ABI yet.
+>>
+>>> Let fq_flush_timeout()
+>>> freeing iovas on cpus who call dma_unmap* APIs, can decrease the overall
+>>> time caused by fq_flush_timeout() by better utilizing the iova_rcache,
+>>> and minimizing the competition for the iova_rbtree_lock().
+>>
+>> I would have assumed that a single CPU simply throwing magazines into 
+>> the depot list from its own percpu cache is quicker, or at least no 
+>> slower, than doing the same while causing additional 
+>> contention/sharing by interfering with other percpu caches as well. 
+>> And where does the rbtree come into that either way? If an observable 
+>> performance issue actually exists here, I'd like a more detailed 
+>> breakdown to understand it.
+>>
+>> Thanks,
+>> Robin.
+>>
+> 
+> This patch is firstly intent to minimize the chance of softlock issue in 
+> fq_flush_timeout(), which is already dicribed erarlier in [1], which has 
+> beed applied in a commercial kernel[2] for years.
+> 
+> However, the later tests show that this single patch is not enough to 
+> fix the softlockup issue, since the root cause of softlockup is the 
+> underlying iova_rbtree_lock. In our softlockup scenarios, the average
+> time cost to get this spinlock is about 6ms.
 
-Implement the flush_buffer() callback and use it to cancel any active TX
-command when the write buffer has been emptied.
+That should already be fixed, though. The only reason for 
+fq_flush_timeout() to interact with the rbtree at all was due to the 
+notion of a fixed-size depot which could become full. That no longer 
+exists since 911aa1245da8 ("iommu/iova: Make the rcache depot scale 
+better").
 
-Fixes: a1fee899e5be ("tty: serial: qcom_geni_serial: Fix softlock")
-Cc: stable@vger.kernel.org	# 5.0
-Reported-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/tty/serial/qcom_geni_serial.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 72addeb9f461..5fbb72f1c0c7 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -1084,6 +1084,11 @@ static void qcom_geni_serial_shutdown(struct uart_port *uport)
- 	qcom_geni_serial_clear_tx_fifo(uport);
- }
- 
-+static void qcom_geni_serial_flush_buffer(struct uart_port *uport)
-+{
-+	qcom_geni_serial_clear_tx_fifo(uport);
-+}
-+
- static int qcom_geni_serial_port_setup(struct uart_port *uport)
- {
- 	struct qcom_geni_serial_port *port = to_dev_port(uport);
-@@ -1540,6 +1545,7 @@ static const struct uart_ops qcom_geni_console_pops = {
- 	.request_port = qcom_geni_serial_request_port,
- 	.config_port = qcom_geni_serial_config_port,
- 	.shutdown = qcom_geni_serial_shutdown,
-+	.flush_buffer = qcom_geni_serial_flush_buffer,
- 	.type = qcom_geni_serial_get_type,
- 	.set_mctrl = qcom_geni_serial_set_mctrl,
- 	.get_mctrl = qcom_geni_serial_get_mctrl,
--- 
-2.44.1
-
+Thanks,
+Robin.
 
