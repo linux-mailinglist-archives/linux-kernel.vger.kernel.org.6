@@ -1,187 +1,108 @@
-Return-Path: <linux-kernel+bounces-227480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C269151D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D009151D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:17:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129821F21D5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D76B1F22FBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D6919D886;
-	Mon, 24 Jun 2024 15:15:24 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC0919DF52;
+	Mon, 24 Jun 2024 15:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5HhcE4r"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30251D696
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331AC19DF4D
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242123; cv=none; b=a/RSqE4///YUWCfnXk2nOUtIwlSJGMEHjRdZYBhzDghnywsG2eiBEPsCgW3/YGV0omBiEWPMsg5nIEMw4gQghWCmW01nOtL3uwY2UorepgMC4QrgEEPMP/T3/sO6ALwTY+fWJxz5gwoRBVcezCtqINa2SsxPZpvwFQwPKJQdmDE=
+	t=1719242128; cv=none; b=UKxQvNiKwLgItCd/SdtyZeTc32Ehop1EVZr1rvWYMr9Eraadc69ZEECj1Zl+WBwYE6D3mOslobXR/nkbJmND7K5yslpXOgz6it6xxliOnyaL1ZwPgxoMYIbo1+Ga8itu7pjTmdUyRvManLueJ35GiUUGdqcOt0o5wBeVIYSB9jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242123; c=relaxed/simple;
-	bh=MNr/iW7hektiD1H3kRheYm/jFxPg/XU6IynSNsEZCbQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FjOYhZ94mTilzRPTo/zozbvnRC96aJYXlsfl6a2zUvoti1kBOFps2bm9pKfN7DeABaI/dvlLGuDEL9yv2olUgidSsIF4ZTakU0YpV2rnno+eEAsXu8N0PF1EdwwzBGSP49d//wIYRdd6M7Cw3UQCjSnLf/oBTq3xcj8POvRjg18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3737b3ae019so53892115ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:15:21 -0700 (PDT)
+	s=arc-20240116; t=1719242128; c=relaxed/simple;
+	bh=GAsy1hrmvNMsy+al1UKDpEJrsqmugZd4+qdldQYyXSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PgRAkBsTbaeVwbYWXb4gGu5255NuINf27LxLzrKCMIepo96F0+thJSBSKfFbN/yoDceXkA0YlBhwDjrCJen0r+8pEK8rU9GnR+iycFcUzw82CDZySGF3oVp+WuBrPqyPR1Hrw6l66XgDOVvcszBnFmYtn+IbamUcPoRUcr/G2W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D5HhcE4r; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cd628f21cso3488291e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719242124; x=1719846924; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9gDB4H9hEb1ddKk08sFFh7SUVmxRRs8hMx/zYwxqCrw=;
+        b=D5HhcE4rUbkgNTrPuWdRxMLlER6URmvc3dLoO6U6qqBUQwnNhdG7kSwtyAt/NQhF1C
+         QExawB1ot4Y2idWTFDFCKFGRdFZuJgiuIaE9ztLe4ypsdUIjltLvofV3oCz0uCoacJLF
+         ml9Tp0ex1SJJtM7P+KA0N+Kqe7N1OJkwo0WzqDDrUz+0ewnxMvn40QnIAzK1Kqa3+aJL
+         M2Ki/dSRqgfgf/0qlhga0fPGrnQCHs1f2ec/omb3UaH1VXN3/Z34uVVvznJAdT3XZ5MR
+         wvUGILo5/ZhJhPT8P0eK2jYrwozzp9KjKg7U4GcY/8FFN2t8Hn04QRr2ONMH64VitNtj
+         HwsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719242121; x=1719846921;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ONAk/9gMOLl8MwIxQFP3SbpLQofEWlsXstY30enpvjw=;
-        b=plEGS21mbg0AMaUE+hegmafywHYiOMaWOyYC3RBTVTP5mVrdx+JubUwAX1+h07vr5S
-         sVz7c3snua4UO1BgeDSBGkYw8piHU2lVGh3nv7C7ZjSWzk0MKNKHEB7Wc2Qh4OIrjX6r
-         y6PTPt7esdOxEgBqnGyKDTqFQhv5hH3fWonXLPNnskbo2N5SHdenZl7FKmOfeUVN3nOM
-         ae18gXKGIYGvwd+nwbk8xti0tZ8NblKMlAesGCsCUUuEeEft9BwCHKakTYHfNkFqnTkn
-         rZLj4xkA+Wq+me6vAT/T6nyWC5h18EiNI6TmyKSoyYNOW4agkMOBNmQMGXnSi3Hvd5KC
-         JGxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX80kJqFDomVzmSkR7JA9dQmbA8v6oiF0hw9RQZCxswbO45dH4sbpteWhsB5f6RdRGrbepoQYyRoJQegiGtUtgHFmpi2hJx6f727fXY
-X-Gm-Message-State: AOJu0Yx1tyGQHUDpybEjnahJ2qehtTul46xaO0Tk5GdORXoOYue7eDLb
-	TXBRb76JRo7fMOw81oxufKrU78PoD/ptVeA/tTVYdyUg45rTORrU9iKSua9Vg8fwJZu6pxZAx9i
-	Rdzpax4Dvlq9sMRjHCjFap/6hWWgQOz16s4IojEgvxjs2rORnLdbeCtg=
-X-Google-Smtp-Source: AGHT+IEoIocCWQfOAZR+v0VwMf8y02t3JJsst6mQZtIsxeuPxTjIs24h6sQVoVN5ty+G51QWUkqIWxu0IRxfgynuMCksvDsLWLRH
+        d=1e100.net; s=20230601; t=1719242124; x=1719846924;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9gDB4H9hEb1ddKk08sFFh7SUVmxRRs8hMx/zYwxqCrw=;
+        b=UG6RVHx5K3pC4ZGkb2+ScxMdNC5qRsLBCzmtS2tNv1Z30EMEKbMCcxA6DeXhKpFSWf
+         5tQhGlAj6kIFGnWy8Pa+RHQAwZQUpzJwqMP7mwDT2zXCIQSolq7fa3O9DO3Rx/WoY8CF
+         qydYmnZZwRk6RPqZ1YreL9P0grs8cLOenyCmnop1XeRT3NUPasRNrxGX89GgHRS8qzDE
+         JvPn48wyNy0eiiqaOmxm8CToGM1kcucsZourIUTC9HGg0YpOhZpvRBa5oUHvYMr8tXVU
+         wuGkLnVF3ajY4CSqxpvQ33q5hTvL+mbb9nST88G+5QruiSY7UYxo4LZOzuXjxGhhpGJD
+         PHvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUriL8GWYhDJFx/thVn50JONw715IYVxrN5JmEy8cvOBH+sf89yIC8iwWuqlzt8NEi1ruDYf8zCRw5iCXtmUQnImlrJPAJHBYx/9Smt
+X-Gm-Message-State: AOJu0YxPqfxEXPTAsSRZuHLs9nnxkHczAg127gNXWGNBF2CnDxO26Ckh
+	18G7XhLm3bR5qfN4VZrEKS0WzWiX8y3shh38yx04K7se4a3N8Lu/FznHI3acvNw=
+X-Google-Smtp-Source: AGHT+IGewbbtNYBe9HGO4cnqDGWmxOyzFNvsNZLeojJsAjYmh08AcYDCbzTBurLxo6pTj/6Sf3tmPg==
+X-Received: by 2002:a05:6512:55c:b0:52c:d9c6:f934 with SMTP id 2adb3069b0e04-52ce18356e5mr2814162e87.18.1719242124247;
+        Mon, 24 Jun 2024 08:15:24 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63b46ecsm1004471e87.10.2024.06.24.08.15.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 08:15:23 -0700 (PDT)
+Date: Mon, 24 Jun 2024 18:15:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] arm64: dts: qcom: x1e80100: Add soundwire
+ controller resets
+Message-ID: <2lnbogqx2mxgyn47vgnbp4ameydjq6ajuauklgzslmfinpmnk5@ez2sz3nyd3wj>
+References: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1988:b0:376:4441:9 with SMTP id
- e9e14a558f8ab-376444101f9mr4206395ab.2.1719242121035; Mon, 24 Jun 2024
- 08:15:21 -0700 (PDT)
-Date: Mon, 24 Jun 2024 08:15:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e85d76061ba43f6d@google.com>
-Subject: [syzbot] [net?] WARNING in dev_deactivate_many
-From: syzbot <syzbot+e9121deb112a224121e0@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, jhs@mojatatu.com, 
-	jiri@resnulli.us, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
 
-Hello,
+On Mon, Jun 24, 2024 at 02:32:35PM GMT, Srinivas Kandagatla wrote:
+> Soundwire resets are missing in the existing dts, add resets for all the 4
+> instances of Soundwire controllers (WSA, WSA2, RX, TX).
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+> Changes in v2:
+> - fixed dt bindings.
+> - Link to v1: https://lore.kernel.org/r/20240624-x1e-swr-reset-v1-0-da326d0733d4@linaro.org
 
-syzbot found the following issue on:
+Thanks!
 
-HEAD commit:    819984a0dd36 kselftest: devices: Add of-fullname-regex pro..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=12779c82980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9ccd5ad0e0c891e3
-dashboard link: https://syzkaller.appspot.com/bug?extid=e9121deb112a224121e0
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1680423e980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1690b5ea980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4a1c28712015/disk-819984a0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/be01b9b3db3a/vmlinux-819984a0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5c8994363c20/bzImage-819984a0.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e9121deb112a224121e0@syzkaller.appspotmail.com
-
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-ref_tracker: freed in:
- netdev_tracker_free include/linux/netdevice.h:4058 [inline]
- netdev_put include/linux/netdevice.h:4075 [inline]
- netdev_put include/linux/netdevice.h:4071 [inline]
- dev_watchdog_down net/sched/sch_generic.c:570 [inline]
- dev_deactivate_many+0x214/0xb40 net/sched/sch_generic.c:1362
- dev_deactivate+0xf9/0x1c0 net/sched/sch_generic.c:1396
- linkwatch_do_dev+0x11e/0x160 net/core/link_watch.c:175
- __linkwatch_run_queue+0x233/0x690 net/core/link_watch.c:234
- linkwatch_event+0x8f/0xc0 net/core/link_watch.c:277
- process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 2496 at lib/ref_tracker.c:255 ref_tracker_free+0x61e/0x820 lib/ref_tracker.c:255
-Modules linked in:
-CPU: 0 PID: 2496 Comm: kworker/0:0 Not tainted 6.10.0-rc4-syzkaller-00053-g819984a0dd36 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:ref_tracker_free+0x61e/0x820 lib/ref_tracker.c:255
-Code: 00 44 8b 6b 18 31 ff 44 89 ee e8 4d d8 f1 fe 45 85 ed 0f 85 a6 00 00 00 e8 3f dd f1 fe 48 8b 34 24 48 89 ef e8 83 f3 32 04 90 <0f> 0b 90 bb ea ff ff ff e9 4e fd ff ff e8 20 dd f1 fe 4c 8d 6d 44
-RSP: 0018:ffffc900002d7298 EFLAGS: 00010202
-RAX: 0000000000000201 RBX: ffff8881137311c0 RCX: 0000000000000000
-RDX: 0000000000000202 RSI: ffffffff86c7d6e0 RDI: 0000000000000001
-RBP: ffff88811fc185e0 R08: 0000000000000001 R09: fffffbfff1997dae
-R10: ffffffff8ccbed77 R11: fffffffffffda9a0 R12: 1ffff9200005ae55
-R13: 0000000005a60115 R14: ffff8881137311d8 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8881f6400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fae50793120 CR3: 00000001026b6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netdev_tracker_free include/linux/netdevice.h:4058 [inline]
- netdev_put include/linux/netdevice.h:4075 [inline]
- netdev_put include/linux/netdevice.h:4071 [inline]
- dev_watchdog_down net/sched/sch_generic.c:570 [inline]
- dev_deactivate_many+0x214/0xb40 net/sched/sch_generic.c:1362
- __dev_close_many+0x145/0x310 net/core/dev.c:1543
- dev_close_many+0x24c/0x6a0 net/core/dev.c:1581
- unregister_netdevice_many_notify+0x46d/0x19f0 net/core/dev.c:11194
- unregister_netdevice_many net/core/dev.c:11277 [inline]
- unregister_netdevice_queue+0x307/0x3f0 net/core/dev.c:11156
- unregister_netdevice include/linux/netdevice.h:3119 [inline]
- unregister_netdev+0x1c/0x30 net/core/dev.c:11295
- usbnet_disconnect+0xed/0x500 drivers/net/usb/usbnet.c:1621
- usb_unbind_interface+0x1e8/0x970 drivers/usb/core/driver.c:461
- device_remove drivers/base/dd.c:568 [inline]
- device_remove+0x122/0x170 drivers/base/dd.c:560
- __device_release_driver drivers/base/dd.c:1270 [inline]
- device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1293
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:574
- device_del+0x396/0x9f0 drivers/base/core.c:3868
- usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2304
- hub_port_connect drivers/usb/core/hub.c:5361 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x1be4/0x4f50 drivers/usb/core/hub.c:5903
- process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
