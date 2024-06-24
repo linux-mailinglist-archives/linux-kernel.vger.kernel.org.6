@@ -1,149 +1,91 @@
-Return-Path: <linux-kernel+bounces-226717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB6C9142AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:22:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FC89142AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11DEFB23BBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:22:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6316EB23956
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF95364A1;
-	Mon, 24 Jun 2024 06:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F8622EE8;
+	Mon, 24 Jun 2024 06:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fgtNEasX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqwaS42x"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D652E400;
-	Mon, 24 Jun 2024 06:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3518B219E2;
+	Mon, 24 Jun 2024 06:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719210132; cv=none; b=W/34H4sEELjKiWqWZPe2QB/cvXNx0w444OW9GPrrIo5Zw5HkbqKBXF49XW+RWt4ZUMDxg8ypCHucXnO64mSSgGKjM08mu8Ji13cFXEddNhmxoGshgKZmRFNXFDYpJ8jfZVS/NL9Tsbg2n0IUutU3BZVy7iaLFHoTCEEQnBChrB4=
+	t=1719210127; cv=none; b=bbeUkpntB3Oz4As51UKjTszxolRh1CF4gO99ZiNBYyMIDBDLuWUMpKKfaZ64RZnWTXcLsFktP2ewdAJF9OoCezIOAEoICHri3wm4/eGXvoc+h2coGCW07uGGFMKjJZ4PfmTsncTCVJp4p0+sCzFztYsJ2C/ZLWNSYZNl5rU9ELk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719210132; c=relaxed/simple;
-	bh=OehhVV1KBD0S5MzdbAomE8iFH0avJWioXXG8XDrbc9c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eteT0MsYIHOfDIuvY3IcNtf1g6xMBeDhZhfYYQf3coQtmwmaWmXGYJSqMKRej3inSP0pB/INhn1YpYXhwxF89m36f5VnhkXcK1c2srVojvdDv7qwfK4uo8aB0X1a1Y+deVwrA9X+xaVjXyI0EPTLqSOK7mTMnWuOFkenMyj5qMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fgtNEasX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NMpd1K025140;
-	Mon, 24 Jun 2024 06:21:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=78BjC4ZngSF0zZa4ZxItwDC7
-	TOkUvZ5wSfalarQ23zM=; b=fgtNEasX4CeU2QVGVI0PidkxsvZTVx1bqKiNCaU3
-	/R91iNbjSiLQzvWCTNf/vtJ6XI3Kwabx03TcnTxYig9woESA8nMQZHYim/VIzLj5
-	NrAQVKesjy72FI447vVix5NzvdMiIzXHBmGtl6+Ap54DF1KnfLqM5FubtVSu0XUK
-	miqXFh4MLBR8ZTTtyKAuz/pOZU4cvpvPcRWnslGos2RSr0t3gFsJvKTZ9t6cDZ1m
-	Kv25nR3TetyaZiNjerumLIfKpJGI+rVInM2jq9ExaoEqbvANr4faIIffrCw8CLNo
-	mqFN5rsK06byKnN8SoMczeINsZiyzThB3VTD/1/yy4OKBw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnxgtsf0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 06:21:56 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45O6Lt12025514
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 06:21:55 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sun, 23 Jun 2024 23:21:49 -0700
-Date: Mon, 24 Jun 2024 11:51:45 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: freedreno <freedreno@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Conor Dooley <conor+dt@kernel.org>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        David Airlie <airlied@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maxime Ripard <mripard@kernel.org>, "Rob
- Herring" <robh@kernel.org>,
-        Sean Paul <sean@poorly.run>, Thomas Zimmermann
-	<tzimmermann@suse.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 0/3] Support for Adreno X1-85 GPU
-Message-ID: <20240624062145.nkqlh2szazvjigk7@hu-akhilpo-hyd.qualcomm.com>
-References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
- <26abe6cd-e9da-4db9-9035-76edd5dda614@kernel.org>
+	s=arc-20240116; t=1719210127; c=relaxed/simple;
+	bh=izV8xtFw87LJRHc0H3NGdhgh/pXNsAOWlHQntv9q9Z4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VpDRGY7QSa2YOArwQUVoxxL8Zs1yNfyr71ydUN5kQ/OcnFkPNos+Ib9pNKd0XP4AgW/TmaxTVu++Pvhi5mvCcbnr8+04ovGFMFbf6M/UH5m3zzIBbW8AusjjLPNcMFpFIxCVVOMJd0DzyZPGELMe4+t7kzFYM43Sra6np1QOP7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqwaS42x; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7252bfe773so59306166b.1;
+        Sun, 23 Jun 2024 23:22:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719210124; x=1719814924; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=izV8xtFw87LJRHc0H3NGdhgh/pXNsAOWlHQntv9q9Z4=;
+        b=JqwaS42xSuYoGivGftta04s4VFAatPrxAo5jiYpsSi7FHnOZXUmbTXH1jSQvqFFzv7
+         Qef+USwCHAWdNm1mt7GMUqKCJGL/x7beQ7cQyn9e1yMX1GWrw+J5OeF+O8LBvlAXq6df
+         fPEgrmYLFTbaaFMFracqzy8JJaygOXkIE0X2koYFZufmfJ5staZlh+zLc+Qu7dnJU8uO
+         ufP2+Ogn82ztrosvFBT07mBFQ3DEwnXJmb8Av3GKbbpv3agkVe0nfNfiuTYTsmIHSBog
+         H3L6KQGCKmdullrjU7alw/FRV+/2TF78jfAvLp2u2Z48Ah/Y0Dgbgg+W0TAiLbucBU4h
+         LbZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719210124; x=1719814924;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=izV8xtFw87LJRHc0H3NGdhgh/pXNsAOWlHQntv9q9Z4=;
+        b=Tij9ddPUJX4bFzHqP3wB+47EWijJ4O8ekgypUaLpGSJue0wgGFa2ry7oN3T6GeN/tH
+         PgKToO77pvpXWVvTR7Bo7XZdArqjF108soI+lZ6Nb6bhliiLwaru56hHb3nihmS6eDCu
+         qri+B7e8BGsdOn2Mb8cNxicbkI0VvcWDDgvlAArMsAKO/avKA1fOr3NV+CWsROX/skzM
+         ZTAfKbzNUPTktU3C/I5ivh6WBaOTadkIO8xxSuclbKPi5nKkqI8Lb6P0k9DN0yvZSC2c
+         xTivstHZTtQx1YGWoXs2hn+Vh2KaW21kHWMwEa7HsG7JGayCIbWrWuTtqLVaAExPOuG3
+         Qt3g==
+X-Forwarded-Encrypted: i=1; AJvYcCV92U0pmxXXrIwpij6doHpF6xRUevqAfhqO2alY53xkfa/3FE3QbqQ4cAIZRKZOX0IZ2FFnUG77y2H8Ll703PwtPTDhba2TsGQsm+Em/YYzUsjKw8c4V1avIJbdliMZjl4jbuyFoDKOmzs2gvhR
+X-Gm-Message-State: AOJu0YwkInhSbhisJIWbSvABNdRC9IIhIx7j4QUiBIVlGACY8fuZP6ux
+	slwI8KsP5mVXhRdNMOGsFVFtmWSxPbWSVjV992fG4SpdNDQb+ac52g8EOsQg6DuN+SY8HIuyjsC
+	UNjhglgerQyD//+Gq7Dnbc+zsVI0=
+X-Google-Smtp-Source: AGHT+IF4p3kQuq5bMoS6IT8dI6Brsx4Molp0hz/DWisb09x1f9QYxKJIHq/2rFVb9+bLYmidFi0EDdziT1pi0FXCcqc=
+X-Received: by 2002:a17:906:f851:b0:a6f:5091:467b with SMTP id
+ a640c23a62f3a-a7245cf27e8mr209723366b.39.1719210124278; Sun, 23 Jun 2024
+ 23:22:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <26abe6cd-e9da-4db9-9035-76edd5dda614@kernel.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PO8NswSRSU9dBTs6ixM3EjEKZVLtXOKQ
-X-Proofpoint-ORIG-GUID: PO8NswSRSU9dBTs6ixM3EjEKZVLtXOKQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_05,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- suspectscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
- malwarescore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406240049
+References: <20240603-md-agp-v1-1-9a1582114ced@quicinc.com> <650386f8-16c4-4988-b05c-1e4fc1c9167a@quicinc.com>
+In-Reply-To: <650386f8-16c4-4988-b05c-1e4fc1c9167a@quicinc.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Mon, 24 Jun 2024 16:21:52 +1000
+Message-ID: <CAPM=9tyKZKPo-bkhGFvwNTOaojV033j0S-5ex5FPmY766x4ocA@mail.gmail.com>
+Subject: Re: [PATCH] agp: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: David Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jun 23, 2024 at 01:11:48PM +0200, Krzysztof Kozlowski wrote:
-> On 23/06/2024 13:06, Akhil P Oommen wrote:
-> > This series adds support for the Adreno X1-85 GPU found in Qualcomm's
-> > compute series chipset, Snapdragon X1 Elite (x1e80100). In this new
-> > naming scheme for Adreno GPU, 'X' stands for compute series, '1' denotes
-> > 1st generation and '8' & '5' denotes the tier and the SKU which it
-> > belongs.
-> > 
-> > X1-85 has major focus on doubling core clock frequency and bandwidth
-> > throughput. It has a dedicated collapsible Graphics MX rail (gmxc) to
-> > power the memories and double the number of data channels to improve
-> > bandwidth to DDR.
-> > 
-> > Mesa has the necessary bits present already to support this GPU. We are
-> > able to bring up Gnome desktop by hardcoding "0xffff43050a01" as
-> > chipid. Also, verified glxgears and glmark2. We have plans to add the
-> > new chipid support to Mesa in next few weeks, but these patches can go in
-> > right away to get included in v6.11.
-> > 
-> > This series is rebased on top of v6.10-rc4. P3 cherry-picks cleanly on
-> > qcom/for-next.
-> > 
-> > P1 & P2 for Rob, P3 for Bjorn to pick up.
-> 
-> Which Rob?
+>
+> Following up to see if anything else is needed from me.
+> Hoping to see this in linux-next :)
 
-Sorry for the confusion! I meant Rob Clark whom I had added in the "To:"
-list.
+I just pushed this into drm-next.
 
--Akhil
-
-> 
-> Why bindings cannot go as usual way - via the subsystem?
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+Thanks,
+Dave.
 
