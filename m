@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-227257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6A8914E1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 479F5914E33
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E54B1C223B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:13:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8161C2274F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCE413D621;
-	Mon, 24 Jun 2024 13:13:18 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2F313D62F;
+	Mon, 24 Jun 2024 13:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0UVNZPOC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6952513BAFA
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9955161FF5;
+	Mon, 24 Jun 2024 13:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719234798; cv=none; b=DqunvcyUT+GeP45+fPz4yCCVs9M2Jl2rVHUbnNjdO6DEkOIyfUJlDOUMcsnVwWM763H+ED1I+B0pIj6Kbvn8Wn+P4INdwyHgfQ9lqrcsIhTc/kaazGB0H/2to0K3RVPyVgpda0+IeXEp4RkqWxhEoXhLuYq7PgwWXyBzb3wUzBU=
+	t=1719235018; cv=none; b=iFszls0j/OfkjqVK/aflpHP20A1uvnhBpgex0AwU8dURsnYJARKgtTtSZlPmYzD1DuUbWxb+qKqPGYRVfJcCm6o16iUc7u6TUgNssuf300QpbbzntTqmDN9SRLliokmMpJBaPimaorRmeGRX6SA4A2yEKNOU9UrwwhglysjYgSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719234798; c=relaxed/simple;
-	bh=oyCpXt6yAyYTSwcQwAZ4p92sZK6DCxmgRGJ7KSlqaNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=R773D2O4g86w7bZ0qc+yT/ysj7g+53LRUGqvV26AdkmYB6un2bsKEfIoCybL7W/zMqpqgBGF4aHMHjWkyHTpeZD8l4G7jQDGoL0a3/+5l/Tx9JnQdSK2KC+DpFwqXMDpXSvJCplkbLv31NTnHsLuXJ5sTRM7AZygd+x3kjhfaXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W77ZW3XFGz1SDbN;
-	Mon, 24 Jun 2024 21:08:51 +0800 (CST)
-Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1941214037B;
-	Mon, 24 Jun 2024 21:13:13 +0800 (CST)
-Received: from [10.174.176.82] (10.174.176.82) by
- kwepemf500003.china.huawei.com (7.202.181.241) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 24 Jun 2024 21:13:12 +0800
-Message-ID: <0322849d-dc1f-4e1c-a47a-463f3c301bdc@huawei.com>
-Date: Mon, 24 Jun 2024 21:13:11 +0800
+	s=arc-20240116; t=1719235018; c=relaxed/simple;
+	bh=j3tSMrNeaGr/GDA1b1OfEDf0WMzQpAsWSoGQg7nQuP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hIjqszlsMiOGtbUulrORcwZafCDC9CkBlqUGvGYTszSIU4MdRHSlCGSUMpw03n1Sph7zP+LrnL4hmYDvLhkCb27CphLVblmtMA9EwXrGjHl0EzIkcSW0hCAiNPQvXySWPsHDM+RDv3IZg15qoQVvB2sENd/me2kUW2yWfrfXyvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0UVNZPOC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD099C2BBFC;
+	Mon, 24 Jun 2024 13:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1719235018;
+	bh=j3tSMrNeaGr/GDA1b1OfEDf0WMzQpAsWSoGQg7nQuP8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0UVNZPOCgNL3Z2mOu+qR47HGLZKP0+08/YM6rEFZ3lEL0EEFSSXSiOmO1UXek/4/F
+	 qhC+gyxQn9Sr56P1iJ153yCcOyJSx9MRilZ5mN7bHYbzt0Psr0pG2bwhu7vV2+6qyj
+	 FAphyBwKfczxSMMotk9p0+Zm4Kq/SoAt9fDW/XpU=
+Date: Mon, 24 Jun 2024 15:16:55 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Shiva Kiran K <shiva_kr@riseup.net>
+Cc: Roshan Khatri <topofeverest8848@gmail.com>,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: fbtft: Remove unnecessary parentheses
+Message-ID: <2024062443-udder-spotted-cc0d@gregkh>
+References: <20240617142746.51885-2-shiva_kr@riseup.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/iova: Bettering utilizing cpu_rcaches in no-strict
- mode
-To: Robin Murphy <robin.murphy@arm.com>, <joro@8bytes.org>, <will@kernel.org>,
-	<john.g.garry@oracle.com>
-CC: <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-References: <20240624083952.52612-1-zhangzekun11@huawei.com>
- <5149c162-cf38-4aa4-9e96-27c6897cad36@arm.com>
-From: "zhangzekun (A)" <zhangzekun11@huawei.com>
-In-Reply-To: <5149c162-cf38-4aa4-9e96-27c6897cad36@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf500003.china.huawei.com (7.202.181.241)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617142746.51885-2-shiva_kr@riseup.net>
 
-
-在 2024/6/24 18:56, Robin Murphy 写道:
-> On 2024-06-24 9:39 am, Zhang Zekun wrote:
->> Currently, when iommu working in no-strict mode, fq_flush_timeout()
->> will always try to free iovas on one cpu. Freeing the iovas from all
->> cpus on one cpu is not cache-friendly to iova_rcache, because it will
->> first filling up the cpu_rcache and then pushing iovas to the depot,
->> iovas in the depot will finally goto the underlying rbtree if the
->> depot_size is greater than num_online_cpus().
+On Mon, Jun 17, 2024 at 07:57:47PM +0530, Shiva Kiran K wrote:
+> Remove unnecessary parentheses in `if` statements.
+> Reported by checkpatch.pl
 > 
-> That is the design intent - if the excess magazines sit in the depot 
-> long enough to be reclaimed then other CPUs didn't want them either. 
-> We're trying to minimise the amount of unused cached IOVAs sitting 
-> around wasting memory, since IOVA memory consumption has proven to be 
-> quite significant on large systems.
-
-Hi, Robin,
-
-It does waste some memory after this change, but since we have been 
-freeing iova on each cpu in strict-mode for years, I think this change 
-seems reasonable to make the iova free logic identical to strict-mode.
-This patch try to make the speed of allcating and freeing iova roughly 
-same by better utilizing the iova_rcache, or we will more likely enter 
-the slowpath. The save of memory consumption is actually at the cost of 
-performance, I am not sure if we need such a optimization for no-strict 
-mode which is mainly used for performance consideration.
-
+> Signed-off-by: Shiva Kiran K <shiva_kr@riseup.net>
+> ---
+>  drivers/staging/fbtft/fb_ili9320.c | 2 +-
+>  drivers/staging/fbtft/fb_ra8875.c  | 2 +-
+>  drivers/staging/fbtft/fbtft-bus.c  | 2 +-
+>  drivers/staging/fbtft/fbtft-core.c | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> As alluded to in the original cover letter, 100ms for IOVA_DEPOT_DELAY 
-> was just my arbitrary value of "long enough" to keep the initial 
-> implementation straightforward - I do expect that certain workloads 
-> might benefit from tuning it differently, but without proof of what they 
-> are and what they want, there's little justification for introducing 
-> extra complexity and potential user ABI yet.
-> 
->> Let fq_flush_timeout()
->> freeing iovas on cpus who call dma_unmap* APIs, can decrease the overall
->> time caused by fq_flush_timeout() by better utilizing the iova_rcache,
->> and minimizing the competition for the iova_rbtree_lock().
-> 
-> I would have assumed that a single CPU simply throwing magazines into 
-> the depot list from its own percpu cache is quicker, or at least no 
-> slower, than doing the same while causing additional contention/sharing 
-> by interfering with other percpu caches as well. And where does the 
-> rbtree come into that either way? If an observable performance issue 
-> actually exists here, I'd like a more detailed breakdown to understand it.
-> 
-> Thanks,
-> Robin.
+> diff --git a/drivers/staging/fbtft/fb_ili9320.c b/drivers/staging/fbtft/fb_ili9320.c
+> index 0be7c2d51..409b54cc5 100644
+> --- a/drivers/staging/fbtft/fb_ili9320.c
+> +++ b/drivers/staging/fbtft/fb_ili9320.c
+> @@ -37,7 +37,7 @@ static int init_display(struct fbtft_par *par)
+>  	devcode = read_devicecode(par);
+>  	fbtft_par_dbg(DEBUG_INIT_DISPLAY, par, "Device code: 0x%04X\n",
+>  		      devcode);
+> -	if ((devcode != 0x0000) && (devcode != 0x9320))
+> +	if (devcode != 0x0000 && devcode != 0x9320)
+>  		dev_warn(par->info->device,
+>  			 "Unrecognized Device code: 0x%04X (expected 0x9320)\n",
+>  			devcode);
+> diff --git a/drivers/staging/fbtft/fb_ra8875.c b/drivers/staging/fbtft/fb_ra8875.c
+> index 398bdbf53..ce305a0be 100644
+> --- a/drivers/staging/fbtft/fb_ra8875.c
+> +++ b/drivers/staging/fbtft/fb_ra8875.c
+> @@ -50,7 +50,7 @@ static int init_display(struct fbtft_par *par)
+>  
+>  	par->fbtftops.reset(par);
+>  
+> -	if ((par->info->var.xres == 320) && (par->info->var.yres == 240)) {
+> +	if (par->info->var.xres == 320 && par->info->var.yres == 240) {
+>  		/* PLL clock frequency */
+>  		write_reg(par, 0x88, 0x0A);
+>  		write_reg(par, 0x89, 0x02);
+> diff --git a/drivers/staging/fbtft/fbtft-bus.c b/drivers/staging/fbtft/fbtft-bus.c
+> index 3d422bc11..ab903c938 100644
+> --- a/drivers/staging/fbtft/fbtft-bus.c
+> +++ b/drivers/staging/fbtft/fbtft-bus.c
+> @@ -85,7 +85,7 @@ void fbtft_write_reg8_bus9(struct fbtft_par *par, int len, ...)
+>  	if (len <= 0)
+>  		return;
+>  
+> -	if (par->spi && (par->spi->bits_per_word == 8)) {
+> +	if (par->spi && par->spi->bits_per_word == 8) {
+>  		/* we're emulating 9-bit, pad start of buffer with no-ops
+>  		 * (assuming here that zero is a no-op)
+>  		 */
+> diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
+> index c8d52c63d..64babfe3a 100644
+> --- a/drivers/staging/fbtft/fbtft-core.c
+> +++ b/drivers/staging/fbtft/fbtft-core.c
+> @@ -666,7 +666,7 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
+>  		txbuflen = 0;
+>  
+>  #ifdef __LITTLE_ENDIAN
+> -	if ((!txbuflen) && (bpp > 8))
+> +	if (!txbuflen && bpp > 8)
+>  		txbuflen = PAGE_SIZE; /* need buffer for byteswapping */
+>  #endif
+>  
+> -- 
+> 2.45.2
 > 
 
-This patch is firstly intent to minimize the chance of softlock issue in 
-fq_flush_timeout(), which is already dicribed erarlier in [1], which has 
-beed applied in a commercial kernel[2] for years.
+Hi,
 
-However, the later tests show that this single patch is not enough to 
-fix the softlockup issue, since the root cause of softlockup is the 
-underlying iova_rbtree_lock. In our softlockup scenarios, the average
-time cost to get this spinlock is about 6ms.
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-[1] https://lkml.org/lkml/2023/2/16/124
-[2] https://gitee.com/openeuler/kernel/tree/OLK-5.10/
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-Thanks,
-Zekun
+- You sent a patch that has been sent multiple times in the past few
+  days, and is identical to ones that has been recently rejected.
+  Please always look at the mailing list traffic to determine if you are
+  duplicating other people's work.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
