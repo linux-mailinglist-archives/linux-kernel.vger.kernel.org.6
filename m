@@ -1,145 +1,112 @@
-Return-Path: <linux-kernel+bounces-227885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A68D9157B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:15:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7529157AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 323281F22331
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:15:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7D31C225BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A901A0739;
-	Mon, 24 Jun 2024 20:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E283A1A01B7;
+	Mon, 24 Jun 2024 20:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FZfqrxAa"
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FibGNk3b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A4BFBEF;
-	Mon, 24 Jun 2024 20:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29192FBEF
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719260091; cv=none; b=VT6+4HfLIPz7gncVRsSl+t2jOLN9jLk5GiKwiVY8M7TXXRN5rdv/9WhxJpskne077xbosCdEJLm6FHlW6H2ju1b2ju2/ajWj2+xkK2IB7L9TiajDWbdSIBzZ6AuVDabUMeTBC19ZRbIo/Xi17B5baq+xzbOwIulPn0z8kSZYBEg=
+	t=1719260063; cv=none; b=JQjMr6Nb9N10xfZEItXWRaGWytar74HpL1SwtWUPcKlp9VPQuI5XJsCGJjJnDsF7TIRYfFSGlALAKia69tXWKCiikzn6433EIsKQzcna6XERnwjDWMrpDuFdXtWlaGga9KrwtJiAJO9t591TMDZFcpW3R2sB6EjoU4tkEzTYv8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719260091; c=relaxed/simple;
-	bh=fDp0bfLOTgweVFtXCjjNaHA/d2bWypmpiTDG5XkIAt4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MVfzaQD+iU7Tx6pCMaSxBH/diINiRppBWsJByz9wYxn3WlYwm8hhmiTbyL7MdzJbrJnLYrjv3jNUOKEchMU03BZPUp87WitQo9wcMnKr8MAnAxeKB27Bpiln2nJayNbDmyIrOeRzS1a75yaR1Xh+Bn5mOqEO0DAMV3+JRcPWg2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FZfqrxAa; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id Lq4CsKPgR6xnbLq4CsCLm9; Mon, 24 Jun 2024 22:13:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719260015;
-	bh=Elslo1pemTLslrrEitU31K06X28LN8QnqrN10QUJgz8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FZfqrxAakQ6ncfePlzV7aPvu5uhH2TwEk70ZO7AglRqZkBeUP7AK5KXz1g1dyWNx/
-	 8v3NFKjMD+EzRejV3k1cCd30g4fFdf8NE9t8LKgiJAcGI2WVwfyzKvQK4WhZWDowu8
-	 3GsP1oe8/gEAT/T8hSEbyFLSjmBNd4paeDTn6fdYI6OB6jS1W9Ilrih3HUXTOjbbP/
-	 4csVnHtFUcYUL+YiB4H+Nk8NToQ6/QiG5ZTPd2ahNryAaNfGarlqFk/zmAj+p3gwqN
-	 7raITcddSY8tKh++LsEtFc7Pk1lW/hfxe03OMQkdYhB/+C0+2pmL7qbFtB4v5+FHMP
-	 RPFmJYCeocaKg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Jun 2024 22:13:35 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-rdma@vger.kernel.org
-Subject: [PATCH] RDMA/hfi1: Constify struct mmu_rb_ops
-Date: Mon, 24 Jun 2024 22:13:27 +0200
-Message-ID: <b826dd05eefa5f4d6a7a1b4d191eaf37c714ed04.1719259997.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719260063; c=relaxed/simple;
+	bh=+T0EC+BKMDCsEfLu0EC918+5a958Z0xU9XA+x12y4X4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dp2h3133wqjzXZQw5yu0KacBFEogkvKNh8DXGTVQ+Owe5E0xy1MOK9NrDA89AFy6VjmTsmyXUI6ie4WARn9ophtCVDDEE558yIDVBnt/44enBYBM7Vf+z728b7wQsxklow/pWAnqn3SgL4EXRmExTZ8aY/+cpXny7FQCd6a3mwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FibGNk3b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A17C4AF0A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:14:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719260062;
+	bh=+T0EC+BKMDCsEfLu0EC918+5a958Z0xU9XA+x12y4X4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FibGNk3b2bUqC1f8zvTTFZYw0VManLnp29Jx1O6va2p7l+FJQ5cuzDKqin4ClBJ3H
+	 xjskbMaGb9uH7J/OrWUD1DFzPk8vY54DS439q1jnZSd4tbdtSBYzCIUSlPjrXet/G3
+	 QRuDuj4Qs9Hw+U8J1xpoRq8+X8RAcQ3QSolfsPpJ4WAIRPr/LstsoBudDeUoriABWU
+	 YySUNxYitYAWHpI8YpfQ6tyGp3ksiKX3SXlySeIk/07XhjIWvVIvtA0YFejI9v4Rw/
+	 uuS28X1yNP6iFzHLfyA2JjoymJXgAcHhYFJvXLeTPgMPXJ0iEwQAgBn9k3OeyA8QQb
+	 oyk2IVPX058AA==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so55216101fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:14:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUMBNQuW6o0l7SdwldRBmU2VE361rR7PW0nM+SiaRpObvYhe7TEaegxZoYLcvrBn1FRRe8zdhADKJkB7+5e1VhM7GqnjF4QQQmXwU5I
+X-Gm-Message-State: AOJu0YyQ82bn9qV6RARHMhvNtGzFhpsT1reUQD0e/fwnu65bSf6pPQ+o
+	fr1ZEeUiKsIoJq7uL0ZUboORVt0JhlPcPvPY8Vlmv7V5Hv1/ju2Ot9rUpJu9d8qhF0QGZjZHeOY
+	JJHhNUaD0hNGN7L0exbeh7P1JIA==
+X-Google-Smtp-Source: AGHT+IGCThMCqv0QdDLhB3+rM3hc+kx0hOPXWMbQFGNrbXIWQLJ1n1x+2xafjuOiPqLi00MvzHiFOn8ELjn/Yj/6k54=
+X-Received: by 2002:a2e:9cc8:0:b0:2ec:3fb8:6a91 with SMTP id
+ 38308e7fff4ca-2ec5797a562mr43562221fa.19.1719260061029; Mon, 24 Jun 2024
+ 13:14:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240611155012.2286044-1-robh@kernel.org> <20240618154102.GD2354@willie-the-truck>
+In-Reply-To: <20240618154102.GD2354@willie-the-truck>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 24 Jun 2024 14:14:08 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJaavfSUGLs4Uoi7ibiYG6=ebzRsUnzdNMU9vo70FA-Xw@mail.gmail.com>
+Message-ID: <CAL_JsqJaavfSUGLs4Uoi7ibiYG6=ebzRsUnzdNMU9vo70FA-Xw@mail.gmail.com>
+Subject: Re: [PATCH] perf: arm_pmuv3: Avoid assigning fixed cycle counter with threshold
+To: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, James Clark <james.clark@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-'struct mmu_rb_ops' is not modified in this driver.
+On Tue, Jun 18, 2024 at 9:41=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
+:
+>
+> On Tue, Jun 11, 2024 at 09:50:12AM -0600, Rob Herring (Arm) wrote:
+> > If the user has requested a counting threshold for the CPU cycles event=
+,
+> > then the fixed cycle counter can't be assigned as it lacks threshold
+> > support. Currently, the thresholds will work or not randomly depending
+> > on which counter the event is assigned.
+> >
+> > While using thresholds for CPU cycles doesn't make much sense, it can b=
+e
+> > useful for testing purposes.
+> >
+> > Fixes: 816c26754447 ("arm64: perf: Add support for event counting thres=
+hold")
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> >  drivers/perf/arm_pmuv3.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+> > index 23fa6c5da82c..2612be29ee23 100644
+> > --- a/drivers/perf/arm_pmuv3.c
+> > +++ b/drivers/perf/arm_pmuv3.c
+> > @@ -939,9 +939,10 @@ static int armv8pmu_get_event_idx(struct pmu_hw_ev=
+ents *cpuc,
+> >       struct arm_pmu *cpu_pmu =3D to_arm_pmu(event->pmu);
+> >       struct hw_perf_event *hwc =3D &event->hw;
+> >       unsigned long evtype =3D hwc->config_base & ARMV8_PMU_EVTYPE_EVEN=
+T;
+> > +     bool has_threshold =3D !!(hwc->config_base & ARMV8_PMU_EVTYPE_TH)=
+;
+>
+> Just a nit, but I don't think you need the '!!' here.
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+Right, I guess since bool is a first class type in C9X we don't have
+to worry about truncation. Old habits...
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  10879	    164	      0	  11043	   2b23	drivers/infiniband/hw/hfi1/pin_system.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  10907	    140	      0	  11047	   2b27	drivers/infiniband/hw/hfi1/pin_system.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- drivers/infiniband/hw/hfi1/mmu_rb.c     | 2 +-
- drivers/infiniband/hw/hfi1/mmu_rb.h     | 4 ++--
- drivers/infiniband/hw/hfi1/pin_system.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/infiniband/hw/hfi1/mmu_rb.c b/drivers/infiniband/hw/hfi1/mmu_rb.c
-index d4a6acad0e65..67a5c410fb5e 100644
---- a/drivers/infiniband/hw/hfi1/mmu_rb.c
-+++ b/drivers/infiniband/hw/hfi1/mmu_rb.c
-@@ -40,7 +40,7 @@ static unsigned long mmu_node_last(struct mmu_rb_node *node)
- }
- 
- int hfi1_mmu_rb_register(void *ops_arg,
--			 struct mmu_rb_ops *ops,
-+			 const struct mmu_rb_ops *ops,
- 			 struct workqueue_struct *wq,
- 			 struct mmu_rb_handler **handler)
- {
-diff --git a/drivers/infiniband/hw/hfi1/mmu_rb.h b/drivers/infiniband/hw/hfi1/mmu_rb.h
-index 8e5d05454d70..3fa50dd64db6 100644
---- a/drivers/infiniband/hw/hfi1/mmu_rb.h
-+++ b/drivers/infiniband/hw/hfi1/mmu_rb.h
-@@ -42,7 +42,7 @@ struct mmu_rb_handler {
- 	/* Begin on a new cachline boundary here */
- 	struct rb_root_cached root ____cacheline_aligned_in_smp;
- 	void *ops_arg;
--	struct mmu_rb_ops *ops;
-+	const struct mmu_rb_ops *ops;
- 	struct list_head lru_list;
- 	struct work_struct del_work;
- 	struct list_head del_list;
-@@ -51,7 +51,7 @@ struct mmu_rb_handler {
- };
- 
- int hfi1_mmu_rb_register(void *ops_arg,
--			 struct mmu_rb_ops *ops,
-+			 const struct mmu_rb_ops *ops,
- 			 struct workqueue_struct *wq,
- 			 struct mmu_rb_handler **handler);
- void hfi1_mmu_rb_unregister(struct mmu_rb_handler *handler);
-diff --git a/drivers/infiniband/hw/hfi1/pin_system.c b/drivers/infiniband/hw/hfi1/pin_system.c
-index 384f722093e0..cce56134519b 100644
---- a/drivers/infiniband/hw/hfi1/pin_system.c
-+++ b/drivers/infiniband/hw/hfi1/pin_system.c
-@@ -26,7 +26,7 @@ static int sdma_rb_evict(void *arg, struct mmu_rb_node *mnode, void *arg2,
- 			 bool *stop);
- static void sdma_rb_remove(void *arg, struct mmu_rb_node *mnode);
- 
--static struct mmu_rb_ops sdma_rb_ops = {
-+static const struct mmu_rb_ops sdma_rb_ops = {
- 	.filter = sdma_rb_filter,
- 	.evict = sdma_rb_evict,
- 	.remove = sdma_rb_remove,
--- 
-2.45.2
-
+Rob
 
