@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-227194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC509149C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:24:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B499149C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:25:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BEDF1C22059
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:24:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C1601F21AA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4D613BAFE;
-	Mon, 24 Jun 2024 12:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIBxER7U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDFA13B7AE;
+	Mon, 24 Jun 2024 12:25:39 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40DD137C2A;
-	Mon, 24 Jun 2024 12:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C094776A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719231887; cv=none; b=ZNJG3IRqv0qmY+iC6v3CQfRfmFNaFmYe8nPYANl8RBLbJj2mUjkx56bGcbHOGtbKdCp9BGw3DOd1t8Ne7nw5sO6Kfcryxi54JIeI+Lnze9OoWdTlVEEyh5kWxJy2rYa5LKDOYqjvEU9rZukB0YCVXNyoiFZAHvWqjSEos4NyKT4=
+	t=1719231939; cv=none; b=a/+qFxRztLisNaGdhIbEzr1xuhG7/G33GBDf5V4LE898gI0NCASqL/tfgkV+y5sxjKesuEc1ZIt7QBVDXsMKaJ0pHQGhpQOXd0rUHqBRqD3Iwiq/0qxY447e6v8fAGSjtdfbP7UJp49j06V2yZ2C3dGihEx0H9tiZTAz75lcbpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719231887; c=relaxed/simple;
-	bh=MhXPY4jkPeEgToke4ZZxebjQj4gyU5p56kP7/FrJt7A=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=oljJaa4shv+jY9nc0/csLs+VD9mcYBZSrpPCg9Vs8Kaz+KQFKmMht67fOqMtBybSuP3DI6lLG8l7LlxJpbEYsOBilvtrp1OehfGK9Q1gYQSdLXf6UV7NPZbw+OXhNl87FZorlIN03WRFlU/YKjlt0Vsg18XDnj9BA9rMohVdsIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EIBxER7U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BB59C2BBFC;
-	Mon, 24 Jun 2024 12:24:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719231887;
-	bh=MhXPY4jkPeEgToke4ZZxebjQj4gyU5p56kP7/FrJt7A=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=EIBxER7Unnl7GxAws+lCzwVlzTfi+xvvaUhhkNVEleBUFCUT+qqqJXeRINkCEUerf
-	 jyRJz0QCf/ymPvUCKSsY74N2dFAl8uP83Dg9Wj2PxsBLC+41qPmrVO9a0CwK2/yIh8
-	 OdS7pmVLQRRcRf7DE116a43k/ROEmojOOgwtpgbiOjbuz07Mc+Kzh6+Bho4vIFKA8x
-	 JwfA5vPF/uQvOlARjQAFKktC/orAzkp3rC64Mc76mcDaqk9PXgJoCTKGLJeM8NUPWb
-	 yG/7mJ54dPI2kKAREvMzIdR4p06MnXE5GaEdohCJuPLdXcV8eivdCgo/5oWTEGo2if
-	 7AnLuxB5016dg==
-Date: Mon, 24 Jun 2024 06:24:45 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1719231939; c=relaxed/simple;
+	bh=DjOoAm4KZP6XcpqouJqN0T3XcgKaMT2zuyvysyUrnHM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nVgWrFNauij7uZUw2V4eYJ92D8mCNc5UVXlVbJ9Dwd6viHBCnAdrgU9Ts9GsIRNvP2sGehDY9NtSZbRpE94rLeMMeaeaqinchTZmIC3nqeknbc1UKyEj1LpM3cyQN2213OIN2Tg0r68Y+If51At6/5V1nTE8DgRpqpYjGOQKKtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4W76XL4lg3zPpLQ;
+	Mon, 24 Jun 2024 20:21:54 +0800 (CST)
+Received: from kwepemd500014.china.huawei.com (unknown [7.221.188.63])
+	by mail.maildlp.com (Postfix) with ESMTPS id F10EE140156;
+	Mon, 24 Jun 2024 20:25:32 +0800 (CST)
+Received: from 228-1616.huawei.com (10.67.246.68) by
+ kwepemd500014.china.huawei.com (7.221.188.63) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 24 Jun 2024 20:25:32 +0800
+From: Nianyao Tang <tangnianyao@huawei.com>
+To: <maz@kernel.org>, <tglx@linutronix.de>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <guoyang2@huawei.com>, <wangwudi@hisilicon.com>, <tangnianyao@huawei.com>
+Subject: [PATCH] irqchip/gic-v4.1: Use the ITS of the NUMA node where current cpu is located
+Date: Mon, 24 Jun 2024 12:25:10 +0000
+Message-ID: <20240624122510.3906474-1-tangnianyao@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Thippeswamy Havalige <thippesw@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- devicetree@vger.kernel.org, bharat.kumar.gogada@amd.com, 
- conor+dt@kernel.org, lpieralisi@kernel.org, bhelgaas@google.com, 
- kw@linux.com, krzk+dt@kernel.org
-In-Reply-To: <20240624110755.133625-2-thippesw@amd.com>
-References: <20240624110755.133625-1-thippesw@amd.com>
- <20240624110755.133625-2-thippesw@amd.com>
-Message-Id: <171923188592.3023374.12489554300919408758.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: PCI: xilinx-xdma: Add schemas for
- Xilinx QDMA PCIe Root Port Bridge
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd500014.china.huawei.com (7.221.188.63)
 
+When GICv4.1 enabled, guest sending IPI use the last ITS reported.
+On multi-NUMA environment with more than one ITS, it makes IPI performance
+various from VM to VM, depending on which NUMA the VM is deployed on. We can
+use closer ITS instead of the last ITS reported.
 
-On Mon, 24 Jun 2024 16:37:54 +0530, Thippeswamy Havalige wrote:
-> Add YAML devicetree schemas for Xilinx QDMA Soft IP PCIe Root Port Bridge.
-> 
-> Signed-off-by: Thippeswamy Havalige <thippesw@amd.com>
-> ---
->  .../devicetree/bindings/pci/xlnx,xdma-host.yaml    | 41 ++++++++++++++++++++--
->  1 file changed, 39 insertions(+), 2 deletions(-)
-> 
+Modify find_4_1_its to find the ITS of the NUMA node where current
+cpu is located and save it with per cpu variable.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Signed-off-by: Nianyao Tang <tangnianyao@huawei.com>
+---
+ drivers/irqchip/irq-gic-v3-its.c | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dts:55.31-79.15: Warning (pci_bridge): /example-0/soc/axi-pcie@80000000: node name is not "pci" or "pcie"
-Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dtb: Warning (unit_address_format): Failed prerequisite 'pci_bridge'
-Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dtb: Warning (pci_device_reg): Failed prerequisite 'pci_bridge'
-Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'pci_bridge'
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dtb: axi-pcie@80000000: $nodename:0: 'axi-pcie@80000000' does not match '^pcie?@'
-	from schema $id: http://devicetree.org/schemas/pci/xlnx,xdma-host.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dtb: axi-pcie@80000000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'device_type' were unexpected)
-	from schema $id: http://devicetree.org/schemas/pci/xlnx,xdma-host.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240624110755.133625-2-thippesw@amd.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 3c755d5dad6e..d35b42f3b2af 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -193,6 +193,8 @@ static DEFINE_RAW_SPINLOCK(vmovp_lock);
+ 
+ static DEFINE_IDA(its_vpeid_ida);
+ 
++static DEFINE_PER_CPU(struct its_node *, its_on_cpu);
++
+ #define gic_data_rdist()		(raw_cpu_ptr(gic_rdists->rdist))
+ #define gic_data_rdist_cpu(cpu)		(per_cpu_ptr(gic_rdists->rdist, cpu))
+ #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
+@@ -4058,19 +4060,26 @@ static struct irq_chip its_vpe_irq_chip = {
+ 
+ static struct its_node *find_4_1_its(void)
+ {
+-	static struct its_node *its = NULL;
++	struct its_node *its = NULL;
++	struct its_node *its_non_cpu_node = NULL;
++	int cpu = smp_processor_id();
+ 
+-	if (!its) {
+-		list_for_each_entry(its, &its_nodes, entry) {
+-			if (is_v4_1(its))
+-				return its;
+-		}
++	if (per_cpu(its_on_cpu, cpu))
++		return per_cpu(its_on_cpu, cpu);
+ 
+-		/* Oops? */
+-		its = NULL;
+-	}
++	list_for_each_entry(its, &its_nodes, entry) {
++		if (is_v4_1(its) && its->numa_node == cpu_to_node(cpu)) {
++			per_cpu(its_on_cpu, cpu) = its;
++			return its;
++		}
++		else if (is_v4_1(its))
++			its_non_cpu_node = its;
++ 	}
+ 
+-	return its;
++	if (!per_cpu(its_on_cpu, cpu) && its_non_cpu_node)
++		per_cpu(its_on_cpu, cpu) = its_non_cpu_node;
++
++	return its_non_cpu_node;
+ }
+ 
+ static void its_vpe_4_1_send_inv(struct irq_data *d)
+-- 
+2.30.0
 
 
