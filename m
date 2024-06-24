@@ -1,207 +1,239 @@
-Return-Path: <linux-kernel+bounces-227736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A6C915604
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:57:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 445B791560C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 790931C22305
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE5A128C3CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD491A071F;
-	Mon, 24 Jun 2024 17:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AC11A01D8;
+	Mon, 24 Jun 2024 17:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="QLbUgLBZ"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rJBXvWJe"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2089.outbound.protection.outlook.com [40.107.236.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A677913BC1E;
-	Mon, 24 Jun 2024 17:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719251737; cv=none; b=mcqEPaj1wtXmoEspxrmBsUAfBrcSBF/PXJwiSggJgFvvt3HzweRjYybbnW2EV+8fZEAvW/eM79TQdNi7cGp9O0EbLqe+A+dgI63WLM65Y+CczKPtHtgBgF3r8Xcc/WxXYk7L62uJHlvnfjBeGHzE883ciJC3Oiav3gWANdXyqzU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719251737; c=relaxed/simple;
-	bh=+Np1PfYtDOV+sfjb7kGbjp3FuCMuZlNsdpaOoDnTykU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Ln7gCtcfAQalCZg9nyI7fpalWP15fwjbovfhOrlg0Bbtq72Wx3x0nyADBTIWkXYH5RMWaBJGbGpFDgIAEhyVWF/GN1q92HfLv8DaB4BgYy2N1EF8Xeb/2BZXQE6gmzJYJ5Zie3YgxeysI4G67J1R6uKUGAVnqgevn0boWmv2UOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=QLbUgLBZ; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AA519F48D;
+	Mon, 24 Jun 2024 17:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719251797; cv=fail; b=i3AWih/G2AMeqYE8jwdVqgPqWkhOzR3+9H2uerX2wAkn1tokSjl1FxqRRyaYSnEGzEdQ0pXQzgfujxBtVYTGx+2RUqH1zMEaiGXbVgBgxUZjyqjvGIYjTqSchA2MxON2EjU1NXZVXufDnCep2oe9UsiIrEJn3lnDYpOck7SLylw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719251797; c=relaxed/simple;
+	bh=WBBeSxYXBXZy2Wqu5D6Pj8Gbstv7vS/UbFTg9ubyodo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NVOEMJHNX4Kzq2FY6j/b5rGf28HlfzEy/18zU6jKhg5UgPG9WCyvTYdCnWzTRqPzSc5Gem/hHuiOGo7tAfvpo/Tw6nuY+DsvDgl3YT4JcXoBJEUF7r8ysYgloYmTEcRrXkFs23J/w/VzPyuyb72ves8whVNbZAh0ZyochqSrNbE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rJBXvWJe; arc=fail smtp.client-ip=40.107.236.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C/5FENQcjDRSjloLSSLsJtNGa/VMnYq0o45KQSrQj3O0IATfm3rU5LfhXgWO5SzcFcA3CWNSV9hoacn6xBYM1jph+afC4pUrzmGyUZcBcq3d3byZz2JwWJN72vsiB8ir3stbRy2e6qu5jDsxQO/kThS6otj5IZyig588X2eRlWGYE5qA8q7K5j8u4vIDoE5GQMyG7Hrymdsp6aUdlcXQb/76tHQ93uOq2YLvouhjsz2lwaatSKstPdgKXBTLCl9hvCK0xNcQy3ccGDZfAoYwOLxkNILz+/YUm+am7XNhzvZjuOCT2UIlflc01M9P8s/LGlmTEecjQpnooRT5gfSf3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v44BJyW+uW3EIX0DLDPXcqLc3QyIINFcVrFXE5ycM8c=;
+ b=Z2hb2OEK32GW15lJO0CivYM3aoX/IvXt1Rj/oNbm1h3hbTPg5HP3R8vp086McoZHSNFrjbx6VotWkosAIJxZMqddHSnUU2NRTpO57LU3fL2rDzBC9KVJ/1MBk7pfFrtmD1xkDIBqCOPz1uVpCqXH3dj/0sf+sCDyTeF0LUHPwxH5R6CFkLHUsPv7SYq8wEwqvlgB2Hm1nroEpocwaDE4dVyGqS3d9chWHJYlm/tau0uBXHG7A1trE3VWwjcfXRitg0Mp5xY5wNehpnUrBl2W6eI26Mz99ovYnl+R51qDp74VMVIz0jbp/xP5FF8xpFsaVaqIFnyTu5iePfCaqfcZZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v44BJyW+uW3EIX0DLDPXcqLc3QyIINFcVrFXE5ycM8c=;
+ b=rJBXvWJeg/d7tk0FG5C2T87TqHTTw4F7yCDtExlghhQGaHNaExTIc22m7447FlRQDIaXvKRbdnyBHnWOYnFMHuwvPD9DK7zuWEOmyKtWjr5L4kFWB4t1+Ak2nYJxjnqByF+TFNMN3sKxzpYdTwxL579YuKlqxcmkCqCaFFL4uIs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB6380.namprd12.prod.outlook.com (2603:10b6:208:38d::18)
+ by MN0PR12MB5761.namprd12.prod.outlook.com (2603:10b6:208:374::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Mon, 24 Jun
+ 2024 17:56:32 +0000
+Received: from BL3PR12MB6380.namprd12.prod.outlook.com
+ ([fe80::66cf:5409:24d1:532b]) by BL3PR12MB6380.namprd12.prod.outlook.com
+ ([fe80::66cf:5409:24d1:532b%7]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 17:56:32 +0000
+Message-ID: <ecc5fbd0-52e1-443f-8e5a-2546328319b2@amd.com>
+Date: Mon, 24 Jun 2024 12:56:29 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/9] PCI/AER: Update AER driver to call root port and
+ downstream port UCE handlers
+Content-Language: en-US
+To: Dan Williams <dan.j.williams@intel.com>, ira.weiny@intel.com,
+ dave@stgolabs.net, dave.jiang@intel.com, alison.schofield@intel.com,
+ ming4.li@intel.com, vishal.l.verma@intel.com, jim.harris@samsung.com,
+ ilpo.jarvinen@linux.intel.com, ardb@kernel.org,
+ sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yazen.Ghannam@amd.com, Robert.Richter@amd.com
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+References: <20240617200411.1426554-1-terry.bowman@amd.com>
+ <20240617200411.1426554-2-terry.bowman@amd.com>
+ <6675d1cc5d08_57ac294d5@dwillia2-xfh.jf.intel.com.notmuch>
+From: Terry Bowman <Terry.Bowman@amd.com>
+In-Reply-To: <6675d1cc5d08_57ac294d5@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR05CA0013.namprd05.prod.outlook.com
+ (2603:10b6:806:2d2::19) To BL3PR12MB6380.namprd12.prod.outlook.com
+ (2603:10b6:208:38d::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1719251732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nMIDSnjT3PD/47d4+6ZJlG0hXn2fIBhyGjnU5O7IR3g=;
-	b=QLbUgLBZVcgVcpGaFpVUnU1mgrT8Tese8mogm39YN+x1kdgHCUBByBafzW3dJGeJkPcGhl
-	0DAvtJZXHlZgDSxRQHZj7Mon8lcOEMCmavE6odP2Bzbyk/GNYpMp9oavCNDecuBDlcDF00
-	YduP8cZGcBKVaymsZi848oV9hWvNScRqQIN5njrEQI2LM0WzEOLUdhs7xLW+t3eVGnecF8
-	WZvAjir1LCMTSWLCjlcsNAMxsE/N3+ESFdmCegfNR7bq7lKlLEinN0+4HjW6SArSetT/RP
-	oxbPjAQCnqF2nsPMjvU8DlKmuk1UWisuvxd2hOMfFbG1pAn0SCNInm6yzQHJBw==
-Date: Mon, 24 Jun 2024 19:55:31 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-kernel@vger.kernel.org, alchark@gmail.com
-Subject: Re: [PATCH] arm64: dts: rockchip: Delete the SoC variant dtsi for
- RK3399Pro
-In-Reply-To: <4449f7d4eead787308300e2d1d37b88c9d1446b2.1717308862.git.dsimic@manjaro.org>
-References: <4449f7d4eead787308300e2d1d37b88c9d1446b2.1717308862.git.dsimic@manjaro.org>
-Message-ID: <ba9d41461f5d56947d7851473637722b@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB6380:EE_|MN0PR12MB5761:EE_
+X-MS-Office365-Filtering-Correlation-Id: 543b7e76-96fb-4370-905e-08dc9476fb0f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|1800799021|366013|7416011|376011|921017;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZVJhbVZ2Vzh4V3RmdWlyME1YRHpjK2tyUjY0VEZQSnBXSVNja1FYYUxMbHcw?=
+ =?utf-8?B?T1hhb2J6c3hNYjJpRzNsczVzdXBPVEhpemZqREFvVHdEc1ZzU2w4VkMxVjV0?=
+ =?utf-8?B?NkVNZFpkUWgrUmNreWpSVzRXY0tPRFdZMmRPV1ZUTFA4bWxUUmNrc2RkcFFk?=
+ =?utf-8?B?cG9GdUJtdkh0bUhaajBUeGp0WDNGQkJYeGp1ZjdXdDRDMVNVemlBV0tkdlJD?=
+ =?utf-8?B?YjRSdDQ0YjFVdXR3UkZIK1dGbk5hbXlZV0RpaUYzMkpsdGdFRFZYZFJPNnk3?=
+ =?utf-8?B?Und1MGtMd0kvOVdKNVpQejJPSjJmdHU4Z0lZOElTRmw4UHpPUFRTQlU4K0Ux?=
+ =?utf-8?B?OC90cjdlNERJSHlsU2U2R0dZeExOd05aaVFmeFdMbTZhYkwvK3NvbWs1UFZy?=
+ =?utf-8?B?NDZQRCt4Ync4ZHdzZ0pqbzFmU3hObG1PZEVKeU93Nk8xN0dDdWVmM0wxSnkz?=
+ =?utf-8?B?aUliMFltSWl2a2ZVYUgyT3BQclJCQjhTQTE1RDRFSE1vWDBFbkxubm1RK2RU?=
+ =?utf-8?B?MUhHOUhxYmNuOFRvYkpIVElTdnZ1L2JacjQvazJkc1JDTDEyMWUzbnRUNXZP?=
+ =?utf-8?B?YmF1OFBKdWRzc1ZVcnl3S3FhMjkxekdaWnJxS3E5emJ0RkZVYi9OQW5kWWps?=
+ =?utf-8?B?SUVRSUcveGQzVUF1UCtyY1p2RnZNNmVMWHRQRnIvRHdqb2I4L0d5MUNnSkZB?=
+ =?utf-8?B?NHJhVjlWKzBDUEhHRmo4bm02Sk5Hclg4ZytQaEJ1Wi9VN1RWZDJYaFkyL0Ew?=
+ =?utf-8?B?YmRoK0p5OTcycU0rWFBUOUl0RERwdmtzSnluMkRwV0hUSzFPK1BsZFBTaXRZ?=
+ =?utf-8?B?RUw1VE1SUVR1VUdFVjlDWmhQdWVKT2RyOWxodkNVUm9xRFBHUzgxdTVKamdU?=
+ =?utf-8?B?QzlEaDdXdkpySkpRZUFTWnhUZWNKQzBGSzYyTDdZeWNDSVp1dG1MNVlqdkdz?=
+ =?utf-8?B?QytORWJrenkyMWNjNzc4N0syYTFyMWVKbTArM2ltaWZPMmdrTlMzaW9oWFRi?=
+ =?utf-8?B?ZlZ3YWtlUmUrU2RmRHJVRmp4bXVCWFU4SmtnajVhZVpHcVVId2FqdUNpTWFR?=
+ =?utf-8?B?RStXNkk4MzB1N2RyVGFhd1ltSTFBRFNqcGRMb0xkdmJReE54eTI1akFOWWo5?=
+ =?utf-8?B?R1VBdDdtTGNhWUNTb0FXem5LM3hERjdqTjN3blJNUnVBWWZiOEJzU1RIYVRj?=
+ =?utf-8?B?Tk5lUEtUajJIU2syc0VkbkdMUEd1Q2RkNlVCNi9nR0dqSkMwVW55NkhvYWhO?=
+ =?utf-8?B?ZzBHTkdXR2dhTEh0anMyTVhsNFcvNExKdm1MRVJpRU1kMjY2QWliNHVWZHZk?=
+ =?utf-8?B?T1ZpQWVNeHE0V2tvTmNuR0JnN2ZYOUQ1TWN4N0diSUdWdGt0Y2duWWtzaGdr?=
+ =?utf-8?B?cW05bTZKUE82NXNzQzQvSm03TkYyS1A3V3VlVWZUMFFXdm83emNCbTdCNnRU?=
+ =?utf-8?B?RFF3ZytQUVh5WlppQi94cm1ra3k5QlFLbktDM1M1TDk1bWxoUzltem4vNDRJ?=
+ =?utf-8?B?ZVhxYWl3ajloMm1heEkwUUtFcU5DY1RiaVNTZDZJZndkWE9vSmZ3Rkw3aXA3?=
+ =?utf-8?B?UW55eDk0TFJScHB4Z2tLUTRNZ1YzVzVtMEs0UzVUKzlOVE1DSC9ZUFNHcERR?=
+ =?utf-8?B?WVRxNmNQSDVjSDgyYW9RbHZTcTNPMjAzb2lnbDlPVUcrWVJ3bHJEYjlKSXNr?=
+ =?utf-8?B?SWl0NTlndWhhN293b0pnd2MrSHJtck5hN3BSWm1zMkZ6dWR2NzZDNmRhYjBS?=
+ =?utf-8?B?ZG1aTzhxejdUUFRnNG93SnVrZWxsSURkWTBlTFdNMDVabHhSM2RsazM1Sy9N?=
+ =?utf-8?Q?Mzh23Xe7ktaGHH6wgqDgoKxBOigvSFSOhTU/o=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6380.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(7416011)(376011)(921017);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V1UwdTg0dkthbEJDM3hhTEtLMTFISjh1QTJQeGlGZTZhYmFmK2o3cUNVTXNk?=
+ =?utf-8?B?SU1rTUc3clRIdmlQblFIY1B0SWFPK2M4SS95WWRqTFBZTDI4NnNtVFBYWUg1?=
+ =?utf-8?B?Mm0zU1A5czQ5SkJJSTlqNm8vR2VsREV6OWFwSXVRalNDMGdQT2lkUTBpOTJi?=
+ =?utf-8?B?di9wbTFRNTdOc3Nhb0VGSGljSXN1YlNsVldJQ0grVXdGQzlrem9JYTdhdDcy?=
+ =?utf-8?B?cHZ5ckYrM0ljdlJQa1NIejVUcVF0NHFWR0h4WFYwRkVFRmJCK01DcWJUVjhQ?=
+ =?utf-8?B?UXYycWNUWGlEVU0vbkN1QWxrT3dwb2VFb2ZIK2pnbzVGbUh6dEtYZnAyd2k2?=
+ =?utf-8?B?dWs2WDZnM25VRUJiU0l3NXplcXZzc2JGcXFMcG9iaDdpN0w5Zy9ZaWtNOE95?=
+ =?utf-8?B?RXdlclNreG1IdUcwZENPVGpMd3lDNGRsUVgvV3oydzRSVWhCbkE2ZFNTWHpT?=
+ =?utf-8?B?dmhmTk9vbG5nTjlRUkhvUCs1ZERtaDYzUUdNRHpaVTBuMm52MWRVSjRGV2Zh?=
+ =?utf-8?B?dkxqQmxKM1hOaitpU1MzZERXTkk5ak5HRzlYbkZxWXcwckloT3haR3V1c2hW?=
+ =?utf-8?B?VzJsWFJVaHlBcU0zRmJVZ05FdHdDYVlUR0NMZEtRbjdaaXNGNmx0TCtPampI?=
+ =?utf-8?B?eFQybUw0a1gxSHQ2Q0s4MXpWNHZkM1FVdEpJclNzYnJDcmltOXpxcDhzSW9V?=
+ =?utf-8?B?MlFjMmdrZnRhMFZGNVluRmg0RkNSaVRzbkwxRWxzYzNUaVVLalBUcTRyVWhL?=
+ =?utf-8?B?emdHc2xyK1FCbmRFSytTMUdXUENpZW5tTks1OXpzYlZZMnJTNXU3S2RrNk10?=
+ =?utf-8?B?cEtnM1dGR28xTmZwY3NaNVdIM3pUT1FhclB4dTMxZno2Ulhjdm96OFUxVm93?=
+ =?utf-8?B?eGVjUTRZM2NyWnhyQ2lLdHRzaUppLzJFaHlCN0JXTzhkd3BGN2t1ekQ1dzVT?=
+ =?utf-8?B?ekZPWFh0YUVmUmE4U2VqaHN4R1VSc1VaZEkwbXNsRHhxK1E0RFo4MldzNjZ0?=
+ =?utf-8?B?Z01JQkRwVUVLdHREbENmZVRzQVl6SXpyYUxrUldlajM1ejg5RzVFcHZTcHZv?=
+ =?utf-8?B?N0E2aVFXRE44VFo4bjBPcHo3eExhT29VQkIvQXBJekMzUGg5NGVXOUoyYUpP?=
+ =?utf-8?B?VDI1Y3NlNFJZY2Nid0FrVnhrTXFiRjFqenRZNkk2NVdGOTllVFBwY1RXRVpH?=
+ =?utf-8?B?OGRwSUY0dkl1aWtpVDBsN3NVbWJJbjdHZ3dMcWFGWWFpUytIaURqQWNEM1F2?=
+ =?utf-8?B?S1VrWDJlMVRlalRNem5wMmVPNmVLYWk3VW9pWGFsVHFXY1VJUnk1Rmk2NnVU?=
+ =?utf-8?B?ZHo2VWNlOWxrTU5HRlQrKzlEN1ZsQXBjSUl0ai92U2d0eXpOU1hMZ3c2azQr?=
+ =?utf-8?B?TklVUlltVXIzcEpvWDF4QUErckZlUllZY3hVaHplZUpvWHNqM2Z6aHkvVXpv?=
+ =?utf-8?B?VjZ5YWRxT0l1ZmpENTBJanozRmIybWVCaFVsVHE0QnpldzdBQ3dnVmxLL05S?=
+ =?utf-8?B?L0QraGtnZEFtR2lTY2h2dW9PWlBrUWp1MkhlRDVyK3FNRXg4cVFnQXpybVEy?=
+ =?utf-8?B?R21pZHJVd1B0aEk2V2lIeVVGcG9TTG9tcDMydHNHY2tFZTJwNVkxb3E1bWQ0?=
+ =?utf-8?B?OWZYeDNRNzZXZnRnQkRkZ1hGRjlaVWZ4MzhXdUxYQVlwYS9sc1NGMkdPRDFn?=
+ =?utf-8?B?OGN2ZENpWjNJVCtrQmtZRWphRGlCL25xaUpkWlJqdU5GOXN5Skl2UDh3R0tU?=
+ =?utf-8?B?SmlqcE5aQkEzQ1hYYUExaWd5bjRuVENSNG1kOC9CSy9Hb0R2aTZLelJEM3RU?=
+ =?utf-8?B?SVArMmYwWXlQL0JHZFJEOUtvc3k0MWdRVUdOOVBaM1NnZno4K3FtTXNNN2FJ?=
+ =?utf-8?B?eGF0Zmpya3V4T1ZHR0Q5TXJyZ3phelJadUhMOUI1MVRGV2x1bWhrZVdzN3hC?=
+ =?utf-8?B?SXRuc29zL0JKUU9FWTBMSEc2bEZDT0dEcllKdkgyOWNlbElnMExSUzIxUkYr?=
+ =?utf-8?B?UXRRQXpWeHJIeDVvWHQyZkdBWkFFdXdyZXdPV2hlQVZlZkZvTDAzZlBsQm8w?=
+ =?utf-8?B?SGl2eVV6M0loRGs5M09mVjA0bVFtY05vSjA1WlRhdHNYTWRzNktIZ1hqazRy?=
+ =?utf-8?Q?OR2HZxhJw1hLg3oeKtmrjYoWD?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 543b7e76-96fb-4370-905e-08dc9476fb0f
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6380.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 17:56:32.0745
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q0OGKlTXZwCH173QO9gwy9TWQ29cYKKzL3nFcPDDpK97Bz8+PQKS4eOLQ3jVgQoTtiFTq6i89RQallwEWCSLfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5761
 
-Hello all,
+Hi Dan,
 
-Just checking, are there any comments on this patch?  Is there something
-more I can do to have it accepted?
+I added a response below.
 
+On 6/21/24 14:17, Dan Williams wrote:
+> Terry Bowman wrote:
+>> The AER service driver does not currently call a handler for AER
+>> uncorrectable errors (UCE) detected in root ports or downstream
+>> ports. This is not needed in most cases because common PCIe port
+>> functionality is handled by portdrv service drivers.
+>>
+>> CXL root ports include CXL specific RAS registers that need logging
+>> before starting do_recovery() in the UCE case.
+>>
+>> Update the AER service driver to call the UCE handler for root ports
+>> and downstream ports. These PCIe port devices are bound to the portdrv
+>> driver that includes a CE and UCE handler to be called.
+>>
+>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>> Cc: linux-pci@vger.kernel.org
+>> ---
+>>  drivers/pci/pcie/err.c | 20 ++++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
+>>
+>> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+>> index 705893b5f7b0..a4db474b2be5 100644
+>> --- a/drivers/pci/pcie/err.c
+>> +++ b/drivers/pci/pcie/err.c
+>> @@ -203,6 +203,26 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>>  	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
+>>  	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+>>  
+>> +	/*
+>> +	 * PCIe ports may include functionality beyond the standard
+>> +	 * extended port capabilities. This may present a need to log and
+>> +	 * handle errors not addressed in this driver. Examples are CXL
+>> +	 * root ports and CXL downstream switch ports using AER UIE to
+>> +	 * indicate CXL UCE RAS protocol errors.
+>> +	 */
+>> +	if (type == PCI_EXP_TYPE_ROOT_PORT ||
+>> +	    type == PCI_EXP_TYPE_DOWNSTREAM) {
+>> +		struct pci_driver *pdrv = dev->driver;
+>> +
+>> +		if (pdrv && pdrv->err_handler &&
+>> +		    pdrv->err_handler->error_detected) {
+>> +			const struct pci_error_handlers *err_handler;
+>> +
+>> +			err_handler = pdrv->err_handler;
+>> +			status = err_handler->error_detected(dev, state);
+>> +		}
+>> +	}
+>> +
+> 
+> Would not a more appropriate place for this be pci_walk_bridge() where
+> the ->subordinate == NULL and these type-check cases are unified?
 
-On 2024-06-02 08:25, Dragan Simic wrote:
-> The commit 587b4ee24fc7 ("arm64: dts: rockchip: add core dtsi file for
-> RK3399Pro SoCs") describes the RK3399Pro's PCI Express interface as the 
-> way
-> built-in NPU communicates with the rest of the SoC.  All available 
-> evidence
-> shows this not to be accurate, as described in detail below.  Moreover, 
-> the
-> rk3399pro.dtsi isn't used anywhere, so let's delete it.
-> 
-> The publicly available schematics of the Radxa Rock Pi N10 carrier 
-> board [1]
-> and the Vamrs VMARC RK3399Pro SoM, [2] which put together form the 
-> currently
-> single supported RK3399Pro-based board, clearly show that the PCI 
-> Express x4
-> interface of this SoC is fully functional and actually not used by the 
-> SoC
-> to communicate with the built-in NPU.  In more detail, the VMARC SoM 
-> exports
-> the SoC's PCI Express interface at its board-to-board connector, and 
-> the Rock
-> Pi N10 routes it to an M.2 M-key slot with four PCI Express lanes.
-> 
-> Both the Rockchip RK3399Pro datasheet, version 1.1, [3] and the 
-> Rockchip
-> RK3399Pro technical reference manual (TRM), first part of the version 
-> 1.0, [4]
-> don't describe that the SoC's PCI Express interface is reserved for the 
-> NPU.
-> Instead, the RK3399Pro TRM describes that the NPU uses AHB and AXI 
-> interfaces
-> as the host interface (HIF).  The RK3399Pro datasheet clearly describes 
-> that
-> the PCI Express x4 interface is available for general-purpose use, just 
-> like
-> it's the case with the standard Rockchip RK3399 SoC, [5] albeit with a 
-> bit
-> shorter feature list provided in the RK3399Pro datasheet.
-> 
-> Even the publicly available reference RK3399Pro schematic from Rockchip 
-> [6]
-> shows the availability of a standard PCI Express slot with four lanes, 
-> which
-> would be pretty much impossible if the PCI Express interface was 
-> reserved
-> for the communication with the built-in NPU.
-> 
-> Based on the RK3399Pro datasheet [3] and the board schematics, [2][6] 
-> the
-> built-in NPU actually exports NPU_PCIE as a separate PCI Express x2 
-> interface
-> that's partially pinmuxed with the NPU's separate USB 3.0 interface, 
-> which is
-> described further in the next paragraph.  However, the NPU's separate 
-> PCI
-> Express x2 interface is left undocumented in the publicly available 
-> RK3399Pro
-> documentation, in which it's clearly described as reserved for internal 
-> use
-> and not intended for the communication with the NPU.  Finally, the 
-> evidently
-> independent nature of the separate NPU_PCIE x2 interface makes ignoring 
-> it
-> safe when it comes to determining the nature and the availability of 
-> the
-> RK3399Pro's main PCI Express x4 interface.
-> 
-> The actual application-level communication with the built-in NPU, 
-> including
-> powering it up and down and uploading the NPU firmware, is performed 
-> through
-> the separate USB 2.0 and USB 3.0 interfaces exported by the NPU, [7] 
-> which
-> the VMARC SoM [2] and the reference board design from Rockchip [6] 
-> route to
-> the SoC's standard USB 2.0 and USB 3.0 interfaces, to make the NPU 
-> accessible
-> to software running on the SoC's ARM cores.
-> 
-> [1] 
-> https://dl.radxa.com/rockpin10/docs/hw/rockpi_n10_sch_v1.1_20190909.pdf
-> [2] 
-> https://dl.radxa.com/rockpin10/docs/hw/VMARC_RK3399Pro_sch_V1.1_20190619.pdf
-> [3] https://www.rockchip.fr/RK3399Pro%20datasheet%20V1.1.pdf
-> [4] 
-> https://www.rockchip.fr/Rockchip%20RK3399Pro%20TRM%20V1.0%20Part1.pdf
-> [5] https://www.rockchip.fr/RK3399%20datasheet%20V1.8.pdf
-> [6] 
-> https://opensource.rock-chips.com/images/e/e4/RK_EVB_RK3399PRO_LP3S178P332SD8_V11_20181113_RZF.pdf
-> [7] https://wiki.radxa.com/RockpiN10/dev/NPU-booting
-> 
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399pro.dtsi | 22 ---------------------
->  1 file changed, 22 deletions(-)
->  delete mode 100644 arch/arm64/boot/dts/rockchip/rk3399pro.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro.dtsi
-> b/arch/arm64/boot/dts/rockchip/rk3399pro.dtsi
-> deleted file mode 100644
-> index bb5ebf6608b9..000000000000
-> --- a/arch/arm64/boot/dts/rockchip/rk3399pro.dtsi
-> +++ /dev/null
-> @@ -1,22 +0,0 @@
-> -// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> -// Copyright (c) 2019 Fuzhou Rockchip Electronics Co., Ltd.
-> -
-> -#include "rk3399.dtsi"
-> -
-> -/ {
-> -	compatible = "rockchip,rk3399pro";
-> -};
-> -
-> -/* Default to enabled since AP talk to NPU part over pcie */
-> -&pcie_phy {
-> -	status = "okay";
-> -};
-> -
-> -/* Default to enabled since AP talk to NPU part over pcie */
-> -&pcie0 {
-> -	ep-gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
-> -	num-lanes = <4>;
-> -	pinctrl-names = "default";
-> -	pinctrl-0 = <&pcie_clkreqn_cpm>;
-> -	status = "okay";
-> -};
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+It does. I can take a look at moving that.
+
+Regards,
+Terry
 
