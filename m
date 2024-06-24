@@ -1,207 +1,208 @@
-Return-Path: <linux-kernel+bounces-228035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE029159DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6CAB9159E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000B51F215EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:27:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 311C61F226BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBA51A2540;
-	Mon, 24 Jun 2024 22:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027271A0B10;
+	Mon, 24 Jun 2024 22:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTVF9WDP"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jIOnvVIY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A4273454;
-	Mon, 24 Jun 2024 22:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C47B73454
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719268071; cv=none; b=ikmWSDhsz6gnnU4yjuqifvKnK8PXwyx0foTR6RwKpm3E9tm5ETKl1csSerGkNgxou8Q87YpzXLeRc+9arvptykUe2uCbNmtMfK1c5Nbis+dHQgtTFb/HrEeprC8Kpm4qXYk6TIZq4nXCi+6tmFm31fNZhxYfZgvCczD7Ma9w/qM=
+	t=1719268139; cv=none; b=nLi2eE+A9M9Nq1hAHpGk2yGqEZ9ejtt4rnqBWzh8l+U+kwYIvP9vA0FsicfvmbxjEGy5QJhGsqKe6GqlF4YdC8+qG3Z2g+ITKQGpnldj/ll1tBRxb/K2bmaCCp3np7nfeBYUI9YO1e+xca3oKauAaIT7eJkavb6HJnbVNKTBpZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719268071; c=relaxed/simple;
-	bh=3tBXMnVdJtF6HYG+GYIwRFDVlIVNQNp37p1A2WjbPec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AgTy98xfWC4sOeaAghI3qcnWgYhPkm4qiiGWfnKTgmow8f1lZES4hLI1S2RuzMHaeJVaktO6jf2RpXe51luWOd8CJ6Q/Rq6dK5RbOPY2S49lvqZX5MlXyxrKtUEQ6FTNZT6FAGy53kqIVH8Y1ArznK0IyJmcG5knaKrhgb0JLJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dTVF9WDP; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-363bbd51050so3859167f8f.0;
-        Mon, 24 Jun 2024 15:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719268068; x=1719872868; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=35sYl9K/ORXM1x/6zIhMbEdYZNSt6JD+mOFZG+4VxFQ=;
-        b=dTVF9WDPxozw7wmvOvtJ4tebC/VB23M2at+TmCLvsS1a6CocDT9GRtPyHwpV7bQaLu
-         kddMjbxZ67ho8b7nteZnIFBjXp1nsGkpBbCS1dGC88HXIfxAgltDBDAD6AwPIKYtc/z7
-         eaoRbSKdZo0qlfPpPGILOtqOCLVBxt6m0tnQ1MyXqT59lAvPgOF1xOOiqW2VHsxbQ1Qy
-         pN2qhrdhtaQvQUpSn7kVSaB4t9hSMMVVbxd9Z+SlO/e6pcLh1fOKxnxe8hvLLg0EZ2od
-         97eexgpdM9iNwGB/u/US/9xCErUDn7ytVm05amUmo0qK44v/nxjl9ou2l4Ft86fqNk6K
-         l2og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719268068; x=1719872868;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=35sYl9K/ORXM1x/6zIhMbEdYZNSt6JD+mOFZG+4VxFQ=;
-        b=sAFZM5usQNJR4wivTaoUdfRfeJ8ntKmfHuYIzxsvzjs8qI7fhLUVxJfic/rtOfWgQ4
-         o/dpyMAAC/ymzNq3DY9WV44eWpyl2WT874e46jO9lavyHHWpVf9oW/ILsrgEGgPZ2BzY
-         iLrFFW1oVFxaI87OSDmUASehkG+ooD/YKplv8Ffz/lVcpT4JRGJh7/qSHbiODdhi18qe
-         kX3xEyIKOfVUz+XarQbl6O3qYfzlZLrgUV1notnGg4ePEFLi2S0dWNF04XvHrbOBiPh9
-         YU//ZQ1PuH/xJ019kRMJDqIuOtZK4nb/fXQLeEYob5Ns1SRiDi5qV6Olbv6ElSFGa1MO
-         OQIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZArFFceCduVqt94AOCW4ZCgxgOBcNvYM/yTZSgUOIrspXybg7ZocSH1g4beH/61RhRV0j9LAuyVzDpAxz+09IXA/7KBOezfsLf3VPqy7TuafDshLLc1dAkoNclZLtJlfAInJvdZDkv6wKKEZAVL10A4Jnewv5Zoo4JP8q5wGYvBtxSw==
-X-Gm-Message-State: AOJu0Yw+ovTAfTvGtR+y6CNV6YhTaxOYaTk8j5g+FOpeSeD18sV8hO6p
-	4ElCVoGRHE1i1Ey7OoarPBQdiN+00A7dOzFnpNHaOkabilYFUxpr
-X-Google-Smtp-Source: AGHT+IEMV86qBKjtTRO9I/8HtY+xnZlcd5tLts38wCLKE/SFMz1NzVCGnCwWzuy9hf0NDXq4vqQJWw==
-X-Received: by 2002:a05:6000:b0f:b0:360:91c2:56fd with SMTP id ffacd0b85a97d-366e4f00b78mr4522844f8f.49.1719268067724;
-        Mon, 24 Jun 2024 15:27:47 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366389b88easm11214117f8f.39.2024.06.24.15.27.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 15:27:46 -0700 (PDT)
-Message-ID: <cf06ea77-c8b0-4476-94d1-32171c96f22f@gmail.com>
-Date: Tue, 25 Jun 2024 00:27:45 +0200
+	s=arc-20240116; t=1719268139; c=relaxed/simple;
+	bh=OowDTvQsp/79L/GViE3+JzPRPtpSVg4kCxYvJN14es4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CMM77+ifYFIqd7QgaWjkE4qQ1GHHMIegOsqShO5n7As8FMd6adT76kKFdN9wohhFDIkOciu6oCkchHzodIEZ4TngdKt+R1mUeRWgusth2f96xNEMwGEKnjXmc2y73EgyWaIEhuTFwVJe3VSxGfkowqldR/UVf4bXamcqkL95CAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jIOnvVIY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OIfuJU031942;
+	Mon, 24 Jun 2024 22:28:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qQGNPMjXxj/37KqwhG1qLhggf6rNJ+AAGcm+KDdlV4Q=; b=jIOnvVIYtn7X4612
+	phzE/Qo802Riq4WQQPNtrsqVpeJ6SfCU9ZZwL5ZWvgndFImhaqYKB2O8lDsJGFUq
+	FUPkkD3+Z13I6tNhSD86bikfgE8g7TqaGHErCfUF1Vgsne9YnyHCM449rDz+GwAI
+	G0e0m1kPkZFyVxVM4cjoM2M+KjRXa3a40MPaRBKeEaErCDipG1o71RY/shbn0gEI
+	69sYiyu7J/JdgVaogF5TNSIqNqOqvQu9oBBdhvlYPPpOmgsG/OeS3lxMTxPlO0zv
+	OoQUXFixUvUuQ+NVsZROSQFGSNqQloCmKMPhh3yV6bTSYUGOBhKAdOyAXxy9qKtf
+	jppqUQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv4s7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 22:28:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45OMSdb2022764
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 22:28:39 GMT
+Received: from [10.110.106.13] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 15:28:38 -0700
+Message-ID: <45c25e4b-d64d-549f-6711-7b753d24e2f9@quicinc.com>
+Date: Mon, 24 Jun 2024 15:28:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] iio: light: ROHM BH1745 colour sensor
-To: Mudit Sharma <muditsharma.info@gmail.com>, jic23@kernel.org,
- lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org
-Cc: ivan.orlov0322@gmail.com, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240624215543.459797-1-muditsharma.info@gmail.com>
- <20240624215543.459797-2-muditsharma.info@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240624215543.459797-2-muditsharma.info@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 1/2] drm/bridge-connector: reset the HDMI connector
+ state
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andrzej Hajda
+	<andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert
+ Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Dave Stevenson
+	<dave.stevenson@raspberrypi.com>
+CC: Rob Clark <robdclark@gmail.com>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-0-8590d44912ce@linaro.org>
+ <20240623-drm-bridge-connector-fix-hdmi-reset-v2-1-8590d44912ce@linaro.org>
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-1-8590d44912ce@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Igwf34iY7-uHXXA9X1Wot4KaNxhQCbk3
+X-Proofpoint-ORIG-GUID: Igwf34iY7-uHXXA9X1Wot4KaNxhQCbk3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_19,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1011 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406240180
 
-On 24/06/2024 23:55, Mudit Sharma wrote:
-> Add support for BH1745, which is an I2C colour sensor with red, green,
-> blue and clear channels. It has a programmable active low interrupt
-> pin. Interrupt occurs when the signal from the selected interrupt
-> source channel crosses set interrupt threshold high or low level.
+
+
+On 6/22/2024 10:40 PM, Dmitry Baryshkov wrote:
+> On HDMI connectors which use drm_bridge_connector and DRM_BRIDGE_OP_HDMI
+> IGT chokes on the max_bpc property in several kms_properties tests due
+> to the the drm_bridge_connector failing to reset HDMI-related
+> properties.
 > 
-> Interrupt source for the device can be configured by enabling the
-> corresponding event and interrupt latch is always enabled when setting 
-> up interrupt.
+> Call __drm_atomic_helper_connector_hdmi_reset() if there is a
+> the drm_bridge_connector has bridge_hdmi.
 > 
-> Add myself as the maintainer for this driver in MAINTAINERS.
+> Note, the __drm_atomic_helper_connector_hdmi_reset() is moved to
+> drm_atomic_state_helper.c because drm_bridge_connector.c can not depend
+> on DRM_DISPLAY_HDMI_STATE_HELPER. At the same time it is impossible to
+> call this function from HDMI bridges, there is is no function that
+> corresponds to the drm_connector_funcs::reset().
 > 
-> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
-> Reviewed-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> Fixes: 6b4468b0c6ba ("drm/bridge-connector: implement glue code for HDMI connector")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
-
-Hi Mudit, some minor comments inline form my side.
-
-...
-
-> +
-> +struct bh1745_data {
-> +	/*
-> +	 * Lock to prevent device setting update or read before related
-
-typo: calculations. I would recommend you to use checkpatch.pl
---codespell to cach such typos.
-
-> +	 * caluculations or event push are completed
-> +	 */
-> +	struct mutex lock;
-> +	struct regmap *regmap;
-> +	struct i2c_client *client;
-> +	struct iio_trigger *trig;
-> +	struct iio_gts gts;
-> +	u8 int_src;
-> +};
-> +
-
-...
-
-> +static int bh1745_int_time_to_us(int val, int val2)
+>   drivers/gpu/drm/display/drm_hdmi_state_helper.c | 21 ---------------------
+>   drivers/gpu/drm/drm_atomic_state_helper.c       | 21 +++++++++++++++++++++
+>   drivers/gpu/drm/drm_bridge_connector.c          | 13 ++++++++++++-
+>   include/drm/display/drm_hdmi_state_helper.h     |  3 ---
+>   include/drm/drm_atomic_state_helper.h           |  2 ++
+>   5 files changed, 35 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> index 2dab3ad8ce64..67f39857b0b4 100644
+> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> @@ -8,27 +8,6 @@
+>   #include <drm/display/drm_hdmi_helper.h>
+>   #include <drm/display/drm_hdmi_state_helper.h>
+>   
+> -/**
+> - * __drm_atomic_helper_connector_hdmi_reset() - Initializes all HDMI @drm_connector_state resources
+> - * @connector: DRM connector
+> - * @new_conn_state: connector state to reset
+> - *
+> - * Initializes all HDMI resources from a @drm_connector_state without
+> - * actually allocating it. This is useful for HDMI drivers, in
+> - * combination with __drm_atomic_helper_connector_reset() or
+> - * drm_atomic_helper_connector_reset().
+> - */
+> -void __drm_atomic_helper_connector_hdmi_reset(struct drm_connector *connector,
+> -					      struct drm_connector_state *new_conn_state)
+> -{
+> -	unsigned int max_bpc = connector->max_bpc;
+> -
+> -	new_conn_state->max_bpc = max_bpc;
+> -	new_conn_state->max_requested_bpc = max_bpc;
+> -	new_conn_state->hdmi.broadcast_rgb = DRM_HDMI_BROADCAST_RGB_AUTO;
+> -}
+> -EXPORT_SYMBOL(__drm_atomic_helper_connector_hdmi_reset);
+> -
+>   static const struct drm_display_mode *
+>   connector_state_get_mode(const struct drm_connector_state *conn_state)
+>   {
+> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
+> index 519228eb1095..1518ada81b45 100644
+> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
+> @@ -478,6 +478,27 @@ void drm_atomic_helper_connector_reset(struct drm_connector *connector)
+>   }
+>   EXPORT_SYMBOL(drm_atomic_helper_connector_reset);
+>   
+> +/**
+> + * __drm_atomic_helper_connector_hdmi_reset() - Initializes all HDMI @drm_connector_state resources
+> + * @connector: DRM connector
+> + * @new_conn_state: connector state to reset
+> + *
+> + * Initializes all HDMI resources from a @drm_connector_state without
+> + * actually allocating it. This is useful for HDMI drivers, in
+> + * combination with __drm_atomic_helper_connector_reset() or
+> + * drm_atomic_helper_connector_reset().
+> + */
+> +void __drm_atomic_helper_connector_hdmi_reset(struct drm_connector *connector,
+> +					      struct drm_connector_state *new_conn_state)
 > +{
-> +	for (u8 i = 0; i < ARRAY_SIZE(bh1745_int_time); i++) {
-> +		if (val == bh1745_int_time[i][0] && val2 == bh1745_int_time[i][1])
-> +			return bh1745_int_time_us[i];
-
-Nit: unnecessary blank line before a close brace.
-
+> +	unsigned int max_bpc = connector->max_bpc;
 > +
-> +	}
-> +
-> +	return -EINVAL;
-> +}
+> +	new_conn_state->max_bpc = max_bpc;
+> +	new_conn_state->max_requested_bpc = max_bpc;
 
-...
+I understand this is just code propagation but do we need a max_bpc 
+local variable?
 
-> +static int bh1745_read_raw(struct iio_dev *indio_dev,
-> +			   struct iio_chan_spec const *chan,
-> +			   int *val, int *val2, long mask)
-> +{
-> +	struct bh1745_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +	int value;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW: {
-> +		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+We can just do
 
-Missing scope indentation.
+new_conn_state->max_bpc = connector->max_bpc;
+new_conn_state->max_requested_bpc = connector->max_bpc;
 
-> +		ret = regmap_bulk_read(data->regmap, chan->address, &value, 2);
-> +		if (ret)
-> +			return ret;
-> +		*val = value;
-> +
-> +		return IIO_VAL_INT;
-> +		}
-> +		unreachable();
-> +	}
-> +
+But apart from that nit, this LGTM.
 
-...
-
-> +static int bh1745_set_trigger_state(struct iio_trigger *trig, bool state)
-> +{
-> +	int ret;
-
-Why is value initialized here? If regmap returns an error, you will not
-use value anyway. I caught my eye because it is initialized here, and
-not in the other functions where you use the same pattern.
-
-> +	int value = 0;
-> +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
-> +	struct bh1745_data *data = iio_priv(indio_dev);
-> +
-> +	guard(mutex)(&data->lock);
-> +	if (state) {
-> +		ret = regmap_read(data->regmap, BH1745_INTR, &value);
-> +		if (ret)
-> +			return ret;
-> +		// Latch is always set when enabling interrupt
-> +		value |= BH1745_INT_ENABLE |
-> +			FIELD_PREP(BH1745_INT_SIGNAL_LATCHED, 1) |
-> +			FIELD_PREP(BH1745_INT_SOURCE_MASK, data->int_src);
-> +		return regmap_write(data->regmap, BH1745_INTR, value);
-> +	}
-> +
-> +	return regmap_write(data->regmap, BH1745_INTR, value);
-> +}
-
-
-Best regards,
-Javier Carrasco
-
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
