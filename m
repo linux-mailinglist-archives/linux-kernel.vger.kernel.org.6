@@ -1,162 +1,216 @@
-Return-Path: <linux-kernel+bounces-226979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C049146A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:46:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B377B9146A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BACA282002
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 344501F24426
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA145135A6F;
-	Mon, 24 Jun 2024 09:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34A713213E;
+	Mon, 24 Jun 2024 09:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pImmXOhd"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuBvBILw"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D521353FF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2BF5380F;
+	Mon, 24 Jun 2024 09:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719222356; cv=none; b=fnHz1oNTxcXDAy9c+I26kZF9k8SRNgEKiZXVm8Rs/LjuGPujavtO3Z3GPG3SheSzWAJb0KCXcFZ0lrvTUmijwIduZF46v/NmoxHx+wk6kmc9R6323UuArH14f4avB/lY/LdpxJ3VOwEPBkLmSQggMj+94xSvWtN0nzJ2ifGZHyQ=
+	t=1719222389; cv=none; b=nRKm/tnKy+CEpe6hrMteQxc1aXUwuzG/NyucqyLzJpHHJCq3ktlASkNZktz2qfUkIPtbex5uchY++9XZQpE7WVZWpHpp78Oqo/yuFoxUk62abwSTdlf9u5+xawG1g3IBWssDnH04+SQHJamTGR26YtqLvcbou5Xc1aTw68UUbtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719222356; c=relaxed/simple;
-	bh=yj10UWg6ET8en8Pb0uVEg3MguJ2yuzhVyQcEX9nr6kc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=c81W3NLXEJ8wCSpexZKS73N5HgtiR1ZtCR7bXmOOe5AELvK4Hry5nieBgX687DmKul5lD1pPmnMC8ymcjIBMXBNfVAJUpJuF83qpIePzHQqwcdh1ColSgoiQPk0ExOoxSgFY0zYN7cGAcqyUJQwl/mKRXPuwi8DCh69GI8nM0FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pImmXOhd; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42278f3aea4so34204005e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:45:54 -0700 (PDT)
+	s=arc-20240116; t=1719222389; c=relaxed/simple;
+	bh=4mTV9YXrOJ/yZMyGkZfmGhr6QWhkhaOb1pz/rZcvkdE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fXY6K74Ruoju53UwdZYOmVR3/2mId8XeNZC0Xl4GnS2RPCyUQlLg8j4gJNUszQgtkVJ8edVU8N3FAMWCTahMpD0FmvQ//aX9Sbeg5BNA/pT883NtANZB9Wv7q//v19DNMzPq2IZa+VQVXa9zlf6TaCvjIKUJkAdvztzWvLRzKlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KuBvBILw; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5b9794dad09so1914621eaf.3;
+        Mon, 24 Jun 2024 02:46:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719222353; x=1719827153; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xSpYP2Iym3bwarcuBRBNMRWDCe6BmBEhKzjcWG+ymbg=;
-        b=pImmXOhduTCcEB/5V/BktZ8aAS9kRebttxvn16tvwdIVCNitqAMVcbZGM53pfWhBfc
-         O9xkM99/yZGLR1VmDdvDEf4JlGuVH09mOiIME+6KgE8V25SpmFq/hLqSJVgqKBSJ30Kt
-         SJoB192uFsnROuumZQQzmp61AyxTX0KFMvuN5tz9BIljG/WaJO86iGQTFX8VK6bzLkvG
-         pJuct2sOq/1GgnnBPhLwpFx7RiO7E2wdrIvovGtundif+vbZaRoMz4PuWJiv88s1K6Z/
-         Eoau/d/jlB0pOwOyJPm4E5fV3fDRqPltRntSY/lRmGHXvP4NwQDzOOHANT9/9+JnTzzH
-         sFSQ==
+        d=gmail.com; s=20230601; t=1719222385; x=1719827185; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zbYplUMzhR1IxUvNZWKsrLoE8LHYWjW6BSc/xXyUo+M=;
+        b=KuBvBILwvor6zhuJJqb8GGCwZYMonRMoHCdJmVoq+chY3AwpnPkLXOZmn9bBFYtS/X
+         apMS/RiDqEyOenG6SPxb1Rw39PLLwy+q5bOdjAKQfdxnYZJyltUWVP8w6dc0oEU2hB5v
+         P8xChuMXn4VwNWMenMa5pF3WRGcn0RTcyT5u7iN+A6gApFqa9RXJm66VQN3c0wL11V94
+         hPREnZO+/zqeA283+blYvH4ZHwuVL2M0t4fjwDVyChXU6wbszqKY5zZxLMyEc5wjHDj6
+         DWLE42YfHY7Xiss5n67ByOuS1elKiss+kblDvCdou7tAwcw4/O7fC2GPtAr92X2kxrkm
+         g71w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719222353; x=1719827153;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xSpYP2Iym3bwarcuBRBNMRWDCe6BmBEhKzjcWG+ymbg=;
-        b=DxsksF193fQ9woW1jvcnLk2p4qmOdD4IDIUVyZG1ZFzt6qxSkQmTeMDoWNsKm3GuUA
-         +bJ36Co0fxgNSEklGMb4/3MqUMwGMyYik8MQQCcmfZW8wA3Gp2qLwgBb9IPdKw/nVFZl
-         8N1/mLZ1r+fy8+RmgrJ3ZtMZTPKuVMIwzo5VKMDLtkeD8auwG5ENHcTNdMXW1ixG8k0l
-         d2Z0dKAZpEykxGwrL86I3A6sG9S4V/hZHYJZkNY54bp3uPqzLePxIRbTzs517UYxUTlB
-         aK3oybFz3Ch3XtB/mGnEtxQuqGAoh48Tzl5zGxxjC0OHEoLiFH2cDK7sawMtBqsndXY8
-         iPOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkq3U1LVA/LoF9nPYlsewbKC66uPHf6CIwVaS/r6E0OtjmZNtw4OFy3Z3W7jZPx76g1AhTZvrn6t+6XH+MvdJQE5s91yhpS8f0CIWo
-X-Gm-Message-State: AOJu0YxwEGFw4cvPOBZ27D9z7pF5fNiGGarDOwoknC8jTqDNkOoMS38h
-	73n8AmSFYCSNDWlw9c+GRuVFJXg9aurtLSSWP04oOr+x+s7doR9fNYQ2+1vd16M=
-X-Google-Smtp-Source: AGHT+IHwmyNB9aKoz1MIv6/1l04rb0OspYjduoAUVUkNgENHzl/1WE4d0EqJCub9g86nEDKLZz6Q6Q==
-X-Received: by 2002:a05:600c:2256:b0:424:9582:abf with SMTP id 5b1f17b1804b1-42495820dabmr8860815e9.26.1719222352479;
-        Mon, 24 Jun 2024 02:45:52 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:cf01:774b:55fd:ab74? ([2a01:e0a:982:cbb0:cf01:774b:55fd:ab74])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0bea05sm167078615e9.18.2024.06.24.02.45.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 02:45:52 -0700 (PDT)
-Message-ID: <4c4c7840-917e-4d00-b8a4-b97a01ca2e6a@linaro.org>
-Date: Mon, 24 Jun 2024 11:45:51 +0200
+        d=1e100.net; s=20230601; t=1719222385; x=1719827185;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zbYplUMzhR1IxUvNZWKsrLoE8LHYWjW6BSc/xXyUo+M=;
+        b=PaTAMH+LIFIvHj7E8Gzo5UOGAH7twIE15cgBiiB9jZecdLcsExavKIMlc6+gafyHLL
+         rCib0xw/gHKss9vMk/oP6TLK8yHnykTIz6fx8AZJESVvvElBzmYHRN6T57kUCulBU/8c
+         HHHumSP0ZkTZUWthLwesRj4QCiWCk8XsjL43Gvo+WV6RMf0L4zjJTT8WXr4/dVmkJeur
+         xYveK9sE4E1ELKlkzG//w8Wsz9EA0hwJQ8NakjwOicPEM3/yKEhayT6ee80+9qWluYJx
+         M54GzZ4bBa8fUudZz+JyfwWWIVWGHF+cEPSgGiNU/3WsSC+B9NRFMlwlCxyhfVwRuxqz
+         Bypw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5JbicX2lpMlJq2i4cEL+9uigZlyD7rY0BmRPc1HO8OWla5D2HLhtuMBEbVg8wDj2u611hewTdeQj73KQmipPccS21J75Xw6IGpDb8Sr8FDsYIBoVn1d0MmGrRXpJanfnUwTLE1frbFw==
+X-Gm-Message-State: AOJu0Yx59aTWJaH7HRDNwqIJoki8t+dzqo+P0No+FY1P0xifQbAlm0io
+	sfcOgLPqTGz0XVl87T1luYC6RZmQp4rCkmQ+WDSvCi71bAQ1WTXIef18EFcCXAJg3G3MPlORGpy
+	4HqdSfux3IR9/fOx5qIgZONSv5OQ=
+X-Google-Smtp-Source: AGHT+IHSR6rbq3FIuKqHp0ot3ROxaxKLl2NcsdfsVuRhutbdT72OR6D67vRm8iSBissHjEm1b03lKoYZIYpEZCpukGY=
+X-Received: by 2002:a4a:6c55:0:b0:5bb:672:4067 with SMTP id
+ 006d021491bc7-5c1e96b6632mr4696719eaf.7.1719222385363; Mon, 24 Jun 2024
+ 02:46:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] arm64: dts: amlogic: ad402: fix thermal zone node name
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Dmitry Rokosov <ddrokosov@salutedevices.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240624-topic-amlogic-upstream-bindings-fixes-dts-round-2-v1-1-0a21f456eb8d@linaro.org>
- <1ad3429c-0bad-4662-bc9d-b912f88e7b3a@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <1ad3429c-0bad-4662-bc9d-b912f88e7b3a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240613123020.43500-1-linux.amoon@gmail.com> <20240613123020.43500-2-linux.amoon@gmail.com>
+ <dbea269e-2de6-470d-96b7-ce1e07c8de07@linaro.org>
+In-Reply-To: <dbea269e-2de6-470d-96b7-ce1e07c8de07@linaro.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Mon, 24 Jun 2024 15:16:10 +0530
+Message-ID: <CANAwSgQroyVKvy8zgTta+-Xgw8B1P-4OVYDxodriXmzn6qzApw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] arm64: dts: amlogic: Used onboard usb hub reset on
+ odroid n2
+To: neil.armstrong@linaro.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24/06/2024 11:28, Krzysztof Kozlowski wrote:
-> On 24/06/2024 10:59, Neil Armstrong wrote:
->> Fixes the following:
->> thermal-zones: 'soc_thermal' does not match any of the regexes: '^[a-zA-Z][a-zA-Z0-9\\-]{1,12}-thermal$', 'pinctrl-[0-9]+'
->>          from schema $id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
->>
->> Fixes: 593ab951232b ("arm64: dts: amlogic: ad402: setup thermal-zones")
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts b/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts
->> index 6883471a93b4..0d92f5253b64 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts
->> +++ b/arch/arm64/boot/dts/amlogic/meson-a1-ad402.dts
->> @@ -86,7 +86,7 @@ vddio_1v8: regulator-vddio-1v8 {
->>   	};
->>   
->>   	thermal-zones {
->> -		soc_thermal: soc_thermal {
->> +		soc_thermal: soc-thermal {
-> 
-> I was fixing all underscores... but then mentioned above commit
-> re-introduced them.
+Hi Neil,
 
-Sorry about that, I'm removing all dtbs check errors, so I'll be able to spot
-this before merging anything now !
+On Mon, 24 Jun 2024 at 13:45, Neil Armstrong <neil.armstrong@linaro.org> wr=
+ote:
+>
+> Hi,
+>
+> On 13/06/2024 14:30, Anand Moon wrote:
+> > On Odroid n2/n2+ previously use gpio-hog to reset the usb hub,
+> > switch to used on-board usb hub reset to enable the usb hub
+> > and enable power to hub.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > v7:none
+> > V6:none
+> > V5:none
+> > V4:none
+> > V3:none
+> > V2:none
+> > V1:none
+> > ---
+> >   .../dts/amlogic/meson-g12b-odroid-n2.dtsi     | 36 ++++++++++++------=
+-
+> >   1 file changed, 24 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi b/ar=
+ch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+> > index d80dd9a3da31..86eb81112232 100644
+> > --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+> > +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtsi
+> > @@ -31,6 +31,30 @@ hub_5v: regulator-hub-5v {
+> >               enable-active-high;
+> >       };
+> >
+> > +     /* USB hub supports both USB 2.0 and USB 3.0 root hub */
+> > +     usb-hub {
+> > +             dr_mode =3D "host";
+> > +             #address-cells =3D <1>;
+> > +             #size-cells =3D <0>;
+> > +
+> > +             /* 2.0 hub on port 1 */
+> > +             hub_2_0: hub@1 {
+> > +                     compatible =3D "usb5e3,610";
+> > +                     reg =3D <1>;
+> > +                     peer-hub =3D <&hub_3_0>;
+> > +                     vdd-supply =3D <&usb_pwr_en>;
+> > +             };
+> > +
+> > +             /* 3.0 hub on port 4 */
+> > +             hub_3_0: hub@2 {
+> > +                     compatible =3D "usb5e3,620";
+> > +                     reg =3D <2>;
+> > +                     peer-hub =3D <&hub_2_0>;
+> > +                     reset-gpios =3D <&gpio GPIOH_4 GPIO_ACTIVE_LOW>;
+> > +                     vdd-supply =3D <&vcc_5v>;
+> > +             };
+> > +     };
+>
+> Why is this nodes under / and not the dwc3 node ????
 
-> 
-> Some fixes need to be done more than once to stick. :)
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> >
-> Best regards,
-> Krzysztof
-> 
+it's similar to usb-hub-hog, mostly usb-hub is just used to reset the
+USB hub controller
+and set the power source of the USB hub.
 
-Thanks,
-Neil
+>
+> With this current DT, there's no way for the usb controller
+> to find those usb devices subnodes in /usb-hub, and it's clearly
+> not described like this in the bindings.
+
+USB hub is independent of the dwc2 and dwc3 initialization (phy, usb).
+
+With this patch applied on my odroid-n2plus ,
+I could see usb-hub entry in the /proc/device-tree nodes.
+
+alarm@odroid-n2plus:~$ tree  /proc/device-tree/usb-hub/
+/proc/device-tree/usb-hub/
+=E2=94=9C=E2=94=80=E2=94=80 #address-cells
+=E2=94=9C=E2=94=80=E2=94=80 dr_mode
+=E2=94=9C=E2=94=80=E2=94=80 hub@1
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 compatible
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 name
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 peer-hub
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 phandle
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 reg
+=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 vdd-supply
+=E2=94=9C=E2=94=80=E2=94=80 hub@2
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 compatible
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 name
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 peer-hub
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 phandle
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 reg
+=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 reset-gpios
+=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 vdd-supply
+=E2=94=9C=E2=94=80=E2=94=80 name
+=E2=94=94=E2=94=80=E2=94=80 #size-cells
+
+3 directories, 17 files
+alarm@odroid-n2plus:~$
+
+alarm@odroid-n2plus:~$ lsusb -tv
+/:  Bus 001.Port 001: Dev 001, Class=3Droot_hub, Driver=3Dxhci-hcd/2p, 480M
+    ID 1d6b:0002 Linux Foundation 2.0 root hub
+    |__ Port 001: Dev 002, If 0, Class=3DHub, Driver=3Dhub/4p, 480M
+        ID 05e3:0610 Genesys Logic, Inc. Hub
+        |__ Port 003: Dev 003, If 0, Class=3DMass Storage,
+Driver=3Dusb-storage, 480M
+            ID 058f:6387 Alcor Micro Corp. Flash Drive
+/:  Bus 002.Port 001: Dev 001, Class=3Droot_hub, Driver=3Dxhci-hcd/1p, 5000=
+M
+    ID 1d6b:0003 Linux Foundation 3.0 root hub
+    |__ Port 001: Dev 002, If 0, Class=3DHub, Driver=3Dhub/4p, 5000M
+        ID 05e3:0620 Genesys Logic, Inc. GL3523 Hub
+        |__ Port 004: Dev 003, If 0, Class=3DMass Storage,
+Driver=3Dusb-storage, 5000M
+            ID 174c:55aa ASMedia Technology Inc. ASM1051E SATA 6Gb/s
+bridge, ASM1053E SATA 6Gb/s bridge, ASM1153 SATA 3Gb/s bridge,
+ASM1153E SATA 6Gb/s bridge
+
+>
+> Neil
+>
+
+Thanks
+-Anand
 
