@@ -1,227 +1,205 @@
-Return-Path: <linux-kernel+bounces-227507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8703D91524A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:29:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27B79151D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148261F22EED
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:29:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329EB1F2307F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35EA19DF5C;
-	Mon, 24 Jun 2024 15:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1VW3jWei";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aEhsb9Kv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BC719D89A;
+	Mon, 24 Jun 2024 15:15:24 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE4E19D8AA;
-	Mon, 24 Jun 2024 15:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1764F26289
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242864; cv=none; b=krTjlqwclpYTVTRCvkCbIJbO0jMK4uWJiT6EW5NVwDonxLmuF1lsadoyY30pMd+5mc+cv5XyIrn+Mo86xZ9Varlq2zn6Ka2RJCGD709T6PTctEYcDNARx6tkH973atsdA6vE4EhTFl6zdaoLmilC6QOIOZdE6e/dmFCXhHu9nHs=
+	t=1719242123; cv=none; b=Gi8DhHmKbHi2GOPRu6IfrJ3oD0GANvwCYWmeeYtvItyGURYMW2UBQxx+mbD6CumF+DCJWc3LEJR5XMltGqRxl8OR6hiZ8enyXLRVh2RMYYltaIMgaTOn26a6px6Q/IVWIDcDHYIkgGTvb2Qs7BKJqEQJ0Idj9aJJnrVINj/yzzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242864; c=relaxed/simple;
-	bh=OVQCYTW4L9yu0EDueyCBAY4a89Jd+rzlyMa52xLOMps=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kfLDgESflsSCW782OsRVYuYOm9xcdbLAWlNRluolMKATCQnGCe4QNBtcvZt5N9SfEKXvMbu44OtC4/899QbTgA1e/L5FQRzFpqrO3KT3UI8MC3LH7lugvtOfGwEqzBp9hENh+ovz+7eAn6q9EPi3sFwv0h42qhQvBa3pXFOKPZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1VW3jWei; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aEhsb9Kv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719242859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iLt0LLfVcMa9a+gilIPNXUQswi86xUZORdJUsd8+HOo=;
-	b=1VW3jWeiz7NTiwDQyDjfCBLU79UznLlW3fIYX2vtm/5EPNKLmO0vNAP303ZZjCc7d00Whl
-	t5rFSOtUwFHSQ3VBewZMohJaeqH46MF5kTz6jriyA0KzYhRSdyNLS2JmOoxnUDACoV1MQZ
-	jVcaE7bj3DHkq5BTMKg3HI7HI5XtMNPdqEv3cT6opKux/bh9VjcgTgsfHZjHsYQ5XopVrT
-	/HJN+rd3WwsAXJDJB3qG3h+Pv/q2A0UUzd4g3dUVtxJBKuIzQl3c1mKluSIulqE8xKaoBd
-	7pb0X8a0TPUOvS2+fa4B6vqS9esmI4Vpit1Er+V8hab/UeUlMOl+2BtFzaO+cA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719242859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iLt0LLfVcMa9a+gilIPNXUQswi86xUZORdJUsd8+HOo=;
-	b=aEhsb9Kv+WZm8yWFi3PZ0NpKtcEJYhzfgkt2ZKfFfYinb3Y7eltunTYTGvDt6THjXA2/+2
-	elJFV18Ha+WgPDBg==
-To: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang  <kan.liang@linux.intel.com>,
-	Marco Elver <elver@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH v4 6/6] perf: Split __perf_pending_irq() out of perf_pending_irq()
-Date: Mon, 24 Jun 2024 17:15:19 +0200
-Message-ID: <20240624152732.1231678-7-bigeasy@linutronix.de>
-In-Reply-To: <20240624152732.1231678-1-bigeasy@linutronix.de>
-References: <20240624152732.1231678-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1719242123; c=relaxed/simple;
+	bh=SGBt+l9L/TihH9IN1lza25hxUi+nrQKwaozz9V6diwQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hqlWf1wi0lpdolVoSEquIh/T34ltAo22xi4SDexliyKZS8fm49/PhYXXO3+yakFnKks7KDmXyotCjFn0/u6gLmyJkr8PvbBTLHJ2zRXCiQFijrMDIiAKqy/2WtMCwR6yzNDAVy6qX/5YXUJmzVOXIXKGcRCW4ilyQk0YrcZ6dIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-375c4006a54so50322165ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:15:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719242121; x=1719846921;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LqPCBrufkafIQyPYPSVEsTUYOWhS/Uh7tEi7hC7IAo8=;
+        b=qRaEb4wLXb50Uhke64F88+C+sW2+sC9TVFd5Wm5OzvWA7FWCTps3hNIY+g3gXiWuWv
+         2zXWmQeZpmlSeQltOjPsJvNjMkZzRyErCfcfxro9NWpVK/M2B86jamgemvPMlSHdgdD4
+         Z76uIaFu3GEA4mS+bt0VzQnd3N2kubaNd5bA9mgmA/YQtvS30bnF+c4yutpTNYPm7PUp
+         txoIM9SxynW2tlEcNpvNYEKuTQc0Nmy6YVScVVKPl15l3LHIYSWBk7WE9LAzUFw/scBU
+         mNzqnZFuXT2qQHXy4sJzvG91jkMbrf0NB+pjgwNjDSDeUH/mGoawYmvDd3UBbjwYFFYP
+         jhuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxhVHC9P13PQy1gIaQJDfKSaK1Lba4keSU7Pp+J7JHoCJD48XC+EX4mDmS31D/2/wsignRPsJZyPP7r9dHLpVojofmtB0dEuDNR6+D
+X-Gm-Message-State: AOJu0YxOYdECR8VD+X/lVaL8omAL0xtawJ5/bKZoBaCZf7n+abGsYcVV
+	9j6+5+CUsW0jn0Fw/qzRUcw1usFbIjqguT5T1rNoxQlJqeC9HnDRYonXaxm1Ot2OSHSS3gCt+7/
+	IaCgcS4FEzUjeNjOwIfgVuZPkWIwUD4ThHPJZtYcLZqu/tj6H39nYz0w=
+X-Google-Smtp-Source: AGHT+IEEKG5KDG2zoSWW6qNnRqu05lMKAibUg4qOnZ8vQWYwzP7699VIm1XVS+1Y0bh/5F72hizj+4OtuwSZsGuHD9DUTc6Tg+u5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1fe7:b0:375:e698:d0f3 with SMTP id
+ e9e14a558f8ab-3763f49d3dfmr3279915ab.0.1719242121284; Mon, 24 Jun 2024
+ 08:15:21 -0700 (PDT)
+Date: Mon, 24 Jun 2024 08:15:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ec1f6b061ba43f7d@google.com>
+Subject: [syzbot] [net?] [s390?] possible deadlock in smc_switch_to_fallback (2)
+From: syzbot <syzbot+bef85a6996d1737c1a2f@syzkaller.appspotmail.com>
+To: agordeev@linux.ibm.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
+	edumazet@google.com, guwen@linux.alibaba.com, jaka@linux.ibm.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-perf_pending_irq() invokes perf_event_wakeup() and __perf_pending_irq().
-The former is in charge of waking any tasks which wait to be woken up
-while the latter disables perf-events.
+Hello,
 
-The irq_work perf_pending_irq(), while this an irq_work, the callback
-is invoked in thread context on PREEMPT_RT. This is needed because all
-the waking functions (wake_up_all(), kill_fasync()) acquire sleep locks
-which must not be used with disabled interrupts.
-Disabling events, as done by __perf_pending_irq(), expects a hardirq
-context and disabled interrupts. This requirement is not fulfilled on
-PREEMPT_RT.
+syzbot found the following issue on:
 
-Split functionality based on perf_event::pending_disable into irq_work
-named `pending_disable_irq' and invoke it in hardirq context on
-PREEMPT_RT. Rename the split out callback to perf_pending_disable().
+HEAD commit:    568ebdaba637 MAINTAINERS: adjust file entry in FREESCALE Q..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f58a61980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
+dashboard link: https://syzkaller.appspot.com/bug?extid=bef85a6996d1737c1a2f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Tested-by: Marco Elver <elver@google.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1d754ea220a6/disk-568ebdab.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/232f2545fca4/vmlinux-568ebdab.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6398bb41810d/bzImage-568ebdab.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bef85a6996d1737c1a2f@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc4-syzkaller-00875-g568ebdaba637 #0 Not tainted
+------------------------------------------------------
+syz-executor.1/11818 is trying to acquire lock:
+ffff888023600a50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_switch_to_fallback+0x35/0xd00 net/smc/af_smc.c:902
+
+but task is already holding lock:
+ffff888023600258 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1602 [inline]
+ffff888023600258 (sk_lock-AF_INET){+.+.}-{0:0}, at: smc_sendmsg+0x55/0x530 net/smc/af_smc.c:2773
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (sk_lock-AF_INET){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       lock_sock_nested+0x48/0x100 net/core/sock.c:3543
+       do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
+       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
+       do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
+       __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
+       __do_sys_setsockopt net/socket.c:2344 [inline]
+       __se_sys_setsockopt net/socket.c:2341 [inline]
+       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (rtnl_mutex){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       do_ip_setsockopt+0x127d/0x3cd0 net/ipv4/ip_sockglue.c:1077
+       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
+       smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3072
+       do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
+       __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
+       __do_sys_setsockopt net/socket.c:2344 [inline]
+       __se_sys_setsockopt net/socket.c:2341 [inline]
+       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&smc->clcsock_release_lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       smc_switch_to_fallback+0x35/0xd00 net/smc/af_smc.c:902
+       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2779
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg+0x221/0x270 net/socket.c:745
+       ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
+       ___sys_sendmsg net/socket.c:2639 [inline]
+       __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &smc->clcsock_release_lock --> rtnl_mutex --> sk_lock-AF_INET
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(sk_lock-AF_INET);
+                               lock(rtnl_mutex);
+                               lock(sk_lock-AF_INET);
+  lock(&smc->clcsock_release_lock);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.1/11818:
+ #0: ffff888023600258 (sk_lock-AF_INET){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1602 [inline]
+ #0: ffff888023600258 (sk_lock-AF_INET){+.+.}-{0:0}, at: smc_sendmsg+0x55/0x530 net/smc/af_smc.c:2773
+
+stack backtrace:
+CPU: 0 PID: 11818 Comm: syz-executor.1 Not tainted 6.10.0-rc4-syzkaller-00875-g568ebdaba637 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+
+
 ---
- include/linux/perf_event.h |  1 +
- kernel/events/core.c       | 31 +++++++++++++++++++++++--------
- 2 files changed, 24 insertions(+), 8 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 99a7ea1d29ed5..65ece0d5b4b6d 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -783,6 +783,7 @@ struct perf_event {
- 	unsigned int			pending_disable;
- 	unsigned long			pending_addr;	/* SIGTRAP */
- 	struct irq_work			pending_irq;
-+	struct irq_work			pending_disable_irq;
- 	struct callback_head		pending_task;
- 	unsigned int			pending_work;
- 	struct rcuwait			pending_work_wait;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f75aa9f14c979..8bba63ea9c686 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2451,7 +2451,7 @@ static void __perf_event_disable(struct perf_event *e=
-vent,
-  * hold the top-level event's child_mutex, so any descendant that
-  * goes to exit will block in perf_event_exit_event().
-  *
-- * When called from perf_pending_irq it's OK because event->ctx
-+ * When called from perf_pending_disable it's OK because event->ctx
-  * is the current context on this CPU and preemption is disabled,
-  * hence we can't get into perf_event_task_sched_out for this context.
-  */
-@@ -2491,7 +2491,7 @@ EXPORT_SYMBOL_GPL(perf_event_disable);
- void perf_event_disable_inatomic(struct perf_event *event)
- {
- 	event->pending_disable =3D 1;
--	irq_work_queue(&event->pending_irq);
-+	irq_work_queue(&event->pending_disable_irq);
- }
-=20
- #define MAX_INTERRUPTS (~0ULL)
-@@ -5218,6 +5218,7 @@ static void perf_pending_task_sync(struct perf_event =
-*event)
- static void _free_event(struct perf_event *event)
- {
- 	irq_work_sync(&event->pending_irq);
-+	irq_work_sync(&event->pending_disable_irq);
- 	perf_pending_task_sync(event);
-=20
- 	unaccount_event(event);
-@@ -6760,7 +6761,7 @@ static void perf_sigtrap(struct perf_event *event)
- /*
-  * Deliver the pending work in-event-context or follow the context.
-  */
--static void __perf_pending_irq(struct perf_event *event)
-+static void __perf_pending_disable(struct perf_event *event)
- {
- 	int cpu =3D READ_ONCE(event->oncpu);
-=20
-@@ -6798,11 +6799,26 @@ static void __perf_pending_irq(struct perf_event *e=
-vent)
- 	 *				  irq_work_queue(); // FAILS
- 	 *
- 	 *  irq_work_run()
--	 *    perf_pending_irq()
-+	 *    perf_pending_disable()
- 	 *
- 	 * But the event runs on CPU-B and wants disabling there.
- 	 */
--	irq_work_queue_on(&event->pending_irq, cpu);
-+	irq_work_queue_on(&event->pending_disable_irq, cpu);
-+}
-+
-+static void perf_pending_disable(struct irq_work *entry)
-+{
-+	struct perf_event *event =3D container_of(entry, struct perf_event, pendi=
-ng_disable_irq);
-+	int rctx;
-+
-+	/*
-+	 * If we 'fail' here, that's OK, it means recursion is already disabled
-+	 * and we won't recurse 'further'.
-+	 */
-+	rctx =3D perf_swevent_get_recursion_context();
-+	__perf_pending_disable(event);
-+	if (rctx >=3D 0)
-+		perf_swevent_put_recursion_context(rctx);
- }
-=20
- static void perf_pending_irq(struct irq_work *entry)
-@@ -6825,8 +6841,6 @@ static void perf_pending_irq(struct irq_work *entry)
- 		perf_event_wakeup(event);
- 	}
-=20
--	__perf_pending_irq(event);
--
- 	if (rctx >=3D 0)
- 		perf_swevent_put_recursion_context(rctx);
- }
-@@ -9734,7 +9748,7 @@ static int __perf_event_overflow(struct perf_event *e=
-vent,
- 			 * is processed.
- 			 */
- 			if (in_nmi())
--				irq_work_queue(&event->pending_irq);
-+				irq_work_queue(&event->pending_disable_irq);
-=20
- 		} else if (event->attr.exclude_kernel && valid_sample) {
- 			/*
-@@ -11972,6 +11986,7 @@ perf_event_alloc(struct perf_event_attr *attr, int =
-cpu,
-=20
- 	init_waitqueue_head(&event->waitq);
- 	init_irq_work(&event->pending_irq, perf_pending_irq);
-+	event->pending_disable_irq =3D IRQ_WORK_INIT_HARD(perf_pending_disable);
- 	init_task_work(&event->pending_task, perf_pending_task);
- 	rcuwait_init(&event->pending_work_wait);
-=20
---=20
-2.45.2
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
