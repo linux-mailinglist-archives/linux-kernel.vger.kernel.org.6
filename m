@@ -1,140 +1,95 @@
-Return-Path: <linux-kernel+bounces-227587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073589153A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:26:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FB3915350
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 876EA2867E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:26:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D39CB24FDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B5B19DF80;
-	Mon, 24 Jun 2024 16:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6548B19DF52;
+	Mon, 24 Jun 2024 16:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="cvjfmSv/"
-Received: from antelope.elm.relay.mailchannels.net (antelope.elm.relay.mailchannels.net [23.83.212.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WLjOTljl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B162136995;
-	Mon, 24 Jun 2024 16:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246327; cv=pass; b=QKcaNrXpRUyx92WgCINpmnPcWnN0G+gpY/Qq3lmSVud86cMQW+cIQrUhr8QmPjTm760XlI032+BadrkhRgnbJ2vQ3Cp36ceev6TKmNTbWxCBRqYG/B4Dq1iDfOQeONjfrK8w+6QIa6I4H7OIeWNtKOaU3wJ7gvaEvG2NBAPLOAM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719246327; c=relaxed/simple;
-	bh=s/X7e9ND1LcgFkfYWET+NkfJ4rO2vGCLphX+LfaDXAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AECTnAGHD+YYiAQV3eJ0ki0nmwkGf6pp0aq4Sp69a3f5C3/7fuJ5CBbSw4iLIoyoJGsMf9BASrT58uhSv0osJDteKeqh+dKVIaZ5h7/7rVqZ55urXqJbzcWK+OfwUHYtLdOfE0F74fgEsXVUSAXzjWRTUDKj5KCAN5utY6QUskA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=cvjfmSv/; arc=pass smtp.client-ip=23.83.212.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id E9C371021BD;
-	Mon, 24 Jun 2024 16:18:46 +0000 (UTC)
-Received: from pdx1-sub0-mail-a312.dreamhost.com (unknown [127.0.0.6])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 643D0102800;
-	Mon, 24 Jun 2024 16:18:46 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1719245926; a=rsa-sha256;
-	cv=none;
-	b=RxFOHkYAs8kHhM0JFi++tXHrqC2wFE3mGXUMYR9fALURWsGiHJNpw+cO69H/BEzikNvESp
-	B5TKPYoMLfZ0YICR/D90VlJ545haN5W65AByHNWI/D4aRoxbcDA4CmVeurTlcSbhWnZlUW
-	V87iD7iaXZZKCY+MFWV3G3hpYzV2zRfOUCmxkTAeTeDTZseEGovTxnXXOSTy3SEHLL9Ryw
-	41TJvNnW6ZW8QCdVKQTanCq/P5YA+nZudb/mjyRiLFI+T8uylza4YRi64Bl8bibK7vhIsH
-	D4e+/ZDpjv3KilokkrTlBs3Uy1PPYl13r0r39fcMGrzvjZtRQA5NiygU1z0lbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1719245926;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=s/X7e9ND1LcgFkfYWET+NkfJ4rO2vGCLphX+LfaDXAk=;
-	b=cIgDMkwcTVVtRiD+kcXnOg1h56H9puTO0bi9dAPXbYFJ6iW3w4/MEvbE3CvZvsDh17eI5s
-	6tN4wfAB22kR5mwMro12wtgmxykrsRCTX5jiFV4bq/WHVnXHKo88abyMW2ctYCQmOlA1o0
-	7wVGf40UUJO52S1FmTFbn2hboUE8KTZCWhXTdy7J3X9EMZc6gVJWy7Vvx6MysawlCP3Xey
-	7mN6a6f+isbxgrnEkNHI0X7cDqX2G67ccee32K9arbzNuR9zJ3Q8ir2ea4dcDxkpLIgOxF
-	AVe/rlWQ7z/NN6ssEIeYN5AuccFvrIzDuKENmEmz1CSKvOO/ACg94+zYZQ19pA==
-ARC-Authentication-Results: i=1;
-	rspamd-7f76976655-7pwfm;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Lyrical-Supply: 4362dac010c41fcf_1719245926736_502416715
-X-MC-Loop-Signature: 1719245926736:1170366257
-X-MC-Ingress-Time: 1719245926735
-Received: from pdx1-sub0-mail-a312.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.97.207.198 (trex/6.9.2);
-	Mon, 24 Jun 2024 16:18:46 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a312.dreamhost.com (Postfix) with ESMTPSA id 4W7Cnd0KhMz83;
-	Mon, 24 Jun 2024 09:18:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1719245926;
-	bh=s/X7e9ND1LcgFkfYWET+NkfJ4rO2vGCLphX+LfaDXAk=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=cvjfmSv/xtxNiy1geC1B7ErlaIXuNCp8p579Rdgk7lRi/G9ZhaRI2JLftSKNd5X73
-	 dxExRW5C4jruL7j8VO6OFRy2XiBofKi3p2M02os7BN/Ld5kTyENlx6CFkqBJxU5MA2
-	 CUXL8qFb0L0N8lCGf9ci5F6wfWwIwgLbYA8NeT3bFzy0is0Q9pFSzPXQM5Hbw7OLdZ
-	 zrxuiJ+Uip9vPt0op9wg09W+0iUaE4NRWgpAVE5emse4vWozSRP47/YMrwNGeixqVZ
-	 ngGFAgPW1zQP2oVndUKmM/eOP9+rH4H5kG4FoSPiT7EQEWSN9Tx0InsNTRpaH8wi5P
-	 CS3V0/Gj6mWDA==
-Date: Mon, 24 Jun 2024 09:18:41 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Huang Ying <ying.huang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alison Schofield <alison.schofield@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Bharata B Rao <bharata@amd.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH v3 1/3] cxl/region: Fix a race condition in memory
- hotplug notifier
-Message-ID: <20240624161841.gekjnoksxrb4zd7x@offworld>
-References: <20240618084639.1419629-1-ying.huang@intel.com>
- <20240618084639.1419629-2-ying.huang@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C42142625;
+	Mon, 24 Jun 2024 16:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719246010; cv=none; b=VlRb0xx5tE3+mnqpCLpTUET9bBiw8/OvCwZsxRFzEfYI3fhS16u7/3rUU1zDKT7jtskWOecemPCq/5kKEEFnzxGR/JcBvqsH8qsnHjN+OEWRee88/4W5EGOggZ+U7l0yUBkSJQp05snPxYrB8eoag+sJBk5ki1k7MHnTQtcAaOE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719246010; c=relaxed/simple;
+	bh=AgvsOSPEnCgrZaz6W0t4pbDzzCo7NW6+3HZm5Pcx/KU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m5o4v766t40Bd1xqd3Xcj4eAvaLEZS4kmmjGnuaVGTDx5PvqHBWkncIj4qpZRbJQAdaHYWma4yY0rNZz4Et7b4uuOvyyic6mwIc4sZ+bn+fw0asvC26SsqVueJOLtk/U3GshX3J0Dhj3vCzJJUGW37dSF3qyHUAWw0oFnLmotqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WLjOTljl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D20AC2BBFC;
+	Mon, 24 Jun 2024 16:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719246009;
+	bh=AgvsOSPEnCgrZaz6W0t4pbDzzCo7NW6+3HZm5Pcx/KU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=WLjOTljlnQZ9POS5c/v7SwB10AWJhRjXZajdh7ydjYjrtqE/yjpXSHglW00309NMS
+	 iTVJK+TD2hemAJ8IAK8uA1qGIG5ucb0hnNvR8/4KyiKoPniD3y/u7jRInqEB6GQ72Q
+	 sn99FL4si3ADfUfzMnYbajYp4km7crXhs4jG1NAq4DaYSwlZv5W/50Jz4zFkq1RY8x
+	 HevdKkWd4kH5iDe0bbByc4Y7kFMEp4/HrlI1J/TTMcQs1zfQ7RMCRoFLKQUuyCdUki
+	 GP0DsdfSMskicYpTu14j9CpAiCwygg6gkqFVmR3aOu5D1Y0PwP4GsmMGYYAfi4UZLS
+	 ijrFMw7jtaQRQ==
+Date: Mon, 24 Jun 2024 17:20:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Maxime Ripard <mripard@kernel.org>
+Subject: linux-next: build failure after merge of the drm-msm-lumag tree
+Message-ID: <ZnmctV78elxIFtCV@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OzhFpMnD5U+YYOyJ"
 Content-Disposition: inline
-In-Reply-To: <20240618084639.1419629-2-ying.huang@intel.com>
-User-Agent: NeoMutt/20220429
 
-On Tue, 18 Jun 2024, Huang Ying wrote:
 
->In the memory hotplug notifier function of the CXL region,
->cxl_region_perf_attrs_callback(), the node ID is obtained by checking
->the host address range of the region. However, the address range
->information is not available when the region is registered in
->devm_cxl_add_region(). Additionally, this information may be removed
->or added under the protection of cxl_region_rwsem during runtime. If
->the memory notifier is called for nodes other than that backed by the
->region, a race condition may occur, potentially leading to a NULL
->dereference or an invalid address range.
->
->The race condition is addressed by checking the availability of the
->address range information under the protection of cxl_region_rwsem. To
->enhance code readability and use guard(), the relevant code has been
->moved into a newly added function: cxl_region_nid().
+--OzhFpMnD5U+YYOyJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Hi all,
+
+After merging the drm-msm-lumag tree, today's linux-next build
+(x86_64 allmodconfig) failed like this:
+
+ERROR: modpost: too long symbol "drm_atomic_helper_connector_hdmi_disable_audio_infoframe" [drivers/gpu/drm/msm/msm.ko]
+
+Caused by commit
+
+  000d1940c90984 ("drm/connector: hdmi: allow disabling Audio Infoframe")
+
+I used the version from 20240621 instead.
+
+--OzhFpMnD5U+YYOyJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ5nLQACgkQJNaLcl1U
+h9Dyhwf/aE00dFlj/i85JoOZOI+HoeBOECCZ86tvhBvKOXwkqPXK0RJ/pda3pQTZ
+9pmQsEalJvLRMcIpAIIfQgWA6dd53MUesshXZwnlMxSRDszMxXFuwCTRpNdOmcTH
+qCOZREc5QaHaiaF6ABDKK+f6JVmOuoYk6ZljTDkhDazce4hOJIyWYgtC8si8MS4s
+K6HAX0wKNoVCIjeVD4YE2NT9RWsEbZZTlmNZQ3VTxxuMngPXTI81fr12H/F9W3C5
+AxQ0AtSGILqB/zbDicMsGZeo2rtG/nmbixeIh5PC5jUo2gn5BpZ3l7+/2yHNZZkx
+avod9t5pp6hTvZBrPOQNJ8hn+qoOFQ==
+=Bkdn
+-----END PGP SIGNATURE-----
+
+--OzhFpMnD5U+YYOyJ--
 
