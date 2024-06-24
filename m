@@ -1,269 +1,110 @@
-Return-Path: <linux-kernel+bounces-227302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D175914EFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:44:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E272914EFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8802E1C2110F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:44:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17CB2821CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8D313DDB5;
-	Mon, 24 Jun 2024 13:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0326213D882;
+	Mon, 24 Jun 2024 13:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b="aSk3bRBf"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zWLO/s9K";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FGBtjy/T"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DDD13DB88
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1BD1E534
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719236657; cv=none; b=jBDR6AYpJySNXiciE9VSd45fl+69EQrsEKknAqN6ZE10jDi67GLlnZ81T7plVhed+0iVEIZnAiEU1u6C3ZvBqyXEwSYfYA5PI3x8lNGezt0D2jPB371RPkPPdnhoP6qWPHH8ZzWOw62g4tmI+x3p0pzz1sxYF4XTLw0M2rcg1xQ=
+	t=1719236749; cv=none; b=MczRKj3/R6lq8g+rX+fcrPI5eH77KCCv2HgxPBGp2LTla7Yy9J6dATPca0tVnYxgFJo+I6qnx3+SIt6xuK1zg9lsZFFqKg78z5pyxbURxLsb5P+PmL/VTeTu4k275xPCTCEVWuw3ZtlJZ5zP0LxCEk3+pjDk3GJbsA1Ge3fpwA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719236657; c=relaxed/simple;
-	bh=ELaIEG74MklaoJDNNoPT1A/8G8fipu+VAEIFwgAMT6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cpvls9M8AnqPrXF/dvdfIutDpH8Zl4f/Nmkpb992QD+Ej7niRh1sjYzxUadY3/3Mj2vU6InVjYPGXtAbt3vhClxbcP0ZUpy6s1tmKQBfrlD5V82iJOuL0ZvIPAHXgkl1Xhtlr5Z/UEeCCdyhpmfatDNajsetTiRuVv0xCNXVvT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk; spf=pass smtp.mailfrom=remote-tech.co.uk; dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b=aSk3bRBf; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=remote-tech.co.uk
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7194ce90afso203689266b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:44:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=remote-tech-co-uk.20230601.gappssmtp.com; s=20230601; t=1719236654; x=1719841454; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wCJM0JyjwJh46dft1tKOFmyjfIFKbxwXPC+ayLJnOKI=;
-        b=aSk3bRBfzYnNq+xSFc9npfY2DZTuSZN0PyNgEGejfz258JlZfExTB699ij4yZGdFzN
-         9JwIy3PiXLo7V4taVKaYpifI0MZdAXo/zYeDVMGtzD0GzHOLTDGqDFThHCiul1GOntWv
-         E3Uexe3cSisBYsiF8GDC3Y9IXakV1JzrOxT6ItDiN4MGUZPflmd2EjwQg99mvBNKjI0B
-         GIY8BnhFGwF08V91/2WC9eAQmxg7lHmzH5NaCaqA1XfUg7Q0I9QWHXSPeMUvJcP21DN5
-         70BBadWB3cKvxHMH7nd/CH1BLR+8l/aCTudjy9EjX+vc32tjAXRVHxTrFwNu2b6coJqD
-         wRbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719236654; x=1719841454;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wCJM0JyjwJh46dft1tKOFmyjfIFKbxwXPC+ayLJnOKI=;
-        b=oqSzopbGV/vPXzQcEu7V37vt/3JaHfzvDhevc74gaFMkKJiVeuzdtgaLCOajKdkFDe
-         k02kfaFg78rwOS2b/qQZ/9e7tDsE9swV2RWjWH+8nv8atnRh/JwbcCKvxbQ7/YuGtMNh
-         W88LUWNH94vc4SMeIj42qnGjhqr1S5GM4gktTSUsu7LigoOsKw2pe/1Jge2xM+vUVqnm
-         PlEkRcv7BTKoCNzI7L1xXbta4nhJlSeOElXiWNj3WBtdk6wVzg7fkVMUlTLXYU7m7z66
-         Ml5tTZqaPd+Nc26moDuekP/FBfvSY9EF9JFozmNg1D52TPq4d68ICHWn4X/Foq1qY7IH
-         k2DA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1CBVwEMQD6lP7yCRH3oLuXOPRkvBOhDIoUFoSm/yt3jvq7KOtb9JmpXi68AeCMVEqrr7l2FAn9DObYfMaiA1l9Vw6N3g8plc+RfMg
-X-Gm-Message-State: AOJu0YygpYcX6LnYO/g5kDIinUtf3W1o7GnC9dj5V4gWgU/fPajSTWVb
-	XBVmpdckVCuasan8B4ihXL16TJnMoJPQA8cTqm6XA/uV2r2AbI+n8UlsySt8becIM78+k9T+18j
-	PFWMLolPaw6OwXiVQZy29+bz7XNt4i69KZRm5pgFmGn+LS04QKaVYYBrGIvLicGATaTvVRImiR0
-	owmWCCmWuMAbIgZvN3QGelZuqQ54s=
-X-Google-Smtp-Source: AGHT+IHPJaWD1ujxrcdnkDisRugDbHGYl6lNKmXKtHZfVumDEr+NmD309KmEmdd2LlDRmGBPipI8lw==
-X-Received: by 2002:a17:906:28c7:b0:a6f:d5b:20c3 with SMTP id a640c23a62f3a-a716556d52bmr340008566b.74.1719236653935;
-        Mon, 24 Jun 2024 06:44:13 -0700 (PDT)
-Received: from admins-Air ([2a02:810d:aec0:2a54:f136:1973:486:27b7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a724ebbc1a5sm155566266b.213.2024.06.24.06.44.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 06:44:13 -0700 (PDT)
-Date: Mon, 24 Jun 2024 15:44:07 +0200
-From: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-To: pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: leds: Add LED1202 LED Controller
-Message-ID: <Znl4J6FRw9ygmIJX@admins-Air>
-References: <ZniNdGgKyUMV-hjq@admins-Air>
- <7a080980-a247-4d17-88f7-19899379e1a1@kernel.org>
- <ZnlvOuvMQmJFrfSX@admins-Air>
- <2b01874f-26e9-41a1-84c0-9a2ed15cb630@kernel.org>
+	s=arc-20240116; t=1719236749; c=relaxed/simple;
+	bh=RqeuvMz0cRSx1ZUaiURn+zvKLMXsN6xdTYTDIkNr6Io=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DTnpaaW4G9xbqZTFE7lxnOMFuN2FjdzhCO5ThLqU0B/uorTR66FCQ4PgZUzpC+dPTrlDkDy9dL97whaMjPyXS+CFiw9LqMGcC9V1JFjJwtRQq31IvWkfw776ArkZI+ZDs/MRXeZDAVWvgKABT5pQm/2+8C0LWJlu6nuXozkvzJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zWLO/s9K; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FGBtjy/T; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719236744;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GboIg5eVGHDPZ9dHMp+OprFYxnXj5dxDMNcULCsadHc=;
+	b=zWLO/s9KLalwIYKdFRK1CChvsksfGjPSSuY4q1nfKLracltPA+LwJL/PFALBxbXHW2WJPs
+	GSa+StBJBeUCkGxoKegr11yqWP7Y73QF7er/UpehEri8F4XejtMPwRiMuPTYNOnsZSNYgF
+	KxhY2sz7kPyF8r4RzeROD7kOO+OVDwNdtt8PLMuGs8sM10M78U6BVAFS6nhoRso9FvyO+r
+	bjxSNvyFaloyz5InhM3icfPZ7+EdTebH+7Vtq4XYYV5oecfoaiuOgFk21EH4vWSAKBWns8
+	AG/66DYKssND59/YVEWNeK5Tau8YuQuRm+DudV3kZ5teqza70DQ1M+Fli42elg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719236744;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GboIg5eVGHDPZ9dHMp+OprFYxnXj5dxDMNcULCsadHc=;
+	b=FGBtjy/TwRE/uHMqDgyipx7UFEpUjQmXrf4kBf8fE1Q4esR2Mk0vube5ZaI+ILex74ZHfn
+	2lSN8V2FSINMmxAg==
+To: kernel test robot <lkp@intel.com>, Tianyang Zhang
+ <zhangtianyang@loongson.cn>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ x86@kernel.org, Jianmin Lv <lvjianmin@loongson.cn>, Liupu Wang
+ <wangliupu@loongson.cn>
+Subject: Re: [tip:irq/core 39/46]
+ drivers/irqchip/irq-loongarch-avec.c:82:17: error: implicit declaration of
+ function 'loongson_send_ipi_single'
+In-Reply-To: <202406240451.ygBFNyJ3-lkp@intel.com>
+References: <202406240451.ygBFNyJ3-lkp@intel.com>
+Date: Mon, 24 Jun 2024 15:45:44 +0200
+Message-ID: <87sex28nef.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b01874f-26e9-41a1-84c0-9a2ed15cb630@kernel.org>
+Content-Type: text/plain
 
-On Mon, Jun 24, 2024 at 03:08:56PM +0200, Krzysztof Kozlowski wrote:
-> On 24/06/2024 15:06, Vicentiu Galanopulo wrote:
-> > On Mon, Jun 24, 2024 at 07:02:12AM +0200, Krzysztof Kozlowski wrote:
-> >> On 23/06/2024 23:02, Vicentiu Galanopulo wrote:
-> >>> The LED1202 is a 12-channel low quiescent current LED driver with:
-> >>>   * Supply range from 2.6 V to 5 V
-> >>>   * 20 mA current capability per channel
-> >>>   * 1.8 V compatible I2C control interface
-> >>>   * 8-bit analog dimming individual control
-> >>>   * 12-bit local PWM resolution
-> >>>   * 8 programmable patterns
-> >>>
-> >>> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-> >>> ---
-> >>>
-> >>> Changes in v2:
-> >>>   - renamed label to remove color from it
-> >>>   - add color property for each node
-> >>>   - add function and function-enumerator property for each node
-> >>
-> >> Fix your email setup, because your broken or non-existing threading
-> >> messes with review process. See:
-> >>
-> >> b4 diff '<ZniNdGgKyUMV-hjq@admins-Air>'
-> >> Grabbing thread from
-> >> lore.kernel.org/all/ZniNdGgKyUMV-hjq@admins-Air/t.mbox.gz
-> >> Checking for older revisions
-> >> Grabbing search results from lore.kernel.org
-> >>   Added from v1: 1 patches
-> >> ---
-> >> Analyzing 3 messages in the thread
-> >> Looking for additional code-review trailers on lore.kernel.org
-> >> Preparing fake-am for v1: dt-bindings: leds: Add LED1202 LED Controller
-> >> ERROR: v1 series incomplete; unable to create a fake-am range
-> >> ---
-> >> Could not create fake-am range for lower series v1
-> >>
-> >>
-> >>>
-> >>>  .../devicetree/bindings/leds/st,led1202.yml   | 162 ++++++++++++++++++
-> >>>  1 file changed, 162 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/leds/st,led1202.yml
-> >>
-> >> yaml, not yml
-> > ok, will change
-> >>
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/leds/st,led1202.yml b/Documentation/devicetree/bindings/leds/st,led1202.yml
-> >>> new file mode 100644
-> >>> index 000000000000..1484b09c8eeb
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/leds/st,led1202.yml
-> >>> @@ -0,0 +1,162 @@
-> >>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> >>> +%YAML 1.2
-> >>> +---
-> >>> +$id: http://devicetree.org/schemas/leds/st,led1202.yaml#
-> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>> +
-> >>> +title: ST LED1202 LED controllers
-> >>> +
-> >>> +maintainers:
-> >>> +  - Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-> >>> +
-> >>> +description:
-> >>> +  The LED1202 is a 12-channel low quiescent current LED controller
-> >>> +  programmable via I2C; The output current can be adjusted separately
-> >>> +  for each channel by 8-bit analog and 12-bit digital dimming control.
-> >>> +
-> >>> +  Datasheet available at
-> >>> +  https://www.st.com/en/power-management/led1202.html
-> >>> +
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    enum:
-> >>> +      - st,led1202
-> >>> +
-> >>> +  reg:
-> >>> +    maxItems: 1
-> >>> +
-> >>> +  "#address-cells":
-> >>> +    const: 1
-> >>> +
-> >>> +  "#size-cells":
-> >>> +    const: 0
-> >>> +
-> >>> +patternProperties:
-> >>> +  "^led@[0-9a-f]+$":
-> >>> +    type: object
-> >>> +    $ref: common.yaml#
-> >>> +    unevaluatedProperties: false
-> >>> +
-> >>> +    properties:
-> >>> +      reg:
-> >>> +        minimum: 0
-> >>> +        maximum: 11
-> >>> +
-> >>> +    required:
-> >>> +      - reg
-> >>> +
-> >>> +additionalProperties: false
-> >>> +
-> >>> +examples:
-> >>> +  - |
-> >>> +    #include <dt-bindings/leds/common.h>
-> >>> +
-> >>> +    i2c {
-> >>> +        #address-cells = <1>;
-> >>> +        #size-cells = <0>;
-> >>> +
-> >>> +        led-controller@58 {
-> >>> +            compatible = "st,led1202";
-> >>> +            reg = <0x58>;
-> >>> +            address-cells = <1>;
-> >>> +            size-cells = <0>;
-> >>> +
-> >>> +            led@0 {
-> >>> +                reg = <0>;
-> >>> +                label = "led1";
-> >>> +                function = LED_FUNCTION_STATUS;
-> >>> +                color = <LED_COLOR_ID_RED>;
-> >>> +                function-enumerator = <1>;
-> >>> +                active = <1>;
-> >>
-> >> This did not improve. First, which binding defines this field?
-> >>
-> > it's a new field I added, but if you would like for me to use another
-> > please advise.
-> 
-> Look at the LED bindings. Anyway, you cannot sprinkle new properties to
-> some nodes without defining them in the bindings.
+On Mon, Jun 24 2024 at 05:06, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+> head:   c9d269469d2b9a06559cdc84d12dd3fb4d552581
+> commit: 760d7e719499d64beea62bfcf53938fb233bb6e7 [39/46] Loongarch: Support loongarch avec
+> config: loongarch-allnoconfig (https://download.01.org/0day-ci/archive/20240624/202406240451.ygBFNyJ3-lkp@intel.com/config)
+> compiler: loongarch64-linux-gcc (GCC) 13.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240624/202406240451.ygBFNyJ3-lkp@intel.com/reproduce)
 >
-Ok, will do
- 
-> > Depending on this value, the enabled/disabled bit is set in the
-> > appropriate register, and the led appears with the label name in sysfs.
-> > Hope this extra info helps in helping me pick the appropiate binding. 
-> > 
-> >> Second this was never tested.
-> >>
-> > are you referring to the automated test done by the kernel test robot?
-> 
-> No, your testing. See writing-schema doc.
-> 
-Thanks for pointing this out, will look.
-> > 
-> >  
-> >> Third, where did you give me any chance to reply to your comment before
-> >> posting new version?
-> >>
-> > I think I have a wrong understanding of the process or mutt client is missconfigured
-> > or missued on my side.
-> 
-> Sending new version of patchset without allowing me to respond is not
-> "mutt misconfiguration".
-> 
-I'm insisting with this just to be sure that I'm not using mutt any other way than
-I should. I've configured threading, but I don't know how it shows on your end.
-So:
-I've sent v1 -> you said change color and function and asked about active ->
-I've send v2 with color and function *changed*, and contiuned the conversation in the
- email thread about active.
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406240451.ygBFNyJ3-lkp@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    drivers/irqchip/irq-loongarch-avec.c: In function 'loongarch_avec_sync':
+>>> drivers/irqchip/irq-loongarch-avec.c:82:17: error: implicit declaration of function 'loongson_send_ipi_single' [-Werror=implicit-function-declaration]
+>       82 |                 loongson_send_ipi_single(adata->prev_cpu, SMP_CLEAR_VECT);
+>          |                 ^~~~~~~~~~~~~~~~~~~~~~~~
+>>> drivers/irqchip/irq-loongarch-avec.c:82:59: error: 'SMP_CLEAR_VECT' undeclared (first use in this function)
+>       82 |                 loongson_send_ipi_single(adata->prev_cpu, SMP_CLEAR_VECT);
+>          |                                                           ^~~~~~~~~~~~~~
+>    drivers/irqchip/irq-loongarch-avec.c:82:59: note: each undeclared identifier is reported only once for each function it appears in
+>    drivers/irqchip/irq-loongarch-avec.c: In function 'complete_irq_moving':
+>    drivers/irqchip/irq-loongarch-avec.c:173:55: error: 'SMP_CLEAR_VECT' undeclared (first use in this function)
+>      173 |                         loongson_send_ipi_single(cpu, SMP_CLEAR_VECT);
+>          |                                                       ^~~~~~~~~~~~~~
 
-Expectation was that the active stuff was to be decided and then a v2 should
-have comed from me?
+So this code was never built with CONFIG_SMP=n.
 
-If yes, this is the "process" part I was previously referring to, that I don't know.
-From my point of view, the outcome is the same, function and color needed to be changed anyway. 
+Can the loongson folks please send me a delta patch ASAP, otherwise I'm
+going to revert it.
 
-> Best regards,
-> Krzysztof
-> 
+Thanks,
 
-Kind regards,
-Vicentiu
+        tglx
 
