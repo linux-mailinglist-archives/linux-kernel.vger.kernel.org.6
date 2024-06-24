@@ -1,152 +1,131 @@
-Return-Path: <linux-kernel+bounces-226578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2BD891408E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:36:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A1191408F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521571F23592
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:36:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 430D72814C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9764C97;
-	Mon, 24 Jun 2024 02:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36465442C;
+	Mon, 24 Jun 2024 02:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="SI1LYvbm"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EbnbJtok"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DE14A2D
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEA18C13
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719196559; cv=none; b=nbvGbLbpzTYYbcoulJi0gITvCBiCNUs2h53/w22nDxwyNqovEv0xLgC3HvHwiFWXOyN9zaa9PaT6fNH2doDzhmH4s6QVJdzLI4MTqvYXiNY/Bke3teL+AjrSHF3brGzk6CyAIUBZJJB7KDZBcxSSuWj6OLq31aYSh13fL6cfqDM=
+	t=1719196567; cv=none; b=puH9E3g/B04WVefvG9BhzHHYthP4aMKqOxZ+5mMmJ0V9ROx24gu4HH677MzZpLemZFOnj49z96oZSaWWO+5YP4dbwLunRsb8hlqCI/L8h5LwJj7OlX5bTLSSqOTQSc2yX8rkq4zp01/ywsi0F+IHH6TsqrsoEBOadTEElGeyF6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719196559; c=relaxed/simple;
-	bh=Yz/lCxxxxoFA9QnCVT2EvlDlUZ4YvLC6CQ3eNeHqRvw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oqu42hkRlEzthRqJ2NInmR/H1DWJHYLbkBTGViF5bRgLYsMOdMePYJrQEHNs8LN02OSO7JUtlRDgtiMP4tMk+cShiQbvMorgVOySTkUB0cSM7LaOCBko2uQnvNJbRyPWSYxiN8Ld3j6RyRsNbsyXZCRzWs9+WBZ4+ZFvxrbwUjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=SI1LYvbm; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719196548; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=MkFxE/rtIPTdOvyHQREWAUOuP0YCioTrW98F+FyCA3U=;
-	b=SI1LYvbmGRnSvhbNaqAZ+QL/KCMto7VHN+iWRXwKJBdtH9x+XnlVOG6r6t6LZw/aVB9SZIHtkY+C8XNzkcbB/Cp6m/aIhy7g4YFhJA+KXQzRWWZuqTjTJe4RToBoejTzNLrrX0xo9dxUS/hwGgK2a7w4CVFNdhMVbNl/sprRkno=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=dtcccc@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W90zdNb_1719196544;
-Received: from 30.97.48.223(mailfrom:dtcccc@linux.alibaba.com fp:SMTPD_---0W90zdNb_1719196544)
-          by smtp.aliyun-inc.com;
-          Mon, 24 Jun 2024 10:35:46 +0800
-Message-ID: <dd6c29cf-3ca0-4aa3-8cfe-e85a35e300e4@linux.alibaba.com>
-Date: Mon, 24 Jun 2024 10:35:44 +0800
+	s=arc-20240116; t=1719196567; c=relaxed/simple;
+	bh=w4z2DkVE9rN8j2iDDGgkpYfV/3GBnwpjFV40h/w/7WA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hQ0/gEzyAdp2R7HrCO2zI+x98bkBKwjABo4KAwEShJm2xvFCTtokjOrFb6secZGWkKIua+DCPnTQsxuy5dMJSIOrplp++FxcHfuo7Snx+iOs5nVXyNWm4m6JoQ+UD8E1VBa1jQdY0iNOy5FAYP7ZWlPfoIPwKmogWKpjbF5eEWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EbnbJtok; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5c1acd482e4so2073852eaf.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 19:36:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719196565; x=1719801365; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w4z2DkVE9rN8j2iDDGgkpYfV/3GBnwpjFV40h/w/7WA=;
+        b=EbnbJtokkmt6NIAgxh5aqODUaEJjLQ3p5WhITtiMEXffgqcvRg5VQwdzhbar1XT4Ta
+         zm0wDIypLeO6a67xCSTPOWEsbR/EzOxv8cux+lWtE6mcvBjtKVzr11jaJe6IXP8K+RmO
+         vktbnH4GFxMhTMENzwLb4uY7qZ8xuEyo1lSTXCdQnSb563v5XyczLvIrksbRjZlJNCug
+         h7u9G5njEGPJ/e7R/BmmCgwrHAB9xWwTHkLQm5SmnzENXyYatzo9Il02vkzUwFkxCmN2
+         50yAtJqYn7m167gl50+uG0g3JF7Cj1bdkZBKtdd2HbApvz/Awi9qZjUHbbrJBdj4ZXN/
+         MQmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719196565; x=1719801365;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w4z2DkVE9rN8j2iDDGgkpYfV/3GBnwpjFV40h/w/7WA=;
+        b=QZgNrl90qb//M7E9CNjgYBPbtjjmiomVuRZPPpWPoTLQYN4/HXfgP9BpMeHAIsmMFQ
+         KHAYpmkHtotbACFgHVfKDsI8deBQ4Ztov2+LVzA13KIVcVTN6fXN0hNxBSYxSBzRS9ML
+         iriF5V/TVZHw1O6P+mhSg/GKp1ayBCEpolcbZtS7yR6lIm0mn8twlVnjnPDgwQnayF1O
+         g28Y7PAqeoteGFktOZ8NPFC1du3XNJWwmOzEvksJz+47yq3OfQmv4gnEk6aEWJFGscXM
+         D5uf/WJL5OiEOEhoVCXMoGpBoFgNT+VT+L2tkpXqWZByxJAbmwx7D29gcwDBRPM/VLKz
+         +zzg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0x99BtcXl6p+Ju/PXwuzo4vwzGKfOiC+OTXUAF+zVr/MjX/56ycHrf7cGx5bEPWbm3gOmp+OmG0yJWJdqHHczJipjOX+T87pdLpyJ
+X-Gm-Message-State: AOJu0YxZNk5rPD4lzaddY9wPSQLUTwwckeKxI8Uu80QY8iY/oNt5ofyv
+	4MPGRcSnTAeiSI5ThZkIGDk0N0wkXalor0loe/CYqsvS1KRa2wyDFCKfiv46iZg/OvNZtmpYSwL
+	2ffGMXxH600Naqy6KrRUDwwrO5DQ=
+X-Google-Smtp-Source: AGHT+IFbekmw1KcqX4ThCOQ1I3O4B7vdyrY7bvygonS+2+TcDdUafXVOL/b6h7JaYNovApjEBxGClQi5XeqrDvBFJ90=
+X-Received: by 2002:a05:6870:3a2b:b0:25c:c661:431b with SMTP id
+ 586e51a60fabf-25d06bd774amr2734225fac.17.1719196565044; Sun, 23 Jun 2024
+ 19:36:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 29/35] sched: handle preempt=voluntary under
- PREEMPT_AUTO
-Content-Language: en-US
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: tglx@linutronix.de, peterz@infradead.org, torvalds@linux-foundation.org,
- paulmck@kernel.org, rostedt@goodmis.org, mark.rutland@arm.com,
- juri.lelli@redhat.com, joel@joelfernandes.org, raghavendra.kt@amd.com,
- sshegde@linux.ibm.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
- Ingo Molnar <mingo@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, linux-kernel@vger.kernel.org
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <20240528003521.979836-30-ankur.a.arora@oracle.com>
- <8e6f02a0-2bd0-4e75-9055-2cb7c508ce4e@linux.alibaba.com>
- <87h6dmazs5.fsf@oracle.com>
-From: Tianchen Ding <dtcccc@linux.alibaba.com>
-In-Reply-To: <87h6dmazs5.fsf@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com> <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
+ <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
+ <20240616222003.agcz5osb2nkli75h@airbuntu> <CAB8ipk-ejDKQTr8nAmK9MkhL2Ra=0J==p3Q+U-4K18G6MeJhQw@mail.gmail.com>
+ <20240617110348.pyofhzekzoqda7fo@airbuntu> <20240618145851.je4a7cu4ltrt3qxa@airbuntu>
+ <CAB8ipk_LXzkkGzT1SS6U8i4nW6j9coxeuwn6vuUFusCQcFM8zw@mail.gmail.com>
+ <8bfa0628-bd74-47c3-ba3c-4724acbfd717@arm.com> <CAKfTPtAQvQv0WfRD5siqJKLBbY-kKu8jcrNvr_bBf0Bc4n-tqQ@mail.gmail.com>
+In-Reply-To: <CAKfTPtAQvQv0WfRD5siqJKLBbY-kKu8jcrNvr_bBf0Bc4n-tqQ@mail.gmail.com>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Mon, 24 Jun 2024 10:35:53 +0800
+Message-ID: <CAB8ipk-E_LPmhHuYSXQuagdnitmtnobSG55kz5mZ_b-yF0XFUw@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding actual_cpu_capacity
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Qais Yousef <qyousef@layalina.io>, 
+	Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	vincent.donnefort@arm.com, ke.wang@unisoc.com, linux-kernel@vger.kernel.org, 
+	christian.loehle@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/6/22 02:58, Ankur Arora wrote:
-> 
-> Tianchen Ding <dtcccc@linux.alibaba.com> writes:
-> 
->> On 2024/5/28 08:35, Ankur Arora wrote:
->>> The default preemption policy for voluntary preemption under
->>> PREEMPT_AUTO is to schedule eagerly for tasks of higher scheduling
->>> class, and lazily for well-behaved, non-idle tasks.
->>> This is the same policy as preempt=none, with an eager handling of
->>> higher priority scheduling classes.
->>> Comparing a cyclictest workload with a background kernel load of
->>> 'stress-ng --mmap', shows that both the average and the maximum
->>> latencies improve:
->>>    # stress-ng --mmap 0 &
->>>    # cyclictest --mlockall --smp --priority=80 --interval=200 --distance=0 -q -D 300
->>>                                        Min     (  %stdev )    Act     (  %stdev
->>> )   Avg     (  %stdev )   Max      (  %stdev )
->>>     PREEMPT_AUTO, preempt=voluntary    1.73  ( +-  25.43% )   62.16 ( +-
->>> 303.39% )  14.92 ( +-  17.96% )  2778.22 ( +-  15.04% )
->>>     PREEMPT_DYNAMIC, preempt=voluntary 1.83  ( +-  20.76% )  253.45 ( +- 233.21% )  18.70 ( +-  15.88% )  2992.45 ( +-  15.95% )
->>> The table above shows the aggregated latencies across all CPUs.
->>> Cc: Ingo Molnar <mingo@redhat.com>
->>> Cc: Peter Ziljstra <peterz@infradead.org>
->>> Cc: Juri Lelli <juri.lelli@redhat.com>
->>> Cc: Vincent Guittot <vincent.guittot@linaro.org>
->>> Originally-by: Thomas Gleixner <tglx@linutronix.de>
->>> Link: https://lore.kernel.org/lkml/87jzshhexi.ffs@tglx/
->>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
->>> ---
->>>    kernel/sched/core.c  | 12 ++++++++----
->>>    kernel/sched/sched.h |  6 ++++++
->>>    2 files changed, 14 insertions(+), 4 deletions(-)
->>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->>> index c25cccc09b65..2bc3ae21a9d0 100644
->>> --- a/kernel/sched/core.c
->>> +++ b/kernel/sched/core.c
->>> @@ -1052,6 +1052,9 @@ static resched_t resched_opt_translate(struct task_struct *curr,
->>>    	if (preempt_model_preemptible())
->>>    		return RESCHED_NOW;
->>>    +	if (preempt_model_voluntary() && opt == RESCHED_PRIORITY)
->>> +		return RESCHED_NOW;
->>> +
->>>    	if (is_idle_task(curr))
->>>    		return RESCHED_NOW;
->>>    @@ -2289,7 +2292,7 @@ void wakeup_preempt(struct rq *rq, struct task_struct
->>> *p, int flags)
->>>    	if (p->sched_class == rq->curr->sched_class)
->>>    		rq->curr->sched_class->wakeup_preempt(rq, p, flags);
->>>    	else if (sched_class_above(p->sched_class, rq->curr->sched_class))
->>> -		resched_curr(rq);
->>> +		resched_curr_priority(rq);
->>>
->> Besides the conditions about higher class, can we do resched_curr_priority() in the same class?
->> For example, in fair class, we can do it when SCHED_NORMAL vs SCHED_IDLE.
-> 
-> So, I agree about the specific case of SCHED_NORMAL vs SCHED_IDLE.
-> (And, that case is already handled by resched_opt_translate() explicitly
-> promoting idle tasks to TIF_NEED_RESCHED.)
-> 
-> But, on the general question of doing resched_curr_priority() in the
-> same class: I did consider it. But, it seemed to me that we want to
-> keep run to completion semantics for lazy scheduling, and so not
-> enforcing priority in a scheduling class was a good line.
-> 
+On Fri, Jun 21, 2024 at 9:01=E2=80=AFPM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> On Fri, 21 Jun 2024 at 12:41, Dietmar Eggemann <dietmar.eggemann@arm.com>=
+ wrote:
+> >
+> > On 19/06/2024 04:46, Xuewen Yan wrote:
+> > > On Tue, Jun 18, 2024 at 10:58=E2=80=AFPM Qais Yousef <qyousef@layalin=
+a.io> wrote:
+> > >>
+> > >> On 06/17/24 12:03, Qais Yousef wrote:
+> >
+> > [...]
+> >
+> > > Sorry for the late reply...
+> > > In our own tree, we removed the check for rd overutil in feec(), so
+> > > the above case often occurs.
+> >
+> > How to you schedule hackbench on this thing then? Via EAS or do you jus=
+t
+> > exclude this kind of workload?
+>
+> Don't know the details for Xuewen but that's also what I'm doing as
+> part of the rework I'm doing on EAS. As I said in at OSPM, I'm also
+> calling feec() every time even when overutilized. feec() return -1
+> when it can't find a suitable cpu and we then fallback to default
+> performance path
+>
+Aha, we do the same, We use eas on Android, and there is often only
+one or two tasks in the overutil state, but we don't want this
+scenario to affect the placement of other small tasks.
+Only when all CPUs are in the overutil state, feec will return -1, and
+then fallback to default performance path.
 
-OK, on general question, this is just a suggestion :-)
-
-Actually, my key point is about SCHED_IDLE. It's not a real idle task, but a 
-normal task with lowest priority. So is_idle_task() in resched_opt_translate() 
-does not fit it. Should add task_has_idle_policy().
-
-However, even using task_has_idle_policy() may be still not enough. Because 
-SCHED_IDLE policy:
-   1. It is the lowest priority, but still belongs to fair_sched_class, which is 
-the same as SCHED_NORMAL.
-   2. Not only tasks, *se of cgroup* can be SCHED_IDLE, too. (introduced by 
-commit 304000390f88d)
-
-So in the special case about SCHED_NORMAL vs SCHED_IDLE, I suggest still do some 
-work in fair.c.
-
-Thanks.
+BR
+---
+xuewen
 
