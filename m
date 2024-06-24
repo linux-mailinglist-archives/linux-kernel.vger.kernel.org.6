@@ -1,105 +1,155 @@
-Return-Path: <linux-kernel+bounces-226957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D989914660
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:26:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1148C914669
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2867E280C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7D92811B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D41130A76;
-	Mon, 24 Jun 2024 09:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7267D132120;
+	Mon, 24 Jun 2024 09:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="je+TYd6X"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCdV0sY7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E3018E29
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9928E18E29;
+	Mon, 24 Jun 2024 09:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719221150; cv=none; b=sbjxtqxa6YTzu/whqTWRCLIh2v9nyFR9BFMpgb1mBM7pKBBimU8iAK7E42nZqSxj/W9wul1VmeFcsgL/NaDEL8sd3f08BhOFzkL6oDljJu9tyj5YYE/Vji4HQAUZQOwG8cWBEmT4xiSTQWKa6e1saqtRY6QZgUdBwTeZ+QDEq/w=
+	t=1719221218; cv=none; b=Ez3rsReI5sCD1Kv6hmVXfihsg7lvKfH1T0GwnELMNfLq+gpM+ME1XAk0s9WmmnWhzg0on60p/hlf8j/y0BpPn0V9J03bnSufoMJbxp4tJvP1HRcb77jDd8PRFbCEqCiW41cp+sfKPURn5IbVw5ChrDRo7SvpVNEmb7507lW2k+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719221150; c=relaxed/simple;
-	bh=dSpj6RVdGlwSynNTqiNA10vYR+M1oEJQAoRfZLhS/8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bv9/IvNdN9sUz8mDOCa0GpvzVV+wbKnFrDSDqzLt/EYCFnB/rICn9l4T8gJk7DjF93uhKJMwTUUo/q2ioQolfsFpq+RjBUWKeOzD+eiU4l3D+1x3xYAi3xLbTwzq9BgrtUH9clOIqZJCFiLZIo1n5t0DM3JmnwVuW4cLReB0vh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=je+TYd6X; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec595d0acbso14600541fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:25:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719221147; x=1719825947; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hQ8rDTFoLXAhMjy0OhmeajbUY5vNojlhHctYKafkZN4=;
-        b=je+TYd6X6Epx5TXmUdV32lnX0jOt5fSRMF9O/FPmLnbvave1b3wMtu53E31nD+hVlg
-         7+J2CqD8zHqK+8+1P0cC9v2HKHqULRY/c/CB3GciWzLdnNTNPqm2zbkJVIWccD4VPngW
-         1Ol+pKtCuezWsDHo8yrjaV6eRJB1OnBivHQuocM1lfn4dDN6cfqK3HNfO6n3COeqq1PW
-         hoVgabNaGzu3FFKAShsArYKXsGk0xirP7sFmqlS82hbh4QrPk1/XeMtfJyRUaOvzqHdt
-         UN802zOYh+P12gHpRY5NdSTjmxs0h5v8pk7VnwI93ZUYZXNlS44QoeqZu0kG1PNaqIS+
-         h7pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719221147; x=1719825947;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hQ8rDTFoLXAhMjy0OhmeajbUY5vNojlhHctYKafkZN4=;
-        b=YJ4zo/84ZsQyLuiJ17McJ82xh0NUoix6168yLuRWym6OWY3O2d8cao+GIyF9B/Eg4/
-         t7cLiFsXbXdaUcrgvNDaKI9QIwOWPK1Lvjs3xBW794TqOPtn8DcsNzirT+Tp6NcO6P5Z
-         Oxj38/fnnyUfMtXZXrxKnsseQuCn0G1qH9rbXCcoxxaJ56VxeokmQ/kE+77ibQds/tt1
-         6nASzGaPkNKndCvUZfhV8t7Zs6QTMbjN8VwsQesr5zz7ZALD/LZwI37/1rjr4CyaCNOO
-         UMLHSG5CPbyVguON+G/2Pk4MucotoOHOppJ+GojsIauIP9GFCuYSfK8pbQz1XGoN5t3/
-         +g3A==
-X-Forwarded-Encrypted: i=1; AJvYcCViNQKyCEY+QQsOxI4uaafcy+a2HaRVf7bRP7FQOQYTfFu1J7WJDgglpvaHq5HBtF+X7EQVJo5iQjVWnaFajwz6/rGnBO95IzsT0+c1
-X-Gm-Message-State: AOJu0Yxu0eIrBcY96zn5ywTgdPTLEIgbER4fzpDsQGESt38YJ41qIJ4m
-	YDL6CtYISo6AKRf2hOCqJLP0yW2SznTudGE2DAZeNvbouTh4kU1w/eiQMwQU83E=
-X-Google-Smtp-Source: AGHT+IFyYQcI0M2p6Aug3g8DCGmk6of8qUf+Yl9RI+onwe/r8cDJBAKjW1liB62k+oh2Qcw1PYwa5g==
-X-Received: by 2002:a2e:7805:0:b0:2ec:5073:5814 with SMTP id 38308e7fff4ca-2ec5b2fd2f3mr32530691fa.8.1719221147588;
-        Mon, 24 Jun 2024 02:25:47 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec5843318fsm5388401fa.91.2024.06.24.02.25.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 02:25:47 -0700 (PDT)
-Date: Mon, 24 Jun 2024 12:25:45 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] clk: qcom: dispcc-sm8650: Update the GDSC flags
-Message-ID: <kjb6m7sr2secyalg2szb36vcxtgwiqcbuqxilxc7uxmfhkx7n2@yrmkw4tw6nng>
-References: <20240624-topic-sm8650-upstream-fix-dispcc-v2-0-ddaa13f3b207@linaro.org>
- <20240624-topic-sm8650-upstream-fix-dispcc-v2-3-ddaa13f3b207@linaro.org>
+	s=arc-20240116; t=1719221218; c=relaxed/simple;
+	bh=eaF1Ms4GXRyu67whAqmZKIEKby5/FfQsbLSCx8IYARM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LjGvLyJHRNvUzmDPUi9keUGYR17oho9j0XrJtnboiOEj0kAV307vMhFTc7StG4Kd1fRZWUk0eR5zI9aN7RueIS/n8CsDWRY7G2VQKs6gDPaKecU0na8cunwFCvuRlWMU5oOSIlF1RjDJ0U0dV5hhTKUH0LRY7EQJNAk4r7VB8vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCdV0sY7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D6DDC2BBFC;
+	Mon, 24 Jun 2024 09:26:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719221218;
+	bh=eaF1Ms4GXRyu67whAqmZKIEKby5/FfQsbLSCx8IYARM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rCdV0sY7CpwwdFer21Ar31wlr8IwX5w2GD+eXu4tJRq3tOnyZtCNclODT+hf7fvQO
+	 shFpwf79paeXyUQVE9MZZ/jmR2lo5ujSxYZKvB3BFepj3bduGbVxCTlSbFIlgZSj/b
+	 6kkXcVKWBC9//pgetPXLlIaU7QgX9LCfHilad9T0Cls7g80KaQ4GCORLmxQcdLlYvo
+	 BdpVaKWQA4HBmFBKiRz5Ad4R7YS0P+5V0n+wgk1ifu44GJh85C7tb8T+5y2IyDXTh5
+	 a8kmLw7wVKrsZdyDq1pM3EAnAAmIWBQg0mv7rFvD1xOnYX37qyZWdWDDc+GtQg1F0f
+	 Oh+9CG5rCujVQ==
+Message-ID: <c4e17f42-2ad2-4979-983b-5f1e2a0b1ed8@kernel.org>
+Date: Mon, 24 Jun 2024 11:26:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624-topic-sm8650-upstream-fix-dispcc-v2-3-ddaa13f3b207@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 1/2] dt-bindings: net: wireless: qcom,ath11k: describe
+ the ath11k on QCA6390
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, ath11k@lists.infradead.org,
+ linux-kernel@vger.kernel.org, ath12k@lists.infradead.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240605122106.23818-2-brgl@bgdev.pl>
+ <171862259099.4124983.18069958656274980613.kvalo@kernel.org>
+ <4c3d4437-4c24-4db3-855d-f2ba7d0c6f8a@kernel.org> <871q4mk8fw.fsf@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <871q4mk8fw.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 24, 2024 at 10:05:52AM GMT, Neil Armstrong wrote:
-> Update the GDSC flags by adding missing POLL_CFG_GDSCR flag.
+On 24/06/2024 11:15, Kalle Valo wrote:
+> Krzysztof Kozlowski <krzk@kernel.org> writes:
 > 
-> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/clk/qcom/dispcc-sm8650.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>> On 17/06/2024 13:09, Kalle Valo wrote:
+>>> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>>
+>>>> Add a PCI compatible for the ATH11K module on QCA6390 and describe the
+>>>> power inputs from the PMU that it consumes.
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
+>>>
+>>> 2 patches applied to ath-next branch of ath.git, thanks.
+>>
+>> Hi Kalle,
+>>
+>> Are you sure your tree is properly fed to linux-next? I cannot find
+>> these patches in linux-next and above repo is not listed in Next/Trees.
 > 
+> ath.git is not included in linux-next builds. To my knowledge wireless
+> and wireless-next trees are the only trees from the wireless subsystem
+> which are included, all driver trees are not. But Jeff and I are talking
+> about including ath.git to linux-next.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Thanks for confirming. There is not much to "talk". Just send one email.
+There is no single issue stopping you from being in linux-next. The only
+work/caveat is when wireless-next cherry-picks your patches instead of
+git pull, but even then you can arrange with Stephen to opt-out from
+emails about duplicated commits.
 
--- 
-With best wishes
-Dmitry
+Of course this is not specific to Ath - as you said - all wireless
+sub-trees should be fixed. It's really odd that these are not in linux-next.
+
+Best regards,
+Krzysztof
+
 
