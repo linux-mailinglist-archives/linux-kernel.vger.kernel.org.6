@@ -1,201 +1,488 @@
-Return-Path: <linux-kernel+bounces-227479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A749151CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:16:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1A09151C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 388A928886D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:16:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B8311C209CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FD019CD04;
-	Mon, 24 Jun 2024 15:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1F419D068;
+	Mon, 24 Jun 2024 15:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="Lx0qfk5d"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="RH1qf/pO"
+Received: from mx0b-00128a01.pphosted.com (mx0b-00128a01.pphosted.com [148.163.139.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43001E868
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242096; cv=none; b=ZVkkldiwOT0VlzFSigRj1R7nmdR5ItOj9kGr3px7Phrcw5zBk9Z6KulsRNvP8J360bN+TDL2TGzNm+4bmRw9BRztZOh6z78ZgvJjs2jVKHqgNfaNaU3YowArBCSkDCVX5SGzYwic6Md1wYJN3Q3Fj5goDzyn1/xZcTKPXGVLDQE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242096; c=relaxed/simple;
-	bh=CuoOy1ii1cHDC1oCyNcHei++Uj4ZOjlT1SkHcX68MEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OoUTwxedi5PlfJxWvNszAbjynWdcxBxYRj4TMfB1M+E773EsKzFFdAL0BD5T1a8adRPgpQVqFcdPkHG0wKeWM8fcPIEAh8Uj8YDWOXwW2NibR2/1IkZX87Khoyxz4OowMBEfB/R06yV9Ei7G+fiAhUg82wpCpg6M+r9l8jNLzL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=Lx0qfk5d; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0148664.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OC04tP006223;
-	Mon, 24 Jun 2024 15:13:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pps0720; bh=UVoVfLIQz0S/jfoT/mip77x
-	/qe57T1fnytTchil6afs=; b=Lx0qfk5dM/n83TkOEZldZxrYvHBcG/n00QTbI58
-	ag2YqpALRB8pgbLwBbGkssS3vkI0AFmOOE7jiGrSl+1OFQc2ttgi8gjKv2xPkrKE
-	CHREU4DvowP1iUZTROo7GktQR42Cuk6rvrXqhnQetv0XvY1vS2+q0COzQZnHierA
-	2XX07mZGvvE2OLjP3NsOGzU9/BfQmb5hds/yypVbZS449oqv2RwlxRW6rp1n5tuG
-	ByKoUYJgLVhV9WD7xCKLEfQIuwwZOfRPOOI4WcPS7S+qJ9BsNfG4EyfA51oxi9ss
-	hqR4UoR4Q+whykF9PkPHLqNWtkzNHoS+cI/ovDrnY/0W0nA==
-Received: from p1lg14880.it.hpe.com ([16.230.97.201])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 3yy8dx1r0s-1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8CD19CCE0;
+	Mon, 24 Jun 2024 15:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.139.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719242059; cv=fail; b=WY9wjvwRGfiTsrPQWPtyGUvj6j19T0+5TQlNcDPNp5yVuSBXViK1ofP54g35KWbGZB1wPvppl38O3NJTkLPIsZ7j5vopbEjE6jjXJcEBz1hOk1xataJinksKNBePk5THdKrj+3o++Qrt5X9cgF5ZGDPtfFAwN7QLkKD+oWI6U4A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719242059; c=relaxed/simple;
+	bh=1PDZkPvADtpJgk/r7g7zEx/nBQKIfWKPn2UgBVLZOMw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BtxsdTKV+IfkPobMhDp7UQF6JAEhSbKxnIXsbmeyhKfFJE1ZrrFSf1j91S9j09uq9y0OSEheP5nDn881QYqovfOhlMJYROZMkjOAi/EWcJ342ilY6g/t9MkX5HwInNOIghOtznqcx/417m9dHGm79bF2OJsdExLqGIuDn55NL9Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=RH1qf/pO; arc=fail smtp.client-ip=148.163.139.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OF3Q9O003144;
+	Mon, 24 Jun 2024 11:14:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=SYpep
+	He6OGk4P9jtlYgCODE7+yiZRU40fiUJss8AIYk=; b=RH1qf/pO+ApKRV0OdZguN
+	gyogJntXQlSwTTdHmSrKZ9W0KRsxeaGaLw9hCYii0Vr1pCHHLw+ySkB7yQSFseF7
+	qyNV+XN3SyxlMKEWXXDQcTpBaoeAHn5YmfS7aTFhufyk1pBOnyK4BhpWuBoch9Oq
+	9AmOyvbG78JQv0HbGnQw7Lr3W/2obHv0XrZilMFTwsy4+ccBYs5hztI8MbK6hVir
+	61sexIXMCUJYtVz7fgrvF92OiiTnO6HxyqejMBpTMt4mDMM6Snz29mPEX7UMFPxH
+	oTHrqGQAjHD1dAT1RJqib1XHab858lnCtJ/hUa8Bzzo9hbe1DqmKv8lQE3uTk7s6
+	Q==
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2174.outbound.protection.outlook.com [104.47.58.174])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3ywu84x0bj-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 15:13:53 +0000 (GMT)
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id 09C1A8005F7;
-	Mon, 24 Jun 2024 15:13:52 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.36])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id E6CAD809741;
-	Mon, 24 Jun 2024 15:13:46 +0000 (UTC)
-Date: Mon, 24 Jun 2024 10:13:44 -0500
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ashish Kalra <ashish.kalra@amd.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org, Pavin Joseph <me@pavinjoseph.com>,
-        Eric Hagberg <ehagberg@gmail.com>, Simon Horman <horms@verge.net.au>,
-        Eric Biederman <ebiederm@xmission.com>, Dave Young <dyoung@redhat.com>,
-        Sarah Brofeldt <srhb@dbc.dk>, Russ Anderson <rja@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Hou Wenlong <houwenlong.hwl@antgroup.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-        Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <ZnmNKAE5qT48yhrI@swahl-home.5wahls.com>
-References: <20240520183633.1457687-1-steve.wahl@hpe.com>
- <20240613152826.GKZmsQGnO3OthLH3Vu@fat_crate.local>
- <ZmsbZCF9rFzuB3rO@swahl-home.5wahls.com>
- <20240616202533.GDZm9KPZtpDKw5aXWX@fat_crate.local>
- <ZnBR6MgS-jzjgA8A@swahl-home.5wahls.com>
- <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
+	Mon, 24 Jun 2024 11:14:01 -0400 (EDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OTQcl9E0VfsYkf0Kcv75pazqUlIGH5c21c7w8hhkes2mbGU8RG0o9hXuH4o1jzyTFlZzZNeVRtQhda35K4/2/xu0sN+6bQ/AJ4MBTrbTpVIijl/F2px3rsJLQ9VTOt1zmvuha5b576EtyzN6xYVK1RZ0l/BK65PKXzGMj72bDz4JO/ALeMPdWxYQYLgccVR8yOSDpilrATQmqd0lyNwY8lITMCGDzQ0KbnxotsXRiCmcrqMxh7nw/Ay/N9ACAm+cwSaHuIK+kuEiEHv8Dnl4bWhfPKo4xVrTgRAMhIrHyNwD/7+74a0RxrpgTS17Jw2nKPJYEX1lDlZrk4lGO9XQ+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SYpepHe6OGk4P9jtlYgCODE7+yiZRU40fiUJss8AIYk=;
+ b=RNkXCi7kpEowTy4w5SJdq47FVxZGqdhuse7sFKWGcw7bbdFlJFebwhlv7gcN67p+8d0avKCfZYBmoErkPrzrCL99Js4S9iPS5aMqVAWeqEZMVq/HWm4CMywHZ7LKlkUdk31avMoUAGrckJkZpx3pAJcsEzqJX6sSQMjYhJXvUDtJK+l75yC1mXtb92f5r5zPYmJKth8+t3+l3btJ1DYgDXC5WixljHOEHrIJOLnEz3Hx8g9wNdJag2mjF/mG0UdgSIOKjuarqcG9Y+HLlRYbRb7JSXwrzqVS0Rd6EtPR9H3ocZLINPRF6Xw9kxfN8Ug55C45xNY1aNdiUVq37bS+Fg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+Received: from PH0PR03MB7141.namprd03.prod.outlook.com (2603:10b6:510:296::20)
+ by CH0PR03MB6065.namprd03.prod.outlook.com (2603:10b6:610:bc::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.26; Mon, 24 Jun
+ 2024 15:13:56 +0000
+Received: from PH0PR03MB7141.namprd03.prod.outlook.com
+ ([fe80::c559:3d31:1af3:b01]) by PH0PR03MB7141.namprd03.prod.outlook.com
+ ([fe80::c559:3d31:1af3:b01%5]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 15:13:56 +0000
+From: "Paller, Kim Seer" <KimSeer.Paller@analog.com>
+To: Conor Dooley <conor@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        David Lechner <dlechner@baylibre.com>,
+        Lars-Peter Clausen
+	<lars@metafoo.de>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Dimitri Fedrau <dima.fedrau@gmail.com>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        =?iso-8859-1?Q?Nuno_S=E1?= <noname.nuno@gmail.com>
+Subject: RE: [PATCH v4 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
+Thread-Topic: [PATCH v4 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
+Thread-Index: AQHawhTjPN73V4dX9kiEjAqlsQvQP7HPX+QAgAepP/A=
+Date: Mon, 24 Jun 2024 15:13:56 +0000
+Message-ID: 
+ <PH0PR03MB7141FB5DFBCA46C727FA9605F9D42@PH0PR03MB7141.namprd03.prod.outlook.com>
+References: <20240619064904.73832-1-kimseer.paller@analog.com>
+ <20240619064904.73832-4-kimseer.paller@analog.com>
+ <20240619-left-usable-316cbe62468a@spud>
+In-Reply-To: <20240619-left-usable-316cbe62468a@spud>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: 
+ =?iso-8859-1?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNca3BhbGxlcj?=
+ =?iso-8859-1?Q?JcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZi?=
+ =?iso-8859-1?Q?ODRiYTI5ZTM1Ylxtc2dzXG1zZy01ZDg0Y2E1ZS0zMjNjLTExZWYtYWFmNS?=
+ =?iso-8859-1?Q?1mOGU0M2IzM2Q2NmVcYW1lLXRlc3RcNWQ4NGNhNjAtMzIzYy0xMWVmLWFh?=
+ =?iso-8859-1?Q?ZjUtZjhlNDNiMzNkNjZlYm9keS50eHQiIHN6PSIxNzI0NiIgdD0iMTMzNj?=
+ =?iso-8859-1?Q?M3MTU2MzM2NDI3Njk1IiBoPSJoWjNDazFUc1Z1aVlJaFlxcDhqamcwK0Fs?=
+ =?iso-8859-1?Q?SUU9IiBpZD0iIiBibD0iMCIgYm89IjEiIGNpPSJjQUFBQUVSSFUxUlNSVU?=
+ =?iso-8859-1?Q?ZOQ2dVQUFFb0NBQUN2NGprZ1NjYmFBZC9lTklIc1dkNmMzOTQwZ2V4WjNw?=
+ =?iso-8859-1?Q?d0RBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBSEFBQUFEYUFRQUFBQUFBQU?=
+ =?iso-8859-1?Q?FBQUFBQUFBQUFBQUFBQUFBRUFBUUFCQUFBQTNMaFNmZ0FBQUFBQUFBQUFB?=
+ =?iso-8859-1?Q?QUFBQUo0QUFBQmhBR1FBYVFCZkFITUFaUUJqQUhVQWNnQmxBRjhBY0FCeU?=
+ =?iso-8859-1?Q?FHOEFhZ0JsQUdNQWRBQnpBRjhBWmdCaEFHd0Fjd0JsQUY4QVpnQnZBSE1B?=
+ =?iso-8859-1?Q?YVFCMEFHa0FkZ0JsQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU?=
+ =?iso-8859-1?Q?FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?iso-8859-1?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFFQUFBQUFBQUFBQWdBQUFBQUFuZ0?=
+ =?iso-8859-1?Q?FBQUdFQVpBQnBBRjhBY3dCbEFHTUFkUUJ5QUdVQVh3QndBSElBYndCcUFH?=
+ =?iso-8859-1?Q?VUFZd0IwQUhNQVh3QjBBR2tBWlFCeUFERUFBQUFBQUFBQUFBQUFBQUFBQU?=
+ =?iso-8859-1?Q?FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?iso-8859-1?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU?=
+ =?iso-8859-1?Q?FBQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFBQUNBQUFBQUFDZUFBQUFZUUJr?=
+ =?iso-8859-1?Q?QUdrQVh3QnpBR1VBWXdCMUFISUFaUUJmQUhBQWNnQnZBR29BWlFCakFIUU?=
+ =?iso-8859-1?Q?Fjd0JmQUhRQWFRQmxBSElBTWdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?iso-8859-1?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQU?=
+ =?iso-8859-1?Q?FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?iso-8859-1?Q?QUFBQUFBQUFBQkFBQUFBQUFBQUFJQUFBQUFBQT09Ii8+PC9tZXRhPg=3D?=
+ =?iso-8859-1?Q?=3D?=
+x-dg-rorf: true
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR03MB7141:EE_|CH0PR03MB6065:EE_
+x-ms-office365-filtering-correlation-id: 41f13b6b-b1dc-4799-b98b-08dc94604460
+x-ld-processed: eaa689b4-8f87-40e0-9c6f-7228de4d754a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230037|1800799021|376011|7416011|366013|38070700015;
+x-microsoft-antispam-message-info: 
+ =?iso-8859-1?Q?m1ApqlZULzR7byvzactnngaoja14cnoySWMzHNxkoeLx3aeroJERYwo6m+?=
+ =?iso-8859-1?Q?zkN9OqMqk/ACutwVVn2Td+f1Nb+p+AWCjWw04+mGnoPgIJr462zHbxuyWP?=
+ =?iso-8859-1?Q?3eFOmJkencpbThy75OAUqk3vB9lvSKST5r35de541N1kb8y4ULwcvgoR91?=
+ =?iso-8859-1?Q?OPgoqBFOl5BpUOAntW3rO3mLu8v/N9DPLSKrO6/G7Pweny3KKBK3Z6020b?=
+ =?iso-8859-1?Q?MrnEL3Rci5w69uqRCURrjqoQKFh5sNDTHI1hrUE4Rh/YT22m+kwdcOGK8r?=
+ =?iso-8859-1?Q?Dj6rhXmfxQ0EvccoqZ2TMLiwmWF5r7JUe/p2TMmEwjJRZjGHFZ6IQ/GXYy?=
+ =?iso-8859-1?Q?9lt+5FJFYxUG4rADb/54sUiYxfmKxyyTPJdxcWnr/JCvMoCS7Pr76+3C/2?=
+ =?iso-8859-1?Q?rluPL0H2K+K4HVX3KYSGo6NwAQPW9am19+J5ZKS22awnR2IM+jXK/mdaVh?=
+ =?iso-8859-1?Q?NlzP8AhNfsA1NPxTTTLomhggTzzwGPdsR7dopWQuFfSP99nFLC6S9dX8Lg?=
+ =?iso-8859-1?Q?Tw5UZLL0qW2oCfZMAjHRyWdahKRCC50psWg/4rqz4+37aPBswqQZufY5S3?=
+ =?iso-8859-1?Q?RRtBZnFAfYodtqHDZgDl5YRCTifZ4S5slLajBRE8Ts+wa3rIRvPnqsy8tX?=
+ =?iso-8859-1?Q?G3O7/8bYetl+1QCEv8Uo16Ebcc/fqaDmijZX+PdsFDY1jYZKXslSj7J4cL?=
+ =?iso-8859-1?Q?tTNb/P3wUs2tEMJgmAQ3yptclHHG6ehIC0MKfZf11LxMlVD/2l/YipeW76?=
+ =?iso-8859-1?Q?E4obl+RwcYxOxdota2Y62AuFFYbSv91vECV1tXv3Uvusens8oR7PmZ/RVw?=
+ =?iso-8859-1?Q?s9zLYtH+Wn2QTOjDhTEd9kZ/QH275IgeAb0ZfNXsBG5YAtmQyuYgogFY/4?=
+ =?iso-8859-1?Q?1zS8+1jBsVpinlLorOEWQ1+Q9pBR1hyd6HN7pGawGM2AO0gP6phv1ncPLj?=
+ =?iso-8859-1?Q?SlQVmgebeg5027EcCoIFpmfdeXaw+SuIkhsBuRK4NNrAVKV7tzkAeHsVUF?=
+ =?iso-8859-1?Q?VRMccBCzOGJW4xqNx/n0Avr+VAYedPBb2u80/uQ4uFn4Xca3MozvFQHmfO?=
+ =?iso-8859-1?Q?QjtG64doeoZSGsSWlqRXjofSE99v+Aw0fmBygg8KeL0XhJW1W8MFGop4Cc?=
+ =?iso-8859-1?Q?3bFoiSYLaWHR9LzoxiR746mq3ZEgInVJ68Djcz0bglwr4wLgwt+wAUc35W?=
+ =?iso-8859-1?Q?n3U2Lt+L1A8u4vGha2CGflWONLq7iKT9prs7bqhVeYmOAxVSqaTQaWrBMA?=
+ =?iso-8859-1?Q?vGlLXC+5XUL9tW44ntFpLN3oHDMbceYyyRPxvgYjbl4I84rpbqkg6XhKa8?=
+ =?iso-8859-1?Q?4N7JQWoTNiGqIumDpCCarchI6ax6bLo04jghXCyemXW3N1Gristz0tyG1t?=
+ =?iso-8859-1?Q?HUJ3SrZPyw?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB7141.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(7416011)(366013)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-8859-1?Q?rVUz2ywKZfRWSHOoSQd77PKtGx3Ecp2WvpfCSCUCAFfx4NSKXhoy1OK9CU?=
+ =?iso-8859-1?Q?MthjpfpOp5PtyGum99eeqjy05asgJdnqhj67yqQ7tO/OVGJ2nVJ0UmQx4v?=
+ =?iso-8859-1?Q?OrU6i+ZEthgl5p87PdLyoYRrvyziVRf1/8YSsp0yjaShUFxmTaBQ3JNF4f?=
+ =?iso-8859-1?Q?HKr6eL51ze/Sqs3ZzN8QEtzDE+eClV4P0UAXEG7rQwm/52B6Ac4cnlojRD?=
+ =?iso-8859-1?Q?mwo+X4JrNrRFMuAmNfFq6E7sS7ogfTr0Gpx7DYazUZMYeTwaX+gFjUpP9B?=
+ =?iso-8859-1?Q?+3sBGEZg6y1/yFqlygVqMiegZgivICMY5TUhRi+3ZFgbkSKelBAL69IDQD?=
+ =?iso-8859-1?Q?d71KkrqdvyCyajGhIndsCSmTp8De5i0zKJPK/Q1/yhA926Lq37s8bdjc7C?=
+ =?iso-8859-1?Q?OoFCGlnLTSriYg35eMihpYo7VC1iLG6ROskb97RpRxZ5Ey11wGZbLhAZTk?=
+ =?iso-8859-1?Q?lXjA5OyYMWlBN/sbUgpEsX8FOaKgfvswFXGEcPxpcMLD0xdAxLAWBFiE5c?=
+ =?iso-8859-1?Q?4iqahTq/H7m3cyup6clC2rf92sMPX+j0QCd5kGc0MmZg4j2tOUsm+55Hw/?=
+ =?iso-8859-1?Q?k4hAvqf5sjBiBbmDIJlAY3YjpOALMtqxx1fYswmm40hiBBojQHtPT/FuBM?=
+ =?iso-8859-1?Q?IBP5tLe2XLA83U75XwfBtghsEdjSwW6yALcgysw7oRRowYMh8MnN+Zu5IQ?=
+ =?iso-8859-1?Q?ifqHNyshxvvw6nUwhIkQeKihj16v1cYznEyobtLYKQx8ceayfa9Fk49uKW?=
+ =?iso-8859-1?Q?u71qtAyi+5AaMKO9ICm8A4nxc94NXHL5+b8Wm8ENPEIx90Anwyfi76ORVJ?=
+ =?iso-8859-1?Q?QwX2UqrcNmTeWA2FwtCQtpKkBdLbkRo9RGt4YIVctOthzKkyKUUbc0V69l?=
+ =?iso-8859-1?Q?AWoqV1eJnNnMy7Id3dXCvhkRGzugVL/4ZFoP1ZH1nzWA0J1G+FjnDSH+Fj?=
+ =?iso-8859-1?Q?jzPHyTXdCnyP6wRneL3CjbOnVzUh5fAtowZSaIY11PbtlLHDLtWV0HSSQ5?=
+ =?iso-8859-1?Q?WP4GmfYV/EYBZVxduPLVQoAoU1NkdZgeZqC9Y/I5GNPzbKVytD3knBWznJ?=
+ =?iso-8859-1?Q?kzTUUwHi7TGcCunsbzZRtkfw0EPByFQFQvOk+3HgW4T41jvUKqSl0XXJE/?=
+ =?iso-8859-1?Q?mY6bXq6i/5zIUERqrXkE1+p+Y4q44POm6ozNkD0A1TNm3QYhHvKh3soR+o?=
+ =?iso-8859-1?Q?zD4VZL3h1Q0qJn9/3DjX/4Ji5FgCwCvkCRr82ufQ29qDqd6K70GIDjRXD3?=
+ =?iso-8859-1?Q?XUz7ms+2eTV5D9OvB2Nt7fEKY87gKrGATaEltScMDCFR5Y+e7qfKJYl7Pz?=
+ =?iso-8859-1?Q?5XMgewJvmK9XehidfMRnHNJDNLSQa0OTpAWqW4IkGa9Lzw64kp9GYEw/pH?=
+ =?iso-8859-1?Q?Ae8sIRwapghzGGVj+NvH9OjtFVUxzYzfPV8RAO1prjpECmVttz3GzThJ1o?=
+ =?iso-8859-1?Q?hdNEExJ9+fQkVt4JqLCJmLtMCCiqwLBuQnjQOtW9b3n7oqoxO1QKhscoXR?=
+ =?iso-8859-1?Q?oTN2udWcWk7dL+4u376lbTtrQomwZgZpbf8GnL4CgEKihCKFMBsxlOyQbb?=
+ =?iso-8859-1?Q?sylEpOFhJ3FNJqVWplMLZPdzkSKv/V9A3brbiIkeaQ0r3hnibEdD4Ps0kj?=
+ =?iso-8859-1?Q?OxcTVL7YXQL+CuafvHwR0fFelHSENf9Xii?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621131742.GEZnV9dn_0XVH0IZ58@fat_crate.local>
-X-Proofpoint-GUID: oZMXOPHJ_L6TAGeX3kEnaIwDz8inBnsP
-X-Proofpoint-ORIG-GUID: oZMXOPHJ_L6TAGeX3kEnaIwDz8inBnsP
-X-HPE-SCL: -1
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB7141.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41f13b6b-b1dc-4799-b98b-08dc94604460
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2024 15:13:56.4409
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JvGGL+Nna3xMqZQ8Un9euZJRP4tM4cVCTAocwqvZk4xT3Hl0W9HZRTL4NI+YGresAmQu+1SALqehixi0HbLHf9+t1L9+f3I2skPIrWt4Qc8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR03MB6065
+X-Proofpoint-GUID: 7VWwzDrg2yymq7RAER0KUewuLMJl13cy
+X-Proofpoint-ORIG-GUID: 7VWwzDrg2yymq7RAER0KUewuLMJl13cy
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-24_11,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 mlxscore=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 phishscore=0 adultscore=0 malwarescore=0 spamscore=0
- impostorscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ phishscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.19.0-2406140001 definitions=main-2406240122
 
-On Fri, Jun 21, 2024 at 03:17:42PM +0200, Borislav Petkov wrote:
-> On Mon, Jun 17, 2024 at 10:10:32AM -0500, Steve Wahl wrote:
-> > The first, hardest step is locate a system that is AMD based, SEV
-> > capable, with a BIOS that chooses to locate the CC_BLOB at addresses
-> > that do not share a 2M page with other chunks of memory the kernel
-> > currently adds to the kexec identity map. I.e. This is a stroke of
-> > luck,
-> 
-> Ya think?
-> 
-> It is more likely that I win the lottery than finding such a beast. ;-\
 
-Yes, that is the impression I was trying to impart!  :-)
 
-> > and for all I know could depend on configuration such as memory
-> > size in addition to motherboard and BIOS version.  However, it does
-> > not seem to change from boot to boot; as system that has the problem
-> > seems to be consistent about it.
-> > 
-> > Second, boot linux including the "nogbpages" command line option.
-> > 
-> > Third, kexec -l <kernel image> --append=<command line options>
-> > --initrd=<initrd>.
-> > 
-> > Fourth, kexec -e.
-> > 
-> > Systems that have this problem successfully kexec without the
-> > "nogbpages" parameter, but fail and do a full reboot with the
-> > "nogbpages" parameter.  
-> > 
-> > I wish I could be more exact,
-> 
-> Yes, this doesn't really explain what the culprit is.
-> 
-> So, your 0th message says:
-> 
-> "But the community chose instead to avoid referencing this memory on
-> non-AMD systems where the problem was reported.
-> 
->     commit bee6cf1a80b5 ("x86/sev: Do not try to parse for the CC blob
->                           on non-AMD hardware")"
-> 
-> But that patch fixes !AMD systems.
-> 
-> Now you're basically saying that there are some AMD machines out there where
-> the EFI config table doesn't get mapped because it is somewhere else, outside
-> of the range of a 2M page or 1G page.
+> -----Original Message-----
+> From: Conor Dooley <conor@kernel.org>
+> Sent: Thursday, June 20, 2024 1:57 AM
+> To: Paller, Kim Seer <KimSeer.Paller@analog.com>
+> Cc: linux-kernel@vger.kernel.org; linux-iio@vger.kernel.org;
+> devicetree@vger.kernel.org; Jonathan Cameron <jic23@kernel.org>; David
+> Lechner <dlechner@baylibre.com>; Lars-Peter Clausen <lars@metafoo.de>;
+> Liam Girdwood <lgirdwood@gmail.com>; Mark Brown <broonie@kernel.org>;
+> Dimitri Fedrau <dima.fedrau@gmail.com>; Krzysztof Kozlowski
+> <krzk+dt@kernel.org>; Rob Herring <robh@kernel.org>; Conor Dooley
+> <conor+dt@kernel.org>; Hennerich, Michael
+> <Michael.Hennerich@analog.com>; Nuno S=E1 <noname.nuno@gmail.com>
+> Subject: Re: [PATCH v4 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
+>=20
+> [External]
+>=20
+> On Wed, Jun 19, 2024 at 02:49:02PM +0800, Kim Seer Paller wrote:
+> > Add documentation for ltc2664.
+> >
+> > Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+> > Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> > Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> > ---
+> >  .../bindings/iio/dac/adi,ltc2664.yaml         | 167 ++++++++++++++++++
+> >  MAINTAINERS                                   |   8 +
+> >  2 files changed, 175 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> > b/Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> > new file mode 100644
+> > index 000000000000..be37700e3b1f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> > @@ -0,0 +1,167 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/dac/adi,ltc2664.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Analog Devices LTC2664 DAC
+> > +
+> > +maintainers:
+> > +  - Michael Hennerich <michael.hennerich@analog.com>
+> > +  - Kim Seer Paller <kimseer.paller@analog.com>
+> > +
+> > +description: |
+> > +  Analog Devices LTC2664 4 channel, 12-/16-Bit, +-10V DAC
+> > +
+> > +https://www.analog.com/media/en/technical-documentation/data-sheets/2
+> > +664fa.pdf
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - adi,ltc2664
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  spi-max-frequency:
+> > +    maximum: 50000000
+> > +
+> > +  vcc-supply:
+> > +    description: Analog Supply Voltage Input.
+> > +
+> > +  v-pos-supply:
+> > +    description: Positive Supply Voltage Input.
+> > +
+> > +  v-neg-supply:
+> > +    description: Negative Supply Voltage Input.
+> > +
+> > +  iovcc-supply:
+> > +    description: Digital Input/Output Supply Voltage.
+> > +
+> > +  ref-supply:
+> > +    description:
+> > +      Reference Input/Output. The voltage at the REF pin sets the full=
+-scale
+> > +      range of all channels. If not provided the internal reference is=
+ used and
+> > +      also provided on the VREF pin.
+> > +
+> > +  reset-gpios:
+> > +    description:
+> > +      Active-low Asynchronous Clear Input. A logic low at this level-t=
+riggered
+> > +      input clears the part to the reset code and range determined by =
+the
+> > +      hardwired option chosen using the MSPAN pins. The control regist=
+ers are
+> > +      cleared to zero.
+> > +    maxItems: 1
+> > +
+> > +  adi,manual-span-operation-config:
+> > +    description:
+> > +      This property must mimic the MSPAN pin configurations. By tying =
+the
+> MSPAN
+> > +      pins (MSP2, MSP1 and MSP0) to GND and/or VCC, any output range c=
+an
+> be
+> > +      hardware-configured with different mid-scale or zero-scale reset=
+ options.
+> > +      The hardware configuration is latched during power on reset for =
+proper
+> > +      operation.
+> > +        0 - MPS2=3DGND, MPS1=3DGND, MSP0=3DGND (+-10V, reset to 0V)
+> > +        1 - MPS2=3DGND, MPS1=3DGND, MSP0=3DVCC (+-5V, reset to 0V)
+> > +        2 - MPS2=3DGND, MPS1=3DVCC, MSP0=3DGND (+-2.5V, reset to 0V)
+> > +        3 - MPS2=3DGND, MPS1=3DVCC, MSP0=3DVCC (0V to 10, reset to 0V)
+> > +        4 - MPS2=3DVCC, MPS1=3DGND, MSP0=3DGND (0V to 10V, reset to 5V=
+)
+> > +        5 - MPS2=3DVCC, MPS1=3DGND, MSP0=3DVCC (0V to 5V, reset to 0V)
+> > +        6 - MPS2=3DVCC, MPS1=3DVCC, MSP0=3DGND (0V to 5V, reset to 2.5=
+V)
+> > +        7 - MPS2=3DVCC, MPS1=3DVCC, MSP0=3DVCC (0V to 5V, reset to 0V,=
+ enables
+> SoftSpan)
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    enum: [0, 1, 2, 3, 4, 5, 6, 7]
+>=20
+> Can you explain why this property is required, when below there's one tha=
+t sets
+> the ranges in microvolts? Isn't the only new information that this provid=
+es the
+> reset values (in a few cases that it is not 0).
+> What am I missing?
 
-I haven't heard of one where using 1G pages doesn't include this EFI
-table.  But if you switch to 2M pages using "nogbpages", that's when
-you get into trouble.
+For specifying output range and reset options without relying on software i=
+nitialization
+routines, and also for enabling the softspan feature, I think this property=
+ seems essential.
 
-(Also trouble if you switch to using some 2M pages using patch #3,
-which is the point of the series.)
-
-> Or even if it is, "nogbpages" supplied on the cmdline would cause the
-> "overlapping 2M and 1G mapping to not happen, leaving the EFI config table
-> unmapped.
-
-I think so.  The EFI config table is being included by luck, not
-explicitly; "nogbpages" switches to using 2M pages only, greatly
-reducing the range of addresses unintentionally included in the map.
-So the EFI config table doesn't end up mapped.
-
-> Am I on the right track here?
-
-I believe so.
-
-Patch #3's intent is/was to reduce the amount of space unintentionally
-included in the identity map, to avoid speculation into areas that
-cause system halts on HPE's UV hardware.  It does so by using 1G pages
-for large areas and 2M pages for smaller areas.  It should have worked
-for systems in general, without being specific to UV, but when it got
-into the mainline kernel, it was found to cause a regression on these
-AMD systems, and was reverted.
-
-The regression turned out to be the EFI config table not being mapped.
-
-Patch #1 fixes this problem for the EFI config table, and patch #2
-fixes it for the CC BLOB that is also likely accessed.
-
-These accesses are a problem because they happen prior to establishing
-the page fault interrupt handler that would mend the identity map.  I
-know very little about the AMD SEV feature but reading the code I
-think it may be required to do this before setting up that handler.
-
-Thanks,
-
---> Steve
-
--- 
-Steve Wahl, Hewlett Packard Enterprise
-
+> > +    default: 7
+> > +
+> > +  io-channels:
+> > +    description:
+> > +      ADC channel to monitor voltages and temperature at the MUXOUT pi=
+n.
+> > +    maxItems: 1
+> > +
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 0
+> > +
+> > +patternProperties:
+> > +  "^channel@[0-3]$":
+> > +    type: object
+> > +    additionalProperties: false
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description: The channel number representing the DAC output ch=
+annel.
+> > +        maximum: 3
+> > +
+> > +      adi,toggle-mode:
+> > +        description:
+> > +          Set the channel as a toggle enabled channel. Toggle operatio=
+n enables
+> > +          fast switching of a DAC output between two different DAC cod=
+es
+> without
+> > +          any SPI transaction.
+> > +        type: boolean
+> > +
+> > +      adi,output-range-microvolt:
+> > +        description: Specify the channel output full scale range.
+> > +        oneOf:
+> > +          - items:
+> > +              - const: 0
+> > +              - enum: [5000000, 10000000]
+> > +          - items:
+> > +              - const: -5000000
+> > +              - const: 5000000
+> > +          - items:
+> > +              - const: -10000000
+> > +              - const: 10000000
+> > +          - items:
+> > +              - const: -2500000
+> > +              - const: 2500000
+> > +
+> > +    required:
+> > +      - reg
+> > +      - adi,output-range-microvolt
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - spi-max-frequency
+> > +  - vcc-supply
+> > +  - iovcc-supply
+> > +  - v-pos-supply
+> > +  - v-neg-supply
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    spi {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +        dac@0 {
+> > +            compatible =3D "adi,ltc2664";
+> > +            reg =3D <0>;
+> > +            spi-max-frequency =3D <10000000>;
+> > +
+> > +            vcc-supply =3D <&vcc>;
+> > +            iovcc-supply =3D <&vcc>;
+> > +            ref-supply =3D <&vref>;
+> > +            v-pos-supply =3D <&vpos>;
+> > +            v-neg-supply =3D <&vneg>;
+> > +
+> > +            io-channels =3D <&adc 0>;
+> > +
+> > +            #address-cells =3D <1>;
+> > +            #size-cells =3D <0>;
+> > +            channel@0 {
+> > +                    reg =3D <0>;
+> > +                    adi,toggle-mode;
+> > +                    adi,output-range-microvolt =3D <(-10000000) 100000=
+00>;
+> > +            };
+> > +
+> > +            channel@1 {
+> > +                    reg =3D <1>;
+> > +                    adi,output-range-microvolt =3D <0 10000000>;
+> > +            };
+> > +        };
+> > +    };
+> > +...
+> > diff --git a/MAINTAINERS b/MAINTAINERS index
+> > be590c462d91..849800d9cbf7 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -13074,6 +13074,14 @@ S:	Maintained
+> >  F:	Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+> >  F:	drivers/iio/dac/ltc1660.c
+> >
+> > +LTC2664 IIO DAC DRIVER
+> > +M:	Michael Hennerich <michael.hennerich@analog.com>
+> > +M:	Kim Seer Paller <kimseer.paller@analog.com>
+> > +L:	linux-iio@vger.kernel.org
+> > +S:	Supported
+> > +W:	https://ez.analog.com/linux-software-drivers
+> > +F:	Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> > +
+> >  LTC2688 IIO DAC DRIVER
+> >  M:	Nuno S=E1 <nuno.sa@analog.com>
+> >  L:	linux-iio@vger.kernel.org
+> > --
+> > 2.34.1
+> >
 
