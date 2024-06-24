@@ -1,110 +1,122 @@
-Return-Path: <linux-kernel+bounces-226656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF939141C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:05:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1199141C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083D3280E09
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:05:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BF801C22E3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31B617BCA;
-	Mon, 24 Jun 2024 05:04:52 +0000 (UTC)
-Received: from smtp.cecloud.com (unknown [1.203.97.240])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62B7179A7
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9CB18B09;
+	Mon, 24 Jun 2024 05:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LH2Ra4VX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B3618039;
+	Mon, 24 Jun 2024 05:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719205492; cv=none; b=B+UALowGAqPCvbojI2dNkPq+8JGjSK9pLn74vIzXQhwUac5ng78PcpJQLgsqV/Ky7deVTYbPcnDFm2cJKbbBVdpGmJknZczNOQWEMOb+9qUl69STmnl3+0ffJeCrThWrkEarFQ244wnm218beYPeQDQukoIgbhTxuwEbuSwlYVs=
+	t=1719205518; cv=none; b=bsVdQu1MFqCPM03YqOVTyrtbB+L40hMFcaoCm3GamFa4dVgXe4+jIuoaiRDzmv2G76TP9MYyN1Cgh1kD7Eh2TEkU13ZDe4NJioSVK3cSw1mQ1OTzPCJKSrvIMDebIH1A/uDsMZDrz8Ll1UdlophI1NbyL5ynbfD/xcGvlYgqLA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719205492; c=relaxed/simple;
-	bh=hu+GpDY/IU7PqdgB+K4XcFL1q/q3jNHapXpDur+yJp8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h7KYAUIhLG0CHGG0S83xTXkTEFcI+Xk+Dbxfl2AAE8vqipHFn/5wy9mUu2gBUH6OO2j4khINoZMobCxVn5otUiN5yddfBzBnL55IJaxGf/RjhiExFmUxAqAafrK2b6aVSYtBda2eayeR1fAdwsa0oa7z4OLtCVPBUgGdiIZ86E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id 21206900112;
-	Mon, 24 Jun 2024 13:04:40 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-SKE-CHECKED:1
-X-ANTISPAM-LEVEL:2
-Received: from localhost.localdomain (117.240.211.222.broad.my.sc.dynamic.163data.com.cn [222.211.240.117])
-	by smtp.cecloud.com (postfix) whith ESMTP id P1340310T281473348858224S1719205479165669_;
-	Mon, 24 Jun 2024 13:04:39 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:liuwei09@cestc.cn
-X-SENDER:liuwei09@cestc.cn
-X-LOGIN-NAME:liuwei09@cestc.cn
-X-FST-TO:andrew@lunn.ch
-X-RCPT-COUNT:7
-X-LOCAL-RCPT-COUNT:1
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:222.211.240.117
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<e6051a2db4a8e4fe2bcdcfef502cae8f>
-X-System-Flag:0
-From: Liu Wei <liuwei09@cestc.cn>
-To: andrew@lunn.ch,
-	Liu Wei <liuwei09@cestc.cn>
-Cc: catalin.marinas@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	prarit@redhat.com,
-	will@kernel.org
-Subject: Re: [PATCH V3] ACPI: Add acpi=nospcr to disable ACPI SPCR as default console on arm64
-Date: Mon, 24 Jun 2024 13:04:04 +0800
-Message-ID: <20240624050404.84512-1-liuwei09@cestc.cn>
-X-Mailer: git-send-email 2.42.1
-In-Reply-To: <f706cb73-4219-47fb-a075-e591502be7c2@lunn.ch>
-References: <f706cb73-4219-47fb-a075-e591502be7c2@lunn.ch>
+	s=arc-20240116; t=1719205518; c=relaxed/simple;
+	bh=VDea9JZ/VnAkeiodG4ZUOo+AIKC6dTvRIqSwpoH2Yf0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TXdwNjBGczg2/jHtQ3I15Wya/J63A7v4puTDZbLBOhEPCszfIS78dMRwkBU9BH0wyX2uoySERWTYFeoI8bRA40ugBvfuNG0dzttaOKtjvFLWM14IhIE8XUADVXsdH4lOjlwSislx7G1P1PEqAXvaNIVye2JcSDO6ApYJ3sayXOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LH2Ra4VX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NMvdjR002875;
+	Mon, 24 Jun 2024 05:05:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=VDea9JZ/VnAkeiodG4ZUOo+A
+	IKC6dTvRIqSwpoH2Yf0=; b=LH2Ra4VXAU89VyZUh/qxDxt9MK/mOOI1SX1OSn3/
+	3YeRFxj7FdJttGI4EeS76ITi/vj3Gn6v3Dc4dXFL3ewsb1HOmo2nHhRWHYbRHmFm
+	vqmziq8eGnyOtyGt8exyK/cG7DD7HknwnZH+chhaGtNn/Q8dl+tu/L1DCMW4Jp5L
+	kDpAvMX6tpLbixEYGh7w/uWBRmpxSwO97JpwcWUpPt+CeBnkOrsDXaP9cdepWp+y
+	I5mimvi8RNTMZo8wL1pbBQ+arsTnlvF8HmBlg45Hit9vmKpFnxSdH/TKEVPHQsuO
+	3Jfx6kE7TRoL+Ufddq6u8wbwijH0daXmnj6N3LR+lQgxYg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqshjp57-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 05:05:06 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45O552vr021314
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 05:05:03 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 23 Jun 2024 22:04:56 -0700
+Date: Mon, 24 Jun 2024 10:34:52 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <quic_rjendra@quicinc.com>, <luca@z3ntu.xyz>, <abel.vesa@linaro.org>,
+        <quic_rohiagar@quicinc.com>, <danila@jiaxyga.com>,
+        <otto.pflueger@abscue.de>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        Praveenkumar I <quic_ipkumar@quicinc.com>
+Subject: Re: [PATCH v1 3/7] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+Message-ID: <Znj+dLEefZWOWqx+@hu-varada-blr.qualcomm.com>
+References: <20240620081427.2860066-1-quic_varada@quicinc.com>
+ <20240620081427.2860066-4-quic_varada@quicinc.com>
+ <jfh2xygjdoapkno2jrt6w7thlylgyp2tk7oaczundhxvi26qel@ahtskgn4v6sp>
+ <ZnUsFwQyc7JRTXl/@hu-varada-blr.qualcomm.com>
+ <jqptvxu4ovvau3aqunfegtr34w5ynk3jjjza2iebhhkzyeuuib@bzvwscd57hoz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <jqptvxu4ovvau3aqunfegtr34w5ynk3jjjza2iebhhkzyeuuib@bzvwscd57hoz>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: MapNJ4gECFMKMJlsmZz6iLeE-UwjeooU
+X-Proofpoint-GUID: MapNJ4gECFMKMJlsmZz6iLeE-UwjeooU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_04,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 impostorscore=0 mlxlogscore=571 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406240038
 
-From: Andrew Lunn <andrew@lunn.ch>
+On Fri, Jun 21, 2024 at 11:55:10PM +0300, Dmitry Baryshkov wrote:
+> On Fri, Jun 21, 2024 at 01:00:31PM GMT, Varadarajan Narayanan wrote:
+> > On Thu, Jun 20, 2024 at 06:09:51PM +0300, Dmitry Baryshkov wrote:
+> > > On Thu, Jun 20, 2024 at 01:44:23PM GMT, Varadarajan Narayanan wrote:
+> > > > Add the APC power domain definitions used in IPQ9574.
+> > > >
+> > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > >
+> > > The order of the S-o-B's is wrong. Who is the actual author of the
+> > > patch?
+> >
+> > Praveenkumar I <quic_ipkumar@quicinc.com> is the actual author.
+>
+> So the order of the tags in your patch is wrong.
 
-> On Sat, Jun 22, 2024 at 05:35:21PM +0800, Liu Wei wrote:
-> > For varying privacy and security reasons, sometimes we would like to
-> > completely silence the serial console, and only enable it when needed.
-> > 
-> > But there are many existing systems that depend on this console,
-> > so add acpi=nospcr for this situation.
-> 
-> Maybe it is just me, but i see nospcr and my brain expands it to "no
-> speaker". Adding to that, your commit message says "completely
-> silence"...
-> 
-> > +			nospcr -- disable ACPI SPCR as default console on ARM64
-> > +			For ARM64, ONLY "acpi=off", "acpi=on", "acpi=force" or
-> > +			"acpi=nospcr" are available
-> > +			For RISCV64, ONLY "acpi=off", "acpi=on" or "acpi=force"
-> > +			are available
-> 
-> How about putting the word 'serial' in here somewhere, just to give
-> users an additional clue you are not talking about a speaker, CTRL-G
-> etc.
+Have fixed this and other comments and posted v2.
+Please review.
 
-Thank you for your suggestion. 
-
-You mean acpi=nospcr_serial or acpi=no_spcrserial? However, it appears 
-somewhat unconventional compared to the original acpi=* parameter.
-
-How about introducing a new one, such as acpi_no_spcr_serial or 
-acpi_no_spcr_console?
-
-Best wishes,
-Liu Wei
-
-> 	Andrew 
-
-
+Thanks
+Varada
 
