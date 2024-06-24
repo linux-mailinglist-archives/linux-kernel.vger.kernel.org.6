@@ -1,129 +1,118 @@
-Return-Path: <linux-kernel+bounces-227123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190169148A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:28:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604D69148A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82753B2248A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:28:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B5D1C22393
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BFE13A252;
-	Mon, 24 Jun 2024 11:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C7C13A3E3;
+	Mon, 24 Jun 2024 11:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Skk7pb8B"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WhbIIPsv"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED43613210F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE2C13210F;
+	Mon, 24 Jun 2024 11:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228512; cv=none; b=J+MrPgR61wX7Yto6sKQ+uHvrivXjCFsAC/tk/JeBu1ratVp5+jqPqjxVA/AEclIkHPwjFkTuxOCs8KIoC+hBCkYhYpZEYZVd83qkcpohnrbI957wKqxhijSMrIYLxOagxzFnpwCZ4zUcfdaYcW78Gfda8nRwER3bn56c23O5x4g=
+	t=1719228547; cv=none; b=NYwUWvlDlZrvL8MnMcQOZMSNT+UDmRwtIQY3rRCOp5BmeNP2NQVJOgN9NL0ULNK64feaz3ETerdqSTf7ty0fT0Js6ugWG7bYZkTMbTtcgkT8guNtM3oFJqO92mRkhx7IIp5i2czEsq39ohWT1y58iFjWbUabfqyqVV/9TJeK6fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719228512; c=relaxed/simple;
-	bh=NYND7VdilAAcK8UQ6tNb4wM6mWC/LRp6HLGpJAraXLA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BlBfOHcWDCclBHvrFm2Ram4EK8H59Vy02y9RJQFBISnTfgMKaWsj0ogK9U1C7CLgQ/BSLJhXFHoI4ryAJGW/rlHhoGSBc2W4BvNDggt8t8epuJ42rtqLXJj+NhjG4R8mzMlKtm9pGwDk4lOXm0s8U+UBWsyScWxVc1aEGVOORwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Skk7pb8B; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5bfb24e338bso1674267eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:28:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719228510; x=1719833310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QteiONYM0/7wKm8o/iZbfkWsRu+IEcJCYcDxA/UWpZM=;
-        b=Skk7pb8B4pTG2wluyc+M3BEnjjfsc+cjoBKHYUgSt4mMKH8bSzkDEfLplA6wY7xiFv
-         gyXyAmNkJqM+Lb1EUY8iXv2TyuKvwMPucVhZ6wnLKqg9/QXQICkHXfxdmThoXJziHjMd
-         KhIrKs43ZDZEefLpo17/tzYlWXXbE7tU2P9pAusJMO1ElDxa6NIUiycheVX9zT6lVu+9
-         gw29awlOqAcBZ4wcMeNCR3ndK95g1lDWnidLW/EPguZrSZ3dTX8oJBJZWiV+hL3jv3o2
-         B5XVnfVVFkX3XisnDmr85HOkBWb5CubA0PjgbeODapqszdB6lHztFk6vhIqxZUkwl2sm
-         qJeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719228510; x=1719833310;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QteiONYM0/7wKm8o/iZbfkWsRu+IEcJCYcDxA/UWpZM=;
-        b=Oxo/pYRmrJ9vS9CICrHPSaJ7vOvkJ0BXC0u15Mv2BCRf5OCUJ5EBR1KttIncuUYSGC
-         ZX77KcDN7M8tfyc6wRfD+SIUjahU7XXGcSLWlmHmGQb0CgJ4vHz+0jMv0j21SM/MDy/8
-         m9BUcLDyARfImeU+KDlsP4fRC21UDrEkHsA1fFSunfLk1TIvPu7H1Xr+o/aHsk+GDlQB
-         q2oPsjofrGbMA8W/PtnDRQW2bBhOTW1ndIjjo8P5VS7S41pWSuw73mtdSemeHB9pZQE/
-         RUE3w2vh28dhBdgvDPoYqRSDMPGPP1dgMcTLpwipg6epLX+fyNFvgm6eGgwF1ZBmEvqR
-         FSJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCtpuNnaWOj4YV8gSrpOR2mvI4C6tInxfeKQTUb9GilPSlUFSbckQxnrQjb/FbOrpV1MsFtxCgnIPLsHeCv9p6QK7AWV0AIfa6MVky
-X-Gm-Message-State: AOJu0YwMZfRWgAUYRALRQkcMBx6jbj1eG3qHzBHUpPfvSl6eTSk9e1sC
-	FmAfjFDFxcqihyX4WxgKTgiINgvNEknvtgJOIVzhSJ05lkqSVMjvAwZes/NCLFn1vzI6yeQeUYz
-	YAJnAJ8f/5cJ2eW6CKKFaDTUS/Kx9R6qO+umPlQ==
-X-Google-Smtp-Source: AGHT+IFlNv2FZElqgVQlBk87lsFwbs9c65tZcdtCpO79u3aNcvuYkknMUcQr9mTDHrMDvpletr+cOs9nxhTCAnVSEb4=
-X-Received: by 2002:a05:6820:60f:b0:5c1:e83b:ee10 with SMTP id
- 006d021491bc7-5c1e83bef4amr2456768eaf.1.1719228509995; Mon, 24 Jun 2024
- 04:28:29 -0700 (PDT)
+	s=arc-20240116; t=1719228547; c=relaxed/simple;
+	bh=W+Od/xdu7fJvPbDjVdQXS0nEF6AudVWgglSNsQYl48E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=emHj7M1OEnxzz8qshUM7sClErH9SP0eGUvpnZ0i1lFrBGxpejCBo64y+U2XOStOpeOb+CMYTO8lk+zdi0Y087ef7NpMszD0dNCxhpSE8Qa1KMDBeSzazCslyZGQOWgLnPmSNThcAID8Q5iHNO5ARD5TKl8EJUEOy61h5g6txuLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WhbIIPsv; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719228535; x=1719833335; i=markus.elfring@web.de;
+	bh=W+Od/xdu7fJvPbDjVdQXS0nEF6AudVWgglSNsQYl48E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=WhbIIPsvyMMv3qLuzqEpCsXWNLd5MI0ScQSEiCrVQjZj/6vP4oxbqOqwsaULW1F4
+	 oVvXKLPtoxnz3auJSWfFOaQT2KORLn1fzUi9bNlSMqk7oOw/jWFixJzCxzrqlb1Kl
+	 Cr9olzyHR7GzwJ7BtbXgQ2kR4NQMAC3pRYte8dS8AsEtmyfQwoN6QkGSybEEUxbF6
+	 1tf2HhpZJVBPBpxTHV2TtwU865oMujVqYzdyWtQNiFq3eBM0SbgFvkCEUbvIcKfam
+	 tplSHPdMc/T0Kgs110ifAxUhz16i0MyzharVJa0/qFiE2zNHyZGbBAuWfezcnmDRa
+	 Zz8yYNW7IJedLZ2Wng==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3V26-1sMG6n1UVG-00BM6u; Mon, 24
+ Jun 2024 13:28:55 +0200
+Message-ID: <8d076c38-f5d0-477b-9b9b-bceee3e2fec4@web.de>
+Date: Mon, 24 Jun 2024 13:28:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org> <20240617-usb-phy-gs101-v3-5-b66de9ae7424@linaro.org>
-In-Reply-To: <20240617-usb-phy-gs101-v3-5-b66de9ae7424@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 24 Jun 2024 12:28:18 +0100
-Message-ID: <CADrjBPpESTiZBruqMsZuuY=GyAjcFEZSXGEceeDAVESd52jJZA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] phy: exynos5-usbdrd: convert Vbus supplies to regulator_bulk
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, kernel-team@android.com, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
+ places
+To: Chun-Yi Lee <jlee@suse.com>, linux-block@vger.kernel.org
+Cc: Chun-Yi Lee <joeyli.kernel@gmail.com>, stable@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Jens Axboe <axboe@kernel.dk>,
+ Justin Sanders <justin@coraid.com>, Kirill Korotaev <dev@openvz.org>,
+ Nicolai Stange <nstange@suse.com>, Pavel Emelianov <xemul@openvz.org>
+References: <20240624064418.27043-1-jlee@suse.com>
+ <e44297c0-f45a-4753-8316-c6b74190a440@web.de>
+ <20240624110449.GJ7611@linux-l9pv.suse>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240624110449.GJ7611@linux-l9pv.suse>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HgMl98ZoBQNlDKB/XPSzWGvOEv0sndZjLM1zLv9laQtbhwF2ecC
+ qlxYvUFiA/+esJhvnQ8lDPwdifKhIcN/eUIG27USNsOgzWHhfAUbgVFkBWds6w0M9zcrkmC
+ gzooqU/tFCq7r992xylVa0Hz4HotSMKgGQNhYtu7XbRPOtKQ5fs0vMifYvuTCqf6QrfMJOv
+ yeLLv5IRINmocNRxQdlCg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:F6TkXs+l3WI=;mDalcAG2+hF+DB8raCUqk5y8zSZ
+ mZFbHtSIFrrP2kUCoEGi2sZMfPjySolKROsHmU6SdGs9oLLts1+q0D3RYKmbMsycValwVSkp3
+ mM3O/DEyw2ffFETnXtP/G5QWC6kCt9OwQDiQ7v2WlZECtcLskY8bjZOI1eyiMreu7s1Us31Q4
+ pzN4DbNUFt9FApfHfB3/JxZUfElfN5h5i9DbcuOU/cNjM/lyrO0Ku7WWzAuortuLUCmZLEAa/
+ gaD23g3lt0tMP4XFOD7HVF0F9XRlFN25fe+hQ8R9lMcSFDKGGubmtupgf9qqlOaZOFdzncJ0Q
+ POjeergBkV6fPcPXAZWb9ZZM1VRYrKwzgYarzZuU+O4sVA6mu+8pfFwChldLxVZU76svxKkoQ
+ O+OL8Cr/F0Hgl+ZTrI8WT7Cy+zxkZyB5E6T8+D5PttX3CE7UwUkDr4bB2MlBc+Z48RLBV898T
+ lztzBBiDqOHWv3tsgWLKH4y9EsLgLIi3WM8zDIwMc926bxLjvVg04UpNIedPndTjN2kh2cDzi
+ i1L27Fat1n+TnltvtLjdABO9Vr7cFwkUfRxzdMttM4vyC4BLPMsJvpk6EnoOUceLU+ZNxJVWm
+ O4XUJ3MPRHdBFrPCLnyx0/fpYP7pmGu1kqnYia53JndL0OEcRzu9sDwT88nt7p3e0II1HCVOX
+ t7ReZ2/EBIe+m1tzKInSN3ow0I9wh7BcZMObiepzKr3r8gOq8jDnpavx8ep3Ivm3DJa994mJi
+ gZfHlIoTYtQGIJm3HrV7EIzPWl/vdoZ0ruVOv38q8crJY80o8HLwfmkkE0qvLRJmYW6nKLAay
+ t/1ILwptX6JC9vfE+ccjodDVTodApd2yCtSosZ4s9DD8A=
 
-Hi Andr=C3=A9,
-
-On Mon, 17 Jun 2024 at 17:45, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
+>> Please reconsider the version identification in this patch subject once=
+ more.
+>>
+>>
+>> =E2=80=A6
+>>> ---
+>>>
+>>> v2:
+>>> - Improve patch description
+>> =E2=80=A6
+>>
+>> How many patch variations were discussed and reviewed in the meantime?
+>>
 >
-> Using the regulator_bulk APIs, the handling of power supplies becomes
-> much simpler. There is no need anymore to check if regulators have been
-> acquired or not, the bulk APIs will do all the work for us. We can also
-> drop the various handles to the individual power supplies in the driver
-> runtime data and instead simply treat them all as one thing. Error
-> cleanup also becomes much simpler.
->
-> Converting to the regulator_bulk APIs also makes it easier to add
-> support for those SoCs that have additional power supplies for the PHY.
-> Google Tensor gs101 is one example of such a SoC. Otherwise we'd have
-> to add all additional supplies individually via individual calls to
-> regulator_get() and enable/disable handle them all individually,
-> including complicated error handling. That doesn't scale and clutters
-> the code.
->
-> Just update the code to use the regulator_bulk APIs.
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
+> Only v2. I sent v2 patch again because nobody response my code in patch.
+> But I still want to grap comments for my code.
 
-Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
-and
-Tested-by: Peter Griffin <peter.griffin@linaro.org>
+How does such a feedback fit to my previous patch review?
+https://lore.kernel.org/r/e8331545-d261-44af-b500-93b90d77d8b7@web.de/
+https://lkml.org/lkml/2024/5/14/551
 
-Tested using my Pixel 6 pro device. USB comes up and it is possible to
-use adb from the host computer to the phone.
-
-regards,
-
-Peter
-
-[..]
+Regards,
+Markus
 
