@@ -1,136 +1,142 @@
-Return-Path: <linux-kernel+bounces-227747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC4D491562E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:04:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FC7915630
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7011F21661
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:04:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187D9286A21
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5C219FA92;
-	Mon, 24 Jun 2024 18:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2EB19FA92;
+	Mon, 24 Jun 2024 18:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IjhuXzNk"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1jKz14bU"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7969E182B2
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E199019B5BD
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719252240; cv=none; b=mMjGSq/7hINWQ8aGoEQhpotkPKFO5w+U8qO8NkpJfdrexHb8gnjot8l2+JzwqonoU97Z7kt0T/gOhU+KrPlqGA/JyrBfTxM8mJhsIW3ToeRikdTgl06W2y1Wt7t8StKegjW9jLvM02adsXCym0RQ1f8MqARayvRETkh709s3YiU=
+	t=1719252308; cv=none; b=cxhWJjP8UiTqcqOIeTLcDEXTh/XzUxnW80cWfmwnifXk+AD+Zre0iJZdCgsiTv9+gTfXdwK54p9EJUFiRvVs7JHPJq0n1TZFVMsZyvnfSm44Tg/6BYLTc/vqxuSYuWTAY/f8rtTvRszZ/JBpmUJnzk+DHB+qLnRaZwapixKJvOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719252240; c=relaxed/simple;
-	bh=WzGhfsAP4XzqaIdBWpKUm18+TeenjF6Blc7M4ECnYSk=;
+	s=arc-20240116; t=1719252308; c=relaxed/simple;
+	bh=25Dq88jBB2CkOkDL/JBMijQofHLFLsFy3IjegoNUwPs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uMZXo9o9nN2Nrob85eiIGzTCJXx/Oe/q2XWempJLcXrZ3l0Pet8PmMOqdpuEdKbtLisz8Z0sN2oU9f8/hfs3oDRyWTnGCoFxfo87uPq9RZl43FUuq+HcdZUrNsxxq1XjulcS8mu8fLUjAMXptuEffFXE4R39YhmfbXLaD4B1IPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IjhuXzNk; arc=none smtp.client-ip=209.85.128.52
+	 To:Cc:Content-Type; b=KDMTJGfRpBo1VQUO5V5tlkJ49zCIV2m3JBcQRfEEUqbrtpma7xwpEujFTfRJPduRpQMJJ8M9bHPsos2vS5mMHRTvbADLgnLGbijwwDYQ0jbjVfuZVUMlsyS+1kyoZ1/thvjMWX+WAr5HGveMWTAetaJiEC1j52YTsm6sSqUlFCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1jKz14bU; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-424997177bbso6325e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:03:58 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57d16251a07so952a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:05:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719252237; x=1719857037; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FF029z/jflx/kP7IEmWTDP0ob8VJPp9a2/waRUF4Abs=;
-        b=IjhuXzNke5DP+Cu0dwInvzsJM/bZVeMJTHFWlXANeFjpYYPAg30WJSPB35lEYJjPyU
-         rPpTr5d7dkzulOXw7+Vzs7b0XUxt6it8E689w7ToFf0p/IvCgRuBKredYy/yqVbMIDrt
-         StnVxzcdqN/TuYZvZoNd5Lo57F+09mjV/Fp6gTaRPoxKc7/4/f4xsAXS5LaelZsi4ZC8
-         rFpjSiJ1fFaEY72ntsmFfI8e46J7rfkNOe27Imy8s0M6wQTSsepbcFZj9+Lh9q4qoNwu
-         8Q37Bl1Z7Rxy29CHeMpD0eF3yLhaDzAnjWW7ck8nJvTPRL7IdAgL3+q/0Kdmo/c7jYtu
-         zWig==
+        d=google.com; s=20230601; t=1719252305; x=1719857105; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iU6twMwsLTVUU1XIizoid6hKLyQKsxMvfVST/Ybsw4I=;
+        b=1jKz14bUJhRtI/R7TboUJ13JcAA3zEIU0O88a/SDoKF9Q22WQeXAIsSODATi2MKDFu
+         2iKvFbsRt2PI2MZj4sMwJ7Cwy7jlMVnm03ruzHC0ngiLtpew4oa/m9pzGOZpbdyymk3j
+         Mu0tTLMqQXtR3RdfC6ibkXtQaPDapkZ7nmurLk/91PRLFsoBQRhmcKbNnhXxtA7Huqu8
+         1n79wKefGNYHxvAoJRPDypBWu7iXMdsO1M7Ms/ZivcQUmshpO/6ifHvaqdFeD+nzOjqe
+         thFuv7AIASgOFJzhdyHoxMJ7HlaV/wWnOoPJWIzdQP7lZsAFKDwmNpZMJ6LIUOq2mvQ8
+         Yr5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719252237; x=1719857037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FF029z/jflx/kP7IEmWTDP0ob8VJPp9a2/waRUF4Abs=;
-        b=tSIFNSbQAjGxkE/RkdGR149ysCSidr60tR3m9SC4U42hlwDVacRT5ynYNiCHtrJwFN
-         8TdsqtsKZ5ixqhBEUq6x4oU6Dt+1KqtFP1lEYaJZa2QxL8Gw4sZ5uYQoB2BMeS1E+8Dk
-         8eyS0f3yS0cWmiDbmLWX+o07iRMoM16H4hkJXu/jCvFzG9FhwvyTe9GOUDR4Ct0YD7nN
-         T/vU8PRBkSeWoe59GRqtrRB9l/JXVXtWsGBCmjwVppqn5uysNLejueD7NrDfFtoe9vuP
-         X9AzOGGgIQr6LHMMHqPJxmgmZR3Txe9FeSYMA2v42xcIhYWFBwC6tuOccPeSZtbbgBdb
-         7TOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsEeATKjOssH9eizz/hIYnpjDuJ61JDKLtTsfSkDulYTsnN7dO+8cl42Mf+vvGww38+LhKwcUBEmp4hjDLCG9VfwSlvbp2M9PQMuF+
-X-Gm-Message-State: AOJu0YxgNQAoAcbpx3VVKQP2w8hAGvnBMzwBSPMSTZC6X1A/ON3BPFKB
-	aSXhavOb+ze42byONjXyzTd4KBnqbYqv3f5kUG+qZ6WLptjSYITnKklL+i7D2bl64OCikYU+MaW
-	Dru9OXTYbePPA/IqI3LGGQ1HFHVwGjMRrfMs=
-X-Google-Smtp-Source: AGHT+IHrfNrvNgINjPFhE00IuMHWGEQ90pK8W7zqvkgYI7i48VPmX8HyZ3EqYScnHj5vTszY2D2Ge/7ppzdCu9YCrBk=
-X-Received: by 2002:a05:600c:4e0d:b0:424:8b0c:156a with SMTP id
- 5b1f17b1804b1-4249a1b913fmr129515e9.2.1719252236758; Mon, 24 Jun 2024
- 11:03:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719252305; x=1719857105;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iU6twMwsLTVUU1XIizoid6hKLyQKsxMvfVST/Ybsw4I=;
+        b=Ukbzwb6aWoho0askKY9PoMZoDs3+yo9F8G/6gC61m/xGAPbFw//ADG5efKKxrkZU9q
+         fYF0nhC4u1ajI8goov+EX1ekfkuNGdRQZyvSyDzZSBNB2MYgbyW0+uLhKW8PefUNOjw/
+         zk0PbjaBVmsvEUT0Ppf+q61d9o+wW/XCmXkqVk580Z1oXkCLl2h29zJLSMqxNTz0tl15
+         MgRoEfzxiuBRzEQzh0/vtB/1MI0q5L6JPu3/qwwfnI6ttXvfUAOmYz2D3OSpTd17e4Lx
+         Ewe01SIXb7L6kQbAfVAWun9aljw045TZw74cjmaHp3rSzCNnR7SbnsWUcCp6CpnWkYiz
+         sfOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHAgBsP1QAXjmqXB+uuLcHujIiB0avGvdJRMAWmrRUZS/Yim/xOhSVtuHo9UOv0ZqilUwP5JPcGSV1/yWzG8q5bMO93tc6MU4CmIN1
+X-Gm-Message-State: AOJu0Yxyan9XU307GvhnC23CB8WNuWLlyQ/ym7tOug8H7TbYjL+enIVS
+	X+gZIN0k87ea1NTIY+O26gAzc9TZ6agOydU8znX1a4NeWfoY50eedNst8EUKCfhdCOl+0lnAkRT
+	ABWCahtAeu7gXHxzHX+uPI0wbYxSKLwWKYXg=
+X-Google-Smtp-Source: AGHT+IH5Y7rUe3HGR92ggNIqhjJ6oN6APNDpcnfWRdAWF9v82nPgkswGoUuk1iuaf6Hb2+YP+rxpC7Z0nldf36iS1/E=
+X-Received: by 2002:a05:6402:348d:b0:57d:6e52:fff6 with SMTP id
+ 4fb4d7f45d1cf-57de4b68f0bmr4244a12.5.1719252304903; Mon, 24 Jun 2024 11:05:04
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606172813.2755930-1-isaacmanjarres@google.com>
-In-Reply-To: <20240606172813.2755930-1-isaacmanjarres@google.com>
-From: John Stultz <jstultz@google.com>
-Date: Mon, 24 Jun 2024 11:03:43 -0700
-Message-ID: <CANDhNCqhJRLgvhAong-5zjsfwk2sL7pNbK0EqWsPcaA+AuzxDQ@mail.gmail.com>
-Subject: Re: [PATCH v5] fs: Improve eventpoll logging to stop indicting timerfd
-To: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-Cc: tglx@linutronix.de, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	saravanak@google.com, Manish Varma <varmam@google.com>, 
-	Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20240620181736.1270455-1-yabinc@google.com> <CAKwvOd=ZKS9LbJExCp8vrV9kLDE_Ew+mRcFH5-sYRW_2=sBiig@mail.gmail.com>
+ <ZnVe5JBIBGoOrk5w@gondor.apana.org.au> <CAHk-=wgubtUrE=YcvHvRkUX7ii8QHPNCJ_0Gc+3tQOw+rL1DSg@mail.gmail.com>
+ <CAHk-=wiBbJLWOJxoz7srMPtKcN7+9cEh79fzf8GKXTJyRdk=tw@mail.gmail.com>
+In-Reply-To: <CAHk-=wiBbJLWOJxoz7srMPtKcN7+9cEh79fzf8GKXTJyRdk=tw@mail.gmail.com>
+From: Yabin Cui <yabinc@google.com>
+Date: Mon, 24 Jun 2024 11:04:51 -0700
+Message-ID: <CALJ9ZPMHCPt-6kf-9McdKYTqs8Vrj9GLhkxObdhjyorgtZQOSg@mail.gmail.com>
+Subject: Re: [PATCH] Fix initializing a static union variable
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Steffen Klassert <steffen.klassert@secunet.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 6, 2024 at 10:28=E2=80=AFAM 'Isaac J. Manjarres' via kernel-tea=
-m
-<kernel-team@android.com> wrote:
+> In other words, in the kernel we simply depend on initializers working
+> reliably and fully. Partly because we've literally been told by
+> compiler people that that is what we should do.
 >
-> From: Manish Varma <varmam@google.com>
+> So no, this is not about empty initializers. And this is not about
+> some C standard verbiage.
 >
-> timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
-> it names them after the underlying file descriptor, and since all
-> timerfd file descriptors are named "[timerfd]" (which saves memory on
-> systems like desktops with potentially many timerfd instances), all
-> wakesources created as a result of using the eventpoll-on-timerfd idiom
-> are called... "[timerfd]".
+> This is literally about "the linux kernel expects initializers to
+> FULLY initialize variables". Padding, other union members, you name
+> it.
 >
-> However, it becomes impossible to tell which "[timerfd]" wakesource is
-> affliated with which process and hence troubleshooting is difficult.
-
-Thanks for sending this out!
-
-My apologies, as this is really meta-commentary (which I'm sure isn't
-what you're looking for), but as you've gotten limited feedback maybe
-it might help?
-
-While your explanation above is understandable, I feel like it might
-benefit from a more concrete example to show why this is problematic?
-It feels like the description gets into the weeds pretty quickly and
-makes it hard to understand the importance of the change.
-
-> This change addresses this problem by changing the way eventpoll
-> wakesources are named:
+> If clang doesn't do that, then clang is buggy as far as the kernel is
+> concerned, and no amount of standards reading is relevant.
 >
-> 1) the top-level per-process eventpoll wakesource is now named
-> "epollN:P" (instead of just "eventpoll"), where N is a unique ID token,
-> and P is the PID of the creating process.
-> 2) individual per-underlying-file descriptor eventpoll wakesources are
-> now named "epollitemN:P.F", where N is a unique ID token and P is PID
-> of the creating process and F is the name of the underlying file
-> descriptor.
+> And in particular, no amount of "but empty initializer" is relevant.
+>
 
-Again the N:P.F mapping is clear, but maybe including a specific
-before and after example would help?
+Thanks for the detailed explanation!
+Sorry for limiting the problem to the empty initializer. I didn't
+realize the linux
+kernel also depends on zero initializing extra bytes when explicitly
+initializing
+one field of a union type.
 
-Additionally, once you have this better named wakesource, can you
-provide a specific example to illustrate a bit on how this
-specifically helps the troubleshooting that was difficult before?
+> And when the union is embedded in a struct, the struct initialization
+> seems to be ok from a quick test, but I might have screwed that test
+> up.
 
-thanks
--john
+I also think so. But probably we need to add tests in clang to make sure
+it continues to work.
+
+> Hmm. Strange. godbolt says that it happens with clang 17.0.1 (and
+> earlier) with a plain -O2.
+>
+> It just doesn't happen for me. Either this got fixed already and my
+> 17.0.6 has the fix, or there's some subtle flag that my test-case uses
+> (some config file - I just use "-O2" for local testing like the
+> godbolt page did).
+>
+> But clearly godbolt does  think this happens with released clang versions too.
+>
+
+Yes, I also think it happens in both clang trunk and past releases, as tested in
+https://godbolt.org/z/vnGqKK43z.
+Gladly in the clang bug in
+https://github.com/llvm/llvm-project/issues/78034, no one
+is against zero initializing the whole union type.
+I feel now it's no longer important to have this patch in the kernel.
+But we need to
+fix this problem in clang and backport the fix to releases we care about.
+
+Thanks,
+Yabin
 
