@@ -1,198 +1,110 @@
-Return-Path: <linux-kernel+bounces-227250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE5D914E07
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:11:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8225914E0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BCBB28560B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:11:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782FF28559B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD71013D62B;
-	Mon, 24 Jun 2024 13:10:58 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B2D13DB9F;
+	Mon, 24 Jun 2024 13:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hBhfsXR4"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438F613BAFA;
-	Mon, 24 Jun 2024 13:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D2913D531
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719234658; cv=none; b=imMz4LsgcHLZEQ4a7uhufFLgfPzTlbgNul8yUTE0gjnlI3kNQxbLazHjPlxFL6bBAdNiRg0/A25dxxl4zzg1zHi7tNo/q0BTPqNP2Bd3ft77HI3eDdt5T1Mnxf6Sx0eswXlob6ucKysIAT0kNM8rcfLcMZWAR5lPvZ9rxjri5B8=
+	t=1719234663; cv=none; b=oQlqCNEym8sjxP4aVhjGAwy68YRtD62dijYqRt9ymjPMuHKCI9Az7/aAnn4r/JpdES4fnXWMBUpgu1MlEwcIlgicaIiiI/wfXDUALfkVlb/Zlcbp99SDvOELbGaAoaukT913Mu+MsyFrW4GkNXkPpcSc7uWnMG7Dp363sVDVxtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719234658; c=relaxed/simple;
-	bh=HtblSTw1nKDAHfs2ii6UyHOamhA9qGV0kkZxWsC7jWY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GmM/wXHtMxHm+J9m4NF8p10ylNO4AEth8nvrpuvrnwtFHAdFQerQclMa8LE8ftxE67nbftjQYhbY6/Va5uRq1Zan7SWmiQjCxtnXk6Q54GhNMCosp3KjpSGhey+Z502ohcYmzmfpeeYGz/qk0d349TjkMp4e+0HQ+8KsrS4m/14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W77cZ26MHz4f3m78;
-	Mon, 24 Jun 2024 21:10:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 5680E1A0572;
-	Mon, 24 Jun 2024 21:10:50 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP2 (Coremail) with SMTP id Syh0CgB334RZcHlmcrLaAA--.31654S4;
-	Mon, 24 Jun 2024 21:10:50 +0800 (CST)
-From: Li Lingfeng <lilingfeng@huaweicloud.com>
-To: tj@kernel.org,
-	josef@toxicpanda.com,
-	hch@lst.de,
-	axboe@kernel.dk
-Cc: cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yangerkun@huawei.com,
-	yukuai1@huaweicloud.com,
-	houtao1@huawei.com,
-	yi.zhang@huawei.com,
-	lilingfeng@huaweicloud.com,
-	lilingfeng3@huawei.com
-Subject: [PATCH] block: cancel all throttled bios when deleting the cgroup
-Date: Mon, 24 Jun 2024 21:09:40 +0800
-Message-Id: <20240624130940.3751791-1-lilingfeng@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1719234663; c=relaxed/simple;
+	bh=xGJaHKJwyhWl+hAEdZGvosuidOGTbGyxm1SE3qgRRf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=psMQeWjxekkH5KlZD2kB9IR+ZDVx+WiMDWIo1UW+Y5q4lweQIo7GDl+YApoZGGoaJhCaq9z8KFIEbpOvweHBV5XPbVHeEmBSlW6SvsTjQVKS4ch7/gYtPG10OVheoXE1xtgi1T32/HDBH9O4shb+BzZ+b/bxaaOTWQjuxiirnhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hBhfsXR4; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52cd8897c73so2992028e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:11:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719234660; x=1719839460; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yXZVn39uAFhs3+C1LuYu19O8cafRf9RIHdluf7Xz6dE=;
+        b=hBhfsXR4KAreIcUZmWnH4y3VTwDTqcRNSV99DbsSFe/hKgeB/knPOWG6RiW8O3+2hF
+         dzpH6NzXtAge24UpebarjA+mqoGsMSpw/TS3qjYfcUte0FbxZR6Gk9IVrjoWGd5okbe4
+         GPtKgwmcYQ0lkSM7fGR7KlBehTfxdr/WGASPIweftKd9W2TxGdw0aYYUXPYhmwgwQ3kV
+         o+vdIEFBW3KwmaQ6WITwMPI8fzLysB2mGlzE9EOTTIZAzbuRuVUX/WDDVXUKxJXRhhEa
+         /d5RWPaqEe0xSAZqpIpSuiDjp8VbDenR+eUEDhvWjEzJmcl1TidRlozw6mdptt2hmZEh
+         1u6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719234660; x=1719839460;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yXZVn39uAFhs3+C1LuYu19O8cafRf9RIHdluf7Xz6dE=;
+        b=Zq47Jbj10HPGM1v6FLRBFqWg4Tq9/idjzjQcFAH6v427BOiuZEkIfOCtMg7bdHzJZa
+         MJaN05OPEiHAEWgEUPPbWzrFCz2NLKDTFcXtJhjPvPTvVEsDOERqCe4QfUUMNKcPxBHA
+         sEmJJVonBNaq1UYu0igjdJlqnbf/WzlJtcchla/NPg95pSwBWuDIC3NpoKm+K7Om7D36
+         uOaZnb0ybvZNgq2zC8a/12ZrzaYP7n+B/71XbOcGAV7TRyG0cMMfYPBK7kMf2UwgViW6
+         y5wNuL0woNLvlhQ2RzU19JNVlkjE6jYs/CK5VMLw3r827nzhjD7ncBJ5cGLF18ChzPJX
+         Qw1g==
+X-Forwarded-Encrypted: i=1; AJvYcCW5Tg0Xvw8gifJ4GFduxVZEIZVjb/ZfhMb0cSU2b1NW4dos9UKRkllCI+U6nW+XJO9AIEQAS95T+HWawE8UvhOvbScna2ORremXFYCS
+X-Gm-Message-State: AOJu0YzyhI0J97Y13ZcGzmpNSFk6kx2o0FQZsihje+PrJWnrjU/sPWDg
+	P1xxOjeJcMjnXj97gd1rrg7D4AgrJMM8hndKd1zt7FwmPEMfBOQk2vAcFugoZCs=
+X-Google-Smtp-Source: AGHT+IFueE8gynLR/P2KeKfrRv7tISR8x9woq5xEOkvIzjjkg5eNCFX/5IAJGOQFKoVmCdePjO7F4w==
+X-Received: by 2002:ac2:48a4:0:b0:52c:dd21:8a2a with SMTP id 2adb3069b0e04-52ce1835057mr2259242e87.21.1719234660314;
+        Mon, 24 Jun 2024 06:11:00 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63b460fsm983524e87.26.2024.06.24.06.10.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 06:10:59 -0700 (PDT)
+Date: Mon, 24 Jun 2024 16:10:58 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Caleb Connolly <caleb.connolly@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] arm64: dts: qcom: sm8650: move usb-role-switch to
+ sm8650.dtsi
+Message-ID: <sq64sf2wym7ti33sadtkvxrdtnm6pm3j2hgzx2ousnzpvwrmnz@w4qcsihnwsgf>
+References: <20240624-b4-rb2-fixes-v1-0-8d763ee4e42e@linaro.org>
+ <20240624-b4-rb2-fixes-v1-1-8d763ee4e42e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgB334RZcHlmcrLaAA--.31654S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr4xWF47tryrZrWUKr13twb_yoWrJFWxpr
-	WfuFyYkw1Utr9I9r4agr4UJFWSq395XrWag397Ga1ayrWIyw1jqF1kZa4rXFWrJF93Cr4a
-	vF45tr48WF18W37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	fUF9a9DUUUU
-X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624-b4-rb2-fixes-v1-1-8d763ee4e42e@linaro.org>
 
-From: Li Lingfeng <lilingfeng3@huawei.com>
+On Mon, Jun 24, 2024 at 02:23:42PM GMT, Caleb Connolly wrote:
+> All sm8650 boards have role switching capabilities, set it in the soc
+> dtsi to deduplicate things.
+> And drop the explicit dr_mode = "otg" since it's the default.
+> 
+> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8650-hdk.dts | 5 -----
+>  arch/arm64/boot/dts/qcom/sm8650-mtp.dts | 5 -----
+>  arch/arm64/boot/dts/qcom/sm8650-qrd.dts | 5 -----
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi    | 1 +
+>  4 files changed, 1 insertion(+), 15 deletions(-)
+> 
 
-When a process migrates to another cgroup and the original cgroup is deleted,
-the restrictions of throttled bios cannot be removed. If the restrictions
-are set too low, it will take a long time to complete these bios.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Refer to the process of deleting a disk to remove the restrictions and
-issue bios when deleting the cgroup.
 
-References:
-https://lore.kernel.org/r/20220318130144.1066064-4-ming.lei@redhat.com
-
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
- block/blk-throttle.c | 68 ++++++++++++++++++++++++++++----------------
- 1 file changed, 44 insertions(+), 24 deletions(-)
-
-diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-index c1bf73f8c75d..a0e5b28951ca 100644
---- a/block/blk-throttle.c
-+++ b/block/blk-throttle.c
-@@ -1534,6 +1534,42 @@ static void throtl_shutdown_wq(struct request_queue *q)
- 	cancel_work_sync(&td->dispatch_work);
- }
- 
-+static void tg_cancel_bios(struct throtl_grp *tg)
-+{
-+	struct throtl_service_queue *sq = &tg->service_queue;
-+
-+	if (tg->flags & THROTL_TG_CANCELING)
-+		return;
-+	/*
-+	 * Set the flag to make sure throtl_pending_timer_fn() won't
-+	 * stop until all throttled bios are dispatched.
-+	 */
-+	tg->flags |= THROTL_TG_CANCELING;
-+
-+	/*
-+	 * Do not dispatch cgroup without THROTL_TG_PENDING or cgroup
-+	 * will be inserted to service queue without THROTL_TG_PENDING
-+	 * set in tg_update_disptime below. Then IO dispatched from
-+	 * child in tg_dispatch_one_bio will trigger double insertion
-+	 * and corrupt the tree.
-+	 */
-+	if (!(tg->flags & THROTL_TG_PENDING))
-+		return;
-+
-+	/*
-+	 * Update disptime after setting the above flag to make sure
-+	 * throtl_select_dispatch() won't exit without dispatching.
-+	 */
-+	tg_update_disptime(tg);
-+
-+	throtl_schedule_pending_timer(sq, jiffies + 1);
-+}
-+
-+static void throtl_pd_offline(struct blkg_policy_data *pd)
-+{
-+	tg_cancel_bios(pd_to_tg(pd));
-+}
-+
- struct blkcg_policy blkcg_policy_throtl = {
- 	.dfl_cftypes		= throtl_files,
- 	.legacy_cftypes		= throtl_legacy_files,
-@@ -1541,6 +1577,7 @@ struct blkcg_policy blkcg_policy_throtl = {
- 	.pd_alloc_fn		= throtl_pd_alloc,
- 	.pd_init_fn		= throtl_pd_init,
- 	.pd_online_fn		= throtl_pd_online,
-+	.pd_offline_fn		= throtl_pd_offline,
- 	.pd_free_fn		= throtl_pd_free,
- };
- 
-@@ -1561,32 +1598,15 @@ void blk_throtl_cancel_bios(struct gendisk *disk)
- 	 */
- 	rcu_read_lock();
- 	blkg_for_each_descendant_post(blkg, pos_css, q->root_blkg) {
--		struct throtl_grp *tg = blkg_to_tg(blkg);
--		struct throtl_service_queue *sq = &tg->service_queue;
--
--		/*
--		 * Set the flag to make sure throtl_pending_timer_fn() won't
--		 * stop until all throttled bios are dispatched.
--		 */
--		tg->flags |= THROTL_TG_CANCELING;
--
- 		/*
--		 * Do not dispatch cgroup without THROTL_TG_PENDING or cgroup
--		 * will be inserted to service queue without THROTL_TG_PENDING
--		 * set in tg_update_disptime below. Then IO dispatched from
--		 * child in tg_dispatch_one_bio will trigger double insertion
--		 * and corrupt the tree.
-+		 * disk_release will call pd_offline_fn to cancel bios.
-+		 * However, disk_release can't be called if someone get
-+		 * the refcount of device and issued bios which are
-+		 * inflight after del_gendisk.
-+		 * Cancel bios here to ensure no bios are inflight after
-+		 * del_gendisk.
- 		 */
--		if (!(tg->flags & THROTL_TG_PENDING))
--			continue;
--
--		/*
--		 * Update disptime after setting the above flag to make sure
--		 * throtl_select_dispatch() won't exit without dispatching.
--		 */
--		tg_update_disptime(tg);
--
--		throtl_schedule_pending_timer(sq, jiffies + 1);
-+		tg_cancel_bios(blkg_to_tg(blkg));
- 	}
- 	rcu_read_unlock();
- 	spin_unlock_irq(&q->queue_lock);
 -- 
-2.31.1
-
+With best wishes
+Dmitry
 
