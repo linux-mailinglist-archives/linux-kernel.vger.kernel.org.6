@@ -1,124 +1,132 @@
-Return-Path: <linux-kernel+bounces-227996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5D391598E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:03:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04999915992
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ABE8B247C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:03:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B046F2840DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2B81A0708;
-	Mon, 24 Jun 2024 22:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29C31A0B1F;
+	Mon, 24 Jun 2024 22:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sin2uMQh"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XGql1k/o"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4B51A2FA0
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9657E1A0AFE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719266534; cv=none; b=JhSvWl91F2ktLo5tRrB1kVNYgGA0pM/OsmbqfnXhdtetOeloJED0YBE5ARDemPc9k6+8/+d/1WKUbIGKuJhLpOzv29qJT2zwsRUTZ6xFG9Ik0+OsFPiIBMqrSLntGvLMw/aUDA4A3RvNr3Bo1oSjhTVEAdZHBX37YTK90nGzs/k=
+	t=1719266602; cv=none; b=pmfW+ViERM/St75BTXNQPP7LEN6C1/+PvBIm/DtRd9zVYEXfqp93PEh3Hg+8tpikIWbLxAPN650kmKDjqe8SGfL2UfrXuZTJRMJX1/7/sffwVyH+0ua5aSM7Dvtj3g98Nl/g9QhIqwXvueJzWUXJ0a0biF2bK+CpnQWLodmQe9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719266534; c=relaxed/simple;
-	bh=xC5FF9l5eZ8bSM2CS/X7awXDo3lA0kREds7STHvAnvk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=AxcIeUgDhpN1AjKhmM3bZM9sMppUNCfUZI0+kaBXfy3ZHLQoZC3ymWFaGi78rzl0wJ/IwVEKBWflu+iRo87TWSutvcnBfxQUtexxFW2yZuu53qBuxmjrUsJ1aAPS/1NDiyg9A3ua7DPeJYkjZe5N/sS0wXGikR9FDEjoX3mBeaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dhavale.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sin2uMQh; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dhavale.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-63bf1d3fb2dso106631617b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:02:12 -0700 (PDT)
+	s=arc-20240116; t=1719266602; c=relaxed/simple;
+	bh=yH8MfUsxyrSONQCCxY9KuK40EJoit1iS7xUJ625+yHU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TIAtnzX/oNHCCVOW1YlGvGLCxJUb6VPevfRN7D1VIZEtXTN+G5mWEYfXulB7wkq7iLPLQ/IJocAmVzXAs5n92Zc1IC/xGdcnoDzrIU2ID+toDXI92pYWkwi8VPk3S1afXF/pMSIt988FQmphxYdXu4/kVE/0Islx81lTh9Ony9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XGql1k/o; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e026a2238d8so4776005276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:03:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719266532; x=1719871332; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=s+EfJ0AoKGlj/+Y6NKu6RGkBJo/MER6SHrvQPfBXON4=;
-        b=Sin2uMQh3gG1Y1Spwxzi3YLSmk9Om8SFuYYoK99HNJ+Z2fWMydOWNKq1z/Zr3ujvfh
-         sdfzAinaI7qUSeKMi5TM+IrmokmLg3tSC6yqCYziyBcx3NDU9EM4yNZIfz5Z9+BTth19
-         C+BVDpErV1W8WltbliwHQ0KrCNr+XMFohcnqk9ygB/dLTmgnVSdFf9eWRWMQ1ZYXSkop
-         +J4sL74tdMUkSXzfxPvW+lCBv6IyRikxJaXcWtnwSemITwErW/tQXpGvbHBU9I3ZgLM7
-         mODBsmTVUYvOPbLXbWezTyBuoM/tDTkVB2xX/4piCYC66K/inueaEn7mY7zCewRmq9y7
-         FDUQ==
+        d=paul-moore.com; s=google; t=1719266599; x=1719871399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=52bKNmTPMX1ld5a7SIGDY7nHZbkLXq2rSTU0Z66Dx80=;
+        b=XGql1k/ooTfR7P9hrEG0198RrU7si26Qf2OhTlOZA9tTb/i0jbkTdnshvkn7Dp+cwX
+         ZraAKuEDk/LqUGYo4C+aw0CRegziNRns9JQjoA8genXXTxzpR/TzXD/s9ilfGn9Yy7GK
+         qJxPwuuruw4mtiql9F6VVp95RFmdHVYj6kodrAWMVHiuqdJzZrKwdfrQTdprKmMLNg7d
+         o6Qrssqep86q25ZQxaYeq+hRREzWXNRx54idMFb2Ds/6/xnCbzwV2wuQOGozBZfqtnhD
+         MjLZtuUuz0rZEOHwnqR7YARy+s/0TIci0a7rC8TElLnoHmxDNwAFsISiuV9cgh1epRc4
+         tgOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719266532; x=1719871332;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s+EfJ0AoKGlj/+Y6NKu6RGkBJo/MER6SHrvQPfBXON4=;
-        b=RJHka54jhB3WsPprAJj5sh19eikVcI2BfTJzBLrkY2ZFpHyrx6QtIZtCfVzKgwQ4GD
-         YL8TXBUFnW7W0Ax5peqc1Nt5S4WmgO7HNe9UVG95iFmxpDSMbLxQ0xCU+iqMfsRKH8Df
-         SjM7lrQ2fL9qiT+yUEP7HnbSFvMrlLsE2gxVE9oFj+YrwwHEGthL9MMF3djsdnZLIqJD
-         Yhiqplw6OpMQt8M38q81vK/vg8HlbeGKsBvttQACdfiX8wvp4qSSVVn5x/s3Hr0TMFw5
-         nh8p9eTLy362StN7/0rgQb0VLFA2jhE7SreJIpX0gWl3GR4kh8nah9YErR5ftPT843lQ
-         qpcw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6I4dbEIH30+va96le+tRdIyVu2gphFr2OEGjBtiu/7i5KPXitWiRqQz0EieixDIJ6pd4JPVgibG+FK0ycPNrQVQjhyoLU2vfH9E5r
-X-Gm-Message-State: AOJu0Yz9MdPfgoR+DBdKAHstpm2OiY0ndPahmCxP16FnliS2/m+2693i
-	hGKDJ217+DZRsPLywKD333kRfFIhNiEq/8XEHRz/TaQW5r6dG7PL5aZbEAcpytBi0mMBzqkMCit
-	WjZTOIQ==
-X-Google-Smtp-Source: AGHT+IHLhxwyVv9nMVrC3Jwu4bpC9flEqE3SXuk9eeKuPJOpyr4XzP7jLnmABDJo9hUdNQV/1SKqydFBjFpL
-X-Received: from dhavale-desktop.mtv.corp.google.com ([2620:15c:211:201:307c:c43a:8b68:c64f])
- (user=dhavale job=sendgmr) by 2002:a05:6902:1241:b0:dff:3ec0:71c1 with SMTP
- id 3f1490d57ef6-e0303fbf483mr103883276.8.1719266531828; Mon, 24 Jun 2024
- 15:02:11 -0700 (PDT)
-Date: Mon, 24 Jun 2024 15:02:05 -0700
+        d=1e100.net; s=20230601; t=1719266599; x=1719871399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=52bKNmTPMX1ld5a7SIGDY7nHZbkLXq2rSTU0Z66Dx80=;
+        b=i4akQSbprZs7+Ncf9BaZ85aEY1JNrqwIslegJ/1o7ae2m83XEy+sgxqyDvFYQggYQs
+         QHPc3DqBEb12A+CbiDtUMd+6Xv0sN0/0fOMAivnfn8ronyf9bXJuZkUSF0WqRCut5Ocn
+         cpSAK8tc7n54WVeFLO6DP5LINhNl2rX3iy/bUrgLfYw0NWYpGfp2v6jlatltV6SYpCvO
+         SrW7E5Mrv4BhEZ+NByyrJXQ7Xkr4AUBhlg2IqMJ5ugglxz9axTkfdVqa5oEFTUaXD8aj
+         axxjhJByWzaR1P/0nQW1/U6w2v/t4/yVVBx+YdfkKJeF3al/pZyrAwOWOPU+OTgt/oCT
+         tnlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHqGKgAbK+ZEE+HMz66zZ599ifsVplEGrb2hMc/t0yDaY0Q0XFPIbkgHnjvzX5WtgoHZmyX7+RQ0WOgx368xcEMr5uA8hq3MUcEz91
+X-Gm-Message-State: AOJu0YzVLWhEXZvnsM85OeqO8zlQBUbVY1uTH0P/XcVW5FMt+xSFMd2F
+	K2TuPw1SrRtS+7L5oaD2n9MI+1hgYXjCxJ6vrq6qKtrqd/Xf/INUhq1DMqW0Vd8e+fT8KXzTcFg
+	HrZDeS7UdzVNMFiHt42XZqxwu+frTvDeQBntU
+X-Google-Smtp-Source: AGHT+IFUpMslya+1feOYS/lW/ARrTRBvD2ducNjI+59U24eltD8K3QjUiXHcvx0G4S+F77LJwubGJrAIyigNmk0ZP6Q=
+X-Received: by 2002:a25:8709:0:b0:e02:68d4:69e5 with SMTP id
+ 3f1490d57ef6-e0303f2ac79mr5746142276.2.1719266599569; Mon, 24 Jun 2024
+ 15:03:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Message-ID: <20240624220206.3373197-1-dhavale@google.com>
-Subject: [PATCH v1] erofs: fix possible memory leak in z_erofs_gbuf_exit()
-From: Sandeep Dhavale <dhavale@google.com>
-To: linux-erofs@lists.ozlabs.org, Gao Xiang <xiang@kernel.org>, 
-	Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
-	Chunhai Guo <guochunhai@vivo.com>
-Cc: hsiangkao@linux.alibaba.com, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+ <20231215221636.105680-2-casey@schaufler-ca.com> <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
+ <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
+ <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
+ <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com> <CAHC9VhRKmkAPgQRt0YXrF4hLXCp7RyCSkG0K9ZchJ6x4bKKhEw@mail.gmail.com>
+ <aecad5ea129946dbf9cf5013331f9368ceb84326.camel@huaweicloud.com> <52bffc64dc7db2cc1912544514008eada1e058a7.camel@linux.ibm.com>
+In-Reply-To: <52bffc64dc7db2cc1912544514008eada1e058a7.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 24 Jun 2024 18:03:08 -0400
+Message-ID: <CAHC9VhS8mC0NC=-gbK_xBq2Ry6Be76ARZSg9Zm3y0bsocGEtTQ@mail.gmail.com>
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from security_audit_rule
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, mic@digikod.net, 
+	linux-integrity@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Because we incorrectly reused of variable `i` in `z_erofs_gbuf_exit()`
-for inner loop, we may exit early from outer loop resulting in memory
-leak. Fix this by using separate variable for iterating through inner loop.
+On Mon, Jun 24, 2024 at 9:57=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Mon, 2024-06-24 at 10:45 +0200, Roberto Sassu wrote:
+> > My only comment would be that I would not call the new functions with
+> > the ima_ prefix, being those in security.c, which is LSM agnostic, but
+> > I would rather use a name that more resembles the differences, if any.
+>
+> Commit 4af4662fa4a9 ("integrity: IMA policy") originally referred to thes=
+e hooks
+> as security_filter_rule_XXXX, but commit b8867eedcf76 ("ima: Rename inter=
+nal
+> filter rule functions") renamed the function to ima_filter_rule_XXX) to a=
+void
+> security namespace polution.
+>
+> If these were regular security hooks, the hooks would be named:
+> filter_rule_init, filter_rule_free, filter_rule_match with the matching
+> "security" prefix functions. Audit and IMA would then register the hooks.
+>
+> I agree these functions should probably be renamed again, probably to
+> security_ima_filter_rule_XXXX.
 
-Fixes: f36f3010f676 ("erofs: rename per-CPU buffers to global buffer pool and make it configurable")
+It's funny, my mind saw that the patch was removing those preprocessor
+macros and was so happy it must have shut off, because we already have
+security_XXX functions for these :)
 
-Signed-off-by: Sandeep Dhavale <dhavale@google.com>
----
- fs/erofs/zutil.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+See security_audit_rule_init(), security_audit_rule_free(), and
+security_audit_rule_match().
 
-diff --git a/fs/erofs/zutil.c b/fs/erofs/zutil.c
-index 036024bce9f7..b80f612867c2 100644
---- a/fs/erofs/zutil.c
-+++ b/fs/erofs/zutil.c
-@@ -148,7 +148,7 @@ int __init z_erofs_gbuf_init(void)
- 
- void z_erofs_gbuf_exit(void)
- {
--	int i;
-+	int i, j;
- 
- 	for (i = 0; i < z_erofs_gbuf_count + (!!z_erofs_rsvbuf); ++i) {
- 		struct z_erofs_gbuf *gbuf = &z_erofs_gbufpool[i];
-@@ -161,9 +161,9 @@ void z_erofs_gbuf_exit(void)
- 		if (!gbuf->pages)
- 			continue;
- 
--		for (i = 0; i < gbuf->nrpages; ++i)
--			if (gbuf->pages[i])
--				put_page(gbuf->pages[i]);
-+		for (j = 0; j < gbuf->nrpages; ++j)
-+			if (gbuf->pages[j])
-+				put_page(gbuf->pages[j]);
- 		kfree(gbuf->pages);
- 		gbuf->pages = NULL;
- 	}
--- 
-2.45.2.741.gdbec12cfda-goog
+Casey, do you want to respin this patch to use the existing LSM
+functions?  It looks like you should have Mimi's and Roberto's support
+in this.  Please submit this as a standalone patch as it really is a
+IMA/LSM cleanup.
 
+Thanks all.
+
+--=20
+paul-moore.com
 
