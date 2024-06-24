@@ -1,127 +1,86 @@
-Return-Path: <linux-kernel+bounces-227205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5548C914A38
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B57914A39
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867201C20BBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8325E1C2325A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DB413C809;
-	Mon, 24 Jun 2024 12:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="spqPJQp/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577D01386DA;
+	Mon, 24 Jun 2024 12:36:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C801E4AE;
-	Mon, 24 Jun 2024 12:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768AD1E4AE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719232552; cv=none; b=SGC+qLjCdrg5TrOj5FgbouMkvHmDfn35D9uCt5kREbDU7bDxkJMNHcDyKJKTVcxxfUxCegZaLv6nJd+M6NgGkrtnCav7VZ0zMVnSFWVNZhzqM+DyYFMJoK8KPRHuF9V1ZfF5p1pqILDUKuhAftnlSx39/8dg8Oh3yLEsi5luBWI=
+	t=1719232564; cv=none; b=hJLUSLAqfbR20k8ZhaPQd+TwbVFy3tCabBGMSvBfSaAwsPkBoFaCJoYsQ7EIQK3ko4fbOD1b6vY2DIBoaExClYHFTRIypH0poQn9uU/0+DStKfAvfcDgQyACgQ+OC67oBnDqCw1czOVJ7M8EBf3Vui+YkUvp63XgyBCJlB+QKs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719232552; c=relaxed/simple;
-	bh=b4OfR3kPYjIt3ptNEk8re7Km0yUPn41sHSR+XClF/q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RJl9DurtyR5NTu6MIbYHN/1vh2LkcjyGZjylCSqFC0RLszqgtUeBi9y2Nig7cxb77JDAIvnxa0OgnmcXPE0rrzM3dM3+iBTI1o0VjidFVAEiivkCU6lH6t8c9e/A6PAjHsy1cjEKr7mQlZwToWxAJzf6jUNlGpwQ43gv0Bfkz5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=spqPJQp/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vfxipKwPSiPtFOclKlM4eBqCSYvecyEBGlQCJIpR8/g=; b=spqPJQp/Noiw+TNMULXA5q4Whw
-	stiOmNCDgP9b7/V3nh73dldzFZFFtdveY3WtS2+dYirKY+XMDSHgwNv1aM7hI7ppqu8vmVyvzYYUo
-	IOBw4BWZbbtNThDUlwR/cx4OS2Q0XoGGX1cjpgpFhVfzdIIkya9uFxwOXnphNzjyoMFUyf5Dl1hmc
-	OWLRiLLaMtZp6FUR6Y0RZ7kF8f7KQ3b09bkzUK7ZBTNUdHsrmo5G4ashYgFer2kB3NciEWjFx5E6g
-	R4msVIcM6/1PoZpi6zPDhG7EkC3P9DeEfnw8FEfBo0Jg0gTSzbZSmabGWDHoN2y72MHi2cFCHUm/D
-	0s08PChQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sLiux-0000000A2o4-3oTY;
-	Mon, 24 Jun 2024 12:35:33 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A94A0300DCB; Mon, 24 Jun 2024 14:35:29 +0200 (CEST)
-Date: Mon, 24 Jun 2024 14:35:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH 10/39] sched: Factor out update_other_load_avgs() from
- __update_blocked_others()
-Message-ID: <20240624123529.GM31592@noisy.programming.kicks-ass.net>
-References: <20240501151312.635565-1-tj@kernel.org>
- <20240501151312.635565-11-tj@kernel.org>
+	s=arc-20240116; t=1719232564; c=relaxed/simple;
+	bh=iqIDiClByuVqkBA4g51VBdbPav7grUag4ByQdoYOMzc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kHUwzXguZmd0qCduMDdwruAVKWV15DFIOMyGl3lansIYCCOFwmR9OWt0hf1ANOmzjjCbty/8zGNkINfv/RcztYrUJI0vt51lrF7uVdhTcEhwEDJT+JDUGyAvxDnK+yqo4/qLKYH6uHXja7ueLPzl6j3NsblJue6dix4zdHVSggA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-376147797ddso57030425ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:36:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719232562; x=1719837362;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p0B/Ki26fhKoJG5UxZ8ax7yW7hmTYMampc0XRPoYdhc=;
+        b=PpQUv3Ham6d3MpBfn2Cgb+egF6UN/YpyNFDNket9oxlUxA88aZYiqTsmiu3k+IqnbW
+         xCd8BO+ZcdnUYyI2N0V6nhxy/8wlvVfF4roEh3tvA+7HLrxSQjRPeSmkrjv9tMqSTslH
+         HNg07Hp/+Aqrt7NEXsvFdp5usutZuFiSZyhUgmvVrRDoJ1ylYywmD1UN0S6C0/uZXEQ2
+         z1m/JdB7ME80lqd/JVyYs5LjJ1MVkOMDZx7oRLt9uCKer1C4xdg9HnMwWh0u2toGG+mE
+         +10XdqgYRCPO1u3Z5xLGdTYEs1isc06lQ0acxgOyOBFUsPhRWH9JCkuAzSRSGgyNciGy
+         b8ag==
+X-Forwarded-Encrypted: i=1; AJvYcCXlKDYuX4VT0ghi+ISi8nNjAiDNGXZ5ly+OcvNwLjO8EGXJlo4QjUYgEZk23Ww/kvpv17FW+2zUhcTrr7klYGjgveGDiaF76r4DO24C
+X-Gm-Message-State: AOJu0YxYHNxV15h/p4uVkZwXCz5AoswCz6Vca/0njnUxZaSn0aIsvpG9
+	JYNlkfMpsfcd0ZXIP5t1J7gGuVLAAwQiSG+CvPFI93QebJH0IOy3TLLiJY68fmkj/Jt3g7nVuWa
+	mYkv/OfzVwV+qvb0hJTXtytGydDaCl7D3BcbCo+szGwsJYeNgUgd3paw=
+X-Google-Smtp-Source: AGHT+IEOlH6X7pBiqm6Csc25ROy8EIXw1ZS+3R89Der6tmBGpkeFvoP2bdnLdr0p7VA/tFBPID+UCFnwU4RDKdUouE+Fjmtcj+l+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240501151312.635565-11-tj@kernel.org>
+X-Received: by 2002:a05:6e02:1d1a:b0:374:9a34:a16 with SMTP id
+ e9e14a558f8ab-3763f73cb2amr4586405ab.5.1719232562440; Mon, 24 Jun 2024
+ 05:36:02 -0700 (PDT)
+Date: Mon, 24 Jun 2024 05:36:02 -0700
+In-Reply-To: <tencent_86BE4A6A74B1761566A83D5B36EC969C3609@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002bc49c061ba20634@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: invalid-free in hci_req_sync_complete
+From: syzbot <syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 01, 2024 at 05:09:45AM -1000, Tejun Heo wrote:
-> RT, DL, thermal and irq load and utilization metrics need to be decayed and
-> updated periodically and before consumption to keep the numbers reasonable.
-> This is currently done from __update_blocked_others() as a part of the fair
-> class load balance path. Let's factor it out to update_other_load_avgs().
-> Pure refactor. No functional changes.
-> 
-> This will be used by the new BPF extensible scheduling class to ensure that
-> the above metrics are properly maintained.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: David Vernet <dvernet@meta.com>
-> ---
->  kernel/sched/core.c  | 19 +++++++++++++++++++
->  kernel/sched/fair.c  | 16 +++-------------
->  kernel/sched/sched.h |  3 +++
->  3 files changed, 25 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 90b505fbb488..7542a39f1fde 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -7486,6 +7486,25 @@ int sched_core_idle_cpu(int cpu)
->  #endif
->  
->  #ifdef CONFIG_SMP
-> +/*
-> + * Load avg and utiliztion metrics need to be updated periodically and before
-> + * consumption. This function updates the metrics for all subsystems except for
-> + * the fair class. @rq must be locked and have its clock updated.
-> + */
-> +bool update_other_load_avgs(struct rq *rq)
-> +{
-> +	u64 now = rq_clock_pelt(rq);
-> +	const struct sched_class *curr_class = rq->curr->sched_class;
-> +	unsigned long thermal_pressure = arch_scale_thermal_pressure(cpu_of(rq));
-> +
-> +	lockdep_assert_rq_held(rq);
-> +
-> +	return update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
-> +		update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
-> +		update_thermal_load_avg(rq_clock_thermal(rq), rq, thermal_pressure) |
-> +		update_irq_load_avg(rq, 0);
-> +}
+Hello,
 
-Yeah, but you then ignore the return value and don't call into cpufreq.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Vincent, what would be the right thing to do here?
+Reported-and-tested-by: syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         2ccbdf43 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=165c91b6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
+dashboard link: https://syzkaller.appspot.com/bug?extid=35ebc808442df6420eae
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12d47071980000
+
+Note: testing is done by a robot and is best-effort only.
 
