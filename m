@@ -1,187 +1,172 @@
-Return-Path: <linux-kernel+bounces-227636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4889154D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:54:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE179154D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8061F24366
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:54:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82992B21526
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B775D19E837;
-	Mon, 24 Jun 2024 16:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B0719E7FF;
+	Mon, 24 Jun 2024 16:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="isfAjYoW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XE4eOXYH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H6Z99u4e";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XE4eOXYH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H6Z99u4e"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE952F24
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719248042; cv=none; b=Tk/NYYVMufRALU3cgyhA2g5dWBw05e6wyuLSzbHszCXaKYj5YQ9mjbWu5OEeuVUmLVXb3d1AHJupHOYnK0UaLmdgouP/YpZqzYxnxkG2GU3td937TFMRhKJI7oe7dRkWz7UdjnWj0k/67UZVMSaDMxl6GZDgNNDlBut2YDlEnOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719248042; c=relaxed/simple;
-	bh=5bohiIQjuFlZ3MC0ytH3G+PZ787pPsJS6tdm3PoEEOI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ojY2zz5XOSnFuhow7DK1EaKIR1mt9zZKm+r5HvKD6co+lsRxcWeaPsFa1Z3YAbcXeBUs2ZylOKsyCaDw8X+3daE5wEVD9pUx6/PNuO3Xx8yFSY2gxp9qnlS3y42p1Tvc616unao2fmMsQO+xINbynPD5mi84tfE3b8G5UGOEtj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=isfAjYoW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719248040;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FnHUA8KFPQfgKOFjau5SADjiwWEi99JYmDlhSDmtX0c=;
-	b=isfAjYoWCnZ2tSRA/+KgOAgZA0YT68FFDLfxuTiIxeGO7WOjFjztCz/83JZ/0M11iSTJMY
-	OcxQohtkTO3HYYmYDK/WEf63PGBZfLpJdEvwi1EUnV0/NJin4ukQdEiNeofAQs2cV+F3Aq
-	dNzUT9SxLHaPtOoN5qHbQo28afV6Yw8=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-638-fE7PfUYeN4qMpNTNcuGP-g-1; Mon,
- 24 Jun 2024 12:53:58 -0400
-X-MC-Unique: fE7PfUYeN4qMpNTNcuGP-g-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F49019560A7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A76B2F24;
 	Mon, 24 Jun 2024 16:53:52 +0000 (UTC)
-Received: from RHTRH0061144 (unknown [10.22.9.58])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74E201955D83;
-	Mon, 24 Jun 2024 16:53:48 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org,  dev@openvswitch.org,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org,  Pravin B
- Shelar <pshelar@ovn.org>,  "David S. Miller" <davem@davemloft.net>,  Eric
- Dumazet <edumazet@google.com>,  Paolo Abeni <pabeni@redhat.com>,  Shuah
- Khan <shuah@kernel.org>,  Stefano Brivio <sbrivio@redhat.com>,
-  =?utf-8?Q?Adri=C3=A1n?=
- Moreno <amorenoz@redhat.com>,  Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
- the internal ovs script.
-In-Reply-To: <f7ttthjh33w.fsf@redhat.com> (Aaron Conole's message of "Sun, 23
-	Jun 2024 15:26:59 -0400")
-References: <20240620125601.15755-1-aconole@redhat.com>
-	<20240621180126.3c40d245@kernel.org> <f7ttthjh33w.fsf@redhat.com>
-Date: Mon, 24 Jun 2024 12:53:45 -0400
-Message-ID: <f7tpls6gu3q.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719248034; cv=none; b=mzR/2NhoDf+Stfsnd89TZ4mT+MyUrJXaH230EkFWiauW3SXw8O6a1rFH3KgkMczcBZX4X6aD2zjjOl5NvXgBjKqJuuw9Lu1XSANN8MjGXVxoVbP7zbmd5HX/TBElQFIVGFV7bwiQ00bjgROhVVL91jj62SJaDjDT7RAdoS8WH7s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719248034; c=relaxed/simple;
+	bh=HwZd8EBFezechcjlh/DZYRg80NRaVK6S2q4FyzxMzcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GtoOMy+p0WczX95Zh6aWEK7OxGVVGv1CG1mgjvd2a7edpLRedjfZoLc5VZI2vWQRJdEjrUFkvcnyjx/WV6pAODBOgEwVkrFaXYpIplyPbIH1s4g5x7xeTcMCuD6qm4JmNMiUxKjnGRvpO/WXwqYxeRGpWhXXAmaj16fQCdG803o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XE4eOXYH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H6Z99u4e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XE4eOXYH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H6Z99u4e; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 28AE71F7D1;
+	Mon, 24 Jun 2024 16:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719248031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4TWOup02Yc3C8yKWXbJzQeMjL6ZnMIgYxFd9eout+Yo=;
+	b=XE4eOXYHStl8Tl3femccYkSxHa9Zcha3fhJVHn2af+WSgAZfr9haAx6vVeOH/FwWPpYnpS
+	sEVmlZw6JfNa7Ai26JvZJi5qx2lm4/vjLLCR5B5+Qyj5w9SrLeXtQudKTSjCJaTijLFh++
+	ihVH77zg8qHMwzZmWyT2GG7cGdUFwKs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719248031;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4TWOup02Yc3C8yKWXbJzQeMjL6ZnMIgYxFd9eout+Yo=;
+	b=H6Z99u4eAVmEjrkNrvVcnGYn0ErthfE8vW3k8VG8LRLeQBjjNaA62CMkAZ5x2+VduEPUUC
+	w2eVp+muxTn6L6Dg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XE4eOXYH;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=H6Z99u4e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719248031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4TWOup02Yc3C8yKWXbJzQeMjL6ZnMIgYxFd9eout+Yo=;
+	b=XE4eOXYHStl8Tl3femccYkSxHa9Zcha3fhJVHn2af+WSgAZfr9haAx6vVeOH/FwWPpYnpS
+	sEVmlZw6JfNa7Ai26JvZJi5qx2lm4/vjLLCR5B5+Qyj5w9SrLeXtQudKTSjCJaTijLFh++
+	ihVH77zg8qHMwzZmWyT2GG7cGdUFwKs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719248031;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4TWOup02Yc3C8yKWXbJzQeMjL6ZnMIgYxFd9eout+Yo=;
+	b=H6Z99u4eAVmEjrkNrvVcnGYn0ErthfE8vW3k8VG8LRLeQBjjNaA62CMkAZ5x2+VduEPUUC
+	w2eVp+muxTn6L6Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A9AA1384C;
+	Mon, 24 Jun 2024 16:53:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YeU8Bp+keWaTNgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 24 Jun 2024 16:53:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A3325A08AA; Mon, 24 Jun 2024 18:53:50 +0200 (CEST)
+Date: Mon, 24 Jun 2024 18:53:50 +0200
+From: Jan Kara <jack@suse.cz>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Alexander Coffin <alex.coffin@maticrobots.com>,
+	Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: PROBLEM: ext4 resize2fs on-line resizing panic
+Message-ID: <20240624165350.madyxs74vx3niyy2@quack3>
+References: <CA+hUFcuGs04JHZ_WzA1zGN57+ehL2qmHOt5a7RMpo+rv6Vyxtw@mail.gmail.com>
+ <20240624152658.GC280025@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624152658.GC280025@mit.edu>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 28AE71F7D1
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-Aaron Conole <aconole@redhat.com> writes:
+On Mon 24-06-24 11:26:58, Theodore Ts'o wrote:
+> On Sun, Jun 23, 2024 at 06:57:13PM -0700, Alexander Coffin wrote:
+> > [1.] One line summary of the problem:
+> > Using resize2fs on-line resizing on a specific ext4 partition is
+> > causing an Oops.
+> > 
+> > 
+> > [6.] Output of Oops.. message (if applicable) with symbolic information
+> >      resolved (see Documentation/admin-guide/bug-hunting.rst)
+> > 
+> > ```
+> > [  445.552287] ------------[ cut here ]------------
+> > [  445.552300] kernel BUG at fs/jbd2/journal.c:846!
+> 
+> Thanks for the bug report.  The BUG_ON is from the following assert in
+> jbd2_journal_next_log_block:
+> 
+> 	J_ASSERT(journal->j_free > 1);
+> 
+> and it indicates that we ran out of space in the journal.  There are
+> mechanisms to make sure that this should never happen, and if the
+> journal is too small and the transaction couldn't be broken up, then
+> the operation (whether it is a resize or a file truncate or some other
+> operation) should have errored out, and not triggered a BUG.
 
-> Jakub Kicinski <kuba@kernel.org> writes:
->
->> On Thu, 20 Jun 2024 08:55:54 -0400 Aaron Conole wrote:
->>> This series enhances the ovs-dpctl utility to provide support for set()
->>> and tunnel() flow specifiers, better ipv6 handling support, and the
->>> ability to add tunnel vports, and LWT interfaces.  Finally, it modifies
->>> the pmtu.sh script to call the ovs-dpctl.py utility rather than the
->>> typical OVS userspace utilities.
->>
->> Thanks for the work! 
->>
->> Looks like the series no longer applies because of other changes
->> to the kernel config. Before it stopped applying we got some runs,
->> here's what I see:
->>
->> https://netdev-3.bots.linux.dev/vmksft-net/results/648440/3-pmtu-sh/stdout
->>
->> # Cannot find device "ovs_br0"
->> # TEST: IPv4, OVS vxlan4: PMTU exceptions                             [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv4, OVS vxlan4: PMTU exceptions - nexthop objects           [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv6, OVS vxlan4: PMTU exceptions                             [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv6, OVS vxlan4: PMTU exceptions - nexthop objects           [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv4, OVS vxlan6: PMTU exceptions                             [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv4, OVS vxlan6: PMTU exceptions - nexthop objects           [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv6, OVS vxlan6: PMTU exceptions                             [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv6, OVS vxlan6: PMTU exceptions - nexthop objects           [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv4, OVS geneve4: PMTU exceptions                            [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv4, OVS geneve4: PMTU exceptions - nexthop objects          [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv6, OVS geneve4: PMTU exceptions                            [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv6, OVS geneve4: PMTU exceptions - nexthop objects          [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv4, OVS geneve6: PMTU exceptions                            [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv4, OVS geneve6: PMTU exceptions - nexthop objects          [FAIL]
->> # Cannot find device "ovs_br0"
->> # TEST: IPv6, OVS geneve6: PMTU exceptions                            [FAIL]
->> # Cannot find device "ovs_br0"
->>
->> Any idea why? Looks like kernel config did include OVS, perhaps we need
->> explicit modprobe now? I don't see any more details in the logs.
->
-> Strange.  I expected that the module should have automatically been
-> loaded when attempting to communicate with the OVS genetlink family
-> type.  At least, that is how it had been working previously.
->
-> I'll spend some time looking into it and resubmit a rebased version.
-> Thanks, Jakub!
+Yeah, I was debugging this today and I'll shortly send a fix for JBD2 so
+that we don't trigger this BUG. But the online resize will fail anyway
+after my fixes (just gracefully) because the add_flex_bg() code tries to
+start a transaction with more credits than the journal allows.
 
-If the ovs module isn't available, then I see:
-
-#   ovs_bridge not supported
-# TEST: IPv4, OVS vxlan4: PMTU exceptions                             [SKIP]
-
-But if it is available, I haven't been able to reproduce such ovs_br0
-setup failure - things work.
-
-My branch is rebased on 568ebdaba6370c03360860f1524f646ddd5ca523
-
-Additionally, the "Cannot find device ..." text comes from an iproute2
-utility output.  The only place we actually interact with that is via
-the call at pmtu.sh:973:
-
-	run_cmd ip link set ovs_br0 up
-
-Maybe it is possible that the link isn't up (could some port memory
-allocation or message be delaying it?) yet in the virtual environment.
-To confirm, is it possible to run in the constrained environment, but
-put a 5s sleep or something?  I will add the following either as a
-separate patch (ie 7/8), or I can fold it into 6/7 (and drop Stefano's
-ACK waiting for another review):
-
-
-wait_for_if() {
-   if ip link show "$2" >/dev/null 2>&1; then return 0; fi
-
-   for d in `seq 1 30`; do
-      sleep 1
-      if ip link show "$2" >/dev/null 2>&1; then return 0; fi
-   done
-   return 1
-}
-
-....
- 	setup_ovs_br_internal || setup_ovs_br_vswitchd || return $ksft_skip
-+	wait_for_if "ovs_br0"
- 	run_cmd ip link set ovs_br0 up
-....
-
-Does it make sense or does it seem like I am way off base?
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
