@@ -1,204 +1,172 @@
-Return-Path: <linux-kernel+bounces-227521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CECA91529E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:37:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCAD19152A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31551F2115F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:37:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E00141C2105E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DC319CD06;
-	Mon, 24 Jun 2024 15:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1663A19CCFB;
+	Mon, 24 Jun 2024 15:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DqoG4rq0"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jA0pRI3/"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A10C1EB48;
-	Mon, 24 Jun 2024 15:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42341DFEF
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719243461; cv=none; b=RsVy+QF5DuyVseqGKDAvbnIWLK19h7n6cam5AhcpnmGAsp+nyFyl9OT56FmxqT7hWFkfH4RL1SIzsyMzurPGZqc7XbqOKoLJRIHWQlWEwARJws7zs9eOWMoB/o/1yg+wo7wrHRiPex0jXQ96+2gI9Zi2i+ejVNxHHGP6Q423pgc=
+	t=1719243547; cv=none; b=uyAFD3Jf9wFSd3eRFNsb1xib9Yipe/sRkCQf+66mQY0A1GicercQNV0RCinSaP/xNBiBTLBloH77yxmyLm6vIgZ+GaTO4OvgXj3dkKGgt+xn4EARegWU2rY1/TfKDZazaiGehlhtEaQPwjSGiw1QFMpCicQzfpoKysmh4XjVb3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719243461; c=relaxed/simple;
-	bh=Z36F+leuCU/otTunzaT4BJQLU9anN/d01xVBaiT1ZT0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nR+HBWbVvk9yZcT2aXeeAjKIfDDXbssgo1bfD3nBMLHZ/Jh30RSMjOBdyRyXEV40d0eKTgrInAPJLWQdw5F8Hmvbe7s7BUCTKIw8a5P4bxnBvGvf+qIj8l20htRiM6WG5ki9wiR0aIcbsXkRDPUpoYoSwYnrlK656fM9n9DEw9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DqoG4rq0; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1719243547; c=relaxed/simple;
+	bh=fkGCYYnByBUPtMADuMf2BMlTvJbpDBTQEAVZpRdutEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CZZKv9lZEoOIwZ2ZEre/Kr8zJpaCmFNogSZiDIFtl1y9VDOtBCbsuYnnh8/NAG0tMUYwQ2g/Jur3DFte2UOUrwxOEIEZFvTxo9/+gxTtwUfTcCJ7nb1P+giuBUyPzfe8jz/54C91Mgje63LTf4+ExemN0dHmI5+vyI3PRWPvxpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jA0pRI3/; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57cc1c00b97so4275783a12.0;
-        Mon, 24 Jun 2024 08:37:39 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-421bb51d81aso37456965e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:39:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719243458; x=1719848258; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jQc+e+I6ia7/ogMpB2OJkI6aQ1tlYzw7cUiWzpvi62U=;
-        b=DqoG4rq0HE/klKgn+fesYF+6UdKdDf8ce9R4vH3nvH8sm3f+aCroHiL8c96F8lv4UN
-         7ZN50dbGhweikJ9VeJWITLgNnMfJ7gZnB9aI2Ur1Cctt2OpR4fjlBCgWf6DgIHaOl3Q7
-         33MgHSKXMiTd/CfWf+xeo4I8lDJDtFxTgKmSBPxz7d/os9IP/IkvB3i508s3WH2WAjK3
-         Z7YXNqIEYVorsvDhXWh/A8FlK2HpzctC+DkyhhFE+zrFCWJYczLuapoHwAetFuKLSnli
-         b3D1tSsETNERQbeqVQ7S281qxzhX/QFtSdHNxeQ3RT1rstb6iLRf7JIdeC/8WkBR5Ov9
-         5qIQ==
+        d=gmail.com; s=20230601; t=1719243544; x=1719848344; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HPcPd9wy1fSfjdoXcI4T31fTF+D9RtkuwE8EltBejPw=;
+        b=jA0pRI3/96l0IJUOF1v8Tpu1q4jdezemAkxLCgez9bBO4UOKeF6ZjXqIWA/t5hXxRq
+         NwT1vx8Ow3D0hU0haVWRnzAx3FeHhS89GCG6PfcKqD74myq4vok9gESB713NWyYWtWTq
+         ok5Lr7IhuNkP8GaScAHEut91vNbUkV9BPCsgPe7j4SfEdtD4C94n1M11qwWF7pJWHf6D
+         CXD8oJ6P/kIiI/8fW37N9+nnX7aMHQjHHNlBMy8rxrtKGQ3+iKkiaaNgcw8Pk1ZxtHcp
+         fV+6/2gRKAYTN+/bwbgfoCaElOgwubkULFDvF+dvFHiRV3yYKpx+1Bxr3UKK+MFajf+A
+         wLAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719243458; x=1719848258;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jQc+e+I6ia7/ogMpB2OJkI6aQ1tlYzw7cUiWzpvi62U=;
-        b=OnkvKWLYtl8n2dO/4+GIOGgbXTnS7tH7GdKRjPnvKOYdYr3ifFdg7149U/gWR5mWBv
-         oK9spmxj8XUx3hMYIfhVMZtGkYtUq6QEDDm6IyLxZIMWpOm3fpUvNU2SdXpRE8xMCR/Z
-         3bgRPTap4ZE5gHmLoZRHhSStk/HnWsiQj5rEPwoy06RUf2NW5dXHNYVb1tvDTD3eoj+X
-         434AXp2iMC+aWw5te2n7jl1tjWo25EY2mtcLZk+TKklLZJ+0UESdeP/Td3bW5iT2rr6q
-         5E0qHnan/0XVKAQ6KxapyOGVm1JFpmMrMyIfS3R5E3USMQ60fQrifzn9ztKslegLsLs4
-         SePA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTRE9Gr+hipht6ieyzaLlBvEZCoC4hcK4n804U23Zfm+tv5/ZAm7r3niB8ANoT6PJdeXZ+8DX33mkcbPs8tUBvvEsY3HGPwiAMrk/JjpiXUkDnCr2hmsS/uPPA7y1vLpHl96nXHY1QDZoTlw==
-X-Gm-Message-State: AOJu0YxM/2/OEK9uzPSUjppes3NZn3D3f2LUkdQ3rBA7+k3Bo91qP+I9
-	uMR2n5UTouuGxAEcsHHHpcG8Agf8UlwDXF3j6VbrwR5e5TN/D/nunMz4wUu43zQRZp/9/ki42Q7
-	X+Lz0/CJqDE5P0cxi5zxdZJ+mjn0=
-X-Google-Smtp-Source: AGHT+IHEEQxmIHCl7aQptuGI+5uw01VLWA2AyOiSUHqCVl//O6JanrQFmlogbqjX9PEO1AhYjBS3Z5mQrF25LbmaeRY=
-X-Received: by 2002:a50:931a:0:b0:57d:2db9:15e8 with SMTP id
- 4fb4d7f45d1cf-57d4bdcb3bfmr2974167a12.34.1719243458252; Mon, 24 Jun 2024
- 08:37:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719243544; x=1719848344;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HPcPd9wy1fSfjdoXcI4T31fTF+D9RtkuwE8EltBejPw=;
+        b=r5oEAtHi4PKS5a1hcya+8LNKJEtP+SWDHqXWMhCNapwMPJirw7pk5WbROpMIb5moou
+         KJiYkKu8opUeq1NpEDjSlLK2qw1I2uj/SmB21mc3kYXD4/LIlsvI9mxuZQUWmRipFdqI
+         nBtR3t/unsOXubTkAyKG6liFhuECQGEeUaDf4d6AqVOUO82RAtP20R4aNz5ez+szRcp/
+         CQ6xKM9VNgOFa/ryM+BDJS61WoVydfP2bsmdibGmfeNe+CAJ/t96W35pl3EriViUHVuJ
+         MJL1OQCQcb6r+Kms+73K3Hzy8GUZlywVzNJlcjRfZBbU28iToX7u41odxJiSYTJup+w7
+         kSsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVju6DN9NcH94JGgyFqreYOv32FMC6bsjrpkuw2TCCjW/EFlCJVe9qV65SFsisYvX9CzILipJZow+/zT3Ayd7kkIHD1cDehKEL1Iqf/
+X-Gm-Message-State: AOJu0Yxfen0VtyE9Kb0FNiYnEwTwbRdXbrou3BQCfpLb0V18qbMoz59x
+	+OvBYTn9oIMbnXMhtvU3J361ahQOD44Z2GgAyGHVVhbgHBh8kpRn
+X-Google-Smtp-Source: AGHT+IEKItbua/CYYFygu+88L+0laEZhLABVve6WLN9uF33edGgRXGcJjBtKahS8k9Dy8kc+1m3BWw==
+X-Received: by 2002:a7b:cc89:0:b0:421:7f4d:525f with SMTP id 5b1f17b1804b1-4248cc35da7mr33607055e9.24.1719243543832;
+        Mon, 24 Jun 2024 08:39:03 -0700 (PDT)
+Received: from ?IPV6:2001:16a2:df66:b900:46d:aa3:6645:bcd8? ([2001:16a2:df66:b900:46d:aa3:6645:bcd8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0c54c9sm179753455e9.27.2024.06.24.08.39.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 08:39:03 -0700 (PDT)
+Message-ID: <5b3e732c-d23d-41ef-ae5c-947fa3e866ab@gmail.com>
+Date: Mon, 24 Jun 2024 18:39:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523175227.117984-1-robdclark@gmail.com> <20240523175227.117984-2-robdclark@gmail.com>
- <20240624151401.GB8706@willie-the-truck>
-In-Reply-To: <20240624151401.GB8706@willie-the-truck>
-From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 24 Jun 2024 08:37:26 -0700
-Message-ID: <CAF6AEGttkHPOsO+NSHZeRXiZBxU_26HZyGMjOZ3-Y8NZUgz0gA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] iommu/io-pgtable-arm: Add way to debug pgtable walk
-To: Will Deacon <will@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Kevin Tian <kevin.tian@intel.com>, 
-	Joao Martins <joao.m.martins@oracle.com>, 
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next:master] [mm] 0fa2857d23:
+ WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
+To: Hugh Dickins <hughd@google.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>,
+ kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+ lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
+ David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Andi Kleen <ak@linux.intel.com>,
+ linux-kernel@vger.kernel.org
+References: <202406241651.963e3e78-oliver.sang@intel.com>
+ <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
+ <12fb19d1-3e57-4880-be59-0e83cdc4b7f1@gmail.com>
+ <61d19ec8-2ba7-e156-7bb7-f746dae8e120@google.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <61d19ec8-2ba7-e156-7bb7-f746dae8e120@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024 at 8:14=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
-:
->
-> On Thu, May 23, 2024 at 10:52:21AM -0700, Rob Clark wrote:
-> > From: Rob Clark <robdclark@chromium.org>
-> >
-> > Add an io-pgtable method to walk the pgtable returning the raw PTEs tha=
-t
-> > would be traversed for a given iova access.
-> >
-> > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > ---
-> >  drivers/iommu/io-pgtable-arm.c | 51 ++++++++++++++++++++++++++++------
-> >  include/linux/io-pgtable.h     |  4 +++
-> >  2 files changed, 46 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-=
-arm.c
-> > index f7828a7aad41..f47a0e64bb35 100644
-> > --- a/drivers/iommu/io-pgtable-arm.c
-> > +++ b/drivers/iommu/io-pgtable-arm.c
-> > @@ -693,17 +693,19 @@ static size_t arm_lpae_unmap_pages(struct io_pgta=
-ble_ops *ops, unsigned long iov
-> >                               data->start_level, ptep);
-> >  }
-> >
-> > -static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
-> > -                                      unsigned long iova)
-> > +static int arm_lpae_pgtable_walk(struct io_pgtable_ops *ops, unsigned =
-long iova,
-> > +                     int (*cb)(void *cb_data, void *pte, int level),
-> > +                     void *cb_data)
-> >  {
-> >       struct arm_lpae_io_pgtable *data =3D io_pgtable_ops_to_data(ops);
-> >       arm_lpae_iopte pte, *ptep =3D data->pgd;
-> >       int lvl =3D data->start_level;
-> > +     int ret;
-> >
-> >       do {
-> >               /* Valid IOPTE pointer? */
-> >               if (!ptep)
-> > -                     return 0;
-> > +                     return -EFAULT;
->
-> nit: -ENOENT might be a little better, as we're only checking against a
-> NULL entry rather than strictly any faulting entry.
->
-> >               /* Grab the IOPTE we're interested in */
-> >               ptep +=3D ARM_LPAE_LVL_IDX(iova, lvl, data);
-> > @@ -711,22 +713,52 @@ static phys_addr_t arm_lpae_iova_to_phys(struct i=
-o_pgtable_ops *ops,
-> >
-> >               /* Valid entry? */
-> >               if (!pte)
-> > -                     return 0;
-> > +                     return -EFAULT;
->
-> Same here (and at the end of the function).
->
-> > +
-> > +             ret =3D cb(cb_data, &pte, lvl);
->
-> Since pte is on the stack, rather than pointing into the actual pgtable,
-> I think it would be clearer to pass it by value to the callback.
 
-fwiw, I passed it as a void* to avoid the pte size.. although I guess
-it could be a union of all the possible pte types
+On 24/06/2024 18:26, Hugh Dickins wrote:
+> On Mon, 24 Jun 2024, Usama Arif wrote:
+>> On 24/06/2024 15:05, Yosry Ahmed wrote:
+>>> On Mon, Jun 24, 2024 at 1:49 AM kernel test robot <oliver.sang@intel.com>
+>>> wrote:
+>>>>
+>>>> Hello,
+>>>>
+>>>> kernel test robot noticed
+>>>> "WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof" on:
+>>>>
+>>>> commit: 0fa2857d23aa170e5e28d13c467b303b0065aad8 ("mm: store zero pages to
+>>>> be swapped out in a bitmap")
+>>>> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+>>> This is coming from WARN_ON_ONCE_GFP(order > MAX_PAGE_ORDER, gfp), and
+>>> is triggered by the new bitmap_zalloc() call in the swapon path. For a
+>>> sufficiently large swapfile, bitmap_zalloc() (which uses kmalloc()
+>>> under the hood) cannot be used to allocate the bitmap.
+>>>
+>>> Usama, I think we want to use a variant of kvmalloc() here.
+> Yes, I hit the same problem with swapon in my testing,
+> and had been intending to send a patch.
+>
+>> Yes, just testing with below diff now. The patch is not in mm-stable yet, so
+>> will just send another revision with below diff included. Thanks!
+>>
+>>
+>> diff --git a/mm/swapfile.c b/mm/swapfile.c
+>> index 0b8270359bcf..2263f71baa31 100644
+>> --- a/mm/swapfile.c
+>> +++ b/mm/swapfile.c
+>> @@ -2643,7 +2643,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *,
+>> specialfile)
+>>          free_percpu(p->cluster_next_cpu);
+>>          p->cluster_next_cpu = NULL;
+>>          vfree(swap_map);
+>> -       bitmap_free(p->zeromap);
+>> +       kvfree(p->zeromap);
+> Yes.
+>
+>>          kvfree(cluster_info);
+>>          /* Destroy swap account information */
+>>          swap_cgroup_swapoff(p->type);
+>> @@ -3170,7 +3170,7 @@ SYSCALL_DEFINE2(swapon, const char __user *,
+>> specialfile, int, swap_flags)
+>>                  goto bad_swap_unlock_inode;
+>>          }
+>>
+>> -       p->zeromap = bitmap_zalloc(maxpages, GFP_KERNEL);
+>> +       p->zeromap = kvzalloc(DIV_ROUND_UP(maxpages, 8), GFP_KERNEL);
+> No, 8 is not right for 32-bit kernels. I think you want
+> 	p->zeromap = kvzalloc(BITS_TO_LONGS(maxpages), GFP_KERNEL);
+> but please check it carefully, I'm easily confused by such conversions.
+>
+> Hugh
 
-BR,
--R
+Ah yes, didnt take into account 32-bit kernel. I think its supposed to be
 
->
-> > +             if (ret)
-> > +                     return ret;
-> >
-> > -             /* Leaf entry? */
-> > +             /* Leaf entry?  If so, we've found the translation */
-> >               if (iopte_leaf(pte, lvl, data->iop.fmt))
-> > -                     goto found_translation;
-> > +                     return 0;
-> >
-> >               /* Take it to the next level */
-> >               ptep =3D iopte_deref(pte, data);
-> >       } while (++lvl < ARM_LPAE_MAX_LEVELS);
-> >
-> >       /* Ran out of page tables to walk */
-> > +     return -EFAULT;
-> > +}
-> > +
-> > +struct iova_to_phys_walk_data {
-> > +     arm_lpae_iopte pte;
-> > +     int level;
-> > +};
->
-> Expanding a little on Robin's suggestion, why don't we drop this structur=
-e
-> in favour of something more generic:
->
->         struct arm_lpae_walk_data {
->                 arm_lpae_iopte ptes[ARM_LPAE_MAX_LEVELS];
->         };
->
-> and then do something in the walker like:
->
->         if (cb && !cb(pte, lvl))
->                 walk_data->ptes[lvl] =3D pte;
->
-> which could return the physical address at the end, if it reaches a leaf
-> entry. That way arm_lpae_iova_to_phys() is just passing a NULL callback
-> to the walker and your debug callback just needs to return 0 (i.e. the
-> callback is basically just saying whether or not to continue the walk).
->
-> Will
+  p->zeromap = kvzalloc(BITS_TO_LONGS(maxpages) * sizeof(unsigned long), 
+GFP_KERNEL);
+
+if using BITS_TO_LONGS.
+
+Will wait sometime incase there are more comments and will send out 
+another version.
+
+Thanks!
+
+>>          if (!p->zeromap) {
+>>                  error = -ENOMEM;
+>>                  goto bad_swap_unlock_inode;
 
