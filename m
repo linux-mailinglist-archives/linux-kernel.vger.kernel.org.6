@@ -1,144 +1,172 @@
-Return-Path: <linux-kernel+bounces-227650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A26E915505
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:07:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81397915509
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1230A2814A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:07:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 008B2B2578A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEE619EEB6;
-	Mon, 24 Jun 2024 17:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D720419EEC4;
+	Mon, 24 Jun 2024 17:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UcY41JrK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYM5g7GW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0B81EA87;
-	Mon, 24 Jun 2024 17:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE991EA87;
+	Mon, 24 Jun 2024 17:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719248816; cv=none; b=q0yVkozngzAwIxDm3elwoylugNNljlakc1JtCWnCekQqaLSa8HY3KIOrl9EWw9GPxIVkXOJfghZoOEwewrpGBue7TePypNA9NeYXpNWeD9AqemKv/9mSlawr6A/g9Pg+01BfD2QXsOlEziyLVDSeBuKgQb0gsekZi8zy5+ouWeI=
+	t=1719248851; cv=none; b=j1yjlI/T2sOE/lpM0gNWgGop4CEnoKpQdrMgGMTLOwPJF1ooJ/A+25MJdPl/V1YRMMnUQkAVeuw8b6Fb3GzaiS4S0GQPo71XKv+xwzvWUagl21mtMYJ7Ll2fMdTyMRSBZoVZFB+KhjHGN7QZg43p+E3R3vMs+JgDuv1KspupiTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719248816; c=relaxed/simple;
-	bh=ME0jqVGIC7eiVMAqx/gHdWA4n8aNbVyDsjNLmQ/tI74=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eugCW0MlKh6AIGQBFtOjK82O2j+34/rGsJURBArm+j/b86KKB7ZhDtuZisi8ytuzx/L1aNyoWtqbTKY8BxUbfGwV/YGqO44W19Apbfn2m9TrjWyJ0SIdlyvJb6Ge+z5j2iXAWy/ZtJ9Lnp81OjNSwLXTOPuNfDXvRI31lkO4WO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UcY41JrK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F4AC2BBFC;
-	Mon, 24 Jun 2024 17:06:53 +0000 (UTC)
+	s=arc-20240116; t=1719248851; c=relaxed/simple;
+	bh=xVjgbxgIL6BdkCx5ma5KcWzBtgfiKZ7zaKg5Ec62yS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UvYzEhAWpTUQOcNa8JXgefsBLTF9DKtpN88wfCXgUlsP2+5i+KO/H1LB6AZAjH0SX0tyZlaUEWvasn+NsdKoUeP23x1fFBc3SJmvDfHAo3y7DiVSFfGxieZaYN1QL2WxicUx2c6PR9UUxIqh/hXdIixMuy+hXIs9KSGXXD6151w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYM5g7GW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF49AC2BBFC;
+	Mon, 24 Jun 2024 17:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719248815;
-	bh=ME0jqVGIC7eiVMAqx/gHdWA4n8aNbVyDsjNLmQ/tI74=;
-	h=Date:From:To:Cc:Subject:From;
-	b=UcY41JrKCHRySIz2Cm+h87TfIts5oZ9ouVpa1A1KBmoA5RwA+Z+eMCJ26lX+mJ3Rt
-	 b3aV22+58zAitgDtdBiFbbK3sRhN758tK68+q6JJBq8wwXT32VoRHvKGNV3oU3ODgP
-	 1IE7tFHKxGltHmMadcani6o/HSD+XD1aNfcsWVUmRvU4MkjaMFsxKtS48ZNY/5vEsM
-	 Xl6UiUT5KPjBtDfkl0l2e5ksPYs3MTC5YGPhX9ZdjDb3dXRzr2gf/9WbQ9rQBNLwNg
-	 P0tqv6JSivvRy3x4bBvA8jfnDI7QymQBMTWoNwzYP7Yv62XNVmaeEGx0U14bre+see
-	 vEbQKKLpT59uw==
-Date: Mon, 24 Jun 2024 18:06:50 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>, Xiaojian Du <Xiaojian.Du@amd.com>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Message-ID: <ZnmnqjCZ_dx0xXjw@sirena.org.uk>
+	s=k20201202; t=1719248850;
+	bh=xVjgbxgIL6BdkCx5ma5KcWzBtgfiKZ7zaKg5Ec62yS0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lYM5g7GWxzB6c3iSoA/1v+VC4k5KN3q6bmB/o7J0uIcfPxuXTLLEaesMKs9/KZAX1
+	 kE770aoUUViwYqw34Ibhh4KMup0tKxx9pfGAa4oZ/HEDaYPF/l8rSznmLKjzvTUHmF
+	 p7sssG/whKSVdSA89NeEKmoFLWg3xJd8SbOy4dmSFUDlClOnGzSgJ7Hbrsl3LqWM0J
+	 LuBUCv/B4XMOKU/xf9XQbE0gfSWcxmhdzihvh8qz9mdQTbDnx/G/4BVNBUFC4jKC/l
+	 DmEoJE5bgoMYuEVfYN2vYLXcFu4fYMXDxxuzYCIk3ePLwouS4M5PdPGOBYj65kOTie
+	 Z5k+qna58BsSA==
+Date: Mon, 24 Jun 2024 18:07:26 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
+Subject: Re: [PATCH v5 1/2] dt-bindings: power: supply: add support for
+ MAX17201/MAX17205 fuel gauge
+Message-ID: <20240624-risk-sixtyfold-3b5f82833615@spud>
+References: <20240621125744.363564-1-dima.fedrau@gmail.com>
+ <20240621125744.363564-2-dima.fedrau@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4klZvQdydUy1+7yP"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="c4ZUpTGjldgbfpX4"
 Content-Disposition: inline
+In-Reply-To: <20240621125744.363564-2-dima.fedrau@gmail.com>
 
 
---4klZvQdydUy1+7yP
+--c4ZUpTGjldgbfpX4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Jun 21, 2024 at 02:57:43PM +0200, Dimitri Fedrau wrote:
+> Adding documentation for MAXIMs MAX17201/MAX17205 fuel gauge.
+>=20
+> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+> ---
+>  .../bindings/power/supply/maxim,max1720x.yaml | 58 +++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,=
+max1720x.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max1720=
+x.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max1720x.yaml
+> new file mode 100644
+> index 000000000000..dc3e0e7cb2ce
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max1720x.yaml
+> @@ -0,0 +1,58 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/supply/maxim,max1720x.yaml#
 
-Today's linux-next merge of the tip tree got a conflict in:
+s/1720x/17201/ both here, the title and in the filename please.
+With that changed,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-  arch/x86/include/asm/cpufeatures.h
+Thanks,
+Conor.
 
-between commit:
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Maxim MAX1720x fuel gauge
+> +
+> +maintainers:
+> +  - Dimitri Fedrau <dima.fedrau@gmail.com>
+> +
+> +allOf:
+> +  - $ref: power-supply.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: maxim,max17201
+> +      - items:
+> +          - enum:
+> +              - maxim,max17205
+> +          - const: maxim,max17201
+> +
+> +  reg:
+> +    items:
+> +      - description: ModelGauge m5 registers
+> +      - description: Nonvolatile registers
+> +
+> +  reg-names:
+> +    items:
+> +      - const: m5
+> +      - const: nvmem
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      fuel-gauge@36 {
+> +        compatible =3D "maxim,max17201";
+> +        reg =3D <0x36>, <0xb>;
+> +        reg-names =3D "m5", "nvmem";
+> +        interrupt-parent =3D <&gpio0>;
+> +        interrupts =3D <31 IRQ_TYPE_LEVEL_LOW>;
+> +      };
+> +    };
+> --=20
+> 2.39.2
+>=20
 
-  c7107750b2ffa ("x86/cpufeatures: Add AMD FAST CPPC feature flag")
-
-=66rom the pm tree and commit:
-
-  78ce84b9e0a54 ("x86/cpufeatures: Flip the /proc/cpuinfo appearance logic")
-
-=66rom the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/x86/include/asm/cpufeatures.h
-index 6c128d463a143,6007462e03d66..0000000000000
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@@ -465,12 -466,11 +466,12 @@@
-   *
-   * Reuse free bits when adding new feature flags!
-   */
-- #define X86_FEATURE_AMD_LBR_PMC_FREEZE	(21*32+ 0) /* AMD LBR and PMC Free=
-ze */
-- #define X86_FEATURE_CLEAR_BHB_LOOP	(21*32+ 1) /* "" Clear branch history =
-at syscall entry using SW loop */
-- #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* "" BHI_DIS_S HW control avail=
-able */
-- #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* "" BHI_DIS_S HW control en=
-abled */
-- #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* "" Clear branc=
-h history at vmexit using SW loop */
-- #define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* "" AMD Fast CPPC */
-+ #define X86_FEATURE_AMD_LBR_PMC_FREEZE	(21*32+ 0) /* "amd_lbr_pmc_freeze"=
- AMD LBR and PMC Freeze */
-+ #define X86_FEATURE_CLEAR_BHB_LOOP	(21*32+ 1) /* Clear branch history at =
-syscall entry using SW loop */
-+ #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* BHI_DIS_S HW control availabl=
-e */
-+ #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* BHI_DIS_S HW control enabl=
-ed */
-+ #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch h=
-istory at vmexit using SW loop */
-++#define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* AMD Fast CPPC */
- =20
-  /*
-   * BUG word(s)
-
---4klZvQdydUy1+7yP
+--c4ZUpTGjldgbfpX4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ5p6kACgkQJNaLcl1U
-h9BV/gf+IyBdZ108YiWqPp6OdY+fl10ivWtGa96tpjUhGmBj/9kQDQbWr/k5fJEU
-ER+E1ouGYwjmR6XO0Y7XuCGSggpcGTtXQKzqms8kYg+E6s6uQxI2P+5nkwX7p4Pa
-i5wehtb/8USpNi5cp2RpTCn/DDOauUnGdFB1KoYkdBXw1tQYt4imcjzwsB5bCj0l
-HRC011cCcgcDuD+ZucXF7h8y/L3IORm2K77Bbyem0eQPySBzPwlajOd26tmcM7im
-GKWqFp8H+YRMNsE/pInAFzpXt/flSdJkxU7tJ/FGaL175NhuNTcX7eC4lFIO5Zh4
-ApX5YnecR3u2C8DY0ATmKTiGG+xdNA==
-=NgFk
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnmnzgAKCRB4tDGHoIJi
+0sJuAP4oa/nY+pl3xEPLYrrj7PVV/pGENjWvjklF0u403a1vWgD/d5QZLRwuI4KV
+VJW28K/aQ3STiD4yBgZusbMsdusRlwU=
+=twk9
 -----END PGP SIGNATURE-----
 
---4klZvQdydUy1+7yP--
+--c4ZUpTGjldgbfpX4--
 
