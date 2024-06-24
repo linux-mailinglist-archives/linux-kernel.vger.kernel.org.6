@@ -1,127 +1,72 @@
-Return-Path: <linux-kernel+bounces-228000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B80D915997
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:08:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFBCF915998
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6EE91F22922
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:08:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C305285328
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9266E1A0B0B;
-	Mon, 24 Jun 2024 22:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B981A0B10;
+	Mon, 24 Jun 2024 22:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FEVYhuYo"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDc6NSO1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D97F13C901
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDAF1A0724
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719266875; cv=none; b=iTJrYO5RlEKPNFnj81OjwI6VanYx8r0xjCxkaf3c3bwuyG/MH2xCgd5R0dvc+tT0KuYNBE6CH8yYBtSrnyNikEtrLf/Hb+aQWDExFWcgb3FBL5IPeTxEKKsqFwqT4U73w8smj58FF+9g6YsVHq3WD1Nibpv8HXW9UP717UX4zJQ=
+	t=1719266891; cv=none; b=fuc0lgAHp3Y6qSFbln2m1srTbSz2fEWL3I7o55YO3Jg4DIAtQUaFSTO2+7DqwnNAoN9fVG+r2d0dJQoZdvKXUbEYo15xTBLyzG7c/Kq7Gc9sI98YN0dmJ5W1n+f/ARBGyqBaqBM/ASRupRjiOMzSWJum2c+x0sRDDwG4/tgbUug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719266875; c=relaxed/simple;
-	bh=opT9chxOr5SNeIuK8SI/neAZbgaJe17hZ4b9hMCiFJE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WxZSFlDBbMXvyLnMLhCTmc/KJ12S6S59ZrEG9WOShXC5Qulb3Vd/CTwtUGd5dMw/2Qaqr6t5evLPjuoA3gQ0js1Jx/40taF0PtR21zleLdgDqfHHuhbt1QHVIcgk15ytlT3flMGoyvp+WXgSxgZDKkXUJbmUDR53NEkcBgPCft8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FEVYhuYo; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-643f3130ed1so18234277b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:07:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1719266872; x=1719871672; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fszxPVkXOEv4ipvfMeUYMBaHCtHM5VmJKexolLOZC+U=;
-        b=FEVYhuYoJJznA45oTekzWcNv7XJDGavcA/3HwyVgrfL4jS6mmMVPiskJvI5RJ6Vy8v
-         835pLpHtMZwIG4ctHgGh5977YNimJwPzLU3Q6D9CD96dgHYBQuNpndXkc9C6dOQprfbu
-         uLfkbG9J5l4SsJmeLMd0IDwLPY7IUkUn/yZLdX2v0YlP5wZ4R5SEYi0NHV5v7IaP/1hh
-         qb21VWUfuXQ7zMBb1ytR9XmGkkj/rGAQwpWV2E/F1XnOkLhYu9684ZosLUNnTi4nYhqD
-         N+ngFu0+ZpgoldrlBq1FR3OMWGBb7U1wiGxbcbTGixxf/p49QvEcKbQ+9KsnuZto4bSe
-         97IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719266872; x=1719871672;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fszxPVkXOEv4ipvfMeUYMBaHCtHM5VmJKexolLOZC+U=;
-        b=Hc2UvOG+m5tZzvM9AuH+z7bqxuzAwb4TvuPvucZUtU5Ks/7arH/BrMLYhuIemJqNbp
-         rTxliDZsvebxJbS2BDiUTNreBjhyxK+Wsf4AaD6xWIORUUT7cU5HhIhcKrVS+gpIFilL
-         PmOeacNiAi9klLBSEt3oocuXXsc94jOKK+p0EgebPgn8YDAG1d/5vViNVJ5jJom7UCD5
-         Annfjs88uabgzTLde90Ztg3nwwGY+v/wNQhR3Y1V9DAZl5znpt7En5mu3qAXCzkytRqW
-         2i/IIF/SRftadKnf6tXY3LtBB+hd6oekaWp/frqOkQtgatEwLBaMnW3v3G3oyIKiJab3
-         RgUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXc3GaffW/Bm2El+vRV6YVyt3HCrYh/eSS28QUABQ7XRZAcEqeepwH3bSudikYAMvArtEjyt9fB2yhyOs4+wK4YFr2wMHadleNhXWK3
-X-Gm-Message-State: AOJu0YxOKvt8MyRGxYqifYolmphgqGt5edaUnHy5yt5qqXjYU9mOmBoH
-	+0suywxq6bAiVBjIc16XrE+I01ysHGT6EOWrZcwhaqW7JMsFDc8FA85p/UZWNwmNN1E8+xF2tpJ
-	mg76gfT2gbDd/u+ylk3lO97284FqwARvWQkYu
-X-Google-Smtp-Source: AGHT+IHOVgf6sPtvz7xkzuxIJIFBk7OeedDuU5iG83zGwr53aHKkAXP3cmaTbi55yIsmL38DOo+j8by+9wv8qdnxftY=
-X-Received: by 2002:a05:690c:f93:b0:633:8b49:f97c with SMTP id
- 00721157ae682-6429c6db0bcmr54456627b3.37.1719266872555; Mon, 24 Jun 2024
- 15:07:52 -0700 (PDT)
+	s=arc-20240116; t=1719266891; c=relaxed/simple;
+	bh=Hq9do1H3ZbS1nGGNaTjnNZGWZHsnBLFylaiBn05T7jQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YtKtiugqhG8F6diIksWU9oJHT0cSH9kuesClzUvb9B2gMnUvvuc6FnCCUk/Url2KmKNeoCWd5xG7z06LSztlIioQXcbmC88CPcNsk1jjWGhD8EbueGuK1bWQeeHqx+6HJo9nC09eVnCXwKoFHBkNkknXTRNjhU9e9SODMftwPAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GDc6NSO1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 831D4C32789;
+	Mon, 24 Jun 2024 22:08:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719266890;
+	bh=Hq9do1H3ZbS1nGGNaTjnNZGWZHsnBLFylaiBn05T7jQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GDc6NSO1eUd6JWQTE3fI6/8mf4VLfqT/zNXt/IhmSfCAeCri/CRQwgd3xeOy3fOQ7
+	 WG9kxWK+Ynv2/y2xuy6K8lEUAUr/6nELoigtcqEiOpKpYLBPi0k5pG5OLufWzRCQVd
+	 SvYi5HQKJop8tDPlQR3rAU3c7qmcb432XMVi3QmIGyfkEQLN+j/DoSI5eE7/PUNGKr
+	 8QpG7bmFDuendEXSkiPJGM26TIcwJxN92M0mk67oQxspQSw8j+huB1xaE37ol4NPjQ
+	 fQQto/7hz9Xw70PE0HbjixYV0KV3QGzAxopAKYIvKi1rhXLJs3l9CgnUctHABK7uM6
+	 OPGxUPi7qdBLg==
+Date: Tue, 25 Jun 2024 00:08:07 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] timer_migration: Spare write when nothing changed
+Message-ID: <ZnnuR8Qp7HeOrSC7@pavilion.home>
+References: <20240624-tmigr-fixes-v2-0-3eb4c0604790@linutronix.de>
+ <20240624-tmigr-fixes-v2-5-3eb4c0604790@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231215221636.105680-1-casey@schaufler-ca.com>
- <20231215221636.105680-3-casey@schaufler-ca.com> <CAHC9VhQnzrHPRWKvWPSuFLWHhcXkwqeAfXsFbEdBBOMcACZorg@mail.gmail.com>
-In-Reply-To: <CAHC9VhQnzrHPRWKvWPSuFLWHhcXkwqeAfXsFbEdBBOMcACZorg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 24 Jun 2024 18:07:41 -0400
-Message-ID: <CAHC9VhQeWF814h8+ho3uKuz+NvvFApwJo4FkdmoRvYpuTcrk4A@mail.gmail.com>
-Subject: Re: [PATCH v39 02/42] SM: Infrastructure management of the sock security
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
-	keescook@chromium.org, john.johansen@canonical.com, 
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
-	linux-kernel@vger.kernel.org, mic@digikod.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240624-tmigr-fixes-v2-5-3eb4c0604790@linutronix.de>
 
-On Fri, Jun 21, 2024 at 4:31=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Fri, Dec 15, 2023 at 5:18=E2=80=AFPM Casey Schaufler <casey@schaufler-=
-ca.com> wrote:
-> >
-> > Move management of the sock->sk_security blob out
-> > of the individual security modules and into the security
-> > infrastructure. Instead of allocating the blobs from within
-> > the modules the modules tell the infrastructure how much
-> > space is required, and the space is allocated there.
-> >
-> > Acked-by: Paul Moore <paul@paul-moore.com>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Reviewed-by: John Johansen <john.johansen@canonical.com>
-> > Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > ---
-> >  include/linux/lsm_hooks.h         |  1 +
-> >  security/apparmor/include/net.h   |  3 +-
-> >  security/apparmor/lsm.c           | 20 +-------
-> >  security/apparmor/net.c           |  2 +-
-> >  security/security.c               | 36 ++++++++++++++-
-> >  security/selinux/hooks.c          | 76 ++++++++++++++-----------------
-> >  security/selinux/include/objsec.h |  5 ++
-> >  security/selinux/netlabel.c       | 23 +++++-----
-> >  security/smack/smack.h            |  5 ++
-> >  security/smack/smack_lsm.c        | 70 ++++++++++++++--------------
-> >  security/smack/smack_netfilter.c  |  4 +-
-> >  11 files changed, 131 insertions(+), 114 deletions(-)
->
-> I had to do some minor merge fixups, but I just merged this into the
-> lsm/dev-staging branch to do some testing, assuming all goes well I'll
-> move this over to the lsm/dev branch; I'll send another note if/when
-> that happens.
+Le Mon, Jun 24, 2024 at 04:53:57PM +0200, Anna-Maria Behnsen a écrit :
+> The wakeup value is written unconditionally in tmigr_cpu_new_timer(). When
+> there was no new next timer expiry that needs to be propagated, then the
+> value that was read before is written. This is not required.
+> 
+> Move write to the place where wakeup value could have changed.
+> 
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-Everything looked good so I've merged this into lsm/dev.  Thanks all.
-
---=20
-paul-moore.com
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
