@@ -1,208 +1,144 @@
-Return-Path: <linux-kernel+bounces-228036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CAB9159E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:29:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67AE99159E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 311C61F226BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E9A281E48
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027271A0B10;
-	Mon, 24 Jun 2024 22:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC99B135A46;
+	Mon, 24 Jun 2024 22:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jIOnvVIY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IS/p41G3"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C47B73454
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C253145C1C;
+	Mon, 24 Jun 2024 22:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719268139; cv=none; b=nLi2eE+A9M9Nq1hAHpGk2yGqEZ9ejtt4rnqBWzh8l+U+kwYIvP9vA0FsicfvmbxjEGy5QJhGsqKe6GqlF4YdC8+qG3Z2g+ITKQGpnldj/ll1tBRxb/K2bmaCCp3np7nfeBYUI9YO1e+xca3oKauAaIT7eJkavb6HJnbVNKTBpZk=
+	t=1719268236; cv=none; b=HYp9bhfxSG5n6eWwnISguO/9Y5OR0DmhrHqBDRHyH9pZxx66SV9kX+xs0styFpu6WX13ijbL3F7dHfd6aeFoseBEGb0ipNUeehXKzzqcT4syvhEhORH8x4tNHYAJSaHb++j9vOG5NX2tMSOQOMheBCGVel0lWpBxyNsWjjI0lNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719268139; c=relaxed/simple;
-	bh=OowDTvQsp/79L/GViE3+JzPRPtpSVg4kCxYvJN14es4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CMM77+ifYFIqd7QgaWjkE4qQ1GHHMIegOsqShO5n7As8FMd6adT76kKFdN9wohhFDIkOciu6oCkchHzodIEZ4TngdKt+R1mUeRWgusth2f96xNEMwGEKnjXmc2y73EgyWaIEhuTFwVJe3VSxGfkowqldR/UVf4bXamcqkL95CAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jIOnvVIY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OIfuJU031942;
-	Mon, 24 Jun 2024 22:28:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qQGNPMjXxj/37KqwhG1qLhggf6rNJ+AAGcm+KDdlV4Q=; b=jIOnvVIYtn7X4612
-	phzE/Qo802Riq4WQQPNtrsqVpeJ6SfCU9ZZwL5ZWvgndFImhaqYKB2O8lDsJGFUq
-	FUPkkD3+Z13I6tNhSD86bikfgE8g7TqaGHErCfUF1Vgsne9YnyHCM449rDz+GwAI
-	G0e0m1kPkZFyVxVM4cjoM2M+KjRXa3a40MPaRBKeEaErCDipG1o71RY/shbn0gEI
-	69sYiyu7J/JdgVaogF5TNSIqNqOqvQu9oBBdhvlYPPpOmgsG/OeS3lxMTxPlO0zv
-	OoQUXFixUvUuQ+NVsZROSQFGSNqQloCmKMPhh3yV6bTSYUGOBhKAdOyAXxy9qKtf
-	jppqUQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv4s7x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 22:28:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45OMSdb2022764
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 22:28:39 GMT
-Received: from [10.110.106.13] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
- 2024 15:28:38 -0700
-Message-ID: <45c25e4b-d64d-549f-6711-7b753d24e2f9@quicinc.com>
-Date: Mon, 24 Jun 2024 15:28:38 -0700
+	s=arc-20240116; t=1719268236; c=relaxed/simple;
+	bh=aDarChGst5JU4FRRPlrSQu3s8UZa9gedrtszGLBRw8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ihzuma2eNGpbJ4Mw6d2YNfXxrHMr+s0w+RKCt+TonrN3l5rZVu2u+/sghdjnkUECNiKZby00YkqaAcrIY32n/t6kTI/JQGsojGp+me4OMesWStMEkNzeRSPhwGNGF3elf1cfR/KLalxAqmaUz/Eukl2e7e8YuHQ4C1v/OYKQqPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IS/p41G3; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f99fe4dc5aso36735675ad.0;
+        Mon, 24 Jun 2024 15:30:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719268234; x=1719873034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EgTvBBG51/i76Zk1fIUJ5PiGRL4CV4PzSjno4NYiILU=;
+        b=IS/p41G3d1j57vj6QlMzG/qcWm+XdGz4leK9953bD2P/vxROPSKHHMiAzb1zzRVGRj
+         SpaFFynXjJosS1BlFQaAjIggjul3mZlAiJc9HK2XZUGGF5pAVB02a1A6HGbq47qZ/lA6
+         sNP3s/EffrR/1ur5qceI6iMoEw2gi8Q87QOM44AYEeR0uBvBDUhWiyf82nvcc4ret2QM
+         Wa3awzTQ7bqOfTNrJTJSmmusUNbI2awsuh4qJzbFz5aGYpEZ4RvPPiTsCbvxSPOcC/KD
+         tx/n/WiAy+MGboCSelmhLKQrZxquUyEswq7cTMlYX2UbCJ8JoBGA8NvhrKRZ60GV8OJz
+         BDng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719268234; x=1719873034;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EgTvBBG51/i76Zk1fIUJ5PiGRL4CV4PzSjno4NYiILU=;
+        b=Sq6x2ypeTZN3Kzxczcg1s7n5mL4mdRfz6II4wlChby0TMQSPmWGWxAO43Evt/v1Uzm
+         Mx00/+Si5QW2/L45w3lg7K5NELgAEFecfPTuuboL0+MUe7LCp6meveAAtZCjCrsI6Oxb
+         syGJwUIktfpUOU2kPExSqc/5JVjdxMDzG2G/1Ef+f1fKfKSeqSbpQZjiXe9AfJgdlbmD
+         azGfEYW+vUkgTBC1fAHNEYcd6QFJXZbI8HhSNWkOu5yI//9UzKyqPNpnnKlousx/UKhl
+         8yrYA8RUCS3o1ZHGh/Umm/OBqvg2Q3TadiMfuT2ss6arXmbI6nTAlo47h9VEDg2qbCSH
+         Mz1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWnvmTRacbbMlII3TY2A9BbsXqK0EncuktRHYk6C5T8q5elumdAPoBj5kSSdsu7Qi4fGv45NK/Qpo9I/MvzpexXqqes063UuPS1A4dU8F36dYHCb1E35qhbEpNMlZey4KgzsR5wy8HEDA==
+X-Gm-Message-State: AOJu0YwN2K8vQ+eqFMpr9B4CgkElovRtPCGgY5szlHJlRK3t6Q9X3tjR
+	VeJRW/ad/OStsGPDB7LWrRe7nwBu82ISUZYy1ZB96k9bKtR/ZDY4o19BOQ==
+X-Google-Smtp-Source: AGHT+IEXHA4y3ZnHrHZJTq9rQL4oJYIcK6tHQBf06oCUMzkBoIQWnfzg2owY2YLxUXepk0aawRHfeA==
+X-Received: by 2002:a17:902:e5c1:b0:1f5:e635:21fc with SMTP id d9443c01a7336-1fa23f21fe2mr66101835ad.21.1719268233879;
+        Mon, 24 Jun 2024 15:30:33 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb30b27asm67956615ad.48.2024.06.24.15.30.30
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 24 Jun 2024 15:30:33 -0700 (PDT)
+From: yskelg@gmail.com
+To: Markus Elfring <Markus.Elfring@web.de>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>
+Cc: MichelleJin <shjy180909@gmail.com>,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <yskelg@gmail.com>
+Subject: [PATCH v2] s390/zcrypt: optimizes memory allocation in online_show()
+Date: Tue, 25 Jun 2024 07:29:34 +0900
+Message-ID: <20240624222933.81363-2-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 1/2] drm/bridge-connector: reset the HDMI connector
- state
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andrzej Hajda
-	<andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert
- Foss <rfoss@kernel.org>,
-        Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej
- Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Dave Stevenson
-	<dave.stevenson@raspberrypi.com>
-CC: Rob Clark <robdclark@gmail.com>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-0-8590d44912ce@linaro.org>
- <20240623-drm-bridge-connector-fix-hdmi-reset-v2-1-8590d44912ce@linaro.org>
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-1-8590d44912ce@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Igwf34iY7-uHXXA9X1Wot4KaNxhQCbk3
-X-Proofpoint-ORIG-GUID: Igwf34iY7-uHXXA9X1Wot4KaNxhQCbk3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_19,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1011 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406240180
+Content-Transfer-Encoding: 8bit
 
+From: Yunseong Kim <yskelg@gmail.com>
 
+Make memory allocation more precise (based on maxzqs) by allocating
+memory only for the queues that are truly affected by the online state
+changes.
 
-On 6/22/2024 10:40 PM, Dmitry Baryshkov wrote:
-> On HDMI connectors which use drm_bridge_connector and DRM_BRIDGE_OP_HDMI
-> IGT chokes on the max_bpc property in several kms_properties tests due
-> to the the drm_bridge_connector failing to reset HDMI-related
-> properties.
-> 
-> Call __drm_atomic_helper_connector_hdmi_reset() if there is a
-> the drm_bridge_connector has bridge_hdmi.
-> 
-> Note, the __drm_atomic_helper_connector_hdmi_reset() is moved to
-> drm_atomic_state_helper.c because drm_bridge_connector.c can not depend
-> on DRM_DISPLAY_HDMI_STATE_HELPER. At the same time it is impossible to
-> call this function from HDMI bridges, there is is no function that
-> corresponds to the drm_connector_funcs::reset().
-> 
-> Fixes: 6b4468b0c6ba ("drm/bridge-connector: implement glue code for HDMI connector")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/display/drm_hdmi_state_helper.c | 21 ---------------------
->   drivers/gpu/drm/drm_atomic_state_helper.c       | 21 +++++++++++++++++++++
->   drivers/gpu/drm/drm_bridge_connector.c          | 13 ++++++++++++-
->   include/drm/display/drm_hdmi_state_helper.h     |  3 ---
->   include/drm/drm_atomic_state_helper.h           |  2 ++
->   5 files changed, 35 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> index 2dab3ad8ce64..67f39857b0b4 100644
-> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> @@ -8,27 +8,6 @@
->   #include <drm/display/drm_hdmi_helper.h>
->   #include <drm/display/drm_hdmi_state_helper.h>
->   
-> -/**
-> - * __drm_atomic_helper_connector_hdmi_reset() - Initializes all HDMI @drm_connector_state resources
-> - * @connector: DRM connector
-> - * @new_conn_state: connector state to reset
-> - *
-> - * Initializes all HDMI resources from a @drm_connector_state without
-> - * actually allocating it. This is useful for HDMI drivers, in
-> - * combination with __drm_atomic_helper_connector_reset() or
-> - * drm_atomic_helper_connector_reset().
-> - */
-> -void __drm_atomic_helper_connector_hdmi_reset(struct drm_connector *connector,
-> -					      struct drm_connector_state *new_conn_state)
-> -{
-> -	unsigned int max_bpc = connector->max_bpc;
-> -
-> -	new_conn_state->max_bpc = max_bpc;
-> -	new_conn_state->max_requested_bpc = max_bpc;
-> -	new_conn_state->hdmi.broadcast_rgb = DRM_HDMI_BROADCAST_RGB_AUTO;
-> -}
-> -EXPORT_SYMBOL(__drm_atomic_helper_connector_hdmi_reset);
-> -
->   static const struct drm_display_mode *
->   connector_state_get_mode(const struct drm_connector_state *conn_state)
->   {
-> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
-> index 519228eb1095..1518ada81b45 100644
-> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
-> @@ -478,6 +478,27 @@ void drm_atomic_helper_connector_reset(struct drm_connector *connector)
->   }
->   EXPORT_SYMBOL(drm_atomic_helper_connector_reset);
->   
-> +/**
-> + * __drm_atomic_helper_connector_hdmi_reset() - Initializes all HDMI @drm_connector_state resources
-> + * @connector: DRM connector
-> + * @new_conn_state: connector state to reset
-> + *
-> + * Initializes all HDMI resources from a @drm_connector_state without
-> + * actually allocating it. This is useful for HDMI drivers, in
-> + * combination with __drm_atomic_helper_connector_reset() or
-> + * drm_atomic_helper_connector_reset().
-> + */
-> +void __drm_atomic_helper_connector_hdmi_reset(struct drm_connector *connector,
-> +					      struct drm_connector_state *new_conn_state)
-> +{
-> +	unsigned int max_bpc = connector->max_bpc;
-> +
-> +	new_conn_state->max_bpc = max_bpc;
-> +	new_conn_state->max_requested_bpc = max_bpc;
+Fixes: df6f508c68db ("s390/ap/zcrypt: notify userspace with online, config and mode info")
+Link: https://lore.kernel.org/linux-s390/your-ad-here.call-01625406648-ext-2488@work.hours/
+Cc: linux-s390@vger.kernel.org
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ drivers/s390/crypto/zcrypt_card.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-I understand this is just code propagation but do we need a max_bpc 
-local variable?
+diff --git a/drivers/s390/crypto/zcrypt_card.c b/drivers/s390/crypto/zcrypt_card.c
+index 050462d95222..2c80be3f2a00 100644
+--- a/drivers/s390/crypto/zcrypt_card.c
++++ b/drivers/s390/crypto/zcrypt_card.c
+@@ -88,9 +88,10 @@ static ssize_t online_store(struct device *dev,
+ 	 * the zqueue objects, we make sure they exist after lock release.
+ 	 */
+ 	list_for_each_entry(zq, &zc->zqueues, list)
+-		maxzqs++;
++		if (!!zq->online != !!online)
++			maxzqs++;
+ 	if (maxzqs > 0)
+-		zq_uelist = kcalloc(maxzqs + 1, sizeof(*zq_uelist), GFP_ATOMIC);
++		zq_uelist = kcalloc(maxzqs, sizeof(*zq_uelist), GFP_ATOMIC);
+ 	list_for_each_entry(zq, &zc->zqueues, list)
+ 		if (zcrypt_queue_force_online(zq, online))
+ 			if (zq_uelist) {
+@@ -98,14 +99,11 @@ static ssize_t online_store(struct device *dev,
+ 				zq_uelist[i++] = zq;
+ 			}
+ 	spin_unlock(&zcrypt_list_lock);
+-	if (zq_uelist) {
+-		for (i = 0; zq_uelist[i]; i++) {
+-			zq = zq_uelist[i];
+-			ap_send_online_uevent(&zq->queue->ap_dev, online);
+-			zcrypt_queue_put(zq);
+-		}
+-		kfree(zq_uelist);
++	while (i--) {
++		ap_send_online_uevent(&zq->queue->ap_dev, online);
++		zcrypt_queue_put(zq_uelist[i]);
+ 	}
++	kfree(zq_uelist);
+ 
+ 	return count;
+ }
+-- 
+2.45.2
 
-We can just do
-
-new_conn_state->max_bpc = connector->max_bpc;
-new_conn_state->max_requested_bpc = connector->max_bpc;
-
-But apart from that nit, this LGTM.
-
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
