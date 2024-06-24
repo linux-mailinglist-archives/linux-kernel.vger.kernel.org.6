@@ -1,110 +1,123 @@
-Return-Path: <linux-kernel+bounces-227095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB71391483E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:14:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B9E914841
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87EA01F212A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:14:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6927B1F211D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5697E13791F;
-	Mon, 24 Jun 2024 11:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D2813A25D;
+	Mon, 24 Jun 2024 11:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jIh/w1QV"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n8oNNWxG"
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAA8130AC8;
-	Mon, 24 Jun 2024 11:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A7913699A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719227639; cv=none; b=GsC9OLnx0O3fVXTiEpc18edU3kv7xo7MWCdanWHI0z7bzO0hYT2RnAa8Kr39RvLYrnaGghLLKn42wJZuDQYlSxyK777JI9JUgv/mNiMFpOHnLFuhwQ4L6AkD9Nqc/JPfjkZMYYFibpUPxKY6KD3yMp9dYc3JGtCOdig7ocMfzRA=
+	t=1719227641; cv=none; b=P6NKw6h8bLV79BRKPa0eZOtGgTWbfjchxf8O/x57nq32yUPGTxL546riBTQSgYkvu4CKwd9LQZoT6ohJ511IzvFwvAju6IfwLb0VLDFqBGDlsN3SCraJgXdK/nkkAJ28hYFzUC0JTPrv4DMk10JnrssMuiayNiDq7v7LfpjX6kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719227639; c=relaxed/simple;
-	bh=o3voOc2ZEL+GyoIX5pkUWkNiG8dPBwXxRD6wYAksTHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=DkCKkN9lyFD9n1PwYkhedDtuqUhzfd2eUhTuqreUcFKYypj8IaBCyfPcCaiRSZgZZZ8yneBttoyXGSTearyWcnDneRc9+TW9GOGoH24EiF+MVq+aG0bwNKF0ZVAy3ryu0o8vHmaMsicn+CypaywKfnEsV5wnRHrvWNaC8I544z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jIh/w1QV; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719227616; x=1719832416; i=markus.elfring@web.de;
-	bh=o3voOc2ZEL+GyoIX5pkUWkNiG8dPBwXxRD6wYAksTHM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=jIh/w1QVgkXZq7UDw5BZWSCJmhbrZ2G6WZow9cUvFnfj6xUcHffVLx85og3TCUlV
-	 SYX69R16st/6T/ISujQ9IYGH3wzbWuFqCt4lifBLUBo0FNegU83u/jvF1SnV5vpCp
-	 s8ef2rivMAf/sbmDGYqQupTN2h7ZPYS7Wo7mVbumnEHNGckA57AsokfG/fJu98vz5
-	 09JBkVJBE90l0P8p+TQSzI/E7C9ZPk6EwL9BPhABvA+IaxJFzNzZzwBsUq2rpWdmT
-	 zV+EM2WF8LGAE8rfdYGTLdD6AwVOTnmJTkzta5z2gWqmYoz3UtgEKDgou1juP3ntb
-	 xvWrEGRRJFJDHk5law==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MHEXc-1s8WLw1KzY-007YbV; Mon, 24
- Jun 2024 13:13:36 +0200
-Message-ID: <6a70fb9a-fa15-4ee1-9a44-c727bd610469@web.de>
-Date: Mon, 24 Jun 2024 13:13:34 +0200
+	s=arc-20240116; t=1719227641; c=relaxed/simple;
+	bh=meeWBmILHEqJWzac8umjaOJa8I4Ncz20EGfL7OzEJwc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h/VQh+a/8VXZZ2K6WgVa6j84xAllXbs4H0YT5lSOK1NukOX+hW5PCWoKGKGXRrrCCVh6jTls4ENx6VSnJvjJzWVU1/nm7wle++9bYt2PE6Wx6DaetpRVvw9rb4Q8/5UdrofkPGAYBdWP9fBRxxTkfUmHx7CBaN6OD2t3AxXuIYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n8oNNWxG; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5bfb24e338bso1670593eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719227638; x=1719832438; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HEzwQY70dS5/4zaR7wFnTP3jHuIxxfgJgjvsBN94sGk=;
+        b=n8oNNWxGWwHxlRPICp3Lbhcrqp48MuLJ+XqpwHPRlQhtDrWO1ymAwipoBvp/kZBo1E
+         YoqlJEguO7P2Br1oe6Ky/QkbZIp8dG0Rb3l3MUIY5uTlmqgQ79wayKMl96hlVClOGFwb
+         P2bL1oV5ZN+SouYXL1wpkKLxlb6CNBD/V2XKZPnoLrFSoKpakyIknf7xEZYgs2DHew3N
+         zfejOkheZ8SZmO/9LgqKjATU+rqmyjMjJCRJSTITy4OpYyJWhSJHkYK9YhN6d1dIlqqH
+         pE7vrU568dRXPFINhVbfmphfTBFqwQLzG1pkpkab0h8oC0nFJtpy3skBNWorQgfqmyRD
+         WjGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719227638; x=1719832438;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HEzwQY70dS5/4zaR7wFnTP3jHuIxxfgJgjvsBN94sGk=;
+        b=nzgXzZmnvk1620626YsBJ1PwQKbUl1U4n8u5DxtT5jG4V6eDIhdKCR194NgUlqj6kx
+         5RNHeYbXcOSf5oqVMfWqXyoNaOZYn3OxMQ4DBz6LC54q5jIaKUUJ+XWrpPSRMHIFHe+3
+         eIidcOtKMGpuxjBGwfaIh+0Y2w1tjCmorVa7o16xWHQwuAv5811aDB4YCGbxjpGcLM2D
+         Kr1NY2ve45G2aEx04b/EANshDFM16cu+axOOM9gXZgITpjDBhyFcWZEUZiX4z5zWmuHp
+         aP6MRGq9p048S0FvK1V26+hatJ8jG+BP6qSxC2BZUnhOkZS7Uz/ZtfYFgO7eVMp4fP+Z
+         5a+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUlUyujR2QobM6WC9z5/IKiTPky9AgNMyc3qM0gpp+jw98QzNlulPaLbmMl9F3eicHeveHwBjBQEyL7Kr//RhNgTXzYparDVQOVQMO5
+X-Gm-Message-State: AOJu0YxtW1UBvaTwNBoEo8EZW5sAZ9bQgy8sHwmQf1MsknHc9n92etMv
+	MjWJuxtboxlfXukwws6wS8Ef74OCDlPPSYa4CrcRpOvtJat7dd1Bqe8u/Ge09Ej6w/hF9Dv+Twg
+	BlKgdNea7JvIKz/+lFsL6FfbCMeoj6Ng8co2VJQ==
+X-Google-Smtp-Source: AGHT+IHmVjPOuYszhXpUs8aOYTWZZ40BicRqOgwhbWDxIhWPU3UqwLQsR384Gfu6pdKECYYPVPugv6s8L7YYKqqAGTM=
+X-Received: by 2002:a4a:240b:0:b0:5c1:e8e4:57a6 with SMTP id
+ 006d021491bc7-5c20ec4e865mr59179eaf.4.1719227638018; Mon, 24 Jun 2024
+ 04:13:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net PATCH 0/7] octeontx2-af: Fix klockwork issues in AF driver
-To: Suman Ghosh <sumang@marvell.com>, netdev@vger.kernel.org
-References: <20240624103638.2087821-1-sumang@marvell.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jerin Jacob <jerinj@marvell.com>, Eric Dumazet <edumazet@google.com>,
- Geethasowjanya Akula <gakula@marvell.com>,
- Hariprasad Kelam <hkelam@marvell.com>, Linu Cherian <lcherian@marvell.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
- Sunil Goutham <sgoutham@marvell.com>
-In-Reply-To: <20240624103638.2087821-1-sumang@marvell.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org> <20240617-usb-phy-gs101-v3-1-b66de9ae7424@linaro.org>
+In-Reply-To: <20240617-usb-phy-gs101-v3-1-b66de9ae7424@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 24 Jun 2024 12:13:46 +0100
+Message-ID: <CADrjBPqLgvot6oG_Kx06okwOkzn=Kozjj5Upem3w4OhN-Z3hNA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add gs101 compatible
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, kernel-team@android.com, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:V+R6WXZ2lZrjghmpjNmWqnBP7H2DU1itTFGmqhrBHQdHhMc5x7k
- x52YYp1mFgLzTnBTzGjXJ8vnj+Cbz8dV6lVc110pvPGnh+Lmy5EKTV0T0CAzHP+wbFhtCYV
- wMQ1zQt92F0hnT9yvmj5/ON2wgz2/UCLCsNNhYldCBb3B41NEDzoOCgSGaoy1/DHABzA8Vg
- Ql2QwJbTAOhv6qy08zhhQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:f9mxQdM7m8M=;HIAp20Swcn0Vrbf5owupbQdpw9F
- 8Yza4InDaPlYAZjUAQ/yMlQ2Pgxl4YP4Yz2vWNgAnsuN4RJ1bRbhxefYQWC2XpVnKSZhvnzFE
- YNaqaSiVv3NU1uC3vpny3cn6zH66d+3usyyAiNo3iOn3pfgn44gqwTNgH3FT+41A7VDUvdQ3o
- abkDIzkQDKwwVgKsNatz/yVTyuNRR1sxy49cZRx1PqRJe2Gc70dl3Ls+4xJHegMOv7lw8tJnt
- xSZtRMQeDo8rrq/yOejzsaLHOxPbRyfpK+At3yaAeFieYz/EHs9YV4yJTbD7O9AaonhMStMwW
- PWFmuGv/80DHxR3nZ0YKWZhrn0LbB2yCbV2JsJV0Hm44OVIKRYPm5kpBDhQZE/gZvHGF090Xw
- +Bo7LukVyZevv2e+GKCe8Eo5VAByarKcJpKutXG/zYfqlaIG4IFCg9T0O2/pMFFGoQyKjCt4h
- 2sH6eC5yT4fa5TZ4uptJgUA3G0kyAjJS6BGs+Rq3N3/ddLFIglepSUy4WfaVGkwK3pVKzncLD
- BWu7QJs83b5uhivAeUwz/m48ydQVzJRHdOlqfK2RTf2yhOB7hX73PQnO3dnjdnNU7Y5gx3EAr
- 9GAnFDxkxwTsFbqUiKF4pgi/ckJ+ANTbd7i6KMKC22tooJ7Yvex9NFDwIgpUv+SBp8K7IRbJj
- MM+y6s1k2ykupVec4M2MqWSqH7RvVc+bE407yz0IjPR8g1vA292Uwd4ZzY4MPX3uiOKbvlMhU
- ldSRn6ktswAIvjthzbUC/AH6aRMoU/2UM530bovtliFzOj3ZIR4HvY/1q1VyKmt1jDul+jMO9
- OSPWl3a/Y5jLgNKtRSG8MNebgTIMCf4us5zPZ5/yYbkhM=
 
-> This patchset fixes minor klockwork issues in multiple files in AF drive=
-r
+Hi Andr=C3=A9,
+
+On Mon, 17 Jun 2024 at 17:45, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
 >
-> Patch #1: octeontx2-af: Fix klockwork issue in cgx.c
-=E2=80=A6
+> Add a dedicated google,gs101-usb31drd-phy compatible for Google Tensor
+> gs101 SoC.
+>
+> It needs additional clocks enabled for register access, and additional
+> memory regions (PCS & PMA) are required for successful configuration.
+>
+> It also requires various power supplies (regulators) for the internal
+> circuitry to work. The required voltages are:
+> * pll-supply: 0.85V
+> * dvdd-usb20-supply: 0.85V (+10%, -7%)
+> * vddh-usb20-supply: 1.8V (+10%, -7%)
+> * vdd33-usb20-supply: 3.3V (+10%, -7%)
+> * vdda-usbdp-supply: 0.85V
+> * vddh-usbdp-supply: 1.8V
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
+> ---
 
-Please improve your selection for summary phrases.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc4#n646
+Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
 
-Which development concern categories did you pick up from the mentioned
-source code analysis tool?
+regards,
 
-Regards,
-Markus
+Peter
+
+[..]
 
