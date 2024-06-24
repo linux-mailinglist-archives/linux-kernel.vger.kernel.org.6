@@ -1,96 +1,101 @@
-Return-Path: <linux-kernel+bounces-226570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688AC91407E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:24:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBEB914081
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEE811F235C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:24:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97289B20A89
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7254979CF;
-	Mon, 24 Jun 2024 02:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="KX8RM+U5"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF79D523A;
+	Mon, 24 Jun 2024 02:26:45 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E6F4A2D;
-	Mon, 24 Jun 2024 02:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F8D46BA;
+	Mon, 24 Jun 2024 02:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719195848; cv=none; b=BYGl6V2YottxA4mmdJNhz2hxxF52DH/bDnFlcAyTh+Cff9M86lY3D8vwk4IAsfYn1ylvzG1G2mzdEnHIbaunY+J7ryXGs855/ASMvk953yQZKIIL+bXV6f84bXuVZDEgo6ETSUhR1xHrcmmJVvfm6Ah64HfQMO1rNKstPWJwd/Y=
+	t=1719196005; cv=none; b=UEz+75x6TszHuPLrhaocYuun24xMywuZwuPeVXxnbmXDUEcke3B3J6/wo2angqAZvjqZLBxiGaPOMrUWktKuC6F93rhK5JO2Z8aedrdbuRiYKn4OIQV2oIKeTMmIgaH9lfq3od31v4iTQwWP/W7Rmdju5L9dAVAaYfy0YqZTJj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719195848; c=relaxed/simple;
-	bh=MIZ+d9HVKB7l6t281umhcoUxFGn6SV9luOFbz0dNbIs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qOzWokqrh9oTPjOnbqIAjS+rVB8urnmNeJXybRk5eQrHAfWvWaSsyZeEYblF01ZesFG207AOc51nbDM0XRBgNCuC/mFLqJfUuHSWuoAOrTt0UaeBkWR/aV3TfPMr4pudDiQQ+runS8udtbELqeHf4YfZBt3zChtxRZei815u1wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=KX8RM+U5; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1719195836;
-	bh=BKlnKRhf6nOKvpU2yiC5wPra7+gk0fCQGmL8XKcMn0U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=KX8RM+U5NabS/m3sC+tWRHbeSjKdVCYygRWRhGcNZfuATg8lPbu11OtJuslFGBGAC
-	 Wz/fHPAOgow+LyxR89oZOXJd0a3f4dU9OFnc9eDWIjgE79UH+hrSeMYPjAAzI/IuFW
-	 NuU2PXZTUObRBcXVLvLq9fW/iHCjn9gTJ/D/BDT26gm+5spRewoRqZDHnknbA28Ozg
-	 G+STsT+QNuUpt0Ic340jHnh8m6iMF/pftiNpSUXevcqIiFEVW3/7qYFZEsrvdkpx2y
-	 gsAsX1el1xuveLygKU26SOCWitwndKbI71vrgTKYRAdZkRGPPV6fF7EhY6RmMITXEm
-	 8GV31u4x5U7mw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W6sGC1H48z4w2N;
-	Mon, 24 Jun 2024 12:23:47 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Arnd Bergmann <arnd@kernel.org>, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, Helge Deller
- <deller@gmx.de>, linux-parisc@vger.kernel.org, "David S. Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- sparclinux@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N . Rao"
- <naveen.n.rao@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, Brian Cain
- <bcain@quicinc.com>, linux-hexagon@vger.kernel.org, Guo Ren
- <guoren@kernel.org>, linux-csky@vger.kernel.org, Heiko Carstens
- <hca@linux.ibm.com>, linux-s390@vger.kernel.org, Rich Felker
- <dalias@libc.org>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, linux-sh@vger.kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- libc-alpha@sourceware.org, musl@lists.openwall.com, ltp@lists.linux.it
-Subject: Re: [PATCH 08/15] powerpc: restore some missing spu syscalls
-In-Reply-To: <20240620162316.3674955-9-arnd@kernel.org>
-References: <20240620162316.3674955-1-arnd@kernel.org>
- <20240620162316.3674955-9-arnd@kernel.org>
-Date: Mon, 24 Jun 2024 12:23:46 +1000
-Message-ID: <874j9jqdsd.fsf@mail.lhotse>
+	s=arc-20240116; t=1719196005; c=relaxed/simple;
+	bh=VF6ss1E9xCanAEWNpbP5BdN9LJRvLeanmOYgYq+Fq4U=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Y3QD8BJ7PxfEsw32Bddb0jCdq6KbkLgE4xoQ2Pc00IB4HRQhcfEglvMKz4XODjKGVOqGfZZT9Qe2OY93W0YauiYJ6AHM3ykJ4cWvXh1IKLAPMM7zHBh4yKDoq34q4LLt2lmjI4rvI2QjwfLDjtrfhNsucTixnJU2vaUGOAPZP2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W6sDP5dnlzxTFc;
+	Mon, 24 Jun 2024 10:22:13 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 043F718007C;
+	Mon, 24 Jun 2024 10:26:31 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 24 Jun 2024 10:26:29 +0800
+Subject: Re: [PATCH v4 0/4] Add ACPI NUMA support for RISC-V
+To: Haibo Xu <haibo1.xu@intel.com>, <sunilvl@ventanamicro.com>,
+	<arnd@arndb.de>
+CC: <xiaobo55x@gmail.com>, <ajones@ventanamicro.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
+	<chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
+	<lenb@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Conor
+ Dooley <conor.dooley@microchip.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Charlie Jenkins <charlie@rivosinc.com>, Baoquan
+ He <bhe@redhat.com>, Evan Green <evan@rivosinc.com>,
+	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, Zong Li
+	<zong.li@sifive.com>, Sami Tolvanen <samitolvanen@google.com>, Alexandre
+ Ghiti <alexghiti@rivosinc.com>, Samuel Holland <samuel.holland@sifive.com>,
+	Chen Jiahao <chenjiahao16@huawei.com>, "Russell King (Oracle)"
+	<rmk+kernel@armlinux.org.uk>, Jisheng Zhang <jszhang@kernel.org>, James Morse
+	<james.morse@arm.com>, Andy Chiu <andy.chiu@sifive.com>, Marc Zyngier
+	<maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Tony Luck
+	<tony.luck@intel.com>, Ard Biesheuvel <ardb@kernel.org>, Dan Williams
+	<dan.j.williams@intel.com>, Alison Schofield <alison.schofield@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Robert Richter
+	<rrichter@amd.com>, Yuntao Wang <ytcoode@gmail.com>, Dave Jiang
+	<dave.jiang@intel.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <loongarch@lists.linux.dev>,
+	<linux-riscv@lists.infradead.org>, <linux-acpi@vger.kernel.org>
+References: <cover.1718268003.git.haibo1.xu@intel.com>
+From: Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <d9c996b8-fe36-1b69-331a-94eb2547cc0f@huawei.com>
+Date: Mon, 24 Jun 2024 10:26:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <cover.1718268003.git.haibo1.xu@intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-Arnd Bergmann <arnd@kernel.org> writes:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> A couple of system calls were inadventently removed from the table during
-> a bugfix for 32-bit powerpc entry. Restore the original behavior.
->
-> Fixes: e23750623835 ("powerpc/32: fix syscall wrappers with 64-bit arguments of unaligned register-pairs")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/powerpc/kernel/syscalls/syscall.tbl | 4 ++++
->  1 file changed, 4 insertions(+)
+On 2024/6/13 16:54, Haibo Xu wrote:
+> This patch series enable RISC-V ACPI NUMA support which was based on
+> the recently approved ACPI ECR[1].
+> 
+> Patch 1/4 add RISC-V specific acpi_numa.c file to parse NUMA information
+> from SRAT and SLIT ACPI tables.
+> Patch 2/4 add the common SRAT RINTC affinity structure handler.
+> Patch 3/4 change the ACPI_NUMA to a hidden option since it would be selected
+> by default on all supported platform.
+> Patch 4/4 replace pr_info with pr_debug in arch_acpi_numa_init() to avoid
+> potential boot noise on ACPI platforms that are not NUMA.
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+Looks good to me,
 
-cheers
+Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
 
