@@ -1,103 +1,134 @@
-Return-Path: <linux-kernel+bounces-228051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77AC3915A29
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:58:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3134D915A2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA2B91C22557
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:58:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62FCD1C2251F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E171A2C00;
-	Mon, 24 Jun 2024 22:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6291A2562;
+	Mon, 24 Jun 2024 23:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIgX487J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WTyukIwy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF151A254A;
-	Mon, 24 Jun 2024 22:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E1F4AECE;
+	Mon, 24 Jun 2024 23:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719269905; cv=none; b=FDEa5iKgXpamGEvgrIv0TXZA0zklAL/AL7bFAyABp2EjKE/qTKPVJX3aX7zBZM8dxxAdKYAr+oz+0s0KyfBk9vWTuiZyZV7j55kce4KrPdGkG5Kf5HMcrgIREG/d8YUB4KZXUFziAWK0xmWTAlni4NfkoWXjyEEnvNZaq6kKA+Y=
+	t=1719270057; cv=none; b=UuYH9n4Q5NQvWngH35HXZVDFTYVjacvaDkF0ojEocil3v4aVDqWzgBWBIMCB3N8NrviuF+WbNGNAV+iRs4Q+x5x4qsXOdNNEbKi11mDXS4fWh9Wl8a7WxMIA3mp8TFlH4li330PnQOaFa+u4dDtX/ipnNhRaHE0p/PszeWHveZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719269905; c=relaxed/simple;
-	bh=iA7soJkpGVIKt7XVvk8Avygo72QDsaSjKA52TLDa3y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=URc6vSgslW+dcyjRN9juuWhGRfDdGunBGkF8nEfadyVxE/U6pOZGpka81dIKh2Il1nxJMr6skOUGVe+Za1XK0zwNP99x+/SYBsas/FR08ZAQVYs+ImJr/E2/U/ZiZ8dHPcI0uzjEUdGaZmWeTEmKH7s/pe8TcF2DWYSzofVAZhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIgX487J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53667C2BBFC;
-	Mon, 24 Jun 2024 22:58:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719269904;
-	bh=iA7soJkpGVIKt7XVvk8Avygo72QDsaSjKA52TLDa3y4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cIgX487JN8lhIWwtdU5liMps5jnB/iuFfCdxzShBm0+k16Zc6TUnzq5B+IfX9ao9h
-	 bvCAPx5R4d2FID4jv+PXsrL3rU+CdxSXD0FEz55Yytha/MVXjP4qDCMIOV76mfGvUK
-	 RzGVX3+vG7RP3qfmNcGzcY77s6ybP1HFlnIdfemDqWPpp9e6OAcDCjkcf7enJbDEf8
-	 z/T3Hgac1qVPR5zIsLevzeNCOVA2NJzbYir9lUyWmKJLRPzp9Z+AUFtGO0zgS3MJx/
-	 CQS1ogR3PouW+eiO0maCC1Dwix1Dx4KUlCAD21OPYpzKHeecDTqvnNx0TENlrK+VwA
-	 cR4rL1FSGnaMw==
-Date: Mon, 24 Jun 2024 16:58:19 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Nitesh Shetty <nj.shetty@samsung.com>
-Cc: Christoph Hellwig <hch@lst.de>, Bart Van Assche <bvanassche@acm.org>,
-	Damien Le Moal <dlemoal@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
-	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
-	joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-Message-ID: <Znn6C-C73Tps3WJk@kbusch-mbp.dhcp.thefacebook.com>
-References: <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
- <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
- <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org>
- <20240601055931.GB5772@lst.de>
- <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
- <20240604044042.GA29094@lst.de>
- <4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
- <20240605082028.GC18688@lst.de>
- <CGME20240624105121epcas5p3a5a8c73bd5ef19c02e922e5829a4dff0@epcas5p3.samsung.com>
- <66795280.630a0220.f3ccd.b80cSMTPIN_ADDED_BROKEN@mx.google.com>
+	s=arc-20240116; t=1719270057; c=relaxed/simple;
+	bh=Ec35imzGEuBbXxvRYJAo/TZyYqIrFfQ1Ebjn3oL/DFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=q9wLXVslS3FczjsZ2aIbM96uclQ8VtmkzC6YNe/wUXBflRHhenlVgYHXgDB6QgJxmfwPvjRIFEpbeoHWvtEutmqQh7kDqxKnElEvjmWfJyMHl1hlIQgybxWjlNrLFmOipPWhTDjSibYVq12KJkTueHYMRpR/2DwHRJglCxSpRbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WTyukIwy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OJ1Hmj031385;
+	Mon, 24 Jun 2024 23:00:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/hQLfmAiXIb2anfT/qj3Vwa6Wgr+wflqbuNpn7rd4dM=; b=WTyukIwyVNr3VUQ5
+	8CTXPAo7quPHE52d8umIC8/n7gi7Ozqu98AkVoI1QdP+j+tbM1guToqxD5nBcQW6
+	bBQKTcnJsomxTv6Asum5J+0rkbrizZq9ebR/QTKBtl/512ne/PgaqV1JIPU0m+oy
+	zb9p49+24XmUdfjKS9r8t8O6iuTjSSC2KljINciVS6awIffMD7dc4h/8fPUdoij6
+	lzNApvEpO0nCa+eH7slwULbUu0/plA8wat3dKGpQnvwWH+Y4r2ROII1+Xm7ieyN1
+	zuWmG0YDt2YiMgsj3yVIJaPucyhYQLMJopSH4+bQrwD0oCg590LI8fiBFwnKKHRn
+	VPmTgg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv4tjk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 23:00:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45ON0i87001796
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 23:00:44 GMT
+Received: from [10.48.244.142] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 16:00:43 -0700
+Message-ID: <aae7de31-b027-4427-83e7-0943257ef229@quicinc.com>
+Date: Mon, 24 Jun 2024 16:00:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66795280.630a0220.f3ccd.b80cSMTPIN_ADDED_BROKEN@mx.google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/ttm/tests: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui
+	<ray.huang@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240609-md-drivers-gpu-drm-ttm-tests-v1-1-d94123d95b4c@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240609-md-drivers-gpu-drm-ttm-tests-v1-1-d94123d95b4c@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rbILnTa6iw5-rIVTROzockP09gxP5XVO
+X-Proofpoint-ORIG-GUID: rbILnTa6iw5-rIVTROzockP09gxP5XVO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_20,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406240184
 
-On Mon, Jun 24, 2024 at 04:14:07PM +0530, Nitesh Shetty wrote:
-> c. List/ctx based approach:
-> A new member is added to bio, bio_copy_ctx, which will a union with
-> bi_integrity. Idea is once a copy bio reaches blk_mq_submit_bio, it will
-> add the bio to this list.
+On 6/9/2024 9:34 AM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_device_test.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_pool_test.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_resource_test.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_tt_test.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_bo_test.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/gpu/drm/ttm/tests/ttm_bo_test.c       | 1 +
+>  drivers/gpu/drm/ttm/tests/ttm_device_test.c   | 1 +
+>  drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c | 1 +
+>  drivers/gpu/drm/ttm/tests/ttm_pool_test.c     | 1 +
+>  drivers/gpu/drm/ttm/tests/ttm_resource_test.c | 1 +
+>  drivers/gpu/drm/ttm/tests/ttm_tt_test.c       | 1 +
+>  6 files changed, 6 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
+> index 1f8a4f8adc92..c18547c65985 100644
+> --- a/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
+> +++ b/drivers/gpu/drm/ttm/tests/ttm_bo_test.c
+> @@ -619,4 +619,5 @@ static struct kunit_suite ttm_bo_test_suite = {
+>  
+>  kunit_test_suites(&ttm_bo_test_suite);
+>  
+> +MODULE_DESCRIPTION("KUnit tests for ttm_bo APIs");
+>  MODULE_LICENSE("GPL");
 
-Is there a reason to tie this to CONFIG_BLK_DEV_INTEGRITY? Why not use
-the bio_io_vec? There's no user data here, so that's unused, right?
+FYI I'll be posting a v2 to resolve conflicts with recent MODULE_LICENSE()
+changes and to handle the addition of new test modules.
 
-> 1. Send the destination BIO, once this reaches blk_mq_submit_bio, this
-> will add the destination BIO to the list inside bi_copy_ctx and return
-> without forming any request.
-> 2. Send source BIO, once this reaches blk_mq_submit_bio, this will
-> retrieve the destination BIO from bi_copy_ctx and form a request with
-> destination BIO and source BIO. After this request will be sent to
-> driver.
-
-Like Damien, I also don't see the point of the 2-bio requirement. Treat
-it like discard, and drivers can allocate "special".
+/jeff
 
