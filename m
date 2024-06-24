@@ -1,241 +1,110 @@
-Return-Path: <linux-kernel+bounces-227164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7508C914952
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:04:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E7C914954
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C7522848C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:04:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61EFF1F24EA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0787F13A879;
-	Mon, 24 Jun 2024 12:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAA213B2B0;
+	Mon, 24 Jun 2024 12:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="I+c3XRou";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="mdeBpSI1"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N787CqEx"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A249B2E636
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2132E636
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719230639; cv=none; b=FEieJ/vEE4h+gWsXUdGryfgB8FM4aIZOB4UPIu8eh3uvjXrWzaNeBrz3k0e5k7gjHW4RD5NHc1r8SaYUyn65+LPuOQ0mgSbZXX/BphHW7eiWJ6fwoV3UPJjLT1RLIgvIMrIwU8mvNXv5/1lOUI8qmieEaZO7o2VsxrbT55opwzI=
+	t=1719230796; cv=none; b=aflILFfMgREDjc9JbEY3Z/xlabqcNqktzFH1WRltN1vbTqx0UA3RCTIegV1Y3LYcdDnt2gRA7QzYihBrwxR+vCa14GrnvI0d+zNVAiHoqY8wLmnWpodrm0l6fDkyrDxXXIjlvOmtciwziLwjdh/UsDJxfX5ruuc9fVSaUJo7cu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719230639; c=relaxed/simple;
-	bh=/98lUCL9BYj2rfeI8lL+8IVU614vRP2zZLoiqRhuhsA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=geqKQ2Zkcl5pAGGwJRxlT+oyuZSmGd1hG9DwV53BppB/PIoY8TMWfwOVGP0N+rTm8apRjhQIw2Z24tQqqco+ENSrZKFXz6yueRPMp40+sm9OapKgvbUYDTCehKccT+nU0VrB1QwD5UpLrA0mTJg9vK4Jp6m0W7vgO7vum5aczno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=I+c3XRou; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=mdeBpSI1 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1719230796; c=relaxed/simple;
+	bh=N2Ye8UlFO/9bFj19GHT6YROH8QmOdP64rM3WllHkw6c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qFGo7ovUzmNtvd3D0ifZGL8gg+GegKGbzYi+0I2JAwycXnJ/PFJPQnxy5slR60TNPW8oH9GjPRBTyAewdWI6sfARjEzGH2iQvFscLRogiRA1GHySwyuwUZg73d3x7zAsm5f4HXqQze6ykIbjNAtvLMzLnrYmfRMOb26BnG78I0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N787CqEx; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57cb9efd8d1so8474801a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:06:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1719230636; x=1750766636;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=L9SqzLwnyFw9O0cjx7JztMLALTgKK8TJgRcvzOsBlc4=;
-  b=I+c3XRoustcGgqj/h0hWro3wJ4iilJl3QXL7//SYiTqWMNGP/D9sCDFG
-   q6HbG+dpX+/6wO8vslUwmRsEcFtStrr6iPsVBWAtnemOxOxPOgiwCIFvf
-   tq7UBw3gEL2Ejbp1u9MyvtP0eVdUEnJn2q2wyKppFWHgpBnp/5YL+YEzq
-   C4/5xt+rSHWStVxk3yR+05tljiPD61BM+QUcLEJMLMqsmeVdQlUjagJry
-   eL8V2dO6vCMdp0P6aVkqFuAPm85kYG0h5SiY21atDGfIW6xfNdEkkgHh/
-   EFK3hL78lOhZcoNBYswuGhsdLAwlAsSFBwq+EyXWshHHaa7QOJXC8qHFf
-   Q==;
-X-CSE-ConnectionGUID: wQQx9fCJQuOjIKyWO8lLWg==
-X-CSE-MsgGUID: u8AO9FrxSwu0gfX69Lyb5w==
-X-IronPort-AV: E=Sophos;i="6.08,261,1712613600"; 
-   d="scan'208";a="37551712"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 24 Jun 2024 14:03:54 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8BF321613E2;
-	Mon, 24 Jun 2024 14:03:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1719230630;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=L9SqzLwnyFw9O0cjx7JztMLALTgKK8TJgRcvzOsBlc4=;
-	b=mdeBpSI1im/et4LdsYakQtiNV5Hmhe7AIWj3a8UOVyfwzq/CSYIVrShsm0THfmCaiLLMpg
-	bxg3emTDk1j0NzhXYbf8TbJebJwWgHbDvxsjVsbCLGXrtuuXDnrkB4PxTEEAc+HuIIAoPk
-	jITczRzAcaP50gID6yObJOi5dvEjm4LfvoBJ8yQhmvlpab7VZx8Z0FWKyCAJd5U6BYFJ3w
-	5SYA9P1ENOx/mpjY/I4R5Ror3okGbW/PgWv5uPs6iXaiPL9iNK9OGfUZdCbVVTlCVBSQiv
-	S7UbNtFLCPSV24V1DKkASssGaMvNE++FcuUFk9Y0i95S8th+Xu0ieHjg7OcgCw==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/lcdif: switch to DRM_BRIDGE_ATTACH_NO_CONNECTOR
-Date: Mon, 24 Jun 2024 14:03:52 +0200
-Message-ID: <1984704.yKVeVyVuyW@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <CAA8EJppQtiDxZjLMk6VB0X_4VSuC8cNhPOMd8on2uQ3xo92vSg@mail.gmail.com>
-References: <20240624-mxc-lcdif-bridge-attach-v1-1-37e8c5d5d934@linaro.org> <859620673.0ifERbkFSE@steina-w> <CAA8EJppQtiDxZjLMk6VB0X_4VSuC8cNhPOMd8on2uQ3xo92vSg@mail.gmail.com>
+        d=google.com; s=20230601; t=1719230793; x=1719835593; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N2Ye8UlFO/9bFj19GHT6YROH8QmOdP64rM3WllHkw6c=;
+        b=N787CqExNV0FfN/ioVRc167uM/o/0YCHbz73yLpZYnnnaMscz/gDwW1rx8+lbOiUCD
+         gmA47nBOaxKjkJtvJ4PokY0/U5lbABrzH0PrVQTuNpO3QiKbZIYSK3x4R9nWoSOL0m2H
+         FW7A054YZB7NkrZSayWoHTU0/B6YmYlA6ormyiVZQUSX7+3f3aNs3PK1wi5v9zKSoXg/
+         p5q+RBntkFFdsyT0BNIeVv5pRsW0gjAEFeVNixwk1Mj32Gp5uQd9fyK3mPtbgakvt5s5
+         QvtHEgi4+KdFjeMTfJz016XoysVJ//wcvM3EOzj8ZEzMro/X+fud9GifnkoYpXd76+sc
+         pUhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719230793; x=1719835593;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N2Ye8UlFO/9bFj19GHT6YROH8QmOdP64rM3WllHkw6c=;
+        b=nSgDFj3DFDD+Liyo+YyE7ioE1VErnT2t27RFlTfb8gGbU7so1fYTcfc/Zy8gmekujZ
+         LSBsoNW5s+2v2q4Z2QoK7Xa60csr7MlKK+ToUg+eB+0EsWqpt/j6bvpqSuzwLqosXqLL
+         9YvcAG2iqBXTO8HQDp3vZ5th9sN/5OL9oA1FVeG9Zsl8Js89BGHSoCBLfhtoWA1xQ2VU
+         oeKyO8idrengr77qWVIeADg7oeP6t5UlzgJxXVMSZ+9VjQuDUE9rSwum1XmQAPD7Ny2G
+         AyaJX8qrU+QXM+A78WKIHKJoG07+55CZVRF2VfzI/ZJFXivTlct59wCQBYDieyeW1TLr
+         ruuw==
+X-Forwarded-Encrypted: i=1; AJvYcCXs+HF6dzEQOJSao4vevjkqOOeaB9VNfELn1/eYa41TxLhzri7FRWz5SNHPMqe8RSTscAMCqfYiZoTICty5d2CHXPk5wv9RwRJ3yZPB
+X-Gm-Message-State: AOJu0Yz4GYZ/XOLuXJSYD8OqF8q7UG+tDmoS0p5R/SAvGkEZqsSNL81I
+	+o2Fl58rlruAHiiT7t8+e1Gt213dywR4G81f0T3wPa7yoktDYuSUhN28kmdnt3zAc6owNdrRSHY
+	0rJYJcHIN3BNDXwd6iE+0p1rTsYySrN06OVtp
+X-Google-Smtp-Source: AGHT+IHNbHupo5acr2B4R/P/hsgga+93sAkzQ/xIPu1nrmVLsRmIQlcAe0rDHcwgQa/2R4VXwD7MHFj2EsLxttIyVH0=
+X-Received: by 2002:a17:906:f909:b0:a6f:62c5:87be with SMTP id
+ a640c23a62f3a-a6ffe270a03mr393937866b.4.1719230792180; Mon, 24 Jun 2024
+ 05:06:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <202406241651.963e3e78-oliver.sang@intel.com>
+In-Reply-To: <202406241651.963e3e78-oliver.sang@intel.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 24 Jun 2024 05:05:56 -0700
+Message-ID: <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
+Subject: Re: [linux-next:master] [mm] 0fa2857d23: WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Usama Arif <usamaarif642@gmail.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Linux Memory Management List <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
+	David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Andi Kleen <ak@linux.intel.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Dmitry,
+On Mon, Jun 24, 2024 at 1:49=E2=80=AFAM kernel test robot <oliver.sang@inte=
+l.com> wrote:
+>
+>
+>
+> Hello,
+>
+> kernel test robot noticed "WARNING:at_mm/page_alloc.c:#__alloc_pages_nopr=
+of" on:
+>
+> commit: 0fa2857d23aa170e5e28d13c467b303b0065aad8 ("mm: store zero pages t=
+o be swapped out in a bitmap")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 
-Am Montag, 24. Juni 2024, 13:49:03 CEST schrieb Dmitry Baryshkov:
-> On Mon, 24 Jun 2024 at 14:32, Alexander Stein
-> <alexander.stein@ew.tq-group.com> wrote:
-> >
-> > Hi,
-> >
-> > Am Montag, 24. Juni 2024, 12:31:46 CEST schrieb Dmitry Baryshkov:
-> > > Existing in-kernel device trees use LCDIF with the dsim + adv7533, ds=
-im
-> > > + tc358762 or with ldb + panel_bridge. All these combinations support
-> > > using DRM_BRIDGE_ATTACH_NO_CONNECTOR for bridge attachment.
-> > >
-> > > Change lcdif driver to use this flag when attaching the bridge and
-> > > create drm_bridge_connector afterwards.
-> > >
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > > Note: compile-tested only.
-> >
-> > I gave it a try, but it doesn't work. Despite DSI output it also breaks
-> > HDMI output, where I at least some error messages:
-> > [drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@32c0=
-0000/hdmi@32fd8000 to encoder None-37: -22
-> > [drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@32c0=
-0000/display-bridge@32fc4000 to encoder None-37: -22
-> > imx-lcdif 32fc6000.display-controller: error -EINVAL: Failed to attach =
-bridge for endpoint0
-> > imx-lcdif 32fc6000.display-controller: error -EINVAL: Cannot connect br=
-idge
-> > imx-lcdif 32fc6000.display-controller: probe with driver imx-lcdif fail=
-ed with error -22
->=20
-> Could you please try it with the following change:
->=20
-> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> index 13bc570c5473..c87d3e55c00d 100644
-> --- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> @@ -94,6 +94,7 @@ static int imx8mp_dw_hdmi_probe(struct platform_device =
-*pdev)
->         plat_data->phy_name =3D "SAMSUNG HDMI TX PHY";
->         plat_data->priv_data =3D hdmi;
->         plat_data->phy_force_vendor =3D true;
-> +       plat_data->output_port =3D 1;
->=20
->         hdmi->dw_hdmi =3D dw_hdmi_probe(pdev, plat_data);
->         if (IS_ERR(hdmi->dw_hdmi))
+This is coming from WARN_ON_ONCE_GFP(order > MAX_PAGE_ORDER, gfp), and
+is triggered by the new bitmap_zalloc() call in the swapon path. For a
+sufficiently large swapfile, bitmap_zalloc() (which uses kmalloc()
+under the hood) cannot be used to allocate the bitmap.
 
-Okay, this does fix the HDMI probe errors. Nevertheless I get the errors:
-[   13.429313] [drm] Initialized imx-lcdif 1.0.0 for 32e80000.display-contr=
-oller on minor 1
-[   13.439116] imx-lcdif 32e80000.display-controller: [drm] Cannot find any=
- crtc or sizes
-[   13.448168] imx-lcdif 32e80000.display-controller: [drm] Cannot find any=
- crtc or sizes
-[   15.519737] [drm] Initialized imx-lcdif 1.0.0 for 32fc6000.display-contr=
-oller on minor 2
-[   15.675672] imx-lcdif 32fc6000.display-controller: [drm] Cannot find any=
- crtc or sizes
-
-just from the lcdif patch for both HDMI and DP.
-
-Best regards,
-Alexander
-
->=20
-> >
-> > Best regards,
-> > Alexander
-> >
-> > > ---
-> > >  drivers/gpu/drm/mxsfb/lcdif_drv.c | 14 +++++++++++++-
-> > >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/mxsfb/lcdif_drv.c b/drivers/gpu/drm/mxsf=
-b/lcdif_drv.c
-> > > index 0f895b8a99d6..1d5508449995 100644
-> > > --- a/drivers/gpu/drm/mxsfb/lcdif_drv.c
-> > > +++ b/drivers/gpu/drm/mxsfb/lcdif_drv.c
-> > > @@ -16,6 +16,7 @@
-> > >
-> > >  #include <drm/drm_atomic_helper.h>
-> > >  #include <drm/drm_bridge.h>
-> > > +#include <drm/drm_bridge_connector.h>
-> > >  #include <drm/drm_drv.h>
-> > >  #include <drm/drm_encoder.h>
-> > >  #include <drm/drm_fbdev_dma.h>
-> > > @@ -48,6 +49,7 @@ static int lcdif_attach_bridge(struct lcdif_drm_pri=
-vate *lcdif)
-> > >  {
-> > >       struct device *dev =3D lcdif->drm->dev;
-> > >       struct device_node *ep;
-> > > +     struct drm_connector *connector;
-> > >       struct drm_bridge *bridge;
-> > >       int ret;
-> > >
-> > > @@ -96,13 +98,23 @@ static int lcdif_attach_bridge(struct lcdif_drm_p=
-rivate *lcdif)
-> > >                       return ret;
-> > >               }
-> > >
-> > > -             ret =3D drm_bridge_attach(encoder, bridge, NULL, 0);
-> > > +             ret =3D drm_bridge_attach(encoder, bridge, NULL, DRM_BR=
-IDGE_ATTACH_NO_CONNECTOR);
-> > >               if (ret) {
-> > >                       of_node_put(ep);
-> > >                       return dev_err_probe(dev, ret,
-> > >                                            "Failed to attach bridge f=
-or endpoint%u\n",
-> > >                                            of_ep.id);
-> > >               }
-> > > +
-> > > +             connector =3D drm_bridge_connector_init(lcdif->drm, enc=
-oder);
-> > > +             if (IS_ERR(connector)) {
-> > > +                     ret =3D PTR_ERR(connector);
-> > > +                     of_node_put(ep);
-> > > +
-> > > +                     return dev_err_probe(dev, ret,
-> > > +                                          "Failed to create bridge c=
-onnector for endpoint%u\n",
-> > > +                                          of_ep.id);
-> > > +             }
-> > >       }
-> > >
-> > >       return 0;
-> > >
-> > > ---
-> > > base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
-> > > change-id: 20240624-mxc-lcdif-bridge-attach-60368807b2f9
-> > >
-> > > Best regards,
-> > >
-> >
-> >
-> > --
-> > TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-> > Amtsgericht M=FCnchen, HRB 105018
-> > Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-> > http://www.tq-group.com/
-> >
-> >
->=20
->=20
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+Usama, I think we want to use a variant of kvmalloc() here.
 
