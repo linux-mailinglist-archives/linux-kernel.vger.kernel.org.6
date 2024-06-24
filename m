@@ -1,191 +1,249 @@
-Return-Path: <linux-kernel+bounces-227578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4942915374
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:23:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 616FD915377
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29FEAB22519
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6F551F23256
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50F919E819;
-	Mon, 24 Jun 2024 16:22:05 +0000 (UTC)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2581519E825;
+	Mon, 24 Jun 2024 16:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ng+jfuf/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFE619D89D;
-	Mon, 24 Jun 2024 16:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C51719DF63;
+	Mon, 24 Jun 2024 16:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246125; cv=none; b=KU7RvCUDXWmOTD0Fl8Y5CQCarFwf2MmacBHAyqWhVrW+Yzv/beEWYZfpfPrHlvsfcmOlQD4b+ZZoSPsSKUD5SNnz4AlLax9k1V5JfnhSPnrHpuys4wQg8Ge9dNbpNLZYL29NV9efjS4TnAgX1dQj5VLTwJNFlyT4GFYKBGB6VPc=
+	t=1719246131; cv=none; b=NYgvzaFd+DBYs+5KZnMxsAR5PTOgYdZR5BzeRyKvu5n5EYaMcX7oHUjpbg6FQaYEbrjhr5jtBlLB413OkJzl25A171n4rOwGFiZC/0aKf3b3cPG00gMUNBIcF4RPbftRlSKLscnPOnS+b/qoJJ4hItecgH7OXRVgDQOcGCcWLJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719246125; c=relaxed/simple;
-	bh=MHuZnCBbfRRzSWLLQ/7VVJKbRN/VS3rhtDIjKYgN3p0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GdsU4cZ6+2jRqie2BhV3tmoF6g08x5jObpfYNdtam2hixKt3bIMxFDPMJ9Uvk5R08KMEebywlpvd/buT48ySxDS8bxPeMu2t0lPw9smLLPSgqj+ksHYadZsXYuQGGT6DL4Q0ff2U+pI4dG7F5EBW/QWrycNaLuyJ3MDMmX+qHJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d26a4ee65so4243648a12.2;
-        Mon, 24 Jun 2024 09:22:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719246122; x=1719850922;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lI0lpN6kx7yRxic2Ty5k5Kh7yOrOrpZPNGmNxWXyvto=;
-        b=eU1OJTSS8Pn3sQpc1zUu0+81ua8ukqDUN4GJSomxuTDh0aiA03ygg0h8JyvfD4EQkX
-         Zs4rMy6GDiSaAr8rYjXpd2jABgnnxGOmKwP/kiUkBDg/z0ttrLYd1jvseZmqsQu7zHTh
-         EjbfIYcEM6BW9bXIeNJO+uqqRtVvZYhzJzRvX5qS/8rGYPaV3J9OxSsr4EaIk1+K9Pvu
-         ad+rHC9iRh70ekhmgKQdljQgHvhdfpmInQVhzEkD2UkRAvH+YcTrf4MbaQEeH8BxeIA7
-         urBe0vRLbxVEp3Ed6aKnLNiCJzswS69oOsdCyqb+EVW749qZ0D8NW+CNfUq67ASr/KVH
-         x0aw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOg4VgFLpUHIyKI+hF6guAwTVmc73bH2LI8C4nOtUZCgBs+/uWfCprw849pedPj8IatOab8alfKOd+Bo3FwezYqA5kQdWvflaUgyouUEg9HQ/hWIN7NfoNSvRRznmyriUS5Pl0LKebwj0kqbQ+cd8DZxeCcrTyJwfNDNEdT3QBkBh4
-X-Gm-Message-State: AOJu0Ywa76OSGP2gfu7osoySOyWamh4/LO+L+PYUcg3quyfOthgPNKpd
-	6phXK6h/vbnFoMQiTW+zj1SgLmZ6Zxu4DjRccrom8dLz2gWykLAi
-X-Google-Smtp-Source: AGHT+IEwMy3K4qn6NThj+xHIEW9HQLoF5ZMgOFTPxFANNhr7dKPUd+SfBDJ7IMkyk+RxYL401G7l8g==
-X-Received: by 2002:a50:cc85:0:b0:57c:8027:534d with SMTP id 4fb4d7f45d1cf-57d4a01f393mr3282346a12.27.1719246121917;
-        Mon, 24 Jun 2024 09:22:01 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303d7aecsm4854506a12.20.2024.06.24.09.22.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 09:22:01 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	netdev@vger.kernel.org,
-	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: kuba@kernel.org,
-	horms@kernel.org,
-	Roy.Pledge@nxp.com,
-	linux-crypto@vger.kernel.org (open list:FREESCALE CAAM (Cryptographic Acceleration and...),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 4/4] crypto: caam: Unembed net_dev structure in dpaa2
-Date: Mon, 24 Jun 2024 09:21:22 -0700
-Message-ID: <20240624162128.1665620-4-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240624162128.1665620-1-leitao@debian.org>
-References: <20240624162128.1665620-1-leitao@debian.org>
+	s=arc-20240116; t=1719246131; c=relaxed/simple;
+	bh=zMvz+Gv9NvgZTcXSP4I7e3sdMcxBeebAk4b31+F0GTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IlsmYCaTYKxDBumEU4Yx2p0NF1V//dSLVPonsm4X1TtQAEJWpKWia/HCXR3crVD4kEN57TLZjVV6/BytJD4qM7XiQHkHkthR0k9q8EQIreMW3hph1fcTlQWpg2/o4q+ahmMF2UADlcAjE9WHQggMnd8WqmeBUDO2aVKCA4621SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ng+jfuf/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8E6BC4AF0C;
+	Mon, 24 Jun 2024 16:22:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719246130;
+	bh=zMvz+Gv9NvgZTcXSP4I7e3sdMcxBeebAk4b31+F0GTg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ng+jfuf/zTupMgZ/PhIAT97RdB6bNRW8KuJ7R1puj32MOV1LRwwtTsAMuY3W2axtD
+	 LDKyjupLi8XpW/2q2w3um/sTmlEQnPkDFmhCHugo10uGXXvmChXC8Yh6wy2OoS1mjs
+	 kP56+v3/L1iNus3AVKz5zgTpOqHn2UcbuHvXObXO2Zdc5rL5RB1D+LdNt1WVHY7pvl
+	 gvnQcxpCuTzWkKoMcQKucc8G+vnFpK9mJQCwDXLPXRWrLwRNaJuGFOHtuTGRw3wZw1
+	 0lWmpX51uuhA+F3+eodURxPVaqz0U3s/LkW2WKI6Zy6QYs4xOSUAPSn/v/DmpePCsM
+	 J5KIr2t+eNa8Q==
+Date: Mon, 24 Jun 2024 17:22:04 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Manikandan Muralidharan <manikandan.m@microchip.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, arnd@arndb.de,
+	durai.manickamkr@microchip.com, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Hari.PrasathGE@microchip.com,
+	Balamanikandan.Gunasundar@microchip.com,
+	Nayabbasha.Sayed@microchip.com, Dharma.B@microchip.com,
+	Varshini.Rajendran@microchip.com, Balakrishnan.S@microchip.com,
+	Charan.Pedumuru@microchip.com
+Subject: Re: [PATCH 4/5] dt-bindings: gpio: convert Atmel GPIO to json-schema
+Message-ID: <20240624-divinity-gonad-e30bb4554403@spud>
+References: <20240624100431.191172-1-manikandan.m@microchip.com>
+ <20240624100431.191172-5-manikandan.m@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MdphJjn9xsPu5pcS"
+Content-Disposition: inline
+In-Reply-To: <20240624100431.191172-5-manikandan.m@microchip.com>
 
-Embedding net_device into structures prohibits the usage of flexible
-arrays in the net_device structure. For more details, see the discussion
-at [1].
 
-Un-embed the net_devices from struct dpaa2_caam_priv_per_cpu by
-converting them into pointers, and allocating them dynamically. Use the
-leverage alloc_netdev_dummy() to allocate the net_device object at
-dpaa2_dpseci_setup().
+--MdphJjn9xsPu5pcS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The free of the device occurs at dpaa2_dpseci_disable().
+On Mon, Jun 24, 2024 at 03:34:30PM +0530, Manikandan Muralidharan wrote:
+> Convert the Atmel GPIO controller binding document to DT schema format
+> using json-schema.
 
-Link: https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/ [1]
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-PS: Unfortunately due to lack of hardware, this was not tested in real
-hardware.
+This should mention that there are additional compatible strings added.
+>=20
+> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> ---
+>  .../bindings/gpio/atmel,at91rm9200-gpio.yaml  | 78 +++++++++++++++++++
+>  .../devicetree/bindings/gpio/gpio_atmel.txt   | 31 --------
+>  2 files changed, 78 insertions(+), 31 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/atmel,at91rm92=
+00-gpio.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio_atmel.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/atmel,at91rm9200-gpio=
+=2Eyaml b/Documentation/devicetree/bindings/gpio/atmel,at91rm9200-gpio.yaml
+> new file mode 100644
+> index 000000000000..3ace7ba687fc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/atmel,at91rm9200-gpio.yaml
+> @@ -0,0 +1,78 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/atmel,at91rm9200-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip GPIO controller (PIO)
+> +
+> +maintainers:
+> +  - Manikandan Muralidharan <manikandan.m@microchip.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - atmel,at91sam9x5-gpio
+> +              - microchip,sam9x60-gpio
+> +          - const: atmel,at91rm9200-gpio
 
- drivers/crypto/caam/caamalg_qi2.c | 28 +++++++++++++++++++++++++---
- drivers/crypto/caam/caamalg_qi2.h |  2 +-
- 2 files changed, 26 insertions(+), 4 deletions(-)
+This is definitely wrong, cos it disallows having
+"atmel,at91rm9200-gpio" on it's own.
 
-diff --git a/drivers/crypto/caam/caamalg_qi2.c b/drivers/crypto/caam/caamalg_qi2.c
-index a4f6884416a0..207dc422785a 100644
---- a/drivers/crypto/caam/caamalg_qi2.c
-+++ b/drivers/crypto/caam/caamalg_qi2.c
-@@ -4990,11 +4990,23 @@ static int dpaa2_dpseci_congestion_setup(struct dpaa2_caam_priv *priv,
- 	return err;
- }
- 
-+static void free_dpaa2_pcpu_netdev(struct dpaa2_caam_priv *priv, const cpumask_t *cpus)
-+{
-+	struct dpaa2_caam_priv_per_cpu *ppriv;
-+	int i;
-+
-+	for_each_cpu(i, cpus) {
-+		ppriv = per_cpu_ptr(priv->ppriv, i);
-+		free_netdev(ppriv->net_dev);
-+	}
-+}
-+
- static int __cold dpaa2_dpseci_setup(struct fsl_mc_device *ls_dev)
- {
- 	struct device *dev = &ls_dev->dev;
- 	struct dpaa2_caam_priv *priv;
- 	struct dpaa2_caam_priv_per_cpu *ppriv;
-+	cpumask_t clean_mask;
- 	int err, cpu;
- 	u8 i;
- 
-@@ -5073,6 +5085,7 @@ static int __cold dpaa2_dpseci_setup(struct fsl_mc_device *ls_dev)
- 		}
- 	}
- 
-+	cpumask_clear(&clean_mask);
- 	i = 0;
- 	for_each_online_cpu(cpu) {
- 		u8 j;
-@@ -5096,15 +5109,23 @@ static int __cold dpaa2_dpseci_setup(struct fsl_mc_device *ls_dev)
- 			priv->rx_queue_attr[j].fqid,
- 			priv->tx_queue_attr[j].fqid);
- 
--		ppriv->net_dev.dev = *dev;
--		INIT_LIST_HEAD(&ppriv->net_dev.napi_list);
--		netif_napi_add_tx_weight(&ppriv->net_dev, &ppriv->napi,
-+		ppriv->net_dev = alloc_netdev_dummy(0);
-+		if (!ppriv->net_dev) {
-+			err = -ENOMEM;
-+			goto err_alloc_netdev;
-+		}
-+		cpumask_set_cpu(cpu, &clean_mask);
-+		ppriv->net_dev->dev = *dev;
-+
-+		netif_napi_add_tx_weight(ppriv->net_dev, &ppriv->napi,
- 					 dpaa2_dpseci_poll,
- 					 DPAA2_CAAM_NAPI_WEIGHT);
- 	}
- 
- 	return 0;
- 
-+err_alloc_netdev:
-+	free_dpaa2_pcpu_netdev(priv, &clean_mask);
- err_get_rx_queue:
- 	dpaa2_dpseci_congestion_free(priv);
- err_get_vers:
-@@ -5153,6 +5174,7 @@ static int __cold dpaa2_dpseci_disable(struct dpaa2_caam_priv *priv)
- 		ppriv = per_cpu_ptr(priv->ppriv, i);
- 		napi_disable(&ppriv->napi);
- 		netif_napi_del(&ppriv->napi);
-+		free_netdev(ppriv->net_dev);
- 	}
- 
- 	return 0;
-diff --git a/drivers/crypto/caam/caamalg_qi2.h b/drivers/crypto/caam/caamalg_qi2.h
-index abb502bb675c..61d1219a202f 100644
---- a/drivers/crypto/caam/caamalg_qi2.h
-+++ b/drivers/crypto/caam/caamalg_qi2.h
-@@ -81,7 +81,7 @@ struct dpaa2_caam_priv {
-  */
- struct dpaa2_caam_priv_per_cpu {
- 	struct napi_struct napi;
--	struct net_device net_dev;
-+	struct net_device *net_dev;
- 	int req_fqid;
- 	int rsp_fqid;
- 	int prio;
--- 
-2.43.0
+> +      - items:
+> +          - enum:
+> +              - microchip,sam9x7-gpio
+> +          - const: microchip,sam9x60-gpio
+> +          - const: atmel,at91rm9200-gpio
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +  gpio-line-names: true
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  "#gpio-lines":
+> +    description:
+> +      Number of gpio, 32 by default if absent
 
+default: 32
+
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-controller
+> +  - "#interrupt-cells"
+> +  - gpio-controller
+> +  - "#gpio-cells"
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/at91.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    pioA: gpio@fffff400 {
+
+The label here isn't needed.
+
+Thanks,
+Conor.
+
+> +            compatible =3D "atmel,at91rm9200-gpio";
+> +            reg =3D <0xfffff400 0x200>;
+> +            interrupts =3D <2 IRQ_TYPE_LEVEL_HIGH 1>;
+> +            #gpio-cells =3D <2>;
+> +            gpio-controller;
+> +            interrupt-controller;
+> +            #interrupt-cells =3D <2>;
+> +            clocks =3D <&pmc PMC_TYPE_PERIPHERAL 2>;
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio_atmel.txt b/Docu=
+mentation/devicetree/bindings/gpio/gpio_atmel.txt
+> deleted file mode 100644
+> index 29416f9c3220..000000000000
+> --- a/Documentation/devicetree/bindings/gpio/gpio_atmel.txt
+> +++ /dev/null
+> @@ -1,31 +0,0 @@
+> -* Atmel GPIO controller (PIO)
+> -
+> -Required properties:
+> -- compatible: "atmel,<chip>-gpio", where <chip> is at91rm9200 or at91sam=
+9x5.
+> -- reg: Should contain GPIO controller registers location and length
+> -- interrupts: Should be the port interrupt shared by all the pins.
+> -- #gpio-cells: Should be two.  The first cell is the pin number and
+> -  the second cell is used to specify optional parameters to declare if t=
+he GPIO
+> -  is active high or low. See gpio.txt.
+> -- gpio-controller: Marks the device node as a GPIO controller.
+> -- interrupt-controller: Marks the device node as an interrupt controller.
+> -- #interrupt-cells: Should be two. The first cell is the pin number and =
+the
+> -  second cell is used to specify irq type flags, see the two cell descri=
+ption
+> -  in interrupt-controller/interrupts.txt for details.
+> -
+> -optional properties:
+> -- #gpio-lines: Number of gpio if absent 32.
+> -
+> -
+> -Example:
+> -	pioA: gpio@fffff200 {
+> -		compatible =3D "atmel,at91rm9200-gpio";
+> -		reg =3D <0xfffff200 0x100>;
+> -		interrupts =3D <2 4>;
+> -		#gpio-cells =3D <2>;
+> -		gpio-controller;
+> -		#gpio-lines =3D <19>;
+> -		interrupt-controller;
+> -		#interrupt-cells =3D <2>;
+> -	};
+> -
+> --=20
+> 2.25.1
+>=20
+
+--MdphJjn9xsPu5pcS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnmdLAAKCRB4tDGHoIJi
+0gfJAP43jmnUWzp4jHeAuoDgfOKxum6Vx7HG8U8ROvnUwO0DpwD9E4g40LqyDENj
+/oRX8/bfq4Od5JJyEuqmzXV00QCQNAc=
+=rC3a
+-----END PGP SIGNATURE-----
+
+--MdphJjn9xsPu5pcS--
 
