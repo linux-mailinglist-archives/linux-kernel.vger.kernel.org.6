@@ -1,359 +1,222 @@
-Return-Path: <linux-kernel+bounces-227787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A85B91568F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:38:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270AF91568E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D6F6B22E93
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0B9284A5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD0019FA9E;
-	Mon, 24 Jun 2024 18:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522571A00C4;
+	Mon, 24 Jun 2024 18:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CtlwXt6v"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Qbw5JzCf"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2082.outbound.protection.outlook.com [40.107.223.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC1B1E4AE
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719254300; cv=none; b=U/GF+QmbzT9q+DHO6ymZENC/ozD9qF5shbPfNHR6XR+kDtRafke8Qoe/HJ28UycitkguR8qXnnpJX0IOo8dordA70bb1n9Ms6fxptmeBFRkTmjCqb1bN/WsgV0v18pO32g2dtYyMEVV7sDWfHvqoT6ETVESBER9g+yc+99LjomU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719254300; c=relaxed/simple;
-	bh=0rNdYsEeufBzyt2hjCg6a2B/JpK38ANrZYIlfm8eA6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KNObuj70BMNEcVbdCippH6P4F2HnKN1s4yJ8qYoD5v2iQmxaP4hP5QwWrKaWEYfJeN6/23OAboXNPkB4KAoh4vr4oQ/+QFe1jNVWjLsvE9GmfVhjUnlKVErWC4HZMenKijddh534Yr4JXfFHyZaVVhDdXZ5PxzhZXtnv1MC2eGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CtlwXt6v; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OIUVlf028045;
-	Mon, 24 Jun 2024 18:37:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=f
-	Ko1luhsQDp6MrQu+6myONF0tx6tJXyVCKfc6xindTc=; b=CtlwXt6vtgzQ5WEZI
-	goazQZ+2+6NZXNeWBhrswpjEMo7YA8MSr9Myxy7ocQvtzUQHLSDUqzz8AQoM52Jp
-	w0AbSEMeUSqmuNk6sBfBAEBYU+VS3VcXgBK3NvkGTdbwPUd3phR+w1+LRXDEC8g0
-	ondjtNKw3dtEq/nAI7SswTzMkaKgt77/Z1jfQysFAT3iq1Pkmdpgzjml6LJL0V5O
-	Etns5F5AHwbGq4H5/Y504G4rhK0KpZQSfrtT/p6xWF75K4cNnMkzvrNRPTEZtBQL
-	TEnS+haMQIrCCSe5DvPBrqwdUqFDm0XdPNdl5umPWXUCduBYzzn9MzwuP5je8H6z
-	jPkvg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yye47g0r3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 18:37:34 +0000 (GMT)
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45OIbYO5007180;
-	Mon, 24 Jun 2024 18:37:34 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yye47g0r0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 18:37:34 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OH9KYq019897;
-	Mon, 24 Jun 2024 18:37:33 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxb5ma0w7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 18:37:33 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45OIbUbL38928724
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Jun 2024 18:37:32 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8CFC658076;
-	Mon, 24 Jun 2024 18:37:28 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A0A705806F;
-	Mon, 24 Jun 2024 18:37:24 +0000 (GMT)
-Received: from [9.195.33.245] (unknown [9.195.33.245])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Jun 2024 18:37:24 +0000 (GMT)
-Message-ID: <14d4584d-a087-4674-9e2b-810e96078b3a@linux.ibm.com>
-Date: Tue, 25 Jun 2024 00:07:23 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AE219DF94
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719254276; cv=fail; b=EVlM7Yn2N8OPpaUmXO3DlKhUfHp1yV21XMt4HdJa/XEKnAMvbLUoGvbEdQaJdQAVB1KoNqfyeVGyrsCVSflpByVHuxxIj6PwUh8/Xh0QzAn7rfS4AUhI7rM0M7QX6jOaBoQai37EfrNm9TbiSYNqm2dxdH5nl67gRUCc8+R0lLI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719254276; c=relaxed/simple;
+	bh=wYqiZmDiO8xCrZvDozw7DU45l7KzjjomkUhUR5C1K+M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DnKM92/Ep1IpXpiul+k03BBuOwK6GcI9XMtvNPHKttmmmSRXHvb+/qgk8CoTV2tYMJJgyQJ2GUp7xZbBvzruSzc662jNKxhrI6aiCwdzJORMjJPOEiAarES8dCrBpGroj3LRbBd6R+ecIbRNg41K+dmr2u1M4yIzwMPVFo+tcro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Qbw5JzCf; arc=fail smtp.client-ip=40.107.223.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ECTeAGYOvEKPhgX1RDd4N41T8l2cmbASjdZDwYRDyj23n/EfGLao9cGaV3oKzXUnhCqDD0CHBbXeuXc8gjFlNW09F3REMi2IzNDXtUdZpouASeWTfuRLXHqJ44BfeZ9ZMOkvc+n3Q5v2FGti3cGtQ7juwwgisxV6CDy+YLoUcFiAa9A5C0DhjOZxe+a+3aa2ax93pk4tQiHjEm5khra/Wy8uKTofTDuyUcIMAXugyg+ckuOSbp554VyFsDzXJruRapa0I1VNmgVCjzkATUmkHowM3Azdf7OsgUXVac0XvEjXyfqydQV3d/WRH57hkKEzrt+jL/3/zfttgJwsnklwIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ejn0w4nFX4m03g9YzdWSF6HBjf9dqovfek5m0QqvPMI=;
+ b=TOD9DRDpYfeAQ5c3voUvt+H7Eev3XZxPz7RNF0OyFg4OFWKJRrj0VHzrAk25JJ6CMg/H93ipMxsaNISVSPpF1VOiPsWusIMbs9HgexKN+7D7r1GviPDMAk9JbZdAL3AWCdccD5r1AQReuvY2b7uNXoxZVN2mfX30a3cG2k5xA0+L+tPN/stWF8av4U/zTbsZiEi8PNx9fdmoLggh6jcBtqp18i4UrYjEiCwGGOPV6bGVrbuXFSxePyJiMevG2sZIDMKOaQo5Xkyo36PSVg5sx4jdZBnOp5NPCx97VoiGqfBnKopxVJCq12NZ+j/GZBXG4+u7Sz2ua5fR1DxH30h6vg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ejn0w4nFX4m03g9YzdWSF6HBjf9dqovfek5m0QqvPMI=;
+ b=Qbw5JzCfgtH6dI702DbzoOGRwK78WQ+Z8+Twaj2Abj7QQtKLLmGZtgC6Iq59Ya5IOwLh3+9WgV1+XwLQyhRqYeNG1dyJYQ7GSIm/wRJ6ow0RUeHRu+MbKludzA+sMrbiK+ciRuhag657HnXPt37yMtPT32k0Rms/JQ5B//H1MpQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SN7PR12MB6982.namprd12.prod.outlook.com (2603:10b6:806:262::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Mon, 24 Jun
+ 2024 18:37:51 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%5]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 18:37:51 +0000
+Message-ID: <93677810-55e5-40b9-8756-c10820dc890e@amd.com>
+Date: Mon, 24 Jun 2024 13:37:47 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] drm: Add panel backlight quirks
+To: Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>,
+ Matthew Anderson <ruinairas1992@gmail.com>,
+ "Derek J. Clark" <derkejohn.clark@gmail.com>
+References: <20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net>
+ <20240623-amdgpu-min-backlight-quirk-v2-1-cecf7f49da9b@weissschuh.net>
+ <efc9165d-856a-44a1-a93f-e7467cd2cceb@amd.com>
+ <ad5d7ff3-e013-46d0-9ddb-5b0afc3dc870@redhat.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <ad5d7ff3-e013-46d0-9ddb-5b0afc3dc870@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN7PR04CA0233.namprd04.prod.outlook.com
+ (2603:10b6:806:127::28) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/35] PREEMPT_AUTO: support lazy rescheduling
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: tglx@linutronix.de, peterz@infradead.org, torvalds@linux-foundation.org,
-        paulmck@kernel.org, rostedt@goodmis.org, mark.rutland@arm.com,
-        juri.lelli@redhat.com, joel@joelfernandes.org, raghavendra.kt@amd.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <2d6ef6d8-6aef-4703-a9c7-90501537cdc5@linux.ibm.com>
- <8734pw51he.fsf@oracle.com>
- <71efae1a-6a27-4e1f-adac-19c1b18e0f0c@linux.ibm.com>
- <bbeca067-ae70-43ff-afab-6d06648c5481@linux.ibm.com>
- <87zfrts1l1.fsf@oracle.com>
- <17555273-a361-48b8-8543-9f63c2b8856b@linux.ibm.com>
- <e7e2126f-40ca-44af-9287-888f4ec34b35@linux.ibm.com>
- <871q4td59k.fsf@oracle.com>
-Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <871q4td59k.fsf@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: do48vBadhubkLN2k4wIhjPOV1DhqQWA9
-X-Proofpoint-ORIG-GUID: UiFCHF8wCX8TaHq3YoCYkQlt9u7UkPFG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_15,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- malwarescore=0 mlxlogscore=999 impostorscore=0 clxscore=1011 spamscore=0
- priorityscore=1501 adultscore=0 lowpriorityscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406240147
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SN7PR12MB6982:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8319d3b0-783f-488a-1080-08dc947cc0b0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|366013|7416011|376011|1800799021|921017;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L090by9BeHYwWDN2dy9ITVNudkRUSHE5WXY1cUx0MFcyWFFUakJGbi85dzNX?=
+ =?utf-8?B?STRiWVhJbjhCRjh3NEt4d3F0TVFQRmdJMUpjZmxwQlZCQW12MThkTE5LM3Fm?=
+ =?utf-8?B?NnFFZVJYSExiRGRtbWxQOWhWOGQ2SmN5QUtoZS85TGVFV3NxbWs0bElSM1Fo?=
+ =?utf-8?B?TldIdFR3enZQeitzeUpQckwwZFd6RDZ3cW9kRkk2Z3ZpQ3kzclc4ZFYwSk1D?=
+ =?utf-8?B?dVBZTmRsdTUvSk4zWUdsODVwR1pmaEVwSmFPY0RxWGNMM2RSUW15aHh6RmZR?=
+ =?utf-8?B?T0hRY3NpM0Z0QmhjOUNzcHF1QmVwQ1ZDaGdHZ1BoRWJIdEJlRFI1UVlGVG1j?=
+ =?utf-8?B?aUMxUnhURlJUWlVLYkVPQWdLQXlIeUIxM3U4VFUzQ2Z2bzN0UG9EM0FqYjVC?=
+ =?utf-8?B?ank4UEVVUmVCRE1YcTN1ZTlNMWI0YWRuU25KcjZiWkxzRHY0dTJsMitSRUVX?=
+ =?utf-8?B?MmlqZC9nVlVzWHV4K3poNVpNdEUveEVlU2lubGNEWlFUenY5emFOVDVxSnlk?=
+ =?utf-8?B?UU1GRjU5eUdwNXN5YkJNZ21qSldDMElVeE5KWVJEWkFaVjU0NjhKamExQmJ3?=
+ =?utf-8?B?UitPNjI4U1VrTWl1R3VrT0doM2E0c3p2d3IvcXRxbmhNNDg5Q00wWGM3ZWFY?=
+ =?utf-8?B?ekJnNVFSMVR1TEpqdEVLYlZ3MTZWY3B5dmtHbFJSaTNjd3dOVTIzQnI3RWdZ?=
+ =?utf-8?B?c1ZIUWFaKzFBVjNlRmdUZkZZUVc0Vk5kNnZSUnRPTnJNNDdjU2FuTHR0Z3Z6?=
+ =?utf-8?B?OGJiemVrZm4xdnZLNkt2VXJ4VGJmTVdBVlU4cHB6Ui9JVTcwa3FOeU02RWNN?=
+ =?utf-8?B?aGFSYy9SMDFzTHdrZzZUR1ZxbjAyRWlkRHVLZUV6NE9nRFFtRmJvVkxyTitm?=
+ =?utf-8?B?RE50L3NEV2IyaGtObnMzR2ZMdG9VU3IzcjR3a094c0Z1cjQrUFdEWWVTeUMx?=
+ =?utf-8?B?dmFnV1VUeUxjZkJ4QSs2T3EvM29lNk1VQXhrZ0VmT2U0MVFqTGsxWnFjZ2dN?=
+ =?utf-8?B?b2luc2VTRktTTlRiMkpvNnJ6UXc0aU5XbTltenIxWkVNUVFwdlJRWTV5MGJz?=
+ =?utf-8?B?RGEwVUZGRlpZTzZUTitmaFZzaXdlZm5ob3ZKTFdqN3l3VjVJVFk5cE9KdjZv?=
+ =?utf-8?B?WktEOEQ4QzJGVnQwenZ1WlRYOG9vcHMyVGlodklNQ255VFhwcFBDaWxXTFNw?=
+ =?utf-8?B?NUxlOHdqcm1USUNwMWl0b1hmRzV5Q0luY3ZON2ZvK3Q4bjJRMmIvYldFUmlU?=
+ =?utf-8?B?TnY1MTg4NW9aam9mY3h4d3JVMk0zU0ZoK01JT1NaMUVqM1lQRmVMRmx0VTBH?=
+ =?utf-8?B?U0dNR0UwaXpkUlRGTXZ5TlVta2lxMmlpdTAwbE5tKzNEY21BbFlKeXBkNURQ?=
+ =?utf-8?B?bjJTUzVZWUU5Wm9SRHJpVm11RjFUQnR5b3YzVWxmNWp1UFBGVXlSdm8wT3JB?=
+ =?utf-8?B?Mi9CZnBaQlV1UW5xenhyeVlzOVFXbUZudDBWSUtjOU1mb0ZxQmUwZi9hTHly?=
+ =?utf-8?B?ZkxER0FDbCtpNWRYbVBXRHlBbllYMER3dzJMRFRiUzFka3VuSGtvSURXL0Nn?=
+ =?utf-8?B?VllTTE9HalBpL3lYSWpvZ1ROdCtMNVR5RTY0WnpaQTd6OUZ0Tk9GYmU5cnda?=
+ =?utf-8?B?ci9jTWxNNWVpRUVZZ1VBWWltTHRiUEluUHdMUkdFcVY0SjR2Y0Q1YW9zVkFI?=
+ =?utf-8?B?M0dSZmorb2pnOGdnbmRRZEVmN3B1b0ErQjJRZW1vQkw3T1hsMkh5MmljRDdj?=
+ =?utf-8?B?ZHFMRWw3MXF1bXRCemxWcmVuNjFDazkxa3l2Z2dLdi93N25OOXduVFZMSktJ?=
+ =?utf-8?Q?2Hx+WTDsx3boj4AqDXPAFqSM2kV1Xkw4pSI/Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021)(921017);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N1NJYjI0Zk4xWFVoeFVwQmhkeGZBK0YrY3IvQ1NrZzRmWllEY1ByN1VjdUI0?=
+ =?utf-8?B?NXBkYzBkVUM5bi9jUFZFU1hzcjNTT3Z3NXlPT2Z0dGt3d0xPS01vVXJ2RjYw?=
+ =?utf-8?B?OGM4SlV0L3ltS3diTDBKc3JFNDdtNWJkRWllNmlQQmdkMXlzNWZMZitxYkx4?=
+ =?utf-8?B?TmpwUVNvcllLMTVEK3FJd1B0TGphMXdnS0hrNkJIeXl3SksyT2RzTXpUVHJL?=
+ =?utf-8?B?TXU1ZFJIamxDUGJ1WC9VSmxaRm1HQTViVDkzZmJZM1A5alpoSzI2QVZFWENC?=
+ =?utf-8?B?aEpEMjRQOVJRRE9ubjE4VUgwWGFZdXJwTWM0MHdwSTh3Nk1IZTRjYTRMekpM?=
+ =?utf-8?B?OUF2T2VKKzVZYnpZcXVYYmNvdUZNWGwwRk9BajY2ZnRUbmVXV3NaZGNBa1Np?=
+ =?utf-8?B?WjJmUzkyZTJjQm5aRUhvSXJDajhac3RpbmFBQ3JWdkZ3aVdZZDJqM0N4R0hm?=
+ =?utf-8?B?bWFsM29pWDBUbkxPMG9za2RZMUY4UGtPdWZNdEN5eWtTTlpsMHl2V2x3VFZB?=
+ =?utf-8?B?NDQwdDRTYWxFWUU2bysveGxwUUd6b0s2azB2OGh4ZXhvTmVZWVZqTTc2Q3VH?=
+ =?utf-8?B?b3Q5M0x1TmNYWW1sQ0RjMXp0NkVobFJ2YUpuMTViZU1PU3Yzcy9jQVRUMGQ3?=
+ =?utf-8?B?TlNHZ3kreG1kWnlvWGNURGF6T2VDZTlYMlhOZEo4bExaLzRQb2RXTFU4Sit3?=
+ =?utf-8?B?U1hHUVVmWHJCZDhnWmZRRFRCNXdUS2lqVkFqbXpjNi9PdCtNTnptaXNiMm5Y?=
+ =?utf-8?B?eVVZYVZtQnVsTUlqY1l5TFQ3QWZIQWdiR3dQOHAzbGUwc0tJZlNZNDVGbTRD?=
+ =?utf-8?B?R0Izalh3ZEJXclhlMGQ5UDA4T2g1RThZZURBWEhJM0NyRzdJRVUyV21KeFo0?=
+ =?utf-8?B?V2ROdEVsdE0rbVp2b21BRUFYRXNQbDArWCs2RjZCWUE2MktZUTlSOVU4Z0Zz?=
+ =?utf-8?B?RFVZc0pVVG0xOUU1TmVLOFhVckF6cVFJSVVLcXFXSHNPOFdIV1BTZWhQUytp?=
+ =?utf-8?B?NDBUbDJMaUw0TXdpdDFIT0t6S2dSdUZpNEswVUlHMVBiMjlxY2k5NkJPQUtN?=
+ =?utf-8?B?M25waEZHS0RrMVU4MVQrQ1VRZFNoVTNlcGpMOXM4bHJTY051UFZITHZ0SDBz?=
+ =?utf-8?B?MUcxUCtkZDY2T2tYeGRLTy9WR0Y5MW9qSFlFU2FROTVJSTI4Mm00ZllEQWZw?=
+ =?utf-8?B?R2RqV2p6KzZ3L2puYWY2L3p4eEpqQlBNVGtkMG54Q2p5MWhBUzE0V2RWdGpC?=
+ =?utf-8?B?Zno1NHZ0SjIzdnpBL1pieU1aK0RKN1FWT3N3QkZkbVVSR3dLYzZEUWx3aVc3?=
+ =?utf-8?B?d1RnYlBjaHlndjF1MTY0S0Z4eDVTN2w1MEpXcUtuaDJlVTJ0TEJSUjkwZGZW?=
+ =?utf-8?B?SVRQSDFIMFBHejhKTHRqeXVIVFMwVDhWUVpjQTVVbkdmck9rMkFtdHFvQUJq?=
+ =?utf-8?B?QkhiWE44dTVkZ0R0NWc3M0xueWFQTHJBQW0zWjkzU09WYU5LRm1OOWdxTmFG?=
+ =?utf-8?B?TE4wdWI2WTFTZ1p2Zi9GR3l6WkJuaksvejQyNUJzb3h0WE1UY25qMllXL3NW?=
+ =?utf-8?B?cDZSYWg4QjBQcVNONm1kWGJocHpsWkFrSlRsVzFSQmUzUlI3SnY0a3hESlNR?=
+ =?utf-8?B?NE8rSExNN3ZWbU5tRTg3Sm5rLzRia1Zra0w5eXpEUm43SU5xVEh0QlMxRlRU?=
+ =?utf-8?B?VjM0aDdMaEU2dTlXYTJCN3ZQaSs1eWYvSVk3ck1xZEtmcWh2WVl0VG5DTUp3?=
+ =?utf-8?B?Wk5VNTV3T2ZnbjVzQkt6N3pxZFlZWUFiczd6dW1RRFJEcFdpdEY2d3QyaDV0?=
+ =?utf-8?B?ZzZSeEIwQlBNeVJvcStsMXV3VUtVdWFaR2ZKV1VMWENDUmI3U1NJZ2duZFZW?=
+ =?utf-8?B?ejFacEJjckhhV3p0dmRiTXE2ME1NejVRaTk0UlZ1ZmVTUDVDQXk5RmwrOURE?=
+ =?utf-8?B?NVc2Yys1WVpFODBRRmdVd1lYcXVXeTdOWlZIdGFKdjVUSk1WTUp2OGZBMWdk?=
+ =?utf-8?B?M2JJSDVwQkZjZXR0VEp2ZStxNWNIZFZ1ZWJlUzg5V1plZzNPcXdGUzV1cTJQ?=
+ =?utf-8?B?U3pNRDNQR1BTZUI1U3ZlT2hTMURLN3czUTVTcXVHVU5Jb0trNWYwMHl6MnlT?=
+ =?utf-8?Q?RqCEbyezsKaTlECWe1DpgWS7Z?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8319d3b0-783f-488a-1080-08dc947cc0b0
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 18:37:51.1097
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6K/bhxK3nq0pDL/a265/KqrxHSxnrtyPQ1M11YVtLRD98BYyOsh7hIO7Zr67g67AzFcCqhwSHYyhbIEnlHlrzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6982
 
-
-
-On 6/19/24 8:10 AM, Ankur Arora wrote:
-
-
+On 6/23/2024 15:55, Hans de Goede wrote:
+> Hi,
+> 
+> On 6/23/24 10:20 PM, Mario Limonciello wrote:
+>> On 6/23/2024 03:51, Thomas Weißschuh wrote:
+>>> Panels using a PWM-controlled backlight source without an do not have a
+>>> standard way to communicate their valid PWM ranges.
+>>> On x86 the ranges are read from ACPI through driver-specific tables.
+>>> The built-in ranges are not necessarily correct, or may grow stale if an
+>>> older device can be retrofitted with newer panels.
 >>>
->>> SOFTIRQ per second:
->>> ===================
->>> 6.10:
->>> ===================
->>> HI	TIMER	NET_TX	NET_RX	BLOCK	IRQ_POLL	TASKLET		SCHED		HRTIMER		RCU
->>> 0.00	3966.47	0.00	18.25	0.59	0.00		0.34		12811.00	0.00		9693.95
+>>> Add a quirk infrastructure with which the valid backlight ranges can be
+>>> maintained as part of the kernel.
 >>>
->>> Preempt_auto:
->>> ===================
->>> HI	TIMER	NET_TX	NET_RX	BLOCK	IRQ_POLL	TASKLET		SCHED		HRTIMER		RCU
->>> 0.00	4871.67	0.00	18.94	0.40	0.00		0.25		13518.66	0.00		15732.77
->>>
->>> Note: RCU softirq seems to increase significantly. Not sure which one triggers. still trying to figure out why.
->>> It maybe irq triggering to softirq or softirq causing more IPI.
 >>
->> Did an experiment keeping the number of CPU constant, while changing the number of sockets they span across.CPU 
->> When all CPU belong to same socket, there is no regression w.r.t to PREEMPT_AUTO. Regression starts when the CPUs start
->> spanning across sockets.
+>> So I was just talking to some folks in the Linux handheld gaming community (added to CC) about an issue they have where they need to know the correct panel orientation.  Due to reuse of panels across vendors the orientation on one might not be appropriate on another.  The trick is then to detect the combo of both the panel and the DMI data.
+>>
+>> It's the same "kind" of problem where something advertised in the firmware should be ignored but only on a panel + SMBIOS combination.
+>>
+>> So I am wondering if what you're proposing here could be more generalized.  IE "drm_panel_quirks.c" instead?
+>>
+>> Thoughts?
 > 
-> Ah. That's really interesting. So, upto 160 CPUs was okay?
-
-No. In both the cases CPUs are limited to 96. In one case its in single NUMA node and in other case its across two NUMA nodes. 
-
+> Note we already have a quirk mechanism for non upright mounted lcd-panels:
 > 
->> Since Preempt auto by default enables preempt count, I think that may cause the regression. I see Powerpc uses generic implementation
->> which may not scale well.
+> drivers/gpu/drm/drm_panel_orientation_quirks.c
 > 
-> Yeah this would explain why I don't see similar behaviour on a 384 CPU
-> x86 box.
+> note that the info here is shared with the simpledrm and
+> efifb drivers, so if the chose is made to extend this then
+> that needs to be taken into account.
 > 
-> Also, IIRC the powerpc numbers on preempt=full were significantly worse
-> than preempt=none. That test might also be worth doing once you have the
-> percpu based method working.
+> Regards,
 > 
->> Will try to shift to percpu based method and see. will get back if I can get that done successfully.
-> 
-> Sounds good to me.
-> 
+> Hans
 
-Did give a try. Made the preempt count per CPU by adding it in paca field. Unfortunately it didn't
-improve the the performance. Its more or less same as preempt_auto.  
-
-Issue still remains illusive. Likely crux is that somehow IPI-interrupts and SOFTIRQs are increasing 
-with preempt_auto. Doing some more data collection with perf/ftrace. Will share that soon. 
-
-This was the patch which I tried to make it per cpu for powerpc: It boots and runs workload.
-Implemented a simpler one instead of folding need resched into preempt count. By hacky way avoided 
-tif_need_resched calls as didnt affect the throughput. Hence kept it simple. Below is the patch 
-for reference. It didn't help fix the regression unless I implemented it wrongly.  
-
-
-diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
-index 1d58da946739..374642288061 100644
---- a/arch/powerpc/include/asm/paca.h
-+++ b/arch/powerpc/include/asm/paca.h
-@@ -268,6 +268,7 @@ struct paca_struct {
- 	u16 slb_save_cache_ptr;
- #endif
- #endif /* CONFIG_PPC_BOOK3S_64 */
-+	int preempt_count;
- #ifdef CONFIG_STACKPROTECTOR
- 	unsigned long canary;
- #endif
-diff --git a/arch/powerpc/include/asm/preempt.h b/arch/powerpc/include/asm/preempt.h
-new file mode 100644
-index 000000000000..406dad1a0cf6
---- /dev/null
-+++ b/arch/powerpc/include/asm/preempt.h
-@@ -0,0 +1,106 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __ASM_PREEMPT_H
-+#define __ASM_PREEMPT_H
-+
-+#include <linux/thread_info.h>
-+
-+#ifdef CONFIG_PPC64
-+#include <asm/paca.h>
-+#endif
-+#include <asm/percpu.h>
-+#include <asm/smp.h>
-+
-+#define PREEMPT_ENABLED (0)
-+
-+/*
-+ * We mask the PREEMPT_NEED_RESCHED bit so as not to confuse all current users
-+ * that think a non-zero value indicates we cannot preempt.
-+ */
-+static __always_inline int preempt_count(void)
-+{
-+	return READ_ONCE(local_paca->preempt_count);
-+}
-+
-+static __always_inline void preempt_count_set(int pc)
-+{
-+	WRITE_ONCE(local_paca->preempt_count, pc);
-+}
-+
-+/*
-+ * must be macros to avoid header recursion hell
-+ */
-+#define init_task_preempt_count(p) do { } while (0)
-+
-+#define init_idle_preempt_count(p, cpu) do { } while (0)
-+
-+static __always_inline void set_preempt_need_resched(void)
-+{
-+}
-+
-+static __always_inline void clear_preempt_need_resched(void)
-+{
-+}
-+
-+static __always_inline bool test_preempt_need_resched(void)
-+{
-+	return false;
-+}
-+
-+/*
-+ * The various preempt_count add/sub methods
-+ */
-+
-+static __always_inline void __preempt_count_add(int val)
-+{
-+	preempt_count_set(preempt_count() + val);
-+}
-+
-+static __always_inline void __preempt_count_sub(int val)
-+{
-+	preempt_count_set(preempt_count() - val);
-+}
-+
-+static __always_inline bool __preempt_count_dec_and_test(void)
-+{
-+	/*
-+	 * Because of load-store architectures cannot do per-cpu atomic
-+	 * operations; we cannot use PREEMPT_NEED_RESCHED because it might get
-+	 * lost.
-+	 */
-+	preempt_count_set(preempt_count() - 1);
-+	if (preempt_count() == 0 && tif_need_resched())
-+		return true;
-+	else
-+		return false;
-+}
-+
-+/*
-+ * Returns true when we need to resched and can (barring IRQ state).
-+ */
-+static __always_inline bool should_resched(int preempt_offset)
-+{
-+	return unlikely(preempt_count() == preempt_offset && tif_need_resched());
-+}
-+
-+//EXPORT_SYMBOL(per_cpu_preempt_count);
-+
-+#ifdef CONFIG_PREEMPTION
-+extern asmlinkage void preempt_schedule(void);
-+extern asmlinkage void preempt_schedule_notrace(void);
-+
-+#if defined(CONFIG_PREEMPT_DYNAMIC) && defined(CONFIG_HAVE_PREEMPT_DYNAMIC_KEY)
-+
-+void dynamic_preempt_schedule(void);
-+void dynamic_preempt_schedule_notrace(void);
-+#define __preempt_schedule()		dynamic_preempt_schedule()
-+#define __preempt_schedule_notrace()	dynamic_preempt_schedule_notrace()
-+
-+#else /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_KEY*/
-+
-+#define __preempt_schedule() preempt_schedule()
-+#define __preempt_schedule_notrace() preempt_schedule_notrace()
-+
-+#endif /* CONFIG_PREEMPT_DYNAMIC && CONFIG_HAVE_PREEMPT_DYNAMIC_KEY*/
-+#endif /* CONFIG_PREEMPTION */
-+
-+#endif /* __ASM_PREEMPT_H */
-diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
-index 0d170e2be2b6..bf2199384751 100644
---- a/arch/powerpc/include/asm/thread_info.h
-+++ b/arch/powerpc/include/asm/thread_info.h
-@@ -52,8 +52,8 @@
-  * low level task data.
-  */
- struct thread_info {
--	int		preempt_count;		/* 0 => preemptable,
--						   <0 => BUG */
-+	//int		preempt_count;		// 0 => preemptable,
-+						//   <0 => BUG
- #ifdef CONFIG_SMP
- 	unsigned int	cpu;
- #endif
-@@ -77,7 +77,6 @@ struct thread_info {
-  */
- #define INIT_THREAD_INFO(tsk)			\
- {						\
--	.preempt_count = INIT_PREEMPT_COUNT,	\
- 	.flags =	0,			\
- }
- 
-diff --git a/arch/powerpc/kernel/paca.c b/arch/powerpc/kernel/paca.c
-index 7502066c3c53..f90245b8359f 100644
---- a/arch/powerpc/kernel/paca.c
-+++ b/arch/powerpc/kernel/paca.c
-@@ -204,6 +204,7 @@ void __init initialise_paca(struct paca_struct *new_paca, int cpu)
- #ifdef CONFIG_PPC_64S_HASH_MMU
- 	new_paca->slb_shadow_ptr = NULL;
- #endif
-+	new_paca->preempt_count = PREEMPT_DISABLED;
- 
- #ifdef CONFIG_PPC_BOOK3E_64
- 	/* For now -- if we have threads this will be adjusted later */
-diff --git a/arch/powerpc/kexec/core_64.c b/arch/powerpc/kexec/core_64.c
-index 85050be08a23..2adab682aab9 100644
---- a/arch/powerpc/kexec/core_64.c
-+++ b/arch/powerpc/kexec/core_64.c
-@@ -33,6 +33,8 @@
- #include <asm/ultravisor.h>
- #include <asm/crashdump-ppc64.h>
- 
-+#include <linux/percpu-defs.h>
-+
- int machine_kexec_prepare(struct kimage *image)
- {
- 	int i;
-@@ -324,7 +326,7 @@ void default_machine_kexec(struct kimage *image)
- 	 * XXX: the task struct will likely be invalid once we do the copy!
- 	 */
- 	current_thread_info()->flags = 0;
--	current_thread_info()->preempt_count = HARDIRQ_OFFSET;
-+	local_paca->preempt_count = HARDIRQ_OFFSET;
- 
- 	/* We need a static PACA, too; copy this CPU's PACA over and switch to
- 	 * it. Also poison per_cpu_offset and NULL lppaca to catch anyone using
+Thanks for sharing.  Totally agree this is this the better way to go for 
+what I raised.
 
