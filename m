@@ -1,133 +1,81 @@
-Return-Path: <linux-kernel+bounces-227789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFDA0915695
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:41:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31B2915698
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67435280FD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:41:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6491F21655
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83471A01A0;
-	Mon, 24 Jun 2024 18:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46331A00FD;
+	Mon, 24 Jun 2024 18:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ph7OOlWi"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tm/UGS7v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9ED1E4AE;
-	Mon, 24 Jun 2024 18:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032461A00CE;
+	Mon, 24 Jun 2024 18:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719254496; cv=none; b=mBSLIIhrFheWk9jfp9zMLHd+VAdy6OiFHCSz5VHA/xJUQfx+fXK/wk12Ifacni3Te4R+FBmA4XGG7LAfEK7z2/zgsZYSuuuXKARFx6tSweazPOUAakDF1jgrwfEImqlClCfZhmZElMpmOeXS+foRthMcku/eA0VuLYZTOMGW2EQ=
+	t=1719254514; cv=none; b=OH/vu9BckacBNn0Js4RTDYUC7PxOmafWRzWl/eQyuUeoUYU+HboDmwUxsk+xpY7hMdY2LaC6jiShIaUROvGojG9jPoNmDrFcMyomAKYYo8AOz3GVxACMWcNArAarOBUjjI6ITFytLzkhb85iPfLO+xe1bY301UgwVSh9rm7uBgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719254496; c=relaxed/simple;
-	bh=AEymIACj9acXLypRztPM/3ziXQiHuyEEdFekiJgFUnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kb9GFLKYbHUKYTzbNIXOk6A+sBbUCiuzvm+baD62+6Kb6parW+dZ/6zDR+NNdnfG4izd1+Zucv1ExFzqHxV9fpb2UvSz6FsNS7eA9RM+50youHh9SSOSoTHHKVXLwn3ajrNOaK9cQEVXMvqHMRTZhYce5u70bao1UW0bxF9MzUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ph7OOlWi; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f9b364faddso37915175ad.3;
-        Mon, 24 Jun 2024 11:41:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719254494; x=1719859294; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QhZ81C/8tpw4iH8irCIrIcQkzUSzJK7fYT6KA3XkY3I=;
-        b=Ph7OOlWiYfvpB9HzucA5YIRBX8F+NwKqVSbJSHeIHAZ8kY2a4IlzEYXjRysE6C1BJ2
-         jZ3FTAjTyc9rE+PPpl8kP6nWKoFJKnYo19SzGapNwst31jF7NjfgyV13plawxWN57CSt
-         PjMkk1JWcuuYgW0NMVT2vD5TaGT+HEz8F/xRqY8qeiq0H6JMfa1vMo+V1PQ9bOzUE2nw
-         bZDyFY55YFTAg+ZA47DOXHseYEaOuW9cgrtG5DXZ0yJalOoC5qhQ/7cnu3Jqu/+utvtT
-         NOC66bC1CmlA2LvstEhQnmGSqjXtoar5rvGlGmAuKudwkZ8y4HhqxVJJsKM5VcWXxi7A
-         v85Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719254494; x=1719859294;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QhZ81C/8tpw4iH8irCIrIcQkzUSzJK7fYT6KA3XkY3I=;
-        b=bjZsl6D9aGRLFYA20Q84GNWSOsAxvsfs1EAe+CWGhRieZqBnCzkWDmzaRBaLKgq/kV
-         BJSsilIdFiaAXg/W2ZcUcKFNxaa28D6izyL4Ouk8Vb0Vzy1Np7b5Il55WK4VBMEbI22d
-         NyFDbvmiXvuJfy+4SCEJB/gHZQenfhqyf5+wXABBV/XSQ0r8XNEldl47HUBGm7zFUGjE
-         ut3zmq0AIWgf9lKblAoBahQzu0arkjawNoARg/VXYdkh+lVPfgz0qrIq2383wDtLcfN/
-         T0moKqcFDH7ot1PS9Id0pE/K+b4Hus9t/1vf5weMYLSvQ5vBMAN9qVTa3hg7N1MxlGzC
-         xMpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcD6B50m3YqmogNGobywGF4wzpGcfzvYsvFnWUgcJaZG29uRy6/uyEGkhKRtl//MIZxWukOzBVgx35YaXQiUvuTrfyHFlMXZQdMlN4BAIEUgT8rZsYfp5Y9J1PuzYPNLrO
-X-Gm-Message-State: AOJu0Yx6RDW/vPg5yFXSlPqRy6ENL1U2PB6qWAmTUoAlermlK5HUvTmB
-	ybrektZddYyReoCvhqdhsisKTbsOkqwMi+qGJiuDTgt+RosQKDFE
-X-Google-Smtp-Source: AGHT+IHwDb7OfmdnB6WV41jjpLoadn0eOZuEF1l7dGFQ+jEFir7EFuJdONcztpz/6d1eLQ8oL7qIYA==
-X-Received: by 2002:a17:902:ccce:b0:1fa:12b4:587c with SMTP id d9443c01a7336-1fa240c50c4mr61742885ad.56.1719254493982;
-        Mon, 24 Jun 2024 11:41:33 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb7d244fsm66055045ad.234.2024.06.24.11.41.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 11:41:33 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 24 Jun 2024 08:41:32 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
-	pjt@google.com, derkling@google.com, haoluo@google.com,
-	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
-	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
-	memxor@gmail.com, andrea.righi@canonical.com,
-	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH sched_ext/for-6.11] sched, sched_ext: Replace
- scx_next_task_picked() with sched_class->switch_class()
-Message-ID: <Znm93GMnCiAkcCIq@slm.duckdns.org>
-References: <87bk3wpnzv.ffs@tglx>
- <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
- <878qz0pcir.ffs@tglx>
- <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
- <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
- <ZnRptXC-ONl-PAyX@slm.duckdns.org>
- <ZnSp5mVp3uhYganb@slm.duckdns.org>
- <CAHk-=wjFPLqo7AXu8maAGEGnOy6reUg-F4zzFhVB0Kyu22h7pw@mail.gmail.com>
- <ZnXYsHw1gOZ4jlp2@slm.duckdns.org>
- <20240624090431.GG31592@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1719254514; c=relaxed/simple;
+	bh=rACcYoyXB2VIAZGsjje4+yo1HRIVSqjKGrWGAqXqR5Y=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VM4hKouSOYbEvt+OHhNX3nuak+g9VxkoKyQB0yNH/15B9WgpQ3fYEThFjVlyUdklI0PpeSprKB9n96MED8q3dyBW8PH/9RhrYs+sWYYt3hdotAA5y9ltSSeWhyhafwZoM2BCwCuoOQSYPajRbe88WGZK6pikGufFV9bMrPdirSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tm/UGS7v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8FE82C2BBFC;
+	Mon, 24 Jun 2024 18:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719254513;
+	bh=rACcYoyXB2VIAZGsjje4+yo1HRIVSqjKGrWGAqXqR5Y=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=Tm/UGS7vYo2uGf6XIy+qLFgjWeVxOAMq7HMcq8/C0sKuaBOod4J46xyc710e/UFir
+	 YpksxfHc8YARgnvrpQ+6SQwzcjNTLhDxYeiQtF9SeqIptvf0TrDp25XFqwa/JvKLx5
+	 +dEB6iZWT5oPJ8pv2cNLvEotZ8eKE+/khMBZxXzG+kXtOeV/i9QalODV8iROQoBAB5
+	 ghZ3AkfoAVvYtCi+D0bjBJCTMsoIvFjtzgeH5krDECjsHQVXBtHc/eu8Qa7leAsCuP
+	 2Slil0Z7GcqHz162eL9tAD9wwh2ujdobvjVZk0ozJ/T5jgA5Iy0gyMJtTzlLcByul2
+	 IY8F0VT7Mw83g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8241BC43612;
+	Mon, 24 Jun 2024 18:41:53 +0000 (UTC)
+Subject: Re: Re: [git pull] Input updates for v6.10-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Znm5EzNHCk_g4puh@google.com>
+References: <ZniqQuGkosZYqIYE@google.com>
+ <CAHk-=wj730guvRzh4wo16Cq8tq1D1tyD8ub4CiBxV4Bk0Kq_-g@mail.gmail.com>
+ <ZnmX1XeOzU1NfgrY@google.com>
+ <CAHk-=wh3ZpDhHseFjYf96CcgTSRoZtjbf41hoBCyfQJ=N+oMng@mail.gmail.com> <Znm5EzNHCk_g4puh@google.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Znm5EzNHCk_g4puh@google.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.10-rc5
+X-PR-Tracked-Commit-Id: 7c7b1be19b228b450c2945ec379d7fc6bfef9852
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
+Message-Id: <171925451352.7868.7438341554773105194.pr-tracker-bot@kernel.org>
+Date: Mon, 24 Jun 2024 18:41:53 +0000
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624090431.GG31592@noisy.programming.kicks-ass.net>
 
-Hello, Peter.
+The pull request you sent on Mon, 24 Jun 2024 11:21:07 -0700:
 
-On Mon, Jun 24, 2024 at 11:04:31AM +0200, Peter Zijlstra wrote:
-> > I'll update the patch description to point to the previous message just in
-> > case and apply it to sched_ext/for-6.11.
-> 
-> Can you please back merge and keep it a sane series? I'm going to have
-> to review it (even though I still very strongly disagree with the whole
-> thing) and there really is nothing worse than a series that introduces
-> things only to remove/change them again later.
+> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.10-rc5
 
-I started the sched_ext/for-6.11 branch last week with the v7 patchset:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/55027e689933ba2e64f3d245fb1ff185b3e7fc81
 
-  http://lkml.kernel.org/r/20240618212056.2833381-1-tj@kernel.org
-
-and would much prefer to just run it as a normal branch. No matter what form
-the patchset gets applied in, we'll have constant flow of changes, fixes,
-reverts and improvements no matter what, so I'd much prefer to avoid another
-round of reshuffling and reposting.
-
-Thanks.
+Thank you!
 
 -- 
-tejun
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
