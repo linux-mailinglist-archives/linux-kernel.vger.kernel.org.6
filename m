@@ -1,212 +1,285 @@
-Return-Path: <linux-kernel+bounces-227773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5630891566C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:22:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05FB91566E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 790521C21E62
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:22:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83D39281041
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE32919FA92;
-	Mon, 24 Jun 2024 18:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE011A01C0;
+	Mon, 24 Jun 2024 18:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GEyGoHcE"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2089.outbound.protection.outlook.com [40.107.220.89])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MAtFZlBI"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2080.outbound.protection.outlook.com [40.107.237.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3D219F488
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF291A00FE;
+	Mon, 24 Jun 2024 18:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.80
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719253322; cv=fail; b=p1tKi2jlgZZ0YN7lwJCCXXOXpHUORLetI18CpwSqEd6zodsNWsefmwWebWU6U50DPj7c82vLK+Y/ho/DiQQWpI75/Agvn0eT1sDIcj921myzW+9hZTTI3//G8pvhb4QXDT+44eJ/37JmydL1RbnhabWyXxnqHNn3WTKm95/Z5x8=
+	t=1719253326; cv=fail; b=ZY/cqKFtIKmepsR4XpNFOx/1KbTqw+mA9/WeyhSr0WPrDYCpipvWe/KehvOFT3H/F26yyYt3Uy+q54yNs+8aAeYU6Vdi9xE+flW2akm+OK30qsifYn4n33zPkF+VKiE8Lpey26fWFZsMY0IfclrraYwPQ/aWVObfxPSmmGjgVi8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719253322; c=relaxed/simple;
-	bh=KMnNrU51AHoj7SypggOopSsUFQbVOXNKtOWQuOuQMvM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eNabBjEGLbFFe0yB7/O4uPZ4fnwZpKQI307uy9l58k2HlDPgabLnYt+DPDsRNHtzCrAD0imClKYfZPchNcNXcpLVVnnaC8qvt0jrB0p0t9pGbqlkqOY542fIiGgu0FBeKyfVIO3y2RfIfiqhcY8c0YzoFAljuZ6endd7Q7hYcd4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GEyGoHcE; arc=fail smtp.client-ip=40.107.220.89
+	s=arc-20240116; t=1719253326; c=relaxed/simple;
+	bh=dfva8uz+0f8UW3izRNiSuBZ7WBiqPOmldCmN9CVF1tU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FKyQ2IiRVLEKpLnvJZiW0dyYfid+Ho/rv7M0zBb94VJwqyDZ2I6iNWZiUofVRJMFlmlTJeVkUVKKqWMFEirobmilYe0fqDTWqxY5iGvQay7MeAsDZyk80eIbRDEV9O+h5tI9dsPimraLKgTfe9SQLutMK2AD6uAghi7AzcdFqQs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MAtFZlBI; arc=fail smtp.client-ip=40.107.237.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Qv7jiPPZ47tEu6Whkgbl/Y85HSyCe2EM2hwuxAV2LEIEF2X+qfynUagCAnxQXbXaoS3JkOvUOWpCB0z9RNOfEs1dG0pZYnirCq8PQY2X/UwTR9eoblIsskLSCA+k/sY/G90Z72QBvkds/lic+Z3Ytoik2bXtjk0K/6jABJA8Cp4XUPdkPrIAHE5V14h6+F4AYYOfi9n2hg6QO6j+bDQOfFOCvalgfVDwJaJsL0C/XyD84vosJmYhpqBAk8WVy3GRtx8QEdC3aT0yvHvtwvaBRK/asXOyYbZ7w0+tiH7K/oiAibCpUvergkcR0BOEgYg4nBVcF+WmkBHcHjD+9jLKqA==
+ b=A420+JkOmECrDw4p6YCdsBi5n+noZgJj1rF5sNCu+hJei7tD+tZreVLFzan/RQowGt9O2nSgrAexZ54/83ylJougsZNzHeToGjlFHekUfJk1P1ei2UXLeMyQwNuqZ4h6sfdwgPBavmG9R9GoA7Zs+TwPq+7CmyZmMYjN/+VMryFRiAaDVTOT+vXQOTOUWiPcESZbNTSpo7mPEVRQZCNjIMk+nXMxJG31utvoiGlu9O1vQlVPK4LGHCjDRzl/2Oc5hBHTAf9cXBvMrgj4YhN2SoTzK8/WfWD4H5sqpkWZiXxtCHiUeGAXtsu+14X/Ktl31n7ZZzvzeS6j9xb1KaYguA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xAW6P1BTBJSfNIUvVl8FqTOvvJPB1XAot5xkWOzWcuA=;
- b=RNualZnek7ASHTIqSnvpAPIw5ye+kRnh7qjbOYGl6axhVmOkUdlHMcx9Bi2XeIOhgtu/7EuYjWbnr3XrwEz6dZywXeXkrjPXgeEWuSstDzpfdtQvqyeHUUe6SMSQQV2UrUO/ZPDp4CVeeUH1+7A5y9wzAd2ldrGwy5FVW3CAXrIEBqLgtFRU3at36Pwoolgdjbh6v3sSSeXfGL9kOEz7jD8R7jVjgHgutAceaPvVstirN3P8L+hTARSk1HK4EaixX617zWsGHY5T/ZBCqIi6AWhg9pCQKU/h460uhgeQScL2FfqbN4PC/+wI60iyDn6weV5DOsJk2Bqgy+XUCW/BZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
+ bh=6VfJDJVSQjlZLG042LOLIPBtB9llFPzfFyKmD4/T0gI=;
+ b=nAqINEreKrqpuehKsDicmVianRH8xRTRPu+X5BXGX5jWXpyHnVtdKJ2kpov5CQYZCnoxVzu5jlVvug5iV5kRpVPwlLKbLcFRDeRZVeE8oGXALVn6wruW0sKmKZBKAM8hl8xWiOCz2n5nYJBmboVIX3278aUEFd/0vfiViwDGkARVnNJu12hhCGardY7f2H3YI73ojBdajCslARqeZ5X6xYs4c85l/o9nCZ2xY7RKCFvQofEEDQnITaqzycacbh7rxYcHNi4no5x9/Ng2sQprWh1V3B3EuQ7ZkIHDrkR52/VP93lj2sfzH5XkFSANw3ib496mtJOuEV/nZp0MRPZ4VQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xAW6P1BTBJSfNIUvVl8FqTOvvJPB1XAot5xkWOzWcuA=;
- b=GEyGoHcE9EO4U+zCdASwJsncnX19LQtDaKec9cWEk1vcbZ01bMTAFjFHfxhYZjUKM99cYaMSEVyVUPSKbXDMfgkKnmK5ULLkwImO+80DGfpIQgWuN5I5BeeHN42G+rD4Q0sFx6/oDY//SKUZF++J7gHTTQ/NZbm+1iJ+ACAm4KA=
-Received: from SN6PR16CA0045.namprd16.prod.outlook.com (2603:10b6:805:ca::22)
- by SN7PR12MB8819.namprd12.prod.outlook.com (2603:10b6:806:32a::11) with
+ bh=6VfJDJVSQjlZLG042LOLIPBtB9llFPzfFyKmD4/T0gI=;
+ b=MAtFZlBIFMy/Hfde4hQB/xhmOSIkJkp6vWhO65EJ9D435xwZBg2+G64eVryB2vhR4nRlRGUlrYx5PNDfa8Dh+/XbSYBaKVhQBRW3fiUMb1GIIPAteD6SpPQfuY2vIncbml4cERh0URFEEtQybnB/7lw5igNYB2dsyyNdDezG2ag=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB6380.namprd12.prod.outlook.com (2603:10b6:208:38d::18)
+ by CH3PR12MB8482.namprd12.prod.outlook.com (2603:10b6:610:15b::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Mon, 24 Jun
- 2024 18:21:55 +0000
-Received: from SN1PEPF000397B5.namprd05.prod.outlook.com
- (2603:10b6:805:ca:cafe::f) by SN6PR16CA0045.outlook.office365.com
- (2603:10b6:805:ca::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.38 via Frontend
- Transport; Mon, 24 Jun 2024 18:21:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF000397B5.mail.protection.outlook.com (10.167.248.59) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Mon, 24 Jun 2024 18:21:55 +0000
-Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Jun
- 2024 13:21:53 -0500
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>
-CC: <rafael@kernel.org>, <hpa@zytor.com>, <peterz@infradead.org>,
-	<adrian.hunter@intel.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	<jun.nakajima@intel.com>, <rick.p.edgecombe@intel.com>,
-	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <seanjc@google.com>,
-	<kai.huang@intel.com>, <bhe@redhat.com>, <kirill.shutemov@linux.intel.com>,
-	<bdas@redhat.com>, <vkuznets@redhat.com>, <dionnaglaze@google.com>,
-	<anisinha@redhat.com>, <jroedel@suse.de>, <ardb@kernel.org>,
-	<dyoung@redhat.com>, <kexec@lists.infradead.org>,
-	<linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v10 1/2] x86/boot: Skip video memory access in the decompressor for SEV-ES/SNP
-Date: Mon, 24 Jun 2024 18:21:44 +0000
-Message-ID: <d38e9fb0c74e2688f866b0dcc39e417b4c302c7f.1719251730.git.ashish.kalra@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1719251730.git.ashish.kalra@amd.com>
-References: <20240614095904.1345461-1-kirill.shutemov@linux.intel.com> <cover.1719251730.git.ashish.kalra@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Mon, 24 Jun
+ 2024 18:22:02 +0000
+Received: from BL3PR12MB6380.namprd12.prod.outlook.com
+ ([fe80::66cf:5409:24d1:532b]) by BL3PR12MB6380.namprd12.prod.outlook.com
+ ([fe80::66cf:5409:24d1:532b%7]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 18:22:02 +0000
+Message-ID: <ce191d03-c228-4f1e-b96a-0388220bc586@amd.com>
+Date: Mon, 24 Jun 2024 13:21:59 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 3/9] PCI/portdrv: Update portdrv with an atomic
+ notifier for reporting AER internal errors
+Content-Language: en-US
+To: Dan Williams <dan.j.williams@intel.com>, ira.weiny@intel.com,
+ dave@stgolabs.net, dave.jiang@intel.com, alison.schofield@intel.com,
+ ming4.li@intel.com, vishal.l.verma@intel.com, jim.harris@samsung.com,
+ ilpo.jarvinen@linux.intel.com, ardb@kernel.org,
+ sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yazen.Ghannam@amd.com, Robert.Richter@amd.com
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+References: <20240617200411.1426554-1-terry.bowman@amd.com>
+ <20240617200411.1426554-4-terry.bowman@amd.com>
+ <6675d622447ac_57ac2942c@dwillia2-xfh.jf.intel.com.notmuch>
+From: Terry Bowman <Terry.Bowman@amd.com>
+In-Reply-To: <6675d622447ac_57ac2942c@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0105.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:3c5::13) To BL3PR12MB6380.namprd12.prod.outlook.com
+ (2603:10b6:208:38d::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B5:EE_|SN7PR12MB8819:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef4c3273-6331-4090-d624-08dc947a8760
+X-MS-TrafficTypeDiagnostic: BL3PR12MB6380:EE_|CH3PR12MB8482:EE_
+X-MS-Office365-Filtering-Correlation-Id: 76187b34-5797-430b-751f-08dc947a8b0e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|36860700010|7416011|376011|1800799021|82310400023;
+	BCL:0;ARA:13230037|376011|7416011|1800799021|366013|921017;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6zf0uf4eqiO6oT4m7D6VdCagUpUIvkJYk3Nkfrw1MNW3Ng+U7ProZjYyd5lz?=
- =?us-ascii?Q?G0r2o+FS3GkuLMCa+wPN7jmgcVi6/OGnHcH3EqjMOmn07DO3E+3WlMJdKpPa?=
- =?us-ascii?Q?hN2b8lW6bjmjBKG/plvR+CmSKj86mzgxd+IkMKEYcW21eJUMYzgnVlF732W+?=
- =?us-ascii?Q?ufsYvwJzz+5I1r6FxQ/FjnlqpZ8tHC1LDWUz5NAGW3/5piUGxC+GbD5Zim3V?=
- =?us-ascii?Q?JIx4ARy8nCFhKymbWlchxls8Gnln4X29B6FasUFMH8ryJ7NOgpStjpo9cVKa?=
- =?us-ascii?Q?GprKxcLTs4ifXxxZ860/7nISIlIt0No2Vmz8Uf6hlF0asbUHdl6l6bRSikdw?=
- =?us-ascii?Q?rWYcc092MezBG2LpyTrqrJadZh8I3zjtrS+pkVbc2zhI3sK6mr//t2hcmcmV?=
- =?us-ascii?Q?0t6y1pZpzcV4ikHMu8rI70BHLqrANry8nWj9Hg5sgcnQokfRKiRglNfqV4AQ?=
- =?us-ascii?Q?ZMcPlW8jwBByLspPrFe5/iwFr/bZxJDLJ6BvnWec++BPwErLin3mTNCFNc25?=
- =?us-ascii?Q?tYqeUZSdeoqplD/4AeI7KQDklfI4IkG+RKIJtXBWBrY071KZS6ni8zm8t+8F?=
- =?us-ascii?Q?oPzb0hNB5V8dluKffVIny3KFuMhA4wOlWVcqpaZDh2lK9+bNiWLxaKucRjFb?=
- =?us-ascii?Q?GzwhLYaBcRIxfeakkS5Em6HJJGwVkiI/42q49+Vc7pU+BnhTBkOHaCyC3nrf?=
- =?us-ascii?Q?k6pga7I2lapWF688Qls7kYgu03JV8Dzqiwx/DBfSntTVtQMf9AOZ2zMZ7WkU?=
- =?us-ascii?Q?kN5GO9OT+UJMGA5/EVi+uwJ2GRiHM1bncx1aveyRwDgbwM0DRR4u3MnxsxdH?=
- =?us-ascii?Q?dCiH006tyZT9FiL46/SRz8rbcAAtme9HCV8Dv7guypTbE0PWhwOoWWBFAXIw?=
- =?us-ascii?Q?VFdmDhJseRULTD95ALX9H/UyO+eWd7VQ7wk5mkdUdhB0neNPAmomOF8EFKhW?=
- =?us-ascii?Q?wM2T8Womm+gnwhzhzApr6tqMPgBCUN38WXHPDAlMeBF9mqPAFFsqPh0WC/ke?=
- =?us-ascii?Q?lGYPEzzvqxeX2pBLLd5f1HItgl0sF50wFjGx8XCVa6K4Tr3LB7l3p24siDdF?=
- =?us-ascii?Q?0J/CbcutLTupnYpDWnNTHRDfxycB5WiEXGffPTVdVymA8FWjkucbGHm3avSe?=
- =?us-ascii?Q?w658PLXa+UKSVaDK//hD9EiYUaYcb2CqM8xM0MfUNVcqqKrEUsQIHfXgiFmZ?=
- =?us-ascii?Q?i5Kzygd12aP0pXj78EdaDui54Emtd3J7mZAwldFn5vJbRuj5RFTbqrWjPjQw?=
- =?us-ascii?Q?yimPKuN7jYQ5wMVQ34V/HmmlGY3f8XEFs/m9q2mX8XnSZfRagDTJZ/o2jKnt?=
- =?us-ascii?Q?SQ71rwbp5DSonfQnZvI7EAVOKXRZBV8yF4tV3MTy5rKSDtPoU5DXAS+e4JwQ?=
- =?us-ascii?Q?6GRXmeQnx7J8Ye6l8AdeCzw1t3TdXb4kZZtCP0yJ70vsU/KYUg=3D=3D?=
+	=?utf-8?B?VkZ4a1lUUTVvcXcvUUJzNU8vSDlUMHlBd1NZeGFHeFN3Z01XT0t2OHlJc3pJ?=
+ =?utf-8?B?cU1UR1lmcUtqajdwdDZiUFl6cGxselNKNWlBQjFMSHRkMFBUTlRGMi9hTERa?=
+ =?utf-8?B?d0xIUi9reVFGZ2N4SXBVUEU2TUVFL2NvTURqbXN4emc3bHlLaTNzYzdkNHE5?=
+ =?utf-8?B?eDMyVUlXcCtvM2xIUk56bDVwT1FVZzVtRHlOd3pMeU4rd0Rrd1ovYUtTZHJM?=
+ =?utf-8?B?Y3dKWWFzUFhGUllHVWdLUkhaVTRKend4VnVWTHA3cEhHSnJrUUxkK3A3WXEr?=
+ =?utf-8?B?ZUFVdGYvUzE3MjRxT1pCemEyV0UzQ0c5TXJLTkZQeU5zVmdwWDJNTUdmUzM4?=
+ =?utf-8?B?MTkwaDRpNXY1ekdaYVdlM2ZHVm5oWEl2cmdOeGZWemhvUkdYdlQzRlh0OE9q?=
+ =?utf-8?B?RTVHOHZWUzN1cXBkbTB2eTRrQi91ZDRobXU1ZGMwd0ZiL21nZTQ3eE54dnEw?=
+ =?utf-8?B?OThldkZTWHUwcVRFa0F2SDE1UmRNRXdJT3VYbGpMVDZ2dWQzRE9mTlFnbGJV?=
+ =?utf-8?B?c2d0QXVQWGlxSmV6cEpwN21sOWxQUVVqRjNYQ2NhR2dNVlVad0lwa0luSmRF?=
+ =?utf-8?B?TGJQcm91bndOYzdpNEt5SUNPYTlnWW5sK2owRXpOUkQ4Q2FTNXR0bkYrYUJ0?=
+ =?utf-8?B?Z1ZVZ2Zreit6OEZjazBveGtiWkFzYSsxUGdHazFOZXV2d0w1UWUwYzZBYXV2?=
+ =?utf-8?B?NS9YRFhzR3RUcHlLVHpYSWo3V2YrTExFK1R3cHpOR09jeGQwTXVMSnFabFhP?=
+ =?utf-8?B?UUlQcDlxLzRNTEdNVDVBOS9haVlVY280SzZCU1BoMGlpZTN5VmpMK20zT1NG?=
+ =?utf-8?B?NzZNMHFZZVZwMEMrS2VVVXVjbG5ONFlXWnFmY0NjZlhwbjErb1o1SlM5bHZT?=
+ =?utf-8?B?T3IvUk90NUhwa2xKQ1g1bDlINE1NYzNiUjM1TWx2dHdDUEtaaEZZNjNlRFdh?=
+ =?utf-8?B?ZS9HbDErU05XekpMM0lUMlRxeVBtOWp2VkMxUFZ5RnpocFVjQVFpVmNhbFRK?=
+ =?utf-8?B?a2pDVXVBMDVhVTVmVEVZdVc2ZUk1bE02Q2xEOUd3MTFjRkJYTFdlOHBkdjYx?=
+ =?utf-8?B?RnZuSWNIeUpick9HRkZhNkdrY2x2cThzV05ldDloYTl0alNlSEQ1TVI3MmVK?=
+ =?utf-8?B?QW8zN0xOWVQ5bkRjQ1dEWG1EZnZCcHVNazJSeDQ1bElacHhYdzZ0Z0R3Z3V5?=
+ =?utf-8?B?bnRqeE1UYU1uZ3J5VGtDL2JLTjZJUWFvYmRHMFp5UWxwVzFvQnVTQk1xMGZ4?=
+ =?utf-8?B?dTB2L24rOVhyK0xKNDVjZk41UGlMMmtVR2FFcHFSdFpyVHhOdDJPclFhRFYv?=
+ =?utf-8?B?VEhkM201dGxTWXJWdDJLbzZndU9yWjQwMEhVeUl5Z0Y4d2xlbytEMmo1N3RP?=
+ =?utf-8?B?YVpmZTdwQ1hvU3ZOU2xDcEplVTBtbjZmb1RMUFdpaHY3YmMySndWUzcyWmoy?=
+ =?utf-8?B?RGtITzV3MXY0emdWWEROVnJRVUlkc0c0OExGL25vVnBQdlJ2Tk5qZ2ZxZGlG?=
+ =?utf-8?B?MUE4SWV3Y1lrb3Q4WFVBYU9pWDhqUFRoZ0RuaU0vZWErWW5kUHpsYW9BaWJw?=
+ =?utf-8?B?TDNrM3ZRSnB0eTJub0M5VjhUcTJxaDU1ckdQU2Y1bUk5WjNIRVZVQkhpd2Nw?=
+ =?utf-8?B?OVViTHZ0bFNSblFEeGNOSGhaODEza1p4WmpCZ0p3d1dPc21MMkpQelYwdFNS?=
+ =?utf-8?B?TlBWb2xObGV2bGgwOHZCNU90ZXNRWUdZK1BIVnY5aEU1VWQ4V3l3YUg4ZXlw?=
+ =?utf-8?B?WEM3OEo2M2t5TjBuNmN3NTgxeUhtVFdWUzFnVWhINndlSStTZXF3Vjk0aWxS?=
+ =?utf-8?Q?EhUIKb5nP+Mp4M1T31Jiw8oBGgSIO5emb/H0I=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(36860700010)(7416011)(376011)(1800799021)(82310400023);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6380.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(7416011)(1800799021)(366013)(921017);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UXU1YWdtTWVqYVo2Zk9Ldyt2RWo4cG81R1dyY1F1QVVsOE8wWFZYeDJLNm1j?=
+ =?utf-8?B?NUIrb2ZUWTJlMEFoN0dwWlhwUkJ3elFDeHRjVUhRSWpNQmNDMEs1WnRYRU1u?=
+ =?utf-8?B?RUNLK2N2NVhGMkZ2UTliRCtYNmxucUdKOXkyMFRhUWk5YURoK1pOcjhWWW03?=
+ =?utf-8?B?NEhYVFlDNGlHL21qVnJCOVI2Z1ozeXdqNmhWMS9LZUI5VFh3VVVjeHRSVkFz?=
+ =?utf-8?B?dnZNMmVqWHdPc3VwZUdkQWd5bGM0blA2TThYVmNyTWpsTkJ2ams2dndRZm84?=
+ =?utf-8?B?bmVWWEFpTTFHZzNic1RiOVRBUVZzd3FFZ045NzY0cnY0THRCRUJvbStrdU5u?=
+ =?utf-8?B?bDZpZlF2RkJ0Rm1NWFZFWE50L1U5NEdKWjBoYk9ha2FyTFB6QzQ3b2Fqckcy?=
+ =?utf-8?B?RGJxZnp6WXZOdzR4TnVzMnFsUStHUjJrN1d0Yk85bmFFejUzRWZ4eXN6Znc1?=
+ =?utf-8?B?K3V4MWdoWWRoKzNHdG5xemIzRy9kckVOaHdBeXZpRnZ4VlJiYm5sckFnRVRr?=
+ =?utf-8?B?cXlJQVhlWVVxcnVETlpyYm1yZXJDY2dsVEZqQmc0MXVNQ3RsOGRwOXIxZmdG?=
+ =?utf-8?B?V3RGNkxnMGtnTnFVL0FCKzhmY2Q0VmhYYjZEaDdPTEk1czY1OExEa0RrNk45?=
+ =?utf-8?B?UjdNNWpLbDFUcHZ4eFBBajJ5KytuSkE2WjV1SEtYTWd6UUlDNDF4aDU2a1ow?=
+ =?utf-8?B?YjErZ2FYY2VLR3kreE1ScjlSZDNnVnBGa1FLVkNmZWtjZ3dBQ2dWUUo2S2Er?=
+ =?utf-8?B?bTdXc0pJMnB5N09YQTJTTHRwM1UxSm5LemZld294N2pwUUNEUituMjBTd0lx?=
+ =?utf-8?B?Vyt0alB3K01idVZQSmZrQzFNczgwTUFrS2N3bHR0KzNMdGxvRUEvRnBSQms3?=
+ =?utf-8?B?dWdkbTVIeTJHaS9aeFlkSDVmNUVod04rM0RSa2kvZEFRNWduR3VMS0k5SUpQ?=
+ =?utf-8?B?VHZBYUZFYVJ6bjZ6azlNVkVsY2Q0ODRTc0NBUC9YaG80RElLOVdpNUR0Wm9M?=
+ =?utf-8?B?S2dESFRLYjFsbmlpUjhWaDJxMlhTWTQ4S3lwOWhLUDhuMmwvSGlaNzJzWUxN?=
+ =?utf-8?B?RnNJbWkrWUZvQUFEN3hudVFKMkNmeWo3b1puZ29NcXJLYnpjeWM5ZnM0NGR4?=
+ =?utf-8?B?eUZDTGYrUFUzaSt3cHVyVFo0TUdWVVJaY2lkWHgwT1hwWHd4Zys5cG5DSEJu?=
+ =?utf-8?B?UHBjRXNSczJPYk8yTCtEVXM4VGU0NEVIeGZzYVVrNnJLRjl1Q3U3amZDbW40?=
+ =?utf-8?B?aU1jTWdyT3Z5aDR5MHRRNVVKK2FVU3FtdkxqcEUwN0lnZkEvWFJadUlheEhD?=
+ =?utf-8?B?eVBFTWFxMmttQUluSXhiUkVHNnVOMlpUeVVRQW1kYXdjSlV6WWtCRXJHRSt2?=
+ =?utf-8?B?aW1CWXFyQmhHL1A3Vmw5NWxEREpmQTNYS2E3dGlaWFBQeHlLUlNZeTNPdFRh?=
+ =?utf-8?B?NlVNNGJyOEIza0ovUmlVTS84QnpWZm1PdEZkZVVNdERUcGtpUnZxejRNaXhF?=
+ =?utf-8?B?SzFoeEgvTE9ZQVNKOVppNGJqNEtKUU8xWkI3eDNBYnpIRWh4cFNKdElIUHky?=
+ =?utf-8?B?YlJCZHJYZjVtZHNpNTRCWnpHOGwvcFVQbXU2MEErRGlmeVV2dzFHSS9pTStk?=
+ =?utf-8?B?dkd4VXVrQlJMZk92cXdwK0ZSRHc5YTEzQmpLMU84ZHNxWWFXeFIwZytuRFht?=
+ =?utf-8?B?TTZnYUp4RmNReTQ1eWk1bG51b3ltckxUbm1DYnJSMEowNmdISzA4SEVEd3pz?=
+ =?utf-8?B?OHJkT1ZyOFRsZVp0TW91WkR4bjlQN0c5RmN2Z3JqYkx0RTU5NWRJOEc4aWg3?=
+ =?utf-8?B?TW1OSGcva2ZIRTlONTdRMlZNVGxJbW9hVGxPREhSOTJEbmFYdzhQQnZRMGVZ?=
+ =?utf-8?B?cjFnSUlvS3JCV0h5V1p1Z2dTZS9URVZvcFVTTjFNWkREdHZzdDdhb3hLaDEx?=
+ =?utf-8?B?MDJSQTB6V1AxMzJIaWZsY2pYUHowUWx6MnI4VnNVVXBaazZsbkFiUTJHbEJQ?=
+ =?utf-8?B?ODU0RlNsVm0yZE9KRTJvMVUyUy9kamMyZkNPNXZSZldWM2F2MFJ2SlQ1RzNW?=
+ =?utf-8?B?eEozeGtWQ3pld2FzaFJEaWMyWWs2Q2JrdzFPdWVHRm5NTDF3MVN2TzdJcnZS?=
+ =?utf-8?Q?lo1BrdAjxMgkLwxwO2HpTBgL6?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 18:21:55.7334
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76187b34-5797-430b-751f-08dc947a8b0e
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6380.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 18:22:02.1143
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef4c3273-6331-4090-d624-08dc947a8760
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397B5.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8819
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: z3M/tvIgxWa8YDd1dzJJ6zWVuM8CYZePy6nS0EKtwM+dnGTymsJBzTeqllcKGLreUBd2N3Yy3E3/EQQaRvNjAg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8482
 
-From: Ashish Kalra <ashish.kalra@amd.com>
+Hi Dan,
 
-Accessing guest video memory/RAM in the decompressor causes guest
-termination as the boot stage2 #VC handler for SEV-ES/SNP systems does
-not support MMIO handling.
+I added responses inline below.
 
-This issue is observed during a SEV-ES/SNP guest kexec as kexec -c adds
-screen_info to the boot parameters passed to the second kernel, which
-causes console output to be dumped to both video and serial.
+On 6/21/24 14:36, Dan Williams wrote:
+> Terry Bowman wrote:
+>> PCIe port devices are bound to portdrv, the PCIe port bus driver. portdrv
+>> does not implement an AER correctable handler (CE) but does implement the
+>> AER uncorrectable error (UCE). The UCE handler is fairly straightforward
+>> in that it only checks for frozen error state and returns the next step
+>> for recovery accordingly.
+>>
+>> As a result, port devices relying on AER correctable internal errors (CIE)
+>> and AER uncorrectable internal errors (UIE) will not be handled. Note,
+>> the PCIe spec indicates AER CIE/UIE can be used to report implementation
+>> specific errors.[1]
+>>
+>> CXL root ports, CXL downstream switch ports, and CXL upstream switch ports
+>> are examples of devices using the AER CIE/UIE for implementation specific
+>> purposes. These CXL ports use the AER interrupt and AER CIE/UIE status to
+>> report CXL RAS errors.[2]
+>>
+>> Add an atomic notifier to portdrv's CE/UCE handlers. Use the atomic
+>> notifier to report CIE/UIE errors to the registered functions. This will
+>> require adding a CE handler and updating the existing UCE handler.
+>>
+>> For the UCE handler, the CXL spec states UIE errors should return need
+>> reset: "The only method of recovering from an Uncorrectable Internal Error
+>> is reset or hardware replacement."[1]
+>>
+>> [1] PCI6.0 - 6.2.10 Internal Errors
+>> [2] CXL3.1 - 12.2.2 CXL Root Ports, Downstream Switch Ports, and
+>>              Upstream Switch Ports
+>>
+>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>> Cc: linux-pci@vger.kernel.org
+>> ---
+>>  drivers/pci/pcie/portdrv.c | 32 ++++++++++++++++++++++++++++++++
+>>  drivers/pci/pcie/portdrv.h |  2 ++
+>>  2 files changed, 34 insertions(+)
+>>
+>> diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
+>> index 14a4b89a3b83..86d80e0e9606 100644
+>> --- a/drivers/pci/pcie/portdrv.c
+>> +++ b/drivers/pci/pcie/portdrv.c
+>> @@ -37,6 +37,9 @@ struct portdrv_service_data {
+>>  	u32 service;
+>>  };
+>>  
+>> +ATOMIC_NOTIFIER_HEAD(portdrv_aer_internal_err_chain);
+>> +EXPORT_SYMBOL_GPL(portdrv_aer_internal_err_chain);
+>> +
+>>  /**
+>>   * release_pcie_device - free PCI Express port service device structure
+>>   * @dev: Port service device to release
+>> @@ -745,11 +748,39 @@ static void pcie_portdrv_shutdown(struct pci_dev *dev)
+>>  static pci_ers_result_t pcie_portdrv_error_detected(struct pci_dev *dev,
+>>  					pci_channel_state_t error)
+>>  {
+>> +	if (dev->aer_cap) {
+>> +		u32 status;
+>> +
+>> +		pci_read_config_dword(dev, dev->aer_cap + PCI_ERR_UNCOR_STATUS,
+>> +				      &status);
+>> +
+>> +		if (status & PCI_ERR_UNC_INTN) {
+>> +			atomic_notifier_call_chain(&portdrv_aer_internal_err_chain,
+>> +						   AER_FATAL, (void *)dev);
+>> +			return PCI_ERS_RESULT_NEED_RESET;
+>> +		}
+>> +	}
+>> +
+> 
+> Oh, this is a finer grained  / lower-level location than I was
+> expecting. I was expecting that the notifier was just conveying the port
+> interrupt notification to a driver that knew how to take the next step.
+> This pcie_portdrv_error_detected() is a notification that is already
+> "downstream" of the AER notification.
+> 
 
-As the decompressor output gets cleared really fast, it is preferable to
-get the console output only on serial, hence, skip accessing the video
-RAM during decompressor stage to prevent guest termination.
+My intent was to implement the UIE/CIE "implementation specific" behavior as 
+mentioned in the PCI spec. This included allowing port devices to be notified if 
+needed. This plan is not ideal but works within the PCI portdrv situation
+and before we can introduce a CXL specific portdriver.
 
-Serial console output during decompressor stage works as boot stage2 #VC
-handler already supports handling port I/O.
+> If PCIe does not care about CIE and UIE then don't make it care, but
+> redirect the notifications to the CXL side that may care.
+> 
+> Leave the portdrv handlers PCIe native as much as possible.
+> 
+> Now, I have not thought through the full implications of that
+> suggestion, but for now am reacting to this AER -> PCIe err_handler ->
+> CXL notfier as potentially more awkward than AER -> CXL notifier. It's a
+> separate error handling domain that the PCIe side likely does not want
+> to worry about. PCIe side is only responsible for allowing CXL to
+> register for the notifications beacuse the AER interrupt is shared.
 
-  [ bp: Massage. ]
+Hmmm, this sounds like either option#2 or introducing a CXL portdrv service 
+driver. 
 
-Suggested-by: Borislav Petkov (AMD) <bp@alien8.de>
-Suggested-by: Thomas Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
----
- arch/x86/boot/compressed/misc.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Thanks for the reviews and please let me know which option you 
+would like me to purse.
 
-diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-index 944454306ef4..826b4d5cb1f0 100644
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -385,6 +385,19 @@ static void parse_mem_encrypt(struct setup_header *hdr)
- 		hdr->xloadflags |= XLF_MEM_ENCRYPTION;
- }
- 
-+static void early_sev_detect(void)
-+{
-+	/*
-+	 * Accessing video memory causes guest termination because
-+	 * the boot stage2 #VC handler of SEV-ES/SNP guests does not
-+	 * support MMIO handling and kexec -c adds screen_info to the
-+	 * boot parameters passed to the kexec kernel, which causes
-+	 * console output to be dumped to both video and serial.
-+	 */
-+	if (sev_status & MSR_AMD64_SEV_ES_ENABLED)
-+		lines = cols = 0;
-+}
-+
- /*
-  * The compressed kernel image (ZO), has been moved so that its position
-  * is against the end of the buffer used to hold the uncompressed kernel
-@@ -440,6 +453,8 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
- 	 */
- 	early_tdx_detect();
- 
-+	early_sev_detect();
-+
- 	console_init();
- 
- 	/*
--- 
-2.34.1
+Regards,
+Terry
 
 
