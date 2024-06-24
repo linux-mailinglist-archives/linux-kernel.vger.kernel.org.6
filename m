@@ -1,295 +1,163 @@
-Return-Path: <linux-kernel+bounces-226533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F15A913FD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:25:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D437913FF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9DAC282D09
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:25:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71B4F1C21C2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB851BC40;
-	Mon, 24 Jun 2024 01:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wwS6LGoY"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26D6F9DA
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D269B4414;
+	Mon, 24 Jun 2024 01:28:44 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BF41396;
+	Mon, 24 Jun 2024 01:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719192198; cv=none; b=eEF2LIrZ7vefyneXy3LlWyq5HI6e76wVFyA0279L7G99EWTyWy3KSYb29wj0/kbDoqnNrEJ+WMctApI4kUPaW9D9uP4obHeqb6/fkhqqw75aS69LxOuUo83LlGlBWK2vzYvHpvd9HUEBFlW32gbcj0DuUZESZevaBIsO9/M3svk=
+	t=1719192524; cv=none; b=peACqwFre7lwQ+6y0ji9uajqKMyJaiySJK/NisZ1fsxvgbOIOWIYwInmqOAUVQr6uG3dSJwx/zWMNRvPeDO9XQ6EYRgN/2npw85H+o67/sw4rbMOICd0QbSaOiAIUZHSoh/Q+jnNv00S/Y/Gj3XSbLWYsuqCC/8RFtoC+w9tm3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719192198; c=relaxed/simple;
-	bh=pZ3kJvyDsz0CkfpuJLw99tu1PndX3crZKmTmSnWuplk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AdwxvOScXjtS6Ac86ue2gX2jM+yEtie4Bws0s9Si20XGmkqyILJFRhEiFzXkhj4UANVEee79BcpH0SxkbrAUpo4ARvtpxuEenqdUkLqvbeIqBtyIlfml/M1ndDlIAE+RBEmn1/rdJQV5600X48rwGuNa/GQuzIlevXHHIvNpEIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=wwS6LGoY; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 067CA2C09B5;
-	Mon, 24 Jun 2024 13:23:10 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1719192190;
-	bh=KRRtnGUVLtgTf5B+yn8CVCgPF0u41rVrOBKi+rnH6nk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=wwS6LGoYmbLV3jxG4kcOLD0799BtQATXIyq9k4kaJ8R+JLMhRYpG/qoCZ3PwE21UI
-	 eL3FJEw1Mxt8Mi4ZNoeFzdVh8eDHeLM+8H6FFiZcAb+oDJkosAKtCkJd3JjxcRVq4X
-	 SV8mLIgBX3Jg1HxiF1hl+IFq7DTAWZKd4jqc+XNK+Tw/Kg3hh291Q8AHrxQei4qVqW
-	 MwyWTjjS72zZp5oaHEy/mtNMXe1zW4aKEIVHBgsnzL46ejIr/acFcF13C4QNPOyBsJ
-	 e+9LeLUBTUIRCnO2yccTj/e+UmwDObd+6JzeT521sBC41tDjqaEVx4HCubOVtFGqzW
-	 r+Hlhi95wLf8A==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6678ca7d0008>; Mon, 24 Jun 2024 13:23:09 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 4ECB013EE8E;
-	Mon, 24 Jun 2024 13:23:09 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 4ACB9280AE5; Mon, 24 Jun 2024 13:23:09 +1200 (NZST)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: tglx@linutronix.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tsbogend@alpha.franken.de,
-	daniel.lezcano@linaro.org,
-	paulburton@kernel.org,
-	peterz@infradead.org,
-	mail@birger-koblitz.de,
-	bert@biot.com,
-	john@phrozen.org,
-	sander@svanheule.net
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	kabel@kernel.org,
-	ericwouds@gmail.com,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v2 8/8] mips: dts: realtek: Add RTL9302C board
-Date: Mon, 24 Jun 2024 13:23:00 +1200
-Message-ID: <20240624012300.1713290-9-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240624012300.1713290-1-chris.packham@alliedtelesis.co.nz>
-References: <20240624012300.1713290-1-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1719192524; c=relaxed/simple;
+	bh=mOEcdBvkXT2vbHlpiHCcXOJg4SoK5g8RzrZjipiVECI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=TtC502s/lpBUe9cPsS1kjcoNRKVKRY91FR3QTjTzBCaSWm58Krahf2oneAyBuuGvtfF4vgXlenT1OCys5Bn/E9kajPS8Q8igshkEu91zsCDkcTzFTkitrC3cKwX3SH6dE3LBex4iL9wE2JPAC4sfMQ28kKS/FO122sKHaA6tqQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8AxnOrHy3hmLWIJAA--.37696S3;
+	Mon, 24 Jun 2024 09:28:39 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxTcfEy3hmqYUuAA--.46119S3;
+	Mon, 24 Jun 2024 09:28:38 +0800 (CST)
+Subject: Re: [PATCH v2 2/6] LoongArch: KVM: Select huge page only if secondary
+ mmu supports it
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240619080940.2690756-1-maobibo@loongson.cn>
+ <20240619080940.2690756-3-maobibo@loongson.cn>
+ <CAAhV-H7YXHwfdy-DFAd6_qPXdqbBVUSHq0U8Hu1eEgdtN_b+OA@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <d6ab6374-717a-6de1-ef21-dbe65bd6f4de@loongson.cn>
+Date: Mon, 24 Jun 2024 09:28:36 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6678ca7d a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=FkagyKZCYwirPjr5IuAA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+In-Reply-To: <CAAhV-H7YXHwfdy-DFAd6_qPXdqbBVUSHq0U8Hu1eEgdtN_b+OA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8AxTcfEy3hmqYUuAA--.46119S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxCw1xZw1rWr1DWF4DWw1UCFX_yoW5AFyUpF
+	Z3AFn8urWkKrnxGrZrtw1qyryYyrs3KF4xZ3W7K348AFnrXr1j9F4ku398ZFyUC3yrAa1I
+	vF4rXr13ua17tagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
+	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4AhLUUUUU
 
-Add support for the RTL930x SoC and the RTL9302C reference board.
 
-The RTL930x family of SoCs are Realtek switches with an embedded MIPS
-core (800MHz 34Kc). Most of the peripherals are similar to the RTL838x
-SoC and can make use of many existing drivers.
 
-Add in full DSA switch support is still a work in progress.
+On 2024/6/23 下午3:55, Huacai Chen wrote:
+> Hi, Bibo,
+> 
+> On Wed, Jun 19, 2024 at 4:09 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>
+>> Currently page level selection about secondary mmu depends on memory
+>> slot and page level about host mmu. There will be problem if page level
+>> of secondary mmu is zero already. So page level selection should depend
+>> on the following three conditions.
+>>   1. Memslot is aligned for huge page and vm is not migrating.
+>>   2. Page level of host mmu is huge page also.
+>>   3. Page level of secondary mmu is suituable for huge page, it cannot
+>> be normal page since it is not supported to merge normal pages into
+>> huge page now.
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>>   arch/loongarch/include/asm/kvm_mmu.h |  2 +-
+>>   arch/loongarch/kvm/mmu.c             | 16 +++++++++++++---
+>>   2 files changed, 14 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/loongarch/include/asm/kvm_mmu.h b/arch/loongarch/include/asm/kvm_mmu.h
+>> index 099bafc6f797..d06ae0e0dde5 100644
+>> --- a/arch/loongarch/include/asm/kvm_mmu.h
+>> +++ b/arch/loongarch/include/asm/kvm_mmu.h
+>> @@ -55,7 +55,7 @@ static inline void kvm_set_pte(kvm_pte_t *ptep, kvm_pte_t val)
+>>   static inline int kvm_pte_write(kvm_pte_t pte) { return pte & _PAGE_WRITE; }
+>>   static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & _PAGE_DIRTY; }
+>>   static inline int kvm_pte_young(kvm_pte_t pte) { return pte & _PAGE_ACCESSED; }
+>> -static inline int kvm_pte_huge(kvm_pte_t pte) { return pte & _PAGE_HUGE; }
+>> +static inline int kvm_pte_huge(kvm_pte_t pte)  { return !!(pte & _PAGE_HUGE); }
+> Why do we need this change?
+In later there is such usage like !kvm_pte_huge(*ptep)
+       if (ptep && !kvm_pte_huge(*ptep))
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
+I had thought it should be 0/1 if !kvm_pte_huge() is used. However the 
+original is ok by test.
 
-Notes:
-    Changes in v2:
-    - Use specific compatibles instead of rtl930x
-    - Remove unnecessary irq flags (interrupt controller is one-cell)
-    - Remove earlycon
-    - Name clocks as recommended in dt schema
+I will remove this modification.
 
- arch/mips/boot/dts/realtek/Makefile     |  1 +
- arch/mips/boot/dts/realtek/rtl9302c.dts | 73 +++++++++++++++++++++++
- arch/mips/boot/dts/realtek/rtl930x.dtsi | 79 +++++++++++++++++++++++++
- 3 files changed, 153 insertions(+)
- create mode 100644 arch/mips/boot/dts/realtek/rtl9302c.dts
- create mode 100644 arch/mips/boot/dts/realtek/rtl930x.dtsi
+Regards
+Bibo Mao
 
-diff --git a/arch/mips/boot/dts/realtek/Makefile b/arch/mips/boot/dts/rea=
-ltek/Makefile
-index fba4e93187a6..8b991c6a5d6f 100644
---- a/arch/mips/boot/dts/realtek/Makefile
-+++ b/arch/mips/boot/dts/realtek/Makefile
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-y	+=3D cisco_sg220-26.dtb
-+dtb-y	+=3D rtl9302c.dtb
-diff --git a/arch/mips/boot/dts/realtek/rtl9302c.dts b/arch/mips/boot/dts=
-/realtek/rtl9302c.dts
-new file mode 100644
-index 000000000000..67adcc472da2
---- /dev/null
-+++ b/arch/mips/boot/dts/realtek/rtl9302c.dts
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/dts-v1/;
-+
-+#include "rtl930x.dtsi"
-+
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/thermal/thermal.h>
-+
-+/ {
-+	compatible =3D "realtek,rtl9302c", "realtek,rtl9302-soc";
-+	model =3D "RTL9302C Development Board";
-+
-+	memory@0 {
-+		device_type =3D "memory";
-+		reg =3D <0x0 0x8000000>;
-+	};
-+
-+	chosen {
-+		stdout-path =3D "serial0:115200n8";
-+	};
-+};
-+
-+&uart0 {
-+	status =3D "okay";
-+};
-+
-+&spi0 {
-+	status =3D "okay";
-+	flash@0 {
-+		compatible =3D "jedec,spi-nor";
-+		reg =3D <0>;
-+		spi-max-frequency =3D <10000000>;
-+
-+		partitions {
-+			compatible =3D "fixed-partitions";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <1>;
-+
-+			partition@0 {
-+				label =3D "u-boot";
-+				reg =3D <0x0 0xe0000>;
-+				read-only;
-+			};
-+			partition@e0000 {
-+				label =3D "u-boot-env";
-+				reg =3D <0xe0000 0x10000>;
-+			};
-+			partition@f0000 {
-+				label =3D "u-boot-env2";
-+				reg =3D <0xf0000 0x10000>;
-+				read-only;
-+			};
-+			partition@100000 {
-+				label =3D "jffs";
-+				reg =3D <0x100000 0x100000>;
-+			};
-+			partition@200000 {
-+				label =3D "jffs2";
-+				reg =3D <0x200000 0x100000>;
-+			};
-+			partition@300000 {
-+				label =3D "runtime";
-+				reg =3D <0x300000 0xe80000>;
-+			};
-+			partition@1180000 {
-+				label =3D "runtime2";
-+				reg =3D <0x1180000 0xe80000>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/mips/boot/dts/realtek/rtl930x.dtsi b/arch/mips/boot/dts=
-/realtek/rtl930x.dtsi
-new file mode 100644
-index 000000000000..f271940f82be
---- /dev/null
-+++ b/arch/mips/boot/dts/realtek/rtl930x.dtsi
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
-+
-+#include "rtl83xx.dtsi"
-+
-+/ {
-+	compatible =3D "realtek,rtl9302-soc";
-+
-+	cpus {
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+
-+		cpu@0 {
-+			device_type =3D "cpu";
-+			compatible =3D "mips,mips34Kc";
-+			reg =3D <0>;
-+			clocks =3D <&baseclk 0>;
-+			clock-names =3D "cpu";
-+		};
-+	};
-+
-+	baseclk: clock-800mhz {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <800000000>;
-+	};
-+
-+	lx_clk: clock-175mhz {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency  =3D <175000000>;
-+	};
-+};
-+
-+&soc {
-+	intc: interrupt-controller@3000 {
-+		compatible =3D "realtek,rtl9300-intc", "realtek,rtl-intc";
-+		reg =3D <0x3000 0x18>, <0x3018 0x18>;
-+		interrupt-controller;
-+		#interrupt-cells =3D <1>;
-+
-+		interrupt-parent =3D <&cpuintc>;
-+		interrupts =3D <2>, <3>, <4>, <5>, <6>, <7>;
-+	};
-+
-+	spi0: spi@1200 {
-+		compatible =3D "realtek,rtl8380-spi";
-+		reg =3D <0x1200 0x100>;
-+
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+	};
-+
-+	timer0: timer@3200 {
-+		compatible =3D "realtek,rtl9302-timer", "realtek,otto-timer";
-+		reg =3D <0x3200 0x10>, <0x3210 0x10>, <0x3220 0x10>,
-+		    <0x3230 0x10>, <0x3240 0x10>;
-+
-+		interrupt-parent =3D <&intc>;
-+		interrupts =3D <7>, <8>, <9>, <10>, <11>;
-+		clocks =3D <&lx_clk>;
-+	};
-+};
-+
-+&uart0 {
-+	/delete-property/ clock-frequency;
-+	clocks =3D <&lx_clk>;
-+
-+	interrupt-parent =3D <&intc>;
-+	interrupts =3D <30>;
-+};
-+
-+&uart1 {
-+	/delete-property/ clock-frequency;
-+	clocks =3D <&lx_clk>;
-+
-+	interrupt-parent =3D <&intc>;
-+	interrupts =3D <31>;
-+};
-+
---=20
-2.45.2
+
+> 
+> Huacai
+> 
+>>
+>>   static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
+>>   {
+>> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+>> index 9e39d28fec35..c6351d13ca1b 100644
+>> --- a/arch/loongarch/kvm/mmu.c
+>> +++ b/arch/loongarch/kvm/mmu.c
+>> @@ -858,10 +858,20 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
+>>
+>>          /* Disable dirty logging on HugePages */
+>>          level = 0;
+>> -       if (!fault_supports_huge_mapping(memslot, hva, write)) {
+>> -               level = 0;
+>> -       } else {
+>> +       if (fault_supports_huge_mapping(memslot, hva, write)) {
+>> +               /* Check page level about host mmu*/
+>>                  level = host_pfn_mapping_level(kvm, gfn, memslot);
+>> +               if (level == 1) {
+>> +                       /*
+>> +                        * Check page level about secondary mmu
+>> +                        * Disable hugepage if it is normal page on
+>> +                        * secondary mmu already
+>> +                        */
+>> +                       ptep = kvm_populate_gpa(kvm, NULL, gpa, 0);
+>> +                       if (ptep && !kvm_pte_huge(*ptep))
+>> +                               level = 0;
+>> +               }
+>> +
+>>                  if (level == 1) {
+>>                          gfn = gfn & ~(PTRS_PER_PTE - 1);
+>>                          pfn = pfn & ~(PTRS_PER_PTE - 1);
+>> --
+>> 2.39.3
+>>
 
 
