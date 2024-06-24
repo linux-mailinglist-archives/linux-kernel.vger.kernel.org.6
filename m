@@ -1,153 +1,152 @@
-Return-Path: <linux-kernel+bounces-226936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3296A91460E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:18:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC5F914610
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C90286CE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:18:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCCAC1C22E91
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322A01304BF;
-	Mon, 24 Jun 2024 09:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE4F1304B1;
+	Mon, 24 Jun 2024 09:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="dQMmv2nS"
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cfFkHVim"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3116E18E29;
-	Mon, 24 Jun 2024 09:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BF1130492
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719220724; cv=none; b=bRY0x6KCovi4Oy1L7jW17dkuXGAWvOoHmAHU1nUdrlDVmJOERR6Uu0B7I7zuLBdbQJvahIQQE9+39Z8PLjV1BAe5Jdc0N0xBmCAQjVAd6gyVtm2EjRMMtt6r+GZsK8agT8dZz0EVnL0D4CS1oBtnHbdrZ3eV8xQgmwrQlzITk70=
+	t=1719220753; cv=none; b=K26a08Cf/QhtCD0dfvdBu08bWA9fK6aHL8AR7GPfpckXMbxkRF5ejI1A29gwnyfUWOlW2EQMg4LpvJaKVgrYmHqo279A1qUyJo+jGIp/66QTDHprSAS5SX5He9QhDP/0UmWsgwy3VZtnInKIFYdlL7svQQnnAxJV4FHxvwwL21I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719220724; c=relaxed/simple;
-	bh=8z0Me58ofAkCeMYK+RbmJRN1l1eSvoaq0OwoETOXuEI=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=ZnG3uKj+9SbIjBAkqgVIA3u/5/TkvGMnzh+cWslOIcOXg8spGjrsbb17HY8cLCrYJQJ6c7+Cyo4ahVq4h6K/+kDlJ+oX6zgTbKm5dR00FiJLSJblcEcoxZwih0JLqJpzu5/IxJTRmWwuTHlx8gYMn+P8Hsm6uZyJOZF3rn/c3gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=dQMmv2nS; arc=none smtp.client-ip=208.88.110.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id B63739C3240;
-	Mon, 24 Jun 2024 05:18:39 -0400 (EDT)
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
- with ESMTP id HR5yBegFxqJ5; Mon, 24 Jun 2024 05:18:38 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id 492A09C5B61;
-	Mon, 24 Jun 2024 05:18:38 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 492A09C5B61
+	s=arc-20240116; t=1719220753; c=relaxed/simple;
+	bh=RT+AW8+PBzwZ+a+aKMlzdwFsNmTcsFuiW6jf5CSOX1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O8jxCuHcRCg5BsLxueomM1NNmVikXVmfZgrRzwMO9K2RfZ2g6dZTCLZHM+4pTVn5g0ytHI3CiXKVhbwDGgvVGYOVi+0Ke0TYi8/gpODcBG110dQhvOl/7aTCqdreE4bcys/+nSBzSjzHiJkyhoU4SMhhpd/tANYlfu8j69KNSpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cfFkHVim; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c7a6da20f2so3203686a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:19:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
-	t=1719220718; bh=4JOrFwNYAzMjJc3yCOi7qIx5d2JoABbFOVFqt1WuodE=;
-	h=Date:From:To:Message-ID:MIME-Version;
-	b=dQMmv2nSrtJBDMOLXfbnYdr0xEsQ+JPCN2ISsqaHfK0rFiK0iVxB7g3L69NRikKSF
-	 tFs9D3pn8s8IrJT0B8gBXrghZesBG0biCOcu54hq0wciU5P0mB0DqJzghiLCD4GHdP
-	 AMp+VJD/fXUB64TKqeZowTL1e2NWWAuHvxalaXKz4yMRxBqj6XRpaaeL019JzRMbrc
-	 Xt8NUIaDhSAFLqFQU9ufuJqullhXIzBF96BK6f0WwRh5+a+5XdxVEesD20tbVhIBld
-	 Lafq1lysngw69xaWD5/bUlPMWd5pYLunOPrmkZ7Vg8a9GBKgukkSz1IH2wvpn6Cm74
-	 c6Y3zVSYLCvIA==
-X-Virus-Scanned: amavis at mail.savoirfairelinux.com
-Received: from mail.savoirfairelinux.com ([127.0.0.1])
- by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
- with ESMTP id VquOXrQmnN-2; Mon, 24 Jun 2024 05:18:38 -0400 (EDT)
-Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [192.168.48.237])
-	by mail.savoirfairelinux.com (Postfix) with ESMTP id E46679C3240;
-	Mon, 24 Jun 2024 05:18:37 -0400 (EDT)
-Date: Mon, 24 Jun 2024 05:18:37 -0400 (EDT)
-From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, 
-	shengjiu wang <shengjiu.wang@gmail.com>, 
-	Xiubo Lee <Xiubo.Lee@gmail.com>, 
-	Nicolin Chen <nicoleotsuka@gmail.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	linux-sound <linux-sound@vger.kernel.org>, 
-	devicetree <devicetree@vger.kernel.org>, imx <imx@lists.linux.dev>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	alsa-devel <alsa-devel@alsa-project.org>, 
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
-	Philip-Dylan Gleonec <philip-dylan.gleonec@savoirfairelinux.com>
-Message-ID: <1048207382.1714780.1719220717882.JavaMail.zimbra@savoirfairelinux.com>
-In-Reply-To: <42b32958-89ee-43b6-96d1-f3e18c7d8955@kernel.org>
-References: <20240620132511.4291-1-elinor.montmasson@savoirfairelinux.com> <20240620132511.4291-8-elinor.montmasson@savoirfairelinux.com> <17a0efe3-72fa-4d13-b3b0-90e6640308f3@kernel.org> <1566099232.1714447.1719219107779.JavaMail.zimbra@savoirfairelinux.com> <42b32958-89ee-43b6-96d1-f3e18c7d8955@kernel.org>
-Subject: Re: [PATCHv5 7/9] ASoC: dt-bindings: imx-audio-spdif: remove
- binding
+        d=linaro.org; s=google; t=1719220751; x=1719825551; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=A9SAQofWuUxGYnDfKTZ/7Ul2x5gYkswxQPvSCxcY1I4=;
+        b=cfFkHVimwwDSTIE6upabqWy5cYAN48QcADPMM+mOq6xSTPf4b+0SwDEDzfAWHoVY5z
+         6G5KbhetMD3nqWuqTvNnXMAEqvjuvLr1VMFhhrHs9meZwMkioY/bmDcPJHpjW74BcdiM
+         v2n/l+hI7kQf8qCmduE1F/S+KM8yQ0KDjP2unT68oaX0X3dR6A555rbhj/uYwO54fNKU
+         JrMB4gqsiC6Sac4aAoKVvonc3YNYnfTVjPcgwUY2WUiGKPJ+AsZFDWVCa4mvL1Iyk11+
+         lXc+dmbWA2KlwUuA539Rum3g4loWjlgzoakNHopvDOm6Da+qjijbBSwDqrqfFn3QR3dq
+         Ov8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719220751; x=1719825551;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A9SAQofWuUxGYnDfKTZ/7Ul2x5gYkswxQPvSCxcY1I4=;
+        b=VcVVa0hr+QdWRDnnGTgdUV1aEXRuG2/oIuAMJdJNedCgChrWMSdkYC+POMUPJ6OM8p
+         B4LN68rjYkuXkW8llcmgTbMMZ3aH+H1WIR8dcHsqT7LAA+XFiVxFeIOxqxg3DhDefJAd
+         68eJWTi/C2XwggQN0WUnq4A0NufO81dIehEy+qDrNmg9fEdd8lal0Mw6WC16B88fZuOp
+         uljyOW3Q01A5QSAR7N2A6c88mQuD5hquYwLvTFwmyxXcCspLYKpWv8P6uWkKGLYlKXgX
+         kQk1oH5f5i1SYWfj1SzIwNFouFYYz5cERrQFQHyltp/8uDz7PodzlqpcCy29kAD9JuHL
+         T2rA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWzkbmFHQwrxmxMos88Eml8h2B4Syy3iuZGtsfuoyrdndWj6+zOJpzy/ciGGH/VNmNjFlxp7v+GuYq+SDZdziCXWv5+r/bKNtsnI42
+X-Gm-Message-State: AOJu0YxecI4FgBQhtmLnqvqMCQj/cocf6TmHHCyBxChtr7bustoXXBGN
+	makztGDGfzp/D0byo539RmV/Y5ab9SR+DO/X82MlbXisK9VN4mUGD82gggyzaSJ+mD2YvakvmJY
+	vzxmI6XA1Zal5vLPHkxbEacymC9yuqb6L68cqGA==
+X-Google-Smtp-Source: AGHT+IHwY6Epu4+xXObpFiFyK5Aeibk2jkaeeAS3wPiqxAkf1TPx6zG2E6kP02YGVThf8+awPWGAmn3tVvQkxHypbto=
+X-Received: by 2002:a17:90a:43c3:b0:2c4:e4a3:b83c with SMTP id
+ 98e67ed59e1d1-2c8504c81ffmr3511932a91.2.1719220750885; Mon, 24 Jun 2024
+ 02:19:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.15_GA_4581 (ZimbraWebClient - GC112 (Linux)/8.8.15_GA_4581)
-Thread-Topic: ASoC: dt-bindings: imx-audio-spdif: remove binding
-Thread-Index: ewOgNpthlCv+G0hUX/mmtwgvLix7HA==
+References: <20240620214450.316280-1-joshdon@google.com>
+In-Reply-To: <20240620214450.316280-1-joshdon@google.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 24 Jun 2024 11:18:59 +0200
+Message-ID: <CAKfTPtDDSzLi7PEJkBqepx9cRgmbBKy2ZXJuT0h62e3RkQBoYw@mail.gmail.com>
+Subject: Re: [PATCH] Revert "sched/fair: Make sure to try to detach at least
+ one movable task"
+To: Josh Don <joshdon@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Krzysztof Kozlowski" <krzk@kernel.org>
-Sent: Monday, 24 June, 2024 10:55:31
-> On 24/06/2024 10:51, Elinor Montmasson wrote:
->> From: "Krzysztof Kozlowski" <krzk@kernel.org>
->> Sent: Sunday, 23 June, 2024 13:09:33
->>> On 20/06/2024 15:25, Elinor Montmasson wrote:
->>>> imx-audio-spdif was merged into the fsl-asoc-card driver, and therefore
->>>> removed.
->>>
->>> So what happens with all existing users (e.g. DTS)? They become
->>> invalid/not supported?
->> 
->> 
->> Next commits, 8/9 and 9/9, update all DTS files that currently use
->> the "fsl,imx-audio-spdif" compatible.
-> 
-> You mean in-tree. I mean all users, in- and out-of-tree. Other projects.
+On Thu, 20 Jun 2024 at 23:45, Josh Don <joshdon@google.com> wrote:
+>
+> This reverts commit b0defa7ae03ecf91b8bfd10ede430cff12fcbd06.
+>
+> b0defa7ae03ec changed the load balancing logic to ignore env.max_loop if
+> all tasks examined to that point were pinned. The goal of the patch was
+> to make it more likely to be able to detach a task buried in a long list
+> of pinned tasks. However, this has the unfortunate side effect of
+> creating an O(n) iteration in detach_tasks(), as we now must fully
+> iterate every task on a cpu if all or most are pinned. Since this load
+> balance code is done with rq lock held, and often in softirq context, it
+> is very easy to trigger hard lockups. We observed such hard lockups with
+> a user who affined O(10k) threads to a single cpu.
+>
+> When I discussed this with Vincent he initially suggested that we keep
+> the limit on the number of tasks to detach, but increase the number of
+> tasks we can search. However, after some back and forth on the mailing
+> list, he recommended we instead revert the original patch, as it seems
+> likely no one was actually getting hit by the original issue.
+>
 
-Oh you're right
+Maybe add a
+Fixes: b0defa7ae03e ("sched/fair: Make sure to try to detach at least
+one movable task")
 
->> From the users point of view, currently configured spdif audio cards
->> will behave just the same.
->> 
->> 
->>> After quick look, I do not see backwards compatibility in the driver and
->>> above commit msg tells me nothing about ABI break.
->> 
->> 
->> For the next version I will state in this commit message the upcoming
->> modifications to DTS
->> and compatibility, why it will be done, and that support for existing DTS is not
->> dropped.
->> 
->> Previous `imx-spdif` driver used the dummy codec instead of
->> using declared spdif codecs. It was discussed in previous version of this
->> contribution
->> that using the dummy codec isn't good practice. So one to one backward
->> compatibility
->> isn't really possible.
-> 
-> Heh, that's not good. This is improvement, cleanup. While it is
-> important and useful, it should also not break existing users.
+> Signed-off-by: Josh Don <joshdon@google.com>
 
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Should I introduce then the use of the dummy codec in `fsl-asoc-card` to
-assure backward compatibility at least for a time ?
-With maybe warning messages in code to indicate that spdif codecs drivers
-should be declared and used in the future ?
-
-
-Best regards,
-Elinor Montmasson
+> ---
+>  kernel/sched/fair.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 34fe6e9490c2..a5416798702b 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9043,12 +9043,8 @@ static int detach_tasks(struct lb_env *env)
+>                         break;
+>
+>                 env->loop++;
+> -               /*
+> -                * We've more or less seen every task there is, call it quits
+> -                * unless we haven't found any movable task yet.
+> -                */
+> -               if (env->loop > env->loop_max &&
+> -                   !(env->flags & LBF_ALL_PINNED))
+> +               /* We've more or less seen every task there is, call it quits */
+> +               if (env->loop > env->loop_max)
+>                         break;
+>
+>                 /* take a breather every nr_migrate tasks */
+> @@ -11328,9 +11324,7 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+>
+>                 if (env.flags & LBF_NEED_BREAK) {
+>                         env.flags &= ~LBF_NEED_BREAK;
+> -                       /* Stop if we tried all running tasks */
+> -                       if (env.loop < busiest->nr_running)
+> -                               goto more_balance;
+> +                       goto more_balance;
+>                 }
+>
+>                 /*
+> --
+> 2.45.2.741.gdbec12cfda-goog
+>
 
