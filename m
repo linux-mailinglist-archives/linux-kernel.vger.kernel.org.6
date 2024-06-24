@@ -1,111 +1,234 @@
-Return-Path: <linux-kernel+bounces-227499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93FE91523D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:27:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF024915243
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAD1C1C220C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6B61C22198
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737F919B5BD;
-	Mon, 24 Jun 2024 15:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="eom2YbTY"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F38219D885;
+	Mon, 24 Jun 2024 15:27:21 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7742619CD1D
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C23819D087
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242836; cv=none; b=GFeK+0UBqtYhBv9Ay7uzeYlyRIkfUnDx6od2eqQtp8NLWRjtkbFbBMctH+hDmOzQEOgmllB/1V9EKLpNVv5RVjBb9X3lPfnT/0U5dKsQBlLhuJEFcKkSQVd0h1HrORPLQJyPUurtPA3aCDFxxPC69JuOFGl83sCo6QOIx1zyYLw=
+	t=1719242840; cv=none; b=dfVONcPV75HIDSLJAit+OURdobkkFTZ+wNzK2ZMEJBK+wp9jOcPZyJjD6c4KWI30sF6F62sDpU7uW9osLKGRx1t76QzGyeBpltoJO7rlIFWzTDyEFVeCDkx0L7rmvfrWRr9LY3X/sdq6fGWAccv99hBGgkC1lvCMVqVYgoV3VIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242836; c=relaxed/simple;
-	bh=aiGzNulTYl0LtlPBBXZTwmZd3N8hpOkdeUGhSQNwerU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lLbrqYMJgqJgfx3eE+XLx18RCGPKgKOEPsUqM/EPvMJyATAT2Nqmmxw8h4gUMavJev1VzBl215+LBTE0c9+q8ZZ62BcU+eS4VRFjq+zxBI/ouqPrMLYqqeQ/Txa0A8yjy/3GL/hcJa5gcGiHUyqX+HjJQbtCgWSpLwhp9JEFCSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=eom2YbTY; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-108-26-156-193.bstnma.fios.verizon.net [108.26.156.193])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 45OFQweR029175
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 11:26:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1719242819; bh=iKR+OzHKf8u/BfsACZ32+X6MX96Prwz7afTODz95XBA=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=eom2YbTYusIC36znG7VxrMfpDcRL3iNiTIsG37+Ae+FcNCH5WwV1v3bSjvlwtyO+4
-	 8G3U/pcJCo8LrWLkl8yiGcK44GSFWIk/ksBb15SLajtOvSyGeWPm4f3z4m9ZKzqNDd
-	 vAOO//JbRqFLRPQfL1IysR7+n0thteOGBmPh+ZQ3trRrfDBSowAAuXA9CB7oqWgWmy
-	 zgZ1aDYPafob049GK8vn5E06Uj8/wGwvGtk4SWv8vnD/4MhLCilUO3JNLpSGuzPByx
-	 QiBHjNG38Eh2nmBcQgKpdoLbNkEkOSvF+PF1eOGnoAeZK+CBLosQMv/DtQz4wmTRA9
-	 NCu0XxgLj6FVQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 0496A15C00DC; Mon, 24 Jun 2024 11:26:58 -0400 (EDT)
-Date: Mon, 24 Jun 2024 11:26:58 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Alexander Coffin <alex.coffin@maticrobots.com>
-Cc: Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: PROBLEM: ext4 resize2fs on-line resizing panic
-Message-ID: <20240624152658.GC280025@mit.edu>
-References: <CA+hUFcuGs04JHZ_WzA1zGN57+ehL2qmHOt5a7RMpo+rv6Vyxtw@mail.gmail.com>
+	s=arc-20240116; t=1719242840; c=relaxed/simple;
+	bh=tzhoTUjn/DIergVJmRXfSBnxf5kvQx64qSKgWfdacmM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kruqBvNk0jbweznqFPOEuyBIbDLx6YfDNJ0RQT+AnIUdpxRGrxDSoCLdk9/hKeRvZkltFCE8rOXGwlHtoBJGWqgBSzpygCM3VVdf/EycBhkOxfUZP6P+DnW4QbwX3zMu501hjKv6lPW47b1FzLSPVgsPRsf9bF4ySjlF61v7+QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-37492fe22cdso34907065ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:27:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719242838; x=1719847638;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uv9QZyvFNQpJEReELh0/Si6IkTCCXel7hEP3gP0lOkQ=;
+        b=DodyTpykgju8q1doH1/z4JFESgoRfY6Pj87T1icC5FYWzeC5ASsPonN+I/i72Qdwcq
+         0ToGQKmjyEFu6DOPXfuKdktUUdy+7OT8jXQZuLkHY61UEYamEX8nQbYu5rKRvuDRmKVO
+         /t/11HaDSlvZ2YJX53HR1HnMHDF8ttjAvAfVXa2l8y9ba23HWsiB/4LMPH1zp2S8frXk
+         d5ajEgYamjTtF1oZm0SLsmdvpYq0v1JIUQnYhs9C88S0vyBDw/H8AZi52qwtIazy+h1i
+         87Jpz5aWvCq8KeCE0UB99F5SgGa4ruXDX3kezJ0rmdpb6qN42G/grT9CkcAH0mNIwUaI
+         ntVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUs0v8wLcBfYUYp3ZzcH2RLbeecQYJlptM8hrt22QRK+ohnkVnqCzRoAFKtPBMtngLeGB1mzGL8uDyUXsWRu9fYyw0ZeClDUiCxWel+
+X-Gm-Message-State: AOJu0YxVvn50/LbQppFNRURxuBbLtGtU6W3DVOclXLnDImG+kE+zw4t0
+	txDm0SmWCtcXja1ws7rx3KxNgq51GnlKV0fUPBFoEXiJ23Ry9mBtjU5WlEDP7AM6T8BvMojImwB
+	uZgV4FDvthPLiLf72og+ixNTVG/vBs/316ih5vDlUNF5IY6ISngO7XDI=
+X-Google-Smtp-Source: AGHT+IHEFj6JqrLDueAmnhIgvoBTRDCAK+g+ykmP/vctpJEyM0cQhmmCV5CRQCnajRFiwgRwjrYIAxdj3wGOMJKH4MaybYmYQQx1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+hUFcuGs04JHZ_WzA1zGN57+ehL2qmHOt5a7RMpo+rv6Vyxtw@mail.gmail.com>
+X-Received: by 2002:a92:c54a:0:b0:375:cfd0:393d with SMTP id
+ e9e14a558f8ab-3763a2510c6mr5302435ab.2.1719242838497; Mon, 24 Jun 2024
+ 08:27:18 -0700 (PDT)
+Date: Mon, 24 Jun 2024 08:27:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000abf2f0061ba46a1a@google.com>
+Subject: [syzbot] [lvs?] possible deadlock in start_sync_thread
+From: syzbot <syzbot+e929093395ec65f969c7@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
+	horms@verge.net.au, ja@ssi.bg, kadlec@netfilter.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
+	pablo@netfilter.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jun 23, 2024 at 06:57:13PM -0700, Alexander Coffin wrote:
-> [1.] One line summary of the problem:
-> Using resize2fs on-line resizing on a specific ext4 partition is
-> causing an Oops.
-> 
-> 
-> [6.] Output of Oops.. message (if applicable) with symbolic information
->      resolved (see Documentation/admin-guide/bug-hunting.rst)
-> 
-> ```
-> [  445.552287] ------------[ cut here ]------------
-> [  445.552300] kernel BUG at fs/jbd2/journal.c:846!
+Hello,
 
-Thanks for the bug report.  The BUG_ON is from the following assert in
-jbd2_journal_next_log_block:
+syzbot found the following issue on:
 
-	J_ASSERT(journal->j_free > 1);
+HEAD commit:    3226607302ca selftests: net: change shebang to bash in amt..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a2683e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
+dashboard link: https://syzkaller.appspot.com/bug?extid=e929093395ec65f969c7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-and it indicates that we ran out of space in the journal.  There are
-mechanisms to make sure that this should never happen, and if the
-journal is too small and the transaction couldn't be broken up, then
-the operation (whether it is a resize or a file truncate or some other
-operation) should have errored out, and not triggered a BUG.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-We'll need to investigate further how to address this, but a
-short-term workaround is to simply to make the journal size larger.
-It looks like this is a very small file system, and so mke2fs will by
-default use a smaller journal so that the overhead of the journal
-doesn't overwhelm the usuable space for that small file system.  This
-can result in a performance degredation, but that was considered an
-acceptable tradeoff rather than users getting annoyed that there very
-small file system had an unaccepted file system overhead of say, 75%
-of the usable space.  Very often these small file systems was on
-crapola devices such as USB thumb drives, where performance was going
-to be a diaster anyway.  :-)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/125c85863435/disk-32266073.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4477ecab2e1f/vmlinux-32266073.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/43e28f6ce879/bzImage-32266073.xz
 
-In practice, people have generally not tried to resize small file
-systems like this, which is why we hadn't run into this situation
-earlier.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e929093395ec65f969c7@syzkaller.appspotmail.com
 
-Cheers,
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc4-syzkaller-00837-g3226607302ca #0 Not tainted
+------------------------------------------------------
+syz-executor.4/10811 is trying to acquire lock:
+ffffffff8f5e6f48 (rtnl_mutex){+.+.}-{3:3}, at: start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
 
-					- Ted
+but task is already holding lock:
+ffff88805ba95750 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3064
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       smc_switch_to_fallback+0x35/0xd00 net/smc/af_smc.c:902
+       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2779
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg+0x221/0x270 net/socket.c:745
+       __sys_sendto+0x3a4/0x4f0 net/socket.c:2192
+       __do_sys_sendto net/socket.c:2204 [inline]
+       __se_sys_sendto net/socket.c:2200 [inline]
+       __x64_sys_sendto+0xde/0x100 net/socket.c:2200
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       lock_sock_nested+0x48/0x100 net/core/sock.c:3543
+       do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
+       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
+       do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
+       __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
+       __do_sys_setsockopt net/socket.c:2344 [inline]
+       __se_sys_setsockopt net/socket.c:2341 [inline]
+       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (rtnl_mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
+       do_ip_vs_set_ctl+0x442/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2732
+       nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
+       smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3072
+       do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
+       __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
+       __do_sys_setsockopt net/socket.c:2344 [inline]
+       __se_sys_setsockopt net/socket.c:2341 [inline]
+       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&smc->clcsock_release_lock);
+                               lock(sk_lock-AF_INET);
+                               lock(&smc->clcsock_release_lock);
+  lock(rtnl_mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.4/10811:
+ #0: ffff88805ba95750 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3064
+
+stack backtrace:
+CPU: 0 PID: 10811 Comm: syz-executor.4 Not tainted 6.10.0-rc4-syzkaller-00837-g3226607302ca #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
+ do_ip_vs_set_ctl+0x442/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2732
+ nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
+ smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3072
+ do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
+ __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
+ __do_sys_setsockopt net/socket.c:2344 [inline]
+ __se_sys_setsockopt net/socket.c:2341 [inline]
+ __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f42d8a7d0a9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f42d98870c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f42d8bb3f80 RCX: 00007f42d8a7d0a9
+RDX: 000000000000048b RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007f42d8aec074 R08: 0000000000000018 R09: 0000000000000000
+R10: 0000000020000200 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f42d8bb3f80 R15: 00007ffde628d3a8
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
