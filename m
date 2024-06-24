@@ -1,142 +1,100 @@
-Return-Path: <linux-kernel+bounces-227748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FC7915630
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:05:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D0F915632
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187D9286A21
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A8851C21123
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2EB19FA92;
-	Mon, 24 Jun 2024 18:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB8119FA86;
+	Mon, 24 Jun 2024 18:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1jKz14bU"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4Alrhjj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E199019B5BD
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744D718039;
+	Mon, 24 Jun 2024 18:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719252308; cv=none; b=cxhWJjP8UiTqcqOIeTLcDEXTh/XzUxnW80cWfmwnifXk+AD+Zre0iJZdCgsiTv9+gTfXdwK54p9EJUFiRvVs7JHPJq0n1TZFVMsZyvnfSm44Tg/6BYLTc/vqxuSYuWTAY/f8rtTvRszZ/JBpmUJnzk+DHB+qLnRaZwapixKJvOM=
+	t=1719252335; cv=none; b=k8Q2vTEHVXkvfLhLI12pW1OH0kXhqQiM7TOdob2l5CApnPNme//e2UbeK2Ig1Ru+DglKyp7hxrxevDmQODPiWUMU3GOqc7U6ktyoEYfii2YacOnLrz86feTUUJb+qfRP3NODj41gkLLDnSZdudEadEXfM0KkSsB6gHE7o+DORbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719252308; c=relaxed/simple;
-	bh=25Dq88jBB2CkOkDL/JBMijQofHLFLsFy3IjegoNUwPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KDMTJGfRpBo1VQUO5V5tlkJ49zCIV2m3JBcQRfEEUqbrtpma7xwpEujFTfRJPduRpQMJJ8M9bHPsos2vS5mMHRTvbADLgnLGbijwwDYQ0jbjVfuZVUMlsyS+1kyoZ1/thvjMWX+WAr5HGveMWTAetaJiEC1j52YTsm6sSqUlFCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1jKz14bU; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57d16251a07so952a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:05:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719252305; x=1719857105; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iU6twMwsLTVUU1XIizoid6hKLyQKsxMvfVST/Ybsw4I=;
-        b=1jKz14bUJhRtI/R7TboUJ13JcAA3zEIU0O88a/SDoKF9Q22WQeXAIsSODATi2MKDFu
-         2iKvFbsRt2PI2MZj4sMwJ7Cwy7jlMVnm03ruzHC0ngiLtpew4oa/m9pzGOZpbdyymk3j
-         Mu0tTLMqQXtR3RdfC6ibkXtQaPDapkZ7nmurLk/91PRLFsoBQRhmcKbNnhXxtA7Huqu8
-         1n79wKefGNYHxvAoJRPDypBWu7iXMdsO1M7Ms/ZivcQUmshpO/6ifHvaqdFeD+nzOjqe
-         thFuv7AIASgOFJzhdyHoxMJ7HlaV/wWnOoPJWIzdQP7lZsAFKDwmNpZMJ6LIUOq2mvQ8
-         Yr5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719252305; x=1719857105;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iU6twMwsLTVUU1XIizoid6hKLyQKsxMvfVST/Ybsw4I=;
-        b=Ukbzwb6aWoho0askKY9PoMZoDs3+yo9F8G/6gC61m/xGAPbFw//ADG5efKKxrkZU9q
-         fYF0nhC4u1ajI8goov+EX1ekfkuNGdRQZyvSyDzZSBNB2MYgbyW0+uLhKW8PefUNOjw/
-         zk0PbjaBVmsvEUT0Ppf+q61d9o+wW/XCmXkqVk580Z1oXkCLl2h29zJLSMqxNTz0tl15
-         MgRoEfzxiuBRzEQzh0/vtB/1MI0q5L6JPu3/qwwfnI6ttXvfUAOmYz2D3OSpTd17e4Lx
-         Ewe01SIXb7L6kQbAfVAWun9aljw045TZw74cjmaHp3rSzCNnR7SbnsWUcCp6CpnWkYiz
-         sfOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHAgBsP1QAXjmqXB+uuLcHujIiB0avGvdJRMAWmrRUZS/Yim/xOhSVtuHo9UOv0ZqilUwP5JPcGSV1/yWzG8q5bMO93tc6MU4CmIN1
-X-Gm-Message-State: AOJu0Yxyan9XU307GvhnC23CB8WNuWLlyQ/ym7tOug8H7TbYjL+enIVS
-	X+gZIN0k87ea1NTIY+O26gAzc9TZ6agOydU8znX1a4NeWfoY50eedNst8EUKCfhdCOl+0lnAkRT
-	ABWCahtAeu7gXHxzHX+uPI0wbYxSKLwWKYXg=
-X-Google-Smtp-Source: AGHT+IH5Y7rUe3HGR92ggNIqhjJ6oN6APNDpcnfWRdAWF9v82nPgkswGoUuk1iuaf6Hb2+YP+rxpC7Z0nldf36iS1/E=
-X-Received: by 2002:a05:6402:348d:b0:57d:6e52:fff6 with SMTP id
- 4fb4d7f45d1cf-57de4b68f0bmr4244a12.5.1719252304903; Mon, 24 Jun 2024 11:05:04
- -0700 (PDT)
+	s=arc-20240116; t=1719252335; c=relaxed/simple;
+	bh=dEStDFuSTYU8n7jrSHnMseqew7Yr9W9Y/sesTQnL1x8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFn9YKJStajfko6A3/HsixgyrjcSBjqQYapwMEwzYs/gl30OlStUFUQ7x9cZbyfnKlHxmdnyG9Shi1RPlaJsLzsRvHhnDp/GNp+ZbHRCkLiXl5/nUtVeDI0Qks22n9hoKoxuumWLyb+Y9G8wNrVZc1bYaCypmyzxzv7eaVUVkPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4Alrhjj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A011CC32789;
+	Mon, 24 Jun 2024 18:05:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719252334;
+	bh=dEStDFuSTYU8n7jrSHnMseqew7Yr9W9Y/sesTQnL1x8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A4AlrhjjM53NXC0HwSKg+XN15w1WObxHQcIoKn8b8ezy4hGWuKhpQy5Jnhg5sJHqO
+	 NGPqle/peJMmON3qZObhYfPWxsLvm/vBAcA53IfL1tahCBLsDZpzR/nTV3SJfQpiTi
+	 T5NL1yw33mpHLYT+29hXEVTGICp2Bvd/x4sUHar9yhSmJ6YfVtxPRtH/RVL7ZJN2ng
+	 vlO8LU8mRe9eitNjYVBK1MkYG2Umbbcvwsn33k8xrjH/6EN2z5kXEQtIw+u3wF2hwj
+	 VKdXKqXFjTP0B1li9GrmidpeAZz8tqnQBtgAda7Foc3ghb3XUjTZAP94m2euwxlPgI
+	 rq9vPWdsjb3iQ==
+Date: Mon, 24 Jun 2024 19:05:30 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next: manual merge of the driver-core tree with the reset
+ tree
+Message-ID: <cc2eeff6-d7d9-45a9-a681-793053f0f26c@sirena.org.uk>
+References: <Znmufb9L78FCoSSS@sirena.org.uk>
+ <2024062443-runt-lard-fd07@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620181736.1270455-1-yabinc@google.com> <CAKwvOd=ZKS9LbJExCp8vrV9kLDE_Ew+mRcFH5-sYRW_2=sBiig@mail.gmail.com>
- <ZnVe5JBIBGoOrk5w@gondor.apana.org.au> <CAHk-=wgubtUrE=YcvHvRkUX7ii8QHPNCJ_0Gc+3tQOw+rL1DSg@mail.gmail.com>
- <CAHk-=wiBbJLWOJxoz7srMPtKcN7+9cEh79fzf8GKXTJyRdk=tw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiBbJLWOJxoz7srMPtKcN7+9cEh79fzf8GKXTJyRdk=tw@mail.gmail.com>
-From: Yabin Cui <yabinc@google.com>
-Date: Mon, 24 Jun 2024 11:04:51 -0700
-Message-ID: <CALJ9ZPMHCPt-6kf-9McdKYTqs8Vrj9GLhkxObdhjyorgtZQOSg@mail.gmail.com>
-Subject: Re: [PATCH] Fix initializing a static union variable
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mXlM7WGKGIZH7Y6z"
+Content-Disposition: inline
+In-Reply-To: <2024062443-runt-lard-fd07@gregkh>
+X-Cookie: Allow 6 to 8 weeks for delivery.
 
-> In other words, in the kernel we simply depend on initializers working
-> reliably and fully. Partly because we've literally been told by
-> compiler people that that is what we should do.
->
-> So no, this is not about empty initializers. And this is not about
-> some C standard verbiage.
->
-> This is literally about "the linux kernel expects initializers to
-> FULLY initialize variables". Padding, other union members, you name
-> it.
->
-> If clang doesn't do that, then clang is buggy as far as the kernel is
-> concerned, and no amount of standards reading is relevant.
->
-> And in particular, no amount of "but empty initializer" is relevant.
->
 
-Thanks for the detailed explanation!
-Sorry for limiting the problem to the empty initializer. I didn't
-realize the linux
-kernel also depends on zero initializing extra bytes when explicitly
-initializing
-one field of a union type.
+--mXlM7WGKGIZH7Y6z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> And when the union is embedded in a struct, the struct initialization
-> seems to be ok from a quick test, but I might have screwed that test
-> up.
+On Mon, Jun 24, 2024 at 07:47:56PM +0200, Greg KH wrote:
+> On Mon, Jun 24, 2024 at 06:35:57PM +0100, Mark Brown wrote:
 
-I also think so. But probably we need to add tests in clang to make sure
-it continues to work.
+> > diff --cc drivers/reset/reset-meson-audio-arb.c
+> > index 894ad9d37a665,8740f5f6abf80..0000000000000
+> > --- a/drivers/reset/reset-meson-audio-arb.c
+> > +++ b/drivers/reset/reset-meson-audio-arb.c
 
-> Hmm. Strange. godbolt says that it happens with clang 17.0.1 (and
-> earlier) with a plain -O2.
->
-> It just doesn't happen for me. Either this got fixed already and my
-> 17.0.6 has the fix, or there's some subtle flag that my test-case uses
-> (some config file - I just use "-O2" for local testing like the
-> godbolt page did).
->
-> But clearly godbolt does  think this happens with released clang versions too.
->
+> No diff for the conflict?
 
-Yes, I also think it happens in both clang trunk and past releases, as tested in
-https://godbolt.org/z/vnGqKK43z.
-Gladly in the clang bug in
-https://github.com/llvm/llvm-project/issues/78034, no one
-is against zero initializing the whole union type.
-I feel now it's no longer important to have this patch in the kernel.
-But we need to
-fix this problem in clang and backport the fix to releases we care about.
+That's what happens when the merge winds up bringing in no changes.
 
-Thanks,
-Yabin
+--mXlM7WGKGIZH7Y6z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ5tWkACgkQJNaLcl1U
+h9Ca0wf/VadP31FBBMBtCQWcIenUZoMjYJodgWLkBDRdpVj9/jy2e94HRyb3Guw/
+9kiZBmsRSaKuCJsHgRuam9Z1D5t+yCHCy545CL7WPdtfyZU1+xlqaUETgClTg4dM
+SqNjqu3Sq2KY3UhEtVs5mdc2bJKxLCVKQYxBNCzpStvXMeqlqMG4BNyy1dkL1D1O
+dR/PidTPBi+2IrcDL6EbP6dhqHOp02GhHTs7wE5Y27CMJErMLS745sPpz5mpi7+U
+wS7i+0CsSCBJIgMBbU/+SXM8Ugd1MhtoiBNRXw5IWcSojuYRd1RGZr4CHMMppnZI
+2i0moT1mgoNpmG7eqzfw2UVRxUDZUg==
+=4okn
+-----END PGP SIGNATURE-----
+
+--mXlM7WGKGIZH7Y6z--
 
