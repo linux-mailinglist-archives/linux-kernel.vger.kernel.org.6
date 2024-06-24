@@ -1,182 +1,247 @@
-Return-Path: <linux-kernel+bounces-227127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B39B59148CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:32:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFFB9148D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C7A287329
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:32:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9151B24346
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F490139590;
-	Mon, 24 Jun 2024 11:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="jzk8zOGz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="J/ZYT6ZZ"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEE413958C;
+	Mon, 24 Jun 2024 11:33:20 +0000 (UTC)
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B99B18654
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AB7137C2E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228751; cv=none; b=YTZlzlbtiR4PB8l0zjZLTRjRYs6s/bX+pDx0/hPxMC3jAUbnYjb6Ar2/9h55lYhvt8YSOFofw6LtOs5Y7MAD2KMOdQFJOnZ86yPUgYhtsYVnY/8Vu7vTdKBQdI3d7GEBFePyKGVgvz2BqcB6xu9zMEt41hbNsHES8ipxyZpopNM=
+	t=1719228799; cv=none; b=eq+Gk8AyAlx1elaqYw+KJk5W38lyabm4OSz4fiXrkXzj5SJomwZvihfYiwhCoV5zCTTKMu1+5TOtew/Y6aSNxRTefzvVshgEpV/OSq/LsnIGzXla5OtnZPnUQdv1ci301SzlW7FioM/zSBob529wLXstnh6Q1/e9cHk7NaHbeIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719228751; c=relaxed/simple;
-	bh=7jlo9vmhtWKTResIq0eDD/qPIJzSgx51/e3patMJCKM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qgQO4qj0aOb5dySqS678Kns3Ft/mBBX5gEHaN9OpNR9FJpOyCfrxnJFNqRKo4q4JWct5Gr4K8pby3tdLX8A5RXRa0jnwZFW2tM4GuVwYiqJwNHTZkaeluAaQ9h96tzW/1HvFA/LT8j6v/PT/iVm/iHKYhDWFZDCUh83wrO1is+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=jzk8zOGz; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=J/ZYT6ZZ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1719228748; x=1750764748;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HS0w/FAC4Vg1rsGlmB0DrwqRXeG8EmTG+BPwYRmz0Bo=;
-  b=jzk8zOGzp6uniq/W8e9ZG4hsjdCJBPScwQ/hyhcavWOsNn28FHtORJck
-   vT1hVLg+YYoz92Ulkc2zFj9zULhcj8U7X57WneeIIDAKvRqLGoAtWwhdw
-   Tv4mU2zOJfTuS9wyHY+FfKy8OKnZ5d+tnd1qoHsPRIi5DfCQ4zh5pTWHP
-   4B4XK9Jt/1k+dApVNGbIYTfhpoaDNSATMnNyqxMqpaTF7t3395qHGmB3y
-   8uhPkq2UlHSwWma84w6FLkLSQ42C7BM7ChY1vQ8SmU9kHIUFpH9nIVTMP
-   dKi4TzdQk57ELUkrepDZVbm2/fFaqGPeIWlkMd3KsLYlrfEHSRPrfUHss
-   A==;
-X-CSE-ConnectionGUID: xutlt1bvR1OPgmKEzE8qrw==
-X-CSE-MsgGUID: 0ZaALeZKQNuLTK+a8XFTmg==
-X-IronPort-AV: E=Sophos;i="6.08,261,1712613600"; 
-   d="scan'208";a="37550994"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 24 Jun 2024 13:32:26 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AA73B161461;
-	Mon, 24 Jun 2024 13:32:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1719228742;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=HS0w/FAC4Vg1rsGlmB0DrwqRXeG8EmTG+BPwYRmz0Bo=;
-	b=J/ZYT6ZZPm0j+qJ4XydMuPOr/DBjQtDvmdFLU+zCLT2h1BaF/9ZdN6AMbIEAcBFZHOufHo
-	dY71HZUtLEoVzDdVUenSGEbmC9Htj7QxPLqUzfdN4VEPC6+XmzXZ/wnv3zRAO9jfin2YbP
-	BTPYjfEK0tJXbllPhenw25hwg59vJ3BfVqrsD9tffJ6zY8lalYhJEWP2xkkzWNtXHr29IP
-	2omtKCwu6I5hltQ+s/T0yYI7+LslkgRXYZRal3CUsTjGdpUaDGgRs5lOzWG+54od/Pkme+
-	cFyVcHhTOZmaG51c+KlgFFdeOkjT9u1kB70EsnbN1e+OV529ORP8gwloyvVoTw==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH] drm/lcdif: switch to DRM_BRIDGE_ATTACH_NO_CONNECTOR
-Date: Mon, 24 Jun 2024 13:32:20 +0200
-Message-ID: <859620673.0ifERbkFSE@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240624-mxc-lcdif-bridge-attach-v1-1-37e8c5d5d934@linaro.org>
-References: <20240624-mxc-lcdif-bridge-attach-v1-1-37e8c5d5d934@linaro.org>
+	s=arc-20240116; t=1719228799; c=relaxed/simple;
+	bh=XYLD1pHJuP9cCV/GN4DIeu2jksC2uN+TICx+WaxYW2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xyy38ea/ua2cDdV4FpsgNocuNN9oeNkYeWQcJZtpf+4f7Bwc2R2vi937mD9cXUwCa712JjCvc8t+lmgDs61rTrAmqFaJzc9wn6vSt958QLE++81oqasyC9FY9SbdQobd9e3KnuM9TH7DSQQYyQbKNxkl8lACGigMdZUONMwATmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E1C4CC0005;
+	Mon, 24 Jun 2024 11:33:01 +0000 (UTC)
+Message-ID: <9bd955f3-7dbf-4d2a-8d05-82eb41083371@ghiti.fr>
+Date: Mon, 24 Jun 2024 13:32:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: Fix linear mapping checks for non-contiguous
+ memory regions
+Content-Language: en-US
+To: Stuart Menefy <stuart.menefy@codasip.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ David McKay <david.mckay@codasip.com>,
+ Palmer Dabbelt <palmerdabbelt@google.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240622114217.2158495-1-stuart.menefy@codasip.com>
+ <bdfbed9b-ea04-4415-8416-d6e9d0a643a3@ghiti.fr>
+ <CALEZRWE4PD2zADF1sVj++XkUan14SfDdugjse695gPqSorLgag@mail.gmail.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <CALEZRWE4PD2zADF1sVj++XkUan14SfDdugjse695gPqSorLgag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hi,
+On 24/06/2024 13:20, Stuart Menefy wrote:
+> On Mon, Jun 24, 2024 at 8:29 AM Alexandre Ghiti <alex@ghiti.fr> wrote:
+>>
+>> On 22/06/2024 13:42, Stuart Menefy wrote:
+>>> The RISC-V kernel already has checks to ensure that memory which would
+>>> lie outside of the linear mapping is not used. However those checks
+>>> use memory_limit, which is used to implement the mem= kernel command
+>>> line option (to limit the total amount of memory, not its address
+>>> range). When memory is made up of two or more non-contiguous memory
+>>> banks this check is incorrect.
+>>>
+>>> Two changes are made here:
+>>>    - add a call in setup_bootmem() to memblock_cap_memory_range() which
+>>>      will cause any memory which falls outside the linear mapping to be
+>>>      removed from the memory regions.
+>>>    - remove the check in create_linear_mapping_page_table() which was
+>>>      intended to remove memory which is outside the liner mapping based
+>>>      on memory_limit, as it is no longer needed. Note a check for
+>>>      mapping more memory than memory_limit (to implement mem=) is
+>>>      unnecessary because of the existing call to
+>>>      memblock_enforce_memory_limit().
+>>>
+>>> This issue was seen when booting on a SV39 platform with two memory
+>>> banks:
+>>>     0x00,80000000 1GiB
+>>>     0x20,00000000 32GiB
+>>> This memory range is 158GiB from top to bottom, but the linear mapping
+>>> is limited to 128GiB, so the lower block of RAM will be mapped at
+>>> PAGE_OFFSET, and the upper block straddles the top of the linear
+>>> mapping.
+>>>
+>>> This causes the following Oops:
+>>> [    0.000000] Linux version 6.10.0-rc2-gd3b8dd5b51dd-dirty (stuart.menefy@codasip.com) (riscv64-codasip-linux-gcc (GCC) 13.2.0, GNU ld (GNU Binutils) 2.41.0.20231213) #20 SMP Sat Jun 22 11:34:22 BST 2024
+>>> [    0.000000] memblock_add: [0x0000000080000000-0x00000000bfffffff] early_init_dt_add_memory_arch+0x4a/0x52
+>>> [    0.000000] memblock_add: [0x0000002000000000-0x00000027ffffffff] early_init_dt_add_memory_arch+0x4a/0x52
+>>> ...
+>>> [    0.000000] memblock_alloc_try_nid: 23724 bytes align=0x8 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 early_init_dt_alloc_memory_arch+0x1e/0x48
+>>> [    0.000000] memblock_reserve: [0x00000027ffff5350-0x00000027ffffaffb] memblock_alloc_range_nid+0xb8/0x132
+>>> [    0.000000] Unable to handle kernel paging request at virtual address fffffffe7fff5350
+>>> [    0.000000] Oops [#1]
+>>> [    0.000000] Modules linked in:
+>>> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 6.10.0-rc2-gd3b8dd5b51dd-dirty #20
+>>> [    0.000000] Hardware name: codasip,a70x (DT)
+>>> [    0.000000] epc : __memset+0x8c/0x104
+>>> [    0.000000]  ra : memblock_alloc_try_nid+0x74/0x84
+>>> [    0.000000] epc : ffffffff805e88c8 ra : ffffffff806148f6 sp : ffffffff80e03d50
+>>> [    0.000000]  gp : ffffffff80ec4158 tp : ffffffff80e0bec0 t0 : fffffffe7fff52f8
+>>> [    0.000000]  t1 : 00000027ffffb000 t2 : 5f6b636f6c626d65 s0 : ffffffff80e03d90
+>>> [    0.000000]  s1 : 0000000000005cac a0 : fffffffe7fff5350 a1 : 0000000000000000
+>>> [    0.000000]  a2 : 0000000000005cac a3 : fffffffe7fffaff8 a4 : 000000000000002c
+>>> [    0.000000]  a5 : ffffffff805e88c8 a6 : 0000000000005cac a7 : 0000000000000030
+>>> [    0.000000]  s2 : fffffffe7fff5350 s3 : ffffffffffffffff s4 : 0000000000000000
+>>> [    0.000000]  s5 : ffffffff8062347e s6 : 0000000000000000 s7 : 0000000000000001
+>>> [    0.000000]  s8 : 0000000000002000 s9 : 00000000800226d0 s10: 0000000000000000
+>>> [    0.000000]  s11: 0000000000000000 t3 : ffffffff8080a928 t4 : ffffffff8080a928
+>>> [    0.000000]  t5 : ffffffff8080a928 t6 : ffffffff8080a940
+>>> [    0.000000] status: 0000000200000100 badaddr: fffffffe7fff5350 cause: 000000000000000f
+>>> [    0.000000] [<ffffffff805e88c8>] __memset+0x8c/0x104
+>>> [    0.000000] [<ffffffff8062349c>] early_init_dt_alloc_memory_arch+0x1e/0x48
+>>> [    0.000000] [<ffffffff8043e892>] __unflatten_device_tree+0x52/0x114
+>>> [    0.000000] [<ffffffff8062441e>] unflatten_device_tree+0x9e/0xb8
+>>> [    0.000000] [<ffffffff806046fe>] setup_arch+0xd4/0x5bc
+>>> [    0.000000] [<ffffffff806007aa>] start_kernel+0x76/0x81a
+>>> [    0.000000] Code: b823 02b2 bc23 02b2 b023 04b2 b423 04b2 b823 04b2 (bc23) 04b2
+>>> [    0.000000] ---[ end trace 0000000000000000 ]---
+>>> [    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
+>>> [    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
+>>>
+>>> The problem is that memblock (unaware that some physical memory cannot
+>>> be used) has allocated memory from the top of memory but which is
+>>> outside the linear mapping region.
+>>>
+>>> Signed-off-by: Stuart Menefy <stuart.menefy@codasip.com>
+>>> Fixes: c99127c45248 ("riscv: Make sure the linear mapping does not use the kernel mapping")
+>>> Reviewed-by: David McKay <david.mckay@codasip.com>
+>>>
+>>> ---
+>>>    arch/riscv/mm/init.c | 15 +++++++++++----
+>>>    1 file changed, 11 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>>> index e3405e4b99af..7e25606f858a 100644
+>>> --- a/arch/riscv/mm/init.c
+>>> +++ b/arch/riscv/mm/init.c
+>>> @@ -233,8 +233,6 @@ static void __init setup_bootmem(void)
+>>>         */
+>>>        memblock_reserve(vmlinux_start, vmlinux_end - vmlinux_start);
+>>>
+>>> -     phys_ram_end = memblock_end_of_DRAM();
+>>> -
+>>>        /*
+>>>         * Make sure we align the start of the memory on a PMD boundary so that
+>>>         * at worst, we map the linear mapping with PMD mappings.
+>>> @@ -249,6 +247,16 @@ static void __init setup_bootmem(void)
+>>>        if (IS_ENABLED(CONFIG_64BIT) && IS_ENABLED(CONFIG_MMU))
+>>>                kernel_map.va_pa_offset = PAGE_OFFSET - phys_ram_base;
+>>>
+>>> +     /*
+>>> +      * The size of the linear page mapping may restrict the amount of
+>>> +      * usable RAM.
+>>> +      */
+>>> +     if (IS_ENABLED(CONFIG_64BIT)) {
+>>> +             max_mapped_addr = __pa(PAGE_OFFSET) + KERN_VIRT_SIZE;
+>>
+>> This is only true for sv39 once the following patch lands
+>> https://lore.kernel.org/linux-riscv/20240514133614.87813-1-alexghiti@rivosinc.com/
+> Hi Alex
+>
+> I've seen this problem whether your patch has been applied or not.
 
-Am Montag, 24. Juni 2024, 12:31:46 CEST schrieb Dmitry Baryshkov:
-> Existing in-kernel device trees use LCDIF with the dsim + adv7533, dsim
-> + tc358762 or with ldb + panel_bridge. All these combinations support
-> using DRM_BRIDGE_ATTACH_NO_CONNECTOR for bridge attachment.
->=20
-> Change lcdif driver to use this flag when attaching the bridge and
-> create drm_bridge_connector afterwards.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-> Note: compile-tested only.
 
-I gave it a try, but it doesn't work. Despite DSI output it also breaks
-HDMI output, where I at least some error messages:
-[drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@32c00000=
-/hdmi@32fd8000 to encoder None-37: -22
-[drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@32c00000=
-/display-bridge@32fc4000 to encoder None-37: -22
-imx-lcdif 32fc6000.display-controller: error -EINVAL: Failed to attach brid=
-ge for endpoint0
-imx-lcdif 32fc6000.display-controller: error -EINVAL: Cannot connect bridge
-imx-lcdif 32fc6000.display-controller: probe with driver imx-lcdif failed w=
-ith error -22
-
-Best regards,
-Alexander
-
-> ---
->  drivers/gpu/drm/mxsfb/lcdif_drv.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/mxsfb/lcdif_drv.c b/drivers/gpu/drm/mxsfb/lc=
-dif_drv.c
-> index 0f895b8a99d6..1d5508449995 100644
-> --- a/drivers/gpu/drm/mxsfb/lcdif_drv.c
-> +++ b/drivers/gpu/drm/mxsfb/lcdif_drv.c
-> @@ -16,6 +16,7 @@
-> =20
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_bridge.h>
-> +#include <drm/drm_bridge_connector.h>
->  #include <drm/drm_drv.h>
->  #include <drm/drm_encoder.h>
->  #include <drm/drm_fbdev_dma.h>
-> @@ -48,6 +49,7 @@ static int lcdif_attach_bridge(struct lcdif_drm_private=
- *lcdif)
->  {
->  	struct device *dev =3D lcdif->drm->dev;
->  	struct device_node *ep;
-> +	struct drm_connector *connector;
->  	struct drm_bridge *bridge;
->  	int ret;
-> =20
-> @@ -96,13 +98,23 @@ static int lcdif_attach_bridge(struct lcdif_drm_priva=
-te *lcdif)
->  			return ret;
->  		}
-> =20
-> -		ret =3D drm_bridge_attach(encoder, bridge, NULL, 0);
-> +		ret =3D drm_bridge_attach(encoder, bridge, NULL, DRM_BRIDGE_ATTACH_NO_=
-CONNECTOR);
->  		if (ret) {
->  			of_node_put(ep);
->  			return dev_err_probe(dev, ret,
->  					     "Failed to attach bridge for endpoint%u\n",
->  					     of_ep.id);
->  		}
-> +
-> +		connector =3D drm_bridge_connector_init(lcdif->drm, encoder);
-> +		if (IS_ERR(connector)) {
-> +			ret =3D PTR_ERR(connector);
-> +			of_node_put(ep);
-> +
-> +			return dev_err_probe(dev, ret,
-> +					     "Failed to create bridge connector for endpoint%u\n",
-> +					     of_ep.id);
-> +		}
->  	}
-> =20
->  	return 0;
->=20
-> ---
-> base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
-> change-id: 20240624-mxc-lcdif-bridge-attach-60368807b2f9
->=20
-> Best regards,
->=20
+Sure, I just meant the use of KERN_VIRT_SIZE above, sorry it was not clear.
 
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+>
+>> Otherwise, sv39 is "weirdly" restricted to 124GB. You mention in the
+>> changelog that the linear mapping size is limited to 128GB, does that
+>> mean you tested your patch on top this one ^? If so, would you mind
+>> adding a Tested-by to it? Otherwise, would you mind testing on top of it
+>> :) ?
+> I've tested in both cases, so I'll add a Tested-by.
 
 
+Thanks!
+
+
+>
+> Note that to actually use 128GiB on Sv39 systems yet another patch is
+> needed which I'll also post.
+
+
+Ok, I'm curious! But if indeed another patch is needed, then we need to 
+merge the 3 at the same time. I'll add this other patch to my fixes branch.
+
+Thanks,
+
+Alex
+
+
+>
+>> I'll see with Palmer, but maybe we can't take both patches to -fixes.
+> All three patches address different issues, so I think it would be safe to
+> take them in any combination. However I understand the reluctance
+> when making changes in this area.
+>
+> Thanks
+>
+> Stuart
+>
+>
+>> You can add:
+>>
+>> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>>
+>> Thanks,
+>>
+>> Alex
+>>
+>>
+>>> +             memblock_cap_memory_range(phys_ram_base,
+>>> +                                       max_mapped_addr - phys_ram_base);
+>>> +     }
+>>> +
+>>>        /*
+>>>         * Reserve physical address space that would be mapped to virtual
+>>>         * addresses greater than (void *)(-PAGE_SIZE) because:
+>>> @@ -265,6 +273,7 @@ static void __init setup_bootmem(void)
+>>>                memblock_reserve(max_mapped_addr, (phys_addr_t)-max_mapped_addr);
+>>>        }
+>>>
+>>> +     phys_ram_end = memblock_end_of_DRAM();
+>>>        min_low_pfn = PFN_UP(phys_ram_base);
+>>>        max_low_pfn = max_pfn = PFN_DOWN(phys_ram_end);
+>>>        high_memory = (void *)(__va(PFN_PHYS(max_low_pfn)));
+>>> @@ -1289,8 +1298,6 @@ static void __init create_linear_mapping_page_table(void)
+>>>                if (start <= __pa(PAGE_OFFSET) &&
+>>>                    __pa(PAGE_OFFSET) < end)
+>>>                        start = __pa(PAGE_OFFSET);
+>>> -             if (end >= __pa(PAGE_OFFSET) + memory_limit)
+>>> -                     end = __pa(PAGE_OFFSET) + memory_limit;
+>>>
+>>>                create_linear_mapping_range(start, end, 0);
+>>>        }
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
