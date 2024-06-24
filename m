@@ -1,258 +1,191 @@
-Return-Path: <linux-kernel+bounces-226876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A22914524
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:43:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E30C91446E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF60284738
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFE3E1F23578
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B92D73501;
-	Mon, 24 Jun 2024 08:42:58 +0000 (UTC)
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D32854654;
+	Mon, 24 Jun 2024 08:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0CqxiHv"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996745FEED;
-	Mon, 24 Jun 2024 08:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E084965C;
+	Mon, 24 Jun 2024 08:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719218578; cv=none; b=U8Wwi3X3KEZ+rsxZUm/zWov5Xx+dVzO2tyV/cWWTI9BMBTFDPoovcg6Qr4QRtvUJJtluKOPwvGBAofZJfyr7xDE9PVT6Dbx1gYHUprUHVz8zAtThZEBvOjKuF6dbkRnXN3bWFFLnKUki/y0drirJXwOJYs1Qp4PbxyoJVVHmnJc=
+	t=1719217043; cv=none; b=V3p5cOxb+CyZft9Hto55jFH1A8JOdicnkMEiS85y7SaUQa7OWBiU6+kipS+Ih2KU9ZlVSNjqjOyiXegLOvXQtUM//C/BXMOmSl+VCtyL6yR47oBfMU97F4Sg9jfcv0CCxbGqd4VTHd65mRDb1htBtB5hCcf8k/doxXN9v8uSrAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719218578; c=relaxed/simple;
-	bh=uou/1X38TpOV1H5lzk1XUMo5zHQwtHBpEjhyhwTfJHY=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=CLAGUwDBK9o8jqf1uqhzOUaeezU+/UMF551hqKSpAlOqbegEmSxgxUkxMu7BPf7GBueijP5bfd8aJ2KjHtKxnY9FJRHOc+esCs0txDxGAtbtH71ihnBOX6sINGM0mmqS0T2SHiqxMb0md9U1yNctho8tRHnwlsjSe53mjhTFOxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [127.0.0.1] (helo=localhost)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=99192e773b=ms@dev.tdt.de>)
-	id 1sLesm-008vkJ-9h; Mon, 24 Jun 2024 10:17:00 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ms@dev.tdt.de>)
-	id 1sLesk-00Ctb6-St; Mon, 24 Jun 2024 10:16:58 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 72BD9240053;
-	Mon, 24 Jun 2024 10:16:58 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id CF369240050;
-	Mon, 24 Jun 2024 10:16:57 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id 038F634826;
-	Mon, 24 Jun 2024 10:16:56 +0200 (CEST)
+	s=arc-20240116; t=1719217043; c=relaxed/simple;
+	bh=zlxB2LL39UkXj/WY6DoZ05vbz2yJfbl6Uuo+hzij+Ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZ44u9FXyXierICzy+WvA0Ev2B5aRLEMJSxz/cQc46BMP80EnWbgajNTueoxquX60tRyVo/NI6dgMWc6Uqj6PV+iBLaxShMnhbLNHJ+nVGS7kgkHzX++ETgYhRFlsTazrChUH1dZqbCwqqU6G8lLb3YkewppHs4acRTrMh2/Gr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0CqxiHv; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee6eso7120872a12.1;
+        Mon, 24 Jun 2024 01:17:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719217040; x=1719821840; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fQqbHSkqEg8UIT4DFzvDECtddkt78IAjLyY6LQO60XA=;
+        b=d0CqxiHv5IX7xS+/PfOROO5eN+NqGRIfjxHseq+xfohfK5e/SCHfjXs+hxCLj/cXN8
+         d2ZNaAbc+IdRQEMMwqYepKA7TsK6o+rQ6SuHli5vgafyx3RyAbH6wlU26PN9bowrUZtz
+         BnZmAS/JlChxZZl4gXnvLnNq7+LA1j6ikaQ4ZvT7Ur9hQiF1DziwAEuOMi2WHCIpw/sX
+         dBbbs6x669gOaE3OODJNpkCI9/iSLbNn5ewZWR+fz0N928IyLG+c5aBMt+dcWIJI7vcO
+         esvq7AZLdH5wmS9u53XWBmlnVTkLO/iukX8o7FEleUR5BzYBw06Vtn0OZc3EXK8ODLQH
+         NW+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719217040; x=1719821840;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fQqbHSkqEg8UIT4DFzvDECtddkt78IAjLyY6LQO60XA=;
+        b=d8q8Kpk0Wlf0dkiSZU/6GS/dYGMmyCsFMZ7Pbs8dW9aSGBxbEc3LwXs9o+E6hiMtB/
+         o/J/O3mZs4WA80z+lx25sR+lZRHL14yrKRmqRoNLOxa7UwchcKJQUy5IuvpccYwraNpk
+         rOk+zc6Nwushkzw1Q3fEByYC1usutP3LVh2RgacDdDVewpMsP3N+bZz1Hqbw45AQSr7S
+         fJhLGM9wjD179UuQ78ana0GM68LyGk1PH/TaTCB/Th9Cnz1OwJ6nDVBXna9vPjjTh2JG
+         Ky+PdrucD5jBZ4F/j2HWv3cQZccBhiQkM1ntwZLC7KaGHkH/xwTHjpecUIL4bkFFQNLs
+         nWqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWshQzOlVT8g0JYvrKZ/FUN46DQfd/xyUTsvHR7qt1uH+QCMYRfImsSaa4QuWhSUfXsMpNWdQhkXic5sEdPzeny1IsEfJDSL7wuAwzPZy4r2NodWl/uRgPbyv8mFQmJx8JrfsEa8bSLlOHl9w==
+X-Gm-Message-State: AOJu0YwfYw6NQFo5WTSuMUeytRXhUu6sdEbWvzbGGw+qHdX3gh1ALXGR
+	DnC4nze5riNqLBcg66xzJJE/eu+Ep77lX9Ve6QyskgUDJWodEHbH
+X-Google-Smtp-Source: AGHT+IEgDXbhNOqfnHDw/RFFKZaSiw6LDw+WjOtm/3URZplVmEWC705lBJRJnwjprOQFPpv/eurX5g==
+X-Received: by 2002:a50:8d58:0:b0:57c:70b4:7ac with SMTP id 4fb4d7f45d1cf-57d44c41970mr3855799a12.15.1719217039737;
+        Mon, 24 Jun 2024 01:17:19 -0700 (PDT)
+Received: from f (cst-prg-81-171.cust.vodafone.cz. [46.135.81.171])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30427f8fsm4471791a12.34.2024.06.24.01.17.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 01:17:19 -0700 (PDT)
+Date: Mon, 24 Jun 2024 10:17:12 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: linux-mm@kvack.org
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfs: wrap CONFIG_READ_ONLY_THP_FOR_FS-related code
+ with an ifdef
+Message-ID: <zjoqxuejv3irj7taola5kgrla6mvns4o2tckep4oi4cvdk26im@fkq762sitjzm>
+References: <20240624074135.486845-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Mon, 24 Jun 2024 10:16:56 +0200
-From: Martin Schiller <ms@dev.tdt.de>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, tsbogend@alpha.franken.de,
- rdunlap@infradead.org, robh@kernel.org, bhelgaas@google.com,
- linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
-Organization: TDT AG
-In-Reply-To: <ZnN9rkNqucEYuXzR@google.com>
-References: <20240607090400.1816612-1-ms@dev.tdt.de>
- <ZmnfQWFoIw5UCV-k@google.com> <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
- <b6bea9239050ed39ce3a051a5985b86d@dev.tdt.de>
- <6e4eed26-0a15-4ab4-8f3f-7ed0e223db5e@hauke-m.de>
- <c1813503ba16e1d46a93382dd806ffa6@dev.tdt.de> <ZnN9rkNqucEYuXzR@google.com>
-Message-ID: <ce1ba2382d12010f960d3e4c04d78fb2@dev.tdt.de>
-X-Sender: ms@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-Content-Transfer-Encoding: quoted-printable
-X-purgate-ID: 151534::1719217019-4697E746-1C37EBBB/0/0
-X-purgate: clean
-X-purgate-type: clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240624074135.486845-1-mjguzik@gmail.com>
 
-On 2024-06-20 02:54, Dmitry Torokhov wrote:
-> On Fri, Jun 14, 2024 at 10:43:29AM +0200, Martin Schiller wrote:
->> On 2024-06-13 22:06, Hauke Mehrtens wrote:
->> > On 6/12/24 21:47, Martin Schiller wrote:
->> > > On 2024-06-12 20:39, Martin Schiller wrote:
->> > > > On 2024-06-12 19:47, Dmitry Torokhov wrote:
->> > > > > Hi Marton,
->> > > >
->> > > > Hi Dmitry,
->> > > >
->> > > > >
->> > > > > On Fri, Jun 07, 2024 at 11:04:00AM +0200, Martin Schiller wrot=
-e:
->> > > > > > Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using
->> > > > > > gpiod API") not
->> > > > > > only switched to the gpiod API, but also inverted /
->> > > > > > changed the polarity
->> > > > > > of the GPIO.
->> > > > > >
->> > > > > > According to the PCI specification, the RST# pin is an activ=
-e-low
->> > > > > > signal. However, most of the device trees that have been
->> > > > > > widely used for
->> > > > > > a long time (mainly in the openWrt project) define this GPIO=
- as
->> > > > > > active-high and the old driver code inverted the signal inte=
-rnally.
->> > > > > >
->> > > > > > Apparently there are actually boards where the reset gpio mu=
-st be
->> > > > > > operated inverted. For this reason, we cannot use the
->> > > > > > GPIOD_OUT_LOW/HIGH
->> > > > > > flag for initialization. Instead, we must explicitly set
->> > > > > > the gpio to
->> > > > > > value 1 in order to take into account any
->> > > > > > "GPIO_ACTIVE_LOW" flag that
->> > > > > > may have been set.
->> > > > >
->> > > > > Do you have example of such boards? They could not have
->> > > > > worked before
->> > > > > 90c2d2eb7ab5 because it was actively setting the reset line
->> > > > > to physical
->> > > > > high, which should leave the device in reset state if there is=
- an
->> > > > > inverter between the AP and the device.
->> > > >
->> > > > Oh, you're right. I totally missed that '__gpio_set_value' was
->> > > > used in
->> > > > the original code and that raw accesses took place without payin=
-g
->> > > > attention to the GPIO_ACTIVE_* flags.
->> > > >
->> > > > You can find the device trees I am talking about in [1].
->> > > >
->> > > > @Thomas Bogendoerfer:
->> > > > Would it be possible to stop the merging of this patch?
->> > > > I think We have to do do some further/other changes.
->> > > >
->> > > > >
->> > > > > >
->> > > > > > In order to remain compatible with all these existing
->> > > > > > device trees, we
->> > > > > > should therefore keep the logic as it was before the commit.
->> > > > >
->> > > > > With gpiod API operating with logical states there's still
->> > > > > difference in
->> > > > > logic:
->> > > > >
->> > > > > =C2=A0=C2=A0=C2=A0=C2=A0gpiod_set_value_cansleep(reset_gpio, 1=
-);
->> > > > >
->> > > > > will leave GPIO at 1 if it is described as GPIO_ACTIVE_HIGH
->> > > > > (which is
->> > > > > apparently what you want for boards with broken DTS) but for b=
-oards
->> > > > > that accurately describe GPIO as GPIO_ACTIVE_LOW it well
->> > > > > drive GPIO to
->> > > > > 0, leaving the card in reset state.
->> > > > >
->> > > > > You should either use gpiod_set_raw_value_calsleep() or we
->> > > > > can try and
->> > > > > quirk it in gpiolib (like we do for many other cases of
->> > > > > incorrect GPIO
->> > > > > polarity descriptions and which is my preference).
->> > >
->> > > So you mean we should add an entry for "lantiq,pci-xway" to the
->> > > of_gpio_try_fixup_polarity()?
->> > > Do you know any dts / device outside the openWrt universe which is
->> > > using
->> > > this driver.
->> > >
->> > > For the lantiq targets in openWrt, the devicetree blob is appended=
- to
->> > > the kernel image and therefore also updated when doing a firmware
->> > > upgrade. So, maybe it would also be an option to fix the driver (u=
-sing
->> > > GPIO_ACTIVE_* flag for the initial level and set it to 0 -> 1 -> 0=
-)
->> > > and
->> > > rework all the dts files to use GPIO_ACTIVE_LOW.
->=20
-> Yes, cleaning up DTS files when it is possible is nice.
->=20
->> > >
->> > > Then we won't need any quirks.
->=20
-> Quirks are fairly cheap and we are not in a hot path here.
->=20
->> >
->> > I am not aware that anyone is using a recent kernel on the VRX200
->> > outside of OpenWrt. I am also not aware that anyone is *not* appendi=
-ng
->> > the DTB to the kernel. The SoC is pretty old now, the successor of
->> > this SoC was released about 10 years ago.
->> >
->>=20
->> We're not just talking about VRX200 (VR9) here, but even older devices
->> such as AR9 and Danube.
->>=20
->> > For me it would be fine if you fix the broken device device trees
->> > shipped with the upstream kernel and with OpenWrt to make them work
->> > with the PCI driver instead of investing too much time into handling
->> > old DTBs.
->> >
->> > The PCI reset is inverted on some boards to handle a dying gasp. If
->> > the power breaks down the reset should get triggered and the PCIe
->> > device can send a dying gasp signal to the other side. This is done =
-on
->> > the reference designs of some Lantiq PCIe DSL card for the VRX318 an=
-d
->> > probably also some other components.
->> >
->> > Hauke
->>=20
->> What I missed so far is the fact that the driver used=20
->> '__gpio_set_value'
->> before Dmitry's commit and thus used raw access to the GPIO.
->>=20
->> This effectively means that every device that has worked with the=20
->> driver
->> so far must have an ACTIVE_LOW reset, no matter what was configured in
->> the device tree.
->>=20
->>=20
->> So renaming the property in the dts from "gpio-reset" to "reset-gpios"
->> and setting the FLAGS to "GPIO_ACTIVE_LOW" should actually solve the
->> problem.
->=20
-> Right, luckily (to a definition of luckily) the driver and DTB used
-> "wrong" syntax for the gpio property, so we can quirk it and make
-> force ACTIVE_LOW polarity on old DTBs, and new DTBs with "reset-gpios"
-> property will follow polarity specified in DTB.
+On Mon, Jun 24, 2024 at 09:41:34AM +0200, Mateusz Guzik wrote:
+> On kernels compiled without this option (which is currently the default
+> state) filemap_nr_thps expands to 0.
+> 
+> do_dentry_open has a big chunk dependent on it, most of which gets
+> optimized away, except for a branch and a full fence:
+> 
+> if (f->f_mode & FMODE_WRITE) {
+> [snip]
+>         smp_mb();
+>         if (filemap_nr_thps(inode->i_mapping)) {
+> [snip]
+> 	}
+> }
+> 
+> While the branch is pretty minor the fence really does not need to be
+> there.
+> 
 
-We have already adapted the device trees in openWrt. [1]
-Will you create a quirk patch for the old DTBs or should I create one?
+[the To: recipient bounces, thus got dropped]
 
->=20
->>=20
->> What still bothers me about the driver itself are 2 things:
->> 1. the initial value of GPIOD_OUT_LOW. This means that there is no=20
->> real
->>    defined HIGH -> LOW -> HIGH on reset.
->=20
-> Is this actually needed? Typically a card requires certain time in=20
-> reset
-> state (with reset line active) before it can be released, however there
-> usually no restrictions on line being inactive beforehand. But=20
-> typically
-> it will be pulled up to avoid leakage...
->=20
+Now that I sent this I remembered that some of the atomic ops in Linux
+provide a full fence regardless of an architecture.
 
-No, I don't think that's absolutely necessary. Several tests have so far
-shown that it works as it is at the moment.
+get_write_access uses atomic_inc_unless_negative which qualifies?
 
-[1]=20
-https://git.openwrt.org/?p=3Dopenwrt/openwrt.git;a=3Dcommitdiff;h=3Df6fe1=
-9ed6dfaf0444cd80f530bf89f6878fd5936
+  1551 static __always_inline bool
+  1552 atomic_inc_unless_negative(atomic_t *v)
+  1553 {
+  1554 │       kcsan_mb();
+  1555 │       instrument_atomic_read_write(v, sizeof(*v));
+  1556 │       return raw_atomic_inc_unless_negative(v);
+  1557 }
 
+If so, the ifdefed-out smp_mb can be eliminated altogether if I got my
+fences right.
+
+On top of that mnt_get_write_access injects another smp_mb() anyway.
+
+> This is a bare-minimum patch which takes care of it until someone(tm)
+> cleans this up. Notably it does not conditionally compile other spots
+> which issue the matching fence.
+> 
+> I did not bother benchmarking it, not issuing a spurious full fence in
+> the fast path does not warrant justification from perf standpoint.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+> 
+> I am not particularly familiar with any of this, the smp_mb in the open
+> for write path was sticking out like a sore thumb on code read so I
+> figured there may be One Weird Trick to whack it.
+> 
+> If the stock code is correct as is, then the ifdef as above is fine.
+> 
+> The ifdefed chunk is big enough that it should probably be its own
+> routine. I don't want to bikeshed so I did not go for it.
+> 
+> For a moment I considered adding filemap_nr_thps_mb which would expand
+> to 0 or issue the fence + do the read, but then I figured a routine
+> claiming to post a fence and only conditionally do it is misleading at
+> best.
+> 
+> As per the commit message fences in collapse_file remain compiled in.
+> It is unclear to me if the code following them is doing anything useful
+> on kernels !CONFIG_READ_ONLY_THP_FOR_FS.
+> 
+> All that said, if there is cosmetic touch ups you want done here, I can
+> do them.
+> 
+> However, a nice full patch would take care of all of the above and I
+> have neither the information needed to do it nor the interest to get it,
+> so should someone insinst on a full version I'm going to suggest they
+> write it themselves. I repeat this is merely a damage control until
+> someone sorts thigs out.
+> 
+>  fs/open.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index 28f2fcbebb1b..654c300b3c33 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -980,6 +980,7 @@ static int do_dentry_open(struct file *f,
+>  	if ((f->f_flags & O_DIRECT) && !(f->f_mode & FMODE_CAN_ODIRECT))
+>  		return -EINVAL;
+>  
+> +#ifdef CONFIG_READ_ONLY_THP_FOR_FS
+>  	/*
+>  	 * XXX: Huge page cache doesn't support writing yet. Drop all page
+>  	 * cache for this file before processing writes.
+> @@ -1007,6 +1008,7 @@ static int do_dentry_open(struct file *f,
+>  			filemap_invalidate_unlock(inode->i_mapping);
+>  		}
+>  	}
+> +#endif
+>  
+>  	return 0;
+>  
+> -- 
+> 2.43.0
+> 
 
