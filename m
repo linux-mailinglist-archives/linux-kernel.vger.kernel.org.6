@@ -1,152 +1,166 @@
-Return-Path: <linux-kernel+bounces-226937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC5F914610
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E41EF914624
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCCAC1C22E91
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:19:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 204BB1C21412
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE4F1304B1;
-	Mon, 24 Jun 2024 09:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396DD132128;
+	Mon, 24 Jun 2024 09:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cfFkHVim"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDUDM/rc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BF1130492
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC5812E1F6;
+	Mon, 24 Jun 2024 09:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719220753; cv=none; b=K26a08Cf/QhtCD0dfvdBu08bWA9fK6aHL8AR7GPfpckXMbxkRF5ejI1A29gwnyfUWOlW2EQMg4LpvJaKVgrYmHqo279A1qUyJo+jGIp/66QTDHprSAS5SX5He9QhDP/0UmWsgwy3VZtnInKIFYdlL7svQQnnAxJV4FHxvwwL21I=
+	t=1719220790; cv=none; b=ZYixsa4sKIPUTvHszCbmj/Vf5w7W5bG3BBOr4N1kVVZeFWirMUIQMQ/LjePCvu7scOVi0AveROfT+cGcMo7PIVKDwOD4FJ7/8c45U7XHPZ+sb9auH/XeFXWgr+m/4AVcpV0qHHayps3tQt5oODmZTr5kxf5urbHYzFsAkdZxJqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719220753; c=relaxed/simple;
-	bh=RT+AW8+PBzwZ+a+aKMlzdwFsNmTcsFuiW6jf5CSOX1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O8jxCuHcRCg5BsLxueomM1NNmVikXVmfZgrRzwMO9K2RfZ2g6dZTCLZHM+4pTVn5g0ytHI3CiXKVhbwDGgvVGYOVi+0Ke0TYi8/gpODcBG110dQhvOl/7aTCqdreE4bcys/+nSBzSjzHiJkyhoU4SMhhpd/tANYlfu8j69KNSpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cfFkHVim; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c7a6da20f2so3203686a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719220751; x=1719825551; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=A9SAQofWuUxGYnDfKTZ/7Ul2x5gYkswxQPvSCxcY1I4=;
-        b=cfFkHVimwwDSTIE6upabqWy5cYAN48QcADPMM+mOq6xSTPf4b+0SwDEDzfAWHoVY5z
-         6G5KbhetMD3nqWuqTvNnXMAEqvjuvLr1VMFhhrHs9meZwMkioY/bmDcPJHpjW74BcdiM
-         v2n/l+hI7kQf8qCmduE1F/S+KM8yQ0KDjP2unT68oaX0X3dR6A555rbhj/uYwO54fNKU
-         JrMB4gqsiC6Sac4aAoKVvonc3YNYnfTVjPcgwUY2WUiGKPJ+AsZFDWVCa4mvL1Iyk11+
-         lXc+dmbWA2KlwUuA539Rum3g4loWjlgzoakNHopvDOm6Da+qjijbBSwDqrqfFn3QR3dq
-         Ov8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719220751; x=1719825551;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A9SAQofWuUxGYnDfKTZ/7Ul2x5gYkswxQPvSCxcY1I4=;
-        b=VcVVa0hr+QdWRDnnGTgdUV1aEXRuG2/oIuAMJdJNedCgChrWMSdkYC+POMUPJ6OM8p
-         B4LN68rjYkuXkW8llcmgTbMMZ3aH+H1WIR8dcHsqT7LAA+XFiVxFeIOxqxg3DhDefJAd
-         68eJWTi/C2XwggQN0WUnq4A0NufO81dIehEy+qDrNmg9fEdd8lal0Mw6WC16B88fZuOp
-         uljyOW3Q01A5QSAR7N2A6c88mQuD5hquYwLvTFwmyxXcCspLYKpWv8P6uWkKGLYlKXgX
-         kQk1oH5f5i1SYWfj1SzIwNFouFYYz5cERrQFQHyltp/8uDz7PodzlqpcCy29kAD9JuHL
-         T2rA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWzkbmFHQwrxmxMos88Eml8h2B4Syy3iuZGtsfuoyrdndWj6+zOJpzy/ciGGH/VNmNjFlxp7v+GuYq+SDZdziCXWv5+r/bKNtsnI42
-X-Gm-Message-State: AOJu0YxecI4FgBQhtmLnqvqMCQj/cocf6TmHHCyBxChtr7bustoXXBGN
-	makztGDGfzp/D0byo539RmV/Y5ab9SR+DO/X82MlbXisK9VN4mUGD82gggyzaSJ+mD2YvakvmJY
-	vzxmI6XA1Zal5vLPHkxbEacymC9yuqb6L68cqGA==
-X-Google-Smtp-Source: AGHT+IHwY6Epu4+xXObpFiFyK5Aeibk2jkaeeAS3wPiqxAkf1TPx6zG2E6kP02YGVThf8+awPWGAmn3tVvQkxHypbto=
-X-Received: by 2002:a17:90a:43c3:b0:2c4:e4a3:b83c with SMTP id
- 98e67ed59e1d1-2c8504c81ffmr3511932a91.2.1719220750885; Mon, 24 Jun 2024
- 02:19:10 -0700 (PDT)
+	s=arc-20240116; t=1719220790; c=relaxed/simple;
+	bh=oU/8r7bCLv97UE0Vbd5wfZPsGHSnpZEWps6OW3Re6iY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mvvIm4NmKiWpASZoRitTo0dPQprgxEKwQ4h8fJ3CPGYpX8GArCf4egPKfaN2EJIVRhvPRsz/PiMyJIceq7ITwUKWTQ/yi7YGI1MvKKtPGcwU4ITc5wU8PrNLtZ5B0+lZNuBsf2UNelKSw6trzFep37ygmMmVD26aKb7NRwHCG+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDUDM/rc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB07C32789;
+	Mon, 24 Jun 2024 09:19:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719220790;
+	bh=oU/8r7bCLv97UE0Vbd5wfZPsGHSnpZEWps6OW3Re6iY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fDUDM/rcfjvVFi3bB/GzUkANTdmyfRJjUvwindo/e8azmI+AAma0IIVyCPla0ocxG
+	 3Hx0HSaJcjENu71NAcnXuDVZfg/hW2n+/S22/ARbZdiUqWRFVR/C5ZZT3+ZiE/ECNf
+	 CBjJwMMe/AECuukZUN/topehhHRVLeOxwYqkPrCmIDKb0ygf1KM5Epwqtzh6fZc5ET
+	 SdBTWAAY+zbn4eQ3E0lVpUtWBbJmDfzRYJx7EhIYZveNHKg2cx08T19Wl9op6HBRdZ
+	 429WVVaq49nkgWfbiJ6EWN/uWBu4uWdGBFaRr1d03vJWToyk4MretRZYHK0YriCMSI
+	 pKHQ1HOLtaE+A==
+Received: from mchehab by mail.kernel.org with local (Exim 4.97.1)
+	(envelope-from <mchehab@kernel.org>)
+	id 1sLfrX-000000085bc-1UbK;
+	Mon, 24 Jun 2024 11:19:47 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: 
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v5 0/4] fix CPER issues related to UEFI 2.9A Errata
+Date: Mon, 24 Jun 2024 11:19:17 +0200
+Message-ID: <cover.1719219886.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620214450.316280-1-joshdon@google.com>
-In-Reply-To: <20240620214450.316280-1-joshdon@google.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 24 Jun 2024 11:18:59 +0200
-Message-ID: <CAKfTPtDDSzLi7PEJkBqepx9cRgmbBKy2ZXJuT0h62e3RkQBoYw@mail.gmail.com>
-Subject: Re: [PATCH] Revert "sched/fair: Make sure to try to detach at least
- one movable task"
-To: Josh Don <joshdon@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-On Thu, 20 Jun 2024 at 23:45, Josh Don <joshdon@google.com> wrote:
->
-> This reverts commit b0defa7ae03ecf91b8bfd10ede430cff12fcbd06.
->
-> b0defa7ae03ec changed the load balancing logic to ignore env.max_loop if
-> all tasks examined to that point were pinned. The goal of the patch was
-> to make it more likely to be able to detach a task buried in a long list
-> of pinned tasks. However, this has the unfortunate side effect of
-> creating an O(n) iteration in detach_tasks(), as we now must fully
-> iterate every task on a cpu if all or most are pinned. Since this load
-> balance code is done with rq lock held, and often in softirq context, it
-> is very easy to trigger hard lockups. We observed such hard lockups with
-> a user who affined O(10k) threads to a single cpu.
->
-> When I discussed this with Vincent he initially suggested that we keep
-> the limit on the number of tasks to detach, but increase the number of
-> tasks we can search. However, after some back and forth on the mailing
-> list, he recommended we instead revert the original patch, as it seems
-> likely no one was actually getting hit by the original issue.
->
+The UEFI 2.9A errata makes clear how ARM processor type encoding should
+be done: it is meant to be equal to Generic processor, using a bitmask.
 
-Maybe add a
-Fixes: b0defa7ae03e ("sched/fair: Make sure to try to detach at least
-one movable task")
+The current code assumes, for both generic and ARM processor types
+that this is an integer, which is an incorrect assumption.
 
-> Signed-off-by: Josh Don <joshdon@google.com>
+Fix it. While here, also fix a compilation issue when using W=1.
 
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+After the change, Kernel will properly decode receiving two errors at the same
+message, as defined at UEFI spec:
 
-> ---
->  kernel/sched/fair.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 34fe6e9490c2..a5416798702b 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -9043,12 +9043,8 @@ static int detach_tasks(struct lb_env *env)
->                         break;
->
->                 env->loop++;
-> -               /*
-> -                * We've more or less seen every task there is, call it quits
-> -                * unless we haven't found any movable task yet.
-> -                */
-> -               if (env->loop > env->loop_max &&
-> -                   !(env->flags & LBF_ALL_PINNED))
-> +               /* We've more or less seen every task there is, call it quits */
-> +               if (env->loop > env->loop_max)
->                         break;
->
->                 /* take a breather every nr_migrate tasks */
-> @@ -11328,9 +11324,7 @@ static int load_balance(int this_cpu, struct rq *this_rq,
->
->                 if (env.flags & LBF_NEED_BREAK) {
->                         env.flags &= ~LBF_NEED_BREAK;
-> -                       /* Stop if we tried all running tasks */
-> -                       if (env.loop < busiest->nr_running)
-> -                               goto more_balance;
-> +                       goto more_balance;
->                 }
->
->                 /*
-> --
-> 2.45.2.741.gdbec12cfda-goog
->
+[   75.282430] Memory failure: 0x5cdfd: recovery action for free buddy page: Recovered
+[   94.973081] {2}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 1
+[   94.973770] {2}[Hardware Error]: event severity: recoverable
+[   94.974334] {2}[Hardware Error]:  Error 0, type: recoverable
+[   94.974962] {2}[Hardware Error]:   section_type: ARM processor error
+[   94.975586] {2}[Hardware Error]:   MIDR: 0x000000000000cd24
+[   94.976202] {2}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x000000000000ab12
+[   94.977011] {2}[Hardware Error]:   error affinity level: 2
+[   94.977593] {2}[Hardware Error]:   running state: 0x1
+[   94.978135] {2}[Hardware Error]:   Power State Coordination Interface state: 4660
+[   94.978884] {2}[Hardware Error]:   Error info structure 0:
+[   94.979463] {2}[Hardware Error]:   num errors: 3
+[   94.979971] {2}[Hardware Error]:    first error captured
+[   94.980523] {2}[Hardware Error]:    propagated error captured
+[   94.981110] {2}[Hardware Error]:    overflow occurred, error info is incomplete
+[   94.981893] {2}[Hardware Error]:    error_type: 0x0006: cache error|TLB error
+[   94.982606] {2}[Hardware Error]:    error_info: 0x000000000091000f
+[   94.983249] {2}[Hardware Error]:     transaction type: Data Access
+[   94.983891] {2}[Hardware Error]:     cache error, operation type: Data write
+[   94.984559] {2}[Hardware Error]:     TLB error, operation type: Data write
+[   94.985215] {2}[Hardware Error]:     cache level: 2
+[   94.985749] {2}[Hardware Error]:     TLB level: 2
+[   94.986277] {2}[Hardware Error]:     processor context not corrupted
+
+And the error code is properly decoded according with table N.17 from UEFI 2.10
+spec:
+
+	[   94.981893] {2}[Hardware Error]:    error_type: 0x0006: cache error|TLB error
+
+The error injection logic was checked via QEMU using this patch:
+https://lore.kernel.org/all/20240621165115.336-1-shiju.jose@huawei.com/
+
+v5:
+- Do some cleanups and minor fixes as suggested by Jonathan and Tony:
+  - check errors at strscpy();
+  - simplify cper_bits_to_str() function;
+  - use FIELD_GET() and for_each_set_bit();
+  - use ARRAY_SIZE() on infofx to let it clear that it should be size of newpfx + 1;
+  - fix kernel-doc warning with W=1;
+  - use kernel-doc for two exported functions at cper.c.
+
+v4:
+- The print function had some bugs on it, which was discovered with
+  the help of an error injection tool I'm now using.
+
+v3:
+- It adds a helper function to produce a buffer describing the
+  error bits at cper's printk and ghes pr_warn_bitrated. It also
+  fixes a W=1 error while building cper.
+
+v2:
+- It fixes the way printks are handled on both cper_arm and ghes
+  drivers.
+
+v1: 
+- (tagged as RFC) was mostly to give a heads up that the current 
+  implementation is not following the spec. It also touches
+  only cper code.
+
+
+
+
+Mauro Carvalho Chehab (4):
+  efi/cper: Adjust infopfx size to accept an extra space
+  efi/cper: Add a new helper function to print bitmasks
+  efi/cper: align ARM CPER type with UEFI 2.9A/2.10 specs
+  docs: efi: add CPER functions to driver-api
+
+ .../driver-api/firmware/efi/index.rst         | 11 ++--
+ drivers/acpi/apei/ghes.c                      | 15 +++---
+ drivers/firmware/efi/cper-arm.c               | 52 +++++++++----------
+ drivers/firmware/efi/cper.c                   | 41 ++++++++++++++-
+ include/linux/cper.h                          | 12 +++--
+ 5 files changed, 89 insertions(+), 42 deletions(-)
+
+-- 
+2.45.2
+
+
 
