@@ -1,133 +1,266 @@
-Return-Path: <linux-kernel+bounces-226784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 254049143B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:30:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF429143C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 915B6B2237D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:30:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AA00B22B88
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A0433F7;
-	Mon, 24 Jun 2024 07:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2744436E;
+	Mon, 24 Jun 2024 07:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x0SNrOUF"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cGaALcot";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F/nVGCQp";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cGaALcot";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F/nVGCQp"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAC879DE
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A6F44C9B;
+	Mon, 24 Jun 2024 07:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719214215; cv=none; b=EczZx/D0I2rQgdjR5WDdTvDGF04B5V9HSbD2LjSBjTPPMG2ZueqeSnIeJFHCFh4KUr70iA9akpZDmceSmqAPVXmXZTAn2+i2vXNRBvaBEfVCzPcpWhhUggPJjfhokDSZNJH8FuV13StdF3WiAnAHqy1H0FAAhuwPIyTbvqZKMrI=
+	t=1719214316; cv=none; b=A++CHCQscvI7KCYYbNQ2uiur6OHoFROKjWEZioQacU820nL8HfBVWHfvjmZ6u2hkdtc62yHk9IFr5iq87GGXCbSVk0a/0rMI7ZJZcOhdNtMMFxnu9Xm/RG7KS99gAmXaPI0g2Z9fG3TmdlUM+NTbvCDAaU3d+jhR8vRXZKsXJTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719214215; c=relaxed/simple;
-	bh=M8cE6CbrRSk+zbBBYOvmEABXXWGImsiVjoJ15IPiQ9E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YUSR/D0qZFB58bZw2/u0Ybx2YwDNNX01FGS9E44RqbGoCFxFPuJ2E996twAVkm8mLYMkpR49YdEovBvy44RuyRpX77BpOyKaBRiFKF22T29rUbotIFPC8XMroEZwImjTSFB8/2kOcHEFxdz6wfFjJoY/TvAHuO5BvnUm8019Uic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x0SNrOUF; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cdf9f934fso1477158e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 00:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719214212; x=1719819012; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c2wEfoJfSxKz/sP5VFQXU0+BbBfrArIiP6A90WvdI4U=;
-        b=x0SNrOUFIhOeee7pnT4+LMKAWKS2XFGoqMp0/gIMBFzHuj7oslGlfZyLt4/vKSMqag
-         ig2d9Uxvja/nlq0MlgmejjV5t2/3gFBS9CiMBfCPoZEAX4JUVehKsknZyW7mNpSkO03P
-         6sc+jCMs/51y7bw4kWpHsXdIQPGn7mQNZd4zdh58V0U2kQiGuq3HYGCKFH4FE6MLnxHy
-         8hDG0a18VzCan5rKW3qGkKzy5Z7JJFdYFfCNpWZwbLjfSBaQSWY6MkvC7o3CiLnJzHOK
-         2b0T34famoVkHZ6Q8NBWnPSBdaCNQ/k4SLRzbCSgduZsyq8ZY9LAgrzz5Br6ql4BabYw
-         g5bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719214212; x=1719819012;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c2wEfoJfSxKz/sP5VFQXU0+BbBfrArIiP6A90WvdI4U=;
-        b=YaBPFXU8dbXyFt2p34ge62f3PmNdNPcXDk68Wc8pSV7ahgqEBDWoYFFXWefsNyxajS
-         VqgUTxtm0rGWVfoLQFYTkjgpJbo2nS5iKHYkfmBZmcisJvWmgotqzeDCMl1hcQeH0ijJ
-         9uLgqVAuCX02M/t/Y6UF2ppslheFG1Mj/OL8p430sT53kzthenEPqXHac7fzWdv/4Oba
-         2Zl+8YqKiS71+8qDGqRIA7pZ5j+TVEVDJiqAOcMInC3SLnceCR3s4TvpmGrHgIAf8B5V
-         vf09AAQoXXK6JBUGIt11hRqQ/8eBOxOqX0mBHfx08M2JjBJPib5LPejRIrh0z804cmKe
-         7miw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0FAw8PQrbuk+okoy2J9vQ2bWMs6JO7oEr2IjE01OVIuL5xHRrcYpAuqa1sICwbL0D8q6yOPdSohnEMbzJ9hbsXUiSreSLrtP4z2M7
-X-Gm-Message-State: AOJu0Yzvb8+uNnGY3TZfzdC7XkVfnoWhJi8idO4XPun4cnaLgzVTBWsH
-	R5qhJ8a9WKNuxIXBD0LaMx/sZzJp89wY1p8kIab9hwviGJ292YRyYKCzPx0gAkKHJTqtY6PeTAU
-	nMLwV281Nh2/3Ub79aqydejdsoIs+YtRKJ+6U7Q==
-X-Google-Smtp-Source: AGHT+IF3tAjzNOGGkT0tQNH/0umUeC6Wa2jKs0yWwYAUPb4y9n4wxhkW/20v+RSive8xdIdFYTIgYUauHnzqgbb41co=
-X-Received: by 2002:a05:6512:715:b0:52c:b008:3db8 with SMTP id
- 2adb3069b0e04-52ce064f483mr1977415e87.38.1719214212126; Mon, 24 Jun 2024
- 00:30:12 -0700 (PDT)
+	s=arc-20240116; t=1719214316; c=relaxed/simple;
+	bh=WheDYIvSXPFHlJ+vjpFSdiYww6phbPNBqdRM6HpTPnc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QDWOk8Zo2EU5wI/xC3B1LCi3Wq/tpnXWVA7eBWIlMg0M881640Mjx344LhwL6DjPKP6NIcWKvjo9z/+Mj9+TjlDwNPEuzBB+IL42Ii5QvZzJul6Uim062mieTRs8apHuQg+HONq8K0xNgut26ZfGa0Xk6gKnErc2FFov7KHx7yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cGaALcot; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F/nVGCQp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cGaALcot; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F/nVGCQp; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7A8681F7B8;
+	Mon, 24 Jun 2024 07:31:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719214312; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wf4xdzLYLuHWo1JVz5hvLlR9WFrEMxWJf5gClzD7V9A=;
+	b=cGaALcotC+G2tl/AjrCaBRoTmir/FK0RFgGktls9x5Me9l91K/ctHwrGIV2EKNxFDWCHri
+	4f7zEAk3SKB4yMqTiP+RrfjvnfOBkOHdt4OQGoPBweh9xBo/19Fv36Yb5F4ROCXONAd6F1
+	8g+1ni7Aj96iSMF+MGn/91RjQ2JSwg0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719214312;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wf4xdzLYLuHWo1JVz5hvLlR9WFrEMxWJf5gClzD7V9A=;
+	b=F/nVGCQpLodoZ4nJO2LBlx9BDHhJwj7fo70TOZiGtdSlL70ejuGjvTKBN8b2jWAhuqvjMq
+	w19lxh7MUkHLRzBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719214312; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wf4xdzLYLuHWo1JVz5hvLlR9WFrEMxWJf5gClzD7V9A=;
+	b=cGaALcotC+G2tl/AjrCaBRoTmir/FK0RFgGktls9x5Me9l91K/ctHwrGIV2EKNxFDWCHri
+	4f7zEAk3SKB4yMqTiP+RrfjvnfOBkOHdt4OQGoPBweh9xBo/19Fv36Yb5F4ROCXONAd6F1
+	8g+1ni7Aj96iSMF+MGn/91RjQ2JSwg0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719214312;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wf4xdzLYLuHWo1JVz5hvLlR9WFrEMxWJf5gClzD7V9A=;
+	b=F/nVGCQpLodoZ4nJO2LBlx9BDHhJwj7fo70TOZiGtdSlL70ejuGjvTKBN8b2jWAhuqvjMq
+	w19lxh7MUkHLRzBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4869B13ACD;
+	Mon, 24 Jun 2024 07:31:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wgcwEeggeWYtfgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 24 Jun 2024 07:31:52 +0000
+Message-ID: <261612b9-e975-4c02-a493-7b83fa17c607@suse.cz>
+Date: Mon, 24 Jun 2024 09:31:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624023612.2134144-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240624023612.2134144-1-ruanjinjie@huawei.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 24 Jun 2024 09:30:00 +0200
-Message-ID: <CACRpkda-FZmyEyMJrKTdic4t8Zq_VSW8AVrvw6t=B25fiUZNKw@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: Add support for STACKLEAK gcc plugin
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: linux@armlinux.org.uk, ardb@kernel.org, arnd@arndb.de, afd@ti.com, 
-	akpm@linux-foundation.org, rmk+kernel@armlinux.org.uk, 
-	eric.devolder@oracle.com, robh@kernel.org, kees@kernel.org, 
-	masahiroy@kernel.org, palmer@rivosinc.com, samitolvanen@google.com, 
-	xiao.w.wang@intel.com, alexghiti@rivosinc.com, nathan@kernel.org, 
-	jan.kiszka@siemens.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 0/4] Introduce QPW for per-cpu operations
+To: Leonardo Bras <leobras@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
+ Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Marcelo Tosatti <mtosatti@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org
+References: <20240622035815.569665-1-leobras@redhat.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240622035815.569665-1-leobras@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -2.79
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[redhat.com,cmpxchg.org,kernel.org,linux.dev,linux-foundation.org,linux.com,google.com,lge.com,gmail.com,linutronix.de,infradead.org];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On Mon, Jun 24, 2024 at 4:33=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com>=
- wrote:
+Hi,
 
-> Add the STACKLEAK gcc plugin to arm32 by adding the helper used by
-> stackleak common code: on_thread_stack(). It initialize the stack with th=
-e
-> poison value before returning from system calls which improves the kernel
-> security. Additionally, this disables the plugin in EFI stub code and
-> decompress code, which are out of scope for the protection.
->
-> Before the test on Qemu versatilepb board:
->         # echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIREC=
-T
->         lkdtm: Performing direct entry STACKLEAK_ERASING
->         lkdtm: XFAIL: stackleak is not supported on this arch (HAVE_ARCH_=
-STACKLEAK=3Dn)
->
-> After:
->         # echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIREC=
-T
->         lkdtm: Performing direct entry STACKLEAK_ERASING
->         lkdtm: stackleak stack usage:
->           high offset: 80 bytes
->           current:     280 bytes
->           lowest:      696 bytes
->           tracked:     696 bytes
->           untracked:   192 bytes
->           poisoned:    7220 bytes
->           low offset:  4 bytes
->         lkdtm: OK: the rest of the thread stack is properly erased
->
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Acked-by: Ard Biesheuvel <ardb@kernel.org>
+you've included tglx, which is great, but there's also LOCKING PRIMITIVES
+section in MAINTAINERS so I've added folks from there in my reply.
+Link to full series:
+https://lore.kernel.org/all/20240622035815.569665-1-leobras@redhat.com/
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On 6/22/24 5:58 AM, Leonardo Bras wrote:
+> The problem:
+> Some places in the kernel implement a parallel programming strategy
+> consisting on local_locks() for most of the work, and some rare remote
+> operations are scheduled on target cpu. This keeps cache bouncing low since
+> cacheline tends to be mostly local, and avoids the cost of locks in non-RT
+> kernels, even though the very few remote operations will be expensive due
+> to scheduling overhead.
+> 
+> On the other hand, for RT workloads this can represent a problem: getting
+> an important workload scheduled out to deal with remote requests is
+> sure to introduce unexpected deadline misses.
+> 
+> The idea:
+> Currently with PREEMPT_RT=y, local_locks() become per-cpu spinlocks.
+> In this case, instead of scheduling work on a remote cpu, it should
+> be safe to grab that remote cpu's per-cpu spinlock and run the required
+> work locally. Tha major cost, which is un/locking in every local function,
+> already happens in PREEMPT_RT.
 
-I was digging around to see if this would interfere with BPF
-trampolines, but the
-BPF code seems so generic that I assume it already takes stackleak into acc=
-ount.
+I've also noticed this a while ago (likely in the context of rewriting SLUB
+to use local_lock) and asked about it on IRC, and IIRC tglx wasn't fond of
+the idea. But I forgot the details about why, so I'll let the the locking
+experts reply...
 
-Yours,
-Linus Walleij
+> Also, there is no need to worry about extra cache bouncing:
+> The cacheline invalidation already happens due to schedule_work_on().
+> 
+> This will avoid schedule_work_on(), and thus avoid scheduling-out an 
+> RT workload. 
+> 
+> For patches 2, 3 & 4, I noticed just grabing the lock and executing
+> the function locally is much faster than just scheduling it on a
+> remote cpu.
+> 
+> Proposed solution:
+> A new interface called Queue PerCPU Work (QPW), which should replace
+> Work Queue in the above mentioned use case. 
+> 
+> If PREEMPT_RT=n, this interfaces just wraps the current 
+> local_locks + WorkQueue behavior, so no expected change in runtime.
+> 
+> If PREEMPT_RT=y, queue_percpu_work_on(cpu,...) will lock that cpu's
+> per-cpu structure and perform work on it locally. This is possible
+> because on functions that can be used for performing remote work on
+> remote per-cpu structures, the local_lock (which is already
+> a this_cpu spinlock()), will be replaced by a qpw_spinlock(), which
+> is able to get the per_cpu spinlock() for the cpu passed as parameter.
+> 
+> Patch 1 implements QPW interface, and patches 2, 3 & 4 replaces the
+> current local_lock + WorkQueue interface by the QPW interface in
+> swap, memcontrol & slub interface.
+> 
+> Please let me know what you think on that, and please suggest
+> improvements.
+> 
+> Thanks a lot!
+> Leo
+> 
+> Leonardo Bras (4):
+>   Introducing qpw_lock() and per-cpu queue & flush work
+>   swap: apply new queue_percpu_work_on() interface
+>   memcontrol: apply new queue_percpu_work_on() interface
+>   slub: apply new queue_percpu_work_on() interface
+> 
+>  include/linux/qpw.h | 88 +++++++++++++++++++++++++++++++++++++++++++++
+>  mm/memcontrol.c     | 20 ++++++-----
+>  mm/slub.c           | 26 ++++++++------
+>  mm/swap.c           | 26 +++++++-------
+>  4 files changed, 127 insertions(+), 33 deletions(-)
+>  create mode 100644 include/linux/qpw.h
+> 
+> 
+> base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+
 
