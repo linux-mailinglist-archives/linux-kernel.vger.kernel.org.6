@@ -1,78 +1,115 @@
-Return-Path: <linux-kernel+bounces-226873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D343591451A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:40:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1485B914528
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C8D5B242B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:40:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0A91F210D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DEC61FE0;
-	Mon, 24 Jun 2024 08:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052BD12F5BB;
+	Mon, 24 Jun 2024 08:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WIMK5TBf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Qlt54Ecx"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2DE5380F;
-	Mon, 24 Jun 2024 08:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCC484D03;
+	Mon, 24 Jun 2024 08:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719218446; cv=none; b=RhDFpLzmc6Qt3LUmj9TkO6kzA9rCfZILFSqzXtDUibpETKKjYMaypeuyXJpNjMzwzFFlSchn8bXAbmnhBEFRyJGtwikC249ymtaIWht7En+pjS6iRLcCKZKo0fIKmttG2F+RrxS6PXlrLIcN3fF2dOkCQYha+piHUiPiBPLbxf4=
+	t=1719218582; cv=none; b=hu3moUhG+uhfCC4A38r1piStqkf3YPA6tfKsko5p8EAOEPhmkdjhaYMQDjfG0fxYIkgEH06sB7hJk6icILOR2nWpeyAOIIHyO8KGcysXwGQFocnScY6/P/xLChm1HuqAFFN0spxX3Pu4hSPr5yA0cIbROvj74t4Q4u+IsTXYZlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719218446; c=relaxed/simple;
-	bh=Q0TAQop9UcGBFWqhcDc6hWj4iTLH8ixvN+t3k8BcBrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dUQS6vjoKt9tEAzaNofC8YXBYvlNNQiNc+h1C0K4jAdClzGp2FdIvWXftqu8L815p/Z0Jp253rRNiXr7vHfPURNqPBewCyD5ivoF7P6mxCjsbzyMR+U4dhot1HDw9Dn9LmrO9wSZ/OC8TIYQ9HEpG2BlZotTns76IvIEDTS9bs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WIMK5TBf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BEC8C2BBFC;
-	Mon, 24 Jun 2024 08:40:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719218445;
-	bh=Q0TAQop9UcGBFWqhcDc6hWj4iTLH8ixvN+t3k8BcBrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WIMK5TBfHUy/SHvGu3zvfeMTSDMS/jQliC4IPMlo7lUTodPGHD8YMUNW3VYeewz1m
-	 r9VxqcAYVjg4+2qC1BxLMPe8HjgJeYsZwkanGzEuZfN0hfsvZesakJiIRkkF2Mhzyt
-	 yL1N4MsWW3+mn7J2PkaaEDva9KGby95nGM7kvAOg=
-Date: Mon, 24 Jun 2024 10:40:42 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: lcx <lichunxiaona@mail.ustc.edu.cn>
-Cc: Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: INFO: rcu detected stall in tty_ioctl
-Message-ID: <2024062412-stray-spousal-e3c3@gregkh>
-References: <fa4a7e17-ad33-4eb6-bfd3-c3e6bae13cec@mail.ustc.edu.cn>
+	s=arc-20240116; t=1719218582; c=relaxed/simple;
+	bh=1Ql/rPJr9B//lnVoSBXI6kmGKjaCsxZKPQJn0Q/2P7E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VhFGhMOT7JC7tBObRs9bdk+YGbZ2EKPIWLfICCwJ7Jejq2cGk11J0jl2xbXw14YvGpmiC2uwntR+CIZaVcw3F7GDTf1IgjuZe7N+sIoYnSljdpPfuk4R77YyShgvwaEQWc9J3Seai6Gq+yrz+WAIcSU//9Ij6lMpibXWYUbVZ3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Qlt54Ecx; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O82p4Y006217;
+	Mon, 24 Jun 2024 10:42:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=AeCFDncPm+RmmKekJr5ls2
+	XtImCTJaOsCJTIji/uvL0=; b=Qlt54Ecxz/AioprZnMS6IBTR4WI7IwO74hsiZw
+	ooMmltq5IR7S8dCj7knsL0Fmdwyqnc39lfqgij+C2Bdb0CvY3It7PYf48rDNW+0D
+	3wpWjhSn6I0TILWpq3drbChLOTpgcte9/0HD1jcTA/6hzHYJZAP886j+oxpFJKrO
+	floMB63eWxqXMRPULya+Wat58WixUln7pF+6KAF3MPJ9hmaw6EZZE+FGtNdg3PwW
+	E+wgOW73TXyoDmhDwJs0Cjp5CEreUxAkSzKBH6ma7szU7b6vKkCtWi7VbbnOnVhl
+	OJQTLHRA2DD6b9Iq9W+VdPIuftrChjd1hQ5iQCWEyUErs00A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yx860by2y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 10:42:37 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D804A4002D;
+	Mon, 24 Jun 2024 10:42:31 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C6134209EC7;
+	Mon, 24 Jun 2024 10:41:53 +0200 (CEST)
+Received: from localhost (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 24 Jun
+ 2024 10:41:53 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
+To: Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Alain Volmat
+	<alain.volmat@foss.st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+CC: <stable@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] media: stm32: dcmipp: correct error handling in dcmipp_create_subdevs
+Date: Mon, 24 Jun 2024 10:41:22 +0200
+Message-ID: <20240624084123.3009122-1-alain.volmat@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa4a7e17-ad33-4eb6-bfd3-c3e6bae13cec@mail.ustc.edu.cn>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_07,2024-06-21_01,2024-05-17_01
 
-On Mon, Jun 24, 2024 at 04:22:36PM +0800, lcx wrote:
-> Dear Linux maintainers and reviewers:
-> 
-> We would like to report a linux kernel bug, found by a modified version of syzkaller.
-> 
-> Kernel Version: a3e18a540541325a8c8848171f71e0d45ad30b2c(6.10-rc3)
-> 
-> Kernel Config: see attach, config
-> 
-> reproducing program: see attach, repro.c
-> 
-> Feel free to email us if any other information is needed. Hope the provided materials will help finding and fixing the bug.
+Correct error handling within the dcmipp_create_subdevs by properly
+decrementing the i counter when releasing the subdeves.
 
-Do you have a proposed fix for this?  That way you can get the proper
-credit for resolving it, especially as you have an easy way to reproduce
-it.
+Fixes: 28e0f3772296 ("media: stm32-dcmipp: STM32 DCMIPP camera interface driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+---
+ drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
+diff --git a/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c b/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
+index 4acc3b90d03a..4924ee36cfda 100644
+--- a/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
++++ b/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
+@@ -202,7 +202,7 @@ static int dcmipp_create_subdevs(struct dcmipp_device *dcmipp)
+ 	return 0;
+ 
+ err_init_entity:
+-	while (i > 0)
++	while (i-- > 0)
+ 		dcmipp->pipe_cfg->ents[i - 1].release(dcmipp->entity[i - 1]);
+ 	return ret;
+ }
+-- 
+2.25.1
 
-greg k-h
 
