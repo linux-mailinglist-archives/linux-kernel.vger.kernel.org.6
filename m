@@ -1,95 +1,131 @@
-Return-Path: <linux-kernel+bounces-227313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F37A914F3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:55:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E96914F40
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5538A1F22FE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:55:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C599283592
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104451422D3;
-	Mon, 24 Jun 2024 13:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1691422D3;
+	Mon, 24 Jun 2024 13:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crxC/vOo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHFZ8wyy"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5269A13A894;
-	Mon, 24 Jun 2024 13:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6B013A894;
+	Mon, 24 Jun 2024 13:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719237299; cv=none; b=GFewhPIWLDWTLjqJMF+KfcxxyMOESaye4GfKqs7ieONKw7V7f7/7AgYamS3MJV+dHpjYrZw6BeoOaaa/VfUqYsVFDHn2SvPt9cPZKfSrmFyBxanB5MfvmHgDSNWIO6ywns+3DDXTwXnnL05DYxpuC25DT0z/eBRDRIJYhBtlixM=
+	t=1719237312; cv=none; b=F/9yYRJDhEe32vi/phMFnKJ56KDPWtGlvJgWRtwLZwAcJWK5RTK9lLw8XZhLhONI1Kvw0PYxybQx+Xugw0wD/R27kq4sHozjPVGg/E14JJOQKtdSkDQ3R9pjibdECopDKQra5DUq6wFjce+eQdtdd3JjiB8bj+TAZDbElqzbVT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719237299; c=relaxed/simple;
-	bh=cbTvhZvij46fKlqp+WkS5Lgc1O3Pj/t6oQXMiZIZRBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gtPBpDPKqjkCnHUMeqd1zGHNw9tP2dLGaNvyFp8iroMIbNTKBC+2idHx7bcOROluL9/2dT+mDHx83ojdyNaBuQWLLLuuTkMm5ZpMUAWisi589xFurHNCT8Oejgp+CNFzxu55wdoVymx2vLCrzgwd3DfyBm/aPInW+HJA6LLXySM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crxC/vOo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C19F8C2BBFC;
-	Mon, 24 Jun 2024 13:54:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719237299;
-	bh=cbTvhZvij46fKlqp+WkS5Lgc1O3Pj/t6oQXMiZIZRBA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=crxC/vOoq3oJHPn0rBccw/H7NNkrN71VIpYlIAy7Aba0DWlB/TKpyZGPwsMZHlh4c
-	 Hi+kSMgp3xHhYLRt+pARsD4QpdLYgEA2ZCZVUADMCEVZlmV72T7NXW9ZLF1IKUyDgs
-	 V7GZtfyM/d+w9J+LuLppoLmIzBMoxK04Mu2tm9TR+CsgF0ugYXLkQqOYyIyTIoH53O
-	 UmqueTYcxFoCi7R9SeK2aX4Uv2awmELTBtBd/TlSvnOn7/RzKxjUmRlx76E40ZuIgQ
-	 ZyzxtXZGgkiDyzqJImCAFscrtPGzGniYZKmEM7gILNcKq6Duqdl+hQKubku+mnMUXg
-	 Kp6WRJH87eoLg==
-Date: Mon, 24 Jun 2024 14:54:52 +0100
-From: Will Deacon <will@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>,
-	Misono Tomohiro <misono.tomohiro@fujitsu.com>,
-	Chen-Yu Tsai <wens@csie.org>, Stephen Boyd <swboyd@chromium.org>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Sumit Garg <sumit.garg@linaro.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: smp: smp_send_stop() and crash_smp_send_stop()
- should try non-NMI first
-Message-ID: <20240624135452.GB8616@willie-the-truck>
-References: <20231207170251.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
- <CAD=FV=V_TGvRgZy9uFzF_tGX25oYzVrjHRrg-CphwmhmJRwsKg@mail.gmail.com>
+	s=arc-20240116; t=1719237312; c=relaxed/simple;
+	bh=OTVvvIzT8s68MzaFas47pQxyxeuMB/eUVz9FaLjaqWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d3WM1ma8sgEkJnB+9XkN2b6qGy2B8JLvR9PWNRIudmuYs0Xg+cK40eky+x3Fqyq8xuAPxRKcEwt0vlSGsFPEAsnO1KQ6YPqhQ/R6yGrGWo7i3ys6kaLBsdR3IAT8wpZmmQkAu+Y/3c9ULhUpgKfTYUugnyhCsbebH5bj7Y00fNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHFZ8wyy; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ebeefb9a6eso48349701fa.1;
+        Mon, 24 Jun 2024 06:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719237309; x=1719842109; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C/Bx3uoP0RpXGONQOgl54hoJE/GZm/I0mWhu2NNUDKo=;
+        b=nHFZ8wyy81Lx7uFf0X+97Zq1igNnCxLe3pIBUD+HZBH/bMCC0LhmXtck3yda1urX78
+         XipwPlmzvQBIIC8EgU3IRauelphPrwmuxUT180Th98+9FaR2c5ZjGlaWuXeDuW+Nlh48
+         PDWGnavoKZGH4Bh8N/8b+lZVBDHr+asAYbxzTBscari6usZ7+Oie5/wO2rPETN8D+fGd
+         gG+eHlQbXVLpqtyIwJWexAdiOhRrmvPjWCjig2z1lGHplNnlqGwbi7IkoWQMp7eagr4f
+         wfK2wuXx4Up2hLqqdki/X9m3YL4LgYEUERExa5cRLozbGf/Z20J8AbachdhEG3L5jLxD
+         Szfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719237309; x=1719842109;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C/Bx3uoP0RpXGONQOgl54hoJE/GZm/I0mWhu2NNUDKo=;
+        b=ISyBzsBj7DRzWoXxCpB24MPrGEpknBOgfF0Y8GAqwwPhiBgwKumt5SrKzmGO/rFTV6
+         +k/HZ4I7DJtTIawUyLpC3jNZqaqRwT07q19wbBC56PAJtjt9cgF5Wic/jxvCHdMwDI5T
+         WZgA+TKv2pykcjVJNIFPYT9mCkwJ7fMvQMkE91mq8MTKhIfZSO7bBG/j4oqfocSk1XIW
+         ZfAv+umnM5VNVkFMtMkL9KSRWgEqghfqxjurJW3AKtoRojyWmXLJ5zGFrYw1Vc8E+y7H
+         egXUyi3VWuqMivS9DOqcFD4otMJMyVf++ywpRjf5y5azR1a0nb2H7CwAaJX48w/+Fmh9
+         7A9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVY05l78C97W2xUUlYigJdUVaEX1iLg58ZmlmKOQ87sFRQ6zVQDSg7qZiKBHXtSRVlWwvFTOj7ouWbApRHeVfHnO964EYVRTvnwryjQdkr8u+q1nJHiCEaO41P2RN4dvy5F4dcluttbbKuBsgaI
+X-Gm-Message-State: AOJu0Yzc57S8oAB8ziIHHaep01hTpM3hjLq42ZZAQJtgXBo11lmHe9F6
+	uPfPLCLEMB8uZwWcQOLh6Nqtrn3MjTxpTKlFowdGYrRpsqedRAJSFk24FnMe5AW1WTQKwQp9oO9
+	ijjpGACGBXs5ikVp2BTLKN5LgPs4=
+X-Google-Smtp-Source: AGHT+IFj7wettLHFG8rd6oFnB5L4JcffGYfYp4659LCbNJPrZ3m46yWaY2woucbv2e5+0OFsY+iWKthKs7riWM82tUU=
+X-Received: by 2002:a2e:9cd4:0:b0:2ec:520d:f1dd with SMTP id
+ 38308e7fff4ca-2ec593be843mr29581371fa.3.1719237308619; Mon, 24 Jun 2024
+ 06:55:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=V_TGvRgZy9uFzF_tGX25oYzVrjHRrg-CphwmhmJRwsKg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <181de5a745458f349b93b05a51438d3608046c49.camel@iki.fi> <tencent_7C66AC3C8B36B8978636E04B46744F77B109@qq.com>
+In-Reply-To: <tencent_7C66AC3C8B36B8978636E04B46744F77B109@qq.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 24 Jun 2024 09:54:56 -0400
+Message-ID: <CABBYNZ+SPSGnPagYAQijd7jvdg=1CZsOhD6PcVd-m8LmKEijpw@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: fix double free in hci_req_sync_complete
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: pav@iki.fi, johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, marcel@holtmann.org, 
+	syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 17, 2024 at 01:01:58PM -0700, Doug Anderson wrote:
-> On Thu, Dec 7, 2023 at 5:03 PM Douglas Anderson <dianders@chromium.org> wrote:
-> >         local_irq_disable();
-> 
-> The above local_irq_disable() is not new for my patch but it seems
-> wonky for two reasons:
-> 
-> 1. It feels like it should have been the first thing in the function.
-> 
-> 2. It feels like it should be local_daif_mask() instead.
+Hi Edward,
 
-Is that to ensure we don't take a pNMI? I think that makes sense, but
-let's please add a comment to say why local_irq_disable() is not
-sufficient.
+On Sun, Jun 23, 2024 at 8:02=E2=80=AFAM Edward Adam Davis <eadavis@qq.com> =
+wrote:
+>
+> On Sun, 23 Jun 2024 13:30:50 +0300, Pauli Virtanen wrote:
+> > > cpu1                       cpu2
+> > > =3D=3D=3D=3D                       =3D=3D=3D=3D
+> > >                            sock_ioctl
+> > >                            sock_do_ioctl
+> > >                            hci_sock_ioctl
+> > > hci_rx_work                hci_dev_cmd
+> > > hci_event_packet           hci_req_sync
+> > > req_complete_skb           __hci_req_sync
+> > > hci_req_sync_complete
+> > >
+> > > If hci_rx_work executes before __hci_req_sync releases req_skb, every=
+thing
+> > > is normal, otherwise it will result in double free of req_skb.
+> > >
+> > > Adding NULL check of req_skb before releasing it can avoid double fre=
+e.
+> >
+> > Do you understand why?
+> >
+> > kfree_skb(NULL) is allowed, so this is logically a no-op.
+> >
+> > Probably it perturbs the timings so syzkaller repro no longer hits the
+> > race window, ie doesn't fix the issue.
+> Good, even if you already know race, let me ask you a question: how to re=
+duce race window?
 
-Will
+We actually need to stop using hci_req_sync since that has been
+deprecated, instead it shall use hci_cmd_sync_submit, we could for the
+time being just make hci_req_sync use hci_cmd_sync_submit to avoid
+such races.
+
+> ``
+> Edward
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
