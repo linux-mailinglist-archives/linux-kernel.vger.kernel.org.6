@@ -1,101 +1,140 @@
-Return-Path: <linux-kernel+bounces-227382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA79915036
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:42:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ABC4915037
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A5A31C21FB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:42:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9844EB23769
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A2519AD9A;
-	Mon, 24 Jun 2024 14:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8074F19AD67;
+	Mon, 24 Jun 2024 14:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSngehcO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFU0MxzJ"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F8C19AD8B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4053419AD45
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719240153; cv=none; b=soBR/vWiZKDktnnhREMWfib6erfqb6adA4SW6Fgerkb2WjeCdn/0ZTHCDli7Q+V8Ol0C/C8ZLTqLZtVaJw/QIggvf2DQBS0jVqYjmMLica1UTVSZaJGdzC3e9ehq5E2uAPzrx30+PrjUCQsi5XxFp8e7GyQzBOEiF28NwceJXlg=
+	t=1719240179; cv=none; b=fPIeqnltNIUueO6BDWnQJbRbArG6sbjcs8eh18D1euAanGrzEp9FrUYAfiz8U0ATfEUb39u8WU3jcF9FsjVuGii66e7bL/CZy/VjG1nJS3vyrKDalovX88+ohXGNOX5b87prANqM3m5zpMb0rPJOlVsY20X8FznCD26akmI2u1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719240153; c=relaxed/simple;
-	bh=SyswWu1AqB72FEdhCtLY98PQ4fTBCKFZWNGbvA8Dmn8=;
+	s=arc-20240116; t=1719240179; c=relaxed/simple;
+	bh=j/qu9btZ0MeXIISsfhrMqOHbPrmGyk4ZFkGEdqSOz9Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOri67em4B1qS9Lm8ij4j/dBLGhh/w8RJ4YSENGay3OMxhTzBeC1HbvmlhIvah7KZjSwWfz9ichsh76aQxiRgZB2/bDzq/g1ViOaPK470PbICCEdDZTw1TiYVlKj7VTguIxXqKMZTj1MuP3mI105E3Ll/F7wgXRypU9MZR8l4XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSngehcO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53E17C2BBFC;
-	Mon, 24 Jun 2024 14:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719240152;
-	bh=SyswWu1AqB72FEdhCtLY98PQ4fTBCKFZWNGbvA8Dmn8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tSngehcO0yI2RZYE6Fx1x4NNKaD2rIHcIsgUqv7WDPhC+S9TNy/HLtAO4jGX1eIWr
-	 esyGUJxcfzYmspAzGjne+nbdM4ZnVdiN0brqUkc61sr9AbIbAojXj4xDVqBQao7693
-	 cjuu5IjyEJPY1iPRAhFFsREgmedRbKiAFAm75JZXnq2LhM8aAemvyep3XgtZ/Y4+CI
-	 Vq2v/HwPIByfWrMCYKn2DmyFvAKjTlKcpwR8ajmHwK/F4p7RpJi+YZ4Jp8YZWLtMBU
-	 zr96MkEY4jCKuo3R9uqgjjiceS2W5sMrybhHETwGLsKMw/reEwzwHllmHLfI3TjyIn
-	 YiXis8zSOyHxA==
-Date: Mon, 24 Jun 2024 15:42:28 +0100
-From: Will Deacon <will@kernel.org>
-To: Liu Wei <liuwei09@cestc.cn>
-Cc: andrew@lunn.ch, catalin.marinas@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	prarit@redhat.com
-Subject: Re: [PATCH V3] ACPI: Add acpi=nospcr to disable ACPI SPCR as default
- console on arm64
-Message-ID: <20240624144227.GA8706@willie-the-truck>
-References: <f706cb73-4219-47fb-a075-e591502be7c2@lunn.ch>
- <20240624050404.84512-1-liuwei09@cestc.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=siUgUzkixYH/3LKIETQ0povOR4xHYpu4mge5Yn7sjh4b8g7heVzuaf54AMFOVG6ickOwU9Cht88if8pBN1FtiTW9KfQI/xuhJzstCKy0IivyqicEiqnrvmhy1Hom+GrcnvgvDYOpwFAB9OnWXSRB7vDLBQDJtlI3Uy60jE0+Ms4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fFU0MxzJ; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-57d044aa5beso4968911a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:42:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719240177; x=1719844977; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V3Be+yUO/6f73NdwtnKZoM8RVqIjuuRKBwPY3MWzE24=;
+        b=fFU0MxzJPD4zOcxW1n8AD6/HXnhrUgMNmbt2NH/rHvY/Bhq/u/qDiJ3GpJsd7q/BGr
+         g/iJubzX38obzfOrQW8zJ2f0+HlgXXRWsHYeJ0dHOuT+OkwrR5tw5cxxs823bBk3H6MU
+         fAMcMmdQC7dN6s1Ur7BR4LTDw48TrMc7TVLDzXq3u9p+0CQl90Yh3tLktx/1a9PqPVuP
+         2lK0Yx4fpzSJgcdbHdKhWAneZBTX2o5dr9VBD23xHc7OGTmFEToe9gXTkQDY8LWHbG4P
+         runVe5Nq9DGts4SwKrGUiEMt0AF7j7zYiHDaa0P3/nViDd77CZqRf4QZmawQisEZ+mSa
+         E7Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719240177; x=1719844977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V3Be+yUO/6f73NdwtnKZoM8RVqIjuuRKBwPY3MWzE24=;
+        b=TcZrzBvqLyV18KLyTUhKK6+z1Z+fwM2y9AY6T3UcVsx8JomL7BkoDTPgDM3/Z0nWo6
+         1P+jmtsPHI4YDNnVz0qPtA5VG0RHeZyiUWsFgfgZbvX8KJ4CXZ+3Ru3WdYSth3m6LlzT
+         IpMxfFgtP5IAUWhPLnS2ny6OQq4iSde5tRbHp/h6qIjscLOgdUmYyYGwWBr7dJ5nacGX
+         rLAfE51x8h5CplGvfqcVsnXopcU1RJubsqR1at1J3/LkPPXbFvQ54G/Rxf9r2WA501yh
+         16rvS2emit0HGSL4q/afYUw6Atx7ej0KF2N6HLQvHU6YLZyjCG3l72xoL6CgSVhfg0/u
+         n8LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX437udgMcfnsxg4fGKtDgdT/HyxErLFflhJOpbJ0NSGcKpu+EP9pgFuhCzqB9ZEEk/wp+ALGIj+4jWf0EeqSi+SYjTgMwolRoSVNi+
+X-Gm-Message-State: AOJu0YxjVWkB27BhWZJtptDyS2zRLwe8svbyhZm75WoNBUKjuRfjpZQR
+	pxaV0cubgorZNL/CC4nsKZXkbjtY17GqOTpLuspbXlUKBdxi+rc=
+X-Google-Smtp-Source: AGHT+IE3J1tIFwCJNX4EeUflSPZ6nTJh6CqbjxuB6465Fe89Wq8k4OmB5CRJEDi67R95Bf+EimwGjQ==
+X-Received: by 2002:a17:906:2711:b0:a6f:b3af:2add with SMTP id a640c23a62f3a-a7245badbf4mr281865966b.45.1719240176418;
+        Mon, 24 Jun 2024 07:42:56 -0700 (PDT)
+Received: from p183 ([46.53.250.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72649a149asm16859066b.3.2024.06.24.07.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 07:42:56 -0700 (PDT)
+Date: Mon, 24 Jun 2024 17:42:54 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Marco Elver <elver@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org
+Subject: Re: [PATCH] compiler.h: simplify data_race() macro
+Message-ID: <2aab04d1-c16b-44e4-a283-7bbf8cba28e7@p183>
+References: <f214f15e-4a0a-4f24-9bd7-8f84cbc12e5a@p183>
+ <CANpmjNO=zv6D807cNLAQ3eGLrigUs9xtYNxoHhyuYvHkhhSUWg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240624050404.84512-1-liuwei09@cestc.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CANpmjNO=zv6D807cNLAQ3eGLrigUs9xtYNxoHhyuYvHkhhSUWg@mail.gmail.com>
 
-On Mon, Jun 24, 2024 at 01:04:04PM +0800, Liu Wei wrote:
-> From: Andrew Lunn <andrew@lunn.ch>
+On Mon, Jun 24, 2024 at 02:27:43PM +0200, Marco Elver wrote:
+> On Mon, 24 Jun 2024 at 13:49, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> >
+> > Use auto type deduction and comma expression to decrease macro expansion
+> > size.
+> >
+> > __unqual_scalar_typeof() is quite wordy macro by itself.
+> >
+> > "expr" can be arbitrary complex so not expanding it twice is good.
+> > Should be faster too because type is deduced only once
+> > from the initializer.
+> >
+> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 > 
-> > On Sat, Jun 22, 2024 at 05:35:21PM +0800, Liu Wei wrote:
-> > > For varying privacy and security reasons, sometimes we would like to
-> > > completely silence the serial console, and only enable it when needed.
-> > > 
-> > > But there are many existing systems that depend on this console,
-> > > so add acpi=nospcr for this situation.
-> > 
-> > Maybe it is just me, but i see nospcr and my brain expands it to "no
-> > speaker". Adding to that, your commit message says "completely
-> > silence"...
-> > 
-> > > +			nospcr -- disable ACPI SPCR as default console on ARM64
-> > > +			For ARM64, ONLY "acpi=off", "acpi=on", "acpi=force" or
-> > > +			"acpi=nospcr" are available
-> > > +			For RISCV64, ONLY "acpi=off", "acpi=on" or "acpi=force"
-> > > +			are available
-> > 
-> > How about putting the word 'serial' in here somewhere, just to give
-> > users an additional clue you are not talking about a speaker, CTRL-G
-> > etc.
+> Thanks for cleaning up.  That code certainly predates the availability
+> of __auto_type. Although if I recall correctly, __unqual_scalar_typeof
+> became the first user of _Generic (the first C11 keyword we used in
+> the kernel?), but we used some ifdef to still support ancient
+> compilers initially (that definitely also didn't have __auto_type).
 > 
-> Thank you for your suggestion. 
+> Reviewed-by: Marco Elver <elver@google.com>
 > 
-> You mean acpi=nospcr_serial or acpi=no_spcrserial? However, it appears 
-> somewhat unconventional compared to the original acpi=* parameter.
+> Which tree is this for?
 > 
-> How about introducing a new one, such as acpi_no_spcr_serial or 
-> acpi_no_spcr_console?
+> > ---
+> >
+> >  include/linux/compiler.h |    5 +----
+> >  1 file changed, 1 insertion(+), 4 deletions(-)
+> >
+> > --- a/include/linux/compiler.h
+> > +++ b/include/linux/compiler.h
+> > @@ -200,10 +200,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+> >   */
+> >  #define data_race(expr)                                                        \
+> >  ({                                                                     \
+> > -       __unqual_scalar_typeof(({ expr; })) __v = ({                    \
+> > -               __kcsan_disable_current();                              \
+> > -               expr;                                                   \
+> > -       });                                                             \
+> > +       __auto_type __v = (__kcsan_disable_current(), expr);            \
+> >         __kcsan_enable_current();                                       \
+> >         __v;                                                            \
+> >  })
 
-I think acpi=nospcr is fine like it is. Just expand the acronym in the
-documentation so that it's obviously not talking about a speaker.
+I just realized, comma expression should not be necesary.
+-Wdeclaration-after-statement prohibited simple
 
-Will
+	({
+		__kcsan_disable_current
+		auto v = (expr);
+		__kcsan_enable_current
+		v;
+	})
 
