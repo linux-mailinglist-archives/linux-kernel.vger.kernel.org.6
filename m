@@ -1,145 +1,348 @@
-Return-Path: <linux-kernel+bounces-227246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC819914DE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:06:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7E2914DF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 081611C22748
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBBD6283981
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D1F13D624;
-	Mon, 24 Jun 2024 13:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772FA13D60F;
+	Mon, 24 Jun 2024 13:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDhJrm8u"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pf3phNxj"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2F113D526
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2B51311A1
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719234369; cv=none; b=eJjUKYj0mgpQzVsNmCGp1IGCt6TLkM+BbU5e/Iv4wZ6kQuFxPp2Yt828h7kaFrUY74Dp5o5i63PnvYOghIjp1nCXnTAn0tzqf6Wh+7MSU4jIM1oyPOsOAABIBh2ajFSsHLGsE7OjFgHbtvSAGZISoD4oMB2Hxh4lZaLN4Apqhvw=
+	t=1719234515; cv=none; b=SKFdEqwnEzLOxPf8mCeqtsJjq76xJtno6OKRq0CDiaJqGMrP/eFR8RCRM9FycjMdjnFlByHd8fporhO2drNnOW8XFcBpHMD1B9sku6K1gQeCpy9gIVRKPTQgRzD0BwQSHk0qFa4QQnL+zgJaUikx8M1pd0IgpiHr+zLv7LSmdMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719234369; c=relaxed/simple;
-	bh=bsFpJ2LlKDUDMCg2nIHUAdPiP7EOnEZdOcqaM4cYPL0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y/gXRFUvzf7Cd0pPuEz2MHRucGXB8f19xTTdK36WU/h7TTHtxliej/AWn2ZTfO8/p3Ip2DuTn8CrJ1tPxwoOWpODp+cRYq6xfluuH/+QHi91kO0dkk8ABGe+wVLDmji/Ae94afuZ1bz52MjfiF11LwP82GuJaZHcm8nINVv6esk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FDhJrm8u; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-364c9ec17d1so2737341f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:06:07 -0700 (PDT)
+	s=arc-20240116; t=1719234515; c=relaxed/simple;
+	bh=NSk42wQXT5/Xm/NXv1x7pyxV8bcBaiuQanGLDAOqvow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BydeDPMlVRztkpGMIaDFFNC51kpsx220O3KdrsnVgkb0UydSWiRuuDHRnpSVkD0y+WC17Ju91FCqcJ7Km0bb9yWyJA8xAId8mr5tbBqRNMoM6vgzOIoaSWxNPdJ0sB8uyT9TueTJmy5O63aSskCc+Ns/Gm4qvXOKg2j/d2W0SWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pf3phNxj; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfa71ded97bso3335770276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719234366; x=1719839166; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vjbtUbH0/r3ewxHlL2R0EHYshkh/JTAG0D1DEhiQckM=;
-        b=FDhJrm8uRgMAvXphW8nQgysmyqHNoab7JPTpVAtQTIyjgWkMHXUt6Ut2AnsEPhIR8H
-         jNU4OAUH0rjr4quFvd8UkPrebqS6kHBMNW24qhT5InCw92fy1mMCxcW7bvtS02GZmTpZ
-         sKt4SVFq7dFy29cxq2S0lk24E7NMRrwcFI1zOZ+2/gDBaY7SwMJhvDqmq8OZE9VSDHWL
-         SP1EOmQRPIZLCv6gN1v6BwC8BucNkvwzn9ZwSNqD0fNwy++wVNTjBslClLOueIgou/zT
-         KqbDBDoqS1P/QKGWy/WWH7Pe4Mq9lWXQHciIVnuapH9aTJqDoKyXgB/CWNC1qQjDdgA1
-         g3jQ==
+        d=linaro.org; s=google; t=1719234512; x=1719839312; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iJ0GaeWHZJU3apbaE0PkNJm8vYB/Ehr9D/Vuo2kLMSY=;
+        b=pf3phNxjKs6enxhgGaf5LiavBYcKvhKZHABr5D3a8MkDwZTuHmHA3uz+lAgIkaIdKw
+         /CpkkMEnG8sgt5oL8DFb5R/XTs/6IOJSmPQoJ9mbVXF81M2eP1xeGsCFBKMHruAwUd2Q
+         Sr2uwxl8zE4vnx3fkQJp6U8/MK6f6ABqzL/wtmykqD3CMP64wjtQxMOA2UCfYglaiTvs
+         4ldV7g5h3nrVgO+VWuofqnzFMajU5jmDeQD/Pn8RigVlmXjvu6BpfuO2NTl6ryaWT5Fa
+         OhXbKCZEzPxdfXUuQSvz64VfxuU7hJG/+O/4S4flAqiEyG2JQfxsNY3DraOsPu1nF/fK
+         pfng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719234366; x=1719839166;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vjbtUbH0/r3ewxHlL2R0EHYshkh/JTAG0D1DEhiQckM=;
-        b=JhPuhTzoFTDPPBGCivV8Fg47pdpLSyTTcGI6YBP1Lcp+e9qfqOIaJFdf1sCL0hqosf
-         1y1ou2XfcTBQANqgDSMoCM0dqBA1XsSemhXDeRBTfl2PwU7U4Qj+hcrkqkze+mqFplJ6
-         dLO/fbrveBPZ443oSn0IBSqdqC1LgDOMiSOZenjywDjcBMU+aTYO+bYN9QKiEXKJ1Ldr
-         sP4K/izdSjacQJSc/SPhSlEs1+XqlI1y6bUaM7xJpjAs4ChABtbRp8dvrTUJzQUZp3xF
-         RNynFuV+KQGRcgb381AtFQZX6mHfAHZLg/iTCaUOI6Ad3QcoW6fI48WNyPLGFL5eS30G
-         yGxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUR1/29CkrlrHwEB3PhMN1WsAIQ8Nry6IsF4XKjg2+Fwv/dOsfy7My3UVhlwaVERKWa5N31mK4hLbe76LDfVKULM8lVD+AtAeLYUlvb
-X-Gm-Message-State: AOJu0YyTRg5EVhMcGIs3mZsbrDSP/CjtQwryTaAGSo2VQpt8+v1/0EZr
-	1IuqWT1vQKmwG6RDvoiBQudNDNkEDc7rdfrq2R9x9gKZmZslmYYs
-X-Google-Smtp-Source: AGHT+IE4FlgLAOGpHUN4Wucv93B2eDrXC3YiiP6yeuDXARAnrn5UUyqDVlY4M0LXfHpTkpcZ0nyEuw==
-X-Received: by 2002:a05:6000:1816:b0:366:f6bd:a549 with SMTP id ffacd0b85a97d-366f6bda769mr1544909f8f.11.1719234365512;
-        Mon, 24 Jun 2024 06:06:05 -0700 (PDT)
-Received: from ?IPV6:2001:16a2:df66:b900:46d:aa3:6645:bcd8? ([2001:16a2:df66:b900:46d:aa3:6645:bcd8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366383f6355sm9968296f8f.17.2024.06.24.06.06.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 06:06:05 -0700 (PDT)
-Message-ID: <12fb19d1-3e57-4880-be59-0e83cdc4b7f1@gmail.com>
-Date: Mon, 24 Jun 2024 16:06:02 +0300
+        d=1e100.net; s=20230601; t=1719234512; x=1719839312;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iJ0GaeWHZJU3apbaE0PkNJm8vYB/Ehr9D/Vuo2kLMSY=;
+        b=hJGsN7nd4KTSFIc/7DjKdKXC7xzwdPZnOFoJ37KW0nsbn963AHcNzZkOJ4Vj120T9d
+         t/PHtOJb1XAnVgD5eaugx0eQv0sdV/SkbzUnqJPaSXO7/s43zECq39lLR4fDhhCSjBd7
+         qta9zEzxN/vBbxCbWm2YRUUIIhW/tP6tnBflwkNGMSPHCc+Db1GVR56hUDLtnd0S387x
+         N5zKYnm7yt+2VR2BRxigIszvhwIux50TCV1EQJ7gjgyPc20Tbe9JezyrDxO/QwEuJ3Ts
+         FxgadogTozD5+lvnl3Q+g9AvmDBxMqPeWW8cD7y0cqxmrGO6FUzENw1ZQt2vn2Yhv2IB
+         6JFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTihV4s3ouXRsHhuoOIV8YiKD2irtmanXVCvYUy/eCOGAtQb1TyYc80nw0fxaG2CgTmu3crL7I+4zStMVR9cBmzPlCgAsqgDkUHax8
+X-Gm-Message-State: AOJu0YzS/oGODWHdOnBZQm7M5GCxUzn56dUd6W90Xk1l16wZqmY21srY
+	YVVdO+myqr8832w+vRZlJ1v+RdHW+kEsvZIRaodHPmKEzTuocn9tEgmf8cL9L74qNEKWcmwZ6bG
+	phmOAcFobVGOYpAeZ5Pdvnv6hTOWzB1kYjnZqWg==
+X-Google-Smtp-Source: AGHT+IE/6w9SX4vD+UyerjeEC2niu6U7wagAXCpv5/FdgO2Xn6aChU2WgKm6SQVmwy1mG2UdMHIk7z4HCPL2yG6vkn4=
+X-Received: by 2002:a05:6902:f0f:b0:dff:9d2:28c0 with SMTP id
+ 3f1490d57ef6-e02f9fcb425mr2801750276.21.1719234512544; Mon, 24 Jun 2024
+ 06:08:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next:master] [mm] 0fa2857d23:
- WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
-To: Yosry Ahmed <yosryahmed@google.com>,
- kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- Linux Memory Management List <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Chengming Zhou <chengming.zhou@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
- David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>,
- Hugh Dickins <hughd@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>,
- Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-References: <202406241651.963e3e78-oliver.sang@intel.com>
- <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240624-b4-rb2-fixes-v1-0-8d763ee4e42e@linaro.org>
+ <20240624-b4-rb2-fixes-v1-3-8d763ee4e42e@linaro.org> <8411fee8-7e09-421a-a52b-487acd3a3e24@linaro.org>
+ <CAA8EJpoifd-Z175ZX6f6Pw+bQHY4F-rX05YoqJNr810_1KLm9Q@mail.gmail.com> <95a69492-afc2-4215-aa50-5d7aedbb1556@linaro.org>
+In-Reply-To: <95a69492-afc2-4215-aa50-5d7aedbb1556@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 24 Jun 2024 16:08:20 +0300
+Message-ID: <CAA8EJpodS=x9BZwpnOLN2eOVA31pNy9YT7rJjVfKqAKJ7c3O_A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: prefer host mode on dev boards
+To: neil.armstrong@linaro.org
+Cc: Caleb Connolly <caleb.connolly@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 24/06/2024 15:05, Yosry Ahmed wrote:
-> On Mon, Jun 24, 2024 at 1:49 AM kernel test robot <oliver.sang@intel.com> wrote:
->>
->>
->> Hello,
->>
->> kernel test robot noticed "WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof" on:
->>
->> commit: 0fa2857d23aa170e5e28d13c467b303b0065aad8 ("mm: store zero pages to be swapped out in a bitmap")
->> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> This is coming from WARN_ON_ONCE_GFP(order > MAX_PAGE_ORDER, gfp), and
-> is triggered by the new bitmap_zalloc() call in the swapon path. For a
-> sufficiently large swapfile, bitmap_zalloc() (which uses kmalloc()
-> under the hood) cannot be used to allocate the bitmap.
+On Mon, 24 Jun 2024 at 15:33, <neil.armstrong@linaro.org> wrote:
 >
-> Usama, I think we want to use a variant of kvmalloc() here.
+> On 24/06/2024 14:31, Dmitry Baryshkov wrote:
+> > On Mon, 24 Jun 2024 at 15:28, <neil.armstrong@linaro.org> wrote:
+> >>
+> >> On 24/06/2024 14:23, Caleb Connolly wrote:
+> >>> Generally, when given the choice these boards should prefer host mode
+> >>> since they're SBCs. When attached to a laptop (which is host-only) they
+> >>> should still fall back to peripheral mode.
+> >>
+> >> It's really not what I observed on sm8550/sm8650 QRD/HDK, as the power
+> >> is setup for peripheral by the bootloader and without an actual UCSI/PD
+> >> negociation it would only be functionnal as peripheral mode.
+> >>
+> >> So this is definitely untrue on sm8450/sm8550/sm8650 HDK/QRD/MTP.
+> >
+> > But we now have the UCSI support for those platforms, don't we?
+>
+> UCSI doesn't care about role-switch-default-mode, it's the default
+> fallback role to set when no role was explicitely set by UCSI.
+>
+> Setting host won't make it work because the power support is handled
+> by the UCSI firmware. setting role-switch-default-mode = "host" will
+> make the USB port unusable if UCSI fails to start since it's
+> physically set to peripheral mode.
 
-Yes, just testing with below diff now. The patch is not in mm-stable 
-yet, so will just send another revision with below diff included. Thanks!
+Let's not mix the source/sink and host/peripheral, those are
+independent. But I see your point. Neither TCPM nor UCSI check this
+property. So it seems it's incorrect to set it even for the TCPM
+hosts.
+
+>
+> Neil
+>
+> >
+> >>
+> >> Neil
+> >>
+> >>>
+> >>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >>> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
+> >>> ---
+> >>>    arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 1 +
+> >>>    arch/arm64/boot/dts/qcom/qrb2210-rb1.dts     | 4 ++++
+> >>>    arch/arm64/boot/dts/qcom/qrb4210-rb2.dts     | 4 ++++
+> >>>    arch/arm64/boot/dts/qcom/sm8150-hdk.dts      | 1 +
+> >>>    arch/arm64/boot/dts/qcom/sm8350-hdk.dts      | 4 ++++
+> >>>    arch/arm64/boot/dts/qcom/sm8450-hdk.dts      | 1 +
+> >>>    arch/arm64/boot/dts/qcom/sm8550-hdk.dts      | 4 ++++
+> >>>    arch/arm64/boot/dts/qcom/sm8550-mtp.dts      | 4 ++++
+> >>>    arch/arm64/boot/dts/qcom/sm8550-qrd.dts      | 4 ++++
+> >>>    arch/arm64/boot/dts/qcom/sm8650-hdk.dts      | 4 ++++
+> >>>    arch/arm64/boot/dts/qcom/sm8650-mtp.dts      | 4 ++++
+> >>>    arch/arm64/boot/dts/qcom/sm8650-qrd.dts      | 4 ++++
+> >>>    12 files changed, 39 insertions(+)
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> >>> index c4cde4328e3d..bac4ed5874b6 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> >>> @@ -657,8 +657,9 @@ &usb_1 {
+> >>>
+> >>>    &usb_1_dwc3 {
+> >>>        dr_mode = "otg";
+> >>>        usb-role-switch;
+> >>> +     role-switch-default-mode = "host";
+> >>>    };
+> >>>
+> >>>    &usb_1_dwc3_hs {
+> >>>        remote-endpoint = <&pmic_glink_hs_in>;
+> >>> diff --git a/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts b/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts
+> >>> index e19790464a11..bece4896ca23 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/qrb2210-rb1.dts
+> >>> @@ -593,8 +593,12 @@ &uart4 {
+> >>>    &usb {
+> >>>        status = "okay";
+> >>>    };
+> >>>
+> >>> +&usb_dwc3 {
+> >>> +     role-switch-default-mode = "host";
+> >>> +};
+> >>> +
+> >>>    &usb_dwc3_hs {
+> >>>        remote-endpoint = <&pm4125_hs_in>;
+> >>>    };
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+> >>> index 1c7de7f2db79..17d36f0ef5ab 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+> >>> @@ -661,8 +661,12 @@ &uart4 {
+> >>>    &usb {
+> >>>        status = "okay";
+> >>>    };
+> >>>
+> >>> +&usb_dwc3 {
+> >>> +     role-switch-default-mode = "host";
+> >>> +};
+> >>> +
+> >>>    &usb_dwc3_hs {
+> >>>        remote-endpoint = <&pmi632_hs_in>;
+> >>>    };
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm8150-hdk.dts b/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+> >>> index bac08f00b303..fe548d795490 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
+> >>> @@ -695,8 +695,9 @@ &usb_2 {
+> >>>
+> >>>    &usb_1_dwc3 {
+> >>>        dr_mode = "otg";
+> >>>        usb-role-switch;
+> >>> +     role-switch-default-mode = "host";
+> >>>    };
+> >>>
+> >>>    &usb_1_dwc3_hs {
+> >>>        remote-endpoint = <&pm8150b_hs_in>;
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm8350-hdk.dts b/arch/arm64/boot/dts/qcom/sm8350-hdk.dts
+> >>> index e031ad4c19f4..20d5c54cfcf9 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm8350-hdk.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm8350-hdk.dts
+> >>> @@ -847,8 +847,12 @@ &ufs_mem_phy {
+> >>>    &usb_1 {
+> >>>        status = "okay";
+> >>>    };
+> >>>
+> >>> +&usb_1_dwc3 {
+> >>> +     role-switch-default-mode = "host";
+> >>> +};
+> >>> +
+> >>>    &usb_1_dwc3_hs {
+> >>>        remote-endpoint = <&pmic_glink_hs_in>;
+> >>>    };
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm8450-hdk.dts b/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
+> >>> index a754b8fe9167..ebafcbe6859e 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
+> >>> @@ -1098,8 +1098,9 @@ &usb_1 {
+> >>>
+> >>>    &usb_1_dwc3 {
+> >>>        dr_mode = "otg";
+> >>>        usb-role-switch;
+> >>> +     role-switch-default-mode = "host";
+> >>>    };
+> >>>
+> >>>    &usb_1_dwc3_hs {
+> >>>        remote-endpoint = <&pmic_glink_hs_in>;
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+> >>> index e0dc03a97771..1efda478b7b9 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
+> >>> @@ -1252,8 +1252,12 @@ &ufs_mem_phy {
+> >>>    &usb_1 {
+> >>>        status = "okay";
+> >>>    };
+> >>>
+> >>> +&usb_1_dwc3 {
+> >>> +     role-switch-default-mode = "host";
+> >>> +};
+> >>> +
+> >>>    &usb_1_dwc3_hs {
+> >>>        remote-endpoint = <&pmic_glink_hs_in>;
+> >>>    };
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm8550-mtp.dts b/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
+> >>> index 26dfca0c3e05..7b05932f9c36 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
+> >>> @@ -945,8 +945,12 @@ &ufs_mem_phy {
+> >>>    &usb_1 {
+> >>>        status = "okay";
+> >>>    };
+> >>>
+> >>> +&usb_1_dwc3 {
+> >>> +     role-switch-default-mode = "host";
+> >>> +};
+> >>> +
+> >>>    &usb_1_dwc3_hs {
+> >>>        remote-endpoint = <&pmic_glink_hs_in>;
+> >>>    };
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+> >>> index 361b0792db4f..744bdc846e70 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+> >>> @@ -1211,8 +1211,12 @@ &ufs_mem_phy {
+> >>>    &usb_1 {
+> >>>        status = "okay";
+> >>>    };
+> >>>
+> >>> +&usb_1_dwc3 {
+> >>> +     role-switch-default-mode = "host";
+> >>> +};
+> >>> +
+> >>>    &usb_1_dwc3_hs {
+> >>>        remote-endpoint = <&pmic_glink_hs_in>;
+> >>>    };
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm8650-hdk.dts b/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
+> >>> index 092b78fd8a3b..f07a56583e7d 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm8650-hdk.dts
+> >>> @@ -1300,8 +1300,12 @@ &ufs_mem_phy {
+> >>>    &usb_1 {
+> >>>        status = "okay";
+> >>>    };
+> >>>
+> >>> +&usb_1_dwc3 {
+> >>> +     role-switch-default-mode = "host";
+> >>> +};
+> >>> +
+> >>>    &usb_1_dwc3_hs {
+> >>>        remote-endpoint = <&pmic_glink_hs_in>;
+> >>>    };
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm8650-mtp.dts b/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
+> >>> index d6f91580ba8d..1a9a31423af4 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm8650-mtp.dts
+> >>> @@ -839,8 +839,12 @@ &ufs_mem_phy {
+> >>>    &usb_1 {
+> >>>        status = "okay";
+> >>>    };
+> >>>
+> >>> +&usb_1_dwc3 {
+> >>> +     role-switch-default-mode = "host";
+> >>> +};
+> >>> +
+> >>>    &usb_1_dwc3_hs {
+> >>>        remote-endpoint = <&pmic_glink_hs_in>;
+> >>>    };
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/qcom/sm8650-qrd.dts b/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
+> >>> index bd60c2770da2..031b7ada8eb1 100644
+> >>> --- a/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
+> >>> +++ b/arch/arm64/boot/dts/qcom/sm8650-qrd.dts
+> >>> @@ -1285,8 +1285,12 @@ &ufs_mem_phy {
+> >>>    &usb_1 {
+> >>>        status = "okay";
+> >>>    };
+> >>>
+> >>> +&usb_1_dwc3 {
+> >>> +     role-switch-default-mode = "host";
+> >>> +};
+> >>> +
+> >>>    &usb_1_dwc3_hs {
+> >>>        remote-endpoint = <&pmic_glink_hs_in>;
+> >>>    };
+> >>>
+> >>>
+> >>
+> >
+> >
+>
 
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 0b8270359bcf..2263f71baa31 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2643,7 +2643,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, 
-specialfile)
-         free_percpu(p->cluster_next_cpu);
-         p->cluster_next_cpu = NULL;
-         vfree(swap_map);
--       bitmap_free(p->zeromap);
-+       kvfree(p->zeromap);
-         kvfree(cluster_info);
-         /* Destroy swap account information */
-         swap_cgroup_swapoff(p->type);
-@@ -3170,7 +3170,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, 
-specialfile, int, swap_flags)
-                 goto bad_swap_unlock_inode;
-         }
-
--       p->zeromap = bitmap_zalloc(maxpages, GFP_KERNEL);
-+       p->zeromap = kvzalloc(DIV_ROUND_UP(maxpages, 8), GFP_KERNEL);
-         if (!p->zeromap) {
-                 error = -ENOMEM;
-                 goto bad_swap_unlock_inode;
-
+-- 
+With best wishes
+Dmitry
 
