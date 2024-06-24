@@ -1,54 +1,49 @@
-Return-Path: <linux-kernel+bounces-227051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA5A39147A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:40:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6019B9147AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6483283517
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:40:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C602BB2328B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6108136E0F;
-	Mon, 24 Jun 2024 10:40:30 +0000 (UTC)
-Received: from mail115-79.sinamail.sina.com.cn (mail115-79.sinamail.sina.com.cn [218.30.115.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387BC137901;
+	Mon, 24 Jun 2024 10:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEY0v4Ix"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E948130485
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE0F136E34;
+	Mon, 24 Jun 2024 10:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719225630; cv=none; b=arC5sUJ+AgFdkTTTwFRjKzFlNSPbs5RcaUNjQzIIdkUXFsnEE5BWVaPMiv3ippxGCKQWuajIKGPrE9CZUCAW3+HPKrhbLaLFYM68heH8XIiP1Ac8V1dmkhTJgTS07iz63YH6L1yvN2orPpiWnbOufG0sHKarlYXba0zSi0d/YCA=
+	t=1719225631; cv=none; b=MaoL8mKYiWbZGe+8iveGkh9e4NNZI4LDdLH/CiGJpPJxakwuEx7PGVeY7BCcYSY+l1uts/AgimfgtsUZu+IlIgmwWgyXbu/5oksEFuiTmGc1TIhMlzMNG7JRmQ/bsJptnFV+0uALx2+JXv7a6Sg3yCgJI1ncBp8FcuxusUF2guU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719225630; c=relaxed/simple;
-	bh=PupXlYcl1e9FcsZOyUZfl2w5mDCJEARuLkKdlYJMqYc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Yt1t1TSuIe2wxQHwGCPORygmzQZqHu0R+RMvrak+2sl1UM3aeE6DVz62g48v70OHSmQ84Nm2DpVuEU+kCg1+9rf1sm+dQ/TMbRzfUvZR9jJytT8BGVukY9FJ25NNAi/ZQ/9qkra/606AsQG4TOoS+R5qWoEjA6VdW71Se3X0V7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.66.200])
-	by sina.com (10.185.250.22) with ESMTP
-	id 66794D0C00004F8B; Mon, 24 Jun 2024 18:40:14 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7561897602818
-X-SMAIL-UIID: AA5052FFE63743FF862FFD1337B9C5F5-20240624-184014-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: invalid-free in hci_req_sync_complete
-Date: Mon, 24 Jun 2024 18:40:01 +0800
-Message-Id: <20240624104001.2004-1-hdanton@sina.com>
-In-Reply-To: <00000000000033a6e8061b3c6d4a@google.com>
-References: 
+	s=arc-20240116; t=1719225631; c=relaxed/simple;
+	bh=h4lTRBwd21zqKE4SFojwMGyxCnQz2xbhnc1TwmZTVBs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=C/5iIuTHbkDC2xhk2BNx4IwPBOw2KumBUqP+gdgUPeIuHGljyMdKOjkWyRnBbzDj1xEng2QOfYkoUQH9OZxTAbM9hk27A93bZRZwP43vf4UnZ2M7si6stJ+Omfwu2iujrfdBUSALeYo5uVk5s0+QhqL0F00vZwcUvvUQ5/CZFrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEY0v4Ix; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D86BBC4AF0A;
+	Mon, 24 Jun 2024 10:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719225630;
+	bh=h4lTRBwd21zqKE4SFojwMGyxCnQz2xbhnc1TwmZTVBs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=OEY0v4IxMi05vpjvq16LHL8uAjU19ukQ4KKE+gSJhPTafLccl91LQEG3hjkwgzLfJ
+	 GkegY57ZUiiIYovSuSmbZxtX6L3U0UgRx+n9C6erv6Kc1jzMwf6ztJKBVrk9l+nGw8
+	 h2li/jcOdnshKbmAAEr+mCNDvWapb+R/kG4JBd4Cm49Fbuo+4zBPcGaecAelFvjaCd
+	 RoYcUpGNAzNkm9TmUaMcRZHJvx3KuQZk1WNpnjdyzUlVrBXsNzarooQ1IcdHz1V+0X
+	 4QgVr0NgI/Ylnws1t1YHByiKBBxW8e1zom9uOW67K90LXqF7V3/PfSX1yaq1YVunZz
+	 KnKs+bPwVXl2Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C0119C43612;
+	Mon, 24 Jun 2024 10:40:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,26 +51,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in FREESCALE QORIQ DPAA FMAN
+ DRIVER
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171922563077.15754.10710703804385085336.git-patchwork-notify@kernel.org>
+Date: Mon, 24 Jun 2024 10:40:30 +0000
+References: <20240624070326.130270-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20240624070326.130270-1-lukas.bulwahn@redhat.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Frank.Li@nxp.com, madalin.bucur@nxp.com, sean.anderson@seco.com,
+ kuba@kernel.org, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lukas.bulwahn@redhat.com
 
-On Wed, 19 Jun 2024 04:23:24 -0700
-> syzbot has found a reproducer for the following issue on:
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Mon, 24 Jun 2024 09:03:26 +0200 you wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > 
-> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125874ea980000
+> Commit 243996d172a6 ("dt-bindings: net: Convert fsl-fman to yaml") splits
+> the previous dt text file into four yaml files. It adjusts a corresponding
+> file entry in MAINTAINERS from txt to yaml, but this adjustment misses
+> that the file was split and renamed.
+> 
+> [...]
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  2ccbdf43d5e7
+Here is the summary with links:
+  - MAINTAINERS: adjust file entry in FREESCALE QORIQ DPAA FMAN DRIVER
+    https://git.kernel.org/netdev/net-next/c/568ebdaba637
 
---- x/net/bluetooth/hci_request.c
-+++ h/net/bluetooth/hci_request.c
-@@ -160,6 +160,8 @@ int __hci_req_sync(struct hci_dev *hdev,
- 
- 	if (err == -ERESTARTSYS)
- 		return -EINTR;
-+	if (!err)
-+		return -ETIMEDOUT;
- 
- 	switch (hdev->req_status) {
- 	case HCI_REQ_DONE:
---
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
