@@ -1,236 +1,359 @@
-Return-Path: <linux-kernel+bounces-227785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAAC691568B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:37:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A85B91568F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57F671F2308E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:37:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D6F6B22E93
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB7E19FA91;
-	Mon, 24 Jun 2024 18:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD0019FA9E;
+	Mon, 24 Jun 2024 18:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="rdzkDVKD";
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="C7i3YMQ2"
-Received: from mx0a-002c1b01.pphosted.com (mx0a-002c1b01.pphosted.com [148.163.151.68])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CtlwXt6v"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616961A01A6;
-	Mon, 24 Jun 2024 18:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.151.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719254236; cv=fail; b=YoHNZwqOeU4SiSjbrRaUZuhW/DMvepdlLDkLXHawRl7kDwcmq9E2uOZuo51zGrJ6Zy6eJE/tdiEIMQ5lyw0jN9Jdd9s3bPJAAB7ilCnLb1WhBD0AdYdr4g3H6YnVrnJOrSBdL4UEi2LdXTpLiOCqTknEBcQ3oujyrbJ+C0C2JuM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719254236; c=relaxed/simple;
-	bh=vSuIr1lPzHYTTdpxF+GfAgopCoRCvQiauRpOAV0B7Jg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kaUZmH5fLSXu8/tZqdPxZaOOrK2bxIZ0OnUF+c1UM4GqIxHy3QL9YDdcTaVIeA6c1jQ/xNESsQF23h5bsMl/RL0ATJaGQiETeJKgWZFrCWVVbU1/8PbjjAbpRC1IJD3r+TmCoQ7Yv70Dl0/i82Um01Um55KMz6cMolwOSCqpog4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=rdzkDVKD; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=C7i3YMQ2; arc=fail smtp.client-ip=148.163.151.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
-Received: from pps.filterd (m0127840.ppops.net [127.0.0.1])
-	by mx0a-002c1b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O9O77J016998;
-	Mon, 24 Jun 2024 11:37:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
-	cc:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	proofpoint20171006; bh=vSuIr1lPzHYTTdpxF+GfAgopCoRCvQiauRpOAV0B7
-	Jg=; b=rdzkDVKDB/7FLRzr8kOIllK9EeEk14lt1D0mjdlBsltR9wFR72kOs2yP4
-	QXPA2QyNpi5Stf+sQmuN6ZHLBnrO0//rrorShv11dhV+rBvyeJy1adsVs3alnNbL
-	H6vlYI0bGH/UB3EDO2vuxU2VIqlb6uinMu0GgKiyynbqwHXTfdmZmJANowv1p2MP
-	tuAPzHRFzLfdulOPEtVFFboH51NO7RPG7AcUtm4lA3k7+5RrF8NGmSYtin2YvkkB
-	c3+K06IX1DqcWCa6RyYcMEW6X1JgMCi4vjIy+CUe1riOe5g1vcFr4AFiQTjEI18k
-	6o1wvUU7PXBmNQsJesWGZO2M2FHfQ==
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2174.outbound.protection.outlook.com [104.47.55.174])
-	by mx0a-002c1b01.pphosted.com (PPS) with ESMTPS id 3ywtxr43x5-1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC1B1E4AE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719254300; cv=none; b=U/GF+QmbzT9q+DHO6ymZENC/ozD9qF5shbPfNHR6XR+kDtRafke8Qoe/HJ28UycitkguR8qXnnpJX0IOo8dordA70bb1n9Ms6fxptmeBFRkTmjCqb1bN/WsgV0v18pO32g2dtYyMEVV7sDWfHvqoT6ETVESBER9g+yc+99LjomU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719254300; c=relaxed/simple;
+	bh=0rNdYsEeufBzyt2hjCg6a2B/JpK38ANrZYIlfm8eA6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KNObuj70BMNEcVbdCippH6P4F2HnKN1s4yJ8qYoD5v2iQmxaP4hP5QwWrKaWEYfJeN6/23OAboXNPkB4KAoh4vr4oQ/+QFe1jNVWjLsvE9GmfVhjUnlKVErWC4HZMenKijddh534Yr4JXfFHyZaVVhDdXZ5PxzhZXtnv1MC2eGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CtlwXt6v; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OIUVlf028045;
+	Mon, 24 Jun 2024 18:37:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=f
+	Ko1luhsQDp6MrQu+6myONF0tx6tJXyVCKfc6xindTc=; b=CtlwXt6vtgzQ5WEZI
+	goazQZ+2+6NZXNeWBhrswpjEMo7YA8MSr9Myxy7ocQvtzUQHLSDUqzz8AQoM52Jp
+	w0AbSEMeUSqmuNk6sBfBAEBYU+VS3VcXgBK3NvkGTdbwPUd3phR+w1+LRXDEC8g0
+	ondjtNKw3dtEq/nAI7SswTzMkaKgt77/Z1jfQysFAT3iq1Pkmdpgzjml6LJL0V5O
+	Etns5F5AHwbGq4H5/Y504G4rhK0KpZQSfrtT/p6xWF75K4cNnMkzvrNRPTEZtBQL
+	TEnS+haMQIrCCSe5DvPBrqwdUqFDm0XdPNdl5umPWXUCduBYzzn9MzwuP5je8H6z
+	jPkvg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yye47g0r3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 11:37:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ihxQBkQ1kMo/2+Ae3/LlVLc0L1YrZKuEpsMlY8j2umxIFVQSYJYxY4lhFRX59jMv3lxdTLyGMDHS15Ube13lzXb0gXm67LGaNPR1ARlHf0USZqDTN94HyxWoR7I1cCqrF4YtsPB4dTRmlzt6cAZJ+2Zxrj+FqQDMMJo0Ivn0WfUiXM5NWyredwIWKCjTKSqX5TwURuy+DCqhhCbwiy11fvj0+HwzYHq/Sxj4E4bPKIdC6eSsWGxNAfWVRoHSmJ64+lUqPuYFd6g0dPG/dQ4Tpwb0fX01JcKrXX6RYKk4lQxrOngHXRu389jmxeHuGfc1s1nN/YglD7g0cZsWuD+nPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vSuIr1lPzHYTTdpxF+GfAgopCoRCvQiauRpOAV0B7Jg=;
- b=UUJQxQwelqd5JGw+7qGt9YkGnoOg0nb9EvlDv9nAB4isdL3ZkWb7qqw+X08N8wxQtZjNTD2hPYbcy3tJE2mHKf6u65f5WzQ8ms1WN7CcfbgPTCRTkuWFuXWoXAyrzOfbxDhbyoxTfRJSCTjq9J1peRkxMUNsk7/S/Tl/MAJGV1dnSJojtQBAMRD2+9bcUqYiAgu7eIoAih+xtguij4+JHtr2rJculken3rw9qAAP4kIKSGKCm0d+kEyQZo+EfuWtejsfSfEsOGeR83qDDCt7kyh+bNf+fL7JhziDD2bkFeoBCBuCWRvxAlzsWf9E/EtX6ivfriiBhrKBc/TJcfBtUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vSuIr1lPzHYTTdpxF+GfAgopCoRCvQiauRpOAV0B7Jg=;
- b=C7i3YMQ2pzDKqCgn1zsBKmfTXWEULTX3yE6vGsmaxg8chbBoBdaDriuaGmcKDi26TPV5fhLL5KLyW4URzux/IcVXHW0QeHlv3un8C/CihCEXgoTZxWjn7Uj9O44RPj3slwyUspKzbi4hIgJNGnaEzxrGlhftFAtRHR5E4YpHY6FnyoQ/yKvrkWObvztsEzD1wfwosacJiOR7rFgvlwsQ/ak3OJbReEW5VYx5o+qs/koL6stQMShWXZSmz5casrdfCqlrWHKtwG3z1Mw21zN5Z5ABNKyWrlef8ufd+sw8jGQUDGw01NsX/71PhMrWfDQ2hAu9W0WB00ogtIEJoRGvTw==
-Received: from LV8PR02MB10287.namprd02.prod.outlook.com
- (2603:10b6:408:1fa::10) by SJ0PR02MB8499.namprd02.prod.outlook.com
- (2603:10b6:a03:3e7::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Mon, 24 Jun
- 2024 18:36:58 +0000
-Received: from LV8PR02MB10287.namprd02.prod.outlook.com
- ([fe80::b769:6234:fd94:5054]) by LV8PR02MB10287.namprd02.prod.outlook.com
- ([fe80::b769:6234:fd94:5054%3]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
- 18:36:58 +0000
-From: Jon Kohler <jon@nutanix.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-        Christian Benvenuti
-	<benve@cisco.com>,
-        Satish Kharat <satishkh@cisco.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	<pabeni@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Larysa Zaremba
-	<larysa.zaremba@intel.com>
-Subject: Re: [PATCH] enic: add ethtool get_channel support
-Thread-Topic: [PATCH] enic: add ethtool get_channel support
-Thread-Index: 
- AQHawZcrbaLWefPNP0aAi0Gu7Ms7PbHNs7oAgAAFRICAAg6kAIABSyOAgAACl4CABjJlgA==
-Date: Mon, 24 Jun 2024 18:36:58 +0000
-Message-ID: <9650C08B-4F8C-43F6-A87E-35EE6F7019FC@nutanix.com>
-References: <20240618160146.3900470-1-jon@nutanix.com>
- <51a446e5-e5c5-433d-96fd-e0e23d560b08@intel.com>
- <2CB61A20-4055-49AF-A941-AF5376687244@nutanix.com>
- <20240619170424.5592d6f6@kernel.org>
- <0201165C-1677-4525-A38B-4DB1E6F6AB68@nutanix.com>
- <20240620125851.142de79c@kernel.org>
-In-Reply-To: <20240620125851.142de79c@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3774.300.61.1.2)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV8PR02MB10287:EE_|SJ0PR02MB8499:EE_
-x-ms-office365-filtering-correlation-id: ac97f04d-ecaa-4959-548b-08dc947ca14f
-x-proofpoint-crosstenant: true
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230037|366013|7416011|376011|1800799021|38070700015;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?VFRSd0c4dWhtVTVET0ltb01CZ0dCTEFuMjdaQ3hzZXVITnArTkdUbEJxZ1lh?=
- =?utf-8?B?c3lVRDdvNG9kUDZjOFVzQ0EvU2lvNndwZzM5bUxsa3pTREdUQjEwY0hDR3dr?=
- =?utf-8?B?Z3R6QTF0Ym8zdFJJbWIxRlgvQVFNK3FNNXNPYUxKWnZ5NGNWdlJTanJDalJZ?=
- =?utf-8?B?MGQvY1dmZUcrMURnVkVDUzJzbEFZK2pXLzFPcmhqVEFFVFlLSExJMEo1aTJz?=
- =?utf-8?B?bDFaV3d1TW5NU3R3RFFnZi82WXVFeFBOY3hONUc5UzdnTjE1TUNkR0JZK2Vt?=
- =?utf-8?B?bEQ3djdsM0hMM0VyUWQzK2lFQXhHYnpVNEZYMExqZXpLM3kvNkg5Y2FZTkF2?=
- =?utf-8?B?NjB1cXhGazlCNUNMRHFja2FpanFadms2dTRBN1cwY1NDWGY0aFppNnhIUVlk?=
- =?utf-8?B?eUFKYWJkTmxxRlNnQXI4UFhSUkZzd29hY1RmT0dUbHFLTmd5bDAreG1ROGpa?=
- =?utf-8?B?OG83OFc1VjRtSUFaWThMZFN5QlpudVUxU0p3TjR3Szh0ZzBPTFNXYktxekg0?=
- =?utf-8?B?RkVDRGgyME5mVnBESlNlcGJ2My9pU3dnbzZZQStsZE5JL2xUbk9wQjR3bDUr?=
- =?utf-8?B?WlVseUdpM3YzaDduWVR5SVB6cER2K0UyeHh5UjB5VlRVQTBBenlmSGJTVVY5?=
- =?utf-8?B?cmR0WnJTNmI4TStkR3FKU0RvMU5Ua000bEtDK01GcUE0RlJadkx0THJrTmcv?=
- =?utf-8?B?R2lWL3BKY2RZRDFLZWloM2Y3WStRaWhtdHRqaXJkMnMvcEdrRXkwUnZIUjF0?=
- =?utf-8?B?OHlWUUtuRXZTZjZrWWtqTUNzWUIrNTUrbm9oTXJHVU4vbW1peFdSN1hWK1R0?=
- =?utf-8?B?cGlmS1Ezd1AyZ3QrMTVMVnAxSE1iSUtrTFR1UEFiRDhubHNCZWJRd2FMV1Ft?=
- =?utf-8?B?WkYrQTRoZjRvUndqcUplTkZhVFYxY3BWakhqMko2U1JWb3JFeWFnZWZReUgz?=
- =?utf-8?B?ZU9YaWcxYzFpdlFVeGhZQmt1V0M0SG8rdlA5YkdSOURVYnVyb0ZDMGNUYTJM?=
- =?utf-8?B?d2o0dFVmRFlIR3krTkFMZjlVMno3Q1RJV2RYNm0rdEJFQlFnWnVRWUJxUHBK?=
- =?utf-8?B?eFM0aUNPNlZoM2Y2bkdIY0xkNUtKYXhXMlVtczVpNjlEak16TG5QYm5OQzEx?=
- =?utf-8?B?NGFZZWY5SWgwdXN5ZC9rcmxsMmJ2SG1WMEpoYmY1elRVN2FNdXpMZHB5aGZq?=
- =?utf-8?B?LzF1emhUOU56YnNtbzhPekM2cVFVa3BUZHdFMmQvNkVHbzc2WjFDZFVvY0ho?=
- =?utf-8?B?NjZINFRQU0FVVFV0MTRTNTRDTFFkZU5mNElka0NTbUoyT3QzOEJ6M1N6K0Ny?=
- =?utf-8?B?R1FRZW8vY2tSRVY2RDBEQVhKVXUzSEFVdWV2MVFqbzcxVWFTdnpranFlWHc4?=
- =?utf-8?B?dzFtc3QyVm81RDdWZ2x0SjBpdGdMUGVPYjlHditudzZxeDBYV2cvMTExcjhT?=
- =?utf-8?B?bHFHYmNMQ0NpMmVWYTNoUXBXTk1QclNzRlpyZ2haMmNzR2VYZjFCbzMzcHVD?=
- =?utf-8?B?UmlqemZUUHdBOFpxVnVrczROQXpZTTF3ZHZodGpXazlpQmhveWRjd25SaktE?=
- =?utf-8?B?c3o3QjV0Wk81dFVWWWlIUytEODNNbkhlbWk1UHVOTjI0UFZYbGFQaW5qV2N2?=
- =?utf-8?B?MiswclNtU3FhQzN0dDJVT3pIdXNkaXJhNVkvdExTbWdqZWhLdHNFQS9KdnVN?=
- =?utf-8?B?MldMYmkvclZWQkJXRHhEaHRZYUNEYUFWNXAwKzZEcjBwZi9zN3BwQTU0TUd4?=
- =?utf-8?B?bGdZbHVLdW9tSDhUOG1XQW5nWnJNanFJd0VzVlBoUVBicUphQUJXeTRMSU13?=
- =?utf-8?Q?HPvLfl2/zMBpjvg3wlH9KFe3vG9a8TR57yH+o=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR02MB10287.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021)(38070700015);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?WXJ0RitsQXZzVmlMaEx4M2Rsd3BHd2gwWVNWYnRtNU1rODhUYXlvdFppbGIz?=
- =?utf-8?B?WmZFVW4yZUhBalJPZnlNQ3QrYktKVW94MWRSNHo4d2RjcytrMFpSd2NpZ2E2?=
- =?utf-8?B?RGJiTHFYYzgwSFU3NDJJbzIvcEs2SGVjcXpBcjE4K3hGQkVzby9tK1BkNSs1?=
- =?utf-8?B?RzJRVXE0TTlGNWxJWTcxZ2x1djBwbyt2ZUQ0N3RJYW1yRE1pS0NmVVpaTlM4?=
- =?utf-8?B?bVFHQVc2enZ0aStnMW9yeWV1N0NMWW9rU3VwQnlFajVNMUJZK20wTHpTYzRG?=
- =?utf-8?B?SkJrTncweEtwSGEwZ2hPQUpsSjRCL05PSHJoYldSeVdDN3dML3NvRGlEc0dN?=
- =?utf-8?B?WTlhUmpwRktsaTFEV0Fvdnl5S3hsQ0Y4UitvMFAzSEt6bmFwakZuN0pFQkJl?=
- =?utf-8?B?WGllQXhJcEJ0dHkxQ25tRGE4emhlSWlYWTd3MHR3QUtmN2wwNzMzRldGWGNH?=
- =?utf-8?B?UEoxaXlRQzY4Y0N2elluYTVqRmdXUndKM3ByZmFwRnM4WHY2aEFxN0xyeU94?=
- =?utf-8?B?RUtGR1kvd1VpRlVzRURxRlNzZExQWUN2WlNNZlVrRE1MSVZRdkhVUndMY2p2?=
- =?utf-8?B?UUwzOUFvV2EvbUJFa0d5a2FvbjNkM2RDbVY1MUtnU1BDMDFYdHc4QlNSNi9i?=
- =?utf-8?B?TFBSYkF2R2pXVmo1RW9qUlc4SFRxZHlpTmpvNlNQRTRPWmt5TVo2MG9ybk04?=
- =?utf-8?B?akFSSVpTUU5CSlVRakdXQ3N5U05zTnRIRXBucmRIR0o2OE0xSXZ0aDNiWUMv?=
- =?utf-8?B?cUFtUUg1ZTJPR1B3SFRNY0QvL3h4S3IzV2lTL0lsbHFxdFVWMjNlZ2loLy9Q?=
- =?utf-8?B?aklwYlRoaG55VlpKN3graWRCVVUzVmJoT3NTMWs0SFVkUHJkVTF0NEc0QVlZ?=
- =?utf-8?B?eU0wZUVQOTBScHRQeDNPdjUvMkM5Q0Ixbm1GVHJHVlBWQldTanptNGhyT25P?=
- =?utf-8?B?SDd5QjZFVG1paHA5eW12d1VMZElqazY3anhHSUNaV2ZMYTJmTjl2UDBBaHRU?=
- =?utf-8?B?RUJEWTIyUGZkUWJDNnNCWXNJTEE5MmJNWXVLQkV0TTBYdVJxRVNtYUdJMVBD?=
- =?utf-8?B?WlBWN3BMS21zd0UyU3hjS09ZS1dKQXl6b2U5NFhKSGd6aXFheGM4c3Q2RzQy?=
- =?utf-8?B?YXRRWjZqU1VBdjhLZkRBOEUzV3Z3TkVPNGUxZ1kvTzFHQ1lyRWFBVFhacTRF?=
- =?utf-8?B?d0NzTDBYYWUyUHcyY2QyQU9nRm1oUWQzaFBiTjJKV0dCZU4yTlRLaitPZWxD?=
- =?utf-8?B?VlhsSlFjZW9TUm9SdXNSVTZqRVB1TE1pNDNYSzdFRjB3aVora3FEK0R3ZXBU?=
- =?utf-8?B?aUZPK3dDTHpXNVFLM3ZNM2pzR3VpaVZVSnJPVnJhZUNqeklNMmJ2T1J3ZEtP?=
- =?utf-8?B?VUNOUUNuVUNtakNKbklmNjVVUnB1Q2prQlQyZ3RZdEs0ZHRDcXdPUHBKbnNp?=
- =?utf-8?B?S2NkbTVISmVTZVRMclRzUmNMNE54c1ZhdkRNeks5NFFISkUzWU5yVXExVGJ1?=
- =?utf-8?B?cXNRUDB5U3U2L3R0bysraWhsQnVnbitIV0h1T1ZxTEd1SElMRStHeis5Z05G?=
- =?utf-8?B?TVVqVitUbmFoVVMrVXhUM1lHT0pWL2ZqNW5JQm52QkJqV01MdVUvY1hTaTFa?=
- =?utf-8?B?Q0Y5RzdhU2NXdDFqTGNydFRPaTh3eE9raXlZK1VHYm5TVXlvaVd3alhKelpD?=
- =?utf-8?B?TkNnZEtjT1ZRdzVBM3BIeEFaUjFsMnkxeXF4N2d0VEVXSmZld0J2YVN0bGIz?=
- =?utf-8?B?cjJCM2tycGFnOEx0VjRuK2oxTWVvd2w4ZitETGVSbTY0a2wrVEQrVktEblFy?=
- =?utf-8?B?aWFUbzAvaElXVXlwN05wQTRHenhEYTd2cmRMR0VtUjkxOGpETUdmUk1QazFu?=
- =?utf-8?B?NW1ucllSVUR5SlZ0RTFtZTFwc2JXZTNyZHdabTBuNWJxdUtrQStoOTZ3b1BN?=
- =?utf-8?B?Z1FZSjhKRmYvY1Jsang4SEExbWZ6MlFCV2ticTRjS1MzSDNBYXNGV0xmVlgw?=
- =?utf-8?B?bHYyWXFPT3VVUUtnU0h5QXZUSlpiWEJzVHlpMzlRbmNyZ3ZnT3FEdUpLZWtl?=
- =?utf-8?B?cFU1RzZCL2VzU1RZa1BlYnJVM2NOWEFYczJvYjFsd2trRzhBamVQbHBndHdJ?=
- =?utf-8?B?UkIyN2NWWGIrWVZOZjBXek5Cb1pzd00welBLOWI3QXRES0YzU2gzOU03M3Ay?=
- =?utf-8?B?NUkxdW1TbUVTczB5ZzMzclBUVTErOFJpL09ycHBoQlVWNUVIbXFaZWIyZ0ZG?=
- =?utf-8?B?T2xEaG9EMGhsbDI2R0pxbVk3US9nPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DAD9598D28A28D41B3EA951ED9339F96@namprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	Mon, 24 Jun 2024 18:37:34 +0000 (GMT)
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45OIbYO5007180;
+	Mon, 24 Jun 2024 18:37:34 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yye47g0r0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 18:37:34 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OH9KYq019897;
+	Mon, 24 Jun 2024 18:37:33 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxb5ma0w7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 18:37:33 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45OIbUbL38928724
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Jun 2024 18:37:32 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8CFC658076;
+	Mon, 24 Jun 2024 18:37:28 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A0A705806F;
+	Mon, 24 Jun 2024 18:37:24 +0000 (GMT)
+Received: from [9.195.33.245] (unknown [9.195.33.245])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 24 Jun 2024 18:37:24 +0000 (GMT)
+Message-ID: <14d4584d-a087-4674-9e2b-810e96078b3a@linux.ibm.com>
+Date: Tue, 25 Jun 2024 00:07:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR02MB10287.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac97f04d-ecaa-4959-548b-08dc947ca14f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2024 18:36:58.2628
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: X0iUyHqgF+JNNBTV2CC7HKYT5a/o6R45xx1d2OiP3v6M1x0Fcr7XrBdaSjmDcMAXfNL8KnQ4DE7SZlcZkVckJjT3KclK7BGlG5fRR8+3MMY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB8499
-X-Proofpoint-GUID: OIj4s_owDKHbNXVKiQSIzrKi5XtVHnCu
-X-Proofpoint-ORIG-GUID: OIj4s_owDKHbNXVKiQSIzrKi5XtVHnCu
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/35] PREEMPT_AUTO: support lazy rescheduling
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: tglx@linutronix.de, peterz@infradead.org, torvalds@linux-foundation.org,
+        paulmck@kernel.org, rostedt@goodmis.org, mark.rutland@arm.com,
+        juri.lelli@redhat.com, joel@joelfernandes.org, raghavendra.kt@amd.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>
+References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
+ <2d6ef6d8-6aef-4703-a9c7-90501537cdc5@linux.ibm.com>
+ <8734pw51he.fsf@oracle.com>
+ <71efae1a-6a27-4e1f-adac-19c1b18e0f0c@linux.ibm.com>
+ <bbeca067-ae70-43ff-afab-6d06648c5481@linux.ibm.com>
+ <87zfrts1l1.fsf@oracle.com>
+ <17555273-a361-48b8-8543-9f63c2b8856b@linux.ibm.com>
+ <e7e2126f-40ca-44af-9287-888f4ec34b35@linux.ibm.com>
+ <871q4td59k.fsf@oracle.com>
+Content-Language: en-US
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+In-Reply-To: <871q4td59k.fsf@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: do48vBadhubkLN2k4wIhjPOV1DhqQWA9
+X-Proofpoint-ORIG-GUID: UiFCHF8wCX8TaHq3YoCYkQlt9u7UkPFG
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-24_15,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Reason: safe
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ malwarescore=0 mlxlogscore=999 impostorscore=0 clxscore=1011 spamscore=0
+ priorityscore=1501 adultscore=0 lowpriorityscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406240147
 
-DQoNCj4gT24gSnVuIDIwLCAyMDI0LCBhdCAzOjU44oCvUE0sIEpha3ViIEtpY2luc2tpIDxrdWJh
-QGtlcm5lbC5vcmc+IHdyb3RlOg0KPiANCj4gT24gVGh1LCAyMCBKdW4gMjAyNCAxOTo0OTo0NSAr
-MDAwMCBKb24gS29obGVyIHdyb3RlOg0KPj4+IGNoYW5uZWwgaXMgYSBiaXQgb2YgYW4gb2xkIHRl
-cm0sIHRoaW5rIGFib3V0IGludGVycnVwdHMgbW9yZSB0aGFuDQo+Pj4gcXVldWVzLiBldGh0b29s
-IG1hbiBwYWdlIGhhcyB0aGUgbW9zdCBpbmZvcm1hdGl2ZSBkZXNjcmlwdGlvbi4gIA0KPj4gDQo+
-PiBUaGFua3MgZm9yIHRoZSBwb2ludGVyIG9uIG1hbiBldGh0b29sIC0gb25lIHF1ZXN0aW9uLCBQ
-cnplbWVrIGhhZA0KPj4gYnJvdWdodCB1cCBhIGdvb2QgcG9pbnQgdGhhdCBldGh0b29sIHVhcGkg
-c2F5cyB0aGF0IGNvbWJpbmVkIHF1ZXVlcw0KPj4gdmFsaWQgdmFsdWVzIHN0YXJ0IGF0IDE7IGhv
-d2V2ZXIsIEkgZG9u4oCZdCBzZWUgYW55dGhpbmcgdGhhdCBlbmZvcmNlcyB0aGF0DQo+PiBwb2lu
-dCBpbiB0aGUgY29kZSBvciB0aGUgbWFuIHBhZ2UuDQo+PiANCj4+IFNob3VsZCBJIGp1c3Qgb21p
-dCB0aGF0IGNvbXBsZXRlbHkgZnJvbSB0aGUgY2hhbmdlLCBzaW5jZSB0aGUgZmllbGRzDQo+PiBh
-cmUgemVybyBpbml0aWFsaXplZCBhbnlob3c/DQo+IA0KPiBOb3Qgc3VyZSB3aGF0IHRoZSBjb21t
-ZW50IGFib3V0IDEgdG8gbWF4IGlzIGludGVuZGluZyB0byBjb21tdW5pY2F0ZS4NCj4gQnV0IEkn
-ZCBndWVzcyBpdCB0cnlpbmcgdG8gY29udmV5IHRoYXQgb24gU0VUIGRyaXZlciBkb2Vzbid0IGhh
-dmUgdG8NCj4gd29ycnkgYWJvdXQgdGhlIHZhbHVlIGJlaW5nIGNyYXp5LCBpZiBpdCBzZXRzIG1h
-eCBjb3JyZWN0bHkuDQoNCkpha3ViIC0gdGhhbmtzIGZvciB0aGUgcG9pbnRlciBvbiB0aGUgY29k
-ZSBzdWdnZXN0aW9uLiBJ4oCZbGwgc2VuZCBvdXQgYSB2Mg0Kc2hvcnRseS4gTm90ZSwgY2hlY2sg
-b3V0IGVuaWNfc2V0X2ludHJfbW9kZS4gSW4gYm90aCBNU0kgYW5kIElOVFggY2FzZXMNCnJxX2Nv
-dW50IGFuZCB3cV9jb3VudCB3aWxsIGJlIDEsIHRob3VnaCBpbiBJTlRYIHRoZSBmaXJzdCBJTlRS
-IGlzDQp0cmVhdGVkIGFzIGNvbWJpbmVkLiA=
+
+
+On 6/19/24 8:10 AM, Ankur Arora wrote:
+
+
+>>>
+>>> SOFTIRQ per second:
+>>> ===================
+>>> 6.10:
+>>> ===================
+>>> HI	TIMER	NET_TX	NET_RX	BLOCK	IRQ_POLL	TASKLET		SCHED		HRTIMER		RCU
+>>> 0.00	3966.47	0.00	18.25	0.59	0.00		0.34		12811.00	0.00		9693.95
+>>>
+>>> Preempt_auto:
+>>> ===================
+>>> HI	TIMER	NET_TX	NET_RX	BLOCK	IRQ_POLL	TASKLET		SCHED		HRTIMER		RCU
+>>> 0.00	4871.67	0.00	18.94	0.40	0.00		0.25		13518.66	0.00		15732.77
+>>>
+>>> Note: RCU softirq seems to increase significantly. Not sure which one triggers. still trying to figure out why.
+>>> It maybe irq triggering to softirq or softirq causing more IPI.
+>>
+>> Did an experiment keeping the number of CPU constant, while changing the number of sockets they span across.CPU 
+>> When all CPU belong to same socket, there is no regression w.r.t to PREEMPT_AUTO. Regression starts when the CPUs start
+>> spanning across sockets.
+> 
+> Ah. That's really interesting. So, upto 160 CPUs was okay?
+
+No. In both the cases CPUs are limited to 96. In one case its in single NUMA node and in other case its across two NUMA nodes. 
+
+> 
+>> Since Preempt auto by default enables preempt count, I think that may cause the regression. I see Powerpc uses generic implementation
+>> which may not scale well.
+> 
+> Yeah this would explain why I don't see similar behaviour on a 384 CPU
+> x86 box.
+> 
+> Also, IIRC the powerpc numbers on preempt=full were significantly worse
+> than preempt=none. That test might also be worth doing once you have the
+> percpu based method working.
+> 
+>> Will try to shift to percpu based method and see. will get back if I can get that done successfully.
+> 
+> Sounds good to me.
+> 
+
+Did give a try. Made the preempt count per CPU by adding it in paca field. Unfortunately it didn't
+improve the the performance. Its more or less same as preempt_auto.  
+
+Issue still remains illusive. Likely crux is that somehow IPI-interrupts and SOFTIRQs are increasing 
+with preempt_auto. Doing some more data collection with perf/ftrace. Will share that soon. 
+
+This was the patch which I tried to make it per cpu for powerpc: It boots and runs workload.
+Implemented a simpler one instead of folding need resched into preempt count. By hacky way avoided 
+tif_need_resched calls as didnt affect the throughput. Hence kept it simple. Below is the patch 
+for reference. It didn't help fix the regression unless I implemented it wrongly.  
+
+
+diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
+index 1d58da946739..374642288061 100644
+--- a/arch/powerpc/include/asm/paca.h
++++ b/arch/powerpc/include/asm/paca.h
+@@ -268,6 +268,7 @@ struct paca_struct {
+ 	u16 slb_save_cache_ptr;
+ #endif
+ #endif /* CONFIG_PPC_BOOK3S_64 */
++	int preempt_count;
+ #ifdef CONFIG_STACKPROTECTOR
+ 	unsigned long canary;
+ #endif
+diff --git a/arch/powerpc/include/asm/preempt.h b/arch/powerpc/include/asm/preempt.h
+new file mode 100644
+index 000000000000..406dad1a0cf6
+--- /dev/null
++++ b/arch/powerpc/include/asm/preempt.h
+@@ -0,0 +1,106 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __ASM_PREEMPT_H
++#define __ASM_PREEMPT_H
++
++#include <linux/thread_info.h>
++
++#ifdef CONFIG_PPC64
++#include <asm/paca.h>
++#endif
++#include <asm/percpu.h>
++#include <asm/smp.h>
++
++#define PREEMPT_ENABLED (0)
++
++/*
++ * We mask the PREEMPT_NEED_RESCHED bit so as not to confuse all current users
++ * that think a non-zero value indicates we cannot preempt.
++ */
++static __always_inline int preempt_count(void)
++{
++	return READ_ONCE(local_paca->preempt_count);
++}
++
++static __always_inline void preempt_count_set(int pc)
++{
++	WRITE_ONCE(local_paca->preempt_count, pc);
++}
++
++/*
++ * must be macros to avoid header recursion hell
++ */
++#define init_task_preempt_count(p) do { } while (0)
++
++#define init_idle_preempt_count(p, cpu) do { } while (0)
++
++static __always_inline void set_preempt_need_resched(void)
++{
++}
++
++static __always_inline void clear_preempt_need_resched(void)
++{
++}
++
++static __always_inline bool test_preempt_need_resched(void)
++{
++	return false;
++}
++
++/*
++ * The various preempt_count add/sub methods
++ */
++
++static __always_inline void __preempt_count_add(int val)
++{
++	preempt_count_set(preempt_count() + val);
++}
++
++static __always_inline void __preempt_count_sub(int val)
++{
++	preempt_count_set(preempt_count() - val);
++}
++
++static __always_inline bool __preempt_count_dec_and_test(void)
++{
++	/*
++	 * Because of load-store architectures cannot do per-cpu atomic
++	 * operations; we cannot use PREEMPT_NEED_RESCHED because it might get
++	 * lost.
++	 */
++	preempt_count_set(preempt_count() - 1);
++	if (preempt_count() == 0 && tif_need_resched())
++		return true;
++	else
++		return false;
++}
++
++/*
++ * Returns true when we need to resched and can (barring IRQ state).
++ */
++static __always_inline bool should_resched(int preempt_offset)
++{
++	return unlikely(preempt_count() == preempt_offset && tif_need_resched());
++}
++
++//EXPORT_SYMBOL(per_cpu_preempt_count);
++
++#ifdef CONFIG_PREEMPTION
++extern asmlinkage void preempt_schedule(void);
++extern asmlinkage void preempt_schedule_notrace(void);
++
++#if defined(CONFIG_PREEMPT_DYNAMIC) && defined(CONFIG_HAVE_PREEMPT_DYNAMIC_KEY)
++
++void dynamic_preempt_schedule(void);
++void dynamic_preempt_schedule_notrace(void);
++#define __preempt_schedule()		dynamic_preempt_schedule()
++#define __preempt_schedule_notrace()	dynamic_preempt_schedule_notrace()
++
++#else /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_KEY*/
++
++#define __preempt_schedule() preempt_schedule()
++#define __preempt_schedule_notrace() preempt_schedule_notrace()
++
++#endif /* CONFIG_PREEMPT_DYNAMIC && CONFIG_HAVE_PREEMPT_DYNAMIC_KEY*/
++#endif /* CONFIG_PREEMPTION */
++
++#endif /* __ASM_PREEMPT_H */
+diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
+index 0d170e2be2b6..bf2199384751 100644
+--- a/arch/powerpc/include/asm/thread_info.h
++++ b/arch/powerpc/include/asm/thread_info.h
+@@ -52,8 +52,8 @@
+  * low level task data.
+  */
+ struct thread_info {
+-	int		preempt_count;		/* 0 => preemptable,
+-						   <0 => BUG */
++	//int		preempt_count;		// 0 => preemptable,
++						//   <0 => BUG
+ #ifdef CONFIG_SMP
+ 	unsigned int	cpu;
+ #endif
+@@ -77,7 +77,6 @@ struct thread_info {
+  */
+ #define INIT_THREAD_INFO(tsk)			\
+ {						\
+-	.preempt_count = INIT_PREEMPT_COUNT,	\
+ 	.flags =	0,			\
+ }
+ 
+diff --git a/arch/powerpc/kernel/paca.c b/arch/powerpc/kernel/paca.c
+index 7502066c3c53..f90245b8359f 100644
+--- a/arch/powerpc/kernel/paca.c
++++ b/arch/powerpc/kernel/paca.c
+@@ -204,6 +204,7 @@ void __init initialise_paca(struct paca_struct *new_paca, int cpu)
+ #ifdef CONFIG_PPC_64S_HASH_MMU
+ 	new_paca->slb_shadow_ptr = NULL;
+ #endif
++	new_paca->preempt_count = PREEMPT_DISABLED;
+ 
+ #ifdef CONFIG_PPC_BOOK3E_64
+ 	/* For now -- if we have threads this will be adjusted later */
+diff --git a/arch/powerpc/kexec/core_64.c b/arch/powerpc/kexec/core_64.c
+index 85050be08a23..2adab682aab9 100644
+--- a/arch/powerpc/kexec/core_64.c
++++ b/arch/powerpc/kexec/core_64.c
+@@ -33,6 +33,8 @@
+ #include <asm/ultravisor.h>
+ #include <asm/crashdump-ppc64.h>
+ 
++#include <linux/percpu-defs.h>
++
+ int machine_kexec_prepare(struct kimage *image)
+ {
+ 	int i;
+@@ -324,7 +326,7 @@ void default_machine_kexec(struct kimage *image)
+ 	 * XXX: the task struct will likely be invalid once we do the copy!
+ 	 */
+ 	current_thread_info()->flags = 0;
+-	current_thread_info()->preempt_count = HARDIRQ_OFFSET;
++	local_paca->preempt_count = HARDIRQ_OFFSET;
+ 
+ 	/* We need a static PACA, too; copy this CPU's PACA over and switch to
+ 	 * it. Also poison per_cpu_offset and NULL lppaca to catch anyone using
 
