@@ -1,179 +1,180 @@
-Return-Path: <linux-kernel+bounces-227035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B861A91477E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:29:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3AC914781
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 414942868DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:29:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064751F22D74
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0F7136E16;
-	Mon, 24 Jun 2024 10:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RR0c0+ac"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B1B137759;
+	Mon, 24 Jun 2024 10:29:30 +0000 (UTC)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E036B3BBF2;
-	Mon, 24 Jun 2024 10:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E073BBF2;
+	Mon, 24 Jun 2024 10:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719224960; cv=none; b=NlL/Au6AuJgXN72diZi27wB5tMLWgbCAE0lif43PQgLvIwt2GFYw267Kvn5pS3wBS6SQ5WN9cQCtJTVFfQNgan6J3Oaxubb2EVXxfNe72bxA7Jw2GkZ98rnXDESZ0HbuLw+R+ZUFtZkgeTiCdIj/+8C+bzE0MNNsWAZnENUbvpY=
+	t=1719224969; cv=none; b=l8/uk3HGKgUZIReZccM49WjzrOZ816HLRTB5D4pR9cEWEhZ6ibdYMmHu6e/GlAY9ssaGss8CkUcQ5nC9N/W/XWutF12s2IAyRFPPJykrPjUdIAdtiPNOayviOp7q6CiANdvj+bQo18pD/9w07hV2KUeX7DIrG/Xj0OGXnq8LkoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719224960; c=relaxed/simple;
-	bh=wNeAG9yIK0CZl4N/ZkvXzvReYFJ5z22Ul9DecMcs2k4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iULAN8kUD0YoJ0cMj2EC6sbh1n5MRCjme3y6EKWdmFkCVVTh90HlsL5zQFsQV0eSEUmtlaevMxx54l1mfjsfjPpaRI/Rq9lHbZbTEPQxBD+ZSPG/D/w5mi+GyOn823bSqPoviG2NJUCaNzOMz2QQXpl57aiCt6JHc1nKdaIZArg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RR0c0+ac; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1719224959; x=1750760959;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wNeAG9yIK0CZl4N/ZkvXzvReYFJ5z22Ul9DecMcs2k4=;
-  b=RR0c0+ac84k6ftIqr5qrbitbQnOjleuaqa2scbLpUQq0PpKEy7I+6XRv
-   JdVbNjr+LQP/lwMSQDDe2I+ODVmrYadb7TOvGVPep+0sdgvQ++pzN9jgm
-   sTxcxQw4AO7TCe76/j5CHYGnFjMxiBW0kZVYq7JNc4GSJyO1jh/ool5qZ
-   XB9xybuo0g9Q5gBgCg7NJR3L/S49kI6GuZy+AHo+rDv57QdJVXpX4t8cm
-   /xoV4duUxrN7fCbL3b53TtwmzKHE8oTftzPu/TJU0IhwRBEvLdoZuSwF4
-   KGrpSRspt2y5+poUEC6EAwxG62yCiCgNwSx+DEY5wJUkhZVSfyRod3V95
-   Q==;
-X-CSE-ConnectionGUID: waFIp9S2RTGCYk7TOATuyQ==
-X-CSE-MsgGUID: TZMuc6vpTuuD6P8hbW5QIA==
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="asc'?scan'208";a="28414746"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2024 03:29:17 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 24 Jun 2024 03:28:59 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex04.mchp-main.com (10.10.85.152)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 24 Jun 2024 03:28:56 -0700
-Date: Mon, 24 Jun 2024 11:28:41 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
-CC: Conor Dooley <conor@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Anup Patel
-	<anup@brainfault.org>, Shuah Khan <shuah@kernel.org>, Atish Patra
-	<atishp@atishpatra.org>, <linux-doc@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<kvm-riscv@lists.infradead.org>, <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v7 08/16] riscv: add ISA parsing for Zca, Zcf, Zcd and Zcb
-Message-ID: <20240624-remission-dominoes-9f22be5ba999@wendy>
-References: <20240619113529.676940-1-cleger@rivosinc.com>
- <20240619113529.676940-9-cleger@rivosinc.com>
- <20240623-cornbread-preteen-4ec287aa165c@spud>
- <c59a8897-34a1-4dc3-b68b-35dddf55c937@rivosinc.com>
+	s=arc-20240116; t=1719224969; c=relaxed/simple;
+	bh=ID6uC1394q/rVuz5Y38/BcmRBkkatT0DyixIDFXXCrM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GU7HyBAmfLGG/Hucmp8wx8NJZ1MPGVANyH5RO6+HAxJW3EjBDLUt3/G4fQ/QWVFnFYlZBzNLk+8uhPxV3lHlmQhRCrY+Ex4X0iPT8/cYIUXCwOTs4nlIgGB+abcJ3rpOL0bSt1vo3vHbOf7Dh9Z/eJk0opj5MkA1uPrECgExJeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a724b3a32d2so118432566b.2;
+        Mon, 24 Jun 2024 03:29:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719224966; x=1719829766;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nyY2ZZiHme00HbBe8pGYRA6yVdo7lRrAai+PoMjkalc=;
+        b=JF/bj3UVEIlMKPcPeDV3asOxxpJnGG2rCqzPNBkzhnA5GjJd4LqHhvJyejqrYKVkdA
+         1V/NKu2qVC41dKklSzlKwtiSItMc1DJW7/VnFwarvCAn4I0z2CI1rbr/KGJSn7OwfyX0
+         xa8emacVyVmm0J5M4cqE1qg0MJ7vgXtp6Qp/KjpFGLxY27f3ou3TkzXtgKeEWasXxLuL
+         EBi8u7lbrAl0W6gMUykvqFHYZSyNctQxy78KXRLUSFfSOZWqYE9Wy8SH1ADgPKTFaA5X
+         BEDNObeiUvgb3tLrahPqCz8IcBaXwUlK/DDzRnhPjCygu9OztBT+F4ChHWBCVYh9w3Dy
+         9GXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUV9BxQUA1yGJCjyxKao9EvZZj59bQrSiCLcybcqO9EElE6+IHUPxiF0Z4gBp+4rZRHoPJqs/Uhvo7yOgtVyss/s8Nd6b2/bU6QZukH/m/PvBQeXmmpAeDHRR0QADQdOIkfsEdx
+X-Gm-Message-State: AOJu0Yw+fj0dmsUkS+15FiUeS3SBvmiRR7tSaqNQWhCQO1FoAn+cD9Qb
+	HOYCcQmpHlGCTD3RqqfWolKzXrWX3TXsHXRx0nWIW+WdstApakEf
+X-Google-Smtp-Source: AGHT+IFvaj7d8f/TKbBcTbx/Me9SR9bDVUuO5uBmoAvYJ1+v2T9aT/ellVN4L4y09upWMQDrgA+JeQ==
+X-Received: by 2002:a17:907:cb85:b0:a72:46f3:ffc8 with SMTP id a640c23a62f3a-a7246f40067mr281037066b.29.1719224965698;
+        Mon, 24 Jun 2024 03:29:25 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a71ddbd3479sm240836966b.189.2024.06.24.03.29.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 03:29:25 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: horms@kernel.org,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/CAVIUM THUNDER NETWORK DRIVER),
+	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: thunderx: Unembed netdev structure
+Date: Mon, 24 Jun 2024 03:29:18 -0700
+Message-ID: <20240624102919.4016797-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="022xOD13U5wpppzg"
-Content-Disposition: inline
-In-Reply-To: <c59a8897-34a1-4dc3-b68b-35dddf55c937@rivosinc.com>
+Content-Transfer-Encoding: 8bit
 
---022xOD13U5wpppzg
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Embedding net_device into structures prohibits the usage of flexible
+arrays in the net_device structure. For more details, see the discussion
+at [1].
 
-On Mon, Jun 24, 2024 at 10:24:51AM +0200, Cl=E9ment L=E9ger wrote:
->=20
->=20
-> On 23/06/2024 17:42, Conor Dooley wrote:
-> > On Wed, Jun 19, 2024 at 01:35:18PM +0200, Cl=E9ment L=E9ger wrote:
-> >> The Zc* standard extension for code reduction introduces new extension=
-s.
-> >> This patch adds support for Zca, Zcf, Zcd and Zcb. Zce, Zcmt and Zcmp
-> >> are left out of this patch since they are targeting microcontrollers/
-> >> embedded CPUs instead of application processors.
-> >>
-> >> Signed-off-by: Cl=E9ment L=E9ger <cleger@rivosinc.com>
-> >> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> >> ---
-> >>  arch/riscv/include/asm/hwcap.h |  4 +++
-> >>  arch/riscv/kernel/cpufeature.c | 55 +++++++++++++++++++++++++++++++++-
-> >>  2 files changed, 58 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/h=
-wcap.h
-> >> index 18859277843a..b12ae3f2141c 100644
-> >> --- a/arch/riscv/include/asm/hwcap.h
-> >> +++ b/arch/riscv/include/asm/hwcap.h
-> >> @@ -87,6 +87,10 @@
-> >>  #define RISCV_ISA_EXT_ZVE64F		78
-> >>  #define RISCV_ISA_EXT_ZVE64D		79
-> >>  #define RISCV_ISA_EXT_ZIMOP		80
-> >> +#define RISCV_ISA_EXT_ZCA		81
-> >> +#define RISCV_ISA_EXT_ZCB		82
-> >> +#define RISCV_ISA_EXT_ZCD		83
-> >> +#define RISCV_ISA_EXT_ZCF		84
-> >> =20
-> >>  #define RISCV_ISA_EXT_XLINUXENVCFG	127
-> >> =20
-> >> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufea=
-ture.c
-> >> index a3af976f36c9..aa631fe49b7c 100644
-> >> --- a/arch/riscv/kernel/cpufeature.c
-> >> +++ b/arch/riscv/kernel/cpufeature.c
-> >> @@ -111,6 +111,9 @@ static int riscv_ext_zicboz_validate(const struct =
-riscv_isa_ext_data *data,
-> >> =20
-> >>  #define __RISCV_ISA_EXT_DATA(_name, _id) _RISCV_ISA_EXT_DATA(_name, _=
-id, NULL, 0, NULL)
-> >> =20
-> >> +#define __RISCV_ISA_EXT_DATA_VALIDATE(_name, _id, _validate) \
-> >> +			_RISCV_ISA_EXT_DATA(_name, _id, NULL, 0, _validate)
-> >> +
-> >>  /* Used to declare pure "lasso" extension (Zk for instance) */
-> >>  #define __RISCV_ISA_EXT_BUNDLE(_name, _bundled_exts) \
-> >>  	_RISCV_ISA_EXT_DATA(_name, RISCV_ISA_EXT_INVALID, _bundled_exts, \
-> >> @@ -122,6 +125,37 @@ static int riscv_ext_zicboz_validate(const struct=
- riscv_isa_ext_data *data,
-> >>  #define __RISCV_ISA_EXT_SUPERSET_VALIDATE(_name, _id, _sub_exts, _val=
-idate) \
-> >>  	_RISCV_ISA_EXT_DATA(_name, _id, _sub_exts, ARRAY_SIZE(_sub_exts), _v=
-alidate)
-> >> =20
-> >> +static int riscv_ext_zca_depends(const struct riscv_isa_ext_data *dat=
-a,
-> >=20
-> > It's super minor, but my OCD doesn't like this being called "depends"
-> > when the others are all called "validate".
->=20
-> Ok, let's make a deal. You review patch 14/16 and I'll make the machine
-> part of you happy and call this function validate ;)
+Un-embed the net_devices from struct lmac by converting them
+into pointers, and allocating them dynamically. Use the leverage
+alloc_netdev() to allocate the net_device object at
+bgx_lmac_enable().
 
-I generally avoid the hwprobe patches intentionally :) I'm not even
-expecting a respin for this tbh, I'd like to just get it in so that I
-can do things on top of it.
+The free of the device occurs at bgx_lmac_disable().
 
---022xOD13U5wpppzg
-Content-Type: application/pgp-signature; name="signature.asc"
+ Do not free_netdevice() if bgx_lmac_enable() fails after lmac->netdev
+is allocated, since bgx_lmac_disable() is called if bgx_lmac_enable()
+fails, and lmac->netdev will be freed there (similarly to lmac->dmacs).
 
------BEGIN PGP SIGNATURE-----
+Link: https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/ [1]
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+PS: Unfortunately due to lack of hardware, this patch is compiled-test
+only.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnlKWAAKCRB4tDGHoIJi
-0qTZAQDW6NkBEEY0BpVBm4oazaou8r5axQXRsRokUPZuDY/Q/wEA7XbMZLRFekMt
-ZYMxRfkbyf9XPgmg2W/WvyHnahDlhA4=
-=Ozsy
------END PGP SIGNATURE-----
+ .../net/ethernet/cavium/thunder/thunder_bgx.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
---022xOD13U5wpppzg--
+diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+index a317feb8decb..d097d606577b 100644
+--- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
++++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+@@ -54,7 +54,7 @@ struct lmac {
+ 	bool			link_up;
+ 	int			lmacid; /* ID within BGX */
+ 	int			lmacid_bd; /* ID on board */
+-	struct net_device       netdev;
++	struct net_device       *netdev;
+ 	struct phy_device       *phydev;
+ 	unsigned int            last_duplex;
+ 	unsigned int            last_link;
+@@ -590,7 +590,7 @@ static void bgx_sgmii_change_link_state(struct lmac *lmac)
+ 
+ static void bgx_lmac_handler(struct net_device *netdev)
+ {
+-	struct lmac *lmac = container_of(netdev, struct lmac, netdev);
++	struct lmac *lmac = netdev_priv(netdev);
+ 	struct phy_device *phydev;
+ 	int link_changed = 0;
+ 
+@@ -1052,12 +1052,18 @@ static int phy_interface_mode(u8 lmac_type)
+ 
+ static int bgx_lmac_enable(struct bgx *bgx, u8 lmacid)
+ {
+-	struct lmac *lmac;
++	struct lmac *lmac, **priv;
+ 	u64 cfg;
+ 
+ 	lmac = &bgx->lmac[lmacid];
+ 	lmac->bgx = bgx;
+ 
++	lmac->netdev = alloc_netdev_dummy(sizeof(struct lmac *));
++	if (!lmac->netdev)
++		return -ENOMEM;
++	priv = netdev_priv(lmac->netdev);
++	*priv = lmac;
++
+ 	if ((lmac->lmac_type == BGX_MODE_SGMII) ||
+ 	    (lmac->lmac_type == BGX_MODE_QSGMII) ||
+ 	    (lmac->lmac_type == BGX_MODE_RGMII)) {
+@@ -1116,7 +1122,7 @@ static int bgx_lmac_enable(struct bgx *bgx, u8 lmacid)
+ 		}
+ 		lmac->phydev->dev_flags = 0;
+ 
+-		if (phy_connect_direct(&lmac->netdev, lmac->phydev,
++		if (phy_connect_direct(lmac->netdev, lmac->phydev,
+ 				       bgx_lmac_handler,
+ 				       phy_interface_mode(lmac->lmac_type)))
+ 			return -ENODEV;
+@@ -1183,6 +1189,7 @@ static void bgx_lmac_disable(struct bgx *bgx, u8 lmacid)
+ 	    (lmac->lmac_type != BGX_MODE_10G_KR) && lmac->phydev)
+ 		phy_disconnect(lmac->phydev);
+ 
++	free_netdev(lmac->netdev);
+ 	lmac->phydev = NULL;
+ }
+ 
+@@ -1414,7 +1421,7 @@ static acpi_status bgx_acpi_register_phy(acpi_handle handle,
+ 
+ 	acpi_get_mac_address(dev, adev, bgx->lmac[bgx->acpi_lmac_idx].mac);
+ 
+-	SET_NETDEV_DEV(&bgx->lmac[bgx->acpi_lmac_idx].netdev, dev);
++	SET_NETDEV_DEV(bgx->lmac[bgx->acpi_lmac_idx].netdev, dev);
+ 
+ 	bgx->lmac[bgx->acpi_lmac_idx].lmacid = bgx->acpi_lmac_idx;
+ 	bgx->acpi_lmac_idx++; /* move to next LMAC */
+@@ -1483,7 +1490,7 @@ static int bgx_init_of_phy(struct bgx *bgx)
+ 
+ 		of_get_mac_address(node, bgx->lmac[lmac].mac);
+ 
+-		SET_NETDEV_DEV(&bgx->lmac[lmac].netdev, &bgx->pdev->dev);
++		SET_NETDEV_DEV(bgx->lmac[lmac].netdev, &bgx->pdev->dev);
+ 		bgx->lmac[lmac].lmacid = lmac;
+ 
+ 		phy_np = of_parse_phandle(node, "phy-handle", 0);
+-- 
+2.43.0
+
 
