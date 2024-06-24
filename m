@@ -1,124 +1,162 @@
-Return-Path: <linux-kernel+bounces-227149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D67914911
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:45:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF14B914916
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FAE1F24C2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:45:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0FFE1C20F13
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E07413B584;
-	Mon, 24 Jun 2024 11:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698BD13B2B2;
+	Mon, 24 Jun 2024 11:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aTbeZvdZ"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOntQANw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCF413A416
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8768513775A;
+	Mon, 24 Jun 2024 11:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719229510; cv=none; b=OrBEoGLmLrMP3QHQfTYXTU2wtcxclon30VrZDuJjaGhfJUiYv9trmO7x9dCG+bMxd8TQ05Rb1fttpzkQwhbycDYc06+Bn9H/iZq+a88rw2/FnwRI0eqDinwObnklSeXYYAy0shDOz+OwV9If8HwKz8CkWOxliPxBvOzaxpkG/M8=
+	t=1719229543; cv=none; b=lFeQkHvj9UvTCDGwrnPRxJY00ux7luk6PeDs6BWLFqVLd8ywEkMEV/swGmmqxGwi5njcZ7/5I9iIzqoxYqkNytCYHbbaWWu8lnBeDiMAKC5nQaoaVuyLSm6qYDxQwdtjRBy7bvFEKM2OKzqrOj+msLbEH7csz5tthaKSsGpNe4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719229510; c=relaxed/simple;
-	bh=ZTb6ItNVRUVXB0JKvtftUqyzvS/9Wc86rHio5MZRE5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uw3NgWA988qL4wqM67Y4eYwLoaSgdoYrJ36J+2EHHSHERiwbrvFjoGBduh+KntFSsA1srDJSvwB0r3P4lC/Ox1s9TlksZVxAuJmeP12KW9bn1Fr4A0VSarilCaX+cIA73U1pwUVAyT82WxCrP8M2t7dQAEpARxe3mXxVXTKKjrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aTbeZvdZ; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec58040f39so17274551fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:45:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719229507; x=1719834307; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Olwpy3S2NO7dozWXBkNeO0Wjc6p2uaDnBhKTeSGxqpk=;
-        b=aTbeZvdZuiF8zAh50H0zbLHSOv6jQUWvGX1TzVAVstHG5jLLV1rNW0S1+I+Lni/edx
-         oFS9Xwsq9JqiUglu0vrG5b4Xlh7q+dOAt6JodyymlDMzuHmkLjxr8brFY+xEf1WZ9nmq
-         BqQ6Lv5HK10LIZaqpKyxYnHmOFTdjh0EYq12Lei05NCTvRVrf0y3JMKo7BsoS2o0laAw
-         UJLdawVp6OtXFZznpBrm4LP6fxsxwcK91zgtLn2DmXXl5WIzd5PezVHBkVQJw2MmCM5R
-         PqbBGfuvrsx8uBPFFqjBPfT81JKZacoCp+k2PrJ7t7MT24OiYActbD1uxTrkiIWDFxZD
-         d62A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719229507; x=1719834307;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Olwpy3S2NO7dozWXBkNeO0Wjc6p2uaDnBhKTeSGxqpk=;
-        b=vSg9Y2WD+TJIIq2sNygVcRjVccRGZkGD5fARAmYrdplDRBGtXFJY2ktClCmaet2Qeg
-         rdSi6cPMSUldpLlkXsOTx7Sbh8TLl4OCZ8WdZu4klvQijMzgBE93Caq20VJs2y40+0uX
-         DyKIvMf5ND7GCf+W2y+KcbSYqFK9ZRG2+nSDXbDY+rne6zoONLe4CjqNLHmn/MZxlNmO
-         VY1Whlum4+Mf7wHOQI4kR4f7RR7T54EMZpEXEo1hGcNz5Yh6cWTIQ1Qt/xk8j4MujZq3
-         QrClJL5mh7brbqXg9mPdKZuQQW+I5vQTWplpoAVB3jlgmSh+J15dykKvhgudH0shU0uX
-         LjJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2gTurfj5k9FMwtU0MYlJTVVOcRCek72LofibFKPGN+fmzKr0zQXClLOgpqNw0rrgWYN/Q6al+1fEERiX6tFmD+MlZw+5CJK1+DV07
-X-Gm-Message-State: AOJu0Yxi9NdfMHDtGAX7zUHymPSS7YquxaaF2iE/93HuzM8ZeUyz4jI2
-	lWBpi3J5FfTuh3VNJ/0Oxu8P+y/hGXvasC7O98ZrpgkZHxhgyzQSfjvKOmYftOaKSJ7DCc0HDYH
-	g
-X-Google-Smtp-Source: AGHT+IFsOq7RvpS4DTLa5t33aUT4eiJQaXEezbXtvZjKsdrtYyXNMldiri2DeYMRY7GZoSW4pmitGg==
-X-Received: by 2002:a2e:9dd8:0:b0:2ec:4fc3:a8c8 with SMTP id 38308e7fff4ca-2ec59312e0fmr32546011fa.0.1719229506433;
-        Mon, 24 Jun 2024 04:45:06 -0700 (PDT)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c5c97sm60893015ad.125.2024.06.24.04.45.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2024 04:45:06 -0700 (PDT)
-Date: Mon, 24 Jun 2024 19:45:01 +0800
-From: joeyli <jlee@suse.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-block@vger.kernel.org, Chun-Yi Lee <joeyli.kernel@gmail.com>,
-	stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jens Axboe <axboe@kernel.dk>, Justin Sanders <justin@coraid.com>,
-	Kirill Korotaev <dev@openvz.org>, Nicolai Stange <nstange@suse.com>,
-	Pavel Emelianov <xemul@openvz.org>
-Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
- places
-Message-ID: <20240624114501.GK7611@linux-l9pv.suse>
-References: <20240624064418.27043-1-jlee@suse.com>
- <e44297c0-f45a-4753-8316-c6b74190a440@web.de>
- <20240624110449.GJ7611@linux-l9pv.suse>
- <8d076c38-f5d0-477b-9b9b-bceee3e2fec4@web.de>
+	s=arc-20240116; t=1719229543; c=relaxed/simple;
+	bh=BsVFyM8P7Q9wi01V+K41RxfR0R5bZXohxwKnTM9eyMM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mk0gadGWs22c6oe2NUN+BLYq2sYKJe1XqrtwyvdkbG5mAe1RZnOvh90Xf7B51jQKguea9aC4fDT/wA8tlE27uRAW/BfbJNS1GhkCOo+I4Jh5QzFPLYlBKH/iGF/8/ln2kL+ls7aNyWr+7hZbUVg23J8L5LVlYr+3hzmrIHKCcCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOntQANw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB6F0C2BBFC;
+	Mon, 24 Jun 2024 11:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719229543;
+	bh=BsVFyM8P7Q9wi01V+K41RxfR0R5bZXohxwKnTM9eyMM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aOntQANw8KVLcFVfAi+Ahs7/LaOK1Tyj0Hy5VpurNllM5jo5tqMeElcSFLmPYw7E0
+	 ZVWDWVkjSqC0gejvdubgpb7XodwAUFhPSwQZiMEysPYpvOYKR2jIuBXyez/z1b5M+5
+	 QF6ex8qSQ1QcjOI52qnxzUTqOFXpFTTyEpSWF2d68XTI+PU5RX0FXZpL6PEiopYTF+
+	 rVh6GMIhSOL1SrCK980/y6xd/3KeZrZiiv7NL3M5Pt4KO/QwM+/EZc/e6fFOp94FCr
+	 VQPJ42WFaOgIBKi/Be5fk7p9ekxrc3AvOCQrh/V5be0Bn0ZDtbOhW/YkprYDRyeJaY
+	 fVMiDw954IPIA==
+Message-ID: <608b8673-a7d3-4a93-8719-841e451e7ddc@kernel.org>
+Date: Mon, 24 Jun 2024 13:45:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8d076c38-f5d0-477b-9b9b-bceee3e2fec4@web.de>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ clock description.
+To: Jacobe Zang <jacobe.zang@wesion.com>, arend.vanspriel@broadcom.com
+Cc: kvalo@kernel.org, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, megi@xff.cz,
+ robh@kernel.org, efectn@protonmail.com, krzk+dt@kernel.org,
+ conor+dt@kernel.org, heiko@sntech.de, nick@khadas.com, jagan@edgeble.ai,
+ dsimic@manjaro.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240624081906.1399447-1-jacobe.zang@wesion.com>
+ <20240624081906.1399447-5-jacobe.zang@wesion.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240624081906.1399447-5-jacobe.zang@wesion.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 24, 2024 at 01:28:54PM +0200, Markus Elfring wrote:
-> >> Please reconsider the version identification in this patch subject once more.
-> >>
-> >>
-> >> …
-> >>> ---
-> >>>
-> >>> v2:
-> >>> - Improve patch description
-> >> …
-> >>
-> >> How many patch variations were discussed and reviewed in the meantime?
-> >>
-> >
-> > Only v2. I sent v2 patch again because nobody response my code in patch.
-> > But I still want to grap comments for my code.
+On 24/06/2024 10:19, Jacobe Zang wrote:
+> Add clocks and clock-names for brcm4329-fmac.
+
+Which devices have this clock? All? You now mention driver, but this is
+a binding so please describe hardware.
+
+Subject: drop full stops. In every patch.
+
 > 
-> How does such a feedback fit to my previous patch review?
-> https://lore.kernel.org/r/e8331545-d261-44af-b500-93b90d77d8b7@web.de/
-> https://lkml.org/lkml/2024/5/14/551
->
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> ---
+>  .../bindings/net/wireless/brcm,bcm4329-fmac.yaml         | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+> index e564f20d8f415..b9e39a62c3b32 100644
+> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+> @@ -121,6 +121,15 @@ properties:
+>        NVRAM. This would normally be filled in by the bootloader from platform
+>        configuration data.
+>  
+> +  clocks:
+> +    description: phandle to the clock connected on rtc clock line.
 
-I want to collect comment of my code in patch then send next version.
+Drop redundant parts, like "phandle to the".  Just use items with
+description instead of above and maxItems.
 
-Joey Lee 
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    description: Names of the supplied clocks.
+
+Drop description, completely redundant.
+
+> +    items:
+> +      - const: 32k
+
+32k? That's the name of the clock? In the datasheet?
+
+> +
+>  required:
+>    - compatible
+>    - reg
+
+Best regards,
+Krzysztof
+
 
